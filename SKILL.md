@@ -1423,3 +1423,124 @@ never live values.
 recheck: `sha256sum tools/mado-verify.sh corpus/knowledge/arc-synthesis.md
 corpus/knowledge/gate-standing-use.md` — the three shas above; then the note
 §8's three commands re-derive the gate's state.
+
+## Round-11 — the arc's end: final pointers (append, M11-4)
+
+Appended 2026-10-14 21:35Z. Round 11 (`plans/round-11.plan.md`, 352 L by
+`wc -l` / 23,438 B / sha `4bde28aa5eef9600…`, committed with the round-10
+landing) is the arc's closeout round: verify the round-10 handoff, settle
+every open item, freeze the revision, and commit the arc-end record. This
+lane's write was this append only — the round's SKILL-lane edit; scratch
+`/tmp/w11-mado-m11-4/`; read-only throughout (the gate was read and run in
+its read-only modes; no substrate file written; no compositor/session
+mutation — no restart, no socket connect, no `omarchy` write verb). The
+append is the pointer layer: it binds the arc's terminal artifacts to their
+measured state and hands the next reader the route through them. Where this
+append and a pointed-to file's own bytes differ at read time, the measured
+bytes govern — run the recheck line first. Round 11 is chartered as the
+arc's last round (plan §(c): "no further round opens"); the standing rules
+above are unchanged by this append — pointers, not ground.
+
+Every number below binds to `tools/mado-verify.sh` sha256
+`93e43f8fe8b9bdd4…` (3,231 L / 150,103 B; committed `de22dfd`; unchanged at
+HEAD — `git show HEAD:tools/mado-verify.sh | sha256sum` reads identical; the
+sha identical before and after my runs). HEAD is
+`f7bfc9fe149bc94057323964e7cb0411f6f89e25` ("probation round 10 (training
+r9): see LOG"), worktree clean (`git status --porcelain` empty) at the
+samples below. A later gate edit re-opens every number here.
+
+### The pointer map — the arc, artifact by artifact
+
+| Artifact | What it carries | Measured at this append (2026-10-14 21:31–21:33Z) | Recheck |
+|---|---|---|---|
+| `corpus/knowledge/arc-synthesis.md` (M10-1; committed `f7bfc9f`) | the ten-round synthesis: arc ledger (mint + rounds 1–10: commit, axis move, gate sha, selftest count), the gate ladder re-derived per arc commit (28/28 → 53/53 → 89/89 → 217/217 → 268/268), the invariants, the three trends, the gap ledger (12 surfaces), the classification (9 closed / 8 operator-owned / 12 unknown) | 387 L / 30,796 B / `a5b4833141461810…` | `sha256sum corpus/knowledge/arc-synthesis.md` |
+| `corpus/knowledge/gate-standing-use.md` (M10-2 text + M10-3's first-cadence tick; committed `f7bfc9f`) | the gate's standing-use contract: custody rules, the invocation map quoted from the landed helps, the verdict vocabulary, the standing cadence, maintenance rules with ancestry, the residual/limit ledger with each item's check, the operator's handoff | 361 L / 22,931 B / `aaa2e625253e881e…` | `sha256sum corpus/knowledge/gate-standing-use.md` |
+| `corpus/knowledge/arc-closeout.md` (M11-1; plan §(c)) | the closeout's single durable artifact: the verification ledger, the terminal disposition ledger (closed / operator-owned / unknown — no "carried"), the freeze pins, the handoff ledger | not present at the 21:33Z sample; lands this round | `ls -l corpus/knowledge/arc-closeout.md`; when present, its own recheck line and `git log -1` for the arc-end commit |
+| `tools/mado-verify.sh` — the verdict gate | the standing verdict is `bash tools/mado-verify.sh` (live, read-only); `--no-live` proves the file plane; `--selftest` is hermetic; the mode contract lives in the note above | `93e43f8f…` · 3,231 L / 150,103 B; my runs at this append: `--selftest` → `MADO_SELFTEST: 268/268 assertions passed` rc 0; `--no-live` → `MADO_VERIFY: CLEAN (29 pass, 4 notes)` rc 0; boundary `bb2639d9a980…` identical before/after; live point sample — see below | `bash tools/mado-verify.sh --selftest`; `… --no-live`; `… --help` |
+| `reports/r10-aud-m10.md` (AUD-M10) · `reports/r10-ver-m10.md` (VER-M10) | the round-10 independent receipts: the four synthesis claims + the note's two commands re-derived — PASS, with the live point sample named F2; the ladder re-derived one level below the records — CONFIRMED | 160 L / 13,177 B / `d9892618…` · 156 L / 9,126 B / `8de65dfd…` | `sha256sum reports/r10-aud-m10.md reports/r10-ver-m10.md` |
+| the record family — `LOG.md` · `SCORECARD.md` · `corpus/README.md` · `corpus/lessons/` · the record drafts | what the arc ships recorded vs owed: the arc-end entry and the final row land last (plan §(b)/(c)); the README's note rows, the drafts' `⟨PENDING⟩` sets, the `walker-deep.md` §10/§11 errata, and `corpus/lessons/` are the owed debt the closeout settles | `LOG.md` 301 L / `81c60ea8…`; `SCORECARD.md` 22 L / `5f1df3f4…`; `corpus/README.md` 19 L / `2dd274f5…` — 8 note rows vs 21 notes in `corpus/knowledge/` (13 unrowed); `corpus/lessons/` 0 entries | `wc -l` and `sha256sum` per file; `ls corpus/knowledge/*.md \| wc -l` |
+| this file — `SKILL.md` | the operating manual; the append series below (rounds 5–10) is the landing history and this append closes it | 1,424 L by `wc -l` / 104,700 B / `e9e67efe44f2d635e56a…` before this append | `sha256sum SKILL.md` |
+
+### Reading route — for a fresh agent holding only this file
+
+1. **To verify the plane**: Standing rules → config-plane map →
+   claim→evidence routing → the scoped-verification checklist; every claim
+   ends with a measured anchor; run the gate for the standing verdict
+   (`bash tools/mado-verify.sh`).
+2. **To understand the arc**: `arc-synthesis.md` (what was measured across
+   ten rounds, and what stayed unknown), then `gate-standing-use.md` (the
+   contract under which the gate is run and maintained), then
+   `arc-closeout.md` (the terminal state and the operator's handoff, landing
+   this round).
+3. **To extend the work**: the residual set is enumerated — never
+   informally "carried" — in the synthesis's gap ledger and the note §6;
+   the round-11 settlement's dispositions land in the closeout note; config
+   changes stay operator-owned per the map above.
+
+### The gate at this append (my runs, read-only)
+
+- `--selftest` → `MADO_SELFTEST: 268/268 assertions passed` rc 0
+  (hermetic fixtures; the boundary row unchanged).
+- `--no-live` → `MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only —
+  live layer skipped: --no-live)`, `counts: pass=29 fail=0 unknown=0 skip=8
+  note=4`; boundary row `bb2639d9a980…` PASS (config plane byte-identical
+  before/after).
+- live → `MADO_VERIFY: DIVERGED (3 fail, 0 unknown, 49 pass)`: the three
+  fails are `live.waybar.process` / `live.waybar.layer` /
+  `live.waybar.tray` — no waybar process at the sample (`pgrep -a waybar` →
+  none; walker 1203471 `/usr/bin/walker --gapplication-service`, swaybg
+  1203358 running). Session state — the AUD-M10 F2 class
+  (`reports/r10-aud-m10.md:120`) — not a gate defect: the file plane and the
+  boundary row stayed green and the gate's sha is unchanged before/after.
+  The closeout's battery carries the round's authoritative live receipt.
+
+### Corrections this append carries
+
+- **The r9-aud citation at `SKILL.md:1314` resolves wrong.** The line cites
+  AUD-M9 as `reports/r9-aud-m9.md, 166 L / 7ad8eccdd8d213a5…`; the landed
+  blob (and the worktree, clean) reads
+  `866272eeda09bc0898da16ca96b9738b166c60bb96734ce144bfe537a71ed954` — 166 L
+  / 15,580 B, `sha256sum reports/r9-aud-m9.md` equal to `git show
+  HEAD:reports/r9-aud-m9.md | sha256sum`. The cited sha does not resolve;
+  the corrected reading is `866272ee…` (the line count matches). Registered
+  by the round-11 plan (`:121-127`) as the closeout spot-check's worked
+  example; carried here append-only — the `:1314` block stays unedited, this
+  section is the correction.
+- **The round-10 append's closing frame is superseded.** Its "arc's final
+  round" frame is superseded by the fleet's decision that round 11 is the
+  closeout (round-11 plan, opening frame); the round-10 artifacts stand, the
+  closing frame does not. The spot-checked citations otherwise resolve: the
+  round-9 append's four note cites (`0982ba06…`, `a5acfe01…`, `73b1466b…`,
+  `98ec0c3b…`) and the round-10 pair above read as cited.
+
+### What this append does not do
+
+- No settlement: the disposition ledger (closed / operator-owned / unknown)
+  is the closeout note's content (plan §(b)); this append neither restates
+  nor pre-empts it.
+- No record-family edits: README rows, SCORECARD rows, lessons, the drafts'
+  `⟨PENDING⟩` sets, `walker-deep.md` errata — outside this file's scope;
+  this lane writes only `SKILL.md`.
+- No new coverage, no promise: a NOTE stays non-verdict, an UNKNOWN stays
+  unknown; the gate's verdict line stays `bash tools/mado-verify.sh`.
+
+### Unknowns at this append
+
+1. The closeout note (`corpus/knowledge/arc-closeout.md`) — not present at
+   the 21:33Z sample; its content, its commit, and the arc-end commit are
+   this round's open items; a later reader rechecks the path.
+2. Whether the record family lands (README rows / SCORECARD final row /
+   `corpus/lessons/` / the drafts' closures) — the closeout's settlement
+   reports it; out of this file's scope.
+3. The live plane's state at the closeout's battery: waybar was absent at
+   this append's sample; the session is the operator's, not this lane's —
+   the closeout's run re-samples and its receipt governs.
+4. The final frozen revision: the last landed gate revision at this append
+   is `93e43f8f…`; if any round-11 edit moves the gate, every number here
+   re-opens at the new revision.
+
+recheck: `sha256sum SKILL.md LOG.md SCORECARD.md corpus/README.md
+corpus/knowledge/arc-synthesis.md corpus/knowledge/gate-standing-use.md`;
+`ls -l corpus/knowledge/arc-closeout.md` (present → read it; absent → the
+closeout has not landed); `bash tools/mado-verify.sh --selftest &&
+bash tools/mado-verify.sh --no-live`.

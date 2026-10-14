@@ -299,3 +299,140 @@
 - 2026-10-14 — round 8 (training r7): post-hardening sweep vs the 10/10 expectation; the drift watch arm + snapshot-diff mode; zero config mutation held. Axis: operability + freshness. Verifiers: VER-M8 | AUD-M8.
 - 2026-10-14 — round 9 (training r8): theme plane as gate arms; walker deep-r9; the snapshot-diff mode's first real receipt across the round's own edits. Axis: coverage + operability. Verifiers: VER-M9 | AUD-M9.
 - 2026-10-14 — round 10 (training r9): the arc synthesis (re-derivable; the gate-evolution ladder 28->268 selftest across 5 revisions independently CONFIRMED cell-for-cell); the gate standing-use runbook + the regression mode's first cadence receipt. Axis: calibration + operability. Verifiers: VER-M10 (cell-for-cell) | AUD-M10.
+- 2026-10-14 — round 11 (training r10) — THE ARC CLOSES. The closeout round
+  (charter `plans/round-11.plan.md`, 353 L / `4bde28aa5eef9600…`, committed
+  with the round-10 landing): verify the round-10 handoff, settle every open
+  item, freeze the revision, commit the arc-end record. This entry is the
+  record lane's (SCR-M11) arc-end record; every number in it was re-measured
+  read-only at the frozen revision (2026-10-14 21:33–21:35Z UTC; raw logs
+  `/tmp/w11-scr-m11/`), and every artifact it names was read at its landed
+  bytes 21:33Z–22:0xZ. Deliverables as landed in-window:
+  M11-1 → `corpus/knowledge/closeout-r11.md` (closeout note; landed name —
+  the plan's `arc-closeout.md` never landed, both values carried, AUD-M11
+  F1): 294 L by `wc -l` (editor view 295) / 19,250 B / `670b5a396ecb8789…`;
+  §1–§7 the M11-1 note, §8 the M11-3 append. It carries: the round-10
+  handoff verification ((a10) yes — `arc-synthesis.md` 387 L /
+  `a5b4833141461810…`; (b10) yes — `gate-standing-use.md` 361 L /
+  `aaa2e625253e881e…`; (c10) partly — the LOG/SCORECARD one-liners landed,
+  README/lessons/⟨PENDING⟩/errata/AGENTS did not), the ladder + battery
+  receipts (§2), the terminal disposition ledger (closed / operator-owned /
+  unknown — "carried" absent; every item named), the freeze pins and the
+  handoff (§7), five open findings F1–F5 with both values.
+  M11-3 → the closeout's §8 append (gate final-state receipt; window
+  21:33:40–21:36:01Z): the whole battery re-run — selftest 268/268;
+  `--no-live` CLEAN 29/4; live DIVERGED 3/49; regression PASS 10/10;
+  snapshot pair `MADO_DIFF: CHANGED (rows 41→60; relabeled=7 appeared=20
+  vanished=1; scope file-plane→live)` + self-diff control `SAME`; gate sha
+  byte-identical before/after.
+  M11-2 → `corpus/lessons/round-10.md` (226 L / 16,423 B /
+  `d7b4708e864fca29…`): round 10's lesson, one wave late (the fleet
+  pattern) — the arc's FIRST lessons entry after ten rounds of
+  `corpus/lessons/` = 0; carries the `## Gate` section (candidates /
+  admits / rejects with reasons) and a non-author spot-check (SC-A:
+  battery + ladder re-derived; admits and rejects both covered).
+  M11-4 → `SKILL.md` "Round-11 — the arc's end: final pointers" append,
+  1,424 → 1,545 L by `wc -l` (`e9e67efe…` → `b9134091c031fade…`; +122/−1):
+  the pointer map + reading route; it carries the F5 correction (both
+  values) append-only.
+  PACK-M → `plans/completion-evidence.md` (196 L / `e63272c4b555213b…`):
+  the rounds-2–11 completion pack for the parent (one line per round,
+  SHONEN status, debts; nothing re-adjudicated).
+  Seat reports: `reports/r11-aud-m11.md` (AUD-M11; window 21:30–21:49Z;
+  C1/C2 + R1–R7 PASS; live NAMED; findings F1 closeout naming / F2
+  +90 vs +89 / F3 waybar / F4 harness; its own scratch-glide slip
+  `gate.sha.after.txt` — visible in this lane's poll 21:36:42–21:37:02Z,
+  removed by its own lane, no byte moved); `reports/r11-ver-m11.md`
+  (VER-M11; ladder complete to the frozen revision, 20/20 + r10 4/4 cells;
+  F0 = the waybar root cause — journal `systemd-coredump`, waybar pid
+  3036215 core-dumped 18:21:17 −03 = 21:21:17Z; F4 = the synthesis
+  epilogue still owed).
+  Scribe verification (this entry; commands at 21:33–21:35Z UTC):
+  gate ladder re-derived per arc commit — five distinct blobs + two
+  identity rows: r5 `d7edaab4bf108625…` 1,098 L / 45,334 B; r6
+  `c4c1afb75dd1c8aa…` 1,186 L / 50,126 B; r7 `90d50cdd4d18410b…` 1,755 L
+  / 75,771 B; r8 `7da4ec5013583c91…` 2,887 L / 131,612 B; r9 and `f7bfc9f`
+  `93e43f8fe8b9bdd4…` 3,231 L / 150,103 B; rounds 1–4 no gate file (the
+  piped command reads the empty blob) — every cell equal to the records
+  and to VER-M11/AUD-M11.
+  Frozen revision's whole row: `--selftest` → `MADO_SELFTEST: 268/268
+  assertions passed` rc 0; `--no-live` → `MADO_VERIFY: CLEAN (29 pass, 4
+  notes; file plane only)`, boundary `bb2639d9a980…`; live → `MADO_VERIFY:
+  DIVERGED (3 fail, 49 pass, 8 notes)` — the three waybar rows
+  (`live.waybar.process/.layer/.tray`); `pgrep -x waybar` rc 1 directly;
+  root cause now on record (VER-M11 F0: core dump 21:21:17Z; cause `[UNK]`;
+  no lane touched it; the bar's restart is operator-owned); `--regression`
+  → `MADO_REGRESSION: PASS` (target `dc7c4141449891cd…`, spec
+  `c7ee75b97c38ac8f…` match, table 10/10, flips 0, `MUTATE_RESTORE: OK`;
+  harness `75ed934d…` printed as provenance vs recorded `b56c6e57…`);
+  snapshot pair → `MADO_DIFF: SAME (rows 41→41; all counters 0)`. Gate sha
+  identical before/after every run.
+  Live pins (read verbs only, 21:35Z): `hyprctl version` → 0.56.2
+  `efb5099…`; `hyprland.conf` `4f52854a3c143dcf`; binds 192;
+  `configerrors` empty rc 0; `wl_socket` `wayland-1`; `pgrep hypridle`
+  rc 1; walker 1203471 / elephant 1203474 / swaybg 1203358; `NVD_BACKEND`
+  unset; omarchy 3.8.3; theme Matte Black.
+  Citation spot-check: `SKILL.md:1314` cites AUD-M9 as `7ad8eccdd8d213a5…`;
+  the landed blob reads `866272eeda09bc08…` (166 L) — carried as F5, both
+  values; the M11-4 append adds the correction, the base line stands.
+  Record family movement (this lane's files, applied with this entry):
+  LOG 301 L → 437 L (this arc-end entry); SCORECARD 22 L → 30 L (rows 4–5
+  replaced with the drafts' ready text, pins re-measured; rows 6–9
+  completed from the records + re-derived ladder cells; the malformed
+  round-10 row completed; the round-11 final row, the arc-end statement
+  and the live caveat added). Other record-family files as measured at
+  this write: README 19 L / `2dd274f5e2…` (8 note rows — 22 notes now
+  stand in `corpus/knowledge/`, unrowed), synthesis 387 L unchanged (the
+  epilogue VER-M11 F4 still owed), standing-use 361 L unchanged (the
+  revision line + F4 path correction owed), walker-deep 617 L /
+  `0982ba066c…` unchanged (§10/§11 errata owed), AGENTS 6 L unchanged
+  (pointer owed), the draft ⟨PENDING⟩ sets unchanged — the settlement
+  (M11-2) remains the named carrier; the round-11 commit is the remaining
+  landing step (HEAD `f7bfc9f` + the wave's dirty set at this write).
+  The closeout round's three trend verdicts (plan §(c)): expansion —
+  unchanged, by design (no new ground; the arc closes at 22 notes in
+  `corpus/knowledge/`, no new frontier opened or promised); quality —
+  improved where the settlement repaired with evidence (SCORECARD rows
+  paid; the arc's first lessons entry; the SKILL pointer append; the
+  closeout + its seat reports), with the harm-side named, not smoothed:
+  F1 `…a5171` now carries ×2 new occurrences in the round-11 set
+  (closeout `:77`/`:83`) — erratum owed; F4 synthesis epilogue owed; F5
+  stale citation standing in the base SKILL line; the live plane moved
+  (waybar crash); discernment — the verification sample AGREED cell-for-cell
+  (this lane's ladder + battery; M11-3's battery; AUD-M11 C1/C2 + R1–R7;
+  VER-M11's ladder 20/20) and the disagree side is the five findings, each
+  reproduced with both values; the non-author spot-check landed with the
+  lessons entry (SC-A) — the ten-round-standing harm-side fact (no
+  lessons, no non-author check) is repaired this round.
+  Freeze pins: gate revision `93e43f8fe8b9bdd48c895cccfac11d5b23f97d8793fc6fb43987b4afdbc00095`
+  (3,231 L / 150,103 B by `wc -l`/`wc -c`; unchanged rounds 9 → 11); the
+  synthesis `corpus/knowledge/arc-synthesis.md` (387 L /
+  `a5b4833141461810…`); the standing-use note
+  `corpus/knowledge/gate-standing-use.md` (361 L / `aaa2e625253e881e…`);
+  the closeout `corpus/knowledge/closeout-r11.md` (294 L / `670b5a396ecb8789…`).
+  THE ARC-END STATEMENT: the arc is closed. The gate is handed over at the
+  frozen revision `93e43f8f…` — the standing verdict is `bash
+  tools/mado-verify.sh` (live, read-only; the contract, invocation map,
+  cadence and residual ledger live in
+  `corpus/knowledge/gate-standing-use.md`). No further round opens.
+  Probation 4/4 `[x]` since round 5 (VER-M3 | VER-M4B; `SHONEN.md`);
+  promotion is the operator/integrator decision, never self-declared.
+  Observations: (a) the live DIVERGED reading is a session-state fact with
+  its root cause now on record — waybar core-dumped at 21:21:17Z (VER-M11
+  F0); reconciliation is operator-owned (restart the bar); every `52 pass`
+  live figure in the records is stale as of 21:21:17Z; (b) the registered
+  findings are the round's disagree side and stay owed as appended errata
+  (F1 including its new occurrences, F2, F3, F4, F5 — none smoothed);
+  (c) the closeout landed under `closeout-r11.md`, not the plan's
+  `arc-closeout.md` — the round-10 rename precedent repeats; both values
+  carried; (d) the drafts' r6–r9 §4c SCORECARD "ready text" claim is
+  verified false this pass — they carry ⟨fill⟩ templates; only r4 (3 rows)
+  and r5 (2 rows) were applyable as written; the rows added here fill the
+  templates from the records + re-derived ladder cells; (e) the settlement
+  appends (README rows / synthesis epilogue / standing-use revision line /
+  ⟨PENDING⟩ closures / walker-deep errata / AGENTS pointer) were measured
+  NOT yet on disk at this write (22:08Z) — recorded as the named
+  remainder, never as landed.
+  Unknowns: whether the settlement appends land between this write and the
+  commit; the round-11 commit sha (none observed; HEAD `f7bfc9f` at this
+  write); waybar's crash cause and return time; whether the operator takes
+  the promotion decision; `.ufo/` not inspected this round.
