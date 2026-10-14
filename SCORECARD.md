@@ -16,3 +16,4 @@ Axes will be pinned with their counting commands as rounds land.
 | 4 | depth + calibration | round-3 state | idle/lock plane (355 L) | wave-4 32-lane; VER-M3 |
 | 5 | operability + calibration | round-4 state | first gate mado-verify.sh (selftest + live verdict) | wave-5 32-lane |
 | 6 | operability | round-5 state | gate proven to fail then hardened: selftest 28->53, the hardened gate kills 10/10 of tameshi's mutants | wave-6 32-lane (2 lanes rerouted alibaba->hyper) |
+| 7 | operability + coverage | round-6 state | gate --regression mode shipped | wave-7 32-lane (3 rerouted alibaba->hyper) |

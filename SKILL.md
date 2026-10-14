@@ -708,3 +708,199 @@ the gate's sha256 was identical before and after every sweep.
   (AGENTS.md:3); this lane's write scope was this file only.
 - Cosmetic, unchanged by design: the hardened gate still self-labels
   "v1 (round 5 / M5-2)" in `VERSION_STR` and its header (M6-1 §3).
+
+## Round-7 — the gate's regression mode, and the two new planes (append, M7-4)
+
+Appended 2026-10-14 18:48Z. Round-7 plan (`plans/round-7.plan.md`, 135 L by
+`wc -l` / 8,689 B / sha `d4e23e8159ff4441…`) orders ONE move in three ordered
+stages: (a) the gate's own proof becomes re-runnable (`--regression`), then
+(b) the theme/wallpaper plane and (c) the walker live surface widen the gate's
+declared census — **(b)/(c) gated on (a) green**. Measured outcome at this
+append: **(a) landed as a gate mode; (b)/(c) landed as measured notes, not as
+gate rows** — the ordering clause was honoured and this section says so plainly
+rather than smoothing it. Independent audit: `reports/r7-aud-m7.md` (AUD-M7,
+239 L / 18,927 B, sha `4011b2c44c9abb35…`; five claims re-measured, zero config
+mutation, its own combined config-plane hash identical before/after and after
+every regression run). Its verdicts: stage (a) + the no-regression contracts
+PASS; stages (b)/(c) NOT-LANDED as gate rows, with both notes' anchors
+independently reproduced. This lane wrote only this file; scratch
+`/tmp/w7-mado-m7-4/`. Substrate stayed read-only (my probes were read verbs plus
+the gate's own runs; the regression mode reads no substrate).
+
+### Stage (a) — `--regression`: usage and contract
+
+    bash tools/mado-verify.sh --regression         # replay the recorded mutation case
+    bash tools/mado-verify.sh --regression --keep  # also retain the scratch root on PASS
+    env: MADO_VERIFY_HARNESS=/path/to/mutate-and-run.sh    # default: sibling tameshi checkout
+
+`--regression --help` appends the mode paragraph (rc 0, measured); the base
+`--help` still lists only the five original flags — same discoverability class
+as the "still self-labels v1" note above, not a verdict input. Refused with
+usage error, exit 2: `--target` / `--defects` / `--suite` / `--label` /
+`--workdir` / `--timeout` / `--tail` ("--regression takes no …") and `--no-live`
+/ `--live` / `--selftest` / `--root` ("not valid with --regression (the case
+reads no substrate)"). Token `MADO_REGRESSION: PASS|FAIL|SETUP` — **never**
+`MADO_VERIFY:`; exit map 0 PASS · 1 FAIL (measured table differs) · 2 SETUP
+(unverifiable) / usage. Scratch only under `/tmp/mado-verify-regression.*`
+(removed on PASS unless `--keep`; kept on FAIL/SETUP). The harness is consumed
+read-only — a needed change is a recommendation to tameshi, never a patch.
+
+The case is **recorded, not re-derived** (the tameshi idiom: re-run recorded
+cases at pinned revisions with a stated contract): tameshi's T6-1 ten-defect
+spec (`c7ee75b9…1dd8`, written from an in-gate heredoc and re-checked against
+the pin on the written bytes) applied to this gate's own round-6 revision. That
+revision is reconstructed by **excising the two marked `MADO-R7` blocks**
+(`# >>> MADO-R7-SELFTEST-BLOCK >>>` `:379-558`; `# >>> MADO-R7-REGRESSION-BLOCK
+>>>` `:699-1087` — refs at the round-7 revision) and asserting byte-identity to
+`PIN_MADO` `c4c1afb7…a5171` (1,186 L) before any sweep; a mismatch refuses with
+SETUP and prints the `REGRESSION_RECUT` command. Suite: `bash "$MUTANT"
+--selftest` (fresh fixtures per run; no substrate read). PASS requires the
+measured table to **equal** the recorded one: all ten ids present, every
+verdict KILLED, flips 0, inconclusive 0, control GREEN, `MUTATE_RESTORE: OK`,
+target bytes unchanged.
+
+**Deviation, recorded:** the plan §(a) sketched a `|killed − recorded| ≤ 1` /
+≤1-flip tolerance (tameshi's report shape); the implementation deliberately
+applies none — the target is byte-frozen by excision, so slack would only hide
+a lost kill (gate `:719-722`, band line `:1003`; the LOG entry repeats
+it). Fail-closed direction (only costs PASSes) and disclosed in the artifact
+and the record.
+
+Measured this append, read-only (my run 18:34:36Z, rc 0, 12.2 s; audit re-runs
+corroborate):
+
+    REGRESSION_TABLE mado-verify-hardened: match=10/10 recorded-killed=10 measured-killed=10 survived=0 inconclusive=0 flips=0
+    REGRESSION_CASE mado-verify-hardened: PASS (recorded table reproduced: killed=10/10 flips=0 inconclusive=0 control=green restore=ok)
+    MADO_REGRESSION: PASS (case=mado-verify-hardened; target=c4c1afb7…a5171)
+
+Harness revision moved mid-round (`b56c6e57…22bcb` → `cf41efaa…242c75`, tameshi
+lane concurrent); the mode prints the harness sha as **provenance, not gated** —
+both revisions re-measured the same 10/10 table (audit §5.2), and a
+behavior-changing harness surfaces as FAIL, not silently.
+
+Reading rules that follow:
+
+1. **From round 7, every gate-widening claim carries `MADO_REGRESSION: PASS`.**
+   A plane widening adds rows *outside* the two marked blocks, so the derived
+   target stops equalling `PIN_MADO` and the mode reads SETUP, never
+   stale-PASS; the fix is the printed re-cut (sweep, then update
+   `PIN_MADO`/`TABLE_MADO`). Edits *inside* the blocks (more selftest
+   scenarios) leave the pin valid — that is the designed split.
+2. `MADO_REGRESSION:` and `MADO_VERIFY:` never mix — a regression run prints
+   zero `MADO_VERIFY:` tokens (measured in every log, including this lane's).
+3. A SETUP is not a gate failure — it says the case could not be verified (pin
+   moved, harness missing, spec mismatch); only FAIL names a non-reproducing
+   table.
+
+### Stage (b) — theme/wallpaper plane: measured surface, not yet gate rows
+
+Note: `corpus/knowledge/theme-wallpaper-plane.md` (M7-2; 394 L / 27,594 B, sha
+`8c578cc70e36506d…` at this read). It issues **no verdict token** — landing
+`theme.*` gate rows is stage (b) and remains owed (census below). Its §6 is the
+paste-ready row spec:
+
+- File rows: `theme.name` read + format pin; include/import chain rows for
+  `hyprland.conf:13`, `hyprlock.conf:1`, waybar `style.css:1`,
+  `alacritty.toml:1`, and the mako config symlink; `walker_css`/`swayosd_css`
+  (installed-consumer-gated); `theme.wallpaper.link` — the `current/background`
+  symlink resolves inside `current/theme/backgrounds/` to a non-empty file.
+- Live rows: `swaybg` argv names the background **symlink** with `-m fill` and
+  the level-0 `wallpaper` layer pid == the swaybg pid; `omarchy theme current`
+  agrees with `theme.name` under the measured reader rule. The theme *choice*
+  stays NOTE (operator-owned — today's `live.theme.current` row, unchanged);
+  chain *integrity* is what would become verdict input.
+
+Key anchors (re-measured this lane and by the audit): `theme.name` =
+`matte-black` (12 B); `current/background` → `…/theme/backgrounds/0-ship-at-sea.jpg`
+(1,681,677 B, sha `55fa691a…`); `pgrep -ax swaybg` → `1203358 /usr/bin/swaybg
+-i /home/vgpnk/.config/omarchy/current/background -m fill`; `hyprctl -j layers`
+→ DP-1 level 0 `wallpaper` pid 1203358, level 2 `waybar` 1203352. The
+name-normalization rule is measured from the two scripts that produce both
+sides (`omarchy-theme-current:9` reader, `omarchy-theme-set:17` writer):
+`printf 'matte-black' | sed -E 's/(^|-)([a-z])/\1\u\2/g; s/-/ /g'` →
+`Matte Black` (my re-run ✓). A pair the rule does not join is recorded, never
+forced; the rule is measured on this host's one theme, not assumed general.
+
+Fence unchanged: the theme dir is rewritten by `omarchy theme set`; every
+mutating verb (`theme set`, `bg *`, `restart *`, `refresh *`, `install *`)
+stays out of the gate — it observes the plane and never sets it. Parts whose
+live chain stays unresolved (`walker.css`, `swayosd.css`, `btop.theme`,
+`themed/*.tpl.sample` rendering) get their exact probe recorded, never an
+inferred consumer (note §7; inertness of `*.tpl.sample` proven from
+`omarchy-theme-set-templates`/`omarchy-hook` source).
+
+### Stage (c) — walker live surface: measured surface, not yet gate rows
+
+Note: `corpus/knowledge/walker-live-surface.md` (M7-3; 300 L / 19,203 B, sha
+`2bbb9609283f2d81…`). The gate's walker live rows today are version + services
+only (`:1648-1667` at the round-7 revision); the note is the surface the wiring
+would cite and does not carry gate rows itself. Measured invariants
+(re-measured here):
+
+- sockets `$XDG_RUNTIME_DIR/walker/walker.sock` and
+  `$XDG_RUNTIME_DIR/elephant/elephant.sock` — `srwxr-xr-x`, 0 B, stat'd never
+  connected;
+- `busctl --user status dev.benz.walker` → owner pid == the walker pid
+  (1203471, `/usr/bin/walker --gapplication-service`); elephant 1203474; both
+  units `active`;
+- layer invariant: if a walker namespace appears in `hyprctl -j layers` its pid
+  == the walker pid; **absence is a NOTE** (the launcher is closed — the gate
+  never opens it).
+
+Rendered UI and the socket protocol stay UNKNOWN by constraint (never opened,
+never connected). `walker --version` = `2.17.0`; binary sha `64826a8531eac525…`.
+The plan's `walker-deep.md` §10/§11 errata append is **owed** — `walker-deep.md`
+unchanged (`0982ba06…` at this read); the note's §5 ledger is the text to carry
+there.
+
+### Identity, census, verdicts at this append
+
+| | Before (round 6) | After (stage (a) landed) |
+|---|---|---|
+| gate lines / bytes | 1,186 / 50,126 | **1,755 / 75,771** (`git diff --numstat` = +569/−0, all inside the two MADO-R7 blocks) |
+| gate sha256 | `c4c1afb75dd1c8aa…a5171` | `90d50cdd4d18410b…` (stable 18:31:59Z → this append) |
+| selftest | 53/53 | **89/89** (rc 0; +36 executed assertions — 37 call sites in the R7 block, R10's defected-gate branch not taken on a pristine run) |
+| live verdict (read-only) | CLEAN (35 pass, 4 notes) | CLEAN (35 pass, 4 notes), rc 0 — identical |
+| file-plane verdict | CLEAN (17 pass, 2 notes) | CLEAN (17 pass, 2 notes), rc 0 — identical |
+| `row` + `row_from_rc` call sites | 106 + 6 | 106 + 6 (a 7th `row_from_rc` occurrence is the helper's definition) |
+| plane ids / coverage | 6 ids; walker live = version + services; theme = 1 NOTE | unchanged — no `theme.*` rows, no walker socket/owner/layer rows |
+| boundary proof | combined sha `bb2639d9a980…` | `bb2639d9a980…` in both verdict runs (gate's own row PASS) |
+
+Excision proof, re-run here: the two-block excision from `90d50cdd…` → sha256
+`c4c1afb7…a5171`, 1,186 L, byte-equal to `git show
+HEAD:tools/mado-verify.sh` — i.e. the verify path is untouched, which is what
+the two identical verdicts also show from the other side.
+
+Corrections this append carries: the plan's design-time numbers are pre-round-6
+— "selftest count before → after (28 → 28+N)" reads **53 → 89**, and the plan's
+theme/walker line refs (`:1014-1021`, `:989-998`/`:1000-1011`) sit at the
+round-5 revision; round-6's refs (`:1102-1108`, `:1077-1101`) sit at the
+1,186-L revision and shift to `:1673-1677` / `:1648-1667` once the MADO-R7
+blocks are added. The scribe draft's "SKILL `:103`/`:138` spell
+`fr.arrouillard.waybar`" erratum candidate does **not** reproduce: both sites
+carry the measured live name `fr.arouillard.waybar` (double-r grep count 0 at
+this revision, `busctl --user list` → `fr.arouillard.waybar`).
+
+### Open items
+
+- Stages (b)/(c) gate rows: **not landed**. Landing conditions, both stated in
+  their notes: widen the selftest plane-prefix regexes (`:352`, `:356`,
+  `:371-375`) to include any new plane id, and ship a covering mutant per new
+  clause (round-6 reading rule 2) — then carry `MADO_REGRESSION: PASS` under
+  rule 1 above (the rows land outside the marked blocks, so the case needs a
+  re-cut; no widening ships without one).
+- `walker-deep.md` §10/§11 errata: substance ready (M7-3 §5 ledger), append
+  owed by the lane owning that note.
+- The omarchy freshness watch arm (round-6 spec, `omarchy-drift-watch.md`) is
+  still unlanded — same mutant + re-cut conditions apply.
+- Record-keeping at this append: `LOG.md` carries the M7-1 round-7 entry
+  (`:297`, 297 L, sha `1ee327882c3f810b…`); `SCORECARD.md` (18 L,
+  `e23b75fe…`) and `corpus/README.md` (19 L, `2dd274f5…`) are still at round-6
+  state; the scribe draft (`plans/round-7-record-draft.md`, 568 L,
+  `045d380ab52ce317…`) and AUD-M7's report carry the provisional pins the
+  finalizer must freeze from the committed revision.
+- Cosmetic, by design: the gate still self-labels "v1 (round 5 / M5-2)" and
+  the base `--help` omits `--regression` — the two MADO-R7 blocks being the
+  only difference from the recorded revision is exactly what makes the
+  excision pin work.
+- `corpus/lessons/` still 0 entries (seventh round of the round-1 promise).

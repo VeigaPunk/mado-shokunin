@@ -376,6 +376,186 @@ selftest() {
     st_has "$2" "$1" "counts: pass=$np fail=$nf unknown=$nu skip=$ns note=$nn"
   }
 
+  # >>> MADO-R7-SELFTEST-BLOCK >>>
+  # --- scenario R: the --regression engine ---------------------------------
+  # Hermetic: every case below runs against a stub runner honouring tameshi's
+  # evidence contract (results.tsv + sweep.log verdict lines) written into the
+  # fixture, so no sibling-repo tool and no substrate is read. The real harness
+  # integration is a separate, measured step (the mode's own end-to-end run).
+  local RF="$T/regression" RG="$T/regression/cases" st_rg o1 dsha
+  local RTGT="$T/regression/target.sh" RSPEC="$T/regression/spec.spec"
+  mkdir -p "$RF" "$RG"
+  printf '#!/bin/bash\nexit 0\n' >"$RTGT"
+  printf '@defect K1 | fixture\n@old exit 0\n@new exit 1\n' >"$RSPEC"
+  cat >"$RF/runner-stub.sh" <<'MADO_R7_STUB_EOF'
+#!/bin/bash
+# stub of tameshi's mutate-and-run.sh: same evidence contract, fixture verdicts
+wd=''
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --workdir) shift; wd="$1" ;;
+    --label | --target | --defects | --suite) shift ;;
+  esac
+  shift
+done
+[ -n "$wd" ] || exit 64
+mkdir -p "$wd" || exit 2
+rows="${STUB_ROWS:-}"
+k=0; s=0; i=0
+printf 'CONTROL: %s (exit=0 duration-ms=1 pristine-sha256=stub)\n' "${STUB_CONTROL:-GREEN}"
+printf 'MUTATE_RESTORE: %s (target-sha256 before=stub after=stub pristine-sha256=stub)\n' "${STUB_RESTORE:-OK}"
+printf 'id\tverdict\texit\tduration-ms\tmutant-sha256\tdesc\n' >"$wd/results.tsv"
+if [ -n "$rows" ] && [ -f "$rows" ]; then
+  while IFS="$(printf '\t')" read -r id v; do
+    [ -n "$id" ] || continue
+    printf '%s\t%s\t1\t1\tstub\tstub\n' "$id" "$v" >>"$wd/results.tsv"
+    case "$v" in KILLED) k=$((k + 1)) ;; SURVIVED) s=$((s + 1)) ;; *) i=$((i + 1)) ;; esac
+  done <"$rows"
+fi
+printf 'MUTATE: DONE (target=stub defects=%s killed=%s survived=%s inconclusive=%s kill-rate=0%%)\n' \
+  "$((k + s + i))" "$k" "$s" "$i"
+exit "${STUB_EXIT:-0}"
+MADO_R7_STUB_EOF
+  chmod +x "$RF/runner-stub.sh"
+  printf 'D1\tKILLED\nD2\tKILLED\n' >"$RF/all-killed.tsv"
+  printf 'D1\tSURVIVED\nD2\tKILLED\n' >"$RF/one-survivor.tsv"
+  printf 'D1\tKILLED\nD2\tKILLED\nD3\tKILLED\n' >"$RF/extra-id.tsv"
+  printf 'D1\tKILLED\n' >"$RF/missing-id.tsv"
+  printf 'D1\tKILLED\nD2\tINCONCLUSIVE\n' >"$RF/inconclusive.tsv"
+  local RTABLE='D1:KILLED,D2:KILLED' RSUITE='bash "$MUTANT" --selftest'
+  REGRESSION_RUNNER="$RF/runner-stub.sh"
+  export STUB_CONTROL=GREEN STUB_RESTORE=OK STUB_EXIT=0 STUB_ROWS="$RF/all-killed.tsv"
+
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/pass" >"$RF/out1" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out1")
+  st_eq  "R1: in-band fixture PASSes (exit 0)" 0 "$st_rg"
+  st_has "R1: PASS line names the reproduced table" "$o1" \
+    "REGRESSION_CASE fixture: PASS (recorded table reproduced: killed=2/2 flips=0 inconclusive=0 control=green restore=ok)"
+  st_has "R1: table line" "$o1" \
+    "REGRESSION_TABLE fixture: match=2/2 recorded-killed=2 measured-killed=2 survived=0 inconclusive=0 flips=0"
+
+  export STUB_ROWS="$RF/one-survivor.tsv"
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/doctored" >"$RF/out2" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out2")
+  st_eq  "R2: a lost kill FAILs the fixture (exit 1)" 1 "$st_rg"
+  st_has "R2: differing row named with both verdicts" "$o1" \
+    "REGRESSION_DEFECT fixture D1: measured=SURVIVED recorded=KILLED"
+  st_has "R2: FAIL line" "$o1" "REGRESSION_CASE fixture: FAIL (out of band:"
+  st_has "R2: measured flips reported" "$o1" "flips=1"
+
+  regression_case fixture "$RTGT" \
+    0000000000000000000000000000000000000000000000000000000000000000 \
+    "$RSPEC" "$RSUITE" "$RTABLE" "$RG/pinmismatch" >"$RF/out3" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out3")
+  st_eq  "R3: pin mismatch is SETUP (exit 2)" 2 "$st_rg"
+  st_has "R3: SETUP names recorded and live sha" "$o1" \
+    "REGRESSION_CASE fixture: SETUP (pin mismatch: recorded=000000000000"
+  if [ ! -e "$RG/pinmismatch" ]; then
+    st_ok
+  else
+    st_bad "R3: refused before any sweep run (case workdir was created)"
+  fi
+
+  regression_case fixture "$RF/no-such-target" \
+    0000000000000000000000000000000000000000000000000000000000000000 \
+    "$RSPEC" "$RSUITE" "$RTABLE" "$RG/notarget" >"$RF/out4" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out4")
+  st_eq  "R4: missing target is SETUP (exit 2)" 2 "$st_rg"
+  st_has "R4: SETUP names the missing target" "$o1" "SETUP (target missing:"
+
+  export STUB_ROWS="$RF/extra-id.tsv"
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/extra" >"$RF/out5" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out5")
+  st_eq  "R5: an unrecorded measured row FAILs (exit 1)" 1 "$st_rg"
+  st_has "R5: unrecorded row named" "$o1" "REGRESSION_DEFECT fixture D3: measured=KILLED recorded=ABSENT"
+  st_has "R5: FAIL line carries the defect count" "$o1" "defects=3-recorded=2"
+
+  export STUB_ROWS="$RF/missing-id.tsv"
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/missing" >"$RF/out6" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out6")
+  st_eq  "R6: a missing recorded row FAILs (exit 1)" 1 "$st_rg"
+  st_has "R6: absent row named" "$o1" "REGRESSION_DEFECT fixture D2: measured=ABSENT recorded=KILLED"
+
+  export STUB_ROWS="$RF/all-killed.tsv" STUB_CONTROL=RED
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/ctlred" >"$RF/out7" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out7")
+  st_eq  "R7: a red control FAILs (exit 1)" 1 "$st_rg"
+  st_has "R7: reason names the control" "$o1" "control-not-green"
+  export STUB_CONTROL=GREEN
+
+  export STUB_RESTORE=DRIFT
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/drift" >"$RF/out8" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out8")
+  st_eq  "R8: a restore drift FAILs (exit 1)" 1 "$st_rg"
+  st_has "R8: reason names the restore proof" "$o1" "restore-not-ok"
+  export STUB_RESTORE=OK
+
+  export STUB_ROWS="$RF/inconclusive.tsv" STUB_EXIT=1
+  regression_case fixture "$RTGT" "$(mado_r7_sha "$RTGT")" "$RSPEC" "$RSUITE" "$RTABLE" \
+    "$RG/inconcl" >"$RF/out9" 2>&1
+  st_rg=$?
+  o1=$(cat "$RF/out9")
+  st_eq  "R9: an inconclusive row FAILs (exit 1)" 1 "$st_rg"
+  st_has "R9: reason names the inconclusive count" "$o1" "inconclusive=1"
+  export STUB_EXIT=0
+
+  if mado_r7_target_build "$0" "$RF/derived.sh"; then
+    dsha=$(mado_r7_sha "$RF/derived.sh")
+  else
+    dsha='build-failed'
+  fi
+  if [ "${DEFECT_ID:-}" = '' ] || [ "${DEFECT_ID:-}" = CONTROL ]; then
+    st_eq "R10: derived target equals the recorded gate revision" "$PIN_MADO" "$dsha"
+  else
+    if [ "$dsha" != "$PIN_MADO" ]; then
+      st_ok
+    else
+      st_bad "R10: a defected gate must not equal the recorded revision"
+    fi
+  fi
+
+  mado_r7_spec_write "$RF/spec.written"
+  st_eq "R11: the embedded spec is byte-identical to the recorded case" "$SPEC_SHA" \
+    "$(mado_r7_sha "$RF/spec.written")"
+  st_eq "R11: the embedded spec carries the ten recorded defects" 10 \
+    "$(grep -c '^@defect ' "$RF/spec.written")"
+
+  o1=$(env MADO_VERIFY_HARNESS="$T/no-harness" "$BASH_BIN" "$0" --regression --target "$RTGT" 2>&1)
+  st_rg=$?
+  st_eq  "R12: --regression --target is a usage error (exit 2)" 2 "$st_rg"
+  st_has "R12: the refusal names the flag" "$o1" "usage error: --regression takes no --target"
+  o1=$(env MADO_VERIFY_HARNESS="$T/no-harness" "$BASH_BIN" "$0" --regression --defects=x 2>&1)
+  st_rg=$?
+  st_eq  "R12: --regression --defects= is a usage error (exit 2)" 2 "$st_rg"
+  o1=$(env MADO_VERIFY_HARNESS="$T/no-harness" "$BASH_BIN" "$0" --regression --bogus 2>&1)
+  st_rg=$?
+  st_eq  "R12: an unknown argument with --regression is refused (exit 2)" 2 "$st_rg"
+  o1=$(env MADO_VERIFY_HARNESS="$T/no-harness" "$BASH_BIN" "$0" --regression --help 2>&1)
+  st_rg=$?
+  st_eq  "R12: --regression --help exits 0" 0 "$st_rg"
+  st_has "R12: --regression --help prints the usage" "$o1" "usage: mado-verify.sh"
+  st_has "R12: --regression --help documents the mode" "$o1" "--regression  replay the recorded mutation case"
+
+  o1=$(env MADO_VERIFY_HARNESS="$T/no-harness" "$BASH_BIN" "$0" --regression 2>&1)
+  st_rg=$?
+  st_eq  "R13: a missing harness is SETUP (exit 2)" 2 "$st_rg"
+  st_has "R13: the SETUP names the harness" "$o1" "MADO_REGRESSION: SETUP (mutation harness not found:"
+  st_not_has "R13: regression mode never prints a MADO_VERIFY verdict" "$o1" "MADO_VERIFY:"
+  # <<< MADO-R7-SELFTEST-BLOCK <<<
   build_fixture "$A"
 
   # --- scenario A: clean fixture → CLEAN, exit 0, substrate untouched ------
@@ -516,6 +696,395 @@ IEOF
   echo "fixtures kept: $T"
   return 2
 }
+# >>> MADO-R7-REGRESSION-BLOCK >>>
+# ===========================================================================
+# REGRESSION — replay the recorded mutation case (M7-1, round 7)
+#
+# Case (recorded, not re-derived): tameshi's T6-1 sweep of this gate — round-6
+# record corpus/knowledge/gate-mutation-proof.md §1: the ten-defect spec byte
+# copy (sha256 c7ee75b9…) applied to gate revision c4c1afb7… (1,186 L, suite
+# 53) measured 10 killed / 0 survived / 0 inconclusive. This mode re-runs it:
+#
+#   target   THIS file with the two MADO-R7 blocks excised = the recorded
+#            revision; byte-identity to PIN_MADO is asserted before any run
+#            (a mismatch refuses with SETUP, exit 2: the table is revision-
+#            tied, re-cut it — the gate moved outside the blocks)
+#   defects  the recorded spec, written verbatim from the heredoc below and
+#            re-checked against SPEC_SHA on the written bytes before the sweep
+#   suite    bash "$MUTANT" --selftest — fresh fixture trees per run, no
+#            substrate read (discipline of selftest(), above)
+#
+# PASS requires the measured table to equal TABLE_MADO exactly: all ten ids
+# present, every verdict KILLED, flips 0, inconclusive 0, control GREEN,
+# MUTATE_RESTORE OK, target bytes unchanged. The round-7 plan §(a) sketched a
+# |killed − recorded| ≤ 1 / ≤ 1 flip tolerance (tameshi's report shape); it is
+# deliberately NOT applied — the target is byte-frozen by excision, so slack
+# would only hide a lost kill. The measured numbers print either way.
+#
+# Re-cut (required after any edit to the gate outside these blocks, e.g. a
+# plane widening): run the printed REGRESSION_RECUT command, then update
+# PIN_MADO and TABLE_MADO here from the measured table. selftest() asserts the
+# derived target equals PIN_MADO on pristine runs, so a stale pin is visible.
+#
+# Discipline: the harness (tameshi-shokunin/tools/mutate-and-run.sh) is
+# consumed read-only — a needed change is a recommendation to tameshi, never a
+# patch; its revision is printed as provenance, not gated (the kill table is
+# the check). Scratch only under /tmp/mado-verify-regression.*; the gate never
+# touches the config plane. Kept fixture dirs from THIS run's failing suite
+# runs are removed by exact path (prefix-guarded); foreign /tmp dirs are left
+# untouched. No compositor/session state is read or written.
+#
+# Usage: mado-verify.sh --regression [--keep]
+#   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
+#   gate's --no-live/--live/--root/--selftest are refused (usage error, exit 2);
+#   --keep retains the scratch root also on PASS.
+# Lines: REGRESSION_TOOL · REGRESSION_DATE · REGRESSION_HARNESS · REGRESSION_SPEC
+#   · REGRESSION_TARGET · REGRESSION_RECUT · REGRESSION_BAND · REGRESSION_SWEEP
+#   · REGRESSION_TABLE · REGRESSION_WORKDIR · REGRESSION_CLEANUP ·
+#   REGRESSION_DEFECT (one per differing row) · REGRESSION_CASE ·
+#   MADO_REGRESSION: PASS|FAIL|SETUP   (never MADO_VERIFY:)
+# Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
+#   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
+# ===========================================================================
+PIN_MADO='c4c1afb75dd1c8aa4d8ff9b808ddbeb2a05ac0e3ab1095dd7d067cff1a625171'
+SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
+HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
+TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
+MADO_R7_SELF=$(readlink -f "$0" 2>/dev/null || printf '%s' "$0")
+MADO_R7_FLEET=$(dirname "$(dirname "$(dirname "$MADO_R7_SELF")")")
+REGRESSION_RUNNER=''
+
+mado_r7_sha() { sha256sum -- "$1" 2>/dev/null | cut -d' ' -f1; }
+
+mado_r7_table_lookup() { # <table> <id> -> verdict, '-' when the id is absent
+  local pair
+  for pair in ${1//,/ }; do
+    if [ "${pair%%:*}" = "$2" ]; then printf '%s' "${pair#*:}"; return 0; fi
+  done
+  printf '%s' '-'
+}
+
+mado_r7_table_count() { # <table> <verdict> -> entries carrying that verdict
+  local pair n=0
+  for pair in ${1//,/ }; do
+    if [ "${pair#*:}" = "$2" ]; then n=$((n + 1)); fi
+  done
+  printf '%s' "$n"
+}
+
+mado_r7_table_total() { # <table> -> number of entries
+  local pair n=0
+  for pair in ${1//,/ }; do n=$((n + 1)); done
+  printf '%s' "$n"
+}
+
+mado_r7_spec_write() { # <dest-file> — the recorded defect spec, verbatim (no trailing LF)
+  local body
+  body=$(cat <<'MADO_R7_SPEC_EOF'
+# defect spec v1 — T6-1 service sweep, target mado-shokunin/tools/mado-verify.sh
+# pin: sha256 d7edaab4bf108625d213393b77432d7c0104daaa487c801fbc8bba16e32d0e13
+# clause map: A verdict token · B UNKNOWN-never-CLEAN · C exit map · D declared-plane census
+#             E sha comparison · F reader fallback
+
+@defect D1 | clause A: file-plane CLEAN verdict token renamed (CLEAN -> OK)
+@old MADO_VERIFY: CLEAN (%s pass, %s notes; file plane only
+@new MADO_VERIFY: OK (%s pass, %s notes; file plane only
+
+@defect D2 | clause B: UNKNOWN guard dropped from the CLEAN test
+@old if [ "$FAIL" = 0 ] && [ "$UNKNOWN" = 0 ]; then
+@new if [ "$FAIL" = 0 ]; then
+
+@defect D3 | clause B: skipped live layer row reports PASS instead of SKIP
+@old     row hypr-live live.plane SKIP "live layer skipped ($live_skipped_reason) — file plane only"
+@new     row hypr-live live.plane PASS "live layer skipped ($live_skipped_reason) — file plane only"
+
+@defect D4 | clause C: DIVERGED path exits 0
+@old "$reason"\nexit 1
+@new "$reason"\nexit 0
+
+@defect D5 | clause C: failing --selftest returns 1 not 2
+@old   return 2
+@new   return 1
+
+@defect D6 | clause D: xdph dropped from the 12-conf local inventory
+@old (hyprland bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs xdph)
+@new (hyprland bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs)
+
+@defect D7 | clause D: include-graph count test -ne -> -lt (extra source lines tolerated)
+@old if [ "${#got[@]}" -ne "${#EXPECT[@]}" ]; then
+@new if [ "${#got[@]}" -lt "${#EXPECT[@]}" ]; then
+
+@defect D8 | clause E: hyprland.conf sha pin comparison always "matches"
+@old if [ "$sha" = "4f52854a3c14" ]; then
+@new if [ -n "$sha" ]; then
+
+@defect D9 | clause E: read-only boundary comparison always reads byte-identical
+@old if [ "$after" = "$before" ]; then
+@new if [ -n "$after" ]; then
+
+@defect R1 | clause F: tomllib-unavailable arm reads PASS not UNKNOWN
+@old     row walker walker.config UNKNOWN "python3 tomllib unavailable — cannot parse TOML"
+@new     row walker walker.config PASS "python3 tomllib unavailable — cannot parse TOML"
+MADO_R7_SPEC_EOF
+)
+  printf '%s' "$body" >"$1"
+}
+
+mado_r7_target_build() { # <src-file> <dest-file> — excise the two MADO-R7 blocks
+  sed -e '/^[[:space:]]*# >>> MADO-R7-REGRESSION-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-REGRESSION-BLOCK <<<$/d' \
+      -e '/^[[:space:]]*# >>> MADO-R7-SELFTEST-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-SELFTEST-BLOCK <<<$/d' \
+      "$1" >"$2" || return 1
+  [ -s "$2" ]
+}
+
+regression_case() {
+  # <name> <target> <pin-sha> <spec> <suite> <recorded-table> <case-workdir>
+  # Fresh sweep of <spec> against <target> through $REGRESSION_RUNNER, then a
+  # comparison of the measured verdict table against the recorded table.
+  # Writes <case-workdir>/sweep.log. Returns 0 PASS · 1 FAIL · 2 SETUP.
+  local name="$1" target="$2" pin="$3" spec="$4" suite="$5" table="$6" cwd="$7"
+  local tsha
+  if [ ! -f "$target" ]; then
+    printf 'REGRESSION_CASE %s: SETUP (target missing: %s)\n' "$name" "$target"
+    return 2
+  fi
+  tsha=$(mado_r7_sha "$target")
+  if [ "$tsha" != "$pin" ]; then
+    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s live=%s target=%s)\n' \
+      "$name" "$pin" "$tsha" "$target"
+    return 2
+  fi
+  mkdir -p "$cwd" || {
+    printf 'REGRESSION_CASE %s: SETUP (cannot create case workdir: %s)\n' "$name" "$cwd"
+    return 2
+  }
+
+  local rc
+  bash "$REGRESSION_RUNNER" --target "$target" --defects "$spec" --suite "$suite" \
+    --workdir "$cwd/sweep" --label "$name" >"$cwd/sweep.log" 2>&1
+  rc=$?
+  printf 'REGRESSION_SWEEP %s: %s\n' "$name" \
+    "$(grep -m1 '^MUTATE: ' "$cwd/sweep.log" 2>/dev/null || printf 'no MUTATE line (sweep exit=%s)' "$rc")"
+  if [ "$rc" = 2 ]; then
+    printf 'REGRESSION_CASE %s: SETUP (sweep refused; log: %s)\n' "$name" "$cwd/sweep.log"
+    return 2
+  fi
+  if [ "$rc" != 0 ] && [ "$rc" != 1 ]; then
+    printf 'REGRESSION_CASE %s: FAIL (sweep exit=%s, expected 0 or 1; log: %s)\n' \
+      "$name" "$rc" "$cwd/sweep.log"
+    return 1
+  fi
+  local rtsv="$cwd/sweep/results.tsv"
+  if [ ! -f "$rtsv" ]; then
+    printf 'REGRESSION_CASE %s: FAIL (no results table; sweep exit=%s; log: %s)\n' \
+      "$name" "$rc" "$cwd/sweep.log"
+    return 1
+  fi
+
+  local id v rest want total=0 killed=0 survived=0 inconcl=0 flips=0 matches=0 seen='' diffs=''
+  while IFS=$'\t' read -r id v rest; do
+    [ -n "$id" ] || continue
+    [ "$id" = id ] && [ "$v" = verdict ] && continue
+    total=$((total + 1)); seen="$seen $id"
+    case "$v" in
+      KILLED) killed=$((killed + 1)) ;;
+      SURVIVED) survived=$((survived + 1)) ;;
+      *) inconcl=$((inconcl + 1)) ;;
+    esac
+    want=$(mado_r7_table_lookup "$table" "$id")
+    if [ "$want" = '-' ]; then
+      flips=$((flips + 1))
+      diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=%s recorded=ABSENT\n' "$name" "$id" "$v")"$'\n'
+    elif [ "$want" != "$v" ]; then
+      flips=$((flips + 1))
+      diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=%s recorded=%s\n' "$name" "$id" "$v" "$want")"$'\n'
+    else
+      matches=$((matches + 1))
+    fi
+  done <"$rtsv"
+  local pair eid
+  for pair in ${table//,/ }; do
+    eid="${pair%%:*}"
+    case " $seen " in
+      *" $eid "*) ;;
+      *)
+        flips=$((flips + 1))
+        diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=ABSENT recorded=%s\n' "$name" "$eid" "${pair#*:}")"$'\n'
+        ;;
+    esac
+  done
+
+  local exp_total exp_killed ctl=0 restore=0 after delta=0
+  exp_total=$(mado_r7_table_total "$table")
+  exp_killed=$(mado_r7_table_count "$table" KILLED)
+  grep -q '^CONTROL: GREEN ' "$cwd/sweep.log" && ctl=1
+  grep -q '^MUTATE_RESTORE: OK ' "$cwd/sweep.log" && restore=1
+  after=$(mado_r7_sha "$target")
+
+  local reasons=''
+  delta=$((killed - exp_killed)); [ "$delta" -lt 0 ] && delta=$((0 - delta))
+  [ "$killed" = "$exp_killed" ] || reasons="$reasons killed=$killed-recorded=$exp_killed"
+  [ "$flips" = 0 ] || reasons="$reasons flips=$flips"
+  [ "$inconcl" = 0 ] || reasons="$reasons inconclusive=$inconcl"
+  [ "$total" = "$exp_total" ] || reasons="$reasons defects=$total-recorded=$exp_total"
+  [ "$ctl" = 1 ] || reasons="$reasons control-not-green"
+  [ "$restore" = 1 ] || reasons="$reasons restore-not-ok"
+  [ "$after" = "$pin" ] || reasons="$reasons target-sha-changed"
+
+  [ -z "$diffs" ] || printf '%s' "$diffs"
+  printf 'REGRESSION_TABLE %s: match=%s/%s recorded-killed=%s measured-killed=%s survived=%s inconclusive=%s flips=%s\n' \
+    "$name" "$matches" "$exp_total" "$exp_killed" "$killed" "$survived" "$inconcl" "$flips"
+  printf 'REGRESSION_WORKDIR %s: %s\n' "$name" "$cwd"
+  if [ -z "$reasons" ]; then
+    printf 'REGRESSION_CASE %s: PASS (recorded table reproduced: killed=%s/%s flips=0 inconclusive=0 control=green restore=ok)\n' \
+      "$name" "$killed" "$exp_total"
+    return 0
+  fi
+  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; delta=%s; log: %s)\n' \
+    "$name" "$reasons" "$delta" "$cwd/sweep.log"
+  return 1
+}
+
+run_regression() { # <keep 0|1>
+  local keep="$1" root harness spec target ssha tsha rc removed=0 p
+  local missing=''
+  for p in sed grep cut sha256sum mktemp python3; do
+    have "$p" || missing="$missing $p"
+  done
+  if [ -n "$missing" ]; then
+    printf 'MADO_REGRESSION: SETUP (tool(s) missing:%s)\n' "$missing"
+    return 2
+  fi
+  harness="${MADO_VERIFY_HARNESS:-$MADO_R7_FLEET/tameshi-shokunin/tools/mutate-and-run.sh}"
+  if [ ! -f "$harness" ]; then
+    printf 'MADO_REGRESSION: SETUP (mutation harness not found: %s; set MADO_VERIFY_HARNESS)\n' "$harness"
+    return 2
+  fi
+  REGRESSION_RUNNER="$harness"
+  root=$(mktemp -d /tmp/mado-verify-regression.XXXXXX) || {
+    printf 'MADO_REGRESSION: SETUP (mktemp -d /tmp/mado-verify-regression.* failed)\n'
+    return 2
+  }
+  printf 'REGRESSION_TOOL: %s sha256=%s\n' "$MADO_R7_SELF" "$(mado_r7_sha "$MADO_R7_SELF")"
+  printf 'REGRESSION_DATE: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf 'REGRESSION_HARNESS: %s sha256=%s (recorded revision %s — provenance, not gated)\n' \
+    "$harness" "$(mado_r7_sha "$harness")" "$HARNESS_SHA_RECORDED"
+
+  spec="$root/mado-verify.defects.spec"
+  if ! mado_r7_spec_write "$spec"; then
+    printf 'MADO_REGRESSION: SETUP (cannot write the embedded spec under %s)\n' "$root"
+    return 2
+  fi
+  ssha=$(mado_r7_sha "$spec")
+  if [ "$ssha" != "$SPEC_SHA" ]; then
+    printf 'MADO_REGRESSION: SETUP (embedded spec sha256 %s != recorded %s)\n' "$ssha" "$SPEC_SHA"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    return 2
+  fi
+  printf 'REGRESSION_SPEC: %s sha256=%s (recorded pin matches)\n' "$spec" "$ssha"
+
+  target="$root/target.mado-verify.sh"
+  if ! mado_r7_target_build "$MADO_R7_SELF" "$target"; then
+    printf 'MADO_REGRESSION: SETUP (cannot derive the recorded target from %s)\n' "$MADO_R7_SELF"
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    return 2
+  fi
+  tsha=$(mado_r7_sha "$target")
+  printf 'REGRESSION_TARGET: %s sha256=%s (recorded pin %s; match=%s)\n' \
+    "$target" "$tsha" "$PIN_MADO" "$([ "$tsha" = "$PIN_MADO" ] && printf yes || printf no)"
+  if [ "$tsha" != "$PIN_MADO" ]; then
+    printf 'REGRESSION_RECUT: bash %s --target %s --defects %s --suite %s --workdir %s/recut --label mado-verify.sh\n' \
+      "$harness" "$target" "$spec" "'bash \"\$MUTANT\" --selftest'" "$root"
+    printf 'MADO_REGRESSION: SETUP (target pin mismatch — the gate moved outside the MADO-R7 blocks; re-cut, then update PIN_MADO/TABLE_MADO)\n'
+    printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+    return 2
+  fi
+
+  printf 'REGRESSION_BAND: all recorded kills required (recorded %s/%s KILLED; flips=0; inconclusive=0; control GREEN; MUTATE_RESTORE OK; target sha unchanged) — plan §(a) killed-delta<=1 tolerance not applied\n' \
+    "$(mado_r7_table_count "$TABLE_MADO" KILLED)" "$(mado_r7_table_total "$TABLE_MADO")"
+  regression_case mado-verify-hardened "$target" "$PIN_MADO" "$spec" \
+    'bash "$MUTANT" --selftest' "$TABLE_MADO" "$root/case"
+  rc=$?
+
+  for p in $(grep -rhoE '^fixtures kept: /tmp/w5-mado-m52-selftest\.[A-Za-z0-9.]+' \
+             "$root/case/sweep/evidence" 2>/dev/null | sed 's/^fixtures kept: //' | sort -u); do
+    case "$p" in
+      /tmp/w5-mado-m52-selftest.*)
+        if [ -d "$p" ]; then rm -rf "$p"; removed=$((removed + 1)); fi
+        ;;
+    esac
+  done
+  printf 'REGRESSION_CLEANUP: removed=%s kept-fixture dir(s) named by this run (paths read from this run; /tmp/w5-mado-m52-selftest.* prefix-guarded)\n' "$removed"
+
+  case "$rc" in
+    0)
+      printf 'MADO_REGRESSION: PASS (case=mado-verify-hardened; target=%s)\n' "$PIN_MADO"
+      if [ "$keep" = 1 ]; then
+        printf 'REGRESSION_WORKDIR: %s (kept; --keep)\n' "$root"
+      else
+        printf 'REGRESSION_WORKDIR: %s (removed on PASS; --keep retains)\n' "$root"
+        rm -rf "$root"
+      fi
+      return 0
+      ;;
+    1)
+      printf 'MADO_REGRESSION: FAIL (case=mado-verify-hardened; the recorded table did not reproduce)\n'
+      printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+      return 1
+      ;;
+    *)
+      printf 'MADO_REGRESSION: SETUP (case=mado-verify-hardened could not be verified)\n'
+      printf 'REGRESSION_WORKDIR: %s (kept)\n' "$root"
+      return 2
+      ;;
+  esac
+}
+
+mado_r7_regression_requested() { # "$@" → 0 when --regression is present
+  local a
+  for a in "$@"; do [ "$a" = '--regression' ] && return 0; done
+  return 1
+}
+
+mado_r7_cli() { # regression-mode argument contract (the gate's own flags are refused)
+  local keep=0
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --regression) : ;;
+      --keep) keep=1 ;;
+      -h | --help)
+        usage
+        printf '\n  --regression  replay the recorded mutation case (tameshi T6-1 spec at\n'
+        printf '                pinned bytes over the recorded gate revision); --keep\n'
+        printf '                retains the scratch root also on PASS. No substrate read.\n'
+        return 0
+        ;;
+      --target | --defects | --suite | --label | --workdir | --timeout | --tail)
+        printf 'usage error: --regression takes no %s\n' "$1" >&2; usage >&2; return 2
+        ;;
+      --target=* | --defects=* | --suite=* | --label=* | --workdir=* | --timeout=* | --tail=*)
+        printf 'usage error: --regression takes no %s\n' "${1%%=*}" >&2; usage >&2; return 2
+        ;;
+      --no-live | --live | --selftest | --root | --root=*)
+        printf 'usage error: %s is not valid with --regression (the case reads no substrate)\n' \
+          "${1%%=*}" >&2
+        usage >&2
+        return 2
+        ;;
+      *)
+        printf 'usage error: unknown argument %s\n' "$1" >&2; usage >&2; return 2
+        ;;
+    esac
+    shift
+  done
+  run_regression "$keep"
+}
+
+if mado_r7_regression_requested "$@"; then
+  mado_r7_cli "$@"
+  exit $?
+fi
+# <<< MADO-R7-REGRESSION-BLOCK <<<
 
 # ===========================================================================
 # VERIFY — file plane + live plane
