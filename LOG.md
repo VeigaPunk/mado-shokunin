@@ -298,3 +298,4 @@
 - 2026-10-14 — round 7 (training r6): gate --regression mode shipped; theme/wallpaper plane; walker live surface; the hardened gate verified under regression. Axis: operability + coverage. Verifiers: VER-M7 | AUD-M7.
 - 2026-10-14 — round 8 (training r7): post-hardening sweep vs the 10/10 expectation; the drift watch arm + snapshot-diff mode; zero config mutation held. Axis: operability + freshness. Verifiers: VER-M8 | AUD-M8.
 - 2026-10-14 — round 9 (training r8): theme plane as gate arms; walker deep-r9; the snapshot-diff mode's first real receipt across the round's own edits. Axis: coverage + operability. Verifiers: VER-M9 | AUD-M9.
+- 2026-10-14 — round 10 (training r9): the arc synthesis (re-derivable; the gate-evolution ladder 28->268 selftest across 5 revisions independently CONFIRMED cell-for-cell); the gate standing-use runbook + the regression mode's first cadence receipt. Axis: calibration + operability. Verifiers: VER-M10 (cell-for-cell) | AUD-M10.

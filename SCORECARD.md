@@ -19,3 +19,4 @@ Axes will be pinned with their counting commands as rounds land.
 | 7 | operability + coverage | round-6 state | gate --regression mode shipped | wave-7 32-lane (3 rerouted alibaba->hyper) |
 | 8 | operability + freshness | round-7 state | post-hardening sweep vs the 10/10 expectation | wave-8 32-lane (2 rerouted alibaba->hyper) |
 | 9 | coverage + operability | round-8 state | theme plane as gate arms | wave-9 32-lane (2 rerouted alibaba->hyper) |
+| 10 | calibration + operability | round-9 state | the arc synthesis (re-derivable | wave-10 32-lane (1 rerouted alibaba->hyper) |

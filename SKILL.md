@@ -1335,3 +1335,91 @@ none — restart is the apply path.
    lane's write scope was this file only).
 5. `corpus/lessons/` still 0 entries (ninth round) — the round charters
    `round-9.md` or records why no independent seat exists.
+
+## Round-10 — arc closeout: the synthesis and the gate's standing-use note (append, M10-4)
+
+Appended 2026-10-14 21:03Z. Round 10 (`plans/round-10.plan.md`, 295 L by
+`wc -l` / 19,322 B / sha `eca573b271e926e3…`, committed with the round-9
+landing) is the arc's final round: fold nine landed rounds into the ten-round
+synthesis and hand the gate over with its standing-use contract. This lane's
+write was this append only; scratch `/tmp/w10-mado-m10-4/`; the 30-minute
+poll (opened 20:50Z) watched both artifacts — the note first appeared
+20:55:43Z (last write 20:58:01Z, M10-3's tick appended), the synthesis's last
+write 20:57:22Z; both sha-stable across four samples through 21:00:55Z before
+this append, in-window. Read-only throughout: the gate was read and its helps
+quoted; no substrate touched. The revision every number below binds to:
+`tools/mado-verify.sh` sha256 `93e43f8fe8b9bdd4…` (3,231 L / 150,103 B,
+committed `de22dfd` — round-9 landing). Where this append and the two files
+differ, their measured rows govern.
+
+### Where the arc is written down
+
+- **The ten-round synthesis** — `corpus/knowledge/arc-synthesis.md`
+  (self-label M10-1; 387 L / 30,796 B / sha `a5b4833141461810…` at this
+  append). It carries the arc ledger (mint + rounds 1–10, one row per round
+  with commit, axis move, gate sha, selftest count), the gate ladder
+  re-derived per arc commit (28/28 → 53/53 → 89/89 → 217/217 → 268/268), the
+  invariants, the three trends (expansion improved · quality improved ·
+  discernment **unprovable-but-better** — its harm-side fact, ten rounds with
+  `corpus/lessons/` at 0, named as such), the gap ledger (12 surfaces), and
+  the classification — **9 closed / 8 operator-owned / 12 unknown**; no item
+  left as "carried". Re-derivation protocol §0, spot-checks §8.
+  Naming note: the plan's working name `ten-round-synthesis.md` landed as
+  `arc-synthesis.md`; the M10-2 note's recheck line still carries the working
+  name (flagged here; its block unedited).
+- **The gate's standing-use note** — `corpus/knowledge/gate-standing-use.md`
+  (self-label M10-2; with M10-3's first-cadence `--regression` tick — `PASS`,
+  target `dc7c4141…f8fd`, at this same gate sha — appended; 361 L / 22,931 B
+  / sha `aaa2e625253e881e…` at this append). It carries the custody rules,
+  the invocation map quoted from the landed helps, the verdict vocabulary,
+  the standing cadence (the round that established each line), the
+  maintenance rules with their ancestry, the residual/limit ledger with each
+  item's check, and the operator's handoff. It is the contract's home.
+
+### Quick invocation map (quoted from the landed helps at `93e43f8f…`)
+
+    bash tools/mado-verify.sh                  # live read-only run; CLEAN rc 0 · DIVERGED rc 1 · usage rc 2
+    bash tools/mado-verify.sh --no-live        # file plane only; the 8 live rows read SKIP, the verdict names it
+    bash tools/mado-verify.sh --root DIR       # verify DIR as the config root (--root=DIR accepted)
+    bash tools/mado-verify.sh --selftest       # hermetic fixtures, no substrate; fail rc 2 (268/268 at this revision, note §1)
+    bash tools/mado-verify.sh --regression [--keep]    # replay the recorded case; PASS rc 0 · FAIL 1 · SETUP 2
+    bash tools/mado-verify.sh --snapshot FILE          # v1 receipt; REFUSED (exists, or in-plane) rc 2, nothing written
+    bash tools/mado-verify.sh --snapshot-diff OLD NEW  # SAME / DETAIL-CHANGED rc 0 · CHANGED rc 1 · SETUP 2
+    env: MADO_VERIFY_ROOT · MADO_VERIFY_LIVE=auto|yes|no · MADO_VERIFY_HARNESS
+
+Tokens: `MADO_VERIFY: CLEAN|DIVERGED` · `MADO_SELFTEST:` ·
+`MADO_REGRESSION: PASS|FAIL|SETUP` · `MADO_SNAPSHOT: WRITTEN|REFUSED` ·
+`MADO_DIFF: SAME|DETAIL-CHANGED|CHANGED|SETUP`; row classes PASS/FAIL/
+UNKNOWN/SKIP/NOTE — UNKNOWN blocks CLEAN, NOTE never flips a verdict. Base
+`--help` lists the five original flags; the mode paragraphs print via
+`<mode> --help` (the excision invariant keeps the base text still — the note
+§5.7 says why; discoverability is a named residual, not a defect). Full mode
+table, writes and exits: note §1; cadence: §4.
+
+### What ships open (named, never promised)
+
+From the note's §6 ledger at this append: the theme live rows ×2 and the
+walker live-surface rows (exempted by name, r9); hypr-live stub scenarios
+J/K/L (open since r8); the assertion floor (`VERSION_STR` `:77`, base-help
+discoverability, the two usage arms, the boundary-prefix assertion); the
+`row_from_rc` rc-6 arm (dead since r6); the theme clauses' covering mutant
+(owed under r6 rule 2 — re-cut record `:1266-1268`); plus the record debt the
+arc ships with (`corpus/README.md` rows; `corpus/lessons/` 0 entries;
+`walker-deep.md` §10/§11 errata; the drafts' ⟨PENDING⟩ markers). A NOTE stays
+non-verdict, an UNKNOWN stays unknown; a stub scenario proves row logic,
+never live values.
+
+### Unknowns at this append
+
+1. The committed round-10 revision. This append binds to the worktree
+   revision `93e43f8f…`; re-check `sha256sum tools/mado-verify.sh` before
+   quoting (§0/§9 of both files carry the same rule).
+2. Whether the synthesis gains its round-10 landing row at the commit — its
+   §1 row 10 reads "in flight"; not predicted here.
+3. Whether the record family (§(c)) lands — out of this file's scope; the
+   SKILL's own state before this append: 1,336 L / 99,084 B / sha
+   `946bf9d5…`.
+
+recheck: `sha256sum tools/mado-verify.sh corpus/knowledge/arc-synthesis.md
+corpus/knowledge/gate-standing-use.md` — the three shas above; then the note
+§8's three commands re-derive the gate's state.
