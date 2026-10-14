@@ -447,3 +447,73 @@ integrator-dispatched, independent seat closes a box; the round-4 measure is
 2 named verifier attributions in `SHONEN.md` with evidence pointers. Anti-claim:
 a non-reproduction or a province violation keeps the box open and says why.
 This SKILL pins the verifier inputs; the marks themselves land in `SHONEN.md`.
+
+## Round-5 — verdict gate & box-4 closure status (append, M5-4)
+
+Appended 2026-10-14 17:27Z (25-min poll closed 17:27:08Z; M5-1/M5-2 both
+landed in-window). Round-5 plan (`plans/round-5.plan.md`, 9 L, sha
+`1061fe40b7c2da4e…`) owns two moves: (a) close box 4 via the §8 re-run with a
+named verifier, (b) ship the lane's first executable gate. This section records
+both as measured; the only file this lane wrote is this one (scratch
+`/tmp/w5-mado-m5-4/`; logs named below). Substrate stayed read-only.
+
+### Gate usage — `tools/mado-verify.sh` (v1, round 5 / M5-2)
+
+One command verifies the declared planes (hypr core, waybar, walker, terminals)
+against live bytes and hyprctl read verbs, then prints one verdict line.
+
+    bash tools/mado-verify.sh                 # live, read-only, root=$HOME
+    bash tools/mado-verify.sh --no-live       # file plane only; verdict names the skipped live layer
+    bash tools/mado-verify.sh --root DIR      # file plane against DIR (used by the selftest)
+    bash tools/mado-verify.sh --selftest      # hermetic fixture assertions (no substrate reads)
+    env: MADO_VERIFY_ROOT, MADO_VERIFY_LIVE=auto|yes|no
+
+Exit map (script `--help`/header): `0` = CLEAN · `1` = DIVERGED — a check
+FAILed, or a required check was UNVERIFIABLE, i.e. any UNKNOWN blocks CLEAN ·
+`2` = tool/usage error (bad args; a failing `--selftest`). Row classes PASS /
+FAIL / UNKNOWN / SKIP / NOTE; NOTE rows are record-level (S3-class or open
+findings) and never flip the verdict.
+
+Measured this pass, read-only (logs `/tmp/w5-mado-m5-4/gate-selftest.log`,
+`gate-live.log`):
+
+- `--selftest` (17:12:34Z) → `MADO_SELFTEST: 28/28 assertions passed`, rc 0.
+  Hermetic: fixtures under `/tmp/w5-mado-m52-selftest.*`, removed on success;
+  scenario C proves the anti-claim (live requested, no `hyprctl` on PATH →
+  `live.plane` UNKNOWN row, exit 1, no fake CLEAN).
+- live run (17:12:39Z) → `MADO_VERIFY: CLEAN (35 pass, 0 fail, 0 unknown,
+  4 notes)`, rc 0; independent before/after combined sha256 over the declared
+  config trees byte-identical (`489eaf5d…` both sides).
+- Script identity at this pass: 1098 L, sha `d7edaab4bf108625…` — re-measure
+  before citing (live wave).
+
+Scope honesty (script header): window-rule effects, dispatcher behaviour,
+module text, idle/lock transitions have no read surface → stay UNKNOWN, never
+guessed. The manual equivalent stays this SKILL's Scoped verification checklist
+(steps 0–9); the gate encodes those rows and adds `boundary.readonly` as a gate
+row. Path note: the `:426` placeholder (`corpus/scripts/`) is superseded —
+round 5 ships `tools/mado-verify.sh`.
+
+### Box-4 status — PROVINCE accuracy
+
+Close evidence landed 17:07–17:09Z, two parts:
+
+1. §8 re-run receipt (in-repo, durable) — `corpus/knowledge/province-accuracy-
+   selfaudit.md` round-5 addendum (M5-1): 25/25 §8 rows re-derive, 4 cross-class
+   spot-checks, "no falsification found"; file now 345 L by `wc -l`, 24,670 B,
+   sha `7c0a58208dea60e8…` (v4 = byte-prefix append over v3 `3014a840…`).
+2. Named verifier verdict (scratch, ephemeral) — `/tmp/w5-ver-m4b-work/
+   VERDICT.md` (8,625 B, sha `f70fc3c70a11e91e…`): "**[x] VER-M4B — box 4
+   CLOSES**"; all province claims hold on the verified revision.
+
+`SHONEN.md` measured at this append's cap (17:27Z, 12 L, sha
+`f6495fe68f4265e3…`): box 4 still `[~]` at `:11` — the closure edit
+(`[x] VER-M4B` + pointer, per the self-audit §7 procedure) is the
+scribe/finalizer's write, outside this lane's scope. When it lands, SHONEN
+reads 4/4 `[x]`.
+
+Refreshed pointers (supersede the `:443` row's v1 numbers, 17,190 B / sha
+`f81f19db…`): self-audit 24,670 B / `7c0a58208dea60e8…` (v4); `PROVINCE.md`
+unchanged (18 L, `7aad7b86…`); box-4 evidence pack = verdict sha + self-audit
+v4 sha + M5-1 scratch `/tmp/w5-mado-m5-1/` (ephemeral — hashes fold into the
+record).

@@ -263,3 +263,84 @@ edited. Candidates noted during the audit (not applied — write scope):_
 - E-candidate 2: `waybar-walker-semantics.md:433` (read-time; resolves
   `:434` at the 16:27Z re-anchor) — note `git status`'s
   index stat-cache write side effect in the probe-verb list.
+
+## Round-5 addendum — §8 re-run receipt (M5-1, box-4 close evidence) [OBS] `[~]`
+
+Appended 2026-10-14 17:07Z (local 14:07, −03:00) by round-5 lane M5-1. This
+block answers the recorded box-4 close condition — "§8 re-run owed / needed"
+(`LOG.md:294`, round-4 entry; `MANIFEST.json` fleet round-4 note) = §7 closure
+step 1: re-run the §8 commands (read-only) and spot-check ≥3 claims across
+evidence classes. Append-only: nothing above was edited (base sha verified
+immediately before this append). Read-only throughout; writes = this append +
+scratch `/tmp/w5-mado-m5-1/` (`rerun.log`, `live.log`, `scans.log`, `gitmech/`;
+ephemeral — the measurements below are the durable record). No network command;
+no mutation verb; secrets shape-only (no content read). Times UTC unless marked
+local (−03:00); pass window 17:03:51–17:07Z.
+
+- **Base revision (pre-append, measured):** sha256 `3014a84060c95710…`; 264 L by
+  `wc -l` = editor 265 − 1; last byte `.`; 17,856 B. The count-convention row is
+  re-measured TRUE a third independent time (audit v3-era, VER-M4, this run).
+  This append lands as **v4** — per VER-M4 §3, a later revision re-opens only
+  the delta; the delta is this block.
+- **VER-M4 finding carried:** all 15 PROVINCE claims reproduced; the sole
+  falsified claim (v1/v2 count-convention line) was corrected in v3 pre-filing
+  and accepted; final verdict `/tmp/w4-ver-m4-scratch/VERDICT.md` 120 L by
+  `wc -l`, sha256 `1101c7bff5e6f6ee…` (scratch; ephemeral) — "any future
+  change must append".
+
+### §8 re-run — all 25 rows re-executed (four hash rows grouped; 22 lines)
+
+| §8 row (abridged) | Recorded (audit) | Re-run observed 17:03–17:06Z | Verdict |
+|---|---|---|---|
+| `wc -l` · `sha256sum PROVINCE.md` | 18 L · `7aad7b863dc3c10b…b135a` | 18 L · `7aad7b863dc3c10b…b135a` | REPRODUCES |
+| `git log --all --name-only` | 4 commits, repo-internal only | 5 commits (`+3d9ba45` = the round-4 commit), every path repo-internal | REPRODUCES (count moved by the round-4 commit itself) |
+| `git log --format='%h %ci' -- PROVINCE.md` | `74d3b7b 2026-10-14 09:50:45 -0300`, 1 commit | equal | REPRODUCES |
+| `find ~/.config -maxdepth 4 -newermt "09:40"` (declared-tree filter) | 0 | 0 (320 raw hits, all non-surface state: chromium, obsidian, Grok Bot, 1Password, …) | REPRODUCES |
+| `find ~/.local/share/omarchy -newermt "09:40"` | `.git/index` 14:42:09Z; `.git` dir 15:42:18Z — only entries | index 11:42:09 local (= 14:42:09Z), unchanged; `.git` dir 13:23:14 local (one further metadata move, already witnessed by VER-M4 §2.2); still only entries | REPRODUCES (era note) |
+| `find ~/.local/state/omarchy ~/.agents -newermt "09:40"` | 0 | 0 | REPRODUCES |
+| `sha256sum ~/.config/hypr/*.conf` + `autostart.conf.bak.…` | 13/13 = R3-2 §2.1 pins | 13/13 equal (`21e76af9…` `5ace1701…` `e574a1ed…` `04af5cdf…` `e7d3b8dd…` `4f52854a…` `b8d173dc…` `3042e4a9…` `3769c92a…` `777a4fdc…` `69c9d899…` `2fded88a…` `8b472371…`) | REPRODUCES |
+| waybar ×2 · walker · mako `sha256sum` | `8316c08c…` `07f7d663…` `fecf71fa…` `95bf0c86…` | equal | REPRODUCES |
+| terminals `sha256sum` | `695301c8…` `3e883544…` `f875291e…` `cb828c04…` | equal | REPRODUCES |
+| `grep -c '^source' ~/.config/hypr/hyprland.conf` | 17 | 17 | REPRODUCES |
+| `wc -l ~/.agents/skills/omarchy/SKILL.md` | 392 | 392; sha `becd149e4d1c0767…`; mtime 2026-10-03 17:42 | REPRODUCES |
+| `hyprctl version` · `configerrors` | 0.56.2 `efb5099…` · empty, rc=0 | equal (empty, rc=0, 0 B) | REPRODUCES |
+| `hyprctl -j instances \| jq` | `"wayland-1"` | `"wayland-1"` | REPRODUCES |
+| `pgrep -x hypridle` | rc=0 16:19:48Z → rc=1 16:24:16Z | rc=1 at 17:04:32Z; the on→off transition is not re-observable (state changed by design; F1-class) | REPRODUCES (era) |
+| `hyprctl -j layers` (namespace+pid) | `wallpaper` 1203358 / `waybar` 1203352 | same PIDs — no restart since the audit session | REPRODUCES |
+| `ps -eo pid,lstart,args` (consumers) | session start 13:11:06–13:11:07 local | 13:11:06–07 local (Hyprland 1203316, waybar 1203352, swaybg 1203358, walker 1203471, elephant 1203474) | REPRODUCES |
+| `who -b` · `uptime -s` | boot 2026-10-13 11:02 · 10:57:58 | equal | REPRODUCES |
+| `systemctl --user list-timers --all` | `ai-usage.timer` ~5 min; LAST 13:16:28 local | `ai-usage.timer` ~5 min; LAST 14:02:11 local | REPRODUCES (era values) |
+| `ls -la ~/.config/ai-usage/` | 309 B/600 · 282 B/600 · 264 B/600 · 5 B/644 | equal (shape-only; no content read) | REPRODUCES |
+| Secret scans (§4) | 14 policy-text hits / 0 key-shaped | 33 policy-text hits (pre-append; = VER-M4's post-growth 33) / 0 key-shaped | REPRODUCES (substance; count = repo growth, frozen since 16:28Z) |
+| Scratch mechanism test | index mtime +1 s; content sha unchanged | `/tmp/w5-mado-m5-1/gitmech/`: index `1791997503→1791997504`; blob `ce013625…` unchanged | REPRODUCES |
+| This file's count convention | no trailing newline; `wc -l` = editor − 1 | TRUE (264 = 265 − 1; last byte `.`) | REPRODUCES |
+
+### Spot-checks (cross-class, ≥3 per §7 step 1) — 4 executed
+
+1. File bytes — `hyprland.conf` 1,273 B / 29 L / `4f52854a3c143dcf…` (C2 row + §2 + VER-M4 §4.1).
+2. Live read — `hyprctl -j binds` → 192; `configerrors` empty rc=0.
+3. Repo scan — declared-tree `find` 0 hits; key-shaped scan 0; `git log --all` repo-internal only.
+4. Live timeline — consumer lstart 13:11:06–07 local; `pgrep -x hypridle` rc=1 at 17:04:32Z.
+
+### Verdict `[~]`
+
+All 25 §8 rows re-derive from current reality; every durable row is byte-equal
+(13/13 hypr, 4/4 terminals, waybar ×2, walker, mako, `PROVINCE.md`, omarchy skill).
+The only moved values carry named causes: commit count 4→5 (the round-4 commit
+`3d9ba45` itself), secret-hit count 14→33 (repo growth, = VER-M4 §2.2), the
+omarchy `.git`-dir metadata mtime (one further move since the audit — already
+witnessed; index/refs/tracked content unchanged). Era values (PIDs, timers,
+hypridle state) re-measured live and labeled; no session restart since the audit.
+**No falsification found.** §7 closure step 1 is satisfied at base `3014a840…`;
+step 2 — the `[x] <verifier-id>` + pointer write in `SHONEN.md` (12 L, sha
+`f6495fe68f42…` at this receipt's time; box 4 still `[~]` at `:11`) — remains the
+named non-author verifier's edit, outside this block's scope.
+
+### Unknowns added
+
+- U6 — mover of the omarchy `.git`-dir mtime since the audit (one further move;
+  metadata-only) — same class as U1/U2; candidates include a verifier's own read
+  per the audit's E-candidate-1 mechanism.
+- U7 — whether hypridle's traceless on/off recurs (F1; U4 stands).
+- U8 — repo-scope counts (commits, secret hits) are era-stamped: sibling lanes
+  write during this wave (`SKILL.md`, plans).
