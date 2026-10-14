@@ -363,3 +363,48 @@ icon is push-driven, while the exec itself is polled.
 
 _No errata yet. New entries append below this line; earlier text is never
 edited — a correction is a new block citing the block it corrects._
+
+## Errata (round 2) — appended 2026-10-14 (MADO-R2-3)
+
+Append-only block; nothing above this line is edited. Sources: wave-1 record
+items plus a number re-measure pass by MADO-R2-3 (read-only probes staged at
+`/tmp/mado-r2-3-probe/`, ephemeral). Number-touching corrigenda re-measured;
+judgment items recorded with their measured pairs.
+
+- **R2-E1 (number-touching corrigendum, re-measured).** §1's table lists
+  `~/.config/mako/config` as **50 B**; live `wc -lc` → `5 119` — **119 B**.
+  The content is the measured one (full sha256
+  `95bf0c86c955cc813d1b60d18e738567c7f135885c5f02a6acfbbb38946e3bec`
+  = the recorded `95bf0c86c955cc81…`), so the byte cell was a transcription
+  error; §4's 5-line structure (:1 include, :3-5 three colours) holds.
+- **R2-E2 (judgment-class — §8 U1 resolved; §9's stated reason superseded).**
+  The stock bindings tree was read and the pair re-measured live:
+  `~/.local/share/omarchy/default/hypr/bindings/utilities.conf:2` =
+  `bindd = SUPER, SPACE, Launch apps, exec, omarchy-launch-walker`; `:7` =
+  `bindd = SUPER ALT, SPACE, Omarchy menu, exec, omarchy-menu`;
+  `hyprctl binds -j` shows modmask 64 SPACE → `omarchy-launch-walker` and
+  modmask 72 SPACE → `omarchy-menu`; `omarchy menu keybindings --print` →
+  `SUPER + SPACE → Launch apps`, `SUPER ALT + SPACE → Omarchy menu` (the
+  menu also sits on COPILOT KEY). Therefore §8 U1 is answered — SUPER+SPACE,
+  stock, launches Walker — and §9's rejection *direction* stands
+  (SUPER+SPACE does not open the Omarchy menu) while its wording "rejected
+  as an active binding" and "the absence of a stock check … unverified here"
+  are superseded: the claim is verified false, not merely unverified, and
+  the local `bindings.conf:34-35` pair is the commented *overwrite* template
+  for that key.
+- **R2-E3 (number-touching — round-1 note-length pin, re-measured).** The
+  round-1 body (commit `65a2254`) is **364 lines by `wc -l`** (365 in editor
+  view; no trailing newline — `tail -c 1` → `_`); this block extends it.
+  Quotes must name the command (SKILL.md "Round 1 sources" quotes the editor
+  count of the round-1 body).
+- **R2-E4 (re-measure held, plus one addition to §6's drift list).** §1/§2/
+  §4/§6/§7 numbers re-checked: `config.jsonc` 249 L / 6,068 B /
+  `07f7d663106b72e4`; `style.css` 136 L / 1,887 B / `8316c08ceaa7e3f0`;
+  walker 49 L / 1,336 B; swayosd 4 L / 87 B; theme `waybar.css` 2 L;
+  `walker.css` 6 L; PIDs 1707/1706/1808/1815 all `STARTED Tue Oct 13
+  11:02:07`; versions v0.15.0 / 2.17.0 / v0.1.8 / v0.9.6 / 0.3.2;
+  `makoctl mode` → `default`; hypridle absent + `inactive`; signals
+  `config.jsonc:66/203/209/215/239`; `#a55555` at `style.css:96/101/110/135`.
+  Diffs vs stock reproduce §6 items 1-6, with one addition to item 6:
+  `config.jsonc` also drops one stock blank line (stock `:56` → local `:68`)
+  — no behaviour change.

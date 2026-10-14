@@ -62,7 +62,7 @@ the toggles dir is tool-written (`omarchy toggle`); the theme dir is rewritten b
 | Global window rules | stock `default/hypr/windows.conf` + `apps.conf` (18 per-app files, `apps.conf:2-19`) | file reads; syntax era pinned at `windows.conf:2` ("Hyprland 0.53+") | MADO-1 §5 |
 | Gaps / borders / rounding / animations / layout | default looknfeel + user looknfeel (comment-only here) + toggles | `hyprctl getoption general:gaps_out`, `decoration:rounding` | MADO-1 §6-7 |
 | Autostart processes | `~/.config/hypr/autostart.conf:5` (grok-bot); default `autostart.conf:1` (hypridle) | `pgrep` | MADO-1 §8, §10 |
-| Env vars (NVIDIA + GDK_SCALE) | `~/.config/hypr/envs.conf:3-5`; `monitors.conf:9` | file read | MADO-1 §2 |
+| Env vars (NVIDIA + GDK_SCALE) | `~/.config/hypr/monitors.conf:9` (effective); local `envs.conf:3-5` is an orphan — no `source` reaches it (`hyprland.conf:9` sources only the default envs.conf), its 3 vars unset | `printenv GDK_SCALE` → `1`; `printenv NVD_BACKEND` → unset | MADO-1 §2; MADO-R2-1 §4/§6 |
 | Idle timings (150 s screensaver / 152 s lock) | `~/.config/hypr/hypridle.conf:10,16` — separate consumer, NOT sourced by hyprland.conf | `systemctl --user is-active hypridle`; `pgrep -x hypridle` — inactive/absent, cause unknown | MADO-1 §8/§10; MADO-2 §5 |
 | Lock screen UI | `~/.config/hypr/hyprlock.conf` + theme `hyprlock.conf` | file read (fingerprint disabled at `:41-43`) | MADO-1 §8; MADO-2 §5 |
 | Night light | `~/.config/hypr/hyprsunset.conf` (identity profile `:3-6`) | file read | omarchy skill:386 |
@@ -184,3 +184,57 @@ Rules:
   `hyprctl configerrors` empty; `grim -t ppm -` 14,860,817 B, nothing persisted.
 - Later rounds append: error patterns, executable checklists, verifier wiring — each with
   its measured anchor.
+
+## Claim routing & mutation-free safety — round 2
+
+Round-2 sources: `corpus/knowledge/hyprctl-verification-layer.md` (MADO-R2-1; 280 by `wc -l`;
+56 `getoption` claim→live pairs + 9 non-getoption pairs — MADO-1's live-verification layer) and
+`corpus/knowledge/keybind-rule-semantics.md` (MADO-R2-2; note self-label MADO-4; 313 by `wc -l`;
+192/192 declared-bind reconciliation). Both measured 2026-10-14 against the same bytes as
+MADO-1 — `sha256sum` equality over all 13 `~/.config/hypr` files (MADO-R2-1 §7) — and neither
+mutated a compositor state. The routing below decides which evidence class may carry which claim.
+
+### Claim → evidence routing
+
+| Evidence class | Licenses (claim allowed) | Does not license (claim barred) | Anchor |
+|---|---|---|---|
+| File bytes (`read`, `path:line`, `wc`, `sha256sum`, `grep`) | what a file declares and where; include order; who declares a key; orphans / unsourced files; substrate identity | the effective value — declarations can be shadowed (toggle beats user file) or inert (commented lines); nothing about the running session | MADO-1 §2/§3/§7; MADO-R2-1 §2/§7 |
+| hyprctl live read (`getoption`, `binds`, `clients`, `monitors`, `workspaces`, `devices`, `animations`, `instances`, `configerrors`, `version`) | effective value after the whole include chain, and which declarer owns it (`agreement*` shadowing proof); parsed bind surface (counts/flags/modmask, 192/192 reconciled); runtime state (workspaces, clients, dynamic tags); load health | intent; who wrote the file; dispatcher *behaviour* (no keystroke injection run — `[INF-docs]` only); per-window rule effects (no rule-read verb in 0.56); env vars (no query surface) | MADO-R2-1 §3-§5; MADO-R2-2 §1/§2.2/§5 |
+| Docs-inference (`[INF-docs]` — wiki / omarchy skill text) | procedure and documented semantics: change rituals, grammar (mod-list bits, flags), documented evaluation order — label `[INF-docs]`, never assert as host state | the host's current value or state; that the host matches the doc's era — docs drift (current wiki is lua-era, host 0.56.2 still parses hyprlang) | MADO-R2-2 tag legend/§2.1/§4.3/§6.2; omarchy skill:300-305 |
+| Consumer-side probe (no hyprctl surface exists) | runtime facts owned by other consumers: `printenv` for env, `pgrep`/`systemctl` for processes, `makoctl` for DND | config-load semantics; the consumer's own config values (config-only surfaces stay static) | MADO-R2-1 §4/§6; MADO-1 §8/§10 |
+
+Divergence vocabulary when reading a live row (falsifiable classes, MADO-R2-1 §2):
+`agreement` / `agreement*` — live equals the last declarer; starred = an earlier declarer is
+provably shadowed. `live-default` — `set=false`, no declarer: engine default or pure runtime
+state, never attributed to a file. `mismatch` — live ≠ resolved declaration; report as a drift
+finding (0 instances in the 56-option pass; any new mismatch falsifies that result). `config-only`
+— declared but no read surface (window rules, exec-once, include graph, other-consumer configs):
+the live layer stays UNKNOWN. A semantics claim is only as strong as its tag — declared bind
+parsing is `[OBS]` (192/192), dispatcher behaviour is `[INF-docs]` (nothing fired, MADO-R2-2 §1/§6.1).
+
+### Mutation-free safety rules
+
+1. **Read-verb whitelist.** hyprctl: only `getoption`, `monitors`, `workspaces`,
+   `activeworkspace`, `clients`, `binds`, `animations`, `devices`, `instances`, `configerrors`,
+   `version`. Never: `keyword`, `dispatch`, `reload`, `setprop`, `setcursor`, `output`, `notify`,
+   `plugin`, `batch`, `--instance` overrides (MADO-R2-1 §0, §8).
+2. **No firing, no injection.** No keystroke injection, no dispatcher invocation; rule-effect and
+   rebind tests are operator-only — `hyprctl keyword 'windowrule[name]:enable false'` is mutating
+   (MADO-R2-2 claim boundary / §5).
+3. **Prove the boundary.** A probe pass ends only when the config trees are byte-identical:
+   `sha256sum` before/after equals MADO-1 §2 (MADO-R2-1 §7). Trees stay read-only
+   (PROVINCE.md:10-12); findings are report-and-recommend.
+4. **Session material stays shape-only.** `clients` for length/tags, never window titles;
+   `hyprland.log` shape-only; no `/proc/*/environ`; `HYPRLAND_INSTANCE_SIGNATURE` shape-checked,
+   never printed in full (MADO-R2-1 §0).
+5. **Unverifiable → UNKNOWN, not inference.** If a claim needs a mutation or a surface that does
+   not exist, mark `[UNK]` and stop. If hyprctl is unavailable or unreachable, the live layer is
+   UNKNOWN: fall back to file-byte evidence via MADO-R2-1 §8's recipe; never disambiguate
+   instances by guess (MADO-R2-1 §6/§8).
+6. **Scratch outside the substrate.** Probe artifacts under `/tmp/<lane>-r2-*` only; nothing
+   persisted into config trees (MADO-R2-1 §0; MADO-R2-2 header).
+
+Re-verified this pass (2026-10-14): binds flags 190/14/26/2/1 and modmask histogram over 192 —
+both equal MADO-R2-2 §8; `input:touchpad:scroll_factor` → `float: 0.400000`; 3 Alacritty clients
+split 2× (`default-opacity*`,`terminal*`) / 1× (`terminal*`) per MADO-R2-2 §4.6;
+`hyprland.conf` sha256 `4f52854a…`; `printenv` → `GDK_SCALE=1`, orphan `envs.conf` vars unset.

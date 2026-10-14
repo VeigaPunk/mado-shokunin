@@ -178,3 +178,28 @@ regeneration for terminal color files (read from sample docs, not executed).
 ## Errata (append-only)
 
 - (none yet)
+
+## Errata (round 2) — appended 2026-10-14 (MADO-R2-3)
+
+Append-only block; nothing above this line is edited. Number re-measure pass
+by MADO-R2-3 (read-only probes staged at `/tmp/mado-r2-3-probe/`, ephemeral).
+No corrections are due this pass; the re-measure record is kept so the block
+exists and re-runs stay reproducible per the round-2 protocol.
+
+- **R2-E1 (number-touching — round-1 note-length pin, re-measured).** The
+  round-1 body (commit `65a2254`) is **179 lines by `wc -l`** (180 in editor
+  view; no trailing newline — `tail -c 1` → `)`); this block extends it.
+  Quotes must name the command (SKILL.md "Round 1 sources" quotes the editor
+  count of the round-1 body).
+- **R2-E2 (re-measure held — no correction).** §1 table: 876/28, 516/25,
+  954/34, 1,325/41 B/L; backups 873/513/953/1,322 B. §4: `theme.name`
+  12 B = `matte-black`; palette spot-checks — `#121212`/`#bebebe` in the
+  four theme files, cursor `#eaeaea`, selection `#515151`, palette
+  `0=#333333`, `1=#D35F5F`, `4`-family `#e68e0d` (theme `ghostty.conf:1-8`,
+  `kitty.conf:1-10`, `alacritty.toml:2-3`). §5: `command -v` → only
+  `/usr/bin/alacritty`; `xdg-terminals.list` 127 B, first entry
+  `Alacritty.desktop`; `/etc/xdg/xdg-terminals.list` absent; both foot
+  stubs 28 B. §6: backup-vs-live `diff` = one `NcN` hunk per file
+  (`size = 9` → `size = 12.5`; e.g. `alacritty.toml` `13c13`). §7: omarchy
+  skill 392 L / 14,908 B; hooks dir = five `*.d` directories plus active
+  `post-update.d/install-voxtype.hook`.

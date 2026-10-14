@@ -216,3 +216,53 @@ These four local files are **not** sourced by `hyprland.conf`; each has its own 
    = 192 = `hyprctl binds -j | length` (§4).
 3. `sha256sum ~/.config/hypr/hyprland.conf` →
    `4f52854a3c143dcf58430a679e339619223d2b5008115a322d06b2de637ea462` (§2).
+
+## Errata (round 2) — appended 2026-10-14 (MADO-R2-3)
+
+Append-only block (continues §11's series; kept as a distinct block per the
+round-2 protocol). Sources: the wave-1 live-verification lane's recorded
+candidate (`hyprctl-verification-layer.md` §6/§9 — "for MADO-1 §11 … per the
+append-only rule") plus a number re-measure pass by MADO-R2-3 (read-only
+probes staged at `/tmp/mado-r2-3-probe/`, ephemeral). Number-touching items
+re-measured; state items recorded with their measured pair and `[UNK]` kept
+where the cause is unknown.
+
+- **R2-E1 (addition — orphan file; MADO-R2-1 §9 candidate, applied).** §4's
+  "Deprecated/unsourced binding files" list and §12 item 5 name the unsourced
+  files; the local `~/.config/hypr/envs.conf` (133 B, 5 L) belongs in that
+  class and was missed. Re-measured: `grep -rn 'envs.conf'` across
+  `~/.config/hypr/`, `default/hypr/`, `toggles/` resolves exactly one
+  `source` — `hyprland.conf:9`, pointing at the *default* envs.conf; the
+  local file is sourced by nothing. Its three vars (`envs.conf:3-5`
+  `NVD_BACKEND,direct`, `LIBVA_DRIVER_NAME,nvidia`,
+  `__GLX_VENDOR_LIBRARY_NAME,nvidia`) are unset in the live session
+  (`printenv` → UNSET ×3) while all 12 vars declared in the sourced default
+  envs.conf are set. Addition, not contradiction — §3's "local files
+  (L16–20)" already excludes it; removal impact untested as in §12 item 5.
+- **R2-E2 (number-touching — round-1 note-length pin, re-measured).** The
+  round-1 body (commit `65a2254`) is **217 lines by `wc -l`** (218 in editor
+  view; the file has no trailing newline — `tail -c 1` → `.`); this round-2
+  block extends the file past that count. Quotes of "218 lines" (SKILL.md
+  "Round 1 sources") are editor counts of the round-1 body; both are correct
+  only with the command named (round-1 scribe LOG, observation (a)). Same
+  convention on the MADO-2 and MADO-3 round-1 bodies (364/365, 179/180).
+- **R2-E3 (state re-measure — §10 autostart line; cause `[UNK]`).** No
+  grok-bot process or window is present at 2026-10-14 11:00
+  (`ps -eo pid,comm,args | grep -iE 'grok|appimage|0.70.2'` → no match;
+  `hyprctl clients -j` → 3 windows, all Alacritty). The config-level facts
+  hold: `autostart.conf:5` declares the exec-once, and
+  `~/.local/share/grok-bot/appimage` is a symlink →
+  `/home/vgpnk/Applications/Grok_Bot_0.70.2.AppImage` (134,596,858 B;
+  shape only, not read). The target's mtime (2026-10-13 22:29) postdates
+  the session start (11:02) and the `autostart.conf` rewrite (22:48), so
+  exec-once cannot have launched this build at login. Whether it started
+  later and exited, or never ran, is `[UNK]` — do not conclude.
+- **R2-E4 (re-measure held — no correction).** All §1/§2 byte counts, line
+  counts and sha256 first-12 re-checked live and identical (13 files;
+  10,386 B active + 65 B backup; `wc -c` total 10,451; `hyprland.conf`
+  29 L / 1,273 B / `4f52854a3c143dcf…`); `grep -c '^source'` → 17; default
+  tree 35 files / 33,830 B; binds 23+4+90+50+25 = 192 =
+  `hyprctl binds -j | jq length`; live `gaps_out` `0 0 0 0`, `input:kb_layout`
+  `br`, `decoration:rounding` 0, `general:border_size` 0,
+  `animations:enabled` 1, `general:layout` dwindle; DP-1 3440x1440@99.99700;
+  hypridle absent + `inactive`; Hyprland 0.56.2 / Omarchy 3.8.3.
