@@ -69,7 +69,7 @@ the toggles dir is tool-written (`omarchy toggle`); the theme dir is rewritten b
 | Gaps / borders / rounding / animations / layout | default looknfeel + user looknfeel (comment-only here) + toggles | `hyprctl getoption general:gaps_out`, `decoration:rounding` | MADO-1 §6-7 |
 | Autostart processes | `~/.config/hypr/autostart.conf:5` (grok-bot); default `autostart.conf:1` (hypridle) | `pgrep` | MADO-1 §8, §10 |
 | Env vars (NVIDIA + GDK_SCALE) | `~/.config/hypr/monitors.conf:9` (effective); local `envs.conf:3-5` is an orphan — no `source` reaches it (`hyprland.conf:9` sources only the default envs.conf), its 3 vars unset | `printenv GDK_SCALE` → `1`; `printenv NVD_BACKEND` → unset | MADO-1 §2; MADO-R2-1 §4/§6 |
-| Idle timings (150 s screensaver / 152 s lock) | `~/.config/hypr/hypridle.conf:10,16` — separate consumer, NOT sourced by hyprland.conf | `systemctl --user is-active hypridle`; `pgrep -x hypridle` — inactive/absent, cause unknown | MADO-1 §8/§10; MADO-2 §5 |
+| Idle timings (150 s screensaver / 152 s lock; ≈302 s effective per the file's own reset rationale) | `~/.config/hypr/hypridle.conf:10,16` — separate consumer, NOT sourced by hyprland.conf | `systemctl --user is-active hypridle`; `pgrep -x hypridle` — no match at the round-3/4 probes; volatile: restarted with the 16:11Z session, absent again by 16:24Z, no stop line (F1, cause `[UNK]`) | MADO-1 §8/§10; MADO-2 §5; MADO-R3-2 §6 F1; MADO-R4-2 §3/§7 |
 | Lock screen UI | `~/.config/hypr/hyprlock.conf` + theme `hyprlock.conf` | file read (fingerprint disabled at `:41-43`) | MADO-1 §8; MADO-2 §5 |
 | Night light | `~/.config/hypr/hyprsunset.conf` (identity profile `:3-6`) | file read | omarchy skill:386 |
 | Screen-share picker | `~/.config/hypr/xdph.conf:1-4` | file read | MADO-1 §8 |
@@ -100,10 +100,11 @@ what reads it, how it takes effect, and which live route can verify it.
 | Scope | Files to read | Consumer & reload semantics | Live route (read-only) | Operator-only |
 |---|---|---|---|---|
 | hypr core | `~/.config/hypr/*.conf` — 12 active files (MADO-1 §2) | Hyprland 0.56.2; auto-reloads on save (omarchy skill:145) | hyprctl read verbs: `getoption`, `binds`, `clients`, `monitors`, `workspaces`, `devices`, `animations`, `layers`, `configerrors`, `version`; env/consumers via `printenv`/`pgrep`/`systemctl` | `hyprctl reload`; any file write |
-| bar (waybar) | `~/.config/waybar/config.jsonc` (249 L), `style.css` (136 L) (MADO-2 §1) | waybar v0.15.0 running (PID 1707, parent = Hyprland; MADO-R3-1 §1); style auto-reloads (`config.jsonc:2`); modules need `omarchy restart waybar` | measured ledger (MADO-R3-1 §2.3, re-verified): bar surface via `hyprctl -j layers` (levels `2` → namespace `waybar`, pid 1707, `3440 26`); tray via `busctl --user get-property fr.arrouillard.waybar /StatusNotifierWatcher …`; **no IPC/query verb in 0.15.0** (`waybar --help` = config/style/log/bar only) → module text config-only, reconstruct via pure-read producers (`RUN`) | `omarchy restart waybar` |
+| bar (waybar) | `~/.config/waybar/config.jsonc` (249 L), `style.css` (136 L) (MADO-2 §1) | waybar v0.15.0 running (PID 1707, parent = Hyprland; MADO-R3-1 §1); style auto-reloads (`config.jsonc:2`); modules need `omarchy restart waybar` | measured ledger (MADO-R3-1 §2.3, re-verified): bar surface via `hyprctl -j layers` (levels `2` → namespace `waybar`, pid 1707, `3440 26`); tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; **no IPC/query verb in 0.15.0** (`waybar --help` = config/style/log/bar only) → module text config-only, reconstruct via pure-read producers (`RUN`) | `omarchy restart waybar` |
 | launcher (walker) | `~/.config/walker/config.toml` (49 L; packaged table `/etc/xdg/walker/config.toml`, 298 L — MADO-R3-1 §6) | walker 2.17.0 via `app-walker@autostart.service` + `elephant.service`; restart `omarchy restart walker` | file bytes; `systemctl --user status app-walker@autostart`; `hyprctl -j layers` when open (absent when closed); D-Bus `dev.benz.walker` (`org.gtk.Actions.List` → `as 0`); sockets shape-only (MADO-R3-1 §6.7/§6.8) | same |
 | notifications / OSD | `~/.config/mako/config`, `~/.config/swayosd/{config.toml,style.css}` (MADO-2 §4) | Mako owns `org.freedesktop.Notifications` (PID-measured); swayosd-server separate | `makoctl mode`; `busctl --user status org.freedesktop.Notifications` | restart/reload commands |
-| idle / lock / sunset / xdph | `hypridle.conf`, `hyprlock.conf`, `hyprsunset.conf`, `xdph.conf` (MADO-1 §8) | separate consumers, outside the include graph; hypridle declared by default autostart `exec-once` yet measured inactive | `pgrep`/`systemctl --user is-active`; config values = file bytes only | start/stop services |
+| idle / lock | `hypridle.conf` (19 L, `e7d3b8dd…`), `hyprlock.conf` (43 L, `b8d173dc…`), theme `hyprlock.conf` (5 L, `3ef010e7…`) — the two local configs byte-identical to the shipped Omarchy payload; not sourced by hyprland.conf; daemon declared by default autostart `exec-once` (`default/hypr/autostart.conf:1`); actuator set under `~/.local/share/omarchy/bin/` (MADO-R4-2 §1/§2b) | hypridle 0.1.8 = idle daemon; on/off is the stateless process-toggle `omarchy-toggle-idle` (`pgrep`/`pkill -x hypridle` ↔ `uwsm-app -- hypridle`; routes: bar glyph `config.jsonc:207`, `SUPER CTRL+I` `utilities.conf:30`, menu `omarchy-menu:212`); hyprlock spawned on demand only (`omarchy-system-lock:8-13`, `pidof hyprlock` guard); lock/wake side-effects script-defined — DPMS off ≈3 s after lock, wake restores (MADO-R4-2 §5/§8) | `pgrep -x hypridle` — absent at the 16:00–16:08Z probe (MADO-R4-2 §7); PID 1203349 present 16:11–16:22Z (restarted with the session), absent again by 16:24Z with no stop line (cause `[UNK]`; F1's disappearance pattern recurred) — re-measure before reuse; `systemctl --user is-active` → `inactive`, `is-enabled` → `disabled`; `journalctl --user` boot-start only (F1); file bytes; session sample via `loginctl show-session` (`IdleHint`/`LockedHint`) and `hyprctl -j layers` (no lock surface while unlocked); live idle transitions have no read surface — no lock test allowed | start/stop daemon; `omarchy-restart-hypridle`; firing the chain (`omarchy-system-lock`, DPMS); any lock or idle-interval test |
+| sunset / xdph | `hyprsunset.conf` (14 L), `xdph.conf` (4 L) (MADO-1 §8) | separate consumers, outside the include graph; hyprsunset measured absent; xdph portal running (PID epoch-varying — 1920 at MADO-1 §8, 1203662 this pass) | `pgrep -x hyprsunset` (no match); `pgrep -af xdg-desktop-portal-hyprland`; file bytes | start/stop services |
 | terminals | `~/.config/{alacritty,foot,kitty,ghostty}/` — only Alacritty installed (MADO-3 §1/§5) | per-terminal binary; `omarchy restart terminal` (omarchy skill:172) | file bytes + `command -v`; colors resolve through the theme include | restart; `omarchy install terminal` |
 | theme & wallpaper | `~/.config/omarchy/current/theme/**`, `theme.name`, `current/background` (MADO-3 §4) | every app includes the theme files; rewritten by `omarchy theme set` | `omarchy theme current`; file reads | `omarchy theme set` |
 
@@ -134,7 +135,7 @@ deliberately and name it in the report.
 | What a dispatch/bind does when fired; rule toggles | docs-inference only (mutation banned) | do not fire; quote docs | `[INF-docs]`; behaviour stays `[UNK]` |
 | Change ritual / grammar / evaluation order | docs-inference | omarchy skill / wiki text, era cross-checked | `[INF-docs]`; never host state |
 | Who owns notifications / DND state | consumer-side probe | `busctl --user status org.freedesktop.Notifications`; `makoctl mode` | `[OBS]` |
-| Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arrouillard.waybar /StatusNotifierWatcher …`; indicator scripts probe process/mako mode (`RUN`, e.g. `idle.sh:3`) | `[OBS]` (MADO-R3-1 §1/§2.3); module text without an IPC verb → `[UNK]` |
+| Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; indicator scripts probe process/mako mode (`RUN`, e.g. `idle.sh:3`) | `[OBS]` (MADO-R3-1 §1/§2.3); module text without an IPC verb → `[UNK]` |
 
 ### Divergence vocabulary and severity taxonomy
 
@@ -298,6 +299,36 @@ no file written; no compositor state mutated. Companion pins from the same pass:
 `hyprctl -j binds | jq length` → 192; `makoctl mode` → `default`; `omarchy theme current` →
 `Matte Black`.
 
+### Reproduction package — re-run the round-3 end-to-end pass
+
+The round-3 report is not narrated-only; it re-runs. Two packages, both read-only
+(hyprctl read verbs + file reads + consumer probes; nothing touches a substrate):
+
+1. **Round-3 set** — the pass behind MADO-R3-2 (`/tmp/mado-r3-2-probe/`, scratch,
+   ephemeral; MADO-R3-2 §11 item 4): `01-filebytes.sh` (sha/bytes chains),
+   `02-hyprctl.sh` (live reads → 57 raw `getoption` JSONs + binds/monitors/layers),
+   `03-consumers.sh` (process/service/D-Bus/env probes), `expected.tsv` (57 round-2
+   expected rows), `check-getoptions.py`. Recipe: copy the set to fresh scratch,
+   redirect its `D=` to the copy (scripts write into `D`), then
+   `bash 01-filebytes.sh && bash 02-hyprctl.sh && bash 03-consumers.sh && python3 check-getoptions.py`
+   → `checked 57; mismatches/missing: 0` (re-run from a copy 2026-10-14 16:07 UTC,
+   `/tmp/mado-r4-4-repro/`; full chain rc 0; census 46 `agreement` + 6 `agreement*`
+   + 4 `live-default` + 1 extra).
+2. **Round-4 reviewer pack** — `/tmp/mado-r4-1-probe/repro-r3.sh` (MADO-R4-1, scratch,
+   ephemeral): self-contained one-pass driver of the same sweep (embeds `expected.tsv`,
+   emits `summary.txt`); usage `D=/tmp/<your-scratch> bash repro-r3.sh` — the `D=`
+   redirect keeps each package's own scratch frozen.
+
+Durable half: the notes themselves (`corpus/knowledge/`: `config-health-report-r3.md`
+§0–§11 + Appendix A; `executor-test-sufficiency.md`; `corpus/README.md` coverage map).
+Scratch under `/tmp` is ephemeral by declaration — copy a package out before it is
+reaped. Epoch-varying values (PIDs, window set, device counts) are expected to differ
+between runs; pins and the 57-option check are the stable assertions. One such change
+was measured inside round 4 itself: the compositor session restarted 2026-10-14
+16:11:06Z (new Hyprland PID 1203316 replacing 1671; hypridle restarted with it, cause
+`[UNK]`), so pre-restart packs carry the old session's PIDs and fresh re-runs see new
+ones.
+
 ## Error patterns & traps
 
 Symptom → cause → the check that settles it (each measured):
@@ -314,6 +345,7 @@ Symptom → cause → the check that settles it (each measured):
 | "What do the open windows show?" | `clients` titles are session material | use `clients` length/tags only; dynamic tags render `*` (MADO-R2-2 §4.6) |
 | "Check the compositor log" | `hyprland.log` is session material | shape-only (size/mtime); never content-read (MADO-R2-1 §0) |
 | Bar shows an idle/notification icon | bar state is a process/mode probe, not a bar flag | `pgrep -x hypridle`; `makoctl mode` (MADO-2 §2.4) |
+| "Will the session lock after idle?" | the declared 150 s/152 s chain has no consumer while hypridle is absent (S1, F1) — it cannot fire; lock state has no read surface while unlocked | `pgrep -x hypridle` + `journalctl --user` boot/stop lines; never trigger the chain (mutation, operator-only) (MADO-R3-2 §6 F1; MADO-R4-2 §7) |
 | "What is the bar showing right now?" | waybar has no query verb — config-only + producer probes | compositor view `hyprctl -j layers`; pure-read producer payloads (`RUN`), e.g. the indicator scripts (MADO-R3-1 §2.3/§3) |
 | Weather chip vanished | `.unavailable` class collapses the module by design when offline | check the network path in `weather.sh`; `style.css:75-79` (MADO-R3-1 §7) |
 | A version claim won't reproduce | Omarchy dual pin — `omarchy version` 3.8.3 vs checkout tag v3.8.4 | name the source: `omarchy version` vs `git -C ~/.local/share/omarchy describe --tags` (MADO-R3-1 §8.4) |
@@ -395,3 +427,23 @@ Rules:
   severities for MADO-R3-1's unregistered candidates — each with its measured anchor. Known
   stale quote fixed this pass: the round-2 distillation quoted the keybind note as "313 by
   `wc -l`"; it is 315 (LOG round-2 observation (a); flagged in MADO-R3-2 §9).
+
+## Promotion-box status — what remains
+
+The lane's gate is `SHONEN.md` — the canonical four boxes (`[~]` = lane-asserted
+with pointer; `[x]` = named non-author verifier; seed PROTOCOL.md:419-431).
+State measured 2026-10-14 16:28Z — SHONEN.md unchanged since the round-3 commit
+(mtime 12:51 −03):
+
+| Box (SHONEN.md) | Mark | Verifier attribution — or what remains |
+|---|---|---|
+| decision tables / checklists / cited sources | `[x]` | MADO-R3-4 (non-author executor lane) — `corpus/knowledge/executor-test-sufficiency.md`; SKILL sha `ef4c29e3…` frozen at the round-3 commit |
+| e2e domain task executed and logged (`:7`) | `[~]` | what remains: the named non-author reviewer attribution. A reviewer seat re-ran the R3 pass from the notes — scratch `/tmp/w4-m4-1-repro/` (runs 16:21/16:24Z; corrected pass: 57-option check, 0 mismatches). Pack: the Reproduction package above — `config-health-report-r3.md` §11 item 4, `/tmp/mado-r3-2-probe/`, `/tmp/mado-r4-1-probe/repro-r3.sh`; re-run copy `/tmp/mado-r4-4-repro/` (16:07Z, 57/0) |
+| executable without oral context | `[x]` | MADO-R3-4 (same note; per-step sufficiency over steps 0–9) |
+| PROVINCE accuracy (`:11`) | `[~]` | what remains: the named non-author verifier's verdict. Audit note landed — `corpus/knowledge/province-accuracy-selfaudit.md` (17,190 B, sha `f81f19db…`; self-audit explicitly labeled, claim census 15/15 `[~]`, its §7 is the closure handoff). Pack: `PROVINCE.md` (18 L, sha `7aad7b86…`) + audit scratch `/tmp/w4-m4-3/*.log`; the round-4 verifier seat's poll found the note at 16:26Z (`/tmp/w4-ver-m4-scratch/poll.log`) |
+
+Rules (`plans/round-4.plan.md`): self-attestation does not count — only an
+integrator-dispatched, independent seat closes a box; the round-4 measure is
+2 named verifier attributions in `SHONEN.md` with evidence pointers. Anti-claim:
+a non-reproduction or a province violation keeps the box open and says why.
+This SKILL pins the verifier inputs; the marks themselves land in `SHONEN.md`.

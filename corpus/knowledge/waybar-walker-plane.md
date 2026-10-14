@@ -408,3 +408,68 @@ judgment items recorded with their measured pairs.
   Diffs vs stock reproduce §6 items 1-6, with one addition to item 6:
   `config.jsonc` also drops one stock blank line (stock `:56` → local `:68`)
   — no behaviour change.
+
+## Errata (round 4) — appended 2026-10-14 (ERR-M; applies MADO-R3-1 §8)
+
+Append-only block; nothing above this line is edited. Sources: the 7 divergence
+candidates recorded in `waybar-walker-semantics.md` §8 (round 3), applied by the
+round-4 errata sweep, plus one provenance corrigendum (R4-E8). Re-measured
+read-only 2026-10-14 16:20–16:25 UTC; scratch `/tmp/w4-err-m-sweep/`. Live
+values are point samples: the compositor session was replaced at ~16:11:06–07
+UTC (new Hyprland PID 1203316, `hyprctl -j instances` `time` 1791994267 =
+16:11:07 UTC; waybar now PID 1203352, mako 1203350) — round-1 PIDs (1707 etc.)
+no longer resolve.
+
+- **R4-E1 (addition — `custom/voxtype`; MADO-R3-1 §8.1).** The module is
+  configured (`config.jsonc:16`, `:218-229`; `exec` = `omarchy-voxtype-status`)
+  but `voxtype` is not installed — `command -v voxtype` → rc=1 — so the
+  producer's else-branch payload `{"alt": "", "tooltip": ""}` renders the
+  module invisible (**RUN**, measured by R3-1; not re-run here). Hazard kept:
+  line 5 of `~/.local/share/omarchy/bin/omarchy-voxtype-status` is
+  `trap 'kill 0' EXIT` — it SIGTERMs its own process group; R3-1 measured a
+  direct invocation killing the caller (exit 143) and contained its re-run
+  under `setsid`. Script bytes re-read; trap line present; producer
+  deliberately not executed.
+- **R4-E2 (addition — `battery`; §8.2).** No battery device on this host:
+  `/sys/class/power_supply/` → 0 entries (re-measured), so the capacity source
+  is absent and the right-click script would emit blanks; `waybar-battery(5)`
+  documents no no-device rendering ⇒ live value stays **UNK**.
+- **R4-E3 (correction — walker `[columns]` comment; §8.3).** Local
+  `~/.config/walker/config.toml:14` says `symbols = 1 # providers to be
+  queried by default`; that role belongs to `[providers] default` (local
+  `:16-21`; packaged `/etc/xdg/walker/config.toml:53-58`, whose own comment
+  reads "providers to be queried by default"). `[columns] symbols` is the
+  provider grid column count — packaged `[columns] "symbols" = 3`
+  (`/etc/xdg/walker/config.toml:31-32`). The user file's inline comment is
+  wrong; semantics are R3-1 §6.3.
+- **R4-E4 (version-pin caveat; §8.4).** Omarchy carries two pins that must be
+  named: `omarchy version` → `3.8.3`, while the checkout's
+  `git -C ~/.local/share/omarchy describe --tags` → `v3.8.4` (branch `master`;
+  clean — `status --porcelain` empty). Both re-measured.
+- **R4-E5 (contradiction — `pkill -RTMIN+N`; §8.5).** Re-measured, contained,
+  against a scratch process: a copy of `/usr/bin/sleep` named `wsig` died to
+  `pkill -x -RTMIN+11 wsig` → pkill rc=0, wait status 173 (= 128+45 =
+  SIGRTMIN+11) under **procps-ng 4.0.7** (`pkill --version`). This
+  contradicts the docstring claim in `~/.local/bin/ai-usage:150-156` that
+  "`pkill -RTMIN+N` is not a signal procps-ng accepts"; R3-1's `caught=45`
+  result reproduces, and the round-1 producer list stands as recorded.
+- **R4-E6 (addition — tray live state; §8.6).** `busctl --user get-property
+  fr.arouillard.waybar /StatusNotifierWatcher org.kde.StatusNotifierWatcher
+  RegisteredStatusNotifierItems` → `as 0`; `ProtocolVersion` → `i 0`; the bus
+  name is `fr.arouillard.waybar` (`busctl --user list`). The drawer is empty
+  by data, not by bug. (The double-r spelling `fr.arrouillard…` carried in
+  round-3 SKILL.md is a typo; the worktree's round-4 SKILL edit reads
+  single-r.)
+- **R4-E7 (addition — signal offset is self-read; §8.7).** `ai-usage` does not
+  assume offset 11: `waybar_signal()` regex-reads the `signal` value out of
+  `~/.config/waybar/config.jsonc` (`~/.local/bin/ai-usage:127-148`; range
+  guard `11 <= sig < 31`, fallback 11). Re-read; script path is
+  `~/.local/bin/ai-usage`. Consequence stands: changing the config number
+  keeps clicks working; changing it with a stale cache does not.
+- **R4-E8 (corrigendum-of-corrigendum — mako 50 B provenance).** R2-E1 above
+  attributed the round-1 "50 B" cell to a "transcription error"; the measured
+  provenance (MADO-R3-2 §3.1, re-measured here) is: `~/.config/mako/config`
+  is a **symlink** → `~/.config/omarchy/current/theme/mako.ini`, and "50" was
+  the symlink's own `ls` size string — the two historical numbers measure
+  different objects. The corrected content cell (5 L / 119 B, sha
+  `95bf0c86c955cc81…`) stands as written.

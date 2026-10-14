@@ -291,3 +291,4 @@
   PROVINCE-accuracy box can move `[~]` → `[x]`; all four SHONEN boxes
   now carry marks — promotion itself stays the operator/gate decision
   per PROTOCOL.
+- 2026-10-14 — round 4 (training r3): idle/lock plane (355 L); box-3 CLOSED (VER-M3: config-health report reproduces); box-4 stays [~] (VER-M4: §8 re-run needed per the named verifier); reproduction package for non-author re-runs. Axis moved: depth + calibration. Verifiers: VER-M3 | VER-M4. 32-lane wave (27+1+4 after an alibaba filter failure rerouted 4 lanes to hyper — recorded).

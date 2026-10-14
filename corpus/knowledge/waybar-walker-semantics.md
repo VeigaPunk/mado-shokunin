@@ -454,3 +454,10 @@ Recorded here as findings; the errata block proper lives in
 
 _None yet. New entries append below this line; earlier text is never edited —
 a correction is a new block citing the block it corrects._
+
+- **E1 (pointer — §8 candidates applied; ERR-M, 2026-10-14).** All 7
+  divergence candidates recorded in §8 were applied to the round-1 note's
+  append-only errata as `waybar-walker-plane.md` "Errata (round 4)" items
+  R4-E1–R4-E7 by the round-4 errata sweep (each re-measured read-only
+  16:20–16:25 UTC; scratch `/tmp/w4-err-m-sweep/`). Nothing in this note is
+  corrected by the application; §8 remains the finding record.

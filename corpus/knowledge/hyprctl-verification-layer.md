@@ -279,3 +279,25 @@ anchors as in MADO-1 §2–9. Never send `keyword`, `dispatch`, `reload`, `setpr
    unset (orphan `envs.conf`, §6).
 5. `hyprctl -j monitors | jq '.[0].refreshRate'` → `99.997` vs declared `100`
    (§4) — the one numeric delta in the probe, classed as nominal rounding.
+
+## Errata (round 4) — appended 2026-10-14 (ERR-M)
+
+Append-only block; §9's entries above stand unedited. Written by the round-4
+errata sweep; read-only probes 2026-10-14 16:20–16:25 UTC (scratch
+`/tmp/w4-err-m-sweep/`). Context: the compositor instance was replaced at
+~16:11:06–07 UTC; live values below are from the current instance (exactly one
+— `hyprctl -j instances`).
+
+- **E2 (closure).** §9's MADO-1 candidate (orphan `envs.conf` omitted from
+  MADO-1 §4's unsourced list) was applied in round 2 as MADO-1's R2-E1 block
+  (`hyprland-config-plane.md`, "Errata (round 2)" R2-E1, MADO-R2-3). The
+  "for the integrator or next round" line is superseded by that application;
+  record closed.
+- **E3 (record correction — F8, forwarded by MADO-R3-2).** §1's instances row
+  records "its `wlSocket` field is `null`" — **does not reproduce** on 0.56.2
+  and is corrected: the entry's keys are exactly `instance`, `pid`, `time`,
+  `wl_socket` (no camelCase `wlSocket` key at all), with `wl_socket` =
+  `"wayland-1"` (string; re-measured; `pid` 1203316, `time` 1791994267 =
+  16:11:07 UTC). §10 U7 ("Why `instances` reports `wlSocket: null`") is
+  superseded by this measurement. Forwarded via `config-health-report-r3.md`
+  §6 F8 / §9; applied here by the sweep as its E3.
