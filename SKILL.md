@@ -517,3 +517,194 @@ Refreshed pointers (supersede the `:443` row's v1 numbers, 17,190 B / sha
 unchanged (18 L, `7aad7b86…`); box-4 evidence pack = verdict sha + self-audit
 v4 sha + M5-1 scratch `/tmp/w5-mado-m5-1/` (ephemeral — hashes fold into the
 record).
+
+## Round-6 — the gate proven to fail, and watch-arm usage (append, M6-4)
+
+Appended 2026-10-14 18:05Z, at the close of a 30-min poll for M6-1 (its note
+landed 17:59:18Z). Round-6 plan (`plans/round-6.plan.md`, 53 L, sha
+`00d4072821cbb15e…`) orders one operability move in three stages: (a) prove the
+round-5 gate can fail, then let the proven gate carry (b) the omarchy freshness
+arm and (c) the remaining planes' live surface. Measured outcome: (a) landed as
+a **selftest hardening** — no declared plane added, no verify-path edit; (b)
+and (c) landed as **notes** (one paste-ready arm spec, one census), not as gate
+rows. This lane's only write is this file; scratch `/tmp/w6-mado-m6-4/` (logs
+named inline); the substrate stayed read-only.
+
+### The gate was made to fail — mutation record (stage a)
+
+Source: `corpus/knowledge/gate-mutation-proof.md` (167 L, 10,693 B, sha
+`716836ca1bf3484a…`; M6-1). Harness: `tameshi-shokunin/tools/mutate-and-run.sh`,
+consumed read-only; its case note is `tameshi-shokunin/corpus/knowledge/
+mutation-case-mado-verify.md` (323 L, 24,534 B, sha `f2d53d49…`). Run shape
+(both lanes, and this lane's four re-runs):
+
+    tameshi-shokunin/tools/mutate-and-run.sh --target mado-shokunin/tools/mado-verify.sh \
+      --defects <spec> --suite 'bash "$MUTANT" --selftest' --workdir <scratch>
+
+Per defect: KILLED = suite exit ≠ 0 · SURVIVED = suite exit 0 · INCONCLUSIVE =
+timeout / suite not runnable. The control run comes first — a red control
+refuses the sweep (exit 2) — and `MUTATE_RESTORE: OK` re-hashes the target, so
+a sweep never leaves the gate written.
+
+Why the suite really exercises the mutant (measured; it retires the gap the
+plan anticipated): the harness copies the target and runs
+`bash "$MUTANT" --selftest`; every sub-run inside the selftest re-invokes `$0`,
+which *is* the mutant copy — a killed mutant's failure line
+(`A: CLEAN verdict (missing: MADO_VERIFY: CLEAN)`) can only have come from the
+mutant. No `--target PATH` option on the selftest is needed.
+
+Identity re-pin (supersedes `:487-488` and `:480`):
+
+| | round-5 gate (before) | round-6 gate (landed) |
+|---|---|---|
+| lines / bytes | 1,098 / 45,334 | 1,186 / 50,126 |
+| sha256 | `d7edaab4bf108625…` | `c4c1afb75dd1c8aa…` |
+| selftest | `28/28` | `53/53` (rc 0, ≈1.1 s) |
+| diff vs previous | — | +88/−0, all inside `selftest()` (M6-1 §Pins) |
+
+Kill grids — every run below was reproduced independently by this lane,
+defect-for-defect (control GREEN, `MUTATE_RESTORE: OK`, zero INCONCLUSIVE):
+
+| Spec (scratch, ephemeral) | Defects | Before | After |
+|---|---|---|---|
+| tameshi clause spec `c7ee75b9…` | 10 | 4 KILLED / 6 SURVIVED (40%) | **10 KILLED / 0 (100%)** |
+| M6-1 clause sweep `122df4ad…` (v1) | 15 | 8 / 7 (53%) | 11 / 4 (73%) |
+| M6-1 extra-probe sweep `700dece9…` (v2: live-branch verdict token, skip-reason strings, `--root=DIR` form, env renames, version string, counts line) | 9 | — | 3 / 6 (33%) |
+
+The hardening (all additions inside `selftest()`; new helpers `st_row_detail`,
+`st_counts_agree`) adds scenarios **E** (no `python3` on PATH → the reader
+degradation arms must read UNKNOWN), **F** (a failing selftest must exit 2; the
+child runs with `MADO_SELFTEST_NESTED=1` so the probe cannot recurse), **H**
+(an undeclared 18th `source =` line must flip the include census to FAIL),
+**I** (a PATH-stub `sha256sum` makes the boundary hashes differ mid-run → the
+boundary proof must FAIL), plus the skipped-live row (`live.plane SKIP`), a
+`sha_pin` detail check, and counts-line agreement in A/B/C/E/H/I.
+
+Residual survivors at the landed revision — findings, recorded, not smoothed:
+
+| Survivor | Clause | Why it survives |
+|---|---|---|
+| `row_from_rc` rc-6 arm | UNKNOWN-never-CLEAN | dead code — nothing in the gate exits 6, so `6) … UNKNOWN → PASS` is an equivalent edit under any black-box suite |
+| `--root` with no value | usage exit map (2) | no assertion on that usage path |
+| bad `MADO_VERIFY_LIVE` | usage exit map (2) | no assertion on that usage path (the swept exit channel D5 *is* covered) |
+| failing `--selftest` → 0 | failing-selftest exit map | exit-flatten family: the suite runs it **red** (`MADO_SELFTEST: FAILED — 52 passed, 1 failed` · `F: failing selftest exits 2 (got '0' want '2')`) but the mutant's own exit is 0, and KILLED is judged by exit only — a harness boundary (M6-1 §3), not a suite gap |
+
+Three reading rules that follow:
+
+1. An exit-code-only kill criterion is blind to the exit-flatten family — read
+   the assertion tail whenever the mutation can touch the suite's own failure
+   path.
+2. A surviving mutant says "no test notices this clause", never "the clause is
+   broken"; the clause stands until a mutant proves otherwise, and nothing
+   ships wider without a covering mutant.
+3. Mutation-test the copy, never the committed path:
+   `--suite 'bash "$MUTANT" --selftest'`. The gate's own verdicts stay
+   `bash tools/mado-verify.sh` (or `--no-live` / `--selftest`).
+
+Still unexercised (open): the live-plane body — the live plane declares 51
+`row hypr-live` sites (`:673-1111`) and the suite asserts only its guard row
+(`live.plane`, 4 sites). A PATH-stub `hyprctl` scenario is the highest-yield
+remainder (M6-1 §3; tameshi §8 rec #1) — which is why the v2 probe grid above
+stays at 33%.
+
+### Watch arm 1 — omarchy freshness (stage b): usage
+
+Status **spec, not landed**: `corpus/knowledge/omarchy-drift-watch.md` (287 L,
+18,714 B, sha `49f5a9a14776d83d…`; M6-2) carries the measurement plus a
+paste-ready plane (`omarchy`, row namespace `omarchy.*`; gate census 6 → 7
+plane ids). It did not land because M6-2's write scope was the note and landing
+rows moves the mutation-proof target sha (note §5) — so the gate still declares
+its six planes. Until the rows land, run the watch by hand from the pin table.
+
+Baseline pins (re-measured at dispatch 17:40-17:42Z, read-only; re-anchoring is
+an append-only erratum event, never a silent edit):
+
+| Pin | Probe (read-only) | Value 2026-10-14 |
+|---|---|---|
+| P1 release marker | `omarchy version` | `3.8.3` |
+| P2 version file | `cat ~/.local/share/omarchy/version` | `3.8.3\n`, 6 B, == `HEAD:version` blob |
+| P3 checkout | `git -C ~/.local/share/omarchy describe --tags --exact-match` · `rev-parse HEAD` | tag `v3.8.4` exactly at HEAD `8fcc9d60…` (branch `master`; 4,363 commits / 1,237 tracked / 63 tags) |
+| P4 skill leaf | `sha256sum` of the resolved link (`~/.agents/skills/omarchy/SKILL.md`) | 392 L / 14,908 B / `becd149e…`; == `HEAD:default/omarchy-skill/SKILL.md` |
+| P5 link topology | `ls -la ~/.agents/skills/` | `omarchy -> ~/.local/share/omarchy/default/omarchy-skill` (+3 sibling links, same target) |
+| P6 theme | `omarchy theme current` | `Matte Black` (NOTE-level — D-1 below) |
+
+Two corrections this arm lands on standing text:
+
+- **Dual pin resolved** (`:20-24`): the 3.8.3-vs-v3.8.4 disagreement is
+  upstream-internal — the release tag sits exactly at HEAD, while the `version`
+  file at that commit says `3.8.3` (worktree vs `HEAD:version` → IDENTICAL).
+  Not local dirt, not an install fault: keep naming the source, and read the
+  pair as a baseline relation rather than a contradiction.
+- **The installed skill is a symlink into the read-only checkout** (`:357`):
+  "installed vs upstream" content drift is structurally impossible while the
+  link holds, so the freshness surface is *link topology* + *checkout motion*.
+  Editing anything under `~/.agents/skills/omarchy/` edits the checkout — the
+  edit the omarchy skill itself forbids (skill:41, :49); the arm's
+  `omarchy.skill.vs_head` row detects it without ever running `git status`.
+
+Drift classes and verdict mapping: C1 release markers · C2 checkout motion ·
+C3 link topology · C4 skill content → verdict-bearing (**any MOVED → DIVERGED
+naming the pin**); C5 docs register · C6 surface counters · C8 install-time
+ordering → record-level NOTEs; C7 probe unavailable → **UNKNOWN, never CLEAN**.
+Verbs stay read-only (`version`, `theme current`, `commands --json --all`,
+`git describe/rev-parse/show/log/ls-tree`, `stat`, `sha256sum`, `readlink`).
+Never `git status` on the checkout (it refreshes the index stat cache —
+`province-accuracy-selfaudit.md` §3.5), never `git fetch`, never a mutating
+verb (`theme set`, `bg next`, `restart *`, `refresh *`, `install *`, `setup *`,
+`update`). Register trap measured: `omarchy commands --json` under-reports (267
+default vs 282 with `--all`; `upload log` is `hidden=true`) — use `--all` or
+resolve by binary.
+
+Hand-forward: **D-1** — the plan lists `omarchy theme current` among the pins,
+but the theme is operator-owned mutable state that the gate already treats as a
+NOTE (`:1104`, `:1108` at the landed revision); the spec keeps it NOTE-level
+while printing HELD|MOVED, so a routine theme change cannot turn the freshness
+gate permanently red (literal plan reading = a one-line `NOTE → FAIL`). Landing
+conditions for the rows: the four spec scenarios (clean / version MOVED / live
+verb unavailable → UNKNOWN / link replaced by a real dir with equal sha) plus
+widening the selftest helper plane regexes (`:352`, `:356`, and the round-6
+`st_counts_agree` twins at `:371-375`), which today match only the six current
+plane ids — new `omarchy.*` rows would otherwise go uncounted.
+
+### Watch arm 2 — remaining planes' live surface (stage c)
+
+`corpus/knowledge/remaining-planes-census.md` (333 L by `wc -l`, 20,512 B, sha
+`710e3e289643f2ff…`; M6-3) — census rows, no verdict token (that vocabulary
+belongs to the gate). Headlines: the theme plane is 24 generated files + 4
+backgrounds under `~/.config/omarchy/current/theme/`; consumers measured — the
+wallpaper symlink feeds a live `swaybg` (`-m fill`, layer ns `wallpaper`),
+mako's config is a symlink into the theme, waybar/walker/swayosd stylesheets
+all `@import` the current theme, alacritty's `general.import` chain covers 3
+live windows (alacritty 0.17.0-1; foot/kitty/ghostty absent); session SDDM →
+uwsm → Hyprland on `wayland-1` with portals `-hyprland` 1.4.1-2 + `-gtk` live;
+hyprsunset absent with its file pin stable; hypridle absent again (F1-class).
+Idle transitions stay **UNKNOWN by constraint** (MADO-R4-2) — not widened. The
+note adds no gate rows; wiring them in is the (a)-gated extension. Its erratum
+E2 measured a transient worth keeping: mako's `notifications` layer surface is
+not permanently mapped (two point samples disagree) — read those rows as
+probe-window statements, not steady state.
+
+### Census and verdicts at this append
+
+| | Before (round 5) | After (round 6) |
+|---|---|---|
+| declared planes / row sites | 6 · 106 `row` + 6 `row_from_rc` | unchanged (hardening is selftest-only) |
+| selftest | `28/28` | `53/53` |
+| live verdict (read-only) | CLEAN (35 pass, 4 notes) | CLEAN (35 pass, 0 fail, 0 unknown, 4 notes), rc 0 |
+| file-plane verdict | CLEAN (17 pass, 2 notes; live skipped) | same, rc 0; `boundary.readonly` PASS, combined sha `bb2639d9a980…` |
+
+Both verdicts were re-run by this lane against the landed revision at append
+time (`/tmp/w6-mado-m6-4/gate-after-liverun.log`, `gate-after-nolive.log`), and
+the gate's sha256 was identical before and after every sweep.
+
+### Open items
+
+- The residual survivors above and the unexercised live-plane body — the next
+  hardening pass (the round-7 plan already names the gate's regression mode as
+  its candidate).
+- Watch arm 1 unlanded (spec + pins ready, D-1 open); watch arm 2 census-only.
+  Neither may ship as gate rows without a mutant that kills the clause.
+- `LOG.md` entry for round 6 is owed by the scribe/finalizer lane
+  (AGENTS.md:3); this lane's write scope was this file only.
+- Cosmetic, unchanged by design: the hardened gate still self-labels
+  "v1 (round 5 / M5-2)" in `VERSION_STR` and its header (M6-1 §3).

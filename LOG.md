@@ -293,3 +293,4 @@
   per PROTOCOL.
 - 2026-10-14 — round 4 (training r3): idle/lock plane (355 L); box-3 CLOSED (VER-M3: config-health report reproduces); box-4 stays [~] (VER-M4: §8 re-run needed per the named verifier); reproduction package for non-author re-runs. Axis moved: depth + calibration. Verifiers: VER-M3 | VER-M4. 32-lane wave (27+1+4 after an alibaba filter failure rerouted 4 lanes to hyper — recorded).
 - 2026-10-14 — round 5 (training r4): first gate mado-verify.sh (selftest + live verdict); walker-deep note; SHONEN box 4 CLOSED by VER-M4B — PROBATION COMPLETE 4/4. Axis: operability + calibration. Verifiers: VER-M4B.
+- 2026-10-14 — round 6 (training r5): gate proven to fail then hardened: selftest 28->53, the hardened gate kills 10/10 of tameshi's mutants; omarchy drift watch + remaining-planes census landed. Axis: operability. Verifiers: VER-M6 | AUD-M6.

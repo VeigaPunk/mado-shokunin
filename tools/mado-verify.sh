@@ -359,6 +359,22 @@ selftest() {
       st_bad "$4 (want row $2 $3)"
     fi
   }
+  st_row_detail() { # out id status substr desc
+    if printf '%s\n' "$1" | awk -v i="$2" -v s="$3" -v t="$4" '$2==i && $3==s && index($0,t) {c++} END {exit (c+0>0)?0:1}'; then
+      st_ok
+    else
+      st_bad "$5 (want row $2 $3 containing '$4')"
+    fi
+  }
+  st_counts_agree() { # out desc — the report counts must equal the row table
+    local np nf nu ns nn
+    np=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="PASS" {c++} END {print c+0}')
+    nf=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="FAIL" {c++} END {print c+0}')
+    nu=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="UNKNOWN" {c++} END {print c+0}')
+    ns=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="SKIP" {c++} END {print c+0}')
+    nn=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="NOTE" {c++} END {print c+0}')
+    st_has "$2" "$1" "counts: pass=$np fail=$nf unknown=$nu skip=$ns note=$nn"
+  }
 
   build_fixture "$A"
 
@@ -378,6 +394,12 @@ selftest() {
   st_row_has "$out" boundary.readonly PASS "A"
   st_has  "A: scope names skipped live layer" "$out" "live layer skipped"
   st_eq   "A: fixture unchanged (read-only proof)" "$before" "$after"
+  st_row_has "$out" live.plane SKIP "A (live layer not executed)"
+  local shaf
+  shaf=$(sha256sum "$A/.config/hypr/hyprland.conf" | cut -c1-12)
+  st_row_detail "$out" hypr.file.sha_pin NOTE "sha256 ${shaf}…" "A: sha pin reports the measured prefix"
+  st_row_detail "$out" hypr.file.sha_pin NOTE "drifted from round-1 pin 4f52854a3c14" "A: sha pin names the round-1 pin (fixture cannot match it)"
+  st_counts_agree "$out" "A: counts agree with rows"
 
   # --- scenario B: broken fixture → DIVERGED, exit 1, named FAIL rows ------
   mkdir -p "$B"
@@ -395,6 +417,7 @@ selftest() {
   st_row_has "$out" walker.config FAIL "B"
   st_row_has "$out" hypr.root.include_graph PASS "B (isolation)"
   st_not_has "B: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$out" "B: counts agree with rows"
 
   # --- scenario C: live requested, no hyprctl → UNKNOWN blocks CLEAN -------
   mkdir -p "$SANDBOX"
@@ -410,6 +433,7 @@ selftest() {
   st_has  "C: reason names unverifiable" "$out" "unverified"
   st_not_has "C: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
   st_row_has "$out" hypr.root.include_graph PASS "C (file plane still judged)"
+  st_counts_agree "$out" "C: counts agree with rows"
 
   # --- scenario D: usage contract ------------------------------------------
   out=$("$BASH_BIN" "$0" --help 2>&1); rc=$?
@@ -417,6 +441,70 @@ selftest() {
   st_has "D: --help prints usage" "$out" "usage: mado-verify.sh"
   out=$("$BASH_BIN" "$0" --bogus 2>&1); rc=$?
   st_eq  "D: bad arg exit 2" 2 "$rc"
+
+  # --- scenario E: python3 absent → degradation arms must read UNKNOWN ------
+  local SANDBOX_NPY="$T/nopy"
+  mkdir -p "$SANDBOX_NPY"
+  for c in bash grep sed awk cut head tail tr sort uniq wc find mktemp sha256sum \
+           ls cat rm cp mv mkdir printf dirname basename; do
+    if have "$c"; then ln -sf "$(command -v "$c")" "$SANDBOX_NPY/$c"; fi
+  done
+  out=$(env PATH="$SANDBOX_NPY" "$BASH_BIN" "$0" --root "$A" --no-live 2>&1); rc=$?
+  st_eq  "E: exit 1 (UNKNOWN blocks CLEAN)" 1 "$rc"
+  st_has "E: DIVERGED verdict" "$out" "MADO_VERIFY: DIVERGED"
+  st_row_has "$out" waybar.config.parse UNKNOWN "E (reader fallback)"
+  st_row_has "$out" walker.config UNKNOWN "E (reader fallback)"
+  st_row_has "$out" term.alacritty.toml UNKNOWN "E (reader fallback)"
+  st_not_has "E: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$out" "E: counts agree with rows"
+
+  # --- scenario F: a failing suite must exit 2 (failing-selftest exit map) --
+  # the child carries the marker so this probe cannot recurse.
+  if [ "${MADO_SELFTEST_NESTED:-0}" != 1 ]; then
+    local SANDBOX_NOSHA="$T/nosha" cs csr csp
+    mkdir -p "$SANDBOX_NOSHA"
+    for c in bash env grep sed awk cut head tail tr sort uniq wc find mktemp \
+             ls cat rm cp mv mkdir printf dirname basename ln chmod; do
+      if have "$c"; then ln -sf "$(command -v "$c")" "$SANDBOX_NOSHA/$c"; fi
+    done
+    cs=$(env MADO_SELFTEST_NESTED=1 PATH="$SANDBOX_NOSHA" "$BASH_BIN" "$0" --selftest 2>&1); csr=$?
+    st_eq  "F: failing selftest exits 2" 2 "$csr"
+    st_has "F: failing selftest reports FAILED" "$cs" "MADO_SELFTEST: FAILED"
+    csp=$(printf '%s\n' "$cs" | sed -n 's/^fixtures kept: //p' | tail -1)
+    [ -n "$csp" ] && rm -rf "$csp"
+  fi
+
+  # --- scenario H: an undeclared extra source flips the census to FAIL ------
+  local EXTRA="$T/extra"
+  mkdir -p "$EXTRA"
+  cp -a "$A/." "$EXTRA/"
+  printf 'source = ~/.config/hypr/extra.conf\n' >>"$EXTRA/.config/hypr/hyprland.conf"
+  out=$("$BASH_BIN" "$0" --root "$EXTRA" --no-live 2>&1); rc=$?
+  st_eq  "H: exit 1 (undeclared source)" 1 "$rc"
+  st_has "H: DIVERGED verdict" "$out" "MADO_VERIFY: DIVERGED"
+  st_row_has "$out" hypr.root.include_graph FAIL "H (exact census, no tolerance)"
+  st_not_has "H: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$out" "H: counts agree with rows"
+
+  # --- scenario I: a plane change mid-run must FAIL the boundary proof ------
+  local MID="$T/midrun" REAL_SHA
+  REAL_SHA=$(command -v sha256sum)
+  mkdir -p "$MID"
+  cat >"$MID/sha256sum" <<IEOF
+#!/bin/sh
+if [ "\$#" -gt 0 ]; then exec "$REAL_SHA" "\$@"; fi
+n=\$(cat "$MID/sha-calls" 2>/dev/null || echo 0)
+n=\$((n + 1)); printf '%s' "\$n" >"$MID/sha-calls"
+h=\$("$REAL_SHA" | cut -d' ' -f1)
+printf '%s %s\\n' "\${h}\${n}" stdin-counter
+IEOF
+  chmod +x "$MID/sha256sum"
+  out=$(env PATH="$MID:$PATH" "$BASH_BIN" "$0" --root "$A" --no-live 2>&1); rc=$?
+  st_eq  "I: exit 1 (boundary drift detected)" 1 "$rc"
+  st_has "I: DIVERGED verdict" "$out" "MADO_VERIFY: DIVERGED"
+  st_row_has "$out" boundary.readonly FAIL "I (safety row, FAIL direction)"
+  st_not_has "I: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$out" "I: counts agree with rows"
 
   if [ "$n_fail" = 0 ]; then
     rm -rf "$T"
