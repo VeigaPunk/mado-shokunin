@@ -52,6 +52,11 @@
 #   pins    — Hyprland 0.56.2 commit efb5099…, waybar v0.15.0, walker 2.17.0
 #             (SKILL.md "Version pins"): a changed pin is a FAIL — the claims
 #             must be re-verified, not silently reused.
+#   omarchy — freshness / version-drift watch (omarchy-drift-watch.md §2/§6):
+#             version cmd+file 3.8.3, git tag v3.8.4 at HEAD 8fcc9d60…, skill
+#             link into the checkout, skill leaf sha becd149e…, worktree ==
+#             HEAD blob, command groups ⊇ the 11 skill groups. MOVED → FAIL
+#             naming the pin; theme/counters/docs are record-level NOTEs (D-1).
 #
 # Explicitly NOT verified here (no read surface; stays UNKNOWN, never guessed):
 # window-rule effects, dispatcher behaviour, module text, idle/lock
@@ -349,11 +354,11 @@ selftest() {
   st_not_has() { case "$2" in *"$3"*) st_bad "$1 (unexpected: $3)" ;; *) st_ok ;; esac; }
   st_rows() { # desc out status expected-count
     local n
-    n=$(printf '%s\n' "$2" | awk -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3==s {c++} END {print c+0}')
+    n=$(printf '%s\n' "$2" | awk -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3==s {c++} END {print c+0}')
     st_eq "$1" "$4" "$n"
   }
   st_row_has() { # out id status
-    if printf '%s\n' "$1" | awk -v i="$2" -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $2==i && $3==s {c++} END {exit (c+0>0)?0:1}'; then
+    if printf '%s\n' "$1" | awk -v i="$2" -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $2==i && $3==s {c++} END {exit (c+0>0)?0:1}'; then
       st_ok
     else
       st_bad "$4 (want row $2 $3)"
@@ -368,11 +373,11 @@ selftest() {
   }
   st_counts_agree() { # out desc — the report counts must equal the row table
     local np nf nu ns nn
-    np=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="PASS" {c++} END {print c+0}')
-    nf=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="FAIL" {c++} END {print c+0}')
-    nu=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="UNKNOWN" {c++} END {print c+0}')
-    ns=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="SKIP" {c++} END {print c+0}')
-    nn=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|gate) / && $3=="NOTE" {c++} END {print c+0}')
+    np=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="PASS" {c++} END {print c+0}')
+    nf=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="FAIL" {c++} END {print c+0}')
+    nu=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="UNKNOWN" {c++} END {print c+0}')
+    ns=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="SKIP" {c++} END {print c+0}')
+    nn=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="NOTE" {c++} END {print c+0}')
     st_has "$2" "$1" "counts: pass=$np fail=$nf unknown=$nu skip=$ns note=$nn"
   }
 
@@ -558,6 +563,187 @@ MADO_R7_STUB_EOF
   # <<< MADO-R7-SELFTEST-BLOCK <<<
   build_fixture "$A"
 
+  # >>> MADO-R8-OMARCHY-BLOCK >>>
+  # --- scenarios OM: the omarchy drift watch, hermetic (M6-2 note §2/§6) ---
+  # Plane `omarchy` (round 8 / M8-2). No substrate is read here: the fixture
+  # root carries the install files and `omarchy` / `git` are PATH stubs
+  # answering from canned values, so each row's decision logic is exercised
+  # without a real checkout or session. Named limitation: the skill-leaf sha
+  # pin is a preimage of the real file, so no fixture can carry it — OM1
+  # asserts the FAIL direction of that one row, and its PASS direction is
+  # covered by the live run only (reported in the round's evidence).
+  local OMB="$T/omarchy/bin" OMB2="$T/omarchy/bin-no-omarchy"
+  local OMR="$T/omarchy/root" om_out om_rc om_leafsha
+  mkdir -p "$OMB" "$OMR/.agents/skills" "$OMR/.config/omarchy/hooks/battery-low.d" \
+           "$OMR/.local/share/omarchy/default/omarchy-skill" "$OMR/.local/share/omarchy/.git"
+  printf '3.8.3\n' >"$OMR/.local/share/omarchy/version"
+  printf 'fixture skill leaf — deliberately not the pinned file\n' \
+    >"$OMR/.local/share/omarchy/default/omarchy-skill/SKILL.md"
+  ln -s "$OMR/.local/share/omarchy/default/omarchy-skill" "$OMR/.agents/skills/omarchy"
+  cp -a "$A/." "$OMR/" # the clean config plane: only omarchy rows can be red
+  om_leafsha=$(sha256sum "$OMR/.local/share/omarchy/default/omarchy-skill/SKILL.md" | cut -c1-12)
+  python3 - "$T/omarchy/cmds-ok.json" "$T/omarchy/cmds-missing.json" \
+    "$OMARCHY_SKILL_GROUPS" <<'MADO_R8_JSON_PY' 2>/dev/null || true
+import json, sys
+ok_path, miss_path, groups = sys.argv[1], sys.argv[2], sys.argv[3].split()
+rows = [{"route": "omarchy %s" % g, "binary": "omarchy-%s" % g, "group": g,
+         "name": g, "hidden": False, "routes": ["omarchy %s" % g]} for g in groups]
+json.dump({"ok": True, "commands": rows}, open(ok_path, "w"))
+json.dump({"ok": True, "commands": [r for r in rows if r["group"] not in ("pkg", "setup")]},
+          open(miss_path, "w"))
+MADO_R8_JSON_PY
+  cat >"$OMB/omarchy" <<'MADO_R8_OM_STUB'
+#!/bin/bash
+# scenario-local stub of the omarchy CLI: answers the three read verbs the
+# drift rows use from canned values (STUB_OM_*), so no install is touched.
+case "${1:-}" in
+  version) printf '%s\n' "${STUB_OM_VERSION:-3.8.3}" ;;
+  theme) [ "${2:-}" = current ] || exit 64; printf '%s\n' "${STUB_OM_THEME:-Matte Black}" ;;
+  commands) cat "${STUB_OM_CMDS:-/dev/null}" ;;
+  *) printf 'stub omarchy: unhandled verb: %s\n' "$*" >&2; exit 64 ;;
+esac
+MADO_R8_OM_STUB
+  cat >"$OMB/git" <<'MADO_R8_GIT_STUB'
+#!/bin/bash
+# scenario-local stub of the three git read verbs the drift rows use. The
+# checkout path after -C is deliberately not read: the answers are canned.
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    describe) printf '%s\n' "${STUB_GIT_TAG:-v3.8.4}"; exit 0 ;;
+    rev-parse) printf '%s\n' "${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}"; exit 0 ;;
+    show) cat "${STUB_GIT_BLOB:-/dev/null}"; exit 0 ;;
+  esac
+  shift
+done
+exit 64
+MADO_R8_GIT_STUB
+  chmod +x "$OMB/omarchy" "$OMB/git"
+  for c in bash grep sed awk cut head tail tr sort uniq wc find mktemp sha256sum \
+           python3 ls cat rm cp mv mkdir printf dirname basename ln chmod readlink; do
+    if have "$c"; then ln -sf "$(command -v "$c")" "$OMB/$c"; fi
+  done
+  cp -a "$OMB" "$OMB2"; rm -f "$OMB2/omarchy"
+  local OM_LEAF="$OMR/.local/share/omarchy/default/omarchy-skill/SKILL.md" OM_CMDS="$T/omarchy/cmds-ok.json"
+
+  # --- OM1: fixture install + stubbed readers, live requested --------------
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_eq  "OM1: exit 1 — only the un-reproducible sha row can be red" 1 "$om_rc"
+  st_eq  "OM1: the plane emits all 11 rows" 11 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" {c++} END {print c+0}')"
+  st_row_has "$om_out" omarchy.version.file PASS "OM1 (P2 pin held)"
+  st_row_has "$om_out" omarchy.skill.link PASS "OM1 (link into the checkout)"
+  st_row_has "$om_out" omarchy.version.cmd PASS "OM1 (P1 pin held, stubbed reader)"
+  st_row_has "$om_out" omarchy.git.tag PASS "OM1 (P3 tag held)"
+  st_row_has "$om_out" omarchy.git.head PASS "OM1 (P3 HEAD held)"
+  st_row_has "$om_out" omarchy.skill.vs_head PASS "OM1 (same bytes both sides)"
+  st_row_has "$om_out" omarchy.cmd.groups PASS "OM1 (11 skill groups present)"
+  st_row_has "$om_out" omarchy.cmd.surface NOTE "OM1 (counter stays a NOTE)"
+  st_row_has "$om_out" omarchy.theme NOTE "OM1 (D-1: operator-owned)"
+  st_row_has "$om_out" omarchy.doc.drifts NOTE "OM1"
+  st_row_detail "$om_out" omarchy.skill.sha FAIL "$om_leafsha" \
+    "OM1: the sha row measures the fixture leaf"
+  st_row_detail "$om_out" omarchy.skill.sha FAIL "${OMARCHY_SKILL_SHA_PIN:0:12}" \
+    "OM1: ... and names the pin it cannot match"
+  st_eq  "OM1: exactly one omarchy FAIL" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_eq  "OM1: zero omarchy UNKNOWN" 0 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_has "OM1: the verdict names that one row" "$om_out" "first fail: omarchy.skill.sha"
+  st_row_has "$om_out" boundary.readonly PASS "OM1 (read-only proof holds with the plane running)"
+  st_row_has "$om_out" hypr.root.orchestrator PASS "OM1 (config plane unaffected)"
+  st_counts_agree "$om_out" "OM1: counts agree with rows"
+
+  # --- OM2: the same root, file plane only ---------------------------------
+  om_out=$(env PATH="$OMB" "$BASH_BIN" "$0" --root "$OMR" --no-live 2>&1); om_rc=$?
+  st_eq  "OM2: exit 1 — the sha row is a file row, live or not" 1 "$om_rc"
+  st_row_has "$om_out" omarchy.version.file PASS "OM2"
+  st_row_has "$om_out" omarchy.skill.link PASS "OM2"
+  st_row_detail "$om_out" omarchy.version.cmd SKIP "live layer skipped" \
+    "OM2: live rows name the skipped scope"
+  st_row_detail "$om_out" omarchy.git.tag SKIP "live layer skipped" "OM2"
+  st_row_detail "$om_out" omarchy.theme SKIP "live layer skipped" "OM2"
+  st_row_has "$om_out" omarchy.cmd.groups SKIP "OM2"
+  st_eq  "OM2: exactly one omarchy FAIL — the unreproducible sha row" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_eq  "OM2: zero omarchy UNKNOWN" 0 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_has "OM2: that FAIL is the sha row" "$om_out" "first fail: omarchy.skill.sha"
+  st_counts_agree "$om_out" "OM2: counts agree with rows"
+
+  # --- OM3: version file MOVED → FAIL naming the pin, DIVERGED -------------
+  local OMR3="$T/omarchy/root-moved"
+  cp -a "$OMR" "$OMR3"
+  rm -f "$OMR3/.agents/skills/omarchy"
+  ln -s "$OMR3/.local/share/omarchy/default/omarchy-skill" "$OMR3/.agents/skills/omarchy"
+  printf '3.8.4\n' >"$OMR3/.local/share/omarchy/version"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR3" 2>&1); om_rc=$?
+  st_eq  "OM3: exit 1" 1 "$om_rc"
+  st_has "OM3: DIVERGED verdict" "$om_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$om_out" omarchy.version.file FAIL "MOVED" "OM3: a moved version file reads MOVED"
+  st_row_detail "$om_out" omarchy.version.file FAIL "3.8.3" "OM3: ... naming the pin"
+  st_row_has "$om_out" omarchy.skill.link PASS "OM3 (the link is untouched)"
+  st_eq  "OM3: two omarchy FAILs (moved file + unreproducible sha)" 2 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM3: counts agree with rows"
+
+  # --- OM4: live verb unavailable → UNKNOWN, never CLEAN -------------------
+  om_out=$(env PATH="$OMB2" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.version.cmd UNKNOWN "OM4 (anti-claim: stub absent)"
+  st_row_has "$om_out" omarchy.cmd.groups UNKNOWN "OM4 (anti-claim)"
+  st_row_has "$om_out" omarchy.git.tag PASS "OM4 (git stub still on PATH)"
+  st_row_has "$om_out" omarchy.theme NOTE "OM4 (theme unread, still a NOTE)"
+  st_eq  "OM4: two omarchy UNKNOWNs, no silent pass" 2 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_not_has "OM4: no fake CLEAN" "$om_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$om_out" "OM4: counts agree with rows"
+
+  # --- OM5: link replaced by a real dir with identical bytes ---------------
+  local OMR5="$T/omarchy/root-copy"
+  cp -a "$OMR" "$OMR5"
+  rm -f "$OMR5/.agents/skills/omarchy"
+  mkdir -p "$OMR5/.agents/skills/omarchy"
+  cp "$OM_LEAF" "$OMR5/.agents/skills/omarchy/SKILL.md"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR5" 2>&1); om_rc=$?
+  st_row_detail "$om_out" omarchy.skill.link FAIL "MOVED" \
+    "OM5: a copy reads MOVED even with identical bytes"
+  st_row_detail "$om_out" omarchy.skill.link FAIL "real directory" "OM5: ... named as a copy, not a link"
+  st_row_detail "$om_out" omarchy.skill.sha FAIL "$om_leafsha" \
+    "OM5: the same bytes are still measured (sha detail unchanged)"
+  st_counts_agree "$om_out" "OM5: counts agree with rows"
+
+  # --- OM6: worktree edit vs HEAD blob (index-free dirty check) ------------
+  printf 'edited in the worktree\n' >"$T/omarchy/blob-edited"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$T/omarchy/blob-edited" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_detail "$om_out" omarchy.skill.vs_head FAIL "local edit" \
+    "OM6: a worktree edit is detected without git status"
+  st_row_has "$om_out" omarchy.version.cmd PASS "OM6 (the pin itself is held)"
+
+  # --- OM7: moved tag / HEAD / version verb -------------------------------
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_TAG=v3.9.0 STUB_GIT_HEAD=0000000000000000000000000000000000000000 \
+    STUB_OM_VERSION=9.9.9 MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_detail "$om_out" omarchy.git.tag FAIL "v3.8.4" "OM7: a moved tag names the pin"
+  st_row_detail "$om_out" omarchy.git.head FAIL "8fcc9d60" "OM7: a moved HEAD names the pin"
+  st_row_detail "$om_out" omarchy.version.cmd FAIL "3.8.3" "OM7: a moved version names the pin"
+  st_eq  "OM7: four omarchy FAILs (three moved pins + the sha row)" 4 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+
+  # --- OM8: a missing command group is named, the counter stays a NOTE -----
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$T/omarchy/cmds-missing.json" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_detail "$om_out" omarchy.cmd.groups FAIL "pkg,setup" \
+    "OM8: the missing groups are named"
+  st_row_detail "$om_out" omarchy.cmd.surface NOTE "MOVED" \
+    "OM8: the surface counter is a NOTE, never a verdict input"
+  st_not_has "OM8: no fake CLEAN" "$om_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$om_out" "OM8: counts agree with rows"
+  # <<< MADO-R8-OMARCHY-BLOCK <<<
+
   # --- scenario A: clean fixture → CLEAN, exit 0, substrate untouched ------
   local before after out rc
   before=$(find "$A" -type f | sort | xargs sha256sum | sha256sum)
@@ -685,6 +871,170 @@ IEOF
   st_row_has "$out" boundary.readonly FAIL "I (safety row, FAIL direction)"
   st_not_has "I: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
   st_counts_agree "$out" "I: counts agree with rows"
+  # >>> MADO-R8-BLOCK >>>
+  # --- scenario S: snapshot + snapshot-diff freshness receipts (M8-3) ------
+  # Hermetic: snapshots come from the fixture roots only (the sandboxed live
+  # case has no hyprctl, so no substrate is read); the diff reads only files.
+  local SNAP="$T/snap" S1 S2 S3 S4 S5 S6 sfix ssha
+  mkdir -p "$SNAP"
+  S1="$SNAP/clean.snap"; S2="$SNAP/broken.snap"; S3="$SNAP/live.snap"
+  S4="$SNAP/created.snap"; S5="$SNAP/resha.snap"; S6="$SNAP/tampered.snap"
+
+  sfix=$(find "$A" -type f | sort | xargs sha256sum | sha256sum)
+  out=$("$BASH_BIN" "$0" --root "$A" --no-live --snapshot "$S1" 2>&1); rc=$?
+  st_eq   "S1: the receipt run keeps the verdict exit (CLEAN=0)" 0 "$rc"
+  st_has  "S1: the child verdict still prints" "$out" "MADO_VERIFY: CLEAN"
+  st_has  "S1: the receipt names the file" "$out" "MADO_SNAPSHOT: WRITTEN $S1"
+  st_eq   "S1: the verified plane is untouched (read-only proof)" "$sfix" \
+    "$(find "$A" -type f | sort | xargs sha256sum | sha256sum)"
+  if [ -f "$S1" ]; then st_ok; else st_bad "S1: no snapshot written at $S1"; fi
+  st_eq   "S1: v1 magic on the first line" "# mado-verify snapshot v1" "$(head -1 "$S1")"
+  st_eq   "S1: scope recorded" "file-plane" "$(sed -n 's/^# scope: //p' "$S1")"
+  st_eq   "S1: '# rows:' agrees with the row lines" \
+    "$(sed -n 's/^# rows: //p' "$S1")" "$(grep -c '^row|' "$S1")"
+  st_has  "S1: rows are stored pipe-delimited" "$(cat "$S1")" \
+    "row|hypr|hypr.root.orchestrator|PASS|0 settings lines (pure orchestrator)"
+  st_eq   "S1: the stored PASS count equals the stored PASS rows" \
+    "$(sed -n 's/^# counts: pass=\([0-9]*\).*/\1/p' "$S1")" "$(grep -c '|PASS|' "$S1")"
+
+  out=$("$BASH_BIN" "$0" --root "$B" --no-live --snapshot "$S2" 2>&1); rc=$?
+  st_eq  "S2: a DIVERGED run still exits 1" 1 "$rc"
+  st_has "S2: the DIVERGED verdict prints" "$out" "MADO_VERIFY: DIVERGED"
+  st_has "S2: the red run also gets a receipt" "$out" "MADO_SNAPSHOT: WRITTEN $S2"
+
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S2" 2>&1); rc=$?
+  st_eq   "S3: a row-class move exits 1" 1 "$rc"
+  st_has  "S3: verdict is CHANGED" "$out" "MADO_DIFF: CHANGED"
+  st_has  "S3: the orchestrator regression is named" "$out" \
+    "DIFF_ROW regressed hypr.root.orchestrator: PASS→FAIL"
+  st_has  "S3: the walker regression is named" "$out" \
+    "DIFF_ROW regressed walker.config: PASS→FAIL"
+  st_has  "S3: a same-status detail move is classified detail" "$out" \
+    "DIFF_ROW detail hypr.file.sha_pin: NOTE (detail changed)"
+  st_has  "S3: the boundary-hash detail move is classified detail" "$out" \
+    "DIFF_ROW detail boundary.readonly: PASS (detail changed)"
+  st_has  "S3: the different roots are named as a scope move" "$out" \
+    "DIFF_SCOPE root: $A → $B"
+  st_has  "S3: scope counted" "$out" "scope=1"
+  st_not_has "S3: the diff prints no MADO_VERIFY verdict" "$out" "MADO_VERIFY:"
+  st_not_has "S3: a changed pair never reads SAME" "$out" "MADO_DIFF: SAME"
+
+  sed 's/^# created:.*/# created: 1999-01-01T00:00:00Z/' "$S1" >"$S4"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S4" 2>&1); rc=$?
+  st_eq  "S4: receipt-time is provenance, not verdict data (SAME, exit 0)" 0 "$rc"
+  st_has "S4: verdict is SAME" "$out" "MADO_DIFF: SAME"
+  st_has "S4: no class noise" "$out" \
+    "regressed=0 recovered=0 flipped=0 relaxed=0 relabeled=0 appeared=0 vanished=0"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S1" 2>&1); rc=$?
+  st_eq  "S4: a file diffed with itself is SAME (exit 0)" 0 "$rc"
+
+  sed 's/^# gate-sha256:.*/# gate-sha256: 0000000000000000000000000000000000000000000000000000000000000000/' \
+    "$S1" >"$S5"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S5" 2>&1); rc=$?
+  st_eq   "S5: a gate-revision move is a class change (exit 1)" 1 "$rc"
+  st_has  "S5: the scope field is named" "$out" "DIFF_SCOPE gate-sha256:"
+  st_has  "S5: scope counted" "$out" "scope=1"
+  st_not_has "S5: no row-class noise" "$out" "DIFF_ROW"
+
+  out=$(env PATH="$SANDBOX" MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$A" --live --snapshot "$S3" 2>&1); rc=$?
+  st_eq  "S6: the sandboxed live run still exits 1 (UNKNOWN blocks CLEAN)" 1 "$rc"
+  st_has "S6: a receipt is written under a degraded PATH" "$out" "MADO_SNAPSHOT: WRITTEN $S3"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S3" 2>&1); rc=$?
+  st_eq  "S6: a scope move is a class change (exit 1)" 1 "$rc"
+  st_has "S6: the scope move is named" "$out" "DIFF_SCOPE scope: file-plane → live"
+  st_has "S6: the live-plane row move is named" "$out" "DIFF_ROW regressed live.plane: SKIP→UNKNOWN"
+
+  ssha=$(sha256sum "$S1")
+  out=$("$BASH_BIN" "$0" --root "$A" --no-live --snapshot "$S1" 2>&1); rc=$?
+  st_eq  "S7: an existing receipt is refused (exit 2)" 2 "$rc"
+  st_has "S7: the refusal names the file" "$out" "MADO_SNAPSHOT: REFUSED (destination exists: $S1"
+  st_eq  "S7: the existing receipt is byte-unchanged" "$ssha" "$(sha256sum "$S1")"
+  out=$("$BASH_BIN" "$0" --snapshot 2>&1); rc=$?
+  st_eq  "S7: --snapshot without a file is a usage error (exit 2)" 2 "$rc"
+  out=$("$BASH_BIN" "$0" --snapshot "$SNAP/never.snap" --selftest 2>&1); rc=$?
+  st_eq  "S7: --snapshot takes no --selftest (exit 2)" 2 "$rc"
+  st_has "S7: the refusal names the flag" "$out" "usage error: --snapshot takes no --selftest"
+  out=$("$BASH_BIN" "$0" --snapshot "$SNAP/never.snap" --bogus 2>&1); rc=$?
+  st_eq  "S7: an unknown argument with --snapshot is refused (exit 2)" 2 "$rc"
+  if [ ! -e "$SNAP/never.snap" ]; then st_ok; else st_bad "S7: a refused invocation wrote a file"; fi
+
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$SNAP/nope.snap" 2>&1); rc=$?
+  st_eq   "S8: a missing snapshot is SETUP (exit 2)" 2 "$rc"
+  st_has  "S8: the SETUP names the file" "$out" "MADO_DIFF: SETUP (missing snapshot file:"
+  st_not_has "S8: the diff never prints a MADO_VERIFY verdict" "$out" "MADO_VERIFY:"
+  printf 'not a snapshot\n' >"$SNAP/junk.txt"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$SNAP/junk.txt" 2>&1); rc=$?
+  st_eq  "S8: a file without the v1 magic is SETUP (exit 2)" 2 "$rc"
+  st_has "S8: the refusal names the magic" "$out" "not a v1 snapshot"
+  sed 's/^# counts: pass=[0-9]*/# counts: pass=99/' "$S1" >"$S6"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S6" 2>&1); rc=$?
+  st_eq  "S8: a tampered receipt that no longer reconciles is SETUP (exit 2)" 2 "$rc"
+  st_has "S8: the refusal names the disagreement" "$out" "does not reconcile"
+
+  out=$("$BASH_BIN" "$0" --snapshot-diff 2>&1); rc=$?
+  st_eq  "S9: --snapshot-diff without files is a usage error (exit 2)" 2 "$rc"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" 2>&1); rc=$?
+  st_eq  "S9: one snapshot is a usage error (exit 2)" 2 "$rc"
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$S1" "$S1" --live 2>&1); rc=$?
+  st_eq  "S9: --snapshot-diff takes no --live (exit 2)" 2 "$rc"
+  out=$("$BASH_BIN" "$0" --snapshot-diff --help 2>&1); rc=$?
+  st_eq  "S9: --snapshot-diff --help exits 0" 0 "$rc"
+  st_has "S9: the help documents the diff mode" "$out" "--snapshot-diff OLD NEW"
+  st_has "S9: the help documents the diff verdicts" "$out" "MADO_DIFF:"
+  out=$("$BASH_BIN" "$0" --snapshot --help 2>&1); rc=$?
+  st_eq  "S9: --snapshot --help exits 0" 0 "$rc"
+  st_has "S9: the help documents the snapshot mode" "$out" "--snapshot FILE"
+
+  # S10: the class table itself, against a crafted pair (no child process) —
+  # every row class is pinned by name, and the unchanged row must stay silent.
+  local SCA="$SNAP/classes-a.snap" SCB="$SNAP/classes-b.snap"
+  cat >"$SCA" <<'MADO_R8_CRAFT_A'
+# mado-verify snapshot v1
+# created: crafted
+# tool: mado-verify.sh fixture
+# gate-sha256: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+# root: /fixture
+# scope: file-plane
+# mode-line: mode: file-plane only | root: /fixture | live layer: skipped (fixture)
+# counts: pass=2 fail=2 unknown=1 skip=0 note=1
+# rows: 6
+row|fix|fix.recovered|FAIL|was red
+row|fix|fix.flipped|FAIL|was fail
+row|fix|fix.relaxed|UNKNOWN|was unknown
+row|fix|fix.relabeled|NOTE|was note
+row|fix|fix.vanished|PASS|goes away
+row|fix|fix.stable|PASS|unchanged
+MADO_R8_CRAFT_A
+  cat >"$SCB" <<'MADO_R8_CRAFT_B'
+# mado-verify snapshot v1
+# created: crafted
+# tool: mado-verify.sh fixture
+# gate-sha256: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+# root: /fixture
+# scope: file-plane
+# mode-line: mode: file-plane only | root: /fixture | live layer: skipped (fixture)
+# counts: pass=4 fail=0 unknown=1 skip=0 note=1
+# rows: 6
+row|fix|fix.recovered|PASS|was red
+row|fix|fix.flipped|UNKNOWN|was fail
+row|fix|fix.relaxed|NOTE|was unknown
+row|fix|fix.relabeled|PASS|was note
+row|fix|fix.appeared|PASS|new row
+row|fix|fix.stable|PASS|unchanged
+MADO_R8_CRAFT_B
+  out=$("$BASH_BIN" "$0" --snapshot-diff "$SCA" "$SCB" 2>&1); rc=$?
+  st_eq   "S10: the crafted pair exits 1 (classes moved)" 1 "$rc"
+  st_has  "S10: recovered is named" "$out" "DIFF_ROW recovered fix.recovered: FAIL→PASS"
+  st_has  "S10: flipped is named" "$out" "DIFF_ROW flipped fix.flipped: FAIL→UNKNOWN"
+  st_has  "S10: relaxed is named" "$out" "DIFF_ROW relaxed fix.relaxed: UNKNOWN→NOTE"
+  st_has  "S10: relabeled is named" "$out" "DIFF_ROW relabeled fix.relabeled: NOTE→PASS"
+  st_has  "S10: appeared is named" "$out" "DIFF_ROW appeared fix.appeared: -→PASS"
+  st_has  "S10: vanished is named" "$out" "DIFF_ROW vanished fix.vanished: PASS→-"
+  st_has  "S10: the class tally is complete" "$out" \
+    "regressed=0 recovered=1 flipped=1 relaxed=1 relabeled=1 appeared=1 vanished=1"
+  st_has  "S10: the counts move is reported" "$out" "DIFF_COUNTS: pass 2→4 fail 2→0"
+  st_not_has "S10: the unchanged row stays silent" "$out" "fix.stable"
+  # <<< MADO-R8-BLOCK <<<
 
   if [ "$n_fail" = 0 ]; then
     rm -rf "$T"
@@ -726,6 +1076,14 @@ IEOF
 # PIN_MADO and TABLE_MADO here from the measured table. selftest() asserts the
 # derived target equals PIN_MADO on pristine runs, so a stale pin is visible.
 #
+# Re-cut record — round 8 / M8-2 (omarchy plane + scenarios OM): the ten
+# recorded defects were re-swept against the widened revision with the recorded
+# spec, re-extracted from the heredoc below and checked byte-for-byte against
+# SPEC_SHA before the sweep. Measured table identical to TABLE_MADO (10 killed
+# / 0 survived / 0 inconclusive; MUTATE_RESTORE OK, target sha unchanged
+# before/after). PIN_MADO moves c4c1afb7… → d2bcdb31…; TABLE_MADO is unchanged
+# — the widening lost no kill. Evidence: /tmp/w8-mado-m8-2/sweep (scratch).
+#
 # Discipline: the harness (tameshi-shokunin/tools/mutate-and-run.sh) is
 # consumed read-only — a needed change is a recommendation to tameshi, never a
 # patch; its revision is printed as provenance, not gated (the kill table is
@@ -746,7 +1104,7 @@ IEOF
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='c4c1afb75dd1c8aa4d8ff9b808ddbeb2a05ac0e3ab1095dd7d067cff1a625171'
+PIN_MADO='d2bcdb31daea5d68dc7c586617939d71d525dbeab723e72b8c17644ad327db62'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -830,9 +1188,15 @@ MADO_R7_SPEC_EOF
   printf '%s' "$body" >"$1"
 }
 
-mado_r7_target_build() { # <src-file> <dest-file> — excise the two MADO-R7 blocks
+mado_r7_target_build() { # <src-file> <dest-file> — excise the MADO-R7/R8 marker blocks
+  # The MADO-R8 pair wraps round-8's own additions (snapshot receipts + the
+  # scenario-S selftest region). Excising it too keeps the derived target
+  # byte-identical when that block rides along — a widening inside the pair
+  # needs no re-cut; anything new outside every pair still does, as the pin
+  # and its re-cut note in the header say.
   sed -e '/^[[:space:]]*# >>> MADO-R7-REGRESSION-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-REGRESSION-BLOCK <<<$/d' \
       -e '/^[[:space:]]*# >>> MADO-R7-SELFTEST-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-SELFTEST-BLOCK <<<$/d' \
+      -e '/^[[:space:]]*# >>> MADO-R8-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R8-BLOCK <<<$/d' \
       "$1" >"$2" || return 1
   [ -s "$2" ]
 }
@@ -1085,6 +1449,529 @@ if mado_r7_regression_requested "$@"; then
   exit $?
 fi
 # <<< MADO-R7-REGRESSION-BLOCK <<<
+# >>> MADO-R8-BLOCK >>>
+# ===========================================================================
+# SNAPSHOT + SNAPSHOT-DIFF — freshness receipts (M8-3, round 8)
+#
+# Why: live verdicts move across a day and no single process can hold two of
+# them. The receipt pair substitutes: snapshot one invocation now, snapshot a
+# later one, then diff the two snapshots class by class.
+#
+#   mado-verify.sh --snapshot FILE [--no-live|--live] [--root DIR]
+#       runs the gate as an ordinary invocation (the child's report and
+#       MADO_VERIFY verdict are printed verbatim; the run's exit code is
+#       preserved) and then writes a v1 snapshot of the verdict table to FILE.
+#       FILE must not exist — receipts are never overwritten — and must not
+#       land inside the verified <root>/.config plane. Refusals (MADO_SNAPSHOT:
+#       REFUSED, exit 2, nothing written): FILE exists or sits in the config
+#       plane; the run exits outside 0/1; the printed rows do not reconcile
+#       with the printed counts (a row whose detail spans lines is refused,
+#       never silently truncated); the write or its read-back fails.
+#   mado-verify.sh --snapshot-diff OLD NEW
+#       reads two snapshots (no substrate, no child process) and prints
+#       DIFF_LEFT/DIFF_RIGHT provenance, DIFF_SCOPE per moved scope field
+#       (tool / gate-sha256 / root / scope), one DIFF_ROW line per changed row
+#       with its class, DIFF_DETAIL old/new for every moved detail, and
+#       DIFF_COUNTS when the status tallies move. Classes:
+#         regressed PASS|SKIP|NOTE → FAIL|UNKNOWN   recovered  FAIL|UNKNOWN → PASS
+#         flipped   FAIL ↔ UNKNOWN                  relaxed    FAIL|UNKNOWN → SKIP|NOTE
+#         relabeled any other status move           detail     same status, new detail
+#         appeared  row only in NEW                 vanished   row only in OLD
+#       Verdicts: MADO_DIFF: SAME (exit 0; nothing moved) ·
+#       DETAIL-CHANGED (exit 0; details moved, classes did not) ·
+#       CHANGED (exit 1; a row class or a scope field moved, counted) ·
+#       SETUP (exit 2; a file is missing/malformed/edited — receipts are
+#       self-checking: the stored counts must reconcile with the stored rows).
+#       The diff never prints MADO_VERIFY: — that token belongs to the runs
+#       being compared, whose output the snapshot mode passes through.
+#
+# Discipline: the snapshot write is the only write this mode makes, only to
+# the named FILE, never into the verified config plane; the child is the
+# ordinary gate under its own read-only discipline; the diff reads only the
+# two named files. 'created:' is receipt-time provenance and is never
+# compared. A refused snapshot writes nothing (a failed write is removed).
+#
+# Excision: this marker pair also wraps the scenario-S selftest region, and
+# mado_r7_target_build excises the pair — the recorded regression target
+# stays byte-identical while this block rides along (no re-cut for it). The
+# gate's own usage text in usage() stays silent on these modes by the same
+# invariant; --snapshot --help / --snapshot-diff --help print the contract.
+# ===========================================================================
+MADO_R8_SELF=$(readlink -f "$0" 2>/dev/null || printf '%s' "$0")
+MADO_R8_ERR=''
+MADO_R8_KEYS_L=()
+MADO_R8_KEYS_R=()
+declare -A MADO_R8_ST=()
+declare -A MADO_R8_DT=()
+declare -A MADO_R8_HDR=()
+declare -A MADO_R8_CNT=()
+
+mado_r8_snapshot_requested() { # "$@" → 0 when --snapshot / --snapshot= is present
+  local a
+  for a in "$@"; do
+    case "$a" in --snapshot | --snapshot=*) return 0 ;; esac
+  done
+  return 1
+}
+
+mado_r8_diff_requested() { # "$@" → 0 when --snapshot-diff / --snapshot-diff= is present
+  local a
+  for a in "$@"; do
+    case "$a" in --snapshot-diff | --snapshot-diff=*) return 0 ;; esac
+  done
+  return 1
+}
+
+mado_r8_usage_note() {
+  cat <<'EOF'
+
+  --snapshot FILE   run the gate (honouring --no-live/--live/--root) and write
+                a v1 verdict snapshot to FILE (FILE must not exist; receipts
+                are never overwritten). Exit = the run's verdict; the write
+                adds MADO_SNAPSHOT: WRITTEN|REFUSED (a refusal exits 2).
+  --snapshot-diff OLD NEW  diff two snapshots class by class; MADO_DIFF:
+                SAME|DETAIL-CHANGED|CHANGED|SETUP (exit 0/0/1/2). Reads only
+                the two files; never prints MADO_VERIFY:.
+EOF
+}
+
+mado_r8_snapshot_cli() {
+  local dest='' out='' rc=0 bash_bin line f1 f2 f3 rest
+  local version_line mode_line counts_line scope root_f
+  local cpass cfail cunk cskip cnote v kv
+  local rpass=0 rfail=0 runk=0 rskip=0 rnote=0 total=0 body=''
+  local gate_sha created content dd dreal cfg cfgr n_file
+  local -a child=()
+  bash_bin="${BASH:-/bin/bash}"
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --snapshot)
+        shift
+        [ "$#" -gt 0 ] || { printf 'usage error: --snapshot needs a file\n' >&2; usage >&2; return 2; }
+        case "$1" in
+          -h | --help) usage; mado_r8_usage_note; return 0 ;;
+          -*) printf 'usage error: --snapshot needs a file (got %s)\n' "$1" >&2; usage >&2; return 2 ;;
+        esac
+        dest="$1"
+        ;;
+      --snapshot=*)
+        dest="${1#--snapshot=}"
+        [ -n "$dest" ] || { printf 'usage error: --snapshot needs a file\n' >&2; usage >&2; return 2; }
+        ;;
+      --no-live | --live) child+=("$1") ;;
+      --root)
+        shift
+        [ "$#" -gt 0 ] || { printf 'usage error: --root needs a directory\n' >&2; usage >&2; return 2; }
+        child+=(--root "$1")
+        ;;
+      --root=*) child+=("$1") ;;
+      -h | --help) usage; mado_r8_usage_note; return 0 ;;
+      --snapshot-diff | --snapshot-diff=* | --selftest | --regression)
+        printf 'usage error: --snapshot takes no %s\n' "${1%%=*}" >&2; usage >&2; return 2 ;;
+      *)
+        printf 'usage error: unknown argument %s with --snapshot\n' "$1" >&2; usage >&2; return 2 ;;
+    esac
+    shift
+  done
+  [ -n "$dest" ] || { printf 'usage error: --snapshot needs a file\n' >&2; usage >&2; return 2; }
+  if [ -e "$dest" ] || [ -L "$dest" ]; then
+    printf 'MADO_SNAPSHOT: REFUSED (destination exists: %s — receipts are never overwritten)\n' "$dest"
+    return 2
+  fi
+
+  out=$("$bash_bin" "$MADO_R8_SELF" ${child[@]+"${child[@]}"} 2>&1)
+  rc=$?
+  printf '%s\n' "$out"
+  case "$rc" in
+    0 | 1) : ;;
+    *)
+      printf 'MADO_SNAPSHOT: REFUSED (the run exited %s — no verdict rows to receipt; nothing written)\n' "$rc"
+      return 2
+      ;;
+  esac
+
+  version_line=$(printf '%s\n' "$out" | head -1)
+  mode_line=$(printf '%s\n' "$out" | sed -n '2p')
+  counts_line=$(printf '%s\n' "$out" | grep -m1 '^counts: pass=' || true)
+  case "$version_line" in
+    'mado-verify.sh '*) : ;;
+    *)
+      printf 'MADO_SNAPSHOT: REFUSED (the run did not print a mado-verify report; first line: %s)\n' "${version_line:-<empty>}"
+      return 2
+      ;;
+  esac
+  case "$mode_line" in
+    'mode: live (read-only) | root: '*) scope=live ;;
+    'mode: file-plane only | root: '*) scope=file-plane ;;
+    *)
+      printf 'MADO_SNAPSHOT: REFUSED (cannot parse the mode line: %s)\n' "${mode_line:-<empty>}"
+      return 2
+      ;;
+  esac
+  root_f=${mode_line#*'| root: '}
+  root_f=${root_f%%' | '*}
+  if [ -z "$root_f" ] || [ "$root_f" = "$mode_line" ]; then
+    printf 'MADO_SNAPSHOT: REFUSED (cannot parse the root from the mode line: %s)\n' "$mode_line"
+    return 2
+  fi
+  if [ -z "$counts_line" ]; then
+    printf 'MADO_SNAPSHOT: REFUSED (the run printed no counts line)\n'
+    return 2
+  fi
+  cpass=0; cfail=0; cunk=0; cskip=0; cnote=0
+  for kv in ${counts_line#counts: }; do
+    case "$kv" in
+      pass=*) cpass="${kv#pass=}" ;;
+      fail=*) cfail="${kv#fail=}" ;;
+      unknown=*) cunk="${kv#unknown=}" ;;
+      skip=*) cskip="${kv#skip=}" ;;
+      note=*) cnote="${kv#note=}" ;;
+    esac
+  done
+  for v in "$cpass" "$cfail" "$cunk" "$cskip" "$cnote"; do
+    case "$v" in
+      '' | *[!0-9]*)
+        printf 'MADO_SNAPSHOT: REFUSED (counts line unparseable: %s)\n' "$counts_line"
+        return 2
+        ;;
+    esac
+  done
+
+  while IFS= read -r line; do
+    read -r f1 f2 f3 rest <<<"$line"
+    case "$f3" in
+      PASS | FAIL | UNKNOWN | SKIP | NOTE)
+        if [ -z "$f1" ] || [ -z "$f2" ] || [ -z "$rest" ]; then
+          printf 'MADO_SNAPSHOT: REFUSED (row-shaped line without plane/id/detail: %s)\n' "$line"
+          return 2
+        fi
+        case "$f3" in
+          PASS) rpass=$((rpass + 1)) ;;
+          FAIL) rfail=$((rfail + 1)) ;;
+          UNKNOWN) runk=$((runk + 1)) ;;
+          SKIP) rskip=$((rskip + 1)) ;;
+          NOTE) rnote=$((rnote + 1)) ;;
+        esac
+        total=$((total + 1))
+        printf -v body '%srow|%s|%s|%s|%s\n' "$body" "$f1" "$f2" "$f3" "$rest"
+        ;;
+    esac
+  done <<<"$out"
+  if [ "$total" = 0 ] || [ "$rpass" != "$cpass" ] || [ "$rfail" != "$cfail" ] ||
+     [ "$runk" != "$cunk" ] || [ "$rskip" != "$cskip" ] || [ "$rnote" != "$cnote" ]; then
+    printf 'MADO_SNAPSHOT: REFUSED (row parse does not reconcile with the printed counts: parsed total=%s pass=%s fail=%s unknown=%s skip=%s note=%s; printed pass=%s fail=%s unknown=%s skip=%s note=%s)\n' \
+      "$total" "$rpass" "$rfail" "$runk" "$rskip" "$rnote" "$cpass" "$cfail" "$cunk" "$cskip" "$cnote"
+    return 2
+  fi
+
+  case "$dest" in
+    */*) dd="${dest%/*}" ;;
+    *) dd='.' ;;
+  esac
+  dreal=$(cd "$dd" 2>/dev/null && pwd -P) || dreal=''
+  if [ -n "$dreal" ] && [ -d "$root_f/.config" ]; then
+    cfgr=$(cd "$root_f/.config" && pwd -P)
+    case "$dreal/${dest##*/}" in
+      "$cfgr"/*)
+        printf 'MADO_SNAPSHOT: REFUSED (destination is inside the verified config plane: %s)\n' "$dest"
+        return 2
+        ;;
+    esac
+  fi
+
+  gate_sha=$(sha256sum -- "$MADO_R8_SELF" 2>/dev/null || true)
+  gate_sha=${gate_sha%% *}
+  [ -n "$gate_sha" ] || gate_sha=unavailable
+  created=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || true)
+  [ -n "$created" ] || created=unavailable
+  content="# mado-verify snapshot v1
+# created: $created
+# tool: $version_line
+# gate-sha256: $gate_sha
+# root: $root_f
+# scope: $scope
+# mode-line: $mode_line
+# counts: pass=$cpass fail=$cfail unknown=$cunk skip=$cskip note=$cnote
+# rows: $total
+$body"
+  if ! printf '%s' "$content" >"$dest" 2>/dev/null; then
+    rm -f "$dest"
+    printf 'MADO_SNAPSHOT: REFUSED (cannot write %s)\n' "$dest"
+    return 2
+  fi
+  n_file=0
+  while IFS= read -r line; do
+    case "$line" in 'row|'*) n_file=$((n_file + 1)) ;; esac
+  done <"$dest"
+  if [ "$n_file" != "$total" ]; then
+    rm -f "$dest"
+    printf 'MADO_SNAPSHOT: REFUSED (write verification failed: %s row lines on disk vs %s expected)\n' "$n_file" "$total"
+    return 2
+  fi
+  printf 'MADO_SNAPSHOT: WRITTEN %s (rows=%s pass=%s fail=%s unknown=%s skip=%s note=%s; scope=%s)\n' \
+    "$dest" "$total" "$rpass" "$rfail" "$runk" "$rskip" "$rnote" "$scope"
+  return "$rc"
+}
+
+mado_r8_load() { # <L|R> <file> → 0 loaded; 1 refused (message in MADO_R8_ERR)
+  local side="$1" file="$2" line key k tag plane id st dt n=0
+  local npass=0 nfail=0 nunk=0 nskip=0 nnote=0 total=0
+  local h_created='' h_tool='' h_sha='' h_root='' h_scope='' h_modeline='' h_counts='' h_rows=''
+  local kv v p='' f='' u='' s='' nt=''
+  MADO_R8_ERR=''
+  [ -f "$file" ] || { MADO_R8_ERR="missing snapshot file: $file"; return 1; }
+  if [ "$side" = L ]; then MADO_R8_KEYS_L=(); else MADO_R8_KEYS_R=(); fi
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    n=$((n + 1))
+    if [ "$n" = 1 ]; then
+      [ "$line" = '# mado-verify snapshot v1' ] || { MADO_R8_ERR="not a v1 snapshot (line 1): $file"; return 1; }
+      continue
+    fi
+    case "$line" in
+      '# created: '*) h_created="${line#'# created: '}" ;;
+      '# tool: '*) h_tool="${line#'# tool: '}" ;;
+      '# gate-sha256: '*) h_sha="${line#'# gate-sha256: '}" ;;
+      '# root: '*) h_root="${line#'# root: '}" ;;
+      '# scope: '*) h_scope="${line#'# scope: '}" ;;
+      '# mode-line: '*) h_modeline="${line#'# mode-line: '}" ;;
+      '# counts: '*) h_counts="${line#'# counts: '}" ;;
+      '# rows: '*) h_rows="${line#'# rows: '}" ;;
+      'row|'*)
+        IFS='|' read -r tag plane id st dt <<<"$line"
+        if [ -z "$plane" ] || [ -z "$id" ] || [ -z "$st" ] || [ -z "$dt" ]; then
+          MADO_R8_ERR="malformed row at line $n in $file"; return 1
+        fi
+        key="$plane|$id"
+        k="$side|$key"
+        if [ -n "${MADO_R8_ST["$k"]+x}" ]; then
+          MADO_R8_ERR="duplicate row $key in $file"; return 1
+        fi
+        MADO_R8_ST["$k"]="$st"
+        MADO_R8_DT["$k"]="$dt"
+        if [ "$side" = L ]; then MADO_R8_KEYS_L+=("$key"); else MADO_R8_KEYS_R+=("$key"); fi
+        case "$st" in
+          PASS) npass=$((npass + 1)) ;;
+          FAIL) nfail=$((nfail + 1)) ;;
+          UNKNOWN) nunk=$((nunk + 1)) ;;
+          SKIP) nskip=$((nskip + 1)) ;;
+          NOTE) nnote=$((nnote + 1)) ;;
+        esac
+        total=$((total + 1))
+        ;;
+      '#'*) : ;;
+      *) MADO_R8_ERR="unexpected line $n in $file"; return 1 ;;
+    esac
+  done <"$file"
+
+  [ -n "$h_tool" ] && [ -n "$h_sha" ] && [ -n "$h_root" ] && [ -n "$h_scope" ] && [ -n "$h_counts" ] || {
+    MADO_R8_ERR="missing required header field(s) in $file"
+    return 1
+  }
+  case "$h_scope" in
+    live | file-plane) : ;;
+    *) MADO_R8_ERR="bad scope '$h_scope' in $file"; return 1 ;;
+  esac
+  if [ "$total" = 0 ]; then MADO_R8_ERR="no rows in $file"; return 1; fi
+  for kv in $h_counts; do
+    case "$kv" in
+      pass=*) p="${kv#pass=}" ;;
+      fail=*) f="${kv#fail=}" ;;
+      unknown=*) u="${kv#unknown=}" ;;
+      skip=*) s="${kv#skip=}" ;;
+      note=*) nt="${kv#note=}" ;;
+    esac
+  done
+  for v in "$p" "$f" "$u" "$s" "$nt"; do
+    case "$v" in
+      '' | *[!0-9]*) MADO_R8_ERR="counts line unparseable in $file"; return 1 ;;
+    esac
+  done
+  if [ "$p" != "$npass" ] || [ "$f" != "$nfail" ] || [ "$u" != "$nunk" ] || [ "$s" != "$nskip" ] || [ "$nt" != "$nnote" ]; then
+    MADO_R8_ERR="receipt does not reconcile (rows pass=$npass fail=$nfail unknown=$nunk skip=$nskip note=$nnote vs counts pass=$p fail=$f unknown=$u skip=$s note=$nt) in $file"
+    return 1
+  fi
+  if [ -n "$h_rows" ]; then
+    case "$h_rows" in
+      '' | *[!0-9]*) MADO_R8_ERR="bad # rows: field in $file"; return 1 ;;
+    esac
+    [ "$h_rows" = "$total" ] || { MADO_R8_ERR="# rows: $h_rows disagrees with $total row lines in $file"; return 1; }
+  fi
+  MADO_R8_HDR["$side|created"]="$h_created"
+  MADO_R8_HDR["$side|tool"]="$h_tool"
+  MADO_R8_HDR["$side|gate-sha256"]="$h_sha"
+  MADO_R8_HDR["$side|root"]="$h_root"
+  MADO_R8_HDR["$side|scope"]="$h_scope"
+  MADO_R8_HDR["$side|mode-line"]="$h_modeline"
+  MADO_R8_CNT["$side|pass"]="$npass"
+  MADO_R8_CNT["$side|fail"]="$nfail"
+  MADO_R8_CNT["$side|unknown"]="$nunk"
+  MADO_R8_CNT["$side|skip"]="$nskip"
+  MADO_R8_CNT["$side|note"]="$nnote"
+  MADO_R8_CNT["$side|total"]="$total"
+  return 0
+}
+
+mado_r8_class() { # <old-status> <new-status> → the change class (statuses differ)
+  case "$1:$2" in
+    PASS:FAIL | PASS:UNKNOWN | SKIP:FAIL | SKIP:UNKNOWN | NOTE:FAIL | NOTE:UNKNOWN)
+      printf 'regressed' ;;
+    FAIL:PASS | UNKNOWN:PASS)
+      printf 'recovered' ;;
+    FAIL:UNKNOWN | UNKNOWN:FAIL)
+      printf 'flipped' ;;
+    FAIL:SKIP | FAIL:NOTE | UNKNOWN:SKIP | UNKNOWN:NOTE)
+      printf 'relaxed' ;;
+    *)
+      printf 'relabeled' ;;
+  esac
+}
+
+mado_r8_diff_cli() {
+  local old='' new='' okey rkey oid os od ns nd cls field l r
+  local r_regressed=0 r_recovered=0 r_flipped=0 r_relaxed=0 r_relabeled=0
+  local r_detail=0 r_appeared=0 r_vanished=0 scount=0 rowcls class_total
+  local verdict rc
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --snapshot-diff)
+        shift
+        [ "$#" -gt 0 ] || { printf 'usage error: --snapshot-diff needs two snapshot files\n' >&2; usage >&2; return 2; }
+        case "$1" in
+          -h | --help) usage; mado_r8_usage_note; return 0 ;;
+          -*) printf 'usage error: --snapshot-diff takes no %s\n' "$1" >&2; usage >&2; return 2 ;;
+        esac
+        old="$1"
+        shift
+        [ "$#" -gt 0 ] || { printf 'usage error: --snapshot-diff needs two snapshot files\n' >&2; usage >&2; return 2; }
+        case "$1" in
+          -h | --help) usage; mado_r8_usage_note; return 0 ;;
+          -*) printf 'usage error: --snapshot-diff takes no %s\n' "$1" >&2; usage >&2; return 2 ;;
+        esac
+        new="$1"
+        ;;
+      --snapshot-diff=*)
+        old="${1#--snapshot-diff=}"
+        [ -n "$old" ] || { printf 'usage error: --snapshot-diff needs two snapshot files\n' >&2; usage >&2; return 2; }
+        shift
+        [ "$#" -gt 0 ] || { printf 'usage error: --snapshot-diff needs two snapshot files\n' >&2; usage >&2; return 2; }
+        case "$1" in
+          -h | --help) usage; mado_r8_usage_note; return 0 ;;
+          -*) printf 'usage error: --snapshot-diff takes no %s\n' "$1" >&2; usage >&2; return 2 ;;
+        esac
+        new="$1"
+        ;;
+      -h | --help) usage; mado_r8_usage_note; return 0 ;;
+      *)
+        printf 'usage error: unexpected argument %s with --snapshot-diff\n' "$1" >&2; usage >&2; return 2 ;;
+    esac
+    shift
+  done
+  if [ -z "$old" ] || [ -z "$new" ]; then
+    printf 'usage error: --snapshot-diff needs two snapshot files\n' >&2; usage >&2; return 2
+  fi
+
+  mado_r8_load L "$old" || { printf 'MADO_DIFF: SETUP (%s)\n' "$MADO_R8_ERR"; return 2; }
+  mado_r8_load R "$new" || { printf 'MADO_DIFF: SETUP (%s)\n' "$MADO_R8_ERR"; return 2; }
+
+  printf 'DIFF_LEFT: %s created=%s scope=%s root=%s gate-sha256=%s tool=%s\n' \
+    "$old" "${MADO_R8_HDR['L|created']}" "${MADO_R8_HDR['L|scope']}" "${MADO_R8_HDR['L|root']}" \
+    "${MADO_R8_HDR['L|gate-sha256']}" "${MADO_R8_HDR['L|tool']}"
+  printf 'DIFF_RIGHT: %s created=%s scope=%s root=%s gate-sha256=%s tool=%s\n' \
+    "$new" "${MADO_R8_HDR['R|created']}" "${MADO_R8_HDR['R|scope']}" "${MADO_R8_HDR['R|root']}" \
+    "${MADO_R8_HDR['R|gate-sha256']}" "${MADO_R8_HDR['R|tool']}"
+  for field in tool gate-sha256 root scope; do
+    l="${MADO_R8_HDR["L|$field"]}"
+    r="${MADO_R8_HDR["R|$field"]}"
+    if [ "$l" != "$r" ]; then
+      printf 'DIFF_SCOPE %s: %s → %s\n' "$field" "$l" "$r"
+      scount=$((scount + 1))
+    fi
+  done
+
+  for okey in "${MADO_R8_KEYS_L[@]}"; do
+    oid="${okey#*|}"
+    os="${MADO_R8_ST["L|$okey"]}"
+    od="${MADO_R8_DT["L|$okey"]}"
+    if [ -z "${MADO_R8_ST["R|$okey"]+x}" ]; then
+      printf 'DIFF_ROW vanished %s: %s→-\n' "$oid" "$os"
+      printf 'DIFF_DETAIL %s old: %s\n' "$oid" "$od"
+      r_vanished=$((r_vanished + 1))
+      continue
+    fi
+    ns="${MADO_R8_ST["R|$okey"]}"
+    nd="${MADO_R8_DT["R|$okey"]}"
+    if [ "$os" = "$ns" ]; then
+      if [ "$od" = "$nd" ]; then continue; fi
+      printf 'DIFF_ROW detail %s: %s (detail changed)\n' "$oid" "$os"
+      printf 'DIFF_DETAIL %s old: %s\n' "$oid" "$od"
+      printf 'DIFF_DETAIL %s new: %s\n' "$oid" "$nd"
+      r_detail=$((r_detail + 1))
+      continue
+    fi
+    cls=$(mado_r8_class "$os" "$ns")
+    printf 'DIFF_ROW %s %s: %s→%s\n' "$cls" "$oid" "$os" "$ns"
+    case "$cls" in
+      regressed) r_regressed=$((r_regressed + 1)) ;;
+      recovered) r_recovered=$((r_recovered + 1)) ;;
+      flipped) r_flipped=$((r_flipped + 1)) ;;
+      relaxed) r_relaxed=$((r_relaxed + 1)) ;;
+      relabeled) r_relabeled=$((r_relabeled + 1)) ;;
+    esac
+    if [ "$od" != "$nd" ]; then
+      printf 'DIFF_DETAIL %s old: %s\n' "$oid" "$od"
+      printf 'DIFF_DETAIL %s new: %s\n' "$oid" "$nd"
+      r_detail=$((r_detail + 1))
+    fi
+  done
+  for rkey in "${MADO_R8_KEYS_R[@]}"; do
+    [ -z "${MADO_R8_ST["L|$rkey"]+x}" ] || continue
+    printf 'DIFF_ROW appeared %s: -→%s\n' "${rkey#*|}" "${MADO_R8_ST["R|$rkey"]}"
+    printf 'DIFF_DETAIL %s new: %s\n' "${rkey#*|}" "${MADO_R8_DT["R|$rkey"]}"
+    r_appeared=$((r_appeared + 1))
+  done
+
+  if [ "${MADO_R8_CNT['L|pass']}" != "${MADO_R8_CNT['R|pass']}" ] ||
+     [ "${MADO_R8_CNT['L|fail']}" != "${MADO_R8_CNT['R|fail']}" ] ||
+     [ "${MADO_R8_CNT['L|unknown']}" != "${MADO_R8_CNT['R|unknown']}" ] ||
+     [ "${MADO_R8_CNT['L|skip']}" != "${MADO_R8_CNT['R|skip']}" ] ||
+     [ "${MADO_R8_CNT['L|note']}" != "${MADO_R8_CNT['R|note']}" ]; then
+    printf 'DIFF_COUNTS: pass %s→%s fail %s→%s unknown %s→%s skip %s→%s note %s→%s\n' \
+      "${MADO_R8_CNT['L|pass']}" "${MADO_R8_CNT['R|pass']}" \
+      "${MADO_R8_CNT['L|fail']}" "${MADO_R8_CNT['R|fail']}" \
+      "${MADO_R8_CNT['L|unknown']}" "${MADO_R8_CNT['R|unknown']}" \
+      "${MADO_R8_CNT['L|skip']}" "${MADO_R8_CNT['R|skip']}" \
+      "${MADO_R8_CNT['L|note']}" "${MADO_R8_CNT['R|note']}"
+  fi
+
+  rowcls=$((r_regressed + r_recovered + r_flipped + r_relaxed + r_relabeled + r_appeared + r_vanished))
+  class_total=$((rowcls + scount))
+  verdict=SAME
+  rc=0
+  if [ "$class_total" -gt 0 ]; then
+    verdict=CHANGED
+    rc=1
+  elif [ "$r_detail" -gt 0 ]; then
+    verdict=DETAIL-CHANGED
+  fi
+  printf 'MADO_DIFF: %s (rows %s→%s; regressed=%s recovered=%s flipped=%s relaxed=%s relabeled=%s appeared=%s vanished=%s; detail-changed=%s; scope=%s)\n' \
+    "$verdict" "${MADO_R8_CNT['L|total']}" "${MADO_R8_CNT['R|total']}" \
+    "$r_regressed" "$r_recovered" "$r_flipped" "$r_relaxed" "$r_relabeled" \
+    "$r_appeared" "$r_vanished" "$r_detail" "$scount"
+  return "$rc"
+}
+
+if mado_r8_diff_requested "$@"; then
+  mado_r8_diff_cli "$@"
+  exit $?
+fi
+if mado_r8_snapshot_requested "$@"; then
+  mado_r8_snapshot_cli "$@"
+  exit $?
+fi
+# <<< MADO-R8-BLOCK <<<
 
 # ===========================================================================
 # VERIFY — file plane + live plane
@@ -1387,6 +2274,11 @@ verify() {
   fi
 
   # -------------------------------------------------------------------------
+  # plane: omarchy — freshness / version-drift watch (M6-2 note §2/§6; M8-2)
+  # -------------------------------------------------------------------------
+  omarchy_plane
+
+  # -------------------------------------------------------------------------
   # boundary proof row (SKILL safety rule 3)
   # -------------------------------------------------------------------------
   if [ -d "$C" ] && [ -n "$before" ]; then
@@ -1675,6 +2567,246 @@ print('%s level %s pid %s %sx%s' % (mon, lvl, pid, w, h)); sys.exit(0)
     local tc
     tc=$(tmo omarchy theme current 2>/dev/null | head -1)
     row hypr-live live.theme.current NOTE "omarchy theme current → '${tc:-<empty>}' (operator-owned; not a verdict input)"
+  fi
+}
+
+# ===========================================================================
+# plane: omarchy — freshness / version-drift watch (MADO-R6-2, round 8 / M8-2)
+#
+# Landed from corpus/knowledge/omarchy-drift-watch.md §2/§6. The watch becomes
+# a verdict-bearing arm: the note's pins are held as the constants below, in
+# line, with the note cited — the gate never *parses* the note. A prose parser
+# would tie the verdict to the repo's working tree instead of to the substrate,
+# and its own failure would surface as a self-inflicted UNKNOWN. Re-anchoring
+# is an appended erratum in the note (old→new + reason + command); the baseline
+# is never edited to match reality, and a MOVED pin is reported first.
+#
+# Verdict-bearing: version cmd (P1) + file (P2), git tag (P3) + HEAD (P3),
+# link topology (P5), leaf sha (P4), worktree-vs-HEAD blob (index-free dirty
+# check), command groups (derived). Record-level NOTEs: theme (D-1: operator-
+# owned mutable state — a routine theme change must not turn the gate
+# permanently red; HELD|MOVED is printed in the detail), the surface counter,
+# and the docs register (C5/C6/C8). An unavailable probe reads UNKNOWN and
+# blocks CLEAN (C7) — never a silent pass (SKILL safety rule 5).
+#
+# Read-only, §6 guard list only: `omarchy version|theme current|commands
+# --json --all`, `git describe|rev-parse|show`, `readlink`, `sha256sum`.
+# Never `git status`/`fetch` on the checkout (index stat-cache refresh,
+# province-accuracy-selfaudit.md:110-128) and never a mutating omarchy verb
+# (`theme set`, `restart *`, `refresh *`, `install *`, `setup *`, `update`).
+# Root-splitting per §6: file/link/git rows read $ROOT; PATH probes follow the
+# live-skip semantics exactly like the hypr-live plane.
+# ===========================================================================
+OMARCHY_VERSION_PIN="3.8.3"
+OMARCHY_TAG_PIN="v3.8.4"
+OMARCHY_HEAD_PIN="8fcc9d6048af4cb0e3af8512c78049857a3b53dd"
+OMARCHY_SKILL_SHA_PIN="becd149e4d1c0767a80bcc1eb84e86e509149dc1e4b3d680cf24ab54bea5256d"
+OMARCHY_SKILL_LINK_TARGET=".local/share/omarchy/default/omarchy-skill"
+OMARCHY_SKILL_REL="default/omarchy-skill/SKILL.md"
+OMARCHY_THEME_PIN="Matte Black"
+OMARCHY_CMD_SURFACE_PIN=282
+OMARCHY_SKILL_GROUPS="refresh restart toggle theme install launch capture reminder pkg setup update"
+
+omarchy_plane() {
+  local tree="$ROOT/.local/share/omarchy"
+  local link="$ROOT/.agents/skills/omarchy"
+  local leaf="$link/SKILL.md"
+  local target="$ROOT/$OMARCHY_SKILL_LINK_TARGET"
+  local nolive=""
+  [ "$LIVE" = 0 ] && nolive="live layer skipped ($live_skipped_reason)"
+
+  # --- file rows (root-scoped; run in both modes) --------------------------
+  # The install marker is the `version` file (P2), not the directory: fixture
+  # roots carry a partial tree (build_fixture writes default/hypr/*) and must
+  # not read as broken installs.
+  local vf="$tree/version" got
+  if [ ! -f "$vf" ]; then
+    if [ "$ROOT" = "$HOME" ]; then
+      row omarchy omarchy.version.file FAIL "missing $vf (install broken)"
+      row omarchy omarchy.skill.link FAIL "no omarchy install at $tree (link topology unverifiable)"
+      row omarchy omarchy.skill.sha FAIL "no omarchy install at $tree (skill sha unverifiable)"
+    else
+      local why="no omarchy install under non-home root $ROOT (plane anchored to the HOME install)"
+      row omarchy omarchy.version.file SKIP "$why"
+      row omarchy omarchy.skill.link SKIP "$why"
+      row omarchy omarchy.skill.sha SKIP "$why"
+    fi
+  else
+    got=$(head -1 "$vf" 2>/dev/null | tr -d '[:space:]')
+    if [ "$got" = "$OMARCHY_VERSION_PIN" ]; then
+      row omarchy omarchy.version.file PASS "HELD: version file '$got' (P2 pin; == HEAD:version blob at the pinned HEAD)"
+    else
+      row omarchy omarchy.version.file FAIL "MOVED: version file '$got' != pin $OMARCHY_VERSION_PIN (re-anchor the note, never the pin)"
+    fi
+
+    if [ ! -L "$link" ]; then
+      if [ -e "$link" ]; then
+        row omarchy omarchy.skill.link FAIL "MOVED: $link is a real directory, not a symlink into the checkout (a copy may not masquerade as the live skill)"
+      else
+        row omarchy omarchy.skill.link FAIL "MOVED: $link missing (skill not installed)"
+      fi
+    elif ! have readlink; then
+      row omarchy omarchy.skill.link UNKNOWN "readlink not on PATH — link target unresolved"
+    else
+      local lr
+      lr=$(readlink -f "$link" 2>/dev/null || true)
+      if [ "$lr" = "$target" ]; then
+        row omarchy omarchy.skill.link PASS "HELD: symlink into the checkout (one file; nothing to drift)"
+      elif [ -z "$lr" ]; then
+        row omarchy omarchy.skill.link FAIL "MOVED: dangling symlink $link"
+      else
+        row omarchy omarchy.skill.link FAIL "MOVED: retargeted to $lr (want $target)"
+      fi
+    fi
+
+    if ! have sha256sum; then
+      row omarchy omarchy.skill.sha UNKNOWN "sha256sum not on PATH"
+    elif [ ! -f "$leaf" ]; then
+      row omarchy omarchy.skill.sha FAIL "MOVED: skill leaf unreadable ($leaf)"
+    else
+      local ss
+      ss=$(sha256sum "$leaf" 2>/dev/null | cut -d' ' -f1)
+      if [ "$ss" = "$OMARCHY_SKILL_SHA_PIN" ]; then
+        row omarchy omarchy.skill.sha PASS "HELD: leaf sha256 ${ss:0:12}… (P4 pin)"
+      else
+        row omarchy omarchy.skill.sha FAIL "MOVED: leaf sha256 ${ss:0:12}… != pin ${OMARCHY_SKILL_SHA_PIN:0:12}…"
+      fi
+    fi
+  fi
+
+  # --- live rows (PATH/repo probes; SKIP under --no-live, UNKNOWN if absent) -
+  local omtree=0
+  [ -d "$tree/.git" ] && omtree=1
+  if [ -n "$nolive" ]; then
+    row omarchy omarchy.version.cmd SKIP "$nolive"
+    row omarchy omarchy.git.tag SKIP "$nolive"
+    row omarchy omarchy.git.head SKIP "$nolive"
+    row omarchy omarchy.skill.vs_head SKIP "$nolive"
+    row omarchy omarchy.cmd.groups SKIP "$nolive"
+    row omarchy omarchy.cmd.surface SKIP "$nolive"
+    row omarchy omarchy.theme SKIP "$nolive"
+  else
+    if ! have omarchy; then
+      row omarchy omarchy.version.cmd UNKNOWN "omarchy not on PATH — version pin unverified (blocks CLEAN)"
+    else
+      local ov orc
+      ov=$(tmo omarchy version 2>/dev/null); orc=$?
+      if [ "$orc" != 0 ] || [ -z "$ov" ]; then
+        row omarchy omarchy.version.cmd UNKNOWN "'omarchy version' failed (rc=$orc) — pin unverified"
+      else
+        ov=$(printf '%s' "$ov" | head -1 | tr -d '[:space:]')
+        if [ "$ov" = "$OMARCHY_VERSION_PIN" ]; then
+          row omarchy omarchy.version.cmd PASS "HELD: 'omarchy version' → $ov (P1 pin)"
+        else
+          row omarchy omarchy.version.cmd FAIL "MOVED: 'omarchy version' → '${ov:-<empty>}' != pin $OMARCHY_VERSION_PIN"
+        fi
+      fi
+    fi
+
+    if ! have git; then
+      row omarchy omarchy.git.tag UNKNOWN "git not on PATH — checkout identity unverified"
+      row omarchy omarchy.git.head UNKNOWN "git not on PATH — checkout identity unverified"
+    elif [ "$omtree" = 0 ]; then
+      row omarchy omarchy.git.tag UNKNOWN "no git checkout at $tree"
+      row omarchy omarchy.git.head UNKNOWN "no git checkout at $tree"
+    else
+      local gt gh grc
+      gt=$(tmo git -C "$tree" describe --tags --exact-match 2>/dev/null); grc=$?
+      gt=$(printf '%s' "$gt" | head -1)
+      if [ "$grc" != 0 ]; then
+        row omarchy omarchy.git.tag UNKNOWN "git describe failed (rc=$grc) — tag pin unverified"
+      elif [ "$gt" = "$OMARCHY_TAG_PIN" ]; then
+        row omarchy omarchy.git.tag PASS "HELD: $gt exactly at HEAD (P3 pin)"
+      else
+        row omarchy omarchy.git.tag FAIL "MOVED: describe --tags --exact-match → '${gt:-<none>}' != pin $OMARCHY_TAG_PIN"
+      fi
+      gh=$(tmo git -C "$tree" rev-parse HEAD 2>/dev/null); grc=$?
+      gh=$(printf '%s' "$gh" | head -1)
+      if [ "$grc" != 0 ]; then
+        row omarchy omarchy.git.head UNKNOWN "git rev-parse failed (rc=$grc) — HEAD unverified"
+      elif [ "$gh" = "$OMARCHY_HEAD_PIN" ]; then
+        row omarchy omarchy.git.head PASS "HELD: ${gh:0:8} (P3 pin)"
+      else
+        row omarchy omarchy.git.head FAIL "MOVED: rev-parse HEAD → '${gh:-<none>}' != pin ${OMARCHY_HEAD_PIN:0:8}… (every pin held at the old HEAD needs re-verification)"
+      fi
+    fi
+
+    if ! have git || [ "$omtree" = 0 ] || ! have sha256sum || [ ! -f "$leaf" ]; then
+      row omarchy omarchy.skill.vs_head UNKNOWN "checkout or leaf unreadable — worktree/HEAD relation unverified"
+    else
+      local blob sw
+      blob=$(tmo git -C "$tree" show "HEAD:$OMARCHY_SKILL_REL" 2>/dev/null | sha256sum | cut -d' ' -f1)
+      sw=$(sha256sum "$leaf" 2>/dev/null | cut -d' ' -f1)
+      if [ -z "$blob" ]; then
+        row omarchy omarchy.skill.vs_head UNKNOWN "cannot read HEAD:$OMARCHY_SKILL_REL from the checkout"
+      elif [ "$blob" = "$sw" ]; then
+        row omarchy omarchy.skill.vs_head PASS "worktree == HEAD blob (index-free; no local edit)"
+      else
+        row omarchy omarchy.skill.vs_head FAIL "MOVED: worktree ${sw:0:12}… != HEAD blob ${blob:0:12}… (local edit; editing the skill edits the checkout)"
+      fi
+    fi
+
+    if ! have omarchy || [ "$PY_OK" = 0 ]; then
+      row omarchy omarchy.cmd.groups UNKNOWN "omarchy or python3 not on PATH — command surface unverified"
+      row omarchy omarchy.cmd.surface NOTE "probe unavailable; surface counter not read"
+    else
+      local cj co crc
+      cj=$(tmo omarchy commands --json --all 2>/dev/null)
+      co=$(printf '%s' "$cj" | python3 -c '
+import json, sys
+want = sys.argv[1].split()
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print("parse-error"); raise SystemExit(6)
+rows = d.get("commands") if isinstance(d, dict) else None
+if not isinstance(rows, list):
+    print("shape-error"); raise SystemExit(6)
+groups = {c.get("group") for c in rows if isinstance(c, dict)}
+missing = [g for g in want if g not in groups]
+print("%d %d %s" % (len(rows), len(groups), ",".join(missing) if missing else "-"))
+' "$OMARCHY_SKILL_GROUPS" 2>/dev/null); crc=$?
+      if [ "$crc" = 6 ] || [ -z "$co" ]; then
+        row omarchy omarchy.cmd.groups UNKNOWN "cannot parse 'omarchy commands --json --all'"
+        row omarchy omarchy.cmd.surface NOTE "probe unparseable; surface counter not read"
+      else
+        local nrows rest ngroups miss nwant
+        nrows=${co%% *}; rest=${co#* }
+        ngroups=${rest%% *}; miss=${rest#* }
+        nwant=$(printf '%s' "$OMARCHY_SKILL_GROUPS" | wc -w | tr -d ' ')
+        if [ "$miss" = "-" ]; then
+          row omarchy omarchy.cmd.groups PASS "HELD: all $nwant skill groups present ($ngroups live groups in --json --all)"
+        else
+          row omarchy omarchy.cmd.groups FAIL "MOVED: skill groups missing from the command surface: $miss"
+        fi
+        if [ "$nrows" = "$OMARCHY_CMD_SURFACE_PIN" ]; then
+          row omarchy omarchy.cmd.surface NOTE "HELD: $nrows commands in --json --all (counter only, not a verdict input)"
+        else
+          row omarchy omarchy.cmd.surface NOTE "MOVED: $nrows commands in --json --all (pin $OMARCHY_CMD_SURFACE_PIN; counter only, not a verdict input)"
+        fi
+      fi
+    fi
+
+    if ! have omarchy; then
+      row omarchy omarchy.theme NOTE "omarchy not on PATH — theme pin not read (operator-owned; D-1: not a verdict input)"
+    else
+      local th
+      th=$(tmo omarchy theme current 2>/dev/null | head -1)
+      if [ "$th" = "$OMARCHY_THEME_PIN" ]; then
+        row omarchy omarchy.theme NOTE "HELD: '$th' (operator-owned; D-1: never a verdict input)"
+      else
+        row omarchy omarchy.theme NOTE "MOVED: '${th:-<empty>}' != pin '$OMARCHY_THEME_PIN' (operator-owned; D-1: never a verdict input)"
+      fi
+    fi
+  fi
+
+  # --- docs register (record-level; C5/C8) ---------------------------------
+  local hooks="$ROOT/.config/omarchy/hooks" nd
+  if [ -d "$hooks" ]; then
+    nd=$(find "$hooks" -mindepth 1 -maxdepth 1 -type d -name '*.d' 2>/dev/null | wc -l | tr -d ' ')
+    row omarchy omarchy.doc.drifts NOTE "R2 carried: $nd *.d hook dirs live vs flat files in the skill text (MADO-3 §7); R1 route-table drift declared in the note, not re-derived here"
+  else
+    row omarchy omarchy.doc.drifts NOTE "no $hooks under this root — docs register carried in omarchy-drift-watch.md §4 (R1/R2)"
   fi
 }
 

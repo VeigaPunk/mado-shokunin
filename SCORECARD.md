@@ -17,3 +17,4 @@ Axes will be pinned with their counting commands as rounds land.
 | 5 | operability + calibration | round-4 state | first gate mado-verify.sh (selftest + live verdict) | wave-5 32-lane |
 | 6 | operability | round-5 state | gate proven to fail then hardened: selftest 28->53, the hardened gate kills 10/10 of tameshi's mutants | wave-6 32-lane (2 lanes rerouted alibaba->hyper) |
 | 7 | operability + coverage | round-6 state | gate --regression mode shipped | wave-7 32-lane (3 rerouted alibaba->hyper) |
+| 8 | operability + freshness | round-7 state | post-hardening sweep vs the 10/10 expectation | wave-8 32-lane (2 rerouted alibaba->hyper) |

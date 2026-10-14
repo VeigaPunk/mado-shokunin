@@ -904,3 +904,194 @@ this revision, `busctl --user list` → `fr.arouillard.waybar`).
   only difference from the recorded revision is exactly what makes the
   excision pin work.
 - `corpus/lessons/` still 0 entries (seventh round of the round-1 promise).
+
+## Round-8 — the post-hardening sweep, plane 7, and the receipt modes (append, M8-4)
+
+Appended 2026-10-14 19:37Z. Round-8 plan (`plans/round-8.plan.md`, 206 L by
+`wc -l` / 13,854 B / sha `ffcc058aa17755d9…`) orders ONE move in three ordered
+stages: (a) the hypr live rows reached through PATH stubs, then (b) the
+`omarchy` freshness plane and (c) an assertion floor — **(b)/(c) gated on (a)
+green**. Measured outcome at this append, at the landed revision
+`tools/mado-verify.sh` sha256 `7da4ec5013583c91…` (2,887 L / 131,612 B, mtime
+16:29:03 −03:00; stable 16:29:03 → 19:37Z through every run quoted here):
+**the declared census gains plane 7 with its live body exercised hermetically
+(b — landed), the recorded mutation case is re-cut and re-passes (landed), and
+two new receipt modes ship (`--snapshot` / `--snapshot-diff`)**; **stage (a)'s
+hypr-live stub scenarios (J/K/L) and stage (c)'s assertion floor did NOT land**
+— the wave's lanes were the sweep (M8-1), the plane (M8-2) and the modes
+(M8-3), and neither (a) nor (c) had an owning lane. This section says so
+plainly rather than smoothing it. Independent verification:
+`reports/r8-aud-m8.md` (AUD-M8; 127 L / 11,881 B / `4d8cd1cb163d810e…`) and
+`reports/r8-ver-m8.md` (VER-M8; 156 L / 9,997 B / `a96795039520e86a…`). This
+lane wrote only this file; scratch `/tmp/w8-mado-m8-4/`; the substrate stayed
+read-only — every run quoted below is the gate's own read-only mode, and the
+snapshot spot-checks wrote only under this lane's scratch.
+
+### The post-hardening sweep — result
+
+Note `corpus/knowledge/gate-mutation-sweep-r8.md` (M8-1; 178 L / 10,946 B / sha
+`9d6435f5cdd52561…`). Headline, measured: the recorded T6-1 ten-defect spec
+re-run against the round-7-hardened revision `90d50cdd…` → **killed 10 /
+survived 0 / inconclusive 0 — 100 % (10/10)**, control GREEN (89/89),
+`MUTATE_RESTORE: OK`, target sha before = after. The recorded spec is refused
+verbatim on the live bytes (nine non-unique anchors — round 7 embedded the spec
+in the gate's own heredoc, so nine anchors occur twice); the re-cut spec sha256
+`85d946d7905d8c92…6b01` (3,166 B) keeps the ten clauses and widens each anchor
+by adjacent live lines; harness pin `cf41efaa8be5f52d…242c75` (1,341 L),
+consumed read-only. Rate path for the same ten defects: round-5 revision
+`d7edaab4` 4/10 (40 %) → `c4c1afb7` 10/10 → live `90d50cdd` 10/10.
+
+Independently reproduced, twice: AUD-M8 re-ran the re-cut spec against its own
+frozen copy of `90d50cdd…` (`killed=10 … rc 0`), re-derived the excision
+itself, and re-ran the recorded spec against `c4c1afb7…` — all PASS; VER-M8
+swept the whole file at three revisions (`90d50cdd…`, `f58632b9…`, `38ed880f…`)
+with its own re-cut specs — 10/10 at each, and `MADO_REGRESSION: PASS` at each.
+Both reports print the in-flight pin machinery as the only red at their closes
+(AUD-M8 C4/C5: `--regression` SETUP and the R10 selftest case failing while the
+pin was mid-re-cut) — that is the alarm doing its job, and it is resolved at
+the landed revision below.
+
+**The re-cut.** `PIN_MADO` moved `c4c1afb7…a5171` → `d2bcdb31daea5d68…db62`;
+the derived target is now this file with **three** marker families excised
+(`MADO-R7-SELFTEST-BLOCK`, `MADO-R7-REGRESSION-BLOCK`, `MADO-R8-BLOCK` — the R8
+pair wraps round-8's own additions so a widening *inside* it needs no re-cut;
+anything new outside every pair still does). This lane reproduced the pin
+independently: the three-family `sed` excision of the landed bytes yields
+`d2bcdb31…`, 1,617 L, byte-for-byte. My own run at the landed revision:
+
+    MADO_REGRESSION: PASS (case=mado-verify-hardened; target=d2bcdb31…db62)   rc 0
+    REGRESSION_CASE … PASS (recorded table reproduced: killed=10/10 flips=0
+      inconclusive=0 control=green restore=ok)
+
+### The new modes — `--snapshot` / `--snapshot-diff`
+
+    bash tools/mado-verify.sh --snapshot FILE [--no-live|--live] [--root DIR]
+        # runs the gate, writes a v1 receipt to FILE (FILE must not exist;
+        # receipts are never overwritten). Exit = the run's verdict; the write
+        # adds MADO_SNAPSHOT: WRITTEN|REFUSED (a refusal exits 2).
+    bash tools/mado-verify.sh --snapshot-diff OLD NEW
+        # diffs two receipts class by class. MADO_DIFF: SAME|DETAIL-CHANGED|
+        # CHANGED|SETUP (exit 0/0/1/2). Reads only the two files; never prints
+        # MADO_VERIFY:.
+
+Discoverability, measured: the base `--help` still lists only the five original
+flags (same class as the round-7 note); the mode paragraph is appended by
+`--snapshot --help` and `--snapshot-diff --help` (both rc 0), and scenario S9
+asserts the help documents both modes. The receipt header carries
+`# mado-verify snapshot v1`, the creation time, `tool=` (the self-label) and
+`gate-sha256=` — a receipt names the revision that produced it.
+
+Spot-checks of the modes, executed at the landed revision (scratch
+`/tmp/w8-mado-m8-4/`):
+
+1. `--no-live --snapshot a.snap` → `MADO_SNAPSHOT: WRITTEN … (rows=31 pass=20
+   fail=0 unknown=0 skip=8 note=3; scope=file-plane)`, rc 0; the file is 40 L /
+   2,860 B and starts `# mado-verify snapshot v1`.
+2. A second write to the same path → `MADO_SNAPSHOT: REFUSED (destination
+   exists: … — receipts are never overwritten)`, **rc 2**.
+3. `--snapshot-diff a.snap b.snap`, where `b.snap` receipts a divergent run
+   (empty root, my scratch) → `MADO_DIFF: CHANGED (rows 31→30; regressed=14
+   recovered=0 flipped=0 relaxed=0 relabeled=5 appeared=0 vanished=1;
+   detail-changed=22; scope=1)`, **rc 1**; `--snapshot-diff a.snap a.snap` →
+   `MADO_DIFF: SAME …`, **rc 0**.
+4. No run touched the substrate: the gate's own `boundary.readonly` row prints
+   the same combined config-plane prefix `bb2639d9a980…` in every run, and the
+   gate's sha256 was identical before and after all of them.
+
+### Plane 7 — `omarchy` freshness, and how its live body is reached
+
+`omarchy_plane()` (`:2610`) emits 11 rows — 8 verdict-bearing and 3 NOTE-level,
+the plan §(b)'s split, from `omarchy-drift-watch.md` §6 (named at `:2574`).
+D-1 resolves as the plan predicted: `omarchy.theme` is a NOTE with HELD|MOVED
+printed in the detail (a routine theme change must not turn the freshness gate
+permanently red). Measured live verdicts at the landed revision, every pin
+HELD:
+
+| row | verdict | detail (quoted from the live run) |
+|---|---|---|
+| `omarchy.version.cmd` | PASS | HELD: 'omarchy version' → 3.8.3 (P1 pin) |
+| `omarchy.version.file` | PASS | HELD: version file '3.8.3' (P2 pin; == HEAD:version blob at the pinned HEAD) |
+| `omarchy.git.tag` | PASS | HELD: v3.8.4 exactly at HEAD (P3 pin) |
+| `omarchy.git.head` | PASS | HELD: 8fcc9d60 (P3 pin) |
+| `omarchy.skill.link` | PASS | HELD: symlink into the checkout (one file; nothing to drift) |
+| `omarchy.skill.sha` | PASS | HELD: leaf sha256 becd149e4d1c… (P4 pin) |
+| `omarchy.skill.vs_head` | PASS | worktree == HEAD blob (index-free; no local edit) |
+| `omarchy.cmd.groups` | PASS | HELD: all 11 skill groups present (56 live groups in --json --all) |
+| `omarchy.cmd.surface` | NOTE | HELD: 282 commands in --json --all (counter only, not a verdict input) |
+| `omarchy.theme` | NOTE | HELD: 'Matte Black' (operator-owned; D-1: never a verdict input) |
+| `omarchy.doc.drifts` | NOTE | R2 carried: 5 *.d hook dirs live vs flat files in the skill text (MADO-3 §7); R1 route-table drift declared in the note, not re-derived here |
+
+The live rows are reached **hermetically**: scenarios OM1–OM8 install stub
+`omarchy` / `git` verbs first on PATH (the `git` stub answers `describe`,
+`rev-parse`, `show` from fixture blobs; the omarchy stub refuses unknown verbs
+with rc 64) and drive the real row code through `--root` fixtures — a moved
+pin FAILs naming the pin (OM3/OM7), a missing stub reads UNKNOWN and never
+CLEAN (OM4), an equal-bytes copy in place of the symlink reads MOVED as a copy
+while `.skill.sha` still measures the same bytes (OM5), a worktree edit is
+detected without `git status` (OM6), and a missing group is named (OM8). That
+is this round's stub-based live-body exercise — it is the `omarchy` plane's,
+not the hypr live plane's (see below). Fence unchanged: the plane reads only
+the §6 guard list — no `git status`, no `git fetch`, no mutating `omarchy` verb.
+
+### Identity, census, verdicts at this append
+
+| | Before (round-7 landed `90d50cdd…`) | After (landed `7da4ec50…`) |
+|---|---|---|
+| gate lines / bytes | 1,755 / 75,771 | **2,887 / 131,612** (`git diff --numstat` vs HEAD = +1,141/−9) |
+| gate sha256 | `90d50cdd4d18410b…` | `7da4ec5013583c91…` |
+| selftest | `89/89`, rc 0 | **`217/217`**, rc 0 (twice) |
+| file-plane verdict | CLEAN (17 pass, 2 notes; skip=1) | CLEAN (**20 pass, 3 notes**; `counts: pass=20 fail=0 unknown=0 skip=8 note=3`), rc 0 |
+| live verdict | CLEAN (35 pass, 4 notes) | CLEAN (**43 pass, 7 notes**; `counts: pass=43 fail=0 unknown=0 skip=0 note=7`), rc 0 |
+| `row` + `row_from_rc` sites | 106 + 6 | **162 + 6** (omarchy 56 / hypr 23 / hypr-live 51 / waybar 17 / terms 10 / gate 3 / walker 2) |
+| distinct row ids / planes | 40 / 6 ids | **51 / 7 ids** (omarchy 11 / hypr-live 21 / hypr 9 / waybar 4 / terms 4 / walker 1 / gate 1) |
+| selftest helper plane regex | 6 ids | **7 ids** (`hypr|hypr-live|waybar|walker|terms|omarchy|gate`, five sites `:357`, `:361`, `:376-380`) |
+| row ids asserted by the suite | 11 of 40 | **22 of 51** (all 11 new ones are `omarchy.*`; no hypr-live id added) |
+| regression case | PASS @ `c4c1afb7…` | **PASS @ `d2bcdb31…`** (three-family excision; my own run, rc 0) |
+| boundary proof | `bb2639d9a980…` | `bb2639d9a980…` (unchanged in every run) |
+| scenario labels in the suite | A–I, R1–R13 | + **OM1–OM8**, **S1–S10** |
+
+Corrections this append carries: the plan's design-time counters are pre-round-7
+— its "selftest count before → after (53 → 53+M)" reads **89 → 217**, its
+"distinct asserted row ids (11 of 40)" is right for the before state and reads
+**22 of 51** after; its line refs (`:379-558`, `:699-1087`,
+`:352`/`:356`/`:371-375`, `:676-1108`) sit at the round-7 revision and shift
+(the helper regexes are `:357`/`:361`/`:376-380`; the live readers
+`live_plane()` `:2300`; `omarchy_plane()` `:2610`).
+
+### What did not land (plan stages (a) and (c))
+
+- **(a) hypr-live stub scenarios J/K/L — not in the suite.** No `hyprctl`
+  PATH-stub fixture exists (`grep -n hyprctl` shows only the reader sites, the
+  `have hyprctl` guard and scenario C's no-hyprctl sandbox); scenarios A–I are
+  unchanged by round 8, and no hypr-live row id entered the asserted set. The
+  live plane's *body* is still exercised only by the real read verbs on this
+  host (35 → 43 live rows pass at the landed revision, but from the substrate,
+  not from a stub) — the round-6 open item stands.
+- **(c) assertion floor — not landed.** The two exit-2 arms the round-6 record
+  named (`--root` with no value; a bad `MADO_VERIFY_LIVE`) still have behavior
+  but no assertion (`grep` for both refusal strings inside the suite: 0), and
+  both existed already at HEAD (`git show HEAD:tools/mado-verify.sh`, 1,755 L)
+  — round 8 neither added nor pinned them; `VERSION_STR` still self-labels
+  "v1 (round 5 / M5-2)" (now also copied into every snapshot receipt's `tool=`
+  line); the boundary combined-hash prefix is still not asserted in a `sha_pin`
+  detail; the `row_from_rc` rc-6 arm is byte-identical (still maps 6 → UNKNOWN
+  — no white-box pin and no branch removal), so the round-6 owner decision is
+  still open.
+- The exit-flatten family stays a harness boundary: recorded as a
+  recommendation to tameshi (a kill criterion that also reads suite stdout),
+  never a patch from this repo.
+- A widening *outside* the three marked families makes `--regression` read
+  SETUP with its printed `REGRESSION_RECUT` — by design, never a stale PASS.
+
+### Unknowns at this append
+
+- The gate was written by three lanes inside this round; every number above is
+  tied to `7da4ec50…` (stable 16:29:03 −03:00 → this append). Later revisions
+  are not covered — re-run `sha256sum tools/mado-verify.sh` before quoting.
+- Whether the `omarchy` guard list stays sufficient when the checkout moves:
+  `omarchy.skill.vs_head` needs a read verb inside the checkout (`git show`);
+  tree-wide cleanliness stays unmeasured by constraint (no `git status`).
+- Whether the `v1` receipt schema carries a different host's live-scope rows
+  without a split — untested beyond two local scopes.
+- `corpus/lessons/` still 0 entries (eighth round); `corpus/README.md` rows and
+  the round-7 `walker-deep.md` §10/§11 errata remain owed by their owners.
