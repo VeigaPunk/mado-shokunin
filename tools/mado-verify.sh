@@ -57,6 +57,15 @@
 #             link into the checkout, skill leaf sha becd149e…, worktree ==
 #             HEAD blob, command groups ⊇ the 11 skill groups. MOVED → FAIL
 #             naming the pin; theme/counters/docs are record-level NOTEs (D-1).
+#   theme   — declared file chain (theme-wallpaper-plane.md §2/§4/§6): the
+#             machine name (`current/theme.name`, one line, ^[a-z0-9-]+$) and
+#             every installed consumer's import resolve (hyprland.conf:13,
+#             hyprlock.conf:1, waybar/style.css:1, alacritty.toml:1, the mako
+#             config symlink, the walker theme package css, swayosd/style.css);
+#             the background symlink resolves inside current/theme/backgrounds/
+#             to a non-empty file. Declared-only parts (consumer binary absent,
+#             §4.1) stay NOTEs; the theme *choice* stays operator-owned
+#             (live.theme.current) and is never a verdict input.
 #
 # Explicitly NOT verified here (no read surface; stays UNKNOWN, never guessed):
 # window-rule effects, dispatcher behaviour, module text, idle/lock
@@ -230,6 +239,8 @@ build_fixture() { # $1 = root
 
   cat >"$R/.config/hypr/hyprland.conf" <<'EOF'
 # fixture — pure orchestrator, mirrors MADO-1 §3 include order
+# fixture line-anchor mirror: three leading lines put the theme include at
+# line 13, the measured live anchor (theme-wallpaper-plane.md §4).
 source = ~/.local/share/omarchy/default/hypr/autostart.conf
 source = ~/.local/share/omarchy/default/hypr/bindings/media.conf
 source = ~/.local/share/omarchy/default/hypr/bindings/clipboard.conf
@@ -280,6 +291,25 @@ EOF
   printf '# fixture theme include\n' >"$R/.config/omarchy/current/theme/hyprland.conf"
   printf 'matte-black\n' >"$R/.config/omarchy/current/theme.name"
   printf '# fixture theme bar css\n' >"$R/.config/omarchy/current/theme/waybar.css"
+  # theme chain fixtures (theme-wallpaper-plane.md §2/§4): the parts every
+  # consumer import must resolve to, plus the two declared symlinks. Shapes
+  # only — a fixture cannot carry the live payload, and no row reads content
+  # beyond "is this part a non-empty regular file".
+  printf '# fixture theme hyprlock include\n' >"$R/.config/omarchy/current/theme/hyprlock.conf"
+  printf '# fixture theme alacritty palette\n' >"$R/.config/omarchy/current/theme/alacritty.toml"
+  printf '[main]\nfont=monospace\n' >"$R/.config/omarchy/current/theme/mako.ini"
+  printf '# fixture theme walker css\n' >"$R/.config/omarchy/current/theme/walker.css"
+  printf '# fixture theme swayosd css\n' >"$R/.config/omarchy/current/theme/swayosd.css"
+  mkdir -p "$R/.config/omarchy/current/theme/backgrounds" "$R/.config/mako" "$R/.config/swayosd"
+  printf 'fixture background (non-empty; bytes are not read)\n' \
+    >"$R/.config/omarchy/current/theme/backgrounds/0-fixture.jpg"
+  ln -s theme/backgrounds/0-fixture.jpg "$R/.config/omarchy/current/background"
+  ln -s ../omarchy/current/theme/mako.ini "$R/.config/mako/config"
+  printf 'source = ~/.config/omarchy/current/theme/hyprlock.conf\n' >"$R/.config/hypr/hyprlock.conf"
+  printf '@import "../omarchy/current/theme/swayosd.css";\n' >"$R/.config/swayosd/style.css"
+  mkdir -p "$R/.local/share/omarchy/default/walker/themes/omarchy-default"
+  printf '@import "~/.config/omarchy/current/theme/walker.css";\n' \
+    >"$R/.local/share/omarchy/default/walker/themes/omarchy-default/style.css"
 
   cat >"$R/.config/waybar/config.jsonc" <<'EOF'
 {
@@ -354,11 +384,11 @@ selftest() {
   st_not_has() { case "$2" in *"$3"*) st_bad "$1 (unexpected: $3)" ;; *) st_ok ;; esac; }
   st_rows() { # desc out status expected-count
     local n
-    n=$(printf '%s\n' "$2" | awk -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3==s {c++} END {print c+0}')
+    n=$(printf '%s\n' "$2" | awk -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3==s {c++} END {print c+0}')
     st_eq "$1" "$4" "$n"
   }
   st_row_has() { # out id status
-    if printf '%s\n' "$1" | awk -v i="$2" -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $2==i && $3==s {c++} END {exit (c+0>0)?0:1}'; then
+    if printf '%s\n' "$1" | awk -v i="$2" -v s="$3" '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $2==i && $3==s {c++} END {exit (c+0>0)?0:1}'; then
       st_ok
     else
       st_bad "$4 (want row $2 $3)"
@@ -373,11 +403,11 @@ selftest() {
   }
   st_counts_agree() { # out desc — the report counts must equal the row table
     local np nf nu ns nn
-    np=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="PASS" {c++} END {print c+0}')
-    nf=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="FAIL" {c++} END {print c+0}')
-    nu=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="UNKNOWN" {c++} END {print c+0}')
-    ns=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="SKIP" {c++} END {print c+0}')
-    nn=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|gate) / && $3=="NOTE" {c++} END {print c+0}')
+    np=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3=="PASS" {c++} END {print c+0}')
+    nf=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3=="FAIL" {c++} END {print c+0}')
+    nu=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3=="UNKNOWN" {c++} END {print c+0}')
+    ns=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3=="SKIP" {c++} END {print c+0}')
+    nn=$(printf '%s\n' "$1" | awk '/^(hypr|hypr-live|waybar|walker|terms|omarchy|theme|gate) / && $3=="NOTE" {c++} END {print c+0}')
     st_has "$2" "$1" "counts: pass=$np fail=$nf unknown=$nu skip=$ns note=$nn"
   }
 
@@ -744,6 +774,143 @@ MADO_R8_GIT_STUB
   st_counts_agree "$om_out" "OM8: counts agree with rows"
   # <<< MADO-R8-OMARCHY-BLOCK <<<
 
+  # --- scenarios T: the theme plane, hermetic (theme-wallpaper-plane.md §6) --
+  # Landed from the round-7 note's file-row spec. Every case drives the real
+  # row code against fixture roots built by build_fixture — the chain parts,
+  # the two declared symlinks and the consumer style files are fixture shapes
+  # (named in build_fixture); no substrate path is read and no consumer is
+  # touched. The assertions cover the verdict direction of every landed row:
+  # clean PASS, a MOVED anchor FAILs naming it, an absent consumer reads NOTE
+  # (never a silent skip), a missing tree reads UNKNOWN (never CLEAN).
+  local TH="$T/theme" th_out th_rc
+  mkdir -p "$TH"
+
+  # --- T1: the clean fixture — 10 rows, verdict rows PASS, NOTEs stay NOTE --
+  th_out=$("$BASH_BIN" "$0" --root "$A" --no-live 2>&1); th_rc=$?
+  st_eq  "T1: exit 0 (the theme rows leave the clean fixture CLEAN)" 0 "$th_rc"
+  st_has "T1: CLEAN verdict" "$th_out" "MADO_VERIFY: CLEAN"
+  st_eq  "T1: the plane emits 10 rows" 10 \
+    "$(printf '%s\n' "$th_out" | awk '$1=="theme" {c++} END {print c+0}')"
+  st_row_has "$th_out" theme.name.read PASS "T1"
+  st_row_detail "$th_out" theme.name.read PASS "matte-black" "T1: the fixture name is read"
+  st_row_has "$th_out" theme.chain.hypr_include PASS "T1"
+  st_row_detail "$th_out" theme.chain.hypr_include PASS "line 13" "T1: the declared line anchor (live:13) is held"
+  st_row_has "$th_out" theme.chain.hyprlock PASS "T1"
+  st_row_has "$th_out" theme.chain.waybar_css PASS "T1"
+  st_row_has "$th_out" theme.chain.alacritty PASS "T1"
+  st_row_has "$th_out" theme.chain.mako_link PASS "T1 (symlink into current/theme/)"
+  st_row_has "$th_out" theme.chain.walker_css PASS "T1 (consumer installed in the fixture)"
+  st_row_has "$th_out" theme.chain.swayosd_css PASS "T1"
+  st_row_has "$th_out" theme.wallpaper.link PASS "T1 (non-empty target inside backgrounds/)"
+  st_row_has "$th_out" theme.parts.declared_only NOTE "T1 (declared-only stays a NOTE)"
+  st_eq  "T1: zero theme FAILs" 0 \
+    "$(printf '%s\n' "$th_out" | awk '$1=="theme" && $3=="FAIL" {c++} END {print c+0}')"
+  st_eq  "T1: zero theme UNKNOWNs" 0 \
+    "$(printf '%s\n' "$th_out" | awk '$1=="theme" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$th_out" "T1: counts agree with the widened plane set"
+
+  # --- T2: a chain target removed → the named row FAILs, DIVERGED ----------
+  local TA="$TH/target-missing"
+  mkdir -p "$TA"
+  cp -a "$A/." "$TA/"
+  rm -f "$TA/.config/omarchy/current/theme/hyprlock.conf"
+  th_out=$("$BASH_BIN" "$0" --root "$TA" --no-live 2>&1); th_rc=$?
+  st_eq  "T2: exit 1" 1 "$th_rc"
+  st_has "T2: DIVERGED verdict" "$th_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$th_out" theme.chain.hyprlock FAIL "target missing" \
+    "T2: the missing part is named"
+  st_row_has "$th_out" theme.chain.hypr_include PASS "T2 (isolation: only the broken row moves)"
+  st_eq  "T2: exactly one theme FAIL" 1 \
+    "$(printf '%s\n' "$th_out" | awk '$1=="theme" && $3=="FAIL" {c++} END {print c+0}')"
+  st_not_has "T2: no fake CLEAN" "$th_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$th_out" "T2: counts agree with rows"
+
+  # --- T3: the include line moved → FAIL naming both line numbers ----------
+  local TM="$TH/moved"
+  mkdir -p "$TM"
+  cp -a "$A/." "$TM/"
+  sed -i '12a # fixture drift comment (pushes the theme include one line down)' \
+    "$TM/.config/hypr/hyprland.conf"
+  th_out=$("$BASH_BIN" "$0" --root "$TM" --no-live 2>&1); th_rc=$?
+  st_eq  "T3: exit 1" 1 "$th_rc"
+  st_row_detail "$th_out" theme.chain.hypr_include FAIL "import moved: line 14 (declared line 13)" \
+    "T3: the move is named with both line numbers"
+  st_row_has "$th_out" hypr.root.include_graph PASS \
+    "T3: isolation — the source order is untouched, only the line number moved"
+  st_counts_agree "$th_out" "T3: counts agree with rows"
+
+  # --- T4: a copy in place of the mako link, and a dangling background -----
+  local TL="$TH/links"
+  mkdir -p "$TL"
+  cp -a "$A/." "$TL/"
+  rm -f "$TL/.config/mako/config"
+  printf '[main]\nfont=monospace\n' >"$TL/.config/mako/config"
+  rm -f "$TL/.config/omarchy/current/background"
+  ln -s theme/backgrounds/0-missing.jpg "$TL/.config/omarchy/current/background"
+  th_out=$("$BASH_BIN" "$0" --root "$TL" --no-live 2>&1); th_rc=$?
+  st_eq  "T4: exit 1" 1 "$th_rc"
+  st_row_detail "$th_out" theme.chain.mako_link FAIL "regular file" \
+    "T4: a copy may not masquerade as the declared link"
+  st_row_detail "$th_out" theme.wallpaper.link FAIL "dangling symlink" \
+    "T4: the dangling background link is named"
+  st_counts_agree "$th_out" "T4: counts agree with rows"
+
+  # --- T5: the background link must resolve INSIDE backgrounds/ ------------
+  local TO="$TH/outside"
+  mkdir -p "$TO"
+  cp -a "$A/." "$TO/"
+  rm -f "$TO/.config/omarchy/current/background"
+  ln -s theme/hyprland.conf "$TO/.config/omarchy/current/background"
+  th_out=$("$BASH_BIN" "$0" --root "$TO" --no-live 2>&1); th_rc=$?
+  st_eq  "T5: exit 1" 1 "$th_rc"
+  st_row_detail "$th_out" theme.wallpaper.link FAIL "resolves outside" \
+    "T5: a link out of backgrounds/ FAILs, never a silent pass"
+  st_row_has "$th_out" theme.chain.hypr_include PASS "T5 (isolation)"
+
+  # --- T6: an empty background target FAILs --------------------------------
+  local TZ="$TH/empty-target"
+  mkdir -p "$TZ"
+  cp -a "$A/." "$TZ/"
+  : >"$TZ/.config/omarchy/current/theme/backgrounds/0-fixture.jpg"
+  th_out=$("$BASH_BIN" "$0" --root "$TZ" --no-live 2>&1); th_rc=$?
+  st_eq  "T6: exit 1" 1 "$th_rc"
+  st_row_detail "$th_out" theme.wallpaper.link FAIL "target is empty" \
+    "T6: an empty wallpaper target is named"
+
+  # --- T7: a malformed theme.name FAILs (shape, not value) -----------------
+  local TN="$TH/name"
+  mkdir -p "$TN"
+  cp -a "$A/." "$TN/"
+  printf 'Matte Black\n' >"$TN/.config/omarchy/current/theme.name"
+  th_out=$("$BASH_BIN" "$0" --root "$TN" --no-live 2>&1); th_rc=$?
+  st_eq  "T7: exit 1" 1 "$th_rc"
+  st_row_detail "$th_out" theme.name.read FAIL "malformed theme.name" \
+    "T7: the display form (uppercase, space) is not a machine name"
+  st_row_has "$th_out" theme.chain.hypr_include PASS "T7 (isolation: the chain is untouched)"
+
+  # --- T8: an absent consumer reads NOTE — never a FAIL, never a skip ------
+  local TC="$TH/consumer"
+  mkdir -p "$TC"
+  cp -a "$A/." "$TC/"
+  rm -rf "$TC/.config/swayosd" "$TC/.local/share/omarchy/default/walker/themes/omarchy-default"
+  th_out=$("$BASH_BIN" "$0" --root "$TC" --no-live 2>&1); th_rc=$?
+  st_eq  "T8: exit 0 — a NOTE never flips the verdict" 0 "$th_rc"
+  st_has "T8: CLEAN verdict" "$th_out" "MADO_VERIFY: CLEAN"
+  st_row_has "$th_out" theme.chain.walker_css NOTE "T8 (consumer absent)"
+  st_row_has "$th_out" theme.chain.swayosd_css NOTE "T8 (consumer absent)"
+  st_eq  "T8: zero theme FAILs" 0 \
+    "$(printf '%s\n' "$th_out" | awk '$1=="theme" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$th_out" "T8: counts agree with rows"
+
+  # --- T9: a missing theme tree reads UNKNOWN — never CLEAN ----------------
+  local TE="$TH/no-tree"
+  mkdir -p "$TE"
+  th_out=$("$BASH_BIN" "$0" --root "$TE" --no-live 2>&1); th_rc=$?
+  st_eq  "T9: exit 1 (an empty root fails closed)" 1 "$th_rc"
+  st_row_has "$th_out" theme.name.read UNKNOWN "T9 (missing tree)"
+  st_not_has "T9: no fake CLEAN" "$th_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$th_out" "T9: counts agree with rows"
+
   # --- scenario A: clean fixture → CLEAN, exit 0, substrate untouched ------
   local before after out rc
   before=$(find "$A" -type f | sort | xargs sha256sum | sha256sum)
@@ -1084,6 +1251,22 @@ MADO_R8_CRAFT_B
 # before/after). PIN_MADO moves c4c1afb7… → d2bcdb31…; TABLE_MADO is unchanged
 # — the widening lost no kill. Evidence: /tmp/w8-mado-m8-2/sweep (scratch).
 #
+# Re-cut record — round 9 / M9-1 (theme plane: the §6 file rows + scenarios T):
+# the note's paste-ready spec landed as theme_plane(), the suite's plane
+# alternation widened to `theme` (seven awk sites) and the plane joined
+# verify() — all outside the marked families, so the derived target moved and
+# the pin was re-cut. The ten recorded defects were re-swept against the
+# widened revision with the recorded spec, re-extracted from the heredoc below
+# and checked byte-for-byte against SPEC_SHA before the sweep. Measured table
+# identical to TABLE_MADO (10 killed / 0 survived / 0 inconclusive, kill-rate
+# 100 %; MUTATE_RESTORE OK, target sha before == after). PIN_MADO moves
+# d2bcdb31… → dc7c4141… (derived target 1,945 L, re-derived independently and
+# cmp-identical); TABLE_MADO is unchanged — the widening lost no kill. The
+# derived target's own suite read 163/163 in the control run. Evidence:
+# /tmp/w9-mado-m9-1/recut (scratch, this round). The newly landed theme rows
+# carry no defect of their own yet: a covering mutant for the theme clauses is
+# owed by the sweep lane (round-6 reading rule 2) — recorded, not smoothed.
+#
 # Discipline: the harness (tameshi-shokunin/tools/mutate-and-run.sh) is
 # consumed read-only — a needed change is a recommendation to tameshi, never a
 # patch; its revision is printed as provenance, not gated (the kill table is
@@ -1104,7 +1287,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='d2bcdb31daea5d68dc7c586617939d71d525dbeab723e72b8c17644ad327db62'
+PIN_MADO='dc7c4141449891cdd83bb603aff7215358328a9ce1b32dba0bb9c0514cb6f8fd'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -2279,6 +2462,11 @@ verify() {
   omarchy_plane
 
   # -------------------------------------------------------------------------
+  # plane: theme — declared file chain (theme-wallpaper-plane.md §6; M9-1)
+  # -------------------------------------------------------------------------
+  theme_plane
+
+  # -------------------------------------------------------------------------
   # boundary proof row (SKILL safety rule 3)
   # -------------------------------------------------------------------------
   if [ -d "$C" ] && [ -n "$before" ]; then
@@ -2808,6 +2996,162 @@ print("%d %d %s" % (len(rows), len(groups), ",".join(missing) if missing else "-
   else
     row omarchy omarchy.doc.drifts NOTE "no $hooks under this root — docs register carried in omarchy-drift-watch.md §4 (R1/R2)"
   fi
+}
+
+# ===========================================================================
+# plane: theme — declared file chain (theme-wallpaper-plane.md §2/§4/§6)
+#
+# Landed from the round-7 note's paste-ready §6 row spec — the FILE rows only
+# (the note's live rows, swaybg argv and the theme-name display agreement, are
+# not landed here). The note is the input and is never parsed: its measured
+# anchors are held in line below with the note cited. Every row reads $ROOT,
+# so a fixture root carrying the declared files is judged like the real one;
+# a missing tree reads UNKNOWN (never a silent pass) and a broken chain FAILs.
+# The theme *choice* stays operator-owned (live.theme.current, unchanged) —
+# this plane judges chain integrity, never the name's value.
+# ===========================================================================
+theme_chain_row() { # <id> <consumer-file> <theme part> <declared line>
+  local id="$1" file="$2" part="$3" at="$4" hit lno
+  if [ ! -f "$file" ]; then
+    row theme "$id" FAIL "missing consumer: ${file#$ROOT/}"
+    return
+  fi
+  hit=$(grep -nE "omarchy/current/theme/${part}([\"' 	]|\$)" "$file" 2>/dev/null | head -1)
+  if [ -z "$hit" ]; then
+    row theme "$id" FAIL "${file#$ROOT/} does not import omarchy/current/theme/$part (chain broken)"
+    return
+  fi
+  lno="${hit%%:*}"
+  if [ -n "$at" ] && [ "$lno" != "$at" ]; then
+    row theme "$id" FAIL "import moved: line $lno (declared line $at)"
+    return
+  fi
+  if [ ! -f "$C/omarchy/current/theme/$part" ]; then
+    row theme "$id" FAIL "import at line $lno but target missing: current/theme/$part"
+    return
+  fi
+  row theme "$id" PASS "line $lno imports current/theme/$part (target exists)"
+}
+
+theme_symlink_row() { # <id> <link> <must-resolve-under> <require-nonempty 0|1>
+  local id="$1" link="$2" under="$3" need="$4" res
+  if [ ! -e "$link" ] && [ ! -L "$link" ]; then
+    row theme "$id" FAIL "missing: ${link#$ROOT/}"
+  elif [ ! -L "$link" ]; then
+    row theme "$id" FAIL "${link#$ROOT/} is a regular file (want a symlink into ${under#$ROOT/})"
+  elif ! have readlink; then
+    row theme "$id" UNKNOWN "readlink not on PATH — link target unresolved"
+  else
+    res=$(readlink -f "$link" 2>/dev/null || true)
+    case "$res" in
+      "$under"/*)
+        if [ ! -f "$res" ]; then
+          row theme "$id" FAIL "dangling symlink: ${link#$ROOT/} → ${res#$ROOT/}"
+        elif [ "$need" = 1 ] && [ ! -s "$res" ]; then
+          row theme "$id" FAIL "target is empty: ${res#$ROOT/}"
+        else
+          row theme "$id" PASS "symlink → ${res#$ROOT/} (inside ${under#$ROOT/})"
+        fi
+        ;;
+      '' | "$link")
+        row theme "$id" FAIL "dangling symlink: ${link#$ROOT/} (target does not exist)"
+        ;;
+      *)
+        row theme "$id" FAIL "resolves outside ${under#$ROOT/}: $res"
+        ;;
+    esac
+  fi
+}
+
+theme_walker_css_row() { # consumer: walker's theme package imports the css
+  local cfg="$C/walker/config.toml" thme loc style
+  if [ ! -f "$cfg" ]; then
+    row theme theme.chain.walker_css NOTE "walker not installed under this root (no ${cfg#$ROOT/}) — css chain declared only"
+    return
+  fi
+  # the two keys are quoted TOML strings; a trailing comment (# …) is legal
+  # and must not defeat the read (measured on the live config.toml:3)
+  thme=$(sed -nE 's/^[[:space:]]*theme[[:space:]]*=[[:space:]]*"([^"]*)".*$/\1/p' "$cfg" | head -1)
+  loc=$(sed -nE 's/^[[:space:]]*additional_theme_location[[:space:]]*=[[:space:]]*"([^"]*)".*$/\1/p' "$cfg" | head -1)
+  if [ -z "$thme" ] || [ -z "$loc" ]; then
+    row theme theme.chain.walker_css UNKNOWN "walker config.toml present but theme/additional_theme_location unreadable — chain unverifiable"
+    return
+  fi
+  style="${loc/#\~/$ROOT}/${thme}/style.css"
+  if [ ! -f "$style" ]; then
+    row theme theme.chain.walker_css NOTE "theme package '$thme' not present under ${loc#$ROOT/} — css chain declared only"
+    return
+  fi
+  if ! grep -q 'omarchy/current/theme/walker.css' "$style"; then
+    row theme theme.chain.walker_css FAIL "${style#$ROOT/} does not import omarchy/current/theme/walker.css"
+    return
+  fi
+  if [ ! -f "$C/omarchy/current/theme/walker.css" ]; then
+    row theme theme.chain.walker_css FAIL "import present but target missing: current/theme/walker.css"
+    return
+  fi
+  row theme theme.chain.walker_css PASS "package '$thme' style.css imports current/theme/walker.css (target exists)"
+}
+
+theme_swayosd_css_row() { # consumer: swayosd style.css imports the css
+  local style="$C/swayosd/style.css"
+  if [ ! -f "$style" ]; then
+    row theme theme.chain.swayosd_css NOTE "swayosd not installed under this root (no ${style#$ROOT/}) — css chain declared only"
+    return
+  fi
+  if ! grep -q 'omarchy/current/theme/swayosd.css' "$style"; then
+    row theme theme.chain.swayosd_css FAIL "${style#$ROOT/} does not import omarchy/current/theme/swayosd.css"
+    return
+  fi
+  if [ ! -f "$C/omarchy/current/theme/swayosd.css" ]; then
+    row theme theme.chain.swayosd_css FAIL "import present but target missing: current/theme/swayosd.css"
+    return
+  fi
+  row theme theme.chain.swayosd_css PASS "style.css imports current/theme/swayosd.css (target exists)"
+}
+
+theme_plane() {
+  local tdir="$C/omarchy/current" thdir="$C/omarchy/current/theme"
+
+  # --- the declared machine name (writer: omarchy-theme-set:45; note §1) ----
+  local nf="$tdir/theme.name" nm nl
+  if [ ! -f "$nf" ]; then
+    row theme theme.name.read UNKNOWN "theme tree absent under this root (${nf#$ROOT/}) — name unreadable"
+  else
+    nm=$(head -1 "$nf" 2>/dev/null)
+    nl=$(awk 'END {print NR+0}' "$nf" 2>/dev/null)
+    if [ -z "$nm" ] || [ "$nl" != 1 ] || ! printf '%s' "$nm" | grep -qE '^[a-z0-9-]+$'; then
+      row theme theme.name.read FAIL "malformed theme.name ('$nm', $nl line(s); want one line matching ^[a-z0-9-]+$)"
+    else
+      row theme theme.name.read PASS "theme.name = '$nm' (one line, machine-name shape)"
+    fi
+  fi
+
+  # --- consumer import chain (note §4): file line → theme part -------------
+  theme_chain_row theme.chain.hypr_include "$H/hyprland.conf" hyprland.conf 13
+  theme_chain_row theme.chain.hyprlock "$H/hyprlock.conf" hyprlock.conf 1
+  theme_chain_row theme.chain.waybar_css "$C/waybar/style.css" waybar.css 1
+  theme_chain_row theme.chain.alacritty "$C/alacritty/alacritty.toml" alacritty.toml 1
+
+  # --- mako: the consumer config IS the theme part (symlink) ---------------
+  theme_symlink_row theme.chain.mako_link "$C/mako/config" "$thdir" 0
+
+  # --- installed-consumer-gated css chains (NOTE when absent, never a
+  #     silent skip — note §4/§6) -------------------------------------------
+  theme_walker_css_row
+  theme_swayosd_css_row
+
+  # --- the wallpaper's declared pointer (note §1/§3) ----------------------
+  theme_symlink_row theme.wallpaper.link "$tdir/background" "$thdir/backgrounds" 1
+
+  # --- §4.1 parts whose consumer is absent: declared-only, never FAILs -----
+  local pair bin part missing=""
+  for pair in foot:foot.ini kitty:kitty.conf ghostty:ghostty.conf \
+              helix:helix.toml code:vscode.json asusctl:keyboard.rgb; do
+    bin="${pair%%:*}"; part="${pair#*:}"
+    if ! have "$bin" && [ -f "$thdir/$part" ]; then missing="$missing $part($bin)"; fi
+  done
+  row theme theme.parts.declared_only NOTE "declared-only, consumer absent:${missing:- none}"
 }
 
 # ===========================================================================

@@ -1095,3 +1095,243 @@ Corrections this append carries: the plan's design-time counters are pre-round-7
   without a split — untested beyond two local scopes.
 - `corpus/lessons/` still 0 entries (eighth round); `corpus/README.md` rows and
   the round-7 `walker-deep.md` §10/§11 errata remain owed by their owners.
+
+## Round-9 — the theme plane lands, the walker surface deepens (append, M9-4)
+
+Appended 2026-10-14 20:17Z. Round-9 plan (`plans/round-9.plan.md`, 231 L by
+`wc -l` / 15,136 B / sha `8630c91a75a2eb43…`, committed with the round-8
+landing) orders ONE move in three ordered stages: (a) the `theme` plane lands
+as gate rows from `corpus/knowledge/theme-wallpaper-plane.md` §6; (b) the
+walker live-surface rows land from `corpus/knowledge/walker-live-surface.md`
+§4/§5 plus the `walker-deep.md` §10/§11 errata; (c) census closure + receipts.
+Measured outcome at the round-9 gate revision `tools/mado-verify.sh` sha256
+`93e43f8fe8b9bdd4…` (3,231 L / 150,103 B, mtime 17:05:32 −03:00; stable ≥10
+min through this lane's battery; **uncommitted in the worktree at this
+append**): **(a) landed as the file-plane arm** — 10 theme rows, scenarios
+T1–T9, helper regex seven → eight ids, the pin re-cut and re-passing;
+**(b) did not land as gate rows** — the walker live surface stays
+measured-only, and the round's walker work is the M9-2 note
+`walker-deep-r9.md`; **(c) landed as the re-cut receipt** quoted below. The
+theme note's two live rows are **exempted by name** (anchors below), the
+plan's own fallback where the round-8 stub discipline does not reach. This
+lane wrote only this file; scratch `/tmp/w9-mado-m94/`; the substrate stayed
+read-only (read verbs + the gate's own modes; no launcher, no socket
+connect, no `omarchy theme set`).
+
+### Theme plane arm — what the gate now checks (landed `93e43f8f…`)
+
+Plane id `theme`; `theme_plane()` at `:3113` (called `:2465`); the plane
+comment `:3002-3012` states the landed scope. The note's §6 spec is the
+input, never edited; its 12 table rows resolve as **10 landed ids + 2 live
+rows exempted by name + `theme.choice` relocated to the existing NOTE**:
+
+| Row id | Layer | PASS | FAIL | Other |
+|---|---|---|---|---|
+| `theme.name.read` | file | `theme.name` one line matching `^[a-z0-9-]+$` (live `matte-black`) | unreadable / malformed | UNKNOWN if tree absent under root |
+| `theme.chain.hypr_include` | file | `hyprland.conf:13` sources the theme file, target exists | line moved / target missing | — |
+| `theme.chain.hyprlock` | file | `hyprlock.conf:1` sources the theme file, target exists | same | — |
+| `theme.chain.waybar_css` | file | `waybar/style.css:1` imports the theme css, target exists | same | — |
+| `theme.chain.alacritty` | file | `alacritty.toml:1` imports the theme toml, target exists | same | — |
+| `theme.chain.mako_link` | file | `~/.config/mako/config` symlink resolving inside `current/theme/`, target exists | regular file / dangling / target outside | UNKNOWN if `readlink` absent |
+| `theme.chain.walker_css` | file | walker theme package's `style.css` imports `current/theme/walker.css`, target exists | import present but target missing / broken | NOTE when walker/package absent (never a silent skip) |
+| `theme.chain.swayosd_css` | file | swayosd `style.css:1` imports `current/theme/swayosd.css`, target exists | same | NOTE when swayosd absent |
+| `theme.wallpaper.link` | file | `current/background` symlink inside `backgrounds/` to a non-empty file | dangling / outside / empty | — |
+| `theme.parts.declared_only` | file | — | — | NOTE always: the §4.1 parts whose consumer is absent (live: 6 — foot.ini, kitty.conf, ghostty.conf, helix.toml, vscode.json, keyboard.rgb) |
+
+Live reading at the landed revision (my run, read-only): **9 PASS + 1 NOTE**
+— `theme.name.read` `matte-black`; the four chain rows hold their declared
+lines; `mako_link` and `wallpaper.link` resolve into `current/theme/`;
+`wallpaper.link` → `…/backgrounds/0-ship-at-sea.jpg`; the declared-only NOTE
+names the six absent consumers. `theme.choice` is **unchanged** — the
+`live.theme.current` NOTE (`:2753`/`:2757`), operator-owned, never a verdict
+input, so a routine theme change cannot turn the gate red; chain *integrity*
+is what the new rows judge.
+
+Scenario register (hermetic, `--root` fixtures; `:788-912`): **T1** clean →
+10 rows, zero FAIL/UNKNOWN, counts agree; **T2** a chain target removed → the
+named row FAILs alone (DIVERGED, and no fake CLEAN); **T3** the include line
+moved → FAIL naming both line numbers; **T4** a copy in place of the mako
+link + a dangling background; **T5** the background link must resolve inside
+`backgrounds/`; **T6** an empty background target FAILs; **T7** a malformed
+`theme.name` FAILs (shape, not value); **T8** an absent consumer reads NOTE —
+never a FAIL, never a skip; **T9** a missing tree reads UNKNOWN, never CLEAN.
+`build_fixture` grew the pieces the chain rows read (theme `alacritty.toml` /
+`hyprlock.conf` / `mako.ini` / `walker.css` / `swayosd.css`, a
+`backgrounds/0-fixture.jpg`, the `current/background` and `.config/mako/config`
+symlinks, `.config/swayosd/style.css`, the walker theme package) and mirrors
+the theme include at **fixture line 13** = the live anchor. The builder sits
+outside every marked family, so the widening re-cut the pin: `PIN_MADO`
+`d2bcdb31…` → **`dc7c4141…`** (derived target 1,945 L, re-derived
+independently and cmp-identical per the gate's re-cut record `:1254-1268`).
+
+Receipts, my own runs at `93e43f8f…` (logs `/tmp/w9-mado-m94/`):
+
+    MADO_SELFTEST: 268/268 assertions passed                        rc 0
+    --no-live: CLEAN (29 pass, 4 notes)   counts: pass=29 fail=0 unknown=0 skip=8 note=4
+    live:      CLEAN (52 pass, 8 notes)   counts: pass=52 fail=0 unknown=0 skip=0 note=8
+               boundary.readonly PASS, combined sha bb2639d9a980…
+    MADO_REGRESSION: PASS (case=mado-verify-hardened; target=dc7c4141…)
+    REGRESSION_TABLE mado-verify-hardened: match=10/10 recorded-killed=10
+      measured-killed=10 survived=0 inconclusive=0 flips=0
+    REGRESSION_DATE: 2026-10-14T20:13:58Z · spec c7ee75b9…1dd8 (pin matches)
+      · harness cf41efaa…242c75 (recorded b56c6e57… — provenance, not gated)
+
+Census, before → after (gate identity + counting commands; site counts count
+`row`/`row_from_rc` call sites, ids count distinct first-args):
+
+| | round-8 landed `7da4ec50…` | round-9 landed `93e43f8f…` |
+|---|---|---|
+| gate lines / bytes | 2,887 / 131,612 | **3,231 / 150,103** (`git diff --numstat` +352/−8) |
+| `row` sites (+`row_from_rc`) | 162 (+6) | **189 (+6)** — theme 27 sites |
+| plane ids / distinct row ids | 7 / 51 | **8** / **55** by literal `row`-site count (AUD-M9's counting command) — **61** as emitted at run time (the plane emits 10 ids; 6 are helper-driven, not literal sites) |
+| row ids asserted by the suite | 22 of 51 | **32** (the 10 theme ids all asserted via T1–T9; the same union AUD-M9 counts as 22 → 32) |
+| helper regex ids / sites | 7 / 7 | **8 / 7** (`:387`, `:391`, `:406-410`) |
+| selftest | 217/217 | **268/268** (+51, the T family) |
+| `--no-live` / live verdicts | CLEAN (20 pass, 3 notes) / CLEAN (43 pass, 7 notes) | CLEAN (29 pass, 4 notes) / CLEAN (52 pass, 8 notes) |
+| `PIN_MADO` / regression | `d2bcdb31…` / PASS | **`dc7c4141…` / PASS** (my run) |
+
+### The owe, stated — the theme clauses' covering mutant
+
+The gate's own re-cut record says it plainly: *"the newly landed theme rows
+carry no defect of their own yet: a covering mutant for the theme clauses is
+owed by the sweep lane (round-6 reading rule 2) — recorded, not smoothed"*
+(`:1266-1268`). So the recorded ten-defect case still dies 10/10 at the
+re-cut revision, but **no mutant yet targets a theme clause itself**: under
+reading rule 2 (round-6 append) an untested clause stands until a mutant
+proves otherwise, and a survivor is a FINDING. This is the round's largest
+named remainder.
+
+### Exempted by name — the rows that did not ship
+
+Under the plan's ordering clause (if the round-8 stub discipline (a8) did not
+fully land, the live rows are exempted **by name** and the exemption counted —
+never faked), these did not land, each with its clause anchor:
+
+1. **`theme.wallpaper.live`** (`theme-wallpaper-plane.md` §6; plan §(a)) —
+   needs `pgrep -ax swaybg` (argv naming the background *symlink* with
+   `-m fill`) and `hyprctl -j layers` (level-0 `wallpaper` pid == swaybg
+   pid). No `swaybg`/argv reader exists and no `hyprctl` PATH stub exists
+   ((a8) resolved **partial**: the `omarchy` stub idiom landed, the
+   hypr-live variant did not); the substrate is never read by a stub
+   scenario. Measured anchors held for when it lands: `pgrep -ax swaybg` →
+   `1203358 /usr/bin/swaybg -i …/current/background -m fill`; layers DP-1
+   level 0 `wallpaper` pid 1203358.
+2. **`theme.name.display_agree`** (§6/§5; plan §(a)) — `omarchy theme current`
+   vs the measured reader rule; the pair today is `Matte Black` /
+   `matte-black` (rule: `sed -E 's/(^|-)([a-z])/\1\u\2/g; s/-/ /g'`), but the
+   gate read of the live verb would be substrate and the fixture carries no
+   display pair.
+3. **Walker live-surface rows** (`walker-live-surface.md` §4/§5; plan §(b)):
+   the two socket rows (`$XDG_RUNTIME_DIR/walker/walker.sock`,
+   `…/elephant/elephant.sock` — path/type/mode/size, **stat'd never
+   connected**), the D-Bus owner row (`dev.benz.walker` owner pid == the
+   walker pid; a mismatch FAILs), the layer-invariant row (a walker
+   namespace must carry the walker pid; **absence is a NOTE**, never a
+   pass/fail signal). `grep -c 'walker.sock' tools/mado-verify.sh` → **0** at
+   `93e43f8f…`; the gate's walker live surface stays version + services
+   (`:2728-2747`). The hermetic barrier is structural: `--root` roots a
+   `$HOME`-shaped tree, while `$XDG_RUNTIME_DIR` and the session bus sit
+   outside it, and no `busctl` stub exists.
+
+Measured live values these rows would read, all re-verified this append
+(read-only, point samples): walker 1203471 `/usr/bin/walker
+--gapplication-service`, elephant 1203474; sockets `srwxr-xr-x` 0 B (mtime
+13:11:09, the session start second); `busctl --user list` → `dev.benz.walker`
+owner **1203471**, unique name `:1.23` (elephant holds no session-bus name);
+`hyprctl -j layers` → DP-1 level 0 `wallpaper` 1203358, level 2 `waybar`
+1203352, **no walker namespace** (launcher closed).
+
+### Walker findings — M9-2's `walker-deep-r9.md`
+
+Note: `corpus/knowledge/walker-deep-r9.md` (M9-2, round 9; 398 L / 24,391 B /
+sha `a5acfe0162c9e5cd…`; the note is the authority). Headlines:
+
+- **Version/shape pinned to build identity** — binary sha256 `64826a85…`,
+  BuildID `a22452d1…`, `.comment` rustc 1.97.1 (Arch) / LLD 22.1.8, package
+  `walker 2.17.0-1` with `pacman -Qkk` 29 files / 0 altered; the printed
+  `2.17.0\n` proven to be the compiled-in rodata literal (offset 847,791) —
+  a replaced or rebuilt binary moves the sha256, the BuildID or the toolchain
+  line. Help pins (`ca4820a8…`, `b513c43f…`, `0945536c…`) byte-identical to
+  round 7.
+- **Config reload semantics** — settled OBS across five independent classes:
+  no reload verb in the CLI (0 hits for config/reload/watch across the three
+  `--help` forms); **no filesystem-watch machinery** in the binary
+  (`inotify` = 0, `(?i)watch` = 0); the `Reload`-family tokens (1 `reload`,
+  52 `Reload`) are **result-list refresh semantics** (`after = "AsyncReload"`),
+  never configuration — the named trap; no D-Bus reload method; `systemctl
+  --user show` → `CanReload=no`, no `ExecReload`. INF-high: config is read
+  **once at process start**; edit → restart is the apply path
+  (`omarchy-restart-walker` restarts `elephant.service` +
+  `app-walker@autostart.service`). UNK kept with its class named: whether an
+  edit applies without a restart — every exercise path opens the launcher
+  (fenced), and ptrace was unattempted.
+- **A bound and its limit** — `--help` under a scratch XDG planting a broken
+  `config.toml`: rc 0, stdout byte-identical, nothing created; the
+  short-circuit-vs-silent-tolerance reading stays UNK.
+- **MOVED check** — every round-7 pin re-measured ~1 h 37 m later (across the
+  round-8 commit): identical; none MOVED.
+
+The `walker-deep.md` §10/§11 errata ledger routed from round 7 is **still
+owed** (file 617 L / 38,403 B / sha `0982ba066c72575a…`, unchanged); M9-2's
+note §8 carries the candidate text (parse-error templates pinned by offset;
+the artifact-identity chain added to the §10 row; the third companion
+negative for the §9 reload rule).
+
+### Re-run recipes (read-only)
+
+    bash tools/mado-verify.sh --selftest     # 268/268 at 93e43f8f…
+    bash tools/mado-verify.sh --no-live      # file plane: CLEAN (29 pass, 4 notes)
+    bash tools/mado-verify.sh                # live: CLEAN (52 pass, 8 notes)
+    bash tools/mado-verify.sh --regression   # PASS, target dc7c4141…, 10/10 flips=0
+
+The theme arm alone: `--no-live --root <fixture>` against `build_fixture`'s
+tree — T1–T9 are the shape; a broken row FAILs naming row + part, a missing
+tree reads UNKNOWN, never CLEAN. The walker surface by hand (no gate rows
+yet): `pgrep -ax walker`; `busctl --user list | grep dev.benz.walker`
+(owner pid == the walker pid); `stat -c '%F %a %s %y'
+"$XDG_RUNTIME_DIR/walker/walker.sock" "$XDG_RUNTIME_DIR/elephant/elephant.sock"`
+(stat, never connect); `hyprctl -j layers` (walker namespace absent when
+closed; if present its pid must equal the walker pid). Reload: there is
+none — restart is the apply path.
+
+### Corrections this append carries
+
+- The plan's design-time numbers are round-7 values (`89/89` selftest, 106
+  `row` sites, 40 ids, gate `90d50cdd…`): the landed round-8 base reads
+  217/217, 162, 51, `7da4ec50…`, and the round-9 landed revision 268/268,
+  189, 61, `93e43f8f…` — the same stale-base class rounds 7 and 8 recorded.
+- The plan's line refs sit at older revisions: helper regexes
+  `:352`/`:356`/`:371-375` → `:387`/`:391`/`:406-410`; `live.theme.current`
+  `:1673`/`:1677` → `:2753`/`:2757`; the walker rows → `:2728-2747`; the
+  theme plane is `theme_plane()` `:3113`.
+- Independent verification of the landed arm: VER-M9 (`reports/r9-ver-m9.md`,
+  139 L / `98ec0c3b57a0d348…`) reproduced the theme file arm at the same
+  revision (clean fixture → 10 theme rows; broken → exactly 1 named FAIL;
+  empty root → UNKNOWN, no fake CLEAN; live CLEAN 52/8) — with the same
+  caveat this append carries: the gate moved six times before it held, so
+  every number binds to `93e43f8f…` only.
+- Independent audit: AUD-M9 (`reports/r9-aud-m9.md`, 166 L /
+  `7ad8eccdd8d213a5…`) — C1 PASS (file half; every anchor re-read), C1b
+  NOT LANDED (the two live rows), C2 PASS (268/268; asserted 22 → 32), C3
+  PASS (census + regex widening), C4 PASS for the recorded case with the
+  same finding this append carries (the spec is byte-identical to round 8
+  — no new recorded mutant covers the theme clauses), C5/C5b PASS
+  (snapshot receipts green at the landed revision; the landing receipt
+  itself reads `MADO_DIFF: CHANGED (rows 31→41; appeared=10;
+  detail-changed=0)`, every appeared row one of the ten theme ids), C6
+  PASS (zero config mutation, boundary `bb2639d9a980…` unchanged).
+
+### Unknowns / open items at this append
+
+1. Whether the committed revision equals `93e43f8f…`; a later revision
+   re-opens the selftest count, the pin, and every receipt above.
+2. The theme clauses' covering mutant — owed; whether the round's sweep lane
+   lands it, and any survivor, are findings to record, never to smooth.
+3. When the exempted rows get a hermetic route: an accepted
+   `XDG_RUNTIME_DIR` seam, a `busctl` stub under the omarchy idiom, or a
+   `hyprctl`/`swaybg` stub — else they stay exempted by name and counted.
+4. `walker-deep.md` §10/§11 errata; `corpus/README.md` rows; the round-8
+   draft's 19 `⟨PENDING⟩`s — all ride the round record, not this file (this
+   lane's write scope was this file only).
+5. `corpus/lessons/` still 0 entries (ninth round) — the round charters
+   `round-9.md` or records why no independent seat exists.
