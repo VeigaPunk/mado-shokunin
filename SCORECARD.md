@@ -159,3 +159,21 @@ config digest is invented. No receipt was minted and Sighting completion
 was not called. The complete canonical rendered payload is retained only
 as `dispatch-preview.json` beside the validated plan; it is not dispatch
 evidence and carries no recorded native agent handles.
+
+### Committed candidate measurement
+
+Content commit: `7cd7f331ae151845ebff7bd100c1073ebad49351`, authored
+as `mado-shokunin <mado@shokunin.local>`. Running the Counting command
+above with `REV=7cd7f331ae151845ebff7bd100c1073ebad49351` produced:
+
+```text
+revision=7cd7f331ae151845ebff7bd100c1073ebad49351 indexed=22/22 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0
+```
+
+Full retained output:
+`.ufo/evidence/fleet-round-1/navigation-committed.txt`.
+The measured coverage-navigation score is 10.0000/10 at that commit,
+versus 3.6364/10 at the baseline; the round is still LIVE/blocked,
+not admitted or saturated. `SCORECARD.md`'s candidate verdict vector and
+learning-trend limits above remain in force.

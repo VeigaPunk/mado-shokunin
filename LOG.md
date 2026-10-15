@@ -578,3 +578,30 @@ direct interactive launch/selected mission fields contain no task key,
 prompt/config digest or receipt path. No value was invented, no schema-only
 receipt was presented as acceptance, and no Sighting completion command ran.
 
+
+## 2026-10-15 — fleet round 1 candidate durability and committed measurement
+
+Owned content and motivating evidence landed locally in
+`7cd7f331ae151845ebff7bd100c1073ebad49351`, identity
+`mado-shokunin <mado@shokunin.local>`. The pathspec-limited commit includes
+only lane documents, the inherited navigation/lesson work and explicit
+plan/blocker/wave-preview/gate/smoke artifacts. Native interactive-session
+files remain outside the commit; no push ran.
+
+The scorecard counter was then executed against that exact commit:
+`revision=7cd7f331ae151845ebff7bd100c1073ebad49351 indexed=22/22 missing=0 dangling=0 duplicates=0 coverage=10.0000/10`,
+exit 0; retained at
+`.ufo/evidence/fleet-round-1/navigation-committed.txt`.
+This supplies the committed after-measurement for the 8/22 → 22/22
+navigation delta, not a completed training round.
+
+The blocked report `.ufo/reports/round-1/mado.md` and fresh-session
+continuation `.ufo/continuations/fleet-round-1.json` name the content commit,
+full gate verdicts/exit codes, per-axis and learning-trend verdicts,
+zero newly verified completions and all three unblock duties: authorized
+global routing, outside-lane admit/reject spot-check and applicable receipt
+binding. They land after the content commit under lane identity.
+Only the fleet integrator may update shared ledgers or authorize redispatch.
+Sighting mission `m_bda9bde95130412f914a953eb0c93835` remains open:
+no applicable receipt was minted/validated and no completion was called.
+
