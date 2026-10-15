@@ -436,3 +436,145 @@
   commit; the round-11 commit sha (none observed; HEAD `f7bfc9f` at this
   write); waybar's crash cause and return time; whether the operator takes
   the promotion decision; `.ufo/` not inspected this round.
+
+## 2026-10-15 — fleet round-1: admitted-corpus navigation
+
+Trigger: the explicit fleet-round-1 steer follows the closed training arc.
+At base `bb08dd57f4b48bfb001a178e57b9c25e7040447f`, the committed
+`corpus/README.md` routes 8 of 22 existing knowledge notes; 14 are missing
+from the index, with no dangling or duplicate targets. The reproducible
+commit-based counter is in `SCORECARD.md` under “Counting command”; its
+baseline invocation exits 1 and prints `indexed=8/22 missing=14 dangling=0
+duplicates=0 coverage=3.6364/10`. This is navigation debt already named at
+historical `LOG.md:383-388`, not a new desktop-behavior discovery.
+
+The inherited scorecard had no numeric axis rows. This round initializes
+bounded local sub-axis scores: admitted-note reachability 3.6364/10 and
+the existing hermetic suite pass fraction 10/10. Only the lower navigation
+subset is selected; no whole-domain completeness, axis saturation or
+promotion is inferred. See `SCORECARD.md` fleet-round-1 scope and rubrics.
+
+Initial uncommitted work was same-scope partial round work: the corpus
+warning, the `SKILL.md` fleet-round-1 navigation appendix and the four
+`SHONEN.md` `[~]` independence caveats. Preserve and complete it; no reset
+of those bytes and no sweep of sibling-owned files. The historical
+scorecard's “no further round” and 4/4 `[x]` frame does not supersede this
+steer or supply current outside-lane promotion authority.
+
+One native OMP `task` call dispatched MadoPlan (planner), MadoConnect
+(connector), MadoExecConfig/MadoExecGate/MadoExecSynthesis (three
+executors), MadoScribe (scribe), MadoRecon (scout), MadoReview (reviewer)
+and MadoCritic (critic). All roles use the existing host routing; no model
+parameter or routing edit. This is the canonical Shokunin host mapping,
+not a claimed validated generic UFO wave. L1 alone integrates repo files.
+
+Re-verification at the unchanged gate revision
+`93e43f8fe8b9bdd48c895cccfac11d5b23f97d8793fc6fb43987b4afdbc00095`:
+`bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: 268/268 assertions
+passed`, exit 0; `bash tools/mado-verify.sh --no-live` → `MADO_VERIFY: CLEAN
+(29 pass, 4 notes; file plane only — live layer skipped: --no-live)`, exit
+0, counts `pass=29 fail=0 unknown=0 skip=8 note=4`, read-only boundary
+`bb2639d9a980…` PASS. These are scoped results, not live desktop health.
+
+Operator question appended to `.ufo/l0-questions.md`, identified by
+`mado | round-1 | Ratify the relaunched round namespace, bounded score
+rubrics and native craft dispatch shape`: no counter, driver, route table
+or domain-tree changes; integrator owns that question's durable commit.
+
+## 2026-10-15 — fleet round 1 interactive cutover: candidate retained, dispatch blocked
+
+Motivating evidence: initial `git status --short --branch` showed same-scope
+uncommitted LOG/SCORECARD/SHONEN/SKILL/corpus-index changes plus
+`corpus/lessons/round-1.md`; HEAD was
+`bb08dd57f4b48bfb001a178e57b9c25e7040447f`. Local `.ufo/` held only the
+current interactive session material, not a landed fleet-round report or
+receipt. Native session bodies were not read or swept into a commit.
+The prior headless launch counter is not a completion. Historical training
+rounds and reports were preserved; this is continuation of fleet round 1.
+
+L1 plan saved before implementation:
+`.ufo/plans/fleet-round-1-wwkd.md`. Canonical UFO §0/§5 and the full
+Shokunin protocol load order, fleet read-only MISSION/AXES, and lane
+SKILL/PROVINCE/QUALITY/MINT/SCORECARD/LOG were read. Current operator
+instructions supersede the inherited push and nine-adviser dispatch frame.
+No push, shared-ledger write, global configuration edit, route overlay,
+new L1, native-session mutation or compositor mutation was performed.
+
+Inherited candidate preserved: 14 missing-note rows, seven province routes,
+Frontier limits, SKILL entry/filename correction, four SHONEN `[~]`
+independence caveats and the fleet-round-1 lesson. No knowledge note or
+gate implementation was rewritten. Append-only lesson/SKILL corrections
+now qualify the inherited “completion”/“Admit” wording as provisional and
+explicitly supersede the lesson's push requirement. This entry also
+supersedes any inference from the preceding LOG entry that its old
+nine-adviser batch meets the current dispatch contract.
+
+Baseline re-measured, not recalled:
+`.ufo/evidence/fleet-round-1/navigation-baseline.txt` records
+`revision=bb08dd57f4b48bfb001a178e57b9c25e7040447f indexed=8/22 missing=14 dangling=0 duplicates=0 coverage=3.6364/10`,
+exit 1. Candidate consumer smoke:
+`.ufo/evidence/fleet-round-1/navigation-smoke.json` records 22/22 indexed,
+zero missing/dangling/duplicates, seven province routes and 54 local links
+with no broken or outside-lane target. The actual SKILL → index →
+idle/lock note reading path reached config provenance, timing inference,
+UNKNOWN transitions and session-turnover E2; no actuator was invoked.
+The throwaway smoke initially skipped two table headers when only one
+matched its filter; correcting that parser, not repository content,
+completed the smoke. No permanent source-text test was added.
+
+Dispatch evidence: exactly 32 honestly distinct scopes saved in
+`.ufo/waves/fleet-round-1-interactive/spec.json` (22 note audits,
+seven surface-route audits, connector, admission critic and provenance
+scribe). Canonical `node .../scripts/ufo-swarm-wave.mjs plan --spec <spec>`
+returned exit 0; full `ufo-swarm-wave-v1` output and counts
+`spawn=32 resume=0 total=32` are in adjacent `plan.json`/`validation.json`.
+The canonical source includes `connector` and the plan retains that role;
+no taxonomy mismatch or relabeling is claimed.
+
+Actual global routing metadata prevents authorized dispatch:
+connector/executor/reviewer → `@m_mid`, critic → `@m_strong`,
+scout/scribe → `@m_fast`; those buckets are not the required
+`@m_composer` content / `@m_grok` audit / `@m_antigravity` connector
+bindings. The required aliases exist, but `m_antigravity` has an empty
+fallback chain rather than `@m_zfl`. Task concurrency is already 32.
+Safe exact evidence and operator-owned unblock action:
+`.ufo/blocked/fleet-round-1-routing.json`. The global authority was not
+edited and no different route was substituted. Native task calls by this
+session: 0; specialists started: 0. Plan validation is not a launched wave,
+native judgment, outside-lane review or a completed round.
+
+L1-only acceptance after integration, full outputs retained under
+`.ufo/evidence/fleet-round-1/`:
+`bash tools/mado-verify.sh --selftest` →
+`MADO_SELFTEST: 268/268 assertions passed`, exit 0;
+`bash tools/mado-verify.sh --no-live` →
+`MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)`,
+exit 0; counts `pass=29 fail=0 unknown=0 skip=8 note=4`;
+`boundary.readonly` PASS with combined SHA `bb2639d9a980…`.
+Gate identity remains
+`93e43f8fe8b9bdd48c895cccfac11d5b23f97d8793fc6fb43987b4afdbc00095`.
+No fresh live desktop-health, UI rendering or idle-transition result is
+claimed. The reported Phase 0/self-iter failures were not re-run.
+
+Candidate axis verdicts are individually recorded in SCORECARD:
+coverage improved; depth/operability/freshness/adjacency unchanged;
+calibration unprovable-but-better. Trends: expansion unchanged, quality
+unchanged, discernment unprovable-but-better. Missing outside-lane
+admit/reject spot-check and compliant native dispatch block admission;
+local green output does not erase either debt. Target ≥100 verified
+rounds is retained, with +0 completions here. The Sighting remains open;
+no receipt, native convergence, promotion, saturation or three-blocked-round
+stop is asserted. Report and exact committed-revision measurement follow
+the content commit inside this repository's `.ufo/` only.
+
+The canonical `planToDispatchPayload` renderer produced the complete
+`ufo-swarm-wave-dispatch-v1` preview with 32 tasks, its connector unchanged,
+and exactly one leading `/skill:godspeed` per fresh task:
+`.ufo/waves/fleet-round-1-interactive/dispatch-preview.json`.
+This pure rendering did not persist a registry or start a worker.
+Receipt applicability is separately blocked:
+`.ufo/blocked/fleet-round-1-receipt-binding.json` records that the inspected
+direct interactive launch/selected mission fields contain no task key,
+prompt/config digest or receipt path. No value was invented, no schema-only
+receipt was presented as acceptance, and no Sighting completion command ran.
+

@@ -28,3 +28,134 @@ Axes will be pinned with their counting commands as rounds land.
 **Arc end.** The arc is closed. The gate is handed over at the frozen revision `93e43f8fe8b9bdd4…` (3,231 L / 150,103 B): the standing verdict is `bash tools/mado-verify.sh` (live, read-only; contract, invocation map, cadence and residual ledger in `corpus/knowledge/gate-standing-use.md`); the ten-round synthesis is `corpus/knowledge/arc-synthesis.md`; the closeout is `corpus/knowledge/closeout-r11.md`. No further round opens. Probation 4/4 `[x]` since round 5 (`SHONEN.md`); promotion is the operator/integrator decision, never self-declared. Applied at this close (SCR-M11): rows 4–5 from the drafts' ready text (pins re-measured 2026-10-14); rows 6–9 completed from the records + re-derived ladder cells (the r6–r9 §4c texts are ⟨fill⟩ templates, not ready text — finding recorded in LOG round 11); row 10 completed; row 11 added. Debt measured at this write: README 8 rows (notes unrowed), the synthesis epilogue, the standing-use revision line, the draft ⟨PENDING⟩ closures, walker-deep §10/§11 errata and the AGENTS pointer were not yet on disk — the settlement (M11-2) remains the named carrier; the round-11 commit is the remaining landing step.
 
 **Live caveat at close.** The live plane reads DIVERGED while waybar is absent: VER-M11's journal receipt shows `systemd-coredump` — waybar (pid 3036215) dumped core at 21:21:17Z; cause `[UNK]`; no mado lane touched it; the bar's restart is operator-owned. The file plane is CLEAN and the config bytes are unchanged (boundary `bb2639d9a980…` green in every run).
+
+## Fleet round 1 — coverage navigation (2026-10-15)
+
+The explicit fleet-round-1 steer opens a new run after the historical arc
+above; it does not renumber or rewrite that arc. Its inherited scorecard
+had a move log but no numeric axis rows. The following bounded sub-axis
+rubrics establish the starting comparison; they are not domain-mastery
+scores, promotion verdicts, or evidence that the desktop is healthy.
+The historical 4/4 `[x]` at arc close is not current promotion clearance:
+`SHONEN.md` now retains four `[~]` assertions because outside-lane
+independence is not established. This round's L2s are still the mado
+authoring lane; none can supply that missing promotion authority.
+
+| Axis / scored sub-axis | Starting score (0–10) | Counting rule and observed result | Measured commit | Last-change round |
+|---|---|---|---|---|
+| coverage / admitted-note reachability | 3.6364 | `10 × uniquely indexed existing knowledge notes / existing knowledge notes`; counting command below: 8/22, missing 14, dangling 0, duplicates 0 | `bb08dd57f4b48bfb001a178e57b9c25e7040447f` | fleet 1 initialization |
+| operability / existing hermetic suite pass fraction | 10.0000 | `10 × passed assertions / total assertions` from `bash tools/mado-verify.sh --selftest`: `MADO_SELFTEST: 268/268 assertions passed`, exit 0; gate unchanged at measurement | `bb08dd57f4b48bfb001a178e57b9c25e7040447f` | fleet 1 initialization |
+
+**Selection:** coverage is lower under these explicit local rubrics.
+Assertion success is not a complete operability assessment; live behavior,
+rendered UI, idle transitions and external verification remain unscored.
+Completing navigation can reach 10 on this finite corpus without saturating
+the province's broader coverage axis.
+
+**Planned:** complete the admitted-note routes and add per-PROVINCE
+navigation, keeping each source's date, errata and unknowns in force.
+No new knowledge admission, gate widening, source-tree write or compositor
+mutation is part of this move.
+
+**Retired:** none. The scoring split makes the measured subset explicit;
+broader coverage and operability remain open, not silently retired.
+
+### Counting command
+
+Run from this lane repo with `REV` set to the commit being measured. Exit 1
+means missing, dangling or duplicate note rows; exit 0 means complete.
+This counts navigation, not the truth or freshness of a note's claims.
+
+```bash
+REV=bb08dd57f4b48bfb001a178e57b9c25e7040447f python3 - <<'PY'
+import os, re, subprocess
+from collections import Counter
+rev = os.environ["REV"]
+def git(*args):
+    return subprocess.check_output(["git", *args], text=True)
+notes = {p for p in git("ls-tree", "--name-only", rev + ":corpus/knowledge").splitlines() if p.endswith(".md")}
+index = git("show", rev + ":corpus/README.md")
+rows = re.findall(r"^\| `knowledge/([^`]+\.md)`", index, re.M)
+counts = Counter(rows)
+missing = sorted(notes - counts.keys())
+dangling = sorted(counts.keys() - notes)
+duplicates = sorted(p for p, n in counts.items() if n != 1)
+covered = sum(counts[p] == 1 for p in notes)
+print(f"revision={rev} indexed={covered}/{len(notes)} missing={len(missing)} dangling={len(dangling)} duplicates={len(duplicates)} coverage={10*covered/len(notes):.4f}/10")
+for kind, paths in (("missing", missing), ("dangling", dangling), ("duplicate", duplicates)):
+    for path in paths:
+        print(f"{kind}: knowledge/{path}")
+raise SystemExit(1 if missing or dangling or duplicates else 0)
+PY
+```
+
+## Fleet round 1 — interactive cutover, blocked before dispatch
+
+**Status: LIVE, blocked and unadmitted; no new verified completed round.**
+This continues the interrupted fleet round 1 rather than opening round 2.
+The historical eleven-round arc is preserved; its launch numbering is not
+a verified-round counter for this relaunched run.
+
+Lowest LIVE measured sub-axis remains coverage / admitted-note reachability.
+The candidate index now routes 22/22 existing notes; that finite denominator
+does not retire broader coverage. The baseline was re-measured at
+`bb08dd57f4b48bfb001a178e57b9c25e7040447f`: 8/22, missing 14,
+dangling 0, duplicates 0, exit 1. Full output:
+`.ufo/evidence/fleet-round-1/navigation-baseline.txt`.
+
+Candidate-worktree smoke:
+`.ufo/evidence/fleet-round-1/navigation-smoke.json` records 22/22,
+missing/dangling/duplicate 0, seven province routes and 54 local Markdown
+links with zero unresolved/outside-lane targets. The representative
+SKILL → index → idle/lock note route preserves declaration versus observed
+timing, the process/unit distinction, E2 turnover and UNKNOWN transitions.
+This is navigation evidence, not a 32-scope semantic audit or live-health
+measurement. The existing commit-based counting command above also measures
+the delivered index; the committed-revision result is recorded separately
+after the candidate content commit.
+
+| Axis | Candidate verdict | Observable and limit |
+|---|---|---|
+| coverage | improved | Exact-target navigation 8/22 → 22/22; bounded scores 3.6364 → 10.0000. No new behavioral coverage or province saturation. |
+| depth | unchanged | No new domain-knowledge entry or technical-depth claim admitted. |
+| operability | unchanged | Existing gate remains SHA-256 `93e43f8fe8b9bdd48c895cccfac11d5b23f97d8793fc6fb43987b4afdbc00095`; `MADO_SELFTEST: 268/268 assertions passed`, exit 0. |
+| freshness | unchanged | `MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)`, exit 0; counts `pass=29 fail=0 unknown=0 skip=8 note=4`. Historical live claims are not refreshed. |
+| calibration | unprovable-but-better | Candidate/admission, historical/current and assertion/independent-review distinctions are explicit; the outside-lane admit/reject spot-check is still absent. |
+| adjacency | unchanged | PROVINCE and all substrate/sibling ownership remain unchanged; no outside defect absorbed. |
+
+Full gate outputs and exit codes:
+`.ufo/evidence/fleet-round-1/{selftest.txt,file-plane.txt,gates.json}`.
+No axis is locally observed harmed, but this vector does **not** admit a
+round whose required dispatch and outside spot-check are missing.
+
+Learning trends: **expansion unchanged** (no new ground admitted);
+**quality unchanged** (domain evidence retains dates/errata/unknowns);
+**discernment unprovable-but-better** (explicit rejects and boundaries,
+without an outside-lane admit/reject agreement sample).
+
+Exactly 32 distinct proposed scopes passed canonical
+`ufo-swarm-wave.mjs plan`, exit 0, `spawn=32 resume=0 total=32`.
+This session made zero native task calls and started zero specialists.
+Global role bindings and the connector fallback do not realize the
+operator contract; exact missing bindings and owner action:
+`.ufo/blocked/fleet-round-1-routing.json`.
+
+**Planned:** operator/global authority owner supplies the requested
+role-to-alias bindings and connector fallback, or explicitly revises that
+contract. A fresh authorized interactive session resumes this same LIVE
+round, performs its complete validated native batch, obtains the outside
+admit/reject spot-check and re-measures before admission. No in-session
+round loop and no push. **Retired:** none.
+
+The operator's at-least-100 verified-round target remains outstanding:
+this blocked partial round adds **0**. One blocked attempt is recorded here;
+no three-consecutive-blocked stop or sound saturation is inferred.
+
+Receipt/continuation debt is separate from local gate success:
+`.ufo/blocked/fleet-round-1-receipt-binding.json` records the selected
+direct-launch metadata and missing applicable expected receipt bag.
+The owning integrator must supply that binding; no task key or unrelated
+config digest is invented. No receipt was minted and Sighting completion
+was not called. The complete canonical rendered payload is retained only
+as `dispatch-preview.json` beside the validated plan; it is not dispatch
+evidence and carries no recorded native agent handles.

@@ -1544,3 +1544,37 @@ corpus/knowledge/arc-synthesis.md corpus/knowledge/gate-standing-use.md`;
 `ls -l corpus/knowledge/arc-closeout.md` (present → read it; absent → the
 closeout has not landed); `bash tools/mado-verify.sh --selftest &&
 bash tools/mado-verify.sh --no-live`.
+
+## Fleet round 1 — corpus navigation (2026-10-15)
+
+Start at [the corpus index](corpus/README.md) for note and province-surface
+routes. Its fleet-round-1 completion supersedes historical statements above
+that the README note rows remain owed; those statements describe the closed
+2026-10-14 arc, not the current index. Indexing does not re-verify a live
+desktop claim: follow each note's date, evidence class, recheck and unknowns.
+
+Navigation correction to the round-11 recheck above: the landed closeout is
+[`corpus/knowledge/closeout-r11.md`](corpus/knowledge/closeout-r11.md), not
+`corpus/knowledge/arc-closeout.md`. The historical missing-file inference
+must not be used to conclude that the closeout is absent.
+
+Promotion remains operator/integrator-owned. The current [SHONEN checklist](SHONEN.md)
+records inherited evidence as assertions; this round's dispatched subagents
+are still the mado authoring lane, not outside-lane promotion verifiers.
+
+### Interactive continuation status — fleet round 1 is not admitted
+
+The index routes above are preserved candidate navigation work, not a
+completed fleet-round claim. The interrupted headless launch left no landed
+fleet-round report. Current plan:
+[WWKD](.ufo/plans/fleet-round-1-wwkd.md); current authority blocker:
+[routing evidence](.ufo/blocked/fleet-round-1-routing.json). The validated
+32-scope plan did not dispatch: existing global role bindings and connector
+fallback do not match the operator's required aliases. Do not substitute a
+different route, change global configuration, or infer a completion from
+the inherited nine-adviser history.
+
+This qualification supersedes “fleet-round-1 completion” above as a round
+status statement; the exact landed-note paths remain usable navigation.
+No live desktop-health, promotion, outside-lane spot-check or completed-round
+count is added. Substrates stay read-only; pushes remain prohibited.
