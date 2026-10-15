@@ -605,3 +605,37 @@ Only the fleet integrator may update shared ledgers or authorize redispatch.
 Sighting mission `m_bda9bde95130412f914a953eb0c93835` remains open:
 no applicable receipt was minted/validated and no completion was called.
 
+
+## 2026-10-15 — fleet round 1 reproducibility erratum: caller-selected revision
+
+Motivating evidence: the published SCORECARD Counting-command shell
+wrapper hardcoded `REV=bb08dd57f4b48bfb001a178e57b9c25e7040447f`;
+copying it ignored a caller-selected candidate revision, contradicting
+the adjacent invocation guidance and the report's reproducibility claim.
+The reported Python-body measurements used the chosen REV in their process
+environment, but that did not prove the published literal shell block.
+No old failing wrapper was re-run merely to confirm the reported defect.
+
+SCORECARD's wrapper now honors an exported caller REV and defaults only an
+unset/empty REV to the historical baseline:
+`REV="${REV:-bb08dd57f4b48bfb001a178e57b9c25e7040447f}"`.
+The counter body and domain gate are unchanged. The corrected literal
+Markdown block is exercised against both exact commits, with full outputs
+and exit codes retained separately; this is a reproducibility correction,
+not another axis move, round completion, route remediation or admission.
+
+
+Literal-block proof completed: the entire corrected SCORECARD bash fence
+(SHA-256 `8b59b503805396b514cb4e009981d6a1837a7898c368afff68e25eb5704a7b88`)
+was extracted without rewriting its wrapper/body and supplied to `bash -s`.
+With caller REV `bb08dd57f4b48bfb001a178e57b9c25e7040447f`, the output
+was 8/22 indexed, missing 14, no dangling/duplicates, exit 1.
+With caller REV `7cd7f331ae151845ebff7bd100c1073ebad49351`, the output
+was 22/22 indexed, zero missing/dangling/duplicates, exit 0.
+Full verdict lines, all missing-note lines, exit codes and execution method
+are retained at `.ufo/evidence/fleet-round-1/counter-literal-{baseline.txt,candidate.txt,invocations.json}`.
+The filed report receives an append-only erratum and the continuation gains
+this exact reproducibility evidence. Previous report durability commit
+`220e0f6682cece6e02028f65abf021fa98b84f83` remains intact; no amendment,
+new gate run, completed-round increment, push or Sighting completion.
+

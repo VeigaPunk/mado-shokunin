@@ -105,3 +105,28 @@ Machine-readable handoff: `.ufo/continuations/fleet-round-1.json`.
 After operator-owned prerequisites, authorize a fresh interactive L1 session to resume **this same unfinished fleet round 1**, inspect current state and dispatch its complete authorized batch. Re-measure before admission. Do not advance to round 2, restart the stopped headless driver, spawn another L1 here, reuse stale route evidence as fresh, or loop rounds inside this session.
 
 The target remains at least 100 verified rounds per included lane. This partial blocked attempt adds zero; historical rounds are neither erased nor automatically re-certified. One blocked attempt is recorded, not three consecutive blocked rounds. No sound-saturation stop is claimed. The fleet integrator owns shared ledgers and redispatch; this report does not retire the Sighting.
+
+## Append-only reproducibility erratum — caller REV wrapper
+
+This corrects the “Counting command ... executed with REV set” reproduction
+claim in the filed report at `220e0f6682cece6e02028f65abf021fa98b84f83`.
+The original published shell wrapper hardcoded the baseline SHA, although
+the earlier Python-body measurements selected the intended REV through
+their process environment. Those measured results stand; the old literal
+wrapper did not support the documented candidate invocation.
+
+`SCORECARD.md` now honors exported caller REV, defaulting only an unset/empty
+REV to the baseline. The complete corrected bash fence was passed unchanged
+to `bash -s`, not reconstructed as an equivalent Python invocation.
+Its SHA-256 is
+`8b59b503805396b514cb4e009981d6a1837a7898c368afff68e25eb5704a7b88`.
+Caller baseline REV produced 8/22, missing 14, dangling/duplicates 0,
+exit 1; caller content REV `7cd7f331ae151845ebff7bd100c1073ebad49351`
+produced 22/22, missing/dangling/duplicates 0, exit 0.
+Full output and execution method:
+`.ufo/evidence/fleet-round-1/counter-literal-{baseline.txt,candidate.txt,invocations.json}`.
+
+Motivation, correction and proof are appended in `LOG.md` → “reproducibility
+erratum: caller-selected revision”. This is a local reproducibility repair,
+not a second craft round or a change to the domain gate, admission blockers,
+axis/trend verdicts, receipt state or zero verified-round increment.

@@ -62,12 +62,12 @@ broader coverage and operability remain open, not silently retired.
 
 ### Counting command
 
-Run from this lane repo with `REV` set to the commit being measured. Exit 1
+Run from this lane repo with `REV` exported (baseline default). Exit 1
 means missing, dangling or duplicate note rows; exit 0 means complete.
 This counts navigation, not the truth or freshness of a note's claims.
 
 ```bash
-REV=bb08dd57f4b48bfb001a178e57b9c25e7040447f python3 - <<'PY'
+REV="${REV:-bb08dd57f4b48bfb001a178e57b9c25e7040447f}" python3 - <<'PY'
 import os, re, subprocess
 from collections import Counter
 rev = os.environ["REV"]
@@ -177,3 +177,22 @@ The measured coverage-navigation score is 10.0000/10 at that commit,
 versus 3.6364/10 at the baseline; the round is still LIVE/blocked,
 not admitted or saturated. `SCORECARD.md`'s candidate verdict vector and
 learning-trend limits above remain in force.
+
+### Reproducibility erratum — literal shell wrapper
+
+The original Counting-command wrapper hardcoded the baseline REV despite
+the caller-selection guidance. Earlier measurements selected REV for the
+Python body; they did not establish that the published shell block honored
+the caller. The wrapper now uses `${REV:-bb08dd57f4b48bfb001a178e57b9c25e7040447f}`;
+export REV before copying the complete block to select another commit.
+
+The corrected literal block, including its wrapper and heredoc, was supplied
+unchanged to `bash -s`, with only the caller REV differing:
+baseline `bb08dd57f4b48bfb001a178e57b9c25e7040447f` → 8/22, exit 1;
+content `7cd7f331ae151845ebff7bd100c1073ebad49351` → 22/22, exit 0.
+Script SHA-256:
+`8b59b503805396b514cb4e009981d6a1837a7898c368afff68e25eb5704a7b88`.
+Full outputs and invocation evidence:
+`.ufo/evidence/fleet-round-1/counter-literal-{baseline.txt,candidate.txt,invocations.json}`.
+This correction supersedes the earlier literal-command reproducibility
+claim, not the measured navigation delta; round status remains blocked.
