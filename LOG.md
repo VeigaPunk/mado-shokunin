@@ -652,3 +652,8 @@ file end, existing bytes unchanged. No axis claim was made and no score
 moved; this is a conformance scaffold, not a round.
 
 
+## 2026-10-17 — root README added
+
+- **Trigger.** Operator request for a repository front door. This checkout had no root `README.md`.
+- **Action.** Added `README.md` from `PROVINCE.md` (read-only Hyprland/waybar/walker/terminal plane) and `tools/mado-verify.sh` header (`MADO_VERIFY: CLEAN|DIVERGED`, exit 0/1/2, `--selftest`, `--no-live`, hyprctl read verbs only). Fleet mint note withholds the roster row; `SHONEN.md` is still present.
+- **Non-claims.** No Devin wiki URL existed here and none was added. No axis claim, no score change, no live hyprctl run. Not a craft round.
