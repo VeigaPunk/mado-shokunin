@@ -196,3 +196,24 @@ Full outputs and invocation evidence:
 `.ufo/evidence/fleet-round-1/counter-literal-{baseline.txt,candidate.txt,invocations.json}`.
 This correction supersedes the earlier literal-command reproducibility
 claim, not the measured navigation delta; round status remains blocked.
+
+## Capabilities
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| — none yet — | | | |
+
+Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+
+## Saturation
+
+The lane's saturation line and stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
+
+## Planned
+
+Populated by the lane at each round start per the `AXES.md` §SCORECARD.md contract; no entries declared by this conformance rollout.
+
+## Retired
+
+- none retired; record with justification when an axis is retired.
+

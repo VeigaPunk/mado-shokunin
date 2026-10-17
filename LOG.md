@@ -639,3 +639,16 @@ this exact reproducibility evidence. Previous report durability commit
 `220e0f6682cece6e02028f65abf021fa98b84f83` remains intact; no amendment,
 new gate run, completed-round increment, push or Sighting completion.
 
+## 2026-10-16 — protocol conformance: SCORECARD contract fields
+
+Per the 2026-10-16 operator amendment (fleet-root `84bade0`): the `axes`
+contract field already existed as real score tables (move log +
+fleet-round-1 scored tables); `Planned`/`Retired` existed only as
+round-scoped bold paragraphs in historical narratives, not contract
+sections. This rollout appended the missing top-level sections —
+`Capabilities` (empty scaffold), `Saturation` (declaration deferred to
+the lane's next round), `Planned`, `Retired` — purely additively at the
+file end, existing bytes unchanged. No axis claim was made and no score
+moved; this is a conformance scaffold, not a round.
+
+
