@@ -652,3 +652,29 @@ file end, existing bytes unchanged. No axis claim was made and no score
 moved; this is a conformance scaffold, not a round.
 
 
+
+## 2026-10-17 — readable front door
+
+Root README was absent. The start command is `bash tools/mado-verify.sh --selftest` from that script's header (hermetic; live hyprctl is not the recommended door). SHONEN.md boxes are `[~]` historical assertions. MINT.md records the roster-scan rejections.
+
+Corpus index: `corpus/README.md` is line-cited (fleet-round-1 navigation smoke names line 54) and was not edited. `corpus/knowledge/`, `corpus/lessons/`, evidence, fixtures, and earlier LOG entries were not rewrapped.
+
+Lint fixes (line counts of existing content unchanged):
+- plans/round-4-record-draft.md (final newline)
+- plans/round-5-record-draft.md (final newline)
+- plans/round-6-record-draft.md (final newline)
+- plans/round-6.plan.md (final newline)
+- plans/round-10-record-draft.md (final newline)
+- plans/round-10.plan.md (final newline)
+- plans/round-11.plan.md (final newline)
+- plans/round-7-record-draft.md (final newline, trailing whitespace)
+- plans/round-7.plan.md (final newline)
+- plans/round-8-record-draft.md (final newline)
+- plans/round-8.plan.md (final newline)
+- plans/round-9-record-draft.md (final newline)
+- plans/round-9.plan.md (final newline)
+
+Lint left in place:
+- plans/completion-evidence.md: missing final newline; sha256 pinned in reports/r11-aud-m11.md
+
+Devin: a search for `devin.ai` in this repo found no URL to edit. No wiki URL was added.

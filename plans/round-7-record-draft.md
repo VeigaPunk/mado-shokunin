@@ -556,7 +556,7 @@ prep; **do not fold into the round-7 commit** (same pattern as rounds 5/6).
 
 **v2c (18:27Z): the two notes are still moving — re-pin at commit.** Re-measured
 both immediately after v2b: `walker-live-surface.md` 299 L / 19,111 B /
-`99d061c2efc7a06c…` → **300 L / 19,203 B / `2bbb9609283f2d81…`** (grew); 
+`99d061c2efc7a06c…` → **300 L / 19,203 B / `2bbb9609283f2d81…`** (grew);
 `theme-wallpaper-plane.md` 393 L / 27,593 B / `e766dd10df5bb217…` →
 **393 L / 27,593 B / `58b12f71cf0c9ef6…`** (equal size/lines, sha moved — read
 as a live-write window; the v2b §-content summary stands as of its own read).
