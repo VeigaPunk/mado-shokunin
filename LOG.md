@@ -652,3 +652,11 @@ file end, existing bytes unchanged. No axis claim was made and no score
 moved; this is a conformance scaffold, not a round.
 
 
+
+## 2026-10-17 — root README
+
+Motivating evidence: no root `README.md`. The page follows `PROVINCE.md`
+(read-only config planes), `SKILL.md` (version pins, OBS/INF/UNK tags),
+`SHONEN.md` (`[~]`, outside-lane verification owed), and the header of
+`tools/mado-verify.sh` (`MADO_VERIFY: CLEAN|DIVERGED`, `--selftest`,
+`--no-live`). No Devin wiki URL exists here.
