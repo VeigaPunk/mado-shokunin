@@ -651,4 +651,9 @@ the lane's next round), `Planned`, `Retired` — purely additively at the
 file end, existing bytes unchanged. No axis claim was made and no score
 moved; this is a conformance scaffold, not a round.
 
+## 2026-10-17 — repository README
 
+- **Trigger.** The repository root had no `README.md`.
+- **Evidence.** Surfaces and the read-only rule are `PROVINCE.md`. The scoped-verification contract is the opening of `SKILL.md`. Usage and exit map are the header of `tools/mado-verify.sh`. Ran `bash tools/mado-verify.sh --selftest` on 2026-10-17: `MADO_SELFTEST: 268/268 assertions passed`, exit 0.
+- **Action.** Added `README.md`. Corpus indexes were not edited. No Devin wiki URL was present.
+- **Outcome.** No axis claim; no score moved.
