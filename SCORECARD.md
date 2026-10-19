@@ -299,7 +299,7 @@ corrected (reviewer F4): at pre-registration calibration and coverage/sourced-ar
 recommended freshness. U3–U6 derive from the ART dossier's `[INFERENCE]`-tagged uncovered-seam bullet
 (`mado-art.md:12`); U2 and U3 had partial prior host footholds (`keybind-rule-semantics.md:31`,
 `remaining-planes-census.md:227-233`) — the new entries add the upstream era/routing/lifecycle layer.
-Gate bytes: `93e43f8f…` (3,231 L) → ``ea798ad078f139f3…` (3,245 L / 151,131 B)` (`sha256sum tools/mado-verify.sh` @ `6e3b75f`).
+Gate bytes: `93e43f8f…` (3,231 L) → `ea798ad078f139f3…` (3,245 L / 151,131 B) (`sha256sum tools/mado-verify.sh` @ `6e3b75f`).
 
 ### Capabilities (round 12)
 
