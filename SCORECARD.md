@@ -217,3 +217,58 @@ Populated by the lane at each round start per the `AXES.md` §SCORECARD.md contr
 
 - none retired; record with justification when an axis is retired.
 
+
+## Round 12 (kaika) — pre-registered claims, baselines and rubrics
+
+Steered round 12 (fleet-ledger `.ufo/waves/kaika/steer.md`; prompt
+`.ufo/prompts/mado-round-12.md` at ledger `12a5571`). Fleet round 1
+(2026-10-15) stays LIVE-blocked and unadmitted; it is superseded, not
+resumed (`LOG.md` round-12 entry). Written **before** any round-12 work;
+baselines measured at `e1d81d48026b6b9c9e9614c3b6390240200110db`, outputs
+in `.ufo/evidence/round-12/before*.txt`.
+
+### Six-axis baseline (bounded rubrics; lane's own claims as denominator)
+
+| Axis / sub-axis | Rubric | Counting command | Baseline @ `e1d81d4` |
+|---|---|---|---|
+| calibration / lesson-grounded admission criteria | `10 × criteria citing a lesson / criteria` | `grep -cE '^[0-9]+\. .*lessons/' corpus/QUALITY.md` over `grep -cE '^[0-9]+\. ' corpus/QUALITY.md` | 0/5 → **0.0000** (lowest) |
+| freshness / file-plane gate agreement | `10 × PASS / (PASS+FAIL+UNKNOWN)` on `--no-live` | `bash tools/mado-verify.sh --no-live \| awk '$3=="FAIL"\|\|$3=="UNKNOWN"' \| wc -l` (and `$3=="PASS"`) | 28/29 → **9.6552**; FAIL+UNKNOWN = 1 (`hypr.root.include_graph`) |
+| coverage / admitted-note reachability (fleet r1) | unchanged rubric, Counting command above | literal fence (sha `8b59b503…`) via `bash -s`, `REV=<commit>` | 22/22 → 10.0000 (saturated on its finite denominator; harm watch only) |
+| coverage / sourced current-art ground (new) | `10 × covered U-items / 7`; an item is covered when an admitted `corpus/knowledge/` entry opens with `source:` citing a `mined` `corpus/SOURCES.md` row and names the item | `for f in corpus/knowledge/*.md; do head -n 15 "$f" \| grep -qE '^source:.*\bS[0-9]{3,}\b' && echo "$f"; done \| wc -l` (entries) + `grep -cE '^covers: U[1-7]' corpus/knowledge/*.md` | 0 entries, 0/7 → **0.0000** |
+| operability / hermetic suite pass fraction | unchanged rubric | `bash tools/mado-verify.sh --selftest` | 268/268 → 10.0000 (harm watch) |
+| depth | unscored: no bounded rubric exists; declared, not invented this round | — | — |
+| adjacency | unscored: no bounded rubric exists; report-not-absorb duty tracked per round in the report | — | — |
+
+Uncovered ground U (pre-registered; sources `corpus/knowledge/arc-synthesis.md`
+§6 gap ledger and the kaika ART dossier `kaika-w1/mado-art.md:7-24`):
+U1 per-window rule effects (`arc-synthesis.md` §6 "no rule-read verb");
+U2 Hyprland configuration-language era (hyprlang → Lua; `SKILL.md:344`);
+U3 XDG portal backend routing and ScreenCast lifecycle; U4 Wayland protocol
+phase and compositor-advertised globals; U5 output management / colour
+boundary; U6 kernel-input → Wayland debugging ladder; U7 Waybar module text
+(`arc-synthesis.md` §6).
+
+### Claims (3; distinct axes; causally separable)
+
+1. **C1 — calibration (lowest axis).** Mine the lane's own mistakes into
+   `corpus/lessons/round-12.md` `## Mistakes`; append `QUALITY.md` criteria,
+   each citing its lesson. Before 0/5 → target ≥5 lesson-cited criteria.
+2. **C2 — freshness.** Re-verify and re-anchor the 2026-10-17 gkeep drift
+   append-only (new `corpus/knowledge/config-drift-r12.md`, `SKILL.md`
+   erratum, gate baseline erratum per `omarchy-drift-watch.md` re-anchor
+   protocol). Before FAIL+UNKNOWN = 1 → target 0.
+3. **C3 — coverage, capability acquisition "sources registry".** Create
+   `corpus/SOURCES.md` (contract v1) and admit entries on U1–U3. Before 0/7
+   → target 3/7 (4.2857). The capability row enters only if every contract
+   census command runs clean.
+
+Harm watch (every claim): selftest stays N/N; `--regression` ends
+`MADO_REGRESSION: PASS` (re-cut if the gate moves); navigation counter
+stays complete (N/N, exit 0); no config tree, compositor state or sibling
+repo is written. Exploratory claim: none.
+
+### Saturation (declared this round)
+
+Saturation line: **9.0** on every scored sub-axis. Stagnation window:
+**N = 3** rounds without a capability row. Both drive the nudge
+(`AXES.md` §The stagnation nudge).

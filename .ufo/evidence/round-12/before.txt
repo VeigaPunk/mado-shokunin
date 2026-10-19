@@ -1,0 +1,21 @@
+# round-12 baselines — measured at e1d81d48026b6b9c9e9614c3b6390240200110db, 2026-10-19T21:42:55Z, tree clean: [1 dirty paths]
+
+$ grep -cE '^[0-9]+\. .*lessons/' corpus/QUALITY.md
+0
+$ grep -cE '^[0-9]+\. ' corpus/QUALITY.md
+5
+$ bash tools/mado-verify.sh --no-live | awk '$3=="FAIL"||$3=="UNKNOWN"' | wc -l
+1
+$ bash tools/mado-verify.sh --no-live | awk '$3=="PASS"' | wc -l
+28
+$ for f in corpus/knowledge/*.md; do head -n 15 "$f" | grep -qE '^source:.*\bS[0-9]{3,}\b' && echo "$f"; done | wc -l
+0
+$ test -e corpus/SOURCES.md; echo $?
+1
+$ triple-header count (source/verified-at/recheck in first 15 lines)
+3
+22
+$ grep -rc getprop corpus SKILL.md | awk -F: '{s+=$2} END{print s}'
+0
+$ sha256sum tools/mado-verify.sh
+93e43f8fe8b9bdd48c895cccfac11d5b23f97d8793fc6fb43987b4afdbc00095  tools/mado-verify.sh
