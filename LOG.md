@@ -730,3 +730,31 @@ calibration (orchestrator-owned after landing; SHONEN stays `[~]`).
 
 **No push.** The standing operator rule "No push" (kaika binding §6.6) overrides `MISSION.md:79`
 commit-then-push; this round commits on `kaika/round` only.
+
+**Post-integration review (round 12, second batched call: reviewer + critic over `5174e15`;
+`.ufo/evidence/round-12/l2-postreviewer.md`, `l2-postcritic.md`).** Reproduced: every `after.txt`
+count, pure-insertion diffs (SKILL 20/0, QUALITY 16/0), 9 Gate quotes re-opened against source
+(S001, S002, S005, S013, S014, S017, S018, S020, S024), U1 host reads (class/address only), no
+gate marker/VERSION_STR/--help touched; C3 verifies. Fixed in this round:
+- Gate: no selftest scenario removed `gkeep.conf` (critic item 4). Scenario B now deletes it and asserts
+  `hypr.root.sources_resolve` FAIL. Red-before/green-after: a mutant flipping that row's FAIL arm to PASS
+  survived every behavioural assertion at `5174e15` (killed only by pin check R10) and is killed by the
+  new assertion (`gate-mutant-sources-resolve.txt`). Third re-cut 10/10 KILLED (`gate-recut-3.txt`),
+  `PIN_MADO` → `538d178b…`, `TABLE_MADO` unchanged; selftest 268 → 269/269; `--no-live` 29/0, live 52/0/8,
+  `--regression` PASS (`gate-*-after.txt`).
+- C1 provenance: criteria 15–16 rest on external inference traps, not lane incidents, and criterion 8's
+  secondary pointer grounds M4 — appended provenance notes to `QUALITY.md` and an errata block to the
+  lesson; the score is reported under both readings (11/16 pre-registered, 9/16 strict).
+- `after.txt` printed one command that differed from the one run, and three counts without commands;
+  the final `after.txt` prints every command verbatim. S003's quote line `:330` → `:331` (lesson errata).
+- Separability of C3 from C1 (reviewer item 2): each U entry clears criteria 1–5 on its own — one
+  `## Rejected` and one `## Limits` section each, and `[OBS]`/`[INF]`/`[UNK]` tags kept apart
+  (`grep -c` per entry: getprop 14/5/2, config-era 8/23/7, portal 9/10/5, drift 5/5/4).
+Kept open, with reasons: operator intent behind the gkeep re-anchor (L0); the SKILL EOF errata block
+(critic item 6, elegance) stays because `PROTOCOL.md` §Evidence requires corrections to sweep every
+mention, and the detail lives in `config-drift-r12.md`; depth/adjacency rubrics (round 13).
+
+Note (same round): the paragraph above was first appended by a shell call without `cwd` to the FLEET
+ROOT `LOG.md` (relative path); the orchestrator restored that file to HEAD and saved the text to
+`/tmp/kaika/mado-misplaced-log.md`; it is appended here verbatim, after `6e3b75f`, so that commit's
+LOG lacks it. The measured content of `6e3b75f` is unaffected (gate, QUALITY, lesson, entry errata).
