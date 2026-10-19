@@ -96,3 +96,12 @@ Source-row gate records for this round: corpus/SOURCES.md rows opened 2026-10-19
 
 - S003's second quote "never a naked assertion" sits at `PROTOCOL.md:331` (fleet `31baf5c`), not `:330` — `grep -n 'never a naked' PROTOCOL.md`, 2026-10-19 (post-integration reviewer, `.ufo/evidence/round-12/l2-postreviewer.md` item 5).
 - Criteria 15–16 rest on the external inference traps above, not on lane incidents; criterion 8's secondary pointer `lessons/round-10.md:108-118` grounds M4, not M3 (`QUALITY.md` provenance notes).
+
+## Mistakes made in this round (caught in-round)
+
+| # | class | evidence pointer | captured-by criterion | fix |
+|---|---|---|---|---|
+| R12-a | A gate list was widened (`LOCAL+=(gkeep)`) with no behavioural covering mutant — only the pin check R10 killed its removal | `.ufo/evidence/round-12/gate-shas.txt` (intermediate `d41a884b…`); `LOG.md` round-12 entry, C2 | `gate-standing-use.md` §5 rule 2 (gate maintenance, not QUALITY) | dropped before commit; probe a mutant per widened list before landing |
+| R12-b | The pre-registration cited `omarchy-drift-watch.md`'s re-anchor protocol for gate `EXPECT`, which that protocol does not govern | `.ufo/evidence/round-12/l2-reviewer.md` F1 | 8 (a cited rule must govern the cited object — same family as path-exists) | the gate erratum and drift entry cite `gate-standing-use.md` §5 rule 4 as well; operator intent routed to L0 |
+| R12-c | `after.txt` printed a command that differed from the one executed, and three counts without commands | `.ufo/evidence/round-12/l2-postreviewer.md` items 3–4 | 10 | `after-measure.sh` prints each command verbatim before its output |
+| R12-d | Two criteria grounded in external traps were filed under "Criteria from mined mistakes" | `.ufo/evidence/round-12/l2-postcritic.md` item 2 | 15–16 provenance note in `QUALITY.md` | score reported under both readings (11/16 and 9/16) |
