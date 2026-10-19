@@ -272,3 +272,56 @@ repo is written. Exploratory claim: none.
 Saturation line: **9.0** on every scored sub-axis. Stagnation window:
 **N = 3** rounds without a capability row. Both drive the nudge
 (`AXES.md` §The stagnation nudge).
+
+## Round 12 (kaika) — results
+
+Measured at the round's final content commit `6e3b75fab5613eabf684857b49b9a658672196ed` (content first landed at `5174e15`; the
+post-integration fixes are in the LOG round-12 entry), 2026-10-19; full output
+`.ufo/evidence/round-12/after.txt`, produced by `REV=6e3b75f bash .ufo/evidence/round-12/after-measure.sh`; every count printed beside its exact command (its header's dirty
+path is `after.txt` itself, created by the redirection). Self-verdicts, pending the orchestrator's
+non-author verification.
+
+| Claim | Axis / sub-axis | Counting command | Before @ `e1d81d4` | After @ `6e3b75f` | Verdict |
+|---|---|---|---|---|---|
+| C1 | calibration / lesson-grounded admission criteria | `grep -cE '^[0-9]+\. .*lessons/' corpus/QUALITY.md` over `grep -cE '^[0-9]+\. '`, counting only criteria whose cited paths and `#mistakes M<n>` rows resolve (resolver loop in `after.txt`) | 0/5 → 0.0000 | 11/16 → **6.8750**; strict reading (lane incidents only; 15–16 rest on external traps): 9/16 → 5.6250 | improved (either reading) |
+| C2 | freshness / file-plane gate agreement | `bash tools/mado-verify.sh --no-live \| awk '$3=="FAIL"\|\|$3=="UNKNOWN"' \| wc -l` (+ `$3=="PASS"`) | 1 FAIL; 28/29 → 9.6552 | 0; 29/29 → **10.0000** | improved — conditional on operator intent to keep gkeep (L0) |
+| C2 | freshness / present-tense SKILL claims contradicted by live without an erratum (reviewer F2) | `grep -c '^> Erratum (round 12' SKILL.md` and `grep -c '^## Errata (round 12)' SKILL.md` (pointer after the `:40-46` paragraph + EOF section) | 1 (`SKILL.md:40-46`, no erratum) | 0 (both greps print 1) | improved (same claim) |
+| C3 | coverage / sourced current-art ground (join: sourced entry × `mined` row naming it × distinct `covers:`) | loop in `after.txt` § C3 | 0/7 → 0.0000 | 3/7 (U1, U2, U3) → **4.2857** | improved; capability below |
+| — | coverage / admitted-note reachability | literal Counting command fence (sha `8b59b503…`), `REV=6e3b75f` | 22/22 | 26/26, exit 0 | unchanged (not harmed) |
+| — | operability / hermetic suite pass fraction | `bash tools/mado-verify.sh --selftest`; `--regression` with `MADO_VERIFY_HARNESS=/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh` | 268/268; PASS @ `dc7c4141…` | 269/269 (+1: gkeep.conf removal case); PASS @ `538d178b…` (third re-cut, 10/10 KILLED) | unchanged at 10.0000 (not harmed; one assertion added) |
+| — | depth | unscored (no bounded rubric) | — | — | unchanged; AXES contract defect carried (reviewer F7) |
+| — | adjacency | unscored (no bounded rubric) | — | — | unchanged; gkeep reported, not absorbed; `LOCAL` widening dropped |
+
+Observational, not claimed: freshness rubric (a) — knowledge entries opening with
+`source:`/`verified-at:`/`recheck:` — 3/22 → 7/26 (the four round-12 entries). Lowest-axis statement
+corrected (reviewer F4): at pre-registration calibration and coverage/sourced-art were **tied** at
+0.0000; this round works both. The W1 STATE dossier had called the lowest axis indeterminate and
+recommended freshness. U3–U6 derive from the ART dossier's `[INFERENCE]`-tagged uncovered-seam bullet
+(`mado-art.md:12`); U2 and U3 had partial prior host footholds (`keybind-rule-semantics.md:31`,
+`remaining-planes-census.md:227-233`) — the new entries add the upstream era/routing/lifecycle layer.
+Gate bytes: `93e43f8f…` (3,231 L) → ``ea798ad078f139f3…` (3,245 L / 151,131 B)` (`sha256sum tools/mado-verify.sh` @ `6e3b75f`).
+
+### Capabilities (round 12)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| sources registry | Curate where mado learns: 39 opened, scoped-tier rows (mined/queued/rejected), study paths, search log; every contract census command runs clean and every mined row joins to an entry that cites it | `corpus/SOURCES.md`; census block in `.ufo/evidence/round-12/after.txt` | 12 |
+| verdict gate (live + file plane) | Read-only verdict over the declared config plane and live hyprctl surfaces, exit 0/1/2, boundary check | `bash tools/mado-verify.sh` → `MADO_VERIFY: CLEAN (52 pass, 8 notes …)`, `.ufo/evidence/round-12/gate-live-after.txt` | 5 (re-demonstrated 12) |
+| hermetic self-test | 269 assertions over isolated fixtures | `bash tools/mado-verify.sh --selftest` → 269/269, `gate-selftest-after.txt` | 5 (re-demonstrated 12) |
+| mutation regression with re-cut | Replays the 10-defect kill table against the gate's derived target; SETUP on a moved gate, re-cut via the printed command | `gate-regression-setup-3.txt`, `gate-recut-3.txt`, `gate-regression-after.txt` | 7 (re-demonstrated 12) |
+
+Stagnation window resets: a capability entered this round.
+
+### Planned (round 13)
+
+1. freshness/operability — M13 set-blind census: `local.inventory` and `sources_resolve` compare
+   observed vs expected sets and name missing/extra members (today 13 `*.conf` on disk, inventory reads
+   12/12); covering mutant + re-cut.
+2. coverage — one bounded U4–U7 entry from the queued paths in `corpus/SOURCES.md` (`wayland-info`
+   and `libinput` are not installed: `.ufo/evidence/round-12/l2-scout.md`).
+3. operability/calibration — gate registry row at `SKILL.md` (registry home, `PROTOCOL.md` §Gate
+   standard) and bounded rubrics for depth and adjacency (reviewer F7).
+
+### Retired
+
+None.

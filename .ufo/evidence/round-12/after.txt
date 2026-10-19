@@ -1,0 +1,88 @@
+# round-12 after-measurements at 6e3b75fab5613eabf684857b49b9a658672196ed, 2026-10-19T22:33:51Z; worktree dirty paths: 3 (SCORECARD.md results + after.txt are written after this run)
+## C1 calibration
+$ grep -cE '^[0-9]+\. .*lessons/' corpus/QUALITY.md
+11
+
+$ grep -cE '^[0-9]+\. ' corpus/QUALITY.md
+16
+
+$ grep -E '^[0-9]+\. ' corpus/QUALITY.md | while IFS= read -r l; do n=${l%%.*}; paths=$(grep -oE 'lessons/[A-Za-z0-9._-]+\.md' <<<"$l" | sort -u); [ -n "$paths" ] || continue; ok=1; for p in $paths; do [ -e "corpus/$p" ] || ok=0; done; for m in $(grep -oE '#mistakes M[0-9]+' <<<"$l" | grep -oE 'M[0-9]+'); do grep -qE "^\| $m \|" corpus/lessons/round-12.md || ok=0; done; [ $ok = 1 ] && echo $n; done | wc -l
+11
+
+$ grep -E '^[0-9]+\. .*lessons/round-12.md#mistakes' corpus/QUALITY.md | wc -l
+9
+
+## C2 freshness
+$ bash tools/mado-verify.sh --no-live | awk '$3=="FAIL"||$3=="UNKNOWN"' | wc -l
+0
+
+$ bash tools/mado-verify.sh --no-live | awk '$3=="PASS"' | wc -l
+29
+
+$ grep -c '^> Erratum (round 12' SKILL.md
+1
+
+$ grep -c '^## Errata (round 12)' SKILL.md
+1
+
+## freshness (a), observational
+$ for f in corpus/knowledge/*.md; do head -n 15 "$f" | grep -q '^source:' && head -n 15 "$f" | grep -q '^verified-at:' && head -n 15 "$f" | grep -q '^recheck:' && echo "$f"; done | wc -l
+7
+
+$ ls corpus/knowledge/*.md | wc -l
+26
+
+## C3 coverage
+$ for f in corpus/knowledge/*.md; do head -n 15 "$f" | grep -qE '^source:.*\bS[0-9]{3,}\b' && echo "$f"; done | wc -l
+4
+
+$ for f in corpus/knowledge/*.md; do h=$(head -n 15 "$f"); grep -qE '^source:.*\bS[0-9]{3,}\b' <<<"$h" || continue; grep -oE '^covers: U[1-7]' <<<"$h"; done | sort -u
+covers: U1
+covers: U2
+covers: U3
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|/ {i=$2;s=$9;u=$12; gsub(/[[:space:]]/,"",i); gsub(/[[:space:]]/,"",s); gsub(/^[[:space:]]+|[[:space:]]+$/,"",u); print i"\t"s"\t"u}' corpus/SOURCES.md > /tmp/mado-r12-rows.tsv; while IFS=$'\t' read -r i s u; do [ "$s" = mined ] || continue; for p in ${u//,/ }; do grep -qw "$i" "$p" || echo "row $i used-by $p does not cite it"; done; done < /tmp/mado-r12-rows.tsv; for f in corpus/knowledge/*.md; do src=$(head -n 15 "$f" | grep -E '^source:'); [ -n "$src" ] || continue; for i in $(grep -oE '\bS[0-9]{3,}\b' <<<"$src" | sort -u); do awk -F'\t' -v i=$i -v f="$f" '$1==i && $2=="mined" && index($3,f) {ok=1} END{if(!ok) print "entry "f" cites "i" without a mined row naming it"}' /tmp/mado-r12-rows.tsv; done; done; echo join-done
+join-done
+
+## SOURCES contract census (SOURCES-CONTRACT-v1.md:66-80, verbatim)
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+39
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+0
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; gsub(/[[:space:]]/,"",t); n[t]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+A=35 B=1 C=3 
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {s=$9; gsub(/[[:space:]]/,"",s); n[s]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+mined=28 queued=9 rejected=2 
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}' corpus/SOURCES.md | sort | uniq -d; echo dup-check-done
+dup-check-done
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {i=$2;k=$4;t=$5;s=$9; gsub(/[[:space:]]/,"",i); gsub(/[[:space:]]/,"",k); gsub(/[[:space:]]/,"",t); gsub(/[[:space:]]/,"",s); if (t !~ /^[ABC]$/) print "tier", i, t; if (s !~ /^(queued|mined|rejected)$/) print "status", i, s; if (k !~ /^(spec|docs|paper|code|tool|dataset|talk|book|community|own-work)$/) print "kind", i, k; if (t=="A" && k=="community") print "tier-inflation", i}' corpus/SOURCES.md; echo enum-check-done
+enum-check-done
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {s=$9; gsub(/[[:space:]]/,"",s); if (s=="mined") {n=split($12, a, /[,;]/); for (j=1;j<=n;j++) {p=a[j]; gsub(/^[[:space:]]+|[[:space:]]+$/,"",p); if (p!="" && p!="—") print p}}}' corpus/SOURCES.md | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done; echo used-by-check-done
+used-by-check-done
+
+## harm watch
+$ git show 6e3b75fab5613eabf684857b49b9a658672196ed:SCORECARD.md | awk '/^```bash$/{f=1;next} /^```$/{if(f){exit}} f' > /tmp/mado-r12-counter.sh; sha256sum < /tmp/mado-r12-counter.sh; REV=6e3b75fab5613eabf684857b49b9a658672196ed bash -s < /tmp/mado-r12-counter.sh; echo exit=$?
+8b59b503805396b514cb4e009981d6a1837a7898c368afff68e25eb5704a7b88  -
+revision=6e3b75fab5613eabf684857b49b9a658672196ed indexed=26/26 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0
+
+$ bash tools/mado-verify.sh --selftest | tail -1
+MADO_SELFTEST: 269/269 assertions passed
+
+$ bash tools/mado-verify.sh | tail -2
+counts: pass=52 fail=0 unknown=0 skip=0 note=8
+MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes verified read-only)
+
+$ bash tools/mado-verify.sh --regression | grep '^MADO_REGRESSION'
+MADO_REGRESSION: PASS (case=mado-verify-hardened; target=538d178bf03a5320e5cfdafc4dc5efd62097a1782c134893dda4d6b2b66454a9)
+
+$ sha256sum tools/mado-verify.sh; wc -lc tools/mado-verify.sh
+ea798ad078f139f34ce06e72ef2c1fecb0732bfc063b1ea95bec50655f27e0b5  tools/mado-verify.sh
+  3245 151131 tools/mado-verify.sh
+
