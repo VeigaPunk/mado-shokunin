@@ -105,3 +105,8 @@ Source-row gate records for this round: corpus/SOURCES.md rows opened 2026-10-19
 | R12-b | The pre-registration cited `omarchy-drift-watch.md`'s re-anchor protocol for gate `EXPECT`, which that protocol does not govern | `.ufo/evidence/round-12/l2-reviewer.md` F1 | 8 (a cited rule must govern the cited object — same family as path-exists) | the gate erratum and drift entry cite `gate-standing-use.md` §5 rule 4 as well; operator intent routed to L0 |
 | R12-c | `after.txt` printed a command that differed from the one executed, and three counts without commands | `.ufo/evidence/round-12/l2-postreviewer.md` items 3–4 | 10 | `after-measure.sh` prints each command verbatim before its output |
 | R12-d | Two criteria grounded in external traps were filed under "Criteria from mined mistakes" | `.ufo/evidence/round-12/l2-postcritic.md` item 2 | 15–16 provenance note in `QUALITY.md` | score reported under both readings (11/16 and 9/16) |
+
+Correction to R12-b (same round): the gate erratum and `config-drift-r12.md` still cite only
+`omarchy-drift-watch.md:284-287`; neither cites `gate-standing-use.md` §5 rule 4. The rule actually
+followed is rule 4's "a MOVED pin … re-verification and an appended erratum" (`gate-standing-use.md:222-226`);
+citing it at the gate is round-13 work alongside M13.
