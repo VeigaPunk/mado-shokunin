@@ -142,3 +142,8 @@ Run from the lane root for repository anchors; config probes use the absolute pa
 - Live precedence and parser health: `hyprctl getoption general:gaps_out`; `hyprctl getoption input:kb_layout`; `hyprctl configerrors` — 2026-10-19.
 - Provenance source: `git -C ~/Projects/gkeep rev-parse --short HEAD`; `git -C ~/Projects/gkeep show HEAD:install.sh | sha256sum` — 2026-10-19.
 - Gate re-anchor verification: `gate-selftest-after.txt` (268/268), `gate-no-live-after.txt`, `gate-live-after.txt` (52 pass / 0 fail / 8 notes) and `gate-regression-after.txt` (PASS at target `e5894387…`), all under `.ufo/evidence/round-12/`, 2026-10-19.
+
+## Errata (round 12, post-integration)
+
+- The post-integration critic found no selftest scenario that removes `gkeep.conf` (`.ufo/evidence/round-12/l2-postcritic.md` item 4). Scenario B now also deletes the fixture `gkeep.conf` and asserts `hypr.root.sources_resolve` FAIL; red-before/green-after: a mutant flipping the `sources_resolve` FAIL arm to PASS survived every behavioural assertion of the `5174e15` gate (killed only by the pin check R10) and is killed by the new assertion (`.ufo/evidence/round-12/gate-mutant-sources-resolve.txt`).
+- Gate figures in "Re-measure commands" above are superseded: selftest 268/268 → **269/269**; regression PASS target `e5894387…` → **`538d178b…`** after the third re-cut (`gate-recut-3.txt`, 10/10 KILLED); `--no-live` 29 pass / 0 fail and live 52 pass / 0 fail / 8 notes are unchanged (`gate-*-after.txt`, 2026-10-19).

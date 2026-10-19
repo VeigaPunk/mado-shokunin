@@ -91,3 +91,8 @@ Source-row gate records for this round: corpus/SOURCES.md rows opened 2026-10-19
 - S037 — https://github.com/hyprwm/xdg-desktop-portal-hyprland/releases/tag/v1.4.1 — accessed 2026-10-19 — “screencopy: add option to override default cursor_mode” — release v1.4.1, “Changes”.
 - S038 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.21.0 — accessed 2026-10-19 — “Add the ConfigureShortcuts method to the Global Shortcuts Portal” — release 1.21.0, “New Features” (marked pre-release).
 - S039 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.22.0 — accessed 2026-10-19 — “Improve Document Portal document path resolving for the File Chooser and OpenURI Portals” — release 1.22.0, “Bug Fixes”.
+
+## Errata (round 12, post-integration)
+
+- S003's second quote "never a naked assertion" sits at `PROTOCOL.md:331` (fleet `31baf5c`), not `:330` — `grep -n 'never a naked' PROTOCOL.md`, 2026-10-19 (post-integration reviewer, `.ufo/evidence/round-12/l2-postreviewer.md` item 5).
+- Criteria 15–16 rest on the external inference traps above, not on lane incidents; criterion 8's secondary pointer `lessons/round-10.md:108-118` grounds M4, not M3 (`QUALITY.md` provenance notes).

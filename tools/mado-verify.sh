@@ -940,6 +940,7 @@ MADO_R8_GIT_STUB
   cp -a "$A/." "$B/"
   printf 'exec-once = fixture-drift\n' >>"$B/.config/hypr/hyprland.conf"
   rm -f "$B/.config/hypr/xdph.conf"
+  rm -f "$B/.config/hypr/gkeep.conf"   # round 12: a declared source whose target vanished
   printf '{ "reload_style_on_change": ' >"$B/.config/waybar/config.jsonc"
   sed -i 's/force_keyboard_focus = true/force_keyboard_focus = false/' "$B/.config/walker/config.toml"
   out=$("$BASH_BIN" "$0" --root "$B" --no-live 2>&1); rc=$?
@@ -947,6 +948,7 @@ MADO_R8_GIT_STUB
   st_has  "B: DIVERGED verdict" "$out" "MADO_VERIFY: DIVERGED"
   st_row_has "$out" hypr.root.orchestrator FAIL "B"
   st_row_has "$out" hypr.local.inventory FAIL "B"
+  st_row_has "$out" hypr.root.sources_resolve FAIL "B (round 12: removed gkeep.conf)"
   st_row_has "$out" waybar.config.parse FAIL "B"
   st_row_has "$out" walker.config FAIL "B"
   st_row_has "$out" hypr.root.include_graph PASS "B (isolation)"
@@ -1288,7 +1290,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='e5894387bddc9e3c12aea2c5e442b602102bbf9db16ba69a71b08bf6613f227d'
+PIN_MADO='538d178bf03a5320e5cfdafc4dc5efd62097a1782c134893dda4d6b2b66454a9'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'

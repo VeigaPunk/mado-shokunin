@@ -22,3 +22,9 @@
 16. Upstream documentation and releases support only dated `[INF-docs]`; never promote them to installed-host or end-to-end facts without independent host measurement. (lesson: lessons/round-12.md#inference-traps M03/M05/M06/M07)
 
 Source tiers and the registry live in SOURCES.md (contract v1); this bar governs claim admission only.
+
+Provenance notes (round 12, post-integration review — `.ufo/evidence/round-12/l2-postcritic.md`, `l2-postreviewer.md`):
+criteria 6–14 are grounded in lane incidents; 15–16 are grounded in external inference traps
+(`lessons/round-12.md` § Inference traps), not lane incidents, despite the block heading. Criterion 8's
+secondary citation `lessons/round-10.md:108-118` grounds record debt (M4), not planned paths; its
+grounding is `lessons/round-12.md#mistakes M3` alone.
