@@ -121,3 +121,7 @@ The migration notice states:
 - Re-measure `hyprctl version`, `hyprctl configerrors`, and the `hyprland.lua` presence sweep when updating the host position; do not reload, edit, or dispatch as a probe.
 - If a later source clarifies the last supported hyprlang release or a rules-parser break, append a dated erratum naming the prior statement, replacement, source, and evidence class; do not silently rewrite the historical claim.
 - No erratum is entered in this initial record.
+
+## Errata (round 12, post-review)
+
+- `source:` cites S030 for the current Window Rules page. S030 was rejected in the same round as a duplicate of S017 (same URL `https://wiki.hypr.land/Configuring/Basics/Window-Rules/`, overlapping scope, no supersedes link); read every S030 citation in this entry (header and line 67) as **S017** — same page, same "Syntax" section, same 2026-08-26 modification. The claim it supports is unchanged. Logged in `corpus/lessons/round-12.md` § Post-review registry changes.

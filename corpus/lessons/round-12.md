@@ -110,3 +110,17 @@ Correction to R12-b (same round): the gate erratum and `config-drift-r12.md` sti
 `omarchy-drift-watch.md:284-287`; neither cites `gate-standing-use.md` §5 rule 4. The rule actually
 followed is rule 4's "a MOVED pin … re-verification and an appended erratum" (`gate-standing-use.md:222-226`);
 citing it at the gate is round-13 work alongside M13.
+
+## Outside spot-check (orchestrator, non-author, 2026-10-19)
+
+Orchestrator adjudication of round 12 (reviewing `e1d81d4`/`aeb33b5`): C1, C2 and C3 numbers reproduce; provenance, append-only and credential checks pass. Admit sample **agreed**: U1 `window-rule-effects-getprop.md` (`hyprctl getprop` as an effect read). Reject sample **agreed**: S012 (version-unanchored blog). **Disagreed**: S030 — admitted as `mined` while it re-registered S017's URL for the same scope with no supersedes link. Lesson: the merge renumbered five seat fragments without a cross-fragment URL check, so two seats' openings of one page became two rows. Fix below; next merge runs a URL-duplicate pass before renumbering.
+
+## Post-review registry changes (contract rule 2 — in-place cells, old → new)
+
+| row | cell | old | new | reason |
+|---|---|---|---|---|
+| S030 | status | mined | rejected | duplicate of S017 (same URL, overlapping current-wiki syntax scope, no supersedes link); flip: a distinct anchor at a pinned revision not covered by S017 |
+| S030 | used-by | corpus/knowledge/hyprland-config-era-r12.md | — | moved to S017 |
+| S017 | used-by | corpus/knowledge/window-rule-effects-getprop.md | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md | takes S030's citation; the U2 entry carries an erratum mapping S030 → S017 |
+
+Search-log errata (ART-id vs registry-id confusion in the portal note; owed anchors for S006, S008, S009, S010) are appended in `corpus/SOURCES.md` § Search log.
