@@ -1,0 +1,113 @@
+# Read-only hyprctl getprop measurements — 2026-10-19
+
+Host: Hyprland 0.56.2 / v0.56.2, commit efb50993780079460b0cbed1363e2166a2de1d9f; version capture is in getprop-help.txt.
+No window titles or hyprland.log contents were requested, emitted, or recorded. No compositor/configuration mutation was made.
+
+## Window selection: title-free projection
+
+$ hyprctl clients -j | jq '[.[] | {class, address, workspace: .workspace.name, floating}]'
+[
+  {
+    "class": "zcode",
+    "address": "0x55b5ee777c70",
+    "workspace": "2",
+    "floating": false
+  },
+  {
+    "class": "grok-bot",
+    "address": "0x55b5ee7a5940",
+    "workspace": "2",
+    "floating": false
+  },
+  {
+    "class": "Alacritty",
+    "address": "0x55b5ee84e440",
+    "workspace": "1",
+    "floating": false
+  },
+  {
+    "class": "Alacritty",
+    "address": "0x55b5efaf3a90",
+    "workspace": "1",
+    "floating": false
+  },
+  {
+    "class": "chromium",
+    "address": "0x55b5ee884770",
+    "workspace": "2",
+    "floating": false
+  },
+  {
+    "class": "Alacritty",
+    "address": "0x55b5ee83c6e0",
+    "workspace": "1",
+    "floating": false
+  },
+  {
+    "class": "chromium",
+    "address": "0x55b5efa0b610",
+    "workspace": "2",
+    "floating": false
+  },
+  {
+    "class": "Alacritty",
+    "address": "0x55b5efa28ab0",
+    "workspace": "1",
+    "floating": false
+  },
+  {
+    "class": "Alacritty",
+    "address": "0x55b5ee7daa30",
+    "workspace": "1",
+    "floating": false
+  }
+]
+
+## Property reads for selected Alacritty window
+
+$ hyprctl getprop class:Alacritty opacity
+0.97
+
+$ hyprctl getprop address:0x55b5ee84e440 opacity
+0.97
+
+$ hyprctl getprop address:0x55b5ee84e440 opacity_inactive
+0.9
+
+$ hyprctl getprop address:0x55b5ee84e440 opacity_fullscreen
+1
+
+$ hyprctl getprop address:0x55b5ee84e440 opacity_override
+false
+
+## Current config defaults for comparison
+
+$ hyprctl getoption decoration:active_opacity
+float: 1.000000
+set: false
+
+$ hyprctl getoption decoration:inactive_opacity
+float: 1.000000
+set: false
+
+## Separate workspace-rule query
+
+$ hyprctl workspacerules -j
+[]
+
+## Usage and selector/error probes
+
+$ hyprctl getprop
+not enough args
+
+$ hyprctl getprop Alacritty opacity
+window not found
+
+$ hyprctl getprop address:0x55b5ee84e440 __unknown_property__
+prop not found
+
+$ hyprctl getprop class:NoSuchClass opacity
+window not found
+
+$ hyprctl getprop address:0x55b5ee84e440 opacity
+0.97

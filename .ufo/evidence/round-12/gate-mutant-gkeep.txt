@@ -1,0 +1,12 @@
+# mutant probe 2026-10-19: final gate with '~/.config/hypr/gkeep.conf' removed from EXPECT (copy under /tmp, sha below)
+725dc81c3f75ecf73dcd87717f3b3e43ea717e675090814981cd68b7c8350cc9
+$ bash <mutant> --selftest | tail -4
+  - B (isolation) (want row hypr.root.include_graph PASS)
+  - C (file plane still judged) (want row hypr.root.include_graph PASS)
+  - S1: the receipt run keeps the verdict exit (CLEAN=0) (got '1' want '0')
+  - S1: the child verdict still prints (missing: MADO_VERIFY: CLEAN)
+exit=2
+$ bash <mutant> --no-live | grep include_graph
+hypr      hypr.root.include_graph         FAIL    18 source lines (expected 17)
+MADO_VERIFY: DIVERGED (1 fail, 0 unknown, 28 pass) — first fail: hypr.root.include_graph (18 source lines (expected 17))
+verdict: KILLED by --selftest (clean fixture A loses CLEAN) and by the live file plane

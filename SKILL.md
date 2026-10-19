@@ -17,6 +17,8 @@ inference from measured parts · `[INF-docs]` inference from documentation (wiki
 skill text), not host-verified · `[UNK]` unknown. Observation / inference / unknown stay
 separate at all times.
 
+Where to learn more: `corpus/SOURCES.md` (tiered registry, study paths, search log).
+
 Version pins for all claims below: Hyprland 0.56.2 (commit `efb5099…`), waybar v0.15.0,
 walker 2.17.0 (MADO-1 §9; MADO-2 §1; re-verified `hyprctl version`). Omarchy carries two
 pins — name which one you mean: `omarchy version` → 3.8.3, while the checkout's
@@ -44,6 +46,7 @@ file to set a key wins:
 > defaults (`~/.local/share/omarchy/default/hypr/*`, `hyprland.conf:4-12`) → theme include
 > (`:13`) → user files (`:16-20`) → toggles glob
 > (`~/.local/state/omarchy/toggles/hypr/*.conf`, `:23`) → `ai-usage.conf` (`:29`)
+> Erratum (round 12, 2026-10-19): live is now 18 sources / 32 L, last include gkeep.conf — see § Errata (round 12).
 
 Measured, not recited: `hyprctl getoption general:gaps_out` → `custom type: 0 0 0 0` —
 owned by the *toggle* `window-no-gaps.conf`, not by user `looknfeel.conf` (wholly
@@ -348,6 +351,9 @@ Symptom → cause → the check that settles it (each measured):
 | "Will the session lock after idle?" | the declared 150 s/152 s chain has no consumer while hypridle is absent (S1, F1) — it cannot fire; lock state has no read surface while unlocked | `pgrep -x hypridle` + `journalctl --user` boot/stop lines; never trigger the chain (mutation, operator-only) (MADO-R3-2 §6 F1; MADO-R4-2 §7) |
 | "What is the bar showing right now?" | waybar has no query verb — config-only + producer probes | compositor view `hyprctl -j layers`; pure-read producer payloads (`RUN`), e.g. the indicator scripts (MADO-R3-1 §2.3/§3) |
 | Weather chip vanished | `.unavailable` class collapses the module by design when offline | check the network path in `weather.sh`; `style.css:75-79` (MADO-R3-1 §7) |
+| "Did my window rule apply?" | 0.56.2 has an *effect* read, not a *match* read: `getprop` returns the applied value with no rule attribution | `hyprctl getprop address:<addr> <prop>` (pick the window by class/address from `clients -j`, never titles); several rules can yield the same value (MADO-R12-1) |
+| "Which portal backend serves this?" | `XDG_CURRENT_DESKTOP` selects `<desktop>-portals.conf`; its ordered list meets each backend's `.portal` `Interfaces=` — a running service proves neither the route nor consent | read `/usr/share/xdg-desktop-portal/hyprland-portals.conf` + `portals/*.portal`; D-Bus property reads only, never a request (MADO-R12-3) |
+| "Is hyprlang still supported?" | Lua is the forward config since 0.55; hyprlang kept "for 1 - 2 releases starting from 0.55" | `hyprctl version`; `hyprctl systeminfo` `configProvider`; re-check on every release (MADO-R12-2) |
 | A version claim won't reproduce | Omarchy dual pin — `omarchy version` 3.8.3 vs checkout tag v3.8.4 | name the source: `omarchy version` vs `git -C ~/.local/share/omarchy describe --tags` (MADO-R3-1 §8.4) |
 | Count-sensitive claim drifts (8 → 9 keyboards) | device lists are hotplug-sensitive | state device context; re-count `hyprctl -j devices` (MADO-R3-2 F9) |
 | Two hypr instances: "which is mine?" | ambiguous target | resolve via the session's own signature; never guess with `--instance` (MADO-R2-1 §8) |
@@ -1578,3 +1584,17 @@ This qualification supersedes “fleet-round-1 completion” above as a round
 status statement; the exact landed-note paths remain usable navigation.
 No live desktop-health, promotion, outside-lane spot-check or completed-round
 count is added. Substrates stay read-only; pushes remain prohibited.
+
+## Errata (round 12)
+
+This append re-anchors present-tense SKILL claims contradicted by the 2026-10-17 operator-applied gkeep drift. The measurements are dated 2026-10-19; see `corpus/knowledge/config-drift-r12.md` and `.ufo/evidence/round-12/drift-*.txt`. No earlier SKILL text is rewritten.
+
+- **Hypr root shape — former `SKILL.md:40-41`.** Old: 17 source statements — `grep -cE '^[[:space:]]*source' ~/.config/hypr/hyprland.conf.bak.1792267376`, 2026-10-19; 29 lines — `wc -l ~/.config/hypr/hyprland.conf.bak.1792267376`, 2026-10-19. New: 18 sources — the same `grep -cE` on current `hyprland.conf`, 2026-10-19; 32 lines — `wc -l ~/.config/hypr/hyprland.conf`, 2026-10-19. Reason: the operator-applied gkeep comment and source were appended; `diff -u ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf` on 2026-10-19 shows only that three-line addition, leaving the orchestrator role intact.
+- **Final include — former `SKILL.md:46,67,92-93`.** Old: `ai-usage.conf` at line 29 was named last. New: `ai-usage.conf` remains at line 29, then `gkeep.conf` is sourced at line 32. Reason: source order changed; only the “sourced last” qualifier is contradicted. Rule-body contents were not reread here. Re-measure: `grep -nE '^[[:space:]]*source[[:space:]]*=' ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf` and `diff -u ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf` — 2026-10-19.
+- **Hypr local inventory — former `SKILL.md:102`.** Old: 12 active `.conf` files — MADO-1's historical file-table rows, re-counted by the documented row-search pattern in `drift-hypr.txt`, 2026-10-19 (the filesystem observation is 2026-10-14; its original listing invocation was not retained). New: 13 active files — `find ~/.config/hypr -maxdepth 1 -type f -name '*.conf' | wc -l`, 2026-10-19. Reason: the operator-owned `gkeep.conf` is an additional active file.
+- **Waybar config/style lengths — former `SKILL.md:103`.** Old: 249 `config.jsonc` lines and 136 `style.css` lines — `wc -l ~/.config/waybar/config.jsonc.bak.1792267376 ~/.config/waybar/style.css.bak.1792267376`, 2026-10-19. New: 260 config lines and 155 style lines — `wc -l ~/.config/waybar/config.jsonc ~/.config/waybar/style.css`, 2026-10-19. Reason: the module was inserted in config and the stylesheet advanced beyond its named intermediate; backup hashes and intermediate measurements are in `drift-waybar.txt`.
+- **Earlier `ai-usage.conf` line in the shadowing example — `SKILL.md:338`.** The reference to `ai-usage.conf:29` remains an earlier-layer anchor, not a claim of last precedence. Current source order also has `gkeep.conf` at line 32 — `grep -nE '^[[:space:]]*source[[:space:]]*=' ~/.config/hypr/hyprland.conf`, 2026-10-19. Disposition: retain the historical line anchor; do not describe it as the terminal source.
+- **Dated SHA examples — `SKILL.md:297` and `:422`.** Both `4f52854a…` mentions are worked/re-verification evidence dated 2026-10-14; they report that day's root, not a present pin. Today's former/current hash pair is measured by `sha256sum ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf` — 2026-10-19. Disposition: preserve both dated examples unchanged; the backup remains the old pin and current live is `ce7483f3…`.
+
+Append-only disposition: this section records the moved pins and their re-measure commands; it does not authorize edits to config files, a compositor reload, or a change to the operator-owned gkeep project.
+

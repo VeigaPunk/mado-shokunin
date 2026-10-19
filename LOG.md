@@ -652,3 +652,81 @@ file end, existing bytes unchanged. No axis claim was made and no score
 moved; this is a conformance scaffold, not a round.
 
 
+
+## 2026-10-19 — round 12 (kaika): calibration, freshness, sourced coverage
+
+**Round identity.** Steered round 12 (fleet-ledger `.ufo/waves/kaika/steer.md`, prompt
+`.ufo/prompts/mado-round-12.md` @ ledger `12a5571`). Last admitted round is 11. Fleet round 1
+(2026-10-15, LIVE-blocked, unadmitted, +0) is **superseded, not resumed**: its navigation candidate
+`7cd7f33` is already on this branch and re-measures 22/22 at `e1d81d4` (`.ufo/evidence/round-12/before-navigation.txt`);
+its routing/receipt blockers belonged to a dispatch frame this round does not use. The 2026-10-15
+statement that the round "continues" (`LOG.md` fleet-round-1 entries) stays as history. Worktree:
+`.tower/worktrees/kaika/mado-shokunin`, branch `kaika/round`, base `e1d81d4`.
+
+**Pre-registration** landed first: `a6528e6` (claims, six-axis baselines, U1–U7, saturation 9.0 / N=3),
+baselines in `.ufo/evidence/round-12/before*.txt`. The `before.txt` header's "1 dirty path" was the
+then-untracked `.ufo/evidence/round-12/` directory itself; the reviewer seat re-derived every value from
+committed bytes (`git archive a6528e6`) and all match (`.ufo/evidence/round-12/l2-reviewer.md` §1).
+Disclosure (reviewer F14): rubrics and baselines came from the W1 STATE dossier (§2.4, §6) and were
+committed ~1 minute after `before.txt`; the claim numbering differs from the dossier's (its C1 freshness =
+our C2, its C2 coverage ≈ our C3, its C3 calibration = our C1).
+
+**L2 swarm.** One batched call of 12 seats (planner, connector, scout, scribe, 6 executors, reviewer,
+critic), every prompt led by `/skill:godspeed` + the verbatim `directive.md` bytes. Two earlier identical
+batched calls were refused whole by the session's 100-job cap (`Background job limit reached (100)`) —
+no seat started; the third call (all 12) ran. The orchestrator's `cd` hazard notice was relayed verbatim in
+the shared context; this lane wrote nothing outside its worktree and `/tmp` scratch (fleet-root check:
+`git -C /home/vgpnk/Projects/shokunin log --author=mado` → empty). The orchestrator's executor-route
+rate-limit notice (m_swe, ~22:01Z) did not hit this lane: all six executors completed. Final outputs:
+`.ufo/evidence/round-12/l2-*.md`.
+
+**C1 — calibration.** `corpus/lessons/round-12.md` `## Mistakes` mines M1–M14 (re-measured at `a6528e6`:
+`a5171` 52 in 17 files; 79 `/tmp` paths in 51 dirs, 0 existing; `getprop` at `hyprctl --help:51`) plus the
+external inference traps M01–M07; `corpus/QUALITY.md` appends criteria 6–16, one per unlearned class, each
+citing its lesson on the same line, and points tier definitions to `SOURCES.md`. M4/M10 stay process rules,
+M5 stays in `gate-standing-use.md` §5, M12/M14 are fleet-level (routed). Counting:
+`grep -cE '^[0-9]+\. .*lessons/' corpus/QUALITY.md` 0 → 11 of 16 criteria; all 11 cited paths and M-rows
+resolve (resolver loop in the round report).
+
+**C2 — freshness.** The gate's only red row was a true alarm: `hypr.root.include_graph` 18 vs 17, caused by
+the operator-run `~/Projects/gkeep/install.sh:21-36` (backup `hyprland.conf.bak.1792267376` = old pin
+`4f52854a…`, 2026-10-17T20:02:56Z). Re-verified and recorded in `corpus/knowledge/config-drift-r12.md`;
+`SKILL.md` gets a one-line erratum pointer after the `:40-46` paragraph plus `## Errata (round 12)` at EOF
+(pure insertion). The gate gets an in-code `Erratum (round 12, 2026-10-19)` above `declare -a EXPECT` and
+`EXPECT` gains `~/.config/hypr/gkeep.conf`; the selftest fixture gains the same include and a fixture
+`gkeep.conf`. An intermediate revision also appended `gkeep` to `LOCAL`; the integrator **dropped** it: a
+mutant removing it was killed only by the pin-integrity assertion R10 (no fixture behaviour), i.e. an
+uncovered widening (`gate-standing-use.md` §5 rule 2), and `sources_resolve` already checks `gkeep.conf`
+existence via EXPECT; dropping it also answers reviewer F1(e) (no operator-project file folded into the
+local inventory). Re-cut twice (`gate-recut.txt` for the intermediate, `gate-recut-2.txt` final): 10/10
+KILLED, `MUTATE_RESTORE: OK`, `PIN_MADO` dc7c4141… → e5894387…, `TABLE_MADO` unchanged; harness pinned
+explicitly `MADO_VERIFY_HARNESS=/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh`
+(sha `75ed934d…`; recorded `b56c6e57…` is provenance, not gated — PASS is under the current harness, not
+claimed equivalent to the round-8 run). A mutant dropping the gkeep EXPECT line is killed by `--selftest`
+(`gate-mutant-gkeep.txt`). The re-anchor rests on inferred operator intent (own installer + gkeep commits
+after install); routed as an L0 question — an operator "temporary" ruling reverts EXPECT by appended erratum.
+
+**C3 — coverage + capability "sources registry".** `corpus/SOURCES.md` (contract v1): 39 rows merged from
+five seat fragments and renumbered S001–S039 (A=35 B=1 C=3; mined 28, queued 9, rejected 2 — the fleet
+MANIFEST verdicts as mado axis history, and a version-unanchored third-party Hyprland blog), `## Paths`
+(6 study paths), `## Search log`, `## Leads`. Grounding quotes (≤25 words) for every row are in
+`corpus/lessons/round-12.md` `## Gate`. Three entries admitted on pre-registered uncovered ground:
+U1 `window-rule-effects-getprop.md` (`hyprctl getprop` is an effect read without rule attribution —
+corrects `arc-synthesis.md:300` / `config-health-report-r3.md` "no rule-read verb" without editing them),
+U2 `hyprland-config-era-r12.md`, U3 `xdg-portal-routing-r12.md`. Integrator fixes at merge: row S014 text
+updated for the dropped LOCAL widening; S020 kind own-work → code (omarchy files are not lane work);
+S002 added to the U1 entry's `source:` so its `used-by` joins. `SKILL.md` folds three durable
+error-pattern rows (MADO-R12-1/2/3) and one pointer line to `corpus/SOURCES.md`; `corpus/README.md` gains
+four coverage-map rows and a Frontier bullet. Seat fragments were merged then removed (their search logs,
+leads and quotes live on in SOURCES.md and the lesson).
+
+**Reviewer/critic dispositions** (full text `l2-reviewer.md`, `l2-critic.md`): accepted — C3 counted by a
+join (sourced entry × mined row naming it × distinct `covers:`), C1 counted only where the cited path
+resolves, README rows added (navigation must read 26/26), the LOCAL widening dropped, supersession recorded
+here, harness pinned, calibration/coverage tie at 0.0000 stated, freshness rubric (a) recorded beside (b).
+Disputed/open — F1(d) operator intent (L0); F7 depth/adjacency unscored (no bounded rubric; carried as a
+known AXES-contract defect, round-13 planned); critic's call for a non-author spot-check before crediting
+calibration (orchestrator-owned after landing; SHONEN stays `[~]`).
+
+**No push.** The standing operator rule "No push" (kaika binding §6.6) overrides `MISSION.md:79`
+commit-then-push; this round commits on `kaika/round` only.

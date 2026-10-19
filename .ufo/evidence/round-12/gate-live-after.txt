@@ -1,0 +1,66 @@
+mado-verify.sh v1 (mado-shokunin round 5 / M5-2)
+mode: live (read-only) | root: /home/vgpnk | hyprctl: yes
+plane     check                           status  detail
+hypr      hypr.file.root                  PASS    hyprland.conf present (32 L)
+hypr      hypr.root.orchestrator          PASS    0 settings lines (pure orchestrator)
+hypr      hypr.root.include_graph         PASS    18/18 sources, order exact
+hypr      hypr.root.sources_resolve       PASS    18/18 targets exist
+hypr      hypr.local.inventory            PASS    12/12 active local confs
+hypr      hypr.local.envs_orphan          PASS    sourced by nothing; declares 3 env vars (F3 stays open)
+hypr      hypr.toggle.no_gaps             PASS    toggle declares gaps_in/gaps_out/border_size = 0
+hypr      hypr.file.sha_pin               NOTE    hyprland.conf sha256 ce7483f35ab5… drifted from round-1 pin 4f52854a3c14…; re-verify anchors
+hypr      hypr.backups                    NOTE    2 backup file(s) under ~/.config/hypr (S3 litter class)
+hypr-live live.hypr.version               PASS    Hyprland 0.56.2 efb5099… (pin matches)
+hypr-live live.hypr.instances             PASS    1 instance (target unambiguous)
+hypr-live live.hypr.configerrors          PASS    empty (config loads clean)
+hypr-live live.hypr.gaps_out              PASS    custom='0 0 0 0' set=True
+hypr-live live.hypr.kb_layout             PASS    str='br' set=True
+hypr-live live.hypr.zero_chrome           PASS    border_size=0, rounding=0 (toggle/style owns)
+hypr-live live.hypr.animations            PASS    enabled=1
+hypr-live live.hypr.binds_count           PASS    192 binds (file arithmetic closes)
+hypr-live live.hypr.monitor_dp1           PASS    DP-1 3440x1440@99.997
+hypr-live live.hypr.scroll_factor         PASS    scroll_factor=0.4
+hypr-live live.consumer.hypridle          NOTE    hypridle absent — declared 150s/152s idle chain has no consumer (F1, S1; operator-owned)
+hypr-live live.env.gdk_scale              PASS    GDK_SCALE=1
+hypr-live live.env.nvd_backend            PASS    NVD_BACKEND unset (orphan envs.conf effect provably absent, F3)
+hypr-live live.waybar.version             PASS    Waybar v0.15.0 (pin matches)
+hypr-live live.waybar.process             PASS    waybar pid 1724
+hypr-live live.waybar.layer               PASS    DP-1 level 2 pid 1724 3440x26
+hypr-live live.waybar.tray                PASS    tray watcher answers: as 0
+hypr-live live.walker.version             PASS    2.17.0 (pin matches)
+hypr-live live.walker.services            PASS    app-walker@autostart + elephant active
+hypr-live live.theme.current              NOTE    omarchy theme current → 'Matte Black' (operator-owned; not a verdict input)
+waybar    waybar.config.parse             PASS    JSONC parses (260 L, 6354 B)
+waybar    waybar.config.reload_style      PASS    reload_style_on_change = true (style reloads; modules need restart)
+waybar    waybar.config.bar_globals       PASS    layer=top, position=top, height=26
+waybar    waybar.style                    PASS    style.css imports the theme css
+walker    walker.config                   PASS    TOML parses; 4/4 keys match (focus/wrap/theme/hints)
+terms     term.alacritty.toml             PASS    TOML parses
+terms     term.alacritty.theme_import     PASS    imports omarchy/current/theme/alacritty.toml
+terms     term.cross.font_size            PASS    12.5 in all 4 present configs (MADO-3 §3)
+terms     term.cross.padding              PASS    padding 14 on both axes in all 4 present configs
+omarchy   omarchy.version.file            PASS    HELD: version file '3.8.3' (P2 pin; == HEAD:version blob at the pinned HEAD)
+omarchy   omarchy.skill.link              PASS    HELD: symlink into the checkout (one file; nothing to drift)
+omarchy   omarchy.skill.sha               PASS    HELD: leaf sha256 becd149e4d1c… (P4 pin)
+omarchy   omarchy.version.cmd             PASS    HELD: 'omarchy version' → 3.8.3 (P1 pin)
+omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at HEAD (P3 pin)
+omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 (P3 pin)
+omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+omarchy   omarchy.cmd.groups              PASS    HELD: all 11 skill groups present (56 live groups in --json --all)
+omarchy   omarchy.cmd.surface             NOTE    HELD: 282 commands in --json --all (counter only, not a verdict input)
+omarchy   omarchy.theme                   NOTE    HELD: 'Matte Black' (operator-owned; D-1: never a verdict input)
+omarchy   omarchy.doc.drifts              NOTE    R2 carried: 5 *.d hook dirs live vs flat files in the skill text (MADO-3 §7); R1 route-table drift declared in the note, not re-derived here
+theme     theme.name.read                 PASS    theme.name = 'matte-black' (one line, machine-name shape)
+theme     theme.chain.hypr_include        PASS    line 13 imports current/theme/hyprland.conf (target exists)
+theme     theme.chain.hyprlock            PASS    line 1 imports current/theme/hyprlock.conf (target exists)
+theme     theme.chain.waybar_css          PASS    line 1 imports current/theme/waybar.css (target exists)
+theme     theme.chain.alacritty           PASS    line 1 imports current/theme/alacritty.toml (target exists)
+theme     theme.chain.mako_link           PASS    symlink → .config/omarchy/current/theme/mako.ini (inside .config/omarchy/current/theme)
+theme     theme.chain.walker_css          PASS    package 'omarchy-default' style.css imports current/theme/walker.css (target exists)
+theme     theme.chain.swayosd_css         PASS    style.css imports current/theme/swayosd.css (target exists)
+theme     theme.wallpaper.link            PASS    symlink → .config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg (inside .config/omarchy/current/theme/backgrounds)
+theme     theme.parts.declared_only       NOTE    declared-only, consumer absent: foot.ini(foot) kitty.conf(kitty) ghostty.conf(ghostty) helix.toml(helix) vscode.json(code) keyboard.rgb(asusctl)
+gate      boundary.readonly               PASS    config plane byte-identical before/after (combined sha 48c882b98e97…)
+counts: pass=52 fail=0 unknown=0 skip=0 note=8
+MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes verified read-only)
+exit=0

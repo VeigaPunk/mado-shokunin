@@ -258,10 +258,11 @@ source = ~/.config/hypr/looknfeel.conf
 source = ~/.config/hypr/autostart.conf
 source = ~/.local/state/omarchy/toggles/hypr/*.conf
 source = ~/.config/hypr/ai-usage.conf
+source = ~/.config/hypr/gkeep.conf
 EOF
 
   local f
-  for f in bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs xdph; do
+  for f in bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage gkeep autostart envs xdph; do
     printf '# fixture %s\n' "$f" >"$R/.config/hypr/$f.conf"
   done
   cat >"$R/.config/hypr/ai-usage.conf" <<'EOF'
@@ -1287,7 +1288,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='dc7c4141449891cdd83bb603aff7215358328a9ce1b32dba0bb9c0514cb6f8fd'
+PIN_MADO='e5894387bddc9e3c12aea2c5e442b602102bbf9db16ba69a71b08bf6613f227d'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -2187,6 +2188,16 @@ verify() {
       row hypr hypr.root.orchestrator FAIL "non-source lines: $(printf '%s' "$off" | tr '\n' ' ')"
     fi
 
+    # Erratum (round 12, 2026-10-19): 17→18 source lines (+ ~/.config/hypr/gkeep.conf
+    # after ai-usage.conf; root sha 4f52854a3c143dcf… → ce7483f35ab52bc2…) after the
+    # operator-applied gkeep installer; gkeep.conf existence is checked by
+    # sources_resolve via EXPECT, so LOCAL stays the MADO-1 list of 12 (the set-blind
+    # local census is mistake M13, corpus/lessons/round-12.md)
+    # (~/Projects/gkeep/install.sh:21-36); backup epoch 1792267376 =
+    # 2026-10-17T20:02:56Z. Re-measure with:
+    # grep -cE '^[[:space:]]*source[[:space:]]*=' ~/.config/hypr/hyprland.conf;
+    # sha256sum ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf;
+    # diff -u ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf
     declare -a EXPECT=( \
       '~/.local/share/omarchy/default/hypr/autostart.conf' \
       '~/.local/share/omarchy/default/hypr/bindings/media.conf' \
@@ -2204,7 +2215,8 @@ verify() {
       '~/.config/hypr/looknfeel.conf' \
       '~/.config/hypr/autostart.conf' \
       '~/.local/state/omarchy/toggles/hypr/*.conf' \
-      '~/.config/hypr/ai-usage.conf' )
+      '~/.config/hypr/ai-usage.conf' \
+      '~/.config/hypr/gkeep.conf' )
     local -a got=() miss=""
     mapfile -t got < <(awk '/^[[:space:]]*source[[:space:]]*=/{sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+$/, ""); print}' "$f")
     local i
