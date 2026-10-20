@@ -1,0 +1,18 @@
+{
+  "label": "calibration-readings",
+  "measured_commit": "1e31681e76b5e7caadd1c749e18669a3632a1c3b",
+  "action_gate_sha256": "226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3",
+  "command": [
+    "python3",
+    "-I",
+    "-c",
+    "import json,re,subprocess,sys\nfor rev in sys.argv[1:]:\n q=subprocess.check_output(['git','show',rev+':corpus/QUALITY.md'],text=True); blocks=re.findall(r'(?ms)^([0-9]+)\\. (.*?)(?=^[0-9]+\\. |\\Z)',q); literal=sum(bool(re.search(r'^'+n+r'\\. .*lessons/',q,re.M)) for n,b in blocks); semantic=sum('lessons/' in b for n,b in blocks); print(json.dumps({'revision':rev,'total':len(blocks),'literal':literal,'semantic_block':semantic,'literal_score':10*literal/len(blocks),'semantic_block_score':10*semantic/len(blocks)}))",
+    "32c4fda873c9cb47a84c549b24b80ead2bcaa1ea",
+    "1e31681e76b5e7caadd1c749e18669a3632a1c3b"
+  ],
+  "exit": 0,
+  "stdout": "{\"revision\": \"32c4fda873c9cb47a84c549b24b80ead2bcaa1ea\", \"total\": 20, \"literal\": 12, \"semantic_block\": 15, \"literal_score\": 6.0, \"semantic_block_score\": 7.5}\n{\"revision\": \"1e31681e76b5e7caadd1c749e18669a3632a1c3b\", \"total\": 22, \"literal\": 14, \"semantic_block\": 17, \"literal_score\": 6.363636363636363, \"semantic_block_score\": 7.7272727272727275}\n",
+  "stderr": "",
+  "expected_exit": 0,
+  "matched_exit": true
+}

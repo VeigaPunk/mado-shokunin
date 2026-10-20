@@ -733,3 +733,87 @@ Criterion 21 also carries its own lesson on its first line; criterion 22
 alone still gives a calibration increase if C2's criterion is removed.
 C2's runnable capability remains independently verifiable without 22.
 All three claims are measured; none is exploratory.
+
+## Round 16 — committed results and bounded author verdicts
+
+Baseline `32c4fda873c9cb47a84c549b24b80ead2bcaa1ea`; initial content
+`9dcf248993a9622a5b016edec0003187141745d2`; corrected measured content
+`1e31681e76b5e7caadd1c749e18669a3632a1c3b`.
+Commands actually run, all paths below under `.ufo/waves/round-16/`:
+
+```sh
+python3 .ufo/waves/round-16/measure.py 32c4fda873c9cb47a84c549b24b80ead2bcaa1ea
+python3 .ufo/waves/round-16/measure.py 1e31681e76b5e7caadd1c749e18669a3632a1c3b
+python3 -I tools/mado-action-plan.py --selftest
+python3 -I tools/mado-action-plan.py --plan .ufo/waves/round-16/fixtures/tight-red.json --policy .ufo/waves/round-16/safety-policy.json
+python3 -I tools/mado-action-plan.py --plan .ufo/waves/round-16/fixtures/tight-green.json --policy .ufo/waves/round-16/safety-policy.json
+python3 -I tools/mado-action-plan.py --frozen .ufo/waves/round-16/frozen
+```
+
+| Claim / axis | Before → after | Verdict / measured evidence |
+|---|---|---|
+| C1 coverage, documented custom-module observation route | 6/7, 8.5714 → 7/7, 10.0000; +1.4286 | improved on the finite route rubric; `evidence/before.json`, `after-final.json`, all U7 facets/reserved/inverse true; actual source/body reviewed by L1 and falsify seats, never inferred from markers alone |
+| C2 operability capability | absent → working finite declared-kind/12-name classifier | improved **capability only**, not host recovery; final selftest 52/52 exit 0; frozen_match exit 0 over expected refused sudo plan; red/green plan controls exit 1/0; independent cases 32/32 at initial content, normal classifier unchanged by the frozen-pair fix |
+| C3 calibration, original literal lesson-citation fraction | 12/20, 6.0000 → 14/22, 6.3636; +0.3636 | improved narrowly; lowest active scored axis worked; `before.json`, `after-final.json`; lesson M1/M2/M3 exact-id rows resolve |
+
+Calibration's separate block-citation reading is 15/20 (7.5000) →
+17/22 (7.7273), **not the score**. Exact inline counting command and output:
+`evidence/calibration-readings.json`. This observes a structural rubric, not
+general self-assessment truth. The scored gain depends on first-line lesson
+citations for criteria 21/22; wrapped 18–20 stay uncounted. Without criterion
+21, criterion 22 alone gives 13/21 (6.1905), still above baseline; C3 does
+not require the safety classifier or the U7 note. Initial wrong selection
+is preserved and corrected, not retired away. Same selection-audit command,
+same baseline scores, only declared_axes changes: `selection-red.json`
+exit 1, `selection-green.json` exit 0. PlanningWalk's block count is not
+transcribed as the literal score.
+
+The 7/7 denominator is now at its finite documentary ceiling; retain it as
+harm watch, not a proxy for the coverage axis. **Retired: none.** Coverage
+remains open across actual behavior, built-in module text, Walker/terminal/
+theme/idle surfaces and the arc gap ledger. A subsequent coverage claim
+needs a new declared rubric/baseline, never silently an eighth item divided
+by seven. Saturation line 9.0 / N=3 unchanged; no stagnation waiver claimed.
+
+### Demonstrated capability
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| finite declared-action classifier | Refuse blocked declared kinds, the 12 pinned argv[0] names, unknown kinds and malformed inputs; compare a digest-pinned declared-plan replay | `python3 -I tools/mado-action-plan.py --selftest` 52/52 and `--frozen .ufo/waves/round-16/frozen` frozen_match at corrected content; `evidence/action-selftest-final.json`, `action-frozen-final.json`, `committed-bindings.json` | 16 |
+
+`plan_safe` is not arbitrary-command safety, credential/probe permission or
+host prevention. Unlisted wrappers/interpreters/operands/destinations are
+not analyzed; residual controls intentionally show that limit. The frozen
+receipt binds executable and expected-file hashes to the measured commit;
+in-directory pins alone do not authenticate a coordinated rewrite.
+
+### Harm watch, defects and admission
+
+First classifier selftest **51/52**, frozen run exit **2**, exposed M6's
+double-colon expected-pair bug. Exact reachable pairs fixed it without
+weakening a fixture; original red and final green receipts both retained.
+Final executable SHA-256:
+`226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3`.
+Legacy gate unchanged `fba82a66…`; isolated selftest **372/372**, exit 0.
+No legacy live or no-live host run, regression or sibling gate executed.
+
+Navigation **29/29 → 30/30**, missing/extra/duplicates empty. Sources
+**52 → 55**, A/B/C **48/1/3 → 51/1/3**, mined/queued/rejected
+**40/8/4 → 43/8/4**; census before/end exit 0, historical W04
+S030/S042/S045 retained. No existing source-row cells changed.
+
+Per-axis: coverage improved (bounded); calibration improved (literal rubric);
+operability improved only for the new runnable capability, while **host-safety
+harm from R15-V1 remains carried, unresolved and operator-owned**. Freshness,
+depth and adjacency unchanged, not freshly scored. No new host transaction
+or tool install is evidenced. M4 misroot and M5 prohibited read-only package
+query are real process defects, disclosed, not erased by green tests.
+
+Trends: expansion improved (one sourced route and demonstrated repertoire);
+quality improved narrowly for the instrument/source precision, with carried
+host harm and process debt explicit; discernment improved through grounded
+outside-closure follow-through and falsified M6, not fresh outside agreement.
+**Admission not asserted; independent closure/operator disposition remains
+required, and this round does not readmit round 15.** SHONEN stays four
+author assertions. Both waves (64+32=96) ran before the wrap-up directive;
+no new worker afterward. No next-round mission is opened.

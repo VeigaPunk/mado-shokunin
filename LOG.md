@@ -1215,3 +1215,39 @@ from pinned kind/name constants. No expectation changed. This correction
 is under the operator wrap-up directive; no new worker or wave was spawned.
 Lesson M6 records the failed check and the direct fix; final-code receipts
 are separate rather than overwriting the red records.
+
+### Round-16 final evidence and handoff
+
+Corrected measured content `1e31681e76b5e7caadd1c749e18669a3632a1c3b`
+passes the same new selftest **52/52** and committed negative frozen
+comparison **frozen_match**, both exit0. Final executable
+`226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3`.
+`evidence/action-{selftest,frozen}-final.json` and `committed-bindings.json`
+bind actual outputs, code and input/expected hashes. Original red receipts
+are preserved; only failed behavior was re-exercised after the small fix.
+Normal classifier32-case evidence remains at initial content, unchanged
+by the exact frozen-pair correction. Legacy isolated selftest372/372 and
+unchanged gate digest are harm watch, not host-package evidence.
+
+Final revision probe confirms C1 **6/7→7/7** (8.5714→10.0000), C3 literal
+**12/20→14/22** (6.0000→6.3636). Separate block citation reading
+15/20→17/22 is not the score. Selection audit red1/green0 holds baseline
+scores fixed while adding calibration to declared axes. New capabilities
+table row is bounded declared-kind/12-name classification, never arbitrary
+command safety, interception or host repair. Finite documentary coverage
+is now ceiling/harm-watch only; broader coverage is not retired.
+
+Census before/end exits0, historical W04 S030/S042/S045; sources52→55,
+navigation29→30 with no gaps/duplicates. Exact commands and counts are
+in round16 evidence. Both validated waves returned96 reports (64+32);
+all advice remains authoring-lane evidence. Operator wrap-up arrived after
+both dispatches; no new worker or next-round mission afterward.
+
+M4 misroot was recovered byte-exact; the fleet sweep found no remaining
+mado seat reports. M5's **one prohibited read-only `pacman -Q waybar`**
+is excluded from evidence; no no-query/compliance claim is made. Seats also
+read static package/log metadata, not credited as host-health clearance.
+No installation/update/transaction is evidenced; host remediation remains
+operator-owned, R15-V1 unresolved and unobserved. The classifier does not
+erase that carried operability harm. No independent admission or promotion
+is asserted. SCORECARD/lesson record bounded axis and trend verdicts.

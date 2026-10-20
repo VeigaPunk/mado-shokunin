@@ -93,3 +93,67 @@ unlisted wrappers/interpreters and executable contents are not analyzed.
 R15-V1 host-recovery L0 remains open; R15-V2 process learning is local only.
 No remediation, promotion, next-round mission or end-to-end rendered-UI result
 is asserted. Current host values and hardware/input health remain unknown.
+
+## Observed verification and round disposition
+
+Initial content `9dcf248993a9622a5b016edec0003187141745d2`; corrected
+measured content `1e31681e76b5e7caadd1c749e18669a3632a1c3b`.
+All evidence paths below are under `.ufo/waves/round-16/`.
+
+- C1 revision counter: **6/7 → 7/7**, 8.5714→10.0000; navigation
+  **29/29 → 30/30**, no missing/extra/duplicate; U7 facets/reserved/inverse
+  true. `evidence/before.json`, `evidence/after-final.json` retain exact
+  commands, exits and resolved revisions. L1 read the body: current live
+  text/pixels remain `[UNK]`; custom-module scope only.
+- C3 literal fraction **12/20 → 14/22**, 6.0000→6.3636; separate block
+  reading **15/20 → 17/22**, 7.5000→7.7273, not substituted for the score.
+  `evidence/calibration-readings.json`; exact M1/M2/M3 row ids resolve.
+  This metric is placement-sensitive: moving a valid citation off the
+  numbered line loses literal credit. Criterion22 alone, without21, still
+  yields13/21; it needs neither the classifier nor Waybar.
+- M3 same inline selection audit returns **1** on initial C1/C2 axes and
+  **0** after adding calibration, with baseline scores held fixed:
+  `evidence/selection-red.json`, `selection-green.json`.
+- Tight plan red/green: same classifier/policy/invocation, only a leading
+  `sudo` token differs; **1 denied_executable:sudo → 0 plan_safe**.
+  `evidence/tight-{red,green}.json`. The incident-shaped mislabeled argv
+  is refused at argv[0]=sudo, not because later arguments were analyzed.
+  Swapping to an unlisted wrapper can pass the finite screen.
+- Independent supplied expectations: **32/32** exact code **and** finding
+  matches at initial content; `evidence/independent-cases.json` records
+  command template, generation/replacement policy semantics and every input
+  digest. These are synthetic JSON fixtures, not actual package validation.
+- M6 initial new selftest **51/52**, frozen run **2 frozen_error**; original
+  `action-selftest.json` and `action-frozen.json` retain the red evidence.
+  Corrected exact-pair check: **52/52**, exit0, and **frozen_match**, exit0,
+  at corrected content; `action-selftest-final.json`, `action-frozen-final.json`.
+  Frozen match compares an expected refused plan, never authorizes it.
+  Input tamper control returns **2 snapshot_tampered**, retained in
+  `frozen-tampered.json`. No fixture expectation was weakened.
+- Legacy isolated selftest **372/372**, exit0, `legacy-selftest.json`;
+  executable unchanged at full SHA-256
+  `fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`.
+  No host live/no-live measurement or sibling gate executed.
+- Source census before/end **exit0**, W04 S030/S042/S045 retained;
+  sources52→55, tiers48/1/3→51/1/3, statuses40/8/4→43/8/4.
+  `census-before.txt`, `census-after.json`. Existing row cells unchanged.
+- `committed-bindings.json` binds final gate/policy/cases/frozen expectation
+  and other measured inputs to corrected content; selftest prints the same
+  code SHA. Frozen pins alone do not authenticate coordinated edits.
+
+Wave census: validated **64+32=96** with96 seat reports, no missing report.
+Both waves were already dispatched when operator wrap-up prohibited new
+workers; none afterward, no planned second wave skipped. `evidence/wrapup.json`
+records the misroot sweep: no mado report names remain in the fleet wave
+tree; earlier RoundConformance was copied byte-exact and Main removed it.
+`falsification-adjudication.json` records accepted fixes and bounded limits.
+
+Local claims verify on these finite rubrics. Coverage/calibration and the
+classifier capability improve; R15-V1 host harm remains carried/unresolved,
+not remeasured or repaired. M4/M5 are genuine process defects. No installation
+or transaction is evidenced; one prohibited read-only pacman query was
+disclosed and excluded from claim evidence. Trends: expansion improved;
+quality improved narrowly for the instrument/source precision while the
+carried host harm remains explicit; discernment improved through grounded
+outside teaching, not current outside agreement. Admission/promotion is not
+asserted; independent closure and operator host disposition remain required.
