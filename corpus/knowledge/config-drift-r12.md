@@ -147,3 +147,26 @@ Run from the lane root for repository anchors; config probes use the absolute pa
 
 - The post-integration critic found no selftest scenario that removes `gkeep.conf` (`.ufo/evidence/round-12/l2-postcritic.md` item 4). Scenario B now also deletes the fixture `gkeep.conf` and asserts `hypr.root.sources_resolve` FAIL; red-before/green-after: a mutant flipping the `sources_resolve` FAIL arm to PASS survived every behavioural assertion of the `5174e15` gate (killed only by the pin check R10) and is killed by the new assertion (`.ufo/evidence/round-12/gate-mutant-sources-resolve.txt`).
 - Gate figures in "Re-measure commands" above are superseded: selftest 268/268 → **269/269**; regression PASS target `e5894387…` → **`538d178b…`** after the third re-cut (`gate-recut-3.txt`, 10/10 KILLED); `--no-live` 29 pass / 0 fail and live 52 pass / 0 fail / 8 notes are unchanged (`gate-*-after.txt`, 2026-10-19).
+
+## Errata (round 13 — re-anchor authority and census scope)
+
+The re-anchor citations in the provenance header and motivating-evidence
+paragraph name `omarchy-drift-watch.md:284-287`. That passage governs that
+note's omarchy baseline, not the verdict gate's EXPECT/LOCAL inventory.
+The governing gate rule is `gate-standing-use.md` §5 rule 4 (:222-226):
+“the response is re-verification and an appended erratum.” Its §5 rule 2
+also requires re-cutting after changes outside the excised blocks.
+This corrects R12-b's owed citation without rewriting the historical entry.
+S015 stays a historical omarchy-method source; round-13 S044 cites the
+actual gate-maintenance rule.
+
+Round 13's exact-set correction is deliberately bounded: it compares root
+source-declaration strings and local regular-file `*.conf` membership to
+persisted expected lists. It preserves source order and target-existence
+checks. Toggle glob expansion requires at least one target; it is **not**
+an expected set of toggle filenames. The old “set-blind” statements
+describe the round-12 instrument, not the corrected clauses. gkeep's
+presence is a recorded baseline, not ownership of its behavior or a ruling
+on the operator's long-term intent. Evidence and negative cases:
+`.ufo/waves/round-13/measure.py`, the before/after measurements named in
+the round-13 SCORECARD, and `corpus/lessons/round-13.md`.

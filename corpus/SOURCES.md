@@ -1,9 +1,10 @@
 # SOURCES — where mado learns
 
-Contract: kaika `SOURCES-CONTRACT-v1.md` (fleet-ledger `.ufo/waves/kaika/`). Claim admission stays in
-`QUALITY.md`; the research method stays chousa's. Every row below was opened on 2026-10-19 by the round-12
-seat that wrote it; its ≤25-word grounding quote is in `lessons/round-12.md` `## Gate`. Rows are
-append-only: only `status`, `recheck` and `used-by` change in place, each change logged in that round's lesson.
+Contract v1: canonical `CORPUS.md` § SOURCES.md (kaika provenance retained).
+Claim admission stays in `QUALITY.md`; research method stays chousa's.
+Original rows were opened 2026-10-19; round-13 additions and reopens are
+recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+`used-by` change in place, each logged old→new in that round's lesson.
 
 ## Registry
 
@@ -13,7 +14,7 @@ append-only: only `status`, `recheck` and `used-by` change in place, each change
 | S002 | mado arc synthesis — §6 gap ledger — corpus/knowledge/arc-synthesis.md | own-work | A | the arc's named-UNKNOWN surface inventory (U1 window-rule/dispatcher ground) | corpus/knowledge/arc-synthesis.md:290-307 §6 @ a6528e6 (sha256 a5b4833141461810…) | names the surfaces never made verdict-bearing (window-rule effects, dispatcher behaviour, exec-once results) with the reason per row — the U1 gap's own anchor text | mined | 2026-10-19 | 180d | corpus/knowledge/window-rule-effects-getprop.md |
 | S003 | shokunin PROTOCOL.md — §Evidence standard + §Gate standard (fleet root) | spec | A | the register/gate/evidence requirements every round-12 artifact is graded against | PROTOCOL.md:328-358 + :360-408 @ fleet 31baf5c (sha256 b1d4f4c094052298…) | gate-vs-probe boundary, self-test as capability not measurement, two-evidence rule, closure-time pointer rule — the standard the lane's gate and its citations must satisfy | mined | 2026-10-19 | on-change | corpus/lessons/round-12.md |
 | S004 | kaika SOURCES contract v1 — .ufo/waves/kaika/SOURCES-CONTRACT-v1.md (fleet-ledger) | spec | A | SOURCES.md row shape, tier scoping, status lifecycle, search-log duty | Rules 1-6 + Census block @ fleet-ledger 5b471e4 (sha256 6c674a2281afb75b…) | row-only-after-opening, tier scoped never global, rejected rows kept as taste evidence, 11-column shape — the rule set this fragment and the integrator's merge follow | mined | 2026-10-19 | on-change | corpus/lessons/round-12.md |
-| S005 | wayland-protocols README — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/README.md | docs | A | wayland protocol phasing and change policy (ground for later U4/U6 rounds) | README.md §Protocol phases @ main 3dac056d (2026-01-16, last commit touching README.md) | experimental/staging/stable semantics: what may break in each phase, deprecation, legacy z-prefix; gives the vocabulary to age-check a protocol claim | queued | 2026-10-19 | on-release | — |
+| S005 | wayland-protocols README — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/README.md | docs | A | wayland protocol phasing and change policy (ground for later U4/U6 rounds) | README.md §Protocol phases @ main 3dac056d (2026-01-16, last commit touching README.md) | experimental/staging/stable semantics: what may break in each phase, deprecation, legacy z-prefix; gives the vocabulary to age-check a protocol claim | mined | 2026-10-19 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
 | S006 | Wayland debugging extras — https://wayland.freedesktop.org/extras.html | docs | A | which Wayland debugging surface exists (compositor globals, protocol dumps) | §Compositor features + §Protocol dumpers (freedesktop.org, opened 2026-10-19) | wayland-info lists advertised globals; WAYLAND_DEBUG and middle-man dumpers/proxies exist — spawn-direction material for a future diagnostic lane, no host fact | queued | 2026-10-19 | 180d | — |
 | S007 | libinput helper tools — https://wayland.freedesktop.org/libinput/doc/latest/tools.html | docs | A | input-layer debugging route (libinput 1.32.0) | §Helper tools + §libinput record and replay, libinput 1.32.0 documentation (opened 2026-10-19) | debug-events/record/replay visualize and replay kernel input events; most tools need root and /dev/input/event* access — scopes what an input probe could ever measure | queued | 2026-10-19 | 180d | — |
 | S008 | The Wayland Protocol (DeVault) — high-level design chapter — https://wayland-book.com/introduction/high-level-design.html | book | B | Wayland architecture concepts: compositor role, userspace component map | §High-level design chapter of a draft book (opened 2026-10-19) | compositor dispatches input and composites output; libinput/xkbcommon/libdrm/GBM/KMS roles named — concept ground for U4/U6, never a host fact | queued | 2026-10-19 | 180d | — |
@@ -25,7 +26,7 @@ append-only: only `status`, `recheck` and `used-by` change in place, each change
 | S014 | mado gate — `tools/mado-verify.sh` | own-work | A | Round-12 gate re-anchor: pinned Hyprland EXPECT source list and local LOCAL inventory | `Erratum (round 12, 2026-10-19)` comment directly above `declare -a EXPECT`; EXPECT gains `~/.config/hypr/gkeep.conf`; LOCAL unchanged (12); gate sha 83b3f5f1… → final bytes at the round commit | Shows which pinned list was re-anchored (EXPECT only) and why LOCAL stayed narrow, so the remaining set-blind census stays visible | mined | 2026-10-19 | on-gate-change | corpus/knowledge/config-drift-r12.md |
 | S015 | mado drift protocol — `corpus/knowledge/omarchy-drift-watch.md` | own-work | A | Append-only re-anchor protocol for moved pins | `## Errata (append-only)`, lines 284-287; M6-2 round 6 | A moved pin is reported, then re-anchored with old/new values, reason and re-measure command rather than silently smoothed | mined | 2026-10-19 | on-change | corpus/knowledge/config-drift-r12.md |
 | S016 | Using hyprctl — https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/ | docs | A | Current wiki's `getprop` purpose and invocation form | `#getprop`; page marked Latest git; modified 2026-08-26; opened 2026-10-19 | Separates the current documented property-read command from command effects; does not pin host behavior | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |
-| S017 | Window Rules — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Current latest-git Lua-era syntax and documented effect semantics, scoped to that wiki era | `#syntax`, `#effects`, `#notes`; page says hyprlang deprecated since 0.55; modified 2026-08-26; opened 2026-10-19 | Teaches to separate match conditions from effects, and to label current-doc semantics rather than projecting them onto a 0.56.2 host | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md |
+| S017 | Window Rules — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Current latest-git Lua-era syntax and documented effect semantics, scoped to that wiki era | `#syntax`, `#effects`, `#notes`; page says hyprlang deprecated since 0.55; modified 2026-08-26; opened 2026-10-19 | Teaches to separate match conditions from effects, and to label current-doc semantics rather than projecting them onto a 0.56.2 host | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md, corpus/lessons/round-13.md |
 | S018 | Hyprland v0.56.2 source — https://github.com/hyprwm/Hyprland/blob/v0.56.2/src/debug/HyprCtl.cpp | code | A | Exact tagged `getprop` dispatch, window selector, error paths, and opacity property getters | `dispatchGetProp`, lines 1463-1645; tag commit efb50993780079460b0cbed1363e2166a2de1d9f | Teaches which window-rule applicator values the pinned handler returns, without attributing a result to a rule | mined | 2026-10-19 | on-release | corpus/knowledge/window-rule-effects-getprop.md |
 | S019 | Host read-only getprop capture — .ufo/evidence/round-12/getprop-help.txt and .ufo/evidence/round-12/getprop-measure.txt | own-work | A | Host Hyprland 0.56.2 help, errors, selector behavior, property values and defaults | `.ufo/evidence/round-12/getprop-help.txt` and `.ufo/evidence/round-12/getprop-measure.txt`, commands dated 2026-10-19 | Teaches an operator how to repeat the read-only host probe while excluding window titles | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |
 | S020 | Omarchy default Hyprland window rules — /home/vgpnk/.local/share/omarchy/default/hypr/windows.conf and /home/vgpnk/.local/share/omarchy/default/hypr/apps/terminals.conf | code | A | Host-declared generic and terminal opacity effects | `windows.conf:5-15`; `apps/terminals.conf:2-4`, files opened 2026-10-19 | Teaches that an observed opacity value may be consistent with multiple declared rules and cannot alone identify the matching rule | mined | 2026-10-19 | on-change | corpus/knowledge/window-rule-effects-getprop.md |
@@ -48,6 +49,13 @@ append-only: only `status`, `recheck` and `used-by` change in place, each change
 | S037 | xdg-desktop-portal-hyprland v1.4.1 — https://github.com/hyprwm/xdg-desktop-portal-hyprland/releases/tag/v1.4.1 | docs | A | Installed XDPH upstream release identity and release-scoped changes | “v1.4.1”, “Changes”; tag commit cc8e5ef; released 2026-07-29 | Pin version-specific XDPH observations to the installed release; release notes do not establish capture success. | mined | 2026-10-19 | on-release | corpus/knowledge/xdg-portal-routing-r12.md |
 | S038 | xdg-desktop-portal 1.21.0 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.21.0 | docs | A | Frontend release feature context for GlobalShortcuts and other portal APIs | “New Features”; tag 1.21.0, marked pre-release; accessed 2026-10-19 | Check release status before using a frontend feature note as an installed-version claim. | queued | 2026-10-19 | on-release | — |
 | S039 | xdg-desktop-portal 1.22.0 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.22.0 | docs | A | Frontend release fixes affecting Dynamic Launcher and FileChooser/OpenURI document paths | “Bug Fixes”; tag 1.22.0; accessed 2026-10-19 | Use exact release notes to anchor path-handling changes without inferring runtime behavior. | queued | 2026-10-19 | on-release | — |
+| S040 | wayland-protocols governance — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/35d9638cf0c3f0bbf0c42996580a284f3d8ce564/GOVERNANCE.md | spec | A | Namespace-specific protocol inclusion and promotion authority, not runtime support | §2.1, §2.2, §2.3 @ 35d9638cf0c3f0bbf0c42996580a284f3d8ce564 (2026-10-12) | Namespaces and implementation/review requirements govern upstream inclusion; they do not certify behavior on a particular compositor | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S041 | Sanitized host registry capture — .ufo/waves/round-13/w1/globals.json | own-work | A | This client's time-bound Hyprland 0.56.2 interface/version advertisements | captured_utc 2026-10-20T04:10:03Z; probe rc 0; tool wayland-utils 1.3.0-1; compositor efb50993780079460b0cbed1363e2166a2de1d9f | Distinguishes advertised interface/version objects and multiplicity from behavioral feature validation without retaining device/output identity | mined | 2026-10-20 | on-session-change | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S042 | Wayland debugging extras — https://wayland.freedesktop.org/extras.html | docs | A | Documented compositor-global discovery, revision-anchored correction to S006 | §Compositor features; website source extras.html @ 8923a19916635c21a3577b616f650a7e45d70fa9 (2026-01-15) | supersedes S006 — anchors wayland-info's advertised-global discovery purpose to the page source revision; no behavioral result follows | mined | 2026-10-20 | 180d | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S043 | Wayland core registry specification — /usr/share/wayland/wayland.xml; https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_registry | spec | A | Core registry announcement, binding and removal are separate events | wayland 1.26.0-1 installed XML:117-177, wl_registry description and global/bind/global_remove | Registry events advertise name/interface/version; binding creates a client handle; neither an inventory nor its version implies tested feature behavior | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S044 | Gate maintenance rules — corpus/knowledge/gate-standing-use.md | own-work | A | Actual gate pin re-anchor and outside-marker regression requirements | §5 rules 2 and 4, :212-226; historical M10-2 note reopened 2026-10-20 | Gate pin movement requires re-verification and an appended erratum; edits outside excised blocks require a measured regression re-cut | mined | 2026-10-20 | on-gate-change | corpus/lessons/round-13.md |
+| S045 | Window Rules duplicate-admission correction — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Duplicate current-wiki source admission, not a new window-rule fact | Latest git introductory Note and Syntax, page modified 2026-08-26; reopened 2026-10-20 | supersedes S030 — REJECTED: duplicate S017 for overlapping current-wiki syntax scope; flip: an independently justified distinct pinned scope after collision review | rejected | 2026-10-20 | 90d | — |
+| S046 | wayland-info diagnostic implementation — https://gitlab.freedesktop.org/wayland/wayland-utils/-/raw/1.3.0/wayland-info/wayland-info.c | code | A | Upstream 1.3.0 observer bindings, output/colour detail queries and print filtering; not binary-source equivalence | tag 1.3.0 @ d01edd68961ca01779dcb96afe56c2d99ff79067; global_handler :3125-3163, detail calls :1775,:2031,:2626,:2744,:2750 | Diagnostic execution includes bindings and read-only detail queries even though S041 retains only registry headers; -i filters printed information, not binding | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
 
 ## Paths
 
@@ -57,6 +65,13 @@ append-only: only `status`, `recheck` and `used-by` change in place, each change
 - **Drift re-anchor (own method)** — S015 → S014 → S013: the lane's re-anchor protocol, then the gate erratum that applies it, then the operator installer that caused the drift.
 - **Protocol and input debugging frontier (U4/U6, queued)** — S009 → S008 → S005 → S006 → S007, with S010 as a discovery index only: architecture before protocol phases, phases before the debugging tools that observe them.
 - **How this lane judges its own claims** — S003 → S004 → S001: the fleet evidence/gate standard, the registry contract, then the lane's own method lessons.
+
+- **U2 path correction (round 13)** — read S017 instead of the historical
+  path's rejected S030; S045 records why the duplicate is not new evidence.
+- **Protocol boundaries (U4, round 13)** — S005 → S040 → S043 → S042 → S041:
+  phase and governance, wire-level registry contract, tool purpose, then the
+  sanitized host sample. S006 remains queued historical metadata; S042
+  supersedes its access-date-only anchor. U5–U7 remain frontier ground.
 
 ## Search log
 
@@ -90,6 +105,39 @@ Search-log errata (round 12, post-review, 2026-10-19):
 - The `portal` seat's note above uses **ART dossier lead ids** (`kaika-w1/mado-art.md` S008, S024–S030), not registry ids. Mapping: ART S008 → S031, S024 → S032, S025 → S033, S026 → S034, S027 → S035, S028 → S036, S029 → S038, S030 → S039; the XDPH v1.4.1 tag → S037. Correct accounting for that search: 9 candidates screened; 6 selected for U3 (S031–S035, S037); 3 not selected for U3 but kept `queued` as adjacent API/release reading (S036, S038, S039); 0 excluded. Its "excluded 0" count came from `printf '%s' '' | wc -l`, an empty input, not a count — the real excluded set is empty because the three were kept, not dropped. Registry rows S028–S030 are a different set (config-era seat, U2) and were never part of the portal search.
 - S030 duplicated S017's URL (`wiki.hypr.land/Configuring/Basics/Window-Rules/`) for an overlapping current-wiki syntax scope with no `supersedes` link. Orchestrator spot-check disagreed with its admission; status `mined` → `rejected` in place, its `used-by` moved to S017 (rule 2; old→new logged in `lessons/round-12.md`). S030's `teaches` cell cannot change in place, so its rejection reason lives here and in the lesson: duplicate of S017; flip: a distinct anchor at a pinned revision that S017 does not cover.
 - Owed anchors (rule: anchor = section plus revision; `anchor` is not an in-place cell). Four queued rows carry a section but only an access date, not a page revision: S006 (`extras.html`), S008 (wayland-book high-level-design), S009 (`architecture.html`), S010 (wayland.app index). Owed: the round that mines any of them appends a superseding row (`teaches` opening `supersedes S0NN —`) with the source-repository commit of that page; until then they stay `queued` and are not citable as sole support. Not done now because a superseding row on the same URL and scope reads as a duplicate to the fleet census (E04/W04) until the supersedes link is recognised.
+
+Round 13 bounded search (2026-10-20): question — how do protocol phase,
+advertised globals and unexercised behavior differ, and what prevents the
+S030 merge mistake? Directly reopened official wayland-protocols README
+and GOVERNANCE, official Wayland extras and installed core XML, the
+sanitized host capture, gate-maintenance note and current Window Rules
+page. Row-action candidates: S005, S017, S040–S045 (eight candidates,
+seven distinct source surfaces). Identified/screened 8, included 7 row
+actions (five new mined rows, S005 mined, S017 citation update), rejected
+1 duplicate-admission correction (S045); 0 candidates left unexamined.
+Counting command: `python3 -c 'a=["S005","S017"]+[f"S{i:03}" for i in range(40,46)]; print(len(a),len(a)-1,1)'`
+→ `8 7 1`; source opens/located quotes in `lessons/round-13.md` § Gate.
+Stop: each U4 facet has primary authority and a host advertisement sample;
+U5–U7 and a complete extension XML crosswalk are not admitted here.
+
+Correction to the round-12 owed-anchor rationale above: the maintained
+census already recognizes a `supersedes S###` marker for the same-URL
+error; different-scope repetitions can remain non-failing W04 warnings.
+That was not a blocker to supplying the S006 revision. S042 now supplies
+it without editing S006's immutable anchor. Historical rejected S030
+still produces a known warning; S045 supplies the explicit rejection
+reason/flip without rewriting its old teaches cell. URL collisions are a
+merge-review trigger, not a source-volume or rejection-quota signal.
+
+Adversarial follow-through: AttackCoverage A1 required one additional
+primary code open, S046 (`wayland-utils` 1.3.0's `wayland-info.c`), to
+distinguish the observer's bindings/detail queries from retained headers.
+Identified/screened/included this follow-through: 1/1/1; rejected 0.
+Combined candidate ids are S005, S017, S040–S046. The revision-bound
+`measure.py` output `source_registry.round13_candidates` counts the
+actual present/mined/rejected candidate sets (final 9/8/1), rather than
+inferring knowledge growth from these row counts. Stop: the diagnostic
+implementation boundary is now code-grounded; no new feature test follows.
 
 ## Leads (unopened)
 

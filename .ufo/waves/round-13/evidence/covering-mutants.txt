@@ -1,0 +1,64 @@
+command: bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r13-cover-4q6xr4wp/target.sh --defects /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-13/covering.spec --suite 'bash "$MUTANT" --selftest' --workdir /tmp/mado-r13-cover-4q6xr4wp/sweep --label mado-r13-covering
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+stdout:
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+MUTATE_DATE: 2026-10-20T04:37:43Z
+MUTATE_TARGET: /tmp/mado-r13-cover-4q6xr4wp/target.sh sha256=87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39 bytes=103569
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-13/covering.spec defects=8
+CONTROL: GREEN (exit=0 duration-ms=5679 pristine-sha256=87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39)
+  | MADO_SELFTEST: 205/205 assertions passed
+DEFECT P1: KILLED (exit=2 duration-ms=5650) suppress local extra-member detection
+  | MADO_SELFTEST: FAILED — 200 passed, 5 failed
+  |   - N1: exit 1 (undeclared local conf) (got '0' want '1')
+  |   - N1: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N1: the stray member is named (want row hypr.local.inventory FAIL containing 'extra: extra.conf')
+  |   - N1: no fake CLEAN (unexpected: MADO_VERIFY: CLEAN)
+  |   - N3: the undeclared member is named (want row hypr.local.inventory FAIL containing 'extra: extra.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.7ITZ84
+DEFECT P2: KILLED (exit=2 duration-ms=5671) suppress local missing-member naming
+  | MADO_SELFTEST: FAILED — 202 passed, 3 failed
+  |   - B (want row hypr.local.inventory FAIL)
+  |   - N3: the absent declared member is named (want row hypr.local.inventory FAIL containing 'missing: xdph.conf')
+  |   - N4: the local census names gkeep.conf (want row hypr.local.inventory FAIL containing 'missing: gkeep.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.zDnFSF
+DEFECT P3: KILLED (exit=2 duration-ms=5646) suppress source extra-member naming
+  | MADO_SELFTEST: FAILED — 204 passed, 1 failed
+  |   - N2: sources_resolve names the extra member (want row hypr.root.sources_resolve FAIL containing 'extra: ~/.local/share/omarchy/default/hypr/replacement.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.5ETKuf
+DEFECT P4: KILLED (exit=2 duration-ms=5659) suppress source missing-member naming
+  | MADO_SELFTEST: FAILED — 204 passed, 1 failed
+  |   - N2: sources_resolve names the missing member (its target exists) (want row hypr.root.sources_resolve FAIL containing 'missing: ~/.config/hypr/ai-usage.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.ty8ajF
+DEFECT P5: KILLED (exit=2 duration-ms=5660) suppress include-graph extra-member naming
+  | MADO_SELFTEST: FAILED — 204 passed, 1 failed
+  |   - N2: the extra source is named (want row hypr.root.include_graph FAIL containing 'extra: ~/.local/share/omarchy/default/hypr/replacement.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.iHbEvi
+DEFECT P6: KILLED (exit=2 duration-ms=5670) suppress empty-source naming without reintroducing an invalid associative key
+  | MADO_SELFTEST: FAILED — 203 passed, 2 failed
+  |   - N7: the empty member is named as extra (want row hypr.root.include_graph FAIL containing 'extra: ''')
+  |   - N7: no bad-subscript error (unexpected: bad array subscript)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.DuatiN
+DEFECT P7: KILLED (exit=2 duration-ms=5626) ignore conditional hyprlang directives
+  | MADO_SELFTEST: FAILED — 201 passed, 4 failed
+  |   - N8: exit 1 (unsupported conditional) (got '0' want '1')
+  |   - N8: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N8: the unsupported directive is named (want row hypr.root.orchestrator FAIL containing 'unsupported hyprlang directive')
+  |   - N8: no fake CLEAN (unexpected: MADO_VERIFY: CLEAN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.9NAavn
+DEFECT P8: KILLED (exit=2 duration-ms=5662) drop gkeep from the local expected set
+  |   - T8: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - A: exit 0 (got '1' want '0')
+  |   - A: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - A: zero FAIL rows (got '1' want '0')
+  |   - A: the local census is exact-set, gkeep included (want row hypr.local.inventory PASS containing '13/13 active local confs, set exact')
+  |   - N2 (isolation: the local file set is untouched) (want row hypr.local.inventory PASS)
+  |   - N4: the local census names gkeep.conf (want row hypr.local.inventory FAIL containing 'missing: gkeep.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.ykeg67
+MUTATE_RESTORE: OK (target-sha256 before=87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39 after=87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39 pristine-sha256=87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39)
+MUTATE_EVIDENCE: /tmp/mado-r13-cover-4q6xr4wp/sweep
+MUTATE: DONE (target=mado-r13-covering defects=8 killed=8 survived=0 inconclusive=0 kill-rate=100%)
+
+stderr:
+
+exit=0
+elapsed_seconds=51.042

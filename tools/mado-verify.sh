@@ -30,10 +30,15 @@
 #     flip the verdict, but they stay visible in the report.
 #
 # Invariants encoded (measured anchors in corpus/knowledge/):
-#   hypr    — hyprland.conf is a pure orchestrator: 17 source statements in the
-#             exact include order (MADO-1 §1/§3); 12 active local confs
-#             (MADO-1 §2); local envs.conf is an orphan (MADO-1 §2,
-#             MADO-R2-1 §6/F3); the no-gaps toggle declares 0s (MADO-1 §7).
+#   hypr    — hyprland.conf is a pure orchestrator: 18 source statements in the
+#             exact include order (MADO-1 §1/§3; 17→18 erratum, round 12); the
+#             13 active local confs are judged as an exact set of regular files
+#             — every declared name present and no undeclared *.conf file
+#             present, each named on FAIL
+#             (MADO-1 §2; round 12 M13); the observed source set is compared to
+#             the declared one the same way, order kept (round 13); local
+#             envs.conf is an orphan (MADO-1 §2, MADO-R2-1 §6/F3); the no-gaps
+#             toggle declares 0s (MADO-1 §7).
 #   hypr-live — configerrors empty; gaps_out "0 0 0 0"; kb_layout br;
 #             border_size 0; rounding 0; animations on; binds 192; DP-1
 #             3440x1440@~100; touchpad scroll_factor 0.4; GDK_SCALE=1;
@@ -922,6 +927,10 @@ MADO_R8_GIT_STUB
   st_rows "A: zero FAIL rows" "$out" FAIL 0
   st_rows "A: zero UNKNOWN rows" "$out" UNKNOWN 0
   st_row_has "$out" hypr.root.include_graph PASS "A"
+  st_row_detail "$out" hypr.local.inventory PASS "13/13 active local confs, set exact" \
+    "A: the local census is exact-set, gkeep included"
+  st_row_detail "$out" hypr.root.sources_resolve PASS "declared targets exist, member set exact" \
+    "A: the source census is exact-set with every target resolving"
   st_row_has "$out" walker.config PASS "A"
   st_row_has "$out" waybar.config.reload_style PASS "A"
   st_row_has "$out" term.cross.font_size PASS "A"
@@ -1007,7 +1016,9 @@ MADO_R8_GIT_STUB
     st_eq  "F: failing selftest exits 2" 2 "$csr"
     st_has "F: failing selftest reports FAILED" "$cs" "MADO_SELFTEST: FAILED"
     csp=$(printf '%s\n' "$cs" | sed -n 's/^fixtures kept: //p' | tail -1)
-    [ -n "$csp" ] && rm -rf "$csp"
+    case "$csp" in
+      /tmp/w5-mado-m52-selftest.*) rm -rf "$csp" ;;
+    esac
   fi
 
   # --- scenario H: an undeclared extra source flips the census to FAIL ------
@@ -1041,6 +1052,121 @@ IEOF
   st_row_has "$out" boundary.readonly FAIL "I (safety row, FAIL direction)"
   st_not_has "I: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
   st_counts_agree "$out" "I: counts agree with rows"
+
+  # --- scenarios N: exact-set censuses, hermetic (round 13 / M13) ----------
+  # One case per named-set failure: a stray local conf, a same-count source
+  # substitution whose replacement target EXISTS (so target-existence alone
+  # cannot see it), a same-count local substitution, and the widened gkeep
+  # member removed. Each asserts the row ids, the named members, and that an
+  # untouched sibling row keeps its verdict (isolation).
+  local NX="$T/census" n_out n_rc
+  mkdir -p "$NX"
+
+  # N1: a stray *.conf under ~/.config/hypr → named as the extra member
+  local N1R="$NX/local-extra"
+  mkdir -p "$N1R"
+  cp -a "$A/." "$N1R/"
+  printf '# undeclared local conf\n' >"$N1R/.config/hypr/extra.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N1R" --no-live 2>&1); n_rc=$?
+  st_eq  "N1: exit 1 (undeclared local conf)" 1 "$n_rc"
+  st_has "N1: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.local.inventory FAIL "extra: extra.conf" \
+    "N1: the stray member is named"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N1 (isolation: sources untouched)"
+  st_row_has "$n_out" hypr.root.sources_resolve PASS "N1 (isolation: declared targets resolve)"
+  st_not_has "N1: no fake CLEAN" "$n_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$n_out" "N1: counts agree with rows"
+
+  # N2: one declared source line swapped for an undeclared one, count equal,
+  # and the replacement target exists — the SET must fail, not existence
+  local N2R="$NX/source-swap"
+  mkdir -p "$N2R"
+  cp -a "$A/." "$N2R/"
+  printf '# undeclared source target (exists, so only the set can fail)\n' \
+    >"$N2R/.local/share/omarchy/default/hypr/replacement.conf"
+  sed -i 's#^source = ~/.config/hypr/ai-usage.conf$#source = ~/.local/share/omarchy/default/hypr/replacement.conf#' \
+    "$N2R/.config/hypr/hyprland.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N2R" --no-live 2>&1); n_rc=$?
+  st_eq  "N2: exit 1 (same-count source substitution)" 1 "$n_rc"
+  st_row_has "$n_out" hypr.root.include_graph FAIL "N2 (count unchanged, set moved)"
+  st_row_detail "$n_out" hypr.root.include_graph FAIL "missing: ~/.config/hypr/ai-usage.conf" \
+    "N2: the missing source is named"
+  st_row_detail "$n_out" hypr.root.include_graph FAIL "extra: ~/.local/share/omarchy/default/hypr/replacement.conf" \
+    "N2: the extra source is named"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL "missing: ~/.config/hypr/ai-usage.conf" \
+    "N2: sources_resolve names the missing member (its target exists)"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL "extra: ~/.local/share/omarchy/default/hypr/replacement.conf" \
+    "N2: sources_resolve names the extra member"
+  st_not_has "N2: no unresolved target (every declared target exists)" "$n_out" "unresolved:"
+  st_row_has "$n_out" hypr.local.inventory PASS "N2 (isolation: the local file set is untouched)"
+  st_counts_agree "$n_out" "N2: counts agree with rows"
+
+  # N3: one declared local conf swapped for an undeclared one, count equal
+  local N3R="$NX/local-swap"
+  mkdir -p "$N3R"
+  cp -a "$A/." "$N3R/"
+  rm -f "$N3R/.config/hypr/xdph.conf"
+  printf '# undeclared local conf\n' >"$N3R/.config/hypr/extra.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N3R" --no-live 2>&1); n_rc=$?
+  st_eq  "N3: exit 1 (same-count local substitution)" 1 "$n_rc"
+  st_eq  "N3: the *.conf count is unchanged (13) — a tally cannot see it" 13 \
+    "$(find "$N3R/.config/hypr" -maxdepth 1 -type f -name '*.conf' | wc -l)"
+  st_row_detail "$n_out" hypr.local.inventory FAIL "missing: xdph.conf" \
+    "N3: the absent declared member is named"
+  st_row_detail "$n_out" hypr.local.inventory FAIL "extra: extra.conf" \
+    "N3: the undeclared member is named"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N3 (isolation: sources untouched)"
+  st_counts_agree "$n_out" "N3: counts agree with rows"
+
+  # N4: the widened gkeep member removed → the census names it, and the source
+  # target row still names the vanished target (round-12 behaviour preserved)
+  local N4R="$NX/gkeep-gone"
+  mkdir -p "$N4R"
+  cp -a "$A/." "$N4R/"
+  rm -f "$N4R/.config/hypr/gkeep.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N4R" --no-live 2>&1); n_rc=$?
+  st_eq  "N4: exit 1 (declared member removed)" 1 "$n_rc"
+  st_row_detail "$n_out" hypr.local.inventory FAIL "missing: gkeep.conf" \
+    "N4: the local census names gkeep.conf"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL "~/.config/hypr/gkeep.conf" \
+    "N4: the source target row names the vanished target"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N4 (isolation: the source line is untouched)"
+  st_counts_agree "$n_out" "N4: counts agree with rows"
+
+  # N7: an empty `source =` line has no member to name — the census must keep
+  # the stable FAIL+verdict (never a bad-subscript error and no rows) and name
+  # the empty member. Regression guard for the exact-set code (AttackSets K2).
+  local N7R="$NX/empty-source"
+  mkdir -p "$N7R"
+  cp -a "$A/." "$N7R/"
+  printf 'source =\n' >>"$N7R/.config/hypr/hyprland.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N7R" --no-live 2>&1); n_rc=$?
+  st_eq  "N7: exit 1, a verdict — not a crash" 1 "$n_rc"
+  st_has "N7: the report still prints a verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.root.include_graph FAIL "extra: ''" \
+    "N7: the empty member is named as extra"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL "extra: ''" \
+    "N7: sources_resolve names it too"
+  st_not_has "N7: no bad-subscript error" "$n_out" "bad array subscript"
+  st_counts_agree "$n_out" "N7: counts agree with rows"
+
+  # N8: a hyprlang conditional wraps a source line. The plain source list still
+  # reads exact, but Hyprland would skip the line — the gate must fail the
+  # orchestrator row by name instead of judging a config it cannot model.
+  local N8R="$NX/hyprlang"
+  mkdir -p "$N8R"
+  cp -a "$A/." "$N8R/"
+  sed -i -e '/^source = ~\/.config\/hypr\/gkeep.conf$/i # hyprlang if UNDEFINED' \
+         -e '/^source = ~\/.config\/hypr\/gkeep.conf$/a # hyprlang endif' \
+         "$N8R/.config/hypr/hyprland.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N8R" --no-live 2>&1); n_rc=$?
+  st_eq  "N8: exit 1 (unsupported conditional)" 1 "$n_rc"
+  st_has "N8: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.root.orchestrator FAIL "unsupported hyprlang directive" \
+    "N8: the unsupported directive is named"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N8 (isolation: the source list is unchanged)"
+  st_not_has "N8: no fake CLEAN" "$n_out" "MADO_VERIFY: CLEAN"
+  st_counts_agree "$n_out" "N8: counts agree with rows"
   # >>> MADO-R8-BLOCK >>>
   # --- scenario S: snapshot + snapshot-diff freshness receipts (M8-3) ------
   # Hermetic: snapshots come from the fixture roots only (the sandboxed live
@@ -1278,6 +1404,17 @@ MADO_R8_CRAFT_B
 # runs are removed by exact path (prefix-guarded); foreign /tmp dirs are left
 # untouched. No compositor/session state is read or written.
 #
+# Re-cut record — round 13 / M13 (exact-set censuses): sources_resolve and
+# hypr.local.inventory became exact-set comparisons with named missing/extra,
+# the local expected set widened 12→13 by an append (gkeep), and scenarios N
+# landed beside A/B/H — all outside the marked families, so the derived target
+# moved and PIN_MADO is owed a measured re-cut by L1 (never edited to match
+# reality, corpus/knowledge/gate-standing-use.md §5 rule 4). The embedded spec
+# and SPEC_SHA are unchanged: the recorded D6 anchor is the 12-name list, which
+# the append leaves byte-verbatim — D6's dropped member now dies on the
+# exact-set guard. Until the recut the mode reads SETUP with the printed
+# REGRESSION_RECUT command — never a stale PASS.
+#
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
 #   gate's --no-live/--live/--root/--selftest are refused (usage error, exit 2);
@@ -1290,7 +1427,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='538d178bf03a5320e5cfdafc4dc5efd62097a1782c134893dda4d6b2b66454a9'
+PIN_MADO='87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -2182,9 +2319,13 @@ verify() {
   fi
 
   if [ -f "$f" ]; then
-    local off
+    local off hyprd
+    hyprd=$(grep -nE '^[[:space:]]*#[[:space:]]*hyprlang' "$f" | head -1)
     off=$(grep -nEv '^[[:space:]]*(#|$)|^[[:space:]]*source[[:space:]]*=' "$f" | head -3)
-    if [ -z "$off" ]; then
+    if [ -n "$hyprd" ]; then
+      row hypr hypr.root.orchestrator FAIL \
+        "unsupported hyprlang directive at line ${hyprd%%:*} — conditional source semantics are not modelled"
+    elif [ -z "$off" ]; then
       row hypr hypr.root.orchestrator PASS "0 settings lines (pure orchestrator)"
     else
       row hypr hypr.root.orchestrator FAIL "non-source lines: $(printf '%s' "$off" | tr '\n' ' ')"
@@ -2192,11 +2333,19 @@ verify() {
 
     # Erratum (round 12, 2026-10-19): 17→18 source lines (+ ~/.config/hypr/gkeep.conf
     # after ai-usage.conf; root sha 4f52854a3c143dcf… → ce7483f35ab52bc2…) after the
-    # operator-applied gkeep installer; gkeep.conf existence is checked by
-    # sources_resolve via EXPECT, so LOCAL stays the MADO-1 list of 12 (the set-blind
-    # local census is mistake M13, corpus/lessons/round-12.md)
-    # (~/Projects/gkeep/install.sh:21-36); backup epoch 1792267376 =
-    # 2026-10-17T20:02:56Z. Re-measure with:
+    # operator-applied gkeep installer (~/Projects/gkeep/install.sh:21-36); backup
+    # epoch 1792267376 = 2026-10-17T20:02:56Z. Round 12 kept LOCAL at the MADO-1 list
+    # of 12 and left the set-blind local census open as M13 (corpus/lessons/round-12.md);
+    # that erratum cited the drift note's re-anchor protocol, which does not govern a
+    # gate EXPECT — the governing rule is corpus/knowledge/gate-standing-use.md §5
+    # rule 4 (a moved anchor reports itself; the response is re-verification plus an
+    # appended erratum), as recorded in lessons round-12 R12-b.
+    # Round 13 (2026-10-20, M13): LOCAL is the exact 13-name expected set (gkeep
+    # appended after the recorded 12-name list, so the recorded spec's D6 anchor
+    # stays byte-verbatim) and both censuses are exact-set comparisons with named
+    # missing/extra; EXPECT stays 18 and SPEC_SHA is unchanged. The regression
+    # PIN is re-cut by L1 from the measured sweep — never edited to match reality
+    # (§5 rule 4). Re-measure with:
     # grep -cE '^[[:space:]]*source[[:space:]]*=' ~/.config/hypr/hyprland.conf;
     # sha256sum ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf;
     # diff -u ~/.config/hypr/hyprland.conf.bak.1792267376 ~/.config/hypr/hyprland.conf
@@ -2219,11 +2368,25 @@ verify() {
       '~/.local/state/omarchy/toggles/hypr/*.conf' \
       '~/.config/hypr/ai-usage.conf' \
       '~/.config/hypr/gkeep.conf' )
-    local -a got=() miss=""
+    local -a got=() miss="" sdiff=""
     mapfile -t got < <(awk '/^[[:space:]]*source[[:space:]]*=/{sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+$/, ""); print}' "$f")
     local i
+    # exact-set census (round 13, M13): membership is compared first so any
+    # FAIL names the substituted members — a count-only or first-position
+    # message is set-blind when one undeclared line replaces one declared line.
+    # The positional walk below stays the PASS criterion (MADO-1 §3 order).
+    local -A seen=() declared=()
+    for i in "${EXPECT[@]}"; do declared["$i"]=1; done
+    for i in "${got[@]}"; do
+      [ -n "$i" ] && seen["$i"]=1
+    done
+    for i in "${EXPECT[@]}"; do [ -n "${seen["$i"]:-}" ] || sdiff="$sdiff missing: $i"; done
+    for i in "${got[@]}"; do
+      if [ -z "$i" ]; then sdiff="$sdiff extra: ''"; continue; fi
+      [ -n "${declared["$i"]:-}" ] || sdiff="$sdiff extra: $i"
+    done
     if [ "${#got[@]}" -ne "${#EXPECT[@]}" ]; then
-      row hypr hypr.root.include_graph FAIL "${#got[@]} source lines (expected ${#EXPECT[@]})"
+      miss="${#got[@]} source lines (expected ${#EXPECT[@]})"
     else
       for i in "${!EXPECT[@]}"; do
         if [ "${got[$i]}" != "${EXPECT[$i]}" ]; then
@@ -2231,27 +2394,46 @@ verify() {
           break
         fi
       done
-      if [ -n "$miss" ]; then
-        row hypr hypr.root.include_graph FAIL "$miss"
-      else
-        row hypr hypr.root.include_graph PASS "${#got[@]}/${#EXPECT[@]} sources, order exact"
-      fi
+    fi
+    if [ -n "$miss" ]; then
+      row hypr hypr.root.include_graph FAIL "$miss$sdiff"
+    else
+      row hypr hypr.root.include_graph PASS "${#got[@]}/${#EXPECT[@]} sources, order exact, set exact"
     fi
 
-    # every source target must resolve under $ROOT (~ expanded; globs ≥1 match)
-    local t x tmiss=""
+    # every source target must resolve under $ROOT (~ expanded; globs ≥1 match),
+    # and the observed source set must equal the declared one (round 13, M13):
+    # a same-count substitution whose replacement target happens to exist is
+    # invisible to target-existence alone, so the members are named as well.
+    local t x tmiss="" tset=""
+    local -A tseen=() tdecl=()
+    for t in "${EXPECT[@]}"; do tdecl["$t"]=1; done
+    for t in "${got[@]}"; do
+      [ -n "$t" ] && tseen["$t"]=1
+    done
     for t in "${EXPECT[@]}"; do
-      x="${t/#\~/$ROOT}"
+      [ -n "${tseen["$t"]:-}" ] || tset="$tset missing: $t"
+      case "$t" in
+        '~'*) x="$ROOT${t#\~}" ;;
+        *) x="$t" ;;
+      esac
       if [ -e "$x" ]; then continue; fi
       case "$x" in
         *'*'*) if compgen -G "$x" >/dev/null 2>&1; then continue; fi ;;
       esac
       tmiss="$tmiss $t"
     done
-    if [ -z "$tmiss" ]; then
-      row hypr hypr.root.sources_resolve PASS "${#EXPECT[@]}/${#EXPECT[@]} targets exist"
+    for t in "${got[@]}"; do
+      if [ -z "$t" ]; then tset="$tset extra: ''"; continue; fi
+      [ -n "${tdecl["$t"]:-}" ] || tset="$tset extra: $t"
+    done
+    if [ -z "$tmiss" ] && [ -z "$tset" ]; then
+      row hypr hypr.root.sources_resolve PASS "declared targets exist, member set exact"
     else
-      row hypr hypr.root.sources_resolve FAIL "unresolved:$tmiss"
+      local tdetail=""
+      [ -n "$tmiss" ] && tdetail="unresolved:$tmiss"
+      [ -n "$tset" ] && tdetail="${tdetail:+$tdetail }$tset"
+      row hypr hypr.root.sources_resolve FAIL "$tdetail"
     fi
   else
     row hypr hypr.root.orchestrator UNKNOWN "hyprland.conf missing"
@@ -2259,17 +2441,48 @@ verify() {
     row hypr hypr.root.sources_resolve UNKNOWN "hyprland.conf missing"
   fi
 
-  # 12 active local confs (MADO-1 §2)
+  # 13 active local confs, exact set (MADO-1 §2 + gkeep; round 13, M13):
+  # a declared regular file may not be absent and no undeclared regular *.conf
+  # file may sit in the directory (directories are not loadable confs and stay
+  # out of both sides of the census). A presence-only tally cannot see a stray
+  # substitution — that silence was M13 (corpus/lessons/round-12.md), so the
+  # observed set is compared exactly and each side is named on FAIL.
   local -a LOCAL=(hyprland bindings input monitors looknfeel hypridle hyprlock hyprsunset ai-usage autostart envs xdph)
-  local n x lmiss=""
+  # gkeep joins the declared set as an append (round 13, M13). The recorded
+  # tameshi spec's D6 anchor is the list above, byte-verbatim, so the append —
+  # not an edited list — keeps the recorded case recorded and moves only
+  # PIN_MADO at the re-cut. D6's dropped member now dies on the exact-set guard
+  # (the observed file becomes an extra), not on a presence tally.
+  LOCAL+=(gkeep)
+  local n x xq lmiss="" lextra=""
+  local -a lobs=()
+  for x in "$H"/*.conf; do
+    [ -f "$x" ] && lobs+=("${x##*/}")
+  done
+  local -A lexp=()
+  for x in "${LOCAL[@]}"; do lexp["$x.conf"]=1; done
   n=0
   for x in "${LOCAL[@]}"; do
-    if [ -f "$H/$x.conf" ]; then n=$((n + 1)); else lmiss="$lmiss $x.conf"; fi
+    if [ -f "$H/$x.conf" ]; then
+      n=$((n + 1))
+    else
+      printf -v xq '%q' "$x.conf"
+      lmiss="$lmiss $xq"
+    fi
   done
-  if [ -z "$lmiss" ]; then
-    row hypr hypr.local.inventory PASS "$n/${#LOCAL[@]} active local confs"
+  for x in "${lobs[@]}"; do
+    if [ -z "${lexp["$x"]:-}" ]; then
+      printf -v xq '%q' "$x"
+      lextra="$lextra $xq"
+    fi
+  done
+  if [ -z "$lmiss" ] && [ -z "$lextra" ]; then
+    row hypr hypr.local.inventory PASS "$n/${#LOCAL[@]} active local confs, set exact"
   else
-    row hypr hypr.local.inventory FAIL "missing:$lmiss"
+    local ldetail=""
+    [ -n "$lmiss" ] && ldetail="missing:$lmiss"
+    [ -n "$lextra" ] && ldetail="${ldetail:+$ldetail }extra:$lextra"
+    row hypr hypr.local.inventory FAIL "$ldetail"
   fi
 
   # orphan invariant: local envs.conf sourced by nothing (MADO-1 §2; F3)

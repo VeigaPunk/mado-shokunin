@@ -325,3 +325,41 @@ Stagnation window resets: a capability entered this round.
 ### Retired
 
 None.
+
+## Round 13 — declared claims (2026-10-20)
+
+Baseline revision: `7dcb785b7b943d03703181b218d7860a7b43007b`.
+L1 holds the canonical planner seat; wave items are bounded leaf work.
+
+- **C1 coverage (lowest scored sub-axis):** sourced current-art ground
+  U1–U3 = 3/7 (4.2857/10) → U1–U4 = 4/7 (5.7143/10).
+  Admit one U4 entry separating protocol phases, compositor-advertised
+  globals and unexercised behavior. Count unique `covers: U[1-7]` joined
+  to existing knowledge paths and mined source rows, not source-row volume.
+- **C2 operability:** exact-set census detection, a new bounded sub-axis.
+  Baseline `sources_resolve` misses a same-count declared-source substitution;
+  `local.inventory` misses extra local files. Target: all four isolated negative cases (extra local,
+  missing+extra local replacement, same-count source replacement, missing
+  gkeep) fail with stable row ids and named missing/extra details, versus
+  the same cases at the baseline. Score = 10 × cases with complete named-set diagnostics / 4.
+  Preserve include order checks and source-target existence; extend the
+  hermetic suite and re-cut mutation regression. Register the existing
+  verdict instrument at its SKILL registry home.
+
+The claims are causally separable: U4 source admission needs no gate change;
+the census fix needs no U4 note. No exploratory claim. Harm watch:
+existing hermetic suite and mutation regression remain green, navigation
+remains complete, and domain configuration/state remains read-only.
+The earlier planned depth/adjacency rubric expansion is not claimed this round.
+
+Pre-verification rubric clarification (AttackClaims / ReviewCensus):
+this is **not** overall defect-detection recall. Baseline `include_graph`
+already detects source substitution and `sources_resolve` already detects
+missing gkeep. The named-set score requires the responsible census row
+(`sources_resolve` for source substitution, `local.inventory` for the
+three local-file cases) to fail with every relevant missing/extra name.
+The measuring command also prints overall run exits so existing detection
+is not hidden. A finite four-case score never retires broader operability.
+Harm watch also includes `--no-live` file-plane agreement. Expanded toggle
+glob membership, arbitrary source syntax and directory/symlink policy are
+not claimed by the four-case correction.

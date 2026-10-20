@@ -28,3 +28,12 @@ criteria 6–14 are grounded in lane incidents; 15–16 are grounded in external
 (`lessons/round-12.md` § Inference traps), not lane incidents, despite the block heading. Criterion 8's
 secondary citation `lessons/round-10.md:108-118` grounds record debt (M4), not planned paths; its
 grounding is `lessons/round-12.md#mistakes M3` alone.
+
+## Criterion from the outside S030 disagreement (round 13)
+
+17. Before source-fragment renumbering/merge, screen repeated canonical URLs across active rows even when scope wording differs. Review overlapping scope explicitly; reject/merge duplicates or append a genuine superseding row with a resolvable prior id. Preserve rejected history, and send distinct-scope reuse to human review rather than claiming URL equality proves semantic duplication. A warning-only shared census is not this review. (lesson: lessons/round-13.md#mistakes M1; outside finding: lessons/round-12-verifier-spotcheck.md)
+
+The lane-local collision screen is a conservative merge-review trigger,
+not a new source-tier scheme or an automatic knowledge-admission authority.
+Its red-before case uses the actual admitted S017/S030 pair, not merely a
+synthetic same-scope duplicate; its green state preserves rejected S030.

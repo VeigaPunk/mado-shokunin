@@ -125,3 +125,16 @@ The migration notice states:
 ## Errata (round 12, post-review)
 
 - `source:` cites S030 for the current Window Rules page. S030 was rejected in the same round as a duplicate of S017 (same URL `https://wiki.hypr.land/Configuring/Basics/Window-Rules/`, overlapping scope, no supersedes link); read every S030 citation in this entry (header and line 67) as **S017** — same page, same "Syntax" section, same 2026-08-26 modification. The claim it supports is unchanged. Logged in `corpus/lessons/round-12.md` § Post-review registry changes.
+
+## Errata (round 13 — complete citation mapping)
+
+The round-12 parenthetical “header and line 67” was an incomplete enumeration.
+**Every** historical S030 occurrence in this entry, including the source header,
+tables, rejected-inference row and recheck range, resolves to **S017**, not to
+an admitted S030. This mapping preserves the old bytes and their rejection.
+The current page was reopened on 2026-10-20 (Latest git; modified
+2026-08-26); its introductory Note says “Since Hyprland 0.55, hyprlang is
+deprecated in favor of lua.” This is dated documentation, not a refreshed
+host-parser observation. The duplicate rejection is now explicitly recorded
+by superseding registry row S045; the original S030 stays rejected.
+See `corpus/lessons/round-13.md` § Mistakes and Gate.

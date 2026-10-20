@@ -1,0 +1,13 @@
+python3 - <<'PY'
+import hashlib, re, subprocess
+p = subprocess.run(["wayland-info"], capture_output=True, text=True)
+if p.returncode or p.stderr:
+    raise SystemExit(f"advertisement UNKNOWN: exit={p.returncode} stderr_bytes={len(p.stderr.encode())}")
+pairs = re.findall(r"^interface: '([A-Za-z0-9_]+)',\s+version:\s+([0-9]+),", p.stdout, re.M)
+if not any(name == "wl_compositor" for name, _ in pairs):
+    raise SystemExit("advertisement UNKNOWN: no wl_compositor header")
+lines = sorted(f"{name}@{version}" for name, version in pairs)
+digest = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
+print(f"globals={len(lines)} interfaces={len(set(name for name, _ in pairs))} sha256={digest} exit={p.returncode}")
+PY
+sha256=07d8ae814f6122765f8f281054dad6c45ab0b4dd1e030c19b53363c2c5555775

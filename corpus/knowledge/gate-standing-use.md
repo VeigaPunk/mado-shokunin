@@ -360,3 +360,43 @@ first live `--regression` tick at the standing revision; log
 recheck: `bash tools/mado-verify.sh --regression | tail -1` — expect
 `MADO_REGRESSION: PASS` with target `dc7c4141…` while the gate sha is
 `93e43f8f…`.
+
+## Current receipt — round 13 (2026-10-20)
+
+Historical “today” pins and cadence commands above describe the 2026-10-14
+arc. The current registry is `SKILL.md` § Gate registry. The delivered gate
+SHA-256 is `037b05dcd3f86e12e1b89ee5631f76ce95301b7c411957fad17ff0d7438a6569`;
+rederive with `sha256sum tools/mado-verify.sh`, bound to the measured content
+commit named in the round-13 SCORECARD and report.
+
+- Hermetic suite: **310/310**, exit 0 — `bash tools/mado-verify.sh --selftest`;
+  `.ufo/waves/round-13/evidence/gate-selftest.txt`.
+- File plane: **29 PASS, 0 FAIL, 0 UNKNOWN, 8 SKIP, 4 NOTE**, exit 0 —
+  `bash tools/mado-verify.sh --no-live`; `evidence/gate-file-plane.txt`
+  under that round directory. No current full live-health run is claimed.
+- Derived target `PIN_MADO`: `538d178b…` →
+  `87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39`.
+  Actual re-cut: historical 10/10 KILLED, restore OK; byte-preserved
+  `SPEC_SHA=c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8`.
+  `evidence/regression-recut.txt` carries the command and complete output.
+- New clauses: **8/8 covering mutants KILLED**, restore OK —
+  `covering.spec`, `evidence/covering-mutants.txt` and
+  `evidence/covering-results.tsv`. The target is the derived executable,
+  so a pin-identity assertion cannot mask missing behavioral coverage.
+- Mutable sibling harness observed SHA-256
+  `75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5`,
+  not the older `cf41efaa…` or recorded `b56c6e57…`. No sibling was edited.
+- Two-evidences replay:
+  `python3 .ufo/waves/round-13/frozen/verify.py` verifies both committed
+  input digests before execution, then reports `frozen_match`, exit 0,
+  and `MADO_REGRESSION: PASS` (10/10 table match, flips 0).
+  Its `--selftest` passes **12/12**, exit 0; expected pins and verdict live
+  in `frozen/expected.json`, observations in `evidence/frozen-regression.txt`
+  and `evidence/frozen-selftest-corrected.txt`.
+
+All abbreviated `evidence/`, `frozen/` and `covering.spec` paths in this
+receipt are under `.ufo/waves/round-13/`. Snapshot copies are immutable
+round evidence, not maintained aliases of the working gate or sibling.
+Expanded toggle-glob membership, generic config parsing, per-feature
+behavior, the historical theme-mutation gap and the broad whole-config
+boundary-hash caveat are not closed by the four-case census correction.

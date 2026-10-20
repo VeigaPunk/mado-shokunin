@@ -765,3 +765,114 @@ LOG lacks it. The measured content of `6e3b75f` is unaffected (gate, QUALITY, le
 - Change: `README.md` created (lane-header convention) with a `**Wiki:**` link to https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/mado-shokunin?branch=master.
 - Evidence: the org's Devin wiki index lists this repo's generated wiki; sibling lane READMEs carry the same `**Wiki:**` header.
 - Documentation-only change; no round run, no axis moved, no verdict changed.
+
+## 2026-10-20 — round 13: protocol boundaries and named-set census
+
+Steer: fleet `.ufo/prompts/mado-round-13.md`, attempt 1. Baseline
+`7dcb785b7b943d03703181b218d7860a7b43007b`; the initial lane tree was
+clean and carried no inherited round-13 work. The old arc and interrupted
+fleet-round-1 records remain history, not a prohibition on this steer.
+
+**Declared claims:** C1 coverage, sourced ground U1–U3 → U1–U4;
+C2 operability, complete named-set diagnostics in four isolated negative
+cases. C1 works the previous lowest scored sub-axis. C2's finite new
+sub-axis does not retire broader operability. No exploratory claim.
+Pre-verification rubric clarification in SCORECARD preserves the baseline's
+existing detections: overall runs already failed in 3/4 cases, while the
+responsible census rows supplied complete named-set diagnostics in 0/4.
+Measured baseline: `.ufo/waves/round-13/evidence/before.txt`, command
+`python3 .ufo/waves/round-13/measure.py 7dcb785b7b943d03703181b218d7860a7b43007b`.
+
+**C1:** one admitted author-gate entry,
+`corpus/knowledge/wayland-protocol-boundaries-r13.md`, covers U4's phase,
+advertisement and unexercised-behavior diagnostic route; README and SKILL
+route to it. S005 was reopened/mined; S040–S046 were opened and curated
+(S045 rejected correction, not new knowledge). S042 fixes S006's owed
+revision without editing immutable cells. S017's used-by gains the lesson;
+all mutations/quotes live in `corpus/lessons/round-13.md` § Gate.
+The U2 note gets a complete append-only S030→S017 mapping; SOURCES retains
+the rejected historical row and supplies its explicit correction S045.
+The observer's bindings/detail queries are code-grounded in S046, separate
+from the headers retained in the sanitized capture.
+
+**Tool install:** wayland-utils **1.3.0-1**, pacman extra,
+`sudo pacman -S --needed --noconfirm wayland-utils`, to obtain the assigned
+`wayland-info` diagnostic route; GlobalCapture read RULES.md first.
+No partial upgrade or system update. Capture/replay: 72 advertisements,
+71 distinct interfaces; digest `9569d02fe2b04bf62079258b1d74f5d2ad8510c26ef0710a1a64c95f1a9becaa`.
+Commands/output: `evidence/packages.txt`, `globals-recheck-bound.txt`,
+`capture-validation.json` under `.ufo/waves/round-13/`.
+The first L1 replay lacked WAYLAND_DISPLAY and correctly returned UNKNOWN;
+the corrected replay explicitly supplied the previously correlated socket,
+not a guessed instance (`session-prerequisites.json`).
+
+**C2:** `tools/mado-verify.sh` now compares expected/observed root-source
+declaration membership and local regular `*.conf` names, reporting
+missing/extra members while preserving source order and target existence.
+gkeep joins the observed/persisted baseline via `LOCAL+=(gkeep)`; it is
+not ownership or an operator-intent endorsement. Empty-source indexing
+fails closed; unsupported `# hyprlang` directives are rejected rather than
+silently interpreted as plain comments. Root expansion and filename
+escaping preserve the read-only fence. This is not a full hyprlang parser
+or a pin of every filename expanded by the toggle glob.
+
+Gate proof: `--selftest` **310/310**, `--no-live` **29 PASS / 0 FAIL /
+0 UNKNOWN / 8 SKIP / 4 NOTE**, both exit 0. Historical spec stays
+byte-preserved at `c7ee75b9…`; real re-cut killed **10/10**, restore OK,
+target `538d178b…` → `87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39`.
+Separate covering spec killed **8/8**, restore OK, over the derived
+executable (not a selftest pin-identity shortcut).
+Commands/full observations: `evidence/gate-selftest.txt`,
+`gate-file-plane.txt`, `regression-recut.txt`, `covering-mutants.txt` and
+both results TSVs under `.ufo/waves/round-13/`.
+
+**Registry and reproducibility:** SKILL is the registry home for the
+existing gate modes, the conservative source-merge screen, the measurement
+probe and the digest-checking frozen regression companion. The companion
+ships `frozen/{gate.sh,harness.sh,expected.json,verify.py}` under that round
+directory; it verifies both input digests before execution and observed
+`MADO_REGRESSION: PASS`, 10/10 table match, and `frozen_match`, exit 0.
+Its self-invocation is **12/12**, exit 0. The live sibling harness remains
+read-only and provenance-only; the frozen copy pins
+`75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5`.
+Standing-use and config-drift notes receive append-only current receipts
+and governing-rule corrections.
+
+**Learned outside disagreement:** QUALITY criterion 17 prevents S030-style
+active-URL duplicates from escaping as warning-only scope-string differences.
+The lane-local screen is deliberately not a semantic source-admission oracle.
+Selftest **25/25**, exit 0; actual historical `5174e15` registry is red
+(`COLLISION S017 -> S030`, exit 1), current registry green (exit 0), retaining
+rejected history and valid S042 supersession. Evidence:
+`evidence/collision-{selftest,red-corrected,green-corrected}.txt`.
+Initial L1 calls used the wrong positional CLI and returned argparse 2;
+the documented `--registry` calls above are the exercised proof.
+
+**In-round defects, not hidden:** Safety found unfiltered Wayland scratch
+files (world-readable metadata); their owner deleted both and corrected
+the capture report. No raw output is retained or pushed. The first frozen
+selftest failed with `UnboundLocalError`; adding `failed` to the nested
+function's nonlocal declaration is the sole correction, then the same
+self-invocation passed (both observations retained).
+
+**Swarm:** one campaign-validated native batch, 32 seats: 8 executor,
+7 scout, 4 connector, 5 reviewer, 4 critic, 2 scribe, 1 sentinel, 1 revenger.
+L1 is canonical planner; PlanningWalk is the connector-routed bounded data
+walk. No per-seat model override or routing edit. Native ids are recorded
+in `.ufo/waves/round-13/w1/reports/swarm-registry.json`; spec and unchanged
+validator payload are committed with the wave. All seats finished before
+L1 verification. Preliminary draft hypotheses are not final verdicts:
+notably early target-count wording and SourceRevision line anchors were
+not adopted; final code/knowledge and actual observations govern.
+
+**Boundaries and disposition:** no config/compositor mutation, kernel-input
+experiment, output action or sibling edit; the sanctioned diagnostic
+package install is explicit above. Broader whole-config hashing, generic
+parser behavior, expanded-glob membership, historical theme mutation
+coverage, rendered UI and operator intent remain named limits.
+Depth/adjacency rubric expansion was not a declared claim. SHONEN stays
+four assertions. The parent requires an after-report fresh non-author
+admit/reject spot-check and closure; admission remains pending that act.
+The content commit and revision-bound after measurements are recorded in
+the appended round-13 closure entry below and in SCORECARD, never by
+rewriting this entry.

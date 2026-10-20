@@ -396,6 +396,43 @@ Rules:
    state); corrections go to the append-only errata of the source note, never into the
    skill file.
 
+## Current diagnostic boundaries (round 13)
+
+For protocol phase and advertised globals, use
+[`wayland-protocol-boundaries-r13.md`](corpus/knowledge/wayland-protocol-boundaries-r13.md)
+(S005, S040–S043; observer implementation S046). Read the owning protocol repository for phase; read the
+sanitized `wayland-info` inventory for interface/version advertisement.
+Neither route proves feature behavior. Do not infer HDR, monitor
+reconfiguration or input delivery from a global's presence.
+The earlier round-12 `wayland-info` absence was a dated observation:
+round 13 installs `wayland-utils 1.3.0-1` through pacman for this read route.
+Host configurations and compositor actions remain operator-owned.
+
+## Gate registry
+
+This `SKILL.md` is the registry home, per `PROTOCOL.md` §Gate standard,
+Registry. Commands run from this lane's root. Record the measured commit alongside ordinary output;
+`--snapshot FILE` also records the gate digest. Historical usage sections
+below retain their original revisions, not current instrument pins.
+
+| name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-verify | gate | `bash tools/mado-verify.sh` (default live; `--no-live` explicitly skips live; `--root DIR` for isolated roots; `--snapshot FILE` for digest-bearing receipt) | 0 clean; 1 failed (FAIL or required UNKNOWN; read counts); 2 could-not-evaluate (usage or snapshot refusal); other could-not-evaluate; snapshot preserves child 0/1 | `bash tools/mado-verify.sh --selftest`; `--selftest`: 0 clean, 2 failed (assertion failure), other could-not-evaluate | `tools/mado-verify.sh`: `EXPECT`, `LOCAL`, omarchy/theme and live-version pins; fixture expectations in `selftest()` | no configuration writes; selftest uses `/tmp/w5-mado-m52-selftest.*`; snapshot writes caller-selected non-config destination only and refuses an existing file | mado |
+| mado-regression | gate | `MADO_VERIFY_HARNESS=/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh bash tools/mado-verify.sh --regression` | 0 clean (PASS); 1 failed (FAIL); 2 could-not-evaluate (SETUP or usage); other could-not-evaluate | `bash tools/mado-verify.sh --selftest`; hermetic regression scenarios assert codes and ids | `tools/mado-verify.sh`: `PIN_MADO`, `SPEC_SHA`, `TABLE_MADO`, embedded spec body; target excludes documented R7/R8 blocks | `/tmp/mado-verify-regression.*`, retained on FAIL/SETUP or `--keep`; sibling harness read-only | mado |
+| mado-snapshot-diff | gate | `bash tools/mado-verify.sh --snapshot-diff OLD NEW` | 0 clean (SAME or detail-only change); 1 failed comparison (class or scope changed, not a desktop-health verdict); 2 could-not-evaluate (SETUP or usage); other could-not-evaluate | `bash tools/mado-verify.sh --selftest`; snapshot scenarios assert codes and row ids | v1 format and comparison expectations in `tools/mado-verify.sh`; caller supplies both receipts | read-only inputs | mado |
+| mado-frozen-regression | gate | `python3 .ufo/waves/round-13/frozen/verify.py` | 0 clean (`frozen_match`); 1 failed (`frozen_verdict_mismatch`); 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same command with `--selftest`; 0 clean, 2 failed; isolated fixtures assert exit and stable id | `.ufo/waves/round-13/frozen/expected.json` pins both `gate.sh` and `harness.sh` before execution plus expected exit/marker | reads committed snapshots; child regression uses isolated temporary trees; selftest temporary fixtures | mado |
+| mado-source-merge | gate | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --registry corpus/SOURCES.md` | 0 clean; 1 failed merge-review screen (active URL collision); 2 could-not-evaluate (usage/read/parse/policy); other could-not-evaluate | same script with `--selftest`; 0 clean, 1 failed; in-memory fixtures assert exit and named findings | same script: `run_selftest()` expected fixture decisions and `supersedes` policy | read-only; no scope-overlap oracle or network lookup | mado |
+| mado-round13-measure | probe | `python3 .ufo/waves/round-13/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (measurement probe, not a verdict gate) | same script: revision-bound source join, U4 facets and four named-case expectations; SCORECARD defines rubric | temporary isolated config fixtures; no live config writes | mado |
+
+Regression's mutable sibling harness digest is printed as provenance, not
+an enforced harness pin. A passing run binds the observed target, spec and
+harness together; it is not equivalence to an older harness revision.
+For the committed two-evidences replay, use `mado-frozen-regression`:
+its input digests are verified before executing the copied gate/harness.
+These are explicitly frozen round-13 inputs, not aliases for mutable
+sibling code. Registration alone is not verification; the round report
+cites the actual self-invocations and frozen-run outcome.
+
 ## Evidence trail & sources
 
 - Round 1: `corpus/knowledge/hyprland-config-plane.md` (MADO-1, 217 L by `wc -l`; editor
