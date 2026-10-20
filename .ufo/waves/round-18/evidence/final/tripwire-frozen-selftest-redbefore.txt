@@ -1,0 +1,35 @@
+RECEIPT tool=tools/mado-tripwire.py tool_sha256=c87a31efa2f4eb6dc7a10249ee490ccc5c0913503af717cc6ce95b7ded59b4bb measured_commit=abfbf35b1ed4d4a1eb294d525ef286be30f3886f utc=2026-10-20T16:25:37Z cmd=python3 -I <abfbf35 tool> --selftest .ufo/waves/round-18/tripwire/frozen (suite bytes at be886a3cd05cf27d47a976c69df2f5f556759c08)
+CASE match-findings ok
+CASE match-clean ok
+CASE verdict-missing-finding ok
+CASE verdict-extra-finding ok
+CASE verdict-exit-label ok
+CASE known-miss-violated ok
+CASE swapped-missing-extra ok
+CASE tampered-input-byte ok
+CASE missing-input ok
+CASE extra-unlisted-input ok
+CASE symlink-input ok
+CASE symlinked-inputs-dir FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: snapshot_tampered') got=(0, 'MADO_TRIPWIRE_FROZEN: frozen_match')
+CASE path-traversal FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(2, 'MADO_TRIPWIRE_FROZEN: snapshot_tampered')
+CASE absolute-input FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(2, 'MADO_TRIPWIRE_FROZEN: snapshot_tampered')
+CASE unreachable-line FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE contradictory-exit-label FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE label-clean-with-findings FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE unknown-class FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE known-miss-blank FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(0, 'MADO_TRIPWIRE_FROZEN: frozen_match')
+CASE known-miss-unreachable FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE expected-unlisted-file FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE duplicate-input-path FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(0, 'MADO_TRIPWIRE_FROZEN: frozen_match')
+CASE unpinned-entry ok
+CASE malformed-expected-json ok
+CASE wrong-schema ok
+CASE match-permitted-only ok
+CASE match-permit-partial ok
+CASE unknown-key FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(0, 'MADO_TRIPWIRE_FROZEN: frozen_match')
+CASE duplicate-json-key FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: frozen_error') got=(1, 'MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch')
+CASE symlinked-frozen-dir FAIL want=(2, 'MADO_TRIPWIRE_FROZEN: snapshot_tampered') got=(0, 'MADO_TRIPWIRE_FROZEN: frozen_match')
+CASE symlinked-frozen-dir-target ok
+SELFTEST_SCRIPT_SHA256: c87a31efa2f4eb6dc7a10249ee490ccc5c0913503af717cc6ce95b7ded59b4bb
+SELFTEST_SUMMARY: 17/31 passed failed=['symlinked-inputs-dir', 'path-traversal', 'absolute-input', 'unreachable-line', 'contradictory-exit-label', 'label-clean-with-findings', 'unknown-class', 'known-miss-blank', 'known-miss-unreachable', 'expected-unlisted-file', 'duplicate-input-path', 'unknown-key', 'duplicate-json-key', 'symlinked-frozen-dir']
+exit=1

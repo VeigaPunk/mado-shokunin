@@ -1283,3 +1283,28 @@ Wave-2 corrections landed at `f71ccbe` and are logged in
 selftest 372/372, classifier 52/52, U 7/7, navigation 32/32, census exit 0.
 Freshness not re-measured (no live/no-live gate run; host moved under the
 09:15 `-Syu`). Admission not asserted.
+
+## 2026-10-20 — round 18: producer identity, P3/P5 sourced routes, tripwire frozen replay
+
+Trigger: admitted round-17 closure (`corpus/lessons/round-17-verifier-spotcheck.md`,
+routed R17-V1..V5) at baseline `d9a5a18`; jj-migration audits
+`.ufo/waves/hyaku/jj-w1/reports/JjAuditMado.md` (F10/F14) and `JjTrialMado.md`
+(`.ufo/state/` ignore). Pre-registration `d3a0000`; integration `4c103b5`;
+receipts `abfbf35`; wave-2 integration `be886a3`. Host pause carried; L1 issued
+no package/service/compositor/input command.
+
+C1: QUALITY 24 (producer identity on receipts), 25 (mutant bite), 26 (producer
+status through pipes); lesson M1-M8; round-17 erratum. 15/23 → 18/26.
+C2: P3 Walker and P5 theme/wallpaper documentary routes, rows S072-S095 with fetch
+receipts and committed licensed bodies; rubric V 4/6 → 6/6.
+C3: `tools/mado-tripwire.py --frozen` digest-pinned replay over committed incident
+lines; registry row `mado-tripwire-frozen` (gate).
+Routed fixes: gate F10/F14 (pipefail inside the substitution, stub rc knobs,
+OM9/OM10, PIN re-cut, 389/389, regression 10/10); `.gitignore` `.ufo/state/`,
+`__pycache__/`. Re-cut real-transcript receipts carry producer headers (identical).
+
+Waves: w1 88 seats (0 dead), w2 73 seats (14 dead without a report: CriticAdmission and
+CriticHonestyW2 on an Anthropic 429, 12 more when the L1 session exited on the
+same 429; ScribeReportDraft failed on a usage limit after writing its draft;
+partial outputs re-verified and kept, none respawned). Harm watch PASS at `be886a3`. Evidence:
+`.ufo/waves/round-18/evidence/final/`. Admission not asserted.

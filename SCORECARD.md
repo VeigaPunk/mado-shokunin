@@ -982,3 +982,49 @@ needs no note or criterion. Routed jj-migration fixes (gate rc capture,
 Harm watch: hermetic selftest N/N (re-cut if the gate moves), classifier
 52/52, tripwire suites N/N, U 7/7, navigation complete, census exit 0.
 No exploratory claim.
+
+## Round 18 — committed results and bounded author verdicts
+
+Measured with `python3 .ufo/waves/round-17/measure.py REV` (instrument sha256
+`de4c422b…`, unchanged): before `d9a5a18` (`evidence/measure-before.json.txt`),
+after `4c103b5` (`evidence/measure-after.json.txt`) and final `be886a3`
+(`evidence/final/measure-final.json.txt`; identical c1/c2). Every receipt's first
+line names `tool_sha256` and `measured_commit` (QUALITY 24).
+
+| Claim / axis | Before → after | Verdict / evidence |
+|---|---|---|
+| C1 calibration, literal lesson-citation fraction | 15/23 = 6.5217 → 18/26 = 6.9231 (+0.4014) | improved narrowly; criteria 24-26 append-only, each with a check shown to fail: 24 `receipt-check.py` 21/21 exit 0 with 6 round-17 reds `MISSING_PROVENANCE`, `STALE`/`SHA_MISMATCH` controls; 25 `measure-mutants.py` 6/6 bites (loose `a280b3ab…` vs tight `de4c422b…`), re-run reproduced (w2 MeasureMutantsRerun); 26 OM9/OM10 (gate 389/389; old gate FAIL "local edit" on `e3b0c442…`, `gate-rc-redbefore.txt`; pipefail reverted → fails, w2 CriticC1W2/MutGateOM 8/8 killed). Semantic block counter 18/23 → 21/26. Outside critics: 24 was not green at `abfbf35` (anchored regex, PENDING claims) — fixed in `be886a3` |
+| C2 coverage, rubric V (P1-P6) | 4/6 = 6.6667 → 6/6 = 10.0000 | improved as declared, documentary sourcing only: P3 `walker-route-r18.md` (S072-S091), P5 `theme-route-r18.md` (S092-S095). 24/24 new rows re-opened by non-author seats, all agree (lesson § Gate). Credited web rows 21/21 have a 200 receipt whose sha is in the anchor; 329 licensed bodies committed, 95 digest-only; fresh clone `fetch-verify` exit 1 only on 4 per-fetch HTML tree URLs in S094's secondary anchor (M7). Host rows S090/S091/S095 have no receipt by construction. Rubric V now saturated on its finite denominator: retained as harm watch; behaviour, rendered UI and running binaries stay `[UNK]` |
+| C3 operability capability, tripwire frozen replay | `--frozen` usage exit 2 at `d9a5a18` (`evidence/tripwire-frozen-before.txt`) → gate entry | capability acquired: `--frozen .ufo/waves/round-18/frozen` `frozen_match` exit 0, one-byte tamper `snapshot_tampered` exit 2 (`evidence/final/`), frozen suite 31/31 (the `abfbf35` tool 17/31), provenance `match`; scan suites 9/16/33/30 unchanged; real-transcript re-cut identical. Change-detector over 5 pinned incident files (8 findings, 3 known misses), not classifier correctness, prevention or R15-V1 remediation |
+
+Tool shas, labelled: tripwire `962919ce…` (`d9a5a18`, round-17 landed), `c87a31ef…`
+(`4c103b5`/`abfbf35`), `c1ae45a7…` (`be886a3`, final). Gate `fba82a66…` →
+`c9fb0cef…`; `PIN_MADO` `cd1d73d7…` → `20714096…`, regression 10/10 PASS.
+
+Harm watch at `be886a3` (`evidence/final/harm-watch-summary.txt`, PASS): gate
+selftest 372 → 389/389 (+17 OM9/OM10, none dropped), classifier 52/52, tripwire
+9/9, 16/16, 33/33, 30/30, frozen 31/31, failsafe 1/1, U 7/7, navigation 32/32 →
+34/34, census exit 0 (three historical W04). Freshness: not re-measured as a score;
+SKILL erratum records the walker 2.17.0 → 2.17.2 move by file read. No axis harmed
+by lane action. Host: `/var/log/pacman.log:3161-3169` records a `pacman -U zcode`
+at 13:23 -03 during this round — no mado tool call issued it (seat scan
+`evidence/final/tripwire-r18-seats.txt` clean in covered forms); actor `[UNK]`,
+operator-owned; R15-V1 unchanged and operator-owned.
+Sources 71 → 95 (A 64 → 88; mined 56 → 80). Saturation 9.0 / N=3 unchanged;
+retired: none.
+
+### Capabilities (round 18)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tripwire frozen replay (gate entry) | Verify digests of committed incident transcript lines and compare the tripwire's verdict with a pinned expected verdict (0 match / 1 mismatch / 2 tampered, unpinned or baseline error) | `python3 -I tools/mado-tripwire.py --frozen .ufo/waves/round-18/frozen`; `--selftest .ufo/waves/round-18/tripwire/frozen`; `evidence/final/tripwire-frozen-*.txt` | 18 |
+
+### Planned (round 19; intent only)
+
+1. operability — apply or reject the three tripwire drafts (`drafts/TwMissBashCVar.patch`,
+   `TwMissHelperFn.patch`, `TwInstallerChannels.patch`), re-pinning the frozen
+   baseline at the landed classifier; a jj command class.
+2. coverage — a rubric beyond V (observed behaviour or module text), and a
+   superseding row for S094 without HTML digests; PROVINCE refinement for the
+   `~/.config/omarchy/**` path root (w2 ConnProvinceScope).
+3. freshness — re-anchor the remaining 2.17.0-era pins and gate `walker` version pin.
