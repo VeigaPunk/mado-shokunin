@@ -1055,3 +1055,66 @@ arm reorder) only by the R10 pin assertion. receipt-check controls also include
 `NOT_ANCESTOR` and `PRODUCER_MISMATCH`. Frozen findings F1/F2 (blank-line pin on an
 expected finding reads verdict mismatch; `link/.` bypasses the symlinked-dir check)
 and `measure-mutants.py` defaulting `--out` to the lane are routed to round 19.
+
+## Round 19 — declared claims (2026-10-20)
+
+Baseline `9c54c56a6a7528675027b7f628f97a1b8d1b8e8d` (includes the admitted
+round-18 closure `round-18-verifier-spotcheck.md`, routed R18-V1..V4 plus the
+carried frozen F1/F2, `measure-mutants.py --out`, jj-audit F6/F9/F16/F17 and the
+three tripwire drafts). Written before any round-19 wave. L1 holds the canonical
+planner seat; wave items are bounded leaf work. Host pause carried: no package
+query or transaction, service, compositor, input or screenshot operation; config
+trees and host binaries are read as file bytes only. R15-V1 stays operator-owned.
+Lane VCS is jj-colocated; commits only through `scripts/hyaku/jj-lane.sh`.
+Baseline receipts: `.ufo/waves/round-19/evidence/*-before.txt` (first line
+`RECEIPT … tool_sha256=… measured_commit=9c54c56…`).
+
+Axis re-derivation at `9c54c56` (QUALITY 22): calibration literal 18/26 =
+**6.9231** (`python3 .ufo/waves/round-17/measure.py REV`, instrument `de4c422b…`
+unchanged); coverage rubric V 6/6 (saturated, harm watch) and U-route 7/7 (harm
+watch); operability hermetic suites 389/389 + classifier 52/52 + tripwire suites
+(harm watch). Two bounded sub-axis rubrics are declared this round, before
+measurement, because the routed defects sit on ground no existing rubric
+counts:
+
+- freshness / walker version-pin currency: `python3 -I
+  .ufo/waves/round-19/fresh-pins.py REV`. Denominator fixed at `9c54c56`: owned
+  files (corpus/knowledge/*.md, corpus/README.md, SKILL.md, PROVINCE.md, tools/*)
+  whose bytes contain `2.17.0` — 13 files. Current = the file carries a line
+  holding `2.17.2` and an `S###` row token. Before **2/13 = 1.5385** (lowest).
+- operability / tripwire recall on the frozen real-incident lines: `python3 -I
+  .ufo/waves/round-19/tw-recall.py REV`. Denominator fixed at `9c54c56`: the 6
+  (file, line) pairs in `.ufo/waves/round-18/frozen/expected.json`
+  (`expected_findings` ∪ `known_misses`), inputs digest-checked; numerator =
+  lines on which `REV:tools/mado-tripwire.py --scan` reports ≥1 finding. Before
+  **3/6 = 5.0000** (tool `c1ae45a7…`).
+
+- **C1 calibration.** Route R18-V1 (S094 anchor cites per-fetch HTML digests),
+  R18-V4 (S084 cites the unpinned docs.rs `latest` alias), R18-V3 (a supersession
+  marked in two files while eleven owned files kept the old pin) and R18-V2
+  (criterion 26's own red-before rests on a headerless receipt) into
+  `lessons/round-19.md` `## Mistakes` and append-only lesson-cited QUALITY
+  criteria, each with a runnable check shown red on a real `9c54c56` artifact.
+  Before 18/26 = 6.9231 → target ≥ 21/29.
+- **C2 freshness (sourced).** Re-anchor the walker pins: every file in the
+  fixed set gains an in-file dated pointer (or a re-pinned value) citing a
+  SOURCES row opened this round for the host walker bytes (binary rodata version
+  literal + file digest, read as bytes) and the upstream release; the gate's
+  `live.walker.version` pin and its selftest stub move with it. Before 2/13 →
+  target 13/13. Live `walker --version` is not run (host pause): the row states
+  file-byte evidence only.
+- **C3 operability.** Apply or reject the three round-18 tripwire drafts
+  (`TwMissBashCVar`, `TwMissHelperFn`, `TwInstallerChannels`), rebased on the
+  `c1ae45a7…` tool, with every existing suite still all-pass; re-pin a round-19
+  frozen baseline at the landed classifier (the round-18 baseline must then read
+  `frozen_verdict_mismatch`, which is the change made visible). Before 3/6 →
+  target 6/6.
+
+Separable: C1 counts QUALITY text only; C2 needs no criterion or tool change
+outside the gate's pin; C3 needs no note, row or criterion. Non-claim repairs
+(harm-watched): S094 superseding row and S084 re-point (frontier step), PROVINCE
+path-root line for `~/.config/omarchy/**`, frozen F1/F2, `measure-mutants.py
+--out`, gate F6 (tip instead of `HEAD`) and F9 (`rev-parse --git-dir`), a
+landedness check (F16). Harm watch: gate selftest N/N (re-cut if the gate
+moves), classifier 52/52, tripwire suites N/N, frozen r18 suite 31/31, U 7/7,
+rubric V 6/6, navigation complete, census exit 0. No exploratory claim.
