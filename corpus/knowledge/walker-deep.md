@@ -629,3 +629,4 @@ a correction is a new block citing the block it corrects._
 
 - Three items the block calls "not re-run on 2.17.2" were re-read this round as file bytes: the embedded default run (now at offset 806,960, byte-equal to `/etc/xdg/walker/config.toml`, S091), the `struct Walker` arity (31 elements in the 2.17.2 binary, w1 DeltaWalkerConfig) and the `/etc/xdg` line anchors (shifted +6/+7, map in w1 DeltaWalkerConfig). Error/fallback tokens were not re-read.
 - The `--help` option text is byte-identical between 2.17.0 and 2.17.2 (838-byte run, w1 DeltaWalkerCli); only the GLib framing is host-library-bound. ElephantConfig defaults and generated-doc counts live in §4.1, not §5.
+- Further delta sites (w2 ReviewDeltaCarry): §3 lines 162-164 list six `after` values; the 2.17.2 default adds `SimpleDelete` (seven). Line anchors outside §2.1-2.4/§4.2/§7.4 (§3, §4.3, §9) shifted +6/+7 as well.

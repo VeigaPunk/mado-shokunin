@@ -1048,6 +1048,30 @@ MADO_R8_GIT_STUB
   st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM17 (the detached commit carries no tag)"
   st_not_has "OM17: no rescue on a tree mismatch" "$om_out" "at refs/heads/master"
   st_counts_agree "$om_out" "OM17: counts agree with rows"
+
+  # --- OM18: no `.git` in the tree, an ancestor repository would answer ----
+  # ReviewJjFinal: `rev-parse --git-dir` walks UP, so a .git-less tree under
+  # ~/.git (a dotfiles repo) resolves to that repo. The fixture removes `.git`
+  # and `.jj`; the stub git still answers `--git-dir` with rc 0, which is
+  # exactly the ancestor's answer — the rows must stay UNKNOWN and never
+  # read that repository's tip.
+  local OMN="$T/omarchy/root-no-git"
+  cp -a "$OMR" "$OMN"
+  rm -f "$OMN/.agents/skills/omarchy"
+  ln -s "$OMN/.local/share/omarchy/default/omarchy-skill" "$OMN/.agents/skills/omarchy"
+  rm -rf "$OMN/.local/share/omarchy/.git" "$OMN/.local/share/omarchy/.jj"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMN" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM18 (the ancestor repo is not this tree's checkout)"
+  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM18"
+  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "no git checkout at" \
+    "OM18: the UNKNOWN names the tree that has no .git"
+  st_row_has "$om_out" omarchy.skill.vs_head UNKNOWN "OM18 (no checkout to compare against)"
+  st_not_has "OM18: never the ancestor's tip" "$om_out" "at refs/heads/master"
+  st_not_has "OM18: never a MOVED against the ancestor" "$om_out" "MOVED: refs/heads"
+  st_eq  "OM18: zero omarchy FAILs beyond the sha row" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM18: counts agree with rows"
   # <<< MADO-R8-OMARCHY-BLOCK <<<
 
   # --- scenarios T: the theme plane, hermetic (theme-wallpaper-plane.md §6) --
@@ -1959,35 +1983,37 @@ MADO_R8_CRAFT_B
 # gate-rc-redbefore.txt (old FAIL e3b0c442 + "local edit" → UNKNOWN rc=128).
 #
 # Re-cut record — round 19 / hyaku (jj-w1 F6/F9 + the walker 2.17.2 re-pin,
-# after the CriticC2/CriticHonesty wave-1 corrections and the CriticC2W2 /
-# CriticAdmission / SentinelGatePath wave-2 corrections):
+# after the CriticC2/CriticHonesty wave-1 corrections, the CriticC2W2 /
+# CriticAdmission / SentinelGatePath wave-2 corrections and ReviewJjFinal):
 # the omarchy tag/head rows read the branch tip a checkout names instead of
-# HEAD, and the rescue is gated twice: $tree/.jj must exist (jj colocation)
-# and HEAD^{tree} must equal <tip>^{tree} (an EMPTY working-copy commit on the
-# tip). `jj new v3.8.3` with the bookmark still at the pin, or any plain-git
-# detached HEAD, keeps the HEAD reading — the old rows' UNKNOWN + false MOVED
-# is fixed only for the empty-commit case, and a real MOVED is never hidden.
-# The repository test is `rev-parse --git-dir`, so a git worktree (`.git` is
-# a FILE) is a checkout too. `live.walker.version` moved 2.17.0 → 2.17.2
-# (S096 host rodata + S090 pacman.log:2929) and its PASS is narrowed to "the
-# installed binary prints the pin" — the 2.17.0-era claims (MADO-R3-1 §6,
-# the 298 L packaged default config /etc/xdg/walker/config.toml, 2026-10-14)
-# stay dated and are never refreshed by a held pin; the pin attribution is
-# S096/S090, not SKILL.md (which keeps the measured 2.17.0 at :23). The two
-# walker live rows are split into walker_live_rows; the selftest gained
-# WL0-WL3 (a stub walker under a REPLACED PATH: both pin arms, the narrowed
-# PASS text, the absent binary), OM10A/OM10B/OM11-OM17 (tip resolution and
-# its two gates, the worktree `.git` file, the ambiguous/no-tip UNKNOWN arms,
-# OM16 plain-git detached, OM17 non-empty jj working copy) and OM1's
-# live.plane guard assertion (SentinelGatePath F-2). All of it sits outside
-# the marked R7/R8 families, so the derived target moved. Re-cut 2026-10-20
-# from the printed REGRESSION_RECUT command against the recorded spec
-# (SPEC_SHA matches): target f03e6cab… (2,804 L / 142,162 B), 10/10 KILLED,
-# 0 survived, 0 inconclusive, flips 0, control GREEN (347/347 assertions on
-# the derived target), MUTATE_RESTORE OK, target sha unchanged before/after.
-# PIN_MADO moves 20714096… → f03e6cab…; TABLE_MADO is unchanged — the
-# re-pin, the tip resolution and every correction lost no kill. Evidence:
-# .ufo/waves/round-19/w1/reports/GateFreshJj.md §3.
+# HEAD, and the rescue is gated three times: $tree/.jj must exist (jj
+# colocation), HEAD^{tree} must equal <tip>^{tree} (an EMPTY working-copy
+# commit on the tip), and the checkout must be THIS tree's — the repository
+# test requires a `.git` entry here (dir or worktree FILE) before
+# `rev-parse --git-dir`, because that command walks UP and would otherwise
+# adopt an ancestor repository (a .git-less tree under a dotfiles repo).
+# `jj new v3.8.3` with the bookmark still at the pin, any plain-git detached
+# HEAD, and any .git-less tree keep the old reading — UNKNOWN or MOVED, never
+# a false PASS. `live.walker.version` moved 2.17.0 → 2.17.2 (S096 host rodata
+# + S090 pacman.log:2929) and its PASS is narrowed to "the installed binary
+# prints the pin" — the 2.17.0-era claims (MADO-R3-1 §6, the 298 L packaged
+# default config /etc/xdg/walker/config.toml, 2026-10-14) stay dated and are
+# never refreshed by a held pin; the pin attribution is S096/S090, not
+# SKILL.md (which keeps the measured 2.17.0 at :23). The two walker live rows
+# are split into walker_live_rows; the selftest gained WL0-WL3 (a stub walker
+# under a REPLACED PATH: both pin arms, the narrowed PASS text, the absent
+# binary), OM10A/OM10B/OM11-OM18 (tip resolution and its gates, the worktree
+# `.git` file, the ambiguous/no-tip UNKNOWN arms, OM16 plain-git detached,
+# OM17 non-empty jj working copy, OM18 .git-less tree under an ancestor repo)
+# and OM1's live.plane guard assertion (SentinelGatePath F-2). All of it sits
+# outside the marked R7/R8 families, so the derived target moved. Re-cut
+# 2026-10-20 from the printed REGRESSION_RECUT command against the recorded
+# spec (SPEC_SHA matches): target 367ff5ec… (2,836 L / 144,260 B), 10/10
+# KILLED, 0 survived, 0 inconclusive, flips 0, control GREEN (355/355
+# assertions on the derived target), MUTATE_RESTORE OK, target sha unchanged
+# before/after. PIN_MADO moves 20714096… → 367ff5ec…; TABLE_MADO is unchanged
+# — the re-pin, the tip resolution and every correction lost no kill.
+# Evidence: .ufo/waves/round-19/w1/reports/GateFreshJj.md §3.
 #
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
@@ -2001,7 +2027,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='f03e6cabc8d8f129c4b801ee0234c4b0340ecac224d8b641f4cdae51c13a24a5'
+PIN_MADO='367ff5ec9613701a6bbd90979edcfdd229d9440b824f7edc0a4bfd8d8b784f9e'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -3737,7 +3763,15 @@ omarchy_plane() {
     row omarchy omarchy.theme SKIP "$nolive"
   else
     local omtree=0
-    if have git && tmo git -C "$tree" rev-parse --git-dir >/dev/null 2>&1; then
+    # Round 19 / jj-w1 F9 + the ReviewJjFinal correction: a checkout is a
+    # `.git` entry in THIS tree (a directory, or a FILE for a git worktree).
+    # `rev-parse --git-dir` alone walks UP, so a .git-less tree under an
+    # ancestor repository (e.g. ~/.local/share/omarchy under a dotfiles repo)
+    # would resolve to that repo and the pin rows would judge the wrong
+    # checkout. Require the entry first; without it the rows stay the old
+    # "no git checkout at …" UNKNOWN.
+    if [ -e "$tree/.git" ] && have git \
+       && tmo git -C "$tree" rev-parse --git-dir >/dev/null 2>&1; then
       omtree=1
     fi
     if ! have omarchy; then

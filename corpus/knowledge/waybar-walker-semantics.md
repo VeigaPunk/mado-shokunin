@@ -475,3 +475,4 @@ a correction is a new block citing the block it corrects._
 
 - The packaged default and the user walker config were re-read this round as file bytes (`/etc/xdg/walker/config.toml` 305 L / 13,743 B / `3c5c6867…`, S091; `~/.config/walker/config.toml` 49 L / 1,336 B / `fecf71fa…`, unchanged; w1 DeltaWalkerConfig, w2 AtkPtrWaybarWalkerSemantics), so "not re-checked"/"not re-hashed this round" above is wrong for those two files; the binary bytes are S096.
 - §1 does carry a walker version pin (line 23), and the §6.7/§6.8 live state (PID 1808, running) is voided by the walker-restart hook runs (`/var/log/pacman.log:3062`, `:3123`, S090), not merely dated. Theme-file bytes are unchanged, but their meaning on 2.17.2 may differ (w1 DeltaWalkerConfig: blur radius handling on GTK 4.24) — [UNK].
+- Further delta sites (w2 ReviewDeltaCarry): the §8 packaged anchor `:53-58` (lines 385-386) is `:59-64` in the 2.17.2 default; §6.3 lines 261-262 likewise shifted.

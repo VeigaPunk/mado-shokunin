@@ -128,3 +128,15 @@ bare `/tmp` remotes; 0 against the lane path). The scan did **not** see M12's re
 probe`: it ran inside a harness script the seat wrote and then executed, a form the tool
 documents as unanalysed. M12's captured-by is therefore `none (seat self-report)`, not the
 tripwire. AdvInstallers' `uv run --with pip` is not classified (documented limit).
+- QUALITY 17 overlap screen for S096 (w2 ReviewSourcesRows F3): S096 shares `pacman.log:2929`
+  with S090 and the binary sha256 with S091. It is kept as a separate host row because its
+  scope is the installed walker *version identity* (the compiled-in literal, BuildID, package
+  `desc`/`mtree` binding), which neither S090 (log lines only) nor S091 (config and binary
+  bytes, no version literal) states. S097's host-side teach clauses are grounded in w1
+  `SrcS094.md`, not in its upstream-only anchor (F4; noted, row unchanged).
+- Gate jj rows after wave 2 (w2 ReviewGateF6F9, ReviewJjFinal): at `01b8094` an empty
+  `.jj` directory alone enabled the tip rescue (closed at `61eaa07` by the tree-equality
+  check, OM17). Still open (low): a stale `.jj` with HEAD detached on a content-identical
+  commit reads HELD (no ancestry check). F9's `rev-parse --git-dir` walked up to an
+  ancestor repo (`/home/vgpnk/.git`) for a `.git`-less tree and accepted bare repos; the
+  final gate adds `[ -e "$tree/.git" ]` before it (see the final gate receipt).
