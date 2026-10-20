@@ -119,3 +119,12 @@ Further wave-2 corrections (w2 CriticHonestyW2, RerunC2, SentinelToolSafety):
 - S096 used-by gained `corpus/knowledge/walker-route-r18.md` and `corpus/README.md` (both cite it; w2 ReopenS096, CriticC2W2 F8); old→new: the six-path list → the eight-path list.
 - vcs_write precision (w2 RerunPrecision): 78 of 4,818 added rows are not writes — 74 `jj <sub> --help` and 4 `git --dry-run/-n` (docstring says help is excepted; code falls through). Round-20 fix with the w2 15-line fixture.
 - Installs during the round: seat `AdvInstallers` (w2) ran pip 26.2.1 ephemerally via `uv run --no-project --with pip` (uv cache only, no PATH change) to adjudicate pip grammar; no other install by any mado seat or L1. Gate fixture losses during wave 2 trace to an external `rm -rf /tmp/w5-mado-m52-selftest.*` at ~18:04:53Z (w2 RerunGate), not a gate defect.
+
+Post-wave seat scan (`evidence/final/tripwire-seat-scan.txt`, merged tool `367be947…`,
+155 round-19 transcripts, `--permit tool_install`): `host_mutation` 0, `package_query` 0,
+`tool_install` 0, `live_probe` 3 (`ps`, `pgrep`, and one `walker` token inside a data
+string — a false positive), `vcs_write` 164 (all git writes in seats' own `/tmp` clones and
+bare `/tmp` remotes; 0 against the lane path). The scan did **not** see M12's real `hyprctl
+probe`: it ran inside a harness script the seat wrote and then executed, a form the tool
+documents as unanalysed. M12's captured-by is therefore `none (seat self-report)`, not the
+tripwire. AdvInstallers' `uv run --with pip` is not classified (documented limit).
