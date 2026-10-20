@@ -1816,3 +1816,14 @@ This append re-anchors present-tense SKILL claims contradicted by the 2026-10-17
 
 Append-only disposition: this section records the moved pins and their re-measure commands; it does not authorize edits to config files, a compositor reload, or a change to the operator-owned gkeep project.
 
+
+## Errata (round 18, append-only)
+
+> Erratum (round 18; ConnStalePinsSweep): the version pin "walker 2.17.0" at the
+> top of this file (lines 22-23) and the launcher row of the config-plane map
+> ("walker 2.17.0"; packaged table "298 L") are dated 2026-10-14. File reads on
+> 2026-10-20: `/var/log/pacman.log:2929` upgraded walker 2.17.0-1 → 2.17.2-1 and
+> `:3095` elephant 2.21.0-1 → 2.22.1-1; `/etc/xdg/walker/config.toml` is now
+> 13,743 B / 305 L / `3c5c6867…` (byte-equal to upstream v2.17.2
+> `resources/config.toml`). The running binary is `[UNK]` (no process probe).
+> Current documentary route: `corpus/knowledge/walker-route-r18.md`.

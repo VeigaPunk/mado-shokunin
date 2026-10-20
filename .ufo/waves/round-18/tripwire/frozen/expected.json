@@ -1,6 +1,6 @@
 {
  "schema": "mado-tripwire-selftest-v1",
- "note": "round-18 frozen-mode selftest (synthetic OMP-shaped JSONL; no real transcript bytes)",
+ "note": "round-18 frozen-mode selftest (synthetic OMP-shaped JSONL; no real transcript bytes). Frozen cases pin the verdict schema/outcome/exit and the missing/extra counts; an unreachable pin is frozen_error.",
  "cases": [
   {
    "name": "match-findings",
@@ -30,6 +30,8 @@
    ],
    "want_exit": 1,
    "want_label": "frozen_verdict_mismatch",
+   "want_missing": 1,
+   "want_extra": 0,
    "want_findings": []
   },
   {
@@ -40,6 +42,20 @@
    ],
    "want_exit": 1,
    "want_label": "frozen_verdict_mismatch",
+   "want_missing": 0,
+   "want_extra": 1,
+   "want_findings": []
+  },
+  {
+   "name": "verdict-exit-label",
+   "mode": "frozen",
+   "args": [
+    "verdict-exit-label"
+   ],
+   "want_exit": 1,
+   "want_label": "frozen_verdict_mismatch",
+   "want_missing": 0,
+   "want_extra": 2,
    "want_findings": []
   },
   {
@@ -50,6 +66,20 @@
    ],
    "want_exit": 1,
    "want_label": "frozen_verdict_mismatch",
+   "want_missing": 0,
+   "want_extra": 1,
+   "want_findings": []
+  },
+  {
+   "name": "swapped-missing-extra",
+   "mode": "frozen",
+   "args": [
+    "swapped-missing-extra"
+   ],
+   "want_exit": 1,
+   "want_label": "frozen_verdict_mismatch",
+   "want_missing": 2,
+   "want_extra": 1,
    "want_findings": []
   },
   {
@@ -93,13 +123,113 @@
    "want_findings": []
   },
   {
+   "name": "symlinked-inputs-dir",
+   "mode": "frozen",
+   "args": [
+    "symlinked-inputs-dir"
+   ],
+   "want_exit": 2,
+   "want_label": "snapshot_tampered",
+   "want_findings": []
+  },
+  {
    "name": "path-traversal",
    "mode": "frozen",
    "args": [
     "path-traversal"
    ],
    "want_exit": 2,
-   "want_label": "snapshot_tampered",
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "absolute-input",
+   "mode": "frozen",
+   "args": [
+    "absolute-input"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "unreachable-line",
+   "mode": "frozen",
+   "args": [
+    "unreachable-line"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "contradictory-exit-label",
+   "mode": "frozen",
+   "args": [
+    "contradictory-exit-label"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "label-clean-with-findings",
+   "mode": "frozen",
+   "args": [
+    "label-clean-with-findings"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "unknown-class",
+   "mode": "frozen",
+   "args": [
+    "unknown-class"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "known-miss-blank",
+   "mode": "frozen",
+   "args": [
+    "known-miss-blank"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "known-miss-unreachable",
+   "mode": "frozen",
+   "args": [
+    "known-miss-unreachable"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "expected-unlisted-file",
+   "mode": "frozen",
+   "args": [
+    "expected-unlisted-file"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "duplicate-input-path",
+   "mode": "frozen",
+   "args": [
+    "duplicate-input-path"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
    "want_findings": []
   },
   {
@@ -153,23 +283,43 @@
    "want_findings": []
   },
   {
-   "name": "absolute-input",
+   "name": "unknown-key",
    "mode": "frozen",
    "args": [
-    "absolute-input"
+    "unknown-key"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "duplicate-json-key",
+   "mode": "frozen",
+   "args": [
+    "duplicate-json-key"
+   ],
+   "want_exit": 2,
+   "want_label": "frozen_error",
+   "want_findings": []
+  },
+  {
+   "name": "symlinked-frozen-dir",
+   "mode": "frozen",
+   "args": [
+    "symlinked-frozen-dir"
    ],
    "want_exit": 2,
    "want_label": "snapshot_tampered",
    "want_findings": []
   },
   {
-   "name": "verdict-exit-label",
+   "name": "symlinked-frozen-dir-target",
    "mode": "frozen",
    "args": [
-    "verdict-exit-label"
+    "symlinked-frozen-dir-target"
    ],
-   "want_exit": 1,
-   "want_label": "frozen_verdict_mismatch",
+   "want_exit": 0,
+   "want_label": "frozen_match",
    "want_findings": []
   }
  ]

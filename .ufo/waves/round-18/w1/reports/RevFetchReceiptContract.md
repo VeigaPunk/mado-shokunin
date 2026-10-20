@@ -303,10 +303,11 @@ false failure for host rows. The closure skips them (prints
 
 ### F13. Orphans and "append-only" before the commit
 
-Five bodies are not referenced by any receipt at the snapshot
-(`MadoR18.SrcWalkerThemes/walker-ls-remote-v2.17.2.txt`,
+Five files are not referenced by any receipt at the snapshot (four bodies
+plus one annotation artifact, `FetchBackfillR17/quote-check.json`):
+`MadoR18.SrcWalkerThemes/walker-ls-remote-v2.17.2.txt`,
 `walker-tree-api.json`, `SrcOmarchyThemeHooks/tree.json`,
-`SrcOmarchyWalker/git-ls-remote-tags.txt`, `FetchBackfillR17/quote-check.json`).
+`SrcOmarchyWalker/git-ls-remote-tags.txt`.
 They are not evidence and should not be read as such. More important: the whole
 `fetch/` tree is still untracked (`?? .ufo/waves/round-18/fetch/`), and
 `.gitignore` contains only `.ufo/interactive-sessions/` and `.ufo/state/`.
@@ -335,7 +336,7 @@ independent facts.
 | check | result |
 |---|---|
 | receipts / seat dirs | 297 at 15:51Z; 301 at 15:53Z / 21 |
-| local consistency (schema, body, bytes, sha) | 0 bad; 292 ok + 5 negative |
+| local consistency (schema, body, bytes, sha) | 0 bad; 292 ok at 297 / 296 ok at 301 + 5 negative |
 | negative statuses | 5 × 404 (listed in F1) |
 | `final_url != url` | 30 (F6) |
 | tag refs / commit refs | 196 / 14 |

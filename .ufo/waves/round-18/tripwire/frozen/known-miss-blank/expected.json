@@ -1,0 +1,33 @@
+{
+ "schema": "mado-tripwire-frozen-v1",
+ "inputs": [
+  {
+   "path": "inputs/incident.jsonl",
+   "sha256": "786d61e29feaeaad1e83ce5d19bb648ecd953fc6d7f917f2d0718d0dcf3f6086"
+  }
+ ],
+ "permit": [],
+ "expected_exit": 1,
+ "expected_label": "findings",
+ "expected_findings": [
+  {
+   "file": "inputs/incident.jsonl",
+   "line": 1,
+   "class": "host_mutation",
+   "rule": "sudo"
+  },
+  {
+   "file": "inputs/incident.jsonl",
+   "line": 1,
+   "class": "host_mutation",
+   "rule": "pacman:-Syu"
+  }
+ ],
+ "known_misses": [
+  {
+   "file": "inputs/incident.jsonl",
+   "line": 2,
+   "note": "blank line: a known miss there asserts nothing because the scanner skips blank lines"
+  }
+ ]
+}

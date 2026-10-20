@@ -3,12 +3,13 @@
 Seat `MadoR18.RevSeparability18`, round 18 (hyaku phase 2), 2026-10-20.
 Read-only review; no lane gate was run and no lane file was written. All lab
 work is in `/tmp/r18sep` (ephemeral; results transcribed here). Baselines:
-`d9a5a18` (bytes) and `d3a0000` (pre-registration). Artifact snapshot at
-12:47–12:52 UTC−03: instrument `.ufo/waves/round-17/measure.py` sha256
-`de4c422b55c6…` (11963 B; `HEAD_LINES = 15`, measure.py:156,185),
-`tools/mado-tripwire.py` sha256 `c87a31ef…` (1181 L, TwFrozenMode final),
-`tools/mado-verify.sh` sha256 `c9fb0cef…` (GateRcFix, still moving during the
-review).
+`d9a5a18` (bytes) and `d3a0000` (pre-registration). Two snapshots: (a) wave
+worktree 12:47–12:52 UTC−03 (instrument `.ufo/waves/round-17/measure.py`
+sha256 `de4c422b55c6…`, 11963 B; `tools/mado-tripwire.py` `c87a31ef…`, 1181 L;
+`tools/mado-verify.sh` `c9fb0cef…`); (b) **integration commits `4c103b5`
+(tree) and `abfbf35` (receipts)**, re-run at 13:0x and reported in §7. The
+pre-integration sections are retained as the design analysis; §7 supersedes
+their numbers where the two differ.
 
 Labels: `[OBS]` observed command output, `[LAB]` observed on a `/tmp` clone or
 fixture, `[INF]` inference from read bytes.
@@ -32,16 +33,21 @@ claim text. Discarded moves: none (every candidate was cheap).
 their non-instrumented acceptance layers cross.** `measure.py` reads three
 disjoint file sets: c1 only `corpus/QUALITY.md`; c2 only `corpus/SOURCES.md`
 plus `corpus/knowledge/*.md`; c3 only `tools/mado-tripwire.py` (presence and
-sha). Removal tests confirm exact independence at that layer:
+sha). Removal tests confirm exact independence at that layer. The integrated
+tree `4c103b5`/`abfbf35` reaches the declared targets (**c1 18/26 = 6.9231,
+c2 6/6 = 10.0**), but two acceptance layers are still broken at that commit:
+criterion 24's receipt checker cannot parse its own green receipts, and the
+fetch bodies are not committed (§7).
 
-| Lab commit (clone of `d3a0000`) | c1 | c2 | c3 tool | u_routes |
+| Lab commit | c1 | c2 | c3 tool | u_routes |
 |---|---|---|---|---|
+| **integrated `4c103b5`/`abfbf35`** `[OBS]` | **18/26 = 6.9231** | **6/6 = 10.0** | `c87a31ef…` | 7 |
 | baseline `d3a0000` `[LAB]` | 15/23 = 6.5217 | 4/6 (P1,P2,P4,P6) | `962919ce…` | 7 |
 | C1 only (actual `QualityDraft.md` text appended) `[LAB]` | **18/26 = 6.9231** | 4/6 = 6.6667 | `962919ce…` | 7 |
 | C2 only (both real notes + real drafted rows, ids S072–S095) `[LAB]` | 15/23 = 6.5217 | **6/6 = 10.0** | `962919ce…` | 7 |
 | theme note only `[LAB]` | 15/23 | 5/6 (P5) | `962919ce…` | 7 |
 | walker note only `[LAB]` | 15/23 | 5/6 (P3) | `962919ce…` | 7 |
-| C3 only (final tool + frozen snapshot, no repo in cwd) `[LAB]` | 15/23 | 4/6 | `c87a31ef…` (behavioral run) | 7 |
+| C3 only (final tool + frozen snapshot, no repo in cwd) `[LAB]` | not read (no repo) | not read (no repo) | `c87a31ef…` (behavioral run) | n/a |
 
 Three couplings are real and must be resolved before the closure sentence is
 written (K1–K3 below); six more are integration hazards (K4–K9). Two claims
@@ -61,7 +67,7 @@ are **not instrumented at all**:
 |---|---|---|---|
 | C1 | `corpus/QUALITY.md` | `corpus/lessons/round-18.md` (citation target, not read); `corpus/lessons/round-17.md` erratum (optional); `.ufo/waves/round-18/{receipt-check.py,receipt-claims.json,receipt-fixtures/,measure-mutants.py,evidence/measure-mutants.json,pipe-rc-census.py,recut-receipts.sh,evidence/tripwire-*-recut.txt}` | seats draft; L1 applies `QUALITY.md`, lessons, commits receipts |
 | C2 | `corpus/SOURCES.md` + `corpus/knowledge/*.md` | `corpus/knowledge/walker-route-r18.md`, `theme-route-r18.md`; `.ufo/waves/round-18/fetch/{NoteWalker,NoteTheme}/**` (10 MB, 323 files, all ≤1 MiB) and every other seat's cited receipts; `.ufo/waves/round-18/fetch-verify.py` | notes by seats; rows/ids/used-by by L1 |
-| C3 | `tools/mado-tripwire.py` | `.ufo/waves/round-18/frozen-tripwire/{expected.json,inputs/*.jsonl,provenance.json,README.md}` (`expected_sha256` 4f3534ae…; 5 inputs, 8 findings, 3 known misses) — **at review snapshot this dir had been renamed to `.ufo/waves/round-18/frozen/`, see F0**; `.ufo/waves/round-18/tripwire/frozen/` (17-case selftest); `.ufo/waves/round-18/frozen-provenance-check.py` (default root `HERE/frozen`, line 64); `SKILL.md` registry row | TwFrozen* + L1 (`SKILL.md`) |
+| C3 | `tools/mado-tripwire.py` | `.ufo/waves/round-18/frozen/{expected.json,inputs/*.jsonl,provenance.json,README.md}` (integrated path; the contract text says `frozen-tripwire`, see F0; `expected_sha256` 4f3534ae…; 5 inputs, 8 findings, 3 known misses); `.ufo/waves/round-18/tripwire/frozen/` (17-case selftest); `.ufo/waves/round-18/frozen-provenance-check.py` (default root `HERE/frozen`, line 64); `SKILL.md` registry row | TwFrozen* + L1 (`SKILL.md`) |
 
 Disjointness holds for the **counter's** inputs. The only shared objects are:
 
@@ -113,7 +119,7 @@ The C1 instrument is the clone's copy; `measure.py` resolves `REPO` from
 git checkout -q "$FREEZE" -B t-c1
 sep_revert d9a5a18 corpus/SOURCES.md corpus/knowledge \
   .ufo/waves/round-18/fetch tools/mado-tripwire.py \
-  .ufo/waves/round-18/frozen-tripwire .ufo/waves/round-18/tripwire \
+  .ufo/waves/round-18/frozen .ufo/waves/round-18/tripwire \
   .ufo/waves/round-18/frozen-provenance-check.py SKILL.md
 git add -A && git commit -q -m 'sep: revert C2+C3 paths'
 measure   # expect c1={'criteria':26,'lesson_cited':18,'score':6.9231}
@@ -146,7 +152,7 @@ baseline tool sha, and every C1 check evaluating only revision-pinned inputs.
 ```bash
 git checkout -q "$FREEZE" -B t-c2
 sep_revert d9a5a18 corpus/QUALITY.md corpus/lessons/round-18.md \
-  tools/mado-tripwire.py .ufo/waves/round-18/frozen-tripwire \
+  tools/mado-tripwire.py .ufo/waves/round-18/frozen \
   .ufo/waves/round-18/tripwire .ufo/waves/round-18/frozen-provenance-check.py SKILL.md
 git add -A && git commit -q -m 'sep: revert C1+C3 paths'
 measure   # expect c1 15/23=6.5217, c2.count=6, covered P1..P6, u_routes=7,
@@ -174,12 +180,12 @@ git checkout -q "$FREEZE" -B t-c3
 sep_revert d9a5a18 corpus/QUALITY.md corpus/lessons/round-18.md \
   corpus/SOURCES.md corpus/knowledge .ufo/waves/round-18/fetch
 git add -A && git commit -q -m 'sep: revert C1+C2 paths'
-measure   # [expect] c1 15/23, c2.count=4, c3.tool_present true, c3.sha256=FREEZE tool
-SNAP=.ufo/waves/round-18/frozen-tripwire   # the path the claim text and SKILL row name
+measure   # [OBS at abfbf35] c1 15/23, c2 4/6, c3.tool_present true, c3.sha256=c87a31ef…
+SNAP=.ufo/waves/round-18/frozen   # integrated path; the wave contract text says frozen-tripwire (F0)
 [ -f "$SNAP/expected.json" ] || {
-  echo "C3 path drift: claim names $SNAP; artifact is at $(ls -d .ufo/waves/round-18/frozen 2>/dev/null) — see F0"; exit 1; }
+  echo "C3 path drift: the claim contract name has no expected.json; see F0"; exit 1; }
 python3 -I tools/mado-tripwire.py --frozen "$SNAP"
-# expect rc 0, first line 'MADO_TRIPWIRE_FROZEN: frozen_match'
+# [OBS at abfbf35] rc 0, first line 'MADO_TRIPWIRE_FROZEN: frozen_match'
 cp -a "$SNAP" "$T/tamper"
 for f in "$T"/tamper/inputs/*.jsonl; do printf ' ' >> "$f"; done
 python3 -I tools/mado-tripwire.py --frozen "$T/tamper"
@@ -201,6 +207,16 @@ Pass condition: the frozen outcomes above, the five suite tallies, and the
 measure fields unchanged except `c3.sha256` (which becomes `FREEZE`'s tool
 sha, not `962919ce…`).
 
+Strict variant: to remove *every* other claim's files (not only the paths the
+counter reads), extend the `sep_revert` argument lists with the other claim's
+evidence scripts (`fetch-verify.py` for C2; `receipt-check.py`,
+`receipt-claims.json`, `receipt-fixtures/`, `measure-mutants.py`,
+`evidence/measure-mutants.json`, `pipe-rc-census.py`, `recut-receipts.sh` and
+the re-cut receipts for C1; `frozen-provenance-check.py` for C3). The measured
+fields cannot move, because `measure.py` reads none of them; only the
+non-instrumented check availability changes, and that is the point of the
+strict variant.
+
 ## 4. Coupling register
 
 ### K1 [High, C1↔C3] Re-cut receipts name C3's file as their measured tool
@@ -208,8 +224,8 @@ sha, not `962919ce…`).
 `receipt-claims.json` binds `tool: tools/mado-tripwire.py` and verifies
 `tool_sha256 == sha256(git show <measured_commit>:<tool>)`
 (`receipt-check.py:41-…`). `recut-receipts.sh` refuses unless the *working
-tree* tool sha equals `git show REV:tools/mado-tripwire.py` (script :9-12,
-:132-138), then stamps `tool_sha256` and `measured_commit=<REV>`.
+tree tool sha equals `git show REV:tools/mado-tripwire.py` (script :9-12,
+:134-140), then stamps `tool_sha256` and `measured_commit=<REV>`.
 
 Consequences:
 
@@ -345,13 +361,15 @@ acceptable check for 25 if its keys are named exactly.
 
 ### K6 [Med, C3 × C1] Frozen provenance has `tool_receipt_sha256` but no `measured_commit`
 
-`frozen-tripwire/provenance.json` records `tool_receipt_sha256:
+`frozen/provenance.json` records `tool_receipt_sha256:
 962919ce…` and the source index, but neither `expected.json` nor the verdict
 carries a `measured_commit`. The frozen verdict prints `tool_sha256` of the
 *running* tool (`c87a31ef…`), not the pinned producer. Criterion 24 says a
 receipt a sentence relies on carries tool sha256 **and** measured_commit, so a
 round-18 report sentence that cites the frozen run as a receipt must either
-(a) wrap it with `measured_commit` (harm-watch.sh already prefixes receipts),
+(a) wrap it with `measured_commit` (harm-watch.sh prefixes receipts, but it
+currently has no `--frozen` entry — grep finds zero "frozen" hits — so add one
+or capture the frozen run separately),
 or (b) state the commit in the sentence and label both tool shas (producer
 `962919ce…`, runner `c87a31ef…`). The SKILL row's honesty line ("the pin binds
 inputs, not the tool digest") must be kept; do not upgrade `frozen_match` to a
@@ -392,6 +410,22 @@ adds `.ufo/state/`, so they are not ignored.
 
 ## 5. Findings on the landed drafts (severity ordered)
 
+**F0 (Med) — C3 path: the integrated registry/artifact say `frozen/`, the wave contract text says `frozen-tripwire/`.**
+The integrated tree `4c103b5` commits the snapshot at
+`.ufo/waves/round-18/frozen/`, the SKILL row `mado-tripwire-frozen` runs
+`--frozen .ufo/waves/round-18/frozen`, `frozen-provenance-check.py:64`
+defaults to `HERE/frozen`, and the README names `frozen`. `expected.json`
+sha256 `4f3534ae…` is byte-identical to the pre-rename copy my lab ran.
+But the wave contract text and TwFrozenMode/TwFrozenSnapshot reports say
+`frozen-tripwire`. A closure that runs the contract's literal path gets
+`MADO_TRIPWIRE_FROZEN: frozen_error` rc 2 ("expected.json unreadable"),
+which reads as a tamper-class failure. Fix: since the registry, artifact,
+README and tool default all agree on `frozen`, keep `frozen` and correct the
+contract/report pointer in the closure sentence (do not rename code at this
+stage); alternatively rename the dir back and change `DEFAULT_ROOT`, the
+SKILL row and README together. My lab numbers transfer because the pinned
+bytes are identical.
+
 1. **F1 (High)** Criterion 26's check is incompatible with the landed census
    and with GateRcFix's correct fix (K2). The criterion cannot be shown green;
    its line list is wrong; the fix's site is still flagged. Rewrite the check
@@ -410,7 +444,7 @@ adds `.ufo/state/`, so they are not ignored.
    criterion 25 must use `a280b3ab…` (loose) and `de4c422b…` (tight).
    Separately, `27cd06f:.ufo/waves/round-17/measure.py` does not exist (git rc
    128) and `f52f43f` is not its ancestor, so the round-17 table's "before"
-   was measured with a worktree instrument, not a committed one; the
+   was measured with a worktree instrument, not a committed one `[INF]`; the
    round-18 report must name an instrument sha **and** a revision that
    contains it (`de4c422b…` at `d3a0000`).
 5. **F5 (Med)** C2 placeholder/registry hazards (K4): 19 identical walker
@@ -440,10 +474,13 @@ adds `.ufo/state/`, so they are not ignored.
   792,861 B > 256 KiB; compensating source named); this must be re-checked by
   the seat allowed to read the transcripts.
 - **I did not run lane gates** (`mado-verify.sh --selftest`, action-plan,
-  navigation, census). Harm watch: the gate bytes moved (OM9/OM10 added, +16
+  navigation, census). Harm watch: the gate bytes moved (OM9/OM10 add 17
   `st_*` assertions), so the hermetic count is not 372 and must be re-cut
   (`evidence/regression-recut.txt` exists but is a GateRcFix artifact, not the
-  final harm-watch run).
+  final harm-watch run). `harm-watch.sh` has no `--frozen` command (zero
+  "frozen" hits), so the C3 behavioral receipt must be captured separately
+  with a `measured_commit` prefix, and the C3 path in that receipt must match
+  F0's resolution.
 - **Lab vs integration.** My C1/C2 numbers use the real drafted criterion text,
   the real note bodies and the real row drafts, but with simulated ids
   (S072–S095). They prove the instrument's behavior and the coupling shapes;
@@ -453,3 +490,114 @@ adds `.ufo/state/`, so they are not ignored.
   26's green is unreachable, or that a credited row has no receipt. That is
   what F1–F3 are, and why the removal tests above include the checks, not only
   the counts.
+
+## 7. Post-integration re-run (`4c103b5` tree / `abfbf35` receipts, and the live worktree)
+
+The integration commits landed while this review was running. Everything above
+that used a simulated tree is re-run here on the integrated bytes; where the
+live worktree differs from the commits, both are stated. Clone at `abfbf35`,
+instrument `de4c422b…`.
+
+### 7.1 Integrated commit: targets met, separability exact
+
+| Test (clone at `abfbf35`) | c1 | c2 | c3 tool | u_routes |
+|---|---|---|---|---|
+| integrated, no revert `[OBS]` | **18/26 = 6.9231** | **6/6 = 10.0** (P1..P6, 0 rejected) | `c87a31ef…` | 7 |
+| T-C1: revert C2+C3 `[OBS]` | **18/26 = 6.9231** | 4/6 (P1,P2,P4,P6) | `962919ce…` | 7 |
+| T-C2: revert C1+C3 `[OBS]` | 15/23 = 6.5217 | **6/6 = 10.0** | `962919ce…` | 7 |
+| T-C3: revert C1+C2 `[OBS]` | 15/23 | 4/6 (P1,P2,P4,P6) | `c87a31ef…` | 7 |
+
+T-C3 behavioural run at the same commit: `--frozen .ufo/waves/round-18/frozen`
+rc 0 `frozen_match`; a one-byte append to any input rc 2 `snapshot_tampered`;
+frozen selftest 17/17; round-17 suites 9/9, 16/16, 33/33, 30/30; the isolated
+empty-cwd run (§3) still proves no repo dependency. **The instrumented layer is
+causally separable on the integrated commit and both declared targets are met
+by the counter.** The receipt layer, however, is not satisfied by the commit.
+
+### 7.2 What the integrated commit does not satisfy
+
+1. **Criterion 24's green is impossible at `abfbf35`.** The committed
+   `receipt-check.py` parses `tool_sha256`/`measured_commit` only as whole
+   lines (`^\s*tool_sha256…$`, line 47), while the receipts' actual header is
+   `RECEIPT tool=… tool_sha256=… measured_commit=… utc=… cmd=…`. The committed
+   claims also still carry six `PENDING-L1` revs and stale `*-recut.txt` paths.
+   As committed: `EXPECT_SUMMARY: 9/15`, rc 2. With only the paths and revs
+   fixed (`rev=abfbf35`): six `MISSING_PROVENANCE`, rc 1. With those plus an
+   unanchored parser (lab patch): **15/15, rc 0** `[LAB]`. Both edits are
+   required; neither is in `abfbf35`.
+2. **Fetch bodies are not committed.** `git ls-tree -r abfbf35 --
+   .ufo/waves/round-18/fetch` lists **21 files**, all `receipts.jsonl`; the
+   lane worktree has 326 untracked bodies (332 `git status` lines including
+   quote files). A fresh clone's `fetch-verify` prints
+   `receipts=301 ok=0 bad=301`, every row `UNRECEIPTED`; the lane worktree
+   prints `receipts=389 ok=389`, rows 24 `unreceipted=0`. R17-V3's "committed
+   raw fetch receipt (body bytes, sha256, byte count, fetch time)" is therefore
+   false at the commit: no body digest can be checked from committed bytes.
+3. **The live worktree moved after the commit.** At 13:04 UTC−03,
+   `receipt-check.py` sha `a2c05fe1…` and `receipt-claims.json` sha
+   `175e74cd…` run **21/21 rc 0** `[OBS]`; `fetch-verify.py` sha `07e7ac74…`
+   runs `receipts=389 ok=389`, all 24 rows receipted or `host/no-url`
+   `[OBS]`. All three are uncommitted (`M`), and the 326 bodies are still
+   untracked.
+4. **The live `tools/mado-tripwire.py` is mid-rewrite and regresses the frozen
+   selftest.** Shas observed within minutes: `c87a31ef…` (integrated; 17/17
+   frozen and matching the receipts/snapshot), `f5a4a3c1…`, `3320ed07…`,
+   `93622ccd…` (13:04:14). On the `3320ed07…` snapshot (tool and suite copied
+   together) the frozen selftest is **11/17**; failures: `verdict-missing-
+   finding`, `verdict-extra-finding`, `known-miss-violated`,
+   `path-traversal`, `absolute-input`, `verdict-exit-label` (the new harness
+   returns an extra tuple element; the path cases now read `frozen_error`
+   instead of `snapshot_tampered`). The real snapshot still replays
+   `frozen_match`, but do not commit the worktree tool until all five suites
+   are green again; if the classifier changed, re-pin `expected.json` and
+   `known_misses` and re-run the re-cut before quoting the old counts.
+
+### 7.3 Status of every finding at the integrated/live snapshot
+
+| Finding | Status | Evidence |
+|---|---|---|
+| F0 path `frozen` vs `frozen-tripwire` | open (Med) | registry/artifact/README/default all `frozen`; wave contract text and TwFrozen* reports say `frozen-tripwire`; the contract path returns `frozen_error` rc 2 |
+| F1 criterion 26 check | **resolved in `4c103b5`** | QUALITY 26 uses the OM9/OM10 behavioural bite and labels the census "screen only"; its "nine at `d9a5a18`" matches the census. Residual: the census still lists the fixed site `:3477` unchecked (in-body pipefail not modelled), so the screen over-reports; no longer a blocker |
+| F2 criteria paths/tokens | **resolved in `4c103b5`** | criteria 24–26 cite `receipt-check.py`, `measure-mutants.py`, `mado-verify.sh` OM9/OM10; the draft drift is historical |
+| F3 criterion 24 green | **open at `abfbf35`; fixed in worktree, uncommitted** | committed 9/15 rc 2 → paths+revs only 6 `MISSING_PROVENANCE` rc 1 → parser patch + paths+revs 15/15 rc 0; live worktree 21/21 rc 0 |
+| F4 lesson sha drift | **resolved in `4c103b5`** | lesson M2 uses `a280b3ab…`/`de4c422b…`; the draft's `4023124f…` is historical |
+| F5 placeholders/registry | **resolved in `4c103b5`** | walker S072–S091 and theme S092–S095 substituted in notes and rows; measure 6/6, no rejects |
+| F6 host rows vs R17-V3 | open in wording; resolved in the live tool | counter credits S090/S091 (P3) and S095 (P5); live `fetch-verify` classifies them `host/no-url` and does not count them unreceipted. The pre-registration says "every new credited row"; lesson M6 says "every credited **web** row" — the closure must use the lesson wording |
+| F7 provenance `measured_commit` | resolved for citation | `evidence/tripwire-frozen-match.txt` line 1 has `tool_sha256=c87a31ef…` + `measured_commit=4c103b5…`; `provenance.json` itself still lacks it |
+| F8 `surface:` head-only | open residual | unchanged |
+| **F9 fetch bodies uncommitted** | **open (High)** | 21 committed files vs 326 untracked bodies; clone `fetch-verify` 0/301, lane 389/389 |
+| **F10 live tool mid-rewrite** | **open (High, moving)** | four shas in minutes; `3320ed07…` frozen selftest 11/17; integrated `c87a31ef…` 17/17 |
+
+### 7.4 Closure-blocking list (in order)
+
+1. Freeze `tools/mado-tripwire.py`; run the five suites and the frozen replay;
+   fix any failure before commit and record the final sha. If the classifier
+   changed, re-run `recut-receipts.sh` at the new revision, re-pin
+   `frozen/expected.json` + `known_misses`, and re-run `measure-mutants.py`
+   (the six tightenings are instrument-level, not classifier-level, so they
+   should still bite — verify).
+2. Commit the live `receipt-check.py`, `receipt-claims.json`,
+   `fetch-verify.py` (all `M`) and **`git add .ufo/waves/round-18/fetch`**
+   (326 bodies, 10 MB). Then in a fresh clone: `receipt-check.py` 21/21 rc 0;
+   `fetch-verify.py --rows <web ids>` 0 unreceipted; `measure` unchanged.
+3. Re-run the three removal tests on the committed tree (§3 script) and record:
+   T-C1 c1 18/26, c2 4/6, c3 `962919ce…`; T-C2 c1 15/23, c2 6/6, c3
+   `962919ce…`; T-C3 c1 15/23, c2 4/6, final tool + `frozen_match` + tamper 2
+   + suites 9/16/33/30/17.
+4. Fix the path sentence: use `.ufo/waves/round-18/frozen` in the closure
+   report (or rename the dir and the four references together); do not leave
+   `frozen-tripwire` in the claim pointer while the artifact is `frozen`.
+5. Scope the R17-V3 sentence to "every credited **web** row"; host rows are
+   `host/no-url` and are verified by the note's sha256 anchors, not fetch
+   receipts.
+
+### 7.5 What I did not run
+
+- The lane gate `tools/mado-verify.sh --selftest` (a gate; L1 only). The
+  integrated `evidence/gate-selftest.txt` and `harm-gate-selftest.txt` exist;
+  re-cut after the live tool settles.
+- `frozen-provenance-check.py` and `recut-receipts.sh` in the lane: both read
+  the restricted transcripts, which my item does not name; L1/verifier must
+  run them.
+- The live tool against lane inputs; all tool runs above used `/tmp` copies of
+  the bytes, never the lane files in place.

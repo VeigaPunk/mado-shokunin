@@ -209,7 +209,9 @@ under `/home/vgpnk` unless absolute. Anchors are file lines.
   the literal boundary is not established).
 - Elephant config directory `~/.config/elephant/`: `calc.toml` (14 B),
   `desktopapplications.toml` (62 B), `symbols.toml` (81 B), `menus/` (directory);
-  no `elephant.toml` is present, so `EG:85-89` applies to the global config.
+  no `elephant.toml` is present, so `EG:85-89` applies to the global config `[INF]`
+  (also requires no `--config` override and no `elephant/` under the running
+  process's `XDG_CONFIG_DIRS`; `ProviderConfig` lookup not read — CriticC2W2 D2).
 - Omarchy checkout `~/.local/share/omarchy`: `.git/HEAD` = `ref: refs/heads/master`;
   `packed-refs` maps `refs/heads/master` and `refs/tags/v3.8.4` to `8fcc9d60…`
   (equal to the upstream tag); `FETCH_HEAD` names `branch 'master' of .` at the same

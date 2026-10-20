@@ -33,8 +33,19 @@ First line: MADO_TRIPWIRE: clean | permitted_only | findings | could_not_evaluat
             MADO_TRIPWIRE_FROZEN: frozen_match | frozen_verdict_mismatch |
             frozen_error | snapshot_tampered | unpinned_legacy
 --frozen proves a committed snapshot still reproduces the pinned verdict over
-pinned bytes. It does not prove the snapshot was copied faithfully from the
+pinned bytes. It validates its pin before replay: inputs must be a non-empty
+list of `inputs/<name>.jsonl` paths that resolve inside DIR (a symlinked
+DIR/inputs, an escaping path, a leaf symlink or an unlisted `*.jsonl` is
+snapshot_tampered), and every expected/known line must name a listed input,
+be in range and non-blank, with no known-miss/expected overlap and a
+reachable exit/label pair; an unreachable pin is frozen_error, never a failed
+verdict. It does not prove the snapshot was copied faithfully from the
 transcript it names: provenance is the snapshot author's claim, not checked.
+
+--selftest DIR runs DIR/expected.json cases. A `mode: "frozen"` case needs
+name, args (one DIR), want_exit and want_label, and may assert want_missing /
+want_extra counts of the verdict's missing_findings / extra_findings (default
+0); it also pins the verdict schema, outcome and exit, not only line 1.
 """
 import ast
 import hashlib
@@ -401,9 +412,9 @@ def classify_pacman(argv0, args):
             flags.add({"--print": "p", "--search": "s", "--info": "i",
                        "--list": "l", "--groups": "g"}[a])
     if op is None:
-        if argv0 in ("yay", "paru"):
-            return ("host_mutation", argv0)
-        return ("package_query", argv0)
+        # Fail safe: an operator the parser could not read (`-$o`, `--typo`,
+        # bare `pacman`) must never land in a permitted class.
+        return ("host_mutation", argv0)
     tok, letter = op
     rule = "%s:%s" % (argv0, tok)
     if letter == "F" and "y" in flags:
@@ -807,7 +818,7 @@ def scan_file(path):
     return entry, findings
 
 
-def scan(paths, permit):
+def scan(paths):
     files = discover(paths)
     entries, findings = [], []
     for f in files:
@@ -815,8 +826,15 @@ def scan(paths, permit):
         entries.append(e)
         findings.extend(fs)
     counts = {c: sum(1 for f in findings if f["class"] == c) for c in CLASSES}
+    return entries, findings, counts
+
+
+def verdict_of(findings, permit):
+    """(exit, label, unpermitted) — one authority for --scan and --frozen."""
     unpermitted = sum(1 for f in findings if f["class"] not in permit)
-    return entries, findings, counts, unpermitted
+    code = 1 if unpermitted else 0
+    label = "clean" if not findings else ("findings" if unpermitted else "permitted_only")
+    return code, label, unpermitted
 
 
 def emit(label, payload):
@@ -826,15 +844,14 @@ def emit(label, payload):
 
 def run_scan(paths, permit):
     try:
-        entries, findings, counts, unpermitted = scan(paths, permit)
+        entries, findings, counts = scan(paths)
     except CouldNotEvaluate as exc:
         emit("could_not_evaluate", {"schema": "mado-tripwire-verdict-v1", "exit": 2,
                                     "error": str(exc), "files": [], "findings": [],
                                     "counts": {c: 0 for c in CLASSES},
                                     "permitted": sorted(permit), "unpermitted": 0})
         return 2
-    code = 1 if unpermitted else 0
-    label = "clean" if not findings else ("findings" if unpermitted else "permitted_only")
+    code, label, unpermitted = verdict_of(findings, permit)
     emit(label, {"schema": "mado-tripwire-verdict-v1", "exit": code, "files": entries,
                  "findings": findings, "counts": counts,
                  "permitted": sorted(permit), "unpermitted": unpermitted})
@@ -845,6 +862,8 @@ def run_scan(paths, permit):
 
 FROZEN_SCHEMA = "mado-tripwire-frozen-v1"
 FROZEN_LABELS = ("clean", "permitted_only", "findings")
+FROZEN_PAIRS = {(0, "clean"), (0, "permitted_only"), (1, "findings")}
+FROZEN_PATH = re.compile(r"inputs/[A-Za-z0-9._-]+\.jsonl")
 
 
 def tool_sha256():
@@ -881,16 +900,47 @@ def frozen_error(message, expected_sha, inputs, outcome="frozen_error"):
     return emit_frozen(outcome, expected_sha, inputs, [], [], None, None, message)
 
 
+FROZEN_KEYS = frozenset(("schema", "inputs", "permit", "expected_exit",
+                         "expected_label", "expected_findings", "known_misses"))
+
+
+def unique_pairs(pairs):
+    """object_pairs_hook: a repeated JSON key is a baseline error, never last-wins."""
+    seen = {}
+    for key, value in pairs:
+        if key in seen:
+            raise ValueError("duplicate key %r" % key)
+        seen[key] = value
+    return seen
+
+
 def validate_frozen(spec):
-    """Return (error, pinned) for a mado-tripwire-frozen-v1 spec object."""
+    """Return (error, pinned) for a mado-tripwire-frozen-v1 spec object.
+
+    Shape and reachability are checked before any input is read: a pin that no
+    scan could ever reproduce (empty inputs, a path outside `inputs/<name>.jsonl`,
+    a duplicate, a class outside CLASSES, an exit/label pair the verdict cannot
+    take, a label contradicting its findings, a listed file that is not an
+    input, a known miss on an expected line) is a baseline error, not a failed
+    verdict.
+    """
     if spec.get("schema") != FROZEN_SCHEMA:
         return "bad schema", None
+    unknown = sorted(set(spec) - FROZEN_KEYS)
+    if unknown:
+        return "unknown expected.json key(s): %s" % ", ".join(unknown), None
     inputs = spec.get("inputs")
-    if not isinstance(inputs, list):
-        return "inputs is not a list", None
+    if not isinstance(inputs, list) or not inputs:
+        return "inputs is not a non-empty list", None
+    listed = {}
     for e in inputs:
         if not isinstance(e, dict) or not isinstance(e.get("path"), str) or not e["path"]:
             return "bad inputs entry", None
+        if not FROZEN_PATH.fullmatch(e["path"]):
+            return "input path is not inputs/<name>.jsonl: %s" % e["path"], None
+        if os.path.normpath(e["path"]) in listed:
+            return "duplicate input path: %s" % e["path"], None
+        listed[os.path.normpath(e["path"])] = e["path"]
         if "sha256" in e and not isinstance(e["sha256"], str):
             return "bad inputs sha256", None
     permit = spec.get("permit")
@@ -898,12 +948,15 @@ def validate_frozen(spec):
         return "permit is not a list of classes", None
     if set(permit) - set(CLASSES):
         return "unknown permit class", None
+    permit = set(permit)
     want_exit = spec.get("expected_exit")
     if type(want_exit) is not int or want_exit not in (0, 1):
         return "bad expected_exit", None
     want_label = spec.get("expected_label")
     if not isinstance(want_label, str) or want_label not in FROZEN_LABELS:
         return "bad expected_label", None
+    if (want_exit, want_label) not in FROZEN_PAIRS:
+        return "unreachable exit/label pair: %d/%s" % (want_exit, want_label), None
     want = spec.get("expected_findings")
     if not isinstance(want, list):
         return "expected_findings is not a list", None
@@ -913,6 +966,20 @@ def validate_frozen(spec):
                 or not isinstance(w.get("class"), str)
                 or not isinstance(w.get("rule"), str)):
             return "bad expected_findings entry", None
+        if w["class"] not in CLASSES:
+            return "unknown class in expected_findings: %s" % w["class"], None
+        if os.path.normpath(w["file"]) not in listed:
+            return "expected_findings names an unlisted input: %s" % w["file"], None
+    if want_label == "clean":
+        if want:
+            return "clean baseline lists expected_findings", None
+    elif not want:
+        return "%s baseline lists no expected_findings" % want_label, None
+    elif want_label == "permitted_only" and any(c not in permit for c in
+                                               (w["class"] for w in want)):
+        return "permitted_only baseline lists a class outside permit", None
+    elif want_label == "findings" and not any(w["class"] not in permit for w in want):
+        return "findings baseline lists no class outside permit", None
     known = spec.get("known_misses", [])
     if not isinstance(known, list):
         return "known_misses is not a list", None
@@ -921,26 +988,59 @@ def validate_frozen(spec):
                 or type(k.get("line")) is not int or k["line"] < 1
                 or ("note" in k and not isinstance(k["note"], str))):
             return "bad known_misses entry", None
-    return None, {"inputs": inputs, "permit": set(permit), "exit": want_exit,
+        if os.path.normpath(k["file"]) not in listed:
+            return "known_misses names an unlisted input: %s" % k["file"], None
+    overlap = ({(os.path.normpath(w["file"]), w["line"]) for w in want}
+               & {(os.path.normpath(k["file"]), k["line"]) for k in known})
+    if overlap:
+        f, ln = sorted(overlap)[0]
+        return "known_misses overlaps expected_findings: %s:%d" % (f, ln), None
+    return None, {"inputs": inputs, "permit": permit, "exit": want_exit,
                   "label": want_label, "findings": want, "known": known}
 
 
+def validate_reachable(pinned, stats):
+    """Return an error when a pinned line cannot exist in the pinned bytes.
+
+    stats maps a listed input path to its per-line non-blank flags; it is
+    computed from the same bytes that matched the pin, so this check cannot be
+    raced by a rewrite between hashing and scanning.
+    """
+    for w in pinned["findings"]:
+        lines = stats[os.path.normpath(w["file"])]
+        if w["line"] > len(lines):
+            return "expected_findings line %d is past the end of %s" % (
+                w["line"], w["file"])
+    for k in pinned["known"]:
+        lines = stats[os.path.normpath(k["file"])]
+        if k["line"] > len(lines):
+            return "known_misses line %d is past the end of %s" % (
+                k["line"], k["file"])
+        if not lines[k["line"] - 1]:
+            return "known_misses line %d of %s is blank" % (k["line"], k["file"])
+    return None
+
+
 def frozen_snapshot(directory, entries):
-    """Return (outcome, report); outcome None when every input matches its pin.
+    """Return (outcome, report, stats); outcome None when every input matches.
 
     report[i]["ok"] means that input itself is a listed non-symlink regular
-    file whose bytes digest-match its pin; it is computed per entry even when
-    another entry fails, so a verdict shows exactly which bytes were verified.
-    Failure priority: path/regularity and unlisted files, then an unpinned
-    entry (legacy), then bytes that do not match their pin.
+    file that resolves inside DIRECTORY and whose bytes digest-match its pin;
+    it is computed per entry even when another entry fails, so a verdict shows
+    exactly which bytes were verified. stats maps a verified input path to its
+    per-line non-blank flags, so pin reachability is judged on the pinned bytes.
+    Failure priority: path/containment/regularity and unlisted files, then an
+    unpinned entry (legacy), then bytes that do not match their pin.
     """
+    real_dir = os.path.realpath(directory)
     report = [{"path": e["path"],
                "sha256": e["sha256"] if isinstance(e.get("sha256"), str) else None,
                "ok": False} for e in entries]
     paths_ok, bad_paths = [], False
     for e in entries:
         rel = e["path"]
-        good = not (os.path.isabs(rel) or ".." in rel.replace("\\", "/").split("/"))
+        real = os.path.realpath(os.path.join(directory, rel))
+        good = real == real_dir or real.startswith(real_dir + os.sep)
         if good:
             try:
                 st = os.lstat(os.path.join(directory, rel))
@@ -952,7 +1052,10 @@ def frozen_snapshot(directory, entries):
         bad_paths = bad_paths or not good
     listed = {os.path.normpath(e["path"]) for e in entries}
     idir = os.path.join(directory, "inputs")
-    if os.path.isdir(idir):
+    if os.path.islink(idir):  # a symlinked inputs/ replays bytes outside the pin
+        bad_paths = True
+        paths_ok = [False for _ in paths_ok]  # every listed path is under inputs/
+    elif os.path.isdir(idir):
         def onerror(err):
             raise CouldNotEvaluate("unreadable snapshot directory: %s" % err.filename)
         try:
@@ -968,6 +1071,7 @@ def frozen_snapshot(directory, entries):
             bad_paths = True  # an unlistable inputs dir cannot prove completeness
     unpinned = any("sha256" not in e for e in entries)
     bad_bytes = False
+    stats = {}
     for idx, e in enumerate(entries):
         if not paths_ok[idx] or "sha256" not in e:
             continue
@@ -979,17 +1083,25 @@ def frozen_snapshot(directory, entries):
             continue
         report[idx]["ok"] = (hashlib.sha256(data).hexdigest()
                              == e["sha256"].strip().lower())
+        if report[idx]["ok"]:
+            raw = data.split(b"\n")
+            if raw and raw[-1] == b"":
+                raw.pop()
+            stats[os.path.normpath(e["path"])] = [bool(r.strip()) for r in raw]
         bad_bytes = bad_bytes or not report[idx]["ok"]
     if bad_paths:
-        return "snapshot_tampered", report
+        return "snapshot_tampered", report, stats
     if unpinned:
-        return "unpinned_legacy", report
+        return "unpinned_legacy", report, stats
     if bad_bytes:
-        return "snapshot_tampered", report
-    return None, report
+        return "snapshot_tampered", report, stats
+    return None, report, stats
 
 
 def run_frozen(directory):
+    if os.path.islink(directory.rstrip("/") or directory):
+        return frozen_error("frozen directory is a symlink", None, [],
+                            outcome="snapshot_tampered")
     try:
         with open(os.path.join(directory, "expected.json"), "rb") as fh:
             raw = fh.read()
@@ -997,7 +1109,8 @@ def run_frozen(directory):
         return frozen_error("expected.json unreadable", None, [])
     expected_sha = hashlib.sha256(raw).hexdigest()
     try:
-        spec = json.loads(raw.decode("utf-8"), parse_constant=reject_constant)
+        spec = json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                          object_pairs_hook=unique_pairs)
     except (ValueError, UnicodeDecodeError) as exc:
         return frozen_error("expected.json not JSON (%s)" % type(exc).__name__,
                             expected_sha, [])
@@ -1006,13 +1119,16 @@ def run_frozen(directory):
     err, pinned = validate_frozen(spec)
     if err:
         return frozen_error(err, expected_sha, [])
-    bad, report = frozen_snapshot(directory, pinned["inputs"])
+    bad, report, stats = frozen_snapshot(directory, pinned["inputs"])
     if bad == "unpinned_legacy":
         return frozen_error("input entry without sha256", expected_sha, report,
                             outcome="unpinned_legacy")
     if bad:
         return frozen_error("snapshot does not match its pin", expected_sha,
                             report, outcome="snapshot_tampered")
+    err = validate_reachable(pinned, stats)
+    if err:
+        return frozen_error(err, expected_sha, report)
     findings = []
     for e in pinned["inputs"]:
         try:
@@ -1025,10 +1141,7 @@ def run_frozen(directory):
         for f in hits:
             f["file"] = e["path"]
             findings.append(f)
-    unpermitted = sum(1 for f in findings if f["class"] not in pinned["permit"])
-    scan_exit = 1 if unpermitted else 0
-    scan_label = ("clean" if not findings
-                  else ("findings" if unpermitted else "permitted_only"))
+    scan_exit, scan_label, _ = verdict_of(findings, pinned["permit"])
 
     def key(f):
         return (f["file"], f["line"], f["class"], f["rule"])
@@ -1036,11 +1149,9 @@ def run_frozen(directory):
     got = Counter(key(f) for f in findings)
     expected = Counter(key(w) for w in pinned["findings"])
     missing = expected - got
+    # A finding on a known-miss line is necessarily `extra`: validate_frozen
+    # refuses a pin that also expects that (file, line).
     extra = got - expected
-    for miss in pinned["known"]:  # a finding on a known-miss line forces a re-pin
-        for k in list(got):
-            if k[0] == miss["file"] and k[1] == miss["line"]:
-                extra[k] = max(extra[k], 1)
     missing_rows = [dict(zip(("file", "line", "class", "rule"), k))
                     for k in sorted(missing.elements())]
     extra_rows = [dict(zip(("file", "line", "class", "rule"), k))
@@ -1071,6 +1182,12 @@ def run_selftest(directory):
             name = case["name"]
             mode = case.get("mode", "scan")
             if mode == "frozen":
+                if not isinstance(case["want_label"], str):
+                    raise KeyError("want_label")
+                want_missing = case.get("want_missing", 0)
+                want_extra = case.get("want_extra", 0)
+                if type(want_missing) is not int or type(want_extra) is not int:
+                    raise KeyError("want_missing")
                 argv = [sys.executable, "-I", me, "--frozen",
                         os.path.join(directory, case["args"][0])]
                 want_exit = case["want_exit"]
@@ -1092,14 +1209,30 @@ def run_selftest(directory):
         got_exit = proc.returncode
         if mode == "frozen":  # want_findings is ignored in this mode
             want_first = "MADO_TRIPWIRE_FROZEN: " + want_label
-            ok = got_exit == want_exit and out[0] == want_first
+            verdict = None
+            try:
+                verdict = json.loads(out[1])
+            except (IndexError, ValueError):
+                pass
+            detail = None
+            if isinstance(verdict, dict):
+                miss = verdict.get("missing_findings")
+                extra_rows = verdict.get("extra_findings")
+                if isinstance(miss, list) and isinstance(extra_rows, list):
+                    detail = (verdict.get("outcome"), verdict.get("exit"),
+                              len(miss), len(extra_rows))
+            ok = (got_exit == want_exit and out[0] == want_first
+                  and isinstance(verdict, dict)
+                  and verdict.get("schema") == "mado-tripwire-frozen-verdict-v1"
+                  and detail == (want_label, want_exit, want_missing, want_extra))
             if ok:
                 passed += 1
                 print("CASE %s ok" % name)
             else:
                 failed.append(name)
                 print("CASE %s FAIL want=%s got=%s" % (
-                    name, (want_exit, want_first), (got_exit, out[0] if out else "")))
+                    name, (want_exit, want_first, want_missing, want_extra),
+                    (got_exit, out[0] if out else "", detail)))
             continue
         try:
             verdict = json.loads(out[1])

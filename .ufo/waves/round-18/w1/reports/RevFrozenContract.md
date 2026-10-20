@@ -23,7 +23,7 @@ Reviewed at the time of writing:
   `frozen-tripwire` path and must be updated to `frozen/` before L1 lands them;
 - `.ufo/waves/round-18/receipt-check.py` (`5aec6154…dc7b2`), `receipt-claims.json`;
 - `.ufo/waves/round-18/frozen-provenance-check.py` and its report;
-- `drafts/SkillRegistryDraft.md:12` (the `mado-tripwire` row);
+- `.ufo/waves/round-18/drafts/SkillRegistryDraft.md:12` (the `mado-tripwire` row);
 - PROTOCOL.md §Gate standard (`:388-437`), especially Verdict `:393-397`,
   Self-test `:398-402`, Two evidences `:403-410`, Registry `:411-419`.
 
@@ -130,7 +130,7 @@ Measured against the five source transcripts (read-only `--scan`, source shas
 equal to `session-index.json` for all five, all 26 mapped snapshot lines
 byte-equal):
 
-| source | source finding lines | mapped | omitted |
+| source | source finding lines | mapped finding lines | omitted finding lines |
 |---|---:|---:|---:|
 | `MadoR15.LibinputEvents.jsonl` | 7 | 1 (54) | 6 |
 | `MadoR13.GlobalCapture.jsonl` | 11 | 1 (19) | 10 |
@@ -158,9 +158,9 @@ is visible as a count change, not only as a prose edit.
 Smallest correction (choose one):
 
 1. **Expand** the snapshot to all finding lines of the five sources except the
-   declared 792,861-byte `OutputSpec:65` skip (the inputs stay small: the
-   omitted lines are in the same 0.6-3.8 MB files and the snapshot would grow
-   well under the 900 KiB budget already used); or
+   declared 792,861-byte `OutputSpec:65` skip (the omitted lines are in the same
+   0.6-3.8 MB source files; measure their bytes against the snapshot's stated
+   <900 KiB envelope before assuming it fits); or
 2. keep the curated sample and record in `provenance.json` (and the receipt):
    `selection` predicate, per-source `source_finding_lines`/`mapped`/`omitted`
    with the omitted line numbers, and a `rule_coverage` table; plus a
@@ -394,7 +394,7 @@ output factual and put the revision claim in the receipt.
   "expected_sha256": "4f3534ae33d8daba7d8c682e1fc97c283185667c4f3c3c91235cc53498fd2ed9",
   "provenance": ".ufo/waves/round-18/frozen/provenance.json",
   "provenance_sha256": "4fb06b6e42b52d5cb04e6ef8a19b36c2a8851a7bbd47e28e1c846f8941ff6310",
-  "snapshot": {"inputs/r15-libinput-events.jsonl": "7118b883…", "...": "..."},
+  "snapshot": {"inputs/r15-libinput-events.jsonl": "7118b8831c95491e11ec96eaa9779e37a2d955c5cd9e02612c6e25461a0d7a90", "...": "..."},
   "measured_commit": "<full 40-hex commit containing the tool, expected, inputs, provenance>",
   "command": "python3 -I tools/mado-tripwire.py --frozen .ufo/waves/round-18/frozen",
   "exit": 0,
@@ -506,7 +506,7 @@ for; a `/tmp` lab without a committed receipt is exactly the round-17 defect.
 | Two evidences: self-test capability + frozen run over a committed snapshot with its committed expected verdict | Not yet: expected/inputs/provenance are untracked; no frozen receipt; receipt-check checks only tool sha; expected sha unbound | Commit A, cut the receipt, extend the checker, add the claim (F1) |
 | `expected.json` pins every input digest; verifies before comparing; edited snapshot = `snapshot_tampered` (could-not-evaluate); no digests = unpinned (legacy) | Pass (`:928-990`) | Keep; add non-empty and shape validation |
 | A verdict names the revision measured | Missing in the verdict by design; the receipt must | Receipt `measured_commit` + `git show` verification |
-| Registry row at `SKILL.md`: name, gate/probe, entry, verdict map, self-test command/spelling, pinned-value path, write scope, owner | Draft row exists (`SkillRegistryDraft.md:12`), mode-qualified; pinned-value cell names only `expected.json` | Add the receipt path/revision binding; `gate` only after F1; full path avoids the `*/*/frozen` bare-name ambiguity; fill count after final run |
+| Registry row at `SKILL.md`: name, gate/probe, entry, verdict map, self-test command/spelling, pinned-value path, write scope, owner | Draft row exists (`.ufo/waves/round-18/drafts/SkillRegistryDraft.md:12`), mode-qualified; pinned-value cell names only `expected.json` | Add the receipt path/revision binding; `gate` only after F1; full path avoids the `*/*/frozen` bare-name ambiguity; fill count after final run |
 | Scope: read-only, never acts externally | Pass: frozen/scan write nothing; selftest reads fixtures; provenance-check reads sources read-only | State the provenance-check’s read of transcripts is outside the gate |
 | Closure: integrator verifies committed evidence, does not execute the sibling gate | Pending | The receipt is the artifact L1 verifies; report cites A and B |
 

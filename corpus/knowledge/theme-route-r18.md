@@ -57,7 +57,7 @@ host package version (§ Host declaration). Tag commits were read with
 
 ### Default autostart (omarchy v3.8.4)
 
-- `[OA:5]` `exec-once = uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill`. The declaration names the link; retargeting the link changes the wallpaper without editing config.
+- `[OA:5]` `exec-once = uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill`. The declaration names the link. A swaybg started after the link is retargeted opens the new target, which is why both writers relaunch it (`[OB:49-50]`, `[OS:24-25]`); whether an already-running swaybg follows a retarget is `[UNK]` (wave-2 correction, CriticC2W2 D1).
 
 ### Theme payload (omarchy v3.8.4, matte-black)
 
@@ -143,3 +143,21 @@ Not run under the host pause and not used: `omarchy theme set|current|list|bg �
 - `[UNK]` Arch packaging of `swaybg 1.2.2-1`: whether the installed binary was built from the v1.2.2 tag without patches. The log records the install only; the binary was not run or queried.
 - `[UNK]` Behaviour when `OMARCHY_THEME_SKIP_BACKGROUND=1` is set in the environment; the host environment was not read.
 - `[UNK]` Walker and elephant's use of the preview images and the theme's `icons.theme`, `vscode.json`, `neovim.lua` and `chromium.theme` consumers: declared-only here (§ Declared-only).
+
+## Wave-2 corrections (round 18, append-only)
+
+- `[OA:5]` wording above corrected in place before closure (old: "retargeting the
+  link changes the wallpaper without editing config"); the old sentence was a
+  live-behaviour claim outside `## Unexercised behavior` (CriticC2W2 D1).
+- Two consumer edges were omitted from § Consumers (ReviewThemeHost F1), bytes read
+  2026-10-20: `~/.config/hyprland-preview-share-picker/config.yaml:4` →
+  `current/theme/hyprland-preview-share-picker.css` (config sha256 `cf88364e…`), and
+  `~/.local/share/omarchy/default/hypr/envs.conf:3` → `current/theme/gum.env.conf`
+  (envs.conf sha256 `80067da7…`, sourced from `hyprland.conf:9`). Declared imports
+  only; whether either consumer runs is `[UNK]`.
+- The `[OM]` GitHub tree-page SHA-256 values (S094 anchor) are per-fetch HTML with
+  rotating tokens and do not reproduce (ReopenS094, ReviewThemeUpstream F6,
+  `fetch-verify.py` CONFLICT); the file *names* and the raw `colors.toml` digest
+  (`dbdd13a6…`) do reproduce. Treat the tree digests as fetch provenance, not pins.
+- "the only theme on this host" (S094 scope) means the only *applied* theme
+  (`current/theme.name` = `matte-black`); 19 theme payload dirs ship in the checkout.

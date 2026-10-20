@@ -2,8 +2,17 @@
   "schema": "mado-receipt-claims-v1",
   "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
   "rev_semantics": {
-    "WORKTREE": "read the receipt file directly (authored fixtures)",
-    "PENDING-L1": "placeholder for the round-18 re-cut receipts; L1 fills rev, evaluates as PENDING (could-not-evaluate)"
+    "WORKTREE": "read the receipt file directly (authored fixtures); bind_rev is then required and is the revision the tool identity binds to",
+    "PENDING-L1": "placeholder for a receipt that is not committed yet; evaluates as PENDING (could-not-evaluate, exit 2, never credit)"
+  },
+  "bind_rev_semantics": "Revision whose <tool> bytes the receipt attests; defaults to rev. A declared value other than rev must equal the receipt's own measured_commit and marks a before-state receipt (it deliberately ran the older tool). Leaving it unset on a receipt whose measured_commit tool differs from rev is STALE.",
+  "expect_semantics": {
+    "ok": "provenance complete, measured_commit an ancestor of the read revision, tool bytes equal at measured_commit and after it",
+    "MISSING_PROVENANCE": "no tool_sha256 and/or measured_commit in the receipt",
+    "SHA_MISMATCH": "tool_sha256 is not the digest of the tool at measured_commit",
+    "STALE": "internally consistent receipt that attests a superseded tool at the claimed revision (R17-V1/V2)",
+    "NOT_ANCESTOR": "measured_commit is not an ancestor of the revision the claim reads at",
+    "PRODUCER_MISMATCH": "the receipt's own tool= token names a producer the claim does not"
   },
   "claims": [
     {
@@ -12,7 +21,7 @@
       "rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
       "expect": "MISSING_PROVENANCE",
-      "note": "R17-V1: real-transcript tripwire receipt carries no tool_sha256/measured_commit header"
+      "note": "R17-V1: real-transcript tripwire receipt carries input digests only, no tool_sha256/measured_commit header"
     },
     {
       "id": "r17-tripwire-r14",
@@ -41,27 +50,30 @@
       "rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
       "expect": "MISSING_PROVENANCE",
-      "note": "R17-V2: anchor receipt also lacks a committed-tool binding"
+      "note": "R17-V2: the anchor receipt also lacks a committed-tool binding"
     },
     {
       "id": "r17-tripwire-pacmanlog-join",
       "receipt": ".ufo/waves/round-17/evidence/tripwire-pacmanlog-join.txt",
       "rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
-      "expect": "MISSING_PROVENANCE"
+      "expect": "MISSING_PROVENANCE",
+      "note": "Hand-authored join (awk over /var/log/pacman.log against tripwire findings), not tool output: it can never carry a producer header, so it stays a red and is NOT re-cut as an ok claim (w1 CriticC1 defect 3)."
     },
     {
       "id": "r18-fixture-ok",
       "receipt": ".ufo/waves/round-18/receipt-fixtures/ok-receipt.txt",
       "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok",
-      "note": "authored fixture bound to d9a5a18's tool sha 962919ce..."
+      "note": "authored fixture bound to d9a5a18's tool sha 962919ce... (green control)"
     },
     {
       "id": "r18-fixture-bad-sha",
       "receipt": ".ufo/waves/round-18/receipt-fixtures/bad-sha-receipt.txt",
       "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
       "expect": "SHA_MISMATCH",
       "note": "authored mutant: tool_sha256 does not match the tool at measured_commit"
@@ -70,52 +82,106 @@
       "id": "r18-fixture-stale-rev",
       "receipt": ".ufo/waves/round-18/receipt-fixtures/stale-rev-receipt.txt",
       "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
       "tool": "tools/mado-tripwire.py",
       "expect": "SHA_MISMATCH",
-      "note": "authored mutant: attests landed digest 962919ce but pins measured_commit f71ccbe (7a98720e) = R17-V2 cross-binding shape"
+      "note": "authored mutant: attests the landed digest 962919ce while pinning measured_commit f71ccbe (7a98720e) = cross-binding, caught before the staleness test"
     },
     {
-      "id": "r18-recut-tripwire-r13",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-r13-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-fixture-stale-tool",
+      "receipt": ".ufo/waves/round-18/receipt-fixtures/stale-receipt.txt",
+      "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+      "tool": "tools/mado-tripwire.py",
+      "expect": "STALE",
+      "note": "authored mutant: internally consistent (7a98720e is the f71ccbe tool) but read at d9a5a18, whose tool is 962919ce -> stale-but-consistent, the exact R17-V1 shape"
+    },
+    {
+      "id": "r18-fixture-nonancestor",
+      "receipt": ".ufo/waves/round-18/receipt-fixtures/nonancestor-receipt.txt",
+      "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+      "tool": "tools/mado-tripwire.py",
+      "expect": "NOT_ANCESTOR",
+      "note": "authored mutant: measured_commit abfbf35 is a descendant of the binding revision"
+    },
+    {
+      "id": "r18-fixture-producer-mismatch",
+      "receipt": ".ufo/waves/round-18/receipt-fixtures/producer-mismatch-receipt.txt",
+      "rev": "WORKTREE",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+      "tool": "tools/mado-tripwire.py",
+      "expect": "PRODUCER_MISMATCH",
+      "note": "authored mutant: the header's tool= token names a different producer than the claim"
+    },
+    {
+      "id": "r18-tripwire-r13",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-r13.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok",
-      "note": "placeholder: L1 commits the re-cut receipt and fills rev"
+      "note": "re-cut of the round-17 r13 receipt: RECEIPT header names tool_sha256 c87a31ef at measured_commit 4c103b5, whose tool bytes equal those at abfbf35"
     },
     {
-      "id": "r18-recut-tripwire-r14",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-r14-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-tripwire-r14",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-r14.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok"
     },
     {
-      "id": "r18-recut-tripwire-r15",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-r15-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-tripwire-r15",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-r15.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok"
     },
     {
-      "id": "r18-recut-tripwire-r16",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-r16-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-tripwire-r16",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-r16.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok"
     },
     {
-      "id": "r18-recut-tripwire-anchor-r15",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-anchor-r15-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-tripwire-anchor-r15",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-anchor-r15.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
       "expect": "ok"
     },
     {
-      "id": "r18-recut-tripwire-pacmanlog-join",
-      "receipt": ".ufo/waves/round-18/evidence/tripwire-pacmanlog-join-recut.txt",
-      "rev": "PENDING-L1",
+      "id": "r18-tripwire-frozen-match",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-frozen-match.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
       "tool": "tools/mado-tripwire.py",
-      "expect": "ok"
+      "expect": "ok",
+      "note": "C3 frozen replay, frozen_match (exit 0), same producer header shape"
+    },
+    {
+      "id": "r18-tripwire-frozen-tampered",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-frozen-tampered.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
+      "tool": "tools/mado-tripwire.py",
+      "expect": "ok",
+      "note": "C3 control: snapshot_tampered (exit 2) with the same producer header; the receipt is honest about a failed replay"
+    },
+    {
+      "id": "r18-tripwire-frozen-before",
+      "receipt": ".ufo/waves/round-18/evidence/tripwire-frozen-before.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
+      "bind_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+      "tool": "tools/mado-tripwire.py",
+      "expect": "ok",
+      "note": "before-state receipt: it ran the d9a5a18 tool (962919ce) and says so; bind_rev declares that older revision, so the drift from the abfbf35 tool (c87a31ef) is stated, not hidden"
+    },
+    {
+      "id": "r18-measure-after",
+      "receipt": ".ufo/waves/round-18/evidence/measure-after.json.txt",
+      "rev": "abfbf35b1ed4d4a1eb294d525ef286be30f3886f",
+      "tool": ".ufo/waves/round-17/measure.py",
+      "expect": "ok",
+      "note": "C1/c2 measure at 4c103b5: de4c422b is the measure.py digest at both measured_commit and the read revision"
     }
   ]
 }

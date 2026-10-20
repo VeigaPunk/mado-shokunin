@@ -1,33 +1,33 @@
 {
- "expected_exit": 1,
- "expected_findings": [
-  {
-   "class": "host_mutation",
-   "file": "inputs/incident.jsonl",
-   "line": 1,
-   "rule": "sudo"
-  },
-  {
-   "class": "host_mutation",
-   "file": "inputs/incident.jsonl",
-   "line": 1,
-   "rule": "pacman:-Syu"
-  }
- ],
- "expected_label": "findings",
+ "schema": "mado-tripwire-frozen-v1",
  "inputs": [
   {
    "path": "inputs/incident.jsonl",
-   "sha256": "cafde03a0290c1afef61f53b2e64b11f52b3bfa9251a0f2f247d46aedb011829"
+   "sha256": "a28e43411697171b651becc854157d187a6e822dc4d2217e3798e0eefb26bb1d"
+  }
+ ],
+ "permit": [],
+ "expected_exit": 1,
+ "expected_label": "findings",
+ "expected_findings": [
+  {
+   "file": "inputs/incident.jsonl",
+   "line": 1,
+   "class": "host_mutation",
+   "rule": "sudo"
+  },
+  {
+   "file": "inputs/incident.jsonl",
+   "line": 1,
+   "class": "host_mutation",
+   "rule": "pacman:-Syu"
   }
  ],
  "known_misses": [
   {
    "file": "inputs/incident.jsonl",
-   "line": 1,
-   "note": "deliberately wrong: line 1 does contain findings"
+   "line": 2,
+   "note": "violated: line 2 yields package_query/pacman:-Qi, which is not in expected_findings"
   }
- ],
- "permit": [],
- "schema": "mado-tripwire-frozen-v1"
+ ]
 }

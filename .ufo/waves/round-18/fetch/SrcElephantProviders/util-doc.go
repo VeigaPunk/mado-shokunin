@@ -1,0 +1,187 @@
+// Package util provides general utility.
+package util
+
+import (
+	"fmt"
+	"log/slog"
+	"os"
+	"path/filepath"
+	"reflect"
+	"slices"
+	"strings"
+
+	"github.com/abenz1267/elephant/v2/internal/providers"
+	"github.com/abenz1267/elephant/v2/pkg/common"
+	"github.com/knadh/koanf/providers/structs"
+	"github.com/knadh/koanf/v2"
+	"github.com/pelletier/go-toml/v2"
+)
+
+func GenerateDoc(provider string, write bool) {
+	provider = strings.ToLower(provider)
+
+	if write {
+		fmt.Println("Written:")
+		fmt.Println("--------")
+	}
+
+	if provider == "" || provider == "elephant" {
+		if !write {
+			fmt.Println("# Elephant")
+			fmt.Println("A service providing various datasources which can be triggered to perform actions.")
+			fmt.Println()
+			fmt.Println("Run `elephant -h` to get an overview of the available commandline flags and actions.")
+			fmt.Println("## Elephant Configuration")
+		}
+
+		PrintConfig(common.GetElephantConfig(), "elephant", write)
+	}
+
+	if provider == "" && !write {
+		fmt.Println("## Provider Configuration")
+	}
+
+	p := []providers.Provider{}
+
+	for _, v := range providers.Providers {
+		p = append(p, v)
+	}
+
+	slices.SortFunc(p, func(a, b providers.Provider) int {
+		return strings.Compare(*a.NamePretty, *b.NamePretty)
+	})
+
+	for _, v := range p {
+		if provider == "" || provider == strings.ToLower(*v.Name) || provider == strings.ToLower(*v.NamePretty) {
+			v.LoadConfig()
+			v.PrintDoc(write)
+		}
+	}
+}
+
+func PrintConfig(c any, name string, write bool) {
+	if !write {
+		fmt.Printf("`~/.config/elephant/%s.toml`\n", name)
+		printStructTable(c, getStructName(c))
+	} else {
+		dir := common.GetExplicitDir()
+
+		if dir == "" {
+			var err error
+
+			dir, err = os.UserConfigDir()
+			if err != nil {
+				slog.Error("printconfig", "get user config dir", err)
+				return
+			}
+		}
+
+		k := koanf.New(".")
+		if err := k.Load(structs.Provider(c, "koanf"), nil); err != nil {
+			slog.Error("printconfig", "load struct", err)
+			return
+		}
+
+		raw := k.Raw()
+		for key, val := range raw {
+			if v, ok := val.([]any); ok && len(v) == 0 {
+				delete(raw, key)
+			}
+		}
+
+		b, err := toml.Marshal(raw)
+		if err != nil {
+			slog.Error("printconfig", "marshall config", err)
+			return
+
+		}
+
+		if !strings.HasSuffix(dir, "elephant") {
+			dir = filepath.Join(dir, "elephant")
+		}
+
+		file := filepath.Join(dir, fmt.Sprintf("%s.toml", name))
+		err = os.MkdirAll(dir, 0o755)
+		if err != nil {
+			slog.Error("printconfig", "create config dir", err)
+			return
+		}
+		err = os.WriteFile(file, b, 0o644)
+		if err != nil {
+			slog.Error("printconfig", "write config", err)
+			return
+		}
+
+		fmt.Println(file)
+	}
+}
+
+func getStructName(c any) string {
+	val := reflect.ValueOf(c)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	return val.Type().Name()
+}
+
+func printStructTable(c any, structName string) {
+	fmt.Printf("#### %s\n", structName)
+	fmt.Println("| Field | Type | Default | Description |")
+	fmt.Println("| --- | ---- | ---- | --- |")
+
+	printStructDesc(c)
+	fmt.Println()
+}
+
+func printStructDesc(c any) {
+	val := reflect.ValueOf(c)
+
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	if val.Kind() != reflect.Struct {
+		fmt.Println("Not a struct")
+		return
+	}
+
+	typ := val.Type()
+	var nestedStructs []reflect.Type
+
+	for i := 0; i < val.NumField(); i++ {
+		field := typ.Field(i)
+		fieldValue := val.Field(i)
+
+		if field.PkgPath == "" {
+			if field.Anonymous {
+				printStructDesc(fieldValue.Interface())
+				continue
+			}
+
+			name := field.Tag.Get("koanf")
+
+			if name == "" {
+				name = field.Tag.Get("toml")
+			}
+
+			if name == "-" {
+				continue
+			}
+
+			fmt.Printf("|%s|%s|%s|%s|\n",
+				name, field.Type, field.Tag.Get("default"), field.Tag.Get("desc"))
+
+			if field.Type.Kind() == reflect.Slice {
+				elemType := field.Type.Elem()
+				if elemType.Kind() == reflect.Struct {
+					nestedStructs = append(nestedStructs, elemType)
+				}
+			}
+		}
+	}
+
+	for _, structType := range nestedStructs {
+		elemVal := reflect.New(structType).Elem()
+		printStructTable(elemVal.Interface(), structType.Name())
+	}
+}

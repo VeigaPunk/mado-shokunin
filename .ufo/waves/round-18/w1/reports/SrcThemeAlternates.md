@@ -28,9 +28,9 @@ screens the alternate families.
 - **No candidate qualifies for C2 credit.** C2 requires `mined` + tier A + upstream
   `https` + the surface keyword. The only opened tier-A alternate is the Hyprland wiki
   listing, and it is a one-paragraph ecosystem blurb, not Walker’s contract; it is
-  queued as corroboration only. Every other opened alternate is tier C or a B
-  (fork-scoped or version-mismatched) and is rejected. The route notes should cite the
-  sibling primary rows.
+  queued as corroboration only. The other row-bearing alternates are tier C or a B
+  (fork-scoped or version-mismatched), and every one is rejected; the out-of-scope
+  pages yield no row. The route notes should cite the sibling primary rows.
 - **The one host-relevant version binding is the pinned AUR PKGBUILD pair**: package
   versions `2.17.2-1`/`2.22.1-1` map to upstream tags `v2.17.2`/`v2.22.1` with
   tarball sha256s. It is packaging provenance only, not host-install proof and not a
@@ -208,9 +208,11 @@ it may only be cited as absence).
 > (0 theme tokens), the omarchytheme index (same class as its Aetheria page), the
 > omarchypulse manual copy (duplicate of the primary manual), the Dracula theme page
 > (same class as Aetheria), and the AUR walker-bin/elephant/marketplace pages (folded
-> into the AUR web-page class row). The YouTube watch page exceeded the 1 MiB receipt
-> cap and is represented only by its oEmbed metadata. Stop: every named alternate
-> family has a tier/version verdict; further opens would not change either.
+> into the AUR web-page class row). General Omarchy intro pages and bar-widget
+> repositories surfaced by the same searches were screened out by scope (not
+> theming/wallpaper contracts). The YouTube watch page exceeded the 1 MiB receipt cap
+> and is represented only by its oEmbed metadata. Stop: every named alternate family
+> has a tier/version verdict; further opens would not change either.
 
 ## 6. Boundaries and remaining unknowns
 

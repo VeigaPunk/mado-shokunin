@@ -152,3 +152,10 @@ carry. Criterion 24 adds only what those leave open: the identity of the
     verdict-bearing hazard (the others are fixture or display values).
     `${PIPESTATUS[0]}` read after `x=$(…)` is the assignment's status, not
     the producer's; capture inside the substitution.
+
+Round-18 wave-2 correction (append-only): criterion 24's red-fixture sentence
+above says a fixture bound to the `f71ccbe` tool sha read at a later tool prints
+`SHA_MISMATCH`; the hardened checker (ReceiptCheckFix) prints `STALE` for that
+stale-but-consistent shape; `receipt-fixtures/stale-rev-receipt.txt` remains the
+`SHA_MISMATCH` control. Green arm: `EXPECT_SUMMARY: 21/21`, exit 0, with the
+round-18 re-cut, frozen and measure receipts as `ok` claims.

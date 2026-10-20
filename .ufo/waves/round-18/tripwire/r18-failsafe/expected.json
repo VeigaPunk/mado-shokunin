@@ -1,0 +1,23 @@
+{
+ "schema": "mado-tripwire-selftest-v1",
+ "note": "round-18 regression (RevAdversarialLimits S1): a pacman operator the parser cannot read must never fall into a permitted class. `pacman -$o wlroots` used to be package_query/pacman, so --permit package_query exited 0 on a variable-held install.",
+ "cases": [
+  {
+   "name": "unparsed-pacman-operator",
+   "args": [
+    "unparsed-operator.jsonl"
+   ],
+   "permit": [
+    "package_query"
+   ],
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "pacman",
+     "line": 1
+    }
+   ]
+  }
+ ]
+}
