@@ -1,0 +1,13 @@
+command: python3 -c 'import json,sys
+installed_before={"libinput":"1.31.3-1"}
+actual_plan={"libinput":"1.32.0-1","libinput-tools":"1.32.0-1","python-libevdev":"0.13.1-1","python-pyudev":"0.24.4-1","python-yaml":"6.0.3-2"}
+plan=actual_plan if sys.argv[1]=="actual" else {n:v for n,v in actual_plan.items() if n not in installed_before}
+overlap=sorted(set(installed_before)&set(plan))
+print(json.dumps({"finding_id":"already_installed_in_plan" if overlap else "new_only_plan","overlap":overlap,"mode":sys.argv[1],"fixture_only":True},sort_keys=True))
+sys.exit(1 if overlap else 0)
+' new-only-control
+input_provenance: pacman.log:2429-2437 and parent initial pacman -Q observation; green is an in-memory new-only control, not an install plan or retry
+exit: 0
+stdout:
+{"finding_id": "new_only_plan", "fixture_only": true, "mode": "new-only-control", "overlap": []}
+stderr:

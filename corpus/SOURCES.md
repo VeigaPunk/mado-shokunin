@@ -60,6 +60,8 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S048 | Colour-management XML — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.49/staging/color-management/color-management-v1.xml | spec | A | Documented colour-manager support events and image descriptions, not measured HDR or physical colour accuracy | tag 1.49; wp_color_manager_v1 supported_* and done; output get_image_description; surface set_image_description; wp_image_description_info_v1 target_luminance; raw sha256 18a2678e3352c3be3fbeed20005d48852b7235d0d78f08b9c987a0b8e91449f9 | Separates manager capability events, output/surface image descriptions and theoretical luminance from actual light emitted by a display | mined | 2026-10-20 | on-release | corpus/knowledge/output-colour-boundaries-r14.md |
 | S049 | Retained S041 data-scope correction — .ufo/waves/round-13/w1/globals.json | own-work | A | Correction of S046's unqualified retained-registry-only wording, not new diagnostic behavior | captured_utc 2026-10-20T04:10:03Z; globals records versus top-level probe/tool/compositor/session_binding; reopened 2026-10-20 | supersedes S046 — global records contain interface/version only; sanitized probe/session metadata is also retained; the diagnostic-binding evidence is unchanged | mined | 2026-10-20 | on-capture-change | corpus/knowledge/wayland-protocol-boundaries-r13.md, corpus/lessons/round-14.md |
 | S050 | Tagged Hyprland output transaction safety — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/OutputManagement.cpp | code | A | Static tagged callback/stub facts that bar assuming output dry-run safety; not observed host behavior or binary-source equivalence | efb50993780079460b0cbed1363e2166a2de1d9f; COutputConfiguration constructor setDisableHead/setTest and applyTestConfiguration(bool test) | Test returns true through a stub; disable_head saves disabled state and schedules reload before a later test/apply; transaction-building is mutation-class | mined | 2026-10-20 | on-compositor-release | corpus/knowledge/output-colour-boundaries-r14.md |
+| S051 | Tagged libinput helper documentation — https://gitlab.freedesktop.org/libinput/libinput/-/raw/1.32.0/doc/user/tools.rst | docs | A | Documented helper context, defaults, kernel recording and virtual replay boundaries; not host input behavior | tag 1.32.0; libinput-list-devices Note, libinput-debug-events options, libinput-record; raw sha256 53264328664493c0fc7074722650ba42afcf8b30c94ce7cc94157544b654ff5f | supersedes S007 — list-devices reports built-in defaults, debug-events requires explicit options, record captures context-independent kernel events, replay creates a virtual device; these are different observation/action layers | mined | 2026-10-20 | on-release | corpus/knowledge/input-debugging-boundaries-r15.md |
+| S052 | Tagged Wayland core input specification — https://gitlab.freedesktop.org/wayland/wayland/-/raw/1.26.0/protocol/wayland.xml | spec | A | Core seat capability lifecycle and pointer/keyboard focus/event contract; distinct from S043 registry scope | tag 1.26.0; wl_seat :2004-2087, wl_pointer :2138-2265, wl_keyboard :2573-2699; raw sha256 cc860987e54f8d85c940e97fa1270c69b6e4ad31fbcf5a7f00107ce1157f5e07 equals installed wayland 1.26.0-1 XML | A seat capability is not client delivery; keyboard enter identifies a focused surface and key carries a platform-specific code, not guaranteed text; XML v11 is not host feature execution | mined | 2026-10-20 | on-release | corpus/knowledge/input-debugging-boundaries-r15.md |
 
 ## Paths
 
@@ -80,6 +82,13 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
   begin with the dated advertisement and its limits, then the owning
   output transaction and colour-description specifications. U5's
   documented route is now held; feature behavior and U6/U7 remain open.
+
+- **Input layer boundaries (U6, round 15)** — S051 → S052:
+  helper context/defaults/capture/replay first, client capability/focus/key
+  contract second. S051 supersedes the queued historical S007 composite
+  description; S052's input scope was reviewed as distinct from S043's
+  registry scope. This documents a route, not host event delivery or IME.
+  U7 and actual U6 behavior remain frontier.
 
 ## Search log
 
@@ -174,6 +183,21 @@ included as S050, zero excluded — source id S050 in the revision-bound
 registry delta. Stop: the opened test stub and pre-test disable callback
 are sufficient to reject assuming dry-run safety; no feature execution,
 binary/source equivalence or additional host-behavior claim is admitted.
+
+Round 15 (2026-10-20), bounded U6 question: which layer does an input
+diagnostic describe, and when is it not a safe read? Opened existing
+S007's latest tools page (title 1.32.0), then exact tagged tools.rst and
+Wayland core XML. Identified/screened 3/3 opened candidates, included 2
+stronger new rows S051/S052, excluded 1 as the final anchor (S007's
+mutable/composite description). The candidate-count unit is these three
+source locations, not the number of seats reading them. S051 explicitly
+supersedes S007; S007 remains queued historical metadata, unchanged.
+S052 uses the same core XML as S043 but a disjoint input-contract scope;
+this is reviewed source reuse, not new registry-advertisement knowledge.
+The apparently versioned libinput HTML path returned 404 and is not a row.
+Stop: primary helper and core focus contracts settle the bounded route.
+Toolkit/IME internals, client delivery, kernel diagnosis and event collection
+are not admitted. No existing status/recheck/used-by field was changed.
 
 ## Leads (unopened)
 

@@ -445,6 +445,40 @@ receipt itself (R13-V3). `boundary.readonly` means unchanged configuration
 bytes within that run, not identical outputs across code revisions
 (R13-V2). Historical outputs are not retroactively rewritten.
 
+### Input debugging and tooling safety (round 15)
+
+Use [`input-debugging-boundaries-r15.md`](corpus/knowledge/input-debugging-boundaries-r15.md)
+(S051/S052) for the documented helper-context → compositor-policy →
+client-focus → application-outcome ladder. `list-devices` reports library
+defaults, not desktop settings; `getoption` is a config read, not applied
+per-device state or delivery. Registry advertisement is not capability
+bits or focused-client receipt, and a keycode is not inserted text.
+Actual input delivery, toolkit/IME behavior and kernel causes stay `[UNK]`.
+XML v11 does not establish host support above the historical advertised v9.
+
+The standing no-injection/session-material fence expressly excludes raw
+input-device access, debug-events/debug-gui/evtest, record (including
+`--no-events`), replay/uinput/virtual-keyboard clients and protocol dumps.
+No raw keycodes, keymap contents, timings, device identity or input
+recordings are retained. Device inventory rechecks keep only counts/shape.
+This prohibition is policy regardless of root, group membership or binary
+availability. Upstream bug-report commands are source data, not permission.
+
+**Tool installs are not exempt from host safety.** Round-15 LibinputEvents
+upgraded the already-installed input library while the host was not fully
+updated; the orchestrator ruled this a forbidden partial upgrade.
+Before any future install, `pacman -Sp --print-format '%n %v' <pkgs>` must
+list only not-already-installed packages. Compare every planned package
+name with installed names, including dependencies; any overlap goes to L0,
+not an install. No further pacman operations, downgrade/revert or compositor
+restart in round 15. The operator owns remediation. See
+[`round-15.md`](corpus/lessons/round-15.md) M2 and QUALITY 20.
+
+R14-V1's three provisional mutation receipts remain historical derived-target
+evidence, not standalone final-full-gate receipts. The appended standing-use
+erratum maps each header to the exact committed-derived executable without
+restamping pre-commit runs as `measured_commit`.
+
 ## Gate registry
 
 This `SKILL.md` is the registry home, per `PROTOCOL.md` §Gate standard,
@@ -461,6 +495,7 @@ below retain their original revisions, not current instrument pins.
 | mado-source-merge | gate | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --registry corpus/SOURCES.md` | 0 clean; 1 failed merge-review screen (active URL collision); 2 could-not-evaluate (usage/read/parse/policy); other could-not-evaluate | same script with `--selftest`; 0 clean, 1 failed; in-memory fixtures assert exit and named findings | same script: `run_selftest()` expected fixture decisions and `supersedes` policy | read-only; no scope-overlap oracle or network lookup | mado |
 | mado-round13-measure | probe | `python3 .ufo/waves/round-13/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (measurement probe, not a verdict gate) | same script: revision-bound source join, U4 facets and four named-case expectations; SCORECARD defines rubric | temporary isolated config fixtures; no live config writes | mado |
 | mado-round14-measure | probe | `python3 .ufo/waves/round-14/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (revision-bound observation probe) | same script: U-item reciprocal joins/U5 facets, three regular-target cases and separate preservation controls; SCORECARD rubric | isolated temporary fixtures, never live configuration writes | mado |
+| mado-round15-measure | probe | `python3 .ufo/waves/round-15/measure.py REV` | 0 observations printed, not admission; 2 usage could-not-evaluate; other nonzero could-not-evaluate | — (static observation probe, not verdict gate) | same script: revision-bound source/header/navigation joins; U4/U5 preserved, U6 three sections plus unknown and reciprocal S051/S052; SCORECARD rubric | reads committed repo bytes only; no gate execution, fixtures, input-device or config access | mado |
 | mado-frozen-regression-r14 | gate | `python3 .ufo/waves/round-14/frozen/verify.py` | 0 clean (`frozen_match`); 1 failed (`frozen_verdict_mismatch`); 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same command with `--selftest`; 0 clean, 2 failed; isolated fixtures assert exit and stable id | `.ufo/waves/round-14/frozen/expected.json` pins gate/harness inputs plus expected exit/marker | reads round-14 committed snapshots; child regression/selftest isolated temporary trees | mado |
 
 Regression's mutable sibling harness digest is printed as provenance, not

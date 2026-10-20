@@ -1067,3 +1067,59 @@ parent's after-report non-author closure. Remaining limits are named in
 SCORECARD/lesson, not silently retired. SHONEN remains four author
 assertions; no promotion, domain mutation, sibling edit, or next-round
 mission was performed. No new L0 question.
+
+## 2026-10-20 — round 15: U6 diagnostic route and an honest safety stop
+
+Motivating evidence: SCORECARD planned bounded U6 study and outside
+`corpus/lessons/round-14-verifier-spotcheck.md:169` R14-V1, whose three
+ancillary mutation headers were provisional although the derived target
+was recoverable. C1 is one coverage move on the lowest current-art rubric:
+U1–U5 5/7 → U1–U6 6/7, measured by
+`python3 .ufo/waves/round-15/measure.py REV`, not source-row volume.
+Baseline is `ea0446fcb4840089f0e541d96350144506fb5d1d`; the actual
+baseline receipt is `.ufo/waves/round-15/evidence/before.txt`.
+
+Landed work under this round entry: the U6 source/prove/does-not-prove
+ladder in `corpus/knowledge/input-debugging-boundaries-r15.md`, S051/S052
+and their reciprocal index route; `corpus/lessons/round-15.md` §Gate
+records quotes/source correction decisions. S051 supersedes S007's
+composite/mutable source description, while S052's input scope is distinct
+from S043 registry semantics. Existing registry rows remain unchanged.
+R14-V1 is an unscored append-only standing-use explanation plus exact
+per-receipt mapping to committed-derived target bytes. Old receipt headers
+are never relabeled as later committed full-gate execution.
+
+**Actual safety violation:** wave scout `MadoR15.LibinputEvents` ran
+`sudo pacman -S --needed --noconfirm libinput libinput-tools` at
+2026-10-20T04:25:16-0300. `/var/log/pacman.log:2429-2437` records
+libinput 1.31.3-1 → 1.32.0-1 and new libinput-tools 1.32.0-1,
+python-libevdev 0.13.1-1, python-pyudev 0.24.4-1, python-yaml 6.0.3-2
+through official Arch extra. The stated reason was static man/help
+inspection, not input capture. The orchestrator ruled this a forbidden
+partial upgrade and routed remediation to L0. Udev-reload/system-update
+hooks also ran. No device/event read, replay, downgrade or restart is
+claimed or authorized; package availability is not input behavior.
+
+Lesson M2, QUALITY 20 and SKILL now require a prospective
+`pacman -Sp --print-format '%n %v' <pkgs>` plan containing only
+not-already-installed packages; any overlap, including dependencies,
+goes to L0. No further pacman operation is allowed this round. The same
+in-memory guard is red on the actual transaction names (exit 1,
+`already_installed_in_plan`, libinput), green only on a new-only fixture
+(exit 0, `new_only_plan`), with full commands/output in
+`evidence/install-guard-{red,green}.txt` under the round-15 wave.
+The guard does not remediate host state or retroactively admit this round.
+
+One validated 64-seat wave; L1 canonical planner plus PlanningWalk mapping.
+All wave advice remains lane-authored; no outside SHONEN clearance.
+ReviewLibinput's disclosed `hyprctl version` call violated the wave's
+no-live-probe instruction and supplies no fresh claim evidence. No input
+event capture/injection or compositor/configuration mutation is performed.
+No other lane/fleet-runtime source write is part of this work.
+
+Author verdict: C1 is bounded structural coverage, subject to committed
+measurement and outside review. Operability safety is harmed by the
+partial upgrade, even though no input regression is established. Thus
+no-harm admission is unmet. Finish reachable records and halt progression;
+do not open round 16. Tool/transaction and source limits are preserved
+in the lesson rather than hidden by a green gate or a successful push.

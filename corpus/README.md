@@ -37,6 +37,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/config-drift-r12.md` (MADO-R12-4, round 12) | Historical gkeep installation drift, provenance, gate EXPECT re-anchor and M13 census limits; the round-13 erratum corrects the governing gate-rule citation and scopes the new set checks versus remaining glob/grammar limits. | `source:` S013–S015; evidence `.ufo/evidence/round-12/drift-*.txt`, `gate-*.txt`; round-13 measurement pointers are in the appended erratum. |
 | `knowledge/wayland-protocol-boundaries-r13.md` (round 13; covers U4) | Pinned experimental/staging/stable policy, protocol-major versus interface-version distinction, and sanitized host registry interface/version capture. Advertisement is not feature behavior; diagnostic bindings/detail queries are separately explained. | `source:` S005, S040–S043, S046 in [SOURCES](SOURCES.md); `.ufo/waves/round-13/w1/globals.json`; read the note's safe recheck and limits. |
 | `knowledge/output-colour-boundaries-r14.md` (round 14; covers U5) | Documented output transaction test/apply/reply and colour-manager/image-description boundaries; tagged implementation safety caveat bars assuming dry-run safety. Historical matching advertisement is not tested behavior, HDR or physical colour accuracy. | `source:` S047/S048/S050 and reopened S041 in [SOURCES](SOURCES.md); raw source bindings `.ufo/waves/round-14/evidence/source-bindings-pipefail.txt`; feature execution remains operator-owned. |
+| `knowledge/input-debugging-boundaries-r15.md` (round 15; covers U6) | Bounded helper-context → compositor-policy → Wayland client focus → application-outcome diagnostic route. Built-in defaults, kernel recording, capability advertisement and actual delivery are distinct; capture/replay/device access is not authorized. | `source:` S051/S052 in [SOURCES](SOURCES.md), pinned libinput 1.32.0 RST and Wayland 1.26.0 core XML. Package drift is recorded in [lesson](lessons/round-15.md); no feature execution or full U6 coverage. |
 
 ## Quality bar
 
@@ -100,3 +101,9 @@ Index completeness does not retire these unresolved surfaces:
   [sourced ground](knowledge/output-colour-boundaries-r14.md). Output test/apply,
   runtime state agreement, colour/HDR rendering and physical accuracy remain
   unknown; this is neither full U5 feature coverage nor a hardware-health verdict.
+- Round 15 moves only U6's **documented layer route** onto
+  [sourced ground](knowledge/input-debugging-boundaries-r15.md), superseding
+  the older “input ladder open” wording for that bounded documentary subset.
+  Actual kernel/libinput/compositor/client delivery, toolkit/IME behavior and
+  U7 Waybar module text remain open. The host partial upgrade during this
+  wave is a safety harm, not knowledge expansion or proof of input health.

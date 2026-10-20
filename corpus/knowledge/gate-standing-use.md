@@ -458,3 +458,49 @@ Named zero-match/dangling classes and newline-regular transport are
 fixtured. Arbitrary grammar, expanded-glob membership policy, broad
 whole-config hashing, historical theme mutation coverage and current
 rendered/live feature behavior remain outside these receipts.
+
+## Erratum — round 15, R14-V1 ancillary mutation receipts
+
+Outside `corpus/lessons/round-14-verifier-spotcheck.md:169` routes the
+precision debt in the three round-14 ancillary mutation receipts. Their
+historical headers and TSVs are preserved. They are **not standalone
+final-full-gate receipts**, and no new runtime kill result is asserted here.
+
+| Historical receipt under `.ufo/waves/round-14/evidence/` | Provisional whole-gate header SHA-256 | Run time (UTC, recorded) | Valid relation |
+|---|---|---|---|
+| regression-recut.txt | ef50e262f311d74e05afd558883415d2f47fa2a0247a0c834e37f49cb60c742b | 2026-10-20T05:58:44Z | recorded MUTATE_TARGET/control/restore bind the derived executable below; historical 10/10 table, not a final-full-gate run |
+| regular-target-mutants.txt | d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36 | 2026-10-20T06:00:23Z | same derived target; historical 4/4 table only |
+| retained-census-mutants.txt | d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36 | 2026-10-20T06:01:00Z | same derived target; historical 8/8 table only |
+
+All three say `input_binding: provisional worktree snapshot` and omit
+`measured_commit`. Their run times precede commit
+`32118fc1014837b3a385c7a66abbdc59b1560835` (06:03:28Z). Neither provisional
+whole-gate hash is retrospectively assigned to that commit. The committed
+whole-gate hash is instead
+`fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`.
+
+The relation recoverable from committed bytes is narrower:
+take `git show 32118fc1014837b3a385c7a66abbdc59b1560835:tools/mado-verify.sh`
+and apply that gate's `mado_r7_target_build` marker-family excision
+(R7 REGRESSION, R7 SELFTEST and R8 BLOCK, four actual spans). Its derived
+executable is **117602 bytes**, SHA-256
+`cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96`,
+which equals each historical MUTATE_TARGET and GREEN/restore target hash.
+The retained R8 OMARCHY block is not one of those excised families.
+This static relation does not recover the excised provisional bytes.
+
+The committed full gate's selftest count 372 is not the mutation target's
+267-assertion GREEN control. The historical SPEC_SHA
+`c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8`
+and harness observation
+`75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5`
+are separate identities. Do not infer whole-gate coverage from a target
+kill count. The exact per-receipt original-byte/digest mapping and static
+re-derivation live at `.ufo/waves/round-15/receipt-correction.json`;
+`corpus/lessons/round-15.md` M1 records the audit and decision.
+
+Future standalone mutation receipts bind the actual derived-target,
+specification and harness identities directly, with actual command/time/exit.
+If measured full-gate commit identity exists, record it separately and
+accurately; never stamp a later commit onto a prior run. This is a direct
+receipt discipline under QUALITY 7/9/13, not a new arbitrary-command wrapper.

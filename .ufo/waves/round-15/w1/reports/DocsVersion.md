@@ -1,0 +1,8 @@
+# libinput documentation version provenance
+
+- **Existing documentation anchor:** `corpus/SOURCES.md:19` (S007) records `https://wayland.freedesktop.org/libinput/doc/latest/tools.html` as “libinput 1.32.0 documentation,” opened 2026-10-19, and names the helper-tools and record/replay sections. The row is still `queued`, and the URL is mutable `latest`; it records the version of the docs consulted, not an immutable upstream revision or current-page version.
+- **Installed package metadata:** `pacman -Qi libinput` reports package version `1.31.3-1` (installed 2026-10-03) and the same `latest` documentation URL. This is the installed library package version, not documentation metadata. `pacman -Ql libinput` lists the header, shared library, quirks and license, but no documentation/manual files. `pacman -Q libinput-tools` reports that package is not found.
+
+**Conclusion:** Preserve S007’s 1.32.0 anchor as the registry’s historical docs-version record. The host has libinput `1.31.3-1`; the evidence does not establish that 1.32.0 documentation is installed, or what version the mutable `latest` page currently serves. Do not describe the host’s installed docs as 1.32.0 or equate the library package version with a docs version.
+
+**Confidence:** High for the recorded S007 anchor and installed package metadata; no current remote-page version or installed-doc equivalence was inspected or established.

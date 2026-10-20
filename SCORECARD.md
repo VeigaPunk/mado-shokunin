@@ -594,3 +594,29 @@ Saturation remains 9.0, stagnation window N=3; retired axes: none.
 
 All shortened `evidence/` and `frozen/` paths above resolve under
 `.ufo/waves/round-14/`. SHONEN stays four author assertions.
+
+## Round 15 — declared claim (2026-10-20)
+
+Baseline: `ea0446fcb4840089f0e541d96350144506fb5d1d`.
+**C1 coverage**, lowest non-retired current-art rubric: sourced U1–U5
+5/7 (7.1429/10) → sourced U1–U6 6/7 (8.5714/10). Admit one
+bounded input-debugging layer route, not raw input capture or successful
+application delivery. Keep the seven-ground denominator and the U4/U5
+body/provenance requirements from round 14. U6 requires the provenance
+trio, exactly `covers: U6`, reciprocal mined A/B source joins S051/S052,
+and `## Layer ladder`, `## Safe boundary`, `## Unexercised delivery`
+with explicit `[UNK]` in the last section. Before measurement, source review
+rejected reusing S007: S051 supersedes its composite/mutable description;
+S052 adds the distinct input-XML scope. Existing S007 remains queued.
+Counting command: `python3 .ufo/waves/round-15/measure.py REV`.
+The probe counts structure; L1 must inspect source/body semantics separately.
+
+R14-V1 provisional ancillary mutation-receipt precision is a lesson-backed,
+unscored correction: preserve historical records and append an accurate
+mapping to the committed derived target. No wrapper or new gate behavior.
+The gate remains unchanged. Harm watch: exact gate digest, complete
+navigation, source census and bounded no-live/selftest receipts.
+No exploratory claim, new repertoire capability, promotion clearance,
+kernel diagnosis, device/event reading, replay, input injection or
+configuration/compositor mutation. L1 holds canonical planner seat;
+PlanningWalk is the bounded data-walk mapping inside one 64-seat wave.

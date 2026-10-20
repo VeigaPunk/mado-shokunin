@@ -59,3 +59,20 @@ receipt does not establish cross-revision output equality, and future
 standalone selftest receipts carry their resolved commit and raw gate
 digest locally. No duplicate provenance criterion or generic wrapper is
 introduced; the lesson records the rejected implementation candidate.
+
+## Round 15 — receipt application and host-install safety
+
+R14-V1 applies existing criteria 7, 9 and 13: preserve provisional historical
+headers; append their exact derived-target relation to committed bytes.
+Never stamp a later full-gate measured commit onto a pre-commit mutation run.
+The lesson's M1 and standing-use erratum name the boundary and red/green
+static correction audit; no generic execution wrapper or duplicate
+provenance criterion is introduced.
+
+20. Before a future tool install, obtain `pacman -Sp --print-format '%n %v' <pkgs>`
+    and compare every planned package name (including dependencies) with the
+    installed-name set. The plan must contain only not-already-installed
+    packages; any overlap goes to L0 instead. Helpful-tool authorization does
+    not permit a partial upgrade. Round 15 performs no further pacman operation,
+    rollback/downgrade or restart. (lesson: lessons/round-15.md#mistakes M2;
+    orchestrator ruling on the actual libinput transaction)

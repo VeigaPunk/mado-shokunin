@@ -1,0 +1,116 @@
+source: S051 (https://gitlab.freedesktop.org/libinput/libinput/-/raw/1.32.0/doc/user/tools.rst, tag 1.32.0, §Helper tools :1-32, §libinput list-devices :34-79, §libinput list-kernel-devices :81-128, §libinput debug-events :130-201, §libinput record and libinput replay :204-388; 16990 bytes (`curl | wc -c`), sha256 53264328664493c0fc7074722650ba42afcf8b30c94ce7cc94157544b654ff5f); S052 (https://gitlab.freedesktop.org/wayland/wayland/-/raw/1.26.0/protocol/wayland.xml, tag 1.26.0, wl_seat :2004-2137, wl_pointer :2138-2572, wl_keyboard :2573-2753; 168656 bytes (`wc -c`), sha256 cc860987e54f8d85c940e97fa1270c69b6e4ad31fbcf5a7f00107ce1157f5e07)
+verified-at: 2026-10-20; both raw sources fetched and hashed; installed XML matches S052 byte-for-byte; pacman -Q libinput read 1.32.0-1 at recheck after 1.31.3-1 earlier this wave; no running-compositor, loaded-library or delivered-event equivalence is claimed
+recheck: On libinput, wayland or Hyprland release, or on any package change; refetch the exact tags, re-hash both files and compare with the installed XML. Event observation, record/replay, injection, IME observation and compositor queries stay separately authorized work.
+covers: U6
+
+# Input layers are documented interfaces, not delivered application input
+
+This entry adds U6's **documented input-debugging layer route**, not raw capture,
+injection, kernel diagnosis or successful delivery to an application.
+`[INF-docs]` marks upstream documented or XML-declared semantics;
+`[OBS-static]` marks package and installed-byte observations made without
+execution; `[UNK]` marks behavior not exercised.
+
+## Layer ladder
+
+| Layer | Opened anchor | What the layer can establish | What it cannot establish |
+|---|---|---|---|
+| Kernel event node | `[INF-docs]` S051 §Helper tools :31-32 | Input tooling reaches the kernel's `/dev/input/event*` nodes and most of it requires root. | `[UNK]` Which nodes exist here, whether any is accessible, or whether libinput recognized one. |
+| libinput device context | `[INF-docs]` S051 §libinput list-devices :34-79, §libinput list-kernel-devices :81-128 | `list-devices` reports devices libinput recognizes plus its built-in defaults; `list-kernel-devices` separates kernel-known devices from libinput-recognized ones. | Desktop/compositor configuration, compositor policy, or any event delivered to a client. |
+| Event observation class | `[INF-docs]` S051 §libinput debug-events :130-201, §libinput record and libinput replay :204-388 | A recording is a kernel-event sequence independent of the libinput context; record obscures key codes by default; replay builds a virtual device from the log. | That an observed kernel event was routed, filtered or accepted by the compositor or an app. Replay is injection-class, not observation. |
+| Compositor policy and focus | `[INF-docs]` S052 wl_keyboard.enter :2614, wl_keyboard.leave :2635, wl_pointer.enter :2197, wl_pointer.leave :2212 | Focus is a compositor decision scoped to a `wl_surface`; enter/leave order and the one-active-surface rule are protocol obligations. | `[UNK]` Which policy rule or device binding this compositor applied, or which surface it focused. |
+| Wayland client delivery | `[INF-docs]` S052 wl_seat.capabilities :2030, wl_seat.get_keyboard :2075, wl_keyboard.keymap :2600, wl_keyboard.key :2669, wl_pointer.motion :2224, wl_pointer.button :2244, wl_pointer.frame :2313 | Capability events gate object creation; key codes require a keymap; pointer coordinates are surface-local and grouped by `frame`; button codes come from the Linux input header. | `[UNK]` That this compositor created a keyboard/pointer object for any client of this session, or sent it enter, key, button or motion events. |
+| Toolkit and application | No opened source in this entry | Keymap interpretation, shortcut matching, text input, IME composition and app response are client-side concerns beyond these interfaces. | `[UNK]` Any delivered keystroke, composed text or application outcome. |
+
+The ladder is deliberately top-down: a fact at one layer never substitutes
+for the layer below it. A device recognized by libinput, an event type
+declared in the XML, and an advertised seat capability are three different
+observations, none of which is delivery.
+
+`[INF-docs]` S052 wl_seat.capabilities :2045-2056 adds a flap rule: a
+`wl_pointer` object of version 5 or later created before the most recent
+added-capability event must not send events; the same applies to
+`wl_keyboard`. A capability flap therefore leaves stale objects inert and
+requires a fresh `get_pointer`/`get_keyboard`; asking for an object on a
+seat that never had the capability is a protocol violation (:2068-2084).
+
+Between libinput and the client sits compositor policy. The XML quotes
+below establish only that focus is compositor-decided and surface-scoped.
+The current Hyprland wiki documents read-only info commands (`hyprctl
+devices`, `hyprctl getoption`, page anchor `#info`) that would address the
+device list and input option values. That route is named, not executed,
+contributes no value here, and is outside this entry's two-source join.
+
+### Opened quotes
+
+Quotes are verbatim with RST inline-literal and emphasis markup rendered
+as plain text; each is at most 25 words.
+
+| Anchor | Quote | Words |
+|---|---|---|
+| S051 §Helper tools :31-32 | "Most of the tools must be run as root to have access to the kernel's `/dev/input/event*` device files." | 18 |
+| S051 §libinput list-devices :45-46 | "This tool does not show your desktop's configuration, just the libinput built-in defaults." | 13 |
+| S051 §libinput debug-events :141-143 | "To reproduce the event sequence as your desktop session sees it, ensure that all options are turned on or off as required." | 22 |
+| S051 §libinput record and libinput replay :220-221 | "The recorded events are kernel events and independent of the libinput context." | 12 |
+| S051 §libinput record and libinput replay :262-263 | "For data protection, `libinput record` obscures key codes by default" | 10 |
+| S051 §libinput record and libinput replay :276-277 | "`libinput replay` creates a new virtual device based on the description in the log file." | 15 |
+| S052 wl_seat.capabilities :2030 | "This is sent on binding to the seat global or whenever a seat gains or loses the pointer, keyboard or touch capabilities." | 22 |
+| S052 wl_seat.get_keyboard :2075 | "This request only takes effect if the seat has the keyboard capability, or has had the keyboard capability in the past." | 21 |
+| S052 wl_keyboard.keymap_format.xkb_v1 :2596 | "to determine the xkb keycode, clients must add 8 to the key event keycode" | 14 |
+| S052 wl_keyboard.keymap :2600 | "This event provides a file descriptor to the client which can be memory-mapped in read-only mode to provide a keyboard mapping description." | 22 |
+| S052 wl_keyboard.enter :2614 | "The compositor must not send this event if the wl_keyboard already had an active surface immediately before this event." | 19 |
+| S052 wl_keyboard.leave :2635 | "The leave notification is sent before the enter notification for the new focus." | 13 |
+| S052 wl_keyboard.key :2669 | "The key is a platform-specific key code that can be interpreted by feeding it to the keyboard mapping" | 18 |
+| S052 wl_pointer :2140 | "The wl_pointer interface represents one or more input devices, such as mice, which control the pointer location and pointer_focus of a seat." | 22 |
+| S052 wl_pointer.enter :2197 | "Notification that this seat's pointer is focused on a certain surface." | 11 |
+| S052 wl_pointer.motion :2224 | "Notification of pointer location change. The arguments surface_x and surface_y are the location relative to the focused surface." | 18 |
+| S052 wl_pointer.button :2244 | "The button is a button code as defined in the Linux kernel's linux/input-event-codes.h header file, e.g. BTN_LEFT." | 17 |
+| S052 wl_pointer.frame :2313 | "Indicates the end of a set of events that logically belong together." | 12 |
+
+S051's tag object is `c7e6fe66f509ba2eda680c28aa64795987b49e7c`,
+peeling to commit `5cf833b572f5a33663888da321dce0ba1abd82a2`. S052's tag
+object is `5f430e41167dd359b70fb5e9f584ba2dc058e4cc`, peeling to commit
+`87cc8a8728a923fc57938faa81ba0e74f34ecdc7`. These peeled commits are the
+source revisions; the tags are cited because the raw URLs use them.
+
+`[OBS-static]` The installed `/usr/share/wayland/wayland.xml` is 168656
+bytes (`wc -c`) and sha256 `cc860987e54f8d85c940e97fa1270c69b6e4ad31fbcf5a7f00107ce1157f5e07`,
+equal to S052's raw bytes (`curl … | sha256sum`). Package state is
+`wayland 1.26.0-1` and `libinput 1.32.0-1` at recheck (`pacman -Q`,
+2026-10-20). The XML byte equality supports using S052's line anchors for
+the installed copy; it is file equality, not compositor-binary equivalence.
+
+## Safe boundary
+
+- Read-only inputs only: the two immutable tag URLs and static package
+  queries. The installed XML was hashed, never parsed as live protocol.
+- `[INF-docs]` never becomes a host fact by citation. Only package
+  presence, byte counts and hashes are `[OBS-static]`.
+- Package drift was observed, not caused here: `libinput` read 1.31.3-1
+  earlier in this wave and 1.32.0-1 at recheck. This seat installed or
+  upgraded nothing. Whether the running compositor started against, links,
+  or now uses 1.32.0 is `[UNK]`; a matching package version is not
+  running-compositor equivalence.
+- Documentation and package now share the 1.32.0 number, but that is a
+  version label, not evidence about this compositor's input behaviour.
+- Prohibited and not performed here: every `libinput` subcommand
+  (`list-devices`, `list-kernel-devices`, `debug-events`, `debug-gui`,
+  `record`, `replay`, `measure`, `analyze`, `quirks`), sudo, opening
+  `/dev/input/event*`, event observation, recording, replay, injection,
+  raw device reads, kernel/DRM diagnosis, any `hyprctl` call, compositor
+  reload or configuration write, and any text-input/IME client.
+- `libinput record` and `libinput replay` are not neutral observers:
+  record is a capture-class privacy surface and replay creates a virtual
+  device. Neither is a permitted checking step, and neither was run.
+- No device name, node path, seat name, keycode or raw event is retained
+  by this entry.
+
+## Unexercised delivery
+
+`[UNK]` This host's device-node and libinput recognition inventory; the
+compositor's device list and input-option values; which client objects a
+compositor created; whether any `wl_keyboard` or `wl_pointer` event reached
+a client; keymap interpretation, layout and repeat behavior; text-input or
+IME composition; and the final application outcome. No event was observed,
+recorded, replayed or injected, and no delivery claim is admitted. Those
+remain separately authorized operator work with their own receipt.

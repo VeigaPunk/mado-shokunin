@@ -1,0 +1,468 @@
+{
+  "artifact": "receipt-correction",
+  "schema": "mado.receipt-correction/v1",
+  "defect": "R14-V1",
+  "class": "ancillary receipt precision / provenance binding",
+  "status": "append-only explanatory correction; historical receipt bytes preserved; coverage-neutral",
+  "axes": "none scored; ancillary provenance precision only",
+  "authority": {
+    "route": "corpus/lessons/round-14-verifier-spotcheck.md:169",
+    "scorecard_note": "SCORECARD.md:613-617",
+    "rule": "map each provisional header to the committed derived target, keep historical bytes, do not add a wrapper, do not change gate behavior"
+  },
+  "measured_commit": "32118fc1014837b3a385c7a66abbdc59b1560835",
+  "measured_commit_role": "reference source revision for static target derivation; not the runtime revision of the three pre-commit mutation runs",
+  "measured_commit_committed_at": "2026-10-20T03:03:28-03:00",
+  "derivation_head": "ea0446fcb4840089f0e541d96350144506fb5d1d",
+  "derivation_date": "2026-10-20",
+  "lane_root": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "no_execution": {
+    "gate_executed": false,
+    "harness_executed": false,
+    "mutants_executed": false,
+    "selftest_or_measure_executed": false,
+    "input_events_read": false,
+    "method": "git show of committed blobs, in-memory bytes transforms, sha256 only"
+  },
+  "historical_bytes": {
+    "preserved": true,
+    "rewritten": false,
+    "evidence": [
+      "git -C /home/vgpnk/Projects/shokunin/mado-shokunin diff --stat ea0446fcb4840089f0e541d96350144506fb5d1d -- .ufo/waves/round-14/  (empty output)",
+      "git rev-parse 32118fc1014837b3a385c7a66abbdc59b1560835:.ufo/waves/round-14/evidence/regression-recut.txt and HEAD:.ufo/waves/round-14/evidence/regression-recut.txt both 2ea4e794454fee3ccb6f9482bc20221acaf23421"
+    ],
+    "subjects": {
+      "regression-recut.txt": "d54626345fa0a37efc4ad1f58cc51520a4e8bd5922d717128f4d5cd19199b75b",
+      "regular-target-mutants.txt": "267de2b54b41a7575716d56fcf4433f44d92b6d2f53b8c05e46d701c4762745f",
+      "retained-census-mutants.txt": "57c462c29984d0e878c4c986ca205bee73dd6e3119b802915be31e5f4b549d81",
+      "historical-results.tsv": "573dba026c054ec1e4edc0df73c9e85b88786bdc3b20a80eb37550c3503232e9",
+      "regular-target-results.tsv": "198fcd7056a1f359d1464d7edaf7d36baaef516f9201eb19d7af780285caa87e",
+      "retained-census-results.tsv": "3e78c5fdaeef83e2edfd523f3c38f504b909db652ce7aeb76bf6482824ee99c3"
+    }
+  },
+  "committed_gate": {
+    "path": "tools/mado-verify.sh",
+    "revision": "32118fc1014837b3a385c7a66abbdc59b1560835",
+    "sha256": "fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207",
+    "bytes": 177849,
+    "lines": 3711,
+    "note": "the worktree file also hashes to this value at derivation time; the binding claim names the committed revision"
+  },
+  "target": {
+    "path_at_run": "/tmp/mado-r14-recut-0blumi29/target.mado-verify.sh",
+    "retained": false,
+    "sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+    "bytes": 117602,
+    "lines": 2403,
+    "equals_committed_derived_target": true,
+    "equals_PIN_MADO_at_measured_commit": true,
+    "pin_line": "tools/mado-verify.sh:1639 (inside the excised R7 regression span)",
+    "algorithm": {
+      "function": "mado_r7_target_build() at tools/mado-verify.sh:1723-1733 (measured commit)",
+      "semantics": "sed deletes every line from an inclusive start marker to the next matching end marker, for each of three marker names, starting a new range after each close",
+      "excised_spans_measured_commit": [
+        "MADO-R7-SELFTEST-BLOCK lines 440-619",
+        "MADO-R8-BLOCK lines 1368-1531",
+        "MADO-R7-REGRESSION-BLOCK lines 1543-1983",
+        "MADO-R8-BLOCK lines 1984-2506"
+      ],
+      "consequence": "PIN_MADO, SPEC_SHA, TABLE_MADO and HARNESS_SHA_RECORDED live inside the excised R7 regression span, so derived-target identity does not authenticate those constants; it authenticates only the retained 117602 bytes"
+    },
+    "run_time_source": "built from uncommitted worktree gate bytes; provisional headers identify ef50e262 or d6d5eb27 digests but their full-gate byte preimages are not retained or recoverable here"
+  },
+  "harness": {
+    "path": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh",
+    "sha256": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5",
+    "bytes": 77904,
+    "role": "mutable sibling mutation tool consumed read-only; digest also equals committed .ufo/waves/round-14/frozen/harness.sh and .ufo/waves/round-13/frozen/harness.sh at derivation time",
+    "not_this": {
+      "gate_constant": "HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb' at tools/mado-verify.sh:1641",
+      "note": "the gate prints b56c6e57 as the recorded revision, provenance not gated; it is not the harness digest the three receipts used"
+    },
+    "drift_risk": "sibling tool is outside the mado repo and can move; the receipts bind the bytes they ran by digest only"
+  },
+  "receipt_map": [
+    {
+      "path": ".ufo/waves/round-14/evidence/regression-recut.txt",
+      "original_sha256": "d54626345fa0a37efc4ad1f58cc51520a4e8bd5922d717128f4d5cd19199b75b",
+      "provisional_gate_sha256": "ef50e262f311d74e05afd558883415d2f47fa2a0247a0c834e37f49cb60c742b",
+      "provisional_status": "unrecoverable uncommitted worktree digest; maps to no commit",
+      "run_time_utc": "2026-10-20T05:58:44Z",
+      "input_binding": "provisional worktree snapshot",
+      "derived_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+      "standalone_final_full_gate_receipt": false
+    },
+    {
+      "path": ".ufo/waves/round-14/evidence/regular-target-mutants.txt",
+      "original_sha256": "267de2b54b41a7575716d56fcf4433f44d92b6d2f53b8c05e46d701c4762745f",
+      "provisional_gate_sha256": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+      "provisional_status": "unrecoverable uncommitted worktree digest; maps to no commit",
+      "run_time_utc": "2026-10-20T06:00:23Z",
+      "input_binding": "provisional worktree snapshot",
+      "derived_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+      "standalone_final_full_gate_receipt": false
+    },
+    {
+      "path": ".ufo/waves/round-14/evidence/retained-census-mutants.txt",
+      "original_sha256": "57c462c29984d0e878c4c986ca205bee73dd6e3119b802915be31e5f4b549d81",
+      "provisional_gate_sha256": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+      "provisional_status": "unrecoverable uncommitted worktree digest; maps to no commit",
+      "run_time_utc": "2026-10-20T06:01:00Z",
+      "input_binding": "provisional worktree snapshot",
+      "derived_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+      "standalone_final_full_gate_receipt": false
+    }
+  ],
+  "receipts": [
+    {
+      "id": "regression-recut",
+      "path": ".ufo/waves/round-14/evidence/regression-recut.txt",
+      "subject_sha256": "d54626345fa0a37efc4ad1f58cc51520a4e8bd5922d717128f4d5cd19199b75b",
+      "committed_at_measured_commit": true,
+      "header": {
+        "lines": "1-4",
+        "command": "bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh --defects /tmp/mado-r14-recut-0blumi29/mado-verify.defects.spec --suite 'bash \"$MUTANT\" --selftest' --workdir /tmp/mado-r14-recut-0blumi29/historical --label mado-r14-historical",
+        "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "input_binding": "provisional worktree snapshot",
+        "gate_sha256": "ef50e262f311d74e05afd558883415d2f47fa2a0247a0c834e37f49cb60c742b",
+        "measured_commit_present": false
+      },
+      "provisional_gate_sha256": {
+        "value": "ef50e262f311d74e05afd558883415d2f47fa2a0247a0c834e37f49cb60c742b",
+        "status": "provisional uncommitted whole-gate header digest; byte preimage unrecoverable here; not a committed gate identity",
+        "recorded_description": "pre-integration worktree gate named by round-14 authoring seats (.ufo/waves/round-14/w1/reports/GateImplement.md:19, ReviewResolver.md:32,34,64), reported as 3711 lines",
+        "bytes_retained": false,
+        "committed_blob_with_this_sha256": false,
+        "maps_to_commit": null,
+        "maps_to_committed_gate_sha256": null
+      },
+      "run": {
+        "mutate_date": "2026-10-20T05:58:44Z",
+        "mutate_tool_sha256": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5",
+        "mutate_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "mutate_target_bytes": 117602,
+        "line_target": 8,
+        "mutate_spec_path_at_run": "/tmp/mado-r14-recut-0blumi29/mado-verify.defects.spec",
+        "mutate_spec_retained": false,
+        "mutate_spec_committed_source": "heredoc body written by mado_r7_spec_write() at tools/mado-verify.sh:1671-1720 (measured commit)",
+        "mutate_spec_sha256": "c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8",
+        "mutate_spec_bytes": 2141,
+        "mutate_spec_equals_SPEC_SHA_at_measured_commit": true,
+        "spec_sha_recorded_line": "tools/mado-verify.sh:1640",
+        "defect_count": 10,
+        "line_spec": 9
+      },
+      "control": {
+        "line": 10,
+        "verdict": "GREEN",
+        "exit": 0,
+        "duration_ms": 7632,
+        "pristine_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "suite_assertions": "267/267 on the derived target"
+      },
+      "kill_table": {
+        "line_done": 77,
+        "label": "mado-r14-historical",
+        "recorded": "10/10 KILLED, survived=0, inconclusive=0, kill-rate=100%",
+        "ids": ["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "R1"],
+        "table_source": ".ufo/waves/round-14/evidence/historical-results.tsv",
+        "equals_TABLE_MADO_at_measured_commit": true,
+        "table_MADO_line": "tools/mado-verify.sh:1642"
+      },
+      "restore": {
+        "line": 75,
+        "verdict": "MUTATE_RESTORE: OK",
+        "target_before": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "target_after": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "pristine": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "bytes_changed": false
+      },
+      "classification": {
+        "standalone_final_full_gate_receipt": false,
+        "what_it_proves": "the mutation harness measured the derived 117602-byte target, whose sha equals excise(measured_commit gate); the inputs reproduce statically from committed bytes",
+        "what_it_does_not_prove": "that the run executed the committed whole gate fba82a66 or any commit, or that the recorded KILLED outcomes were re-executed by this correction"
+      }
+    },
+    {
+      "id": "regular-target-mutants",
+      "path": ".ufo/waves/round-14/evidence/regular-target-mutants.txt",
+      "subject_sha256": "267de2b54b41a7575716d56fcf4433f44d92b6d2f53b8c05e46d701c4762745f",
+      "committed_at_measured_commit": true,
+      "header": {
+        "lines": "1-4",
+        "command": "bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh --defects /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-14/w1/regular-target.spec --suite 'bash \"$MUTANT\" --selftest' --workdir /tmp/mado-r14-recut-0blumi29/regular --label mado-r14-regular",
+        "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "input_binding": "provisional worktree snapshot",
+        "gate_sha256": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+        "measured_commit_present": false
+      },
+      "provisional_gate_sha256": {
+        "value": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+        "status": "provisional uncommitted whole-gate header digest; byte preimage unrecoverable here; not a committed gate identity",
+        "recorded_description": "no record in the repository outside these two receipts",
+        "bytes_retained": false,
+        "committed_blob_with_this_sha256": false,
+        "maps_to_commit": null,
+        "maps_to_committed_gate_sha256": null
+      },
+      "run": {
+        "mutate_date": "2026-10-20T06:00:23Z",
+        "mutate_tool_sha256": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5",
+        "mutate_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "mutate_target_bytes": 117602,
+        "line_target": 8,
+        "mutate_spec_path_at_run": ".ufo/waves/round-14/w1/regular-target.spec",
+        "mutate_spec_retained": true,
+        "mutate_spec_committed": true,
+        "mutate_spec_sha256": "45f1fcd33df4d38bc231d665656421512c6accf7918a7325cb3822ea38ecdc08",
+        "mutate_spec_bytes": 1119,
+        "defect_count": 4,
+        "line_spec": 9,
+        "stale_comment": "regular-target.spec:3 still says 'no mutant was run' while this receipt records a run; historical bytes, not edited"
+      },
+      "control": {
+        "line": 10,
+        "verdict": "GREEN",
+        "exit": 0,
+        "duration_ms": 7336,
+        "pristine_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "suite_assertions": "267/267 on the derived target"
+      },
+      "kill_table": {
+        "line_done": 46,
+        "label": "mado-r14-regular",
+        "recorded": "4/4 KILLED, survived=0, inconclusive=0, kill-rate=100%",
+        "ids": ["RT1", "RT2", "RT3", "RT4"],
+        "table_source": ".ufo/waves/round-14/evidence/regular-target-results.tsv"
+      },
+      "restore": {
+        "line": 44,
+        "verdict": "MUTATE_RESTORE: OK",
+        "target_before": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "target_after": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "pristine": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "bytes_changed": false
+      },
+      "classification": {
+        "standalone_final_full_gate_receipt": false,
+        "what_it_proves": "the 4 committed-spec defects were each applied once to the derived target and the suite failed for each",
+        "what_it_does_not_prove": "a committed full-gate run, or a byte-level identity of the spec file used at run time (only defect semantics and mutant bytes bind)"
+      }
+    },
+    {
+      "id": "retained-census-mutants",
+      "path": ".ufo/waves/round-14/evidence/retained-census-mutants.txt",
+      "subject_sha256": "57c462c29984d0e878c4c986ca205bee73dd6e3119b802915be31e5f4b549d81",
+      "committed_at_measured_commit": true,
+      "header": {
+        "lines": "1-4",
+        "command": "bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh --defects /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-13/covering.spec --suite 'bash \"$MUTANT\" --selftest' --workdir /tmp/mado-r14-recut-0blumi29/retained --label mado-r14-retained",
+        "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "input_binding": "provisional worktree snapshot",
+        "gate_sha256": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+        "measured_commit_present": false
+      },
+      "provisional_gate_sha256": {
+        "value": "d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36",
+        "status": "provisional uncommitted whole-gate header digest; byte preimage unrecoverable here; not a committed gate identity",
+        "recorded_description": "no record in the repository outside these two receipts",
+        "bytes_retained": false,
+        "committed_blob_with_this_sha256": false,
+        "maps_to_commit": null,
+        "maps_to_committed_gate_sha256": null
+      },
+      "run": {
+        "mutate_date": "2026-10-20T06:01:00Z",
+        "mutate_tool_sha256": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5",
+        "mutate_target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "mutate_target_bytes": 117602,
+        "line_target": 8,
+        "mutate_spec_path_at_run": ".ufo/waves/round-13/covering.spec",
+        "mutate_spec_retained": true,
+        "mutate_spec_committed": true,
+        "mutate_spec_sha256": "d7cc64ca351f046264fbbc9fc047b0427e55167c6e5fd9949c6e37dd1cd63340",
+        "mutate_spec_bytes": 1264,
+        "mutate_spec_unchanged_since": "95cbc41fe5d5db121b89c2ddd1f953728663c5f4 (round-13)",
+        "defect_count": 8,
+        "line_spec": 9
+      },
+      "control": {
+        "line": 10,
+        "verdict": "GREEN",
+        "exit": 0,
+        "duration_ms": 7357,
+        "pristine_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "suite_assertions": "267/267 on the derived target"
+      },
+      "kill_table": {
+        "line_done": 61,
+        "label": "mado-r14-retained",
+        "recorded": "8/8 KILLED, survived=0, inconclusive=0, kill-rate=100%",
+        "ids": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+        "table_source": ".ufo/waves/round-14/evidence/retained-census-results.tsv"
+      },
+      "restore": {
+        "line": 59,
+        "verdict": "MUTATE_RESTORE: OK",
+        "target_before": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "target_after": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "pristine": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96",
+        "bytes_changed": false
+      },
+      "classification": {
+        "standalone_final_full_gate_receipt": false,
+        "what_it_proves": "the 8 round-13 covering defects were each applied once to the derived target and the suite failed for each",
+        "what_it_does_not_prove": "a committed full-gate run, or a byte-level identity of the spec file used at run time (only defect semantics and mutant bytes bind)"
+      }
+    }
+  ],
+  "derivations": {
+    "commands": [
+      {
+        "purpose": "whole committed gate bytes",
+        "command": "git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:tools/mado-verify.sh | sha256sum",
+        "observed": "fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207"
+      },
+      {
+        "purpose": "committed derived target (the exact sed from mado_r7_target_build)",
+        "command": "git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:tools/mado-verify.sh | sed -e '/^[[:space:]]*# >>> MADO-R7-REGRESSION-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-REGRESSION-BLOCK <<<$/d' -e '/^[[:space:]]*# >>> MADO-R7-SELFTEST-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R7-SELFTEST-BLOCK <<<$/d' -e '/^[[:space:]]*# >>> MADO-R8-BLOCK >>>$/,/^[[:space:]]*# <<< MADO-R8-BLOCK <<<$/d' | sha256sum",
+        "observed": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96"
+      },
+      {
+        "purpose": "committed derived target byte count",
+        "command": "same pipeline | wc -c",
+        "observed": "117602"
+      },
+      {
+        "purpose": "embedded historical spec bytes exactly as mado_r7_spec_write writes them",
+        "command": "body=$(git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:tools/mado-verify.sh | awk '/cat <<.MADO_R7_SPEC_EOF./{f=1;next} f&&/^MADO_R7_SPEC_EOF$/{exit} f'); printf '%s' \"$body\" | sha256sum",
+        "observed": "c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8 (2141 bytes), equal to SPEC_SHA at tools/mado-verify.sh:1640"
+      },
+      {
+        "purpose": "committed regular-target spec",
+        "command": "git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:.ufo/waves/round-14/w1/regular-target.spec | sha256sum",
+        "observed": "45f1fcd33df4d38bc231d665656421512c6accf7918a7325cb3822ea38ecdc08"
+      },
+      {
+        "purpose": "committed round-13 covering spec",
+        "command": "git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:.ufo/waves/round-13/covering.spec | sha256sum",
+        "observed": "d7cc64ca351f046264fbbc9fc047b0427e55167c6e5fd9949c6e37dd1cd63340"
+      },
+      {
+        "purpose": "harness actually consumed by the three receipts (read-only sibling bytes)",
+        "command": "sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh",
+        "observed": "75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5 (77904 bytes)"
+      },
+      {
+        "purpose": "preserved receipt bytes",
+        "command": "git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 32118fc1014837b3a385c7a66abbdc59b1560835:.ufo/waves/round-14/evidence/regression-recut.txt | sha256sum",
+        "observed": "d54626345fa0a37efc4ad1f58cc51520a4e8bd5922d717128f4d5cd19199b75b"
+      }
+    ],
+    "cross_check": "an independent Python range-excisor implementing the same three inclusive marker ranges (sed 'd' semantics: each script's range state advances only on lines it processes) also produced 2403 lines, 117602 bytes, sha256 cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96"
+  },
+  "mutant_recomputation": {
+    "method": "for each defect in each committed spec, decode the harness @old/@new escapes, assert the @old byte string occurs exactly once in the derived target, replace once (the frozen harness cmd_apply semantics at .ufo/waves/round-14/frozen/harness.sh:351-372), and sha256 the result; bytes handled in memory only",
+    "executed_gate_or_harness": false,
+    "result": {
+      "regression-recut": {"reproduced": 10, "total": 10, "each_old_count": 1},
+      "regular-target-mutants": {"reproduced": 4, "total": 4, "each_old_count": 1},
+      "retained-census-mutants": {"reproduced": 8, "total": 8, "each_old_count": 1}
+    },
+    "mutant_sha256": {
+      "regression-recut": {
+        "D1": "306f7dba5f52e3a38b358c9de260b379cf90f9f3c8a1f14b97cc097a2239f51a",
+        "D2": "cbdd48fbc9e447c9d8aa46cdcfcb91f8f75d56ecee8f50749cdd46a54f780ea1",
+        "D3": "4e22a544d876d4d8f42f32a0a3b331a355f0f14708c5275076f0b91b79066ef8",
+        "D4": "2d03a44eb78d21962fb89568f08684de2daba60123bb56c464597f3aa4f8a670",
+        "D5": "e5f55ac550f5f4bdc412d74c03a727e57da3ebb988839ef7ca536ba29f0a0fef",
+        "D6": "b99e0561085f25930a8360aef6effdc85300dd3482bbdd17421ee2093c0c8a0c",
+        "D7": "95f4572b3108fc0bc91875ebdd7ea7ad61d3b03711de8901db9a2f57cf957621",
+        "D8": "7d157d0162118c31a66cf43a32d3fa900612697da199eaafefc7c2759a29f8a8",
+        "D9": "37cf341a162e0708594af8dd18559c2c7edebcedc561bfb7c27d46ee4a74bf5d",
+        "R1": "2eb82343299515df37734d60653b76dd8003fb99216851bb097851c6849d4b69"
+      },
+      "regular-target-mutants": {
+        "RT1": "826b4bccbe01762284cc67e5cc0355c8e59c7e6fa9abb9e62e5ea2ce58f2b5c0",
+        "RT2": "a9c7fe1e3c1e9d5a13b586ba4c44c25fbe673cf71cf72e2328ae22146b9f09db",
+        "RT3": "7af30a0dedacf87eff79108f4c36469dbe6d4a1e9d8d278699f6d15da63fce0d",
+        "RT4": "978af9d9db274d9d44f8e669e31e093309277380ad65d4fbec49c15131f82b31"
+      },
+      "retained-census-mutants": {
+        "P1": "35fd474a6acbfc9b20614fd1f3bed2760b2a624f110b16422cc36a523328cbef",
+        "P2": "1f51aa84c9aaff2076d60242e7134f2e68a654b75c7558b7ee607af00ef59001",
+        "P3": "e57b82d0928a9598788ca454107c6e7012203a472124cdf4978ca5de89e4a4f4",
+        "P4": "831adbc27ff5d7508216d45157f6a8c8142f2cfbb6fe177fe092c3014669e464",
+        "P5": "62db38183818bd4cbee7e7981b2f15c6ecba1bf5e0ce65af2e94dcb8a79b4c15",
+        "P6": "602d16ce348425c2195668231cd1937a991cc4282bf009c99cac36a9d52d58d3",
+        "P7": "772d660c14a8fb6c3f72056d1aff85f73401b2f11e4efdf7f64a73b97c5291d8",
+        "P8": "7b5132cd231f8796f9bef1390091dd95a4983ddfb1c2e8e33e187d186349bd60"
+      }
+    },
+    "scope": "inputs reproduced statically; KILLED verdicts, exits, durations and control runs remain recorded observations and were not re-executed"
+  },
+  "recorded_outcomes": {
+    "killed": {"regression-recut": "10/10", "regular-target-mutants": "4/4", "retained-census-mutants": "8/8"},
+    "exits": {
+      "regression-recut": {"D1": 2, "D2": 2, "D3": 2, "D4": 2, "D5": 1, "D6": 2, "D7": 2, "D8": 2, "D9": 2, "R1": 2},
+      "regular-target-mutants": {"RT1": 2, "RT2": 2, "RT3": 2, "RT4": 2},
+      "retained-census-mutants": {"P1": 2, "P2": 2, "P3": 2, "P4": 2, "P5": 2, "P6": 2, "P7": 2, "P8": 2}
+    },
+    "receipt_exit": {"regression-recut": 0, "regular-target-mutants": 0, "retained-census-mutants": 0},
+    "restore": "all three: MUTATE_RESTORE OK, target before == after == pristine cd1d73d7..., bytes unchanged"
+  },
+  "commit_bound_full_gate_receipts": [
+    {
+      "path": ".ufo/waves/round-14/evidence/gate-selftest.txt",
+      "measured_commit": "32118fc1014837b3a385c7a66abbdc59b1560835",
+      "gate_sha256": "fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207",
+      "result": "MADO_SELFTEST 372/372, exit 0",
+      "runs_mutants": false
+    },
+    {
+      "path": ".ufo/waves/round-14/evidence/gate-file-plane.txt",
+      "measured_commit": "32118fc1014837b3a385c7a66abbdc59b1560835",
+      "gate_sha256": "fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207",
+      "result": "counts pass=29 fail=0 unknown=0 skip=8 note=4, exit 0",
+      "runs_mutants": false
+    },
+    {
+      "path": ".ufo/waves/round-14/evidence/frozen-regression.txt",
+      "measured_commit": "32118fc1014837b3a385c7a66abbdc59b1560835",
+      "gate_sha256": "fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207",
+      "result": "frozen gate/harness digests verified, REGRESSION_SPEC sha c7ee75b9..., target pin match, 10/10, MADO_REGRESSION PASS, exit 0",
+      "runs_mutants": true,
+      "note": "committed replay at delivered revision 97c35835da3702df2f397d5c70ac6b1d871f012d, which binds measured commit 32118fc; not re-executed by this correction"
+    }
+  ],
+  "cautions": [
+    "These three receipts are NOT standalone final-full-gate receipts. Their run target is the excised derivative, and their run-time whole gate predates the measured commit.",
+    "Do not map ef50e262... or d6d5eb27... to any commit, to fba82a66..., or to 'the committed gate'. Neither digest is retained as bytes and neither equals any of the nine committed gate revisions or any of the 484 blobs scanned in the object store.",
+    "Derived-target sha equality with excise(measured_commit) is proven from committed bytes; it does not mean the run executed the measured commit. The run-time gate bytes are not retained.",
+    "The 267/267 CONTROL belongs to the derived target's selftest. The committed full gate selftest is 372/372 (gate-selftest.txt). Do not interchange them.",
+    "Recorded KILLED outcomes were not re-executed here. Only the mutation inputs were statically reproduced: derived target bytes, defect semantics, and all 22 mutant byte digests.",
+    "For RT/P the receipt prints MUTATE_SPEC path and defect count but no spec sha256; the committed spec defect semantics and mutant bytes match, which is not a byte-level identity claim about the file present at run time.",
+    "MUTATE_TOOL 75ed934d... is a mutable sibling tool path, not a mado artifact; its bytes currently equal committed frozen/harness.sh. It is not the gate constant HARNESS_SHA_RECORDED b56c6e57..., which is printed as provenance and is not gated.",
+    "regular-target.spec:3 still reads 'no mutant was run'; that comment is stale historical text inside a pinned file and must not be edited.",
+    "No wrapper, gate edit, new quality criterion, score move or receipt rewrite is introduced. This artifact is coverage-neutral."
+  ],
+  "forward_binding_recommendation": [
+    "future standalone mutation receipts should carry measured_commit, the committed whole-gate gate_sha256, the derived MUTATE_TARGET sha256 and byte count, the spec sha256, and the harness sha256",
+    "recommendation only; no wrapper and no gate behavior change"
+  ],
+  "references": [
+    "corpus/lessons/round-14-verifier-spotcheck.md:169",
+    "SCORECARD.md:613-617",
+    ".ufo/waves/round-14/evidence/committed-bindings.json",
+    ".ufo/waves/round-14/evidence/regression-recut.txt:1-4,8-10,75,77",
+    ".ufo/waves/round-14/evidence/regular-target-mutants.txt:1-4,8-10,44,46",
+    ".ufo/waves/round-14/evidence/retained-census-mutants.txt:1-4,8-10,59,61",
+    ".ufo/waves/round-14/evidence/historical-results.tsv",
+    ".ufo/waves/round-14/evidence/regular-target-results.tsv",
+    ".ufo/waves/round-14/evidence/retained-census-results.tsv",
+    "tools/mado-verify.sh:1639-1642,1671-1720,1723-1733 (measured commit)",
+    ".ufo/waves/round-14/frozen/harness.sh:351-372",
+    ".ufo/waves/round-14/w1/reports/GateImplement.md:19",
+    ".ufo/waves/round-14/w1/reports/ReviewResolver.md:32,34,64"
+  ]
+}
