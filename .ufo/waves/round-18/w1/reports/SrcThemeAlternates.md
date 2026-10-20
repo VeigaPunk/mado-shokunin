@@ -28,12 +28,15 @@ screens the alternate families.
 - **No candidate qualifies for C2 credit.** C2 requires `mined` + tier A + upstream
   `https` + the surface keyword. The only opened tier-A alternate is the Hyprland wiki
   listing, and it is a one-paragraph ecosystem blurb, not Walker’s contract; it is
-  queued as corroboration only. Every other opened alternate is tier C or a
-  fork-scoped B and is rejected. The route notes should cite the sibling primary rows.
-- **The one version-bound alternate is the pinned AUR PKGBUILD pair**: package
+  queued as corroboration only. Every other opened alternate is tier C or a B
+  (fork-scoped or version-mismatched) and is rejected. The route notes should cite the
+  sibling primary rows.
+- **The one host-relevant version binding is the pinned AUR PKGBUILD pair**: package
   versions `2.17.2-1`/`2.22.1-1` map to upstream tags `v2.17.2`/`v2.22.1` with
   tarball sha256s. It is packaging provenance only, not host-install proof and not a
-  C2 credit row.
+  C2 credit row. The strongest P5 version stamp points the other way: omarchythemes.dev
+  says it is checked on Omarchy 4.0.0.alpha while the host is v3.8.4, so that row is
+  rejected.
 - **ArchWiki has no `Walker` article**: `index.php?title=Walker&action=raw` returned
   HTTP 404 with a 0-byte body (empty-input sha256 `e3b0c442…`); the
   `Category:Application_launchers` raw page (478 B) lists translations and see-also

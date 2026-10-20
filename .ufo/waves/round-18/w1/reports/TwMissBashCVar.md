@@ -226,12 +226,13 @@ fixture's counter "is 1 today" is superseded.
 
 ## Integration notes for L1 (receipts hygiene R17-V1/V2, CriticHonesty H5)
 
-- Freeze the classifier **before** cutting the C3 frozen pin. If source lines
-  152/155 are in the committed snapshot, this patch changes their pinned
-  verdict from no finding to `package_query pacman:-Q` and drops their
-  `unparsed_spawns`; a `known_misses` entry for either line would become
-  `frozen_verdict_mismatch`. Re-cut the pin at the landed tool and quote the
-  landed sha.
+- L1's disposition: the fixture suite lives under `drafts/tripwire/` and the
+  frozen pin keeps its known misses — i.e. the pin describes the **pre-patch**
+  classifier and stays valid only while this patch is unlanded. If it lands,
+  re-cut the pin at the landed tool and quote the landed sha. Lines 152/155
+  would then change from no finding to `package_query pacman:-Q` (and drop
+  their `unparsed_spawns`), so a `known_misses` entry for either line becomes
+  `frozen_verdict_mismatch` at that point.
 - Every existing receipt that quotes `962919ce…` (four suite tallies,
   adversarial 4/26, round-17 real-transcript scans) is superseded by this
   classifier change and needs a re-cut at the landed revision.
@@ -248,13 +249,15 @@ fixture's counter "is 1 today" is superseded.
 
 Tooling installed or updated: none.
 
-## Concurrent-write watch
+## Relocation by L1
 
-Between 12:51 and 12:53 UTC the whole `.ufo/waves/round-18/tripwire/r18-bashcvar/`
-directory was removed from the shared working tree by a concurrent process
-(the sibling `frozen/` directory survived). It was restored byte-identically
-from the build copy and re-verified: 15 files, `expected.json sha256
-a83b7008…`, suite 15/15 on the patched tool `6ec3eb9a…`. Nothing else of this
-seat's output was touched (the patch and this report kept their hashes). L1
-should keep this in mind if `.ufo/` is cleaned before commit; the directory
-is untracked and would be removed by a `git clean` over the wave tree.
+The fixture directory was authored under
+`.ufo/waves/round-18/tripwire/r18-bashcvar/`; L1 moved it during integration
+to `.ufo/waves/round-18/drafts/tripwire/r18-bashcvar/` ("patches stay drafts
+this round", frozen pin keeps the known misses). A restore of the original
+path was compared with the drafts copy before deletion: 15/15 files present
+on both sides, `sha256sum` lists identical, every file `cmp`-clean. The
+restored duplicate was then deleted, and the drafts copy was re-run:
+15/15 on the patched tool `6ec3eb9a…`, `expected.json sha256 a83b7008…`.
+The original `.ufo/waves/round-18/tripwire/` now holds only the sibling
+`frozen/` pin.

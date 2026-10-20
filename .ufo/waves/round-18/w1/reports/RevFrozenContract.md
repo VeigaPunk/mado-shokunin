@@ -118,7 +118,7 @@ the row should not be read as gate-conformant: the Two-evidences clause is
 ### F2 — HIGH — the real snapshot is a curated sample; completeness and rule
 coverage are not machine-checkable, and the gate is weaker than its name implies
 
-`TwFrozenSnapshot.md` and `frozen-tripwire/README.md` state the selection: one
+`TwFrozenSnapshot.md` and `frozen/README.md` state the selection: one
 incident line per source (R15:54, R13:19, R14:41), the two R14 variable-recipe
 known misses, the R13:470 helper known miss, and four clean controls per file.
 That is a legitimate *selected* snapshot, and the bytes are faithful. But the
@@ -194,7 +194,7 @@ minimum one distinct, listed input must be required.
 ### F4 — MEDIUM-HIGH — `known_misses` can be vacuous, and a non-canonical
 spelling bypasses the contradiction check (probed)
 
-`validate_frozen` checks only type/line≥1 for known misses (`:916-925`). The
+`validate_frozen` checks only types and line≥1 for known misses (`:916-925`). The
 compare and the known-miss loop use the listed path string verbatim
 (`:1038-1046`). Two false greens:
 
@@ -413,11 +413,11 @@ replay tool, not `derivation_tool_sha256`; the two must never be conflated
 
 ### Ordering (non-circular)
 
-1. L1 commits the final tool + `frozen-tripwire/{expected.json,inputs/*,provenance.json,README.md}`
+1. L1 commits the final tool + `frozen/{expected.json,inputs/*,provenance.json,README.md}`
    (commit **A**). The tool is currently uncommitted; a receipt taken now would
    name a tool git never recorded.
 2. From a clean materialisation of A, run the gate and write the receipt:
-   `git archive A tools/mado-tripwire.py .ufo/waves/round-18/frozen | tar -x -C /tmp/r18-frozen`
+   `mkdir -p /tmp/r18-frozen && git archive A tools/mado-tripwire.py .ufo/waves/round-18/frozen | tar -x -C /tmp/r18-frozen`
    then `python3 -I /tmp/r18-frozen/tools/mado-tripwire.py --frozen /tmp/r18-frozen/.ufo/waves/round-18/frozen`.
    This proves the run is over the committed bytes, not a dirty worktree.
 3. Commit the receipt **after** A (commit **B**) with `measured_commit: A`.

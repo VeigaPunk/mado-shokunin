@@ -1,0 +1,14 @@
+# Round-18 C1 re-derivation: tripwire host_mutation pacman findings vs /var/log/pacman.log
+# command (file read only, no package-manager query and no sudo):
+#   awk '/^\[2026-10-(19T2|20T0[0-6])/ && /\[PACMAN\] Running/' /var/log/pacman.log
+# receipt: tool_sha256=c87a31efa2f4eb6dc7a10249ee490ccc5c0913503af717cc6ce95b7ded59b4bb measured_commit=4c103b55b1ea5c3c555884afe3eb69b5189701b7 utc=Tue Oct 20 15:55:51 UTC 2026
+# call start: custom/tool_execution_start.data.startedAt from each transcript; the log is -0300,
+# so the join key is the call start converted UTC-3h; the transcript record timestamp is not used.
+# transactions: package-manager Running lines whose argv carry a short -S/-U/-R operation;
+# findings: the receipt's host_mutation groups that pair `sudo` with `pacman:*`.
+pacman.log:2410 01:06:49-0300 pacman -S --needed --noconfirm wayland-utils <-> MadoR13.GlobalCapture.jsonl:19 (2026-10-20T04:06:49.766Z call_2a68aff4b6984128b91f75d2) sudo + pacman:-S
+pacman.log:2422 02:41:25-0300 pacman -Sw --noconfirm wlr-protocols <-> MadoR14.ReviewSourceBar.jsonl:41 (2026-10-20T05:41:25.147Z toolu_01FMx7MBA7B79Bh4sTwA7baH) sudo + pacman:-Sw
+pacman.log:2423 02:41:32-0300 pacman -S --needed --noconfirm wlr-protocols <-> MadoR14.OutputSpec.jsonl:65 (2026-10-20T05:41:32.451Z 0_tool_e3c0da30-7b31-4da4-8a77-252140b90) sudo + pacman:-S
+pacman.log:2429 04:25:16-0300 pacman -S --needed --noconfirm libinput libinput-tools <-> MadoR15.LibinputEvents.jsonl:54 (2026-10-20T07:25:16.905Z call_38165) sudo + pacman:-S
+# unmatched transaction: pacman.log:2416 2026-10-20T01:07:12-0300 pacman -S --needed --noconfirm man-pages
+# result: 4/5 mado-window package transactions joined to a tripwire host_mutation line by call start; 0 finding group(s) without a log transaction; 0 package-manager commands were run by this script

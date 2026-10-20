@@ -225,8 +225,9 @@ that tag; it is a generated container.
 
 The rule caps each body at 1 MiB (1,048,576 bytes) and says "skip and report
 larger bodies". No checker enforces it; `fetch-verify.py` would accept a
-5 MiB body. Current largest body is 401,538 B (`tree.json`); the codeload
-tarball is 165,438 B. A partial download (`curl` rc 18/28/63) can leave a
+5 MiB body. Largest observed body is 903,486 B (a GitHub discussion HTML
+page); the omarchy tree JSON is 401,538 B and the codeload tarball is
+165,438 B. A partial download (`curl` rc 18/28/63) can leave a
 short body whose sha/bytes are self-consistent; the rule does not forbid it.
 GitHub tree JSON can also carry `"truncated": true`, which a hash check cannot
 see.
@@ -340,7 +341,7 @@ independent facts.
 | tag refs / commit refs | 196 / 14 |
 | receipts with `tag_commit` or commit field | 0 |
 | timestamps / tool | all within 15:40–15:52Z (seats kept writing); all `curl 8.23.0` |
-| largest body | 401,538 B (tree.json, under 1 MiB) |
+| largest body | 903,486 B (GitHub discussion HTML; under 1 MiB) |
 | slug regex violations (`[a-z0-9._-]+`) | 13 at 297; 14 at 301 |
 | bodies without a receipt | 5 |
 | `fetch-verify.py` live result | `receipts=296 ok=296 bad=0`, exit 0, including the five 404s |
@@ -381,6 +382,11 @@ Exit: 0 all receipts `ok`/`negative` with every listed row `receipted` and
 quote found; 1 any bad receipt, URL/ref mismatch, unreceipted row, or missing
 quote; 2 could-not-evaluate (missing revision, unreadable body, tag unresolved
 when needed, HTTP 403/429).
+
+`S072,…` above is a placeholder: replace it with the ids L1 actually assigns
+(S072-S099 are reserved, not assigned). `fetch-quotes.json` must be a committed
+path (or named in the closure receipt); a `/tmp` copy is provenance only
+(QUALITY 13).
 
 `fetch-quotes.json` is the three-way join the notes must supply: one entry per
 credited row, `text` ≤25 words, and the coordinate mode:

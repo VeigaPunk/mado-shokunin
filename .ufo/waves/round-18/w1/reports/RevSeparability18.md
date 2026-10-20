@@ -61,7 +61,7 @@ are **not instrumented at all**:
 |---|---|---|---|
 | C1 | `corpus/QUALITY.md` | `corpus/lessons/round-18.md` (citation target, not read); `corpus/lessons/round-17.md` erratum (optional); `.ufo/waves/round-18/{receipt-check.py,receipt-claims.json,receipt-fixtures/,measure-mutants.py,evidence/measure-mutants.json,pipe-rc-census.py,recut-receipts.sh,evidence/tripwire-*-recut.txt}` | seats draft; L1 applies `QUALITY.md`, lessons, commits receipts |
 | C2 | `corpus/SOURCES.md` + `corpus/knowledge/*.md` | `corpus/knowledge/walker-route-r18.md`, `theme-route-r18.md`; `.ufo/waves/round-18/fetch/{NoteWalker,NoteTheme}/**` (10 MB, 323 files, all ≤1 MiB) and every other seat's cited receipts; `.ufo/waves/round-18/fetch-verify.py` | notes by seats; rows/ids/used-by by L1 |
-| C3 | `tools/mado-tripwire.py` | `.ufo/waves/round-18/frozen-tripwire/{expected.json,inputs/*.jsonl,provenance.json,README.md}` (`expected_sha256` 4f3534ae…; 5 inputs, 8 findings, 3 known misses); `.ufo/waves/round-18/tripwire/frozen/` (17-case selftest); `.ufo/waves/round-18/frozen-provenance-check.py`; `SKILL.md` registry row | TwFrozen* + L1 (`SKILL.md`) |
+| C3 | `tools/mado-tripwire.py` | `.ufo/waves/round-18/frozen-tripwire/{expected.json,inputs/*.jsonl,provenance.json,README.md}` (`expected_sha256` 4f3534ae…; 5 inputs, 8 findings, 3 known misses) — **at review snapshot this dir had been renamed to `.ufo/waves/round-18/frozen/`, see F0**; `.ufo/waves/round-18/tripwire/frozen/` (17-case selftest); `.ufo/waves/round-18/frozen-provenance-check.py` (default root `HERE/frozen`, line 64); `SKILL.md` registry row | TwFrozen* + L1 (`SKILL.md`) |
 
 Disjointness holds for the **counter's** inputs. The only shared objects are:
 
@@ -175,9 +175,12 @@ sep_revert d9a5a18 corpus/QUALITY.md corpus/lessons/round-18.md \
   corpus/SOURCES.md corpus/knowledge .ufo/waves/round-18/fetch
 git add -A && git commit -q -m 'sep: revert C1+C2 paths'
 measure   # [expect] c1 15/23, c2.count=4, c3.tool_present true, c3.sha256=FREEZE tool
-python3 -I tools/mado-tripwire.py --frozen .ufo/waves/round-18/frozen-tripwire
+SNAP=.ufo/waves/round-18/frozen-tripwire   # the path the claim text and SKILL row name
+[ -f "$SNAP/expected.json" ] || {
+  echo "C3 path drift: claim names $SNAP; artifact is at $(ls -d .ufo/waves/round-18/frozen 2>/dev/null) — see F0"; exit 1; }
+python3 -I tools/mado-tripwire.py --frozen "$SNAP"
 # expect rc 0, first line 'MADO_TRIPWIRE_FROZEN: frozen_match'
-cp -a .ufo/waves/round-18/frozen-tripwire "$T/tamper"
+cp -a "$SNAP" "$T/tamper"
 for f in "$T"/tamper/inputs/*.jsonl; do printf ' ' >> "$f"; done
 python3 -I tools/mado-tripwire.py --frozen "$T/tamper"
 # expect rc 2, first line 'MADO_TRIPWIRE_FROZEN: snapshot_tampered'
@@ -380,8 +383,8 @@ line anywhere, and the closure should say the instrument checks the head only.
 
 ### K9 [Low, C2 evidence hygiene] Fetch join and body cap
 
-`fetch-verify.py` verifies bytes/sha of every receipt body (296/296 ok at
-`[OBS]`), but its row join accepts `sha in anchor` (line 229), which produced
+`fetch-verify.py` verifies bytes/sha of every receipt body (301/301 ok at the
+last run; the corpus grew from 296 to 301 during the review), but its row join accepts `sha in anchor` (line 229), which produced
 the S075 false positive; and it enforces no 1 MiB body cap although
 `LessonDraft` M4 says "at most 1 MiB". Current bodies: 10 MB / 323 files, none
 >1 MiB. Fetch bodies are untracked and must be committed; `.gitignore` only

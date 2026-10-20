@@ -90,17 +90,19 @@ the wrong-class case).
 |---|---|---|---|---|---|
 | 15 | `eval-var-argv` (`args=[…]; subprocess.run(args)`) | `0 []` (unparsed_spawns 1) | **(a)** | a same-cell `Name = literal list` is an intra-AST constant map; resolve the Name at the spawn call. | reassignment/loops/closures still unparsed; counters must be escalated (§4 S3) |
 | 16 | `eval-concat-argv` (`["su"+"do", …]`) | `0 []` (unparsed_spawns 1) | **(a)** | constant-fold `Add` over string `Constant`s while building the argv list — same AST, decidable. | non-constant expressions remain unparsed |
-| 18 | `eval-getattr-spawn` (`getattr(subprocess,"r"+"un")(…)`) | `0 []` (unparsed_spawns 1) | **(a)** | fold the literal attribute string and resolve the dotted name before the spawn test. | `globals()['…']`, computed names → (b) |
-| 19 | `eval-exec-string` (`exec("… subprocess.run([…])")`) | `0 []` | **(a)** | the payload is same-language source; `ast.parse` the literal and reuse the existing walk (never executed). | non-literal `exec` escapes into the unparsed counter |
+| 17 | `eval-getattr-spawn` (`getattr(subprocess,"r"+"un")(…)`) | `0 []` (unparsed_spawns 1) | **(a)** | fold the literal attribute string and resolve the dotted name before the spawn test. | `globals()['…']`, computed names → (b) |
+| 18 | `eval-exec-string` (`exec("… subprocess.run([…])")`) | `0 []` | **(a)** | the payload is same-language source; `ast.parse` the literal and reuse the existing walk (never executed). | non-literal `exec` escapes into the unparsed counter |
 
 ### A4 — non-Python / non-shell channels (2/4 fixable)
 
 | # | case | current verdict | | one-line justification / narrow rule | residual |
 |---|---|---|---|---|---|
-| 20 | `perl-system-install` (`perl -e 'system "sudo","pacman","-S",…'`) | `0 []` | **(b)** | needs perl call semantics (`system`, `exec`, `qx`, `open "|"`, `eval`, `&{"system"}`); a literal-spelling regex is trivially evaded and would overstate coverage. No perl front-end exists. | whole class |
-| 21 | `eval-js-blind` (`Bun.$\`sudo pacman -S …\``) | `0 []` (eval_unparsed 1) | **(b)** | the cell is JavaScript, which the tool refuses by design (:597-598); the literal template is a pattern, while `Bun.spawn([...])`, `${}` interpolation, `globalThis[...]` and `eval` are unbounded. | whole class; the actionable narrow move is verdict escalation, not parsing |
+| 19 | `base64-pipe-sh` (`echo <b64> \| base64 -d \| sh`) | `0 []` | **(a)** | the producer is a literal `echo` and `base64 -d` is a total transform of bytes in the transcript; decode and classify at the shell sink. | any other encoder/compressor or non-literal producer → (b); durable fix is the *shape* rule in §4 S3 |
+| 20 | `base64-pipe-sudo-sh` (`echo <b64> \| base64 -d \| sudo sh`) | `1 [sudo]` | **(a)** | same literal-decode flow; `sudo` is already caught, the decoded `pacman -Q` is what is missing. | as above |
+| 21 | `perl-system-install` (`perl -e 'system "sudo","pacman","-S",…'`) | `0 []` | **(b)** | needs perl call semantics (`system`, `exec`, `qx`, `open "\|"`, `eval`, `&{"system"}`); a literal-spelling regex is trivially evaded and would overstate coverage. No perl front-end exists. | whole class |
+| 22 | `eval-js-blind` (`Bun.$\`sudo pacman -S …\``) | `0 []` (eval_unparsed 1) | **(b)** | the cell is JavaScript, which the tool refuses by design (:597-598); the literal template is a pattern, while `Bun.spawn([...])`, `${}` interpolation, `globalThis[...]` and `eval` are unbounded. | whole class; the actionable narrow move is verdict escalation, not parsing |
 
-Rows 11-12 note: I kept the letter **(a)** because I demonstrated an exact
+Rows 19-20 note: I kept the letter **(a)** because I demonstrated an exact
 stdlib rule for this literal shape (and it is the only decoder the fixture
 names). The *category* "opaque bytes into a shell" is (b) beyond that shape;
 treat these two letters as "closeable, do not describe the class as solved".
