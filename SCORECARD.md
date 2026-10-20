@@ -1224,3 +1224,60 @@ regression PASS, `PIN_MADO` `367ff5ec…`). Final receipts and harm watch re-cut
 27/28 red→green unchanged; receipt claims re-pointed, `EXPECT_SUMMARY: 17/17` (adds the
 post-wave seat scan). Gate selftest 389 → 460: the ten old OM10 assertions were replaced by
 OM10A/B; no other prior assertion lost.
+
+## Round 20 — declared claims (2026-10-20; repair round)
+
+Baseline `1f7f995caa25627db804e996cccd87fe38a3a1b6` (round-19 tip `b435568` + the
+closure `corpus/lessons/round-19-verifier-spotcheck.md`, which closed round 19
+**rejected-harmed**: HelperFn rule B turns provably pure data — `BLOCK=frozenset(['pacman',
+'-Q','hyprland'])` — into an ordinary `package_query` finding with no lead marker).
+Pre-harm baseline for every no-harm comparison: `9c54c56a6a7528675027b7f628f97a1b8d1b8e8d`.
+Written before any round-20 wave. L1 (MadoR20) holds the canonical planner seat. Host
+pause carried: no package query or transaction, service, compositor, input or screenshot
+operation, no real `hyprctl` by L1 or any seat; host files are read as bytes only.
+
+- **C1 operability / tripwire precision (sourced; R19-V3 first).** Counter
+  `python3 -I .ufo/waves/round-20/tw-precision.py REV` (written in wave 1, committed
+  before any tool edit). It runs `REV:tools/mado-tripwire.py --scan` (temp copy, `python3
+  -I`, cwd = temp) on every case of the round-20 precision suite
+  `.ufo/waves/round-20/precision/`, read at the commit that first lands the suite (that
+  commit lands no tool change), and compares the exit code and the multiset of (class,
+  rule, line, evidence) with the case's expectation. `evidence` is `observed` (the
+  transcript states the command and its execution path: bash text, `!`/`%%bash`, a
+  literal spawn, or a helper whose body is visible in the scanned transcript) or `lead`
+  (a literal argv handed to a callee whose body is not visible). A row with no
+  `evidence` key is an unmarked claim of execution: it matches `observed` and never
+  `lead`. Families, each ≥ 4 cases, pre-declared: **P** pure containers/formatters
+  (want clean), **S** binding/shadowing, **W** real wrapper misses (want observed), **H**
+  help/dry-run non-writes (want clean) with write negatives (e.g. `git commit -n`, which
+  is `--no-verify`), **L** invisible-body leads (want `lead`). Score = 10·passed/N.
+  Before measured at `1f7f995` (tool `367be947…`) and at `9c54c56` (tool `c1ae45a7…`);
+  target N/N. Admission guards (C1 fails if any breaks): `tw-recall.py` 6/6 unchanged
+  and reported split observed/lead; zero findings on the 20 control lines; every P case
+  also passes at `9c54c56` (the pre-harm reading is restored, not approximated); a
+  whole-corpus diff of the `9c54c56` and final tools loses zero findings and classes
+  every added row; every existing tripwire suite all-pass (a case edit only with its
+  reason); round-19 frozen replay recorded (re-pinned for round 20 if the schema moves).
+  Sourced on SOURCES rows opened this round (git help/dry-run semantics, jj help,
+  Python builtins).
+- **C2 calibration (lowest-scoring measured axis, 7.1429).** Counter `python3
+  .ufo/waves/round-17/measure.py REV` (key `c1`, instrument unchanged). Before 20/28 =
+  7.1429 → target 22/30 = 7.3333 with two lesson-cited criteria, each with a runnable
+  check red on a real round-19 artifact: **29** an isolation harness fails closed — a
+  setup failure aborts before any payload (red: the round-19 `inns.sh` `[ -e ] && mount
+  && echo` shape, R19-V4; the check's payload is a canary file write, never a host
+  probe); **30** a count stated in a SCORECARD/lesson/report claim is re-derived at the
+  measured revision by a cited command (red: round 19's "155 transcripts" vs a
+  154-file receipt, "5/13 name S096" vs 8/13 any-line / 6/13 first-line, "ten OM10
+  assertions" vs nine labeled occurrences). R19-V1: round 19's ≥21/29 miss stays a miss;
+  neither criterion restates 24, 27 or 28, and this target is registered fresh.
+
+Separable: C1 is the tool, its suite and counter (no QUALITY text); C2 is QUALITY text
+and two round-20 checkers (no tool change). Non-claim repairs (harm-watched, append-only):
+R19-V2 S096 tally (any-match 8/13, first-match 6/13, five S090-only files; provenance, not
+behaviour), R19-V4 incident record (154 files; written-script scan blindness;
+self-report, not detection), R19-V5 (nine labeled OM10 occurrences, eight distinct),
+R19-V6 (absolute lane paths in every seat item; dead seats uncredited). Reserved SOURCES
+ids S099–S110 (L1-assigned). Harm watch: gate selftest N/N, regression PASS, classifier
+52/52, tripwire suites N/N, U 7/7, rubric V 6/6, navigation complete, census exit 0. No
+exploratory claim.
