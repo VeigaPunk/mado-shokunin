@@ -1,0 +1,1036 @@
+{
+ "schema": "mado-tripwire-selftest-v1",
+ "cases": [
+  {
+   "name": "uv-tool-install-upgrade-uninstall",
+   "args": [
+    "uv-tool.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "uv-tool.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uv:tool-upgrade"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uv:tool-uninstall"
+    }
+   ]
+  },
+  {
+   "name": "uv-tool-install-permitted",
+   "args": [
+    "uv-tool.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "permitted_only",
+   "want_findings": [
+    {
+     "file": "uv-tool.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uv:tool-upgrade"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uv:tool-uninstall"
+    }
+   ],
+   "permit": [
+    "tool_install"
+   ]
+  },
+  {
+   "name": "uv-pip-uvx-and-tool-run",
+   "args": [
+    "uv-pip-and-uvx.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:pip-install"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "uv:tool-run"
+    }
+   ]
+  },
+  {
+   "name": "pip-pipx-python-m",
+   "args": [
+    "pip-family.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "pip-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "pip3:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 10,
+     "class": "tool_install",
+     "rule": "pip:install"
+    }
+   ]
+  },
+  {
+   "name": "npm-global-and-exec",
+   "args": [
+    "npm-family.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "npm-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "npm:update-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "npm:uninstall-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 11,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 12,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 14,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    }
+   ]
+  },
+  {
+   "name": "cargo-install-uninstall",
+   "args": [
+    "cargo-channel.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    }
+   ]
+  },
+  {
+   "name": "channel-forms-detected",
+   "args": [
+    "channel-forms.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "channel-forms.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pipx:run"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "pip:install"
+    }
+   ]
+  },
+  {
+   "name": "sudo-install-is-both-classes",
+   "args": [
+    "permit-and-sudo.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    }
+   ]
+  },
+  {
+   "name": "tool-install-permit-does-not-cover-sudo",
+   "args": [
+    "permit-and-sudo.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    }
+   ],
+   "permit": [
+    "tool_install"
+   ]
+  },
+  {
+   "name": "host-mutation-permit-leaves-install-unpermitted",
+   "args": [
+    "permit-and-sudo.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    }
+   ],
+   "permit": [
+    "host_mutation"
+   ]
+  },
+  {
+   "name": "both-classes-permitted",
+   "args": [
+    "permit-and-sudo.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "permitted_only",
+   "want_findings": [
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    }
+   ],
+   "permit": [
+    "host_mutation",
+    "tool_install"
+   ]
+  },
+  {
+   "name": "compound-wrappers-shell-c",
+   "args": [
+    "compound-and-wrappers.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    }
+   ]
+  },
+  {
+   "name": "eval-bang-list-shell-string",
+   "args": [
+    "eval-tool-call.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    }
+   ]
+  },
+  {
+   "name": "negative-controls-stay-clean",
+   "args": [
+    "negative-controls.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "negative-controls-clean-under-permit",
+   "args": [
+    "negative-controls.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": [],
+   "permit": [
+    "tool_install"
+   ]
+  },
+  {
+   "name": "installers-only-permit",
+   "args": [
+    "uv-tool.jsonl",
+    "uv-pip-and-uvx.jsonl",
+    "pip-family.jsonl",
+    "npm-family.jsonl",
+    "cargo-channel.jsonl",
+    "channel-forms.jsonl",
+    "compound-and-wrappers.jsonl",
+    "negative-controls.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "permitted_only",
+   "want_findings": [
+    {
+     "file": "uv-tool.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uv:tool-upgrade"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uv:tool-uninstall"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:pip-install"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "uv:tool-run"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "pip3:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 10,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "npm:update-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "npm:uninstall-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 11,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 12,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 14,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pipx:run"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    }
+   ],
+   "permit": [
+    "tool_install"
+   ]
+  },
+  {
+   "name": "whole-directory-permitted",
+   "args": [
+    "."
+   ],
+   "want_exit": 0,
+   "want_label": "permitted_only",
+   "want_findings": [
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "cargo-channel.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pipx:run"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "cargo:uninstall"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "channel-forms.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "compound-and-wrappers.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "cargo:install"
+    },
+    {
+     "file": "eval-tool-call.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "npm:update-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 8,
+     "class": "tool_install",
+     "rule": "npm:uninstall-global"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 9,
+     "class": "tool_install",
+     "rule": "npx"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 11,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 12,
+     "class": "tool_install",
+     "rule": "npm:exec"
+    },
+    {
+     "file": "npm-family.jsonl",
+     "line": 14,
+     "class": "tool_install",
+     "rule": "npm:install-global"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "host_mutation",
+     "rule": "sudo"
+    },
+    {
+     "file": "permit-and-sudo.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "pip3:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 5,
+     "class": "tool_install",
+     "rule": "pipx:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 6,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "pip-family.jsonl",
+     "line": 10,
+     "class": "tool_install",
+     "rule": "pip:install"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:pip-install"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uvx"
+    },
+    {
+     "file": "uv-pip-and-uvx.jsonl",
+     "line": 7,
+     "class": "tool_install",
+     "rule": "uv:tool-run"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "uv:tool-upgrade"
+    },
+    {
+     "file": "uv-tool.jsonl",
+     "line": 4,
+     "class": "tool_install",
+     "rule": "uv:tool-uninstall"
+    },
+    {
+     "file": "tool-install.jsonl",
+     "line": 2,
+     "class": "tool_install",
+     "rule": "uv:tool-install"
+    },
+    {
+     "file": "tool-install.jsonl",
+     "line": 3,
+     "class": "tool_install",
+     "rule": "npx"
+    }
+   ],
+   "permit": [
+    "host_mutation",
+    "package_query",
+    "live_probe",
+    "tool_install"
+   ]
+  },
+  {
+   "name": "frozen-tool-install-permit",
+   "mode": "frozen",
+   "args": [
+    "frozen-permit"
+   ],
+   "want_exit": 0,
+   "want_label": "frozen_match"
+  }
+ ]
+}

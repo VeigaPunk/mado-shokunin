@@ -1,0 +1,519 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "note": "round-19 rebase of the r18-bashcvar suite for TwBashCVar (variable recipes resolved to literal-only values). The 15 r18 cases are retained verbatim; r19 adds the real r14-source-safety incident shapes, every resolution shape the patch folds, and precision negatives for each way the text fails to fix a value. Every case runs through --scan with the pinned tool blob.",
+  "cases": [
+    {
+      "name": "cell-var-literal",
+      "args": [
+        "cell-var-literal.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "cell-var-literal.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "cell-var-literal-permitted-permit",
+      "args": [
+        "cell-var-literal.jsonl"
+      ],
+      "permit": [
+        "package_query"
+      ],
+      "want_exit": 0,
+      "want_findings": [
+        {
+          "file": "cell-var-literal.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "want_label": "permitted_only"
+    },
+    {
+      "name": "cell-replace-keeps-command",
+      "args": [
+        "cell-replace-keeps-command.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "cell-replace-keeps-command.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "carry-two-cells",
+      "args": [
+        "carry-two-cells.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "carry-two-cells.jsonl",
+          "line": 2,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "list-var",
+      "args": [
+        "list-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "list-var.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "plus-concat",
+      "args": [
+        "plus-concat.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "plus-concat.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "reassign-nonliteral-clean",
+      "args": [
+        "reassign-nonliteral.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "reassign-conditional-clean",
+      "args": [
+        "reassign-conditional.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "nonliteral-undefined-clean",
+      "args": [
+        "nonliteral-undefined.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "replace-removes-command-clean",
+      "args": [
+        "replace-removes-command.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "function-param-shadow-clean",
+      "args": [
+        "function-param-shadow.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "exec-clears-carry-clean",
+      "args": [
+        "exec-clears-carry.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "reset-clears-carry-clean",
+      "args": [
+        "reset-clears-carry.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "js-cell-separate-kernel-clean",
+      "args": [
+        "js-cell-separate-kernel.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "use-before-binding-clean",
+      "args": [
+        "use-before-binding.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-incident-multiline-recipe",
+      "args": [
+        "incident-multiline-recipe.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "incident-multiline-recipe.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "r14-source-safety:2 shape (raw triple-quoted recipe executed via subprocess.run(['bash','-c',recipe])); the pacman -Q line lives only inside the variable"
+    },
+    {
+      "name": "r19-incident-multiline-recipe-permitted",
+      "args": [
+        "incident-multiline-recipe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [
+        {
+          "file": "incident-multiline-recipe.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "permit": [
+        "package_query"
+      ],
+      "want_label": "permitted_only"
+    },
+    {
+      "name": "r19-incident-replace-chain-two-cells",
+      "args": [
+        "incident-replace-chain-two-cells.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "incident-replace-chain-two-cells.jsonl",
+          "line": 2,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "r14-source-safety:3 shape: recipe bound in cell 1, two str.replace rewrites then spawn in cell 2; the kernel env carries across cells"
+    },
+    {
+      "name": "r19-tool-bash-var-command",
+      "args": [
+        "tool-bash-var-command.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "tool-bash-var-command.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "r19-popen-shell-string-var",
+      "args": [
+        "popen-shell-string-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "popen-shell-string-var.jsonl",
+          "line": 1,
+          "class": "host_mutation",
+          "rule": "sudo"
+        },
+        {
+          "file": "popen-shell-string-var.jsonl",
+          "line": 1,
+          "class": "host_mutation",
+          "rule": "pacman:-S"
+        }
+      ]
+    },
+    {
+      "name": "r19-os-system-var",
+      "args": [
+        "os-system-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "os-system-var.jsonl",
+          "line": 1,
+          "class": "live_probe",
+          "rule": "journalctl"
+        }
+      ]
+    },
+    {
+      "name": "r19-annassign-var",
+      "args": [
+        "annassign-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "annassign-var.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Qi"
+        }
+      ]
+    },
+    {
+      "name": "r19-tuple-var",
+      "args": [
+        "tuple-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "tuple-var.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ]
+    },
+    {
+      "name": "r19-concat-name-var",
+      "args": [
+        "concat-name-var.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "concat-name-var.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "str + str where both operands are resolvable names"
+    },
+    {
+      "name": "r19-exec-in-def-not-eager",
+      "args": [
+        "exec-in-def-not-eager.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "exec-in-def-not-eager.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "exec inside an uncalled def clears nothing: only eager statements do"
+    },
+    {
+      "name": "r19-reset-false-keeps-carry",
+      "args": [
+        "reset-false-keeps-carry.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "reset-false-keeps-carry.jsonl",
+          "line": 3,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "only reset:true starts a fresh kernel; reset:false carries the env"
+    },
+    {
+      "name": "r19-nested-eval-fresh-env",
+      "args": [
+        "nested-eval-fresh-env.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "file": "nested-eval-fresh-env.jsonl",
+          "line": 1,
+          "class": "package_query",
+          "rule": "pacman:-Q"
+        }
+      ],
+      "note": "python heredoc reached through the bash classifier starts with an empty env and still folds an in-body literal"
+    },
+    {
+      "name": "r19-cell-var-rebound-literal-clean",
+      "args": [
+        "cell-var-rebound-literal.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "last straight-line literal assignment wins: the spawn sees 'ls -la'"
+    },
+    {
+      "name": "r19-fstring-var-clean",
+      "args": [
+        "fstring-var.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-format-var-clean",
+      "args": [
+        "format-var.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-replace-three-args-clean",
+      "args": [
+        "replace-three-args.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "only the two-argument str.replace is folded; the three-argument form is unparsed"
+    },
+    {
+      "name": "r19-cross-file-no-carry-clean",
+      "args": [
+        "cross-file-no-carry.jsonl",
+        "cross-file-no-carry-b.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "one env per scanned file: a binding in one transcript file never resolves a spawn in another"
+    },
+    {
+      "name": "r19-class-body-deferred-clean",
+      "args": [
+        "class-body-deferred.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-lambda-deferred-clean",
+      "args": [
+        "lambda-deferred.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-walrus-unsafe-clean",
+      "args": [
+        "walrus-unsafe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-for-target-unsafe-clean",
+      "args": [
+        "for-target-unsafe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-global-rebind-unsafe-clean",
+      "args": [
+        "global-rebind-unsafe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-del-unsafe-clean",
+      "args": [
+        "del-unsafe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-import-star-clears-clean",
+      "args": [
+        "import-star-clears.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "a from os import * cell clears the carried env"
+    },
+    {
+      "name": "r19-import-star-same-cell-clears-clean",
+      "args": [
+        "import-star-same-cell-clears.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "the clear happens at the import * statement, so later statements in the same cell see nothing"
+    },
+    {
+      "name": "r19-exec-same-cell-clears-clean",
+      "args": [
+        "exec-same-cell-clears.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": [],
+      "note": "the clear happens at the exec statement, so a spawn after it is unparsed"
+    },
+    {
+      "name": "r19-quoted-data-in-recipe-clean",
+      "args": [
+        "quoted-data-in-recipe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-comment-in-recipe-clean",
+      "args": [
+        "comment-in-recipe.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-list-var-mixed-clean",
+      "args": [
+        "list-var-mixed.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "r19-dict-command-nonliteral-clean",
+      "args": [
+        "dict-command-nonliteral.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    }
+  ]
+}

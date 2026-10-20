@@ -1,0 +1,226 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "note": "round-19 r19-vcs suite (synthetic OMP-shaped JSONL; no real transcript bytes). Pins the vcs_write class: jj mutating subcommands, jj reads that snapshot without --ignore-working-copy, git writes, jj-lane.sh helper exemption, and negative controls (git reads, quoted data, mentions, comments, toolResult-only, non-literal spawn). git-multiline-quoted pins the round-17 hardening case multiline-quoted-commit-clean supersession: the quoted 'sudo pacman -S' text stays data (one vcs_write finding, no host_mutation).",
+  "cases": [
+    {
+      "name": "jj-write-subcommands",
+      "args": ["jj-write-subcommands.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:commit", "line": 2},
+        {"class": "vcs_write", "rule": "jj:new", "line": 3},
+        {"class": "vcs_write", "rule": "jj:describe", "line": 4},
+        {"class": "vcs_write", "rule": "jj:squash", "line": 5},
+        {"class": "vcs_write", "rule": "jj:rebase", "line": 6},
+        {"class": "vcs_write", "rule": "jj:abandon", "line": 7},
+        {"class": "vcs_write", "rule": "jj:undo", "line": 8},
+        {"class": "vcs_write", "rule": "jj:edit", "line": 9},
+        {"class": "vcs_write", "rule": "jj:restore", "line": 10},
+        {"class": "vcs_write", "rule": "jj:split", "line": 11},
+        {"class": "vcs_write", "rule": "jj:duplicate", "line": 12},
+        {"class": "vcs_write", "rule": "jj:absorb", "line": 13}
+      ]
+    },
+    {
+      "name": "jj-nested-writes",
+      "args": ["jj-nested-writes.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 2},
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 3},
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 4},
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 5},
+        {"class": "vcs_write", "rule": "jj:op", "line": 6},
+        {"class": "vcs_write", "rule": "jj:op", "line": 7},
+        {"class": "vcs_write", "rule": "jj:git", "line": 8},
+        {"class": "vcs_write", "rule": "jj:git", "line": 9}
+      ]
+    },
+    {
+      "name": "jj-snapshot-reads",
+      "args": ["jj-snapshot-reads.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:log", "line": 2},
+        {"class": "vcs_write", "rule": "jj:status", "line": 3},
+        {"class": "vcs_write", "rule": "jj:diff", "line": 4},
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 5},
+        {"class": "vcs_write", "rule": "jj:op", "line": 6},
+        {"class": "vcs_write", "rule": "jj:show", "line": 7},
+        {"class": "vcs_write", "rule": "jj:file", "line": 8},
+        {"class": "vcs_write", "rule": "jj:log", "line": 9}
+      ]
+    },
+    {
+      "name": "jj-ignore-working-copy-clean",
+      "args": ["jj-ignore-working-copy-clean.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "jj-lane-helper-clean",
+      "args": ["jj-lane-helper-clean.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "git-writes",
+      "args": ["git-writes.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "git:add", "line": 2},
+        {"class": "vcs_write", "rule": "git:commit", "line": 3},
+        {"class": "vcs_write", "rule": "git:stash", "line": 4},
+        {"class": "vcs_write", "rule": "git:checkout", "line": 5},
+        {"class": "vcs_write", "rule": "git:switch", "line": 6},
+        {"class": "vcs_write", "rule": "git:reset", "line": 7},
+        {"class": "vcs_write", "rule": "git:pull", "line": 8},
+        {"class": "vcs_write", "rule": "git:push", "line": 9},
+        {"class": "vcs_write", "rule": "git:restore", "line": 10},
+        {"class": "vcs_write", "rule": "git:rebase", "line": 11},
+        {"class": "vcs_write", "rule": "git:merge", "line": 12},
+        {"class": "vcs_write", "rule": "git:cherry-pick", "line": 13}
+      ]
+    },
+    {
+      "name": "git-reads-clean",
+      "args": ["git-reads-clean.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "git-arg-opts",
+      "args": ["git-arg-opts.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "git:commit", "line": 2},
+        {"class": "vcs_write", "rule": "git:reset", "line": 3},
+        {"class": "vcs_write", "rule": "git:cherry-pick", "line": 5},
+        {"class": "vcs_write", "rule": "git:restore", "line": 6}
+      ]
+    },
+    {
+      "name": "eval-forms",
+      "args": ["eval-forms.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "git:commit", "line": 2},
+        {"class": "vcs_write", "rule": "jj:commit", "line": 3},
+        {"class": "vcs_write", "rule": "jj:new", "line": 4},
+        {"class": "vcs_write", "rule": "git:reset", "line": 5},
+        {"class": "vcs_write", "rule": "git:push", "line": 6}
+      ]
+    },
+    {
+      "name": "eval-literal-argv-commit",
+      "args": ["eval-clean.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {
+          "class": "vcs_write",
+          "rule": "git:commit",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "name": "mention-and-data-clean",
+      "args": ["mention-and-data-clean.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "cd-and-compound",
+      "args": ["cd-and-compound.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:log", "line": 3},
+        {"class": "vcs_write", "rule": "git:commit", "line": 4},
+        {"class": "host_mutation", "rule": "sudo", "line": 5},
+        {"class": "vcs_write", "rule": "git:commit", "line": 5},
+        {"class": "vcs_write", "rule": "git:checkout", "line": 6},
+        {"class": "vcs_write", "rule": "jj:commit", "line": 7}
+      ]
+    },
+    {
+      "name": "jj-mutation-with-ignore",
+      "args": ["jj-mutation-with-ignore.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:commit", "line": 2},
+        {"class": "vcs_write", "rule": "jj:bookmark", "line": 3},
+        {"class": "vcs_write", "rule": "jj:op", "line": 4},
+        {"class": "vcs_write", "rule": "jj:git", "line": 5}
+      ]
+    },
+    {
+      "name": "jj-dashdash-paths",
+      "args": ["jj-dashdash-paths.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:diff", "line": 2}
+      ],
+      "note": "An --ignore-working-copy token after `--` is a pathspec, not the flag: only the flag before the separator suppresses the snapshot finding."
+    },
+    {
+      "name": "git-multiline-quoted-supersedes-hardening-clean",
+      "args": ["git-multiline-quoted.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "git:commit", "line": 2}
+      ],
+      "note": "Same command shape as round-17 tripwire/hardening/multiline-quoted-commit-clean.jsonl, whose want_exit 0 predates this class: the multiline quote stays one token, the embedded 'sudo pacman -S' text is data, and the git write itself is a vcs_write finding."
+    },
+    {
+      "name": "permit-vcs-write",
+      "args": ["git-writes.jsonl"],
+      "permit": ["vcs_write"],
+      "want_exit": 0,
+      "want_label": "permitted_only",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "git:add", "line": 2},
+        {"class": "vcs_write", "rule": "git:commit", "line": 3},
+        {"class": "vcs_write", "rule": "git:stash", "line": 4},
+        {"class": "vcs_write", "rule": "git:checkout", "line": 5},
+        {"class": "vcs_write", "rule": "git:switch", "line": 6},
+        {"class": "vcs_write", "rule": "git:reset", "line": 7},
+        {"class": "vcs_write", "rule": "git:pull", "line": 8},
+        {"class": "vcs_write", "rule": "git:push", "line": 9},
+        {"class": "vcs_write", "rule": "git:restore", "line": 10},
+        {"class": "vcs_write", "rule": "git:rebase", "line": 11},
+        {"class": "vcs_write", "rule": "git:merge", "line": 12},
+        {"class": "vcs_write", "rule": "git:cherry-pick", "line": 13}
+      ]
+    },
+    {
+      "name": "permit-unrelated-class-does-not-cover-vcs",
+      "args": ["cd-and-compound.jsonl"],
+      "permit": ["host_mutation"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "vcs_write", "rule": "jj:log", "line": 3},
+        {"class": "vcs_write", "rule": "git:commit", "line": 4},
+        {"class": "host_mutation", "rule": "sudo", "line": 5},
+        {"class": "vcs_write", "rule": "git:commit", "line": 5},
+        {"class": "vcs_write", "rule": "git:checkout", "line": 6},
+        {"class": "vcs_write", "rule": "jj:commit", "line": 7}
+      ]
+    }
+  ]
+}

@@ -4,7 +4,21 @@
 Classifies commands a seat *issued* in assistant `toolCall` blocks:
 `bash` (arguments.command) and python `eval` (arguments.code: `!` shell
 lines, `%%bash` cells and literal subprocess/os/tool.bash spawns parsed with
-`ast`, never executed). Classes: host_mutation, package_query, live_probe.
+`ast`, never executed). Classes: host_mutation, package_query, live_probe,
+tool_install, vcs_write. tool_install names tool-acquisition channels that are
+not pacman: `uv tool install|upgrade|uninstall|run`, `uv pip install`, `uvx`,
+`pip`/`pipN install`, `pipx install|inject|run|upgrade|reinstall|uninstall`,
+`npx`, `npm exec|x`, `npm -g install|update|uninstall`, `cargo
+install|uninstall` and `python -m pip ...`. It is a separate, permit-able
+class and never host_mutation: `--permit tool_install` covers the whole class,
+so the rule string (`uv:tool-install`, `pip:install`, `npx`, ...) is what
+distinguishes one channel from another, and a `sudo` prefix on the same
+command is still reported separately as host_mutation. Only the forms above
+are classified; for example pnpm, yarn, bun, brew, nix, `uv sync`, `uv python
+install`, `go install`, `gem install`, `cargo binstall`, `deno install -g`,
+`uv run --with`, `pnpm dlx`, `npm --global=true` and plain downloads are not,
+and variable indirection (`$UV tool install ...`) is invisible here, as is
+the difference between a venv/`--user` install and a system one.
 
 Limits (stated, not hidden):
 - Detection after the fact only. It is not interception, prevention, a
@@ -14,9 +28,47 @@ Limits (stated, not hidden):
   (a successful harmful call and a refused one both count).
 - `clean` means no finding in the covered forms. It never means "no host
   command ran": non-literal spawn arguments (counted as unparsed_spawns),
-  JavaScript eval cells (eval_unparsed), scripts written then run, shell
-  functions/aliases, python -c bodies, other tools and other sessions are
-  not analysed. Pair a verdict with a /var/log/pacman.log window count.
+  JavaScript eval cells (eval_unparsed), scripts written then run, aliases,
+  helpers defined in one text and called from another, python -c bodies,
+  other tools and other sessions are not analysed. Pair a verdict with a
+  /var/log/pacman.log window count.
+- A function defined earlier in the SAME text and called there with literal
+  arguments has its body classified with those arguments substituted: $1..$9
+  and $@/$* for shell functions, positional parameters for python `def`.
+  Nothing is substituted unless the call text states it literally, so a
+  resolved finding names a command the transcript spells out. A helper body
+  that is defined but never called is still read as before.
+- A call to a bare name this text resolves neither to a same-text helper
+  nor to a spawn function, handed a literal `['prog', ...]` argv list that
+  classifies as a host command, is reported as a lead: the argv is stated
+  outright, but whether that helper executes it is not visible, so a helper
+  that only formats or logs that argv is reported too (an imported helper
+  whose body lives in another file is a lead for the same reason). Pure
+  data calls (`print`, `json.dumps`, ...) are exempt (PURE_ARG_CALLS); a
+  call to a name this text DOES define contributes no lead when its
+  arguments are not all literal, and only positional argv lists are read
+  (a keyword `args=[...]` is a miss).
+- Variable recipes are resolved only when the text fixes them: a name bound
+  by a straight-line module-level assignment to a literal-only expression
+  (str, `+`, two-argument `str.replace`, or a list of those), earlier in the
+  same cell or in an earlier cell of the same py kernel in the same
+  transcript (eval state persists; a `reset` cell, an exec/globals/import *
+  statement from that point on, or any other binding forgets the name).
+  Anything else stays unparsed_spawns. A shell function body defined in one
+  text and called in another is not resolved.
+- vcs_write covers version-control writes in a jj-colocated lane: `git` runs
+  whose subcommand is add, commit, stash, checkout, switch, reset, pull,
+  push, restore, rebase, merge or cherry-pick (rule `git:<sub>`; `stash
+  list|show` stays clean), and `jj` runs that write or snapshot the working
+  copy (rule `jj:<sub>`): the mutating subcommands commit, new, describe,
+  squash, rebase, abandon, undo, edit, restore, split, duplicate, absorb,
+  bookmark set/move/create/delete, op restore/revert and git push/fetch, and
+  every other subcommand without an exact `--ignore-working-copy` token,
+  because jj snapshots the working copy on all of them (`help` and
+  `--version` excepted). A jj-lane.sh helper invocation is not a finding.
+  Anything else on the `git` side (fetch, revert, tag, branch, clean,
+  worktree, gc, config) and `git` subcommands hidden in aliases, shell
+  functions or scripts are outside the class.
 - shlex is not bash: exotic quoting can hide a command from the parser.
 - Transcript text is data. Nothing in it is followed or executed.
 
@@ -58,7 +110,8 @@ import subprocess
 import sys
 from collections import Counter
 
-CLASSES = ("host_mutation", "package_query", "live_probe")
+CLASSES = ("host_mutation", "package_query", "live_probe", "tool_install",
+           "vcs_write")
 SHELLS = {"bash", "sh", "zsh", "dash"}
 ELEVATE = {"sudo", "doas", "pkexec", "run0"}
 SUDO_ARG_OPTS = {"-u", "-g", "-h", "-p", "-C", "-D", "-r", "-t", "-U", "-T",
@@ -71,6 +124,21 @@ REDIRECTS = {">", ">>", "<", "<<", "<<<", ">&", "<&", ">|", "&>", "&>>", "<>"}
 XARGS_ARG_OPTS = {"-I", "-n", "-P", "-d", "-a", "-E", "-s", "-L", "-i", "--arg-file",
                   "--max-args", "--max-procs", "--delimiter", "--max-lines", "--max-chars",
                   "--eof", "--replace"}
+
+JJ_WRITE = {"commit", "new", "describe", "squash", "rebase", "abandon", "undo",
+            "edit", "restore", "split", "duplicate", "absorb"}
+JJ_BOOKMARK_WRITE = {"set", "move", "create", "delete"}
+JJ_OP_WRITE = {"restore", "revert"}
+JJ_GIT_WRITE = {"push", "fetch"}
+JJ_NO_SNAPSHOT = {"help", "version"}  # no working copy is read or written
+JJ_ARG_OPTS = {"-R", "--repository", "--at-op", "--color", "--config",
+               "--config-toml", "-T", "--template"}
+JJ_SUB_ARG_OPTS = {"-r", "--revision", "-T", "--template", "--at-op", "--config",
+                   "--color", "--repository", "-R"}
+GIT_WRITE = {"add", "commit", "stash", "checkout", "switch", "reset", "pull",
+             "push", "restore", "rebase", "merge", "cherry-pick"}
+GIT_ARG_OPTS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
+                "--exec-path", "--super-prefix", "--config-env"}
 
 SYSTEMCTL_QUERY = {"status", "show", "is-active", "is-enabled", "is-failed",
                    "is-system-running", "list-units", "list-unit-files",
@@ -104,6 +172,26 @@ LIVE_PROBE_BINS = {"journalctl", "libinput", "evtest", "wayland-info", "wev",
                    "pidof", "xdg-terminal-exec", "wpctl", "brightnessctl",
                    "hyprpaper", "hyprsunset", "uwsm", "uwsm-app", "ps", "dmesg",
                    "wl-paste"}
+PIP_RE = re.compile(r"^pip[0-9.]*$")
+UV_ARG_OPTS = {"-C", "--directory", "--project", "--color", "--python", "-p",
+               "--config-file", "--cache-dir", "--index-url",
+               "--extra-index-url", "--find-links", "-f",
+               "--allow-insecure-host", "--config-setting",
+               "--python-preference"}
+PIP_ARG_OPTS = {"--log", "--proxy", "--proxy-user", "--cert", "--client-cert",
+                "--cache-dir", "--timeout", "--retries", "--exists-action",
+                "--trusted-host", "--keyring-provider", "--use-feature",
+                "--use-deprecated", "--python"}
+PIPX_ARG_OPTS = {"--python", "-p", "--spec", "--pip-args", "--suffix",
+                 "--backend"}
+NPX_ARG_OPTS = {"-p", "--package", "-c", "--call", "--node-options",
+                "--registry", "--cache"}
+NPM_ARG_OPTS = {"--prefix", "--registry", "--userconfig", "--globalconfig",
+                "--cache", "--loglevel", "--location", "--workspace", "-w",
+                "--omit", "--include", "--otp", "--before", "--script-shell",
+                "--tag"}
+CARGO_ARG_OPTS = {"--color", "-Z", "--config", "--target-dir",
+                  "--manifest-path", "--explain"}
 SPAWN_FUNCS = {"run", "call", "check_call", "check_output", "Popen",
                "getoutput", "getstatusoutput"}
 SHELL_STRING_FUNCS = {"os.system", "os.popen", "subprocess.getoutput",
@@ -386,6 +474,61 @@ def first_verb(args, arg_opts):
     return None
 
 
+def sub_verb(args, verb):
+    """First positional after `verb`, skipping flags and their argument values."""
+    try:
+        rest = args[args.index(verb) + 1:]
+    except ValueError:
+        return None
+    skip = False
+    for a in rest:
+        if skip:
+            skip = False
+            continue
+        if a in JJ_SUB_ARG_OPTS:
+            skip = True
+            continue
+        if a.startswith("-"):
+            continue
+        return a
+    return None
+
+
+def ignores_working_copy(args):
+    """True when an exact --ignore-working-copy precedes any `--` separator."""
+    head = args[:args.index("--")] if "--" in args else args
+    return "--ignore-working-copy" in head
+
+
+def classify_jj(args):
+    """Rule for a `jj` run that writes or snapshots the working copy, else None."""
+    verb = first_verb(args, JJ_ARG_OPTS)
+    if verb is None:  # `jj`, `jj --version`, `jj --help`: nothing is touched
+        return None
+    if verb in JJ_WRITE:
+        return "jj:" + verb
+    if verb == "bookmark":
+        if sub_verb(args, verb) in JJ_BOOKMARK_WRITE:
+            return "jj:bookmark"
+    elif verb == "op":
+        if sub_verb(args, verb) in JJ_OP_WRITE:
+            return "jj:op"
+    elif verb == "git":
+        if sub_verb(args, verb) in JJ_GIT_WRITE:
+            return "jj:git"
+    elif verb in JJ_NO_SNAPSHOT:
+        return None
+    return None if ignores_working_copy(args) else "jj:" + verb
+
+
+def classify_git(args):
+    """Rule for a `git` write, else None (reads and unclassified subcommands)."""
+    verb = first_verb(args, GIT_ARG_OPTS)
+    if verb == "stash" and sub_verb(args, verb) in ("list", "show"):
+        return None  # read-only stash inspection
+    return "git:" + verb if verb in GIT_WRITE else None
+
+
 def classify_pacman(argv0, args):
     op = None
     long_ops = {"--sync": "S", "--query": "Q", "--remove": "R",
@@ -432,12 +575,286 @@ def classify_pacman(argv0, args):
     return ("host_mutation", rule)
 
 
+SHELL_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+SHELL_EXPANSION = re.compile(r"[$\x60*?\[{~\n]")
+
+
+def last_unquoted(text, target):
+    """Index of the last occurrence of target outside quotes, or -1."""
+    quote, i, last = None, 0, -1
+    while i < len(text):
+        ch = text[i]
+        if quote:
+            if ch == "\\" and quote == '"':
+                i += 2
+                continue
+            if ch == quote:
+                quote = None
+        elif ch == "\\":
+            i += 2
+            continue
+        elif ch in ("'", '"'):
+            quote = ch
+        elif ch == target:
+            last = i
+        i += 1
+    return last
+
+
+def heredoc_attached(line, bodies):
+    """A raw line with its heredoc bodies and delimiters put back in place.
+
+    `logical_lines` returns a heredoc body beside its marker line; a function
+    body rebuilt from marker lines alone would re-parse the marker and swallow
+    the following body lines as a bogus heredoc.
+    """
+    for m, body in zip(re.finditer(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1", line), bodies):
+        line += "\n" + body + "\n" + m.group(2)
+    return line
+
+
+def shell_functions(pairs):
+    """Definitions visible in one command text: {name: (start, body_text)}.
+
+    Only `name() { ... }` and `function name { ... }` are read, only when the
+    closing `}` is present in the same text, and a name defined twice is
+    dropped: neither its body nor its call site is then interpreted. The body
+    is the raw text between the braces: token text would lose quoting, and a
+    body re-parsed without its quotes splits `python3 -c "...; ..."` and
+    `sh -c '...'` into words bash never saw.
+    """
+    funcs, dup = {}, set()
+    i = 0
+    while i < len(pairs):
+        line = pairs[i][0]
+        try:
+            toks = tokenize(line) if line.strip() else []
+        except ValueError:
+            i += 1
+            continue
+        name = None
+        if toks and toks[0] == "function" and len(toks) > 1 and SHELL_IDENT.match(toks[1]):
+            name = toks[1]
+        elif len(toks) > 1 and SHELL_IDENT.match(toks[0]) and toks[1] in ("()", "("):
+            after = toks[1:]
+            if after[:1] == ["()"]:
+                after = after[1:]
+            elif after[:2] == ["(", ")"]:
+                after = after[2:]
+            else:
+                after = None
+            if after is not None and after[:1] == ["{"]:
+                name = toks[0]
+        if name is None:
+            i += 1
+            continue
+        raw = strip_comment(line)
+        m = re.match(r"^\s*(?:function\s+)?%s\s*(?:\(\s*\))?\s*\{" % re.escape(name), raw)
+        if not m:
+            i += 1  # tokens and raw text disagree: no body, never a guess
+            continue
+        start = i
+        end = len(raw.rstrip())
+        if end and raw.rstrip().endswith("}") and last_unquoted(raw, "}") == end - 1:
+            body = raw[m.end():end - 1]
+            i += 1
+        else:
+            head = heredoc_attached(raw[m.end():], pairs[i][1])
+            parts = [head] if head.strip() else []
+            j, closed = i + 1, False
+            while j < len(pairs):
+                ln, bodies2 = pairs[j]
+                try:
+                    t2 = tokenize(ln) if ln.strip() else []
+                except ValueError:
+                    t2 = ln.split()
+                rawln = strip_comment(ln).rstrip()
+                if (t2 and t2[-1] == "}" and rawln.endswith("}")
+                        and last_unquoted(rawln, "}") == len(rawln) - 1):
+                    if rawln[:-1].strip():
+                        parts.append(rawln[:-1])
+                    closed = True
+                    break
+                parts.append(heredoc_attached(ln, bodies2))
+                j += 1
+            if not closed:
+                i += 1
+                continue
+            body = "\n".join(parts)
+            i = j + 1
+        if name in funcs:
+            dup.add(name)
+        funcs[name] = (start, body)
+    for name in dup:
+        funcs.pop(name, None)
+    return funcs
+
+
+def shell_expand(body, args):
+    """Substitute literal positional arguments into a function body.
+
+    $1..$9 and $@/$* are replaced outside single quotes (bash never expands
+    there); inside double quotes the value is inserted unquoted, elsewhere it
+    is shell-quoted. A positional the call did not supply yields None.
+    """
+    out, i, quote = [], 0, None
+    words = " ".join(shlex.quote(a) for a in args)
+    body = body.replace('"$@"', words).replace('"${@}"', words)  # one word per argument
+    while i < len(body):
+        ch = body[i]
+        if quote == "'":
+            if ch == "'":
+                quote = None
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "\\" and i + 1 < len(body):
+            out.append(body[i:i + 2])
+            i += 2
+            continue
+        if ch in ("'", '"'):
+            quote = None if ch == quote else (ch if quote is None else quote)
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "$":
+            m = re.match(r"\$(?:\{([0-9]+|[@*])\}|([0-9@*]))", body[i:])
+            if m:
+                key = m.group(1) or m.group(2)
+                if key in ("@", "*"):
+                    out.append(shlex.join(args))
+                elif 1 <= int(key) <= len(args):
+                    val = args[int(key) - 1]
+                    out.append(val if quote == '"' else shlex.quote(val))
+                else:
+                    return None
+                i += m.end()
+                continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+def leading_tokens(args, arg_opts, count):
+    """First `count` non-option tokens as (index, token), skipping option values."""
+    out = []
+    skip = False
+    for i, a in enumerate(args):
+        if skip:
+            skip = False
+            continue
+        if a == "--":
+            break  # operands after -- are not verbs
+        if a in arg_opts:
+            skip = True
+            continue
+        if a.startswith("-"):
+            continue
+        out.append((i, a))
+        if len(out) >= count:
+            break
+    return out
+
+
+def has_operand(args, arg_opts):
+    """True if a non-option token remains once option values and flags are skipped."""
+    skip = False
+    for i, a in enumerate(args):
+        if skip:
+            skip = False
+            continue
+        if a == "--":
+            return i + 1 < len(args)
+        if a in arg_opts:
+            skip = True
+            continue
+        if a.startswith("-"):
+            continue
+        return True
+    return False
+
+
+def package_run(args):
+    """True for a package-run form: a `--package`/`-p` selector or a trailing operand."""
+    return any(a in ("-p", "--package") for a in args) or has_operand(args, NPX_ARG_OPTS)
+
+
+def npm_global(args):
+    for i, a in enumerate(args):
+        if a in ("--global", "--location=global"):
+            return True
+        if a == "--location" and i + 1 < len(args) and args[i + 1] == "global":
+            return True
+        if a == "-g" or (a.startswith("-") and not a.startswith("--")
+                         and a[1:].isalpha() and "g" in a[1:]):
+            return True
+    return False
+
+
+def classify_installer(argv0, args):
+    """Return (class, rule) for a tool-acquisition channel, else None.
+
+    Only the argv0-level forms named in the module docstring are classified;
+    same-channel tools (pnpm, yarn, bun, brew, nix) are deliberately not.
+    """
+    if argv0 == "uv":
+        verbs = [v for _, v in leading_tokens(args, UV_ARG_OPTS, 2)]
+        if len(verbs) == 2 and verbs[0] == "tool" and verbs[1] in (
+                "install", "upgrade", "uninstall", "run"):
+            return ("tool_install", "uv:tool-%s" % verbs[1])
+        if verbs[:2] == ["pip", "install"]:
+            return ("tool_install", "uv:pip-install")
+        return None
+    if argv0 == "uvx":
+        return ("tool_install", "uvx") if has_operand(args, NPX_ARG_OPTS) else None
+    if PIP_RE.match(argv0):
+        verbs = [v for _, v in leading_tokens(args, PIP_ARG_OPTS, 1)]
+        if verbs == ["install"]:
+            return ("tool_install", "%s:install" % argv0)
+        return None
+    if argv0 == "pipx":
+        verbs = [v for _, v in leading_tokens(args, PIPX_ARG_OPTS, 1)]
+        if verbs and verbs[0] in ("install", "inject", "run", "upgrade",
+                                  "reinstall", "uninstall"):
+            return ("tool_install", "pipx:%s" % verbs[0])
+        return None
+    if argv0 == "npx":
+        return ("tool_install", "npx") if package_run(args) else None
+    if argv0 == "npm":
+        lead = leading_tokens(args, NPM_ARG_OPTS, 1)
+        verb = lead[0][1] if lead else None
+        rest = args[lead[0][0] + 1:] if lead else []
+        if verb in ("exec", "x"):
+            return ("tool_install", "npm:exec") if package_run(rest) else None
+        if verb in ("install", "i", "add"):
+            return ("tool_install", "npm:install-global") if npm_global(args) else None
+        if verb in ("update", "up", "upgrade"):
+            return ("tool_install", "npm:update-global") if npm_global(args) else None
+        if verb in ("uninstall", "unlink", "remove", "rm", "un", "r"):
+            return ("tool_install", "npm:uninstall-global") if npm_global(args) else None
+        return None
+    if argv0 == "cargo":
+        rest = list(args)
+        while rest and re.fullmatch(r"\+[A-Za-z0-9_.-]+", rest[0]):
+            rest = rest[1:]  # rustup toolchain override precedes the subcommand
+        verbs = [v for _, v in leading_tokens(rest, CARGO_ARG_OPTS, 1)]
+        verb = verbs[0] if verbs else None
+        if verb == "install" and "--list" not in rest:
+            return ("tool_install", "cargo:install")
+        if verb == "uninstall":
+            return ("tool_install", "cargo:uninstall")
+        return None
+    return None
+
+
 def classify_shell(text, depth=0):
     """Return a list of (class, rule, argv0, segment_text, unparsed)."""
     if depth > 8 or not text or not text.strip():
         return []
+    pairs = logical_lines(text)
+    funcs = shell_functions(pairs)
     out = []
-    for line, bodies in logical_lines(text):
+    for idx, (line, bodies) in enumerate(pairs):
         unparsed = False
         try:
             toks = tokenize(line)
@@ -450,6 +867,12 @@ def classify_shell(text, depth=0):
             out.extend(classify_segment(seg, depth, unparsed))
             s = strip_prefix(seg)
             base = os.path.basename(s[0]) if s else ""
+            defn = funcs.get(base)
+            if (defn is not None and idx > defn[0] and len(s) > 1
+                    and not any(SHELL_EXPANSION.search(a) for a in s[1:])):
+                expanded = shell_expand(defn[1], s[1:])
+                if expanded is not None:
+                    out.extend(classify_shell(expanded, depth + 1))
             if base in SHELLS and not any(
                     a.startswith("-") and "c" in a and not a.startswith("--") for a in s[1:]):
                 fed_to_shell = True
@@ -515,10 +938,43 @@ def classify_segment(seg, depth, unparsed):
         return hits
     if argv0 == "eval":
         return classify_shell(" ".join(args), depth + 1)
-    if re.fullmatch(r"python[0-9.]*", argv0) and "-c" in args:
-        i = args.index("-c")
-        if i + 1 < len(args):
-            return nested_eval(args[i + 1])
+    if re.fullmatch(r"python[0-9.]*", argv0):
+        # -c/-m is an interpreter option; the first operand (a script) ends
+        # options. Reading -m anywhere in argv misreads a script's arguments
+        # (`python3 tool.py -m ps` is not `python3 -m ps`).
+        i = 0
+        while i < len(args):
+            a = args[i]
+            if a in ("-W", "-X", "--check-hash-based-pycs"):
+                i += 2
+                continue
+            if a.startswith("-m") and not a.startswith("--"):
+                mod, rest = (a[2:], args[i + 1:]) if len(a) > 2 else (
+                    (args[i + 1], args[i + 2:]) if i + 1 < len(args) else (None, []))
+                if mod:
+                    hits.extend(classify_segment([mod] + rest, depth + 1, unparsed))
+                return hits
+            if a.startswith("-c") and not a.startswith("--"):
+                code = a[2:] if len(a) > 2 else (
+                    args[i + 1] if i + 1 < len(args) else None)
+                return hits + (nested_eval(code) if code else [])
+            if not a.startswith("-") or a == "-":
+                break
+            i += 1
+        if "-c" in args:  # legacy: a -c after a script operand was always read
+            j = args.index("-c")
+            if j + 1 < len(args):
+                return hits + nested_eval(args[j + 1])
+        return hits
+    if argv0 == "jj":
+        rule = classify_jj(args)
+        if rule is not None:
+            hit("vcs_write", rule)
+        return hits
+    if argv0 == "git":
+        rule = classify_git(args)
+        if rule is not None:
+            hit("vcs_write", rule)
         return hits
     if argv0 in ("pacman", "yay", "paru"):
         cls, rule = classify_pacman(argv0, args)
@@ -535,6 +991,10 @@ def classify_segment(seg, depth, unparsed):
                (a.startswith("-") and not a.startswith("--") and ("i" in a or "s" in a))
                for a in args):
             hit("host_mutation", argv0)
+        return hits
+    found = classify_installer(argv0, args)
+    if found is not None:
+        hit(*found)
         return hits
     if argv0 == "systemctl":
         verb = first_verb(args, SYSTEMCTL_ARG_OPTS)
@@ -596,15 +1056,257 @@ def dotted(node):
     return None
 
 
-def str_list(node):
-    if isinstance(node, (ast.List, ast.Tuple)) and node.elts and all(
-            isinstance(e, ast.Constant) and isinstance(e.value, str) for e in node.elts):
-        return [e.value for e in node.elts]
+LITERAL_MISS = object()
+OPAQUE_PY_CALLS = {"exec", "eval", "globals", "locals", "vars", "__import__",
+                   "compile", "setattr", "delattr"}
+OPAQUE_PY_DOTTED = OPAQUE_PY_CALLS | {"builtins." + n for n in OPAQUE_PY_CALLS}
+MATCH_BINDERS = tuple(getattr(ast, n) for n in ("MatchAs", "MatchStar", "MatchMapping")
+                      if hasattr(ast, n))
+TYPE_ALIAS = getattr(ast, "TypeAlias", None)
+
+
+def target_names(target):
+    """Names a binding target assigns; attribute/subscript targets bind none."""
+    if isinstance(target, ast.Name):
+        return {target.id}
+    if isinstance(target, (ast.Tuple, ast.List)):
+        names = set()
+        for elt in target.elts:
+            names |= target_names(elt)
+        return names
+    if isinstance(target, ast.Starred):
+        return target_names(target.value)
+    return set()
+
+
+def module_binding(stmt):
+    """The single-name straight-line module assignment in stmt, else None."""
+    if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and \
+            isinstance(stmt.targets[0], ast.Name):
+        return stmt.targets[0].id, stmt.value
+    if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name) and \
+            stmt.value is not None:
+        return stmt.target.id, stmt.value
     return None
 
 
-def classify_eval(code, language):
-    """Return (hits, eval_unparsed, unparsed_spawns)."""
+def literal_value(node, env):
+    """The literal value an expression denotes, else LITERAL_MISS.
+
+    The one resolver both consumers share: module-level variable recipes
+    (spawn arguments, folded against the cell environment) and same-text
+    helper arguments (folded against bound parameters). Only shapes whose
+    value the text itself fixes are folded: a str/int/float/bool/None
+    constant, a resolvable name, str + str, a two-argument str.replace on
+    resolvable strings, and a list/tuple of folded values. Anything else is
+    LITERAL_MISS and the caller counts the spawn as unparsed, never guesses.
+    """
+    if isinstance(node, ast.Constant) and (
+            node.value is None or isinstance(node.value, (str, int, float, bool))):
+        return node.value
+    if isinstance(node, ast.Name):
+        return env.get(node.id, LITERAL_MISS)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left, right = literal_value(node.left, env), literal_value(node.right, env)
+        if isinstance(left, str) and isinstance(right, str):
+            return left + right
+        return LITERAL_MISS
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and \
+            node.func.attr == "replace" and len(node.args) == 2 and not node.keywords:
+        base = literal_value(node.func.value, env)
+        old, new = literal_value(node.args[0], env), literal_value(node.args[1], env)
+        if isinstance(base, str) and isinstance(old, str) and isinstance(new, str):
+            return base.replace(old, new)
+        return LITERAL_MISS
+    if isinstance(node, (ast.List, ast.Tuple)):
+        values = [literal_value(elt, env) for elt in node.elts]
+        if all(v is not LITERAL_MISS for v in values):
+            return values
+    return LITERAL_MISS
+
+
+def argv_strings(value):
+    """The strings of a folded literal argv list/tuple, else None."""
+    if isinstance(value, list) and value and all(isinstance(v, str) for v in value):
+        return value
+    return None
+
+
+def module_unsafe_names(tree):
+    """Module-level names whose value cannot be tracked by straight-line
+    assignment: conditional/loop/tuple/augmented/import/del/walrus targets,
+    scope definitions, comprehension targets and global/nonlocal aliases."""
+    simple = {id(stmt) for stmt in tree.body if module_binding(stmt) is not None}
+    unsafe = set()
+
+    def scan(node):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                unsafe.add(child.name)
+                for inner in ast.walk(child):  # a `global x` in any scope rebinds x
+                    if isinstance(inner, (ast.Global, ast.Nonlocal)):
+                        unsafe.update(inner.names)
+                continue  # other body bindings are local to that scope
+            if isinstance(child, ast.Lambda):
+                continue
+            if isinstance(child, ast.Assign):
+                if id(child) not in simple:
+                    for target in child.targets:
+                        unsafe.update(target_names(target))
+            elif isinstance(child, ast.AnnAssign):
+                if id(child) not in simple:
+                    unsafe.update(target_names(child.target))
+            elif isinstance(child, ast.AugAssign):
+                unsafe.update(target_names(child.target))
+            elif isinstance(child, (ast.For, ast.AsyncFor, ast.comprehension)):
+                unsafe.update(target_names(child.target))
+            elif isinstance(child, ast.withitem) and child.optional_vars is not None:
+                unsafe.update(target_names(child.optional_vars))
+            elif isinstance(child, ast.ExceptHandler) and child.name:
+                unsafe.add(child.name)
+            elif isinstance(child, (ast.Import, ast.ImportFrom)):
+                for alias in child.names:
+                    if alias.name != "*":
+                        unsafe.add(alias.asname or alias.name.split(".")[0])
+            elif isinstance(child, ast.Delete):
+                for target in child.targets:
+                    unsafe.update(target_names(target))
+            elif isinstance(child, ast.NamedExpr):
+                unsafe.update(target_names(child.target))
+            elif isinstance(child, (ast.Global, ast.Nonlocal)):
+                unsafe.update(child.names)
+            elif MATCH_BINDERS and isinstance(child, MATCH_BINDERS):
+                name = getattr(child, "name", None) or getattr(child, "rest", None)
+                if name:
+                    unsafe.add(name)
+            elif TYPE_ALIAS is not None and isinstance(child, TYPE_ALIAS):
+                unsafe.add(child.name.id)
+            scan(child)
+
+    scan(tree)
+    return unsafe
+
+
+def scoped_call_ids(tree):
+    """Ids of calls lexically inside a def/lambda body or a class body.
+
+    Those run later (or in another namespace), so the module-level value at
+    the definition point need not be the value they see: only literals
+    written inside the call itself are resolved for them.
+    """
+    ids = set()
+
+    def defer(nodes):
+        for node in nodes:
+            for inner in ast.walk(node):
+                if isinstance(inner, ast.Call):
+                    ids.add(id(inner))
+
+    def scan(node):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                defer(child.body)
+            elif isinstance(child, ast.Lambda):
+                defer([child.body])
+            elif isinstance(child, ast.ClassDef):
+                defer(child.body)
+            else:
+                scan(child)
+
+    scan(tree)
+    return ids
+
+
+def opaque_module_mutation(tree):
+    """True when eager module/class-scope code can rebind names behind the
+    resolver's back (exec/eval/globals/locals/vars/builtins or import *)."""
+    def scan(node):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+                continue
+            if isinstance(child, ast.ImportFrom) and any(a.name == "*" for a in child.names):
+                return True
+            if isinstance(child, ast.Call) and (dotted(child.func) or "") in OPAQUE_PY_DOTTED:
+                return True
+            if scan(child):
+                return True
+        return False
+
+    return scan(tree)
+
+
+def opaque_statement(stmt):
+    """True when stmt itself, executed in order, rebinds names for what follows.
+
+    A def only defines a name (its body runs later, if at all), so it clears
+    nothing; every other statement is walked for the same eager rebinding the
+    whole-cell check looked for, so a class body's exec still counts.
+    """
+    if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+        return False
+    if isinstance(stmt, ast.ImportFrom) and any(a.name == "*" for a in stmt.names):
+        return True
+    return opaque_module_mutation(stmt)
+
+
+PURE_ARG_CALLS = {  # never spawns: never report a literal argv list handed to it
+    "print", "list", "tuple", "set", "dict", "sorted", "reversed", "repr", "str",
+    "bytes", "len", "any", "all", "min", "max", "sum", "enumerate", "zip", "map",
+    "filter", "open", "exec", "eval", "compile", "isinstance", "getattr", "hasattr",
+    "setattr", "iter", "next", "input",
+}
+
+
+def bind_literal(fn, call, env=None):
+    """Bind a same-text `def` helper's parameters to literal call arguments.
+
+    Arguments are folded with the shared resolver against `env`, which holds
+    only parameters bound by an enclosing same-text helper call: a module
+    variable is never substituted into a helper body, so a binding always
+    names an argument the call text itself states. Defaults are folded at the
+    definition site, where no call parameter is in scope.
+    """
+    env = {} if env is None else env
+    if fn.args.vararg or fn.args.kwarg or any(isinstance(a, ast.Starred) for a in call.args):
+        return None
+    params = [a.arg for a in fn.args.posonlyargs + fn.args.args]
+    if len(call.args) > len(params):
+        return None
+    bound = {}
+    for name, node in zip(params, call.args):
+        value = literal_value(node, env)
+        if value is LITERAL_MISS:
+            return None
+        bound[name] = value
+    for k in call.keywords:
+        if k.arg is None or k.arg not in params or k.arg in bound:
+            return None
+        value = literal_value(k.value, env)
+        if value is LITERAL_MISS:
+            return None
+        bound[k.arg] = value
+    first_default = len(params) - len(fn.args.defaults)
+    for idx, name in enumerate(params):
+        if name in bound:
+            continue
+        if idx < first_default:
+            return None  # a required parameter the call does not state
+        value = literal_value(fn.args.defaults[idx - first_default], {})
+        if value is LITERAL_MISS:
+            return None
+        bound[name] = value
+    return bound
+
+
+def classify_eval(code, language, env=None):
+    """Return (hits, eval_unparsed, unparsed_spawns).
+
+    `env` is the literal environment of the transcript's py kernel (one dict
+    per scanned file); it is updated in place so a later eval cell resolves a
+    name an earlier cell bound, and it is the environment spawn arguments are
+    folded against. A name entered here was bound by exactly one
+    straight-line module-level assignment to a literal-only expression.
+    """
     if language and language not in ("py", "python"):
         return [], 1, 0
     hits = []
@@ -628,6 +1330,12 @@ def classify_eval(code, language):
                        dont_inherit=True)
     except Exception:  # SyntaxError, ValueError, MemoryError, RecursionError: never executed
         return hits, 1, 0
+    if env is None:
+        env = {}
+    unsafe = module_unsafe_names(tree)
+    for name in unsafe:
+        env.pop(name, None)
+    scoped = scoped_call_ids(tree)
     from_subprocess = set()
     aliases = {"sp": "subprocess"}  # bound name -> canonical dotted prefix
     for node in ast.walk(tree):
@@ -642,10 +1350,72 @@ def classify_eval(code, language):
                 aliases[a.asname or a.name] = "%s.%s" % (node.module, a.name)
                 if node.module == "subprocess":
                     from_subprocess.add(a.asname or a.name)
-    unparsed = 0
-    for node in ast.walk(tree):
+    call_env = {}  # call id -> module literal env at its statement
+    for stmt in tree.body:
+        for node in ast.walk(stmt):
+            if isinstance(node, ast.Call):
+                call_env[id(node)] = dict(env)
+        if opaque_statement(stmt):
+            env.clear()  # exec/globals/import * here rebinds names behind the resolver
+        binding = module_binding(stmt)
+        if binding is not None:
+            name, value = binding
+            resolved = LITERAL_MISS if name in unsafe else literal_value(value, env)
+            if resolved is LITERAL_MISS:
+                env.pop(name, None)
+            else:
+                env[name] = resolved
+    funcs = {}
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and not node.decorator_list:
+            funcs[node.name] = None if node.name in funcs else (node.lineno, node)
+    funcs = {k: v for k, v in funcs.items() if v is not None}
+    spawn_hits, unparsed = spawn_scan(list(ast.walk(tree)), aliases, from_subprocess,
+                                      {}, funcs, 0, call_env, scoped)
+    hits.extend(spawn_hits)
+    return hits, 0, unparsed
+
+
+def helper_argv_leads(node, env):
+    """Classify literal argv lists handed to a call this text does not define.
+
+    Only what the call states is read: inline literals and parameters bound
+    by an enclosing same-text helper call, never a module variable.
+    """
+    out = []
+    for a in node.args:
+        vals = argv_strings(literal_value(a, env))
+        if vals is not None:
+            out.extend(classify_shell(shlex.join(vals)))
+    return out
+
+
+def spawn_scan(nodes, aliases, from_subprocess, env, funcs, depth=0,
+               call_env=None, scoped=frozenset()):
+    """Classify spawn calls, resolving literal calls to same-text helpers.
+
+    `env` is the helper-binding environment: empty at module scope, the bound
+    parameters inside a same-text helper body. `call_env`/`scoped` carry the
+    cell's module literal environment per call (a deferred call, inside a
+    def/lambda/class body, resolves no module name). A call to a name this
+    text neither defines nor imports contributes one lead per literal argv
+    list it is handed: the argv is stated outright, the helper's body is not
+    visible here.
+    """
+    hits, unparsed = [], 0
+    for node in nodes:
         if not isinstance(node, ast.Call):
             continue
+        cenv = env if call_env is None else (
+            {} if id(node) in scoped else call_env[id(node)])
+        helper = funcs.get(node.func.id) if isinstance(node.func, ast.Name) else None
+        if helper is not None and node.lineno > helper[0] and depth < 4:
+            bound = bind_literal(helper[1], node, env)
+            if bound is not None:
+                body = [n for n in ast.walk(helper[1]) if isinstance(n, ast.Call)]
+                inner, _ = spawn_scan(body, aliases, from_subprocess, bound, funcs, depth + 1)
+                hits.extend(inner)
+            continue  # the helper body was counted where that body is defined
         name = dotted(node.func) or ""
         head, _, rest = name.partition(".")
         if head in aliases:
@@ -658,39 +1428,47 @@ def classify_eval(code, language):
                            "os.spawnlp", "os.execlp")
         is_tool = name in ("tool.bash",)
         if not (is_sub or is_shell_fn or is_exec or is_tool):
+            if (isinstance(node.func, ast.Name) and helper is None
+                    and name not in PURE_ARG_CALLS):
+                hits.extend(helper_argv_leads(node, env))
             continue
         if is_tool:
             arg = node.args[0] if node.args else None
             cmd = None
             if isinstance(arg, ast.Dict):
                 for k, v in zip(arg.keys, arg.values):
-                    if isinstance(k, ast.Constant) and k.value == "command" and \
-                            isinstance(v, ast.Constant) and isinstance(v.value, str):
-                        cmd = v.value
+                    if isinstance(k, ast.Constant) and k.value == "command":
+                        value = literal_value(v, cenv)
+                        if isinstance(value, str):
+                            cmd = value
             if cmd is None:
                 unparsed += 1
             else:
                 hits.extend(classify_shell(cmd))
             continue
         if is_exec:
-            vals = [a.value for a in node.args if isinstance(a, ast.Constant) and isinstance(a.value, str)]
-            if vals and len(vals) == len(node.args):
+            vals = [literal_value(a, cenv) for a in node.args]
+            if vals and all(isinstance(v, str) for v in vals):
                 hits.extend(classify_shell(shlex.join(vals)))
             else:
                 unparsed += 1
             continue
         arg = node.args[0] if node.args else None
-        shell_kw = any(k.arg == "shell" and not (isinstance(k.value, ast.Constant) and not k.value.value)
-                       for k in node.keywords)  # non-literal shell= is treated as shell
-        lst = str_list(arg) if arg is not None else None
-        if lst is not None:
-            hits.extend(classify_shell(shlex.join(lst)))
-        elif isinstance(arg, ast.Constant) and isinstance(arg.value, str):
-            hits.extend(classify_shell(arg.value) if (is_shell_fn or shell_kw)
-                        else classify_shell(shlex.quote(arg.value)))
+        shell_kw = True
+        for k in node.keywords:  # non-literal shell= is treated as shell
+            if k.arg == "shell":
+                flag = literal_value(k.value, cenv)
+                shell_kw = flag is LITERAL_MISS or bool(flag)
+        value = literal_value(arg, cenv) if arg is not None else LITERAL_MISS
+        argv = argv_strings(value)
+        if argv is not None:
+            hits.extend(classify_shell(shlex.join(argv)))
+        elif isinstance(value, str):
+            hits.extend(classify_shell(value) if (is_shell_fn or shell_kw)
+                        else classify_shell(shlex.quote(value)))
         else:
             unparsed += 1
-    return hits, 0, unparsed
+    return hits, unparsed
 
 
 # ----------------------------------------------------------------- scan ---
@@ -763,6 +1541,7 @@ def scan_file(path):
     if raw_lines and raw_lines[-1] == b"":
         raw_lines.pop()
     entry["lines"] = len(raw_lines)
+    envs = {}  # language kernel -> literal env, carried across this file's cells
     for lineno, raw in enumerate(raw_lines, 1):
         if not raw.strip():
             continue
@@ -795,7 +1574,13 @@ def scan_file(path):
                 code = args.get("code")
                 if not isinstance(code, str):
                     continue
-                hits, un_eval, un_spawn = classify_eval(code, args.get("language"))
+                language = args.get("language")
+                env = None
+                if language in (None, "py", "python"):
+                    if args.get("reset") is True:  # fresh kernel: nothing carries in
+                        envs["py"] = {}
+                    env = envs.setdefault("py", {})
+                hits, un_eval, un_spawn = classify_eval(code, language, env)
                 entry["eval_unparsed"] += un_eval
                 entry["unparsed_spawns"] += un_spawn
             else:
@@ -1011,6 +1796,8 @@ def validate_reachable(pinned, stats):
         if w["line"] > len(lines):
             return "expected_findings line %d is past the end of %s" % (
                 w["line"], w["file"])
+        if not lines[w["line"] - 1]:
+            return "expected_findings line %d of %s is blank" % (w["line"], w["file"])
     for k in pinned["known"]:
         lines = stats[os.path.normpath(k["file"])]
         if k["line"] > len(lines):
@@ -1051,8 +1838,14 @@ def frozen_snapshot(directory, entries):
         paths_ok.append(good)
         bad_paths = bad_paths or not good
     listed = {os.path.normpath(e["path"]) for e in entries}
+    # Resolve DIR/inputs the way the kernel will before testing it: `DIR`,
+    # `DIR/` and `DIR/.` name one directory, so a lexical test answers for the
+    # spelling, not for the directory (round-18 finding F2). The walk root
+    # stays spelled so relative paths remain relative to DIRECTORY.
     idir = os.path.join(directory, "inputs")
-    if os.path.islink(idir):  # a symlinked inputs/ replays bytes outside the pin
+    real_inputs = os.path.join(real_dir, "inputs")
+    if os.path.islink(idir) or os.path.realpath(idir) != real_inputs:
+        # a symlinked inputs/ replays bytes outside the pin
         bad_paths = True
         paths_ok = [False for _ in paths_ok]  # every listed path is under inputs/
     elif os.path.isdir(idir):
@@ -1098,8 +1891,29 @@ def frozen_snapshot(directory, entries):
     return None, report, stats
 
 
+def frozen_dir_symlinked(directory):
+    """True when DIRECTORY is named through a symlink.
+
+    Every spelling that reaches one directory (`DIR`, `DIR/`, `DIR/.`,
+    `DIR/inputs/..`, `link/../evil`) is judged by kernel resolution, so a
+    trailing component cannot launder a symlinked DIR (round-18 finding F2).
+    A symlink above DIR is host layout, not snapshot identity, and is allowed.
+    """
+    real_dir = os.path.realpath(directory)
+    path = directory if os.path.isabs(directory) else os.path.join(os.getcwd(),
+                                                                   directory)
+    prefix = os.sep
+    for part in path.split(os.sep):
+        if not part:
+            continue
+        prefix = os.path.join(prefix, part)
+        if os.path.islink(prefix) and os.path.realpath(prefix) == real_dir:
+            return True
+    return False
+
+
 def run_frozen(directory):
-    if os.path.islink(directory.rstrip("/") or directory):
+    if frozen_dir_symlinked(directory):
         return frozen_error("frozen directory is a symlink", None, [],
                             outcome="snapshot_tampered")
     try:

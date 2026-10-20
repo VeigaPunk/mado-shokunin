@@ -1,0 +1,162 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "note": "round-19 frozen-mode selftest cases for carried finding F1 (round-18: an expected-finding pin on a blank line reported frozen_verdict_mismatch/1 instead of the documented frozen_error/2). Cases f1-* are owned by TwFrozenF1; TwFrozenF2 adds f2-* cases. Synthetic OMP-shaped JSONL only; no real transcript bytes. L1 merges the cases array with expected-f2.json into expected.json. round-19 F2 fragment (merge with the F1 cases into the suite's expected.json). Cases pin the --frozen argument-spelling bypass from round-18 F2: `DIR/.`, `DIR/./`, `DIR/inputs/..` and `link/../evil` must be rejected as a symlinked frozen directory exactly like the canonical `DIR` spelling, while a real directory reached through the same `/.` spelling and a real directory below a symlinked ancestor still verify. Run with `--selftest .ufo/waves/round-19/tripwire/r19-frozen-f1f2`; the f2-symlink-* and f2-dotdot/f2-outside entries are relative symlinks (git mode 120000), and f2-target/f2-realdir-dot hold identical pinned bytes.",
+  "cases": [
+    {
+      "name": "f1-blank-expected",
+      "mode": "frozen",
+      "args": [
+        "f1-blank-expected"
+      ],
+      "want_exit": 2,
+      "want_label": "frozen_error",
+      "want_missing": 0,
+      "want_extra": 0,
+      "note": "expected_findings line 2 of 2 is empty: unreachable pin, a baseline error before replay"
+    },
+    {
+      "name": "f1-whitespace-expected",
+      "mode": "frozen",
+      "args": [
+        "f1-whitespace-expected"
+      ],
+      "want_exit": 2,
+      "want_label": "frozen_error",
+      "want_missing": 0,
+      "want_extra": 0,
+      "note": "blank means strip()=='' (the scanner's own skip rule), so a whitespace-only line is blank too"
+    },
+    {
+      "name": "f1-blank-after-valid",
+      "mode": "frozen",
+      "args": [
+        "f1-blank-after-valid"
+      ],
+      "want_exit": 2,
+      "want_label": "frozen_error",
+      "want_missing": 0,
+      "want_extra": 0,
+      "note": "a valid line-1 pin does not short-circuit the check: the blank line-3 pin still refuses before scan"
+    },
+    {
+      "name": "f1-nonblank-control",
+      "mode": "frozen",
+      "args": [
+        "f1-nonblank-control"
+      ],
+      "want_exit": 1,
+      "want_label": "frozen_verdict_mismatch",
+      "want_missing": 1,
+      "want_extra": 2,
+      "note": "control: an in-range non-blank line without the pinned finding stays a verdict mismatch"
+    },
+    {
+      "name": "f1-nonblank-note-control",
+      "mode": "frozen",
+      "args": [
+        "f1-nonblank-note-control"
+      ],
+      "want_exit": 1,
+      "want_label": "frozen_verdict_mismatch",
+      "want_missing": 1,
+      "want_extra": 0,
+      "note": "control: a non-blank non-message record is reachable, so no pin error"
+    },
+    {
+      "name": "f1-trailing-newline-past-end",
+      "mode": "frozen",
+      "args": [
+        "f1-trailing-newline-past-end"
+      ],
+      "want_exit": 2,
+      "want_label": "frozen_error",
+      "want_missing": 0,
+      "want_extra": 0,
+      "note": "boundary: after one trailing newline is popped, the phantom next line is past-the-end, not blank"
+    },
+    {
+      "name": "f2-symlink-dir-dot",
+      "mode": "frozen",
+      "args": [
+        "f2-symlink-dir-dot/."
+      ],
+      "want_exit": 2,
+      "want_label": "snapshot_tampered",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-symlink-dir-dot-slash",
+      "mode": "frozen",
+      "args": [
+        "f2-symlink-dir-dot-slash/./"
+      ],
+      "want_exit": 2,
+      "want_label": "snapshot_tampered",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-symlink-dir-inputs-dotdot",
+      "mode": "frozen",
+      "args": [
+        "f2-symlink-dir-inputs-dotdot/inputs/.."
+      ],
+      "want_exit": 2,
+      "want_label": "snapshot_tampered",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-symlink-dotdot-launder",
+      "mode": "frozen",
+      "args": [
+        "f2-dotdot/link/../evil"
+      ],
+      "want_exit": 2,
+      "want_label": "snapshot_tampered",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-symlink-dir-plain",
+      "mode": "frozen",
+      "args": [
+        "f2-symlink-dir-plain"
+      ],
+      "want_exit": 2,
+      "want_label": "snapshot_tampered",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-realdir-dot-match",
+      "mode": "frozen",
+      "args": [
+        "f2-realdir-dot/."
+      ],
+      "want_exit": 0,
+      "want_label": "frozen_match",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    },
+    {
+      "name": "f2-ancestor-symlink-match",
+      "mode": "frozen",
+      "args": [
+        "f2-ancestor-symlink/f2-target"
+      ],
+      "want_exit": 0,
+      "want_label": "frozen_match",
+      "want_missing": 0,
+      "want_extra": 0,
+      "want_findings": []
+    }
+  ]
+}

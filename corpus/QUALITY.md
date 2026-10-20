@@ -159,3 +159,46 @@ above says a fixture bound to the `f71ccbe` tool sha read at a later tool prints
 stale-but-consistent shape; `receipt-fixtures/stale-rev-receipt.txt` remains the
 `SHA_MISMATCH` control. Green arm: `EXPECT_SUMMARY: 21/21`, exit 0, with the
 round-18 re-cut, frozen and measure receipts as `ok` claims.
+
+## Round 19 — durable anchors, supersession sweep (outside R18-V1/V3/V4); R18-V2 applies criterion 24
+
+Not restatements: criteria 7 and 13 bind a digest to committed bytes, and a
+committed digest of a rotating GitHub tree page satisfies both; 27 asks whether the
+upstream an anchor names can be re-obtained to the same bytes. Criterion 6 asks for
+a named revision; 28 is a property of the owned file set after a supersession,
+which passes 6 and 9 untouched. R18-V2 (criterion 26's own red-before receipt has
+no producer header) is not a new criterion: it is criterion 24 applied to the
+lane's own criterion evidence (outside critic CriticC1, round-19 w1), recorded in
+the note after 28.
+
+27. A credited source row's anchor is reproducible — tag- or commit-pinned bytes with their sha256, a content-addressed object id, or a registry checksum; a digest that committed receipts show rotating between fetches never anchors a row, and an unversioned alias (`latest`, `main`, `master`, `HEAD`) never serves as version-specific support without a pin in the anchor; the superseding row names the replaced id (lesson: lessons/round-19.md#mistakes M1/M2; outside lessons/round-18-verifier-spotcheck.md R18-V1/R18-V4).
+    Runnable check: `python3 -I .ufo/waves/round-19/anchor-durability.py REV`
+    (mined rows only; PER_FETCH_DIGEST needs ≥2 distinct committed 200
+    digests for a URL the anchor credits; a single-digest page digest prints
+    `durable — … not shown to rotate`). Red at `9c54c56`: `FLAGGED S084 S094`
+    (S084 UNPINNED_ALIAS, S094 PER_FETCH_DIGEST, 5 receipts / 5 digests),
+    exit 1. Green at `df84807`: `flagged=0`, exit 0 (S094 → S097, S084 → S098,
+    both old rows `rejected`). Limit: it reads the anchor text; it cannot tell a
+    reproducible page that has never been fetched twice.
+28. When a present-tense value is superseded, every owned file that still states the old value carries, in the same round, an in-file pointer naming the new value and the SOURCES row that superseded it; a SKILL erratum or one note does not discharge the sweep for the other files (lesson: lessons/round-19.md#mistakes M3; outside lessons/round-18-verifier-spotcheck.md R18-V3).
+    Runnable check: `python3 -I .ufo/waves/round-19/supersede-sweep.py REV`
+    (ledger `.ufo/waves/round-19/supersessions.json`: `2.17.0` → `2.17.2`,
+    rows S090/S096; scope knowledge notes, corpus/README.md, SKILL.md,
+    PROVINCE.md, tools/*). Red at `9c54c56`: `files=13 pointed=2 stale=11`,
+    exit 1. Green at `df84807`: `pointed=13 stale=0`, exit 0. Limit (CriticC1):
+    file-level — one pointer line clears a file with other untouched mentions;
+    a reviewer reads each pointer, the check only proves none is missing.
+
+Round-19 application of criterion 24 to criterion 26's evidence (R18-V2,
+append-only; no new number): criterion 26's red-before
+`.ufo/waves/round-18/evidence/gate-rc-redbefore.txt` and `regression-recut.txt`
+read `MISSING_PROVENANCE` under `python3 -I .ufo/waves/round-18/receipt-check.py
+.ufo/waves/round-19/receipt-claims.json`. The header-bound re-cut is
+`.ufo/waves/round-19/evidence/gate-swap-receipt.txt` (`tool_sha256=6e6782c3…` =
+the committed fixture `evidence/gate-swap-d9a5a18.sh`, `measured_commit=df84807`):
+`383 passed, 6 failed` — five OM9 assertions plus `R10` (the fixture's own
+`PIN_MADO` self-pin moves with any gate edit); round 18's "383/389, five OM9"
+omitted R10. Criterion 25's runnable command now needs an explicit lane receipt:
+`python3 -I .ufo/waves/round-18/measure-mutants.py --out
+.ufo/waves/round-18/evidence/measure-mutants.json --force-lane-receipt` (a bare
+run prints JSON to stdout and writes nothing; w1 MeasureMutantsOut).

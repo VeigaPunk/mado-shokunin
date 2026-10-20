@@ -1,0 +1,276 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "note": "Round 19 r19-helperfn (TwHelperFn, rebased from round-18 drafts/tripwire/r18-helperfn). Two rules. (A) A function defined earlier in the SAME command text and called there with literal arguments has its body classified with those arguments substituted ($1..$9/$@/$* for shell functions, positional parameters for python `def`); positives show the resolved command, negatives show that nothing is guessed (uncalled, non-literal, wrong order, redefined, vararg, non-spawn body, non-literal default, single-quoted $1, call before definition). (B) A call to a name the text neither defines nor imports, handed a literal positional ['prog', ...] argv list that classifies as a host command, is reported as a lead (the real r13-root.jsonl:4 shape); pure data calls and calls to same-text defs with non-literal arguments contribute nothing. Two round-18 pins changed with the round-18 `pacman` fail-safe (unknown operator -> host_mutation): sh-fn-positional-n and sh-fn-single-quoted.",
+  "cases": [
+    {
+      "name": "py-helper-literal-list",
+      "args": ["py-helper-literal-list.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-shell-string",
+      "args": ["py-helper-shell-string.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Qi", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-shell-kw",
+      "args": ["py-helper-shell-kw.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-two-hop",
+      "args": ["py-helper-two-hop.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-keyword",
+      "args": ["py-helper-keyword.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Sl", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-literal-twice",
+      "args": ["py-helper-literal-twice.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-positional-at",
+      "args": ["sh-fn-positional-at.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-positional-n",
+      "args": ["sh-fn-positional-n.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "pacman", "line": 1},
+        {"class": "package_query", "rule": "pacman:-Qi", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-function-keyword",
+      "args": ["sh-fn-function-keyword.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "systemctl:restart", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-oneline",
+      "args": ["sh-fn-oneline.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "py-helper-uncalled",
+      "args": ["py-helper-uncalled.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-nonliteral-arg",
+      "args": ["py-helper-nonliteral-arg.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-defined-after-call",
+      "args": ["py-helper-defined-after-call.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-redefined",
+      "args": ["py-helper-redefined.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-vararg",
+      "args": ["py-helper-vararg.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-nonspawn-body",
+      "args": ["py-helper-nonspawn-body.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-binop-body",
+      "args": ["py-helper-binop-body.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-default-nonliteral",
+      "args": ["py-helper-default-nonliteral.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "sh-fn-uncalled",
+      "args": ["sh-fn-uncalled.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "sh-fn-nonliteral-arg",
+      "args": ["sh-fn-nonliteral-arg.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "sh-fn-called-before-def",
+      "args": ["sh-fn-called-before-def.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-helper-recursive",
+      "args": ["py-helper-recursive.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "sh-fn-unterminated",
+      "args": ["sh-fn-unterminated.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "sh-fn-single-quoted",
+      "args": ["sh-fn-single-quoted.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "pacman", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-quoted-positional",
+      "args": ["sh-fn-quoted-positional.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "pacman", "line": 1},
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1}
+      ]
+    },
+    {
+      "name": "sh-fn-heredoc-tail",
+      "args": ["sh-fn-heredoc-tail.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-lead-cross-cell-literal",
+      "args": ["py-lead-cross-cell-literal.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "py-lead-two-calls",
+      "args": ["py-lead-two-calls.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Qi", "line": 1}
+      ]
+    },
+    {
+      "name": "py-lead-nested-literal",
+      "args": ["py-lead-nested-literal.jsonl"],
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+      ]
+    },
+    {
+      "name": "py-lead-pure-print",
+      "args": ["py-lead-pure-print.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-lead-nonliteral-var",
+      "args": ["py-lead-nonliteral-var.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-lead-literal-nonargv",
+      "args": ["py-lead-literal-nonargv.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-lead-defined-nonliteral",
+      "args": ["py-lead-defined-nonliteral.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    },
+    {
+      "name": "py-lead-string-arg",
+      "args": ["py-lead-string-arg.jsonl"],
+      "want_exit": 0,
+      "want_label": "clean",
+      "want_findings": []
+    }
+  ]
+}

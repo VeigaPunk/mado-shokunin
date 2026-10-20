@@ -293,6 +293,18 @@ nibble, S070 dynamic digest) are logged old→new in `lessons/round-17.md`.
 Stop: both routes are documented to their host declaration with every
 behaviour step marked `[UNK]`.
 
+Round 19 (2026-10-20, bounded: walker version provenance and the two routed anchor
+defects). Searched the host's own walker bytes before any upstream page, because the
+question was what is installed, not what upstream says: `/usr/bin/walker` holds one
+`2.17.2` literal and no `2.17.0` (S096). For S084 the walker v2.17.2 `Cargo.lock` named
+the exact xdg release and its checksum, so the crate archive (S098) replaced the docs.rs
+`latest` page; the `3.0.0` docs page was opened and rejected (its markup differs from
+`latest` and moves the quoted lines). For S094 a /tmp clone at the tag gave tree ids,
+which reproduce where GitHub tree HTML does not (S097). ArchWiki `oldid` raw URLs
+returned bot-challenge pages under HTTP 200 and were discarded (lesson M6). Leads
+not opened this round: the same-morning elephant, uwsm and hyprland pkgrel moves
+(w1 `PacmanLogMoves`) and `/etc/pacman.d/hooks/walker-restart.hook` (operator-local).
+
 ## Leads (unopened)
 
 A lead is not evidence and never a row.
