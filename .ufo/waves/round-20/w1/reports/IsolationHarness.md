@@ -87,11 +87,43 @@ ac11cc5adb1ece61eba4d45a8e2b65016576eb247957a846afe797b9118c6ed4  .ufo/waves/rou
 a9bfa1be563c76e74edffa480514e69f3ee85ead8415e54b865d02be10107940  .ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh
 ```
 
+## V3 Hardening
+
+Built and tested in `/tmp/mado-r20-IsolationHarness-3-v3`; after cloning, removed `origin` and observed `git rev-parse HEAD=a4046a8216080d4004de3f268c62cf142095ac07` (remote list empty). Delivered full versions at `.ufo/waves/round-20/w2/IsoV3/isolate.sh` and `isolation-check.sh`.
+
+`isolate.sh` still resolves `unshare` and `mount` through PATH for injectable setup failures, but replaces PATH-resolved `cmp` with fixed-path `/usr/bin/stat -Lc "%d:%i"` identity comparison after the bind loop (`isolate.sh:44-65`). The checker puts a no-op mount and fake `cmp` returning 0 in PATH for the mount-noop case; v3 fails closed without invoking that `cmp`, while the fake-cmp harness invokes it and reads red. Before `exec`, the runner unsets `HYPRLAND_INSTANCE_SIGNATURE`, `WAYLAND_DISPLAY`, `DBUS_SESSION_BUS_ADDRESS`, and `XDG_RUNTIME_DIR` (`isolate.sh:67-69`). Header and usage warn that fail-closed setup is not containment, is not a sandbox, and must never be used for a host probe under the host pause (`isolate.sh:2-4,7-10`).
+
+`isolation-check.sh` removes `CHECK_MODE`, `CHECK_MARKER`, and `CHECK_REAL_PATH` from its own environment and applies only a PATH override for stub injection when launching the harness (`isolation-check.sh:18-21,165-170`). Per-mode values and marker paths are baked into generated stub sources (`:93-156`); randomized case-directory names do not disclose the mode in PATH. The payload writes the visible canary and an execution witness through fd 9; the checker opens that witness in a private `/tmp` directory and unlinks its pathname before launching the harness (`:35-50`). Verdicts use the witness rather than canary presence alone; an injected stub that was not invoked yields `COULD_NOT_EVALUATE`, and a zero exit without a witness is `SKIP_AS_SUCCESS`/`FAIL_OPEN` (`:177-199`). A failed positive control now emits `NEVER_RUNS` and exits 2 (`:221-239`).
+
+The saved `.ufo/waves/round-20/w2/IsoV3/run.txt` records every run; its receipt binds checker SHA-256 `97cdef57b0d4a5f55b9611223321f13127e0c2bd2a20e7f10279e71771427842` to measured commit `a4046a8216080d4004de3f268c62cf142095ac07`. Observed outcomes:
+
+| Harness/control | Result in `run.txt` |
+|---|---|
+| v3 `isolate.sh` | All six setup failures `FAIL_CLOSED`, exit 125/no execution witness; positive control `POSITIVE_CONTROL_OK`; checker exit 0 (`:13-63`). |
+| `inns-r19-shape.sh` (made executable in the clone) | `FAIL_OPEN` on mount-nonzero, mount-noop, partial-arm, missing-target and missing-stub; exit 1 (`:75-126`). |
+| `m1-nocmp.sh`, `m3b-capprobe.sh`, `m6-besteffort.sh`, `m4-skiptarget.sh` | Each red/exit 1 on its mutant mode; respectively no-op mount (`:154,188`), unshare refusal (`:208,250`), partial arm (`:286,312`), and missing target (`:355,372`). |
+| RevQuality29 `masked.sh` and `canary-deleter3.sh` | Both red/exit 1; control environment was absent. The latter also reads `FAIL_OPEN` for `SKIP_AS_SUCCESS` on refused unshare (`:384-494`). |
+| Fake-cmp harness | Red/exit 1 on mount-noop; transcript confirms `cmp-stub=present` and payload witness (`:522,556`). |
+| Absolute-mount bypass control | `COULD_NOT_EVALUATE` when injected mount was not observed; exit 2 (`:571,586,593,619`). |
+| Zero-exit/no-payload control | `SKIP_AS_SUCCESS` red and `NEVER_RUNS` on positive control; checker exit 2 (`:630,671-672`). |
+| Session-variable scrub probe | Supplied synthetic values for all four variables; payload observed them unset and wrote `session-vars-unset`; exit 0/canary present (`:558-560`). |
+
+The four mutant harness copies run from the clone were SHA-256 identical to the assigned lane fixtures; their paired hashes match the v2 evidence list at lines 84-87.
+
+Current v3 artifact SHA-256 (`sha256sum`):
+
+```text
+89125ff7191f0d91799158c0e19695197784bda9e352c0fa0a59bbe0090b7f9a  .ufo/waves/round-20/w2/IsoV3/isolate.sh
+97cdef57b0d4a5f55b9611223321f13127e0c2bd2a20e7f10279e71771427842  .ufo/waves/round-20/w2/IsoV3/isolation-check.sh
+e3e3807330377f64cb813429e455f501f90c3b562a6fdc146d369d3f7757b652  .ufo/waves/round-20/w2/IsoV3/run.txt
+```
+
 ## Limits
 
 - Namespace refusal was simulated with a PATH-first stub returning 1; the host's real positive-control namespace setup succeeded.
-- The post-mount comparison failure was exercised using a successful no-op mount; a separate mismatch after a real successful bind was not exercised.
-- Payload nonzero-status propagation was not separately re-tested in the v2 run. No full repository build, lint, or suite was run.
+- The post-bind check was exercised with a successful no-op mount and fake `cmp`; a separate mismatch after a real successful bind was not exercised.
+- The unlinked fd 9 witness survives canary deletion, but this is not containment against a subject deliberately manipulating inherited descriptors. Session-scrub validation used synthetic values only; no live session socket or host probe was touched.
+- Payload nonzero-status propagation was not separately re-tested. No full repository build, lint, or suite was run.
 
 ## Installs
 
