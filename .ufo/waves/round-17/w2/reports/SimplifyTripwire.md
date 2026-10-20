@@ -1,96 +1,113 @@
 # SimplifyTripwire — `tools/mado-tripwire.py` deletion / simplification set (W2, report only)
 
-Lane root `/home/vgpnk/Projects/shokunin/mado-shokunin`, HEAD `988b858bd6049bc709807534fd725c05264f7e60`.
-Artifact under review: `tools/mado-tripwire.py`, 818 lines, sha256
-`4ced68d33ad4db5b86cb8b7cbacbb7f7052fc324ac7ae6672e5459f8a94d4c44` (unchanged after this seat; `git diff` empty).
+Lane root `/home/vgpnk/Projects/shokunin/mado-shokunin`. **Installs: none.** No pacman/sudo/systemctl/
+compositor/live probe, no omp CLI. No lane file was written except this report; every mutation ran on a copy
+under `/tmp/simplify-tripwire.3092`.
 
-**Installs: none.** No pacman/sudo/systemctl/compositor/live probe was run. No file outside `/tmp` was modified.
-This report is the only lane write.
+## Artifacts — the file moved under this seat
+
+| id | what | lines | sha256 |
+|---|---|---|---|
+| **A** | lane HEAD `988b858` blob (`git show HEAD:tools/mado-tripwire.py`) | 818 | `4ced68d3…d4c44` |
+| **B** | current worktree file (uncommitted, +132/−37 vs HEAD, mtime 2026-10-20 12:06:29) | 913 | `7a98720e…f31fe7` |
+
+A was the file on disk when this seat opened and the artifact C3 claimed. Mid-seat another seat landed an
+uncommitted edit that adds alias normalization (`aliases` at 590–610), comment/punctuation handling in
+`segments` (177–190), pacman long-option prefixes (353–357), `nested_eval`/`NESTED` counters (105–111), and
+extra rule-table entries. HEAD is still `988b858`.
+
+Both artifacts were measured. **Line numbers below are B** (`7a98720e`); the hunk *text* is the authority and
+will survive the next line shift. Re-anchor on the hash before landing.
 
 ## Verdict
 
-Ten scratch mutations were built from a pristine copy and measured against the three pinned suites and a
-differential harness. Every proposal below is **output-identical** to the shipped tool: all three suites stay
-green and the full verdict JSON (including `command`, counts and file digests) is byte-identical on all 49
-regular fixtures. The combined variant is 818 → 816 lines (non-blank 758 → 752) and removes six dead/duplicate
-items plus three stacked authorities.
+Nine hunks are **output-identical** and one (P11) is a **behavioural fix** that only changes quoted-`#`
+inputs. All ten keep the three suites green:
 
-The attack on the C3 landing (9/9, 16/16, 33/33 selftests, anchor exit 1, 4/4 pacman.log join) **failed**:
-nothing in the classifier changes. What did surface is code the suites cannot see — three over-general
-behaviors with concrete counterexamples (§ Findings), one of which (F3) is a real detection hole under the
-alias `import subprocess as sp`.
+- On B: P1–P9 → 913 → 910 lines, full verdict JSON byte-identical on all 49 regular fixtures, 13/13
+  differential comparisons identical. Adding P11 → 908 lines, suites green, 0/13 diffs on the standing
+  corpus, and the intended delta appears only on the new quoted-hash probe.
+- On A: the same nine hunks → 818 → 816 lines, 13/13 identical, byte-identical fixture verdicts. (A's P7
+  additionally hoisted a per-argument `long_ops` rebuild that B has already fixed.)
 
-## Method (all read-only; scratch copies under `/tmp/simplify-tripwire.3092`)
+The attack on the C3 landing (9/9, 16/16, 33/33, anchor exit 1, 4/4 pacman.log join) **failed**: P1–P9 do not
+change a single classification. What the suites cannot see is documented under Findings: the redaction
+catch-all still destroys commit-SHA evidence (F1) and the `omarchy-*` substring rule still fires on
+`clock`/`block` (F2); the `sp.getoutput` hole I found at A is **already fixed in B** (F3, historical).
 
-- Baseline: `python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/{core,compound,hardening}`
+## Method
+
+- Baseline on each artifact: `python3 -I <copy> --selftest .ufo/waves/round-17/tripwire/{core,compound,hardening}`
   → `9/9`, `16/16`, `33/33`.
-- Differential harness (`/tmp/.../fuzz.py`): one synthetic transcript with 156 `bash` tool calls, 25 `eval`
-  calls (literal, non-literal, `!`-bang, `%%bash`, heredocs, `await tool.bash`, JS, malformed) and three
-  non-toolCall record shapes; scanned five ways (single file, directory, three `--permit` sets) plus eight
-  refusal paths (missing path, non-`.jsonl`, empty dir, bad/empty permit, no path, usage, refused name).
-  13 byte-exact comparisons of stdout + exit code per variant.
-- Stronger check for the combined variant: scan of all 49 regular fixture files (core 9 + compound 16 +
-  hardening 33, excluding `malformed.jsonl`, `agent.db.jsonl` and the symlink fixture, which are the exit-2
-  cases themselves) compared with `cmp` — byte-identical verdict, 53 findings each, exit 1 each.
-- Every mutant was executed only as a `/tmp` copy; the lane file was never edited. Restored/verified state:
-  sha256 `4ced68d3…`, `git diff -- tools/mado-tripwire.py` empty.
+- Differential harness: one synthetic transcript with 156 `bash` calls, 25 `eval` calls (literal, non-literal,
+  `!`-bang, `%%bash`, heredocs, `await tool.bash`, JS, malformed) and three non-toolCall record shapes; scanned
+  five ways (file, directory, three `--permit` sets) and through eight refusal paths (missing path, non-`.jsonl`,
+  empty dir, bad/empty permit, no path, usage, refused name). 13 byte-exact stdout+exit comparisons per mutant.
+- Stronger check: scan of the 49 regular fixture files (`core` 6, `compound` 13, `hardening` 32 at maxdepth 1,
+  excluding `malformed.jsonl`, `agent.db.jsonl`, the symlink fixture — those are the suites' exit-2 cases)
+  compared with `cmp`. B baseline: 53 findings, counts `host_mutation 34 / live_probe 6 / package_query 13`,
+  exit 1.
+- Every proposal was also built and measured **alone** (per-row table below), not only in the combined patch.
+- Hunk builder asserts exactly one match per hunk (`build_now.py`), so a later edit fails loudly instead of
+  applying to the wrong site.
 
-## Proposals (exact line numbers in the shipped file; apply bottom-up)
+## Proposals (line numbers on B `7a98720e`; apply bottom-up)
 
-| # | Lines | What | Δ lines | Proof |
-|---|-------|------|---------|-------|
-| P1 | 50, 167 | drop `REDIRECTS`, the `tok in REDIRECTS` disjunct, and the constant-true `tok not in SEPARATORS` conjunct | −1 | 399-token enumeration, 0 divergent |
-| P2 | 163 | drop `or tok == "\n"` — `"\n"` is already in `SEPARATORS` (49) | 0 | set membership |
-| P3 | 74 | drop `"systemd-run"`, `"su"` from `HOST_MUTATION_BINS` — shadowed by the earlier branches at 393/398 | 0 | control flow + run0 fixture |
-| P4 | 178, 182 | drop `in_single` (never assigned `True`) and its conjunct | −1 | grep: single assignment `False` |
-| P5 | 507 | drop `lines and` — `str.split("\n")` is never empty | 0 | Python semantics |
-| P6 | 82–83 | drop the two `SPAWN_FUNCS` entries duplicated by `SHELL_STRING_FUNCS` (84–86) | −1 | measured identical, incl. the `sp.` miss |
-| P7 | 294–314 | hoist `long_ops` out of the loop and merge the two per-arg flag dicts into one table | +1 | snapshot equality |
-| P8 | 352–354, 408–413 | one `shell_code()` authority for the duplicated shell `-c` predicate | +5 | snapshot equality |
-| P9 | 713–717, 783–787, 795–799, 801–805 | one `emit_failure()` authority for four copies of the exit-2 payload | −5 | all refusal paths |
-| P10 | 508–510, 754, 759–762, 772 | nits, not applied (see below) | 0 | — |
-| — | combined | P1–P9 | **−2** (816) | suites + 13/13 + `cmp` |
+| # | Lines | What | Δ lines | Nature |
+|---|-------|------|---------|--------|
+| P1 | 50, 187 | drop `REDIRECTS` + its disjunct (generic punctuation clause already covers every member) | −1 | dead constant |
+| P2 | 182 | drop `or tok == "\n"` — `"\n"` is in `SEPARATORS` (49) | 0 | duplicate branch |
+| P3 | 78 | drop `"systemd-run"`, `"su"` from `HOST_MUTATION_BINS` — shadowed by branches at 452/457 | 0 | dead table entries |
+| P4 | 198, 202 | drop `in_single` (never assigned `True`) and its conjunct | −1 | dead state |
+| P5 | 570 | drop `lines and` — `str.split("\n")` never returns `[]` | 0 | dead guard |
+| P6 | 87–88 | drop `getoutput`/`getstatusoutput` from `SPAWN_FUNCS`; duplicated by `SHELL_STRING_FUNCS` 89–91 | −1 | duplicate table |
+| P7 | 349–351, 355, 366–371 | one `PACMAN_LONG_OPS` + one `PACMAN_LONG_FLAGS` table; two flag spellings disappear | 0 | duplicate authority |
+| P8 | 411–413, 467–473 | one `shell_code()` for the duplicated shell `-c` predicate | +5 | duplicate branch |
+| P9 | 800–804, 876–880, 888–892, 894–898 | one `emit_failure()` for four copies of the exit-2 payload | −5 | duplicate payload |
+| P10 | 578/580, 846–849, 851, 865 | nits, not applied | 0 | — |
+| P11 | 177–178 | drop the `tok.startswith("#")` break (comments are already stripped by `tokenize`) | −2 | **fix**, not neutral |
+| — | P1–P9 | 913 → 910 | **−3** | byte-identical |
+| — | P1–P9+P11 | 913 → **908** (non-blank 849 → 840) | **−5** | suites green, one intended delta |
 
-### P1 — `REDIRECTS` is fully subsumed (50, 167)
+### P1 — `REDIRECTS` is subsumed (50, 187)
 
 ```diff
  SEPARATORS = {";", "&&", "||", "|", "&", "|&", ";;", "(", ")", "\n"}
 -REDIRECTS = {">", ">>", "<", "<<", "<<<", ">&", "<&", ">|", "&>", "&>>", "<>"}
 ...
--        elif tok in REDIRECTS or (tok and set(tok) <= set("<>&|") and tok not in SEPARATORS):
+-        elif tok in REDIRECTS or (tok and set(tok) <= set("<>&|")):
 +        elif tok and set(tok) <= set("<>&|"):
 ```
 
-Every `REDIRECTS` member consists only of `<>&|` and none is in `SEPARATORS`, so the generic clause already
-covers it. The trailing `tok not in SEPARATORS` was always redundant: the elif is only reached when the
-`if tok in SEPARATORS` branch at 163 did not fire. Exhaustive check: all 399 strings over `<>&|;()` of length
-1–3, `0` divergent between old and new predicates. Note the suites do **not** pin redirect skipping (Finding
-F4), so this rests on the enumeration plus the fuzz corpus (`>>`, `<`, `2>&1`, `<&0`, `&>>`, `>|`, `<>`,
-`&&>>` all exercised).
+Every `REDIRECTS` member is a string over `<>&|` (and none is in `SEPARATORS`), so the generic clause is a
+strict superset. Enumeration of all 399 strings over `<>&|;()` of length 1–3: `0` tokens where the two
+predicates differ. The suites do not pin redirection skipping (F4), but it is load-bearing: `>/tmp/log sudo
+pacman -Syu` is caught *only* because the redirect target is skipped (measured on B). Keep the generic clause;
+delete the enumeration. The fuzz corpus exercises `>>`, `<`, `2>&1`, `<&0`, `&>>`, `>|`, `<>`, `&&>>`.
 
-### P2 — duplicate newline test (163)
+### P2 — duplicate newline test (182)
 
 ```diff
--        if tok in SEPARATORS or tok == "\n":
-+        if tok in SEPARATORS:
+-        if tok in SEPARATORS or tok == "\n" or (tok and set(tok) <= set(";&|()") and
++        if tok in SEPARATORS or (tok and set(tok) <= set(";&|()") and
 ```
 
-`SEPARATORS` (49) ends in `"\n"`. Exact.
+`SEPARATORS` (49) already ends in `"\n"`. The second (compound-punctuation) disjunct is *not* redundant —
+`();` is not a `SEPARATORS` member — so keep it.
 
-### P3 — two unreachable set members (74)
+### P3 — two unreachable set members (78)
 
 ```diff
 -                      "shutdown", "halt", "systemd-run", "su"}
 +                      "shutdown", "halt"}
 ```
 
-`classify_segment` reaches `if argv0 == "su":` (393) and `if argv0 == "systemd-run":` (398) before
-`if argv0 in HOST_MUTATION_BINS:` (467); both earlier branches return and emit the identical
-`("host_mutation", "su")` / `("host_mutation", "systemd-run")` rule. `systemd-run` is pinned by
-`hardening/run0-and-systemd-run.jsonl` (expected rule `systemd-run` line 1); `su` is not pinned by any fixture
-(F4) but stays pinned by fuzz lines 17–20 (`su`, `su -c …`, `su - root -c …`, `su -l`).
+`classify_segment` returns at `if argv0 == "su":` (452) and `if argv0 == "systemd-run":` (457) before
+`if argv0 in HOST_MUTATION_BINS:` (527), emitting the identical `("host_mutation", "su")` /
+`("host_mutation", "systemd-run")` rule. `systemd-run` is pinned by `hardening/run0-and-systemd-run.jsonl`;
+`su` has no fixture (F4) but stays pinned by fuzz lines 17–20.
 
-### P4 — dead state in `substitutions` (178, 182)
+### P4 — dead state (198, 202)
 
 ```diff
 -    in_single = False
@@ -99,19 +116,19 @@ F4), so this rests on the enumeration plus the fuzz corpus (`>>`, `<`, `2>&1`, `
 +        if ch == "'":
 ```
 
-`in_single` has exactly one assignment in the file (178, `False`); nothing sets it `True`, so the conjunct is
-constant-true. (The function remains approximate by its own comment at 184 — this deletion does not change it.)
+`in_single` has exactly one assignment in the file (198, `False`); nothing sets it `True`, so the conjunct is
+constant-true. The function stays approximate by its own comment (204).
 
-### P5 — dead guard in `classify_eval` (507)
+### P5 — dead guard (570)
 
 ```diff
 -    if lines and lines[0].strip().startswith("%%bash"):
 +    if lines[0].strip().startswith("%%bash"):
 ```
 
-`code.split("\n")` always returns at least `[""]`.
+`str.split` never returns an empty list.
 
-### P6 — duplicate spawn-table entries (82–83)
+### P6 — duplicate spawn-table entries (87–88)
 
 ```diff
 -SPAWN_FUNCS = {"run", "call", "check_call", "check_output", "Popen",
@@ -119,11 +136,11 @@ constant-true. (The function remains approximate by its own comment at 184 — t
 +SPAWN_FUNCS = {"run", "call", "check_call", "check_output", "Popen"}
 ```
 
-`subprocess.getoutput` / `subprocess.getstatusoutput` are already matched by `SHELL_STRING_FUNCS` (84–86) and
-take the same `is_shell_fn` branch; measured output-identical, including `sp.getoutput`. **Read F3 before
-landing this alone** — the deletion is behaviour-neutral but encodes a hole rather than fixing it.
+`subprocess.getoutput` / `subprocess.getstatusoutput` are in `SHELL_STRING_FUNCS` (89–91) and reach the same
+`is_shell_fn` branch; B's alias normalization (590–610) means `sp.getoutput` is also caught either way.
+Measured output-identical, including that alias.
 
-### P7 — pacman option tables (294–314)
+### P7 — pacman option tables (349–351, 355, 366–371)
 
 ```diff
 + PACMAN_LONG_OPS = {"--sync": "S", "--query": "Q", "--remove": "R",
@@ -134,30 +151,27 @@ landing this alone** — the deletion is behaviour-neutral but encodes a hole ra
 +                      "--print": "p", "--search": "s", "--info": "i",
 +                      "--list": "l", "--groups": "g"}
 ...
--        if a.startswith("--"):
--            long_ops = {...}                      # rebuilt for every arg
--            if a in long_ops and op is None:
--                op = (a, long_ops[a])
--        elif a.startswith("-") and len(a) > 1:
-+        if a in PACMAN_LONG_OPS:
-+            if op is None:
-+                op = (a, PACMAN_LONG_OPS[a])
-+        elif a.startswith("-") and not a.startswith("--") and len(a) > 1:
+-    long_ops = {"--sync": "S", ...}                      # rebuilt per call
 ...
--        elif a in ("--refresh", ...):
--            flags.add({"--refresh": "y", ...}[a])
--        elif a in ("--print", ...):
--            flags.add({"--print": "p", ...}[a])
+-            hits = [k for k in long_ops if k.startswith(name)] if len(name) > 3 else []
+-                op = (a, long_ops[hits[0]])
++            hits = [k for k in PACMAN_LONG_OPS if k.startswith(name)] if len(name) > 3 else []
++                op = (a, PACMAN_LONG_OPS[hits[0]])
+...
+-        elif a in ("--refresh", "--sysupgrade", "--downloadonly", "--clean"):
+-            flags.add({"--refresh": "y", "--sysupgrade": "u",
+-                       "--downloadonly": "w", "--clean": "c"}[a])
+-        elif a in ("--print", "--search", "--info", "--list", "--groups"):
+-            flags.add({"--print": "p", "--search": "s", "--info": "i",
+-                       "--list": "l", "--groups": "g"}[a])
 +        elif a in PACMAN_LONG_FLAGS:
 +            flags.add(PACMAN_LONG_FLAGS[a])
 ```
 
-Two flag spellings per option currently live in two literals (`in (...)` and the map), and `long_ops` is
-rebuilt inside the argument loop. Output-identical; the `--` guard in the `elif` preserves the original's
-`if a.startswith("--")` / `elif` semantics for unknown long options. Cost: +1 line; value: one table per
-concept. Skip if LOC is the only axis.
+Today each long flag is spelled twice (membership tuple + mapping literal), and `long_ops` is rebuilt on every
+`classify_pacman` call. Net 0 lines on B; value is one table per concept. If LOC is the only axis, skip.
 
-### P8 — duplicated shell `-c` predicate (352–354, 408–413)
+### P8 — duplicated shell `-c` predicate (411–413, 467–473)
 
 ```diff
 +def shell_code(args):
@@ -186,10 +200,10 @@ concept. Skip if LOC is the only axis.
 +        return hits
 ```
 
-Both spellings of "does this shell carry inline code" are present today and can drift; the tuple keeps the
-`bash -c` with no argument case exact. Cost: +5 lines. Skip if LOC is the only axis.
+Two independent spellings of one question ("does this shell carry inline code"), which can drift. The tuple
+keeps the `bash -c` with no argument edge exact. +5 lines; skip if LOC is the only axis.
 
-### P9 — four copies of the exit-2 payload (713–717, 783–787, 795–799, 801–805)
+### P9 — four copies of the exit-2 payload (800–804, 876–880, 888–892, 894–898)
 
 ```diff
 +def emit_failure(message, permit=()):
@@ -211,113 +225,135 @@ Both spellings of "does this shell carry inline code" are present today and can 
 +        emit_failure("no path")
 ```
 
-Key sets and `sort_keys=True` are identical, so stdout bytes are unchanged; the eight refusal comparisons
-cover all four call sites. Leave the `__main__` internal-error payload (813–818) alone — it is deliberately a
-smaller shape.
+Identical keys and `sort_keys=True`, so bytes are unchanged; the eight refusal comparisons cover all four
+sites. Leave the `__main__` internal-error payload alone (deliberately smaller shape).
 
-### P10 — nits (not applied; zero behaviour change each)
+### P11 — dead comment branch hides quoted `#` (177–178) — behavioural fix
 
-- 764: `first_ok = out[0].startswith(...) if out else False` — `split("\n")` never returns `[]`; the guard is dead.
-- 759–762: `key()` nests a `use_file` conditional inside a `from_want` conditional; an early return for
-  `not use_file` reads better and is the same tuple.
-- 772: `hashlib.sha256(open(me, "rb").read())` leaks the handle; `with open(...)`.
-- 508–510: the leading indentation is re-recovered with a second `re.match(r"^\s*", ln)`; capture it in the
-  first pattern (`^(\s*)(?:…)?!(.*)$`) and reuse group 1 for the `pass` stub.
+```diff
+-        if tok.startswith("#"):
+-            break  # comment to end of line (a word starting with '#')
+```
 
-## Measured equivalence
+`tokenize` already sets `commenters = "#"`, so an unquoted comment never produces a token; the *only* tokens
+that start with `#` come from quoting or escaping, and the branch truncates the rest of the line on them.
+Measured on B:
 
-Every single-mutation variant and the combined variant: `9/9`, `16/16`, `33/33`; `13 comparisons, 0 diffs`.
+```
+echo '# x'; pacman -Syu      -> []                                   (missed)
+echo 'a # b'; sudo pacman -Syu -> sudo + pacman:-Syu                 (no break; correct)
+```
 
-| variant | suites | differential |
-|---|---|---|
-| m_redirects (P1) | 9/9 16/16 33/33 | 0/13 |
-| m_newline (P2) | 9/9 16/16 33/33 | 0/13 |
-| m_setholes (P3) | 9/9 16/16 33/33 | 0/13 |
-| m_insingle (P4) | 9/9 16/16 33/33 | 0/13 |
-| m_linesguard (P5) | 9/9 16/16 33/33 | 0/13 |
-| m_spawn (P6) | 9/9 16/16 33/33 | 0/13 |
-| m_pacman (P7) | 9/9 16/16 33/33 | 0/13 |
-| m_shellcode (P8) | 9/9 16/16 33/33 | 0/13 |
-| m_fail (P9) | 9/9 16/16 33/33 | 0/13 |
-| combined (P1–P9) | 9/9 16/16 33/33 | 0/13 |
-| **total** | **10 × green** | **130/130 identical** |
+After deleting the two lines, the first case yields `pacman:-Syu`. Suites stay `9/9 16/16 33/33`; the standing
+differential corpus shows 0/13 diffs (its quoted-`#` string is shell-unbalanced, so it never reaches the
+branch); the intended delta is exactly the quoted-hash probe. This branch does not exist at A — it is new in B,
+so it is a worktree regression, not a C3 claim. Add a fixture (`echo '# x'; pacman -Syu` expect
+`pacman:-Syu`) with the deletion.
 
-Combined: 816 lines / 752 non-blank (from 818 / 758); full verdict over the 49 fixtures byte-identical to the
-shipped tool (`cmp` exit 0), 53 findings, exit 1; `py_compile` clean.
+### P10 — nits (not applied; zero behaviour change)
 
-## Findings — over-general code the suites cannot see
+- 578/580: the leading indentation is recovered twice with `re.match(r"^\s*", ln)`; capture it in the first
+  pattern (`^(\s*)(?:…)?!(.*)$`) and reuse group 1.
+- 851: `first_ok = out[0].startswith(...) if out else False` — `split("\n")` never returns `[]`; guard is dead.
+- 846–849: `key()` nests a `use_file` conditional inside a `from_want` conditional; early-return on
+  `not use_file` is the same tuple and reads better.
+- 865: `hashlib.sha256(open(me, "rb").read())` leaks the handle; use `with open(...)`.
 
-These are attack results, not patches; each has a concrete anchor. The suites compare only
-`(class, rule, line[, basename])` (`key()` at 758), so none of these can ever turn a suite red.
+## Measured equivalence (artifact B, `7a98720e`)
 
-**F1 — the redaction catch-all destroys evidence (92).**
-`SECRET_PATTERNS` third entry `[A-Za-z0-9_\-]{32,}` matches any 32+ alphanumeric token, not just credentials.
-Measured: `sudo git show 988b858bd6049bc709807534fd725c05264f7e60` → finding command
-`"sudo git show <redacted>"`. That is exactly the 40-hex commit-SHA anchor class C1/C3 cite. Of 53 findings
-across the 49 fixtures, 0 contain `<redacted>`, so the suites are blind to it. Recommendation: delete the
-catch-all (patterns 1–2, userinfo and `AKIA…`, remain) or require mixed character classes and a `=`/`:`/`-p`
-context. Not landed: this is a policy choice about credentials in findings, and it changes recorded output.
+Every proposal alone: `9/9 16/16 33/33`, `13 comparisons, 0 diffs`.
 
-**F2 — `omarchy-*` substring match (70, 474).**
-`any(k in argv0 for k in OMARCHY_MUTATE)` matches `"lock"` inside `clock`/`block`. Measured:
-`omarchy-clock-format` → `host_mutation` rule `omarchy-clock-format`; `omarchy-blocklist` likewise. Whether
-those verbs exist is unverified [INFERENCE]; the over-match mechanism is proven by tool output. A verb-prefix
-match (`restart-`, `refresh-`, …, or exact verbs) would be the narrow form.
+| proposal | Δ lines | suites | differential |
+|---|---|---|---|
+| P1 | −1 | green | 0/13 |
+| P2 | 0 | green | 0/13 |
+| P3 | 0 | green | 0/13 |
+| P4 | −1 | green | 0/13 |
+| P5 | 0 | green | 0/13 |
+| P6 | −1 | green | 0/13 |
+| P7 | 0 | green | 0/13 |
+| P8 | +5 | green | 0/13 |
+| P9 | −5 | green | 0/13 |
+| P11 | −2 | green | 0/13 (intended delta only on the quoted-hash probe) |
+| P1–P9 | −3 (910) | green | 0/13 |
+| P1–P9+P11 | −5 (908) | green | 0/13 |
 
-**F3 — `sp.getoutput` is a detection hole (82–86).**
-`is_sub` accepts the `sp.` alias, but `getoutput`/`getstatusoutput` are only classified as shell strings when
-spelled `subprocess.*`. Measured on one probe transcript:
-`subprocess.getoutput('pacman -Syu')` → `pacman:-Syu` (caught);
-`sp.getoutput('pacman -Syu')` → no finding (the arg goes through `shlex.quote`, becomes one token, matches
-nothing).
-Scratch variant `m_spawnfix` = P6 + add `sp.getoutput`, `sp.getstatusoutput` to `SHELL_STRING_FUNCS`: all three
-suites stay green (`9/9 16/16 33/33`) and the probe now catches it; the differential run shows exactly the
-intended `+1 host_mutation` in each of the five scan modes (13 comparisons, 5 diffs, all that finding). This is
-the one change here that can turn a verdict red on a real transcript; it needs a fixture before landing.
-C3's stated claims are unaffected either way.
+Combined P1–P9: full verdict over the 49 fixtures `cmp`-identical to B (exit 1, 53 findings, counts
+34/6/13); `py_compile` clean. Combined P1–P9+P11: same suites, and the only measured classification change is
+the quoted-`#` case above.
+
+Artifact A (`4ced68d3`, 818 lines) was measured the same way before the drift: nine hunks → 816 lines,
+`9/9 16/16 33/33`, 13/13 identical, `cmp`-identical over the same 49 files. A's P7 also removed a
+per-iteration `long_ops` rebuild that B already hoisted.
+
+## Findings the suites cannot see
+
+The suites compare only `(class, rule, line[, basename])` (`key()` at 846), so none of these can turn a suite
+red. Each is a concrete counterexample measured on B.
+
+**F1 — redaction catch-all destroys evidence (96).**
+`SECRET_PATTERNS` still ends with `[A-Za-z0-9_\-]{32,}`. Measured:
+`sudo git show 988b858bd6049bc709807534fd725c05264f7e60` → finding command `"sudo git show <redacted>"` —
+i.e. the exact SHA anchor class C1/C3 cite. 0 of 53 fixture findings contain `<redacted>`, so the corpus is
+blind. Recommendation: delete the catch-all (userinfo and `AKIA…` patterns remain) or require mixed character
+classes plus credential context. Not landed: it is a policy call and changes recorded output.
+
+**F2 — `omarchy-*` substring match (72–75, 533–534).**
+`any(k in argv0 for k in OMARCHY_MUTATE)` matches `"lock"` inside `clock`/`block`. Measured on B:
+`omarchy-clock-format` and `omarchy-blocklist` → `host_mutation`. Whether those verbs exist is unverified
+[INFERENCE]; the over-match is proven. The list has grown to 25 substrings, so the surface widened since A.
+A verb-prefix match would be the narrow form.
+
+**F3 — `sp.getoutput` (historical; fixed in B).**
+At A, `subprocess.getoutput('pacman -Syu')` → `pacman:-Syu` but `sp.getoutput('pacman -Syu')` → no finding
+(the string went through `shlex.quote`, becoming one token). B normalizes import aliases (590–610), and the
+probe now yields `pacman:-Syu`. No action; recorded so the A→B delta is not mistaken for a suite-driven fix.
 
 **F4 — fixture blind spots (coverage, not a defect).**
-Across the 49 fixture `bash` calls and 8 `eval` calls: bare `su` appears 0 times; backticks appear 0 times —
-the backtick branch in `substitutions` is unpinned; `systemd-run` appears once; `>` and `<` appear once each,
-and neither fixture result depends on redirect skipping (`cat > /tmp/note.md <<'EOF'` yields no finding either
-way; `xargs -r pkill < pids` yields the same `pkill` class/rule, only a different `command` string, verified by
-running `classify_shell` with the redirect-skipping branch removed). So P1 and the `su` half of P3 rest on code
-proof + fuzz, not on fixtures.
-If any of these deletions lands, three corpus additions would make the proof durable: a bare `su` case, a
-backtick substitution case, and a *leading*-redirect case — `>/tmp/log sudo pacman -Syu` is detected today only
-because `>` and its target are skipped (measured: the same predicate without skipping yields no finding at
-all), and no fixture covers that shape.
+Across the 49 fixture `bash` calls and 8 `eval` calls: bare `su` 0 occurrences; backticks 0 (the backtick
+branch in `substitutions` is unpinned); `systemd-run` 1; `>` and `<` 1 each, and neither fixture result
+depends on redirect skipping. A *leading* redirect does: `>/tmp/log sudo pacman -Syu` is caught only because
+`>` and its target are skipped (measured; without skipping the predicate yields no finding). If P1 lands,
+add: (a) a bare `su` case, (b) a backtick substitution case, (c) the leading-redirect case, (d) the quoted-`#`
+case for P11.
 
 ## Preserved contract (unchanged by P1–P9)
 
 CLI (`--scan PATH… [--permit CLASS…]`, `--selftest DIR`), first line
-`MADO_TRIPWIRE: clean|permitted_only|findings|could_not_evaluate`, JSON schema
-`mado-tripwire-verdict-v1` with the same keys, exit precedence 2 > 1 > 0, the three class names and every
-rule string, per-toolCall dedupe on `(class, rule)`, `SELFTEST_SCRIPT_SHA256` emission, and every
-classification (byte-identical verdicts over the fixture corpus). `SELFTEST_SUMMARY` counts are untouched.
+`MADO_TRIPWIRE: clean|permitted_only|findings|could_not_evaluate`, JSON schema `mado-tripwire-verdict-v1`
+with the same keys, exit precedence 2 > 1 > 0, class names and every rule string, per-toolCall dedupe on
+`(class, rule)`, `SELFTEST_SCRIPT_SHA256` output, and every classification (byte-identical verdicts).
+`SELFTEST_SUMMARY` counts unchanged. P11 is the only intentional behaviour change and only adds a finding on
+quoted/escaped `#` tokens.
 
-## Tradeoff / landing notes
+## Landing notes / tradeoffs
 
-- Any edit changes the artifact sha `4ced68d3…`, which is recorded in
-  `.ufo/waves/round-17/evidence/measure-c3.json` (committed-blob `sha256`) and printed inside
-  `tripwire-selftest-{core,compound,hardening}.txt`; reports in this wave that quote that hash go stale.
-  `measure.py` C3 is presence/bytes only, so it re-measures rather than rejecting a new hash, but the receipts
-  must be re-cut (`python3 .ufo/waves/round-17/measure.py REV`) with the new selftest output.
-- P7 and P8 each grow the file by a line or five. They remove duplicate authorities, not lines; if the metric is
-  LOC alone, land P1–P6 + P9 (−4) and skip them.
-- Deliberately not touched: `logical_lines` re-runs `shlex.split` on the growing accumulator (118–126, O(n²) in
-  logical lines) and `substitutions` recounts `"` before each `'` (185, O(n²) in quotes). Replacing either
-  needs a quote/comment-aware scanner; `# don't` currently works *because* shlex's `comments=True` is the
-  oracle, so the obvious counter would regress. Keep and treat as a documented cost.
-- Deliberately not touched: `classify_shell` calls `strip_prefix` a second time per segment (350) after
-  `classify_segment` already did (369) — two list copies per segment; consolidating needs an API change with
-  no semantic gain.
-- Stop point: the next consolidation candidate — one `CALL_FORMS` table replacing `SPAWN_FUNCS` +
-  `SHELL_STRING_FUNCS` + `is_exec` + `is_tool` (82–86, 551–554) — would rewrite `classify_eval` past what the
-  eight fixture eval calls pin. I did not build it; the evidence base does not justify it yet.
+- **Re-anchor first.** B is an uncommitted 913-line worktree owned by another seat; if it moves again the
+  hunk strings still apply (the builder asserts one match each) but the line numbers in this report will not.
+  Land against the settled revision, then re-run `--selftest` on all three suites and this report's hunk table.
+- Any edit changes the tool sha. A's `4ced68d3…` is recorded in `.ufo/waves/round-17/evidence/measure-c3.json`
+  and printed in the three `tripwire-selftest-*.txt` receipts; re-cut those receipts with the new
+  `SELFTEST_SCRIPT_SHA256` (`python3 .ufo/waves/round-17/measure.py REV`). `measure.py` C3 is presence/bytes
+  only, so it re-measures rather than rejecting a new hash. Reports in this wave that quote the old hash
+  become stale.
+- P7/P8 are structural, not LOC wins (+0/+5). If the metric is lines alone, land P1–P6 + P9 + P11 (−5) and
+  skip them.
+- Deliberately not touched: `logical_lines` re-runs `shlex.split` on the growing accumulator (O(n²) in logical
+  lines) and `substitutions` recounts `"` before each `'` (O(n²) in quotes). A replacement needs a
+  quote/comment-aware scanner; `# don't` works today *because* shlex's `commenters` is the oracle. Keep and
+  document.
+- Deliberately not touched: `classify_shell` calls `strip_prefix` twice per segment (once inside
+  `classify_segment`, once for the `base` test) — two list copies per segment, no semantic gain in fixing.
+- `NESTED`/`nested_eval` (105–111, 423, 479, 746, 761–762) is live, not dead: it is reset per file and folded
+  into `eval_unparsed`/`unparsed_spawns`. Not a deletion target.
+- Stop point: the next candidate — one `CALL_FORMS` table replacing `SPAWN_FUNCS` + `SHELL_STRING_FUNCS` +
+  `is_exec` + `is_tool` — would rewrite `classify_eval` past what the eight eval fixtures pin. Not built; the
+  evidence base does not justify it.
 
 ## Evidence index (scratch only, `/tmp/simplify-tripwire.3092`)
 
-`base.py`, `v1.py`, `v2.py`, `m_*.py`, `m_spawnfix.py`, `combined.py`, `build_variants.py` (hunk table with
-assert-one-match guards), `fuzz.py`, `probe.py`, `final-base.json`, `final-combined.json`, `out-*.json`.
-Nothing in the lane was written except this report.
+`base.py` (A), `now.py` (B), `combined.py` (A, P1–P9), `combined_now.py` (B, P1–P9), `combined_now2.py`
+(B, P1–P9+P11), `one_P*.py`, `build_variants.py`, `build_now.py` (hunk tables with one-match assertions),
+`fuzz.py`, `probe.py`, `quotedhash.jsonl`, `now-base.json`, `now-combined.json`, `final-*.json`.
+Lane state at report time: `tools/mado-tripwire.py` = `7a98720e…` (worktree), HEAD `988b858` blob =
+`4ced68d3…`. Nothing in the lane was written except this report.

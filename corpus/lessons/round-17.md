@@ -150,3 +150,21 @@ rows corrected in place before closure, each logged old→new here:
   ignored; exit code is the expectation verdict when every claim declares
   one; want-side mutant pinned to `245fd11`.
 
+
+### Late wave-2 residuals (AttackLessonM1M3, append-only)
+
+- M3: the instrument tightenings were shown to bite only in a wave-2 seat's
+  `/tmp` lab (AttackLessonM1M3, AttackRubricGaming), not by a committed
+  mutant receipt; "shown to bite" is seat-attested, not lane-receipted.
+- M4: the binding reminder went to all 70 seats immediately after the
+  dispatch call returned, i.e. while seats were already running, not before.
+  The tripwire does not classify `uv tool`, `npx`, `pip`, `npm -g` or
+  `cargo install`; the wave-1 context itself allowed `uv tool`/`npx`, so a
+  `clean` round-17 scan says nothing about those installer channels.
+- M5: the report referent is `.ufo/reports/round-17/mado.md` (fleet `fb81be5`);
+  the close re-measure is `evidence/pacmanlog-round-window.txt` (0 runs from
+  10:51). The cited range 2440-3152 starts the 09:39:21 transaction, whose
+  completion lines run to 3160.
+- M1's "exit 1" describes the checker before the wave-2 exit-code change; the
+  hardened checker exits 0 when all 7 expectations are met
+  (`evidence/label-check-final.txt`).

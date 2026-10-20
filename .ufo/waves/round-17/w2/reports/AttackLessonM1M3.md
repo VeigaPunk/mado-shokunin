@@ -3,6 +3,9 @@
 Seat: `MadoR17.AttackLessonM1M3` (leaf reviewer). Date 2026-10-20.
 Target: `corpus/lessons/round-17.md:15-18` (§ Mistakes rows M1, M3, M4, M5)
 at lane HEAD `988b858bd6049bc709807534fd725c05264f7e60`.
+HEAD moved to `f71ccbe` during the review (L1 wave-2 corrections); every
+finding below is re-checked against that commit in the
+[Post-review HEAD move](#post-review-head-move-f71ccbe) section.
 
 Read-only. No commits, no git/jj mutation of the lane, no delegation, no
 transcripts read (my item names none), no package/service/compositor/input
@@ -28,6 +31,10 @@ transcripts with `tools/mado-tripwire.py`.
 
 All report references above resolve **in the worktree**. None of the
 `w1/reports/` files is tracked at `988b858`; see F9.
+
+At `f71ccbe`: F1 is addressed by the new M4 wording, F9 is resolved (149
+report files tracked), and M1's exit-code wording is stale against the
+hardened checker — see the Post-review section. F2-F7 stand unchanged.
 
 ## Findings (severity-ranked)
 
@@ -252,6 +259,43 @@ QUALITY 13 (committed path, or quoted lines + sha) is the lane's own rule
 for evidence that outlives a round. If the reports are committed at close,
 this closes; at `988b858` it is open. No on-disk file is missing.
 
+## Post-review HEAD move (f71ccbe)
+
+While this attack ran, L1 committed `f71ccbe` ("round-17: wave-2 corrections
+(tripwire fixes + regression suite, ... label-check/measure hardening, wave
+reports)"). The findings above are anchored to `988b858` as assigned; this
+section re-checks each against the new HEAD so nothing already fixed is
+re-reported.
+
+| finding | status at `f71ccbe` |
+|---|---|
+| F1 | **addressed.** M4 now says *"whether any seat issued a package command **in the covered forms** is checked ... (`evidence/tripwire-r17.txt`: 149 files, 1 `live_probe` `ps` by RevSeparability, 133 unparsed spawns); `clean` would not mean no seat ran one."* I verified all three numbers against the **committed** receipt: 149 files, `('live_probe','ps','MadoR17.RevSeparability.jsonl',152)`, `sum(unparsed_spawns)=133`. The tool still has no npx/uv/pip/npm/cargo classifier: `git show f71ccbe:tools/mado-tripwire.py` on the five-installer transcript is still `MADO_TRIPWIRE: clean`. The corrected sentence is accurate; the blind spot remains, now disclosed. |
+| F2 | **stands.** The "L1 sent a binding reminder to all 70 seats at dispatch" sentence is byte-identical at `f71ccbe`; the three reminder records still place it mid-wave (or at no time). |
+| F3 | **stands.** Still no `mado.md` in `.ufo/reports/round-17/`; `drafts/ReportSkeleton.md:105` still holds `{{PAUSE_STATE}}`. |
+| F4 | **stands.** M5 is unchanged; no close receipt and no command. |
+| F5 | **stands.** The +12-line `measure.py` change at `f71ccbe` is the `## Registry` parser / duplicate-id fix from AttackRubricGaming E2, not a mutant run of the four tightenings; `measure-final.json` (untracked) is a count, not a failure receipt. I re-ran `f71ccbe`'s `measure.py` (`de4c422b…`): 2/6 at `27cd06f`/`f52f43f`/`ab0bc9b`, 4/6 at `a9998d1`/`f71ccbe` — the registry hardening changes no score. |
+| F6 | **stands.** No baseline-existence ("new entries") check was added. |
+| F7 | **stands.** M5's line range is unchanged. |
+| F9 | **resolved.** `f71ccbe` tracks 149 files under `w1/reports` + `w2/reports`; `git ls-tree -r --name-only f71ccbe -- .ufo/waves/round-17/w1/reports .ufo/waves/round-17/w2/reports \| wc -l` = 149, including all six cited here. |
+
+Two new observations at `f71ccbe`, neither a broken pointer:
+
+1. **M1's `exit 1` is now a historical receipt.** The hardened
+   `label-check.py` (`a6512a01…`) returns the *expectation* verdict: rerun
+   now prints the same seven LABEL lines and `EXPECT_SUMMARY: 7/7`, but
+   exit **0** (`evidence/label-check-final.txt`, untracked, records
+   `exit=0`; the old tracked `evidence/label-check.txt` is `b890a5ca…` and
+   exit 1). The red controls still show as `MISMATCH` in the LABEL lines,
+   so the M1 fix still demonstrates the defect; the fix cell should either
+   cite the final receipt or say "exit 0 under the hardened checker; the
+   exit-1 record is the pre-hardening run". The untracked final receipt
+   should be committed if it is the evidence of record.
+2. **The worktree `evidence/tripwire-r17.txt` diverges from the tracked
+   one.** Tracked at `f71ccbe`: `9f88e117…`, 149 files, 133 unparsed.
+   Worktree: `136fc60c…`, 149 files, **136** unparsed (a concurrent rerun
+   added three). M4's 133 matches the tracked receipt, so the row is correct
+   now; if the worktree file is committed as-is, the 133 becomes wrong.
+
 ## M1 — attack failed
 
 Every pointer and claim I checked resolves, and the fix reproduces:
@@ -271,7 +315,9 @@ Every pointer and claim I checked resolves, and the fix reproduces:
   measured `9dcf248` and carries the got-side token.
 - `corpus/QUALITY.md:111` is criterion 23; `measure.py 3722ba4` reports
   criteria 23, lesson_cited 15 (the C1 15/23 claim is arithmetically right).
-- `label-check.py` rerun reproduces `evidence/label-check.txt` exactly:
+- `label-check.py` rerun at `988b858` reproduces `evidence/label-check.txt`
+  exactly (the hardened checker at `f71ccbe` prints the same LABEL lines but
+  exits 0; §Post-review):
   `R16-V1-red MISMATCH`, `frozen-match-green ok`,
   `spotcheck-selftest-final-green ok`, `want-side-only-mutant MISMATCH`,
   `superseded-commit-mutant MISMATCH`, `honest-red-green ok`,
@@ -281,11 +327,14 @@ Every pointer and claim I checked resolves, and the fix reproduces:
 - `frozen-tampered-recut.json`: tampered run exit 2 `snapshot_tampered`,
   control exit 0 `frozen_match`, both `matched: true`.
 
-Two precision notes, not findings: (a) the cited receipt
+Two precision notes at `988b858`, not findings: (a) the cited receipt
 `frozen-tampered.json` contains **zero** occurrences of `snapshot_tampered`
 (verified at `1e31681` and in the worktree); the "substring check would
 also have passed" sentence is true only for a check that scans a wider
 evidence set (the red selftest receipt), not the cited receipt itself.
+**Superseded at `f71ccbe`**: L1 rewrote this captured-by to
+*"A plain substring check on `frozen-tampered.json` would have caught this
+one (the token occurs 0 times there)"* — which matches my measurement.
 (b) `spotcheck-selftest-final-green` is the receipt that does carry the
 token; the red claim is correctly scoped to outcome-side tokens by the
 script.
