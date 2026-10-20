@@ -57,16 +57,19 @@
 #             round-19 re-pin). The version row's PASS certifies one thing
 #             only: the installed binary prints the pin. It does not refresh
 #             the claims — the 2.17.0-era measurements (MADO-R3-1 §1/§6, e.g.
-#             the 298 L packaged help table, probe window 2026-10-14) stay
-#             dated and are routed by walker-route-r18.md.
+#             the 298 L packaged default config (/etc/xdg/walker/config.toml),
+#             probe window 2026-10-14) stay dated and are routed by
+#             walker-route-r18.md.
 #   terms   — alacritty.toml TOML-parses and imports the theme (MADO-3 §1-3);
 #             font 12.5 + padding 14 uniform across the four configs
 #             (MADO-3 §3); install state: alacritty only (MADO-3 §5).
-#   pins    — Hyprland 0.56.2 commit efb5099…, waybar v0.15.0, walker 2.17.2
-#             (S096 host rodata + S090 pacman.log:2929, round 19; SKILL.md
-#             "Version pins"): a changed pin is a FAIL — the claims must be
-#             re-verified, not silently reused. A held pin is not a claim
-#             refresh: the 2.17.0-era walker measurements stay dated.
+#   pins    — Hyprland 0.56.2 commit efb5099…, waybar v0.15.0 (SKILL.md
+#             "Version pins"); walker 2.17.2 (S096 host rodata + S090
+#             pacman.log:2929, round 19 — SKILL.md:23 keeps the measured
+#             2.17.0 deliberately, so it is not the walker pin source): a
+#             changed pin is a FAIL — the claims must be re-verified, not
+#             silently reused. A held pin is not a claim refresh: the
+#             2.17.0-era walker measurements stay dated.
 #   omarchy — freshness / version-drift watch (omarchy-drift-watch.md §2/§6):
 #             version cmd+file 3.8.3, git tag v3.8.4 at the branch tip
 #             8fcc9d60…, skill link into the checkout, skill leaf sha
@@ -99,9 +102,9 @@ VERSION_STR="mado-verify.sh v1 (mado-shokunin round 5 / M5-2)"
 # Walker version pin. Round 19: the host package moved 2.17.0-1 → 2.17.2-1 on
 # 2026-10-20 (S090 /var/log/pacman.log:2929) and /usr/bin/walker carries the
 # compiled-in `2.17.2` literal (S096, sha256 25240650686f…, 7,039,912 B); the
-# old pin failed every live run from that transaction onward. A moved pin is
-# still a FAIL — this is the value the host is measured against, not a
-# tolerance.
+# old pin would FAIL a live run from that transaction onward ([INFERENCE]; no
+# live gate receipt exists after round 12). A moved pin is still a FAIL — this
+# is the value the host is measured against, not a tolerance.
 WALKER_VERSION_PIN="2.17.2"
 ROOT="${MADO_VERIFY_ROOT:-$HOME}"
 LIVE_REQ="${MADO_VERIFY_LIVE:-auto}"
@@ -695,8 +698,10 @@ MADO_R8_OM_STUB
 # (exit 1 when STUB_GIT_DETACHED=1, the jj working-copy state) and
 # `for-each-ref refs/heads` (STUB_GIT_BRANCHES, space-separated;
 # STUB_GIT_NO_BRANCHES=1 for none). `rev-parse --verify <ref>` answers
-# STUB_GIT_TIP, falling back to STUB_GIT_HEAD so the pre-round-19 scenarios
-# keep their meaning.
+# STUB_GIT_TIP for a refs/heads ref and STUB_GIT_HEAD otherwise, so the
+# pre-round-19 scenarios keep their meaning; `<ref>^{tree}` answers
+# STUB_GIT_HEAD_TREE / STUB_GIT_TIP_TREE (equal by default = an empty jj
+# working-copy commit on the tip; make them differ for a non-empty one).
 while [ "$#" -gt 0 ]; do
   case "$1" in
     describe)
@@ -707,9 +712,19 @@ while [ "$#" -gt 0 ]; do
         *--git-dir*)
           if [ "${STUB_GIT_GITDIR_RC:-0}" != 0 ]; then exit "$STUB_GIT_GITDIR_RC"; fi
           printf '.git\n'; exit 0 ;;
+        *HEAD*'^{tree}'*)
+          if [ "${STUB_GIT_TREE_RC:-0}" != 0 ]; then exit "$STUB_GIT_TREE_RC"; fi
+          printf '%s\n' "${STUB_GIT_HEAD_TREE:-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}"; exit 0 ;;
+        *'^{tree}'*)
+          if [ "${STUB_GIT_TREE_RC:-0}" != 0 ]; then exit "$STUB_GIT_TREE_RC"; fi
+          printf '%s\n' "${STUB_GIT_TIP_TREE:-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}"; exit 0 ;;
       esac
       if [ "${STUB_GIT_REVPARSE_RC:-0}" != 0 ]; then exit "$STUB_GIT_REVPARSE_RC"; fi
-      printf '%s\n' "${STUB_GIT_TIP:-${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}}"; exit 0 ;;
+      case "$*" in
+        *--verify*refs/heads*)
+          printf '%s\n' "${STUB_GIT_TIP:-${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}}"; exit 0 ;;
+      esac
+      printf '%s\n' "${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}"; exit 0 ;;
     symbolic-ref)
       if [ "${STUB_GIT_DETACHED:-0}" != 0 ]; then exit 1; fi
       printf '%s\n' "${STUB_GIT_REF:-refs/heads/master}"; exit 0 ;;
@@ -759,6 +774,10 @@ MADO_R8_GIT_STUB
   st_has "OM1: the verdict names that one row" "$om_out" "first fail: omarchy.skill.sha"
   st_row_has "$om_out" boundary.readonly PASS "OM1 (read-only proof holds with the plane running)"
   st_row_has "$om_out" hypr.root.orchestrator PASS "OM1 (config plane unaffected)"
+  st_row_has "$om_out" live.plane UNKNOWN \
+    "OM1 (no hyprctl in the stub PATH — the live layer stops at the guard)"
+  st_row_detail "$om_out" live.plane UNKNOWN "hyprctl not on PATH" \
+    "OM1: the guard names the missing tool (SentinelGatePath F-2: a PATH prepend reaching the host would not read UNKNOWN)"
   st_counts_agree "$om_out" "OM1: counts agree with rows"
 
   # --- OM2: the same root, file plane only ---------------------------------
@@ -902,13 +921,16 @@ MADO_R8_GIT_STUB
     "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
   st_counts_agree "$om_out" "OM10B: counts agree with rows"
 
-  # --- OM11: detached HEAD on an empty commit, the branch tip carries the
-  # tag (jj-w1 F6, the live jj shape). The rows must read the tip, never the
-  # working-copy commit — the old code read UNKNOWN + a false MOVED here.
+  # --- OM11: detached HEAD on an EMPTY commit, the branch tip carries the
+  # tag (jj-w1 F6, the live jj shape; CriticAdmission w2 §3). The rescue is
+  # allowed only when HEAD^{tree} == <tip>^{tree}; here they are equal, as an
+  # empty jj working-copy commit on the tip has the tip's tree.
   om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
     STUB_GIT_DETACHED=1 \
     STUB_GIT_HEAD=8d286c97f829cd575362639c2f63129df10b7a94 \
     STUB_GIT_TIP=8fcc9d6048af4cb0e3af8512c78049857a3b53dd \
+    STUB_GIT_HEAD_TREE=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+    STUB_GIT_TIP_TREE=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
     MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
   st_row_has "$om_out" omarchy.git.tag PASS "OM11 (the tag is read from the branch tip)"
   st_row_detail "$om_out" omarchy.git.tag PASS "exactly at refs/heads/master" \
@@ -1001,6 +1023,31 @@ MADO_R8_GIT_STUB
   st_not_has "OM16: no tip rescue without .jj" "$om_out" "at refs/heads/master"
   st_not_has "OM16: no tip rescue without .jj" "$om_out" "tip read from"
   st_counts_agree "$om_out" "OM16: counts agree with rows"
+
+  # --- OM17: jj-colocated, but HEAD is NOT an empty commit on the tip ------
+  # CriticAdmission w2 §3: the rescue requires HEAD^{tree} == <tip>^{tree}.
+  # `jj new v3.8.3` with the bookmark still at the pin has a different tree,
+  # so the rows must keep the HEAD reading (MOVED), never PASS at the tip.
+  local OMJ="$T/omarchy/root-jj-nonempty"
+  cp -a "$OMR" "$OMJ"
+  rm -f "$OMJ/.agents/skills/omarchy"
+  ln -s "$OMJ/.local/share/omarchy/default/omarchy-skill" "$OMJ/.agents/skills/omarchy"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DETACHED=1 STUB_GIT_DESCRIBE_RC=128 \
+    STUB_GIT_HEAD=2222222222222222222222222222222222222222 \
+    STUB_GIT_TIP=8fcc9d6048af4cb0e3af8512c78049857a3b53dd \
+    STUB_GIT_HEAD_TREE=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+    STUB_GIT_TIP_TREE=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMJ" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.head FAIL \
+    "OM17 (a non-empty jj working-copy commit is not rescued)"
+  st_row_detail "$om_out" omarchy.git.head FAIL "MOVED: HEAD" \
+    "OM17: the row reads HEAD"
+  st_row_detail "$om_out" omarchy.git.head FAIL "222222222222" \
+    "OM17: ... and names the detached commit"
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM17 (the detached commit carries no tag)"
+  st_not_has "OM17: no rescue on a tree mismatch" "$om_out" "at refs/heads/master"
+  st_counts_agree "$om_out" "OM17: counts agree with rows"
   # <<< MADO-R8-OMARCHY-BLOCK <<<
 
   # --- scenarios T: the theme plane, hermetic (theme-wallpaper-plane.md §6) --
@@ -1267,6 +1314,9 @@ MADO_WL_SYSTEMCTL
   st_row_detail "$wl_out" live.walker.version PASS "claims measured on 2.17.0 2026-10-14 stay dated" \
     "WL1: the PASS says the 2.17.0-era claims are dated, not re-verified"
   st_not_has "WL1: the PASS claims no claim refresh" "$wl_out" "claims re-verified"
+  st_has "WL1: the verdict value is the 2.17.2 pin (2.17.0 survives only as the dated window)" \
+    "$wl_out" "live.walker.version PASS 2.17.2 ("
+  st_not_has "WL1: the old pin text is gone" "$wl_out" "2.17.0 (pin matches)"
   st_eq "WL1: two walker rows, both PASS" 2 \
     "$(printf '%s\n' "${ROWS[@]}" | awk -F'|' '$3=="PASS" {c++} END {print c+0}')"
 
@@ -1288,7 +1338,6 @@ MADO_WL_SYSTEMCTL
   st_row_detail "$wl_out" live.walker.version FAIL "not on PATH" \
     "WL3: the FAIL names the missing binary"
   st_row_has "$wl_out" live.walker.services PASS "WL3 (the services row still runs)"
-  st_not_has "WL: no row still names the old 2.17.0 pin" "$wl_out" "2.17.0"
   PASS=$wl_p; FAIL=$wl_f; UNKNOWN=$wl_u; SKIP=$wl_s; NOTE=$wl_n; ROWS=()
 
   # --- scenario F: a failing suite must exit 2 (failing-selftest exit map) --
@@ -1910,30 +1959,34 @@ MADO_R8_CRAFT_B
 # gate-rc-redbefore.txt (old FAIL e3b0c442 + "local edit" → UNKNOWN rc=128).
 #
 # Re-cut record — round 19 / hyaku (jj-w1 F6/F9 + the walker 2.17.2 re-pin,
-# after the CriticC2/CriticHonesty corrections):
+# after the CriticC2/CriticHonesty wave-1 corrections and the CriticC2W2 /
+# CriticAdmission / SentinelGatePath wave-2 corrections):
 # the omarchy tag/head rows read the branch tip a checkout names instead of
-# HEAD, and the rescue is gated on $tree/.jj: a jj-colocated tree detaches
-# HEAD onto an empty working-copy commit (the old rows read UNKNOWN + a false
-# MOVED on a pinned checkout), while a plain-git detached HEAD keeps the HEAD
-# reading, so a real MOVED is never hidden. The repository test is
-# `rev-parse --git-dir`, so a git worktree (`.git` is a FILE) is a checkout
-# too. `live.walker.version` moved 2.17.0 → 2.17.2 (S096 host rodata + S090
-# pacman.log:2929) and its PASS is narrowed to "the installed binary prints
-# the pin" — the 2.17.0-era claims (MADO-R3-1 §6, the 298 L packaged table,
-# 2026-10-14) stay dated and are never refreshed by a held pin. The two
+# HEAD, and the rescue is gated twice: $tree/.jj must exist (jj colocation)
+# and HEAD^{tree} must equal <tip>^{tree} (an EMPTY working-copy commit on the
+# tip). `jj new v3.8.3` with the bookmark still at the pin, or any plain-git
+# detached HEAD, keeps the HEAD reading — the old rows' UNKNOWN + false MOVED
+# is fixed only for the empty-commit case, and a real MOVED is never hidden.
+# The repository test is `rev-parse --git-dir`, so a git worktree (`.git` is
+# a FILE) is a checkout too. `live.walker.version` moved 2.17.0 → 2.17.2
+# (S096 host rodata + S090 pacman.log:2929) and its PASS is narrowed to "the
+# installed binary prints the pin" — the 2.17.0-era claims (MADO-R3-1 §6,
+# the 298 L packaged default config /etc/xdg/walker/config.toml, 2026-10-14)
+# stay dated and are never refreshed by a held pin; the pin attribution is
+# S096/S090, not SKILL.md (which keeps the measured 2.17.0 at :23). The two
 # walker live rows are split into walker_live_rows; the selftest gained
 # WL0-WL3 (a stub walker under a REPLACED PATH: both pin arms, the narrowed
-# PASS text, the absent binary) and OM10A/OM10B/OM11-OM16 (tip resolution
-# under a detached HEAD, the worktree `.git` file, the ambiguous/no-tip
-# UNKNOWN arms, and OM16's plain-git detached HEAD that must keep reading
-# MOVED). All of it sits outside the marked R7/R8 families, so the derived
-# target moved. Re-cut 2026-10-20 from the printed REGRESSION_RECUT command
-# against the recorded spec (SPEC_SHA matches): target 05aea198… (2,745 L /
-# 138,328 B), 10/10 KILLED, 0 survived, 0 inconclusive, flips 0, control
-# GREEN (338/338 assertions on the derived target), MUTATE_RESTORE OK, target
-# sha unchanged before/after. PIN_MADO moves 20714096… → 05aea198…;
-# TABLE_MADO is unchanged — the re-pin, the tip resolution and the
-# corrections lost no kill. Evidence:
+# PASS text, the absent binary), OM10A/OM10B/OM11-OM17 (tip resolution and
+# its two gates, the worktree `.git` file, the ambiguous/no-tip UNKNOWN arms,
+# OM16 plain-git detached, OM17 non-empty jj working copy) and OM1's
+# live.plane guard assertion (SentinelGatePath F-2). All of it sits outside
+# the marked R7/R8 families, so the derived target moved. Re-cut 2026-10-20
+# from the printed REGRESSION_RECUT command against the recorded spec
+# (SPEC_SHA matches): target f03e6cab… (2,804 L / 142,162 B), 10/10 KILLED,
+# 0 survived, 0 inconclusive, flips 0, control GREEN (347/347 assertions on
+# the derived target), MUTATE_RESTORE OK, target sha unchanged before/after.
+# PIN_MADO moves 20714096… → f03e6cab…; TABLE_MADO is unchanged — the
+# re-pin, the tip resolution and every correction lost no kill. Evidence:
 # .ufo/waves/round-19/w1/reports/GateFreshJj.md §3.
 #
 # Usage: mado-verify.sh --regression [--keep]
@@ -1948,7 +2001,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='05aea198a2084ea1fd87825fd6183e5afd9a2d95f8cc06476efcaa7e0af6cca0'
+PIN_MADO='f03e6cabc8d8f129c4b801ee0234c4b0340ecac224d8b641f4cdae51c13a24a5'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -3721,33 +3774,43 @@ omarchy_plane() {
       # No fetch, no write: symbolic-ref, for-each-ref, rev-parse --verify.
       local jcol=0
       [ -d "$tree/.jj" ] && jcol=1
-      local tip="" tipref="" tipwhy="" gt gh grc nbr=0 brrefs=""
+      local tip="" tipref="" tipwhy="" gt gh grc nbr=0 brrefs="" jjok=0
+      local candref="" cand="" htree="" ctree=""
       tipref=$(tmo git -C "$tree" symbolic-ref -q HEAD 2>/dev/null); grc=$?
       tipref=$(printf '%s' "$tipref" | head -1)
       if [ "$grc" != 0 ] || [ -z "$tipref" ]; then
+        tipref=""
         if [ "$jcol" = 1 ]; then
-          # Detached HEAD in a jj-colocated checkout (jj new/commit). Fall
-          # back to the branch tip only when the checkout names exactly one;
-          # more (or none) is no pin target.
-          tipref=""
+          # Detached HEAD in a jj-colocated checkout. The rescue is allowed
+          # only for an EMPTY working-copy commit on top of the single branch
+          # tip, proven by HEAD^{tree} == <tip>^{tree}. `jj new v3.8.3` with
+          # the bookmark still at the pin has a different tree and must keep
+          # the HEAD reading, or a real MOVED would be hidden (CriticAdmission).
           brrefs=$(tmo git -C "$tree" for-each-ref --format='%(refname)' refs/heads 2>/dev/null)
           nbr=$(printf '%s\n' "$brrefs" | grep -c .)
           if [ "$nbr" = 1 ]; then
-            tipref=$(printf '%s\n' "$brrefs" | head -1)
-            tipwhy="detached HEAD in a jj checkout; tip read from $tipref"
+            candref=$(printf '%s\n' "$brrefs" | head -1)
+            cand=$(tmo git -C "$tree" rev-parse --verify "$candref" 2>/dev/null)
+            cand=$(printf '%s' "$cand" | head -1)
+            htree=$(tmo git -C "$tree" rev-parse --verify 'HEAD^{tree}' 2>/dev/null)
+            ctree=$(tmo git -C "$tree" rev-parse --verify "$candref^{tree}" 2>/dev/null)
+            if [ -n "$cand" ] && [ -n "$htree" ] && [ "$htree" = "$ctree" ]; then
+              tip="$cand"; tipref="$candref"; jjok=1
+            fi
           elif [ "$nbr" = 0 ]; then
             tipwhy="HEAD detached and no branch tip under $tree"
           else
             tipwhy="HEAD detached and $nbr branch tips — no unambiguous pin target"
           fi
-        else
-          # Plain git: the checked-out commit is HEAD, detached or not. This is
-          # the pre-round-19 reading, kept on purpose.
+        fi
+        if [ "$jjok" = 0 ] && [ -z "$tipwhy" ]; then
+          # Plain git, or a jj working-copy commit that is NOT an empty commit
+          # on the tip: the checked-out commit is HEAD (pre-round-19 reading,
+          # kept on purpose).
           tipref="HEAD"
-          tipwhy="detached HEAD in a plain git checkout"
         fi
       fi
-      if [ -n "$tipref" ]; then
+      if [ -z "$tip" ] && [ -n "$tipref" ]; then
         tip=$(tmo git -C "$tree" rev-parse --verify "$tipref" 2>/dev/null); grc=$?
         tip=$(printf '%s' "$tip" | head -1)
         if [ "$grc" != 0 ] || [ -z "$tip" ]; then

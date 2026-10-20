@@ -1118,3 +1118,64 @@ path-root line for `~/.config/omarchy/**`, frozen F1/F2, `measure-mutants.py
 landedness check (F16). Harm watch: gate selftest N/N (re-cut if the gate
 moves), classifier 52/52, tripwire suites N/N, frozen r18 suite 31/31, U 7/7,
 rubric V 6/6, navigation complete, census exit 0. No exploratory claim.
+
+## Round 19 — committed results and bounded author verdicts
+
+Measured at `01b80946d92b26370d3012a7da655d00dd135154` (tools final; later commits
+change prose and receipts only). Receipts: `.ufo/waves/round-19/evidence/harm/`
+(`HARM_WATCH: PASS`, 22 runs, every file headed `RECEIPT … measured_commit=01b8094…`),
+before receipts `evidence/*-before.txt` and their producer-bound re-cuts
+`evidence/*-before-recut.txt` (lesson M5).
+
+| Claim / axis | Before → after | Verdict / evidence |
+|---|---|---|
+| C1 calibration, literal lesson-citation fraction (`python3 .ufo/waves/round-17/measure.py REV`, `de4c422b…`) | 18/26 = 6.9231 → 20/28 = 7.1429 (+0.2198) | improved narrowly; **pre-registered target ≥ 21/29 missed** by decision: R18-V2 is recorded as an application of criterion 24, not a criterion 29 (CriticC1: restatement). 27 durable anchors (`anchor-durability.py`: red `9c54c56` `FLAGGED S084 S094` exit 1 → green `df84807` `flagged=0`); 28 supersession sweep (`supersede-sweep.py`: red `stale=11` → green `stale=0`). R18-V2: `receipt-check.py` reads the round-18 red-before receipts `MISSING_PROVENANCE`; header-bound re-cut `evidence/gate-swap-receipt.txt` 383 passed / 6 failed (five OM9 + R10) |
+| C2 freshness, walker pin currency (`python3 -I .ufo/waves/round-19/fresh-pins.py REV`) | 2/13 = 1.5385 → 13/13 = 10.0000 (at `df84807` and `01b8094`) | improved as declared, **sourced** on S096 (host walker bytes opened this round: `/usr/bin/walker` sha256 `25240650…`, one literal `2.17.2` at offset 856,302, none `2.17.0`). Every credited line cites S090/S091/S096 (supersede-sweep ledger rows; README via the S072–S091 span). This is dated provenance, not re-measurement: `walker --version`, the running process and 2.17.2 behaviour stay `[UNK]`. Gate pin 2.17.0 → 2.17.2 with the PASS narrowed to "installed version matches pin; 2.17.0-era claims stay dated" |
+| C3 operability, tripwire recall on the 6 frozen real-incident lines (`python3 -I .ufo/waves/round-19/tw-recall.py REV`) | 3/6 = 5.0000 (tool `c1ae45a7…`) → 6/6 = 10.0000 (tool `367be947…`) | improved on a six-line set the drafts were written for (overfit-prone by construction, lesson M7). Guards reported beside it: the three new findings are `package_query/pacman:-Q`, the class the round-18 known-miss notes name; zero findings on the 20 control lines; whole-corpus base-vs-merged diff lost 0 findings (w1 TwMerge-2; w2 RerunPrecision re-runs it). Round-18 frozen baseline now reads `frozen_verdict_mismatch` (the change made visible); round-19 baseline `.ufo/waves/round-19/frozen` `frozen_match` (`50d2a45e…`) |
+
+Harm watch at `01b8094` (PASS): gate selftest 389 → 443/443 (+54 WL0-WL3, OM10A/B,
+OM11-OM16; none dropped), regression PASS (`PIN_MADO` `05aea198…`), classifier 52/52,
+tripwire suites 247/247 over 11 suites (two case edits, both reasoned: round-17
+hardening `multiline-quoted-commit-clean` → `-vcs` and round-19 `eval-clean` →
+`eval-literal-argv-commit`, because a real `git commit` is now a `vcs_write`
+finding; host_mutation stays 0 in both), rubric V 6/6 (P5 via S092/S093/S097, P3 via
+S072–S083/S085–S091/S098), U 7/7, navigation 34/34, census exit 0 (W04 now also
+names S097/S094 sharing a URL; S094 is rejected). No owned axis harmed by lane action.
+Sources 95 → 98 (A 88 → 91; mined 80 → 81; rejected 7 → 9). Saturation 9.0 / N=3
+unchanged; retired: none.
+
+Non-claim repairs landed: S097/S098 supersede S094/S084; PROVINCE `~/.config/omarchy/**`
+path-root line; gate jj F6 (tip read only when `$tree/.jj` exists; plain-git detached
+HEAD still reports MOVED) and F9 (`rev-parse --git-dir`); frozen F1/F2; tripwire classes
+`tool_install` (permit-able) and `vcs_write`; `measure-mutants.py` no default lane
+write; `landed-check.sh` (F16 narrowed: a probe, not a gate row). F17 stays
+operator-owned: colocation is structural while `HYAKU_VCS=jj` (w1 JjIncidentScan).
+
+### Capabilities (round 19)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| landedness check | Say whether each cited lane hash is an ancestor of the live remote tip (`LANDED`/`LOCAL_ONLY`/`MISSING`) without fetching or writing | `bash .ufo/waves/round-19/landed-check.sh LANE HASH...`; w1 `LandedCheck.md` (T1-T9 matrix) | 19 |
+
+### Round 19 — wave-2 corrections to the results above (append-only)
+
+Wave 2 (67 seats over `01b8094`, reports `.ufo/waves/round-19/w2/reports/`) re-ran every
+counter and reproduced 18/26 → 20/28, 2/13 → 13/13 and 3/6 → 6/6. It narrowed the prose:
+- C1 (CriticC1W2, CriticAdmission): improved, target missed. Criterion 28's walker entry is
+  the C2 file set, so its green is not independent of C2; the ledger now also carries the
+  S094→S097 and S084→S098 supersessions. Both checkers' limits are appended to QUALITY.
+- C2 (CriticC2W2, RerunC2, RerunC1): read as "13/13 pointed; 5/13 name S096 on the
+  crediting line; 0 walker facts re-measured on 2.17.2". The 2/13 baseline credited two
+  round-18 lines (`corpus/README.md:44`, `walker-route-r18.md:1`); substantively 0/13
+  before. Two pointers that called S096 "reserved" were corrected in place and seven notes
+  carry appended wave-2 corrections (lesson M10).
+- C3 (CriticC3W2, AdvHelperFn, AdvVcs, RerunC3, RerunPrecision): read as "3/6 → 6/6 on the
+  six lines the drafts were written for; 5/6 without the HelperFn rule-B lead; the three new
+  findings are `package_query/pacman:-Q` as the round-18 notes predict; 0 findings on the 20
+  control lines; 0 findings lost across the real corpus". Rule B fires on 2 real lines
+  (both true) but on 12/12 synthetic data-only shapes and does not mark its rows as leads;
+  eval-surface VCS writes stay unseen. Limits, not admitted coverage (lesson M14).
+- Harm watch: unchanged numbers; the round-17 hardening suite reads 32/33 under the
+  pre-round tool after its one reasoned case edit (CriticHonestyW2 A7). Gate selftest showed
+  two non-reproducible fixture-loss failures under concurrent seat runs (ScribeScorecardCheck,
+  MutGateR19); every isolated run reads 443/443 → cause `[UNK]`.

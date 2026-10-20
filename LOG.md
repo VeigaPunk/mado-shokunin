@@ -1308,3 +1308,31 @@ CriticHonestyW2 on an Anthropic 429, 12 more when the L1 session exited on the
 same 429; ScribeReportDraft failed on a usage limit after writing its draft;
 partial outputs re-verified and kept, none respawned). Harm watch PASS at `be886a3`. Evidence:
 `.ufo/waves/round-18/evidence/final/`. Admission not asserted.
+
+## 2026-10-20 — round 19: durable anchors and supersession sweep, walker pin currency, tripwire recall
+
+Trigger: admitted round-18 closure (`corpus/lessons/round-18-verifier-spotcheck.md`,
+routed R18-V1..V4) at baseline `9c54c56`; carried frozen F1/F2, `measure-mutants.py
+--out`, jj audit F6/F9/F16/F17, three tripwire drafts. Pre-registration `17661e0`;
+wave-1 integration `df84807`; tripwire merge and QUALITY/lesson `01b8094`; wave-2
+corrections and final receipts in the commits after it (cited in the round report).
+Host pause carried; L1 issued no package/service/compositor/input command.
+
+C1 calibration: QUALITY 27 (durable anchors) and 28 (supersession sweep), R18-V2 applied
+as criterion 24 (no new number); 18/26 → 20/28, pre-registered ≥21/29 missed.
+C2 freshness (sourced, S096 host walker bytes): 13 owned files carry dated pointers;
+`fresh-pins.py` 2/13 → 13/13 (5/13 name S096 on the crediting line; 0 walker facts
+re-measured on 2.17.2); gate `live.walker.version` pin 2.17.2 with the PASS narrowed.
+C3 operability: six patches merged into `tools/mado-tripwire.py` (BashCVar, HelperFn,
+Installers `tool_install`, VcsClass `vcs_write`, frozen F1, F2); `tw-recall.py` 3/6 → 6/6
+on the drafts' own lines (5/6 without the HelperFn rule-B lead); round-19 frozen re-pin.
+Repairs: S097/S098 supersede S094/S084 (rejected); PROVINCE `~/.config/omarchy/**`
+path-root line; gate F6 (tip read only with `.jj` and equal trees) and F9; landed-check.sh
+(F16 narrowed); measure-mutants `--out`/`--workdir` safety; fetch RETENTION + class ignores.
+
+Waves: w1 86 seats + 1 integration seat (TwMerge-2); 28 w1 seats on m_zfl ended on
+`429 Rate limit` without a report; w2 67 seats. Harm watch PASS at `01b8094`
+(`.ufo/waves/round-19/evidence/harm/`). Installs: none by L1 or any seat (w2
+AtkInstallsRecord; two cache-level package materializations in the window belong to a
+non-mado seat or are `[UNK]`). Seat `SentinelGatePath` ran one real `hyprctl probe`
+(lesson M12). Admission not asserted.

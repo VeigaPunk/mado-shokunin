@@ -1,9 +1,12 @@
-# MadoR19.ProvinceScope — `~/.config/omarchy/**` resolves as the P5 theme plane; one-line refinement drafted, no lane file touched
+# MadoR19.ProvinceScope — `~/.config/omarchy/**` resolves as the P5 theme plane; refinement landed byte-identical, no lane file edited by this seat
 
 Seat: `MadoR19.ProvinceScope` (scout, leaf; no dispatch). Lane root
 `/home/vgpnk/Projects/shokunin/mado-shokunin`, baseline `9c54c56`, pre-registration
 `17661e0`. Deliverable: `.ufo/waves/round-19/drafts/ProvinceScope-line.md`
-(10,689 B; the refinement is one physical line, 924 B, at draft line 16).
+(11,303 B; the refinement is one physical line, 924 B, at draft line 19). The
+line landed mid-wave at `PROVINCE.md:18` in commit `df84807` — 20 L, sha256
+`539a9f6a9f452a82f8ca0fa7700d6824d842957d463e1673ae93a2012f79e8bc`, `cmp`-identical
+to the canonical bytes quoted below.
 
 ## Verdict
 
@@ -11,19 +14,21 @@ Seat: `MadoR19.ProvinceScope` (scout, leaf; no dispatch). Lane root
 route it already carries resolves to `~/.config/omarchy/**`. The host tree yields
 a clean split — theme/background state and its declared consumer parts are mado's
 (read-only), while hook bodies, branding, the menu extension, template machinery,
-secrets and every omarchy write/update stay out. No sibling `PROVINCE.md` claims
-the ground. The drafted line changes no measured number and creates no new write
-surface.
+secrets and every omarchy write/update stay out. No sibling lane claims the
+ground (roster sweep: all 21 fleet `PROVINCE.md` plus out-of-root `kimi-shokunin`;
+zero claims on the omarchy tree, update flows or secrets there). The line changes
+no measured number and creates no new write surface.
 
-## The drafted line (draft:16, one physical line, verbatim)
+## The drafted line (draft:19, one physical line, verbatim)
 
 ```
 **Round-19 refinement (P5 theme/wallpaper route; resolves `:8-9`; no new write surface):** the theme/wallpaper state is the omarchy theme plane under `~/.config/omarchy/**`, read-only — IN: `current/theme.name`, the `current/background` link and `current/theme/**` as declared theme state (the hypr/waybar/walker/terminal consumers are the owned chain; `mako.ini`, `swayosd.css`, `btop.theme` and `neovim.lua` are chain evidence only, their consumer configs not owned), plus `themes/` as the declared selectable store; OUT (report, never absorb): `hooks/**` bodies, `branding/`, `extensions/`, `themed/` template machinery, any secret-shaped value (→ kagi), and every omarchy program update, theme write or consumer reload; `~/.local/share/omarchy/**` (checkout) is read-only source evidence for this chain (gate `theme_plane()`/`omarchy_plane()` in `tools/mado-verify.sh`; route note `corpus/knowledge/theme-route-r18.md`).
 ```
 
-Insertion point: after `PROVINCE.md:16` (end of `Refuses`), one blank line before
-the final slogan at `:18`. It deliberately cites function names, not gate line
-numbers, so the new prose does not create its own line-pin drift.
+Insertion point (as landed): after the `Refuses` paragraph, one blank line before
+the final slogan — the slogan moved from `:18` to `:20`. The line deliberately
+cites function names, not gate line numbers, so the new prose does not create its
+own line-pin drift.
 
 ## Findings
 
@@ -94,25 +99,37 @@ refinement documents an already-measured surface; it does not enlarge it.
 
 ### 5. Boundary and adjacency
 
-- `PROVINCE.md` at `9c54c56`, `17661e0` and the worktree hashes identically:
-  `7aad7b863dc3c10b9fbafb8b04b7f73084adbdf91616a0859f7bfd4b0edb135a` (18 L, final
-  byte `0x0a`); `git status --porcelain -- PROVINCE.md` is empty.
+- Pre-landing: `PROVINCE.md` hashed
+  `7aad7b863dc3c10b9fbafb8b04b7f73084adbdf91616a0859f7bfd4b0edb135a` (18 L) at
+  `9c54c56`, `17661e0` and the worktree. Post-landing (commit `df84807`):
+  20 L, sha256 `539a9f6a9f452a82f8ca0fa7700d6824d842957d463e1673ae93a2012f79e8bc`,
+  final byte `0x0a`; `git status --porcelain -- PROVINCE.md` is empty at
+  `01b8094`, i.e. the landed bytes are committed.
 - `grep -l -i omarchy /home/vgpnk/Projects/shokunin/*/PROVINCE.md` →
-  `mado-shokunin/PROVINCE.md` only. `[INFERENCE]` no contested claim; the
-  authoritative sweep is `MadoR19.ConnProvinceRoster` (messaged once with the
-  classification; no reply awaited).
+  `mado-shokunin/PROVINCE.md` only. Now grounded, not inferred:
+  `MadoR19.ConnProvinceRoster` swept all 21 fleet `PROVINCE.md` plus out-of-root
+  `kimi-shokunin` (no `PROVINCE.md`) and reports zero sibling claims on
+  `~/.config/omarchy` (themes/hooks/branding/scripts), omarchy update flows or
+  secrets there; `.config/omarchy` appears only in mado's own files and kotoba
+  substrate captures quoting the skill description (report:
+  `.ufo/waves/round-19/w1/reports/ConnProvinceRoster.md`).
 - `PROTOCOL.md:430` makes this a resolving correction; round-18 w2
   `ConnProvinceScope.md` E6/E9 is the prior read of the same ground. The lane's
   own C6 audit (`corpus/knowledge/province-accuracy-selfaudit.md:52`) already
   resolves the clause to `current/theme.name`, `current/theme/`,
   `current/background`.
 
-### 6. Landing pins and counter state (for L1)
+### 6. Landing state, pins and counters
 
-- Insert 2 lines (blank + line) before `:18` → 20 L; record the new
-  `wc -l` + `sha256sum`.
-- Present-tense pins to re-point: `SKILL.md:660` ("PROVINCE.md (18 L, sha
-  `7aad7b86…`)") and `SKILL.md:741` ("unchanged (18 L, `7aad7b86…`)").
+- Landed as drafted: 20 L, sha256
+  `539a9f6a9f452a82f8ca0fa7700d6824d842957d463e1673ae93a2012f79e8bc`
+  (commit `df84807`); the refinement occupies `:18`, the slogan moved to `:20`,
+  and the line is byte-identical to the draft (`cmp` clean, 924 B).
+- Stale pin text still in the worktree (sibling edits in flight; this seat did
+  not touch it): `SKILL.md:666` carries "Pack: `PROVINCE.md` (18 L, sha
+  `7aad7b86…`)" in the round-4 pack row, and `SKILL.md:747` carries "unchanged
+  (18 L, `7aad7b86…`)" in the round-5 refreshed-pointers block. Both now name a
+  superseded artifact; L1 decides re-point vs append-only erratum (the R1 class).
 - Historical, not current: `corpus/knowledge/province-accuracy-selfaudit.md:12-13`,
   `:213`, `:295` (add an append-only errata, never rewrite the audit body), and
   `plans/round-5..10-*` (ten `7aad7b86…` hits; leave as records).
@@ -134,10 +151,12 @@ refinement documents an already-measured surface; it does not enlarge it.
   `theme-route-r18.md`, not re-read this pass; walker's runtime resolution of
   `current/theme/walker.css` and every consumer's loading of current bytes stay
   `[UNK]`.
-- No web source opened, so no fetch receipts are owed. `PROVINCE.md` (L1-owned)
-  was not edited, so no post-landing digest exists yet.
-- Adjacency rests on the round-18 E6 read plus a HEAD re-grep; not a sibling
-  lane's acceptance.
+- No web source opened, so no fetch receipts are owed. This seat did not edit
+  `PROVINCE.md`; the landing (commit `df84807`) was L1's, verified here by
+  `wc -l`/`sha256sum`/`cmp` only.
+- Adjacency is now the roster's grounded sweep
+  (`.ufo/waves/round-19/w1/reports/ConnProvinceRoster.md`), not only the
+  round-18 E6 read; this seat did not re-run that sweep.
 
 ## Installs
 

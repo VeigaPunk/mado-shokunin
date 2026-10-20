@@ -1885,3 +1885,16 @@ Append-only disposition: this section records the moved pins and their re-measur
 > `snapshot_tampered`) are closed (suite `.ufo/waves/round-19/tripwire/r19-frozen-f1f2`).
 > `mado-tw-recall`: a `git show` failure exits 1, not 2 (SimplifyCounters D1); the
 > counter is pre-registered and unchanged this round.
+> Round-19 source supersessions (append-only): S094 → S097 (omarchy matte-black payload;
+> per-fetch HTML digests replaced by tag commit and git tree ids) and S084 → S098 (xdg
+> search order; docs.rs `latest` alias replaced by the xdg 3.0.0 crate whose sha256 equals
+> walker v2.17.2 `Cargo.lock:2708`). Registry rows above that name S094 or S084 describe
+> round-18 evidence; current support is S097 and S098.
+> SKILL erratum corrections (w2 AtkSkillErratum, CriticC2W2): "sole version literal" in the
+> round-19 walker erratum means the sole *walker* version literal (the binary holds other
+> x.y.z strings); its "round-18 erratum `:1820-1828`/`:1824`" line numbers are baseline
+> `9c54c56` numbers (the round-18 erratum now starts at `:1826`); the `:114` row moved two
+> values (walker version and the packaged table 298 L → 305 L), not one.
+> PROVINCE pins (w2 AtkProvinceLine): `PROVINCE.md` gained the round-19 path-root line, so the
+> "18 L, sha `7aad7b86…`" statements at `:666`/`:747` and the slogan citation `PROVINCE.md:18`
+> at `:391` describe the round-18 file; read the current `PROVINCE.md` bytes instead.

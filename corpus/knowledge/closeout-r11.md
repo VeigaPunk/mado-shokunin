@@ -302,3 +302,6 @@ lane wrote only this append.
 - Version-bound behaviour: "no reload path — restart is the apply path" is a consumer-side reading against 2.17.0. walker-route-r18.md greps the v2.17.2 tag tree for `reload_config`/`set_config` in `src/` (source reading only); the 2.17.2 binary's live reload behaviour is [UNK].
 - Other walker mentions (lines 152, 154, 187, 201: walker-deep notes; line 174: the exempted `walker ×3` live rows; line 264: the 2026-10-14 PID sample) are not walker version pins; none is re-asserted here, and none is affected by the host move to 2.17.2.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+### Wave-2 corrections (round 19, append-only)
+
+- The socket observation was re-statted this round as file metadata (both sockets `755`, 0 B, mtime 2026-10-20 09:57:13 -0300; w1 DeltaWalkerCli, w2 AtkPtrCloseoutR11), so "not re-measured this round" above is wrong; shape unchanged, mtime moved (restart). Line 43 is the single `2.17.0` pin. The line-264 PID sample is session-dependent and stale after the 09:57 restart [INFERENCE]. Host walker bytes: S096.

@@ -470,3 +470,8 @@ a correction is a new block citing the block it corrects._
 - Host-file bytes, dated 2026-10-14 and not re-hashed this round: `~/.config/walker/config.toml` (49 lines, sha256 `fecf71fa…` in §10); its key-by-key table (§6.2) is interpreted by the walker binary, so its meaning is version-bound too.
 - Version-independent of the walker package [INFERENCE], not re-measured this round: omarchy-owned theme files (§6.6), launch and restart scripts and keybinds (§6.7), omarchy-menu path (§6.7). Waybar sections §1-§5 make no walker-version claim.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- The packaged default and the user walker config were re-read this round as file bytes (`/etc/xdg/walker/config.toml` 305 L / 13,743 B / `3c5c6867…`, S091; `~/.config/walker/config.toml` 49 L / 1,336 B / `fecf71fa…`, unchanged; w1 DeltaWalkerConfig, w2 AtkPtrWaybarWalkerSemantics), so "not re-checked"/"not re-hashed this round" above is wrong for those two files; the binary bytes are S096.
+- §1 does carry a walker version pin (line 23), and the §6.7/§6.8 live state (PID 1808, running) is voided by the walker-restart hook runs (`/var/log/pacman.log:3062`, `:3123`, S090), not merely dated. Theme-file bytes are unchanged, but their meaning on 2.17.2 may differ (w1 DeltaWalkerConfig: blur radius handling on GTK 4.24) — [UNK].

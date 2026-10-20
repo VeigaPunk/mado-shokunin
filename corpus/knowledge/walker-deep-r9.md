@@ -406,3 +406,9 @@ text is never edited._
 - Not version-bound (host file bytes and unit/socket state), dated 2026-10-14 and not re-measured this round: user `config.toml` sha `fecf71fa…`, autostart desktop sha, unit `app-walker@autostart.service`, PIDs, socket stat, layer rows (§1, §4, §6).
 - Mechanism (§3.8, INF high: read once, no reload verb, no watch token, no D-Bus reload): walker-route-r18.md records the same read-once config load (v2.17.2 `src/config.rs`) and no config-reload entry point in the v2.17.2 tree. The live discriminator stays [UNK] under the file-byte + `--help` class.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- The printed `--version` bytes are not superseded "by S090": a log line carries no printed output; the 2.17.2 print stays [UNK] (inferred from the S096 literal only).
+- Every §3.3/§5.5 rodata offset is version-bound, not only the 847,791 literal: w1 DeltaWalkerConfig (lines 169-188 of its report) and w2 AtkPtrWalkerDeepR9 give the 2.17.2 positions (e.g. `reload` 814,881; `Failed to set loaded config` 806,884; embedded default 806,960). The note's values describe the 2.17.0 binary.
+- Process state (PIDs, sockets, layers) is voided, not merely dated: the walker-restart hook ran (`/var/log/pacman.log:3062`, `:3123`, S090) and the host booted at 2026-10-20 09:56:56 -0300 (w2 seat read of `/proc/stat` btime).

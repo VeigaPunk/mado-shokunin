@@ -395,3 +395,9 @@ launcher — fenced).
 - Version-independent, kept: the consumer-probe method (`walker --version`, `pgrep -ax`, `stat`, `busctl --user list`; never connect) and the constraint that socket protocol and rendered UI stay UNKNOWN.
 - Version-bound behaviour: "no reload path — restart is the apply path (r9)" was measured on 2.17.0. walker-route-r18.md reports no `reload_config` or `set_config` in the v2.17.2 source tag; the 2.17.2 binary's apply behaviour is [UNK].
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- The block's phrase "the only `2.17.0` in the file" was true before the append only; the block itself adds further mentions (w2 AtkPtrArcSynthesis).
+- The binary sha `25240650…` is the S096/S091 file-byte value (S096 recorded at `df84807`, not pending).
+- Some host state the block calls not re-measured was read as file bytes by round-19 w1 seats (walker sockets present after the 09:57 restart, theme pins unchanged: w1 DeltaWalkerCli, DeltaWalkerConfig); the 2026-10-14 values in this note stay dated.

@@ -335,9 +335,14 @@ round-6 lanes may write repo files concurrently (not inspected).
 
 ## Freshness pointer (round 19, 2026-10-20)
 
-- The walker version pin in this note (line 246, `walker 2.17.0-1`) is dated 2026-10-14 (probe window 17:39-17:41Z) and describes walker 2.17.0; on 2026-10-20 the host package moved to 2.17.2 per `/var/log/pacman.log:2929` (S090); the binary-bytes row S096 is reserved and not yet recorded. Current routing: corpus/knowledge/walker-route-r18.md.
+- The walker version pin in this note (line 246, `walker 2.17.0-1`) is dated 2026-10-14 (probe window 17:39-17:41Z) and describes walker 2.17.0; on 2026-10-20 the host package moved to 2.17.2 per `/var/log/pacman.log:2929` (S090); the host binary bytes (one `2.17.2` literal, sha256 `25240650…`) are recorded as S096 [wave-2 corrected wording]. Current routing: corpus/knowledge/walker-route-r18.md.
 - Version-bound, dated: line 246 only (walker 2.17.0-1 in the package-shape list). The other package versions on that line (hyprland, hypridle, hyprlock, hyprsunset, swaybg, mako, waybar, alacritty, uwsm, sddm) are 2026-10-14 pins and were not re-measured this round.
 - Walker process and CSS import rows (§2 walker row, §4 clients): PID 1203471 and the `walker --gapplication-service` sample are 2026-10-14 point samples; the 2026-10-20 upgrade logged walker-restart.hook entries (S090 lines 3062, 3123), so no live walker process fact is re-asserted. The config.toml and style.css lines cited there are file-level bytes read on 2026-10-14, not checked against 2.17.2 behaviour.
 - Version-independent (file bytes and host state, not the walker binary): theme-tree census and sha256 pins (§1), symlink targets (§1.2, §2 wallpaper and mako rows), hyprsunset and hyprlock pins (§2, §4), session/portal/monitor shape (§4), spot-checks (§6). These remain 2026-10-14 point samples dated by the probe window; none depends on the walker version.
 - Not in this note: walker help text, walker binary sha, config line counts, `walker --version` output. No value of these is asserted here, so none needs re-pinning.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- S096 is a recorded mined row (landed with this block in `df84807`), not "reserved and not yet recorded" (w2 AtkPtrRemainingPlanesCensus).
+- Line 246 also carries uwsm `0.26.7-1`, which the host log moved to `0.27.1-1` (`/var/log/pacman.log:2926`), and line 244 hyprland `0.56.2-2`, moved to `0.56.2-4` (`:2733`); both are dated host-false pins, not merely "not re-measured". hyprland/hypridle sit on line 244 and hyprlock/hyprsunset/swaybg/mako on line 245, not all on line 246.

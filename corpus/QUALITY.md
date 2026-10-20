@@ -202,3 +202,27 @@ omitted R10. Criterion 25's runnable command now needs an explicit lane receipt:
 `python3 -I .ufo/waves/round-18/measure-mutants.py --out
 .ufo/waves/round-18/evidence/measure-mutants.json --force-lane-receipt` (a bare
 run prints JSON to stdout and writes nothing; w1 MeasureMutantsOut).
+
+Round-19 wave-2 limits (append-only; CriticC1W2, RerunC1): criterion 27's checker
+prints `durable` when no rule fires — not proof of reproducibility. It reads any
+`N.N` in the anchor as a pin (even an unrelated or superseded version), knows only
+the alias words `latest`/`main`/`master`/`HEAD`, does not check that a registry
+checksum is present, and does not exercise "the superseding row names the replaced
+id" (true by reading for S097/S098). Access-date-only anchors (S032–S035) print
+`durable`. Criterion 28's ledger now also carries the S094→S097 and S084→S098
+supersessions; its walker entry is the C2 file set, so 28's green there is not
+independent of C2. The line rule credits `corpus/README.md:44` (a round-18 row with
+`Walker v2.17.2` and the span S072–S091) and `walker-route-r18.md:1` (its source
+list) at `9c54c56`: substantively the pre-state held 0 dated pointers, not 2.
+Wave-2 correction (append-only; w2 RerunGateSwap): round 18 did not omit R10 everywhere —
+`.ufo/waves/round-18/w3/reports/W3CriticC1Final.md:188` lists "R10 (pin drift, expected)";
+only the round-18 SCORECARD fragment "(383/389, five OM9 failures …)" left it out. The
+round-19 gate-swap receipt is a new red run on a hybrid fixture (the d9a5a18 block inside
+the 17661e0 gate), header-bound; criterion 26's original red-before file still reads
+`MISSING_PROVENANCE`.
+More criterion-27 checker limits (w2 RerunAnchor): `accessed on <date>` counts as a date
+pin, licence/protocol versions (`Apache-2.0`, `HTTP/1.1`) count as version pins, a 40-hex
+tree id counts as a commit, `develop`/`trunk` branch URLs are not aliases, a GitHub release
+HTML page at a tag reads as raw bytes, and a row made malformed by a literal `|` drops out
+of evaluation. The red at `9c54c56` and green at the tip stand; a `durable` line is a screen
+result, and the closure reads the anchor.

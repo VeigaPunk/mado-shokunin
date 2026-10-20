@@ -61,3 +61,61 @@ rejected 7 → 9).
   only when `$tree/.jj` exists (CriticHonesty hole); F9 `rev-parse --git-dir`.
 - QUALITY: 27 and 28 only; R18-V2 recorded as an application of 24 (CriticC1).
   C1 therefore misses its pre-registered ≥21/29 target.
+
+## Wave-2 corrections and mistakes (append-only, 2026-10-20)
+
+Wave 2 (67 seats over `01b8094`; reports `.ufo/waves/round-19/w2/reports/`) attacked
+every claim, row, pointer and new tool. Corrections to the rows above:
+
+- M4: round 18 did not omit R10 everywhere — `round-18/w3/reports/W3CriticC1Final.md:188`
+  names it; only the round-18 SCORECARD fragment did (w2 RerunGateSwap). The gate-swap
+  receipt is a new header-bound red on a hybrid fixture, not a header on the old file.
+- M5: the "(tool not yet committed)" note was true when written (receipt 16:59:29Z, commit
+  16:59:52Z; w2 RerunReceipts). The defect is only `measured_commit=9c54c56`, a commit
+  that does not carry the producer. The round-19 claims now point at the re-cuts.
+- M6: the first `fetch/.gitignore` listed 29 paths, not classes, so a later seat's
+  `xdg-3.0.0.crate` was unignored (w2 SentinelCommitSet F1). Class patterns (`*.html`,
+  `*.crate`, `*.json` except `RETENTION.json`) and `fetch/RETENTION.json` (16 commit, 32
+  digest-only, incl. the three withheld bot-challenge receipts) now carry the rule.
+- M9: wave 2 still placed 10 reviewer seats on m_zfl; the role routing is fixed by the
+  orchestrator, not by L1 (w2 ScribeLogCheck).
+
+| id | class | evidence pointer | captured-by | fix (shown able to fail) |
+|---|---|---|---|---|
+| M10 | landing (seats, L1 integration) | Two pointer blocks written in w1 say S096 is "reserved"/"row pending" (`remaining-planes-census.md:338`, `walker-live-surface.md:305`), and L1 landed them in the same commit as the S096 row (`df84807`); `fresh-pins.py` credited both through their S090 token (w2 AtkPtrRemainingPlanesCensus, AtkPtrWalkerLiveSurface, AtkReadmeFrontier, CriticC2W2). Five more blocks call re-read items "not re-measured" (w2 AtkPtrWalkerDeep, AtkPtrWaybarWalkerSemantics, AtkPtrConfigHealthReportR3, AtkPtrArcSynthesis). | none: the C2 counter reads a token, not the sentence | Appended wave-2 correction blocks in all seven notes; C2 reported as "13/13 pointed; 7/13 cite S096; 0 walker facts re-measured on 2.17.2". Rule: a seat draft that reserves an id is re-read after the row lands, before commit. |
+| M11 | vacuous (L1) | Criterion 28's checker exited 1 at the integration tip once the ledger gained the S094→S097/S084→S098 entries: the new SKILL registry rows name S094/S084 with no S097/S098 line (w2 CriticAdmission). The harm watch did not run either criterion checker. | criterion 28's own checker (caught it when run) | SKILL line naming both supersessions; both checkers re-run at the final commit with header-bound receipts in `evidence/final/`. |
+| M12 | host-pause breach (seat) | Seat `SentinelGatePath` ran the real `/usr/bin/hyprctl probe` once (rc 0, `unknown request`) while building a stub harness whose mount step failed, just before 18:05Z; it self-reported and hardened its script (w2 SentinelGatePath § Incident). | the post-wave tripwire scan (`live_probe` class) | Disclosed; no state change observed. The wave context forbade hyprctl; prompt fences remain prompt-level (round-18 M5). |
+| M13 | scope (L1 pre-registration) | `fresh-pins.py` credits `corpus/README.md:44` and `walker-route-r18.md:1` at `9c54c56` (a round-18 row and a source list), so the substantive pre-state was 0 dated pointers, not 2 (w2 RerunC1, CriticC2W2 F3); line-level, 55 of 73 `2.17.0` lines carry no same-line pointer (w2 ScribePlannedRow). | none | Reported beside the score; a round-20 line-level rubric is planned. The pre-registered counter is unchanged. |
+| M14 | survivor (tripwire) | HelperFn rule B (literal argv to an undefined name) is the sole source of the 6th recall line; without it C3 reads 5/6, and it fires on 12/12 synthetic data-only shapes (dataclass constructors, imported classifiers) the base tool leaves clean; lead rows are not marked as leads (w2 CriticC3W2). Eval-surface VCS writes (the real `.jj` birth, merge, push loop) give 0 `vcs_write` findings (w2 AdvVcs); `curl … | sh` is not classified (w1 RevDraftInstallers). | the w2 adversarial seats | Recorded as limits in SKILL and SCORECARD; round 20 plans the name-binding guard, lead tagging and eval-argv coverage with the w2 regression cases. |
+
+Gate (wave 2): every new row re-opened by a non-author seat — S096 (w2 ReopenS096,
+CriticC2W2, AtkSkillErratum, AtkPtrWalkerRouteR18: bytes, offset, BuildID, `.comment`
+reproduce), S097 (w2 ReopenS097, AtkPtrThemeRouteR18: 200/461 B/`dbdd13a6…`, own clone
+tag `8fcc9d60…`, trees `3fc08f95…`/`ff02c341…`), S098 (w2 ReopenS098 and AtkReadmeFrontier:
+crate `2fb43323…` = `Cargo.lock:2708`, quote at `base_directories.rs:446-448`).
+
+Gate corrections (w2 AtkLessonGate): the S096 quote `version2.17.2` begins at byte 856,295;
+856,302 is the start of the `2.17.2\n` literal the row anchors. The S098 quote is 5 words
+(two rustdoc lines joined after stripping `///`), not 6.
+
+Further wave-2 corrections (w2 CriticHonestyW2, RerunC2, SentinelToolSafety):
+- M1's fetch-verify sentence: a bare `fetch-verify.py` run exits 0; with `--sources` its
+  CONFLICT check is global, so even `--rows S097` exits 1 on the historical S094 tree URLs,
+  and pointed at the round-19 fetch root it reports digest-only bodies as missing. It is not
+  a per-row durability check; QUALITY 27's checker is.
+- The two "reserved/pending S096" sentences were corrected in place (marked
+  `[wave-2 corrected wording]`); the appended correction bullets stay.
+- C2 sourcing: 5 of 13 credited files name S096 on the crediting line; the rest credit
+  S090 or the README S072–S091 span. The counter certifies "a permitted row", not S096.
+- `measure-mutants.py --workdir` no longer deletes a caller-named directory (the tool now
+  makes its own `mkdtemp` inside it; canary kept, summary unchanged 6/6). Still open:
+  `--out` guard only covers the `--lane` worktree; `harm-watch.sh` runs the worktree
+  SCORECARD block; `supersede-sweep.py` reads its ledger from the worktree;
+  `anchor-durability.py` exits 1 on a malformed receipt line; `frozen-repin.py` writes a
+  README receipt without `measured_commit` (receipts for the round-19 frozen replay are
+  re-cut header-bound in `evidence/final/`).
+- The round-17 hardening suite reads 32/33 under the pre-round tool after its one case
+  edit; the all-pass statements refer to the merged tool.
+- S096 used-by gained `corpus/knowledge/walker-route-r18.md` and `corpus/README.md` (both cite it; w2 ReopenS096, CriticC2W2 F8); old→new: the six-path list → the eight-path list.
+- vcs_write precision (w2 RerunPrecision): 78 of 4,818 added rows are not writes — 74 `jj <sub> --help` and 4 `git --dry-run/-n` (docstring says help is excepted; code falls through). Round-20 fix with the w2 15-line fixture.
+- Installs during the round: seat `AdvInstallers` (w2) ran pip 26.2.1 ephemerally via `uv run --no-project --with pip` (uv cache only, no PATH change) to adjudicate pip grammar; no other install by any mado seat or L1. Gate fixture losses during wave 2 trace to an external `rm -rf /tmp/w5-mado-m52-selftest.*` at ~18:04:53Z (w2 RerunGate), not a gate defect.

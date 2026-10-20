@@ -534,8 +534,11 @@ def main() -> int:
     loose_bytes = fetch_instrument(lane, LOOSE_REV, LOOSE_SHA)
     tight_bytes = fetch_instrument(lane, BASELINE_REV, TIGHT_SHA)
 
-    root = args.workdir or Path(tempfile.mkdtemp(prefix='mado-r18-mutants-'))
-    root.mkdir(parents=True, exist_ok=True)
+    # Round 19 (w2 SentinelToolSafety F1): never delete a caller-named directory;
+    # --workdir only chooses where the tool's own fresh mkdtemp directory lives.
+    if args.workdir:
+        args.workdir.mkdir(parents=True, exist_ok=True)
+    root = Path(tempfile.mkdtemp(prefix='mado-r18-mutants-', dir=args.workdir))
     started = datetime.now(timezone.utc).isoformat(timespec='seconds')
 
     records = []

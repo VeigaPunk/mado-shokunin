@@ -302,7 +302,13 @@ if the environment permits ptrace).
 
 ## Freshness pointer (round 19, 2026-10-20)
 
-- The walker version pins in this note (lines 19, 37, 38) are dated 2026-10-14 (the measurement window in line 6) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090); the host binary bytes are reserved as S096 (row pending, not re-read this round). Current routing: corpus/knowledge/walker-route-r18.md.
+- The walker version pins in this note (lines 19, 37, 38) are dated 2026-10-14 (the measurement window in line 6) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090); the host binary bytes were re-read this round and are recorded as S096 (sha256 `25240650…`, one `2.17.2` literal) [wave-2 corrected wording]. Current routing: corpus/knowledge/walker-route-r18.md.
 - Version-bound, therefore dated to the 2.17.0 build: §1 binary sha256 `64826a85…`, owner pkg `walker 2.17.0-1`, the `--version` bytes; §1 package file list (29 entries) and packaged `/etc/xdg/walker/config.toml` (13,220 B, sha `5b4e47b7…`); §2 help text and its sha256 `ca4820a8…` with the help-all and gapplication captures; §3 L0 embedded-default equality at offset 784,064.
 - Version-independent in kind, but host-state dated 2026-10-14: §3 user config `~/.config/walker/config.toml` (1,336 B, sha `fecf71fa…`) and its overrides; §3 GSettings values and unit environment; §4 PIDs, sockets, D-Bus owner and layer invariant; §7 boundary snapshot. None of these is re-asserted for 2026-10-20.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- S096 is a recorded mined row (landed in `df84807`); the host walker bytes were re-read this round (`/usr/bin/walker` sha256 `25240650…`, literal `2.17.2` at 856,302).
+- The §2 help/capture digests are GLib-bound rather than walker-version-bound: walker's 838-byte option-description run is byte-identical between the 2.17.0 and 2.17.2 binaries (w1 DeltaWalkerCli, w2 AtkDeltaCli) while glib2 moved 2.88.3 → 2.90.1 (`/var/log/pacman.log:2554`); the rendered help bytes stay [UNK].
+- The 29-entry package file list is version-invariant (both packages list the same 29 entries); only the packaged config content moved (13,220 B `5b4e47b7…` → 13,743 B `3c5c6867…`, S091). The §1 PIDs and unit state (lines 39-42) are dated 2026-10-14 like §3/§4/§7.

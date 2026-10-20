@@ -110,7 +110,7 @@ local_master=
 local_master=$(git -C "$LANE" rev-parse --verify --quiet 'refs/heads/master^{commit}' 2>/dev/null) \
   || local_master=
 
-shallow=$(git -C "$LANE" rev-parse --git-path shallow 2>/dev/null) || shallow=
+shallow=$(git -C "$LANE" rev-parse --path-format=absolute --git-path shallow 2>/dev/null) || shallow=
 if [ -n "$shallow" ] && [ -f "$shallow" ]; then
   printf '%s: warning: shallow clone — ancestry is bounded by the shallow boundary (false LOCAL_ONLY possible)\n' "$PROG" >&2
 fi

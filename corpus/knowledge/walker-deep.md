@@ -624,3 +624,8 @@ a correction is a new block citing the block it corrects._
 - Elephant-bound, dated 2026-10-14: `elephant version` 2.21.0 (line 28), the `listproviders` census and plugin list (§4.1), ElephantConfig defaults and generated-doc counts (§4.1, §5). S090 (line 3095) records elephant 2.21.0-1 -> 2.22.1-1 on this host; not re-measured.
 - Not walker-version-bound, still dated 2026-10-14: user files and hashes (only `~/.config/walker/config.toml` fecf71fa4253803e, 1,336 B was re-read this round, unchanged), elephant user TOMLs and menu Lua hashes, theme file hashes, omarchy script line anchors (§5, §7), and process/session state (§1 PIDs 1203471 and 1203474, sockets, `hyprctl -j layers`, §7.1 binds). [INFERENCE] a PID from 2026-10-14 runs the pre-upgrade image; not checked.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- Three items the block calls "not re-run on 2.17.2" were re-read this round as file bytes: the embedded default run (now at offset 806,960, byte-equal to `/etc/xdg/walker/config.toml`, S091), the `struct Walker` arity (31 elements in the 2.17.2 binary, w1 DeltaWalkerConfig) and the `/etc/xdg` line anchors (shifted +6/+7, map in w1 DeltaWalkerConfig). Error/fallback tokens were not re-read.
+- The `--help` option text is byte-identical between 2.17.0 and 2.17.2 (838-byte run, w1 DeltaWalkerCli); only the GLib framing is host-library-bound. ElephantConfig defaults and generated-doc counts live in §4.1, not §5.

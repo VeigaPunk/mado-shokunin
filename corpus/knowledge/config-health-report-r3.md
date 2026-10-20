@@ -1011,3 +1011,7 @@ class).
 - Version-independent file bytes, dated 2026-10-14 and not re-measured this round: user walker config and its sha, line count and size (lines 242-243, 645), the autostart desktop entry (lines 243-244, 657), the theme `walker.css` and `style.css`/`layout.xml` (lines 270, 915-916). What walker 2.17.2 does with these bytes is `[UNK]` (walker-route-r18.md, § Unexercised behavior).
 - Launch path and command presence (lines 252-255, 902) are omarchy-defined bindings and a PATH lookup, not walker-version-bound; they are dated 2026-10-14 and were not re-measured this round.
 - Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].
+
+### Wave-2 corrections (round 19, append-only)
+
+- The user walker config was re-read this round with the same digest (`fecf71fa…`, 49 L, 1,336 B; w1 DeltaWalkerConfig), so "not re-measured this round" above is an underclaim. Line 900 belongs to the round-4 kit window (16:07-16:24 UTC, lines 598/947/951), not the line-3 probe window. S096 (host walker bytes) now exists and is not cited here.

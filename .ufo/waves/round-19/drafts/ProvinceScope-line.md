@@ -1,16 +1,19 @@
 # ProvinceScope — one PROVINCE line: `~/.config/omarchy/**` with an in/out split
 
-Draft only. This seat edited no lane file; `PROVINCE.md` belongs to L1.
+**STATUS: LANDED, DO NOT RE-APPEND.** The canonical line below now sits at
+`PROVINCE.md:18` (commit `df84807`), verified byte-identical by `cmp`; the file
+is 20 L, sha256 `539a9f6a9f452a82f8ca0fa7700d6824d842957d463e1673ae93a2012f79e8bc`.
+This seat edited no lane file; `PROVINCE.md` belongs to L1.
 Root of every path below: `/home/vgpnk/Projects/shokunin/mado-shokunin` unless
 absolute. Host tree read 2026-10-20; `PROVINCE.md` at baseline `9c54c56`
 (18 L, sha256 `7aad7b863dc3c10b9fbafb8b04b7f73084adbdf91616a0859f7bfd4b0edb135a`,
-byte-identical to the pre-registration `17661e0` and the worktree).
+byte-identical to the pre-registration `17661e0` and the then-worktree).
 
 ## The line (canonical: one physical line, verbatim)
 
-Insert after `PROVINCE.md:16` (end of the `Refuses` paragraph), keeping one blank
-line before the final slogan at `:18`; do not reflow it if the post-landing
-digest is to be reproducible from this draft.
+Landed at `PROVINCE.md:18` (blank line `:17`, slogan now `:20`), inserted after
+the `Refuses` paragraph. Do not reflow or re-append: the canonical bytes below are
+already in `PROVINCE.md`, and the original insertion instruction is historical.
 
 ```
 **Round-19 refinement (P5 theme/wallpaper route; resolves `:8-9`; no new write surface):** the theme/wallpaper state is the omarchy theme plane under `~/.config/omarchy/**`, read-only — IN: `current/theme.name`, the `current/background` link and `current/theme/**` as declared theme state (the hypr/waybar/walker/terminal consumers are the owned chain; `mako.ini`, `swayosd.css`, `btop.theme` and `neovim.lua` are chain evidence only, their consumer configs not owned), plus `themes/` as the declared selectable store; OUT (report, never absorb): `hooks/**` bodies, `branding/`, `extensions/`, `themed/` template machinery, any secret-shaped value (→ kagi), and every omarchy program update, theme write or consumer reload; `~/.local/share/omarchy/**` (checkout) is read-only source evidence for this chain (gate `theme_plane()`/`omarchy_plane()` in `tools/mado-verify.sh`; route note `corpus/knowledge/theme-route-r18.md`).
@@ -27,7 +30,7 @@ requires a found surface to be corrected to the real path. No sibling
 
 | id | fact | pointer |
 |---|---|---|
-| E1 | The clause to resolve, and the boundary sentence the refinement sits behind | `PROVINCE.md:8-9` "themes/wallpapers as declared files"; `:10-12` config trees READ-ONLY; `:14-16` secrets → kagi; `:18` "Out of province → report, never absorb." File: 18 L, final byte `0x0a`, sha `7aad7b86…` |
+| E1 | The clause to resolve, and the boundary sentence the refinement sits behind | `PROVINCE.md:8-9` "themes/wallpapers as declared files"; `:10-12` config trees READ-ONLY; `:14-16` secrets → kagi; `:18` "Out of province → report, never absorb." (pre-landing; slogan now `:20`). Pre-landing file: 18 L, final byte `0x0a`, sha `7aad7b86…` |
 | E2 | The path root exists with exactly one symlink; `current` and `current/theme` are real directories (materialized state), `themes/` is empty | `find /home/vgpnk/.config/omarchy -maxdepth 3 -printf '%y %p %l\n'` → dirs `branding current current/theme current/theme/backgrounds extensions hooks hooks/{battery-low,font-set,post-boot,post-update,theme-set}.d themed themes`; `l …/current/background -> …/current/theme/backgrounds/0-ship-at-sea.jpg`; `test -L current` / `current/theme` → REAL; `find themes -mindepth 1 | wc -l` → 0; `~/.config/omarchy/backgrounds` absent; `current/next-theme` absent |
 | E3 | Theme state under `current/`: 24 regular parts + 4 backgrounds, `theme.name` one 12 B file | `find current/theme -maxdepth 1 -type f | wc -l` → 24; `…/backgrounds -maxdepth 1 -type f | wc -l` → 4; `stat -c %s current/theme.name` → 12; mtimes `2026-10-03 17:49:02` |
 | E4 | Consumers demonstrably name `current/theme` parts (declared edges only) | `~/.config/hypr/hyprland.conf:13`, `hyprlock.conf:1` (and `:10` background path), `~/.config/waybar/style.css:1`, `~/.config/alacritty/alacritty.toml:1`, `~/.config/foot/foot.ini:2`, `~/.config/kitty/kitty.conf:1`, `~/.config/ghostty/config:2`, `~/.config/swayosd/style.css:1`; `~/.config/mako/config` is a symlink to `current/theme/mako.ini`; walker: `~/.config/walker/config.toml:3-4` (`theme = "omarchy-default"`, `additional_theme_location = "~/.local/share/omarchy/default/walker/themes/"`) and the checkout theme `omarchy-default/style.css:1` imports `current/theme/walker.css` (cited from `corpus/knowledge/theme-route-r18.md` § Host declaration; not re-read this pass) |
@@ -35,7 +38,7 @@ requires a found surface to be corrected to the real path. No sibling
 | E6 | The out-of-domain entries, by name/type/mode only | `branding/about.txt` 2,734 B 0644; `branding/screensaver.txt` 1,525 B 0644; `extensions/menu.sh` 656 B 0644; `hooks/*` six files — five `*.sample` 0644 and `hooks/post-update.d/install-voxtype.hook` 174 B **0755** (the only executable in the tree, mtime 2026-10-03 17:48:34); `themed/alacritty.toml.tpl.sample` 2,729 B 0644 |
 | E7 | No secret-shaped name in the tree; the one `*key*` match is a colour part, not a credential | name-only `find` for `*secret*|*token*|*credential*|*.env|*key*|*passw*` → only `current/theme/keyboard.rgb` (8 B), which the gate classifies in `theme.parts.declared_only` as the asusctl RGB part; no content was read. Secrets stay under `PROVINCE.md:14` |
 | E8 | Lane documents this line must agree with | `corpus/knowledge/theme-route-r18.md` (`surface: P5`, host declaration, consumer table, § Unexercised behaviour `[UNK]`); `SCORECARD.md:843-845` maps P5 to "themes/wallpapers"; round-18 w2 `ConnProvinceScope.md` E6/E9 |
-| E9 | No sibling lane claims the ground (re-check at HEAD) | `grep -l -i omarchy /home/vgpnk/Projects/shokunin/*/PROVINCE.md` → `mado-shokunin/PROVINCE.md` only. `[INFERENCE]` no contested claim; `MadoR19.ConnProvinceRoster` is producing the authoritative adjacency sweep in parallel |
+| E9 | No sibling lane claims the ground (roster sweep, grounded) | `grep -l -i omarchy /home/vgpnk/Projects/shokunin/*/PROVINCE.md` → `mado-shokunin/PROVINCE.md` only; `MadoR19.ConnProvinceRoster` then swept all 21 fleet `PROVINCE.md` plus out-of-root `kimi-shokunin` and reports zero sibling claims on `~/.config/omarchy`, omarchy update flows or secrets there (`.ufo/waves/round-19/w1/reports/ConnProvinceRoster.md`) |
 
 ## In/out split, entry by entry
 
@@ -51,16 +54,18 @@ requires a found surface to be corrected to the real path. No sibling
 | `extensions/menu.sh` | OUT | omarchy program extension script/behaviour (non-executable data mode, but still a script) |
 | `themed/` (`*.tpl.sample`) | OUT | theme template machinery (write-side asset), sample only |
 | secret-shaped value anywhere under the root | OUT → kagi | existing `PROVINCE.md:14`; no such name found (E7) |
-| theme writes, `omarchy update`, any consumer reload | OUT | `PROVINCE.md:10-12,18`; lane never mutates running state |
+| theme writes, `omarchy update`, any consumer reload | OUT | `PROVINCE.md:10-12` and the final slogan (`:20` after landing); lane never mutates running state |
 
-## Landing recipe (so the refinement does not become a stale-pin defect)
+## Landing recipe and post-landing state (do not re-insert)
 
-1. Insert the line and one blank line before the final slogan (`:18`); the file
-   then reads 20 L with a trailing newline. Record the new `wc -l` and
-   `sha256sum PROVINCE.md` in the landing receipt.
-2. Re-point the **present-tense** pins of the old artifact:
-   - `SKILL.md:660` — "Pack: `PROVINCE.md` (18 L, sha `7aad7b86…`)"
-   - `SKILL.md:741` — "unchanged (18 L, `7aad7b86…`)"
+1. Landed: the line and one blank line sit before the final slogan; the file is
+   20 L with a trailing newline, sha256
+   `539a9f6a9f452a82f8ca0fa7700d6824d842957d463e1673ae93a2012f79e8bc`, and the
+   refinement is `cmp`-identical to the block above. Verify with `wc -l` +
+   `sha256sum PROVINCE.md`; do not insert it again.
+2. Re-point the stale pins of the old artifact in the current worktree:
+   - `SKILL.md:666` — "Pack: `PROVINCE.md` (18 L, sha `7aad7b86…`)"
+   - `SKILL.md:747` — "unchanged (18 L, `7aad7b86…`)"
 3. The self-audit's measured rows are history, not current pins:
    `corpus/knowledge/province-accuracy-selfaudit.md:12-13`, `:213`, `:295`.
    Append an errata naming the round-19 digest and stating that the `18 L` /
