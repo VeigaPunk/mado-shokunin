@@ -1179,3 +1179,38 @@ counter and reproduced 18/26 → 20/28, 2/13 → 13/13 and 3/6 → 6/6. It narro
   pre-round tool after its one reasoned case edit (CriticHonestyW2 A7). Gate selftest showed
   two non-reproducible fixture-loss failures under concurrent seat runs (ScribeScorecardCheck,
   MutGateR19); every isolated run reads 443/443 → cause `[UNK]`.
+
+### Round 19 — final state (append-only)
+
+Tools final at `61eaa071161e401a370fbdc3000de1cfbf99e1cd` (gate `071d39d9…`, 4,160 L:
+F5-F9 comment fixes, F6 rescue now requires `.jj` and equal `HEAD^{tree}`/tip tree,
+OM1 PATH guard; `PIN_MADO` `f03e6cab…`). Final receipts `evidence/final/` (commit
+`6963d34`), each headed `RECEIPT … measured_commit=61eaa07…`: C1 20/28, C2 13/13, C3
+6/6; criterion 27 red `9c54c56` exit 1 / green exit 0; criterion 28 red exit 1 / green
+exit 0 (three ledger entries); class scan (three `package_query/pacman:-Q`, 0 control
+hits); frozen r19 `frozen_match`, r18 `frozen_verdict_mismatch`; token-join PASS; gate
+selftest 452/452. Harm watch at `61eaa07` PASS (`evidence/final/harm/`: gate 452/452,
+regression PASS, 11/11 suites, classifier 52/52, U 7/7, navigation 34/34, census exit
+0). `python3 -I .ufo/waves/round-18/receipt-check.py .ufo/waves/round-19/receipt-claims.json`
+→ `EXPECT_SUMMARY: 16/16`. Gate selftest 389 → 452 (+63), no prior assertion lost
+(w2 CriticAdmission label diff at 443; the 9 added since are OM1 guard, OM17, WL1).
+
+### Capabilities (round 19, addendum)
+
+Tripwire classes `tool_install` and `vcs_write` are not entered as capabilities: their
+w2 precision findings (help/dry-run rows, eval-surface misses, synthetic rule-B false
+positives) are open.
+
+### Planned (round 20; intent only)
+
+1. operability/precision — tripwire: rule-B name-binding guard and lead tagging, `jj …
+   --help`/`git --dry-run` carve-outs, eval-argv VCS coverage, `curl … | sh`, pip
+   pre-verb options; adopt the w2 regression cases (AdvHelperFn 14, AdvVcs 6,
+   AdvInstallers 6, AdvBashCVar, MutMergedTripwire 5) red-before → green; re-pin.
+2. freshness — line-level pin currency (55 of 73 `2.17.0` lines without a same-line
+   pointer, w2 ScribePlannedRow) and the same-morning moves the walker sweep missed:
+   elephant 2.21.0 → 2.22.1, uwsm 0.26.7 → 0.27.1, hyprland 0.56.2-2 → -4, hyprtoolkit.
+3. calibration — tool-honesty fixes routed by w2 SentinelToolSafety/ReviewHarmTool
+   (harm-watch worktree block, supersede-sweep worktree ledger, frozen-repin README
+   receipt without `measured_commit`, frozen pin-spelling normpath, anchor-durability
+   exit code) as lesson-cited criteria with reds.

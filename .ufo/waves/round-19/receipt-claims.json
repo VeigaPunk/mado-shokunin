@@ -1,68 +1,141 @@
 {
-  "schema": "mado-receipt-claims-v1",
-  "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
-  "round": "round-19",
-  "checker": ".ufo/waves/round-18/receipt-check.py",
-  "revs": {
-    "baseline": "9c54c56a6a7528675027b7f628f97a1b8d1b8e8d",
-    "pre_registration": "17661e0fa83f978fb659f5bb8fef47f0969f6945"
+ "schema": "mado-receipt-claims-v1",
+ "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+ "round": "round-19",
+ "checker": ".ufo/waves/round-18/receipt-check.py",
+ "revs": {
+  "baseline": "9c54c56a6a7528675027b7f628f97a1b8d1b8e8d",
+  "pre_registration": "17661e0fa83f978fb659f5bb8fef47f0969f6945"
+ },
+ "rev_semantics": {
+  "WORKTREE": "read the receipt file directly (authored fixtures); bind_rev is then required and is the revision the tool identity binds to",
+  "PENDING-L1": "placeholder for a receipt that is not committed yet; evaluates as PENDING (could-not-evaluate, exit 2, never credit)"
+ },
+ "bind_rev_semantics": "Revision whose <tool> bytes the receipt attests; defaults to rev. A declared value other than rev must equal the receipt's own measured_commit and marks a before-state receipt (it deliberately ran the older tool). Leaving it unset on a receipt whose measured_commit tool differs from rev is STALE.",
+ "expect_semantics": {
+  "ok": "provenance complete, measured_commit an ancestor of the read revision, tool bytes equal at measured_commit (or tool_rev) and after it",
+  "MISSING_PROVENANCE": "no tool_sha256 and/or measured_commit in the receipt",
+  "SHA_MISMATCH": "tool_sha256 is not the digest of the tool at measured_commit (or tool_rev)",
+  "STALE": "internally consistent receipt that attests a superseded tool at the claimed revision (R17-V1/V2)",
+  "NOT_ANCESTOR": "measured_commit is not an ancestor of the revision the claim reads at",
+  "PRODUCER_MISMATCH": "the receipt's own tool= token names a producer the claim does not"
+ },
+ "claims": [
+  {
+   "id": "r19-c26-redbefore-headerless",
+   "receipt": ".ufo/waves/round-18/evidence/gate-rc-redbefore.txt",
+   "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
+   "tool": "tools/mado-verify.sh",
+   "expect": "MISSING_PROVENANCE",
+   "note": "R18-V2 red, kept red: QUALITY.md:148 cites this hand-authored GateRcFix \u00a71 receipt as criterion 26's red-before, but its bytes carry neither tool_sha256 nor measured_commit (grep at 17661e0 finds no token), so criterion 26's own red-before rests on evidence that fails criterion 24. Producer digests exist only as prose: :8 names the committed d9a5a18 gate fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207 and :10 an uncommitted edited gate 2bdf5e8afbb617142e4a881943084f94c9513327b1de25170ad71db113983925; the gate committed at 9c54c56/17661e0 is c9fb0cef3e081dc878d69f8e20c148429bdfbdce949f8afaed705db957ea42b5. None of the three sits in a RECEIPT header."
   },
-  "rev_semantics": {
-    "WORKTREE": "read the receipt file directly (authored fixtures); bind_rev is then required and is the revision the tool identity binds to",
-    "PENDING-L1": "placeholder for a receipt that is not committed yet; evaluates as PENDING (could-not-evaluate, exit 2, never credit)"
+  {
+   "id": "r19-c26-regression-recut-headerless",
+   "receipt": ".ufo/waves/round-18/evidence/regression-recut.txt",
+   "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
+   "tool": "tools/mado-verify.sh",
+   "expect": "MISSING_PROVENANCE",
+   "note": "R18-V2 red, kept red: the PIN_MADO re-cut receipt is produced by the external harness tameshi-shokunin/tools/mutate-and-run.sh (sha256 0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa, narrated in prose) against the in-lane gate; no RECEIPT header, no tool_sha256, no measured_commit, so its provenance is unverifiable by the checker. The claim names the in-lane tool under test only; the producer is external and cannot be bound to a lane revision."
   },
-  "bind_rev_semantics": "Revision whose <tool> bytes the receipt attests; defaults to rev. A declared value other than rev must equal the receipt's own measured_commit and marks a before-state receipt (it deliberately ran the older tool). Leaving it unset on a receipt whose measured_commit tool differs from rev is STALE.",
-  "tool_rev_semantics": "Revision whose <tool> bytes tool_sha256 attests, for producers that were worktree-only at the measured revision (the round-19 before receipts say 'tool not yet committed; pre-registration baseline'). Defaults to measured_commit. The unmodified round-18 checker ignores this key and returns ERROR for the two such claims because git show <measured_commit>:<tool> is absent; the three-hunk change reported in .ufo/waves/round-19/w1/reports/ReceiptClaims19.md makes them ok. It changes no other claim's status.",
-  "expect_semantics": {
-    "ok": "provenance complete, measured_commit an ancestor of the read revision, tool bytes equal at measured_commit (or tool_rev) and after it",
-    "MISSING_PROVENANCE": "no tool_sha256 and/or measured_commit in the receipt",
-    "SHA_MISMATCH": "tool_sha256 is not the digest of the tool at measured_commit (or tool_rev)",
-    "STALE": "internally consistent receipt that attests a superseded tool at the claimed revision (R17-V1/V2)",
-    "NOT_ANCESTOR": "measured_commit is not an ancestor of the revision the claim reads at",
-    "PRODUCER_MISMATCH": "the receipt's own tool= token names a producer the claim does not"
+  {
+   "id": "r19-measure-before",
+   "receipt": ".ufo/waves/round-19/evidence/measure-before.json.txt",
+   "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
+   "tool": ".ufo/waves/round-17/measure.py",
+   "expect": "ok",
+   "note": "C1 calibration baseline: RECEIPT header tool=.ufo/waves/round-17/measure.py tool_sha256=de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc measured_commit=9c54c56; measure.py is committed at 9c54c56 and unchanged at 17661e0 (same digest), so this claim credits under the unmodified checker."
   },
-  "claims": [
-    {
-      "id": "r19-c26-redbefore-headerless",
-      "receipt": ".ufo/waves/round-18/evidence/gate-rc-redbefore.txt",
-      "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "tool": "tools/mado-verify.sh",
-      "expect": "MISSING_PROVENANCE",
-      "note": "R18-V2 red, kept red: QUALITY.md:148 cites this hand-authored GateRcFix §1 receipt as criterion 26's red-before, but its bytes carry neither tool_sha256 nor measured_commit (grep at 17661e0 finds no token), so criterion 26's own red-before rests on evidence that fails criterion 24. Producer digests exist only as prose: :8 names the committed d9a5a18 gate fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207 and :10 an uncommitted edited gate 2bdf5e8afbb617142e4a881943084f94c9513327b1de25170ad71db113983925; the gate committed at 9c54c56/17661e0 is c9fb0cef3e081dc878d69f8e20c148429bdfbdce949f8afaed705db957ea42b5. None of the three sits in a RECEIPT header."
-    },
-    {
-      "id": "r19-c26-regression-recut-headerless",
-      "receipt": ".ufo/waves/round-18/evidence/regression-recut.txt",
-      "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "tool": "tools/mado-verify.sh",
-      "expect": "MISSING_PROVENANCE",
-      "note": "R18-V2 red, kept red: the PIN_MADO re-cut receipt is produced by the external harness tameshi-shokunin/tools/mutate-and-run.sh (sha256 0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa, narrated in prose) against the in-lane gate; no RECEIPT header, no tool_sha256, no measured_commit, so its provenance is unverifiable by the checker. The claim names the in-lane tool under test only; the producer is external and cannot be bound to a lane revision."
-    },
-    {
-      "id": "r19-tw-recall-before",
-      "receipt": ".ufo/waves/round-19/evidence/tw-recall-before.txt",
-      "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "tool": ".ufo/waves/round-19/tw-recall.py",
-      "tool_rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "expect": "ok",
-      "note": "C3 before receipt: RECEIPT header tool=.ufo/waves/round-19/tw-recall.py tool_sha256=220902982fb1f0561811e6483ea53fe08ba2b8f939f396a440ab63944e4cbd28 measured_commit=9c54c56 (the measured data baseline). The tool was worktree-only then and landed at 17661e0 with exactly that digest; tool_rev names the committing revision, so the sha resolves. The unmodified round-18 checker returns ERROR (git show 9c54c56:.ufo/waves/round-19/tw-recall.py is absent) and does not read tool_rev."
-    },
-    {
-      "id": "r19-fresh-pins-before",
-      "receipt": ".ufo/waves/round-19/evidence/fresh-pins-before.txt",
-      "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "tool": ".ufo/waves/round-19/fresh-pins.py",
-      "tool_rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "expect": "ok",
-      "note": "C2 before receipt: RECEIPT header tool=.ufo/waves/round-19/fresh-pins.py tool_sha256=a094be019968ef2cff4bf643be5f5f2b62d24b957310a4c0620a0ea2c5bcd789 measured_commit=9c54c56. Same split provenance as tw-recall-before: worktree-only at baseline, committed at 17661e0 (digest matches); tool_rev names the committing revision. Unmodified checker: ERROR (tool absent at measured_commit)."
-    },
-    {
-      "id": "r19-measure-before",
-      "receipt": ".ufo/waves/round-19/evidence/measure-before.json.txt",
-      "rev": "17661e0fa83f978fb659f5bb8fef47f0969f6945",
-      "tool": ".ufo/waves/round-17/measure.py",
-      "expect": "ok",
-      "note": "C1 calibration baseline: RECEIPT header tool=.ufo/waves/round-17/measure.py tool_sha256=de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc measured_commit=9c54c56; measure.py is committed at 9c54c56 and unchanged at 17661e0 (same digest), so this claim credits under the unmodified checker."
-    }
-  ]
+  {
+   "id": "r19-tw-recall-before-recut",
+   "receipt": ".ufo/waves/round-19/evidence/tw-recall-before-recut.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/tw-recall.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-fresh-pins-before-recut",
+   "receipt": ".ufo/waves/round-19/evidence/fresh-pins-before-recut.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/fresh-pins.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-gate-swap-recut",
+   "receipt": ".ufo/waves/round-19/evidence/gate-swap-receipt.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/evidence/gate-swap-d9a5a18.sh",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-anchor-durability-red",
+   "receipt": ".ufo/waves/round-19/evidence/final/anchor-durability-red.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/anchor-durability.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-anchor-durability-green",
+   "receipt": ".ufo/waves/round-19/evidence/final/anchor-durability-green.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/anchor-durability.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-supersede-sweep-red",
+   "receipt": ".ufo/waves/round-19/evidence/final/supersede-sweep-red.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/supersede-sweep.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-supersede-sweep-green",
+   "receipt": ".ufo/waves/round-19/evidence/final/supersede-sweep-green.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/supersede-sweep.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-measure-after",
+   "receipt": ".ufo/waves/round-19/evidence/final/measure-after.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-17/measure.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-fresh-pins-after",
+   "receipt": ".ufo/waves/round-19/evidence/final/fresh-pins-after.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/fresh-pins.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-tw-recall-after",
+   "receipt": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": ".ufo/waves/round-19/tw-recall.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-tripwire-frozen-r19",
+   "receipt": ".ufo/waves/round-19/evidence/final/tripwire-frozen-r19.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": "tools/mado-tripwire.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-tripwire-scan-classes",
+   "receipt": ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": "tools/mado-tripwire.py",
+   "expect": "ok"
+  },
+  {
+   "id": "r19-gate-selftest",
+   "receipt": ".ufo/waves/round-19/evidence/final/gate-selftest.txt",
+   "rev": "6963d34bc418c37b522a631ad5451f583600d4cd",
+   "tool": "tools/mado-verify.sh",
+   "expect": "ok"
+  }
+ ],
+ "note_r19_final": "Round-19 final (L1): the two original before receipts (measured_commit=9c54c56, producer first committed at 17661e0) are superseded by the *-recut receipts bound to the producer commit; tool_rev is not used (w2 RerunReceipts: it weakens criterion 24)."
 }
