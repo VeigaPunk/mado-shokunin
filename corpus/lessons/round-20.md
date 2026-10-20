@@ -58,9 +58,9 @@ Status/recheck/used-by changes, old→new: none on existing rows. New rows S099�
 - R19-V1: round 19's C1 target ≥ 21/29 was missed (20/28) and stays missed; recording
   R18-V2 under criterion 24 did not convert it. Round 20's calibration target is its own
   pre-registration (`e629f73`) as corrected before measurement.
-- R19-V2: the S096 tally over the 13-file `fresh-pins.py` set at `b435568` (unchanged at
-  `7b4839d`, `1f7f995`) is **8/13 on any matching line** and **6/13 on the first matching
-  line**; the five files with no S096 on a qualifying line cite S090 only:
+- R19-V2: over the 13-file `fresh-pins.py` set at `b435568` (unchanged at `7b4839d`,
+  `1f7f995`) S096 is **8/13 on any matching line** and **6/13 on the first matching line**;
+  the five files with no S096 on a qualifying line cite S090 only:
   `arc-synthesis.md:392`, `closeout-r11.md:299`, `config-health-report-r3.md:1009`,
   `waybar-walker-plane.md:479`, `waybar-walker-semantics.md:467`. The "5/13" was RerunC2's
   cited-as-evidence reading at `01b8094`, not a token count. The round-19 promise that
