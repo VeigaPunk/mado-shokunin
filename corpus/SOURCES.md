@@ -50,12 +50,16 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S038 | xdg-desktop-portal 1.21.0 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.21.0 | docs | A | Frontend release feature context for GlobalShortcuts and other portal APIs | “New Features”; tag 1.21.0, marked pre-release; accessed 2026-10-19 | Check release status before using a frontend feature note as an installed-version claim. | queued | 2026-10-19 | on-release | — |
 | S039 | xdg-desktop-portal 1.22.0 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.22.0 | docs | A | Frontend release fixes affecting Dynamic Launcher and FileChooser/OpenURI document paths | “Bug Fixes”; tag 1.22.0; accessed 2026-10-19 | Use exact release notes to anchor path-handling changes without inferring runtime behavior. | queued | 2026-10-19 | on-release | — |
 | S040 | wayland-protocols governance — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/35d9638cf0c3f0bbf0c42996580a284f3d8ce564/GOVERNANCE.md | spec | A | Namespace-specific protocol inclusion and promotion authority, not runtime support | §2.1, §2.2, §2.3 @ 35d9638cf0c3f0bbf0c42996580a284f3d8ce564 (2026-10-12) | Namespaces and implementation/review requirements govern upstream inclusion; they do not certify behavior on a particular compositor | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
-| S041 | Sanitized host registry capture — .ufo/waves/round-13/w1/globals.json | own-work | A | This client's time-bound Hyprland 0.56.2 interface/version advertisements | captured_utc 2026-10-20T04:10:03Z; probe rc 0; tool wayland-utils 1.3.0-1; compositor efb50993780079460b0cbed1363e2166a2de1d9f | Distinguishes advertised interface/version objects and multiplicity from behavioral feature validation without retaining device/output identity | mined | 2026-10-20 | on-session-change | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S041 | Sanitized host registry capture — .ufo/waves/round-13/w1/globals.json | own-work | A | This client's time-bound Hyprland 0.56.2 interface/version advertisements | captured_utc 2026-10-20T04:10:03Z; probe rc 0; tool wayland-utils 1.3.0-1; compositor efb50993780079460b0cbed1363e2166a2de1d9f | Distinguishes advertised interface/version objects and multiplicity from behavioral feature validation without retaining device/output identity | mined | 2026-10-20 | on-session-change | corpus/knowledge/wayland-protocol-boundaries-r13.md, corpus/knowledge/output-colour-boundaries-r14.md |
 | S042 | Wayland debugging extras — https://wayland.freedesktop.org/extras.html | docs | A | Documented compositor-global discovery, revision-anchored correction to S006 | §Compositor features; website source extras.html @ 8923a19916635c21a3577b616f650a7e45d70fa9 (2026-01-15) | supersedes S006 — anchors wayland-info's advertised-global discovery purpose to the page source revision; no behavioral result follows | mined | 2026-10-20 | 180d | corpus/knowledge/wayland-protocol-boundaries-r13.md |
 | S043 | Wayland core registry specification — /usr/share/wayland/wayland.xml; https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_registry | spec | A | Core registry announcement, binding and removal are separate events | wayland 1.26.0-1 installed XML:117-177, wl_registry description and global/bind/global_remove | Registry events advertise name/interface/version; binding creates a client handle; neither an inventory nor its version implies tested feature behavior | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
 | S044 | Gate maintenance rules — corpus/knowledge/gate-standing-use.md | own-work | A | Actual gate pin re-anchor and outside-marker regression requirements | §5 rules 2 and 4, :212-226; historical M10-2 note reopened 2026-10-20 | Gate pin movement requires re-verification and an appended erratum; edits outside excised blocks require a measured regression re-cut | mined | 2026-10-20 | on-gate-change | corpus/lessons/round-13.md |
 | S045 | Window Rules duplicate-admission correction — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Duplicate current-wiki source admission, not a new window-rule fact | Latest git introductory Note and Syntax, page modified 2026-08-26; reopened 2026-10-20 | supersedes S030 — REJECTED: duplicate S017 for overlapping current-wiki syntax scope; flip: an independently justified distinct pinned scope after collision review | rejected | 2026-10-20 | 90d | — |
 | S046 | wayland-info diagnostic implementation — https://gitlab.freedesktop.org/wayland/wayland-utils/-/raw/1.3.0/wayland-info/wayland-info.c | code | A | Upstream 1.3.0 observer bindings, output/colour detail queries and print filtering; not binary-source equivalence | tag 1.3.0 @ d01edd68961ca01779dcb96afe56c2d99ff79067; global_handler :3125-3163, detail calls :1775,:2031,:2626,:2744,:2750 | Diagnostic execution includes bindings and read-only detail queries even though S041 retains only registry headers; -i filters printed information, not binding | mined | 2026-10-20 | on-release | corpus/knowledge/wayland-protocol-boundaries-r13.md |
+| S047 | wlr-output-management XML — https://gitlab.freedesktop.org/wlroots/wlr-protocols/-/raw/a741f0ac5d655338a5100fc34bc8cec87d237346/unstable/wlr-output-management-unstable-v1.xml | spec | A | Documented output-configuration serial/test/apply/outcome boundary, not host behavior | a741f0ac5d655338a5100fc34bc8cec87d237346; manager/head descriptions and zwlr_output_configuration_v1 test/apply/succeeded/failed/cancelled; raw sha256 65b0f82a6cf129bf1a1c31a2428795abd33886c15ddd5f3ad97e5922d7bdc3a7 | Validation-only test does not guarantee apply success; successful apply may round state; stale serials cancel proposals | mined | 2026-10-20 | on-release | corpus/knowledge/output-colour-boundaries-r14.md |
+| S048 | Colour-management XML — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.49/staging/color-management/color-management-v1.xml | spec | A | Documented colour-manager support events and image descriptions, not measured HDR or physical colour accuracy | tag 1.49; wp_color_manager_v1 supported_* and done; output get_image_description; surface set_image_description; wp_image_description_info_v1 target_luminance; raw sha256 18a2678e3352c3be3fbeed20005d48852b7235d0d78f08b9c987a0b8e91449f9 | Separates manager capability events, output/surface image descriptions and theoretical luminance from actual light emitted by a display | mined | 2026-10-20 | on-release | corpus/knowledge/output-colour-boundaries-r14.md |
+| S049 | Retained S041 data-scope correction — .ufo/waves/round-13/w1/globals.json | own-work | A | Correction of S046's unqualified retained-registry-only wording, not new diagnostic behavior | captured_utc 2026-10-20T04:10:03Z; globals records versus top-level probe/tool/compositor/session_binding; reopened 2026-10-20 | supersedes S046 — global records contain interface/version only; sanitized probe/session metadata is also retained; the diagnostic-binding evidence is unchanged | mined | 2026-10-20 | on-capture-change | corpus/knowledge/wayland-protocol-boundaries-r13.md, corpus/lessons/round-14.md |
+| S050 | Tagged Hyprland output transaction safety — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/OutputManagement.cpp | code | A | Static tagged callback/stub facts that bar assuming output dry-run safety; not observed host behavior or binary-source equivalence | efb50993780079460b0cbed1363e2166a2de1d9f; COutputConfiguration constructor setDisableHead/setTest and applyTestConfiguration(bool test) | Test returns true through a stub; disable_head saves disabled state and schedules reload before a later test/apply; transaction-building is mutation-class | mined | 2026-10-20 | on-compositor-release | corpus/knowledge/output-colour-boundaries-r14.md |
 
 ## Paths
 
@@ -72,6 +76,10 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
   phase and governance, wire-level registry contract, tool purpose, then the
   sanitized host sample. S006 remains queued historical metadata; S042
   supersedes its access-date-only anchor. U5–U7 remain frontier ground.
+- **Output/colour boundaries (U5, round 14)** — S041 → S047 → S048 → S050:
+  begin with the dated advertisement and its limits, then the owning
+  output transaction and colour-description specifications. U5's
+  documented route is now held; feature behavior and U6/U7 remain open.
 
 ## Search log
 
@@ -138,6 +146,34 @@ Combined candidate ids are S005, S017, S040–S046. The revision-bound
 actual present/mined/rejected candidate sets (final 9/8/1), rather than
 inferring knowledge growth from these row counts. Stop: the diagnostic
 implementation boundary is now code-grounded; no new feature test follows.
+
+Round 14 (2026-10-20), bounded U5 source selection: question — what do
+output-configuration replies and colour descriptions actually establish?
+Opened directly the canonical wlroots XML at a741f0ac and
+wayland-protocols colour XML tag 1.49; identified/screened/included
+2/2/2 sources, excluded 0 — the exact two new ids S047/S048 in this
+round's revision-bound `measure.py` registry delta. Reopened S041 for
+the historical advertisement join; its used-by change is logged in the
+lesson. Stop: both owning XMLs directly answer the bounded questions.
+Advisory alternate revisions and community discovery pages were not
+admitted as additional sources; no complete protocol or host-behavior
+inventory is implied. The raw tag-1.49 colour XML matches the installed
+1.49-1 file; older README/governance revisions are not substituted for it.
+
+Round-14 correction search, R13-V1: reopened the single own-work S041
+capture and compared global-record keys with enclosing metadata; one
+candidate screened and included as S049, zero excluded — the S049 row in
+the revision-bound registry delta is the counting unit. This correction
+supersedes S046's unqualified retention phrase; it is not a third external
+protocol source, a new capture or additional U-item expansion.
+
+Round-14 adversarial follow-through: SourceSafety identified a possible
+specification/implementation safety mismatch. Parent opened the exact
+tagged OutputManagement.cpp callbacks once; one candidate screened and
+included as S050, zero excluded — source id S050 in the revision-bound
+registry delta. Stop: the opened test stub and pre-test disable callback
+are sufficient to reject assuming dry-run safety; no feature execution,
+binary/source equivalence or additional host-behavior claim is admitted.
 
 ## Leads (unopened)
 

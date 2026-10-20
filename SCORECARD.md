@@ -453,3 +453,42 @@ window N=3; the finite diagnostic subset does not retire broad operability.
 
 Retired: none. **Admission and SHONEN clearance remain pending the parent's
 fresh non-author closure after this report lands.**
+
+## Round 14 — declared claims (2026-10-20)
+
+Baseline `873ff081b2ac363df771261b0ed950cba50d8988`. L1 holds the
+canonical planner seat; one campaign-validated 32-seat wave serves these
+two causally separable claims, with no exploratory claim.
+
+1. **C1 coverage:** the lowest non-retired scored axis is sourced
+   current-art ground, 4/7 = 5.7143/10. Admit one substantive U5
+   output-management/colour boundary note citing opened primary S047/S048
+   with reciprocal mined joins: target 5/7 = 7.1429/10. Neither source
+   rows nor advertisement imply tested output changes or HDR.
+2. **C2 operability:** on the explicitly new regular-source-target
+   subset, count three isolated directory-shaped cases (direct,
+   all-directory glob, mixed file/directory glob) whose owning
+   `hypr.root.sources_resolve` row fails with the named non-regular
+   target and overall exit 1. Target 0/3 → 3/3; baseline observation
+   still to be run, so zero is a falsifiable prediction, not a result.
+   Print all overall exits separately. Before any baseline measurement,
+   ReviewResolver moved the direct fixture from local ai-usage.conf
+   to default/hypr/windows.conf to isolate this row. The local-directory
+   overlap is an unscored control. Source-order swap preserves existing
+   behavior, not a falsely claimed new capability.
+
+The revision-bound counting command is
+`python3 .ufo/waves/round-14/measure.py <revision>`.
+Broader operability is not retired by its earlier finite 10/10 rubric.
+No domain-source-tree mutation, client feature request, kernel diagnosis or promotion
+clearance is authorized. R13-V1..V3 are lesson-backed corrections within
+these claims/frontier duties, not a third axis claim.
+
+Premeasurement predicate tightening (AttackMetric / AttackNoHarm):
+`10 × credited cases / 3`; credit requires the exact expected `~/`
+path under `non-regular:` with no unresolved/missing/extra class, only
+the resolver FAIL row, the declared toggle PASS/NOTE collateral status,
+and identical owning-row detail under a second isolated root. The
+mixed case must not accuse its regular sibling. Clean/order/file-symlink/
+newline-regular/ai-usage-overlap/direct-missing/zero-match controls
+are outside the denominator. No baseline result has yet been observed.

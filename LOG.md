@@ -913,3 +913,73 @@ discernment improved narrowly (outside S030 disagreement becomes
 criterion 17 with a demonstrated red historical case). The current
 round's independent admit/reject spot-check and admission are still
 pending the parent's after-report closure, not self-attested.
+
+## 2026-10-20 — round 14: U5 boundaries and regular source targets
+
+**Motivation:** SCORECARD's round-14 plan; lowest scored non-retired
+coverage 5.7143/10; outside `round-13-verifier-spotcheck.md` R13-V1..V3;
+ReviewResolver/GateRecon source inspection of the baseline `-e`/any-glob
+existence predicate. Baseline revision:
+`873ff081b2ac363df771261b0ed950cba50d8988`.
+
+**Declared separable claims:** C1 adds sourced U5's documented
+output-management/colour boundary route, targeting sourced U-items
+4/7 → 5/7. C2 requires owning-row named non-regular diagnostics for
+three isolated directory-shaped source cases, targeting 0/3 → 3/3.
+These zero baselines are predictions until the named-revision counter
+runs; they are not copied results. Counting command:
+`python3 .ufo/waves/round-14/measure.py REV`.
+
+**Knowledge/source work:** `corpus/knowledge/output-colour-boundaries-r14.md`
+distinguishes configuration test/apply/outcome, manager support events
+and immutable image descriptions from unexercised feature behavior.
+Opened S047/S048 are exact primary XMLs; S041 is reopened historical
+advertisement, not a new client run. S049 corrects immutable S046's broad
+retained-data wording, not its diagnostic behavior evidence. README
+indexes the actual new note and narrows remaining U5 feature unknowns.
+Source byte commands/output are committed in
+`.ufo/waves/round-14/evidence/{output,colour}-source-binding.txt`.
+
+**Learned corrections:** U4 gains an appended R13-V1 erratum:
+global records contain interface/version only; sanitized probe/session
+metadata is also retained. `gate-standing-use.md` gains an appended
+R13-V2/V3 clarification; the original fleet report and old receipt are
+not rewritten. In particular, round-13's “byte-identical before/after”
+means config boundary bytes unchanged **within that one run**, not
+identical outputs across code revisions. Its 29 PASS / 0 FAIL / 0 UNKNOWN
+historical result stands. Future standalone evidence carries its
+resolved measured commit and raw whole-gate digest in the receipt itself.
+QUALITY 18/19 are grounded in lesson M4/M1, respectively; existing
+criteria 7/9/13 already govern receipt provenance.
+
+**Gate work:** `tools/mado-verify.sh` owns a strict regular-target policy
+on its declared sources, not a claim that Hyprland itself errors on every
+directory it may skip. Direct files/file symlinks and every glob member
+are checked; non-regular and unresolved classes stay separate. Source
+set/order checks stay separate; an order-only fixture preserves existing
+behavior and is not counted as improvement. ReviewResolver's direct
+case moves from ai-usage to default/hypr/windows.conf before any baseline
+run to isolate the resolver. All-directory toggle collateral NOTE is
+explicit; mixed-glob diagnostics must not accuse the regular sibling.
+The current handler remains line-oriented, not a general hyprlang parser.
+
+**Swarm:** one campaign-validated 32-seat native batch through unchanged
+host routing. L1 holds canonical planner; PlanningWalk is a connector
+bounded data-walk. Spec, unchanged taskCall and recorded ids live under
+`.ufo/waves/round-14/w1/`. Reviews are lane-authoring advice, not outside
+promotion authority. The generic arbitrary-command receipt wrapper was
+rejected and removed as unnecessary surface; its reports remain rejected
+candidate evidence. No wrapper capability or executed selftest claimed.
+
+**Tooling:** OutputSpec installed wlr-protocols r112.a741f0a-1 from
+official pacman extra (`sudo pacman -S --needed --noconfirm wlr-protocols`)
+for the owning XML. ReviewSourceBar's `pacman -Sw` was cache download
+only, not a second install. No full-system upgrade or partial `-Sy`.
+Host configs/compositor, sibling repos and source trees stay read-only.
+No inherited uncommitted lane work existed at start; the non-author
+round-13 spotcheck stays untouched. No new L0 decision is needed.
+
+The separate round-14 committed-measurement entry below records actual
+results and delivered revisions; no unrun check is a pass. Parent's
+fresh after-report non-author closure supplies the independent admit
+and reject spot-check. SHONEN remains four author assertions.

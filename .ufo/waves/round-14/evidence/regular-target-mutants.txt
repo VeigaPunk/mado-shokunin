@@ -1,0 +1,50 @@
+command: bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh --defects /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-14/w1/regular-target.spec --suite 'bash "$MUTANT" --selftest' --workdir /tmp/mado-r14-recut-0blumi29/regular --label mado-r14-regular
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+input_binding: provisional worktree snapshot
+gate_sha256: d6d5eb27d5e6811367c9d447f224485460db13f1b832e131296036dc1fd39b36
+stdout:
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+MUTATE_DATE: 2026-10-20T06:00:23Z
+MUTATE_TARGET: /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 bytes=117602
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-14/w1/regular-target.spec defects=4
+CONTROL: GREEN (exit=0 duration-ms=7336 pristine-sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96)
+  | MADO_SELFTEST: 267/267 assertions passed
+DEFECT RT1: KILLED (exit=2 duration-ms=7357) accept an existing directory as a direct source target
+  | MADO_SELFTEST: FAILED — 262 passed, 5 failed
+  |   - N9: exit 1 (directory-shaped direct source) (got '0' want '1')
+  |   - N9: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N9: the directory-shaped direct target is named (want row hypr.root.sources_resolve FAIL containing 'non-regular: ~/.local/share/omarchy/default/hypr/windows.conf')
+  |   - N9: the owning-row detail is exactly the non-regular target (got '' want 'non-regular: ~/.local/share/omarchy/default/hypr/windows.conf')
+  |   - N9: exactly one hypr FAIL — the source row (got '0' want '1')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.z8KDrG
+DEFECT RT2: KILLED (exit=2 duration-ms=7344) bypass regular-file filtering for every expanded glob match
+  |   - N11: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N11: the owning-row detail names only the directory member (no regular-member token) (got '' want 'non-regular: ~/.local/state/omarchy/toggles/hypr/dir.conf')
+  |   - N11: exactly one hypr FAIL — the source row (got '0' want '1')
+  |   - N15: exit 1 (a matched dangling link does not resolve) (got '0' want '1')
+  |   - N15: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N15: the declared glob is named exactly once, never as non-regular (got '' want 'unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf')
+  |   - N15: exactly one hypr FAIL — the source row (got '0' want '1')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.1Hop8P
+DEFECT RT3: KILLED (exit=2 duration-ms=7357) invert the glob regular-file guard and misclassify both match kinds
+  |   - N15: exit 1 (a matched dangling link does not resolve) (got '0' want '1')
+  |   - N15: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - N15: the declared glob is named exactly once, never as non-regular (got '' want 'unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf')
+  |   - N15: exactly one hypr FAIL — the source row (got '0' want '1')
+  |   - N16: exit 0 (a newline-named regular member is not split) (got '1' want '0')
+  |   - N16: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - N16: the whole match set is regular — no phantom non-regular member (got '' want 'declared targets exist, member set exact')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.4QGByN
+DEFECT RT4: KILLED (exit=2 duration-ms=7360) omit the unresolved: label from a missing-target row
+  | MADO_SELFTEST: FAILED — 264 passed, 3 failed
+  |   - N4: the owning-row detail is exactly one unresolved member (no extra token) (got '~/.config/hypr/gkeep.conf' want 'unresolved: ~/.config/hypr/gkeep.conf')
+  |   - N14: the declared glob is named once under unresolved (got '~/.local/state/omarchy/toggles/hypr/*.conf' want 'unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf')
+  |   - N15: the declared glob is named exactly once, never as non-regular (got '~/.local/state/omarchy/toggles/hypr/*.conf' want 'unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.SJVFJo
+MUTATE_RESTORE: OK (target-sha256 before=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 after=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 pristine-sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96)
+MUTATE_EVIDENCE: /tmp/mado-r14-recut-0blumi29/regular
+MUTATE: DONE (target=mado-r14-regular defects=4 killed=4 survived=0 inconclusive=0 kill-rate=100%)
+
+stderr:
+
+exit=0

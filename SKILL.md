@@ -408,6 +408,43 @@ The earlier round-12 `wayland-info` absence was a dated observation:
 round 13 installs `wayland-utils 1.3.0-1` through pacman for this read route.
 Host configurations and compositor actions remain operator-owned.
 
+### Output/colour and source-target boundaries (round 14)
+
+Use [`output-colour-boundaries-r14.md`](corpus/knowledge/output-colour-boundaries-r14.md)
+for S047's exact output test/apply/outcome contract and S048's manager
+support events versus immutable output/surface image descriptions.
+Successful validation is not successful apply; even apply success need
+not exactly match requested properties. Colour metadata is not measured
+panel luminance or HDR rendering. S041 is historical advertisement only.
+The U4 appended R13-V1 erratum and S049 clarify that **global records**
+are interface/version pairs while sanitized probe/session metadata also
+remains in the enclosing artifact.
+
+**Never assume dry-run safety from the XML.** S050's tagged Hyprland
+`efb5099` source returns true through a test stub, and `disable_head`
+saves disabled state/schedules reload before any later test/apply.
+These are static source facts, not a measured host failure or binary
+equivalence claim. Treat the whole configuration-building transaction
+as mutation-class and operator-owned. Binding can also deliver head
+identity before explicit configuration requests; no requests is not
+no received identity. The U5 note carries exact source anchors.
+
+For the gate's supported declared-source policy, every direct target
+and every matched glob member must be a regular file; file symlinks
+are followed. `hypr.root.sources_resolve` names `non-regular:` versus
+`unresolved:`; it does not claim Hyprland itself raises a config error
+for targets that its parser may skip. Exact set membership and positional
+order remain separate checks. Named directory fixtures are the measured
+new subset; the order-swap fixture preserves existing behavior, not a
+new feature. Generic hyprlang grammar and expanded-glob membership policy
+remain unclaimed.
+
+Standalone round-14 selftest evidence records its resolved measured
+commit, raw whole-gate SHA-256, exact command and actual exit in the
+receipt itself (R13-V3). `boundary.readonly` means unchanged configuration
+bytes within that run, not identical outputs across code revisions
+(R13-V2). Historical outputs are not retroactively rewritten.
+
 ## Gate registry
 
 This `SKILL.md` is the registry home, per `PROTOCOL.md` §Gate standard,
@@ -423,6 +460,8 @@ below retain their original revisions, not current instrument pins.
 | mado-frozen-regression | gate | `python3 .ufo/waves/round-13/frozen/verify.py` | 0 clean (`frozen_match`); 1 failed (`frozen_verdict_mismatch`); 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same command with `--selftest`; 0 clean, 2 failed; isolated fixtures assert exit and stable id | `.ufo/waves/round-13/frozen/expected.json` pins both `gate.sh` and `harness.sh` before execution plus expected exit/marker | reads committed snapshots; child regression uses isolated temporary trees; selftest temporary fixtures | mado |
 | mado-source-merge | gate | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --registry corpus/SOURCES.md` | 0 clean; 1 failed merge-review screen (active URL collision); 2 could-not-evaluate (usage/read/parse/policy); other could-not-evaluate | same script with `--selftest`; 0 clean, 1 failed; in-memory fixtures assert exit and named findings | same script: `run_selftest()` expected fixture decisions and `supersedes` policy | read-only; no scope-overlap oracle or network lookup | mado |
 | mado-round13-measure | probe | `python3 .ufo/waves/round-13/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (measurement probe, not a verdict gate) | same script: revision-bound source join, U4 facets and four named-case expectations; SCORECARD defines rubric | temporary isolated config fixtures; no live config writes | mado |
+| mado-round14-measure | probe | `python3 .ufo/waves/round-14/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (revision-bound observation probe) | same script: U-item reciprocal joins/U5 facets, three regular-target cases and separate preservation controls; SCORECARD rubric | isolated temporary fixtures, never live configuration writes | mado |
+| mado-frozen-regression-r14 | gate | `python3 .ufo/waves/round-14/frozen/verify.py` | 0 clean (`frozen_match`); 1 failed (`frozen_verdict_mismatch`); 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same command with `--selftest`; 0 clean, 2 failed; isolated fixtures assert exit and stable id | `.ufo/waves/round-14/frozen/expected.json` pins gate/harness inputs plus expected exit/marker | reads round-14 committed snapshots; child regression/selftest isolated temporary trees | mado |
 
 Regression's mutable sibling harness digest is printed as provenance, not
 an enforced harness pin. A passing run binds the observed target, spec and
@@ -432,6 +471,11 @@ its input digests are verified before executing the copied gate/harness.
 These are explicitly frozen round-13 inputs, not aliases for mutable
 sibling code. Registration alone is not verification; the round report
 cites the actual self-invocations and frozen-run outcome.
+
+For round-14 evidence use `mado-frozen-regression-r14`; the round-13
+row and snapshots remain immutable historical evidence, not aliases for
+the current gate. Round-14's expected file pins both executable inputs
+before the replay compares the recorded historical kill table.
 
 ## Evidence trail & sources
 

@@ -102,3 +102,23 @@ from the installed package alone.
 ## Limits
 
 The capture is time-bound and client/session-specific; a future absence is not a historical falsification. No source XML inventory of every advertised extension was performed. Phase-classification coverage is the decision method, not a per-interface stable/staging assignment. No desktop configuration was written. Kernel/libinput diagnosis, device permission changes and full output/colour validation remain outside this admitted entry.
+
+## Erratum — round 14, R13-V1 retained-data scope
+
+The sentence in §Advertisement, binding and behavior saying “The retained
+S041 data is only registry interface/version headers” is too broad.
+**Global records contain interface/version only; sanitized probe/session
+metadata is also retained.** S041 also holds package/probe/compositor
+metadata, the socket name and later non-atomic session correlation, as
+the original §Host point sample already acknowledges.
+
+This clarification also supersedes the same unqualified retention phrase
+in SOURCES S046's teaches cell; S049 records the append-only source-row
+correction. It does not retract S046's diagnostic bindings/detail-query
+evidence or imply retention of raw device/output identity. The original
+sentence and immutable source cell remain historical bytes.
+
+Evidence: `.ufo/waves/round-13/w1/globals.json` keys `globals`, `probe`,
+`tool`, `compositor`, `session_binding` and `excluded`; S049;
+`corpus/lessons/round-13-verifier-spotcheck.md` R13-V1;
+`corpus/lessons/round-14.md` §Mistakes.

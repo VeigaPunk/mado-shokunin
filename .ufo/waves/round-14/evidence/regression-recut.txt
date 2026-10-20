@@ -1,0 +1,81 @@
+command: bash /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh --target /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh --defects /tmp/mado-r14-recut-0blumi29/mado-verify.defects.spec --suite 'bash "$MUTANT" --selftest' --workdir /tmp/mado-r14-recut-0blumi29/historical --label mado-r14-historical
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+input_binding: provisional worktree snapshot
+gate_sha256: ef50e262f311d74e05afd558883415d2f47fa2a0247a0c834e37f49cb60c742b
+stdout:
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5
+MUTATE_DATE: 2026-10-20T05:58:44Z
+MUTATE_TARGET: /tmp/mado-r14-recut-0blumi29/target.mado-verify.sh sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 bytes=117602
+MUTATE_SPEC: /tmp/mado-r14-recut-0blumi29/mado-verify.defects.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=7632 pristine-sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96)
+  | MADO_SELFTEST: 267/267 assertions passed
+DEFECT D1: KILLED (exit=2 duration-ms=7737) clause A: file-plane CLEAN verdict token renamed (CLEAN -> OK)
+  | MADO_SELFTEST: FAILED — 262 passed, 5 failed
+  |   - T1: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - T8: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - A: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - N13: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - N16: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.874c6M
+DEFECT D2: KILLED (exit=2 duration-ms=7800) clause B: UNKNOWN guard dropped from the CLEAN test
+  | MADO_SELFTEST: FAILED — 261 passed, 6 failed
+  |   - C: exit 1 (got '0' want '1')
+  |   - C: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - C: no fake CLEAN (unexpected: MADO_VERIFY: CLEAN)
+  |   - E: exit 1 (UNKNOWN blocks CLEAN) (got '0' want '1')
+  |   - E: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - E: no fake CLEAN (unexpected: MADO_VERIFY: CLEAN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.5LEgJh
+DEFECT D3: KILLED (exit=2 duration-ms=7863) clause B: skipped live layer row reports PASS instead of SKIP
+  | MADO_SELFTEST: FAILED — 266 passed, 1 failed
+  |   - A (live layer not executed) (want row live.plane SKIP)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.nDudt0
+DEFECT D4: KILLED (exit=2 duration-ms=7386) clause C: DIVERGED path exits 0
+  |   - N8: exit 1 (unsupported conditional) (got '0' want '1')
+  |   - N9: exit 1 (directory-shaped direct source) (got '0' want '1')
+  |   - N10: exit 1 (glob matched, but only a directory) (got '0' want '1')
+  |   - N11: exit 1 (mixed regular/directory glob) (got '0' want '1')
+  |   - N12: exit 1 (same member set, order moved) (got '0' want '1')
+  |   - N14: exit 1 (a zero-match glob does not pass) (got '0' want '1')
+  |   - N15: exit 1 (a matched dangling link does not resolve) (got '0' want '1')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.UN1hp0
+DEFECT D5: KILLED (exit=1 duration-ms=7342) clause C: failing --selftest returns 1 not 2
+  | MADO_SELFTEST: FAILED — 266 passed, 1 failed
+  |   - F: failing selftest exits 2 (got '1' want '2')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.6hV0VL
+DEFECT D6: KILLED (exit=2 duration-ms=7322) clause D: xdph dropped from the 12-conf local inventory
+  |   - N13: exit 0 (a file symlink is a regular target) (got '1' want '0')
+  |   - N13: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  |   - N13 (isolation: the local census is untouched) (want row hypr.local.inventory PASS)
+  |   - N14: exactly one hypr FAIL — the source row (got '2' want '1')
+  |   - N15: exactly one hypr FAIL — the source row (got '2' want '1')
+  |   - N16: exit 0 (a newline-named regular member is not split) (got '1' want '0')
+  |   - N16: CLEAN verdict (missing: MADO_VERIFY: CLEAN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.epbIhM
+DEFECT D7: KILLED (exit=2 duration-ms=7330) clause D: include-graph count test -ne -> -lt (extra source lines tolerated)
+  | MADO_SELFTEST: FAILED — 265 passed, 2 failed
+  |   - H (exact census, no tolerance) (want row hypr.root.include_graph FAIL)
+  |   - N7: the empty member is named as extra (want row hypr.root.include_graph FAIL containing 'extra: ''')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.HAYOFe
+DEFECT D8: KILLED (exit=2 duration-ms=7347) clause E: hyprland.conf sha pin comparison always "matches"
+  | MADO_SELFTEST: FAILED — 266 passed, 1 failed
+  |   - A: sha pin names the round-1 pin (fixture cannot match it) (want row hypr.file.sha_pin NOTE containing 'drifted from round-1 pin 4f52854a3c14')
+  | fixtures kept: /tmp/w5-mado-m52-selftest.pyiEO4
+DEFECT D9: KILLED (exit=2 duration-ms=7344) clause E: read-only boundary comparison always reads byte-identical
+  | MADO_SELFTEST: FAILED — 263 passed, 4 failed
+  |   - I: exit 1 (boundary drift detected) (got '0' want '1')
+  |   - I: DIVERGED verdict (missing: MADO_VERIFY: DIVERGED)
+  |   - I (safety row, FAIL direction) (want row boundary.readonly FAIL)
+  |   - I: no fake CLEAN (unexpected: MADO_VERIFY: CLEAN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.8FoB7K
+DEFECT R1: KILLED (exit=2 duration-ms=7338) clause F: tomllib-unavailable arm reads PASS not UNKNOWN
+  | MADO_SELFTEST: FAILED — 266 passed, 1 failed
+  |   - E (reader fallback) (want row walker.config UNKNOWN)
+  | fixtures kept: /tmp/w5-mado-m52-selftest.ay6HHN
+MUTATE_RESTORE: OK (target-sha256 before=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 after=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96 pristine-sha256=cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96)
+MUTATE_EVIDENCE: /tmp/mado-r14-recut-0blumi29/historical
+MUTATE: DONE (target=mado-r14-historical defects=10 killed=10 survived=0 inconclusive=0 kill-rate=100%)
+
+stderr:
+
+exit=0

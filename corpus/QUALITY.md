@@ -37,3 +37,25 @@ The lane-local collision screen is a conservative merge-review trigger,
 not a new source-tier scheme or an automatic knowledge-admission authority.
 Its red-before case uses the actual admitted S017/S030 pair, not merely a
 synthetic same-scope duplicate; its green state preserves rejected S030.
+
+## Criteria from regular-target and retained-data mistakes (round 14)
+
+18. A declared source target is not validated by existence alone: direct
+    targets and every matched glob member must be regular files, following
+    file symlinks. Name non-regular versus unresolved targets separately.
+    Exercise mixed-glob rejection without misclassifying its regular member;
+    preserve source-set/order as separate invariants. This is the lane's
+    strict supported-source policy, not an assertion that Hyprland itself
+    rejects every skipped target. (lesson: lessons/round-14.md#mistakes M4)
+19. Scope retained-data statements to the actual field or record class.
+    If global records are projected to interface/version pairs but the
+    enclosing artifact retains sanitized package/probe/session metadata,
+    name both; “only headers” must not describe the entire artifact.
+    Keep diagnostic requests, retained evidence and behavioral conclusions
+    separate. (lesson: lessons/round-14.md#mistakes M1; outside R13-V1)
+
+R13-V2/V3 use existing criteria 7, 9 and 13: a within-run boundary
+receipt does not establish cross-revision output equality, and future
+standalone selftest receipts carry their resolved commit and raw gate
+digest locally. No duplicate provenance criterion or generic wrapper is
+introduced; the lesson records the rejected implementation candidate.

@@ -36,6 +36,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/xdg-portal-routing-r12.md` (MADO-R12-3, round 12; covers U3) | Portal frontend/backend routing on this host (`hyprland-portals.conf` `default=hyprland;gtk` meets each `.portal` `Interfaces=`) and the ScreenCast v6 lifecycle, each stage with what it proves; no request was issued. | `source:` S031–S035, S037; evidence `.ufo/evidence/round-12/portal-host.txt`; recheck 2027-01-17. |
 | `knowledge/config-drift-r12.md` (MADO-R12-4, round 12) | Historical gkeep installation drift, provenance, gate EXPECT re-anchor and M13 census limits; the round-13 erratum corrects the governing gate-rule citation and scopes the new set checks versus remaining glob/grammar limits. | `source:` S013–S015; evidence `.ufo/evidence/round-12/drift-*.txt`, `gate-*.txt`; round-13 measurement pointers are in the appended erratum. |
 | `knowledge/wayland-protocol-boundaries-r13.md` (round 13; covers U4) | Pinned experimental/staging/stable policy, protocol-major versus interface-version distinction, and sanitized host registry interface/version capture. Advertisement is not feature behavior; diagnostic bindings/detail queries are separately explained. | `source:` S005, S040–S043, S046 in [SOURCES](SOURCES.md); `.ufo/waves/round-13/w1/globals.json`; read the note's safe recheck and limits. |
+| `knowledge/output-colour-boundaries-r14.md` (round 14; covers U5) | Documented output transaction test/apply/reply and colour-manager/image-description boundaries; tagged implementation safety caveat bars assuming dry-run safety. Historical matching advertisement is not tested behavior, HDR or physical colour accuracy. | `source:` S047/S048/S050 and reopened S041 in [SOURCES](SOURCES.md); raw source bindings `.ufo/waves/round-14/evidence/source-bindings-pipefail.txt`; feature execution remains operator-owned. |
 
 ## Quality bar
 
@@ -90,8 +91,12 @@ Index completeness does not retire these unresolved surfaces:
 - Round 12 (2026-10-19) moved per-window rule *effects*, the configuration-language
   era and portal routing onto sourced ground ([getprop](knowledge/window-rule-effects-getprop.md),
   [config era](knowledge/hyprland-config-era-r12.md), [portals](knowledge/xdg-portal-routing-r12.md)).
-  Still open: rule *attribution*, output management, the input debugging ladder
-  and Waybar module text — study paths and queued sources in [SOURCES](SOURCES.md).
+  Still open: rule *attribution*, output-management behavior, the input debugging
+  ladder and Waybar module text — study paths and queued sources in [SOURCES](SOURCES.md).
 - Round 13 moves U4's protocol-phase and advertised-global diagnostic route onto
   [sourced ground](knowledge/wayland-protocol-boundaries-r13.md).
   Feature behavior and a complete per-interface phase crosswalk remain unclaimed.
+- Round 14 moves U5's documented output-management/colour boundary route onto
+  [sourced ground](knowledge/output-colour-boundaries-r14.md). Output test/apply,
+  runtime state agreement, colour/HDR rendering and physical accuracy remain
+  unknown; this is neither full U5 feature coverage nor a hardware-health verdict.

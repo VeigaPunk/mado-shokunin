@@ -36,9 +36,12 @@
 #             — every declared name present and no undeclared *.conf file
 #             present, each named on FAIL
 #             (MADO-1 §2; round 12 M13); the observed source set is compared to
-#             the declared one the same way, order kept (round 13); local
-#             envs.conf is an orphan (MADO-1 §2, MADO-R2-1 §6/F3); the no-gaps
-#             toggle declares 0s (MADO-1 §7).
+#             the declared one the same way, order kept (round 13); every
+#             declared target must be a regular file — the check follows a
+#             symlink, so a link to a file passes while a directory (direct or
+#             a glob match) is refused by name under `non-regular:` (round 14);
+#             local envs.conf is an orphan (MADO-1 §2, MADO-R2-1 §6/F3); the
+#             no-gaps toggle declares 0s (MADO-1 §7).
 #   hypr-live — configerrors empty; gaps_out "0 0 0 0"; kb_layout br;
 #             border_size 0; rounding 0; animations on; binds 192; DP-1
 #             3440x1440@~100; touchpad scroll_factor 0.4; GDK_SCALE=1;
@@ -214,6 +217,17 @@ if bad:
     print("mismatch: " + ", ".join(bad)); sys.exit(5)
 print("4/4 keys match (focus/wrap/theme/hints)")
 PY
+}
+
+# diagnostic display for a resolved source path: the verified root reads as ~
+# so a named target matches the declared form in hyprland.conf. Diagnostics
+# only — never used for the filesystem test itself.
+src_disp() { # <expanded path>
+  local p="$1" r="${ROOT%/}"
+  case "$p" in
+    "$r"/*) printf '~/%q' "${p#"$r"/}" ;;
+    *) printf '%q' "$p" ;;
+  esac
 }
 
 # ---------------------------------------------------------------------------
@@ -406,6 +420,12 @@ selftest() {
     else
       st_bad "$5 (want row $2 $3 containing '$4')"
     fi
+  }
+  st_row_exact() { # out id status whole-detail desc — equality, not a substring
+    local got
+    got=$(printf '%s\n' "$1" | awk -v i="$2" -v s="$3" '
+      $2==i && $3==s { d=$0; sub(/^[^ ]+ +[^ ]+ +[^ ]+ +/, "", d); print d; exit }')
+    st_eq "$5" "$4" "$got"
   }
   st_counts_agree() { # out desc — the report counts must equal the row table
     local np nf nu ns nn
@@ -1130,6 +1150,9 @@ IEOF
     "N4: the local census names gkeep.conf"
   st_row_detail "$n_out" hypr.root.sources_resolve FAIL "~/.config/hypr/gkeep.conf" \
     "N4: the source target row names the vanished target"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "unresolved: ~/.config/hypr/gkeep.conf" \
+    "N4: the owning-row detail is exactly one unresolved member (no extra token)"
   st_row_has "$n_out" hypr.root.include_graph PASS "N4 (isolation: the source line is untouched)"
   st_counts_agree "$n_out" "N4: counts agree with rows"
 
@@ -1167,6 +1190,181 @@ IEOF
   st_row_has "$n_out" hypr.root.include_graph PASS "N8 (isolation: the source list is unchanged)"
   st_not_has "N8: no fake CLEAN" "$n_out" "MADO_VERIFY: CLEAN"
   st_counts_agree "$n_out" "N8: counts agree with rows"
+
+  # N9-N11 (round 14): a source target must be a REGULAR file. `[ -f ]` follows
+  # symlinks, so a link to a file is accepted; a directory — declared directly,
+  # matched by a glob, or mixed into a glob's match set — is refused by name
+  # under `non-regular:` on the stable owner row hypr.root.sources_resolve.
+  # A non-existent direct target and a zero-match glob keep `unresolved:`.
+  # These fixtures are isolated: the hyprland.conf source lines are untouched,
+  # so include_graph stays PASS and the local conf census stays PASS.
+
+  # N9: a direct source target replaced by a directory of the same name
+  local N9R="$NX/direct-dir"
+  mkdir -p "$N9R"
+  cp -a "$A/." "$N9R/"
+  rm -f "$N9R/.local/share/omarchy/default/hypr/windows.conf"
+  mkdir -p "$N9R/.local/share/omarchy/default/hypr/windows.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N9R" --no-live 2>&1); n_rc=$?
+  st_eq  "N9: exit 1 (directory-shaped direct source)" 1 "$n_rc"
+  st_has "N9: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL \
+    "non-regular: ~/.local/share/omarchy/default/hypr/windows.conf" \
+    "N9: the directory-shaped direct target is named"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "non-regular: ~/.local/share/omarchy/default/hypr/windows.conf" \
+    "N9: the owning-row detail is exactly the non-regular target"
+  st_not_has "N9: an existing target is never called unresolved" "$n_out" "unresolved:"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N9 (isolation: the source line and order are untouched)"
+  st_row_has "$n_out" hypr.local.inventory PASS "N9 (isolation: the local census is untouched)"
+  st_eq  "N9: exactly one hypr FAIL — the source row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N9: counts agree with rows"
+
+  # N10: the toggle glob's only match is a directory (all-directory match set).
+  # The toggle content row has its own status path for an absent regular file
+  # (NOTE), so it is asserted separately — never assumed clean.
+  local N10R="$NX/glob-dirs"
+  mkdir -p "$N10R"
+  cp -a "$A/." "$N10R/"
+  rm -f "$N10R/.local/state/omarchy/toggles/hypr/window-no-gaps.conf"
+  mkdir -p "$N10R/.local/state/omarchy/toggles/hypr/window-no-gaps.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N10R" --no-live 2>&1); n_rc=$?
+  st_eq  "N10: exit 1 (glob matched, but only a directory)" 1 "$n_rc"
+  st_has "N10: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.root.sources_resolve FAIL \
+    "non-regular: ~/.local/state/omarchy/toggles/hypr/window-no-gaps.conf" \
+    "N10: the all-directory glob match is named"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "non-regular: ~/.local/state/omarchy/toggles/hypr/window-no-gaps.conf" \
+    "N10: the owning-row detail names only that match"
+  st_not_has "N10: the glob did match, so it is not unresolved" "$n_out" "unresolved:"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N10 (isolation: the glob line and order are untouched)"
+  st_row_has "$n_out" hypr.local.inventory PASS "N10 (isolation: the local census is untouched)"
+  st_row_has "$n_out" hypr.toggle.no_gaps NOTE "N10 (collateral status: the toggle path is not a regular file)"
+  st_eq  "N10: exactly one hypr FAIL — the source row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N10: counts agree with rows"
+
+  # N11: mixed glob — one regular member beside one directory-shaped member.
+  # Only the non-regular member is refused; the regular one still judges.
+  local N11R="$NX/glob-mixed"
+  mkdir -p "$N11R"
+  cp -a "$A/." "$N11R/"
+  mkdir -p "$N11R/.local/state/omarchy/toggles/hypr/dir.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N11R" --no-live 2>&1); n_rc=$?
+  st_eq  "N11: exit 1 (mixed regular/directory glob)" 1 "$n_rc"
+  st_has "N11: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "non-regular: ~/.local/state/omarchy/toggles/hypr/dir.conf" \
+    "N11: the owning-row detail names only the directory member (no regular-member token)"
+  st_not_has "N11: the glob matched, so it is not unresolved" "$n_out" "unresolved:"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N11 (isolation: the source lines are untouched)"
+  st_row_has "$n_out" hypr.toggle.no_gaps PASS "N11 (isolation: the regular member still judges)"
+  st_eq  "N11: exactly one hypr FAIL — the source row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N11: counts agree with rows"
+
+  # N12: SAME members, order swapped (monitors.conf ↔ input.conf, file lines
+  # 14/15 so the theme anchor at line 13 does not move). This is the existing
+  # order/set split, recorded as a fixture — NOT new detection: include_graph
+  # owns order and FAILs naming line 11, while sources_resolve stays PASS
+  # because the set and every regular target are unchanged.
+  local N12R="$NX/source-order"
+  mkdir -p "$N12R"
+  cp -a "$A/." "$N12R/"
+  sed -i -e '\#^source = ~/.config/hypr/monitors.conf$#{h;d;}' \
+         -e '\#^source = ~/.config/hypr/input.conf$#{G;}' \
+         "$N12R/.config/hypr/hyprland.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N12R" --no-live 2>&1); n_rc=$?
+  st_eq  "N12: exit 1 (same member set, order moved)" 1 "$n_rc"
+  st_has "N12: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_detail "$n_out" hypr.root.include_graph FAIL \
+    "line 11: got '~/.config/hypr/input.conf' want '~/.config/hypr/monitors.conf'" \
+    "N12: the swap is named with the line and both members"
+  st_row_detail "$n_out" hypr.root.sources_resolve PASS \
+    "declared targets exist, member set exact" \
+    "N12: the resolution row stays PASS — order belongs to the graph row"
+  st_row_has "$n_out" hypr.root.sources_resolve PASS "N12: stable owner row id"
+  st_row_has "$n_out" hypr.local.inventory PASS "N12 (isolation: the local census is untouched)"
+  st_row_has "$n_out" theme.chain.hypr_include PASS "N12 (isolation: the line-13 theme anchor is held)"
+  st_eq  "N12: exactly one hypr FAIL — the graph row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N12: counts agree with rows"
+
+  # N13-N16 (round 14, pass 2): the policy's other arms, each a hermetic shape.
+  # N13 is the positive control for the symlink rule; N14/N15 cover the
+  # `unresolved:` classes; N16 proves the glob transport does not split a
+  # filename containing a newline (the compgen line transport did).
+
+  # N13: a symlink to a regular file is an accepted target (`-f` follows it).
+  local N13R="$NX/direct-symlink"
+  mkdir -p "$N13R"
+  cp -a "$A/." "$N13R/"
+  rm -f "$N13R/.local/share/omarchy/default/hypr/windows.conf"
+  ln -s envs.conf "$N13R/.local/share/omarchy/default/hypr/windows.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N13R" --no-live 2>&1); n_rc=$?
+  st_eq  "N13: exit 0 (a file symlink is a regular target)" 0 "$n_rc"
+  st_has "N13: CLEAN verdict" "$n_out" "MADO_VERIFY: CLEAN"
+  st_row_exact "$n_out" hypr.root.sources_resolve PASS \
+    "declared targets exist, member set exact" \
+    "N13: the followed link resolves — no non-regular token"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N13 (isolation: the source lines are untouched)"
+  st_row_has "$n_out" hypr.local.inventory PASS "N13 (isolation: the local census is untouched)"
+  st_counts_agree "$n_out" "N13: counts agree with rows"
+
+  # N14: the toggle glob matches nothing → the pre-existing unresolved class.
+  local N14R="$NX/glob-empty"
+  mkdir -p "$N14R"
+  cp -a "$A/." "$N14R/"
+  rm -f "$N14R/.local/state/omarchy/toggles/hypr/window-no-gaps.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N14R" --no-live 2>&1); n_rc=$?
+  st_eq  "N14: exit 1 (a zero-match glob does not pass)" 1 "$n_rc"
+  st_has "N14: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf" \
+    "N14: the declared glob is named once under unresolved"
+  st_not_has "N14: no non-regular token for a non-match" "$n_out" "non-regular:"
+  st_row_has "$n_out" hypr.toggle.no_gaps NOTE "N14 (collateral status: the toggle file is gone)"
+  st_eq  "N14: exactly one hypr FAIL — the source row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N14: counts agree with rows"
+
+  # N15: the glob matches a dangling symlink → unresolved, appended once.
+  local N15R="$NX/glob-dangling"
+  mkdir -p "$N15R"
+  cp -a "$A/." "$N15R/"
+  rm -f "$N15R/.local/state/omarchy/toggles/hypr/window-no-gaps.conf"
+  ln -s gone.conf "$N15R/.local/state/omarchy/toggles/hypr/window-no-gaps.conf"
+  n_out=$("$BASH_BIN" "$0" --root "$N15R" --no-live 2>&1); n_rc=$?
+  st_eq  "N15: exit 1 (a matched dangling link does not resolve)" 1 "$n_rc"
+  st_has "N15: DIVERGED verdict" "$n_out" "MADO_VERIFY: DIVERGED"
+  st_row_exact "$n_out" hypr.root.sources_resolve FAIL \
+    "unresolved: ~/.local/state/omarchy/toggles/hypr/*.conf" \
+    "N15: the declared glob is named exactly once, never as non-regular"
+  st_row_has "$n_out" hypr.toggle.no_gaps NOTE "N15 (collateral status: the toggle link is broken)"
+  st_eq  "N15: exactly one hypr FAIL — the source row" 1 \
+    "$(printf '%s\n' "$n_out" | awk '$1=="hypr" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$n_out" "N15: counts agree with rows"
+
+  # N16: a regular glob member whose name contains a newline stays one member.
+  # The NUL-delimited transport reads it whole; the old line-oriented compgen
+  # transport split it into two phantom non-regular names.
+  local N16R="$NX/glob-newline" N16N
+  N16N=$'line\nbreak.conf'
+  mkdir -p "$N16R"
+  cp -a "$A/." "$N16R/"
+  printf '# fixture newline-named toggle\n' \
+    >"$N16R/.local/state/omarchy/toggles/hypr/$N16N"
+  n_out=$("$BASH_BIN" "$0" --root "$N16R" --no-live 2>&1); n_rc=$?
+  st_eq  "N16: exit 0 (a newline-named regular member is not split)" 0 "$n_rc"
+  st_has "N16: CLEAN verdict" "$n_out" "MADO_VERIFY: CLEAN"
+  st_row_exact "$n_out" hypr.root.sources_resolve PASS \
+    "declared targets exist, member set exact" \
+    "N16: the whole match set is regular — no phantom non-regular member"
+  st_row_has "$n_out" hypr.root.include_graph PASS "N16 (isolation: the source lines are untouched)"
+  st_row_has "$n_out" hypr.toggle.no_gaps PASS "N16 (isolation: the declared toggle is untouched)"
+  st_counts_agree "$n_out" "N16: counts agree with rows"
   # >>> MADO-R8-BLOCK >>>
   # --- scenario S: snapshot + snapshot-diff freshness receipts (M8-3) ------
   # Hermetic: snapshots come from the fixture roots only (the sandboxed live
@@ -1415,6 +1613,17 @@ MADO_R8_CRAFT_B
 # exact-set guard. Until the recut the mode reads SETUP with the printed
 # REGRESSION_RECUT command — never a stale PASS.
 #
+# Re-cut record — round 14 / M14 (regular-file source targets): sources_resolve
+# now tests each declared target with `-f` (following file symlinks) and names
+# non-regular direct targets and glob matches under `non-regular:`; the PASS
+# text, the `unresolved:` class, the exact-set comparison and the order split
+# are unchanged. N9-N16 cover directory, order, symlink, zero-match,
+# dangling-glob and newline-regular cases outside the marked R7/R8 blocks.
+# L1 measured the required re-cut: target cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96,
+# historical spec unchanged, 10/10 KILLED, GREEN control, restore OK;
+# .ufo/waves/round-14/evidence/regression-recut.txt and historical-results.tsv.
+# PIN_MADO moves only from that measured table, never by blessing a mismatch.
+#
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
 #   gate's --no-live/--live/--root/--selftest are refused (usage error, exit 2);
@@ -1427,7 +1636,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='87910c39f460ad169b879fc28f2e80f2c988d56f91e18b51efcac9cb0ec04b39'
+PIN_MADO='cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -2401,11 +2610,20 @@ verify() {
       row hypr hypr.root.include_graph PASS "${#got[@]}/${#EXPECT[@]} sources, order exact, set exact"
     fi
 
-    # every source target must resolve under $ROOT (~ expanded; globs ≥1 match),
-    # and the observed source set must equal the declared one (round 13, M13):
-    # a same-count substitution whose replacement target happens to exist is
+    # every source target must resolve under $ROOT as a REGULAR file (~ expanded;
+    # a glob must match ≥1 path and every match must be a regular file), and the
+    # observed source set must equal the declared one (round 13, M13): a
+    # same-count substitution whose replacement target happens to exist is
     # invisible to target-existence alone, so the members are named as well.
-    local t x tmiss="" tset=""
+    #
+    # Regular-file test (round 14): `[ -f ]` follows symlinks on purpose — a
+    # symlink to a regular file is accepted, while a directory, a symlink to a
+    # directory, or any other non-regular path is refused by name under
+    # `non-regular:` (owner row: hypr.root.sources_resolve). A direct target
+    # that does not exist keeps the pre-existing `unresolved:` class, and so
+    # does a glob with zero matches; the two name classes are not repurposed.
+    # The check reads metadata only — it never opens or writes a target.
+    local t x m tmiss="" tnr="" tset=""
     local -A tseen=() tdecl=()
     for t in "${EXPECT[@]}"; do tdecl["$t"]=1; done
     for t in "${got[@]}"; do
@@ -2417,21 +2635,56 @@ verify() {
         '~'*) x="$ROOT${t#\~}" ;;
         *) x="$t" ;;
       esac
-      if [ -e "$x" ]; then continue; fi
       case "$x" in
-        *'*'*) if compgen -G "$x" >/dev/null 2>&1; then continue; fi ;;
+        *'*'*)
+          # glob target: ≥1 match required, and every match must be a regular
+          # file. A mixed match set names only the non-regular members, so a
+          # legitimate *.conf beside a directory-shaped one is never refused.
+          # A matched dangling symlink does not resolve (`unresolved:`); any
+          # other non-`-f` match — directory, link to a directory, FIFO,
+          # socket, device — is named under `non-regular:`.
+          #
+          # Matches are collected NUL-delimited from a nullglob expansion in a
+          # subshell (IFS empty, so no field splitting; nullglob scoped there),
+          # not from line-oriented compgen output: a filename containing a
+          # space or a newline stays one member. Only `*` is treated as a glob
+          # (the pre-existing grammar).
+          local -a gmatch=()
+          local gdang=0
+          mapfile -d '' -t gmatch < <(
+            shopt -s nullglob
+            IFS=
+            gsub=( $x )
+            for g in "${gsub[@]}"; do printf '%s\0' "$g"; done
+          )
+          if [ "${#gmatch[@]}" -eq 0 ]; then
+            tmiss="$tmiss $t"
+          else
+            for m in "${gmatch[@]}"; do
+              if [ -f "$m" ]; then continue; fi
+              if [ -L "$m" ] && [ ! -e "$m" ]; then gdang=1; else tnr="$tnr $(src_disp "$m")"; fi
+            done
+            # one declared token, however many matched links are broken: the
+            # unresolved class names the source line, not each dangling match.
+            [ "$gdang" = 1 ] && tmiss="$tmiss $t"
+          fi
+          ;;
+        *)
+          if [ -f "$x" ]; then continue; fi
+          if [ -e "$x" ]; then tnr="$tnr $(src_disp "$x")"; else tmiss="$tmiss $t"; fi
+          ;;
       esac
-      tmiss="$tmiss $t"
     done
     for t in "${got[@]}"; do
       if [ -z "$t" ]; then tset="$tset extra: ''"; continue; fi
       [ -n "${tdecl["$t"]:-}" ] || tset="$tset extra: $t"
     done
-    if [ -z "$tmiss" ] && [ -z "$tset" ]; then
+    if [ -z "$tmiss" ] && [ -z "$tnr" ] && [ -z "$tset" ]; then
       row hypr hypr.root.sources_resolve PASS "declared targets exist, member set exact"
     else
       local tdetail=""
       [ -n "$tmiss" ] && tdetail="unresolved:$tmiss"
+      [ -n "$tnr" ] && tdetail="${tdetail:+$tdetail }non-regular:$tnr"
       [ -n "$tset" ] && tdetail="${tdetail:+$tdetail }$tset"
       row hypr hypr.root.sources_resolve FAIL "$tdetail"
     fi

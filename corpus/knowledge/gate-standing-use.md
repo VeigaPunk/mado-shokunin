@@ -400,3 +400,26 @@ round evidence, not maintained aliases of the working gate or sibling.
 Expanded toggle-glob membership, generic config parsing, per-feature
 behavior, the historical theme-mutation gap and the broad whole-config
 boundary-hash caveat are not closed by the four-case census correction.
+
+## Erratum — round 14, R13-V2/V3 evidence precision
+
+The fleet's filed `.ufo/reports/round-13/mado.md` phrase “byte-identical
+before/after” refers only to configuration boundary bytes unchanged
+**within the recorded file-plane run** (`round-13/evidence/gate-file-plane.txt`,
+`boundary.readonly`). It does not establish byte-identical command outputs
+across the before and after code revisions, nor across separate runs.
+The legitimate historical result remains 29 PASS / 0 FAIL / 0 UNKNOWN,
+with live rows skipped; the filed report and this note's original bytes
+are preserved. The source correction is
+`corpus/lessons/round-13-verifier-spotcheck.md` R13-V2 and the round-14
+lesson. This is not a new freshness score or host-health verdict.
+
+R13-V3 concerns standalone receipt provenance, not those verdicts.
+Round-13 `gate-selftest.txt` has no local gate revision/digest header;
+its old binding remains recoverable from its report and committed
+bindings rather than being retroactively inserted. Future round-14
+selftest receipts record the resolved measured commit, raw whole-gate
+SHA-256, exact executed command and actual exit in that same artifact.
+The whole-gate digest is distinct from the regression's documented
+derived/excised-target PIN. No generic receipt wrapper or second runtime
+format is required or shipped.
