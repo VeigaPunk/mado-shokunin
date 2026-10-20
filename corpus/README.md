@@ -133,3 +133,17 @@ Index completeness does not retire these unresolved surfaces:
   application and wallpaper reload, Walker provider behaviour, the elephant
   service and wire schema, rendered UI. Host binaries stay `[UNK]`; the
   2.17.0-era pins in the round-5/9 Walker notes are dated, not current.
+- Round 19 narrows "host binaries stay `[UNK]`" to what was read, not run:
+  walker's **binary bytes** are a mined host row (S096: digest, package `desc`
+  `2.17.2-1`, compiled-in literal `2.17.2` at offset 856,302), and the 13 owned
+  files that said `2.17.0` carry dated pointers to S090/S091/S096 or a re-pinned
+  value (`python3 -I .ufo/waves/round-19/fresh-pins.py REV`). The running process
+  and the `--version` print stay `[UNK]`. S097 supersedes S094's per-fetch GitHub
+  HTML digests with tag-pinned content identities and S098 replaces the docs.rs
+  `latest` alias with the xdg 3.0.0 crate whose sha256 is walker v2.17.2's
+  `Cargo.lock` checksum — durability repairs, not new behaviour. Still open:
+  runtime theme application and wallpaper reload, Walker provider behaviour, the
+  elephant service and wire schema, rendered UI; and the same-morning moves the
+  walker sweep does not cover (elephant 2.21.0 → 2.22.1, uwsm 0.26.7 → 0.27.1,
+  hyprland pkgrel 0.56.2-2 → -4; w1 `PacmanLogMoves`). The gate's
+  `live.walker.version` re-pin is a pin, not a measurement.

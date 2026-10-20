@@ -18,10 +18,13 @@ unmodified into <tmp-repo>/.ufo/waves/round-18/ so that the instrument's own
 root.  The sha256 of every instrument is rechecked at run time against the
 pin recorded below; the lane is only read through git.
 
-Writes .ufo/waves/round-18/evidence/measure-mutants.json.  A tightening
-bites when the loose run credits at least one province entry that the tight
-run does not, or when the tight instrument refuses the measurement outright.
-A tightening that does not bite is recorded as such, not smoothed over.
+The receipt JSON is printed to stdout.  `--out FILE` writes it there
+atomically instead; a FILE inside the git worktree being read is refused
+unless `--force-lane-receipt` is given, so a lab rerun cannot silently
+overwrite the lane receipt.  A tightening bites when the loose run credits
+at least one province entry that the tight run does not, or when the tight
+instrument refuses the measurement outright.  A tightening that does not
+bite is recorded as such, not smoothed over.
 """
 from __future__ import annotations
 
@@ -40,7 +43,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 LANE_DEFAULT = Path('/home/vgpnk/Projects/shokunin/mado-shokunin')
-OUT_DEFAULT = Path('.ufo/waves/round-18/evidence/measure-mutants.json')
 
 BASELINE_REV = 'd9a5a18e17cd3a68b52148fcc01c4a30e340ba98'
 LOOSE_REV = 'f52f43f8ea44f60b3c52e5cc5b2e5ab76d77be59'
@@ -489,19 +491,39 @@ def expectation_met(spec: dict, tight: dict) -> bool:
     return any(key in reason for reason in reasons)
 
 
+def lane_worktree(lane: Path) -> Path:
+    proc = subprocess.run(
+        ['git', '-C', str(lane), 'rev-parse', '--show-toplevel'],
+        capture_output=True, text=True)
+    if proc.returncode != 0 or not proc.stdout.strip():
+        return lane
+    return Path(proc.stdout.strip()).resolve()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--lane', type=Path, default=LANE_DEFAULT)
-    ap.add_argument('--out', type=Path, default=None)
+    ap.add_argument('--out', type=Path, default=None,
+                    help='write the receipt here; without it the JSON is '
+                         'printed to stdout')
+    ap.add_argument('--force-lane-receipt', action='store_true',
+                    help='allow --out inside the git worktree being read')
     ap.add_argument('--keep', action='store_true',
                     help='keep the throwaway repos under the work dir')
     ap.add_argument('--workdir', type=Path, default=None)
     args = ap.parse_args()
 
     lane = args.lane.resolve()
-    out = args.out or (lane / OUT_DEFAULT)
     if not (lane / '.git').exists() and not (lane / '.jj').exists():
         raise SystemExit(f'{lane} is not a git/jj checkout')
+    out = args.out.resolve() if args.out else None
+    worktree = lane_worktree(lane)
+    if out is not None and not args.force_lane_receipt \
+            and (out == worktree or worktree in out.parents):
+        raise SystemExit(
+            f'refusing --out {out}: inside the git worktree being read '
+            f'({worktree}); pass --force-lane-receipt to write a lane '
+            'receipt')
 
     head = subprocess.run(
         ['git', '-C', str(lane), 'rev-parse', '--verify', BASELINE_REV],
@@ -565,9 +587,9 @@ def main() -> int:
         status = 'BITES' if cmp['bites'] else 'NO-BITE'
         print(f"{spec['id']} {status}: loose={cmp['loose_count']} "
               f"tight={cmp['tight_count']} "
-              f"loose_only={list(cmp['loose_only'])}")
+              f"loose_only={list(cmp['loose_only'])}", file=sys.stderr)
         for line in cmp['basis']:
-            print(f"  {line}")
+            print(f"  {line}", file=sys.stderr)
 
     summary = {
         'mutants': len(records),
@@ -645,13 +667,16 @@ def main() -> int:
         'mutants': records,
     }
 
-    out.parent.mkdir(parents=True, exist_ok=True)
-    tmp = out.with_suffix(out.suffix + '.tmp')
-    tmp.write_text(json.dumps(payload, indent=2, sort_keys=False) + '\n',
-                   encoding='utf-8')
-    os.replace(tmp, out)
-    print(f'wrote {out}')
-    print(json.dumps(summary, indent=2))
+    text = json.dumps(payload, indent=2, sort_keys=False) + '\n'
+    if out is None:
+        sys.stdout.write(text)
+    else:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        tmp = out.with_suffix(out.suffix + '.tmp')
+        tmp.write_text(text, encoding='utf-8')
+        os.replace(tmp, out)
+        print(f'wrote {out}', file=sys.stderr)
+        print(json.dumps(summary, indent=2))
 
     if not args.keep:
         shutil.rmtree(root, ignore_errors=True)

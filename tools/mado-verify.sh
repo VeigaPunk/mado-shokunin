@@ -53,18 +53,31 @@
 #   walker  — config.toml TOML-parses; force_keyboard_focus/selection_wrap/
 #             hide_action_hints true, theme omarchy-default (MADO-2 §3); live:
 #             app-walker@autostart.service + elephant.service active,
-#             version pin 2.17.0 (MADO-R3-1 §1/§6).
+#             version pin 2.17.2 (S096 host rodata + S090 pacman.log:2929;
+#             round-19 re-pin). The version row's PASS certifies one thing
+#             only: the installed binary prints the pin. It does not refresh
+#             the claims — the 2.17.0-era measurements (MADO-R3-1 §1/§6, e.g.
+#             the 298 L packaged help table, probe window 2026-10-14) stay
+#             dated and are routed by walker-route-r18.md.
 #   terms   — alacritty.toml TOML-parses and imports the theme (MADO-3 §1-3);
 #             font 12.5 + padding 14 uniform across the four configs
 #             (MADO-3 §3); install state: alacritty only (MADO-3 §5).
-#   pins    — Hyprland 0.56.2 commit efb5099…, waybar v0.15.0, walker 2.17.0
-#             (SKILL.md "Version pins"): a changed pin is a FAIL — the claims
-#             must be re-verified, not silently reused.
+#   pins    — Hyprland 0.56.2 commit efb5099…, waybar v0.15.0, walker 2.17.2
+#             (S096 host rodata + S090 pacman.log:2929, round 19; SKILL.md
+#             "Version pins"): a changed pin is a FAIL — the claims must be
+#             re-verified, not silently reused. A held pin is not a claim
+#             refresh: the 2.17.0-era walker measurements stay dated.
 #   omarchy — freshness / version-drift watch (omarchy-drift-watch.md §2/§6):
-#             version cmd+file 3.8.3, git tag v3.8.4 at HEAD 8fcc9d60…, skill
-#             link into the checkout, skill leaf sha becd149e…, worktree ==
-#             HEAD blob, command groups ⊇ the 11 skill groups. MOVED → FAIL
-#             naming the pin; theme/counters/docs are record-level NOTEs (D-1).
+#             version cmd+file 3.8.3, git tag v3.8.4 at the branch tip
+#             8fcc9d60…, skill link into the checkout, skill leaf sha
+#             becd149e…, worktree == tip blob, command groups ⊇ the 11 skill
+#             groups. The tag/head rows read the branch tip a checkout names,
+#             never HEAD: a jj-colocated tree detaches HEAD onto an empty
+#             working-copy commit and the old rows read UNKNOWN / a false
+#             MOVED (round 19, jj-w1 F6); the repository test is
+#             `rev-parse --git-dir`, so a git worktree (`.git` is a FILE) is a
+#             checkout too (F9). MOVED → FAIL naming the pin; theme/counters/
+#             docs are record-level NOTEs (D-1).
 #   theme   — declared file chain (theme-wallpaper-plane.md §2/§4/§6): the
 #             machine name (`current/theme.name`, one line, ^[a-z0-9-]+$) and
 #             every installed consumer's import resolve (hyprland.conf:13,
@@ -83,6 +96,13 @@ set -u
 export LC_ALL=C
 
 VERSION_STR="mado-verify.sh v1 (mado-shokunin round 5 / M5-2)"
+# Walker version pin. Round 19: the host package moved 2.17.0-1 → 2.17.2-1 on
+# 2026-10-20 (S090 /var/log/pacman.log:2929) and /usr/bin/walker carries the
+# compiled-in `2.17.2` literal (S096, sha256 25240650686f…, 7,039,912 B); the
+# old pin failed every live run from that transaction onward. A moved pin is
+# still a FAIL — this is the value the host is measured against, not a
+# tolerance.
+WALKER_VERSION_PIN="2.17.2"
 ROOT="${MADO_VERIFY_ROOT:-$HOME}"
 LIVE_REQ="${MADO_VERIFY_LIVE:-auto}"
 MODE="verify"
@@ -631,7 +651,11 @@ MADO_R7_STUB_EOF
   local OMB="$T/omarchy/bin" OMB2="$T/omarchy/bin-no-omarchy"
   local OMR="$T/omarchy/root" om_out om_rc om_leafsha
   mkdir -p "$OMB" "$OMR/.agents/skills" "$OMR/.config/omarchy/hooks/battery-low.d" \
-           "$OMR/.local/share/omarchy/default/omarchy-skill" "$OMR/.local/share/omarchy/.git"
+           "$OMR/.local/share/omarchy/default/omarchy-skill" \
+           "$OMR/.local/share/omarchy/.git" "$OMR/.local/share/omarchy/.jj"
+  # `.jj` marks the checkout as jj-colocated: the detached-HEAD → branch-tip
+  # rescue is gated on it (round 19, jj-w1 F6 + the honesty correction), and
+  # OM16 removes it to prove a plain-git detached HEAD keeps the HEAD reading.
   printf '3.8.3\n' >"$OMR/.local/share/omarchy/version"
   printf 'fixture skill leaf — deliberately not the pinned file\n' \
     >"$OMR/.local/share/omarchy/default/omarchy-skill/SKILL.md"
@@ -661,19 +685,37 @@ esac
 MADO_R8_OM_STUB
   cat >"$OMB/git" <<'MADO_R8_GIT_STUB'
 #!/bin/bash
-# scenario-local stub of the three git read verbs the drift rows use. The
-# checkout path after -C is deliberately not read: the answers are canned.
+# scenario-local stub of the git read verbs the drift rows use. The checkout
+# path after -C is deliberately not read: the answers are canned.
 # Per-verb rc knobs (round 18 / jj-w1 F14): a nonzero STUB_GIT_*_RC prints
 # nothing and exits with that rc, so the gate's UNKNOWN arms are reachable
 # from this fixture (the pre-round-18 stub could only exit 0).
+# Round 19 / F6/F9 adds the verbs the tip resolution needs: `rev-parse
+# --git-dir` (repository test; STUB_GIT_GITDIR_RC), `symbolic-ref -q HEAD`
+# (exit 1 when STUB_GIT_DETACHED=1, the jj working-copy state) and
+# `for-each-ref refs/heads` (STUB_GIT_BRANCHES, space-separated;
+# STUB_GIT_NO_BRANCHES=1 for none). `rev-parse --verify <ref>` answers
+# STUB_GIT_TIP, falling back to STUB_GIT_HEAD so the pre-round-19 scenarios
+# keep their meaning.
 while [ "$#" -gt 0 ]; do
   case "$1" in
     describe)
       if [ "${STUB_GIT_DESCRIBE_RC:-0}" != 0 ]; then exit "$STUB_GIT_DESCRIBE_RC"; fi
       printf '%s\n' "${STUB_GIT_TAG:-v3.8.4}"; exit 0 ;;
     rev-parse)
+      case "$*" in
+        *--git-dir*)
+          if [ "${STUB_GIT_GITDIR_RC:-0}" != 0 ]; then exit "$STUB_GIT_GITDIR_RC"; fi
+          printf '.git\n'; exit 0 ;;
+      esac
       if [ "${STUB_GIT_REVPARSE_RC:-0}" != 0 ]; then exit "$STUB_GIT_REVPARSE_RC"; fi
-      printf '%s\n' "${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}"; exit 0 ;;
+      printf '%s\n' "${STUB_GIT_TIP:-${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}}"; exit 0 ;;
+    symbolic-ref)
+      if [ "${STUB_GIT_DETACHED:-0}" != 0 ]; then exit 1; fi
+      printf '%s\n' "${STUB_GIT_REF:-refs/heads/master}"; exit 0 ;;
+    for-each-ref)
+      if [ "${STUB_GIT_NO_BRANCHES:-0}" != 0 ]; then exit 0; fi
+      printf '%s\n' ${STUB_GIT_BRANCHES:-refs/heads/master}; exit 0 ;;
     show)
       if [ "${STUB_GIT_SHOW_RC:-0}" != 0 ]; then exit "$STUB_GIT_SHOW_RC"; fi
       cat "${STUB_GIT_BLOB:-/dev/null}"; exit 0 ;;
@@ -829,23 +871,136 @@ MADO_R8_GIT_STUB
     "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
   st_counts_agree "$om_out" "OM9: counts agree with rows"
 
-  # --- OM10: describe/rev-parse rc≠0 reads UNKNOWN, never a false FAIL -----
-  # jj-w1 F6/F14: under a colocated checkout `jj new` moves HEAD to an empty
-  # working-copy commit — describe exits 128 (tag invisible) and rev-parse
-  # names a moved commit. Both arms must be UNKNOWN, never MOVED.
+  # --- OM10A: describe rc≠0 reads UNKNOWN, never a false tag MOVED --------
+  # jj-w1 F6/F14: describe exits 128 when HEAD is an unexported working-copy
+  # commit. Under the round-19 tip resolution the row asks describe about the
+  # resolved tip, so this arm is now "the tag is not at the tip".
   om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
-    STUB_GIT_DESCRIBE_RC=128 STUB_GIT_REVPARSE_RC=128 \
+    STUB_GIT_DESCRIBE_RC=128 \
     MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
-  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM10 (describe rc=128 is unverified)"
-  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM10 (rev-parse rc=128 is unverified)"
-  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "rc=128" "OM10: the UNKNOWN names the rc"
-  st_row_detail "$om_out" omarchy.git.head UNKNOWN "rc=128" "OM10: the UNKNOWN names the rc"
-  st_row_has "$om_out" omarchy.skill.vs_head PASS "OM10 (show succeeds; the comparison still runs)"
-  st_not_has "OM10: no false tag MOVED" "$om_out" "MOVED: describe"
-  st_not_has "OM10: no false head MOVED" "$om_out" "MOVED: rev-parse"
-  st_eq  "OM10: exactly two omarchy UNKNOWNs (tag + head)" 2 \
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM10A (describe rc=128 is unverified)"
+  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "rc=128" "OM10A: the UNKNOWN names the rc"
+  st_row_has "$om_out" omarchy.git.head PASS "OM10A (the tip still resolves and matches)"
+  st_not_has "OM10A: no false tag MOVED" "$om_out" "MOVED: describe"
+  st_eq  "OM10A: exactly one omarchy UNKNOWN (tag)" 1 \
     "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
-  st_counts_agree "$om_out" "OM10: counts agree with rows"
+  st_counts_agree "$om_out" "OM10A: counts agree with rows"
+
+  # --- OM10B: an unresolvable tip reads UNKNOWN on both rows, no false FAIL -
+  # jj-w1 F6: rev-parse on the named branch must fail before any describe.
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_REVPARSE_RC=128 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM10B (unresolved tip)"
+  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM10B (unresolved tip)"
+  st_row_detail "$om_out" omarchy.git.head UNKNOWN "cannot resolve refs/heads/master (rc=128)" \
+    "OM10B: the UNKNOWN names the ref and the rc"
+  st_row_has "$om_out" omarchy.skill.vs_head PASS "OM10B (show succeeds; the comparison still runs)"
+  st_not_has "OM10B: no false tag MOVED" "$om_out" "MOVED: describe"
+  st_not_has "OM10B: no false head MOVED" "$om_out" "MOVED: refs/heads"
+  st_eq  "OM10B: exactly two omarchy UNKNOWNs (tag + head)" 2 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM10B: counts agree with rows"
+
+  # --- OM11: detached HEAD on an empty commit, the branch tip carries the
+  # tag (jj-w1 F6, the live jj shape). The rows must read the tip, never the
+  # working-copy commit — the old code read UNKNOWN + a false MOVED here.
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DETACHED=1 \
+    STUB_GIT_HEAD=8d286c97f829cd575362639c2f63129df10b7a94 \
+    STUB_GIT_TIP=8fcc9d6048af4cb0e3af8512c78049857a3b53dd \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag PASS "OM11 (the tag is read from the branch tip)"
+  st_row_detail "$om_out" omarchy.git.tag PASS "exactly at refs/heads/master" \
+    "OM11: the tag row names the tip it read"
+  st_row_has "$om_out" omarchy.git.head PASS "OM11 (the pin matches the tip)"
+  st_row_detail "$om_out" omarchy.git.head PASS "at refs/heads/master" \
+    "OM11: the head row names the tip it read"
+  st_not_has "OM11: the detached commit is never the pin target" "$om_out" "8d286c97"
+  st_eq  "OM11: zero omarchy UNKNOWNs" 0 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_eq  "OM11: exactly one omarchy FAIL — the unreproducible sha row" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM11: counts agree with rows"
+
+  # --- OM12: a git worktree (.git is a FILE) still evaluates the rows ------
+  # jj-w1 F9: the old `[ -d "$tree/.git" ]` read a worktree as "no git
+  # checkout" and turned the identity rows UNKNOWN. `rev-parse --git-dir` is
+  # the repository test; the worktree's file shape is the fixture here.
+  local OMW="$T/omarchy/root-worktree"
+  cp -a "$OMR" "$OMW"
+  rm -f "$OMW/.agents/skills/omarchy"
+  ln -s "$OMW/.local/share/omarchy/default/omarchy-skill" "$OMW/.agents/skills/omarchy"
+  rm -rf "$OMW/.local/share/omarchy/.git"
+  printf 'gitdir: %s\n' "$T/omarchy/wt.git/worktrees/omarchy" \
+    >"$OMW/.local/share/omarchy/.git"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMW" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag PASS "OM12 (a .git FILE is still a checkout)"
+  st_row_has "$om_out" omarchy.git.head PASS "OM12"
+  st_not_has "OM12: the old -d precondition no longer blinds the rows" "$om_out" \
+    "no git checkout at"
+  st_eq  "OM12: zero omarchy UNKNOWNs" 0 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM12: counts agree with rows"
+
+  # --- OM13: a tree git does not call a repository reads UNKNOWN, not FAIL -
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_GITDIR_RC=128 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM13 (no repository: unverified)"
+  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "no git checkout at" \
+    "OM13: the UNKNOWN names the tree that is not a checkout"
+  st_not_has "OM13: no false MOVED without a repository" "$om_out" "MOVED: refs/heads"
+  st_eq  "OM13: exactly three omarchy UNKNOWNs (tag + head + vs_head)" 3 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM13: counts agree with rows"
+
+  # --- OM14: detached with two branch tips → no unambiguous target ---------
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DETACHED=1 STUB_GIT_BRANCHES='refs/heads/master refs/heads/topic' \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM14 (two tips: no pin target)"
+  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM14"
+  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "2 branch tips" \
+    "OM14: the UNKNOWN names the ambiguity"
+  st_not_has "OM14: ambiguity is never a MOVED" "$om_out" "MOVED: refs/heads"
+  st_eq  "OM14: exactly two omarchy UNKNOWNs (tag + head)" 2 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM14: counts agree with rows"
+
+  # --- OM15: detached with no branch at all → UNKNOWN, never a guess ------
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DETACHED=1 STUB_GIT_NO_BRANCHES=1 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM15 (no branch tip to read)"
+  st_row_detail "$om_out" omarchy.git.head UNKNOWN "no branch tip under" \
+    "OM15: the UNKNOWN says there is no tip"
+  st_not_has "OM15: no tip is never a MOVED" "$om_out" "MOVED: refs/heads"
+  st_counts_agree "$om_out" "OM15: counts agree with rows"
+  # --- OM16: a PLAIN-git detached HEAD is not rescued by a branch tip -------
+  # Round 19 honesty correction (CriticHonesty): the tip fallback is jj-only.
+  # This fixture carries no `.jj` (plain git) and HEAD sits off the pin while
+  # the branch tip still carries it, so the head row must read MOVED — the old
+  # HEAD behaviour — never a PASS read from a branch nobody checked out.
+  local OMP="$T/omarchy/root-plain-detached"
+  cp -a "$OMR" "$OMP"
+  rm -f "$OMP/.agents/skills/omarchy"
+  ln -s "$OMP/.local/share/omarchy/default/omarchy-skill" "$OMP/.agents/skills/omarchy"
+  rm -rf "$OMP/.local/share/omarchy/.jj"
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DETACHED=1 STUB_GIT_DESCRIBE_RC=128 \
+    STUB_GIT_HEAD=1111111111111111111111111111111111111111 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMP" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.head FAIL "OM16 (plain-git detached HEAD keeps the MOVED reading)"
+  st_row_detail "$om_out" omarchy.git.head FAIL "MOVED: HEAD" \
+    "OM16: the row names HEAD as what it read"
+  st_row_detail "$om_out" omarchy.git.head FAIL "111111111111" \
+    "OM16: ... and the detached commit it found"
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM16 (the detached commit carries no tag)"
+  st_not_has "OM16: no tip rescue without .jj" "$om_out" "at refs/heads/master"
+  st_not_has "OM16: no tip rescue without .jj" "$om_out" "tip read from"
+  st_counts_agree "$om_out" "OM16: counts agree with rows"
   # <<< MADO-R8-OMARCHY-BLOCK <<<
 
   # --- scenarios T: the theme plane, hermetic (theme-wallpaper-plane.md §6) --
@@ -1070,6 +1225,71 @@ MADO_R8_GIT_STUB
   st_row_has "$out" term.alacritty.toml UNKNOWN "E (reader fallback)"
   st_not_has "E: no fake CLEAN" "$out" "MADO_VERIFY: CLEAN"
   st_counts_agree "$out" "E: counts agree with rows"
+
+  # --- scenario WL: the walker version pin, re-pinned 2.17.2 (round 19) -----
+  # live.walker.version/services are split into walker_live_rows, so both pin
+  # arms run here without a compositor. PATH is REPLACED, never prepended: a
+  # `$stub:$PATH` would fall through to the host's /usr/bin/walker and
+  # `systemctl --user` whenever a stub is missing, and those are exactly the
+  # host surfaces this suite must not touch.
+  local WLB="$T/walker/bin" WLB2="$T/walker/bin-no-walker" wl_out
+  local wl_path="$PATH" wl_p=$PASS wl_f=$FAIL wl_u=$UNKNOWN wl_s=$SKIP wl_n=$NOTE
+  mkdir -p "$WLB" "$WLB2"
+  cat >"$WLB/walker" <<'MADO_WL_WALKER'
+#!/bin/bash
+# scenario-local stub of walker: only the read verb the pin row uses.
+[ "${1:-}" = --version ] || exit 64
+printf '%s\n' "${STUB_WALKER_VERSION:-2.17.2}"
+MADO_WL_WALKER
+  cat >"$WLB/systemctl" <<'MADO_WL_SYSTEMCTL'
+#!/bin/bash
+# scenario-local stub of `systemctl --user is-active <unit>`: one canned state,
+# so no user bus is queried.
+printf '%s\n' "${STUB_SYSTEMCTL_STATE:-active}"
+MADO_WL_SYSTEMCTL
+  chmod +x "$WLB/walker" "$WLB/systemctl"
+  for c in bash grep sed awk cut head tail tr sort uniq wc find mktemp sha256sum \
+           python3 ls cat rm cp mv mkdir printf dirname basename timeout; do
+    if have "$c"; then ln -sf "$(command -v "$c")" "$WLB/$c"; fi
+  done
+  cp -a "$WLB/." "$WLB2/"
+  rm -f "$WLB2/walker"
+
+  st_eq "WL0: pin constant is 2.17.2 (S096 file-byte evidence; not a host read)" \
+    "2.17.2" "$WALKER_VERSION_PIN"
+  ROWS=(); PASS=0; FAIL=0; UNKNOWN=0; SKIP=0; NOTE=0
+  PATH="$WLB"; walker_live_rows; PATH="$wl_path"
+  wl_out=$(printf '%s\n' "${ROWS[@]}" | tr '|' ' ')
+  st_row_has "$wl_out" live.walker.version PASS "WL1 (a 2.17.2 binary matches the pin)"
+  st_row_has "$wl_out" live.walker.services PASS "WL1 (stubbed is-active)"
+  st_row_detail "$wl_out" live.walker.version PASS "installed version matches pin" \
+    "WL1: the PASS certifies the installed version only"
+  st_row_detail "$wl_out" live.walker.version PASS "claims measured on 2.17.0 2026-10-14 stay dated" \
+    "WL1: the PASS says the 2.17.0-era claims are dated, not re-verified"
+  st_not_has "WL1: the PASS claims no claim refresh" "$wl_out" "claims re-verified"
+  st_eq "WL1: two walker rows, both PASS" 2 \
+    "$(printf '%s\n' "${ROWS[@]}" | awk -F'|' '$3=="PASS" {c++} END {print c+0}')"
+
+  ROWS=(); PASS=0; FAIL=0; UNKNOWN=0; SKIP=0; NOTE=0
+  STUB_WALKER_VERSION=2.17.1; export STUB_WALKER_VERSION
+  PATH="$WLB"; walker_live_rows; PATH="$wl_path"
+  unset STUB_WALKER_VERSION
+  wl_out=$(printf '%s\n' "${ROWS[@]}" | tr '|' ' ')
+  st_row_has "$wl_out" live.walker.version FAIL "WL2 (a moved binary is a FAIL)"
+  st_row_detail "$wl_out" live.walker.version FAIL "pin 2.17.2" \
+    "WL2: the FAIL names the new pin"
+  st_row_detail "$wl_out" live.walker.version FAIL "2.17.1" \
+    "WL2: the FAIL names what the binary printed"
+
+  ROWS=(); PASS=0; FAIL=0; UNKNOWN=0; SKIP=0; NOTE=0
+  PATH="$WLB2"; walker_live_rows; PATH="$wl_path"
+  wl_out=$(printf '%s\n' "${ROWS[@]}" | tr '|' ' ')
+  st_row_has "$wl_out" live.walker.version FAIL "WL3 (an absent binary FAILs, never passes)"
+  st_row_detail "$wl_out" live.walker.version FAIL "not on PATH" \
+    "WL3: the FAIL names the missing binary"
+  st_row_has "$wl_out" live.walker.services PASS "WL3 (the services row still runs)"
+  st_not_has "WL: no row still names the old 2.17.0 pin" "$wl_out" "2.17.0"
+  PASS=$wl_p; FAIL=$wl_f; UNKNOWN=$wl_u; SKIP=$wl_s; NOTE=$wl_n; ROWS=()
 
   # --- scenario F: a failing suite must exit 2 (failing-selftest exit map) --
   # the child carries the marker so this probe cannot recurse.
@@ -1689,6 +1909,33 @@ MADO_R8_CRAFT_B
 # .ufo/waves/round-18/evidence/regression-recut.txt (sweep) and
 # gate-rc-redbefore.txt (old FAIL e3b0c442 + "local edit" → UNKNOWN rc=128).
 #
+# Re-cut record — round 19 / hyaku (jj-w1 F6/F9 + the walker 2.17.2 re-pin,
+# after the CriticC2/CriticHonesty corrections):
+# the omarchy tag/head rows read the branch tip a checkout names instead of
+# HEAD, and the rescue is gated on $tree/.jj: a jj-colocated tree detaches
+# HEAD onto an empty working-copy commit (the old rows read UNKNOWN + a false
+# MOVED on a pinned checkout), while a plain-git detached HEAD keeps the HEAD
+# reading, so a real MOVED is never hidden. The repository test is
+# `rev-parse --git-dir`, so a git worktree (`.git` is a FILE) is a checkout
+# too. `live.walker.version` moved 2.17.0 → 2.17.2 (S096 host rodata + S090
+# pacman.log:2929) and its PASS is narrowed to "the installed binary prints
+# the pin" — the 2.17.0-era claims (MADO-R3-1 §6, the 298 L packaged table,
+# 2026-10-14) stay dated and are never refreshed by a held pin. The two
+# walker live rows are split into walker_live_rows; the selftest gained
+# WL0-WL3 (a stub walker under a REPLACED PATH: both pin arms, the narrowed
+# PASS text, the absent binary) and OM10A/OM10B/OM11-OM16 (tip resolution
+# under a detached HEAD, the worktree `.git` file, the ambiguous/no-tip
+# UNKNOWN arms, and OM16's plain-git detached HEAD that must keep reading
+# MOVED). All of it sits outside the marked R7/R8 families, so the derived
+# target moved. Re-cut 2026-10-20 from the printed REGRESSION_RECUT command
+# against the recorded spec (SPEC_SHA matches): target 05aea198… (2,745 L /
+# 138,328 B), 10/10 KILLED, 0 survived, 0 inconclusive, flips 0, control
+# GREEN (338/338 assertions on the derived target), MUTATE_RESTORE OK, target
+# sha unchanged before/after. PIN_MADO moves 20714096… → 05aea198…;
+# TABLE_MADO is unchanged — the re-pin, the tip resolution and the
+# corrections lost no kill. Evidence:
+# .ufo/waves/round-19/w1/reports/GateFreshJj.md §3.
+#
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
 #   gate's --no-live/--live/--root/--selftest are refused (usage error, exit 2);
@@ -1701,7 +1948,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744'
+PIN_MADO='05aea198a2084ea1fd87825fd6183e5afd9a2d95f8cc06476efcaa7e0af6cca0'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -3030,6 +3277,41 @@ verify() {
 # ---------------------------------------------------------------------------
 # live plane (read verbs only; every unverifiable surface reads UNKNOWN)
 # ---------------------------------------------------------------------------
+
+# The two walker live rows (MADO-R3-1 §1/§6), split out of live_plane so the
+# selftest can drive both pin arms against a stub `walker` / `systemctl` —
+# the surrounding plane would otherwise need a compositor and a user bus.
+# The PASS is deliberately narrow: it certifies that the installed binary
+# prints the 2.17.2 pin (S096 file bytes + S090 pacman.log:2929). The
+# 2.17.0-era claims (MADO-R3-1 §6's 298 L packaged table and the rest of the
+# 2026-10-14 probe window) were measured on 2.17.0 and stay dated — a held
+# pin never refreshes them (walker-route-r18.md routes the current values).
+walker_live_rows() {
+  if ! have walker; then
+    row hypr-live live.walker.version FAIL "walker not on PATH (declared launcher absent)"
+  else
+    local kv
+    kv=$(tmo walker --version 2>/dev/null | head -1)
+    if [ "$kv" = "$WALKER_VERSION_PIN" ]; then
+      row hypr-live live.walker.version PASS "$WALKER_VERSION_PIN (installed version matches pin; claims measured on 2.17.0 2026-10-14 stay dated — walker-route-r18.md, S096)"
+    else
+      row hypr-live live.walker.version FAIL "pin changed: '$kv'; re-verify claim anchors (pin $WALKER_VERSION_PIN, S096)"
+    fi
+  fi
+  if ! have systemctl; then
+    row hypr-live live.walker.services UNKNOWN "systemctl not on PATH"
+  else
+    local wa el
+    wa=$(tmo systemctl --user is-active app-walker@autostart.service 2>/dev/null || true)
+    el=$(tmo systemctl --user is-active elephant.service 2>/dev/null || true)
+    if [ "$wa" = active ] && [ "$el" = active ]; then
+      row hypr-live live.walker.services PASS "app-walker@autostart + elephant active"
+    else
+      row hypr-live live.walker.services FAIL "app-walker='$wa' elephant='$el' (want active/active)"
+    fi
+  fi
+}
+
 live_plane() {
   local reason=""
   if ! have hyprctl; then reason="hyprctl not on PATH"; fi
@@ -3268,30 +3550,10 @@ print('%s level %s pid %s %sx%s' % (mon, lvl, pid, w, h)); sys.exit(0)
     fi
   fi
 
-  # walker: version pin + services (MADO-R3-1 §1/§6)
-  if ! have walker; then
-    row hypr-live live.walker.version FAIL "walker not on PATH (declared launcher absent)"
-  else
-    local kv
-    kv=$(tmo walker --version 2>/dev/null | head -1)
-    if [ "$kv" = "2.17.0" ]; then
-      row hypr-live live.walker.version PASS "2.17.0 (pin matches)"
-    else
-      row hypr-live live.walker.version FAIL "pin changed: '$kv'; re-verify claim anchors"
-    fi
-  fi
-  if ! have systemctl; then
-    row hypr-live live.walker.services UNKNOWN "systemctl not on PATH"
-  else
-    local wa el
-    wa=$(tmo systemctl --user is-active app-walker@autostart.service 2>/dev/null || true)
-    el=$(tmo systemctl --user is-active elephant.service 2>/dev/null || true)
-    if [ "$wa" = active ] && [ "$el" = active ]; then
-      row hypr-live live.walker.services PASS "app-walker@autostart + elephant active"
-    else
-      row hypr-live live.walker.services FAIL "app-walker='$wa' elephant='$el' (want active/active)"
-    fi
-  fi
+  # walker: version pin + services (MADO-R3-1 §1/§6; round-19 re-pin 2.17.2,
+  # S096/S090 — the PASS certifies the installed version only, never the
+  # 2.17.0-era claims)
+  walker_live_rows
 
   # theme: record-level only (operator-owned)
   if ! have omarchy; then
@@ -3408,8 +3670,10 @@ omarchy_plane() {
   fi
 
   # --- live rows (PATH/repo probes; SKIP under --no-live, UNKNOWN if absent) -
-  local omtree=0
-  [ -d "$tree/.git" ] && omtree=1
+  # Round 19 / jj-w1 F9: ask git for the repository, never for a `.git`
+  # directory — a git worktree's `.git` is a FILE, and the old `-d` test read
+  # such a checkout as "no git checkout" and blinded all three identity rows.
+  # The probe lives inside the live arm so a file-plane run spawns no git.
   if [ -n "$nolive" ]; then
     row omarchy omarchy.version.cmd SKIP "$nolive"
     row omarchy omarchy.git.tag SKIP "$nolive"
@@ -3419,6 +3683,10 @@ omarchy_plane() {
     row omarchy omarchy.cmd.surface SKIP "$nolive"
     row omarchy omarchy.theme SKIP "$nolive"
   else
+    local omtree=0
+    if have git && tmo git -C "$tree" rev-parse --git-dir >/dev/null 2>&1; then
+      omtree=1
+    fi
     if ! have omarchy; then
       row omarchy omarchy.version.cmd UNKNOWN "omarchy not on PATH — version pin unverified (blocks CLEAN)"
     else
@@ -3443,24 +3711,68 @@ omarchy_plane() {
       row omarchy omarchy.git.tag UNKNOWN "no git checkout at $tree"
       row omarchy omarchy.git.head UNKNOWN "no git checkout at $tree"
     else
-      local gt gh grc
-      gt=$(tmo git -C "$tree" describe --tags --exact-match 2>/dev/null); grc=$?
-      gt=$(printf '%s' "$gt" | head -1)
-      if [ "$grc" != 0 ]; then
-        row omarchy omarchy.git.tag UNKNOWN "git describe failed (rc=$grc) — tag pin unverified"
-      elif [ "$gt" = "$OMARCHY_TAG_PIN" ]; then
-        row omarchy omarchy.git.tag PASS "HELD: $gt exactly at HEAD (P3 pin)"
-      else
-        row omarchy omarchy.git.tag FAIL "MOVED: describe --tags --exact-match → '${gt:-<none>}' != pin $OMARCHY_TAG_PIN"
+      # Round 19 / jj-w1 F6 + the honesty correction: read the tip commit the
+      # checkout's branch names, never HEAD — but only under jj colocation.
+      # A jj-colocated tree ($tree/.jj) detaches HEAD onto an empty working-copy
+      # commit, where `describe` exits 128 (tag invisible) and `rev-parse HEAD`
+      # names an unexported commit, so the old rows read UNKNOWN and a false
+      # MOVED on a pinned checkout. A *plain-git* detached HEAD keeps the HEAD
+      # reading: rescuing it with a branch tip would hide a real MOVED.
+      # No fetch, no write: symbolic-ref, for-each-ref, rev-parse --verify.
+      local jcol=0
+      [ -d "$tree/.jj" ] && jcol=1
+      local tip="" tipref="" tipwhy="" gt gh grc nbr=0 brrefs=""
+      tipref=$(tmo git -C "$tree" symbolic-ref -q HEAD 2>/dev/null); grc=$?
+      tipref=$(printf '%s' "$tipref" | head -1)
+      if [ "$grc" != 0 ] || [ -z "$tipref" ]; then
+        if [ "$jcol" = 1 ]; then
+          # Detached HEAD in a jj-colocated checkout (jj new/commit). Fall
+          # back to the branch tip only when the checkout names exactly one;
+          # more (or none) is no pin target.
+          tipref=""
+          brrefs=$(tmo git -C "$tree" for-each-ref --format='%(refname)' refs/heads 2>/dev/null)
+          nbr=$(printf '%s\n' "$brrefs" | grep -c .)
+          if [ "$nbr" = 1 ]; then
+            tipref=$(printf '%s\n' "$brrefs" | head -1)
+            tipwhy="detached HEAD in a jj checkout; tip read from $tipref"
+          elif [ "$nbr" = 0 ]; then
+            tipwhy="HEAD detached and no branch tip under $tree"
+          else
+            tipwhy="HEAD detached and $nbr branch tips — no unambiguous pin target"
+          fi
+        else
+          # Plain git: the checked-out commit is HEAD, detached or not. This is
+          # the pre-round-19 reading, kept on purpose.
+          tipref="HEAD"
+          tipwhy="detached HEAD in a plain git checkout"
+        fi
       fi
-      gh=$(tmo git -C "$tree" rev-parse HEAD 2>/dev/null); grc=$?
-      gh=$(printf '%s' "$gh" | head -1)
-      if [ "$grc" != 0 ]; then
-        row omarchy omarchy.git.head UNKNOWN "git rev-parse failed (rc=$grc) — HEAD unverified"
-      elif [ "$gh" = "$OMARCHY_HEAD_PIN" ]; then
-        row omarchy omarchy.git.head PASS "HELD: ${gh:0:8} (P3 pin)"
+      if [ -n "$tipref" ]; then
+        tip=$(tmo git -C "$tree" rev-parse --verify "$tipref" 2>/dev/null); grc=$?
+        tip=$(printf '%s' "$tip" | head -1)
+        if [ "$grc" != 0 ] || [ -z "$tip" ]; then
+          tip=""; tipwhy="cannot resolve $tipref (rc=$grc)"
+        fi
+      fi
+      if [ -z "$tip" ]; then
+        row omarchy omarchy.git.tag UNKNOWN "$tipwhy — tag pin unverified"
+        row omarchy omarchy.git.head UNKNOWN "$tipwhy — commit pin unverified"
       else
-        row omarchy omarchy.git.head FAIL "MOVED: rev-parse HEAD → '${gh:-<none>}' != pin ${OMARCHY_HEAD_PIN:0:8}… (every pin held at the old HEAD needs re-verification)"
+        gt=$(tmo git -C "$tree" describe --tags --exact-match "$tip" 2>/dev/null); grc=$?
+        gt=$(printf '%s' "$gt" | head -1)
+        if [ "$grc" != 0 ]; then
+          row omarchy omarchy.git.tag UNKNOWN "git describe failed (rc=$grc) — tag pin unverified"
+        elif [ "$gt" = "$OMARCHY_TAG_PIN" ]; then
+          row omarchy omarchy.git.tag PASS "HELD: $gt exactly at $tipref (P3 pin)"
+        else
+          row omarchy omarchy.git.tag FAIL "MOVED: describe --tags --exact-match → '${gt:-<none>}' != pin $OMARCHY_TAG_PIN"
+        fi
+        gh="$tip"
+        if [ "$gh" = "$OMARCHY_HEAD_PIN" ]; then
+          row omarchy omarchy.git.head PASS "HELD: ${gh:0:8} at $tipref (P3 pin)"
+        else
+          row omarchy omarchy.git.head FAIL "MOVED: $tipref → '${gh:-<none>}' != pin ${OMARCHY_HEAD_PIN:0:8}… (every pin held at the old tip needs re-verification)"
+        fi
       fi
     fi
 

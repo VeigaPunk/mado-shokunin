@@ -386,3 +386,12 @@ launcher — fenced).
   closed, with the seam named.
 - Before any promotion decision: read §7's record-debt row first — the arc's
   largest named remainder is its own record, not its gate.
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (line 229, the only `2.17.0` in the file) are dated 2026-10-14 (the note's verified-at; identity re-measured r9) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, dated, not carried forward: the `2.17.0` version string, binary identity sha256 `64826a85…` and BuildID `a22452d1…` (2.17.0 binary). The current host binary sha is `25240650…` per walker-route-r18.md § Host declaration (file bytes, not re-measured here).
+- Host-state, dated 2026-10-14, not re-measured this round: `config.toml` parse, theme package `omarchy-default`, `app-walker@autostart.service` + `elephant.service` active, sockets `srwxr-xr-x` 0 B, `dev.benz.walker` D-Bus owner == walker pid. The restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090) leave the post-restart process state [UNK].
+- Version-independent, kept: the consumer-probe method (`walker --version`, `pgrep -ax`, `stat`, `busctl --user list`; never connect) and the constraint that socket protocol and rendered UI stay UNKNOWN.
+- Version-bound behaviour: "no reload path — restart is the apply path (r9)" was measured on 2.17.0. walker-route-r18.md reports no `reload_config` or `set_config` in the v2.17.2 source tag; the 2.17.2 binary's apply behaviour is [UNK].
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

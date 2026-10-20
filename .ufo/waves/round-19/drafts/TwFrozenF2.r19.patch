@@ -1,0 +1,49 @@
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -1051,8 +1051,14 @@
+         paths_ok.append(good)
+         bad_paths = bad_paths or not good
+     listed = {os.path.normpath(e["path"]) for e in entries}
++    # Resolve DIR/inputs the way the kernel will before testing it: `DIR`,
++    # `DIR/` and `DIR/.` name one directory, so a lexical test answers for the
++    # spelling, not for the directory (round-18 finding F2). The walk root
++    # stays spelled so relative paths remain relative to DIRECTORY.
+     idir = os.path.join(directory, "inputs")
+-    if os.path.islink(idir):  # a symlinked inputs/ replays bytes outside the pin
++    real_inputs = os.path.join(real_dir, "inputs")
++    if os.path.islink(idir) or os.path.realpath(idir) != real_inputs:
++        # a symlinked inputs/ replays bytes outside the pin
+         bad_paths = True
+         paths_ok = [False for _ in paths_ok]  # every listed path is under inputs/
+     elif os.path.isdir(idir):
+@@ -1098,8 +1104,29 @@
+     return None, report, stats
+ 
+ 
++def frozen_dir_symlinked(directory):
++    """True when DIRECTORY is named through a symlink.
++
++    Every spelling that reaches one directory (`DIR`, `DIR/`, `DIR/.`,
++    `DIR/inputs/..`, `link/../evil`) is judged by kernel resolution, so a
++    trailing component cannot launder a symlinked DIR (round-18 finding F2).
++    A symlink above DIR is host layout, not snapshot identity, and is allowed.
++    """
++    real_dir = os.path.realpath(directory)
++    path = directory if os.path.isabs(directory) else os.path.join(os.getcwd(),
++                                                                   directory)
++    prefix = os.sep
++    for part in path.split(os.sep):
++        if not part:
++            continue
++        prefix = os.path.join(prefix, part)
++        if os.path.islink(prefix) and os.path.realpath(prefix) == real_dir:
++            return True
++    return False
++
++
+ def run_frozen(directory):
+-    if os.path.islink(directory.rstrip("/") or directory):
++    if frozen_dir_symlinked(directory):
+         return frozen_error("frozen directory is a symlink", None, [],
+                             outcome="snapshot_tampered")
+     try:

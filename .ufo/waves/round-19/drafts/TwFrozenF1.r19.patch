@@ -1,0 +1,11 @@
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -1011,6 +1011,8 @@
+         if w["line"] > len(lines):
+             return "expected_findings line %d is past the end of %s" % (
+                 w["line"], w["file"])
++        if not lines[w["line"] - 1]:
++            return "expected_findings line %d of %s is blank" % (w["line"], w["file"])
+     for k in pinned["known"]:
+         lines = stats[os.path.normpath(k["file"])]
+         if k["line"] > len(lines):

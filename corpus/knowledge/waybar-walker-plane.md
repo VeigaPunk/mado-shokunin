@@ -473,3 +473,12 @@ no longer resolve.
   the symlink's own `ls` size string — the two historical numbers measure
   different objects. The corrected content cell (5 L / 119 B, sha
   `95bf0c86c955cc81…`) stands as written.
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (lines 38, 197, 405) are dated 2026-10-14 and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, dated, not re-verified on 2.17.2: the `walker --version` print (`:38`, `:197`, `:405`) and the `walker --help` flag list (`:196-197`).
+- Process and unit state, dated and superseded: walker PID 1808 and its 2026-10-13 start (`:31-33`, `:172`, `:404`); the walker restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090) make that PID likely stale [INFERENCE: S090 records hook runs, not process state]. Elephant `is-enabled` (`:181`) is dated host state; elephant 2.21.0 to 2.22.1 (`/var/log/pacman.log:3095`, S090) is not pinned in this note.
+- Version-independent of the walker binary: user config 49 lines / 1,336 bytes / sha `fecf71fa4253803e` (`:21`) and the omarchy launcher and restart script anchors (`:169-188`). walker-route-r18.md records the same sha prefix for `~/.config/walker/config.toml` on 2026-10-20 as a file-bytes read; this block does not re-assert it.
+- Waybar, hypridle, hyprlock and swayosd version prints (`:37-40`) are outside S090 and were not re-measured this round.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

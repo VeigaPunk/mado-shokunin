@@ -461,3 +461,12 @@ a correction is a new block citing the block it corrects._
   R4-E1–R4-E7 by the round-4 errata sweep (each re-measured read-only
   16:20–16:25 UTC; scratch `/tmp/w4-err-m-sweep/`). Nothing in this note is
   corrected by the application; §8 remains the finding record.
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pin in this note (line 23 only) is dated 2026-10-14 (line 4) and describes walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, dated 2026-10-14, not re-checked against 2.17.2: the packaged default `/etc/xdg/walker/config.toml` line count (298, §6.1) and its key values (§6.2 table, incl. `:47` and `:112`); the `strings /usr/bin/walker` claims (§6.2 force_keyboard_focus warning, §6.3 GridView/list_max_columns, §6.4 EmergencyEntry strings); the walker socket and protocol ledger (§6.8, §9 item 7).
+- Version-bound elephant pin (line 24, pkg 2.21.0-1): S090 records elephant 2.21.0-1 -> 2.22.1-1 at `/var/log/pacman.log:3095`; the provider `.so` list (§6.5) is dated 2026-10-14.
+- Host-file bytes, dated 2026-10-14 and not re-hashed this round: `~/.config/walker/config.toml` (49 lines, sha256 `fecf71fa…` in §10); its key-by-key table (§6.2) is interpreted by the walker binary, so its meaning is version-bound too.
+- Version-independent of the walker package [INFERENCE], not re-measured this round: omarchy-owned theme files (§6.6), launch and restart scripts and keybinds (§6.7), omarchy-menu path (§6.7). Waybar sections §1-§5 make no walker-version claim.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

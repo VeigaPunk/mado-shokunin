@@ -616,3 +616,11 @@ errata blocks only if a note asserts otherwise; none does.
 
 _None yet. New entries append below this line; earlier text is never edited —
 a correction is a new block citing the block it corrects._
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (line 27) are dated 2026-10-14 (the note's own measurement date, lines 3-4) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090) and the binary's compiled-in version literal `2.17.2`, read as file bytes (S096). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, dated 2026-10-14 and not re-run on 2.17.2: the `walker --help` flag table (§5), the embedded-default byte run at offset 784,064 (§2.1), struct/field-arity and error/fallback token strings (§2.2-2.3, §6.1, §6.3), and every `/etc/xdg/walker/config.toml` line anchor (§2.1-2.4, §4.2, §7.4). The note's L1 pin (298 L, 13,220 B, sha256 prefix 5b4e47b7d2314bf8) is superseded: the host file now reads 13,743 B, sha256 prefix 3c5c6867d0216d0c (S091; upstream v2.17.2 default S073; DeltaWalkerConfig w1 round 19: 2.17.1 added `blur_corner_radius`, the `[niri]` table, a desktopapplications edit action and changed clipboard `after` to `SimpleDelete`, so §2.1-2.4 key enumerations are incomplete for 2.17.2).
+- Elephant-bound, dated 2026-10-14: `elephant version` 2.21.0 (line 28), the `listproviders` census and plugin list (§4.1), ElephantConfig defaults and generated-doc counts (§4.1, §5). S090 (line 3095) records elephant 2.21.0-1 -> 2.22.1-1 on this host; not re-measured.
+- Not walker-version-bound, still dated 2026-10-14: user files and hashes (only `~/.config/walker/config.toml` fecf71fa4253803e, 1,336 B was re-read this round, unchanged), elephant user TOMLs and menu Lua hashes, theme file hashes, omarchy script line anchors (§5, §7), and process/session state (§1 PIDs 1203471 and 1203474, sockets, `hyprctl -j layers`, §7.1 binds). [INFERENCE] a PID from 2026-10-14 runs the pre-upgrade image; not checked.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

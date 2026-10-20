@@ -1,0 +1,327 @@
+diff --git a/tools/mado-tripwire.py b/tools/mado-tripwire.py
+index a5d8a6e..f1f0786 100755
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -17,6 +17,13 @@ Limits (stated, not hidden):
+   JavaScript eval cells (eval_unparsed), scripts written then run, shell
+   functions/aliases, python -c bodies, other tools and other sessions are
+   not analysed. Pair a verdict with a /var/log/pacman.log window count.
++- Variable recipes are resolved only when the text fixes them: a name bound
++  by a straight-line module-level assignment to a literal-only expression
++  (str, `+`, two-argument `str.replace`, or a list of those), earlier in the
++  same cell or in an earlier cell of the same py kernel in the same
++  transcript (eval state persists; a `reset` cell, an exec/globals/import *
++  statement from that point on, or any other binding forgets the name).
++  Anything else stays unparsed_spawns.
+ - shlex is not bash: exotic quoting can hide a command from the parser.
+ - Transcript text is data. Nothing in it is followed or executed.
+ 
+@@ -596,15 +603,196 @@ def dotted(node):
+     return None
+ 
+ 
+-def str_list(node):
+-    if isinstance(node, (ast.List, ast.Tuple)) and node.elts and all(
+-            isinstance(e, ast.Constant) and isinstance(e.value, str) for e in node.elts):
+-        return [e.value for e in node.elts]
++LITERAL_MISS = object()
++OPAQUE_PY_CALLS = {"exec", "eval", "globals", "locals", "vars", "__import__",
++                   "compile", "setattr", "delattr"}
++OPAQUE_PY_DOTTED = OPAQUE_PY_CALLS | {"builtins." + n for n in OPAQUE_PY_CALLS}
++MATCH_BINDERS = tuple(getattr(ast, n) for n in ("MatchAs", "MatchStar", "MatchMapping")
++                      if hasattr(ast, n))
++TYPE_ALIAS = getattr(ast, "TypeAlias", None)
++
++
++def target_names(target):
++    """Names a binding target assigns; attribute/subscript targets bind none."""
++    if isinstance(target, ast.Name):
++        return {target.id}
++    if isinstance(target, (ast.Tuple, ast.List)):
++        names = set()
++        for elt in target.elts:
++            names |= target_names(elt)
++        return names
++    if isinstance(target, ast.Starred):
++        return target_names(target.value)
++    return set()
++
++
++def module_binding(stmt):
++    """The single-name straight-line module assignment in stmt, else None."""
++    if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and \
++            isinstance(stmt.targets[0], ast.Name):
++        return stmt.targets[0].id, stmt.value
++    if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name) and \
++            stmt.value is not None:
++        return stmt.target.id, stmt.value
+     return None
+ 
+ 
+-def classify_eval(code, language):
+-    """Return (hits, eval_unparsed, unparsed_spawns)."""
++def literal_value(node, env):
++    """Exact str (or list of str) value of a literal-only expression.
++
++    Only shapes whose value the text itself fixes are folded: a string
++    constant, a resolvable name, str + str, a two-argument str.replace on
++    resolvable strings, and a list/tuple of those. Anything else is
++    LITERAL_MISS and the caller counts the spawn as unparsed, never guesses.
++    """
++    if isinstance(node, ast.Constant) and isinstance(node.value, str):
++        return node.value
++    if isinstance(node, ast.Name):
++        return env.get(node.id, LITERAL_MISS)
++    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
++        left, right = literal_value(node.left, env), literal_value(node.right, env)
++        if isinstance(left, str) and isinstance(right, str):
++            return left + right
++        return LITERAL_MISS
++    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and \
++            node.func.attr == "replace" and len(node.args) == 2 and not node.keywords:
++        base = literal_value(node.func.value, env)
++        old, new = literal_value(node.args[0], env), literal_value(node.args[1], env)
++        if isinstance(base, str) and isinstance(old, str) and isinstance(new, str):
++            return base.replace(old, new)
++        return LITERAL_MISS
++    if isinstance(node, (ast.List, ast.Tuple)):
++        values = [literal_value(elt, env) for elt in node.elts]
++        if values and all(isinstance(v, str) for v in values):
++            return values
++    return LITERAL_MISS
++
++
++def module_unsafe_names(tree):
++    """Module-level names whose value cannot be tracked by straight-line
++    assignment: conditional/loop/tuple/augmented/import/del/walrus targets,
++    scope definitions, comprehension targets and global/nonlocal aliases."""
++    simple = {id(stmt) for stmt in tree.body if module_binding(stmt) is not None}
++    unsafe = set()
++
++    def scan(node):
++        for child in ast.iter_child_nodes(node):
++            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
++                unsafe.add(child.name)
++                for inner in ast.walk(child):  # a `global x` in any scope rebinds x
++                    if isinstance(inner, (ast.Global, ast.Nonlocal)):
++                        unsafe.update(inner.names)
++                continue  # other body bindings are local to that scope
++            if isinstance(child, ast.Lambda):
++                continue
++            if isinstance(child, ast.Assign):
++                if id(child) not in simple:
++                    for target in child.targets:
++                        unsafe.update(target_names(target))
++            elif isinstance(child, ast.AnnAssign):
++                if id(child) not in simple:
++                    unsafe.update(target_names(child.target))
++            elif isinstance(child, ast.AugAssign):
++                unsafe.update(target_names(child.target))
++            elif isinstance(child, (ast.For, ast.AsyncFor, ast.comprehension)):
++                unsafe.update(target_names(child.target))
++            elif isinstance(child, ast.withitem) and child.optional_vars is not None:
++                unsafe.update(target_names(child.optional_vars))
++            elif isinstance(child, ast.ExceptHandler) and child.name:
++                unsafe.add(child.name)
++            elif isinstance(child, (ast.Import, ast.ImportFrom)):
++                for alias in child.names:
++                    if alias.name != "*":
++                        unsafe.add(alias.asname or alias.name.split(".")[0])
++            elif isinstance(child, ast.Delete):
++                for target in child.targets:
++                    unsafe.update(target_names(target))
++            elif isinstance(child, ast.NamedExpr):
++                unsafe.update(target_names(child.target))
++            elif isinstance(child, (ast.Global, ast.Nonlocal)):
++                unsafe.update(child.names)
++            elif MATCH_BINDERS and isinstance(child, MATCH_BINDERS):
++                name = getattr(child, "name", None) or getattr(child, "rest", None)
++                if name:
++                    unsafe.add(name)
++            elif TYPE_ALIAS is not None and isinstance(child, TYPE_ALIAS):
++                unsafe.add(child.name.id)
++            scan(child)
++
++    scan(tree)
++    return unsafe
++
++
++def scoped_call_ids(tree):
++    """Ids of calls lexically inside a def/lambda body or a class body.
++
++    Those run later (or in another namespace), so the module-level value at
++    the definition point need not be the value they see: only literals
++    written inside the call itself are resolved for them.
++    """
++    ids = set()
++
++    def defer(nodes):
++        for node in nodes:
++            for inner in ast.walk(node):
++                if isinstance(inner, ast.Call):
++                    ids.add(id(inner))
++
++    def scan(node):
++        for child in ast.iter_child_nodes(node):
++            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
++                defer(child.body)
++            elif isinstance(child, ast.Lambda):
++                defer([child.body])
++            elif isinstance(child, ast.ClassDef):
++                defer(child.body)
++            else:
++                scan(child)
++
++    scan(tree)
++    return ids
++
++
++def opaque_module_mutation(tree):
++    """True when eager module/class-scope code can rebind names behind the
++    resolver's back (exec/eval/globals/locals/vars/builtins or import *)."""
++    def scan(node):
++        for child in ast.iter_child_nodes(node):
++            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
++                continue
++            if isinstance(child, ast.ImportFrom) and any(a.name == "*" for a in child.names):
++                return True
++            if isinstance(child, ast.Call) and (dotted(child.func) or "") in OPAQUE_PY_DOTTED:
++                return True
++            if scan(child):
++                return True
++        return False
++
++    return scan(tree)
++
++
++def opaque_statement(stmt):
++    """True when stmt itself, executed in order, rebinds names for what follows.
++
++    A def only defines a name (its body runs later, if at all), so it clears
++    nothing; every other statement is walked for the same eager rebinding the
++    whole-cell check looked for, so a class body's exec still counts.
++    """
++    if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
++        return False
++    if isinstance(stmt, ast.ImportFrom) and any(a.name == "*" for a in stmt.names):
++        return True
++    return opaque_module_mutation(stmt)
++
++
++def classify_eval(code, language, env=None):
++    """Return (hits, eval_unparsed, unparsed_spawns).
++
++    `env` is the literal environment of the transcript's py kernel (one dict
++    per scanned file); it is updated in place so a later eval cell resolves a
++    name an earlier cell bound. A name entered here was bound by exactly one
++    straight-line module-level assignment to a literal-only expression.
++    """
+     if language and language not in ("py", "python"):
+         return [], 1, 0
+     hits = []
+@@ -628,6 +816,12 @@ def classify_eval(code, language):
+                        dont_inherit=True)
+     except Exception:  # SyntaxError, ValueError, MemoryError, RecursionError: never executed
+         return hits, 1, 0
++    if env is None:
++        env = {}
++    unsafe = module_unsafe_names(tree)
++    for name in unsafe:
++        env.pop(name, None)
++    scoped = scoped_call_ids(tree)
+     from_subprocess = set()
+     aliases = {"sp": "subprocess"}  # bound name -> canonical dotted prefix
+     for node in ast.walk(tree):
+@@ -642,10 +836,26 @@ def classify_eval(code, language):
+                 aliases[a.asname or a.name] = "%s.%s" % (node.module, a.name)
+                 if node.module == "subprocess":
+                     from_subprocess.add(a.asname or a.name)
++    call_env = {}  # call id -> module literal env at its statement
++    for stmt in tree.body:
++        for node in ast.walk(stmt):
++            if isinstance(node, ast.Call):
++                call_env[id(node)] = dict(env)
++        if opaque_statement(stmt):
++            env.clear()  # exec/globals/import * here rebinds names behind the resolver
++        binding = module_binding(stmt)
++        if binding is not None:
++            name, value = binding
++            resolved = LITERAL_MISS if name in unsafe else literal_value(value, env)
++            if resolved is LITERAL_MISS:
++                env.pop(name, None)
++            else:
++                env[name] = resolved
+     unparsed = 0
+     for node in ast.walk(tree):
+         if not isinstance(node, ast.Call):
+             continue
++        cenv = {} if id(node) in scoped else call_env[id(node)]
+         name = dotted(node.func) or ""
+         head, _, rest = name.partition(".")
+         if head in aliases:
+@@ -664,17 +874,18 @@ def classify_eval(code, language):
+             cmd = None
+             if isinstance(arg, ast.Dict):
+                 for k, v in zip(arg.keys, arg.values):
+-                    if isinstance(k, ast.Constant) and k.value == "command" and \
+-                            isinstance(v, ast.Constant) and isinstance(v.value, str):
+-                        cmd = v.value
++                    if isinstance(k, ast.Constant) and k.value == "command":
++                        value = literal_value(v, cenv)
++                        if isinstance(value, str):
++                            cmd = value
+             if cmd is None:
+                 unparsed += 1
+             else:
+                 hits.extend(classify_shell(cmd))
+             continue
+         if is_exec:
+-            vals = [a.value for a in node.args if isinstance(a, ast.Constant) and isinstance(a.value, str)]
+-            if vals and len(vals) == len(node.args):
++            vals = [literal_value(a, cenv) for a in node.args]
++            if vals and all(isinstance(v, str) for v in vals):
+                 hits.extend(classify_shell(shlex.join(vals)))
+             else:
+                 unparsed += 1
+@@ -682,12 +893,12 @@ def classify_eval(code, language):
+         arg = node.args[0] if node.args else None
+         shell_kw = any(k.arg == "shell" and not (isinstance(k.value, ast.Constant) and not k.value.value)
+                        for k in node.keywords)  # non-literal shell= is treated as shell
+-        lst = str_list(arg) if arg is not None else None
+-        if lst is not None:
+-            hits.extend(classify_shell(shlex.join(lst)))
+-        elif isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+-            hits.extend(classify_shell(arg.value) if (is_shell_fn or shell_kw)
+-                        else classify_shell(shlex.quote(arg.value)))
++        value = literal_value(arg, cenv) if arg is not None else LITERAL_MISS
++        if isinstance(value, list):
++            hits.extend(classify_shell(shlex.join(value)))
++        elif isinstance(value, str):
++            hits.extend(classify_shell(value) if (is_shell_fn or shell_kw)
++                        else classify_shell(shlex.quote(value)))
+         else:
+             unparsed += 1
+     return hits, 0, unparsed
+@@ -763,6 +974,7 @@ def scan_file(path):
+     if raw_lines and raw_lines[-1] == b"":
+         raw_lines.pop()
+     entry["lines"] = len(raw_lines)
++    envs = {}  # language kernel -> literal env, carried across this file's cells
+     for lineno, raw in enumerate(raw_lines, 1):
+         if not raw.strip():
+             continue
+@@ -795,7 +1007,13 @@ def scan_file(path):
+                 code = args.get("code")
+                 if not isinstance(code, str):
+                     continue
+-                hits, un_eval, un_spawn = classify_eval(code, args.get("language"))
++                language = args.get("language")
++                env = None
++                if language in (None, "py", "python"):
++                    if args.get("reset") is True:  # fresh kernel: nothing carries in
++                        envs["py"] = {}
++                    env = envs.setdefault("py", {})
++                hits, un_eval, un_spawn = classify_eval(code, language, env)
+                 entry["eval_unparsed"] += un_eval
+                 entry["unparsed_spawns"] += un_spawn
+             else:

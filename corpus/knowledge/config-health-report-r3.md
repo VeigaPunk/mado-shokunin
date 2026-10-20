@@ -1004,3 +1004,10 @@ class).
   verbs or the idle toggle; F1 re-arming stays operator-side (§7).
 - Pins drift ⇒ "not reproduced" for byte-identity; escalate to the lane —
   never silently adopt new values.
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pin in this note (line 900: `walker --version` expectation `2.17.0`, measured in the 2026-10-14 probe window of line 3 and the round-4 kit at lines 951-953) is dated 2026-10-14 and describes walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090; the 2.17.0 window starts at line 1943). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, dated, not re-asserted: the version print (line 900); the help-text statement "`walker --help` = launch flags only" (line 249); the service state "Main PID 1808 from boot" (lines 245-246, 896), which may no longer be current after the restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090); current PID is `[UNK]`.
+- Version-independent file bytes, dated 2026-10-14 and not re-measured this round: user walker config and its sha, line count and size (lines 242-243, 645), the autostart desktop entry (lines 243-244, 657), the theme `walker.css` and `style.css`/`layout.xml` (lines 270, 915-916). What walker 2.17.2 does with these bytes is `[UNK]` (walker-route-r18.md, § Unexercised behavior).
+- Launch path and command presence (lines 252-255, 902) are omarchy-defined bindings and a PATH lookup, not walker-version-bound; they are dated 2026-10-14 and were not re-measured this round.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

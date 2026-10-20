@@ -299,3 +299,10 @@ if the environment permits ptrace).
    walker surface; round-5 §1 pins it at 2.21.0).
 5. Whether the help blob's literal boundaries (option descriptions) are
    stable across rebuilds — only this build (`64826a85…`) is pinned.
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (lines 19, 37, 38) are dated 2026-10-14 (the measurement window in line 6) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090); the host binary bytes are reserved as S096 (row pending, not re-read this round). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound, therefore dated to the 2.17.0 build: §1 binary sha256 `64826a85…`, owner pkg `walker 2.17.0-1`, the `--version` bytes; §1 package file list (29 entries) and packaged `/etc/xdg/walker/config.toml` (13,220 B, sha `5b4e47b7…`); §2 help text and its sha256 `ca4820a8…` with the help-all and gapplication captures; §3 L0 embedded-default equality at offset 784,064.
+- Version-independent in kind, but host-state dated 2026-10-14: §3 user config `~/.config/walker/config.toml` (1,336 B, sha `fecf71fa…`) and its overrides; §3 GSettings values and unit environment; §4 PIDs, sockets, D-Bus owner and layer invariant; §7 boundary snapshot. None of these is re-asserted for 2026-10-20.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

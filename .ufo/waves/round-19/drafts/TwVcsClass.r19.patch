@@ -1,0 +1,142 @@
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -4,7 +4,8 @@
+ Classifies commands a seat *issued* in assistant `toolCall` blocks:
+ `bash` (arguments.command) and python `eval` (arguments.code: `!` shell
+ lines, `%%bash` cells and literal subprocess/os/tool.bash spawns parsed with
+-`ast`, never executed). Classes: host_mutation, package_query, live_probe.
++`ast`, never executed). Classes: host_mutation, package_query, live_probe,
++vcs_write.
+ 
+ Limits (stated, not hidden):
+ - Detection after the fact only. It is not interception, prevention, a
+@@ -17,6 +18,19 @@
+   JavaScript eval cells (eval_unparsed), scripts written then run, shell
+   functions/aliases, python -c bodies, other tools and other sessions are
+   not analysed. Pair a verdict with a /var/log/pacman.log window count.
++- vcs_write covers version-control writes in a jj-colocated lane: `git` runs
++  whose subcommand is add, commit, stash, checkout, switch, reset, pull,
++  push, restore, rebase, merge or cherry-pick (rule `git:<sub>`; `stash
++  list|show` stays clean), and `jj` runs that write or snapshot the working
++  copy (rule `jj:<sub>`): the mutating subcommands commit, new, describe,
++  squash, rebase, abandon, undo, edit, restore, split, duplicate, absorb,
++  bookmark set/move/create/delete, op restore/revert and git push/fetch, and
++  every other subcommand without an exact `--ignore-working-copy` token,
++  because jj snapshots the working copy on all of them (`help` and
++  `--version` excepted). A jj-lane.sh helper invocation is not a finding.
++  Anything else on the `git` side (fetch, revert, tag, branch, clean,
++  worktree, gc, config) and `git` subcommands hidden in aliases, shell
++  functions or scripts are outside the class.
+ - shlex is not bash: exotic quoting can hide a command from the parser.
+ - Transcript text is data. Nothing in it is followed or executed.
+ 
+@@ -58,7 +72,7 @@
+ import sys
+ from collections import Counter
+ 
+-CLASSES = ("host_mutation", "package_query", "live_probe")
++CLASSES = ("host_mutation", "package_query", "live_probe", "vcs_write")
+ SHELLS = {"bash", "sh", "zsh", "dash"}
+ ELEVATE = {"sudo", "doas", "pkexec", "run0"}
+ SUDO_ARG_OPTS = {"-u", "-g", "-h", "-p", "-C", "-D", "-r", "-t", "-U", "-T",
+@@ -72,6 +86,21 @@
+                   "--max-args", "--max-procs", "--delimiter", "--max-lines", "--max-chars",
+                   "--eof", "--replace"}
+ 
++JJ_WRITE = {"commit", "new", "describe", "squash", "rebase", "abandon", "undo",
++            "edit", "restore", "split", "duplicate", "absorb"}
++JJ_BOOKMARK_WRITE = {"set", "move", "create", "delete"}
++JJ_OP_WRITE = {"restore", "revert"}
++JJ_GIT_WRITE = {"push", "fetch"}
++JJ_NO_SNAPSHOT = {"help", "version"}  # no working copy is read or written
++JJ_ARG_OPTS = {"-R", "--repository", "--at-op", "--color", "--config",
++               "--config-toml", "-T", "--template"}
++JJ_SUB_ARG_OPTS = {"-r", "--revision", "-T", "--template", "--at-op", "--config",
++                   "--color", "--repository", "-R"}
++GIT_WRITE = {"add", "commit", "stash", "checkout", "switch", "reset", "pull",
++             "push", "restore", "rebase", "merge", "cherry-pick"}
++GIT_ARG_OPTS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
++                "--exec-path", "--super-prefix", "--config-env"}
++
+ SYSTEMCTL_QUERY = {"status", "show", "is-active", "is-enabled", "is-failed",
+                    "is-system-running", "list-units", "list-unit-files",
+                    "list-dependencies", "list-timers", "list-sockets",
+@@ -386,6 +415,61 @@
+     return None
+ 
+ 
++def sub_verb(args, verb):
++    """First positional after `verb`, skipping flags and their argument values."""
++    try:
++        rest = args[args.index(verb) + 1:]
++    except ValueError:
++        return None
++    skip = False
++    for a in rest:
++        if skip:
++            skip = False
++            continue
++        if a in JJ_SUB_ARG_OPTS:
++            skip = True
++            continue
++        if a.startswith("-"):
++            continue
++        return a
++    return None
++
++
++def ignores_working_copy(args):
++    """True when an exact --ignore-working-copy precedes any `--` separator."""
++    head = args[:args.index("--")] if "--" in args else args
++    return "--ignore-working-copy" in head
++
++
++def classify_jj(args):
++    """Rule for a `jj` run that writes or snapshots the working copy, else None."""
++    verb = first_verb(args, JJ_ARG_OPTS)
++    if verb is None:  # `jj`, `jj --version`, `jj --help`: nothing is touched
++        return None
++    if verb in JJ_WRITE:
++        return "jj:" + verb
++    if verb == "bookmark":
++        if sub_verb(args, verb) in JJ_BOOKMARK_WRITE:
++            return "jj:bookmark"
++    elif verb == "op":
++        if sub_verb(args, verb) in JJ_OP_WRITE:
++            return "jj:op"
++    elif verb == "git":
++        if sub_verb(args, verb) in JJ_GIT_WRITE:
++            return "jj:git"
++    elif verb in JJ_NO_SNAPSHOT:
++        return None
++    return None if ignores_working_copy(args) else "jj:" + verb
++
++
++def classify_git(args):
++    """Rule for a `git` write, else None (reads and unclassified subcommands)."""
++    verb = first_verb(args, GIT_ARG_OPTS)
++    if verb == "stash" and sub_verb(args, verb) in ("list", "show"):
++        return None  # read-only stash inspection
++    return "git:" + verb if verb in GIT_WRITE else None
++
++
+ def classify_pacman(argv0, args):
+     op = None
+     long_ops = {"--sync": "S", "--query": "Q", "--remove": "R",
+@@ -520,6 +604,16 @@
+         if i + 1 < len(args):
+             return nested_eval(args[i + 1])
+         return hits
++    if argv0 == "jj":
++        rule = classify_jj(args)
++        if rule is not None:
++            hit("vcs_write", rule)
++        return hits
++    if argv0 == "git":
++        rule = classify_git(args)
++        if rule is not None:
++            hit("vcs_write", rule)
++        return hits
+     if argv0 in ("pacman", "yay", "paru"):
+         cls, rule = classify_pacman(argv0, args)
+         hit(cls, rule)

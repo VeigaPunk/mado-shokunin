@@ -293,3 +293,12 @@ move this round: no re-cut or recalibration is owed from this lane.
 append (M11-4) was still in flight at this read (`git status --porcelain` →
 ` M SKILL.md`; `plans/completion-evidence.md` untracked, another seat's). This
 lane wrote only this append.
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (lines 43) are dated 2026-10-14 (`verified-at`, line 12; §1 measurement) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound (dated, superseded for the host package): the `2.17.0` version print on line 43. No walker version pin is re-asserted here.
+- Point sample, dated, not version-bound: "sockets `stat`'d 0 B, never connected" is a 2026-10-14 host-state observation, session-dependent, not re-measured this round.
+- Version-bound behaviour: "no reload path — restart is the apply path" is a consumer-side reading against 2.17.0. walker-route-r18.md greps the v2.17.2 tag tree for `reload_config`/`set_config` in `src/` (source reading only); the 2.17.2 binary's live reload behaviour is [UNK].
+- Other walker mentions (lines 152, 154, 187, 201: walker-deep notes; line 174: the exempted `walker ×3` live rows; line 264: the 2026-10-14 PID sample) are not walker version pins; none is re-asserted here, and none is affected by the host move to 2.17.2.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

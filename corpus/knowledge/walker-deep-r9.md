@@ -397,3 +397,12 @@ owning lane (round-7 note §5 routed the §10/§11 ledger there; still owed):
 
 _End of note. Append-only: corrections append below this line; earlier
 text is never edited._
+
+## Freshness pointer (round 19, 2026-10-20)
+
+- The walker version pins in this note (lines 30, 58, 60, 78, 103, 110, 111, 305, 316, 317) are dated 2026-10-14 (19:59:02–20:01:39Z) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090) and the binary's compiled-in version literal read as file bytes (S096). Current routing: corpus/knowledge/walker-route-r18.md.
+- Version-bound and dated, superseded for the host by S090 line 2929: printed `--version` bytes (§1 line 58, §2.1, §5.1); binary identity (sha256, size, mtime, BuildID, `.comment` toolchain, rodata literal offset 847,791; §1, §2.2, §2.3, §5.3–5.4); package row and `pacman -Qkk` count (line 60, line 103, §5.6).
+- Version-bound and dated: help-family sha256 pins (§1 line 59, §5.2); packaged `/etc/xdg` default config size and sha (§1 config layers, §5.9); embedded-config offset 784,064 (§1, §5.9).
+- Not version-bound (host file bytes and unit/socket state), dated 2026-10-14 and not re-measured this round: user `config.toml` sha `fecf71fa…`, autostart desktop sha, unit `app-walker@autostart.service`, PIDs, socket stat, layer rows (§1, §4, §6).
+- Mechanism (§3.8, INF high: read once, no reload verb, no watch token, no D-Bus reload): walker-route-r18.md records the same read-once config load (v2.17.2 `src/config.rs`) and no config-reload entry point in the v2.17.2 tree. The live discriminator stays [UNK] under the file-byte + `--help` class.
+- Not re-measured live this round (host pause): behaviour of the 2.17.2 binary stays [UNK].

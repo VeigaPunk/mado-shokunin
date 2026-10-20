@@ -1,0 +1,401 @@
+diff --git a/tools/mado-tripwire.py b/tools/mado-tripwire.py
+index a5d8a6e..cab65dd 100755
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -14,9 +14,22 @@ Limits (stated, not hidden):
+   (a successful harmful call and a refused one both count).
+ - `clean` means no finding in the covered forms. It never means "no host
+   command ran": non-literal spawn arguments (counted as unparsed_spawns),
+-  JavaScript eval cells (eval_unparsed), scripts written then run, shell
+-  functions/aliases, python -c bodies, other tools and other sessions are
+-  not analysed. Pair a verdict with a /var/log/pacman.log window count.
++  JavaScript eval cells (eval_unparsed), scripts written then run, aliases,
++  helpers defined in one text and called from another, python -c bodies,
++  other tools and other sessions are not analysed. Pair a verdict with a
++  /var/log/pacman.log window count.
++- A function defined earlier in the SAME text and called there with literal
++  arguments has its body classified with those arguments substituted: $1..$9
++  and $@/$* for shell functions, positional parameters for python `def`.
++  Nothing is substituted unless the call text states it literally, so a
++  resolved finding names a command the transcript spells out. A helper body
++  that is defined but never called is still read as before.
++- A call to a name this text neither defines nor imports, handed a literal
++  `['prog', ...]` argv list that classifies as a host command, is reported
++  as a lead: the argv is stated outright, but whether that helper executes
++  it is not visible. Pure data calls (`print`, `json.dumps`, ...) are exempt
++  (PURE_ARG_CALLS); a call to a name this text DOES define contributes no
++  lead when its arguments are not all literal.
+ - shlex is not bash: exotic quoting can hide a command from the parser.
+ - Transcript text is data. Nothing in it is followed or executed.
+ 
+@@ -432,12 +445,174 @@ def classify_pacman(argv0, args):
+     return ("host_mutation", rule)
+ 
+ 
++SHELL_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
++SHELL_EXPANSION = re.compile(r"[$\x60*?\[{~\n]")
++
++
++def last_unquoted(text, target):
++    """Index of the last occurrence of target outside quotes, or -1."""
++    quote, i, last = None, 0, -1
++    while i < len(text):
++        ch = text[i]
++        if quote:
++            if ch == "\\" and quote == '"':
++                i += 2
++                continue
++            if ch == quote:
++                quote = None
++        elif ch == "\\":
++            i += 2
++            continue
++        elif ch in ("'", '"'):
++            quote = ch
++        elif ch == target:
++            last = i
++        i += 1
++    return last
++
++
++def heredoc_attached(line, bodies):
++    """A raw line with its heredoc bodies and delimiters put back in place.
++
++    `logical_lines` returns a heredoc body beside its marker line; a function
++    body rebuilt from marker lines alone would re-parse the marker and swallow
++    the following body lines as a bogus heredoc.
++    """
++    for m, body in zip(re.finditer(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1", line), bodies):
++        line += "\n" + body + "\n" + m.group(2)
++    return line
++
++
++def shell_functions(pairs):
++    """Definitions visible in one command text: {name: (start, body_text)}.
++
++    Only `name() { ... }` and `function name { ... }` are read, only when the
++    closing `}` is present in the same text, and a name defined twice is
++    dropped: neither its body nor its call site is then interpreted. The body
++    is the raw text between the braces: token text would lose quoting, and a
++    body re-parsed without its quotes splits `python3 -c "...; ..."` and
++    `sh -c '...'` into words bash never saw.
++    """
++    funcs, dup = {}, set()
++    i = 0
++    while i < len(pairs):
++        line = pairs[i][0]
++        try:
++            toks = tokenize(line) if line.strip() else []
++        except ValueError:
++            i += 1
++            continue
++        name = None
++        if toks and toks[0] == "function" and len(toks) > 1 and SHELL_IDENT.match(toks[1]):
++            name = toks[1]
++        elif len(toks) > 1 and SHELL_IDENT.match(toks[0]) and toks[1] in ("()", "("):
++            after = toks[1:]
++            if after[:1] == ["()"]:
++                after = after[1:]
++            elif after[:2] == ["(", ")"]:
++                after = after[2:]
++            else:
++                after = None
++            if after is not None and after[:1] == ["{"]:
++                name = toks[0]
++        if name is None:
++            i += 1
++            continue
++        raw = strip_comment(line)
++        m = re.match(r"^\s*(?:function\s+)?%s\s*(?:\(\s*\))?\s*\{" % re.escape(name), raw)
++        if not m:
++            i += 1  # tokens and raw text disagree: no body, never a guess
++            continue
++        start = i
++        end = len(raw.rstrip())
++        if end and raw.rstrip().endswith("}") and last_unquoted(raw, "}") == end - 1:
++            body = raw[m.end():end - 1]
++            i += 1
++        else:
++            head = heredoc_attached(raw[m.end():], pairs[i][1])
++            parts = [head] if head.strip() else []
++            j, closed = i + 1, False
++            while j < len(pairs):
++                ln, bodies2 = pairs[j]
++                try:
++                    t2 = tokenize(ln) if ln.strip() else []
++                except ValueError:
++                    t2 = ln.split()
++                rawln = strip_comment(ln).rstrip()
++                if (t2 and t2[-1] == "}" and rawln.endswith("}")
++                        and last_unquoted(rawln, "}") == len(rawln) - 1):
++                    if rawln[:-1].strip():
++                        parts.append(rawln[:-1])
++                    closed = True
++                    break
++                parts.append(heredoc_attached(ln, bodies2))
++                j += 1
++            if not closed:
++                i += 1
++                continue
++            body = "\n".join(parts)
++            i = j + 1
++        if name in funcs:
++            dup.add(name)
++        funcs[name] = (start, body)
++    for name in dup:
++        funcs.pop(name, None)
++    return funcs
++
++
++def shell_expand(body, args):
++    """Substitute literal positional arguments into a function body.
++
++    $1..$9 and $@/$* are replaced outside single quotes (bash never expands
++    there); inside double quotes the value is inserted unquoted, elsewhere it
++    is shell-quoted. A positional the call did not supply yields None.
++    """
++    out, i, quote = [], 0, None
++    words = " ".join(shlex.quote(a) for a in args)
++    body = body.replace('"$@"', words).replace('"${@}"', words)  # one word per argument
++    while i < len(body):
++        ch = body[i]
++        if quote == "'":
++            if ch == "'":
++                quote = None
++            out.append(ch)
++            i += 1
++            continue
++        if ch == "\\" and i + 1 < len(body):
++            out.append(body[i:i + 2])
++            i += 2
++            continue
++        if ch in ("'", '"'):
++            quote = None if ch == quote else (ch if quote is None else quote)
++            out.append(ch)
++            i += 1
++            continue
++        if ch == "$":
++            m = re.match(r"\$(?:\{([0-9]+|[@*])\}|([0-9@*]))", body[i:])
++            if m:
++                key = m.group(1) or m.group(2)
++                if key in ("@", "*"):
++                    out.append(shlex.join(args))
++                elif 1 <= int(key) <= len(args):
++                    val = args[int(key) - 1]
++                    out.append(val if quote == '"' else shlex.quote(val))
++                else:
++                    return None
++                i += m.end()
++                continue
++        out.append(ch)
++        i += 1
++    return "".join(out)
++
++
+ def classify_shell(text, depth=0):
+     """Return a list of (class, rule, argv0, segment_text, unparsed)."""
+     if depth > 8 or not text or not text.strip():
+         return []
++    pairs = logical_lines(text)
++    funcs = shell_functions(pairs)
+     out = []
+-    for line, bodies in logical_lines(text):
++    for idx, (line, bodies) in enumerate(pairs):
+         unparsed = False
+         try:
+             toks = tokenize(line)
+@@ -450,6 +625,12 @@ def classify_shell(text, depth=0):
+             out.extend(classify_segment(seg, depth, unparsed))
+             s = strip_prefix(seg)
+             base = os.path.basename(s[0]) if s else ""
++            defn = funcs.get(base)
++            if (defn is not None and idx > defn[0] and len(s) > 1
++                    and not any(SHELL_EXPANSION.search(a) for a in s[1:])):
++                expanded = shell_expand(defn[1], s[1:])
++                if expanded is not None:
++                    out.extend(classify_shell(expanded, depth + 1))
+             if base in SHELLS and not any(
+                     a.startswith("-") and "c" in a and not a.startswith("--") for a in s[1:]):
+                 fed_to_shell = True
+@@ -603,6 +784,60 @@ def str_list(node):
+     return None
+ 
+ 
++def literal_node(node):
++    """True when an argument is literal text the transcript states outright."""
++    if isinstance(node, ast.Constant) and (node.value is None or
++                                           isinstance(node.value, (str, int, float, bool))):
++        return True
++    if isinstance(node, (ast.List, ast.Tuple)) and all(literal_node(e) for e in node.elts):
++        return True
++    return False
++
++
++def resolve(node, env, hops=0):
++    """Follow a parameter bound to a literal argument at the same-text call."""
++    while isinstance(node, ast.Name) and hops < 8:
++        nxt = env.get(node.id)
++        if nxt is None:
++            break
++        node, hops = nxt, hops + 1
++    return node
++
++
++def bind_literal(fn, call, env=None):
++    """Bind a same-text `def` helper's parameters to literal call arguments."""
++    env = {} if env is None else env
++    if fn.args.vararg or fn.args.kwarg or any(isinstance(a, ast.Starred) for a in call.args):
++        return None
++    params = [a.arg for a in fn.args.posonlyargs + fn.args.args]
++    if len(call.args) > len(params):
++        return None
++    bound = {}
++    for name, node in zip(params, call.args):
++        node = resolve(node, env)
++        if not literal_node(node):
++            return None
++        bound[name] = node
++    for k in call.keywords:
++        if k.arg is None or k.arg not in params or k.arg in bound:
++            return None
++        node = resolve(k.value, env)
++        if not literal_node(node):
++            return None
++        bound[k.arg] = node
++    first_default = len(params) - len(fn.args.defaults)
++    for idx, name in enumerate(params):
++        if name in bound:
++            continue
++        if idx < first_default:
++            return None  # a required parameter the call does not state
++        dflt = fn.args.defaults[idx - first_default]
++        if not literal_node(dflt):
++            return None
++        bound[name] = dflt
++    return bound
++
++
+ def classify_eval(code, language):
+     """Return (hits, eval_unparsed, unparsed_spawns)."""
+     if language and language not in ("py", "python"):
+@@ -642,10 +877,65 @@ def classify_eval(code, language):
+                 aliases[a.asname or a.name] = "%s.%s" % (node.module, a.name)
+                 if node.module == "subprocess":
+                     from_subprocess.add(a.asname or a.name)
+-    unparsed = 0
+-    for node in ast.walk(tree):
++    funcs = {}
++    for node in tree.body:
++        if isinstance(node, ast.FunctionDef) and not node.decorator_list:
++            funcs[node.name] = None if node.name in funcs else (node.lineno, node)
++    funcs = {k: v for k, v in funcs.items() if v is not None}
++    spawn_hits, unparsed = spawn_scan(list(ast.walk(tree)), aliases, from_subprocess, {}, funcs)
++    hits.extend(spawn_hits)
++    return hits, 0, unparsed
++
++
++PURE_ARG_CALLS = {  # never spawns: never report a literal argv list handed to it
++    "print", "list", "tuple", "set", "dict", "sorted", "reversed", "repr", "str",
++    "bytes", "len", "any", "all", "min", "max", "sum", "enumerate", "zip", "map",
++    "filter", "open", "exec", "eval", "compile", "isinstance", "getattr", "hasattr",
++    "setattr", "iter", "next", "input",
++}
++
++
++def argv_list(node):
++    """The strings of a literal ['prog', ...] list/tuple, else None."""
++    if not (isinstance(node, (ast.List, ast.Tuple)) and node.elts):
++        return None
++    vals = []
++    for e in node.elts:
++        if not (isinstance(e, ast.Constant) and isinstance(e.value, str)):
++            return None
++        vals.append(e.value)
++    return vals
++
++
++def helper_argv_leads(node, env):
++    """Classify literal argv lists handed to a call this text does not define."""
++    out = []
++    for a in node.args:
++        vals = argv_list(resolve(a, env))
++        if vals is not None:
++            out.extend(classify_shell(shlex.join(vals)))
++    return out
++
++
++def spawn_scan(nodes, aliases, from_subprocess, env, funcs, depth=0):
++    """Classify spawn calls, resolving literal calls to same-text helpers.
++
++    A call to a name this text neither defines nor imports contributes one
++    lead per literal argv list it is handed: the argv is stated outright,
++    the helper's body is not visible here.
++    """
++    hits, unparsed = [], 0
++    for node in nodes:
+         if not isinstance(node, ast.Call):
+             continue
++        helper = funcs.get(node.func.id) if isinstance(node.func, ast.Name) else None
++        if helper is not None and node.lineno > helper[0] and depth < 4:
++            bound = bind_literal(helper[1], node, env)
++            if bound is not None:
++                body = [n for n in ast.walk(helper[1]) if isinstance(n, ast.Call)]
++                inner, _ = spawn_scan(body, aliases, from_subprocess, bound, funcs, depth + 1)
++                hits.extend(inner)
++            continue  # the helper body was counted where that body is defined
+         name = dotted(node.func) or ""
+         head, _, rest = name.partition(".")
+         if head in aliases:
+@@ -658,9 +948,12 @@ def classify_eval(code, language):
+                            "os.spawnlp", "os.execlp")
+         is_tool = name in ("tool.bash",)
+         if not (is_sub or is_shell_fn or is_exec or is_tool):
++            if (isinstance(node.func, ast.Name) and helper is None
++                    and name not in PURE_ARG_CALLS):
++                hits.extend(helper_argv_leads(node, env))
+             continue
+         if is_tool:
+-            arg = node.args[0] if node.args else None
++            arg = resolve(node.args[0], env) if node.args else None
+             cmd = None
+             if isinstance(arg, ast.Dict):
+                 for k, v in zip(arg.keys, arg.values):
+@@ -673,15 +966,25 @@ def classify_eval(code, language):
+                 hits.extend(classify_shell(cmd))
+             continue
+         if is_exec:
+-            vals = [a.value for a in node.args if isinstance(a, ast.Constant) and isinstance(a.value, str)]
++            vals = []
++            for a in node.args:
++                r = resolve(a, env)
++                if not (isinstance(r, ast.Constant) and isinstance(r.value, str)):
++                    vals = []
++                    break
++                vals.append(r.value)
+             if vals and len(vals) == len(node.args):
+                 hits.extend(classify_shell(shlex.join(vals)))
+             else:
+                 unparsed += 1
+             continue
+-        arg = node.args[0] if node.args else None
+-        shell_kw = any(k.arg == "shell" and not (isinstance(k.value, ast.Constant) and not k.value.value)
+-                       for k in node.keywords)  # non-literal shell= is treated as shell
++        arg = resolve(node.args[0], env) if node.args else None
++        shell_kw = False
++        for k in node.keywords:  # non-literal shell= is treated as shell
++            if k.arg == "shell":
++                v = resolve(k.value, env)
++                if not (isinstance(v, ast.Constant) and not v.value):
++                    shell_kw = True
+         lst = str_list(arg) if arg is not None else None
+         if lst is not None:
+             hits.extend(classify_shell(shlex.join(lst)))
+@@ -690,7 +993,7 @@ def classify_eval(code, language):
+                         else classify_shell(shlex.quote(arg.value)))
+         else:
+             unparsed += 1
+-    return hits, 0, unparsed
++    return hits, unparsed
+ 
+ 
+ # ----------------------------------------------------------------- scan ---
