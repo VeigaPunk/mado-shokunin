@@ -620,3 +620,69 @@ No exploratory claim, new repertoire capability, promotion clearance,
 kernel diagnosis, device/event reading, replay, input injection or
 configuration/compositor mutation. L1 holds canonical planner seat;
 PlanningWalk is the bounded data-walk mapping inside one 64-seat wave.
+
+## Round 15 — committed measurement and honest-stop verdict
+
+Measured content `5f13870491588703ea6c81ef390488c5d2eeb727`;
+baseline `ea0446fcb4840089f0e541d96350144506fb5d1d`, 2026-10-20.
+Both commands below actually ran, exit 0 (observation, not admission):
+
+```sh
+python3 .ufo/waves/round-15/measure.py ea0446fcb4840089f0e541d96350144506fb5d1d
+python3 .ufo/waves/round-15/measure.py 5f13870491588703ea6c81ef390488c5d2eeb727
+```
+
+| Claim / axis | Before | After | Delta / verdict | Evidence |
+|---|---|---|---|---|
+| C1 coverage / sourced current-art documented routes | U1–U5, 5/7, 7.1429/10 | U1–U6, 6/7, 8.5714/10; U6 S051/S052 joins, inverse and four facets true | +1.4286, locally verified improved on this bounded structural rubric | `evidence/{before,after}.txt`; actual source/body hand check in lesson §Gate; new U6 note, not successful input delivery |
+
+Only U6 is added; no prior U-item is lost. Navigation 28/28 → 29/29,
+missing/extra/duplicates empty. Sources 50 → 52; A/B/C 46/1/3 → 48/1/3,
+mined/queued/rejected 38/8/4 → 40/8/4. S007 stays queued; no existing
+registry mutable field changed. Census before/after exits 0 with the
+same historical W04 S030/S042/S045 warnings. Source-merge screen exits 0,
+rows 52, collisions/errors 0. These are structural/source conformance,
+not non-author clearance.
+
+### Harm watch and safety outcome
+
+- Gate digest unchanged:
+  `fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`.
+  The measurement probe hashes committed bytes and never executes the gate.
+- One fresh `bash tools/mado-verify.sh --selftest`: 372/372, exit 0.
+  One fresh `bash tools/mado-verify.sh --no-live`: 29 PASS, 0 FAIL,
+  0 UNKNOWN, 8 SKIP, 4 NOTE, exit 0. Receipts name measured commit and
+  raw gate digest. `boundary.readonly` is config-byte equality **within
+  that run**, not unchanged host packages or equality across revisions.
+- R14-V1 static correction audit: exact same command exits 1,
+  `receipt_mapping_missing`, at baseline; exits 0,
+  `receipt_mapping_verified`, mapped 3, problems [], at measured content.
+  It derives 117602-byte target `cd1d73d7…` from the original committed
+  gate and preserves three receipts. No gate/mutant replay is claimed.
+- The actual install-plan overlap guard is red (exit 1, libinput already
+  installed); the new-only in-memory control is green (exit 0).
+  Both are static fixture evidence, not real pacman operations or host repair.
+- **Operability safety: harmed.** LibinputEvents performed the forbidden
+  partial upgrade recorded in lesson M2. Existing suite success and limited
+  orchestrator ABI checks do not erase that policy/host-state harm or prove
+  no input regression. No further package operation or restart is attempted.
+
+| Axis | Verdict |
+|---|---|
+| coverage | improved, bounded C1 measurement above |
+| operability | harmed on host safety; gate behavior itself unchanged |
+| freshness | unchanged, no fresh live-input or freshness score claim |
+| calibration | unchanged, no scored move; uncertainty/safety debt explicit |
+| depth | unchanged, no separate scored claim |
+| adjacency | unchanged, kernel/driver diagnosis and remediation not absorbed |
+
+**Round admission: not asserted; no-harm condition unmet.** Expansion improved
+narrowly; quality harmed; discernment improved narrowly by applying outside
+R14-V1 and a lesson-backed demonstrated safety guard, not current outside
+agreement. SHONEN stays four `[~]`. No exploratory claim, capability-table
+entry, promotion or retirement. Saturation 9.0 / stagnation window N=3
+unchanged. Halt progression; only the operator may authorize host remediation.
+
+All short `evidence/` pointers here resolve under `.ufo/waves/round-15/`.
+The next study intent, only after operator clearance, is the remaining
+U7 observation boundary; no next-round mission is opened by that intent.

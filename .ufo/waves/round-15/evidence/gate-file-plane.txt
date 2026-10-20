@@ -1,0 +1,52 @@
+command: bash tools/mado-verify.sh --no-live
+measured_commit: 5f13870491588703ea6c81ef390488c5d2eeb727
+gate_sha256: fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207
+exit: 0
+stdout:
+mado-verify.sh v1 (mado-shokunin round 5 / M5-2)
+mode: file-plane only | root: /home/vgpnk | live layer: skipped (--no-live)
+plane     check                           status  detail
+hypr      hypr.file.root                  PASS    hyprland.conf present (32 L)
+hypr      hypr.root.orchestrator          PASS    0 settings lines (pure orchestrator)
+hypr      hypr.root.include_graph         PASS    18/18 sources, order exact, set exact
+hypr      hypr.root.sources_resolve       PASS    declared targets exist, member set exact
+hypr      hypr.local.inventory            PASS    13/13 active local confs, set exact
+hypr      hypr.local.envs_orphan          PASS    sourced by nothing; declares 3 env vars (F3 stays open)
+hypr      hypr.toggle.no_gaps             PASS    toggle declares gaps_in/gaps_out/border_size = 0
+hypr      hypr.file.sha_pin               NOTE    hyprland.conf sha256 ce7483f35ab5… drifted from round-1 pin 4f52854a3c14…; re-verify anchors
+hypr      hypr.backups                    NOTE    2 backup file(s) under ~/.config/hypr (S3 litter class)
+hypr-live live.plane                      SKIP    live layer skipped (--no-live) — file plane only
+waybar    waybar.config.parse             PASS    JSONC parses (260 L, 6354 B)
+waybar    waybar.config.reload_style      PASS    reload_style_on_change = true (style reloads; modules need restart)
+waybar    waybar.config.bar_globals       PASS    layer=top, position=top, height=26
+waybar    waybar.style                    PASS    style.css imports the theme css
+walker    walker.config                   PASS    TOML parses; 4/4 keys match (focus/wrap/theme/hints)
+terms     term.alacritty.toml             PASS    TOML parses
+terms     term.alacritty.theme_import     PASS    imports omarchy/current/theme/alacritty.toml
+terms     term.cross.font_size            PASS    12.5 in all 4 present configs (MADO-3 §3)
+terms     term.cross.padding              PASS    padding 14 on both axes in all 4 present configs
+omarchy   omarchy.version.file            PASS    HELD: version file '3.8.3' (P2 pin; == HEAD:version blob at the pinned HEAD)
+omarchy   omarchy.skill.link              PASS    HELD: symlink into the checkout (one file; nothing to drift)
+omarchy   omarchy.skill.sha               PASS    HELD: leaf sha256 becd149e4d1c… (P4 pin)
+omarchy   omarchy.version.cmd             SKIP    live layer skipped (--no-live)
+omarchy   omarchy.git.tag                 SKIP    live layer skipped (--no-live)
+omarchy   omarchy.git.head                SKIP    live layer skipped (--no-live)
+omarchy   omarchy.skill.vs_head           SKIP    live layer skipped (--no-live)
+omarchy   omarchy.cmd.groups              SKIP    live layer skipped (--no-live)
+omarchy   omarchy.cmd.surface             SKIP    live layer skipped (--no-live)
+omarchy   omarchy.theme                   SKIP    live layer skipped (--no-live)
+omarchy   omarchy.doc.drifts              NOTE    R2 carried: 5 *.d hook dirs live vs flat files in the skill text (MADO-3 §7); R1 route-table drift declared in the note, not re-derived here
+theme     theme.name.read                 PASS    theme.name = 'matte-black' (one line, machine-name shape)
+theme     theme.chain.hypr_include        PASS    line 13 imports current/theme/hyprland.conf (target exists)
+theme     theme.chain.hyprlock            PASS    line 1 imports current/theme/hyprlock.conf (target exists)
+theme     theme.chain.waybar_css          PASS    line 1 imports current/theme/waybar.css (target exists)
+theme     theme.chain.alacritty           PASS    line 1 imports current/theme/alacritty.toml (target exists)
+theme     theme.chain.mako_link           PASS    symlink → .config/omarchy/current/theme/mako.ini (inside .config/omarchy/current/theme)
+theme     theme.chain.walker_css          PASS    package 'omarchy-default' style.css imports current/theme/walker.css (target exists)
+theme     theme.chain.swayosd_css         PASS    style.css imports current/theme/swayosd.css (target exists)
+theme     theme.wallpaper.link            PASS    symlink → .config/omarchy/current/theme/backgrounds/0-ship-at-sea.jpg (inside .config/omarchy/current/theme/backgrounds)
+theme     theme.parts.declared_only       NOTE    declared-only, consumer absent: foot.ini(foot) kitty.conf(kitty) ghostty.conf(ghostty) helix.toml(helix) vscode.json(code) keyboard.rgb(asusctl)
+gate      boundary.readonly               PASS    config plane byte-identical before/after (combined sha 3cb692751b4d…)
+counts: pass=29 fail=0 unknown=0 skip=8 note=4
+MADO_VERIFY: CLEAN (29 pass, 4 notes; file plane only — live layer skipped: --no-live)
+stderr:

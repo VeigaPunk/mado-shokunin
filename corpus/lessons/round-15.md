@@ -155,3 +155,46 @@ complete cited pointer-button element through line 2265 (parent XML read).
 The structural counter does not compare source URLs/hashes or detect
 unmined co-citations automatically; L1's exact S051/S052 header/registry
 check and the external spot-check remain separate admission duties.
+
+### Committed measurement and verification receipts
+
+Measured content `5f13870491588703ea6c81ef390488c5d2eeb727`, 2026-10-20.
+`python3 .ufo/waves/round-15/measure.py <revision>` actually ran on
+baseline `ea0446fcb4840089f0e541d96350144506fb5d1d` and measured content:
+covered sets U1–U5 → U1–U6, 5/7 → 6/7, 7.1429 → 8.5714/10.
+Navigation 28/28 → 29/29, missing/extra/duplicates [] on both. Source
+rows 50 → 52, A/B/C 46/1/3 → 48/1/3, mined/queued/rejected
+38/8/4 → 40/8/4. Actual complete stdout/exit 0 is in
+`evidence/{before,after}.txt`, not a transcribed prior-round result.
+
+Maintained census before and after: exit 0, same three retained W04
+warnings S030/S042/S045. Source-merge gate exits 0, rows 52, collisions 0,
+errors 0. The fresh selftest is 372/372, exit 0; fresh `--no-live`
+is 29 PASS / 0 FAIL / 0 UNKNOWN / 8 SKIP / 4 NOTE, exit 0.
+Whole-gate SHA-256 unchanged at
+`fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`.
+No fresh mutation harness, frozen replay, live-input probe or compositor
+restart was run. A clean file-plane/config-byte boundary is not a
+package-mutation boundary and cannot repair M2.
+
+M1 demonstrated able to fail: identical static committed-byte audit,
+whose exact `python3 -c` command is preserved in the two receipts, exits
+1 on the baseline with `receipt_mapping_missing`, then 0 on measured
+content with `receipt_mapping_verified`, mapped 3, problems [].
+It derives target
+`cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96`,
+117602 bytes, independently of the correction fields, and checks all
+three original receipt hashes/provisional headers/targets and their
+false standalone-full-gate flags. Files
+`evidence/receipt-correction-{red,green}.txt` preserve observations.
+The only relevant input delta is the appended mapping; original gate
+and historical receipt bytes remain unchanged. Runtime verdicts were
+not re-executed. The JSON's `measured_commit_role` explicitly names
+static reference derivation, not pre-commit mutation runtime.
+
+All abbreviated `evidence/` paths in this section resolve under
+`.ufo/waves/round-15/`. Source binds, wave census and actual process
+observations remain checkable there. The externally routed question is
+the orchestrator L0 entry beginning “HOST PARTIAL UPGRADE during mado r15”;
+it is not answered or re-owned by this lane. Legacy mado round-1 namespace
+question also remains operator-owned. No duplicate L0 line is appended.

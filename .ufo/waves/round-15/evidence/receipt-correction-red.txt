@@ -1,0 +1,42 @@
+command: python3 -c 'import hashlib,json,re,subprocess,sys
+R="/home/vgpnk/Projects/shokunin/mado-shokunin"
+C="32118fc1014837b3a385c7a66abbdc59b1560835"
+rev=sys.argv[1]
+def blob(rev,path):
+    p=subprocess.run(["git","-C",R,"show",rev+":"+path],capture_output=True)
+    return p.stdout if p.returncode==0 else None
+gate=blob(C,"tools/mado-verify.sh")
+derived=gate
+for name in (b"MADO-R7-REGRESSION-BLOCK",b"MADO-R7-SELFTEST-BLOCK",b"MADO-R8-BLOCK"):
+    pattern=rb"^[ \t]*# >>> "+name+rb" >>>$.*?^[ \t]*# <<< "+name+rb" <<<$\n?"
+    derived=re.sub(pattern,b"",derived,flags=re.M|re.S)
+target=hashlib.sha256(derived).hexdigest()
+expected="cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96"
+raw=blob(rev,".ufo/waves/round-15/receipt-correction.json")
+if raw is None:
+    print(json.dumps({"finding_id":"receipt_mapping_missing","revision":rev,"target_sha256":target,"target_matches":target==expected},sort_keys=True));sys.exit(1)
+x=json.loads(raw)
+problems=[]
+if target!=expected or x["target"]["sha256"]!=target:problems.append("derived_target_mismatch")
+if x["committed_gate"]["sha256"]!=hashlib.sha256(gate).hexdigest():problems.append("reference_gate_mismatch")
+if len(x["receipt_map"])!=3:problems.append("mapping_cardinality")
+for m in x["receipt_map"]:
+    data=blob(rev,m["path"])
+    historical=blob(C,m["path"])
+    text=data.decode()
+    header=dict(re.findall(r"^(input_binding|gate_sha256): (.*)$",text,re.M))
+    observed=re.search(r"^MUTATE_TARGET: .* sha256=([0-9a-f]{64})",text,re.M)[1]
+    if data!=historical or hashlib.sha256(data).hexdigest()!=m["original_sha256"]:problems.append("historical_bytes_changed:"+m["path"])
+    if header["gate_sha256"]!=m["provisional_gate_sha256"] or header["input_binding"]!=m["input_binding"]:problems.append("header_mapping_mismatch:"+m["path"])
+    if observed!=target or m["derived_target_sha256"]!=target:problems.append("target_mapping_mismatch:"+m["path"])
+    if m["standalone_final_full_gate_receipt"] is not False or "measured_commit:" in text:problems.append("false_full_gate_relabel:"+m["path"])
+if any(x["no_execution"][k] for k in ("gate_executed","harness_executed","mutants_executed")):problems.append("new_execution_claim")
+print(json.dumps({"finding_id":"receipt_mapping_verified" if not problems else "receipt_mapping_invalid","revision":rev,"mapped":len(x["receipt_map"]),"target_sha256":target,"bytes":len(derived),"problems":problems,"runtime_verdicts_reexecuted":False},sort_keys=True))
+sys.exit(1 if problems else 0)
+' ea0446fcb4840089f0e541d96350144506fb5d1d
+measured_commit: ea0446fcb4840089f0e541d96350144506fb5d1d
+method: static committed-byte audit only; not a gate/mutant execution or a new shipping wrapper
+exit: 1
+stdout:
+{"finding_id": "receipt_mapping_missing", "revision": "ea0446fcb4840089f0e541d96350144506fb5d1d", "target_matches": true, "target_sha256": "cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96"}
+stderr:

@@ -1123,3 +1123,38 @@ partial upgrade, even though no input regression is established. Thus
 no-harm admission is unmet. Finish reachable records and halt progression;
 do not open round 16. Tool/transaction and source limits are preserved
 in the lesson rather than hidden by a green gate or a successful push.
+
+### Round-15 committed measurements and final author verdict
+
+Content `5f13870491588703ea6c81ef390488c5d2eeb727` was committed and pushed
+before the final evidence/report record. The exact revision counter
+`python3 .ufo/waves/round-15/measure.py REV` returned coverage U1–U5
+5/7, 7.1429/10 at baseline `ea0446fcb4840089f0e541d96350144506fb5d1d`
+and U1–U6 6/7, 8.5714/10 at content (+1.4286). Only U6 was added.
+Navigation 28/28 → 29/29, no missing/extra/duplicates.
+Source rows 50 → 52, A/B/C 46/1/3 → 48/1/3,
+mined/queued/rejected 38/8/4 → 40/8/4. Exact stdout/exits are under
+`.ufo/waves/round-15/evidence/{before,after}.txt`.
+
+After all 64 seats landed, L1 ran one verification set: selftest 372/372,
+exit 0; no-live 29 PASS, 0 FAIL, 0 UNKNOWN, 8 SKIP, 4 NOTE, exit 0;
+source census exit 0 with historical W04 S030/S042/S045; source-merge
+screen rows 52, collisions/errors 0, exit 0. Standalone gate receipts
+carry measured content and unchanged raw gate hash `fba82a66…`.
+No live desktop-input probe or new mutation/frozen replay was run.
+
+The identical static correction audit fails on baseline (exit 1,
+`receipt_mapping_missing`) and passes delivered content (exit 0,
+`receipt_mapping_verified`, mapped 3, problems []). Original receipt
+bytes remain unchanged; derived target is 117602 bytes, `cd1d73d7…`,
+not whole-gate `fba82a66…`. Future binding discipline stays direct,
+without a new generic execution wrapper. Lesson §Gate and
+`evidence/receipt-correction-{red,green}.txt` record this learned R14-V1.
+
+Final per-axis verdicts: coverage improved narrowly, operability safety
+harmed by the forbidden partial upgrade, freshness/calibration/depth/
+adjacency unchanged. Trends: expansion improved narrowly, quality harmed,
+discernment improved through the grounded outside correction; no current
+non-author agreement or promotion claimed. **No-harm admission unmet.**
+The orchestrator's L0 HOST PARTIAL UPGRADE question owns remediation;
+no duplicate lane question or rollback/restart was performed. No round 16.
