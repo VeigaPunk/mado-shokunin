@@ -140,3 +140,21 @@ tripwire. AdvInstallers' `uv run --with pip` is not classified (documented limit
   commit reads HELD (no ancestry check). F9's `rev-parse --git-dir` walked up to an
   ancestor repo (`/home/vgpnk/.git`) for a `.git`-less tree and accepted bare repos; the
   final gate adds `[ -e "$tree/.git" ]` before it (see the final gate receipt).
+
+Final wave-2 corrections (w2 ReviewLessonRows):
+- M12's table cell "captured-by: the post-wave tripwire scan" is superseded by the
+  post-wave scan paragraph above: captured-by is `none (seat self-report)`.
+- M9 evidence: each dead w1 seat's task result reads `[zai/glm-5.3-flash] Retry budget
+  exhausted after 10 retries: 429 Rate limit reached for requests` (L1 session task
+  results; the lane holds only `w1/record.json` membership). Mitigation partial: wave 2
+  still routed 10 reviewers to m_zfl (role routing is the orchestrator's).
+- M1/M2 green limit: `anchor-durability.py` passes a `latest` URL when any version token
+  appears in the anchor prose (also RerunAnchor) — QUALITY 27 limits; round-20 fix.
+- `tw-recall.py` grades a malformed tool verdict (no `findings` key) as 0/6 with exit 0
+  instead of could-not-evaluate (also SimplifyCounters D2); pre-registered, unchanged.
+- F17 disposition: operator-owned — colocation is re-created by the fleet driver while
+  `HYAKU_VCS=jj` (w1 JjIncidentScan; w2 ReviewJjFinal); the lane commits only through
+  `jj-lane.sh` and the post-wave scan shows no lane-path VCS write by any seat.
+- Freshness triggers found by w1 RecheckSweep and not acted on this round: S003's cited
+  PROTOCOL sections moved +15 lines; omarchy is 9 tags past v3.8.4 (S085-S089, S093, S097);
+  carried to the round-20 plan.
