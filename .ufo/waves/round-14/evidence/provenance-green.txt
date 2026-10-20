@@ -1,0 +1,10 @@
+command: python3 -c 'import pathlib,re,sys; t=pathlib.Path(sys.argv[1]).read_text(); checks={'"'"'command'"'"':bool(re.search(r'"'"'^command: .+'"'"',t,re.M)),'"'"'measured_commit'"'"':bool(re.search(r'"'"'^measured_commit: [0-9a-f]{40}$'"'"',t,re.M)),'"'"'gate_sha256'"'"':bool(re.search(r'"'"'^gate_sha256: [0-9a-f]{64}$'"'"',t,re.M))}; missing=[k for k,v in checks.items() if not v]; print('"'"'RECEIPT_PROVENANCE: '"'"'+('"'"'FAIL missing='"'"'+'"'"','"'"'.join(missing) if missing else '"'"'PASS revision+digest+command'"'"')); sys.exit(bool(missing))' .ufo/waves/round-14/evidence/gate-selftest.txt
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+measured_commit: 32118fc1014837b3a385c7a66abbdc59b1560835
+gate_sha256: fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207
+stdout:
+RECEIPT_PROVENANCE: PASS revision+digest+command
+
+stderr:
+
+exit=0

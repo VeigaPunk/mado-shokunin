@@ -423,3 +423,38 @@ SHA-256, exact executed command and actual exit in that same artifact.
 The whole-gate digest is distinct from the regression's documented
 derived/excised-target PIN. No generic receipt wrapper or second runtime
 format is required or shipped.
+
+## Current receipt — round 14 (2026-10-20)
+
+Measured gate/content revision `32118fc1014837b3a385c7a66abbdc59b1560835`.
+Raw whole-gate SHA-256
+`fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`;
+rederive with `git show 32118fc1014837b3a385c7a66abbdc59b1560835:tools/mado-verify.sh | sha256sum`.
+The recorded commands and exits below resolve under
+`.ufo/waves/round-14/evidence/`.
+
+| Command / evidence file | Observed result | Limit |
+|---|---|---|
+| `bash tools/mado-verify.sh --selftest`; gate-selftest.txt | 372/372, exit 0, receipt-local measured commit/digest | Hermetic fixtures, not live health |
+| `bash tools/mado-verify.sh --no-live`; gate-file-plane.txt | 29 PASS, 0 FAIL, 0 UNKNOWN, 8 SKIP, 4 NOTE, exit 0 | Config-byte boundary unchanged within this run only |
+| exact tameshi invocation in regression-recut.txt; historical-results.tsv | 10/10 KILLED, GREEN control, restore OK | Documented derived target, historical spec unchanged |
+| exact invocations in regular-target-mutants.txt / retained-census-mutants.txt; matching TSVs | 4/4 new and 8/8 retained KILLED, GREEN controls, restore OK | New strict non-regular policy versus supported source grammar |
+| `python3 .ufo/waves/round-14/frozen/verify.py`; frozen-regression.txt | both input digests verified, table match 10/10, frozen_match, exit 0 | Pins recorded gate/harness, not mutable sibling equivalence |
+| same frozen command with `--selftest`; frozen-selftest.txt | 12/12, exit 0 | Isolated expected-exit/stable-id fixtures |
+
+Derived target PIN is
+`cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96`;
+SPEC_SHA stays
+`c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8`.
+The frozen harness input is
+`75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5`.
+Complete committed-input bindings and re-derivation command:
+`committed-bindings.json`.
+
+The regular-target policy follows file symlinks, rejects directory-shaped
+direct/glob matches and preserves order/set checks. It is stricter than
+claiming an error from Hyprland's parser, which may skip such targets.
+Named zero-match/dangling classes and newline-regular transport are
+fixtured. Arbitrary grammar, expanded-glob membership policy, broad
+whole-config hashing, historical theme mutation coverage and current
+rendered/live feature behavior remain outside these receipts.

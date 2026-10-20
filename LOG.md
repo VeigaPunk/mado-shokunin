@@ -983,3 +983,87 @@ The separate round-14 committed-measurement entry below records actual
 results and delivered revisions; no unrun check is a pass. Parent's
 fresh after-report non-author closure supplies the independent admit
 and reject spot-check. SHONEN remains four author assertions.
+
+### Round-14 closure — committed measurement and correction record
+
+Measured content **`32118fc1014837b3a385c7a66abbdc59b1560835`**;
+baseline **`873ff081b2ac363df771261b0ed950cba50d8988`**.
+`python3 .ufo/waves/round-14/measure.py <revision>` actually ran at
+both revisions, exit 0: sourced U-items **4/7 → 5/7** (coverage
+**5.7143 → 7.1429**), navigation **27/27 → 28/28**, regular-source
+diagnostics **0/3 → 3/3** (finite score **0 → 10**), and overall
+failing runs **0/3 → 3/3** on the selected default-windows/all-directory/
+mixed fixtures. Exact commands, rows, source joins and all seven
+unscored controls: `.ufo/waves/round-14/evidence/{before,after}.txt`.
+The draft ai-usage placement was changed before measurement; its
+unscored control honestly shows pre-existing local-inventory detection.
+
+U5's source/body hand check includes the unexpected static safety
+boundary: newly opened S050 at tagged Hyprland `efb5099` returns true
+from a test stub and schedules reload in `disable_head` before a later
+test/apply. The U5 note and SKILL teach the entire transaction as
+mutation-class; they do not claim executed host behavior or
+binary/source equivalence. S047 is owning XML, not claimed compiled
+Hyprland XML. Parent source-byte/peeled-tag bindings and AttackCoverage's
+actual-note agreement are retained under the round directory.
+
+**Observed harm watch:** gate selftest **372/372**, file plane **29 PASS,
+0 FAIL, 0 UNKNOWN, 8 SKIP, 4 NOTE**, both exit 0. Historical recut
+**10/10 KILLED**, regular-policy covering mutants **4/4 KILLED**,
+retained census mutants **8/8 KILLED**, GREEN controls and restore OK.
+Frozen companion verifies executable input digests, reproduces historical
+table **10/10**, ends `frozen_match`/`MADO_REGRESSION: PASS`, exit 0;
+its isolated selftest **12/12**, exit 0. Each exact command/output/exit
+and results TSV is committed in `evidence/`, not inferred from a prior
+round. The repair fails the same contract audit at baseline (exit 1,
+FAIL 0/3), then passes after (exit 0, 3/3).
+
+**R13-V1..V3 disposition:** learned, append-only. U4 erratum plus S049
+scope retained-data wording to globals records versus sanitized metadata;
+QUALITY 19 cites that outside disagreement. Standing-use and this log
+correct the ambiguous report boundary claim without rewriting the filed
+round-13 report: unchanged bytes within that run, not cross-revision
+output equality. The old selftest receipt remains header-deficient;
+the same provenance audit fails it with exit 1 naming missing commit/
+digest, and passes the new directly bound selftest receipt with exit 0.
+The discarded generic wrapper is not a shipped capability.
+QUALITY 18 is grounded in M4 and demonstrated by strict fixture failures
+and the new covering mutants.
+
+**Inputs:** raw gate and frozen input both
+`fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`;
+derived target
+`cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96`;
+historical spec stays
+`c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8`.
+Re-derive committed full inputs via the command in
+`evidence/committed-bindings.json`. Mutants grade only that documented
+derived executable; no excised-machinery coverage is implied.
+
+**Sources:** revision counter **46 → 50** rows, A/B/C **42/1/3 → 46/1/3**,
+mined/queued/rejected **34/8/4 → 38/8/4**. S047/S048/S050 support one new
+U5 entry; S049 is correction, not expansion. S041 used-by is the sole
+existing-row field change. Maintained before/after census exits 0 with
+W04 S030/S042/S045 retained; source merge screen exit 0, collisions 0.
+Quotes, immutable corrections and mutation log are in lesson §Gate.
+
+**Swarm and safety:** unique wave members **32** — 3 executor, 8 scout,
+4 connector, 6 reviewer, 4 critic, 2 sentinel, 2 scribe, 2 revenger,
+1 mutation-tester (registry/spec provide the counting set). L1 canonical
+planner, connector PlanningWalk bounded data-walk. All seats finished
+before L1 integrated verification. Safety's jj working-copy-snapshot
+incident is disclosed, not rewritten; future read-only jj commands use
+`--ignore-working-copy`. Source scratch owners removed exact public
+temporary paths. `cleanup.json` records this round's own mutation fixture
+cleanup; old/foreign scratch was not swept. Source fetch digests were
+also bound with pipefail. The only installed package remains authorized
+wlr-protocols r112.a741f0a-1, official pacman extra, for XML inspection.
+
+**Verdicts:** C1 coverage improved; C2 operability improved. Other axes
+have no additional scored move and no retained harm observed. Expansion,
+quality and discernment improved on the specific evidence above, with
+current-round independent admit/reject/admission still pending the
+parent's after-report non-author closure. Remaining limits are named in
+SCORECARD/lesson, not silently retired. SHONEN remains four author
+assertions; no promotion, domain mutation, sibling edit, or next-round
+mission was performed. No new L0 question.

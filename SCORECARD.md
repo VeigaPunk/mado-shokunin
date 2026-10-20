@@ -492,3 +492,105 @@ and identical owning-row detail under a second isolated root. The
 mixed case must not accuse its regular sibling. Clean/order/file-symlink/
 newline-regular/ai-usage-overlap/direct-missing/zero-match controls
 are outside the denominator. No baseline result has yet been observed.
+
+## Round 14 — committed measurements and author verdicts
+
+Measured content **`32118fc1014837b3a385c7a66abbdc59b1560835`**,
+2026-10-20. Baseline **`873ff081b2ac363df771261b0ed950cba50d8988`**.
+Exact revision-bound counting commands, run from this lane root:
+
+```sh
+python3 .ufo/waves/round-14/measure.py 873ff081b2ac363df771261b0ed950cba50d8988
+python3 .ufo/waves/round-14/measure.py 32118fc1014837b3a385c7a66abbdc59b1560835
+```
+
+Both observation probes exited 0; the full commands, raw gate digest,
+source joins, facets, per-case rows and unscored controls are committed
+in `.ufo/waves/round-14/evidence/{before,after}.txt`.
+
+| Claim / axis sub-axis | Before | After | Score delta | Verdict and boundary |
+|---|---|---|---|---|
+| C1 coverage / sourced current-art ground | U1–U4, 4/7, 5.7143/10 | U1–U5, 5/7, 7.1429/10; U5 facets/source reciprocity true | +1.4286 | locally verified improved; `knowledge/output-colour-boundaries-r14.md`, S047/S048/S041/S050. The counter measures structural joins; parent source/body inspection and AttackCoverage's actual-note review supply the semantic hand check. No full U5 feature coverage inferred. |
+| C2 operability / exact non-regular-source diagnostics in the declared three cases | 0/3, 0.0000/10; overall failing runs 0/3 on these selected isolated fixtures | 3/3, 10.0000/10; overall failing runs 3/3 | +10.0000 on this finite policy subset | locally verified improved; each exact non-regular path is the sole FAIL row, all other class clauses absent, declared toggle collateral retained, detail identical under a second root. Not whole-domain operability saturation. |
+
+The direct case is **default/hypr/windows.conf**, selected before the
+baseline, not the draft ai-usage case. The unscored ai-usage-directory
+control already exits 1 before and after via local inventory; baseline
+blindness to every possible directory placement is explicitly rejected.
+Order-swap is already detected before and after. File-symlink and
+newline-regular controls pass before and after; direct-missing and
+zero-match controls retain unresolved before and after. The all-directory
+case retains the no_gaps NOTE collateral, not all-row equality.
+
+### Harm watch and falsifiability
+
+- Navigation **27/27 → 28/28**, missing/extra/duplicates empty — same
+  revision counter's `navigation` field.
+- `bash tools/mado-verify.sh --selftest`: **372/372**, exit 0.
+  Receipt `evidence/gate-selftest.txt` carries measured commit and raw
+  gate digest itself. The prior 310/310 is historical, not a fresh
+  baseline-suite run.
+- `bash tools/mado-verify.sh --no-live`: **29 PASS, 0 FAIL, 0 UNKNOWN,
+  8 SKIP, 4 NOTE**, exit 0; `evidence/gate-file-plane.txt`. This is
+  file-plane agreement and within-run config-byte stability only.
+- Historical recut **10/10 KILLED**, new regular-target mutants
+  **4/4 KILLED**, retained census mutants **8/8 KILLED**, each with
+  GREEN control and restore OK. Exact harness invocations/output and
+  result tables: `evidence/{regression-recut,regular-target-mutants,
+  retained-census-mutants}.txt` and corresponding TSVs. They grade the
+  documented derived executable, not excised R7/R8 machinery.
+- Derived target PIN **cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96**;
+  historical SPEC_SHA stays **c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8**.
+  Full current gate SHA-256 **fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207**
+  equals the frozen gate input. These are distinct digests by design.
+- Frozen replay `python3 .ufo/waves/round-14/frozen/verify.py` verifies
+  gate/harness digests first, then returns `frozen_match` and
+  `MADO_REGRESSION: PASS`, exit 0; its `--selftest` is **12/12**, exit 0.
+  `frozen/expected.json`, `evidence/frozen-*.txt` and
+  `evidence/committed-bindings.json` bind these to the measured content.
+- The exact contract auditor committed in `evidence/contract-red.txt`
+  exits **1**, `REGULAR_TARGET_CONTRACT: FAIL detected=0/3`, on the
+  baseline observations; the same auditor exits **0**, PASS 3/3, on
+  delivered observations (`contract-green.txt`). Four new mutants also
+  demonstrate the repaired policy can fail.
+- The same standalone-header audit exits **1** on the unchanged
+  round-13 selftest receipt (missing measured_commit/gate_sha256), and
+  **0** on this round's selftest receipt — `evidence/provenance-{red,green}.txt`.
+  R13-V3 is a demonstrated record correction, not an extra scored claim.
+
+### Sources, trends and limits
+
+Source registry **46 → 50**, tiers A/B/C **42/1/3 → 46/1/3**, statuses
+mined/queued/rejected **34/8/4 → 38/8/4**, by the same revision counter.
+S047/S048 are new protocol sources; S050 is a tagged static safety
+caveat; S049 corrects retention wording, not knowledge expansion.
+S041 used-by is the sole existing-row mutation, logged in the lesson.
+Both maintained census commands exit 0; W04 warnings for S030/S042/S045
+are retained. Conservative source-merge screen exits 0 at rows=50,
+collisions=0; `evidence/source-merge.txt`.
+
+Coverage and operability are improved on the declared rubrics. Freshness,
+calibration, depth and adjacency have no additional scored move and no
+retained harm observed. Trends: expansion improved (one new U5 entry),
+quality improved (strict regular-target instrument plus static safety
+boundary), discernment improved narrowly (outside R13-V1..V3 become
+grounded criteria/corrections with failing controls). Current-round
+non-author spot-check/admission remains pending parent closure.
+
+The probe is not a semantic admission oracle: U4 facets are structural,
+registry validity is separately checked by the maintained census, and
+space-containing diagnostic paths are outside its three named cases.
+The gate preserves newline-regular handling, but broad boundary hashing,
+generic grammar, expanded-glob membership, historical theme mutation
+coverage and live/rendered feature behavior remain unclaimed.
+Saturation remains 9.0, stagnation window N=3; retired axes: none.
+
+### Planned next round (intent only; no mission opened)
+
+1. calibration — read the fresh outside round-14 spot-check, learn any
+   disagreement and re-derive the current rubric before selecting a move.
+2. coverage — bounded U6 input-debugging layer route from opened primary
+   sources, without raw input capture, injection or kernel diagnosis.
+
+All shortened `evidence/` and `frozen/` paths above resolve under
+`.ufo/waves/round-14/`. SHONEN stays four author assertions.

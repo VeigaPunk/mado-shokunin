@@ -141,3 +141,74 @@ The colour release's annotated tag object and peeled commit are distinct;
 the exact binding is in `evidence/colour-release-binding.txt`.
 All abbreviated evidence paths in this lesson resolve under
 `.ufo/waves/round-14/`.
+
+### Exercised verification — L1 after all seats finished
+
+Content measured at `32118fc1014837b3a385c7a66abbdc59b1560835`.
+Full commands/stdout/stderr/exits are under
+`.ufo/waves/round-14/evidence/`; these are observed results, replacing
+the earlier explicitly unrun predictions without rewriting them.
+
+- `python3 .ufo/waves/round-14/measure.py 873ff081b2ac363df771261b0ed950cba50d8988`:
+  U1–U4 4/7, navigation 27/27, regular-target diagnostics 0/3 and
+  all three selected overall exits 0; `before.txt`, exit 0.
+- Same command at `32118fc1014837b3a385c7a66abbdc59b1560835`:
+  U1–U5 5/7, navigation 28/28, exact diagnostics 3/3 and overall
+  exits all 1; `after.txt`, exit 0. All U5 structural facets, reserved
+  source joins and inverse reciprocity pass. These are structural
+  counts, not semantic truth: parent opened sources/body and
+  AttackCoverage agrees on the actual bounded note, as authoring advice.
+- Both revisions retain clean, order, file-symlink, newline-regular,
+  direct-missing and zero-match behavior; the overlap control shows
+  local inventory already detects ai-usage-directory at baseline.
+  The all-directory case retains toggle NOTE, while direct/mixed keep PASS.
+- `bash tools/mado-verify.sh --selftest`: 372/372, exit 0;
+  `gate-selftest.txt` carries resolved measured commit and raw digest.
+- `bash tools/mado-verify.sh --no-live`: 29 PASS, 0 FAIL, 0 UNKNOWN,
+  8 SKIP, 4 NOTE, exit 0; `gate-file-plane.txt`. Within-run config
+  boundary equality only, not cross-revision output equality.
+- `regression-recut.txt`: historical 10/10 KILLED; new
+  `regular-target-mutants.txt`: 4/4 KILLED; retained
+  `retained-census-mutants.txt`: 8/8 KILLED. All GREEN controls/restore OK,
+  all exits 0; TSVs retain each measured mutant. The derived target is
+  cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96;
+  excised regression/snapshot machinery is outside those mutant claims.
+- `python3 .ufo/waves/round-14/frozen/verify.py`: verifies input
+  digests first, table match 10/10, `MADO_REGRESSION: PASS` and
+  `frozen_match`, exit 0; `frozen-regression.txt`. Its `--selftest`
+  is 12/12, exit 0; `frozen-selftest.txt`.
+- M4's same inline auditor (full command in `contract-red.txt` /
+  `contract-green.txt`) exits **1**, FAIL 0/3, on baseline measurements,
+  then **0**, PASS 3/3, on delivered measurements. The source-policy
+  repair is demonstrated able to fail, not just a green count.
+- M3's same inline header auditor (full command in
+  `provenance-red.txt` / `provenance-green.txt`) exits **1** on the
+  unchanged round-13 selftest receipt, naming missing measured_commit
+  and gate_sha256; it exits **0** on the new receipt. No wrapper shipped.
+- Maintained source census: before and after both exit 0, retaining W04
+  S030/S042/S045 warnings; full outputs `census-before.txt` /
+  `census-after.txt`. Revision counter: rows 46 → 50; A/B/C
+  42/1/3 → 46/1/3; mined/queued/rejected 34/8/4 → 38/8/4.
+  Four new source rows support one new U5 entry plus the correction.
+- Existing conservative merge screen: `python3
+  .ufo/waves/round-13/w1/reports/MistakeFix.py --registry corpus/SOURCES.md`
+  exits 0, rows=50, collisions=0; `source-merge.txt`. Historical rejected
+  and explicit superseding history is retained, not silently erased.
+- `committed-bindings.json` binds gate/measure/frozen/spec inputs to
+  measured content. Raw gate fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207
+  equals frozen gate input; retained harness is 75ed934dc86360f5c2cdd5b17abb8814249425e9c1835d36b81d74412719adc5.
+- `cleanup.json` records exact selftest directories emitted by this
+  round's own mutation runs and removed after receipts/TSVs were copied.
+  Foreign/round-13 fixtures were not swept.
+
+Source-review-only gaps remain explicit: the probe's U4 facets are
+structural, the maintained census checks registry validity separately,
+and its three scored diagnostics do not test space-containing paths.
+The final exactly-one `covers:` selector was tightened before measurement.
+No source parser, full-config hash, theme mutation or feature-behavior
+capability is inferred from these observations.
+
+Local C1/C2 verdicts: improved. Learning trends: expansion improved,
+quality improved, discernment improved narrowly via learned outside
+R13-V1..V3. Current-round independent admit/reject spot-check remains
+pending the parent's after-report non-author closure.
