@@ -663,11 +663,20 @@ MADO_R8_OM_STUB
 #!/bin/bash
 # scenario-local stub of the three git read verbs the drift rows use. The
 # checkout path after -C is deliberately not read: the answers are canned.
+# Per-verb rc knobs (round 18 / jj-w1 F14): a nonzero STUB_GIT_*_RC prints
+# nothing and exits with that rc, so the gate's UNKNOWN arms are reachable
+# from this fixture (the pre-round-18 stub could only exit 0).
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    describe) printf '%s\n' "${STUB_GIT_TAG:-v3.8.4}"; exit 0 ;;
-    rev-parse) printf '%s\n' "${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}"; exit 0 ;;
-    show) cat "${STUB_GIT_BLOB:-/dev/null}"; exit 0 ;;
+    describe)
+      if [ "${STUB_GIT_DESCRIBE_RC:-0}" != 0 ]; then exit "$STUB_GIT_DESCRIBE_RC"; fi
+      printf '%s\n' "${STUB_GIT_TAG:-v3.8.4}"; exit 0 ;;
+    rev-parse)
+      if [ "${STUB_GIT_REVPARSE_RC:-0}" != 0 ]; then exit "$STUB_GIT_REVPARSE_RC"; fi
+      printf '%s\n' "${STUB_GIT_HEAD:-8fcc9d6048af4cb0e3af8512c78049857a3b53dd}"; exit 0 ;;
+    show)
+      if [ "${STUB_GIT_SHOW_RC:-0}" != 0 ]; then exit "$STUB_GIT_SHOW_RC"; fi
+      cat "${STUB_GIT_BLOB:-/dev/null}"; exit 0 ;;
   esac
   shift
 done
@@ -798,6 +807,45 @@ MADO_R8_GIT_STUB
     "OM8: the surface counter is a NOTE, never a verdict input"
   st_not_has "OM8: no fake CLEAN" "$om_out" "MADO_VERIFY: CLEAN"
   st_counts_agree "$om_out" "OM8: counts agree with rows"
+
+  # --- OM9: a FAILING git show reads UNKNOWN, never a "local edit" ---------
+  # Round 18 / jj-w1 F10: the row piped `git show` into sha256sum without the
+  # producer's rc, so any failed read became the empty-input digest e3b0c442…
+  # and the row claimed a local edit. The stub exits 128 printing nothing; the
+  # row must read UNKNOWN, name the path and rc, and never say "local edit".
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_SHOW_RC=128 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag PASS "OM9 (describe still succeeds)"
+  st_row_has "$om_out" omarchy.git.head PASS "OM9 (rev-parse still succeeds)"
+  st_row_has "$om_out" omarchy.skill.vs_head UNKNOWN \
+    "OM9 (a failed show can never be compared)"
+  st_row_detail "$om_out" omarchy.skill.vs_head UNKNOWN \
+    "cannot read HEAD:default/omarchy-skill/SKILL.md (rc=128)" \
+    "OM9: the UNKNOWN names the unreadable path and the producer rc"
+  st_not_has "OM9: no false local-edit claim" "$om_out" "local edit"
+  st_eq  "OM9: exactly one omarchy UNKNOWN (the failed read)" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_eq  "OM9: exactly one omarchy FAIL — the unreproducible sha row" 1 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="FAIL" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM9: counts agree with rows"
+
+  # --- OM10: describe/rev-parse rc≠0 reads UNKNOWN, never a false FAIL -----
+  # jj-w1 F6/F14: under a colocated checkout `jj new` moves HEAD to an empty
+  # working-copy commit — describe exits 128 (tag invisible) and rev-parse
+  # names a moved commit. Both arms must be UNKNOWN, never MOVED.
+  om_out=$(env PATH="$OMB" STUB_OM_CMDS="$OM_CMDS" STUB_GIT_BLOB="$OM_LEAF" \
+    STUB_GIT_DESCRIBE_RC=128 STUB_GIT_REVPARSE_RC=128 \
+    MADO_VERIFY_LIVE=yes "$BASH_BIN" "$0" --root "$OMR" 2>&1); om_rc=$?
+  st_row_has "$om_out" omarchy.git.tag UNKNOWN "OM10 (describe rc=128 is unverified)"
+  st_row_has "$om_out" omarchy.git.head UNKNOWN "OM10 (rev-parse rc=128 is unverified)"
+  st_row_detail "$om_out" omarchy.git.tag UNKNOWN "rc=128" "OM10: the UNKNOWN names the rc"
+  st_row_detail "$om_out" omarchy.git.head UNKNOWN "rc=128" "OM10: the UNKNOWN names the rc"
+  st_row_has "$om_out" omarchy.skill.vs_head PASS "OM10 (show succeeds; the comparison still runs)"
+  st_not_has "OM10: no false tag MOVED" "$om_out" "MOVED: describe"
+  st_not_has "OM10: no false head MOVED" "$om_out" "MOVED: rev-parse"
+  st_eq  "OM10: exactly two omarchy UNKNOWNs (tag + head)" 2 \
+    "$(printf '%s\n' "$om_out" | awk '$1=="omarchy" && $3=="UNKNOWN" {c++} END {print c+0}')"
+  st_counts_agree "$om_out" "OM10: counts agree with rows"
   # <<< MADO-R8-OMARCHY-BLOCK <<<
 
   # --- scenarios T: the theme plane, hermetic (theme-wallpaper-plane.md §6) --
@@ -1624,6 +1672,23 @@ MADO_R8_CRAFT_B
 # .ufo/waves/round-14/evidence/regression-recut.txt and historical-results.tsv.
 # PIN_MADO moves only from that measured table, never by blessing a mismatch.
 #
+# Re-cut record — round 18 / hyaku (jj-w1 F10/F14: git producer rc): the
+# omarchy.skill.vs_head row now captures `git show`'s own rc (pipefail inside
+# the command substitution, bytes hashed unchanged) and routes rc≠0 to UNKNOWN
+# before any digest comparison, so a failed read can no longer surface as the
+# empty-input digest e3b0c442… and a false "local edit"; the selftest git stub
+# gained per-verb rc knobs (STUB_GIT_DESCRIBE_RC / STUB_GIT_REVPARSE_RC /
+# STUB_GIT_SHOW_RC) and OM9/OM10 assert the three UNKNOWN arms. Stub, scenarios
+# and fix all sit outside the marked R7/R8 families, so the derived target
+# moved. Re-cut 2026-10-20 from the printed REGRESSION_RECUT command against the
+# recorded spec (SPEC_SHA matches): target 20714096… (2,460 L / 121,533 B),
+# 10/10 KILLED, 0 survived, 0 inconclusive, flips 0, control GREEN (284/284
+# assertions on the derived target), MUTATE_RESTORE OK, target sha unchanged
+# before/after. PIN_MADO moves cd1d73d7… → 20714096…; TABLE_MADO is unchanged —
+# the rc capture lost no kill. Evidence:
+# .ufo/waves/round-18/evidence/regression-recut.txt (sweep) and
+# gate-rc-redbefore.txt (old FAIL e3b0c442 + "local edit" → UNKNOWN rc=128).
+#
 # Usage: mado-verify.sh --regression [--keep]
 #   --target/--defects/--suite/--label/--workdir/--timeout/--tail and the
 #   gate's --no-live/--live/--root/--selftest are refused (usage error, exit 2);
@@ -1636,7 +1701,7 @@ MADO_R8_CRAFT_B
 # Exit map: 0 PASS · 1 FAIL (measured table differs) · 2 SETUP (cannot verify:
 #   missing tool/harness, spec or pin mismatch, sweep refusal) · 2 usage error.
 # ===========================================================================
-PIN_MADO='cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96'
+PIN_MADO='20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744'
 SPEC_SHA='c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8'
 HARNESS_SHA_RECORDED='b56c6e57f1b7ae91c85f06ee101d3a348158ab219fae4a16f5d3e6f77fd22bcb'
 TABLE_MADO='D1:KILLED,D2:KILLED,D3:KILLED,D4:KILLED,D5:KILLED,D6:KILLED,D7:KILLED,D8:KILLED,D9:KILLED,R1:KILLED'
@@ -3402,10 +3467,19 @@ omarchy_plane() {
     if ! have git || [ "$omtree" = 0 ] || ! have sha256sum || [ ! -f "$leaf" ]; then
       row omarchy omarchy.skill.vs_head UNKNOWN "checkout or leaf unreadable — worktree/HEAD relation unverified"
     else
-      local blob sw
-      blob=$(tmo git -C "$tree" show "HEAD:$OMARCHY_SKILL_REL" 2>/dev/null | sha256sum | cut -d' ' -f1)
+      local blob sw grc
+      # Round 18 / jj-w1 F10: capture the producer's rc before hashing. Without
+      # it a failed `git show` becomes the empty-input digest e3b0c442…, which
+      # is non-empty, so the `-z "$blob"` guard below could never fire and a
+      # read failure was reported as a local edit. pipefail makes the pipeline
+      # status the rightmost non-zero — git's own rc — while the bytes hashed
+      # stay exactly the bytes `git show` wrote (no command-substitution strip).
+      blob=$(set -o pipefail; tmo git -C "$tree" show "HEAD:$OMARCHY_SKILL_REL" 2>/dev/null \
+        | sha256sum | cut -d' ' -f1); grc=$?
       sw=$(sha256sum "$leaf" 2>/dev/null | cut -d' ' -f1)
-      if [ -z "$blob" ]; then
+      if [ "$grc" != 0 ]; then
+        row omarchy omarchy.skill.vs_head UNKNOWN "cannot read HEAD:$OMARCHY_SKILL_REL (rc=$grc) — worktree/HEAD relation unverified"
+      elif [ -z "$blob" ]; then
         row omarchy omarchy.skill.vs_head UNKNOWN "cannot read HEAD:$OMARCHY_SKILL_REL from the checkout"
       elif [ "$blob" = "$sw" ]; then
         row omarchy omarchy.skill.vs_head PASS "worktree == HEAD blob (index-free; no local edit)"

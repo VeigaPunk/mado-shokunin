@@ -174,3 +174,28 @@ rows corrected in place before closure, each logged old→new here:
   before tokenizing; four new regression cases (quoted, escaped, mid-word,
   real comment) — `tripwire/w2-regressions` 30/30; tool sha256 `962919ce…`;
   all real-transcript receipts re-cut with identical counts.
+
+## Erratum (round 18, append-only; outside R17-V1/V2)
+
+Lines 175-176 read: "`tripwire/w2-regressions` 30/30; tool sha256 `962919ce…`;
+all real-transcript receipts re-cut with identical counts." What the record
+shows (round-18 w1 `RevR17V1Facts`, `RevengeR17Recut`, `RevR17V2Facts`):
+
+- The re-cut ran: `MadoR17.jsonl` record 539 (15:17:25.987Z, after the P11
+  fix at record 536) regenerated r13-r16, the r15 anchor, r17 and the
+  vs-oracles file with tool `962919ce…`; record 541 printed the counts.
+  r13-r16 and the anchor came out byte-identical to their `f71ccbe` blobs, so
+  `0ab1ccc` records no change to them; only `tripwire-r17.txt` (growing seat
+  transcripts) and the selftest receipts changed bytes.
+- No committed byte shows that the re-cut ran or which producer made those
+  receipts: they carry input digests only, no `tool_sha256`, no
+  `measured_commit`. `tripwire-pacmanlog-join.txt` was never re-cut; it is a
+  hand-authored join, not tool output.
+- The claim therefore rested on a narrated rerun. It is superseded by the
+  round-18 receipts `.ufo/waves/round-18/evidence/tripwire-*.txt`, whose first
+  line names `tool_sha256` and `measured_commit` (lesson `round-18.md` M1,
+  QUALITY 24).
+- R17-V2: the round-17 report's C3 row pairs `7a98720e…` (tool at `f71ccbe`)
+  with `30/30`, which exists only at `0ab1ccc` (`962919ce…`); at `f71ccbe` the
+  suite was 26/26. Line 132 above ("26/26") is the `f71ccbe` count; line 175
+  ("30/30") the `0ab1ccc` count.

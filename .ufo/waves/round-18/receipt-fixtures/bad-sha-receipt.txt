@@ -1,0 +1,12 @@
+# Round-18 receipt fixture (authored): mutant with a wrong tool digest.
+# Same receipt shape as ok-receipt.txt but tool_sha256 does not match
+# sha256(git show measured_commit:tools/mado-tripwire.py) -> SHA_MISMATCH.
+command: python3 -I tools/mado-tripwire.py --scan /tmp/fixture-transcript.jsonl
+cwd: /home/vgpnk/Projects/shokunin/mado-shokunin
+measured_commit: d9a5a18e17cd3a68b52148fcc01c4a30e340ba98
+tool_sha256=7a98720ec38ab81de0dea109c25e5ec610b53f5b2142b79c5cb9eed7d5aaa072
+stdout:
+MADO_TRIPWIRE: findings
+{"counts": {"host_mutation": 0, "live_probe": 0, "package_query": 1}, "exit": 1, "fixture": true}
+
+exit=1

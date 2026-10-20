@@ -1,0 +1,194 @@
+diff --git a/tools/mado-tripwire.py b/tools/mado-tripwire.py
+index 22b5175..6811867 100755
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -4,7 +4,13 @@
+ Classifies commands a seat *issued* in assistant `toolCall` blocks:
+ `bash` (arguments.command) and python `eval` (arguments.code: `!` shell
+ lines, `%%bash` cells and literal subprocess/os/tool.bash spawns parsed with
+-`ast`, never executed). Classes: host_mutation, package_query, live_probe.
++`ast`, never executed). Classes: host_mutation, package_query, live_probe,
++tool_install. tool_install names tool-acquisition channels that are not
++pacman: `uv tool install|upgrade|uninstall|run`, `uv pip install`, `uvx`,
++`pip`/`pipN install`, `pipx install|inject|upgrade|reinstall|uninstall`,
++`npx`, `npm exec|x`, `npm -g install|update|uninstall`, `cargo
++install|uninstall` and `python -m pip ...`. pnpm, yarn, bun, brew, nix,
++`uv sync`, `uv python install` and plain downloads are not classified.
+ 
+ Limits (stated, not hidden):
+ - Detection after the fact only. It is not interception, prevention, a
+@@ -41,2 +47,2 @@
+-CLASSES = ("host_mutation", "package_query", "live_probe")
++CLASSES = ("host_mutation", "package_query", "live_probe", "tool_install")
+ SHELLS = {"bash", "sh", "zsh", "dash"}
+@@ -84,6 +90,23 @@ LIVE_PROBE_BINS = {"journalctl", "libinput", "evtest", "wayland-info", "wev",
+                    "pidof", "xdg-terminal-exec", "wpctl", "brightnessctl",
+                    "hyprpaper", "hyprsunset", "uwsm", "uwsm-app", "ps", "dmesg",
+                    "wl-paste"}
++PIP_RE = re.compile(r"^pip[0-9.]*$")
++UV_ARG_OPTS = {"-C", "--directory", "--project", "--color", "--python", "-p",
++               "--config-file", "--cache-dir", "--index-url", "--extra-index-url",
++               "--find-links", "-f", "--allow-insecure-host", "--config-setting",
++               "--python-preference"}
++PIP_ARG_OPTS = {"--log", "--proxy", "--proxy-user", "--cert", "--client-cert",
++                "--cache-dir", "--timeout", "--retries", "--exists-action",
++                "--trusted-host", "--keyring-provider", "--use-feature",
++                "--use-deprecated", "--python"}
++PIPX_ARG_OPTS = {"--python", "-p", "--spec", "--pip-args", "--suffix", "--backend"}
++NPX_ARG_OPTS = {"-p", "--package", "-c", "--call", "--node-options",
++                "--registry", "--cache"}
++NPM_ARG_OPTS = {"--prefix", "--registry", "--userconfig", "--globalconfig",
++                "--cache", "--loglevel", "--location", "--workspace", "-w",
++                "--omit", "--include", "--otp", "--before", "--script-shell", "--tag"}
++CARGO_ARG_OPTS = {"--color", "-Z", "--config", "--target-dir", "--manifest-path",
++                  "--explain"}
+ SPAWN_FUNCS = {"run", "call", "check_call", "check_output", "Popen",
+                "getoutput", "getstatusoutput"}
+ SHELL_STRING_FUNCS = {"os.system", "os.popen", "subprocess.getoutput",
+@@ -412,6 +435,113 @@ def classify_pacman(argv0, args):
+     return ("host_mutation", rule)
+ 
+ 
++def leading_tokens(args, arg_opts, count):
++    """First `count` non-option tokens as (index, token), skipping option values."""
++    out = []
++    skip = False
++    for i, a in enumerate(args):
++        if skip:
++            skip = False
++            continue
++        if a == "--":
++            break  # operands after -- are not verbs
++        if a in arg_opts:
++            skip = True
++            continue
++        if a.startswith("-"):
++            continue
++        out.append((i, a))
++        if len(out) >= count:
++            break
++    return out
++
++
++def has_operand(args, arg_opts):
++    """True if a non-option token remains once option values and flags are skipped."""
++    skip = False
++    for i, a in enumerate(args):
++        if skip:
++            skip = False
++            continue
++        if a == "--":
++            return i + 1 < len(args)
++        if a in arg_opts:
++            skip = True
++            continue
++        if a.startswith("-"):
++            continue
++        return True
++    return False
++
++
++def npm_global(args):
++    for i, a in enumerate(args):
++        if a in ("--global", "--location=global"):
++            return True
++        if a == "--location" and i + 1 < len(args) and args[i + 1] == "global":
++            return True
++        if a == "-g" or (a.startswith("-") and not a.startswith("--")
++                         and a[1:].isalpha() and "g" in a[1:]):
++            return True
++    return False
++
++
++def classify_installer(argv0, args):
++    """Return (class, rule) for a tool-acquisition channel, else None.
++
++    Only the argv0-level forms named in the module docstring are classified;
++    same-channel tools (pnpm, yarn, bun, brew, nix) are deliberately not.
++    """
++    if argv0 == "uv":
++        verbs = [v for _, v in leading_tokens(args, UV_ARG_OPTS, 2)]
++        if len(verbs) == 2 and verbs[0] == "tool" and verbs[1] in (
++                "install", "upgrade", "uninstall", "run"):
++            return ("tool_install", "uv:tool-%s" % verbs[1])
++        if verbs[:2] == ["pip", "install"]:
++            return ("tool_install", "uv:pip-install")
++        return None
++    if argv0 == "uvx":
++        return ("tool_install", "uvx") if has_operand(args, NPX_ARG_OPTS) else None
++    if PIP_RE.match(argv0):
++        verbs = [v for _, v in leading_tokens(args, PIP_ARG_OPTS, 1)]
++        if verbs == ["install"]:
++            return ("tool_install", "%s:install" % argv0)
++        return None
++    if argv0 == "pipx":
++        verbs = [v for _, v in leading_tokens(args, PIPX_ARG_OPTS, 1)]
++        if verbs and verbs[0] in ("install", "inject", "upgrade", "reinstall",
++                                  "uninstall"):
++            return ("tool_install", "pipx:%s" % verbs[0])
++        return None
++    if argv0 == "npx":
++        return ("tool_install", "npx") if has_operand(args, NPX_ARG_OPTS) else None
++    if argv0 == "npm":
++        lead = leading_tokens(args, NPM_ARG_OPTS, 1)
++        verb = lead[0][1] if lead else None
++        rest = args[lead[0][0] + 1:] if lead else []
++        if verb in ("exec", "x"):
++            return ("tool_install", "npm:exec") if has_operand(rest, NPX_ARG_OPTS) else None
++        if verb in ("install", "i", "add"):
++            return ("tool_install", "npm:install-global") if npm_global(args) else None
++        if verb in ("update", "up", "upgrade"):
++            return ("tool_install", "npm:update-global") if npm_global(args) else None
++        if verb in ("uninstall", "unlink", "remove", "rm", "un", "r"):
++            return ("tool_install", "npm:uninstall-global") if npm_global(args) else None
++        return None
++    if argv0 == "cargo":
++        rest = list(args)
++        while rest and re.fullmatch(r"\+[A-Za-z0-9_.-]+", rest[0]):
++            rest = rest[1:]  # rustup toolchain override precedes the subcommand
++        verbs = [v for _, v in leading_tokens(rest, CARGO_ARG_OPTS, 1)]
++        verb = verbs[0] if verbs else None
++        if verb == "install" and "--list" not in rest:
++            return ("tool_install", "cargo:install")
++        if verb == "uninstall":
++            return ("tool_install", "cargo:uninstall")
++        return None
++    return None
++
++
+ def classify_shell(text, depth=0):
+     """Return a list of (class, rule, argv0, segment_text, unparsed)."""
+     if depth > 8 or not text or not text.strip():
+@@ -495,10 +625,17 @@ def classify_segment(seg, depth, unparsed):
+         return hits
+     if argv0 == "eval":
+         return classify_shell(" ".join(args), depth + 1)
+-    if re.fullmatch(r"python[0-9.]*", argv0) and "-c" in args:
+-        i = args.index("-c")
+-        if i + 1 < len(args):
+-            return nested_eval(args[i + 1])
++    if re.fullmatch(r"python[0-9.]*", argv0):
++        if "-c" in args:
++            i = args.index("-c")
++            if i + 1 < len(args):
++                return nested_eval(args[i + 1])
++            return hits
++        if "-m" in args:  # python -m pip|uvx|pipx ... runs the module as argv0
++            i = args.index("-m")
++            if i + 1 < len(args):
++                hits.extend(classify_segment([args[i + 1]] + args[i + 2:],
++                                             depth + 1, unparsed))
+         return hits
+     if argv0 in ("pacman", "yay", "paru"):
+         cls, rule = classify_pacman(argv0, args)
+@@ -516,6 +653,10 @@ def classify_segment(seg, depth, unparsed):
+                for a in args):
+             hit("host_mutation", argv0)
+         return hits
++    found = classify_installer(argv0, args)
++    if found is not None:
++        hit(*found)
++        return hits
+     if argv0 == "systemctl":
+         verb = first_verb(args, SYSTEMCTL_ARG_OPTS)
+         if verb is None or verb in SYSTEMCTL_QUERY:

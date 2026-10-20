@@ -120,3 +120,35 @@ trade is erased by this criterion or a green configuration gate.
     Runnable check: `python3 -I .ufo/waves/round-17/label-check.py`
     (seven declared claims including the R16-V1 red line, a want-side-only
     mutant and a wrong-revision mutant; `EXPECT_SUMMARY` must be 7/7).
+
+## Round 18 — producer identity, instrument bite, producer status (outside R17-V1/V2/V5, JjAuditMado F10)
+
+The round-14/15 rulings ("no duplicate provenance criterion") stand for
+input binding and commit binding, which criteria 7, 9, 13 and 23 already
+carry. Criterion 24 adds only what those leave open: the identity of the
+*producer* bytes that ran, and receipt-borne evidence for a re-cut claim.
+
+24. A sentence that relies on a scan, selftest, measure or replay receipt cites one whose own bytes name its producer (`tool_sha256=` equal to `git show <measured_commit>:<tool> | sha256sum`, read with the producer status checked) and its `measured_commit`; a claimed re-cut is a committed receipt with those fields, never a narrated rerun; a report labels every tool sha with the revision it belongs to (lesson: lessons/round-18.md#mistakes M1; outside lessons/round-17-verifier-spotcheck.md R17-V1/V2).
+    Runnable check: `python3 -I .ufo/waves/round-18/receipt-check.py`
+    (claims `.ufo/waves/round-18/receipt-claims.json`). Red: the six
+    round-17 real-transcript receipts read at `d9a5a18` print
+    `MISSING_PROVENANCE` (they carry input digests only); a fixture bound
+    to the `f71ccbe` tool sha read at a later tool prints `SHA_MISMATCH`.
+    Green: the round-18 re-cut receipts and the frozen-replay receipt.
+25. An instrument tightening counts as biting only with a committed mutant receipt in which the pre-change instrument credits a committed mutant and the post-change instrument rejects it, both instruments named by sha256 and each mutant by its diff digest; a seat or `/tmp` lab run is provenance, not credit (lesson: lessons/round-18.md#mistakes M2; outside lessons/round-17-verifier-spotcheck.md R17-V5).
+    Runnable check: `python3 -I .ufo/waves/round-18/measure-mutants.py`
+    → `.ufo/waves/round-18/evidence/measure-mutants.json` (`no_bite` lists
+    any tightening the loose instrument already rejects). Red at `d9a5a18`:
+    no committed mutant receipt exists for any of the six round-17
+    tightenings, so round-17 M3's "shown to bite" has no credit under 25.
+26. A digest, count or identity taken through a pipe or command substitution carries the producer's exit status; when the producer fails the result is UNKNOWN, never a value (`e3b0c44298fc1c14…` is the sha256 of empty input, not of a file) (lesson: lessons/round-18.md#mistakes M3; outside /home/vgpnk/Projects/shokunin/.ufo/waves/hyaku/jj-w1/reports/JjAuditMado.md F10).
+    Runnable check (behavioural, the bite): `bash tools/mado-verify.sh
+    --selftest` scenarios OM9/OM10 (stub `git show`/`describe`/`rev-parse`
+    exit 128 must read UNKNOWN with `rc=128`, never `local edit`); red
+    before at `d9a5a18`: `.ufo/waves/round-18/evidence/gate-rc-redbefore.txt`
+    §1. Screen only (not proof — pipefail alone does not consume the rc):
+    `python3 -I .ufo/waves/round-18/pipe-rc-census.py REV` lists unchecked
+    producer sites; at `d9a5a18` it flags nine, of which only `:3406` was a
+    verdict-bearing hazard (the others are fixture or display values).
+    `${PIPESTATUS[0]}` read after `x=$(…)` is the assignment's status, not
+    the producer's; capture inside the substitution.

@@ -1,0 +1,92 @@
+# gate-rc-redbefore — jj-w1 F10/F14 red-before receipt (round 18, GateRcFix)
+
+Seat: MadoR18.GateRcFix. Date: 2026-10-20.
+Baseline: lane `mado-shokunin`, branch master, commit d9a5a18 (pre-registration d3a0000
+carries the same gate bytes). Gate under test: `tools/mado-verify.sh`.
+
+- old gate bytes: `git show d9a5a18:tools/mado-verify.sh` → sha256
+  `fba82a662795813ac65e4af293bd4ca3d135148a277ccf1d5e90777ac3f5c207`
+- edited gate bytes (working tree at the time of this run): sha256
+  `2bdf5e8afbb617142e4a881943084f94c9513327b1de25170ad71db113983925`
+- lab script: `/tmp/mado-r18-gaterc.lab.sh` (scratch; synthetic root, PATH stubs only,
+  no config tree read, no live gate run). Exact command: `bash /tmp/mado-r18-gaterc.lab.sh`
+- fixture root: `/tmp/mado-r18-gaterc/root` — `version` = 3.8.3, a skill leaf that is
+  deliberately not the pinned file, `.agents/skills/omarchy` → the checkout's
+  `default/omarchy-skill`, and a `.git` directory (so the git rows arm). `git` is a stub:
+  `describe` → v3.8.4, `rev-parse` → 8fcc9d60…, `show` → exit 128 printing nothing.
+
+## §1 Red-before — old gate, `git show` rc=128 (F10 reproduced)
+
+```
+=== old gate (d9a5a18) — git show rc=128 ===
+old gate exit: 1
+omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at HEAD (P3 pin)
+omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 (P3 pin)
+omarchy   omarchy.skill.vs_head           FAIL    MOVED: worktree c982d6758a1a… != HEAD blob e3b0c44298fc… (local edit; editing the skill edits the checkout)
+MADO_VERIFY: DIVERGED (16 fail, 9 unknown, 6 pass) — first fail: hypr.file.root (missing: /tmp/mado-r18-gaterc/root/.config/hypr/hyprland.conf)
+
+old row claims "local edit": 1
+```
+
+The read failure is reported as `local edit` against the empty-input digest
+`e3b0c44298fc…` — the exact false FAIL JjAuditMado F10 describes, and the
+`[ -z "$blob" ]` UNKNOWN arm is unreachable.
+
+## §2 Green-after — edited gate, same fixture, same stub
+
+```
+=== new gate (working tree) — same fixture, same stub ===
+new gate exit: 1
+omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at HEAD (P3 pin)
+omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 (P3 pin)
+omarchy   omarchy.skill.vs_head           UNKNOWN cannot read HEAD:default/omarchy-skill/SKILL.md (rc=128) — worktree/HEAD relation unverified
+MADO_VERIFY: DIVERGED (15 fail, 10 unknown, 6 pass) — first fail: hypr.file.root (missing: /tmp/mado-r18-gaterc/root/.config/hypr/hyprland.conf)
+
+new row claims "local edit": 0
+```
+
+## §3 The other two rc arms (same edited gate, knobs STUB_GIT_*_RC)
+
+```
+=== new gate — STUB_GIT_DESCRIBE_RC=128 ===
+exit: 1
+omarchy   omarchy.git.tag                 UNKNOWN git describe failed (rc=128) — tag pin unverified
+omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 (P3 pin)
+omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+
+=== new gate — STUB_GIT_REVPARSE_RC=128 ===
+exit: 1
+omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at HEAD (P3 pin)
+omarchy   omarchy.git.head                UNKNOWN git rev-parse failed (rc=128) — HEAD unverified
+omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+
+=== new gate — all three rc=128 ===
+exit: 1
+omarchy   omarchy.git.tag                 UNKNOWN git describe failed (rc=128) — tag pin unverified
+omarchy   omarchy.git.head                UNKNOWN git rev-parse failed (rc=128) — HEAD unverified
+omarchy   omarchy.skill.vs_head           UNKNOWN cannot read HEAD:default/omarchy-skill/SKILL.md (rc=128) — worktree/HEAD relation unverified
+omarchy UNKNOWN rows: 3 (want 3)
+omarchy FAIL rows: 1 (want 1 — only the unreproducible sha row)
+MADO_VERIFY verdict: MADO_VERIFY: DIVERGED (15 fail, 11 unknown, 5 pass) — first fail: hypr.file.root (missing: /tmp/mado-r18-gaterc/root/.config/hypr/hyprland.conf)
+```
+
+## §4 Assertion map — measured, all directions
+
+| assertion | measured |
+|---|---|
+| `git describe` rc 128 → `omarchy.git.tag` UNKNOWN, never FAIL | §3 row 1: UNKNOWN, detail `rc=128` |
+| `git rev-parse` rc 128 → `omarchy.git.head` UNKNOWN, never FAIL | §3 row 2: UNKNOWN, detail `rc=128` |
+| `git show` rc 128 → `omarchy.skill.vs_head` UNKNOWN, never FAIL | §2/§3 row 3: UNKNOWN, detail `(rc=128)`, zero `local edit` |
+| old gate on the same `git show` failure | §1: FAIL `HEAD blob e3b0c44298fc…` + `local edit` |
+| failure isolation | §3 single-failure runs move exactly one row; the others stay PASS |
+| verdict honesty | DIVERGED both before and after (the unrelated `omarchy.skill.sha` pin row); no row turns CLEAN |
+
+The same three rc knobs are now asserted in-gate as selftest scenarios OM9
+(`STUB_GIT_SHOW_RC=128`) and OM10 (`STUB_GIT_DESCRIBE_RC=128` +
+`STUB_GIT_REVPARSE_RC=128`); their pass counts are in `gate-selftest.txt` beside this file.
+
+## §5 Scope limits
+
+- The fixture is synthetic: it proves the row's decision logic, not the host checkout.
+  The host omarchy tree was read as file bytes only; no git command was run in it.
+- No live gate run was made (`--no-live`-less invocation is out of scope for this seat).

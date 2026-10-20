@@ -1,0 +1,90 @@
+# regression-recut — round 18 PIN_MADO re-cut receipt (GateRcFix, jj-w1 F10/F14)
+
+Seat: MadoR18.GateRcFix. Date: 2026-10-20.
+Gate: `tools/mado-shokunin/tools/mado-verify.sh`. Harness consumed read-only:
+`/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh` sha256
+`0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa`
+(recorded revision b56c6e57… — provenance, not gated).
+
+## §1 Why a re-cut was owed
+
+The round-18 fix captures `git show`'s producer rc at the `omarchy.skill.vs_head`
+row and the selftest git stub/scenarios OM9/OM10 gained per-verb rc knobs — all
+outside the marked MADO-R7/R8 families, so the derived target moved. Measured by
+the mode itself before pinning:
+
+```
+REGRESSION_TOOL: …/tools/mado-verify.sh sha256=2bdf5e8afbb617142e4a881943084f94c9513327b1de25170ad71db113983925
+REGRESSION_DATE: 2026-10-20T15:45:56Z
+REGRESSION_HARNESS: …/tameshi-shokunin/tools/mutate-and-run.sh sha256=0673d2e5… (recorded revision b56c6e57… — provenance, not gated)
+REGRESSION_SPEC: /tmp/mado-verify-regression.Kl97v1/mado-verify.defects.spec sha256=c7ee75b97c38ac8f88410165a574ad1cba7f4653bd09d35e6814267a12df1dd8 (recorded pin matches)
+REGRESSION_TARGET: /tmp/mado-verify-regression.Kl97v1/target.mado-verify.sh sha256=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744 (recorded pin cd1d73d75fcc8e5b96d5b83c0d16660897e58cf32edf77416d389fa16b9f3f96; match=no)
+REGRESSION_RECUT: bash …/mutate-and-run.sh --target /tmp/mado-verify-regression.Kl97v1/target.mado-verify.sh --defects /tmp/mado-verify-regression.Kl97v1/mado-verify.defects.spec --suite 'bash "$MUTANT" --selftest' --workdir /tmp/mado-verify-regression.Kl97v1/recut --label mado-verify.sh
+MADO_REGRESSION: SETUP (target pin mismatch — the gate moved outside the MADO-R7 blocks; re-cut, then update PIN_MADO/TABLE_MADO)
+```
+
+## §2 The re-cut sweep — the printed REGRESSION_RECUT command, run verbatim
+
+```
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=0673d2e5374b94c651238e7497cbebaffb6483348400747b08f9d27cdc8118aa
+MUTATE_DATE: 2026-10-20T15:46:06Z
+MUTATE_TARGET: /tmp/mado-verify-regression.Kl97v1/target.mado-verify.sh sha256=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744 bytes=121533
+MUTATE_SPEC: /tmp/mado-verify-regression.Kl97v1/mado-verify.defects.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=8784 pristine-sha256=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744)
+  | MADO_SELFTEST: 284/284 assertions passed
+DEFECT D1: KILLED (exit=2 duration-ms=8882) clause A: file-plane CLEAN verdict token renamed (CLEAN -> OK)
+DEFECT D2: KILLED (exit=2 duration-ms=9146) clause B: UNKNOWN guard dropped from the CLEAN test
+DEFECT D3: KILLED (exit=2 duration-ms=9215) clause B: skipped live layer row reports PASS instead of SKIP
+DEFECT D4: KILLED (exit=2 duration-ms=9440) clause C: DIVERGED path exits 0
+DEFECT D5: KILLED (exit=1 duration-ms=9488) clause C: failing --selftest returns 1 not 2
+DEFECT D6: KILLED (exit=2 duration-ms=9286) clause D: xdph dropped from the 12-conf local inventory
+DEFECT D7: KILLED (exit=2 duration-ms=8988) clause D: include-graph count test -ne -> -lt (extra source lines tolerated)
+DEFECT D8: KILLED (exit=2 duration-ms=8825) clause E: hyprland.conf sha pin comparison always "matches"
+DEFECT D9: KILLED (exit=2 duration-ms=8856) clause E: read-only boundary comparison always reads byte-identical
+DEFECT R1: KILLED (exit=2 duration-ms=9151) clause F: tomllib-unavailable arm reads PASS not UNKNOWN
+MUTATE_RESTORE: OK (target-sha256 before=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744 after=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744 pristine-sha256=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744)
+MUTATE_EVIDENCE: /tmp/mado-verify-regression.Kl97v1/recut
+MUTATE: DONE (target=mado-verify.sh defects=10 killed=10 survived=0 inconclusive=0 kill-rate=100%)
+```
+
+Measured table (results.tsv, verbatim):
+
+```
+id	verdict	exit	duration-ms	mutant-sha256	desc
+D1	KILLED	2	8882	376d8144d0978555baea3af211a0754a19f1a57cabf4a7e6a2de97c05628b2d4	clause A: file-plane CLEAN verdict token renamed (CLEAN -> OK)
+D2	KILLED	2	9146	9dd13775ee321c9e261759d73448941f38f3b9c9b47e6bac040bf08f289d0358	clause B: UNKNOWN guard dropped from the CLEAN test
+D3	KILLED	2	9215	9d76381f2fc089c7ba5b9625e6b1cdd8c865d897b003f4ba96fbd5fe1306810d	clause B: skipped live layer row reports PASS instead of SKIP
+D4	KILLED	2	9440	ee673bea7c70e3d84772fb397b4a2b7f1bf0f19e5f9e9f40a7e61edc2a83c1bc	clause C: DIVERGED path exits 0
+D5	KILLED	1	9488	c105ae887ec422fdcdee1c203d76243a6c4a596f1e76675bfc5ec54b76c73443	clause C: failing --selftest returns 1 not 2
+D6	KILLED	2	9286	0cb961a37e4b244ced150c9aa1052cb601cd108597f70d68c770d713d83baf14	clause D: xdph dropped from the 12-conf local inventory
+D7	KILLED	2	8988	70d436543fe0b0e38ea4f75b1f6d55470bee7f1578b4998acbfb1cae8a59c14d	clause D: include-graph count test -ne -> -lt (extra source lines tolerated)
+D8	KILLED	2	8825	46c0b07de603e558266a289e9d20c43e67e8765b3d98b44316cfda91391df25d	clause E: hyprland.conf sha pin comparison always "matches"
+D9	KILLED	2	8856	8f13cd6258ae2790d3a2f0da850e09571929f7bbdc7e4915dc8e979972c08263	clause E: read-only boundary comparison always reads byte-identical
+R1	KILLED	2	9151	0df7f7de2adb84339c7b48d990d8385fa8d534b7693cf0e44c824a49b17d6863	clause F: tomllib-unavailable arm reads PASS not UNKNOWN
+```
+
+## §3 Re-cut result
+
+- derived target (gate minus the marked R7/R8 families): 2,460 L / 121,533 B /
+  sha256 `20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744`
+- 10 / 10 KILLED · 0 SURVIVED · 0 INCONCLUSIVE · kill-rate 100 % · flips 0
+- control GREEN (suite 284/284 on the derived target)
+- `MUTATE_RESTORE: OK`; target sha before == after == the pin
+- TABLE_MADO unchanged; PIN_MADO re-cut `cd1d73d7…` → `20714096…`
+- raw sweep log: `/tmp/mado-r18-recut-sweep.txt` (scratch); harness workdir
+  `/tmp/mado-verify-regression.Kl97v1/recut` (kept by the harness)
+
+## §4 Post-pin confirmation (same mode, new PIN_MADO)
+
+```
+REGRESSION_TARGET: /tmp/mado-verify-regression.FIm6Tf/target.mado-verify.sh sha256=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744 (recorded pin 20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744; match=yes)
+REGRESSION_BAND: all recorded kills required (recorded 10/10 KILLED; flips=0; inconclusive=0; control GREEN; MUTATE_RESTORE OK; target sha unchanged) — plan §(a) killed-delta<=1 tolerance not applied
+REGRESSION_TABLE mado-verify-hardened: match=10/10 recorded-killed=10 measured-killed=10 survived=0 inconclusive=0 flips=0
+REGRESSION_CASE mado-verify-hardened: PASS (recorded table reproduced: killed=10/10 flips=0 inconclusive=0 control=green restore=ok)
+MADO_REGRESSION: PASS (case=mado-verify-hardened; target=20714096e1481e92c8f75414968b596b5b7c31cc684c1dd94b9c3edb0f772744)
+```
+
+Exit 0. The pristine gate's own suite (with scenario R and S present) reads
+389/389 in `gate-selftest.txt`; the derived target's suite (both families
+excised) reads 284/284 in the control above.
+

@@ -41,6 +41,8 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/waybar-observation-boundaries-r16.md` (round 16; covers U7) | Tagged custom-module producer contract → parser/format/visibility → GTK markup → rendered-observation boundary. Producer data is not current bar text; no producer or UI execution is admitted. | `source:` S053/S054 in [SOURCES](SOURCES.md); raw source digests `.ufo/waves/round-16/evidence/source-bindings.json`; actual rendering remains `[UNK]`. |
 | `knowledge/idle-lock-route-r17.md` (round 17; surface P6) | Documentary upstream contract for hypridle v0.1.8 and hyprlock v0.9.6 (listener timeouts, lock/sleep hooks, inhibit) joined to the host's declared files by sha256 and line anchor. Declared timings are not observed behaviour; transitions and lock success stay `[UNK]`. | `source:` S063–S069 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/hypridle.conf` and `hyprlock.conf` by sha256; open unknowns in [idle-lock-plane.md](knowledge/idle-lock-plane.md) §11. No lock, suspend or listener is triggered. |
 | `knowledge/terminal-route-r17.md` (round 17; surface P4) | Documentary route from the Hyprland launch binding through `xdg-terminal-exec` v0.14.3 and `xdg-terminals.list` (first entry `Alacritty.desktop`) to the Alacritty v0.17.0 config-import contract. Which terminal actually launches and reload effects stay `[UNK]`. | `source:` S056–S060, S071 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/bindings.conf`, `~/.config/xdg-terminals.list`, `Alacritty.desktop` by sha256. No terminal is launched. |
+| `knowledge/walker-route-r18.md` (round 18; surface P3) | Documentary upstream contract for Walker v2.17.2 and elephant v2.22.1 (config load order, theme lookup, socket path) and the omarchy v3.8.4 launcher, joined to declared host config by sha256 and line anchor. Declared configuration is not observed launcher behaviour; provider resolution at runtime, the elephant service, wire schema and rendered UI stay `[UNK]`. | `source:` S072–S091 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No walker or elephant process is started or queried. |
+| `knowledge/theme-route-r18.md` (round 18; surface P5) | Documentary upstream contract for the omarchy v3.8.4 theme-set and wallpaper writers and swaybg v1.2.2, joined to `current/theme`, the `current/background` link and consumer imports by sha256 and line anchor. The declared chain is not runtime theme application; reload effects and the rendered wallpaper stay `[UNK]`. | `source:` S092–S095 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No theme, wallpaper or swaybg command is run. |
 
 ## Quality bar
 
@@ -124,3 +126,10 @@ Index completeness does not retire these unresolved surfaces:
   actually launches and Alacritty reload effects; P3 Walker and P5
   theme/wallpaper sourced routes. Compiled host binaries stay `[UNK]` (a
   pacman.log pkgver is a log line, not a running-binary fact).
+- Round 18 moves P3 Walker and P5 themes/wallpapers onto **documentary** sourced
+  ground, superseding the round-17 "P3 Walker and P5 theme/wallpaper sourced
+  routes" open item: [Walker route](knowledge/walker-route-r18.md) and
+  [theme route](knowledge/theme-route-r18.md). Still open: runtime theme
+  application and wallpaper reload, Walker provider behaviour, the elephant
+  service and wire schema, rendered UI. Host binaries stay `[UNK]`; the
+  2.17.0-era pins in the round-5/9 Walker notes are dated, not current.

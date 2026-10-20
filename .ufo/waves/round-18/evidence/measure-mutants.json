@@ -1,0 +1,1039 @@
+{
+  "schema": "mado-measure-mutants-v1",
+  "claim": "R17-V5 \u2014 committed mutant receipts for the round-17 rubric-V tightenings",
+  "generated_at": "2026-10-20T15:50:02+00:00",
+  "started_at": "2026-10-20T15:50:00+00:00",
+  "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "baseline_rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+  "instruments": {
+    "loose": {
+      "rev": "f52f43f8ea44f60b3c52e5cc5b2e5ab76d77be59",
+      "git_path": ".ufo/waves/round-17/measure.py",
+      "sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+      "staged_as": ".ufo/waves/round-18/measure-loose.py"
+    },
+    "tight": {
+      "rev": "d9a5a18e17cd3a68b52148fcc01c4a30e340ba98",
+      "git_path": ".ufo/waves/round-17/measure.py",
+      "sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+      "staged_as": ".ufo/waves/round-18/measure-tight.py"
+    }
+  },
+  "adaptation": "Instruments: only file placement changed. Each instrument was copied byte-identically from the named revision into <tmp-repo>/.ufo/waves/round-18/ so that its own REPO = Path(__file__).resolve().parents[3] resolves to the throwaway repo; its sha256 was asserted at every run (see record.mutant.*.instrument_sha256). No source byte, argument or environment variable was altered. Archive: the extraction skips symlink members whose targets are absolute or escape the extraction root (the baseline tree carries such fixtures under .ufo/waves/round-17/tripwire); neither instrument reads those paths, and every path either instrument reads is extracted verbatim.",
+  "mutant_method": "Per mutant: fresh `git archive d9a5a18` extraction, fresh git init, baseline commit, both instruments run at the baseline commit, one mutant applied and committed, both instruments run at the mutant commit. Bite = loose credits a province entry the tight run does not, or the tight run refuses (exit != 0).",
+  "environment": {
+    "python": "3.14.8",
+    "git": "git version 2.56.0",
+    "platform": "Linux-7.2.11-arch1-1-x86_64-with-glibc2.44",
+    "workdir": "/tmp/mado-r18-mutants-run",
+    "kept": true
+  },
+  "harness": {
+    "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-18/measure-mutants.py",
+    "sha256": "075815bd5bbcf80fbf00a80ac9400ff9ec82082562a6691c1f5cc290da601d73",
+    "argv": [
+      ".ufo/waves/round-18/measure-mutants.py",
+      "--keep",
+      "--workdir",
+      "/tmp/mado-r18-mutants-run"
+    ],
+    "note": "Rerun with --keep to retain the throwaway repos; mutant commit hashes identify this run only."
+  },
+  "summary": {
+    "mutants": 6,
+    "bites": 6,
+    "no_bite": [],
+    "expectations_met": 6,
+    "expected_but_unmet": [],
+    "unexpected_tight_only": [],
+    "baselines_agree": true
+  },
+  "mutants": [
+    {
+      "id": "M1",
+      "tightening": "exact surface line",
+      "description": "terminal-route-r17.md surface line becomes `surface: P4 terminal`; the loose P[1-6]\\b scan still reads P4, the tight fullmatch rejects it",
+      "expect": "loose credits P4 from `surface: P4 terminal`; tight rejects the note as MALFORMED and P4 drops",
+      "files": [
+        "corpus/knowledge/terminal-route-r17.md"
+      ],
+      "changed_files": [
+        "corpus/knowledge/terminal-route-r17.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M1/repo",
+      "baseline_commit": "452e92e1321a786878f2ac8e3fff5bbfa69987d5",
+      "mutant_commit": "4efe919d7f88b867ffa235a896fe9834af9b1e14",
+      "diff_sha256": "e9f712a5f88ca88f646eb961e96beb9ce847e542b0947dce994d433ae1af21b5",
+      "diff": "diff --git a/corpus/knowledge/terminal-route-r17.md b/corpus/knowledge/terminal-route-r17.md\nindex 389d810..eba89cc 100644\n--- a/corpus/knowledge/terminal-route-r17.md\n+++ b/corpus/knowledge/terminal-route-r17.md\n@@ -1,7 +1,7 @@\n source: S056 (xdg-terminal-exec v0.14.3 README.md:55-57,100-101,115-118,131,153-166,264; S057 xdg-terminal-exec:106,148-162,919,1252; S058 alacritty v0.17.0 extra/man/alacritty.5.scd:27-41,57-61; S059 host ~/.config/hypr/bindings.conf:2-3, ~/.config/xdg-terminals.list:3, ~/.config/alacritty/alacritty.toml:1; S060 /usr/share/xdg-terminal-exec/xdg-terminals.list:1-25; S071 host ~/.local/share/applications/Alacritty.desktop:7,14-17)\n verified-at: 2026-10-20; tag-pinned raw bytes fetched with curl and host files read as bytes only (sha256sum, cat, stat, grep); SHA-256 values in the sections below and in corpus/SOURCES.md S056-S060, S071\n recheck: re-fetch README.md, xdg-terminal-exec and xdg-terminals.list at tag v0.14.3 and extra/man/alacritty.5.scd at tag v0.17.0, compare their SHA-256 values, re-hash the host files, reread the named lines; no alacritty, xdg-terminal-exec, omarchy-*, pacman or package query, systemctl, hyprctl or live probe\n-surface: P4\n+surface: P4 terminal\n scope: one Alacritty-only route (selection chain + config import); foot, kitty and ghostty trees are not sourced here\n \n # Terminal emulator route \u2014 documentary, not observed\n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M1/repo/.ufo/waves/round-18/measure-loose.py",
+            "4efe919d7f88b867ffa235a896fe9834af9b1e14"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "ec7f72b21c219a91c55938306043da7c8e2b767c773a5d80ca2d358828d20f8a",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M1/repo/.ufo/waves/round-18/measure-tight.py",
+            "4efe919d7f88b867ffa235a896fe9834af9b1e14"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 0,
+          "stdout_sha256": "4b180d0282052d6cb74f23efc0bed68dc622b2a0dd733ba92b1a8ef8aee5c6d5",
+          "stderr": "",
+          "c2": {
+            "count": 3,
+            "score": 5.0,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [
+              {
+                "path": "corpus/knowledge/terminal-route-r17.md",
+                "reason": "surface line must be exactly `surface: P<n>`"
+              }
+            ],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P4": [
+            "corpus/knowledge/terminal-route-r17.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 4,
+        "tight_count": 3,
+        "tight_refused": false,
+        "bites": true,
+        "basis": [
+          "P4: loose-only ['corpus/knowledge/terminal-route-r17.md']",
+          "count 4 vs 3"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    },
+    {
+      "id": "M2",
+      "tightening": "legacy credit pinned to three paths",
+      "description": "input-debugging-boundaries-r15.md gains an unpinned `covers: U1`; loose credits P1 from it, tight only credits the three pinned paths",
+      "expect": "loose credits P1 from an unpinned `covers: U1` entry; tight does not credit that entry (count may stay 4 because P1 is already covered by the pinned paths)",
+      "files": [
+        "corpus/knowledge/input-debugging-boundaries-r15.md"
+      ],
+      "changed_files": [
+        "corpus/knowledge/input-debugging-boundaries-r15.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M2/repo",
+      "baseline_commit": "2a5d21cdbcedb06dd220ee5d12a4ad1e17fd9568",
+      "mutant_commit": "134c648cb35d57e986b34e7b8e7be338a6539cc6",
+      "diff_sha256": "cf76218f577ccf30a7ed40bd1e06e2e5ea1a642c0858ed01a26ba188cad19eb2",
+      "diff": "diff --git a/corpus/knowledge/input-debugging-boundaries-r15.md b/corpus/knowledge/input-debugging-boundaries-r15.md\nindex a089e28..2adbc23 100644\n--- a/corpus/knowledge/input-debugging-boundaries-r15.md\n+++ b/corpus/knowledge/input-debugging-boundaries-r15.md\n@@ -1,7 +1,7 @@\n source: S051 https://gitlab.freedesktop.org/libinput/libinput/-/raw/1.32.0/doc/user/tools.rst (tag 1.32.0, libinput-list-devices/debug-events/record, SHA-256 53264328664493c0fc7074722650ba42afcf8b30c94ce7cc94157544b654ff5f); S052 https://gitlab.freedesktop.org/wayland/wayland/-/raw/1.26.0/protocol/wayland.xml (tag 1.26.0, wl_seat/wl_pointer/wl_keyboard, SHA-256 cc860987e54f8d85c940e97fa1270c69b6e4ad31fbcf5a7f00107ce1157f5e07)\n verified-at: 2026-10-20; static primary-document/XML inspection, not a live input-delivery test\n recheck: Reopen the tagged S051/S052 source elements and compare the persisted digests; run `pacman -Q libinput wayland` and `sha256sum /usr/share/wayland/wayland.xml`. Stop on source/version/digest drift. Do not collect events.\n-covers: U6\n+covers: U6, U1\n \n # Input debugging \u2014 keep the layers apart\n \n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M2/repo/.ufo/waves/round-18/measure-loose.py",
+            "134c648cb35d57e986b34e7b8e7be338a6539cc6"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "876fc2e1f05c60d509092f2271e21b09ed55f47de52bca0ac5a2f1449861fb8b",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/input-debugging-boundaries-r15.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M2/repo/.ufo/waves/round-18/measure-tight.py",
+            "134c648cb35d57e986b34e7b8e7be338a6539cc6"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 0,
+          "stdout_sha256": "65cc65aea48f7277cbae92e3309d9e07e24a6852ba464b2e136d50df56f0be86",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P1": [
+            "corpus/knowledge/input-debugging-boundaries-r15.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 4,
+        "tight_count": 4,
+        "tight_refused": false,
+        "bites": true,
+        "basis": [
+          "P1: loose-only ['corpus/knowledge/input-debugging-boundaries-r15.md']"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    },
+    {
+      "id": "M3",
+      "tightening": "upstream https docs/spec/code row naming the surface",
+      "description": "a valid P3 note cites the Hyprland docs row S016; loose accepts any docs/spec/code https row, tight requires walker/elephant in source or scope",
+      "expect": "loose credits P3 from a Hyprland docs row; tight rejects because walker/elephant do not appear in the row source or scope",
+      "files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-upstream-keyword-mutant.md"
+      ],
+      "changed_files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-upstream-keyword-mutant.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M3/repo",
+      "baseline_commit": "2a5d21cdbcedb06dd220ee5d12a4ad1e17fd9568",
+      "mutant_commit": "39f98005fdfbcfcd4dc43668f406493c74d25200",
+      "diff_sha256": "6a0fcaf898cb083e2a0f78c7b227331afaa7e70782bb4d60b41994fbd019a3e9",
+      "diff": "diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md\nindex 3bc4666..9a25ef1 100644\n--- a/corpus/SOURCES.md\n+++ b/corpus/SOURCES.md\n@@ -25,7 +25,7 @@ recorded in `lessons/round-13.md` \u00a7 Gate. Only `status`, `recheck` and\n | S013 | gkeep installer \u2014 `/home/vgpnk/Projects/gkeep/install.sh` | code | A | Provenance scope: operator installer actions corresponding to the measured gkeep Hyprland and Waybar deltas | `HEAD` 133b86717a02548aeaff3f1411bf301d936c5308; `install.sh:21-36,60-82,88-90`; worktree SHA equals `HEAD:install.sh` | Connects installer code paths to the observed copied Hypr config, include append, Waybar module, CSS, and reload calls without executing them | mined | 2026-10-19 | on-change | corpus/knowledge/config-drift-r12.md |\n | S014 | mado gate \u2014 `tools/mado-verify.sh` | own-work | A | Round-12 gate re-anchor: pinned Hyprland EXPECT source list and local LOCAL inventory | `Erratum (round 12, 2026-10-19)` comment directly above `declare -a EXPECT`; EXPECT gains `~/.config/hypr/gkeep.conf`; LOCAL unchanged (12); gate sha 83b3f5f1\u2026 \u2192 final bytes at the round commit | Shows which pinned list was re-anchored (EXPECT only) and why LOCAL stayed narrow, so the remaining set-blind census stays visible | mined | 2026-10-19 | on-gate-change | corpus/knowledge/config-drift-r12.md |\n | S015 | mado drift protocol \u2014 `corpus/knowledge/omarchy-drift-watch.md` | own-work | A | Append-only re-anchor protocol for moved pins | `## Errata (append-only)`, lines 284-287; M6-2 round 6 | A moved pin is reported, then re-anchored with old/new values, reason and re-measure command rather than silently smoothed | mined | 2026-10-19 | on-change | corpus/knowledge/config-drift-r12.md |\n-| S016 | Using hyprctl \u2014 https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/ | docs | A | Current wiki's `getprop` purpose and invocation form | `#getprop`; page marked Latest git; modified 2026-08-26; opened 2026-10-19 | Separates the current documented property-read command from command effects; does not pin host behavior | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |\n+| S016 | Using hyprctl \u2014 https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/ | docs | A | Current wiki's `getprop` purpose and invocation form | `#getprop`; page marked Latest git; modified 2026-08-26; opened 2026-10-19 | Separates the current documented property-read command from command effects; does not pin host behavior | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/p3-upstream-keyword-mutant.md |\n | S017 | Window Rules \u2014 https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Current latest-git Lua-era syntax and documented effect semantics, scoped to that wiki era | `#syntax`, `#effects`, `#notes`; page says hyprlang deprecated since 0.55; modified 2026-08-26; opened 2026-10-19 | Teaches to separate match conditions from effects, and to label current-doc semantics rather than projecting them onto a 0.56.2 host | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md, corpus/lessons/round-13.md |\n | S018 | Hyprland v0.56.2 source \u2014 https://github.com/hyprwm/Hyprland/blob/v0.56.2/src/debug/HyprCtl.cpp | code | A | Exact tagged `getprop` dispatch, window selector, error paths, and opacity property getters | `dispatchGetProp`, lines 1463-1645; tag commit efb50993780079460b0cbed1363e2166a2de1d9f | Teaches which window-rule applicator values the pinned handler returns, without attributing a result to a rule | mined | 2026-10-19 | on-release | corpus/knowledge/window-rule-effects-getprop.md |\n | S019 | Host read-only getprop capture \u2014 .ufo/evidence/round-12/getprop-help.txt and .ufo/evidence/round-12/getprop-measure.txt | own-work | A | Host Hyprland 0.56.2 help, errors, selector behavior, property values and defaults | `.ufo/evidence/round-12/getprop-help.txt` and `.ufo/evidence/round-12/getprop-measure.txt`, commands dated 2026-10-19 | Teaches an operator how to repeat the read-only host probe while excluding window titles | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |\ndiff --git a/corpus/knowledge/p3-upstream-keyword-mutant.md b/corpus/knowledge/p3-upstream-keyword-mutant.md\nnew file mode 100644\nindex 0000000..5f709b9\n--- /dev/null\n+++ b/corpus/knowledge/p3-upstream-keyword-mutant.md\n@@ -0,0 +1,33 @@\n+source: S016 \u2014 https://github.com/abenz1267/walker \u2014 mutant fixture row, no fetch performed\n+surface: P3\n+scope: mutant fixture for the rubric-V instrument receipts; no host fact\n+\n+# Mutant fixture note\n+\n+This note exists only in a throwaway /tmp git repo to prove one\n+instrument tightening bites. It is never part of the lane, and every\n+host behaviour stays [UNK].\n+\n+## Upstream contract\n+\n+- The cited row is a walker upstream scaffold used only by this fixture.\n+- It states a documentary contract shape, nothing about this host.\n+- No fetch or execution is performed for the fixture.\n+\n+## Host declaration\n+\n+- The only declared input is the fixture row in SOURCES.md.\n+- No host file is read by this mutated repository.\n+- No launch, theme or compositor fact is asserted.\n+\n+## Safe observation\n+\n+- Reading this note's bytes is the whole observation.\n+- No walker or elephant process is started.\n+- The route stays documentary by construction.\n+\n+## Unexercised behavior\n+\n+- [UNK] Whether Walker is installed or which version runs on this host.\n+- [UNK] Any preview, launch or theme behaviour on this host.\n+- [UNK] Whether the scaffold URL resolves or its lines exist.\n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M3/repo/.ufo/waves/round-18/measure-loose.py",
+            "39f98005fdfbcfcd4dc43668f406493c74d25200"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "456ffdd3d23a032cd2583e4a4472d8ec9964a96e1613cb8ba879d40981f74fb0",
+          "stderr": "",
+          "c2": {
+            "count": 5,
+            "score": 8.3333,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P3": [
+                "corpus/knowledge/p3-upstream-keyword-mutant.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M3/repo/.ufo/waves/round-18/measure-tight.py",
+            "39f98005fdfbcfcd4dc43668f406493c74d25200"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 0,
+          "stdout_sha256": "ae5183263e60da17051ecc898214ca884c0a24fc154889bd3527c6a3287f088a",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [
+              {
+                "path": "corpus/knowledge/p3-upstream-keyword-mutant.md",
+                "reason": "no cited mined tier-A row is an upstream https source of kind docs/spec/code naming the surface"
+              }
+            ],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P3": [
+            "corpus/knowledge/p3-upstream-keyword-mutant.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 5,
+        "tight_count": 4,
+        "tight_refused": false,
+        "bites": true,
+        "basis": [
+          "P3: loose-only ['corpus/knowledge/p3-upstream-keyword-mutant.md']",
+          "count 5 vs 4"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    },
+    {
+      "id": "M4",
+      "tightening": "three-line section floor",
+      "description": "a valid P3 note has a two-line `## Host declaration`; loose credits it, tight rejects it under the content floor",
+      "expect": "loose credits P3 with a two-line `## Host declaration`; tight rejects under the content floor",
+      "files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-section-floor-mutant.md"
+      ],
+      "changed_files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-section-floor-mutant.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M4/repo",
+      "baseline_commit": "2a5d21cdbcedb06dd220ee5d12a4ad1e17fd9568",
+      "mutant_commit": "5adb297833fe16ced1dc6861faf7c410a9fe2b52",
+      "diff_sha256": "1bf73ed9392de649ae9183a0c1354574d2eb83b6969b3b80f92c12ec218ba16c",
+      "diff": "diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md\nindex 3bc4666..f89187c 100644\n--- a/corpus/SOURCES.md\n+++ b/corpus/SOURCES.md\n@@ -81,6 +81,7 @@ recorded in `lessons/round-13.md` \u00a7 Gate. Only `status`, `recheck` and\n | S069 | hyprlock README @ v0.9.6 \u2014 https://raw.githubusercontent.com/hyprwm/hyprlock/v0.9.6/README.md | docs | A | hyprlock features, docs pointer, build deps at tag v0.9.6 | file lines 5, 19; sha256 83096def1a9760088ee6508d550f9498aab959176ae50f90720a57fe838f50f3 | ext-session-lock protocol basis; README points to the older wiki domain (wiki.hyprland.org) | mined | 2026-10-20 | on-change | corpus/knowledge/idle-lock-route-r17.md |\n | S070 | FlareXes \u2014 Hyprland getting-started (screen lock) \u2014 https://flarexes.com/hyprland-getting-started-configure-screen-lock-brightness-volume-authentication-and-more | community | C | third-party hyprlock/hypridle setup walkthrough (published 2024-12-24, modified 2026-04-05) | dynamic page: raw bytes differ per fetch (CDN token; the recorded `bf875a25\u2026350ab90a` is not reproducible), verdict rests on extracted text; `hypridle.conf` block with `lock_cmd`/`before_sleep_cmd`/listeners 600/900/1800; 0 version tokens in 339 extracted lines | REJECTED: names no hypridle/hyprlock/Hyprland version anywhere, so no claim can bind to a release; restates the upstream wiki it links; route text is mutation commands. flip: a version-anchored rewrite with per-claim tag references | rejected | 2026-10-20 | 180d | \u2014 |\n | S071 | host user-local Alacritty desktop entry, file bytes \u2014 ~/.local/share/applications/Alacritty.desktop | code | A | the desktop entry xdg-terminal-exec resolves for `Alacritty.desktop` on this host (bytes only) | whole file, sha256 713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683; :7 `Categories=System;TerminalEmulator;`, :14-17 `X-TerminalArg*` keys; byte-identical to ~/.local/share/omarchy/applications/Alacritty.desktop; system entry /usr/share/applications/Alacritty.desktop has 0 `X-Terminal` keys | the applicability keys (TerminalEmulator, X-TerminalArgExec, X-TerminalArgDir) the upstream resolver reads are declared; it does not show which entry is chosen at launch | mined | 2026-10-20 | on-change | corpus/knowledge/terminal-route-r17.md |\n+| S900 | Walker fixture scaffold \u2014 https://github.com/abenz1267/walker \u2014 mutant only | docs | A | walker upstream scaffold for the mutant receipt | fixture anchor; no fetch performed | fixture row only; not a source claim | mined | 2026-10-20 | on-change | corpus/knowledge/p3-section-floor-mutant.md |\n \n ## Paths\n \ndiff --git a/corpus/knowledge/p3-section-floor-mutant.md b/corpus/knowledge/p3-section-floor-mutant.md\nnew file mode 100644\nindex 0000000..9bd8dfb\n--- /dev/null\n+++ b/corpus/knowledge/p3-section-floor-mutant.md\n@@ -0,0 +1,32 @@\n+source: S900 \u2014 https://github.com/abenz1267/walker \u2014 mutant fixture row, no fetch performed\n+surface: P3\n+scope: mutant fixture for the rubric-V instrument receipts; no host fact\n+\n+# Mutant fixture note\n+\n+This note exists only in a throwaway /tmp git repo to prove one\n+instrument tightening bites. It is never part of the lane, and every\n+host behaviour stays [UNK].\n+\n+## Upstream contract\n+\n+- The cited row is a walker upstream scaffold used only by this fixture.\n+- It states a documentary contract shape, nothing about this host.\n+- No fetch or execution is performed for the fixture.\n+\n+## Host declaration\n+\n+- The only declared input is the fixture row in SOURCES.md.\n+- No host file is read by this mutated repository.\n+\n+## Safe observation\n+\n+- Reading this note's bytes is the whole observation.\n+- No walker or elephant process is started.\n+- The route stays documentary by construction.\n+\n+## Unexercised behavior\n+\n+- [UNK] Whether Walker is installed or which version runs on this host.\n+- [UNK] Any preview, launch or theme behaviour on this host.\n+- [UNK] Whether the scaffold URL resolves or its lines exist.\n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M4/repo/.ufo/waves/round-18/measure-loose.py",
+            "5adb297833fe16ced1dc6861faf7c410a9fe2b52"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "d63003f803abb5e9b89a65d6a51aca336fb180f1ec933c34a85a01e738f0fd4f",
+          "stderr": "",
+          "c2": {
+            "count": 5,
+            "score": 8.3333,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P3": [
+                "corpus/knowledge/p3-section-floor-mutant.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M4/repo/.ufo/waves/round-18/measure-tight.py",
+            "5adb297833fe16ced1dc6861faf7c410a9fe2b52"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 0,
+          "stdout_sha256": "a071cbb1654d2cc69d457604144e17ab2ad4d65950f39f9f265cdbd48fe732f5",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [
+              {
+                "path": "corpus/knowledge/p3-section-floor-mutant.md",
+                "reason": "sections under content floor: ## Host declaration"
+              }
+            ],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P3": [
+            "corpus/knowledge/p3-section-floor-mutant.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 5,
+        "tight_count": 4,
+        "tight_refused": false,
+        "bites": true,
+        "basis": [
+          "P3: loose-only ['corpus/knowledge/p3-section-floor-mutant.md']",
+          "count 5 vs 4"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    },
+    {
+      "id": "M5",
+      "tightening": "registry-only parse",
+      "description": "a valid walker row is placed under `## Paths`, outside `## Registry`; loose parses it and credits P3, tight never sees it",
+      "expect": "loose parses a valid walker row under `## Paths` and credits P3; tight never sees the row and rejects the note as unsourced",
+      "files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-registry-only-mutant.md"
+      ],
+      "changed_files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-registry-only-mutant.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M5/repo",
+      "baseline_commit": "a8f378424ea79d4cb229ec089e4a930b78d46b75",
+      "mutant_commit": "02be7a4c4820462dedd6599fe3485432cdede59c",
+      "diff_sha256": "700d022a9b18fb322d95ae2b3fb8e389723f80100859549c5b3cd195f2a299b2",
+      "diff": "diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md\nindex 3bc4666..a2d49dc 100644\n--- a/corpus/SOURCES.md\n+++ b/corpus/SOURCES.md\n@@ -83,6 +83,7 @@ recorded in `lessons/round-13.md` \u00a7 Gate. Only `status`, `recheck` and\n | S071 | host user-local Alacritty desktop entry, file bytes \u2014 ~/.local/share/applications/Alacritty.desktop | code | A | the desktop entry xdg-terminal-exec resolves for `Alacritty.desktop` on this host (bytes only) | whole file, sha256 713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683; :7 `Categories=System;TerminalEmulator;`, :14-17 `X-TerminalArg*` keys; byte-identical to ~/.local/share/omarchy/applications/Alacritty.desktop; system entry /usr/share/applications/Alacritty.desktop has 0 `X-Terminal` keys | the applicability keys (TerminalEmulator, X-TerminalArgExec, X-TerminalArgDir) the upstream resolver reads are declared; it does not show which entry is chosen at launch | mined | 2026-10-20 | on-change | corpus/knowledge/terminal-route-r17.md |\n \n ## Paths\n+| S901 | Walker fixture scaffold \u2014 https://github.com/abenz1267/walker \u2014 mutant only | docs | A | walker upstream scaffold for the mutant receipt | fixture anchor; no fetch performed | fixture row only; not a source claim | mined | 2026-10-20 | on-change | corpus/knowledge/p3-registry-only-mutant.md |\n \n - **Window-rule effects (U1)** \u2014 S002 \u2192 S018 \u2192 S019 \u2192 S020 \u2192 S016 \u2192 S017: start from the gap the arc named, read the tagged 0.56.2 handler before any doc, then the host capture and the host rule files, and only then the current (Lua-era) wiki pages; this order keeps pinned-source truth ahead of current-docs prose.\n - **Configuration-language era (U2)** \u2014 S021 \u2192 S023 \u2192 S022 \u2192 S024 \u2192 S025 \u2192 S026 \u2192 S027 \u2192 S028 \u2192 S029 \u2192 S030: the 0.53 rule-syntax break first, the archived v0.54 hyprlang pages as the host-era reference, then the Lua announcements and releases in date order, the current wiki last \u2014 release order prevents reading current syntax back onto 0.56.2.\ndiff --git a/corpus/knowledge/p3-registry-only-mutant.md b/corpus/knowledge/p3-registry-only-mutant.md\nnew file mode 100644\nindex 0000000..95364cb\n--- /dev/null\n+++ b/corpus/knowledge/p3-registry-only-mutant.md\n@@ -0,0 +1,33 @@\n+source: S901 \u2014 https://github.com/abenz1267/walker \u2014 mutant fixture row, no fetch performed\n+surface: P3\n+scope: mutant fixture for the rubric-V instrument receipts; no host fact\n+\n+# Mutant fixture note\n+\n+This note exists only in a throwaway /tmp git repo to prove one\n+instrument tightening bites. It is never part of the lane, and every\n+host behaviour stays [UNK].\n+\n+## Upstream contract\n+\n+- The cited row is a walker upstream scaffold used only by this fixture.\n+- It states a documentary contract shape, nothing about this host.\n+- No fetch or execution is performed for the fixture.\n+\n+## Host declaration\n+\n+- The only declared input is the fixture row in SOURCES.md.\n+- No host file is read by this mutated repository.\n+- No launch, theme or compositor fact is asserted.\n+\n+## Safe observation\n+\n+- Reading this note's bytes is the whole observation.\n+- No walker or elephant process is started.\n+- The route stays documentary by construction.\n+\n+## Unexercised behavior\n+\n+- [UNK] Whether Walker is installed or which version runs on this host.\n+- [UNK] Any preview, launch or theme behaviour on this host.\n+- [UNK] Whether the scaffold URL resolves or its lines exist.\n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M5/repo/.ufo/waves/round-18/measure-loose.py",
+            "02be7a4c4820462dedd6599fe3485432cdede59c"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "60e22ec3fa04f37f313c3b04912d7b8d6ea512c9a8e04f91ec8fe00ca6725885",
+          "stderr": "",
+          "c2": {
+            "count": 5,
+            "score": 8.3333,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P3": [
+                "corpus/knowledge/p3-registry-only-mutant.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M5/repo/.ufo/waves/round-18/measure-tight.py",
+            "02be7a4c4820462dedd6599fe3485432cdede59c"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 0,
+          "stdout_sha256": "329350b2f98b4e59fe94421987d98d7f879582ba9fc5beea7be6e8ca4ee94a4f",
+          "stderr": "",
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [
+              {
+                "path": "corpus/knowledge/p3-registry-only-mutant.md",
+                "reason": "no head `source:` S### token resolves to a mined tier-A SOURCES row naming this entry in used-by"
+              }
+            ],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P3": [
+            "corpus/knowledge/p3-registry-only-mutant.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 5,
+        "tight_count": 4,
+        "tight_refused": false,
+        "bites": true,
+        "basis": [
+          "P3: loose-only ['corpus/knowledge/p3-registry-only-mutant.md']",
+          "count 5 vs 4"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    },
+    {
+      "id": "M6",
+      "tightening": "duplicate ids fail",
+      "description": "a second `S016` row grants the P3 fixture note; loose keeps the last copy, tight exits 2 on the duplicate id",
+      "expect": "loose keeps the last S016 copy and credits P3; tight exits 2 on the duplicate id with no c2 result",
+      "files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-duplicate-id-mutant.md"
+      ],
+      "changed_files": [
+        "corpus/SOURCES.md",
+        "corpus/knowledge/p3-duplicate-id-mutant.md"
+      ],
+      "repo": "/tmp/mado-r18-mutants-run/M6/repo",
+      "baseline_commit": "a8f378424ea79d4cb229ec089e4a930b78d46b75",
+      "mutant_commit": "19f4bc4cb17937bde463bb2b44bebdf6dfa49859",
+      "diff_sha256": "d62bfcd81afb60154e28c67e885ba3a0ffd51714d6b79d73154a6b9b5dd6e474",
+      "diff": "diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md\nindex 3bc4666..f01ae1c 100644\n--- a/corpus/SOURCES.md\n+++ b/corpus/SOURCES.md\n@@ -26,6 +26,7 @@ recorded in `lessons/round-13.md` \u00a7 Gate. Only `status`, `recheck` and\n | S014 | mado gate \u2014 `tools/mado-verify.sh` | own-work | A | Round-12 gate re-anchor: pinned Hyprland EXPECT source list and local LOCAL inventory | `Erratum (round 12, 2026-10-19)` comment directly above `declare -a EXPECT`; EXPECT gains `~/.config/hypr/gkeep.conf`; LOCAL unchanged (12); gate sha 83b3f5f1\u2026 \u2192 final bytes at the round commit | Shows which pinned list was re-anchored (EXPECT only) and why LOCAL stayed narrow, so the remaining set-blind census stays visible | mined | 2026-10-19 | on-gate-change | corpus/knowledge/config-drift-r12.md |\n | S015 | mado drift protocol \u2014 `corpus/knowledge/omarchy-drift-watch.md` | own-work | A | Append-only re-anchor protocol for moved pins | `## Errata (append-only)`, lines 284-287; M6-2 round 6 | A moved pin is reported, then re-anchored with old/new values, reason and re-measure command rather than silently smoothed | mined | 2026-10-19 | on-change | corpus/knowledge/config-drift-r12.md |\n | S016 | Using hyprctl \u2014 https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/ | docs | A | Current wiki's `getprop` purpose and invocation form | `#getprop`; page marked Latest git; modified 2026-08-26; opened 2026-10-19 | Separates the current documented property-read command from command effects; does not pin host behavior | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |\n+| S016 | Walker fixture scaffold \u2014 https://github.com/abenz1267/walker \u2014 mutant only | docs | A | walker upstream scaffold for the mutant receipt | fixture anchor; no fetch performed | fixture row only; not a source claim | mined | 2026-10-20 | on-change | corpus/knowledge/p3-duplicate-id-mutant.md |\n | S017 | Window Rules \u2014 https://wiki.hypr.land/Configuring/Basics/Window-Rules/ | docs | A | Current latest-git Lua-era syntax and documented effect semantics, scoped to that wiki era | `#syntax`, `#effects`, `#notes`; page says hyprlang deprecated since 0.55; modified 2026-08-26; opened 2026-10-19 | Teaches to separate match conditions from effects, and to label current-doc semantics rather than projecting them onto a 0.56.2 host | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md, corpus/lessons/round-13.md |\n | S018 | Hyprland v0.56.2 source \u2014 https://github.com/hyprwm/Hyprland/blob/v0.56.2/src/debug/HyprCtl.cpp | code | A | Exact tagged `getprop` dispatch, window selector, error paths, and opacity property getters | `dispatchGetProp`, lines 1463-1645; tag commit efb50993780079460b0cbed1363e2166a2de1d9f | Teaches which window-rule applicator values the pinned handler returns, without attributing a result to a rule | mined | 2026-10-19 | on-release | corpus/knowledge/window-rule-effects-getprop.md |\n | S019 | Host read-only getprop capture \u2014 .ufo/evidence/round-12/getprop-help.txt and .ufo/evidence/round-12/getprop-measure.txt | own-work | A | Host Hyprland 0.56.2 help, errors, selector behavior, property values and defaults | `.ufo/evidence/round-12/getprop-help.txt` and `.ufo/evidence/round-12/getprop-measure.txt`, commands dated 2026-10-19 | Teaches an operator how to repeat the read-only host probe while excluding window titles | mined | 2026-10-19 | 90d | corpus/knowledge/window-rule-effects-getprop.md |\ndiff --git a/corpus/knowledge/p3-duplicate-id-mutant.md b/corpus/knowledge/p3-duplicate-id-mutant.md\nnew file mode 100644\nindex 0000000..5f709b9\n--- /dev/null\n+++ b/corpus/knowledge/p3-duplicate-id-mutant.md\n@@ -0,0 +1,33 @@\n+source: S016 \u2014 https://github.com/abenz1267/walker \u2014 mutant fixture row, no fetch performed\n+surface: P3\n+scope: mutant fixture for the rubric-V instrument receipts; no host fact\n+\n+# Mutant fixture note\n+\n+This note exists only in a throwaway /tmp git repo to prove one\n+instrument tightening bites. It is never part of the lane, and every\n+host behaviour stays [UNK].\n+\n+## Upstream contract\n+\n+- The cited row is a walker upstream scaffold used only by this fixture.\n+- It states a documentary contract shape, nothing about this host.\n+- No fetch or execution is performed for the fixture.\n+\n+## Host declaration\n+\n+- The only declared input is the fixture row in SOURCES.md.\n+- No host file is read by this mutated repository.\n+- No launch, theme or compositor fact is asserted.\n+\n+## Safe observation\n+\n+- Reading this note's bytes is the whole observation.\n+- No walker or elephant process is started.\n+- The route stays documentary by construction.\n+\n+## Unexercised behavior\n+\n+- [UNK] Whether Walker is installed or which version runs on this host.\n+- [UNK] Any preview, launch or theme behaviour on this host.\n+- [UNK] Whether the scaffold URL resolves or its lines exist.\n",
+      "baseline": {
+        "loose": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        },
+        "tight": {
+          "exit": 0,
+          "c2": {
+            "count": 4,
+            "score": 6.6667,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          }
+        }
+      },
+      "mutant": {
+        "loose": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M6/repo/.ufo/waves/round-18/measure-loose.py",
+            "19f4bc4cb17937bde463bb2b44bebdf6dfa49859"
+          ],
+          "instrument_sha256": "a280b3ab7c4dc21a25a954056f6a0c55187fd84dc06cfcddcb28e7f897d3508e",
+          "exit": 0,
+          "stdout_sha256": "60f8ecbc79155470f4672493810e23b12714068aff47d74b39d476b3641f8932",
+          "stderr": "",
+          "c2": {
+            "count": 5,
+            "score": 8.3333,
+            "covered": {
+              "P1": [
+                "corpus/knowledge/hyprland-config-era-r12.md",
+                "corpus/knowledge/window-rule-effects-getprop.md"
+              ],
+              "P2": [
+                "corpus/knowledge/waybar-observation-boundaries-r16.md"
+              ],
+              "P3": [
+                "corpus/knowledge/p3-duplicate-id-mutant.md"
+              ],
+              "P4": [
+                "corpus/knowledge/terminal-route-r17.md"
+              ],
+              "P6": [
+                "corpus/knowledge/idle-lock-route-r17.md"
+              ]
+            },
+            "rejected": [],
+            "u_routes": 7,
+            "c1": 6.5217,
+            "c3_present": false
+          },
+          "stdout": null
+        },
+        "tight": {
+          "cmd": [
+            "/tmp/mado-r18-mutants-run/M6/repo/.ufo/waves/round-18/measure-tight.py",
+            "19f4bc4cb17937bde463bb2b44bebdf6dfa49859"
+          ],
+          "instrument_sha256": "de4c422b55c67f822cb9f0be21fe5e879e3d15c46830565c1c661381817cfcdc",
+          "exit": 2,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr": "duplicate SOURCES id S016",
+          "c2": null,
+          "stdout": ""
+        }
+      },
+      "compare": {
+        "loose_only": {
+          "P1": [
+            "corpus/knowledge/hyprland-config-era-r12.md",
+            "corpus/knowledge/window-rule-effects-getprop.md"
+          ],
+          "P2": [
+            "corpus/knowledge/waybar-observation-boundaries-r16.md"
+          ],
+          "P3": [
+            "corpus/knowledge/p3-duplicate-id-mutant.md"
+          ],
+          "P4": [
+            "corpus/knowledge/terminal-route-r17.md"
+          ],
+          "P6": [
+            "corpus/knowledge/idle-lock-route-r17.md"
+          ]
+        },
+        "tight_only": {},
+        "loose_count": 5,
+        "tight_count": null,
+        "tight_refused": true,
+        "bites": true,
+        "basis": [
+          "P1: loose-only ['corpus/knowledge/hyprland-config-era-r12.md', 'corpus/knowledge/window-rule-effects-getprop.md']",
+          "P2: loose-only ['corpus/knowledge/waybar-observation-boundaries-r16.md']",
+          "P3: loose-only ['corpus/knowledge/p3-duplicate-id-mutant.md']",
+          "P4: loose-only ['corpus/knowledge/terminal-route-r17.md']",
+          "P6: loose-only ['corpus/knowledge/idle-lock-route-r17.md']",
+          "tight refused (exit 2): duplicate SOURCES id S016"
+        ],
+        "expectation_met": true
+      },
+      "bites": true
+    }
+  ]
+}
