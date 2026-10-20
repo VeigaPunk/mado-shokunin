@@ -927,3 +927,58 @@ Saturation 9.0 / N=3 unchanged; retired: none.
    committed raw fetch receipts so a closure can tell fetched from invented rows.
 3. freshness — re-anchor present-tense pins moved by the 2026-10-20 `-Syu`
    (walker 2.17.2, hyprland 0.56.2-4) by file bytes and pacman.log only.
+
+## Round 18 — declared claims (2026-10-20)
+
+Baseline `d9a5a18e17cd3a68b52148fcc01c4a30e340ba98` (includes the admitted
+round-17 closure `round-17-verifier-spotcheck.md`, routed R17-V1..V5).
+Written before any round-18 wave. L1 holds the canonical planner seat;
+wave items are bounded leaf work. Host pause carried: no package query or
+transaction, service, compositor, input or screenshot operation; config
+trees are read as file bytes only. R15-V1 stays operator-owned. Lane VCS is
+jj-colocated; commits only through `scripts/hyaku/jj-lane.sh`.
+
+Axis re-derivation (QUALITY 22; `python3 .ufo/waves/round-17/measure.py
+d9a5a18`, instrument unchanged, `evidence/measure-before.json`):
+calibration literal 15/23 = **6.5217** (lowest active scored);
+coverage rubric V 4/6 = 6.6667 (P3 Walker, P5 themes open); coverage
+U-route 7/7 (finite ceiling, harm watch); freshness file-plane 29/29
+(r12, harm watch; not re-measured — live re-anchor is planned work, not
+claimed); operability hermetic 372/372 + classifier 52/52 + tripwire
+suites (harm watch); depth/adjacency unscored. No stagnation waiver
+(capability entered round 17).
+
+- **C1 calibration (lowest axis).** Route R17-V1/V2 (scan receipts
+  without tool sha or measured revision; report cites the wrong tool sha),
+  R17-V5 (instrument tightenings without committed mutant receipts) and the
+  jj-audit finding JjAuditMado F10 (`tools/mado-verify.sh:3406` digests a
+  failed `git show` as the empty-input sha and reports a local edit) into
+  `lessons/round-18.md` `## Mistakes` and append-only lesson-cited QUALITY
+  criteria, each with a runnable check shown able to fail. Command:
+  `python3 .ufo/waves/round-17/measure.py REV` (`c1`: literal
+  `^[0-9]+\. .*lessons/` over `^[0-9]+\. `). Before 15/23 = 6.5217 →
+  target ≥ 18/26.
+- **C2 coverage — rubric V (unchanged instrument).** Sourced documentary
+  routes for **P3 Walker** and **P5 themes/wallpapers** from tier-A rows
+  opened this round, each new credited row backed by a committed raw fetch
+  receipt (body bytes, sha256, byte count, fetch time — R17-V3) so a closure
+  can tell a fetched row from an invented one. Command:
+  `python3 .ufo/waves/round-17/measure.py REV` (`c2`). Before 4/6 =
+  6.6667 → target 6/6. Documentary routes, not observed behaviour; host
+  binaries `[UNK]`.
+- **C3 operability — capability acquisition: tripwire frozen replay
+  (R17-V4).** `tools/mado-tripwire.py --frozen DIR` verifies the digest of
+  every committed snapshot input before comparing a committed expected
+  verdict (`frozen_match` 0 / `frozen_verdict_mismatch` 1 /
+  `snapshot_tampered` or `frozen_error` 2); a committed snapshot of the
+  real incident transcript lines; the registry row moves `probe` → `gate`.
+  Before at `d9a5a18`: `--frozen` is a usage error (exit 2), no frozen
+  baseline, registry `probe`. After: frozen run exit 0 `frozen_match`,
+  a tampered copy exit 2 `snapshot_tampered`, frozen selftest suite N/N.
+
+Separable: C1 counts QUALITY text only; C2 needs no tool or criterion; C3
+needs no note or criterion. Routed jj-migration fixes (gate rc capture,
+`.gitignore .ufo/state/`) are harm-watched defect repairs, not claims.
+Harm watch: hermetic selftest N/N (re-cut if the gate moves), classifier
+52/52, tripwire suites N/N, U 7/7, navigation complete, census exit 0.
+No exploratory claim.
