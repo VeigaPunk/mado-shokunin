@@ -123,6 +123,22 @@ def mined_a(sid, path):
 # --- C2 coverage: declared rubric V, provinces P1..P6 -----------------------
 PROVINCES = [f'P{i}' for i in range(1, 7)]
 LEGACY_MAP = {'U1': 'P1', 'U2': 'P1', 'U7': 'P2'}
+# T3: legacy credit is pinned to the entries that held it at 27cd06f.
+LEGACY_PATHS = {
+    ('corpus/knowledge/window-rule-effects-getprop.md', 'U1'),
+    ('corpus/knowledge/hyprland-config-era-r12.md', 'U2'),
+    ('corpus/knowledge/waybar-observation-boundaries-r16.md', 'U7'),
+}
+# T4: a cited upstream row must name its surface in its source or scope cell.
+SURFACE_KEYWORDS = {
+    'P1': ('hyprland', 'hypr.land', 'hyprwm/hyprland'),
+    'P2': ('waybar',),
+    'P3': ('walker', 'elephant'),
+    'P4': ('terminal', 'alacritty', 'foot', 'kitty', 'ghostty'),
+    'P5': ('theme', 'wallpaper', 'hyprpaper', 'swaybg'),
+    'P6': ('hypridle', 'hyprlock', 'idle', 'session-lock'),
+}
+FACET_MIN_LINES = 3  # T5: each required section carries content
 REQUIRED_HEADINGS = ('## Upstream contract', '## Host declaration',
                      '## Safe observation', '## Unexercised behavior')
 HEAD_LINES = 15
@@ -167,7 +183,9 @@ for path in sorted(notes):
     covers = set()
     for line in head:
         if line.startswith('surface:'):
-            surfaces.update(re.findall(r'P[1-6]\b', line))
+            # T2: exact single-token form only; anything else is malformed.
+            m = re.fullmatch(r'surface: (P[1-6])', line.rstrip())
+            surfaces.add(m.group(1) if m else 'MALFORMED')
         if line.startswith('covers:'):
             covers.update(re.findall(r'U[1-7]\b', line))
     u_routes.update(covers)
@@ -176,6 +194,17 @@ for path in sorted(notes):
         missing = [h for h in REQUIRED_HEADINGS
                    if section_body(text, h) is None]
         unex = section_body(text, '## Unexercised behavior')
+        if 'MALFORMED' in surfaces:
+            rejected.append({'path': path, 'declared': sorted(surfaces),
+                             'reason': 'surface line must be exactly `surface: P<n>`'})
+            continue
+        thin = [h for h in REQUIRED_HEADINGS if h not in missing and
+                sum(1 for l in section_body(text, h).splitlines() if l.strip())
+                < FACET_MIN_LINES]
+        if thin:
+            rejected.append({'path': path, 'declared': sorted(surfaces),
+                             'reason': 'sections under content floor: ' + ', '.join(thin)})
+            continue
         if missing:
             rejected.append({
                 'path': path,
@@ -209,15 +238,18 @@ for path in sorted(notes):
                 'reason': 'an entry may declare exactly one surface',
             })
             continue
+        (only_surface,) = tuple(surfaces) if len(surfaces) == 1 else ('',)
         upstream = [s for s in ok_sources
                     if registry[s][3] in ('docs', 'spec', 'code')
-                    and 'https://' in registry[s][2]]
+                    and 'https://' in registry[s][2]
+                    and any(k in (registry[s][2] + ' ' + registry[s][5]).lower()
+                            for k in SURFACE_KEYWORDS.get(only_surface, ()))]
         if not upstream:
             rejected.append({
                 'path': path,
                 'declared': sorted(surfaces),
                 'reason': 'no cited mined tier-A row is an upstream https '
-                          'source of kind docs/spec/code',
+                          'source of kind docs/spec/code naming the surface',
             })
             continue
         for p in sorted(surfaces):
@@ -232,7 +264,7 @@ for path in sorted(notes):
         continue
     for u in sorted(covers):
         prov = LEGACY_MAP.get(u)
-        if prov:
+        if prov and (path, u) in LEGACY_PATHS:
             covered[prov].append({
                 'path': path,
                 'reason': f'legacy covers: {u} -> {prov}',
