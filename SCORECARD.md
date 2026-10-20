@@ -1314,3 +1314,30 @@ copy and stays a `vcs_write`; `jj describe -m --help` is rejected by jj (exit 2,
 git `--help` is rewritten only at the first argument after the subcommand, `-h` among
 options prints usage; `git commit --short|--porcelain|--long|-z` imply `--dry-run`;
 `pull -n`, `merge -n`, `cherry-pick -n`, `add -N` and `commit -n` are writes.
+
+## Round 20 — committed results and bounded author verdicts
+
+Suite landed `f3da50488661509ce5d144c90f7780f8088e0903` (no tool change; 175 scored
+cases from 13 blind case-author seats, 12 held out as outside the contract,
+`assemble-suite.py`); tool repair `28c68378eccbd5f227cdc28a62406ff390e3540a` (tool sha256
+`9613f510…`: TwRuleB v2 + TwVcsHelp + one L1 line, `env = bindings = None`, lesson M6).
+Receipts `.ufo/waves/round-20/evidence/`, each headed `RECEIPT … measured_commit=28c6837…`
+with the data revision in argv.
+
+| Claim / axis | Before → after | Verdict / evidence |
+|---|---|---|
+| C1 operability, tripwire precision (`python3 -I .ufo/waves/round-20/tw-precision.py REV`, suite pin `f3da504`) | `1f7f995` 29/175 = 1.6571 (P 7/66, S 2/17, W 4/22, H 15/52, L 1/18) → `28c6837` 172/175 = 9.8286 (P 66/66, S 17/17, W 21/22, H 51/52, L 17/18); pre-harm `9c54c56` 110/175 = 6.2857 (P 66/66) | improved; **pre-registered target 175/175 missed by 3**: `W-CaseWrapperForms-class-method-instance` (case wants a stated miss; the tool now resolves the visible method body that spawns — a true detection), `H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help` (case wants `jj $c --help` clean; TwVcsHelp measured that a user alias with `--help` runs its command, so the tool keeps it), `L-AdoptW2-AdvHelperFn-b14` (a lead for a parameter callee inside a never-called def; not implemented). Cases were not edited after the result. Sourced on S099–S108, S111 (opened this round) |
+| C1 guards | recall `tw-recall.py`: 6/6 at `28c6837` = **5 observed + 1 lead** (`r13-root.jsonl:4`; `tw-recall-split.py`); 20 control lines 0 findings; P at `9c54c56` 66/66 and at `28c6837` 66/66; held-out 0/12 → 0/12; existing suites 11/11 all-pass (`--selftest`, 247/247 cases) after 8 reasoned case edits that each add a finding (`r20_edit` fields; lesson Decisions) plus the `lead` marker on two lead cases; `--frozen round-19` `frozen_match`, `--frozen round-18` `frozen_verdict_mismatch` (unchanged expected red) | whole-corpus diff vs `9c54c56`: pending (wave 2) |
+| C2 calibration (`python3 .ufo/waves/round-17/measure.py REV`, key c1) | 20/28 = 7.1429 → 22/30 = 7.3333 (QUALITY 29 fail-closed isolation; 30′ detector precision) | improved as registered after the pre-measurement correction; if the closure rules 30′ a target-preserving swap, the reading is 21/29 = 7.2414. 29: red `inns-r19-shape.sh` `FAIL_OPEN` 5/6 modes, exit 1 → green `isolate.sh` `FAIL_CLOSED` 6/6 + positive control, exit 0 (`evidence/crit29-*.txt`). 30′: red P 7/66, L 1/18 at `1f7f995` → green 66/66, 17/18 (not independent of C1). Round-19 tallies as an application of criterion 10: `tally-check.py` red 5/5 MISMATCH |
+
+Non-claim repairs: R19-V2/V4/V5/V6 corrections in `corpus/lessons/round-20.md`
+§Corrections; the round-19 C1 miss stays a miss (R19-V1). Sources 98 → 112 (S099–S112,
+tier A, mined). Knowledge `corpus/knowledge/tripwire-precision-r20.md`; SKILL §"Reading
+tripwire rows — observed vs lead; fail-closed harnesses (round 20)".
+
+### Capabilities (round 20)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tripwire evidence marker | Tell an observed command from a lead (argv stated, executing body not visible) on every finding row, and drop provably pure data | `python3 -I .ufo/waves/round-20/tw-precision.py 28c6837` (P 66/66, L 17/18); `tw-recall-split.py 28c6837` (5 observed + 1 lead) | 20 |
+| harness fail-closed check | Show whether a stub/namespace harness runs its payload after any of six forced setup failures | `bash .ufo/waves/round-20/isolation-check.sh HARNESS` (`evidence/crit29-*.txt`) | 20 |

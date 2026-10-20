@@ -1336,3 +1336,26 @@ Waves: w1 86 seats + 1 integration seat (TwMerge-2); 28 w1 seats on m_zfl ended 
 AtkInstallsRecord; two cache-level package materializations in the window belong to a
 non-mado seat or are `[UNK]`). Seat `SentinelGatePath` ran one real `hyprctl probe`
 (lesson M12). Admission not asserted.
+
+## 2026-10-20 — round 20: repair — tripwire precision (observed vs lead), fail-closed harnesses, round-19 tallies
+
+Trigger: round 19 closed rejected-harmed (`corpus/lessons/round-19-verifier-spotcheck.md`,
+R19-V1..V6): HelperFn rule B made `BLOCK=frozenset([...])` an ordinary finding.
+Pre-registration `e629f73`; precision suite `f3da504` (no tool change); tool repair
+`28c6837`. Host pause carried; L1 ran no package/service/compositor/input command and no
+hyprctl.
+
+C1 operability (sourced, S099–S108/S111): every tripwire row carries `evidence`
+(`observed`/`lead`); builtins, pure stdlib callables and visible pure bodies give no row;
+cross-cell helpers, spawn aliases, vararg and keyword argv resolve; git/jj help and
+dry-run forms are not writes (per segment, before de-dup). `tw-precision.py` 29/175 →
+172/175 (target 175/175 missed by 3, reasons in SCORECARD); pre-harm `9c54c56` P 66/66
+kept; recall 6/6 = 5 observed + 1 lead; controls 0; 11 suites 247/247 after 8 reasoned
+case edits (each adds a finding). C2 calibration: QUALITY 29 (fail-closed isolation,
+`isolation-check.sh` red on the round-19 shape) and 30′ (detector precision evidence);
+registered 30 withdrawn as a restatement of 10 before measurement; 20/28 → 22/30.
+Corrections to round 19 (R19-V2 8/13 any-line, 6/13 first-line; V4 154 files, fail-open,
+self-report; V5 nine/eight; V6 25 dead seats) via `tally-check.py` (red 5/5).
+
+Waves: w1 85 seats (0 dead; 85 refused twice by the 100-job cap at 16:36 and 16:39, spawned
+on the third try at 16:42). Installs: none by L1; seat reports say none.

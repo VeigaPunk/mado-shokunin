@@ -226,3 +226,46 @@ tree id counts as a commit, `develop`/`trunk` branch URLs are not aliases, a Git
 HTML page at a tag reads as raw bytes, and a row made malformed by a literal `|` drops out
 of evaluation. The red at `9c54c56` and green at the tip stand; a `durable` line is a screen
 result, and the closure reads the anchor.
+
+## Round 20 — fail-closed isolation and detector precision (outside R19-V3, R19-V4)
+
+29. An isolation harness fails closed: every setup step (namespace creation, each bind or mount, each post-mount verification that the target now holds the stub) is tested on its own, and any failure — or a missing target or stub — aborts before the payload starts; `set -e` with a non-final `&&` member is not a gate, and a harness that exits 0 without running its payload under a forced failure counts as failing open (lesson: lessons/round-20.md#mistakes M2; outside lessons/round-19-verifier-spotcheck.md R19-V4).
+    Runnable check: `bash .ufo/waves/round-20/isolation-check.sh HARNESS` — forces six
+    setup failures (mount non-zero, `unshare` refused, mount exits 0 without binding,
+    partial arm over two targets, missing target, missing stub) through PATH stubs over
+    `/tmp` targets only, with a payload that only writes a `/tmp` canary, plus a positive
+    control. Red: `.ufo/waves/round-20/evidence/inns-r19-shape.sh` (the round-19
+    `[ -e ] && mount && echo` shape, SentinelGatePath §Incident) reads `FAIL_OPEN` in five
+    of six modes, exit 1 (`evidence/crit29-inns-r19-shape.txt`). Green:
+    `.ufo/waves/round-20/isolate.sh` reads `FAIL_CLOSED` in all six and
+    `POSITIVE_CONTROL_OK`, exit 0 (`evidence/crit29-isolate.txt`); four single-point
+    mutants of it (`evidence/isolation-mutants/`) each read `FAIL_OPEN` in the mode they
+    break. Sources: bash 5.3 `set -e` exceptions (S110), util-linux unshare/mount and the
+    namespace capability rules (S109, S112). Limit: a harness that resolves `mount` or
+    `unshare` by absolute path bypasses the stubs and reads `COULD_NOT_EVALUATE`, never a
+    pass; fail-closed setup is not containment — `isolate.sh` passes the environment
+    through and the compositor and session-bus sockets stay reachable inside it
+    (w1 SentinelPause20 H3), so it is no licence to run a host probe while the pause binds.
+30. A detector change credited for recall is admitted only beside its precision evidence: committed negatives of the shapes the new rule could misread (pure data, formatters, names bound or shadowed in the text), each read at the pre-change and the changed tool; a whole-corpus diff against the pre-change tool that lists every added and relabelled row; and a machine-readable marker on every row the detector cannot tie to a visible execution path (`evidence: lead`), never the shape of an observed row (lesson: lessons/round-20.md#mistakes M1; outside lessons/round-19-verifier-spotcheck.md R19-V3).
+    Runnable check: `python3 -I .ufo/waves/round-20/tw-precision.py REV` (suite pinned at
+    `f3da504`), read for families P (pure data → no row) and L (invisible body → `lead`).
+    Red at `1f7f995` (tool `367be947…`): P 7/66, L 1/18 — the closure's data-only
+    `BLOCK=frozenset([...])` artifact is case `P-CasePureBuiltins-frozenset-closure`,
+    an unmarked ordinary `package_query` row. Green at `28c6837` (tool `9613f510…`): P
+    66/66, L 17/18 (`.ufo/waves/round-20/evidence/precision-*.txt`). Its green is not
+    independent of the round-20 C1 repair (it reads the same counter). Limit: the suite
+    was written in the same round as the fix (blind authors, but one contract); a
+    held-out set (`precision-heldout/`, 12 cases outside the contract) reads 0/12 before
+    and after, and the corpus diff is the out-of-suite evidence.
+
+Round-20 application of criterion 10 to round-19 tallies (R19-V2, R19-V4, R19-V5;
+append-only, no new number — registered criterion 30 "re-derive stated counts" was
+withdrawn as a restatement of 10, SCORECARD "Round-20 pre-measurement corrections"):
+`python3 -I .ufo/waves/round-20/tally-check.py .ufo/waves/round-20/tally-claims.json`
+re-derives each registered round-19 count under its named counting rule from committed
+bytes. Red: "155 round-19 transcripts" (lesson round-19 :124) → 154 receipt files;
+"5/13 name S096" (SCORECARD :1167, lesson :108, LOG :1324) → 6/13 first-matching line
+(8/13 any matching line; the 5 was RerunC2's cited-as-evidence reading at `01b8094`);
+"the ten old OM10 assertions" (SCORECARD :1225) → nine labeled occurrences, eight
+distinct. Green entries are the round-20 correction sentences. Limit: it reads only
+registered statements; a stale sentence left beside its correction is not flagged.

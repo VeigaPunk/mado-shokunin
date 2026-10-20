@@ -1,0 +1,59 @@
+RECEIPT tool=.ufo/waves/round-20/isolation-check.sh tool_sha256=2bf115db1658df32d5e89e600ad6ef47c0e2855beda5f25dfc936270604f6aa9 measured_commit=28c68378eccbd5f227cdc28a62406ff390e3540a harness=.ufo/waves/round-20/evidence/inns-r19-shape.sh harness_sha256=8bd507f0ea39d4d876359a0f5a1f798e810cda3c59293487af35d3a8df37ce9c utc=2026-10-20T20:29:56Z argv='bash .ufo/waves/round-20/isolation-check.sh .ufo/waves/round-20/evidence/inns-r19-shape.sh'
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-nonzero targets=1
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/mount-nonzero/stub --target /tmp/mado-isolation-check.xrAuhx/mount-nonzero/target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=unshare-refused targets=1
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/unshare-refused/stub --target /tmp/mado-isolation-check.xrAuhx/unshare-refused/target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 1; canary=absent; injected-marker=present
+FAIL_CLOSED inns-r19-shape.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-noop targets=1
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/mount-noop/stub --target /tmp/mado-isolation-check.xrAuhx/mount-noop/target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+armed /tmp/mado-isolation-check.xrAuhx/mount-noop/target
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=partial-arm targets=2
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/partial-arm/stub --target /tmp/mado-isolation-check.xrAuhx/partial-arm/t1 --target /tmp/mado-isolation-check.xrAuhx/partial-arm/t2 -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/partial-arm/canary
+INJECTION: PATH-stub
+output:
+armed /tmp/mado-isolation-check.xrAuhx/partial-arm/t1
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-target targets=1
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/missing-target/stub --target /tmp/mado-isolation-check.xrAuhx/missing-target/missing-target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+harness exit: 0; canary=present; injected-marker=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-stub targets=1
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/missing-stub/stub --target /tmp/mado-isolation-check.xrAuhx/missing-stub/target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.xrAuhx/missing-stub/target: special device /tmp/mado-isolation-check.xrAuhx/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 0; canary=present; injected-marker=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=inns-r19-shape.sh
+COMMAND: .ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.xrAuhx/positive/stub --target /tmp/mado-isolation-check.xrAuhx/positive/target -- /tmp/mado-isolation-check.xrAuhx/payload.sh /tmp/mado-isolation-check.xrAuhx/positive/canary
+output:
+armed /tmp/mado-isolation-check.xrAuhx/positive/target
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK inns-r19-shape.sh
+exit=1

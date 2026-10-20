@@ -43,6 +43,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/terminal-route-r17.md` (round 17; surface P4) | Documentary route from the Hyprland launch binding through `xdg-terminal-exec` v0.14.3 and `xdg-terminals.list` (first entry `Alacritty.desktop`) to the Alacritty v0.17.0 config-import contract. Which terminal actually launches and reload effects stay `[UNK]`. | `source:` S056–S060, S071 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/bindings.conf`, `~/.config/xdg-terminals.list`, `Alacritty.desktop` by sha256. No terminal is launched. |
 | `knowledge/walker-route-r18.md` (round 18; surface P3) | Documentary upstream contract for Walker v2.17.2 and elephant v2.22.1 (config load order, theme lookup, socket path) and the omarchy v3.8.4 launcher, joined to declared host config by sha256 and line anchor. Declared configuration is not observed launcher behaviour; provider resolution at runtime, the elephant service, wire schema and rendered UI stay `[UNK]`. | `source:` S072–S091 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No walker or elephant process is started or queried. |
 | `knowledge/theme-route-r18.md` (round 18; surface P5) | Documentary upstream contract for the omarchy v3.8.4 theme-set and wallpaper writers and swaybg v1.2.2, joined to `current/theme`, the `current/background` link and consumer imports by sha256 and line anchor. The declared chain is not runtime theme application; reload effects and the rendered wallpaper stay `[UNK]`. | `source:` S092–S095 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No theme, wallpaper or swaybg command is run. |
+| `knowledge/tripwire-precision-r20.md` (round 20; lane tooling, no surface) | What a tripwire row means (`evidence: observed` vs `lead`, pure data gives no row), which git 2.56.0 / jj 0.45.1 help and dry-run forms write, and the fail-closed rule for stub/namespace harnesses. S099–S112. |
 
 ## Quality bar
 
@@ -148,3 +149,9 @@ Index completeness does not retire these unresolved surfaces:
   hyprland pkgrel 0.56.2-2 → -4, hyprtoolkit 0.5.4 → 0.6.0, hyprwayland-scanner
   removed; w1 `PacmanLogMoves`). The gate's
   `live.walker.version` re-pin is a pin, not a measurement.
+- Round 20 (repair; no province surface moved): the tripwire now marks every row
+  `observed` or `lead` and drops provably pure data (precision suite 29/175 → 172/175,
+  `knowledge/tripwire-precision-r20.md`, S099–S112); harnesses that stub host binaries
+  must fail closed (QUALITY 29). Open: scripts written then run, shell aliases and
+  `python -c` bodies stay unanalysed; the round-19 freshness triggers (S003 sections,
+  omarchy tags past v3.8.4, elephant/uwsm/hyprland package moves) are still queued.

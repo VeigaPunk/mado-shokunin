@@ -539,6 +539,37 @@ misroots) are not findings. Its `--scan` entry stays a probe: it reads mutable
 transcripts. Round 18 adds the gate entry `--frozen` (registry row
 `mado-tripwire-frozen`): a digest-pinned replay of committed incident lines.
 
+### Reading tripwire rows — observed vs lead; fail-closed harnesses (round 20)
+
+Every finding row carries `evidence` (tool `9613f510…`, commit `28c6837`; knowledge
+`corpus/knowledge/tripwire-precision-r20.md`). `observed`: the transcript states the
+command and the path that runs it (bash text, `!`/`%%bash`, a literal spawn or spawn alias,
+or a helper whose body is visible in the same file — earlier py cells count until a
+`reset`). `lead`: a literal host argv handed to a callee whose body is not visible (an
+unbound name, a non-stdlib import, a parameter). Leads stay in `findings` (exit 1); the
+verdict adds `observed_findings`/`lead_findings`. Report them apart — "6/6 incident lines
+flagged = 5 observed + 1 lead", never a bare 6/6 — and never write a lead as a command
+that ran. Pure data gives no row: builtins and pure stdlib callables (frozenset, deque,
+`shlex.join`, `json.dumps`, S105–S107) unless the text rebinds the name; `del` of a
+shadowing name restores the builtin (S111). VCS help and dry runs are not writes: git
+`-h`/`--help` as a flag, `git help`, `commit --dry-run|--short|--porcelain|--long|-z`,
+`add`/`push -n|--dry-run` (S099–S102), `jj … -h|--help` and `jj help` (S103), and `jj
+--ignore-working-copy git push --dry-run`; still writes: `git commit -n` (`--no-verify`),
+`git commit -m --help` (a message), `pull -n`, plain `jj git push --dry-run` (it snapshots
+first; S104), and a `jj <alias> --help` whose verb is unknown or variable (a user alias
+runs its command). Precision is measured, not asserted: `python3 -I
+.ufo/waves/round-20/tw-precision.py REV` (175 cases, families P/S/W/H/L; QUALITY 30).
+Still unanalysed: scripts written then run, shell aliases, `python -c` bodies, JavaScript
+cells, other sessions — a `clean` verdict bounds only the covered forms.
+
+Any harness that stubs a host binary for a hermetic run fails closed (QUALITY 29): test
+each setup step on its own (`mount … || exit 125`, then `cmp` the target against the stub
+`|| exit 125`), never rely on `set -e` across a `&&` list (S110), and check the harness
+with `bash .ufo/waves/round-20/isolation-check.sh HARNESS` before it runs anything real.
+`.ufo/waves/round-20/isolate.sh` passes that check; it is not a sandbox (the environment
+and the compositor/session sockets stay reachable) and gives no licence to run a host
+probe while the host pause binds.
+
 ## Gate registry
 
 This `SKILL.md` is the registry home, per `PROTOCOL.md` §Gate standard,
