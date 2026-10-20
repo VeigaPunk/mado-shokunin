@@ -1028,3 +1028,30 @@ retired: none.
    superseding row for S094 without HTML digests; PROVINCE refinement for the
    `~/.config/omarchy/**` path root (w2 ConnProvinceScope).
 3. freshness — re-anchor the remaining 2.17.0-era pins and gate `walker` version pin.
+
+C3 scope (residual check W3CriticC3Final, append): the frozen gate watches 5 rule
+ids over 5 pinned files; known misses are annotations; eval-path coverage stays with
+the scan suites; self-pinned rewrites still match. All `evidence/final/` receipts are
+bound by `receipt-check.py` claims (`EXPECT_SUMMARY: 33/33`).
+
+Correction (append; residual check W3CriticC1Final): "Every receipt's first line
+names `tool_sha256` and `measured_commit`" above is too broad. It holds for the
+measure, tripwire and frozen-provenance receipts (bound by `receipt-check.py`,
+33/33). `evidence/gate-rc-redbefore.txt`, `regression-recut.txt`,
+`gate-selftest.txt` and `measure-mutants.json` lack that header (two name the
+uncommitted gate `2bdf5e8a…`): they are provenance only. Criterion 26's
+reproducible red is the d9a5a18 block swapped into the landed gate (383/389, five
+OM9 failures; w3 report `W3CriticC1Final.md`); the GateRerun receipts
+`evidence/w2-gate-selftest.txt` (389/389) and `w2-gate-regression.txt` (PASS)
+carry the header at `abfbf35`. Round-19: `:3479` worktree-hash status, M6 bite rule,
+quoted-pair acceptance in `receipt-check.py`.
+
+Residual-check corrections (append; w3 `MadoR18.W3NumbersAudit`,
+`MadoR18.W3TripwireFinal`): `RETENTION.json` lists 103 digest-only bodies; 95 is
+fetch-verify's count of digest-only receipt lines (8 retained bodies have no receipt
+line and are never credited). "re-cut identical" means identical verdict JSON (the
+files differ by the producer header). MutGateOM: 8/8 killed, of which m07 (`-z`
+arm reorder) only by the R10 pin assertion. receipt-check controls also include
+`NOT_ANCESTOR` and `PRODUCER_MISMATCH`. Frozen findings F1/F2 (blank-line pin on an
+expected finding reads verdict mismatch; `link/.` bypasses the symlinked-dir check)
+and `measure-mutants.py` defaulting `--out` to the lane are routed to round 19.

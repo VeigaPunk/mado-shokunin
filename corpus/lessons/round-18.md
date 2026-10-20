@@ -107,3 +107,15 @@ mined 56 → 80).
   `fetch/.gitignore`), per SentinelFetchBodies / SentinelCommitSet.
 - Host rows S090/S091/S095 carry no fetch receipt by construction; the C2 receipt
   statement covers credited **web** rows only (RevSeparability18, ReopenS090).
+
+## Residual checks (w3, 6 seats over `a210241`; append-only)
+
+Reports `.ufo/waves/round-18/w3/reports/`. Fresh clone reproduces every SCORECARD
+number (W3FreshClone); append-only holds for LOG, QUALITY, round-17 lesson, SOURCES
+S001-S071 and SKILL except the documented 2-line registry sentence (W3AppendOnly);
+C1 ruled admit-narrowly with criteria 24-26 each red on a real `d9a5a18` artifact
+(W3CriticC1Final; its SCORECARD-sentence condition is met by the appended
+correction); C3 scope bounded in SKILL/SCORECARD errata (W3CriticC3Final). Seat
+`MadoR18.W3FreshClone` ran `measure-mutants.py` from a clone and it wrote the lane
+receipt (default `--out`); the seat restored it byte-exact (`58929eea…`). M8
+precision: `FetchVerifyFix` exited 16:15:48.174Z, the other 11 at 16:15:47Z.

@@ -1827,3 +1827,18 @@ Append-only disposition: this section records the moved pins and their re-measur
 > 13,743 B / 305 L / `3c5c6867…` (byte-equal to upstream v2.17.2
 > `resources/config.toml`). The running binary is `[UNK]` (no process probe).
 > Current documentary route: `corpus/knowledge/walker-route-r18.md`.
+
+> Erratum (round 18, residual check W3CriticC3Final): the `mado-tripwire-frozen`
+> registry row says "17 mode-frozen cases"; at `be886a3` the suite has 31
+> (`evidence/final/tripwire-frozen-selftest.txt`). Since `be886a3` these are
+> `frozen_error` (exit 2), not compared verdicts: an expected exit/label pair the
+> verdict cannot take, an unreachable or unlisted expected line, a known miss that is
+> blank, out of range or on an expected line, an empty or duplicated input, an
+> unknown top-level key or a duplicate JSON key; a symlinked frozen directory (as
+> passed) or `inputs/` dir is `snapshot_tampered`. Scope: the gate detects a change
+> in the classifier's output on 5 pinned incident files (5 distinct rule ids, 8
+> findings); `known_misses` are annotations that fail only if a listed line starts
+> producing a finding — removing them does not fail; the eval-path classifier is
+> covered by the scan suites, not by this gate; a coordinated rewrite of input,
+> digest and expected verdict, or a permit-only rewrite, still matches (git history
+> and the bound receipt are the defence).
