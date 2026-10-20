@@ -758,3 +758,10 @@ Note (same round): the paragraph above was first appended by a shell call withou
 ROOT `LOG.md` (relative path); the orchestrator restored that file to HEAD and saved the text to
 `/tmp/kaika/mado-misplaced-log.md`; it is appended here verbatim, after `6e3b75f`, so that commit's
 LOG lacks it. The measured content of `6e3b75f` is unaffected (gate, QUALITY, lesson, entry errata).
+
+## 2026-10-17 — README: Devin wiki link
+
+- Operator directive (2026-10-17): insert the Devin wiki link into the README header of every repository with a generated wiki.
+- Change: `README.md` created (lane-header convention) with a `**Wiki:**` link to https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/mado-shokunin?branch=master.
+- Evidence: the org's Devin wiki index lists this repo's generated wiki; sibling lane READMEs carry the same `**Wiki:**` header.
+- Documentation-only change; no round run, no axis moved, no verdict changed.
