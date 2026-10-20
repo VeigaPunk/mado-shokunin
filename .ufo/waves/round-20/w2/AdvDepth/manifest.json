@@ -1,0 +1,509 @@
+{
+ "cases": [
+  {
+   "case": "C1-direct-spawn",
+   "expect": "hit",
+   "file": "C1-direct-spawn.jsonl",
+   "note": "top-level subprocess.run literal argv"
+  },
+  {
+   "case": "C2-one-helper",
+   "expect": "hit",
+   "file": "C2-one-helper.jsonl",
+   "note": "one visible helper"
+  },
+  {
+   "case": "C3-uncalled-helper",
+   "expect": "clean",
+   "file": "C3-uncalled-helper.jsonl",
+   "note": "uncalled helper is not an execution path"
+  },
+  {
+   "case": "C4-unresolved-lead",
+   "expect": "lead",
+   "file": "C4-unresolved-lead.jsonl",
+   "note": "literal argv list to unresolved bare name -> lead row"
+  },
+  {
+   "case": "C5-unresolved-separate-strings",
+   "expect": "silent",
+   "file": "C5-unresolved-separate-strings.jsonl",
+   "note": "separate string args to unresolved name (lead covers only a literal argv list)"
+  },
+  {
+   "case": "C6-unresolved-star-arg",
+   "expect": "silent",
+   "file": "C6-unresolved-star-arg.jsonl",
+   "note": "starred argv list to an unresolved name: no lead"
+  },
+  {
+   "case": "C7-unresolved-dictsplat",
+   "expect": "silent",
+   "file": "C7-unresolved-dictsplat.jsonl",
+   "note": "dict splat to an unresolved name: no lead"
+  },
+  {
+   "case": "D1-chain1",
+   "expect": "hit",
+   "file": "D1-chain1.jsonl",
+   "note": "1 visible helpers before the spawn"
+  },
+  {
+   "case": "D2-chain2",
+   "expect": "hit",
+   "file": "D2-chain2.jsonl",
+   "note": "2 visible helpers before the spawn"
+  },
+  {
+   "case": "D3-chain3",
+   "expect": "hit",
+   "file": "D3-chain3.jsonl",
+   "note": "3 visible helpers before the spawn"
+  },
+  {
+   "case": "D4-chain4",
+   "expect": "hit",
+   "file": "D4-chain4.jsonl",
+   "note": "4 visible helpers before the spawn"
+  },
+  {
+   "case": "D4-defaults",
+   "expect": "hit",
+   "file": "D4-defaults.jsonl",
+   "note": "4 helpers, literal default at the last hop"
+  },
+  {
+   "case": "D4-direct-at-depth4",
+   "expect": "hit",
+   "file": "D4-direct-at-depth4.jsonl",
+   "note": "direct spawn inside the 4th helper body (depth 4)"
+  },
+  {
+   "case": "D4-kwargs",
+   "expect": "hit",
+   "file": "D4-kwargs.jsonl",
+   "note": "4 helpers, **kw forwarded each hop"
+  },
+  {
+   "case": "D5-chain5",
+   "expect": "silent",
+   "file": "D5-chain5.jsonl",
+   "note": "5 visible helpers before the spawn"
+  },
+  {
+   "case": "D5-class",
+   "expect": "silent",
+   "file": "D5-class.jsonl",
+   "note": "5th hop is a class construction+method at depth 4"
+  },
+  {
+   "case": "D5-defaults",
+   "expect": "silent",
+   "file": "D5-defaults.jsonl",
+   "note": "5 helpers, literal default at the last hop"
+  },
+  {
+   "case": "D5-kwargs",
+   "expect": "silent",
+   "file": "D5-kwargs.jsonl",
+   "note": "5 helpers, **kw forwarded each hop"
+  },
+  {
+   "case": "D5-lambda",
+   "expect": "silent",
+   "file": "D5-lambda.jsonl",
+   "note": "4 helpers then lambda call at depth 4"
+  },
+  {
+   "case": "D6-chain6",
+   "expect": "silent",
+   "file": "D6-chain6.jsonl",
+   "note": "6 visible helpers before the spawn"
+  },
+  {
+   "case": "K-neg-kw-helper-kwarg-subscript",
+   "expect": "unparsed",
+   "file": "K-neg-kw-helper-kwarg-subscript.jsonl",
+   "note": "**dict bound to **kw but body subscripts the dict"
+  },
+  {
+   "case": "K-neg-kw-helper-no-kwarg",
+   "expect": "silent",
+   "file": "K-neg-kw-helper-no-kwarg.jsonl",
+   "note": "**dict into a helper with a named parameter"
+  },
+  {
+   "case": "K-neg-kw-key-name-mismatch",
+   "expect": "unparsed",
+   "file": "K-neg-kw-key-name-mismatch.jsonl",
+   "note": "**dict key argv is not subprocess's args= keyword"
+  },
+  {
+   "case": "K-neg-kwchain-of-2",
+   "expect": "hit",
+   "file": "K-neg-kwchain-of-2.jsonl",
+   "note": "**kw forwarded through two helpers"
+  },
+  {
+   "case": "K-neg-kwchain-of-4",
+   "expect": "hit",
+   "file": "K-neg-kwchain-of-4.jsonl",
+   "note": "**kw forwarded through four helpers"
+  },
+  {
+   "case": "K-neg-star-chain2",
+   "expect": "silent",
+   "file": "K-neg-star-chain2.jsonl",
+   "note": "* at the second hop"
+  },
+  {
+   "case": "K-neg-star-class",
+   "expect": "unparsed",
+   "file": "K-neg-star-class.jsonl",
+   "note": "class constructor *literal-list not followed; method followed, self.argv unresolved -> counted"
+  },
+  {
+   "case": "K-neg-star-empty-then-pos",
+   "expect": "silent",
+   "file": "K-neg-star-empty-then-pos.jsonl",
+   "note": "helper called with empty * plus literal positionals"
+  },
+  {
+   "case": "K-neg-star-helper-list",
+   "expect": "silent",
+   "file": "K-neg-star-helper-list.jsonl",
+   "note": "helper called with *literal-list"
+  },
+  {
+   "case": "K-neg-star-helper-name",
+   "expect": "silent",
+   "file": "K-neg-star-helper-name.jsonl",
+   "note": "helper called with *module-literal name"
+  },
+  {
+   "case": "K-neg-star-helper-tuple",
+   "expect": "silent",
+   "file": "K-neg-star-helper-tuple.jsonl",
+   "note": "helper called with *literal-tuple"
+  },
+  {
+   "case": "K-neg-star-lambda",
+   "expect": "silent",
+   "file": "K-neg-star-lambda.jsonl",
+   "note": "visible lambda called with *literal-list"
+  },
+  {
+   "case": "K-neg-star-method",
+   "expect": "silent",
+   "file": "K-neg-star-method.jsonl",
+   "note": "method called with *literal-list"
+  },
+  {
+   "case": "K-neg-star-vararg-helper",
+   "expect": "silent",
+   "file": "K-neg-star-vararg-helper.jsonl",
+   "note": "vararg helper called with *literal-list"
+  },
+  {
+   "case": "K-pos-default-helper",
+   "expect": "hit",
+   "file": "K-pos-default-helper.jsonl",
+   "note": "literal tuple default"
+  },
+  {
+   "case": "K-pos-dict-param-unpack",
+   "expect": "hit",
+   "file": "K-pos-dict-param-unpack.jsonl",
+   "note": "dict param unpacked at spawn"
+  },
+  {
+   "case": "K-pos-kw-args-in-spawn",
+   "expect": "hit",
+   "file": "K-pos-kw-args-in-spawn.jsonl",
+   "note": "top-level spawn args= keyword"
+  },
+  {
+   "case": "K-pos-kw-helper",
+   "expect": "hit",
+   "file": "K-pos-kw-helper.jsonl",
+   "note": "helper with argv= keyword"
+  },
+  {
+   "case": "K-pos-kw-helper-kwarg-star",
+   "expect": "hit",
+   "file": "K-pos-kw-helper-kwarg-star.jsonl",
+   "note": "**dict bound to **kw then **kw at spawn"
+  },
+  {
+   "case": "K-pos-kwarg-helper",
+   "expect": "hit",
+   "file": "K-pos-kwarg-helper.jsonl",
+   "note": "helper **kwargs, **kw forwarded to spawn"
+  },
+  {
+   "case": "K-pos-kwargs-in-spawn",
+   "expect": "hit",
+   "file": "K-pos-kwargs-in-spawn.jsonl",
+   "note": "top-level spawn keyword unpacking of a literal dict"
+  },
+  {
+   "case": "K-pos-kwonly-default",
+   "expect": "hit",
+   "file": "K-pos-kwonly-default.jsonl",
+   "note": "keyword-only literal default"
+  },
+  {
+   "case": "K-pos-method",
+   "expect": "hit",
+   "file": "K-pos-method.jsonl",
+   "note": "visible class method with literal argv"
+  },
+  {
+   "case": "K-pos-partial-kw-spawn",
+   "expect": "hit",
+   "file": "K-pos-partial-kw-spawn.jsonl",
+   "note": "functools.partial with args= keyword"
+  },
+  {
+   "case": "K-pos-partial-spawn",
+   "expect": "hit",
+   "file": "K-pos-partial-spawn.jsonl",
+   "note": "functools.partial of a spawn callable"
+  },
+  {
+   "case": "K-pos-plain-helper",
+   "expect": "hit",
+   "file": "K-pos-plain-helper.jsonl",
+   "note": "helper with positional literal argv"
+  },
+  {
+   "case": "K-pos-star-in-list",
+   "expect": "hit",
+   "file": "K-pos-star-in-list.jsonl",
+   "note": "starred literal list inside argv"
+  },
+  {
+   "case": "K-pos-star-in-spawn",
+   "expect": "hit",
+   "file": "K-pos-star-in-spawn.jsonl",
+   "note": "top-level spawn arg unpacking of a literal list"
+  },
+  {
+   "case": "K-pos-star-in-spawn-tuple",
+   "expect": "hit",
+   "file": "K-pos-star-in-spawn-tuple.jsonl",
+   "note": "top-level spawn arg unpacking of a literal tuple"
+  },
+  {
+   "case": "K-pos-vararg-helper",
+   "expect": "hit",
+   "file": "K-pos-vararg-helper.jsonl",
+   "note": "helper *args, flat call"
+  },
+  {
+   "case": "K-unparsed-dict-merge",
+   "expect": "unparsed",
+   "file": "K-unparsed-dict-merge.jsonl",
+   "note": "dict-unpack literal inside a dict literal"
+  },
+  {
+   "case": "X-default-add",
+   "expect": "unparsed",
+   "file": "X-default-add.jsonl",
+   "note": "default is a list concatenation"
+  },
+  {
+   "case": "X-default-module-name",
+   "expect": "unparsed",
+   "file": "X-default-module-name.jsonl",
+   "note": "default is a module-level name"
+  },
+  {
+   "case": "X-default-none-if",
+   "expect": "unparsed",
+   "file": "X-default-none-if.jsonl",
+   "note": "conditional assignment inside the helper body"
+  },
+  {
+   "case": "XCell-depth4",
+   "expect": "hit",
+   "file": "XCell-depth4.jsonl",
+   "note": "4-hop chain defined across five py eval cells"
+  },
+  {
+   "case": "XCell-depth5",
+   "expect": "silent",
+   "file": "XCell-depth5.jsonl",
+   "note": "5-hop chain across six py eval cells"
+  },
+  {
+   "case": "XCell-kwsplat-helper",
+   "expect": "silent",
+   "file": "XCell-kwsplat-helper.jsonl",
+   "note": "dict-splat helper call in a later cell"
+  },
+  {
+   "case": "XCell-star-helper",
+   "expect": "silent",
+   "file": "XCell-star-helper.jsonl",
+   "note": "starred helper call in a later cell"
+  },
+  {
+   "case": "XCell-star-spawn",
+   "expect": "hit",
+   "file": "XCell-star-spawn.jsonl",
+   "note": "starred spawn call reading an earlier-cell literal name"
+  },
+  {
+   "case": "Y-call-in-fstring",
+   "expect": "hit",
+   "file": "Y-call-in-fstring.jsonl",
+   "note": "spawn inside an f-string expression"
+  },
+  {
+   "case": "Y-dict-dispatch",
+   "expect": "silent",
+   "file": "Y-dict-dispatch.jsonl",
+   "note": "dict-of-callables dispatch"
+  },
+  {
+   "case": "Y-getattr-spawn",
+   "expect": "silent",
+   "file": "Y-getattr-spawn.jsonl",
+   "note": "getattr-selected spawn callable"
+  },
+  {
+   "case": "Y-immediate-lambda",
+   "expect": "silent",
+   "file": "Y-immediate-lambda.jsonl",
+   "note": "immediately invoked lambda"
+  },
+  {
+   "case": "Y-nested-def-in-helper",
+   "expect": "hit",
+   "file": "Y-nested-def-in-helper.jsonl",
+   "note": "nested def two hops down"
+  },
+  {
+   "case": "Y-partial-of-helper",
+   "expect": "silent",
+   "file": "Y-partial-of-helper.jsonl",
+   "note": "functools.partial of a visible helper"
+  },
+  {
+   "case": "Z-bound-lambda",
+   "expect": "hit",
+   "file": "Z-bound-lambda.jsonl",
+   "note": "lambda bound to a name then called flat (control for Y-immediate-lambda)"
+  },
+  {
+   "case": "Z-class-method-hop4",
+   "expect": "hit",
+   "file": "Z-class-method-hop4.jsonl",
+   "note": "3 helpers then a visible method call as the 4th hop"
+  },
+  {
+   "case": "Z-class-method-hop5",
+   "expect": "silent",
+   "file": "Z-class-method-hop5.jsonl",
+   "note": "4 helpers then a visible method call at depth 4"
+  },
+  {
+   "case": "Z-default-hop2-of-4",
+   "expect": "hit",
+   "file": "Z-default-hop2-of-4.jsonl",
+   "note": "literal default at hop 2 flows through hops 3 and 4"
+  },
+  {
+   "case": "Z-empty-starsplat-helper",
+   "expect": "silent",
+   "file": "Z-empty-starsplat-helper.jsonl",
+   "note": "empty **{} at a helper call with no **kw parameter"
+  },
+  {
+   "case": "Z-empty-starsplat-mixed",
+   "expect": "silent",
+   "file": "Z-empty-starsplat-mixed.jsonl",
+   "note": "literal argv plus an empty *[] splat at a helper call"
+  },
+  {
+   "case": "Z-kw-at-spawn-mixed",
+   "expect": "hit",
+   "file": "Z-kw-at-spawn-mixed.jsonl",
+   "note": "kwargs splat at the spawn call beside a literal argv"
+  },
+  {
+   "case": "Z-kwonly-default-via-dictsplat",
+   "expect": "wrong-argv",
+   "file": "Z-kwonly-default-via-dictsplat.jsonl",
+   "note": "dict splat goes to **kw; the keyword-only DEFAULT is reported instead"
+  },
+  {
+   "case": "Z-kwonly-named-via-dictsplat",
+   "expect": "silent",
+   "file": "Z-kwonly-named-via-dictsplat.jsonl",
+   "note": "keyword-only param supplied through a literal dict splat"
+  },
+  {
+   "case": "Z-kwsplat-hop2-of-4",
+   "expect": "silent",
+   "file": "Z-kwsplat-hop2-of-4.jsonl",
+   "note": "**dict at hop 2 of a 4-hop chain (no **kw parameter)"
+  },
+  {
+   "case": "Z-leading-vararg",
+   "expect": "hit",
+   "file": "Z-leading-vararg.jsonl",
+   "note": "named first param plus vararg, flat literal call"
+  },
+  {
+   "case": "Z-method-star-empty",
+   "expect": "silent",
+   "file": "Z-method-star-empty.jsonl",
+   "note": "method call with literal argv plus empty *[]"
+  },
+  {
+   "case": "Z-named-default-via-dictsplat",
+   "expect": "wrong-argv",
+   "file": "Z-named-default-via-dictsplat.jsonl",
+   "note": "dict splat goes to **kw; positional param stays unbound, default reported"
+  },
+  {
+   "case": "Z-named-kwargs-via-dictsplat",
+   "expect": "silent",
+   "file": "Z-named-kwargs-via-dictsplat.jsonl",
+   "note": "named param plus **kw; dict splat goes to **kw, named param stays unbound"
+  },
+  {
+   "case": "Z-partial-helper-kw",
+   "expect": "silent",
+   "file": "Z-partial-helper-kw.jsonl",
+   "note": "functools.partial of a helper with keyword argv"
+  },
+  {
+   "case": "Z-posonly",
+   "expect": "hit",
+   "file": "Z-posonly.jsonl",
+   "note": "positional-only parameter"
+  },
+  {
+   "case": "Z-star-at-spawn-from-param",
+   "expect": "hit",
+   "file": "Z-star-at-spawn-from-param.jsonl",
+   "note": "literal list bound to a param then * at the spawn call"
+  },
+  {
+   "case": "Z-star-at-spawn-literal",
+   "expect": "hit",
+   "file": "Z-star-at-spawn-literal.jsonl",
+   "note": "*literal-list at the spawn call inside a helper"
+  },
+  {
+   "case": "Z-star-hop2-of-4",
+   "expect": "silent",
+   "file": "Z-star-hop2-of-4.jsonl",
+   "note": "* at hop 2 of a 4-hop chain (depth budget remains)"
+  }
+ ],
+ "schema": "mado-advdepth-fixtures-v1"
+}

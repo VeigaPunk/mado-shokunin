@@ -1,0 +1,23 @@
+### jj case: corpus line 77 is a loop, fixture drops the binding
+corpus : /home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-19T20-36-43-523Z_01a155e1-7d83-74e9-8383-9ee7c15d7c99/W2jProbeKagi.jsonl:77
+command: cd ... && for c in commit new squash describe; do echo "=== $c ==="; ~/.local/bin/jj $c --help 2>&1 | grep ... ; done
+
+loop   @28c6837  exit 1 [('vcs_write', 'jj:$c', 'observed')]
+loop   @1f7f995  exit 1 [('vcs_write', 'jj:$c', None)]
+loop   @9c54c56  exit 0 []
+varc   @28c6837  exit 1 [('vcs_write', 'jj:$c', 'observed')]
+varc   @1f7f995  exit 1 [('vcs_write', 'jj:$c', None)]
+varc   @9c54c56  exit 0 []
+desc   @28c6837  exit 0 []
+desc   @1f7f995  exit 1 [('vcs_write', 'jj:describe', None)]
+desc   @9c54c56  exit 0 []
+
+### pre-harm tool has no vcs_write class:
+CLASSES = CLASSES = ("host_mutation", "package_query", "live_probe")
+
+### built-in verb help forms are 0-op (fresh /tmp repo, HOME/XDG/JJ_CONFIG redirected; jj 0.45.1)
+method: append a line to f.txt, count 'jj op log --ignore-working-copy', run 'jj <verb> --help', recount
+jj commit --help rc=0 ops 4->4
+jj new --help rc=0 ops 4->4
+jj squash --help rc=0 ops 4->4
+jj describe --help rc=0 ops 4->4

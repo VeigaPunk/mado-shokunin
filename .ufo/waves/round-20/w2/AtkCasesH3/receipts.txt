@@ -1,0 +1,146 @@
+AtkCasesH3 receipts — generated 2026-10-20T20:50:10Z
+lane tip: a4046a8216080d4004de3f268c62cf142095ac07
+tools:
+367be94773d8fec5e6df91f80ac777070c407c1128f7c75b3dcaa26cc83fdb4d  /tmp/r20h3/tool-1f7f995/mado-tripwire.py
+c1ae45a7573e536bdb8ad410f36782aaad9832ecae6a95b2f5c7f823d13c70cd  /tmp/r20h3/tool-9c54c56/mado-tripwire.py
+9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c  /tmp/r20h3/tool-28c6837/mado-tripwire.py
+
+== suite immutability
+$ git -C clone diff --stat f3da504 a4046a8 -- .ufo/waves/round-20/precision .ufo/waves/round-20/precision-heldout
+(empty above = identical)
+$ git rev-parse f3da504:.../expected.json a4046a8:.../expected.json
+c456ab0de54d15f55487e5b4ad6efaeabc7d1ace
+c456ab0de54d15f55487e5b4ad6efaeabc7d1ace
+
+== jj 0.45.1 op counts (fresh repo, HOME/XDG redirected under /tmp)
+jj log --help => rc=0 ops 3->3 out=[Show revision history]
+jj commit --help => rc=0 ops 3->3 out=[Update the description and create a new change on top [default alias: ci]]
+jj workspace add --help => rc=0 ops 3->3 out=[Add a workspace]
+jj describe --help => rc=0 ops 3->3 out=[Update the change description or other metadata [default alias: desc]]
+jj log => rc=0 ops 3->3 out=[@  tyswzmrv t@t 2026-10-20 17:42:42 c063e521]
+jj --ignore-working-copy log => rc=0 ops 3->3 out=[@  tyswzmrv t@t 2026-10-20 17:42:42 c063e521]
+jj bogus --help => rc=2 ops 3->3 out=[error: unrecognized subcommand 'bogus']
+alias xx --help (util exec sh -c echo):
+rc=0 ops 3->3 out=[ALIAS-RAN]
+alias yy --help (util exec sh -c write canary):
+canary_exists=YES
+
+== git 2.56.0 dry-run effects (fresh repos, HOME/GIT_CONFIG_NOSYSTEM redirected)
+case p33 second command: git commit --dry-run -m x, staged new file
+index d28adcd66ca4dc0e080494e07e869de41b6fb9ce96e7bbea6c5fb76413ddb246 -> 2a31a07b9d3c5c2c488107262813a19f8b13cd19c3f7b3f6fcc578cd42059319; objects 4->5; HEAD unchanged; ls-files -s unchanged
+case commit-a-dry-run-short: git commit -a --dry-run --short
+index unchanged at 2a31a07b9d3c; objects 5->7; HEAD unchanged
+git commit -a --short (no --dry-run): HEAD unchanged (--short implies dry run), objects 3->5
+git add -n <existing>: index unchanged, objects unchanged; git add -A --dry-run: index unchanged
+git push --dry-run: index unchanged, objects 6->6, local refs unchanged, bare-remote refs unchanged, output '8c1d734..40fb6c9 master -> master'
+
+== git 2.56.0 fresh measurements (each in a new /tmp repo; HOME/GIT_CONFIG_NOSYSTEM redirected)
+prep: init, commit a; git add b; append to a
+$ git commit --dry-run -m x
+  rc=0 head_moved=no index_changed=YES objects 4->5
+  index 1118c7ac36f1496700a88f517becfb1d6054499e8c447e1713e710b9bb433229 -> b1ddd2a8fbdada9bf3911b098f4c45035bac42d253287c9a0ae4ed3557713765
+  ls-files -s: 100644 78981922613b2afb6025042ff6bd878ac1994e85 0	a|100644 61780798228d17af2d34fce4cfbdf35556832472 0	b|
+  out: On branch master|Changes to be committed:|  (use "git restore --staged <file>..." to unstage)|
+$ git commit -a --dry-run --short
+  rc=0 head_moved=no index_changed=no objects 4->6
+  index ab9ecfe9e1c7995664a1513bf2d08210312fa6530e7fccab0102a1efe4b621f5 -> ab9ecfe9e1c7995664a1513bf2d08210312fa6530e7fccab0102a1efe4b621f5
+  ls-files -s: 100644 78981922613b2afb6025042ff6bd878ac1994e85 0	a|100644 61780798228d17af2d34fce4cfbdf35556832472 0	b|
+  out: M  a|A  b|
+$ git commit -a --short
+  rc=0 head_moved=no index_changed=no objects 4->6
+  index 15421c4f57c20621311d9cce5318551d05b8e5740a042c6ae45fd482a2c19dd8 -> 15421c4f57c20621311d9cce5318551d05b8e5740a042c6ae45fd482a2c19dd8
+  ls-files -s: 100644 78981922613b2afb6025042ff6bd878ac1994e85 0	a|100644 61780798228d17af2d34fce4cfbdf35556832472 0	b|
+  out: M  a|A  b|
+$ git add -n b
+  rc=0 head_moved=no index_changed=no objects 4->4
+  index e6287eaf67ab4c941911ba69be62595a182852eb03a780806d201f1a8562281b -> e6287eaf67ab4c941911ba69be62595a182852eb03a780806d201f1a8562281b
+  ls-files -s: 100644 78981922613b2afb6025042ff6bd878ac1994e85 0	a|100644 61780798228d17af2d34fce4cfbdf35556832472 0	b|
+  out: |
+$ git add -A --dry-run
+  rc=0 index_changed=no objects 3->3 out=[add 'a'
+add 'b']
+$ git push --dry-run origin master
+  rc=0 index_changed=no objects 6->6 localrefs=unchanged remoterefs=unchanged
+  out: To /tmp/r20h3/rec-remote|   3621f06..d24c507  master -> master|
+
+== mutant score runs (same counter rule: exit + multiset (class,rule,line,evidence); cases read from f3da504)
+28c6837 (shipped)                                            172/175 fails=['W-CaseWrapperForms-class-method-instance', 'L-AdoptW2-AdvHelperFn-b14', 'H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help']
+mutA: delete final jj snapshot else                          171/175 fails=['W-CaseWrapperForms-class-method-instance', 'H-CaseDryRunBash-jj-push-dry-run-snapshots', 'H-CaseHelpDryRunEval-jj-push-dry-run-snapshot', 'L-AdoptW2-AdvHelperFn-b14']
+mutA2: demote jj read verbs only                             172/175 fails=['W-CaseWrapperForms-class-method-instance', 'L-AdoptW2-AdvHelperFn-b14', 'H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help']
+mutB: delete commit --short/--porcelain/--long/-z dry-run    172/175 fails=['W-CaseWrapperForms-class-method-instance', 'L-AdoptW2-AdvHelperFn-b14', 'H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help']
+mutC: A2 + accept $var verb as help                          173/175 fails=['W-CaseWrapperForms-class-method-instance', 'L-AdoptW2-AdvHelperFn-b14']
+
+mutant tool sha256:
+0dc99df89dd866dd2f3becd1550fac688c6c5b6e706e20e8c4eee93ef7c6391c  /tmp/r20h3/tool-mutA.py
+b249244474df8c839bcba2635b8caa3165b883a98c8dfeb72008046a1df5ba45  /tmp/r20h3/tool-mutA2.py
+90f43e580a04ea005426a22867c16692c55f5cbd452485faef0135f2010781fe  /tmp/r20h3/tool-mutB.py
+3728fb6c770481049337af36c0d52f759f97c18ac9f74c9e7e16382714b519b9  /tmp/r20h3/tool-mutC.py
+
+mutant diffs vs 28c6837:
+--- 28c6837
+
++++ mutA
+
+@@ -610,3 +610,3 @@
+
+         return None
+-    return None if ignores_working_copy(args) else "jj:" + verb
++    return None
+ 
+====
+--- 28c6837
+
++++ mutA2
+
+@@ -609,2 +609,4 @@
+
+     elif verb in JJ_NO_SNAPSHOT:
++        return None
++    if verb in {"log", "status", "st", "diff", "show", "obslog", "evolog", "op", "config", "util", "file", "root"}:
+         return None
+====
+--- 28c6837
+
++++ mutB
+
+@@ -663,8 +663,8 @@
+
+             dry = False
+-        elif verb == "commit" and f in ("--short", "--porcelain", "--long"):
+-            fmt = True  # a status format implies --dry-run
++        elif False:
++            fmt = True  # a status format implies --dry-run (MUTANT)
+         elif verb == "commit" and f in ("--no-short", "--no-porcelain", "--no-long"):
+             fmt = False
+-        elif verb == "commit" and f in ("-z", "--null"):
+-            null = True  # -z selects porcelain, hence a dry run
++        elif False:
++            null = True  # -z selects porcelain, hence a dry run (MUTANT)
+         elif verb == "commit" and f == "--no-null":
+====
+--- 28c6837
+
++++ mutC
+
+@@ -584,2 +584,4 @@
+
+         return True
++    if args[i].startswith("$"):
++        return True
+     return args[i] in JJ_HELP_VERBS and any(a in JJ_HELP_FLAGS for a in head[i + 1:])
+@@ -609,2 +611,4 @@
+
+     elif verb in JJ_NO_SNAPSHOT:
++        return None
++    if verb in {"log", "status", "st", "diff", "show", "obslog", "evolog", "op", "config", "util", "file", "root"}:
+         return None
+====
+
+== jj snapshot state dependence (fresh /tmp/r20h3/jj2; a pending untracked change forces a snapshot)
+note: the earlier 'jj log 3->3' line above ran after the working copy had already been snapshotted; that is the no-change state, not evidence that jj log is read-only.
+jj log (pending change)                 ops 2->3  => snapshot write
+jj log --help (pending change)          ops 3->3
+jj commit --help (pending change)       ops 3->3
+jj workspace add --help (pending change) ops 3->3
+jj describe --help (pending change)     ops 3->3
+jj --ignore-working-copy log (pending)  ops 3->3

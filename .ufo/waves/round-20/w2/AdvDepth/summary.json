@@ -1,0 +1,187 @@
+{
+ "categories": {
+  "callable_shape_executed": [
+   {
+    "case": "Y-immediate-lambda",
+    "note": "immediately invoked lambda"
+   },
+   {
+    "case": "Y-partial-of-helper",
+    "note": "functools.partial of a visible helper"
+   },
+   {
+    "case": "Z-partial-helper-kw",
+    "note": "functools.partial of a helper with keyword argv"
+   }
+  ],
+  "depth_exhaustion": [
+   {
+    "case": "D5-chain5",
+    "note": "5 visible helpers before the spawn"
+   },
+   {
+    "case": "D5-class",
+    "note": "5th hop is a class construction+method at depth 4"
+   },
+   {
+    "case": "D5-defaults",
+    "note": "5 helpers, literal default at the last hop"
+   },
+   {
+    "case": "D5-kwargs",
+    "note": "5 helpers, **kw forwarded each hop"
+   },
+   {
+    "case": "D5-lambda",
+    "note": "4 helpers then lambda call at depth 4"
+   },
+   {
+    "case": "D6-chain6",
+    "note": "6 visible helpers before the spawn"
+   },
+   {
+    "case": "Z-class-method-hop5",
+    "note": "4 helpers then a visible method call at depth 4"
+   },
+   {
+    "case": "XCell-depth5",
+    "note": "cross-cell variant"
+   }
+  ],
+  "dict_splat_helper_call": [
+   {
+    "case": "K-neg-kw-helper-no-kwarg",
+    "note": "**dict into a helper with a named parameter"
+   },
+   {
+    "case": "Z-kwsplat-hop2-of-4",
+    "note": "**dict at hop 2 of a 4-hop chain (no **kw parameter)"
+   },
+   {
+    "case": "Z-kwonly-named-via-dictsplat",
+    "note": "keyword-only param supplied through a literal dict splat"
+   },
+   {
+    "case": "Z-named-kwargs-via-dictsplat",
+    "note": "named param plus **kw; dict splat goes to **kw, named param stays unbound"
+   },
+   {
+    "case": "Z-empty-starsplat-helper",
+    "note": "empty **{} at a helper call with no **kw parameter"
+   },
+   {
+    "case": "XCell-kwsplat-helper",
+    "note": "cross-cell variant"
+   }
+  ],
+  "documented_dynamic_dispatch": [
+   {
+    "case": "Y-dict-dispatch",
+    "note": "dict-of-callables dispatch"
+   },
+   {
+    "case": "Y-getattr-spawn",
+    "note": "getattr-selected spawn callable"
+   }
+  ],
+  "lead_side_star": [
+   {
+    "case": "C6-unresolved-star-arg",
+    "note": "starred argv list to an unresolved name: no lead"
+   },
+   {
+    "case": "C7-unresolved-dictsplat",
+    "note": "dict splat to an unresolved name: no lead"
+   }
+  ],
+  "starred_helper_call": [
+   {
+    "case": "K-neg-star-helper-list",
+    "note": "helper called with *literal-list"
+   },
+   {
+    "case": "K-neg-star-helper-tuple",
+    "note": "helper called with *literal-tuple"
+   },
+   {
+    "case": "K-neg-star-helper-name",
+    "note": "helper called with *module-literal name"
+   },
+   {
+    "case": "K-neg-star-empty-then-pos",
+    "note": "helper called with empty * plus literal positionals"
+   },
+   {
+    "case": "K-neg-star-vararg-helper",
+    "note": "vararg helper called with *literal-list"
+   },
+   {
+    "case": "K-neg-star-method",
+    "note": "method called with *literal-list"
+   },
+   {
+    "case": "K-neg-star-lambda",
+    "note": "visible lambda called with *literal-list"
+   },
+   {
+    "case": "K-neg-star-chain2",
+    "note": "* at the second hop"
+   },
+   {
+    "case": "Z-star-hop2-of-4",
+    "note": "* at hop 2 of a 4-hop chain (depth budget remains)"
+   },
+   {
+    "case": "Z-empty-starsplat-mixed",
+    "note": "literal argv plus an empty *[] splat at a helper call"
+   },
+   {
+    "case": "Z-method-star-empty",
+    "note": "method call with literal argv plus empty *[]"
+   },
+   {
+    "case": "XCell-star-helper",
+    "note": "cross-cell variant"
+   }
+  ]
+ },
+ "counts": {
+  "callable_shape_executed": 3,
+  "counted_unparsed": 7,
+  "depth_exhaustion": 8,
+  "dict_splat_helper_call": 6,
+  "documented_dynamic_dispatch": 2,
+  "executed_silent_total": 29,
+  "lead": 1,
+  "lead_side_star": 2,
+  "observed_hit": 41,
+  "silent_all_rows": 35,
+  "silent_zero_total": 33,
+  "starred_helper_call": 12
+ },
+ "digests": {
+  "manifest.json": "c556dccc545ec50f89353fa923a3d5edd202c36edb39ea3fcbb06ccb32ee391a",
+  "results.json": "d47611f9f6de2e82baf9740e477c4bcee0cc7858d93849007f5ed8a03315aacb",
+  "scan-all.out": "a2720e74d63ed687bb77791ce8000032342ce7d3fa7fa3cc37ec92c25be2849e",
+  "scan-positive-only.out": "d43fa7f20a80efac364e28f51aeced7ed92c8796b0c206ecfc9b6c160614945c",
+  "scan-silent-only.out": "0e9a440dec9619b38af14bbac890f240feba69bf049af9c264dea8a438f7adba",
+  "summary.json": "(self-excluded)"
+ },
+ "fixture_count": 84,
+ "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+ "schema": "mado-advdepth-summary-v1",
+ "tip": "a4046a8216080d4004de3f268c62cf142095ac07",
+ "tool_sha256": "9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c",
+ "wrong_argv": [
+  {
+   "actual_runtime_argv": "pacman -S advdepth-pkg",
+   "case": "Z-kwonly-default-via-dictsplat",
+   "reported_command": "pacman -S other"
+  },
+  {
+   "actual_runtime_argv": "pacman -S advdepth-pkg",
+   "case": "Z-named-default-via-dictsplat",
+   "reported_command": "pacman -S other"
+  }
+ ]
+}

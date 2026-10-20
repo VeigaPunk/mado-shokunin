@@ -153,10 +153,11 @@ HEAD moved to `28c68378eccbd5f227cdc28a62406ff390e3540a` (tool blob `5f0bac58…
   `module_unsafe_names` is unchanged. Instead of one map it keeps two parallel environments
   (`update_bindings` +89, `callable_info` +54, `assignment_binding` +43, `prepare_eval_calls`
   +27, `eager_calls` +29, `spawn_scan` +50).
-- It moved the contract in six places, each with an `r20_edit` reason in
-  `r19-helperfn/expected.json` and `r19-bashcvar/expected.json`: `py-helper-nonliteral-arg`
-  → observed, `py-helper-vararg` → observed, `py-helper-default-nonliteral` → observed,
-  `py-lead-nonliteral-var` → lead, `py-lead-defined-nonliteral` → observed, and
+- It moved the contract in eight places, each with an `r20_edit` reason: in
+  `r19-helperfn/expected.json` `py-helper-nonliteral-arg` → observed, `py-helper-vararg`
+  → observed, `py-helper-default-nonliteral` → observed, `py-lead-nonliteral-var` → lead,
+  `py-lead-defined-nonliteral` → observed, `py-helper-defined-after-call` → lead,
+  `py-helper-redefined` → observed; in `r19-bashcvar/expected.json`
   `r19-class-body-deferred-clean` → observed (a class body executes at the class statement;
   `r19-lambda-deferred-clean` stays 0). The class-body reading is the CPython execution model and
   is better evidence than the r19 "deferred" convention this design preserved.

@@ -1,0 +1,23 @@
+### b14 variants at tool-28c6837 (9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c)
+== v0: def run_all(run_case): |     return run_case('q', ['pacman','-Q','wayland-utils']) | 
+  exit 0 findings [] unparsed 0
+== v1: def run_all(run_case): |     return run_case('q', ['pacman','-Q','wayland-utils']) | run_all(show) | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== v2: def run_all(run_case): |     return run_case('q', ['pacman','-Q','wayland-utils']) | run_all(subprocess.run) | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== v3: def run_all(): |     return run_case('q', ['pacman','-Q','wayland-utils']) | run_all() | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== v4: def run_all(run_case): |     return run_case(['pacman','-Q','wayland-utils']) | run_all(show) | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== v5: run_case('q', ['pacman','-Q','wayland-utils']) | def run_case(name, argv): |     return print(name, argv) | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== u1: def f(): |     return subprocess.run(['pacman','-Q','wayland-utils']) | 
+  exit 0 findings [] unparsed 0
+== u2: def f(): |     return subprocess.run(['pacman','-Q','wayland-utils']) | f() | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'observed')] unparsed 0
+== u3: if False: |     run_case('q', ['pacman','-Q','wayland-utils']) | 
+  exit 1 findings [('package_query', 'pacman:-Q', 'lead')] unparsed 0
+== pure_method: import subprocess | class Runner: |     def run(self, argv): |         return print(argv) | print(Runner().run(['pacman','-Q','hyprland'])) | 
+  exit 0 findings [] unparsed 0
+== spawn_method: import subprocess | class Runner: |     def run(self, argv): |         return subprocess.run(argv, capture_output=True, text=True) | print(Runner().run(['/bin/echo','x']).stdout) | 
+  exit 0 findings [] unparsed 0

@@ -1,0 +1,90 @@
+# S102 re-open evidence — 2026-10-20T20:43:18Z
+
+## host git
+git version 2.56.0
+
+## ls-remote tag pin
+2478544319491bbd2a42cc57a83e3d2f4730a280	refs/tags/v2.56.0
+a018953688f1b10bddf91bff8747068f5f4746a4	refs/tags/v2.56.0^{}
+
+## my tag fetches (url / status / bytes / sha256)
+1   200 30923 0e1bbafb1fa791d07a91e9e714adb1274e1247ce5d7b9bde46562f0d55494432 https://raw.githubusercontent.com/git/git/v2.56.0/git.c
+2   200 42814 8ff610bf58103a838a82b8fb82f5738fc198fc83190b9b38a36b962988e25bed https://raw.githubusercontent.com/git/git/v2.56.0/parse-options.c
+3   200 19624 87e2be30e54631812165cf2e489116fe476e5edce7b92221dd1f4cdfa0e2d6d1 https://raw.githubusercontent.com/git/git/v2.56.0/parse-options.h
+4   200 23071 5c62ecb43cf09f02e84c667b8b6fc67b4b933899d0e832c9af10fdfc7c94cf09 https://raw.githubusercontent.com/git/git/v2.56.0/help.c
+5   200 20408 8eb0ef101125861c9e59c986782cf55a09c3a9bc2c9e2db400e6843f2d4a5aa1 https://raw.githubusercontent.com/git/git/v2.56.0/builtin/help.c
+6   200 11312 19829855b2982e1b59e75d08fce4ac4a096510a6fcd1735a1bef163d8bc6031d https://raw.githubusercontent.com/git/git/v2.56.0/Documentation/gitcli.adoc
+
+## byte-compare my tag fetch vs round-20 receipt body (fetched at peeled commit)
+IDENTICAL git.c
+IDENTICAL parse-options.c
+IDENTICAL parse-options.h
+IDENTICAL help.c
+IDENTICAL builtin-help.c
+IDENTICAL Documentation-gitcli.adoc
+
+## gate quote git.c:762 (repr) and token count
+'\t/* Turn "git cmd --help" into "git help --exclude-guides cmd" */'
+verbatim: True occurrences: 1 tokens: 9
+
+## runtime: GIT_TRACE rewrite
+rc=0
+17:43:18.802015 git.c:506               trace: built-in: git help commit --exclude-guides
+
+## runtime: -h over GIT_WRITE verbs (rc/out-bytes/err-bytes/first stdout line)
+add rc=0 out=1695 err=0 | usage: git add [<options>] [--] <paths
+commit rc=0 out=3551 err=0 | usage: git commit [-a | --interactive 
+stash rc=0 out=1095 err=0 | usage: git stash list [<log-options>] 
+checkout rc=0 out=2082 err=0 | usage: git checkout [<options>] <branc
+switch rc=0 out=1266 err=0 | usage: git switch [<options>] [<branch
+reset rc=0 out=1489 err=0 | usage: git reset [--mixed | --soft | -
+pull rc=0 out=3658 err=0 | usage: git pull [<options>] [<reposito
+push rc=0 out=1815 err=0 | usage: git push [<options>] [<reposito
+restore rc=0 out=1460 err=0 | usage: git restore [<options>] [--sour
+rebase rc=0 out=3427 err=0 | usage: git rebase [-i] [options] [--ex
+merge rc=0 out=2379 err=0 | usage: git merge [<options>] [<commit>
+cherry-pick rc=0 out=1596 err=0 | usage: git cherry-pick [--edit] [-n] [
+
+## runtime: value/mid-list forms (scratch repo, staged change for each)
+commit -m x --help rc=0 commits=4
+commit -m --help rc=0 subject=--help
+commit -m -h rc=0 subject=-h
+commit --badopt -h rc=129 stderr-first=error: unknown option `badopt'
+
+## runtime: config alias counterexample
+alias:x --help rc=0 canary=ABSENT stdout='x' is aliased to '!echo RAN > /tmp/r20reopen/canary'
+alias:x -h rc=0 canary=PRESENT content=RAN -h stderr='x' is aliased to '!echo RAN > /tmp/r20reopen/canary'
+alias.commit -h rc=0 canary2=ABSENT
+
+## clean-room (fresh repo, one base commit; staged change before each form)
+commit -m x --help rc=0 commits 1 -> 1 stdout=usage: git commit [-a | --interactive | --patch] [-s] [-v] [-u[<mode>]] [--amend] stderr_bytes=0
+commit --help rc=0 commits 1 -> 1
+17:43:28.592930 git.c:506               trace: built-in: git help commit --exclude-guides
+commit -m --help rc=0 subject=--help
+commit -m -h rc=0 subject=-h
+
+## demote: -h outside a repository
+rc=0 stdout=3551 stderr=0
+
+## git -h <sub> vs git help <sub>
+-h add rc=0 bytes=19314 first=GIT-ADD(1)                         Git Manual                        GIT-ADD(1)
+help add rc=0 bytes=19314
+SAME-BYTES
+
+## committed tool 9613f510 (clone at a4046a8) on synthetic transcripts
+a-help-first           MADO_TRIPWIRE: clean
+   exit=0 observed=0 lead=0 rules=[]
+b-help-mid             MADO_TRIPWIRE: clean
+   exit=0 observed=0 lead=0 rules=[]
+c-value-help           MADO_TRIPWIRE: findings
+   exit=1 observed=1 lead=0 rules=['git:commit']
+d-alias-dash-h         MADO_TRIPWIRE: clean
+   exit=0 observed=0 lead=0 rules=[]
+e-top-help             MADO_TRIPWIRE: clean
+   exit=0 observed=0 lead=0 rules=[]
+f-badopt               MADO_TRIPWIRE: clean
+   exit=0 observed=0 lead=0 rules=[]
+g-m-dash-h             MADO_TRIPWIRE: findings
+   exit=1 observed=1 lead=0 rules=['git:commit']
+h-add-dashdash-help    MADO_TRIPWIRE: findings
+   exit=1 observed=1 lead=0 rules=['git:add']

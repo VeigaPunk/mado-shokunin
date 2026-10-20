@@ -1,0 +1,88 @@
+CMD: jj --help describe
+## final-jj--help-describe | rc=0 mut=no ops_changed=yes
+   desc_after= wc 0a67a7ce->60cd58a4
+   out: Jujutsu (An experimental VCS)~~To get started, see the tutorial [`jj help -k tutorial`].~~
+CMD: jj describe -h -m x
+## final-jj-describe-h-m | rc=0 mut=no ops_changed=yes
+   desc_after= wc 0ba01387->27d78089
+   out: Update the change description or other metadata [default alias: desc]~~Usage: jj describe [OPTIONS] [REVSETS]...~~
+CMD: jj describe -m -h
+## final-jj-describe-m-h | rc=2 mut=no ops_changed=yes
+   desc_after= wc 1a6e2a73->5e9a8b6d
+   out: error: a value is required for '--message <MESSAGE>' but none was supplied~~For more information, try '--help'.~
+CMD: jj root
+## final-jj-root | rc=0 mut=no ops_changed=yes
+   desc_after= wc 3cec8686->a3297eb6
+   out: /tmp/mado-r20w2-vcs/jj-cases/final-jj-root/work~
+CMD: jj config list
+## final-jj-config-list | rc=0 mut=no ops_changed=yes
+   desc_after= wc a1872d6f->2a5ca042
+   out: operation.hostname = "plazir27"~operation.username = "vgpnk"~ui.color = "never"~ui.editor = "true"~
+CMD: jj util config-schema
+## final-jj-util-config-schema | rc=0 mut=no ops_changed=yes
+   desc_after= wc 05f76426->d39ddc04
+   out: {~    "$schema": "http://json-schema.org/draft-04/schema",~    "$comment": "`taplo` and the corresponding VS Code plugins only support version draft-04 of JSON Schema, see <https://taplo.tamasfe.dev/configuration/developing-schemas.html>. draft-07 is mostly compatible with it, newer versions may not be.",~    "title": "Jujutsu config",~
+CMD: jj util exec -- true
+## final-jj-util-exec-true | rc=0 mut=no ops_changed=yes
+   desc_after= wc 2480dfa5->1c786848
+   out: ~
+CMD: jj util exec -- git status
+## final-jj-util-exec-git | rc=0 mut=no ops_changed=yes
+   desc_after= wc cb033ba1->49e199f8
+   out: On branch main~~No commits yet~~
+CMD: jj describe --dry-run -m x
+## final-jj-describe-dry | rc=2 mut=no ops_changed=yes
+   desc_after= wc 19dd0722->d4fdc577
+   out: error: unexpected argument '--dry-run' found~~  tip: to pass '--dry-run' as a value, use '-- --dry-run'~~
+CMD: jj git --dry-run push
+## final-jj-git--dry-run-push | rc=2 mut=no ops_changed=yes
+   desc_after= wc 65093e57->784f5844
+   out: error: unexpected argument '--dry-run' found~~  tip: 'push --dry-run' exists~~
+CMD: jj git fetch --dry-run
+## final-jj-git-fetch-dry | rc=2 mut=no ops_changed=yes
+   desc_after= wc 369438f9->c86d7a34
+   out: error: unexpected argument '--dry-run' found~~Usage: jj git fetch [OPTIONS]~~
+CMD: jj git push --dry-run -- --ignore-working-copy
+## final-jj-git-push-dd-iwc | rc=2 mut=no ops_changed=yes
+   desc_after= wc 763db974->f9fda538
+   out: error: unexpected argument '--ignore-working-copy' found~~Usage: jj git push [OPTIONS]~~
+CMD: jj git push --dry-run
+## final-jj-git-push-dry | rc=0 mut=yes ops_changed=yes
+   desc_after= wc 4bdf67c0->57a235a5
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~Warning: Refusing to create new remote bookmark main@origin~Hint: Run `jj bookmark track main@origin` and try again.~
+CMD: jj git push --dry-run --ignore-working-copy
+## final-jj-git-push-dry-iwc | rc=0 mut=no ops_changed=yes
+   desc_after= wc 7567be75->e25086a9
+   out: Warning: Refusing to create new remote bookmark main@origin~Hint: Run `jj bookmark track main@origin` and try again.~Nothing changed.~
+CMD: jj git push --ignore-working-copy --dry-run
+## final-jj-git-push-iwc-dry | rc=0 mut=no ops_changed=yes
+   desc_after= wc b8797b77->e2088f9a
+   out: Warning: Refusing to create new remote bookmark main@origin~Hint: Run `jj bookmark track main@origin` and try again.~Nothing changed.~
+CMD: jj git push -b main
+## final-jj-git-push-b-main | rc=0 mut=yes ops_changed=yes
+   desc_after= wc 195c60ca->c0000c49
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~Changes to push to origin:~  bookmark: main [add to 000000000000]~
+CMD: jj --ignore-working-copy describe -m hi
+## final-jj-iwc-describe | rc=0 mut=yes ops_changed=yes
+   desc_after=hi wc f0d7ff9e->0f50cde2
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~
+CMD: jj op log
+## final-jj-op-log | rc=0 mut=yes ops_changed=yes
+   desc_after= wc 4f5eb541->95a1a17d
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~@  44005b9543c6 vgpnk@plazir27 default@ now, lasted 1 millisecond~│  snapshot working copy~
+CMD: jj file list
+## final-jj-file-list | rc=0 mut=yes ops_changed=yes
+   desc_after= wc 938dd569->bb5f6f41
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~seed.txt~
+CMD: jj --ignore-working-copy log
+## final-jj-iwc-log | rc=0 mut=no ops_changed=yes
+   desc_after= wc 36f590a1->73ef4d9d
+   out: @  xxzzoluv t@example.invalid 2026-10-20 17:54:03 36f590a1~│  (no description set)~◆  zzzzzzzz root() 00000000 main~
+CMD: jj prev
+## final-jj-prev | rc=1 mut=yes ops_changed=yes
+   desc_after= wc 063e4a38->fb21330e
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~Error: No ancestor found 1 commit(s) back from the working copy parents(s)~Hint: Working copy parent: zzzzzzzz 00000000 main | (empty) (no description set)~
+CMD: jj describe -m hi
+## final-jj-describe | rc=0 mut=yes ops_changed=yes
+   desc_after=hi wc 399e252a->8dec680a
+   out: Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~Warning: Failed to export some bookmarks:~  main@git: Ref cannot point to the root commit in Git~

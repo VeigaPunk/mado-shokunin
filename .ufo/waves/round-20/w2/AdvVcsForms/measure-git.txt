@@ -1,0 +1,97 @@
+CMD: git add -nv .
+## final-git-add-nv | rc=0 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: add 'seed.txt'~add 'new.txt'~
+CMD: git add -An .
+## final-git-add-An | rc=0 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: add 'seed.txt'~add 'new.txt'~
+CMD: git add --dry .
+## final-git-add--dry | rc=0 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: add 'seed.txt'~add 'new.txt'~
+CMD: git add --dry-run --no-dry-run .
+## final-git-add-dry-nodry | rc=0 mut=yes filesmut=yes canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: ~
+CMD: git push -nv
+## final-git-push-nv | rc=0 mut=no filesmut=no canary=yes
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: Pushing to file:///tmp/mado-r20w2-vcs/git-cases/final-git-push-nv/remote.git~To file:///tmp/mado-r20w2-vcs/git-cases/final-git-push-nv/remote.git~   44e3372..9268302  main -> main~
+CMD: git push --dry
+## final-git-push--dry | rc=0 mut=no filesmut=no canary=yes
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: To file:///tmp/mado-r20w2-vcs/git-cases/final-git-push--dry/remote.git~   44e3372..9268302  main -> main~
+CMD: git push --dry-run --no-dry-run
+## final-git-push-dry-nodry | rc=0 mut=yes filesmut=yes canary=yes
+   head 92683027 -> 92683027 ; remote 44e33724 -> 92683027
+   out: To file:///tmp/mado-r20w2-vcs/git-cases/final-git-push-dry-nodry/remote.git~   44e3372..9268302  main -> main~
+CMD: git push --porcelain -n
+## final-git-push-porcelain-n | rc=0 mut=no filesmut=no canary=yes
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: To file:///tmp/mado-r20w2-vcs/git-cases/final-git-push-porcelain-n/remote.git~ 	refs/heads/main:refs/heads/main	44e3372..9268302~Done~
+CMD: git commit -zn -m c4
+run_git.sh: line 41: warning: command substitution: ignored null byte in input
+## final-git-commit-zn | rc=0 mut=no filesmut=yes canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: MM seed.txt?? new.txt~
+CMD: git commit -an -m c1
+## final-git-commit-an | rc=0 mut=yes filesmut=yes canary=no
+   head 92683027 -> 3beac717 ; remote 44e33724 -> 44e33724
+   out: [main 3beac71] c1~ 1 file changed, 1 insertion(+), 1 deletion(-)~
+CMD: git commit --porcelain --no-dry-run -m c6
+## final-git-commit-porcelain-nodry | rc=0 mut=no filesmut=yes canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: MM seed.txt~?? new.txt~
+CMD: git commit --dry-run --no-dry-run -m c9
+## final-git-commit-dry-nodry | rc=0 mut=yes filesmut=yes canary=no
+   head 92683027 -> b0e5d837 ; remote 44e33724 -> 44e33724
+   out: [main b0e5d83] c9~ 1 file changed, 1 insertion(+), 1 deletion(-)~
+CMD: git add -Nn .
+## final-git-add-Nn | rc=0 mut=no filesmut=yes canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: add 'seed.txt'~add 'new.txt'~
+CMD: git add --no-dry .
+## final-git-add--no-dry | rc=0 mut=yes filesmut=yes canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: ~
+CMD: git add --dry-run=false .
+## final-git-add--dry-run-eq-false | rc=129 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: error: option `dry-run' takes no value~
+CMD: git add -pn .
+## final-git-add-pn | rc=128 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: fatal: options '--dry-run' and '--interactive/--patch' cannot be used together~
+CMD: git -n add .
+## final-git-dash-n-add | rc=129 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: unknown option: -n~usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]~           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]~
+CMD: git checkout -n seed.txt
+## final-git-checkout-n | rc=129 mut=no filesmut=no canary=no
+   head 92683027 -> 92683027 ; remote 44e33724 -> 44e33724
+   out: error: unknown switch `n'~usage: git checkout [<options>] <branch>~   or: git checkout [<options>] [<branch>] -- <file>...~
+CMD: git push --repo --dry-run
+## final-git-push-repo-dry | rc=128 mut=no filesmut=no canary=no
+   head 1e43ff92 -> 1e43ff92 ; remote 3faeaecf -> 3faeaecf
+   out: fatal: strange pathname '--dry-run' blocked~
+CMD: git commit -m -n
+## final-git-commit-m-n | rc=0 mut=yes filesmut=yes canary=no
+   head 1e43ff92 -> 983994c0 ; remote 3faeaecf -> 3faeaecf
+   out: [main 983994c] -n~ 1 file changed, 1 insertion(+), 1 deletion(-)~
+CMD: git commit -am c10 -h
+## final-git-commit-a-m-h | rc=0 mut=no filesmut=no canary=no
+   head 1e43ff92 -> 1e43ff92 ; remote 3faeaecf -> 3faeaecf
+   out: usage: git commit [-a | --interactive | --patch] [-s] [-v] [-u[<mode>]] [--amend]~                  [--dry-run] [(-c | -C | --squash) <commit> | --fixup [(amend|reword):]<commit>]~                  [-F <file> | -m <msg>] [--reset-author] [--allow-empty]~
+CMD: git stash push -m st1
+## final-git-stash-push | rc=0 mut=yes filesmut=yes canary=no
+   head 1e43ff92 -> 1e43ff92 ; remote 3faeaecf -> 3faeaecf
+   out: Saved working directory and index state On main: st1~
+CMD: git push --porcelain
+## final-git-push-porcelain | rc=0 mut=yes filesmut=yes canary=yes
+   head 1e43ff92 -> 1e43ff92 ; remote 3faeaecf -> 1e43ff92
+   out: To file:///tmp/mado-r20w2-vcs/git-cases/final-git-push-porcelain/remote.git~ 	refs/heads/main:refs/heads/main	3faeaec..1e43ff9~Done~
+CMD: git commit --porcel -m c8
+## final-git-commit-porcel | rc=0 mut=no filesmut=yes canary=no
+   head 1e43ff92 -> 1e43ff92 ; remote 3faeaecf -> 3faeaecf
+   out: MM seed.txt~?? new.txt~
