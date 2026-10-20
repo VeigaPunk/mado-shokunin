@@ -893,3 +893,37 @@ exploratory claim.
   fact: `/var/log/pacman.log:2440-3152` shows 13 non-lane runs on
   2026-10-20 07:45-09:39 (including `pacman -Syu`), none after round launch.
   R15-V1's current host state is `[UNK]` and operator-owned.
+
+## Round 17 — committed results and bounded author verdicts
+
+Measured with `python3 .ufo/waves/round-17/measure.py REV` (receipts
+`evidence/measure-before.json`, `measure-final.json`): 27cd06f → f71ccbe.
+
+| Claim / axis | Before → after | Verdict / evidence |
+|---|---|---|
+| C1 calibration, literal lesson-citation fraction | 14/22 = 6.3636 → 15/23 = 6.5217 (+0.1581) | improved narrowly; only criterion 23 added (append-only); semantic block counter 17/22 = 7.7273 → 18/23 = 7.8261 (QUALITY 22); label check `evidence/label-check-final.txt` EXPECT 7/7 exit 0, R16-V1 red line MISMATCH |
+| C2 coverage, rubric V (PROVINCE P1-P6) | 2/6 = 3.3333 → 4/6 = 6.6667 | improved as declared, joined, documentary sourcing: P1/P2 inherited, P6 idle/lock route, P4 one Alacritty-only route; behaviour, launch and host binaries `[UNK]`; V cannot detect an invented row (wave-2 E1) — non-author re-open of S056-S071 required |
+| C3 operability capability, post-hoc transcript tripwire | absent → present (`tools/mado-tripwire.py` sha256 `7a98720e…`) | capability acquired, detection after the fact only; suites 9/9, 16/16, 33/33, 26/26 (`evidence/tripwire-selftest-*.txt`); anchor exit 1; adversarial 4/26 pinned as known limits; not prevention, not R15-V1 remediation |
+
+Harm watch at `f71ccbe`: hermetic selftest 372/372 (`harm-legacy-selftest.txt`,
+gate sha `fba82a66…` unchanged), classifier 52/52, U 7/7, navigation 32/32,
+census exit 0 (three historical W04). Freshness: not re-measured. No axis
+harmed by lane action; operability carries R15-V1 (operator-owned, `[UNK]`).
+Sources 55 → 71 (A 51 → 64, C 3 → 6; mined 43 → 56, rejected 4 → 7).
+Saturation 9.0 / N=3 unchanged; retired: none.
+
+### Capabilities (round 17)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| post-hoc transcript tripwire | Classify commands issued in OMP session JSONL (bash; python eval `!`/`%%bash`/literal spawns; shell/python heredocs) into host_mutation / package_query / live_probe with exit 0/1/2 | `python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/{core,compound,hardening,w2-regressions}`; `evidence/tripwire-anchor-r15.txt`, `tripwire-pacmanlog-join.txt` | 17 |
+
+### Planned (round 18; intent only)
+
+1. operability/calibration — close the remaining tripwire misses that recur
+   in real transcripts (variable `bash -c` recipes, helper-wrapped spawns) or
+   record them as permanent limits; frozen replay to make it a gate.
+2. coverage — P3 Walker or P5 theme sourced route under rubric V, with
+   committed raw fetch receipts so a closure can tell fetched from invented rows.
+3. freshness — re-anchor present-tense pins moved by the 2026-10-20 `-Syu`
+   (walker 2.17.2, hyprland 0.56.2-4) by file bytes and pacman.log only.

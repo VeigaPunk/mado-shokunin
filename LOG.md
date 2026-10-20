@@ -1251,3 +1251,35 @@ No installation/update/transaction is evidenced; host remediation remains
 operator-owned, R15-V1 unresolved and unobserved. The classifier does not
 erase that carried operability harm. No independent admission or promotion
 is asserted. SCORECARD/lesson record bounded axis and trend verdicts.
+
+## 2026-10-20 — round 17: receipt labels, P4/P6 sourced routes, transcript tripwire
+
+Trigger: admitted round-16 closure (`corpus/lessons/round-16-verifier-spotcheck.md`,
+routed R16-V1/V2) at baseline `27cd06f`; claims pre-registered at `0175f13`.
+Host pause carried into both wave contexts with an explicit override of the
+appended install directive; no package/service/compositor/input command was
+issued by L1. `/var/log/pacman.log` (file read) shows 13 runs 07:45-09:39
+before launch (no actor recorded) and 0 from 10:51 to close
+(`evidence/pacmanlog-round-window.txt`). R15-V1 remains operator-owned, state
+`[UNK]`.
+
+C1 calibration: QUALITY 23 (receipt-label precision) from outside R16-V1,
+lesson M1, append-only round-16 erratum, recut tamper receipt (exit 2
+`snapshot_tampered`, control exit 0 `frozen_match`), label check with red,
+mutant and green claims (`EXPECT_SUMMARY: 7/7`). Literal 14/22 → 15/23.
+C2 coverage: new rubric V (PROVINCE surfaces P1-P6), instrument bound at
+`f52f43f`/`ab0bc9b` before integration; P6 idle/lock and an Alacritty-only P4
+route from rows S056-S071 opened this round; 2/6 → 4/6, documentary only.
+C3 operability capability: `tools/mado-tripwire.py` (L1-written after seat
+TripwireCore died on an m_swe rate limit) — post-hoc detection of issued
+commands in OMP transcripts; suites 9/9, 16/16, 33/33, 26/26; anchor
+`MadoR15.LibinputEvents.jsonl:54` `call_38165`; 4/4 pacman.log join by call
+start; found undisclosed `sudo -n true` (r15) and a second `pacman -Q waybar`
+(r16); round 17's own 149 transcripts: 1 `live_probe` (`ps`, RevSeparability).
+
+Waves: w1 70 seats (1 dead: TripwireCore), w2 78 seats (falsify; 0 dead).
+Wave-2 corrections landed at `f71ccbe` and are logged in
+`lessons/round-17.md` § Wave-2 corrections. Harm watch at `f71ccbe`: legacy
+selftest 372/372, classifier 52/52, U 7/7, navigation 32/32, census exit 0.
+Freshness not re-measured (no live/no-live gate run; host moved under the
+09:15 `-Syu`). Admission not asserted.
