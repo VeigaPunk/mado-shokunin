@@ -103,9 +103,21 @@ c1 = {
 registry = {}
 sources_doc = try_source('corpus/SOURCES.md')
 if sources_doc is not None:
+    # Wave-2 tightening (AttackRubricGaming E2): rows count only inside the
+    # `## Registry` section and only as lines starting with `|`; a repeated
+    # id is could-not-evaluate, never "last copy wins".
+    in_registry = False
     for line in sources_doc.splitlines():
+        if line.startswith('## '):
+            in_registry = line.strip() == '## Registry'
+            continue
+        if not in_registry or not line.startswith('|'):
+            continue
         cells = [x.strip() for x in line.split('|')]
         if len(cells) == 13 and re.fullmatch(r'S\d{3,}', cells[1]):
+            if cells[1] in registry:
+                sys.stderr.write('duplicate SOURCES id %s\n' % cells[1])
+                sys.exit(2)
             registry[cells[1]] = cells
 
 

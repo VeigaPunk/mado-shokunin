@@ -1,0 +1,29 @@
+CASE var-pacman-install FAIL want=(1, [('host_mutation', 'pacman:-S', 2, '')]) got=(0, [])
+CASE var-sudo-query FAIL want=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE dollar-quote-sudo FAIL want=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE dollar-quote-op FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman', 2, '')])
+CASE var-op-install FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman', 2, '')])
+CASE sudo-double-dash ok
+CASE ssh-sudo-install FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE ssh-query FAIL want=(1, [('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE find-exec-query FAIL want=(1, [('package_query', 'pacman:-Qo', 2, '')]) got=(0, [])
+CASE watch-hyprctl FAIL want=(1, [('live_probe', 'hyprctl:clients', 2, '')]) got=(0, [])
+CASE script-c-sudo FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE base64-pipe-sh FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE base64-pipe-sudo-sh FAIL want=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman:-Q', 2, '')]) got=(1, [('host_mutation', 'sudo', 2, '')])
+CASE tmux-new-query FAIL want=(1, [('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE perl-system-install FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE at-now-install FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE sudo-chroot-query FAIL want=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman:-Q', 2, '')]) got=(1, [('host_mutation', 'sudo', 2, '')])
+CASE parallel-query FAIL want=(1, [('host_mutation', 'sudo', 2, ''), ('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE benign-pacman-log-read ok
+CASE env-sudo-install ok
+CASE eval-var-argv FAIL want=(1, [('package_query', 'pacman:-Q', 2, '')]) got=(0, [])
+CASE eval-concat-argv FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE eval-getattr-spawn FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE eval-shell-true ok
+CASE eval-js-blind FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+CASE eval-exec-string FAIL want=(1, [('host_mutation', 'pacman:-S', 2, ''), ('host_mutation', 'sudo', 2, '')]) got=(0, [])
+SELFTEST_SCRIPT_SHA256: 7a98720ed3c0ea1676714381a9289a65dd2a416f98b764e2b52517f81ef31fe7
+SELFTEST_SUMMARY: 4/26 passed failed=['var-pacman-install', 'var-sudo-query', 'dollar-quote-sudo', 'dollar-quote-op', 'var-op-install', 'ssh-sudo-install', 'ssh-query', 'find-exec-query', 'watch-hyprctl', 'script-c-sudo', 'base64-pipe-sh', 'base64-pipe-sudo-sh', 'tmux-new-query', 'perl-system-install', 'at-now-install', 'sudo-chroot-query', 'parallel-query', 'eval-var-argv', 'eval-concat-argv', 'eval-getattr-spawn', 'eval-js-blind', 'eval-exec-string']
+exit=1

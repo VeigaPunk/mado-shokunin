@@ -76,6 +76,8 @@ def outcome_tokens(node, acc):
     """Collect verdict tokens only (never want-side text), recursively."""
     if isinstance(node, dict):
         for k, v in node.items():
+            if k in ("expected", "want", "expect", "expected_finding", "want_finding"):
+                continue  # want-side containers never count as outcomes
             if k == "finding" and isinstance(v, str):
                 acc.add(v)
             elif k in ("stdout", "stderr") and isinstance(v, str):
@@ -101,6 +103,8 @@ def check_claim(root, claim):
         return "UNEVAL", "bad line range"
 
     if "doc_text" in claim:
+        if claim.get("doc") != "mutant":
+            return "UNEVAL", "doc_text is allowed only for doc == 'mutant'"
         text = claim["doc_text"]
     else:
         text = git_show(root, rev, doc)
@@ -184,6 +188,11 @@ def main(argv):
     print("EXPECT_SUMMARY: %d/%d claims met their declared expectation" % (met, expected))
     if uneval:
         return 2
+    # Wave-2 fix (AttackLabelCheckCode F3): when every claim declares `expect`,
+    # the exit code is the expectation verdict (0 iff all met); red controls
+    # are visible in the LABEL lines. Otherwise any MISMATCH exits 1.
+    if expected == len(claims):
+        return 0 if met == expected else 1
     return 1 if mismatch else 0
 
 

@@ -32,13 +32,13 @@ rate-limit and was not used.
 
 ### General keys (hypridle)
 
-- **lock_cmd** runs on a dbus `Lock` member: `if (MEMBER == "Lock") {` [HC:473], then `spawn(*LOCKCMD)` if non-empty [HC:477-478]. Documented as "command to run when receiving a dbus lock event (e.g. loginctl lock-session)" [HW:13]. README example: "dbus/sysd lock command (loginctl lock-session)" [HR:16].
+- **lock_cmd** runs on a dbus `Lock` member: `if (MEMBER == "Lock") {` [HC:473], then `spawn(*LOCKCMD)` if non-empty [HC:476-478]. Documented as "command to run when receiving a dbus lock event (e.g. loginctl lock-session)" [HW:13]. README example: "dbus/sysd lock command (loginctl lock-session)" [HR:16].
 - **unlock_cmd** — same pattern on `Unlock` [HC:480-485]; [HW:14].
 - **on_lock_cmd / on_unlock_cmd** — fired from the Wayland session-lock notification, not dbus: `onLocked` reads `general:on_lock_cmd` [HC:402] and spawns it [HC:404]; `onUnlocked` reads `general:on_unlock_cmd` [HC:433]. The source warns when the compositor lacks the protocol: "Compositor is missing hyprland-lock-notify-v1!" with "general:inhibit_sleep=3, general:on_lock_cmd and general:on_unlock_cmd will not work." [HC:104-107]. Documented [HW:15-16].
 - **before_sleep_cmd / after_sleep_cmd** — `handleDbusSleep` matches `PrepareForSleep` [HC:493]; `cmd = toSleep ? before : after` [HC:504]; spawned if non-empty [HC:509-510]. Documented [HW:17-18].
 - **ignore_dbus_inhibit** — read in `setupDBUS` [HC:600]; when false (default) the block that registers `org.freedesktop.ScreenSaver` runs [HC:626]. README: "whether to ignore dbus-sent idle-inhibit requests (used by e.g. firefox or steam)" [HR:20]; documented [HW:19].
 - **ignore_systemd_inhibit** — read in `setupDBUS` [HC:601], gated at [HC:617], documented [HW:20]. **ignore_wayland_inhibit** — read at [HC:58]; selects the inhibit-aware idle notification when true or when the listener sets `ignore_inhibit` [HC:74]; documented [HW:21].
-- **inhibit_sleep** — modes 0 disable / 1 normal / 2 auto / 3 "wait until locked" [HW:22-26]. Source: case 2 "auto" [HC:120], case 3 waits only `if (m_sWaylandState.lockNotifier)` [HC:128-129]. Wiki: "3 makes your system wait until the session gets locked by a lock screen app." [HW:33].
+- **inhibit_sleep** — modes 0 disable / 1 normal / 2 auto / 3 lock notify [HW:22-26] (source comment `case 3: // wait until locked`, [HC:128]). Source: case 2 "auto" [HC:120], case 3 waits only `if (m_sWaylandState.lockNotifier)` [HC:128-129]. Wiki: "3 makes your system wait until the session gets locked by a lock screen app." [HW:33].
 - Default `inhibit_sleep` = 2 [HW:26].
 
 ### Listeners (hypridle)
@@ -58,6 +58,7 @@ rate-limit and was not used.
 - `general:hide_cursor` default false [LW:37]; `general:ignore_empty_input` default false [LW:38]; `general:fail_timeout` default 2000 ms: "Milliseconds until the ui resets after a failed auth attempt" [LW:49].
 - `auth:pam:enabled` default true [LW:53]; `pam:module` default `hyprlock`, falls back to `su` [LW:54]; `fingerprint:enabled` default false [LW:55].
 - Arch: "On Arch Linux, by default, hyprlock integrates with pambase through pam_faillock.so, which forces a 10 minute timeout after 3 failed unlocks." [LW:84]. Remedy per [LW:85] (documentary).
+  Host file bytes (round-17 wave 2) contradict those numbers for this host: `/etc/pam.d/system-auth:3,8` set `pam_faillock.so … deny=10 unlock_time=120` (and `/etc/security/faillock.conf:32` `deny = 10`), reached via `/etc/pam.d/hyprlock` → login → system-local-login → system-login → system-auth; module arguments override `faillock.conf`. Declared values only; no failed unlock was attempted.
 - Protocol: "Uses the ext-session-lock protocol" [LR:5]. hypridle README: "based on the `ext-idle-notify-v1` wayland protocol" [HR:5].
 - Drift: hyprlock README links the wiki at `wiki.hyprland.org` [LR:19]; the fetched wiki URL is `wiki.hypr.land` (page header [LW:1-3] carries no domain). Documentary only.
 
@@ -79,6 +80,8 @@ Host bytes read with `cat -n` and `sha256sum` only. Paths are under `/home/vgpnk
 
 ### hypridle.conf (`general`, `listener`)
 
+Commands are spawned via `/bin/sh -c` ([HC:289], `CProcess proc("/bin/sh", {"-c", args})`), which is why the `OMARCHY_LOCK_ONLY=true` prefix and the `||` guard below are shell syntax; bare `omarchy-*` names resolve through `~/.config/uwsm/env:5` (`PATH=$OMARCHY_PATH/bin:…`).
+
 - `lock_cmd = omarchy-system-lock` (hypridle.conf:2).
 - `before_sleep_cmd = OMARCHY_LOCK_ONLY=true omarchy-system-lock` (:3) — the env var suppresses the display-off branch in the script (omarchy-system-lock:26).
 - `after_sleep_cmd = sleep 1 && omarchy-system-wake` (:4).
@@ -95,7 +98,7 @@ Host bytes read with `cat -n` and `sha256sum` only. Paths are under `/home/vgpnk
 - `animations { enabled = false }` (:14-16).
 - `input-field` size 650×100, `fade_on_empty = false`, `fail_text` with `$FAIL ($ATTEMPTS)` (:18-39).
 - `auth { fingerprint:enabled = false }` (:41-43). Documented default is already false [LW:55]; the line is explicit.
-- `hide_cursor`, `fail_timeout`, `pam:module`, `grace` not set: defaults apply [LW:37, 49, 54].
+- `hide_cursor`, `fail_timeout`, `pam:module` not set: defaults apply [LW:37, 49, 54]. `grace` is not a config key at v0.9.6: it is the CLI flag `--grace` (default 0, hyprlock `src/main.cpp:29,59`), and the host invokes `hyprlock` bare (omarchy-system-lock:8-13).
 
 ### omarchy theme and scripts (bytes, not executed)
 
@@ -122,13 +125,14 @@ Not safe under the current pause, and not used: `pidof`, `pgrep`, `hypridle -v`,
 ## Unexercised behavior
 
 - `[UNK]` Actual idle timing: whether the 150 s and 152 s listeners fire on this host, and whether the screensaver really resets the idle timer (hypridle.conf:14). Extends `idle-lock-plane.md` §11 item 2.
-- `[UNK]` Listener firing and on-resume execution on this host (`idle-lock-plane.md` §11 items 2, 5).
+- `[UNK]` Listener firing and on-resume execution on this host (`idle-lock-plane.md` §11 item 2).
 - `[UNK]` Lock success: whether `hyprlock` starts and takes the session lock; behaviour when its grace period or `fail_timeout` applies; the PAM faillock lockout in [LW:84] is documentary.
-- `[UNK]` Whether the compositor exposes `hyprland-lock-notify-v1` on this host. This decides whether `inhibit_sleep = 3` waits and whether `on_lock_cmd` works ([HC:104-107]; `idle-lock-plane.md` §11 item 6).
+- `[UNK]` Whether the compositor exposes `hyprland-lock-notify-v1` on this host. Upstream assigns the mode-3 sleep-inhibit behaviour only when the protocol is bound (Hypridle.cpp:128-131; the member has no initializer, Hypridle.hpp:67-71), so without it the fallback is undefined, not "no wait"; this also decides whether `inhibit_sleep = 3` waits and whether `on_lock_cmd` works ([HC:104-107]; `idle-lock-plane.md` §11 item 6).
 - `[UNK]` Whether the `pidof hyprlock ||` guard holds against the backgrounded `( hyprlock; omarchy-system-wake ) &` in `omarchy-system-lock` (race is not analysed).
-- `[UNK]` Why hypridle is not running at probe time (`idle-lock-plane.md` §11 item 1). This note adds the declared start route above (hyprland.conf:4 → default autostart.conf:1); running state is not observed.
+- `[UNK]` Why hypridle was not running at the 2026-10-14 probe (`idle-lock-plane.md` §11 item 1; its E2 erratum later saw autostart launch it in a fresh session and then saw it gone). The declared start route (hyprland.conf:4 → default autostart.conf:1) was already recorded in that plane §3; running state is not observed here.
 - `[UNK]` Whether the wiki ("Latest git", last updated 2026-08-26 [HW:120]) matches the v0.1.8 and v0.9.6 tag bytes; the wiki documents `condition_cmd`, which the v0.1.8 source also contains ([HC:71]), so the two agree on that key only.
 - `[UNK]` hyprlock source behaviour (grace, fail_timeout, fingerprint, faillock): hyprlock v0.9.6 source not opened this round; wiki and README only.
 - `[UNK]` The wiki's example-config link target (`[LW:8]` "which can be found here"): the upstream `example/` paths 404 at both tags.
 - `[UNK]` Multi-monitor behaviour of the chain (`idle-lock-plane.md` §11 item 8).
 - `[UNK]` Host binary version of hypridle and hyprlock against the tags above.
+- `[UNK]` Remaining `idle-lock-plane.md` §11 items, not narrowed by this route: item 3 (which component writes logind `IdleHint`/`LockedHint`; this note cites no logind source), item 4 (whether the host configs parse; no daemon was run), item 5 (cursor restore if hyprlock is killed), item 7 (a Waybar idle indicator). Only item 6 (mode-3 dependency on lock-notify) and item 1 (declared start route) are touched above.

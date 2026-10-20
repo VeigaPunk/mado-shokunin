@@ -40,7 +40,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/input-debugging-boundaries-r15.md` (round 15; covers U6) | Bounded helper-context → compositor-policy → Wayland client focus → application-outcome diagnostic route. Built-in defaults, kernel recording, capability advertisement and actual delivery are distinct; capture/replay/device access is not authorized. | `source:` S051/S052 in [SOURCES](SOURCES.md), pinned libinput 1.32.0 RST and Wayland 1.26.0 core XML. Package drift is recorded in [lesson](lessons/round-15.md); no feature execution or full U6 coverage. |
 | `knowledge/waybar-observation-boundaries-r16.md` (round 16; covers U7) | Tagged custom-module producer contract → parser/format/visibility → GTK markup → rendered-observation boundary. Producer data is not current bar text; no producer or UI execution is admitted. | `source:` S053/S054 in [SOURCES](SOURCES.md); raw source digests `.ufo/waves/round-16/evidence/source-bindings.json`; actual rendering remains `[UNK]`. |
 | `knowledge/idle-lock-route-r17.md` (round 17; surface P6) | Documentary upstream contract for hypridle v0.1.8 and hyprlock v0.9.6 (listener timeouts, lock/sleep hooks, inhibit) joined to the host's declared files by sha256 and line anchor. Declared timings are not observed behaviour; transitions and lock success stay `[UNK]`. | `source:` S063–S069 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/hypridle.conf` and `hyprlock.conf` by sha256; open unknowns in [idle-lock-plane.md](knowledge/idle-lock-plane.md) §11. No lock, suspend or listener is triggered. |
-| `knowledge/terminal-route-r17.md` (round 17; surface P4) | Documentary route from the Hyprland launch binding through `xdg-terminal-exec` v0.14.3 and `xdg-terminals.list` (first entry `Alacritty.desktop`) to the Alacritty v0.17.0 config-import contract. Which terminal actually launches and reload effects stay `[UNK]`. | `source:` S056–S060 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/bindings.conf`, `~/.config/xdg-terminals.list`, `Alacritty.desktop` by sha256. No terminal is launched. |
+| `knowledge/terminal-route-r17.md` (round 17; surface P4) | Documentary route from the Hyprland launch binding through `xdg-terminal-exec` v0.14.3 and `xdg-terminals.list` (first entry `Alacritty.desktop`) to the Alacritty v0.17.0 config-import contract. Which terminal actually launches and reload effects stay `[UNK]`. | `source:` S056–S060, S071 in [SOURCES](SOURCES.md); host bytes `~/.config/hypr/bindings.conf`, `~/.config/xdg-terminals.list`, `Alacritty.desktop` by sha256. No terminal is launched. |
 
 ## Quality bar
 
@@ -116,10 +116,11 @@ Index completeness does not retire these unresolved surfaces:
   GTK/widget state, pixels, CSS effects, freshness and hardware values stay
   unmeasured; no capability to read the live bar is claimed. Host recovery
   remains operator-owned under the round-15 rejected-harmed closure.
-- Round 17 moves P6 screen/idle (hypridle/hyprlock) and P4 terminal-emulator
-  configs onto **documentary** sourced ground: [idle/lock route](knowledge/idle-lock-route-r17.md)
+- Round 17 moves P6 screen/idle (hypridle/hyprlock) and one Alacritty-only
+  P4 terminal route onto **documentary** sourced ground (foot, kitty and
+  ghostty trees remain unsourced): [idle/lock route](knowledge/idle-lock-route-r17.md)
   and [terminal route](knowledge/terminal-route-r17.md). Still open: idle/lock
   transitions, listener firing, lock success and stop-cause; which terminal
   actually launches and Alacritty reload effects; P3 Walker and P5
-  theme/wallpaper sourced routes. Host binaries stay `[UNK]` (pacman.log pkgver
-  is a log line, not a running-binary fact).
+  theme/wallpaper sourced routes. Compiled host binaries stay `[UNK]` (a
+  pacman.log pkgver is a log line, not a running-binary fact).

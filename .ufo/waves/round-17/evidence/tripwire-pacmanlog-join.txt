@@ -10,3 +10,9 @@ pacman.log:2429 04:25:16-0300 pacman -S --needed --noconfirm libinput libinput-t
 # not mado window: 2026-10-19T20:48 dmidecode, 21:02 gitleaks (before mado round 13)
 # tripwire-only elevated call with no transaction: MadoR15.ReviewDocsEra.jsonl:50 `sudo -n true` (privilege probe, undisclosed in round-15 lesson/LOG: grep count 0)
 # result: 4/4 mado-window package transactions joined to exactly one tripwire host_mutation pacman finding each; 0 tripwire pacman transactions without a log line
+# wave-2 correction (append-only): the join holds 4/4 by call START time taken from each call's
+# custom/tool_execution_start record, 3/4 by record timestamp. MadoR14.OutputSpec.jsonl:65 is a cursor
+# provider-history record (34 turns / 50 calls; line timestamp 05:45:52.190Z = write time); its
+# `sudo pacman -S --needed --noconfirm wlr-protocols` call started 05:41:32.451Z (= pacman.log:2423
+# 02:41:32-0300). Sources: w2 RevengeMultiCallRecord, AuditR14Join. The 13 pacman runs 07:45-09:39 have
+# no recorded actor in the log; "non-lane" means outside every mado round window, not a known actor.

@@ -48,7 +48,9 @@ KEYWORDS = {"if", "then", "elif", "else", "fi", "for", "while", "until", "do",
             "done", "case", "esac", "time", "!", "{", "}", "function"}
 SEPARATORS = {";", "&&", "||", "|", "&", "|&", ";;", "(", ")", "\n"}
 REDIRECTS = {">", ">>", "<", "<<", "<<<", ">&", "<&", ">|", "&>", "&>>", "<>"}
-XARGS_ARG_OPTS = {"-I", "-n", "-P", "-d", "-a", "-E", "-s", "-L", "-i"}
+XARGS_ARG_OPTS = {"-I", "-n", "-P", "-d", "-a", "-E", "-s", "-L", "-i", "--arg-file",
+                  "--max-args", "--max-procs", "--delimiter", "--max-lines", "--max-chars",
+                  "--eof", "--replace"}
 
 SYSTEMCTL_QUERY = {"status", "show", "is-active", "is-enabled", "is-failed",
                    "is-system-running", "list-units", "list-unit-files",
@@ -68,7 +70,9 @@ HYPRCTL_MUTATE = {"dispatch", "keyword", "reload", "kill", "setcursor",
                   "eval"}
 HYPRCTL_ARG_OPTS = {"-i", "--instance"}
 OMARCHY_MUTATE = ("restart", "refresh", "install", "update", "remove",
-                  "theme-set", "toggle", "launch", "pkg-", "lock", "wake")
+                  "theme-set", "toggle", "launch", "pkg-", "lock", "wake", "reboot",
+                  "shutdown", "logout", "-set", "reset", "setup", "snapshot", "sudo",
+                  "hibernat", "config", "plymouth", "enable", "disable", "suspend")
 HOST_MUTATION_BINS = {"pkill", "killall", "mkinitcpio", "bootctl",
                       "grub-mkconfig", "systemd-inhibit", "reboot", "poweroff",
                       "shutdown", "halt", "systemd-run", "su"}
@@ -78,14 +82,14 @@ LIVE_PROBE_BINS = {"journalctl", "libinput", "evtest", "wayland-info", "wev",
                    "dbus-send", "gdbus", "notify-send", "makoctl", "waybar",
                    "walker", "hypridle", "hyprlock", "alacritty", "pgrep",
                    "pidof", "xdg-terminal-exec", "wpctl", "brightnessctl",
-                   "hyprpaper", "hyprsunset", "uwsm", "uwsm-app"}
+                   "hyprpaper", "hyprsunset", "uwsm", "uwsm-app", "ps", "dmesg",
+                   "wl-paste"}
 SPAWN_FUNCS = {"run", "call", "check_call", "check_output", "Popen",
                "getoutput", "getstatusoutput"}
 SHELL_STRING_FUNCS = {"os.system", "os.popen", "subprocess.getoutput",
                       "subprocess.getstatusoutput",
                       "asyncio.create_subprocess_shell"}
-REFUSED_NAMES = re.compile(
-    r"^(agent\.db.*|.*\.db|.*\.db-(shm|wal)|auth\.json|oauth.*|credentials?(\.[a-z]+)?)$", re.I)
+REFUSED_NAMES = re.compile(r"^agent\.db", re.I)  # only .jsonl files are ever opened
 SECRET_PATTERNS = (
     re.compile(r"(?<=://)[^/\s:@]+:[^/\s@]+(?=@)"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
@@ -96,6 +100,16 @@ MAX_COMMAND = 240
 
 class CouldNotEvaluate(Exception):
     pass
+
+
+NESTED = {"eval_unparsed": 0, "unparsed_spawns": 0}  # python bodies reached from shell
+
+
+def nested_eval(code):
+    hits, un_eval, un_spawn = classify_eval(code, "py")
+    NESTED["eval_unparsed"] += un_eval
+    NESTED["unparsed_spawns"] += un_spawn
+    return hits
 
 
 def redact(text):
@@ -149,23 +163,29 @@ def tokenize(line):
     lex = shlex.shlex(line, posix=True, punctuation_chars=";&|()<>")
     lex.whitespace_split = True
     lex.whitespace = " \t\r"
-    lex.commenters = "#"
+    lex.commenters = ""  # '#' is a comment only at word start: handled in segments()
     return list(lex)
 
 
 def segments(tokens):
     seg = []
     skip_next = False
-    for tok in tokens:
+    for i, tok in enumerate(tokens):
         if skip_next:
             skip_next = False
             continue
-        if tok in SEPARATORS or tok == "\n":
+        if tok.startswith("#"):
+            break  # comment to end of line (a word starting with '#')
+        nxt = tokens[i + 1] if i + 1 < len(tokens) else ""
+        if tok.isdigit() and nxt and set(nxt) <= set("<>&"):
+            continue  # file-descriptor number of a redirection (2>/dev/null)
+        if tok in SEPARATORS or tok == "\n" or (tok and set(tok) <= set(";&|()") and
+                                                 set(tok) & set(";|()")):
             if seg:
                 yield seg
             seg = []
-        elif tok in REDIRECTS or (tok and set(tok) <= set("<>&|") and tok not in SEPARATORS):
-            skip_next = True
+        elif tok in REDIRECTS or (tok and set(tok) <= set("<>&|")):
+            skip_next = not tok.endswith("&") or tok in (">&", "<&")
         else:
             seg.append(tok)
     if seg:
@@ -215,6 +235,9 @@ def strip_prefix(seg):
         head = seg[0]
         if re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", head) or head in KEYWORDS:
             seg.pop(0)
+            if head == "time":
+                while seg and seg[0] in ("-p", "--"):
+                    seg.pop(0)
             changed = True
             continue
         base = os.path.basename(head)
@@ -223,7 +246,10 @@ def strip_prefix(seg):
         if base in WRAPPERS:
             seg.pop(0)
             while seg and seg[0].startswith("-") and seg[0] != "--":
-                seg.pop(0)
+                opt = seg.pop(0)
+                if (base == "exec" and opt == "-a") or (base == "stdbuf" and opt in ("-i", "-o", "-e")):
+                    if seg:
+                        seg.pop(0)
             if seg and seg[0] == "--":
                 seg.pop(0)
             changed = True
@@ -231,14 +257,29 @@ def strip_prefix(seg):
             seg.pop(0)
             while seg and (seg[0].startswith("-") or re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", seg[0])):
                 opt = seg.pop(0)
-                if opt in ("-u", "-C", "-S") and seg:
+                if opt == "--":
+                    break
+                if opt in ("-S", "--split-string") and seg:
+                    try:
+                        seg = shlex.split(seg.pop(0)) + seg  # payload is a command line
+                    except ValueError:
+                        pass
+                    break
+                if opt.startswith("--split-string="):
+                    try:
+                        seg = shlex.split(opt.split("=", 1)[1]) + seg
+                    except ValueError:
+                        pass
+                    break
+                if opt in ("-u", "-C", "--unset", "--chdir") and seg:
                     seg.pop(0)
             changed = True
         elif base == "nice":
             seg.pop(0)
-            if seg and seg[0] == "-n" and len(seg) > 1:
+            if seg and seg[0] in ("-n", "--adjustment") and len(seg) > 1:
                 seg = seg[2:]
-            elif seg and re.match(r"^-\d+$", seg[0]):
+            elif seg and (re.match(r"^-\d+$", seg[0]) or re.match(r"^-n-?\d+$", seg[0])
+                          or seg[0].startswith("--adjustment=")):
                 seg.pop(0)
             changed = True
         elif base == "ionice":
@@ -254,8 +295,12 @@ def strip_prefix(seg):
                 opt = seg.pop(0)
                 if opt in ("-s", "-k", "--signal", "--kill-after") and seg:
                     seg.pop(0)
+            if seg and seg[0] == "--":
+                seg.pop(0)
             if seg:
                 seg.pop(0)  # duration
+            if seg and seg[0] == "--":
+                seg.pop(0)
             changed = True
         elif base == "xargs":
             seg.pop(0)
@@ -266,10 +311,20 @@ def strip_prefix(seg):
             changed = True
         elif base == "flock":
             seg.pop(0)
+            payload = None
             while seg and seg[0].startswith("-"):
-                seg.pop(0)
+                opt = seg.pop(0)
+                if opt in ("-w", "-E", "--timeout", "--conflict-exit-code") and seg:
+                    seg.pop(0)
             if seg:
-                seg.pop(0)  # lock file
+                seg.pop(0)  # lock file or fd
+            if seg and seg[0] in ("-c", "--command") and len(seg) > 1:
+                payload = seg[1]
+            if payload is not None:
+                try:
+                    seg = shlex.split(payload)
+                except ValueError:
+                    seg = payload.split()
             changed = True
     return seg
 
@@ -291,20 +346,22 @@ def first_verb(args, arg_opts):
 
 def classify_pacman(argv0, args):
     op = None
+    long_ops = {"--sync": "S", "--query": "Q", "--remove": "R",
+                "--upgrade": "U", "--database": "D", "--files": "F",
+                "--deptest": "T", "--version": "V"}
     for a in args:
         if a.startswith("--"):
-            long_ops = {"--sync": "S", "--query": "Q", "--remove": "R",
-                        "--upgrade": "U", "--database": "D", "--files": "F",
-                        "--deptest": "T", "--version": "V"}
-            if a in long_ops and op is None:
-                op = (a, long_ops[a])
-        elif a.startswith("-") and len(a) > 1:
+            name = a.split("=", 1)[0]
+            hits = [k for k in long_ops if k.startswith(name)] if len(name) > 3 else []
+            if len(hits) == 1 and op is None:  # getopt_long accepts unique prefixes
+                op = (a, long_ops[hits[0]])
+        elif a.startswith("-") and len(a) > 1 and a[1:].isalpha():
             letters = [c for c in a[1:] if c.isupper()]
             if letters and op is None:
                 op = (a, letters[0])
     flags = set()
     for a in args:
-        if a.startswith("-") and not a.startswith("--"):
+        if a.startswith("-") and not a.startswith("--") and a[1:].isalpha():
             flags.update(a[1:])
         elif a in ("--refresh", "--sysupgrade", "--downloadonly", "--clean"):
             flags.add({"--refresh": "y", "--sysupgrade": "u",
@@ -318,6 +375,8 @@ def classify_pacman(argv0, args):
         return ("package_query", argv0)
     tok, letter = op
     rule = "%s:%s" % (argv0, tok)
+    if letter == "F" and "y" in flags:
+        return ("host_mutation", rule)  # -Fy refreshes the files database
     if letter in ("Q", "F", "T", "V"):
         return ("package_query", rule)
     if letter in ("R", "U", "D"):
@@ -361,7 +420,7 @@ def classify_shell(text, depth=0):
             if fed_to_shell:
                 out.extend(classify_shell(body, depth + 1))
             elif fed_to_python:
-                out.extend(classify_eval(body, "py")[0])
+                out.extend(nested_eval(body))
     return out
 
 
@@ -417,7 +476,7 @@ def classify_segment(seg, depth, unparsed):
     if re.fullmatch(r"python[0-9.]*", argv0) and "-c" in args:
         i = args.index("-c")
         if i + 1 < len(args):
-            return classify_eval(args[i + 1], "py")[0]
+            return nested_eval(args[i + 1])
         return hits
     if argv0 in ("pacman", "yay", "paru"):
         cls, rule = classify_pacman(argv0, args)
@@ -443,7 +502,8 @@ def classify_segment(seg, depth, unparsed):
             hit("host_mutation", "systemctl:%s" % verb)
         return hits
     if argv0 == "loginctl":
-        verb = first_verb(args, set())
+        verb = first_verb(args, {"-H", "-M", "-n", "-p", "-P", "-o", "--host", "--machine",
+                                 "--lines", "--property", "--output", "--signal", "-s"})
         hit("host_mutation" if verb in LOGINCTL_MUTATE else "live_probe",
             "loginctl:%s" % (verb or "list-sessions"))
         return hits
@@ -460,12 +520,15 @@ def classify_segment(seg, depth, unparsed):
             "hyprctl:%s" % (verb or "help"))
         return hits
     if argv0 == "kill":
-        if any(a in ("-0", "-l", "-L", "--list") for a in args):
-            return hits
+        if args and args[0] in ("-0", "-l", "-L", "--list", "-s0"):
+            return hits  # existence test or signal listing only (first argument)
         hit("host_mutation", "kill")
         return hits
     if argv0 in HOST_MUTATION_BINS:
         hit("host_mutation", argv0)
+        return hits
+    if argv0 == "omarchy":
+        hit("host_mutation", "omarchy")  # dispatcher: routes to arbitrary omarchy-* helpers
         return hits
     if argv0.startswith("omarchy-"):
         hit("host_mutation" if any(k in argv0 for k in OMARCHY_MUTATE) else "live_probe", argv0)
@@ -521,17 +584,30 @@ def classify_eval(code, language):
         tree = compile("\n".join(py), "<eval>", "exec",
                        flags=ast.PyCF_ONLY_AST | ast.PyCF_ALLOW_TOP_LEVEL_AWAIT,
                        dont_inherit=True)
-    except (SyntaxError, ValueError):
+    except Exception:  # SyntaxError, ValueError, MemoryError, RecursionError: never executed
         return hits, 1, 0
     from_subprocess = set()
+    aliases = {"sp": "subprocess"}  # bound name -> canonical dotted prefix
     for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module == "subprocess":
-            from_subprocess.update(a.asname or a.name for a in node.names)
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.name in ("subprocess", "os", "asyncio") and a.asname:
+                    aliases[a.asname] = a.name
+        elif isinstance(node, ast.ImportFrom) and node.module in ("subprocess", "os", "asyncio"):
+            for a in node.names:
+                if a.name == "*":
+                    continue
+                aliases[a.asname or a.name] = "%s.%s" % (node.module, a.name)
+                if node.module == "subprocess":
+                    from_subprocess.add(a.asname or a.name)
     unparsed = 0
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
         name = dotted(node.func) or ""
+        head, _, rest = name.partition(".")
+        if head in aliases:
+            name = aliases[head] + ("." + rest if rest else "")
         tail = name.rsplit(".", 1)[-1]
         is_sub = (name.startswith(("subprocess.", "sp.")) and tail in SPAWN_FUNCS) or \
                  (name == tail and tail in from_subprocess and tail in SPAWN_FUNCS)
@@ -562,8 +638,8 @@ def classify_eval(code, language):
                 unparsed += 1
             continue
         arg = node.args[0] if node.args else None
-        shell_kw = any(k.arg == "shell" and isinstance(k.value, ast.Constant) and k.value.value
-                       for k in node.keywords)
+        shell_kw = any(k.arg == "shell" and not (isinstance(k.value, ast.Constant) and not k.value.value)
+                       for k in node.keywords)  # non-literal shell= is treated as shell
         lst = str_list(arg) if arg is not None else None
         if lst is not None:
             hits.extend(classify_shell(shlex.join(lst)))
@@ -586,7 +662,9 @@ def refuse_path(path):
         raise CouldNotEvaluate("refused symlink: %s" % path)
     real = os.path.realpath(path)
     agent = os.path.realpath(os.path.expanduser("~/.omp/agent"))
-    if real.startswith(agent + os.sep) and not real.startswith(os.path.join(agent, "sessions") + os.sep):
+    sessions = os.path.join(agent, "sessions")
+    if (real == agent or real.startswith(agent + os.sep)) and not (
+            real == sessions or real.startswith(sessions + os.sep)):
         raise CouldNotEvaluate("refused path outside ~/.omp/agent/sessions: %s" % path)
     if REFUSED_NAMES.search(os.path.basename(real)):
         raise CouldNotEvaluate("refused file name: %s" % path)
@@ -613,7 +691,13 @@ def discover(paths):
             raise CouldNotEvaluate("not a regular file or directory: %s" % p)
     if not files:
         raise CouldNotEvaluate("no .jsonl file found")
-    return files
+    seen, unique = set(), []
+    for f in files:  # the same file reached twice is scanned once
+        key = os.path.realpath(f)
+        if key not in seen:
+            seen.add(key)
+            unique.append(f)
+    return unique
 
 
 def reject_constant(value):
@@ -659,6 +743,7 @@ def scan_file(path):
                 continue
             name = item.get("name")
             args = item.get("arguments") if isinstance(item.get("arguments"), dict) else {}
+            NESTED["eval_unparsed"] = NESTED["unparsed_spawns"] = 0
             if name == "bash":
                 entry["bash_calls"] += 1
                 cmd = args.get("command")
@@ -673,6 +758,8 @@ def scan_file(path):
                 entry["unparsed_spawns"] += un_spawn
             else:
                 continue
+            entry["eval_unparsed"] += NESTED["eval_unparsed"]
+            entry["unparsed_spawns"] += NESTED["unparsed_spawns"]
             seen = set()
             for cls, rule, argv0, text in hits:
                 key = (cls, rule)
@@ -682,7 +769,7 @@ def scan_file(path):
                 findings.append({
                     "file": path, "line": lineno,
                     "tool_call_id": str(item.get("id", "")),
-                    "timestamp": obj.get("timestamp"),
+                    "timestamp": obj.get("timestamp") if isinstance(obj.get("timestamp"), str) else str(obj.get("timestamp")),
                     "tool": name, "class": cls, "rule": rule,
                     "argv0": argv0, "command": redact(text),
                 })
@@ -763,6 +850,12 @@ def run_selftest(directory):
         exp = sorted(key(w, True) for w in want)
         first_ok = out[0].startswith("MADO_TRIPWIRE: ") if out else False
         ok = verdict is not None and first_ok and got_exit == want_exit and got == exp
+        if ok and "want_label" in case:
+            ok = out[0] == "MADO_TRIPWIRE: " + case["want_label"]
+        if ok and "want_error_contains" in case:
+            ok = case["want_error_contains"] in str((verdict or {}).get("error", ""))
+        if ok and "want_ids" in case:  # tool_call_id attribution, in finding order
+            ok = [f["tool_call_id"] for f in verdict["findings"]] == case["want_ids"]
         if ok:
             passed += 1
             print("CASE %s ok" % name)
@@ -814,5 +907,7 @@ if __name__ == "__main__":
     except BaseException as exc:  # never let an internal error read as "findings"
         print("MADO_TRIPWIRE: could_not_evaluate")
         print(json.dumps({"schema": "mado-tripwire-verdict-v1", "exit": 2,
-                          "error": "internal %s" % type(exc).__name__}, ensure_ascii=True))
+                          "error": "internal %s" % type(exc).__name__, "files": [],
+                          "findings": [], "counts": {c: 0 for c in CLASSES},
+                          "permitted": [], "unpermitted": 0}, ensure_ascii=True))
         sys.exit(2)
