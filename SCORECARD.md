@@ -903,7 +903,7 @@ Measured with `python3 .ufo/waves/round-17/measure.py REV` (receipts
 |---|---|---|
 | C1 calibration, literal lesson-citation fraction | 14/22 = 6.3636 → 15/23 = 6.5217 (+0.1581) | improved narrowly; only criterion 23 added (append-only); semantic block counter 17/22 = 7.7273 → 18/23 = 7.8261 (QUALITY 22); label check `evidence/label-check-final.txt` EXPECT 7/7 exit 0, R16-V1 red line MISMATCH |
 | C2 coverage, rubric V (PROVINCE P1-P6) | 2/6 = 3.3333 → 4/6 = 6.6667 | improved as declared, joined, documentary sourcing: P1/P2 inherited, P6 idle/lock route, P4 one Alacritty-only route; behaviour, launch and host binaries `[UNK]`; V cannot detect an invented row (wave-2 E1) — non-author re-open of S056-S071 required |
-| C3 operability capability, post-hoc transcript tripwire | absent → present (`tools/mado-tripwire.py` sha256 `7a98720e…`) | capability acquired, detection after the fact only; suites 9/9, 16/16, 33/33, 26/26 (`evidence/tripwire-selftest-*.txt`); anchor exit 1; adversarial 4/26 pinned as known limits; not prevention, not R15-V1 remediation |
+| C3 operability capability, post-hoc transcript tripwire | absent → present (`tools/mado-tripwire.py` sha256 `962919ce…` after the late P11 fix) | capability acquired, detection after the fact only; suites 9/9, 16/16, 33/33, 30/30 (`evidence/tripwire-selftest-*.txt`); anchor exit 1; adversarial 4/26 pinned as known limits; not prevention, not R15-V1 remediation |
 
 Harm watch at `f71ccbe`: hermetic selftest 372/372 (`harm-legacy-selftest.txt`,
 gate sha `fba82a66…` unchanged), classifier 52/52, U 7/7, navigation 32/32,

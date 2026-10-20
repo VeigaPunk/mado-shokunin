@@ -159,11 +159,35 @@ def logical_lines(text):
     return out
 
 
+def strip_comment(line):
+    """Drop a bash comment: '#' at word start, outside quotes, not escaped."""
+    quote = None
+    i = 0
+    while i < len(line):
+        ch = line[i]
+        if quote:
+            if ch == "\\" and quote == '"':
+                i += 2
+                continue
+            if ch == quote:
+                quote = None
+        elif ch == "\\":
+            i += 2
+            continue
+        elif ch in ("'", '"'):
+            quote = ch
+        elif ch == "#" and (i == 0 or line[i - 1] in " \t\n;&|()<>"):
+            return line[:i]
+        i += 1
+    return line
+
+
 def tokenize(line):
+    line = strip_comment(line)
     lex = shlex.shlex(line, posix=True, punctuation_chars=";&|()<>")
     lex.whitespace_split = True
     lex.whitespace = " \t\r"
-    lex.commenters = ""  # '#' is a comment only at word start: handled in segments()
+    lex.commenters = ""  # comments removed quote-aware by strip_comment()
     return list(lex)
 
 
@@ -174,8 +198,6 @@ def segments(tokens):
         if skip_next:
             skip_next = False
             continue
-        if tok.startswith("#"):
-            break  # comment to end of line (a word starting with '#')
         nxt = tokens[i + 1] if i + 1 < len(tokens) else ""
         if tok.isdigit() and nxt and set(nxt) <= set("<>&"):
             continue  # file-descriptor number of a redirection (2>/dev/null)

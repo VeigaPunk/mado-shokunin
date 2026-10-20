@@ -21,12 +21,12 @@ will survive the next line shift. Re-anchor on the hash before landing.
 
 ## Verdict
 
-Nine hunks are **output-identical** and one (P11) is a **behavioural fix** that only changes quoted-`#`
-inputs. All ten keep the three suites green:
+Nine hunks are **output-identical**; P11 is a **behavioural fix** (a revert of a worktree regression) that
+changes only quoted or escaped `#` inputs. All ten keep the three suites green:
 
 - On B: P1–P9 → 913 → 910 lines, full verdict JSON byte-identical on all 49 regular fixtures, 13/13
   differential comparisons identical. Adding P11 → 908 lines, suites green, 0/13 diffs on the standing
-  corpus, and the intended delta appears only on the new quoted-hash probe.
+  corpus, and the intended deltas appear only on the new comment probe (`echo '# x'; …`, `echo \# x; …`).
 - On A: the same nine hunks → 818 → 816 lines, 13/13 identical, byte-identical fixture verdicts. (A's P7
   additionally hoisted a per-argument `long_ops` rebuild that B has already fixed.)
 
@@ -48,6 +48,8 @@ catch-all still destroys commit-SHA evidence (F1) and the `omarchy-*` substring 
   compared with `cmp`. B baseline: 53 findings, counts `host_mutation 34 / live_probe 6 / package_query 13`,
   exit 1.
 - Every proposal was also built and measured **alone** (per-row table below), not only in the combined patch.
+- A six-line comment probe (`commentprobe.jsonl`) covers comment-only, trailing-comment, quoted-`#`,
+  escaped-`#` and `a#b` lines; used for P11 and F4.
 - Hunk builder asserts exactly one match per hunk (`build_now.py`), so a later edit fails loudly instead of
   applying to the wrong site.
 
@@ -65,7 +67,7 @@ catch-all still destroys commit-SHA evidence (F1) and the `omarchy-*` substring 
 | P8 | 411–413, 467–473 | one `shell_code()` for the duplicated shell `-c` predicate | +5 | duplicate branch |
 | P9 | 800–804, 876–880, 888–892, 894–898 | one `emit_failure()` for four copies of the exit-2 payload | −5 | duplicate payload |
 | P10 | 578/580, 846–849, 851, 865 | nits, not applied | 0 | — |
-| P11 | 177–178 | drop the `tok.startswith("#")` break (comments are already stripped by `tokenize`) | −2 | **fix**, not neutral |
+| P11 | 166, 177–178 | restore `lex.commenters = "#"` and delete the post-token `#` break — A's mechanism | −2 | **fix**, not neutral |
 | — | P1–P9 | 913 → 910 | **−3** | byte-identical |
 | — | P1–P9+P11 | 913 → **908** (non-blank 849 → 840) | **−5** | suites green, one intended delta |
 
@@ -228,28 +230,6 @@ keeps the `bash -c` with no argument edge exact. +5 lines; skip if LOC is the on
 Identical keys and `sort_keys=True`, so bytes are unchanged; the eight refusal comparisons cover all four
 sites. Leave the `__main__` internal-error payload alone (deliberately smaller shape).
 
-### P11 — dead comment branch hides quoted `#` (177–178) — behavioural fix
-
-```diff
--        if tok.startswith("#"):
--            break  # comment to end of line (a word starting with '#')
-```
-
-`tokenize` already sets `commenters = "#"`, so an unquoted comment never produces a token; the *only* tokens
-that start with `#` come from quoting or escaping, and the branch truncates the rest of the line on them.
-Measured on B:
-
-```
-echo '# x'; pacman -Syu      -> []                                   (missed)
-echo 'a # b'; sudo pacman -Syu -> sudo + pacman:-Syu                 (no break; correct)
-```
-
-After deleting the two lines, the first case yields `pacman:-Syu`. Suites stay `9/9 16/16 33/33`; the standing
-differential corpus shows 0/13 diffs (its quoted-`#` string is shell-unbalanced, so it never reaches the
-branch); the intended delta is exactly the quoted-hash probe. This branch does not exist at A — it is new in B,
-so it is a worktree regression, not a C3 claim. Add a fixture (`echo '# x'; pacman -Syu` expect
-`pacman:-Syu`) with the deletion.
-
 ### P10 — nits (not applied; zero behaviour change)
 
 - 578/580: the leading indentation is recovered twice with `re.match(r"^\s*", ln)`; capture it in the first
@@ -258,6 +238,36 @@ so it is a worktree regression, not a C3 claim. Add a fixture (`echo '# x'; pacm
 - 846–849: `key()` nests a `use_file` conditional inside a `from_want` conditional; early-return on
   `not use_file` is the same tuple and reads better.
 - 865: `hashlib.sha256(open(me, "rb").read())` leaks the handle; use `with open(...)`.
+
+### P11 — comment handling lost quote context (166, 177–178) — behavioural fix
+
+B sets `lex.commenters = ""` (166) and re-implements comments *after* tokenization by breaking on any token
+that starts with `#` (177–178). Post-shlex there is no quote or escape information left, so a quoted or
+escaped `#` is treated as a comment and truncates the rest of the line. A did it correctly: `commenters = "#"`,
+no branch. Measured on one probe transcript:
+
+| command | A | B (`7a98720e`) | branch deleted only | B + P11 |
+|---|---|---|---|---|
+| `# comment; sudo pacman -Syu` | clean | clean | **false positive** (sudo, pacman) | clean |
+| `echo '# x'; pacman -Syu` | `pacman:-Syu` | **missed** | `pacman:-Syu` | `pacman:-Syu` |
+| `echo \# x; pacman -Syu` | `pacman:-Syu` | **missed** | `pacman:-Syu` | `pacman:-Syu` |
+| `pacman -Qq # trailing; sudo pacman -Syu` | only `pacman:-Qq` | only `pacman:-Qq` | **false positive** (sudo, pacman) | only `pacman:-Qq` |
+
+```diff
+ def tokenize(line):
+     ...
+-    lex.commenters = ""  # '#' is a comment only at word start: handled in segments()
++    lex.commenters = "#"
+...
+-        if tok.startswith("#"):
+-            break  # comment to end of line (a word starting with '#')
+```
+
+Deleting only the branch is **wrong** — measured: comment-only and trailing-comment lines then produce
+findings. The pair restores A's exact behaviour on every probe line. Suites stay `9/9 16/16 33/33`; the standing
+differential corpus shows 0/13 diffs; the only classification changes are the two quoted/escaped-`#` cases
+above, both restorations of A. This is a worktree regression, not a C3 claim. Land with fixtures:
+`echo '# x'; pacman -Syu` expect `host_mutation pacman:-Syu`; `# comment; sudo pacman -Syu` expect clean.
 
 ## Measured equivalence (artifact B, `7a98720e`)
 
@@ -274,13 +284,13 @@ Every proposal alone: `9/9 16/16 33/33`, `13 comparisons, 0 diffs`.
 | P7 | 0 | green | 0/13 |
 | P8 | +5 | green | 0/13 |
 | P9 | −5 | green | 0/13 |
-| P11 | −2 | green | 0/13 (intended delta only on the quoted-hash probe) |
+| P11 | −2 | green | 0/13 (intended deltas only on quoted/escaped `#`; comment lines stay clean) |
 | P1–P9 | −3 (910) | green | 0/13 |
 | P1–P9+P11 | −5 (908) | green | 0/13 |
 
 Combined P1–P9: full verdict over the 49 fixtures `cmp`-identical to B (exit 1, 53 findings, counts
-34/6/13); `py_compile` clean. Combined P1–P9+P11: same suites, and the only measured classification change is
-the quoted-`#` case above.
+34/6/13); `py_compile` clean. Combined P1–P9+P11: same suites, and the only measured classification changes
+are the quoted/escaped-`#` restorations above.
 
 Artifact A (`4ced68d3`, 818 lines) was measured the same way before the drift: nine hunks → 816 lines,
 `9/9 16/16 33/33`, 13/13 identical, `cmp`-identical over the same 49 files. A's P7 also removed a
@@ -313,9 +323,11 @@ probe now yields `pacman:-Syu`. No action; recorded so the A→B delta is not mi
 Across the 49 fixture `bash` calls and 8 `eval` calls: bare `su` 0 occurrences; backticks 0 (the backtick
 branch in `substitutions` is unpinned); `systemd-run` 1; `>` and `<` 1 each, and neither fixture result
 depends on redirect skipping. A *leading* redirect does: `>/tmp/log sudo pacman -Syu` is caught only because
-`>` and its target are skipped (measured; without skipping the predicate yields no finding). If P1 lands,
-add: (a) a bare `su` case, (b) a backtick substitution case, (c) the leading-redirect case, (d) the quoted-`#`
-case for P11.
+`>` and its target are skipped (measured; without skipping the predicate yields no finding). No fixture
+contains a quoted or escaped `#`, which is why B's `segments`/`tokenize` change (P11) regressed a case A
+handled without any suite turning red. If P1/P11 land, add: (a) a bare `su` case, (b) a backtick substitution
+case, (c) the leading-redirect case, (d) `echo '# x'; pacman -Syu` → `pacman:-Syu` and
+`# comment; sudo pacman -Syu` → clean.
 
 ## Preserved contract (unchanged by P1–P9)
 
@@ -323,8 +335,8 @@ CLI (`--scan PATH… [--permit CLASS…]`, `--selftest DIR`), first line
 `MADO_TRIPWIRE: clean|permitted_only|findings|could_not_evaluate`, JSON schema `mado-tripwire-verdict-v1`
 with the same keys, exit precedence 2 > 1 > 0, class names and every rule string, per-toolCall dedupe on
 `(class, rule)`, `SELFTEST_SCRIPT_SHA256` output, and every classification (byte-identical verdicts).
-`SELFTEST_SUMMARY` counts unchanged. P11 is the only intentional behaviour change and only adds a finding on
-quoted/escaped `#` tokens.
+`SELFTEST_SUMMARY` counts unchanged. P11 is the only intentional behaviour change: it restores A's comment
+handling and only affects lines containing a quoted or escaped `#`.
 
 ## Landing notes / tradeoffs
 
@@ -340,8 +352,8 @@ quoted/escaped `#` tokens.
   skip them.
 - Deliberately not touched: `logical_lines` re-runs `shlex.split` on the growing accumulator (O(n²) in logical
   lines) and `substitutions` recounts `"` before each `'` (O(n²) in quotes). A replacement needs a
-  quote/comment-aware scanner; `# don't` works today *because* shlex's `commenters` is the oracle. Keep and
-  document.
+  quote/comment-aware scanner; `logical_lines`' `shlex.split(comments=True)` is the oracle that keeps
+  `# don't` balanced. Keep and document.
 - Deliberately not touched: `classify_shell` calls `strip_prefix` twice per segment (once inside
   `classify_segment`, once for the `base` test) — two list copies per segment, no semantic gain in fixing.
 - `NESTED`/`nested_eval` (105–111, 423, 479, 746, 761–762) is live, not dead: it is reset per file and folded
@@ -352,8 +364,9 @@ quoted/escaped `#` tokens.
 
 ## Evidence index (scratch only, `/tmp/simplify-tripwire.3092`)
 
-`base.py` (A), `now.py` (B), `combined.py` (A, P1–P9), `combined_now.py` (B, P1–P9), `combined_now2.py`
-(B, P1–P9+P11), `one_P*.py`, `build_variants.py`, `build_now.py` (hunk tables with one-match assertions),
-`fuzz.py`, `probe.py`, `quotedhash.jsonl`, `now-base.json`, `now-combined.json`, `final-*.json`.
+`base.py` (A), `now.py` (B), `combined.py` (A, P1–P9), `combined_now.py` (B, P1–P9), `p11b.py` and
+`combined_now3.py` (B, P1–P9+P11), `combined_now2.py` (rejected branch-only P11), `one_P*.py`,
+`build_variants.py`, `build_now.py` (hunk tables with one-match assertions), `fuzz.py`, `probe.py`,
+`commentprobe.jsonl`, `quotedhash.jsonl`, `now-base.json`, `now-combined.json`, `final-*.json`.
 Lane state at report time: `tools/mado-tripwire.py` = `7a98720e…` (worktree), HEAD `988b858` blob =
 `4ced68d3…`. Nothing in the lane was written except this report.

@@ -409,6 +409,61 @@
         "live_probe"
       ],
       "want_label": "permitted_only"
+    },
+    {
+      "name": "quoted-hash-not-comment",
+      "args": [
+        "quoted-hash-not-comment.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-Syu",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "escaped-hash-not-comment",
+      "args": [
+        "escaped-hash-not-comment.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-Syu",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "comment-after-separator-is-data",
+      "args": [
+        "comment-after-separator-is-data.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "redirect-target-before-command",
+      "args": [
+        "redirect-target-before-command.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-Syu",
+          "line": 1
+        }
+      ]
     }
   ]
 }

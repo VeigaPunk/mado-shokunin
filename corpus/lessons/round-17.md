@@ -168,3 +168,9 @@ rows corrected in place before closure, each logged old→new here:
 - M1's "exit 1" describes the checker before the wave-2 exit-code change; the
   hardened checker exits 0 when all 7 expectations are met
   (`evidence/label-check-final.txt`).
+- Wave-2 fix regression (SimplifyTripwire P11): moving comment handling to a
+  post-shlex `#`-token break hid commands after a quoted or escaped `#`
+  (`echo '# x'; pacman -Syu`). Replaced by quote-aware `strip_comment()`
+  before tokenizing; four new regression cases (quoted, escaped, mid-word,
+  real comment) — `tripwire/w2-regressions` 30/30; tool sha256 `962919ce…`;
+  all real-transcript receipts re-cut with identical counts.
