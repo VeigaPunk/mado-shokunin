@@ -1214,3 +1214,13 @@ positives) are open.
    (harm-watch worktree block, supersede-sweep worktree ledger, frozen-repin README
    receipt without `measured_commit`, frozen pin-spelling normpath, anchor-durability
    exit code) as lesson-cited criteria with reds.
+
+Final-state correction (append-only): after `0fa4125` the gate gained the F9 containment
+`[ -e "$tree/.git" ]` before `rev-parse --git-dir` (w2 ReviewJjFinal: a `.git`-less tree
+under `$HOME` resolved to the dotfiles repo) with scenario OM18. Tools final at
+`7b4839d31d60af5bac40e3e74aec70e928601dfc` (gate `050efc72…`, 4,194 L, selftest 460/460,
+regression PASS, `PIN_MADO` `367ff5ec…`). Final receipts and harm watch re-cut at
+`7b4839d` (commit `d642ce5`): `HARM_WATCH: PASS`, C1 20/28, C2 13/13, C3 6/6, criterion
+27/28 red→green unchanged; receipt claims re-pointed, `EXPECT_SUMMARY: 17/17` (adds the
+post-wave seat scan). Gate selftest 389 → 460: the ten old OM10 assertions were replaced by
+OM10A/B; no other prior assertion lost.
