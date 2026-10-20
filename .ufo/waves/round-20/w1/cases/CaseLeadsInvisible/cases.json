@@ -1,0 +1,76 @@
+{
+  "schema": "mado-tw-precision-cases-v1",
+  "seat": "CaseLeadsInvisible",
+  "cases": [
+    {
+      "name": "L-CaseLeadsInvisible-run-record",
+      "family": "L",
+      "file": "run-record.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "lead"}
+      ],
+      "why": "An undefined bare helper receives the literal pacman query argv; the transcript does not show whether run_record executes it.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    },
+    {
+      "name": "L-CaseLeadsInvisible-import-run-cmd",
+      "family": "L",
+      "file": "import-run-cmd.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "host_mutation", "rule": "sudo", "line": 1, "evidence": "lead"},
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1, "evidence": "lead"}
+      ],
+      "why": "The non-pure imported run_cmd body is outside this transcript, so the stated sudo pacman argv is a lead rather than observed execution.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    },
+    {
+      "name": "L-CaseLeadsInvisible-import-classify-argv",
+      "family": "L",
+      "file": "import-classify-argv.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "host_mutation", "rule": "sudo", "line": 1, "evidence": "lead"},
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1, "evidence": "lead"}
+      ],
+      "why": "The assertion only consumes an imported classifier's result; with its body invisible, passing the literal argv is not evidence that the command ran.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    },
+    {
+      "name": "L-CaseLeadsInvisible-opaque-runner",
+      "family": "L",
+      "file": "opaque-runner.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "host_mutation", "rule": "sudo", "line": 1, "evidence": "lead"},
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1, "evidence": "lead"}
+      ],
+      "why": "The local run binding comes from opaque make_runner(), so the literal argv is a lead and its execution path is not visible.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    },
+    {
+      "name": "L-CaseLeadsInvisible-reset-cleared-helper",
+      "family": "L",
+      "file": "reset-cleared-helper.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 2, "evidence": "lead"}
+      ],
+      "why": "The reset on the second eval cell clears the earlier run_record definition; the later literal argv has no visible helper body.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    },
+    {
+      "name": "L-CaseLeadsInvisible-import-alias",
+      "family": "L",
+      "file": "import-alias.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {"class": "host_mutation", "rule": "sudo", "line": 1, "evidence": "lead"},
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1, "evidence": "lead"}
+      ],
+      "why": "The imported launch alias has no visible body; passing a literal sudo pacman argv warrants lead rows, not observed execution.",
+      "before": {"1f7f995": "fail", "9c54c56": "fail"}
+    }
+  ]
+}

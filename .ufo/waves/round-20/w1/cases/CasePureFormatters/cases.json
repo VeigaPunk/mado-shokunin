@@ -1,0 +1,162 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CasePureFormatters",
+ "cases": [
+  {
+   "name": "P-CasePureFormatters-shlex-join",
+   "family": "P",
+   "file": "shlex-join.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "shlex.join imported by name only renders the sudo pacman -S argv as one quoted string; nothing spawns it.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-json-dumps",
+   "family": "P",
+   "file": "json-dumps.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "json.dumps imported by name serializes the systemctl restart argv to JSON text; nothing spawns it.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-pprint-pformat",
+   "family": "P",
+   "file": "pprint-pformat.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "pprint.pformat imported by name pretty-prints the pacman -Q argv; nothing spawns it.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-textwrap-indent-chain",
+   "family": "P",
+   "file": "textwrap-indent-chain.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "Two same-text defs (block -> line, depth 2) only join and textwrap.indent the systemctl restart argv; no body spawns.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-lambda-join",
+   "family": "P",
+   "file": "lambda-join.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "A same-text lambda whose visible body is ' '.join(argv) only formats the sudo pacman -S argv.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-fstring-def",
+   "family": "P",
+   "file": "fstring-def.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "A same-text def returns an f-string around shlex.join(argv) for the pacman -Q argv; its visible body spawns nothing.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-str-format-bound",
+   "family": "P",
+   "file": "str-format-bound.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "A name bound to a str literal's .format method only renders the systemctl restart argv as text.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-quote-cross-cell",
+   "family": "P",
+   "file": "quote-cross-cell.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "A def in an earlier py cell (no reset) shell-quotes each token with shlex.quote; the later call only formats the sudo pacman -S argv.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-dumps-alias",
+   "family": "P",
+   "file": "dumps-alias.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "json.dumps imported under an alias (from json import dumps as to_json) only serializes the sudo pacman -S argv; the alias binds a pure stdlib callable.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-join-cross-cell-import",
+   "family": "P",
+   "file": "join-cross-cell-import.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "shlex.join imported in an earlier py cell (no reset) is the binding in effect at the later call, which only renders the pacman -Q argv.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-partial-dumps",
+   "family": "P",
+   "file": "partial-dumps.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "functools.partial over json.dumps (not over a spawn) is a configured formatter; calling it on the systemctl restart argv only serializes it.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-fstring-def-control",
+   "family": "P",
+   "file": "fstring-def-control.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "Control: a same-text def returning an f-string over ' '.join(argv) is already resolved and clean at both baselines; it must stay clean.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-CasePureFormatters-dotted-control",
+   "family": "P",
+   "file": "dotted-control.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "Control: module-qualified attribute formatters (shlex.join, json.dumps, pprint.pformat, textwrap.indent) are unflagged at both baselines and must stay clean.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  }
+ ]
+}

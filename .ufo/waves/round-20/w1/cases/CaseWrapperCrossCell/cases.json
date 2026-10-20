@@ -1,0 +1,170 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseWrapperCrossCell",
+ "cases": [
+  {
+   "name": "W-WrapperCrossCell-r13-shape",
+   "family": "W",
+   "file": "WrapperCrossCell-r13-shape.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control: round-13 run_record(name, argv, rc, **kw) body is visible in line 1 (earlier py cell, no reset) and its literal argv reaches subprocess.run, so line 2 is observed, never lead",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-r13-verbatim",
+   "family": "W",
+   "file": "WrapperCrossCell-r13-verbatim.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control: verbatim MadoR13.jsonl:437 def (literal defaults, runs then records) + :470 call that frozen r13-root.jsonl:4 keeps without its def; with the def visible the pacman -Q call is observed",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-kw-argv",
+   "family": "W",
+   "file": "WrapperCrossCell-kw-argv.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "keyword argv= to the line-1 wrapper: rule B reads positional lists only, so 1f7f995 misses it; the visible body binds argv and spawns it, observed",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-check-true",
+   "family": "W",
+   "file": "WrapperCrossCell-check-true.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "line-1 wrapper with a check=True kwarg, called on line 2 with keywords only (check=True, plus timeout= that lands in **kw); the bound argv reaches subprocess.run, so sudo pacman -S is observed",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-two-hop",
+   "family": "W",
+   "file": "WrapperCrossCell-two-hop.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 3,
+     "evidence": "observed"
+    }
+   ],
+   "why": "two hops across cells: pkg_version (line 2) builds the argv from its parameter and hands it to run_record (line 1); the literal call on line 3 reaches subprocess.run, observed there",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-format-then-run",
+   "family": "W",
+   "file": "WrapperCrossCell-format-then-run.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Qi",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "line-1 helper formats the command line from literal parts, prints it, then runs it with shell=True; the line-2 call states every part, so pacman -Qi is observed",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-gap-cell",
+   "family": "W",
+   "file": "WrapperCrossCell-gap-cell.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Ql",
+     "line": 3,
+     "evidence": "observed"
+    }
+   ],
+   "why": "helper defined on line 1, unrelated non-reset py cell on line 2, literal call on line 3: the kernel keeps the def, so pacman -Ql is observed on line 3",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-WrapperCrossCell-git-commit",
+   "family": "W",
+   "file": "WrapperCrossCell-git-commit.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "line-1 helper runs git add then git commit with its bound parameters; the literal line-2 call makes both writes observed (string arguments, so rule B never fired)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}

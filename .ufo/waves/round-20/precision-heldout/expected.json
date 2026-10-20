@@ -1,0 +1,222 @@
+{
+ "schema": "mado-tw-precision-suite-v1",
+ "note": "Round-20 precision suite, assembled by assemble-suite.py from .ufo/waves/round-20/w1/cases/<seat>/ (wave-1 case authors, blind to the repaired tool). Counter: tw-precision.py. `before` is the author's reading, re-measured by the counter. Set: held-out (EDGE)",
+ "cases": [
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a01",
+   "family": "S",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a01.jsonl",
+   "sha256": "5d4ec76e79bbf37958561d0d1347af616d532ae1821e9eeeda98327ae0cd70e0",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E3 by analogy (bash): the same-text function pacman() shadows the binary, so the call runs echo; def line is not an invocation. Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a02",
+   "family": "S",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a02.jsonl",
+   "sha256": "6c7f6b479cb690fd9534f1dcc40c5a8c93053417546003c9181c89afb87c70d8",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E3 by analogy (bash): sudo() shadows sudo, the call runs echo and pacman never runs. Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a15",
+   "family": "S",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a15.jsonl",
+   "sha256": "0320f10a6f95fc193d5166c647c8b364d8e7e2cd5603e523ca102b06bd0c014c",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): a function definition alone runs nothing (a16 `sudo() { echo no; }` merged: same shape). Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a18",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a18.jsonl",
+   "sha256": "3f6f23c0c8efdbe731aa7700748406d359b575a0b253646e93eaaa2a891a2586",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: text states the argv and both visible bodies (f -> g -> \"$@\"), so bash runs pacman -Q; rule A drops defs after one hop (a22 sudo variant, a23 three-hop merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a20",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a20.jsonl",
+   "sha256": "a0f6b362c8e209f3db33f7c3ab79962fcd76410c0db3964ea891423dbc0965d3",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: b's visible body calls the visible run wrapper with a literal sudo pacman -S; bash executes it",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a24",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a24.jsonl",
+   "sha256": "64f179d83c821c8f12eaed172600af59056425d5582602488e406ead804b38e4",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: run is defined before main is called, so bash runs pacman -Q through two visible bodies",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a13",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvHelperFn-a13.jsonl",
+   "sha256": "ba6411b9df68d8177a4670cfef03bb8e021d3326ce1e9299d2f1f5b5bb8698cf",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: visible \"$@\" body and a literal call; the quoted glob only names the package (a14 tilde variant merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvVcs-p16-xargs-jj",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvVcs-p16-xargs-jj.jsonl",
+   "sha256": "13a97dfa636d9735e242511968f9dfee52ed36ab5cae1b7c7b2dc0333e771fb1",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:log",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: printf feeds `log` to xargs jj, so the text states jj log and its path; stdin substitution is not modelled",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvVcs-p32-pipe-bash",
+   "family": "W",
+   "file": "CaseAdoptW2--AdoptW2-AdvVcs-p32-pipe-bash.jsonl",
+   "sha256": "8074bde131e8cb7e7747548306bd78770f61fa5e017ed8a17120d2d73edb45bf",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: the printf payload is piped into bash, which runs jj commit -m x",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx3-jj-log-version",
+   "family": "H",
+   "file": "CaseAdoptW2--AdoptW2-RerunPrecision-fx3-jj-log-version.jsonl",
+   "sha256": "d0c9fa48961b5291e539568b347948aac6dd6c48ed7188bb4fc3c448bf4799ae",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): docstring excepts --version; jj 0.45.1 rejects it after a subcommand (rc 2) and adds no op; E4 names only -h/--help and the issued-not-executed rule could keep jj:log",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx8-uv-tool-install-help",
+   "family": "H",
+   "file": "CaseAdoptW2--AdoptW2-RerunPrecision-fx8-uv-tool-install-help.jsonl",
+   "sha256": "c0f3a817df0b185d54fa80b05048520d2b0229e2e5e0a4e0a31ce1d45936192d",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): help installs nothing (uv 0.13.0: rc 0, isolated tool/cache dirs untouched); tool_install class is outside E4",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx9-pip-install-help",
+   "family": "H",
+   "file": "CaseAdoptW2--AdoptW2-RerunPrecision-fx9-pip-install-help.jsonl",
+   "sha256": "f7400b12f4bdcc72ff577d3cb23fda5bf190202028c95b553b66cc05ef9bbccd",
+   "want_exit": 0,
+   "want_findings": [],
+   "seat": "CaseAdoptW2",
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): pip install --help prints help [INFERENCE: pip absent here]; tool_install class is outside E4",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  }
+ ]
+}

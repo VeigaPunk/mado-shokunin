@@ -1,0 +1,824 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseAdoptW2",
+ "cases": [
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-dataclass",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-dataclass.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text @dataclass Case has no spawn in its body; the ctor only stores the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-namedtuple",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-namedtuple.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: Case is bound to collections.namedtuple (known-pure stdlib); an instance only holds the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-shlex-join",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-shlex-join.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: join imported from shlex (known-pure: shlex.join) only formats the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-lambda",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-lambda.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text lambda body is ' '.join(argv), no spawn; print only shows the string",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-decorated-def",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-decorated-def.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: @functools.cache def (functools.cache is pure) whose visible body only joins a tuple argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-CriticC3W2-dc-import-classifier",
+   "family": "L",
+   "file": "AdoptW2-CriticC3W2-dc-import-classifier.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 1,
+     "evidence": "lead"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: classify_argv is imported from tripwire_mod (not known-pure stdlib), body invisible -> lead, never clean and never observed (it is data in truth, but the scanned text cannot show that)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-frozenset",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-frozenset.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: builtin frozenset, not rebound, builds data; the closure's harm shape plus print(BLOCK)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-CriticC3W2-dc-cross-cell-fixture",
+   "family": "L",
+   "file": "AdoptW2-CriticC3W2-dc-cross-cell-fixture.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 1,
+     "evidence": "lead"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 1,
+     "evidence": "lead"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "hyprctl:reload",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: write_case is an unbound bare name in this file (no def in any cell) -> each host argv is a lead",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-deque",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-deque.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: deque from collections (known-pure) only stores the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-CriticC3W2-dc-pytest-param",
+   "family": "L",
+   "file": "AdoptW2-CriticC3W2-dc-pytest-param.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Qi",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E2: pytest.param(...) is an attribute call (stays unflagged); E1: expect is unbound -> its argv is a lead",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-async-def",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-async-def.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text async def whose visible body only prints; awaited at top level",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-CriticC3W2-dc-type-hint-shape",
+   "family": "P",
+   "file": "AdoptW2-CriticC3W2-dc-type-hint-shape.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2/E3: duplicate def check; the binding in effect at the call (the later def) only prints",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b01",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b01.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: run_case is an unbound bare name handed a literal host argv -> lead (doc-consistent lead, now marked)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b02",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b02.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: unbound run_case under `if False:`; a lead is not an execution claim, so dead code stays a lead",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b06",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b06.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: builtin format() of a list only builds a string (b24 `format(['sudo','pacman','-Syu',...])` merged: same shape)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b07",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b07.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text class Case with an __init__ that only stores the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b08",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b08.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: r is bound to a same-text lambda whose body only prints",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-b09",
+   "family": "S",
+   "file": "AdoptW2-AdvHelperFn-b09.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E3: record is bound to None in the same cell (visible, not callable, cannot spawn); not unbound, not imported -> no row",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b10",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b10.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: log_argv imported from util (outside known-pure stdlib) -> body invisible -> lead",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b12",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b12.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E3: no binding of run_case precedes the call (the def follows it) -> unbound bare name -> lead; AdvHelperFn rated it ok/clean by the old tool",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b14",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b14.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1/E3: callee run_case is a parameter of run_all, an opaque binding whose body is not visible -> lead (AdvHelperFn proposed clean)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b15",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b15.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2/E3: log is a nested def bound before the call in the same scope; its body only prints",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b16b",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b16b.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: builtin frozenset of a flat argv (b23 frozenset(['pacman','-S',...]) merged: same shape, host_mutation at 1f7f995)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b17",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b17.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text @dataclass ctor called as a bare expression statement",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b18b",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b18b.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: collections.deque of a flat argv, bare expression statement",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-b19b",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-b19b.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1: expect is an unbound bare name -> lead (AdvHelperFn's proposed case wanted clean; its matrix called it lead-by-design)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b20",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b20.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: same-text async def, body only prints; the call is never awaited",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b21",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b21.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2: @functools.lru_cache def whose visible body only joins the argv",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "P-AdoptW2-AdvHelperFn-b22",
+   "family": "P",
+   "file": "AdoptW2-AdvHelperFn-b22.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E2/E3: duplicate def note; the later binding only prints",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-c01",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-c01.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control (F3): a literal subprocess.run argv is observed and must never be relabelled lead",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "L-AdoptW2-AdvHelperFn-c03",
+   "family": "L",
+   "file": "AdoptW2-AdvHelperFn-c03.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "lead"
+    }
+   ],
+   "why": "E1 (F3): go() runs a literal spawn (observed) and log_argv is unbound (lead); both rows must survive the per-call dedup, which needs (class, rule, evidence) as key",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a01",
+   "family": "S",
+   "file": "AdoptW2-AdvHelperFn-a01.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E3 by analogy (bash): the same-text function pacman() shadows the binary, so the call runs echo; def line is not an invocation. Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a02",
+   "family": "S",
+   "file": "AdoptW2-AdvHelperFn-a02.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E3 by analogy (bash): sudo() shadows sudo, the call runs echo and pacman never runs. Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "S-AdoptW2-AdvHelperFn-a15",
+   "family": "S",
+   "file": "AdoptW2-AdvHelperFn-a15.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): a function definition alone runs nothing (a16 `sudo() { echo no; }` merged: same shape). Shell side, red at 9c54c56 too",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a18",
+   "family": "W",
+   "file": "AdoptW2-AdvHelperFn-a18.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: text states the argv and both visible bodies (f -> g -> \"$@\"), so bash runs pacman -Q; rule A drops defs after one hop (a22 sudo variant, a23 three-hop merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a20",
+   "family": "W",
+   "file": "AdoptW2-AdvHelperFn-a20.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: b's visible body calls the visible run wrapper with a literal sudo pacman -S; bash executes it",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a24",
+   "family": "W",
+   "file": "AdoptW2-AdvHelperFn-a24.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: run is defined before main is called, so bash runs pacman -Q through two visible bodies",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a25",
+   "family": "W",
+   "file": "AdoptW2-AdvHelperFn-a25.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "E1: go's visible body spawns the argv; the deferred call in build() runs after def go (Python resolves globals at call time), so E3's binding in effect is def go",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvHelperFn-a13",
+   "family": "W",
+   "file": "AdoptW2-AdvHelperFn-a13.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: visible \"$@\" body and a literal call; the quoted glob only names the package (a14 tilde variant merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvVcs-p3-eval-vararg-helper",
+   "family": "W",
+   "file": "AdoptW2-AdvVcs-p3-eval-vararg-helper.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:merge",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "E1: git(*args) has a visible body that spawns ['git', *args]; the literal call reaches it -> observed git:merge (source cwd = live lane, moved to /tmp/x; r19-helperfn py-helper-vararg pins the vararg miss as clean)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvVcs-p16-xargs-jj",
+   "family": "W",
+   "file": "AdoptW2-AdvVcs-p16-xargs-jj.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:log",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: printf feeds `log` to xargs jj, so the text states jj log and its path; stdin substitution is not modelled",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-AdoptW2-AdvVcs-p32-pipe-bash",
+   "family": "W",
+   "file": "AdoptW2-AdvVcs-p32-pipe-bash.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): E1: the printf payload is piped into bash, which runs jj commit -m x",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-AdoptW2-AdvVcs-p33-git-dryrun",
+   "family": "H",
+   "file": "AdoptW2-AdvVcs-p33-git-dryrun.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: git push --dry-run and git commit --dry-run after a -C option are no vcs_write (AdvVcs FP-1; /x -> /tmp/x)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-AdvVcs-p29-read-then-commit",
+   "family": "H",
+   "file": "AdoptW2-AdvVcs-p29-read-then-commit.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control (write negative): a read with --ignore-working-copy followed by jj commit keeps the write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx1-jj-log-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx1-jj-log-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: jj log --help (read verb) prints help; jj 0.45.1 adds no op",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx2-jj-commit-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx2-jj-commit-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: jj commit --help (write verb) prints help; no op (corpus jj squash/rebase --help merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx3-jj-log-version",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx3-jj-log-version.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): docstring excepts --version; jj 0.45.1 rejects it after a subcommand (rc 2) and adds no op; E4 names only -h/--help and the issued-not-executed rule could keep jj:log",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx7-git-add-n",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx7-git-add-n.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: git add -n is --dry-run for add; index unchanged",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx8-uv-tool-install-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx8-uv-tool-install-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): help installs nothing (uv 0.13.0: rc 0, isolated tool/cache dirs untouched); tool_install class is outside E4",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-fx9-pip-install-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-fx9-pip-install-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "EDGE (outside the TwRuleB/TwVcsHelp patch scope): pip install --help prints help [INFERENCE: pip absent here]; tool_install class is outside E4",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-corpus-jj-path-workspace-add-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-corpus-jj-path-workspace-add-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: path-qualified jj, two-word subcommand + --help (corpus ~/.local/bin/jj shape, path moved to /tmp; file track merged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-corpus-jj-var-verb-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: help flag whatever $c names (corpus W2jProbeKagi:77 shape `jj $c --help`); no op for c=describe",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-corpus-git-commit-a-dry-run-short",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-corpus-git-commit-a-dry-run-short.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: --dry-run after -a (corpus JjRevengerLaneJjState-2:165); no commit/ref/index change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-AdoptW2-RerunPrecision-corpus-git-add-A-dry-run",
+   "family": "H",
+   "file": "AdoptW2-RerunPrecision-corpus-git-add-A-dry-run.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "E4: long --dry-run after -A (corpus JjRevengerLaneJjState-2:165; `--dry-run -n` form merged); index unchanged",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  }
+ ]
+}

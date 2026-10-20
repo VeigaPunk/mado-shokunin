@@ -1,0 +1,268 @@
+{
+  "schema": "mado-tw-precision-cases-v1",
+  "seat": "CaseShadowing",
+  "cases": [
+    {
+      "name": "S-CaseShadowing-print-lambda-spawn",
+      "family": "S",
+      "file": "print-lambda-spawn.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "observed"
+        }
+      ],
+      "why": "print is rebound by assignment to a visible lambda whose body spawns its argv, so the builtin exemption is lost and the call is observed (E1 lambda helper, E3 assignment).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-print-imported",
+      "family": "S",
+      "file": "print-imported.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "lead"
+        }
+      ],
+      "why": "print is rebound by an import from a module outside the known-pure stdlib set; its body is not visible, so the literal argv is a lead (E1 lead, E3 import).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-list-bound-to-spawn",
+      "family": "S",
+      "file": "list-bound-to-spawn.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "observed"
+        }
+      ],
+      "why": "list is rebound by assignment to subprocess.run, a spawn alias bound in the text, so list([...]) is an observed spawn, not a pure builtin call (E1 alias, E3 assignment).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-frozenset-def-spawn",
+      "family": "S",
+      "file": "frozenset-def-spawn.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "observed"
+        }
+      ],
+      "why": "Control: the round-19 BLOCK=frozenset([...]) shape after def frozenset rebinds the builtin to a visible spawner; the E2 frozenset exemption must not swallow it (E3 def).",
+      "before": {
+        "1f7f995": "pass",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-run-redef-pure",
+      "family": "S",
+      "file": "run-redef-pure.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "The latest preceding binding of run is a visible def that only joins its argv; the earlier spawner def is no longer in effect at the call (E3 latest binding, E2 pure def).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-run-call-before-spawn-redef",
+      "family": "S",
+      "file": "run-call-before-spawn-redef.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "At the call the binding in effect is the pure join def; the spawner def that follows rebinds run only after the call and its body has no literal argv (E3 preceding binding).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-run-import-rebound-print",
+      "family": "S",
+      "file": "run-import-rebound-print.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "Dry-run toggle: the subprocess.run alias is rebound to builtin print before the call, so the call prints the argv and spawns nothing (E3 assignment over import, E2 builtin).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-run-redef-cross-cell",
+      "family": "S",
+      "file": "run-redef-cross-cell.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "Across cells with no reset the latest preceding binding of run is cell 2's pure join def, not cell 1's spawner (E3 across earlier cells, E2 pure def).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-print-def-cross-cell",
+      "family": "S",
+      "file": "print-def-cross-cell.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 2,
+          "evidence": "observed"
+        }
+      ],
+      "why": "Cell 1 rebinds builtin print to a visible spawner def and no reset follows, so cell 2's print([...]) is an observed spawn (E1 earlier-cell helper, E3 def).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-del-run",
+      "family": "S",
+      "file": "del-run.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "lead"
+        }
+      ],
+      "why": "del run unbinds the visible spawner, so the later run([...]) names an unbound bare name whose body is not visible: a lead, not observed (E3 del, E1 lead).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-del-run-cross-cell",
+      "family": "S",
+      "file": "del-run-cross-cell.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 3,
+          "evidence": "lead"
+        }
+      ],
+      "why": "A del in an intervening cell unbinds cell 1's spawner for later cells; cell 3's run([...]) is an unbound bare name, a lead (E3 del carried across cells).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-del-print-restores-builtin",
+      "family": "S",
+      "file": "del-print-restores-builtin.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "After del print at module scope the name resolves to builtins.print again (CPython executionmodel: global, then builtins), so the call is the pure builtin: no row; evidence-fixed against E3's literal 'then a lead' (E2).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-param-shadows-helper",
+      "family": "S",
+      "file": "param-shadows-helper.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "lead"
+        }
+      ],
+      "why": "Inside preview, run is the parameter, which shadows the module spawner def; it is bound only to the imported show, whose body is not visible, so the argv is a lead (E3 scope).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-param-shadows-spawn-alias",
+      "family": "S",
+      "file": "param-shadows-spawn-alias.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "lead"
+        }
+      ],
+      "why": "The parameter run shadows the from-subprocess alias inside preview and is bound only to the imported show, so the literal argv is a lead, not an observed spawn (E3 scope).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "fail"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-shlex-join-as-run",
+      "family": "S",
+      "file": "shlex-join-as-run.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "run is bound by import alias to shlex.join, a known-pure stdlib formatter, so run([...]) only builds a string (E2 shlex.join, E3 import alias).",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "S-CaseShadowing-run-as-frozenset-control",
+      "family": "S",
+      "file": "run-as-frozenset-control.jsonl",
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "observed"
+        }
+      ],
+      "why": "Control: frozenset is bound by from subprocess import run as frozenset, a spawn alias, so the round-19 BLOCK shape here really spawns and stays observed (E1 alias, E3 import).",
+      "before": {
+        "1f7f995": "pass",
+        "9c54c56": "pass"
+      }
+    }
+  ]
+}

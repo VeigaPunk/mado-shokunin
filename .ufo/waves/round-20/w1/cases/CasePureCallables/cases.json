@@ -1,0 +1,174 @@
+{
+  "schema": "mado-tw-precision-cases-v1",
+  "seat": "CasePureCallables",
+  "cases": [
+    {
+      "name": "P-CasePureCallables-dataclass-ctor",
+      "family": "P",
+      "file": "dataclass-ctor.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A same-cell @dataclass Case only stores the sudo pacman argv as a field; its generated __init__ cannot spawn.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-plain-class-init",
+      "family": "P",
+      "file": "plain-class-init.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A same-cell plain class whose __init__ only assigns attributes stores the pacman argv as data.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-functools-cache-def",
+      "family": "P",
+      "file": "functools-cache-def.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A @functools.cache def whose visible body only joins the argv tuple into text; decorated, still pure.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-async-def-await",
+      "family": "P",
+      "file": "async-def-await.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "An awaited same-cell async def whose visible body only prints the argv list.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-duplicate-def",
+      "family": "P",
+      "file": "duplicate-def.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "Two printing defs of one name: the binding in effect at the call (the second) only prints the argv.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-duplicate-def-later-spawner",
+      "family": "P",
+      "file": "duplicate-def-later-spawner.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "The pure first def is the binding in effect at the call; a spawning redefinition only follows the call.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-duplicate-def-earlier-spawner",
+      "family": "P",
+      "file": "duplicate-def-earlier-spawner.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A spawning def is rebound by a printing def before the call; the latest preceding binding only prints.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-nested-def",
+      "family": "P",
+      "file": "nested-def.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A def nested inside the calling def has a visible print-only body; the literal argv is never spawned.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-nested-def-param",
+      "family": "P",
+      "file": "nested-def-param.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A nested formatting def receives an argv completed by the enclosing helper's literal parameter; nothing spawns.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-lambda-same-cell",
+      "family": "P",
+      "file": "lambda-same-cell.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A same-cell lambda bound to fmt only joins the systemctl argv into a string for print.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-transitive-class",
+      "family": "P",
+      "file": "transitive-class.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A visible def hands its argv to a visible class whose __init__ only joins it: pure at depth two.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-same-text-decorator",
+      "family": "P",
+      "file": "same-text-decorator.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "A def wrapped by a visible same-cell logging decorator: wrapper and body only print and join the git argv.",
+      "before": {
+        "1f7f995": "fail",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-staticmethod-classmethod-control",
+      "family": "P",
+      "file": "staticmethod-classmethod-control.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "Control: staticmethod/classmethod formatters on a same-cell class are attribute calls and stay unflagged.",
+      "before": {
+        "1f7f995": "pass",
+        "9c54c56": "pass"
+      }
+    },
+    {
+      "name": "P-CasePureCallables-two-hop-plain-control",
+      "family": "P",
+      "file": "two-hop-plain-control.jsonl",
+      "want_exit": 0,
+      "want_findings": [],
+      "why": "Control: two plain same-cell defs, resolved by literal binding, only format and print the argv.",
+      "before": {
+        "1f7f995": "pass",
+        "9c54c56": "pass"
+      }
+    }
+  ]
+}

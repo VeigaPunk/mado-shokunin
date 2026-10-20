@@ -1,0 +1,185 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseDryRunBash",
+ "cases": [
+  {
+   "name": "H-CaseDryRunBash-commit-dry-run",
+   "family": "H",
+   "file": "commit-dry-run.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git commit --dry-run only shows what would be committed: /tmp repro kept HEAD, refs and staged entries and ran no hook (it did write the would-be tree and index cache-tree).",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-add-n",
+   "family": "H",
+   "file": "add-n.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "add -n is --dry-run per `git add -h`; /tmp repro left index bytes and objects identical.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-add-dry-run",
+   "family": "H",
+   "file": "add-dry-run.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git add --dry-run lists what would be added; /tmp repro left index bytes and objects identical.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-push-n-origin-master",
+   "family": "H",
+   "file": "push-n-origin-master.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "push -n is --dry-run per `git push -h`; bare /tmp remote refs and tracking refs unchanged.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-push-dry-run",
+   "family": "H",
+   "file": "push-dry-run.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git push --dry-run to the upstream; bare /tmp remote refs and tracking refs unchanged.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-push-trailing-dry-run",
+   "family": "H",
+   "file": "push-trailing-dry-run.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git accepts the flag after the refspec (a flag-position check); /tmp remote unchanged.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-jj-push-dry-run-ignore-wc",
+   "family": "H",
+   "file": "jj-push-dry-run-ignore-wc.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "No snapshot and no push: /tmp colocated repro with a dirty working copy kept op heads, git refs/index and the remote unchanged.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-jj-push-dry-run-snapshots",
+   "family": "H",
+   "file": "jj-push-dry-run-snapshots.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "Write negative by evidence: jj snapshots a dirty working copy first (new op 'snapshot working copy', git index and refs/jj/keep changed) though nothing is pushed.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-commit-n-no-verify",
+   "family": "H",
+   "file": "commit-n-no-verify.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "On commit -n is --no-verify: /tmp repro created the commit and skipped the pre-commit/commit-msg hooks.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-add-n-then-add",
+   "family": "H",
+   "file": "add-n-then-add.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "A dry run followed by a real add in the same text: exactly one git:add row (the real one).",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-push-dry-run-then-push",
+   "family": "H",
+   "file": "push-dry-run-then-push.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "A dry run followed by a real push in the same text: exactly one git:push row (the real one).",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseDryRunBash-commit-msg-value-dry-run",
+   "family": "H",
+   "file": "commit-msg-value-dry-run.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "`--dry-run` here is the -m option's value, not a flag: /tmp repro committed subject '--dry-run' (hooks ran); a token-anywhere exemption would drop this real write.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}

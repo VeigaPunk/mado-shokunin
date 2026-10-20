@@ -1,0 +1,242 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseHelpDryRunEval",
+ "cases": [
+  {
+   "name": "H-CaseHelpDryRunEval-run-add-n",
+   "family": "H",
+   "file": "run-add-n.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git add -n is --dry-run (E4); measured in a /tmp repo: no .git file changed, HEAD unchanged",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-bang-jj-help-flags",
+   "family": "H",
+   "file": "bang-jj-help-flags.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "jj --help/-h as a flag prints help before any workspace load (E4); measured jj 0.45.1 with a dirty working copy: ops +0 for both",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-check-output-help-before-sub",
+   "family": "H",
+   "file": "check-output-help-before-sub.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git --help <sub> (also after the global -C DIR) is git help <sub> (E4); measured: man invoked once each, no .git change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-popen-push-dry-runs",
+   "family": "H",
+   "file": "popen-push-dry-runs.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git push -n and a trailing --dry-run are dry runs (E4); measured with a bare /tmp remote: no local or remote ref change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-helper-commit-h-late-help",
+   "family": "H",
+   "file": "helper-commit-h-late-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "visible same-cell helper: git commit -h and a --help flag after a complete -m value only print usage (E4); measured: HEAD unchanged, no .git change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-tool-bash-jj-commit-help",
+   "family": "H",
+   "file": "tool-bash-jj-commit-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "tool.bash spawn of jj commit --help: help flag, no snapshot (E4); measured jj 0.45.1 dirty working copy: ops +0",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-pct-bash-dry-runs",
+   "family": "H",
+   "file": "pct-bash-dry-runs.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "%%bash cell of three E4 non-writes; measured: no HEAD/ref change and jj ops +0 (git commit --dry-run may refresh .git/index cache-tree, as git status does)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-n-two-meanings",
+   "family": "H",
+   "file": "n-two-meanings.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "-n is --dry-run for git add (line 1, no row) but --no-verify for git commit (line 2, a real commit); measured: add -n wrote nothing, commit -n moved HEAD and skipped the pre-commit hook",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-help-flag-vs-value",
+   "family": "H",
+   "file": "help-flag-vs-value.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "same cell: jj describe --help is help (no row); --help as the value of git commit -m is a commit (E4); measured: commit created with subject --help",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-jj-push-dry-run-snapshot",
+   "family": "H",
+   "file": "jj-push-dry-run-snapshot.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 2,
+     "evidence": "observed"
+    }
+   ],
+   "why": "EVIDENCE OVERRIDES E4: jj git push --dry-run still snapshots (measured jj 0.45.1 colocated, dirty wc: ops +1, new git objects + refs/jj/keep ref); with --ignore-working-copy ops +0, nothing written",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-ctl-dry-then-push-same-cell",
+   "family": "H",
+   "file": "ctl-dry-then-push-same-cell.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control: a dry run followed by a real write in the same text still writes (E4); guards against cell-level suppression",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-CaseHelpDryRunEval-ctl-commit-m-dry-run-value",
+   "family": "H",
+   "file": "ctl-commit-m-dry-run-value.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "control: --dry-run as the value of -m is a commit message, not a flag; measured: commit created with subject --dry-run",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseHelpDryRunEval-vararg-def-commit-n",
+   "family": "W",
+   "file": "vararg-def-commit-n.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative missed today: visible same-cell vararg wrapper (round-19 real shape) runs git commit -n (--no-verify commit) (E1 observed)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseHelpDryRunEval-lambda-vararg-jj-commit",
+   "family": "W",
+   "file": "lambda-vararg-jj-commit.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative missed today: visible lambda vararg wrapper runs jj commit (E1 lists lambda helpers as observed)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseHelpDryRunEval-cross-cell-vararg-dry-then-n",
+   "family": "W",
+   "file": "cross-cell-vararg-dry-then-n.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 3,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative missed today: wrapper body visible in an earlier cell (E1); push -n via it is a dry run (line 2, no row), commit -n is a real commit (line 3)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}

@@ -1281,3 +1281,36 @@ R19-V6 (absolute lane paths in every seat item; dead seats uncredited). Reserved
 ids S099–S110 (L1-assigned). Harm watch: gate selftest N/N, regression PASS, classifier
 52/52, tripwire suites N/N, U 7/7, rubric V 6/6, navigation complete, census exit 0. No
 exploratory claim.
+
+### Round-20 pre-measurement corrections (append-only; before any after-measurement)
+
+Wave-1 advisers (CriticC2Inflation, RevCriterion30, ConnCriteriaFleet; reports under
+`.ufo/waves/round-20/w1/reports/`) showed that registered criterion **30** ("a stated count
+is re-derived at the measured revision by a cited command") restates criterion **10**
+(`corpus/QUALITY.md:16`: "Report each count as `<n> — <command> <date>` and rederive it
+from the named revision"), which the pre-registration's restatement screen (24/27/28) did
+not check, and that its "5/13" red mixes a different counting rule and revision
+(`01b8094`, cited-as-evidence) with the closure's `b435568` any-line/first-line counts.
+Disposition, by R19-V1's own rule (no duplicate criterion): registered 30 is
+**withdrawn**; the three round-19 tallies are recorded as an **application of criterion
+10** (no new number), checked by `.ufo/waves/round-20/tally-check.py`, each tally with its
+counting rule and revision named.
+
+Replacement, registered here before any after-measurement and flagged for the closure as a
+possible target-preserving swap: criterion **30′** — a detector change credited for recall
+is admitted only beside its precision evidence: committed negatives of the shapes the new
+rule could misread, read at the pre-change and changed tools, a whole-corpus diff against
+the pre-change tool listing every added row, and a machine-readable `lead` marker on any
+row the detector cannot tie to a visible execution path. Ground: the round-19 harm itself
+(closure R19-V3; round-20 lesson M1); no criterion 1–28 covers detector precision. Red:
+the closure's data-only frozenset artifact at `1f7f995` (unmarked ordinary finding); its
+check is the C1 counter's P and L families, so 30′'s green is **not independent of C1**.
+C2 target unchanged at 22/30 = 7.3333; if the closure rules 30′ a swap, the honest C2
+reading is 21/29 = 7.2414 (criterion 29 only), reported beside it.
+
+E4 amended by wave-1 evidence (CaseDryRunBash, CaseHelpDryRunEval, ScoutJjHelpEmpirical,
+SrcJjHelp): `jj git push --dry-run` without `--ignore-working-copy` snapshots the working
+copy and stays a `vcs_write`; `jj describe -m --help` is rejected by jj (exit 2, no op);
+git `--help` is rewritten only at the first argument after the subcommand, `-h` among
+options prints usage; `git commit --short|--porcelain|--long|-z` imply `--dry-run`;
+`pull -n`, `merge -n`, `cherry-pick -n`, `add -N` and `commit -n` are writes.

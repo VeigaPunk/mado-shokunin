@@ -1,0 +1,176 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseWrapperForms",
+ "cases": [
+  {
+   "name": "W-CaseWrapperForms-spawn-kwarg-args",
+   "family": "W",
+   "file": "spawn-kwarg-args.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "A literal spawn whose argv is stated by keyword (args=[...]); both tools read only node.args[0], so the spawn is counted unparsed and missed.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-alias-assign-shell",
+   "family": "W",
+   "file": "alias-assign-shell.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Qi",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "run = subprocess.run binds a spawn alias in the text (E1), so run('pacman -Qi hyprland', shell=True) is a literal spawn; neither tool resolves assignment aliases and rule B reads only argv lists (silent: unparsed_spawns 0).",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-partial-shell-sudo",
+   "family": "W",
+   "file": "partial-shell-sudo.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "host_mutation",
+     "rule": "sudo",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "host_mutation",
+     "rule": "pacman:-S",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "functools.partial(subprocess.run, shell=True, check=True) is a spawn alias (E1); the literal sudo pacman -S string handed to it is missed silently (unparsed_spawns 0) by both tools.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-decorated-cache-param",
+   "family": "W",
+   "file": "decorated-cache-param.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "@functools.cache removes a visible spawning def from same-text helper resolution (decorator_list check), so pkg_version('hyprland') never reaches ['pacman','-Q',name]; the undecorated twin resolves at 1f7f995.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-decorated-lrucache-call",
+   "family": "W",
+   "file": "decorated-lrucache-call.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Qi",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "Same miss with the Call-decorator shape the real corpus uses (lru_cache(...)); guards resolution that is agnostic to the decorator's AST shape.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-async-def-exec-param",
+   "family": "W",
+   "file": "async-def-exec-param.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "An async def helper (AsyncFunctionDef is not a resolvable helper) feeds its literal argument into asyncio.create_subprocess_exec('pacman','-Q',name); the exec is counted unparsed and missed.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-lambda-param-argv",
+   "family": "W",
+   "file": "lambda-param-argv.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "A lambda spawner bound by assignment is not a resolvable helper and its literal str argument is not an argv list, so rule B is silent and the body spawn is unparsed.",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-class-method-instance",
+   "family": "W",
+   "file": "class-method-instance.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "Control, stated miss: Runner().run([...]) is a method call through an instance; E1 lists def/async def/lambda helpers only and E2 keeps attribute/method calls unflagged, so it stays clean (unparsed_spawns 1); resolving it later needs a case edit with reason.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "W-CaseWrapperForms-async-def-exec-starred",
+   "family": "W",
+   "file": "async-def-exec-starred.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "package_query",
+     "rule": "pacman:-Q",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "Control: 1f7f995 passes only through rule B's unmarked bare-name row; the target must keep it observed by folding create_subprocess_exec(*argv) in the visible async body, not demote it to lead or drop it.",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}

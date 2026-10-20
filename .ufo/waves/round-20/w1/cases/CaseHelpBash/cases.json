@@ -1,0 +1,276 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "CaseHelpBash",
+ "cases": [
+  {
+   "name": "H-HelpBash-jj-describe-help",
+   "family": "H",
+   "file": "HelpBash-jj-describe-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: a --help flag on a jj write verb only prints help; jj 0.45.1 rc=0, op log 5->5, repo tree unchanged with a dirty working copy; 1f7f995 flags jj:describe",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-st-h",
+   "family": "H",
+   "file": "HelpBash-jj-st-h.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: -h on a snapshotting jj read prints help and loads no workspace; jj 0.45.1 rc=0, op log 5->5, tree unchanged (plain `jj st` then snapshots 5->6); 1f7f995 flags jj:st",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-git-push-help",
+   "family": "H",
+   "file": "HelpBash-jj-git-push-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: help for jj git push contacts no remote and writes nothing; jj 0.45.1 rc=0, op log 5->5, tree unchanged; 1f7f995 flags jj:git",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-help-flag-describe",
+   "family": "H",
+   "file": "HelpBash-jj-help-flag-describe.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: a top-level --help before the subcommand prints jj help; jj 0.45.1 rc=0, op log 5->5, tree unchanged; 1f7f995 skips the flag and flags jj:describe",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-describe-m-x-help",
+   "family": "H",
+   "file": "HelpBash-jj-describe-m-x-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: --help after a complete -m value is still a flag; jj 0.45.1 prints describe help, rc=0, op log 5->5, description unchanged; 1f7f995 flags jj:describe",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-describe-m-help-parse-error",
+   "family": "H",
+   "file": "HelpBash-jj-describe-m-help-parse-error.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red, contradicts the item premise: clap does not take a separate --help as the -m value; jj 0.45.1 rc=2 'a value is required for --message', op log 6->6, tree unchanged; 1f7f995 flags jj:describe",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-commit-help",
+   "family": "H",
+   "file": "HelpBash-git-commit-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: git turns `git commit --help` into `git help commit` (man page); git 2.56.0 rc=0, HEAD 1ed5f67 kept, status/stash and .git tree unchanged with staged changes; 1f7f995 flags git:commit",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-commit-h",
+   "family": "H",
+   "file": "HelpBash-git-commit-h.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: -h prints commit usage; git 2.56.0 rc=0, HEAD 1ed5f67 kept, status/stash and .git tree unchanged with staged changes; 1f7f995 flags git:commit",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-help-flag-commit",
+   "family": "H",
+   "file": "HelpBash-git-help-flag-commit.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: `git --help commit` runs `git help commit` (man page); git 2.56.0 rc=0, HEAD and .git tree unchanged; 1f7f995 skips the flag and flags git:commit",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-stash-h",
+   "family": "H",
+   "file": "HelpBash-git-stash-h.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: -h prints stash usage and stashes nothing; git 2.56.0 rc=0, stash list 0->0, tree unchanged (plain `git stash` 0->1); 1f7f995 flags git:stash",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-commit-m-x-help",
+   "family": "H",
+   "file": "HelpBash-git-commit-m-x-help.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "red: a later --help still stops git commit at option parsing (usage); git 2.56.0 rc=0, HEAD and .git tree unchanged with staged changes; 1f7f995 flags git:commit",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-help-commit",
+   "family": "H",
+   "file": "HelpBash-jj-help-commit.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "control: the jj help verb is already exempt (JJ_NO_SNAPSHOT); jj 0.45.1 rc=0, op log 5->5, tree unchanged; clean at both revisions",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-help-push",
+   "family": "H",
+   "file": "HelpBash-git-help-push.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "control: help is not a git write verb; git 2.56.0 rc=0 (man page), HEAD and .git tree unchanged; clean at both revisions",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-commit-m-h",
+   "family": "H",
+   "file": "HelpBash-git-commit-m-h.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative: git takes the separate -h as the -m value and commits; git 2.56.0 rc=0, HEAD 1ed5f67->6ea09cf, subject '-h'; must stay vcs_write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-HelpBash-git-commit-m-help",
+   "family": "H",
+   "file": "HelpBash-git-commit-m-help.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative: git takes the separate --help as the -m value and commits; git 2.56.0 rc=0, HEAD 6ea09cf->9f2a946, subject '--help'; must stay vcs_write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-help-then-describe",
+   "family": "H",
+   "file": "HelpBash-jj-help-then-describe.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative: a help segment then a real describe; jj 0.45.1 op log 6->8, description ''->'x'; exactly one jj:describe row (1f7f995 keeps only the help segment's row, deduped)",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-st-h-then-describe",
+   "family": "H",
+   "file": "HelpBash-jj-st-h-then-describe.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "red write negative: help on another verb, then a real describe; jj 0.45.1 op log 8->10, description 'x'->'y'; one jj:describe row and no jj:st row (1f7f995 adds jj:st)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-describe-message-eq-help",
+   "family": "H",
+   "file": "HelpBash-jj-describe-message-eq-help.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative: an attached value is the option value; jj 0.45.1 rc=0, op log 16->18, description 'reset-2'->'--help'; must stay vcs_write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-HelpBash-jj-describe-dashdash-help",
+   "family": "H",
+   "file": "HelpBash-jj-describe-dashdash-help.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1,
+     "evidence": "observed"
+    }
+   ],
+   "why": "write negative: after -- the token is a revset, not a flag; jj 0.45.1 snapshots the dirty working copy (op log 10->11), then rc=1 revset parse error; must stay vcs_write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}
