@@ -1,0 +1,12 @@
+# Round-17 C3 second-authority join: tripwire host_mutation pacman findings vs /var/log/pacman.log
+# command (L1): awk '/^\[2026-10-(19T2|20T0[0-6])/ && /\[PACMAN\] Running/' /var/log/pacman.log  (file read, no package query)
+# transcript timestamps are UTC; pacman.log is -0300. OutputSpec:65 is one assistant record carrying many toolCalls,
+# so its line timestamp (05:45:52Z) is the record time, not the call time.
+pacman.log:2410 01:06:49-0300 pacman -S --needed --noconfirm wayland-utils        <-> MadoR13.GlobalCapture.jsonl:19 (04:06:49.766Z) sudo + pacman:-S
+pacman.log:2422 02:41:25-0300 pacman -Sw --noconfirm wlr-protocols                <-> MadoR14.ReviewSourceBar.jsonl:41 (05:41:25.147Z) sudo + pacman:-Sw
+pacman.log:2423 02:41:32-0300 pacman -S --needed --noconfirm wlr-protocols        <-> MadoR14.OutputSpec.jsonl:65 (record 05:45:52Z) sudo + pacman:-S
+pacman.log:2429 04:25:16-0300 pacman -S --needed --noconfirm libinput libinput-tools <-> MadoR15.LibinputEvents.jsonl:54 (07:25:16.905Z) call_38165 sudo + pacman:-S
+# not mado: 2026-10-20T01:07:12 'pacman -S --needed --noconfirm man-pages' — string present in MoriR13/MoriR14 transcripts (sibling lane; reported, not absorbed)
+# not mado window: 2026-10-19T20:48 dmidecode, 21:02 gitleaks (before mado round 13)
+# tripwire-only elevated call with no transaction: MadoR15.ReviewDocsEra.jsonl:50 `sudo -n true` (privilege probe, undisclosed in round-15 lesson/LOG: grep count 0)
+# result: 4/4 mado-window package transactions joined to exactly one tripwire host_mutation pacman finding each; 0 tripwire pacman transactions without a log line

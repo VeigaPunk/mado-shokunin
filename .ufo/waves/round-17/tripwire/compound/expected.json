@@ -1,0 +1,154 @@
+{
+ "schema": "mado-tripwire-selftest-v1",
+ "convention": "Rule naming for compound fixtures (to be reconciled with TripwireCore): a finding's rule is `<argv0>` for elevation wrappers (sudo, doas, pkexec), process killers (pkill, killall, kill), and omarchy-* verbs — i.e. the whole basename is the rule — and `<argv0>:<first operation flag or verb>` for pacman/yay/paru (e.g. `pacman:-S`, `pacman:-Syu`, `pacman:-U`, `pacman:-R`, `pacman:-Q`, `pacman:-Qq`), systemctl (e.g. `systemctl:restart`, `systemctl:daemon-reload`), and hyprctl (e.g. `hyprctl:dispatch`, `hyprctl:keyword`). `sudo|doas|pkexec <opts> X` emits TWO findings on the same line: rule `sudo` (host_mutation) plus the classification of X. Wrapper stripping before classification: leading `VAR=val` assignments, `env [-opts] [VAR=val...]`, `command`, `exec`, `nohup`, `nice [-n N]`, `timeout [opts] DURATION`, `xargs [opts]`; argv0 is the basename (`/usr/bin/pacman` -> `pacman:-U`). Recursion: `bash|sh|zsh|dash -c STR`, `eval STR`, `$(...)` and backtick bodies. Segments are split on `;` `&&` `||` `|` `&` and newlines, so each segment is classified independently. Quoted arguments are data: `grep 'pacman -S' f` and `echo \"sudo pacman -S x\"` produce no finding. eval tool calls are parsed only when the stripped code starts with `!`; tool name in findings is `eval`. Classes: host_mutation (sudo/doas/pkexec; pacman mutating ops incl. -U/-R/-D/-Sw; systemctl mutating verbs incl. --user; hyprctl mutating verbs incl. dispatch/keyword; pkill/killall/kill; mutating omarchy-*), package_query (pacman -Q*/-F*/-T/-Ss/-Si/-Sl/-Sg/-Sp, expac, pactree, checkupdates), live_probe (all other listed live commands). Multiple findings may share one JSONL line; every emitted finding counts against exit unless its class is permitted.",
+ "cases": [
+  {
+   "name": "compound-and-sudo-pacman",
+   "args": ["compound-and.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "compound-and.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "compound-and.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-Syu"}
+   ]
+  },
+  {
+   "name": "abs-path-pacman-upgrade",
+   "args": ["abs-path-pacman.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "abs-path-pacman.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-U"}
+   ]
+  },
+  {
+   "name": "env-prefix-pacman-remove",
+   "args": ["env-prefix.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "env-prefix.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-R"}
+   ]
+  },
+  {
+   "name": "var-assign-pacman-query",
+   "args": ["var-assign-query.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "var-assign-query.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Q"}
+   ]
+  },
+  {
+   "name": "var-assign-pacman-query-permitted",
+   "args": ["var-assign-query.jsonl"],
+   "permit": ["package_query"],
+   "want_exit": 0,
+   "want_findings": [
+    {"file": "var-assign-query.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Q"}
+   ]
+  },
+  {
+   "name": "bash-c-sudo-systemctl-restart",
+   "args": ["bash-c-subshell.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "bash-c-subshell.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "bash-c-subshell.jsonl", "line": 2, "class": "host_mutation", "rule": "systemctl:restart"}
+   ]
+  },
+  {
+   "name": "cmdsub-pacman-query",
+   "args": ["cmdsub-query.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "cmdsub-query.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Qq"}
+   ]
+  },
+  {
+   "name": "timeout-nohup-hyprctl-mutations",
+   "args": ["wrappers-hyprctl.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "wrappers-hyprctl.jsonl", "line": 2, "class": "host_mutation", "rule": "hyprctl:dispatch"},
+    {"file": "wrappers-hyprctl.jsonl", "line": 4, "class": "host_mutation", "rule": "hyprctl:keyword"}
+   ]
+  },
+  {
+   "name": "xargs-pkill",
+   "args": ["xargs-pkill.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "xargs-pkill.jsonl", "line": 2, "class": "host_mutation", "rule": "pkill"}
+   ]
+  },
+  {
+   "name": "quoted-data-clean",
+   "args": ["quoted-data.jsonl"],
+   "want_exit": 0,
+   "want_findings": []
+  },
+  {
+   "name": "eval-bang-sudo-pacman",
+   "args": ["eval-bang.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "eval-bang.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "eval-bang.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-S"}
+   ]
+  },
+  {
+   "name": "eval-nonbang-clean",
+   "args": ["eval-nonbang.jsonl"],
+   "want_exit": 0,
+   "want_findings": []
+  },
+  {
+   "name": "user-daemon-reload",
+   "args": ["user-daemon-reload.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "user-daemon-reload.jsonl", "line": 2, "class": "host_mutation", "rule": "systemctl:daemon-reload"}
+   ]
+  },
+  {
+   "name": "omarchy-mutating-verbs",
+   "args": ["omarchy-verbs.jsonl"],
+   "want_exit": 1,
+   "want_findings": [
+    {"file": "omarchy-verbs.jsonl", "line": 2, "class": "host_mutation", "rule": "omarchy-restart-waybar"},
+    {"file": "omarchy-verbs.jsonl", "line": 4, "class": "host_mutation", "rule": "omarchy-theme-set"}
+   ]
+  },
+  {
+   "name": "omarchy-permitted",
+   "args": ["omarchy-verbs.jsonl"],
+   "permit": ["host_mutation"],
+   "want_exit": 0,
+   "want_findings": [
+    {"file": "omarchy-verbs.jsonl", "line": 2, "class": "host_mutation", "rule": "omarchy-restart-waybar"},
+    {"file": "omarchy-verbs.jsonl", "line": 4, "class": "host_mutation", "rule": "omarchy-theme-set"}
+   ]
+  },
+  {
+   "name": "dir-scan-all-permitted",
+   "args": ["."],
+   "permit": ["host_mutation", "package_query", "live_probe"],
+   "want_exit": 0,
+   "want_findings": [
+    {"file": "abs-path-pacman.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-U"},
+    {"file": "bash-c-subshell.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "bash-c-subshell.jsonl", "line": 2, "class": "host_mutation", "rule": "systemctl:restart"},
+    {"file": "cmdsub-query.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Qq"},
+    {"file": "compound-and.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "compound-and.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-Syu"},
+    {"file": "env-prefix.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-R"},
+    {"file": "eval-bang.jsonl", "line": 2, "class": "host_mutation", "rule": "sudo"},
+    {"file": "eval-bang.jsonl", "line": 2, "class": "host_mutation", "rule": "pacman:-S"},
+    {"file": "omarchy-verbs.jsonl", "line": 2, "class": "host_mutation", "rule": "omarchy-restart-waybar"},
+    {"file": "omarchy-verbs.jsonl", "line": 4, "class": "host_mutation", "rule": "omarchy-theme-set"},
+    {"file": "user-daemon-reload.jsonl", "line": 2, "class": "host_mutation", "rule": "systemctl:daemon-reload"},
+    {"file": "var-assign-query.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Q"},
+    {"file": "wrappers-hyprctl.jsonl", "line": 2, "class": "host_mutation", "rule": "hyprctl:dispatch"},
+    {"file": "wrappers-hyprctl.jsonl", "line": 4, "class": "host_mutation", "rule": "hyprctl:keyword"},
+    {"file": "xargs-pkill.jsonl", "line": 2, "class": "host_mutation", "rule": "pkill"}
+   ]
+  }
+ ]
+}

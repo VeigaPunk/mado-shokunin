@@ -1,0 +1,436 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "note": "L1 hardening suite (round 17): real OMP assistant/toolCall shape; cases from CriticC3, RevTripwireContract, SentinelTranscriptRead, RevengeEvalBang, SiblingOverlap, SchemaVariants",
+  "cases": [
+    {
+      "name": "newline-second-line",
+      "args": [
+        "newline-second-line.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 2
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-S",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "name": "backslash-continuation",
+      "args": [
+        "backslash-continuation.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-S",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "heredoc-data-clean",
+      "args": [
+        "heredoc-data-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "heredoc-into-shell",
+      "args": [
+        "heredoc-into-shell.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "systemctl:restart",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "multiline-quoted-commit-clean",
+      "args": [
+        "multiline-quoted-commit-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "multi-toolcall-line",
+      "args": [
+        "multi-toolcall-line.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "eval-subprocess-list",
+      "args": [
+        "eval-subprocess-list.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "eval-bash-c-recipe",
+      "args": [
+        "eval-bash-c-recipe.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Qi",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "eval-shell-true",
+      "args": [
+        "eval-shell-true.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "journalctl",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "eval-tool-bash",
+      "args": [
+        "eval-tool-bash.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "systemctl:restart",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "eval-nonliteral-unparsed-clean",
+      "args": [
+        "eval-nonliteral-unparsed-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "eval-js-unparsed-clean",
+      "args": [
+        "eval-js-unparsed-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "kill-zero-clean",
+      "args": [
+        "kill-zero-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "kill-term",
+      "args": [
+        "kill-term.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "kill",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "systemctl-suspend",
+      "args": [
+        "systemctl-suspend.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "systemctl:suspend",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "loginctl-lock",
+      "args": [
+        "loginctl-lock.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "loginctl:lock-session",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "loginctl-show-probe",
+      "args": [
+        "loginctl-show-probe.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "loginctl:show-session",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "omarchy-quoted-grep-clean",
+      "args": [
+        "omarchy-quoted-grep-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "omarchy-bare-launch",
+      "args": [
+        "omarchy-bare-launch.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "omarchy-launch-screensaver",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "result-and-marker-only-clean",
+      "args": [
+        "result-and-marker-only-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "pacman-sync-print-query",
+      "args": [
+        "pacman-sync-print-query.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Sp",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "pacman-downloadonly-mutation",
+      "args": [
+        "pacman-downloadonly-mutation.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-Sw",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "run0-and-systemd-run",
+      "args": [
+        "run0-and-systemd-run.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "run0",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-R",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "systemd-run",
+          "line": 1
+        },
+        {
+          "class": "host_mutation",
+          "rule": "hyprctl:reload",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "hyprctl-batch",
+      "args": [
+        "hyprctl-batch.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "hyprctl:keyword",
+          "line": 1
+        },
+        {
+          "class": "live_probe",
+          "rule": "hyprctl:version",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "dollar-paren-in-double-quotes",
+      "args": [
+        "dollar-paren-in-double-quotes.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "pacman-log-read-clean",
+      "args": [
+        "pacman-log-read-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "refused-db-name",
+      "args": [
+        "agent.db.jsonl"
+      ],
+      "want_exit": 2,
+      "want_findings": []
+    },
+    {
+      "name": "seat-name-with-credential-word-allowed",
+      "args": [
+        "MadoR16.CredentialFence.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "refused-symlink",
+      "args": [
+        "symlink-target.jsonl"
+      ],
+      "want_exit": 2,
+      "want_findings": []
+    },
+    {
+      "name": "command-v-lookup-clean",
+      "args": [
+        "command-v-lookup-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "python-heredoc-spawn",
+      "args": [
+        "python-heredoc-spawn.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "hyprctl:globals",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "name": "python-heredoc-data-clean",
+      "args": [
+        "python-heredoc-data-clean.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "python-c-spawn",
+      "args": [
+        "python-c-spawn.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Qi",
+          "line": 1
+        }
+      ]
+    }
+  ]
+}

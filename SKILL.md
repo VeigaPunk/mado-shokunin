@@ -522,6 +522,17 @@ pixels may contain private session data; without that authorization, keep
 them shape-only. Launching/restarting Waybar also runs configured producers
 and hooks, so a rendering request alone does not authorize a launch.
 
+### Post-hoc transcript tripwire (round 17)
+
+After every wave and before writing anything about seat conduct, run
+`python3 -I tools/mado-tripwire.py --scan <session-dir>/<Lane>R<N>` over the
+round's seat transcripts (no `--permit` while the host pause holds) and
+quote its first line, `counts` and `unparsed_spawns`. A finding is an
+issued command to disclose in the lesson, not a host-state fact: confirm
+package transactions against `/var/log/pacman.log` by timestamp (UTC in
+transcripts, -0300 in the log). Round 17 found, in rounds 13-16, every
+seat-disclosed breach plus undisclosed ones (lesson `round-17.md` M2).
+
 ## Gate registry
 
 This `SKILL.md` is the registry home, per `PROTOCOL.md` §Gate standard,
@@ -543,6 +554,9 @@ below retain their original revisions, not current instrument pins.
 | mado-action-plan | gate | `python3 -I tools/mado-action-plan.py --plan PLAN --policy .ufo/waves/round-16/safety-policy.json` | 0 clean within finite declared-kind/name policy (`plan_safe`); 1 failed (blocked kind/name, unknown kind or empty argv); 2 could-not-evaluate (malformed plan/policy or usage); other could-not-evaluate | same script `--selftest`; 0 clean, 1 failed; self-invocation asserts code and finding | script `PINNED_*` and literal selftest expectations; `.ufo/waves/round-16/safety-policy.json`; independent cases `safety-cases.json` | reads supplied regular JSON inputs; selftest isolated temp fixtures; never executes supplied argv | mado |
 | mado-action-plan-frozen | gate | `python3 -I tools/mado-action-plan.py --frozen .ufo/waves/round-16/frozen` | 0 clean comparison (`frozen_match`, including expected refused plan); 1 failed comparison; 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same script `--selftest`, includes frozen CLI fixtures | `.ufo/waves/round-16/frozen/expected.json` pins plan/policy input bytes and exact expected code/finding; receipt separately binds executable and expectation digests to measured commit | fixed-name snapshot reads; isolated selftest fixtures only | mado |
 | mado-round16-measure | probe | `python3 .ufo/waves/round-16/measure.py REV` | 0 observations only, never admission; nonzero could-not-evaluate | — (static revision-bound probe) | script U1–U6 preserved checks, U7 S053/S054/facets, original literal calibration rule; SCORECARD declares scope | git-show committed repo bytes only; no gate, host or device execution | mado |
+| mado-tripwire | audit | `python3 -I tools/mado-tripwire.py --scan PATH [PATH ...] [--permit CLASS ...]` (post-hoc scan of OMP session JSONL; assistant `toolCall` bash commands and python eval `!`/`%%bash`/literal spawns only) | 0 no unpermitted finding (`clean` when there are no findings, `permitted_only` when every finding is waived); 1 at least one unpermitted host_mutation/package_query/live_probe finding (`findings`); 2 could-not-evaluate (usage, refused symlink/`agent.db`/credential name, unreadable, no `.jsonl`, invalid line, internal error); 2 wins over 1 | `python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/core` (9), `…/compound` (16), `…/hardening` (33); 0 all pass, 1 any fail, 2 malformed expected.json; each case self-invokes `--scan` and compares exit plus the exact (class, rule, line[, file]) multiset | rules in `tools/mado-tripwire.py` (class tables at the top); real-transcript receipts `.ufo/waves/round-17/evidence/tripwire-*.txt` bound to `session-index.json` digests | reads only the given JSONL files; writes nothing | mado |
+| mado-label-check | probe | `python3 -I .ufo/waves/round-17/label-check.py [CLAIMS]` | 0 every claim ok; 1 any MISMATCH (expected for declared red claims); 2 could-not-evaluate; `EXPECT_SUMMARY` must equal the claim count | — (declared red/green/mutant claims in `.ufo/waves/round-17/label-claims.json` are its controls) | outcome tokens only: `MADO_<NAME>:` verdict word, `finding` values, got-side of selftest rows; optional `measured_commit` | `git show` of committed bytes only | mado |
+| mado-round17-measure | probe | `python3 .ufo/waves/round-17/measure.py REV` | 0 observations only, never admission; 2 usage/bad rev | — (static revision-bound probe) | rubric V (P1-P6, exact `surface:` line, pinned legacy U1/U2/U7 paths, upstream relevance, facet floor) and the literal calibration counter; SCORECARD round-17 corrections declare scope | `git show`/`ls-tree` only | mado |
 
 Round-16 classifier limit: `plan_safe` means only no blocked declared kind
 and no listed argv[0] basename. It is **not** credential/privacy safety,
@@ -554,6 +568,18 @@ round-15 incident was undeclared/ungated and is not prevented or repaired.
 Frozen match means recorded comparison matched, never that a red plan is
 safe. The existing verifier defaults live and is not run in that mode this
 round; only isolated selftest and committed digest are harm-watch evidence.
+
+Round-17 tripwire limit: detection after the fact over the files given,
+never interception, prevention or host repair. It records commands
+*issued* (tool results are ignored), so a refused call still counts and a
+successful harmful call cannot hide behind `isError`. `clean` means no
+finding in the covered forms, not that no host command ran: non-literal
+spawn arguments (`unparsed_spawns`), JavaScript eval cells (`eval_unparsed`),
+scripts written then run, shell functions/aliases, other tools and other
+sessions are outside it. Pair every verdict with a `/var/log/pacman.log`
+window count, cite `counts`/`permitted`, and never cite a `--permit` run as
+clean. Its classes are not `mado-action-plan`'s declared-kind policy:
+`clean` is not `plan_safe`.
 
 Regression's mutable sibling harness digest is printed as provenance, not
 an enforced harness pin. A passing run binds the observed target, spec and

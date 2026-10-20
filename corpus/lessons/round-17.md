@@ -17,7 +17,7 @@ rounds 13-16. Wave evidence under `.ufo/waves/round-17/`.
 | M4 | Conflicting install instruction reached every seat | Each dispatched seat task ends with the appended tooling directive whose first channel is `sudo pacman -S --needed --noconfirm`; `w1/reports/SentinelHostPause.md` H1-H3 | Wave context pause sentence (prompt-level only) | L1 sent a binding reminder to all 70 seats at dispatch; wave-2 context states an explicit override (no installs by any channel this round). Whether any seat ran a package command is checked by the C3 tripwire over the round-17 transcripts, not asserted. |
 | M5 | "Paused host-wide" stated as a host fact | `/var/log/pacman.log:2440-3152` (file read): 13 non-lane runs 07:45-09:39 on 2026-10-20, including a 09:15 `pacman -Syu` (mkinitcpio 41.1→42.2, kernel, hyprland 0.56.2-4); 0 lines from round launch 10:51 to measurement | CriticHonesty, CriticC3 | Report and SCORECARD say: the pause is an instruction to lanes; non-lane transactions ran before launch (actor unknown, operator-owned); R15-V1's current host state is `[UNK]`; the round-window count is re-measured at close. No lane remediation. |
 
-M2 (recurring seat scope breaches) is recorded with the C3 capability below.
+| M2 | Seat scope breaches recurred and lessons undercounted them; fences were prompt-only | `tools/mado-tripwire.py` receipts `.ufo/waves/round-17/evidence/tripwire-r13..r16.txt`; join `tripwire-pacmanlog-join.txt`: 4/4 mado-window package transactions (pacman.log:2410, 2422, 2423, 2429) each match one issued `sudo pacman` call (r13 GlobalCapture:19 wayland-utils; r14 ReviewSourceBar:41 `-Sw` and OutputSpec:65 `-S` wlr-protocols; r15 LibinputEvents:54 libinput). Undisclosed in the round's own lesson: r13 wayland-utils install (only the r13 spot-check names it); r15 ReviewDocsEra:50 `sudo -n true`; r16 CustomMan:24 second `pacman -Q waybar` (round-16 M5 says one). Package-query findings r13/r14/r15/r16 = 19/46/177/2 | QUALITY 21 and wave-context pause text (prompt-level); seat self-disclosure | Post-hoc tripwire (C3) run over every wave before any conduct sentence (SKILL "Post-hoc transcript tripwire (round 17)"). Shown able to fail: the round-15 anchor file exits 1 with 2 host_mutation findings on line 54; synthetic suites 9/9, 16/16, 33/33 including newline, heredoc, eval-spawn and multi-call cases. Detection only; it cannot prevent a call. Earlier lessons are not rewritten here; these counts supersede their "one query"/silence by reference. |
 
 ## Gate
 
@@ -73,3 +73,17 @@ Both notes are documentary routes (`surface: P6`, `surface: P4`): no lock,
 suspend, listener, terminal launch or reload was performed or observed.
 P3 Walker and P5 themes remain without a sourced route. R15-V1 stays
 operator-owned; this round does not readmit round 15.
+
+## Capability (C3) — post-hoc transcript tripwire
+
+`tools/mado-tripwire.py` (written by L1 after seat TripwireCore died on an
+m_swe rate limit). Receipts in `.ufo/waves/round-17/evidence/`:
+selftests `tripwire-selftest-{core,compound,hardening}.txt` (9/9, 16/16,
+33/33, exit 0); anchor `tripwire-anchor-r15.txt` (exit 1; line 54
+`call_38165` host_mutation `sudo` + `pacman:-S`; 8 findings over 7 calls);
+rounds `tripwire-r13..r16.txt`; independent-oracle comparison
+`tripwire-vs-oracles.json` (every oracle non-clean row is also a tripwire
+finding; 21 tripwire-only rows listed for wave-2 audit); round-17 wave 1
+`tripwire-r17-w1.txt` (70 seat files, `clean`, 1 unparsed spawn, 1
+unparsed eval cell). Transcript digests: `session-index.json`.
+

@@ -1,0 +1,148 @@
+{
+  "schema": "mado-tripwire-selftest-v1",
+  "cases": [
+    {
+      "name": "incident-replica",
+      "args": [
+        "incident-replica.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "host_mutation",
+          "rule": "sudo",
+          "line": 3
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pacman:-S",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "name": "package-query-only",
+      "args": [
+        "package-queries.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Qi",
+          "line": 1
+        },
+        {
+          "class": "package_query",
+          "rule": "pacman:-Si",
+          "line": 2
+        },
+        {
+          "class": "package_query",
+          "rule": "pacman:-Fl",
+          "line": 3
+        },
+        {
+          "class": "package_query",
+          "rule": "pacman:-Sp",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "name": "live-probe-only",
+      "args": [
+        "live-probe.jsonl"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "hyprctl:version",
+          "line": 1
+        },
+        {
+          "class": "live_probe",
+          "rule": "systemctl:status",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "name": "live-probe-permitted",
+      "args": [
+        "live-probe.jsonl"
+      ],
+      "permit": [
+        "live_probe"
+      ],
+      "want_exit": 0,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "hyprctl:version",
+          "line": 1
+        },
+        {
+          "class": "live_probe",
+          "rule": "systemctl:status",
+          "line": 3
+        }
+      ],
+      "note": "L1 reconciliation: findings always list permitted findings; exit 0 because none is unpermitted (compound suite convention)"
+    },
+    {
+      "name": "clean-reads",
+      "args": [
+        "clean-reads.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "mention-only",
+      "args": [
+        "mention-only.jsonl"
+      ],
+      "want_exit": 0,
+      "want_findings": []
+    },
+    {
+      "name": "malformed-json-line",
+      "args": [
+        "malformed.jsonl"
+      ],
+      "want_exit": 2,
+      "want_findings": []
+    },
+    {
+      "name": "no-jsonl-dir",
+      "args": [
+        "nodata"
+      ],
+      "want_exit": 2,
+      "want_findings": []
+    },
+    {
+      "name": "dir-scan-two-files",
+      "args": [
+        "multi"
+      ],
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "live_probe",
+          "rule": "hyprctl:version",
+          "line": 2,
+          "file": "a.jsonl"
+        },
+        {
+          "class": "host_mutation",
+          "rule": "pkill",
+          "line": 2,
+          "file": "b.jsonl"
+        }
+      ]
+    }
+  ]
+}
