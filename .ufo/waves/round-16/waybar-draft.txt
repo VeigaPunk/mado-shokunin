@@ -1,0 +1,47 @@
+source: S053 https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/man/waybar-custom.5.scd (tag 0.15.0, waybar-custom(5) man page, SHA-256 efb6a63a3d7f125840d4c4a49956664070f36231724e7aa0fa281e6d2de30d82, 6656 bytes); S054 https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/custom.cpp (tag 0.15.0, src/modules/custom.cpp, SHA-256 2232f7f7141caa5958344e1e6a0ab8eec6321994da1fecd704345aeb513b291f, 8746 bytes)
+verified-at: 2026-10-20; static reading of two tagged Waybar 0.15.0 files; not a host run of waybar, of any exec, exec-if, on-click or restart-interval command, and not a rendered bar
+recheck: Re-fetch both tagged raw URLs and compare the SHA-256 digests and byte counts above; stop on drift. Re-read man lines 8, 22, 45-50, 122, 128, 150, 159, 172 and custom.cpp lines 21-28, 81-112, 165-192, 233-246, 285-288. No package query, no waybar launch, no producer execution.
+covers: U7
+
+# Waybar custom module — the producer emits text; the renderer, not this note, decides what appears
+
+This note admits a bounded documentation and source route: what a `custom/<name>` exec producer's stdout is parsed into, and where the Waybar 0.15.0 source hands that text to GTK. It does not admit a rendered bar, visible glyphs, CSS effects, script behaviour, or any privacy or network property of a configured command. Man and source text are cited by line; quotes are under 25 words with emphasis markers removed.
+
+## Producer contract
+
+- Man, DESCRIPTION (line 8): "The custom module displays either the output of a script or static text."
+- Man, exec-if (line 22): "exec will be executed if the exit code of exec-if equals 0." Source (custom.cpp lines 50-58, 122-130) runs `exec-if` through `execNoRead` and `exec` through `util::command::exec` only when that check passes or is absent.
+- Mode selection (custom.cpp lines 21-28): a `signal` with no `interval` and no `restart-interval` selects `waitingWorker`, which runs once and then sleeps until a signal. A positive interval selects `delayWorker`. Otherwise an `exec` string selects `continuousWorker`, which opens the command as a stream (line 69).
+- Man, interval (line 42): "If no interval or signal is defined, it is assumed that the out script loops itself." The source's handling of the literal `once` value is in the ALabel base class, which was not read here [UNK].
+- Continuous mode (custom.cpp lines 81-112): each `getline` yields one line, and `output_` is set to that single line with its trailing newline removed. Raw tooltip and class lines, and a JSON object spread over several lines, are therefore not assembled in this mode. [INFERENCE from code; not exercised.]
+- Man, return-type (line 159): "If nothing or an invalid option is specified, Waybar expects i3blocks style output." Source (`parseOutputRaw`, lines 222-250) reads line 0 as text, line 1 as tooltip and line 2 as class, then stops.
+- Man, return-type json (line 150): "When return-type is set to json, Waybar expects the exec-script to output its data in JSON format." Source (`parseOutputJson`, lines 257-290) reads the first line only. It takes `text`, `alt` and `tooltip` as strings, and `class` as either a single string or an array. `percentage` is used only when it is numeric, otherwise it is 0 (lines 285-288). A percentage supplied as a JSON string therefore yields 0. [source observation]
+- Man, restart-interval (line 50): "Once the script exits, it'll be re-executed after the restart-interval." Source (lines 92-96) reopens the stream after `max(1 ms, restart-interval)`. Without a numeric restart-interval the worker stops (line 102).
+- On a non-zero exit at end of stream, the source sets `output_` to `{exit_code, ""}` (line 88) and logs `spdlog::error` with the module name only (line 90). A clean exit with restart-interval leaves the previous `output_` in place, since nothing resets it on that branch. [source observation]
+- Man, signal (`The signal number used to update the module.`): `refresh(sig)` wakes the worker only when `sig == SIGRTMIN + signal` (custom.cpp lines 138-142).
+- Events: `handleEvent` wakes the worker on scroll and toggle when `exec-on-event` is unset or true (lines 144-160). Man, on-click (`Command to execute when clicked on the module.`): the command itself is run by ALabel, which was not read [UNK].
+
+## Renderer boundary
+
+- Format: the script text, `alt`, the computed icon and `percentage` are passed to `fmt::format` with the configured `format` (lines 175-177). The man default is `{text}`. Only the manual-versus-automatic argument-indexing error is rewritten; other `fmt` errors propagate (lines 175-205).
+- Markup: `label_.set_markup(str)` (line 181) receives the formatted string. Unless `escape` is set, script text therefore reaches GTK's Pango markup parser unescaped. Man, escape (line 128): "Option to enable escaping of script output." The default is false. GTK's behaviour on invalid markup is [UNK].
+- Hiding: the module is hidden when `exec` or `exec-if` is set and the output is empty or the exit code is non-zero (line 165). It is also hidden when `hide-empty-text` is set and the text is empty, or when the formatted string is empty (lines 178-179). Error text is never displayed.
+- Tooltip: `tooltip-format` overrides the tooltip when present (lines 186-188). Otherwise the script's tooltip is used, or the formatted string when text and tooltip are equal (lines 189-192). Man, tooltip-format (line 122): "The tooltip format. If specified, overrides any tooltip output from the script in exec."
+- Escape, raw mode [INFERENCE from code; not exercised]: with `escape` set, `parseOutputRaw` sets the first-line tooltip to the escaped text (line 235), but line 240 then unconditionally reassigns `tooltip_ = validated_line`, so the first-line tooltip is unescaped unless line 1 supplies a tooltip (lines 243-246). JSON mode escapes text, alt and tooltip consistently (lines 263-275).
+- CSS: script classes are added to the label, along with `flat`, `text-button` and the module class (update, after the `class_` loop). Man, style: `#custom-<name>.<class>`. Whether those styles change the visible result is [UNK].
+
+## Safe observation
+
+- Admitted: the man page and source files at tag 0.15.0 document the parse path from producer stdout to format string, markup, tooltip and classes, along with the hide and restart conditions.
+- Privacy and network: neither file contains a network call. Any network or data egress comes from the configured `exec`, `exec-if`, `on-click` or similar command, which runs with the user's privileges. That property belongs to the configured script, not to this module, and is not established here. Logging in these files is limited to a null-config warning and an unexpected-stop error, both naming the module only; script output is not logged here.
+- Producer execution: none. No exec, exec-if, on-click, restart-interval or signal-driven command was run. Waybar was not launched and no package or service was queried.
+- Limits: tagged source only. The installed host version, the user's configuration and the output of `util::command` helpers (shell interpretation, environment, stdin, timeout) were not read.
+
+## Unexercised rendering ([UNK])
+
+- Whether unescaped script text that is invalid Pango markup is rejected, partly rendered or shown raw.
+- Visible text, glyphs, alignment, rotation, `max-length`, `min-length`, `justify` and CSS classes as displayed on screen.
+- Shell or direct-exec semantics, environment and stdin of `util::command::exec`, `execNoRead` and `open`.
+- ALabel behaviour for `interval: "once"`, `tooltipEnabled()` and `getIcon()`.
+- jsoncpp `asString()` behaviour when `text`, `alt` or `tooltip` holds a non-string value.
+- Whether a JSON `percentage` string or a `format-icons` lookup changes what a user sees on screen.

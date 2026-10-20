@@ -1158,3 +1158,45 @@ discernment improved through the grounded outside correction; no current
 non-author agreement or promotion claimed. **No-harm admission unmet.**
 The orchestrator's L0 HOST PARTIAL UPGRADE question owns remediation;
 no duplicate lane question or rollback/restart was performed. No round 16.
+
+## 2026-10-20 — round 16: source-only learning after rejected-harmed closure
+
+Trigger: independent `corpus/lessons/round-15-verifier-spotcheck.md`,
+R15-V1/V2, at baseline `32c4fda873c9cb47a84c549b24b80ead2bcaa1ea`.
+The explicit round-16 steer authorizes this bounded source-only work, never
+host remediation. Historical “No round 16” entries above are retained records
+of the prior honest stop, not silently overwritten.
+
+C1 coverage admits `waybar-observation-boundaries-r16.md` from opened tagged
+S053/S054, indexed in corpus/README. Producer data, formatting/visibility,
+GTK markup and actual rendering are separate; actual text remains unknown.
+Source digests and located quotes are in round-16 evidence and lesson §Gate.
+C2 operability acquires only a finite declared-action classifier, with a
+persisted paused policy and self-invocation/frozen evidence. It never
+intercepts tool calls or proves arbitrary argv safe; wrappers, credentials,
+write destinations and actual host effects are not analyzed. QUALITY21 and
+SKILL carry the current pause; old hard-coded overlap controls are not
+relabeled real package validation. R15-V1 stays operator-owned and unresolved.
+
+PlanningWalk exposed the L1's initial lowest-axis mistake: calibration's
+active literal same-line lesson criterion fraction was lower than coverage.
+The explicit SCORECARD correction adds independent C3 calibration and
+QUALITY22, grounded in round-16 lesson M3. The original literal counter is
+preserved; multiline semantic citation counts are not substituted.
+
+M4 records RoundConformance's actual fleet-root report write despite the
+context's lane-relative instructions. L1 copied its 8613 bytes byte-exact to
+the lane; Main removes the fleet copy. Wave2 repeats the exact requested
+trailer-resolution sentence. This is a disclosed scope/process defect,
+not a claim of flawless compliance.
+
+All wave advice is lane-authored, not fresh outside verification. No package
+transaction/query, service/compositor mutation, input collection, producer
+execution, screenshot or tool installation is authorized for this round.
+SHONEN remains four author assertions; historical SKILL promotion tables
+remain dated, not current independent clearance. PROVINCE stays unchanged.
+No retirement or next-round mission is declared.
+
+Historical source-header note from AppendOnly: commit `95cbc41` changed
+SOURCES header prose and its CORPUS pointer without logging the prose rewrite;
+no row cells were lost. This new entry records it without rewriting history.

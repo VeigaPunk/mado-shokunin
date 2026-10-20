@@ -62,6 +62,9 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
 | S050 | Tagged Hyprland output transaction safety — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/OutputManagement.cpp | code | A | Static tagged callback/stub facts that bar assuming output dry-run safety; not observed host behavior or binary-source equivalence | efb50993780079460b0cbed1363e2166a2de1d9f; COutputConfiguration constructor setDisableHead/setTest and applyTestConfiguration(bool test) | Test returns true through a stub; disable_head saves disabled state and schedules reload before a later test/apply; transaction-building is mutation-class | mined | 2026-10-20 | on-compositor-release | corpus/knowledge/output-colour-boundaries-r14.md |
 | S051 | Tagged libinput helper documentation — https://gitlab.freedesktop.org/libinput/libinput/-/raw/1.32.0/doc/user/tools.rst | docs | A | Documented helper context, defaults, kernel recording and virtual replay boundaries; not host input behavior | tag 1.32.0; libinput-list-devices Note, libinput-debug-events options, libinput-record; raw sha256 53264328664493c0fc7074722650ba42afcf8b30c94ce7cc94157544b654ff5f | supersedes S007 — list-devices reports built-in defaults, debug-events requires explicit options, record captures context-independent kernel events, replay creates a virtual device; these are different observation/action layers | mined | 2026-10-20 | on-release | corpus/knowledge/input-debugging-boundaries-r15.md |
 | S052 | Tagged Wayland core input specification — https://gitlab.freedesktop.org/wayland/wayland/-/raw/1.26.0/protocol/wayland.xml | spec | A | Core seat capability lifecycle and pointer/keyboard focus/event contract; distinct from S043 registry scope | tag 1.26.0; wl_seat :2004-2087, wl_pointer :2138-2265, wl_keyboard :2573-2699; raw sha256 cc860987e54f8d85c940e97fa1270c69b6e4ad31fbcf5a7f00107ce1157f5e07 equals installed wayland 1.26.0-1 XML | A seat capability is not client delivery; keyboard enter identifies a focused surface and key carries a platform-specific code, not guaranteed text; XML v11 is not host feature execution | mined | 2026-10-20 | on-release | corpus/knowledge/input-debugging-boundaries-r15.md |
+| S053 | Tagged Waybar custom-module manual — https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/man/waybar-custom.5.scd | docs | A | Producer return-type, formatting and scheduling contract, not observed module text | tag 0.15.0; DESCRIPTION, CONFIGURATION exec/return-type/interval/signal, RETURN-TYPE, FORMAT REPLACEMENTS; raw sha256 efb6a63a3d7f125840d4c4a49956664070f36231724e7aa0fa281e6d2de30d82 | A custom producer supplies text and optional metadata; declared formatting and event commands do not establish rendered output or safe execution | mined | 2026-10-20 | on-release | corpus/knowledge/waybar-observation-boundaries-r16.md |
+| S054 | Tagged Waybar custom-module implementation — https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/custom.cpp | code | A | Static producer-buffer-to-GTK-markup route and hide conditions, not installed-binary equivalence | tag 0.15.0; Custom::update, parseOutputJson, parseOutputRaw; raw sha256 2232f7f7141caa5958344e1e6a0ab8eec6321994da1fecd704345aeb513b291f | Parsing, formatting, visibility and GTK label update are distinct stages; producer success alone cannot establish user-visible pixels | mined | 2026-10-20 | on-release | corpus/knowledge/waybar-observation-boundaries-r16.md |
+| S055 | Independent rejected-harmed safety closure — corpus/lessons/round-15-verifier-spotcheck.md | own-work | A | Established host partial-upgrade incident and routed process debt, not host remediation | R15-V1/V2 and Gate and correction evidence :161-162,254-277; file recorded in 32c4fda873c9cb47a84c549b24b80ead2bcaa1ea, which is this round's reading baseline | A green file-plane gate and hard-coded overlap fixture do not erase package harm or prove actual installation prevention | mined | 2026-10-20 | on-operator-recovery-decision | corpus/lessons/round-16.md |
 
 ## Paths
 
@@ -89,6 +92,10 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
   description; S052's input scope was reviewed as distinct from S043's
   registry scope. This documents a route, not host event delivery or IME.
   U7 and actual U6 behavior remain frontier.
+- **Waybar module observation boundary (U7, round 16)** — S053 → S054:
+  producer contract before parsing/formatting/hide/GTK update stages. This
+  closes only the documentary route gap; rendered text remains unmeasured.
+  S055 grounds the distinct static safety-plan capability and its limits.
 
 ## Search log
 
@@ -198,6 +205,18 @@ The apparently versioned libinput HTML path returned 404 and is not a row.
 Stop: primary helper and core focus contracts settle the bounded route.
 Toolkit/IME internals, client delivery, kernel diagnosis and event collection
 are not admitted. No existing status/recheck/used-by field was changed.
+
+Round 16 (2026-10-20): which evidence reaches producer data, GTK label
+updates, or rendered module text, and what did outside closure require?
+Opened the two assigned tagged Waybar files and the independent closure.
+Identified/screened/included 3/3/3 locations, excluded 0; this count is the
+three S053–S055 additions (revision counter's registry delta), not seat
+reads. Tagged manual and implementation are complementary scoped primary
+sources, not duplicates of the older general Waybar inventory. No existing
+row's status/recheck/used-by changes. Stop: the exact producer/renderer
+boundary and outside safety debt are settled without executing a producer,
+capturing UI or touching packages/services. Actual rendering and host
+recovery remain outside this admission.
 
 ## Leads (unopened)
 

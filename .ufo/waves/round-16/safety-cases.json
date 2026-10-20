@@ -1,0 +1,533 @@
+{
+  "schema": "mado-action-plan-expected-cases-v1",
+  "author": "MadoR16.SafetyCases",
+  "round": 16,
+  "created": "2026-10-20",
+  "subject": "tools/mado-action-plan.py invoked as: python3 tools/mado-action-plan.py --plan <plan>.json --policy .ufo/waves/round-16/safety-policy.json",
+  "assumptions": {
+    "policy": "All cases are evaluated against the round-16 committed paused policy (.ufo/waves/round-16/safety-policy.json with paused=true) unless a case embeds its own policy field.",
+    "exit_codes": {
+      "0": "plan evaluated clean, finding plan_safe",
+      "1": "plan evaluated and refused with a stable named reason",
+      "2": "gate could not evaluate: malformed plan or policy (fail closed)"
+    },
+    "plan_schema": "plan is a JSON object with an actions list; each action is an object with a string kind and a list-of-strings argv. The gate classifies statically; argv is data and is never executed.",
+    "finding_priority": "One finding per verdict. For multi-action plans the first refusing action in declared order wins; plan/policy malformation is detected before any action classification, so a malformed policy yields policy_malformed even when the plan is clean.",
+    "policy_field": "A case MAY carry an embedded policy object; when present the embedded object REPLACES the policy file input wholesale for that case (replacement, not overlay or merge — hidden defaults are never filled in). Malformed-policy pins therefore embed a FULL copy of the canonical safety-policy.json fields and mutate exactly the named key, so each pin isolates one defect rather than failing on incidental missing fields.",
+    "scope_limit": "L1 scope decision: the gate is ONLY a declared-kind plus finite 12-basename screen (pacman, yay, paru, systemctl, hyprctl, omarchy, libinput, evtest, sudo, sh, bash, env). Unlisted argv[0] is NOT screened: helper installers (omarchy-pkg-add), interpreters (python3 -c), and arbitrary wrappers pass as plan_safe. This is by design — no broad allowlist, prefix, or shell enforcement; argv is never executed and the gate asserts no privacy, probe-safety, or host-prevention property. Cases labelled residual_control pin that boundary deliberately.",
+    "finding_vocabulary": {
+      "plan_safe": "exit 0; every action admitted",
+      "blocked_action_kind:<kind>": "exit 1; action kind is policy-blocked (package-install, service-mutate, compositor-mutate, input-capture)",
+      "denied_executable:<basename>": "exit 1; allowed kind (read-source, repo-write) carries argv[0] whose basename is on the refused-executable list (pacman, yay, paru, systemctl, hyprctl, omarchy, libinput, evtest, sudo, sh, bash, env)",
+      "unknown_action_kind": "exit 1; action kind not in the policy vocabulary (fail closed)",
+      "empty_argv": "exit 1; allowed kind carries an empty argv list, violating the nonempty-argv requirement",
+      "plan_malformed": "exit 2; plan JSON violates the schema (missing/non-object actions, missing kind, missing/non-list argv, non-string argv element)",
+      "policy_malformed": "exit 2; policy JSON unreadable or violates the policy schema, including a paused field that is missing, non-boolean, not true, or a policy carrying unexpected keys",
+      "snapshot_tampered": "exit 2; --frozen input digests do not match expected.json"
+    },
+    "independence": "Cases are authored from the dispatch spec and L1 scope decisions, not from SafetyGate's implementation output. The finding vocabulary was reconciled and adopted verbatim by the landed gate, so BOTH expected_code AND expected_finding are authoritative expectations — any mismatch is an implementation bug to adjudicate, not a naming drift to retrofit."
+  },
+  "cases": [
+    {
+      "name": "r15_libinput_sudo_pacman_transaction",
+      "plan": {
+        "actions": [
+          {
+            "kind": "package-install",
+            "argv": ["sudo", "pacman", "-S", "--needed", "--noconfirm", "libinput", "libinput-tools"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:package-install"
+    },
+    {
+      "name": "service_restart_waybar",
+      "plan": {
+        "actions": [
+          {
+            "kind": "service-mutate",
+            "argv": ["systemctl", "--user", "restart", "waybar.service"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:service-mutate"
+    },
+    {
+      "name": "compositor_hyprctl_reload",
+      "plan": {
+        "actions": [
+          {
+            "kind": "compositor-mutate",
+            "argv": ["hyprctl", "reload"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:compositor-mutate"
+    },
+    {
+      "name": "raw_input_libinput_debug_events",
+      "plan": {
+        "actions": [
+          {
+            "kind": "input-capture",
+            "argv": ["libinput", "debug-events", "--device", "/dev/input/event5"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:input-capture"
+    },
+    {
+      "name": "raw_input_evtest",
+      "plan": {
+        "actions": [
+          {
+            "kind": "input-capture",
+            "argv": ["evtest", "/dev/input/event3"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:input-capture"
+    },
+    {
+      "name": "unknown_action_kind",
+      "plan": {
+        "actions": [
+          {
+            "kind": "snapshot-device",
+            "argv": ["ls", "/dev/input"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "unknown_action_kind"
+    },
+    {
+      "name": "missing_argv",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source"
+          }
+        ]
+      },
+      "expected_code": 2,
+      "expected_finding": "plan_malformed"
+    },
+    {
+      "name": "argv_not_a_list",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": "cat corpus/SOURCES.md"
+          }
+        ]
+      },
+      "expected_code": 2,
+      "expected_finding": "plan_malformed"
+    },
+    {
+      "name": "empty_argv_allowed_kind",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": []
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "empty_argv"
+    },
+    {
+      "name": "read_source_disguised_pacman_plan_mode",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["pacman", "-Sp", "--print-format", "%n %v", "libinput"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:pacman"
+    },
+    {
+      "name": "read_source_sudo_wrapper",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["sudo", "-n", "cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:sudo"
+    },
+    {
+      "name": "read_source_bash_shell",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["bash", "-c", "cat corpus/SOURCES.md | grep S051"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:bash"
+    },
+    {
+      "name": "read_source_sh_shell",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["sh", "-c", "cat corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:sh"
+    },
+    {
+      "name": "read_source_env_wrapper",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["env", "cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:env"
+    },
+    {
+      "name": "read_source_hyprctl_version_r15_probe",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["hyprctl", "version"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:hyprctl"
+    },
+    {
+      "name": "service_mutate_kind_benign_argv",
+      "plan": {
+        "actions": [
+          {
+            "kind": "service-mutate",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:service-mutate"
+    },
+    {
+      "name": "allowed_source_read",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 0,
+      "expected_finding": "plan_safe"
+    },
+    {
+      "name": "allowed_repo_write",
+      "plan": {
+        "actions": [
+          {
+            "kind": "repo-write",
+            "argv": ["write", "corpus/knowledge/waybar-module-text-boundary-r16.md"]
+          }
+        ]
+      },
+      "expected_code": 0,
+      "expected_finding": "plan_safe"
+    },
+    {
+      "name": "allowed_source_read_and_repo_write",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          },
+          {
+            "kind": "repo-write",
+            "argv": ["write", "corpus/knowledge/waybar-module-text-boundary-r16.md"]
+          }
+        ]
+      },
+      "expected_code": 0,
+      "expected_finding": "plan_safe"
+    },
+    {
+      "name": "missing_actions_list",
+      "plan": {},
+      "expected_code": 2,
+      "expected_finding": "plan_malformed"
+    }
+    ,
+    {
+      "name": "r15_libinput_sudo_pacman_mislabeled_read_source",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["sudo", "pacman", "-S", "--needed", "--noconfirm", "libinput", "libinput-tools"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:sudo"
+    },
+    {
+      "name": "multi_action_green_then_red",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          },
+          {
+            "kind": "service-mutate",
+            "argv": ["systemctl", "--user", "restart", "waybar.service"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "blocked_action_kind:service-mutate"
+    },
+    {
+      "name": "read_source_libinput_debug_events_help",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["/usr/bin/libinput", "debug-events", "--help"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:libinput"
+    },
+    {
+      "name": "policy_paused_boolean_false",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused": false,
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        }
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "policy_paused_string_false",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused": "false",
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        }
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "policy_paused_numeric_one",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused": 1,
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        }
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "policy_paused_null",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused": null,
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        }
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "policy_paused_missing",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        }
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "policy_extra_allow_key",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "policy": {
+        "schema": "mado-action-plan-policy-v1",
+        "paused": true,
+        "paused_scope": ["package-install", "service-mutate", "compositor-mutate", "input-capture"],
+        "deny_executables": ["pacman", "yay", "paru", "systemctl", "hyprctl", "omarchy", "libinput", "evtest", "sudo", "sh", "bash", "env"],
+        "kinds": {
+          "read-source": {"disposition": "allow", "argv_nonempty": true},
+          "repo-write": {"disposition": "allow", "argv_nonempty": true},
+          "package-install": {"disposition": "deny"},
+          "service-mutate": {"disposition": "deny"},
+          "compositor-mutate": {"disposition": "deny"},
+          "input-capture": {"disposition": "deny"}
+        },
+        "allow": ["package-install"]
+      },
+      "expected_code": 2,
+      "expected_finding": "policy_malformed"
+    },
+    {
+      "name": "residual_control_omarchy_pkg_add_unscreened",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["omarchy-pkg-add", "libinput"]
+          }
+        ]
+      },
+      "expected_code": 0,
+      "expected_finding": "plan_safe"
+    },
+    {
+      "name": "residual_control_python3_inline_unscreened",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["python3", "-c", "print(1)"]
+          }
+        ]
+      },
+      "expected_code": 0,
+      "expected_finding": "plan_safe"
+    },
+    {
+      "name": "read_source_sudo_cat_tight_red",
+      "plan": {
+        "actions": [
+          {
+            "kind": "read-source",
+            "argv": ["sudo", "cat", "corpus/SOURCES.md"]
+          }
+        ]
+      },
+      "expected_code": 1,
+      "expected_finding": "denied_executable:sudo"
+    }
+  ]
+}

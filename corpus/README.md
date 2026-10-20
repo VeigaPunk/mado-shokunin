@@ -38,6 +38,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/wayland-protocol-boundaries-r13.md` (round 13; covers U4) | Pinned experimental/staging/stable policy, protocol-major versus interface-version distinction, and sanitized host registry interface/version capture. Advertisement is not feature behavior; diagnostic bindings/detail queries are separately explained. | `source:` S005, S040–S043, S046 in [SOURCES](SOURCES.md); `.ufo/waves/round-13/w1/globals.json`; read the note's safe recheck and limits. |
 | `knowledge/output-colour-boundaries-r14.md` (round 14; covers U5) | Documented output transaction test/apply/reply and colour-manager/image-description boundaries; tagged implementation safety caveat bars assuming dry-run safety. Historical matching advertisement is not tested behavior, HDR or physical colour accuracy. | `source:` S047/S048/S050 and reopened S041 in [SOURCES](SOURCES.md); raw source bindings `.ufo/waves/round-14/evidence/source-bindings-pipefail.txt`; feature execution remains operator-owned. |
 | `knowledge/input-debugging-boundaries-r15.md` (round 15; covers U6) | Bounded helper-context → compositor-policy → Wayland client focus → application-outcome diagnostic route. Built-in defaults, kernel recording, capability advertisement and actual delivery are distinct; capture/replay/device access is not authorized. | `source:` S051/S052 in [SOURCES](SOURCES.md), pinned libinput 1.32.0 RST and Wayland 1.26.0 core XML. Package drift is recorded in [lesson](lessons/round-15.md); no feature execution or full U6 coverage. |
+| `knowledge/waybar-observation-boundaries-r16.md` (round 16; covers U7) | Tagged custom-module producer contract → parser/format/visibility → GTK markup → rendered-observation boundary. Producer data is not current bar text; no producer or UI execution is admitted. | `source:` S053/S054 in [SOURCES](SOURCES.md); raw source digests `.ufo/waves/round-16/evidence/source-bindings.json`; actual rendering remains `[UNK]`. |
 
 ## Quality bar
 
@@ -54,7 +55,7 @@ that apply changes are operator handoffs, never permission to run them.
 | Surface | Start here | Evidence to follow | Limit |
 |---|---|---|---|
 | Hyprland config, binds, rules and display | [config plane](knowledge/hyprland-config-plane.md), [live verification](knowledge/hyprctl-verification-layer.md), [bind/rule semantics](knowledge/keybind-rule-semantics.md) | Include precedence and file bytes; dated `getoption`, binds and monitor reads; live-layer §8 anti-claim recipe | Parsed declarations do not prove dispatcher behavior, rule effects or exec-once results. |
-| Waybar | [bar/launcher plane](knowledge/waybar-walker-plane.md), [semantics](knowledge/waybar-walker-semantics.md) §§2–5, §9 | Config/style, module sources, consumer-layer and tray probes | No module-text IPC/query verb at the recorded version; rendering is not inferred from file imports. |
+| Waybar | [bar/launcher plane](knowledge/waybar-walker-plane.md), [semantics](knowledge/waybar-walker-semantics.md) §§2–5, §9; [custom-module observation boundary](knowledge/waybar-observation-boundaries-r16.md) | Config/style, dated consumer/tray probes; tagged producer/parser/GTK source route | No module-text IPC/query verb at the historical version; producer data is not current bar text or rendered pixels. No producer runs this round. |
 | Walker | [config depth](knowledge/walker-deep.md), [live surface](knowledge/walker-live-surface.md) §§2–5, [r9 discriminator](knowledge/walker-deep-r9.md) §§2–3, §7 | TOML, dated CLI/binary evidence, process/D-Bus and socket metadata | Socket protocol and rendered UI remain UNKNOWN; r9's live reload discriminator was not exercised. |
 | Alacritty / foot / kitty / ghostty | [terminal plane](knowledge/terminals-and-omarchy.md) §§1–6, [runtime census](knowledge/remaining-planes-census.md) §3 | File settings, theme imports and dated install/process sweep | Only Alacritty was installed in the recorded sweep; the other configs are declarations, not tested consumers. |
 | Themes / wallpapers | [theme plane](knowledge/theme-wallpaper-plane.md) §§1–5, §11, [census](knowledge/remaining-planes-census.md) §§1–2 | Declared files, generated/payload split, symlinks and consumer import chains | Chain existence is not live rendering. The theme note's §6 gate proposal describes an older revision, not new landed rows. |
@@ -107,3 +108,9 @@ Index completeness does not retire these unresolved surfaces:
   Actual kernel/libinput/compositor/client delivery, toolkit/IME behavior and
   U7 Waybar module text remain open. The host partial upgrade during this
   wave is a safety harm, not knowledge expansion or proof of input health.
+- Round 16 moves U7's **documentary observation route** onto
+  [sourced ground](knowledge/waybar-observation-boundaries-r16.md).
+  This supersedes “U7 open” only for that finite route. Actual module text,
+  GTK/widget state, pixels, CSS effects, freshness and hardware values stay
+  unmeasured; no capability to read the live bar is claimed. Host recovery
+  remains operator-owned under the round-15 rejected-harmed closure.

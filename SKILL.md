@@ -36,6 +36,13 @@ between releases (omarchy skill:300-305).
   Observation / inference / unknown stay separate; a claim with only one anchored
   side is an UNK item, not a finding.
 - Errata append-only; rejections kept.
+- **Host-wide package pause until an explicit operator recovery decision:**
+  no package transactions or service/compositor mutations. This source-only
+  round additionally forbids package queries, live reads (including process
+  and compositor probes), input capture, screenshots and producer execution.
+  Read already available tagged source instead of installing a help tool.
+  All old live/RUN examples are suspended here, including pure-read producers.
+  The round-15 rejected-harmed host debt is not cleared; see QUALITY21/M1/M2.
 
 ## Config-plane map — who owns this key
 
@@ -103,7 +110,7 @@ what reads it, how it takes effect, and which live route can verify it.
 | Scope | Files to read | Consumer & reload semantics | Live route (read-only) | Operator-only |
 |---|---|---|---|---|
 | hypr core | `~/.config/hypr/*.conf` — 12 active files (MADO-1 §2) | Hyprland 0.56.2; auto-reloads on save (omarchy skill:145) | hyprctl read verbs: `getoption`, `binds`, `clients`, `monitors`, `workspaces`, `devices`, `animations`, `layers`, `configerrors`, `version`; env/consumers via `printenv`/`pgrep`/`systemctl` | `hyprctl reload`; any file write |
-| bar (waybar) | `~/.config/waybar/config.jsonc` (249 L), `style.css` (136 L) (MADO-2 §1) | waybar v0.15.0 running (PID 1707, parent = Hyprland; MADO-R3-1 §1); style auto-reloads (`config.jsonc:2`); modules need `omarchy restart waybar` | measured ledger (MADO-R3-1 §2.3, re-verified): bar surface via `hyprctl -j layers` (levels `2` → namespace `waybar`, pid 1707, `3440 26`); tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; **no IPC/query verb in 0.15.0** (`waybar --help` = config/style/log/bar only) → module text config-only, reconstruct via pure-read producers (`RUN`) | `omarchy restart waybar` |
+| bar (waybar) | `~/.config/waybar/config.jsonc`, `style.css` (historical MADO-2 §1) | Historical v0.15.0 process/style/restart observations in MADO-R3-1 §1, not current state | Dated surface/tray ledger MADO-R3-1 §2.3; **no current module-text observation**. A producer invocation cannot reconstruct the current GTK label or rendered bar. For the custom-module source route use §Waybar observation boundary (round 16); no live or producer run this round. | `omarchy restart waybar` remains operator-only |
 | launcher (walker) | `~/.config/walker/config.toml` (49 L; packaged table `/etc/xdg/walker/config.toml`, 298 L — MADO-R3-1 §6) | walker 2.17.0 via `app-walker@autostart.service` + `elephant.service`; restart `omarchy restart walker` | file bytes; `systemctl --user status app-walker@autostart`; `hyprctl -j layers` when open (absent when closed); D-Bus `dev.benz.walker` (`org.gtk.Actions.List` → `as 0`); sockets shape-only (MADO-R3-1 §6.7/§6.8) | same |
 | notifications / OSD | `~/.config/mako/config`, `~/.config/swayosd/{config.toml,style.css}` (MADO-2 §4) | Mako owns `org.freedesktop.Notifications` (PID-measured); swayosd-server separate | `makoctl mode`; `busctl --user status org.freedesktop.Notifications` | restart/reload commands |
 | idle / lock | `hypridle.conf` (19 L, `e7d3b8dd…`), `hyprlock.conf` (43 L, `b8d173dc…`), theme `hyprlock.conf` (5 L, `3ef010e7…`) — the two local configs byte-identical to the shipped Omarchy payload; not sourced by hyprland.conf; daemon declared by default autostart `exec-once` (`default/hypr/autostart.conf:1`); actuator set under `~/.local/share/omarchy/bin/` (MADO-R4-2 §1/§2b) | hypridle 0.1.8 = idle daemon; on/off is the stateless process-toggle `omarchy-toggle-idle` (`pgrep`/`pkill -x hypridle` ↔ `uwsm-app -- hypridle`; routes: bar glyph `config.jsonc:207`, `SUPER CTRL+I` `utilities.conf:30`, menu `omarchy-menu:212`); hyprlock spawned on demand only (`omarchy-system-lock:8-13`, `pidof hyprlock` guard); lock/wake side-effects script-defined — DPMS off ≈3 s after lock, wake restores (MADO-R4-2 §5/§8) | `pgrep -x hypridle` — absent at the 16:00–16:08Z probe (MADO-R4-2 §7); PID 1203349 present 16:11–16:22Z (restarted with the session), absent again by 16:24Z with no stop line (cause `[UNK]`; F1's disappearance pattern recurred) — re-measure before reuse; `systemctl --user is-active` → `inactive`, `is-enabled` → `disabled`; `journalctl --user` boot-start only (F1); file bytes; session sample via `loginctl show-session` (`IdleHint`/`LockedHint`) and `hyprctl -j layers` (no lock surface while unlocked); live idle transitions have no read surface — no lock test allowed | start/stop daemon; `omarchy-restart-hypridle`; firing the chain (`omarchy-system-lock`, DPMS); any lock or idle-interval test |
@@ -228,6 +235,9 @@ mado runs only the read leg (`configerrors`).
    proves it pure-read and side-effect-free (no network, no writes) and it runs contained — the
    `omarchy-voxtype-status:5` `trap 'kill 0' EXIT` is the measured counter-example: it SIGTERMs
    its own process group (MADO-R3-1 §8.1).
+   **Round-16 override:** no producer execution, even pure-read/contained.
+   Producer text, tooltip and provider metadata are session material; the
+   source-only scope supersedes the historical conditional license above.
 3. **Prove the boundary.** A probe pass ends only when the config trees are byte-identical:
    `sha256sum` before/after equals MADO-1 §2 (MADO-R2-1 §7). Trees stay read-only
    (PROVINCE.md:10-12); findings are report-and-recommend.
@@ -349,7 +359,7 @@ Symptom → cause → the check that settles it (each measured):
 | "Check the compositor log" | `hyprland.log` is session material | shape-only (size/mtime); never content-read (MADO-R2-1 §0) |
 | Bar shows an idle/notification icon | bar state is a process/mode probe, not a bar flag | `pgrep -x hypridle`; `makoctl mode` (MADO-2 §2.4) |
 | "Will the session lock after idle?" | the declared 150 s/152 s chain has no consumer while hypridle is absent (S1, F1) — it cannot fire; lock state has no read surface while unlocked | `pgrep -x hypridle` + `journalctl --user` boot/stop lines; never trigger the chain (mutation, operator-only) (MADO-R3-2 §6 F1; MADO-R4-2 §7) |
-| "What is the bar showing right now?" | waybar has no query verb — config-only + producer probes | compositor view `hyprctl -j layers`; pure-read producer payloads (`RUN`), e.g. the indicator scripts (MADO-R3-1 §2.3/§3) |
+| "What is the bar showing right now?" | `[UNK]`; a producer sample is not the current bar label or pixels | Source-only route: `corpus/knowledge/waybar-observation-boundaries-r16.md` (S053/S054). No producer, signal or live probe is authorized this round; a later rendered observation needs separate authorization. |
 | Weather chip vanished | `.unavailable` class collapses the module by design when offline | check the network path in `weather.sh`; `style.css:75-79` (MADO-R3-1 §7) |
 | "Did my window rule apply?" | 0.56.2 has an *effect* read, not a *match* read: `getprop` returns the applied value with no rule attribution | `hyprctl getprop address:<addr> <prop>` (pick the window by class/address from `clients -j`, never titles); several rules can yield the same value (MADO-R12-1) |
 | "Which portal backend serves this?" | `XDG_CURRENT_DESKTOP` selects `<desktop>-portals.conf`; its ordered list meets each backend's `.portal` `Interfaces=` — a running service proves neither the route nor consent | read `/usr/share/xdg-desktop-portal/hyprland-portals.conf` + `portals/*.portal`; D-Bus property reads only, never a request (MADO-R12-3) |
@@ -474,10 +484,43 @@ not an install. No further pacman operations, downgrade/revert or compositor
 restart in round 15. The operator owns remediation. See
 [`round-15.md`](corpus/lessons/round-15.md) M2 and QUALITY 20.
 
+**Round-16 superseding instruction:** all pacman transactions are currently
+paused host-wide. Do not even obtain a fresh package plan for this task;
+never downgrade, reinstall, remove packages or restart host services.
+Criterion 20's real full-plan/installed-name comparison is conditional on a
+future explicit operator lift and installation authorization, not a way
+around the pause. The prior in-memory overlap fixtures are not production
+validation. R15-V1 remains operator-owned; R15-V2 and the disclosed no-live
+probe breach become QUALITY 21 and round-16 lesson M1/M2. Old live command
+tables describe dated routes, not authorization for this round.
+This version of the static classifier always requires paused=true. It cannot
+authorize a post-lift installation; that would require separately reviewed
+instructions/policy, not editing its input to manufacture permission.
+
 R14-V1's three provisional mutation receipts remain historical derived-target
 evidence, not standalone final-full-gate receipts. The appended standing-use
 erratum maps each header to the exact committed-derived executable without
 restamping pre-commit runs as `measured_commit`.
+
+### Waybar observation boundary (round 16)
+
+Use [`waybar-observation-boundaries-r16.md`](corpus/knowledge/waybar-observation-boundaries-r16.md)
+(S053/S054) to separate producer stdout, parser fields, format/visibility,
+GTK markup and rendered appearance. A fresh producer result is not the
+current bar label. The historical `RUN` route elsewhere in this file is
+superseded for the question “what is showing now?”: actual module text,
+tooltips, alt/provider payloads and pixels are unmeasured session material,
+not permission to execute a producer or collect private output. This
+round is source-only; no screenshot, refresh signal or service launch.
+Tagged source is not proof of the installed binary or current behavior.
+The seven-item documentary rubric can complete while these remain unknown.
+The sourced route covers custom modules only; built-in module contracts
+remain unsourced. Old screenshot/RUN recipes are not standing authorization:
+an operator must name the exact producer/capture, allowed data and retained
+destination before any later execution. Producer fields and screenshot
+pixels may contain private session data; without that authorization, keep
+them shape-only. Launching/restarting Waybar also runs configured producers
+and hooks, so a rendering request alone does not authorize a launch.
 
 ## Gate registry
 
@@ -497,6 +540,20 @@ below retain their original revisions, not current instrument pins.
 | mado-round14-measure | probe | `python3 .ufo/waves/round-14/measure.py REV` | 0 observations printed, not admission; nonzero could-not-evaluate | — (revision-bound observation probe) | same script: U-item reciprocal joins/U5 facets, three regular-target cases and separate preservation controls; SCORECARD rubric | isolated temporary fixtures, never live configuration writes | mado |
 | mado-round15-measure | probe | `python3 .ufo/waves/round-15/measure.py REV` | 0 observations printed, not admission; 2 usage could-not-evaluate; other nonzero could-not-evaluate | — (static observation probe, not verdict gate) | same script: revision-bound source/header/navigation joins; U4/U5 preserved, U6 three sections plus unknown and reciprocal S051/S052; SCORECARD rubric | reads committed repo bytes only; no gate execution, fixtures, input-device or config access | mado |
 | mado-frozen-regression-r14 | gate | `python3 .ufo/waves/round-14/frozen/verify.py` | 0 clean (`frozen_match`); 1 failed (`frozen_verdict_mismatch`); 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same command with `--selftest`; 0 clean, 2 failed; isolated fixtures assert exit and stable id | `.ufo/waves/round-14/frozen/expected.json` pins gate/harness inputs plus expected exit/marker | reads round-14 committed snapshots; child regression/selftest isolated temporary trees | mado |
+| mado-action-plan | gate | `python3 -I tools/mado-action-plan.py --plan PLAN --policy .ufo/waves/round-16/safety-policy.json` | 0 clean within finite declared-kind/name policy (`plan_safe`); 1 failed (blocked kind/name, unknown kind or empty argv); 2 could-not-evaluate (malformed plan/policy or usage); other could-not-evaluate | same script `--selftest`; 0 clean, 1 failed; self-invocation asserts code and finding | script `PINNED_*` and literal selftest expectations; `.ufo/waves/round-16/safety-policy.json`; independent cases `safety-cases.json` | reads supplied regular JSON inputs; selftest isolated temp fixtures; never executes supplied argv | mado |
+| mado-action-plan-frozen | gate | `python3 -I tools/mado-action-plan.py --frozen .ufo/waves/round-16/frozen` | 0 clean comparison (`frozen_match`, including expected refused plan); 1 failed comparison; 2 could-not-evaluate (`snapshot_tampered` or `frozen_error`); other could-not-evaluate | same script `--selftest`, includes frozen CLI fixtures | `.ufo/waves/round-16/frozen/expected.json` pins plan/policy input bytes and exact expected code/finding; receipt separately binds executable and expectation digests to measured commit | fixed-name snapshot reads; isolated selftest fixtures only | mado |
+| mado-round16-measure | probe | `python3 .ufo/waves/round-16/measure.py REV` | 0 observations only, never admission; nonzero could-not-evaluate | — (static revision-bound probe) | script U1–U6 preserved checks, U7 S053/S054/facets, original literal calibration rule; SCORECARD declares scope | git-show committed repo bytes only; no gate, host or device execution | mado |
+
+Round-16 classifier limit: `plan_safe` means only no blocked declared kind
+and no listed argv[0] basename. It is **not** credential/privacy safety,
+no-live-probe clearance, destination confinement or permission to execute.
+Unlisted wrappers/interpreters (including `omarchy-pkg-add` and `python3`)
+pass the finite screen; operand paths are not analyzed. Residual controls
+record this explicitly. It does not intercept actual tool calls; the
+round-15 incident was undeclared/ungated and is not prevented or repaired.
+Frozen match means recorded comparison matched, never that a red plan is
+safe. The existing verifier defaults live and is not run in that mode this
+round; only isolated selftest and committed digest are harm-watch evidence.
 
 Regression's mutable sibling harness digest is printed as provenance, not
 an enforced harness pin. A passing run binds the observed target, spec and
@@ -563,6 +620,13 @@ State measured 2026-10-14 16:28Z — SHONEN.md unchanged since the round-3 commi
 | e2e domain task executed and logged (`:7`) | `[~]` | what remains: the named non-author reviewer attribution. A reviewer seat re-ran the R3 pass from the notes — scratch `/tmp/w4-m4-1-repro/` (runs 16:21/16:24Z; corrected pass: 57-option check, 0 mismatches). Pack: the Reproduction package above — `config-health-report-r3.md` §11 item 4, `/tmp/mado-r3-2-probe/`, `/tmp/mado-r4-1-probe/repro-r3.sh`; re-run copy `/tmp/mado-r4-4-repro/` (16:07Z, 57/0) |
 | executable without oral context | `[x]` | MADO-R3-4 (same note; per-step sufficiency over steps 0–9) |
 | PROVINCE accuracy (`:11`) | `[~]` | what remains: the named non-author verifier's verdict. Audit note landed — `corpus/knowledge/province-accuracy-selfaudit.md` (17,190 B, sha `f81f19db…`; self-audit explicitly labeled, claim census 15/15 `[~]`, its §7 is the closure handoff). Pack: `PROVINCE.md` (18 L, sha `7aad7b86…`) + audit scratch `/tmp/w4-m4-3/*.log`; the round-4 verifier seat's poll found the note at 16:26Z (`/tmp/w4-ver-m4-scratch/poll.log`) |
+
+Round-16 current-status correction: this dated 2026-10-14 table is
+historical, not current promotion authority. Current `SHONEN.md` has four
+`[~]` assertions and zero approved boxes; lane-dispatched MADO-R3-4 does
+not satisfy the present independent non-author rule. The historical arc
+and completion-plan statements retain their dates and are superseded for
+current status by SHONEN.md and SCORECARD's fleet-round-1 correction.
 
 Rules (`plans/round-4.plan.md`): self-attestation does not count — only an
 integrator-dispatched, independent seat closes a box; the round-4 measure is

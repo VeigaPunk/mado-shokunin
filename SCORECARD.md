@@ -686,3 +686,50 @@ unchanged. Halt progression; only the operator may authorize host remediation.
 All short `evidence/` pointers here resolve under `.ufo/waves/round-15/`.
 The next study intent, only after operator clearance, is the remaining
 U7 observation boundary; no next-round mission is opened by that intent.
+
+## Round 16 — declared claims (2026-10-20)
+
+Baseline `32c4fda873c9cb47a84c549b24b80ead2bcaa1ea` includes the
+independent round-15 rejected-harmed closure. This explicit operator round
+authorizes source-only learning, not host remediation or live-health clearance.
+
+- **C1 coverage**, lowest active finite rubric: documented source routes
+  U1–U6 6/7 (8.5714/10) → U1–U7 7/7 (10/10). U7 requires provenance,
+  reciprocal mined A/B S053/S054, and the exact sections `Producer contract`,
+  `Renderer boundary`, `Safe observation`, `Unexercised rendering` with
+  `[UNK]` in the last. Prior U1–U6 checks remain unchanged. This is not
+  full domain coverage or a claim to observe rendered module text.
+  Command: `python3 .ufo/waves/round-16/measure.py REV`.
+- **C2 operability / capability acquisition**: absent (0) → demonstrated (1)
+  bounded static action-plan classifier, with persisted paused policy,
+  self-invocation assertions, negative actual-incident-shaped input and
+  digest-bound frozen run. Commands: `python3 tools/mado-action-plan.py
+  --selftest`, `--plan PLAN --policy POLICY`, and `--frozen DIR`.
+  No numeric rewrite of the old hermetic-suite score. This gate grades
+  declared JSON actions; it neither intercepts tools nor repairs the host.
+
+These claims are causally separable: U7 source admission needs no classifier;
+the classifier needs no Waybar note. R15-V1/V2 become an append-only
+QUALITY criterion superseding criterion 20 while the host pause holds and
+a current SKILL safety instruction. Host recovery stays operator-owned;
+no package query/transaction, service operation, live compositor or input
+probe is part of this round. No exploratory claim or promotion request.
+L1 holds the planner seat; PlanningWalk supplies a bounded data walk.
+
+### Round-16 pre-measurement selection correction — C3 calibration
+
+PlanningWalk correctly found an omitted active calibration row from round
+12. The initial “coverage lowest” assertion above is superseded, not
+retired away: calibration remains below coverage. Add **C3 calibration**
+within the three-claim cap: append lesson-grounded criterion 22 on this
+selection error, independently of the U7 note and the safety classifier.
+Counting command remains `python3 .ufo/waves/round-16/measure.py REV`,
+which separately reports the original literal `^[0-9]+\. .*lessons/`
+numerator over all `^[0-9]+\. ` criteria. This old counter measures
+same-line lesson citations, not all multiline semantic grounding or
+current source truth. It is not silently replaced by a friendlier counter.
+Baseline/delivered fractions will be recorded from committed inputs.
+Criterion 21 also carries its own lesson on its first line; criterion 22
+alone still gives a calibration increase if C2's criterion is removed.
+C2's runnable capability remains independently verifiable without 22.
+All three claims are measured; none is exploratory.

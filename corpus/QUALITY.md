@@ -76,3 +76,32 @@ provenance criterion is introduced.
     not permit a partial upgrade. Round 15 performs no further pacman operation,
     rollback/downgrade or restart. (lesson: lessons/round-15.md#mistakes M2;
     orchestrator ruling on the actual libinput transaction)
+
+## Round 16 — outside rejected-harmed follow-through
+
+21. Host-install pause and declared-plan evidence boundary (lesson: lessons/round-16.md#mistakes M1/M2). Supersedes criterion 20's prospective install route **while the
+    operator's host-wide pause holds**: no package transaction or host
+    service/compositor mutation is permitted, including installing a tool
+    merely to read its help. Use already available source/documentation;
+    source examples are data, not execution permission. Carry the pause and
+    this round's no-live-probe scope into every seat context. A static
+    action-plan classifier must return nonzero on the literal libinput
+    incident argv, listed argv[0] basenames even when path-prefixed or
+    mislabeled, unknown kind and malformed action, with a source-read
+    control. Unlisted wrappers/operands are not screened. Its verdict is
+    not tool interception, credential/privacy/probe safety, host immutability,
+    a real package dry run or remediation. After explicit operator lift,
+    criterion 20's complete real-plan/installed-name comparison still applies; a
+    hard-coded new-only fixture never proves it ran.
+    Even a real new-only name comparison is necessary, not clearance:
+    stale sync state, dependencies, replacements, hooks and running-process
+    compatibility remain operator decisions. No filtered fixture authorizes
+    a transaction, and editing the lane policy cannot lift the host pause.
+    (lesson: lessons/round-16.md#mistakes M1/M2; outside
+    lessons/round-15-verifier-spotcheck.md R15-V1/V2)
+
+The runnable check and its failure evidence are registered in SKILL.md.
+The unresolved host-recovery decision stays with the operator. No safety
+trade is erased by this criterion or a green configuration gate.
+
+22. Re-derive every active, non-retired axis under its recorded counting rule before selecting the lowest axis; do not compare coverage only with the hermetic-suite pass fraction while a lower calibration row remains active. Report literal versus semantic citation counters separately rather than silently changing the rubric. (lesson: lessons/round-16.md#mistakes M3; PlanningWalk is a lane-dispatched adviser, not an outside reviewer)
