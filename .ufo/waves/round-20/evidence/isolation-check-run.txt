@@ -1,0 +1,461 @@
+RECEIPT tool=.ufo/waves/round-20/isolation-check.sh tool_sha256=2bf115db1658df32d5e89e600ad6ef47c0e2855beda5f25dfc936270604f6aa9 measured_commit=PENDING
+
+===== CHECK isolate.sh =====
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/mount-nonzero/stub --target /tmp/mado-isolation-check.Mg4mtr/mount-nonzero/target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED isolate.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/unshare-refused/stub --target /tmp/mado-isolation-check.Mg4mtr/unshare-refused/target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED isolate.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/mount-noop/stub --target /tmp/mado-isolation-check.Mg4mtr/mount-noop/target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED isolate.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/partial-arm/stub --target /tmp/mado-isolation-check.Mg4mtr/partial-arm/t1 --target /tmp/mado-isolation-check.Mg4mtr/partial-arm/t2 -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/partial-arm/canary
+INJECTION: PATH-stub
+output:
+forced second-target mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED isolate.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/missing-target/stub --target /tmp/mado-isolation-check.Mg4mtr/missing-target/missing-target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.Mg4mtr/missing-target/missing-target: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED isolate.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=isolate.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/missing-stub/stub --target /tmp/mado-isolation-check.Mg4mtr/missing-stub/target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.Mg4mtr/missing-stub/target: special device /tmp/mado-isolation-check.Mg4mtr/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED isolate.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=isolate.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/isolate.sh --stub /tmp/mado-isolation-check.Mg4mtr/positive/stub --target /tmp/mado-isolation-check.Mg4mtr/positive/target -- /tmp/mado-isolation-check.Mg4mtr/payload.sh /tmp/mado-isolation-check.Mg4mtr/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK isolate.sh
+CHECK_EXIT isolate.sh=0
+
+===== CHECK inns-r19-shape.sh =====
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/mount-nonzero/stub --target /tmp/mado-isolation-check.AHzE3k/mount-nonzero/target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/unshare-refused/stub --target /tmp/mado-isolation-check.AHzE3k/unshare-refused/target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 1; canary=absent; injected-marker=present
+FAIL_CLOSED inns-r19-shape.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/mount-noop/stub --target /tmp/mado-isolation-check.AHzE3k/mount-noop/target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+armed /tmp/mado-isolation-check.AHzE3k/mount-noop/target
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/partial-arm/stub --target /tmp/mado-isolation-check.AHzE3k/partial-arm/t1 --target /tmp/mado-isolation-check.AHzE3k/partial-arm/t2 -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/partial-arm/canary
+INJECTION: PATH-stub
+output:
+armed /tmp/mado-isolation-check.AHzE3k/partial-arm/t1
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN inns-r19-shape.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/missing-target/stub --target /tmp/mado-isolation-check.AHzE3k/missing-target/missing-target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+harness exit: 0; canary=present; injected-marker=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/missing-stub/stub --target /tmp/mado-isolation-check.AHzE3k/missing-stub/target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.AHzE3k/missing-stub/target: special device /tmp/mado-isolation-check.AHzE3k/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 0; canary=present; injected-marker=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=inns-r19-shape.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-check.AHzE3k/positive/stub --target /tmp/mado-isolation-check.AHzE3k/positive/target -- /tmp/mado-isolation-check.AHzE3k/payload.sh /tmp/mado-isolation-check.AHzE3k/positive/canary
+output:
+armed /tmp/mado-isolation-check.AHzE3k/positive/target
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK inns-r19-shape.sh
+CHECK_EXIT inns-r19-shape.sh=1
+
+===== CHECK m1-nocmp.sh =====
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/mount-nonzero/stub --target /tmp/mado-isolation-check.hcfWdC/mount-nonzero/target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m1-nocmp.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/unshare-refused/stub --target /tmp/mado-isolation-check.hcfWdC/unshare-refused/target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m1-nocmp.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/mount-noop/stub --target /tmp/mado-isolation-check.hcfWdC/mount-noop/target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN m1-nocmp.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/partial-arm/stub --target /tmp/mado-isolation-check.hcfWdC/partial-arm/t1 --target /tmp/mado-isolation-check.hcfWdC/partial-arm/t2 -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/partial-arm/canary
+INJECTION: PATH-stub
+output:
+forced second-target mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m1-nocmp.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/missing-target/stub --target /tmp/mado-isolation-check.hcfWdC/missing-target/missing-target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.hcfWdC/missing-target/missing-target: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m1-nocmp.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m1-nocmp.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/missing-stub/stub --target /tmp/mado-isolation-check.hcfWdC/missing-stub/target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.hcfWdC/missing-stub/target: special device /tmp/mado-isolation-check.hcfWdC/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m1-nocmp.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m1-nocmp.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh --stub /tmp/mado-isolation-check.hcfWdC/positive/stub --target /tmp/mado-isolation-check.hcfWdC/positive/target -- /tmp/mado-isolation-check.hcfWdC/payload.sh /tmp/mado-isolation-check.hcfWdC/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK m1-nocmp.sh
+CHECK_EXIT m1-nocmp.sh=1
+
+===== CHECK m3b-capprobe.sh =====
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/mount-nonzero/stub --target /tmp/mado-isolation-check.lIopKO/mount-nonzero/target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m3b-capprobe.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/unshare-refused/stub --target /tmp/mado-isolation-check.lIopKO/unshare-refused/target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN m3b-capprobe.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/mount-noop/stub --target /tmp/mado-isolation-check.lIopKO/mount-noop/target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m3b-capprobe.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/partial-arm/stub --target /tmp/mado-isolation-check.lIopKO/partial-arm/t1 --target /tmp/mado-isolation-check.lIopKO/partial-arm/t2 -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/partial-arm/canary
+INJECTION: PATH-stub
+output:
+forced second-target mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m3b-capprobe.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/missing-target/stub --target /tmp/mado-isolation-check.lIopKO/missing-target/missing-target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.lIopKO/missing-target/missing-target: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m3b-capprobe.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m3b-capprobe.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/missing-stub/stub --target /tmp/mado-isolation-check.lIopKO/missing-stub/target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.lIopKO/missing-stub/target: special device /tmp/mado-isolation-check.lIopKO/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m3b-capprobe.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m3b-capprobe.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh --stub /tmp/mado-isolation-check.lIopKO/positive/stub --target /tmp/mado-isolation-check.lIopKO/positive/target -- /tmp/mado-isolation-check.lIopKO/payload.sh /tmp/mado-isolation-check.lIopKO/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK m3b-capprobe.sh
+CHECK_EXIT m3b-capprobe.sh=1
+
+===== CHECK m6-besteffort.sh =====
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/mount-nonzero/stub --target /tmp/mado-isolation-check.HYrVVV/mount-nonzero/target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m6-besteffort.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/unshare-refused/stub --target /tmp/mado-isolation-check.HYrVVV/unshare-refused/target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m6-besteffort.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/mount-noop/stub --target /tmp/mado-isolation-check.HYrVVV/mount-noop/target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m6-besteffort.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/partial-arm/stub --target /tmp/mado-isolation-check.HYrVVV/partial-arm/t1 --target /tmp/mado-isolation-check.HYrVVV/partial-arm/t2 -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/partial-arm/canary
+INJECTION: PATH-stub
+output:
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; injected-marker=present
+FAIL_OPEN m6-besteffort.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/missing-target/stub --target /tmp/mado-isolation-check.HYrVVV/missing-target/missing-target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.HYrVVV/missing-target/missing-target: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m6-besteffort.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/missing-stub/stub --target /tmp/mado-isolation-check.HYrVVV/missing-stub/target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.HYrVVV/missing-stub/target: special device /tmp/mado-isolation-check.HYrVVV/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m6-besteffort.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m6-besteffort.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-check.HYrVVV/positive/stub --target /tmp/mado-isolation-check.HYrVVV/positive/target -- /tmp/mado-isolation-check.HYrVVV/payload.sh /tmp/mado-isolation-check.HYrVVV/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK m6-besteffort.sh
+CHECK_EXIT m6-besteffort.sh=1
+
+===== CHECK m4-skiptarget.sh =====
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=mount-nonzero targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/mount-nonzero/stub --target /tmp/mado-isolation-check.F5a8I0/mount-nonzero/target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m4-skiptarget.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=unshare-refused targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/unshare-refused/stub --target /tmp/mado-isolation-check.F5a8I0/unshare-refused/target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m4-skiptarget.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=mount-noop targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/mount-noop/stub --target /tmp/mado-isolation-check.F5a8I0/mount-noop/target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/mount-noop/canary
+INJECTION: PATH-stub
+output:
+forced successful no-op mount
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m4-skiptarget.sh mode=mount-noop
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=partial-arm targets=2
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/partial-arm/stub --target /tmp/mado-isolation-check.F5a8I0/partial-arm/t1 --target /tmp/mado-isolation-check.F5a8I0/partial-arm/t2 -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/partial-arm/canary
+INJECTION: PATH-stub
+output:
+forced second-target mount failure (exit 32)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m4-skiptarget.sh mode=partial-arm
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=missing-target targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/missing-target/stub --target /tmp/mado-isolation-check.F5a8I0/missing-target/missing-target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+harness exit: 0; canary=present; injected-marker=absent
+FAIL_OPEN m4-skiptarget.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m4-skiptarget.sh mode=missing-stub targets=1
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/missing-stub/stub --target /tmp/mado-isolation-check.F5a8I0/missing-stub/target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.F5a8I0/missing-stub/target: special device /tmp/mado-isolation-check.F5a8I0/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m4-skiptarget.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m4-skiptarget.sh
+COMMAND: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh --stub /tmp/mado-isolation-check.F5a8I0/positive/stub --target /tmp/mado-isolation-check.F5a8I0/positive/target -- /tmp/mado-isolation-check.F5a8I0/payload.sh /tmp/mado-isolation-check.F5a8I0/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK m4-skiptarget.sh
+CHECK_EXIT m4-skiptarget.sh=1
+
+===== CHECK absolute-mount bypass control =====
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=mount-nonzero targets=1
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/mount-nonzero/stub --target /tmp/mado-isolation-check.FVUFoL/mount-nonzero/target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=present; injected-marker=absent
+COULD_NOT_EVALUATE m2-absmount.sh mode=mount-nonzero (injected stub was not invoked)
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=unshare-refused targets=1
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/unshare-refused/stub --target /tmp/mado-isolation-check.FVUFoL/unshare-refused/target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; injected-marker=present
+FAIL_CLOSED m2-absmount.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=mount-noop targets=1
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/mount-noop/stub --target /tmp/mado-isolation-check.FVUFoL/mount-noop/target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/mount-noop/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=present; injected-marker=absent
+COULD_NOT_EVALUATE m2-absmount.sh mode=mount-noop (injected stub was not invoked)
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=partial-arm targets=2
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/partial-arm/stub --target /tmp/mado-isolation-check.FVUFoL/partial-arm/t1 --target /tmp/mado-isolation-check.FVUFoL/partial-arm/t2 -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/partial-arm/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=present; injected-marker=absent
+COULD_NOT_EVALUATE m2-absmount.sh mode=partial-arm (injected stub was not invoked)
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=missing-target targets=1
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/missing-target/stub --target /tmp/mado-isolation-check.FVUFoL/missing-target/missing-target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.FVUFoL/missing-target/missing-target: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m2-absmount.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m2-absmount.sh mode=missing-stub targets=1
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/missing-stub/stub --target /tmp/mado-isolation-check.FVUFoL/missing-stub/target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+mount: /tmp/mado-isolation-check.FVUFoL/missing-stub/target: special device /tmp/mado-isolation-check.FVUFoL/missing-stub/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; injected-marker=absent
+FAIL_CLOSED m2-absmount.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m2-absmount.sh
+COMMAND: /tmp/critiso-mut/m2-absmount.sh --stub /tmp/mado-isolation-check.FVUFoL/positive/stub --target /tmp/mado-isolation-check.FVUFoL/positive/target -- /tmp/mado-isolation-check.FVUFoL/payload.sh /tmp/mado-isolation-check.FVUFoL/positive/canary
+output:
+harness exit: 0; canary=present
+POSITIVE_CONTROL_OK m2-absmount.sh
+CHECK_EXIT absolute-mount-bypass=2
+
+===== CHECK zero-exit skip control =====
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=mount-nonzero targets=1
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/mount-nonzero/stub --target /tmp/mado-isolation-check.HuwWAK/mount-nonzero/target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/mount-nonzero/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=absent; injected-marker=present
+FAIL_OPEN mado-r20-skip-as-success.sh mode=mount-nonzero SKIP_AS_SUCCESS (exit 0 without canary)
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=unshare-refused targets=1
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/unshare-refused/stub --target /tmp/mado-isolation-check.HuwWAK/unshare-refused/target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/unshare-refused/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=absent; injected-marker=absent
+COULD_NOT_EVALUATE mado-r20-skip-as-success.sh mode=unshare-refused (injected stub was not invoked)
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=mount-noop targets=1
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/mount-noop/stub --target /tmp/mado-isolation-check.HuwWAK/mount-noop/target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/mount-noop/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=absent; injected-marker=present
+FAIL_OPEN mado-r20-skip-as-success.sh mode=mount-noop SKIP_AS_SUCCESS (exit 0 without canary)
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=partial-arm targets=2
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/partial-arm/stub --target /tmp/mado-isolation-check.HuwWAK/partial-arm/t1 --target /tmp/mado-isolation-check.HuwWAK/partial-arm/t2 -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/partial-arm/canary
+INJECTION: PATH-stub
+output:
+harness exit: 0; canary=absent; injected-marker=present
+FAIL_OPEN mado-r20-skip-as-success.sh mode=partial-arm SKIP_AS_SUCCESS (exit 0 without canary)
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=missing-target targets=1
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/missing-target/stub --target /tmp/mado-isolation-check.HuwWAK/missing-target/missing-target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/missing-target/canary
+INJECTION: real-filesystem-failure
+output:
+harness exit: 0; canary=absent; injected-marker=absent
+FAIL_OPEN mado-r20-skip-as-success.sh mode=missing-target SKIP_AS_SUCCESS (exit 0 without canary)
+
+TRANSCRIPT setup-failure harness=mado-r20-skip-as-success.sh mode=missing-stub targets=1
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/missing-stub/stub --target /tmp/mado-isolation-check.HuwWAK/missing-stub/target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/missing-stub/canary
+INJECTION: real-filesystem-failure
+output:
+harness exit: 0; canary=absent; injected-marker=absent
+FAIL_OPEN mado-r20-skip-as-success.sh mode=missing-stub SKIP_AS_SUCCESS (exit 0 without canary)
+
+TRANSCRIPT positive-control harness=mado-r20-skip-as-success.sh
+COMMAND: /tmp/mado-r20-skip-as-success.sh --stub /tmp/mado-isolation-check.HuwWAK/positive/stub --target /tmp/mado-isolation-check.HuwWAK/positive/target -- /tmp/mado-isolation-check.HuwWAK/payload.sh /tmp/mado-isolation-check.HuwWAK/positive/canary
+output:
+harness exit: 0; canary=absent
+NEVER_RUNS mado-r20-skip-as-success.sh positive control (exit=0, canary=absent)
+CHECK_EXIT zero-exit-skip=1

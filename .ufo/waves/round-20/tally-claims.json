@@ -5,13 +5,13 @@
  "usage": "python3 -I .ufo/waves/round-20/tally-check.py .ufo/waves/round-20/tally-claims.json [--set all|red|green] [--rev REV] [--expect]",
  "entry_semantics": {
   "id": "unique, [A-Za-z0-9._:-]+",
-  "statement": "rev: a 40-hex lane commit, or REV (the checker's --rev, for a corrected statement whose commit does not exist yet); path: lane-relative; line_regex: exactly one line of `git show rev:path` (split on \\n, numbered like grep -n) matches, and its required (?P<stated>...) group quotes the stated number (digits or an English number word)",
-  "stated": "the integer the statement asserts; must equal the (?P<stated>...) text",
-  "derive": "argv: `python3 -I .ufo/waves/round-20/tally-check.py <receipt-files|pointer-token|selftest-labels> ...` only, every --rev/--counter-rev/--old/--new value 40-hex or REV, no --path/--counter value equal to the statement file, a --token value present in the statement line; run with cwd = lane over committed bytes only. extract_regex: begins (?m)^<count key>= with a key the subcommand declares, matches stdout exactly once; group 1 (or (?P<derived>...)) is the derived integer. A literal denominator such as /13 in both regexes binds the fraction's denominator.",
+  "statement": "rev: a 40-hex lane commit (green entries may say REV, the checker's --rev, for a corrected statement whose commit does not exist yet); path: canonical lane-relative; line_regex: exactly one line of `git show rev:path` (split on \\n, numbered like grep -n) matches. Its required (?P<stated>...) group quotes the claimed number (digits or an English number word) as a standalone token. A fraction claim (N/D, N of D) also captures (?P<den>...) with only '/' or 'of' between the two; any other claim has no den group and its stated number must not sit in a fraction",
+  "stated": "the integer the statement asserts (a fraction's numerator); must equal the (?P<stated>...) text",
+  "derive": "argv: `python3 -I .ufo/waves/round-20/tally-check.py <subcommand>` plus `--flag value` pairs, each flag at most once: receipt-files --rev --path; pointer-token --counter --counter-rev --rev --token; selftest-labels --path --old --new --label-id. Revisions are 40-hex (REV only in green entries). --path/--counter is never the statement file; a --token or --label-id value occurs as a word in the statement line. Runs with cwd = lane over committed bytes only. extract_regex: begins (?m)^<key>= with a headline key (receipt-files files|distinct_paths|jsonl_paths; pointer-token current|first_line|any_line, printed and claimed as N/D; selftest-labels removed_occurrences|removed_distinct|added_occurrences|added_distinct). It matches stdout exactly once, and its group 1 (or (?P<derived>...)) must equal the N of the one `<key>=` line.",
   "note": "what is counted, how, and the measured value"
  },
  "set_semantics": {
-  "red": "stale round-19 statements read at their own pinned revision: each must print MISMATCH (`--set red` exits 1; `--set red --expect` exits 0 only when every red mismatches)",
+  "red": "stale round-19 statements, every revision pinned 40-hex: each must print MISMATCH (`--set red` exits 1; `--set red --expect` exits 0 only when every red mismatches)",
   "green": "corrected statements (L1 adds them, usually at REV): each must print MATCH (`--set green --rev <commit>` exits 0); an empty set exits 2, never a vacuous pass"
  },
  "red": [
@@ -36,7 +36,7 @@
    "statement": {
     "rev": "1f7f995caa25627db804e996cccd87fe38a3a1b6",
     "path": "SCORECARD.md",
-    "line_regex": "\\b13/13 pointed; (?P<stated>\\d+)/13 name S096 on the\\b"
+    "line_regex": "\\b13/13 pointed; (?P<stated>\\d+)/(?P<den>\\d+) name S096 on the\\b"
    },
    "stated": 5,
    "derive": {
@@ -45,16 +45,16 @@
              "--counter-rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--token", "S096"],
-    "extract_regex": "(?m)^first_line=(\\d+)/13$"
+    "extract_regex": "(?m)^first_line=(\\d+)/\\d+$"
    },
-   "note": "R19-V2. The wave-2 C2 correction says 5/13 name S096 on the crediting line. Over fresh-pins.py's 13-file set (PIN_REV 9c54c56 files carrying 2.17.0), the crediting line is read as each file's first line matching the counter's POINTER regex at 1f7f995. 6/13 of those lines carry S096. Derived 6. With S096 on any pointer line the count is 8/13 (any_line), and five files carry it on none: arc-synthesis, closeout-r11, config-health-report-r3, waybar-walker-plane, waybar-walker-semantics."
+   "note": "R19-V2. The wave-2 C2 correction says 5/13 name S096 on the crediting line. Over fresh-pins.py's 13-file set (PIN_REV 9c54c56 files carrying 2.17.0), the crediting line is read as each file's first line matching the counter's POINTER regex at 1f7f995. 6/13 of those lines carry S096. Derived 6/13. With S096 on any pointer line the count is 8/13 (any_line), and five files carry it on none: arc-synthesis, closeout-r11, config-health-report-r3, waybar-walker-plane, waybar-walker-semantics."
   },
   {
    "id": "r19-lesson-c2-5of13-s096",
    "statement": {
     "rev": "1f7f995caa25627db804e996cccd87fe38a3a1b6",
     "path": "corpus/lessons/round-19.md",
-    "line_regex": "C2 sourcing: (?P<stated>\\d+) of 13 credited files name S096 on the crediting line\\b"
+    "line_regex": "C2 sourcing: (?P<stated>\\d+) of (?P<den>\\d+) credited files name S096 on the crediting line\\b"
    },
    "stated": 5,
    "derive": {
@@ -63,16 +63,16 @@
              "--counter-rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--token", "S096"],
-    "extract_regex": "(?m)^first_line=(\\d+)/13$"
+    "extract_regex": "(?m)^first_line=(\\d+)/\\d+$"
    },
-   "note": "R19-V2. The lesson restates the claim on line 108 as '5 of 13 credited files name S096 on the crediting line', counted the same way as the SCORECARD entry. First-line count 6/13 (any-line 8/13). Derived 6."
+   "note": "R19-V2. The lesson restates the claim on line 108 as '5 of 13 credited files name S096 on the crediting line', counted the same way as the SCORECARD entry. First-line count 6/13 (any-line 8/13). Derived 6/13."
   },
   {
    "id": "r19-log-c2-5of13-s096",
    "statement": {
     "rev": "1f7f995caa25627db804e996cccd87fe38a3a1b6",
     "path": "LOG.md",
-    "line_regex": "\\((?P<stated>\\d+)/13 name S096 on the crediting line;"
+    "line_regex": "\\((?P<stated>\\d+)/(?P<den>\\d+) name S096 on the crediting line;"
    },
    "stated": 5,
    "derive": {
@@ -81,9 +81,9 @@
              "--counter-rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--rev", "1f7f995caa25627db804e996cccd87fe38a3a1b6",
              "--token", "S096"],
-    "extract_regex": "(?m)^first_line=(\\d+)/13$"
+    "extract_regex": "(?m)^first_line=(\\d+)/\\d+$"
    },
-   "note": "R19-V2, one entry per stating file. LOG.md line 1324 repeats '5/13 name S096 on the crediting line'. This file is outside the brief's SCORECARD/lesson list; it was found by `git grep` at 1f7f995, and L1 may drop the entry. First-line count 6/13. Derived 6."
+   "note": "R19-V2, one entry per stating file. LOG.md line 1324 repeats '5/13 name S096 on the crediting line'. This file is outside the brief's SCORECARD/lesson list; it was found by `git grep` at 1f7f995, and L1 may drop the entry. First-line count 6/13. Derived 6/13."
   },
   {
    "id": "r19-scorecard-ten-om10",
@@ -95,14 +95,13 @@
    "stated": 10,
    "derive": {
     "argv": ["python3", "-I", ".ufo/waves/round-20/tally-check.py", "selftest-labels",
-             "--path", "tools/mado-verify.sh", "--function", "selftest",
-             "--fail-helper", "st_bad",
+             "--path", "tools/mado-verify.sh",
              "--old", "9c54c56a6a7528675027b7f628f97a1b8d1b8e8d",
              "--new", "7b4839d31d60af5bac40e3e74aec70e928601dfc",
-             "--label-regex", "^OM10(?![0-9A-Za-z])"],
+             "--label-id", "OM10"],
     "extract_regex": "(?m)^removed_occurrences=(\\d+)$"
    },
-   "note": "R19-V5. The final-state correction says the ten old OM10 assertions were replaced. Labeled assertion occurrences in selftest() are 390 (370 distinct) at 9c54c56 and 461 (440 distinct) at 7b4839d, the closure's own figures. The multiset old - new is 9 occurrences, 8 distinct ('OM10: the UNKNOWN names the rc' appears twice), and all 9 are OM10 (removed_unmatched_occurrences=0). Derived 9. Their replacements are OM10A 6 and OM10B 8. A count of removed diff lines that mention OM10 gives 10 because it includes the '# --- OM10:' banner comment, so this derive counts labeled helper calls, not lines."
+   "note": "R19-V5. The final-state correction says the ten old OM10 assertions were replaced. Labeled assertion occurrences in selftest() are 390 (370 distinct) at 9c54c56 and 461 (440 distinct) at 7b4839d, the closure's own figures. The multiset old - new is 9 occurrences, 8 distinct ('OM10: the UNKNOWN names the rc' appears twice). All 9 have label id OM10 (removed_other_id_occurrences=0). Derived 9. Their replacements are OM10A 6 and OM10B 8. A count of removed diff lines that mention OM10 gives 10 because it includes the '# --- OM10:' banner comment, so this derive counts labeled helper calls, not lines."
   }
  ],
  "green": []

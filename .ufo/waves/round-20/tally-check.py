@@ -8,10 +8,10 @@ of this file's own subcommands; the checker compares the two numbers.
 
 Usage:
   tally-check.py REGISTRY [--set all|red|green] [--rev REV] [--expect]
-  tally-check.py receipt-files   --rev REV --path PATH [--schema NAME]
+  tally-check.py receipt-files   --rev REV --path PATH
   tally-check.py pointer-token   --counter-rev REV --rev REV --token TOKEN
                                  [--counter PATH]
-  tally-check.py selftest-labels --old REV --new REV --label-regex RE
+  tally-check.py selftest-labels --old REV --new REV --label-id ID
                                  [--path PATH] [--function NAME]
                                  [--fail-helper NAME]
 
@@ -19,41 +19,56 @@ Registry (tally-claims.json): {"schema": "mado-tally-claims-v1",
 "red": [entry, ...], "green": [entry, ...]}, each entry
 
   {"id": "<[A-Za-z0-9._:-]+, unique>",
-   "statement": {"rev": "<40-hex lane commit, or REV>",
+   "statement": {"rev": "<40-hex lane commit; green entries may say REV>",
                  "path": "<lane-relative path>",
-                 "line_regex": "<Python regex with a (?P<stated>...) group>"},
-   "stated": <int>,
+                 "line_regex": "<Python regex: (?P<stated>...), and (?P<den>...)
+                                for an N/D or N-of-D claim>"},
+   "stated": <int, the claimed number (a fraction's numerator)>,
    "derive": {"argv": ["python3", "-I", ".ufo/waves/round-20/tally-check.py",
-                       "<subcommand>", ...],
+                       "<subcommand>", "--flag", "value", ...],
               "extract_regex": "(?m)^<count key>=(\\d+)...; group 1 or (?P<derived>...)"},
    "note": "<what is counted, and how>"}
 
 REV stands for the checker's --rev (the measured revision), so a corrected
-statement can be registered before the commit that lands it exists; any
-other revision in the registry is a full 40-hex hash (never a branch).
+statement can be registered before the commit that lands it exists. Only
+green entries may use it; a red entry pins its historical staleness with
+full 40-hex hashes everywhere (never a branch).
 
 For each selected entry:
-1. `git show <rev>:<path>` must contain exactly one line (split on "\\n",
-   numbered like `grep -n`) matching line_regex: none -> ERROR (statement
-   absent at rev), several -> ERROR (ambiguous). The `stated` group is
-   required and must quote `stated` (digits, or an English number word such
-   as "ten"), else ERROR: the number is read from the statement, never only
-   from the registry.
-2. derive.argv must be `python3 -I .ufo/waves/round-20/tally-check.py
-   <subcommand> ...` -- a committed helper, never an ad hoc command. Every
-   value after --rev/--counter-rev/--old/--new is 40-hex or REV; no
-   --path/--counter value may be the statement's own file; a --token value
-   must occur as a word in the statement line. extract_regex must begin
-   `(?m)^<key>=` with <key> one of the subcommand's count keys (COUNT_KEYS),
-   so a derived number is always a named count, never a digit picked out of
-   a label, hash or timestamp. The derive runs with cwd = lane; extract_regex
-   must match its stdout exactly once, and that group is the derived integer.
-   A nonzero derive exit -> ERROR.
-3. Prints `MATCH|MISMATCH|ERROR <id> stated=<s> derived=<d>` (derived=none
-   on ERROR) and one indented detail line (set, expectation, resolved
-   statement location, count key, the derive as run), then
+1. Statement. `git show <rev>:<path>` must contain exactly one line (split on
+   "\\n", numbered like `grep -n`) matching line_regex: none -> ERROR
+   (statement absent at rev), several -> ERROR (ambiguous). The `stated`
+   group is required, must quote `stated` (digits, or an English number word
+   such as "ten") and must be a standalone number, not digits inside a token
+   such as S096, OM10, round-19 or 2.17.2. For a fraction count key the
+   statement must also capture `den`, standalone, with only "/" or "of"
+   between the two groups (N/D, N of D); for any other key a `den` group or
+   a stated number that sits in a fraction is an ERROR. The number is read
+   from the statement, never only from the registry, and a denominator can
+   never stand in for the claim.
+2. Derive. argv must be `python3 -I .ufo/waves/round-20/tally-check.py
+   <subcommand>` followed by `--flag value` pairs, each flag at most once and
+   listed in REGISTRY_FLAGS for the subcommand (no abbreviations, no
+   `--flag=value`, no value starting with "-"). Values after
+   --rev/--counter-rev/--old/--new are 40-hex (or REV, green only); no
+   --path/--counter value may be the statement's own file; a --token or
+   --label-id value must occur as a word in the statement line, so the
+   counted family is the one the prose names. extract_regex must begin
+   `(?m)^<key>=` with <key> a headline count of the subcommand (COUNT_KEYS;
+   diagnostics such as the counter's denominator are not claimable). The
+   derive runs with cwd = lane; its stdout must carry exactly one
+   `<key>=N` (or `<key>=N/D` for a fraction key) line, extract_regex must
+   match exactly once and read that same N. A nonzero derive exit -> ERROR.
+3. Compare. MATCH when stated == N (and, for a fraction, the statement's
+   denominator == D), else MISMATCH. Prints
+   `MATCH|MISMATCH|ERROR <id> stated=<s> derived=<d>` (fractions as N/D,
+   derived=none on ERROR) and one indented detail line (set, expectation,
+   resolved statement location, the matched claim text -- which claim on the
+   line was certified --, count key, the derive as run), then
    `TALLY_SUMMARY: ...` and `EXPECT_SUMMARY: k/n`, where k counts entries on
-   their set's side: red -> MISMATCH, green -> MATCH.
+   their set's side: red -> MISMATCH, green -> MATCH. The first line,
+   `TALLY_REGISTRY: ...`, names the registry and checker sha256 and the
+   resolved --rev.
 
 Exit: 0 every selected entry MATCH; 1 any MISMATCH (no ERROR); 2 any ERROR,
 a malformed registry, or an empty selection -- nothing re-derived is never a
@@ -69,9 +84,9 @@ from a revision is executed and no host state is read or touched:
 
 receipt-files   The number of files a committed tripwire receipt scanned: the
                 receipt must hold exactly one JSON line whose "schema" is
-                --schema (default mado-tripwire-verdict-v1) and whose "files"
-                is a list; prints files=len(files), distinct_paths,
-                jsonl_paths and the receipt's own RECEIPT header provenance.
+                mado-tripwire-verdict-v1 and whose "files" is a list; prints
+                files=len(files), distinct_paths, jsonl_paths and the
+                receipt's own RECEIPT header provenance.
 pointer-token   The round-19 C2 counter's file set, re-derived from the
                 counter's committed text (parsed with ast, never executed):
                 its PIN_REV, OLD and POINTER constants, and its in_scope
@@ -81,7 +96,8 @@ pointer-token   The round-19 C2 counter's file set, re-derived from the
                 lines (str.splitlines, as the counter numbers them) matching
                 POINTER; first_line counts files whose FIRST pointer line
                 contains \\bTOKEN\\b, any_line files with the token on ANY
-                pointer line, current files with any pointer line.
+                pointer line, current files with any pointer line; each is
+                printed as N/denominator.
 selftest-labels Labeled assertion occurrences in one shell function body
                 (default `selftest()` of tools/mado-verify.sh) at --old and
                 --new, and their multiset difference. The body is tokenized
@@ -92,9 +108,11 @@ selftest-labels Labeled assertion occurrences in one shell function body
                 positional arguments; a labeled assertion is a call, in the
                 body outside helper definitions, to a helper with a resolved
                 position, and its label is that argument with quotes removed
-                and nothing expanded. removed_* counts old - new restricted
-                to labels matching --label-regex; removed_all_* is
-                unrestricted.
+                and nothing expanded. A label's id is its leading
+                [A-Za-z][A-Za-z0-9]* run ("OM10: ..." -> OM10, "OM10A: ..." ->
+                OM10A). removed_* / added_* count old - new / new - old for
+                labels whose id is --label-id; all-id totals are printed as
+                diagnostics.
 """
 
 import argparse
@@ -148,9 +166,10 @@ def commit(rev):
 
 
 def lane_path(path):
-    if (not isinstance(path, str) or not path or path.startswith(("/", "-"))
-            or ".." in path.split("/")):
-        raise Unevaluable(f"path {path!r} is not lane-relative")
+    """A lane-relative path in canonical spelling (no leading / or -, no ., .. or empty parts)."""
+    if (not isinstance(path, str) or path.startswith("-")
+            or any(part in ("", ".", "..") for part in path.split("/"))):
+        raise Unevaluable(f"path {path!r} is not a canonical lane-relative path")
     return path
 
 
@@ -177,6 +196,9 @@ def parse_number(text):
 
 # --- receipt-files ----------------------------------------------------------
 
+VERDICT_SCHEMA = "mado-tripwire-verdict-v1"
+
+
 def cmd_receipt_files(a):
     rev = commit(a.rev)
     blob = show(rev, a.path)
@@ -190,11 +212,11 @@ def cmd_receipt_files(a):
             obj = json.loads(s)
         except ValueError:
             continue
-        if (isinstance(obj, dict) and obj.get("schema") == a.schema
+        if (isinstance(obj, dict) and obj.get("schema") == VERDICT_SCHEMA
                 and isinstance(obj.get("files"), list)):
             verdicts.append(obj)
     if len(verdicts) != 1:
-        raise Unevaluable(f"{a.path}@{rev}: {len(verdicts)} {a.schema} objects, want 1")
+        raise Unevaluable(f"{a.path}@{rev}: {len(verdicts)} {VERDICT_SCHEMA} objects, want 1")
     files = verdicts[0]["files"]
     paths = [f.get("path") if isinstance(f, dict) else None for f in files]
     named = [p for p in paths if isinstance(p, str)]
@@ -206,7 +228,7 @@ def cmd_receipt_files(a):
     print(f"receipt_sha256={sha256(blob)}")
     for key in ("tool", "tool_sha256", "measured_commit", "utc"):
         print(f"header_{key}={prov.get(key, '-')}")
-    print(f"schema={a.schema}")
+    print(f"schema={VERDICT_SCHEMA}")
     print(f"files={len(files)}")
     print(f"distinct_paths={len(set(named))}")
     print(f"jsonl_paths={sum(p.endswith('.jsonl') for p in named)}")
@@ -651,16 +673,17 @@ def assertion_labels(rev, path, func, fail_helper):
             "labels": labels, "unlabeled": unlabeled, "others": others}
 
 
+LABEL_ID = re.compile(r"[A-Za-z][A-Za-z0-9]*")
+
+
 def label_id(label):
-    m = re.match(r"[A-Za-z][A-Za-z0-9]*", label)
+    m = LABEL_ID.match(label)
     return m.group(0) if m else "-"
 
 
 def cmd_selftest_labels(a):
-    try:
-        rx = re.compile(a.label_regex)
-    except re.error as exc:
-        raise Unevaluable(f"--label-regex: {exc}") from None
+    if not LABEL_ID.fullmatch(a.label_id):
+        raise Unevaluable(f"--label-id {a.label_id!r} is not a label id ([A-Za-z][A-Za-z0-9]*)")
     inv = {}
     for side, r in (("old", a.old), ("new", a.new)):
         rev = commit(r)
@@ -668,7 +691,8 @@ def cmd_selftest_labels(a):
     old = Counter(lbl for lbl, _ in inv["old"][1]["labels"])
     new = Counter(lbl for lbl, _ in inv["new"][1]["labels"])
     removed, added = old - new, new - old
-    chosen = Counter({lbl: c for lbl, c in removed.items() if rx.search(lbl)})
+    mine_removed = Counter({lbl: c for lbl, c in removed.items() if label_id(lbl) == a.label_id})
+    mine_added = Counter({lbl: c for lbl, c in added.items() if label_id(lbl) == a.label_id})
     print(f"path={a.path} function={a.function} fail_helper={a.fail_helper}")
     for side in ("old", "new"):
         rev, d = inv[side]
@@ -678,47 +702,67 @@ def cmd_selftest_labels(a):
         print(f"{side}_label_positions="
               + ",".join(f"{h}:{p}" for h, p in sorted(d["positions"].items())))
         print(f"{side}_helpers_without_label={','.join(d['others']) or '-'}")
-    print(f"removed_all_occurrences={sum(removed.values())}")
-    print(f"removed_all_distinct={len(removed)}")
-    print(f"added_all_occurrences={sum(added.values())}")
-    print(f"added_all_distinct={len(added)}")
-    print(f"label_regex={a.label_regex}")
-    print(f"removed_occurrences={sum(chosen.values())}")
-    print(f"removed_distinct={len(chosen)}")
-    print(f"removed_unmatched_occurrences={sum(removed.values()) - sum(chosen.values())}")
+    print(f"label_id={a.label_id}")
+    print(f"removed_occurrences={sum(mine_removed.values())}")
+    print(f"removed_distinct={len(mine_removed)}")
+    print(f"added_occurrences={sum(mine_added.values())}")
+    print(f"added_distinct={len(mine_added)}")
+    print(f"removed_other_id_occurrences={sum(removed.values()) - sum(mine_removed.values())}")
+    print(f"all_ids_removed_occurrences={sum(removed.values())}")
+    print(f"all_ids_removed_distinct={len(removed)}")
+    print(f"all_ids_added_occurrences={sum(added.values())}")
+    print(f"all_ids_added_distinct={len(added)}")
     old_lines = {}
     for lbl, ln in inv["old"][1]["labels"]:
         old_lines.setdefault(lbl, []).append(ln)
     for lbl in sorted(removed):
-        print(f"removed {removed[lbl]}x {'matched' if lbl in chosen else 'unmatched'} "
+        print(f"removed {removed[lbl]}x id={label_id(lbl)} "
               f"old_lines={','.join(map(str, old_lines[lbl]))} "
               f"label={json.dumps(lbl, ensure_ascii=False)}")
-    ids = Counter()
-    for lbl, c in added.items():
-        ids[label_id(lbl)] += c
-    print("added_by_id=" + ",".join(f"{k}:{v}" for k, v in sorted(ids.items())))
+    for name, diff in (("removed", removed), ("added", added)):
+        ids = Counter()
+        for lbl, c in diff.items():
+            ids[label_id(lbl)] += c
+        print(f"{name}_by_id=" + (",".join(f"{k}:{v}" for k, v in sorted(ids.items())) or "-"))
 
 
 # --- registry check ---------------------------------------------------------
 
 FULL_HEX = re.compile(r"[0-9a-f]{40}")
 PLACEHOLDER = "REV"
+# `--flag value` pairs a registry derive may pass, each at most once; the
+# CLI-only --function/--fail-helper keep their defaults inside the registry.
+REGISTRY_FLAGS = {
+    "receipt-files": ("--rev", "--path"),
+    "pointer-token": ("--counter", "--counter-rev", "--rev", "--token"),
+    "selftest-labels": ("--path", "--old", "--new", "--label-id"),
+}
 REV_FLAGS = frozenset({"--rev", "--counter-rev", "--old", "--new"})
 SOURCE_FLAGS = frozenset({"--path", "--counter"})
+BOUND_FLAGS = frozenset({"--token", "--label-id"})  # value must be a word of the statement line
+# Headline counts a statement may claim; True marks a count printed and
+# claimed as a fraction N/D. Diagnostics (the counter's denominator, pathless
+# entries, other-id and all-id label totals) are printed but never claimable.
 COUNT_KEYS = {
-    "receipt-files": ("files", "distinct_paths", "jsonl_paths", "pathless_entries"),
-    "pointer-token": ("denominator", "current", "first_line", "any_line"),
-    "selftest-labels": ("removed_occurrences", "removed_distinct",
-                        "removed_unmatched_occurrences", "removed_all_occurrences",
-                        "removed_all_distinct", "added_all_occurrences", "added_all_distinct"),
+    "receipt-files": {"files": False, "distinct_paths": False, "jsonl_paths": False},
+    "pointer-token": {"current": True, "first_line": True, "any_line": True},
+    "selftest-labels": {"removed_occurrences": False, "removed_distinct": False,
+                        "added_occurrences": False, "added_distinct": False},
 }
 EXTRACT_KEY = re.compile(r"\(\?m\)\^([a-z_]+)=")
 EXPECT = {"red": "MISMATCH", "green": "MATCH"}
+_NUM = r"(?:\d[\d,]*|\b(?:" + "|".join(NUMBER_WORDS) + r")\b)"
+_CONN = r"(?:\s*/\s*|\s+(?:out\s+)?of\s+)"
+CONNECTOR = re.compile(_CONN, re.I)
+FRACTION_AFTER = re.compile(_CONN + _NUM, re.I)
+FRACTION_BEFORE = re.compile(_NUM + _CONN + r"$", re.I)
 
 
-def pinned(rev, measured):
-    """A registry revision: a full 40-hex commit, or REV (the checker's --rev)."""
+def pinned(rev, measured, allow_rev):
+    """A registry revision: a full 40-hex commit, or REV (green: the checker's --rev)."""
     if rev == PLACEHOLDER:
+        if not allow_rev:
+            raise Unevaluable(f"a red entry pins 40-hex revisions; {PLACEHOLDER} is for green entries")
         if measured is None:
             raise Unevaluable(f"entry reads at {PLACEHOLDER}; pass --rev")
         return measured
@@ -727,11 +771,11 @@ def pinned(rev, measured):
     return commit(rev)
 
 
-def check_statement(st, measured):
-    """(rev, path, line number, line, stated text) of the one matching line."""
+def check_statement(st, measured, allow_rev):
+    """(rev, path, line number, line, match) of the one line matching line_regex."""
     if not isinstance(st, dict):
         raise Unevaluable("statement is not an object")
-    rev = pinned(st.get("rev"), measured)
+    rev = pinned(st.get("rev"), measured, allow_rev)
     path = lane_path(st.get("path"))
     blob = show(rev, path)
     try:
@@ -753,11 +797,44 @@ def check_statement(st, measured):
     n, line, m = hits[0]
     if m.group("stated") is None:
         raise Unevaluable("the (?P<stated>...) group did not participate in the match")
-    return rev, path, n, line, m.group("stated")
+    return rev, path, n, line, m
 
 
-def derive_plan(dv, measured, statement_path, statement_line):
-    """The derive argv as it will run (REV resolved) and its count key."""
+def standalone(line, start, end):
+    """True when line[start:end] is a whole number, not digits of S096, OM10, round-19, 2.17.2."""
+    before, after = line[start - 1:start], line[end:end + 1]
+    if before and (before.isalnum() or before in "_.-"):
+        return False
+    if after and (after.isalnum() or after == "_"):
+        return False
+    return not (after == "." and line[end + 1:end + 2].isdigit())
+
+
+def claim_shape(line, m, fraction):
+    """Check where the claimed number sits in the line; the claimed denominator text or None."""
+    s0, s1 = m.span("stated")
+    if not standalone(line, s0, s1):
+        raise Unevaluable(f"stated {m.group('stated')!r} is part of a larger token")
+    den = m.group("den") if "den" in m.re.groupindex else None
+    if not fraction:
+        if den is not None:
+            raise Unevaluable("(?P<den>...) given for a count that is not a fraction")
+        if FRACTION_AFTER.match(line, s1) or FRACTION_BEFORE.search(line, 0, s0):
+            raise Unevaluable("the stated number sits in a fraction; claim it with a fraction "
+                              "key and (?P<den>...)")
+        return None
+    if den is None:
+        raise Unevaluable("a fraction count needs a (?P<den>...) group in line_regex")
+    d0, d1 = m.span("den")
+    if not standalone(line, d0, d1):
+        raise Unevaluable(f"den {den!r} is part of a larger token")
+    if not (s1 <= d0 and CONNECTOR.fullmatch(line, s1, d0)):
+        raise Unevaluable("(?P<stated>...) and (?P<den>...) must read N/D or N of D")
+    return den
+
+
+def derive_plan(dv, measured, allow_rev, statement_path, statement_line):
+    """(argv as it will run, count key, is-fraction, compiled extract_regex)."""
     if not isinstance(dv, dict):
         raise Unevaluable("derive is not an object")
     argv = dv.get("argv")
@@ -766,28 +843,40 @@ def derive_plan(dv, measured, statement_path, statement_line):
     if (argv[0] != "python3" or argv[1] != "-I" or (LANE / argv[2]).resolve() != HERE
             or argv[3] not in SUBCOMMANDS):
         raise Unevaluable(f"derive.argv is not `python3 -I {SELF} <{'|'.join(SUBCOMMANDS)}> ...`")
-    run = list(argv)
-    for k in range(4, len(argv)):
-        flag, value = argv[k - 1], argv[k]
+    sub, rest = argv[3], argv[4:]
+    flags, values = rest[0::2], rest[1::2]
+    if len(rest) % 2 or any(f not in REGISTRY_FLAGS[sub] for f in flags):
+        raise Unevaluable(f"{sub} takes `--flag value` pairs from {' '.join(REGISTRY_FLAGS[sub])}")
+    if len(set(flags)) != len(flags):
+        raise Unevaluable("derive.argv repeats a flag")
+    run = argv[:4]
+    for flag, value in zip(flags, values):
+        if value.startswith("-"):
+            raise Unevaluable(f"{flag} value {value!r} starts with '-'")
         if flag in REV_FLAGS:
-            run[k] = pinned(value, measured)
+            value = pinned(value, measured, allow_rev)
         elif flag in SOURCE_FLAGS and value == statement_path:
             raise Unevaluable(f"derive reads the statement file {value} itself")
-        elif flag == "--token" and not re.search(r"\b" + re.escape(value) + r"\b", statement_line):
-            raise Unevaluable(f"--token {value} does not occur in the statement line")
+        elif flag in BOUND_FLAGS and not re.search(
+                r"(?<!\w)" + re.escape(value) + r"(?!\w)", statement_line):
+            raise Unevaluable(f"{flag} {value} does not occur as a word in the statement line")
+        run += [flag, value]
     text = dv.get("extract_regex")
     m = EXTRACT_KEY.match(text) if isinstance(text, str) else None
-    if not m or m.group(1) not in COUNT_KEYS[argv[3]]:
+    if not m or m.group(1) not in COUNT_KEYS[sub]:
         raise Unevaluable(f"extract_regex must begin (?m)^<key>= with <key> in "
-                          f"{','.join(COUNT_KEYS[argv[3]])}")
-    return run, m.group(1)
-
-
-def run_derive(dv, run):
+                          f"{','.join(COUNT_KEYS[sub])}")
     try:
-        rx = re.compile(dv["extract_regex"])
+        rx = re.compile(text)
     except re.error as exc:
         raise Unevaluable(f"extract_regex: {exc}") from None
+    if rx.groups < 1:
+        raise Unevaluable("extract_regex captures nothing")
+    return run, m.group(1), COUNT_KEYS[sub][m.group(1)], rx
+
+
+def run_derive(rx, run, key, fraction):
+    """The derived (N, D or None): the one `<key>=` line, which extract_regex must agree with."""
     try:
         r = subprocess.run([sys.executable, "-I", str(HERE), *run[3:]], cwd=LANE,
                            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
@@ -797,11 +886,22 @@ def run_derive(dv, run):
     if r.returncode != 0:
         err = r.stderr.decode("utf-8", errors="replace").strip().splitlines()
         raise Unevaluable(f"derive exited {r.returncode}: {err[-1] if err else ''}")
-    found = list(rx.finditer(r.stdout.decode("utf-8", errors="replace")))
+    out = r.stdout.decode("utf-8", errors="replace")
+    canon = re.findall(r"(?m)^" + re.escape(key) + r"=(\d+)(?:/(\d+))?$", out)
+    if len(canon) != 1:
+        raise Unevaluable(f"derive printed {len(canon)} `{key}=` lines, want 1")
+    num, den = int(canon[0][0]), (int(canon[0][1]) if canon[0][1] else None)
+    if (den is not None) != fraction:
+        raise Unevaluable(f"`{key}=` {'is' if den is not None else 'is not'} a fraction, "
+                          f"contrary to COUNT_KEYS")
+    found = list(rx.finditer(out))
     if len(found) != 1:
         raise Unevaluable(f"extract_regex matched {len(found)} times, want 1")
     m = found[0]
-    return parse_number(m.group("derived") if "derived" in rx.groupindex else m.group(1))
+    got = parse_number(m.group("derived") if "derived" in rx.groupindex else m.group(1))
+    if got != num:
+        raise Unevaluable(f"extract_regex reads {got}, but the derive printed {key}={num}")
+    return num, den
 
 
 def check(registry, which, rev_arg, expect_mode):
@@ -820,7 +920,8 @@ def check(registry, which, rev_arg, expect_mode):
     except (OSError, ValueError) as exc:
         print(f"TALLY_REGISTRY_ERROR: {registry}: {exc}")
         return 2
-    print(f"TALLY_REGISTRY: {registry} sha256={sha256(raw)} set={which} rev={measured or '-'}")
+    print(f"TALLY_REGISTRY: {registry} sha256={sha256(raw)} "
+          f"checker_sha256={sha256(HERE.read_bytes())} set={which} rev={measured or '-'}")
     entries = []
     for name in (("red", "green") if which == "all" else (which,)):
         group = reg.get(name, [])
@@ -834,28 +935,36 @@ def check(registry, which, rev_arg, expect_mode):
     seen, tally, met = set(), Counter(), 0
     for k, (name, e) in enumerate(entries, 1):
         e = e if isinstance(e, dict) else {}
-        eid, stated, derived = e.get("id"), e.get("stated"), None
-        where, run, key = "", None, None
+        eid, stated = e.get("id"), e.get("stated")
+        shown, derived, where, run, key = stated, "none", "", None, None
         try:
             if not (isinstance(eid, str) and ID_SHAPE.fullmatch(eid)) or eid in seen:
                 raise Unevaluable("id missing, malformed or duplicated")
             seen.add(eid)
             if not isinstance(stated, int) or isinstance(stated, bool):
                 raise Unevaluable("stated is not an integer")
-            rev, path, line, text, quoted = check_statement(e.get("statement"), measured)
-            where = f"statement {path}:{line}@{rev}"
-            if parse_number(quoted) != stated:
-                raise Unevaluable(f"stated={stated} but the statement says {quoted!r}")
-            run, key = derive_plan(e.get("derive"), measured, path, text)
-            derived = run_derive(e["derive"], run)
-            status = "MATCH" if derived == stated else "MISMATCH"
+            allow_rev = name == "green"
+            rev, path, line_no, line, m = check_statement(e.get("statement"), measured, allow_rev)
+            claim = m.group(0) if len(m.group(0)) <= 200 else m.group(0)[:199] + "…"
+            where = (f"statement {path}:{line_no}@{rev} "
+                     f"claim={json.dumps(claim, ensure_ascii=False)}")
+            if parse_number(m.group("stated")) != stated:
+                raise Unevaluable(f"stated={stated} but the statement says {m.group('stated')!r}")
+            run, key, fraction, rx = derive_plan(e.get("derive"), measured, allow_rev, path, line)
+            den_text = claim_shape(line, m, fraction)
+            den = parse_number(den_text) if den_text is not None else None
+            if den is not None:
+                shown = f"{stated}/{den}"
+            num, dnum = run_derive(rx, run, key, fraction)
+            derived = f"{num}/{dnum}" if dnum is not None else str(num)
+            status = "MATCH" if (num, dnum) == (stated, den) else "MISMATCH"
         except Unevaluable as exc:
-            status, derived = "ERROR", None
+            status, derived = "ERROR", "none"
             where = f"{where}; error: {exc}" if where else f"error: {exc}"
         tally[status] += 1
         met += status == EXPECT[name]
         label = eid if isinstance(eid, str) and ID_SHAPE.fullmatch(eid) else f"entry#{k}"
-        print(f"{status} {label} stated={stated} derived={'none' if derived is None else derived}")
+        print(f"{status} {label} stated={shown} derived={derived}")
         print(f"  set={name} expect={EXPECT[name]} {where}"
               + (f" | key={key} | derive: {shlex.join(run)}" if run else ""))
     print(f"TALLY_SUMMARY: set={which} n={len(entries)} match={tally['MATCH']} "
@@ -870,26 +979,25 @@ def check(registry, which, rev_arg, expect_mode):
 
 def main(argv):
     if len(argv) > 1 and argv[1] in SUBCOMMANDS:
-        p = argparse.ArgumentParser(prog="tally-check.py")
+        p = argparse.ArgumentParser(prog="tally-check.py", allow_abbrev=False)
         sub = p.add_subparsers(dest="cmd", required=True)
-        s = sub.add_parser("receipt-files")
+        s = sub.add_parser("receipt-files", allow_abbrev=False)
         s.add_argument("--rev", required=True)
         s.add_argument("--path", required=True)
-        s.add_argument("--schema", default="mado-tripwire-verdict-v1")
         s.set_defaults(run=cmd_receipt_files)
-        s = sub.add_parser("pointer-token")
+        s = sub.add_parser("pointer-token", allow_abbrev=False)
         s.add_argument("--counter", default=".ufo/waves/round-19/fresh-pins.py")
         s.add_argument("--counter-rev", required=True)
         s.add_argument("--rev", required=True)
         s.add_argument("--token", required=True)
         s.set_defaults(run=cmd_pointer_token)
-        s = sub.add_parser("selftest-labels")
+        s = sub.add_parser("selftest-labels", allow_abbrev=False)
         s.add_argument("--path", default="tools/mado-verify.sh")
         s.add_argument("--function", default="selftest")
         s.add_argument("--fail-helper", default="st_bad")
         s.add_argument("--old", required=True)
         s.add_argument("--new", required=True)
-        s.add_argument("--label-regex", required=True)
+        s.add_argument("--label-id", required=True)
         s.set_defaults(run=cmd_selftest_labels)
         a = p.parse_args(argv[1:])
         try:
@@ -898,10 +1006,10 @@ def main(argv):
             print(f"could_not_evaluate: {exc}", file=sys.stderr)
             return 2
         return 0
-    p = argparse.ArgumentParser(prog="tally-check.py")
+    p = argparse.ArgumentParser(prog="tally-check.py", allow_abbrev=False)
     p.add_argument("registry")
     p.add_argument("--set", choices=("all", "red", "green"), default="all")
-    p.add_argument("--rev", help="the measured revision that REV stands for")
+    p.add_argument("--rev", help="the measured revision that REV stands for (green entries)")
     p.add_argument("--expect", action="store_true",
                    help="exit 0 iff every entry lands on its set's side (red MISMATCH, green MATCH)")
     a = p.parse_args(argv[1:])

@@ -1,0 +1,947 @@
+diff --git a/tools/mado-tripwire.py b/tools/mado-tripwire.py
+index 07c0468..c59e795 100755
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -28,26 +28,25 @@ Limits (stated, not hidden):
+   (a successful harmful call and a refused one both count).
+ - `clean` means no finding in the covered forms. It never means "no host
+   command ran": non-literal spawn arguments (counted as unparsed_spawns),
+-  JavaScript eval cells (eval_unparsed), scripts written then run, aliases,
+-  helpers defined in one text and called from another, python -c bodies,
+-  other tools and other sessions are not analysed. Pair a verdict with a
+-  /var/log/pacman.log window count.
+-- A function defined earlier in the SAME text and called there with literal
+-  arguments has its body classified with those arguments substituted: $1..$9
+-  and $@/$* for shell functions, positional parameters for python `def`.
+-  Nothing is substituted unless the call text states it literally, so a
+-  resolved finding names a command the transcript spells out. A helper body
+-  that is defined but never called is still read as before.
+-- A call to a bare name this text resolves neither to a same-text helper
+-  nor to a spawn function, handed a literal `['prog', ...]` argv list that
+-  classifies as a host command, is reported as a lead: the argv is stated
+-  outright, but whether that helper executes it is not visible, so a helper
+-  that only formats or logs that argv is reported too (an imported helper
+-  whose body lives in another file is a lead for the same reason). Pure
+-  data calls (`print`, `json.dumps`, ...) are exempt (PURE_ARG_CALLS); a
+-  call to a name this text DOES define contributes no lead when its
+-  arguments are not all literal, and only positional argv lists are read
+-  (a keyword `args=[...]` is a miss).
++  JavaScript eval cells (eval_unparsed), scripts written then run, aliases
++  not bound in the scanned text, python -c bodies, other tools and other
++  sessions are not analysed. Pair a verdict with a /var/log/pacman.log window
++  count.
++- A visible Python `def`/`async def`/lambda called with literal arguments
++  is followed through its body up to four nested helper calls, including
++  definitions from earlier py eval cells of the same file unless a `reset`
++  intervenes. Async helpers require a direct `await`; an explicit
++  `__init__` and a directly resolved visible class method are followed.
++  `$1..$9` and `$@/$*` are substituted for shell functions. Uncalled helpers
++  do not establish an execution path.
++- A literal positional `['prog', ...]` argv passed to an unresolved bare
++  name or imported external callable is a `lead`, not an observed execution:
++  the command is stated but that callable's body is outside the transcript.
++  Builtins and listed pure stdlib callables are exempt only while not
++  rebound; visible helper bodies and ordinary class constructors are
++  followed rather than flagged for command-shaped data alone. Dynamic
++  dispatch, metaclass/descriptor behavior and inherited/indirect methods are
++  not resolved. Every finding carries `evidence: observed|lead`.
+ - Variable recipes are resolved only when the text fixes them: a name bound
+   by a straight-line module-level assignment to a literal-only expression
+   (str, `+`, two-argument `str.replace`, or a list of those), earlier in the
+@@ -84,6 +83,8 @@ unpinned snapshot). Exit 2 wins over 1.
+ First line: MADO_TRIPWIRE: clean | permitted_only | findings | could_not_evaluate
+             MADO_TRIPWIRE_FROZEN: frozen_match | frozen_verdict_mismatch |
+             frozen_error | snapshot_tampered | unpinned_legacy
++--scan JSON includes findings with evidence markers and the integer totals
++`observed_findings` and `lead_findings`; a lead remains under `findings`.
+ --frozen proves a committed snapshot still reproduces the pinned verdict over
+ pinned bytes. It validates its pin before replay: inputs must be a non-empty
+ list of `inputs/<name>.jsonl` paths that resolve inside DIR (a symlinked
+@@ -97,7 +98,9 @@ transcript it names: provenance is the snapshot author's claim, not checked.
+ --selftest DIR runs DIR/expected.json cases. A `mode: "frozen"` case needs
+ name, args (one DIR), want_exit and want_label, and may assert want_missing /
+ want_extra counts of the verdict's missing_findings / extra_findings (default
+-0); it also pins the verdict schema, outcome and exit, not only line 1.
++0); it also pins the verdict schema, outcome and exit, not only line 1. A
++scan case may specify `evidence` in wanted findings; it is compared when any
++wanted finding specifies it.
+ """
+ import ast
+ import hashlib
+@@ -1093,13 +1096,12 @@ def module_binding(stmt):
+ def literal_value(node, env):
+     """The literal value an expression denotes, else LITERAL_MISS.
+ 
+-    The one resolver both consumers share: module-level variable recipes
+-    (spawn arguments, folded against the cell environment) and same-text
+-    helper arguments (folded against bound parameters). Only shapes whose
+-    value the text itself fixes are folded: a str/int/float/bool/None
+-    constant, a resolvable name, str + str, a two-argument str.replace on
+-    resolvable strings, and a list/tuple of folded values. Anything else is
+-    LITERAL_MISS and the caller counts the spawn as unparsed, never guesses.
++    The resolver serves module variable recipes (folded against the per-cell
++    literal environment) and visible-helper arguments (folded against the
++    call-site literal environment and bound parameters). It folds primitive
++    constants, resolvable names, str concatenation/replace, literal
++    lists/tuples/dicts, and starred list/tuple elements whose iterated values
++    are themselves literal. Other shapes remain unresolved, never guessed.
+     """
+     if isinstance(node, ast.Constant) and (
+             node.value is None or isinstance(node.value, (str, int, float, bool))):
+@@ -1119,9 +1121,25 @@ def literal_value(node, env):
+             return base.replace(old, new)
+         return LITERAL_MISS
+     if isinstance(node, (ast.List, ast.Tuple)):
+-        values = [literal_value(elt, env) for elt in node.elts]
+-        if all(v is not LITERAL_MISS for v in values):
+-            return values
++        values = []
++        for elt in node.elts:
++            if isinstance(elt, ast.Starred):
++                expanded = literal_value(elt.value, env)
++                if not isinstance(expanded, (list, tuple)):
++                    return LITERAL_MISS
++                values.extend(expanded)
++            else:
++                value = literal_value(elt, env)
++                if value is LITERAL_MISS:
++                    return LITERAL_MISS
++                values.append(value)
++        return values
++    if isinstance(node, ast.Dict):
++        pairs = [(literal_value(key, env), literal_value(value, env))
++                 for key, value in zip(node.keys, node.values)]
++        if all(isinstance(key, str) and value is not LITERAL_MISS
++               for key, value in pairs):
++            return dict(pairs)
+     return LITERAL_MISS
+ 
+ 
+@@ -1187,34 +1205,6 @@ def module_unsafe_names(tree):
+     return unsafe
+ 
+ 
+-def scoped_call_ids(tree):
+-    """Ids of calls lexically inside a def/lambda body or a class body.
+-
+-    Those run later (or in another namespace), so the module-level value at
+-    the definition point need not be the value they see: only literals
+-    written inside the call itself are resolved for them.
+-    """
+-    ids = set()
+-
+-    def defer(nodes):
+-        for node in nodes:
+-            for inner in ast.walk(node):
+-                if isinstance(inner, ast.Call):
+-                    ids.add(id(inner))
+-
+-    def scan(node):
+-        for child in ast.iter_child_nodes(node):
+-            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+-                defer(child.body)
+-            elif isinstance(child, ast.Lambda):
+-                defer([child.body])
+-            elif isinstance(child, ast.ClassDef):
+-                defer(child.body)
+-            else:
+-                scan(child)
+-
+-    scan(tree)
+-    return ids
+ 
+ 
+ def opaque_module_mutation(tree):
+@@ -1249,64 +1239,377 @@ def opaque_statement(stmt):
+     return opaque_module_mutation(stmt)
+ 
+ 
+-PURE_ARG_CALLS = {  # never spawns: never report a literal argv list handed to it
+-    "print", "list", "tuple", "set", "dict", "sorted", "reversed", "repr", "str",
+-    "bytes", "len", "any", "all", "min", "max", "sum", "enumerate", "zip", "map",
+-    "filter", "open", "exec", "eval", "compile", "isinstance", "getattr", "hasattr",
++PURE_ARG_CALLS = {  # known builtin callables that do not execute a command
++    "print", "list", "tuple", "set", "frozenset", "dict", "type",
++    "sorted", "reversed", "repr", "str", "bytes", "len", "any", "all",
++    "min", "max", "sum", "enumerate", "zip", "map", "filter", "open",
++    "abs", "ascii", "bin", "bool", "bytearray", "callable", "chr",
++    "classmethod", "complex", "divmod", "float", "format", "hash", "hex",
++    "id", "int", "issubclass", "memoryview", "object", "oct", "ord", "pow",
++    "property", "range", "round", "slice", "staticmethod", "super", "vars",
++    "dir", "exit", "quit",
++    "exec", "eval", "compile", "isinstance", "getattr", "hasattr",
+     "setattr", "iter", "next", "input",
+ }
++PURE_STDLIB_MODULES = {
++    "collections", "itertools", "operator", "string", "enum",
++    "textwrap", "dataclasses",
++}
++PURE_STDLIB_EXACT = {
++    "json.dumps", "pprint.pformat", "pprint.pprint",
++    "shlex.join", "shlex.quote", "shlex.split", "typing.NamedTuple",
++}
+ 
+ 
+-def bind_literal(fn, call, env=None):
+-    """Bind a same-text `def` helper's parameters to literal call arguments.
++def pure_stdlib_path(path):
++    return (path in PURE_STDLIB_EXACT
++            or any(path.startswith(module + ".") for module in PURE_STDLIB_MODULES)
++            or path.startswith("functools.")
++            or (path.startswith("builtins.")
++                and path.rsplit(".", 1)[-1] in PURE_ARG_CALLS))
+ 
+-    Arguments are folded with the shared resolver against `env`, which holds
+-    only parameters bound by an enclosing same-text helper call: a module
+-    variable is never substituted into a helper body, so a binding always
+-    names an argument the call text itself states. Defaults are folded at the
+-    definition site, where no call parameter is in scope.
+-    """
++
++def spawn_path(path):
++    tail = path.rsplit(".", 1)[-1]
++    return ((path.startswith("subprocess.") and tail in SPAWN_FUNCS)
++            or path in SHELL_STRING_FUNCS
++            or path in ("asyncio.create_subprocess_exec", "os.execvp", "os.execv",
++                        "os.spawnlp", "os.execlp", "tool.bash"))
++
++
++def class_method_info(class_node, method_name):
++    if not isinstance(class_node, ast.ClassDef):
++        return None
++    for member in class_node.body:
++        if (isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
++                and member.name == method_name):
++            static = any((dotted(decorator) or "").rsplit(".", 1)[-1] == "staticmethod"
++                         for decorator in member.decorator_list)
++            class_method = any((dotted(decorator) or "").rsplit(".", 1)[-1] == "classmethod"
++                               for decorator in member.decorator_list)
++            return {"kind": "helper", "node": member,
++                    "skip_first": not static, "class_node": class_node,
++                    "bound_kind": "class" if class_method else
++                    "instance" if not static else None}
++    return None
++
++
++def callable_info(node, bindings):
++    """Resolve a callable against the binding in effect at this call site."""
++    if isinstance(node, ast.Name):
++        bound = bindings.get(node.id)
++        if bound is not None:
++            if bound.get("kind") == "instance":
++                method = class_method_info(bound.get("node"), "__call__")
++                return method or bound
++            return bound
++        if node.id in PURE_ARG_CALLS:
++            return {"kind": "pure", "name": node.id}
++        return {"kind": "unresolved", "name": node.id}
++    if isinstance(node, ast.Call):
++        constructor = callable_info(node.func, bindings)
++        if constructor.get("kind") in ("class", "instance"):
++            method = class_method_info(constructor.get("node"), "__call__")
++            if method is not None:
++                return method
++    if isinstance(node, ast.Attribute):
++        class_info = None
++        if isinstance(node.value, ast.Call):
++            class_info = callable_info(node.value.func, bindings)
++        elif isinstance(node.value, ast.Name):
++            class_info = bindings.get(node.value.id)
++        if class_info is not None:
++            if class_info.get("kind") == "instance":
++                method = class_method_info(class_info.get("node"), node.attr)
++                if method is not None:
++                    return method
++            elif class_info.get("kind") == "class":
++                method = class_method_info(class_info.get("node"), node.attr)
++                if method is not None:
++                    return method
++    raw = dotted(node)
++    if not raw:
++        return {"kind": "unresolved"}
++    head, _, rest = raw.partition(".")
++    bound = bindings.get(head)
++    if bound is not None:
++        if bound.get("kind") != "module":
++            return {"kind": "unresolved"}
++        path = bound.get("module", "") + ("." + rest if rest else "")
++        if spawn_path(path):
++            return {"kind": "spawn", "name": path}
++        if pure_stdlib_path(path):
++            return {"kind": "pure", "name": path}
++        return {"kind": "external", "name": path}
++    if head == "sp":
++        raw = "subprocess." + rest
++    if spawn_path(raw):
++        return {"kind": "spawn", "name": raw}
++    if pure_stdlib_path(raw):
++        return {"kind": "pure", "name": raw}
++    return {"kind": "unresolved", "name": raw}
++
++
++def assignment_binding(node, bindings, env):
++    """Classify one assigned value without evaluating transcript code."""
++    if isinstance(node, (ast.Lambda, ast.FunctionDef, ast.AsyncFunctionDef)):
++        return {"kind": "helper", "node": node}
++    if isinstance(node, ast.ClassDef):
++        return {"kind": "class", "node": node}
++    if isinstance(node, ast.Name):
++        bound = bindings.get(node.id)
++        if bound is not None:
++            return dict(bound)
++        if node.id in PURE_ARG_CALLS:
++            return {"kind": "pure", "name": node.id}
++        return {"kind": "unknown"}
++    if isinstance(node, ast.Attribute):
++        if isinstance(literal_value(node.value, env), str):
++            return {"kind": "pure", "name": "str." + node.attr}
++        return dict(callable_info(node, bindings))
++    if isinstance(node, ast.Call):
++        info = callable_info(node.func, bindings)
++        if info.get("kind") == "pure" and info.get("name") == "functools.partial" \
++                and node.args:
++            wrapped = callable_info(node.args[0], bindings)
++            if wrapped.get("kind") == "spawn":
++                return {
++                    "kind": "spawn", "name": wrapped["name"],
++                    "partial_args": [literal_value(a, env) for a in node.args[1:]],
++                    "partial_keywords": {
++                        k.arg: literal_value(k.value, env)
++                        for k in node.keywords if k.arg is not None
++                    },
++                }
++        if info.get("kind") == "pure" and info.get("name") in (
++                "collections.namedtuple", "typing.NamedTuple"):
++            return {"kind": "class"}
++        if info.get("kind") == "class":
++            return {"kind": "instance", "node": info.get("node")}
++        if info.get("kind") == "pure":
++            return {"kind": "value"}
++        return {"kind": "unknown"}
++    if isinstance(node, (ast.Constant, ast.List, ast.Tuple, ast.Set, ast.Dict,
++                         ast.BinOp, ast.UnaryOp, ast.JoinedStr)):
++        return {"kind": "value"}
++    return {"kind": "unknown"}
++
++
++def update_bindings(stmt, bindings, env):
++    """Apply this statement's module-level name bindings in execution order."""
++    if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
++        bindings[stmt.name] = {"kind": "helper", "node": stmt}
++        return
++    if isinstance(stmt, ast.ClassDef):
++        bindings[stmt.name] = {"kind": "class", "node": stmt}
++        return
++    if isinstance(stmt, ast.Import):
++        for alias in stmt.names:
++            name = alias.asname or alias.name.split(".")[0]
++            module = alias.name if alias.asname else alias.name.split(".")[0]
++            bindings[name] = {"kind": "module", "module": module}
++        return
++    if isinstance(stmt, ast.ImportFrom):
++        for alias in stmt.names:
++            if alias.name == "*":
++                continue
++            name = alias.asname or alias.name
++            path = (stmt.module + "." + alias.name) if stmt.module else alias.name
++            if spawn_path(path):
++                bindings[name] = {"kind": "spawn", "name": path}
++            elif pure_stdlib_path(path):
++                bindings[name] = {"kind": "pure", "name": path}
++            else:
++                bindings[name] = {"kind": "external", "name": path}
++        return
++    if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
++        value = stmt.value
++        resolved = assignment_binding(value, bindings, env) if value is not None \
++            else {"kind": "unknown"}
++        targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
++        names = set().union(*(target_names(target) for target in targets))
++        for name in names:
++            bindings[name] = dict(resolved) if len(names) == 1 else {"kind": "unknown"}
++        return
++    if isinstance(stmt, ast.Delete):
++        for target in stmt.targets:
++            for name in target_names(target):
++                if name in PURE_ARG_CALLS:
++                    bindings.pop(name, None)
++                else:
++                    bindings[name] = {"kind": "deleted"}
++        return
++    if isinstance(stmt, (ast.AugAssign, ast.NamedExpr)):
++        target = stmt.target
++        for name in target_names(target):
++            bindings[name] = {"kind": "unknown"}
++        return
++    # A branch/loop may or may not bind a name. Do not keep an earlier
++    # exemption or helper as if the execution were straight-line.
++    def visit(current):
++        if isinstance(current, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
++            if current is not stmt:
++                bindings[current.name] = {"kind": "unknown"}
++            return
++        if isinstance(current, ast.Lambda):
++            return
++        if isinstance(current, (ast.Assign, ast.AnnAssign, ast.AugAssign,
++                                ast.NamedExpr, ast.Delete)):
++            targets = (current.targets if isinstance(current, ast.Assign)
++                       else [current.target] if hasattr(current, "target")
++                       else current.targets)
++            for target in targets:
++                for name in target_names(target):
++                    bindings[name] = {"kind": "unknown"}
++        elif isinstance(current, (ast.Import, ast.ImportFrom)):
++            for alias in current.names:
++                if alias.name != "*":
++                    bindings[alias.asname or alias.name.split(".")[0]] = {
++                        "kind": "unknown"}
++        elif isinstance(current, (ast.For, ast.AsyncFor, ast.comprehension)):
++            for name in target_names(current.target):
++                bindings[name] = {"kind": "unknown"}
++        elif isinstance(current, ast.withitem) and current.optional_vars is not None:
++            for name in target_names(current.optional_vars):
++                bindings[name] = {"kind": "unknown"}
++        elif isinstance(current, ast.ExceptHandler) and current.name:
++            bindings[current.name] = {"kind": "unknown"}
++        elif isinstance(current, (ast.Global, ast.Nonlocal)):
++            for name in current.names:
++                bindings[name] = {"kind": "unknown"}
++        elif MATCH_BINDERS and isinstance(current, MATCH_BINDERS):
++            name = getattr(current, "name", None) or getattr(current, "rest", None)
++            if name:
++                bindings[name] = {"kind": "unknown"}
++        for child in ast.iter_child_nodes(current):
++            visit(child)
++    visit(stmt)
++
++
++def eager_calls(nodes):
++    """Calls executed when these statements run; skip deferred function bodies."""
++    calls = []
++
++    class Visitor(ast.NodeVisitor):
++        def visit_FunctionDef(self, node):
++            for expr in node.decorator_list:
++                self.visit(expr)
++            for expr in node.args.defaults + node.args.kw_defaults:
++                if expr is not None:
++                    self.visit(expr)
++            if node.returns is not None:
++                self.visit(node.returns)
++
++        visit_AsyncFunctionDef = visit_FunctionDef
++
++        def visit_Lambda(self, node):
++            for expr in node.args.defaults + node.args.kw_defaults:
++                if expr is not None:
++                    self.visit(expr)
++
++        def visit_Call(self, node):
++            calls.append(node)
++            self.generic_visit(node)
++
++    visitor = Visitor()
++    for node in nodes:
++        visitor.visit(node)
++    return calls
++
++
++def bind_literal(fn, call, env=None, skip_first=False):
++    """Bind literal helper arguments and retain unknown values as unresolved."""
+     env = {} if env is None else env
+-    if fn.args.vararg or fn.args.kwarg or any(isinstance(a, ast.Starred) for a in call.args):
++    if any(isinstance(arg, ast.Starred) for arg in call.args):
+         return None
+-    params = [a.arg for a in fn.args.posonlyargs + fn.args.args]
+-    if len(call.args) > len(params):
++    all_params = [arg.arg for arg in fn.args.posonlyargs + fn.args.args]
++    offset = 1 if skip_first else 0
++    params = all_params[offset:]
++    vararg = fn.args.vararg.arg if fn.args.vararg else None
++    kwarg = fn.args.kwarg.arg if fn.args.kwarg else None
++    kwonly_params = [arg.arg for arg in fn.args.kwonlyargs]
++    keyword_params = {arg.arg for arg in fn.args.args + fn.args.kwonlyargs}
++    if len(call.args) > len(params) and vararg is None:
+         return None
+-    bound = {}
++    bound = {all_params[0]: None} if skip_first and all_params else {}
+     for name, node in zip(params, call.args):
+-        value = literal_value(node, env)
+-        if value is LITERAL_MISS:
++        bound[name] = literal_value(node, env)
++    extra_args = [literal_value(node, env) for node in call.args[len(params):]]
++    if vararg is not None:
++        bound[vararg] = extra_args
++    extra_keywords = {}
++    for keyword in call.keywords:
++        value = literal_value(keyword.value, env)
++        if keyword.arg is None:
++            if kwarg is None:
++                return None
++            if not isinstance(value, dict):
++                extra_keywords = LITERAL_MISS
++            elif extra_keywords is not LITERAL_MISS:
++                extra_keywords.update(value)
++        elif keyword.arg in keyword_params:
++            if keyword.arg in bound:
++                return None
++            bound[keyword.arg] = value
++        elif kwarg is not None:
++            if extra_keywords is not LITERAL_MISS:
++                extra_keywords[keyword.arg] = value
++        else:
+             return None
+-        bound[name] = value
+-    for k in call.keywords:
+-        if k.arg is None or k.arg not in params or k.arg in bound:
+-            return None
+-        value = literal_value(k.value, env)
+-        if value is LITERAL_MISS:
+-            return None
+-        bound[k.arg] = value
+-    first_default = len(params) - len(fn.args.defaults)
+-    for idx, name in enumerate(params):
++    if kwarg is not None:
++        bound[kwarg] = extra_keywords
++    elif extra_keywords:
++        return None
++    first_default = len(all_params) - len(fn.args.defaults)
++    for index, name in enumerate(params, offset):
+         if name in bound:
+             continue
+-        if idx < first_default:
+-            return None  # a required parameter the call does not state
+-        value = literal_value(fn.args.defaults[idx - first_default], {})
+-        if value is LITERAL_MISS:
++        if index < first_default:
+             return None
+-        bound[name] = value
++        bound[name] = literal_value(fn.args.defaults[index - first_default], {})
++    for name, default in zip(kwonly_params, fn.args.kw_defaults):
++        if name not in bound:
++            if default is None:
++                return None
++            bound[name] = literal_value(default, {})
+     return bound
+ 
+ 
+-def classify_eval(code, language, env=None):
+-    """Return (hits, eval_unparsed, unparsed_spawns).
++def prepare_eval_calls(statements, env, bindings):
++    """Snapshot literals and bindings at each statement, then retain its updates."""
++    tree = ast.Module(body=statements, type_ignores=[])
++    unsafe = module_unsafe_names(tree)
++    for name in unsafe:
++        env.pop(name, None)
++    call_env, binding_env = {}, {}
++    for stmt in statements:
++        for node in ast.walk(stmt):
++            if isinstance(node, ast.Call):
++                call_env[id(node)] = dict(env)
++                binding_env[id(node)] = dict(bindings)
++        if opaque_statement(stmt):
++            env.clear()
++            bindings.clear()
++            for name in PURE_ARG_CALLS:
++                bindings[name] = {"kind": "unknown"}
++        binding = module_binding(stmt)
++        if binding is not None:
++            name, value = binding
++            resolved = LITERAL_MISS if name in unsafe else literal_value(value, env)
++            if resolved is LITERAL_MISS:
++                env.pop(name, None)
++            else:
++                env[name] = resolved
++        update_bindings(stmt, bindings, env)
++    return eager_calls(statements), call_env, binding_env
+ 
+-    `env` is the literal environment of the transcript's py kernel (one dict
+-    per scanned file); it is updated in place so a later eval cell resolves a
+-    name an earlier cell bound, and it is the environment spawn arguments are
+-    folded against. A name entered here was bound by exactly one
+-    straight-line module-level assignment to a literal-only expression.
+-    """
++
++def awaited_call_ids(statements):
++    return {id(node.value) for stmt in statements for node in ast.walk(stmt)
++            if isinstance(node, ast.Await) and isinstance(node.value, ast.Call)}
++
++def classify_eval(code, language, env=None, bindings=None):
++    """Return hits and unparsed counters; both Python environments persist per file."""
+     if language and language not in ("py", "python"):
+         return [], 1, 0
+     hits = []
+@@ -1328,117 +1631,131 @@ def classify_eval(code, language, env=None):
+         tree = compile("\n".join(py), "<eval>", "exec",
+                        flags=ast.PyCF_ONLY_AST | ast.PyCF_ALLOW_TOP_LEVEL_AWAIT,
+                        dont_inherit=True)
+-    except Exception:  # SyntaxError, ValueError, MemoryError, RecursionError: never executed
++    except Exception:
+         return hits, 1, 0
+-    if env is None:
+-        env = {}
+-    unsafe = module_unsafe_names(tree)
+-    for name in unsafe:
+-        env.pop(name, None)
+-    scoped = scoped_call_ids(tree)
+-    from_subprocess = set()
+-    aliases = {"sp": "subprocess"}  # bound name -> canonical dotted prefix
+-    for node in ast.walk(tree):
+-        if isinstance(node, ast.Import):
+-            for a in node.names:
+-                if a.name in ("subprocess", "os", "asyncio") and a.asname:
+-                    aliases[a.asname] = a.name
+-        elif isinstance(node, ast.ImportFrom) and node.module in ("subprocess", "os", "asyncio"):
+-            for a in node.names:
+-                if a.name == "*":
+-                    continue
+-                aliases[a.asname or a.name] = "%s.%s" % (node.module, a.name)
+-                if node.module == "subprocess":
+-                    from_subprocess.add(a.asname or a.name)
+-    call_env = {}  # call id -> module literal env at its statement
+-    for stmt in tree.body:
+-        for node in ast.walk(stmt):
+-            if isinstance(node, ast.Call):
+-                call_env[id(node)] = dict(env)
+-        if opaque_statement(stmt):
+-            env.clear()  # exec/globals/import * here rebinds names behind the resolver
+-        binding = module_binding(stmt)
+-        if binding is not None:
+-            name, value = binding
+-            resolved = LITERAL_MISS if name in unsafe else literal_value(value, env)
+-            if resolved is LITERAL_MISS:
+-                env.pop(name, None)
+-            else:
+-                env[name] = resolved
+-    funcs = {}
+-    for node in tree.body:
+-        if isinstance(node, ast.FunctionDef) and not node.decorator_list:
+-            funcs[node.name] = None if node.name in funcs else (node.lineno, node)
+-    funcs = {k: v for k, v in funcs.items() if v is not None}
+-    spawn_hits, unparsed = spawn_scan(list(ast.walk(tree)), aliases, from_subprocess,
+-                                      {}, funcs, 0, call_env, scoped)
+-    hits.extend(spawn_hits)
++    env = {} if env is None else env
++    bindings = {} if bindings is None else bindings
++    calls, call_env, binding_env = prepare_eval_calls(tree.body, env, bindings)
++    found, unparsed = spawn_scan(
++        calls, {}, bindings, 0, call_env, binding_env, awaited_call_ids(tree.body))
++    hits.extend(found)
+     return hits, 0, unparsed
+ 
+ 
+ def helper_argv_leads(node, env):
+-    """Classify literal argv lists handed to a call this text does not define.
+-
+-    Only what the call states is read: inline literals and parameters bound
+-    by an enclosing same-text helper call, never a module variable.
+-    """
++    """Mark literal argv passed to a callee whose body is not visible."""
+     out = []
+-    for a in node.args:
+-        vals = argv_strings(literal_value(a, env))
++    for arg in node.args:
++        vals = argv_strings(literal_value(arg, env))
+         if vals is not None:
+-            out.extend(classify_shell(shlex.join(vals)))
++            out.extend(tuple(hit) + ("lead",)
++                       for hit in classify_shell(shlex.join(vals)))
+     return out
+ 
+ 
+-def spawn_scan(nodes, aliases, from_subprocess, env, funcs, depth=0,
+-               call_env=None, scoped=frozenset()):
+-    """Classify spawn calls, resolving literal calls to same-text helpers.
+-
+-    `env` is the helper-binding environment: empty at module scope, the bound
+-    parameters inside a same-text helper body. `call_env`/`scoped` carry the
+-    cell's module literal environment per call (a deferred call, inside a
+-    def/lambda/class body, resolves no module name). A call to a name this
+-    text neither defines nor imports contributes one lead per literal argv
+-    list it is handed: the argv is stated outright, the helper's body is not
+-    visible here.
+-    """
++def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
++               awaited_calls=None):
++    """Follow visible helper calls and classify reachable spawn calls."""
+     hits, unparsed = [], 0
++    awaited_calls = set() if awaited_calls is None else awaited_calls
+     for node in nodes:
+         if not isinstance(node, ast.Call):
+             continue
+-        cenv = env if call_env is None else (
+-            {} if id(node) in scoped else call_env[id(node)])
+-        helper = funcs.get(node.func.id) if isinstance(node.func, ast.Name) else None
+-        if helper is not None and node.lineno > helper[0] and depth < 4:
+-            bound = bind_literal(helper[1], node, env)
+-            if bound is not None:
+-                body = [n for n in ast.walk(helper[1]) if isinstance(n, ast.Call)]
+-                inner, _ = spawn_scan(body, aliases, from_subprocess, bound, funcs, depth + 1)
+-                hits.extend(inner)
+-            continue  # the helper body was counted where that body is defined
+-        name = dotted(node.func) or ""
+-        head, _, rest = name.partition(".")
+-        if head in aliases:
+-            name = aliases[head] + ("." + rest if rest else "")
++        cenv = env if call_env is None else call_env.get(id(node), {})
++        cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
++        info = callable_info(node.func, cbindings)
++        helper = info.get("node")
++        if info.get("kind") == "helper":
++            if isinstance(helper, ast.AsyncFunctionDef) and id(node) not in awaited_calls:
++                continue
++            if depth < 4 and helper is not None:
++                bound = bind_literal(helper, node, cenv,
++                                     skip_first=info.get("skip_first", False))
++                if bound is not None:
++                    body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
++                    body_bindings = dict(cbindings)
++                    body_bindings.update({
++                        name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
++                        for name, value in bound.items()
++                    })
++                    if info.get("class_node") and info.get("bound_kind"):
++                        params = helper.args.posonlyargs + helper.args.args
++                        if params:
++                            body_bindings[params[0].arg] = {
++                                "kind": info["bound_kind"], "node": info["class_node"]}
++                    calls, body_call_env, body_binding_env = prepare_eval_calls(
++                        body_nodes, bound, body_bindings)
++                    inner, missed = spawn_scan(
++                        calls, bound, body_bindings, depth + 1, body_call_env,
++                        body_binding_env, awaited_call_ids(body_nodes))
++                    hits.extend(inner)
++                    unparsed += missed
++            continue
++        if info.get("kind") == "class":
++            if depth < 4 and isinstance(helper, ast.ClassDef):
++                init = next((member for member in helper.body
++                             if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
++                             and member.name == "__init__"), None)
++                if init is not None:
++                    bound = bind_literal(init, node, cenv, skip_first=True)
++                    if bound is not None:
++                        body_bindings = dict(cbindings)
++                        body_bindings.update(
++                            {name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
++                             for name, value in bound.items()})
++                        init_params = init.args.posonlyargs + init.args.args
++                        if init_params:
++                            body_bindings[init_params[0].arg] = {
++                                "kind": "instance", "node": helper}
++                        calls, body_call_env, body_binding_env = prepare_eval_calls(
++                            init.body, bound, body_bindings)
++                        inner, missed = spawn_scan(
++                            calls, bound, body_bindings, depth + 1, body_call_env,
++                            body_binding_env, awaited_call_ids(init.body))
++                        hits.extend(inner)
++                        unparsed += missed
++            continue
++        if info.get("kind") in ("pure", "value"):
++            continue
++        if info.get("kind") in ("unresolved", "external", "deleted",
++                                "unknown", "parameter"):
++            if isinstance(node.func, ast.Name):
++                hits.extend(helper_argv_leads(node, cenv))
++            continue
++        name = info.get("name", "")
+         tail = name.rsplit(".", 1)[-1]
+-        is_sub = (name.startswith(("subprocess.", "sp.")) and tail in SPAWN_FUNCS) or \
+-                 (name == tail and tail in from_subprocess and tail in SPAWN_FUNCS)
++        is_sub = name.startswith("subprocess.") and tail in SPAWN_FUNCS
+         is_shell_fn = name in SHELL_STRING_FUNCS
+         is_exec = name in ("asyncio.create_subprocess_exec", "os.execvp", "os.execv",
+                            "os.spawnlp", "os.execlp")
+-        is_tool = name in ("tool.bash",)
+-        if not (is_sub or is_shell_fn or is_exec or is_tool):
+-            if (isinstance(node.func, ast.Name) and helper is None
+-                    and name not in PURE_ARG_CALLS):
+-                hits.extend(helper_argv_leads(node, env))
++        is_tool = name == "tool.bash"
++        if not (info.get("kind") == "spawn" or is_sub or is_shell_fn or is_exec or is_tool):
+             continue
++        fixed_args = info.get("partial_args", [])
++        call_args = list(fixed_args)
++        for arg in node.args:
++            if isinstance(arg, ast.Starred):
++                values = literal_value(arg.value, cenv)
++                if isinstance(values, (list, tuple)):
++                    call_args.extend(values)
++                else:
++                    call_args.append(LITERAL_MISS)
++            else:
++                call_args.append(literal_value(arg, cenv))
++        call_kwargs = dict(info.get("partial_keywords", {}))
++        for keyword in node.keywords:
++            value = literal_value(keyword.value, cenv)
++            if keyword.arg is None and isinstance(value, dict):
++                call_kwargs.update(value)
++            elif keyword.arg is not None:
++                call_kwargs[keyword.arg] = value
+         if is_tool:
+             arg = node.args[0] if node.args else None
+             cmd = None
+             if isinstance(arg, ast.Dict):
+-                for k, v in zip(arg.keys, arg.values):
+-                    if isinstance(k, ast.Constant) and k.value == "command":
+-                        value = literal_value(v, cenv)
++                for key, value in zip(arg.keys, arg.values):
++                    if isinstance(key, ast.Constant) and key.value == "command":
++                        value = literal_value(value, cenv)
+                         if isinstance(value, str):
+                             cmd = value
+             if cmd is None:
+@@ -1447,24 +1764,20 @@ def spawn_scan(nodes, aliases, from_subprocess, env, funcs, depth=0,
+                 hits.extend(classify_shell(cmd))
+             continue
+         if is_exec:
+-            vals = [literal_value(a, cenv) for a in node.args]
+-            if vals and all(isinstance(v, str) for v in vals):
+-                hits.extend(classify_shell(shlex.join(vals)))
++            if call_args and all(isinstance(value, str) for value in call_args):
++                hits.extend(classify_shell(shlex.join(call_args)))
+             else:
+                 unparsed += 1
+             continue
+-        arg = node.args[0] if node.args else None
+-        shell_kw = True
+-        for k in node.keywords:  # non-literal shell= is treated as shell
+-            if k.arg == "shell":
+-                flag = literal_value(k.value, cenv)
+-                shell_kw = flag is LITERAL_MISS or bool(flag)
+-        value = literal_value(arg, cenv) if arg is not None else LITERAL_MISS
++        shell_kw = call_kwargs.get("shell", True)
++        if shell_kw is LITERAL_MISS:
++            shell_kw = True
++        value = call_args[0] if call_args else call_kwargs.get("args", LITERAL_MISS)
+         argv = argv_strings(value)
+         if argv is not None:
+             hits.extend(classify_shell(shlex.join(argv)))
+         elif isinstance(value, str):
+-            hits.extend(classify_shell(value) if (is_shell_fn or shell_kw)
++            hits.extend(classify_shell(value) if (is_shell_fn or bool(shell_kw))
+                         else classify_shell(shlex.quote(value)))
+         else:
+             unparsed += 1
+@@ -1541,7 +1854,8 @@ def scan_file(path):
+     if raw_lines and raw_lines[-1] == b"":
+         raw_lines.pop()
+     entry["lines"] = len(raw_lines)
+-    envs = {}  # language kernel -> literal env, carried across this file's cells
++    envs = {}  # literal environments persist across this file's Python cells
++    binding_envs = {}  # visible Python bindings persist until reset in this file
+     for lineno, raw in enumerate(raw_lines, 1):
+         if not raw.strip():
+             continue
+@@ -1575,30 +1889,35 @@ def scan_file(path):
+                 if not isinstance(code, str):
+                     continue
+                 language = args.get("language")
+-                env = None
++                bindings = None
+                 if language in (None, "py", "python"):
+-                    if args.get("reset") is True:  # fresh kernel: nothing carries in
++                    if args.get("reset") is True:
+                         envs["py"] = {}
++                        binding_envs["py"] = {}
+                     env = envs.setdefault("py", {})
+-                hits, un_eval, un_spawn = classify_eval(code, language, env)
++                    bindings = binding_envs.setdefault("py", {})
++                hits, un_eval, un_spawn = classify_eval(code, language, env, bindings)
+                 entry["eval_unparsed"] += un_eval
+                 entry["unparsed_spawns"] += un_spawn
+             else:
+                 continue
+             entry["eval_unparsed"] += NESTED["eval_unparsed"]
+             entry["unparsed_spawns"] += NESTED["unparsed_spawns"]
+-            seen = set()
+-            for cls, rule, argv0, text in hits:
+-                key = (cls, rule)
+-                if key in seen:
+-                    continue
+-                seen.add(key)
++            unique_hits = {}
++            for result in hits:
++                cls, rule, argv0, text = result[:4]
++                evidence = result[4] if len(result) > 4 else "observed"
++                key = (cls, rule, evidence)
++                if key not in unique_hits:
++                    unique_hits[key] = (cls, rule, argv0, text, evidence)
++            for cls, rule, argv0, text, evidence in unique_hits.values():
+                 findings.append({
+                     "file": path, "line": lineno,
+                     "tool_call_id": str(item.get("id", "")),
+                     "timestamp": obj.get("timestamp") if isinstance(obj.get("timestamp"), str) else str(obj.get("timestamp")),
+                     "tool": name, "class": cls, "rule": rule,
+                     "argv0": argv0, "command": redact(text),
++                    "evidence": evidence,
+                 })
+     return entry, findings
+ 
+@@ -1634,11 +1953,16 @@ def run_scan(paths, permit):
+         emit("could_not_evaluate", {"schema": "mado-tripwire-verdict-v1", "exit": 2,
+                                     "error": str(exc), "files": [], "findings": [],
+                                     "counts": {c: 0 for c in CLASSES},
++                                    "observed_findings": 0, "lead_findings": 0,
+                                     "permitted": sorted(permit), "unpermitted": 0})
+         return 2
+     code, label, unpermitted = verdict_of(findings, permit)
++    observed = sum(1 for finding in findings
++                   if finding.get("evidence", "observed") == "observed")
++    leads = sum(1 for finding in findings if finding.get("evidence") == "lead")
+     emit(label, {"schema": "mado-tripwire-verdict-v1", "exit": code, "files": entries,
+                  "findings": findings, "counts": counts,
++                 "observed_findings": observed, "lead_findings": leads,
+                  "permitted": sorted(permit), "unpermitted": unpermitted})
+     return code
+ 
+@@ -2053,9 +2377,11 @@ def run_selftest(directory):
+         except (IndexError, ValueError):
+             verdict = None
+         use_file = any("file" in w for w in want)
++        use_evidence = any("evidence" in w for w in want)
+         def key(f, from_want):
+             return (f["class"], f["rule"], f["line"],
+-                    (f.get("file", "") if from_want else os.path.basename(f["file"])) if use_file else "")
++                    (f.get("file", "") if from_want else os.path.basename(f["file"])) if use_file else "",
++                    (f.get("evidence", "observed") if use_evidence else ""))
+         got = sorted(key(f, False) for f in (verdict or {}).get("findings", []))
+         exp = sorted(key(w, True) for w in want)
+         first_ok = out[0].startswith("MADO_TRIPWIRE: ") if out else False
+@@ -2087,8 +2413,9 @@ def main(argv):
+               "--frozen DIR | --selftest DIR", file=sys.stderr)
+         emit("could_not_evaluate", {"schema": "mado-tripwire-verdict-v1", "exit": 2,
+                                     "error": "usage", "files": [], "findings": [],
+-                                    "counts": {c: 0 for c in CLASSES}, "permitted": [],
+-                                    "unpermitted": 0})
++                                    "counts": {c: 0 for c in CLASSES},
++                                    "observed_findings": 0, "lead_findings": 0,
++                                    "permitted": [], "unpermitted": 0})
+         return 2
+     rest = argv[1:]
+     permit = set()
+@@ -2100,13 +2427,15 @@ def main(argv):
+             emit("could_not_evaluate", {"schema": "mado-tripwire-verdict-v1", "exit": 2,
+                                         "error": "unknown permit class", "files": [],
+                                         "findings": [], "counts": {c: 0 for c in CLASSES},
++                                        "observed_findings": 0, "lead_findings": 0,
+                                         "permitted": [], "unpermitted": 0})
+             return 2
+     if not rest:
+         emit("could_not_evaluate", {"schema": "mado-tripwire-verdict-v1", "exit": 2,
+                                     "error": "no path", "files": [], "findings": [],
+-                                    "counts": {c: 0 for c in CLASSES}, "permitted": [],
+-                                    "unpermitted": 0})
++                                    "counts": {c: 0 for c in CLASSES},
++                                    "observed_findings": 0, "lead_findings": 0,
++                                    "permitted": [], "unpermitted": 0})
+         return 2
+     return run_scan(rest, permit)
+ 
+@@ -2124,5 +2453,6 @@ if __name__ == "__main__":
+         print(json.dumps({"schema": "mado-tripwire-verdict-v1", "exit": 2,
+                           "error": "internal %s" % type(exc).__name__, "files": [],
+                           "findings": [], "counts": {c: 0 for c in CLASSES},
++                          "observed_findings": 0, "lead_findings": 0,
+                           "permitted": [], "unpermitted": 0}, ensure_ascii=True))
+         sys.exit(2)

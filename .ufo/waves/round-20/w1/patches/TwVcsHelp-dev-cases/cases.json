@@ -1,0 +1,352 @@
+{
+ "schema": "mado-tw-precision-cases-v1",
+ "seat": "TwVcsHelp",
+ "cases": [
+  {
+   "name": "H-TwVcsHelp-jj-help-bash",
+   "family": "H",
+   "file": "jj-help-bash.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "jj -h/--help ahead of the subcommand or after a built-in one/default alias: clap prints help (or a usage error for `-m --help`) before any workspace load; measured ops +0",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-git-help-bash",
+   "family": "H",
+   "file": "git-help-bash.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git help/usage: global -h/--help, and -h/--help as a FLAG anywhere among the subcommand's options (parse-options usage; a leading --help is git.c's `git help <sub>`); measured no HEAD/ref/index/worktree change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-git-dry-run-bash",
+   "family": "H",
+   "file": "git-dry-run-bash.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "git dry runs: commit --dry-run/--short/--porcelain/--long/-z, add/push -n|--dry-run; measured no HEAD/ref/index/worktree/remote change",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-eval-help-dry",
+   "family": "H",
+   "file": "eval-help-dry.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "the same help/dry-run forms on the eval surface (literal argv spawn, ! line, %%bash cell) stay clean",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-jj-dry-run-iwc",
+   "family": "H",
+   "file": "jj-dry-run-iwc.jsonl",
+   "want_exit": 0,
+   "want_findings": [],
+   "why": "jj git push --dry-run with --ignore-working-copy neither pushes nor snapshots (measured ops +0, refs and remote unchanged)",
+   "before": {
+    "1f7f995": "fail",
+    "9c54c56": "pass"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-git-value-writes",
+   "family": "H",
+   "file": "git-value-writes.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 3,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 4,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 6,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:stash",
+     "line": 7,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:stash",
+     "line": 8,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 9,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 10,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 11,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:rebase",
+     "line": 12,
+     "evidence": "observed"
+    }
+   ],
+   "why": "a -h/--help/--dry-run/-n that is an option VALUE stays a write (git parse-options hands it to -m/-o/--mess...): measured commits with subject -h/--help/--dry-run",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-git-dry-negations",
+   "family": "H",
+   "file": "git-dry-negations.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 3,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 4,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 6,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 7,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 8,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:pull",
+     "line": 9,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:pull",
+     "line": 10,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:merge",
+     "line": 11,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:cherry-pick",
+     "line": 12,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 13,
+     "evidence": "observed"
+    }
+   ],
+   "why": "a dry run undone by its --no- form (or an abbreviation of it), or a non-dry -n/-N, stays a write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-dry-then-write",
+   "family": "H",
+   "file": "dry-then-write.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 3,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 4,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5,
+     "evidence": "observed"
+    }
+   ],
+   "why": "exemption is per segment/spawn, before the per-toolCall (class, rule) dedup: a dry run or help followed by the real write still reports the write",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  },
+  {
+   "name": "H-TwVcsHelp-jj-writes-kept",
+   "family": "H",
+   "file": "jj-writes-kept.jsonl",
+   "want_exit": 1,
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 2,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:diff",
+     "line": 3,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:myx",
+     "line": 4,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 5,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 6,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:log",
+     "line": 7,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:util",
+     "line": 8,
+     "evidence": "observed"
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:$c",
+     "line": 9,
+     "evidence": "observed"
+    }
+   ],
+   "why": "jj forms that still write or snapshot: attached value, help after `--`, unknown/alias verb, plain git push --dry-run (snapshots: ops +1), a real push with --ignore-working-copy, --version on a subcommand",
+   "before": {
+    "1f7f995": "pass",
+    "9c54c56": "fail"
+   }
+  }
+ ]
+}

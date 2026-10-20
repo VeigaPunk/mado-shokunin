@@ -413,8 +413,17 @@
       "args": [
         "class-body-deferred.jsonl"
       ],
-      "want_exit": 0,
-      "want_findings": []
+      "want_exit": 1,
+      "want_findings": [
+        {
+          "class": "package_query",
+          "rule": "pacman:-Q",
+          "line": 1,
+          "evidence": "observed"
+        }
+      ],
+      "want_label": "findings",
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1; a class body executes when the class statement runs (CPython execution model, S111), so subprocess.run(['bash','-c',recipe]) with a literal module recipe runs at definition: the round-19 'deferred' reading was wrong; finding added, nothing removed"
     },
     {
       "name": "r19-lambda-deferred-clean",

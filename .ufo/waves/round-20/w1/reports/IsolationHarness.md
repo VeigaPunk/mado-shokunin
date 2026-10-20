@@ -57,11 +57,41 @@ SHA-256 evidence (`sha256sum`):
 8bd507f0ea39d4d876359a0f5a1f798e810cda3c59293487af35d3a8df37ce9c  .ufo/waves/round-20/evidence/inns-r19-shape.sh
 ```
 
+## V2 Hardening
+
+Expanded `isolation-check.sh` to run six setup-failure modes per harness: nonzero mount, refused unshare, mount-success-without-bind, partial arm of two targets, missing target, and missing stub. The marker files attest invocation of PATH-injected `mount`/`unshare`; if an injected stub is bypassed, the verdict is `COULD_NOT_EVALUATE` (not `FAIL_OPEN`). A zero-exit failure with no canary is classified `FAIL_OPEN ... SKIP_AS_SUCCESS`; a failed positive control prints `NEVER_RUNS` and exits 1 (`isolation-check.sh:25-30,35-146,148-180`). Each mode has a separate fresh `/tmp` case directory, and the payload only writes its canary.
+
+Observed results in the saved transcript `.ufo/waves/round-20/evidence/isolation-check-run.txt`:
+
+| Harness | Observed failure result | Check exit |
+|---|---|---:|
+| `isolate.sh` | `FAIL_CLOSED` for all six modes; `POSITIVE_CONTROL_OK` | 0 (`:11-60`) |
+| `inns-r19-shape.sh` | `FAIL_OPEN` on nonzero mount, no-op mount, partial arm, missing target and missing stub; positive control ran | 1 (`:70-120`) |
+| `m1-nocmp.sh` | `FAIL_OPEN` on no-op mount | 1 (`:146,179`) |
+| `m3b-capprobe.sh` | `FAIL_OPEN` on refused unshare | 1 (`:197,238`) |
+| `m6-besteffort.sh` | `FAIL_OPEN` on partial arm | 1 (`:272,297`) |
+| `m4-skiptarget.sh` | `FAIL_OPEN` on missing target | 1 (`:338,354`) |
+
+Additional checker behavior was exercised: the absolute-mount bypass control returned `COULD_NOT_EVALUATE` because its injected marker stayed absent, with final exit 2 (`isolation-check-run.txt:363-410`). A temporary zero-exit/no-canary control produced `FAIL_OPEN ... SKIP_AS_SUCCESS` (line 419) and a failed positive control printed `NEVER_RUNS` and exited 1 (lines 456-461). Its temporary harness was removed after the run.
+
+The `isolate.sh` implementation was not changed: the six-mode run confirmed exit 125 and no canary for each setup failure, including unshare refusal and a no-op bind detected by `cmp`. All actual and injected test targets and canaries were under fresh `/tmp` directories; the partial-arm stub performed a real bind only over its `/tmp` first target before failing its `/tmp` second target. No host binary was used as a target or payload.
+
+Transcript receipt: `tool_sha256=2bf115db1658df32d5e89e600ad6ef47c0e2855beda5f25dfc936270604f6aa9`, `measured_commit=PENDING`. Current artifact hashes (`sha256sum`):
+
+```text
+2bf115db1658df32d5e89e600ad6ef47c0e2855beda5f25dfc936270604f6aa9  .ufo/waves/round-20/isolation-check.sh
+7d12321793c44b54eec74791dfc5063b64d235772f3d703fe959b2daa1db2703  .ufo/waves/round-20/evidence/isolation-check-run.txt
+2f2cc63bdb4903a42d99bf5685acc12e5b221158610217e42b0c1ee3d85df359  .ufo/waves/round-20/evidence/isolation-mutants/m1-nocmp.sh
+a6dde1c30355b29917091f0045b51befcefc7fc78d0903c098fc880ff9099727  .ufo/waves/round-20/evidence/isolation-mutants/m3b-capprobe.sh
+ac11cc5adb1ece61eba4d45a8e2b65016576eb247957a846afe797b9118c6ed4  .ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh
+a9bfa1be563c76e74edffa480514e69f3ee85ead8415e54b865d02be10107940  .ufo/waves/round-20/evidence/isolation-mutants/m4-skiptarget.sh
+```
+
 ## Limits
 
-- The checker exercises one target per run; the repeated-target loop is implemented but not separately exercised.
-- The controlled negative run fails the bind step; a forced `cmp`-failure case and payload nonzero-status propagation were not separately exercised.
-- No blocker observed. No repository build, lint, or test suite was run.
+- Namespace refusal was simulated with a PATH-first stub returning 1; the host's real positive-control namespace setup succeeded.
+- The post-mount comparison failure was exercised using a successful no-op mount; a separate mismatch after a real successful bind was not exercised.
+- Payload nonzero-status propagation was not separately re-tested in the v2 run. No full repository build, lint, or suite was run.
 
 ## Installs
 

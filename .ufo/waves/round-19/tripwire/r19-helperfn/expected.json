@@ -103,30 +103,42 @@
     {
       "name": "py-helper-nonliteral-arg",
       "args": ["py-helper-nonliteral-arg.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "observed"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; cmd is a straight-line literal module binding (the round-19 BashCVar literal env); round 20 folds it into the visible helper's spawn: a true observed finding added"
     },
     {
       "name": "py-helper-defined-after-call",
       "args": ["py-helper-defined-after-call.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "lead"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; E3: at the call the name is unbound (the def follows it), so the literal argv is a lead, not resolved through the later body"
     },
     {
       "name": "py-helper-redefined",
       "args": ["py-helper-redefined.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "host_mutation", "rule": "pacman:-S", "line": 1, "evidence": "observed"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; E3: the binding in effect at the call (the second, identical spawning def) is visible and spawns its argument"
     },
     {
       "name": "py-helper-vararg",
       "args": ["py-helper-vararg.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "observed"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; E1: the visible *a body spawns the literal positional arguments (round-20 W family vararg wrappers)"
     },
     {
       "name": "py-helper-nonspawn-body",
@@ -145,9 +157,12 @@
     {
       "name": "py-helper-default-nonliteral",
       "args": ["py-helper-default-nonliteral.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "observed"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; the default T is a straight-line literal module binding and the argv is literal: the visible helper spawns pacman -Q"
     },
     {
       "name": "sh-fn-uncalled",
@@ -216,7 +231,7 @@
       "want_exit": 1,
       "want_label": "findings",
       "want_findings": [
-        {"class": "package_query", "rule": "pacman:-Q", "line": 1}
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "lead"}
       ]
     },
     {
@@ -225,7 +240,7 @@
       "want_exit": 1,
       "want_label": "findings",
       "want_findings": [
-        {"class": "package_query", "rule": "pacman:-Qi", "line": 1}
+        {"class": "package_query", "rule": "pacman:-Qi", "line": 1, "evidence": "lead"}
       ]
     },
     {
@@ -247,9 +262,12 @@
     {
       "name": "py-lead-nonliteral-var",
       "args": ["py-lead-nonliteral-var.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "lead"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; a literal module binding handed to an unbound callee: E1 lead (argv stated, body invisible)"
     },
     {
       "name": "py-lead-literal-nonargv",
@@ -261,9 +279,12 @@
     {
       "name": "py-lead-defined-nonliteral",
       "args": ["py-lead-defined-nonliteral.jsonl"],
-      "want_exit": 0,
-      "want_label": "clean",
-      "want_findings": []
+      "want_exit": 1,
+      "want_label": "findings",
+      "want_findings": [
+        {"class": "package_query", "rule": "pacman:-Q", "line": 1, "evidence": "observed"}
+      ],
+      "r20_edit": "round 20 (MadoR20): exit 0/clean -> exit 1/findings; as py-helper-nonliteral-arg: a literal module binding reaches a visible spawning helper"
     },
     {
       "name": "py-lead-string-arg",

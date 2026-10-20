@@ -1,4 +1,4 @@
-# CriticTally — shipped tally-check pins 7 of 9 spec cheats; one live false-green remains (numerator/denominator swap), mode-in-prose and contra-sweep stay reviewer-bound
+# CriticTally — P2 tally-check (`566f93be`) closes the numerator-swap and every machine exploit I could construct; remaining risk is reviewer-bound only (contra-sweep, --path to prose, reports scope)
 
 
 ## Landed-implementation re-attack (tally-check.py `1ce05aa0…`, tally-claims.json `79ac2191…`)
@@ -7,7 +7,7 @@ Verified in `/tmp/mado-r20-CriticTally` (clone HEAD `e629f73`, files copied in; 
 
 - `--set red` → 5/5 MISMATCH, exit 1; `--set red --expect` → `EXPECT_SUMMARY: 5/5`, exit 0; empty set → exit 2. The three shipped reds bite for the right reasons: 155→154 (JSON `files[]`, not line count), 5→6 (`first_line`, and the note discloses the 8/13 any-line reading), 10→9 (`selftest-labels` parses `selftest()` as shell: 9 labeled occurrences, 8 distinct — the `OM10` banner comment and diff-line count are structurally excluded, so my headline OM10 counterexample is dead).
 - Dead attacks: hardcoded/ad-hoc `argv` (argv[0..3] allowlisted AND the derive is re-invoked as `sys.executable -I <HERE>` regardless of argv[2]); `stated` unbound (required `(?P<stated>)` must equal the field; "ten"→10 verified); mutable registry revs (40-hex-or-`REV` only); derive reading the statement file → `ERROR` (verified); derive rev ≠ statement rev (`--rev` arg to the checker resolved once); ambiguous `line_regex` (>1 match) → `ERROR`; registry-sha and full derive printed per entry.
-- Coverage: the seat registered a fourth stale surface itself — `LOG.md:1324` "5/13" (found by `git grep`, my sweep confirms: at `1f7f995` the only stating files are `SCORECARD.md:1167`, `corpus/lessons/round-19.md:108`, `LOG.md:1324`, plus the two already-registered lesson/scorecard spots). Registered reds cover every stale claim surface at the pinned rev.
+- Coverage: the seat registered a fourth stale surface itself — `LOG.md:1324` "5/13" (found by `git grep`, my sweep confirms: at `1f7f995` the stating files are exactly `SCORECARD.md:1167`, `corpus/lessons/round-19.md:108`, `LOG.md:1324` — all three registered). Registered reds cover every stale claim surface at the pinned rev.
 
 ### Residual attack — LIVE, demonstrated: numerator/denominator swap false-green
 
@@ -33,9 +33,37 @@ derive extract_regex: "(?m)^denominator=(\d+)$"
 - Reports are criterion-scope ("SCORECARD/lesson/report") but unregistered: `.ufo/waves/round-19/w2/reports/RerunC2.md:71` "S096 cited as evidence **5/13**" and `CriticC2W2.md:11,153` still state 5–6/13 framings at `1f7f995`. Defensible (they measure their own snapshot; the closure calls the discrepancy out) but it's a scope decision L1 should make explicit — either register them or narrow criterion wording to SCORECARD/lesson/LOG.
 - `checker_sha256` is not printed; receipts hash the registry but not the checker bytes that produced them. One-line fix matching the lane's `tool_sha256=` convention.
 
-### Verdict on shipped state
+### Verdict on the first build (P1, superseded by P2 below)
 
-Spec defects from the first pass: 7 of 9 pinned or dead. The two admitted gaps stand: mode-in-prose is reviewer-only (partly mitigated — `key=first_line` prints the mode per entry, so a reviewer sees the definition used), and there is no contra-sweep (a corrected claim can pass while a differently-phrased stale line survives in the same file — exactly what criterion 28 sweeps for at file level). The numerator-swap is the only machine-exploitable false-green found; recommend fix (1)+(2) above before the registry's green section fills in.
+Spec defects from the first pass: 7 of 9 pinned or dead at P1. The two admitted gaps stand: mode-in-prose is reviewer-only (partly mitigated — `key=first_line` prints the mode per entry, so a reviewer sees the definition used), and there is no contra-sweep (a corrected claim can pass while a differently-phrased stale line survives in the same file — exactly what criterion 28 sweeps for at file level). The numerator-swap is the only machine-exploitable false-green found; recommend fix (1)+(2) above before the registry's green section fills in.
+
+## P2 re-attack (tally-check.py `566f93be…`, claims `eaa5a151…`)
+
+Re-verified in the same `/tmp/mado-r20-CriticTally` clone (files copied from the lane, run with `python3 -I`, cwd = clone):
+
+- `--set red --expect` → `EXPECT_SUMMARY: 5/5`, exit 0; fraction entries now display `5/13→6/13` (denominator carried through); `checker_sha256=566f93be…` is in the `TALLY_REGISTRY` header.
+- **My demonstrated exploit is closed.** The original `/tmp/swap.json` (stated bound to "of 13", `key=denominator`) now ERRORs — `denominator` is no longer an extractable key.
+- Fuzz results vs P2, all correct: fraction entry whose captured `(?P<stated>)`/`(?P<den>)` disagree with the derived pair → MISMATCH 5/13≠6/13 (exit 1); non-fraction key over a number inside a fraction → ERROR; `--label-id OM9` not in the statement line → ERROR; `statement.rev:"REV"` on a red entry → ERROR ("a red entry pins 40-hex revisions; REV is for green entries").
+- New shape that MATCHes and is **documented-open, not a defect**: a registry entry can certify a *different, true* claim on the same line — `stated:13`, regex over the "13/13 pointed" half of `SCORECARD.md:1167` → MATCH 13/13 while the "5/13 S096" half stays stale in the same sentence. That is the same-line variant of the admitted no-contra-sweep gap: criterion 30 certifies the registered claim, never "this line/file is free of stale numbers."
+- Remaining reviewer-bound surfaces (all admitted by the seat, none machine-demonstrable as false-green): `--path`/`--counter` not bound to prose (a transcript claim could name receipt A and derive from receipt B's files[]); no same-file contra-sweep; mode still a reviewer read (now mitigated — `key=first_line` + `token=S096` + the full derive print make the definition legible in the receipt); w2-report files (`RerunC2.md:71`, `CriticC2W2.md:11,153`) stating 5/13-era framings are unregistered — L1 scope call, defensible either way since they measure their own snapshot.
+- Minor auditability suggestion, not a gate: the per-entry detail prints path:line but not the matched line text; printing it would let a reviewer see *which* claim on a multi-claim line was certified without opening the file.
+
+**P2 verdict:** every exploit I could construct as a false-green is closed; the checker's mechanical guarantees are now: stated number(s) are quoted from the matched line (fraction claims fully bound), every count key names an assertable headline count, derive is self-subcommand-only over pinned 40-hex committed bytes, --token/--label-id bound to prose, REV green-only, polarity-aware exits, and the receipt carries checker+registry digests. Safe to integrate; the green section can fill.
+
+P3 addendum (tally-check.py `21ce9dd5…`, claims unchanged `eaa5a151…`): the per-entry detail
+now prints `claim="<matched span>"` — verified: `r19-scorecard-c2-5of13-s096` shows
+`claim="13/13 pointed; 5/13 name S096 on the"`, `r19-scorecard-ten-om10` shows
+`claim="the ten old OM10 assertions were replaced"`. Reds still 5/5 EXPECT-clean. The
+multi-claim-line residual is now visible in the receipt itself.
+
+Decisions taken (this seat, for L1): **keep** `r19-log-c2-5of13-s096` — `LOG.md:1324` is a
+real stale stating surface at `1f7f995` (my sweep found it; criterion-30 completeness wants
+one entry per stating file, not a fixed count). **Do not register** the w2-report statements
+(`RerunC2.md:71`, `CriticC2W2.md:11,153`): the seat's re-derivation shows "5/13" was never a
+token count at any revision — it is RerunC2's "cited as evidence" tally restated without its
+qualifier, so the reports state a *different* claim measured on their own snapshot. L1 should
+narrow criterion-30 wording to SCORECARD/lesson/LOG (normative surfaces) rather than register
+the reports.
 
 ## First pass — spec-level attack (pre-landing; kept for the record of which pins were demanded)
 
@@ -136,7 +164,7 @@ the `mode` key.
   REV-argument form matches sibling checkers and is cheaper to audit.
 - **Satisfying the regex while the stale claim survives.** `line_regex` existence is monotone:
   append "8/13 (corrected)" anywhere and a green entry MATCHes while "5 of 13 … crediting line"
-  still stands at `corpus/lessons/round-19.md:110` (verified present at `1f7f995`) — the prose
+  still stands at `corpus/lessons/round-19.md:108` (verified present at `1f7f995`) — the prose
   moved the *claim the registry watches* without removing the stale one. Criterion 28
   (`supersede-sweep.py`) already fights exactly this for `2.17.0`→`2.17.2`; criterion 30 needs
   the same hygiene at claim granularity. Pin: (i) the checker reports **all** lines matching
@@ -147,7 +175,7 @@ the `mode` key.
   the honest minimum is: green `line_regex` must match a line that *corrects in place or is
   marked as the correction*, and the red entry's prose stays red because it is historical);
   (iii) multi-file claims (the S096 count is stated at `SCORECARD.md:1167` *and*
-  `lessons/round-19.md:110` at `1f7f995`; verified) need one entry per stating file, or a
+  `lessons/round-19.md:108` at `1f7f995`; verified) need one entry per stating file, or a
   `statements:[]` list — a single-file entry leaves the sibling stale claim unmeasured.
 - **Spelling.** "5/13" vs "5 of 13" (both present: SCORECARD uses `5/13`, the lesson uses
   `5 of 13`) and "ten" vs "10": a `line_regex` that only matches digits misses the numeral-word
@@ -209,7 +237,7 @@ dropped red entry visible since the receipt then lists an unknown id).
   (listed above). SCORECARD:1225 "the ten old OM10 assertions" verified at `1f7f995`.
 - S096: reproduced closure counts — any-line 8/13, first-line 6/13, five S090-only files —
   via fresh-pins.py's denominator (PIN `9c54c56`, in-scope `2.17.0` files = 13) evaluated at
-  `1f7f995`. Stale claims: `corpus/lessons/round-19.md:110` ("5 of 13 credited files name S096"),
+  `1f7f995`. Stale claims: `corpus/lessons/round-19.md:108` ("5 of 13 credited files name S096"),
   `SCORECARD.md:1167` ("5/13 name S096"), both at `1f7f995`.
 - Transcripts: `lessons/round-19.md:124` "155 round-19 transcripts" at `1f7f995`; receipt
   `.ufo/waves/round-19/evidence/final/tripwire-seat-scan.txt` blob `5982e233` at `1f7f995`,
@@ -218,13 +246,17 @@ dropped red entry visible since the receipt then lists an unknown id).
 
 ## Limits
 
-- tally-check.py/tally-claims.json do not exist yet; this attacks the spec, not code. If the
-  implementation lands before integration, re-run attacks 1–5 against the shipped argv
-  validation and exit logic.
-- Did not enumerate *every* line in the lane stating the three stale numbers (found the two
-  documented locations per claim); the multi-file pin recommendation stands regardless.
+- P1 findings superseded where noted; P2 (`566f93be`) verified by re-running the shipped reds
+  plus five hostile registries in `/tmp/mado-r20-CriticTally` (clone HEAD `e629f73`). Not tried:
+  regex-catastrophic-backtracking timing (a ReDoS `line_regex` would hang the check, not fake
+  a verdict), and derive output > the match budget.
+- Did not enumerate *every* line in the lane stating the three stale numbers beyond a `git
+  grep` at `1f7f995` (found the three registered locations; w2-report occurrences are a
+  documented scope decision for L1).
 - The `contra_regex` sweep design is sketched, not prototyped; a naive regex for "same
   quantity, different number" will have false positives on fraction families.
+- Line-citation erratum (seat's catch, fixed above): the stale "5 of 13" lesson line is
+  `round-19.md:108` at `1f7f995`, not `:110` as an earlier draft of this report said.
 
 ## Installs
 

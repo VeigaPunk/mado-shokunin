@@ -16,7 +16,7 @@ import sys
 import tempfile
 
 LANE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-SUITE_PIN = None  # L1 fills this after the suite's first landing.
+SUITE_PIN = "f3da50488661509ce5d144c90f7780f8088e0903"  # commit that first landed the suite (no tool change)
 SUITE = ".ufo/waves/round-20/precision"
 EXPECTED_SCHEMA = "mado-tw-precision-suite-v1"
 OUTPUT_SCHEMA = "mado-tw-precision-r20-v1"

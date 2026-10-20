@@ -1,0 +1,247 @@
+diff --git a/tools/mado-tripwire.py b/tools/mado-tripwire.py
+index 07c0468..4e78831 100755
+--- a/tools/mado-tripwire.py
++++ b/tools/mado-tripwire.py
+@@ -69,6 +69,26 @@ Limits (stated, not hidden):
+   Anything else on the `git` side (fetch, revert, tag, branch, clean,
+   worktree, gc, config) and `git` subcommands hidden in aliases, shell
+   functions or scripts are outside the class.
++- A run that only prints help or simulates is not a vcs_write. jj: an exact
++  `-h`/`--help` before any `--`, ahead of the subcommand or after one in
++  JJ_HELP_VERBS (jj 0.45.1 built-ins, which config cannot shadow, and the
++  default aliases b/ci/desc/st, whose redefinition is not visible here):
++  clap answers it before the workspace is loaded and never takes a separate
++  `--help` as an option value (`-m --help` is a usage error, `-m=--help` a
++  message). Any other verb may be a config alias that forwards `--help`
++  past `util exec --`, so it stays a finding. `jj git push --dry-run`
++  pushes nothing but still snapshots, so it is a write unless
++  --ignore-working-copy is given.
++  git: `git -h|--help <sub>` and `-h`/`--help` as a flag anywhere among the
++  subcommand's options (usage; a leading `<sub> --help` becomes `git help
++  <sub>`), `git commit` with --dry-run/--short/--porcelain/--long/-z and
++  `git add|push` with -n/--dry-run, each read last-wins against its --no-
++  form. Option values are skipped with GIT_VALUE_OPTS (git 2.56.0
++  separate-value options, long ones also by unique abbreviation), so
++  `commit -m -h` and `commit -m --dry-run` stay writes; `commit -n` is
++  --no-verify, and an abbreviated negation (`--no-dry`) keeps the finding.
++  A dry run still runs the pre-push hook and `commit --dry-run` may store
++  unreferenced objects; neither moves a ref, the index or the worktree.
+ - shlex is not bash: exotic quoting can hide a command from the parser.
+ - Transcript text is data. Nothing in it is followed or executed.
+ 
+@@ -135,10 +155,52 @@ JJ_ARG_OPTS = {"-R", "--repository", "--at-op", "--color", "--config",
+                "--config-toml", "-T", "--template"}
+ JJ_SUB_ARG_OPTS = {"-r", "--revision", "-T", "--template", "--at-op", "--config",
+                    "--color", "--repository", "-R"}
++JJ_HELP_FLAGS = {"-h", "--help"}
++# jj 0.45.1 subcommands whose -h/--help clap answers: the `jj help` list, clap
++# aliases op/evolution-log, hidden debug/obslog and default aliases b/ci/desc/st.
++JJ_HELP_VERBS = frozenset(
++    "abandon absorb arrange b bisect bookmark ci commit config converge debug "
++    "desc describe diff diffedit duplicate edit evolog evolution-log file fix "
++    "gerrit git help interdiff log metaedit new next obslog op operation "
++    "parallelize prev rebase redo resolve restore revert root run show sign "
++    "simplify-parents sparse split squash st status tag undo unsign util "
++    "version workspace".split())
+ GIT_WRITE = {"add", "commit", "stash", "checkout", "switch", "reset", "pull",
+              "push", "restore", "rebase", "merge", "cherry-pick"}
+ GIT_ARG_OPTS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
+                 "--exec-path", "--super-prefix", "--config-env"}
++# Options that take a SEPARATE value, which parse-options hands the next
++# argument even when it starts with `-` (git 2.56.0 `git <sub> --help-all`;
++# stash is the union over its subcommands).
++GIT_VALUE_OPTS = {verb: frozenset(opts.split()) for verb, opts in {
++    "add": "--chmod --inter-hunk-context --pathspec-from-file --unified -U",
++    "commit": "--author --cleanup --date --file --fixup --inter-hunk-context "
++              "--message --pathspec-from-file --reedit-message --reuse-message "
++              "--squash --template --trailer --unified -C -F -U -c -m -t",
++    "stash": "--inter-hunk-context --label-base --label-ours --label-theirs "
++             "--message --pathspec-from-file --to-ref --unified -U -m",
++    "checkout": "--conflict --inter-hunk-context --orphan --pathspec-from-file "
++                "--unified -B -U -b",
++    "switch": "--conflict --create --force-create --orphan -C -c",
++    "reset": "--inter-hunk-context --pathspec-from-file --unified -U",
++    "pull": "--cleanup --deepen --depth --negotiation-include "
++            "--negotiation-restrict --negotiation-tip --refmap --server-option "
++            "--shallow-exclude --shallow-since --strategy --strategy-option "
++            "--upload-pack -X -o -s",
++    "push": "--exec --push-option --receive-pack --recurse-submodules --repo -o",
++    "restore": "--conflict --inter-hunk-context --pathspec-from-file --source "
++               "--unified -U -s",
++    "rebase": "--empty --exec --onto --strategy --strategy-option --trailer "
++              "--whitespace -C -X -s -x",
++    "merge": "--cleanup --file --into-name --message --strategy "
++             "--strategy-option -F -X -m -s",
++    "cherry-pick": "--cleanup --empty --mainline --strategy --strategy-option "
++                   "-X -m",
++}.items()}
++# Negations that undo a dry run; an abbreviation of one keeps the finding.
++GIT_DRY_NEGATIONS = {"add": ("--no-dry-run",), "push": ("--no-dry-run",),
++                     "commit": ("--no-dry-run", "--no-short", "--no-porcelain",
++                                "--no-long", "--no-null")}
+ 
+ SYSTEMCTL_QUERY = {"status", "show", "is-active", "is-enabled", "is-failed",
+                    "is-system-running", "list-units", "list-unit-files",
+@@ -459,9 +521,10 @@ def strip_prefix(seg):
+     return seg
+ 
+ 
+-def first_verb(args, arg_opts):
++def verb_index(args, arg_opts):
++    """Index of the first positional, skipping flags and the values of arg_opts."""
+     skip = False
+-    for a in args:
++    for i, a in enumerate(args):
+         if skip:
+             skip = False
+             continue
+@@ -470,10 +533,15 @@ def first_verb(args, arg_opts):
+             continue
+         if a.startswith("-"):
+             continue
+-        return a
++        return i
+     return None
+ 
+ 
++def first_verb(args, arg_opts):
++    i = verb_index(args, arg_opts)
++    return None if i is None else args[i]
++
++
+ def sub_verb(args, verb):
+     """First positional after `verb`, skipping flags and their argument values."""
+     try:
+@@ -494,17 +562,34 @@ def sub_verb(args, verb):
+     return None
+ 
+ 
++def before_dashdash(args):
++    """The tokens ahead of the first `--` (everything after it is an operand)."""
++    return args[:args.index("--")] if "--" in args else args
++
++
+ def ignores_working_copy(args):
+     """True when an exact --ignore-working-copy precedes any `--` separator."""
+-    head = args[:args.index("--")] if "--" in args else args
+-    return "--ignore-working-copy" in head
++    return "--ignore-working-copy" in before_dashdash(args)
++
++
++def jj_prints_help(args, i):
++    """True when clap answers this jj run with help or a usage error before
++    any workspace load: an exact -h/--help before any `--`, ahead of the
++    subcommand args[i] or after a JJ_HELP_VERBS one."""
++    head = before_dashdash(args)
++    if any(a in JJ_HELP_FLAGS for a in head[:i]):
++        return True
++    return args[i] in JJ_HELP_VERBS and any(a in JJ_HELP_FLAGS for a in head[i + 1:])
+ 
+ 
+ def classify_jj(args):
+     """Rule for a `jj` run that writes or snapshots the working copy, else None."""
+-    verb = first_verb(args, JJ_ARG_OPTS)
+-    if verb is None:  # `jj`, `jj --version`, `jj --help`: nothing is touched
++    i = verb_index(args, JJ_ARG_OPTS)
++    if i is None:  # `jj`, `jj --version`, `jj --help`: nothing is touched
+         return None
++    if jj_prints_help(args, i):
++        return None
++    verb = args[i]
+     if verb in JJ_WRITE:
+         return "jj:" + verb
+     if verb == "bookmark":
+@@ -514,19 +599,88 @@ def classify_jj(args):
+         if sub_verb(args, verb) in JJ_OP_WRITE:
+             return "jj:op"
+     elif verb == "git":
+-        if sub_verb(args, verb) in JJ_GIT_WRITE:
+-            return "jj:git"
++        sub = sub_verb(args, verb)
++        if sub in JJ_GIT_WRITE and not (
++                sub == "push" and "--dry-run" in before_dashdash(args)):
++            return "jj:git"  # a dry-run push only snapshots (rule below)
+     elif verb in JJ_NO_SNAPSHOT:
+         return None
+     return None if ignores_working_copy(args) else "jj:" + verb
+ 
+ 
++def git_option_flags(verb, rest):
++    """Option tokens git's parse-options reads after `verb`, in order.
++
++    A GIT_VALUE_OPTS option (a long one also by unique abbreviation, or a
++    short cluster ending in one) takes the next token as its value even when
++    it starts with `-`; that value is skipped. `--`/`--end-of-options` stop.
++    """
++    takes = GIT_VALUE_OPTS.get(verb, frozenset())
++    flags, value = [], False
++    for a in rest:
++        if value:
++            value = False
++        elif a in ("--", "--end-of-options"):
++            break
++        elif a.startswith("--"):
++            flags.append(a)
++            value = "=" not in a and any(t.startswith(a) for t in takes)
++        elif a.startswith("-") and a != "-":
++            flags.append(a)
++            for j, c in enumerate(a[1:], 1):
++                if "-" + c in takes:
++                    value = j == len(a) - 1
++                    break
++    return flags
++
++
++def git_prints_or_simulates(verb, pre, rest):
++    """True when `git PRE verb REST` only prints usage/help or is a dry run."""
++    skip = False
++    for a in pre:  # `git -h <sub>`, `git --help <sub>`
++        if skip:
++            skip = False
++        elif a in GIT_ARG_OPTS:
++            skip = True
++        elif a in ("-h", "--help"):
++            return True
++    flags = git_option_flags(verb, rest)
++    if "-h" in flags or "--help" in flags:  # usage, or `git help <verb>` if leading
++        return True
++    negations = GIT_DRY_NEGATIONS.get(verb)
++    if negations is None:
++        return False
++    dry = fmt = null = False
++    for f in flags:
++        if any(n.startswith(f) and n != f for n in negations):
++            return False  # an abbreviated negation: not modelled, stays a write
++        if f == "--dry-run" or (f == "-n" and verb != "commit"):
++            dry = True  # commit -n is --no-verify
++        elif f == "--no-dry-run":
++            dry = False
++        elif verb == "commit" and f in ("--short", "--porcelain", "--long"):
++            fmt = True  # a status format implies --dry-run
++        elif verb == "commit" and f in ("--no-short", "--no-porcelain", "--no-long"):
++            fmt = False
++        elif verb == "commit" and f in ("-z", "--null"):
++            null = True  # -z selects porcelain, hence a dry run
++        elif verb == "commit" and f == "--no-null":
++            null = False
++    return dry or fmt or null
++
++
+ def classify_git(args):
+-    """Rule for a `git` write, else None (reads and unclassified subcommands)."""
+-    verb = first_verb(args, GIT_ARG_OPTS)
++    """Rule for a `git` write, else None (reads, unclassified subcommands,
++    help/usage and dry runs)."""
++    i = verb_index(args, GIT_ARG_OPTS)
++    verb = None if i is None else args[i]
++    if verb not in GIT_WRITE:
++        return None
+     if verb == "stash" and sub_verb(args, verb) in ("list", "show"):
+         return None  # read-only stash inspection
+-    return "git:" + verb if verb in GIT_WRITE else None
++    if git_prints_or_simulates(verb, args[:i], args[i + 1:]):
++        return None
++    return "git:" + verb
+ 
+ 
+ def classify_pacman(argv0, args):

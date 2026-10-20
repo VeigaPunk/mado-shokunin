@@ -1,0 +1,286 @@
+{
+ "schema": "mado-tripwire-selftest-v1",
+ "note": "TwVcsHelp dev cases for the round-20 E4 patch (help/usage and dry-run invocations are not vcs_write; option values, --no- negations, unknown jj verbs and jj git push --dry-run stay writes). Synthetic OMP-shaped JSONL; no transcript bytes.",
+ "cases": [
+  {
+   "name": "jj-help-bash",
+   "args": [
+    "jj-help-bash.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "git-help-bash",
+   "args": [
+    "git-help-bash.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "git-dry-run-bash",
+   "args": [
+    "git-dry-run-bash.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "eval-help-dry",
+   "args": [
+    "eval-help-dry.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "jj-dry-run-iwc",
+   "args": [
+    "jj-dry-run-iwc.jsonl"
+   ],
+   "want_exit": 0,
+   "want_label": "clean",
+   "want_findings": []
+  },
+  {
+   "name": "git-value-writes",
+   "args": [
+    "git-value-writes.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 1
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 2
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 3
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 4
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 6
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:stash",
+     "line": 7
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:stash",
+     "line": 8
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 9
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 10
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 11
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:rebase",
+     "line": 12
+    }
+   ]
+  },
+  {
+   "name": "git-dry-negations",
+   "args": [
+    "git-dry-negations.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 1
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 2
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 3
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 4
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 6
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 7
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 8
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:pull",
+     "line": 9
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:pull",
+     "line": 10
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:merge",
+     "line": 11
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:cherry-pick",
+     "line": 12
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 13
+    }
+   ]
+  },
+  {
+   "name": "dry-then-write",
+   "args": [
+    "dry-then-write.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 1
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:push",
+     "line": 2
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 3
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:add",
+     "line": 4
+    },
+    {
+     "class": "vcs_write",
+     "rule": "git:commit",
+     "line": 5
+    }
+   ]
+  },
+  {
+   "name": "jj-writes-kept",
+   "args": [
+    "jj-writes-kept.jsonl"
+   ],
+   "want_exit": 1,
+   "want_label": "findings",
+   "want_findings": [
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 1
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:describe",
+     "line": 2
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:diff",
+     "line": 3
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:myx",
+     "line": 4
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 5
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:git",
+     "line": 6
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:log",
+     "line": 7
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:util",
+     "line": 8
+    },
+    {
+     "class": "vcs_write",
+     "rule": "jj:$c",
+     "line": 9
+    }
+   ]
+  }
+ ]
+}
