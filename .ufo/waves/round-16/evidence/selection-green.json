@@ -1,0 +1,18 @@
+{
+  "label": "selection-green",
+  "measured_commit": "9dcf248993a9622a5b016edec0003187141745d2",
+  "action_gate_sha256": "13d86fb0b34c21bccde0a8314875d66deb287624a9d971e4f4ed287496dcdb73",
+  "command": [
+    "python3",
+    "-I",
+    "-c",
+    "import json,sys\nm=json.load(open(sys.argv[1])); d=json.load(open(sys.argv[2])); scores={'calibration':m['calibration']['score'],'coverage':m['coverage']['score'],'operability':10.0,'freshness':10.0}; lowest=min(scores,key=scores.get); ok=lowest in d['declared_axes']; print(json.dumps({'scores':scores,'lowest':lowest,'declared_axes':d['declared_axes'],'obligation_met':ok},sort_keys=True));sys.exit(0 if ok else 1)",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-16/evidence/before-observation.json",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-16/selection-corrected.json"
+  ],
+  "exit": 0,
+  "stdout": "{\"declared_axes\": [\"coverage\", \"operability\", \"calibration\"], \"lowest\": \"calibration\", \"obligation_met\": true, \"scores\": {\"calibration\": 6.0, \"coverage\": 8.5714, \"freshness\": 10.0, \"operability\": 10.0}}\n",
+  "stderr": "",
+  "expected_exit": 0,
+  "matched_exit": true
+}

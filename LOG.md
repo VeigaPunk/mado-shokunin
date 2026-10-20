@@ -1200,3 +1200,18 @@ No retirement or next-round mission is declared.
 Historical source-header note from AppendOnly: commit `95cbc41` changed
 SOURCES header prose and its CORPUS pointer without logging the prose rewrite;
 no row cells were lost. This new entry records it without rewriting history.
+
+### Round-16 verification correction — M6
+
+First integrated measurement at `9dcf248993a9622a5b016edec0003187141745d2`
+observed C1 6/7→7/7, C3 12/20→14/22, independent cases 32/32 and legacy
+selftest 372/372. New classifier selftest was **51/52**, not green:
+the frozen denied-match case and committed frozen run rejected valid
+`denied_executable:sudo`/1 as unreachable. Exact red receipts are retained
+at `evidence/action-selftest.json` and `evidence/action-frozen.json`.
+The expected-pair prefix table already ended prefixes with `:`, then
+appended a second `:`. L1 replaced this with the exact reachable pair set
+from pinned kind/name constants. No expectation changed. This correction
+is under the operator wrap-up directive; no new worker or wave was spawned.
+Lesson M6 records the failed check and the direct fix; final-code receipts
+are separate rather than overwriting the red records.

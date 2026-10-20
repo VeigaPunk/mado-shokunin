@@ -445,15 +445,14 @@ def run_frozen(root):
                      detail="expected.json field types invalid")
     # The expected pair must be a reachable evaluate-mode verdict.
     valid_pairs = {
-        0: ("plan_safe",),
-        1: ("blocked_action_kind:", "denied_executable:",
-            "unknown_action_kind", "empty_argv"),
-        2: ("plan_malformed", "policy_malformed"),
+        (0, "plan_safe"), (1, "unknown_action_kind"), (1, "empty_argv"),
+        (2, "plan_malformed"), (2, "policy_malformed"),
     }
-    allowed = valid_pairs.get(want_exit)
-    ok_pair = allowed is not None and any(
-        want_finding == a or want_finding.startswith(a + ":")
-        for a in allowed)
+    valid_pairs.update(
+        (1, "blocked_action_kind:" + kind) for kind in PINNED_PAUSED_SCOPE)
+    valid_pairs.update(
+        (1, "denied_executable:" + name) for name in PINNED_DENY_EXECUTABLES)
+    ok_pair = (want_exit, want_finding) in valid_pairs
     if not ok_pair:
         return _emit(F_FROZEN_ERROR, EXIT_ERROR,
                      detail=f"expected.json pair "
