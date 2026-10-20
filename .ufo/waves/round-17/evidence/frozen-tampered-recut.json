@@ -1,0 +1,54 @@
+{
+  "label": "frozen-tampered-recut",
+  "purpose": "Re-receipt of defect R16-V1 tamper control at current content: verify that a single-byte alteration of plan.json in a copy of .ufo/waves/round-16/frozen fires snapshot_tampered (not frozen_error), superseding round-16 evidence/frozen-tampered.json which recorded frozen_error because the stale expected.json pair was unreachable at that commit.",
+  "measured_commit": "0175f13d83dceb9344fd0ecc5f94aa4aac5dfb53",
+  "action_gate_sha256": "226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3",
+  "snapshot_source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-16/frozen",
+  "pristine_digests": {
+    "expected.json": "e76090a3c0079582c090a441de12e2eb1d190da981b556ac13d78944f6bbe535",
+    "plan.json": "82bc76520ee23804f20efb106df61023c30c2b74447ade39953a493a035febc3",
+    "policy.json": "fb134d8f90d1bb4afbe11df874b5605024aeb2da64b393ed2c7536c15b18b7fc"
+  },
+  "tamper": {
+    "file": "plan.json",
+    "description": "single byte: argv element \"libinput\" -> \"libinpuv\" (ASCII 't' 0x74 -> 'v' 0x76), no length change",
+    "post_tamper_plan_sha256": "052c03b2beed7a3e4eb8c9326015c4b0877134c1d49bc9bd439230019dbbf157",
+    "note": "tamper keeps plan.json valid JSON and preserves the denied executable argv[0] 'sudo'; the digest pin alone detects it"
+  },
+  "runs": [
+    {
+      "label": "tampered",
+      "tmpdir": "/tmp/mado-r17-frozen-tamper-PDanoS",
+      "command": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-action-plan.py",
+        "--frozen",
+        "/tmp/mado-r17-frozen-tamper-PDanoS"
+      ],
+      "exit": 2,
+      "stdout": "MADO_PLAN: snapshot_tampered\n{\"action_index\": null, \"action_kind\": null, \"detail\": \"plan.json sha256 052c03b2beed7a3e4eb8c9326015c4b0877134c1d49bc9bd439230019dbbf157 != pinned 82bc76520ee23804f20efb106df61023c30c2b74447ade39953a493a035febc3\", \"exit\": 2, \"finding\": \"snapshot_tampered\", \"schema\": \"mado-action-plan-verdict-v1\"}\n",
+      "stderr": "",
+      "expected_exit": 2,
+      "expected_finding": "snapshot_tampered",
+      "matched": true
+    },
+    {
+      "label": "control_untampered",
+      "tmpdir": "/tmp/mado-r17-frozen-control-kGThY6",
+      "command": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-action-plan.py",
+        "--frozen",
+        "/tmp/mado-r17-frozen-control-kGThY6"
+      ],
+      "exit": 0,
+      "stdout": "MADO_PLAN: frozen_match\n{\"action_index\": null, \"action_kind\": null, \"detail\": \"frozen verdict denied_executable:sudo/1 matched\", \"exit\": 0, \"finding\": \"frozen_match\", \"schema\": \"mado-action-plan-verdict-v1\"}\n",
+      "stderr": "",
+      "expected_exit": 0,
+      "expected_finding": "frozen_match",
+      "matched": true
+    }
+  ]
+}

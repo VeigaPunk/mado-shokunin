@@ -1,0 +1,192 @@
+{
+  "schema": "mado-r17-schema-variants-v1",
+  "surveyed_at": "2026-10-20",
+  "scope": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-20T01-48-55-258Z_01a156ff-505a-7798-99c2-b47895c874f4/MadoR1{3,4,5,6}/*.jsonl",
+  "files": 224,
+  "files_per_dir": {"MadoR13": 32, "MadoR14": 32, "MadoR15": 64, "MadoR16": 96},
+  "total_lines": 26975,
+  "invalid_json_lines": 0,
+  "line_types": {
+    "message": 15188,
+    "custom": 9972,
+    "model_change": 485,
+    "session_init": 264,
+    "title": 224,
+    "session": 224,
+    "thinking_level_change": 224,
+    "credential_pin": 213,
+    "custom_message": 181
+  },
+  "custom_types": {
+    "tool_execution_start": 9507,
+    "system-prompt-digest": 238,
+    "session_exit": 227
+  },
+  "custom_message_types": {
+    "irc:incoming": 148,
+    "async-result": 30,
+    "eval-state-context": 1,
+    "gemini-tool-call-reminder": 1,
+    "thinking-loop-redirect": 1
+  },
+  "message_roles": {"toolResult": 9431, "assistant": 5485, "user": 272},
+  "content_items": {
+    "toolResult/text": 9434,
+    "assistant/thinking": 4484,
+    "assistant/toolCall": 9431,
+    "assistant/text": 727,
+    "user/text-items": 225,
+    "user/content-as-bare-string-lines": 47
+  },
+  "toolCall_names": {
+    "read": 3582,
+    "bash": 2841,
+    "grep": 1266,
+    "edit": 632,
+    "glob": 535,
+    "write": 394,
+    "eval": 148,
+    "web_search": 30,
+    "wait": 3
+  },
+  "toolCall_roles": {"assistant": 9431, "non_assistant": 0},
+  "toolCall_id_formats": {
+    "toolu_*": 4167,
+    "call_N": 4076,
+    "N_tool_<hex>": 1039,
+    "<name>:<n>#<hex>": 132,
+    "chatcmpl-tool-*": 17
+  },
+  "toolCall_arguments_types": {"dict": 9431, "string": 0, "missing_arguments_key": 0, "null": 0},
+  "tool_execution_start": {
+    "count": 9507,
+    "with_data_args": 9169,
+    "without_data_args": 338,
+    "te_starts_without_args_by_name": {"eval": 148, "edit": 156, "web_search": 30, "wait": 3, "grep": 1},
+    "ids_without_matching_toolCall": 0,
+    "toolCalls_without_matching_te_start": 0,
+    "toolCall_name_mismatch": "77 toolCall id/name pairs where te_start toolName differs from the toolCall name: 76 edit->write, 1 edit->read (id still matches 1:1; name is unreliable on the custom line)",
+    "name_count_deltas": "te_start minus toolCall per name: write +76, read +77, edit -77, all others 0 — fully explained by the relabel mismatch above",
+    "note": "1:1 with toolCall ids; every bash and eval toolCall has a te_start twin (bash 2841/2841, eval 148/148). A parser keying on te_start.toolName would misclassify 77 edit calls as write/read and would lose the command field on the 338 rows lacking data.args — including all 148 eval te_starts, which never carry args."
+  },
+  "bash_arg_keysets": {
+    "{command,i}": 2412,
+    "{command,cwd,i}": 248,
+    "{command,timeout}": 136,
+    "{command}": 18,
+    "{command,i,timeout}": 17,
+    "{async,command,cwd,i,name,pty,ready,timeout}": 6,
+    "{command,cwd,timeout}": 3,
+    "{command,cwd}": 1
+  },
+  "eval": {
+    "calls": 148,
+    "languages": {"py": 148, "js": 0},
+    "shell_bang_code": 0,
+    "shell_magics_or_os_system": 0,
+    "import_subprocess": 29,
+    "subprocess_spawn_bash_c": 2,
+    "subprocess_argv0s": {"git": 19, "sed": 3, "sha256sum": 1, "bash": 2, "-c": 1},
+    "subprocess_suspicious_argv0": "none (no sudo/pacman/yay/systemctl/hyprctl argv0)",
+    "urllib_urlopen_network": 23
+  },
+  "other_shell_executing_tools": {
+    "task_or_spawn_or_agent_tool_calls": 0,
+    "ssh_or_browser_or_service_tool_calls": 0,
+    "xd_uri_writes": 0,
+    "agent_uri_writes": ">=4 (write to agent://<seat> messaging, not execution)",
+    "note": "No toolCall name other than bash/eval exists in this corpus. write paths are plain filesystem paths or agent:// seat messages; no xd:// writes, no toolCall named task/spawn/browser/ssh."
+  },
+  "command_hiding_variants": [
+    {
+      "variant": "V1 eval->subprocess->bash -c recipe",
+      "count": 2,
+      "risk": "a toolCall-only parser that keys on name==bash or eval code starting with '!' misses shell commands embedded in a Python recipe run via subprocess.run(['bash','-c',recipe])",
+      "examples": [
+        {"file": "MadoR14/MadoR14.SourceSafety.jsonl", "line": 152, "tool_call_id": "toolu_01DtvHZ7SLzzNUjfsPjSdmDp", "timestamp": "2026-10-20T05:46:07.078Z", "snippet": "p = subprocess.run([\"bash\",\"-c\",recipe],capture_output=True,text=True)  # recipe builds pinned tarballs"},
+        {"file": "MadoR14/MadoR14.SourceSafety.jsonl", "line": 155, "tool_call_id": "toolu_01GGG3mRWUrRbBpWdqAQ1fAp", "timestamp": "2026-10-20T05:46:24.897Z", "snippet": "p = subprocess.run([\"bash\",\"-c\",recipe2],...) ; recipe2 contains literal 'pacman -Q hyprland'"},
+        {"file": "MadoR16/MadoR16.PolicyTamper.jsonl", "line": 50, "tool_call_id": "toolu_0174x1zcyDXjS1Tgku6Mqx4r", "snippet": "subprocess.run(['python','-c','raise ValueError()']) shape — argv0 '-c' literal found in argv scan, not a shell"}
+      ]
+    },
+    {
+      "variant": "V2 eval->subprocess->direct argv (git/sed/sha256sum)",
+      "count": 29,
+      "risk": "commands issued as argv lists inside eval code; a parser reading only arguments.command sees none of them",
+      "examples": [
+        {"file": "MadoR13/MadoR13.AttackMistake.jsonl", "line": 52, "tool_call_id": "toolu_01TVeBQGuqWwXeXeMnVH4Vet", "snippet": "subprocess.run(['git','-C','/home/vgpnk/Projects/shokunin/mado-shokunin','show',f'{rev}:corpus/SOURCES.md'],...)"},
+        {"file": "MadoR15/MadoR15.AttackMistake.jsonl", "line": 35, "tool_call_id": "toolu_018UgxpQL87K6erv2HFwocdu", "snippet": "def g(*a): return subprocess.run(a,cwd=R,capture_output=True).stdout ; gate=g('git','show','32118fc:tools/mado-verify.sh')"},
+        {"file": "MadoR13/MadoR13.Safety.jsonl", "line": 119, "tool_call_id": "toolu_0156fyJby5dBQ3WW1RrhDH1b", "snippet": "import subprocess ; print(subprocess.run(['sha256sum', <redacted-file>],...)"}
+      ]
+    },
+    {
+      "variant": "V3 command text in non-executing argument fields",
+      "count": 623,
+      "risk": "write/edit content and grep/read patterns contain pacman/hyprctl/systemctl text that a naive regex over raw lines would mis-flag as issued commands, or a field-scoped parser must not flag",
+      "examples": [
+        {"file": "MadoR13/MadoR13.ReanchorErratum.jsonl", "line": 83, "tool_call_id": "call_01_6g8h8wru49jbhatnqkdbw1wl", "name": "grep", "snippet": "\"pattern\": \"hypr_src|hypr/main_text.endswith|modules-right|custom/gkeep|#custom-gkeep|hyprctl reload|omarch…\""},
+        {"file": "MadoR13/MadoR13.Safety.jsonl", "line": 17, "tool_call_id": "toolu_01N6W6Ct7D4kn8uRyRiyvMCo", "name": "grep", "snippet": "\"pattern\": \"wayland-info|hyprctl|mktemp|ln -s|readlink|realpath|trap \""},
+        {"file": "MadoR15/MadoR15.GateDecisions.jsonl", "line": 38, "tool_call_id": "toolu_0151UoLgDBXFYgDfBWZnXWcX", "name": "web_search", "snippet": "\"query\": \"libinput helper tools debug-events record replay root /dev/input/event\""}
+      ]
+    },
+    {
+      "variant": "V4 content-as-bare-string user messages",
+      "count": 47,
+      "risk": "user messages whose message.content is a bare string (interjection/IRC text), not a list; content-item iteration must handle str or commands embedded in interrupts would be skipped/misparsed",
+      "examples": [
+        {"file": "MadoR13/MadoR13.GateImplement.jsonl", "line": 56, "snippet": "[Wait interrupted by message] <irc from=\"parent\" agent=\"MadoR13\"> Main measurement script .ufo/waves/round-13/measure.py tests same 4 cases…"},
+        {"file": "MadoR13/MadoR13.GateImplement.jsonl", "line": 162, "snippet": "[Wait interrupted by message] <irc …> Adopt AttackClaims recommendation: preserve original D6 and entire mado_r7_spec_write bytes (<redacted>)…"},
+        {"file": "MadoR13/MadoR13.GateImplement.jsonl", "line": 193, "snippet": "[Wait interrupted by message] <irc …> Keep C2 bounded to four predeclared cases and exact declaration/local regular-file sets…"}
+      ]
+    },
+    {
+      "variant": "V5 tool_execution_start duplicate channel",
+      "count": 9507,
+      "risk": "every toolCall is duplicated as a custom tool_execution_start line carrying the same args; 338 of them lack data.args, so a parser using the custom line instead of the toolCall would lose commands. Treating both as issued commands would double-count",
+      "examples": [
+        {"file": "MadoR15/MadoR15.LibinputEvents.jsonl", "line": 55, "tool_call_id": "call_38165", "snippet": "{\"customType\":\"tool_execution_start\",\"data\":{\"toolCallId\":\"call_38165\",\"toolName\":\"bash\",\"args\":{\"command\":\"sudo pacman -S --needed --noconfirm libinput libinput-tools\"}}}"},
+        {"file": "MadoR15/MadoR15.LibinputEvents.jsonl", "line": 54, "tool_call_id": "call_38165", "snippet": "{\"type\":\"message\",\"message\":{\"role\":\"assistant\",\"content\":[…{\"type\":\"toolCall\",\"id\":\"call_38165\",\"name\":\"bash\",\"arguments\":{\"i\":\"Install libinp…\"}}]}}"},
+        {"file": "MadoR13/MadoR13.AttackClaims.jsonl", "line": 11, "tool_call_id": "call_44652", "snippet": "te_start for a read call; same file pairs every call id 1:1"}
+      ]
+    },
+    {
+      "variant": "V6 toolCall id format diversity",
+      "count": 5,
+      "risk": "id matching must accept toolu_*, call_N, 0_tool_*, N_tool_<hex>, chatcmpl-tool-*, and <name>:<n>#<hex> or joins against toolResult/toolCallId miss rows",
+      "examples": [
+        {"format": "toolu_01DtvHZ7SLzzNUjfsPjSdmDp", "count_in_corpus": 4167},
+        {"format": "call_38165", "count_in_corpus": 4076},
+        {"format": "bash:0#219afd2 / read:2#f4c2da4", "count_in_corpus": 132, "note": "name-prefix + ordinal + hash, seen in MadoR14/16 files"}
+      ]
+    },
+    {
+      "variant": "V7 non-bash argument fields that carry paths only",
+      "count": 0,
+      "risk": "write/edit arguments.path values are filesystem or agent:// URIs; no xd:// writes observed; no toolCall named task/spawn/browser exists — nothing here issues a shell",
+      "examples": [
+        {"file": "MadoR13/MadoR13.AttackClaims.jsonl", "line": 77, "tool_call_id": "toolu_016TWXBWPzJyYNRNxMX6Dgy6", "name": "write", "snippet": "path=agent://MadoR13.GateImplement (peer message, not execution)"},
+        {"file": "MadoR15/MadoR15.FrontierRecord.jsonl", "line": 55, "tool_call_id": "toolu_01K9hun3EckYAgyBgjv4QQZr", "name": "glob", "snippet": "path='/usr/share/wayland-protocols/**/text-input*.xml;/usr/share/man/man1/libinput*'"},
+        {"file": "MadoR15/MadoR15.LibinputList.jsonl", "line": 9, "tool_call_id": "call_28048", "name": "glob", "snippet": "path='/usr/share/doc/*libinput*'"}
+      ]
+    }
+  ],
+  "absent_variants_confirmed": {
+    "eval_code_starting_with_bang": 0,
+    "eval_language_js": 0,
+    "eval_os_system_or_popen": 0,
+    "arguments_as_json_string": 0,
+    "toolCall_outside_assistant_role": 0,
+    "toolCall_missing_arguments": 0,
+    "te_start_without_toolCall_id": 0,
+    "toolCall_without_te_start_id": 0,
+    "toolCall_name_other_than_inventory": 0,
+    "invalid_json_lines": 0
+  },
+  "red_anchor_check": {
+    "file": "MadoR15/MadoR15.LibinputEvents.jsonl",
+    "line": 54,
+    "tool_call_id": "call_38165",
+    "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools",
+    "visible_to_toolCall_parser": true,
+    "note": "the issued command sits in message/assistant/toolCall.arguments.command on line 54; line 55's te_start duplicates it"
+  }
+}
