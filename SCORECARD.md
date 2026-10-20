@@ -817,3 +817,49 @@ outside-closure follow-through and falsified M6, not fresh outside agreement.
 required, and this round does not readmit round 15.** SHONEN stays four
 author assertions. Both waves (64+32=96) ran before the wrap-up directive;
 no new worker afterward. No next-round mission is opened.
+
+## Round 17 — declared claims (2026-10-20)
+
+Baseline `27cd06f` (includes the admitted round-16 closure and its routed
+R16-V1/V2). Written before any round-17 wave. L1 holds the canonical planner
+seat; wave items are bounded leaf work. Host pause carried: no package
+query or transaction, service, compositor, input or screenshot operation;
+config trees are read as file bytes only. R15-V1 stays operator-owned.
+
+Axis re-derivation (QUALITY22, every active row under its recorded rule):
+calibration literal 14/22 = **6.3636** (lowest active scored);
+coverage U-route 7/7 (finite ceiling, harm watch); freshness file-plane
+29/29 (r12, harm watch); operability hermetic 372/372 + classifier 52/52
+(harm watch); depth/adjacency unscored. No stagnation waiver (capability
+entered round 16).
+
+- **C1 calibration (lowest axis).** Route R16-V1 (receipt cited for a
+  verdict token it does not carry) into lesson `round-17.md` M1 and an
+  append-only lesson-cited QUALITY criterion, with a label check shown to
+  fail on the round-16 lesson line. Command:
+  `git show REV:corpus/QUALITY.md | grep -cE '^[0-9]+\. .*lessons/'` over
+  `grep -cE '^[0-9]+\. '`. Before 14/22 = 6.3636 → target ≥ 15/23.
+- **C2 coverage — new declared rubric V (post-ceiling; U stays 7/7).**
+  PROVINCE.md owned surfaces P1 Hyprland config tree, P2 Waybar, P3 Walker,
+  P4 terminal-emulator configs, P5 themes/wallpapers, P6 screen/idle
+  (hypridle/hyprlock). A surface is covered when an admitted
+  `corpus/knowledge/` entry's first 15 lines carry `source:` citing a
+  `mined` tier-A SOURCES row whose `used-by` names that entry, and the entry
+  declares it: `surface: P<n>` (new entries) or the fixed legacy map
+  `covers: U1|U2 → P1`, `covers: U7 → P2` (declared now, never widened in
+  this round). Command: `python3 .ufo/waves/round-17/measure.py REV`.
+  Baseline 2/6 = 3.3333 → target 4/6 (P6 idle/lock, P4 terminal) from
+  sources opened this round. Documentary routes, not observed behaviour.
+- **C3 operability — capability acquisition: post-hoc transcript
+  tripwire.** `tools/mado-tripwire.py` reads OMP session JSONL and
+  classifies only commands actually issued as `bash` tool calls (not text
+  mentions) into host_mutation / package_query / live_probe. Before:
+  absent at `27cd06f`. After: hermetic selftest N/N exit 0, and the real
+  round-15 transcripts return the libinput `sudo pacman -S` call as
+  host_mutation, agreeing with an independent oracle. Detection after the
+  fact only — never interception, prevention or host repair.
+
+Separable: C1 counts QUALITY text only; C2 needs no tool or criterion; C3
+needs no note or criterion. Harm watch: hermetic selftest 372/372,
+classifier selftest 52/52, U 7/7, navigation complete, census exit 0. No
+exploratory claim.
