@@ -876,3 +876,40 @@ admit/reject spot-check and closure; admission remains pending that act.
 The content commit and revision-bound after measurements are recorded in
 the appended round-13 closure entry below and in SCORECARD, never by
 rewriting this entry.
+
+### Round-13 closure — measured content revision
+
+Content commit: **`95cbc41fe5d5db121b89c2ddd1f953728663c5f4`**.
+Running the exact counter above at that revision produced
+U1–U4 **4/7 (5.7143/10)**, all three U4 facets present and source-joined,
+navigation **27/27** with no missing/extra/duplicate, and C2 complete
+named-set diagnostics **4/4 (10.0000/10)** with all four overall runs
+failing. Baseline was **3/7 (4.2857/10)**, **26/26**, strict **0/4** and
+overall **3/4** respectively. Both observation counters exited 0.
+Exact commands, rows and exits: `.ufo/waves/round-13/evidence/{before,after}.txt`.
+The finite score improvement is not whole-domain saturation.
+
+SOURCES at the measured revision: **46**, versus **39** at baseline;
+A/B/C **42/1/3**, versus **35/1/3**; mined/queued/rejected **34/8/4**,
+versus **27/9/3**, by that counter's `source_registry` field.
+Seven new A rows yielded one new U4 knowledge entry; S045 is a duplicate
+correction, not expansion. S005 status/used-by and S017 used-by are the
+only existing-row cell changes, logged old→new in the lesson.
+
+Committed bindings (`git show <commit>:<path> | sha256sum`) confirm:
+gate `037b05dc…` equals the frozen gate input; capture
+`ced47240c2a1941bbbf1f125d9a1e41624cfeeb8218ab2a3a425eb335a08a949`;
+frozen runner `094bf3a4…`; source screen `a3a1559b…`.
+Full values and the exact measured commit are retained in
+`evidence/committed-bindings.json` under the round directory.
+
+SCORECARD records per-claim deltas, harm watch, demonstrated source-merge
+and frozen-regression repertoire, and the next-round intent without
+opening that round. Local claims: C1 improved, C2 improved. Other scored
+axes unchanged; depth/adjacency unscored and unchanged. Learning trends:
+expansion improved (new source-joined U4 ground); quality improved
+(measured named-set gate plus revision-bound current receipts);
+discernment improved narrowly (outside S030 disagreement becomes
+criterion 17 with a demonstrated red historical case). The current
+round's independent admit/reject spot-check and admission are still
+pending the parent's after-report closure, not self-attested.

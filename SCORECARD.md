@@ -363,3 +363,93 @@ is not hidden. A finite four-case score never retires broader operability.
 Harm watch also includes `--no-live` file-plane agreement. Expanded toggle
 glob membership, arbitrary source syntax and directory/symlink policy are
 not claimed by the four-case correction.
+
+## Round 13 — committed measurements and author verdicts
+
+Content measured at **`95cbc41fe5d5db121b89c2ddd1f953728663c5f4`**,
+2026-10-20. Baseline **`7dcb785b7b943d03703181b218d7860a7b43007b`**.
+Exact counting commands, from this lane root:
+
+```sh
+python3 .ufo/waves/round-13/measure.py 7dcb785b7b943d03703181b218d7860a7b43007b
+python3 .ufo/waves/round-13/measure.py 95cbc41fe5d5db121b89c2ddd1f953728663c5f4
+```
+
+Both counters exit 0 because they are observation probes, not admission
+verdicts. Complete outputs/commands/exits:
+`.ufo/waves/round-13/evidence/before.txt` and `after.txt`.
+The counter reads every counted note, registry and index from the named
+revision. U4 additionally requires the three facet rows and matching
+phase/advertisement/core-registry mined-source joins; metadata alone is
+not a body-quality judgment. Source semantics were reviewed separately
+(ProtocolPhases, GlobalDocs, AttackCoverage); outside closure remains pending.
+
+| Claim / axis sub-axis | Before | After | Score delta | Verdict and evidence |
+|---|---|---|---|---|
+| C1 coverage / sourced current-art ground | U1–U3: 3/7, 4.2857/10 | U1–U4: 4/7, 5.7143/10; U4 facets 3/3 | +1.4286 | locally verified improved; `knowledge/wayland-protocol-boundaries-r13.md`, reciprocal mined rows S005/S040–S043/S046; revision counter `coverage` field |
+| C2 operability / complete named-set diagnostics in the declared four cases | 0/4, 0.0000/10; overall failing runs already 3/4 | 4/4, 10.0000/10; overall failing runs 4/4 | +10.0000 on this finite diagnostic subset only | locally verified improved; revision counter `exact_set` field, actual FAIL rows and every missing/extra name; no full-domain saturation inferred |
+
+### Harm watch and limits
+
+- Navigation **26/26 → 27/27**, missing/extra/duplicate 0; same revision
+  counter `navigation` field. Its finite score stays 10.0000.
+- Hermetic suite **310/310**, exit 0 —
+  `bash tools/mado-verify.sh --selftest`; current pass fraction 10.0000.
+  The old 269/269 is the prior round's record, not a fresh baseline-suite run.
+- File plane **29/29 verdict-bearing rows PASS**, FAIL+UNKNOWN 0, exit 0 —
+  `bash tools/mado-verify.sh --no-live`; freshness fraction stays 10.0000.
+  Eight live SKIPs are not agreement or a current full desktop-health verdict.
+- Historical regression **10/10 KILLED** with unchanged spec
+  `c7ee75b9…`; new clauses **8/8 covering mutants KILLED**, restore OK.
+  Re-cut target `87910c39…`; complete commands and outputs in
+  `.ufo/waves/round-13/evidence/{regression-recut,covering-mutants}.txt`.
+- Frozen companion verifies input digests before replay, ends
+  `frozen_match` and `MADO_REGRESSION: PASS`, exit 0; selftest 12/12.
+  `frozen/expected.json` and `evidence/frozen-regression.txt` beneath the
+  round directory provide the second evidence over committed inputs.
+- Gate committed SHA-256
+  `037b05dcd3f86e12e1b89ee5631f76ce95301b7c411957fad17ff0d7438a6569`
+  equals the frozen gate input. S041 committed capture SHA-256
+  `ced47240c2a1941bbbf1f125d9a1e41624cfeeb8218ab2a3a425eb335a08a949`.
+  Re-derivation command: `git show <measured-commit>:<path> | sha256sum`;
+  exact paths/digests in `evidence/committed-bindings.json`.
+- No other axis score is claimed moved. Depth/adjacency remain unscored
+  and unchanged, not silently retired. Calibration criterion 17 learns
+  the outside S030 disagreement; that frontier duty is not a third claim.
+- Fixed in-round defects are disclosed: raw session metadata was briefly
+  retained in scratch then removed; initial frozen selftest crashed then
+  passed after its sole scoping correction. Final committed artifacts
+  retain no raw session data. No retained axis harm was observed; outside
+  adjudication decides admission.
+
+### Sources and demonstrated repertoire
+
+The same revision counter records SOURCES **39 → 46**:
+tiers **A=35/B=1/C=3 → A=42/B=1/C=3**; statuses
+**mined=27/queued=9/rejected=3 → mined=34/queued=8/rejected=4**.
+Seven new A rows include one rejected duplicate-admission correction,
+not seven knowledge entries. Required maintained census before/after
+both exits 0; final warnings S030/S042/S045 are explicitly retained.
+Source mutations and all new-row opening quotes are in lesson § Gate.
+
+| Capability | What it can now do | Demonstrated evidence | First-working round |
+|---|---|---|---|
+| source-fragment collision screen | Stop a repeated active canonical URL despite different scope wording; preserve rejected history and valid supersedes links | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --selftest` 25/25; real historical registry exits 1 naming S017/S030, current exits 0; `evidence/collision-*-corrected.txt` | 13 |
+| digest-pinned frozen regression | Verify both committed gate/harness input digests before evaluating the recorded regression, with tamper refusal | `python3 .ufo/waves/round-13/frozen/verify.py` → `frozen_match`, exit 0; `--selftest` 12/12; `frozen/expected.json` | 13 |
+
+These demonstrations belong to C1's frontier and C2's gate conformance,
+not additional claims. Short `evidence/` and `frozen/` paths above resolve
+under `.ufo/waves/round-13/`. Saturation line remains 9.0 and stagnation
+window N=3; the finite diagnostic subset does not retire broad operability.
+
+### Planned (round 14; intent only, no mission opened)
+
+1. coverage — one bounded U5 output-management/colour boundary entry,
+   grounded in exact owning-protocol revisions and retaining unexercised
+   feature behavior as unknown.
+2. operability — address the named directory-shaped source-target and
+   source-order fixture limits with isolated negative cases and covering
+   mutants, without attempting a full hyprlang parser.
+
+Retired: none. **Admission and SHONEN clearance remain pending the parent's
+fresh non-author closure after this report lands.**
