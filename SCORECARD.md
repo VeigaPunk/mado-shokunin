@@ -863,3 +863,33 @@ Separable: C1 counts QUALITY text only; C2 needs no tool or criterion; C3
 needs no note or criterion. Harm watch: hermetic selftest 372/372,
 classifier selftest 52/52, U 7/7, navigation complete, census exit 0. No
 exploratory claim.
+
+### Round-17 pre-measurement corrections (append-only; advisers RevPreRegistration, CriticC2, RevRubricV)
+
+- **Lowest axis.** The declaration names calibration (6.3636) lowest while
+  declaring rubric V at 2/6 = 3.3333. V is a new coverage sub-axis created
+  this round, so it is now the lowest active row. Both V (C2) and
+  calibration (C1) are worked, so the lowest-axis obligation holds under
+  either reading; the U-route 7/7 row is unchanged (harm watch).
+- **Instrument.** `measure.py` was absent at `0175f13`. It was committed and
+  bound before any note integration: `f52f43f` (sha256 `a280b3ab…`), then
+  tightened — exact `surface: P<n>` line, legacy credit pinned to the three
+  entries that held it at `27cd06f`, at least one cited mined tier-A row
+  that is an upstream https source of kind docs/spec/code naming the
+  surface, and a three-line content floor per required section — at
+  `ab0bc9b` (sha256 `4023124f…`). Stricter only; baseline stays 2/6 under
+  both (`evidence/measure-before.json`, `measure-instrument.json`).
+- **C1 attribution.** Only criterion 23 is credited to C1 (target 15/23). A
+  tripwire criterion was proposed and **not** added to QUALITY (it would be
+  C3 work inflating C1's fraction). Semantic block-citation counter, per
+  QUALITY 22, reported beside the literal one.
+- **C3 pins.** Selftest suites `tripwire/core` and `tripwire/compound` must
+  pass in full with case counts stated; the red anchor is the single file
+  `MadoR15/MadoR15.LibinputEvents.jsonl` with finding tuple (line 54,
+  `call_38165`, host_mutation, rules `sudo` and `pacman:-S`); agreement is
+  checked against the independent oracles and against `/var/log/pacman.log`
+  lines 2429-2437 (UTC 07:25:16Z = 04:25:16-0300).
+- **Host pause.** "Paused host-wide" is an instruction to lanes, not a host
+  fact: `/var/log/pacman.log:2440-3152` shows 13 non-lane runs on
+  2026-10-20 07:45-09:39 (including `pacman -Syu`), none after round launch.
+  R15-V1's current host state is `[UNK]` and operator-owned.
