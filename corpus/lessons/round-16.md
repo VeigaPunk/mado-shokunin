@@ -157,3 +157,21 @@ quality improved narrowly for the instrument/source precision while the
 carried host harm remains explicit; discernment improved through grounded
 outside teaching, not current outside agreement. Admission/promotion is not
 asserted; independent closure and operator host disposition remain required.
+
+## Erratum (round 17, append-only) — R16-V1
+
+Superseded text, lines 131-132 at `27cd06f`: "Input tamper control returns
+**2 snapshot_tampered**, retained in `frozen-tampered.json`." That receipt
+(`.ufo/waves/round-16/evidence/frozen-tampered.json`, measured `9dcf248`,
+gate `13d86fb0…`) records exit 2 `frozen_error` ("expected.json pair
+1/'denied_executable:sudo' is unreachable"): the M6 pair defect fired before
+any digest check, and `matched_exit: true` compared the exit code only. Where
+`snapshot_tampered` is evidenced: the got-side of `frozen-tampered-plan` and
+`frozen-tampered-policy` in `action-selftest-final.json` (measured `1e31681`)
+and already in the red `action-selftest.json` (measured `9dcf248`). Round 17
+re-receipted the CLI tamper control at current content:
+`.ufo/waves/round-17/evidence/frozen-tampered-recut.json` (one-byte plan
+change, exit 2 `snapshot_tampered`; untampered control exit 0
+`frozen_match`; gate `226220ae…`). The fleet report's line 64 sentence names
+no receipt; it is outside this lane repo and is not edited. Routed into
+QUALITY 23 and `lessons/round-17.md` M1. Status-neutral for round-16 C2.

@@ -105,3 +105,18 @@ The unresolved host-recovery decision stays with the operator. No safety
 trade is erased by this criterion or a green configuration gate.
 
 22. Re-derive every active, non-retired axis under its recorded counting rule before selecting the lowest axis; do not compare coverage only with the hermetic-suite pass fraction while a lower calibration row remains active. Report literal versus semantic citation counters separately rather than silently changing the rubric. (lesson: lessons/round-16.md#mistakes M3; PlanningWalk is a lane-dispatched adviser, not an outside reviewer)
+
+## Round 17 — receipt-label precision (outside R16-V1)
+
+23. A sentence that attributes a verdict token to a receipt must cite a receipt whose recorded outcome is that token at the revision the sentence describes (lesson: lessons/round-17.md#mistakes M1; outside lessons/round-16-verifier-spotcheck.md R16-V1).
+    Outcome means the verdict word on a `MADO_<NAME>:` line, a `finding`
+    value, or the got-side of a selftest row — never want-side text, a fixture
+    name, or `matched_exit` alone (exit 2 is shared by `frozen_error` and
+    `snapshot_tampered`). When the receipt records a `measured_commit`, the
+    sentence's revision must match it. A superseded receipt is named as
+    superseded and keeps its true token; corrections append and never relabel.
+    This specifies criterion 9's commit binding at token level; it did not
+    bite on round-16 line 131-132 because 9 binds the commit, not the token.
+    Runnable check: `python3 -I .ufo/waves/round-17/label-check.py`
+    (seven declared claims including the R16-V1 red line, a want-side-only
+    mutant and a wrong-revision mutant; `EXPECT_SUMMARY` must be 7/7).
