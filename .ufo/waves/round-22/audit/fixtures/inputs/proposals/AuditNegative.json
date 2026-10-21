@@ -1,0 +1,12 @@
+{
+  "id": "AuditNegative",
+  "snapshot": {
+    "findings": [],
+    "files": [
+      {"eval_unparsed": -1, "unparsed_spawns": 1}
+    ]
+  },
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "rationale": "The only files member carries eval_unparsed:-1. The contract schema requires each file counter to be a nonnegative exact int, and the rules list negative counts as invalid, so the snapshot is invalid input and the verdict is 2 (could-not-evaluate) with only evidence_audit_input_invalid. The fixture is built so the negative value cancels: -1 + 1 sums to 0. That makes the claim errors:0 with clean:true look arithmetically consistent to an auditor that sums counters without validating their sign, and such an auditor would wrongly return 0/evidence_audit_clean while hiding one real unparsed spawn. Everything else is valid on purpose: findings is legitimately empty, files is nonempty, the claim fields are nonnegative exact ints with an exact bool, and the harness supplies the actual digest. Negative validation is therefore the only thing that can fail. Code 1 IDs are not expected because input validity is decided before claim comparison, and an invalid counter has no trustworthy sum to compare against. This checks artifact arithmetic and validity only, not semantic truth."
+}

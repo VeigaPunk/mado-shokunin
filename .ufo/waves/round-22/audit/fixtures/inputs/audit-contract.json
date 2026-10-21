@@ -1,0 +1,11 @@
+{
+  "name": "mado-finding-evidence-audit",
+  "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+  "cli": "python3 -I tools/mado-evidence-audit.py --check BUNDLE --root ROOT; --selftest FIXTURE_ROOT",
+  "bundle": {"snapshot": "relative snapshot path", "sha256": "actual lowercase SHA256 of snapshot bytes", "claim": {"total": "nonnegative exact int", "observed": "nonnegative exact int", "lead": "nonnegative exact int", "errors": "nonnegative exact int", "clean": "exact bool"}},
+  "snapshot": {"findings": "list of objects, each explicit evidence observed|lead and nonempty class and command strings", "files": "nonempty list of objects, each eval_unparsed and unparsed_spawns nonnegative exact ints"},
+  "rules": ["At least one files member is required; findings may legitimately be empty", "Sum errors from all file eval_unparsed and unparsed_spawns counters", "Claim total, observed, lead and errors each equal the actual corresponding count", "clean:true only if findings empty and errors zero", "Missing/invalid evidence markers are uncertainty, never silently observed", "No path escape or symlink is accepted; all snapshot bytes are bounded to 2MiB", "Duplicate JSON keys, malformed JSON, booleans-as-counts, negative counts and nonfinite numbers are invalid", "Snapshot digest is checked before verdict comparison"],
+  "verdicts": {"0": "clean (artifact assertions consistent)", "1": "failed (artifact assertion contradicted)", "2": "could-not-evaluate (invalid or unavailable input)"},
+  "finding_ids": ["evidence_audit_clean", "snapshot_tampered", "finding_count_mismatch", "observed_count_mismatch", "lead_count_mismatch", "error_count_mismatch", "uncertain_scan_claimed_clean", "findings_claimed_clean", "evidence_audit_input_invalid"],
+  "preimplementation_proposal_shape": {"id": "unique seat name", "snapshot": "raw JSON receipt object", "claim": "claim object from bundle above", "expected": {"code": "0|1|2", "finding_ids": "exact stable IDs"}, "rationale": "independently reasoned semantics; do not measure or read candidate code"}
+}

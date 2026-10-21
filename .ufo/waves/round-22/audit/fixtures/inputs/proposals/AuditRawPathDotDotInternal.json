@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawPathDotDotInternal",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["root/snapshot.json"], "mkdir": ["root/sub"]},
+  "path_overrides": {"snapshot": "sub/../snapshot.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "sub/../snapshot.json resolves INSIDE ROOT to a valid clean snapshot with the correct digest. The clarifications reject dot/dotdot paths as a lexical rule, not only paths that escape. So 2/evidence_audit_input_invalid. This kills a mutant that only checks the resolved path is contained in ROOT, which would return 0/evidence_audit_clean."
+}

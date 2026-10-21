@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawClaimInfinity",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "raw_bundle": "{\"snapshot\":\"{{SNAPSHOT_PATH}}\",\"sha256\":\"{{SNAPSHOT_SHA256}}\",\"claim\":{\"total\":0,\"observed\":0,\"lead\":0,\"errors\":Infinity,\"clean\":false}}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": "Infinity (raw token)", "clean": false},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The nonfinite value is in the bundle claim, not the snapshot. claim.errors is the non-JSON token Infinity. The snapshot is valid and clean with the actual digest. A claim count must be a nonnegative exact int, and the clarifications require finite JSON numbers and give 2 for malformed JSON. So the input is invalid: 2/evidence_audit_input_invalid. Not code 1/error_count_mismatch, because an invalid claim is not a comparable assertion. This kills a mutant that compares inf != 0 and reports error_count_mismatch, and one that validates only the snapshot strictly."
+}

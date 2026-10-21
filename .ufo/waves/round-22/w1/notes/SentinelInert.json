@@ -1,76 +1,85 @@
 {
   "schema": "mado-r22-sentinel-inert-v1",
   "seat": "SentinelInert",
-  "scope": "Static review only; no harness, scanner, fixture, command, or subprocess was invoked.",
+  "scope": "Static source/artifact review only; no assembly, scanner, fixture, command, or subprocess was invoked.",
   "axes": [
     "payloads remain parsed data",
     "private-session paths are excluded",
-    "host probes and descendants cannot escape the measurement boundary",
+    "host probes and descendant processes cannot escape the measurement boundary",
     "receipts bind the executed tool and runner"
   ],
-  "assessment": "The transcript parser is AST-only, but the planned measurement path executes the selected scanner module. Safe entry is currently source/artifact reads only. Later measurement requires a sealed, explicitly trusted tool path and input-root confinement; the resource/time limits alone are not a sandbox.",
+  "assessment": "The delivered isolated-clone C1 assembler and measurement runner have strong static fixture/root checks and preserve payloads as JSON data, but the selected scanner is imported/executed as Python. Tool-path trust and process isolation remain open. The separate replay wrapper runs round-21 harnesses, not the new round-22 C1 measurement runner.",
   "findings": [
     {
       "severity": "high-conditional",
-      "title": "The selected scanner is executable Python, not inert input",
-      "exploit_path": "replay.py accepts any regular file resolving inside the repository as --tool. Oracle mode invokes the round-21 measurement runner, whose wrapper imports the selected path with importlib and calls exec_module. A malicious or unintended in-repository .py therefore executes at import with the invoking user's environment and filesystem permissions; -I does not prevent that.",
+      "title": "C1 executes the selected scanner with caller privileges",
+      "exploit_path": "The new C1 measure.py accepts --tool, resolves it, verifies only that the resolved target is a regular file, and passes it to a child wrapper that imports the file and calls exec_module. There is no repository/path allowlist or no-network/low-privilege sandbox in the direct CLI. A malicious or unintended external or in-repository Python file can run at import. A modified candidate scanner could also execute untrusted transcript code; PyCF_ONLY_AST in the current scanner is source evidence for that file, not an enforcement boundary for future candidate bytes.",
       "evidence": [
-        ".ufo/waves/round-22/replay.py:39-45,48-71,139-152",
-        ".ufo/waves/round-21/oracle/measure.py:13-16,28-38",
-        "tools/mado-tripwire.py:2101-2114 compiles transcript source with PyCF_ONLY_AST; this establishes input parsing behavior, not safety of arbitrary --tool code"
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle/measure.py:34-38,128-131,813-819",
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle/measure.py:655-668 starts the child with inherited environment and only an address-space/time limit",
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/w1/reports/OracleHarness.md:21-27 describes the direct --tool interface and AST-only payload intent",
+        "tools/mado-tripwire.py:2101-2114 uses PyCF_ONLY_AST for the current source"
       ],
-      "impact": "If an unreviewed tool path is accepted, its top-level code can access private files, environment secrets, or initiate host/network actions even though JSONL payload code is not evaluated.",
-      "smallest_remediation": "Before any run, allow only the explicitly selected scanner path(s) and require their independently sealed SHA-256. If candidate code is not trusted, run it in a separately authorized unprivileged, no-network, read-only fixture sandbox; do not treat -I, timeout, or RLIMIT_AS as isolation."
+      "impact": "If the selected source is not trusted, it can read private files/secrets or initiate host/network actions. If a candidate scanner executes JSONL code instead of parsing it, the fixtures can trigger the same effects; resource/time caps do not prevent that.",
+      "smallest_remediation": "Restrict --tool to explicitly approved scanner path(s) and independently sealed hashes; verify the invocation path before resolution so symlinks cannot bypass policy. For adversarial candidate bytes or to guarantee payload non-execution, require a separately authorized unprivileged, no-network, read-only fixture sandbox."
     },
     {
       "severity": "medium-conditional",
-      "title": "Round-21 fixture path resolution can reach private sessions",
-      "exploit_path": "The reference oracle runner joins unvalidated expected.json case.fixture values to ROOT and reads/scans the resulting path. A traversal value can point to ~/.omp/agent/sessions; tools/mado-tripwire.py explicitly permits that subtree in refuse_path. If a writable local expected.json and its adjacent expected.sha256 are both replaced, the scanner can read private JSONL despite this wave's no-session rule.",
+      "title": "Replay oracle mode retains the round-21 manifest path risk",
+      "exploit_path": "The main-lane replay.py oracle mode selects .ufo/waves/round-21/oracle/measure.py. That reference runner joins case.fixture to ROOT without containment checks; tools/mado-tripwire.py permits ~/.omp/agent/sessions. A traversal fixture plus a rewritten colocated expected.sha256 can therefore redirect a later round-21 replay if those old manifest files are writable. This is not a path escape in the new isolated-clone C1 runner: it constrains cases to inputs/<case-id>.jsonl, rejects symlink components, checks exact population, and revalidates before and after.",
       "evidence": [
-        ".ufo/waves/round-21/oracle/measure.py:49-60 reads the adjacent digest and uses ROOT / case['fixture'] without containment validation",
-        "tools/mado-tripwire.py:2575-2589 permits paths within ~/.omp/agent/sessions; 2593-2619 discovers JSONL beneath the supplied path",
-        ".ufo/waves/round-22/audit-contract.json:7 and audit-clarifications.md:5-8 explicitly require path/symlink rejection for C2, but no new C1 harness implementation was present at inspection"
+        ".ufo/waves/round-22/replay.py:48-52 invokes the round-21 oracle runner",
+        ".ufo/waves/round-21/oracle/measure.py:49-60 uses ROOT / case['fixture'] without containment validation",
+        "tools/mado-tripwire.py:2575-2589 permits ~/.omp/agent/sessions",
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle/measure.py:109-125,503-540 confines and inventories R22 fixture paths"
       ],
-      "impact": "A later harness run could read and classify private session material and include sensitive command/path fragments in its receipt. A colocated digest sidecar is not an independent authenticity anchor if both files are writable.",
-      "smallest_remediation": "Derive fixture paths only from validated case IDs under the sealed inputs directory; reject absolute, dot/dotdot, symlink components, and any resolved path outside that directory. Pin the manifest digest outside the mutable harness tree before running."
+      "impact": "A tampered historical replay manifest could cause private session JSONL to be read/classified; the current new C1 fixture path check prevents the same straightforward traversal through its expected case.fixture.",
+      "smallest_remediation": "Do not use replay.py --mode oracle as the R22 C1 entry path. If historical replay remains authorized, confine its fixture paths and reject symlinks/escape exactly as the new C1 runner does; externally pin its expected manifest."
+    },
+    {
+      "severity": "medium-conditional",
+      "title": "A detached scanner descendant escapes process-group cleanup",
+      "exploit_path": "The updated R22 runner kills the scanner's process group on timeout and normal completion, but arbitrary selected Python can spawn a descendant in a new session/process group before returning. That descendant is outside the scanner PGID; killpg on the original group can report it empty while the detached process continues. The outer replay wrapper has the same process-group limitation.",
+      "evidence": [
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle/measure.py:656-712 kills only the scanner process group",
+        ".ufo/waves/round-22/replay.py:75-97"
+      ],
+      "impact": "A deliberately detached child can retain the caller's privileges after a timeout or successful receipt and continue file or host-probe actions.",
+      "smallest_remediation": "For an adversarial scanner, use an OS process-tree boundary such as a separately authorized cgroup/PID namespace sandbox that prevents descendants from escaping; process-group cleanup alone is not containment."
     },
     {
       "severity": "medium",
-      "title": "Replay records tool drift but does not fail on it",
-      "exploit_path": "replay.py hashes --tool before launch and after completion, but returns the runner's exit code without comparing those hashes. It records the runner hash only before execution and does not check it against an independently sealed digest. A file swap during a later run can therefore accompany an exit 0/1 receipt unless a downstream consumer independently rejects the mismatch.",
+      "title": "Replay records tool drift without making it a failure",
+      "exploit_path": "The main-lane replay wrapper records tool digests before and after but returns the underlying round-21 runner status without comparing the digests, and it records the runner digest only before launch. A changed tool can therefore accompany exit 0/1. The new R22 C1 measure runner is stronger: it revalidates tool, runner, producer, population, and source inputs and returns 2 on post-run integrity failure.",
       "evidence": [
-        ".ufo/waves/round-22/replay.py:145-160 records hashes; 161-169 returns exit_code without enforcing equality or a pinned runner digest"
+        ".ufo/waves/round-22/replay.py:145-169",
+        ".ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle/measure.py:467-475,849-869"
       ],
-      "impact": "The returned process status can be mistaken for a result tied to stable, approved bytes; the receipt exposes the mismatch but does not itself fail closed.",
-      "smallest_remediation": "Require exact sealed tool and runner digests before launch, recheck after, and force exit 2 on any mismatch."
-    },
-    {
-      "severity": "medium-conditional",
-      "title": "Per-case timeout does not guarantee descendant cleanup",
-      "exploit_path": "The new replay driver starts a process group and kills it on its own aggregate timeout, but on normal completion it does not terminate remaining group members. The nested round-21 oracle runner uses subprocess.run(timeout=15) for the scanner, which only kills/waits for that direct child. An imported tool that starts a detached/stdio-closed descendant can outlive a successful per-case run.",
-      "evidence": [
-        ".ufo/waves/round-22/replay.py:75-97 kills the process group only in the outer TimeoutExpired branch",
-        ".ufo/waves/round-21/oracle/measure.py:28-38 invokes subprocess.run with timeout but no new session or group cleanup"
-      ],
-      "impact": "A descendant may continue with the user's privileges after the receipt is emitted, including filesystem or host-probe actions.",
-      "smallest_remediation": "Run each measurement child in its own session and reap/terminate its process group on every exit path, or constrain execution to a sandbox that denies process creation."
+      "impact": "Replay process status alone is not proof that the reported result used stable bytes; readers must not treat a receipt with differing before/after hashes as a pass.",
+      "smallest_remediation": "Make replay exit 2 on any tool-digest mismatch and verify an independently sealed runner digest before and after launch."
     }
+  ],
+  "static_safety_controls": [
+    "The isolated-clone assembler reads strictly parsed, digest-sealed source/proposal artifacts and writes only beside its own __file__; it serializes proposal cells to JSONL and does not execute them.",
+    "The new C1 runner starts each scanner in its own session and kills/reports that group on timeout and normal completion; this cleans same-group descendants but cannot contain a selected module that deliberately starts a separate session.",
+    "The current mado-tripwire.py parses eval source using PyCF_ONLY_AST, but this is not a sandbox for a future selected scanner.",
+    "The audit-contract CLI is artifact-only by contract, but no new C2 audit implementation was present at inspection."
   ],
   "safe_entry_paths": [
     {
       "when": "This wave",
-      "path": "Static read of registration, contracts, source, and inert JSON artifacts only.",
+      "path": "Static reads of contracts, source, and inert JSON artifacts only.",
       "status": "Used; no execution or host probe."
+    },
+    {
+      "when": "After main seals C1 artifacts and explicitly authorizes measurement",
+      "path": "Isolated-clone .ufo/waves/round-22/oracle/assemble.py followed by its measure.py --tool PATH [--case ID] interface.",
+      "status": "Source reviewed, not run. The fixture root is statically confined, but direct --tool still needs an approved-path/hash boundary and a decision on sandboxing candidate code. Avoid main-lane replay.py --mode oracle for this C1 run; it invokes the historical R21 runner."
     },
     {
       "when": "After main seals C2 artifacts and authorizes a check",
       "path": "audit-contract.json specifies python3 -I tools/mado-evidence-audit.py --check BUNDLE --root ROOT or --selftest FIXTURE_ROOT.",
-      "status": "Contract path only; audit implementation was absent at inspection. Safe only if it remains a strict JSON/digest reader with the clarified root/symlink/2MiB checks; do not import or invoke C1."
-    },
-    {
-      "when": "After independent C1 inputs and runner are sealed and a run is authorized",
-      "path": "The dedicated oracle measure path over only the sealed inputs/*.jsonl population; replay.py exposes explicit oracle/resource-api/resource-cli/corpus modes using argv rather than a shell.",
-      "status": "Not invoked. Require exact approved tool/runner digests and fixture-root containment first. The `--tool` option is not itself a trust boundary."
+      "status": "Contract path only; implementation absent at inspection. Keep it a strict JSON/digest reader with the clarified root/symlink/2MiB checks; never import/run C1."
     }
   ],
   "resume_continuity_v1": {
@@ -79,8 +88,8 @@
     "conclusion": "No resume rejection occurred in this run to adversarially verify. This is not evidence that other resume rejections are mutation-free."
   },
   "availability": {
-    "replay_driver": "present and reviewed as source",
-    "new_oracle_harness": "not present under .ufo/waves/round-22/oracle at inspection",
+    "new_oracle_harness": "present in isolated clone .ufo/worktrees/r22-oracle/.ufo/waves/round-22/oracle; statically reviewed after delivery, not run or integrated",
+    "replay_driver": "present in main lane and statically reviewed",
     "new_audit_harness": "not present under .ufo/waves/round-22/audit at inspection"
   },
   "actions": {

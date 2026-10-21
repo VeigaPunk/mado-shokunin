@@ -1,0 +1,96 @@
+{
+  "files": [
+    {
+      "eval_unparsed": 0,
+      "path": "inputs/r13-global-capture.jsonl",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "inputs/r13-root.jsonl",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "inputs/r14-review-source-bar.jsonl",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "inputs/r14-source-safety.jsonl",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "inputs/r15-libinput-events.jsonl",
+      "unparsed_spawns": 0
+    }
+  ],
+  "findings": [
+    {
+      "class": "host_mutation,live_probe,package_query",
+      "command": "sudo pacman -S --needed --noconfirm wayland-utils ; pacman -S --needed --noconfirm wayland-utils ; wayland-info --version ; pacman -Q wayland-utils",
+      "evidence": "observed",
+      "file": "inputs/r13-global-capture.jsonl",
+      "line": 1,
+      "source_row_indices": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q wayland-utils wayland wayland-protocols hyprland",
+      "evidence": "lead",
+      "file": "inputs/r13-root.jsonl",
+      "line": 4,
+      "source_row_indices": [
+        4
+      ]
+    },
+    {
+      "class": "host_mutation",
+      "command": "sudo pacman -Sw --noconfirm wlr-protocols ; pacman -Sw --noconfirm wlr-protocols",
+      "evidence": "observed",
+      "file": "inputs/r14-review-source-bar.jsonl",
+      "line": 1,
+      "source_row_indices": [
+        5,
+        6
+      ]
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q hyprland wayland-protocols wayland-utils",
+      "evidence": "observed",
+      "file": "inputs/r14-source-safety.jsonl",
+      "line": 2,
+      "source_row_indices": [
+        7
+      ]
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q hyprland wayland-protocols wayland-utils",
+      "evidence": "observed",
+      "file": "inputs/r14-source-safety.jsonl",
+      "line": 3,
+      "source_row_indices": [
+        8
+      ]
+    },
+    {
+      "class": "host_mutation",
+      "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools ; pacman -S --needed --noconfirm libinput libinput-tools",
+      "evidence": "observed",
+      "file": "inputs/r15-libinput-events.jsonl",
+      "line": 1,
+      "source_row_indices": [
+        9,
+        10
+      ]
+    }
+  ]
+}

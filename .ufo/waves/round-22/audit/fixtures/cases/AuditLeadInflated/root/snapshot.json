@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "eval_unparsed": 0,
+      "path": "scan/cells/worker.py",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "scan/cells/scheduler.py",
+      "unparsed_spawns": 0
+    }
+  ],
+  "findings": [
+    {
+      "class": "capture-builtin",
+      "command": "threading.Thread(target=eval, args=(payload,))",
+      "evidence": "observed"
+    },
+    {
+      "class": "capture-builtin",
+      "command": "threading.Thread(target=exec, args=(snippet,))",
+      "evidence": "observed"
+    },
+    {
+      "class": "scheduled-call",
+      "command": "threading.Timer(0, os.system, (cmd,)).start()",
+      "evidence": "observed"
+    },
+    {
+      "class": "capture-builtin",
+      "command": "threading.Thread(target=compile, args=(src, name, mode))",
+      "evidence": "observed"
+    },
+    {
+      "class": "scheduled-call",
+      "command": "threading.Timer(1, getattr(obj, attr)).start()",
+      "evidence": "observed"
+    },
+    {
+      "class": "capture-builtin",
+      "command": "threading.Thread(target=handler, args=(blob,))",
+      "evidence": "lead"
+    }
+  ]
+}

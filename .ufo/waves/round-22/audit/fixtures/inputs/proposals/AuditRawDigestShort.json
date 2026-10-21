@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawDigestShort",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "digest_override": {"truncate": 63},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The bundle sha256 is the first 63 characters of the correct lowercase digest. The clarifications require exactly 64 lowercase hex characters, so it is a malformed bundle field: 2/evidence_audit_input_invalid, not snapshot_tampered. This kills a prefix or startswith comparison, which would return 0/evidence_audit_clean."
+}

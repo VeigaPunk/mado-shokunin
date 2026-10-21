@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawOversizedSnapshot",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[],\"files\":[{\"eval_unparsed\":0,\"unparsed_spawns\":0}]}",
+  "pad": {"target": "snapshot", "byte": " ", "total_bytes": 2097153},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "A valid clean receipt is padded with trailing ASCII spaces (still valid JSON) to exactly 2097153 bytes, one byte over 2 MiB (2097152). The digest is the actual SHA-256 of all padded bytes. The contract bounds all snapshot bytes to 2 MiB, and the clarifications say a bounded read happens before the digest. So the input is invalid: 2/evidence_audit_input_invalid, not snapshot_tampered. One byte over exceeds the bound whether the limit is read as inclusive or exclusive. A mutant without a size check returns 0/evidence_audit_clean. One that reads only 2 MiB and hashes the prefix returns snapshot_tampered."
+}

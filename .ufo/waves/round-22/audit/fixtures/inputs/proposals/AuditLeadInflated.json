@@ -1,0 +1,64 @@
+{
+  "id": "AuditLeadInflated",
+  "snapshot": {
+    "findings": [
+      {
+        "class": "capture-builtin",
+        "command": "threading.Thread(target=eval, args=(payload,))",
+        "evidence": "observed"
+      },
+      {
+        "class": "capture-builtin",
+        "command": "threading.Thread(target=exec, args=(snippet,))",
+        "evidence": "observed"
+      },
+      {
+        "class": "scheduled-call",
+        "command": "threading.Timer(0, os.system, (cmd,)).start()",
+        "evidence": "observed"
+      },
+      {
+        "class": "capture-builtin",
+        "command": "threading.Thread(target=compile, args=(src, name, mode))",
+        "evidence": "observed"
+      },
+      {
+        "class": "scheduled-call",
+        "command": "threading.Timer(1, getattr(obj, attr)).start()",
+        "evidence": "observed"
+      },
+      {
+        "class": "capture-builtin",
+        "command": "threading.Thread(target=handler, args=(blob,))",
+        "evidence": "lead"
+      }
+    ],
+    "files": [
+      {
+        "path": "scan/cells/worker.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      },
+      {
+        "path": "scan/cells/scheduler.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 6,
+    "observed": 6,
+    "lead": 0,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "1",
+    "finding_ids": [
+      "observed_count_mismatch",
+      "lead_count_mismatch"
+    ]
+  },
+  "rationale": "The frozen snapshot contains exactly six finding rows: five carry explicit evidence \"observed\" and one carries explicit evidence \"lead\". The claim asserts total 6, observed 6, lead 0, errors 0, clean false. Total is the arithmetic count of finding rows, and 6 equals the actual six rows, so finding_count_mismatch is NOT expected. Observed counts only rows whose explicit evidence marker is \"observed\"; the actual observed count is 5, not 6, because the claim has folded the single lead row into the observed bucket -- precisely the lead-as-observed inflation the audit exists to refuse -- so observed_count_mismatch is expected. The actual lead count is 1, not the claimed 0, so lead_count_mismatch is expected. Errors is the sum of eval_unparsed and unparsed_spawns across the files list; both file members report 0 for each counter, so actual errors is 0 and the claimed 0 matches, ruling out error_count_mismatch. The claim asserts clean:false while findings are nonempty and errors are zero; clean:true would only be consistent with empty findings and zero errors, so clean:false is the honest assertion and neither findings_claimed_clean nor uncertain_scan_claimed_clean applies. Every finding row carries explicit evidence in {observed,lead} plus nonempty class and command strings; the files list is nonempty with nonnegative exact-int counters; no booleans-as-counts, negatives, duplicates or malformed input are present, so the input is valid and evidence_audit_input_invalid does not apply. With a consistent snapshot and at least one contradicted count assertion, the verdict is 1 (failed) with exactly the two named finding ids. Reasoned from the contract's arithmetic and evidence-label rules only; no candidate code was read and no measurement was taken."
+}

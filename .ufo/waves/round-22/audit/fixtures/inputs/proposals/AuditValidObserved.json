@@ -1,0 +1,41 @@
+{
+  "id": "AuditValidObserved",
+  "snapshot": {
+    "findings": [
+      {
+        "evidence": "observed",
+        "class": "subprocess.Popen",
+        "command": "systemctl --user restart example.service"
+      },
+      {
+        "evidence": "observed",
+        "class": "os.system",
+        "command": "logger -t mado-fixture observed-row"
+      }
+    ],
+    "files": [
+      {
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      },
+      {
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 2,
+    "observed": 2,
+    "lead": 0,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "0",
+    "finding_ids": [
+      "evidence_audit_clean"
+    ]
+  },
+  "rationale": "Valid consistent bundle authored independently from audit-contract.json only; no candidate code read and no measurement taken. Snapshot carries exactly two finding rows, each with an explicit evidence marker of 'observed' plus nonempty class and command strings, so the actual counts are total=2, observed=2, lead=0. The files list is nonempty (two members) and every eval_unparsed and unparsed_spawns counter is the exact int 0, so the actual error sum is 0. The claim matches each actual count exactly. The clean flag is legitimately false: the contract permits clean:true only when findings are empty and errors are zero; here findings are nonempty, so claiming clean:false is the consistent choice and no 'findings_claimed_clean' or 'uncertain_scan_claimed_clean' finding applies. All evidence markers are explicit and valid, all counts are nonnegative exact ints (no booleans, negatives, or nonfinite values), JSON has no duplicate keys, and the snapshot is well under the 2MiB bound. With the digest verified and every assertion consistent, the expected verdict is code 0 with the sole pass finding_id 'evidence_audit_clean'."
+}

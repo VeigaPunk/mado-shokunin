@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawPathAbsolute",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["root/snapshot.json"]},
+  "path_overrides": {"snapshot": "{{ROOT_ABS}}/snapshot.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The bundle names the snapshot by an absolute path that points inside ROOT, at a valid clean receipt with the correct digest. The clarifications reject absolute paths outright, so 2/evidence_audit_input_invalid. Python's pathlib ROOT / '/abs' discards ROOT, so a mutant without the absolute check reads the file and returns 0/evidence_audit_clean."
+}

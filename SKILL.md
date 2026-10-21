@@ -1958,3 +1958,15 @@ Round-21 scope qualification for the old pure-data examples at557–559: “plai
 ### Round-21 final withdrawal
 
 Delivered classifier a6cef898 / SHA46c82902 remains **harmed**, not a verified general binding repair: `.ufo/waves/round-21/residual/FinalBindingReview.md` records factory-lifetime, unresolved/global leakage, returned-binding, direct-run and synthetic-name failures that the finite oracle did not catch. Read the final disposition inside `corpus/knowledge/tripwire-binding-boundaries-r21.md` before using its candidate discussion. C2's demonstrated artifact gate does not admit the round or a capability rank. The classifier's module docstring is also stale about commit dry-run exemptions: current code flags commit/index preparation except recognized help/usage; retain `FinalRemovalReview.md` as that documentation defect, not a licence to execute it. Inherited clean labels with nonzero unparsed counters are not safety evidence.
+
+## Round 22 — scoped lifetime and evidence-grain recovery
+
+Read [`corpus/knowledge/tripwire-lifetime-recovery-r22.md`](corpus/knowledge/tripwire-lifetime-recovery-r22.md), sourced to opened S121/S122, before interpreting factory capture, late globals or direct standard Thread/Timer calls. Raw independent truth was sealed at `9185f1f9806b823a23ef9f5077a893e40e46e1b9`; normalized populations are later materializations, not retroactive preregistration. A finite repair result does not erase the r19/r20/r21 red receipts, prove all Python semantics or authorize a host action. Final round-22 evidence and genuinely non-author closure govern any re-admission proposal.
+
+### Gate registry — mado-evidence-audit
+
+| name | kind | entry command | verdict map | self-test command and spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-evidence-audit | gate | `python3 -I tools/mado-evidence-audit.py --check BUNDLE --root ROOT` | 0=clean artifact assertions; 1=failed contradictory assertions; 2=could-not-evaluate, including invalid/markerless input or snapshot_tampered | `python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures` (`--selftest`; real self-invocation compares exit and stable IDs for every fixture) | `.ufo/waves/round-22/audit/fixtures/expected.json`, `expected.sha256`, input_entries digests and symlink targets; raw truth seal `.ufo/waves/round-22/truth-seal.json` | read-only over selected artifacts; no host, network, classifier execution or source mutation | mado |
+
+This gate validates arithmetic and asserted labels, not that an `observed` marker is semantically true. The actual r19 scan is markerless and remains could-not-evaluate. Six incident lines are not eleven finding rows: derived5/1-line or10/1-row views and new counterfactual inflation assertions must retain their provenance, never become an old r19 observed6/6 assertion or retrospective precision proof. A nonzero unparsed/error outcome is uncertainty even when an inherited scanner labels its empty finding set clean.

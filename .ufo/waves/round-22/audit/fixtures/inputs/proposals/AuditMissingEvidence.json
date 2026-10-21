@@ -1,0 +1,34 @@
+{
+  "id": "AuditMissingEvidence",
+  "snapshot": {
+    "findings": [
+      {
+        "evidence": "observed",
+        "class": "subprocess.Popen",
+        "command": "systemctl --user restart example.service"
+      },
+      {
+        "class": "os.system",
+        "command": "logger -t mado-fixture unmarked-row"
+      }
+    ],
+    "files": [
+      {
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 2,
+    "observed": 1,
+    "lead": 0,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "2",
+    "finding_ids": ["evidence_audit_input_invalid"]
+  },
+  "rationale": "Reasoned independently from audit-contract.json only; no candidate code read or executed and no measurement taken. The snapshot's second findings row carries nonempty class and command strings but has no evidence key at all. The contract schema requires every findings member to carry an explicit evidence marker of 'observed' or 'lead', and the rules state that missing or invalid evidence markers are uncertainty, never silently observed. A row with no marker is therefore not a demotable lead and not an observed row: it is a malformed findings member, which makes the entire receipt invalid input and routes the verdict to 2 (could-not-evaluate) with the single stable ID evidence_audit_input_invalid. Everything else is deliberately valid so the missing marker is the sole defect: files is a nonempty list with one member, both counters are nonnegative exact ints summing to zero errors, and every claim field is a nonnegative exact int except the exact bool clean. The claim is authored to be consistent under the most lenient counting: total=2 counts both submitted rows, observed=1 counts only the row that does carry explicit 'observed', lead=0 and errors=0 match, and clean=false is arithmetically consistent because findings is nonempty. An auditor that merely skips the unmarked row when tallying observed/lead but continues to verdict comparison would see every claim field agree and wrongly return 0/evidence_audit_clean; the fixture exists to catch exactly that skip-and-continue behavior. Verdict 1 is wrong because no count is contradicted under the lenient reading and because input validity is decided before verdict comparison; the contract assigns missing/invalid evidence markers to could-not-evaluate, not to any *_count_mismatch or clean-flag finding ID."
+}

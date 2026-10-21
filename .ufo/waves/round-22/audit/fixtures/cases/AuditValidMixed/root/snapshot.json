@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "eval_unparsed": 0,
+      "path": "src/jobs/backup.py",
+      "unparsed_spawns": 0
+    },
+    {
+      "eval_unparsed": 0,
+      "path": "src/deploy/runner.py",
+      "unparsed_spawns": 0
+    }
+  ],
+  "findings": [
+    {
+      "class": "thread",
+      "command": "worker = threading.Thread(target=backup.flush); worker.start()",
+      "evidence": "observed",
+      "file": "src/jobs/backup.py",
+      "line": 41
+    },
+    {
+      "class": "spawn",
+      "command": "subprocess.Popen(shlex.split(env['WORKER_CMD']))",
+      "evidence": "lead",
+      "file": "src/deploy/runner.py",
+      "line": 12
+    }
+  ]
+}

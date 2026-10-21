@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawDupNestedConflict",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[],\"files\":[{\"eval_unparsed\":1,\"unparsed_spawns\":0,\"eval_unparsed\":0}]}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The single files member repeats the key eval_unparsed with conflicting values 1 and 0. The contract says duplicate JSON keys are invalid, and the clarifications say duplicate keys anywhere give 2/evidence_audit_input_invalid. The digest is the actual digest of these exact bytes, so tampering is not involved. A last-wins parser (Python's default) sees errors 0 and wrongly returns 0/evidence_audit_clean. A first-wins parser sees errors 1 and wrongly returns 1. Only rejection is correct. Everything else is valid: findings is legitimately empty, files is nonempty, and the claim fields are exact nonnegative ints with an exact bool."
+}

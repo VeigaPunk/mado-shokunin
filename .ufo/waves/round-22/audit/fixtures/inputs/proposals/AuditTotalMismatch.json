@@ -1,0 +1,68 @@
+{
+  "id": "AuditTotalMismatch",
+  "snapshot": {
+    "schema": "mado-tripwire-verdict-v1",
+    "exit": 1,
+    "counts": {"host_mutation": 0, "live_probe": 1, "package_query": 1},
+    "permitted": [],
+    "unpermitted": 2,
+    "files": [
+      {
+        "path": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T00-00-00-000Z_fixture0000-0000-0000-0000-000000000001/MadoR22/MadoR22.AuditTotalMismatch.jsonl",
+        "sha256": "c963155523093f8c939c51adb0e076aa8e826e546d5e68807e41068fc2ba98a7",
+        "lines": 120,
+        "bash_calls": 9,
+        "eval_calls": 2,
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      },
+      {
+        "path": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T00-00-00-000Z_fixture0000-0000-0000-0000-000000000001/MadoR22/MadoR22.AuditTotalMismatchHelper.jsonl",
+        "sha256": "ccfed58388f04dcddcb7b5bbae82634d0d5d8088e541112dfd753ce30abcfdac",
+        "lines": 64,
+        "bash_calls": 3,
+        "eval_calls": 1,
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ],
+    "findings": [
+      {
+        "argv0": "pacman",
+        "class": "package_query",
+        "command": "pacman -Qi linux",
+        "file": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T00-00-00-000Z_fixture0000-0000-0000-0000-000000000001/MadoR22/MadoR22.AuditTotalMismatch.jsonl",
+        "line": 9,
+        "rule": "pacman:-Qi",
+        "timestamp": "2026-10-21T01:00:00.000Z",
+        "tool": "bash",
+        "tool_call_id": "call_fixture0001",
+        "evidence": "observed"
+      },
+      {
+        "argv0": "wayland-info",
+        "class": "live_probe",
+        "command": "wayland-info",
+        "file": "/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-21T00-00-00-000Z_fixture0000-0000-0000-0000-000000000001/MadoR22/MadoR22.AuditTotalMismatchHelper.jsonl",
+        "line": 22,
+        "rule": "wayland-info",
+        "timestamp": "2026-10-21T01:00:05.000Z",
+        "tool": "bash",
+        "tool_call_id": "call_fixture0002",
+        "evidence": "lead"
+      }
+    ]
+  },
+  "claim": {
+    "total": 1,
+    "observed": 1,
+    "lead": 1,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "1",
+    "finding_ids": ["finding_count_mismatch"]
+  },
+  "rationale": "Independently reasoned from audit-contract.json only; no candidate code read and no detector measured. The snapshot receipt is well-formed: files is a nonempty list of two objects each carrying nonnegative exact-int eval_unparsed (0) and unparsed_spawns (0), so actual errors = 0+0 = 0. findings is a list of two objects, each with explicit evidence ('observed' resp. 'lead') and nonempty class and command strings, so the receipt is valid input, not could-not-evaluate. Per contract rule 'Claim total, observed, lead and errors each equal the actual corresponding count': actual total = 2 finding rows (the count is row membership, not tier; observed 1 + lead 1 = 2), actual observed = 1, actual lead = 1, actual errors = 0. The claim's observed=1, lead=1, errors=0 each match, so observed_count_mismatch, lead_count_mismatch and error_count_mismatch do NOT apply. Claimed total=1 contradicts the actual row count 2 -> finding_count_mismatch is the sole triggered ID. Contract rule 'clean:true only if findings empty and errors zero' is satisfied by clean:false (findings nonempty), so uncertain_scan_claimed_clean and findings_claimed_clean do not apply. The digest is assumed matching by construction because this proposal ships snapshot bytes rather than a tamper scenario, so snapshot_tampered does not apply; evidence_audit_clean cannot apply because an assertion was contradicted. Verdict 1 'failed (artifact assertion contradicted)' with the exact finding_ids [finding_count_mismatch]. The mixed observed/lead split additionally exercises that a lead row is still a finding row for the total while never being counted as observed; an implementation that counts only 'observed' rows would wrongly pass this fixture."
+}

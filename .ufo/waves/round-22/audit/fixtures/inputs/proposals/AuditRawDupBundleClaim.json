@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawDupBundleClaim",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "raw_bundle": "{\"snapshot\":\"{{SNAPSHOT_PATH}}\",\"sha256\":\"{{SNAPSHOT_SHA256}}\",\"claim\":{\"total\":0,\"observed\":0,\"lead\":0,\"errors\":0,\"clean\":false,\"clean\":true}}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The duplicate is in the BUNDLE, not the snapshot: claim.clean appears twice, as false then true. The snapshot is a valid clean receipt with the actual digest, so either value of clean would be consistent and an auditor that ignores duplicates returns 0/evidence_audit_clean. The clarifications say duplicate keys anywhere give 2/evidence_audit_input_invalid, and the bundle is an input. This kills a mutant that uses a strict duplicate-rejecting loader only for the snapshot. The claim field above is documentation; the bundle bytes come from raw_bundle."
+}

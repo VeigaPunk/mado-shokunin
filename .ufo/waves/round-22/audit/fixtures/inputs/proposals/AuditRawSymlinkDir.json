@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawSymlinkDir",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["root/real/snapshot.json"], "symlinks": [{"path": "root/dirlink", "target": "real"}]},
+  "path_overrides": {"snapshot": "dirlink/snapshot.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The final file is a regular file, but the intermediate directory component dirlink is a symlink to ROOT/real. The clarifications reject EVERY symlink component, so 2/evidence_audit_input_invalid. This kills a mutant that checks only the final component, for example with os.open(O_NOFOLLOW) or Path.is_symlink() on the leaf, which would return 0/evidence_audit_clean."
+}

@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawSymlinkEscape",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["outside.json"], "symlinks": [{"path": "root/link.json", "target": "../outside.json"}]},
+  "path_overrides": {"snapshot": "link.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The bundle path link.json is lexically clean: relative, no dot/dotdot, no backslash. But it is a symlink leading out of ROOT to a valid clean receipt, with the correct digest of those bytes. It is rejected both as a symlink and as an escape: 2/evidence_audit_input_invalid. A mutant that checks only the path string returns 0/evidence_audit_clean."
+}

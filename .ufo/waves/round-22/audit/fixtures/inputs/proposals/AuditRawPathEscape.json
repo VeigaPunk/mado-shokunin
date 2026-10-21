@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawPathEscape",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["outside.json"]},
+  "path_overrides": {"snapshot": "../outside.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "A valid clean snapshot exists only at FIX/outside.json, one level above ROOT. The bundle references it as ../outside.json with the correct digest. The clarifications say the path resolves relative to ROOT and dotdot and path escape are rejected, so 2/evidence_audit_input_invalid. A mutant that joins paths without checks reads the file and returns 0/evidence_audit_clean."
+}

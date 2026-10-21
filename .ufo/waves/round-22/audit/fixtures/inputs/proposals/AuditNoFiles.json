@@ -1,0 +1,10 @@
+{
+  "id": "AuditNoFiles",
+  "snapshot": {
+    "findings": [],
+    "files": []
+  },
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "rationale": "The files key is present but empty. The contract schema requires files to be a nonempty list, and its first rule says at least one files member is required while findings may legitimately be empty. With no scanned files the scan population is empty, so the receipt cannot support any clean assertion and the verdict is 2 (could-not-evaluate) with only evidence_audit_input_invalid. The fixture targets a vacuous-truth bug: summing zero file counters gives errors 0, and an empty findings list gives total, observed and lead 0, so every claim field, including clean:true, matches the naive arithmetic. An auditor that skips the population check would return 0/evidence_audit_clean for a scan that examined nothing. Code 1 is wrong too, because no claim contradicts the rows; the input is unusable. The files key is deliberately present-but-empty rather than absent, because that is the harder case; an absent key is a plainer schema violation that should give the same verdict. All other fields are valid and the harness supplies the actual digest. This checks artifact population and validity only, not semantic truth."
+}
