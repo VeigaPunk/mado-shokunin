@@ -1941,3 +1941,7 @@ Append-only disposition: this section records the moved pins and their re-measur
 > PROVINCE pins (w2 AtkProvinceLine): `PROVINCE.md` gained the round-19 path-root line, so the
 > "18 L, sha `7aad7b86…`" statements at `:666`/`:747` and the slogan citation `PROVINCE.md:18`
 > at `:391` describe the round-18 file; read the current `PROVINCE.md` bytes instead.
+
+## Round 21 standing-use correction — tripwire limits
+
+The round-20 “Reading tripwire rows” section describes intended bounded treatment, **not** a general proof of restored recall, precision or safe VCS no-writes. At delivered v3.1 `a8960de`, independent residual reviews found invoked partialmethod/recursive-string/callback/global-binding misses, inert-reference false leads, a process-capable stdlib purity hole and quadratic retained environment snapshots. `--ignore-working-copy` and unchanged Git refs do not rule out repository/index/object/config/workspace writes. Read the in-file correction in [`tripwire-precision-r20.md`](corpus/knowledge/tripwire-precision-r20.md#round-21-correction--delivered-round-20-claims-were-too-broad) and `corpus/lessons/round-20-verifier-spotcheck.md` before interpreting the old examples. Preserve 172/175 as a missed historical target; a clean scan or a lead label is never execution authorization. Source-only host pause remains unchanged.

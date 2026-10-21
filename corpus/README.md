@@ -159,3 +159,7 @@ Index completeness does not retire these unresolved surfaces:
   changes is queued for round 21; the round-19 freshness triggers (S003 sections, omarchy
   tags past v3.8.4, elephant/uwsm/hyprland package moves) and the R19-V5 harm-watch
   provenance tail (w2 ConnQueueClose) are still queued.
+
+### Round-21 correction to the tripwire index and frontier
+
+The round-20 row and frontier text describe intended support and bounded historical guards, not a generally restored detector. Read the append-only correction in [`knowledge/tripwire-precision-r20.md`](knowledge/tripwire-precision-r20.md#round-21-correction--delivered-round-20-claims-were-too-broad): the delivered tool retained recall, inert-reference precision, memory and VCS-write regressions documented by the independent round-20 closure. No province surface or runtime behavior was newly verified by that rejected round. Its 172/175 count remains a missed historical target; new independent round-21 populations do not edit those expectations or retroactively admit the capability rows.

@@ -1431,3 +1431,12 @@ Final trend verdicts: expansion improved (sources and evidence), quality harmed
 retained the failures). Round admission is not claimed. Under the operator's wrap-up
 instruction, unresolved behavioral defects are explicitly handed back to Main; no next
 round was started, and no review report is outstanding.
+
+## Round 21 attempt 1 — declared repair claims, before measurement
+
+Base `794aaeb22b4bf35b2482a6779733b69343baff5b`; registration landed `0644c536224847ecbb0b6c530d55d142e24f86c9`, pre-measurement clarification/wave provenance `0caf5f3ef31a38d4dfc5c4a4b586619b2f6ad452`. MANIFEST rounds[387] and `corpus/lessons/round-20-verifier-spotcheck.md` remain authoritative: rounds 19/20 rejected-harmed; no retroactive admission or restored capability is inferred.
+
+- **C1 operability:** actual residual recall/precision/body-binding/VCS/retained-memory repair, independently authored truth population frozen before implementation; score rubric `10 * matching new oracle cases / frozen new oracle cases`. Before and after command and measured revisions will be recorded only after observed runs. No true old finding may be silently lost; every whole-fixture-corpus removed/relabelled row needs adjudication. Resource population is 1000/2000/4000 shallow assignments under a strict 384-MiB address-space cap and 15-second timeout. Same direct `main` wrapper before/after isolates retained snapshots from the CLI's unrelated 512-MiB thread reservation; CLI behavior is checked separately. The unchanged round-20 benchmark stays historical: 172/175, three misses, no target weakening.
+- **C2 calibration (lowest non-retired measured axis), capability acquisition:** a separate artifact-assessment integrity gate, its independently specified valid/invalid fixtures and actual input hashes. It does not run/read C1's classifier or counter; reverting C1 must leave its result unchanged. Before capability absent; after target all frozen artifact expectations, plus red on the actual old wrong-topic SHONEN assessment and green on a canonical corrected assessment. No synthetic permissive baseline or inflated criterion count. Timestamp/provenance checks bound artifact assertions, not omniscient proof that no unrecorded measurement happened.
+
+Planned for this steered round only: seal oracle/resource/corpus populations, measure bounded red, integrate production repairs, final stable checks and independent advisory attacks, then report both actual verdicts. No next round or admission is pre-claimed; no saturation waiver, retirement or exploratory claim.

@@ -1389,3 +1389,11 @@ VCS boundary counterexamples), C2 not independently established. Fixed-populatio
 checks reproduced; live-corpus census cannot be repeated without frozen input.
 Documentation review corrections landed; behavioral findings remain unresolved under
 the operator's wrap-up instruction. No next round started; no installs.
+
+## 2026-10-21 — round 21 attempt 1: registered residual repair
+
+Trigger: non-author round-20 closure `corpus/lessons/round-20-verifier-spotcheck.md` at `794aaeb22b4bf35b2482a6779733b69343baff5b`, MANIFEST rounds[387], rejected-harmed (C1 recall/precision/memory/VCS failures; C2 coupled counter; in-entry false generalization; wrong-topic SHONEN assessment; mutable corpus and late registration). Prior target 175/175 remains missed by three, not rewritten.
+
+Action before implementation/measurements: declaration `0644c536224847ecbb0b6c530d55d142e24f86c9`, provenance/clarification `0caf5f3ef31a38d4dfc5c4a4b586619b2f6ad452`; two causally separate claims in SCORECARD round 21. Wave 1: validated 65 independent oracle/recon items in one unchanged taskCall, L1 planner; actual private external writer worktrees pinned at `0644c536`, read-only advisers own only reports/proposals. Source census start exit 0, four W04 duplicate-URL warnings retained. No implementation or new tool result yet.
+
+Correction landed with this record: the append-only correction inside `corpus/knowledge/tripwire-precision-r20.md` explicitly qualifies recall/sweep claims, preserves true source facts and historical counts, and names the actual residual defects. It does not claim their behavioral repair. Isolation tooling incident and cleanup limitation are preserved at `.ufo/waves/round-21/isolation-incident.json`; no host recovery or tool installation is inferred. Outcomes and measured revisions will be appended after actual observation, never pre-filled.
