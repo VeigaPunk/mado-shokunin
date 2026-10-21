@@ -1673,7 +1673,9 @@ def factory_result(info, call, env, bindings, resolving):
                          for alias in statement.names if alias.name != "*")
     prepare_eval_calls(prefix, local_env, local_bindings, resolving)
     result = callable_info(returned.value, local_bindings, local_env, resolving)
-    if result.get("kind") == "helper":
+    if (result.get("kind") == "helper" and any(
+            part is result.get("node") for statement in owner.body
+            for part in ast.walk(statement))):
         result = dict(result)
         overlay = {name: local_env.get(name, LITERAL_MISS) for name in names}
         overlay.update(result.get("closure_env", {}))
@@ -2405,7 +2407,7 @@ def sweep_class(class_node, bindings, ctx, depth, dunders_only, exclude=()):
 
 
 def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
-                  class_node=None, bound_kind=None):
+                  class_node=None, bound_kind=None, closure_env=None, closure_bindings=None):
     """Follow one helper call with its literal arguments bound (`observed`
     rows), or None when it is not followed: recursion, depth or budget spent,
     or arguments that cannot be bound."""
@@ -2418,6 +2420,8 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
     ctx["descents"] += 1
     body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
     body_bindings = dict(cbindings)
+    if closure_bindings:
+        body_bindings.update(closure_bindings)
     body_bindings.update({
         name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
         for name, value in bound.items()
@@ -2428,6 +2432,9 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         if params:
             body_bindings[params[0].arg] = {"kind": bound_kind, "node": class_node}
     body_env = dict(cenv)
+    if closure_env:
+        body_env.update({name: LITERAL_MISS if mutated_literal(value, cenv) else value
+                         for name, value in closure_env.items()})
     body_env.update(bound)
     calls, refs, body_call_env, body_binding_env = prepare_eval_calls(
         body_nodes, body_env, body_bindings)
@@ -2508,12 +2515,6 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
                     continue
         helper = info.get("node")
-        if "closure_env" in info or "closure_bindings" in info:
-            caller_env = cenv
-            cenv, cbindings = dict(cenv), dict(cbindings)
-            cenv.update({name: LITERAL_MISS if mutated_literal(value, caller_env) else value
-                         for name, value in info.get("closure_env", {}).items()})
-            cbindings.update(info.get("closure_bindings", {}))
         config_arg = (node.args[0] if node.args else
                       next((keyword.value for keyword in node.keywords if keyword.arg == "config"), None))
         if info.get("name") == "logging.config.dictConfig" and config_arg is not None:
@@ -2567,7 +2568,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                 continue
             result = follow_helper(helper, bound_node, cenv, cbindings, ctx, depth,
                                    info.get("skip_first", False),
-                                   info.get("class_node"), info.get("bound_kind"))
+                                   info.get("class_node"), info.get("bound_kind"),
+                                   info.get("closure_env"), info.get("closure_bindings"))
             if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
                     and id(node) not in awaited_calls:
                 # a coroutine created here runs only if something schedules it
