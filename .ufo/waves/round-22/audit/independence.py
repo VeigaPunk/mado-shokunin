@@ -203,6 +203,10 @@ def main():
                 for parent in rel.parents:
                     if (fixtures / parent).is_symlink():
                         raise ValueError('symlink inventory ancestor')
+                if entry['kind'] == 'directory' and not path.exists():
+                    # Git cannot store empty directories. Recreate only the
+                    # directories named in the committed, digest-pinned manifest.
+                    path.mkdir()
                 mode = path.lstat().st_mode
                 if entry['kind'] == 'file':
                     if not stat.S_ISREG(mode):
