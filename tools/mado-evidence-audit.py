@@ -77,8 +77,8 @@ def count(obj, key):
     return value
 
 
-def relative(name):
-    if (not isinstance(name, str) or not name or '\\' in name
+def relative(name, allow_backslash=False):
+    if (not isinstance(name, str) or not name or ('\\' in name and not allow_backslash)
             or PurePosixPath(name).is_absolute()
             or any(part in ('', '.', '..') for part in name.split('/'))):
         raise Invalid('invalid relative path')
@@ -182,7 +182,9 @@ def inventory(root, entries):
             if require(entry, 'kind', str) != 'directory' or root.is_symlink() or not root.is_dir():
                 raise Invalid('invalid inventory root')
             continue
-        rel = relative(name)
+        # POSIX fixture filenames may contain a literal backslash to test that
+        # the snapshot API rejects it; it is never a directory separator here.
+        rel = relative(name, allow_backslash=True)
         path = root / rel
         for parent in rel.parents:
             if (root / parent).is_symlink():

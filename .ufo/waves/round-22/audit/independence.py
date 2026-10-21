@@ -40,9 +40,11 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def relative(value):
+def relative(value, inventory=False):
+    if inventory and value == '.':
+        return Path('.')
     p = PurePosixPath(value)
-    if not value or '\\' in value or p.is_absolute() or any(
+    if not value or ('\\' in value and not inventory) or p.is_absolute() or any(
             part in ('', '.', '..') for part in value.split('/')):
         raise ValueError('unsafe relative path: ' + value)
     return Path(*p.parts)
@@ -170,7 +172,7 @@ def main():
                 raise ValueError('empty or invalid manifest population')
             inventory = set()
             for entry in entries:
-                rel = relative(entry['path'])
+                rel = relative(entry['path'], inventory=True)
                 name = rel.as_posix()
                 if name in inventory:
                     raise ValueError('duplicate inventory path: ' + name)
@@ -197,7 +199,7 @@ def main():
                 else:
                     raise ValueError('unknown inventory kind')
             actual = {p.relative_to(fixtures).as_posix() for p in fixtures.rglob('*')}
-            if actual != inventory | {'expected.json', 'expected.sha256'}:
+            if actual != (inventory - {'.'}) | {'expected.json', 'expected.sha256'}:
                 raise ValueError('fixture inventory not exact')
             fixture_pin = tree_hash(fixtures)
             gate_pin = digest(gate.read_bytes())
