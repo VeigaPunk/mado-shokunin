@@ -163,3 +163,7 @@ Index completeness does not retire these unresolved surfaces:
 ### Round-21 correction to the tripwire index and frontier
 
 The round-20 row and frontier text describe intended support and bounded historical guards, not a generally restored detector. Read the append-only correction in [`knowledge/tripwire-precision-r20.md`](knowledge/tripwire-precision-r20.md#round-21-correction--delivered-round-20-claims-were-too-broad): the delivered tool retained recall, inert-reference precision, memory and VCS-write regressions documented by the independent round-20 closure. No province surface or runtime behavior was newly verified by that rejected round. Its 172/175 count remains a missed historical target; new independent round-21 populations do not edit those expectations or retroactively admit the capability rows.
+
+### Round-21 instrument route
+
+For binding/value-use/partialmethod/process-capability and strict-write boundaries, read [`knowledge/tripwire-binding-boundaries-r21.md`](knowledge/tripwire-binding-boundaries-r21.md) (S116–S118). This is sourced local instrument knowledge, not a newly observed desktop surface or proof of complete safety detection. The separate artifact assessment command is registered in `SKILL.md` as `mado-assessment`; final receipts and advisory attack dispositions, not the first candidate's green rows, govern its capability claim.
