@@ -12,7 +12,7 @@ Re-verification of reused attempt-1 work is listed at the end.
 | AdvDepth | partly falsified: starred/dict-splat/lambda silently drop a spawn | fixed A2 (literal starred binding; unbindable calls and lambdas swept as `lead`) | guards `recall_lost` (silent-only set) |
 | AdvLeadMarks | partly falsified: 11 mis-marked shapes; `globals()` reads fabricate leads | partly fixed A2 (namespace reads no longer reset; `miss-*` shapes found); A1/A2 decorator and `global`-in-helper marks kept as limits | note Limits; tool docstring |
 | AdvPureShapes | partly falsified: 24 pure stdlib `from`-imports emit leads | fixed A2 (stdlib purity by process denylist, S113–S115) | guards `pure_rows` 24→0 |
-| AdvRecallShapes | falsified: 51 real-execution shapes silently missed | fixed A2 (lead sweeps of reached bodies, `importlib` alias) | guards `recall_lost` 52→0; lesson M9 |
+| AdvRecallShapes | falsified: 49 certain real-execution shapes silently missed; one signal-contingent shape and one intentional old false-positive correction are excluded | fixed A2 within this frozen population (lead sweeps, `importlib` alias); later residual reviews found additional regressions | guards `recall_lost` 52→0; lesson M9 |
 | AdvVcsForms | partly falsified: clusters/abbreviations flagged as writes | partly fixed A2 (short clusters); abbreviations and `=false` kept as limits | guards `vcs_fp` 31→20, `vcs_fn` 0→0 |
 | AtkCasesH1 | partly falsified: vacuous case, inert evidence fields | limit: suite pinned at `f3da504`, no post-result edit | SCORECARD A2 results |
 | AtkCasesH2 | partly falsified: 3 vacuous H cases, no cluster negative | limit (pinned suite); cluster negatives now in the a2 guard via AdvVcsForms | guards |
@@ -35,7 +35,7 @@ Re-verification of reused attempt-1 work is listed at the end.
 | CorpusRuntime | partly falsified: one 30 s hang; duplicate observed+lead rows | fixed A2 (recursion guard, budget; same-command lead dedup) | lesson M10; guards `dup_rows` 0 |
 | CriticC1Final | partly falsified: scope-local repair, corpus diff pending | addressed A2 (out-of-suite guard, corpus diff run) | SCORECARD A2 |
 | CriticC2Final | partly falsified: 22/30 conditional; 21/29 conservative | both readings reported | SCORECARD A2 |
-| CriticHarmAxes | partly falsified: note `surface:` head MALFORMED | fixed A2 (`scope:`) | `measure.py` rejected=[] at tip |
+| CriticHarmAxes | partly falsified: note `surface:` head MALFORMED | fixed A2 (`scope:`) at `94b6925`, after tool measurement at `a8960de` | ReviewDocsV3 reproduced `measure.py` rejected=[] at `451c7e41`; the rejection still exists at `a8960de` |
 | CriticHonestyFinal | partly falsified: receipt/mode defects, wording overclaims | mode fixed A1; wording reviewed in A2 rewrite of note/SKILL | — |
 | MutBinding | holds (combined detectors) | — | — |
 | MutEvidence | partly falsified: emitted totals unasserted | limit (counter reads rows, not totals) | — |
