@@ -172,13 +172,29 @@ def selftest(root):
         if hashlib.sha256(read_bytes(rooted(root, row['path']))).hexdigest() != row['sha256']:
             raise Invalid('snapshot_tampered: ' + row['path'])
     expected = load(rooted(root, 'expected.json'))
+    expected_ids = {
+        'late_registration_after_measurement': 'late_registration',
+        'late_registration_after_implementation': 'late_registration',
+        'population_file_mutated': 'population_digest_changed',
+        'oracle_tool_generated_not_independent': 'oracle_not_independent',
+        'expectation_digest_changed': 'expectations_changed',
+        'shonen_x_without_nonauthor': 'unnamed_nonauthor_verifier',
+        'history_suppresses_old_three_misses': 'historical_target_rewritten',
+        'history_round20_admitted_true': 'historical_target_rewritten',
+        'history_c2_independent_true': 'historical_target_rewritten',
+        'round20_wrong_topic_shonen': 'wrong_topic_shonen',
+    }
     results = []
     for case in expected['cases']:
         path = rooted(root, case['fixture'])
         cmd = [sys.executable, '-I', str(Path(__file__).resolve()), '--root', str(root), '--check', str(path)]
         proc = subprocess.run(cmd, text=True, capture_output=True, timeout=10)
         got = json.loads(proc.stdout)
-        passed = proc.returncode == case['expected']['code'] and got['code'] == proc.returncode and got['result'] == case['expected']['result']
+        finding = expected_ids.get(case['id'], 'assessment_clean' if case['expected']['code'] == 0
+                                   else 'assessment_input_invalid')
+        passed = (proc.returncode == case['expected']['code'] and got['code'] == proc.returncode
+                  and got['result'] == case['expected']['result']
+                  and finding in got.get('finding_ids', []))
         results.append({'id': case['id'], 'pass': passed, 'got': got, 'want': case['expected'], 'exit': proc.returncode})
     output = {'code': int(not all(row['pass'] for row in results)), 'result': 'selftest',
               'finding_ids': ['assessment_oracle_match'] if all(row['pass'] for row in results) else ['assessment_oracle_mismatch'],

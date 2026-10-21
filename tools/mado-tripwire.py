@@ -2144,6 +2144,17 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         cenv = env if call_env is None else call_env.get(id(node), {})
         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
         info = callable_info(node.func, cbindings)
+        if isinstance(node.func, ast.Call) and node.args:
+            builder = node.func
+            builder_info = callable_info(builder.func, cbindings)
+            if builder_info.get("name") == "operator.methodcaller" and builder.args:
+                method = literal_value(builder.args[0], cenv)
+                if isinstance(method, str):
+                    callee = node.args[0] if method == "__call__" else ast.Attribute(
+                        value=node.args[0], attr=method, ctx=ast.Load())
+                    invocation = ast.Call(func=callee, args=builder.args[1:], keywords=builder.keywords)
+                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+                    continue
         helper = info.get("node")
         if info.get("capture_owner") is not None:
             captured = bind_literal(info["capture_owner"], info["capture_call"], cenv)
@@ -2306,6 +2317,11 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     continue
                 target_info = ({"kind": "helper", "node": ref} if isinstance(ref, ast.Lambda)
                                else callable_info(ref, rbindings))
+                if target_info.get("kind") == "class":
+                    penv = env if call_env is None else call_env.get(id(parent), {})
+                    take(spawn_scan([ast.Call(func=ref, args=[], keywords=[])],
+                                    penv, rbindings, depth + 1, ctx=ctx))
+                    continue
                 if target_info.get("kind") == "helper":
                     arguments = next((keyword.value for keyword in parent.keywords
                                       if keyword.arg == "args"), ast.Tuple(elts=[], ctx=ast.Load()))
