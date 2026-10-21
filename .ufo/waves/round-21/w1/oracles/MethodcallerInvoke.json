@@ -1,0 +1,16 @@
+{
+  "id": "MethodcallerInvoke",
+  "language": "py",
+  "code": "import operator, subprocess\noperator.methodcaller(\"__call__\", [\"pacman\", \"-Q\", \"r21\"])(subprocess.run)\n",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Invoked methodcaller forwards its bound argv to subprocess.run.__call__, an explicit execution-capable sink.",
+  "source": "/usr/lib/python3.14/operator.py:310-327; CriticPrecisionV3.md:25-30",
+  "author": "MadoR21 static preimplementation known-residual expansion",
+  "category": "pre-existing process-capability hole/control, not mislabeled new regression"
+}

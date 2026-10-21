@@ -1,0 +1,19 @@
+{
+  "id": "ThreadInline",
+  "language": "py",
+  "code": "import subprocess\nimport threading\n\nthreading.Thread(target=lambda: subprocess.run([\"pacman\", \"-Q\", \"r21\"])).start()",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Static semantic expectation, independent of detector output: Thread.start() starts the thread's activity; the default Thread.run() calls the supplied target, so this directly supplied inline lambda is invoked. The lambda passes the exact literal argv [\"pacman\", \"-Q\", \"r21\"] to subprocess.run, which runs the command described by that argument sequence. pacman -Q is a package-database query. The callback and command binding are explicit, with no unresolved callback or recursion, so the evidence is observed rather than lead. This transcript is inert data for the oracle and was not executed.",
+  "source": [
+    "https://docs.python.org/3.14/library/threading.html#threading.Thread.start",
+    "https://docs.python.org/3.14/library/threading.html#threading.Thread.run",
+    "https://docs.python.org/3.14/library/subprocess.html#subprocess.run",
+    "https://man.archlinux.org/man/pacman.8.en.txt"
+  ]
+}

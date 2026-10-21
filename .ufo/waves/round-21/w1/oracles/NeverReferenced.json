@@ -1,0 +1,8 @@
+{
+  "id": "NeverReferenced",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"r21\"])",
+  "want": [],
+  "rationale": "The required preamble is import subprocess. Executing this eval transcript imports the module and binds f, but no code references or calls f after its definition. Python defers execution of the function body until a call, so the visible subprocess.run statement remains unexecuted and no process-spawning path is reached. This no-findings expectation follows from Python execution semantics, not from a tripwire result.",
+  "source": "Python 3.14.8 Language Reference, function definitions: https://docs.python.org/3.14/reference/compound_stmts.html#function-definitions; Execution model, structure of a program: https://docs.python.org/3.14/reference/executionmodel.html#structure-of-a-program"
+}

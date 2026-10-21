@@ -1,0 +1,14 @@
+{
+  "id": "NamespaceLeft",
+  "language": "py",
+  "code": "import subprocess\ncmd = [\"pacman\", \"-S\", \"r21\"]\nglobals() == {}\nsubprocess.run(cmd)",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Static expectation only; this transcript is not executed. At module scope, the assignment binds cmd to the exact literal argument vector in the module namespace. globals() returns that namespace, and comparing it with an empty dict only reads it; the comparison result is discarded and does not rebind or erase cmd. The subsequent direct subprocess.run(cmd) therefore receives the exact vector and follows an explicit process-spawning path. The command pacman -S r21 requests a package installation, so the expected class is host_mutation. Its command and call path are fully resolved, so evidence is observed rather than lead. Executing this transcript would attempt a package transaction and is prohibited.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceNamespace/cpython-v3.14.8-executionmodel.rst:84-96,127-143; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/fetch/SrcPyBuiltins/cpython-3.14.8-Doc-builtins-functions.rst:895-899; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/fetch/SrcPyShlex/subprocess.rst:38-44; https://man.archlinux.org/man/pacman.8.en (pacman -S package synchronization/install semantics)"
+}

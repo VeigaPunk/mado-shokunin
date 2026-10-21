@@ -1,0 +1,25 @@
+{
+  "id": "CrossCell",
+  "language": "py",
+  "cells": [
+    {
+      "language": "py",
+      "code": "import subprocess\n\ndef query_package(name):\n    subprocess.run([\"pacman\", \"-Q\", name])\n",
+      "reset": false
+    },
+    {
+      "language": "py",
+      "code": "query_package(\"r21\")\n",
+      "reset": false
+    }
+  ],
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "The first cell binds query_package in the shared Python session and binds subprocess through its import. Both cells specify reset:false, so the second-cell call resolves that same helper. Its literal argument \"r21\" binds the formal parameter name; the body places that value unchanged in the argv vector [\"pacman\", \"-Q\", name] and passes it directly to subprocess.run. This is a statically explicit, directly invoked process path with no unresolved callback or recursion, so the exact command is observed rather than a lead. pacman -Q queries package information, making the class package_query; whether r21 is installed does not alter the command's meaning. This is inert transcript data and was not executed.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/registration.md:7,13-16 (oracle expectations are semantic and transcript code is not executed); /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceNamespace/cpython-v3.14.8-executionmodel.rst:55-93,113-124 (function/parameter binding and name resolution); /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md:120,123 (pinned CPython subprocess and execution-model source identities); https://docs.python.org/3.14/library/subprocess.html#subprocess.run (run executes the command described by args); https://man.archlinux.org/man/pacman.8.en (-Q/--query queries installed packages)"
+}

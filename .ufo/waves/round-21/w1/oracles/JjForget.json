@@ -1,0 +1,14 @@
+{
+  "id": "JjForget",
+  "language": "bash",
+  "code": "jj --ignore-working-copy bookmark forget probe",
+  "want": [
+    {
+      "class": "vcs_write",
+      "command": "jj --ignore-working-copy bookmark forget probe",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "The --ignore-working-copy flag does not make this mutating bookmark command read-only. The committed round-20 ReviewVcsV3 measurement reports that jj bookmark forget probe exited successfully and the previously created local bookmark was absent from the subsequent bookmark list, despite --ignore-working-copy. Forgetting that repository bookmark is a repository-state write, so the expected semantic class is vcs_write.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewVcsV3.md:14-20,53"
+}

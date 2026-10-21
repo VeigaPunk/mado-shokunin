@@ -1,0 +1,8 @@
+{
+  "id": "r21-c1-ReturnAnnotation",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\ndef g() -> f:\n    pass",
+  "want": [],
+  "rationale": "Without postponed annotations, defining g evaluates f to obtain the return-annotation value. This is a name lookup yielding the function object, not a call to f. Defining f does not execute its deferred body, and neither f nor g is invoked; therefore subprocess.run is never reached and the transcript has no process-spawning path. The required preamble is import subprocess. No class C or methods are relevant to this exact return-annotation shape. The empty expectation follows from Python semantics, not a tool outcome.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:11 (case 16 identifies a return annotation naming f as a false lead; the expected result is independently derived from Python semantics)"
+}

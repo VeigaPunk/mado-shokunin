@@ -1,0 +1,10 @@
+{
+  "id": "ClassTargetDormant",
+  "language": "py",
+  "code": "import subprocess, threading\nclass C:\n    def never_called(self):\n        subprocess.run([\"pacman\", \"-S\", \"r21\"])\nthreading.Thread(target=C).start()\n",
+  "want": [],
+  "rationale": "Thread calls C as a constructor; with no spawning initializer it never invokes never_called.",
+  "source": "corpus/lessons/round-20-verifier-spotcheck.md; .ufo/waves/round-20/a2/review/; static language semantics; S105/S106/S111/S116/S117 as applicable",
+  "author": "MadoR21 (L1 static recovery; not production classifier author)",
+  "recovery": "No dead seat was revived or replaced. Proposal authored before classifier implementation or measurements."
+}

@@ -1,0 +1,14 @@
+{
+  "id": "JjReadIwc",
+  "language": "bash",
+  "code": "jj --ignore-working-copy log",
+  "want": [
+    {
+      "class": "vcs_write",
+      "command": "jj --ignore-working-copy log",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Reject the proposed universal clean expectation. In jj v0.45.1, log calls workspace_helper; --ignore-working-copy disables the working-copy snapshot path, but repo loading still calls get_index_at_op. When the operation's index association is missing, or the index is corrupt/not found, get_index_at_op rebuilds the index; build_index_at_operation saves index segments and associates them with the operation. The assignment's write boundary counts repository index writes, so this reachable path is vcs_write even though it is conditional and no runtime invocation was performed here. Separately, operation-head resolution can reconcile divergent heads through a transaction. This does not claim every invocation writes: with a valid index and one operation head, these conditional paths are not taken.",
+  "source": "jj v0.45.1 tag commit 7c41cdeb16b6b321c64e789a966b6adf723816a5: cli/src/commands/log.rs:133-140; cli/src/cli_util.rs:474-490,532-565,801-833; lib/src/repo.rs:899-916; lib/src/default_index/store.rs:342-343,457-478,519-559; lib/src/transaction.rs:135-171; lib/src/op_heads_store.rs:96-109,146-160. S103 in corpus/SOURCES.md records the exact cli_util.rs digest."
+}

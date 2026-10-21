@@ -1,0 +1,14 @@
+{
+  "id": "JjRemote",
+  "language": "bash",
+  "code": "jj --ignore-working-copy git remote add origin local.git",
+  "want": [
+    {
+      "class": "write",
+      "command": "jj --ignore-working-copy git remote add origin local.git",
+      "evidence": "Observed in committed round-20 ReviewVcsV3: the `jj git remote add origin ...` case succeeded with `--ignore-working-copy` and changed the repository's Git remote configuration. This is a repository-config write even though working-copy snapshotting is suppressed."
+    }
+  ],
+  "rationale": "Classify as write because adding a jj Git remote changes repository configuration. `--ignore-working-copy` suppresses working-copy snapshot/update behavior, not repository configuration mutation. The registered semantic boundary counts repository config writes.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewVcsV3.md:14-20,52"
+}

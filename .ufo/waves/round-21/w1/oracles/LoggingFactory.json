@@ -1,0 +1,16 @@
+{
+  "id": "LoggingFactory",
+  "language": "py",
+  "code": "import logging.config, subprocess\nlogging.config.dictConfig({\"version\": 1, \"handlers\": {\"probe\": {\"()\": subprocess.run, \"args\": [\"pacman\", \"-Q\", \"r21\"]}}})\n",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "The () factory is called with kwargs, here subprocess.run(args=literalargv); later logging type errors do not undo the already issued factory call.",
+  "source": "/usr/lib/python3.14/logging/config.py:481-493; CriticPrecisionV3.md:25-30",
+  "author": "MadoR21 static preimplementation known-residual expansion",
+  "category": "pre-existing process-capability hole/control, not mislabeled new regression"
+}

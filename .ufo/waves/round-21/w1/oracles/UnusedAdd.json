@@ -1,0 +1,8 @@
+{
+  "id": "C1-OracleUnusedAdd",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"], capture_output=True)\n\nclass C:\n    def __add__(self, other):\n        return f()\n\nC()",
+  "want": [],
+  "rationale": "Static Python semantics: C() constructs an instance but performs no binary addition, so the class's __add__ method is not invoked. The class defines no explicit constructor, and construction does not call f; f is reachable only through the unused __add__ body. The visible subprocess.run call is therefore not reached, and the expected result is no findings. The subprocess import is the complete preamble required by this single eval cell.",
+  "source": "Independently authored by MadoR21.OracleUnusedAdd; semantic precedent: .ufo/waves/round-20/a2/review/CriticPrecisionV3.md:10-13 (false lead for constructing C without using __add__)."
+}

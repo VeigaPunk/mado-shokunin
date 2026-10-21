@@ -1,0 +1,14 @@
+{
+  "id": "NamespaceRight",
+  "language": "py",
+  "code": "import subprocess\ncmd = [\"pacman\", \"-S\", \"r21\"]\n{} == globals()\nsubprocess.run(cmd)",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Static expectation only; this transcript is not executed. At module scope, the assignment binds cmd in the module namespace. The discarded comparison {} == globals() reads the module namespace and does not rebind cmd. The following direct subprocess.run(cmd) therefore receives the exact literal argv and is an explicit process-spawning path, so its evidence is observed rather than lead. pacman -S r21 requests a package installation/host mutation. Executing this transcript would attempt that transaction and is prohibited.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceNamespace/cpython-v3.14.8-executionmodel.rst:84-96,127-143; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/fetch/SrcPyBuiltins/cpython-3.14.8-Doc-builtins-functions.rst:895-899; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/fetch/SrcPyShlex/subprocess.rst:38-44; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewV3Diff.md:43-44 (shape precedent only)"
+}

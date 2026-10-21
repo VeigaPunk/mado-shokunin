@@ -1,0 +1,14 @@
+{
+  "id": "JjWorkspace",
+  "language": "bash",
+  "code": "jj --ignore-working-copy workspace add new-workspace",
+  "want": [
+    {
+      "class": "vcs_write",
+      "command": "jj --ignore-working-copy workspace add new-workspace",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Classify as a VCS write even though --ignore-working-copy makes this workspace-add form fail: committed ReviewVcsV3 evidence measured the command creating the destination and registering the workspace before it exited 1. Workspace-state mutation counts as a write; no ref update is required.",
+  "source": ".ufo/waves/round-20/a2/review/ReviewVcsV3.md:14-20 (especially line 18); committed measurement of jj -R ws --ignore-working-copy workspace add workspace-added, including exit 1 and the observed destination/workspace registration."
+}

@@ -1,0 +1,8 @@
+{
+  "id": "r21-c1-GetattrName",
+  "language": "py",
+  "code": "import subprocess\nf = subprocess.run\ngetattr(f, \"__name__\")",
+  "want": [],
+  "rationale": "Static semantic expectation: importing subprocess and binding f to subprocess.run obtain a function reference; they do not call it. getattr(f, \"__name__\") reads the function's metadata name and does not invoke f. Since subprocess.run starts a child only when called, this transcript has no process-spawning path and should produce no findings. The required preamble is import subprocess. No class C or constructor is needed for this shape. The expected result follows from Python call and attribute-lookup semantics, not a tripwire outcome.",
+  "source": "https://docs.python.org/3.14/library/subprocess.html#subprocess.run; https://docs.python.org/3.14/library/functions.html#getattr; https://docs.python.org/3.14/reference/datamodel.html#user-defined-functions; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:10-13 (historical shape provenance only; the empty expectation is independently derived from Python semantics)"
+}

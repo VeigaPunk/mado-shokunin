@@ -1,0 +1,19 @@
+{
+  "id": "ResetBoundary",
+  "language": "py",
+  "cells": [
+    {
+      "language": "py",
+      "code": "import subprocess\n\ndef invoke(argv):\n    subprocess.run(argv)\n",
+      "reset": false
+    },
+    {
+      "language": "py",
+      "code": "invoke([\"pacman\", \"-Q\", \"r21\"])\n",
+      "reset": true
+    }
+  ],
+  "want": [],
+  "rationale": "The first cell only imports subprocess and defines invoke; it does not call the helper. The reset:true marker applies before the second cell, so the second cell runs without the prior cell's global binding for invoke. Evaluating invoke therefore raises NameError before the previous helper body can call subprocess.run. The literal argv list is only data at this call site and does not provide evidence that any process is launched. No finding is expected. This expectation follows from the specified reset boundary and Python name-resolution semantics, not from a detector result.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1-spec.json (OracleResetBoundary assignment specifies reset:true before the call); /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceNamespace/cpython-v3.14.8-executionmodel.rst:113-124 (unresolved names raise NameError)"
+}

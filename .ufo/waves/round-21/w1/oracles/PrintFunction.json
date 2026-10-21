@@ -1,0 +1,8 @@
+{
+  "id": "r21-c1-PrintFunction",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\nprint(f)\n",
+  "want": [],
+  "rationale": "Static semantic expectation: defining f creates a function object but does not execute its body. Builtin print formats this ordinary function object; it neither calls f nor passes it to a callback. Therefore subprocess.run is unreachable in this transcript and the correct expected findings are empty. No class C is needed for the requested print(f) shape, so no constructor or unrelated class methods are introduced. This is consistent with the independent round-20 precision review's explanation that print(f) is a value-only use, not a call.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:5-13; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewV3Diff.md:46-57"
+}

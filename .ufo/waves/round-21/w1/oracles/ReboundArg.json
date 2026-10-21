@@ -1,0 +1,19 @@
+{
+  "id": "ReboundArg",
+  "language": "py",
+  "code": "import subprocess\n\ndef run(argv):\n    subprocess.run(argv)\n\nrun([\"pacman\", \"-Q\", \"hyprland\"])\nrun([\"pacman\", \"-Q\", \"waybar\"])\n",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q hyprland",
+      "evidence": "observed"
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q waybar",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "At module execution, run is defined before either call. Each call supplies a separate literal argv list that binds to argv; run passes that bound list directly to subprocess.run without mutation, indirection, callbacks, or recursion. Both process invocations therefore have exact, independently known commands and must remain represented: pacman -Q hyprland and pacman -Q waybar. -Q denotes package queries, so both findings are package_query. Their paths are statically followed through the visible helper, so evidence is observed rather than lead. The code is inert transcript data here and was not executed.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md:120,123; /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/tripwire-precision-r20.md:27; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/precision/expected.json:1028-1035"
+}

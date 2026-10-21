@@ -1,0 +1,20 @@
+{
+  "id": "JjReadSnapshot",
+  "language": "bash",
+  "code": "jj log",
+  "want": [
+    {
+      "class": "vcs_write",
+      "command": "jj log",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Retain the proposed write expectation, conditionally: in a writable jj workspace whose working-copy tree differs from the recorded working-copy commit, `jj log` follows the default snapshot path and writes the changed tree as a rewritten/new commit plus a repository transaction and workspace state. A clean working copy can make this path a no-op; the semantic class is write because the command can perform repository/workspace writes, not merely alter refs. This is grounded in tagged source; no VCS command or runtime measurement was executed.",
+  "source": [
+    "https://github.com/jj-vcs/jj/blob/v0.45.1/cli/src/commands/log.rs#L139",
+    "https://github.com/jj-vcs/jj/blob/v0.45.1/cli/src/cli_util.rs#L461-L500",
+    "https://github.com/jj-vcs/jj/blob/v0.45.1/cli/src/cli_util.rs#L2088-L2225",
+    "https://github.com/jj-vcs/jj/blob/v0.45.1/docs/working-copy.md#L9-L12",
+    ".ufo/waves/round-20/a2/review/ReviewVcsV3.md#L43-L45"
+  ]
+}

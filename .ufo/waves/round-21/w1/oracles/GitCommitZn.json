@@ -1,0 +1,14 @@
+{
+  "id": "GitCommitZn",
+  "language": "bash",
+  "code": "git commit -zn",
+  "want": [
+    {
+      "class": "write",
+      "command": "git commit -zn",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Classify this exact form as a repository write. Committed ReviewVcsV3 evidence measured `git commit -zn` in a fresh Git 2.56.0 repository with a staged tracked-file modification: it exited 0 and emitted NUL-terminated status, HEAD remained unchanged, but `.git/index` changed and an unreferenced tree object was created. Index and object-database mutations count as writes; a ref update is not required. This expectation is grounded in that prior committed observation, not a command execution in this assignment.",
+  "source": ".ufo/waves/round-20/a2/review/ReviewVcsV3.md:22-29,59"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "ImapStream",
+  "language": "py",
+  "code": "import imaplib\n\nimaplib.IMAP4_stream([\"loginctl\"])\n",
+  "want": [
+    {
+      "class": "live_probe",
+      "command": "loginctl:list-sessions",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "IMAP4_stream.__init__ binds the exact list to self.command and calls IMAP4.__init__(self). The base initializer calls self.open(...); dynamic dispatch reaches IMAP4_stream.open, which directly calls subprocess.Popen(self.command, ..., shell=True). On POSIX, for shell=True with a sequence, the first element is the shell command string, so this one-element list launches loginctl. systemd registers list-sessions as loginctl's default no-argument verb, a session-listing probe; thus the canonical command is loginctl:list-sessions and its class is live_probe. This is a direct, explicitly bound constructor path, with no unresolved callback or recursion, so the expected evidence level is observed. That label describes the statically explicit path, not a claim of live execution; this transcript was not executed.",
+  "source": [
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceImap/imaplib-v3.14.8.py:202-224,1795-1814",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/sources/SourceImap/receipt.json",
+    "https://docs.python.org/3.14/library/subprocess.html#popen-constructor",
+    "https://github.com/systemd/systemd/blob/main/src/login/loginctl.c#L279",
+    "https://github.com/systemd/systemd/blob/main/src/shared/verbs.h#L107-L108"
+  ]
+}

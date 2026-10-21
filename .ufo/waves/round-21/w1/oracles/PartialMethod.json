@@ -1,0 +1,14 @@
+{
+  "id": "PartialMethod",
+  "language": "py",
+  "code": "import functools\nimport subprocess\n\ndef worker(self):\n    subprocess.run([\"pacman\", \"-Q\", \"r21\"])\n\nclass C:\n    run = functools.partialmethod(worker)\n\nC().run()",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "The class-body assignment stores a partialmethod around the visible module-level function. On C().run(), partialmethod delegates descriptor binding to worker, binding the C instance as self; invoking the resulting callable enters worker and reaches subprocess.run with the exact literal argv [\"pacman\", \"-Q\", \"r21\"]. No callback or recursive uncertainty remains, so the expected evidence is observed rather than lead. This expectation is derived from Python binding and call semantics, independently of any detector result.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticRecallV3.md:27-41 (prior report identifies this invoked partialmethod shape; the expected r21 command and observed classification here are independently derived from the supplied code); https://docs.python.org/3.14/library/functools.html#functools.partialmethod"
+}

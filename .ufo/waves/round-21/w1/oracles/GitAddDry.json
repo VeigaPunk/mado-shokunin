@@ -1,0 +1,25 @@
+{
+  "id": "GitAddDry",
+  "language": "bash",
+  "code": "git add -nv new.txt",
+  "want": [
+    {
+      "class": "clean",
+      "command": "git add -nv new.txt",
+      "evidence": "Committed round-20 ReviewVcsV3 per-form table row 8 (line 56) measured this exact form on Git 2.56.0 in a fresh repo with an untracked existing new.txt: \"No repo change; printed add 'new.txt'.\" — no object, index, ref, config, or workspace write; the same report (line 45) defines clean as no per-line finding and records the host git version as 2.56.0."
+    }
+  ],
+  "rationale": "Retain the proposed clean expectation, scoped to this exact form and boundary (repository object/index/config/workspace writes count; refs are not the boundary). Tagged source git v2.56.0 (the measured host version): builtin/add.c:262 binds -n via OPT__DRY_RUN to show_only; builtin/add.c:571-576 sets ADD_CACHE_PRETEND from show_only; read-cache.c:734 makes hash_flags 0 under PRETEND so index_path (read-cache.c:792-795) hashes new.txt without INDEX_WRITE_OBJECT, writing no blob; read-cache.c:807-808 discards the cache entry instead of calling add_index_entry, so the in-memory index never changes and write_locked_index with SKIP_IF_UNCHANGED (builtin/add.c:690-692) leaves .git/index untouched; the only effect is the verbose print add 'new.txt' (read-cache.c:810) and exit 0. The clean class is form-specific, not a dry-run guarantee: the sibling dry-run form git add -Nn new.txt wrote an unreferenced empty blob (ReviewVcsV3 row 15, line 63) because the intent-to-add path calls odb_write_object unconditionally (read-cache.c:719-725) before PRETEND is consulted. At the older tool revision 28c6837 this line was flagged vcs_write:git:add (ReviewVcsV3 line 56), a precision false positive against the measured no-write behavior; a8960de's clean observation agrees with measured behavior.",
+  "source": [
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewVcsV3.md:26,45,56-57,63",
+    "https://github.com/git/git/blob/v2.56.0/builtin/add.c#L242",
+    "https://github.com/git/git/blob/v2.56.0/builtin/add.c#L262",
+    "https://github.com/git/git/blob/v2.56.0/builtin/add.c#L571-L576",
+    "https://github.com/git/git/blob/v2.56.0/builtin/add.c#L674-L676",
+    "https://github.com/git/git/blob/v2.56.0/builtin/add.c#L690-L692",
+    "https://github.com/git/git/blob/v2.56.0/read-cache.c#L719-L725",
+    "https://github.com/git/git/blob/v2.56.0/read-cache.c#L728-L734",
+    "https://github.com/git/git/blob/v2.56.0/read-cache.c#L792-L795",
+    "https://github.com/git/git/blob/v2.56.0/read-cache.c#L807-L810"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "CallbackGlobal",
+  "language": "py",
+  "code": "import subprocess\nimport threading\n\nargv = [\"pacman\", \"-S\", \"r21\"]\n\ndef worker():\n    subprocess.run(argv)\n\nthreading.Thread(target=worker).start()",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "The module-level argv is bound to the literal vector [\"pacman\", \"-S\", \"r21\"]. Thread receives the visible worker function as its target; calling start starts that thread, whose run path invokes the target. worker resolves the module-level argv and passes it to subprocess.run, so the exact pacman command is on a statically explicit execution path. This is observed, not a lead: the callback and argument binding are resolved rather than conservatively opaque. The snippet is transcript data only and was not executed.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewV3Diff.md:18-30 (regression-shape provenance only); https://docs.python.org/3.14/library/threading.html (Thread target/start semantics); https://docs.python.org/3.14/library/subprocess.html#subprocess.run (run executes the command described by args)"
+}

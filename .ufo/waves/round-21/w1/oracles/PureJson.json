@@ -1,0 +1,8 @@
+{
+  "id": "PureJson",
+  "language": "py",
+  "code": "import json\nimport subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"r21\"])\n\nclass C:\n    def __add__(self, other):\n        f()\n\nC()\njson.dumps([\"pacman\", \"-Q\", \"r21\"])\n",
+  "want": [],
+  "rationale": "The required preamble is import json for json.dumps and import subprocess for f. f visibly contains subprocess.run, but its only reference is inside C.__add__, which this transcript never invokes. C() constructs an instance using inherited object initialization; it does not invoke __add__, and C defines no constructor that spawns. The final json.dumps call serializes a built-in list of strings and returns JSON text; it does not interpret the strings as argv or launch pacman. Therefore no process-spawning path executes and no finding is expected. This expectation is derived from Python execution and json serialization semantics, not a tool outcome.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:11 (unused __add__ false-lead shape) and /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/w1/cases/CasePureFormatters/cases.json:18-23 (json.dumps serialization shape); both are provenance only, not authority for the expected result"
+}

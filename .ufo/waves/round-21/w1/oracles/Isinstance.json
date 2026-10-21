@@ -1,0 +1,8 @@
+{
+  "id": "Isinstance",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\nclass C:\n    def __instancecheck__(self, instance):\n        return f()\n\nisinstance(object(), C)\n",
+  "want": [],
+  "rationale": "Static semantic expectation: the expression constructs a plain object and asks whether it is an instance of C; it does not construct C or call f. The special isinstance hook is looked up on type(C), which is the builtin type here, not on C itself, so the ordinary __instancecheck__ method defined in C's body is not invoked. Its only call to f therefore remains unreachable, and f's subprocess.run body is deferred as well. C defines no constructor, so it cannot spawn during class construction or object creation. The required preamble is import subprocess. This expected empty result follows from Python semantics, not a tripwire run.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:10-13 (records the exact isinstance(object(), C) value-only false-lead shape; expected result is independently derived from Python semantics); https://docs.python.org/3.14/library/functions.html#isinstance; https://docs.python.org/3.14/reference/datamodel.html#customizing-instance-and-subclass-checks"
+}

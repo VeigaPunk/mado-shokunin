@@ -1,0 +1,14 @@
+{
+  "id": "ShadowPrint",
+  "language": "py",
+  "code": "import subprocess\nprint = lambda x: subprocess.run(x)\nprint([\"pacman\", \"-Q\", \"r21\"])\n",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Static Python semantics: importing subprocess binds the module name. The assignment rebinds the module-level name print to the lambda, so the following print(...) resolves to that lambda rather than the builtin. Its parameter x receives the literal argument vector [\"pacman\", \"-Q\", \"r21\"], and the lambda immediately passes that vector to subprocess.run. Thus the exact pacman -Q r21 command is on a direct, fully bound execution path: classify it as package_query with observed evidence, not lead. This inert transcript is data only and was not executed.",
+  "source": "https://docs.python.org/3.14/reference/simple_stmts.html#assignment-statements (assignment rebinds names); https://docs.python.org/3.14/reference/expressions.html#lambda (lambda expression); https://docs.python.org/3.14/library/subprocess.html#subprocess.run (run executes the command described by args; a sequence supplies program arguments)"
+}

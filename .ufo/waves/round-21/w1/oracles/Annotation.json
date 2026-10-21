@@ -1,0 +1,8 @@
+{
+  "id": "Annotation",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\nannotation: f",
+  "want": [],
+  "rationale": "At module scope, the annotated assignment evaluates f as the annotation value, but does not call f. The subprocess.run call is inside f's deferred function body, which is never invoked by this transcript. Therefore the transcript has no process-spawning path and should produce no findings. The required preamble is import subprocess. This expectation follows from Python annotation and function-call semantics, not a tripwire outcome. No class C is needed for this variable-annotation case.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:11 (case 6 records the variable-annotation false lead; source establishes the shape, while the expected result is independently derived from Python semantics)"
+}

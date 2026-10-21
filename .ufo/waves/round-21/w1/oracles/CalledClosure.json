@@ -1,0 +1,14 @@
+{
+  "id": "CalledClosure",
+  "language": "py",
+  "code": "import subprocess\n\ndef outer(argv):\n    def inner():\n        subprocess.run(argv)\n    return inner\n\nouter([\"pacman\", \"-Q\", \"w2shape\"])()",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q w2shape",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Calling outer with the literal list binds that list to its argv parameter. The returned inner function closes over that binding; the immediately following () invokes inner, which reaches subprocess.run(argv) with exactly [\"pacman\", \"-Q\", \"w2shape\"]. This is a directly visible, statically determined call path, not an unresolved callback or recursive path, so the expected evidence is observed. The command/category expectation follows from the supplied code and Python closure/call semantics, not from detector output. This proposal is inert as stored transcript data and was not executed.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/w2/AdvRecallShapes/fixtures/ar25-returned-closure-bound.jsonl:1 (prior returned-closure call shape); https://docs.python.org/3.14/reference/executionmodel.html#resolution-of-names"
+}

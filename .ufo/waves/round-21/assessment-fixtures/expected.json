@@ -1,0 +1,182 @@
+{
+  "schema": "mado-r21-assessment-oracle-v1",
+  "purpose": "Independent artifact-only oracle for the round-21 registration-integrity capability; this defines expected classifications and does not implement or run a gate.",
+  "author": "MadoR21.FixtureAssessment",
+  "precondition": "The capability is absent before the new gate. No permissive historical baseline is asserted or manufactured.",
+  "input_contract": {
+    "required_top_level_fields": [
+      "registration_time",
+      "implementation_time",
+      "measurements",
+      "population",
+      "oracle",
+      "shonen",
+      "history"
+    ],
+    "population_digest_rule": "For each population.path, compute SHA-256 from the file bytes and compare it with sha256. actual_sha256 is advisory fixture provenance only and is not authority for the computed digest.",
+    "timestamp_rule": "Fixture timestamps are synthetic RFC3339 ordering assertions, not authenticated wall-clock evidence. Registration must precede every measurement and implementation timestamp.",
+    "shonen_rule": "Exactly one assessment row per canonical box 1 through 4; marks are ~ or x; evidence is nonempty. An x requires an explicitly named non-author verifier. A structurally complete but semantically wrong-topic four-row assessment fails.",
+    "history_rule": "The unchanged round-20 comparison is target 175, pass 172, admitted false, and C2 independent false."
+  },
+  "code_map": [
+    {
+      "code": 0,
+      "result": "clean",
+      "meaning": "Complete, well-formed artifact satisfying the registered integrity and assessment requirements."
+    },
+    {
+      "code": 1,
+      "result": "failed",
+      "meaning": "Complete enough to evaluate, but a registration-integrity or assessment requirement is violated."
+    },
+    {
+      "code": 2,
+      "result": "could-not-evaluate",
+      "meaning": "Malformed, incomplete, or ambiguous input prevents a trustworthy evaluation; it must never be reported clean."
+    }
+  ],
+  "population_files": [
+    {
+      "path": "snapshots/population-baseline.txt",
+      "registered_sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed",
+      "observed_fixture_sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"
+    },
+    {
+      "path": "snapshots/population-mutated.txt",
+      "registered_sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed",
+      "observed_fixture_sha256": "c02069a203b8c1306e61b8470c8fe916e08fd5db23fd433c95b6f87ed82e84fc"
+    }
+  ],
+  "historical_wrong_topic_transcription": {
+    "source": "/home/vgpnk/Projects/shokunin/.ufo/reports/round-20/mado.md:65-68",
+    "rows_preserved_as_inert_evidence_text": [
+      "[~] claims measured with receipts — `.ufo/waves/round-20/a2/evidence/`",
+      "[~] no axis harmed — harm-watch PASS `a2/evidence/harm/harm-watch-summary.txt`",
+      "[~] sources curated — S113–S115, census exit 0",
+      "[~] mistake mined — lesson M9–M15"
+    ],
+    "classification": "failed: four topics do not assess the four canonical SHONEN boxes"
+  },
+  "cases": [
+    {
+      "id": "baseline_valid",
+      "fixture": "cases/baseline_valid.json",
+      "expected": {"code": 0, "result": "clean"},
+      "reason": "All required artifacts are present; registration precedes measurement and implementation; the actual population file matches its frozen digest; oracle hashes match; four unique canonical boxes have nonempty evidence and ~ marks; round-20 history is disclosed unchanged."
+    },
+    {
+      "id": "late_registration_after_measurement",
+      "fixture": "cases/late_registration_after_measurement.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The artifact timestamp for registration is later than its measurement timestamp, so the result was not preregistered relative to that measurement."
+    },
+    {
+      "id": "late_registration_after_implementation",
+      "fixture": "cases/late_registration_after_implementation.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The artifact timestamp for registration is later than implementation_time, so registration did not precede implementation."
+    },
+    {
+      "id": "population_file_mutated",
+      "fixture": "cases/population_file_mutated.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The bytes at population.path hash to the mutated file digest, not the frozen sha256. The supplied actual_sha256 is advisory and cannot repair this mismatch."
+    },
+    {
+      "id": "missing_registered_input_sha256",
+      "fixture": "cases/missing_registered_input_sha256.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "The population record lacks its required frozen sha256, so there is no registered digest against which to evaluate the actual file."
+    },
+    {
+      "id": "oracle_tool_generated_not_independent",
+      "fixture": "cases/oracle_tool_generated_not_independent.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The oracle explicitly identifies a tool-generated author and independent=false; a tool's own output is not an independent oracle."
+    },
+    {
+      "id": "expectation_digest_changed",
+      "fixture": "cases/expectation_digest_changed.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The current expectations digest names the deliberately altered expectations source while registered_expectations_sha256 remains bound to the independent expected.json."
+    },
+    {
+      "id": "shonen_missing_box",
+      "fixture": "cases/shonen_missing_box.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "The assessment has no row for box 4, so the required four-box assessment is incomplete."
+    },
+    {
+      "id": "shonen_duplicate_box",
+      "fixture": "cases/shonen_duplicate_box.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "Box 1 occurs twice even though all four box numbers are present; duplicate identities make the assessment ambiguous."
+    },
+    {
+      "id": "shonen_x_without_nonauthor",
+      "fixture": "cases/shonen_x_without_nonauthor.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The structurally complete row marks box 1 x while its evidence says the assessment is author-only and names no non-author verifier."
+    },
+    {
+      "id": "shonen_empty_evidence",
+      "fixture": "cases/shonen_empty_evidence.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "Box 2 has an empty evidence value, leaving a required assessment row unsupported."
+    },
+    {
+      "id": "history_suppresses_old_three_misses",
+      "fixture": "cases/history_suppresses_old_three_misses.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The artifact rewrites the historical 172/175 result as 175/175, suppressing the three unchanged misses."
+    },
+    {
+      "id": "history_round20_admitted_true",
+      "fixture": "cases/history_round20_admitted_true.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "The historical round-20 finding was rejected-harmed and admitted=false; changing admitted to true contradicts the retained disposition."
+    },
+    {
+      "id": "history_c2_independent_true",
+      "fixture": "cases/history_c2_independent_true.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "Round-20 C2 was not causally independent of C1; claiming c2_independent=true falsifies the retained historical ruling."
+    },
+    {
+      "id": "malformed_timestamp",
+      "fixture": "cases/malformed_timestamp.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "registration_time is not a valid timestamp, so ordering cannot be evaluated safely."
+    },
+    {
+      "id": "population_empty",
+      "fixture": "cases/population_empty.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "An empty population supplies no frozen inputs to assess and cannot be considered clean."
+    },
+    {
+      "id": "oracle_author_missing",
+      "fixture": "cases/oracle_author_missing.json",
+      "expected": {"code": 2, "result": "could-not-evaluate"},
+      "reason": "The required oracle author field is absent, leaving provenance incomplete."
+    },
+    {
+      "id": "shonen_x_with_named_nonauthor",
+      "fixture": "cases/shonen_x_with_named_nonauthor.json",
+      "expected": {"code": 0, "result": "clean"},
+      "reason": "This positive control marks one canonical box x and supplies a named non-author verifier in evidence. The verifier name and assessment are synthetic fixture data only, not a real verification claim."
+    },
+    {
+      "id": "round20_wrong_topic_shonen",
+      "fixture": "cases/round20_wrong_topic_shonen.json",
+      "expected": {"code": 1, "result": "failed"},
+      "reason": "This is a four-row transcription of the actual round-20 SHONEN section, but its rows assess claim receipts, no-harm, sources, and mistakes instead of the four canonical promotion boxes."
+    },
+    {
+      "id": "round20_canonical_shonen_corrected",
+      "fixture": "cases/round20_canonical_shonen_corrected.json",
+      "expected": {"code": 0, "result": "clean"},
+      "reason": "This corrected assessment uses the actual four canonical checklist subjects, one per box, with honest ~ marks and evidence. It is the required green counterpart to the rejected historical wrong-topic transcription."
+    }
+  ]
+}

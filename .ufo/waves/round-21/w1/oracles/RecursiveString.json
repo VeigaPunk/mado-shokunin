@@ -1,0 +1,16 @@
+{
+  "id": "RecursiveString",
+  "language": "py",
+  "code": "import subprocess\ndef run(cmd):\n    if cmd == \"safe\":\n        return run(\"pacman -S r21\")\n    return subprocess.run(cmd, shell=True)\nrun(\"safe\")\n",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r21",
+      "evidence": "lead"
+    }
+  ],
+  "rationale": "The literal recursive call reaches a shell-string command. A bounded recursion analysis must retain at least the documented conservative lead with this binding, not claim clean.",
+  "source": "corpus/lessons/round-20-verifier-spotcheck.md; .ufo/waves/round-20/a2/review/; static language semantics; S105/S106/S111/S116/S117 as applicable",
+  "author": "MadoR21 (L1 static recovery; not production classifier author)",
+  "recovery": "No dead seat was revived or replaced. Proposal authored before classifier implementation or measurements."
+}

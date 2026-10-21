@@ -1,0 +1,8 @@
+{
+  "id": "UnusedCall",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\nclass C:\n    def __call__(self):\n        f()\n\nC()  # __call__ is not used",
+  "want": [],
+  "rationale": "Python's C() expression constructs an instance; it does not call that instance's __call__. C defines no __init__, so construction uses inherited object initialization and does not spawn a process. The only reference to f() is inside the uninvoked __call__ method, and f's subprocess.run call is itself inside its deferred function body. Thus the transcript executes no process-spawning path and should have no findings. The required preamble is import subprocess. This expectation follows from Python call semantics, not a tripwire result.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:11 (case 10 identifies the unused-__call__ construction shape; the expected result here is independently derived from Python class-call semantics)"
+}

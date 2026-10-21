@@ -1,0 +1,16 @@
+{
+  "id": "CallbackBoundArgs",
+  "language": "py",
+  "code": "import subprocess, threading\ndef worker(argv):\n    subprocess.run(argv)\nthreading.Thread(target=worker, args=([\"pacman\", \"-S\", \"r21\"],)).start()\n",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r21",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Recognized Thread start invokes its visible target with args; argument binding is explicit. Mere stored targets without start remain distinct conservative leads.",
+  "source": "corpus/lessons/round-20-verifier-spotcheck.md; .ufo/waves/round-20/a2/review/; static language semantics; S105/S106/S111/S116/S117 as applicable",
+  "author": "MadoR21 (L1 static recovery; not production classifier author)",
+  "recovery": "No dead seat was revived or replaced. Proposal authored before classifier implementation or measurements."
+}

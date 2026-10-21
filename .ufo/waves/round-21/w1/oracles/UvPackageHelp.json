@@ -1,0 +1,14 @@
+{
+  "id": "UvPackageHelp",
+  "language": "bash",
+  "code": "uv tool run package-not-executed --help",
+  "want": [
+    {
+      "class": "install",
+      "command": "uv tool run package-not-executed --help",
+      "evidence": "observed"
+    }
+  ],
+  "rationale": "Affirm the proposed install class. With a package operand, `uv tool run` resolves a tool environment; `--help` after the target is forwarded to that tool, not consumed as uv's own help. The tagged uv 0.13.4 tool_run_args test distinguishes these forms: `--help` before `pytest` prints uv help, while `pytest --help` prints pytest help after the test records resolution, preparation, and package installation. This is a tool-acquisition/install action, not a VCS repository write. The class describes the command path; it does not assert that the placeholder package resolves or that this exact command was executed.",
+  "source": "https://github.com/astral-sh/uv/blob/0.13.4/crates/uv/tests/tool/tool_run.rs#L28-L47; https://github.com/astral-sh/uv/blob/0.13.4/docs/guides/tools.md#L15-L56, L166-L167; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/ReviewVcsV3.md:86,96"
+}

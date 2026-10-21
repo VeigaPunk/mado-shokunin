@@ -1,0 +1,8 @@
+{
+  "id": "r21-c1-ReprFunction",
+  "language": "py",
+  "code": "import subprocess\n\ndef f():\n    subprocess.run([\"pacman\", \"-Q\", \"hyprland\"])\n\nrepr(f)\n",
+  "want": [],
+  "rationale": "Static semantic expectation: importing subprocess and defining f do not execute f's body. The unshadowed builtin repr receives an ordinary function object and returns its representation; it does not call f or hand f to a callback. Therefore subprocess.run is unreachable and the transcript should produce no findings. The required preamble is import subprocess so f's deferred body visibly contains a process-spawning call. No class C is needed for repr(f), so there is no constructor or unrelated method to introduce. The negative expectation is independently supported by Python call/representation semantics, not a tool outcome.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/review/CriticPrecisionV3.md:5-13,18"
+}
