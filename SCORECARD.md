@@ -1341,3 +1341,38 @@ tripwire rows — observed vs lead; fail-closed harnesses (round 20)".
 |---|---|---|---|
 | tripwire evidence marker | Tell an observed command from a lead (argv stated, executing body not visible) on every finding row, and drop provably pure data | `python3 -I .ufo/waves/round-20/tw-precision.py 28c6837` (P 66/66, L 17/18); `tw-recall-split.py 28c6837` (5 observed + 1 lead) | 20 |
 | harness fail-closed check | Show whether a stub/namespace harness runs its payload after any of six forced setup failures | `bash .ufo/waves/round-20/isolation-check.sh HARNESS` (`evidence/crit29-*.txt`) | 20 |
+
+## Round 20 — attempt-2 recovery registration (2026-10-21)
+
+Timing, stated plainly: the fixture populations below were committed by attempt 1 and the nine
+`a2/fixtures/` were written before any attempt-2 tool edit, but this text is written after a
+draft repair was developed and measured in a sandbox clone; it lands before that repair.
+
+Attempt 1 (MadoR20) ended without a report after landing `f8576f7` (helper-recovered,
+PHASE2 incident 6) and checkpoints `ed4bf22`, `38d1b36`; recovery coordinator
+MadoR20Recovery reuses that work, claim base `1f7f995`, and holds the planner seat. Its
+wave 2 (78 seats) falsified C1's no-harm reading on populations outside the scored suite,
+all committed by attempt 1 at `f8576f7`/`38d1b36` before this registration:
+AdvRecallShapes (49 certain real-execution shapes found by `9c54c56`/`1f7f995`, silent at
+`28c6837`), AdvDepth/AdvLeadMarks (silent starred/lambda/asyncio shapes), AdvCrash
+(13 transcripts flip to `internal RecursionError` exit 2 where `1f7f995` scans),
+CorpusRuntime (a self-recursive helper costs ~N⁴: 30 s vs 0.07 s), AdvPureShapes (24
+pure-stdlib `from`-import fixtures emit `lead` rows), RevToolDiffVcs (`jj -R git … git
+push` and `jj -R bookmark … bookmark create` missed: measured writes), AdvVcsForms (31
+measured non-writes flagged). C1 is therefore **not admissible at `28c6837`**; the
+attempt-2 repair is part of C1 (same axis, same counter) and is measured by:
+
+- C1 counter unchanged: `python3 -I .ufo/waves/round-20/tw-precision.py REV` (suite pin
+  `f3da504`), target unchanged 175/175; every guard registered at `e629f73` unchanged.
+- New guard counter `python3 .ufo/waves/round-20/a2/a2-guards.py REV --fixtures-rev PIN`
+  over the frozen wave-2 fixture populations (recall 81 files, crash 172, pure 24 named by
+  AdvPureShapes, AdvVcsForms 74 with its measured `truth`) plus nine attempt-2 fixtures
+  (`a2/fixtures/`, written before any attempt-2 tool edit; `dotted-rebind-sp` was rewritten
+  once before measurement because its first text bound `sp` to the stdlib `json` module,
+  whose `run` does not exist — a fixture error, not a tool reading). Admission targets
+  (no harm): `recall_lost` 0 (two exclusions declared by AdvRecallShapes itself: gap04
+  old false positive, ar49 signal-contingent), `crash_flip` 0, `vcs_fn` 0, `dup_rows` 0,
+  `timeouts` none; improvement targets: `pure_rows` 24 → 0, `vcs_fp` 31 → lower,
+  `a2_mismatch` → 0.
+- Whole-corpus diff (`w2/CorpusDiffV2/corpus-diff-v2.py`) from `9c54c56` (registered
+  guard: 0 lost) and from `28c6837` to the attempt-2 tool, every lost row classed.
