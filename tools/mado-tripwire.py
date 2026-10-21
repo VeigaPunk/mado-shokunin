@@ -2452,6 +2452,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
     referenced bodies the call path does not follow (see sweep_body)."""
     hits, unparsed = [], 0
     resolved_callees = set()
+    resolved_consumers = set()
     awaited_calls = set() if awaited_calls is None else awaited_calls
     ctx = new_scan_context() if ctx is None else ctx
 
@@ -2565,11 +2566,16 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             if (bind_literal(helper, bound_node, cenv, info.get("skip_first", False)) is None
                     and binding_failure(bound_node, cenv) == "invalid"):
                 resolved_callees.update(id(part) for part in ast.walk(node.func))
+                resolved_consumers.add(id(node))
                 continue
             result = follow_helper(helper, bound_node, cenv, cbindings, ctx, depth,
                                    info.get("skip_first", False),
                                    info.get("class_node"), info.get("bound_kind"),
                                    info.get("closure_env"), info.get("closure_bindings"))
+            if (result is not None and result[1] == 0
+                    and not any(opaque_statement(part) for part in
+                                ([helper.body] if isinstance(helper, ast.Lambda) else helper.body))):
+                resolved_consumers.add(id(node))
             if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
                     and id(node) not in awaited_calls:
                 # a coroutine created here runs only if something schedules it
@@ -2720,6 +2726,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     take(sweep_body(info["node"], rbindings, ctx, depth,
                                     info.get("class_node"), info.get("bound_kind")))
             continue
+        if isinstance(parent, ast.Call) and id(parent) in resolved_consumers:
+            continue  # its visible body already owns any actual callback use
         if parent not in ("decorator", "invoke"):
             parent_info = callable_info(parent.func, rbindings)
             parent_name = parent_info.get("name", "")

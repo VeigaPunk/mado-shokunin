@@ -155,6 +155,21 @@ def main():
             classifier = regular(stage, relative(CLASSIFIER))
             candidate = classifier.read_bytes()
             classifier_mode = stat.S_IMODE(classifier.stat().st_mode)
+            copies = []
+            for path in sorted(stage.rglob('*.py')):
+                if path.is_symlink() or not path.is_file():
+                    continue
+                raw = path.read_bytes()
+                if (any(line.startswith(b'def scan_file(') for line in raw.splitlines())
+                        and b'MADO_TRIPWIRE' in raw):
+                    copies.append({'path': path.relative_to(stage).as_posix(),
+                                   'sha256': digest(raw)})
+            receipt.update(
+                intervention_scope='active tools/mado-tripwire.py only; not absence of every historical classifier snapshot',
+                classifier_copy_inventory=copies,
+                substituted_paths=[CLASSIFIER],
+                unsubstituted_candidates=[row for row in copies if row['path'] != CLASSIFIER],
+                copy_inventory_selector='tracked staged .py files with column-zero def scan_file( and MADO_TRIPWIRE; heuristic candidate inventory')
             if candidate == baseline:
                 raise ValueError('baseline and changed classifier bytes are equal; no effective intervention')
             fixtures = stage / fixtures_rel
@@ -304,6 +319,9 @@ def main():
                                'FIFO/marker do not detect stat-only, nonblocking reads, or intentional evasion.',
                                'No reverse-direction or oracle-harness intervention is performed by this driver.',
                                'Fixture derivation independence must be established from frozen provenance separately.'])
+            receipt['limitations'].append(
+                'Historical classifier snapshots listed in unsubstituted_candidates remain present; '
+                'base/changed/absent/FIFO/marker state names refer only to the active production path.')
             code = 0 if receipt['pass_intervention'] else 1
     except (OSError, ValueError, KeyError, TypeError, RecursionError,
             subprocess.SubprocessError, tarfile.TarError) as exc:
