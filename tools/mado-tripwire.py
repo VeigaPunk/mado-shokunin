@@ -630,7 +630,7 @@ def classify_jj(args, exempt=True):
         return None
     if exempt and jj_prints_help(args, i):
         return None
-    verb = args[i]
+    verb = {"b": "bookmark", "ci": "commit", "desc": "describe", "st": "status"}.get(args[i], args[i])
     if verb in JJ_WRITE:
         return "jj:" + verb
     if verb == "bookmark":
@@ -646,6 +646,8 @@ def classify_jj(args, exempt=True):
             return "jj:git"  # a dry-run push only snapshots (rule below)
         if sub == "remote" and any(a in ("add", "remove", "rename", "set-url") for a in args[i + 1:]):
             return "jj:git"
+    elif verb == "config" and sub_verb(args, i) in ("set", "unset", "edit"):
+        return "jj:config"
     elif verb == "workspace" and sub_verb(args, i) in ("add", "forget", "update-stale"):
         return "jj:workspace"
     elif verb in JJ_NO_SNAPSHOT:
@@ -704,7 +706,7 @@ def git_prints_or_simulates(verb, pre, rest):
     for f in flags:
         if any(n.startswith(f) and n != f for n in negations):
             return False  # an abbreviated negation: not modelled, stays a write
-        if f == "--dry-run" or (f == "-n" and verb != "commit"):
+        if (f.startswith("--dry") and "--dry-run".startswith(f)) or (f == "-n" and verb != "commit"):
             dry = True  # commit -n is --no-verify
         elif f == "--no-dry-run":
             dry = False
@@ -1018,9 +1020,12 @@ def classify_installer(argv0, args, exempt=True):
         return None
     if exempt and rule is not None and rule[1] == "uv:tool-run":
         positionals = leading_tokens(args, UV_ARG_OPTS, 3)
-        if len(positionals) == 2 and any(a in ("-h", "--help") for a in args) \
+        run_index = positionals[1][0] if len(positionals) >= 2 else len(args)
+        operand_index = positionals[2][0] if len(positionals) >= 3 else len(args)
+        help_args = before_dashdash(args[run_index + 1:operand_index])
+        if any(a in ("-h", "--help") for a in help_args) \
                 and not any(a in ("--from", "--with", "--with-editable") for a in args):
-            return None  # bare uv help, not PACKAGE --help after acquisition
+            return None  # help before PACKAGE belongs to uv, not the fetched tool
     return rule
 
 
@@ -1446,7 +1451,8 @@ def namespace_read_only(parent, call):
     if isinstance(parent, ast.Subscript) and parent.value is call:
         return isinstance(parent.ctx, ast.Load)
     if isinstance(parent, ast.Compare):
-        return parent.left is call or any(item is call for item in parent.comparators)
+        others = [item for item in [parent.left] + parent.comparators if item is not call]
+        return bool(others) and all(isinstance(item, ast.Dict) and not item.keys for item in others)
     return (isinstance(parent, ast.Call) and isinstance(parent.func, ast.Name)
             and parent.func.id in NAMESPACE_READERS
             and any(arg is call for arg in parent.args))
@@ -1508,11 +1514,10 @@ PURE_STDLIB_EXACT = {
     "shlex.join", "shlex.quote", "shlex.split", "typing.NamedTuple",
     "subprocess.list2cmdline",  # argv -> string formatter (S115); never spawns
 }
-# Stdlib modules whose callables can start a process, run code text or call a
-# callable they are handed (os "Process Management", S113; subprocess, S108;
-# threads, timers, exit/finalizer hooks, debuggers, profilers, pickles). A
-# callable from any other stdlib module only computes on the data it is given:
-# a literal argv passed to it is data, never a command (S105-S107, S114).
+# Finite process/callback inventory, not a proof of module-wide purity.
+# Exact formatters and implicit-protocol/callback handling below cover the
+# supported transcript forms. S119 supersedes S113's universal inference:
+# stdlib membership alone cannot establish that a callable never executes code.
 PROCESS_STDLIB = frozenset("""
     os posix nt subprocess pty asyncio multiprocessing concurrent ctypes
     webbrowser pydoc distutils runpy code codeop importlib builtins sys
@@ -1546,8 +1551,8 @@ def spawn_path(path):
                         "imaplib.IMAP4_stream", "uuid._get_command_stdout"))
 
 
-def class_method_info(class_node, method_name, bindings=None):
-    if not isinstance(class_node, ast.ClassDef):
+def class_method_info(class_node, method_name, bindings=None, seen=()):
+    if not isinstance(class_node, ast.ClassDef) or id(class_node) in seen:
         return None
     for member in class_node.body:
         if (isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
@@ -1564,13 +1569,21 @@ def class_method_info(class_node, method_name, bindings=None):
                 isinstance(target, ast.Name) and target.id == method_name
                 for target in member.targets) and isinstance(member.value, ast.Call):
             descriptor = member.value
-            if (dotted(descriptor.func) or "").rsplit(".", 1)[-1] == "partialmethod" \
-                    and descriptor.args and bindings is not None:
+            if bindings is not None and descriptor.args and \
+                    callable_info(descriptor.func, bindings).get("name") == "functools.partialmethod":
                 wrapped = callable_info(descriptor.args[0], bindings)
                 if wrapped.get("kind") == "helper":
                     return dict(wrapped, skip_first=True, class_node=class_node,
                                 bound_kind="instance", fixed_nodes=descriptor.args[1:],
                                 fixed_keywords=descriptor.keywords)
+    if bindings is not None:
+        for base in class_node.bases:
+            info = bindings.get(base.id, {}) if isinstance(base, ast.Name) else {}
+            if info.get("kind") == "class":
+                method = class_method_info(info.get("node"), method_name, bindings,
+                                           seen + (id(class_node),))
+                if method is not None:
+                    return method
     return None
 
 
@@ -1602,6 +1615,8 @@ def callable_info(node, bindings):
         return {"kind": "unresolved", "name": node.id}
     if isinstance(node, ast.Call):
         constructor = callable_info(node.func, bindings)
+        if constructor.get("name") == "typing.cast" and len(node.args) == 2:
+            return callable_info(node.args[1], bindings)
         if constructor.get("name") == "functools.partial" and node.args:
             wrapped = callable_info(node.args[0], bindings)
             if wrapped.get("kind") == "helper":
@@ -1620,12 +1635,21 @@ def callable_info(node, bindings):
             if returned in local:
                 return {"kind": "helper", "node": local[returned],
                         "capture_owner": outer, "capture_call": node}
+            returned_call = next((part.value for part in outer.body
+                                  if isinstance(part, ast.Return) and isinstance(part.value, ast.Call)
+                                  and callable_info(part.value.func, bindings).get("name") == "functools.partial"), None)
+            if returned_call is not None:
+                wrapped = callable_info(returned_call, bindings)
+                if wrapped.get("kind") == "helper":
+                    return dict(wrapped, capture_owner=outer, capture_call=node)
     if isinstance(node, ast.Attribute):
         class_info = None
         if isinstance(node.value, ast.Call):
             class_info = callable_info(node.value.func, bindings)
         elif isinstance(node.value, ast.Name):
             class_info = bindings.get(node.value.id)
+        if class_info is not None and class_info.get("kind") == "scheduled" and node.attr == "start":
+            return dict(class_info, kind="thread_start")
         if class_info is not None:
             if class_info.get("kind") == "instance":
                 method = class_method_info(class_info.get("node"), node.attr, bindings)
@@ -1678,7 +1702,22 @@ def assignment_binding(node, bindings, env):
     if isinstance(node, ast.Call):
         info = callable_info(node.func, bindings)
         if info.get("name") in ("threading.Thread", "threading.Timer"):
-            return {"kind": "scheduled", "node": node}
+            keywords = {keyword.arg: keyword.value for keyword in node.keywords if keyword.arg}
+            timer = info["name"] == "threading.Timer"
+            target = keywords.get("function" if timer else "target",
+                node.args[1] if len(node.args) > 1 else None)
+            args_index, kwargs_index = (2, 3) if timer else (3, 4)
+            arguments = keywords.get("args", node.args[args_index] if len(node.args) > args_index else None)
+            options = keywords.get("kwargs", node.args[kwargs_index] if len(node.args) > kwargs_index else None)
+            return {"kind": "scheduled", "node": node,
+                    "target": callable_info(target, bindings) if target is not None else {"kind": "unknown"},
+                    "args": literal_value(arguments, env) if arguments is not None else (),
+                    "kwargs": literal_value(options, env) if options is not None else {}}
+        if info.get("name") == "operator.methodcaller" and node.args:
+            return {"kind": "methodcaller", "method": literal_value(node.args[0], env),
+                    "args": [literal_value(arg, env) for arg in node.args[1:]],
+                    "keywords": {keyword.arg: literal_value(keyword.value, env)
+                                 for keyword in node.keywords if keyword.arg is not None}}
         returned = callable_info(node, bindings)
         if returned.get("kind") == "helper":
             return returned
@@ -1753,7 +1792,8 @@ def update_bindings(stmt, bindings, env):
         targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
         names = set().union(*(target_names(target) for target in targets))
         for name in names:
-            bindings[name] = dict(resolved) if len(names) == 1 else {"kind": "unknown"}
+            bindings[name] = (dict(resolved) if all(isinstance(target, ast.Name) for target in targets)
+                              else {"kind": "unknown"})
         return
     if isinstance(stmt, ast.Delete):
         for target in stmt.targets:
@@ -1838,11 +1878,22 @@ def eager_calls(nodes):
                     parents[id(part)] = "invoke"
         elif isinstance(node, ast.Compare):
             refs.append((node.left, ("protocol", "__eq__")))
+        elif isinstance(node, ast.BinOp):
+            method = {ast.Add: "__add__", ast.Sub: "__sub__", ast.Mult: "__mul__",
+                      ast.Div: "__truediv__", ast.MatMult: "__matmul__",
+                      ast.Mod: "__mod__", ast.BitOr: "__or__", ast.BitAnd: "__and__"}.get(type(node.op))
+            if method:
+                refs.append((node.left, ("protocol", method)))
         elif isinstance(node, ast.Subscript) and isinstance(node.ctx, ast.Load):
             refs.append((node.value, ("protocol", "__getitem__")))
         elif isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Load):
             refs.append((node.value, ("protocol", "__getattr__")))
         if isinstance(node, ast.Call):
+            for arg in node.args + [keyword.value for keyword in node.keywords]:
+                refs.append((arg, ("argument_protocol", node)))
+            if isinstance(node.func, ast.Name) and node.func.id in ("isinstance", "issubclass") and len(node.args) > 1:
+                refs.append((node.args[1], ("metaclass_protocol",
+                    "__instancecheck__" if node.func.id == "isinstance" else "__subclasscheck__")))
             if isinstance(node.func, ast.Name) and node.func.id in ("print", "repr", "str", "iter", "list", "tuple"):
                 for arg in node.args:
                     refs.append((arg, ("protocol", "__repr__" if node.func.id == "repr"
@@ -1854,12 +1905,12 @@ def eager_calls(nodes):
             for base in node.bases:
                 refs.append((base, ("protocol", "__init_subclass__")))
             for decorator in node.decorator_list:
-                if isinstance(decorator, (ast.Name, ast.Attribute)):
+                if isinstance(decorator, (ast.Name, ast.Attribute, ast.Call)):
                     refs.append((decorator, "decorator"))
                     skip.add(id(decorator))
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for expr in node.decorator_list:
-                if isinstance(expr, (ast.Name, ast.Attribute)):
+                if isinstance(expr, (ast.Name, ast.Attribute, ast.Call)):
                     refs.append((expr, "decorator"))  # applied, not a stored value
                     skip.add(id(expr))
             children = list(node.decorator_list) + [
@@ -1873,6 +1924,8 @@ def eager_calls(nodes):
         else:
             if isinstance(node, ast.Call):
                 calls.append(node)
+                if id(node) in parents:
+                    refs.append((node, parents[id(node)]))
                 skip.add(id(node.func))
                 for arg in node.args + [keyword.value for keyword in node.keywords]:
                     parents.setdefault(id(arg.value if isinstance(arg, ast.Starred) else arg), node)
@@ -1928,12 +1981,17 @@ def bind_literal(fn, call, env=None, skip_first=False):
     for keyword in call.keywords:
         value = literal_value(keyword.value, env)
         if keyword.arg is None:
-            if kwarg is None:
+            if not isinstance(value, dict) or any(not isinstance(key, str) for key in value):
                 return None
-            if not isinstance(value, dict):
-                extra_keywords = LITERAL_MISS
-            elif extra_keywords is not LITERAL_MISS:
-                extra_keywords.update(value)
+            for key, item in value.items():
+                if key in bound:
+                    return None
+                if key in keyword_params:
+                    bound[key] = item
+                elif kwarg is not None:
+                    extra_keywords[key] = item
+                else:
+                    return None
         elif keyword.arg in keyword_params:
             if keyword.arg in bound:
                 return None
@@ -2203,6 +2261,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
     """Follow visible helper calls and classify reachable spawn calls; sweep
     referenced bodies the call path does not follow (see sweep_body)."""
     hits, unparsed = [], 0
+    resolved_callees = set()
     awaited_calls = set() if awaited_calls is None else awaited_calls
     ctx = new_scan_context() if ctx is None else ctx
 
@@ -2217,6 +2276,33 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         cenv = env if call_env is None else call_env.get(id(node), {})
         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
         info = callable_info(node.func, cbindings)
+        if isinstance(node.func, ast.Attribute) and node.func.attr == "start" and isinstance(node.func.value, ast.Call):
+            scheduled = assignment_binding(node.func.value, cbindings, cenv)
+            if scheduled.get("kind") == "scheduled":
+                info = dict(scheduled, kind="thread_start")
+        if info.get("kind") == "thread_start":
+            local_bindings = dict(cbindings)
+            local_bindings["__mado_thread_target__"] = info["target"]
+            arguments = info["args"] if info["args"] is not None else ()
+            options = info["kwargs"] if info["kwargs"] is not None else {}
+            if isinstance(arguments, (list, tuple)) and isinstance(options, dict):
+                invocation = ast.Call(func=ast.Name(id="__mado_thread_target__", ctx=ast.Load()),
+                    args=[ast.Constant(value=value) for value in arguments],
+                    keywords=[ast.keyword(arg=key, value=ast.Constant(value=value))
+                              for key, value in options.items() if isinstance(key, str)])
+                take(spawn_scan([invocation], cenv, local_bindings, depth + 1, ctx=ctx))
+            else:
+                unparsed += 1
+            continue
+        if info.get("kind") == "methodcaller" and node.args and isinstance(info.get("method"), str):
+            callee = node.args[0] if info["method"] == "__call__" else ast.Attribute(
+                value=node.args[0], attr=info["method"], ctx=ast.Load())
+            invocation = ast.Call(func=callee,
+                args=[ast.Constant(value=value) for value in info["args"]],
+                keywords=[ast.keyword(arg=key, value=ast.Constant(value=value))
+                          for key, value in info["keywords"].items()])
+            take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+            continue
         if isinstance(node.func, ast.Call) and node.args:
             builder = node.func
             builder_info = callable_info(builder.func, cbindings)
@@ -2232,18 +2318,44 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         if info.get("capture_owner") is not None:
             captured = bind_literal(info["capture_owner"], info["capture_call"], cenv)
             if captured is not None:
-                cenv = dict(cenv, **captured)
-        if info.get("name") == "logging.config.dictConfig" and node.args:
-            for config in ast.walk(node.args[0]):
-                if not isinstance(config, ast.Dict):
+                captured_env, captured_bindings = dict(cenv), dict(cbindings)
+                captured_env.update(captured)
+                prefix = []
+                for statement in info["capture_owner"].body:
+                    if isinstance(statement, ast.Return):
+                        break
+                    prefix.append(statement)
+                prepare_eval_calls(prefix, captured_env, captured_bindings)
+                cenv, cbindings = captured_env, captured_bindings
+        config_arg = (node.args[0] if node.args else
+                      next((keyword.value for keyword in node.keywords if keyword.arg == "config"), None))
+        if info.get("name") == "logging.config.dictConfig" and config_arg is not None:
+            if isinstance(config_arg, ast.Name):
+                config_arg = cbindings.get(config_arg.id, {}).get("container")
+            if not isinstance(config_arg, ast.Dict):
+                continue
+            sections = {key.value: value for key, value in zip(config_arg.keys, config_arg.values)
+                        if isinstance(key, ast.Constant) and isinstance(key.value, str)}
+            incremental = literal_value(sections.get("incremental", ast.Constant(value=False)), cenv)
+            if incremental is True:
+                continue  # incremental mode changes existing levels, not factories
+            for section in ("formatters", "filters", "handlers"):
+                entries = sections.get(section)
+                if not isinstance(entries, ast.Dict):
                     continue
-                values = {key.value: value for key, value in zip(config.keys, config.values)
-                          if isinstance(key, ast.Constant) and isinstance(key.value, str)}
-                factory = values.get("()")
-                if factory is not None:
-                    invocation = ast.Call(func=factory, args=[],
-                        keywords=[ast.keyword(arg=key, value=value) for key, value in values.items() if key != "()"])
-                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+                for config in entries.values:
+                    if not isinstance(config, ast.Dict):
+                        continue
+                    values = {key.value: value for key, value in zip(config.keys, config.values)
+                              if isinstance(key, ast.Constant) and isinstance(key.value, str)}
+                    factory = values.get("()")
+                    if factory is not None:
+                        invocation = ast.Call(func=factory, args=[],
+                            keywords=[ast.keyword(arg=key, value=value) for key, value in values.items() if key not in ("()", ".")])
+                        result = spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx)
+                        if incremental is LITERAL_MISS:
+                            result = ([tuple(hit[:4]) + ("lead",) for hit in result[0]], result[1])
+                        take(result)
             continue
         if info.get("kind") == "helper" and helper is not None:
             if id(helper) in ctx["stack"]:  # recursion: the body is already in scan
@@ -2269,15 +2381,15 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             if result is None:  # not followed: sweep the body instead
                 result = sweep_body(helper, cbindings, ctx, depth,
                                     info.get("class_node"), info.get("bound_kind"))
+            resolved_callees.update(id(part) for part in ast.walk(node.func))
             take(result)
             continue
         if info.get("kind") == "helper":
             continue
         if info.get("kind") == "class":
             if isinstance(helper, ast.ClassDef):
-                init = next((member for member in helper.body
-                             if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
-                             and member.name == "__init__"), None)
+                init_info = class_method_info(helper, "__init__", cbindings)
+                init = init_info.get("node") if init_info else None
                 followed = ()
                 if init is not None:
                     result = follow_helper(init, node, cenv, cbindings, ctx, depth, True,
@@ -2285,6 +2397,11 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     if result is not None:
                         followed = (id(init),)
                         take(result)
+                if any((dotted(decorator.func if isinstance(decorator, ast.Call) else decorator) or "")
+                       .rsplit(".", 1)[-1] == "dataclass" for decorator in helper.decorator_list):
+                    post = class_method_info(helper, "__post_init__", cbindings)
+                    if post is not None:
+                        take(sweep_body(post["node"], cbindings, ctx, depth, helper, "instance"))
                 # Construction does not invoke every operator/context dunder.
                 for member in helper.body:
                     if isinstance(member, ast.FunctionDef) and member.name in ("__new__", "__del__"):
@@ -2362,23 +2479,45 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         value = call_args[0] if call_args else call_kwargs.get("args", LITERAL_MISS)
         argv = argv_strings(value)
         if argv is not None:
-            hits.extend(classify_shell(shlex.join(argv)))
+            hits.extend(classify_shell(argv[0] if argv else "") if name == "imaplib.IMAP4_stream"
+                        else classify_shell(shlex.join(argv)))
         elif isinstance(value, str):
             hits.extend(classify_shell(value) if (is_shell_fn or bool(shell_kw))
                         else classify_shell(shlex.quote(value)))
         else:
             unparsed += 1
     for ref, parent in refs:
+        if parent == "invoke" and id(ref) in resolved_callees:
+            continue
         rbindings = bindings if binding_env is None else binding_env.get(id(ref), {})
-        if isinstance(parent, tuple) and parent[0] == "protocol":
-            method = parent[1]
+        if isinstance(parent, tuple):
+            mode, method = parent
+            if mode == "argument_protocol":
+                consumer = callable_info(method.func, rbindings).get("name", "")
+                if consumer == "json.dumps" and any(
+                        keyword.arg == "default" and keyword.value is ref for keyword in method.keywords):
+                    callback = callable_info(ref, rbindings)
+                    if callback.get("kind") == "helper":
+                        take(sweep_body(callback["node"], rbindings, ctx, depth))
+                if consumer not in ("shlex.join", "collections.deque", "list", "tuple", "set",
+                                     "frozenset", "sorted", "sum", "any", "all", "min", "max"):
+                    continue
+                method = "__iter__"
             receiver = (callable_info(ref.func, rbindings) if isinstance(ref, ast.Call)
                         else rbindings.get(ref.id, {}) if isinstance(ref, ast.Name) else {})
+            target = receiver.get("node")
+            if receiver.get("kind") == "class" and not isinstance(ref, ast.Call) and \
+                    method != "__init_subclass__" and isinstance(target, ast.ClassDef):
+                meta = next((keyword.value for keyword in target.keywords if keyword.arg == "metaclass"), None)
+                receiver = rbindings.get(meta.id, {}) if isinstance(meta, ast.Name) else {}
+                target = receiver.get("node")
+                mode = "metaclass_protocol"
             if receiver.get("kind") == "instance" or isinstance(ref, ast.Call) and receiver.get("kind") == "class" \
+                    or mode == "metaclass_protocol" and receiver.get("kind") == "class" \
                     or method == "__init_subclass__" and receiver.get("kind") == "class":
-                info = class_method_info(receiver.get("node"), method, rbindings)
+                info = class_method_info(target, method, rbindings)
                 if info is None and method == "__str__":
-                    info = class_method_info(receiver.get("node"), "__repr__", rbindings)
+                    info = class_method_info(target, "__repr__", rbindings)
                 if info is not None:
                     take(sweep_body(info["node"], rbindings, ctx, depth,
                                     info.get("class_node"), info.get("bound_kind")))
@@ -2396,37 +2535,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         if isinstance(parent, ast.Call):
             pinfo = callable_info(parent.func, rbindings)
             if pinfo.get("name") in ("threading.Thread", "threading.Timer"):
-                scheduled = any(isinstance(call.func, ast.Attribute) and call.func.attr == "start"
-                                and (call.func.value is parent or isinstance(call.func.value, ast.Name)
-                                     and (bindings if binding_env is None else binding_env.get(id(call), {}))
-                                         .get(call.func.value.id, {}).get("node") is parent)
-                                for call in nodes)
-                if not scheduled:
-                    continue
-                target_info = ({"kind": "helper", "node": ref} if isinstance(ref, ast.Lambda)
-                               else callable_info(ref, rbindings))
-                if target_info.get("kind") == "class":
-                    penv = env if call_env is None else call_env.get(id(parent), {})
-                    take(spawn_scan([ast.Call(func=ref, args=[], keywords=[])],
-                                    penv, rbindings, depth + 1, ctx=ctx))
-                    continue
-                if target_info.get("kind") == "helper":
-                    arguments = next((keyword.value for keyword in parent.keywords
-                                      if keyword.arg == "args"), ast.Tuple(elts=[], ctx=ast.Load()))
-                    keywords = next((keyword.value for keyword in parent.keywords
-                                     if keyword.arg == "kwargs"), ast.Dict(keys=[], values=[]))
-                    call = ast.Call(func=ref, args=[ast.Starred(value=arguments, ctx=ast.Load())],
-                                    keywords=[ast.keyword(arg=None, value=keywords)])
-                    # Empty **{} must not require a **kwargs parameter.
-                    if isinstance(keywords, ast.Dict) and not keywords.keys:
-                        call.keywords = []
-                    penv = env if call_env is None else call_env.get(id(parent), {})
-                    result = follow_helper(target_info["node"], call, penv, rbindings, ctx, depth,
-                        target_info.get("skip_first", False), target_info.get("class_node"),
-                        target_info.get("bound_kind"))
-                    if result is not None:
-                        take(result)
-                        continue
+                continue  # explicit/aliased start calls own the captured target
         if isinstance(ref, ast.Lambda):
             take(sweep_body(ref, rbindings, ctx, depth))
             continue
@@ -3108,7 +3217,7 @@ def main(argv):
     return run_scan(rest, permit)
 
 
-STACK_BYTES = 64 * 1024 * 1024
+STACK_BYTES = 512 * 1024 * 1024
 RECURSION_LIMIT = 50000
 
 
@@ -3125,7 +3234,12 @@ def run_with_stack(fn, *args):
         except BaseException as exc:  # re-raised on the calling thread
             result["error"] = exc
 
-    threading.stack_size(STACK_BYTES)
+    import resource
+    ceiling = resource.getrlimit(resource.RLIMIT_AS)[0]
+    stack_bytes = STACK_BYTES
+    if ceiling != resource.RLIM_INFINITY and ceiling <= STACK_BYTES:
+        stack_bytes = min(64 * 1024 * 1024, max(8 * 1024 * 1024, ceiling // 4))
+    threading.stack_size(stack_bytes)
     sys.setrecursionlimit(RECURSION_LIMIT)
     worker = threading.Thread(target=target)
     worker.start()

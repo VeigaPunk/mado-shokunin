@@ -142,8 +142,12 @@ def check(bundle, root):
         # This checks the declared subject, not whether its evidence proves it.
         if SUBJECTS[box].casefold() not in evidence.casefold():
             failures.append('wrong_topic_shonen')
-        if mark == 'x' and re.search(r'\bnon-author verifier:\s*[A-Za-z0-9][A-Za-z0-9_.-]*', evidence) is None:
-            failures.append('unnamed_nonauthor_verifier')
+        if mark == 'x':
+            verifier = re.search(r'\bnon-author verifier:\s*([A-Za-z0-9][A-Za-z0-9_.-]*)(?=[\s;,)]|$)', evidence)
+            if (verifier is None or verifier.group(1).rstrip('.').casefold() in
+                    ('na', 'none', 'null', 'unknown', 'unnamed', 'tbd')
+                    or 'author-only' in evidence.casefold()):
+                failures.append('unnamed_nonauthor_verifier')
     for key, expected in {'round20_target': 175, 'round20_pass': 172,
                           'round20_admitted': False, 'c2_independent': False}.items():
         value = require(history, key, type(expected))

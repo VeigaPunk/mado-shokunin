@@ -73,11 +73,25 @@ def main():
     data = manifest()
     runs = []
     for tool in (args.before_tool, args.after_tool):
+        tool_before = sha(tool)
         proc = subprocess.run([sys.executable, '-I', str(Path(__file__).resolve()), '--worker', str(tool.resolve())],
                               capture_output=True, text=True, timeout=600)
         rows = [json.loads(line) for line in proc.stdout.splitlines()]
         if proc.returncode or len(rows) != len(data['files']):
             raise ValueError('incomplete corpus run: ' + proc.stderr[-2000:])
+        if sha(tool) != tool_before:
+            raise ValueError('selected tool changed during corpus run')
+        for observed, frozen in zip(rows, data['files']):
+            if observed.get('path') != frozen['path']:
+                raise ValueError('missing/duplicate/substituted corpus member')
+            if 'error' not in observed:
+                stats = observed.get('stats', {})
+                path = str(ROOT / 'snapshot/files' / frozen['path'])
+                if stats.get('sha256') != frozen['sha256'] or stats.get('path') != path:
+                    raise ValueError('worker input attribution mismatch')
+                if any(finding.get('file') != path for finding in observed.get('findings', [])):
+                    raise ValueError('worker finding attribution mismatch')
+        manifest()  # reject input drift during execution, never relabel it a match
         runs.append(rows)
     lost, added, errors = [], [], []
     retained = 0
