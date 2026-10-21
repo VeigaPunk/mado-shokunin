@@ -269,3 +269,26 @@ bytes. Red: "155 round-19 transcripts" (lesson round-19 :124) → 154 receipt fi
 "the ten old OM10 assertions" (SCORECARD :1225) → nine labeled occurrences, eight
 distinct. Green entries are the round-20 correction sentences. Limit: it reads only
 registered statements; a stale sentence left beside its correction is not flagged.
+
+Round-20 attempt-2 corrections (append-only; 2026-10-21; no new number):
+- Criterion 10's application above: the bare invocation exits 2 (green entries read at a
+  revision; w2 RevCrit10Application F1). The runnable form is `python3 -I
+  .ufo/waves/round-20/tally-check.py .ufo/waves/round-20/tally-claims.json --set all --rev
+  REV --expect` (at `a8960de`: `TALLY_SUMMARY n=9 match=4 mismatch=5`, `EXPECT_SUMMARY:
+  9/9`, exit 0).
+- Criterion 29's check was rebuilt by attempt 1 (`f8576f7`: controls not exported, an
+  execution witness, stat identity, a scrubbed environment) after w2 RevQuality29 showed
+  a harness could read the leaked controls and mask itself green. Its six modes are four
+  PATH-stub injections and two real missing target/stub paths (w2 RevKnowledgeNote3). Re-run
+  at `a8960de` (`a2/evidence/iso/crit29-*.txt`): red `inns-r19-shape` 5/6 `FAIL_OPEN`, exit 1;
+  green `isolate.sh` 6/6 `FAIL_CLOSED`, exit 0; the four adversarial harnesses
+  (masked, env-aware, fake-cmp, canary-deleter3) and the four mutants each read
+  `FAIL_OPEN` in at least one mode, exit 1.
+- Criterion 30's green at `28c6837` held on its three legs and still admitted a recall
+  loss: w2 found 52 out-of-suite real-execution shapes the older tools reported and the
+  repair dropped without a row (lessons/round-20.md#mistakes M9). The legs bound what a
+  detector adds, not what it removes. At `a8960de` the legs read P 66/66, L 17/18, corpus
+  diff from `9c54c56` 0 lost; the recall-loss evidence that caught M9 is the attempt-2
+  guard (`a2/a2-guards.py`, `recall_lost` 52 → 0). A criterion requiring a removal-side
+  population for every detector change is a candidate for round 21, not registered here:
+  adding it after measurement would move this round's C2 target.

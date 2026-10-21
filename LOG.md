@@ -1359,3 +1359,25 @@ self-report; V5 nine/eight; V6 25 dead seats) via `tally-check.py` (red 5/5).
 
 Waves: w1 85 seats (0 dead; 85 refused twice by the 100-job cap at 16:36 and 16:39, spawned
 on the third try at 16:42). Installs: none by L1; seat reports say none.
+
+### Round 20, attempt 2 — recovery (2026-10-21, L1 MadoR20Recovery)
+
+Trigger: attempt 1 (MadoR20) ended without a report (`.ufo/watchdog.log:548`
+`lane-dead-no-report`); it had landed `f8576f7` (helper-recovered, PHASE2 incident 6) and
+checkpoints `ed4bf22`, `38d1b36`, with w1 85/85 and w2 76/78 reports
+(`SentinelPostWaveScan`, `ConnConsumers` dead, not respawned). Wave 2 falsified C1's
+no-harm reading at `28c6837`: 52 out-of-suite recall losses, 13 RecursionError flips, a
+~N⁴ helper expansion, 24 pure-stdlib leads, missed `jj -R` writes. Attempt 2 ran no new
+64–100 wave (163 of ≤200 seats spent): registration `6a7d9ca`, before-receipts
+`107955e`, tool v3 `3610e3e`, v3.1 `a8960de` (lesson M15: the removal-side corpus diff
+caught a cluster `-h` from the next command hiding a checkout in an unparsed segment).
+
+C1 at `a8960de`: precision 29/175 → 172/175 (target 175/175 missed by 3, unchanged);
+recall 6/6 = 5 observed + 1 lead; controls 0; P at `9c54c56` 66/66; harm-watch PASS;
+corpus diff from `9c54c56` 0 lost; a2 guards recall_lost 52 → 0, crash_flip 13 → 0,
+pure_rows 24 → 0, vcs_fp 31 → 20, vcs_fn 0. C2: 22/30, criterion 29 re-verified, 30′
+scoped by M9. Sources S113–S115 (112 → 115). Wave-2 dispositions
+`.ufo/waves/round-20/a2/w2-dispositions.md`; residual review: one ordinary task call of
+8 reviewer/critic seats (`a2/review/`), refused three times by the 100-job cap before it
+started. Host pause carried: no package, service, compositor, input or hyprctl command
+by L1. Installs: none by L1.

@@ -1,0 +1,23 @@
+RECEIPT tool=.ufo/waves/round-20/tally-check.py tool_sha256=21ce9dd57a47d975623aa9ca2bf53c3dadb8fa68b6f066a92461edba2fd2aea4 measured_commit=a8960de655e6ea8c0a3bf74f5542041d9fe25b39 utc=2026-10-21T06:47:30Z argv=python3\ -I\ .ufo/waves/round-20/tally-check.py\ .ufo/waves/round-20/tally-claims.json\ --set\ all\ --rev\ a8960de655e6ea8c0a3bf74f5542041d9fe25b39\ --expect
+TALLY_REGISTRY: .ufo/waves/round-20/tally-claims.json sha256=81eed3ebe33ec0bd2a7adbb5077c51a2624e00bccd945df83477f21674b3a48d checker_sha256=21ce9dd57a47d975623aa9ca2bf53c3dadb8fa68b6f066a92461edba2fd2aea4 set=all rev=a8960de655e6ea8c0a3bf74f5542041d9fe25b39
+MISMATCH r19-lesson-155-transcripts stated=155 derived=154
+  set=red expect=MISMATCH statement corpus/lessons/round-19.md:124@1f7f995caa25627db804e996cccd87fe38a3a1b6 claim="155 round-19 transcripts" | key=files | derive: python3 -I .ufo/waves/round-20/tally-check.py receipt-files --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --path .ufo/waves/round-19/evidence/final/tripwire-seat-scan.txt
+MISMATCH r19-scorecard-c2-5of13-s096 stated=5/13 derived=6/13
+  set=red expect=MISMATCH statement SCORECARD.md:1167@1f7f995caa25627db804e996cccd87fe38a3a1b6 claim="13/13 pointed; 5/13 name S096 on the" | key=first_line | derive: python3 -I .ufo/waves/round-20/tally-check.py pointer-token --counter .ufo/waves/round-19/fresh-pins.py --counter-rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --token S096
+MISMATCH r19-lesson-c2-5of13-s096 stated=5/13 derived=6/13
+  set=red expect=MISMATCH statement corpus/lessons/round-19.md:108@1f7f995caa25627db804e996cccd87fe38a3a1b6 claim="C2 sourcing: 5 of 13 credited files name S096 on the crediting line" | key=first_line | derive: python3 -I .ufo/waves/round-20/tally-check.py pointer-token --counter .ufo/waves/round-19/fresh-pins.py --counter-rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --token S096
+MISMATCH r19-log-c2-5of13-s096 stated=5/13 derived=6/13
+  set=red expect=MISMATCH statement LOG.md:1324@1f7f995caa25627db804e996cccd87fe38a3a1b6 claim="(5/13 name S096 on the crediting line;" | key=first_line | derive: python3 -I .ufo/waves/round-20/tally-check.py pointer-token --counter .ufo/waves/round-19/fresh-pins.py --counter-rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --token S096
+MISMATCH r19-scorecard-ten-om10 stated=10 derived=9
+  set=red expect=MISMATCH statement SCORECARD.md:1225@1f7f995caa25627db804e996cccd87fe38a3a1b6 claim="the ten old OM10 assertions were replaced" | key=removed_occurrences | derive: python3 -I .ufo/waves/round-20/tally-check.py selftest-labels --path tools/mado-verify.sh --old 9c54c56a6a7528675027b7f628f97a1b8d1b8e8d --new 7b4839d31d60af5bac40e3e74aec70e928601dfc --label-id OM10
+MATCH r20-lesson-154-files stated=154 derived=154
+  set=green expect=MATCH statement corpus/lessons/round-20.md:82@a8960de655e6ea8c0a3bf74f5542041d9fe25b39 claim="lists **154** files (not 155)" | key=files | derive: python3 -I .ufo/waves/round-20/tally-check.py receipt-files --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --path .ufo/waves/round-19/evidence/final/tripwire-seat-scan.txt
+MATCH r20-lesson-s096-first-line stated=6/13 derived=6/13
+  set=green expect=MATCH statement corpus/lessons/round-20.md:74@a8960de655e6ea8c0a3bf74f5542041d9fe25b39 claim="**8/13 on any matching line** and **6/13 on the first matching" | key=first_line | derive: python3 -I .ufo/waves/round-20/tally-check.py pointer-token --counter .ufo/waves/round-19/fresh-pins.py --counter-rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --token S096
+MATCH r20-lesson-s096-any-line stated=8/13 derived=8/13
+  set=green expect=MATCH statement corpus/lessons/round-20.md:74@a8960de655e6ea8c0a3bf74f5542041d9fe25b39 claim="is **8/13 on any matching line**" | key=any_line | derive: python3 -I .ufo/waves/round-20/tally-check.py pointer-token --counter .ufo/waves/round-19/fresh-pins.py --counter-rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --rev 1f7f995caa25627db804e996cccd87fe38a3a1b6 --token S096
+MATCH r20-lesson-om10-nine stated=9 derived=9
+  set=green expect=MATCH statement corpus/lessons/round-20.md:86@a8960de655e6ea8c0a3bf74f5542041d9fe25b39 claim="**nine labeled assertion occurrences, eight distinct**" | key=removed_occurrences | derive: python3 -I .ufo/waves/round-20/tally-check.py selftest-labels --path tools/mado-verify.sh --old 9c54c56a6a7528675027b7f628f97a1b8d1b8e8d --new 7b4839d31d60af5bac40e3e74aec70e928601dfc --label-id OM10
+TALLY_SUMMARY: set=all n=9 match=4 mismatch=5 error=0
+EXPECT_SUMMARY: 9/9
+exit=0

@@ -1,0 +1,60 @@
+RECEIPT tool=.ufo/waves/round-20/isolation-check.sh tool_sha256=f7aa051faee522f3c4b61494a7a75078b469a1b0f1d0f7503caa3f89777736e1 measured_commit=3610e3ec76ab951043cbc41110d30f6f94a72ec2 utc=2026-10-21T06:31:25Z argv=bash\ .ufo/waves/round-20/isolation-check.sh\ .ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh
+SCOPE m6-besteffort.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=mount-nonzero targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.i7Sr9H/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.i7Sr9H/target -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.i7Sr9H/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced mount failure (exit 32)
+harness exit: 125; canary=absent; execution-witness=absent; injected-marker=present; cmp-stub=absent
+FAIL_CLOSED m6-besteffort.sh mode=mount-nonzero
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=unshare-refused targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.3rQccQ/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.3rQccQ/target -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.3rQccQ/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced unshare refusal (exit 1)
+harness exit: 125; canary=absent; execution-witness=absent; injected-marker=present; cmp-stub=absent
+FAIL_CLOSED m6-besteffort.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=mount-noop targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.VHWF3q/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.VHWF3q/target -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.VHWF3q/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced successful no-op mount
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=present
+FAIL_OPEN m6-besteffort.sh mode=mount-noop (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=partial-arm targets=2
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.cZqTE7/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.cZqTE7/t1 --target /tmp/mado-isolation-v3-check.Yw6JCx/case.cZqTE7/t2 -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.cZqTE7/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN m6-besteffort.sh mode=partial-arm (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=missing-target targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.YDRGej/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.YDRGej/absent -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.YDRGej/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+mount: /tmp/mado-isolation-v3-check.Yw6JCx/case.YDRGej/absent: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; execution-witness=absent; injected-marker=absent; cmp-stub=absent
+FAIL_CLOSED m6-besteffort.sh mode=missing-target
+
+TRANSCRIPT setup-failure harness=m6-besteffort.sh mode=missing-stub targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/case.ZW3tib/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/case.ZW3tib/target -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/case.ZW3tib/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+mount: /tmp/mado-isolation-v3-check.Yw6JCx/case.ZW3tib/target: special device /tmp/mado-isolation-v3-check.Yw6JCx/case.ZW3tib/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 125; canary=absent; execution-witness=absent; injected-marker=absent; cmp-stub=absent
+FAIL_CLOSED m6-besteffort.sh mode=missing-stub
+
+TRANSCRIPT positive-control harness=m6-besteffort.sh
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-mutants/m6-besteffort.sh --stub /tmp/mado-isolation-v3-check.Yw6JCx/positive/stub --target /tmp/mado-isolation-v3-check.Yw6JCx/positive/target -- /tmp/mado-isolation-v3-check.Yw6JCx/payload.sh /tmp/mado-isolation-v3-check.Yw6JCx/positive/canary
+output:
+harness exit: 0; canary=present; execution-witness=present
+POSITIVE_CONTROL_OK m6-besteffort.sh
+SCOPE m6-besteffort.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+exit=1

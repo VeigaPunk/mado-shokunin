@@ -1,0 +1,60 @@
+RECEIPT tool=.ufo/waves/round-20/isolation-check.sh tool_sha256=f7aa051faee522f3c4b61494a7a75078b469a1b0f1d0f7503caa3f89777736e1 measured_commit=3610e3ec76ab951043cbc41110d30f6f94a72ec2 utc=2026-10-21T06:31:25Z argv=bash\ .ufo/waves/round-20/isolation-check.sh\ .ufo/waves/round-20/evidence/isolation-adversarial/masked.sh
+SCOPE masked.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+
+TRANSCRIPT setup-failure harness=masked.sh mode=mount-nonzero targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.ldvV0u/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.ldvV0u/target -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.ldvV0u/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced mount failure (exit 32)
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN masked.sh mode=mount-nonzero (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=masked.sh mode=unshare-refused targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.xGihBG/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.xGihBG/target -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.xGihBG/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced unshare refusal (exit 1)
+harness exit: 1; canary=absent; execution-witness=absent; injected-marker=present; cmp-stub=absent
+FAIL_CLOSED masked.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=masked.sh mode=mount-noop targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.zPgtL2/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.zPgtL2/target -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.zPgtL2/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced successful no-op mount
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN masked.sh mode=mount-noop (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=masked.sh mode=partial-arm targets=2
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.hYCPNL/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.hYCPNL/t1 --target /tmp/mado-isolation-v3-check.jG0SMx/case.hYCPNL/t2 -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.hYCPNL/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN masked.sh mode=partial-arm (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=masked.sh mode=missing-target targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.8XeKPV/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.8XeKPV/absent -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.8XeKPV/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+mount: /tmp/mado-isolation-v3-check.jG0SMx/case.8XeKPV/absent: mount point does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 0; canary=present; execution-witness=present; injected-marker=absent; cmp-stub=absent
+FAIL_OPEN masked.sh mode=missing-target (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=masked.sh mode=missing-stub targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/case.9Ksr7m/stub --target /tmp/mado-isolation-v3-check.jG0SMx/case.9Ksr7m/target -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/case.9Ksr7m/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+mount: /tmp/mado-isolation-v3-check.jG0SMx/case.9Ksr7m/target: special device /tmp/mado-isolation-v3-check.jG0SMx/case.9Ksr7m/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 0; canary=present; execution-witness=present; injected-marker=absent; cmp-stub=absent
+FAIL_OPEN masked.sh mode=missing-stub (payload execution witnessed)
+
+TRANSCRIPT positive-control harness=masked.sh
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/isolation-adversarial/masked.sh --stub /tmp/mado-isolation-v3-check.jG0SMx/positive/stub --target /tmp/mado-isolation-v3-check.jG0SMx/positive/target -- /tmp/mado-isolation-v3-check.jG0SMx/payload.sh /tmp/mado-isolation-v3-check.jG0SMx/positive/canary
+output:
+harness exit: 0; canary=present; execution-witness=present
+POSITIVE_CONTROL_OK masked.sh
+SCOPE masked.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+exit=1

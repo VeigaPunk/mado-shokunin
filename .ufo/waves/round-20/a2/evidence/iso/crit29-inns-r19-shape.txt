@@ -1,0 +1,61 @@
+RECEIPT tool=.ufo/waves/round-20/isolation-check.sh tool_sha256=f7aa051faee522f3c4b61494a7a75078b469a1b0f1d0f7503caa3f89777736e1 measured_commit=a8960de655e6ea8c0a3bf74f5542041d9fe25b39 utc=2026-10-21T07:01:25Z argv=bash\ .ufo/waves/round-20/isolation-check.sh\ .ufo/waves/round-20/evidence/inns-r19-shape.sh
+SCOPE inns-r19-shape.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-nonzero targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.WQyIGR/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.WQyIGR/target -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.WQyIGR/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced mount failure (exit 32)
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN inns-r19-shape.sh mode=mount-nonzero (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=unshare-refused targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.s1rFsm/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.s1rFsm/target -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.s1rFsm/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced unshare refusal (exit 1)
+harness exit: 1; canary=absent; execution-witness=absent; injected-marker=present; cmp-stub=absent
+FAIL_CLOSED inns-r19-shape.sh mode=unshare-refused
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=mount-noop targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.EpDX8e/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.EpDX8e/target -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.EpDX8e/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+forced successful no-op mount
+armed /tmp/mado-isolation-v3-check.qnnIZS/case.EpDX8e/target
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN inns-r19-shape.sh mode=mount-noop (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=partial-arm targets=2
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.Hlq8AT/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.Hlq8AT/t1 --target /tmp/mado-isolation-v3-check.qnnIZS/case.Hlq8AT/t2 -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.Hlq8AT/canary
+INJECTION: PATH-stub; controls are not exported
+output:
+armed /tmp/mado-isolation-v3-check.qnnIZS/case.Hlq8AT/t1
+forced second-target mount failure (exit 32)
+harness exit: 0; canary=present; execution-witness=present; injected-marker=present; cmp-stub=absent
+FAIL_OPEN inns-r19-shape.sh mode=partial-arm (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-target targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.OXKYpW/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.OXKYpW/absent -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.OXKYpW/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+harness exit: 0; canary=present; execution-witness=present; injected-marker=absent; cmp-stub=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-target (payload execution witnessed)
+
+TRANSCRIPT setup-failure harness=inns-r19-shape.sh mode=missing-stub targets=1
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/case.mR3tSX/stub --target /tmp/mado-isolation-v3-check.qnnIZS/case.mR3tSX/target -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/case.mR3tSX/canary
+INJECTION: real-filesystem-failure; controls are not exported
+output:
+mount: /tmp/mado-isolation-v3-check.qnnIZS/case.mR3tSX/target: special device /tmp/mado-isolation-v3-check.qnnIZS/case.mR3tSX/stub does not exist.
+       dmesg(1) may have more information after failed mount system call.
+harness exit: 0; canary=present; execution-witness=present; injected-marker=absent; cmp-stub=absent
+FAIL_OPEN inns-r19-shape.sh mode=missing-stub (payload execution witnessed)
+
+TRANSCRIPT positive-control harness=inns-r19-shape.sh
+COMMAND: /tmp/mado-r20a2/hw/.ufo/waves/round-20/evidence/inns-r19-shape.sh --stub /tmp/mado-isolation-v3-check.qnnIZS/positive/stub --target /tmp/mado-isolation-v3-check.qnnIZS/positive/target -- /tmp/mado-isolation-v3-check.qnnIZS/payload.sh /tmp/mado-isolation-v3-check.qnnIZS/positive/canary
+output:
+armed /tmp/mado-isolation-v3-check.qnnIZS/positive/target
+harness exit: 0; canary=present; execution-witness=present
+POSITIVE_CONTROL_OK inns-r19-shape.sh
+SCOPE inns-r19-shape.sh: fail-closed setup only; not containment; not a sandbox; never run a host probe under the host pause.
+exit=1

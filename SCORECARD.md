@@ -1376,3 +1376,35 @@ attempt-2 repair is part of C1 (same axis, same counter) and is measured by:
   `a2_mismatch` → 0.
 - Whole-corpus diff (`w2/CorpusDiffV2/corpus-diff-v2.py`) from `9c54c56` (registered
   guard: 0 lost) and from `28c6837` to the attempt-2 tool, every lost row classed.
+
+## Round 20 — attempt-2 results and bounded author verdicts (2026-10-21)
+
+Tool v3 `3610e3ec76ab951043cbc41110d30f6f94a72ec2` and v3.1
+`a8960de655e6ea8c0a3bf74f5542041d9fe25b39` (tool sha256 `a57d4fe9…`; v3.1 adds only the
+unparsed-segment rule, lesson M15). Every number below was re-run by L1 MadoR20Recovery at
+`a8960de` (receipts `.ufo/waves/round-20/a2/evidence/`, each headed `RECEIPT …
+measured_commit=…`); none is carried from attempt 1 without a re-run.
+
+| Claim / axis | Before → after | Verdict / evidence |
+|---|---|---|
+| C1 operability, tripwire precision (`python3 -I .ufo/waves/round-20/tw-precision.py REV`, suite pin `f3da504`) | `1f7f995` 29/175 = 1.6571 → `a8960de` 172/175 = 9.8286 (P 66/66, S 17/17, W 21/22, H 51/52, L 17/18), same three failing cases as `28c6837` | improved; **registered target 175/175 missed by 3** (unchanged reasons above; w2 AtkFailingThree reads two of the three wants as stale, 174/175, reported beside, no suite edit). Full suite incl. held-out 172/187 → 174/187 |
+| C1 guards (registered at `e629f73`) | recall 6/6 = 5 observed + 1 lead, 20 control lines 0 findings (`recall-split-a8960de…`); P at `9c54c56` 66/66 and at `a8960de` 66/66; 11 suites all pass and `--frozen round-19` `frozen_match`, round-18 baseline mismatch unchanged (harm-watch PASS, `a2/evidence/harm/`); whole-corpus diff `9c54c56` → `a8960de`: **0 lost** on 7,889 stable files, 7,253 added rows in 99 class/rule/evidence groups (vcs_write observed 7,012 / lead 4, tool_install 208, live_probe 20, package_query observed 6 / lead 3) listed in `corpus-diff-9c54c56-vs-a8960de.json` | hold |
+| C1 attempt-2 guards (registered `6a7d9ca`; `a2-guards.py REV --fixtures-rev 6a7d9ca`) | `28c6837` → `a8960de`: recall_lost 52 → 0, crash_flip 13 → 0, pure_rows 24 → 0, vcs_fn 0 → 0, vcs_fp 31 → 20, a2_mismatch 6 → 0, dup_rows 0 → 0, timeouts none → none; `hang-selfrec-40` 54.764 s → 0.037 s, `hang-mutual-24` 6.754 s → 0.050 s | hold (targets met; vcs_fp lower, not zero: abbreviations and `=false` forms stay findings) |
+| C1 removal side from `28c6837` (`corpus-diff-28c6837-vs-a8960de.json`, classed in `…-classified.txt`) | lost 5 rows / 4 calls: 3 installer `--help`, 1 `git push -nv` (measured dry run), 1 `heapq.nlargest` data lead; 22 same-command lead duplicates dropped; added 10 (2 jj `-R` pushes, 6 lead rows in TabiR16/SoujiR18 cells, a git add/commit pair at `MadoR17.AttackRubricGaming.jsonl:38`) | every row classed; the v3 run of the same diff found M15, fixed in v3.1 |
+| C2 calibration (`python3 .ufo/waves/round-17/measure.py REV`, key c1) | 20/28 = 7.1429 → `a8960de` 22/30 = 7.3333 | improved as registered; conservative reading 21/29 = 7.2414 if the closure rules 30′ a target-preserving swap. 29 re-verified at `a8960de` (`a2/evidence/iso/`): red 5/6 `FAIL_OPEN` exit 1, green 6/6 `FAIL_CLOSED` exit 0, four adversarial harnesses and four mutants exit 1. 30′'s legs hold at `a8960de` but did not catch M9 (a recall loss): recorded in QUALITY's attempt-2 note, a removal-side criterion queued for round 21 |
+
+Frontier: SOURCES 112 → 115 (S113–S115 opened 2026-10-21, tier A, mined; census `validate`
+exit 0); the sourced claim is C1's v3 stdlib purity split (S113 process side, S114
+`json.dumps`, S115 `list2cmdline`). Mistakes mined this attempt: M9–M15
+(`corpus/lessons/round-20.md`). Wave-2 dispositions: `.ufo/waves/round-20/a2/w2-dispositions.md`.
+Harm watch at `a8960de`: gate selftest 460/460, regression PASS, classifier 52/52, U 7/7,
+V 6/6 (c2 6, `u_routes` 7), navigation 35/35, census exit 0. Runtime: the two corpus
+files w2 CorpusRuntime timed at 30 s / 14 s took 25.85 s / 4.77 s at `28c6837` and
+0.062 s / 0.142 s at v3 in one L1 run (2026-10-21, host shared with other lanes).
+
+### Capabilities (round 20, attempt 2; append-only)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tripwire reached-body sweep | Report every visible body the executed text reaches but the call path does not follow (thread targets, callbacks, decorators, closures, dunders, scheduled coroutines, recursion, past-depth helpers) as a `lead` row instead of dropping it | `python3 .ufo/waves/round-20/a2/a2-guards.py a8960de --fixtures-rev 6a7d9ca` (`recall_lost` 0; 52 at `28c6837`) | 20 |
+| detector removal-side guard | Count, for a tripwire change, the findings an older tool reported that the new one drops, the crash flips and the pure-data rows, over frozen adversarial populations | `a2/evidence/guards-before-28c6837.txt` vs `guards-after-a8960de….txt` | 20 |

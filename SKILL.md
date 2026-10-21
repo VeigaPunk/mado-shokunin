@@ -541,26 +541,38 @@ transcripts. Round 18 adds the gate entry `--frozen` (registry row
 
 ### Reading tripwire rows — observed vs lead; fail-closed harnesses (round 20)
 
-Every finding row carries `evidence` (tool `9613f510…`, commit `28c6837`; knowledge
+Every finding row carries `evidence` (tool `a57d4fe9…`, commit `a8960de`; knowledge
 `corpus/knowledge/tripwire-precision-r20.md`). `observed`: the transcript states the
 command and the path that runs it (bash text, `!`/`%%bash`, a literal spawn or spawn alias,
-or a helper whose body is visible in the same file — earlier py cells count until a
-`reset`). `lead`: a literal host argv handed to a callee whose body is not visible (an
-unbound name, a non-stdlib import, a parameter). Leads stay in `findings` (exit 1); the
-verdict adds `observed_findings`/`lead_findings`. Report them apart — "6/6 incident lines
-flagged = 5 observed + 1 lead", never a bare 6/6 — and never write a lead as a command
-that ran. Pure data gives no row: builtins and pure stdlib callables (frozenset, deque,
-`shlex.join`, `json.dumps`, S105–S107) unless the text rebinds the name; `del` of a
-shadowing name restores the builtin (S111). VCS help and dry runs are not writes: git
-`-h`/`--help` as a flag, `git help`, `commit --dry-run|--short|--porcelain|--long|-z`,
-`add`/`push -n|--dry-run` (S099–S102), `jj … -h|--help` and `jj help` (S103), and `jj
---ignore-working-copy git push --dry-run`; still writes: `git commit -n` (`--no-verify`),
-`git commit -m --help` (a message), `pull -n`, plain `jj git push --dry-run` (it snapshots
-first; S104), and a `jj <alias> --help` whose verb is unknown or variable (a user alias
-runs its command). Precision is measured, not asserted: `python3 -I
-.ufo/waves/round-20/tw-precision.py REV` (175 cases, families P/S/W/H/L; QUALITY 30).
-Still unanalysed: scripts written then run, shell aliases, `python -c` bodies, JavaScript
-cells, other sessions — a `clean` verdict bounds only the covered forms.
+or a helper whose body is visible in the same file and is called with bindable arguments —
+earlier py cells count until a `reset`). `lead` has two sources: a literal host argv
+handed to a callee whose body is not visible (an unbound name, a non-stdlib import, a
+parameter, a spawn-named method of an unresolved object), and a visible body the executed
+text reaches without a followed call (a thread target, callback, decorator, returned
+closure, inline lambda, dunder of a constructed class, a coroutine created without
+`await`, a recursive or over-depth helper) — "may run", not "ran". A lead stays in
+`findings` and exits 1 unless its class is permitted; the verdict adds
+`observed_findings`/`lead_findings`. Report them apart — "6/6 incident lines flagged = 5
+observed + 1 lead", never a bare 6/6 — and never write a lead as a command that ran. Pure
+data gives no row: builtins (S105) and callables of stdlib modules that cannot start a
+process, run code text or call back (`deque`, `shlex.join`, `json.dumps`, `heapq`,
+`copy`, `os.path`, …; S106, S107, S113–S115) unless the text rebinds the name; `del` of
+a shadowing name at module level restores the builtin (S111); a body nothing references
+gives no row. VCS help and dry runs are not writes: git `-h`/`--help` as a flag, `git
+help`, `commit --dry-run|--short|--porcelain|--long|-z`, `add`/`push -n|--dry-run`, also
+inside a short cluster (`-nv`) (S099–S102), `jj … -h|--help` and `jj help` (S103), and
+`jj --ignore-working-copy git push --dry-run`; still writes: `git commit -n`
+(`--no-verify`), `git commit -m --help` (a message), `pull -n`, plain `jj git push
+--dry-run` (it snapshots first; S104), `jj -R git … git push` (the subcommand is found by
+position), a `jj <alias> --help` whose verb is unknown or variable (a user alias runs
+its command), and any form in an unparsed (`/unparsed`) segment, whose tokens may belong
+to the next command. Measure, do not assert: `python3 -I .ufo/waves/round-20/tw-precision.py REV`
+(175 cases, families P/S/W/H/L; QUALITY 30) for what a change adds, and `python3
+.ufo/waves/round-20/a2/a2-guards.py REV --fixtures-rev 6a7d9ca` for what it drops (recall
+losses, crash flips, pure-data rows, VCS truth) — a detector change read only for
+precision hid 52 recall losses in round 20 (lesson M9). Still unanalysed: scripts
+written then run, shell aliases, dynamic dispatch, JavaScript cells, other sessions — a
+`clean` verdict bounds only the covered forms.
 
 Any harness that stubs a host binary for a hermetic run fails closed (QUALITY 29): test
 each setup step on its own (`mount … || exit 125`, then `cmp` the target against the stub

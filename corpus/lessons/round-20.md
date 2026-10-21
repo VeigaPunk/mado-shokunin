@@ -20,6 +20,13 @@ pre-registration `e629f73`; suite landed `f3da504` (no tool change); tool repair
 | M6 | unrun check (round 20, seat + L1) | TwRuleB delivered v1 and v2 without running any suite (it read the host's "never verify" rule over its item); L1's integration run found `UnboundLocalError` on JS eval cells (exit 2) in `round-17/hardening eval-js-unparsed-clean` and `r19-bashcvar js-cell-separate-kernel-clean` | L1 integration (11 suites run before landing) | one-line fix (`env = bindings = None`), both cases green at `28c6837`; wave-2 items that write code say explicitly that running the named checks is part of the item |
 | M7 | write scope (round 20, wave context) | `git clone <lane> /tmp/...` leaves `origin` = the lane; a replica `git push` moved the origin's master (w1 SentinelPause20 H2); seats ran push experiments | w1 SentinelPause20 | no lane ref moved except by `jj-lane.sh` (`git for-each-ref`: master and origin/master at L1 commits only); wave-2 context requires `git remote remove origin` right after cloning and VCS experiments in a fresh `git init` repo |
 | M8 | overfit channel (round 20, seats) | case authors CaseWrapperCrossCell and CasePureCallables messaged the tool author TwRuleB about their expectations before the suite landed | L1 reading of seat reports | recorded; the suite was assembled by contract before any tool result was read (`assemble-suite.py`), and the held-out set plus the corpus diff are the out-of-suite evidence |
+| M9 | recall traded for precision, unseen by a thin recall guard (round 20, L1 repair `28c6837`) | w2 AdvRecallShapes: 49 certain real-execution shapes (thread targets, `asyncio.run(coro())`, decorators, returned closures, dunders, inline lambdas, `importlib` alias) reported by `9c54c56` and `1f7f995`, silent at `28c6837` with no row and no counter; AdvDepth/AdvLeadMarks add starred, lambda and scheduled-coroutine shapes | none at landing — every registered guard passed (`tw-recall.py` covers 6 incident lines; the precision legs bound what a detector adds, not what it drops); w2 AdvRecallShapes | v3 `3610e3e` sweeps every reached-but-unfollowed visible body as `lead`; `a2/a2-guards.py` `recall_lost` 52 at `28c6837` → 0 at `3610e3e` and at `a8960de` (`a2/evidence/guards-*.txt`); QUALITY attempt-2 note queues a removal-side criterion for round 21 |
+| M10 | unbounded expansion (round 20, L1 repair) | w2 CorpusRuntime: `KaidokuR19.EvidenceSecurity-3.jsonl` 30 s vs 0.07 s; a self-recursive helper costs ~N⁴ (`depth < 4`, re-expanded per call) | w2 CorpusRuntime (the 200-largest sample alone missed it) | recursion guard (a helper being followed is never re-followed) and a 2000-follow budget per cell; `a2/fixtures/hang-selfrec-40` 54.764 s → 0.036 s, `hang-mutual-24` 6.754 s → 0.049 s; the corpus file 25.85 s → 0.062 s (L1 timing, 2026-10-21) |
+| M11 | new crash surface (round 20, L1 repair) | w2 AdvCrash: recursive `eager_calls` and helper-body scans raise `RecursionError` at ~half the depth `1f7f995` survives; exit 2 replaces a findings/clean verdict in 13 committed fixtures | w2 AdvCrash, RevToolDiffEval | iterative eager walk plus a 512 MiB / 50,000-frame scan thread; `crash_flip` 13 → 0 (the 3 remaining exit-2 files also exit 2 at `1f7f995`: parity) |
+| M12 | option-value collision (round 20, L1 repair) | `sub_verb` restarted at the first token spelling the verb: `jj -R git --ignore-working-copy git push` and `jj -R bookmark … bookmark create` measured as writes, unflagged (w2 RevToolDiffVcs P1) | w2 RevToolDiffVcs | subcommand anchored at the located verb index; `a2/fixtures/jj-R-*` red at `28c6837`, green at `3610e3e` and `a8960de` |
+| M13 | registration after a developed repair (round 20, attempt 2, L1) | the attempt-2 SCORECARD registration (`6a7d9ca`) was written after a sandbox draft had been measured; its populations predate the draft (attempt-1 commits, nine fixtures written first) and the text says so | L1 self-report | rule for round 21: commit the registration and before-receipts before opening the tool file; not shown able to fail (process) |
+| M14 | coordinator lost before the report (round 20, attempt 1) | `.ufo/watchdog.log:548` `lane-dead-no-report mado round=20`; attempt 1 left `f8576f7`, `ed4bf22`, `38d1b36` and 161 seat reports (w1 85/85, w2 76/78; `SentinelPostWaveScan`, `ConnConsumers` dead), no SCORECARD verdicts for wave 2 | watchdog | recovery coordinator MadoR20Recovery reused the committed work after re-running every counter it cites at `a8960de` (no attempt-1 number is cited without a re-run) |
+| M15 | an exemption widened by v3 hid a real write (round 20, attempt 2, L1) | v3 `3610e3e` read git short clusters letter by letter; in the unparsed segment `git -C $C checkout -q --detach 6cec83aed; bash -c 'git grep -ohE …'` (`W3ReviewLore.jsonl:119`) the next command's `-ohE` gave an `-h`, so a real checkout read as usage | the removal-side corpus diff from `28c6837` (`a2/evidence/corpus-diff-28c6837-vs-3610e3e.json`, `unmatched_base_rows_in_retained_calls`) — not the precision suite, the a2 guard or any selftest | v3.1 `a8960de`: no help/dry-run/`--ignore-working-copy`/installer-help exemption in an unparsed segment; the row is back (`corpus-diff-28c6837-vs-a8960de-classified.txt` no longer lists it); every remaining lost row is classed (3 installer `--help`, 1 `push -nv` dry run, 1 pure `heapq` lead) |
 
 ## Gate
 
@@ -63,7 +70,24 @@ rule holds without `unshare --keep-caps` (with it, a non-root-mapped payload kee
 CAP_SYS_ADMIN and can mount); S102's `-h` clause does not cover a git **shell alias**,
 which prints its definition and then runs on a lone `-h`; S103's `jj help` is dispatched
 to `cmd_help` (not answered by clap), which loads no workspace — the outcome (no
-snapshot) stands, the mechanism wording in the knowledge note is corrected.
+snapshot) stands; the knowledge note's mechanism wording was still the clap one at
+`38d1b36` and is corrected in attempt 2 (its §2 now splits `-h`/`--help` from `jj help`).
+
+Attempt 2 (2026-10-21, L1 MadoR20Recovery; receipts `.ufo/waves/round-20/fetch/A2Sources/
+receipts.jsonl`, bodies digest-only; tag `v3.14.8` → `992560c2…` peeled `8e6e75d9…`, the
+same pin as S105–S108/S111). Three candidates opened, three admitted, none rejected; the
+question was which stdlib callables can turn a literal argv into a process (w2
+AdvPureShapes showed the five-module allowlist made 24 pure callables leads):
+
+- GATE | S113 | https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/os.rst | 2026-10-21 | `:4419-4422` "These functions may be used to create and manage processes." (10 words) | sha256 `2d0f2892…` | admit: the process side of the v3 purity split
+- GATE | S114 | https://raw.githubusercontent.com/python/cpython/v3.14.8/Doc/library/json.rst | 2026-10-21 | `:260-266` "Serialize *obj* to a JSON formatted :class:`str` using this :ref:`conversion table <py-to-json-table>`." (12 words) | sha256 `0cfbe94c…` | admit: replaces the S106/S107 citation for `json.dumps`, whose bodies never name it (w2 ScribeTrendDraft)
+- GATE | S115 | https://raw.githubusercontent.com/python/cpython/v3.14.8/Lib/subprocess.py | 2026-10-21 | `:583-586` "Translate a sequence of arguments into a command line string" (10 words) | sha256 `7fa4af83…` | admit: the one `subprocess` formatter, exempt by exact path
+
+Status/recheck/used-by changes, old→new: none on existing rows. New rows enter `mined`,
+recheck `on-release`, used-by `corpus/knowledge/tripwire-precision-r20.md`. Rows 112 →
+115 (tier A 105 → 108; mined 95 → 98): `git show REV:corpus/SOURCES.md | grep -c '^| S[0-9]'`
+at `38d1b36` and the round tip; census `validate` exit 0 at both ends
+(`.ufo/waves/round-20/evidence/census-start.txt`, `a2/evidence/census-end.txt`).
 
 ## Corrections to round 19 (append-only; closure R19-V1..V6)
 
