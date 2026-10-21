@@ -119,6 +119,11 @@ Limits (stated, not hidden):
   git itself would reject.
   A dry run still runs the pre-push hook and `commit --dry-run` may store
   unreferenced objects; neither moves a ref, the index or the worktree.
+  None of these exemptions (nor the installer `--help` one, nor
+  `--ignore-working-copy`) applies in an unparsed segment (rule suffix
+  `/unparsed`: shlex failed and the line was split on whitespace, so its
+  tokens may belong to the next command): `git checkout x; bash -c 'git
+  grep -ohE …'` stays a checkout even though `-ohE` holds an `h`.
 - shlex is not bash: exotic quoting can hide a command from the parser.
 - Transcript text is data. Nothing in it is followed or executed.
 
@@ -615,12 +620,15 @@ def jj_prints_help(args, i):
     return args[i] in JJ_HELP_VERBS and any(a in JJ_HELP_FLAGS for a in head[i + 1:])
 
 
-def classify_jj(args):
-    """Rule for a `jj` run that writes or snapshots the working copy, else None."""
+def classify_jj(args, exempt=True):
+    """Rule for a `jj` run that writes or snapshots the working copy, else None.
+
+    exempt=False (an unparsed segment, whose tokens may belong to the next
+    command) applies no help, dry-run or --ignore-working-copy exemption."""
     i = verb_index(args, JJ_ARG_OPTS)
     if i is None:  # `jj`, `jj --version`, `jj --help`: nothing is touched
         return None
-    if jj_prints_help(args, i):
+    if exempt and jj_prints_help(args, i):
         return None
     verb = args[i]
     if verb in JJ_WRITE:
@@ -634,11 +642,11 @@ def classify_jj(args):
     elif verb == "git":
         sub = sub_verb(args, i)
         if sub in JJ_GIT_WRITE and not (
-                sub == "push" and "--dry-run" in before_dashdash(args)):
+                exempt and sub == "push" and "--dry-run" in before_dashdash(args)):
             return "jj:git"  # a dry-run push only snapshots (rule below)
     elif verb in JJ_NO_SNAPSHOT:
         return None
-    return None if ignores_working_copy(args) else "jj:" + verb
+    return None if exempt and ignores_working_copy(args) else "jj:" + verb
 
 
 def git_option_flags(verb, rest):
@@ -704,16 +712,17 @@ def git_prints_or_simulates(verb, pre, rest):
     return dry or fmt or null
 
 
-def classify_git(args):
+def classify_git(args, exempt=True):
     """Rule for a `git` write, else None (reads, unclassified subcommands,
-    help/usage and dry runs)."""
+    help/usage and dry runs). exempt=False (an unparsed segment) applies no
+    help or dry-run exemption: a later command's `-h`/`-n` may sit in it."""
     i = verb_index(args, GIT_ARG_OPTS)
     verb = None if i is None else args[i]
     if verb not in GIT_WRITE:
         return None
     if verb == "stash" and sub_verb(args, i) in ("list", "show"):
         return None  # read-only stash inspection
-    if git_prints_or_simulates(verb, args[:i], args[i + 1:]):
+    if exempt and git_prints_or_simulates(verb, args[:i], args[i + 1:]):
         return None
     return "git:" + verb
 
@@ -984,7 +993,7 @@ HELP_EXEMPT_INSTALLS = {"uv:tool-install", "uv:tool-upgrade", "uv:tool-uninstall
                         "uv:pip-install", "cargo:install", "cargo:uninstall"}
 
 
-def classify_installer(argv0, args):
+def classify_installer(argv0, args, exempt=True):
     """Return (class, rule) for a tool-acquisition channel, else None.
 
     Only the argv0-level forms named in the module docstring are classified;
@@ -995,8 +1004,9 @@ def classify_installer(argv0, args):
     exec) pass a trailing `--help` to the package they fetch: no exemption.
     """
     rule = classify_installer_rule(argv0, args)
-    if rule is not None and (rule[1] in HELP_EXEMPT_INSTALLS
-                             or (PIP_RE.match(argv0) and rule[1].endswith(":install"))) \
+    if exempt and rule is not None and (
+            rule[1] in HELP_EXEMPT_INSTALLS
+            or (PIP_RE.match(argv0) and rule[1].endswith(":install"))) \
             and any(a in ("-h", "--help") for a in before_dashdash(args)):
         return None
     return rule
@@ -1174,12 +1184,12 @@ def classify_segment(seg, depth, unparsed):
                 return hits + nested_eval(args[j + 1])
         return hits
     if argv0 == "jj":
-        rule = classify_jj(args)
+        rule = classify_jj(args, exempt=not unparsed)
         if rule is not None:
             hit("vcs_write", rule)
         return hits
     if argv0 == "git":
-        rule = classify_git(args)
+        rule = classify_git(args, exempt=not unparsed)
         if rule is not None:
             hit("vcs_write", rule)
         return hits
@@ -1199,7 +1209,7 @@ def classify_segment(seg, depth, unparsed):
                for a in args):
             hit("host_mutation", argv0)
         return hits
-    found = classify_installer(argv0, args)
+    found = classify_installer(argv0, args, exempt=not unparsed)
     if found is not None:
         hit(*found)
         return hits
