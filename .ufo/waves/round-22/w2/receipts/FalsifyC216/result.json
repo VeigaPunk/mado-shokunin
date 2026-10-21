@@ -1,0 +1,74 @@
+{
+  "seat": "MadoR22.FalsifyC216",
+  "attack_item": "C2 AuditRawNaNCounter",
+  "case_id": "AuditRawNaNCounter",
+  "assignment_revision_stated": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "revision_verified": false,
+  "command": "prlimit --as=402653184 timeout 15 python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py --check /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/bundle.json --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/root",
+  "caps": {
+    "address_space_bytes": 402653184,
+    "address_space_mib": 384,
+    "address_space_verified_ulimit_kib": 393216,
+    "wall_timeout_s": 15,
+    "scanner_children_at_a_time": 1,
+    "timeout_fired": false
+  },
+  "python": "/usr/bin/python3 (3.14.8)",
+  "installs": [],
+  "exit_code": 2,
+  "stdout_full": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}\n",
+  "stderr_full": "",
+  "stdout_bytes": 240,
+  "stderr_bytes": 0,
+  "observed": {
+    "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+    "code": 2,
+    "error": "Invalid",
+    "finding_ids": [
+      "evidence_audit_input_invalid"
+    ],
+    "result": "could-not-evaluate"
+  },
+  "expected": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": [
+      "evidence_audit_input_invalid"
+    ],
+    "source": "audit/fixtures/expected.json cases[AuditRawNaNCounter]; original_expected identical; normalizations empty"
+  },
+  "independent_semantic_verdict": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": [
+      "evidence_audit_input_invalid"
+    ],
+    "basis": "bundle strict-valid; snapshot regular file, no symlink; sha256 183587... matches bundle before decode; snapshot decode fails on bare NaN token (nonfinite, not strict JSON, not exact int); no counter or clean comparison permitted"
+  },
+  "observed_matches_expected": true,
+  "input_digests_unchanged_across_run": true,
+  "digests_pre_run": [
+    "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca  tools/mado-evidence-audit.py",
+    "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09  .ufo/waves/round-22/audit/fixtures/expected.json",
+    "6f24550878848f8ceb3a857ff7bf28eaf893c78f8fdb935eddfbbbb55ae453cb  .ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/bundle.json",
+    "183587487f1dacc2623dfdc185cb60c0789458aa05ee3f57d1da361d44fb144c  .ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/root/snapshot.json"
+  ],
+  "digests_post_run": [
+    "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca  tools/mado-evidence-audit.py",
+    "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09  .ufo/waves/round-22/audit/fixtures/expected.json",
+    "6f24550878848f8ceb3a857ff7bf28eaf893c78f8fdb935eddfbbbb55ae453cb  .ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/bundle.json",
+    "183587487f1dacc2623dfdc185cb60c0789458aa05ee3f57d1da361d44fb144c  .ufo/waves/round-22/audit/fixtures/cases/AuditRawNaNCounter/root/snapshot.json",
+    "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756  .ufo/waves/round-22/w2/receipts/FalsifyC216/stdout.txt",
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  .ufo/waves/round-22/w2/receipts/FalsifyC216/stderr.txt"
+  ],
+  "uncertainties": [
+    "Receipt carries exception class only: error=Invalid, no message. NaN attribution is by control flow [INFERENCE from tool lines 121-131]: bundle parse, name/sha checks, rooted and bounded path checks and digest match all pass before parse(raw) at line 131, whose parse_constant hook raises Invalid on the NaN token; no other Invalid site is reached on this input.",
+    "Digest-before-decode is not discriminated by this case: the snapshot digest matches, so a decode-first mutant would also return code 2 with evidence_audit_input_invalid. Ordering needs a digest-mismatch fixture.",
+    "[INFERENCE from control flow, not observed] Only parse_constant fires on this input; finite() and the exact-int check in count() are not reached because parse aborts first. A mutant removing parse_constant still returns code 2 via finite() or count(), so this fixture does not discriminate that layer. The observed output cannot distinguish the layers: all raise class Invalid.",
+    "Size and symlink boundaries not exercised: 67-byte snapshot against 2 MiB limit; no symlink component (readlink -f equals every input path); no at-limit or over-limit input.",
+    "Caps: address space verified as 393216 KiB via ulimit under prlimit; RSS not measured; wall time not separately measured; exit 2 returned and timeout did not fire.",
+    "Scope: oracle expected b5cd4cf3... was neither consumed nor hashed by this single-case run; governing identity is audit expected b5df74b5..., unchanged across the run.",
+    "Revision 71228fd5... is the assignment-stated revision and was not verified; no git subcommands were run.",
+    "Two python3 -I -c version/executable probes ran before the scanner invocation; they did not execute the scanner or any fixture code."
+  ]
+}

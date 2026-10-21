@@ -1,0 +1,118 @@
+{
+  "seat": "MadoR22.FalsifyC217",
+  "case_id": "AuditRawOverflowCounter",
+  "reviewed_revision": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "scope": "One fixed artifact-only case; author-lane advisory falsification, not admission",
+  "axes": [
+    "Exact-count and finite-number schema fidelity",
+    "Digest-before-decode and invalid-input verdict fidelity",
+    "Reproducible bounded evidence and truthful authority"
+  ],
+  "command": [
+    "python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "--check",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawOverflowCounter/bundle.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawOverflowCounter/root"
+  ],
+  "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "resource_cap": {
+    "address_space_soft_bytes": 402653184,
+    "address_space_hard_bytes": 402653184,
+    "wall_timeout_seconds": 15,
+    "method": "resource.setrlimit(RLIMIT_AS) in child preexec_fn; subprocess.run(timeout=15)",
+    "scanner_children": 1,
+    "background_jobs": 0
+  },
+  "artifacts": {
+    "tool": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+      "before_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+      "after_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+      "matches_fixed_identity": true,
+      "drift": false
+    },
+    "expected_manifest": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/expected.json",
+      "before_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+      "after_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+      "matches_fixed_identity": true
+    },
+    "bundle": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawOverflowCounter/bundle.json",
+      "size_bytes": 218,
+      "before_sha256": "d3257ba9de2eb48b74310a517aa6a2f177588bac2c00fe57b47135f62b0357f0",
+      "after_sha256": "d3257ba9de2eb48b74310a517aa6a2f177588bac2c00fe57b47135f62b0357f0"
+    },
+    "snapshot": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawOverflowCounter/root/snapshot.json",
+      "size_bytes": 69,
+      "before_sha256": "996f1e4b190fbda1df83c51f4e2b537acc18fb6c2a3689a2c402c73f2a6f0379",
+      "after_sha256": "996f1e4b190fbda1df83c51f4e2b537acc18fb6c2a3689a2c402c73f2a6f0379",
+      "bundle_declared_sha256": "996f1e4b190fbda1df83c51f4e2b537acc18fb6c2a3689a2c402c73f2a6f0379",
+      "raw_counter_token": "1e400"
+    },
+    "frozen_proposal_copy": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/inputs/proposals/AuditRawOverflowCounter.json",
+      "size_bytes": 903,
+      "before_sha256": "38a4f4d8d6b9c05f36a0ae2c0985877e41c412e2eb9c2a6fd9422608cd2331be",
+      "after_sha256": "38a4f4d8d6b9c05f36a0ae2c0985877e41c412e2eb9c2a6fd9422608cd2331be"
+    }
+  },
+  "declared_claim": {
+    "total": 0,
+    "observed": 0,
+    "lead": 0,
+    "errors": 0,
+    "clean": false
+  },
+  "fixed_case_expectation": {
+    "code": 2,
+    "finding_ids": ["evidence_audit_input_invalid"],
+    "original_expected": {
+      "code": 2,
+      "finding_ids": ["evidence_audit_input_invalid"]
+    },
+    "normalizations": []
+  },
+  "independent_expectation": {
+    "code": 2,
+    "finding_ids": ["evidence_audit_input_invalid"],
+    "derived_before_scanner_run": true,
+    "old_classifier_output_used": false,
+    "basis": [
+      "Raw snapshot has zero finding rows and one file row, eval_unparsed:0 and unparsed_spawns:1e400.",
+      "The schema requires nonnegative exact-int counters and finite decoded JSON numbers. Under the pinned Python JSON decoder, the exponent token 1e400 becomes float infinity, violating both requirements; mathematical integrality is not an exact-int type exemption.",
+      "The raw-byte snapshot digest equals the declaration, so the expected refusal is invalid input, not snapshot_tampered.",
+      "Invalid counter data prevents establishing actual error totals. The zero declared errors and clean:false cannot turn invalid input into clean0 or contradicted1."
+    ],
+    "candidate_source_reasoning": "check verifies SHA at lines 127-130 before parse(raw) at line 131; parse invokes finite at lines 51-53; finite rejects a nonfinite float at lines 38-48; count separately requires exact int at lines 67-77; evaluate maps Invalid to code2/evidence_audit_input_invalid at lines 165-169. This is source reasoning, not an instrumented branch trace."
+  },
+  "observation": {
+    "exit_code": 2,
+    "timed_out": false,
+    "elapsed_seconds": 0.03210346099513117,
+    "stdout": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}\n",
+    "stderr": "",
+    "stdout_bytes": 240,
+    "stderr_bytes": 0,
+    "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_base64": "eyJhdXRob3JpdHkiOiAiYXJ0aWZhY3QgYXJpdGhtZXRpYyBhbmQgZXZpZGVuY2UgbGFiZWxzIG9ubHk7IG5vdCBzZW1hbnRpYyBjb3JyZWN0bmVzcywgYXV0aGVudGljYXRpb24sIGFkbWlzc2lvbiBvciBwcm9tb3Rpb24iLCAiY29kZSI6IDIsICJlcnJvciI6ICJJbnZhbGlkIiwgImZpbmRpbmdfaWRzIjogWyJldmlkZW5jZV9hdWRpdF9pbnB1dF9pbnZhbGlkIl0sICJyZXN1bHQiOiAiY291bGQtbm90LWV2YWx1YXRlIn0K",
+    "stderr_base64": ""
+  },
+  "observed_match": true,
+  "independent_semantic_verdict": "Correct controlled invalid-input refusal for this case: code2 could-not-evaluate, not false clean0 and not assertion-failed1.",
+  "actionable_findings": [],
+  "limitations": [
+    "The lsp device was not mounted: schema lookup and status request both returned No such tool. References, definitions, and diagnostics were unavailable. Textual callsite fallback is not semantic-reference proof.",
+    "Only the assigned --check was executed. No selftest, measurement driver, old classifier, extra source-shaped probe, build, lint, formatter, generic smoke, or mutation was run.",
+    "This case has no finding rows and therefore does not exercise row-versus-line aggregation, signed/bool counters, path/symlink attacks, or size boundaries. No universal coverage or saturation is claimed.",
+    "The exact rejecting branch is source-derived; stdout exposes the Invalid class, not a traced branch or detailed validation message.",
+    "No semantic precision, chronology authentication, historical C3 correction, admission, promotion, routing, or resume claim follows."
+  ],
+  "authority": "Author-lane advisory review only; L1 retains planner/integration authority and only the canonical runtime may judge.",
+  "installs_or_updates": []
+}

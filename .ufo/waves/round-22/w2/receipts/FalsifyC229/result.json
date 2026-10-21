@@ -1,0 +1,140 @@
+{
+  "attack": "C2 AuditRawSymlinkFile",
+  "seat": "MadoR22.FalsifyC229",
+  "case": {
+    "id": "AuditRawSymlinkFile",
+    "bundle": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile/bundle.json",
+    "root": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile/root",
+    "expected_manifest": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/expected.json",
+    "bundle_snapshot_path": "link.json",
+    "snapshot_target": "real.json"
+  },
+  "measured_command": "python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py --check /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile/bundle.json --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile/root",
+  "caps": {
+    "address_space_kib": 393216,
+    "address_space_bytes": 402653184,
+    "wall_timeout_seconds": 15,
+    "wall_timeout_wrapper": "timeout 15s",
+    "child_concurrency": 1,
+    "stream_capture": "stdout/stderr to receipt files, no truncation observed"
+  },
+  "exit": 2,
+  "stdout": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}\n",
+  "stdout_bytes": 240,
+  "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+  "stderr": "",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "observed": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": [
+      "evidence_audit_input_invalid"
+    ],
+    "error": "Invalid",
+    "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+    "actual_snapshot_sha256_present": false,
+    "process_exit_equals_code": true
+  },
+  "digests": {
+    "selected_tool_pre": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "selected_tool_post": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "selected_tool_matches_fixed_identity": true,
+    "bundle_pre": "0b6edd115aadfa273bd849baf567fad9151c33cba19e48e1e57fbbf92bdd17e7",
+    "bundle_post": "0b6edd115aadfa273bd849baf567fad9151c33cba19e48e1e57fbbf92bdd17e7",
+    "bundle_matches_expected_bundle_sha256": true,
+    "snapshot_real_pre": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "snapshot_real_post": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "snapshot_real_sha_equals_bundle_declared_sha256": true,
+    "root_link_target_pre_and_post": "real.json",
+    "fixture_expected_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "fixture_expected_matches_fixed_identity": true,
+    "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "path_facts": {
+    "root_and_all_ancestors_symlink_free": true,
+    "ancestor_scan_source": "precheck.txt: root, .ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile, ... up to / all not-symlink and directories",
+    "link_lstat_is_symlink": true,
+    "link_readlink": "real.json",
+    "link_realpath": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkFile/root/real.json",
+    "link_target_is_regular_file": true,
+    "link_target_bytes": 104,
+    "link_target_inside_root": true,
+    "snapshot_path_lexically_clean": true,
+    "snapshot_path_parts": [
+      "link.json"
+    ],
+    "bundle_bytes": 213,
+    "snapshot_bytes": 104,
+    "two_mib_bound_exceeded": false
+  },
+  "derived_expectation": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": [
+      "evidence_audit_input_invalid"
+    ],
+    "basis": [
+      "bundle.json parses to snapshot='link.json', sha256='3972b1f5...', claim={total:0, observed:0, lead:0, errors:0, clean:true}; every counter is an exact int and clean is an exact bool; the declared sha is 64 lowercase hex.",
+      "ROOT and every ancestor are symlink-free (precheck.txt), so the ROOT-validity rejection site root_path() at tools/mado-evidence-audit.py:88-94 is not reachable for this input; ROOT is a directory.",
+      "ROOT/link.json has lstat S_ISLNK and target 'real.json' relative to the same directory; rooted() at tools/mado-evidence-audit.py:97-105 raises Invalid('symlink input') at line 101 before any snapshot read or digest.",
+      "audit-contract.json:7 states 'No path escape or symlink is accepted'; audit-clarifications.md:5 (pre-implementation, frozen) states 'Reject absolute, empty, dot/dotdot, backslash paths and every symlink component'. audit-contract.json:8 maps invalid input to code 2 could-not-evaluate.",
+      "The link target root/real.json is a regular 104-byte file whose sha256 3972b1f5... equals the declared sha256; its parsed shape {files:[{eval_unparsed:0,unparsed_spawns:0}], findings:[]} would satisfy the strict schema and make every declared claim equal to the actual counts (total 0, observed 0, lead 0, errors 0) with clean:true, i.e. a permissive resolve-then-contain implementation would return 0/evidence_audit_clean, not 1.",
+      "Because the input path is inadmissible, the audit must not evaluate the snapshot assertions at all; the sole applicable finding is evidence_audit_input_invalid, so the semantically correct result is 2/no assertion evaluated."
+    ],
+    "counterfactual_arithmetic_if_admissible": {
+      "total": 0,
+      "observed": 0,
+      "lead": 0,
+      "errors": 0,
+      "failures": [],
+      "code": 0,
+      "finding_ids": [
+        "evidence_audit_clean"
+      ]
+    }
+  },
+  "match": {
+    "process_exit_equals_expected_code": true,
+    "observed_code_equals_expected_code": true,
+    "observed_ids_equal_expected_ids": true,
+    "stderr_empty": true,
+    "observed_result_is_could_not_evaluate": true,
+    "no_snapshot_tampered_id": true,
+    "verdict": "observed match to frozen expectation"
+  },
+  "independent_semantic_verdict": {
+    "verdict": "agree",
+    "confidence": "high",
+    "statement": "Under the frozen no-symlink-component rule, an in-ROOT relative symlink whose target bytes and digest are valid is still inadmissible; code 2 evidence_audit_input_invalid is the correct outcome, and code 0 would accept a symlinked snapshot contrary to the contract. Code 1 is wrong because no declared count is contradicted."
+  },
+  "not_exercised": [
+    "digest-before-decode ordering (rejection occurs at rooted()/line 101 before bounded() reads the snapshot; no actual_snapshot_sha256 field appears)",
+    "2 MiB input bound (bundle 213 bytes, snapshot 104 bytes)",
+    "duplicate-key, malformed-JSON, nonfinite-number, bool-as-count and negative-count rejection",
+    "finding row grain / evidence marker observed|lead and row-count claims (findings is empty; declared total/observed/lead are 0)",
+    "finding class/command nonempty-string requirement (no finding rows)",
+    "claim-count contradiction ids (finding/observed/lead/error mismatches) and clean:false path"
+  ],
+  "uncertainties": [
+    "The output records only the exception class name 'Invalid'; it does not record the raising site. Attribution to rooted():101 rests on the verified symlink-free ancestry plus source order, not on a logged message.",
+    "Single-ID refusal cannot discriminate implementation cause: an unconditional-invalid mutant, or a mutant that rejects every non-regular target, produces the identical code/ids on this case; case-level kill power is limited to mutants that accept the symlink and then report clean.",
+    "The explicit rejection of an in-ROOT symlink comes from the pre-implementation clarification audit-clarifications.md:5; audit-contract.json:7 alone says 'no path escape or symlink is accepted' without spelling out 'every component'. Both are frozen; no contradiction, but the expectation depends on the clarification.",
+    "Only the single --check invocation assigned to this seat was run; no selftest, no measurement driver, no whole-population comparison, no mutant execution.",
+    "The snapshot digest equality is a property of the link target bytes; it is not evidence that the tool verified the digest on this input."
+  ],
+  "raw_receipt_files": {
+    "stdout": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC229/stdout.txt",
+    "stderr": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC229/stderr.txt",
+    "exit": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC229/exit.txt",
+    "precheck": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC229/precheck.txt",
+    "postcheck": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC229/postcheck.txt"
+  },
+  "no_mutation": {
+    "production_fixture_expected_source_edited": false,
+    "tool_hash_stable_before_after": true,
+    "fixture_hashes_stable_before_after": true,
+    "expectations_changed": false
+  }
+}

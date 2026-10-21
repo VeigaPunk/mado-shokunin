@@ -1,0 +1,62 @@
+{
+  "seat": "MadoR22.FalsifyC235",
+  "case_id": "HistoricalC3.D1.row-claim-matches-derived",
+  "command": "prlimit --as=402653184 -- timeout 15 python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py --check /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/HistoricalC3.D1.row-claim-matches-derived/bundle.json --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/HistoricalC3.D1.row-claim-matches-derived/root",
+  "limits": {"address_space_bytes": 402653184, "timeout_seconds": 15, "concurrency": 1},
+  "runtime": {"python": "Python 3.14.8", "prlimit": "util-linux 2.42.4"},
+  "started_utc": "2026-10-21T15:37:43.292220358Z",
+  "ended_utc": "2026-10-21T15:37:43.322940510Z",
+  "exit": 0,
+  "stdout": "{\"actual_counts\": {\"errors\": 0, \"lead\": 1, \"observed\": 10, \"total\": 11}, \"actual_snapshot_sha256\": \"f9cf3c643213c085a5031c15ea314458b18aca0d7312df01a86d5f87ce46c608\", \"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 0, \"finding_ids\": [\"evidence_audit_clean\"], \"result\": \"clean\"}\n",
+  "stdout_bytes": 365,
+  "stdout_sha256": "962922a71dbb959495db0790ee834117c2ecc359b792e70f797bd6d097d74265",
+  "stderr": "",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_stream_files": ["stdout.txt", "stderr.txt", "exit.txt", "start.txt", "end.txt"],
+  "tool": {
+    "path": "tools/mado-evidence-audit.py",
+    "fixed_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "sha256_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "sha256_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "drift": false
+  },
+  "fixtures_expected": {
+    "path": ".ufo/waves/round-22/audit/fixtures/expected.json",
+    "fixed_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "observed_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "expected_sha256_file_matches": true
+  },
+  "inputs": {
+    "bundle": {"sha256_before": "2390cf9cab3e052f1d2fa079bd244e16fdf6a03bffee150618f34dcd3a028b56", "sha256_after": "2390cf9cab3e052f1d2fa079bd244e16fdf6a03bffee150618f34dcd3a028b56", "size_bytes": 220, "expected_bundle_sha256": "2390cf9cab3e052f1d2fa079bd244e16fdf6a03bffee150618f34dcd3a028b56"},
+    "snapshot": {"sha256_before": "f9cf3c643213c085a5031c15ea314458b18aca0d7312df01a86d5f87ce46c608", "sha256_after": "f9cf3c643213c085a5031c15ea314458b18aca0d7312df01a86d5f87ce46c608", "size_bytes": 3140, "bundle_declared_sha256": "f9cf3c643213c085a5031c15ea314458b18aca0d7312df01a86d5f87ce46c608", "regular_file": true, "symlinks_in_case_tree": false}
+  },
+  "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]},
+  "independent_derivation": {
+    "method": "read raw snapshot bytes and bundle claim; counted rows and file counters by hand; applied audit-contract.json rules; did not use classifier or tool output",
+    "digest_before_decode": "sha256(raw snapshot bytes) = f9cf3c64... equals bundle sha256 (64 lowercase hex)",
+    "rows": {"total": 11, "observed": 10, "lead": 1, "lead_row": "inputs/r13-root.jsonl:4 package_query pacman:-Q"},
+    "lines": {"distinct_file_line": 6, "observed_lines": 5, "lead_lines": 1, "note": "line grain is not the grain used by this claim; the contract counts rows without deduplication"},
+    "errors": {"files": 5, "eval_unparsed_sum": 0, "unparsed_spawns_sum": 0, "total": 0},
+    "claim": {"total": 11, "observed": 10, "lead": 1, "errors": 0, "clean": false, "types": "exact int, nonnegative; clean exact bool; no floats or bools in count positions"},
+    "comparisons": {"total": "11==11", "observed": "10==10", "lead": "1==1", "errors": "0==0", "clean_true_clauses": "not applicable, clean is false"},
+    "verdict": {"code": 0, "finding_ids": ["evidence_audit_clean"]}
+  },
+  "observed_matches_expected": true,
+  "independent_matches_expected": true,
+  "provenance_checks": {
+    "snapshot_equals_proposal_D1_snapshot_parsed": true,
+    "D1_canonical_sha256_recomputed": "9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b",
+    "D1_canonical_sha256_declared": "9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b",
+    "file_bytes_equal_sorted_indent2_plus_newline_of_D1": true,
+    "D1_row_i_equals_original_row_i_plus_r20_marker_i_for_all_11": true,
+    "original_rows_markerless": "0 of 11 original rows carry an evidence key",
+    "r20_source_finding_totals": {"observed": 10, "lead": 1, "unmarked": 0},
+    "proposal_sha256": "9ee6144d73342062fc1120afd2e4d4db4a52ec014f8a18744f116ab0dbebed7a"
+  },
+  "contradictions_retained": [
+    "The case rationale in expected.json says 'Six rows ... total 6 = 6 rows, observed 5, lead 1', but the bound snapshot has 11 rows and the claim is 11/10/1. The text is the proposal's top-level (six-row) rationale, copied verbatim onto 5 cases, 3 of which are D1 row-level cases. Expectation is unaffected; rationale/provenance text is false for this case.",
+    "HistoricalC3.r19-c3-derived-row-level-green binds a byte-identical bundle (sha256 2390cf9c...) with the same snapshot, claim and expectation as this case. These two are one input, not two independent cases."
+  ],
+  "not_credited": ["semantic precision", "detector correctness", "C3 admission", "C2 admission"]
+}

@@ -1,0 +1,44 @@
+{
+  "seat": "MadoR22.FalsifyC206",
+  "case": "AuditNegative",
+  "phase": "independent derivation recorded before the sole candidate execution",
+  "delivered_revision": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "axes": [
+    "Exact-byte identity and frozen provenance",
+    "Per-counter strict schema and signed-count cancellation resistance",
+    "Tri-state verdict and artifact-only authority honesty",
+    "Bounded single-child execution and read-only source scope"
+  ],
+  "identities_before": {
+    "tool_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "expected_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "bundle_sha256": "d43d04e2fe84f6d7092acfbb748b63271db63f68ae2165eb5b4bbeb63cd80cfa",
+    "snapshot_sha256": "5434a72fd22ac904ec9412a4192845909c925681683973df4761a37b40e22120",
+    "proposal_sha256": "80f4cdd1563d335ed652c0114bea1d6a787547a7a4462d3b354f1864c15fbd2b"
+  },
+  "input_bytes": {"bundle": 217, "snapshot": 105, "proposal": 1397},
+  "raw_snapshot_values": {
+    "files": [{"eval_unparsed": -1, "unparsed_spawns": 1}],
+    "findings": []
+  },
+  "declared_claim": {"clean": true, "errors": 0, "lead": 0, "observed": 0, "total": 0},
+  "independent_derivation": [
+    "The 105-byte snapshot digest matches the exact digest declared in the 217-byte bundle and the frozen case metadata; the input is neither a digest mismatch nor a size-boundary case.",
+    "The files population contains one row and findings contains zero rows. Findings may be empty and total/observed/lead are row counts, not incident-line counts.",
+    "Snapshot files[0].eval_unparsed is JSON integer -1. The strict contract requires every per-file counter to be a nonnegative exact int, independently of any later sum.",
+    "Although unchecked arithmetic would cancel -1 + 1 to zero, no validated aggregate errors count exists. The errors:0 and clean:true assertions cannot be evaluated against invalid counters.",
+    "Therefore the independent semantic verdict is code 2 (could-not-evaluate) with exactly evidence_audit_input_invalid, never code 0 or assertion-failure code 1. This uses the raw values and strict schema, not any classifier output.",
+    "Candidate count() requires exact int and rejects a negative value; check() calls it on eval_unparsed before adding unparsed_spawns; evaluate() catches Invalid through ValueError and returns the same code/ID. main() prints that output and exits with its code."
+  ],
+  "canonical_logic": {
+    "contract": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit-contract.json:5-8",
+    "clarification": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit-clarifications.md:6-9",
+    "require_and_count": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py:67-77",
+    "digest_before_decode": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py:127-131",
+    "per_file_validation": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py:145-149",
+    "invalid_result": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py:165-169",
+    "cli_result": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py:267-286"
+  },
+  "review_mechanism": "xd://lsp is not mounted (read returned No such tool). LSP status/references/definition/diagnostics unavailable; used bounded source reads and the delivered commit diff, with no semantic-LSP claim.",
+  "limits": "This single signed-counter case cannot establish generic bool/nonfinite/path/symlink/size-boundary coverage, scanner semantics, precision, chronology, admission, promotion, or saturation."
+}

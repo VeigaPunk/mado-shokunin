@@ -1,0 +1,157 @@
+{
+  "schema": "mado-r22-falsify-c2-receipt-v1",
+  "seat": "FalsifyC225",
+  "attack_item": "C2 AuditRawPathEscape",
+  "lane": "author-lane advisory falsification; not non-author admission",
+  "generated_date": "2026-10-21",
+  "target": {
+    "tool": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "fixed_identity_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tool_sha256_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tool_sha256_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "identity_match": true,
+    "drift": false
+  },
+  "fixture": {
+    "expected_entry_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/expected.json",
+    "expected_json_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "expected_json_sha256_matches_fixed_identity": true,
+    "expected_entry_lines": "1163-1205",
+    "case_id": "AuditRawPathEscape",
+    "kind": "raw",
+    "bundle": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/bundle.json",
+    "bundle_bytes": 219,
+    "bundle_sha256_observed": "6be0ed408c2e8b61be065538a3f4f35a64512a7cf2755eb607d2a3d4e58da97c",
+    "bundle_sha256_declared": "6be0ed408c2e8b61be065538a3f4f35a64512a7cf2755eb607d2a3d4e58da97c",
+    "snapshot_name_declared": "../outside.json",
+    "root": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/root",
+    "root_entry_count": 0,
+    "root_and_ancestors_symlink_free": true,
+    "root_ancestry_check": "readlink -f(root) == logical abspath (no symlinked component)",
+    "escape_target": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/outside.json",
+    "escape_target_bytes": 104,
+    "escape_target_sha256_observed": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "snapshot_sha256_declared_in_bundle": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "escape_target_shape": {
+      "findings_len": 0,
+      "files_len": 1,
+      "file_row_counters": {"eval_unparsed": 0, "unparsed_spawns": 0}
+    },
+    "declared_claim": {"clean": true, "errors": 0, "lead": 0, "observed": 0, "total": 0},
+    "declared_expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+    "declared_original_expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]}
+  },
+  "execution": {
+    "argv": [
+      "python3", "-I",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+      "--check",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/bundle.json",
+      "--root",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/root"
+    ],
+    "wrapper": "prlimit --as=402653184 --cpu=15 -- timeout 15",
+    "caps": {"address_space_bytes": 402653184, "cpu_seconds": 15, "wall_seconds": 15, "children": 1},
+    "exit_code": 2,
+    "timed_out": false,
+    "signal": null,
+    "stdout_verbatim": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}\n",
+    "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stdout_bytes": 240,
+    "stderr_verbatim": "",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_matches_byte_identical_replay": "single run; no replay"
+  },
+  "observed": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": ["evidence_audit_input_invalid"],
+    "error": "Invalid",
+    "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion"
+  },
+  "independent_derivation": {
+    "basis": [
+      "raw bundle bytes at cases/AuditRawPathEscape/bundle.json (sha 6be0ed40...)",
+      "raw escaped bytes at cases/AuditRawPathEscape/outside.json (sha 3972b1f5...)",
+      "declared counts in the bundle claim object",
+      "strict schema in .ufo/waves/round-22/audit-contract.json rules 1-8",
+      "path rule in .ufo/waves/round-22/audit-clarifications.md:5 (dot/dotdot and path escape rejected; snapshot path resolves relative to ROOT)",
+      "candidate relevant check in tools/mado-evidence-audit.py relative()/rooted()/evaluate()"
+    ],
+    "steps": [
+      "check(): bounded(bundle) reads 219 bytes <= 2MiB; parse() succeeds; require snapshot str -> '../outside.json'; require sha256 str -> 64 lowercase hex valid.",
+      "check(): next statement is raw = bounded(rooted(root_path(root), name)). root_path(root) passes: abspath, root and every ancestor non-symlink (verified by readlink -f equality), root is a directory.",
+      "rooted(root, '../outside.json') calls relative(name); name.split('/') == ['..', 'outside.json']; the '..' member satisfies the dotdot rejection predicate, so Invalid('invalid relative path') is raised BEFORE any path join, stat, open or digest.",
+      "evaluate() catches Invalid (subclass of ValueError) and returns result(2, ['evidence_audit_input_invalid'], error='Invalid'). No snapshot bytes are read, no finding row is inspected, no claim field is compared.",
+      "main() prints json.dumps(output, sort_keys=True) and returns output['code'] == 2; process exit is 2 and stderr stays empty."
+    ],
+    "derived_code": 2,
+    "derived_finding_ids": ["evidence_audit_input_invalid"],
+    "derived_error_class": "Invalid",
+    "derived_result_label": "could-not-evaluate",
+    "derived_exit": 2,
+    "derived_stderr_bytes": 0,
+    "derivation_independent_of_old_classifier_output": true,
+    "counts_used_for_derivation": "none beyond declared-claim inertness; the snapshot is never opened under the observed path"
+  },
+  "match": {
+    "collection": false,
+    "simulated_second_case": false,
+    "reason": "fixture chosen from expected.json only, not from prior classifier output",
+    "code_match": true,
+    "finding_ids_match": true,
+    "exit_match": true,
+    "stderr_empty_match": true,
+    "verdict": "observed matches independently derived expectation exactly"
+  },
+  "semantic_verdict": {
+    "verdict": "accept observed 2/could-not-evaluate as the truthful label for these bytes",
+    "why_not_0": "0/evidence_audit_clean would assert the escaped snapshot satisfied the declared claim; the rules forbid path escape, so reaching that verdict requires the artifact-input gate to fail first.",
+    "why_not_1": "1 asserts an artifact assertion was contradicted. Nothing was evaluated: no digest comparison, no row counting, no claim comparison. Labeling refusal as 'failed' would claim contradiction that never occurred.",
+    "counterfactual_discriminator": "An unchecked join (root / '..' / 'outside.json') reaches outside.json, whose 104 bytes match the declared 3972... digest, whose findings is empty and whose sole files row has 0/0 counters. Declared claim is all zeros with clean true, so a bypass yields failures=[] -> 0/evidence_audit_clean, exit 0. The expectation therefore separates the escaped-join class from compliant behaviour exactly.",
+    "credit_ceiling": "This green evidences only that the delivered bytes refuse this dotdot snapshot name at the CLI boundary, with the contract authority string intact. It is not arithmetic correctness, not row-grain precision, not digest-ordering evidence, not symlink or size-boundary evidence, and not semantic precision or admission."
+  },
+  "guard_localization": {
+    "fired_guard": "relative() component rejection of '..' (lexical, pre-filesystem)",
+    "secondary_guard_present": "rooted() final containment check path.resolve().is_relative_to(root) would also reject this name after per-component symlink checks",
+    "distinguishable_from_receipt": false,
+    "note": "Both guards raise the same Invalid class, so the output field error='Invalid' does not localize which guard fired. Localization rests on the ordered source, not on the process output."
+  },
+  "mutation_boundary": {
+    "single_site_removals_that_still_yield_2": [
+      "deleting only the '..' member from relative()'s component tuple leaves rooted()'s is_relative_to(root) check, which rejects after resolve()",
+      "deleting only rooted()'s containment predicate leaves relative()'s lexical dotdot rejection"
+    ],
+    "single_edit_that_would_flip": "replace the call bounded(rooted(root_path(root), name)) with a plain join such as bounded(root / name): both guards are bypassed at the call site, bounded() then accepts parent=FIX directory, and the escaped file matches the declared digest and claim",
+    "proposed_recipe_only": true,
+    "mutant_killed_claimed": false,
+    "note": "No mutant was built or run by this seat. The recipe and prediction are inference for L1's private sandbox; they must not be reported as a killed mutant."
+  },
+  "uncertainties_and_contradictions_retained": [
+    "The fixture cannot kill a single-site removal inside relative() alone or inside rooted()'s containment line alone; a private mutation run expecting a one-line kill at either guard will see green and must not read that as case failure.",
+    "error='Invalid' is a class label, not a cause label; the same output arises from lexical dotdot rejection, absolute path, backslash path, empty component, symlink input, missing root or symlinked root/ancestor. The fixture's expected id is stable across all of those, so the case does not discriminate among invalid-input causes.",
+    "root_path() rejects any symlinked ancestor, so an environment symlink above root could produce the identical 2/evidence_audit_input_invalid for the wrong reason. Ruled out here by readlink -f equality, which is an environment observation rather than tool evidence.",
+    "--check does not verify bundle_sha256; bundle-to-manifest binding is established only by the external sha256 comparison against the expected.json entry (6be0ed40..., matches). The single --check run alone does not prove the bundle is the manifest-bound bytes.",
+    "Digest-before-decode ordering is stated in the contract but never reached in this case: no snapshot bytes are read and no digest is computed. The case gives no evidence for or against that ordering.",
+    "Row/line grain, signed/negative counts, bool-as-count rejection, nonfinite numbers, duplicate keys and the 2 MiB boundary are all untouched by this case; its declared all-zero claim is parsed only after the snapshot and is never validated on the observed path.",
+    "Symlink-component rejection and file-size boundary are not exercised: root and ancestors are real directories, outside.json is a regular 104-byte file."
+  ],
+  "scope_exclusions": {
+    "selftest_46_case_run": false,
+    "measurement_driver_run": false,
+    "other_cases_measured": 0,
+    "extra_source_shaped_probes": 0,
+    "production_fixture_or_expectation_edits": 0,
+    "delegation": false,
+    "background_jobs": false,
+    "installs": 0
+  },
+  "artifacts": {
+    "stdout_raw": ".ufo/waves/round-22/w2/receipts/FalsifyC225/stdout.raw",
+    "stderr_raw": ".ufo/waves/round-22/w2/receipts/FalsifyC225/stderr.raw",
+    "exit_raw": ".ufo/waves/round-22/w2/receipts/FalsifyC225/exit.raw",
+    "tool_sha_before": ".ufo/waves/round-22/w2/receipts/FalsifyC225/tool-sha-before.txt",
+    "tool_sha_after": ".ufo/waves/round-22/w2/receipts/FalsifyC225/tool-sha-after.txt"
+  }
+}

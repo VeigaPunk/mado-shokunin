@@ -1,0 +1,117 @@
+{
+  "seat": "MadoR22.FalsifyC227",
+  "attack_item": "C2 AuditRawSymlinkDir",
+  "case_id": "AuditRawSymlinkDir",
+  "lane": "author-lane advisory attack; NOT non-author admission",
+  "timestamp_utc": "2026-10-21T15:38:47Z",
+  "base_revision": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "tool": {
+    "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "sha256_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "sha256_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "sha256_fixed_identity": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "drift": false
+  },
+  "fixture_hashes": {
+    "audit_fixtures_expected_json": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_fixtures_expected_json_fixed_identity": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_fixtures_expected_sha256_file": "259554568e17f61039b5340f4bf8dd24ff0e31eee14fa2777e309bf04c0ebc60",
+    "case_bundle_json": "1966aebb64d28c5bb5cd059d0c582aafbef2de44d10c46597b60128c5393af0d",
+    "case_bundle_json_declared_in_expected": "1966aebb64d28c5bb5cd059d0c582aafbef2de44d10c46597b60128c5393af0d",
+    "case_snapshot_real_snapshot_json": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "case_snapshot_declared_digest": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "case_proposal": "45fed7badadf44908a2c0424da436bf4cdba6a7b23fe2684e248b31ad236b427",
+    "case_proposal_declared": "45fed7badadf44908a2c0424da436bf4cdba6a7b23fe2684e248b31ad236b427"
+  },
+  "root_inventory_observed": [
+    {"path": ".", "kind": "directory"},
+    {"path": "dirlink", "kind": "symlink", "target": "real"},
+    {"path": "real", "kind": "directory"},
+    {"path": "real/snapshot.json", "kind": "regular", "size_bytes": 104}
+  ],
+  "root_ancestor_symlinks_observed": [],
+  "command": [
+    "ulimit -v 393216",
+    "timeout 15s",
+    "python3 -I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "--check",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkDir/bundle.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkDir/root"
+  ],
+  "caps": {
+    "address_space_bytes": 402653184,
+    "ulimit_v_kib": 393216,
+    "timeout_seconds": 15,
+    "single_child": true,
+    "timeout_tripped": false,
+    "timeout_wrapper_verified": "shell builtin/enforced: `timeout 1s sleep 5` exited 124 in a separate environment sanity check"
+  },
+  "python_version": "3.14.8",
+  "exit_code": 2,
+  "stdout_full": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}\n",
+  "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+  "stdout_bytes": 240,
+  "stderr_full": "",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 0,
+  "raw_files": {
+    "stdout": ".ufo/waves/round-22/w2/receipts/FalsifyC227/stdout.txt",
+    "stderr": ".ufo/waves/round-22/w2/receipts/FalsifyC227/stderr.txt"
+  },
+  "independent_derivation": {
+    "inputs_used": [
+      "raw bundle.json bytes (225 bytes, regular file)",
+      "raw snapshot.json bytes (104 bytes, regular file reached through root/real)",
+      "filesystem stat/readlink topology of the case root",
+      "strict JSON/schema rules stated in .ufo/waves/round-22/audit-clarifications.md",
+      "candidate relevant check: tools/mado-evidence-audit.py rooted() per-component symlink rejection"
+    ],
+    "steps": [
+      "bundle.json parses as a JSON object with unique keys snapshot, sha256, claim (225 bytes, no duplicate keys observable; claim.clean is a bool, claim counters are exact ints 0, so the claim itself is structurally admissible).",
+      "root_path(root) resolves the abspath root; neither root nor any parent is a symlink (observed symlink ancestors: []), and root is a directory, so the root guard does not fire.",
+      "relative('dirlink/snapshot.json') passes: nonempty str, no backslash, PurePosixPath is not absolute, parts are 'dirlink','snapshot.json' with no '', '.', '..'.",
+      "rooted() walks components left to right; the first component root/'dirlink' has lstat mode 0o120777 and readlink target 'real', so is_symlink() is True and rooted() raises Invalid('symlink input') BEFORE any byte read, size bound, or digest comparison of the snapshot.",
+      "evaluate() catches the Invalid (a ValueError) and returns result(2, ['evidence_audit_input_invalid'], error='Invalid'); main() prints sorted-key JSON and exits with output['code'] = 2."
+    ],
+    "derived_code": 2,
+    "derived_result_label": "could-not-evaluate",
+    "derived_finding_ids": ["evidence_audit_input_invalid"],
+    "derived_guard_site": "rooted(): per-component symlink rejection of intermediate directory component",
+    "why_not_failed_1": "The declared claim is not evaluated at all: the run stops at input validation, so no contradiction set exists. code 1 would require validated rows/counters contradicting the claim; code 2 is could-not-evaluate.",
+    "why_not_clean_0": "The claim (clean true, all counters 0) matches the snapshot's zero findings and zero per-file error counters, so a leaf-only or resolve-then-read implementation could return 0/evidence_audit_clean. The clarification requires rejecting EVERY symlink component, so 0 would be a wrong-semantics green for this case.",
+    "digest_before_decode_relevance": "Not reached: path rejection precedes opening the snapshot. The snapshot's declared sha256 happens to equal the actual bytes (3972b1f5...), so the case cannot exercise snapshot_tampered; credit for digest-before-decode is not earned by this case."
+  },
+  "observed": {
+    "code": 2,
+    "result": "could-not-evaluate",
+    "finding_ids": ["evidence_audit_input_invalid"],
+    "error": "Invalid",
+    "process_exit": 2,
+    "stderr_empty": true
+  },
+  "expected": {
+    "code": 2,
+    "finding_ids": ["evidence_audit_input_invalid"]
+  },
+  "observed_match": true,
+  "independent_semantic_verdict": "match",
+  "verdict_basis": "Derived code 2 with the single ID evidence_audit_input_invalid from raw bytes, topology and strict schema without using classifier output; the observed run equals it exactly (exit 2, same code/IDs, empty stderr).",
+  "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+  "uncertainty_and_contradictions": [
+    "Observed output does not carry actual_counts/actual_snapshot_sha256 for this case (evaluate() drops them on input-invalid), so the receipt cannot independently show which guard fired from tool output alone; attribution to the dirlink component rests on source reading plus the observed filesystem topology (leaf is a regular file whose digest matches, root has no symlink ancestors, so the only reachable symlink rejection is the dirlink component).",
+    "This case cannot establish digest-before-decode ordering, row/line-grain arithmetic, signed/bool/nonfinite count handling, or size-boundary behavior; it exercises exactly one boundary: rejection of a symlinked intermediate directory component.",
+    "The 2 MiB bound is not reachable here (bundle 225 B, snapshot 104 B); no size-limit credit.",
+    "The expected fixture's claim block (clean true, all zero) is not a semantic assertion of a clean scan; it is never evaluated because input validation fails first. Reading it as a clean verdict would be contradiction-inflated and is not done here.",
+    "No mutants were executed; the leaf-only-check mutant described in the proposal remains a proposal, not a killed mutant.",
+    "Scope note: this run is author-lane advisory evidence only and does not constitute non-author admission, semantic precision, or retirement of prior r19/r20/r21 red receipts."
+  ],
+  "commands_not_run": [
+    "python3 tools/mado-evidence-audit.py --selftest (whole 46-case suite)",
+    "any measurement driver",
+    "any rerun of old tools to confirm prior reported failures",
+    "any production, fixture, expected or gate mutation"
+  ],
+  "installs_or_updates": []
+}

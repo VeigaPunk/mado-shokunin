@@ -1,0 +1,133 @@
+{
+  "seat": "MadoR22.FalsifyC228",
+  "lane": "author-lane advisory (C2 falsification), leaf member, no subagent dispatch",
+  "attack_item": "C2 AuditRawSymlinkEscape",
+  "case": "AuditRawSymlinkEscape",
+  "lane_bounds": "read-only production/fixtures/expected; ONE bounded check child; no selftest, no measurement driver, no mutants, no installs",
+  "fixed_identities": {
+    "c2_tool_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "c2_tool_sha256_required": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "c2_tool_sha256_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "c2_tool_sha256_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "audit_expected_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/expected.json",
+    "audit_expected_sha256_required": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_expected_sha256_before": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_expected_sha256_after": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "drift": "none observed"
+  },
+  "authorized_invocation": {
+    "primary": "python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py --check /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkEscape/bundle.json --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkEscape/root",
+    "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+    "child_cap": "ulimit -v 393216 (384 MiB address space) + timeout 15s",
+    "second_run": "cross-check run, relative bundle/root form, executed first; byte-identical stdout and stderr to the primary absolute-form run (240-byte stdout, 0-byte stderr, exit 2); the absolute-form run is the assigned invocation and is primary in this receipt"
+  },
+  "observed": {
+    "exit_code": 2,
+    "stdout_full": "{\"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"error\": \"Invalid\", \"finding_ids\": [\"evidence_audit_input_invalid\"], \"result\": \"could-not-evaluate\"}",
+    "stdout_sha256": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stderr_full": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "elapsed_ms_primary": 263,
+    "elapsed_ms_crosscheck": 280,
+    "truncation": "none; stdout is one JSON line, 239 bytes of JSON plus trailing newline = 240-byte file"
+  },
+  "fixture_identity_observed": {
+    "bundle_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkEscape/bundle.json",
+    "bundle_sha256": "0b6edd115aadfa273bd849baf567fad9151c33cba19e48e1e57fbbf92bdd17e7",
+    "bundle_size_bytes": 213,
+    "bundle_type": "regular file (not symlink)",
+    "root_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawSymlinkEscape/root",
+    "root_is_dir": true,
+    "root_and_ancestors_are_symlinks": [],
+    "bundle_and_ancestors_are_symlinks": [],
+    "link_path": "root/link.json",
+    "link_lstat_type": "symbolic link",
+    "link_target": "../outside.json",
+    "link_target_sha256": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "link_target_size_bytes": 104,
+    "bundle_declared_snapshot": "link.json",
+    "bundle_declared_sha256": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "bundle_declared_claim": {"clean": true, "errors": 0, "lead": 0, "observed": 0, "total": 0}
+  },
+  "manifest_expectation_this_case": {
+    "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+    "original_expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+    "normalizations": [],
+    "bundle_sha256": "0b6edd115aadfa273bd849baf567fad9151c33cba19e48e1e57fbbf92bdd17e7",
+    "snapshot_sha256": "3972b1f5d92cb5a2ff347d11cbe2861765e10e0954764a87931195e17eeae99c",
+    "snapshot_files": ["cases/AuditRawSymlinkEscape/outside.json"],
+    "claim_in_manifest": {"clean": true, "errors": 0, "lead": 0, "observed": 0, "total": 0},
+    "consistency_with_bundle_bytes": "bundle_sha256, declared sha256, declared snapshot, declared claim, symlink target and symlink target digest all match the observed fixture bytes"
+  },
+  "independent_derivation": {
+    "basis": "fixture bytes, manifest entry for this case, and tools/mado-evidence-audit.py source; old classifier/receipt output not consulted",
+    "candidate_relevant_check": "check() -> bounded/parse/require -> root_path -> rooted(root, 'link.json')",
+    "chain": [
+      "bounded(bundle.json): path is not a symlink and is a regular file; 213 bytes <= MAX_BYTES 2*1024*1024 -> raw bundle bytes read",
+      "parse(raw): UTF-8 JSON, object_pairs_hook rejects duplicate keys, parse_constant rejects nonfinite -> accepted; claim = {clean:true, errors:0, lead:0, observed:0, total:0}, sha256 has 64 lowercase hex digits",
+      "require(data,'snapshot',str) -> 'link.json'; SHA.fullmatch(declared sha256) succeeds",
+      "root_path(root): os.path.abspath(root); no element of (root, *root.parents) is a symlink (independently observed []); root.is_dir() true -> accepted",
+      "relative('link.json'): not absolute, no backslash, split parts ('link.json',) contain no '', '.', '..' -> accepted",
+      "rooted(): path = root/'link.json'; path.is_symlink() is true (lstat type symbolic link, target '../outside.json') -> raise Invalid('symlink input')",
+      "evaluate(): Invalid subclasses ValueError -> result(2, ['evidence_audit_input_invalid'], error='Invalid')",
+      "main(): prints sort_keys JSON, returns output['code'] = 2 -> process exit 2, empty stderr"
+    ],
+    "derived_code": 2,
+    "derived_finding_ids": ["evidence_audit_input_invalid"],
+    "derived_result_label": "could-not-evaluate",
+    "first_rejecting_gate": "rooted() per-component symlink guard (Invalid('symlink input'))",
+    "why_code_2_not_1_or_0": "no assertion about the bundle claim was evaluated or contradicted; the input was refused. result() maps code 2 to 'could-not-evaluate'; evidence_audit_input_invalid is the only id the exception path emits."
+  },
+  "discrimination_analysis": {
+    "method": "static source-level derivation from outside.json bytes and the strict schema; no mutant executed",
+    "follow_symlink_outcome": {
+      "derived_code": 0,
+      "derived_finding_ids": ["evidence_audit_clean"],
+      "reason": "outside.json parses to findings=[] and files=[{eval_unparsed:0,unparsed_spawns:0}]; findings is an empty list (row loop vacuous), files is non-empty (so 'empty file population' does not fire), errors=0; declared total/observed/lead/errors 0 all equal actual 0; clean=true with errors=0 and total=0 adds no failure -> failures=[] -> result(0, ['evidence_audit_clean'])"
+    },
+    "digest_gate_would_pass": true,
+    "digest_gate_detail": "sha256 of outside.json bytes equals the bundle's declared sha256 3972b1f5..., so a read-through mutant would also satisfy the digest comparison; the fixture's only defence is the path/symlink refusal",
+    "verdict": "fixture is genuinely discriminating against a mutant that trusts the lexical path string and reads through the symlink (would return 0/evidence_audit_clean, a false clean)"
+  },
+  "guard_attribution": {
+    "independent_gates_against_this_input": [
+      "G1 rooted(): each joined component is_symlink() -> Invalid('symlink input')  [FIRES]",
+      "G2 rooted(): not path.is_file() or not path.resolve().is_relative_to(root) -> Invalid('missing or escaping input')  [masked by G1]",
+      "G3 bounded(): path.is_symlink() or not path.is_file() -> Invalid('nonregular or symlink input')  [masked by G1]"
+    ],
+    "removal_sensitivity": "removing G1 alone: G2 still rejects (resolved ../outside.json is not relative to root). removing G2 alone: G1 still rejects. removing G1 and G2: G3 still rejects. Only neutralising all three yields the clean 0",
+    "attribution_verdict": "the observed match cannot prove the symlink guard specifically is intact; the same 2/evidence_audit_input_invalid is produced by any one surviving gate (all emit the same Invalid and the same id). Per-guard attribution needs a within-root symlink sibling (manifest neighbours AuditRawSymlinkFile/AuditRawSymlinkDir are named in the same setup region; their bytes/expectations were not inspected in this lane)",
+    "rationale_claim_note": "manifest rationale 'rejected both as a symlink and as an escape' is true as source structure (G1/G2, plus G3), but the single observed exit cannot attribute which guard fired; no contradiction with delivered bytes"
+  },
+  "axis_findings": {
+    "row_line_grain": "not exercised. Snapshot carries 0 finding rows and 1 file row. The file row's only schema role is satisfying non-empty `files` and contributing two zero counters; it is never reached because the read is refused. A mutant that changed row-vs-line count arithmetic would not be killed here.",
+    "digest_before_decode": "statically true in source order (bounded -> sha256 -> compare -> parse), but NOT exercised here: no digest is computed because the read is refused. This case cannot kill a decode-before-digest mutant.",
+    "signed_bool_nonfinite_counts": "not exercised. count() rejects negatives and requires type(x) is int (Python bools rejected); require(claim,'clean',bool) demands exact bool; parse_constant/finite reject nonfinite. All claim fields are int 0 / bool true and are validated only after the snapshot read, which never happens. No credit.",
+    "path_symlink_size_boundary": "lexical relative-path acceptance IS exercised (relative() accepts 'link.json'); final-component symlink rejection IS exercised (G1 fires); escape containment and bounded() symlink guard are source-present but masked; 2 MiB size boundary and root-ancestor symlink guard not exercised (213/104 bytes; ancestors clean); intermediate-directory symlink path not exercised.",
+    "truthful_authority": "output carries the authority disclaimer, result 'could-not-evaluate', and emits no actual_counts/actual_snapshot_sha256 on the exception path, so no count is fabricated. Code 2 is neither a clean nor a failed-1 verdict. No semantic-precision or admission credit is claimed from this case.",
+    "count_inflation_applicability": "not applicable: the exception path produces zero count rows, so no all-observed or derived 5/1 or 10/1 claim is made or implied; the actual r19 markerless code2 receipt is a different artifact and was not touched"
+  },
+  "independent_semantic_verdict": {
+    "observed_vs_expected": "MATCH: exit 2, code 2, finding_ids ['evidence_audit_input_invalid'], empty stderr",
+    "expectation_is_semantically_correct": true,
+    "verdict_reasoning": "The path string is lexically clean, so lexical rejection would be wrong; the resolved target is a symlink leaving the audit ROOT, so following it would read outside the declared evidence boundary; refusing to evaluate is the truthful disposition (code 2 could-not-evaluate), distinct from a contradicted claim (code 1) and from a clean audit (code 0).",
+    "authority_scope": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion. This receipt is author-lane advisory falsification, not non-author admission evidence.",
+    "confidence": "high for the observed match and for the derived code/id; high for the guard-order derivation; medium for the removal-sensitivity statement (source-level reasoning, mutants not executed)"
+  },
+  "residual_uncertainty": [
+    "Check-then-use (INFERENCE, unexercised): bounded(), sha_file() and inventory() test is_symlink()/lstat then open by path without O_NOFOLLOW; a concurrent swap between check and open could read a symlink target. Frozen fixture bytes cannot exercise this, and it is not claimed as a defect of this case.",
+    "Environment sensitivity (INFERENCE): bounded(bundle) first calls root_path(bundle.parent), so a checkout or ancestor symlink would produce 2/evidence_audit_input_invalid for the wrong reason. Verified symlink-free for this case's absolute paths at run time.",
+    "Selection: only this case's fixture bytes and its manifest entry were read; sibling case expectations were not used. The manifest contains within-root symlink neighbours, but their behaviour is outside this receipt.",
+    "Not run by design: 46-case selftest, measurement driver, whole-corpus scans, mutants, installs, live probes. No claim about any other case or about the aggregate C2 axis."
+  ],
+  "receipt_artifacts": {
+    "stdout.txt": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit.txt": "2",
+    "timing.txt": "elapsed_ms=280",
+    "stdout_abs.txt": "9956a6a70be430b8f2c1692fc4425dd06c0c33c92be6937ab6303ca099eb4756",
+    "stderr_abs.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit_abs.txt": "2",
+    "timing_abs.txt": "elapsed_ms=263"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "schema": "mado-r22-w2-c2-audit-receipt-v1",
+  "seat": "MadoR22.FalsifyC204",
+  "attack_item": "C2 AuditLeadInflated",
+  "case_id": "AuditLeadInflated",
+  "argv": [
+    "timeout",
+    "15",
+    "prlimit",
+    "--as=402653184",
+    "--",
+    "python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+    "--check",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditLeadInflated/bundle.json",
+    "--root",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditLeadInflated/root"
+  ],
+  "caps": {
+    "address_space_bytes": 402653184,
+    "address_space_mib": 384,
+    "wall_timeout_seconds": 15,
+    "children_run": 1
+  },
+  "exit_code": 1,
+  "stdout": "{\"actual_counts\": {\"errors\": 0, \"lead\": 1, \"observed\": 5, \"total\": 6}, \"actual_snapshot_sha256\": \"86594a7200ba514d5f45270a04524eeade7ca50a997223f5366942ca66fa62b8\", \"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 1, \"finding_ids\": [\"lead_count_mismatch\", \"observed_count_mismatch\"], \"result\": \"failed\"}\n",
+  "stdout_bytes": 390,
+  "stderr": "",
+  "stderr_bytes": 0,
+  "stdout_parsed": {
+    "actual_counts": {"errors": 0, "lead": 1, "observed": 5, "total": 6},
+    "actual_snapshot_sha256": "86594a7200ba514d5f45270a04524eeade7ca50a997223f5366942ca66fa62b8",
+    "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+    "code": 1,
+    "finding_ids": ["lead_count_mismatch", "observed_count_mismatch"],
+    "result": "failed"
+  },
+  "digests_sha256": {
+    "tool_before_run": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tool_after_run": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "audit_expected_json": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "case_bundle_json": "32fabd725ba4fa42c8a5d34dc9713c82dd5e1a9753626b7519524f37948608f7",
+    "case_root_snapshot_json": "86594a7200ba514d5f45270a04524eeade7ca50a997223f5366942ca66fa62b8",
+    "inputs_audit_contract_json": "e65d165a1599c2d8743509bfb09ef46df9b8cc9038246b80cdef1780b5fdf23f",
+    "w1_proposal_AuditLeadInflated_json": "3fdae2e29b3714f6a4a6ba7e6ba69d12993085ccadb143aa78173df3ec31df93",
+    "receipt_stdout_txt": "aff5bc67f8eed8a1d41be46ad50216e4fabd409811f824fa79f3052958d0775b",
+    "receipt_stderr_txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sizes_bytes": {
+    "case_bundle_json": 218,
+    "case_root_snapshot_json": 1112
+  },
+  "ancestors_and_leaves_symlink_free_per_namei": true,
+  "expected_entry": {
+    "normalized_code": 1,
+    "normalized_finding_ids": ["lead_count_mismatch", "observed_count_mismatch"],
+    "original_proposal_code": "1",
+    "original_proposal_finding_ids": ["observed_count_mismatch", "lead_count_mismatch"],
+    "normalizations_recorded_in_expected_json": true,
+    "claim_kind": null,
+    "source_pointer": null
+  },
+  "independent_derivation": {
+    "method": "hand derivation from raw bundle.json and root/snapshot.json bytes, the declared count and evidence-marker rules, and the check() logic read from the tool source; completed before the run",
+    "rows_total": 6,
+    "rows_observed": 5,
+    "rows_lead": 1,
+    "rows_missing_or_invalid_marker": 0,
+    "files": 2,
+    "errors": 0,
+    "claim": {"total": 6, "observed": 6, "lead": 0, "errors": 0, "clean": false},
+    "contradicted_checks": ["observed_count_mismatch", "lead_count_mismatch"],
+    "derived_code": 1,
+    "derived_finding_ids": ["lead_count_mismatch", "observed_count_mismatch"]
+  },
+  "observed_match": {
+    "exit_code_equals_expected_code": true,
+    "stdout_code_equals_expected_code": true,
+    "finding_ids_equal_expected_sorted": true,
+    "stderr_empty": true,
+    "snapshot_digest_equals_claim_digest": true,
+    "observed_equals_independent_derivation": true,
+    "tool_sha_unchanged_across_run": true,
+    "authority_text_identical_to_contract_text": true,
+    "authority_check_basis": "manual character comparison of the stdout authority field against the contract authority field"
+  },
+  "not_exercised_static_only": [
+    "snapshot tamper path (digest mismatch, code 2): no mutated variant executed",
+    "symlink injection and the 2 MiB size boundary: not triggered; boundaries checked by namei and stat only",
+    "bool-as-count, negative count, NaN/Infinity: absent from these bytes; static read only",
+    "duplicate JSON keys: absent from both files"
+  ],
+  "uncertainty_retained": [
+    "The lead-folded-into-observed cause stated in the expected rationale is an inference; the artifacts establish only the arithmetic (5 observed + 1 lead = 6 claimed observed).",
+    "AuditLeadInflated is a synthetic all-observed counterfactual (claim_kind null, source_pointer null). It is not an actual r19 receipt claim and must not be cited as r19 evidence.",
+    "Static inference, not executed on r19 data: a markerless row raises Invalid at require(row, 'evidence'), which evaluate() maps to code 2; the markerless-r19 expectation of 2 is consistent with that path.",
+    "Exit status 1 is also what an uncaught Python exception produces (any exception outside evaluate()'s tuple, e.g. MemoryError), which prints a traceback and no JSON. This run printed valid JSON with code 1 and empty stderr, so the verdict is genuine here. Exit-code-only consumers would misread a crash as failed 1; the selftest guards this by requiring parsed JSON and empty stderr, the bare CLI does not.",
+    "check() reads only the known keys and ignores unknown keys. No unknown keys are present in this case's bytes, so no effect on this verdict.",
+    "No contradiction between the normalized expected entry and the independent derivation or the observed run."
+  ],
+  "not_run": [
+    "46-case --selftest and the measurement driver (forbidden by assignment)",
+    "C1 tool and its source (outside lane)",
+    "variant or mutant probes (none assigned)"
+  ],
+  "installs": "none; pacman transactions paused and no install was needed",
+  "credit": "artifact arithmetic verdict only; no semantic precision, classification or admission credit is claimed"
+}

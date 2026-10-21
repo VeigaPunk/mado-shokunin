@@ -1,0 +1,27 @@
+{
+  "schema": "mado-r22-residual-caller-truth-v1",
+  "case": "CallerArgumentBeforeClosureOverlay",
+  "authored": "independent static reasoning over the delivered source, before the single bounded scan",
+  "delivered_revision": "4d308e5e79b0b9798183445f6431164f2e25e18a",
+  "tool": "tools/mado-tripwire.py",
+  "tool_sha256": "a953237344d8b3539f9e7948ba9d6f5db0759cffb4f672fb944cbd77cf32f0fe",
+  "fixture": ".ufo/waves/round-22/residual-truth/CallerArgumentBeforeClosureOverlay.jsonl",
+  "fixture_sha256": "799315302691759b727ed9bf9c98e2846903a0a1743ead698240862bb7723525",
+  "semantics": {
+    "caller_before_callee": "job(argv) evaluates its argument in the caller namespace (module globals) before entering run's frame; run's parameter is `actual`, and make's parameter `argv` is unreachable from run.",
+    "expected_rows": [
+      {"class": "package_query", "command": "pacman -Q r22-callsite-argument", "evidence": "observed"}
+    ],
+    "expected_unparsed": 0,
+    "forbidden_at_all_tiers": ["pacman -S r22-unused-closed-argument"],
+    "stale_value_rejected": "make's argv parameter literal (pacman -S r22-unused-closed-argument) may appear only in the factory's captured frame, never as a command; the stale -S literal is not reachable in run's body, so it must not surface"
+  },
+  "code_path_reasoning": [
+    "tools/mado-tripwire.py:2417 follow_helper binds the callee arguments in the CALLER env cenv (bind_literal(helper, node, cenv)), i.e. the module global argv.",
+    "tools/mado-tripwire.py:2423-2437 the factory's captured frame (closure_bindings/closure_env) is installed only into the callee body, after the caller binding.",
+    "tools/mado-tripwire.py:2438 body_env.update(bound) applies the callee parameter bindings last, so a parameter always wins over a captured frame name.",
+    "tools/mado-tripwire.py:1676-1679 the factory overlay is attached only when the returned helper is lexically nested in the factory (ast.walk over owner.body).",
+    "tools/mado-tripwire.py:2165-2204 statement_snapshot keeps only names syntactically reachable in the swept body, so the stale factory `argv` literal never enters the body environment of run."
+  ],
+  "expected_verdict": "pass: exactly one observed package_query row, zero unparsed counters, no forbidden command at any tier"
+}

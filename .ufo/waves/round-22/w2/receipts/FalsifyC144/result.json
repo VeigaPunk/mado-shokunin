@@ -1,0 +1,246 @@
+{
+  "authorized_command": [
+    "python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py",
+    "--tool",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+    "--case",
+    "ThreadRunAlias"
+  ],
+  "base_commit": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "caps": {
+    "child_rlimit_as_bytes": 402653184,
+    "concurrent_scan_children": 1,
+    "source": "measure.py scan() preexec_fn=set_address_space_limit + subprocess timeout",
+    "timeout_seconds": 15
+  },
+  "case": {
+    "accept_exact_want": null,
+    "expected_kind": "exact",
+    "fixture": "inputs/ThreadRunAlias.jsonl",
+    "forbid_commands_any_tier": [],
+    "forbid_observed_commands": [
+      "pacman -Q r22-tralias-stale"
+    ],
+    "got_rows": [
+      {
+        "class": "host_mutation",
+        "command": "pacman -S r22-tralias-live",
+        "evidence": "observed"
+      }
+    ],
+    "group": "proposal",
+    "input_sha256": "bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814",
+    "pass": true,
+    "reasons": [],
+    "require_signal": true,
+    "unparsed": 0,
+    "want": [
+      {
+        "class": "host_mutation",
+        "command": "pacman -S r22-tralias-live",
+        "evidence": "observed"
+      }
+    ],
+    "want_input_order_equals_want": true
+  },
+  "case_id": "ThreadRunAlias",
+  "external_observations": [
+    "Tracked SCORECARD.md was modified at 2026-10-21T12:40:10-03:00 (13 insertions) by a concurrent lane after this seat's initial git status; this seat made no tracked-file writes.",
+    "Untracked .ufo/waves/round-22/w2-*.json files appeared concurrently; not written by this seat."
+  ],
+  "falsification_axes": [
+    {
+      "assessment": "pass",
+      "axis": "false observed/lead argv (stale -Q borrowed)",
+      "observed": "none: observed_findings=1, lead_findings=0, only 'pacman -S r22-tralias-live'"
+    },
+    {
+      "assessment": "pass",
+      "axis": "lost true command (F4 silent miss)",
+      "observed": "row present with evidence=observed; scanner exit 1"
+    },
+    {
+      "assessment": "identity correct by source trace; output is observationally invariant under substituting a direct worker() call, so the row alone cannot prove bound-method identity",
+      "axis": "wrong identity",
+      "observed": "source-traced path: callable_info(Attribute)->scheduled_invoke (1788-1792) -> scheduled_invoke branch 2467-2480 -> synthetic Name('<scheduled target>') carrying mado_resolved=worker -> follow_helper(stored args=(), kwargs={})"
+    },
+    {
+      "assessment": "not exercised; no defect exposed",
+      "axis": "lifetime",
+      "observed": "bound method pins the instance and thread remains bound; no del/rebind of thread"
+    },
+    {
+      "assessment": "pass",
+      "axis": "conditional target",
+      "observed": "single unconditional target and single unconditional invocation; no lead emitted"
+    },
+    {
+      "assessment": "zero is honest for this text; there is nothing legitimately unresolved",
+      "axis": "parsed-clean ambiguity",
+      "observed": "eval_calls=1, eval_unparsed=0, unparsed_spawns=0; file row path and sealed sha match"
+    }
+  ],
+  "hashes": {
+    "after": {
+      ".ufo/waves/round-22/oracle/expected.json": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+      ".ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl": "bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814",
+      ".ufo/waves/round-22/oracle/measure.py": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+      "tools/mado-tripwire.py": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce"
+    },
+    "before": {
+      ".ufo/waves/round-22/oracle/expected.json": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+      ".ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl": "bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814",
+      ".ufo/waves/round-22/oracle/measure.py": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+      "tools/mado-tripwire.py": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce"
+    },
+    "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+    "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+    "fixture_sha256": "bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814",
+    "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+    "proposal_sha256": "1043f19f9766e58941a2575798cf4b9a6a26ec56dd816750bc9d26f15e207d5a",
+    "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+    "stable": true,
+    "threading_source_sha256": "5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3",
+    "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+    "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+  },
+  "independent_semantics": {
+    "accept_exact_want_null_is_correct": true,
+    "result": "exactly one observed host_mutation row 'pacman -S r22-tralias-live'; zero lead rows; zero unparsed",
+    "stale_command_unreachable_at_all_tiers": true,
+    "steps": [
+      "threading.Thread(target=worker) stores _target=worker, _args=(), _kwargs={} and does not invoke target (threading.py 880-928, sha 53239096...); start() is never called.",
+      "run = thread.run yields the bound method of that exact instance and pins the instance for the alias lifetime (bound-method strong reference); thread is not rebound or deleted.",
+      "command = [...] rebinds the module-global name to a NEW list; the stale list object is unmodified but unreachable after rebinding and is never passed to any spawn.",
+      "run() dispatches to Thread.run(thread) (threading.py 1013-1025): no _initialized/_started precondition (those guard start(), 975-1012); it calls self._target(*self._args, **self._kwargs) synchronously in the caller thread.",
+      "worker's free name command is a global load at call time (LEGB), resolving to the live list.",
+      "subprocess.run(['pacman','-S','r22-tralias-live']) is the only spawn; pacman -S maps to host_mutation (classify_pacman: letter S without y/u/w/c or s/i/l/g/p flags).",
+      "No exception path is taken before the spawn: constructor does not raise for these arguments; run() has no state precondition; no thread race exists because no thread is started."
+    ],
+    "true_uncertainty": "none for this text; all argv and the sole invocation are fixed by the source"
+  },
+  "lane": "author-lane advisory falsification; no admission authority",
+  "population_integrity": {
+    "input_files_verified": 57,
+    "integrity_after_equals_before": true,
+    "integrity_before": {
+      "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+      "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+      "input_files_verified": 57,
+      "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+      "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+      "proposal_files_verified": 52,
+      "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+      "sealed_source_files_verified": 106,
+      "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+      "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+    },
+    "integrity_errors": [],
+    "per_case_semantics_measured": 1,
+    "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+    "proposal_files_verified": 52,
+    "sealed_source_files_verified": 106
+  },
+  "production_mutation": false,
+  "residual_unknowns": [
+    "Whether an implementation that resolves run=thread.run but drops the stored-instance identity would fail a fixture where thread is rebound to a different Thread before run(); not tested here.",
+    "Whether the F4 family is closed beyond this exact shape; this receipt covers one fixture."
+  ],
+  "round": 22,
+  "runner": {
+    "argv": [
+      "/usr/bin/python3",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py",
+      "--tool",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "--case",
+      "ThreadRunAlias"
+    ],
+    "case_filter": "ThreadRunAlias",
+    "exit": 0,
+    "exit_file": [
+      "exit=0",
+      "wall_ns=107544018"
+    ],
+    "group_filter": null,
+    "scan_children": 1,
+    "status": "complete",
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\"argv\": [\"/usr/bin/python3\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py\", \"--tool\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"--case\", \"ThreadRunAlias\"], \"case_filter\": \"ThreadRunAlias\", \"cases\": [{\"accept_exact_want\": null, \"argv\": [\"/usr/bin/python3\", \"-I\", \"-c\", \"import importlib.util,sys\\ns=importlib.util.spec_from_file_location(\\\"selected_tripwire\\\",sys.argv[1])\\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\\nsys.exit(m.main([\\\"--scan\\\",sys.argv[2]]))\\n\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl\"], \"exit\": 1, \"expected_kind\": \"exact\", \"forbid_commands_any_tier\": [], \"forbid_observed_commands\": [\"pacman -Q r22-tralias-stale\"], \"got_rows\": [{\"class\": \"host_mutation\", \"command\": \"pacman -S r22-tralias-live\", \"evidence\": \"observed\"}], \"group\": \"proposal\", \"id\": \"ThreadRunAlias\", \"pass\": true, \"reasons\": [], \"require_signal\": true, \"scanner_error\": null, \"scanner_payload\": {\"counts\": {\"host_mutation\": 1, \"live_probe\": 0, \"package_query\": 0, \"tool_install\": 0, \"vcs_write\": 0}, \"exit\": 1, \"files\": [{\"bash_calls\": 0, \"eval_calls\": 1, \"eval_unparsed\": 0, \"lines\": 1, \"path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl\", \"sha256\": \"bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814\", \"unparsed_spawns\": 0}], \"findings\": [{\"argv0\": \"pacman\", \"class\": \"host_mutation\", \"command\": \"pacman -S r22-tralias-live\", \"evidence\": \"observed\", \"file\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl\", \"line\": 1, \"rule\": \"pacman:-S\", \"timestamp\": \"None\", \"tool\": \"eval\", \"tool_call_id\": \"ThreadRunAlias-0\"}], \"lead_findings\": 0, \"observed_findings\": 1, \"permitted\": [], \"schema\": \"mado-tripwire-verdict-v1\", \"unpermitted\": 1}, \"stderr\": \"\", \"stdout\": \"MADO_TRIPWIRE: findings\\n{\\\"counts\\\": {\\\"host_mutation\\\": 1, \\\"live_probe\\\": 0, \\\"package_query\\\": 0, \\\"tool_install\\\": 0, \\\"vcs_write\\\": 0}, \\\"exit\\\": 1, \\\"files\\\": [{\\\"bash_calls\\\": 0, \\\"eval_calls\\\": 1, \\\"eval_unparsed\\\": 0, \\\"lines\\\": 1, \\\"path\\\": \\\"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl\\\", \\\"sha256\\\": \\\"bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814\\\", \\\"unparsed_spawns\\\": 0}], \\\"findings\\\": [{\\\"argv0\\\": \\\"pacman\\\", \\\"class\\\": \\\"host_mutation\\\", \\\"command\\\": \\\"pacman -S r22-tralias-live\\\", \\\"evidence\\\": \\\"observed\\\", \\\"file\\\": \\\"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl\\\", \\\"line\\\": 1, \\\"rule\\\": \\\"pacman:-S\\\", \\\"timestamp\\\": \\\"None\\\", \\\"tool\\\": \\\"eval\\\", \\\"tool_call_id\\\": \\\"ThreadRunAlias-0\\\"}], \\\"lead_findings\\\": 0, \\\"observed_findings\\\": 1, \\\"permitted\\\": [], \\\"schema\\\": \\\"mado-tripwire-verdict-v1\\\", \\\"unpermitted\\\": 1}\\n\", \"unparsed\": 0, \"want\": [{\"class\": \"host_mutation\", \"command\": \"pacman -S r22-tralias-live\", \"evidence\": \"observed\"}]}], \"exit\": 0, \"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"group_filter\": null, \"integrity_after\": {\"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"input_files_verified\": 57, \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"proposal_files_verified\": 52, \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"sealed_source_files_verified\": 106, \"tool_sha256\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"truth_seal_sha256\": \"47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4\"}, \"integrity_before\": {\"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"input_files_verified\": 57, \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"proposal_files_verified\": 52, \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"sealed_source_files_verified\": 106, \"tool_sha256\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"truth_seal_sha256\": \"47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4\"}, \"integrity_errors\": [], \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"schema\": \"mado-r22-c1-measure-v1\", \"status\": \"complete\", \"tool_argument\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"tool_path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"tool_sha256_before\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"totals\": {\"pass\": 1, \"total\": 1}}\n",
+    "stdout_sha256": "aa50b9a59efda7d6463286c88323f633ac8c76b8fac2887b9010eecc180dea12",
+    "wall_ns": 107544018
+  },
+  "scanner": {
+    "argv": [
+      "/usr/bin/python3",
+      "-I",
+      "-c",
+      "import importlib.util,sys\ns=importlib.util.spec_from_file_location(\"selected_tripwire\",sys.argv[1])\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nsys.exit(m.main([\"--scan\",sys.argv[2]]))\n",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl"
+    ],
+    "exit": 1,
+    "log_prefix": "MADO_TRIPWIRE: findings",
+    "payload": {
+      "counts": {
+        "host_mutation": 1,
+        "live_probe": 0,
+        "package_query": 0,
+        "tool_install": 0,
+        "vcs_write": 0
+      },
+      "exit": 1,
+      "files": [
+        {
+          "bash_calls": 0,
+          "eval_calls": 1,
+          "eval_unparsed": 0,
+          "lines": 1,
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl",
+          "sha256": "bed770f9d1b20c084b88a874498a52a3e23de42ec810ca83edaf54895983e814",
+          "unparsed_spawns": 0
+        }
+      ],
+      "findings": [
+        {
+          "argv0": "pacman",
+          "class": "host_mutation",
+          "command": "pacman -S r22-tralias-live",
+          "evidence": "observed",
+          "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/ThreadRunAlias.jsonl",
+          "line": 1,
+          "rule": "pacman:-S",
+          "timestamp": "None",
+          "tool": "eval",
+          "tool_call_id": "ThreadRunAlias-0"
+        }
+      ],
+      "lead_findings": 0,
+      "observed_findings": 1,
+      "permitted": [],
+      "schema": "mado-tripwire-verdict-v1",
+      "unpermitted": 1
+    },
+    "scanner_error": null,
+    "stderr": ""
+  },
+  "schema": "mado-r22-w2-c1-case-falsification-v1",
+  "scope_limits": [
+    "One case / one fixture; closes only the aliased-.run plus call-time-global shape for this text.",
+    "The green cannot discriminate Thread.run bound-method identity from a direct worker() call because both produce the identical row.",
+    "Repeated invocation, start()+run() double execution, Timer.run, cancellation, and del thread before run() are not exercised.",
+    "Runner zero-error condition uses the scanner's own counters; it is independently meaningful here only because the text leaves nothing legitimately unresolved.",
+    "Population integrity was validated (106 sealed sources, 52 proposals, 57 inputs), but no other case's semantics were measured."
+  ],
+  "seat": "MadoR22.FalsifyC144",
+  "verdict": {
+    "admission_grant": false,
+    "delivered_result": "pass (green) for ThreadRunAlias",
+    "falsification": "agree",
+    "reason": "The single observed row is the semantically complete expected multiset for this fixture under the declared supported forms; no stale row at any tier; no lost true command; zero unparsed is warranted."
+  },
+  "writes_confined_to": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC144/"
+}

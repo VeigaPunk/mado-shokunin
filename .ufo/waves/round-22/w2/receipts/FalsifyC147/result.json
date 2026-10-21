@@ -1,0 +1,235 @@
+{
+ "schema": "mado-r22-w2-falsify-receipt-v1",
+ "seat": "FalsifyC147",
+ "attack_item": "C1 case TimerRun (lifetime/callable/scheduled repair falsification)",
+ "case": "TimerRun",
+ "verdict": {
+  "expectation": "agree",
+  "measured_pass": true,
+  "falsified": false,
+  "admission": "none; this receipt is one case row, not C1 admission"
+ },
+ "scope": {
+  "population_validated_before_and_after": 57,
+  "proposal_files_verified": 52,
+  "sealed_source_files_verified": 106,
+  "cases_executed": 1,
+  "case_filter": "TimerRun",
+  "note": "measure.py --case validates the full 57-case population (and the 106-file raw truth seal) before and after, then scans exactly one fixture; it does not run the other 56 cases."
+ },
+ "invocation": {
+  "shell_command": "timeout 20 python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py --tool /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py --case TimerRun",
+  "shell_exit": "EXIT=0",
+  "interpreter": "/usr/bin/python3 (Python 3.14.8)",
+  "note": "-I is an interpreter flag and does not appear in the runner's sys.argv; timeout 20 was an outer guard and did not fire (runner exit 0)."
+ },
+ "runner_receipt": {
+  "argv": [
+   "/usr/bin/python3",
+   "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py",
+   "--tool",
+   "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+   "--case",
+   "TimerRun"
+  ],
+  "exit": 0,
+  "status": "complete",
+  "stdout_sha256": "fa6cfe345a2942d79e394063ce61ae151adb502a315c062b9e64761d16268ae9",
+  "stdout_bytes": 5307,
+  "stdout": "{\"argv\": [\"/usr/bin/python3\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py\", \"--tool\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"--case\", \"TimerRun\"], \"case_filter\": \"TimerRun\", \"cases\": [{\"accept_exact_want\": null, \"argv\": [\"/usr/bin/python3\", \"-I\", \"-c\", \"import importlib.util,sys\\ns=importlib.util.spec_from_file_location(\\\"selected_tripwire\\\",sys.argv[1])\\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\\nsys.exit(m.main([\\\"--scan\\\",sys.argv[2]]))\\n\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\"], \"exit\": 1, \"expected_kind\": \"exact\", \"forbid_commands_any_tier\": [], \"forbid_observed_commands\": [], \"got_rows\": [{\"class\": \"host_mutation\", \"command\": \"pacman -S r22-timer-run\", \"evidence\": \"observed\"}], \"group\": \"proposal\", \"id\": \"TimerRun\", \"pass\": true, \"reasons\": [], \"require_signal\": true, \"scanner_error\": null, \"scanner_payload\": {\"counts\": {\"host_mutation\": 1, \"live_probe\": 0, \"package_query\": 0, \"tool_install\": 0, \"vcs_write\": 0}, \"exit\": 1, \"files\": [{\"bash_calls\": 0, \"eval_calls\": 1, \"eval_unparsed\": 0, \"lines\": 1, \"path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\", \"sha256\": \"d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb\", \"unparsed_spawns\": 0}], \"findings\": [{\"argv0\": \"pacman\", \"class\": \"host_mutation\", \"command\": \"pacman -S r22-timer-run\", \"evidence\": \"observed\", \"file\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\", \"line\": 1, \"rule\": \"pacman:-S\", \"timestamp\": \"None\", \"tool\": \"eval\", \"tool_call_id\": \"TimerRun-0\"}], \"lead_findings\": 0, \"observed_findings\": 1, \"permitted\": [], \"schema\": \"mado-tripwire-verdict-v1\", \"unpermitted\": 1}, \"stderr\": \"\", \"stdout\": \"MADO_TRIPWIRE: findings\\n{\\\"counts\\\": {\\\"host_mutation\\\": 1, \\\"live_probe\\\": 0, \\\"package_query\\\": 0, \\\"tool_install\\\": 0, \\\"vcs_write\\\": 0}, \\\"exit\\\": 1, \\\"files\\\": [{\\\"bash_calls\\\": 0, \\\"eval_calls\\\": 1, \\\"eval_unparsed\\\": 0, \\\"lines\\\": 1, \\\"path\\\": \\\"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\\\", \\\"sha256\\\": \\\"d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb\\\", \\\"unparsed_spawns\\\": 0}], \\\"findings\\\": [{\\\"argv0\\\": \\\"pacman\\\", \\\"class\\\": \\\"host_mutation\\\", \\\"command\\\": \\\"pacman -S r22-timer-run\\\", \\\"evidence\\\": \\\"observed\\\", \\\"file\\\": \\\"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\\\", \\\"line\\\": 1, \\\"rule\\\": \\\"pacman:-S\\\", \\\"timestamp\\\": \\\"None\\\", \\\"tool\\\": \\\"eval\\\", \\\"tool_call_id\\\": \\\"TimerRun-0\\\"}], \\\"lead_findings\\\": 0, \\\"observed_findings\\\": 1, \\\"permitted\\\": [], \\\"schema\\\": \\\"mado-tripwire-verdict-v1\\\", \\\"unpermitted\\\": 1}\\n\", \"unparsed\": 0, \"want\": [{\"class\": \"host_mutation\", \"command\": \"pacman -S r22-timer-run\", \"evidence\": \"observed\"}]}], \"exit\": 0, \"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"group_filter\": null, \"integrity_after\": {\"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"input_files_verified\": 57, \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"proposal_files_verified\": 52, \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"sealed_source_files_verified\": 106, \"tool_sha256\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"truth_seal_sha256\": \"47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4\"}, \"integrity_before\": {\"expected_pin_file_sha256\": \"7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6\", \"expected_sha256\": \"b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357\", \"input_files_verified\": 57, \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"proposal_files_verified\": 52, \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"sealed_source_files_verified\": 106, \"tool_sha256\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"truth_seal_sha256\": \"47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4\"}, \"integrity_errors\": [], \"population_sha256\": \"046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad\", \"producer_sha256\": \"0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600\", \"runner_sha256\": \"41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7\", \"schema\": \"mado-r22-c1-measure-v1\", \"status\": \"complete\", \"tool_argument\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"tool_path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py\", \"tool_sha256_before\": \"36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce\", \"totals\": {\"pass\": 1, \"total\": 1}}\n",
+  "stderr": "",
+  "stderr_bytes": 0
+ },
+ "hashes": {
+  "tool_mado_tripwire": {
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+   "fixed_identity": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+   "before": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+   "after": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+   "matches_fixed_identity": true,
+   "stable": true
+  },
+  "fixture_TimerRun_jsonl": {
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl",
+   "before": "d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb",
+   "after": "d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb",
+   "case_input_sha256": "d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb",
+   "scanner_reported_sha256": "d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb",
+   "stable": true
+  },
+  "runner_measure": {
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py",
+   "before": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+   "after": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+   "stable": true
+  },
+  "expected": {
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/expected.json",
+   "fixed_identity": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+   "measured": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+   "pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+   "matches_fixed_identity": true
+  },
+  "producer_assemble": {
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/assemble.py",
+   "sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600"
+  },
+  "threading_stdlib_truth_basis": {
+   "path": "/usr/lib/python3.14/threading.py",
+   "sha256": "5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3",
+   "timer_class_line": 1361,
+   "timer_init_lines": "1370-1376",
+   "timer_cancel_lines": "1378-1380",
+   "timer_run_lines": "1382-1386",
+   "thread_run_lines": "1013-1024"
+  }
+ },
+ "integrity": {
+  "before": {
+   "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+   "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+   "input_files_verified": 57,
+   "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+   "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+   "proposal_files_verified": 52,
+   "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+   "sealed_source_files_verified": 106,
+   "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+   "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+  },
+  "after": {
+   "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+   "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+   "input_files_verified": 57,
+   "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+   "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+   "proposal_files_verified": 52,
+   "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+   "sealed_source_files_verified": 106,
+   "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+   "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+  },
+  "errors": [],
+  "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+  "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+ },
+ "scanner": {
+  "argv": [
+   "/usr/bin/python3",
+   "-I",
+   "-c",
+   "import importlib.util,sys\ns=importlib.util.spec_from_file_location(\"selected_tripwire\",sys.argv[1])\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nsys.exit(m.main([\"--scan\",sys.argv[2]]))\n",
+   "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+   "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl"
+  ],
+  "exit": 1,
+  "stderr": "",
+  "scanner_error": null,
+  "stdout": "MADO_TRIPWIRE: findings\n{\"counts\": {\"host_mutation\": 1, \"live_probe\": 0, \"package_query\": 0, \"tool_install\": 0, \"vcs_write\": 0}, \"exit\": 1, \"files\": [{\"bash_calls\": 0, \"eval_calls\": 1, \"eval_unparsed\": 0, \"lines\": 1, \"path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\", \"sha256\": \"d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb\", \"unparsed_spawns\": 0}], \"findings\": [{\"argv0\": \"pacman\", \"class\": \"host_mutation\", \"command\": \"pacman -S r22-timer-run\", \"evidence\": \"observed\", \"file\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl\", \"line\": 1, \"rule\": \"pacman:-S\", \"timestamp\": \"None\", \"tool\": \"eval\", \"tool_call_id\": \"TimerRun-0\"}], \"lead_findings\": 0, \"observed_findings\": 1, \"permitted\": [], \"schema\": \"mado-tripwire-verdict-v1\", \"unpermitted\": 1}\n",
+  "payload": {
+   "counts": {
+    "host_mutation": 1,
+    "live_probe": 0,
+    "package_query": 0,
+    "tool_install": 0,
+    "vcs_write": 0
+   },
+   "exit": 1,
+   "files": [
+    {
+     "bash_calls": 0,
+     "eval_calls": 1,
+     "eval_unparsed": 0,
+     "lines": 1,
+     "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl",
+     "sha256": "d513fafa0986e723f806a5cf8486a1ac6da9d2ae1b0b1d7a310e947d4af82dcb",
+     "unparsed_spawns": 0
+    }
+   ],
+   "findings": [
+    {
+     "argv0": "pacman",
+     "class": "host_mutation",
+     "command": "pacman -S r22-timer-run",
+     "evidence": "observed",
+     "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/TimerRun.jsonl",
+     "line": 1,
+     "rule": "pacman:-S",
+     "timestamp": "None",
+     "tool": "eval",
+     "tool_call_id": "TimerRun-0"
+    }
+   ],
+   "lead_findings": 0,
+   "observed_findings": 1,
+   "permitted": [],
+   "schema": "mado-tripwire-verdict-v1",
+   "unpermitted": 1
+  }
+ },
+ "case_result": {
+  "id": "TimerRun",
+  "group": "proposal",
+  "expected_kind": "exact",
+  "require_signal": true,
+  "want": [
+   {
+    "class": "host_mutation",
+    "command": "pacman -S r22-timer-run",
+    "evidence": "observed"
+   }
+  ],
+  "got_rows": [
+   {
+    "class": "host_mutation",
+    "command": "pacman -S r22-timer-run",
+    "evidence": "observed"
+   }
+  ],
+  "unparsed": 0,
+  "forbid_commands_any_tier": [],
+  "forbid_observed_commands": [],
+  "accept_exact_want": null,
+  "pass": true,
+  "reasons": [],
+  "multiset_equal": true,
+  "zero_unparsed_counters": true,
+  "scanner_exit_is_verdict_1": true
+ },
+ "independent_semantic_basis": [
+  "threading.py:1370-1376 (CPython 3.14.8) binds self.function=worker, self.args=(argv,) and self.kwargs={} at construction; self.finished=Event() is fresh and unset.",
+  "threading.py:1382-1386 Timer.run waits on finished, and because is_set() is false calls self.function(*self.args, **self.kwargs) synchronously in the calling thread.",
+  "No start() is called, so no OS thread is created; t has no other reference and cancel() (threading.py:1378-1380, the only pre-run setter) is unreachable.",
+  "Module-level script order is straight-line: imports, def binding, literal argv assignment, Timer construction, t.run() -> worker(argv) -> subprocess.run(['pacman','-S','r22-timer-run']).",
+  "The interval value (1) only delays the wait; it cannot change which literal argv is issued. Observed (static issuance), not runtime execution, is the oracle's evidence convention."
+ ],
+ "mechanism_trace": {
+  "tool_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+  "timer_binding": "assignment_binding lines 1841-1850: ast.Call named threading.Timer -> kind=scheduled with target=worker, args=[['pacman','-S','r22-timer-run']], kwargs={}, shared state {done:false,cancelled:false}.",
+  "run_dispatch": "callable_info lines 1786-1793: Attribute on a scheduled receiver with attr run/start -> scheduled_invoke (cancel -> scheduled_cancel).",
+  "invocation_expansion": "spawn_scan lines 2467-2485: first non-cancelled scheduled_invoke builds an inert synthetic call to the captured target with the captured literal positional args, then recurses; a cancelled/done state emits nothing.",
+  "observation": "follow_helper lines 2409-2446 follows worker with argv bound; the subprocess.run(argv) spawn node at lines 2653-2668 resolves the literal argv and classifies pacman -S as host_mutation; the per-cell emitter marks 4-tuples without an explicit lead marker as observed (lines 2876-2895).",
+  "reference_sweep_exclusion": "lines 2732-2734 skip sweeping a reference whose parent call is threading.Thread/threading.Timer, so the constructor alone (without a run/start) emits no row.",
+  "uniqueness": "worker is referenced only as the Timer 'function' argument and is never called directly; the only invocation path is the synthetic scheduled target call. The observed row therefore demonstrates the F4 scheduled-run repair for this fixture, not an unrelated body sweep (sweeps emit lead)."
+ },
+ "falsification_checks": {
+  "false_observed_or_lead_argv": "none: exact command 'pacman -S r22-timer-run', argv0 'pacman', rule 'pacman:-S'; no truncated or borrowed argv.",
+  "lost_true_command": "none: the one true row is present and the scanner emitted one finding.",
+  "wrong_identity": "none: class host_mutation, rule pacman:-S, argv0 pacman; the package classifier maps -S without query flags to host_mutation (lines 738-790).",
+  "lifetime": "none for this fixture: t is bound before t.run() in the same single cell (cell_count=1, reset=false); no rebinding, del, or later cell; scheduled state is shared between the binding and the invoke.",
+  "conditional_target": "none in the executed path: no branch/loop precedes t.run(); Timer.run's finished.is_set() guard is false by construction and cancel() is unreachable. The scanner does not model the interval/Event internals, but for this fixture the modeled unconditional target call coincides with real semantics.",
+  "parsed_clean_ambiguity": "none: eval_unparsed=0, unparsed_spawns=0, no scanner stderr, strict one-line JSON payload, scanner exit 1 (findings) accepted, file sha and path matched the sealed fixture.",
+  "unknown_case_rules": "not exercised: expected_kind=exact, accept_exact_want=null, both forbid lists empty. This case cannot falsify the all-tier forbidden-argv or accept_exact_want rules.",
+  "green_degeneracy": "no: an emitted row requires following a resolved invocation; constructor-only or swept-body paths skip or mark lead, and the fixture's only invocation is the scheduled target captured by t.run()."
+ },
+ "residual_uncertainty": [
+  "Single fixture, single case: this does not establish F4 for aliased run/start, inline Timer(...).run(), cancellation before run, no-start fixtures, subclass run overrides, or repeated invocation. Other population cases cover some of those and are not executed here.",
+  "The scanner models Timer.run as an unconditional target call; it does not simulate finished.is_set() or the 1s wait. Here both models coincide (Event fresh/unset), so this case does not discriminate the guard's negative branch.",
+  "Per-cell unique_hits deduplication collapses identical repeated invocations into one row; this fixture invokes once, so multiplicity is not tested.",
+  "expected.json itself is not inside the 106-file raw truth seal (materialization_status says it is normalized later); the TimerRun proposal sha c63de1cd... and fixture sha d513fafa... are sealed pre-implementation at base 741122d, and expected.json is pinned by expected.sha256 b5cd4cf3... The runner cross-checks the seal linkage and the proposal field equality.",
+  "The runner checks the selected tool hash only for stability across the run; the fixed-identity equality 36fdc459... was verified independently here by sha256sum before and after."
+ ],
+ "proposed_sensitivity_for_L1_not_executed": "Not run here and not a killed fault: in a private sandbox copy, disabling the scheduled_invoke branch (or redirecting the Timer target extraction to node.args[0]) should make TimerRun emit no host_mutation row or an uncertainty, turning this case red. L1 may use this to confirm the green is path-dependent; it is a proposal only.",
+ "measured_at": "2026-10-21",
+ "receipt_dir": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/FalsifyC147"
+}

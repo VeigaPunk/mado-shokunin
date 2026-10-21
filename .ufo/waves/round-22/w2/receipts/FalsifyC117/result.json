@@ -1,0 +1,145 @@
+{
+  "case": "CaptureCrossCell",
+  "case_result": {
+    "accept_exact_want": null,
+    "argv": [
+      "/usr/bin/python3",
+      "-I",
+      "-c",
+      "import importlib.util,sys\ns=importlib.util.spec_from_file_location(\"selected_tripwire\",sys.argv[1])\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nsys.exit(m.main([\"--scan\",sys.argv[2]]))\n",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/CaptureCrossCell.jsonl"
+    ],
+    "exit": 1,
+    "expected_kind": "exact",
+    "forbid_commands_any_tier": [],
+    "forbid_observed_commands": [
+      "pacman -Q r22-crosscell-decoy",
+      "pacman -S r22-crosscell-decoy",
+      "pacman -Q r22-crosscell-exact"
+    ],
+    "got_rows": [
+      {
+        "class": "host_mutation",
+        "command": "pacman -S r22-crosscell-exact",
+        "evidence": "observed"
+      }
+    ],
+    "group": "proposal",
+    "id": "CaptureCrossCell",
+    "pass": true,
+    "reasons": [],
+    "require_signal": true,
+    "scanner_error": null,
+    "scanner_payload": {
+      "counts": {
+        "host_mutation": 1,
+        "live_probe": 0,
+        "package_query": 0,
+        "tool_install": 0,
+        "vcs_write": 0
+      },
+      "exit": 1,
+      "files": [
+        {
+          "bash_calls": 0,
+          "eval_calls": 2,
+          "eval_unparsed": 0,
+          "lines": 2,
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/CaptureCrossCell.jsonl",
+          "sha256": "d4760b9582cdb6bc25c02cb67fd82ec6f1bd1c5ab39ef38795d3da9f57409115",
+          "unparsed_spawns": 0
+        }
+      ],
+      "findings": [
+        {
+          "argv0": "pacman",
+          "class": "host_mutation",
+          "command": "pacman -S r22-crosscell-exact",
+          "evidence": "observed",
+          "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/CaptureCrossCell.jsonl",
+          "line": 2,
+          "rule": "pacman:-S",
+          "timestamp": "None",
+          "tool": "eval",
+          "tool_call_id": "CaptureCrossCell-1"
+        }
+      ],
+      "lead_findings": 0,
+      "observed_findings": 1,
+      "permitted": [],
+      "schema": "mado-tripwire-verdict-v1",
+      "unpermitted": 1
+    },
+    "stderr": "",
+    "stdout": "MADO_TRIPWIRE: findings\n{\"counts\": {\"host_mutation\": 1, \"live_probe\": 0, \"package_query\": 0, \"tool_install\": 0, \"vcs_write\": 0}, \"exit\": 1, \"files\": [{\"bash_calls\": 0, \"eval_calls\": 2, \"eval_unparsed\": 0, \"lines\": 2, \"path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/CaptureCrossCell.jsonl\", \"sha256\": \"d4760b9582cdb6bc25c02cb67fd82ec6f1bd1c5ab39ef38795d3da9f57409115\", \"unparsed_spawns\": 0}], \"findings\": [{\"argv0\": \"pacman\", \"class\": \"host_mutation\", \"command\": \"pacman -S r22-crosscell-exact\", \"evidence\": \"observed\", \"file\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/inputs/CaptureCrossCell.jsonl\", \"line\": 2, \"rule\": \"pacman:-S\", \"timestamp\": \"None\", \"tool\": \"eval\", \"tool_call_id\": \"CaptureCrossCell-1\"}], \"lead_findings\": 0, \"observed_findings\": 1, \"permitted\": [], \"schema\": \"mado-tripwire-verdict-v1\", \"unpermitted\": 1}\n",
+    "unparsed": 0,
+    "want": [
+      {
+        "class": "host_mutation",
+        "command": "pacman -S r22-crosscell-exact",
+        "evidence": "observed"
+      }
+    ]
+  },
+  "hashes": {
+    "fixture_input": "d4760b9582cdb6bc25c02cb67fd82ec6f1bd1c5ab39ef38795d3da9f57409115",
+    "oracle_expected": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+    "runner_measure_py": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+    "stderr_raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_raw": "58867a92ed890362fc8b56d84adb36f770f327995c312c87fc5ed557b164a2a2",
+    "tool_after": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+    "tool_before": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+    "tool_drift": false
+  },
+  "integrity_after": {
+    "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+    "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+    "input_files_verified": 57,
+    "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+    "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+    "proposal_files_verified": 52,
+    "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+    "sealed_source_files_verified": 106,
+    "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+    "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+  },
+  "integrity_before": {
+    "expected_pin_file_sha256": "7cc4aae9017a157faea3d66e47b5bc0181ec9093a3160d1c41d8e2e93b1567f6",
+    "expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+    "input_files_verified": 57,
+    "population_sha256": "046168571f51fe313c3ca57df5e743f0a6bb7d25c86d985b894eedc9f58686ad",
+    "producer_sha256": "0270c10b90828a895ae3f0a5dec8b2c5610f960a2c1d994aa9409cad702c5600",
+    "proposal_files_verified": 52,
+    "runner_sha256": "41b021bb0052ef2e08e33a00e8b1d009ac8b4dd09c3dbabf88d8bf5caeb628c7",
+    "sealed_source_files_verified": 106,
+    "tool_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+    "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+  },
+  "integrity_errors": [],
+  "notes": "Scanner child exit 1 is the tripwire findings-present verdict convention (payload exit=1, unpermitted=1), not a runner failure; runner comparison exit 0. Exactly one scanner child spawned; no other probes.",
+  "outer_invocation": {
+    "argv": [
+      "python3",
+      "-I",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py",
+      "--tool",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "--case",
+      "CaptureCrossCell"
+    ],
+    "exit": 0,
+    "wrapper": "timeout 20 bash -c 'ulimit -v 393216; exec python3 -I \u2026' (outer guard; runner itself enforces child RLIMIT_AS=384MiB via preexec_fn and timeout=15s, one synchronous child)"
+  },
+  "runner_exit": 0,
+  "runner_status": "complete",
+  "schema": "mado-r22-w2-falsify-receipt-v1",
+  "seat": "MadoR22.FalsifyC117",
+  "stderr_verbatim": "",
+  "stdout_verbatim": "stdout.raw (sha256 in hashes.stdout_raw)",
+  "target_revision": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "totals": {
+    "pass": 1,
+    "total": 1
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "seat": "MadoR22.RecoveryIndependence",
+  "role": "connector / author-lane advisory only; not non-author admission",
+  "revision": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "mode": "source-only static inspection; no C1, C2, measure.py, independence.py, selftest, fixture payload, mutant, build, lint or formatter was executed; no installs",
+  "read_only": true,
+  "identities_checked_at_head": {
+    "tools/mado-tripwire.py": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+      "matches_fixed_identity": true
+    },
+    "tools/mado-evidence-audit.py": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+      "sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+      "matches_fixed_identity": true
+    },
+    "oracle_expected": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/expected.json",
+      "sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+      "matches_fixed_identity": true
+    },
+    "audit_expected": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/expected.json",
+      "sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+      "expected_sidecar": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09  expected.json",
+      "matches_fixed_identity": true
+    },
+    "truth_seal_fixture_copy": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/inputs/truth-seal.json",
+      "sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4",
+      "also_at_9185f1f9": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4",
+      "also_at_71228fd": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4",
+      "worktree_original": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/truth-seal.json",
+      "worktree_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4"
+    },
+    "historical_c3": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w1/historical-c3.json",
+      "sha256": "9ee6144d73342062fc1120afd2e4d4db4a52ec014f8a18744f116ab0dbebed7a",
+      "matches_expected_provenance": true
+    },
+    "independence_driver": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/independence.py",
+      "sha256": "002b0d676813ef40b832126759fcc8edeb305fccc298534d0188407e9c7fbefc"
+    },
+    "assemble_driver": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/assemble.py",
+      "sha256": "9b566e0b957fb4d32b0e703f7b888a5a79f14f5ab6ae42c7b6949d3b48c98845",
+      "equals_retry1_runner_sha": true
+    },
+    "measure_driver": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/measure.py",
+      "sha256": "7646701aa552019285d2546f215d6f7d5e6fbc318622ef84e2673c9277fd0eed"
+    }
+  },
+  "checks": [
+    {
+      "id": "C2_SOURCE_HAS_NO_C1_COUPLING",
+      "method": "read tools/mado-evidence-audit.py end to end; enumerate imports and subprocess call sites; grep for classifier/tripwire/round/repo traversal; enumerate fixture input_entries and truth-seal files",
+      "result": "No source-level C1 read/import/run found",
+      "facts": [
+        "imports at tools/mado-evidence-audit.py:9-18 are argparse, hashlib, json, math, os, pathlib, re, stat, subprocess, sys; no tools/ import, no importlib, no runpy",
+        "subprocess is used only at tools/mado-evidence-audit.py:244 to re-invoke sys.executable -I <its own resolved path> --check for --selftest",
+        "the string 'classifier' occurs only in the docstring at tools/mado-evidence-audit.py:6; 'tripwire' does not occur; 'mado' occurs only in the fixture schema name at :220",
+        "audit fixtures input_entries: 266 entries = 190 under cases/ + 76 under inputs/; zero paths under tools/; the only 'tripwire' names are old r19 receipt text files under inputs/provenance/ (.ufo/waves/round-19/evidence/final/tripwire-frozen-r19.txt and tripwire-frozen-scan-classes.txt), which are historical output data, not C1 source",
+        "truth seal files: 106 entries, zero paths under tools/, zero classifier source paths",
+        "the --check path (tools/mado-evidence-audit.py:121-162) reads only bundle, snapshot and (via --selftest) expected.json/expected.sha256/fixture inventory; it never reads tools/mado-tripwire.py"
+      ],
+      "boundary": "The tool does read old C1 output receipts as hashed fixture inventory during --selftest. That is the declared historical C3 input, not C1 source, import or execution."
+    },
+    {
+      "id": "HISTORICAL_LABELS_COME_FROM_OLD_COMMITTED_BLOBS",
+      "method": "verify each historical-c3 sources[] path/sha256 against git show <committed_in>:<path>; independently join the 11 markerless r19 rows to the committed r20 split receipt and compare with D1/D2; recompute canonical digests",
+      "result": "PASS: later derived labels are exactly the committed r20 split receipt labels; no changed-detector derivation",
+      "facts": [
+        "14 of 14 sources with a named commit matched that commit's blob byte-for-byte (0,1,2,4,5,6,7,8,9,10,11,12,13,14 in historical-c3.json sources[])",
+        "the 'git show 9c54c56a...:.ufo/waves/round-18/frozen/expected.json' denominator pin 4f3534ae... matches both the blob at 9c54c56 and the worktree copy",
+        "sources[15] .ufo/waves/round-22/audit-clarifications.md is honestly recorded 'UNCOMMITTED (worktree at eda932e)'; its bytes db5e5c30... equal blobs at both 9185f1f9 and 71228fd. It is contract text, not an evidence-label source",
+        "raw r19 receipt .ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt sha256 64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857, committed d642ce524ba01c6212b573e5ad51a2b7ddc84c1c: exactly 11 rows, no evidence key",
+        "r19 counter .ufo/waves/round-19/evidence/final/tw-recall-after.txt sha256 8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1, committed d642ce5: incident_lines 6, detected 6",
+        "split authority .ufo/waves/round-20/evidence/recall-split-final.txt sha256 5165b72878feec8c67e20a0ab079db0aaaea358258b8a62fbb965dd91a6df0a2, committed 4362219e0aaf56601486bdad1df64311e75e12f6: finding_totals {observed:10, lead:1, unmarked:0}",
+        "split producer .ufo/waves/round-20/tw-recall-split.py sha256 5c8f1424833de506f8f839164ff284614ed5080b6015cf615b61b31e30bc7956, committed f3da50488661509ce5d144c90f7780f8088e0903; recorded scanned tool 9613f510... at commit 28c6837, not the r22 changed detector 36fdc459...",
+        "independent join: marker_by_row from the committed split receipt applied 1:1 to the 11 raw rows reproduces D1 findings exactly and D2 line aggregation exactly (observed=10, lead=1 row grain; 5 observed + 1 lead lines)",
+        "D1 canonical sha256 9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b, D2 407f7500330b778f142a6f7e8f4f05d8fea3511b3d381a42d98921483cc976af, markerless projection 9351abaa5b5dcb00dd75f9a2340bbb50e1446cfbcad8e64ecf3144e700c432df: all recomputed and equal to declared values",
+        "fixture snapshots HistoricalC3.r19-c3-derived-six-row-5obs-1lead and HistoricalC3.D1.row-claim-matches-derived are byte-equal to D2 and D1 respectively",
+        "assemble.py:545-560 (11 markerless rows), :562-574 (6 incident lines), :576-599 (D1/D2 canonical digests and 5/1 claim), :601-620 (split totals), :621-684 (1:1 join and faithful D1/D2), :687-695 (markerless projection digest) enforce the above at materialization"
+      ]
+    },
+    {
+      "id": "INDEPENDENCE_HARNESS_SUBSTITUTION_SCOPE",
+      "method": "read independence.py end to end; enumerate every tracked file in the staged revision that is classifier source; trace every write/unlink/mkfifo in the state loop and positive controls",
+      "result": "GAP: the intervention perturbs only one of three in-tree classifier sources; two historical C1 copies remain byte-identical in all states",
+      "facts": [
+        "independence.py:34 CLASSIFIER = 'tools/mado-tripwire.py'; :35 BASELINE = 741122d...",
+        "staged revision 71228fd tracks three classifier sources: tools/mado-tripwire.py (162323 B, sha256 36fdc459...), .ufo/waves/round-22/evidence/tool-before.py (153493 B, sha256 46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1 = git show 741122d:tools/mado-tripwire.py), .ufo/waves/round-21/evidence/tool-before.py (130516 B, sha256 a57d4fe9277ff06c9b5916fc731e91f05bcd69cf05639cb2090ebcb00b5b6458, the r20 a2 scanned tool recorded in historical-c3.json)",
+        "independence.py:155-157 defines classifier = regular(stage, relative(CLASSIFIER)) and reads its bytes/mode",
+        "independence.py:238 states = base/changed/absent/read_fifo/execution_marker; :243-248 and :276-289 unlink/write/mkfifo only 'classifier'",
+        "independence.py:251-256 checks only tree_hash(fixtures) and digest(gate.read_bytes()) for integrity; the two tool-before.py copies are outside fixtures and outside the gate and are never hashed or restored",
+        "independence.py:261-262 equality compares stdout/stderr/exit signatures across states for the same command list; a gate whose only classifier-source access is either tool-before.py copy is invariant because those files are untouched in every state",
+        "independence.py:271-292 positive controls hash only 'classifier' (base/changed/read_fifo) and execute only 'classifier' (marker); no control reads .ufo/waves/round-2[12]/evidence/tool-before.py",
+        "independence.py:301-306 limitations name stat-only/nonblocking reads and intentional evasion, but not unsubstituted in-tree classifier copies",
+        "the 'absent' state name (:238) is a receipt label: two classifier sources still exist in the stage at that moment",
+        "delivered tools/mado-evidence-audit.py has no read of either copy (source check above), so this is a proof-scope gap, not observed C2 coupling"
+      ]
+    },
+    {
+      "id": "CLI_AND_SELFTEST_OUTPUT_EQUALITY_BOUNDARY",
+      "method": "read tools/mado-evidence-audit.py:212-286, measure.py:411-541,718-722; grep for actual_counts/result assertions",
+      "result": "Documented equality boundary is narrower than the tool's full evidence output",
+      "facts": [
+        "tools/mado-evidence-audit.py:252-253 marks a selftest case passed iff proc.returncode == expected code == observed_code, sorted(expected ids) == observed ids, and stderr is empty. It does not compare result label, actual_counts, actual_snapshot_sha256 or authority",
+        "measure.py:446-460 compares code, exact finding_ids, exact authority string, and only requires result/authority to be non-empty strings; it never reads actual_counts (grep: no occurrence in measure.py) and never checks result == clean/failed/could-not-evaluate",
+        "measure.py:494-541 run_selftest returns pass = (no spawn error, no timeout, no truncation, exit == 0); it stores stdout text/base64 but does not parse passed/total/expected_sha256/tool_sha256 or per-case rows",
+        "measure.py:718-722 aggregates case pass plus selftest pass",
+        "consequence: a fault that only swaps/misreports actual_counts.observed/lead (verdict computed before output), or emits a wrong result label, or silently short-circuits --selftest while exiting 0, is not killed by the 46-case population, measure.py, or independence.py. No such fault is claimed to exist in the delivered tool; this is a verification-surface gap",
+        "CLI shape: --check requires --root to evaluate (missing root returns code 2 at :275); --selftest ignores a supplied --root; both are minor interface ambiguities, not verdict defects"
+      ]
+    },
+    {
+      "id": "NO_IDENTITY_AUTHENTICATION_CLAIM",
+      "method": "read docstring, AUTHORITY constant, result builder, check/verdict paths, measure authority match",
+      "result": "Accounted for: the tool claims only artifact arithmetic and label consistency, not authentication",
+      "facts": [
+        "tools/mado-evidence-audit.py:6 docstring: 'No classifier, host probe, Git, network, authenticated chronology, admission or promotion authority is consulted'",
+        "tools/mado-evidence-audit.py:22 AUTHORITY = 'artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion'",
+        "tools/mado-evidence-audit.py:116-118 result() attaches that authority and sorted unique finding_ids",
+        "snapshot_tampered at :130 means only 'bytes differ from the caller-supplied bundle digest'; it is not an authenticity or authorship proof",
+        "--selftest prints expected_sha256 and tool_sha256, which are self-computed digests, not signatures; a self-consistent forged bundle+snapshot+sidecar passes, consistent with the disclaimer",
+        "measure.py:456 requires the authority string exactly, which prevents an upgraded claim from slipping through"
+      ]
+    }
+  ],
+  "classifier_copies_staged_at_revision": [
+    {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+      "sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+      "bytes": 162323,
+      "role": "candidate/current C1; the only path independence.py substitutes",
+      "mode_at_71228fd": "100755"
+    },
+    {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/evidence/tool-before.py",
+      "sha256": "46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+      "bytes": 153493,
+      "role": "r21 delivered classifier = git show 741122d177ae8ff68a73768777f20484d5bdcbe4:tools/mado-tripwire.py; unsubstituted in every independence state",
+      "mode_at_71228fd": "100755"
+    },
+    {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/evidence/tool-before.py",
+      "sha256": "a57d4fe9277ff06c9b5916fc731e91f05bcd69cf05639cb2090ebcb00b5b6458",
+      "bytes": 130516,
+      "role": "r20 a2 scanned classifier recorded in historical-c3.json sources[10].scanned_tool_sha256; unsubstituted in every independence state",
+      "mode_at_71228fd": "100755"
+    }
+  ],
+  "coverage_enumeration": {
+    "cases": 46,
+    "kinds": {"raw": 23, "proposal": 12, "historical-derived": 11},
+    "sealed_audit_proposals_represented": 35,
+    "excluded": 0,
+    "eligibility_entries": 36,
+    "markers_across_valid_snapshots": {"observed": 92, "lead": 14, "absent": 12},
+    "invalid_nonabsent_marker_values": 0,
+    "nonzero_error_counter_rows": [
+      {"case": "AuditErrorsOmitted", "path": "pkg/mod.py", "eval_unparsed": 0, "unparsed_spawns": 2},
+      {"case": "AuditUnknownClean", "path": "pkg/handler.py", "eval_unparsed": 1, "unparsed_spawns": 0}
+    ],
+    "rows_with_both_counters_positive": 0,
+    "duplicate_file_paths_with_nonzero_counter": 0,
+    "clean_false_zero_total_zero_errors_cases": ["AuditErrorsOmitted", "AuditRawOverflowCounter"],
+    "clean_false_zero_green_case": null,
+    "clean_true_with_both_findings_and_errors": 0,
+    "non_bool_clean_claims": 0,
+    "non_string_or_whitespace_class_command_rows": 0,
+    "known_duplicate_case_pairs": 4,
+    "duplicate_cross_reference": ".ufo/waves/round-22/w2/reports/FalsifyC233.md groups 46 cases into 41 byte-identical (bundle_sha256,snapshot_sha256) groups; at most 42 distinct inputs"
+  },
+  "normalization_note": {
+    "cross_reference": ".ufo/waves/round-22/w2/reports/FalsifyC204.md lines 8-11,73-75 already records both normalizations",
+    "fact": "expected.json normalizations include 10 expected.code string->int records and one AuditLeadInflated expected.finding_ids sort/dedup record; original values are retained; no verdict change",
+    "boundary": "audit-clarifications.md names only expected.code normalization; the finding_ids sort is representation-neutral because the tool emits sorted unique IDs, but it is not named in that clause"
+  },
+  "proposed_move": {
+    "name": "Exhaustive staged classifier-copy substitution for C2 independence",
+    "target": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/independence.py",
+    "owner": "L1 integration; this seat proposes only",
+    "steps": [
+      "After git archive staging, enumerate regular non-symlink files under tools/ and .ufo/waves/** whose sha256 is in the known classifier set {36fdc459..., 46c82902..., a57d4fe9...} or whose basename is tool-before.py or mado-tripwire.py and whose hash matches an explicit pin; record path, sha256, bytes, mode.",
+      "Apply each state (base, changed, absent, read_fifo, execution_marker) to every discovered copy, not only tools/mado-tripwire.py. For base write baseline bytes to all copies; changed write candidate bytes to all; absent unlink all; read_fifo mkfifo all; execution_marker write marker to all.",
+      "Record classifier_copy_inventory, substituted_paths, unsubstituted_candidates and per-copy pre/post hashes in the receipt; replace the bare state label 'absent' with 'known_classifier_copies_absent' or add state_scope so the receipt cannot be read as 'no classifier bytes exist'.",
+      "Extend positive_controls to every copy: for each path run the hashing control on base vs changed (require different signatures), require FIFO timeout, and require marker execution (exit 83 plus marker). Set sensitive = all copies sensitive.",
+      "Extend intact to require every substituted copy to be at the state's expected hash/absence/FIFO after each run, and to require the gate and fixture tree unchanged as today.",
+      "Add a limitation line: only enumerated copies are controlled; absolute-path reads outside the staged tree, stat-only reads, nonblocking opens, and unenumerated copies are not detected."
+    ],
+    "why_it_improves": "The current receipt can report identical_outputs=true and pass_intervention=true while two in-tree C1 sources are invariant, so the intervention does not demonstrate the declared negative for those paths. The extension covers every known copy and makes the receipt's scope explicit without changing any fixture, expected value, tool, or C1 byte.",
+    "no_harm_expectation": "The delivered tools/mado-evidence-audit.py does not read any copy, and its --selftest inventory contains no tools/ path, so extending substitution should leave the delivered gate's outputs and expected exits unchanged."
+  },
+  "risks": [
+    "Discovery can miss a future copy with a different size/hash; mitigate with explicit --classifier-copies pins and record unmatched tool-before/mado-tripwire-named files as unsubstituted_candidates.",
+    "Substituting .ufo/waves/round-21/evidence/tool-before.py changes staged provenance bytes; this must happen only in the temp stage, with original hashes recorded, never in the checkout.",
+    "A gate that legitimately reads a historical copy would now produce non-identical output; that is the finding the intervention exists to surface, not a harness failure, but L1 should inspect it rather than treating pass=false as automatically a candidate defect.",
+    "Multiple marker copies write the same marker path; make the marker write idempotent and clean between states; do not let marker_present leak across states.",
+    "Do not follow symlinks or hardlinks when substituting copies; use lstat and reject nonregular entries, matching the existing regular() discipline.",
+    "Keep the existing one-child, 384 MiB address-space, 15 s limits; the added hashing is a handful of files, not a corpus scan."
+  ],
+  "verification_plan": [
+    "Static: assert every discovered copy is mutated in every state; assert receipt classifiers copy inventory and substituted_paths are present and complete; assert no write path remains outside the loop.",
+    "L1 run after the wave: independence.py --revision 71228fd582d6d9338d7916cc64e69bd4c2e928b5 --fixtures .ufo/waves/round-22/audit/fixtures; expect identical_outputs=true, selftest_ok=true, expected_exits_match=true, fixtures_and_gate_unchanged=true, positive_control_sensitive=true, pass_intervention=true, with all three copies enumerated.",
+    "Negative controls in L1's private sandbox: a coupled probe that reads .ufo/waves/round-22/evidence/tool-before.py and changes its output must yield identical_outputs=false under the extended harness while the current harness passes it; the same for .ufo/waves/round-21/evidence/tool-before.py and for tools/mado-tripwire.py. Do not call any proposed fault killed before L1 runs it.",
+    "Identity checks before and after any run: C1 36fdc459..., C2 277eced2..., audit expected b5df74b5..., seal 47f403f6...; record the new independence.py sha256 in the receipt."
+  ],
+  "contradictions": [
+    "No contradiction found between the delivered C2 tool's verdicts and the 46 sealed expectations in the source-only reading; per-case reports exist and are not rerun here.",
+    "sources[15] audit-clarifications.md is recorded UNCOMMITTED (worktree at eda932e) but its bytes now equal the blob at 9185f1f9 and 71228fd; it is contract text, not a label source, and the sealed digest remains correct.",
+    "Historical D1 cases inherit a D2 rationale text that is false for their own bytes; cross-referenced from FalsifyC234/C235/C236, not re-derived here; expectations are unaffected.",
+    "Four HistoricalC3 case pairs are byte-identical per FalsifyC233; 46 cases are not 46 independent inputs.",
+    "The registration phrase 'red on a faithful actual r19 C3 six-incident receipt' is correctly materialized as code 2 for the markerless original, per guard-clarifications; it is not normalized to failed 1 or clean 0."
+  ],
+  "not_credited": [
+    "No admission, non-author admission, semantic precision, execution truth, authentication, promotion or streak reset.",
+    "No mutant is claimed killed; recipes are proposed only.",
+    "No C1 semantic claim and no C2 verdict change."
+  ]
+}

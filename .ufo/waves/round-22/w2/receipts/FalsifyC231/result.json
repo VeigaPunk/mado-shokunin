@@ -1,0 +1,157 @@
+{
+  "assignment": "C2 AuditTotalMismatch independent derivation + one capped candidates check",
+  "case": {
+    "group": "audit-proposal",
+    "id": "AuditTotalMismatch",
+    "kind": "proposal"
+  },
+  "contradictions": [],
+  "digests": {
+    "audit_expected_json_after": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_expected_json_before": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+    "audit_expected_sha256_content": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09  expected.json\n",
+    "audit_expected_sha256_file": "259554568e17f61039b5340f4bf8dd24ff0e31eee14fa2777e309bf04c0ebc60",
+    "bundle_after": "15422fc47e710c1d5e40bf1d0aa04567158cacfa6b47814849791538fed6a5b1",
+    "bundle_before": "15422fc47e710c1d5e40bf1d0aa04567158cacfa6b47814849791538fed6a5b1",
+    "drift": "none",
+    "oracle_expected_json": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+    "snapshot_after": "ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808",
+    "snapshot_before": "ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808",
+    "tool_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tool_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tool_fixed_identity": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+    "tripwire_fixed_identity_not_used": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce"
+  },
+  "exit": 1,
+  "frozen_expectation": {
+    "bundle_sha256": "15422fc47e710c1d5e40bf1d0aa04567158cacfa6b47814849791538fed6a5b1",
+    "bundle_sha256_in_expected_record": "15422fc47e710c1d5e40bf1d0aa04567158cacfa6b47814849791538fed6a5b1",
+    "expected": {
+      "code": 1,
+      "finding_ids": [
+        "finding_count_mismatch"
+      ]
+    },
+    "normalizations": [
+      {
+        "field": "expected.code",
+        "normalized": 1,
+        "original": "1",
+        "reason": "exact verdict string normalized to integer"
+      }
+    ],
+    "original_expected": {
+      "code": "1",
+      "finding_ids": [
+        "finding_count_mismatch"
+      ]
+    },
+    "proposal": ".ufo/waves/round-22/w1/audit-proposals/AuditTotalMismatch.json",
+    "proposal_sha256": "ba6c93e986897086966204d3e12848eaf13c5609e201c01ea8921854507507b7",
+    "snapshot_sha256": "ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808",
+    "snapshot_sha256_in_expected_record": "ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808"
+  },
+  "independent_derivation": {
+    "actual_counts": {
+      "errors": 0,
+      "lead": 1,
+      "observed": 1,
+      "total": 2
+    },
+    "clean_branch": "clean=false so neither uncertain_scan_claimed_clean nor findings_claimed_clean applies",
+    "comparison": {
+      "errors": "0 == 0",
+      "lead": "1 == 1",
+      "observed": "1 == 1",
+      "total": "1 != 2 -> finding_count_mismatch"
+    },
+    "declared_counts": {
+      "errors": 0,
+      "lead": 1,
+      "observed": 1,
+      "total": 1
+    },
+    "derived_verdict": {
+      "code": 1,
+      "finding_ids": [
+        "finding_count_mismatch"
+      ],
+      "result": "failed"
+    },
+    "grain_robustness": "the two rows sit on distinct (file,line) pairs (9 in MadoR22.AuditTotalMismatch.jsonl, 22 in MadoR22.AuditTotalMismatchHelper.jsonl), so row grain and distinct-line grain both give 2; no line/row ambiguity can rescue the declared total 1",
+    "input_validity": {
+      "bundle_strict_json": "valid: no duplicate keys, no nonfinite tokens, UTF-8, 218 bytes <= 2097152",
+      "claim_field_types": "total/observed/lead/errors exact nonnegative ints (1,1,1,0); clean exact bool false",
+      "digest": "declared sha256 is 64 lowercase hex and equals sha256(snapshot bytes) -> no snapshot_tampered, decode proceeds",
+      "files_population": "2 nonempty members, each eval_unparsed=0 and unparsed_spawns=0 exact ints",
+      "findings_rows": "2 rows, each explicit evidence marker observed|lead and nonempty class/command strings",
+      "path_resolution": "root and every component real directories/files, no symlink component, resolved path inside ROOT",
+      "snapshot_name": "snapshot.json: relative, nonempty, no backslash, no '.'/'..'/empty component, not absolute",
+      "snapshot_strict_json": "valid: no duplicate keys, no nonfinite tokens, UTF-8, 1940 bytes <= 2097152"
+    },
+    "internal_claim_inconsistency": "observed 1 + lead 1 = 2 != declared total 1, so the contradiction holds even without adopting len(findings) as the total definition",
+    "method": "read raw bundle/snapshot bytes and the normative contract (inputs/audit-contract.json); apply the candidate relevant check rules (row membership total, per-tier split, summed file error counters, exact-bool clean) without consulting any old classifier output or any expected verdict"
+  },
+  "installs": [],
+  "invocation": {
+    "argv": [
+      "python3",
+      "-I",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+      "--check",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditTotalMismatch/bundle.json",
+      "--root",
+      "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditTotalMismatch/root"
+    ],
+    "child_cap": {
+      "address_space_bytes": 402653184,
+      "concurrent_children": 1,
+      "seconds": 15,
+      "timeout_exit_would_be": 124
+    },
+    "wrapper": "bash -c 'ulimit -v 393216; timeout 15 python3 -I ... >stdout.txt 2>stderr.txt; echo $? >exit.txt'"
+  },
+  "lane": "leaf member; author-lane advisory falsification only; no admission authority",
+  "match_basis": "exit 1 == expected.code 1; finding_ids ['finding_count_mismatch'] == expected; result failed; actual_counts consistent; actual_snapshot_sha256 matches declared and frozen snapshot digest; stderr empty",
+  "no_other_scanner_runs": true,
+  "not_exercised_by_this_case": [
+    "digest-before-decode ordering (digest matches and snapshot is well-formed; no tamper/malformed interleaving)",
+    "negative counts, booleans-as-counts, nonfinite counters (all claim and file counters are exact nonnegative ints)",
+    "path escape, absolute path, dot/dotdot component, backslash, symlink file/ancestor, empty path",
+    "size boundary (218/1940 bytes far below 2 MiB)",
+    "missing/invalid evidence markers and empty class/command (both rows explicit and nonempty)",
+    "unknown-scan-claimed-clean / findings-claimed-clean (clean=false)",
+    "historical r19 markerless rows, derived 5/1 or 10/1 projections, all-observed inflation counterfactuals"
+  ],
+  "observed_match_expected": true,
+  "parsed_output": {
+    "actual_counts": {
+      "errors": 0,
+      "lead": 1,
+      "observed": 1,
+      "total": 2
+    },
+    "actual_snapshot_sha256": "ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808",
+    "authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion",
+    "code": 1,
+    "finding_ids": [
+      "finding_count_mismatch"
+    ],
+    "result": "failed"
+  },
+  "seat": "FalsifyC231",
+  "stderr_bytes": 0,
+  "stderr_full": "",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 366,
+  "stdout_full": "{\"actual_counts\": {\"errors\": 0, \"lead\": 1, \"observed\": 1, \"total\": 2}, \"actual_snapshot_sha256\": \"ba9279096a0ed653ccde520267202ad07a86d5c14570d371c4dd9cd921217808\", \"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 1, \"finding_ids\": [\"finding_count_mismatch\"], \"result\": \"failed\"}\n",
+  "stdout_sha256": "8e264770f6424dad983d8db097164df2d34595747fa30d2f6a50b5bf35065cb1",
+  "uncertainty": [
+    "single bounded case; no claim about other C2 cases or the whole 46-case population",
+    "no semantic precision, authentication, admission or promotion credit derived from this arithmetic agreement"
+  ],
+  "writes_scope": [
+    "this receipt directory",
+    "scoped report .ufo/waves/round-22/w2/reports/FalsifyC231.md"
+  ]
+}

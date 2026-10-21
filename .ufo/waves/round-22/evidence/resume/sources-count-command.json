@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import re,pathlib,subprocess,collections; L=pathlib.Path('/home/vgpnk/Projects/shokunin/mado-shokunin'); texts=[subprocess.check_output(['git','-C',str(L),'show','741122d:corpus/SOURCES.md'],text=True),(L/'corpus/SOURCES.md').read_text()]; print([{'rows':len(r:=[x.strip().strip('|').split('|') for x in t.splitlines() if re.match(r'^\\|\\s*S\\d{3,}\\s*\\|',x)]),'tiers':dict(collections.Counter(x[3].strip() for x in r)),'statuses':dict(collections.Counter(x[7].strip() for x in r))} for t in texts])"
+  ],
+  "exit": 0,
+  "stdout": "[{'rows': 120, 'tiers': {'A': 113, 'B': 1, 'C': 6}, 'statuses': {'mined': 103, 'queued': 8, 'rejected': 9}}, {'rows': 122, 'tiers': {'A': 115, 'B': 1, 'C': 6}, 'statuses': {'mined': 105, 'queued': 8, 'rejected': 9}}]\n",
+  "stderr": "",
+  "elapsed_seconds": 0.01776123046875
+}

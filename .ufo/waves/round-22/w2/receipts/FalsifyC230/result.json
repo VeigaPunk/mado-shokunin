@@ -1,0 +1,160 @@
+{
+ "argv": [
+  "python3",
+  "-I",
+  "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+  "--check",
+  "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/bundle.json",
+  "--root",
+  "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/root"
+ ],
+ "authorized_command": "python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py --check /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/bundle.json --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/root",
+ "case": "AuditRawTamperMalformed",
+ "child_cap": {
+  "rlimit_as_bytes": 402653184,
+  "rlimit_as_mib": 384,
+  "timeout_s": 15
+ },
+ "comparison": {
+  "authority_exact_match": true,
+  "code_match": true,
+  "exit_equals_code": true,
+  "expected_code": 2,
+  "expected_finding_ids": [
+   "snapshot_tampered"
+  ],
+  "ids_exact_match": true,
+  "no_actual_counts_key": true,
+  "no_error_key": true,
+  "observed_code": 2,
+  "observed_finding_ids": [
+   "snapshot_tampered"
+  ],
+  "observed_result_label": "could-not-evaluate",
+  "stderr_empty": true,
+  "verdict": "observed matches independently derived verdict"
+ },
+ "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+ "derivation": {
+  "actual_snapshot_sha256": "e1645cb225fd5c9d477c4990847699459e446fc7bc03405ed1b6962dd7501e32",
+  "alternative_path_excluded": {
+   "artifact": "JSONDecodeError is a ValueError -> evaluate() catch -> code 2 input_invalid",
+   "note": "both paths exit 2; only finding_ids discriminates",
+   "path": "decode-before-digest",
+   "would_emit": "evidence_audit_input_invalid"
+  },
+  "declared_equals_sha256_of_empty_bytes": true,
+  "declared_is_64_lowercase_hex": true,
+  "declared_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "derived_before_measurement_code": 2,
+  "derived_before_measurement_finding_ids": [
+   "snapshot_tampered"
+  ],
+  "derived_result_label": "could-not-evaluate",
+  "digest_mismatch": true,
+  "rule_sources": [
+   {
+    "doc": ".ufo/waves/round-22/audit-clarifications.md",
+    "line": 6,
+    "quote": "Read bounded snapshot bytes and verify digest before JSON decoding/shape/verdict comparison. Digest mismatch gives code2, finding_id snapshot_tampered; do not compare malformed bytes as semantic results."
+   },
+   {
+    "doc": ".ufo/waves/round-22/audit/fixtures/inputs/audit-contract.json",
+    "rule": "Snapshot digest is checked before verdict comparison"
+   },
+   {
+    "doc": "tools/mado-evidence-audit.py",
+    "lines": "125-131",
+    "order": "sha256(raw) compared to bundle sha256 (line 128-130) BEFORE parse(raw) (line 131)"
+   }
+  ],
+  "snapshot_bytes_len": 13,
+  "snapshot_hex": "7b2266696e64696e6773223a5b",
+  "snapshot_json_decode": {
+   "error_type": "JSONDecodeError",
+   "is_value_error": true,
+   "message": "Expecting value: line 1 column 14 (char 13)",
+   "ok": false
+  }
+ },
+ "elapsed_s": 0.031755,
+ "exit_code": 2,
+ "inputs": {
+  "bundle": {
+   "bytes": 217,
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/bundle.json",
+   "sha256": "01d93b6e44093c06f28b8830bade0f33612fd26bff3715e8a7aedea4646158c1"
+  },
+  "root_is_symlink": false,
+  "root_path_symlink_components": [],
+  "snapshot": {
+   "bytes": 13,
+   "hex": "7b2266696e64696e6773223a5b",
+   "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/audit/fixtures/cases/AuditRawTamperMalformed/root/snapshot.json",
+   "sha256": "e1645cb225fd5c9d477c4990847699459e446fc7bc03405ed1b6962dd7501e32"
+  },
+  "snapshot_is_regular_file": true,
+  "snapshot_is_symlink": false
+ },
+ "limitations": [
+  "exit code alone cannot distinguish snapshot_tampered from evidence_audit_input_invalid here; discrimination requires exact finding_ids",
+  "this case supplies no evidence for count arithmetic, markerless r19 handling, semantic precision or admission",
+  "determinism inferred from source (no env/time/random in check path) plus -I; single run only",
+  "file-read set is source-derived, not syscall-traced",
+  "proposed parse-before-hash mutant outcome is inference from JSONDecodeError(ValueError); no mutant executed, none called killed"
+ ],
+ "provenance_checks": {
+  "applied_child_cap_matches_declared": true,
+  "case_bundle_sha_matches_expected_entry": true,
+  "case_snapshot_sha_matches_expected_entry": true,
+  "check_reads_expected_json": false,
+  "check_reads_expected_json_basis": "source inspection of check(): only bundle bytes and root/name snapshot bytes are read; no expected fixture consulted",
+  "contract_matches_expected_entry": true,
+  "contract_sha256": "e65d165a1599c2d8743509bfb09ef46df9b8cc9038246b80cdef1780b5fdf23f",
+  "contract_size_bytes": 2129,
+  "declared_limits": {
+   "address_space_bytes": 402653184,
+   "concurrency": 1,
+   "output_bytes_per_stream": 1048576,
+   "seconds_per_child": 15
+  },
+  "expected_json_matches_fixed_audit_expected_identity": true,
+  "expected_json_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+  "expected_slash_sha256_file_consistent": true,
+  "inventory_binding": "bundle and snapshot listed in expected.json input_entries with matching kind/sha256/size_bytes",
+  "materialized_digests_in_truth_seal": false,
+  "materialized_snapshot_equals_sealed_raw_snapshot_literal": true,
+  "oracle_expected_matches_fixed_identity": true,
+  "oracle_expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+  "proposal_in_truth_seal": true,
+  "proposal_sha256": "74545426f80767ba7ff0e73aa21cb0798bea0a42aab0cc01ddf87d9ae9e3675d",
+  "truth_seal_matches_expected_raw_truth_seal": true,
+  "truth_seal_scan_performed": false,
+  "truth_seal_sha256": "47f403f6d4672639629d014d160530b831720aefb5ed588ab841ca92585b24d4",
+  "truth_seal_verified_file_count_claimed": 106
+ },
+ "role": "author-lane advisory falsification (not non-author admission)",
+ "schema": "mado-r22-w2-falsify-receipt-v1",
+ "seat": "FalsifyC230",
+ "stderr": "",
+ "stderr_bytes": 0,
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout": "{\"actual_snapshot_sha256\": \"e1645cb225fd5c9d477c4990847699459e446fc7bc03405ed1b6962dd7501e32\", \"authority\": \"artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion\", \"code\": 2, \"finding_ids\": [\"snapshot_tampered\"], \"result\": \"could-not-evaluate\"}\n",
+ "stdout_bytes": 303,
+ "stdout_sha256": "8f1b3f8638eb5d5b0b1d8f1ffd8404245c346421f621a3b99d2d9ccf5321e86f",
+ "surface_status": {
+  "declared_counts_strictness": "not exercised by this case (claim well-formed but inert after digest gate)",
+  "digest_before_decode": "exercised and consistent (tamper branch returned, no error key, no actual_counts)",
+  "path_symlink_size": "all gates pass legitimately (non-symlink root, regular 13-byte file, valid relative single-segment name); no mutant discrimination on this axis",
+  "row_line_grain": "unreachable: snapshot bytes are truncated JSON, zero complete rows, claim never validated",
+  "single_finding_id_rule": "observed exactly one id",
+  "truthful_authority": "output authority string exact; result label could-not-evaluate; no semantic/admission credit"
+ },
+ "timed_out": false,
+ "tool": {
+  "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-evidence-audit.py",
+  "sha256_after": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+  "sha256_before": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca",
+  "unchanged": true
+ }
+}
