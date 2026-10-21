@@ -1596,6 +1596,8 @@ def callable_info(node, bindings):
         if isinstance(container, ast.Name):
             container = bindings.get(container.id, {}).get("container")
         index = literal_value(node.slice, {})
+        if index is LITERAL_MISS:
+            return {"kind": "unresolved"}
         if isinstance(container, ast.Dict):
             for key, value in zip(container.keys, container.values):
                 if literal_value(key, {}) == index:
