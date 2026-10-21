@@ -1576,6 +1576,20 @@ def class_method_info(class_node, method_name, bindings=None):
 
 def callable_info(node, bindings):
     """Resolve a callable against the binding in effect at this call site."""
+    if isinstance(node, ast.Lambda):
+        return {"kind": "helper", "node": node}
+    if isinstance(node, ast.Subscript):
+        container = node.value
+        if isinstance(container, ast.Name):
+            container = bindings.get(container.id, {}).get("container")
+        index = literal_value(node.slice, {})
+        if isinstance(container, ast.Dict):
+            for key, value in zip(container.keys, container.values):
+                if literal_value(key, {}) == index:
+                    return callable_info(value, bindings)
+        if isinstance(container, (ast.List, ast.Tuple)) and isinstance(index, int):
+            if -len(container.elts) <= index < len(container.elts):
+                return callable_info(container.elts[index], bindings)
     if isinstance(node, ast.Name):
         bound = bindings.get(node.id)
         if bound is not None:
@@ -1588,6 +1602,10 @@ def callable_info(node, bindings):
         return {"kind": "unresolved", "name": node.id}
     if isinstance(node, ast.Call):
         constructor = callable_info(node.func, bindings)
+        if constructor.get("name") == "functools.partial" and node.args:
+            wrapped = callable_info(node.args[0], bindings)
+            if wrapped.get("kind") == "helper":
+                return dict(wrapped, fixed_nodes=node.args[1:], fixed_keywords=node.keywords)
         if constructor.get("kind") in ("class", "instance"):
             method = class_method_info(constructor.get("node"), "__call__", bindings)
             if method is not None:
@@ -1659,6 +1677,11 @@ def assignment_binding(node, bindings, env):
         return dict(callable_info(node, bindings))
     if isinstance(node, ast.Call):
         info = callable_info(node.func, bindings)
+        if info.get("name") in ("threading.Thread", "threading.Timer"):
+            return {"kind": "scheduled", "node": node}
+        returned = callable_info(node, bindings)
+        if returned.get("kind") == "helper":
+            return returned
         if info.get("name") == "importlib.import_module" and len(node.args) == 1 \
                 and not node.keywords:
             module = literal_value(node.args[0], env)
@@ -1684,8 +1707,9 @@ def assignment_binding(node, bindings, env):
         if info.get("kind") == "pure":
             return {"kind": "value"}
         return {"kind": "unknown"}
-    if isinstance(node, (ast.Constant, ast.List, ast.Tuple, ast.Set, ast.Dict,
-                         ast.BinOp, ast.UnaryOp, ast.JoinedStr)):
+    if isinstance(node, (ast.List, ast.Tuple, ast.Dict)):
+        return {"kind": "value", "container": node}
+    if isinstance(node, (ast.Constant, ast.Set, ast.BinOp, ast.UnaryOp, ast.JoinedStr)):
         return {"kind": "value"}
     return {"kind": "unknown"}
 
@@ -1694,6 +1718,11 @@ def update_bindings(stmt, bindings, env):
     """Apply this statement's module-level name bindings in execution order."""
     if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
         bindings[stmt.name] = {"kind": "helper", "node": stmt}
+        for decorator in reversed(stmt.decorator_list):
+            wrapped = callable_info(ast.Call(func=decorator,
+                args=[ast.Name(id=stmt.name, ctx=ast.Load())], keywords=[]), bindings)
+            if wrapped.get("kind") == "helper":
+                bindings[stmt.name] = wrapped
         return
     if isinstance(stmt, ast.ClassDef):
         bindings[stmt.name] = {"kind": "class", "node": stmt}
@@ -1796,6 +1825,38 @@ def eager_calls(nodes):
     stack = list(reversed(list(nodes)))
     while stack:
         node = stack.pop()
+        if isinstance(node, (ast.With, ast.AsyncWith)):
+            for item in node.items:
+                refs.extend((item.context_expr, ("protocol", method))
+                            for method in ("__enter__", "__exit__"))
+        elif isinstance(node, (ast.For, ast.AsyncFor)):
+            refs.append((node.iter, ("protocol", "__iter__")))
+            names = target_names(node.target)
+            if any(isinstance(part, ast.Call) and isinstance(part.func, ast.Name)
+                   and part.func.id in names for stmt in node.body for part in ast.walk(stmt)):
+                for part in ast.walk(node.iter):
+                    parents[id(part)] = "invoke"
+        elif isinstance(node, ast.Compare):
+            refs.append((node.left, ("protocol", "__eq__")))
+        elif isinstance(node, ast.Subscript) and isinstance(node.ctx, ast.Load):
+            refs.append((node.value, ("protocol", "__getitem__")))
+        elif isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Load):
+            refs.append((node.value, ("protocol", "__getattr__")))
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id in ("print", "repr", "str", "iter", "list", "tuple"):
+                for arg in node.args:
+                    refs.append((arg, ("protocol", "__repr__" if node.func.id == "repr"
+                                      else "__str__" if node.func.id in ("str", "print") else "__iter__")))
+            if not isinstance(node.func, (ast.Name, ast.Attribute)):
+                for part in ast.walk(node.func):
+                    parents[id(part)] = "invoke"
+        if isinstance(node, ast.ClassDef):
+            for base in node.bases:
+                refs.append((base, ("protocol", "__init_subclass__")))
+            for decorator in node.decorator_list:
+                if isinstance(decorator, (ast.Name, ast.Attribute)):
+                    refs.append((decorator, "decorator"))
+                    skip.add(id(decorator))
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for expr in node.decorator_list:
                 if isinstance(expr, (ast.Name, ast.Attribute)):
@@ -1814,7 +1875,7 @@ def eager_calls(nodes):
                 calls.append(node)
                 skip.add(id(node.func))
                 for arg in node.args + [keyword.value for keyword in node.keywords]:
-                    parents[id(arg.value if isinstance(arg, ast.Starred) else arg)] = node
+                    parents.setdefault(id(arg.value if isinstance(arg, ast.Starred) else arg), node)
             elif isinstance(node, (ast.Assign, ast.AnnAssign)) and \
                     isinstance(node.value, ast.Lambda):
                 assigned.add(id(node.value))  # a binding; its calls are followed
@@ -2109,6 +2170,18 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
         for name, value in bound.items()
     })
+    positional = helper.args.posonlyargs + helper.args.args
+    defaults = dict(zip((arg.arg for arg in positional[-len(helper.args.defaults):]),
+                        helper.args.defaults)) if helper.args.defaults else {}
+    supplied = {parameter.arg: argument for parameter, argument in zip(
+        positional[1:] if skip_first else positional, node.args)}
+    supplied.update({keyword.arg: keyword.value for keyword in node.keywords if keyword.arg})
+    for parameter in callable_params(helper):
+        argument = supplied.get(parameter, defaults.get(parameter))
+        if argument is not None:
+            resolved = assignment_binding(argument, cbindings, cenv)
+            if resolved.get("kind") in ("helper", "spawn", "class", "instance"):
+                body_bindings[parameter] = resolved
     if class_node is not None and bound_kind:
         params = helper.args.posonlyargs + helper.args.args
         if params:
@@ -2297,12 +2370,25 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             unparsed += 1
     for ref, parent in refs:
         rbindings = bindings if binding_env is None else binding_env.get(id(ref), {})
-        if parent != "decorator":
+        if isinstance(parent, tuple) and parent[0] == "protocol":
+            method = parent[1]
+            receiver = (callable_info(ref.func, rbindings) if isinstance(ref, ast.Call)
+                        else rbindings.get(ref.id, {}) if isinstance(ref, ast.Name) else {})
+            if receiver.get("kind") == "instance" or isinstance(ref, ast.Call) and receiver.get("kind") == "class" \
+                    or method == "__init_subclass__" and receiver.get("kind") == "class":
+                info = class_method_info(receiver.get("node"), method, rbindings)
+                if info is None and method == "__str__":
+                    info = class_method_info(receiver.get("node"), "__repr__", rbindings)
+                if info is not None:
+                    take(sweep_body(info["node"], rbindings, ctx, depth,
+                                    info.get("class_node"), info.get("bound_kind")))
+            continue
+        if parent not in ("decorator", "invoke"):
             parent_info = callable_info(parent.func, rbindings)
             parent_name = parent_info.get("name", "")
             # Value-only builtins/formatters and partial construction do not
             # execute function bodies or a class's instance methods.
-            higher_order = parent_name in ("map", "filter", "sorted", "min", "max")
+            higher_order = parent_name in ("map", "filter", "sorted", "min", "max", "functools.reduce")
             if parent_info.get("kind") in ("pure", "value") and not higher_order:
                 continue
             if parent_info.get("kind") == "class":
@@ -2310,8 +2396,10 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         if isinstance(parent, ast.Call):
             pinfo = callable_info(parent.func, rbindings)
             if pinfo.get("name") in ("threading.Thread", "threading.Timer"):
-                scheduled = any(isinstance(call.func, ast.Attribute)
-                                and call.func.attr == "start" and call.func.value is parent
+                scheduled = any(isinstance(call.func, ast.Attribute) and call.func.attr == "start"
+                                and (call.func.value is parent or isinstance(call.func.value, ast.Name)
+                                     and (bindings if binding_env is None else binding_env.get(id(call), {}))
+                                         .get(call.func.value.id, {}).get("node") is parent)
                                 for call in nodes)
                 if not scheduled:
                     continue
