@@ -5,7 +5,9 @@ Usage (after sealing and implementation):
   python3 -I .ufo/waves/round-22/audit/independence.py \
     --revision COMMIT --baseline 741122d --fixtures LANE_RELATIVE_ROOT
 
-Only tracked bytes from COMMIT are staged (git archive, never recursive copying).
+Only the tracked auditor, active classifier and C2 fixture subtree from COMMIT
+are staged (path-limited git archive, never recursive copying). Unrelated
+historical fixture symlinks and classifier snapshots are not staged.
 The complete cases list comes exclusively from the sealed expected.json schema
 mado-r22-audit-fixtures-v1, with each case's exact bundle and root paths.
 expected.sha256 and the full input_entries inventory are validated before use.
@@ -148,7 +150,10 @@ def main():
             stage = work / 'tree'
             stage.mkdir()
             archive = work / 'tree.tar'
-            git('archive', '--format=tar', '--output=' + str(archive), commit)
+            stage_paths = [TOOL, CLASSIFIER, fixtures_rel.as_posix()]
+            receipt['staged_paths'] = stage_paths
+            git('archive', '--format=tar', '--output=' + str(archive),
+                commit, '--', *stage_paths)
             with tarfile.open(archive) as source:
                 source.extractall(stage, filter='data')
             gate = regular(stage, relative(TOOL))
@@ -169,7 +174,7 @@ def main():
                 classifier_copy_inventory=copies,
                 substituted_paths=[CLASSIFIER],
                 unsubstituted_candidates=[row for row in copies if row['path'] != CLASSIFIER],
-                copy_inventory_selector='tracked staged .py files with column-zero def scan_file( and MADO_TRIPWIRE; heuristic candidate inventory')
+                copy_inventory_selector='only staged paths above; column-zero def scan_file( and MADO_TRIPWIRE; not a whole-repository absence claim')
             if candidate == baseline:
                 raise ValueError('baseline and changed classifier bytes are equal; no effective intervention')
             fixtures = stage / fixtures_rel
