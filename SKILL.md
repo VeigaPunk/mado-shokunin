@@ -1974,3 +1974,12 @@ This gate validates arithmetic and asserted labels, not that an `observed` marke
 ### Round-22 final withdrawal
 
 Final classifier restores v2's bounded ownership/caller-argument fixes (SHA256cd9da20c), not v3's unsafe consumer-sweep suppression. The latter could hide callbacks escaping through container/attribute stores. Primary57/57 does not cure supplemental2/4 or source-supported caller-frame leakage (`.ufo/waves/round-22/residual/ResidualForward.md`; sourced note's final withdrawal). Strict C1 and unchanged-row historical C2 targets remain unprovable/not admitted. The46/46 artifact audit and killed digest-check mutant do not supply semantic precision, outside-lane admission, host clearance or authorization to advance the round.
+
+Standalone C2 selftest in a fresh Git clone requires restoring three intentionally empty, manifest-pinned fixture directories (Git does not store empty directories). From that clone's root, first run:
+
+```sh
+mkdir -p -- .ufo/waves/round-22/audit/fixtures/cases/AuditRawPathBackslash/root .ufo/waves/round-22/audit/fixtures/cases/AuditRawPathDotDotInternal/root/sub .ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/root
+python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures
+```
+
+Only fixture directories are created; no snapshot byte, symlink, label or expected result changes. `.ufo/waves/round-22/evidence/resume/empty-directory-materialization.json` pins the setup. The bounded intervention driver recreates the same manifest-declared directories inside its throwaway tree and passed235 command-state runs at78b1824; its two earlier setup failures remain could-not-evaluate, not green evidence. Active-path equality does not prove absence of every historical classifier read or semantic truth.

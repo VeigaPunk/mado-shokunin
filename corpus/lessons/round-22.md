@@ -76,3 +76,13 @@ C2's actual snapshot-digest comparison is independently disabled in a retained m
 Inherited spending170 seats, five dead/unreported: RepairBindings, ImplementEvidenceAudit (capacity error already quoted above); ResidualOwner, ResidualCaller, ResidualCallable (zero-byte reports, terminal `Request was aborted`). Partial artifacts remain evidence, not completed advice. ResidualForward completed; its session output is retained beside its lane report. Four fresh3-seat advisory requests hit `Background job limit reached (100)`, zero spawned and no dead seat replacement. No additional repair or admission proposal follows.
 
 End census command unchanged, exit0, exact output `evidence/resume/sources-end.json`:120→122 rows, tierA113→115/B1/C6; mined103→105/queued8/rejected9. Only S121/S122 were added; their used-by changes are recorded above, no province frontier moved into core. Current outside-lane admit/reject spot-check remains the fresh closure's responsibility. Author advice cannot satisfy it.
+
+### Frozen staging is itself a gate
+
+| id | class | evidence pointer | captured-by | fix / demonstrated boundary |
+|---|---|---|---|---|
+| M15 | landing | `evidence/resume/audit-active-path-intervention{,-retry,-final}.json` | committed input boundary, safe extraction and exact fixture inventory | Whole-tree safe extraction refused an unrelated absolute symlink; narrowed extraction then exposed Git's absent empty directories. Keep both code2 receipts. Stage only the tracked auditor/active-classifier/C2 inputs; recreate only manifest-pinned missing directories after symlink-ancestor rejection. The same intervention then passes235 command-state runs and sensitive FIFO/marker controls, with no expected byte or verdict changed. |
+
+Intervention runtime equality is finite active-path evidence, not universal filesystem noninterference or semantic precision. The first two attempts ran zero C2 commands; only the final235-run receipt is a pass. Standalone fresh-clone C2 use first runs the explicit three-directory setup in SKILL.md / `empty-directory-materialization.json`; its immutable fixture inventory otherwise remains unchanged.
+
+Final historical precision is166/175, with zero previously passing-case losses on the identical175 names (`precision-comparison.json`), not175/175. Final author trends: expansion unchanged, quality unchanged with unresolved defects visibly marked, discernment improved through grounded corrections to previous outside rejection and preserved counterexamples. Current outside-lane spot-check and admission remain unclaimed.
