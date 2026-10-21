@@ -19,7 +19,7 @@ import sys
 
 MAX_BYTES = 2 * 1024 * 1024
 SHA = re.compile(r'[0-9a-f]{64}\Z')
-AUTHORITY = 'artifact assertions only; labels are not semantic proof, authentication, admission or promotion'
+AUTHORITY = 'artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion'
 
 
 class Invalid(ValueError):
@@ -178,6 +178,10 @@ def inventory(root, entries):
         if name in seen:
             raise Invalid('duplicate inventory path')
         seen.add(name)
+        if name == '.':
+            if require(entry, 'kind', str) != 'directory' or root.is_symlink() or not root.is_dir():
+                raise Invalid('invalid inventory root')
+            continue
         rel = relative(name)
         path = root / rel
         for parent in rel.parents:
