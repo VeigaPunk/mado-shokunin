@@ -1472,3 +1472,13 @@ Claim admission and current outside-lane admit/reject spot-check remain the non-
 **C2: improved as a separately demonstrated, bounded capability; round admission remains false.** Its20/20 fixture verdicts, actual wrong-topic/canonical subject pair, exact N/A rejection, code-mutant kill and complete C1-intervention equality are observed and independent. This does not authenticate assertions or evidence sufficiency. The repertoire row above records a working demonstration, **not an admitted capability or rank from a rejected round**. Historical criterion counts remain unchanged as claimed.
 
 Fresh residuals:4 reviewers dispatched,3 completed,1 provider-dead (`FinalAssessmentReview`, Codex capacity error), none replaced; total round154 seats including65+84 validated waves, the inherited MapResiduals scout and these4 residual seats. `FinalRemovalReview.md` found no wrongly excused prior process loss among31 groups, but `FinalEvidenceReview.md` retained source-scope, unparsed-clean labeling and provenance limits. Complete A2 counts are at a1e1b60, not final a6cef89;166/175 remains the delivered legacy comparison. The `--dry` rationales are source/old-manifest-limited, not a newly retained execution receipt. No all-input-green, global precision, no-harm, promotion or host-recovery verdict is granted.
+
+## Round 22 — explicitly authorized recovery registration
+
+Base `741122d177ae8ff68a73768777f20484d5bdcbe4`; full pre-implementation specification:
+`.ufo/waves/round-22/registration.md`.
+
+- C1 operability: bounded repair of r21 F1–F5 lifetime/scope/returned-callable/direct-run/hygiene failures, six original fixtures plus independently authored sealed variants; target every eligible frozen expectation and no new true finding loss/error flip on the frozen1356-fixture comparator. No global semantic completeness claim.
+- C2 calibration, lowest measured non-retired axis, capability acquisition: independent artifact-only evidence-tier/count audit; actual r19 C3 receipt must fail an observed6/6 assertion and accept only its correct observed5/6 plus lead1/6 scope; independent frozen validity fixtures, code-mutant kill and C1-intervention equality required. No criterion-count credit or retrospective r19 admission.
+
+Scores and before/after outputs are not pre-claimed. Prior red receipts and the three-rejection streak remain in force pending an admitted non-author closure. Authorization is dispatch permission only. No r23.
