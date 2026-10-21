@@ -1381,3 +1381,11 @@ scoped by M9. Sources S113–S115 (112 → 115). Wave-2 dispositions
 8 reviewer/critic seats (`a2/review/`), refused three times by the 100-job cap before it
 started. Host pause carried: no package, service, compositor, input or hyprctl command
 by L1. Installs: none by L1.
+
+Final residual review: all 8/8 reports completed, no dead residual seats (round total
+171; two dead attempt-1 seats remain uncredited). SCORECARD's final disposition
+supersedes the improved author readings: C1 harmed (recall, false leads, memory and
+VCS boundary counterexamples), C2 not independently established. Fixed-population
+checks reproduced; live-corpus census cannot be repeated without frozen input.
+Documentation review corrections landed; behavioral findings remain unresolved under
+the operator's wrap-up instruction. No next round started; no installs.

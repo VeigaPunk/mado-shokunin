@@ -1408,3 +1408,26 @@ files w2 CorpusRuntime timed at 30 s / 14 s took 25.85 s / 4.77 s at `28c6837` a
 |---|---|---|---|
 | tripwire reached-body sweep | Report every visible body the executed text reaches but the call path does not follow (thread targets, callbacks, decorators, closures, dunders, scheduled coroutines, recursion, past-depth helpers) as a `lead` row instead of dropping it | `python3 .ufo/waves/round-20/a2/a2-guards.py a8960de --fixtures-rev 6a7d9ca` (`recall_lost` 0; 52 at `28c6837`) | 20 |
 | detector removal-side guard | Count, for a tripwire change, the findings an older tool reported that the new one drops, the crash flips and the pure-data rows, over frozen adversarial populations | `a2/evidence/guards-before-28c6837.txt` vs `guards-after-a8960de….txt` | 20 |
+
+### Final residual-review disposition (supersedes author verdicts above)
+
+All eight attempt-2 reviewer/critic reports are under
+`.ufo/waves/round-20/a2/review/`; none died. **C1: harmed**, despite the reproduced
+172/175 count: ReviewV3Diff found recursive shell-string and callback-literal misses;
+CriticPrecisionV3 found 18 new false leads and a missed `imaplib.IMAP4_stream` process;
+ReviewRuntimeV3 exceeded 1,800 MiB on large assignment-only cells (old tools 80–167 MiB).
+CriticRecallV3 also found a partialmethod miss dating from `28c6837`.
+ReviewVcsV3 confirmed unflagged jj remote/bookmark/workspace writes under
+`--ignore-working-copy` at both revisions, and newly exempted `add -Nn` / `commit -zn`
+that still write Git objects or refresh the index (the write boundary was too broad
+to call these no-writes). It also found bare `uv tool run --help` falsely flagged.
+**C2: unprovable independently**, although its literal counter reproduces 22/30:
+30′ reads C1's own evidence, so the two claims are not causally independent.
+RerunAllV3 reproduced the fixed-population checks but whole-corpus counts drifted on
+the unpinned live input; those totals are dated observations, not reproducible census.
+ReviewDocsV3's three count/path/revision corrections landed before this disposition.
+Final trend verdicts: expansion improved (sources and evidence), quality harmed
+(counterexamples above), discernment improved (independent reviews surfaced and
+retained the failures). Round admission is not claimed. Under the operator's wrap-up
+instruction, unresolved behavioral defects are explicitly handed back to Main; no next
+round was started, and no review report is outstanding.
