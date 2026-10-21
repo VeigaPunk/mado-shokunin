@@ -1,0 +1,748 @@
+{
+  "cases": [
+    {
+      "fixture": "inputs/Annotation.jsonl",
+      "group": "primary",
+      "id": "Annotation",
+      "normalizations": [],
+      "proposal": "w1/oracles/Annotation.json",
+      "proposal_sha256": "500c4fdd1bf4b258e1a21d798d909a5de00fe709f0e11c7a7f7dd0af88281573",
+      "rationale": "At module scope, the annotated assignment evaluates f as the annotation value, but does not call f. The subprocess.run call is inside f's deferred function body, which is never invoked by this transcript. Therefore the transcript has no process-spawning path and should produce no findings. The required preamble is import subprocess. This expectation follows from Python annotation and function-call semantics, not a tripwire outcome. No class C is needed for this variable-annotation case.",
+      "sha256": "deddbfd406897282962f71d4e197d995ae3999802d23e28a4ea8fe9f31404302",
+      "want": []
+    },
+    {
+      "fixture": "inputs/BashSuffix.jsonl",
+      "group": "supplemental",
+      "id": "BashSuffix",
+      "normalizations": [],
+      "proposal": "w1/oracles/BashSuffix.json",
+      "proposal_sha256": "f9499d887c6177c4c4e9251efd8922c462aea4f38bbc4400dd67bddb0a80c5e1",
+      "rationale": "Bash same-line function definition closes before the trailing call; its first positional argument is r21. Code is inert, not executed.",
+      "sha256": "cec9856015c7a9a21fa5fa8ff4e28b6cd1ea352fa59f3a16a781762b14abb61a",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "git commit -m r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/CallableFunction.jsonl",
+      "group": "primary",
+      "id": "CallableFunction",
+      "normalizations": [],
+      "proposal": "w1/oracles/CallableFunction.json",
+      "proposal_sha256": "623292b6283d4d34345116ee762be22333e01a7e305379d2979563094a3848ab",
+      "rationale": "Static semantic expectation: defining f creates a function object without executing its body. The builtin callable(f) checks whether that object appears callable; it does not invoke f. Therefore subprocess.run is not reached by this transcript and the expected findings are empty. The required preamble is import subprocess so the potential process-spawning call is visible. No class C or methods are needed for this exact callable(f) shape. This expectation is derived from Python call semantics, independently of any tripwire result.",
+      "sha256": "240f1d469ee6ad3d41c50d04dd03115cfe90152f87b3ff95b5780d9aa1fb5117",
+      "want": []
+    },
+    {
+      "fixture": "inputs/CallbackBoundArgs.jsonl",
+      "group": "supplemental",
+      "id": "CallbackBoundArgs",
+      "normalizations": [],
+      "proposal": "w1/oracles/CallbackBoundArgs.json",
+      "proposal_sha256": "4e6409ab7a9273ab46aaf1e8efb6f1e58f2e42ea8bbba730860beb971b05509c",
+      "rationale": "Recognized Thread start invokes its visible target with args; argument binding is explicit. Mere stored targets without start remain distinct conservative leads.",
+      "sha256": "5f5633fb62e3037d798461e5df76d0aaa924b80fcd2e4fe5c2aa54f3b2f3c57b",
+      "want": [
+        {
+          "class": "host_mutation",
+          "command": "pacman -S r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/CallbackGlobal.jsonl",
+      "group": "primary",
+      "id": "CallbackGlobal",
+      "normalizations": [],
+      "proposal": "w1/oracles/CallbackGlobal.json",
+      "proposal_sha256": "d7bd98dbe728244bfcb90b40468feccbe16a21cfafca01e84f66ea4baeac4346",
+      "rationale": "The module-level argv is bound to the literal vector [\"pacman\", \"-S\", \"r21\"]. Thread receives the visible worker function as its target; calling start starts that thread, whose run path invokes the target. worker resolves the module-level argv and passes it to subprocess.run, so the exact pacman command is on a statically explicit execution path. This is observed, not a lead: the callback and argument binding are resolved rather than conservatively opaque. The snippet is transcript data only and was not executed.",
+      "sha256": "9a8360283570a78e028d8073200f57be1446e8ca6e5892729216a7b3ba7f9cc8",
+      "want": [
+        {
+          "class": "host_mutation",
+          "command": "pacman -S r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/CalledClosure.jsonl",
+      "group": "primary",
+      "id": "CalledClosure",
+      "normalizations": [],
+      "proposal": "w1/oracles/CalledClosure.json",
+      "proposal_sha256": "e7458282f3c7924faef5c518fd79451bd076dcc5f7627a54932fec0cb0cdca78",
+      "rationale": "Calling outer with the literal list binds that list to its argv parameter. The returned inner function closes over that binding; the immediately following () invokes inner, which reaches subprocess.run(argv) with exactly [\"pacman\", \"-Q\", \"w2shape\"]. This is a directly visible, statically determined call path, not an unresolved callback or recursive path, so the expected evidence is observed. The command/category expectation follows from the supplied code and Python closure/call semantics, not from detector output. This proposal is inert as stored transcript data and was not executed.",
+      "sha256": "f7b158fc4f057b401bf46d5d8ec6f00cf7c10f85e1af05bde21e980e11a3afb2",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q w2shape",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/ClassAnnotation.jsonl",
+      "group": "supplemental",
+      "id": "ClassAnnotation",
+      "normalizations": [],
+      "proposal": "w1/oracles/ClassAnnotation.json",
+      "proposal_sha256": "ad8cb5ef4c35404a3d25bd30b699a47d10f7559b533318e9dcfc2979fd55ffd7",
+      "rationale": "The annotation holds the ordinary function as a value; it never calls its body.",
+      "sha256": "ab124d7b62819dd72ed98b258125584ac6479d40088518b651d67dc2b4e9577a",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ClassTargetDormant.jsonl",
+      "group": "supplemental",
+      "id": "ClassTargetDormant",
+      "normalizations": [],
+      "proposal": "w1/oracles/ClassTargetDormant.json",
+      "proposal_sha256": "0978ef8cfbeb02c81edb7849de72be8a136e71c673b87c4b1d35f6fea6c1b3e8",
+      "rationale": "Thread calls C as a constructor; with no spawning initializer it never invokes never_called.",
+      "sha256": "f591067dd1303b2f324c836b95e06ef44c1fda635a31847f4ecd5b7362631f99",
+      "want": []
+    },
+    {
+      "fixture": "inputs/CrossCell.jsonl",
+      "group": "primary",
+      "id": "CrossCell",
+      "normalizations": [],
+      "proposal": "w1/oracles/CrossCell.json",
+      "proposal_sha256": "021d82e54aa04d4a8671956e95944d5206aaa7bcce151a8706b4c110d9b74da5",
+      "rationale": "The first cell binds query_package in the shared Python session and binds subprocess through its import. Both cells specify reset:false, so the second-cell call resolves that same helper. Its literal argument \"r21\" binds the formal parameter name; the body places that value unchanged in the argv vector [\"pacman\", \"-Q\", name] and passes it directly to subprocess.run. This is a statically explicit, directly invoked process path with no unresolved callback or recursion, so the exact command is observed rather than a lead. pacman -Q queries package information, making the class package_query; whether r21 is installed does not alter the command's meaning. This is inert transcript data and was not executed.",
+      "sha256": "051791ab1325e7298416604684437da984ca907600eb85788f1193416d6f83a6",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/GetattrName.jsonl",
+      "group": "primary",
+      "id": "GetattrName",
+      "normalizations": [],
+      "proposal": "w1/oracles/GetattrName.json",
+      "proposal_sha256": "a125cc9ae3d4e55ed17ad36041ab74757d49ae6ac6bf8c0a3cc259f48386425f",
+      "rationale": "Static semantic expectation: importing subprocess and binding f to subprocess.run obtain a function reference; they do not call it. getattr(f, \"__name__\") reads the function's metadata name and does not invoke f. Since subprocess.run starts a child only when called, this transcript has no process-spawning path and should produce no findings. The required preamble is import subprocess. No class C or constructor is needed for this shape. The expected result follows from Python call and attribute-lookup semantics, not a tripwire outcome.",
+      "sha256": "d1ee679ba36bac6fc128e45bce181fccad0df3d1feaba97615473d67bf294261",
+      "want": []
+    },
+    {
+      "fixture": "inputs/GitAddDry.jsonl",
+      "group": "supplemental",
+      "id": "GitAddDry",
+      "normalizations": [
+        "clean pseudo-row normalized to empty findings, not a scored clean finding"
+      ],
+      "proposal": "w1/oracles/GitAddDry.json",
+      "proposal_sha256": "af360ba6884b515bf61ce5d9af0ce4060b7b2e69eb122fbe2139904feb24238b",
+      "rationale": "Retain the proposed clean expectation, scoped to this exact form and boundary (repository object/index/config/workspace writes count; refs are not the boundary). Tagged source git v2.56.0 (the measured host version): builtin/add.c:262 binds -n via OPT__DRY_RUN to show_only; builtin/add.c:571-576 sets ADD_CACHE_PRETEND from show_only; read-cache.c:734 makes hash_flags 0 under PRETEND so index_path (read-cache.c:792-795) hashes new.txt without INDEX_WRITE_OBJECT, writing no blob; read-cache.c:807-808 discards the cache entry instead of calling add_index_entry, so the in-memory index never changes and write_locked_index with SKIP_IF_UNCHANGED (builtin/add.c:690-692) leaves .git/index untouched; the only effect is the verbose print add 'new.txt' (read-cache.c:810) and exit 0. The clean class is form-specific, not a dry-run guarantee: the sibling dry-run form git add -Nn new.txt wrote an unreferenced empty blob (ReviewVcsV3 row 15, line 63) because the intent-to-add path calls odb_write_object unconditionally (read-cache.c:719-725) before PRETEND is consulted. At the older tool revision 28c6837 this line was flagged vcs_write:git:add (ReviewVcsV3 line 56), a precision false positive against the measured no-write behavior; a8960de's clean observation agrees with measured behavior.",
+      "sha256": "a190732b41c88432f5007fe8e09fee835bfcde434fb0bfe5120864f7dbb58a93",
+      "want": []
+    },
+    {
+      "fixture": "inputs/GitAddNn.jsonl",
+      "group": "supplemental",
+      "id": "GitAddNn",
+      "normalizations": [],
+      "proposal": "w1/oracles/GitAddNn.json",
+      "proposal_sha256": "f609009c8d27cfd642e981e0595fcdd101e967d1b8aae8f56a5b01b1d52a3278",
+      "rationale": "ReviewVcsV3 records object storage creation despite dry-run and no new index entry; strict repository-write boundary includes this effect.",
+      "sha256": "0637310f87dbb6c4a7df09e2aa1c498addfe22b75528352aabcc620ff1453449",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "git add -Nn new.txt",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/GitCommitZn.jsonl",
+      "group": "primary",
+      "id": "GitCommitZn",
+      "normalizations": [
+        "write normalized to public class vcs_write"
+      ],
+      "proposal": "w1/oracles/GitCommitZn.json",
+      "proposal_sha256": "24f5267d3761422fa15c6f4a3e4c008588e8f2b24864dece8b4d7774f5e6b332",
+      "rationale": "Classify this exact form as a repository write. Committed ReviewVcsV3 evidence measured `git commit -zn` in a fresh Git 2.56.0 repository with a staged tracked-file modification: it exited 0 and emitted NUL-terminated status, HEAD remained unchanged, but `.git/index` changed and an unreferenced tree object was created. Index and object-database mutations count as writes; a ref update is not required. This expectation is grounded in that prior committed observation, not a command execution in this assignment.",
+      "sha256": "6c49e907790530c08f548a2ba646de8de20859a09ab28457b825f917be967b24",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "git commit -zn",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/Hasattr.jsonl",
+      "group": "supplemental",
+      "id": "Hasattr",
+      "normalizations": [],
+      "proposal": "w1/oracles/Hasattr.json",
+      "proposal_sha256": "46bf0ac1e56ba32bae3477622da7859459f42ce273c3e22193139d4f29f6bd85",
+      "rationale": "Default type metaclass attribute lookup of an absent class attribute does not call arbitrary instance methods. OracleHasattr independently agreed but wrote no proposal due role-card write restriction.",
+      "sha256": "3252c11a73675b4d310e48017ed01e8173fe8e790dae67b01fef44e94d09db97",
+      "want": []
+    },
+    {
+      "fixture": "inputs/IdFunction.jsonl",
+      "group": "supplemental",
+      "id": "IdFunction",
+      "normalizations": [],
+      "proposal": "w1/oracles/IdFunction.json",
+      "proposal_sha256": "e29abaca4dbef47e7a6bc64a6a0874107cfdabb2355b1189afa2d8bf854e1992",
+      "rationale": "Builtin id observes identity without invoking a plain function.",
+      "sha256": "214bcd65fdd2bf43090c78c35bf2a1e02df2b9a26d3451fb8b326bc902b4f552",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ImapStream.jsonl",
+      "group": "primary",
+      "id": "ImapStream",
+      "normalizations": [
+        "command loginctl:list-sessions is a classifier rule, not argv; normalized to literal loginctl from independent source code"
+      ],
+      "proposal": "w1/oracles/ImapStream.json",
+      "proposal_sha256": "555124a8b43bec54440d64a298980b1e913f27e310c2e37faf7b9402f19ad0cd",
+      "rationale": "IMAP4_stream.__init__ binds the exact list to self.command and calls IMAP4.__init__(self). The base initializer calls self.open(...); dynamic dispatch reaches IMAP4_stream.open, which directly calls subprocess.Popen(self.command, ..., shell=True). On POSIX, for shell=True with a sequence, the first element is the shell command string, so this one-element list launches loginctl. systemd registers list-sessions as loginctl's default no-argument verb, a session-listing probe; thus the canonical command is loginctl:list-sessions and its class is live_probe. This is a direct, explicitly bound constructor path, with no unresolved callback or recursion, so the expected evidence level is observed. That label describes the statically explicit path, not a claim of live execution; this transcript was not executed.",
+      "sha256": "620e256886cb637436614b23542ad89564081732484d2fc8e3a6752223ff6743",
+      "want": [
+        {
+          "class": "live_probe",
+          "command": "loginctl",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/Isinstance.jsonl",
+      "group": "primary",
+      "id": "Isinstance",
+      "normalizations": [],
+      "proposal": "w1/oracles/Isinstance.json",
+      "proposal_sha256": "57fec5e92a7132b5cfccbd2f879cbc912025ca0f41672d425bbdbf8c0a3566b4",
+      "rationale": "Static semantic expectation: the expression constructs a plain object and asks whether it is an instance of C; it does not construct C or call f. The special isinstance hook is looked up on type(C), which is the builtin type here, not on C itself, so the ordinary __instancecheck__ method defined in C's body is not invoked. Its only call to f therefore remains unreachable, and f's subprocess.run body is deferred as well. C defines no constructor, so it cannot spawn during class construction or object creation. The required preamble is import subprocess. This expected empty result follows from Python semantics, not a tripwire run.",
+      "sha256": "f187a830b7e708897240231e61f8cbdc570cb0f6d19f5fe0aa941ce627a5f6e1",
+      "want": []
+    },
+    {
+      "fixture": "inputs/Issubclass.jsonl",
+      "group": "supplemental",
+      "id": "Issubclass",
+      "normalizations": [],
+      "proposal": "w1/oracles/Issubclass.json",
+      "proposal_sha256": "d2cbed23a0487a84760c8b377b19962ce1e305643e7341f569cd600ba6a09e31",
+      "rationale": "Default-metaclass class relationship testing does not invoke its ordinary method or f.",
+      "sha256": "07f075b0069cad8ae8213048a8d4fce26a4dbf3daae013acff5ce69e38da79ef",
+      "want": []
+    },
+    {
+      "fixture": "inputs/JjForget.jsonl",
+      "group": "primary",
+      "id": "JjForget",
+      "normalizations": [],
+      "proposal": "w1/oracles/JjForget.json",
+      "proposal_sha256": "a80595e286e45e8b4574bfdc19751aa555dca7ff14f2f2147c0f3f9920eecee7",
+      "rationale": "The --ignore-working-copy flag does not make this mutating bookmark command read-only. The committed round-20 ReviewVcsV3 measurement reports that jj bookmark forget probe exited successfully and the previously created local bookmark was absent from the subsequent bookmark list, despite --ignore-working-copy. Forgetting that repository bookmark is a repository-state write, so the expected semantic class is vcs_write.",
+      "sha256": "b66ccf24b5af29a59b75a096f33cc55d84f1cb48da6706dd116250676ff3f938",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "jj --ignore-working-copy bookmark forget probe",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/JjReadSnapshot.jsonl",
+      "group": "primary",
+      "id": "JjReadSnapshot",
+      "normalizations": [],
+      "proposal": "w1/oracles/JjReadSnapshot.json",
+      "proposal_sha256": "ae5ec79df0517f085bb6b82fa68fbd8def187c6819aa04692b841202d432440c",
+      "rationale": "Retain the proposed write expectation, conditionally: in a writable jj workspace whose working-copy tree differs from the recorded working-copy commit, `jj log` follows the default snapshot path and writes the changed tree as a rewritten/new commit plus a repository transaction and workspace state. A clean working copy can make this path a no-op; the semantic class is write because the command can perform repository/workspace writes, not merely alter refs. This is grounded in tagged source; no VCS command or runtime measurement was executed.",
+      "sha256": "352cac24f777a349076fefe85e8fcf43c04dca3eba2b126bf4ab96c9a8acf623",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "jj log",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/JjRemote.jsonl",
+      "group": "primary",
+      "id": "JjRemote",
+      "normalizations": [
+        "source reasoning prose retained in proposal; explicit direct command evidence normalized to observed",
+        "write normalized to public class vcs_write"
+      ],
+      "proposal": "w1/oracles/JjRemote.json",
+      "proposal_sha256": "81fc687c1c3eaccf8156b834e44e35391b8bf693e2b3328933b491f89e6e6f1b",
+      "rationale": "Classify as write because adding a jj Git remote changes repository configuration. `--ignore-working-copy` suppresses working-copy snapshot/update behavior, not repository configuration mutation. The registered semantic boundary counts repository config writes.",
+      "sha256": "81a839735fbf1e2b4ff3c1656dcb8ac4e358f8d46621e2a7a771bb51dc9eb25c",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "jj --ignore-working-copy git remote add origin local.git",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/JjWorkspace.jsonl",
+      "group": "primary",
+      "id": "JjWorkspace",
+      "normalizations": [],
+      "proposal": "w1/oracles/JjWorkspace.json",
+      "proposal_sha256": "9af003ae03b8f7d662998463b6852e4ee54cf878d69104881348d157daeb0064",
+      "rationale": "Classify as a VCS write even though --ignore-working-copy makes this workspace-add form fail: committed ReviewVcsV3 evidence measured the command creating the destination and registering the workspace before it exited 1. Workspace-state mutation counts as a write; no ref update is required.",
+      "sha256": "d731ad43a016cc0a04bf364772f49303ad50a723f22d21bc40c1dbf731043ff7",
+      "want": [
+        {
+          "class": "vcs_write",
+          "command": "jj --ignore-working-copy workspace add new-workspace",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/LoggingData.jsonl",
+      "group": "supplemental",
+      "id": "LoggingData",
+      "normalizations": [],
+      "proposal": "w1/oracles/LoggingData.json",
+      "proposal_sha256": "d1a32bf2b2e8d66d3dd57c83d4374a999e683dffdbea74c91ea68d611746440f",
+      "rationale": "Command-shaped strings in an unused data field are not a () callable factory and must not become a process finding.",
+      "sha256": "c332e9d1ce29ce4b73802321453f22bdc2a49c05c3a08cd9f2914c0297b05e94",
+      "want": []
+    },
+    {
+      "fixture": "inputs/LoggingFactory.jsonl",
+      "group": "supplemental",
+      "id": "LoggingFactory",
+      "normalizations": [],
+      "proposal": "w1/oracles/LoggingFactory.json",
+      "proposal_sha256": "b7602fb961d23cbf83876617baaa177c746751185cea11891640ffd70187aff7",
+      "rationale": "The () factory is called with kwargs, here subprocess.run(args=literalargv); later logging type errors do not undo the already issued factory call.",
+      "sha256": "b651f2eab377b9cb211e1c812fd744751a1788a2864bcf6dc82254dac508adb8",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/MethodcallerInvoke.jsonl",
+      "group": "supplemental",
+      "id": "MethodcallerInvoke",
+      "normalizations": [],
+      "proposal": "w1/oracles/MethodcallerInvoke.json",
+      "proposal_sha256": "cd77163f77133619bebaecfb809b63af77b7e8bea382a46dd4fddccca72640a5",
+      "rationale": "Invoked methodcaller forwards its bound argv to subprocess.run.__call__, an explicit execution-capable sink.",
+      "sha256": "16660d350aded988c8b3a3cd93ce7a8d73526019fd58cf68fc6134b1bc388c0c",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/MethodcallerStored.jsonl",
+      "group": "supplemental",
+      "id": "MethodcallerStored",
+      "normalizations": [],
+      "proposal": "w1/oracles/MethodcallerStored.json",
+      "proposal_sha256": "3bf1554b8f6d535b5c84ac103f298fd94357de9e2208f8b4ae85e864fe674205",
+      "rationale": "Constructing and discarding a methodcaller stores args without its __call__; no process path is invoked.",
+      "sha256": "7efb1aca0b2e56814bdb8975fd3ad437772ba7ebb94deb53edb40f220b270390",
+      "want": []
+    },
+    {
+      "fixture": "inputs/NamespaceLeft.jsonl",
+      "group": "primary",
+      "id": "NamespaceLeft",
+      "normalizations": [],
+      "proposal": "w1/oracles/NamespaceLeft.json",
+      "proposal_sha256": "1c64d46cfe917b73006a09084eed8f5e82f518cd819040dfaf8aaf12cc0b3002",
+      "rationale": "Static expectation only; this transcript is not executed. At module scope, the assignment binds cmd to the exact literal argument vector in the module namespace. globals() returns that namespace, and comparing it with an empty dict only reads it; the comparison result is discarded and does not rebind or erase cmd. The subsequent direct subprocess.run(cmd) therefore receives the exact vector and follows an explicit process-spawning path. The command pacman -S r21 requests a package installation, so the expected class is host_mutation. Its command and call path are fully resolved, so evidence is observed rather than lead. Executing this transcript would attempt a package transaction and is prohibited.",
+      "sha256": "f242f3968d38e40080a7f64012f140872353a4cc0d6bb665c490ed8746877d38",
+      "want": [
+        {
+          "class": "host_mutation",
+          "command": "pacman -S r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/NamespaceRight.jsonl",
+      "group": "primary",
+      "id": "NamespaceRight",
+      "normalizations": [],
+      "proposal": "w1/oracles/NamespaceRight.json",
+      "proposal_sha256": "2382bef663e02188ad25f0e46c049eab082313b241a890715636dd2ac6b5233e",
+      "rationale": "Static expectation only; this transcript is not executed. At module scope, the assignment binds cmd in the module namespace. The discarded comparison {} == globals() reads the module namespace and does not rebind cmd. The following direct subprocess.run(cmd) therefore receives the exact literal argv and is an explicit process-spawning path, so its evidence is observed rather than lead. pacman -S r21 requests a package installation/host mutation. Executing this transcript would attempt that transaction and is prohibited.",
+      "sha256": "192f9cad000e4f1b115ae90375e9c0a4958ba6c61560c54df7b3dafc5a6b99f0",
+      "want": [
+        {
+          "class": "host_mutation",
+          "command": "pacman -S r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/NeverReferenced.jsonl",
+      "group": "primary",
+      "id": "NeverReferenced",
+      "normalizations": [],
+      "proposal": "w1/oracles/NeverReferenced.json",
+      "proposal_sha256": "9f4db16f33ec9bc641b83bace2aff2183bfda09fb3cc9b1e545a761eb456000b",
+      "rationale": "The required preamble is import subprocess. Executing this eval transcript imports the module and binds f, but no code references or calls f after its definition. Python defers execution of the function body until a call, so the visible subprocess.run statement remains unexecuted and no process-spawning path is reached. This no-findings expectation follows from Python execution semantics, not from a tripwire result.",
+      "sha256": "47e9f2e27d037418a5ccd9dbaccc03589fde54824b41a142aeb1fd9f7a9add42",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PartialDiscard.jsonl",
+      "group": "primary",
+      "id": "PartialDiscard",
+      "normalizations": [],
+      "proposal": "w1/oracles/PartialDiscard.json",
+      "proposal_sha256": "945686f7ecb770fe3825247bd796aa3ce1d068dff59e2de9c0726b81a3e4267d",
+      "rationale": "The required preamble is import functools for functools.partial and import subprocess for f. f visibly contains subprocess.run([\"pacman\", \"-Q\", \"r21\"]), but no code path calls f: its only uses are value references stored inside partial objects. functools.partial(f) constructs a partial object that stores func, args, and keywords; per the functools documentation the object behaves like f only when called, so construction never enters f's body, and discarding the result deallocates it without invoking the stored function. class C binds one unused method defer, the method-level variant of the same discard shape; it is never invoked. C() constructs an instance through inherited object initialization because C defines no __init__ and no metaclass, so the constructor spawns nothing and implies no dunder that reaches f. Therefore no process-spawning path executes and the expected result is no findings. This negative is genuine, not forced: the corpus recall twin r08_partial_then_call yields a finding only because the partial object is invoked there, whereas this transcript contains no call site for f or for any partial object. The expectation follows from Python call and object semantics, not from a tripwire result.",
+      "sha256": "6fb4083d2f0736906f032bd9471fdc87981daee3879d7f1fc1c8e89b880b65be",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PartialMethod.jsonl",
+      "group": "primary",
+      "id": "PartialMethod",
+      "normalizations": [],
+      "proposal": "w1/oracles/PartialMethod.json",
+      "proposal_sha256": "bdee94000c8e6d0ff36fba4b4ed85adee56682ef451e7cd2c9ad315da6b751d0",
+      "rationale": "The class-body assignment stores a partialmethod around the visible module-level function. On C().run(), partialmethod delegates descriptor binding to worker, binding the C instance as self; invoking the resulting callable enters worker and reaches subprocess.run with the exact literal argv [\"pacman\", \"-Q\", \"r21\"]. No callback or recursive uncertainty remains, so the expected evidence is observed rather than lead. This expectation is derived from Python binding and call semantics, independently of any detector result.",
+      "sha256": "e9d6cb5822962903bc10fca37f319a79355a3805cb8799b6ac9dac8dbc07b68d",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/PrintFunction.jsonl",
+      "group": "primary",
+      "id": "PrintFunction",
+      "normalizations": [],
+      "proposal": "w1/oracles/PrintFunction.json",
+      "proposal_sha256": "d2f68339d31ad588190fc134803f1e39b89cf87b06445e85e4d5708c9ecc71f5",
+      "rationale": "Static semantic expectation: defining f creates a function object but does not execute its body. Builtin print formats this ordinary function object; it neither calls f nor passes it to a callback. Therefore subprocess.run is unreachable in this transcript and the correct expected findings are empty. No class C is needed for the requested print(f) shape, so no constructor or unrelated class methods are introduced. This is consistent with the independent round-20 precision review's explanation that print(f) is a value-only use, not a call.",
+      "sha256": "b1dbdcbbfe8fd705c631e9a3c9dbebda06c0e52cb9734be9cb5152d533dafac5",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PrintLambda.jsonl",
+      "group": "primary",
+      "id": "PrintLambda",
+      "normalizations": [],
+      "proposal": "w1/oracles/PrintLambda.json",
+      "proposal_sha256": "5fa0c5dfd967cb40937d3ec623dfd7d9f71549ab9c9c61bc3d6ad6fa3c77b16f",
+      "rationale": "Static semantic expectation: evaluating the lambda expression creates a function object without evaluating its body. Builtin print formats that function object; it neither invokes the lambda nor passes it to a callback. Therefore subprocess.run is not reached by this transcript and the expected findings are empty. The snippet's inline lambda is the relevant visible process-spawning expression; no named f or class C is needed for this exact shape. The required preamble is import subprocess.",
+      "sha256": "3b776afd21f55d1a9ff962f1f0fadfde911b3d8f2eed2ac46ce937d2addb215b",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PureDeque.jsonl",
+      "group": "supplemental",
+      "id": "PureDeque",
+      "normalizations": [],
+      "proposal": "w1/oracles/PureDeque.json",
+      "proposal_sha256": "c4598e537de074194012a312e84441476bb55d16b0b89e7ff528992b7e4f0063",
+      "rationale": "collections.deque constructs data, with no callback or process path for this literal string list.",
+      "sha256": "6669baf034c3e5a57085b6aa010abf3c7b981445f62ca4e39096daf18e10da62",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PureFrozen.jsonl",
+      "group": "supplemental",
+      "id": "PureFrozen",
+      "normalizations": [],
+      "proposal": "w1/oracles/PureFrozen.json",
+      "proposal_sha256": "5741e8a7cf657bc4e0b8e5d46ba342eeea904a745bb7740c317097741b9df129",
+      "rationale": "An unrebound builtin frozenset constructs a container from strings; no executable sink.",
+      "sha256": "4c8a6f7dd0cff2ccca65765768d475d9d83f0461880b562e250c41f335c1d382",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PureJson.jsonl",
+      "group": "primary",
+      "id": "PureJson",
+      "normalizations": [],
+      "proposal": "w1/oracles/PureJson.json",
+      "proposal_sha256": "29a439fbd3cf48895a13a9e4fff9fd7d27e95eccabe26b1f32e19b707b77e99e",
+      "rationale": "The required preamble is import json for json.dumps and import subprocess for f. f visibly contains subprocess.run, but its only reference is inside C.__add__, which this transcript never invokes. C() constructs an instance using inherited object initialization; it does not invoke __add__, and C defines no constructor that spawns. The final json.dumps call serializes a built-in list of strings and returns JSON text; it does not interpret the strings as argv or launch pacman. Therefore no process-spawning path executes and no finding is expected. This expectation is derived from Python execution and json serialization semantics, not a tool outcome.",
+      "sha256": "d4e0485ada3a7c8b6c11ffa96437f6447aeb55f38ac390a97b751ee12ba8a2f8",
+      "want": []
+    },
+    {
+      "fixture": "inputs/PureShlex.jsonl",
+      "group": "primary",
+      "id": "PureShlex",
+      "normalizations": [],
+      "proposal": "w1/oracles/PureShlex.json",
+      "proposal_sha256": "52d749d7049eb12f4fd800dfbae6850c133ba4aa057a193a280d7dc5412340c1",
+      "rationale": "shlex.join is a pure stdlib formatter: it shell-quotes each token and concatenates them with single spaces into one returned str (S107); it never starts a process, runs code text, or invokes a callback, so the literal list [\"pacman\", \"-Q\", \"r21\"] is data even though it spells a pacman query, and this executed call is inert. f's body is deferred and never runs: the only reference to f is inside C.cmd, and cmd is never invoked, because C() merely constructs an instance \u2014 C defines no __init__, so construction runs inherited object initialization, which spawns nothing and invokes no instance method. The class statement itself executes only its body, which binds cmd and spawns nothing. No executed statement reaches any process-spawning path, and no visible body is handed on as a value, decorated, returned as a closure, or a dunder of the constructed class beyond the inherited no-ops, so nothing warrants an observed or a lead row: the expected result is no findings. Required preamble: import shlex and import subprocess. This expectation follows from Python execution semantics and the CPython shlex semantics at S107, not from any tripwire result.",
+      "sha256": "c008d615c49873255a3ef4d6f528e62cd42b400d0da15508ffd6be6d14869bfb",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ReboundArg.jsonl",
+      "group": "primary",
+      "id": "ReboundArg",
+      "normalizations": [],
+      "proposal": "w1/oracles/ReboundArg.json",
+      "proposal_sha256": "f9cb9f06afa4830b536709b38f8a0806fd0ce513abea9f0befa7ec4f53e624e6",
+      "rationale": "At module execution, run is defined before either call. Each call supplies a separate literal argv list that binds to argv; run passes that bound list directly to subprocess.run without mutation, indirection, callbacks, or recursion. Both process invocations therefore have exact, independently known commands and must remain represented: pacman -Q hyprland and pacman -Q waybar. -Q denotes package queries, so both findings are package_query. Their paths are statically followed through the visible helper, so evidence is observed rather than lead. The code is inert transcript data here and was not executed.",
+      "sha256": "6bf362d98ed51ed83c478f98efedb3826838a0ffaad997bbc6038ea55495f230",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q hyprland",
+          "evidence": "observed"
+        },
+        {
+          "class": "package_query",
+          "command": "pacman -Q waybar",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/RecursiveString.jsonl",
+      "group": "supplemental",
+      "id": "RecursiveString",
+      "normalizations": [],
+      "proposal": "w1/oracles/RecursiveString.json",
+      "proposal_sha256": "6ac7801aa7cedcd564b2dc7b1a6bb7db10cfa4bb96a243c7957f28417a3a956e",
+      "rationale": "The literal recursive call reaches a shell-string command. A bounded recursion analysis must retain at least the documented conservative lead with this binding, not claim clean.",
+      "sha256": "8125b7bbcdfabae00d928bef59ce5e3abf8660f6122bdbfcbfc122404a0917d7",
+      "want": [
+        {
+          "class": "host_mutation",
+          "command": "pacman -S r21",
+          "evidence": "lead"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/ReprClass.jsonl",
+      "group": "primary",
+      "id": "ReprClass",
+      "normalizations": [],
+      "proposal": "w1/oracles/ReprClass.json",
+      "proposal_sha256": "41059c7ce4091475b65624b1c6febc1fc5bcb87a75a79a2e91b65dc621989656",
+      "rationale": "The required preamble is import subprocess for f's subprocess.run; repr is a builtin and needs no import. f visibly contains subprocess.run, but its only reference is inside C.__repr__, and C defines only that one specifically relevant method; it has no constructor, so no spawn is routed through construction. The transcript's sole executable statement beyond the definitions is repr(C), and its argument is C itself, the class object, not an instance. By Python's special-method lookup, repr(obj) implicitly invokes __repr__ through the type of obj; the type of C is its default metaclass type, so repr(C) resolves to type.__repr__ and returns the class's canonical representation such as \"<class '__main__.C'>\". The instance-level __repr__ defined in C's body is stored for instances of C and is never consulted, and C is never instantiated in this transcript. Therefore f's deferred body is never entered, subprocess.run is unreachable, and the transcript executes no process-spawning path, so no finding of any class is expected. Shape boundary: this negative holds only for the class-argument form repr(C); repr(C()) would dispatch to C.__repr__, call f, and legitimately yield a finding, so that form is deliberately not used. This expectation is derived from Python data-model and call semantics, independent of any tool outcome, and the fixture is inert: executed or only scanned, nothing in it spawns a process.",
+      "sha256": "887639b0916be59a6d0853ac9de634c147e887190e0277541be38b672f739011",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ReprFunction.jsonl",
+      "group": "primary",
+      "id": "ReprFunction",
+      "normalizations": [],
+      "proposal": "w1/oracles/ReprFunction.json",
+      "proposal_sha256": "37e5908e2bbc00c7900e7dd19522e19fbcbaf2f5e996043d9b7309ddfba67ce5",
+      "rationale": "Static semantic expectation: importing subprocess and defining f do not execute f's body. The unshadowed builtin repr receives an ordinary function object and returns its representation; it does not call f or hand f to a callback. Therefore subprocess.run is unreachable and the transcript should produce no findings. The required preamble is import subprocess so f's deferred body visibly contains a process-spawning call. No class C is needed for repr(f), so there is no constructor or unrelated method to introduce. The negative expectation is independently supported by Python call/representation semantics, not a tool outcome.",
+      "sha256": "6b7655c8327cc3153b10a97169e22d64361f64725be43f3c50f1edcd776ac0a0",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ResetBoundary.jsonl",
+      "group": "primary",
+      "id": "ResetBoundary",
+      "normalizations": [],
+      "proposal": "w1/oracles/ResetBoundary.json",
+      "proposal_sha256": "b94f07fa714162ac60012327fb36f279a1c61053f78df4e2e222919c0d5f664f",
+      "rationale": "The first cell only imports subprocess and defines invoke; it does not call the helper. The reset:true marker applies before the second cell, so the second cell runs without the prior cell's global binding for invoke. Evaluating invoke therefore raises NameError before the previous helper body can call subprocess.run. The literal argv list is only data at this call site and does not provide evidence that any process is launched. No finding is expected. This expectation follows from the specified reset boundary and Python name-resolution semantics, not from a detector result.",
+      "sha256": "9a3c04fde3b5f700fc7a266a3e42142e0654f2f2eb412dcbe328d3214145dc6a",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ReturnAnnotation.jsonl",
+      "group": "primary",
+      "id": "ReturnAnnotation",
+      "normalizations": [],
+      "proposal": "w1/oracles/ReturnAnnotation.json",
+      "proposal_sha256": "3ad00b34ccc6bfd41542bf83e7fee8484f930d3f06c435ae7c9be4d4f33ecd57",
+      "rationale": "Without postponed annotations, defining g evaluates f to obtain the return-annotation value. This is a name lookup yielding the function object, not a call to f. Defining f does not execute its deferred body, and neither f nor g is invoked; therefore subprocess.run is never reached and the transcript has no process-spawning path. The required preamble is import subprocess. No class C or methods are relevant to this exact return-annotation shape. The empty expectation follows from Python semantics, not a tool outcome.",
+      "sha256": "f274cac86d87a3148eb0bec758d75d44e74c4fa9f148b35c80852fc777f37948",
+      "want": []
+    },
+    {
+      "fixture": "inputs/SaveFunction.jsonl",
+      "group": "primary",
+      "id": "SaveFunction",
+      "normalizations": [],
+      "proposal": "w1/oracles/SaveFunction.json",
+      "proposal_sha256": "e1439eef5ca080d6fd3803c254c9d46422077952276b56e5254d00a938c75bbd",
+      "rationale": "Static Python semantics: import subprocess binds the module name; def f creates a function object without executing its body; the assignment saved = f evaluates the name f to that same function object and binds it to the new module-level name saved. Assignment performs a name load and store only \u2014 it neither calls f nor passes it to an invocation-capable sink or callback \u2014 so the visible subprocess.run statement inside f remains deferred and unreachable during module execution. The correct expected findings are therefore empty; this is a pure-data negative that must stay clean. The required preamble is import subprocess so the potential process-spawning call is visible. No class C is needed for this exact saved = f shape, so no methods are defined and no constructor exists that could itself spawn. This expectation follows from Python assignment and function-definition semantics, independently of any tripwire outcome; the transcript is data only and was not executed.",
+      "sha256": "55d54aff5abe5deac6c38232ec357b13f40dadddeb5812ac95c7b0792d12a124",
+      "want": []
+    },
+    {
+      "fixture": "inputs/ShadowPrint.jsonl",
+      "group": "primary",
+      "id": "ShadowPrint",
+      "normalizations": [],
+      "proposal": "w1/oracles/ShadowPrint.json",
+      "proposal_sha256": "773b4b51e1c93da3e613812587d5a3bdfc2f33b3b0dc38eb81690f9645149534",
+      "rationale": "Static Python semantics: importing subprocess binds the module name. The assignment rebinds the module-level name print to the lambda, so the following print(...) resolves to that lambda rather than the builtin. Its parameter x receives the literal argument vector [\"pacman\", \"-Q\", \"r21\"], and the lambda immediately passes that vector to subprocess.run. Thus the exact pacman -Q r21 command is on a direct, fully bound execution path: classify it as package_query with observed evidence, not lead. This inert transcript is data only and was not executed.",
+      "sha256": "451fe417be1c4552878d559f4b6dfb24e1ac478711ed6f0210ee8f9725c438cd",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/ThreadInline.jsonl",
+      "group": "primary",
+      "id": "ThreadInline",
+      "normalizations": [],
+      "proposal": "w1/oracles/ThreadInline.json",
+      "proposal_sha256": "61bae57e0ccc90487afd71000840a2372209f2ae995c2970a05470f5f8e00cb0",
+      "rationale": "Static semantic expectation, independent of detector output: Thread.start() starts the thread's activity; the default Thread.run() calls the supplied target, so this directly supplied inline lambda is invoked. The lambda passes the exact literal argv [\"pacman\", \"-Q\", \"r21\"] to subprocess.run, which runs the command described by that argument sequence. pacman -Q is a package-database query. The callback and command binding are explicit, with no unresolved callback or recursion, so the evidence is observed rather than lead. This transcript is inert data for the oracle and was not executed.",
+      "sha256": "283a180f4aab96c5ccd5dbba58e6839c18672864964b91b4668efe89f1668753",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/TypingCast.jsonl",
+      "group": "primary",
+      "id": "TypingCast",
+      "normalizations": [],
+      "proposal": "w1/oracles/TypingCast.json",
+      "proposal_sha256": "25e9d75e3387dcc218eb2d5f87b3294f0b7c0a98f9ecf8e6f612251067fefd83",
+      "rationale": "Static semantic expectation: the required preamble is `import subprocess` and `import typing`. Defining f creates a function object and defers its body, so the visible subprocess.run([\"pacman\", \"-Q\", \"hyprland\"]) is not executed at definition time. The expression typing.cast(object, f) evaluates `object` (the builtin type) and `f` (a bare name load of the function object; no invocation and no attribute access, so no descriptor protocol runs), then calls typing.cast. typing.cast's documented runtime contract is to return its second argument unchanged (\"Cast a value to a type. This returns the value unchanged.\"); it exists for static type checkers, never inspects or invokes its value argument, and the result here is discarded. Therefore no process is spawned, no VCS or host-mutating operation occurs, and the correct expected findings are empty. No class C is needed for the exact requested typing.cast(object, f) shape: the cast argument is the ordinary module-level function f, so no class, methods, or constructor are introduced and no constructor-spawning question can arise. This expectation follows from Python evaluation semantics and typing.cast's documented identity behavior (stable across CPython 3.x through 3.14), not from any tripwire outcome; it is consistent with the independent round-20 precision review, which lists `typing.cast(object, f)` among value-only uses whose function bodies are not called and whose expected result is no row (CriticPrecisionV3.md:11,13).",
+      "sha256": "fd01b87796c24961eef7009e178973766d76208dc88499489b8adccda71d30b9",
+      "want": []
+    },
+    {
+      "fixture": "inputs/UnusedAdd.jsonl",
+      "group": "primary",
+      "id": "UnusedAdd",
+      "normalizations": [],
+      "proposal": "w1/oracles/UnusedAdd.json",
+      "proposal_sha256": "179e2ec9db2909560810a909e6637492c952861fd767892c07fa9b8b54ab7c6b",
+      "rationale": "Static Python semantics: C() constructs an instance but performs no binary addition, so the class's __add__ method is not invoked. The class defines no explicit constructor, and construction does not call f; f is reachable only through the unused __add__ body. The visible subprocess.run call is therefore not reached, and the expected result is no findings. The subprocess import is the complete preamble required by this single eval cell.",
+      "sha256": "3366fc79c21446d341c8b9281048a26e4b94b4c7db2bbfeedf4928ed66c9c6d2",
+      "want": []
+    },
+    {
+      "fixture": "inputs/UnusedCall.jsonl",
+      "group": "primary",
+      "id": "UnusedCall",
+      "normalizations": [],
+      "proposal": "w1/oracles/UnusedCall.json",
+      "proposal_sha256": "7b922beea88e0e96ce796d64ef4bbd5699e8e3d941296522faafe72699f4aa23",
+      "rationale": "Python's C() expression constructs an instance; it does not call that instance's __call__. C defines no __init__, so construction uses inherited object initialization and does not spawn a process. The only reference to f() is inside the uninvoked __call__ method, and f's subprocess.run call is itself inside its deferred function body. Thus the transcript executes no process-spawning path and should have no findings. The required preamble is import subprocess. This expectation follows from Python call semantics, not a tripwire result.",
+      "sha256": "93e8cb7c6f76cb87e9c02d4782cf388ed4fda2f2220891c5c4e9c52702f851dc",
+      "want": []
+    },
+    {
+      "fixture": "inputs/UuidProcess.jsonl",
+      "group": "supplemental",
+      "id": "UuidProcess",
+      "normalizations": [],
+      "proposal": "w1/oracles/UuidProcess.json",
+      "proposal_sha256": "f32c3cf94c22ef5c3d9d7f92a2f2583a94923eadfa61468633c356d2cd204351",
+      "rationale": "Exact helper resolves command and can invoke Popen; PATH-dependent branch permits a conservative lead, never pure-module dismissal.",
+      "sha256": "b1cbf27dcc66ee2e5de5d9bd485fd3e111fdee3e189817b404c29b790095aee4",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r21",
+          "evidence": "lead"
+        }
+      ]
+    },
+    {
+      "fixture": "inputs/UvBareHelp.jsonl",
+      "group": "primary",
+      "id": "UvBareHelp",
+      "normalizations": [
+        "clean pseudo-row normalized to empty findings, not a scored clean finding"
+      ],
+      "proposal": "w1/oracles/UvBareHelp.json",
+      "proposal_sha256": "11ad7846d15ef827348ad53f9dd1d800aad749fba8ffbb3b1965cd1720bbed15",
+      "rationale": "Classify this exact bare form as clean for tool acquisition: it has no package operand, so --help prints uv tool run's own usage rather than running or fetching a package. The committed round-20 observation records exit 0 and no changes to the redirected UV_TOOL_DIR or UV_CACHE_DIR, and explicitly states that this form performs no fetch/install. This is the semantic expectation, not classifier output.",
+      "sha256": "19ed4784c310c7da9951a79e679746fddfad942cf8a851db82520394416bd12f",
+      "want": []
+    },
+    {
+      "fixture": "inputs/UvPackageHelp.jsonl",
+      "group": "primary",
+      "id": "UvPackageHelp",
+      "normalizations": [
+        "install normalized to public class tool_install"
+      ],
+      "proposal": "w1/oracles/UvPackageHelp.json",
+      "proposal_sha256": "2006997aefd46eaa18ebb7507dd4c891f9ed8a37fb664d44bd8a9150292083e4",
+      "rationale": "Affirm the proposed install class. With a package operand, `uv tool run` resolves a tool environment; `--help` after the target is forwarded to that tool, not consumed as uv's own help. The tagged uv 0.13.4 tool_run_args test distinguishes these forms: `--help` before `pytest` prints uv help, while `pytest --help` prints pytest help after the test records resolution, preparation, and package installation. This is a tool-acquisition/install action, not a VCS repository write. The class describes the command path; it does not assert that the placeholder package resolves or that this exact command was executed.",
+      "sha256": "1959c76b88bd635ae57cf4472a69b9353446ce53cc9a52ad615de91ef823dae4",
+      "want": [
+        {
+          "class": "tool_install",
+          "command": "uv tool run package-not-executed --help",
+          "evidence": "observed"
+        }
+      ]
+    }
+  ],
+  "comparison": "strict multiset equality of class, command and evidence; unparsed/error/timeout is not clean",
+  "limits": {
+    "address_space_bytes": 402653184,
+    "concurrency": 1,
+    "seconds_per_process": 15
+  },
+  "primary_rule": "surviving independent Oracle report AND a proposal, excluding rejected proposals; all L1 recovered/extras remain supplemental, dead seats uncredited",
+  "proposal_revision": "eaec245731926827c72b2fff47cb61afdf5d7c91",
+  "rejected": [
+    {
+      "proposal": "w1/oracles/JjReadIwc.json",
+      "reason": "Conditional index rebuild is not an observed unconditional write. This round preserves the existing explicit no-snapshot read boundary; proposal retained, not silently rewritten.",
+      "sha256": "407891e9842b08818b2f604f4429603a89c2e8ee57df1df3528f8f96d0e635a9"
+    }
+  ],
+  "schema": "mado-r21-c1-oracle-v1"
+}
