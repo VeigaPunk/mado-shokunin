@@ -1374,6 +1374,16 @@ def literal_value(node, env):
     return LITERAL_MISS
 
 
+def literal_node(value):
+    """Represent captured literal arguments as valid inert AST, never evaluate."""
+    if isinstance(value, (list, tuple)):
+        return ast.List(elts=[literal_node(item) for item in value], ctx=ast.Load())
+    if isinstance(value, dict):
+        return ast.Dict(keys=[literal_node(key) for key in value],
+                        values=[literal_node(item) for item in value.values()])
+    return ast.Constant(value=value)
+
+
 def argv_strings(value):
     """The strings of a folded literal argv list/tuple, else None."""
     if isinstance(value, list) and value and all(isinstance(v, str) for v in value):
@@ -2287,11 +2297,11 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             local_bindings["__mado_thread_target__"] = info["target"]
             arguments = info["args"] if info["args"] is not None else ()
             options = info["kwargs"] if info["kwargs"] is not None else {}
-            if isinstance(arguments, (list, tuple)) and isinstance(options, dict):
+            if isinstance(arguments, (list, tuple)) and isinstance(options, dict) and all(isinstance(key, str) for key in options):
                 invocation = ast.Call(func=ast.Name(id="__mado_thread_target__", ctx=ast.Load()),
-                    args=[ast.Constant(value=value) for value in arguments],
-                    keywords=[ast.keyword(arg=key, value=ast.Constant(value=value))
-                              for key, value in options.items() if isinstance(key, str)])
+                    args=[literal_node(value) for value in arguments],
+                    keywords=[ast.keyword(arg=key, value=literal_node(value))
+                              for key, value in options.items()])
                 take(spawn_scan([invocation], cenv, local_bindings, depth + 1, ctx=ctx))
             else:
                 unparsed += 1
@@ -2300,8 +2310,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             callee = node.args[0] if info["method"] == "__call__" else ast.Attribute(
                 value=node.args[0], attr=info["method"], ctx=ast.Load())
             invocation = ast.Call(func=callee,
-                args=[ast.Constant(value=value) for value in info["args"]],
-                keywords=[ast.keyword(arg=key, value=ast.Constant(value=value))
+                args=[literal_node(value) for value in info["args"]],
+                keywords=[ast.keyword(arg=key, value=literal_node(value))
                           for key, value in info["keywords"].items()])
             take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
             continue
