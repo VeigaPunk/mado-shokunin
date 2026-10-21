@@ -1,0 +1,52 @@
+{
+  "schema": "mado-source-curation-instructions-v1",
+  "wave": "round-22-w1",
+  "purpose": "Curatorial instructions for S121 and S122 only; this is not a source receipt or evidence claim.",
+  "state": "awaiting_source_seat_returns",
+  "source_claims": [],
+  "source_rows_added": [],
+  "common_gate": {
+    "after_return": [
+      "Wait for the owning source seat's report and artifacts; do not infer a return from a directory entry alone.",
+      "Match each proposed row to its assigned ID and returned artifact(s); do not reassign or mint IDs.",
+      "Confirm the source is the requested official CPython v3.14.8/tagged material and record the exact upstream URL, access date, source path/section, and SHA-256 of the retained raw bytes.",
+      "Verify the digest against the retained bytes and verify every quoted span against those bytes; retain an exact, located quotation of at most 25 words per cited source item.",
+      "Keep the source's direct statement separate from any interpretation; limit the claim to the passage and task scope, and state unsupported or unverified points as unknown.",
+      "Do not modify shared lesson, SOURCES, LOG, registry, or any other seat's files. Add no source row until the seat has returned and the gate is satisfied."
+    ],
+    "hold_if": [
+      "The assigned seat has not returned both its report and required source artifacts.",
+      "The upstream identity/version, exact URL, access date, raw-byte digest, quote, or quote locator is missing or inconsistent.",
+      "The proposed claim exceeds the source passage, conflates source text with inference, or does not match the assigned ID and scope."
+    ],
+    "authority_limit": "These sources may support C1 only. They do not establish detector completeness, semantic truth beyond the cited passages, admission, or outside-lane approval."
+  },
+  "items": [
+    {
+      "id": "S121",
+      "owner": "SourceClosure",
+      "requested_source_scope": "Official CPython v3.14.8 documentation: Doc/reference/executionmodel.rst and the narrowly relevant language-reference material for lexical free variables and global lifetime.",
+      "curation_instructions": [
+        "Use only the requested official tagged documentation; record the exact documentation path and URL for each cited passage.",
+        "Retain the exact raw source bytes and the seat's access-date and SHA-256 provenance; keep each quotation verbatim, located, and no longer than 25 words.",
+        "Limit any eventual row to what the retained passage directly supports about the requested lexical-scope/lifetime subject; do not generalize to all Python closure or detector behavior.",
+        "If the relevant language-reference passage or its scope cannot be located in the returned artifacts, leave that point unclaimed and report it as unknown."
+      ],
+      "claim_boundary": "C1 source support only; not detector completeness.",
+      "pre_return": "No source claim and no S121 row recorded."
+    },
+    {
+      "id": "S122",
+      "owner": "SourceThread",
+      "requested_source_scope": "Official CPython v3.14.8 Lib/threading.py, limited to the Thread.run and Timer.run definitions requested by the source seat.",
+      "curation_instructions": [
+        "Retain the exact raw file bytes, official tagged-source URL, access date, and SHA-256; identify the exact definition and source locator for each quotation.",
+        "Use only verbatim located quotations of at most 25 words; tie any eventual row to the specific Thread.run or Timer.run passage it cites.",
+        "Keep direct worker-call semantics distinct from Timer wait/cancel behavior. Do not claim wait/cancel guarantees from Thread.run or Timer.run unless the returned cited material directly supports them; otherwise mark the point unknown.",
+        "Do not infer general scheduling, cancellation, or detector behavior from a narrow method body."
+      ],
+      "claim_boundary": "C1 source support only; distinguish Timer wait/cancel uncertainty from direct worker semantics.",
+      "pre_return": "No source claim and no S122 row recorded."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "CX5AfterReturn",
+  "cells": [
+    "import subprocess\n\n\ndef make():\n    def a():\n        subprocess.run([\"pacman\", \"-Q\", \"r22-cx5-early\"])\n\n    def b():\n        subprocess.run([\"pacman\", \"-S\", \"r22-cx5-early\"])\n\n    return a\n    a = b\n\n\nmake()()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "package_query", "command": "pacman -Q r22-cx5-early", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -S r22-cx5-early"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `return a` leaves the call to `make` immediately with the function object currently bound to `a`, the first nested def. The statement `a = b` after it is unreachable and never executes. `a` is still a local of `make`, because the assignment makes it local at compile time, but that changes nothing at runtime here. `make()()` calls the returned `a`, which runs `subprocess.run([\"pacman\", \"-Q\", \"r22-cx5-early\"])`. Exactly one observed package_query row, zero unparsed. `b` is defined but never called, so `pacman -S r22-cx5-early` never runs. This attacks an F3 repair that replays the whole factory body, instead of the prefix up to the executed return, before choosing the returned name. Every planned F3 variant rebinds before the return.",
+  "source": "CriticScope.json CX5. Mechanism: .ufo/waves/round-21/residual/FinalBindingReview.md F3 (lines 85-88; prefix replay 2338-2343). Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-simple_stmts.rst (sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc) line 496 'return leaves the current function call with the expression list'. Class mapping: pacman -Q -> package_query."
+}

@@ -1,0 +1,18 @@
+{
+  "id": "CapturePartialNested",
+  "cells": [
+    "import functools\nimport subprocess\n\ndef run_pkg(cmd):\n    subprocess.run(cmd)\n\ndef make(cmd):\n    return functools.partial(run_pkg, cmd)\n\nstored = make([\"pacman\", \"-S\", \"r22-pn-build\"])",
+    "cmd = [\"pacman\", \"-Q\", \"r22-pn-late\"]\nstored()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-pn-build",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 semantics: functools.partial copies its fixed argument objects when the partial(...) expression executes. In cell 1 the factory parameter cmd is already the literal list object, so functools.partial(run_pkg, cmd) freezes that list inside the partial's args tuple at construction time inside make. The name stored is bound to that partial object as a module global of the persistent eval namespace (cells run with reset:false), and cell 2's rebinding of the global name cmd to a different list rebinds only the name; it cannot reach the object already stored in the partial. Invoking stored() in cell 2 therefore calls run_pkg with the construction-time literal, which calls subprocess.run([\"pacman\", \"-S\", \"r22-pn-build\"]). A correct static detector that freezes partial fixed arguments at construction and persists stored bindings across eval cells emits exactly one row: class host_mutation, command shlex.join([\"pacman\", \"-S\", \"r22-pn-build\"]) = \"pacman -S r22-pn-build\", evidence observed, with zero unparsed rows. This is the minimal supported literal-source shape: a bindable factory call with one literal positional argument, a plain functools.partial wrapping a module helper def, one assignment storing the returned partial, one kwarg-free invocation in a later cell, and no rebinding of the stored name. Any observed row naming \"pacman -Q r22-pn-late\" is the failure signature of evaluating the partial's fixed argument in the invocation env instead of at construction (round21 F1 partial class); under expected_kind exact such an extra row fails the expectation by itself, so forbid_observed_commands stays empty per the exact template. The two commands use different pacman modes (-S versus -Q) so a wrong-value row differs in class as well as tokens.",
+  "source": "round22 registration.md C1 (repair F1-F5 plus independently authored finite variants, bounded static-source-shape agreement); round21 residual/FinalBindingReview.md F1 'Same class, by source, not probed': a returned functools.partial evaluates its fixed arguments in the invocation env, tools/mado-tripwire.py callable_info partial branch storing fixed_nodes as AST (lines 1635-1638) and the follow_helper call site evaluating them in the invocation cenv (lines 2384-2388), at reviewed bytes 46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1 (sha256 re-verified in the working tree); cross-cell persistence of per-file envs and binding_envs (same review, citing lines 2643-2644 and 2685-2686). Truth is static Python-semantics reasoning; cells are inert scanner input and were never executed, and no detector was measured."
+}

@@ -1,0 +1,20 @@
+{
+  "id": "CX4NonlocalMutation",
+  "cells": [
+    "import subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n\n    def retarget(new):\n        nonlocal argv\n        argv = new\n\n    retarget([\"pacman\", \"-S\", \"r22-cx4-nonlocal\"])\n    return run\n\n\nrunner = make([\"pacman\", \"-Q\", \"r22-cx4-nonlocal\"])\nrunner()\n"
+  ],
+  "expected_kind": "uncertain",
+  "want": [],
+  "require_signal": true,
+  "accept_exact_want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cx4-nonlocal", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cx4-nonlocal"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -Q r22-cx4-nonlocal"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `argv` is a local of `make` that both `run` and `retarget` share through one cell. `retarget` declares `nonlocal argv`, so its assignment rebinds make's `argv` cell, not a local of its own. The call `retarget([... \"-S\" ...])` runs inside `make` before `return run`, so when `runner()` executes, `run` reads the cell at call time and gets `[\"pacman\", \"-S\", \"r22-cx4-nonlocal\"]`. The true result is exactly one observed host_mutation `pacman -S r22-cx4-nonlocal` (accept_exact_want). The rebinding happens through a call into a sibling inner function, not through a direct assignment in the factory body, so neither CaptureLocalReassign nor a prefix replay of plain assignments covers it. It is filed as uncertain because cell mutation through nonlocal may be outside the supported forms. The factory-call argument `pacman -Q r22-cx4-nonlocal` is stale by the time run executes and never runs, so it is forbidden as observed and at any tier. Single returned closure; no tuple unpacking, which avoids an unrelated confound.",
+  "source": "CriticScope.json CX4. Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-simple_stmts.rst (sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc) lines 1004-1018 nonlocal statement: 'It allows encapsulated code to rebind such nonlocal identifiers'; lines 145-150 binding in the 'outer namespace determined by nonlocal'; executionmodel.rst (sha256 11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89) line 322 runtime free-variable resolution. Harness note: accept_exact_want is a schema extension."
+}

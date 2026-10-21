@@ -1,0 +1,19 @@
+{
+  "id": "CaptureGlobalLate",
+  "cells": [
+    "import subprocess\n\nCMD = [\"pacman\", \"-Q\", \"r22-early\"]\n\n\ndef make_runner():\n    def runner():\n        return subprocess.run(CMD)\n\n    return runner\n\n\nrunner = make_runner()\nCMD = [\"pacman\", \"-S\", \"r22-globallate\"]\nrunner()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-globallate",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-early"
+  ],
+  "rationale": "Python 3.14 semantics, static (cell never executed). runner is a nested function with ZERO parameters: it takes no factory argument, so bind_literal/parameter-miss paths (F1/F2 class) are never reached. CMD is assigned only at module level and is never bound in make_runner's or runner's local scope, so inside runner CMD is not a closure variable — CPython compiles it to LOAD_GLOBAL resolved against make_runner.__globals__ (the module dict) at every call. No closure cell exists to snapshot. Execution order: (1) CMD = ['pacman','-Q','r22-early'] binds the name; (2) make_runner() constructs runner, capturing NOTHING — runner.__closure__ is empty/None; (3) CMD = ['pacman','-S','r22-globallate'] rebinds the same module-global slot in-place; (4) runner() invokes the closure, LOAD_GLOBAL reads the CURRENT module binding: ['pacman','-S','r22-globallate']. subprocess.run receives the late list literally: exact argv ['pacman','-S','r22-globallate'], shlex.join => 'pacman -S r22-globallate', class host_mutation, evidence observed. Contrast the frozen-parameter class (F1): a factory ARGUMENT must bind at factory-call time, but a free module GLOBAL must resolve at invocation time — freezing it is the symmetric over-reach defect. A repaired ClosureFrame that snapshots the module literal env at factory creation would emit 'pacman -Q r22-early' (package_query); that row is the forbidden one. This variant therefore guards both directions: correct repair keeps parameters frozen at creation AND leaves unshadowed globals late-bound. expected_kind=exact: the full argv is statically determined with no unknown operand, so the sound result is exactly one observed row and zero unparsed; 'pacman -Q r22-early' must never appear as observed, and no fabricated row may be invented from the pre-rebind value.",
+  "source": "FinalBindingReview.md r21 F1/F2 contrast class (factory-argument freeze vs free-global late binding); SimplifyCapture note authorities_today file_literal_env persistence; CPython LOAD_GLOBAL semantics for unshadowed module globals in zero-parameter nested functions (Python 3.14.8)"
+}

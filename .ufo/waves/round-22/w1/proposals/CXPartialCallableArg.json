@@ -1,0 +1,13 @@
+{
+  "id": "CXPartialCallableArg",
+  "cells": [
+    "import functools\nimport subprocess\n\n\ndef helper(f, argv):\n    f(argv)\n\n\nsink = subprocess.run\np = functools.partial(helper, sink, [\"pacman\", \"-S\", \"r22-cxpcall\"])\nsink = print\np()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cxpcall", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Classification: definite execution, no exception. Python 3.14 static reasoning; no execution. `functools.partial(helper, sink, [...])` evaluates its arguments at construction and stores `args = (subprocess.run, [\"pacman\", \"-S\", \"r22-cxpcall\"])`, holding the function object, not the name `sink`. The later `sink = print` rebinds only the module name and does not change the stored tuple. `p()` calls `helper(subprocess.run, [...])`, and `f(argv)` is `subprocess.run([\"pacman\", \"-S\", \"r22-cxpcall\"])`. Exactly one observed host_mutation row, zero unparsed. This attacks two repairs at once. A partial freeze that keeps only literal values downgrades the callable argument `f` to an unknown parameter, yielding a lead instead of observed. A repair that keeps evaluating fixed partial arguments at the call site resolves `sink` to `print`, yielding no row or a lead. Only a creation-time freeze of both the literal and the callable binding is exact. Limits: this is exact static semantics for this text, not current-code behavior. No frozen round-21 corpus input passes a callable fixed argument to a helper partial, so this form has no existing no-harm guard.",
+  "source": "ConnLifetime.json V6 and invariants I1/I2. Mechanism: tools/mado-tripwire.py sha256 46c82902...c8c1 fixed_nodes kept as AST at 1635-1638 and merged at the call site at 2384-2388; follow_helper resolves callable-valued parameters from the call-site bindings at 2252-2257. Corpus check: rg over .ufo/waves/round-21/corpus found 18 partial/Timer/.run() jsonl files, none with a callable fixed argument to a helper partial. Semantics: host CPython 3.14.8 /usr/lib/python3.14/functools.py (sha256 9db56d38172c4c9e689b21cc58c8538008b09d86b682faf4dd193b529cdd79d5; read-only, not a frozen wave source; C _functools.partial imported at 438 has the same contract) 'self.args = tot_args' 353 at construction, partial.__call__ 393 'return self.func(*pto_args, *args, **keywords)'. Class mapping: pacman -S -> host_mutation."
+}

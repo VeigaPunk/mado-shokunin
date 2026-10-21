@@ -1,0 +1,103 @@
+{
+  "id": "ConnHistorical",
+  "seat": "MadoR22.ConnHistorical",
+  "role": "UFO-FSD connector (leaf; no delegation)",
+  "wave": "round-22 w1",
+  "method": "read-only artifact reconciliation: committed receipts, MANIFEST closures, SCORECARD, LOG (incl. uncommitted r22 LOG append), registration, audit-contract. SHA-256 of existing artifact bytes only. No detector/scanner run, no payload execution, no production edit, no measurement.",
+  "base": {
+    "registration_base": "741122d177ae8ff68a73768777f20484d5bdcbe4",
+    "lane_head_read": "a963ce67e303db94201507a93018416e4e44fd23",
+    "audit_tool_absent_at_base_and_head": "git cat-file -e <rev>:tools/mado-evidence-audit.py -> exit 128 at both (agrees with .ufo/waves/round-22/evidence/audit-before-absence.json)"
+  },
+  "axes": [
+    "calibration (C2): evidence-tier/count disclosure must not rewrite r19 history",
+    "operability (C1): no-harm guard coverage carried from r20/r21",
+    "record fidelity: prior verdict labels quoted exactly"
+  ],
+  "authoritative_red_receipts": [
+    {"round": 19, "manifest_index": 367, "verdict": "rejected-harmed", "admitted": false, "harmed": ["operability"], "spotcheck": "corpus/lessons/round-19-verifier-spotcheck.md@1f7f995", "key": "C3 6/6 recall reproduced; rule-B frozenset pure-data ordinary finding without lead marker; C1 target >=21/29 missed"},
+    {"round": 20, "manifest_index": 387, "verdict": "rejected-harmed", "admitted": false, "harmed": ["operability"], "trend_harmed": ["expansion", "quality"], "calibration": "unprovable", "spotcheck": "corpus/lessons/round-20-verifier-spotcheck.md@794aaeb", "key": "175/175 target missed by 3 (172/175); 30-prime coupled to C1"},
+    {"round": 21, "manifest_index": 400, "verdict": "rejected-harmed", "admitted": false, "harmed": ["operability"], "trend_harmed": ["quality"], "calibration": "improved (bounded, no admission credit)", "capabilities_added": [], "key": "FinalBindingReview F1-F5 reproduced by CloseMado21; legacy 175 suite 166/175 at a6cef89"}
+  ],
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "high",
+      "kind": "old-target rewrite risk (C2 green target unreachable on faithful r19 bytes)",
+      "evidence": {
+        "r19_finding_row_artifact": ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt (commit d642ce5; file sha256 64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857; JSON line 3 sha256 0ffc3e816dd9d660d703eccfa397a4efa5095796cd334a88985df9d3548ecc1e, 4431 B; tool 367be947..., measured_commit 7b4839d)",
+        "r19_rows": "11 findings over the 6 incident lines (host_mutation 6, live_probe 1, package_query 4); 0/11 rows carry an evidence key; all have class and command; 5 files, every eval_unparsed=0 and unparsed_spawns=0",
+        "r19_counter_receipt": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt: schema mado-tw-recall-r19-v1, rows {file,line,detected} only; no findings list and no files list, so it is not audit-contract-shaped",
+        "split_origin": "5 observed + 1 lead exists only in r20 receipts from later tools: .ufo/waves/round-20/evidence/recall-split-final.txt (tool 9613f510 at 28c6837) and a2/evidence/recall-split-{3610e3e,a8960de}.txt (tools f4490405, a57d4fe9). Its units are incident LINES; the same receipts give finding ROWS observed 10 + lead 1 = 11. Those rows are nested per line and have no command strings, so they are not contract-shaped either.",
+        "contract_units": "audit-contract.json claim total/observed/lead count finding rows; findings need explicit evidence observed|lead plus nonempty class and command strings",
+        "registration_target": "registration.md:9 and SCORECARD.md:1482: red on a faithful r19 receipt 'represented without changing rows', green 'only when correctly scoped to five observed plus one lead'"
+      },
+      "contradiction": "On faithful r19 rows, no claim of observed 5 / lead 1 can be arithmetically consistent: there are no markers, and the row total is 11, not 6. A green on 5+1 requires one of: (a) adding evidence keys to r19 rows, which changes rows; (b) substituting an r20 rejected-round tool receipt labelled as r19; (c) converting incident-line counts into row counts; or (d) a fresh marker-capable scan of the r18 inputs, which is a detector measurement, and if run with the C1-changed tool it breaks C2 independence. Each is an old-target rewrite that would make r19 C3 look retroactively correctly scoped.",
+      "second_contradiction": "Missing marker semantics conflict. The r20 counter (SCORECARD.md:1240-1250) treats an unmarked row as a claim of execution that matches observed. The r22 contract says missing markers are uncertainty, never silently observed. Separately, the contract's snapshot schema ('each explicit evidence observed|lead') together with verdict 2 'invalid input' allows reading markerless r19 rows as code 2. On that reading the registered 'red' is unreachable as code 1, unless 'red' is defined as non-zero before seal."
+    },
+    {
+      "id": "H2",
+      "severity": "medium",
+      "kind": "historical verdict label softening",
+      "evidence": "registration.md:3 says 'Prior r19/r20 rejected and r21 rejected-harmed'; the round-21 MANIFEST notes (rounds[400]) say the same. MANIFEST rounds[367] and [387] are verdict rejected-harmed. SCORECARD.md:1437 (r21 registration) correctly says 'rounds 19/20 rejected-harmed'.",
+      "implication": "Shortening rejected-harmed to 'rejected' drops the operability-harmed record (and the r20 expansion/quality harm trend) from the r22 authority statement. No admission follows from it, but it is a record rewrite."
+    },
+    {
+      "id": "H3",
+      "severity": "medium",
+      "kind": "carried no-harm guard omitted",
+      "evidence": "registration.md:7 guard list is oracle35+17, incident recall, existing suites, resource recipes and the 1356-fixture comparison. It names no 175-case legacy population. r20 closure routed defect 1 (round-20-verifier-spotcheck.md:74) requires preserving the 175 population and its three misses. r21 delivered 166/175 under unchanged wants (SCORECARD.md:1458; evidence/final/precision-legacy-a6cef89.json per lessons/round-21.md:67). grep '175|166' on registration.md: 0 hits.",
+      "implication": "C1 could lower 166/175 further without a registered harm signal. Naming it is a disclosed no-worse guard, not a target, and it does not restore 172/175 or 175/175."
+    },
+    {
+      "id": "H4",
+      "severity": "low",
+      "kind": "missing baseline",
+      "evidence": "r21 records only 'six incident lines still detected' at a6cef89 (SCORECARD.md:1458). No recall-split receipt exists under .ufo/waves/round-21 (rg 'recall-split|detected_lead' finds only w1/reports/ScoutOldSuite.md).",
+      "implication": "The r22 'incident recall' guard has no observed/lead baseline at the delivered r21 tool. Its before value is UNKNOWN until measured after seal at 741122d. The r20 split (5+1 lines, 10+1 rows) belongs to a different tool."
+    }
+  ],
+  "confirmed_no_rewrite": [
+    "r19 C1 >=21/29 miss stays a miss (R19-V1); r22 claims no criterion-count credit",
+    "r20 175/175 missed by 3; r21 172/175 kept as r20 history, 166/175 as delivered",
+    "r21 C2 repertoire row is marked 'not an admitted capability'; MANIFEST capabilities_added [] for r19/r20/r21; r22 audit tool is new and absent at base",
+    "r21 six FinalBindingReview fixtures still match their review digests (6b21d584, 9ab845d4, 774e2946, 1cc1188d, 4ea8ccc8, 00ecb83f)",
+    "r22 LOG append (uncommitted) already states that a 5-observed/1-lead translation is not a new execution receipt for the old markerless tool",
+    "registration requires outside-lane falsification before any re-admission proposal; Main owns streak disposition"
+  ],
+  "proposed_move": {
+    "name": "two-tier historical pin: faithful-r19 claim table plus pre-seal correction of the C2 green wording",
+    "affected_axes": {"calibration": "improves (closes a reachable rewrite path before seal)", "operability": "unchanged; H3 adds a disclosed guard only", "others": "unchanged"},
+    "steps": [
+      "Before any audit implementation, freeze snapshot H19 = verbatim JSON line 3 of round-19/evidence/final/tripwire-frozen-scan-classes.txt, binding both the source-file sha256 64648cca... and the extracted-bytes sha256 0ffc3e81... plus the extraction rule (third LF-delimited line, no newline). Rows are not edited.",
+      "Freeze H19 claim/expectation rows. Expected codes depend on one pre-seal decision about markerless rows. Reading U: they are uncertain, count toward total, and are neither observed nor lead. Reading I: they are invalid input, code 2. Rows: (1) {total 6, observed 6, lead 0, errors 0, clean false} -> U: 1 finding_count_mismatch+observed_count_mismatch; I: 2 evidence_audit_input_invalid. (2) {total 6, observed 5, lead 1, errors 0, clean false} -> U: 1 finding_count_mismatch+observed_count_mismatch+lead_count_mismatch; I: 2. (3) {total 11, observed 0, lead 0, errors 0, clean false} -> U: 0 evidence_audit_clean; I: 2. (4) {total 11, observed 0, lead 0, errors 0, clean true} -> U: 1 findings_claimed_clean; I: 2.",
+      "Append a dated pre-seal correction to the C2 target. 'Correctly scoped' on faithful r19 bytes means total 11 / observed 0 / lead 0 (reading U). The 5-observed + 1-lead split is r20-tool, line-level evidence (tools 9613f510/f4490405/a57d4fe9; rows 10+1) and credits nothing to r19. Keep the original wording verbatim beside the correction.",
+      "If an r20 split receipt is represented at all, label it H20 with its own tool digest. Its rows lack command strings, so record it as code 2 unless rows are changed, which is forbidden.",
+      "Quote exact prior verdicts: r19, r20 and r21 are all rejected-harmed (H2).",
+      "Add the legacy 175 population at 166/175 (P66 S17 W21 H47 L15, unchanged wants) as a disclosed no-worse C1 guard (H3). Record the r21-tool incident observed/lead split as UNKNOWN until measured after seal (H4)."
+    ]
+  },
+  "risks": [
+    "A pre-seal target correction can be read as a target-preserving swap (the r20 30-prime / M13 pattern). Mitigation: land it before any audit code exists, keep the original words, and let the closure judge.",
+    "Picking reading U or I after seeing implementation output would be post-hoc. The choice must be frozen now.",
+    "Reading U makes 'green' on r19 mean 'no tier proven'. Readers must not take it as r19 precision repair or admission.",
+    "Adding the 166/175 guard can surface more C1 harm. That is the purpose, not a scope expansion of the target."
+  ],
+  "verification": [
+    "sha256 of tripwire-frozen-scan-classes.txt == 64648cca...; its third line == 0ffc3e81...; 11 findings, 0 with an 'evidence' key",
+    "the r20 recall-split receipts show finding_totals observed 10, lead 1 and totals detected_observed 5, detected_lead 1",
+    "MANIFEST rounds[367/387/400].verdict == 'rejected-harmed'",
+    "grep -nE '175|166' .ufo/waves/round-22/registration.md -> no hits (before correction)",
+    "audit fixture selftest on H19 rows (1)-(4) matches the frozen codes; this is done by implementers after seal, not by this seat"
+  ],
+  "unknowns": [
+    "r21 delivered-tool (a6cef89) incident observed/lead split: not recorded",
+    "which markerless reading (U or I) L1 adopts",
+    "whether other w1 seats already froze an r19 snapshot with edited rows: w1/proposals/ was empty at read time"
+  ],
+  "tools_installed": [],
+  "writes": [
+    ".ufo/waves/round-22/w1/notes/ConnHistorical.json",
+    ".ufo/waves/round-22/w1/reports/ConnHistorical.md"
+  ]
+}

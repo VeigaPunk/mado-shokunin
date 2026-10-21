@@ -1,0 +1,17 @@
+{
+  "id": "ThreadRunInline",
+  "cells": [
+    "import subprocess\nimport threading\n\nargv = [\"pacman\", \"-S\", \"r22-threadruninline\"]\n\ndef worker(argv):\n    subprocess.run(argv)\n\nthreading.Thread(target=worker, args=(argv,)).run()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-threadruninline",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "The chained expression threading.Thread(target=worker, args=(argv,)).run() never starts a thread: attribute .run resolves to Thread.run on the fresh instance, which is an ordinary synchronous method call in the caller. Per CPython 3.14.8 threading.Thread.__init__ (Lib/threading.py, source snapshot lines 925-928), target=worker binds self._target = worker and args=(argv,) binds self._args = (argv,); run() (lines 1013-1028) then executes self._target(*self._args, **self._kwargs), i.e. worker(argv), in this same frame. argv is a literal module-level list [\"pacman\", \"-S\", \"r22-threadruninline\"], so worker's parameter binds to that exact vector and subprocess.run receives exactly the command 'pacman -S r22-threadruninline'. A pacman -S install transaction is a host mutation; every link in the call chain (constructor keywords, run dispatch, argv binding) is statically resolvable, so the row is observed, not a lead, and there is nothing unparsed. The transient Thread object being unbound to any name does not change semantics: .run() runs before the object is discarded. This truth is derived from Python 3.14 call and threading semantics independently of any detector result; the cell is inert AST-scanner input and was never executed.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py:880-928 (Thread.__init__ binds target/args/kwargs), :1013-1028 (Thread.run invokes self._target(*self._args, **self._kwargs) synchronously); /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md:90-95 (F4: .run on a scheduled binding is a synchronous invoke; the r21 seat covered only the named-variable t.run() shape, this proposal is the unbound chained-expression sibling); https://docs.python.org/3.14/library/subprocess.html#subprocess.run (run executes the command described by args)"
+}

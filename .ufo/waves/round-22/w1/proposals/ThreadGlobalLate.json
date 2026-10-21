@@ -1,0 +1,17 @@
+{
+  "id": "ThreadGlobalLate",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker():\n    subprocess.run(command)\n\n\ncommand = [\"pacman\", \"-Q\", \"r22-tglate-early\"]\nt = threading.Thread(target=worker)\ncommand = [\"pacman\", \"-S\", \"r22-tglate-late\"]\nt.start()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-tglate-late",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": ["pacman -Q r22-tglate-early"],
+  "rationale": "Python 3.14 semantics: worker contains no binding operation for command (no parameter, no assignment, no global/nonlocal declaration), so command is a free variable resolved in the module's global namespace, and name resolution of free variables occurs at runtime when worker executes, not when worker or the Thread object is defined (executionmodel.rst: free variable defined at lines 92-93; top-level names resolve by searching the global namespace at 138-143; 'Name resolution of free variables occurs at runtime, not at compile time' at 322). Thread.__init__ only stores self._target = worker (threading.py:925); Thread.start() 'arranges for the object's run() method to be invoked in a separate thread of control' (978-979), and run() invokes self._target(*self._args, **self._kwargs) (1023-1024). Therefore worker() can only execute at or after the t.start() statement, which in program order is after the rebinding command = ['pacman','-S','r22-tglate-late']; the module namespace then holds exactly that binding and no later statement rebinds command. The single statically determined spawn is subprocess.run(['pacman','-S','r22-tglate-late']) -> host_mutation 'pacman -S r22-tglate-late' (shlex.join), observed, because the worker is unconditionally scheduled by start() and its argv is a fully literal module global at invocation time. Determining argv from a construction-time namespace snapshot ('pacman -Q r22-tglate-early') would misread late-bound globals; that early binding is passed to no call and is forbidden as an observed row.",
+  "source": "Independent static-truth specification; no detector source, output, fixture rerun, or measurement consulted. Mechanism: module-global free variables are late-bound at call time (vendored /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst lines 92-93, 138-143, 322; CPython v3.14.8 Doc/reference/executionmodel.rst). Thread start/run semantics: vendored /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (Lib/threading.py at tag v3.14.8, sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3 per sources/SourceThread/receipt.json) lines 925, 978-979, 985-986, 1013-1024. Defect context: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md lines 90-95 (F4 scheduled-thread following) and lines 99-101 plus probe table lines 58-60 (thread-key-control observed convention for a literal argv inside a started thread body)."
+}

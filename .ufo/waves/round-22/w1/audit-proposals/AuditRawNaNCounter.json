@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawNaNCounter",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[],\"files\":[{\"eval_unparsed\":NaN,\"unparsed_spawns\":0}]}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "NaN is not a strict JSON (RFC 8259) token. Python's default json accepts it as float nan. Strictly it is malformed JSON; leniently it is a nonfinite, non-int counter. Both readings give 2/evidence_audit_input_invalid under the contract and clarifications. The claim says errors 0 and clean:true. Any NaN comparison is false, so an auditor that compares with != or == could silently pass or fail it. Only rejection is correct."
+}

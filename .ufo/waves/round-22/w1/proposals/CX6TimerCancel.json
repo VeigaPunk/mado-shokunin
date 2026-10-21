@@ -1,0 +1,13 @@
+{
+  "id": "CX6TimerCancel",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker(argv):\n    subprocess.run(argv)\n\n\nt = threading.Timer(0, worker, args=([\"pacman\", \"-S\", \"r22-cx6-cancel\"],))\nt.cancel()\nt.run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [],
+  "forbid_observed_commands": [
+    "pacman -S r22-cx6-cancel"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `t.cancel()` is `self.finished.set()`. `t.run()` then calls `self.finished.wait(0)`, which returns at once because the event is set. `if not self.finished.is_set()` is false, so `self.function(*self.args, **self.kwargs)` is skipped, and `self.finished.set()` follows. `worker` is never called, and no process runs. The result is definite: no findings, zero unparsed (exact empty, per the parent rule for definite no-execution). There is no start() and no second thread, so there is no race. This attacks an F4 repair that maps every Timer `.run()` to an observed follow of the target without consulting a reachable `.cancel()`.",
+  "source": "CriticScope.json CX6. Semantics: .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3) lines 1378-1380 Timer.cancel: 'Stop the timer if it hasn't finished yet.' self.finished.set(); lines 1382-1386 Timer.run: wait(interval); 'if not self.finished.is_set(): self.function(*self.args, **self.kwargs)'. Mechanism: .ufo/waves/round-21/residual/FinalBindingReview.md F4 ('Timer.run() shares the path by source')."
+}

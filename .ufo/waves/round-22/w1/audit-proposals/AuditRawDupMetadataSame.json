@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawDupMetadataSame",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"meta\":{\"tool\":\"fixture\",\"tool\":\"fixture\"},\"findings\":[],\"files\":[{\"eval_unparsed\":0,\"unparsed_spawns\":0}]}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The duplicate is in an ignored extra-metadata object, and both values are identical. The clarifications say duplicate keys ANYWHERE give 2/evidence_audit_input_invalid, and that extra metadata is permitted and ignored but never overrides normative fields. Ignoring metadata semantically does not exempt it from JSON validity. This kills two weaker mutants: one that checks duplicates only in normative fields, and one that rejects only conflicting duplicate values. Either would return 0/evidence_audit_clean because the normative content is a valid clean receipt."
+}

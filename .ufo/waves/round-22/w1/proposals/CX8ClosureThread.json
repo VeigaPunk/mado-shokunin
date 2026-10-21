@@ -1,0 +1,17 @@
+{
+  "id": "CX8ClosureThread",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\ncmd = [\"pacman\", \"-S\", \"r22-cx8-compose\"]\nt = threading.Thread(target=make(cmd))\ncmd = [\"pacman\", \"-Q\", \"r22-cx8-decoy\"]\nt.run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cx8-compose", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cx8-decoy",
+    "pacman -S r22-cx8-decoy",
+    "pacman -Q r22-cx8-compose"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `make(cmd)` is evaluated as the `target` argument while the Thread is being constructed. It binds parameter `argv` to the list object `[\"pacman\", \"-S\", \"r22-cx8-compose\"]` and returns the closure `run`, which Thread.__init__ stores as `self._target`. `cmd = [... \"-Q\" ...]` rebinds the module name to a new list and mutates nothing. `t.run()` synchronously calls `self._target()`, the closure, which reads its own cell and runs `subprocess.run([\"pacman\", \"-S\", \"r22-cx8-compose\"])`. Exactly one observed host_mutation row, zero unparsed. This composes F1 (factory capture time) with F4 (direct run). The SimplifyThread and SimplifyCapture designs declare themselves orthogonal, and each could pass its own fixtures while the composition fails.",
+  "source": "CriticScope.json CX8. Mechanisms: .ufo/waves/round-21/residual/FinalBindingReview.md F1 (lines 70-77) and F4 (lines 90-96). Semantics: .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3) line 925 constructor stores target; lines 1022-1024 run invokes self._target synchronously; SourceClosure simple_stmts.rst (sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc) lines 146-149 rebinding a name binds it to a new object."
+}

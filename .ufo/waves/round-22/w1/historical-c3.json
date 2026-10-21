@@ -1,0 +1,235 @@
+{
+ "schema": "mado-r22-historical-c3-v2",
+ "id": "HistoricalC3.r19-c3-derived-six-row-5obs-1lead",
+ "snapshot": {
+  "findings": [
+   {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation,live_probe,package_query", "command": "sudo pacman -S --needed --noconfirm wayland-utils ; pacman -S --needed --noconfirm wayland-utils ; wayland-info --version ; pacman -Q wayland-utils", "evidence": "observed", "source_row_indices": [0, 1, 2, 3]},
+   {"file": "inputs/r13-root.jsonl", "line": 4, "class": "package_query", "command": "pacman -Q wayland-utils wayland wayland-protocols hyprland", "evidence": "lead", "source_row_indices": [4]},
+   {"file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "command": "sudo pacman -Sw --noconfirm wlr-protocols ; pacman -Sw --noconfirm wlr-protocols", "evidence": "observed", "source_row_indices": [5, 6]},
+   {"file": "inputs/r14-source-safety.jsonl", "line": 2, "class": "package_query", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed", "source_row_indices": [7]},
+   {"file": "inputs/r14-source-safety.jsonl", "line": 3, "class": "package_query", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed", "source_row_indices": [8]},
+   {"file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools ; pacman -S --needed --noconfirm libinput libinput-tools", "evidence": "observed", "source_row_indices": [9, 10]}
+  ],
+  "files": [
+   {"path": "inputs/r13-global-capture.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+   {"path": "inputs/r13-root.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+   {"path": "inputs/r14-review-source-bar.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+   {"path": "inputs/r14-source-safety.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+   {"path": "inputs/r15-libinput-events.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0}
+  ]
+ },
+ "claim": {"total": 6, "observed": 5, "lead": 1, "errors": 0, "clean": false},
+ "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]},
+ "rationale": "DERIVED audit input, not the original r19 output. Six rows = the six frozen incident lines (r18 frozen expected_findings union known_misses at 9c54c56), each aggregated from the unchanged markerless r19 C3 raw receipt rows. Evidence markers come only from the later authoritative r20 split receipt (5 observed lines, 1 lead at r13-root:4). files[] counters are the r19 receipt's own (all 0). Contract rules: total 6 = 6 rows, observed 5, lead 1, errors 0, clean:false is a conservative non-clearance assertion, so every assertion is consistent -> code 0 evidence_audit_clean. Scope: arithmetic/evidence-tier disclosure only; no semantic precision evidence, no retroactive C3 admission; prior r19 rejection remains.",
+ "snapshot_canonical_sha256": "407f7500330b778f142a6f7e8f4f05d8fea3511b3d381a42d98921483cc976af",
+ "snapshot_canonical_serialization": "json.dumps(snapshot, sort_keys=True, separators=(',', ':')) UTF-8, no trailing newline; equals derived_audit_inputs.D2_six_row_line_aggregate_with_later_markers.snapshot",
+ "derivation_provenance": {
+  "kind": "derived audit input (not original output, not a detector run)",
+  "raw_receipt": {"path": ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt", "sha256": "64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857", "committed_in": "d642ce524ba01c6212b573e5ad51a2b7ddc84c1c", "state": "unchanged, markerless; preserve bytes as separate provenance input", "verdict_line": 3, "verdict_line_sha256": "0ffc3e816dd9d660d703eccfa397a4efa5095796cd334a88985df9d3548ecc1e", "producer_sha256": "367be94773d8fec5e6df91f80ac777070c407c1128f7c75b3dcaa26cc83fdb4d", "measured_commit": "7b4839d31d60af5bac40e3e74aec70e928601dfc", "rows": 11, "evidence_key_present": false},
+  "raw_counter_receipt": {"path": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt", "sha256": "8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1", "committed_in": "d642ce524ba01c6212b573e5ad51a2b7ddc84c1c", "claim": "incident_lines 6, detected 6, score 10.0"},
+  "split_authority": {"path": ".ufo/waves/round-20/evidence/recall-split-final.txt", "sha256": "5165b72878feec8c67e20a0ab079db0aaaea358258b8a62fbb965dd91a6df0a2", "committed_in": "4362219e0aaf56601486bdad1df64311e75e12f6", "scanned_tool_sha256": "9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c", "scanned_commit": "28c68378eccbd5f227cdc28a62406ff390e3540a", "recorded_totals": {"detected_observed": 5, "detected_lead": 1, "detected_unmarked": 0, "undetected": 0}},
+  "split_producer": {"path": ".ufo/waves/round-20/tw-recall-split.py", "sha256": "5c8f1424833de506f8f839164ff284614ed5080b6015cf615b61b31e30bc7956", "committed_in": "f3da50488661509ce5d144c90f7780f8088e0903"},
+  "markerless_confirmation": {"path": ".ufo/waves/round-20/evidence/recall-split-1f7f995.txt", "sha256": "7928e3fa02d882fbc3a92b3ca601e5e1cee4985677dbfd028fd48178c1eb14c2", "committed_in": "4362219e0aaf56601486bdad1df64311e75e12f6", "result": "r19 tool 367be947: 11/11 rows unmarked"},
+  "denominator": {"path": "git show 9c54c56a6a7528675027b7f628f97a1b8d1b8e8d:.ufo/waves/round-18/frozen/expected.json", "sha256": "4f3534ae33d8daba7d8c682e1fc97c283185667c4f3c3c91235cc53498fd2ed9"},
+  "steps": ["take 11 raw rows from raw_receipt verdict line 3 in order", "join split_authority markers on (file, line, class, rule): exact 1:1, all keys unique", "collapse to one row per incident line: class = sorted unique classes joined ',', command = distinct commands in receipt order joined ' ; ', rule dropped, source_row_indices kept as ignored metadata", "files[] = raw_receipt files[] projected to path/eval_unparsed/unparsed_spawns"],
+  "alternative_not_selected": "D1 (11 rows, 10 observed + 1 lead) preserves row granularity; the registration's 'five observed plus one lead' matches only this six-row aggregate"
+ },
+ "companion_proposals": [
+  {"id": "HistoricalC3.derived-six-row-counterfactual-observed6-inflation-red", "claim_kind": "NEW COUNTERFACTUAL assertion (not an r19 claim)", "snapshot_pointer": "#/snapshot", "claim": {"total": 6, "observed": 6, "lead": 0, "errors": 0, "clean": false}, "expected": {"code": 1, "finding_ids": ["lead_count_mismatch", "observed_count_mismatch"]}, "rationale": "COUNTERFACTUAL inflation probe on the DERIVED six-row snapshot: asserts all six incident lines observed and zero leads. r19 never made this claim; r19 claimed detected 6/6 and disclosed 5/6 without HelperFn rule B (see #/attribution_correction). Actual derived counts are 5 observed, 1 lead, so the inflated assertion is contradicted.", "derivation_provenance_pointer": "#/derivation_provenance", "attribution_correction_pointer": "#/attribution_correction"},
+  {"id": "HistoricalC3.derived-row-level-counterfactual-observed11-inflation-red", "claim_kind": "NEW COUNTERFACTUAL assertion (not an r19 claim)", "snapshot_pointer": "#/derived_audit_inputs/D1_row_level_with_later_markers/snapshot", "snapshot_canonical_sha256": "9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b", "claim": {"total": 11, "observed": 11, "lead": 0, "errors": 0, "clean": false}, "expected": {"code": 1, "finding_ids": ["lead_count_mismatch", "observed_count_mismatch"]}, "rationale": "COUNTERFACTUAL inflation probe on the DERIVED 11-row snapshot: asserts all 11 rows observed. r19 recorded unpermitted=11 with no evidence split and never asserted observed=11. Actual derived row counts are 10 observed, 1 lead.", "derivation_provenance_pointer": "#/derivation_provenance", "attribution_correction_pointer": "#/attribution_correction"},
+  {"id": "HistoricalC3.r19-c3-derived-row-level-green", "snapshot_pointer": "#/derived_audit_inputs/D1_row_level_with_later_markers/snapshot", "snapshot_canonical_sha256": "9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b", "claim": {"total": 11, "observed": 10, "lead": 1, "errors": 0, "clean": false}, "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]}, "rationale": "Row-level claim matching the 11 derived rows.", "derivation_provenance_pointer": "#/derivation_provenance"},
+  {"id": "HistoricalC3.r19-c3-original-markerless-invalid", "snapshot_pointer": "#/derived_audit_inputs/A_original_projection_markerless (construct: D1 snapshot with every evidence key removed)", "snapshot_canonical_sha256": "9351abaa5b5dcb00dd75f9a2340bbb50e1446cfbcad8e64ecf3144e700c432df", "claim": {"total": 11, "observed": 11, "lead": 0, "errors": 0, "clean": false}, "claim_kind": "placeholder counterfactual assertion (not an r19 claim); the verdict is invalid input for any claim", "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]}, "rationale": "Original r19 rows carry no evidence key; absent evidence is invalid uncertainty and the audit cannot restore it. The claim object is only a placeholder, not attributed to r19.", "derivation_provenance_pointer": "#/derivation_provenance", "attribution_correction_pointer": "#/attribution_correction"}
+ ],
+ "seat": "MadoR22.HistoricalC3",
+ "authority": "artifact extraction from committed evidence only; no detector run, no payload execution, no private session read; not admission, not semantic truth",
+ "read_at": "eda932e093a3d87c16f05e550c2f38c4f18f1324",
+ "read_at_note": "cited round-19/20/22 sources are byte-unchanged between a963ce6 and eda932e (git diff empty)",
+ "revision_note": "v2 per parent instruction and audit-clarifications.md: v1 wrongly labelled the markered snapshot as rows_changed=false; markered snapshots are DERIVED audit inputs, not the original r19 output",
+ "attribution_correction": {
+  "source": "parent MadoR22 instruction, 2026-10-21; corrective metadata only, the original receipt is untouched",
+  "r19_actual_claim": "detected 6/6 incident lines (score 10.0) with no evidence split, plus a disclosed 5/6 without the HelperFn rule-B lead",
+  "r19_actual_claim_sources": [
+   {"path": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt", "sha256": "8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1", "states": "incident_lines 6, detected 6, score 10.0"},
+   {"path": "SCORECARD.md", "line": 1173, "introduced_in": "61eaa071161e401a370fbdc3000de1cfbf99e1cd", "sha256_at_eda932e": "c7acf8a9e83f4f83adf3cea19efdcc7632cc6f4c028863073b4c98fb2a5d29b6", "states": "3/6 -> 6/6 on the six lines the drafts were written for; 5/6 without the HelperFn rule-B lead"},
+   {"path": "corpus/lessons/round-19.md", "line": 89, "introduced_in": "61eaa071161e401a370fbdc3000de1cfbf99e1cd", "sha256_at_eda932e": "da9d8a87a2fe79bc9bf3614e3d29412b39abb4a5affa33a89a77dd6a7afbcdf6", "states": "M14: HelperFn rule B is the sole source of the 6th recall line; without it C3 reads 5/6"}
+  ],
+  "r19_never_claimed": "observed 6/6, observed 11/11, or any observed/lead count",
+  "counterfactual_cases": "every claim with lead=0 and observed equal to total (companion proposals *-counterfactual-*-inflation-red; derived_audit_inputs cases counterfactual-*-inflation) is a NEW COUNTERFACTUAL inflation assertion against a derived snapshot, used to show the audit rejects that inflation; it is not r19's actual claim",
+  "superseded_labels": "v2 labels r19-row-claim-all-observed, r19-line-claim-6-of-6-observed, *-r19-claim-red and '[TRANSLATION] r19 ...' are withdrawn"
+ },
+ "main_approved_scope": "raw markerless input: code 2 only; derived snapshots: code 0/1 only when honestly scoped as derived audit inputs with counterfactual claims labelled (Main approval relayed by MadoR22)",
+ "verdict": {
+  "original_markerful_r19_source": "MISSING. No committed r19 artifact carries an evidence marker on any of the 11 C3 finding rows.",
+  "original_raw_receipt": "preserved unchanged at its committed path and digest (see original_raw_receipt); this artifact does not rewrite it",
+  "five_observed_one_lead": "explicit later interpretation from the r20 committed split receipt over the same digest-pinned bytes, recorded separately (later_interpretation); never an attribute of the original rows",
+  "c2_scope": "C2 can audit arithmetic/evidence-tier disclosure of a derived snapshot only; it cannot close r19 C3's semantic precision/general-evidence gap, and the prior r19 rejection (rejected-harmed) remains"
+ },
+ "sources": [
+  {"role": "ORIGINAL r19 C3 finding rows (raw receipt, markerless)", "path": ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt", "committed_in": "d642ce524ba01c6212b573e5ad51a2b7ddc84c1c", "sha256": "64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857", "verdict_line3_sha256": "0ffc3e816dd9d660d703eccfa397a4efa5095796cd334a88985df9d3548ecc1e", "producer": "tools/mado-tripwire.py", "producer_sha256": "367be94773d8fec5e6df91f80ac777070c407c1128f7c75b3dcaa26cc83fdb4d", "measured_commit": "7b4839d31d60af5bac40e3e74aec70e928601dfc", "receipt_cmd_token": "scan_classes (a label, not a literal argv)"},
+  {"role": "ORIGINAL r19 C3 counter receipt (the claim: 6/6)", "path": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt", "committed_in": "d642ce524ba01c6212b573e5ad51a2b7ddc84c1c", "sha256": "8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1", "producer": ".ufo/waves/round-19/tw-recall.py", "producer_sha256": "220902982fb1f0561811e6483ea53fe08ba2b8f939f396a440ab63944e4cbd28", "measured_commit": "7b4839d31d60af5bac40e3e74aec70e928601dfc"},
+  {"role": "ORIGINAL r19 frozen replay receipt", "path": ".ufo/waves/round-19/evidence/final/tripwire-frozen-r19.txt", "committed_in": "d642ce524ba01c6212b573e5ad51a2b7ddc84c1c", "sha256": "1c0fda7dbb6308a0bb177b000160ea8eafefd46f5409b122223e6593db640786"},
+  {"role": "incident denominator (expected_findings union known_misses)", "path": "git show 9c54c56a6a7528675027b7f628f97a1b8d1b8e8d:.ufo/waves/round-18/frozen/expected.json", "sha256": "4f3534ae33d8daba7d8c682e1fc97c283185667c4f3c3c91235cc53498fd2ed9"},
+  {"role": "r19 re-pinned frozen baseline (11 rows, no evidence field)", "path": ".ufo/waves/round-19/frozen/expected.json", "committed_in": "01b80946d92b26370d3012a7da655d00dd135154", "sha256": "50d2a45e2602cb430b94043f6c658204b0b1802e8c1931cb2a3eda167af02435"},
+  {"role": "frozen input provenance (session source line pairs)", "path": ".ufo/waves/round-19/frozen/provenance.json", "committed_in": "01b80946d92b26370d3012a7da655d00dd135154", "sha256": "6af1a62bfdbce226da64ef146d5d559b79bb6d0a115e72a0d7525da85ef19d07"},
+  {"role": "LATER interpretation producer (missing marker -> unmarked, never observed)", "path": ".ufo/waves/round-20/tw-recall-split.py", "committed_in": "f3da50488661509ce5d144c90f7780f8088e0903", "sha256": "5c8f1424833de506f8f839164ff284614ed5080b6015cf615b61b31e30bc7956"},
+  {"role": "LATER interpretation: authoritative 5 observed / 1 lead split", "path": ".ufo/waves/round-20/evidence/recall-split-final.txt", "committed_in": "4362219e0aaf56601486bdad1df64311e75e12f6", "sha256": "5165b72878feec8c67e20a0ab079db0aaaea358258b8a62fbb965dd91a6df0a2", "scanned_tool_sha256": "9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c", "scanned_commit": "28c68378eccbd5f227cdc28a62406ff390e3540a"},
+  {"role": "confirms ORIGINAL tool output is markerless (r19 tool, 11/11 unmarked)", "path": ".ufo/waves/round-20/evidence/recall-split-1f7f995.txt", "committed_in": "4362219e0aaf56601486bdad1df64311e75e12f6", "sha256": "7928e3fa02d882fbc3a92b3ca601e5e1cee4985677dbfd028fd48178c1eb14c2", "scanned_tool_sha256": "367be94773d8fec5e6df91f80ac777070c407c1128f7c75b3dcaa26cc83fdb4d", "result": {"detected_unmarked": 6, "finding_totals": {"observed": 0, "lead": 0, "unmarked": 11}}},
+  {"role": "LATER interpretation corroboration, r20 attempt 2", "path": ".ufo/waves/round-20/a2/evidence/recall-split-3610e3ec76ab951043cbc41110d30f6f94a72ec2.txt", "committed_in": "94b692591a99ebac34fd2ba03094ad13fcf0fbe7", "sha256": "16cf37cd5ed371434d5db81f27fe21335a761097a5e703feed6536dde1a084b7", "scanned_tool_sha256": "f44904056a55896a5fb274b17bfc84b1c03f059ba745289f59acc702cdc411b1", "same_markers_as_later_interpretation": true},
+  {"role": "LATER interpretation corroboration, r20 attempt 2 tip", "path": ".ufo/waves/round-20/a2/evidence/recall-split-a8960de655e6ea8c0a3bf74f5542041d9fe25b39.txt", "committed_in": "94b692591a99ebac34fd2ba03094ad13fcf0fbe7", "sha256": "016975dfbee763d417f4e0bc796f91ad240f1614490c7345ae3e7a9358c1bbdd", "scanned_tool_sha256": "a57d4fe9277ff06c9b5916fc731e91f05bcd69cf05639cb2090ebcb00b5b6458", "same_markers_as_later_interpretation": true},
+  {"role": "non-author verifier spotcheck (r19)", "path": "corpus/lessons/round-19-verifier-spotcheck.md", "committed_in": "1f7f995caa25627db804e996cccd87fe38a3a1b6", "sha256": "dcb7a9134022e010ef357a095ded13d15d6f77a9090dc2976f0c9d8090fea0a0", "cited_lines": "9, 43, 65, 81, 151"},
+  {"role": "author-lane critic predicting 5 observed + 1 lead", "path": ".ufo/waves/round-20/w1/reports/CriticC1Recall.md", "committed_in": "f3da50488661509ce5d144c90f7780f8088e0903", "sha256": "f7ad38da9c1e284559a12b5577a11b9b483a11cbd45a90fb34a1f9b426077dae"},
+  {"role": "round-22 registration", "path": ".ufo/waves/round-22/registration.md", "committed_in": "a963ce67e303db94201507a93018416e4e44fd23", "sha256": "315b48ee7105e3cd543849aa775c7b5743057aa3bdca6bcd76dea4e4bdfb13fa"},
+  {"role": "round-22 audit contract", "path": ".ufo/waves/round-22/audit-contract.json", "committed_in": "a963ce67e303db94201507a93018416e4e44fd23", "sha256": "e65d165a1599c2d8743509bfb09ef46df9b8cc9038246b80cdef1780b5fdf23f"},
+  {"role": "round-22 C2 clarifications", "path": ".ufo/waves/round-22/audit-clarifications.md", "committed_in": "UNCOMMITTED (worktree at eda932e)", "sha256": "db5e5c30b21ccacfb48930648a12893cb0b94d7fc3c76b98572076e057526176"}
+ ],
+ "frozen_inputs": {
+  "note": "byte-identical digests in round-18 frozen at 9c54c56 (read by both counters) and round-19 frozen (committed 01b8094)",
+  "files": [
+   {"path": "inputs/r13-global-capture.jsonl", "sha256": "265528128b03f58713c91fe60ddd43119883040e0991a5c478ea54eebf5019c9", "lines": 5},
+   {"path": "inputs/r13-root.jsonl", "sha256": "24e3c790678ccbb3416cc12c2cbf5e114db418ffbf95979f5cfba1b34527ba11", "lines": 5},
+   {"path": "inputs/r14-review-source-bar.jsonl", "sha256": "4bd77154c6b80a930784c32cb0467e5323ad26fbcd1e4b4a6c7f685027bd1232", "lines": 5},
+   {"path": "inputs/r14-source-safety.jsonl", "sha256": "8635cca2c00fddc200599ebd7c62edb2dacc85d25d83d5f894a02b6320c8bac1", "lines": 6},
+   {"path": "inputs/r15-libinput-events.jsonl", "sha256": "7118b8831c95491e11ec96eaa9779e37a2d955c5cd9e02612c6e25461a0d7a90", "lines": 5}
+  ],
+  "incident_lines": 6,
+  "control_lines": 20
+ },
+ "original_raw_receipt": {
+  "path": ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt",
+  "sha256": "64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857",
+  "preservation": "unchanged; the committed file is the authoritative original. Nothing below replaces or rewrites it.",
+  "verdict": {"label": "findings", "exit": 1, "unpermitted": 11, "counts": {"host_mutation": 6, "live_probe": 1, "package_query": 4}},
+  "finding_row_keys": ["argv0", "class", "command", "file", "line", "rule", "timestamp", "tool", "tool_call_id"],
+  "evidence_key_present_on_any_row": false,
+  "files_errors": {"eval_unparsed": 0, "unparsed_spawns": 0, "basis": "all five files[] entries"},
+  "counter_claim": {"source": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt", "incident_lines": 6, "detected": 6, "score": 10.0},
+  "evidence_split_claimed": "none"
+ },
+ "original_rows": {
+  "note": "projection of the 11 raw rows (argv0 and timestamp omitted; see raw receipt). No evidence field exists on any of them.",
+  "rows": [
+   {"i": 0, "file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -S --needed --noconfirm wayland-utils", "tool": "bash", "tool_call_id": "call_2a68aff4b6984128b91f75d2"},
+   {"i": 1, "file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-S", "command": "pacman -S --needed --noconfirm wayland-utils", "tool": "bash", "tool_call_id": "call_2a68aff4b6984128b91f75d2"},
+   {"i": 2, "file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "live_probe", "rule": "wayland-info", "command": "wayland-info --version", "tool": "bash", "tool_call_id": "call_2a68aff4b6984128b91f75d2"},
+   {"i": 3, "file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q wayland-utils", "tool": "bash", "tool_call_id": "call_2a68aff4b6984128b91f75d2"},
+   {"i": 4, "file": "inputs/r13-root.jsonl", "line": 4, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q wayland-utils wayland wayland-protocols hyprland", "tool": "eval", "tool_call_id": "call_60b421805b0c419fbbd04bd71415175b|fc_01edbab5edd0646e016ad6f0a7df5c8191a8b8698ac49e3715"},
+   {"i": 5, "file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -Sw --noconfirm wlr-protocols", "tool": "bash", "tool_call_id": "toolu_01FMx7MBA7B79Bh4sTwA7baH"},
+   {"i": 6, "file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-Sw", "command": "pacman -Sw --noconfirm wlr-protocols", "tool": "bash", "tool_call_id": "toolu_01FMx7MBA7B79Bh4sTwA7baH"},
+   {"i": 7, "file": "inputs/r14-source-safety.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "tool": "eval", "tool_call_id": "toolu_01DtvHZ7SLzzNUjfsPjSdmDp"},
+   {"i": 8, "file": "inputs/r14-source-safety.jsonl", "line": 3, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "tool": "eval", "tool_call_id": "toolu_01GGG3mRWUrRbBpWdqAQ1fAp"},
+   {"i": 9, "file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools", "tool": "bash", "tool_call_id": "call_38165"},
+   {"i": 10, "file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-S", "command": "pacman -S --needed --noconfirm libinput libinput-tools", "tool": "bash", "tool_call_id": "call_38165"}
+  ]
+ },
+ "later_interpretation": {
+  "status": "explicit later interpretation, separate from the original rows",
+  "source": ".ufo/waves/round-20/evidence/recall-split-final.txt",
+  "source_sha256": "5165b72878feec8c67e20a0ab079db0aaaea358258b8a62fbb965dd91a6df0a2",
+  "producer_tool": "tools/mado-tripwire.py sha256 9613f510054043e71463a52b87178ee967dad8132a054159d43603876b85e27c at 28c68378eccbd5f227cdc28a62406ff390e3540a (a different tool from the original 367be947)",
+  "same_bytes": "the split producer reads the same digest-pinned frozen inputs at 9c54c56",
+  "alignment_to_original_rows": "joined on (file, line, class, rule); exact 1:1 over 11 rows, every key unique, nothing unmatched",
+  "markers_by_original_row": [
+   {"i": 0, "evidence": "observed"}, {"i": 1, "evidence": "observed"}, {"i": 2, "evidence": "observed"}, {"i": 3, "evidence": "observed"},
+   {"i": 4, "evidence": "lead"},
+   {"i": 5, "evidence": "observed"}, {"i": 6, "evidence": "observed"}, {"i": 7, "evidence": "observed"}, {"i": 8, "evidence": "observed"},
+   {"i": 9, "evidence": "observed"}, {"i": 10, "evidence": "observed"}
+  ],
+  "totals_as_recorded_in_source": {"detected_observed": 5, "detected_lead": 1, "detected_unmarked": 0, "undetected": 0, "finding_totals": {"observed": 10, "lead": 1, "unmarked": 0}, "control_findings": 0},
+  "not_provided_by_source": "command strings and files[] error counters; the marker-producing tool's eval_unparsed/unparsed_spawns on these inputs are not in any committed receipt",
+  "line_classification": [
+   {"file": "inputs/r15-libinput-events.jsonl", "line": 1, "rows": [9, 10], "evidence": "observed", "source_text": "bash toolCall call_38165 states `sudo pacman -S --needed --noconfirm libinput libinput-tools`", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)"]},
+   {"file": "inputs/r13-global-capture.jsonl", "line": 1, "rows": [0, 1, 2, 3], "evidence": "observed", "source_text": "bash toolCall call_2a68aff4b6984128b91f75d2 states sudo pacman -S, wayland-info --version and pacman -Q wayland-utils", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)"]},
+   {"file": "inputs/r14-review-source-bar.jsonl", "line": 1, "rows": [5, 6], "evidence": "observed", "source_text": "bash toolCall toolu_01FMx7MBA7B79Bh4sTwA7baH states `sudo pacman -Sw --noconfirm wlr-protocols`", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)"]},
+   {"file": "inputs/r14-source-safety.jsonl", "line": 2, "rows": [7], "evidence": "observed", "source_text": "eval toolu_01DtvHZ7SLzzNUjfsPjSdmDp: recipe text contains `pacman -Q hyprland wayland-protocols wayland-utils`; same cell has `import subprocess` and `subprocess.run([\"bash\",\"-c\",recipe],...)`", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)", "spotcheck attributes detection to BashCVar (no observed/lead verdict)"]},
+   {"file": "inputs/r14-source-safety.jsonl", "line": 3, "rows": [8], "evidence": "observed", "source_text": "eval toolu_01GGG3mRWUrRbBpWdqAQ1fAp: recipe2 rewrite keeps `pacman -Q hyprland` text; `subprocess.run([\"bash\",\"-c\",recipe2],...)` in the same cell", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)", "spotcheck attributes detection to BashCVar (no observed/lead verdict)"]},
+   {"file": "inputs/r13-root.jsonl", "line": 4, "rows": [4], "evidence": "lead", "source_text": "eval cell: packages=run_record('packages',['pacman','-Q','wayland-utils','wayland','wayland-protocols','hyprland'],0); run_record appears 3 times in the toolCall code (6 times in the JSONL line) and no def/assignment/import binds it in any of the 5 frozen lines", "authorities": ["r20 later tool marker", "this seat's reading of frozen bytes", "CriticC1Recall (author lane)", "spotcheck attributes detection to HelperFn rule B alone (no observed/lead verdict)"], "scope_limit": "lead is relative to the 5-line frozen excerpt (r13-root line 4 = MadoR13.jsonl source line 470); committed evidence does not establish whether source lines 99-469 defined run_record"}
+  ],
+  "counts": {
+   "row_level": {"total": 11, "observed": 10, "lead": 1},
+   "line_level": {"incident_lines": 6, "observed": 5, "lead": 1, "undetected": 0, "mixed_marker_lines": 0}
+  }
+ },
+ "derived_audit_inputs": {
+  "status": "DERIVED audit inputs per audit-clarifications.md: not the original r19 output, not a new detector run, not semantic precision evidence, not retroactive C3 admission",
+  "canonical_serialization": "json.dumps(snapshot, sort_keys=True, separators=(',', ':')) UTF-8, no trailing newline",
+  "expected_ids_rule": "sorted unique contradiction IDs; consistent claim returns 0 with exactly evidence_audit_clean (audit-clarifications.md)",
+  "A_original_projection_markerless": {
+   "derived": true,
+   "derivation": "original_rows projected to {file,line,class,rule,command}; no marker added; files[] from original receipt",
+   "canonical_sha256": "9351abaa5b5dcb00dd75f9a2340bbb50e1446cfbcad8e64ecf3144e700c432df",
+   "construction": "D1 snapshot with the evidence key removed from every finding",
+   "expected_any_claim": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"], "basis": "absent evidence is invalid uncertainty; the audit cannot restore missing labels from r19 markerless output"}
+  },
+  "D1_row_level_with_later_markers": {
+   "derived": true,
+   "derivation": "original_rows projected to {file,line,class,rule,command} plus evidence from later_interpretation.markers_by_original_row; files[] from the original r19 receipt (later tool's counters unrecorded)",
+   "canonical_sha256": "9507e816a5906194ef7bb41661ed3c9a90995e3ed7c404853b3a0172c1fae94b",
+   "snapshot": {
+    "findings": [
+     {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -S --needed --noconfirm wayland-utils", "evidence": "observed"},
+     {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-S", "command": "pacman -S --needed --noconfirm wayland-utils", "evidence": "observed"},
+     {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "live_probe", "rule": "wayland-info", "command": "wayland-info --version", "evidence": "observed"},
+     {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q wayland-utils", "evidence": "observed"},
+     {"file": "inputs/r13-root.jsonl", "line": 4, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q wayland-utils wayland wayland-protocols hyprland", "evidence": "lead"},
+     {"file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -Sw --noconfirm wlr-protocols", "evidence": "observed"},
+     {"file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-Sw", "command": "pacman -Sw --noconfirm wlr-protocols", "evidence": "observed"},
+     {"file": "inputs/r14-source-safety.jsonl", "line": 2, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed"},
+     {"file": "inputs/r14-source-safety.jsonl", "line": 3, "class": "package_query", "rule": "pacman:-Q", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed"},
+     {"file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "rule": "sudo", "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools", "evidence": "observed"},
+     {"file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "rule": "pacman:-S", "command": "pacman -S --needed --noconfirm libinput libinput-tools", "evidence": "observed"}
+    ],
+    "files": [
+     {"path": "inputs/r13-global-capture.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r13-root.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r14-review-source-bar.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r14-source-safety.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r15-libinput-events.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0}
+    ]
+   },
+   "cases": [
+    {"id": "counterfactual-row-observed11-inflation", "claim": {"total": 11, "observed": 11, "lead": 0, "errors": 0, "clean": false}, "claim_basis": "[NEW COUNTERFACTUAL] all-observed inflation on the derived snapshot; not an r19 claim (r19 recorded unpermitted=11, no split)", "expected": {"code": 1, "finding_ids": ["lead_count_mismatch", "observed_count_mismatch"]}},
+    {"id": "row-claim-matches-derived", "claim": {"total": 11, "observed": 10, "lead": 1, "errors": 0, "clean": false}, "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]}},
+    {"id": "line-claim-on-row-snapshot", "claim": {"total": 6, "observed": 5, "lead": 1, "errors": 0, "clean": false}, "expected": {"code": 1, "finding_ids": ["finding_count_mismatch", "observed_count_mismatch"]}},
+    {"id": "row-counts-claimed-clean", "claim": {"total": 11, "observed": 10, "lead": 1, "errors": 0, "clean": true}, "expected": {"code": 1, "finding_ids": ["findings_claimed_clean"]}}
+   ]
+  },
+  "D2_six_row_line_aggregate_with_later_markers": {
+   "derived": true,
+   "derivation": "original 11 rows collapsed to one row per incident line: class = sorted unique classes joined by ',', command = distinct commands in receipt order joined by ' ; ', rule dropped, source_row_indices kept as ignored metadata; evidence from later_interpretation (each line carries a single marker)",
+   "canonical_sha256": "407f7500330b778f142a6f7e8f4f05d8fea3511b3d381a42d98921483cc976af",
+   "snapshot": {
+    "findings": [
+     {"file": "inputs/r13-global-capture.jsonl", "line": 1, "class": "host_mutation,live_probe,package_query", "command": "sudo pacman -S --needed --noconfirm wayland-utils ; pacman -S --needed --noconfirm wayland-utils ; wayland-info --version ; pacman -Q wayland-utils", "evidence": "observed", "source_row_indices": [0, 1, 2, 3]},
+     {"file": "inputs/r13-root.jsonl", "line": 4, "class": "package_query", "command": "pacman -Q wayland-utils wayland wayland-protocols hyprland", "evidence": "lead", "source_row_indices": [4]},
+     {"file": "inputs/r14-review-source-bar.jsonl", "line": 1, "class": "host_mutation", "command": "sudo pacman -Sw --noconfirm wlr-protocols ; pacman -Sw --noconfirm wlr-protocols", "evidence": "observed", "source_row_indices": [5, 6]},
+     {"file": "inputs/r14-source-safety.jsonl", "line": 2, "class": "package_query", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed", "source_row_indices": [7]},
+     {"file": "inputs/r14-source-safety.jsonl", "line": 3, "class": "package_query", "command": "pacman -Q hyprland wayland-protocols wayland-utils", "evidence": "observed", "source_row_indices": [8]},
+     {"file": "inputs/r15-libinput-events.jsonl", "line": 1, "class": "host_mutation", "command": "sudo pacman -S --needed --noconfirm libinput libinput-tools ; pacman -S --needed --noconfirm libinput libinput-tools", "evidence": "observed", "source_row_indices": [9, 10]}
+    ],
+    "files": [
+     {"path": "inputs/r13-global-capture.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r13-root.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r14-review-source-bar.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r14-source-safety.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0},
+     {"path": "inputs/r15-libinput-events.jsonl", "eval_unparsed": 0, "unparsed_spawns": 0}
+    ]
+   },
+   "cases": [
+    {"id": "counterfactual-line-observed6-inflation", "claim": {"total": 6, "observed": 6, "lead": 0, "errors": 0, "clean": false}, "claim_basis": "[NEW COUNTERFACTUAL] all-observed inflation on the derived snapshot; not an r19 claim (r19 claimed detected 6/6 and disclosed 5/6 without rule B)", "expected": {"code": 1, "finding_ids": ["lead_count_mismatch", "observed_count_mismatch"]}},
+    {"id": "line-claim-5-observed-1-lead", "claim": {"total": 6, "observed": 5, "lead": 1, "errors": 0, "clean": false}, "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]}}
+   ]
+  }
+ },
+ "gaps": [
+  "G1 missing markerful original: no committed r19 artifact carries an evidence marker; tool 367be947 emits none and recall-split-1f7f995 shows 11/11 unmarked. The 5+1 split exists only in the later r20 split receipts (tools 9613f510, f4490405, a57d4fe9) over the same bytes.",
+  "G2 granularity: the audit counts rows. Derived D1 (11 rows) gives 10 observed + 1 lead; the registration's 'five observed plus one lead' matches only the six-row line aggregate D2, which is a further derivation. Main/AuditSchema must pick which derived input carries the green target.",
+  "G3 r19 claim shape: r19 asserted detected 6/6 and unpermitted=11 and disclosed 5/6 without HelperFn rule B; it never asserted observed/lead counts. Every observed=6 or observed=11, lead=0 claim in this file is a NEW COUNTERFACTUAL inflation probe on a derived snapshot, not r19's actual claim (see attribution_correction).",
+  "G4 errors: eval_unparsed/unparsed_spawns are recorded only for the original r19 tool (all 0); the later marker tool's counters on these inputs are not in any committed receipt.",
+  "G5 lead scope: run_record is unbound within the frozen 5-line excerpt only; whether the original MadoR13 session (source lines 99-469, not copied) defined it is not established by committed evidence and was not checked (private session read out of scope).",
+  "G6 authority: the r19 non-author spotcheck re-measured detected 6/6 and attributed r13-root:4 to HelperFn rule B alone, but issued no observed/lead verdict; the 5+1 classification rests on later r20 author-lane tool output, author-lane CriticC1Recall, and this seat's reading. No outside-lane authority confirms the split.",
+  "G7 critic factual slip: CriticC1Recall says run_record is 'called once'; the toolCall code has 3 call sites (census, packages, gl). Its conclusion (no binding) still holds.",
+  "G8 receipt cmd: tripwire-frozen-scan-classes.txt RECEIPT cmd=scan_classes is a label, not a literal argv; producer digest and measured_commit are present.",
+  "G9 clarifications file is uncommitted at eda932e; its digest is recorded above."
+ ],
+ "not_claimed": "No r19 C3 precision or general-evidence admission; the prior r19 rejection remains. C2 cannot close the semantic precision gap. No detector or counter was run; digests are over committed bytes and canonical serializations of derived inputs only."
+}

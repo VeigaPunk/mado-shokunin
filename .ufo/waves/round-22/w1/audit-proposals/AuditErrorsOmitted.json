@@ -1,0 +1,27 @@
+{
+  "id": "AuditErrorsOmitted",
+  "snapshot": {
+    "findings": [],
+    "files": [
+      {
+        "path": "pkg/mod.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 2
+      }
+    ]
+  },
+  "claim": {
+    "total": 0,
+    "observed": 0,
+    "lead": 0,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "1",
+    "finding_ids": [
+      "error_count_mismatch"
+    ]
+  },
+  "rationale": "Fixture: unparsed_spawns2 claim errors0 cleanfalse -> 1 error_count_mismatch. The snapshot is structurally valid and evaluable: findings is a legitimately empty list, files is nonempty with one member carrying nonnegative-integer counters eval_unparsed=0 and unparsed_spawns=2. Actual counts derived purely from contract arithmetic: total=0, observed=0, lead=0, errors=0+2=2. The claim asserts total=0, observed=0 and lead=0, each equal to its actual count, so no finding_count_mismatch, observed_count_mismatch or lead_count_mismatch is owed. The claim asserts errors=0 while the summed error counters equal 2; that assertion is contradicted, so the audit owes error_count_mismatch and the verdict is 1 (failed). clean=false is itself a correct statement for this receipt: findings is empty but errors is nonzero, so the snapshot is not clean and the claim does not assert otherwise; no uncertain_scan_claimed_clean and no findings_claimed_clean finding is owed. No input-invalid condition exists: JSON is well-formed, counts are integers (not booleans), nonnegative and finite, a files member is present, and every finding-evidence marker rule is vacuously satisfied by the empty findings list, so evidence_audit_input_invalid must not appear. Snapshot digest and path/escape rules are harness concerns satisfied by construction of the committed bytes; the only contradiction is the omitted error total, hence expected code 1 with exactly [error_count_mismatch]. Other counters and finding types are valid and unaffected; this is artifact-arithmetic consistency, not a claim about detector semantics."
+}

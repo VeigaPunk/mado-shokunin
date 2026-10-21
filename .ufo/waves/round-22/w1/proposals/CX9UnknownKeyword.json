@@ -1,0 +1,18 @@
+{
+  "id": "CX9UnknownKeyword",
+  "cells": [
+    "import subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\nargv = [\"pacman\", \"-Q\", \"r22-cx9-global\"]\nrunner = make(argvv=[\"pacman\", \"-Q\", \"r22-cx9-passed\"])\nrunner()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cx9-global",
+    "pacman -Q r22-cx9-passed"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -Q r22-cx9-global",
+    "pacman -Q r22-cx9-passed"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `make` has the single parameter `argv` and no **kwargs. The call `make(argvv=...)` passes a keyword that matches no formal parameter, and the required `argv` is also missing, so the call raises TypeError before make's body runs. No closure is created, `runner` is never bound, and the cell aborts before `runner()`. Nothing executes: exact empty, zero unparsed, per the parent rule for definite TypeError. The module-level `argv` literal is a same-named decoy, and the keyword's value is a misnamed-argument decoy; neither may appear at any tier. This is the fourth FinalBindingReview F2 trigger (unknown keyword, bind_literal 2017-2018), which had no variant; CaptureKeyword is an F1 rebinding shape.",
+  "source": "CriticScope.json CX9. Mechanism: .ufo/waves/round-21/residual/FinalBindingReview.md F2 (line 80 triggers list: 'unknown keyword (2017-2018)'). Semantics: Python 3.14 Language Reference section 'Calls' (expressions.rst; not among the retained source bytes): a keyword argument that does not correspond to a formal parameter name, or an unfilled parameter slot with no default, raises TypeError. Disclosure: this citation is by section name, not retained bytes."
+}

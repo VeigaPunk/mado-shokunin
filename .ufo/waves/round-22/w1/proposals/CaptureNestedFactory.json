@@ -1,0 +1,13 @@
+{
+  "id": "CaptureNestedFactory",
+  "cells": [
+    "import subprocess\n\n\ndef outer(host):\n    def middle(pkg):\n        def leaf():\n            subprocess.run([\"pacman\", \"-S\", host, pkg])\n        return leaf\n    return middle\n\n\nouter(\"r22-nest-outer\")(\"r22-nest-inner\")()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-nest-outer r22-inner", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 semantics: evaluating outer(\"r22-nest-outer\") binds outer's parameter host to the string object 'r22-nest-outer' at that call and returns middle. Evaluating (that result)(\"r22-nest-inner\") binds middle's parameter pkg to 'r22-nest-inner' and returns leaf. leaf's free variables host and pkg resolve lexically through two closure cells — leaf -> middle locals -> outer locals — to the objects bound at each enclosing factory call. The chained invocation outer(...)('...')() therefore executes subprocess.run with argv ['pacman','-S','r22-nest-outer','r22-nest-inner']; shlex.join serializes it as 'pacman -S r22-nest-outer r22-inner'. Exactly one statically determined finding exists: host_mutation, observed, zero unparsed. No name is rebound anywhere in the cell, so creation-time and invocation-time resolution must coincide; the discriminating content is the two-level chained factory capture: the level-1 argument must survive intact through the level-2 factory follow, and the level-2 parameter overlay must not clobber or shadow the level-1 cell when leaf's body is swept. A scanner that resolves leaf's free variables in the wrong environment loses host (no same-named module global exists), producing uncertain/lead or empty output instead of the exact observed row. All shapes used are within the declared bounded literal-source forms: def-defined factories, literal string arguments, plain Name returns at both levels, single eval cell.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md: F1 (factory parameters bind to the argument objects at factory-call time, same-cell and cross-cell reach), F2 (unbindable factory arguments must degrade to lead/unparsed, never module globals), and the frozen CalledClosure input shape outer([\"pacman\",\"-Q\",\"w2shape\"])() as the depth-1 precedent for chained call-as-func closure invocation; Python 3.14 language reference (execution model / naming and binding): parameters bind to argument objects at call time and inner functions resolve free variables through enclosing-function closure cells before module globals."
+}

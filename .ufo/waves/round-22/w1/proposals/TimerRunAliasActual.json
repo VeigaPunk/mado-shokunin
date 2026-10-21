@@ -1,0 +1,17 @@
+{
+  "id": "TimerRunAliasActual",
+  "cells": [
+    "import subprocess\nimport threading\n\ndef worker(argv):\n    subprocess.run(argv)\n\ntimer = threading.Timer(0, worker, kwargs={\"argv\": [\"pacman\", \"-Q\", \"r22-timer-run-alias-actual\"]})\nrun = timer.run\nrun()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-timer-run-alias-actual",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 semantics only; derived independently of detector output. threading.Timer.__init__(interval, function, args=None, kwargs=None) binds self.function=worker and self.kwargs={\"argv\": [\"pacman\", \"-Q\", \"r22-timer-run-alias-actual\"]} at construction; literal kwargs are fixed at that moment. The assignment 'run = timer.run' is an attribute load on the instance: it produces a bound method object whose __self__ is timer (language bound-method semantics, Python 3.14; timer is a module-local Timer instance with a statically known class). Invoking 'run()' calls Timer.run(timer) synchronously in the calling thread: self.finished.wait(0) returns at once, finished.is_set() is False because no cancel() call exists anywhere in the program, so the body calls self.function(*(), **self.kwargs) -> worker(argv=[\"pacman\", \"-Q\", \"r22-timer-run-alias-actual\"]) -> subprocess.run([\"pacman\", \"-Q\", \"r22-timer-run-alias-actual\"]). Exactly one argv is statically determined; shlex.join of the literal tokens is 'pacman -Q r22-timer-run-alias-actual'. pacman -Q is a package query, not a host mutation. All bindings are literal and module-local, so the row is observed, not lead, and zero tokens are unparsed. Static truth therefore is exactly one package_query observed row and nothing else. This exercises the F4-open .run path on a scheduled binding (Timer, not Thread) reached through a local name alias of the bound method — the callable identity flows through 'run = timer.run' rather than a direct attribute call — with literal kwargs supplied at construction.",
+  "source": "CPython Lib/threading.py at tag v3.14.8 (git ls-remote pin 992560c2cc62d47b308cec662feb485456847931; peeled 8e6e75d9102e39bed2a2b279203a396741180f12), archived at .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py: Thread.__init__ stores args/kwargs at lines 927-928; class Timer lines 1361-1386, __init__ 1370-1376 (self.function, self.args, self.kwargs fixed at construction), run 1382-1386 (finished.wait(interval); if not finished.is_set(): self.function(*self.args, **self.kwargs)); Thread.run docstring 1013-1021 confirms run() invokes the target synchronously in the caller. Bound-method attribute semantics: instance attribute access yielding a bound method whose call prepends the instance is Python 3.14 language semantics (types.MethodType), independent of the archived file. Defect context: .ufo/waves/round-21/residual/FinalBindingReview.md F4 (lines 90-95): scheduled Thread.run() and Timer.run() share the unfollowed path; this variant adds a name-alias indirection on the .run dispatch."
+}

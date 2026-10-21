@@ -1,0 +1,13 @@
+{
+  "id": "CaptureSameCell",
+  "cells": [
+    "import subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\nspec = [\"pacman\", \"-Q\", \"r22-samecell-held\"]\nslot = make(spec)\nspec = [\"pacman\", \"-S\", \"r22-samecell-decoy\"]\nslot()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "package_query", "command": "pacman -Q r22-samecell-held", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": ["pacman -S r22-samecell-decoy"],
+  "rationale": "Python 3.14 semantics: a call binds parameters to the argument objects at the moment of that call. make(spec) binds parameter argv to the list object ['pacman','-Q','r22-samecell-held'] that spec referenced at factory-call time. The nested def run closes over make's local cell for argv, so run keeps referencing that same list object. The later statement spec = ['pacman','-S','r22-samecell-decoy'] is a rebinding of the module-level name spec to a new list object; it is not a mutation of the held list and cannot reach the closure's cell. slot() therefore invokes subprocess.run with the creation-time argv, yielding exactly one statically determined finding: package_query 'pacman -Q r22-samecell-held', observed, with zero unparsed. The rebound decoy argv is passed to no call, so it must produce no observed row; a detector that binds the factory parameter at closure-invocation time (the r21 F1 defect shape) would wrongly report host_mutation 'pacman -S r22-samecell-decoy'. This variant exercises the same lifetime shape in the opposite evidence-class direction with fresh markers, independent of any detector output.",
+  "source": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F1 (lines 70-77): 'Python binds the factory parameter to the object passed at creation. Rebinding `cmd` afterwards does not change the closure's cell.'; Python 3.14 language reference: calls bind parameters to argument objects at call time; inner functions capture enclosing-function locals via closure cells, not module names."
+}

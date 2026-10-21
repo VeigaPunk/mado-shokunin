@@ -1,0 +1,19 @@
+{
+  "id": "CaptureLocalShadow",
+  "cells": [
+    "import subprocess\ndef shadow():\n    subprocess.run([\"pacman\", \"-Q\", \"r22-shadow-global\"])\ndef make():\n    def inner():\n        subprocess.run([\"pacman\", \"-S\", \"r22-shadow-local\"])\n    shadow = inner\n    return shadow\nmake()()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-shadow-local",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-shadow-global"
+  ],
+  "rationale": "Python 3.14 naming-and-binding semantics: inside make, the statement shadow = inner assigns a name with no global declaration, so shadow is factory-local for make's entire scope and shadows the module-level def shadow from that point; return shadow therefore returns the factory-local function bound to inner. The call make()() executes inner's body, subprocess.run([\"pacman\", \"-S\", \"r22-shadow-local\"]), which is exactly one host_mutation finding, evidence observed. The module-global shadow body, subprocess.run([\"pacman\", \"-Q\", \"r22-shadow-global\"]), is never invoked by this cell: a bare module-level def is a binding, not a call. Any observed pacman -Q r22-shadow-global row would be an observed value borrowed from a same-named module global, which registration round-22 C1 forbids: unresolved or shadowed bindings may yield lead/unparsed uncertainty but never observed module-global values. The static truth is fully determined because the variant uses only literal source shapes: no factory parameters, literal list argv, plain statement-level defs and assignments, one eval cell.",
+  "source": "MadoR22.CaptureLocalShadow seat, authored independently before any implementation or measurement. Truth derived from Python 3.14.8 static naming-and-binding semantics (assignment without a global declaration makes the name local to the enclosing function scope; module def binds a distinct module global that the factory local shadows). Scenario class extends round-21 residual FinalBindingReview.md F3 (returned closure identity resolved from def bindings while a factory-body rebind is ignored) with a same-named module global, per round-22 registration C1. No probe run, no detector source measurement, no payload execution; digests frozen in the accompanying report at authoring."
+}

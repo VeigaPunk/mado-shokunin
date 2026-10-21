@@ -1,0 +1,13 @@
+{
+  "id": "CX7ThreadRepeatedRun",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker(argv):\n    subprocess.run(argv)\n\n\nt = threading.Thread(target=worker, args=([\"pacman\", \"-S\", \"r22-cx7-twice\"],))\nt.run()\nt.run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cx7-twice", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 static reasoning; no execution. `Thread.__init__` sets the instance attributes `_target`, `_args` and `_kwargs`; there is no class-level `_target`. The first `t.run()` calls `worker([... ])` synchronously inside `try`, and its `finally` executes `del self._target, self._args, self._kwargs`. At the second `t.run()`, evaluating `self._target` raises AttributeError, and the `finally` del raises AttributeError again, so the cell aborts and `worker` is not called a second time. If the first subprocess.run itself raised, the cell would abort before the second run, which leaves the count unchanged. Exactly one execution: one observed host_mutation row. The multiset comparison (round-21 oracle measure.py rows_key) makes a duplicate row a failure. This attacks an F4 repair that follows every `.run()` call site on the same Thread instance.",
+  "source": "CriticScope.json CX7. Semantics: .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3) line 925 'self._target = target' (only binding site of _target in the file); lines 1022-1028 Thread.run: 'if self._target is not None: self._target(*self._args, **self._kwargs)' then finally 'del self._target, self._args, self._kwargs'. Class mapping: pacman -S -> host_mutation."
+}

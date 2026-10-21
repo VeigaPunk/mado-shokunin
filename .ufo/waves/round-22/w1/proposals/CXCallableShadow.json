@@ -1,0 +1,13 @@
+{
+  "id": "CXCallableShadow",
+  "cells": [
+    "import subprocess\n\n\ndef make(f):\n    def run():\n        f([\"pacman\", \"-S\", \"r22-cxshadow\"])\n    return run\n\n\nf = subprocess.run\nrunner = make(print)\nrunner()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [],
+  "forbid_observed_commands": [
+    "pacman -S r22-cxshadow"
+  ],
+  "rationale": "Classification: definite no execution, no exception. Python 3.14 static reasoning; no execution. `make(print)` binds make's local parameter `f` to the builtin `print`. Inside `run`, `f` is a free variable. It resolves to the nearest enclosing function scope, which is make's local `f`, never the module-level `f = subprocess.run`. `runner()` therefore calls `print([\"pacman\", \"-S\", \"r22-cxshadow\"])`, which writes the list repr to stdout, returns None and starts no process. All names are bound, every call has a valid arity, and nothing raises. The module-level `f = subprocess.run` is a same-named decoy in the bindings namespace, not the literal namespace. The argument `print` is a resolvable builtin, so this is not an unknown-argument case; the definite result is no rows and zero unparsed. This attacks a capture repair that masks factory parameters in the literal environment only, or only when argument binding fails. Here binding succeeds, and `f` is still resolved through the module binding map. Limits: this is exact static semantics for this text, not current-code behavior. A scanner that reports a lead for `f(...)` over-reports and fails exact; any observed `pacman -S r22-cxshadow` is an invented command.",
+  "source": "ConnLifetime.json V3 and invariant I2 (.ufo/waves/round-22/w1/notes/ConnLifetime.json). Mechanism: tools/mado-tripwire.py sha256 46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1: the capture overlay updates the env only (2336-2337), and captured_bindings keeps the module binding of `f` (1805-1811). Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst (sha256 11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89) line 89 'If a name is bound in a block, it is a local variable of that block'; line 113 'resolved using the nearest enclosing' scope; line 322 'Name resolution of free variables occurs at runtime'. Class mapping: pacman -S -> host_mutation."
+}

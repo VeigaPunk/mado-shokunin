@@ -1,0 +1,19 @@
+{
+  "id": "CX1AnyTierLeak",
+  "cells": [
+    "import os\nimport subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\nargv = [\"pacman\", \"-Q\", \"r22-cx1-global\"]\nparts = os.environ.get(\"R22_CX1_ARGV\", \"\").split()\nrunner = make(parts)\nrunner()\n"
+  ],
+  "expected_kind": "uncertain",
+  "want": [],
+  "require_signal": true,
+  "forbid_observed_commands": [
+    "pacman -Q r22-cx1-global",
+    "pacman -S r22-cx1-global"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -Q r22-cx1-global",
+    "pacman -S r22-cx1-global"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. `parts` is bound, so no NameError, but its value is a list of strings taken from the process environment at runtime and is lexically unknown. `make(parts)` binds make's local parameter `argv` to that unknown list. `run` has a free variable `argv`, which resolves to make's local `argv` (the nearest enclosing function scope), never to the module-level `argv`. `runner()` therefore reaches `subprocess.run(<unknown list>)`. That is a possible execution with no statically determined command, so some uncertainty signal (a lead with no invented argv, or an unparsed counter) is owed: require_signal is true. The module-level literal `argv = [\"pacman\", \"-Q\", \"r22-cx1-global\"]` is a same-named decoy. It cannot be the closure's value at any evidence tier, so naming it as a lead is as false as naming it as observed. This differs from the original `capture-unbound-global` (starred, undefined name) and from CaptureStarUnknown/CaptureKwUnknown: here the argument is a bound, non-starred, non-literal positional, and the cheap patch 'downgrade the borrowed global to lead' must fail.",
+  "source": "CriticScope.json CX1. Mechanism: .ufo/waves/round-21/residual/FinalBindingReview.md F2 (lines 78-83; sweep_body contract 'Its parameters are unknown; every row it finds is a lead'). Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst (sha256 11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89) line 113 'When a name is used in a code block, it is resolved using the nearest enclosing' scope; line 322 'Name resolution of free variables occurs at runtime, not at compile time.' Class mapping: pacman -Q -> package_query, pacman -S -> host_mutation."
+}

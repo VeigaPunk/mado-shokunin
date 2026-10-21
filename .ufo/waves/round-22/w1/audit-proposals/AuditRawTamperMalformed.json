@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawTamperMalformed",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[",
+  "digest_override": {"literal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["snapshot_tampered"]},
+  "eligibility": "frozen",
+  "rationale": "This tests ordering. The snapshot bytes are truncated, malformed JSON, AND the bundle digest (the empty-string SHA-256) does not match them. The clarifications say bounded bytes are read and the digest verified BEFORE JSON decoding, and malformed bytes are not compared as semantic results. So the digest mismatch decides first: 2/snapshot_tampered, not evidence_audit_input_invalid. This kills a mutant that parses before hashing, which would report input_invalid."
+}

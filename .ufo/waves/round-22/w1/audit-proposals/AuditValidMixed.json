@@ -1,0 +1,47 @@
+{
+  "id": "AuditValidMixed",
+  "snapshot": {
+    "findings": [
+      {
+        "evidence": "observed",
+        "class": "thread",
+        "command": "worker = threading.Thread(target=backup.flush); worker.start()",
+        "file": "src/jobs/backup.py",
+        "line": 41
+      },
+      {
+        "evidence": "lead",
+        "class": "spawn",
+        "command": "subprocess.Popen(shlex.split(env['WORKER_CMD']))",
+        "file": "src/deploy/runner.py",
+        "line": 12
+      }
+    ],
+    "files": [
+      {
+        "path": "src/jobs/backup.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      },
+      {
+        "path": "src/deploy/runner.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 2,
+    "observed": 1,
+    "lead": 1,
+    "errors": 0,
+    "clean": false
+  },
+  "expected": {
+    "code": "0",
+    "finding_ids": [
+      "evidence_audit_clean"
+    ]
+  },
+  "rationale": "Independently authored valid positive-control fixture for the artifact-arithmetic audit. The snapshot contains exactly two finding rows: one evidence:\"observed\" and one evidence:\"lead\", each with nonempty class and command strings, and a nonempty files list of two entries whose eval_unparsed and unparsed_spawns are all exact nonnegative ints summing to 0. Claim arithmetic checked against the contract rules: total 2 == len(findings) 2; observed 1 == rows with evidence:\"observed\"; lead 1 == rows with evidence:\"lead\"; errors 0 == sum(eval_unparsed)+sum(unparsed_spawns) = 0. clean is correctly false: findings is nonempty, so clean:true would be contradicted (findings_claimed_clean); declaring clean:false while findings exist is honest disclosure, not an inconsistency, so no finding_id is raised for it. This exercises the observed/lead split rule: the lead row is counted only in lead and total, never folded into observed; a checker that promoted the lead to observed would still satisfy total but is not required here since the claim itself is internally consistent. All count fields are exact nonnegative ints (not booleans, negatives or nonfinite), evidence markers are the explicit enumerated values observed|lead with no missing/invalid markers, and no malformed/duplicate-key structure is present, so code 2 (evidence_audit_input_invalid) does not apply. With every declared number matching the actual rows and clean:false accurately disclosing the nonempty findings, the artifact assertions are consistent: expected exit code 0. finding_ids is [\"evidence_audit_clean\"] interpreting that stable ID as the contract's own label for the consistent/clean verdict (per its annotation in the finding_ids list); if the implementation instead emits no diagnostic IDs on a clean verdict, the equivalent expectation is an empty finding_ids list — this ambiguity is flagged in the seat report as a contract note. Content is invented independently for this seat; no candidate code was read, no classifier output or measurement informed any value. The snapshot digest is intentionally not pinned here: the harness binds the actual SHA-256 of the serialized snapshot bytes at bundle-assembly time, and digest verification precedes verdict comparison per contract."
+}

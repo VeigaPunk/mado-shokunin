@@ -1,0 +1,33 @@
+{
+  "id": "AuditFindingsClean",
+  "snapshot": {
+    "findings": [
+      {
+        "evidence": "observed",
+        "class": "dynamic-spawn",
+        "command": "os.system('id')",
+        "file": "pkg/worker.py",
+        "line": 14
+      }
+    ],
+    "files": [
+      {
+        "path": "pkg/worker.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 1,
+    "observed": 1,
+    "lead": 0,
+    "errors": 0,
+    "clean": true
+  },
+  "expected": {
+    "code": "1",
+    "finding_ids": ["findings_claimed_clean"]
+  },
+  "rationale": "Reasoned from audit-contract.json alone; no candidate code read or executed and no measurement taken. The snapshot is well formed: one files member satisfies the nonempty-population rule; the single findings row carries explicit evidence \"observed\" plus nonempty class and command strings, so no evidence marker is missing or invalid and nothing routes to could-not-evaluate. Both file counters are nonnegative exact ints summing to zero errors. Arithmetic is fully consistent: actual total 1 == claim.total 1, actual observed 1 == claim.observed 1, actual lead 0 == claim.lead 0, actual errors 0 == claim.errors 0, so no *_count_mismatch ID applies. The sole contradiction is claim.clean == true while findings is nonempty, violating the contract rule \"clean:true only if findings empty and errors zero\". Because errors are zero and every evidence marker is explicit, the failure is specifically findings_claimed_clean, not uncertain_scan_claimed_clean (which covers error-bearing or uncertain scans claimed clean) and not evidence_audit_input_invalid (input is valid). Verdict: code 1 (failed, artifact assertion contradicted) with exactly the finding_ids [\"findings_claimed_clean\"]. Digest is assumed to match the fixture's own snapshot bytes; tampering is not part of this fixture. This exercises the disclosure rule that a receipt containing real observed rows must never be labeled clean even when every counter agrees."
+}

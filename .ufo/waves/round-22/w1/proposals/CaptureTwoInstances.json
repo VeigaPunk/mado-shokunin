@@ -1,0 +1,24 @@
+{
+  "id": "CaptureTwoInstances",
+  "cells": [
+    "import subprocess\n\ndef make_runner(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\nconf = [\"pacman\", \"-S\", \"r22-ti-a\"]\nfirst = make_runner(conf)\nconf = [\"pacman\", \"-Q\", \"r22-ti-b\"]\nsecond = make_runner(conf)\nconf = [\"pacman\", \"-Q\", \"r22-ti-c\"]\nfirst()\nsecond()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-ti-a",
+      "evidence": "observed"
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-ti-b",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-ti-c"
+  ],
+  "rationale": "Python 3.14 closure semantics. Each make_runner(conf) call creates a fresh frame that binds parameter argv to the list object conf denotes at that call; the nested def run closes over that frame's argv cell. The first call binds argv to [\"pacman\", \"-S\", \"r22-ti-a\"]; the second to [\"pacman\", \"-Q\", \"r22-ti-b\"]. The third assignment rebinds only the module-level name conf to [\"pacman\", \"-Q\", \"r22-ti-c\"]; rebinding a name never mutates the previously bound objects, so neither closure's cell changes. first() therefore reaches subprocess.run([\"pacman\", \"-S\", \"r22-ti-a\"]) and second() reaches subprocess.run([\"pacman\", \"-Q\", \"r22-ti-b\"]). The c-list is never the argv of any subprocess.run in this program. Both argvs are fully literal at their creation calls, so both rows are observed, not leads. Command strings are shlex.join of each argv list: no shell specials, plain space join. pacman -S is host_mutation and pacman -Q is package_query per the frozen r21 conventions (capture-invoke-time, CalledClosure, CallbackBoundArgs). Invocation order first() then second() fixes row order. Every construct is a plain def, Assign, or Name call, so a correct static read yields zero unparsed and exactly these two rows. The variant discriminates the F1 invoke-time re-evaluation defect: a scanner that evaluates the recorded factory-call argument expression conf in the invocation-statement environment sees the c-binding for both calls and would emit package_query pacman -Q r22-ti-c (and drop host_mutation), which is exactly why that command is forbidden as observed. This is static truth from Python semantics; no cell was executed and no detector output was consulted.",
+  "source": "https://docs.python.org/3.14/reference/executionmodel.html#resolution-of-names (nested-scope closure cells bind at function-call time; rebinding the outer name does not reach existing cells); /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F1 (invoke-time vs creation-time argument evaluation this variant discriminates) and F1 reach note; /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w1/oracles/CalledClosure.json (returned-closure shape and pacman class conventions)"
+}

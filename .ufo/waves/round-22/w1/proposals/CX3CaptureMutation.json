@@ -1,0 +1,20 @@
+{
+  "id": "CX3CaptureMutation",
+  "cells": [
+    "import subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\ncmd = [\"pacman\", \"-Q\", \"r22-cx3-mutation\"]\nrunner = make(cmd)\ncmd[1] = \"-S\"\nrunner()\n"
+  ],
+  "expected_kind": "uncertain",
+  "want": [],
+  "require_signal": true,
+  "accept_exact_want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cx3-mutation", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cx3-mutation"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -Q r22-cx3-mutation"
+  ],
+  "rationale": "Python 3.14 static reasoning; no execution. The static truth is definite: `make(cmd)` binds parameter `argv` to the same list object that `cmd` names. Assignment binds names to objects and copies nothing. `cmd[1] = \"-S\"` is a subscription assignment, which calls the list's __setitem__ and replaces item 1 of that one shared object in place. `runner()` reads `argv` through the closure cell at call time and runs `subprocess.run([\"pacman\", \"-S\", \"r22-cx3-mutation\"])`. The true result is exactly one observed host_mutation `pacman -S r22-cx3-mutation`, which is recorded in accept_exact_want. Per the parent directive, in-place mutation may be outside the supported forms, so the proposal is filed as uncertain: an exact correct row is accepted, and an uncertainty signal with no invented argv is also accepted. The stale pre-mutation command `pacman -Q r22-cx3-mutation` never runs. It is forbidden as observed, which is the parent's requirement. It is also forbidden at any tier, because it names a command that is definitely never executed. This targets value-snapshot repairs (SimplifyCapture ClosureFrame literal_env) that would freeze the pre-mutation list.",
+  "source": "CriticScope.json CX3. Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-simple_stmts.rst (sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc) lines 146-149 'the name is bound to the object'; lines 190-208 subscription target: the primary's __setitem__ is called, and for a mutable sequence 'the sequence is asked to assign the assigned object to its item with that index'; executionmodel.rst (sha256 11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89) line 322 runtime free-variable resolution. Harness note: accept_exact_want is a schema extension; without it a correct exact answer would fail the uncertain rule."
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "mado-r22-critic-v1",
+  "seat": "MadoR22.CriticRecovery",
+  "role": "critic (author-lane advice; not a judgment, admission, closure or streak disposition)",
+  "date": "2026-10-21",
+  "scope": "Recovery admission conditions, prior-streak handling, no-harm original corpus guard, independent non-author closure, honesty of C2's actual-r19 gap. Read-only: registration, audit contract, prior receipts, driver script/state, committed W1 artifacts. No detector run, no payload execution, no production edit, no Git/jj mutation, no installs.",
+  "identity": {
+    "lane_head": "a963ce67e303db94201507a93018416e4e44fd23",
+    "registration_base": "741122d177ae8ff68a73768777f20484d5bdcbe4",
+    "tools_changed_since_base": "none (git diff --stat 741122d a963ce6 -- tools .ufo/waves/round-21 is empty; git status --porcelain tools is empty)",
+    "tripwire_sha256": "46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+    "registration_sha256": "315b48ee7105e3cd543849aa775c7b5743057aa3bdca6bcd76dea4e4bdfb13fa (as pinned by audit-authority.json; not recomputed by this seat)",
+    "audit_contract_sha256": "e65d165a1599c2d8743509bfb09ef46df9b8cc9038246b80cdef1780b5fdf23f (as pinned by audit-authority.json; not recomputed by this seat)"
+  },
+  "axes": ["operability (C1)", "calibration (C2)", "trend: quality", "trend: discernment", "process: streak/closure integrity"],
+  "counterexamples": [
+    {
+      "id": "CR1",
+      "severity": "high",
+      "class": "duplicate authority / unenforced streak",
+      "claim_attacked": "registration.md:3 'does not ... erase the three-rejection streak' and SCORECARD r22 'three-rejection streak remain[s] in force'",
+      "counterexample": "The driver never recorded a three-rejection streak for mado, and it would not record one after a fourth rejection either. scripts/hyaku/inline.sh:164 counts a round only when its outcome file is exactly 'rejected'. ~/.local/state/shokunin-hyaku/outcome/mado-r21 contains 'rejected-harmed' (16 bytes, mtime 2026-10-21 07:24:49). closure_count (inline.sh:64-71) only emits 'admitted'/'rejected'/'none', so this token was written outside the advance path. Streak at r21 = 2 (r20, r19), so no blocked/mado file was written. ~/.local/state/shokunin-hyaku/blocked/ holds only 'kumitate', and mado r22 launched at 11:14:32 (fleet .ufo/watchdog.log:602). Meanwhile MANIFEST rounds[400].notes says 'Third consecutive mado rejection ... -> lane blocked'. If r22 is rejected, the window r22/r21/r20 again counts 2, so the lane still does not block.",
+      "evidence": [
+        "/home/vgpnk/Projects/shokunin/scripts/hyaku/inline.sh:64-71,157-168",
+        "/home/vgpnk/.local/state/shokunin-hyaku/outcome/mado-r19 = 'rejected', mado-r20 = 'rejected', mado-r21 = 'rejected-harmed'",
+        "/home/vgpnk/.local/state/shokunin-hyaku/blocked/ contains only kumitate",
+        "/home/vgpnk/Projects/shokunin/MANIFEST.json rounds[400].notes",
+        "/home/vgpnk/Projects/shokunin/.ufo/watchdog.log:602"
+      ],
+      "authorization_provenance": "registration.md:3 asserts 'Operator permission to run this recovery' with no pointer. The mado round-21 L0 question (fleet .ufo/l0-questions.md:78) has no recorded answer. The dispatch prompt .ufo/prompts/mado-round-22.md (fleet commit 0820349) has no unblock or authorization sentence for the streak. No blocked-file removal is on record because no file existed. [INFERENCE] The launch is mechanically explained by the token mismatch; an out-of-band operator authorization may exist but is not in any committed artifact this seat could find.",
+      "impacted_axes": ["process: streak/closure integrity", "trend: discernment"],
+      "smallest_safe_correction": "Out of lane: Main/operator either normalizes mado-r21's outcome token to 'rejected' or makes the streak test match the 'rejected*' prefix, then records the disposition. In lane: an append-only registration clarification citing the exact authorization artifact (path + commit or L0 answer line), or stating that none is committed. The lane MUST NOT edit driver state."
+    },
+    {
+      "id": "CR2",
+      "severity": "high",
+      "class": "false provenance / unit mismatch (C2 actual-r19 gap honesty)",
+      "claim_attacked": "registration.md:7 'red on a faithful actual r19 C3 six-incident receipt represented without changing rows, green only when correctly scoped to five observed plus one lead'; SCORECARD r22 'actual r19 C3 receipt must fail an observed6/6 assertion'",
+      "counterexample": [
+        "Faithful r19 bytes evaluate to code 2, not red. Both r19 C3 artifacts lack evidence markers. tw-recall-after.txt rows are {file,line,detected}. tripwire-frozen-scan-classes.txt has 11 finding rows with class/command but no evidence key (absence sweep in audit-authority.json; confirmed here by parsing). Under audit-contract rules ('Missing/invalid evidence markers are uncertainty') and the frozen W1 proposal AuditMissingEvidence (expected code 2, evidence_audit_input_invalid), an unchanged r19 snapshot is could-not-evaluate. A red code 1 needs an evidence key, which changes rows.",
+        "Unit mismatch. The contract counts finding rows. r19 has 11 rows over 6 incident lines. '5 observed + 1 lead' is the incident-line split. The row split is observed 10 + lead 1 (round-20 recall-split-final.txt finding_totals). A row-level bundle claiming total 6 / observed 5 / lead 1 against the 11-row snapshot is red (finding_count_mismatch, observed_count_mismatch), not green. The registered green is reachable only by collapsing rows into lines, which also changes rows.",
+        "The observed/lead labels come from a later, rejected detector. The 5/1 split exists only in .ufo/waves/round-20/evidence/recall-split-final.txt (round-20 tool 9613f510…, measured_commit 28c6837, inside round 20, which was rejected-harmed). The only independent authority is round-19-verifier-spotcheck.md:65, which says r13-root:4 is found by HelperFn rule B alone. Nothing independent establishes 'observed' for the other ten rows. The r19 frozen README states that the baseline 'does not prove the tool classifies the original incident correctly'.",
+        "The 'observed6/6 assertion' is r22-authored. No r19 artifact asserts observed 6. r19 asserted detected=6/score 10.0 with no tier, and the r19 lane report (:100-101) self-disclosed '5/6 without the HelperFn rule-B lead'. Calling a constructed observed=6 claim the 'actual r19 receipt red' repeats the manufactured-baseline pattern that the r21 registration clarification explicitly refused."
+      ],
+      "evidence": [
+        ".ufo/waves/round-19/evidence/final/tw-recall-after.txt sha256 8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1 (tool 367be947…, measured 7b4839d)",
+        ".ufo/waves/round-19/evidence/final/tripwire-frozen-scan-classes.txt sha256 64648ccad1f2c872d62026f530ee535624b03268e454ffd1ab8437ab2d0cf857: 11 rows, keys {argv0,class,command,file,line,rule,timestamp,tool,tool_call_id}, all five files eval_unparsed 0 / unparsed_spawns 0",
+        ".ufo/waves/round-20/evidence/recall-split-final.txt sha256 5165b72878feec8c67e20a0ab079db0aaaea358258b8a62fbb965dd91a6df0a2: totals detected_observed 5 / detected_lead 1; finding_totals observed 10 / lead 1",
+        "Read-only artifact join by this seat (JSON parse of the two committed receipts; no detector): r19 (file,line,class,rule) multiset == r20 multiset, 11 == 11, the single lead is (r13-root.jsonl, 4, package_query, pacman:-Q)",
+        ".ufo/waves/round-19/frozen/expected.json sha256 50d2a45e…: 11 expected_findings, no evidence tier",
+        "corpus/lessons/round-19-verifier-spotcheck.md:65",
+        ".ufo/waves/round-21/registration.md:20 (refusal to manufacture a permissive baseline)",
+        ".ufo/waves/round-22/w1/audit-proposals/AuditMissingEvidence.json expected code 2"
+      ],
+      "impacted_axes": ["calibration (C2)", "trend: discernment"],
+      "smallest_safe_correction": "Before seal, append-only registration clarification replacing the single 'faithful red / 5+1 green' target with three explicitly provenanced fixtures. (a) Raw r19 scan snapshot, bytes unchanged; expect code 2 evidence_audit_input_invalid (the honest verdict on the actual artifact). (b) Translated snapshot: the r19 scan rows plus an evidence key joined 1:1 from round-20 recall-split-final by (file,line,class,rule). Translation provenance names both digests, the r20 tool digest and the r19 verifier :65 as the independent lead authority. The claim mirrors r19 tw-recall's detected-as-observed reading at row level (total 11, observed 11, lead 0, errors 0, clean false); expect code 1 [observed_count_mismatch, lead_count_mismatch]. (c) Same translated snapshot with claim 11/10/1/0/false; expect code 0. Use row-level wording '10 observed + 1 lead over 11 rows (5 observed + 1 lead incident lines)'. Never call (b)'s claim an r19 assertion."
+    },
+    {
+      "id": "CR3",
+      "severity": "medium",
+      "class": "contract cannot express declared requirement",
+      "claim_attacked": "registration.md:7 'explicit unknown/error totals' vs audit-contract snapshot.files 'nonnegative exact ints'",
+      "counterexample": "The contract has no representation for an unknown error count. Any receipt lacking per-file counters (for example r19 tw-recall-after.txt) either becomes input-invalid or needs invented zeros. Invented zeros would make an uncertainty-bearing population look error-free, which is the exact error C2 targets. The W1 proposals also disagree on the expected.code type: AuditNoFiles uses integer 2, while AuditLeadInflated and AuditMissingEvidence use strings ('1'/'2'), and the contract says '0|1|2'.",
+      "evidence": [".ufo/waves/round-22/audit-contract.json:6", ".ufo/waves/round-22/w1/audit-proposals/AuditNoFiles.json", ".ufo/waves/round-22/w1/audit-proposals/AuditLeadInflated.json"],
+      "impacted_axes": ["calibration (C2)"],
+      "smallest_safe_correction": "State in the sealed manifest that missing counters are input-invalid (code 2), never zero-filled. The translation for CR2(b) uses the r19 scan receipt's own counters, never tw-recall. Normalize expected.code to one type in assemble.py, and record the normalization as a rejection reason rather than a silent cast."
+    },
+    {
+      "id": "CR4",
+      "severity": "high",
+      "class": "hidden regression / incomplete no-harm guard",
+      "claim_attacked": "registration.md:5 'entire committed1356-fixture removal/error comparison as no-harm guards'; SCORECARD r22 'no new true finding loss/error flip'",
+      "counterexample": [
+        "Additions are outside the registered guard. F2 is a fabricated observed row, which shows up as an addition. r19's rejection was an added false positive (frozenset rule B). A repair that adds fabricated observed rows elsewhere in the 1356 corpus passes a removal/error-only guard. Inherited debt: r21's 104 added/relabelled groups never received individual semantic no-harm judgments (residual/dispositions.json FinalRemovalReview.addition_side).",
+        "Unparsed counters are not compared. compare.py:104-108 diffs finding keys only; stats (eval_unparsed/unparsed_spawns) are ignored. The registered F2 remedy ('lead/unparsed uncertainty') therefore appears only as a removed row, and a silent unparsed-to-clean or clean-to-unparsed change with no row change is invisible.",
+        "Pairs where both sides error are skipped. compare.py:101-103 continues past any file where either side errors, so the 108 inherited error pairs carry no row comparison. Because the exit is int(bool(errors)), the raw exit is always 1 and cannot signal no-harm.",
+        "The baseline is undeclared. The registration does not name the before-tool. Comparing against a6cef89 (r21, harmed) inherits r21's unadjudicated additions. Comparing against r21's tool-before.py (pre-r21) re-tests r21's removals. Either choice alone hides one side."
+      ],
+      "evidence": [".ufo/waves/round-21/corpus/compare.py:58-59,96-114", ".ufo/waves/round-21/residual/dispositions.json reviews.FinalRemovalReview.addition_side", ".ufo/waves/round-21/final-summary.json corpus.{error_pairs:108,added_or_relabelled_groups:104}", "corpus/lessons/round-19-verifier-spotcheck.md:9,81"],
+      "impacted_axes": ["operability (C1)", "trend: quality"],
+      "smallest_safe_correction": "Before seal, declare both baselines (a6cef89 tool and the r21 tool-before.py) and the exact comparator digest. Extend the no-harm criterion to every added observed group, with a semantic disposition by a reviewer who is not the C1 author. Report per-file eval_unparsed/unparsed_spawns deltas next to row deltas (an existing artifact field, no new tool semantics). Keep both-error pairs listed with their error strings unchanged."
+    },
+    {
+      "id": "CR5",
+      "severity": "medium",
+      "class": "hidden regression (resource)",
+      "claim_attacked": "registration.md:10 'Existing resource population remains exactly round21's 1000/2000/4000 assignment recipes'",
+      "counterexample": "The F1 remedy (FinalBindingReview check 1: 'Snapshot factory-call bindings at closure creation') reintroduces per-call retained environments, the mechanism behind r20's retained-memory harm. The registered resource population is shallow assignment-only cells (r21 registration.md:7). It contains no factory call, closure or thread, so it cannot exercise the new retention. A green run on the frozen recipes is therefore no evidence of resource no-harm for the repair.",
+      "evidence": [".ufo/waves/round-21/registration.md:7", ".ufo/waves/round-21/residual/FinalBindingReview.md:157", "LOG.md:1369-1370 (~N^4 helper expansion, r20)"],
+      "impacted_axes": ["operability (C1)"],
+      "smallest_safe_correction": "Keep the frozen recipes unchanged. Add one separately labelled recipe before implementation: N factory calls each returning a closure, followed by N invocations at 1000/2000/4000, under the same 384 MiB / 15 s / one-child caps. Label it an addition, not a denominator swap."
+    },
+    {
+      "id": "CR6",
+      "severity": "medium",
+      "class": "denominator control / premature saturation",
+      "claim_attacked": "registration.md:5 'all eligible frozen expectations match'; 'A new counterexample to the declared supported forms ... defeats admission'",
+      "counterexample": "Neither 'eligible' nor 'declared supported forms' is enumerated in the registration or the contract. That leaves the author free to exclude a falsifying proposal as ineligible, or a W2 counterexample as unsupported, after the fact. The F2 truth admits two outputs ('unparsed or lead', FinalBindingReview.md:58,82), so an unfrozen choice lets either result pass. The oracle35+17 guard cannot detect F1–F3 by construction (FinalBindingReview.md:150), so its green is no-harm only, never C1 evidence.",
+      "evidence": [".ufo/waves/round-22/registration.md:5,10", ".ufo/waves/round-21/residual/FinalBindingReview.md:58,82,150"],
+      "impacted_axes": ["operability (C1)", "trend: discernment"],
+      "smallest_safe_correction": "Seal, before any implementation: a written eligibility rule applied to every proposal with a per-proposal reason; an enumerated supported-form list (the F1–F5 shapes plus each admitted variant); and an exact allowed-output set per fixture (for F2: no observed row; rows allowed only with evidence lead, or eval_unparsed/unparsed_spawns >= 1). Do not cite oracle35+17 as repair evidence."
+    },
+    {
+      "id": "CR7",
+      "severity": "high",
+      "class": "author-lane self-closure risk",
+      "claim_attacked": "registration.md:10 'Actual outside-lane falsification of both admits and rejects is REQUIRED ... Main owns closure and streak disposition'",
+      "counterexample": "The requirement has no operational definition. W2 seats are dispatched by MadoR22 and are author-lane advisers by the registration's own rule. 'Main' is also the party that issued r21's parent ruling (dispositions.json parent_ruling) and, by registration.md:3's wording, is the channel of the claimed authorization. One party would then authorize the recovery, own its closure and dispose of its streak. The r21 precedent separated these: CloseMado21 was an orchestrator-dispatched non-author closure seat that re-ran fixtures in a scratch clone (MANIFEST rounds[400].verification).",
+      "evidence": [".ufo/waves/round-21/residual/dispositions.json parent_ruling", "/home/vgpnk/Projects/shokunin/MANIFEST.json rounds[400].verification", "/home/vgpnk/Projects/shokunin/MANIFEST.json rounds[387].verification ('Main (non-author integrator)')"],
+      "impacted_axes": ["process: streak/closure integrity", "trend: discernment"],
+      "smallest_safe_correction": "Append-only clarification before seal. The closure is a non-author seat dispatched by the orchestrator, with no membership in r22 W1/W2 and separate from whoever recorded the authorization. Its minimum re-run set, in a scratch clone: the six FinalBindingReview fixtures plus sealed variants, both comparator baselines with added-group dispositions, the resource addition, and the C2 CR2 fixture triple with the C1 intervention/mutant receipts. 'Falsification of rejects' means re-examining every excluded or ineligible proposal and every retained red output for a wrong exclusion."
+    },
+    {
+      "id": "CR8",
+      "severity": "low",
+      "class": "wording drift",
+      "claim_attacked": "registration.md:3 'Prior r19/r20 rejected and r21 rejected-harmed'; registration.md:7 'lowest measured non-retired axis'",
+      "counterexample": "MANIFEST records r19 and r20 as verdict 'rejected-harmed' (rounds[367], rounds[387]), not plain 'rejected'. The 'lowest axis' selection names no current numeric score or measured commit. r21's C2 was a capability without a number, and SCORECARD:1263 last cites calibration 7.1429.",
+      "evidence": ["/home/vgpnk/Projects/shokunin/MANIFEST.json rounds[367],[387]", "SCORECARD.md:1263,1440,1482"],
+      "impacted_axes": ["calibration (C2)"],
+      "smallest_safe_correction": "Use the MANIFEST verdict strings, and cite the counting row and commit that make calibration the lowest non-retired axis."
+    }
+  ],
+  "held_up": [
+    "The registration precedes implementation: a963ce6 adds only registration, contract, w1-spec and SCORECARD; there are no tools/ or round-21 changes since base 741122d; tripwire bytes are 46c82902 (= r21 final).",
+    "The registration preserves r21 C1=harmed and the 166/175 and 172/175 history. It claims no criterion-count credit and does not retroactively admit r19 C3 precision.",
+    "C2's causal-separation requirements (no C1 import/read, intervention equality, real mutant kill) mirror the demonstrated r21 method."
+  ],
+  "tradeoffs_for_canonical_judge": [
+    "C2's scope ('arithmetic/evidence-tier disclosure only') is honest, but its marquee historical demonstration depends on round-20 detector labels. Even with the CR2 correction, the green fixture certifies label/count consistency of a translation, not r19 truth. The judge should weigh it as capability, not historical repair."
+  ],
+  "unknowns": [
+    "Whether an operator authorization for r22 exists out of band (no committed pointer found).",
+    "Who wrote 'rejected-harmed' into outcome/mado-r21 (not closure_count; writer unidentified).",
+    "registration/contract sha256 values are taken from audit-authority.json and were not independently recomputed by this seat."
+  ],
+  "verification_performed": "Read-only file reads and JSON parsing of committed receipts; one read-only artifact join of two committed receipts. No detector, comparator, harness, payload, build or test was run.",
+  "tools_installed": "none"
+}

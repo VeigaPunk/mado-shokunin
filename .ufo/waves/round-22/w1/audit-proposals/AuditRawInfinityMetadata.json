@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawInfinityMetadata",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"scan_seconds\":-Infinity,\"findings\":[],\"files\":[{\"eval_unparsed\":0,\"unparsed_spawns\":0}]}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "The only defect is the token -Infinity in an ignored extra-metadata key. Every normative field is a valid clean receipt. -Infinity is not a strict JSON token, so the bytes are malformed JSON. The clarifications also say JSON numbers must be finite and malformed JSON gives 2. Being ignored as metadata does not make invalid JSON acceptable. This kills a mutant that checks finiteness only on counters and otherwise returns 0/evidence_audit_clean."
+}

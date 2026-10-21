@@ -1,0 +1,27 @@
+{
+  "id": "AuditUnknownClean",
+  "snapshot": {
+    "findings": [],
+    "files": [
+      {
+        "path": "pkg/handler.py",
+        "eval_unparsed": 1,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 0,
+    "observed": 0,
+    "lead": 0,
+    "errors": 1,
+    "clean": true
+  },
+  "expected": {
+    "code": "1",
+    "finding_ids": [
+      "uncertain_scan_claimed_clean"
+    ]
+  },
+  "rationale": "Authored independently from audit-contract.json alone; no candidate code read or executed and no measurement taken. The snapshot is well-formed input, not invalid: findings may legitimately be empty, the files list is nonempty with one member, and both counters are nonnegative exact ints (eval_unparsed 1, unparsed_spawns 0), so no rule routes this bundle to could-not-evaluate. Actual arithmetic: findings rows give total 0, observed 0, lead 0; the error sum over every file's eval_unparsed and unparsed_spawns counters is 1+0 = 1. The claim reproduces each count exactly (total 0, observed 0, lead 0, errors 1), so finding_count_mismatch, observed_count_mismatch, lead_count_mismatch and error_count_mismatch all stay silent, and findings_claimed_clean cannot apply because the findings list is genuinely empty. The sole contradiction is claim.clean == true while the error total is nonzero: the contract rule 'clean:true only if findings empty and errors zero' forbids certifying an error-bearing scan as clean even when the errors are honestly disclosed in the claim. Expected verdict is therefore 1 (artifact assertion contradicted) with exactly the single finding ID uncertain_scan_claimed_clean: the scan recorded one unparsed eval (residual unknown) yet asserted clean. This fixture pins the disclosure gap an auditor must not miss — gating clean solely on findings emptiness, or checking clean before summing the error counters, would wrongly return 0/evidence_audit_clean here. Declaring errors:0 instead would have added error_count_mismatch; honest errors:1 isolates the clean-flag rule as the only violation."
+}

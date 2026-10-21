@@ -1,0 +1,22 @@
+{
+  "id": "ThreadReuseName",
+  "cells": [
+    "import subprocess\nimport threading\n\ndef run_install(argv):\n    subprocess.run(argv)\n\ndef run_query(argv):\n    subprocess.run(argv)\n\ntarget = run_install\nt1 = threading.Thread(target=target, args=([\"pacman\", \"-S\", \"r22-reuse-a\"],))\ntarget = run_query\nt2 = threading.Thread(target=target, args=([\"pacman\", \"-Q\", \"r22-reuse-b\"],))\nt1.start()\nt2.start()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-reuse-a",
+      "evidence": "observed"
+    },
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-reuse-b",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 static semantics: threading.Thread.__init__ evaluates its arguments at the construction call site and stores target/args/kwargs by reference on the instance (Lib/threading.py:925-928); Thread.run invokes self._target(*self._args, **self._kwargs) (1023-1024); start() runs run() in the new thread (1082). The two constructions are distinct calls: at the t1 statement the local name target resolves to run_install, at the t2 statement it resolves to run_query; rebinding target between the constructions cannot alter either already-built instance. Therefore t1.start() reaches subprocess.run(['pacman', '-S', 'r22-reuse-a']) and t2.start() reaches subprocess.run(['pacman', '-Q', 'r22-reuse-b']); both argv are literal, so truth is exact. The two instances share only the variable name, never a binding: a detector that resolves target at .start() time, or that collapses the two scheduled bindings into one shared or module-global entry, would emit two identical r22-reuse-b package_query rows with the host_mutation row missing and must stay red. Uses only declared supported forms: module top-level defs as targets, literal argv tuples, stored Thread instances started via .start() (r21 FinalBindingReview: scheduled-binding .start maps to thread_start, Thread args/kwargs are evaluated at construction which is the correct timing, and a thread target handed on as a value is skipped by the refs sweep). The two rows are asserted as a set; they are listed in start order only.",
+  "source": "CPython v3.14.8 Lib/threading.py, official opened copy .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3, receipt.json, tag refs/tags/v3.14.8 peeled 8e6e75d9102e39bed2a2b279203a396741180f12): lines 925-928 _target/_args/_kwargs stored by reference in Thread.__init__; lines 1023-1024 Thread.run calls _target(*_args, **_kwargs); line 1082 start() schedules run() in the new thread. Supported-form provenance: .ufo/waves/round-21/residual/FinalBindingReview.md F4/.start mapping and construction-timing items."
+}

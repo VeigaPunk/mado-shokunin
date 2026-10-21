@@ -1,0 +1,137 @@
+{
+  "schema": "mado-round22-sentinel-resource-review-v1",
+  "id": "SentinelResources",
+  "scope": "Static source and artifact review of the proposed 384 MiB / 15 s scanner-probe boundary and the pinned 1,356-input comparator workload. No detector measurement, fixture execution, candidate import, build, or probe was performed.",
+  "axes": [
+    "hard resource isolation and process-tree cleanup",
+    "bounded comparator output and result provenance",
+    "fixed-population input integrity without recursive self-copy",
+    "global concurrency across seats"
+  ],
+  "summary": "The cap is not by itself a safe bound for the existing 1,356-input comparator. Its 384 MiB limit is per worker process; its 15 s SIGALRM is set after candidate-module import and reset for each file, while each of two sequential worker invocations has a 600 s direct-child timeout. Candidate-controlled stdout is captured without a byte limit and doubles as the result protocol. One child per seat also does not cap concurrent children across a wave. The current pinned corpus freezer does avoid recursive self-copy by enumerating a pinned Git commit and writing to a fresh staging directory; preserve that invariant.",
+  "findings": [
+    {
+      "id": "SR-1",
+      "severity": "High",
+      "title": "The 15-second comparator alarm is not a hard whole-run deadline",
+      "exploit_path": "[INFERENCE, not executed] The comparator imports the selected scanner before installing SIGALRM. Import-time code can therefore run outside the 15-second alarm; imported code can also replace/cancel the process-local handler before or during a scan. The alarm is restarted for each manifest row, so it is not a 15-second bound for a 1,356-row pass. The parent only supplies a 600-second timeout for each of the two sequential worker subprocesses, and no process-group cleanup is present in that launch path.",
+      "evidence": [
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py",
+          "lines": "38-55",
+          "observation": "RLIMIT_AS is set, then the candidate module is imported at lines 41-43; SIGALRM is installed only at line 44 and alarm(15) is set/reset around each scan_file call."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py",
+          "lines": "73-83",
+          "observation": "Before/after workers run sequentially via subprocess.run(timeout=600); the comparator does not start a new session or kill a process group."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w2/reports/CorpusRemoved.md",
+          "lines": "26-27",
+          "observation": "The prior static review independently records that candidate code can replace/cancel the in-process SIGALRM; it did not run a timeout-bypass probe."
+        }
+      ],
+      "impact": "An import or scan can consume substantially more than the advertised 15 seconds; descendants launched by candidate code are not shown to be killed with the direct worker. A timeout/error cannot be treated as proof that the process tree has stopped.",
+      "smallest_remediation": "Do not run a candidate in this proposal-only phase. For a later authorized run, enforce the wall deadline from a trusted parent and place the complete worker tree in a killable process group/cgroup; kill and reap the group on timeout rather than trusting candidate-process signal handlers."
+    },
+    {
+      "id": "SR-2",
+      "severity": "High",
+      "title": "Candidate stdout is both the result channel and an unbounded parent allocation",
+      "exploit_path": "[INFERENCE, not executed] The worker imports candidate code and emits its own JSON rows to stdout. The parent uses capture_output=True and parses the entire stdout into rows, then retains both complete runs. Candidate module code can write arbitrary bytes/JSON to the same pipe during import or scanning, forging the expected row stream or causing parent memory growth beyond the child's address-space limit.",
+      "evidence": [
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py",
+          "lines": "40-55",
+          "observation": "Candidate module import and worker protocol emission share stdout."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py",
+          "lines": "76-80, 95-113",
+          "observation": "The parent captures all stdout, parses all lines, and retains both run arrays before producing the comparison. No output-byte or row-size limit is applied."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/w2/reports/CorpusRemoved.md",
+          "lines": "13-21",
+          "observation": "Prior source-only review documents the same worker-stdout forgery path and post-run hash attribution weakness; no attack was executed."
+        }
+      ],
+      "impact": "The comparison can be forged without completing scans, and untrusted output can exhaust parent memory despite the 384 MiB worker limit. A well-formed row count does not prove scan completion or provenance.",
+      "smallest_remediation": "Separate candidate stdout from a trusted parent-owned result channel; stream and validate one manifest row at a time with strict per-row and total-output byte caps. Treat truncation, malformed output, or an uncompleted worker as an explicit error."
+    },
+    {
+      "id": "SR-3",
+      "severity": "Medium",
+      "title": "One-child-per-seat is not a wave-wide concurrency limit",
+      "exploit_path": "[INFERENCE, conditional] If each concurrently dispatched seat uses its one-child allowance, the per-seat rule permits 64 concurrent top-level children in this recorded wave and up to 100 at the configured wave maximum. Each child may address up to 384 MiB; this is up to 24 GiB or 37.5 GiB of aggregate per-process virtual-address-space allowance respectively, not a prediction of resident-memory use. Descendants are not counted by the per-seat rule.",
+      "evidence": [
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/registration.md",
+          "lines": "13",
+          "observation": "The proposed bound is one child at a time per seat, 384 MiB address space, 15 s. It does not define a global semaphore or total process-tree budget."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w1-run.json",
+          "lines": "4-19",
+          "observation": "The dispatch record reports 64 spawned seats and a 100-lane wave maximum. This is dispatch capacity evidence, not evidence that 64 scanner children ran."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py",
+          "lines": "73-80",
+          "observation": "A single comparator invocation runs its before/after workers sequentially, but that does not serialize separate seat invocations."
+        }
+      ],
+      "impact": "Simultaneous scans can multiply CPU, I/O, process count, and memory pressure. The stated per-seat cap does not establish safe aggregate host resource usage.",
+      "smallest_remediation": "Keep this wave source-only as specified. For a later authorized full-corpus comparison, admit at most one resource-heavy comparator globally at a time; if candidate code is in scope as untrusted, enforce aggregate memory and PID limits on its entire process tree in addition to the per-process RLIMIT_AS."
+    },
+    {
+      "id": "SR-4",
+      "severity": "Informational",
+      "title": "The pinned corpus freezer currently avoids recursive self-copy",
+      "exploit_path": "No self-copy exploit is identified in the existing frozen-corpus construction path. The freezer selects only regular .jsonl blobs from a pinned Git commit, rejects absolute, empty, dot, and parent path components, reads bytes from that commit, stages a new snapshot, refuses to overwrite an existing snapshot, and publishes by rename. The comparator iterates the pinned manifest instead of recursively walking its output directory.",
+      "evidence": [
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/freeze_corpus.py",
+          "lines": "18-21, 49-75",
+          "observation": "The base commit is fixed; enumeration is from Git tree blobs with regular-file mode and traversal checks."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/freeze_corpus.py",
+          "lines": "110-142, 185-191",
+          "observation": "Existing snapshot output is refused; bytes are staged from git show and published by rename."
+        },
+        {
+          "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/snapshot/manifest.json",
+          "lines": "1-3",
+          "observation": "The pinned manifest declares 1,356 inputs. The prior corpus review reports 1,356 distinct path strings."
+        }
+      ],
+      "impact": "The present recipe does not recursively absorb its own generated snapshot. Replacing it with a recursive working-tree copy/walk, or placing generated output under an enumerated source root, would reintroduce self-ingestion and workload growth.",
+      "smallest_remediation": "Preserve the pinned-commit manifest and fresh-stage approach; do not enumerate or copy the current output tree into itself. Keep snapshot generation separate from any future comparison output."
+    }
+  ],
+  "scanner_recursion_note": {
+    "evidence": [
+      {
+        "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+        "lines": "2164-2170, 2233-2235",
+        "observation": "Helper following has a same-function recursion guard, depth limit 4, and per-cell descent budget 2,000; shell classification also has an explicit depth guard at lines 1084-1087."
+      }
+    ],
+    "limit": "These source-level traversal guards do not sandbox candidate-module import, bound stdout, prevent operating-system child creation, or replace an external process-tree deadline."
+  },
+  "unknowns": [
+    "No round-22 candidate scanner bytes or proposed round-22 comparator implementation were measured or executed.",
+    "No detector probe, fixture payload, build, test, lint, or smoke run was performed.",
+    "The actual number of scanner children launched by any wave seat is unobserved; the lane counts above describe dispatch capacity only.",
+    "No process-tree memory/PID accounting was performed, and no aggregate resident-memory result is claimed."
+  ],
+  "actions_taken": {
+    "production_edits": false,
+    "probes_or_payload_execution": false,
+    "child_processes_spawned": false,
+    "tools_installed_or_updated": false
+  },
+  "report": ".ufo/waves/round-22/w1/reports/SentinelResources.md"
+}

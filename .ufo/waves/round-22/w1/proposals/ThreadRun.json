@@ -1,0 +1,17 @@
+{
+  "id": "ThreadRun",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker(cmd):\n    subprocess.run(cmd)\n\n\nargv = [\"pacman\", \"-S\", \"r22-thread-run\"]\nt = threading.Thread(target=worker, args=(argv,))\nt.run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-thread-run",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 semantics: Thread.__init__ binds self._target=worker, self._args=(argv,), self._kwargs={} at construction (threading.py:925-928). t.run() is a plain method call on the stored object; Thread.run invokes self._target(*self._args, **self._kwargs) synchronously in the calling thread (threading.py:1023-1024), with no start() and no new thread. argv is a module-scope literal list bound before construction and never rebound, so worker executes subprocess.run([\"pacman\",\"-S\",\"r22-thread-run\"]) with a fully determined argv. Serialized with shlex.join: 'pacman -S r22-thread-run'. A scanner that follows calls to statically known callables therefore owes exactly one observed host_mutation row and zero unparsed counters. The r21 F4 miss (only .start on a scheduled binding was followed; .run fell through to unresolved and emitted nothing) must not recur; silent absence fails this exact expectation.",
+  "source": "/usr/lib/python3.14/threading.py (CPython 3.14.8, installed): lines 925-928 constructor binds _target/_args/_kwargs; lines 1013-1024 run() 'invokes the callable object passed to the object's constructor as the target argument' via self._target(*self._args, **self._kwargs) in the caller's thread. Defect repaired per .ufo/waves/round-21/residual/FinalBindingReview.md F4 (thread-run-direct fixture, sha256 1cc1188d...)."
+}

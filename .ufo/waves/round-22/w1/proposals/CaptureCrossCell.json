@@ -1,0 +1,22 @@
+{
+  "id": "CaptureCrossCell",
+  "cells": [
+    "import subprocess\n\nspec = [\"pacman\", \"-S\", \"r22-crosscell-exact\"]\n\ndef factory(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\nworker = factory(spec)\n",
+    "spec = [\"pacman\", \"-Q\", \"r22-crosscell-decoy\"]\nworker()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-crosscell-exact",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-crosscell-decoy",
+    "pacman -S r22-crosscell-decoy",
+    "pacman -Q r22-crosscell-exact"
+  ],
+  "rationale": "Python 3.14 semantics, static reasoning only (no execution, no measurement). Cell 1: `factory(spec)` binds the parameter `argv` to the list object [\"pacman\",\"-S\",\"r22-crosscell-exact\"] at the factory call; the returned closure `run` captures that parameter cell, not the caller-side name `spec`. Eval cells share one persistent namespace, so `worker`, `spec`, and the `subprocess` import all remain bound into cell 2. Cell 2 first executes `spec = [\"pacman\",\"-Q\",\"r22-crosscell-decoy\"]`, a rebinding of the module global to a new list object; rebinding a name never mutates the previously bound object, so the closure's captured `argv` is untouched. `worker()` then runs `subprocess.run([\"pacman\",\"-S\",\"r22-crosscell-exact\"])` exactly once. Exact truth: one host_mutation finding, command `pacman -S r22-crosscell-exact` (shlex.join of the argv tokens), evidence observed, and zero unparsed. Any observed row built from the decoy list or from recombined tokens demonstrates invoke-time rebinding of factory arguments (the r21 F1 defect projected across cells) or fabricated literals, not Python behavior.",
+  "source": "Independent static-truth specification. Mechanism and cross-cell reach: .ufo/waves/round-21/residual/FinalBindingReview.md F1 (factory arguments bind at factory-call time in Python; the review's reach note states per-file envs/binding_envs persist across eval cells at scan_file 2643-2644 and 2685-2686, so a factory created in one cell and invoked in a later cell hits the same defect class). Semantics authority: CPython 3.14 closure cell capture and name rebinding. Class mapping follows the r21 probe convention: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

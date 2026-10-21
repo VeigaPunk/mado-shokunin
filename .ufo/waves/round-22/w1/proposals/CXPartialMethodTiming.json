@@ -1,0 +1,15 @@
+{
+  "id": "CXPartialMethodTiming",
+  "cells": [
+    "import functools\nimport subprocess\n\n\ndef worker(self, argv):\n    subprocess.run(argv)\n\n\nargv = [\"pacman\", \"-S\", \"r22-cxpm\"]\n\n\nclass C:\n    run = functools.partialmethod(worker, argv)\n\n\nargv = [\"pacman\", \"-Q\", \"r22-cxpm-late\"]\nC().run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cxpm", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cxpm-late"
+  ],
+  "rationale": "Classification: definite execution, no exception. Python 3.14 static reasoning; no execution. The class suite executes when the `class C:` statement runs. `functools.partialmethod(worker, argv)` evaluates `argv` there. In the class body, `argv` resolves to the module global, then bound to the -S list, and `_partial_new` stores `self.args = (that list,)`. The later `argv = [... -Q ...]` binds a new list object to the module name and does not mutate the stored one. `C().run` invokes `partialmethod.__get__`. `worker` is a function with `__get__`, which returns a new bound method, so the result is `partial(bound_worker, *self.args)`. Calling it runs `worker(instance, [\"pacman\", \"-S\", \"r22-cxpm\"])`, which reaches `subprocess.run` with that argv. Exactly one observed host_mutation row, zero unparsed. This attacks partialmethod fixed arguments kept as AST and evaluated in the method-call environment, the same class as F1. No round-22 seat name covers partialmethod timing; the frozen round-21 PartialMethod input has no fixed argument. Limits: this is exact static semantics for this text, not current-code behavior. If a repair cannot retain the class-definition environment, a lead without the -Q command fails exact and is a disclosed recall loss, not soundness.",
+  "source": "ConnLifetime.json V5 and invariant I1. Mechanism: tools/mado-tripwire.py sha256 46c82902...c8c1 class_method_info 1581-1591 returns fixed_nodes=descriptor.args[1:] as AST, merged at the call site at 2384-2388 and bound by follow_helper(skip_first) with the call-site cenv. Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-compound_stmts.rst (sha256 35e6dfbf2794d367774253655d95b6d5ef91ba63084685624144f2b3945e3e2f) line 1434 'The class's suite is then executed in a new execution frame'; host CPython 3.14.8 /usr/lib/python3.14/functools.py (sha256 9db56d38172c4c9e689b21cc58c8538008b09d86b682faf4dd193b529cdd79d5; read-only, not a frozen wave source) partialmethod uses _partial_new 313-357 (args stored at 353); partialmethod.__get__ 472-488 'result = partial(new_func, *self.args, **self.keywords)' 480. Class mapping: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

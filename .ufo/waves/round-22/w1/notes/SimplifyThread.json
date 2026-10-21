@@ -1,0 +1,148 @@
+{
+  "id": "SimplifyThread",
+  "seat": "MadoR22.SimplifyThread",
+  "wave": "round-22",
+  "method": "source-only; no production edits; no measurements; no payload execution",
+  "tool": {
+    "path": "tools/mado-tripwire.py",
+    "sha256": "46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+    "lines": 3282
+  },
+  "axes": [
+    "correctness (F4: Thread/Timer .run() synchronous invoke must follow like .start(); F5: no __mado_thread_target__ in source binding namespace)",
+    "authority count (one scheduled-invoke resolver vs callable_info thread_start + spawn_scan chained .start replay)",
+    "size (delete local_bindings copy, sentinel Name, duplicate start detection)",
+    "contract clarity (construction-time args/kwargs from scheduled binding; observed rows for followed worker bodies; refs skip unchanged)"
+  ],
+  "authorities_today": [
+    {
+      "name": "scheduled_binding",
+      "site": "assignment_binding Thread/Timer",
+      "lines": "1719-1730",
+      "fields": "target, args, kwargs literal-folded at construction statement"
+    },
+    {
+      "name": "thread_start_callable_info",
+      "site": "callable_info Attribute on scheduled",
+      "lines": "1666-1667",
+      "scope": ".start only; .run unresolved"
+    },
+    {
+      "name": "thread_start_spawn_chained",
+      "site": "spawn_scan Attribute.start on Call",
+      "lines": "2294-2297",
+      "scope": "Thread(...).start() when callable_info missed scheduled"
+    },
+    {
+      "name": "thread_start_body",
+      "site": "spawn_scan kind thread_start",
+      "lines": "2298-2311",
+      "defect": "injects __mado_thread_target__ into copied bindings (F5)"
+    },
+    {
+      "name": "refs_thread_constructor_skip",
+      "site": "spawn_scan refs loop",
+      "lines": "2551-2553",
+      "scope": "target passed to Thread(...) not swept; start/run path owns follow"
+    }
+  ],
+  "design": {
+    "name": "scheduled_invoke_unified",
+    "rule": "Every .start() or .run() on a threading.Thread or threading.Timer binding (Name or inline constructor Call) resolves through one helper. The worker is invoked via follow_helper with construction-time literal args/kwargs from the scheduled record—never via a bindings-map sentinel. Synthetic func nodes carry mado_resolved only; callable_info returns it before any Name lookup.",
+    "types": {
+      "ScheduledInvoke": {
+        "scheduled": "existing scheduled dict from assignment_binding or binding map",
+        "sync": "true for .run(), false for .start() (reserved for evidence policy; both keep today's observed follow for sync worker defs)"
+      },
+      "mado_resolved": "callable_info dict for target; set on ephemeral ast.Name or ast.Attribute stub, never stored in bindings"
+    },
+    "resolve_scheduled_invoke": {
+      "site": "spawn_scan loop head (replaces 2294-2311 and retires callable_info 1666-1667 thread_start)",
+      "logic": [
+        "Require call.func Attribute with attr in (start, run)",
+        "If func.value is Name: binding must be kind scheduled",
+        "If func.value is Call: assignment_binding(..., cenv) must be kind scheduled",
+        "Return ScheduledInvoke(scheduled=bound, sync=(attr == run))"
+      ]
+    },
+    "emit_scheduled_invoke": {
+      "site": "same module as follow_helper (new small function)",
+      "logic": [
+        "target_info = scheduled.target; helper = target_info.node when kind helper",
+        "If args/kwargs not literal-ready: unparsed += 1 (same guard as 2303-2310)",
+        "Build bound_node = Call(func=stub, args=literal_nodes..., keywords=...); stub.mado_resolved = target_info",
+        "follow_helper(helper, bound_node, cenv, cbindings, ctx, depth, ...) — no local_bindings copy",
+        "If follow_helper returns None: sweep_body on helper (same as helper branch 2396-2398)",
+        "Do not downgrade to lead solely because sync=false (preserves AtkCallbackGlobal / frozen .start() behavior)"
+      ]
+    },
+    "callable_info_guard": {
+      "lines": "1603 first lines of callable_info",
+      "logic": "if getattr(node, mado_resolved, None) is not None: return that dict"
+    }
+  },
+  "deletions": [
+    {
+      "target": "bindings map injection __mado_thread_target__",
+      "lines": "2299-2300",
+      "condition": "emit_scheduled_invoke uses mado_resolved stub only",
+      "semantic_caller_proof": "grep: __mado_thread_target__ only tripwire 2300, 2304 and r21 hygiene fixture; LSP unavailable"
+    },
+    {
+      "target": "ast.Name(id=__mado_thread_target__)",
+      "lines": "2304-2308 nested spawn_scan",
+      "condition": "follow_helper direct call with mado_resolved stub",
+      "semantic_caller_proof": "same"
+    },
+    {
+      "target": "kind thread_start in callable_info",
+      "lines": "1666-1667",
+      "condition": "resolve_scheduled_invoke is sole entry",
+      "semantic_caller_proof": "grep thread_start: only 1667, 2297, 2298 in tools/mado-tripwire.py"
+    },
+    {
+      "target": "spawn_scan chained .start reassignment",
+      "lines": "2294-2297",
+      "condition": "folded into resolve_scheduled_invoke",
+      "semantic_caller_proof": "same"
+    },
+    {
+      "target": "thread_start branch continue block",
+      "lines": "2298-2311",
+      "lines_approx": 14,
+      "condition": "replaced by emit_scheduled_invoke (~8 lines call site + ~15 lines helper)",
+      "semantic_caller_proof": "same"
+    }
+  ],
+  "deletion_candidates": [
+    {
+      "target": "separate kind scheduled_invoke string",
+      "tradeoff": "Could reuse kind helper with flag; prefer explicit kind for spawn_scan clarity until refs loop documents owner"
+    }
+  ],
+  "preserved_contract": [
+    "scheduled binding creation and literal args/kwargs at Thread/Timer construction (1719-1730)",
+    "refs skip for Thread/Timer constructor target argument (2551-2553); extend comment to .run owner",
+    "follow_helper + sweep_body fallback for unbound worker (2228-2271, 2396-2398)",
+    "observed vs lead for followed helper bodies (docstring 38-41); no new lead downgrade on .start()",
+    "Timer shares Thread scheduled shape (1719-1726); .run() on Timer included in attr set",
+    "Orthogonal to SimplifyCapture ClosureFrame (factory closures); no overlap on capture_owner path",
+    "C1 registration: F4 thread-run-direct expects observed host_mutation; F5 hygiene expects observed not lead when global name is innocent"
+  ],
+  "maps_to_r21_findings": {
+    "F4": ".run() uses same emit_scheduled_invoke as .start(); follow_helper observes worker subprocess.run(argv)",
+    "F5": "Target never enters bindings; worker body resolves __mado_thread_target__ global, not injected shadow"
+  },
+  "collision_freedom": {
+    "mechanism": "mado_resolved on ephemeral AST stub consulted before bindings.get in callable_info",
+    "no_source_identifier": "Stub Name id may be invalid/non-identifier (e.g. empty or internal); never looked up because guard runs first",
+    "contrast_rejected": "Map key __mado_thread_target__ collides with legal module-level binding (F5 probe)"
+  },
+  "verification_status": "design only; author lane must re-run FinalBindingReview thread-run-direct, thread-key-hygiene/control + frozen replay",
+  "tools_installed": [],
+  "unknowns": [
+    "Inherited Thread subclass .run override (docstring 73-74: inherited methods not resolved) — unchanged",
+    "scheduled binding on non-Name receiver (e.g. getattr result) — still unresolved; no expansion claimed",
+    "Semantic deletion proof pending LSP references when available"
+  ]
+}

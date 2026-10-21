@@ -1,0 +1,17 @@
+{
+  "id": "TimerRun",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker(argv):\n    subprocess.run(argv)\n\n\nargv = [\"pacman\", \"-S\", \"r22-timer-run\"]\nt = threading.Timer(1, worker, args=(argv,))\nt.run()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-timer-run",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14 semantics, static only, nothing executed. threading.Timer(interval, function, args, kwargs) binds self.function=worker, self.args=(argv,), self.kwargs={} at construction (threading.py:1370-1376) and creates self.finished=Event() unset. t.run() is an ordinary method call on the stored object; Timer.run executes self.finished.wait(self.interval) and then, because finished is still unset, self.function(*self.args, **self.kwargs) synchronously in the calling thread (threading.py:1382-1386). No new thread is ever created because start() is never called, and finished can never be set because t has no other reference and cancel() (the only pre-run setter, threading.py:1378-1380) is unreachable; the interval length does not change which call is made. argv is a module-scope literal list bound before construction and never rebound, so the single statically determined effect is subprocess.run([\"pacman\",\"-S\",\"r22-timer-run\"]) in the caller, serialized by shlex.join as 'pacman -S r22-timer-run' -> one observed host_mutation row, zero eval_unparsed/unparsed_spawns. This is the r21 F4 defect on the Timer sibling: .run on a scheduled binding was never followed (silent miss, zero rows, zero unparsed); the FinalBindingReview states Timer.run() shares the .run path by source.",
+  "source": "/usr/lib/python3.14/threading.py (CPython 3.14.8, installed, read-only): line 1361 class Timer(Thread); lines 1370-1376 __init__ binds interval/function/args/kwargs and creates finished Event; lines 1378-1380 cancel() sets finished; lines 1382-1386 run() waits on finished then calls self.function(*self.args, **self.kwargs) in the caller's thread. Defect under test: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F4 ('a scheduled Thread.run() (and Timer.run()) is never followed', 'Timer.run() shares the path by source'; thread-run-direct fixture sha256 1cc1188d...) and contract note 't.run() calls the target synchronously in the caller'. Class convention: pacman -S -> host_mutation, literal argv -> observed."
+}

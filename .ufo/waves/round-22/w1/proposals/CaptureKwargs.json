@@ -1,0 +1,19 @@
+{
+  "id": "CaptureKwargs",
+  "cells": [
+    "import subprocess\ndef make(**kw):\n    def run():\n        subprocess.run(kw[\"argv\"])\n    return run\nspec = {\"argv\": [\"pacman\", \"-S\", \"r22-kwargs-a\"]}\nrunner = make(**spec)\nspec = {\"argv\": [\"pacman\", \"-Q\", \"r22-kwargs-b\"]}\nrunner()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-kwargs-a",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-kwargs-b"
+  ],
+  "rationale": "Python 3.14: a '**identifier' parameter is initialized per call to 'a new ordered mapping receiving any excess keyword arguments' (compound_stmts.rst function-definition section). make(**spec) executes while spec names the first dict literal, so the closure's cell kw holds {\"argv\": [\"pacman\",\"-S\",\"r22-kwargs-a\"]} and that list object forever; the later rebind spec = {...-b} cannot reach the closed-over mapping. runner() therefore calls subprocess.run([\"pacman\",\"-S\",\"r22-kwargs-a\"]) — exactly one observed host_mutation, serialized by shlex.join as 'pacman -S r22-kwargs-a'. The rebound mapping's argv 'pacman -Q r22-kwargs-b' must never appear as an observed row: reporting it means arguments were re-evaluated at invocation time (the F1 invoke-time lifetime defect applied to the **kwargs binding path). All parts are literal and the call binds cleanly, so no lead or unparsed row is required by Python semantics.",
+  "source": "Python 3.14.8 language reference, Doc/reference/compound_stmts.rst function definitions ('If the form \"**identifier\" is present, it is initialized to a new ordered mapping receiving any excess keyword arguments') — .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-compound_stmts.rst lines 1331-1334, sha256 35e6dfbf2794d367774253655d95b6d5ef91ba63084685624144f2b3945e3e2f; F1 invoke-time binding defect, .ufo/waves/round-21/residual/FinalBindingReview.md F1 (factory arguments bound at invocation time)"
+}

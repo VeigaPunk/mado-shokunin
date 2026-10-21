@@ -1,0 +1,15 @@
+{
+  "id": "CXReturnAfterDef",
+  "cells": [
+    "import subprocess\n\n\ndef make():\n    def run():\n        subprocess.run([\"pacman\", \"-S\", \"r22-cxafterdef-live\"])\n    return run\n    def run():\n        subprocess.run([\"pacman\", \"-Q\", \"r22-cxafterdef-dead\"])\n\n\nmake()()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cxafterdef-live", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cxafterdef-dead"
+  ],
+  "rationale": "Classification: definite execution, no exception. Python 3.14 static reasoning; no execution. A `def` statement is an executable binding. The first `def run` binds `run` to the -S function. `return run` then leaves the call to `make` with that object. The second `def run` comes after the return, never executes and never rebinds `run`, although it is legal syntax and `run` is a local of make either way. `make()()` calls the first `run`, which reaches `subprocess.run([\"pacman\", \"-S\", \"r22-cxafterdef-live\"])`. Exactly one observed host_mutation row, zero unparsed. This differs from CX5AfterReturn, which places an assignment `a = b` after the return. Here the dead binding is a second function definition with the same name, which defeats identity selection that maps names to the last top-level def in the factory body. Limits: this is exact static semantics for this text, not current-code behavior.",
+  "source": "ConnLifetime.json V9 and invariant I3. Mechanism: tools/mado-tripwire.py sha256 46c82902...c8c1 callable_info 1646-1647 builds `local` as a dict comprehension over all top-level defs, so the last same-named def wins. Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-simple_stmts.rst (sha256 d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc) line 496 'return leaves the current function call'; .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-compound_stmts.rst (sha256 35e6dfbf2794d367774253655d95b6d5ef91ba63084685624144f2b3945e3e2f) line 1253 'The function definition does not execute the function body'. Class mapping: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

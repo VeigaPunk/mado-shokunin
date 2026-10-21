@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawSymlinkFile",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "setup": {"snapshot_at": ["root/real.json"], "symlinks": [{"path": "root/link.json", "target": "real.json"}]},
+  "path_overrides": {"snapshot": "link.json"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "link.json is a relative symlink to real.json in the same ROOT directory. The target is a valid clean receipt, and the digest is correct for the bytes reached through the link. The contract says no symlink is accepted, and the clarifications reject every symlink component, even one that stays inside ROOT. So 2/evidence_audit_input_invalid. A mutant that only checks the resolved path is contained in ROOT returns 0/evidence_audit_clean."
+}

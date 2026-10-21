@@ -1,0 +1,20 @@
+{
+  "id": "CapturePartialFixed",
+  "cells": [
+    "import functools\nimport subprocess\n\n\ndef factory(cmd):\n    return functools.partial(subprocess.run, cmd)\n\n\nargv = [\"pacman\", \"-S\", \"r22-partialfixed-held\"]\nrunner = factory(argv)\nargv = [\"pacman\", \"-Q\", \"r22-partialfixed-decoy\"]\nrunner()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-partialfixed-held",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-partialfixed-decoy",
+    "pacman -S r22-partialfixed-decoy"
+  ],
+  "rationale": "Python 3.14 semantics, static reasoning only (no execution, no measurement). functools.partial(subprocess.run, cmd) evaluates and stores its fixed argument objects at partial-construction time. The call factory(argv) binds parameter cmd to the list object [\"pacman\",\"-S\",\"r22-partialfixed-held\"] that argv referenced at factory-call time, and the returned partial holds that same object in its stored args. The later module-level statement argv = [\"pacman\",\"-Q\",\"r22-partialfixed-decoy\"] is a rebinding of the name argv to a fresh list object; rebinding a name never mutates a previously bound object, so the partial's stored argv is untouched. runner() therefore invokes subprocess.run([\"pacman\",\"-S\",\"r22-partialfixed-held\"]), yielding exactly one statically determined finding: host_mutation 'pacman -S r22-partialfixed-held', observed, with zero unparsed. A detector that evaluates the factory-call argument or the partial's fixed argument in the invocation environment instead of the creation environment (the F1 invoke-time-binding defect, extended to partial fixed arguments) resolves argv to the rebound decoy list and fabricates an observed 'pacman -Q r22-partialfixed-decoy' row while missing the true host_mutation; that command is forbidden as observed. All argv tokens are inert markers inside a subprocess.run call that is never executed by the wave.",
+  "source": "Independent static-truth specification. Mechanism: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F1 (lines 70-77): 'Python binds the factory parameter to the object passed at creation. Rebinding `cmd` afterwards does not change the closure's cell'; same-class by-source note (line 75): 'a returned functools.partial evaluates its fixed arguments in the invocation env (1635-1638, 2384-2388)'. Semantics authority: Python 3.14 functools.partial stores positional and keyword arguments at construction and supplies them at call time; name rebinding does not mutate the bound object. Class mapping follows the r21 probe convention: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

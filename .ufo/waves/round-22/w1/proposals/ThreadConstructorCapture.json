@@ -1,0 +1,19 @@
+{
+  "id": "ThreadConstructorCapture",
+  "cells": [
+    "import subprocess\nimport threading\ndef worker(argv):\n    subprocess.run(argv)\ncmd = [\"pacman\", \"-S\", \"r22-ctor\"]\nt = threading.Thread(target=worker, args=(cmd,))\ncmd = [\"pacman\", \"-Q\", \"r22-ctor-late\"]\nt.start()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-ctor",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-ctor-late"
+  ],
+  "rationale": "Python 3.14.8 semantics, argued statically (cell never executed). (1) In the call `threading.Thread(target=worker, args=(cmd,))`, the argument expression `(cmd,)` is evaluated at construction time: it produces a tuple holding a reference to the exact list object `cmd` names at that moment, not a reference to the name. CPython v3.14.8 Lib/threading.py:925-928 stores `self._args = args` by reference in `Thread.__init__`. (2) `cmd = [\"pacman\", \"-Q\", \"r22-ctor-late\"]` is an assignment statement; per the language reference assignment (re)binds the name to a different object. It does not mutate the list captured inside the thread's args tuple, so `self._args` still points at `[\"pacman\", \"-S\", \"r22-ctor\"]`. (3) `t.start()` schedules the thread; `Thread.run` (Lib/threading.py:1023-1024) invokes `self._target(*self._args, **self._kwargs)`, i.e. `worker([\"pacman\", \"-S\", \"r22-ctor\"])`, so the only argv ever reaching `subprocess.run` is the construction-time list. Therefore exactly one finding exists: subprocess invocation of `pacman -S r22-ctor` with a statically known literal argv -> class host_mutation, evidence observed, command serialized as shlex.join([\"pacman\",\"-S\",\"r22-ctor\"]) = \"pacman -S r22-ctor\". The rebound decoy argv `pacman -Q r22-ctor-late` is never passed to any callable; any observed row naming it is a fabrication (invocation-time evaluation bug, the Thread analogue of residual F1). A scanner that evaluates Thread args at .start()/.run()-dispatch time or that re-resolves the name `cmd` at the scheduled-call site produces the wrong command and class; a scanner that drops the name resolution loses the row entirely. Zero unparsed is required because every argument in the cell is statically determined.",
+  "source": "Frozen pinning fetched by seat SourceThread: .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py = CPython Lib/threading.py @ tag v3.14.8 (peeled commit 8e6e75d9102e39bed2a2b279203a396741180f12, git blob c03b0b5370c933680bd04c8934d17dfa211bbf54, sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3; receipt.json). Lines cited: __init__ signature args=() :880-881; self._target/self._args/self._kwargs stored :925-928; run() calls self._target(*self._args, **self._kwargs) :1023-1024; start() path reaches run() :1082. Rebinding semantics: CPython 3.14.8 language reference, simple_stmts.rst 'Assignment statements are used to (re)bind names to values' (.ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-simple_stmts.rst :83-84). Prior defect context: .ufo/waves/round-21/residual/FinalBindingReview.md F1 (arguments bound at invocation time instead of binding time); its 'checked by source' note that Thread args/kwargs are evaluated at construction (tripwire :1719-1730) is the behavior this variant freezes as truth."
+}

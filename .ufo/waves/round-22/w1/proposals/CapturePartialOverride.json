@@ -1,0 +1,17 @@
+{
+  "id": "CapturePartialOverride",
+  "cells": [
+    "import functools\nimport subprocess\n\n\ndef worker(argv):\n    subprocess.run(argv)\n\n\ndef make():\n    return functools.partial(\n        worker, argv=[\"pacman\", \"-S\", \"r22-partial-fixed\"]\n    )\n\n\nrunner = make()\nrunner(argv=[\"pacman\", \"-Q\", \"r22-partial-override\"])\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-partial-override",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": ["pacman -S r22-partial-fixed"],
+  "rationale": "Python 3.14 semantics, no execution performed. functools.partial(worker, argv=fixed_list) stores argv=fixed_list in the partial's keywords dict at construction. The invocation runner(argv=override_list) calls partial.__call__, which computes keywords = {**self.keywords, **call_keywords}; the duplicate key argv takes the call-site value, so the effective call is worker(['pacman','-Q','r22-partial-override']) and the stored -S list is unreachable. This is a keyword-merge override, not an environment-timing question: the winning argument is a literal supplied at the invocation site, so the result holds regardless of whether a scanner snapshots the invocation environment or the construction environment. The single subprocess.run executes exactly once with a fully literal argv; there is precisely one statically determined finding, package_query 'pacman -Q r22-partial-override' (shlex.join of the literal list), evidence observed, and zero unparsed counters. Any observed row for 'pacman -S r22-partial-fixed' contradicts the override rule and is forbidden, whether it is emitted alone or alongside the true row.",
+  "source": "Python 3.14 docs, functools.partial: 'If additional keyword arguments are supplied, they extend and override keywords' (https://docs.python.org/3.14/library/functools.html#functools.partial). Pure-Python reference implementation /usr/lib/python3.14/functools.py line 392 (installed 3.14.8): partial.__call__ computes keywords = {**self.keywords, **keywords} then calls self.func(*pto_args, *args, **keywords), so a repeated keyword takes the invocation value. Defect class per /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F1 'same class, by source, not probed' note (line 75): 'A returned functools.partial evaluates its fixed arguments in the invocation env.'"
+}

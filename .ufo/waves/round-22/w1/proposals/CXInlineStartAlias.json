@@ -1,0 +1,13 @@
+{
+  "id": "CXInlineStartAlias",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef worker():\n    subprocess.run([\"pacman\", \"-S\", \"r22-cxinline-alias\"])\n\n\nstart = threading.Thread(target=worker).start\nstart()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cxinline-alias", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Classification: definite execution, no exception. Python 3.14 static reasoning; no execution. `threading.Thread(target=worker)` constructs a Thread that stores `worker` as `_target` and empty args. `.start` on that new object yields a bound method, which keeps the Thread alive, and `start = ...` stores it. `start()` is `Thread.start` on that object. It launches `_bootstrap` on a new OS thread and waits for `_started`. The bootstrap calls `self.run()`, and the default `run` calls `self._target(*self._args, **self._kwargs)`, i.e. `worker()`, which reaches `subprocess.run([\"pacman\", \"-S\", \"r22-cxinline-alias\"])`. The thread is non-daemon and has no cancel path, so the call happens. Exactly one observed host_mutation row, zero unparsed. This is the same execution path as the frozen CallbackGlobal `.start()`, but the method is aliased from an inline-constructed Thread instead of a named one. The `.run` sibling of this shape is covered by ThreadRunAlias-style seats only when the Thread is named. Limits: this is exact static semantics for this text, not current-code behavior. Thread scheduling timing does not matter, because nothing after `start()` rebinds any name the worker reads.",
+  "source": "ConnLifetime.json V10 and invariant I9. Mechanism: tools/mado-tripwire.py sha256 46c82902...c8c1 dotted() 1280-1290 returns None for Attribute(Call), so the alias binding is unresolved; the refs sweep exempts Thread targets unconditionally at 2550-2553. Semantics: .ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3) Thread.start 975-1011 (_start_joinable_thread(self._bootstrap...) 1005, self._started.wait() 1011); Thread.run 1013-1025 'self._target(*self._args, **self._kwargs)' 1024. Class mapping: pacman -S -> host_mutation."
+}

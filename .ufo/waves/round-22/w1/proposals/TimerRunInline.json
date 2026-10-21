@@ -1,0 +1,17 @@
+{
+  "id": "TimerRunInline",
+  "cells": [
+    "import subprocess\nimport threading\ndef worker(argv):\n    subprocess.run(argv)\nthreading.Timer(1, worker, kwargs={\"argv\": [\"pacman\", \"-S\", \"r22-timer-run-inline\"]}).run()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-timer-run-inline",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Python 3.14.8 semantics, independently derived from the vendored CPython v3.14.8 Lib/threading.py source (SourceThread artifact, sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3), no detector read and nothing executed. Timer.__init__ (lines 1370-1376) stores function/args/kwargs verbatim: self.function = worker, self.kwargs = {'argv': ['pacman','-S','r22-timer-run-inline']}, and self.finished = Event() which starts unset. The constructor Call is a temporary invoked in place, so no name binds the Timer and no other code can set finished. Attribute call .run() on that temporary resolves to Timer.run (lines 1382-1386): self.finished.wait(1) returns False (flag unset; nothing can call cancel on an unbound temporary), the 'if not self.finished.is_set()' guard passes unconditionally, and self.function(*self.args, **self.kwargs) invokes worker(argv=['pacman','-S','r22-timer-run-inline']) synchronously in the caller thread after the 1 s wait. run() is a synchronous caller-thread invoke, not a scheduled spawn: same invocation class as Thread.run (docstring lines 1016-1020) whose F4 truth in round-21 FinalBindingReview is an observed row. Inside worker, argv binds the dict's literal list, so subprocess.run(argv) deterministically executes 'pacman -S r22-timer-run-inline', a package-install attempt -> host_mutation, observed. Command serialization is shlex.join of the literal argv tokens. Every argument reaching the worker is a source literal: interval 1 unused for row identity, function a same-module def name, kwargs a dict literal with a literal list value. Zero unresolved inputs, so exactly one observed row and zero unparsed: expected_kind exact, forbid list empty.",
+  "source": ".ufo/waves/round-22/w1/sources/SourceThread/threading-v3.14.8.py (CPython v3.14.8 Lib/threading.py, sha256 5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3): Timer.__init__ lines 1370-1376, Timer.run lines 1382-1386, Thread.run contract lines 1016-1024; receipt at .ufo/waves/round-22/w1/sources/SourceThread/receipt.json; F4 truth table .ufo/waves/round-21/residual/FinalBindingReview.md lines 90-95"
+}

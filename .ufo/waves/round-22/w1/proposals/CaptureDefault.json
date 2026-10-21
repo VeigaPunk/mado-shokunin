@@ -1,0 +1,19 @@
+{
+  "id": "CaptureDefault",
+  "cells": [
+    "import subprocess\ndef make(argv=[\"pacman\", \"-S\", \"r22-default\"]):\n    def run():\n        subprocess.run(argv)\n    return run\nargv = [\"pacman\", \"-Q\", \"r22-default-global\"]\nrunner = make()\nrunner()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-default",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-default-global"
+  ],
+  "rationale": "Python 3.14: the literal default for factory parameter argv is evaluated once when 'def make' executes and is the pre-computed value substituted whenever the argument is omitted, so make() binds argv to [\"pacman\",\"-S\",\"r22-default\"] regardless of any later same-named binding. Inside nested run, the free name argv resolves to the nearest enclosing scope, i.e. make's local parameter cell, never the module namespace; the module-level argv assigned after the def is dead source on this path. runner() therefore executes subprocess.run([\"pacman\",\"-S\",\"r22-default\"]) exactly once: one observed host_mutation row, zero unparsed. The decoy module global must not be borrowed into the closure's parameter slot (that is the r21 F2 failure shape, reproduced here by misreading an omitted-defaulted parameter as unbound); hence forbid_observed_commands lists the global's argv. All names are statically resolved, so the expectation is exact rather than uncertain.",
+  "source": "CPython 3.14.8 Language Reference, fetched official source: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-compound_stmts.rst lines 1297-1329 (default parameter values: evaluated when the function is defined, same pre-computed value each call; a call assigns every parameter either from arguments or from default values); .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst lines 89-115 (names bound in a block are locals; unbound uses are free variables resolved via the nearest enclosing scope) and lines 136-148 (module namespace reached only through global/builtins resolution). Defect shape: .ufo/waves/round-21/residual/FinalBindingReview.md F2 (unbindable factory call leaks module globals into the closure) and inert fixture .ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/capture-unbound-global.jsonl, whose decoy-before-call ordering this cell mirrors."
+}

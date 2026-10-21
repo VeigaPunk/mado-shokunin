@@ -1,0 +1,15 @@
+{
+  "id": "CXPartialLocalFunction",
+  "cells": [
+    "import functools\nimport subprocess\n\n\ndef inner(argv):\n    subprocess.run([\"pacman\", \"-Q\", \"r22-cxlocal-module\"])\n\n\ndef make():\n    def inner(argv):\n        subprocess.run(argv)\n    return functools.partial(inner, [\"pacman\", \"-S\", \"r22-cxlocal\"])\n\n\nmake()()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {"class": "host_mutation", "command": "pacman -S r22-cxlocal", "evidence": "observed"}
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-cxlocal-module"
+  ],
+  "rationale": "Classification: definite execution, no exception. Python 3.14 static reasoning; no execution. Inside `make`, the nested `def inner` binds `inner` as a local of make, so the `inner` in `functools.partial(inner, ...)` is that local function, not the module-level `inner`. `functools.partial` stores `func` and the positional args tuple at construction. Calling the returned partial with no arguments therefore calls the local `inner([\"pacman\", \"-S\", \"r22-cxlocal\"])`, which reaches `subprocess.run` with that literal argv. Exactly one observed host_mutation row, zero unparsed. The module-level `inner` is never called, so `pacman -Q r22-cxlocal-module` never runs. This attacks returned-partial identity resolution that looks up the wrapped name in module bindings instead of factory-local bindings at the return. Limits: this is exact static semantics for this text, not current-code behavior. With the module-level decoy removed, a resolver that misses the local def would be silent; that variant is not frozen here.",
+  "source": "ConnLifetime.json V8 and invariant I3. Mechanism: tools/mado-tripwire.py sha256 46c82902...c8c1 callable_info returned_call 1653-1659 resolves the wrapped name via callable_info(..., module bindings) at 1657. Semantics: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst (sha256 11f99f83...eb89) line 89 (local binding in block) and line 113 (nearest enclosing scope); host CPython 3.14.8 /usr/lib/python3.14/functools.py (sha256 9db56d38172c4c9e689b21cc58c8538008b09d86b682faf4dd193b529cdd79d5; read-only, not a frozen wave source; partial normally comes from _functools at line 438 with the same contract) _partial_new 313-357 'self.func = func' 352, 'self.args = tot_args' 353; partial.__call__ 393 'return self.func(*pto_args, *args, **keywords)'. Class mapping: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

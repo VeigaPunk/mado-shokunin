@@ -1,0 +1,19 @@
+{
+  "id": "CaptureReturnedChain",
+  "cells": [
+    "import subprocess\ndef make():\n    def alpha():\n        subprocess.run([\"pacman\", \"-Q\", \"r22-chain-alpha\"])\n    def beta():\n        subprocess.run([\"pacman\", \"-S\", \"r22-chain-beta\"])\n    relay = alpha\n    relay = beta\n    chosen = relay\n    return chosen\nmake()()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-chain-beta",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-chain-alpha"
+  ],
+  "rationale": "Python 3.14 semantics only; no code executed. Inside make(), 'def alpha' binds alpha to function object A (inert argv [pacman,-Q,r22-chain-alpha]); 'def beta' binds beta to function object B (inert argv [pacman,-S,r22-chain-beta]). 'relay = alpha' binds relay to A; 'relay = beta' rebinds relay to B (CPython ref, simple_stmts: 'The name is rebound if it was already bound'). 'chosen = relay' binds chosen to the object relay denotes at that point, B; names refer to objects, not to other names, so chosen does not alias the name relay (executionmodel: 'Names refer to objects'). 'return chosen' therefore returns B, and the immediately following () at make()() invokes B exactly once, reaching subprocess.run([\"pacman\",\"-S\",\"r22-chain-beta\"]). A is never invoked. This is a chained-alias generalization of r21 F3 (returned-rebound): the returned local name is reached only by following a def-name through a rebound intermediate alias, so correct resolution must take each name's binding in effect at its own binding point, replayed in statement order through the chain. Exactly one statically determined observed row exists and no unresolved spawn remains, so expected_kind is exact; the alpha command is listed under forbid_observed_commands because observing it is the F3-sibling defect of resolving a returned name against its first/def-adjacent binding rather than the post-rebinding one.",
+  "source": "Independent static reasoning from CPython v3.14.8 reference docs fetched by SourceClosure: .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst (Naming and binding, resolution of names; upstream https://docs.python.org/3.14/reference/executionmodel.html#resolution-of-names) and cpython-3.14.8-Doc-reference-simple_stmts.rst (Assignment statements; upstream https://docs.python.org/3.14/reference/simple_stmts.html#assignment-statements); tag pinned in .ufo/waves/round-22/w1/sources/SourceClosure/git-ls-remote-v3.14.8.txt. Variant shape derives from the r21 F3 fixture .ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/returned-rebound.jsonl and its analysis in .ufo/waves/round-21/residual/FinalBindingReview.md F3/line 87."
+}

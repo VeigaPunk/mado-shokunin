@@ -1,0 +1,19 @@
+{
+  "id": "CapturePartialGlobalLateActual",
+  "cells": [
+    "import functools\nimport subprocess\n\ndef run_helper():\n    subprocess.run(ARGV)\n\ndef make_partial():\n    return functools.partial(run_helper)\n\nARGV = [\"pacman\", \"-S\", \"r22-partial-global-early\"]\nbound = make_partial()\nARGV = [\"pacman\", \"-Q\", \"r22-partial-global-late\"]\nbound()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-partial-global-late",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -S r22-partial-global-early"
+  ],
+  "rationale": "Python 3.14 semantics, fully static: module-global names read inside a function body are late-bound — resolved against module globals at call time, not at def, factory-return, or partial-construction time. functools.partial(run_helper) contributes zero fixed arguments; bound() simply calls run_helper(), whose subprocess.run(ARGV) reads the CURRENT module global, i.e. the list rebound after make_partial() returned: [\"pacman\",\"-Q\",\"r22-partial-global-late\"]. Truth is therefore exactly one observed package_query row naming pacman -Q r22-partial-global-late, with zero unparsed, so expected_kind is exact. The early [\"pacman\",\"-S\",\"r22-partial-global-early\"] list is bound while the partial is created but is never the argument of any spawned call; a detector that freezes module globals at factory-call or partial-construction time (an over-frozen F1 repair) fabricates an observed host_mutation pacman -S r22-partial-global-early row and misses the real query — that serialization is the named discriminator in forbid_observed_commands. This guards the opposite timing direction from CapturePartialGlobal: there the fixed arg is an object captured at construction (early value correct); here the body global is call-time (late value correct). A sound repair must freeze the former and NOT the latter. -Q and -S against invented names are inert markers only; no cell is ever executed.",
+  "source": ".ufo/waves/round-21/residual/FinalBindingReview.md F1 (factory/invoke-time binding) and F2 (module globals leaking into observed rows); parent seat MadoR22 direction that this slice is the late-bound-body-global opposite guard to CapturePartialGlobal; independently authored, no detector measured, no production code read beyond that review."
+}

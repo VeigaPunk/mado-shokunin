@@ -1,0 +1,277 @@
+{
+  "id": "CriticScope",
+  "seat": "MadoR22.CriticScope",
+  "wave": "mado-r22-w1",
+  "role": "critic",
+  "authority": "author-lane critic advice; not judgment, admission, closure or outside-lane falsification",
+  "method": "read-only: registration, audit-contract, w1-spec seat list, r21 FinalBindingReview + six fixtures (parsed as JSON data, never executed), r21 dispositions/final-summary/outcomes, r21 oracle/measure.py comparison lines, corpus/knowledge/tripwire-binding-boundaries-r21.md, sibling notes SimplifyCapture/SimplifyThread, SourceThread/SourceClosure retained CPython 3.14.8 bytes. No production code read, no scanner run, no measurement, no payload execution.",
+  "axes": [
+    "scope_honesty: claimed repair wording vs what frozen fixtures can show",
+    "falsification_power: can the frozen set fail a wrong-but-cheap repair",
+    "repair_regression: can the proposed repair designs create new silent observed rows",
+    "evidence_tier: observed vs lead vs unparsed honesty, no borrowed values",
+    "provenance_independence: who authored truths and which forms were selected"
+  ],
+  "inputs": {
+    "registration": ".ufo/waves/round-22/registration.md",
+    "audit_contract": ".ufo/waves/round-22/audit-contract.json",
+    "seat_spec": ".ufo/waves/round-22/w1-spec.json",
+    "final_binding_review": ".ufo/waves/round-21/residual/FinalBindingReview.md",
+    "original6_sha256": {
+      "capture-invoke-time.jsonl": "6b21d584710878f5e486f3e9fcd737c6a6e573c629c2f75d30b45f55b6a317f7",
+      "capture-unbound-global.jsonl": "9ab845d4a8886714cfea0b16203328b67335013f00b21b18ba23e9b7175e1d9d",
+      "returned-rebound.jsonl": "774e2946d16c23d9ebdd557ccf279143f6d2249dc7132aa567fb34d12d3d7573",
+      "thread-run-direct.jsonl": "1cc1188dc4e0c37ecba97d34bdf546113d888c62a9cba0bcfe06d44201a2407f",
+      "thread-key-hygiene.jsonl": "4ea8ccc8724de011e19dcc1e69da1f4078ac74544f554e39ccda66dc42065c9e",
+      "thread-key-control.jsonl": "00ecb83fabddfd002d703bc1fbaa449b24e1edf935d0f6792a773c96007162be"
+    },
+    "r21_oracle_exact_rule": ".ufo/waves/round-21/oracle/measure.py:42,64 sorted multiset of (class, command, evidence) equality, exit in (0,1), no error, unparsed == 0",
+    "cpython_sources": {
+      "threading-v3.14.8.py": {"sha256": "5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3", "lines": {"Thread.__init__ self._target": 925, "Thread.run": "1013-1028", "Timer.cancel": "1378-1380", "Timer.run": "1382-1386"}},
+      "executionmodel.rst": {"sha256": "11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89", "line_322": "Name resolution of free variables occurs at runtime, not at compile time."},
+      "simple_stmts.rst": {"sha256": "d43206423b327dcf05009b5aa26d1175a516a597367cc4739851d3b299ae29dc", "line_146": "the name is bound to the object in the"}
+    }
+  },
+  "answer": {
+    "question": "Can original6 plus the planned independent variants genuinely falsify the r21 F1-F5 objections?",
+    "verdict": "partially",
+    "can_falsify": [
+      "F1 invocation-time rebinding for same-cell, cross-cell, keyword, **literal, *literal, default, two-instance and partial shapes (CaptureSameCell, CaptureCrossCell, CaptureKeyword, CaptureKwargs, CaptureStarKnown, CaptureDefault, CaptureTwoInstances, CapturePartialFixed, CapturePartialOverride)",
+      "F1 over-correction (snapshotting late-bound globals) via CaptureGlobalLate, ThreadGlobalLate, CapturePartialGlobal",
+      "F2 observed-tier borrowing for three of the four FinalBindingReview triggers (starred, **mapping, missing required)",
+      "F3 returned identity for rebinding that happens before the return statement (CaptureReturnedAlias, CaptureReturnedRebound, CaptureReturnedChain, CaptureLocalReassign, CaptureLocalShadow, CaptureNestedFactory)",
+      "F4 direct Thread.run/Timer.run follow for stored, alias and inline receivers",
+      "F5 for the one known key name __mado_thread_target__ under .start and .run"
+    ],
+    "cannot_falsify_without_correction": ["CX1", "CX2", "CX3", "CX4", "CX5", "CX6", "CX7", "CX8", "CX9", "CX10", "CX11"]
+  },
+  "scope_findings": [
+    {
+      "id": "S1",
+      "severity": "high",
+      "kind": "fixable",
+      "claim": "Registration's admission-defeating clause names 'the declared supported forms', but no supported-form list is declared in registration.md or audit-contract.json.",
+      "counterexample": "Wave2 finds CX3 (aliasing mutation). With no frozen list, it can be classed 'unsupported' after the fact and the numeric target still admits. That is a silent scope shrink.",
+      "evidence": "registration.md C1 paragraph; w1-spec seat descriptions are the only enumeration and live in a dispatch spec, not the sealed claim",
+      "axes": ["scope_honesty", "provenance_independence"],
+      "correction": "Before seal, freeze supported_forms (original six + every eligible variant id with a one-line shape) and unsupported_forms (list below) into the sealed oracle expected.json or a dated registration addendum. A wave2 counterexample inside supported_forms defeats admission. One outside is reported open, never 'repaired'."
+    },
+    {
+      "id": "S2",
+      "severity": "high",
+      "kind": "fixable",
+      "claim": "F1-F5 are mechanism-level labels ('factory arguments are bound at invocation time'). Closing them by ID on a finite pass reads as a general mechanism repair. The r21 knowledge note already states that these findings 'falsify the general binding-repair claim'.",
+      "evidence": "FinalBindingReview.md F1-F5 headings; corpus/knowledge/tripwire-binding-boundaries-r21.md final disposition",
+      "axes": ["scope_honesty"],
+      "correction": "Report per-form agreement as 'F1 listed forms N/N'. Keep F-IDs open for every unsupported trigger (for example F2 unknown keyword unless CX9 is added, and F5 structurally, see CX10)."
+    },
+    {
+      "id": "S3",
+      "severity": "medium",
+      "kind": "disclosure",
+      "claim": "The original six truths are author-lane static reasoning (FinalBindingReview header: 'Author-lane advice, not independent promotion or admission'). thread-key-control is a passing control, not a red, so 'every original red' is five reds plus one no-harm control.",
+      "axes": ["provenance_independence"],
+      "correction": "Label the originals as author-lane truths in expected.json provenance. The independence credit rests on the variant seats."
+    },
+    {
+      "id": "S4",
+      "severity": "medium",
+      "kind": "disclosure",
+      "claim": "All 28 C1 reviewer variants were selected by L1 from the FinalBindingReview taxonomy, and each seat was told to read that review. They falsify overfitting to the exact six strings, not unseen mechanism classes. Only the four revenger seats are partly open-ended.",
+      "axes": ["provenance_independence", "falsification_power"],
+      "correction": "State 'near-neighbour variant set' in the outcome. Do not claim discovery-level independence."
+    },
+    {
+      "id": "S5",
+      "severity": "medium",
+      "kind": "unknown",
+      "claim": "The 'exact' comparison must stay multiset equality with no extra rows and zero unparsed, as in r21 measure.py:42,64. Otherwise a repair that emits both the old wrong row and the right row passes F1/F3. The r22 oracle harness was not delivered at review time (.ufo/waves/round-22/oracle absent).",
+      "axes": ["falsification_power"],
+      "correction": "The sealed measure.py must reuse rows_key multiset equality for exact, and wave2 must check it."
+    }
+  ],
+  "counterexamples": [
+    {
+      "id": "CX1",
+      "severity": "high",
+      "finding": "F2",
+      "kind": "fixable",
+      "attack": "A cheap wrong patch ('on bind failure, keep resolving the factory parameter from the invocation/module env, but mark rows lead') emits lead 'pacman -Q r21-global' on capture-unbound-global. That satisfies the planned uncertain rule (no observed rows plus at least one lead or unparsed) while still borrowing the module-global value, which is the F2 mechanism itself.",
+      "evidence": "OracleHarness assignment: 'uncertain requires no observed rows + at least lead/unparsed'; registration: 'never observed values borrowed from module globals' restricts only the observed tier; FinalBindingReview F2 contract: sweep_body parameters are unknown",
+      "axes": ["evidence_tier", "falsification_power"],
+      "correction": "Add 'forbid_commands' (any evidence tier) to uncertain proposals. Every F2-class proposal lists the shadowed module-global command there. Proposals already carry forbid_observed_commands. Extend it rather than adding a second authority."
+    },
+    {
+      "id": "CX2",
+      "severity": "medium",
+      "finding": "F2",
+      "kind": "tradeoff",
+      "attack": "The planned rule that uncertain requires at least one lead or unparsed signal is stricter than registration ('may produce lead/unparsed'). Under Python semantics, CaptureMissingRequired and CX9 raise TypeError at the factory call, so no body runs and a silent no-row output is correct. That correct output fails. For capture-unbound-global, 'parts' may exist in unknown prior session state, so requiring a signal is defensible there.",
+      "axes": ["evidence_tier", "scope_honesty"],
+      "correction": "Each uncertain proposal declares require_signal true or false with a rationale (TypeError-certain means false; possibly-defined name means true). Freeze this before seal. Do not use one global rule that diverges from the registration text."
+    },
+    {
+      "id": "CX3",
+      "severity": "high",
+      "finding": "F1 repair regression",
+      "kind": "tradeoff",
+      "attack": "Closures capture the object, not a value copy. Mutating the passed list in place after factory creation changes what the closure runs. SimplifyCapture's ClosureFrame freezes 'literal_env: dict name -> literal' at creation, so it would report the pre-mutation command as observed. Here that is a package_query hiding a real host_mutation, the inverse silent error of F1. No planned variant mutates an alias.",
+      "cells": ["import subprocess\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\ncmd = [\"pacman\", \"-Q\", \"r22-alias\"]\nrunner = make(cmd)\ncmd[1] = \"-S\"\nrunner()"],
+      "truth": {"expected_kind": "exact", "want": [{"class": "host_mutation", "command": "pacman -S r22-alias", "evidence": "observed"}], "if_lane_declares_unsupported": {"expected_kind": "uncertain", "forbid_commands": ["pacman -Q r22-alias"]}},
+      "evidence": "simple_stmts.rst:146 'the name is bound to the object'; executionmodel.rst:322 free-variable resolution at runtime; SimplifyCapture.json design.types.ClosureFrame.literal_env",
+      "sibling": "The same applies to Thread/Timer args=(cmd,) mutated before start/run. SimplifyThread preserves construction-time literal folding, and ThreadConstructorCapture covers rebinding only, not mutation.",
+      "axes": ["repair_regression", "evidence_tier"],
+      "correction": "Add a CaptureAliasMutation variant and a ThreadArgsMutation variant. Any in-place mutation (subscript or attribute store, mutating method call) of a captured name must invalidate the frame to uncertain. It must never stay observed with the pre-mutation value."
+    },
+    {
+      "id": "CX4",
+      "severity": "medium",
+      "finding": "F1/F3 repair regression",
+      "kind": "tradeoff",
+      "attack": "A sibling inner function rebinds the shared cell with nonlocal after the closure was created. A frozen-frame repair reports the old value as observed.",
+      "cells": ["import subprocess\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    def retarget(x):\n        nonlocal argv\n        argv = x\n    return run, retarget\nrun, retarget = make([\"pacman\", \"-Q\", \"r22-cell\"])\nretarget([\"pacman\", \"-S\", \"r22-cell\"])\nrun()"],
+      "truth": {"expected_kind": "exact", "want": [{"class": "host_mutation", "command": "pacman -S r22-cell", "evidence": "observed"}], "if_unsupported": {"expected_kind": "uncertain", "forbid_commands": ["pacman -Q r22-cell"]}},
+      "axes": ["repair_regression"],
+      "correction": "List as unsupported, with the uncertainty requirement, or add as a variant. A nonlocal on a captured name invalidates the frame."
+    },
+    {
+      "id": "CX5",
+      "severity": "medium",
+      "finding": "F3",
+      "kind": "fixable",
+      "attack": "Every planned F3 variant rebinds before the return. Rebinding after an early return is dead code. A 'post-prefix replay' that replays the whole factory body picks b and reports host_mutation. Conditional rebinding on a non-literal condition has no exact truth.",
+      "cells": ["import subprocess\ndef make():\n    def a():\n        subprocess.run([\"pacman\", \"-Q\", \"r22-early\"])\n    def b():\n        subprocess.run([\"pacman\", \"-S\", \"r22-early\"])\n    return a\n    a = b\nmake()()"],
+      "truth": {"expected_kind": "exact", "want": [{"class": "package_query", "command": "pacman -Q r22-early", "evidence": "observed"}]},
+      "sibling_conditional": "if flag: a = b, with flag unresolved, gives uncertain with forbid_observed for both commands",
+      "axes": ["falsification_power", "repair_regression"],
+      "correction": "Add CaptureReturnBeforeRebind (exact) and CaptureConditionalRebind (uncertain) variants, or declare both forms unsupported."
+    },
+    {
+      "id": "CX6",
+      "severity": "high",
+      "finding": "F4 repair regression",
+      "kind": "fixable",
+      "attack": "Timer.run calls the function only if the timer was not cancelled. SimplifyThread unifies .run with .start and keeps observed for both, so cancel-then-run would fabricate an observed host_mutation. The SourceThread scout was told to distinguish cancel uncertainty, but no variant seat encodes it.",
+      "cells": ["import subprocess\nimport threading\ndef worker(argv):\n    subprocess.run(argv)\nt = threading.Timer(0, worker, args=([\"pacman\", \"-S\", \"r22-cancel\"],))\nt.cancel()\nt.run()"],
+      "truth": {"expected_kind": "exact", "want": [], "note": "threading.py:1378-1386: cancel sets finished, so run skips function"},
+      "axes": ["repair_regression", "evidence_tier"],
+      "correction": "Add a TimerCancelRun variant. Any .cancel() reaching the Timer binding before run makes the result no-row or uncertain, never observed."
+    },
+    {
+      "id": "CX7",
+      "severity": "medium",
+      "finding": "F4",
+      "kind": "fixable",
+      "attack": "A second Thread.run() does not call the target again. Thread.run deletes _target in its finally block (threading.py:1025-1028), and _target is only an instance attribute (925). A second Timer.run() finds finished set (1386). A repair that follows every .run emits two rows. The truth is one, and the multiset comparison (r21 measure.py:42) detects it only if a variant exists. start() followed by run() races and is uncertain.",
+      "cells": ["import subprocess\nimport threading\ndef worker(argv):\n    subprocess.run(argv)\nt = threading.Thread(target=worker, args=([\"pacman\", \"-S\", \"r22-twice\"],))\nt.run()\nt.run()"],
+      "truth": {"expected_kind": "exact", "want": [{"class": "host_mutation", "command": "pacman -S r22-twice", "evidence": "observed"}]},
+      "axes": ["falsification_power"],
+      "correction": "Add a ThreadRunTwice variant, or declare repeated scheduled invocation unsupported, with a duplicate-row disclosure."
+    },
+    {
+      "id": "CX8",
+      "severity": "medium",
+      "finding": "F1 x F4",
+      "kind": "fixable",
+      "attack": "SimplifyThread declares itself orthogonal to ClosureFrame. Composing the two (a factory closure as a Thread target, caller rebinding, then run) is untested, and each design passes its own fixtures independently.",
+      "cells": ["import subprocess\nimport threading\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\ncmd = [\"pacman\", \"-S\", \"r22-compose\"]\nt = threading.Thread(target=make(cmd))\ncmd = [\"pacman\", \"-Q\", \"r22-compose\"]\nt.run()"],
+      "truth": {"expected_kind": "exact", "want": [{"class": "host_mutation", "command": "pacman -S r22-compose", "evidence": "observed"}]},
+      "axes": ["falsification_power"],
+      "correction": "Add a ThreadTargetClosure composition variant."
+    },
+    {
+      "id": "CX9",
+      "severity": "medium",
+      "finding": "F2",
+      "kind": "fixable",
+      "attack": "FinalBindingReview lists four F2 triggers. The unknown-keyword trigger (bind_literal None at cited lines 2017-2018) has no variant: CaptureKeyword is an F1 rebinding shape, not an unknown keyword. Too many positional arguments is a sibling shape.",
+      "cells": ["import subprocess\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\nargv = [\"pacman\", \"-Q\", \"r22-kw-global\"]\nrunner = make(argvv=[\"pacman\", \"-Q\", \"x\"])\nrunner()"],
+      "truth": {"expected_kind": "uncertain", "require_signal": false, "forbid_commands": ["pacman -Q r22-kw-global"], "note": "TypeError at make(); runner never bound"},
+      "axes": ["falsification_power", "evidence_tier"],
+      "correction": "Add a CaptureUnknownKeyword variant. Otherwise F2 stays open for that trigger (see S2)."
+    },
+    {
+      "id": "CX10",
+      "severity": "medium",
+      "finding": "F5",
+      "kind": "tradeoff",
+      "attack": "Both hygiene variants use the literal __mado_thread_target__. A rename-only 'fix' to any other valid identifier passes every frozen fixture while keeping the shared-namespace defect. Finite fixtures can falsify only known names.",
+      "axes": ["falsification_power", "scope_honesty"],
+      "correction": "Make F5 closure depend on a structural source criterion checked by a non-author wave2 seat. The criterion: no synthetic key in any bindings map satisfies str.isidentifier(), or the resolved callable is carried on the node. Disclose it as a non-fixture criterion. Do not count the hygiene fixtures as F5 proof."
+    },
+    {
+      "id": "CX11",
+      "severity": "low",
+      "finding": "F1 cross-cell",
+      "kind": "fixable",
+      "attack": "CaptureCrossCell assumes namespace persistence. With reset:true on cell 2 the closure name is undefined (NameError), so no command runs. A repair that persists ClosureFrame on the binding map across a reset would fabricate observed.",
+      "evidence": "Original fixtures carry 'reset': false; SimplifyCapture preserved_contract cites the reset semantics (docstring 42-43, 78-81)",
+      "axes": ["repair_regression"],
+      "correction": "Require CaptureCrossCell to pin reset:false explicitly, and add a reset:true counter-variant whose expectation is no observed row."
+    }
+  ],
+  "unsupported_forms_to_declare": [
+    "in-place mutation of captured or Thread-arg objects (CX3) unless added",
+    "nonlocal/cell mutation by sibling inner functions (CX4) unless added",
+    "rebinding after return, conditional or loop rebinding of the returned name (CX5) unless added",
+    "non-Name factory returns: conditional expression, tuple return, return of another call, lambda return (FinalBindingReview Limits; SimplifyCapture unknowns)",
+    "closures stored in containers, attributes or dicts, passed as callbacks to other callables, or applied as decorators",
+    "lambda closures; generator/async closures; class-body or bound-method closures",
+    "factory body with try/except/with/loop control flow before return",
+    "global declarations inside the factory",
+    "factories imported from other modules; functools.wraps/update_wrapper; partial of partial; partial with unknown *args/**kwargs",
+    "Timer.cancel before run (CX6) unless added; repeated run or start+run (CX7) unless added",
+    "Thread subclass run override or inherited run (docstring 73-74); Thread.run(t) unbound call; getattr(t, 'run')()",
+    "non-threading schedulers: concurrent.futures submit, multiprocessing.Process.run, asyncio.to_thread, _thread.start_new_thread",
+    "capture x thread composition (CX8) unless added",
+    "F2 unknown-keyword and positional-overflow triggers (CX9) unless added",
+    "reset:true boundary across cells (CX11) unless added",
+    "F5 synthetic names other than __mado_thread_target__ (CX10: structural criterion only)",
+    "Python profiles other than CPython 3.14.8"
+  ],
+  "fixable_vs_tradeoff": {
+    "fixable_by_adding_frozen_variants_or_schema_before_seal": ["S1", "S2", "S5", "CX1", "CX5", "CX6", "CX7", "CX8", "CX9", "CX11"],
+    "tradeoff_judge_must_reject_if_violated": ["CX2 (signal rule must match registration text)", "CX3/CX4 (if object mutation is unsupported, any observed pre-mutation row defeats admission)", "CX10 (fixtures cannot prove F5; structural non-author check required)"],
+    "disclosure_only": ["S3", "S4"]
+  },
+  "smallest_safe_correction": "Before seal: (1) freeze supported_forms and unsupported_forms lists; (2) extend uncertain expectations with any-tier forbid_commands and a per-proposal require_signal; (3) add or explicitly list as unsupported CaptureAliasMutation, ThreadArgsMutation, CaptureReturnBeforeRebind, TimerCancelRun, ThreadRunTwice, ThreadTargetClosure, CaptureUnknownKeyword, and a CrossCell reset:true counter; (4) make F5 closure a structural non-author source check. No expectation of any existing proposal changes.",
+  "positives": [
+    "CaptureGlobalLate, ThreadGlobalLate, CapturePartialGlobal and CaptureDefault guard against over-correction (snapshotting late-bound globals or ignoring def-time defaults).",
+    "r21 exact comparison is multiset equality with unparsed==0, which catches duplicate or extra rows if retained.",
+    "Registration already disclaims complete Python semantics and desktop clearance."
+  ],
+  "unknowns": [
+    "Whether the current or changed scanner models subscript-store or mutating-method invalidation at all [INFERENCE: not established; no code read]",
+    "Whether the r22 oracle harness keeps the r21 exact rule (harness not delivered at review time)",
+    "Whether the scanner deduplicates rows per receiver, which affects CX7 detectability [INFERENCE]",
+    "Proposal contents of the 28 C1 variant seats; only ThreadHygiene.json and ThreadRun.json existed at review time and were not read"
+  ],
+  "addendum_proposals": {
+    "requested_by": "MadoR22 IRC 2026-10-21, before seal",
+    "dir": ".ufo/waves/round-22/w1/proposals",
+    "validation": "JSON parse, id equals filename, ast.parse on each cell (no execution), wanted and accepted commands disjoint from forbidden commands",
+    "files": {
+      "CX1AnyTierLeak.json": "10f4d4e61577f5b2120105112fa455c4a00830f40b2f033facc998b51e22456c",
+      "CX3CaptureMutation.json": "74d66361c75778377cd41cd8b2c4d4d9e17611f9b8d6898cf59bdbe2b0cce456",
+      "CX4NonlocalMutation.json": "d82343f9bcf363b09c97816a75d159bf01c242aeaf68be619f5e522610a40e06",
+      "CX5AfterReturn.json": "98925a43044075a7320afec0f571a9aec76b91a952e81bba216ca12b1c07e241",
+      "CX6TimerCancel.json": "9593ed60c7920bf8d2088ba38380f82f4142713d1d247e6a0f638a595793bdb2",
+      "CX7ThreadRepeatedRun.json": "cf7029dc0856dadd8031379a1abc7a038e273de377bd14d1cd5303a6ab0a5679",
+      "CX8ClosureThread.json": "335eacd8917fdde1b74a3366ae823a82cc86ecf95e1dc8c1f51355907e1cfe97",
+      "CX9UnknownKeyword.json": "374b2312d388d052648b9d003077fea3c52aceed85c62abe55501366732bc75f",
+      "CX11Reset.json": "1ab019a3689bc60411754ce5869a95bc7f5b3e8713d5d48f73682e6ebc568fac"
+    },
+    "schema_extensions_needing_main_decision": {
+      "accept_exact_want": "CX3, CX4: definite observed truth; the uncertain rule must also accept this exact correct answer",
+      "cell_reset": "CX11: harness must emit arguments.reset per cell; if dropped, the truth flips and the proposal is ineligible"
+    },
+    "premises": {
+      "CX11": "reset:true means a fresh namespace; no on-disk eval-tool authority located; detector docstring not used",
+      "CX9": "Language Reference 'Calls' TypeError rule cited by section name; expressions.rst not retained"
+    },
+    "not_authored_remain_unsupported": ["ThreadArgsMutation", "CaptureConditionalRebind", "Thread start()+run() race"]
+  },
+  "tools_installed": [],
+  "measurements_run": 0,
+  "payloads_executed": 0
+}

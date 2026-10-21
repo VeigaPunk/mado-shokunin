@@ -1,0 +1,17 @@
+{
+  "id": "ThreadHygiene",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ndef __mado_thread_target__():\n    subprocess.run([\"pacman\", \"-Q\", \"r22-thg\"])\n\n\ndef worker():\n    __mado_thread_target__()\n\n\nthreading.Thread(target=worker).start()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "package_query",
+      "command": "pacman -Q r22-thg",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [],
+  "rationale": "Static Python 3.14 truth, no execution and no detector reading. threading.Thread(target=worker).start() schedules worker on a new thread; inside worker the bare Name '__mado_thread_target__' is a global-scope load because worker contains no binding for it, so it resolves to the module-level function def __mado_thread_target__ — a legal global function name (dunder spelling is a valid identifier). That function's body performs subprocess.run on a fully literal argv list [\"pacman\",\"-Q\",\"r22-thg\"], whose shlex.join serialization is 'pacman -Q r22-thg'. pacman -Q is a query, so the single statically determined result is exactly one observed package_query row and zero unparsed. The variant exercises the r21 F5 mechanism from a second direction: any implementation that still injects the reserved key '__mado_thread_target__' into the followed worker body's binding namespace (to carry the resolved thread target) shadows the real module global, so the body's call resolves to the synthetic thread-target binding — i.e., worker again, already on the resolution stack — and yields a lead or nothing instead of the required observed row. A correct implementation carries the resolved target without touching the source-name namespace (node-carried attribute or a non-identifier key), preserving the observed row.",
+  "source": "Independent static-truth specification. Mechanism under test: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md finding F5 (reserved key __mado_thread_target__ shares the source binding namespace; confirmed by probe thread-key-hygiene lead vs thread-key-control observed) and its parent-requested hygiene answer (carry the resolved callable on the synthetic node, or use a non-identifier key). Semantics: Python 3.14 name resolution — unbound names inside a function body are global loads (reference 4.2.2 / LEGB); threading.Thread.start runs target in a new thread (threading docs). Class mapping mirrors established convention: pacman -Q -> package_query, pacman -S -> host_mutation."
+}

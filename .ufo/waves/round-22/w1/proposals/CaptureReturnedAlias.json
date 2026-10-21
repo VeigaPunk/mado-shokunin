@@ -1,0 +1,17 @@
+{
+  "id": "CaptureReturnedAlias",
+  "cells": [
+    "import subprocess\n\n\ndef make():\n    def worker():\n        subprocess.run([\"pacman\", \"-S\", \"r22-alias\"])\n\n    def decoy():\n        subprocess.run([\"pacman\", \"-Q\", \"r22-alias-decoy\"])\n\n    run = worker\n    return run\n\n\nmake()()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-alias",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": ["pacman -Q r22-alias-decoy"],
+  "rationale": "Python 3.14 semantics: the two FunctionDef statements create distinct function objects and bind the factory-local names worker and decoy. The simple assignment 'run = worker' is then executed at that point in the factory body: it evaluates the name worker in the enclosing function scope, obtains the already-created worker function object, and binds the new local name run to that same object. No copying or rebinding of worker occurs. 'return run' evaluates run against the local namespace as it stands after the prefix statements, so make() returns the worker function object; decoy is never returned and its body is unreachable through this call chain. make()() therefore calls worker(), which executes subprocess.run with the fully literal argv ['pacman','-S','r22-alias'], serialized with shlex.join as 'pacman -S r22-alias'. A scanner that resolves the returned name against the bindings in effect at return owes exactly one observed host_mutation row and zero unparsed counters. Under the r21 F3 mechanism (returned name looked up only among top-level def names, ignoring intervening Assign bindings) the name run is not a def target at all, so a defective detector silently emits no row; a detector that wrongly substitutes a def name or a stale binding could instead report 'pacman -Q r22-alias-decoy', which forbid_observed_commands names explicitly. Exact expectation: one exact row, zero unparsed.",
+  "source": ".ufo/waves/round-21/residual/FinalBindingReview.md F3 (lines 85-88): returned-closure identity taken from top-level defs only, later Assign rebinding inside the factory ignored; author-lane check 1 (line 158): 'Resolve the returned name against post-prefix bindings.' Python 3.14 language reference: simple assignment binds the target name to the object the right-hand expression evaluates to at execution time; return evaluates its expression against the local namespace in effect at the return statement."
+}

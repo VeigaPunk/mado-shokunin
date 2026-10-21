@@ -1,0 +1,30 @@
+{
+  "id": "AuditEmptyClean",
+  "snapshot": {
+    "findings": [],
+    "files": [
+      {
+        "path": "pkg/alpha.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      },
+      {
+        "path": "pkg/sub/beta.py",
+        "eval_unparsed": 0,
+        "unparsed_spawns": 0
+      }
+    ]
+  },
+  "claim": {
+    "total": 0,
+    "observed": 0,
+    "lead": 0,
+    "errors": 0,
+    "clean": true
+  },
+  "expected": {
+    "code": "0",
+    "finding_ids": ["evidence_audit_clean"]
+  },
+  "rationale": "Independent artifact-arithmetic reasoning only; no candidate code read, no classifier or detector consulted, no measurements taken. The snapshot satisfies every structural precondition for evaluation: 'files' is a nonempty list (two members), so the required-population rule is met; each file object carries 'eval_unparsed' and 'unparsed_spawns' as nonnegative exact integers (0, 0) with no booleans, negatives, nonfinite numbers, or missing counters; 'findings' is present and legitimately empty, which the rules expressly permit. Error sum across all file counters = 0 + 0 + 0 + 0 = 0. Claim comparison: total 0 equals actual finding-row count 0; observed 0 equals actual observed-evidence rows 0; lead 0 equals actual lead-evidence rows 0; errors 0 equals the computed error sum 0. The 'clean:true only if findings empty and errors zero' gate is satisfied on both conjuncts, so the asserted clean label is consistent rather than overclaimed. No invalid or unavailable input exists, so verdict 2 (could-not-evaluate / evidence_audit_input_invalid) does not apply; no artifact assertion is contradicted, so verdict 1 and every mismatch/mislabel finding id (finding_count_mismatch, observed_count_mismatch, lead_count_mismatch, error_count_mismatch, uncertain_scan_claimed_clean, findings_claimed_clean, snapshot_tampered) must be absent. Verdict 0 'clean (artifact assertions consistent)' therefore applies with the success marker evidence_audit_clean as the sole expected finding id. This asserts only receipt-internal arithmetic and evidence-label consistency, not semantic truth, authorship authentication, or admission of any underlying scan result. Extra 'path' members on file objects are incidental metadata: the contract names only the two counter fields per file object, and other members/types remain valid unless named invalid."
+}

@@ -1,0 +1,18 @@
+{
+  "id": "CX11Reset",
+  "cells": [
+    "import subprocess\n\nspec = [\"pacman\", \"-S\", \"r22-cx11-reset\"]\n\n\ndef factory(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\nworker = factory(spec)\n",
+    "worker()\n"
+  ],
+  "cell_reset": [false, true],
+  "expected_kind": "exact",
+  "want": [],
+  "forbid_observed_commands": [
+    "pacman -S r22-cx11-reset"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -S r22-cx11-reset"
+  ],
+  "rationale": "Python 3.14 static reasoning plus one declared transcript premise; no execution. Premise: an eval toolCall whose arguments carry `\"reset\": true` runs its code in a fresh interpreter namespace, so no names from earlier cells survive. Cell 1 (reset false) defines `factory` and binds `worker` to a closure over `[\"pacman\", \"-S\", \"r22-cx11-reset\"]`, but calls nothing that spawns. Cell 2 (reset true) evaluates `worker()` in the fresh namespace: `worker` is unbound, so NameError, and nothing executes. Exact empty, zero unparsed. This attacks a repair that persists closure frames on the per-file binding map across a reset. CaptureCrossCell is the reset:false sibling.",
+  "source": "CriticScope.json CX11. Premise disclosure: no on-disk authority for the eval tool's reset argument was located outside the detector itself; the detector's docstring was deliberately not used as truth. The original six fixtures carry 'reset': false in toolCall arguments. Harness requirement: cell_reset is a schema extension. OracleHarness must emit arguments.reset per cell from it. If the flag is dropped, the static truth flips to one observed host_mutation and this proposal must be marked ineligible, not re-scored."
+}

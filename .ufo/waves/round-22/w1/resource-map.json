@@ -1,0 +1,330 @@
+{
+  "schema": "mado-r22-resource-map-v1",
+  "seat": "MadoR22.ResourceMap",
+  "role": "scout; map only. Nothing listed here was executed by this seat: no scanner, comparator, measurement, generator, freeze or payload run.",
+  "repo": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "registered_base": "741122d177ae8ff68a73768777f20484d5bdcbe4",
+  "observed_head": "a963ce67e303db94201507a93018416e4e44fd23",
+  "observed_head_note": "HEAD is a963ce6 (round-22 preregistration) on top of 234f0bc and 741122d. `git diff --stat 741122d HEAD -- tools .ufo/waves/round-21` was empty.",
+  "tool_identities": {
+    "r21_delivered_and_current_production": {
+      "path": "tools/mado-tripwire.py",
+      "sha256": "46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+      "equals": ["git show 741122d:tools/mado-tripwire.py", "after_tool of evidence/final/corpus-final-a6cef89.json", "tool of evidence/final/resource-after-*-a6cef89.json"]
+    },
+    "r21_pre_repair_before_tool": {
+      "path": ".ufo/waves/round-21/evidence/tool-before.py",
+      "sha256": "a57d4fe9277ff06c9b5916fc731e91f05bcd69cf05639cb2090ebcb00b5b6458",
+      "git_tracked": true
+    },
+    "committed_copy_of_741122d_tool_outside_tools": "absent (no tracked .py with sha 46c829... other than tools/mado-tripwire.py)"
+  },
+  "resource_recipes": {
+    "entry": {
+      "runner": {"path": ".ufo/waves/round-21/resource/measure.py", "sha256": "6d0362e1920b8c8f010bd83619f9b6c15fb705a67614a7c9b5d5d314937987d4", "equals_runner_sha256_in_all_r21_resource_receipts": true},
+      "generator": {"path": ".ufo/waves/round-21/resource/gen.py", "sha256": "f742acc5a5074cbb53aa8c00efa2ec9d23a4b5eeba66ca81d4968bb65d03c183", "reuse": "DO NOT rerun; it overwrites fixtures/manifest. Fixtures are committed."},
+      "manifest": {"path": ".ufo/waves/round-21/resource/manifest.json", "sha256": "2d479fed13cf852c4243c6ffccb48a39b37d32095b5422a8b7913fdbfa3a0ff4", "sidecar": ".ufo/waves/round-21/resource/manifest.sha256", "schema": "mado-r21-resource-workloads-v1"},
+      "fixtures": [
+        {"path": ".ufo/waves/round-21/resource/fixtures/assignments-1000.jsonl", "statements": 1000, "sha256": "cada424f6584b7085b8c8ade33d872bf42e10d3bcba9402b8ef0a851de0a0acf"},
+        {"path": ".ufo/waves/round-21/resource/fixtures/assignments-2000.jsonl", "statements": 2000, "sha256": "e59bb1c2d9306dd8dcbf4c576ec7cd94861131058bff087701d005b71decdb1a"},
+        {"path": ".ufo/waves/round-21/resource/fixtures/assignments-4000.jsonl", "statements": 4000, "sha256": "ac11bd54403295b509641d2db30d78a2a6abee9d27ea91e67e93f7aff9639c3c"}
+      ],
+      "workload": "one eval toolCall per file of unique shallow scalar assignments `binding_NNNN = N`; spawn_calls 0; expected {verdict: clean, exit: 0, findings: 0}"
+    },
+    "caps": {
+      "child_RLIMIT_AS_bytes": 402653184,
+      "child_RLIMIT_AS_source": "measure.py ADDRESS_SPACE_BYTES = 384*1024*1024, applied via preexec_fn setrlimit(RLIMIT_AS)",
+      "wall_timeout_seconds": 15,
+      "timeout_mechanism": "monotonic deadline then SIGKILL to the child process group (start_new_session=True); 1 s reap grace, then reap_timeout",
+      "stdout_stderr_capture_limit_bytes": 1000000,
+      "children": "one at a time, sequential, manifest order 1000 -> 2000 -> 4000",
+      "child_cwd": ".ufo/waves/round-21/resource/fixtures",
+      "child_stdin": "/dev/null",
+      "rss_source": "os.wait4 ru_maxrss (KiB); no /proc reads",
+      "preflight_rejections": ["manifest.sha256 mismatch", "schema != mado-r21-resource-workloads-v1", "statements != [1000,2000,4000]", "any expected != clean/0/0", "fixture outside fixtures/ or sha256 mismatch"],
+      "runner_exit": "0, or 2 if a started child was never reaped; per-case scanner exit is only in the JSON rows, NOT in runner exit",
+      "outer_cap_in_r21_final_receipts": 402653184,
+      "outer_cap_mechanism": "UNKNOWN: receipts record outer_address_space_cap 402653184 but not how it was applied. [INFERENCE] same as r21 w2 seats: `ulimit -v 393216` (393216 KiB = 402653184 B)."
+    },
+    "modes": {
+      "cli": {
+        "child_argv_template": ["<resolved --python>", "-I", "<resolved --tool>", "--scan", "<resolved fixture>"],
+        "r21_observed_child_argv0": "/usr/bin/python3.14",
+        "note": "goes through the tool __main__ run_with_stack; tools/mado-tripwire.py:3253-3256 shrinks the 512 MiB thread stack to min(64 MiB, max(8 MiB, ceiling//4)) when RLIMIT_AS <= 512 MiB"
+      },
+      "module-main": {
+        "child_argv_template": ["<resolved --python>", "-I", "-c", "<API_MAIN_WRAPPER>", "<resolved --tool>", "<resolved fixture>"],
+        "api_main_wrapper_sha256": "233f0c03bc7d20818a2b157fee2d38e73e57b77cd5f0827202b4340e06333eb9",
+        "note": "loads the tool as module _mado_r21_scan_target and calls main(['--scan', fixture]) directly, bypassing run_with_stack"
+      }
+    },
+    "r21_exact_outer_argv": {
+      "cli": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/resource/measure.py", "--tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py", "--mode", "cli"],
+      "module-main": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/resource/measure.py", "--tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py", "--mode", "module-main"]
+    },
+    "r22_reuse_argv_not_run": {
+      "changed_tool_cli": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/resource/measure.py", "--tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py", "--mode", "cli"],
+      "changed_tool_module_main": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/resource/measure.py", "--tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py", "--mode", "module-main"],
+      "outer_wrapper_if_matching_r21": "[INFERENCE] bash -c 'ulimit -v 393216 && exec <argv>'; registration requires same entry paths and the exact 1000/2000/4000 population, so --tool path and runner path must stay as above",
+      "baseline_tool_variant": "for a before/after pair, pass --tool <frozen copy of 741122d tool>; no such committed copy exists yet (see comparator recipe B)"
+    },
+    "r21_receipts_baseline": {
+      "before_eaec245_tool_a57d4fe": {
+        "cli": {"receipt": ".ufo/waves/round-21/evidence/resource-before-cli.json", "rows": [{"statements": 1000, "exit": 2, "rss_kib": 24572}, {"statements": 2000, "exit": 2, "rss_kib": 25412}, {"statements": 4000, "exit": 2, "rss_kib": 24420}], "note": "could_not_evaluate 'internal RuntimeError' (512 MiB stack reservation under 384 MiB cap)"},
+        "module-main": {"receipt": ".ufo/waves/round-21/evidence/resource-before-module-main.json", "rows": [{"statements": 1000, "exit": 0, "rss_kib": 47164}, {"statements": 2000, "exit": 0, "rss_kib": 132160}, {"statements": 4000, "exit": 1, "rss_kib": 381464, "stderr": "MemoryError, lost sys.stderr"}]}
+      },
+      "after_a6cef89_tool_46c8290": {
+        "cli": {"receipt": ".ufo/waves/round-21/evidence/final/resource-after-cli-a6cef89.json", "outer_seconds": 0.236, "rows": [{"statements": 1000, "exit": 0, "rss_kib": 29200, "elapsed_s": 0.046476}, {"statements": 2000, "exit": 0, "rss_kib": 31748, "elapsed_s": 0.063179}, {"statements": 4000, "exit": 0, "rss_kib": 38916, "elapsed_s": 0.093446}]},
+        "module-main": {"receipt": ".ufo/waves/round-21/evidence/final/resource-after-module-main-a6cef89.json", "outer_seconds": 0.184, "rows": [{"statements": 1000, "exit": 0, "rss_kib": 20292, "elapsed_s": 0.031262}, {"statements": 2000, "exit": 0, "rss_kib": 22852, "elapsed_s": 0.046381}, {"statements": 4000, "exit": 0, "rss_kib": 28904, "elapsed_s": 0.073205}]},
+        "all_rows": "MADO_TRIPWIRE: clean, exit 0, timed_out false"
+      },
+      "no_harm_reading": "r22 changed tool should keep all six rows clean/exit 0/not timed out under the same caps; RSS/elapsed are host-dependent measurements, not frozen expectations"
+    }
+  },
+  "corpus_comparator_1356": {
+    "entry": {
+      "comparator": {"path": ".ufo/waves/round-21/corpus/compare.py", "sha256": "60cef7bebe6eef0bbf09448fec70f1b55375b5f511aad4c968dc22ee4036a653", "equals_runner_sha256_in": "evidence/final/corpus-final-a6cef89.json", "note": "the earlier evidence/corpus-comparison.json (2ac0f9b) used runner 9296ab49...; that runner is no longer on disk"},
+      "snapshot_manifest": {"path": ".ufo/waves/round-21/corpus/snapshot/manifest.json", "sha256": "8e1cf206c85563b418630ef1d094559a9522431ff4e077ca1b51f249436a1377", "pinned_in": "compare.py MANIFEST_SHA", "file_count": 1356, "source_commit": "794aaeb22b4bf35b2482a6779733b69343baff5b"},
+      "snapshot_files_root": ".ufo/waves/round-21/corpus/snapshot/files",
+      "snapshot_files_tracked": 1356,
+      "freezer": {"path": ".ufo/waves/round-21/corpus/freeze_corpus.py", "sha256": "f2af37046669155c217e5f9c79fa25c459254c80bc225499d66c87299c8da866", "reuse": "DO NOT rerun; refuses an existing snapshot. Its caps: max_files 10000, max_single_file_bytes 33554432, max_total_bytes 268435456"}
+    },
+    "caps": {
+      "worker_RLIMIT_AS_bytes": 402653184,
+      "worker_RLIMIT_AS_source": "compare.py worker(): resource.setrlimit(RLIMIT_AS, 384 MiB) inside the worker child before importing the tool",
+      "per_file_deadline_seconds": 15,
+      "per_file_deadline_mechanism": "signal.alarm(15) -> TimeoutError('per-file 15-second deadline'), recorded as a row error, worker continues",
+      "outer_subprocess_timeout_seconds": 600,
+      "outer_subprocess_timeout_note": "subprocess.run(..., timeout=600) per tool run; expiry raises uncaught TimeoutExpired (traceback, no JSON)",
+      "children": "two worker children, strictly sequential: before-tool run then after-tool run",
+      "outer_cap_in_r21_final_receipt": 402653184,
+      "outer_cap_mechanism": "UNKNOWN; [INFERENCE] `ulimit -v 393216`",
+      "r21_final_outer_seconds": 41.156
+    },
+    "worker_contract": {
+      "worker_argv_template": ["<sys.executable of outer>", "-I", "<abs compare.py>", "--worker", "<resolved tool>"],
+      "tool_import": "importlib spec_from_file_location('corpus_tripwire', tool); exec_module; calls module.scan_file(str(path)) per manifest row on the MAIN thread",
+      "not_used": "run_with_stack / main(); sys.setrecursionlimit(50000) is only set inside run_with_stack (tools/mado-tripwire.py:3258)",
+      "required_tool_api": "scan_file(path) -> (stats, findings); stats.sha256 and stats.path must equal the frozen sha and absolute ROOT/snapshot/files/<path>; every finding.file must equal that absolute path",
+      "row_errors_caught": "Exception and MemoryError -> {path, error: '<Type>: <msg>'}",
+      "comparison_key": ["line", "tool_call_id", "class", "rule", "command", "evidence (default 'observed')"],
+      "integrity_checks": ["manifest sha before runs and after each run", "every snapshot file sha256 vs manifest", "tool sha unchanged across its run", "row count == 1356 and path order identical", "worker exit 0"],
+      "exit": "int(bool(errors)): exit 1 whenever any file errors on either side. With the known error pairs this is ALWAYS 1; exit code cannot serve as the no-harm guard"
+    },
+    "r21_exact_argv": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py", "--before-tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/evidence/tool-before.py", "--after-tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py"],
+    "r21_final_receipt": {
+      "path": ".ufo/waves/round-21/evidence/final/corpus-final-a6cef89.json",
+      "sha256": "57eb2590cff07fae9044f355ffeedc6028c64f9da805418e7922ed33bd56d803",
+      "committed_in": "741122d177ae8ff68a73768777f20484d5bdcbe4",
+      "measured_commit": "a6cef8984d3815775587ab634ce558e13338b0eb",
+      "exit": 1,
+      "files": 1356,
+      "retained": 836,
+      "removed_or_relabelled_groups": 31,
+      "removed_or_relabelled_count": 31,
+      "added_or_relabelled_groups": 104,
+      "added_or_relabelled_count": 383,
+      "before_findings_total": 867,
+      "after_findings_total": 1219,
+      "errors": 108,
+      "adjudication": {"path": ".ufo/waves/round-21/evidence/final/corpus-adjudication-a6cef89.json", "sha256": "34abe2fcd2161b24039b6e459c30c64f167250da206d9f552efbb644a36f58aa", "author": "MadoR21-2, static semantic review (not independent closure)", "classification_counts": {"false_positive_removed": 10, "evidence_relabel": 19, "binding_correction": 2}, "added_side_itemized": false}
+    },
+    "r22_reuse_argv_not_run": {
+      "A_r21_identical": {
+        "argv": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py", "--before-tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/evidence/tool-before.py", "--after-tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py"],
+        "use": "same entry paths as r21; diff the new runs.after against r21 final runs.after per path and key, and the error list against the 108 pairs below",
+        "expected_if_no_harm": "errors == the 108 pairs below with identical class/reason per path (or a disclosed improvement), no new error flip, removed/added changes vs r21 each adjudicated"
+      },
+      "B_delivered_baseline": {
+        "prerequisite_not_done": "freeze the 741122d tool to a non-production path BEFORE editing tools/, e.g. `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 741122d177ae8ff68a73768777f20484d5bdcbe4:tools/mado-tripwire.py` written to .ufo/waves/round-22/evidence/tool-before.py (owner seat decides path), then verify sha256 46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+        "argv": ["python3", "-I", "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/compare.py", "--before-tool", "<frozen 741122d copy, sha 46c829...>", "--after-tool", "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py"],
+        "expected_baseline_errors_for_identical_tools": 107,
+        "why_107": "with before == r21 delivered tool, huge_many_stmts.jsonl no longer errors on either side, so only the 107 both-sided pairs remain"
+      },
+      "outer_wrapper_if_matching_r21": "[INFERENCE] bash -c 'ulimit -v 393216 && exec <argv>'"
+    },
+    "hazards": [
+      "Exit is 1 by construction while known error pairs exist; guard on pair/row diff, never on exit 0.",
+      "Error messages and stats.path embed the absolute checkout path /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/corpus/snapshot/files/...; running from another worktree/jj workspace root changes message strings and fails attribution unless compared by manifest path + error class.",
+      "The TimeoutError pair (huge_bash_cmd.jsonl) depends on wall-clock time under SIGALRM 15 s; host load can flip it either way. The MemoryError pair depends on RLIMIT_AS and allocator behavior.",
+      "[INFERENCE] The 20 RecursionError pairs reflect scan_file on the main thread at the default recursion limit, because compare.py bypasses run_with_stack; they say nothing about the CLI path and are not clean results.",
+      "compare.py --worker is an internal mode; it does not apply the outer integrity/attribution checks by itself.",
+      "Do not rerun gen.py or freeze_corpus.py: both write into the committed recipe directories."
+    ]
+  },
+  "known_108_error_pairs": {
+    "source": ".ufo/waves/round-21/evidence/final/corpus-final-a6cef89.json, stdout JSON .errors",
+    "count": 108,
+    "both_sides_error": 107,
+    "before_only": 1,
+    "after_only": 0,
+    "identical_before_after_message": 107,
+    "new_error_flips": 0,
+    "same_paths_as_2ac0f9b_run": true,
+    "by_class": {"CouldNotEvaluate": 86, "RecursionError": 20, "TimeoutError": 1, "MemoryError_before_only": 1},
+    "digests": {
+      "error_paths_in_order": {"sha256": "73a5b3648cdaac4eddcca6aef70de340760a73cb159fe1f34c59fa16777c207b", "command": "jq -r .stdout corpus-final-a6cef89.json | jq -c '[.errors[]|.path]' | tr -d '\\n' | sha256sum"},
+      "errors_array": {"sha256": "2a8842a7d5c0d99a8dcbf06c538fd18b38c28843ceb112d117c0f0df3cfe3626", "command": "jq -r .stdout corpus-final-a6cef89.json | jq -c '.errors' | tr -d '\\n' | sha256sum"},
+      "delivered_tool_after_error_paths_107": {"sha256": "53b5c0e39ab89dc97105bee4747cf7c3257d6204f406e856cd30fc850f021756", "command": "jq -r .stdout corpus-final-a6cef89.json | jq -c '[.runs.after[]|select(has(\"error\"))|.path]' | tr -d '\\n' | sha256sum"},
+      "delivered_tool_after_rows_1356": {"sha256": "dc9d36e2e8b72985498a5890b740dad22a341a9f91f0843076e0ae9fd11a3198", "command": "jq -r .stdout corpus-final-a6cef89.json | jq -c '.runs.after' | tr -d '\\n' | sha256sum"}
+    },
+    "path_prefix": ".ufo/waves/",
+    "groups": [
+      {
+        "before": "MemoryError: ",
+        "after": null,
+        "n": 1,
+        "paths": ["round-20/w2/AdvCrash/fixtures/huge_many_stmts.jsonl"],
+        "note": "before-only; after evaluable with 0 findings, eval_calls 1 (adjudication improved_allocation_failure 1)"
+      },
+      {
+        "before": "TimeoutError: per-file 15-second deadline",
+        "after": "TimeoutError: per-file 15-second deadline",
+        "n": 1,
+        "paths": ["round-20/w2/AdvCrash/fixtures/huge_bash_cmd.jsonl"]
+      },
+      {
+        "before": "CouldNotEvaluate: refused file name: <path>",
+        "after": "CouldNotEvaluate: refused file name: <path>",
+        "n": 1,
+        "paths": ["round-17/tripwire/hardening/agent.db.jsonl"]
+      },
+      {
+        "before": "CouldNotEvaluate: <path>:2 invalid line (JSONDecodeError)",
+        "after": "CouldNotEvaluate: <path>:2 invalid line (JSONDecodeError)",
+        "n": 1,
+        "paths": ["round-17/tripwire/core/malformed.jsonl"]
+      },
+      {
+        "before": "CouldNotEvaluate: <path>:1 invalid line (ValueError)",
+        "after": "CouldNotEvaluate: <path>:1 invalid line (ValueError)",
+        "n": 1,
+        "paths": ["round-20/w2/AdvCrash/fixtures2/float_inf_field.jsonl"]
+      },
+      {
+        "before": "RecursionError: maximum recursion depth exceeded",
+        "after": "RecursionError: maximum recursion depth exceeded",
+        "n": 20,
+        "paths": [
+          "round-20/w2/AdvCrash/fixtures/deep_attr_chain_5k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/deep_binop_2k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/deep_binop_50k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/deep_call_suffix_2k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/huge_string_concat_20k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/huge_string_concat_2k.jsonl",
+          "round-20/w2/AdvCrash/fixtures/sudo_chain_1500.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_attr_in_lambda.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_attr_in_staticmethod.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_attrchain_in_helper.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_binop_in_helper.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_body_via_chain.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_callsuffix_in_helper.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_callsuffix_in_init.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_callsuffix_in_lambda.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_callsuffix_in_method.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_expr_in_class_body.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_expr_in_class_body_called.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_helper_cross_cell.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_in_inner_def_called.jsonl"
+        ]
+      },
+      {
+        "before": "CouldNotEvaluate: <path>:1 unknown record shape",
+        "after": "CouldNotEvaluate: <path>:1 unknown record shape",
+        "n": 83,
+        "paths": [
+          "round-18/fetch/CriticHonestyW2/receipts.jsonl",
+          "round-18/fetch/FetchBackfillR17/receipts.jsonl",
+          "round-18/fetch/FetchBodyPolicy/receipts.jsonl",
+          "round-18/fetch/HostThemeConsumers/receipts.jsonl",
+          "round-18/fetch/MadoR18.HostOmarchyCheckoutTag/receipts.jsonl",
+          "round-18/fetch/MadoR18.ReopenS081/receipts.jsonl",
+          "round-18/fetch/MadoR18.RevengeTarballRepro/receipts.jsonl",
+          "round-18/fetch/MadoR18.ReviewSourcesRows/receipts.jsonl",
+          "round-18/fetch/MadoR18.SrcSwaybgMan/receipts.jsonl",
+          "round-18/fetch/MadoR18.SrcWalkerThemes/receipts.jsonl",
+          "round-18/fetch/NoteTheme/receipts.jsonl",
+          "round-18/fetch/NoteWalker/receipts.jsonl",
+          "round-18/fetch/ReopenS072/receipts.jsonl",
+          "round-18/fetch/ReopenS073/receipts.jsonl",
+          "round-18/fetch/ReopenS074/receipts.jsonl",
+          "round-18/fetch/ReopenS075/receipts.jsonl",
+          "round-18/fetch/ReopenS076/receipts.jsonl",
+          "round-18/fetch/ReopenS077/receipts.jsonl",
+          "round-18/fetch/ReopenS078/receipts.jsonl",
+          "round-18/fetch/ReopenS079/receipts.jsonl",
+          "round-18/fetch/ReopenS080/receipts.jsonl",
+          "round-18/fetch/ReopenS082/receipts.jsonl",
+          "round-18/fetch/ReopenS083/receipts.jsonl",
+          "round-18/fetch/ReopenS084/receipts.jsonl",
+          "round-18/fetch/ReopenS085/receipts.jsonl",
+          "round-18/fetch/ReopenS086/receipts.jsonl",
+          "round-18/fetch/ReopenS087/receipts.jsonl",
+          "round-18/fetch/ReopenS088/receipts.jsonl",
+          "round-18/fetch/ReopenS089/receipts.jsonl",
+          "round-18/fetch/ReopenS092/receipts.jsonl",
+          "round-18/fetch/ReopenS093/receipts.jsonl",
+          "round-18/fetch/ReopenS094/receipts.jsonl",
+          "round-18/fetch/ReviewThemeUpstream/receipts.jsonl",
+          "round-18/fetch/ReviewWalkerHost/receipts.jsonl",
+          "round-18/fetch/ReviewWalkerUpstream/receipts.jsonl",
+          "round-18/fetch/SrcElephantProviders/receipts.jsonl",
+          "round-18/fetch/SrcElephantReadme/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyBackground/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyManualThemes/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyThemeHooks/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyThemeLayout/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyThemeSet/receipts.jsonl",
+          "round-18/fetch/SrcOmarchyWalker/receipts.jsonl",
+          "round-18/fetch/SrcThemeAlternates/receipts.jsonl",
+          "round-18/fetch/SrcWalkerChangelog/receipts.jsonl",
+          "round-18/fetch/SrcWalkerConfigPaths/receipts.jsonl",
+          "round-18/fetch/SrcWalkerDefaultConfig/receipts.jsonl",
+          "round-18/fetch/SrcWalkerDocsSite/receipts.jsonl",
+          "round-18/fetch/SrcWalkerReadme/receipts.jsonl",
+          "round-19/fetch/CriticC1/receipts.jsonl",
+          "round-19/fetch/DeltaWalkerCli/receipts.jsonl",
+          "round-19/fetch/DeltaWalkerConfig/receipts.jsonl",
+          "round-19/fetch/FrontierRows/receipts.jsonl",
+          "round-19/fetch/HtmlAnchorSweep/receipts.jsonl",
+          "round-19/fetch/MadoR19.UnpinnedUrlSweep/receipts.jsonl",
+          "round-19/fetch/RevRubricVRisk/receipts.jsonl",
+          "round-19/fetch/SrcS084/receipts.jsonl",
+          "round-19/fetch/SrcS094/receipts.jsonl",
+          "round-20/fetch/A2Sources/receipts.jsonl",
+          "round-20/fetch/CasePureCallables/receipts.jsonl",
+          "round-20/fetch/CaseShadowing/receipts.jsonl",
+          "round-20/fetch/ScoutCorpusVcsNonWrites/receipts.jsonl",
+          "round-20/fetch/SrcBashErrexit/receipts.jsonl",
+          "round-20/fetch/SrcGitAddPushDoc/receipts.jsonl",
+          "round-20/fetch/SrcGitCommitDoc/receipts.jsonl",
+          "round-20/fetch/SrcGitHelpSource/receipts.jsonl",
+          "round-20/fetch/SrcJjHelp/receipts.jsonl",
+          "round-20/fetch/SrcPyBuiltins/receipts.jsonl",
+          "round-20/fetch/SrcPyShlex/receipts.jsonl",
+          "round-20/fetch/SrcUnshare/receipts.jsonl",
+          "round-20/w2/AdvCrash/fixtures2/deep_json_line.jsonl",
+          "round-20/w2/CorpusRuntime/full-sweep.jsonl",
+          "round-20/w2/CorpusRuntime/runs.jsonl",
+          "round-20/w2/CorpusRuntime/serial-runs.jsonl",
+          "round-20/w2/ReopenBash/fetch/receipts.jsonl",
+          "round-20/w2/ReopenExecModel/fetch/receipts.jsonl",
+          "round-20/w2/ReopenGitDocs/fetch/receipts.jsonl",
+          "round-20/w2/ReopenGitSource/fetch/receipts.jsonl",
+          "round-20/w2/ReopenJj/fetch/receipts.jsonl",
+          "round-20/w2/ReopenPyDocs/fetch/receipts.jsonl",
+          "round-20/w2/ReopenPyShlexSub/fetch/receipts.jsonl",
+          "round-20/w2/ReopenUnshare/fetch/receipts.jsonl",
+          "round-20/w2/ScribeTrendDraft/fetch/receipts.jsonl"
+        ]
+      }
+    ],
+    "disclosure": "These 108 pairs are error-bearing scans, not clean results. The r21 corpus is NOT a green all-input evaluation. r22 must keep every pair visible and must not count any of them as clean or as a match."
+  },
+  "unknowns": [
+    "How the 402653184-byte outer cap in r21 final receipts was applied (receipts don't record the wrapper).",
+    "Whether a fresh run on this host reproduces the TimeoutError pair and the per-case RSS/elapsed values; not measured by this seat.",
+    "The added_or_relabelled side (104 groups / 383 rows) of the r21 final receipt has no itemized adjudication.",
+    "Whether r22 Main picks recipe A, recipe B, or both; recipe B needs a frozen copy of the 741122d tool that does not exist yet."
+  ]
+}

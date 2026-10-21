@@ -1,0 +1,19 @@
+{
+  "id": "CaptureKeyword",
+  "cells": [
+    "import subprocess\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\ncmd = [\"pacman\", \"-S\", \"r22-kw-factory\"]\nrunner = make(argv=cmd)\ncmd = [\"pacman\", \"-Q\", \"r22-kw-invoke\"]\nrunner()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-kw-factory",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-kw-invoke"
+  ],
+  "rationale": "Static Python 3.14 semantics only; nothing executed. make(argv=cmd) is a keyword-argument call: per CPython reference compound_stmts, a function call assigns values to all parameters 'either from positional arguments, from keyword arguments, or from default values' at the moment of the call, so make's local parameter argv is bound to the exact list object [\"pacman\",\"-S\",\"r22-kw-factory\"] when the factory runs. The nested def run uses argv but does not bind it, so argv is a free variable in run; per executionmodel's name-resolution rule it is 'resolved using the nearest enclosing scope', which is make's function scope cell holding the creation-time list, not the module name cmd. The later statement cmd = [\"pacman\",\"-Q\",\"r22-kw-invoke\"] is a plain assignment that per simple_stmts '(re)binds names' — it rebinds only the module-level name cmd and cannot reach make's closed-over argv. runner() therefore calls subprocess.run([\"pacman\",\"-S\",\"r22-kw-factory\"]): exactly one inert pacman -S host_mutation marker, evidence observed. The argv is a fully literal list at creation, so the correct result is exact: one observed row, zero leads from this source, zero unparsed. A scanner that re-evaluates the factory call's keyword argument in the invocation-statement environment (r21 FinalBindingReview F1 class: capture args bound at invoke time) will instead report package_query pacman -Q r22-kw-invoke, which is fabricated relative to Python semantics; that wrong row is what forbid_observed_commands pins.",
+  "source": "CPython Python 3.14 Language Reference v3.14.8: reference/compound_stmts.rst function-definition section 'A function call always assigns values to all parameters mentioned in the parameter list, either from positional arguments, from keyword arguments, or from default values' (local copy .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-compound_stmts.rst lines 1326-1336; upstream https://github.com/python/cpython/blob/v3.14.8/Doc/reference/compound_stmts.rst); reference/executionmodel.rst 'When a name is used in a code block, it is resolved using the nearest enclosing scope' (cpython-3.14.8-Doc-reference-executionmodel.rst lines 89-115); reference/simple_stmts.rst 'Assignment statements are used to (re)bind names to values' (cpython-3.14.8-Doc-reference-simple_stmts.rst lines 72-108)"
+}

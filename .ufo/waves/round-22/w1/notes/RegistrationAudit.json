@@ -1,0 +1,111 @@
+{
+  "schema": "mado-r22-registration-audit-v1",
+  "seat": "RegistrationAudit",
+  "axes": [
+    "chronology and provenance",
+    "C2 fail-closed calibration",
+    "scope and evidence honesty"
+  ],
+  "chronology": {
+    "base": "741122d177ae8ff68a73768777f20484d5bdcbe4",
+    "registration_path": ".ufo/waves/round-22/registration.md",
+    "registration_sha256": "315b48ee7105e3cd543849aa775c7b5743057aa3bdca6bcd76dea4e4bdfb13fa",
+    "audit_contract_path": ".ufo/waves/round-22/audit-contract.json",
+    "audit_contract_sha256": "e65d165a1599c2d8743509bfb09ef46df9b8cc9038246b80cdef1780b5fdf23f",
+    "observed_registration_commit": {
+      "hash": "a963ce67e303db94201507a93018416e4e44fd23",
+      "author_date": "2026-10-21T11:18:17-03:00",
+      "committer_date": "2026-10-21T11:18:18-03:00",
+      "paths": [
+        ".ufo/waves/round-22/audit-contract.json",
+        ".ufo/waves/round-22/registration.md",
+        ".ufo/waves/round-22/w1-spec.json",
+        "SCORECARD.md"
+      ]
+    },
+    "other_observed_registration_commits": [
+      {
+        "hash": "387fba0eee40cbaac10ac735d2b0fa9b3c436e26",
+        "author_date": "2026-10-21T11:18:17-03:00",
+        "committer_date": "2026-10-21T11:18:17-03:00",
+        "same_registration_paths_observed": true
+      },
+      {
+        "hash": "5471d9e2ff4c1e685636f5e8fbc5dae2649a7c09",
+        "author_date": "2026-10-21T11:18:17-03:00",
+        "committer_date": "2026-10-21T11:18:17-03:00",
+        "same_registration_paths_observed": true
+      }
+    ],
+    "last_observed_production_path_commit": {
+      "path": "tools/mado-tripwire.py",
+      "hash": "a6cef8984d3815775587ab634ce558e13338b0eb",
+      "subject": "round-21: separate logging message data from configured factories",
+      "author_date": "2026-10-21T06:37:21-03:00",
+      "committer_date": "2026-10-21T06:37:21-03:00"
+    },
+    "latest_observed_commit": {
+      "hash": "80506328d5e46079261d39c0e1e19b8ede0d7c89",
+      "parent": "a963ce67e303db94201507a93018416e4e44fd23",
+      "observed_path_changes": []
+    },
+    "result": "The observed Git history records round-22 registration before any observed round-22 production implementation commit: no post-registration tools/mado-tripwire.py commit appears in the queried all-ref history. The registration postdates the round-21 production commit above. This is absence of an observed later implementation commit, not positive proof of a future implementation's chronology.",
+    "timestamp_limit": "AuthorDate and CommitDate are Git metadata assertions, not trusted timestamps or authentication of authorship, pre-commit knowledge, or when bytes were actually written. This review did not inspect working-tree/index state or prove the absence of uncommitted earlier implementation."
+  },
+  "c2_review": {
+    "contract_requirements_observed": [
+      "Exact nonnegative integers for total, observed, lead, and errors; clean must be an exact bool.",
+      "Every finding row requires an explicit observed|lead evidence marker and nonempty class and command strings.",
+      "At least one files entry is required; sum eval_unparsed and unparsed_spawns; clean:true requires no findings and zero errors.",
+      "Missing or invalid evidence markers are uncertainty, not observed; digest is checked before verdict comparison.",
+      "Malformed JSON, duplicate keys, booleans-as-counts, negative counts, nonfinite numbers, paths escaping the root, symlinks, and snapshots over 2 MiB are invalid."
+    ],
+    "historical_c3_sources": [
+      {
+        "path": ".ufo/waves/round-19/evidence/final/tw-recall-after.txt",
+        "sha256": "8ff13d23d3ffeab946a301a3457360edc3abf52ea833611ac2a0d6bda48ec1c1",
+        "measured_commit": "7b4839d31d60af5bac40e3e74aec70e928601dfc",
+        "observed_rows": "Six incident-line rows; each records file, line, and detected:true. No class, command, or evidence-tier field."
+      },
+      {
+        "path": ".ufo/waves/round-19/evidence/harm/harm-tw-recall.txt",
+        "sha256": "6cbdd4949d30dc0f65e6f4a22a64406fe22ae7cd0bbce5ae1083b5856f55247d",
+        "measured_commit": "01b80946d92b26370d3012a7da655d00dd135154",
+        "observed_rows": "Six incident-line rows; each records file, line, and detected:true. No class, command, or evidence-tier field."
+      },
+      {
+        "path": ".ufo/waves/round-19/frozen/expected.json",
+        "sha256": "50d2a45e2602cb430b94043f6c658204b0b1802e8c1931cb2a3eda167af02435",
+        "observed_rows": "Eleven expected finding rows, with file, line, class, and rule; no command or observed|lead evidence marker."
+      },
+      {
+        "path": ".ufo/waves/round-19/w2/reports/RerunC3.md",
+        "observed_rows": "Lines 41-55 enumerate eleven scan findings and their classes/rules. This is report evidence, not a row-level evidence marker in either receipt."
+      },
+      {
+        "path": ".ufo/waves/round-19/w2/reports/CriticC3W2.md",
+        "observed_rows": "Lines 23-32 and 151-157 identify the six-incident score as five non-guessing detections plus the r13-root:4 lead heuristic; the report also says the lead row was not distinguishable from an observed row in the old output."
+      }
+    ],
+    "finding": "The registration's five-observed-plus-one-lead target is incident-line-level (six rows), while audit-contract.json requires counts over explicit finding rows; the retained C3 scan inventory has eleven finding rows. Neither old receipt schema supplies evidence, class, or command fields. Therefore the raw receipt cannot be used unchanged as a valid audit-contract snapshot that proves a 5/1 split. Collapsing eleven finding rows to six incident rows or adding labels in-place would not preserve the original row population. Keep the raw receipt and its digest intact; any independently justified mapping must be a distinct, digest-bound artifact and define whether claims count incidents or finding rows. Until that is specified, do not claim a C2 green. Under the contract, unmarked rows are uncertainty, not observed; a raw unmarked input cannot be silently accepted as clean.",
+    "red_green_acceptance": "Registration requires the faithful r19 case to go red and a correctly scoped five-observed/one-lead case to go green. The raw receipts contain only detected booleans, so the contract does not establish whether the raw case should be code 1 (contradiction) or code 2 (could-not-evaluate); its missing-marker rule points to uncertainty unless an independently authenticated row mapping is supplied. Resolve the count grain and define whether red means code 1 specifically or any non-green verdict before accepting a baseline. On the same digest-bound population, an all-observed overclaim must not pass; a universal-accept evaluator must fail the explicit invalid cases and the required audit-check mutant.",
+    "candidate_status": "No C2 implementation, baseline result, fixture result, or mutant-kill result was established by this review. The w1 notes directory contained no files when inspected. Contract checks here are static review only."
+  },
+  "scope": {
+    "production_edits": false,
+    "detector_measurements": false,
+    "payload_execution": false,
+    "tests_builds_linters_formatters_smokes": false,
+    "packages_or_installs": false,
+    "shared_lesson_sources_log_edits": false,
+    "unknowns": [
+      "Whether any implementation exists as uncommitted or indexed work; no worktree/index inspection was performed.",
+      "Which of the two retained six-row r19 C3 receipts is intended as the canonical historical baseline.",
+      "Whether five observed plus one lead is to be counted per incident line or per finding row, and what code-1 red means for the unmarked raw receipt."
+    ]
+  },
+  "artifacts": [
+    ".ufo/waves/round-22/w1/notes/RegistrationAudit.json",
+    ".ufo/waves/round-22/w1/reports/RegistrationAudit.md"
+  ]
+}

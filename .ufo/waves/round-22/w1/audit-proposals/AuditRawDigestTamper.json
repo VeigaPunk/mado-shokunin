@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawDigestTamper",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": {"findings": [], "files": [{"eval_unparsed": 0, "unparsed_spawns": 0}]},
+  "digest_override": {"literal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 2, "finding_ids": ["snapshot_tampered"]},
+  "eligibility": "frozen",
+  "rationale": "The bundle sha256 is well-formed (64 lowercase hex) but is the SHA-256 of the empty byte string. The snapshot file is nonempty, so the digest cannot match. The clarifications say digest mismatch gives code 2 with finding_id snapshot_tampered, verified before JSON decoding or comparison. evidence_audit_input_invalid is not added because the clarification names a single ID. The snapshot and claim are otherwise a consistent clean receipt, so a mutant that skips or mis-compares the digest returns 0/evidence_audit_clean."
+}

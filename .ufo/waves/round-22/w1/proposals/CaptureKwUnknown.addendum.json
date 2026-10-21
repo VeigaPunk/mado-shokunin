@@ -1,0 +1,20 @@
+{
+  "id": "CaptureKwUnknown.addendum",
+  "addendum_to": "CaptureKwUnknown",
+  "cells": [
+    "import subprocess\n\n\ndef make(argv):\n    def run():\n        subprocess.run(argv)\n    return run\n\n\nargv = [\"pacman\", \"-Q\", \"r22-kwunknown-global\"]\nrunner = make(**unknown_map)\nrunner()\n"
+  ],
+  "expected_kind": "uncertain",
+  "want": [],
+  "require_signal": true,
+  "forbid_observed_commands": [
+    "pacman -Q r22-kwunknown-global",
+    "pacman -S r22-kwunknown-global"
+  ],
+  "forbid_commands_any_tier": [
+    "pacman -Q r22-kwunknown-global",
+    "pacman -S r22-kwunknown-global"
+  ],
+  "rationale": "Addendum per parent directive (pre-seal): the borrowed same-named module global is forbidden at ANY evidence tier, not merely observed. Original proposal retained unchanged. Python 3.14 semantics, static reasoning only (no execution, no measurement). `make(**unknown_map)` evaluates `unknown_map`, bound nowhere in the transcript: NameError before parameter binding; `runner` never binds, `runner()` never executes. Independently, a `**` unpack takes keys from the mapping's runtime contents, statically unknowable for a non-literal mapping, so parameter `argv` has no determined value. `run` reads `argv` through `make`'s closure cell, never module scope — the module `argv` global cannot supply it at any confidence level. Therefore `pacman -Q r22-kwunknown-global` (and the class-flipped `pacman -S r22-kwunknown-global` recombination) must appear in NO row at ANY evidence tier: an observed row is the r21 F2 defect outright, and a lead row carrying that argv still invents a binding Python cannot produce — lead is speculative, not fabricated. require_signal: the statically unresolvable `**` unpack must leave a trace — at least one lead row or a nonzero unparsed counter; silent zero-row-plus-clean-scan is an unsound miss, not a sound abstention. Exact error signal may be lead or unparsed; no invented argv is permitted. want stays empty: no required observed row exists.",
+  "source": "Parent directive (MadoR22, pre-seal): forbid borrowed same-named module command at any evidence tier; require_signal true; lead-or-unparsed permitted, no invented argv. Mechanism grounding unchanged: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/residual/FinalBindingReview.md F2 (lines 78-83): unbindable factory call lets closure parameters resolve to same-named module globals reported as observed; non-literal `**` mapping trigger (bind_literal 1998-2000); 'No statically determined observed row exists... The sound output is unparsed or lead.' sweep_body contract (2179-2186): 'Its parameters are unknown; every row it finds is a lead.' — a lead may exist but must not carry argv it could not have. Python 3.14: `**expr` unpacks the runtime mapping (NameError when unbound); shadowed parameter names are cell variables for the inner load."
+}

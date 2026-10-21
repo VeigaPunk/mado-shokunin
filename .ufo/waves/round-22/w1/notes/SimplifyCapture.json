@@ -1,0 +1,129 @@
+{
+  "id": "SimplifyCapture",
+  "seat": "MadoR22.SimplifyCapture",
+  "wave": "round-22",
+  "method": "source-only; no production edits; no measurements; no payload execution",
+  "tool": {
+    "path": "tools/mado-tripwire.py",
+    "sha256": "46c82902896da0ec0ebd54254b1891667fa5da48f8cb297ee08bfb337e34c8c1",
+    "lines": 3282
+  },
+  "axes": [
+    "correctness (F1–F3: factory-time vs invoke-time literals; unbindable capture must not borrow module globals; returned-closure identity after factory-body rebind)",
+    "authority count (how many independent env/bindings snapshots exist and who may mutate them)",
+    "size (lines and duplicate prepare_eval_calls / overlay paths)",
+    "contract clarity (docstring observed vs lead vs sweep; per-file eval persistence)"
+  ],
+  "authorities_today": [
+    {
+      "name": "file_literal_env",
+      "site": "scan_file envs['py']",
+      "lines": "2643-2686",
+      "lifetime": "persists across eval cells in one transcript file until reset"
+    },
+    {
+      "name": "file_binding_map",
+      "site": "scan_file binding_envs['py']",
+      "lines": "2643-2686",
+      "lifetime": "same as file_literal_env"
+    },
+    {
+      "name": "statement_call_snapshot",
+      "site": "prepare_eval_calls call_env / binding_env keyed by id(node)",
+      "lines": "2038-2075",
+      "lifetime": "immutable per eager call/ref at its statement; outer env/bindings advance after snapshot"
+    },
+    {
+      "name": "follow_helper_body",
+      "site": "follow_helper body_env + body_bindings",
+      "lines": "2228-2271",
+      "lifetime": "call-site cenv/cbindings + bind_literal params; nested prepare_eval_calls inside body"
+    },
+    {
+      "name": "capture_invoke_overlay",
+      "site": "spawn_scan capture_owner branch",
+      "lines": "2333-2344",
+      "lifetime": "re-binds factory args with invocation cenv; prefix replay mutates captured_env/bindings — second authority for closure entry (F1/F2/F3 defect source per FinalBindingReview F1–F3)"
+    },
+    {
+      "name": "partial_fixed_at_invoke",
+      "site": "spawn_scan fixed_nodes merge + follow_helper",
+      "lines": "2385-2391",
+      "lifetime": "functools.partial fixed args folded at invoke statement env (same class as F1)"
+    }
+  ],
+  "design": {
+    "name": "immutable_closure_frame",
+    "rule": "Every followed callable carries at most one ClosureFrame: frozen (literal_env, binding_map, bound_params, resolved_node). Frames are created exactly when the factory/partial/helper binding is recorded, using the statement snapshot at that creation call. Invocation only extends the frame with parameter slots; it never re-runs bind_literal against the outer invocation environment for captured defaults.",
+    "types": {
+      "ClosureFrame": {
+        "literal_env": "dict name -> literal | LITERAL_MISS",
+        "binding_map": "shallow copy of binding map at creation statement",
+        "bound_params": "bind_literal result or explicit miss map when bind_literal returns None",
+        "node": "AST helper body to follow (may differ from callable_info static local[returned] after prefix replay)",
+        "bind_status": "bound | miss (miss forces sweep_body / lead-only for that closure; never fall through to module env for parameters)"
+      }
+    },
+    "creation_sites": [
+      "assignment_binding / update_bindings when callable_info returns capture_owner + capture_call: compute frame at capture_call id via call_env/binding_env from the same prepare_eval_calls that classified the cell",
+      "assignment_binding for functools.partial spawn aliases: frame holds fixed_nodes/fixed_keywords literals evaluated at partial construction env",
+      "ordinary helper binding: frame absent; follow_helper continues to bind at call site (unchanged)"
+    ],
+    "consumption": {
+      "follow_helper": "If binding carries closure_frame: seed body_env/body_bindings from frame; skip spawn_scan capture overlay. If bind_status is miss: return None (sweep). Else bind only invoke-time args atop frame.bound_params.",
+      "callable_info": "Stop selecting nested def by static local[returned]; store resolved node on frame after prefix replay at creation time only."
+    },
+    "threading_unification": {
+      "optional": "Replace parallel (env, call_env, bindings, binding_env) quadruple with EnvPair(literal, bindings) plus per-node statement snapshots; spawn_scan reads cenv/cbindings only through get_site(node) -> EnvPair. Not required for F1–F3 fix but deletes four-parameter drift."
+    }
+  },
+  "deletions": [
+    {
+      "target": "spawn_scan capture_owner overlay",
+      "lines": "2333-2344",
+      "lines_approx": 12,
+      "condition": "ClosureFrame computed at binding time",
+      "semantic_caller_proof": "grep: capture_owner referenced only in callable_info 1652/1659 and spawn_scan 2333-2344; no other consumers. LSP unavailable (xd://lsp missing); text fallback only."
+    },
+    {
+      "target": "duplicate prefix prepare_eval_calls in spawn_scan",
+      "lines": "2338-2343",
+      "lines_approx": 6,
+      "condition": "prefix replay folded into frame creation",
+      "semantic_caller_proof": "same as above"
+    }
+  ],
+  "deletion_candidates": [
+    {
+      "target": "capture_owner and capture_call fields on callable_info dict",
+      "lines": "1652-1659",
+      "tradeoff": "Keep until assignment_binding owns frame creation; then replace with closure_frame key only"
+    },
+    {
+      "target": "spawn_scan env + call_env dual lookup",
+      "lines": "2291-2292",
+      "tradeoff": "Merge after EnvPair refactor; not on critical path for closure correctness"
+    }
+  ],
+  "preserved_contract": [
+    "Per-file eval persistence and reset semantics (scan_file 2679-2686; docstring 42-43, 78-81)",
+    "prepare_eval_calls statement snapshots for ordinary eager calls (2038-2075)",
+    "bind_literal + follow_helper for non-closure helpers",
+    "sweep_body when bind fails or depth/budget exceeded (2179-2206; docstring 47-55)",
+    "observed vs lead marking and evidence field (docstring 38-46, 74)",
+    "Thread args/kwargs evaluated at construction (assignment_binding 1719-1730) — distinct timing, unchanged",
+    "C1 registration: unknown capture args -> lead/unparsed, never observed from module globals (registration.md C1)"
+  ],
+  "maps_to_r21_findings": {
+    "F1": "Frame literal_env/bindings frozen at factory call statement; invoke no longer re-binds cmd",
+    "F2": "bind_status miss -> follow_helper None -> sweep/lead; no invocation-env parameter fill",
+    "F3": "frame.node chosen after prefix replay at creation, not static local[returned] at invoke"
+  },
+  "verification_status": "design only; author lane must re-run six FinalBindingReview inert fixtures + frozen replay after implementation",
+  "tools_installed": [],
+  "unknowns": [
+    "Non-Name factory returns (return a if c else b) — frame creation may need two frames or uncertain",
+    "Cross-cell factory create / later invoke — frame must persist on binding_map entry across cells (same as today’s helper node persistence); not probed",
+    "Semantic deletion proof for capture_owner fields pending LSP references when available"
+  ]
+}

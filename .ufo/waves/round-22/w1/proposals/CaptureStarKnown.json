@@ -1,0 +1,19 @@
+{
+  "id": "CaptureStarKnown",
+  "cells": [
+    "import subprocess\ndef make(*argv):\n    def run():\n        subprocess.run(argv)\n    return run\nt = (\"pacman\", \"-S\", \"r22-starknown\")\nrunner = make(*t)\nt = (\"pacman\", \"-Q\", \"r22-starknown-rebound\")\nrunner()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-starknown",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-starknown-rebound"
+  ],
+  "rationale": "Python 3.14 semantics, argued statically (payload never executed). `make(*t)` evaluates `t` at the factory call and splices that tuple object's elements as positional arguments (language ref 6.3.4 Calls: `*expression` must evaluate to an iterable whose elements become positional arguments). `def make(*argv)` therefore receives argv = the tuple object (\"pacman\",\"-S\",\"r22-starknown\") — the varargs signature is required for a starred argv-vector call to be arity-valid; an arity-1 `def make(argv)` under `make(*t)` would raise TypeError and the intended variant would be vacuous. The nested `run` closes over `make`'s parameter cell holding that fixed tuple object. The later `t = (\"pacman\",\"-Q\",\"r22-starknown-rebound\")` rebinds only the caller's module-level NAME to a new tuple; it cannot reach the closed-over cell, so rebinding a caller variable is semantically inert for the closure. `runner()` invokes run() which calls subprocess.run((\"pacman\",\"-S\",\"r22-starknown\")); shlex.join serialization is `pacman -S r22-starknown`. `pacman -S` is host_mutation (same class as the r21 `pacman -S r21-factory` / `r21-b` / `r21-thread-run` truth rows), the argv is fully statically determined, and every statement parses, so exactly one observed host_mutation row and zero unparsed is the truth. Discrimination: a detector that binds the factory call's arguments in the INVOCATION-statement environment (r21 F1 mechanism, FinalBindingReview 70-77) re-resolves `t` to the rebound tuple and emits `pacman -Q r22-starknown-rebound` as observed — that serialization is forbidden. Unlike sibling CaptureStarUnknown (F2 trigger: starred argument whose value is not statically resolvable, FinalBindingReview 80-83 citing bind_literal 1972-1976), the starred `t` here is bound to a literal tuple at every program point, so the argument is statically known and must bind; a lead or unparsed downgrade of this known form is itself a defect. The proposal asserts Python truth only and is independent of any detector output.",
+  "source": "Python 3.14 language reference 6.3.4 Calls (`*expression` iterable unpacking; call-time argument binding) and closure cell semantics (PEP 227/execution model: nested scope binds the object in the enclosing frame, not the caller's later rebinding); .ufo/waves/round-21/residual/FinalBindingReview.md F1 (lines 9, 70-77: factory args bound at invocation-time cenv at spawn_scan 2334) and F2 (lines 10, 80-83: starred non-literal bind failure trigger at 1972-1976, global-leak consequence); r21 inert fixtures .ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/capture-invoke-time.jsonl and capture-unbound-global.jsonl for cell shape and class/evidence conventions; round-22 registration.md C1 (`unknown capture arguments may produce lead/unparsed but never observed values borrowed from module globals`; this variant is a KNOWN capture argument)."
+}

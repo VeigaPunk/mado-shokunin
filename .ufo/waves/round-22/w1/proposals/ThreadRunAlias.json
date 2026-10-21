@@ -1,0 +1,19 @@
+{
+  "id": "ThreadRunAlias",
+  "cells": [
+    "import subprocess\nimport threading\n\n\ncommand = [\"pacman\", \"-Q\", \"r22-tralias-stale\"]\n\n\ndef worker():\n    subprocess.run(command)\n\n\nthread = threading.Thread(target=worker)\nrun = thread.run\ncommand = [\"pacman\", \"-S\", \"r22-tralias-live\"]\nrun()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-tralias-live",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-tralias-stale"
+  ],
+  "rationale": "Python 3.14 semantics, statically reasoned, never executed. threading.Thread.__init__ binds self._target=worker, self._args=(), self._kwargs={} at construction (/usr/lib/python3.14/threading.py:925-928); worker carries no args, so the arg tuple is empty. `run = thread.run` loads the bound-method attribute once and binds module name `run` to that bound method object; the alias permanently targets this Thread instance's run method regardless of later statements. `command = [...]` then rebinds the module-global name `command` to a NEW list object; it does not mutate the earlier ['pacman','-Q','r22-tralias-stale'] list and does not disturb the `run` alias or the thread's stored target. `run()` invokes Thread.run, which executes self._target(*self._args, **self._kwargs) synchronously in the calling thread (threading.py:1013-1024) — no start(), no new thread. Inside worker, `command` is a global load (no local binding in worker), resolved at call time against the module dict, which now holds the rebound list. The reached call is therefore subprocess.run(['pacman','-S','r22-tralias-live']); shlex.join serialization is 'pacman -S r22-tralias-live'. A correct static scanner that preserves the method alias and resolves call-time globals owes exactly one observed host_mutation row and zero eval_unparsed/unparsed_spawns. A scanner that snapshots module bindings at Thread construction or alias time, or follows worker under a pre-rebinding env, fabricates observed 'pacman -Q r22-tralias-stale' — forbidden. A scanner that loses the alias through `run = thread.run` and emits nothing (the r21 F4 silent-miss mode, worsened by indirection) fails exactness.",
+  "source": "/usr/lib/python3.14/threading.py (CPython 3.14.8, installed, read statically): lines 925-928 constructor binds _target/_args/_kwargs; lines 1013-1024 run() invokes self._target(*self._args, **self._kwargs) in the caller's thread. Python 3.14 name-resolution semantics: function-body names with no local binding are global loads evaluated at call time (LEGB); rebinding a global name to a new object does not mutate the previously bound object. Bound-method semantics: `run = thread.run` stores a bound method; calling `run()` dispatches to Thread.run on that instance. Defect class under test: .ufo/waves/round-21/residual/FinalBindingReview.md F4 (scheduled .run never followed; silent miss with unparsed 0) plus call-time global resolution — the stale row guards against construction-time env capture. Class convention mirrors r21 fixtures: pacman -S -> host_mutation, pacman -Q -> package_query."
+}

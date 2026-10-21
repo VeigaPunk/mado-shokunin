@@ -1,0 +1,11 @@
+{
+  "id": "AuditRawSnapshotAtLimit",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[],\"files\":[{\"eval_unparsed\":0,\"unparsed_spawns\":0}]}",
+  "pad": {"target": "snapshot", "byte": " ", "total_bytes": 2097152},
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": true},
+  "expected": {"code": 0, "finding_ids": ["evidence_audit_clean"]},
+  "eligibility": "contingent: neither the contract ('bounded to 2MiB') nor the clarifications ('Inputs are bounded to2MiB') say whether exactly 2097152 bytes is allowed; freeze only if Main rules the bound inclusive, else exclude visibly",
+  "rationale": "A boundary companion to AuditRawOversizedSnapshot: the same valid clean receipt padded to exactly 2097152 bytes, with the actual digest. Reading 'bounded to 2 MiB' as at most 2097152 bytes, this is valid and consistent: 0/evidence_audit_clean. This pins the off-by-one and kills a mutant using '>=' as the reject condition. If Main rules the bound exclusive, the expectation flips to 2/evidence_audit_input_invalid. That is why this is contingent and must not be frozen until decided."
+}

@@ -1,0 +1,19 @@
+{
+  "id": "CaptureLocalReassign",
+  "cells": [
+    "import subprocess\ndef make(cmd):\n    def run():\n        subprocess.run(cmd)\n    cmd = [\"pacman\", \"-S\", \"r22-local-rebound\"]\n    return run\nrunner = make([\"pacman\", \"-Q\", \"r22-local-initial\"])\nrunner()"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-local-rebound",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-local-initial"
+  ],
+  "rationale": "cmd is a parameter of make, bound at the make() call to [\"pacman\",\"-Q\",\"r22-local-initial\"]. Because nested run references cmd, cmd is a cell variable of make; the Assign cmd = [\"pacman\",\"-S\",\"r22-local-rebound\"] inside make's body stores into that same cell before `return run`. Free-variable resolution happens at call time, not def time and not factory-argument-bind time: when runner() executes, run dereferences the cell and sees the rebound list. subprocess.run is therefore invoked with argv exactly [\"pacman\",\"-S\",\"r22-local-rebound\"], shlex.join -> \"pacman -S r22-local-rebound\", classified host_mutation, evidence observed: every element is a string literal, the call is unconditional, and no starred/keyword/dynamic argument exists. Zero unparsed rows is required: every statement is an import, def, literal Assign, return, or plain call with statically known values. The creation-time argument [\"pacman\",\"-Q\",\"r22-local-initial\"] is never passed to subprocess.run; a scanner that binds the cell at factory-call time, snapshots the parameter binding without replaying the body prefix, or otherwise misses the in-body rebinding would emit it as an observed row, which is exactly the F1/F3-class defect this variant discriminates. This shape is distinct from returned-name rebinding (CaptureReturnedRebound/Chain) and from caller-side post-creation rebinding of the argument variable (capture-invoke-time class): here the parameter name itself is reassigned inside the factory before return.",
+  "source": "Python 3.14.8 Language Reference, executionmodel: \"Name resolution of free variables occurs at runtime, not at compile time\" with the canonical example `i = 10; def f(): print(i); i = 42; f()` printing 42; same section: a name bound in a block is local unless declared nonlocal/global, resolved via the nearest enclosing scope. Fetched copy .ufo/waves/round-22/w1/sources/SourceClosure/cpython-3.14.8-Doc-reference-executionmodel.rst sha256 11f99f83d785ac174dc02aaf26e03eb91813b38c213729c0017b5a3a70a2eb89 (raw.githubusercontent.com/python/cpython v3.14.8, tag peeled 8e6e75d9102e39bed2a2b279203a396741180f12), lines 89-93 and 322-329. Round-21 residual FinalBindingReview.md F1 (factory-call-time binding) and F3 (prefix replay must update captured bindings before the closure is chosen): this variant requires the correct conjunction — parameter bound at invocation, then cell updated by the in-body prefix, so the returned closure reports the post-prefix value."
+}

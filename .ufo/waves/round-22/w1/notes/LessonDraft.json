@@ -1,0 +1,94 @@
+{
+  "schema": "mado-round22-lesson-draft-v1",
+  "status": "proposal-only; not a canonical lesson and not sealed round-22 truth",
+  "scope": {
+    "intended_destination": "corpus/lessons/round-22.md#mistakes",
+    "axes": ["operability / binding correctness", "calibration / precision and no-harm"],
+    "basis": [
+      ".ufo/waves/round-21/residual/FinalBindingReview.md F1-F5 and its six inert fixtures",
+      "corpus/lessons/round-19-verifier-spotcheck.md R19-V3 / C3",
+      "corpus/QUALITY.md criteria 30 and 32"
+    ]
+  },
+  "mistakes": [
+    {
+      "id": "M1",
+      "class": "binding lifetime / factory capture timing (r21 F1)",
+      "evidence_pointer": [
+        ".ufo/waves/round-21/residual/FinalBindingReview.md:53-55,70-76",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/capture-invoke-time.jsonl (sha256 6b21d584710878f5e486f3e9fcd737c6a6e573c629c2f75d30b45f55b6a317f7)"
+      ],
+      "captured_by": "The r21 FinalBindingReview reports one bounded child probe over inert JSONL; this seat did not rerun it.",
+      "reported_falsification": "Factory argument truth is observed host_mutation `pacman -S r21-factory`; the scanner instead emitted observed package_query `pacman -Q r21-invoke`.",
+      "fix_or_limit": "Bind captured factory arguments at closure creation, not invocation. No repair is claimed until the unchanged frozen case and independently specified lifetime variants have actual before/after receipts.",
+      "criterion_pointer": "corpus/QUALITY.md:306 (criterion 32)"
+    },
+    {
+      "id": "M2",
+      "class": "scope / unresolved capture falls through to module global (r21 F2)",
+      "evidence_pointer": [
+        ".ufo/waves/round-21/residual/FinalBindingReview.md:53-56,78-83",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/capture-unbound-global.jsonl (sha256 9ab845d4a8886714cfea0b16203328b67335013f00b21b18ba23e9b7175e1d9d)"
+      ],
+      "captured_by": "The r21 FinalBindingReview reports one bounded child probe over inert JSONL; this seat did not rerun it.",
+      "reported_falsification": "With unresolved `parts`, no statically determined observed argv exists; the scanner reported same-named module-global `pacman -Q r21-global` as observed.",
+      "fix_or_limit": "An unbindable factory call must preserve unknown closure parameters and must not use same-named globals as captured values. The expected result remains lead/unparsed as appropriate; no repaired status is asserted.",
+      "criterion_pointer": "corpus/QUALITY.md:306 (criterion 32)"
+    },
+    {
+      "id": "M3",
+      "class": "callable identity / returned-name rebinding (r21 F3)",
+      "evidence_pointer": [
+        ".ufo/waves/round-21/residual/FinalBindingReview.md:53-57,85-88",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/returned-rebound.jsonl (sha256 774e2946d16c23d9ebdd557ccf279143f6d2249dc7132aa567fb34d12d3d7573)"
+      ],
+      "captured_by": "The r21 FinalBindingReview reports one bounded child probe over inert JSONL; this seat did not rerun it.",
+      "reported_falsification": "After a local rebinding, truth is observed host_mutation `pacman -S r21-b`; the scanner followed the earlier def identity and emitted observed package_query `pacman -Q r21-a`.",
+      "fix_or_limit": "Resolve the returned callable name against bindings after the executed factory prefix. The repair is unverified until the unchanged case and independent rebinding variants have actual before/after receipts.",
+      "criterion_pointer": "corpus/QUALITY.md:306 (criterion 32)"
+    },
+    {
+      "id": "M4",
+      "class": "scheduled-call recall / direct Thread.run (r21 F4)",
+      "evidence_pointer": [
+        ".ufo/waves/round-21/residual/FinalBindingReview.md:53-58,90-95",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/thread-run-direct.jsonl (sha256 1cc1188dc4e0c37ecba97d34bdf546113d888c62a9cba0bcfe06d44201a2407f)"
+      ],
+      "captured_by": "The r21 FinalBindingReview reports one bounded child probe over inert JSONL; this seat did not rerun it.",
+      "reported_falsification": "A direct scheduled `Thread.run()` target has truth host_mutation `pacman -S r21-thread-run`; the scanner emitted no row and reported unparsed=0. The review says Timer.run shares the source path, but this fixture did not separately test Timer.run.",
+      "fix_or_limit": "Follow direct run invocation separately from asynchronous start handling, preserving its caller-time semantics. Do not claim the Timer.run variant fixed from the Thread.run case alone.",
+      "criterion_pointer": "corpus/QUALITY.md:306 (criterion 32; F4 is among the named F1-F5 residuals)"
+    },
+    {
+      "id": "M5",
+      "class": "synthetic-state collision / evidence downgrade (r21 F5)",
+      "evidence_pointer": [
+        ".ufo/waves/round-21/residual/FinalBindingReview.md:53-60,97-125",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/thread-key-hygiene.jsonl (sha256 4ea8ccc8724de011e19dcc1e69da1f4078ac74544f554e39ccda66dc42065c9e)",
+        ".ufo/waves/round-21/residual/MadoR21-2.FinalBindingReview/thread-key-control.jsonl (sha256 00ecb83fabddfd002d703bc1fbaa449b24e1edf935d0f6792a773c96007162be)"
+      ],
+      "captured_by": "The r21 FinalBindingReview reports the hygiene variant and its control in the same bounded child probe; this seat did not rerun it.",
+      "reported_falsification": "The legal source identifier `__mado_thread_target__` makes the scanner label the correct package_query as lead, while the non-colliding control is observed.",
+      "fix_or_limit": "Keep synthetic callable state out of source-name binding lookup (the review proposes carrying the resolved callable on the synthetic node); this proposal is not a verified repair.",
+      "criterion_pointer": "corpus/QUALITY.md:306 (criterion 32)"
+    },
+    {
+      "id": "M6",
+      "class": "precision / recall-only no-harm gap (round-19 C3, R19-V3)",
+      "evidence_pointer": [
+        "corpus/lessons/round-19-verifier-spotcheck.md:63-81,149-153",
+        "corpus/lessons/round-19.md:89,120",
+        "corpus/QUALITY.md:249-259,287-294,300"
+      ],
+      "captured_by": "The round-19 non-author closure independently scanned digest-pinned text and ran the copied tool on a data-only variant; it explicitly records that fixture code was never executed. Round-19 lesson M14 also records adversarial precision review. This seat did not rerun either check.",
+      "reported_falsification": "C3's 6/6 incident recall did not establish precision/no-harm: the closure reports a base clean result and a changed-tool ordinary, unmarked package_query on `BLOCK=frozenset(['pacman','-Q','hyprland'])`, which only constructs data. Round-19 RerunPrecision separately reports 78/4,818 added vcs_write rows were nonwrites (74 jj --help and 4 git --dry-run/-n). Criterion 30's positive-side evidence also did not cover removed true findings; criterion 30's later application and round-21 removal-side guard are distinct evidence duties.",
+      "fix_or_limit": "Keep the r19 rejected-harmed disposition and historical counts unchanged. For a later detector claim, require criterion 30's committed pre/change negative comparisons, lead labels, and complete added/relabelled-row diff, plus the removal-side population required by the round-21 application. A recall result or a green positive-only precision leg is not a no-harm result.",
+      "criterion_pointer": "corpus/QUALITY.md:249-259 (criterion 30); :287-300 (attempt-2 correction and removal-side guard)"
+    }
+  ],
+  "count_disposition": {
+    "historical_only": "The cited r21 review reports six variants (five F1-F5 defect cases plus one passing control), four observed findings and one lead. The r19 closure reports 6/6 incident recall and the separate precision discrepancies recorded in M6. These are transcribed from existing evidence, not remeasured here.",
+    "round22_changes": "None. No detector count or historical count is corrected in this draft.",
+    "update_gate": "Change a count only after the applicable actual red and green receipts exist, identify the measured revision and producer/input digests, and retain the original historical value and its scope. No round-22 detector red/green receipt was used by this seat."
+  }
+}

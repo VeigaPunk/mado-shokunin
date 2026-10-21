@@ -1,0 +1,10 @@
+{
+  "id": "AuditRawOverflowCounter",
+  "schema_extension": "audit-proposal-raw-v1",
+  "snapshot": null,
+  "raw_snapshot": "{\"findings\":[],\"files\":[{\"eval_unparsed\":0,\"unparsed_spawns\":1e400}]}",
+  "claim": {"total": 0, "observed": 0, "lead": 0, "errors": 0, "clean": false},
+  "expected": {"code": 2, "finding_ids": ["evidence_audit_input_invalid"]},
+  "eligibility": "frozen",
+  "rationale": "unparsed_spawns is the literal 1e400. It overflows IEEE-754 double to infinity, and Python's default json decodes it to float inf without error. It fails twice over: it is not an exact int, and the clarifications require every JSON number to be finite. So the input is invalid: 2/evidence_audit_input_invalid. The claim is clean:false with errors:0. An auditor that coerces inf, or crashes on int(inf) with an OverflowError, would give a wrong 1 or exit 1. The required behavior is a controlled 2."
+}

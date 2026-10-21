@@ -1,0 +1,19 @@
+{
+  "id": "CapturePartialGlobal",
+  "cells": [
+    "import functools\nimport subprocess\n\ndef run_helper(cmd):\n    subprocess.run(cmd)\n\ndef make_partial():\n    return functools.partial(run_helper, ARGV)\n\nARGV = [\"pacman\", \"-S\", \"r22-partial-global\"]\nbound = make_partial()\nARGV = [\"pacman\", \"-Q\", \"r22-partial-global-late\"]\nbound()\n"
+  ],
+  "expected_kind": "exact",
+  "want": [
+    {
+      "class": "host_mutation",
+      "command": "pacman -S r22-partial-global",
+      "evidence": "observed"
+    }
+  ],
+  "forbid_observed_commands": [
+    "pacman -Q r22-partial-global-late"
+  ],
+  "rationale": "Python 3.14 semantics, fully static: functools.partial stores its fixed positional argument objects in partial.args at construction time. Inside make_partial, the name ARGV resolves against module globals when the factory body runs (after ARGV is bound to [\"pacman\",\"-S\",\"r22-partial-global\"]), so partial.args[0] is that early list object. Rebinding the module global ARGV to the late [\"pacman\",\"-Q\",\"r22-partial-global-late\"] list after bound = make_partial() creates a second object and never mutates the captured one. bound() therefore invokes run_helper with the construction-time list, and the subprocess.run inside it spawns exactly pacman -S r22-partial-global: one observed host_mutation row, zero unparsed, so expected_kind is exact. A detector that folds a returned partial's fixed argument in the invocation environment (the F1 same-class defect for functools.partial noted in the r21 review) reports the late rebound value pacman -Q r22-partial-global-late as a package_query; that serialization is the named discriminator in forbid_observed_commands. -Q and -S against the invented names are inert markers only; no cell is ever executed.",
+  "source": ".ufo/waves/round-21/residual/FinalBindingReview.md F1 (High: factory arguments bound at invocation time, lines 70-76; 'returned functools.partial evaluates its fixed arguments in the invocation env', line 75) and probe fixture capture-invoke-time.jsonl; this proposal is the partial-wraps-module-helper-with-late-bound-global sibling, independently authored, no detector measured, no production code read beyond that review."
+}
