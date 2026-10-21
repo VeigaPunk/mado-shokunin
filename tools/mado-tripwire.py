@@ -18,7 +18,10 @@ are classified; for example pnpm, yarn, bun, brew, nix, `uv sync`, `uv python
 install`, `go install`, `gem install`, `cargo binstall`, `deno install -g`,
 `uv run --with`, `pnpm dlx`, `npm --global=true` and plain downloads are not,
 and variable indirection (`$UV tool install ...`) is invisible here, as is
-the difference between a venv/`--user` install and a system one.
+the difference between a venv/`--user` install and a system one. An exact
+`-h`/`--help` before any `--` on the uv/pip/cargo install, upgrade and
+uninstall forms prints help and is not a finding; run forms (uvx, npx, `uv
+tool run`, pipx run, npm exec) hand it to the fetched package and stay one.
 
 Limits (stated, not hidden):
 - Detection after the fact only. It is not interception, prevention, a
@@ -28,31 +31,54 @@ Limits (stated, not hidden):
   (a successful harmful call and a refused one both count).
 - `clean` means no finding in the covered forms. It never means "no host
   command ran": non-literal spawn arguments (counted as unparsed_spawns),
-  JavaScript eval cells (eval_unparsed), scripts written then run, aliases
-  not bound in the scanned text, python -c bodies, other tools and other
-  sessions are not analysed. Pair a verdict with a /var/log/pacman.log window
-  count.
+  JavaScript eval cells (eval_unparsed), scripts written then run, shell
+  aliases (never expanded, even when defined in the scanned text), other
+  tools and other sessions are not analysed. `python -c` bodies are parsed
+  like eval cells. Pair a verdict with a /var/log/pacman.log window count.
 - A visible Python `def`/`async def`/lambda called with literal arguments
-  is followed through its body up to four nested helper calls, including
+  (a starred argument only when its value is a literal list/tuple) is
+  followed through its body with those values bound: the called helper and
+  up to three helpers it calls in turn (four bodies deep), including
   definitions from earlier py eval cells of the same file unless a `reset`
-  intervenes. Async helpers require a direct `await`; an explicit
-  `__init__` and a directly resolved visible class method are followed.
-  `$1..$9` and `$@/$*` are substituted for shell functions. Uncalled helpers
-  do not establish an execution path.
+  intervenes; an explicit `__init__` and a directly resolved visible class
+  method are followed. Rows found that way are `observed`; a coroutine
+  created without a direct `await` is followed, but its rows are `lead`
+  (it runs only if something schedules it).
+- A visible body this path does not follow but the executed text still
+  reaches is swept, and every row in it is a `lead`: a def, lambda or class
+  handed on as a value (thread target, callback, decorator, returned
+  closure, `asyncio.run(...)` argument), an inline or immediately invoked
+  lambda, the dunder methods of a constructed or used class
+  (`__enter__`/`__exit__`, `__del__`, `__post_init__`, ...), a recursive
+  call, a call past the depth above or past 2000 followed calls per cell,
+  and a call whose arguments cannot be bound. A swept body's parameters are
+  unknown, and each body is swept once per cell. A Python body nothing in
+  the executed text references establishes no execution path and gives no
+  row. Shell function bodies are different: `f() { cmd; }` is classified
+  as if `cmd` ran, called or not, and `$1..$9` and `$@/$*` are substituted
+  where the function is called.
 - A literal positional `['prog', ...]` argv passed to an unresolved bare
-  name or imported external callable is a `lead`, not an observed execution:
-  the command is stated but that callable's body is outside the transcript.
-  Builtins and listed pure stdlib callables are exempt only while not
-  rebound; visible helper bodies and ordinary class constructors are
-  followed rather than flagged for command-shaped data alone. Dynamic
-  dispatch, metaclass/descriptor behavior and inherited/indirect methods are
-  not resolved. Every finding carries `evidence: observed|lead`.
+  name or to a callable imported from outside the standard library is a
+  `lead`, as is a literal argv (or, for `system`/`popen` or a `shell=`
+  call, a literal command string) handed to a spawn-named method
+  (`run`, `call`, `Popen`, `check_output`, `system`, `popen`, ...) of an
+  object or module the scan cannot resolve, and literal argv handed beside
+  a spawn callable to the call that receives it (`Thread(target=
+  subprocess.run, args=(argv,))`). Builtins and callables of standard
+  library modules that cannot start a process, run code text or call back
+  (everything but PROCESS_STDLIB; `os.path` is allowed) are pure while not
+  rebound: data passed to them gives no row. A same-command `lead` is
+  dropped when the same tool call already has it `observed`. Dynamic
+  dispatch (`getattr`, `importlib` other than a literal
+  `import_module('name')`), metaclass/descriptor behavior and inherited
+  methods are not resolved. Every finding carries `evidence: observed|lead`.
 - Variable recipes are resolved only when the text fixes them: a name bound
   by a straight-line module-level assignment to a literal-only expression
   (str, `+`, two-argument `str.replace`, or a list of those), earlier in the
   same cell or in an earlier cell of the same py kernel in the same
-  transcript (eval state persists; a `reset` cell, an exec/globals/import *
-  statement from that point on, or any other binding forgets the name).
+  transcript (eval state persists; a `reset` cell, an exec/import * or a
+  globals()/locals()/vars() result used other than for a read from that
+  point on, or any other binding forgets the name).
   Anything else stays unparsed_spawns. A shell function body defined in one
   text and called in another is not resolved.
 - vcs_write covers version-control writes in a jj-colocated lane: `git` runs
@@ -64,10 +90,12 @@ Limits (stated, not hidden):
   bookmark set/move/create/delete, op restore/revert and git push/fetch, and
   every other subcommand without an exact `--ignore-working-copy` token,
   because jj snapshots the working copy on all of them (`help` and
-  `--version` excepted). A jj-lane.sh helper invocation is not a finding.
-  Anything else on the `git` side (fetch, revert, tag, branch, clean,
-  worktree, gc, config) and `git` subcommands hidden in aliases, shell
-  functions or scripts are outside the class.
+  `--version` excepted). The subcommand is located by position, so a global
+  option value spelling a verb (`jj -R git git push`) does not hide it. A
+  jj-lane.sh helper invocation is not a finding. Anything else on the `git`
+  side (fetch, revert, tag, branch, clean, worktree, gc, config) and `git`
+  subcommands hidden in aliases or scripts are outside the class (a shell
+  function body is classified where it is defined, see above).
 - A run that only prints help or simulates is not a vcs_write. jj: an exact
   `-h`/`--help` before any `--`, ahead of the subcommand or after one in
   JJ_HELP_VERBS (jj 0.45.1 built-ins, which config cannot shadow, and the
@@ -82,10 +110,13 @@ Limits (stated, not hidden):
   subcommand's options (usage; a leading `<sub> --help` becomes `git help
   <sub>`), `git commit` with --dry-run/--short/--porcelain/--long/-z and
   `git add|push` with -n/--dry-run, each read last-wins against its --no-
-  form. Option values are skipped with GIT_VALUE_OPTS (git 2.56.0
-  separate-value options, long ones also by unique abbreviation), so
-  `commit -m -h` and `commit -m --dry-run` stay writes; `commit -n` is
-  --no-verify, and an abbreviated negation (`--no-dry`) keeps the finding.
+  form; a short-option cluster counts letter by letter (`add -nv` is `-n
+  -v`) up to a value-taking letter. Option values are skipped with
+  GIT_VALUE_OPTS (git 2.56.0 separate-value options, long ones also by
+  abbreviation), so `commit -m -h` and `commit -m --dry-run` stay writes;
+  `commit -n` is --no-verify, and an abbreviated negation (`--no-dry`) or
+  dry-run (`--dry`) keeps the finding, as does an ambiguous abbreviation
+  git itself would reject.
   A dry run still runs the pre-push hook and `commit --dry-run` may store
   unreferenced objects; neither moves a ref, the index or the worktree.
 - shlex is not bash: exotic quoting can hide a command from the parser.
@@ -545,12 +576,11 @@ def first_verb(args, arg_opts):
     return None if i is None else args[i]
 
 
-def sub_verb(args, verb):
-    """First positional after `verb`, skipping flags and their argument values."""
-    try:
-        rest = args[args.index(verb) + 1:]
-    except ValueError:
-        return None
+def sub_verb(args, i):
+    """First positional after the verb at args[i], skipping flags and their
+    argument values. The index, not the verb's text, anchors the search: a
+    global option value may spell the verb (`jj -R git git push`)."""
+    rest = args[i + 1:]
     skip = False
     for a in rest:
         if skip:
@@ -596,13 +626,13 @@ def classify_jj(args):
     if verb in JJ_WRITE:
         return "jj:" + verb
     if verb == "bookmark":
-        if sub_verb(args, verb) in JJ_BOOKMARK_WRITE:
+        if sub_verb(args, i) in JJ_BOOKMARK_WRITE:
             return "jj:bookmark"
     elif verb == "op":
-        if sub_verb(args, verb) in JJ_OP_WRITE:
+        if sub_verb(args, i) in JJ_OP_WRITE:
             return "jj:op"
     elif verb == "git":
-        sub = sub_verb(args, verb)
+        sub = sub_verb(args, i)
         if sub in JJ_GIT_WRITE and not (
                 sub == "push" and "--dry-run" in before_dashdash(args)):
             return "jj:git"  # a dry-run push only snapshots (rule below)
@@ -616,7 +646,9 @@ def git_option_flags(verb, rest):
 
     A GIT_VALUE_OPTS option (a long one also by unique abbreviation, or a
     short cluster ending in one) takes the next token as its value even when
-    it starts with `-`; that value is skipped. `--`/`--end-of-options` stop.
+    it starts with `-`; that value is skipped. A short cluster yields one flag
+    per letter (`-nv` is `-n -v`) up to a value-taking letter, whose rest of
+    the cluster is its value. `--`/`--end-of-options` stop.
     """
     takes = GIT_VALUE_OPTS.get(verb, frozenset())
     flags, value = [], False
@@ -629,8 +661,8 @@ def git_option_flags(verb, rest):
             flags.append(a)
             value = "=" not in a and any(t.startswith(a) for t in takes)
         elif a.startswith("-") and a != "-":
-            flags.append(a)
             for j, c in enumerate(a[1:], 1):
+                flags.append("-" + c)
                 if "-" + c in takes:
                     value = j == len(a) - 1
                     break
@@ -679,7 +711,7 @@ def classify_git(args):
     verb = None if i is None else args[i]
     if verb not in GIT_WRITE:
         return None
-    if verb == "stash" and sub_verb(args, verb) in ("list", "show"):
+    if verb == "stash" and sub_verb(args, i) in ("list", "show"):
         return None  # read-only stash inspection
     if git_prints_or_simulates(verb, args[:i], args[i + 1:]):
         return None
@@ -948,12 +980,30 @@ def npm_global(args):
     return False
 
 
+HELP_EXEMPT_INSTALLS = {"uv:tool-install", "uv:tool-upgrade", "uv:tool-uninstall",
+                        "uv:pip-install", "cargo:install", "cargo:uninstall"}
+
+
 def classify_installer(argv0, args):
     """Return (class, rule) for a tool-acquisition channel, else None.
 
     Only the argv0-level forms named in the module docstring are classified;
-    same-channel tools (pnpm, yarn, bun, brew, nix) are deliberately not.
+    same-channel tools (pnpm, yarn, bun, brew, nix) are deliberately not. For
+    the install/uninstall verbs of uv, pip and cargo an exact `-h`/`--help`
+    before any `--` prints help and installs nothing (clap, optparse; round
+    20, held-out fx8/fx9). Run forms (uvx, npx, `uv tool run`, pipx run, npm
+    exec) pass a trailing `--help` to the package they fetch: no exemption.
     """
+    rule = classify_installer_rule(argv0, args)
+    if rule is not None and (rule[1] in HELP_EXEMPT_INSTALLS
+                             or (PIP_RE.match(argv0) and rule[1].endswith(":install"))) \
+            and any(a in ("-h", "--help") for a in before_dashdash(args)):
+        return None
+    return rule
+
+
+def classify_installer_rule(argv0, args):
+    """The tool_install rule for argv0/args, before the help exemption."""
     if argv0 == "uv":
         verbs = [v for _, v in leading_tokens(args, UV_ARG_OPTS, 2)]
         if len(verbs) == 2 and verbs[0] == "tool" and verbs[1] in (
@@ -1359,11 +1409,31 @@ def module_unsafe_names(tree):
     return unsafe
 
 
+NAMESPACE_CALLS = {"globals", "locals", "vars"}
+NAMESPACE_READERS = {"print", "len", "repr", "str", "sorted", "list", "tuple", "set",
+                     "frozenset", "dict", "any", "all", "bool", "iter", "enumerate",
+                     "format", "id", "type", "hash"}
+
+
+def namespace_read_only(parent, call):
+    """True when a globals()/locals()/vars() result is only read where it is
+    made: discarded, subscripted for a value, tested with `in`, or handed to a
+    builtin that only reads it. Any other use may write a name through it."""
+    if isinstance(parent, ast.Expr):
+        return True
+    if isinstance(parent, ast.Subscript) and parent.value is call:
+        return isinstance(parent.ctx, ast.Load)
+    if isinstance(parent, ast.Compare):
+        return any(item is call for item in parent.comparators)
+    return (isinstance(parent, ast.Call) and isinstance(parent.func, ast.Name)
+            and parent.func.id in NAMESPACE_READERS
+            and any(arg is call for arg in parent.args))
 
 
 def opaque_module_mutation(tree):
     """True when eager module/class-scope code can rebind names behind the
-    resolver's back (exec/eval/globals/locals/vars/builtins or import *)."""
+    resolver's back (exec/eval/builtins rebinding, import *, or a
+    globals()/locals()/vars() result used other than for a read)."""
     def scan(node):
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
@@ -1371,7 +1441,9 @@ def opaque_module_mutation(tree):
             if isinstance(child, ast.ImportFrom) and any(a.name == "*" for a in child.names):
                 return True
             if isinstance(child, ast.Call) and (dotted(child.func) or "") in OPAQUE_PY_DOTTED:
-                return True
+                if not (dotted(child.func).rsplit(".", 1)[-1] in NAMESPACE_CALLS
+                        and namespace_read_only(node, child)):
+                    return True
             if scan(child):
                 return True
         return False
@@ -1412,15 +1484,35 @@ PURE_STDLIB_MODULES = {
 PURE_STDLIB_EXACT = {
     "json.dumps", "pprint.pformat", "pprint.pprint",
     "shlex.join", "shlex.quote", "shlex.split", "typing.NamedTuple",
+    "subprocess.list2cmdline",  # argv -> string formatter (S115); never spawns
 }
+# Stdlib modules whose callables can start a process, run code text or call a
+# callable they are handed (os "Process Management", S113; subprocess, S108;
+# threads, timers, exit/finalizer hooks, debuggers, profilers, pickles). A
+# callable from any other stdlib module only computes on the data it is given:
+# a literal argv passed to it is data, never a command (S105-S107, S114).
+PROCESS_STDLIB = frozenset("""
+    os posix nt subprocess pty asyncio multiprocessing concurrent ctypes
+    webbrowser pydoc distutils runpy code codeop importlib builtins sys
+    threading signal atexit sched weakref contextlib unittest pdb bdb timeit
+    profile cProfile trace idlelib tkinter turtle turtledemo ensurepip venv
+    zipapp pickle marshal shelve socketserver http xmlrpc site
+""".split())
+PURE_STDLIB_ALLOW = ("os.path.",)
+STDLIB_NAMES = frozenset(getattr(sys, "stdlib_module_names", ()))
 
 
 def pure_stdlib_path(path):
-    return (path in PURE_STDLIB_EXACT
+    if (path in PURE_STDLIB_EXACT
             or any(path.startswith(module + ".") for module in PURE_STDLIB_MODULES)
             or path.startswith("functools.")
+            or path.startswith(PURE_STDLIB_ALLOW)
             or (path.startswith("builtins.")
-                and path.rsplit(".", 1)[-1] in PURE_ARG_CALLS))
+                and path.rsplit(".", 1)[-1] in PURE_ARG_CALLS)):
+        return True
+    top, dot, _ = path.partition(".")
+    return (bool(dot) and top in STDLIB_NAMES and not top.startswith("_")
+            and top not in PROCESS_STDLIB)
 
 
 def spawn_path(path):
@@ -1523,6 +1615,11 @@ def assignment_binding(node, bindings, env):
         return dict(callable_info(node, bindings))
     if isinstance(node, ast.Call):
         info = callable_info(node.func, bindings)
+        if info.get("name") == "importlib.import_module" and len(node.args) == 1 \
+                and not node.keywords:
+            module = literal_value(node.args[0], env)
+            if isinstance(module, str) and module and not module.startswith("."):
+                return {"kind": "module", "module": module}
         if info.get("kind") == "pure" and info.get("name") == "functools.partial" \
                 and node.args:
             wrapped = callable_info(node.args[0], bindings)
@@ -1641,41 +1738,72 @@ def update_bindings(stmt, bindings, env):
 
 
 def eager_calls(nodes):
-    """Calls executed when these statements run; skip deferred function bodies."""
-    calls = []
+    """Calls executed when these statements run, in source pre-order, and the
+    callable references they hand on.
 
-    class Visitor(ast.NodeVisitor):
-        def visit_FunctionDef(self, node):
+    A reference is a name or attribute loaded as a value rather than called
+    here (paired with the call that receives it as an argument, if any), a
+    bare decorator, or a lambda not bound by a plain assignment. Deferred
+    bodies are skipped. The walk is iterative, so expression depth cannot
+    exhaust the interpreter stack.
+    """
+    calls, refs = [], []
+    skip, parents, assigned = set(), {}, set()
+    stack = list(reversed(list(nodes)))
+    while stack:
+        node = stack.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for expr in node.decorator_list:
-                self.visit(expr)
-            for expr in node.args.defaults + node.args.kw_defaults:
-                if expr is not None:
-                    self.visit(expr)
+                if isinstance(expr, (ast.Name, ast.Attribute)):
+                    refs.append((expr, None))  # applied to the def at definition
+                    skip.add(id(expr))
+            children = list(node.decorator_list) + [
+                expr for expr in node.args.defaults + node.args.kw_defaults
+                if expr is not None]
             if node.returns is not None:
-                self.visit(node.returns)
-
-        visit_AsyncFunctionDef = visit_FunctionDef
-
-        def visit_Lambda(self, node):
-            for expr in node.args.defaults + node.args.kw_defaults:
-                if expr is not None:
-                    self.visit(expr)
-
-        def visit_Call(self, node):
-            calls.append(node)
-            self.generic_visit(node)
-
-    visitor = Visitor()
-    for node in nodes:
-        visitor.visit(node)
-    return calls
+                children.append(node.returns)
+        elif isinstance(node, ast.Lambda):
+            if id(node) not in assigned:
+                refs.append((node, parents.get(id(node))))
+            children = [expr for expr in node.args.defaults + node.args.kw_defaults
+                        if expr is not None]
+        else:
+            if isinstance(node, ast.Call):
+                calls.append(node)
+                skip.add(id(node.func))
+                for arg in node.args + [keyword.value for keyword in node.keywords]:
+                    parents[id(arg.value if isinstance(arg, ast.Starred) else arg)] = node
+            elif isinstance(node, (ast.Assign, ast.AnnAssign)) and \
+                    isinstance(node.value, ast.Lambda):
+                assigned.add(id(node.value))  # a binding; its calls are followed
+            elif isinstance(node, ast.Attribute):
+                skip.add(id(node.value))
+                if isinstance(node.ctx, ast.Load) and id(node) not in skip:
+                    refs.append((node, parents.get(id(node))))
+            elif isinstance(node, ast.Name):
+                if isinstance(node.ctx, ast.Load) and id(node) not in skip:
+                    refs.append((node, parents.get(id(node))))
+            children = list(ast.iter_child_nodes(node))
+        stack.extend(reversed(children))
+    return calls, refs
 
 
 def bind_literal(fn, call, env=None, skip_first=False):
-    """Bind literal helper arguments and retain unknown values as unresolved."""
+    """Bind literal helper arguments and retain unknown values as unresolved.
+
+    A starred argument binds only when its value is a literal list/tuple
+    (`run(*['pacman', '-Q'])`); any other starred argument leaves the call
+    unbound (None)."""
     env = {} if env is None else env
-    if any(isinstance(arg, ast.Starred) for arg in call.args):
-        return None
+    values = []
+    for arg in call.args:
+        if isinstance(arg, ast.Starred):
+            expanded = literal_value(arg.value, env)
+            if not isinstance(expanded, (list, tuple)):
+                return None
+            values.extend(expanded)
+        else:
+            values.append(literal_value(arg, env))
     all_params = [arg.arg for arg in fn.args.posonlyargs + fn.args.args]
     offset = 1 if skip_first else 0
     params = all_params[offset:]
@@ -1683,12 +1811,12 @@ def bind_literal(fn, call, env=None, skip_first=False):
     kwarg = fn.args.kwarg.arg if fn.args.kwarg else None
     kwonly_params = [arg.arg for arg in fn.args.kwonlyargs]
     keyword_params = {arg.arg for arg in fn.args.args + fn.args.kwonlyargs}
-    if len(call.args) > len(params) and vararg is None:
+    if len(values) > len(params) and vararg is None:
         return None
     bound = {all_params[0]: None} if skip_first and all_params else {}
-    for name, node in zip(params, call.args):
-        bound[name] = literal_value(node, env)
-    extra_args = [literal_value(node, env) for node in call.args[len(params):]]
+    for name, value in zip(params, values):
+        bound[name] = value
+    extra_args = values[len(params):]
     if vararg is not None:
         bound[vararg] = extra_args
     extra_keywords = {}
@@ -1730,17 +1858,22 @@ def bind_literal(fn, call, env=None, skip_first=False):
 
 
 def prepare_eval_calls(statements, env, bindings):
-    """Snapshot literals and bindings at each statement, then retain its updates."""
+    """Snapshot literals and bindings at each statement, then retain its updates.
+
+    Returns the statements' eager calls and references and, for every call,
+    name, attribute and lambda, the literal environment and bindings in effect
+    at its statement (one shared snapshot per statement; never mutated)."""
     tree = ast.Module(body=statements, type_ignores=[])
     unsafe = module_unsafe_names(tree)
     for name in unsafe:
         env.pop(name, None)
     call_env, binding_env = {}, {}
     for stmt in statements:
+        stmt_env, stmt_bindings = dict(env), dict(bindings)
         for node in ast.walk(stmt):
-            if isinstance(node, ast.Call):
-                call_env[id(node)] = dict(env)
-                binding_env[id(node)] = dict(bindings)
+            if isinstance(node, (ast.Call, ast.Name, ast.Attribute, ast.Lambda)):
+                call_env[id(node)] = stmt_env
+                binding_env[id(node)] = stmt_bindings
         if opaque_statement(stmt):
             env.clear()
             bindings.clear()
@@ -1755,7 +1888,8 @@ def prepare_eval_calls(statements, env, bindings):
             else:
                 env[name] = resolved
         update_bindings(stmt, bindings, env)
-    return eager_calls(statements), call_env, binding_env
+    calls, refs = eager_calls(statements)
+    return calls, refs, call_env, binding_env
 
 
 def awaited_call_ids(statements):
@@ -1789,9 +1923,10 @@ def classify_eval(code, language, env=None, bindings=None):
         return hits, 1, 0
     env = {} if env is None else env
     bindings = {} if bindings is None else bindings
-    calls, call_env, binding_env = prepare_eval_calls(tree.body, env, bindings)
+    calls, refs, call_env, binding_env = prepare_eval_calls(tree.body, env, bindings)
     found, unparsed = spawn_scan(
-        calls, {}, bindings, 0, call_env, binding_env, awaited_call_ids(tree.body))
+        calls, {}, bindings, 0, call_env, binding_env, awaited_call_ids(tree.body),
+        refs, new_scan_context())
     hits.extend(found)
     return hits, 0, unparsed
 
@@ -1807,11 +1942,151 @@ def helper_argv_leads(node, env):
     return out
 
 
+def spawn_attr_leads(node, env):
+    """Lead rows for a spawn-named method of an object the scan cannot resolve
+    (`sp = other; sp.run([...])`): a literal argv, or a literal command string
+    when the method takes one (`system`/`popen`) or `shell=` is not literal false."""
+    out = helper_argv_leads(node, env)
+    value = literal_value(node.args[0], env) if node.args else LITERAL_MISS
+    if isinstance(value, str):
+        shell = next((literal_value(k.value, env) for k in node.keywords
+                      if k.arg == "shell"), False)
+        if node.func.attr in ("system", "popen") or shell is not False:
+            out.extend(tuple(hit) + ("lead",) for hit in classify_shell(value))
+    return out
+
+
+def callback_argv_leads(call, env, shell_string=False):
+    """Lead rows for literal argv handed, beside a spawn callable, to the call
+    that receives it (`Thread(target=subprocess.run, args=(argv,))`); for a
+    shell-string callable (`os.system`) also its literal command strings."""
+    out = []
+    pending = [literal_value(arg.value if isinstance(arg, ast.Starred) else arg, env)
+               for arg in call.args]
+    pending += [literal_value(keyword.value, env) for keyword in call.keywords]
+    while pending:
+        value = pending.pop(0)
+        vals = argv_strings(value)
+        if vals is not None:
+            out.extend(tuple(hit) + ("lead",) for hit in classify_shell(shlex.join(vals)))
+        elif isinstance(value, (list, tuple)):
+            pending.extend(value)
+        elif isinstance(value, dict):
+            pending.extend(value.values())
+        elif shell_string and isinstance(value, str):
+            out.extend(tuple(hit) + ("lead",) for hit in classify_shell(value))
+    return out
+
+
+DESCENT_LIMIT = 4  # nested helper bodies followed with bound literals
+DESCENT_BUDGET = 2000  # helper descents per cell; past it, bodies are swept
+
+
+def new_scan_context():
+    """Per-cell state: bodies already swept, helpers being followed, descents."""
+    return {"swept": set(), "stack": [], "descents": 0}
+
+
+def callable_params(fn):
+    spec = fn.args
+    names = [arg.arg for arg in spec.posonlyargs + spec.args + spec.kwonlyargs]
+    return names + [arg.arg for arg in (spec.vararg, spec.kwarg) if arg is not None]
+
+
+def sweep_body(owner, bindings, ctx, depth, class_node=None, bound_kind=None):
+    """Lead rows for a visible body that may run on a path this scan does not
+    follow with bound literals: a callable handed on as a value, a scheduled
+    coroutine, a bare decorator, a dunder of a constructed or used class, an
+    inline lambda, a recursive or over-budget helper, or a call whose
+    arguments cannot be bound. Its parameters are unknown; every row it finds
+    is a `lead`. Each body is swept at most once per cell and never while it
+    is being followed; a body nothing references stays silent."""
+    if id(owner) in ctx["swept"] or id(owner) in ctx["stack"]:
+        return [], 0
+    ctx["swept"].add(id(owner))
+    if isinstance(owner, ast.ClassDef):
+        return sweep_class(owner, bindings, ctx, depth, dunders_only=False)
+    body = [owner.body] if isinstance(owner, ast.Lambda) else owner.body
+    body_bindings = dict(bindings)
+    for name in callable_params(owner):
+        body_bindings[name] = {"kind": "parameter"}
+    positional = owner.args.posonlyargs + owner.args.args
+    if class_node is not None and bound_kind and positional:
+        body_bindings[positional[0].arg] = {"kind": bound_kind, "node": class_node}
+    calls, refs, call_env, binding_env = prepare_eval_calls(body, {}, body_bindings)
+    ctx["stack"].append(id(owner))
+    try:
+        found, unparsed = spawn_scan(calls, {}, body_bindings, depth + 1, call_env,
+                                     binding_env, awaited_call_ids(body), refs, ctx)
+    finally:
+        ctx["stack"].pop()
+    return [tuple(hit[:4]) + ("lead",) for hit in found], unparsed
+
+
+def sweep_class(class_node, bindings, ctx, depth, dunders_only, exclude=()):
+    """Sweep a class's methods; only its dunders for a constructed or used
+    instance (`__enter__`/`__exit__`, `__del__`, `__post_init__`, ...)."""
+    hits, unparsed = [], 0
+    for member in class_node.body:
+        if not isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)) or \
+                id(member) in exclude:
+            continue
+        if dunders_only and not (member.name.startswith("__")
+                                 and member.name.endswith("__")):
+            continue
+        info = class_method_info(class_node, member.name) or {}
+        found, missed = sweep_body(member, bindings, ctx, depth, class_node,
+                                   info.get("bound_kind"))
+        hits.extend(found)
+        unparsed += missed
+    return hits, unparsed
+
+
+def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
+                  class_node=None, bound_kind=None):
+    """Follow one helper call with its literal arguments bound (`observed`
+    rows), or None when it is not followed: recursion, depth or budget spent,
+    or arguments that cannot be bound."""
+    if id(helper) in ctx["stack"] or depth >= DESCENT_LIMIT or \
+            ctx["descents"] >= DESCENT_BUDGET:
+        return None
+    bound = bind_literal(helper, node, cenv, skip_first=skip_first)
+    if bound is None:
+        return None
+    ctx["descents"] += 1
+    body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
+    body_bindings = dict(cbindings)
+    body_bindings.update({
+        name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
+        for name, value in bound.items()
+    })
+    if class_node is not None and bound_kind:
+        params = helper.args.posonlyargs + helper.args.args
+        if params:
+            body_bindings[params[0].arg] = {"kind": bound_kind, "node": class_node}
+    calls, refs, body_call_env, body_binding_env = prepare_eval_calls(
+        body_nodes, bound, body_bindings)
+    ctx["stack"].append(id(helper))
+    try:
+        return spawn_scan(calls, bound, body_bindings, depth + 1, body_call_env,
+                          body_binding_env, awaited_call_ids(body_nodes), refs, ctx)
+    finally:
+        ctx["stack"].pop()
+
+
 def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
-               awaited_calls=None):
-    """Follow visible helper calls and classify reachable spawn calls."""
+               awaited_calls=None, refs=(), ctx=None):
+    """Follow visible helper calls and classify reachable spawn calls; sweep
+    referenced bodies the call path does not follow (see sweep_body)."""
     hits, unparsed = [], 0
     awaited_calls = set() if awaited_calls is None else awaited_calls
+    ctx = new_scan_context() if ctx is None else ctx
+
+    def take(result):
+        nonlocal unparsed
+        hits.extend(result[0])
+        unparsed += result[1]
+
     for node in nodes:
         if not isinstance(node, ast.Call):
             continue
@@ -1819,55 +2094,37 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
         info = callable_info(node.func, cbindings)
         helper = info.get("node")
-        if info.get("kind") == "helper":
-            if isinstance(helper, ast.AsyncFunctionDef) and id(node) not in awaited_calls:
+        if info.get("kind") == "helper" and helper is not None:
+            if id(helper) in ctx["stack"]:  # recursion: the body is already in scan
+                hits.extend(helper_argv_leads(node, cenv))
                 continue
-            if depth < 4 and helper is not None:
-                bound = bind_literal(helper, node, cenv,
-                                     skip_first=info.get("skip_first", False))
-                if bound is not None:
-                    body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
-                    body_bindings = dict(cbindings)
-                    body_bindings.update({
-                        name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
-                        for name, value in bound.items()
-                    })
-                    if info.get("class_node") and info.get("bound_kind"):
-                        params = helper.args.posonlyargs + helper.args.args
-                        if params:
-                            body_bindings[params[0].arg] = {
-                                "kind": info["bound_kind"], "node": info["class_node"]}
-                    calls, body_call_env, body_binding_env = prepare_eval_calls(
-                        body_nodes, bound, body_bindings)
-                    inner, missed = spawn_scan(
-                        calls, bound, body_bindings, depth + 1, body_call_env,
-                        body_binding_env, awaited_call_ids(body_nodes))
-                    hits.extend(inner)
-                    unparsed += missed
+            result = follow_helper(helper, node, cenv, cbindings, ctx, depth,
+                                   info.get("skip_first", False),
+                                   info.get("class_node"), info.get("bound_kind"))
+            if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
+                    and id(node) not in awaited_calls:
+                # a coroutine created here runs only if something schedules it
+                result = ([tuple(hit[:4]) + ("lead",) for hit in result[0]], result[1])
+            if result is None:  # not followed: sweep the body instead
+                result = sweep_body(helper, cbindings, ctx, depth,
+                                    info.get("class_node"), info.get("bound_kind"))
+            take(result)
+            continue
+        if info.get("kind") == "helper":
             continue
         if info.get("kind") == "class":
-            if depth < 4 and isinstance(helper, ast.ClassDef):
+            if isinstance(helper, ast.ClassDef):
                 init = next((member for member in helper.body
                              if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
                              and member.name == "__init__"), None)
+                followed = ()
                 if init is not None:
-                    bound = bind_literal(init, node, cenv, skip_first=True)
-                    if bound is not None:
-                        body_bindings = dict(cbindings)
-                        body_bindings.update(
-                            {name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
-                             for name, value in bound.items()})
-                        init_params = init.args.posonlyargs + init.args.args
-                        if init_params:
-                            body_bindings[init_params[0].arg] = {
-                                "kind": "instance", "node": helper}
-                        calls, body_call_env, body_binding_env = prepare_eval_calls(
-                            init.body, bound, body_bindings)
-                        inner, missed = spawn_scan(
-                            calls, bound, body_bindings, depth + 1, body_call_env,
-                            body_binding_env, awaited_call_ids(init.body))
-                        hits.extend(inner)
-                        unparsed += missed
+                    result = follow_helper(init, node, cenv, cbindings, ctx, depth, True,
+                                           helper, "instance")
+                    if result is not None:
+                        followed = (id(init),)
+                        take(result)
+                take(sweep_class(helper, cbindings, ctx, depth, True, followed))
             continue
         if info.get("kind") in ("pure", "value"):
             continue
@@ -1875,6 +2132,10 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                                 "unknown", "parameter"):
             if isinstance(node.func, ast.Name):
                 hits.extend(helper_argv_leads(node, cenv))
+            elif isinstance(node.func, ast.Attribute) and (
+                    node.func.attr in SPAWN_FUNCS
+                    or node.func.attr in ("system", "popen")):
+                hits.extend(spawn_attr_leads(node, cenv))
             continue
         name = info.get("name", "")
         tail = name.rsplit(".", 1)[-1]
@@ -1935,6 +2196,24 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                         else classify_shell(shlex.quote(value)))
         else:
             unparsed += 1
+    for ref, parent in refs:
+        rbindings = bindings if binding_env is None else binding_env.get(id(ref), {})
+        if isinstance(ref, ast.Lambda):
+            take(sweep_body(ref, rbindings, ctx, depth))
+            continue
+        info = callable_info(ref, rbindings)
+        kind, target = info.get("kind"), info.get("node")
+        if kind == "helper" and target is not None:
+            take(sweep_body(target, rbindings, ctx, depth,
+                            info.get("class_node"), info.get("bound_kind")))
+        elif kind == "class" and isinstance(target, ast.ClassDef):
+            take(sweep_body(target, rbindings, ctx, depth))
+        elif kind == "instance" and isinstance(target, ast.ClassDef):
+            take(sweep_class(target, rbindings, ctx, depth, True))
+        elif kind == "spawn" and parent is not None:
+            penv = env if call_env is None else call_env.get(id(parent), {})
+            hits.extend(callback_argv_leads(
+                parent, penv, info.get("name", "") in SHELL_STRING_FUNCS))
     return hits, unparsed
 
 
@@ -2058,9 +2337,13 @@ def scan_file(path):
             entry["eval_unparsed"] += NESTED["eval_unparsed"]
             entry["unparsed_spawns"] += NESTED["unparsed_spawns"]
             unique_hits = {}
+            observed = {tuple(result[:4]) for result in hits
+                        if (result[4] if len(result) > 4 else "observed") == "observed"}
             for result in hits:
                 cls, rule, argv0, text = result[:4]
                 evidence = result[4] if len(result) > 4 else "observed"
+                if evidence == "lead" and tuple(result[:4]) in observed:
+                    continue  # the same command is already observed in this call
                 key = (cls, rule, evidence)
                 if key not in unique_hits:
                     unique_hits[key] = (cls, rule, argv0, text, evidence)
@@ -2594,9 +2877,36 @@ def main(argv):
     return run_scan(rest, permit)
 
 
+STACK_BYTES = 512 * 1024 * 1024
+RECURSION_LIMIT = 50000
+
+
+def run_with_stack(fn, *args):
+    """Run fn on a thread with a deep stack and a raised recursion limit, so
+    the recursive AST helpers and the parser reach far deeper (well-formed)
+    expressions than the default 1000-frame limit before any RecursionError."""
+    import threading
+    result = {}
+
+    def target():
+        try:
+            result["value"] = fn(*args)
+        except BaseException as exc:  # re-raised on the calling thread
+            result["error"] = exc
+
+    threading.stack_size(STACK_BYTES)
+    sys.setrecursionlimit(RECURSION_LIMIT)
+    worker = threading.Thread(target=target)
+    worker.start()
+    worker.join()
+    if "error" in result:
+        raise result["error"]
+    return result["value"]
+
+
 if __name__ == "__main__":
     try:
-        sys.exit(main(sys.argv[1:]))
+        sys.exit(run_with_stack(main, sys.argv[1:]))
     except SystemExit:
         raise
     except BaseException as exc:  # never let an internal error read as "findings"
