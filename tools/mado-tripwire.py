@@ -108,17 +108,16 @@ Limits (stated, not hidden):
   --ignore-working-copy is given.
   git: `git -h|--help <sub>` and `-h`/`--help` as a flag anywhere among the
   subcommand's options (usage; a leading `<sub> --help` becomes `git help
-  <sub>`), `git commit` with --dry-run/--short/--porcelain/--long/-z and
-  `git add|push` with -n/--dry-run, each read last-wins against its --no-
-  form; a short-option cluster counts letter by letter (`add -nv` is `-n
-  -v`) up to a value-taking letter. Option values are skipped with
-  GIT_VALUE_OPTS (git 2.56.0 separate-value options, long ones also by
-  abbreviation), so `commit -m -h` and `commit -m --dry-run` stay writes;
-  `commit -n` is --no-verify, and an abbreviated negation (`--no-dry`) or
-  dry-run (`--dry`) keeps the finding, as does an ambiguous abbreviation
-  git itself would reject.
-  A dry run still runs the pre-push hook and `commit --dry-run` may store
-  unreferenced objects; neither moves a ref, the index or the worktree.
+  <sub>`) are recognized as help. `git add|push` -n/--dry-run modes are
+  read last-wins against their --no- forms; intent-to-add remains a write.
+  Short-option clusters count letter by letter up to a value-taking letter,
+  and option values are skipped with GIT_VALUE_OPTS. All non-help `commit`
+  invocations remain writes, including --dry-run/--short/--porcelain/-z:
+  index preparation and possible object writes are not disproved by no new
+  commit. `commit -n` means --no-verify. Recognized unique --dry prefixes
+  retain the add/push simulation boundary, not a general no-effect promise.
+  Unknown or ambiguous negations remain findings. A simulated push may
+  invoke hooks; these are source-shape classifications, not host execution.
   None of these exemptions (nor the installer `--help` one, nor
   `--ignore-working-copy`) applies in an unparsed segment (rule suffix
   `/unparsed`: shlex failed and the line was split on whitespace, so its
@@ -684,7 +683,7 @@ def git_option_flags(verb, rest):
 
 
 def git_prints_or_simulates(verb, pre, rest):
-    """True when `git PRE verb REST` only prints usage/help or is a dry run."""
+    """Recognize help or bounded add/push simulation, never commit/index preparation."""
     skip = False
     for a in pre:  # `git -h <sub>`, `git --help <sub>`
         if skip:
@@ -1324,6 +1323,25 @@ def module_binding(stmt):
     return None
 
 
+MUTATED_LITERALS = object()  # not a source identifier or source binding
+
+
+def mutated_literal(value, env):
+    changed = env.get(MUTATED_LITERALS, ())
+    if not changed:
+        return False
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if id(item) in changed:
+            return True
+        if isinstance(item, (list, tuple)):
+            pending.extend(item)
+        elif isinstance(item, dict):
+            pending.extend(item.values())
+    return False
+
+
 def literal_value(node, env):
     """The literal value an expression denotes, else LITERAL_MISS.
 
@@ -1334,11 +1352,23 @@ def literal_value(node, env):
     lists/tuples/dicts, and starred list/tuple elements whose iterated values
     are themselves literal. Other shapes remain unresolved, never guessed.
     """
+    if hasattr(node, "mado_literal"):
+        value = node.mado_literal
+        return LITERAL_MISS if mutated_literal(value, env) else value
     if isinstance(node, ast.Constant) and (
             node.value is None or isinstance(node.value, (str, int, float, bool))):
         return node.value
     if isinstance(node, ast.Name):
-        return env.get(node.id, LITERAL_MISS)
+        value = env.get(node.id, LITERAL_MISS)
+        return LITERAL_MISS if mutated_literal(value, env) else value
+    if isinstance(node, ast.Subscript):
+        container, index = literal_value(node.value, env), literal_value(node.slice, env)
+        if isinstance(container, dict) and isinstance(index, str):
+            return container.get(index, LITERAL_MISS)
+        if isinstance(container, (list, tuple)) and type(index) is int:
+            if -len(container) <= index < len(container):
+                return container[index]
+        return LITERAL_MISS
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
         left, right = literal_value(node.left, env), literal_value(node.right, env)
         if isinstance(left, str) and isinstance(right, str):
@@ -1382,6 +1412,17 @@ def literal_node(value):
         return ast.Dict(keys=[literal_node(key) for key in value],
                         values=[literal_node(item) for item in value.values()])
     return ast.Constant(value=value)
+
+
+def captured_node(node, bindings, env, resolving=()):
+    """Store argument objects and callable identity, never a later name lookup."""
+    if isinstance(node, ast.Starred):
+        return ast.Starred(value=captured_node(node.value, bindings, env, resolving),
+                           ctx=ast.Load())
+    frozen = ast.Name(id="<captured argument>", ctx=ast.Load())
+    frozen.mado_literal = literal_value(node, env)
+    frozen.mado_resolved = callable_info(node, bindings, env, resolving)
+    return frozen
 
 
 def argv_strings(value):
@@ -1564,6 +1605,85 @@ def spawn_path(path):
                         "imaplib.IMAP4_stream", "uuid._get_command_stdout"))
 
 
+def bound_callables(helper, call, bindings, env, skip_first=False, resolving=()):
+    positional = helper.args.posonlyargs + helper.args.args
+    if skip_first:
+        positional = positional[1:]
+    supplied = {}
+    for parameter, argument in zip(positional, call.args):
+        if not isinstance(argument, ast.Starred):
+            supplied[parameter.arg] = argument
+    supplied.update({keyword.arg: keyword.value for keyword in call.keywords
+                     if keyword.arg is not None})
+    defaults = dict(zip((p.arg for p in positional[-len(helper.args.defaults):]),
+                        helper.args.defaults)) if helper.args.defaults else {}
+    result = {}
+    for name in callable_params(helper):
+        argument = supplied.get(name, defaults.get(name))
+        info = assignment_binding(argument, bindings, env, resolving) if argument is not None else {}
+        result[name] = (info if info.get("kind") not in (None, "unknown", "unresolved")
+                        else {"kind": "parameter"})
+    return result
+
+
+def binding_failure(call, env):
+    """Unknown expansion differs from an otherwise definitely invalid call."""
+    if any(isinstance(arg, ast.Starred) and
+           not isinstance(literal_value(arg.value, env), (list, tuple))
+           for arg in call.args):
+        return "uncertain"
+    if any(keyword.arg is None and
+           not isinstance(literal_value(keyword.value, env), dict)
+           for keyword in call.keywords):
+        return "uncertain"
+    return "invalid"
+
+
+def factory_result(info, call, env, bindings, resolving):
+    owner = info["node"]
+    if id(owner) in resolving or len(resolving) >= DESCENT_LIMIT:
+        return {"kind": "uncertain"}
+    resolving = resolving + (id(owner),)
+    if not isinstance(owner, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return {"kind": "unresolved"}
+    returned = next((part for part in owner.body if isinstance(part, ast.Return)), None)
+    if returned is None:
+        return {"kind": "unresolved"}
+    bound = bind_literal(owner, call, env)
+    if bound is None and binding_failure(call, env) == "invalid":
+        return {"kind": "invalid"}
+    if bound is None:
+        bound = {name: LITERAL_MISS for name in callable_params(owner)}
+    local_env, local_bindings = dict(env), dict(bindings)
+    local_env.update(info.get("closure_env", {}))
+    local_bindings.update(info.get("closure_bindings", {}))
+    local_env.update(bound)
+    local_bindings.update(bound_callables(owner, call, bindings, env,
+                                          resolving=resolving))
+    prefix = owner.body[:owner.body.index(returned)]
+    names = set(bound) | set(info.get("closure_env", {})) | set(info.get("closure_bindings", {}))
+    for statement in prefix:
+        binding = module_binding(statement)
+        if binding is not None:
+            names.add(binding[0])
+        elif isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            names.add(statement.name)
+        elif isinstance(statement, (ast.Import, ast.ImportFrom)):
+            names.update(alias.asname or alias.name.split(".")[0]
+                         for alias in statement.names if alias.name != "*")
+    prepare_eval_calls(prefix, local_env, local_bindings, resolving)
+    result = callable_info(returned.value, local_bindings, local_env, resolving)
+    if result.get("kind") == "helper":
+        result = dict(result)
+        overlay = {name: local_env.get(name, LITERAL_MISS) for name in names}
+        overlay.update(result.get("closure_env", {}))
+        binding_overlay = {name: local_bindings.get(name, {"kind": "parameter"})
+                           for name in names}
+        binding_overlay.update(result.get("closure_bindings", {}))
+        result["closure_env"], result["closure_bindings"] = overlay, binding_overlay
+    return result
+
+
 def class_method_info(class_node, method_name, bindings=None, seen=()):
     if not isinstance(class_node, ast.ClassDef) or id(class_node) in seen:
         return None
@@ -1584,11 +1704,14 @@ def class_method_info(class_node, method_name, bindings=None, seen=()):
             descriptor = member.value
             if bindings is not None and descriptor.args and \
                     callable_info(descriptor.func, bindings).get("name") == "functools.partialmethod":
-                wrapped = callable_info(descriptor.args[0], bindings)
+                wrapped = getattr(descriptor, "mado_wrapped", None)
+                if wrapped is None:
+                    wrapped = callable_info(descriptor.args[0], bindings)
                 if wrapped.get("kind") == "helper":
+                    fixed = getattr(descriptor, "mado_fixed", (descriptor.args[1:], descriptor.keywords))
                     return dict(wrapped, skip_first=True, class_node=class_node,
-                                bound_kind="instance", fixed_nodes=descriptor.args[1:],
-                                fixed_keywords=descriptor.keywords)
+                                bound_kind="instance", fixed_nodes=fixed[0],
+                                fixed_keywords=fixed[1])
     if bindings is not None:
         for base in class_node.bases:
             info = bindings.get(base.id, {}) if isinstance(base, ast.Name) else {}
@@ -1600,80 +1723,77 @@ def class_method_info(class_node, method_name, bindings=None, seen=()):
     return None
 
 
-def callable_info(node, bindings):
-    """Resolve a callable against the binding in effect at this call site."""
+def callable_info(node, bindings, env=None, resolving=()):
+    """Resolve identity at its lifetime boundary; free globals remain late."""
+    resolved = getattr(node, "mado_resolved", None)
+    if resolved is not None:
+        return resolved
+    env = {} if env is None else env
     if isinstance(node, ast.Lambda):
         return {"kind": "helper", "node": node}
     if isinstance(node, ast.Subscript):
         container = node.value
         if isinstance(container, ast.Name):
             container = bindings.get(container.id, {}).get("container")
-        index = literal_value(node.slice, {})
+        index = literal_value(node.slice, env)
         if index is LITERAL_MISS:
             return {"kind": "unresolved"}
         if isinstance(container, ast.Dict):
             for key, value in zip(container.keys, container.values):
-                if literal_value(key, {}) == index:
-                    return callable_info(value, bindings)
+                if literal_value(key, env) == index:
+                    return callable_info(value, bindings, env, resolving)
         if isinstance(container, (ast.List, ast.Tuple)) and isinstance(index, int):
             if -len(container.elts) <= index < len(container.elts):
-                return callable_info(container.elts[index], bindings)
+                return callable_info(container.elts[index], bindings, env, resolving)
     if isinstance(node, ast.Name):
         bound = bindings.get(node.id)
         if bound is not None:
             if bound.get("kind") == "instance":
-                method = class_method_info(bound.get("node"), "__call__", bindings)
-                return method or bound
+                return class_method_info(bound.get("node"), "__call__", bindings) or bound
             return bound
         if node.id in PURE_ARG_CALLS:
             return {"kind": "pure", "name": node.id}
         return {"kind": "unresolved", "name": node.id}
     if isinstance(node, ast.Call):
-        constructor = callable_info(node.func, bindings)
+        constructor = callable_info(node.func, bindings, env, resolving)
         if constructor.get("name") == "typing.cast" and len(node.args) == 2:
-            return callable_info(node.args[1], bindings)
+            return callable_info(node.args[1], bindings, env, resolving)
         if constructor.get("name") == "functools.partial" and node.args:
-            wrapped = callable_info(node.args[0], bindings)
+            wrapped = callable_info(node.args[0], bindings, env, resolving)
             if wrapped.get("kind") == "helper":
-                return dict(wrapped, fixed_nodes=node.args[1:], fixed_keywords=node.keywords)
+                return dict(wrapped,
+                            fixed_nodes=tuple(captured_node(arg, bindings, env, resolving)
+                                              for arg in node.args[1:]),
+                            fixed_keywords=tuple(ast.keyword(arg=keyword.arg,
+                                value=captured_node(keyword.value, bindings, env, resolving))
+                                for keyword in node.keywords))
+            if wrapped.get("kind") == "spawn":
+                return dict(wrapped,
+                            partial_args=[literal_value(arg, env) for arg in node.args[1:]],
+                            partial_keywords={keyword.arg: literal_value(keyword.value, env)
+                                              for keyword in node.keywords if keyword.arg})
+            return wrapped
         if constructor.get("kind") in ("class", "instance"):
             method = class_method_info(constructor.get("node"), "__call__", bindings)
             if method is not None:
                 return method
-        if constructor.get("kind") == "helper" and isinstance(
-                constructor.get("node"), (ast.FunctionDef, ast.AsyncFunctionDef)):
-            outer = constructor["node"]
-            local = {part.name: part for part in outer.body
-                     if isinstance(part, (ast.FunctionDef, ast.AsyncFunctionDef))}
-            returned = next((part.value.id for part in outer.body
-                             if isinstance(part, ast.Return) and isinstance(part.value, ast.Name)), None)
-            if returned in local:
-                return {"kind": "helper", "node": local[returned],
-                        "capture_owner": outer, "capture_call": node}
-            returned_call = next((part.value for part in outer.body
-                                  if isinstance(part, ast.Return) and isinstance(part.value, ast.Call)
-                                  and callable_info(part.value.func, bindings).get("name") == "functools.partial"), None)
-            if returned_call is not None:
-                wrapped = callable_info(returned_call, bindings)
-                if wrapped.get("kind") == "helper":
-                    return dict(wrapped, capture_owner=outer, capture_call=node)
+        if constructor.get("kind") == "helper":
+            return factory_result(constructor, node, env, bindings, resolving)
+        if constructor.get("kind") in ("uncertain", "invalid"):
+            return constructor
     if isinstance(node, ast.Attribute):
-        class_info = None
-        if isinstance(node.value, ast.Call):
-            class_info = callable_info(node.value.func, bindings)
-        elif isinstance(node.value, ast.Name):
-            class_info = bindings.get(node.value.id)
-        if class_info is not None and class_info.get("kind") == "scheduled" and node.attr == "start":
-            return dict(class_info, kind="thread_start")
-        if class_info is not None:
-            if class_info.get("kind") == "instance":
-                method = class_method_info(class_info.get("node"), node.attr, bindings)
-                if method is not None:
-                    return method
-            elif class_info.get("kind") == "class":
-                method = class_method_info(class_info.get("node"), node.attr, bindings)
-                if method is not None:
-                    return method
+        receiver = (assignment_binding(node.value, bindings, env, resolving)
+                    if isinstance(node.value, ast.Call)
+                    else bindings.get(node.value.id) if isinstance(node.value, ast.Name) else None)
+        if receiver is not None and receiver.get("kind") == "scheduled":
+            if node.attr in ("start", "run"):
+                return dict(receiver, kind="scheduled_invoke")
+            if node.attr == "cancel" and receiver.get("timer"):
+                return dict(receiver, kind="scheduled_cancel")
+        if receiver is not None and receiver.get("kind") in ("instance", "class"):
+            method = class_method_info(receiver.get("node"), node.attr, bindings)
+            if method is not None:
+                return method
     raw = dotted(node)
     if not raw:
         return {"kind": "unresolved"}
@@ -1697,8 +1817,10 @@ def callable_info(node, bindings):
     return {"kind": "unresolved", "name": raw}
 
 
-def assignment_binding(node, bindings, env):
+def assignment_binding(node, bindings, env, resolving=()):
     """Classify one assigned value without evaluating transcript code."""
+    if hasattr(node, "mado_resolved"):
+        return node.mado_resolved
     if isinstance(node, (ast.Lambda, ast.FunctionDef, ast.AsyncFunctionDef)):
         return {"kind": "helper", "node": node}
     if isinstance(node, ast.ClassDef):
@@ -1713,9 +1835,9 @@ def assignment_binding(node, bindings, env):
     if isinstance(node, ast.Attribute):
         if isinstance(literal_value(node.value, env), str):
             return {"kind": "pure", "name": "str." + node.attr}
-        return dict(callable_info(node, bindings))
+        return dict(callable_info(node, bindings, env, resolving))
     if isinstance(node, ast.Call):
-        info = callable_info(node.func, bindings)
+        info = callable_info(node.func, bindings, env, resolving)
         if info.get("name") in ("threading.Thread", "threading.Timer"):
             keywords = {keyword.arg: keyword.value for keyword in node.keywords if keyword.arg}
             timer = info["name"] == "threading.Timer"
@@ -1724,8 +1846,9 @@ def assignment_binding(node, bindings, env):
             args_index, kwargs_index = (2, 3) if timer else (3, 4)
             arguments = keywords.get("args", node.args[args_index] if len(node.args) > args_index else None)
             options = keywords.get("kwargs", node.args[kwargs_index] if len(node.args) > kwargs_index else None)
-            return {"kind": "scheduled", "node": node,
-                    "target": callable_info(target, bindings) if target is not None else {"kind": "unknown"},
+            return {"kind": "scheduled", "node": node, "timer": timer,
+                    "state": {"done": False, "cancelled": False},
+                    "target": callable_info(target, bindings, env, resolving) if target is not None else {"kind": "unknown"},
                     "args": literal_value(arguments, env) if arguments is not None else (),
                     "kwargs": literal_value(options, env) if options is not None else {}}
         if info.get("name") == "operator.methodcaller" and node.args:
@@ -1733,26 +1856,14 @@ def assignment_binding(node, bindings, env):
                     "args": [literal_value(arg, env) for arg in node.args[1:]],
                     "keywords": {keyword.arg: literal_value(keyword.value, env)
                                  for keyword in node.keywords if keyword.arg is not None}}
-        returned = callable_info(node, bindings)
-        if returned.get("kind") == "helper":
+        returned = callable_info(node, bindings, env, resolving)
+        if returned.get("kind") in ("helper", "spawn", "uncertain", "invalid"):
             return returned
         if info.get("name") == "importlib.import_module" and len(node.args) == 1 \
                 and not node.keywords:
             module = literal_value(node.args[0], env)
             if isinstance(module, str) and module and not module.startswith("."):
                 return {"kind": "module", "module": module}
-        if info.get("kind") == "pure" and info.get("name") == "functools.partial" \
-                and node.args:
-            wrapped = callable_info(node.args[0], bindings)
-            if wrapped.get("kind") == "spawn":
-                return {
-                    "kind": "spawn", "name": wrapped["name"],
-                    "partial_args": [literal_value(a, env) for a in node.args[1:]],
-                    "partial_keywords": {
-                        k.arg: literal_value(k.value, env)
-                        for k in node.keywords if k.arg is not None
-                    },
-                }
         if info.get("kind") == "pure" and info.get("name") in (
                 "collections.namedtuple", "typing.NamedTuple"):
             return {"kind": "class"}
@@ -1768,18 +1879,32 @@ def assignment_binding(node, bindings, env):
     return {"kind": "unknown"}
 
 
-def update_bindings(stmt, bindings, env):
+def update_bindings(stmt, bindings, env, resolving=()):
     """Apply this statement's module-level name bindings in execution order."""
     if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
         bindings[stmt.name] = {"kind": "helper", "node": stmt}
         for decorator in reversed(stmt.decorator_list):
             wrapped = callable_info(ast.Call(func=decorator,
-                args=[ast.Name(id=stmt.name, ctx=ast.Load())], keywords=[]), bindings)
+                args=[ast.Name(id=stmt.name, ctx=ast.Load())], keywords=[]), bindings, env, resolving)
             if wrapped.get("kind") == "helper":
                 bindings[stmt.name] = wrapped
         return
     if isinstance(stmt, ast.ClassDef):
         bindings[stmt.name] = {"kind": "class", "node": stmt}
+        class_bindings = dict(bindings)
+        for member in stmt.body:
+            if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                class_bindings[member.name] = {"kind": "helper", "node": member}
+            if isinstance(member, ast.Assign) and isinstance(member.value, ast.Call):
+                descriptor = member.value
+                if (descriptor.args and callable_info(descriptor.func, class_bindings, env, resolving)
+                        .get("name") == "functools.partialmethod"):
+                    descriptor.mado_wrapped = callable_info(descriptor.args[0], class_bindings, env, resolving)
+                    descriptor.mado_fixed = (
+                        tuple(captured_node(arg, class_bindings, env, resolving) for arg in descriptor.args[1:]),
+                        tuple(ast.keyword(arg=keyword.arg,
+                            value=captured_node(keyword.value, class_bindings, env, resolving))
+                            for keyword in descriptor.keywords))
         return
     if isinstance(stmt, ast.Import):
         for alias in stmt.names:
@@ -1802,7 +1927,7 @@ def update_bindings(stmt, bindings, env):
         return
     if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
         value = stmt.value
-        resolved = assignment_binding(value, bindings, env) if value is not None \
+        resolved = assignment_binding(value, bindings, env, resolving) if value is not None \
             else {"kind": "unknown"}
         targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
         names = set().union(*(target_names(target) for target in targets))
@@ -2035,7 +2160,47 @@ def bind_literal(fn, call, env=None, skip_first=False):
     return bound
 
 
-def prepare_eval_calls(statements, env, bindings):
+def statement_snapshot(statement, env, bindings):
+    """Retain only syntactically reachable names, including visible callees.
+
+    Keeping the entire unrelated module namespace at every stored factory call
+    makes a shallow closure population quadratic in retained memory.
+    """
+    names, visited = set(), set()
+    pending_nodes, pending_infos = [statement], []
+    while pending_nodes or pending_infos:
+        if pending_nodes:
+            node = pending_nodes.pop()
+            for part in ast.walk(node):
+                if isinstance(part, ast.Name) and part.id not in names:
+                    names.add(part.id)
+                    info = bindings.get(part.id)
+                    if info is not None:
+                        pending_infos.append(info)
+                resolved = getattr(part, "mado_resolved", None)
+                if resolved is not None:
+                    pending_infos.append(resolved)
+        else:
+            info = pending_infos.pop()
+            if id(info) in visited:
+                continue
+            visited.add(id(info))
+            for key in ("node", "container", "class_node"):
+                node = info.get(key)
+                if isinstance(node, ast.AST):
+                    pending_nodes.append(node)
+            pending_infos.extend(info.get("closure_bindings", {}).values())
+            if isinstance(info.get("target"), dict):
+                pending_infos.append(info["target"])
+            pending_nodes.extend(info.get("fixed_nodes", ()))
+            pending_nodes.extend(keyword.value for keyword in info.get("fixed_keywords", ()))
+    literals = {name: env[name] for name in names if name in env}
+    if MUTATED_LITERALS in env:
+        literals[MUTATED_LITERALS] = env[MUTATED_LITERALS]
+    return literals, {name: bindings[name] for name in names if name in bindings}
+
+
+def prepare_eval_calls(statements, env, bindings, resolving=()):
     """Snapshot literals and bindings at each statement, then retain its updates.
 
     Returns the statements' eager calls and references and, for every call,
@@ -2054,7 +2219,7 @@ def prepare_eval_calls(statements, env, bindings):
         calls.extend(stmt_calls)
         refs.extend(stmt_refs)
         if stmt_calls or stmt_refs:
-            stmt_env, stmt_bindings = dict(env), dict(bindings)
+            stmt_env, stmt_bindings = statement_snapshot(stmt, env, bindings)
             for node in stmt_calls + [ref for ref, _ in stmt_refs]:
                 call_env[id(node)] = stmt_env
                 binding_env[id(node)] = stmt_bindings
@@ -2063,6 +2228,18 @@ def prepare_eval_calls(statements, env, bindings):
             bindings.clear()
             for name in PURE_ARG_CALLS:
                 bindings[name] = {"kind": "unknown"}
+        targets = (stmt.targets if isinstance(stmt, (ast.Assign, ast.Delete))
+                   else [stmt.target] if isinstance(stmt, (ast.AnnAssign, ast.AugAssign)) else ())
+        mutated = set()
+        for target in targets:
+            if isinstance(target, (ast.Subscript, ast.Attribute)):
+                root = target.value
+                while isinstance(root, (ast.Subscript, ast.Attribute)):
+                    root = root.value
+                if isinstance(root, ast.Name) and root.id in env:
+                    mutated.add(id(env[root.id]))
+        if mutated:
+            env[MUTATED_LITERALS] = frozenset(env.get(MUTATED_LITERALS, ())) | mutated
         binding = module_binding(stmt)
         if binding is not None:
             name, value = binding
@@ -2071,7 +2248,9 @@ def prepare_eval_calls(statements, env, bindings):
                 env.pop(name, None)
             else:
                 env[name] = resolved
-        update_bindings(stmt, bindings, env)
+        update_bindings(stmt, bindings, env, resolving)
+        if isinstance(stmt, ast.Return):
+            break
     return calls, refs, call_env, binding_env
 
 
@@ -2243,18 +2422,7 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         name: {"kind": "parameter" if value is LITERAL_MISS else "value"}
         for name, value in bound.items()
     })
-    positional = helper.args.posonlyargs + helper.args.args
-    defaults = dict(zip((arg.arg for arg in positional[-len(helper.args.defaults):]),
-                        helper.args.defaults)) if helper.args.defaults else {}
-    supplied = {parameter.arg: argument for parameter, argument in zip(
-        positional[1:] if skip_first else positional, node.args)}
-    supplied.update({keyword.arg: keyword.value for keyword in node.keywords if keyword.arg})
-    for parameter in callable_params(helper):
-        argument = supplied.get(parameter, defaults.get(parameter))
-        if argument is not None:
-            resolved = assignment_binding(argument, cbindings, cenv)
-            if resolved.get("kind") in ("helper", "spawn", "class", "instance"):
-                body_bindings[parameter] = resolved
+    body_bindings.update(bound_callables(helper, node, cbindings, cenv, skip_first))
     if class_node is not None and bound_kind:
         params = helper.args.posonlyargs + helper.args.args
         if params:
@@ -2290,22 +2458,32 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             continue
         cenv = env if call_env is None else call_env.get(id(node), {})
         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
-        info = callable_info(node.func, cbindings)
-        if isinstance(node.func, ast.Attribute) and node.func.attr == "start" and isinstance(node.func.value, ast.Call):
-            scheduled = assignment_binding(node.func.value, cbindings, cenv)
-            if scheduled.get("kind") == "scheduled":
-                info = dict(scheduled, kind="thread_start")
-        if info.get("kind") == "thread_start":
-            local_bindings = dict(cbindings)
-            local_bindings["__mado_thread_target__"] = info["target"]
+        info = callable_info(node.func, cbindings, cenv)
+        if info.get("kind") == "uncertain":
+            unparsed += 1
+            continue
+        if info.get("kind") == "invalid":
+            continue
+        if info.get("kind") == "scheduled_cancel":
+            info["state"]["cancelled"] = True
+            continue
+        if info.get("kind") == "scheduled_invoke":
+            state = info["state"]
+            if state["done"] or state["cancelled"]:
+                continue
+            state["done"] = True
             arguments = info["args"] if info["args"] is not None else ()
             options = info["kwargs"] if info["kwargs"] is not None else {}
-            if isinstance(arguments, (list, tuple)) and isinstance(options, dict) and all(isinstance(key, str) for key in options):
-                invocation = ast.Call(func=ast.Name(id="__mado_thread_target__", ctx=ast.Load()),
+            if (isinstance(arguments, (list, tuple)) and isinstance(options, dict)
+                    and all(isinstance(key, str) for key in options)
+                    and not mutated_literal(arguments, cenv) and not mutated_literal(options, cenv)):
+                target = ast.Name(id="<scheduled target>", ctx=ast.Load())
+                target.mado_resolved = info["target"]
+                invocation = ast.Call(func=target,
                     args=[literal_node(value) for value in arguments],
                     keywords=[ast.keyword(arg=key, value=literal_node(value))
                               for key, value in options.items()])
-                take(spawn_scan([invocation], cenv, local_bindings, depth + 1, ctx=ctx))
+                take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
             else:
                 unparsed += 1
             continue
@@ -2330,18 +2508,12 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
                     continue
         helper = info.get("node")
-        if info.get("capture_owner") is not None:
-            captured = bind_literal(info["capture_owner"], info["capture_call"], cenv)
-            if captured is not None:
-                captured_env, captured_bindings = dict(cenv), dict(cbindings)
-                captured_env.update(captured)
-                prefix = []
-                for statement in info["capture_owner"].body:
-                    if isinstance(statement, ast.Return):
-                        break
-                    prefix.append(statement)
-                prepare_eval_calls(prefix, captured_env, captured_bindings)
-                cenv, cbindings = captured_env, captured_bindings
+        if "closure_env" in info or "closure_bindings" in info:
+            caller_env = cenv
+            cenv, cbindings = dict(cenv), dict(cbindings)
+            cenv.update({name: LITERAL_MISS if mutated_literal(value, caller_env) else value
+                         for name, value in info.get("closure_env", {}).items()})
+            cbindings.update(info.get("closure_bindings", {}))
         config_arg = (node.args[0] if node.args else
                       next((keyword.value for keyword in node.keywords if keyword.arg == "config"), None))
         if info.get("name") == "logging.config.dictConfig" and config_arg is not None:
@@ -2383,9 +2555,16 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                 continue
             bound_node = node
             if info.get("fixed_nodes") or info.get("fixed_keywords"):
+                fixed_keywords = list(info.get("fixed_keywords", ()))
+                overridden = {keyword.arg for keyword in node.keywords if keyword.arg is not None}
                 bound_node = ast.Call(func=node.func,
                     args=list(info.get("fixed_nodes", ())) + node.args,
-                    keywords=list(info.get("fixed_keywords", ())) + node.keywords)
+                    keywords=[keyword for keyword in fixed_keywords if keyword.arg not in overridden]
+                             + node.keywords)
+            if (bind_literal(helper, bound_node, cenv, info.get("skip_first", False)) is None
+                    and binding_failure(bound_node, cenv) == "invalid"):
+                resolved_callees.update(id(part) for part in ast.walk(node.func))
+                continue
             result = follow_helper(helper, bound_node, cenv, cbindings, ctx, depth,
                                    info.get("skip_first", False),
                                    info.get("class_node"), info.get("bound_kind"))
@@ -2451,7 +2630,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         if not (info.get("kind") == "spawn" or is_sub or is_shell_fn or is_exec or is_tool):
             continue
         fixed_args = info.get("partial_args", [])
-        call_args = list(fixed_args)
+        call_args = [LITERAL_MISS if mutated_literal(value, cenv) else value
+                     for value in fixed_args]
         for arg in node.args:
             if isinstance(arg, ast.Starred):
                 values = literal_value(arg.value, cenv)
@@ -2461,7 +2641,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     call_args.append(LITERAL_MISS)
             else:
                 call_args.append(literal_value(arg, cenv))
-        call_kwargs = dict(info.get("partial_keywords", {}))
+        call_kwargs = {key: LITERAL_MISS if mutated_literal(value, cenv) else value
+                       for key, value in info.get("partial_keywords", {}).items()}
         for keyword in node.keywords:
             value = literal_value(keyword.value, cenv)
             if keyword.arg is None and isinstance(value, dict):
