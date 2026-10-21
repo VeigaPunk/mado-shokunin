@@ -41,3 +41,5 @@ python3 -c 'import json,pathlib; d=json.loads(pathlib.Path(".ufo/waves/round-19/
 ```
 
 Raw digest and output: `.ufo/waves/round-22/evidence/historical-row-line-count.json`. The later row/line split remains explicitly derived in `w1/historical-c3.json` under the same wave directory; no current classifier was run to generate the historical labels.
+
+Round-22 fresh-review provenance correction: `.ufo/waves/round-22/audit/rationale-and-duplicates-correction.json` supersedes inherited six-row explanation text on three D1 row-level cases without rewriting any frozen input, expectation or seal. The registered46 named audit cases represent42 distinct pinned case trees (including symlink topology), not46 independent semantic cases; four historical duplicate pairs are named explicitly. Per-case pass counts remain the original denominator, with distinct-state counts beside them. A case-correct verdict does not validate its copied rationale.

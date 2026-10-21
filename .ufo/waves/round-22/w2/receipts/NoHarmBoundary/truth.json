@@ -1,0 +1,16 @@
+{
+  "schema": "mado-r22-w2-noharmboundary-truth-v1",
+  "case": "NHBFactoryReturnsGlobalHelperParamShadow",
+  "fixture": "NHBFactoryReturnsGlobalHelperParamShadow.jsonl",
+  "authored_before_probe": true,
+  "supported_form": "supported-forms.md line 7-8: straight-line visible factory definition with positional literal argument; stored factory result in one eval cell; returned helper identity from an executed Name binding; enclosing factory locals stay distinct from module globals; globals are read at invocation",
+  "semantics": "make(argv) returns the module-level function object `helper` (resolved by Name at the return). helper is defined at module scope, so its free name `argv` is a module global (LEGB: helper's enclosing scope is the module, never make's frame). make's parameter `argv` is a local of make and is invisible to helper. job() therefore runs subprocess.run with the module global argv bound at invocation time: ['pacman','-Q','r22-nhb-module'].",
+  "kind": "exact",
+  "want": [
+    {"class": "package_query", "command": "pacman -Q r22-nhb-module", "evidence": "observed"}
+  ],
+  "forbid_any": ["pacman -S r22-nhb-factory-local"],
+  "forbid_observed": ["pacman -S r22-nhb-factory-local"],
+  "require_zero_unparsed": true,
+  "signal": true
+}

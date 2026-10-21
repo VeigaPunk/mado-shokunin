@@ -1482,3 +1482,16 @@ Base `741122d177ae8ff68a73768777f20484d5bdcbe4`; full pre-implementation specifi
 - C2 calibration, lowest measured non-retired axis, capability acquisition: independent artifact-only evidence-tier/count audit; actual r19 C3 receipt must fail an observed6/6 assertion and accept only its correct observed5/6 plus lead1/6 scope; independent frozen validity fixtures, code-mutant kill and C1-intervention equality required. No criterion-count credit or retrospective r19 admission.
 
 Scores and before/after outputs are not pre-claimed. Prior red receipts and the three-rejection streak remain in force pending an admitted non-author closure. Authorization is dispatch permission only. No r23.
+
+## Round 22 — first measured facts, not admission
+
+Raw truth seal `9185f1f9806b823a23ef9f5077a893e40e46e1b9` precedes production330de688; normalized fixtures are later materialized at `5c7b98312c2a89f8f59ae9d9f1c83895ed6cd065`. This distinction is explicit, not a claim that the normalized expected.json already existed before implementation.
+
+| Claim / axis | Before → current measured facts | Counting command / revision / limit |
+|---|---|---|
+| C1 operability, finite independently specified source-shape agreement | baseline46c82902 **13/50** → changed classifier **50/50** new proposals; current full population **57/57**, including six original r21 inputs and r19's exact pure-data negative | `python3 -I .ufo/waves/round-22/oracle/measure.py --tool TOOL --group proposal` before; default full57 after with the proposal subset retained. Receipts `evidence/first/oracle-{before-new50,after-all57}.json`, measured at5c7b983. Local numeric rubric10×proposal passes/50:2.6→10, delta+7.4; not a global skill/no-harm score. |
+| C2 calibration, independent evidence-audit capability | before tool absent (exit128); all46 fixed per-case codes/IDs match, but first two complete runner attempts remain could-not-evaluate on audit selftest/envelope defects | `python3 -I .ufo/waves/round-22/audit/measure.py --tool tools/mado-evidence-audit.py --fixtures .ufo/waves/round-22/audit/fixtures`; receipts `audit-after.json` at5c7b983 and `audit-after-corrected.json` ata607f3e. Later code71228fd fixes inventory grammar; no post-fix success is pre-claimed. No criterion-count credit. |
+
+The literal registered unchanged-row historical5/1 green cannot be demonstrated: raw r19 is markerless, and eleven finding rows are not six incident lines. Original raw2 and explicitly derived0/1 cases are separate evidence, not a target-preserving rewrite or retroactive r19 admission. Main's non-author closure grades the actual capability and this strict-target limitation.
+
+Fresh W2 dispatch:100 validated concrete attacks after W1's64; two additional production executor seats died and were not replaced, total166 seats. C1 no-harm, actual gate mutation/intervention and final verdicts remain subject to the recorded final evidence and fresh attacks. Planned: complete only this already-held recovery; no next round is authorized by this scorecard, and prior rejection receipts/streak remain until admitted non-author closure.

@@ -1,0 +1,53 @@
+{
+ "argv": [
+  "/usr/bin/python3",
+  "-I",
+  "-c",
+  "import importlib.util,sys\ns=importlib.util.spec_from_file_location(\"selected_tripwire\",sys.argv[1])\nm=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nsys.exit(m.main([\"--scan\",sys.argv[2]]))\n",
+  "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+  "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/NoHarmBoundary/NHBFactoryReturnsGlobalHelperParamShadow.jsonl"
+ ],
+ "exit": 1,
+ "payload": {
+  "counts": {
+   "host_mutation": 1,
+   "live_probe": 0,
+   "package_query": 0,
+   "tool_install": 0,
+   "vcs_write": 0
+  },
+  "exit": 1,
+  "files": [
+   {
+    "bash_calls": 0,
+    "eval_calls": 1,
+    "eval_unparsed": 0,
+    "lines": 1,
+    "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/NoHarmBoundary/NHBFactoryReturnsGlobalHelperParamShadow.jsonl",
+    "sha256": "bba513187e957d79032e76c9c7e549414c8e7452968ed67f3115c86715e80ede",
+    "unparsed_spawns": 0
+   }
+  ],
+  "findings": [
+   {
+    "argv0": "pacman",
+    "class": "host_mutation",
+    "command": "pacman -S r22-nhb-factory-local",
+    "evidence": "observed",
+    "file": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/NoHarmBoundary/NHBFactoryReturnsGlobalHelperParamShadow.jsonl",
+    "line": 1,
+    "rule": "pacman:-S",
+    "timestamp": "None",
+    "tool": "eval",
+    "tool_call_id": "NHBFactoryReturnsGlobalHelperParamShadow-0"
+   }
+  ],
+  "lead_findings": 0,
+  "observed_findings": 1,
+  "permitted": [],
+  "schema": "mado-tripwire-verdict-v1",
+  "unpermitted": 1
+ },
+ "stderr": "",
+ "stdout": "MADO_TRIPWIRE: findings\n{\"counts\": {\"host_mutation\": 1, \"live_probe\": 0, \"package_query\": 0, \"tool_install\": 0, \"vcs_write\": 0}, \"exit\": 1, \"files\": [{\"bash_calls\": 0, \"eval_calls\": 1, \"eval_unparsed\": 0, \"lines\": 1, \"path\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/NoHarmBoundary/NHBFactoryReturnsGlobalHelperParamShadow.jsonl\", \"sha256\": \"bba513187e957d79032e76c9c7e549414c8e7452968ed67f3115c86715e80ede\", \"unparsed_spawns\": 0}], \"findings\": [{\"argv0\": \"pacman\", \"class\": \"host_mutation\", \"command\": \"pacman -S r22-nhb-factory-local\", \"evidence\": \"observed\", \"file\": \"/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/w2/receipts/NoHarmBoundary/NHBFactoryReturnsGlobalHelperParamShadow.jsonl\", \"line\": 1, \"rule\": \"pacman:-S\", \"timestamp\": \"None\", \"tool\": \"eval\", \"tool_call_id\": \"NHBFactoryReturnsGlobalHelperParamShadow-0\"}], \"lead_findings\": 0, \"observed_findings\": 1, \"permitted\": [], \"schema\": \"mado-tripwire-verdict-v1\", \"unpermitted\": 1}\n"
+}

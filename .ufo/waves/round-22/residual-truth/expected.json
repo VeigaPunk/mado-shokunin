@@ -1,0 +1,82 @@
+{
+  "schema": "mado-r22-residual-lifetime-truth-v1",
+  "authored_before_patch": true,
+  "base_commit": "71228fd582d6d9338d7916cc64e69bd4c2e928b5",
+  "base_classifier_sha256": "36fdc45950cafe0be8c7698e7ed037772d9eed395a42c12097d75c16479badce",
+  "original_primary_expected_sha256": "b5cd4cf3a54ba3af3808436edecf659fe625aba1a8d3cbfbdd0ac355c59c4357",
+  "cases": [
+    {
+      "id": "ReturnedGlobalHelper",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-nhb-module",
+          "evidence": "observed"
+        }
+      ],
+      "forbid_any": [
+        "pacman -S r22-nhb-factory-local"
+      ],
+      "authority": "Fresh author-lane critic NoHarmBoundary independently specified truth before its observed red; do not rerun the old tool merely to confirm.",
+      "fixture": "ReturnedGlobalHelper.jsonl",
+      "sha256": "bba513187e957d79032e76c9c7e549414c8e7452968ed67f3115c86715e80ede",
+      "expected_kind": "exact",
+      "zero_unparsed": true
+    },
+    {
+      "id": "CallerArgumentBeforeClosureOverlay",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-callsite-argument",
+          "evidence": "observed"
+        }
+      ],
+      "forbid_any": [
+        "pacman -S r22-unused-closed-argument"
+      ],
+      "authority": "L1 static neighbouring guard before patch/probe: invocation arguments are evaluated in caller namespace BEFORE entering the callee lexical frame.",
+      "fixture": "CallerArgumentBeforeClosureOverlay.jsonl",
+      "sha256": "799315302691759b727ed9bf9c98e2846903a0a1743ead698240862bb7723525",
+      "expected_kind": "exact",
+      "zero_unparsed": true
+    },
+    {
+      "id": "ReturnedGlobalCallableShadow",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-global-callable",
+          "evidence": "observed"
+        }
+      ],
+      "forbid_any": [
+        "pacman -S r22-foreign-callable"
+      ],
+      "authority": "L1 static neighbouring guard before patch/probe: returning a module helper cannot replace its free global callable with factory-local parameter.",
+      "fixture": "ReturnedGlobalCallableShadow.jsonl",
+      "sha256": "6b3d838271403e5eb6ad4331c64a3093140c6b02a6a0f9bd1276406d7b10caa2",
+      "expected_kind": "exact",
+      "zero_unparsed": true
+    },
+    {
+      "id": "ForwardExistingClosureWithoutFrameContamination",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-forward-global",
+          "evidence": "observed"
+        }
+      ],
+      "forbid_any": [
+        "pacman -S r22-forward-foreign"
+      ],
+      "authority": "L1 static neighbouring guard before patch/probe: a forwarded existing closure retains its original lexical frame and late module globals, not the forwarding factory locals.",
+      "fixture": "ForwardExistingClosureWithoutFrameContamination.jsonl",
+      "sha256": "d3d8222a46c325ec0d5c02dd048345eb6a5edf1d74a5c265a1452b0c5e1f94b1",
+      "expected_kind": "exact",
+      "zero_unparsed": true
+    }
+  ],
+  "scope": "Supplemental discovery guards, NOT a changed50/57 denominator; original known red retained without rerun to confirm. New neighbours derive from Python call argument timing and lexical ownership."
+}
