@@ -1523,6 +1523,9 @@ PURE_STDLIB_EXACT = {
     "json.dumps", "pprint.pformat", "pprint.pprint",
     "shlex.join", "shlex.quote", "shlex.split", "typing.NamedTuple",
     "subprocess.list2cmdline",  # argv -> string formatter (S115); never spawns
+    "logging.debug", "logging.info", "logging.warning", "logging.warn",
+    "logging.error", "logging.exception", "logging.critical", "logging.fatal",
+    "logging.log",  # literal message argv is data; dictConfig factories differ
 }
 # Finite process/callback inventory, not a proof of module-wide purity.
 # Exact formatters and implicit-protocol/callback handling below cover the
