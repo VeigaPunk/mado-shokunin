@@ -1,0 +1,218 @@
+{
+  "schema": "mado-r23-repair-set-v1",
+  "authored_before_patch": true,
+  "base_commit": "e33ea30461f6e9bbeee40beef19770a953f7a105",
+  "base_classifier_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+  "pass_rule": {
+    "exact": "scanner exit 0 or 1, no error, sorted (class, command, evidence) rows equal want, eval_unparsed+unparsed_spawns 0, no forbid_any command at any tier",
+    "present": "scanner exit 0 or 1, no error, every want_present command appears in a row with evidence observed or lead, no forbid_any command at any tier"
+  },
+  "truth_rule": "truth.py executes each fixture under a recording fake subprocess module; exact wants must equal the executed argv set, present wants must be executed, forbid_any must never execute",
+  "cases": [
+    {
+      "id": "ReturnedGlobalHelper",
+      "kind": "exact",
+      "forbid_any": [
+        "pacman -S r22-nhb-factory-local"
+      ],
+      "origin": "round-22 residual-truth (copied byte-exact; r22 sha256 bba513187e957d79032e76c9c7e549414c8e7452968ed67f3115c86715e80ede)",
+      "fixture": "fixtures/ReturnedGlobalHelper.jsonl",
+      "sha256": "bba513187e957d79032e76c9c7e549414c8e7452968ed67f3115c86715e80ede",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-nhb-module",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "CallerArgumentBeforeClosureOverlay",
+      "kind": "exact",
+      "forbid_any": [
+        "pacman -S r22-unused-closed-argument"
+      ],
+      "origin": "round-22 residual-truth (copied byte-exact; r22 sha256 799315302691759b727ed9bf9c98e2846903a0a1743ead698240862bb7723525)",
+      "fixture": "fixtures/CallerArgumentBeforeClosureOverlay.jsonl",
+      "sha256": "799315302691759b727ed9bf9c98e2846903a0a1743ead698240862bb7723525",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-callsite-argument",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "ReturnedGlobalCallableShadow",
+      "kind": "exact",
+      "forbid_any": [
+        "pacman -S r22-foreign-callable"
+      ],
+      "origin": "round-22 residual-truth (copied byte-exact; r22 sha256 6b3d838271403e5eb6ad4331c64a3093140c6b02a6a0f9bd1276406d7b10caa2)",
+      "fixture": "fixtures/ReturnedGlobalCallableShadow.jsonl",
+      "sha256": "6b3d838271403e5eb6ad4331c64a3093140c6b02a6a0f9bd1276406d7b10caa2",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-global-callable",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "ForwardExistingClosureWithoutFrameContamination",
+      "kind": "exact",
+      "forbid_any": [
+        "pacman -S r22-forward-foreign"
+      ],
+      "origin": "round-22 residual-truth (copied byte-exact; r22 sha256 d3d8222a46c325ec0d5c02dd048345eb6a5edf1d74a5c265a1452b0c5e1f94b1)",
+      "fixture": "fixtures/ForwardExistingClosureWithoutFrameContamination.jsonl",
+      "sha256": "d3d8222a46c325ec0d5c02dd048345eb6a5edf1d74a5c265a1452b0c5e1f94b1",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r22-forward-global",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "ForwarderInvokesCallback",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [
+        "pacman -S r23-forward-foreign"
+      ],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "r22 closure probe gap 1: a module helper invoked by a forwarder reads module globals, not the forwarder frame.",
+      "fixture": "fixtures/ForwarderInvokesCallback.jsonl",
+      "sha256": "9325530c118139c98cab19daf3f3df389d5594b605fd854ae91e5feb6585f5ff",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-forward-global",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "CallerLocalShadowsHelperGlobal",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [
+        "pacman -S r23-local-foreign"
+      ],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "Same frame leak through an assigned caller local instead of a parameter.",
+      "fixture": "fixtures/CallerLocalShadowsHelperGlobal.jsonl",
+      "sha256": "442d9956243cb73e3397d3da794c2cd4eabb73b4017acaee54a3796e763e57a9",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-local-global",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "NestedDefReadsDefiningFrame",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [
+        "pacman -S r23-nested-foreign"
+      ],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "Overcorrection guard: a def nested in the running frame closes over that frame.",
+      "fixture": "fixtures/NestedDefReadsDefiningFrame.jsonl",
+      "sha256": "ac38b6f3088edf3469800e571bb2a8dd4dd1def5e505a64899ccfb9d079dbe0b",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-nested-local",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "LateGlobalRebinding",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [
+        "pacman -S r23-early-global"
+      ],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "Free globals resolve at call time (S121), so the later module binding wins.",
+      "fixture": "fixtures/LateGlobalRebinding.jsonl",
+      "sha256": "1141e4750e420855abd0f08eea0e0790389c9af11779227a9f92c8205d44f116",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-late-global",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "ForwarderPassesCallerArgument",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "Overcorrection guard: arguments are evaluated in the forwarder frame before entering the callee.",
+      "fixture": "fixtures/ForwarderPassesCallerArgument.jsonl",
+      "sha256": "63041df9aef342a0db0a985109311b5ddc66e4ee8c9413d4cca19486b961f306",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-forwarded-argument",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "ForwarderInvokesFactoryClosure",
+      "kind": "exact",
+      "want_present": [],
+      "forbid_any": [
+        "pacman -S r23-module-foreign",
+        "pacman -S r23-forwarder-foreign"
+      ],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "A factory closure invoked by a forwarder keeps its own captured frame.",
+      "fixture": "fixtures/ForwarderInvokesFactoryClosure.jsonl",
+      "sha256": "7a4c7a2b308ee9a38702ac64240e1ca81838666578b411431daf733e27dacc90",
+      "want": [
+        {
+          "class": "package_query",
+          "command": "pacman -Q r23-closure-captured",
+          "evidence": "observed"
+        }
+      ]
+    },
+    {
+      "id": "CallbackStoredInDict",
+      "kind": "present",
+      "want_present": [
+        "pacman -S r23-hook-dict"
+      ],
+      "forbid_any": [],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "r22 closure probe gap 2 recall guard: the run is executed; the row may be observed or lead, never absent.",
+      "fixture": "fixtures/CallbackStoredInDict.jsonl",
+      "sha256": "6602eedff1cf08210c9007c73996c89075b1404036692d0c2e52aeffdc2272d6"
+    },
+    {
+      "id": "CallbackStoredOnAttribute",
+      "kind": "present",
+      "want_present": [
+        "pacman -S r23-hook-attr"
+      ],
+      "forbid_any": [],
+      "origin": "round-23 L1, authored before any round-23 production edit",
+      "why": "Recall guard: attribute store escape; the row may be observed or lead, never absent.",
+      "fixture": "fixtures/CallbackStoredOnAttribute.jsonl",
+      "sha256": "c403bb3cfe130fbc9a7960db524a799163d4e9e5131339d94322b71d09c7e75b"
+    }
+  ]
+}
