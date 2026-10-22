@@ -54,3 +54,12 @@ identical passing-case set.
   actual read-only scope. No tool is removed to hit the number.
 
 No exploratory claim. A miss is an honest stop; no target is narrowed after landing.
+
+## Pre-measurement clarification (append-only, before any after-measurement)
+
+C3's counter is committed as `python3 -I .ufo/waves/round-23/c3/count.py REV`. It reads SHONEN.md box 4
+(the self-assessment "No cross-domain bleed (PROVINCE.md still accurate)") and counts tracked
+`tools/*.py|*.sh` files whose names PROVINCE.md does not contain: each is a mismatch between that
+self-assessment row and the observed repo. Same population and before value as the shell form
+above: **4** at base (`evidence/c3-before-e33ea304.json`); target **0**. The shell form stays as
+recorded; the script is the counter of record.
