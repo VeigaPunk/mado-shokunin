@@ -93,3 +93,16 @@ This note supersedes, for these three trees only, "foot, kitty and ghostty trees
 here" (`terminal-route-r17.md:5`) and the frontier clause at `corpus/README.md:123-124`. It also
 narrows `terminals-and-omarchy.md` §8 unknown (1): the three binaries are absent from pacman as well
 as from PATH. Older notes are not edited.
+
+## Errata (round 23 wave 2, append-only)
+
+- Host declaration said "2 Alacritty clients" (HostGhostty's undated read). ReviewNoteHost read
+  `hyprctl -j clients` at 11:57Z and 12:00Z: 1 client, class Alacritty. The class claim stands; the
+  count is a moving session value, not a fact of this note.
+- "omarchy 3.8.3 checkout": the checkout's `version` file says 3.8.3 while its HEAD is the commit
+  tagged v3.8.4. The three terminal defaults are byte-identical at both tags, so the byte claim holds.
+- "L1 re-ran these at 2026-10-22T11:55Z" had no receipt. The re-measured values are reproduced with
+  receipts in `.ufo/waves/round-23/w2/reports/ReviewNoteHost.md` (11:57–12:01Z).
+- The ghostty C5 row says the treewide sweep is "recorded in §4"; this note has no §4. The sweep
+  command and result are in `.ufo/waves/round-23/w1/reports/SrcGhostty.md` §1.2 and §3; no
+  wave-2 seat re-ran it, so C5 (no watcher, no SIGHUP handler) rests on that single sweep.
