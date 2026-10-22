@@ -1348,28 +1348,54 @@ def own_names(fn):
     """The names a function's own frame binds: its parameters and assignments.
 
     A name the frame does not bind is not its own: it is inherited from the
-    scope the frame closes over, and it is read there, late (S121)."""
+    scope the frame closes over, and it is read there, late (S121). Bindings
+    inside nested defs, lambdas, classes and comprehensions belong to those
+    scopes, not to this frame; names declared global or nonlocal are not own.
+    Every binder form Python has counts (round-23 wave-2 counterexamples:
+    with/except/match targets were missed, nested binders were over-counted)."""
     names = set(callable_params(fn)) if hasattr(fn, "args") else set()
     body = fn.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) else [fn.body]
-    for node in ast.walk(ast.Module(body=body, type_ignores=[])):
-        if isinstance(node, ast.Assign):
+    declared = set()
+    pending = list(body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            names.add(node.name)
+            pending.extend(node.decorator_list)
+            if not isinstance(node, ast.ClassDef):
+                pending.extend(node.args.defaults)
+                pending.extend(d for d in node.args.kw_defaults if d is not None)
+            continue  # the nested body is its own scope
+        if isinstance(node, (ast.Lambda, ast.ListComp, ast.SetComp, ast.DictComp,
+                             ast.GeneratorExp)):
+            continue  # its own scope
+        if isinstance(node, (ast.Global, ast.Nonlocal)):
+            declared.update(node.names)
+        elif isinstance(node, ast.Assign):
             for target in node.targets:
                 names |= target_names(target)
-        elif isinstance(node, ast.AnnAssign) and node.target is not None:
+        elif isinstance(node, (ast.AnnAssign, ast.AugAssign, ast.NamedExpr)) and \
+                node.target is not None:
             names |= target_names(node.target)
-        elif isinstance(node, (ast.AugAssign, ast.NamedExpr)):
+        elif isinstance(node, (ast.For, ast.AsyncFor)):
             names |= target_names(node.target)
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        elif isinstance(node, ast.withitem) and node.optional_vars is not None:
+            names |= target_names(node.optional_vars)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
             names.add(node.name)
+        elif isinstance(node, (ast.MatchAs, ast.MatchStar)) and node.name:
+            names.add(node.name)
+        elif isinstance(node, ast.MatchMapping) and node.rest:
+            names.add(node.rest)
+        elif isinstance(node, ast.Delete):
+            for target in node.targets:
+                names |= target_names(target)
         elif isinstance(node, (ast.Import, ast.ImportFrom)):
             for alias in node.names:
                 if alias.name != "*":
                     names.add(alias.asname or alias.name.split(".")[0])
-        elif isinstance(node, (ast.For, ast.AsyncFor)):
-            names |= target_names(node.target)
-        elif isinstance(node, ast.comprehension):
-            names |= target_names(node.target)
-    return names
+        pending.extend(ast.iter_child_nodes(node))
+    return names - declared
 
 
 MUTATED_LITERALS = object()  # not a source identifier or source binding
@@ -1709,7 +1735,9 @@ def factory_result(info, call, env, bindings, resolving):
     local_env.update(bound)
     local_bindings.update(bound_callables(owner, call, bindings, env,
                                           resolving=resolving))
-    local_bindings[SCOPE_KEY] = frame_scope(owner)  # the factory's own frame
+    # The factory's own frame, one token per call site: two calls of one
+    # factory are two frames, so their closures never share a view.
+    local_bindings[SCOPE_KEY] = ("factory", id(owner), id(call))
     prefix = owner.body[:owner.body.index(returned)]
     names = set(bound) | set(info.get("closure_env", {})) | set(info.get("closure_bindings", {}))
     for statement in prefix:
@@ -1877,7 +1905,7 @@ def assignment_binding(node, bindings, env, resolving=()):
     if isinstance(node, (ast.Lambda, ast.FunctionDef, ast.AsyncFunctionDef)):
         scope = bindings.get(SCOPE_KEY, MODULE_SCOPE)
         node.mado_scope = getattr(node, "mado_scope", scope)
-        return {"kind": "helper", "node": node, "scope": node.mado_scope}
+        return {"kind": "helper", "node": node, "scope": scope}  # this evaluation's frame
     if isinstance(node, ast.ClassDef):
         return {"kind": "class", "node": node}
     if isinstance(node, ast.Name):
@@ -2411,6 +2439,18 @@ DESCENT_LIMIT = 4  # nested helper bodies followed with bound literals
 DESCENT_BUDGET = 2000  # helper descents per cell; past it, bodies are swept
 
 
+def own_view(own, env, bindings):
+    """A frame's own (env, bindings) view. An own name the scan could not
+    bind still shadows outer scopes: it is unknown here, never an outer value
+    (round-23 wave-2 counterexamples: match and with targets)."""
+    own_env = {name: env.get(name, LITERAL_MISS) for name in own}
+    own_bindings = {name: bindings[name] for name in own if name in bindings}
+    for name in own:
+        if name not in bindings and name not in env:
+            own_bindings[name] = {"kind": "unknown"}
+    return own_env, own_bindings
+
+
 def scope_entry(ctx, scope, cenv, cbindings):
     """Record a scope's own view at this statement and return it.
 
@@ -2421,8 +2461,7 @@ def scope_entry(ctx, scope, cenv, cbindings):
     if own is None:
         env, bindings = cenv, cbindings
     else:
-        env = {name: cenv[name] for name in own if name in cenv}
-        bindings = {name: cbindings[name] for name in own if name in cbindings}
+        env, bindings = own_view(own, cenv, cbindings)
     ctx["scopes"][scope] = {"env": env, "bindings": bindings,
                             "parent": entry.get("parent"), "own": own}
 
@@ -2445,6 +2484,13 @@ def scope_view(ctx, scope, fallback_env, fallback_bindings):
     while key is not None:
         view = ctx["scopes"].get(key)
         if view is None:
+            # A frame that was never followed (e.g. a factory read only for its
+            # returned closure): its captured names travel in closure_env, and
+            # its free names are module globals, never the caller's frame.
+            module = ctx["scopes"].get(MODULE_SCOPE)
+            if key != MODULE_SCOPE and module is not None and \
+                    not any(view_ is module for view_ in views):
+                views.append(module)
             break
         views.append(view)
         key = view.get("parent")
@@ -2468,49 +2514,55 @@ def source_names(node):
     return {part.id for part in ast.walk(node) if isinstance(part, ast.Name)}
 
 
+DYNAMIC_SCOPE_CALLS = {"locals", "vars", "globals", "eval", "exec", "setattr", "getattr"}
+
+
 def parameter_escapes(fn, param):
     """True when the value bound to `param` inside fn's body may escape fn.
 
-    Escape means the value is stored into a container or an attribute,
-    returned, or handed to another call. A value the body only calls is not
-    an escape: that call is followed, so the callback is read in its own
-    defining scope and no separate lead is owed for it."""
+    Allowlist, not denylist (round-23 wave-2 counterexamples): the value does
+    not escape only when every read of it, or of a plain local alias of it,
+    is the callee of a direct call `name(...)` or the whole right-hand side of
+    a plain assignment to local names. Any other read (store, augmented or
+    annotated assignment, global/nonlocal target, return, yield, container,
+    attribute access such as `name.__call__()`, argument to another call,
+    capture by a nested def, lambda or class) counts as an escape, and so does
+    dynamic scope access; an escaping value's body is swept as before."""
     body = fn.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) else [fn.body]
     tree = ast.Module(body=body, type_ignores=[])
+    parents, nested, shared = {}, set(), set()
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parents[child] = node
+        if isinstance(node, (ast.Global, ast.Nonlocal)):
+            shared.update(node.names)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+            nested.update(id(part) for part in ast.walk(node) if part is not node)
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and \
+                node.func.id in DYNAMIC_SCOPE_CALLS:
+            return True
     reaches = {param}      # names whose value may be the parameter's value
-    aliases = {}           # name -> the names it was bound from
-    escaping = set()       # names whose value leaves the function
     changed = True
     while changed:
         changed = False
-        for name, sources in aliases.items():
-            if name not in reaches and sources & reaches:
-                reaches.add(name)
-                changed = True
-        if reaches & escaping:
-            return True
         for node in ast.walk(tree):
-            if isinstance(node, ast.Assign):
-                for target in node.targets:
-                    if isinstance(target, ast.Name):
-                        sources = aliases.setdefault(target.id, set())
-                        fresh = source_names(node.value) - sources
-                        if fresh:
-                            sources |= fresh
-                            changed = True
-                    else:  # a container or an attribute keeps the value
-                        escaping |= source_names(node.value)
-            elif isinstance(node, ast.Return) and node.value is not None:
-                escaping |= source_names(node.value)
-            elif isinstance(node, ast.Call):
-                if isinstance(node.func, ast.Attribute) and \
-                        node.func.attr in ESCAPE_METHODS:
-                    for argument in node.args:
-                        escaping |= source_names(argument)
-                elif not (isinstance(node.func, ast.Name) and node.func.id in reaches):
-                    for argument in list(node.args) + [kw.value for kw in node.keywords]:
-                        escaping |= source_names(argument)
-    return bool(reaches & escaping)
+            if not (isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+                    and node.id in reaches):
+                continue
+            if id(node) in nested:
+                return True  # captured by a nested scope that may outlive the call
+            up = parents.get(node)
+            if isinstance(up, ast.Call) and up.func is node:
+                continue
+            if isinstance(up, ast.Assign) and up.value is node and \
+                    all(isinstance(t, ast.Name) and t.id not in shared for t in up.targets):
+                fresh = {t.id for t in up.targets} - reaches
+                if fresh:
+                    reaches |= fresh
+                    changed = True
+                continue
+            return True  # any other use may store or run it where no follow reaches
+    return False
 
 
 def argument_position(call, ref):
@@ -2620,7 +2672,8 @@ def sweep_class(class_node, bindings, ctx, depth, dunders_only, exclude=()):
 
 
 def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
-                  class_node=None, bound_kind=None, closure_env=None, closure_bindings=None):
+                  class_node=None, bound_kind=None, closure_env=None, closure_bindings=None,
+                  def_scope=None):
     """Follow one helper call with its literal arguments bound (`observed`
     rows), or None when it is not followed: recursion, depth or budget spent,
     or arguments that cannot be bound.
@@ -2636,7 +2689,18 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         return None
     ctx["descents"] += 1
     body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
-    scope = getattr(helper, "mado_scope", None)
+    # The defining scope is the one recorded on this binding when the def ran
+    # (def_scope); the AST attribute is only a fallback, because a later call of
+    # the enclosing function re-runs the same def node in a different frame.
+    scope = def_scope if def_scope is not None else getattr(helper, "mado_scope", None)
+    ctx["frames"] = ctx.get("frames", 0) + 1
+    frame = ("frame", id(helper), ctx["frames"])  # one token per followed call
+    if (closure_env or closure_bindings) and scope is not None and scope not in ctx["scopes"]:
+        # A factory frame read only for its returned closure: its captured
+        # names are the closure overlay; it closes over the module.
+        ctx["scopes"][scope] = {"env": dict(closure_env or {}),
+                                "bindings": dict(closure_bindings or {}),
+                                "parent": MODULE_SCOPE, "own": None}
     view_env, view_bindings = scope_view(ctx, scope, cenv, cbindings)
     body_bindings = dict(view_bindings)
     if closure_bindings:
@@ -2655,19 +2719,18 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         body_env.update({name: LITERAL_MISS if mutated_literal(value, cenv) else value
                          for name, value in closure_env.items()})
     body_env.update(bound)
-    body_bindings[SCOPE_KEY] = frame_scope(helper)
+    body_bindings[SCOPE_KEY] = frame
     calls, refs, body_call_env, body_binding_env = prepare_eval_calls(
         body_nodes, body_env, body_bindings)
     own = own_names(helper)
-    ctx["scopes"][frame_scope(helper)] = {
-        "env": {name: body_env[name] for name in own if name in body_env},
-        "bindings": {name: body_bindings[name] for name in own if name in body_bindings},
-        "parent": scope, "own": own}
+    own_env, own_bindings = own_view(own, body_env, body_bindings)
+    ctx["scopes"][frame] = {"env": own_env, "bindings": own_bindings,
+                            "parent": scope, "own": own}
     ctx["stack"].append(id(helper))
     try:
         return spawn_scan(calls, body_env, body_bindings, depth + 1, body_call_env,
                           body_binding_env, awaited_call_ids(body_nodes), refs, ctx,
-                          scope=frame_scope(helper))
+                          scope=frame)
     finally:
         ctx["stack"].pop()
 
@@ -2798,7 +2861,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             result = follow_helper(helper, bound_node, cenv, cbindings, ctx, depth,
                                    info.get("skip_first", False),
                                    info.get("class_node"), info.get("bound_kind"),
-                                   info.get("closure_env"), info.get("closure_bindings"))
+                                   info.get("closure_env"), info.get("closure_bindings"),
+                                   info.get("scope"))
             if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
                     and id(node) not in awaited_calls:
                 # a coroutine created here runs only if something schedules it
