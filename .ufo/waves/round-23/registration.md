@@ -63,3 +63,42 @@ C3's counter is committed as `python3 -I .ufo/waves/round-23/c3/count.py REV`. I
 self-assessment row and the observed repo. Same population and before value as the shell form
 above: **4** at base (`evidence/c3-before-e33ea304.json`); target **0**. The shell form stays as
 recorded; the script is the counter of record.
+
+## Second pre-measurement clarification (append-only; CritRegistration findings, before any after-measurement)
+
+Wave-1 critic `w1/reports/CritRegistration.md` raised eleven findings. Dispositions:
+
+1. **H2 attribution corrected.** Three of the nine failing precision cases already failed at round 20
+   (`W-CaseWrapperForms-class-method-instance`, `L-AdoptW2-AdvHelperFn-b14`,
+   `H-AdoptW2-RerunPrecision-corpus-jj-var-verb-help`). The round-21 drop of six is four `git commit`
+   dry-run forms made strict on purpose (S118: they still refresh the index) and two reset-cleared
+   helper leads round 21 adjudicated as false positives. The sentence above that calls `b14` a
+   reset-cleared helper is wrong; it is an uncalled function.
+2. **D11 conflict stated plainly.** The operator ruling asks the first claim to repair routed harms.
+   C1 repairs H3, H4 and keeps H5; it does not restore 172/175, because restoring the six would
+   undo the strict write boundary that the round-20 closure required. An L0 question records this.
+3. **Precision guard reworded** so that fixing an old failure is not counted as harm: no case that
+   passes at base may fail at the landed tip, and the count may not drop below 166/175.
+4. **C3 counter tightened (v2).** A tool now counts as accounted for only through a PROVINCE.md table
+   row whose first cell is the tool path in backticks with at least four non-empty cells (tool,
+   reads, writes, owner and adjacent lanes); bare prose mentions no longer count; subdirectories
+   count; git errors exit 2. Under v2 the base value is **5** (`mado-verify.sh` was credited by a
+   bare mention under v1): `evidence/c3-before-v2-e33ea304.json`. Target stays **0**.
+5. **C3 is calibration, not coverage.** v2 evaluates only while SHONEN box 4 is asserted ([~] or
+   [x]) and exits 2 when the box is unticked. C3 claims no coverage change.
+6. **C3 wording.** The refinement will call the tools lane-internal instruments, state the actual
+   reads and writes (subprocess children and selftest temp dirs included) and name adjacent owners
+   (mori for transcript observation, tsukuroi for package state).
+7. **C2 counter tightened (v2).** Whole-word terminal match; the source cell must name exactly one
+   of the three terminals and point at that terminal's upstream; used-by must name the note; the
+   route row must carry a `~/.config/<terminal>/` cell. Base still **0/3**:
+   `evidence/c2-before-v2-e33ea304.json`.
+8. **Unparsed counters.** The corpus guard must adjudicate every changed per-file unparsed counter,
+   not only finding groups.
+9. **Routed round-22 defects added.** (a) The round-22 report pasted 6 of 7 W04 census lines: this
+   round's report pastes the census receipts byte-exact and the lesson records the mistake.
+   (b) Shared-checkout writers: every round-23 executor works in its own clone under
+   `/fast/scratch/hyaku/mado-r23/`. (c) Overlapping comparators: guard runs are sequential.
+10. **Committed bytes.** After-values are measured on the classifier extracted from the landed tip
+    (`git show <tip>:tools/mado-tripwire.py > <scratch>/tool.py`), not on working-tree bytes.
+11. C3 v2 reads `tools/` recursively; C1 adds no new tool file.
