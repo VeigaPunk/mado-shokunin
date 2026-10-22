@@ -1323,6 +1323,55 @@ def module_binding(stmt):
     return None
 
 
+# --- defining-scope provenance (round-23 C1) --------------------------------
+# Every helper binding records the scope whose frame executed its `def`: the
+# module namespace, or the frame of the enclosing function. A followed body's
+# free names resolve through that scope chain and never through the frame that
+# called it: a caller's local must not shadow a callee's global. S121 keeps a
+# global's *value* late (at call time); it does not make the caller's frame the
+# scope the callee's globals live in.
+MODULE_SCOPE = "module"      # the module namespace, as one scope
+SCOPE_KEY = "\x00scope"      # sentinel: the scope a binding view belongs to
+
+
+def frame_scope(fn):
+    """Identity of the frame a function's body runs in."""
+    return ("frame", id(fn))
+
+
+def sweep_scope(fn):
+    """Identity of the frame a swept body is read in (its parameters unknown)."""
+    return ("sweep", id(fn))
+
+
+def own_names(fn):
+    """The names a function's own frame binds: its parameters and assignments.
+
+    A name the frame does not bind is not its own: it is inherited from the
+    scope the frame closes over, and it is read there, late (S121)."""
+    names = set(callable_params(fn)) if hasattr(fn, "args") else set()
+    body = fn.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) else [fn.body]
+    for node in ast.walk(ast.Module(body=body, type_ignores=[])):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                names |= target_names(target)
+        elif isinstance(node, ast.AnnAssign) and node.target is not None:
+            names |= target_names(node.target)
+        elif isinstance(node, (ast.AugAssign, ast.NamedExpr)):
+            names |= target_names(node.target)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            names.add(node.name)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                if alias.name != "*":
+                    names.add(alias.asname or alias.name.split(".")[0])
+        elif isinstance(node, (ast.For, ast.AsyncFor)):
+            names |= target_names(node.target)
+        elif isinstance(node, ast.comprehension):
+            names |= target_names(node.target)
+    return names
+
+
 MUTATED_LITERALS = object()  # not a source identifier or source binding
 
 
@@ -1660,6 +1709,7 @@ def factory_result(info, call, env, bindings, resolving):
     local_env.update(bound)
     local_bindings.update(bound_callables(owner, call, bindings, env,
                                           resolving=resolving))
+    local_bindings[SCOPE_KEY] = frame_scope(owner)  # the factory's own frame
     prefix = owner.body[:owner.body.index(returned)]
     names = set(bound) | set(info.get("closure_env", {})) | set(info.get("closure_bindings", {}))
     for statement in prefix:
@@ -1698,6 +1748,7 @@ def class_method_info(class_node, method_name, bindings=None, seen=()):
                                for decorator in member.decorator_list)
             return {"kind": "helper", "node": member,
                     "skip_first": not static, "class_node": class_node,
+                    "scope": getattr(member, "mado_scope", None),
                     "bound_kind": "class" if class_method else
                     "instance" if not static else None}
         if isinstance(member, ast.Assign) and any(
@@ -1824,7 +1875,9 @@ def assignment_binding(node, bindings, env, resolving=()):
     if hasattr(node, "mado_resolved"):
         return node.mado_resolved
     if isinstance(node, (ast.Lambda, ast.FunctionDef, ast.AsyncFunctionDef)):
-        return {"kind": "helper", "node": node}
+        scope = bindings.get(SCOPE_KEY, MODULE_SCOPE)
+        node.mado_scope = getattr(node, "mado_scope", scope)
+        return {"kind": "helper", "node": node, "scope": node.mado_scope}
     if isinstance(node, ast.ClassDef):
         return {"kind": "class", "node": node}
     if isinstance(node, ast.Name):
@@ -1884,7 +1937,9 @@ def assignment_binding(node, bindings, env, resolving=()):
 def update_bindings(stmt, bindings, env, resolving=()):
     """Apply this statement's module-level name bindings in execution order."""
     if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
-        bindings[stmt.name] = {"kind": "helper", "node": stmt}
+        scope = bindings.get(SCOPE_KEY, MODULE_SCOPE)
+        stmt.mado_scope = scope  # the frame that executed this def
+        bindings[stmt.name] = {"kind": "helper", "node": stmt, "scope": scope}
         for decorator in reversed(stmt.decorator_list):
             wrapped = callable_info(ast.Call(func=decorator,
                 args=[ast.Name(id=stmt.name, ctx=ast.Load())], keywords=[]), bindings, env, resolving)
@@ -1892,11 +1947,15 @@ def update_bindings(stmt, bindings, env, resolving=()):
                 bindings[stmt.name] = wrapped
         return
     if isinstance(stmt, ast.ClassDef):
-        bindings[stmt.name] = {"kind": "class", "node": stmt}
+        scope = bindings.get(SCOPE_KEY, MODULE_SCOPE)
+        stmt.mado_scope = scope
+        bindings[stmt.name] = {"kind": "class", "node": stmt, "scope": scope}
         class_bindings = dict(bindings)
         for member in stmt.body:
             if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                class_bindings[member.name] = {"kind": "helper", "node": member}
+                member.mado_scope = scope  # a method closes over the class's scope
+                class_bindings[member.name] = {"kind": "helper", "node": member,
+                                               "scope": scope}
             if isinstance(member, ast.Assign) and isinstance(member.value, ast.Call):
                 descriptor = member.value
                 if (descriptor.args and callable_info(descriptor.func, class_bindings, env, resolving)
@@ -2199,7 +2258,10 @@ def statement_snapshot(statement, env, bindings):
     literals = {name: env[name] for name in names if name in env}
     if MUTATED_LITERALS in env:
         literals[MUTATED_LITERALS] = env[MUTATED_LITERALS]
-    return literals, {name: bindings[name] for name in names if name in bindings}
+    snapshot = {name: bindings[name] for name in names if name in bindings}
+    if SCOPE_KEY in bindings:
+        snapshot[SCOPE_KEY] = bindings[SCOPE_KEY]  # the scope this view belongs to
+    return literals, snapshot
 
 
 def prepare_eval_calls(statements, env, bindings, resolving=()):
@@ -2212,6 +2274,7 @@ def prepare_eval_calls(statements, env, bindings, resolving=()):
     unsafe = module_unsafe_names(tree)
     for name in unsafe:
         env.pop(name, None)
+    scope = bindings.get(SCOPE_KEY, MODULE_SCOPE)
     call_env, binding_env = {}, {}
     # Retain snapshots only for inspected eager calls/references, not every
     # literal assignment in a wide shallow cell.
@@ -2228,6 +2291,7 @@ def prepare_eval_calls(statements, env, bindings, resolving=()):
         if opaque_statement(stmt):
             env.clear()
             bindings.clear()
+            bindings[SCOPE_KEY] = scope
             for name in PURE_ARG_CALLS:
                 bindings[name] = {"kind": "unknown"}
         targets = (stmt.targets if isinstance(stmt, (ast.Assign, ast.Delete))
@@ -2287,10 +2351,11 @@ def classify_eval(code, language, env=None, bindings=None):
         return hits, 1, 0
     env = {} if env is None else env
     bindings = {} if bindings is None else bindings
+    bindings[SCOPE_KEY] = MODULE_SCOPE  # this cell's statements run in the module scope
     calls, refs, call_env, binding_env = prepare_eval_calls(tree.body, env, bindings)
     found, unparsed = spawn_scan(
         calls, {}, bindings, 0, call_env, binding_env, awaited_call_ids(tree.body),
-        refs, new_scan_context())
+        refs, new_scan_context(), scope=MODULE_SCOPE)
     hits.extend(found)
     return hits, 0, unparsed
 
@@ -2346,9 +2411,148 @@ DESCENT_LIMIT = 4  # nested helper bodies followed with bound literals
 DESCENT_BUDGET = 2000  # helper descents per cell; past it, bodies are swept
 
 
+def scope_entry(ctx, scope, cenv, cbindings):
+    """Record a scope's own view at this statement and return it.
+
+    A scope's own view holds the names that scope binds; the names it closes
+    over are read in the scopes it closes over, late (S121)."""
+    entry = ctx["scopes"].get(scope, {})
+    own = entry.get("own")
+    if own is None:
+        env, bindings = cenv, cbindings
+    else:
+        env = {name: cenv[name] for name in own if name in cenv}
+        bindings = {name: cbindings[name] for name in own if name in cbindings}
+    ctx["scopes"][scope] = {"env": env, "bindings": bindings,
+                            "parent": entry.get("parent"), "own": own}
+
+
 def new_scan_context():
     """Per-cell state: bodies already swept, helpers being followed, descents."""
-    return {"swept": set(), "stack": [], "descents": 0}
+    return {"swept": set(), "stack": [], "descents": 0, "scopes": {}}
+
+
+def scope_view(ctx, scope, fallback_env, fallback_bindings):
+    """The (env, bindings) view of a scope chain, innermost scope first.
+
+    A helper's free names live in the scope that defined it, so they are read
+    from that scope's own view and then from the scopes it closes over. The
+    frame that called the helper is not in the chain: its locals must not
+    shadow the callee's globals."""
+    if scope is None or ctx is None:
+        return fallback_env, fallback_bindings
+    views, key = [], scope
+    while key is not None:
+        view = ctx["scopes"].get(key)
+        if view is None:
+            break
+        views.append(view)
+        key = view.get("parent")
+    if not views:
+        return fallback_env, fallback_bindings
+    env, bindings = {}, {}
+    for view in views:
+        for name, value in view["env"].items():
+            env.setdefault(name, value)
+        for name, info in view["bindings"].items():
+            bindings.setdefault(name, info)
+    return env, bindings
+
+
+ESCAPE_METHODS = {"append", "extend", "insert", "update", "add", "setdefault",
+                  "appendleft", "push", "__setitem__"}
+
+
+def source_names(node):
+    """The names an expression reads."""
+    return {part.id for part in ast.walk(node) if isinstance(part, ast.Name)}
+
+
+def parameter_escapes(fn, param):
+    """True when the value bound to `param` inside fn's body may escape fn.
+
+    Escape means the value is stored into a container or an attribute,
+    returned, or handed to another call. A value the body only calls is not
+    an escape: that call is followed, so the callback is read in its own
+    defining scope and no separate lead is owed for it."""
+    body = fn.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) else [fn.body]
+    tree = ast.Module(body=body, type_ignores=[])
+    reaches = {param}      # names whose value may be the parameter's value
+    aliases = {}           # name -> the names it was bound from
+    escaping = set()       # names whose value leaves the function
+    changed = True
+    while changed:
+        changed = False
+        for name, sources in aliases.items():
+            if name not in reaches and sources & reaches:
+                reaches.add(name)
+                changed = True
+        if reaches & escaping:
+            return True
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        sources = aliases.setdefault(target.id, set())
+                        fresh = source_names(node.value) - sources
+                        if fresh:
+                            sources |= fresh
+                            changed = True
+                    else:  # a container or an attribute keeps the value
+                        escaping |= source_names(node.value)
+            elif isinstance(node, ast.Return) and node.value is not None:
+                escaping |= source_names(node.value)
+            elif isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Attribute) and \
+                        node.func.attr in ESCAPE_METHODS:
+                    for argument in node.args:
+                        escaping |= source_names(argument)
+                elif not (isinstance(node.func, ast.Name) and node.func.id in reaches):
+                    for argument in list(node.args) + [kw.value for kw in node.keywords]:
+                        escaping |= source_names(argument)
+    return bool(reaches & escaping)
+
+
+def argument_position(call, ref):
+    """The parameter index or name the reference is handed to, else None."""
+    for index, arg in enumerate(call.args):
+        if arg is ref:
+            return index
+    for keyword in call.keywords:
+        if keyword.value is ref:
+            return keyword.arg
+    return None
+
+
+def reference_escapes(call, ref, bindings, env):
+    """True when a callable handed to `call` as an argument may escape it.
+
+    A value the receiving call only calls does not escape it: that call is
+    followed, so the callback's body is read in its own defining scope and no
+    separate lead is owed. A value the call stores, returns, or hands to a
+    call this scan cannot follow does escape, and its body is swept."""
+    info = callable_info(call.func, bindings, env)
+    callee = info.get("node")
+    if info.get("kind") != "helper" or \
+            not isinstance(callee, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return True  # the receiving body is not visible: the value may escape
+    position = argument_position(call, ref)
+    if position is None:
+        return True  # nested in a composite argument: the value escapes
+    params = callee.args.posonlyargs + callee.args.args
+    if isinstance(position, int):
+        index = position + (1 if info.get("skip_first") else 0)
+        if index >= len(params):
+            return True
+        name = params[index].arg
+    else:
+        name = position
+        if name not in [param.arg for param in params] and \
+                not (callee.args.kwarg is not None):
+            return True  # collected by **kwargs: the value escapes
+    if bind_literal(callee, call, env, info.get("skip_first", False)) is None:
+        return True  # the call is not followed: its body is swept instead
+    return parameter_escapes(callee, name)
 
 
 def callable_params(fn):
@@ -2363,7 +2567,8 @@ def sweep_body(owner, bindings, ctx, depth, class_node=None, bound_kind=None):
     coroutine, a bare decorator, a dunder of a constructed or used class, an
     inline lambda, a recursive or over-budget helper, or a call whose
     arguments cannot be bound. Its parameters are unknown; every row it finds
-    is a `lead`. Each body is swept at most once per cell and never while it
+    is a `lead`. Its free names are read in the scope that defined it, like a
+    followed body. Each body is swept at most once per cell and never while it
     is being followed; a body nothing references stays silent."""
     if id(owner) in ctx["swept"] or id(owner) in ctx["stack"]:
         return [], 0
@@ -2371,17 +2576,25 @@ def sweep_body(owner, bindings, ctx, depth, class_node=None, bound_kind=None):
     if isinstance(owner, ast.ClassDef):
         return sweep_class(owner, bindings, ctx, depth, dunders_only=False)
     body = [owner.body] if isinstance(owner, ast.Lambda) else owner.body
-    body_bindings = dict(bindings)
+    view_env, view_bindings = scope_view(ctx, getattr(owner, "mado_scope", None),
+                                          {}, bindings)
+    body_bindings = dict(view_bindings)
     for name in callable_params(owner):
         body_bindings[name] = {"kind": "parameter"}
     positional = owner.args.posonlyargs + owner.args.args
     if class_node is not None and bound_kind and positional:
         body_bindings[positional[0].arg] = {"kind": bound_kind, "node": class_node}
-    calls, refs, call_env, binding_env = prepare_eval_calls(body, {}, body_bindings)
+    body_bindings[SCOPE_KEY] = sweep_scope(owner)
+    own = own_names(owner)
+    ctx["scopes"][sweep_scope(owner)] = {"env": {}, "bindings": {},
+                                         "parent": getattr(owner, "mado_scope", None),
+                                         "own": own}
+    calls, refs, call_env, binding_env = prepare_eval_calls(body, view_env, body_bindings)
     ctx["stack"].append(id(owner))
     try:
-        found, unparsed = spawn_scan(calls, {}, body_bindings, depth + 1, call_env,
-                                     binding_env, awaited_call_ids(body), refs, ctx)
+        found, unparsed = spawn_scan(calls, view_env, body_bindings, depth + 1, call_env,
+                                     binding_env, awaited_call_ids(body), refs, ctx,
+                                     scope=sweep_scope(owner))
     finally:
         ctx["stack"].pop()
     return [tuple(hit[:4]) + ("lead",) for hit in found], unparsed
@@ -2410,7 +2623,11 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
                   class_node=None, bound_kind=None, closure_env=None, closure_bindings=None):
     """Follow one helper call with its literal arguments bound (`observed`
     rows), or None when it is not followed: recursion, depth or budget spent,
-    or arguments that cannot be bound."""
+    or arguments that cannot be bound.
+
+    The body's free names are read in the scope that defined the helper, not
+    in the frame that called it: a caller's local never shadows a callee's
+    global."""
     if id(helper) in ctx["stack"] or depth >= DESCENT_LIMIT or \
             ctx["descents"] >= DESCENT_BUDGET:
         return None
@@ -2419,7 +2636,9 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         return None
     ctx["descents"] += 1
     body_nodes = [helper.body] if isinstance(helper, ast.Lambda) else helper.body
-    body_bindings = dict(cbindings)
+    scope = getattr(helper, "mado_scope", None)
+    view_env, view_bindings = scope_view(ctx, scope, cenv, cbindings)
+    body_bindings = dict(view_bindings)
     if closure_bindings:
         body_bindings.update(closure_bindings)
     body_bindings.update({
@@ -2431,23 +2650,30 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
         params = helper.args.posonlyargs + helper.args.args
         if params:
             body_bindings[params[0].arg] = {"kind": bound_kind, "node": class_node}
-    body_env = dict(cenv)
+    body_env = dict(view_env)
     if closure_env:
         body_env.update({name: LITERAL_MISS if mutated_literal(value, cenv) else value
                          for name, value in closure_env.items()})
     body_env.update(bound)
+    body_bindings[SCOPE_KEY] = frame_scope(helper)
     calls, refs, body_call_env, body_binding_env = prepare_eval_calls(
         body_nodes, body_env, body_bindings)
+    own = own_names(helper)
+    ctx["scopes"][frame_scope(helper)] = {
+        "env": {name: body_env[name] for name in own if name in body_env},
+        "bindings": {name: body_bindings[name] for name in own if name in body_bindings},
+        "parent": scope, "own": own}
     ctx["stack"].append(id(helper))
     try:
         return spawn_scan(calls, body_env, body_bindings, depth + 1, body_call_env,
-                          body_binding_env, awaited_call_ids(body_nodes), refs, ctx)
+                          body_binding_env, awaited_call_ids(body_nodes), refs, ctx,
+                          scope=frame_scope(helper))
     finally:
         ctx["stack"].pop()
 
 
 def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
-               awaited_calls=None, refs=(), ctx=None):
+               awaited_calls=None, refs=(), ctx=None, scope=None):
     """Follow visible helper calls and classify reachable spawn calls; sweep
     referenced bodies the call path does not follow (see sweep_body)."""
     hits, unparsed = [], 0
@@ -2465,6 +2691,9 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             continue
         cenv = env if call_env is None else call_env.get(id(node), {})
         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
+        if scope is not None:
+            # this statement's view is the scope's current view
+            scope_entry(ctx, scope, cenv, cbindings)
         info = callable_info(node.func, cbindings, cenv)
         if info.get("kind") == "uncertain":
             unparsed += 1
@@ -2490,7 +2719,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     args=[literal_node(value) for value in arguments],
                     keywords=[ast.keyword(arg=key, value=literal_node(value))
                               for key, value in options.items()])
-                take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+                take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx, scope=scope))
             else:
                 unparsed += 1
             continue
@@ -2501,7 +2730,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                 args=[literal_node(value) for value in info["args"]],
                 keywords=[ast.keyword(arg=key, value=literal_node(value))
                           for key, value in info["keywords"].items()])
-            take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+            take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx, scope=scope))
             continue
         if isinstance(node.func, ast.Call) and node.args:
             builder = node.func
@@ -2512,7 +2741,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     callee = node.args[0] if method == "__call__" else ast.Attribute(
                         value=node.args[0], attr=method, ctx=ast.Load())
                     invocation = ast.Call(func=callee, args=builder.args[1:], keywords=builder.keywords)
-                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
+                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx, scope=scope))
                     continue
         helper = info.get("node")
         config_arg = (node.args[0] if node.args else
@@ -2540,7 +2769,7 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
                     if factory is not None:
                         invocation = ast.Call(func=factory, args=[],
                             keywords=[ast.keyword(arg=key, value=value) for key, value in values.items() if key not in ("()", ".")])
-                        result = spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx)
+                        result = spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx, scope=scope)
                         if incremental is LITERAL_MISS:
                             result = ([tuple(hit[:4]) + ("lead",) for hit in result[0]], result[1])
                         take(result)
@@ -2688,6 +2917,10 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
         if parent == "invoke" and id(ref) in resolved_callees:
             continue
         rbindings = bindings if binding_env is None else binding_env.get(id(ref), {})
+        if scope is not None:
+            # this reference's own statement is the scope's current view
+            scope_entry(ctx, scope, env if call_env is None else call_env.get(id(ref), {}),
+                        rbindings)
         if isinstance(parent, tuple):
             mode, method = parent
             if mode == "argument_protocol":
@@ -2734,6 +2967,9 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
             pinfo = callable_info(parent.func, rbindings)
             if pinfo.get("name") in ("threading.Thread", "threading.Timer"):
                 continue  # explicit/aliased start calls own the captured target
+            penv = env if call_env is None else call_env.get(id(parent), {})
+            if not reference_escapes(parent, ref, rbindings, penv):
+                continue  # the receiving call only calls it: its own scope applies
         if isinstance(ref, ast.Lambda):
             take(sweep_body(ref, rbindings, ctx, depth))
             continue
