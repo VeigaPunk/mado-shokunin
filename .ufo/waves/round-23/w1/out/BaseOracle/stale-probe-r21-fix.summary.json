@@ -1,0 +1,47 @@
+{
+ "base_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+ "chain": [
+  {
+   "exit": 0,
+   "file_mtime": 1790000200,
+   "file_size": 162432,
+   "harness": "r21-control",
+   "label": "A-old-wrapper-base-creates-pyc",
+   "pass": 52,
+   "stderr_head": "",
+   "tool_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+   "total": 52
+  },
+  {
+   "exit": 0,
+   "file_mtime": 1790000200,
+   "file_size": 162432,
+   "harness": "r21-control",
+   "label": "B-old-wrapper-mutated-stale-pyc",
+   "pass": 52,
+   "stderr_head": "",
+   "tool_sha256": "95eed74b812e42e09ff6adb381f18ab0fa3c228b58e9ba4d9d838d0c56e53018",
+   "total": 52
+  },
+  {
+   "exit": 1,
+   "file_mtime": 1790000200,
+   "file_size": 162432,
+   "harness": "r21-fixwrap",
+   "label": "C-bytes-wrapper-mutated-stale-pyc-present",
+   "pass": 29,
+   "stderr_head": "",
+   "tool_sha256": "95eed74b812e42e09ff6adb381f18ab0fa3c228b58e9ba4d9d838d0c56e53018",
+   "total": 52
+  }
+ ],
+ "mutated_sha256": "95eed74b812e42e09ff6adb381f18ab0fa3c228b58e9ba4d9d838d0c56e53018",
+ "mutation": {
+  "from": "\"findings\": findings, \"counts\": counts,",
+  "to": "\"findingS\": findings, \"counts\": counts,"
+ },
+ "new_wrapper": "WRAPPER = '''import sys,types\nsrc=open(sys.argv[1],\"rb\").read()\nm=types.ModuleType(\"selected_tripwire\"); m.__file__=sys.argv[1]\nexec(compile(src,sys.argv[1],\"exec\"),m.__dict__)\n",
+ "pyc_after_A": [
+  "tool.cpython-314.pyc"
+ ]
+}

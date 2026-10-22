@@ -1,0 +1,198 @@
+diff --git c/tools/mado-tripwire.py w/tools/mado-tripwire.py
+index 8835114..7ac0faf 100755
+--- c/tools/mado-tripwire.py
++++ w/tools/mado-tripwire.py
+@@ -2347,8 +2347,15 @@ DESCENT_BUDGET = 2000  # helper descents per cell; past it, bodies are swept
+ 
+ 
+ def new_scan_context():
+-    """Per-cell state: bodies already swept, helpers being followed, descents."""
+-    return {"swept": set(), "stack": [], "descents": 0}
++    """Per-cell state: bodies already swept, helpers being followed, descents.
++
++    `clean_calls` holds the calls this scan followed with no unparsed row and
++    `clean_bodies` the bodies it followed that way; `safe_args` holds the
++    argument nodes whose later sweep is redundant, and `returned_args` the
++    ones a consumer only hands back, with the body that hand-back must reach.
++    """
++    return {"swept": set(), "stack": [], "descents": 0, "clean_calls": set(),
++            "clean_bodies": set(), "safe_args": set(), "returned_args": {}}
+ 
+ 
+ def callable_params(fn):
+@@ -2357,6 +2364,147 @@ def callable_params(fn):
+     return names + [arg.arg for arg in (spec.vararg, spec.kwarg) if arg is not None]
+ 
+ 
++def consumer_body(fn):
++    """The statements of a function body, or a lambda's single expression."""
++    return [fn.body] if isinstance(fn, ast.Lambda) else fn.body
++
++
++def bound_param_names(fn, call, skip_first=False):
++    """The parameter each argument of `call` binds to, as bind_literal maps them.
++
++    A starred argument expands to an unknown number of values, so it is left
++    out: the positions after it cannot be mapped."""
++    all_params = [arg.arg for arg in fn.args.posonlyargs + fn.args.args]
++    offset = 1 if skip_first else 0
++    params = all_params[offset:]
++    vararg = fn.args.vararg.arg if fn.args.vararg else None
++    kwarg = fn.args.kwarg.arg if fn.args.kwarg else None
++    keyword_params = set(all_params) | {arg.arg for arg in fn.args.kwonlyargs}
++    result = {}
++    for index, arg in enumerate(call.args):
++        if isinstance(arg, ast.Starred):
++            return {}
++        if index < len(params):
++            result[arg] = params[index]
++        elif vararg is not None:
++            result[arg] = vararg
++    for keyword in call.keywords:
++        if keyword.arg is None:
++            continue
++        if keyword.arg in keyword_params:
++            result[keyword.value] = keyword.arg
++        elif kwarg is not None:
++            result[keyword.value] = kwarg
++    return result
++
++
++def scope_binds_name(scope, name):
++    """True when `scope` binds `name` itself: a parameter, an assignment or a
++    `global`/`nonlocal` declaration. A nested scope that does so shadows the
++    enclosing name; one that does not reads the enclosing binding."""
++    spec = scope.args
++    for arg in spec.posonlyargs + spec.args + spec.kwonlyargs:
++        if arg.arg == name:
++            return True
++    if spec.vararg is not None and spec.vararg.arg == name:
++        return True
++    if spec.kwarg is not None and spec.kwarg.arg == name:
++        return True
++    for part in ast.walk(scope):
++        if isinstance(part, ast.Name) and part.id == name and \
++                isinstance(part.ctx, (ast.Store, ast.Del)):
++            return True
++        if isinstance(part, (ast.Global, ast.Nonlocal)) and name in part.names:
++            return True
++    return False
++
++
++def parameter_escape(fn, name, ctx):
++    """How the body of `fn` uses its parameter `name`.
++
++    "unused"    the name never appears there: the consumer cannot reach the
++                value it was handed.
++    "call"      the name appears only as the direct target of calls this scan
++                followed with no unparsed row.
++    "returned"  the name appears only as the value of a return.
++    "escape"    anything else: a store, a container, a pass-on, an alias, a
++                yield, a `global`/`nonlocal` name, or a `locals()`/`vars()`
++                read, any of which lets the value reach code this scan does
++                not account for.
++    """
++    uses, parents = [], {}
++
++    def walk_node(node, shadowed):
++        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
++            inner = shadowed or scope_binds_name(node, name)
++            defaults = [expr for expr in node.args.defaults + node.args.kw_defaults
++                        if expr is not None]
++            for expr in list(node.decorator_list) + defaults:
++                walk_node(expr, shadowed)
++            walk_scope(consumer_body(node), inner)
++            return
++        if isinstance(node, ast.Name) and node.id == name and not shadowed:
++            uses.append(node)
++        for child in ast.iter_child_nodes(node):
++            parents[id(child)] = node
++            walk_node(child, shadowed)
++
++    def walk_scope(nodes, shadowed):
++        for node in nodes:
++            walk_node(node, shadowed)
++
++    walk_scope(consumer_body(fn), False)
++    for part in ast.walk(fn):
++        if isinstance(part, ast.Call) and isinstance(part.func, ast.Name) and \
++                part.func.id in ("locals", "vars", "globals"):
++            return "escape"  # any local, the parameter included, may be read
++    if not uses:
++        return "unused"
++    kinds = set()
++    for use in uses:
++        parent = parents.get(id(use))
++        if isinstance(parent, ast.Call) and parent.func is use and \
++                isinstance(use.ctx, ast.Load):
++            kinds.add("call" if id(parent) in ctx["clean_calls"] else "escape")
++        elif isinstance(parent, ast.Return):
++            kinds.add("returned")
++        else:
++            kinds.add("escape")
++    if kinds == {"call"}:
++        return "call"
++    if kinds == {"returned"}:
++        return "returned"
++    return "escape"
++
++
++def note_consumer_args(helper, call, cenv, cbindings, ctx, skip_first=False):
++    """Record which arguments of a followed consumer call need no later sweep.
++
++    A callable handed to a consumer whose body cannot reach it (the parameter
++    is never read) or reaches it only through a call this scan followed with
++    no unparsed row has no execution path the scan does not already own: its
++    sweep would only repeat rows the follow already produced. A consumer that
++    only returns the value hands it back instead; that sweep is redundant only
++    when the returned body was itself followed with no unparsed row, which the
++    caller decides once every call of the cell is known."""
++    if not isinstance(helper, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
++        return
++    if any(isinstance(arg, ast.Starred) for arg in call.args):
++        return
++    names = bound_param_names(helper, call, skip_first)
++    if not names:
++        return
++    bindings = bound_callables(helper, call, cbindings, cenv, skip_first)
++    for argument, param in names.items():
++        escape = parameter_escape(helper, param, ctx)
++        if escape in ("unused", "call"):
++            ctx["safe_args"].add(id(argument))
++        elif escape == "returned":
++            node = bindings.get(param, {}).get("node")
++            if isinstance(node, ast.AST):
++                ctx["returned_args"][id(argument)] = id(node)
++
++
+ def sweep_body(owner, bindings, ctx, depth, class_node=None, bound_kind=None):
+     """Lead rows for a visible body that may run on a path this scan does not
+     follow with bound literals: a callable handed on as a value, a scheduled
+@@ -2570,6 +2718,14 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                                    info.get("skip_first", False),
+                                    info.get("class_node"), info.get("bound_kind"),
+                                    info.get("closure_env"), info.get("closure_bindings"))
++            if result is not None:
++                if result[1] == 0:
++                    ctx["clean_calls"].add(id(node))
++                    ctx["clean_bodies"].add(id(helper))
++                if result[1] == 0 and not any(opaque_statement(part)
++                                              for part in consumer_body(helper)):
++                    note_consumer_args(helper, bound_node, cenv, cbindings, ctx,
++                                       info.get("skip_first", False))
+             if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
+                     and id(node) not in awaited_calls:
+                 # a coroutine created here runs only if something schedules it
+@@ -2740,6 +2896,12 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+         info = callable_info(ref, rbindings)
+         kind, target = info.get("kind"), info.get("node")
+         if kind == "helper" and target is not None:
++            if id(ref) in ctx["safe_args"]:
++                continue  # the followed consumer body already owns this call
++            returned = ctx["returned_args"].get(id(ref))
++            if returned is not None and returned == id(target) and \
++                    returned in ctx["clean_bodies"]:
++                continue  # the consumer hands the value back; it was followed
+             take(sweep_body(target, rbindings, ctx, depth,
+                             info.get("class_node"), info.get("bound_kind")))
+         elif kind == "class" and isinstance(target, ast.ClassDef):

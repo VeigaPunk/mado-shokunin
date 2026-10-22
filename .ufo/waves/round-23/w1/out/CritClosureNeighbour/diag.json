@@ -1,0 +1,124 @@
+{
+ "schema": "mado-r23-critclosure-diag-v1",
+ "note": "scratch diagnostics only, not wave-2 attack inputs; base scan only, no truth run",
+ "tool_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+ "variants": [
+  {
+   "id": "A_loop_direct_call_in_factory",
+   "sha256": "47e6baffd9de00ffb62c8316f5edaa72c3c8d0affea1af79c336fbef79868905",
+   "code": "import subprocess\ndef make_all():\n    for argv in ([\"pacman\", \"-S\", \"d-first\"], [\"pacman\", \"-Q\", \"d-last\"]):\n        def run():\n            subprocess.run(argv)\n    run()\nmake_all()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "B_no_loop_list_subscript_call",
+   "sha256": "b3339af8d5639d86c332392165d0afede8c2a2ae03efda121c42c8ca974a666d",
+   "code": "import subprocess\ndef make_all():\n    argv = [\"pacman\", \"-Q\", \"d-only\"]\n    jobs = []\n    def run():\n        subprocess.run(argv)\n    jobs.append(run)\n    return jobs\njobs = make_all()\njobs[0]()\n",
+   "exit": 0,
+   "unparsed": 1,
+   "rows": []
+  },
+  {
+   "id": "C_module_loop_direct_call",
+   "sha256": "b8f591be9973852404dc3b94ba93e0e773e5b23c919d859187df66361ae682a2",
+   "code": "import subprocess\nfor argv in ([\"pacman\", \"-S\", \"d-first\"], [\"pacman\", \"-Q\", \"d-last\"]):\n    def run():\n        subprocess.run(argv)\nrun()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "D_module_loop_body_spawn",
+   "sha256": "9c74adbc8b0cbd10decfab4986a5c8f3750e3b2d30bc05ad2db0f46d9fe31c6e",
+   "code": "import subprocess\nfor argv in ([\"pacman\", \"-S\", \"d-first\"], [\"pacman\", \"-Q\", \"d-last\"]):\n    subprocess.run(argv)\n",
+   "exit": 0,
+   "unparsed": 1,
+   "rows": []
+  },
+  {
+   "id": "E_nonlocal_no_rebind_call",
+   "sha256": "d86c65c78631f7688e2a6aab121df65bd5647fa4c3bc1ba73cd563315abb2b7d",
+   "code": "import subprocess\ndef make():\n    argv = [\"pacman\", \"-Q\", \"d-only\"]\n    def run():\n        subprocess.run(argv)\n    return run\njob = make()\njob()\n",
+   "exit": 1,
+   "unparsed": 0,
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q d-only",
+     "observed"
+    ]
+   ]
+  },
+  {
+   "id": "F_if_def",
+   "sha256": "72674334b9f6bfc0a95e5811f387129827c58e6c3dc6dade83eb032c93a03fcb",
+   "code": "import subprocess\nif True:\n    def run():\n        subprocess.run([\"pacman\", \"-Q\", \"d-only\"])\nrun()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "G_try_def",
+   "sha256": "cabcc7c2021c008cc2fc227b3577dd844a003d9caa487892997a10397b0c8294",
+   "code": "import subprocess\ntry:\n    def run():\n        subprocess.run([\"pacman\", \"-Q\", \"d-only\"])\nexcept ValueError:\n    pass\nrun()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "H_while_def",
+   "sha256": "fdd9f9c77811a9dec2efcb68ba62300a9aa590afced59bc226bbd7ae0196b098",
+   "code": "import subprocess\nn = 0\nwhile n < 1:\n    def run():\n        subprocess.run([\"pacman\", \"-Q\", \"d-only\"])\n    n = 1\nrun()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "I_for_def_in_function_call_inside_loop",
+   "sha256": "629681d8b16b840808d1bef1c1bbed89bcfeade1950223abdcf49a51f1c90768",
+   "code": "import subprocess\nfor argv in ([\"pacman\", \"-Q\", \"d-only\"],):\n    def run():\n        subprocess.run(argv)\n    run()\n",
+   "exit": 0,
+   "unparsed": 0,
+   "rows": []
+  },
+  {
+   "id": "r20/lead-if-true-def",
+   "sha256": "361ad7b444f69128d188cd0854e5948082ee0e099f7d4905fb078caa705fdefa",
+   "exit": 1,
+   "unparsed": 0,
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q hyprland",
+     "lead"
+    ]
+   ]
+  },
+  {
+   "id": "r20/lead-try-def",
+   "sha256": "8ab0a41e1ae0f2cacad088f09f8df8579adeafcecebc82c83697ffc9412b8205",
+   "exit": 1,
+   "unparsed": 0,
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q hyprland",
+     "lead"
+    ]
+   ]
+  },
+  {
+   "id": "r20/lead-while-false-def",
+   "sha256": "ed8c05a981b4cf2965b6a5da33aad9c619644321275c7eec936386cf1fb5e960",
+   "exit": 1,
+   "unparsed": 0,
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q hyprland",
+     "lead"
+    ]
+   ]
+  }
+ ]
+}

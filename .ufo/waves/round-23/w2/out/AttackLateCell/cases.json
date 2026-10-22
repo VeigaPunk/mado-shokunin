@@ -1,0 +1,74 @@
+{
+ "schema": "mado-r23-w2-attacklatecell-cases-v1",
+ "cases": [
+  {
+   "id": "LateEnclosingLocalViaRelay",
+   "kind": "exact",
+   "why": "enclosing local rebound after the nested def, before the call; the call goes through a sibling relay that binds its own same-named local",
+   "fixture": "fixtures/LateEnclosingLocalViaRelay.jsonl",
+   "sha256": "2e41dcacefe517306d003a3057e12e5c886319e5c24ea68272e95aa985d22cb5",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q r23w2-late-cell",
+     "evidence": "observed"
+    }
+   ],
+   "forbid_any": [
+    "pacman -S r23w2-early-cell",
+    "pacman -S r23w2-relay-foreign"
+   ]
+  },
+  {
+   "id": "NonlocalRebindThenCallInSibling",
+   "kind": "exact",
+   "why": "a sibling nested function rebinds the enclosing cell with nonlocal, then calls the closure",
+   "fixture": "fixtures/NonlocalRebindThenCallInSibling.jsonl",
+   "sha256": "4db9345fc46cec7d996e61363c439554d53195a229d9403a97120e0850059784",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q r23w2-after-nonlocal",
+     "evidence": "observed"
+    }
+   ],
+   "forbid_any": [
+    "pacman -S r23w2-before-nonlocal"
+   ]
+  },
+  {
+   "id": "LoopClosureCalledAfterLoop",
+   "kind": "exact",
+   "why": "closure defined in a for-loop body over the loop variable, called after the loop (late binding: last value only)",
+   "fixture": "fixtures/LoopClosureCalledAfterLoop.jsonl",
+   "sha256": "cfea001be735994368f80b2effef606be34c1e5f29d7511cde1bcfd3ba0cf234",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q r23w2-loop-last",
+     "evidence": "observed"
+    }
+   ],
+   "forbid_any": [
+    "pacman -S r23w2-loop-first"
+   ]
+  },
+  {
+   "id": "SecondFrameInvokesFirstFrameClosure",
+   "kind": "exact",
+   "why": "closure from the first invocation of outer is called inside a second invocation of the same outer (tip keys frames by def node, not invocation)",
+   "fixture": "fixtures/SecondFrameInvokesFirstFrameClosure.jsonl",
+   "sha256": "e2f69b6dc42dd82ccf6a26d0fa9f2dc91cc2ff19a971d081ad5f5e39474df495",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q r23w2-first-invocation",
+     "evidence": "observed"
+    }
+   ],
+   "forbid_any": [
+    "pacman -S r23w2-second-invocation"
+   ]
+  }
+ ]
+}

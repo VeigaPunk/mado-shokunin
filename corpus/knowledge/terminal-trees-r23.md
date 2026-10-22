@@ -106,3 +106,12 @@ as from PATH. Older notes are not edited.
 - The ghostty C5 row says the treewide sweep is "recorded in §4"; this note has no §4. The sweep
   command and result are in `.ufo/waves/round-23/w1/reports/SrcGhostty.md` §1.2 and §3; no
   wave-2 seat re-ran it, so C5 (no watcher, no SIGHUP handler) rests on that single sweep.
+- foot: "SIGUSR1 and SIGUSR2 are the only handled signals" overclaims (ReopenFoot F1): the same pinned
+  code also handles SIGINT, SIGTERM, SIGALRM and SIGCHLD; the reload conclusion (no runtime reload)
+  still holds. Server mode clones the config per client only conditionally (F2).
+- ghostty C4: the SIGUSR2 route is a hard reload on both platforms, not "hard or soft"; upstream also
+  ships `ReloadSignal=SIGUSR2` in `dist/linux/systemd.service.in:9` (ReopenGhostty M2, L2).
+- ghostty C5: "SIGUSR2 only" is wrong (the systemd unit names it too) and `src/pty.zig:227` resets
+  SIGHUP in a child; the core claim, no SIGHUP handler in ghostty's own process and no file watcher,
+  survives a widened sweep (ReopenGhostty M1).
+- ghostty C2 quote location is `docs/config/index.mdx:38`, not `:44` (ReopenGhostty L1).

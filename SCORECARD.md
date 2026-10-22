@@ -1507,3 +1507,51 @@ Frozen no-harm evidence is bounded:1356 files,1214 retained finding groups,3 add
 Final bounded C2 intervention at `78b182400b048708a82cfb8b6a7e3bc5459fcc0e`:235/235 command-state runs match full outputs/exits across active-classifier baseline/changed/absent/FIFO/marker states, with sensitive positive controls and unchanged audit/fixture bytes (`evidence/resume/audit-active-path-intervention-final.json`). Initial whole-tree/empty-directory setup failures remain code2 records. Scope is only the staged active path, not universal noninterference. Fresh-clone standalone setup is the three pinned empty-directory recipe in SKILL.md.
 
 Historical precision at `579109a6812f4d0a2dd47572caca241075c6021d`:166/175 unchanged, zero prior passing-case losses (`precision-final.json`, `precision-comparison.json`). Restored production bytes are the exact v2 revision above; C2 auditor SHA256277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca. Strict claim verdicts and original target denominators remain unchanged. No admitted capability row, score inflation, promotion, host recovery or next-round plan is added.
+
+## Round 23 — repair-first recovery: registration, results and author verdicts (2026-10-22)
+
+Registration `.ufo/waves/round-23/registration.md` (landed `6b383c46` before any production edit;
+clarifications `a28e4815`, `4de44647` before any after-measurement). Base `e33ea304`. Measured tip
+`3732c7a73244fab87558c704107418e5de01436c`; after-values re-derive from committed bytes with the
+commands below (classifier extracted with `git show <rev>:tools/mado-tripwire.py`).
+
+| Claim / axis | Before → after | Counting command | Evidence / measured commit |
+|---|---|---|---|
+| C1 operability, frozen 12-case repair set (repair of rounds[400]/[426] routed harms H3–H5) | 6/12 → **12/12** (local rubric 10 × passes/12: 5.0 → 10.0) | `python3 -I .ufo/waves/round-23/repair/measure.py --tool <extracted classifier>` | `evidence/repair-before-e33ea304.json`, `evidence/repair-after-3732c7a7.json`; classifier `e1dc8029…` at `03227ddf` |
+| C2 coverage, sourced routes for the foot, kitty and ghostty trees (learning claim) | 0/3 → **3/3** | `python3 -I .ufo/waves/round-23/c2/count.py REV` (v2) | `evidence/c2-before-v2-e33ea304.json`, `evidence/c2-after-3732c7a7.json`; note at `c8cb3930`, errata `3732c7a7` |
+| C3 calibration, SHONEN box 4 versus tracked lane tools without a PROVINCE row | 5 → **0** | `python3 -I .ufo/waves/round-23/c3/count.py REV` (v2) | `evidence/c3-before-v2-e33ea304.json`, `evidence/c3-after-3732c7a7.json`; PROVINCE at `2f1134f3`, correction `3732c7a7` |
+
+No-harm guards for C1 at classifier `e1dc8029…` (`evidence/guards-fix5-scratch.json`, scratch clone of
+the lane at that classifier): round-22 supplemental 4/4; round-22 primary 57/57; round-21 oracle
+35/35 + 17/17; eleven selftests 247/247; precision 166/175 with the identical passing set; 1356-file
+corpus comparator 0 added / 0 removed / 0 error flips, one reduced unparsed counter adjudicated as
+a correction; four resource populations clean under 384 MiB / 15 s. Wave-2 base-versus-tip attack
+fixtures: zero regressions at `e1dc8029…` (`evidence/attacks-fix5.txt`), after 1 + 13 + 11
+regressions found at the first landed classifier `41489991…` and repaired.
+
+Not repaired: H2, precision 172/175 → 166/175 (round 21). Three of the nine failing cases predate
+round 21; the other six follow round 21's strict index-write boundary (S118) and reset-cleared lead
+adjudication. Restoring them would undo the boundary the round-20 closure required; an L0 question
+records the conflict with the repair-first ruling.
+
+Author verdicts (closure decides admission): C1 improved (operability); C2 improved (coverage);
+C3 improved (calibration). Other axes unchanged. No exploratory claim, no retirement, no
+capability row (the repair is a fix, not a new capability). Probation checklist unchanged: four
+`[~]`.
+
+### Planned (round 24; intent only)
+
+Freeze the wave-2 attack fixtures that found regressions (AttackEscapeGate, AttackRecallRegress,
+AttackFrameScopes, CritClosureNeighbour) as a registered discovery population before any further
+tripwire change; then return to province frontier work (Walker provider behaviour or rule attribution).
+
+### Round 23 — final C1 disposition (append-only; supersedes the C1 row above)
+
+C1 is withdrawn to base bytes. After the table above was written, wave-2 reports still showed
+regressions against base at the repaired classifier `e1dc8029…` (AttackLateCell relay case, measured
+at `3732c7a7`) and at the first landed classifier (ReClosureNeighbour, seven stored-callable rebind
+shapes, measured at `2f1134f3`, not re-measured at `3732c7a7`). A trade is not an improvement, so
+`tools/mado-tripwire.py` is restored to `cd9da20c…`; the candidate is kept at
+`.ufo/waves/round-23/evidence/candidate-classifier-e1dc8029.py`. **C1 after-value at the landed tip:
+6/12 — target 12/12 not met (honest stop).** Author verdict C1: unchanged (no production change).
+C2 and C3 stand as recorded. Operability is not harmed: production bytes equal base.

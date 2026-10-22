@@ -1,0 +1,124 @@
+{
+ "schema": "mado-r23-critclosure-cases-v1",
+ "python": "3.14.8",
+ "tool_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+ "helper_sha256": "4eb893d2337a4aa758d14c064a855032737c6e2b2b1239d7ca3502042c6c82da",
+ "helper": "/.ufo/waves/round-21/oracle/measure.py",
+ "cases": [
+  {
+   "id": "LoopClosuresLateBinding",
+   "fixture": "fixtures/LoopClosuresLateBinding.jsonl",
+   "sha256": "cf12f9d97e8cd4f8a6c10e3fe52728561e5eba9d4394834b613d88fa78c3ec9f",
+   "truth": {
+    "executed": [
+     "pacman -Q r23cc-loop-last"
+    ],
+    "never_executed_literals": [
+     "pacman -S r23cc-loop-first"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "exact",
+    "forbid_any": [
+     "pacman -S r23cc-loop-first"
+    ],
+    "want": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23cc-loop-last",
+      "evidence": "observed"
+     }
+    ]
+   },
+   "base": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 0,
+    "rows": [],
+    "classification": "base-silent-miss",
+    "flags": [
+     "silent_miss"
+    ]
+   }
+  },
+  {
+   "id": "NonlocalReboundAfterFactory",
+   "fixture": "fixtures/NonlocalReboundAfterFactory.jsonl",
+   "sha256": "faccb16b407e9a6a1c1f70b19242829e4693443bb3884cefc3a4da09f7472286",
+   "truth": {
+    "executed": [
+     "pacman -Q r23cc-nonlocal-rebound"
+    ],
+    "never_executed_literals": [
+     "pacman -S r23cc-nonlocal-initial"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "exact",
+    "forbid_any": [
+     "pacman -S r23cc-nonlocal-initial"
+    ],
+    "want": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23cc-nonlocal-rebound",
+      "evidence": "observed"
+     }
+    ]
+   },
+   "base": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 1,
+    "rows": [],
+    "classification": "base-unparsed",
+    "flags": [
+     "silent_miss",
+     "unparsed"
+    ]
+   }
+  },
+  {
+   "id": "TwoFactoryClosureReadsReboundGlobal",
+   "fixture": "fixtures/TwoFactoryClosureReadsReboundGlobal.jsonl",
+   "sha256": "6b84af674ca45f26e7db31a7a765895c19aab0fa7029bc5b1a705118ec347804",
+   "truth": {
+    "executed": [
+     "pacman -Q r23cc-global-at-call"
+    ],
+    "never_executed_literals": [
+     "pacman -S r23cc-global-at-definition"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "exact",
+    "forbid_any": [
+     "pacman -S r23cc-global-at-definition"
+    ],
+    "want": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23cc-global-at-call",
+      "evidence": "observed"
+     }
+    ]
+   },
+   "base": {
+    "exit": 1,
+    "error": null,
+    "unparsed": 1,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r23cc-global-at-call",
+      "observed"
+     ]
+    ],
+    "classification": "base-unparsed",
+    "flags": [
+     "unparsed"
+    ]
+   }
+  }
+ ]
+}

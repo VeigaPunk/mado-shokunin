@@ -175,3 +175,16 @@ Round-21 final disposition: **C1 harmed; no admission**. The new binding note's 
 Read [`knowledge/tripwire-lifetime-recovery-r22.md`](knowledge/tripwire-lifetime-recovery-r22.md) for S121/S122's lexical-frame versus late-global boundary, conditional standard Timer invocation, and finding-row versus incident-line evidence arithmetic. This is a source-backed local instrument note, not a newly verified desktop surface or an admitted recovery capability. Original r19/r20/r21 red receipts remain authoritative; a markerless original is could-not-evaluate, and a later derived projection is never retrospective admission. Actual final measurements and non-author closure govern any repair verdict.
 
 Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v2's concrete fixes retain57/57 but supplemental2/4 and caller-frame leakage remain. Strict C1/C2 targets are unprovable/not admitted. Read the new note's **Final round-22 withdrawal** and lesson22 before interpreting any candidate count. No frontier/runtime surface or general safety capability is admitted; the audit's46/46 concerns explicit artifact arithmetic, never historical marker truth.
+
+### Round-23 terminal trees and lane-tool inventory
+
+- Round 23 moves the **foot, kitty and ghostty trees** onto documentary sourced ground:
+  [terminal trees](knowledge/terminal-trees-r23.md) (S123–S152, tag-pinned foot 1.28.0, kitty
+  v0.49.2, ghostty v1.3.1). This supersedes the round-17 clause "(foot, kitty and ghostty trees
+  remain unsourced)" for those three trees only. Host fact: none of the three is installed, so each
+  tree is declared bytes with no consumer today. Still open: whether any would read its tree as
+  documented, reload effects, and foot's hidden desktop entries; nothing was run.
+- PROVINCE.md now carries a table for every tracked lane tool (round-23 refinement). It names
+  reads, writes and adjacent owners; it is not a new desktop surface.
+- The round-23 tripwire repair (frame leak and escape-gated callback sweep) is instrument work:
+  evidence `.ufo/waves/round-23/`, lesson23. No province frontier moves because of it.

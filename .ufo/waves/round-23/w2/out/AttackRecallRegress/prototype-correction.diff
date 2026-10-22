@@ -1,0 +1,70 @@
+--- tip/tools/mado-tripwire.py	2026-10-22 08:55:39.431744024 -0300
++++ prototype/tools/mado-tripwire.py	2026-10-22 08:58:55.791706248 -0300
+@@ -2477,40 +2477,37 @@
+     defining scope and no separate lead is owed for it."""
+     body = fn.body if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) else [fn.body]
+     tree = ast.Module(body=body, type_ignores=[])
+-    reaches = {param}      # names whose value may be the parameter's value
+-    aliases = {}           # name -> the names it was bound from
+-    escaping = set()       # names whose value leaves the function
++    parents, nested = {}, set()
++    for node in ast.walk(tree):
++        for child in ast.iter_child_nodes(node):
++            parents[child] = node
++    for node in ast.walk(tree):
++        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
++            nested |= {id(part) for part in ast.walk(node) if part is not node}
++    shared = {name for node in ast.walk(tree) if isinstance(node, (ast.Global, ast.Nonlocal))
++              for name in node.names}
++    reaches = {param}
+     changed = True
+     while changed:
+         changed = False
+-        for name, sources in aliases.items():
+-            if name not in reaches and sources & reaches:
+-                reaches.add(name)
+-                changed = True
+-        if reaches & escaping:
+-            return True
+         for node in ast.walk(tree):
+-            if isinstance(node, ast.Assign):
+-                for target in node.targets:
+-                    if isinstance(target, ast.Name):
+-                        sources = aliases.setdefault(target.id, set())
+-                        fresh = source_names(node.value) - sources
+-                        if fresh:
+-                            sources |= fresh
+-                            changed = True
+-                    else:  # a container or an attribute keeps the value
+-                        escaping |= source_names(node.value)
+-            elif isinstance(node, ast.Return) and node.value is not None:
+-                escaping |= source_names(node.value)
+-            elif isinstance(node, ast.Call):
+-                if isinstance(node.func, ast.Attribute) and \
+-                        node.func.attr in ESCAPE_METHODS:
+-                    for argument in node.args:
+-                        escaping |= source_names(argument)
+-                elif not (isinstance(node.func, ast.Name) and node.func.id in reaches):
+-                    for argument in list(node.args) + [kw.value for kw in node.keywords]:
+-                        escaping |= source_names(argument)
+-    return bool(reaches & escaping)
++            if not (isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
++                    and node.id in reaches):
++                continue
++            up = parents.get(node)
++            if id(node) in nested:
++                return True  # captured by a nested scope that may outlive the call
++            if isinstance(up, ast.Call) and up.func is node:
++                continue
++            if isinstance(up, ast.Assign) and up.value is node and \
++                    all(isinstance(t, ast.Name) and t.id not in shared for t in up.targets):
++                fresh = {t.id for t in up.targets} - reaches
++                if fresh:
++                    reaches |= fresh
++                    changed = True
++                continue
++            return True  # any other use may store or run it where no follow reaches
++    return False
+ 
+ 
+ def argument_position(call, ref):

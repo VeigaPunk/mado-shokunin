@@ -1,0 +1,184 @@
+{
+ "schema": "mado-r23-crit-escape-neighbour-v1",
+ "tool": "/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py",
+ "tool_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+ "helper": ".ufo/waves/round-21/oracle/measure.py",
+ "helper_sha256": "4eb893d2337a4aa758d14c064a855032737c6e2b2b1239d7ca3502042c6c82da",
+ "runner_sha256": "28f4055042800d8c03d53c83c5c36b67479450f041e92ee4e407132e6c6c73aa",
+ "python": "3.14.8",
+ "truth_child": "recording fake subprocess, CHILD copied verbatim from round-23/repair/truth.py",
+ "cases": [
+  {
+   "id": "EscapeListAppendThenCalled",
+   "fixture": "fixtures/EscapeListAppendThenCalled.jsonl",
+   "sha256": "77ebcdf8b59bcdcb99a9ec8b7d126e14dfb42097fb5f1a6a066416ce7301a6ff",
+   "truth": {
+    "executed": [
+     "pacman -Q r23x-list-global"
+    ],
+    "never_executed_shadow_argv": [
+     "pacman -S r23x-list-foreign"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "present",
+    "want_present": [
+     "pacman -Q r23x-list-global"
+    ],
+    "forbid_any": [
+     "pacman -S r23x-list-foreign"
+    ]
+   },
+   "base": {
+    "exit": 0,
+    "error": null,
+    "rows": [],
+    "unparsed": 1,
+    "foreign_rows": [],
+    "missing_executed": [
+     "pacman -Q r23x-list-global"
+    ],
+    "executed_lead_only": [],
+    "classification": "base-unparsed",
+    "flags": [
+     "base-unparsed"
+    ],
+    "exact_rule_pass": false,
+    "files": [
+     {
+      "bash_calls": 0,
+      "eval_calls": 1,
+      "eval_unparsed": 0,
+      "lines": 1,
+      "sha256": "77ebcdf8b59bcdcb99a9ec8b7d126e14dfb42097fb5f1a6a066416ce7301a6ff",
+      "unparsed_spawns": 1
+     }
+    ],
+    "proposed_rule_pass": false
+   }
+  },
+  {
+   "id": "EscapeSecondForwarder",
+   "fixture": "fixtures/EscapeSecondForwarder.jsonl",
+   "sha256": "d426c7b8b65c21c5d62057f2151e1508a874e5cc3c1314fa8e31a22dc3758a76",
+   "truth": {
+    "executed": [
+     "pacman -Q r23x-chain-global"
+    ],
+    "never_executed_shadow_argv": [
+     "pacman -S r23x-chain-inner-foreign",
+     "pacman -S r23x-chain-outer-foreign"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "exact",
+    "want": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23x-chain-global",
+      "evidence": "observed"
+     }
+    ],
+    "forbid_any": [
+     "pacman -S r23x-chain-inner-foreign",
+     "pacman -S r23x-chain-outer-foreign"
+    ]
+   },
+   "base": {
+    "exit": 1,
+    "error": null,
+    "rows": [
+     [
+      "host_mutation",
+      "pacman -S r23x-chain-inner-foreign",
+      "observed"
+     ]
+    ],
+    "unparsed": 1,
+    "foreign_rows": [
+     [
+      "host_mutation",
+      "pacman -S r23x-chain-inner-foreign",
+      "observed"
+     ]
+    ],
+    "missing_executed": [
+     "pacman -Q r23x-chain-global"
+    ],
+    "executed_lead_only": [],
+    "classification": "base-false-observed",
+    "flags": [
+     "base-false-observed",
+     "base-unparsed"
+    ],
+    "exact_rule_pass": false,
+    "files": [
+     {
+      "bash_calls": 0,
+      "eval_calls": 1,
+      "eval_unparsed": 0,
+      "lines": 1,
+      "sha256": "d426c7b8b65c21c5d62057f2151e1508a874e5cc3c1314fa8e31a22dc3758a76",
+      "unparsed_spawns": 1
+     }
+    ],
+    "proposed_rule_pass": false
+   }
+  },
+  {
+   "id": "EscapeTupleNestedClosureLater",
+   "fixture": "fixtures/EscapeTupleNestedClosureLater.jsonl",
+   "sha256": "65e8166688594cdefb4cfdc6014836512d9940669822654d2fdab25365920466",
+   "truth": {
+    "executed": [
+     "pacman -Q r23x-tuple-captured"
+    ],
+    "never_executed_shadow_argv": [
+     "pacman -S r23x-tuple-forwarder-foreign",
+     "pacman -S r23x-tuple-module-foreign"
+    ]
+   },
+   "proposed_expectation": {
+    "kind": "exact",
+    "want": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23x-tuple-captured",
+      "evidence": "observed"
+     }
+    ],
+    "forbid_any": [
+     "pacman -S r23x-tuple-forwarder-foreign",
+     "pacman -S r23x-tuple-module-foreign"
+    ]
+   },
+   "base": {
+    "exit": 0,
+    "error": null,
+    "rows": [],
+    "unparsed": 0,
+    "foreign_rows": [],
+    "missing_executed": [
+     "pacman -Q r23x-tuple-captured"
+    ],
+    "executed_lead_only": [],
+    "classification": "base-silent-miss",
+    "flags": [
+     "base-silent-miss"
+    ],
+    "exact_rule_pass": false,
+    "files": [
+     {
+      "bash_calls": 0,
+      "eval_calls": 1,
+      "eval_unparsed": 0,
+      "lines": 1,
+      "sha256": "65e8166688594cdefb4cfdc6014836512d9940669822654d2fdab25365920466",
+      "unparsed_spawns": 0
+     }
+    ],
+    "proposed_rule_pass": false
+   }
+  }
+ ]
+}

@@ -1,0 +1,58 @@
+# MadoR23.BaseCorpus command log (2026-10-22, sequential; one harness or comparator process at a time)
+# L = /home/vgpnk/Projects/shokunin/mado-shokunin   S = /fast/scratch/hyaku/mado-r23/BaseCorpus   O = $L/.ufo/waves/round-23/w1/out/BaseCorpus
+
+## 1. Base tool copy and hashes (read-only git; writes only to S)
+git -C $L cat-file -t a28e4815aabfa85f55274884000fb2608355f8cf            -> commit
+git -C $L show a28e4815aabfa85f55274884000fb2608355f8cf:tools/mado-tripwire.py > $S/base-tool.py
+sha256sum $S/base-tool.py                                                  -> cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+git -C $L show e33ea30461f6e9bbeee40beef19770a953f7a105:tools/mado-tripwire.py | sha256sum   -> cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+sha256sum $L/tools/mado-tripwire.py                                        -> cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84 (byte-identical to base)
+
+## 2. Help (exit 0 both)
+python3 -I $L/.ufo/waves/round-22/replay.py --help       > $O/00-replay-help.txt
+python3 -I $L/.ufo/waves/round-21/corpus/compare.py --help > $O/00-compare-help.txt
+sha256sum compare.py replay.py snapshot/manifest.json      -> 00-harness-sha256.txt
+   replay.py      324e79861f4fe3f2a2b617786fae7652df861cfe09844e6609284ba2cdd3cfe4
+   compare.py     60cef7bebe6eef0bbf09448fec70f1b55375b5f511aad4c968dc22ee4036a653
+   manifest.json  8e1cf206c85563b418630ef1d094559a9522431ff4e077ca1b51f249436a1377
+
+## 3. Assignment command with scratch paths -> refused by harness (exit 2, no child spawned)
+cd $S && python3 -I $L/.ufo/waves/round-22/replay.py --tool $S/base-tool.py --mode corpus --before-tool $S/base-tool.py > $O/01-replay-scratch-path.json 2> $O/01-replay-scratch-path.stderr
+   exit=2   setup_error="ValueError: --tool must resolve inside the repository"
+
+## 4. Fallback: lane-path base on both sides (assignment's stated fallback). Bracketed by lane state snapshots.
+T=$L/tools/mado-tripwire.py
+(sha256sum $T $L/tools/__pycache__/*.pyc; ls -la --full-time $L/tools/__pycache__) > $O/02-lane-pre-state.txt
+python3 -I $L/.ufo/waves/round-22/replay.py --tool $T --mode corpus --before-tool $T > $O/02-replay-lane-run1.json 2> $O/02-replay-lane-run1.stderr
+   exit=1  timed_out=false  harness wall 46.17 s  -> 1356 files, retained 1217, removed 0, added 0, error pairs 107 (before!=after: 0)
+(state after) -> 02-lane-post-state.txt ; diff exit=0
+
+python3 -I $L/.ufo/waves/round-22/replay.py --tool $T --mode corpus --before-tool $T > $O/04-replay-lane-run2.json 2> $O/04-replay-lane-run2.stderr
+   exit=1  harness wall 46.06 s  -> comparator stdout identical to run 1 (sha256 4ae71da5db93cedc761565ddb872bdfeec17565758a02515032a6fa407857e30 both)
+(state before/after) -> 04-lane-pre-state-run2.txt / 04-lane-post-state-run2.txt ; diff exit=0
+
+## 5. Cross-check: comparator directly, scratch copy on both sides (replay.py containment bypassed; comparator logic unchanged)
+python3 -I $L/.ufo/waves/round-21/corpus/compare.py --before-tool $S/base-tool.py --after-tool $S/base-tool.py > $O/03-compare-direct-scratch.json 2> $O/03-compare-direct-scratch.stderr
+   exit=1  wall 46.21 s  -> full JSON dict equal to run 1 (True)
+(lane state) -> 03-lane-pre-state.txt / 03-lane-post-state.txt ; diff exit=0
+
+## 6. Positive control: base vs scratch-only mutant (mutant = base bytes + appended wrapper; sha ebd4cff4cf7f9668a0fc4e09f9b8d8890e25bf79b748e91081a9d7f9ac36d304)
+# appended wrapper (scratch file only, never in lane):
+#   _control_base_scan_file = scan_file
+#   def scan_file(path):
+#       entry, findings = _control_base_scan_file(path)
+#       return entry, list(findings)[1:]
+python3 -I $L/.ufo/waves/round-21/corpus/compare.py --before-tool $S/base-tool.py --after-tool $S/mutant-drop-first.py > $O/05-positive-control-mutant-direct.json 2> $O/05-positive-control-mutant-direct.stderr
+   exit=1  wall 46.14 s  -> removed 634 (= base files with >=1 finding), added 0, retained 583, error pairs 107 unchanged (before!=after: 0)
+(lane state) -> 05-lane-pre-state.txt / 05-lane-post-state.txt ; diff exit=0
+
+## 7. Tamper test: before-tool copy overwritten with the mutant at t=8 s, while the first worker runs (comparator direct, scratch only)
+# driven by a Python subprocess call: /usr/bin/python3 -I compare.py --before-tool S/tamper-tool.py --after-tool S/base-tool.py ; sleep 8 ; copy mutant over tamper-tool.py
+   exit=1  elapsed 23.18 s  stdout bytes=0  stderr last line: "ValueError: selected tool changed during corpus run"  -> 06-tamper-direct.stdout/.stderr
+
+## 8. Bytecode probes (trivial module only; scratch only) -> 06-pyc-stale-probes.txt
+
+## 9. Final lane state vs first pre-state
+(sha256sum $L/tools/mado-tripwire.py $L/tools/__pycache__/*.pyc; ls -la --full-time $L/tools/__pycache__) > 09-lane-final-state.txt ; diff vs 02-lane-pre-state.txt exit=0
+
+## 10. Installs/updates: none. No pacman, no network, no package changes.

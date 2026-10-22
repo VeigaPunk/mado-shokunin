@@ -1527,3 +1527,49 @@ Historical precision measured at `579109a6812f4d0a2dd47572caca241075c6021d` is u
 Fresh-clone fixture setup is explicit in `empty-directory-materialization.json` and SKILL.md: Git cannot represent three intentionally empty fixture directories; recreate only those pinned directories before standalone C2 selftest/measure. The intervention driver handles exactly that setup internally and preserves every expected byte/label. Two failed setup receipts remain separate could-not-evaluate records, never converted into passes.
 
 Final author verdicts: strict C1 and C2 unprovable/not admitted; expansion unchanged (no province frontier or admitted recovered capability), quality unchanged (bounded repairs/evidence, unresolved detector defects marked), discernment improved only in the grounded-learning sense (previous outside rejection became criteria/lessons, unsafe candidate withdrawn, contradictions retained). No outside-lane admit/reject spot-check is claimed. L0 disposition is appended in the fleet queue; the rejection hold, closure and any future authorization belong to the parent/operator. Stale-lane: the predecessor was killed; this same held attempt progressed through replacement commits, no other mado mission or r23 was started. No tool installation/update occurred.
+
+## 2026-10-22 — round 23: repair-first recovery (operator ruling D11)
+
+Motivating evidence. MANIFEST rounds[400] (round 21, operability harmed: binding failures F1–F5 and a
+precision drop 172/175 → 166/175) and rounds[426] (round 22, C1/C2 unprovable: supplemental 2/4,
+caller-frame leak, routed defects on census pasting and on expectation commit order). The operator
+lifted the mado block for this one round at 10:43:09Z. Registration
+`.ufo/waves/round-23/registration.md` and the frozen 12-case repair set landed at `6b383c46`
+before any production edit; counter clarifications landed at `a28e4815` and `4de44647` before any
+after-measurement.
+
+C1 (operability, repair). Wave-1 executor ExecFullB produced a scope-provenance candidate; it
+landed at `2e592aff` (12/12, all guards green). Wave-2 critics then found real regressions against
+base that no registered guard covers: a global-store callback silent miss, 13 of 45 recall shapes,
+and frame-reuse and binder regressions. The L1 repaired them at `03227ddf` (allowlist escape gate,
+per-call frame tokens, scope-correct `own_names`, unbound own names shadow outer scopes). At
+`3732c7a7` the repair set is 12/12 (`evidence/repair-after-3732c7a7.json`), the round-22
+supplemental is 4/4, the round-22 primary 57/57, round-21 oracle 35/35 + 17/17, selftests 247/247,
+precision 166/175 with the identical passing set, corpus comparator 0 added / 0 removed / 0 error
+flips with one reduced unparsed counter (`b14_called_spawner.jsonl`, adjudicated: the call raises
+TypeError in Python, nothing runs), and all four resource populations clean
+(`evidence/guards-fix5-scratch.json`). The wave-2 attack fixtures report zero regressions at the
+repaired tool (`evidence/attacks-fix5.txt`; AttackFrameScopes, AttackRecallRegress addenda). H2
+(precision 172/175) is not restored; reason in the registration's second clarification.
+
+C2 (coverage, learning, sourced). New note `corpus/knowledge/terminal-trees-r23.md` with 30 new
+SOURCES rows S123–S152 (29 mined, S132 queued): tag-pinned foot 1.28.0, kitty v0.49.2,
+ghostty v1.3.1. Counter `c2/count.py` 0/3 → 3/3 at `3732c7a7`. Host fact: none of the three
+terminals is installed; each tree is declared bytes with no consumer. SKILL.md gains a three-row
+decision table; the corpus README frontier records the move.
+
+C3 (calibration). SHONEN box 4 asserts PROVINCE accuracy; PROVINCE named no row for five tracked
+tools. Append-only PROVINCE refinement with a five-row table, then a wave-2 correction of the
+`mado-verify.sh` reads, the tripwire redaction scope and the mori/tsukuroi overlaps. Counter
+`c3/count.py` v2 5 → 0 at `3732c7a7`.
+
+Swarm: wave 1 36 seats (v1), wave 2 33 seats (v1), total 69; five wave-2 attackers were resumed to
+re-run on the repaired tool (no new seats). No tool installs.
+
+### Round 23 — C1 withdrawn (append-only)
+
+Late wave-2 reports (AttackLateCell re-run, ReClosureNeighbour) showed regressions against base that
+no registered guard covers. One more fix attempt broke the repair set (11/12) and was discarded.
+The production classifier is restored to base bytes `cd9da20c…`; the candidate stays as evidence.
+C1 is an honest stop at 6/12. Fourteen still-running wave-2 seats were cancelled at the wrap-up
+point (their partial reports, if any, are kept); no seat was replaced.

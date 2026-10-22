@@ -1,0 +1,6 @@
+{
+ "RecallConditionalAugAssignStore": "import subprocess\nclass Box:\n    pass\nbox = Box()\nbox.cbs = []\ndef run():\n    subprocess.run([\"pacman\", \"-S\", \"r23y-aug-cond\"])\ndef register(callback, flag):\n    if flag:\n        box.cbs += [callback]\nregister(run, True)\nfor f in box.cbs:\n    f()\n",
+ "RecallTryExceptDunderCall": "import subprocess\ndef run():\n    subprocess.run([\"pacman\", \"-S\", \"r23y-try-dunder\"])\ndef consume(callback):\n    try:\n        callback.__call__()\n    except TypeError:\n        pass\nconsume(run)\n",
+ "RecallSecondCallDunder": "import subprocess\ndef run():\n    subprocess.run([\"pacman\", \"-S\", \"r23y-second-dunder\"])\ndef first():\n    pass\ndef consume(a, b):\n    a()\n    b.__call__()\nconsume(first, run)\n",
+ "RecallClosureStoredInDict": "import subprocess\nhooks = {}\ndef run():\n    subprocess.run([\"pacman\", \"-S\", \"r23x-closure-dict\"])\ndef register(callback):\n    def inner():\n        callback()\n    hooks[\"k\"] = inner\nregister(run)\nhooks[\"k\"]()\n"
+}

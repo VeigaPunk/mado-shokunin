@@ -1,0 +1,188 @@
+[
+ {
+  "id": "FrameReusedBothClosuresCalled",
+  "executed": [
+   "pacman -Q w2-afs-both-first",
+   "pacman -Q w2-afs-both-second"
+  ],
+  "base": {
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q w2-afs-both-first",
+     "observed"
+    ],
+    [
+     "package_query",
+     "pacman -Q w2-afs-both-second",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [],
+   "false_rows": [],
+   "missed": [],
+   "lead_only": [],
+   "exact": true
+  },
+  "tip": {
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q w2-afs-both-second",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [],
+   "false_rows": [],
+   "missed": [
+    "pacman -Q w2-afs-both-first"
+   ],
+   "lead_only": [],
+   "exact": false
+  },
+  "verdict": "REGRESSED"
+ },
+ {
+  "id": "FrameReusedBySecondInvocation",
+  "executed": [
+   "pacman -Q w2-afs-first-frame"
+  ],
+  "base": {
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q w2-afs-first-frame",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [],
+   "false_rows": [],
+   "missed": [],
+   "lead_only": [],
+   "exact": true
+  },
+  "tip": {
+   "rows": [
+    [
+     "host_mutation",
+     "pacman -S w2-afs-second-frame",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [
+    "pacman -S w2-afs-second-frame"
+   ],
+   "false_rows": [
+    "pacman -S w2-afs-second-frame"
+   ],
+   "missed": [
+    "pacman -Q w2-afs-first-frame"
+   ],
+   "lead_only": [],
+   "exact": false
+  },
+  "verdict": "REGRESSED"
+ },
+ {
+  "id": "MatchCaptureBinderNotOwned",
+  "executed": [
+   "pacman -Q w2-afs-match-capture"
+  ],
+  "base": {
+   "rows": [],
+   "unparsed": 1,
+   "exit": 0,
+   "error": null,
+   "false_observed": [],
+   "false_rows": [],
+   "missed": [
+    "pacman -Q w2-afs-match-capture"
+   ],
+   "lead_only": [],
+   "exact": false
+  },
+  "tip": {
+   "rows": [
+    [
+     "host_mutation",
+     "pacman -S w2-afs-module-global",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [
+    "pacman -S w2-afs-module-global"
+   ],
+   "false_rows": [
+    "pacman -S w2-afs-module-global"
+   ],
+   "missed": [
+    "pacman -Q w2-afs-match-capture"
+   ],
+   "lead_only": [],
+   "exact": false
+  },
+  "verdict": "REGRESSED"
+ },
+ {
+  "id": "NestedBinderFreezesLateGlobal",
+  "executed": [
+   "pacman -Q w2-afs-late-global"
+  ],
+  "base": {
+   "rows": [
+    [
+     "package_query",
+     "pacman -Q w2-afs-late-global",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [],
+   "false_rows": [],
+   "missed": [],
+   "lead_only": [],
+   "exact": true
+  },
+  "tip": {
+   "rows": [
+    [
+     "host_mutation",
+     "pacman -S w2-afs-early-global",
+     "observed"
+    ]
+   ],
+   "unparsed": 0,
+   "exit": 1,
+   "error": null,
+   "false_observed": [
+    "pacman -S w2-afs-early-global"
+   ],
+   "false_rows": [
+    "pacman -S w2-afs-early-global"
+   ],
+   "missed": [
+    "pacman -Q w2-afs-late-global"
+   ],
+   "lead_only": [],
+   "exact": false
+  },
+  "verdict": "REGRESSED"
+ }
+]

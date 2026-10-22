@@ -1,0 +1,95 @@
+{
+ "schema": "mado-r23-w2-attackframescopes-cases-v1",
+ "cases": [
+  {
+   "id": "FrameReusedBySecondInvocation",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S w2-afs-second-frame"
+   ],
+   "why": "frame_scope keys a frame on id(def node); the second invocation of outer overwrites the view that the first closure's sibling leaf reads argv through.",
+   "fixture": "fixtures/FrameReusedBySecondInvocation.jsonl",
+   "sha256": "e051093396dd531bf82db426251e49a511410be867a35fad4df63ff238e7af64",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q w2-afs-first-frame",
+     "evidence": "observed"
+    }
+   ],
+   "truth_executed": [
+    "pacman -Q w2-afs-first-frame"
+   ],
+   "base_verdict_vs_tip": "REGRESSED"
+  },
+  {
+   "id": "FrameReusedBothClosuresCalled",
+   "kind": "exact",
+   "forbid_any": [],
+   "why": "Same conflation as a silent miss: two live frames of outer, both closures run, the first frame's command disappears.",
+   "fixture": "fixtures/FrameReusedBothClosuresCalled.jsonl",
+   "sha256": "8eacf719c12df18cd26a0ce578d43eecaadcc74c3fd3da228c775d8b1f627699",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q w2-afs-both-first",
+     "evidence": "observed"
+    },
+    {
+     "class": "package_query",
+     "command": "pacman -Q w2-afs-both-second",
+     "evidence": "observed"
+    }
+   ],
+   "truth_executed": [
+    "pacman -Q w2-afs-both-first",
+    "pacman -Q w2-afs-both-second"
+   ],
+   "base_verdict_vs_tip": "REGRESSED"
+  },
+  {
+   "id": "NestedBinderFreezesLateGlobal",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S w2-afs-early-global",
+    "pacman -S w2-afs-other-local"
+   ],
+   "why": "own_names walks into nested def bodies, so a name bound only in sibling other() counts as owned by outer's frame and freezes the early module value (breaks S121 late binding).",
+   "fixture": "fixtures/NestedBinderFreezesLateGlobal.jsonl",
+   "sha256": "d7f16cc0cd89dfb1641031948e5f2e1a7c0db4498fece0db677c995b8fc07330",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q w2-afs-late-global",
+     "evidence": "observed"
+    }
+   ],
+   "truth_executed": [
+    "pacman -Q w2-afs-late-global"
+   ],
+   "base_verdict_vs_tip": "REGRESSED"
+  },
+  {
+   "id": "MatchCaptureBinderNotOwned",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S w2-afs-module-global"
+   ],
+   "why": "own_names omits match-capture (and with-as) binders, so the frame view lacks argv and the scope chain falls through to the module global: base was an honest unparsed, tip is a false observed row.",
+   "fixture": "fixtures/MatchCaptureBinderNotOwned.jsonl",
+   "sha256": "5cdc9cb41e4c911a4eb3a9ffd0b9850c7aa864929cc29452985c1ef173372539",
+   "want": [
+    {
+     "class": "package_query",
+     "command": "pacman -Q w2-afs-match-capture",
+     "evidence": "observed"
+    }
+   ],
+   "truth_executed": [
+    "pacman -Q w2-afs-match-capture"
+   ],
+   "base_verdict_vs_tip": "REGRESSED"
+  }
+ ],
+ "truth_rule": "CHILD copied from round-23 repair/truth.py: recording fake subprocess, python3 -I -S"
+}

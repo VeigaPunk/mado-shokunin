@@ -1,0 +1,115 @@
+{
+ "lane_expected_sha256": "53e34d2691f1a456ce6a4387795c84e5a55d3449b94245d68de516023187c6b9",
+ "cases": [
+  {
+   "id": "ReturnedGlobalHelper",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r22-nhb-factory-local"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "CallerArgumentBeforeClosureOverlay",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r22-unused-closed-argument"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "ReturnedGlobalCallableShadow",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r22-foreign-callable"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "ForwardExistingClosureWithoutFrameContamination",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r22-forward-foreign"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "ForwarderInvokesCallback",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r23-forward-foreign"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "CallerLocalShadowsHelperGlobal",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r23-local-foreign"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "NestedDefReadsDefiningFrame",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r23-nested-foreign"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "LateGlobalRebinding",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r23-early-global"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "ForwarderPassesCallerArgument",
+   "kind": "exact",
+   "forbid_any": [],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "ForwarderInvokesFactoryClosure",
+   "kind": "exact",
+   "forbid_any": [
+    "pacman -S r23-forwarder-foreign",
+    "pacman -S r23-module-foreign"
+   ],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbidden implies keys != want (want and forbid_any are disjoint), so `not forbidden` is redundant"
+  },
+  {
+   "id": "CallbackStoredInDict",
+   "kind": "present",
+   "forbid_any": [],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbid_any is empty, so forbidden is always False and `not forbidden` is vacuous"
+  },
+  {
+   "id": "CallbackStoredOnAttribute",
+   "kind": "present",
+   "forbid_any": [],
+   "want_disjoint_from_forbid_any": true,
+   "reasoning": "forbid_any is empty, so forbidden is always False and `not forbidden` is vacuous"
+  }
+ ],
+ "all_redundant": true,
+ "exhaustive_payload_check": {
+  "payloads_checked": 3264,
+  "M1_flips": 0,
+  "M7_flips": 0
+ },
+ "conclusion": "M1 and M7 are equivalent mutants on the frozen repair set: the forbid_any clause of the exact rule is redundant with keys == want, and both present cases have an empty forbid_any. Neither can be killed by any scanner output against the frozen expected.json."
+}

@@ -118,6 +118,14 @@ what reads it, how it takes effect, and which live route can verify it.
 | terminals | `~/.config/{alacritty,foot,kitty,ghostty}/` — only Alacritty installed (MADO-3 §1/§5) | per-terminal binary; `omarchy restart terminal` (omarchy skill:172) | file bytes + `command -v`; colors resolve through the theme include | restart; `omarchy install terminal` |
 | theme & wallpaper | `~/.config/omarchy/current/theme/**`, `theme.name`, `current/background` (MADO-3 §4) | every app includes the theme files; rewritten by `omarchy theme set` | `omarchy theme current`; file reads | `omarchy theme set` |
 
+### Which terminal tree is live on this host (round 23; `corpus/knowledge/terminal-trees-r23.md`)
+
+| Situation | Action | Why (anchor) |
+|---|---|---|
+| A question names `~/.config/foot/`, `~/.config/kitty/` or `~/.config/ghostty/` | Answer "declared bytes, no consumer" first: `command -v <t>` and `pacman -Q <t>` (read-only) | none of the three is installed (terminal-trees-r23 §Host declaration) |
+| Someone asks how that terminal would read or reload its config | Quote the pinned upstream route and label it contract, not observation | S140/S146 foot (no runtime reload), S124/S127/S128 kitty (search order, auto reload, ctrl+shift+f5, SIGUSR1), S136/S138/S139 ghostty (`config.ghostty` vs legacy `config`, ctrl+shift+, and SIGUSR2) |
+| A change to one of these trees is proposed | Report it as inert until the operator installs the terminal and routes it in `xdg-terminals.list`; never install, start or signal it | install and selection are operator-owned (PROVINCE.md; terminal-route-r17) |
+
 ## Claim → evidence-class routing
 
 The routing decides which evidence class may carry which claim — and which claims an

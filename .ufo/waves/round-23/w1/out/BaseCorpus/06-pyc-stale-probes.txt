@@ -1,0 +1,10 @@
+# pyc / stale-bytecode probe re-run 2026-10-22T11:13:35.273882+00:00
+# trivial module only (no classifier code); python3 -I harness flags; scratch paths only
+A. -I load of new module: stdout='1 False' exit=0 | __pycache__ created: True
+B. -I -B load of new module: stdout='1 True' exit=0 | __pycache__ created: False
+C0. -I load (populates cache): stdout='1 False' exit=0
+C1. edited to X = 2, same size (6 bytes), mtime restored to 1792667615290495541 ns; on-disk: 'X = 2'
+C2. -I load after same-size edit (harness flags): stdout='1 False' exit=0   <- 1 means STALE cached bytecode executed
+C3. -I -B load after same-size edit: stdout='1 True' exit=0   <- -B does not skip a valid cache
+C4. compile-from-hashed-bytes load (no cache): stdout='2' exit=0   <- 2 means fresh source executed
+C5. cache files for c: ['probe.cpython-314.pyc']

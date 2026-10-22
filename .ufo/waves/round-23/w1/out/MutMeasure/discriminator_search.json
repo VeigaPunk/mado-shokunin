@@ -1,0 +1,269 @@
+{
+ "M1_ignore_forbid": {
+  "desc": "forbidden = False (ignore forbid_any)",
+  "killable": false,
+  "witnesses": []
+ },
+ "M2_ignore_unparsed": {
+  "desc": "exact rule drops `unparsed == 0`",
+  "killable": true,
+  "witnesses": [
+   {
+    "case": "ReturnedGlobalHelper",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-nhb-module",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 1
+   },
+   {
+    "case": "CallerArgumentBeforeClosureOverlay",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-callsite-argument",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 1
+   },
+   {
+    "case": "ReturnedGlobalCallableShadow",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-global-callable",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 1
+   }
+  ]
+ },
+ "M3_any_evidence": {
+  "desc": "exact rule compares (class, command) only",
+  "killable": true,
+  "witnesses": [
+   {
+    "case": "ReturnedGlobalHelper",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-nhb-module",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   },
+   {
+    "case": "CallerArgumentBeforeClosureOverlay",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-callsite-argument",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   },
+   {
+    "case": "ReturnedGlobalCallableShadow",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-global-callable",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   }
+  ]
+ },
+ "M4_missing_present": {
+  "desc": "present rule drops want_present subset test",
+  "killable": true,
+  "witnesses": [
+   {
+    "case": "CallbackStoredInDict",
+    "kind": "present",
+    "orig": false,
+    "mutant": true,
+    "rows": [],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   },
+   {
+    "case": "CallbackStoredOnAttribute",
+    "kind": "present",
+    "orig": false,
+    "mutant": true,
+    "rows": [],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   }
+  ]
+ },
+ "M5_drop_exit": {
+  "desc": "clean = True (exit/error check dropped)",
+  "killable": true,
+  "witnesses": [
+   {
+    "case": "ReturnedGlobalHelper",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-nhb-module",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": "boom",
+    "unparsed": 0
+   },
+   {
+    "case": "CallerArgumentBeforeClosureOverlay",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-callsite-argument",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": "boom",
+    "unparsed": 0
+   },
+   {
+    "case": "ReturnedGlobalCallableShadow",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-global-callable",
+      "observed"
+     ]
+    ],
+    "exit": 0,
+    "error": "boom",
+    "unparsed": 0
+   }
+  ]
+ },
+ "M7_forbid_observed_only": {
+  "desc": "forbid_any counted only at observed tier",
+  "killable": false,
+  "witnesses": []
+ },
+ "M8_exact_subset": {
+  "desc": "exact rule becomes a subset test",
+  "killable": true,
+  "witnesses": [
+   {
+    "case": "ReturnedGlobalHelper",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-nhb-module",
+      "observed"
+     ],
+     [
+      "package_query",
+      "pacman -Q r22-nhb-module",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   },
+   {
+    "case": "CallerArgumentBeforeClosureOverlay",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-callsite-argument",
+      "observed"
+     ],
+     [
+      "package_query",
+      "pacman -Q r22-callsite-argument",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   },
+   {
+    "case": "ReturnedGlobalCallableShadow",
+    "kind": "exact",
+    "orig": false,
+    "mutant": true,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r22-global-callable",
+      "observed"
+     ],
+     [
+      "package_query",
+      "pacman -Q r22-global-callable",
+      "lead"
+     ]
+    ],
+    "exit": 0,
+    "error": null,
+    "unparsed": 0
+   }
+  ]
+ }
+}

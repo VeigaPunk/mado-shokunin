@@ -1,0 +1,272 @@
+{
+ "wave": "mado-r23-w2",
+ "context": "# Goal\nWAVE 2 (falsify). Landed lane tip 2f1134f38930fc8b067d2d7f5bba126338faabdd: C1 tool change at 2e592aff (tools/mado-tripwire.py sha256 41489991..., from wave-1 candidate ExecFullB, design note /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/ExecFullB/design-note.md), C2 note corpus/knowledge/terminal-trees-r23.md + SOURCES rows S123-S152 at c8cb3930, C3 PROVINCE table at 2f1134f3. Registered after-values measured by the L1: C1 repair 12/12 (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/repair-after-2f1134f3.json), C2 3/3, C3 0. Base classifier for comparisons: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py (sha256 cd9da20c...). Your job is to attack what landed: re-run, re-open, find counterexamples, and report honestly; never fix lane files.\nMado round 23 (hyaku leg 2026-10-22), repair-first recovery. Lane repo /home/vgpnk/Projects/shokunin/mado-shokunin (jj-colocated; branch master at 6b383c465779be3a620905590ae56554e434c395). Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/registration.md first: three claims. C1 operability: frozen 12-case tripwire repair set /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/ (expected.json, fixtures/, truth.py, measure.py), before 6/12 at the base classifier tools/mado-tripwire.py (sha256 cd9da20c...), target 12/12 with no-harm guards (round-22 primary 57/57, round-21 oracle 35/35+17/17, precision 166/175 same passing set, eleven selftest suites 247/247, 1356-file corpus comparator, resource guards). C2 coverage: sourced routes for the foot, kitty and ghostty config trees, counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/c2/count.py, before 0/3. C3 calibration: tracked tools/*.py|*.sh not named in PROVINCE.md, before 4, target 0 via an append-only PROVINCE refinement. Evidence of the prior rounds: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/ and /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-22.md. The L1 (MadoR23) holds the planner seat and is the only integration owner and judge of what lands; your output is advice plus evidence.\n# Contract (binding bounds)\n- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>. Use absolute paths for every read and write; your tools start at the fleet root /home/vgpnk/Projects/shokunin, which you must never write.\n- Never write in the lane repo except your own report file and, if your item says so, files inside /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/<YourSeatName>/. Never edit tools/, corpus/, SKILL.md, SCORECARD.md, LOG.md, PROVINCE.md, SHONEN.md, fixtures, expected files or any other seat's files.\n- Executors write code only in their own clone: `git clone -q /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r23/<YourSeatName>` then work there on a new local branch; never push, never touch the lane's git index, jj state or working copy. Deliver a patch (`git -C <clone> diff 6b383c465779be3a620905590ae56554e434c395 -- tools/ > /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/<YourSeatName>/candidate.patch`) plus JSON receipts in your out dir.\n- Never run any jj command at the fleet root. In the lane, read-only jj only with --ignore-working-copy. Never run git add/commit/stash/checkout/switch/reset/pull/push in the lane; read-only git (log, show, diff, status, ls-files, rev-parse) is fine.\n- Host safety: never change the host (packages, input stack, display, compositor state, services, ~/.config files). Read-only probes only. pacman guard: all pacman transactions are PAUSED host-wide; never -S/-Sy/-Syu/-U/-R; `pacman -Q`/`-Qi` reads are fine. The operator authorizes installs and upgrades that help the task: read /home/vgpnk/.omp/agent/RULES.md first, use uv tool / npx / an official binary in ~/.local/bin only, and record tool, version, channel and reason in your report.\n- Sources: open by ordinary means only (fetch/read tools). Never use a headless browser or any tool to pass a bot challenge, captcha or access control; a source you cannot open is recorded as unopened.\n- Scanner and fixture runs: run the classifier only as `python3 -I` over committed fixture data, one child at a time, under the existing harness caps (384 MiB / 15 s); never execute transcript content except through /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py's recording fake subprocess or an equivalent fake-module runner of your own over fixtures you authored.\n- Never message agent://all. You are a leaf: do not spawn agents (executors may spawn one read-only labrat for one falsifiable hypothesis). Never pass a model parameter.\n- Write plain English. Report: what you did, exact commands, outputs (or receipt paths), and a verdict line. An unrun check has not passed; never fabricate.\n",
+ "reportDir": ".ufo/waves/round-23/w2/reports",
+ "items": [
+  {
+   "name": "ReRepair",
+   "role": "reviewer",
+   "prompt": "C1 re-measure: extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__); run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/measure.py --tool <that tool.py>` and `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py`. Confirm 12/12 and truth 12/12, check per-case rows against expected.json, and confirm the tool sha256 is 41489991... . Report exact outputs.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReResidual",
+   "role": "reviewer",
+   "prompt": "C1 guard: extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__); run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/residual-truth/measure.py --tool <tool.py>` (target 4/4) and `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py --tool <tool.py>` (57/57). Report exact outputs and any defect.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReOracle21",
+   "role": "reviewer",
+   "prompt": "C1 guard: run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/replay.py --tool /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py --mode oracle` from /home/vgpnk/Projects/shokunin/mado-shokunin (replay refuses tools outside the lane; verify the lane file sha256 is 41489991... and equals `git show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py`). Delete nothing; if a tools/__pycache__ appears after your run, report it. Target 35/35+17/17.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReSelftests",
+   "role": "reviewer",
+   "prompt": "C1 guard: extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__); run the eleven selftest suites listed in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/evidence/resume/legacy-selftests-summary.json, each `prlimit --as=402653184 --cpu=15 python3 -I <tool.py> --selftest SUITE`. Target 247/247. Report per-suite counts.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReCorpus",
+   "role": "reviewer",
+   "prompt": "C1 guard: from /home/vgpnk/Projects/shokunin/mado-shokunin run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/replay.py --tool /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py --mode corpus --before-tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py` (both in-lane). Report added/removed finding groups, error flips (before != after pairs; exit 1 alone is by design when shared errors exist), and compute every per-file eval_unparsed/unparsed_spawns change between the two runs. Target: 0 added, 0 removed, 0 flips, 0 counter changes, or each change adjudicated by you against Python semantics.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReResource",
+   "role": "reviewer",
+   "prompt": "C1 guard: from /home/vgpnk/Projects/shokunin/mado-shokunin run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/resource-closure-measure.py --tool /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py --mode module-main` and `--mode cli`, and `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/resource/measure.py --tool /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-tripwire.py --mode module-main` and `--mode cli`, sequentially. Compare RSS and time with /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/BaseResource.md. Target all clean under 384 MiB / 15 s.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "RePrecision",
+   "role": "reviewer",
+   "prompt": "C1 guard: from /home/vgpnk/Projects/shokunin/mado-shokunin run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/tw-precision.py 2f1134f38930fc8b067d2d7f5bba126338faabdd` and the same at a28e4815aabfa85f55274884000fb2608355f8cf; compare per-case pass sets. Target: no case passing at base fails at the tip; count not below 166/175. List every case whose verdict changed.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReCounters",
+   "role": "reviewer",
+   "prompt": "C2/C3 re-measure: run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/c2/count.py 2f1134f38930fc8b067d2d7f5bba126338faabdd` (target 3/3) and `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/c3/count.py 2f1134f38930fc8b067d2d7f5bba126338faabdd` (target 0), and both at e33ea30461f6e9bbeee40beef19770a953f7a105 (before 0/3 and 5). Also run the census `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado` and paste its full output and exit code. Report.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ReFrameNeighbour",
+   "role": "reviewer",
+   "prompt": "C1 discovery re-run: the wave-1 critic CritFrameNeighbour authored neighbour fixtures and a runner in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritFrameNeighbour/ (read its report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/CritFrameNeighbour.md). Copy that out dir to /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/ and run its runner against the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) and the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py. Report per case: truth, base rows, tip rows, and whether the tip is better, same or worse than base (any worse = regression, the most important finding). For the closure cases, any forbidden -S command at any tier on the tip is a regression.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReScheduledNeighbour",
+   "role": "reviewer",
+   "prompt": "C1 discovery re-run: the wave-1 critic CritScheduledNeighbour authored neighbour fixtures and a runner in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritScheduledNeighbour/ (read its report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/CritScheduledNeighbour.md). Copy that out dir to /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/ and run its runner against the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) and the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py. Report per case: truth, base rows, tip rows, and whether the tip is better, same or worse than base (any worse = regression, the most important finding). For the closure cases, any forbidden -S command at any tier on the tip is a regression.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReEscapeNeighbour",
+   "role": "reviewer",
+   "prompt": "C1 discovery re-run: the wave-1 critic CritEscapeNeighbour authored neighbour fixtures and a runner in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritEscapeNeighbour/ (read its report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/CritEscapeNeighbour.md). Copy that out dir to /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/ and run its runner against the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) and the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py. Report per case: truth, base rows, tip rows, and whether the tip is better, same or worse than base (any worse = regression, the most important finding). For the closure cases, any forbidden -S command at any tier on the tip is a regression.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReClosureNeighbour",
+   "role": "reviewer",
+   "prompt": "C1 discovery re-run: the wave-1 critic CritClosureNeighbour authored neighbour fixtures and a runner in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritClosureNeighbour/ (read its report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/CritClosureNeighbour.md). Copy that out dir to /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/ and run its runner against the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) and the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py. Report per case: truth, base rows, tip rows, and whether the tip is better, same or worse than base (any worse = regression, the most important finding). For the closure cases, any forbidden -S command at any tier on the tip is a regression.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "AttackFrameScopes",
+   "role": "critic",
+   "prompt": "C1 attack (discovery): author up to four new minimal inert transcript fixtures on scope-chain edge cases of the new provenance design: helper defined inside a class body, staticmethod/classmethod helpers reading module globals shadowed by the caller, a def nested two levels deep called from a third function, a module helper redefined after a forwarder captured it, global statement inside the helper. Same JSONL shape as /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/fixtures/*.jsonl, imports only subprocess (threading only if needed), only subprocess.run with list literals or names. Write only under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackFrameScopes/. Derive truth with a recording fake subprocess runner (copy the CHILD of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py). Run both the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py and the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) via the round-21 scan helper (runpy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/oracle/measure.py 'scan'). Classify each case base vs tip: improved, same-correct, same-wrong, REGRESSED (tip worse than base: false observed, silent miss or new unparsed where base was right). Regressions are the key output.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "AttackEscapeGate",
+   "role": "critic",
+   "prompt": "C1 attack (discovery): author up to four new minimal inert transcript fixtures on the escape-gated sweep: callback stored via setattr(obj, \"cb\", cb), via `global hook; hook = cb`, via dict.update, via functools-free wrapper that returns a lambda calling the parameter, via passing the parameter to a builtin like map() or sorted(key=...), via yield from a generator. Same JSONL shape as /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/fixtures/*.jsonl, imports only subprocess (threading only if needed), only subprocess.run with list literals or names. Write only under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackEscapeGate/. Derive truth with a recording fake subprocess runner (copy the CHILD of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py). Run both the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py and the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) via the round-21 scan helper (runpy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/oracle/measure.py 'scan'). Classify each case base vs tip: improved, same-correct, same-wrong, REGRESSED (tip worse than base: false observed, silent miss or new unparsed where base was right). Regressions are the key output.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "AttackLateCell",
+   "role": "critic",
+   "prompt": "C1 attack (discovery): author up to four new minimal inert transcript fixtures on late enclosing-cell rebinding (RevTruthD F1): enclosing local rebound after the nested def but before the call, nonlocal rebind inside another nested function, closure captured in a loop and called after the loop. Same JSONL shape as /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/fixtures/*.jsonl, imports only subprocess (threading only if needed), only subprocess.run with list literals or names. Write only under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackLateCell/. Derive truth with a recording fake subprocess runner (copy the CHILD of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py). Run both the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py and the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) via the round-21 scan helper (runpy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/oracle/measure.py 'scan'). Classify each case base vs tip: improved, same-correct, same-wrong, REGRESSED (tip worse than base: false observed, silent miss or new unparsed where base was right). Regressions are the key output.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "AttackRecallRegress",
+   "role": "critic",
+   "prompt": "C1 attack (discovery): author up to four new minimal inert transcript fixtures on recall: shapes where the base produced an observed or lead row for an executed command and the new sweep gate might drop it \u2014 callbacks passed to followed consumers that call them conditionally, through try/except, through a second unfollowed call, or after storing them. Same JSONL shape as /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/fixtures/*.jsonl, imports only subprocess (threading only if needed), only subprocess.run with list literals or names. Write only under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackRecallRegress/. Derive truth with a recording fake subprocess runner (copy the CHILD of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py). Run both the base classifier /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py and the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) via the round-21 scan helper (runpy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/oracle/measure.py 'scan'). Classify each case base vs tip: improved, same-correct, same-wrong, REGRESSED (tip worse than base: false observed, silent miss or new unparsed where base was right). Regressions are the key output.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "MutHunks",
+   "role": "mutation-tester",
+   "prompt": "C1 mutation: the landed change is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/ExecFullB/candidate.patch over base. In /fast/scratch/hyaku/mado-r23/w2/MutHunks/ clone the lane at 2f1134f38930fc8b067d2d7f5bba126338faabdd, then revert each hunk of the patch singly (or each logical part: scope tagging, scope_view chain merge, reference_escapes/parameter_escapes sweep gate) and run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/measure.py --tool <mutant>` plus `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-22/oracle/measure.py --tool <mutant>`. Report which parts are load-bearing (killed) and which survive (dead code or untested). Control first; count killed only when the unmutated tip gives its expected verdict on the same input.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "MutScopeView",
+   "role": "mutation-tester",
+   "prompt": "C1 mutation: in a scratch copy of the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)), make single mutants of the new scope logic: include the calling frame in scope_view, merge chain outermost-first instead of innermost-first, treat every parameter as escaping, treat no parameter as escaping, drop the MODULE_SCOPE late-global view. Run the repair counter, the round-22 oracle and the neighbour runners in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/Crit*Neighbour/ on each. Report killed/survived/inconclusive with commands.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReviewDiff",
+   "role": "reviewer",
+   "prompt": "C1 code review: read `git -C /home/vgpnk/Projects/shokunin/mado-shokunin diff a28e4815aabfa85f55274884000fb2608355f8cf 2e592aff01be2bdd3039f3a825864078cdff86b5 -- tools/mado-tripwire.py` and /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/ExecFullB/design-note.md. Review correctness against Python scoping (S121: free names resolve in the defining scope chain and module globals at call time), complexity, memory (any per-scope dict growth with deep or wide code), id()-based keys that could collide after garbage collection, and whether the escape test misses any store form. Give findings by severity with line numbers.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReviewPresent",
+   "role": "reviewer",
+   "prompt": "C1 strictness check beyond the counter: for the two 'present' repair cases (CallbackStoredInDict, CallbackStoredOnAttribute) and every 'exact' case, scan with the tip classifier (extract the classifier with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/w2/<YourSeatName>/tool.py` (fresh dir, no __pycache__)) via the round-21 scan helper and check the stricter properties the counter does not: class host_mutation for -S rows, no extra rows, unparsed 0. Compare with base. Report any case that passes the counter but is weaker than base.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "AttackPerf",
+   "role": "critic",
+   "prompt": "C1 resource attack: author two or three inert fixtures that stress the new scope chain (hundreds of nested defs, a long forwarder chain, many module helpers each calling the next) and run base and tip classifiers on each under `prlimit --as=402653184 --cpu=15` through the round-21 scan helper. Report RSS/time/exit for both. Any tip failure where base passes is a regression. Write only under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackPerf/.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ReopenFoot",
+   "role": "reviewer",
+   "prompt": "C2 source re-open: for each corpus/SOURCES.md row S140-S149, S152 at lane tip 2f1134f38930fc8b067d2d7f5bba126338faabdd, re-open the URL by ordinary means (no headless browser, no captcha bypass), recompute sha256 of the pinned bytes where the row records one, and confirm the anchor lines and the located quote in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/SrcFoot.md exist in those bytes. Verdict per row: confirmed / mismatch (detail) / unopened. Write raw downloads only under /fast/scratch/hyaku/mado-r23/w2/ReopenFoot/.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ReopenKitty",
+   "role": "reviewer",
+   "prompt": "C2 source re-open: for each corpus/SOURCES.md row S123-S133 at lane tip 2f1134f38930fc8b067d2d7f5bba126338faabdd, re-open the URL by ordinary means (no headless browser, no captcha bypass), recompute sha256 of the pinned bytes where the row records one, and confirm the anchor lines and the located quote in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/SrcKitty.md exist in those bytes. Verdict per row: confirmed / mismatch (detail) / unopened. Write raw downloads only under /fast/scratch/hyaku/mado-r23/w2/ReopenKitty/.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ReopenGhostty",
+   "role": "reviewer",
+   "prompt": "C2 source re-open: for each corpus/SOURCES.md row S134-S139, S150, S151 at lane tip 2f1134f38930fc8b067d2d7f5bba126338faabdd, re-open the URL by ordinary means (no headless browser, no captcha bypass), recompute sha256 of the pinned bytes where the row records one, and confirm the anchor lines and the located quote in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/SrcGhostty.md exist in those bytes. Verdict per row: confirmed / mismatch (detail) / unopened. Write raw downloads only under /fast/scratch/hyaku/mado-r23/w2/ReopenGhostty/.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ReviewNoteClaims",
+   "role": "reviewer",
+   "prompt": "C2 claim review: read /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/terminal-trees-r23.md at tip 2f1134f38930fc8b067d2d7f5bba126338faabdd. For each claim row, check that the cited S### rows (corpus/SOURCES.md) and their anchors actually support the claim as worded, and flag any claim wider than its sources (version, platform, default values). Flag any statement presented as host behaviour that was not observed.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ReviewNoteHost",
+   "role": "reviewer",
+   "prompt": "C2 host check: re-derive every value in the '## Host declaration' and '## Safe observation' sections of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/terminal-trees-r23.md read-only (sha256sum, stat, command -v, pacman -Q, grep on ~/.config/xdg-terminals.list, sha256 compare with ~/.local/share/omarchy/config/<t>/). Report mismatches. Never change the host.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "CritC2Gaming",
+   "role": "critic",
+   "prompt": "C2 attack: does the landed note reach 3/3 for honest reasons? Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/c2/count.py (v2), /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/RevC2Counter.md (holes v2 leaves), the note and the SOURCES rows at 2f1134f38930fc8b067d2d7f5bba126338faabdd. Check each counted row against those holes (fenced rows, duplicate ids, id prefixes, annotation words, bookkeeping-only rows). Verdict: honest 3/3 or which terminal counts only through a hole.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ReviewProvinceTruth",
+   "role": "reviewer",
+   "prompt": "C3 truth check: for each of the five rows in the PROVINCE.md table at 2f1134f38930fc8b067d2d7f5bba126338faabdd, read the tool's source at 2f1134f38930fc8b067d2d7f5bba126338faabdd and verify the Reads and Writes cells: grep for open(..., 'w'), write_text, mkdtemp, tempfile, subprocess, os.system, shutil, ~/.config and network use. Report any row that understates what the tool reads, writes or executes.",
+   "axes": [
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritProvinceBleed",
+   "role": "critic",
+   "prompt": "C3 attack: does the PROVINCE refinement at 2f1134f38930fc8b067d2d7f5bba126338faabdd absorb another lane's ground or open a write surface? Compare with sibling PROVINCE.md files under /home/vgpnk/Projects/shokunin/*-shokunin/ (mori transcript observation, tsukuroi package state, tameshi mutation testing, kagi secrets) and with mado's own Refuses list. Also judge whether C3's counter (registration.md, last two sections) measures a mismatch between the SHONEN box 4 self-assessment and observed repo state, as the hyaku calibration rule requires. Verdict with reasons.",
+   "axes": [
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritSeparability",
+   "role": "critic",
+   "prompt": "Round attack: read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/registration.md and the commits 2e592aff (C1), c8cb3930 (C2), 2f1134f3 (C3). Check the claims are causally separable (reverting one leaves the others' counters unchanged: run each counter at the parent of each commit), that no axis is harmed (any guard regression, any coverage or calibration loss), and that each statement is no wider than its counter. Verdict per claim.",
+   "axes": [
+    "calibration"
+   ]
+  },
+  {
+   "name": "ReviewHarmTable",
+   "role": "reviewer",
+   "prompt": "Repair-first check: compare the registration H-table and clarifications in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/registration.md with /home/vgpnk/Projects/shokunin/MANIFEST.json rounds[400] and rounds[426] (read only). For each routed harm and defect state its before value, the after evidence now available in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/evidence/ and /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/ExecFullB/guards.json, and whether it is repaired, improved, unchanged (with stated reason) or worse. Flag anything routed that the round ignored.",
+   "axes": [
+    "operability"
+   ]
+  },
+  {
+   "name": "ScribeLessonCheck",
+   "role": "scribe",
+   "prompt": "Frontier item: draft the '## Gate' source-decision lines for corpus/lessons/round-23.md: one line per new SOURCES row S123-S152 at 2f1134f38930fc8b067d2d7f5bba126338faabdd with URL, access date 2026-10-22 and one located quote of at most 25 words with its line anchor, taken from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/reports/SrcFoot.md, SrcKitty.md and SrcGhostty.md (re-check each quote's word count with len(quote.split())). Return the exact lines in your report; do not edit lesson files.",
+   "axes": [
+    "coverage"
+   ]
+  },
+  {
+   "name": "ScoutMisroot",
+   "role": "scout",
+   "prompt": "Misroot sweep (read only): run `git -C /home/vgpnk/Projects/shokunin status --porcelain` and list every untracked file at the fleet root whose content names mado and round 23 (or a MadoR23 seat). Also list untracked files in /home/vgpnk/Projects/shokunin/mado-shokunin outside .ufo/waves/round-23/ and any __pycache__ directories under /home/vgpnk/Projects/shokunin/mado-shokunin/tools or /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23. Report paths and evidence; delete nothing.",
+   "axes": [
+    "calibration"
+   ]
+  }
+ ]
+}

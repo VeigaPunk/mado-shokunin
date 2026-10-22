@@ -1,0 +1,173 @@
+{
+ "schema": "mado-r23-w2-attacklatecell-scan-v1",
+ "python": "3.14.8",
+ "helper": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-21/oracle/measure.py",
+ "helper_sha256": "4eb893d2337a4aa758d14c064a855032737c6e2b2b1239d7ca3502042c6c82da",
+ "truth_child_from": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/repair/truth.py",
+ "truth_py_sha256": "7f9e7865b828dd49499c781ff9697fc49e5b7869b447f9047f16cea0236d18b0",
+ "base_sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+ "tip_sha256": "41489991163627f56de79bc360d4f13454fa5d50787a5802927b9cac562ca009",
+ "tip_source": "git show 2f1134f38930fc8b067d2d7f5bba126338faabdd:tools/mado-tripwire.py",
+ "tally": {
+  "improved": 2,
+  "same-wrong": 2
+ },
+ "results": [
+  {
+   "id": "LateEnclosingLocalViaRelay",
+   "base": {
+    "exit": 1,
+    "error": null,
+    "unparsed": 0,
+    "rows": [
+     [
+      "host_mutation",
+      "pacman -S r23w2-relay-foreign",
+      "observed"
+     ]
+    ],
+    "correct": false,
+    "false_observed": [
+     "pacman -S r23w2-relay-foreign"
+    ],
+    "forbidden_any_tier": [
+     "pacman -S r23w2-relay-foreign"
+    ],
+    "missed": [
+     "pacman -Q r23w2-late-cell"
+    ],
+    "silent_miss": [
+     "pacman -Q r23w2-late-cell"
+    ],
+    "abstained": false
+   },
+   "tip": {
+    "exit": 1,
+    "error": null,
+    "unparsed": 0,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r23w2-late-cell",
+      "observed"
+     ]
+    ],
+    "correct": true,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [],
+    "silent_miss": [],
+    "abstained": false
+   },
+   "classification": "improved"
+  },
+  {
+   "id": "NonlocalRebindThenCallInSibling",
+   "base": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 1,
+    "rows": [],
+    "correct": false,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [
+     "pacman -Q r23w2-after-nonlocal"
+    ],
+    "silent_miss": [],
+    "abstained": true
+   },
+   "tip": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 1,
+    "rows": [],
+    "correct": false,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [
+     "pacman -Q r23w2-after-nonlocal"
+    ],
+    "silent_miss": [],
+    "abstained": true
+   },
+   "classification": "same-wrong"
+  },
+  {
+   "id": "LoopClosureCalledAfterLoop",
+   "base": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 0,
+    "rows": [],
+    "correct": false,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [
+     "pacman -Q r23w2-loop-last"
+    ],
+    "silent_miss": [
+     "pacman -Q r23w2-loop-last"
+    ],
+    "abstained": false
+   },
+   "tip": {
+    "exit": 0,
+    "error": null,
+    "unparsed": 0,
+    "rows": [],
+    "correct": false,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [
+     "pacman -Q r23w2-loop-last"
+    ],
+    "silent_miss": [
+     "pacman -Q r23w2-loop-last"
+    ],
+    "abstained": false
+   },
+   "classification": "same-wrong"
+  },
+  {
+   "id": "SecondFrameInvokesFirstFrameClosure",
+   "base": {
+    "exit": 1,
+    "error": null,
+    "unparsed": 1,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r23w2-first-invocation",
+      "observed"
+     ]
+    ],
+    "correct": false,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [],
+    "silent_miss": [],
+    "abstained": true
+   },
+   "tip": {
+    "exit": 1,
+    "error": null,
+    "unparsed": 0,
+    "rows": [
+     [
+      "package_query",
+      "pacman -Q r23w2-first-invocation",
+      "observed"
+     ]
+    ],
+    "correct": true,
+    "false_observed": [],
+    "forbidden_any_tier": [],
+    "missed": [],
+    "silent_miss": [],
+    "abstained": false
+   },
+   "classification": "improved"
+  }
+ ]
+}

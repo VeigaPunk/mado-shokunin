@@ -5,7 +5,7 @@ set -euo pipefail
 L=/home/vgpnk/Projects/shokunin/mado-shokunin
 D=/fast/scratch/hyaku/mado-r23/L1-$1
 rm -rf "$D"; git clone -q "$L" "$D"; cp "$L/tools/mado-tripwire.py" "$D/tools/"
-cd "$D"; git -c user.name=v -c user.email=v@v commit -qam "$1"
+cd "$D"; git -c user.name=v -c user.email=v@v commit -qam "$1" || true
 sha256sum tools/mado-tripwire.py
 T="$D/tools/mado-tripwire.py"; B="$D/.ufo/waves/round-23/evidence/tool-base-cd9da20c.py"
 python3 -I "$L/.ufo/waves/round-23/repair/measure.py" --tool "$T" | python3 -c 'import json,sys;d=json.load(sys.stdin);print("repair",d.get("passed"),d.get("total"),d.get("error"),[r["id"] for r in d.get("results",[]) if not r["passed"]])'

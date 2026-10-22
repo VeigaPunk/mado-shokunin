@@ -1,0 +1,285 @@
+diff --git c/tools/mado-tripwire.py w/tools/mado-tripwire.py
+index 8835114..396a825 100755
+--- c/tools/mado-tripwire.py
++++ w/tools/mado-tripwire.py
+@@ -1881,10 +1881,16 @@ def assignment_binding(node, bindings, env, resolving=()):
+     return {"kind": "unknown"}
+ 
+ 
+-def update_bindings(stmt, bindings, env, resolving=()):
+-    """Apply this statement's module-level name bindings in execution order."""
++def update_bindings(stmt, bindings, env, resolving=(), scope="module"):
++    """Apply this statement's name bindings in execution order.
++
++    `scope` names the frame the statement runs in: "module" for the module
++    body, "function" inside a helper body, "class" inside a class body. It
++    is recorded on helper bindings so a followed helper's free names can be
++    resolved in its defining frame rather than the caller's frame.
++    """
+     if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+-        bindings[stmt.name] = {"kind": "helper", "node": stmt}
++        bindings[stmt.name] = {"kind": "helper", "node": stmt, "scope": scope}
+         for decorator in reversed(stmt.decorator_list):
+             wrapped = callable_info(ast.Call(func=decorator,
+                 args=[ast.Name(id=stmt.name, ctx=ast.Load())], keywords=[]), bindings, env, resolving)
+@@ -1896,7 +1902,8 @@ def update_bindings(stmt, bindings, env, resolving=()):
+         class_bindings = dict(bindings)
+         for member in stmt.body:
+             if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
+-                class_bindings[member.name] = {"kind": "helper", "node": member}
++                class_bindings[member.name] = {"kind": "helper", "node": member,
++                                               "scope": "class"}
+             if isinstance(member, ast.Assign) and isinstance(member.value, ast.Call):
+                 descriptor = member.value
+                 if (descriptor.args and callable_info(descriptor.func, class_bindings, env, resolving)
+@@ -1931,6 +1938,8 @@ def update_bindings(stmt, bindings, env, resolving=()):
+         value = stmt.value
+         resolved = assignment_binding(value, bindings, env, resolving) if value is not None \
+             else {"kind": "unknown"}
++        if resolved.get("kind") == "helper" and "scope" not in resolved:
++            resolved = dict(resolved, scope=scope)
+         targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
+         names = set().union(*(target_names(target) for target in targets))
+         for name in names:
+@@ -2202,9 +2211,13 @@ def statement_snapshot(statement, env, bindings):
+     return literals, {name: bindings[name] for name in names if name in bindings}
+ 
+ 
+-def prepare_eval_calls(statements, env, bindings, resolving=()):
++def prepare_eval_calls(statements, env, bindings, resolving=(), scope="module"):
+     """Snapshot literals and bindings at each statement, then retain its updates.
+ 
++    `scope` is the frame these statements run in ("module" for the module
++    body, "function"/"class" inside a helper/class body); it is recorded on
++    helper bindings so a followed helper's free names can be resolved in its
++    defining frame rather than the caller's frame.
+     Returns the statements' eager calls and references and, for every call,
+     name, attribute and lambda, the literal environment and bindings in effect
+     at its statement (one shared snapshot per statement; never mutated)."""
+@@ -2250,7 +2263,7 @@ def prepare_eval_calls(statements, env, bindings, resolving=()):
+                 env.pop(name, None)
+             else:
+                 env[name] = resolved
+-        update_bindings(stmt, bindings, env, resolving)
++        update_bindings(stmt, bindings, env, resolving, scope=scope)
+         if isinstance(stmt, ast.Return):
+             break
+     return calls, refs, call_env, binding_env
+@@ -2290,7 +2303,7 @@ def classify_eval(code, language, env=None, bindings=None):
+     calls, refs, call_env, binding_env = prepare_eval_calls(tree.body, env, bindings)
+     found, unparsed = spawn_scan(
+         calls, {}, bindings, 0, call_env, binding_env, awaited_call_ids(tree.body),
+-        refs, new_scan_context())
++        refs, new_scan_context(), genv=call_env)
+     hits.extend(found)
+     return hits, 0, unparsed
+ 
+@@ -2377,7 +2390,8 @@ def sweep_body(owner, bindings, ctx, depth, class_node=None, bound_kind=None):
+     positional = owner.args.posonlyargs + owner.args.args
+     if class_node is not None and bound_kind and positional:
+         body_bindings[positional[0].arg] = {"kind": bound_kind, "node": class_node}
+-    calls, refs, call_env, binding_env = prepare_eval_calls(body, {}, body_bindings)
++    calls, refs, call_env, binding_env = prepare_eval_calls(body, {}, body_bindings,
++                                                             scope="function")
+     ctx["stack"].append(id(owner))
+     try:
+         found, unparsed = spawn_scan(calls, {}, body_bindings, depth + 1, call_env,
+@@ -2407,7 +2421,8 @@ def sweep_class(class_node, bindings, ctx, depth, dunders_only, exclude=()):
+ 
+ 
+ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
+-                  class_node=None, bound_kind=None, closure_env=None, closure_bindings=None):
++                  class_node=None, bound_kind=None, closure_env=None, closure_bindings=None,
++                  genv=None, scope="module"):
+     """Follow one helper call with its literal arguments bound (`observed`
+     rows), or None when it is not followed: recursion, depth or budget spent,
+     or arguments that cannot be bound."""
+@@ -2431,25 +2446,90 @@ def follow_helper(helper, node, cenv, cbindings, ctx, depth, skip_first=False,
+         params = helper.args.posonlyargs + helper.args.args
+         if params:
+             body_bindings[params[0].arg] = {"kind": bound_kind, "node": class_node}
+-    body_env = dict(cenv)
++    # A helper's free names resolve in its defining frame: the module
++    # globals as of the call (genv) for a module-level/class/factory helper,
++    # the enclosing frame (cenv) for a nested def whose closure is the
++    # current frame. Never inherit the caller's unrelated locals.
++    if scope == "function":
++        base_env = cenv
++    else:
++        base_env = genv if genv is not None else cenv
++    body_env = dict(base_env)
+     if closure_env:
+         body_env.update({name: LITERAL_MISS if mutated_literal(value, cenv) else value
+                          for name, value in closure_env.items()})
+     body_env.update(bound)
+     calls, refs, body_call_env, body_binding_env = prepare_eval_calls(
+-        body_nodes, body_env, body_bindings)
++        body_nodes, body_env, body_bindings, scope="function")
++    if calls:
++        inner_genv = {id(n): (genv if genv is not None else body_env) for n in calls}
++    else:
++        inner_genv = None
+     ctx["stack"].append(id(helper))
+     try:
+-        return spawn_scan(calls, body_env, body_bindings, depth + 1, body_call_env,
+-                          body_binding_env, awaited_call_ids(body_nodes), refs, ctx)
++        result = spawn_scan(calls, body_env, body_bindings, depth + 1, body_call_env,
++                            body_binding_env, awaited_call_ids(body_nodes), refs, ctx,
++                            genv=inner_genv)
+     finally:
+         ctx["stack"].pop()
++    if result is not None:
++        # The body was analyzed with bound literals; re-sweeping it in this
++        # cell would only duplicate its rows and inflate the unparsed count.
++        ctx["swept"].add(id(helper))
++    return result
++
++
++def parameter_escapes(fn, param):
++    """True when the consumer's parameter value can leave its followed body:
++    stored, returned, aliased or handed to another call. A direct call of the
++    parameter inside the body does not let it escape."""
++    parents = {}
++    stack = [(fn, None)]
++    while stack:
++        node, par = stack.pop()
++        parents[id(node)] = par
++        for child in ast.iter_child_nodes(node):
++            stack.append((child, node))
++    for node in ast.walk(fn):
++        if isinstance(node, ast.Name) and node.id == param:
++            par = parents[id(node)]
++            if isinstance(par, ast.Call) and par.func is node:
++                continue  # a direct call of the parameter is not an escape
++            return True
++    return False
++
++
++def consumer_unescaping_args(fn, call, skip_first=False):
++    """Call-argument node ids bound to a parameter that cannot escape the
++    followed consumer body (parameter_escapes). Empty when every callable
++    argument can escape (store/return/alias/pass-on), so the separate sweep
++    of that callback body stays required."""
++    positional = fn.args.posonlyargs + fn.args.args
++    if skip_first:
++        positional = positional[1:]
++    uses = {}
++    for index, arg in enumerate(call.args):
++        if isinstance(arg, ast.Starred):
++            continue
++        pidx = index if not skip_first else index - 1
++        if 0 <= pidx < len(positional):
++            uses[id(arg)] = positional[pidx].arg
++    for keyword in call.keywords:
++        if keyword.arg is not None:
++            uses[id(keyword.value)] = keyword.arg
++    escaping = {p for p in set(uses.values()) if parameter_escapes(fn, p)}
++    return {arg_id for arg_id, p in uses.items() if p not in escaping}
+ 
+ 
+ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+-               awaited_calls=None, refs=(), ctx=None):
++               awaited_calls=None, refs=(), ctx=None, genv=None):
+     """Follow visible helper calls and classify reachable spawn calls; sweep
+-    referenced bodies the call path does not follow (see sweep_body)."""
++    referenced bodies the call path does not follow (see sweep_body).
++
++    `genv` maps call-node id to the module-global literal environment in
++    effect for that call (the defining frame of a module-level helper); when
++    absent the per-node `cenv` is used.
++    """
+     hits, unparsed = [], 0
+     resolved_callees = set()
+     awaited_calls = set() if awaited_calls is None else awaited_calls
+@@ -2465,7 +2545,9 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+             continue
+         cenv = env if call_env is None else call_env.get(id(node), {})
+         cbindings = bindings if binding_env is None else binding_env.get(id(node), {})
++        globals_env = cenv if genv is None else genv.get(id(node), cenv)
+         info = callable_info(node.func, cbindings, cenv)
++
+         if info.get("kind") == "uncertain":
+             unparsed += 1
+             continue
+@@ -2490,7 +2572,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                     args=[literal_node(value) for value in arguments],
+                     keywords=[ast.keyword(arg=key, value=literal_node(value))
+                               for key, value in options.items()])
+-                take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
++                take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx,
++                                genv={id(invocation): globals_env}))
+             else:
+                 unparsed += 1
+             continue
+@@ -2501,7 +2584,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                 args=[literal_node(value) for value in info["args"]],
+                 keywords=[ast.keyword(arg=key, value=literal_node(value))
+                           for key, value in info["keywords"].items()])
+-            take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
++            take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx,
++                            genv={id(invocation): globals_env}))
+             continue
+         if isinstance(node.func, ast.Call) and node.args:
+             builder = node.func
+@@ -2512,7 +2596,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                     callee = node.args[0] if method == "__call__" else ast.Attribute(
+                         value=node.args[0], attr=method, ctx=ast.Load())
+                     invocation = ast.Call(func=callee, args=builder.args[1:], keywords=builder.keywords)
+-                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx))
++                    take(spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx,
++                                    genv={id(invocation): globals_env}))
+                     continue
+         helper = info.get("node")
+         config_arg = (node.args[0] if node.args else
+@@ -2540,7 +2625,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                     if factory is not None:
+                         invocation = ast.Call(func=factory, args=[],
+                             keywords=[ast.keyword(arg=key, value=value) for key, value in values.items() if key not in ("()", ".")])
+-                        result = spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx)
++                        result = spawn_scan([invocation], cenv, cbindings, depth + 1, ctx=ctx,
++                                            genv={id(invocation): globals_env})
+                         if incremental is LITERAL_MISS:
+                             result = ([tuple(hit[:4]) + ("lead",) for hit in result[0]], result[1])
+                         take(result)
+@@ -2569,11 +2655,20 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+             result = follow_helper(helper, bound_node, cenv, cbindings, ctx, depth,
+                                    info.get("skip_first", False),
+                                    info.get("class_node"), info.get("bound_kind"),
+-                                   info.get("closure_env"), info.get("closure_bindings"))
++                                   info.get("closure_env"), info.get("closure_bindings"),
++                                   genv=globals_env, scope=info.get("scope", "module"))
+             if result is not None and isinstance(helper, ast.AsyncFunctionDef) \
+                     and id(node) not in awaited_calls:
+                 # a coroutine created here runs only if something schedules it
+                 result = ([tuple(hit[:4]) + ("lead",) for hit in result[0]], result[1])
++            if (result is not None and result[1] == 0
++                    and not any(opaque_statement(part) for part in
++                                ([helper.body] if isinstance(helper, ast.Lambda) else helper.body))):
++                # Only a callback that cannot escape the followed consumer body
++                # makes the outer sweep of that argument redundant.
++                unescaping = consumer_unescaping_args(helper, node, info.get("skip_first", False))
++                if unescaping:
++                    ctx.setdefault("consumer_args", {})[id(node)] = unescaping
+             if result is None:  # not followed: sweep the body instead
+                 result = sweep_body(helper, cbindings, ctx, depth,
+                                     info.get("class_node"), info.get("bound_kind"))
+@@ -2589,7 +2684,8 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+                 followed = ()
+                 if init is not None:
+                     result = follow_helper(init, node, cenv, cbindings, ctx, depth, True,
+-                                           helper, "instance")
++                                           helper, "instance", genv=globals_env,
++                                           scope=init_info.get("scope", "class"))
+                     if result is not None:
+                         followed = (id(init),)
+                         take(result)
+@@ -2740,6 +2836,9 @@ def spawn_scan(nodes, env, bindings, depth=0, call_env=None, binding_env=None,
+         info = callable_info(ref, rbindings)
+         kind, target = info.get("kind"), info.get("node")
+         if kind == "helper" and target is not None:
++            if isinstance(parent, ast.Call) and \
++                    id(ref) in ctx.get("consumer_args", {}).get(id(parent), ()):
++                continue  # its non-escaping parameter was already analyzed
+             take(sweep_body(target, rbindings, ctx, depth,
+                             info.get("class_node"), info.get("bound_kind")))
+         elif kind == "class" and isinstance(target, ast.ClassDef):

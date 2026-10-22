@@ -1,0 +1,28 @@
+# BasePrecision (MadoR23) exact commands, in order
+# lane = /home/vgpnk/Projects/shokunin/mado-shokunin ; scratch = /fast/scratch/hyaku/mado-r23/BasePrecision
+1. [lane] git --no-optional-locks rev-parse --verify '<rev>^{commit}'  for a28e4815aabfa85f55274884000fb2608355f8cf, e33ea30461f6e9bbeee40beef19770a953f7a105, f3da50488661509ce5d144c90f7780f8088e0903
+2. [lane] git --no-optional-locks log --oneline --no-decorate -3 a28e4815aabfa85f55274884000fb2608355f8cf
+3. [lane] git --no-optional-locks show a28e4815aabfa85f55274884000fb2608355f8cf:tools/mado-tripwire.py > /fast/scratch/hyaku/mado-r23/BasePrecision/base-tool.py ; sha256sum base-tool.py tools/mado-tripwire.py ; git --no-optional-locks show e33ea30461f6e9bbeee40beef19770a953f7a105:tools/mado-tripwire.py | sha256sum
+4. [lane] command -v python3 git sha256sum prlimit timeout ; python3 --version ; git --version ; prlimit --version ; readlink -f /usr/bin/timeout ; pacman -Qo /usr/bin/timeout ; pacman -Qo /usr/bin/prlimit   (read-only)
+5. read-only: round-20/tw-precision.py (flags, SUITE_PIN, REV-only tool path), round-20 precision listing, round-21/oracle/measure.py:1-40, base-tool.py:2880-2925 and :3418-3465 (run_with_stack, CLI), grep for cap conventions
+6. [lane] git --no-optional-locks status --porcelain ; git --no-optional-locks diff --stat a28e4815 -- .ufo/waves/round-20 tools (empty) ; git --no-optional-locks diff --stat f3da50488661509ce5d144c90f7780f8088e0903 -- .ufo/waves/round-20/precision (empty) ; git --no-optional-locks diff --stat f3da5048 a28e4815 -- .ufo/waves/round-20/tw-precision.py (1 line)
+7. [lane] suite read at pin (git show f3da5048:<path>), digest check, family counts (Python, read-only)
+8. HARNESS RUN 1 (cwd lane):
+   prlimit --as=402653184 --cpu=15 -- timeout --signal=KILL 600 python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/tw-precision.py a28e4815aabfa85f55274884000fb2608355f8cf
+9. HARNESS RUN 2 (identical command, cwd lane)
+10. Cap propagation check (rlimit read only): prlimit --as=402653184 --cpu=15 -- python3 -I -c 'import resource as r; print(r.getrlimit(r.RLIMIT_AS), r.getrlimit(r.RLIMIT_CPU))'
+11. Fail-closed probes (same wrapper with timeout 120; no classifier child reached):
+   a. ... tw-precision.py                                  (no args)
+   b. ... tw-precision.py --help
+   c. ... tw-precision.py 0000000000000000000000000000000000000001
+   d. ... tw-precision.py a28e4815aabfa85f55274884000fb2608355f8cf --suite-rev 0000000000000000000000000000000000000001
+   e. ... tw-precision.py a28e4815aabfa85f55274884000fb2608355f8cf --bogus
+12. Receipt cross-check (read-only Python json compare): round-22/evidence/resume/precision-final.json vs precision-base-run1.stdout
+13. Failing-fixture read (read-only): git show f3da5048:.ufo/waves/round-20/precision/<file> for the nine failing cases
+14. Scratch clone (not the lane): git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r23/BasePrecision/clone ; git -C <clone> checkout -q -b tamper-probe-r23 a28e4815aabfa85f55274884000fb2608355f8cf
+15. TAMPER PROBE (clone only): appended one newline to .ufo/waves/round-20/precision/CasePureBuiltins--frozenset-closure.jsonl, committed as de7b464094dcda16db7af3e24d0054687e816de4 (BasePrecision identity), then:
+   prlimit --as=402653184 --cpu=15 -- timeout --signal=KILL 120 python3 -I <clone>/.ufo/waves/round-20/tw-precision.py a28e4815aabfa85f55274884000fb2608355f8cf --suite-rev de7b464094dcda16db7af3e24d0054687e816de4
+16. WORKTREE-ONLY PROBE (clone only): git -C <clone> checkout -q a28e4815aabfa85f55274884000fb2608355f8cf ; appended one comment line to <clone>/tools/mado-tripwire.py (uncommitted) ; ran RUN 1 command with cwd <clone> ; git -C <clone> checkout -- tools/mado-tripwire.py (restore)
+17. Writes: only under .ufo/waves/round-23/w1/out/BasePrecision/ and .ufo/waves/round-23/w1/reports/BasePrecision.md (lane); everything else under /fast/scratch/hyaku/mado-r23/BasePrecision/
+18. [lane] git --no-optional-locks log --oneline --no-decorate -4 HEAD ; show-ref --heads ; merge-base --is-ancestor a28e4815aabfa85f55274884000fb2608355f8cf HEAD ; diff --stat a28e4815aabfa85f55274884000fb2608355f8cf HEAD -- tools .ufo/waves/round-20 (empty)
+19. TIP CHECK (cwd lane): prlimit --as=402653184 --cpu=15 -- timeout --signal=KILL 600 python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/tw-precision.py 4de44647f93bfd25ed5c979f61ff016b50456549
