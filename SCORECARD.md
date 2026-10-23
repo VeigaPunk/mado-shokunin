@@ -1769,3 +1769,35 @@ Harm watch: `git diff --stat 543f0445 -- tools/` touches only `tools/mado-wsrule
 ### Planned (round 28; intent only)
 
 C2 residual: H-set rotation on re-measurement (w3 CritC2Claim) and the two Q36-successor survivors (glob-case, marker-case, w2 MutQ36Successor); the ExactBool blind spot noted by w3 CritC1Claim (counter BOOLWORD values are exact words; the 13-tree `bools` probe is the discriminator); suite-A sandbox residuals (output-flood DoS, `.git` metadata leak, w3 CritC2Claim).
+
+## Round 28 — record repairs
+
+### round-27 harm-watch erratum
+
+The false round-27 claim is at `SCORECARD.md:1767`:
+
+> “Harm watch: `git diff --stat 543f0445 -- tools/` touches only `tools/mado-wsrules.py` (new); suites/repairs touch only `quality/`.”
+
+At the lane tip, the tools diff instead reports:
+
+```text
+ tools/mado-binds.py   |   6 +
+ tools/mado-wsrules.py | 851 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 857 insertions(+)
+```
+
+`git show b6650d583924d670c9e98594ffb1c6f25e8e7682 -- tools/mado-binds.py` shows this docstring hunk:
+
+```diff
+commit b6650d583924d670c9e98594ffb1c6f25e8e7682
++Environment limit (round-27 note, M26-10): environment variables are not imported into the
++config variable table, unlike hyprlang v0.6.8, which seeds variables from the process
++environment.  A `$NAME` supplied only by the environment stays literal, and `source = $VAR`
++using only an environment value is not followed.  Variables defined in the config tree are
++still expanded.
++
+```
+
+Classification: an introduced docstring/contract change was unrecorded by the harm watch. It makes no behavior change; the omission is an S3 record defect.
+
+Correction: the `543f0445e9d60bdfa026c54772d29e8b96bc844b` → `4f610066efd90804b055c42ae20c41a7f44404f9` `tools/` diff changes both `tools/mado-wsrules.py` (new) and `tools/mado-binds.py` (six added docstring lines). The harm watch must include the latter's environment-limit note as a docstring-only change, not a behavior change.

@@ -1,0 +1,32 @@
+=== RED: malformed two-cell fixture ===
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-28/evidence/e01-red-before/SOURCES.md
+55969efeacb23dd17c9ac8f7d5f448bef60572ca8ca9c95390863f14714b4ba9  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-28/evidence/e01-red-before/SOURCES.md
+fixture_sha256=55969efeacb23dd17c9ac8f7d5f448bef60572ca8ca9c95390863f14714b4ba9
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-28/evidence/e01-red-before/SOURCES.md --today 2026-10-23
+file	E01	S178 fields=2
+file	E01	S179 fields=2
+file	E01	S180 fields=2
+file	E01	S181 fields=2
+file	E01	S182 fields=2
+exit=1
+
+=== GREEN: pre-existing lane clone ===
+The destination existed before this session; it was not overwritten or recreated. Observed clone metadata:
+$ git -C /fast/scratch/hyaku/mado-r28/d3clone rev-parse HEAD
+123d8cd07fada3b75fbe6d726b30e5b96abd39d7
+$ git -C /fast/scratch/hyaku/mado-r28/d3clone remote get-url origin
+/home/vgpnk/Projects/shokunin/mado-shokunin
+$ git -C /fast/scratch/hyaku/mado-r28/d3clone status --short
+(no output)
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --today 2026-10-23 /fast/scratch/hyaku/mado-r28/d3clone
+d3clone	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+d3clone	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+d3clone	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+d3clone	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+d3clone	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+d3clone	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+d3clone	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+d3clone	ok	/fast/scratch/hyaku/mado-r28/d3clone/corpus/SOURCES.md
+exit=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --today 2026-10-23 /fast/scratch/hyaku/mado-r28/d3clone | { grep -F $'\tE01\t' || true; } | wc -l
+E01 stdout lines: 0

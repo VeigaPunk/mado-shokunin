@@ -1,0 +1,1 @@
+# ScoutReportShape — stub

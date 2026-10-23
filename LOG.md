@@ -1656,3 +1656,17 @@ C1 (coverage, sourced S178–S182 + S158/S162): the inherited ExecWsToolA bytes 
 C2 (operability): measurement 1 at `48b9434a` (suites from ExecSuiteA1/ExecSuiteB2 first-returned bytes): green=17/17, w_killed=15/15, h_killed=12/18 vs h_need=14 — TARGET_MISSED on three named suite-A survivors (extra-disjunction, unstable-conjunction, embed-boundary; all c2-counter subjects). Per the registration repair flow (repair seats never read the sealed H directory), w4 repaired suite A; measurement 2 at `0b53bd86`: green=17/17, w_killed=15/15, h_killed=15/18 vs h_need=14, `verdict=TARGET_MET`, exit 0 (`evidence/c2-after-0b53bd86.txt`). Suite B independently confirmed (MutSuiteB: 3 fresh checker-class mutants killed, 46/46 greens).
 
 Spotcheck debt (r26 §7): items 1/3 (M26-10 PROVINCE + binds docstring) landed at `b6650d5`; item 4 SKILL.md registry rows landed (six rows, r26+r27 gates); item 6 population-run citation fixed in SCORECARD with `evidence/r26-population-after.txt` + hidden-dependency note; item 5 Q36 successor landed (`quality/check-control-receipts.py`, receipts `quality/q36-successor-receipts.txt`; two survivors routed: glob-case, marker-case); item 7 host-safety terms carried through every receipt (delta 0); item 2 seeds-per-control routed with the survivors. QUALITY-37 run on the C1 receipt: exit 2 UNREADABLE (open-ended PRED-C2 totals not parseable — routed extension).
+## Round 28 — SKILL citation erratum (2026-10-23)
+
+- 2026-10-23 — round-27 SKILL citation erratum: supersedes `SKILL.md:631-636` with
+  `SKILL.md:630-635`; the citation was off by one after a header edit. At the
+  round-27 closure commit `767b12db62ceb3ad38d24a13e4c693b4375ceb5a` and
+  wave-start tip `4f610066efd90804b055c42ae20c41a7f44404f9`, the registry's
+  three round-27 rows are `mado-r27-counter-selftest` at 633,
+  `mado-r27-population-suite` at 634, and `mado-r27-control-receipts` at
+  635; together with the round-26 rows at 630-632, the registry span is
+  630-635. Evidence command:
+  `git show REV:SKILL.md | grep -nE 'mado-r(26|27)-' | cut -d'|' -f1-2`
+  (run once at each revision) returned 630 r26-counter-selftest, 631
+  r26-population, 632 r26-control-receipts, and 633/634/635 the three
+  round-27 rows above at both revisions.

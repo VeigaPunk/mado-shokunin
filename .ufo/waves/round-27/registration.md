@@ -170,3 +170,13 @@ L1 pilots: before 0/41 (`evidence/c1v4-before-543f0445.txt`); FileScope 24/41, G
 **PRED-C1-r27-v4**: the PRED-C1-r27-v2 sentence above, word for word, with the counter `c1/count-v4.py`; target:
 cases_pass=41/41. Every C1 control (now 13 shapes) is re-scored under v4 with two fresh seeds before any data seat
 (`controls/v4/<Control>-seed{1,2}.txt`).
+
+## Round-27 measurement erratum (round 28)
+
+This round-27 measurement erratum records the two C2 attempts and repair sequence omitted from the registration.
+
+- `measurement 1` — at REV `48b9434a0b0619b3896c9d80e8288ec2226c9ed8`, the frozen C2 counter reported `green=17/17`, `b_valid=9`, `w_killed=15/15`, `h_killed=12/18`, `h_need=14`, `h_valid=18`, `verdict=TARGET_MISSED`, exit 1 (`evidence/c2-after-48b9434a.txt:1,64-65`).
+- `repair flow` — after the miss, repair seats ExecRepairA1 and ExecRepairA2 produced suite-A candidates; RevRepair audited them and recommended ExecRepairA1, with ExecRepairA2 as fallback (`w4/reports/ExecRepairA1.md:4,117-120`; `w4/reports/ExecRepairA2.md:1-5`; `w4/reports/RevRepair.md:112-179`). The suite measured next was ExecRepairA2's candidate (sha256 `aa0e14d160b8429b945f12329e5673a1d484986d1b617a05920a92e77a1d4898`; `evidence/c2-after-0b53bd86.txt:5`).
+- `measurement 2` — at REV `0b53bd861104cb8319c698ce622d1b81d3fc66e9`, the frozen C2 counter reported `green=17/17`, `b_valid=9`, `w_killed=15/15`, `h_killed=15/18`, `h_need=14`, `h_valid=18`, `h_min_per_subject=6`, `invalid=0`, `verdict=TARGET_MET`, exit 0 (`evidence/c2-after-0b53bd86.txt:1,64-65`).
+
+The original C2 data rule says the first returned suite lands and receives “one measurement” (lines 70-73); it records neither a failed first measurement nor a repair-and-remeasurement path. Read literally, it implied a single measurement rather than the missed measurement 1, the repair flow, and the successful measurement 2 documented here.

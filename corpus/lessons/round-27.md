@@ -30,3 +30,7 @@ Changes on pre-existing rows (in place, logged old→new):
 
 - S158 `used-by`: `corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/animation-table-r26.md` → `corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/animation-table-r26.md, corpus/knowledge/workspace-rules-r27.md`.
 - S162 `used-by`: `corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/bind-table-r25.md, corpus/knowledge/animation-table-r26.md` → `corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/bind-table-r25.md, corpus/knowledge/animation-table-r26.md, corpus/knowledge/workspace-rules-r27.md`.
+
+## Round-27 erratum (round 28)
+
+The malformed two-cell S178–S182 quote rows were at `corpus/SOURCES.md:195-199`; they failed M27-2's E01 schema check (`NF!=13`). The located quotes live in this lesson's `## Gate` table, not in `SOURCES.md`. The round-28 sources seat repairs the registry rows themselves; this lesson does not edit `corpus/SOURCES.md`.

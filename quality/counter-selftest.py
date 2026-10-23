@@ -17,18 +17,21 @@ The round-26 self-test failed 2 of its 9 checks on the active C1 v2 counter beca
 fake oracle answered the `version` verb with an animation table; the fake oracle here
 answers `version` with the pinned Hyprland commit, so the version guard is exercised too.
 
-Checks (55 behavioural probes + 1 fixed-inventory gate):
+Checks (58 behavioural probes + 1 fixed-inventory gate):
 
   C1  c1-perfect          perfect tool                        -> exit 0, TARGET_MET, 41/41
       c1-field-*          one node field wrong (6 fields)     -> exit 1, TARGET_MISSED
       c1-bezier-*         one bezier field wrong (5 fields)    -> exit 1, TARGET_MISSED
+      c1-node-subset      tool omits one node (strict subset)    -> exit 1, TARGET_MISSED
       c1-invalid-json     tool stdout is not JSON              -> exit 1, TARGET_MISSED
       c1-malformed        tool stdout is not [nodes,beziers]   -> exit 1, TARGET_MISSED
+      c1-extra-output-segment tool adds a third output array     -> exit 1, TARGET_MISSED
       c1-tool-exit        tool exits non-zero                  -> exit 1, TARGET_MISSED
       c1-near-perfect     40 of 41 cases right                 -> exit 1, TARGET_MISSED
       c1-drift            two BASE oracle runs disagree       -> exit 2, ORACLE_UNSTABLE
       c1-oracle-fail      every oracle call fails              -> exit 2, ORACLE_FAIL
       c1-version-guard    nested Hyprland commit is wrong      -> exit 2, ORACLE_VERSION
+      c1-version-missing-commit version commit absent             -> exit 2, ORACLE_VERSION
   C2  c2-perfect          perfect tool                        -> exit 0, TARGET_MET, 51/51
       c2-field-*          one bind field wrong (18 fields)    -> exit 1, TARGET_MISSED
       c2-invalid-json     tool stdout is not JSON              -> exit 1, TARGET_MISSED
@@ -83,6 +86,7 @@ import threading
 HYPR_COMMIT = "efb50993780079460b0cbed1363e2166a2de1d9f"
 VERSION_OK = {"commit": HYPR_COMMIT, "tag": "v0.56.2"}
 VERSION_BAD = {"commit": "0" * 40, "tag": "v0.0.0"}
+VERSION_MISSING = {"tag": "v0.56.2"}
 
 MARK_NAME = ".mado-selftest-near-perfect"
 SEED = "27a1c0de5eed0001"
@@ -225,8 +229,9 @@ REQUIRED = (
     ["c1-perfect"]
     + ["c1-field-%s" % f for f, _ in C1_NODE_FIELDS]
     + ["c1-bezier-%s" % f for f, _ in C1_BEZ_FIELDS]
-    + ["c1-invalid-json", "c1-malformed", "c1-tool-exit", "c1-near-perfect", "c1-drift",
-       "c1-drift-bezier", "c1-oracle-fail", "c1-version-guard"]
+    + ["c1-invalid-json", "c1-malformed", "c1-extra-output-segment", "c1-tool-exit", "c1-near-perfect",
+       "c1-node-subset", "c1-drift", "c1-drift-bezier", "c1-oracle-fail",
+       "c1-version-guard", "c1-version-missing-commit"]
     + ["c2-perfect"]
     + ["c2-field-%s" % f for f, _ in C2_FIELDS]
     + ["c2-invalid-json", "c2-malformed", "c2-tool-exit", "c2-near-perfect", "c2-embed",
@@ -527,6 +532,12 @@ def main():
         (got, total), _, verdict = pred(out)
         record("c1-malformed", rc == 1 and verdict == "TARGET_MISSED",
                "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
+        rc, out = run_case(c1, run_dir, a.rev, "c1-extra-output-segment",
+                           C1_BASE, mut="out.append([])")
+        (got, total), _, verdict = pred(out)
+        record("c1-extra-output-segment",
+               rc == 1 and verdict == "TARGET_MISSED" and got is not None and got < total,
+               "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
 
         rc, out = run_case(c1, run_dir, a.rev, "c1-tool-exit", C1_BASE, mode="exit")
         (got, total), _, verdict = pred(out)
@@ -541,6 +552,12 @@ def main():
         (got, total), _, verdict = pred(out)
         record("c1-near-perfect",
                rc == 1 and verdict == "TARGET_MISSED" and got == 40 and total == 41,
+               "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
+        # A node-set subset is not an exact table match.
+        rc, out = run_case(c1, run_dir, a.rev, "c1-node-subset", C1_BASE, mut="out[0].pop()")
+        (got, total), _, verdict = pred(out)
+        record("c1-node-subset",
+               rc == 1 and verdict == "TARGET_MISSED" and got is not None and got < total,
                "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
 
         drift1 = copy(C1_BASE)
@@ -562,6 +579,11 @@ def main():
 
         rc, out = run_case(c1, run_dir, a.rev, "c1-version-guard", C1_BASE, version=VERSION_BAD)
         record("c1-version-guard", rc == 2 and "ORACLE_VERSION" in out,
+               "rc=%s ORACLE_VERSION=%s" % (rc, "yes" if "ORACLE_VERSION" in out else "no"), out)
+        rc, out = run_case(c1, run_dir, a.rev, "c1-version-missing-commit",
+                           C1_BASE, version=VERSION_MISSING)
+        record("c1-version-missing-commit",
+               rc == 2 and "ORACLE_VERSION" in out,
                "rc=%s ORACLE_VERSION=%s" % (rc, "yes" if "ORACLE_VERSION" in out else "no"), out)
 
         # ---- C2: the binds counter ----------------------------------------------
