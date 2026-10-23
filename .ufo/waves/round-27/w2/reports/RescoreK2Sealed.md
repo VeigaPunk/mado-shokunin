@@ -1,0 +1,9 @@
+RESCORE-K2 K2ASTPin PRED-C2-r27-v2 green=5/17 b_valid=9 w_killed=15/15 h_killed=18/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2AcceptAll PRED-C2-r27-v2 green=17/17 b_valid=9 w_killed=0/15 h_killed=0/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2DoNothing PRED-C2-r27-v2 green=0/17 b_valid=9 w_killed=0/15 h_killed=0/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2NormPin PRED-C2-r27-v2 green=8/17 b_valid=9 w_killed=15/15 h_killed=18/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2R26Suites PRED-C2-r27-v2 green=6/17 b_valid=9 w_killed=12/15 h_killed=14/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2RejectAll PRED-C2-r27-v2 green=0/17 b_valid=9 w_killed=15/15 h_killed=18/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2ShaPin PRED-C2-r27-v2 green=2/17 b_valid=9 w_killed=15/15 h_killed=18/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2WBlocklist PRED-C2-r27-v2 green=6/17 b_valid=9 w_killed=15/15 h_killed=11/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
+RESCORE-K2 K2WBlocklistExact PRED-C2-r27-v2 green=17/17 b_valid=9 w_killed=15/15 h_killed=0/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
