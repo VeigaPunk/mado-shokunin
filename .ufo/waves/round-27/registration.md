@@ -152,3 +152,21 @@ every generated variable name drawn as `$` + 5-9 random letters (no fixed prefix
 **PRED-C1-r27-v3**: the PRED-C1-r27-v2 sentence above, word for word, with the counter `c1/count-v3.py`; target:
 cases_pass=41/41. Every C1 control is re-scored under v3 with two fresh seeds by the seat that built it before any
 data seat (`controls/v3/<Control>-seed{1,2}.txt`).
+
+## C1 redesign before data: counter v4 (11:10Z, before any data seat)
+
+w1 `CritC1Counter` met v3 at 41/41 on two fresh seeds each with two partial readers that key on no label: GlobalOnce
+(a name defined once applies everywhere; only redefined names bind by position; whole-field substitution; each file
+read once) and FileScope (definitions in a sourced file never reach the sourcing file)
+(`controls/K1GlobalOnce.py`, `controls/K1FileScope.py`). Cause: v3 wrote every definition at the top of the root,
+every use as a whole field, and never sourced a file twice. Under the kill rule v3 is retired before data. Counter v4
+`c1/count-v4.py` (sha256 `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1`) adds the critic's four
+shapes: VAREMBED (a variable holding only an item's value, used inside the item), SRCDEF (definitions in a sourced
+file that runs before their uses), USEBEFOREDEF (an item variable used once before its only definition, then after)
+and TWICE (one file sourced twice with a conflicting rule in between); same population, oracle and comparator.
+L1 pilots: before 0/41 (`evidence/c1v4-before-543f0445.txt`); FileScope 24/41, GlobalOnce 18/41, PrefixKeyed 16/41
+(`controls/v4/*-L1pilot.txt`).
+
+**PRED-C1-r27-v4**: the PRED-C1-r27-v2 sentence above, word for word, with the counter `c1/count-v4.py`; target:
+cases_pass=41/41. Every C1 control (now 13 shapes) is re-scored under v4 with two fresh seeds before any data seat
+(`controls/v4/<Control>-seed{1,2}.txt`).
