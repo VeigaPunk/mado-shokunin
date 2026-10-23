@@ -145,3 +145,51 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha2
 
 The same bounded `df -h /fast` command recorded above reported 86% used and 113G available before this re-score. The same independent bounded coredump-count command reported `1338` before and after (delta 0), matching both v2 receipts. Both counter processes completed; all nested compositor execution and cleanup remained in the pinned oracle. The control, counter, and oracle were unchanged, so restoration was unnecessary. Only the two authorized v2 receipt files and this appended report section were written for the follow-up. No tools were installed or updated.
 
+## v3 re-score
+CONTROL K1NaiveGrep v3 best: PRED-C1-r27-v3 cases_pass=2/41 verdict=TARGET_MISSED — not met
+
+L1 retired v2 before data after a separate `$wsr`-prefix-keyed reader met its target. The v2 receipts above remain historical evidence. As requested, re-scored the unchanged NAIVE-GREP control under v3, which replaces fixed variable-name prefixes with random names while retaining v2's other behavior.
+
+Ran this exact command twice concurrently from `/home/vgpnk/Projects/shokunin/mado-shokunin`, allowing the counter to draw two fresh seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NaiveGrep.py --jobs 6
+```
+
+| Verbatim stdout receipt | Fresh seed | PRED line | Exit |
+| --- | --- | --- | --- |
+| `.ufo/waves/round-27/controls/v3/K1NaiveGrep-seed1.txt` | `30688c62b8e855e5` | `PRED-C1-r27-v3 cases_pass=2/41 verdict=TARGET_MISSED` | 1 |
+| `.ufo/waves/round-27/controls/v3/K1NaiveGrep-seed2.txt` | `8f384c40777b4ea2` | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | 1 |
+
+Both runs resolved REV to `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, confirmed duplicate BASE oracle equality with zero rules, and confirmed oracle commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. The 79-file snapshot digest was unchanged. Seed1 passed BASE and this generated case:
+
+```text
+CASE C22   PASS rules=3 oracle_rules=3 (APPEND:DECOY+GAPSHORT)
+```
+
+Its remaining 39 generated cases failed. Seed2 passed only BASE, with all 40 generated cases failing. Neither run exited 2 or was inconclusive; no guard retry was needed. Both rejected this control against the 41/41 target, so it did not trigger the target-meeting-control redesign rule.
+
+Before-and-after SHA-256 evidence:
+
+| Path | SHA-256 before and after |
+| --- | --- |
+| `.ufo/waves/round-27/c1/count-v3.py` | `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd` |
+| `.ufo/waves/round-27/harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+| `.ufo/waves/round-27/controls/K1NaiveGrep.py` | `f26dfb60602b57297fba5c4e5b1153dd22964f2b1cb7fee33a2539f77550e611` |
+
+Receipt SHA-256 values:
+
+- v3 seed1: `603c41088a3e6bc49b6b4f10e77f46ce7cf857a176f3c3306a477cb267b0f95e`
+- v3 seed2: `4cb1850e7a3d7628307e2925c8d5ebdc91d8c4e5ef27a4494d659181211828c3`
+
+Exact hash commands:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py .ufo/waves/round-27/controls/v3/K1NaiveGrep-seed1.txt .ufo/waves/round-27/controls/v3/K1NaiveGrep-seed2.txt
+```
+
+The bounded scratch-capacity command recorded above reported `/fast` 89% used, 94G available before the v3 runs. The independent bounded coredump-count command recorded above reported `1338` both before and after (delta 0). Both receipts independently contain `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0` and end in `exit=1`.
+
+Both bounded counter processes completed using the pinned oracle for compositor isolation and cleanup. The control and frozen inputs were unchanged; no restoration was necessary. Only the two authorized v3 receipts and this report append were written for this follow-up. No tools were installed or updated.
+

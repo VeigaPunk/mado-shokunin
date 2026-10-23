@@ -145,3 +145,77 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 30 prlimit --as=4000000000 --core=
 Both bounded counter processes exited normally (PIDs 556529 and 556544). Repeated the earlier cleared-environment `ps -eo pid=,ppid=,args=` inspection, filtering captured output for the exact absolute control path: `K1Junk v2 remaining process matches=0`, `process_check_exit=0`.
 
 Follow-up writes were limited to the two assigned `controls/v2/` receipts and this appended report section. No control edit, tool installation, direct Hyprland launch, live-compositor command, git/jj write, or subagent dispatch was performed.
+
+## C1 counter v3 re-score
+CONTROL K1Junk v3 best: PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v2 before data after a different control exploited the generated `$wsr` variable-name prefix. Per the follow-up, scored the unchanged JUNK control twice under v3, whose generated variable names have no fixed prefix. The detector still requires exact, ordered, type-strict equality in all 41 cases.
+
+Executed this exact command twice from the lane root:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1Junk.py --jobs 6
+```
+
+| Run | Fresh case seed | Actual prediction line | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `868f2870b502fc1c` | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1Junk-seed1.txt` |
+| 2 | `c7c31a1c251131c4` | `PRED-C1-r27-v3 cases_pass=0/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1Junk-seed2.txt` |
+
+Run 1 passed only BASE by randomly emitting the oracle's empty array; run 2 passed no cases. All 40 generated cases failed in both runs.
+
+### Additional assigned critic-built control
+CONTROL K1FlatScan v3 best: PRED-C1-r27-v3 cases_pass=2/41 verdict=TARGET_MISSED — not met
+
+Also scored the supplied critic-built `K1FlatScan.py` twice, without changing its bytes. Coordinated receipt ownership with `MadoR27.CritC1Counter`; no sibling source was edited. Executed this exact command twice from the lane root:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1FlatScan.py --jobs 6
+```
+
+| Run | Fresh case seed | Actual prediction line | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `c5c869d2ee2cca23` | `PRED-C1-r27-v3 cases_pass=2/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1FlatScan-seed1.txt` |
+| 2 | `005dea94a64865eb` | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1FlatScan-seed2.txt` |
+
+FlatScan run 1 passed BASE and C38 (`SYNTH:BOOLWORD+MERGE+NEWSRC+ORDER`); run 2 passed only BASE. Neither control met the v3 target.
+
+### V3 receipts, unchanged bytes, and host safety
+
+All four bounded scores ran concurrently through the supplied counter and isolated oracle, with separate automatically generated case seeds and explicitly cleared subprocess environments. All four process exits were 1, stderr streams were empty, and stdout was saved verbatim through `exit=1`. No timeout or exit-2 guard occurred. These are negative-control results, not source-mutant kill claims.
+
+Every receipt resolved revision `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, verified Hyprland commit `efb50993780079460b0cbed1363e2166a2de1d9f` / tag `v0.56.2`, and printed:
+
+```text
+ORACLE_CHECK base_twice equal rules=0
+HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
+```
+
+Measured SHA-256 before and after:
+
+| Path under `.ufo/waves/round-27/` | SHA-256 before = after |
+| --- | --- |
+| `controls/K1Junk.py` | `2105846310d5b3e85b707b7e809d171b6a66c1914cde8be89db6f13272645a5a` |
+| `controls/K1FlatScan.py` | `68339595f2a1ae6c0d41276c78852f81af7fb5ebc7b423f320a4d0f0c7abf1ea` |
+| `c1/count-v3.py` | `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd` |
+| `harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+No source or control mutation was made; no restoration was necessary. The JUNK hash remains identical across v1, v2 and v3.
+
+| V3 receipt | SHA-256 |
+| --- | --- |
+| `controls/v3/K1Junk-seed1.txt` | `1f4219717f949910a4ffd0503f29989f5399c174372e6834c17d305f704b210a` |
+| `controls/v3/K1Junk-seed2.txt` | `36b35326c96c8199ea6d2cafd36034002b970e8253262577daab4e5e318744e0` |
+| `controls/v3/K1FlatScan-seed1.txt` | `e67a1b4cd7e73b0a780a78747640db0422ba920184b05a237ea01c8cb7265047` |
+| `controls/v3/K1FlatScan-seed2.txt` | `f16973ed0f99fb3498f501ec33aedf3d2dcd756324ac613729b48e09a69f224c` |
+
+Exact hash commands, from the lane root:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/controls/K1Junk.py .ufo/waves/round-27/controls/K1FlatScan.py .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/controls/K1Junk.py .ufo/waves/round-27/controls/K1FlatScan.py .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/v3/K1Junk-seed1.txt .ufo/waves/round-27/controls/v3/K1Junk-seed2.txt .ufo/waves/round-27/controls/v3/K1FlatScan-seed1.txt .ufo/waves/round-27/controls/v3/K1FlatScan-seed2.txt
+```
+
+Repeated the earlier exact `df -h /fast` command before scoring: 92G available. Repeated the v2 cleared-environment `sh -c` coredump count command before and after: 1338 to 1338, delta 0. All four counter processes exited normally: JUNK PIDs 3503637 and 3503643; FlatScan PIDs 3503647 and 3503651. Repeated the earlier cleared-environment `ps` command and filtered its captured output for each absolute control path: `K1Junk v3 remaining process matches=0`, `K1FlatScan v3 remaining process matches=0`, `process_check_exit=0`.
+
+Follow-up writes were limited to the four assigned `controls/v3/` receipts and this appended report section. No tools were installed, no lane subjects or controls were edited, and no direct Hyprland launch, live-compositor command, git/jj write, or subagent dispatch was performed.

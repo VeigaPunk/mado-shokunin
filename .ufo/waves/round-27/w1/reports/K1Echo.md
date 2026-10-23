@@ -135,3 +135,76 @@ New receipt SHA-256 values:
 - v2 seed 2: `11928ff2385c8af6839e9777732b19c9acdc029e63bcea5822c29149ff61557f`.
 
 Restoration was unnecessary: no control, subject, counter, or oracle bytes were modified. This follow-up wrote only the two requested v2 receipts and appended this section. No tools were installed or upgraded, no subagents were dispatched, and no git/jj write commands were run.
+
+## C1 v3 re-score — unchanged ECHO
+CONTROL K1Echo v3 best: PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+At L1's request after v2 retirement, scored the unchanged control twice with v3 (random variable names without the fixed prefix). Both runs passed only the empty BASE table and failed every generated case.
+
+## C1 v3 additional control — K1PrefixKeyed
+CONTROL K1PrefixKeyed v3 best: PRED-C1-r27-v3 cases_pass=30/41 verdict=TARGET_MISSED — not met
+
+Also scored the existing critic-built `K1PrefixKeyed.py` without editing it. It follows sources and interprets workspace fields, but uses final-value bindings for ordinary variables with an encounter-time exception keyed specifically to `$wsr[a-z]{4}`. Results were 30/41 and 29/41. Every failing case in both receipts carried `VARREDEF`; these are control measurements, not pristine/mutated/restored mutant-kill claims.
+
+### Exact commands and receipts
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Executed each command twice, all four runs concurrently, each with a fresh counter-selected seed:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1Echo.py --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1PrefixKeyed.py --jobs 6
+```
+
+| Control/run | Seed | BASE | APPEND | SYNTH | Total | Process exit |
+| --- | --- | --- | --- | --- | --- | --- |
+| K1Echo/1 | `908f2689b7dc8f9d` | 1/1 | 0/25 | 0/15 | 1/41 | 1 |
+| K1Echo/2 | `32783f2e1331a85f` | 1/1 | 0/25 | 0/15 | 1/41 | 1 |
+| K1PrefixKeyed/1 | `1a26c102a1fd892d` | 1/1 | 19/25 | 10/15 | 30/41 | 1 |
+| K1PrefixKeyed/2 | `abb243a34141c621` | 1/1 | 16/25 | 12/15 | 29/41 | 1 |
+
+Verbatim stdout, including `exit=1`, is saved in:
+
+- `.ufo/waves/round-27/controls/v3/K1Echo-seed1.txt`
+- `.ufo/waves/round-27/controls/v3/K1Echo-seed2.txt`
+- `.ufo/waves/round-27/controls/v3/K1PrefixKeyed-seed1.txt`
+- `.ufo/waves/round-27/controls/v3/K1PrefixKeyed-seed2.txt`
+
+Every run printed `TARGET_MISSED`, had empty stderr, and passed its guards; no exit-2 retry was needed. The expected detector still requires 41/41 under type-strict ordered JSON equality. All four runs resolved revision `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, confirmed duplicate BASE oracle equality (`rules=0`), the pinned Hyprland v0.56.2 commit, and the same 79-file snapshot digest recorded above.
+
+### Safety and unchanged-byte evidence
+
+Repeated the exact storage and coredump commands documented above. `/fast` had 92G available (712G used, 89%) before scoring. Independent pre/post Hyprland coredump counts were both `1338`, delta zero; every receipt also printed:
+
+```text
+HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
+```
+
+All four subprocesses received a cleared initial environment and separate process groups, with a 925-second parent deadline and the previously documented `finally` process-group cleanup. Hyprland was launched only by the frozen counter/oracle, with oracle slot locking enforcing its host-wide limit; no live compositor commands were issued.
+
+Before scoring:
+
+```sh
+env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1Echo.py .ufo/waves/round-27/controls/K1PrefixKeyed.py .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py
+```
+
+After scoring:
+
+```sh
+env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1Echo.py .ufo/waves/round-27/controls/K1PrefixKeyed.py .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/v3/K1Echo-seed1.txt .ufo/waves/round-27/controls/v3/K1Echo-seed2.txt .ufo/waves/round-27/controls/v3/K1PrefixKeyed-seed1.txt .ufo/waves/round-27/controls/v3/K1PrefixKeyed-seed2.txt
+```
+
+Identical before/after SHA-256 values:
+
+- K1Echo: `093aa876dca8081acd1c3a88a0d17475f8510cfaa105d9be57ab12f6a8b9fedd`.
+- K1PrefixKeyed: `6fb88339190ad63e3549231281d6068ff4f09d31542e8568e62dccd3fe9b05fa`.
+- Frozen v3 counter: `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd`.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+New receipt SHA-256 values:
+
+- K1Echo seed 1: `1b22135adce881154e677252f56a99454e8fd1428e0dfd91d8e3175cee479950`.
+- K1Echo seed 2: `327ee971617db11887626cf004b7564e9e00a2b0b5cc2a71b05be7a30b50def2`.
+- K1PrefixKeyed seed 1: `89ad36865aece0ff5237c869329abb144cc6b9420293e2086beb9584f8be38bc`.
+- K1PrefixKeyed seed 2: `387adb8f8cdbc203338415a4dd732da717cea61e23f56e3e22eb1bdb56b50b44`.
+
+Neither control nor any subject/counter/oracle was modified, so no byte restoration was necessary. This follow-up wrote only the four requested v3 receipts and appended this report. No tool installation/upgrade, subagent dispatch, or git/jj write command occurred.

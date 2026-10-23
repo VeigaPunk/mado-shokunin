@@ -111,3 +111,40 @@ V2 receipt SHA-256:
 
 Both counters printed `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent before/after observations using `env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 --core=0 -- coredumpctl list --no-pager --no-legend` also counted 1338 and 1338 Hyprland entries: own v2 delta=0. Both counter processes were awaited to exit; nested compositor lifecycle remained exclusively under the unchanged pinned oracle. The bounded pre-run `df -h /fast` observation reported 113G available. No tools were installed or updated, no git/jj writes were run, and no control/source bytes were edited.
 
+
+## V3 re-score — unchanged control
+
+CONTROL K1LabelKeyed v3 best: PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v2 before data after a prefix-keyed reader met it. Per the follow-up, tested the identical LabelKeyed control against v3, which randomizes generated variable names without a fixed prefix. Earlier results remain historical receipts, not the active C1 rule.
+
+Ran the following command twice concurrently from `/home/vgpnk/Projects/shokunin/mado-shokunin`, with fresh counter-generated seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1LabelKeyed.py --jobs 6
+```
+
+| Run | Fresh seed | BASE | APPEND | SYNTH | Actual PRED output | Process exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `b04c013dca3881dd` | 1/1 | 0/25 | 0/15 | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1LabelKeyed-seed1.txt` |
+| 2 | `adaaa716bb5a1980` | 1/1 | 0/25 | 0/15 | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1LabelKeyed-seed2.txt` |
+
+Both receipts include `exit=1`; both stderr streams were empty. No exit-2 guard occurred and no rerun was needed. Both resolved REV to `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, recorded the same 79-file snapshot digest `fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727`, confirmed equal zero-rule BASE oracle runs, and confirmed Hyprland commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. This metadata/canned-answer substitution failed every generated case under both v3 seeds.
+
+Before/after `sha256sum` evidence was identical:
+
+| File under `.ufo/waves/round-27/` | SHA-256 before = after |
+| --- | --- |
+| `controls/K1LabelKeyed.py` | `1fb107df8d51811145da3fa12e2e1b01349ad295b5fcff1f34ca491c7d718c72` |
+| `c1/count-v3.py` | `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd` |
+| `harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+V3 receipt SHA-256:
+
+- Seed 1: `a1f0584a05d0bb1c0db68c39854cab8c5bfae38750d27647ddda8c5007e1e12e`.
+- Seed 2: `fbac867472189e31faec5f88ac84aaa6edefad3dcb220caf0758371f2084ea94`.
+
+The control remains byte-identical to its original scored version; no mutation or restoration was performed. The frozen counter and oracle hashes match the follow-up pins before and after.
+
+Both counters printed `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent before/after runs of `env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 --core=0 -- coredumpctl list --no-pager --no-legend` also counted 1338 Hyprland entries each: own v3 delta=0. Both counter processes were awaited to exit; nested compositor lifecycle remained under the unchanged oracle. The bounded pre-run capacity observation reported 94G available on `/fast`. No tools were installed or updated, no git/jj write command was run, and no control/source bytes were edited.
+

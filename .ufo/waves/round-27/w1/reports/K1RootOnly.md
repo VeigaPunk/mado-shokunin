@@ -109,3 +109,35 @@ Receipt SHA-256:
 At inspection, registration.md's redesign paragraph still printed an earlier v2 counter hash (`f7f86d75…`); the measured bytes and both receipts use the exact newer pin supplied by the L1. Registration was not edited.
 
 Bounded `df -h /fast` reported 113G available before rescore. Independent before/after Hyprland coredump counts were both 1338, delta 0; both counters also printed `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Only the frozen counter/oracle launched nested compositors. Both awaited counter processes exited with code 1 and their oracle calls executed harness process-group cleanup. No persistent service, additional test, install, production parser change, or restoration was required.
+
+## C1 v3 rescore — unchanged control
+
+CONTROL K1RootOnly v3 best: PRED-C1-r27-v3 cases_pass=3/41 verdict=TARGET_MISSED — not met
+
+The L1 retired counter v2 before data after a different variable-prefix-keyed reader met its target. The preceding v1/v2 results remain historical. This rescore uses v3, which randomizes variable names without a fixed prefix. The ROOT-ONLY control was not changed.
+
+Executed twice concurrently from the lane directory with clean parent environments containing only `PATH=/usr/bin`, retaining verbatim stdout in the requested receipts:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1RootOnly.py --jobs 6
+```
+
+| Run | Fresh seed | Actual predicate output | Exit | Receipt | Elapsed |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `d251182b055cf307` | `PRED-C1-r27-v3 cases_pass=3/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v3/K1RootOnly-seed1.txt` | 108.464 s |
+| 2 | `3baf9ef184c7bf09` | `PRED-C1-r27-v3 cases_pass=3/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v3/K1RootOnly-seed2.txt` | 113.022 s |
+
+Both receipts resolve the revision to `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, confirm repeated BASE equality, pinned Hyprland v0.56.2, and the unchanged 79-file snapshot digest `fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727`. Stderr was empty for both runs. Neither returned guard code 2; no retry was required.
+
+Before/after SHA-256 values were identical:
+
+- Control: `bf9a86af4f5f34679d77a47d19ba67614a1715c2b6d74df175469fee20b3544a`, unchanged from v1/v2.
+- Counter v3: `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd`, matching the L1 pin and registration.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+Receipt SHA-256:
+
+- v3 seed 1: `585c4789c40ab4ae12313c05662224687bb19da33f4eb1b1dd42cf35040b638d`.
+- v3 seed 2: `b7c3d5bd785df50a7bb95e9e77dbe3d5f21952c352242ea009ec696e182aa8a5`.
+
+Before rescore, bounded `df -h /fast` reported 94G available. Independent Hyprland coredump counts before and after were both 1338, delta 0; both receipts independently print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Only the frozen counter/oracle launched nested compositors. Both awaited counter processes exited with code 1 and their oracle calls executed harness process-group cleanup. No persistent service or tool install was started. No control, frozen counter, oracle, production code, or sibling file was modified; no restoration was necessary. The source-omission control is rejected under v3.

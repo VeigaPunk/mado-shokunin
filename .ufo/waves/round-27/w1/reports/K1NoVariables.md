@@ -186,3 +186,53 @@ Filesystem      Size  Used Avail Use% Mounted on
 The same bounded, clean-environment crash census command was run before and after this follow-up. Both outputs were `1338`, giving a seat-observed delta of `0`. Each v2 receipt also prints `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
 
 Both counter processes completed. Compositor startup and teardown stayed inside the frozen harness. Only the two requested v2 receipt files and this report appendix were written during the follow-up; control and subject bytes needed no restoration because they were never edited. No tools were installed, no subagents were dispatched, and no additional verification was run.
+
+## v3 rescoring
+CONTROL K1NoVariables v3 best: PRED-C1-r27-v3 cases_pass=10/41 verdict=TARGET_MISSED — not met
+
+Re-scored the unchanged NO-VARIABLES control under the registered v3 counter, which randomizes generated variable names without a fixed prefix. Both fresh-seed measurements rejected the control; neither returned exit 2 and no guard retry was needed.
+
+| Run | Fresh seed | Actual PRED output | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `32b6552f33f29d4d` | `PRED-C1-r27-v3 cases_pass=8/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1NoVariables-seed1.txt` |
+| 2 | `9cbc9111ba1de2aa` | `PRED-C1-r27-v3 cases_pass=10/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v3/K1NoVariables-seed2.txt` |
+
+Every failing case in both v3 receipts carries `VARIABLE` or `VARREDEF`. Every case carrying neither feature passed. The control's missing variable evaluation remains detected; the target-meeting kill rule is not triggered.
+
+### Exact command and actual outputs
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Executed the following command twice with fresh seeds selected by the counter:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NoVariables.py --jobs 6
+```
+
+The initial two asynchronous tool launch requests were rejected with `Background job limit reached (100). Wait for running jobs to finish or cancel one.` Retrying the same command through non-asynchronous tool calls produced the two completed counter runs recorded above. There was no exit-2 detector run.
+
+Both receipts report revision `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`, the unchanged 79-file snapshot digest `fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727`, `ORACLE_CHECK base_twice equal rules=0`, and `ORACLE_VERSION commit=efb50993780079460b0cbed1363e2166a2de1d9f tag=v0.56.2`. Complete case output and terminal `exit=1` are preserved in each receipt.
+
+### Before/after hashes and safety
+
+Before measurement, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/harness/oracle.py
+```
+
+After measurement, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/c1/count-v3.py .ufo/waves/round-27/harness/oracle.py
+```
+
+Both commands returned the same per-file hashes, also recorded in the receipts:
+
+```text
+65672716b17daf24f7a4f7d69ab4b922cc47066c2d02e5cdd0586423e3cc0b44  .ufo/waves/round-27/controls/K1NoVariables.py
+ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd  .ufo/waves/round-27/c1/count-v3.py
+0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601  .ufo/waves/round-27/harness/oracle.py
+```
+
+The same bounded `df -h /fast` command used previously returned `/dev/nvme1n1p2 804G 710G 94G 89% /fast` before scratch writes. The same bounded crash-census command returned `1338` before and after v3 measurement: delta `0`. Both receipts independently report `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
+
+Both counter jobs completed; nested compositor startup and teardown remained within the frozen harness. No control or subject bytes were changed, so no restoration was needed. Only the two v3 receipts and this report appendix were written during this follow-up. No subagents, installations, other runtime, build, lint, formatter, or extra behavioral checks were used.

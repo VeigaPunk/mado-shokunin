@@ -123,3 +123,37 @@ After-score receipt SHA-256 values:
 - V2 seed 2: `a88acbddaa82f8bd37dcafbb90b8f9151a992c3962261e83878aacb1a45c2f89`.
 
 No control or subject bytes changed, so no restoration was needed. Only the two assigned v2 receipt files were created and this report was appended.
+
+## V3 re-score — unchanged control
+
+CONTROL K1StaticBase v3 best: PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v2 before data after a variable-prefix-keyed reader met its target. Re-scored the original, unchanged STATIC-BASE control under v3, which removes the fixed variable-name prefix. The required live read remains the original single query; no additional live query or control edit was made.
+
+Ran this exact command twice from `/home/vgpnk/Projects/shokunin/mado-shokunin`, concurrently with six oracle workers each and fresh counter-generated seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v3.py 9f5fc28b --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1StaticBase.py --jobs 6
+```
+
+| Run | Fresh seed | Result | Process status | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `33bcddc387d41635` | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v3/K1StaticBase-seed1.txt` |
+| 2 | `2ee7633fc9a66f80` | `PRED-C1-r27-v3 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v3/K1StaticBase-seed2.txt` |
+
+Both runs passed BASE and failed all 25 APPEND and all 15 SYNTH cases, with no exit-2 guard. Both confirmed `ORACLE_CHECK base_twice equal rules=0` and the pinned Hyprland v0.56.2 commit. Resolved revision: `9f5fc28b3db8d06870d0314818ffbe5e43bb5937`. Both retained the same 79-file snapshot digest recorded above. The control was rejected; no contract change is inferred from the result.
+
+The bounded free-space query before these runs showed 94G available (804G total, 710G used, 89%). The bounded coredump command documented above returned `1338` before and after, delta 0; both receipts independently reported the same zero delta. Both bounded counter processes exited with code 1 through the existing oracle/counter cleanup paths. No long-lived service was started, and all launched commands used cleared environments.
+
+Before and after SHA-256 values, measured with the same bounded hash command pattern with `count-v3.py`, were identical:
+
+- Control: `857cd2de4de199a99fc48527ae64b17938c72cf9dc6f0b9768271297d0a76873`.
+- V3 counter: `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd`.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+V3 receipt SHA-256 values:
+
+- Seed 1: `0ca1d847a21d731d821525037228ec09429b9a23919d548314cdd8a7ebdaba2d`.
+- Seed 2: `57a1215ecbf0dcbc27e3a1acefaaf5dde1c11cc8295e9c12948c542e54c5c07d`.
+
+No control or subject bytes changed, so no restoration was needed. Only the two assigned v3 receipts were created and this report was appended. No tool installation, git/jj write, direct compositor launch, or unrelated test occurred.
