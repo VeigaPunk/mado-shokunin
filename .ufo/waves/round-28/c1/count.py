@@ -67,10 +67,9 @@ def git(*args):
 
 
 def blob(rev, path):
+    """Committed bytes of PATH at REV, or None: a missing artifact fails its leg, not setup."""
     p = git("show", "%s:%s" % (rev, path))
-    if p.returncode != 0:
-        raise SystemExit("SETUP_ERROR blob %s:%s missing" % (rev[:12], path))
-    return p.stdout.encode()
+    return p.stdout.encode() if p.returncode == 0 else None
 
 
 def seal_bytes(path):
@@ -92,14 +91,16 @@ def run_counter(rev, heldout, seal):
 def run_v5(rev, tool_mutant=None):
     script_path = os.path.join(LANE, R28C1V5)
     committed = blob(rev, R28C1V5)
+    if committed is None:
+        return 2, "SETUP_ERROR count-v5.py missing at REV"
     if not os.path.isfile(script_path) or sha(open(script_path, "rb").read()) != sha(committed):
         return 2, "SETUP_ERROR count-v5 bytes do not match REV"
     v4 = blob(rev, ".ufo/waves/round-27/c1/count-v4.py")
-    if sha(v4) != "3d7d301fb9315f9a6cea2427db7c39e556482b30d3f4283373579ae665afd136":
+    if v4 is None or sha(v4) != "3d7d301fb9315f9a6cea2427db7c39e556482b30d3f4283373579ae665afd136":
         return 2, "SETUP_ERROR frozen count-v4 bytes changed"
     home_config = blob(rev, V5_HOME_CONFIG_REL)
     home_config_path = os.path.join(LANE, V5_HOME_CONFIG_REL)
-    if not os.path.isfile(home_config_path) or sha(open(home_config_path, "rb").read()) != sha(home_config):
+    if home_config is None or not os.path.isfile(home_config_path) or sha(open(home_config_path, "rb").read()) != sha(home_config):
         return 2, "SETUP_ERROR synthetic HOME bytes do not match REV"
     with tempfile.TemporaryDirectory(prefix="mado-r28-boolword-") as td:
         args = [sys.executable, "-I", script_path, rev, "--seed", V5_SEED, "--jobs", "2"]
@@ -174,8 +175,11 @@ def main():
     # --- leg q36-witness -----------------------------------------------------
     runner_blob = blob(rev, Q36_RUNNER_REL)
     checker_blob = blob(rev, "quality/check-control-receipts.py")
-    receipts = blob(rev, Q36_RECEIPTS).decode()
-    with tempfile.TemporaryDirectory(prefix="mado-r28-q36-") as td:
+    receipts = (blob(rev, Q36_RECEIPTS) or b"").decode()
+    if runner_blob is None or checker_blob is None:
+        ok &= leg(False, "q36-witness", "runner-or-checker missing at REV")
+    else:
+      with tempfile.TemporaryDirectory(prefix="mado-r28-q36-") as td:
         runner_path = os.path.join(td, "q36-successor-run.sh")
         checker_path = os.path.join(td, "check-control-receipts.py")
         with open(runner_path, "wb") as stream:
@@ -185,15 +189,21 @@ def main():
         env = dict(os.environ, MADO_Q36_CHECKER=checker_path)
         p = subprocess.run(["bash", runner_path], cwd=LANE, env=env,
                            capture_output=True, text=True)
-    q36_ok = (p.returncode == 0 and "Q2-glob-case-sensitive" in receipts
-              and "Q5-marker-case-insensitive" in receipts)
-    ok &= leg(q36_ok, "q36-witness", "rc=%d names=%s" % (
-        p.returncode, "Q2-glob-case-sensitive" in receipts and "Q5-marker-case-insensitive" in receipts))
+      q36_ok = (p.returncode == 0 and "Q2-glob-case-sensitive" in receipts
+                and "Q5-marker-case-insensitive" in receipts)
+      ok &= leg(q36_ok, "q36-witness", "rc=%d names=%s" % (
+          p.returncode, "Q2-glob-case-sensitive" in receipts and "Q5-marker-case-insensitive" in receipts))
 
     # --- leg q37-open-ended --------------------------------------------------
     checker_blob = blob(rev, Q37_CHECKER_REL)
     registration = blob(rev, R27_REG)
     receipt = blob(rev, R27_RECEIPT)
+    r26 = blob(rev, Q37_R26_ARTIFACT)
+    if checker_blob is None or registration is None or receipt is None or r26 is None:
+        ok &= leg(False, "q37-open-ended", "checker/registration/receipt/r26 missing at REV")
+        print("PRED-C1-r28 verdict=%s" % ("TARGET_MET" if ok else "TARGET_MISSED"))
+        print("exit=%d" % (0 if ok else 1))
+        return 0 if ok else 1
     with tempfile.TemporaryDirectory(prefix="mado-r28-q37-") as td:
         checker_path = os.path.join(td, "check-population.py")
         registration_path = os.path.join(td, "registration.md")
@@ -205,7 +215,7 @@ def main():
         p = subprocess.run([sys.executable, "-I", checker_path, "--registration",
                             registration_path, receipt_path], cwd=LANE, capture_output=True, text=True)
     q37_ok = p.returncode == 0 and "verdict=PASS" in p.stdout
-    r26_sha = sha(blob(rev, Q37_R26_ARTIFACT))
+    r26_sha = sha(r26)
     q37_ok &= r26_sha == Q37_R26_SHA
     ok &= leg(q37_ok, "q37-open-ended", "rc=%d r26sha=%s" % (p.returncode, r26_sha[:12]))
 
