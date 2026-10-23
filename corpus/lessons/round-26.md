@@ -77,3 +77,22 @@ Rejections at the gate this round (with reasons):
 - Gate-check fixtures for the surviving mutants of the self-test, Q37 and Q36 checks (M26-8).
 - Carried unchanged: H2 (L0 `.ufo/l0-questions.md:103`); QUALITY 33–35 survivors.
 
+
+## Errata and late mistakes (appended after the residual call; rows above unchanged)
+
+- M26-3's fix cell says the v2 snapshot-cache receipt fails "every EDIT and SYNTH case". False: it fails 9/10 EDIT
+  (C28 `EDIT:rewrite-animation+NEWSRC` passes, `changed=no`) and 10/10 SYNTH (`controls/v2/K1SnapshotCache.txt:37,50`;
+  res CritClaims).
+- **M26-9 · rule not followed: one seed per v2 control.** Registration §Controls says each control is scored with two
+  fresh seeds; the L1 re-scored the C1 controls under v2 with one seed each before data (`controls/v2/*.txt`); the
+  second and third v2 seeds came from w2 Rescore seats running alongside the data seats (best 13/41). Captured-by: res
+  CritClaims (non-author). Fix: a pre-data control receipt set is complete only when every control has the
+  registered number of seeds; the Q36 successor could count receipts per control. Not shown able to fail.
+- **M26-10 · C2 tool dropped round-25 environment seeding.** The w2 data-seat contract (written by the L1) forbade
+  reading `os.environ`; the C2 seat removed the round-25 tool's environment seeding (`State.env = dict(os.environ)`),
+  which mirrored hyprlang. A tree using an environment variable (`$PATH`, `$HOME` style) now differs from Hyprland
+  where round-25 matched it; the counter's V3 sample has no such tree, so 51/51 does not see it. It also closes the
+  out-of-`--home` read channel the round-25 spot-check routed (defect 6), so it is a trade, not a pure gain.
+  Captured-by: res CritClaims (non-author) after measurement. Not fixed: changing the landed tool after its single
+  measurement would be new data; reported for the closure to rule. Route: restore seeding behind an explicit flag and
+  add environment-using cases to the next counter.
