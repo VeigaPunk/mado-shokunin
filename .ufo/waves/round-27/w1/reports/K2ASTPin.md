@@ -123,3 +123,6 @@ Bounded `sha256sum` calls before and after both runs reported identical control 
 Counter v2 uses disposable no-local clones under `/fast/scratch/hyaku/mado-r27/c2v2`, per-run directories, bubblewrap, and clone cleanup in its inspected `finally` blocks. No lane subject was modified, so no manual restoration was needed. The only new writes were the two assigned v2 receipts and this report append. Both counter processes completed; the unchanged AST suites spawn no child processes.
 
 Pre-run bounded `df -h /fast` reported 804G total, 695G used, 109G available, 87% usage. The same bounded, cleared-environment coredump counting procedure used above exited 0 before and after: Hyprland count 1338 to 1338, delta=+0. No Hyprland instance was started by the controls. No tools were installed or updated; no other checks were run.
+
+PRED-C2-r27-v2 green=8/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED
+PRED-C2-r27-v2 green=8/17 b_valid=9 w_killed=15/15 h_killed=18/18 h_need=14 h_valid=18 h_min_per_subject=6 invalid=0 verdict=TARGET_MISSED
