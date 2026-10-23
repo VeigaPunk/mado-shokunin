@@ -8,9 +8,9 @@ D1  SKILL.md gate registry: no row under the round-27 gates table still says "pe
 D2  Lesson M27-2: `corpus/lessons/round-27.md` carries an erratum block that names the
      superseded evidence pointer and whose corrected pointer target (a SOURCES.md row) exists
      at REV.
-D3  E01 fix red-before: `evidence/e01-red-before.txt` exists and contains "E01", and the
-     pinned pre-fix revision's SOURCES.md re-runs the census validator to a non-zero exit
-     with E01.
+D3 E01 red-before: committed malformed two-cell S178–S182 fixture is rejected by the frozen census
+     validator with five E01 rows; a clone of REV's corrected SOURCES.md validates cleanly.
+     The receipt pins the fixture sha and the validator sha.
 D4  q36-successor receipts dead pointer: `quality/q36-successor-receipts.txt` exists and
      names both surviving case mutant ids.
 D5  Harm-watch omission: the round-27 SCORECARD section carries an erratum line naming
@@ -32,12 +32,13 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
 
-REVREPAIR_SHA = "2ee4116"   # prefix; full sha pinned in evidence/closure-defects-r28.md
-A1REPORT_SHA = "94d6"       # prefix; full sha pinned in evidence/closure-defects-r28.md
+REVREPAIR_SHA = "2ee4116645657382176134617c02e73ae96b43296747babece8de61d41d8577f"
+A1REPORT_SHA = "94d656ce41972e1764387921fb5cc825f900dcfaa49425e0e32f94b85201d4a4"
 M27_2_CORRECTED_POINTER = "S178"
 W3_RECON = ".ufo/waves/round-28/evidence/w3-seats-reconciliation.txt"
 E01_RED_BEFORE = ".ufo/waves/round-28/evidence/e01-red-before.txt"
@@ -47,6 +48,9 @@ LESSON27 = "corpus/lessons/round-27.md"
 SCORECARD = "SCORECARD.md"
 LOG = "LOG.md"
 SKILL = "SKILL.md"
+E01_FIXTURE = ".ufo/waves/round-28/evidence/e01-red-before/SOURCES.md"
+CENSUS_SHA = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+CENSUS = "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh"
 
 
 def sha(b):
@@ -89,65 +93,95 @@ def main():
     print("counter c2-r28 sha256:%s rev=%s" % (sha(open(__file__, "rb").read()), rev))
     ok = True
 
-    # D1 SKILL gate registry rows: no "pending" in the r27 gates rows.
+    # D1: inspect only the three r27 registry rows, not historical text elsewhere in SKILL.
     skill = text(rev, SKILL) or ""
-    hang1 = "pending" in skill.lower() and "mado-r27" in skill.lower()
-    ok &= check("D1", not hang1, "pending-r27-rows=%s" % hang1)
+    rows = [ln for ln in skill.splitlines() if ln.startswith("| mado-r27-")]
+    names = {ln.split("|", 2)[1].strip() for ln in rows}
+    expected = {"mado-r27-counter-selftest", "mado-r27-population-suite", "mado-r27-control-receipts"}
+    d1 = names == expected and len(rows) == 3 and all(
+        "pending" not in ln.lower() and "provisional" not in ln.lower() for ln in rows)
+    ok &= check("D1", d1, "rows=%d names=%s pending=%s" % (
+        len(rows), ",".join(sorted(names)), any("pending" in ln.lower() for ln in rows)))
 
-    # D2 lesson M27-2 erratum with resolvable corrected pointer.
+    # D2: the appended lesson erratum supersedes the malformed row pointer and links actual rows.
     les = text(rev, LESSON27) or ""
-    d2 = ("M27-2" in les and "erratum" in les.lower()
-           and M27_2_CORRECTED_POINTER in les)
-    ok &= check("D2", d2, "erratum=%s pointer=%s" % ("M27-2" in les, M27_2_CORRECTED_POINTER in les))
+    sources = text(rev, "corpus/SOURCES.md") or ""
+    d2 = ("Round-27 erratum (round 28)" in les
+          and "corpus/SOURCES.md:195-199" in les
+          and all("| S%d |" % n in sources for n in range(178, 183)))
+    ok &= check("D2", d2, "erratum=%s rows=%d/5" % (
+        "Round-27 erratum (round 28)" in les,
+        sum("| S%d |" % n in sources for n in range(178, 183))))
 
-    # D3 E01 red-before: evidence file exists and reruns red.
-    red = text(rev, E01_RED_BEFORE)
-    d3 = red is not None and "E01" in red
+    # D3: run the frozen census validator on a committed malformed-row fixture (red)
+    # and on an isolated checkout of REV's real registry (green).
+    red = blob(rev, E01_RED_BEFORE)
+    fixture = blob(rev, E01_FIXTURE)
+    census_bytes = open(CENSUS, "rb").read()
+    d3 = (red is not None and fixture is not None and sha(census_bytes) == CENSUS_SHA
+          and ("fixture_sha256=" + sha(fixture)) in red.decode(errors="replace"))
     if d3:
-        pinned = re.search(r"pre-fix revision (\w{40})", red)
-        d3 = pinned is not None
-        if d3:
-            src = text(rev, "corpus/SOURCES.md")
-            if src is None:
-                d3 = False
+        with tempfile.TemporaryDirectory(prefix="mado-r28-e01-") as td:
+            fixture_root = os.path.join(td, "fixture")
+            srcpath = os.path.join(fixture_root, "corpus", "SOURCES.md")
+            os.makedirs(os.path.dirname(srcpath))
+            with open(srcpath, "wb") as stream:
+                stream.write(fixture)
+            p_red = subprocess.run([CENSUS, "validate", "--file", srcpath, "--today", "2026-10-23"],
+                                   capture_output=True, text=True)
+            e01_lines = [line for line in p_red.stdout.splitlines() if "\tE01\t" in line]
+            clone = os.path.join(td, "lane")
+            p_clone = subprocess.run(["git", "clone", "--quiet", "--no-hardlinks", LANE, clone],
+                                     capture_output=True, text=True)
+            p_checkout = subprocess.run(["git", "-C", clone, "checkout", "--quiet", "--detach", rev],
+                                        capture_output=True, text=True) if p_clone.returncode == 0 else None
+            if p_checkout is not None and p_checkout.returncode == 0:
+                p_green = subprocess.run([CENSUS, "validate", clone, "--today", "2026-10-23"],
+                                         capture_output=True, text=True)
+                d3 = (p_red.returncode == 1 and len(e01_lines) == 5
+                      and p_green.returncode == 0 and "E01" not in p_green.stdout
+                      and "exit=1" in red.decode(errors="replace"))
             else:
-                # Re-run the frozen manual census validator over the malformed rows: the
-                # pre-fix rows are two-cell gate-quote rows; E01 fires on NF!=13.
-                bad = [ln for ln in src.splitlines() if ln.startswith("|") and ln.count("|") != 12]
-                d3 = bool(bad) and "E01" in red
-    ok &= check("D3", d3, "evidence=%s e01=%s" % (red is not None, "E01" in (red or "")))
+                d3 = False
+    ok &= check("D3", d3, "red-fixture=%s census-sha=%s red/green=%s" % (
+        fixture is not None, sha(census_bytes)[:12], d3))
 
     # D4 q36-successor receipts dead pointer.
     rec = text(rev, QR36_RECEIPTS) or ""
     d4 = "Q2-glob-case-sensitive" in rec and "Q5-marker-case-insensitive" in rec
     ok &= check("D4", d4, "names=%s" % d4)
 
-    # D5 harm-watch omission: SCORECARD r27 section erratum names the docstring change.
+    # D5: exact r27 harm-watch omission and its append-only correction.
     sc = text(rev, SCORECARD) or ""
-    d5 = "mado-binds.py" in sc and "docstring" in sc
-    ok &= check("D5", d5, "mentions-docstring=%s" % d5)
+    d5 = ("round-27 harm-watch erratum" in sc
+          and "tools/mado-binds.py" in sc and "docstring" in sc)
+    ok &= check("D5", d5, "erratum=%s binds-docstring=%s" % (
+        "round-27 harm-watch erratum" in sc, "tools/mado-binds.py" in sc and "docstring" in sc))
 
-    # D6 registration round-27 C2-measurement erratum.
+    # D6: registration records both measured C2 attempts and the repair path.
     reg = text(rev, ROUND27_REG) or ""
-    d6 = "measurement 2" in reg and "erratum" in reg.lower()
-    ok &= check("D6", d6, "erratum=%s" % d6)
+    d6 = ("round-27 measurement erratum" in reg and "measurement 1" in reg
+          and "measurement 2" in reg and "repair flow" in reg)
+    ok &= check("D6", d6, "both-measurements=%s repair-flow=%s" % (
+        "measurement 1" in reg and "measurement 2" in reg, "repair flow" in reg))
 
-    # D7 w3 seat reconciliation file.
-    w3 = text(rev, W3_RECON)
-    d7 = w3 is not None and "8" in w3 and "7" in w3
-    ok &= check("D7", d7, "file=%s" % (w3 is not None))
+    # D7: reconcile counts without inventing the unreported identity.
+    w3 = text(rev, W3_RECON) or ""
+    d7 = ("declared=8" in w3 and "reports=7" in w3 and "unreported=1" in w3
+          and "identity=unknown" in w3)
+    ok &= check("D7", d7, "8 declared / 7 reports / 1 unknown=%s" % d7)
 
-    # D8 SKILL.md:631-636 citation erratum.
+    # D8: identify both the superseded range and the actual round-27 source range.
     log = text(rev, LOG) or ""
-    d8 = "630" in log and "631" in log
-    ok &= check("D8", d8, "mentions-630-631=%s" % d8)
+    d8 = ("round-27 SKILL citation erratum" in log and "631-636" in log and "630-635" in log)
+    ok &= check("D8", d8, "superseded=631-636 corrected=630-635 present=%s" % d8)
 
     # D9 both w4 erratum reports committed with pinned hashes.
     rr = blob(rev, ".ufo/waves/round-27/w4/reports/RevRepair.md")
     a1 = blob(rev, ".ufo/waves/round-27/w4/reports/ExecRepairA1.md")
     d9 = rr is not None and a1 is not None
     if d9:
-        d9 = sha(rr)[:7] == REVREPAIR_SHA and sha(a1)[:4] == A1REPORT_SHA
+        d9 = sha(rr) == REVREPAIR_SHA and sha(a1) == A1REPORT_SHA
     ok &= check("D9", d9, "revrepair=%s a1=%s" % (rr is not None, a1 is not None))
 
     print("PRED-C2-r28 verdict=%s" % ("TARGET_MET" if ok else "TARGET_MISSED"))

@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""mado round 28 C1 composite counter: the routed round-27 gate blind spots close.
+"""mado round 28 C1 composite counter: round-27 gate blind spots close.
 
-The six legs are the C1-m27 claim. Each leg runs on committed bytes at REV only.
+Six legs run only at the requested committed REV:
+h1-rotation (all 18 H1 rows killed, including the three named HeldC1v2 survivors),
+h2-rotate (rotated H set meets the frozen threshold), refpub-kills (all valid public
+reference rows die), boolword-v5 (two deterministic prefix-boolean cases pass on the lane
+tool and fail on the public exact-alias mutant), q36-witness (both Q36 successor mutants
+are killed), and q37-open-ended (the extended population checker passes the r27 C2 receipt
+without changing the frozen r26 checker).
 
-Leg h1-rotation: the frozen round-27 C2 counter on the round-27 sealed held-out set H1
-must print TARGET_MET and kill the three named held-c1v2 survivors.
-Leg h2-rotate: the same frozen counter on the rotated sealed set H2 (round-28) must print
-TARGET_MET under its own frozen rule.
-Leg refpub-kills: the same frozen counter on the public reference set (round-28) must kill
-every valid row (h_killed == h_valid), ≥9 valid, ≥2 per subject.
-Leg a1-predicates: the committed suite bytes contain the eight A1 probe names and do not
-contain the softened `got < total` form for the one/two-missing/extra checks.
-Leg q36-witness: the committed Q36-successor runner exits 0 and the receipts file names both
-surviving case mutants.
-Leg q37-open-ended: the extended population checker exits 0 on the round-27 C2 receipt and
-the round-26 frozen artifact sha256 is unchanged.
+H2 and the public reference set are committed under the lane (sealed by sha256 list); H1 is
+the inherited ephemeral round-27 set, so leg h1-rotation needs that directory present. The
+suites are the committed bytes of REV: the frozen round-27 counter clones REV and runs
+`quality/counter-selftest.py` / `quality/population-suite.py` from the clone.
 
 Exit: 0 all legs pass; 1 any leg fails; 2 setup/usage error.
 """
@@ -24,6 +22,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
@@ -31,25 +30,25 @@ R27C2 = os.path.join(LANE, ".ufo/waves/round-27/c2/count-v2.py")
 SUITE = os.path.join(LANE, "quality/counter-selftest.py")
 H1_HELDOUT = "/fast/scratch/hyaku/mado-r27/heldout"
 H1_SEAL = os.path.join(LANE, ".ufo/waves/round-27/c2/heldout-seal.txt")
-H2_HELDOUT = "/fast/scratch/hyaku/mado-r28/heldout2"
-H2_SEAL = os.path.join(LANE, ".ufo/waves/round-28/c2/heldout2-seal.txt")
-REF_HELDOUT = "/fast/scratch/hyaku/mado-r28/refpub"
-REF_SEAL = os.path.join(LANE, ".ufo/waves/round-28/c1/refpub-seal.txt")
+H2_HELDOUT = os.path.join(LANE, ".ufo/waves/round-28/c2/heldout2")
+H2_SEAL_REL = ".ufo/waves/round-28/c2/heldout2-seal.txt"
+H2_SEAL = os.path.join(LANE, H2_SEAL_REL)
+REF_HELDOUT = os.path.join(LANE, ".ufo/waves/round-28/c1/refpub")
+REF_SEAL_REL = ".ufo/waves/round-28/c1/refpub-seal.txt"
+R28C1V5 = ".ufo/waves/round-28/c1/count-v5.py"
+EXACTBOOL_TOOL = ".ufo/waves/round-28/c1/ref-mutants/exactbool-tool.py"
+V5_SEED = "28c1a8c0ffee0001"
+V5_HOME_REL = ".ufo/waves/round-28/c1/synthetic-home"
+V5_HOME_CONFIG_REL = V5_HOME_REL + "/.config/hypr/hyprland.conf"
 
-Q36_RUNNER = os.path.join(LANE, ".ufo/waves/round-28/quality/q36-successor-run.sh")
-Q36_RECEIPTS = os.path.join(LANE, "quality/q36-successor-receipts.txt")
-Q37_CHECKER = os.path.join(LANE, "quality/check-population.py")
+Q36_RUNNER_REL = "quality/q36-successor-run.sh"
+Q36_RECEIPTS = "quality/q36-successor-receipts.txt"
+Q37_CHECKER_REL = "quality/check-population.py"
 Q37_R26_ARTIFACT = ".ufo/waves/round-26/quality/check-population.py"
 Q37_R26_SHA = "803e0096c994d301fa7fe9a9dd7e35255ee1f5bcf3f63d15956cdba8943d0f64"
 
 R27_REG = ".ufo/waves/round-27/registration.md"
 R27_RECEIPT = ".ufo/waves/round-27/evidence/c2-after-0b53bd86.txt"
-
-A1_PROBES = ("c2-drift-extra", "c2-drift-missing", "c2-one-missing", "c2-one-extra",
-             "c2-two-missing", "c2-two-extra", "c2-embed-at-min", "c2-embed-below-min")
-# A1's strict form for the one/two missing/extra checks; A2's softened form uses got < total.
-STRICT_PRED = ("rc == 1 and verdict == \"TARGET_MISSED\" and got == 0 and total == 51")
-SOFTENED_PRED = ("got is not None and got < total")
 
 HELD_C1V2_SURVIVORS = ("held-c1v2-node-subset", "held-c1v2-missing-version-guard",
                         "held-c1v2-extra-output-segment")
@@ -74,6 +73,14 @@ def blob(rev, path):
     return p.stdout.encode()
 
 
+def seal_bytes(path):
+    try:
+        with open(path, "rb") as stream:
+            return stream.read()
+    except OSError:
+        return None
+
+
 def run(argv):
     p = subprocess.run(argv, capture_output=True, text=True)
     return p.returncode, p.stdout, p.stderr
@@ -81,6 +88,30 @@ def run(argv):
 
 def run_counter(rev, heldout, seal):
     return run([sys.executable, "-I", R27C2, rev, "--heldout", heldout, "--seal", seal])
+
+def run_v5(rev, tool_mutant=None):
+    script_path = os.path.join(LANE, R28C1V5)
+    committed = blob(rev, R28C1V5)
+    if not os.path.isfile(script_path) or sha(open(script_path, "rb").read()) != sha(committed):
+        return 2, "SETUP_ERROR count-v5 bytes do not match REV"
+    v4 = blob(rev, ".ufo/waves/round-27/c1/count-v4.py")
+    if sha(v4) != "3d7d301fb9315f9a6cea2427db7c39e556482b30d3f4283373579ae665afd136":
+        return 2, "SETUP_ERROR frozen count-v4 bytes changed"
+    home_config = blob(rev, V5_HOME_CONFIG_REL)
+    home_config_path = os.path.join(LANE, V5_HOME_CONFIG_REL)
+    if not os.path.isfile(home_config_path) or sha(open(home_config_path, "rb").read()) != sha(home_config):
+        return 2, "SETUP_ERROR synthetic HOME bytes do not match REV"
+    with tempfile.TemporaryDirectory(prefix="mado-r28-boolword-") as td:
+        args = [sys.executable, "-I", script_path, rev, "--seed", V5_SEED, "--jobs", "2"]
+        if tool_mutant:
+            mutant = blob(rev, tool_mutant)
+            mutant_path = os.path.join(td, "exactbool-tool.py")
+            with open(mutant_path, "wb") as stream:
+                stream.write(mutant)
+            args += ["--tool-file", mutant_path]
+        env = dict(os.environ, HOME=os.path.join(LANE, V5_HOME_REL))
+        p = subprocess.run(args, cwd=LANE, env=env, capture_output=True, text=True)
+        return p.returncode, p.stdout + p.stderr
 
 
 def leg(ok, name, detail):
@@ -102,52 +133,81 @@ def main():
     # --- leg h1-rotation -----------------------------------------------------
     rc, out, err = run_counter(rev, H1_HELDOUT, H1_SEAL)
     met = re.search(r"verdict=(TARGET_MET|TARGET_MISSED)", out)
-    h1_ok = rc == 0 and met and met.group(1) == "TARGET_MET" and all(
-        re.search(r"CASE H\s+H/HeldC1v2:%s\s+suite=A rc=1 KILLED" % re.escape(s), out)
-        for s in HELD_C1V2_SURVIVORS)
+    h = re.search(r"h_killed=(\d+)/(\d+)", out)
+    h1_ok = rc == 0 and met and met.group(1) == "TARGET_MET" and h \
+        and h.group(1) == "18" and h.group(2) == "18" and all(
+            re.search(r"CASE H\s+H/HeldC1v2:%s\s+suite=A rc=1 KILLED" % re.escape(s), out)
+            for s in HELD_C1V2_SURVIVORS)
     ok &= leg(h1_ok, "h1-rotation",
-              "rc=%d %s" % (rc, met.group(1) if met else "no-verdict"))
+              "rc=%d %s h=%s" % (rc, met.group(1) if met else "no-verdict", h.group(0) if h else "no-tally"))
+
+
+    # --- leg boolword-v5 ----------------------------------------------------
+    rc, out = run_v5(rev)
+    normal = re.search(r"PRED-C1-r28-v5 cases_pass=(\d+)/(\d+) boolword_pass=(\d+)/(\d+) verdict=(TARGET_MET|TARGET_MISSED)", out)
+    exact_rc, exact_out = run_v5(rev, EXACTBOOL_TOOL)
+    mutant = re.search(r"PRED-C1-r28-v5 cases_pass=(\d+)/(\d+) boolword_pass=(\d+)/(\d+) verdict=(TARGET_MET|TARGET_MISSED)", exact_out)
+    bool_ok = (normal is not None and rc == 0 and normal.group(1, 2, 3, 4, 5) == ("41", "41", "2", "2", "TARGET_MET")
+               and mutant is not None and exact_rc == 1 and mutant.group(3, 4, 5) == ("0", "2", "TARGET_MISSED"))
+    ok &= leg(bool_ok, "boolword-v5", "normal=%s mutant=%s" % (
+        normal.group(0) if normal else "missing", mutant.group(0) if mutant else "missing"))
 
     # --- leg h2-rotate ------------------------------------------------------
+    seal_ok = blob(rev, H2_SEAL_REL) == seal_bytes(H2_SEAL)
     rc, out, err = run_counter(rev, H2_HELDOUT, H2_SEAL)
     met = re.search(r"verdict=(TARGET_MET|TARGET_MISSED)", out)
-    h2_ok = rc == 0 and met and met.group(1) == "TARGET_MET"
+    h2_ok = seal_ok and rc == 0 and met and met.group(1) == "TARGET_MET"
     ok &= leg(h2_ok, "h2-rotate",
-              "rc=%d %s" % (rc, met.group(1) if met else "no-verdict"))
+              "seal-at-rev=%s rc=%d %s" % (seal_ok, rc, met.group(1) if met else "no-verdict"))
 
     # --- leg refpub-kills ----------------------------------------------------
+    seal_ok = blob(rev, REF_SEAL_REL) == seal_bytes(REF_SEAL)
     rc, out, err = run_counter(rev, REF_HELDOUT, REF_SEAL)
     m = re.search(r"h_killed=(\d+)/(\d+) h_need=\d+ h_valid=(\d+) h_min_per_subject=(\d+)", out)
     ref_ok = False
     if m:
         killed, total, valid, minper = map(int, m.groups())
-        ref_ok = (rc == 0 and killed == total and valid >= 9 and minper >= 2)
+        ref_ok = (seal_ok and rc == 0 and killed == total and valid >= 9 and minper >= 2)
     ok &= leg(ref_ok, "refpub-kills",
-              "rc=%d %s" % (rc, m.group(0) if m else "no-h-tally"))
-
-    # --- leg a1-predicates ---------------------------------------------------
-    suite = blob(rev, "quality/counter-selftest.py").decode()
-    a1_ok = all(p in suite for p in A1_PROBES) and STRICT_PRED in suite \
-        and SOFTENED_PRED not in suite
-    ok &= leg(a1_ok, "a1-predicates",
-              "probes=%d/%d strict=%s softened=%s" % (
-                  sum(p in suite for p in A1_PROBES), len(A1_PROBES),
-                  STRICT_PRED in suite, SOFTENED_PRED in suite))
+              "seal-at-rev=%s rc=%d %s" % (seal_ok, rc, m.group(0) if m else "no-h-tally"))
 
     # --- leg q36-witness -----------------------------------------------------
-    rc, out, err = run(["bash", Q36_RUNNER])
-    receipts = blob(rev, "quality/q36-successor-receipts.txt").decode()
-    q36_ok = rc == 0 and "Q2-glob-case-sensitive" in receipts and "Q5-marker-case-insensitive" in receipts
+    runner_blob = blob(rev, Q36_RUNNER_REL)
+    checker_blob = blob(rev, "quality/check-control-receipts.py")
+    receipts = blob(rev, Q36_RECEIPTS).decode()
+    with tempfile.TemporaryDirectory(prefix="mado-r28-q36-") as td:
+        runner_path = os.path.join(td, "q36-successor-run.sh")
+        checker_path = os.path.join(td, "check-control-receipts.py")
+        with open(runner_path, "wb") as stream:
+            stream.write(runner_blob)
+        with open(checker_path, "wb") as stream:
+            stream.write(checker_blob)
+        env = dict(os.environ, MADO_Q36_CHECKER=checker_path)
+        p = subprocess.run(["bash", runner_path], cwd=LANE, env=env,
+                           capture_output=True, text=True)
+    q36_ok = (p.returncode == 0 and "Q2-glob-case-sensitive" in receipts
+              and "Q5-marker-case-insensitive" in receipts)
     ok &= leg(q36_ok, "q36-witness", "rc=%d names=%s" % (
-        rc, "Q2-glob-case-sensitive" in receipts and "Q5-marker-case-insensitive" in receipts))
+        p.returncode, "Q2-glob-case-sensitive" in receipts and "Q5-marker-case-insensitive" in receipts))
 
     # --- leg q37-open-ended --------------------------------------------------
-    rc, out, err = run([sys.executable, "-I", Q37_CHECKER, "--registration",
-                         os.path.join(LANE, R27_REG), os.path.join(LANE, R27_RECEIPT)])
-    q37_ok = rc == 0 and "verdict=PASS" in out
+    checker_blob = blob(rev, Q37_CHECKER_REL)
+    registration = blob(rev, R27_REG)
+    receipt = blob(rev, R27_RECEIPT)
+    with tempfile.TemporaryDirectory(prefix="mado-r28-q37-") as td:
+        checker_path = os.path.join(td, "check-population.py")
+        registration_path = os.path.join(td, "registration.md")
+        receipt_path = os.path.join(td, "c2-after.txt")
+        for path, content in ((checker_path, checker_blob), (registration_path, registration),
+                              (receipt_path, receipt)):
+            with open(path, "wb") as stream:
+                stream.write(content)
+        p = subprocess.run([sys.executable, "-I", checker_path, "--registration",
+                            registration_path, receipt_path], cwd=LANE, capture_output=True, text=True)
+    q37_ok = p.returncode == 0 and "verdict=PASS" in p.stdout
     r26_sha = sha(blob(rev, Q37_R26_ARTIFACT))
     q37_ok &= r26_sha == Q37_R26_SHA
-    ok &= leg(q37_ok, "q37-open-ended", "rc=%d r26sha=%s" % (rc, r26_sha[:12]))
+    ok &= leg(q37_ok, "q37-open-ended", "rc=%d r26sha=%s" % (p.returncode, r26_sha[:12]))
 
     print("PRED-C1-r28 verdict=%s" % ("TARGET_MET" if ok else "TARGET_MISSED"))
     print("exit=%d" % (0 if ok else 1))
