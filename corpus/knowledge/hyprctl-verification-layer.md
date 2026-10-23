@@ -301,3 +301,8 @@ errata sweep; read-only probes 2026-10-14 16:20–16:25 UTC (scratch
   16:11:07 UTC). §10 U7 ("Why `instances` reports `wlSocket: null`") is
   superseded by this measurement. Forwarded via `config-health-report-r3.md`
   §6 F8 / §9; applied here by the sweep as its E3.
+**Round-26 pointer (append-only):** the animations row's "directive→entry expansion `[INF]`" is now covered from
+source and a measured tool: [animation-table-r26.md](animation-table-r26.md) explains how Hyprland v0.56.2 builds the
+`hyprctl animations -j` table from the directives (S175–S177, S158, S162), and `tools/mado-anims.py` reproduced
+Hyprland's own table for 41/41 trees under `.ufo/waves/round-26/c1/count-v2.py` at `2b3487f7`. The row above is
+unchanged; its live counts were not re-captured this round.
