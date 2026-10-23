@@ -89,3 +89,37 @@ Both outputs were `1338`: own observed Hyprland coredump delta 0. Each counter i
 The only live compositor operation was the one read-only query above. Every launched command used a cleared environment; no WAYLAND_DISPLAY or HYPRLAND_INSTANCE_SIGNATURE was set or inherited by those commands. Nested compositor launches were exclusively through the frozen counter/oracle, not direct commands. Both bounded counters exited normally with code 1. The oracle's existing finally block terminates its sandbox process groups, waits, escalates if necessary, and removes its temporary runtime directory; the counter removes its scratch tree in finally. No long-lived service was started.
 
 No tools were installed or updated. No additional tests, builds, or unrelated verification were run.
+
+## V2 re-score — unchanged control
+
+CONTROL K1StaticBase v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+The v1 findings above are historical: L1 retired v1 before data after another control met its target. Per the same-item follow-up, re-scored the identical STATIC-BASE bytes against the final amended v2 counter, whose registration pin and observed SHA-256 were `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`. V2 adds unsourced decoys, nested/glob sources, source placement among rules, variable redefinition, and type-strict JSON comparison. No second live query was made and the embedded table remains `[]`.
+
+Ran the following exact command twice from `/home/vgpnk/Projects/shokunin/mado-shokunin`, concurrently with six workers each:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1StaticBase.py --jobs 6
+```
+
+| Run | Fresh seed | Result | Process status | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `6a01588c811bc3db` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v2/K1StaticBase-seed1.txt` |
+| 2 | `c2329b28df187b04` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v2/K1StaticBase-seed2.txt` |
+
+Each run passed BASE and failed all 25 APPEND and all 15 SYNTH cases. Neither hit an exit-2 guard. Both confirmed the base twice with zero rules and the pinned v0.56.2 commit. Resolved revision: `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. Snapshot files/digest were identical to the earlier runs. The control was rejected under v2; the outcome does not change the STATIC-BASE contract.
+
+Before the runs, the same bounded `df -h /fast` command recorded 113G available (804G total, 691G used, 86%). The same bounded coredump query before and after returned `1338`; delta 0. Both receipts independently print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Both counter processes exited with code 1 and used the frozen oracle's process-group teardown and scratch cleanup. No direct compositor launch, live mutation, long-lived service, installation, or git/jj write occurred.
+
+Preservation evidence: before and after hashes, measured using the same bounded `sha256sum` command pattern above with `count-v2.py` in place of `count.py`, remained:
+
+- Control: `857cd2de4de199a99fc48527ae64b17938c72cf9dc6f0b9768271297d0a76873`.
+- V2 counter: `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+After-score receipt SHA-256 values:
+
+- V2 seed 1: `c4e039bbb01e3a88f4a3b4def20de3c4ea46be749cb8b9033498c532acf78ea9`.
+- V2 seed 2: `a88acbddaa82f8bd37dcafbb90b8f9151a992c3962261e83878aacb1a45c2f89`.
+
+No control or subject bytes changed, so no restoration was needed. Only the two assigned v2 receipt files were created and this report was appended.

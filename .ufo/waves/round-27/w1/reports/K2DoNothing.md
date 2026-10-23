@@ -81,3 +81,62 @@ HOST_SAFETY Hyprland_coredumps before=1338 after=1338 delta=0
 ```
 
 No Hyprland, oracle, live-compositor command, or long-lived service was started by this seat. Both bounded counter process trees finished; counter-owned git children are synchronous. All launched commands used cleared environments without WAYLAND_DISPLAY or HYPRLAND_INSTANCE_SIGNATURE. No lane/fleet git or jj write command was issued; only counter-owned sandbox clones were used. No tool was installed or updated. No build, lint, formatter, or unrelated verification was run.
+
+## C2 v2 rescore — L1 follow-up
+
+CONTROL K2DoNothing v2 best: PRED-C2-r27-v2 green=0/8 b_valid=0 w_killed=0/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+The L1 retired C2 v1 before data and requested this rescore under the hardened counter. The earlier receipts above remain historical evidence. The DO-NOTHING control was unchanged: no suite file was authored, copied, or supplied. Both suites were missing at the newly assigned revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281`.
+
+### Commands and actual output
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Two fresh seeds were independently generated with `secrets.token_hex(8)`. The bounded commands ran concurrently:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --seed 812fc7f54b78da35 --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --seed ce5da8b869d87d78 --jobs 6
+```
+
+| Run | Verbatim stdout receipt, including `exit=1` | Command exit | Wall time |
+| --- | --- | --- | --- |
+| V2 seed 1 | `.ufo/waves/round-27/controls/v2/K2DoNothing-seed1.txt` | 1 | 270.99 s |
+| V2 seed 2 | `.ufo/waves/round-27/controls/v2/K2DoNothing-seed2.txt` | 1 | 271.05 s |
+
+Each receipt is 3709 bytes. Both report the PRED line above, both suites `MISSING at REV`, all 8 green cases `rc=None FAIL`, and all 15 W cases `rc=None SURVIVED`. Neither invocation returned exit 2; no guard-error rerun was required. No held-out directory or seal was supplied or read, so `b_valid=0` and `h_valid=0` do not assess the sealed population.
+
+Expected detector: the v2 missing-suite contract fails every green and kills nothing (`c2/count-v2.py:27-30`). The observed result matches it. Because the missing-suite guard returns before scratch-subject edits and the bubblewrap invocation (`:88-105`), this control exercises the missing-suite path, not the suite sandbox. No behavioral mutant kill is claimed: pristine green cases also fail.
+
+### V2 hashes, restoration and safety
+
+This command was run before and after both scores, with identical output:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/c2/count-v2.py .ufo/waves/round-27/c2/mutants-w.json
+```
+
+```text
+4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3  .ufo/waves/round-27/c2/count-v2.py
+0ad0e46c1a6e61f369c30ab08d6a998f6dce7d16436087b5df57fb8f22323608  .ufo/waves/round-27/c2/mutants-w.json
+```
+
+The pristine subject hashes in both v2 receipts match those listed in the v1 section. No counter, W set, harness, subject, or control bytes were modified. Suite hashes and byte restoration are not applicable because the control consists of absent suites; no manual mutation was performed.
+
+Capacity check before scoring:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=0 -- df -h /fast
+```
+
+Output: `/fast` had 112G available, 87% used. Coredump counts were collected before and after using:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 30 prlimit --as=4000000000 --core=0 -- coredumpctl list --no-pager --no-legend
+```
+
+Both listings exited 0 with empty stderr. Python counted lines containing `/usr/bin/Hyprland`:
+
+```text
+HOST_SAFETY v2 Hyprland_coredumps before=1338 after=1338 delta=0
+```
+
+Both bounded counter invocations finished. No suite process, Hyprland, oracle, live-compositor command, or long-lived service was started by this seat. All command environments were cleared. No lane/fleet git or jj write command was issued; git writes were counter-owned no-local scratch clones. No tools were installed or updated, and no unrelated checks were run.

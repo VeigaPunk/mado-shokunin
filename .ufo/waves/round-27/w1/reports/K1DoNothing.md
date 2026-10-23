@@ -100,3 +100,36 @@ HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
 ```
 
 SHA-256 fact commands used `timeout 30`, a clean environment, and `prlimit --as=4000000000 --core=0 -- sha256sum` on the paths named above. The counter runs used the contract's memory-limit exception. Hyprland was started only through the frozen counter/oracle; no live-compositor commands or DRM card nodes were used. All subprocess calls completed; the oracle's `finally` cleanup terminates and waits for its nested process groups. No persistent processes were started. No other checks were run.
+
+## v2 re-score — unchanged control
+
+CONTROL K1DoNothing v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v1 before data and assigned this re-score under `count-v2.py`. The historical v1 receipts above remain unchanged. This follow-up made no control mutation: both v2 runs used the original 12-byte file, SHA-256 `a3381e95441354d833917bdaf481a5b210edf2b8cda6419b5e1805dfe143fd3b`, confirmed before and after both scores. No empty-file rerun was requested or performed under v2.
+
+The v2 detector still requires 41/41 exact ordered arrays, now using type-strict canonical JSON comparison and cases with unsourced decoys, nested/glob sources, interleaved source lines, and variable redefinition. The two independent scores ran concurrently, each with six jobs, through the frozen oracle's host-wide slot controls. Both invocations used this exact command with the lane as their working directory and a clean outer environment:
+
+```sh
+cd /home/vgpnk/Projects/shokunin/mado-shokunin
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1DoNothing.py --jobs 6
+```
+
+| Run | Fresh seed | Exact PRED output | Process exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| v2 seed 1 | `cb4c12390d0e37b7` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1DoNothing-seed1.txt` |
+| v2 seed 2 | `85d747e99df79cb3` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1DoNothing-seed2.txt` |
+
+Both runs passed only BASE (`rules=0`) and failed all 40 generated cases (`rules got=0 want=N first_diff=0`, with positive N). Both printed `exit=1`; stderr was empty. Neither exited 2, so no guard retry was needed. Each receipt identifies revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281`, the same 79-file snapshot and oracle commit recorded above, and two agreeing BASE oracle runs.
+
+Before/after hashes matched:
+
+- Unchanged control: `a3381e95441354d833917bdaf481a5b210edf2b8cda6419b5e1805dfe143fd3b`.
+- Frozen v2 counter: `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`.
+- Frozen harness: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+Receipt SHA-256 values:
+
+- `controls/v2/K1DoNothing-seed1.txt` (5,790 bytes): `9114508f636013131077a982b6b5d82e47b52683edd82f05cae15e502e9eb94d`.
+- `controls/v2/K1DoNothing-seed2.txt` (5,737 bytes): `6bfb13cc61b4754313e041563749cb3821f8bd38c548d5bb12a910f9b6b0f454`.
+
+Repeated the bounded clean-environment coredump listing command from the host-safety section immediately before and after these two scores. Both listings exited 0 with empty stderr: **1338 before, 1338 after, delta 0**. Each v2 receipt also prints `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. All score subprocesses completed, and oracle cleanup handles its nested process groups. No persistent processes, installations, additional mutations, or unrelated checks were introduced.

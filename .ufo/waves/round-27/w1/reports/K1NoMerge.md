@@ -89,3 +89,43 @@ HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
 Independent before/after coredump measurements used `env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 -- coredumpctl list --no-pager --no-legend`, counting output lines containing `/usr/bin/Hyprland`: 1,338 before, 1,338 after, delta 0; both commands exited 0 with empty stderr.
 
 No tools were installed or updated. No git/jj write commands, host-service changes, held-out reads, or additional behavioral probes were performed.
+
+## v2 rescore — unchanged control
+
+CONTROL K1NoMerge v2 best: PRED-C1-r27-v2 cases_pass=20/41 verdict=TARGET_MISSED — not met
+
+L1 retired v1 before data and requested this follow-up under the redesigned, type-strict v2 detector. The control was not edited. This section adds exactly two v2 measurements; the v1 receipts and findings above remain historical evidence.
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Executed twice concurrently, allowing each invocation to generate its own fresh seed:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NoMerge.py --jobs 6
+```
+
+| Run | Fresh seed | Actual PRED output | Process exit | Elapsed | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `4c5cad49891a6850` | `PRED-C1-r27-v2 cases_pass=20/41 verdict=TARGET_MISSED` | 1 | 116.010 s | `.ufo/waves/round-27/controls/v2/K1NoMerge-seed1.txt` |
+| 2 | `0727a9cfecf66ae2` | `PRED-C1-r27-v2 cases_pass=7/41 verdict=TARGET_MISSED` | 1 | 87.106 s | `.ufo/waves/round-27/controls/v2/K1NoMerge-seed2.txt` |
+
+Both stderr captures were empty, and both receipts end in `exit=1`. Neither run exited 2, so no guard retry was required. Saved receipt bytes matched captured stdout exactly:
+
+- Seed 1: 5,296 bytes; SHA-256 `42aaa8fa8dfbd4936c709312594b833e2ac31b5856677259041cf5e6301add6b`.
+- Seed 2: 5,648 bytes; SHA-256 `f89e85464e30e6476bae7ce0ff1648aaa3f65d5356d6448bd846359be669bc8f`.
+
+Both runs passed BASE, reported `ORACLE_CHECK base_twice equal rules=0`, and confirmed Hyprland commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. They used revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281` and the same 79-file snapshot digest recorded above.
+
+The detector distinguished the NO-MERGE defect on both seeds: all 21 failures in run 1 and all 34 failures in run 2 had excess entries. All run-1 failures and 32 run-2 failures carried MERGE labels. Run-2 C02 and C37 had excess entries without MERGE labels; feature-label completeness is not assumed. A glob-source case passed in run 2 (`C06`), a nested-source case passed in run 1 (`C02`), and variable-redefinition and interleaved-source cases also passed, as recorded in the receipts.
+
+Before and after the v2 measurements, all measured hashes were identical:
+
+| File | Before = after SHA-256 |
+| --- | --- |
+| Control | `918501eb066d36b811a6ac0ec759e2b510c2285261c58d5f9058291ead785947` |
+| C1 counter v2 | `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87` |
+| Retired C1 counter v1 | `3d7d301fb9315f9a6cea2427db7c39e556482b30d3f4283373579ae665afd136` |
+| Oracle | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+Thus no restoration was necessary: the retained control is byte-identical to the originally scored file, and neither detector nor harness was mutated.
+
+The pre-write disk command reported 114G available on `/fast`. Both v2 receipts reported `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent coredump measurements using the bounded command recorded above also gave 1,338 before and after, delta 0; both commands exited 0 with empty stderr. Both counter processes completed normally. No background service, source edit, git/jj write, or tool installation was added by this follow-up.
+

@@ -85,3 +85,63 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=
 ```
 
 No live-compositor commands, direct Hyprland launches, git/jj write commands, subagent dispatch, tool installation, or service restart was performed. Writes were limited to this report, the single assigned control, and its two receipts. No additional verification beyond the assigned scoring and safety/hash evidence was run.
+
+## C1 counter v2 re-score
+CONTROL K1Junk v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v1 before data after a different source-blind control met its target. Per the follow-up, re-scored the unchanged JUNK control twice against the revised detector, including unsourced decoys, nested/glob sources, interleaved source order, variable redefinition, and type-strict canonical-JSON comparison. Used the follow-up's exact v2 pin `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`, measured before and after.
+
+Executed this exact command twice concurrently from the lane root, with separate fresh automatically generated case seeds and explicitly cleared subprocess environments:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1Junk.py --jobs 6
+```
+
+| Run | Fresh case seed | Actual prediction line | Process exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `167addaf08663b08` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1Junk-seed1.txt` |
+| 2 | `754aa02a1f9f539f` | `PRED-C1-r27-v2 cases_pass=0/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1Junk-seed2.txt` |
+
+Both receipts preserve stdout verbatim through `exit=1`; both stderr streams were empty. Neither run timed out or hit an exit-2 guard. The resolved revision was `a4dc0da0394a71badf506e9c72144cd1b8ca7281`.
+
+Run 1 passed only BASE because the random output was the oracle's empty list; all 40 generated cases failed. Run 2 emitted two objects for BASE, so all 41 cases failed. Thus neither seed met the 41/41 target.
+
+Both runs reported:
+
+```text
+ORACLE_CHECK base_twice equal rules=0
+ORACLE_VERSION commit=efb50993780079460b0cbed1363e2166a2de1d9f tag=v0.56.2
+HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
+```
+
+### V2 unchanged-byte and safety evidence
+
+| Path under `.ufo/waves/round-27/` | SHA-256 before = after |
+| --- | --- |
+| `controls/K1Junk.py` | `2105846310d5b3e85b707b7e809d171b6a66c1914cde8be89db6f13272645a5a` |
+| `c1/count-v2.py` | `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87` |
+| `harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+No subject or control bytes were changed, so restoration was unnecessary. These measured hashes also show the control is identical to the v1-tested bytes.
+
+Receipt hashes:
+
+- `controls/v2/K1Junk-seed1.txt`: `c7d9ddc25c898ebb7a60e40b8c476fb43a9b88645e384ca44327df7e3890977f`
+- `controls/v2/K1Junk-seed2.txt`: `71b5fdf61a03d14f15064bbac88f8deecc0b5e211503c1afa7271df2abb7e319`
+
+Exact before/after hash commands:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/controls/K1Junk.py .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/controls/K1Junk.py .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/v2/K1Junk-seed1.txt .ufo/waves/round-27/controls/v2/K1Junk-seed2.txt
+```
+
+The earlier `df -h /fast` command was repeated before v2 and reported 113G available. The explicit coredump command below returned 1338 before and 1338 after, delta 0:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 30 prlimit --as=4000000000 --core=0 -- sh -c 'coredumpctl list --no-pager --no-legend | grep -c /usr/bin/Hyprland'
+```
+
+Both bounded counter processes exited normally (PIDs 556529 and 556544). Repeated the earlier cleared-environment `ps -eo pid=,ppid=,args=` inspection, filtering captured output for the exact absolute control path: `K1Junk v2 remaining process matches=0`, `process_check_exit=0`.
+
+Follow-up writes were limited to the two assigned `controls/v2/` receipts and this appended report section. No control edit, tool installation, direct Hyprland launch, live-compositor command, git/jj write, or subagent dispatch was performed.

@@ -80,3 +80,44 @@ env -i PATH=/usr/bin timeout 20 prlimit --as=4000000000 --core=0 -- coredumpctl 
 ```
 
 Both outputs were `1338`; Hyprland coredump delta = **0**. The SHA-only suites never started Hyprland or hyprctl. No compositor/environment identifiers were supplied. Counter-run limits are the frozen counter's own; ancillary commands used the 4 GB/core-0 cap. Scorers ran in separate process groups with a final SIGKILL group sweep after completion. No host service was started/restarted. No git/jj write commands were issued in the lane or fleet repository. No other held-out files were read, no subagents were dispatched, and no tools were installed or updated.
+
+## C2 counter v2 re-score
+
+CONTROL K2ShaPin v2 best: PRED-C2-r27-v2 green=2/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+At L1's direction, re-scored the **unchanged** suites against the replacement frozen counter, SHA-256 `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`, at full revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. The preceding v1 results remain historical, not the current counter result.
+
+Both v2 runs again passed the two pristine cases, rejected all six public benign edits, and killed all 15 W mutants. All failures/kills reported `rc=1 | SHA_PIN FAIL`; pristine cases reported `rc=0 | SHA_PIN PASS`. Both PRED lines are identical to the line above. Each process returned 1 and printed `exit=1`; there were no exit-2 runs or retries. The expected detector still rejects this byte-identity control because of the six benign false rejections. No behavioural checks were added.
+
+Exact commands, run concurrently from the same lane directory with two new random seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ShaPin-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ShaPin-suite-b.py --seed ae15ca7921d6ab90 --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ShaPin-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ShaPin-suite-b.py --seed b9be4979deaddd09 --jobs 6
+```
+
+Verbatim full receipts, including the PRED and exit lines:
+
+- `.ufo/waves/round-27/controls/v2/K2ShaPin-seed1.txt`
+- `.ufo/waves/round-27/controls/v2/K2ShaPin-seed2.txt`
+
+As instructed, neither command passed `--heldout`; no sealed files were read. Thus `b_valid=0`, `h_valid=0`, and held-out/sealed-benign performance is unmeasured. The failed public green cases already prevent the target independently of those absent sets.
+
+Before and after the v2 scores, this command produced identical output:
+
+```sh
+env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 --core=0 -- sha256sum .ufo/waves/round-27/c2/count-v2.py .ufo/waves/round-27/c2/count.py .ufo/waves/round-27/c2/mutants-w.json .ufo/waves/round-26/c1/count-v2.py .ufo/waves/round-26/c2/count.py .ufo/waves/round-26/quality/check-population.py .ufo/waves/round-27/controls/K2ShaPin-suite-a.py .ufo/waves/round-27/controls/K2ShaPin-suite-b.py
+```
+
+```text
+4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3  .ufo/waves/round-27/c2/count-v2.py
+2e180ed29c31abcb3421d7e57a147d05ac9d2982ebe4dbc555747b287e754dc7  .ufo/waves/round-27/c2/count.py
+0ad0e46c1a6e61f369c30ab08d6a998f6dce7d16436087b5df57fb8f22323608  .ufo/waves/round-27/c2/mutants-w.json
+4ed70b5427f2e223a8d816679e6d1fad7d2e76d2ed57aa0fe7f135496e836428  .ufo/waves/round-26/c1/count-v2.py
+b92c32da632bc9cfaeae72b6a0be2202e5a25653274cc0b33fc0ae3f37a716a8  .ufo/waves/round-26/c2/count.py
+803e0096c994d301fa7fe9a9dd7e35255ee1f5bcf3f63d15956cdba8943d0f64  .ufo/waves/round-26/quality/check-population.py
+3f41b8c6cbeb3c9017ac05684120b41895144f0c5606ba8bb8e512938e65453c  .ufo/waves/round-27/controls/K2ShaPin-suite-a.py
+4478cdb9a5b814edb98451719e0cde5c57db9e33f8d142f4166a9c3f202b6381  .ufo/waves/round-27/controls/K2ShaPin-suite-b.py
+```
+
+No lane subject or control needed restoration: the control bytes were unchanged and mutations remained in the counter's disposable clones. The original bounded `df -h /fast` command reported 113G available before v2 scoring (`804G` size, `691G` used, `86%`). Repeating the original bounded coredump-count command before and after gave `1338` both times: Hyprland coredump delta **0**. Subprocess environments were cleared, no compositor was started, and both scorer process groups received the same final SIGKILL sweep. No tooling was installed/updated.

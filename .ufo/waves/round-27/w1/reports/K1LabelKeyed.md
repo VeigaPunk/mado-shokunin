@@ -74,3 +74,40 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 --core=
 Counting output lines containing `/usr/bin/Hyprland` gave own before=1338, after=1338, delta=0. Each counter also printed `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
 
 No tools were installed or updated. No git/jj write command was run. No additional implementation tests or source-mutant probes were performed.
+
+## V2 re-score — unchanged control
+
+CONTROL K1LabelKeyed v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+At L1's follow-up instruction, re-scored the exact same control bytes against the redesigned v2 counter. V1 above is retained historical evidence, not the active C1 rule. The detector now includes unsourced decoys, nested/glob sources, interleaved source positions, variable redefinition, and type-strict JSON comparison.
+
+Ran this exact command twice concurrently from the lane directory, leaving seeds unspecified so the counter generated two fresh seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1LabelKeyed.py --jobs 6
+```
+
+| Run | Fresh seed | BASE | APPEND | SYNTH | Actual PRED output | Process exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `74a58228b0aaa937` | 1/1 | 0/25 | 0/15 | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1LabelKeyed-seed1.txt` |
+| 2 | `0bba261298c05f0b` | 1/1 | 0/25 | 0/15 | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1LabelKeyed-seed2.txt` |
+
+Both stdout receipts include `exit=1`; stderr was empty. Neither run hit an exit-2 guard, so neither required a rerun. Both resolved REV to `a4dc0da0394a71badf506e9c72144cd1b8ca7281`, recorded the unchanged snapshot digest `fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727`, confirmed BASE twice equal with zero rules, and confirmed oracle commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`.
+
+Before/after `sha256sum` observations were identical:
+
+| File under `.ufo/waves/round-27/` | SHA-256 before = after |
+| --- | --- |
+| `controls/K1LabelKeyed.py` | `1fb107df8d51811145da3fa12e2e1b01349ad295b5fcff1f34ca491c7d718c72` |
+| `c1/count-v2.py` | `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87` |
+| `harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+The v2 counter hash matches L1's follow-up pin. The control was not changed or restored because no mutation was made; its delivered bytes remain identical to the v1-scored bytes.
+
+V2 receipt SHA-256:
+
+- Seed 1: `7c4a86e66ee2c97e8e667d0d1eba7a11023b6b46a55765a0e19a1984994850de`.
+- Seed 2: `847349ef10ced185167a7e0d64e1f4776ec8dd1daf960829205393d0ca12b28e`.
+
+Both counters printed `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent before/after observations using `env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 --core=0 -- coredumpctl list --no-pager --no-legend` also counted 1338 and 1338 Hyprland entries: own v2 delta=0. Both counter processes were awaited to exit; nested compositor lifecycle remained exclusively under the unchanged pinned oracle. The bounded pre-run `df -h /fast` observation reported 113G available. No tools were installed or updated, no git/jj writes were run, and no control/source bytes were edited.
+

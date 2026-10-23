@@ -129,3 +129,60 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 30 prlimit --as=4000000000 -- curl
 An attempted `src/config/shared/complex/ComplexDataTypes.cpp` fetch returned HTTP 404; the implementation is in the successfully opened header linked above. No claim relies on that unopened URL. Workspace-manager and workspace-rule headers were also read to resolve the implementation paths. No source-corpus rows were changed: this seat is a control, not a source-opener.
 
 Only the two required counter measurements were run; no separate build, lint, formatter, smoke test, or mutation cycle was run.
+
+## v2 rescoring
+CONTROL K1NoVariables v2 best: PRED-C1-r27-v2 cases_pass=17/41 verdict=TARGET_MISSED — not met
+
+This follow-up adds two measurements under the redesigned v2 counter; the preceding sections preserve the historical v1 work. The control was not changed. The v2 detector rejected it on both fresh seeds. Neither run returned exit 2, so no guard retry was needed.
+
+| Run | Fresh seed | Actual PRED output | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `43a7bfd51fab9972` | `PRED-C1-r27-v2 cases_pass=9/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1NoVariables-seed1.txt` |
+| 2 | `9df8dcf40a4f7fd5` | `PRED-C1-r27-v2 cases_pass=17/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v2/K1NoVariables-seed2.txt` |
+
+Every v2 failure carries `VARIABLE` or `VARREDEF`; all cases carrying neither feature passed. Run 1 C10 is variable-tagged but passes. These observations support detection of the assigned omission, not a general completeness claim.
+
+### Exact v2 command and guards
+
+Working directory remained `/home/vgpnk/Projects/shokunin/mado-shokunin`. Executed the following unchanged command twice, concurrently, with six workers per run and the harness's shared instance locks:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NoVariables.py --jobs 6
+```
+
+Both receipts identify revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281`, counter SHA-256 `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`, and the same 79-file snapshot digest as v1. Both passed `ORACLE_CHECK base_twice equal rules=0` and verified nested Hyprland commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. Both full stdout receipts end in `exit=1`.
+
+The actual v2 counter hash matched the L1 follow-up's explicit pin. The registration redesign paragraph read during this follow-up still listed the earlier v2 hash `f7f86d75eb45a2dcd6a2094dcb614b701c948d6fee90f46da911831213c1a2c4`; this seat did not alter the registration or counter.
+
+### Unchanged bytes and host safety
+
+Before scoring, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/harness/oracle.py
+```
+
+After both runs, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py
+```
+
+The before/after hashes and both receipts agree:
+
+```text
+65672716b17daf24f7a4f7d69ab4b922cc47066c2d02e5cdd0586423e3cc0b44  .ufo/waves/round-27/controls/K1NoVariables.py
+258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87  .ufo/waves/round-27/c1/count-v2.py
+0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601  .ufo/waves/round-27/harness/oracle.py
+```
+
+The scratch-capacity command from the original report was repeated before scoring and returned:
+
+```text
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme1n1p2  804G  691G  113G  86% /fast
+```
+
+The same bounded, clean-environment crash census command was run before and after this follow-up. Both outputs were `1338`, giving a seat-observed delta of `0`. Each v2 receipt also prints `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
+
+Both counter processes completed. Compositor startup and teardown stayed inside the frozen harness. Only the two requested v2 receipt files and this report appendix were written during the follow-up; control and subject bytes needed no restoration because they were never edited. No tools were installed, no subagents were dispatched, and no additional verification was run.

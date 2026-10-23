@@ -79,3 +79,47 @@ Filesystem      Size  Used Avail Use% Mounted on
 Before and after scoring, ran `coredumpctl list --no-pager --no-legend` under `timeout 30`, a cleared environment and `prlimit --as=4000000000 --core=0`, counting output lines containing `/usr/bin/Hyprland` in Python. Both calls exited 0: before=1338, after=1338, delta=+0. These suites do not launch Hyprland, contact the live compositor, access DRM nodes, or start a service. Counter runs used the prescribed 1800-second bound; their suite subprocesses carry the frozen counter's 300-second, 4-GB, core-disabled limits.
 
 No tools were installed or updated. No build, linter, formatter, additional behavior suite, or held-out check was run.
+
+## C2 v2 re-score — unchanged control
+CONTROL K2ASTPin v2 best: PRED-C2-r27-v2 green=5/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+L1 retired counter v1 before data and requested this re-score under counter v2. The preceding v1 results remain historical receipts. Neither control suite was changed.
+
+Ran these commands concurrently with two fresh seeds and no held-out directory:
+
+```sh
+cd /home/vgpnk/Projects/shokunin/mado-shokunin && env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ASTPin-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ASTPin-suite-b.py --seed 7711d387341b6a9d --jobs 6
+```
+
+```sh
+cd /home/vgpnk/Projects/shokunin/mado-shokunin && env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ASTPin-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2ASTPin-suite-b.py --seed 6694ed23a6b74e8c --jobs 6
+```
+
+Both runs resolved REV to `a4dc0da0394a71badf506e9c72144cd1b8ca7281` and reported counter SHA-256 `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`, also observed in the pre-run bounded `sha256sum` call. The three subject hashes and W hash matched the earlier pins.
+
+| Run | Seed | Exit | Verbatim stdout receipt | Receipt SHA-256 |
+|---|---|---:|---|---|
+| 1 | `7711d387341b6a9d` | 1 | `.ufo/waves/round-27/controls/v2/K2ASTPin-seed1.txt` | `88136f8c4254754ee18955a5ca3775ef73e0bd57a32c5b1651d55153d1b0317b` |
+| 2 | `6694ed23a6b74e8c` | 1 | `.ufo/waves/round-27/controls/v2/K2ASTPin-seed2.txt` | `ee957c36f7b68d1da394ed17168ca802f73a1ecf92a4a47f977e73da653527f5` |
+
+Each receipt is 3,562 bytes and contains all 23 case lines and `exit=1`. Both stderr streams were empty; no exit-2 rerun was necessary. Both pristine runs and all three comment edits passed. The three unused-assignment edits failed with `rc=1` and the respective `AST_PIN ... MISMATCH`; all 15 W mutants were killed with `rc=1`. Thus the passing pristine baselines support the W tally, but the syntactic detector still fails the green requirement. Sealed benign edits and held-out mutants were not supplied, read, or scored; `b_valid=0` and `h_valid=0` are not passes.
+
+Both runs ended with:
+
+```text
+PRED-C2-r27-v2 green=5/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED
+exit=1
+```
+
+### V2 preservation and host safety
+
+Bounded `sha256sum` calls before and after both runs reported identical control hashes:
+
+| Control | Before and after SHA-256 |
+|---|---|
+| `K2ASTPin-suite-a.py` | `b1e7bd4ff760c6726da21c4c31fe4e791f9fb67ede17578baaed05f767c38571` |
+| `K2ASTPin-suite-b.py` | `cd000383087e21fbc18fe000f9e6ad5b1b2552002e8bdbc9d1e8064bbbe0f17e` |
+
+Counter v2 uses disposable no-local clones under `/fast/scratch/hyaku/mado-r27/c2v2`, per-run directories, bubblewrap, and clone cleanup in its inspected `finally` blocks. No lane subject was modified, so no manual restoration was needed. The only new writes were the two assigned v2 receipts and this report append. Both counter processes completed; the unchanged AST suites spawn no child processes.
+
+Pre-run bounded `df -h /fast` reported 804G total, 695G used, 109G available, 87% usage. The same bounded, cleared-environment coredump counting procedure used above exited 0 before and after: Hyprland count 1338 to 1338, delta=+0. No Hyprland instance was started by the controls. No tools were installed or updated; no other checks were run.

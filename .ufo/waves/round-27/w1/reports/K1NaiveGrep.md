@@ -96,3 +96,52 @@ env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- core
 ```
 
 All Hyprland execution was through the frozen counter/oracle, with cleared environments, private headless isolation, and the shared oracle slot cap. No live-compositor commands, host service changes, package transactions, or git/jj writes were performed. No tools were installed or updated. No checks beyond the assigned two scoring runs and safety/hash evidence were run.
+
+## v2 re-score
+CONTROL K1NaiveGrep v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired C1 counter v1 before data after a separate source-blind control met its target. The original v1 results above remain historical evidence, not the active claim. As requested, re-scored this control without changing any of its bytes under the amended frozen v2 counter, which adds decoys, nested/glob sources, interleaved source order, variable redefinition, and type-strict canonical-JSON comparison.
+
+Ran this exact command twice concurrently from `/home/vgpnk/Projects/shokunin/mado-shokunin`; the counter independently generated two fresh seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NaiveGrep.py --jobs 6
+```
+
+| Verbatim stdout receipt | Fresh seed | Result | Exit |
+| --- | --- | --- | --- |
+| `.ufo/waves/round-27/controls/v2/K1NaiveGrep-seed1.txt` | `1e38009652d8ff46` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 |
+| `.ufo/waves/round-27/controls/v2/K1NaiveGrep-seed2.txt` | `7d0a534e821b6298` | `PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED` | 1 |
+
+Both runs resolved REV to `a4dc0da0394a71badf506e9c72144cd1b8ca7281`, confirmed duplicate BASE oracle equality with zero rules, and confirmed oracle commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. Both used the same 79-file snapshot digest recorded above. BASE passed and every generated case failed in each run. Both receipts finish:
+
+```text
+HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
+PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED
+exit=1
+```
+
+Thus v2 rejected the unchanged NAIVE-GREP control on both seeds; neither run was inconclusive or exited 2, so no guard retry was needed. No target-meeting-control redesign rule was triggered by this control.
+
+Before-and-after SHA-256 evidence for the re-score:
+
+| Path | SHA-256 before and after |
+| --- | --- |
+| `.ufo/waves/round-27/c1/count-v2.py` | `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87` |
+| `.ufo/waves/round-27/harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+| `.ufo/waves/round-27/controls/K1NaiveGrep.py` | `f26dfb60602b57297fba5c4e5b1153dd22964f2b1cb7fee33a2539f77550e611` |
+
+Receipt hashes:
+
+- v2 seed1: `c772fb9d7417521d9c05f0d1be35ee17f62186bab063bb4cbd3e65f3f22c25e5`
+- v2 seed2: `482d64343fb0404330d14b68c3237452a9516a95c39035fce6d79f0229d50739`
+
+Exact re-score hash commands:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py .ufo/waves/round-27/controls/v2/K1NaiveGrep-seed1.txt .ufo/waves/round-27/controls/v2/K1NaiveGrep-seed2.txt
+```
+
+The same bounded `df -h /fast` command recorded above reported 86% used and 113G available before this re-score. The same independent bounded coredump-count command reported `1338` before and after (delta 0), matching both v2 receipts. Both counter processes completed; all nested compositor execution and cleanup remained in the pinned oracle. The control, counter, and oracle were unchanged, so restoration was unnecessary. Only the two authorized v2 receipt files and this appended report section were written for the follow-up. No tools were installed or updated.
+

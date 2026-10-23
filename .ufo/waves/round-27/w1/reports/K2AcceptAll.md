@@ -88,3 +88,49 @@ HOST_SAFETY Hyprland_before=1338 Hyprland_after=1338 delta=0 launched_by_control
 ```
 
 No compositor, subject runtime, host service, network fetch, or live-compositor command was invoked by either suite. All started counter processes returned; there are no retained background jobs. No tools were installed or updated. No additional tests or builds were run.
+
+## C2 v2 rescore
+
+CONTROL K2AcceptAll v2 best: PRED-C2-r27-v2 green=8/8 b_valid=0 w_killed=0/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+At L1's follow-up instruction, rescored the unchanged suites with the retired counter replaced by the pinned v2 counter. Both fresh-seed runs produced the exact PRED line above, `exit=1`, and empty stderr. All 8 green cases passed, while all 15 W mutants survived with suite `rc=0`. Neither run was inconclusive or exit 2. No held-out or sealed benign files were supplied or inspected; their zero counts are not held-out measurements.
+
+### Exact v2 commands and receipts
+
+The two independent runs were launched concurrently, each with six jobs:
+
+```sh
+cd /home/vgpnk/Projects/shokunin/mado-shokunin && env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2AcceptAll-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2AcceptAll-suite-b.py --seed 5f278066a82003bb --jobs 6
+cd /home/vgpnk/Projects/shokunin/mado-shokunin && env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2AcceptAll-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2AcceptAll-suite-b.py --seed 7949e3a414797c29 --jobs 6
+```
+
+Both resolved REV to `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. Verbatim stdout, including `exit=1`, is saved at:
+
+| Receipt | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.ufo/waves/round-27/controls/v2/K2AcceptAll-seed1.txt` | 3027 | `51fa6fd6a96a4a89fa02a2492e52e8b0970854cfc9ca97c2c52e2363c3dec160` |
+| `.ufo/waves/round-27/controls/v2/K2AcceptAll-seed2.txt` | 3027 | `088503c0cf2954947a3b083cadb6535783560709ac96ba929c998487fae11d03` |
+
+Both saved receipts were byte-equal to the corresponding captured stdout. No exit-2 repetition was necessary.
+
+### v2 preservation, restoration, and host safety
+
+Before and after the rescore, the v2 counter had SHA-256 `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`, matching L1's pin. Both control suites retained their original SHA-256 `29453a6f2fb8c3e5f0e6fefb688ae00cbc5d2d36d2eb762112a1553e33167ae0`; no control bytes changed. The W set, all three lane subjects, and the oracle also had identical before/after hashes matching the table above.
+
+The frozen v2 detector makes no-local disposable clones under `/fast/scratch/hyaku/mado-r27/c2v2` and runs each suite in bubblewrap with the lane and host home hidden. Its clone and parent cleanup are in `c2/count-v2.py:109-110,243-244`. No lane subject was edited and no lane restoration was needed. Both counter processes returned 1, and their process groups were confirmed absent afterward (PIDs 581509 and 581516).
+
+The same bounded `df` command recorded:
+
+```text
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme1n1p2  804G  691G  113G  86% /fast
+```
+
+The same bounded `coredumpctl` command was run before and after; both returned 0 with empty stderr:
+
+```text
+HOST_SAFETY v2 Hyprland_before=1338 Hyprland_after=1338 delta=0 launched_by_control=0
+```
+
+No compositor or subject runtime was invoked by either control suite. No tools were installed or updated, and no unrelated checks or builds were run.
+

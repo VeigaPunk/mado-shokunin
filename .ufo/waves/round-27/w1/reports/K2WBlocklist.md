@@ -177,3 +177,72 @@ The same bounded `df -h /fast` command shown above was rerun before scoring and 
 `HOST_SAFETY exact_followup_Hyprland_coredumps_before=1338 after=1338 delta=0; Hyprland_processes_started_by_this_control=0`.
 
 All started commands completed; the suites' bounded Git children were waited for. No Hyprland, hyprctl, oracle, subject program, host service, additional runtime, tool installation, or tool update was invoked. No build, lint, formatter, or extra behavioral test was run.
+
+## C2 v2 re-score — unchanged controls
+
+### Verdict
+CONTROL K2WBlocklist v2 best: PRED-C2-r27-v2 green=3/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+CONTROL K2WBlocklistExact v2 best: PRED-C2-r27-v2 green=8/8 b_valid=0 w_killed=15/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+Both variants were re-scored unchanged under the replacement counter `.ufo/waves/round-27/c2/count-v2.py`, SHA-256 `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`, at revision `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. The retired v1 results above remain historical evidence, not the current claim rule.
+
+No `--heldout` argument was supplied, as requested. Thus no sealed benign edits or held-out mutants were read or scored: `b_valid=0`, `h_valid=0`, and `h_min_per_subject=0`. The exact variant satisfies every public green and W criterion but misses v2's required sealed-benign and held-out population/subject-coverage conditions. It is no longer accurate under v2 to describe its miss as solely `h_valid=0`: the sealed-benign requirement is also unsatisfied in this W-only run.
+
+### Observed outputs and receipts
+
+| Unchanged control | Fresh seed | Green | W counter tally | Exit |
+| --- | --- | --- | --- | --- |
+| K2WBlocklist | `af070cbf3e7eb28e` | 3/8 | 15/15 | 1 |
+| K2WBlocklist | `e92887f1256779bc` | 3/8 | 15/15 | 1 |
+| K2WBlocklistExact | `2f8cf09310ecc30e` | 8/8 | 15/15 | 1 |
+| K2WBlocklistExact | `f83c85512990535f` | 8/8 | 15/15 | 1 |
+
+Each pair produced its exact PRED line above twice. All four exited 1, not 2, so no guard rerun was needed. There were no counter-reported W survivors.
+
+The original variant still rejects all five A green cases due to the same `c1-drop-bezier` substring collision. Its nine A “KILLED” labels remain inconclusive as mutation-discrimination evidence because pristine fails. Its B baseline passes and its six B W mutants are rejected. The exact variant passes all eight public green cases and rejects all 15 W mutants with the corresponding IDs, with no baseline-failure ambiguity. These are source-only controls, not behavioral checks.
+
+Complete stdout, including each `exit=1`, is saved verbatim in:
+
+- `.ufo/waves/round-27/controls/v2/K2WBlocklist-seed1.txt`
+- `.ufo/waves/round-27/controls/v2/K2WBlocklist-seed2.txt`
+- `.ufo/waves/round-27/controls/v2/K2WBlocklistExact-seed1.txt`
+- `.ufo/waves/round-27/controls/v2/K2WBlocklistExact-seed2.txt`
+
+### Exact commands
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Four fresh seeds were selected with `secrets.token_hex(8)`. All four bounded scores ran concurrently, each with six workers:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklist-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklist-suite-b.py --seed af070cbf3e7eb28e --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklist-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklist-suite-b.py --seed e92887f1256779bc --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklistExact-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklistExact-suite-b.py --seed 2f8cf09310ecc30e --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklistExact-suite-a.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2WBlocklistExact-suite-b.py --seed f83c85512990535f --jobs 6
+```
+
+The detector used its v2 no-local clones, shuffled scheduling, and bubblewrap isolation. The exact suites' read-only Git source reads succeeded inside that isolation; all pristine exact-suite runs exited 0.
+
+### Unchanged-byte and safety evidence
+
+The following bounded command was run before and after the four scores:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 15 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c2/count-v2.py .ufo/waves/round-27/c2/mutants-w.json .ufo/waves/round-26/c1/count-v2.py .ufo/waves/round-26/c2/count.py .ufo/waves/round-26/quality/check-population.py .ufo/waves/round-27/controls/K2WBlocklist-suite-a.py .ufo/waves/round-27/controls/K2WBlocklist-suite-b.py .ufo/waves/round-27/controls/K2WBlocklistExact-suite-a.py .ufo/waves/round-27/controls/K2WBlocklistExact-suite-b.py
+```
+
+Every before/after hash matched. The v2 counter hash is recorded above; W and all three subject hashes match the original preservation table. The four control hashes also match their original receipts and the new v2 receipts:
+
+| Control file | Before SHA-256 = after SHA-256 |
+| --- | --- |
+| K2WBlocklist-suite-a.py | `dbc34f3ae7f19bfe10cc9923b63883b115aaf8b4e35f461e1245b1351b477d6c` |
+| K2WBlocklist-suite-b.py | `ae38ee85014933d80ae87482512f0f9f39a7ede992f43325da4d24d4af0382b1` |
+| K2WBlocklistExact-suite-a.py | `422880dd574e90556c8ab21f9b753378cd44037a69f84fec7173e23c07c7915b` |
+| K2WBlocklistExact-suite-b.py | `a59744733e0684d19983914bce83518764932edcf009e06d19779f38bb2adf13` |
+
+No suite, subject, counter, W set, or harness was changed. The frozen detector applied mutations only in its disposable per-case scratch clones and performed its cleanup. No manual restoration was needed and no restored-clone rerun was performed.
+
+The same bounded `df -h /fast` command recorded earlier reported 113 GB available before these scores. The same executable-filtered coredump-count command was run before and after; both outputs were `1338`.
+
+`HOST_SAFETY v2_Hyprland_coredumps_before=1338 after=1338 delta=0; Hyprland_processes_started_by_this_control=0`.
+
+All four bounded counter processes completed. No Hyprland, hyprctl, oracle, subject program, additional runtime, host service, tool install, or tool update was invoked. No build, lint, formatter, or additional behavioral check was run.

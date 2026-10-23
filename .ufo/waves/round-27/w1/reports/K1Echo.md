@@ -82,3 +82,56 @@ Receipt SHA-256 values:
 - Seed 2: `0754e44135334ff5c960e0034689a79e6d0c90a985b20ac4b8e091bde45f6cdc`.
 
 No pristine subject bytes were mutated, so no source restoration was necessary. Only this seat's control, two receipts, and this report were written; the control remains as the required deliverable. No git/jj writes, subagents, tool installations, or upgrades were performed.
+
+## C1 v2 re-score
+CONTROL K1Echo v2 best: PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+At L1's request, re-scored the unchanged ECHO control after retirement of v1. No control bytes were edited. The v2 detector retains the 41/41 target and adds source-order/glob/nesting/decoy and variable-redefinition cases plus type-strict JSON equality.
+
+Working directory remained `/home/vgpnk/Projects/shokunin/mado-shokunin`. Executed this exact command twice concurrently with fresh counter-selected seeds:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v2.py a4dc0da0 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1Echo.py --jobs 6
+```
+
+| Run | Seed | BASE | APPEND | SYNTH | Process exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | `ef8547bc424a0772` | 1/1 | 0/25 | 0/15 | 1 | `.ufo/waves/round-27/controls/v2/K1Echo-seed1.txt` |
+| 2 | `eff4ef7fdcf80a37` | 1/1 | 0/25 | 0/15 | 1 | `.ufo/waves/round-27/controls/v2/K1Echo-seed2.txt` |
+
+Both runs had empty stderr, no exit-2 guard, and these verbatim final lines:
+
+```text
+HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0
+PRED-C1-r27-v2 cases_pass=1/41 verdict=TARGET_MISSED
+exit=1
+```
+
+Resolved revision: `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. Both runs confirmed equal duplicate BASE oracle results (`rules=0`), the pinned Hyprland v0.56.2 commit, and the same 79-file snapshot digest as v1. No retry was necessary.
+
+Repeated the storage and coredump commands documented above. Before re-scoring, `/fast` had 113G available (691G used, 86%). Independent before/after Hyprland coredump counts were both `1338`, delta zero. Both processes used a cleared initial environment, separate process groups, a 925-second parent deadline, and the same process-group cleanup in `finally`. No live compositor commands were issued.
+
+Before re-scoring:
+
+```sh
+env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1Echo.py .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py
+```
+
+After re-scoring:
+
+```sh
+env -i PATH=/usr/bin timeout 15 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1Echo.py .ufo/waves/round-27/c1/count-v2.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/v2/K1Echo-seed1.txt .ufo/waves/round-27/controls/v2/K1Echo-seed2.txt
+```
+
+Before/after SHA-256 values were identical:
+
+- Unchanged ECHO control: `093aa876dca8081acd1c3a88a0d17475f8510cfaa105d9be57ab12f6a8b9fedd`.
+- Frozen v2 counter: `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87`.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+New receipt SHA-256 values:
+
+- v2 seed 1: `319b31eb0f803478ac012fc0aa234dbfe2f7ba62368e8eb91883e411bbeee824`.
+- v2 seed 2: `11928ff2385c8af6839e9777732b19c9acdc029e63bcea5822c29149ff61557f`.
+
+Restoration was unnecessary: no control, subject, counter, or oracle bytes were modified. This follow-up wrote only the two requested v2 receipts and appended this section. No tools were installed or upgraded, no subagents were dispatched, and no git/jj write commands were run.

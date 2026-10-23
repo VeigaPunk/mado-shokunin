@@ -74,3 +74,40 @@ timeout 20 prlimit --as=4000000000 --core=0 -- coredumpctl list --no-pager --no-
 `df` reported `/fast`: 804G total, 689G used, 115G available, 86% used. The coredump command was run before and after; Python counted stdout lines containing `/usr/bin/Hyprland` (the equivalent of the required grep count): before 1338, after 1338, delta 0. Both coredump commands exited 0 with empty stderr.
 
 All started child environments omitted WAYLAND_DISPLAY, HYPRLAND_INSTANCE_SIGNATURE, and git override variables. The self-test uses its existing offline oracle replacements; no Hyprland instance, live-compositor command, host service, network request, or device access was started. Both counter process groups were isolated; direct children were reaped, and each group received final cleanup if still present. The counter itself imposes the registered 300-second, 4-GB, core-disabled suite bounds. No git/jj write command was run in the lane or fleet repo. No tools were installed or updated.
+
+## C2 v2 re-score — unchanged control
+
+CONTROL K2R26Suites v2 best: PRED-C2-r27-v2 green=3/8 b_valid=0 w_killed=12/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED — not met
+
+L1 requested this re-score after retiring C2 v1 before data. Neither control suite was changed. The v2 counter SHA-256 was `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`; the requested REV resolved to `a4dc0da0394a71badf506e9c72144cd1b8ca7281`. The counter uses no-local clones and runs suites in its bubblewrap sandbox with the host home and other scratch runs hidden, a private TMPDIR, and shuffled execution.
+
+### Exact v2 commands
+
+Run concurrently from `/home/vgpnk/Projects/shokunin/mado-shokunin`:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --suite-a-rel .ufo/waves/round-26/quality/counter-selftest.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2R26Suites-suite-b.py --seed 71b8217b686de6ec --jobs 6
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 1800 python3 -I .ufo/waves/round-27/c2/count-v2.py a4dc0da0 --suite-a-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --suite-a-rel .ufo/waves/round-26/quality/counter-selftest.py --suite-b-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K2R26Suites-suite-b.py --seed f5b74e3b422c2621 --jobs 6
+```
+
+Both processes exited 1 with empty stderr; neither required an exit-2 rerun. No `--heldout` or `--seal` argument was supplied, and no sealed files were read. Therefore `b_valid=0` and `h_valid=0` are expected in this requested W-only re-score, not a claim about the sealed population.
+
+| Fresh seed | Verbatim stdout receipt relative to lane root | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `71b8217b686de6ec` | `.ufo/waves/round-27/controls/v2/K2R26Suites-seed1.txt` | 3329 | `800ed544532b218c337ff68a2543d3f57ffe4f58b1c638ae856ea6519501ef54` |
+| `f5b74e3b422c2621` | `.ufo/waves/round-27/controls/v2/K2R26Suites-seed2.txt` | 3329 | `e4e2f9b104da0c16a28472c71e6061e1fc97526d5a30f7bf5c10d64acd7a4c9e` |
+
+Each saved receipt matched its captured stdout bytes exactly, including:
+
+```text
+PRED-C2-r27-v2 green=3/8 b_valid=0 w_killed=12/15 h_killed=0/0 h_need=0 h_valid=0 h_min_per_subject=0 invalid=0 verdict=TARGET_MISSED
+exit=1
+```
+
+### V2 behavioral interpretation and preservation
+
+Every case outcome agreed across the two fresh seeds and with the earlier v1 control scores. Suite A failed pristine and all four benign variants; its nine nonzero W results remain baseline-inconclusive despite the counter's KILLED labels. Suite B passed all three green runs, killed M1/M3/M5 with 3/5, 4/5, and 3/5 matching fixtures respectively, and let M2/M4/M6 survive with 5/5. The unchanged five-fixture control does not meet the target.
+
+Before/after hashes matched for the v2 counter, W set, unchanged suites A and B, and all three lane subjects. The v2 counter retained the hash above; W, suite A, and the three subject hashes remained exactly those in the earlier preservation table. Suite B remained `d8ef4aa74516ff0e443942e1ffdceff3a050864180d80bd5e20a8a271ea7aaff`. No original bytes needed restoration; all mutation work remained in disposable counter clones.
+
+The same bounded safety commands as above reported `/fast` with 113G available (86% used) before the runs. Hyprland coredump count was 1338 before and 1338 after, delta 0; both count commands exited 0 with empty stderr. Child environments were cleared, direct children reaped, and isolated process groups cleaned if still present. No control changes, package installation, host-service action, live-compositor action, or lane/fleet git write was performed.
