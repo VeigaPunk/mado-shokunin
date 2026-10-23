@@ -1723,7 +1723,7 @@ session-isolated nested instance (`.ufo/waves/round-26/harness/oracle.py`; pilot
 | C2 operability: `tools/mado-binds.py` works on trees whose binds/variables use hyprlang `{{…}}` expressions, keeping round-25 behaviour on the 20-case V3 sample | `96101be5` (round-25 tool): `cases_pass=22/51` (`evidence/c2-before-96101be5.txt`) → `a496b02a`: `PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET`, exit 0 (`evidence/c2-after-a496b02a.txt`, seed `629fd25ee94fb42a`) | `python3 -I .ufo/waves/round-26/c2/count.py REV` (sha256 `b92c32da…16a8`) | target met; controls (6 shapes) best 24/51 |
 
 Population check (QUALITY 37): `python3 -I .ufo/waves/round-26/quality/check-population.py --registration
-.ufo/waves/round-26/registration.md` on both after-receipts → `POPULATION verdict=PASS`, exit 0.
+.ufo/waves/round-26/registration.md` on both after-receipts → `POPULATION verdict=PASS`, exit 0. Evidence (landed round 27, `evidence/r26-population-after.txt`, sha256 `faf6df7e…23f98`): the sentence holds only because the registration at its commit already carried the C2-v2 paragraph — with the pre-v2 registration at `05319e0` the same two receipts give `verdict=FAIL`, exit 1 (hidden-dependency probe).
 
 ### Capabilities (round 26)
 
