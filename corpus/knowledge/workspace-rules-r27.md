@@ -7,7 +7,7 @@ source:
   - S182
   - S158
   - S162
-verified-at: <pending>
+verified-at: 20022a652d201af52c899c4492a7f71be0136b80 (PRED-C1-r27-v4 41/41, seed 4cfdf858277ad362, evidence/c1-after-20022a65.txt)
 recheck: `python3 -I .ufo/waves/round-27/c1/count-v4.py REV`
 ---
 
@@ -16,6 +16,10 @@ recheck: `python3 -I .ufo/waves/round-27/c1/count-v4.py REV`
 ## Scope
 
 The implementation details below are pinned to Hyprland v0.56.2, commit `efb50993780079460b0cbed1363e2166a2de1d9f`. The selector-property descriptions are from the pinned hyprlang-era wiki, and are documentation rather than a runtime measurement. [S178, `content/Configuring/Workspace-Rules.md:13-48`]
+
+## Measurement status (round 27)
+
+The `[INF]` markers below record what the static source reports alone did not locate. They are superseded as capability claims by the round-27 measurement: `tools/mado-wsrules.py` at `20022a65` reproduces Hyprland v0.56.2's `hyprctl workspacerules -j` byte-for-byte, entry-by-entry, on BASE + 40 generated cases (41/41, seed `4cfdf858277ad362`, `evidence/c1-after-20022a65.txt`), which establishes the emitted schema (member order `workspaceString, enabled, monitor, default, persistent, gapsIn, gapsOut, borderSize, border, rounding, decorate, shadow, defaultName, onCreatedEmpty`; unset members omitted; gaps `[top,right,bottom,left]`; bools as JSON bools; `enabled` always `true`), merge-in-place with first-seen order, and the `on-created-empty` `[workspace X] cmd` prefix.
 
 ## Selector grammar
 
@@ -62,6 +66,6 @@ When a new parsed rule has the same exact selector string as an existing enabled
 - **Lua-era behavior:** [INF] None of the allowed source reports or fetched bins locates Lua-era workspace-rule parsing or establishes compatibility with it.
 - **Runtime `hyprctl keyword workspace`:** [INF] The allowed material locates legacy config registration and static handler behavior, but not the runtime keyword dispatch path or whether it constructs the same table.
 - **Dynamic selectors:** The wiki documents existing-workspace selectors and the manager uses `matchesStaticSelector`; [INF] the allowed sources do not establish dynamic selector forms or update semantics beyond those anchors. [S178, `content/Configuring/Workspace-Rules.md:15-19,44-48`; S162, `src/config/legacy/ConfigManager.cpp:608-610`; S179, `src/config/shared/workspace/WorkspaceRuleManager.cpp:34-52`]
-- **Exact emitted table schema:** [INF] A complete member-by-member JSON table and optional-field omission behavior cannot be located from the allowed report text; see the evidence limits above.
+- **Exact emitted table schema:** [VERIFIED via measurement at 20022a65] the emitted member order and omission behavior are exactly `workspaceString, enabled, monitor, default, persistent, gapsIn, gapsOut, borderSize, border, rounding, decorate, shadow, defaultName, onCreatedEmpty` (unset members omitted), as enforced entry-by-entry by the frozen comparator in `.ufo/waves/round-27/c1/count-v4.py`.
 
-[INF] This is a static-source draft, not a C1 measurement or live `hyprctl workspacerules -j` capture. `verified-at` remains pending.
+[VERIFIED] The note semantics were confirmed by measurement: `verified-at: 20022a65` passed PRED-C1-r27-v4 41/41 (seed 4cfdf858277ad362, `evidence/c1-after-20022a65.txt`); on-created-empty behavior (`[workspace X] cmd` with no leading colon) is exercised by the counter population's ONEMPTY cases.
