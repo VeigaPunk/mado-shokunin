@@ -1,0 +1,841 @@
+{
+ "schema": "mado-r24-carry-population-v1",
+ "created_utc": "2026-10-23T03:57:02Z",
+ "description": "Byte-exact freeze of the round-23 wave-2 regression/discovery fixtures named by five wave-2 reports, as a registered discovery population for round 24. No file under tools/ was changed.",
+ "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+ "round": "round-24",
+ "fixture_count": 28,
+ "populations": {
+  "AttackLateCell": {
+   "report": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "report_sha256": "f5622d7731d750d44b30846ff39ce95e9fdf3fd77111febee0a0567e7f52644d",
+   "scope": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "fixtures": 5
+  },
+  "AttackRecallRegress": {
+   "report": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackRecallRegress.md",
+   "report_sha256": "3cb5410cf17f3d674088a089671e99333af10ba0be230a1e09986fc300d0118e",
+   "scope": "wave-2 recall: escape-gated callback sweep regressions",
+   "fixtures": 4
+  },
+  "AttackFrameScopes": {
+   "report": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackFrameScopes.md",
+   "report_sha256": "627a66b70b5f84fb3232d8333bcce1203dbf6d869f6475f74cab18e9b7916555",
+   "scope": "wave-2 scope-chain: frame identity, nested binders, match/with binders",
+   "fixtures": 4
+  },
+  "AttackEscapeGate": {
+   "report": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "report_sha256": "21822b88219a87847931a600923185485705989e32f31cef2db09390d7fad1d5",
+   "scope": "wave-2 escape gate: stores the gate does not see",
+   "fixtures": 5
+  },
+  "ReClosureNeighbour": {
+   "report": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "report_sha256": "245c227000471b92ce3dbbd059888ccfefea1a183d021f63c8b4be1777b6c326",
+   "scope": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "fixtures": 10
+  }
+ },
+ "base_classifier": {
+  "path": "tools/mado-tripwire.py",
+  "sha256": "cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84",
+  "python": "3.14.8"
+ },
+ "base_run": {
+  "path": "base-run.txt",
+  "sha256": "a4f27aa772d1ae8be36942eceb71e09f9429150c98ef885c94834263bb9e5337",
+  "caps": "timeout 60 s; RLIMIT_AS 384 MiB per child",
+  "exit_values": {
+   "0": "no findings",
+   "1": "findings"
+  }
+ },
+ "entries": [
+  {
+   "path": "fixtures/AttackLateCell/LateEnclosingLocalViaRelay.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/LateEnclosingLocalViaRelay.jsonl",
+   "origin_kind": "lane",
+   "sha256": "2e41dcacefe517306d003a3057e12e5c886319e5c24ea68272e95aa985d22cb5",
+   "bytes": 513,
+   "report": "AttackLateCell",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "fixture_id": "LateEnclosingLocalViaRelay",
+   "population": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "improved",
+    "at_tip_3732c7a7": "improved"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-relay-foreign",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackLateCell/LoopClosureCalledAfterLoop.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/LoopClosureCalledAfterLoop.jsonl",
+   "origin_kind": "lane",
+   "sha256": "cfea001be735994368f80b2effef606be34c1e5f29d7511cde1bcfd3ba0cf234",
+   "bytes": 415,
+   "report": "AttackLateCell",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "fixture_id": "LoopClosureCalledAfterLoop",
+   "population": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same-wrong",
+    "at_tip_3732c7a7": "same-wrong"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/AttackLateCell/NonlocalRebindThenCallInSibling.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/NonlocalRebindThenCallInSibling.jsonl",
+   "origin_kind": "lane",
+   "sha256": "4db9345fc46cec7d996e61363c439554d53195a229d9403a97120e0850059784",
+   "bytes": 513,
+   "report": "AttackLateCell",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "fixture_id": "NonlocalRebindThenCallInSibling",
+   "population": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same-wrong",
+    "at_tip_3732c7a7": "same-wrong"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/AttackLateCell/SecondFrameInvokesFirstFrameClosure.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/SecondFrameInvokesFirstFrameClosure.jsonl",
+   "origin_kind": "lane",
+   "sha256": "e2f69b6dc42dd82ccf6a26d0fa9f2dc91cc2ff19a971d081ad5f5e39474df495",
+   "bytes": 489,
+   "report": "AttackLateCell",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "fixture_id": "SecondFrameInvokesFirstFrameClosure",
+   "population": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "improved",
+    "at_tip_3732c7a7": "improved"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23w2-first-invocation",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackLateCell/SecondFrameRelayInvokesFirstClosure.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/AttackLateCell/probes/fixtures/SecondFrameRelayInvokesFirstClosure.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "9d3c1c7db7ec03e74b5d49274a9a17a551074792fbdec58314dec7f9a485002e",
+   "bytes": 514,
+   "report": "AttackLateCell",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackLateCell.md",
+   "fixture_id": "SecondFrameRelayInvokesFirstClosure",
+   "population": "wave-2 C1 attack: late enclosing-cell rebinding",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "pass (correct row, unparsed 0)",
+    "at_tip_3732c7a7": "REGRESSED (extra lead row)"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23w2-first-relay",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackRecallRegress/RecallClosureStoredInDict.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackRecallRegress/fixtures/RecallClosureStoredInDict.jsonl",
+   "origin_kind": "lane",
+   "sha256": "eb2aa4e66827f898d458d9cf4be05522512ba0d5b7a0e535431934e9ffae39ea",
+   "bytes": 431,
+   "report": "AttackRecallRegress",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackRecallRegress.md",
+   "fixture_id": "RecallClosureStoredInDict",
+   "population": "wave-2 recall: escape-gated callback sweep regressions",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23x-closure-dict",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackRecallRegress/RecallConditionalAugAssignStore.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackRecallRegress/fixtures/RecallConditionalAugAssignStore.jsonl",
+   "origin_kind": "lane",
+   "sha256": "931c2432362f948c0f018a6b6eb70e4c6f67b35ca7e23aa2037812a6516d5334",
+   "bytes": 475,
+   "report": "AttackRecallRegress",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackRecallRegress.md",
+   "fixture_id": "RecallConditionalAugAssignStore",
+   "population": "wave-2 recall: escape-gated callback sweep regressions",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23y-aug-cond",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackRecallRegress/RecallSecondCallDunder.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackRecallRegress/fixtures/RecallSecondCallDunder.jsonl",
+   "origin_kind": "lane",
+   "sha256": "c9fc86a13c37eae1889fa5f03a0020a54d1724255d8e869a618d8d409bcac77e",
+   "bytes": 389,
+   "report": "AttackRecallRegress",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackRecallRegress.md",
+   "fixture_id": "RecallSecondCallDunder",
+   "population": "wave-2 recall: escape-gated callback sweep regressions",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23y-second-dunder",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackRecallRegress/RecallTryExceptDunderCall.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackRecallRegress/fixtures/RecallTryExceptDunderCall.jsonl",
+   "origin_kind": "lane",
+   "sha256": "d52885d475a7900098f00232c1ffd223f0f1b842e47fa8c266ea6434ad0b4d69",
+   "bytes": 411,
+   "report": "AttackRecallRegress",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackRecallRegress.md",
+   "fixture_id": "RecallTryExceptDunderCall",
+   "population": "wave-2 recall: escape-gated callback sweep regressions",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23y-try-dunder",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackFrameScopes/FrameReusedBothClosuresCalled.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/FrameReusedBothClosuresCalled.jsonl",
+   "origin_kind": "lane",
+   "sha256": "8eacf719c12df18cd26a0ce578d43eecaadcc74c3fd3da228c775d8b1f627699",
+   "bytes": 466,
+   "report": "AttackFrameScopes",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackFrameScopes.md",
+   "fixture_id": "FrameReusedBothClosuresCalled",
+   "population": "wave-2 scope-chain: frame identity, nested binders, match/with binders",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 2,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2-afs-both-first",
+      "evidence": "observed"
+     },
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2-afs-both-second",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackFrameScopes/FrameReusedBySecondInvocation.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/FrameReusedBySecondInvocation.jsonl",
+   "origin_kind": "lane",
+   "sha256": "e051093396dd531bf82db426251e49a511410be867a35fad4df63ff238e7af64",
+   "bytes": 459,
+   "report": "AttackFrameScopes",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackFrameScopes.md",
+   "fixture_id": "FrameReusedBySecondInvocation",
+   "population": "wave-2 scope-chain: frame identity, nested binders, match/with binders",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2-afs-first-frame",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackFrameScopes/MatchCaptureBinderNotOwned.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/MatchCaptureBinderNotOwned.jsonl",
+   "origin_kind": "lane",
+   "sha256": "5cdc9cb41e4c911a4eb3a9ffd0b9850c7aa864929cc29452985c1ef173372539",
+   "bytes": 459,
+   "report": "AttackFrameScopes",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackFrameScopes.md",
+   "fixture_id": "MatchCaptureBinderNotOwned",
+   "population": "wave-2 scope-chain: frame identity, nested binders, match/with binders",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-wrong (honest unparsed 1 on both)"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/AttackFrameScopes/NestedBinderFreezesLateGlobal.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/NestedBinderFreezesLateGlobal.jsonl",
+   "origin_kind": "lane",
+   "sha256": "d7f16cc0cd89dfb1641031948e5f2e1a7c0db4498fece0db677c995b8fc07330",
+   "bytes": 510,
+   "report": "AttackFrameScopes",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackFrameScopes.md",
+   "fixture_id": "NestedBinderFreezesLateGlobal",
+   "population": "wave-2 scope-chain: frame identity, nested binders, match/with binders",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2-afs-late-global",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackEscapeGate/EscapeDictUpdateKeyword.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeDictUpdateKeyword.jsonl",
+   "origin_kind": "lane",
+   "sha256": "c43ab8dd099c4757a4c76d3801e4b61527ed60295859d3dee8f28851fe1691d3",
+   "bytes": 395,
+   "report": "AttackEscapeGate",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "fixture_id": "EscapeDictUpdateKeyword",
+   "population": "wave-2 escape gate: stores the gate does not see",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same-correct",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-dict-update",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackEscapeGate/EscapeGlobalHook.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeGlobalHook.jsonl",
+   "origin_kind": "lane",
+   "sha256": "a7c2f5037a6a6c1ac6aab7afaebe1847212eb09db463c278ed7c07cad6de7e7f",
+   "bytes": 376,
+   "report": "AttackEscapeGate",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "fixture_id": "EscapeGlobalHook",
+   "population": "wave-2 escape gate: stores the gate does not see",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-global-hook",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackEscapeGate/EscapeNonlocalHook.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/AttackEscapeGate-r2/fixtures/EscapeNonlocalHook.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "fcee11c15640f829b3dd247aa33908f193ba0775310914cb77c9346e12c54986",
+   "bytes": 442,
+   "report": "AttackEscapeGate",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "fixture_id": "EscapeNonlocalHook",
+   "population": "wave-2 escape gate: stores the gate does not see",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "REGRESSED",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-nonlocal-hook",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackEscapeGate/EscapeWrapperClosure.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeWrapperClosure.jsonl",
+   "origin_kind": "lane",
+   "sha256": "2a7594afdecb60181759a3f8db1676590433ecffe000849727401fd70968fa60",
+   "bytes": 401,
+   "report": "AttackEscapeGate",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "fixture_id": "EscapeWrapperClosure",
+   "population": "wave-2 escape gate: stores the gate does not see",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same-correct",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-wrapper-closure",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/AttackEscapeGate/EscapeYieldGenerator.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeYieldGenerator.jsonl",
+   "origin_kind": "lane",
+   "sha256": "04d25ceab7aa43518c0735c797969fcd41d7824c3bc20ae6e33dfddddc015ee3",
+   "bytes": 367,
+   "report": "AttackEscapeGate",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/AttackEscapeGate.md",
+   "fixture_id": "EscapeYieldGenerator",
+   "population": "wave-2 escape gate: stores the gate does not see",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same-correct",
+    "at_tip_3732c7a7": "same-correct"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 1,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "host_mutation",
+      "command": "pacman -S r23w2-yield",
+      "evidence": "lead"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/LoopClosuresLateBinding.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritClosureNeighbour/fixtures/LoopClosuresLateBinding.jsonl",
+   "origin_kind": "lane",
+   "sha256": "cf12f9d97e8cd4f8a6c10e3fe52728561e5eba9d4394834b613d88fa78c3ec9f",
+   "bytes": 485,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "LoopClosuresLateBinding",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same (fail-open silent on both)",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 0,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/NonlocalReboundAfterFactory.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritClosureNeighbour/fixtures/NonlocalReboundAfterFactory.jsonl",
+   "origin_kind": "lane",
+   "sha256": "faccb16b407e9a6a1c1f70b19242829e4693443bb3884cefc3a4da09f7472286",
+   "bytes": 502,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "NonlocalReboundAfterFactory",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "same (disclosed unparsed 1 on both)",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/TwoFactoryClosureReadsReboundGlobal.jsonl",
+   "origin_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/CritClosureNeighbour/fixtures/TwoFactoryClosureReadsReboundGlobal.jsonl",
+   "origin_kind": "lane",
+   "sha256": "6b84af674ca45f26e7db31a7a765895c19aab0fa7029bc5b1a705118ec347804",
+   "bytes": 531,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "TwoFactoryClosureReadsReboundGlobal",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "better",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q r23cc-global-at-call",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2c-1-subscript-store-in-receiver-called-later.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2c-1-subscript-store-in-receiver-called-later.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "b7a8d94c324074428509e9395908d725f1c03c3433dffe6971ba915067f94667",
+   "bytes": 470,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2c-1-subscript-store-in-receiver-called-later",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2c-2-subscript-store-in-receiver-never-called.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2c-2-subscript-store-in-receiver-never-called.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "e6c78bafd50d68880c003fb2aafeebc4b364d4d69a23d3f7b67651fac8b5e8f9",
+   "bytes": 466,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2c-2-subscript-store-in-receiver-never-called",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2c-3-attribute-store-in-receiver-called-later.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2c-3-attribute-store-in-receiver-called-later.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "ba2f8e4f93c5c7de1d6054d34473c882dfc64f7764ad225ce686028d7388ac8e",
+   "bytes": 489,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2c-3-attribute-store-in-receiver-called-later",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2c-4-append-then-subscript-call-after-rebind.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2c-4-append-then-subscript-call-after-rebind.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "9b16e20cb9dde2b981ad9aa33a948c59704f62a966017d1eef7e0ef1ea61df0a",
+   "bytes": 427,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2c-4-append-then-subscript-call-after-rebind",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2e-1-subscript-store-rebind-after-handoff-direct-call.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2e-1-subscript-store-rebind-after-handoff-direct-call.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "35e30326a4e8068689ef1e8c098e21e83c4126d41e493b926cbf5b3d94f84bf5",
+   "bytes": 475,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2e-1-subscript-store-rebind-after-handoff-direct-call",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2e-direct-final",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2e-2-module-append-rebind-after-handoff-direct-call.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2e-2-module-append-rebind-after-handoff-direct-call.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "71df608537496ddf6655614beef3ed30fc2b5a50e7bbae93ab2038fb4efe57a0",
+   "bytes": 429,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2e-2-module-append-rebind-after-handoff-direct-call",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 1,
+    "lead_findings": 0,
+    "observed_findings": 1,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": [
+     {
+      "class": "package_query",
+      "command": "pacman -Q w2e-append-final",
+      "evidence": "observed"
+     }
+    ]
+   }
+  },
+  {
+   "path": "fixtures/ReClosureNeighbour/W2f-2-factory-local-rebind-after-handoff.jsonl",
+   "origin_path": "/fast/scratch/hyaku/mado-r23/w2/ReClosureNeighbour/w2/W2f-2-factory-local-rebind-after-handoff.jsonl",
+   "origin_kind": "scratch",
+   "sha256": "5ebe6a9720f22ed2a7d096f5812f227488268f7a42492e8d03c1db4cd123aa47",
+   "bytes": 529,
+   "report": "ReClosureNeighbour",
+   "report_path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w2/reports/ReClosureNeighbour.md",
+   "fixture_id": "W2f-2-factory-local-rebind-after-handoff",
+   "population": "wave-2 closure lifetime: stored callable rebound after handoff, plus the critic's three fixtures",
+   "copy_verified_byte_identical": true,
+   "reported_status": {
+    "at_tip_2f1134f3": "WORSE",
+    "at_tip_3732c7a7": "not measured"
+   },
+   "base_scan": {
+    "exit": 0,
+    "lead_findings": 0,
+    "observed_findings": 0,
+    "unparsed_spawns": 1,
+    "eval_unparsed": 0,
+    "findings": []
+   }
+  }
+ ]
+}

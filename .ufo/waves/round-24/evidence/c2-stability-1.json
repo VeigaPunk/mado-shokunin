@@ -1,0 +1,204 @@
+{
+  "schema": "mado-r24-c2-count-v1",
+  "revision": "8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122",
+  "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "population": 12,
+  "mismatches": 1,
+  "manifest_sha256": "e02c76d1adb4f523fccf11e1e5ad4cd40f6d0da460b75c7f811b66306e188a02",
+  "counter_sha256": "a280950195d647b0be992122a14cc96535e6de24a8bc40d92683351af7ffe4e8",
+  "capabilities": [
+    {
+      "name": "sources registry",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+        "validate",
+        "--root",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/census-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "verdict gate (live + file plane)",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/tools/mado-verify.sh",
+        "--no-live"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "hermetic self-test",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/tools/mado-verify.sh",
+        "--selftest"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "mutation regression with re-cut",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/tools/mado-verify.sh",
+        "--regression"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "post-hoc transcript tripwire",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "-c",
+        "for d in core compound hardening w2-regressions; do python3 -I tools/mado-tripwire.py --selftest \".ufo/waves/round-17/tripwire/$d\" || exit 1; done"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "tripwire frozen replay (gate entry)",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 1,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "python3",
+        "-I",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/tools/mado-tripwire.py",
+        "--frozen",
+        ".ufo/waves/round-18/frozen"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "landedness check",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/.ufo/waves/round-19/landed-check.sh",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin",
+        "8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "tripwire evidence marker",
+      "stated": "works",
+      "observed": "fails",
+      "ok": false,
+      "exit": 0,
+      "reason": "output did not match the frozen rule",
+      "in_population": true,
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/tw-precision.py",
+        "8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin"
+    },
+    {
+      "name": "harness fail-closed check",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "bash",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/.ufo/waves/round-20/isolation-check.sh",
+        ".ufo/waves/round-20/isolate.sh"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    },
+    {
+      "name": "tripwire reached-body sweep",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/a2-guards.py",
+        "8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122",
+        "--fixtures-rev",
+        "6a7d9ca0d2124a4077074b800c94a9bc1184441c"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin"
+    },
+    {
+      "name": "detector removal-side guard",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-20/a2/a2-guards.py",
+        "8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122",
+        "--fixtures-rev",
+        "6a7d9ca0d2124a4077074b800c94a9bc1184441c"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/mado-shokunin"
+    },
+    {
+      "name": "artifact-only assessment integrity",
+      "stated": "works",
+      "observed": "works",
+      "ok": true,
+      "exit": 0,
+      "reason": "rule matched",
+      "in_population": true,
+      "argv": [
+        "python3",
+        "-I",
+        "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree/tools/mado-assessment.py",
+        "--selftest",
+        ".ufo/waves/round-21/assessment-fixtures"
+      ],
+      "cwd": "/fast/scratch/hyaku/mado-r24/c2/run-8e5d9369-i8mkokpz/tree"
+    }
+  ],
+  "status_table_present": false,
+  "tree_kept": null
+}

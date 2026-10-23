@@ -1,0 +1,138 @@
+m23-4-7 red/green receipt — registration order of a lane round
+generated 2026-10-23T04:02:42Z (UTC)
+
+checker:  .ufo/waves/round-24/quality/check-registration-order.py
+sha256:   c27f474dd2e3b60ba41780589cc712acc418481358169cf0430aa7846bb75ed2
+bytes:    14609
+python:   Python 3.14.8
+git:      git version 2.56.0
+lane:     /home/vgpnk/Projects/shokunin/mado-shokunin (HEAD 81955bd5f04878320b93e60246a146901cdfd2cf when this receipt was generated)
+pinned:   round-23 tip 8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122
+read-only: the checker issues only `git log`, `git rev-list`, `git diff-tree`
+and `git show` with GIT_OPTIONAL_LOCKS=0; no git write verb is used and no
+GIT_* variable is set in any run below.
+
+Rule under test: exit 1 when a commit changing tools/ precedes the first commit
+that adds a registered discovery/attack population for the round; exit 0
+otherwise; exit 2 when the history cannot be evaluated.
+
+== 1. RED — lane round 23 (tools change at 2e592af precedes the wave-2 attack fixtures) ==
+Round-23 window, in order (base e33ea30 is the round-22 closure):
+$ git log --oneline --reverse --format=%h %ci %s e33ea30461f6e9bbeee40beef19770a953f7a105..8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122
+6b383c4 2026-10-22 07:51:02 -0300 round-23: registration, frozen repair set and before receipts (before any production edit)
+a28e481 2026-10-22 07:53:50 -0300 round-23: C3 self-assessment mismatch counter and wave-1 spec (before any production edit)
+4de4464 2026-10-22 08:11:58 -0300 round-23: tighten C2/C3 counters and record registration clarifications (before any after-measurement)
+2e592af 2026-10-22 08:49:38 -0300 round-23: C1 scope-provenance repair of tripwire frame leak and escape-gated callback sweep (candidate ExecFullB)
+c8cb393 2026-10-22 08:49:46 -0300 round-23: C2 sourced routes for the foot, kitty and ghostty trees (S123-S152)
+2f1134f 2026-10-22 08:49:48 -0300 round-23: C3 PROVINCE refinement accounts for every tracked lane tool
+03227dd 2026-10-22 09:08:33 -0300 round-23: repair wave-2 regressions in C1 (allowlist escape gate, per-call frame tokens, scope-correct own names)
+3732c7a 2026-10-22 09:08:35 -0300 round-23: wave-2 corrections to PROVINCE rows and terminal-trees note (append-only)
+3df1062 2026-10-22 09:12:32 -0300 round-23: withdraw C1 classifier to base bytes (honest stop), lesson, records, wave evidence
+fa819d5 2026-10-22 09:12:44 -0300 round-23: large raw wave receipts
+8e5d936 2026-10-22 09:19:50 -0300 round-23 verifier spot-check (integrator, hyaku): non-author admit/reject
+
+The wave-2 attack fixtures (AttackLateCell, AttackRecallRegress,
+AttackFrameScopes, AttackEscapeGate, AttackPerf) are added by the withdrawal
+commit 3df1062; the first tools/ change is 2e592af, earlier in the window.
+The frozen repair set at 6b383c4 is seen and rejected as a repair-target
+population, not a discovery population (see the ignored-population line).
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 23 --tip 8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122
+round=23 repo=/home/vgpnk/Projects/shokunin/mado-shokunin
+window=e33ea30461f6e9bbeee40beef19770a953f7a105..8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122 commits=11
+first-tools-change=2e592aff01be2bdd3039f3a825864078cdff86b5 2026-10-22T08:49:38-03:00 'round-23: C1 scope-provenance repair of tripwire frame leak and escape-gated callback sweep (candidate ExecFullB)' paths=tools/mado-tripwire.py
+first-registered-discovery-attack-population=3df106261b4fd94ce3e36c5add9975781b548e8d 2026-10-22T09:12:32-03:00 'round-23: withdraw C1 classifier to base bytes (honest stop), lesson, records, wave evidence' kind=attack-fixture paths=.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeDictUpdateKeyword.jsonl,.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeGlobalHook.jsonl,.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeWrapperClosure.jsonl,.ufo/waves/round-23/w2/out/AttackEscapeGate/fixtures/EscapeYieldGenerator.jsonl,.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/FrameReusedBothClosuresCalled.jsonl,.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/FrameReusedBySecondInvocation.jsonl,.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/MatchCaptureBinderNotOwned.jsonl,.ufo/waves/round-23/w2/out/AttackFrameScopes/fixtures/NestedBinderFreezesLateGlobal.jsonl,.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/LateEnclosingLocalViaRelay.jsonl,.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/LoopClosureCalledAfterLoop.jsonl,.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/NonlocalRebindThenCallInSibling.jsonl,.ufo/waves/round-23/w2/out/AttackLateCell/fixtures/SecondFrameInvokesFirstFrameClosure.jsonl (+20 more)
+later-tools-changes=03227ddf0734c94136ce718f005eb2d5a788c03a,3df106261b4fd94ce3e36c5add9975781b548e8d
+later-populations=fa819d561d613cf3cfd8f58ed763e1ca57ab5eb4
+ignored-population=6b383c465779be3a620905590ae56554e434c395 kind=repair dir=.ufo/waves/round-23/repair reason=manifest declares a repair set, not a discovery/attack population
+verdict=RED reason=first tools/ change 2e592aff01be2bdd3039f3a825864078cdff86b5 precedes the first registered discovery/attack population 3df106261b4fd94ce3e36c5add9975781b548e8d (attack-fixture)
+exit: 1
+== 2. GREEN — constructed sandbox history (population first, tools change later) ==
+Sandbox at /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-green, run
+through its clone (GIT_* unset). Commit 1 adds the registered carry population
+(manifest + fixture); commit 2 changes tools/detector.py.
+$ git -C /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-green-clone log --reverse --format=%h %s --name-status
+0903be2 round-99: freeze registered discovery population (before any tool change)
+
+A	.ufo/waves/round-99/carry/fixtures/RegressionA.jsonl
+A	.ufo/waves/round-99/carry/manifest.json
+A	.ufo/waves/round-99/registration.md
+f16afaf round-99: change tools/detector.py after the population landed
+
+A	tools/detector.py
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 99 --repo /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-green-clone
+round=99 repo=/fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-green-clone
+window=(root)..f16afaf500d0c3dca85018579b6d360c289f1752 commits=2
+first-tools-change=f16afaf500d0c3dca85018579b6d360c289f1752 2026-10-23T00:59:45-03:00 'round-99: change tools/detector.py after the population landed' paths=tools/detector.py
+first-registered-discovery-attack-population=0903be23a62cce93cd2ce9247b34c93a86ee09df 2026-10-23T00:59:45-03:00 'round-99: freeze registered discovery population (before any tool change)' kind=carry paths=.ufo/waves/round-99/carry/fixtures/RegressionA.jsonl,.ufo/waves/round-99/carry/manifest.json
+verdict=GREEN reason=first registered discovery/attack population 0903be23a62cce93cd2ce9247b34c93a86ee09df precedes the first tools/ change f16afaf500d0c3dca85018579b6d360c289f1752
+exit: 0
+== 3. NEGATIVE CONTROL — same shapes, tools changed first ==
+Sandbox sandbox-red-late: commit 1 changes tools/detector.py, commit 2 adds the
+identical carry population. The check must fail.
+$ git -C /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-red-late log --reverse --format=%h %s --name-status
+e6a2799 round-99: change tools/detector.py first
+
+A	tools/detector.py
+7e04d0a round-99: freeze the discovery population late
+
+A	.ufo/waves/round-99/carry/fixtures/RegressionA.jsonl
+A	.ufo/waves/round-99/carry/manifest.json
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 99 --repo /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-red-late
+round=99 repo=/fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-red-late
+window=(root)..7e04d0a814497090f3f301296486eb5234c65f86 commits=2
+first-tools-change=e6a2799adc3163df785a9a8a829448d27e111241 2026-10-23T00:59:56-03:00 'round-99: change tools/detector.py first' paths=tools/detector.py
+first-registered-discovery-attack-population=7e04d0a814497090f3f301296486eb5234c65f86 2026-10-23T00:59:56-03:00 'round-99: freeze the discovery population late' kind=carry paths=.ufo/waves/round-99/carry/fixtures/RegressionA.jsonl,.ufo/waves/round-99/carry/manifest.json
+verdict=RED reason=first tools/ change e6a2799adc3163df785a9a8a829448d27e111241 precedes the first registered discovery/attack population 7e04d0a814497090f3f301296486eb5234c65f86 (carry)
+exit: 1
+== 4. NEGATIVE CONTROL — repair set registered before the change (round-23 arm) ==
+Sandbox sandbox-repair-only: commit 1 adds .ufo/waves/round-99/repair
+(expected.json + fixture), commit 2 changes tools/detector.py. The repair
+manifest does not declare a discovery/attack population, so it does not count:
+this is the arm that makes round 23 red rather than green.
+$ git -C /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-repair-only log --reverse --format=%h %s --name-status
+987aeed round-99: freeze the repair set (before any tool change)
+
+A	.ufo/waves/round-99/repair/expected.json
+A	.ufo/waves/round-99/repair/fixtures/RepairA.jsonl
+665a617 round-99: change tools/detector.py
+
+A	tools/detector.py
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 99 --repo /fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-repair-only
+round=99 repo=/fast/scratch/hyaku/mado-r24/ExecCheckM2347/sandbox-repair-only
+window=(root)..665a6170e492143547bb395d5273fac804cb1831 commits=2
+first-tools-change=665a6170e492143547bb395d5273fac804cb1831 2026-10-23T00:59:56-03:00 'round-99: change tools/detector.py' paths=tools/detector.py
+first-registered-discovery-attack-population=none
+ignored-population=987aeed1e1871fab3700781d98f4ae975f1745e3 kind=repair dir=.ufo/waves/round-99/repair reason=manifest declares a repair set, not a discovery/attack population
+verdict=RED reason=tools/ changed at 665a6170e492143547bb395d5273fac804cb1831 but no commit in the window adds a registered discovery/attack population
+exit: 1
+== 5. Current lane round 24 (vacuous green) ==
+No commit in the round-24 window changes tools/ (registration records that the
+anti-loop guard keeps tools/ untouched this round).
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 24
+round=24 repo=/home/vgpnk/Projects/shokunin/mado-shokunin
+window=5bb2c875a2e1e964d6edef6ba013a9e0b0d230b7..81955bd5f04878320b93e60246a146901cdfd2cf commits=6
+first-tools-change=none
+first-registered-discovery-attack-population=none
+verdict=GREEN reason=no commit in the window changes tools/
+exit: 0
+== 6. Guard — an unknown round must not scan all history ==
+A mistyped round with no round-named commit and no --base is an evaluation
+error (exit 2), not a silent whole-history pass.
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-registration-order.py --round 77
+round=77 error=no commit naming round-77 is reachable from HEAD; pass --base
+exit: 2
+== 7. What this receipt does not establish ==
+- The check classifies populations by path class and registration manifest; it
+  does not judge whether the fixtures are meaningful discovery attacks or
+  whether a registered case was ever executed.
+- Only committed history is visible: fixtures written to the work tree but not
+  committed at the time of a tools/ change are invisible to the check.
+- Commit dates are printed for context only; ordering comes from
+  `git rev-list --reverse --topo-order`, so rebases and non-monotonic clocks
+  affect the reported dates, not the verdict.
+- A `repair/` population counts only when its manifest declares discovery or
+  attack; this is the interpretation that makes the routed round-23 defect
+  (M23-4, M23-7) visible. Round-23 repair/expected.json (schema
+  mado-r23-repair-set-v1) names neither word.
+- It is a registration-order check, not a judgement that the registered
+  population covers the defect the tools/ change addresses.

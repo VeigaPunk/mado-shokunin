@@ -1,0 +1,70 @@
+# M23-5 receipt-provenance gate — red/green receipt (round 24, ExecCheckM235)
+Generated 2026-10-23. Every sha256 below is labelled `sha256:`.
+
+gate: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/check-receipt-provenance.py
+gate sha256:5b463510893fea56276fb377a23dcc90935f8b4baef0e307f6b6e35ea0e585f9
+red: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh
+red sha256:599a92da90695f0e4faa9fb764940af751d9b845206a31279b0a9cc00bb7425d
+red provenance: `git cat-file -p 602ecd7` — the first committed revision of
+.ufo/waves/round-23/w1/out/L1/l1-attacks.sh (added by commit 03227ddf). The later
+revision 3df10626 differs by exactly one character-run (` || true` on the clone commit),
+so the pre-fix working-tree bytes described by lesson M23-5 are not in git; this blob is
+the closest real artifact and it still reads probe data through relative names.
+green: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/fixtures/l1-attacks-green.sh
+green sha256:076a41ed6d9bb926c5dd3a3a53349a5096191b1158ee4614f66497aa691012ef
+
+## 1. git history of the red path (read-only)
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin log --oneline --follow -- .ufo/waves/round-23/w1/out/L1/l1-attacks.sh
+3df1062 round-23: withdraw C1 classifier to base bytes (honest stop), lesson, records, wave evidence
+03227dd round-23: repair wave-2 regressions in C1 (allowlist escape gate, per-call frame tokens, scope-correct own names)
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin log -p --follow -- .ufo/waves/round-23/w1/out/L1/l1-attacks.sh | sed -n "6,16p"
+
+diff --git a/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh b/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh
+index 602ecd7..16610d4 100755
+--- a/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh
++++ b/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh
+@@ -5,7 +5,7 @@ set -euo pipefail
+ L=/home/vgpnk/Projects/shokunin/mado-shokunin
+ D=/fast/scratch/hyaku/mado-r23/L1-$1
+ rm -rf "$D"; git clone -q "$L" "$D"; cp "$L/tools/mado-tripwire.py" "$D/tools/"
+-cd "$D"; git -c user.name=v -c user.email=v@v commit -qam "$1"
++cd "$D"; git -c user.name=v -c user.email=v@v commit -qam "$1" || true
+
+## 2. gate self-test (mutant matrix; green must pass, every mutant must fail)
+$ timeout 60 python3 -I $Q/check-receipt-provenance.py --selftest
+selftest case=bare-digest expected=pass got=pass ok
+selftest case=green expected=pass got=pass ok
+selftest case=no-digest expected=fail got=fail ok
+selftest case=relative-result expected=fail got=fail ok
+selftest case=relative-var expected=fail got=fail ok
+selftest case=tilde-result expected=fail got=fail ok
+selftest case=truncated-digest expected=fail got=fail ok
+selftest case=unbound-digest expected=fail got=fail ok
+selftest=pass cases=8 mismatches=0
+exit=0
+
+## 3. RED — real r23 artifact, first committed revision
+$ timeout 60 python3 -I $Q/check-receipt-provenance.py $RED
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh:-: R1 no `sha256:`<64hex> or full 64-hex sha256 naming the measured tool; `sha256sum` at line(s) 9 computes a digest at run time but the receipt never states it
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh:18: R2 data position: relative path 'probes' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh:19: R2 data position: relative path 'probes2' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh:20: R2 data position: relative path '../fixtures' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/red/r23-l1-attacks-first.sh:31: R2 data position: relative path '$c.json': variable $c is not pinned to an absolute value
+verdict=fail reasons=5
+exit=1
+
+## 4. GREEN — corrected fixture
+$ timeout 60 python3 -I $Q/check-receipt-provenance.py $GRN
+PASS /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-24/quality/fixtures/l1-attacks-green.sh
+verdict=pass reasons=0
+exit=0
+
+## 5. Diagnostic (not the red/green pair): the lane's later committed revision
+$ timeout 60 python3 -I $Q/check-receipt-provenance.py /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh:-: R1 no `sha256:`<64hex> or full 64-hex sha256 naming the measured tool; `sha256sum` at line(s) 9 computes a digest at run time but the receipt never states it
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh:18: R2 data position: relative path 'probes' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh:19: R2 data position: relative path 'probes2' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh:20: R2 data position: relative path '../fixtures' (resolved against the receipt's current directory)
+FAIL /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-23/w1/out/L1/l1-attacks.sh:31: R2 data position: relative path '$c.json': variable $c is not pinned to an absolute value
+verdict=fail reasons=5
+exit=1
