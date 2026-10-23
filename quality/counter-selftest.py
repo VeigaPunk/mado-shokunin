@@ -17,7 +17,7 @@ The round-26 self-test failed 2 of its 9 checks on the active C1 v2 counter beca
 fake oracle answered the `version` verb with an animation table; the fake oracle here
 answers `version` with the pinned Hyprland commit, so the version guard is exercised too.
 
-Checks (45 behavioural probes + 1 fixed-inventory gate):
+Checks (55 behavioural probes + 1 fixed-inventory gate):
 
   C1  c1-perfect          perfect tool                        -> exit 0, TARGET_MET, 41/41
       c1-field-*          one node field wrong (6 fields)     -> exit 1, TARGET_MISSED
@@ -36,12 +36,24 @@ Checks (45 behavioural probes + 1 fixed-inventory gate):
       c2-tool-exit        tool exits non-zero                  -> exit 1, TARGET_MISSED
       c2-near-perfect     50 of 51 cases right                 -> exit 1, TARGET_MISSED
       c2-embed            tool bytes hold a 40-char base arg   -> exit 1, embed_hits>=1
+      c2-embed-desc       tool bytes hold a 40-char desc       -> exit 1, embed_hits>=1
       c2-drift            two BASE oracle runs disagree       -> exit 2, ORACLE_UNSTABLE
+      c2-drift-superset   the two runs differ by one entry    -> exit 2, ORACLE_UNSTABLE
       c2-oracle-fail      every oracle call fails              -> exit 2, ORACLE_FAIL
+      c2-extra-one        tool reports one entry too many      -> exit 1, TARGET_MISSED
+      c2-extra-two        tool reports two entries too many    -> exit 1, TARGET_MISSED
+      c2-missing-one      tool omits one entry                 -> exit 1, TARGET_MISSED
+      c2-embed-at-threshold   12-char base arg in tool bytes  -> exit 1, embed_hits>=1
+      c2-embed-below-threshold 11-char base arg in tool bytes -> exit 0, embed_hits=0
+      c2-embed-desc-at-threshold   12-char base desc         -> exit 1, embed_hits>=1
+      c2-embed-desc-below-threshold 11-char base desc        -> exit 0, embed_hits=0
       check-inventory     every required check was executed    -> missing/extra listed
 
 Each `field` check changes exactly one field of the synthetic truth, so a counter that stops
-comparing that field is caught by that check alone.
+comparing that field is caught by that check alone.  A changed field makes one entry missing
+AND one entry extra at the same time, so the checks that break exactly one side of that
+conjunction -- one extra entry, two extra entries, one missing entry -- are separate, and
+so are the two sides of the embed threshold.
 
 Offline: no Hyprland, no compositor, no display, no network, no /dev/dri.  All scratch lives
 in one mkdtemp under TMPDIR (the counter's sandbox puts TMPDIR inside the run directory) and
@@ -132,6 +144,43 @@ C2_EMBED[0]["arg"] = EMBED_ARG
 C2_EMBED_DESC = json.loads(json.dumps(C2_BASE))
 C2_EMBED_DESC[2]["description"] = EMBED_ARG
 
+# The two sides of the embed-eligibility threshold.  The counter admits a base-table arg
+# or description of EMBED_MIN (12) or more characters; an arg of exactly 12 characters
+# must therefore be seen as a hit and an arg of exactly 11 must not be.  A threshold moved
+# by one character in either direction is caught by one of the two.
+EMBED_ARG_12 = "embed-arg-12"      # exactly 12 characters
+EMBED_ARG_11 = "embed-arg-1"       # exactly 11 characters
+assert len(EMBED_ARG_12) == 12, len(EMBED_ARG_12)
+assert len(EMBED_ARG_11) == 11, len(EMBED_ARG_11)
+C2_EMBED_12 = json.loads(json.dumps(C2_BASE))
+C2_EMBED_12[0]["arg"] = EMBED_ARG_12
+C2_EMBED_11 = json.loads(json.dumps(C2_BASE))
+C2_EMBED_11[0]["arg"] = EMBED_ARG_11
+# The same two lengths seen through the other field: the embed scan reads the arg and the
+# description of every base entry.
+C2_EMBED_12D = json.loads(json.dumps(C2_BASE))
+C2_EMBED_12D[2]["description"] = EMBED_ARG_12
+C2_EMBED_12D[2]["has_description"] = True
+C2_EMBED_11D = json.loads(json.dumps(C2_BASE))
+C2_EMBED_11D[2]["description"] = EMBED_ARG_11
+C2_EMBED_11D[2]["has_description"] = True
+
+# A second BASE oracle run that disagrees with the first by exactly one entry.  The
+# counter compares the two runs and counts the entries missing from one and extra in the
+# other; with a table that differs by a single added entry exactly one of those two counts
+# is non-zero, so a guard that asks for both of them (a conjunction where the counter
+# has a disjunction) is caught here, while the counter's own drift probe -- which
+# replaces one field and so differs in both directions at once -- cannot see it.
+C2_SUPERSET = json.loads(json.dumps(C2_BASE)) + [bind_entry(64, "X", "xterm")]
+
+# Tool-side table defects the counter must judge as a mismatch.  The counter's verdict
+# for a case is "nothing missing AND nothing extra", so a tool that reports one bind
+# entry more than the truth, or two more, or one fewer, must each be judged a mismatch:
+# a verdict that tolerates either side of that conjunction is a disjunction.
+EXTRA_ONE = 'out.append(dict(out[0], key="EXTRA1", arg="extra1"))'
+EXTRA_TWO = EXTRA_ONE + '\nout.append(dict(out[0], key="EXTRA2", arg="extra2"))'
+MISSING_ONE = "out.pop(1)"
+
 # One mutation per compared field: a counter that stops comparing that field alone is caught.
 C1_NODE_FIELDS = [
     ("name", 'out[0][0]["name"] = "otherNode"'),
@@ -182,6 +231,9 @@ REQUIRED = (
     + ["c2-field-%s" % f for f, _ in C2_FIELDS]
     + ["c2-invalid-json", "c2-malformed", "c2-tool-exit", "c2-near-perfect", "c2-embed",
        "c2-embed-desc", "c2-drift", "c2-oracle-fail"]
+    + ["c2-extra-one", "c2-extra-two", "c2-missing-one", "c2-drift-superset",
+       "c2-embed-at-threshold", "c2-embed-below-threshold",
+       "c2-embed-desc-at-threshold", "c2-embed-desc-below-threshold"]
 )
 TOTAL = len(REQUIRED) + 1          # + the inventory gate itself
 
@@ -562,10 +614,75 @@ def main():
                rc == 1 and verdict == "TARGET_MISSED" and eh is not None and eh >= 1,
                "rc=%s cases_pass=%s/%s embed_hits=%s verdict=%s" % (rc, got, total, eh, verdict), out)
 
+        # The verdict for one case is "nothing missing AND nothing extra".  A tool that
+        # reports an entry the truth does not have (one extra entry, or two) or omits an
+        # entry the truth has breaks exactly one side of that conjunction, so each side
+        # is probed on its own: a verdict that tolerates either side accepts the broken
+        # table.  The per-field probes cannot see this, because a changed field makes one
+        # entry missing AND one entry extra at the same time.
+        rc, out = run_case(c2, run_dir, a.rev, "c2-extra-one", C2_BASE, mut=EXTRA_ONE)
+        (got, total), _, verdict = pred(out)
+        record("c2-extra-one",
+               rc == 1 and verdict == "TARGET_MISSED" and got is not None and got < total,
+               "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
+
+        rc, out = run_case(c2, run_dir, a.rev, "c2-extra-two", C2_BASE, mut=EXTRA_TWO)
+        (got, total), _, verdict = pred(out)
+        record("c2-extra-two",
+               rc == 1 and verdict == "TARGET_MISSED" and got is not None and got < total,
+               "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
+
+        rc, out = run_case(c2, run_dir, a.rev, "c2-missing-one", C2_BASE, mut=MISSING_ONE)
+        (got, total), _, verdict = pred(out)
+        record("c2-missing-one",
+               rc == 1 and verdict == "TARGET_MISSED" and got is not None and got < total,
+               "rc=%s cases_pass=%s/%s verdict=%s" % (rc, got, total, verdict), out)
+
+        # The embed threshold from both sides.  The counter admits a base-table arg or
+        # description of EMBED_MIN (12) or more characters: a string of exactly 12
+        # characters must be reported as a hit and a string of exactly 11 must not be.
+        # A threshold moved by one character in either direction is caught by one of the
+        # two, and the long-string probe above cannot see it (40 characters is eligible
+        # under any threshold near 12).
+        rc, out = run_case(c2, run_dir, a.rev, "c2-embed-at-threshold", C2_EMBED_12)
+        (got, total), eh, verdict = pred(out)
+        record("c2-embed-at-threshold",
+               rc == 1 and verdict == "TARGET_MISSED" and eh is not None and eh >= 1,
+               "rc=%s cases_pass=%s/%s embed_hits=%s verdict=%s" % (rc, got, total, eh, verdict), out)
+
+        rc, out = run_case(c2, run_dir, a.rev, "c2-embed-below-threshold", C2_EMBED_11)
+        (got, total), eh, verdict = pred(out)
+        record("c2-embed-below-threshold",
+               rc == 0 and verdict == "TARGET_MET" and eh == 0 and got == total,
+               "rc=%s cases_pass=%s/%s embed_hits=%s verdict=%s" % (rc, got, total, eh, verdict), out)
+
+        rc, out = run_case(c2, run_dir, a.rev, "c2-embed-desc-at-threshold", C2_EMBED_12D)
+        (got, total), eh, verdict = pred(out)
+        record("c2-embed-desc-at-threshold",
+               rc == 1 and verdict == "TARGET_MISSED" and eh is not None and eh >= 1,
+               "rc=%s cases_pass=%s/%s embed_hits=%s verdict=%s" % (rc, got, total, eh, verdict), out)
+
+        rc, out = run_case(c2, run_dir, a.rev, "c2-embed-desc-below-threshold", C2_EMBED_11D)
+        (got, total), eh, verdict = pred(out)
+        record("c2-embed-desc-below-threshold",
+               rc == 0 and verdict == "TARGET_MET" and eh == 0 and got == total,
+               "rc=%s cases_pass=%s/%s embed_hits=%s verdict=%s" % (rc, got, total, eh, verdict), out)
+
         drift2 = copy(C2_BASE)
         drift2[0]["arg"] = "term"
         rc, out = run_case(c2, run_dir, a.rev, "c2-drift", C2_BASE, alt=drift2)
         record("c2-drift", rc == 2 and "ORACLE_UNSTABLE" in out,
+               "rc=%s ORACLE_UNSTABLE=%s" % (rc, "yes" if "ORACLE_UNSTABLE" in out else "no"), out)
+
+        # The same guard seen from the side the field-replacement drift cannot reach.
+        # The counter compares the two BASE oracle runs and asks whether the counts of
+        # missing and extra entries differ; a field replacement makes one entry missing
+        # AND one entry extra, so both counts are non-zero at once and a guard that asks
+        # for both of them still fires.  A second run whose table differs from the first
+        # by one *added* entry leaves exactly one of the two counts non-zero, so a guard
+        # that asks for both of them misses the disagreement and lets the run continue.
+        rc, out = run_case(c2, run_dir, a.rev, "c2-drift-superset", C2_BASE, alt=C2_SUPERSET)
+        record("c2-drift-superset", rc == 2 and "ORACLE_UNSTABLE" in out,
                "rc=%s ORACLE_UNSTABLE=%s" % (rc, "yes" if "ORACLE_UNSTABLE" in out else "no"), out)
 
         rc, out = run_case(c2, run_dir, a.rev, "c2-oracle-fail", C2_BASE, fail=True)
