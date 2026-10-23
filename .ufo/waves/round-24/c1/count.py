@@ -20,9 +20,9 @@ corpus/README.md (`| \`knowledge/rule-attribution-r24.md\``) -> verdict line `TA
 .ufo/waves/round-24/fetch/<S###>.bin (diagnostic only; the counted mode re-fetches).
 Exit 0 TARGET_MET, 1 not met, 2 setup error.
 """
-import hashlib, json, re, subprocess, sys, urllib.request
+import hashlib, json, os, re, subprocess, sys, urllib.request
 
-LANE = "/home/vgpnk/Projects/shokunin/mado-shokunin"
+LANE = os.environ.get("MADO_LANE", "/home/vgpnk/Projects/shokunin/mado-shokunin")  # sandbox clones for controls
 NOTE = "corpus/knowledge/rule-attribution-r24.md"
 OPENED = "2026-10-23"
 URL_RE = re.compile(

@@ -188,3 +188,8 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
   reads, writes and adjacent owners; it is not a new desktop surface.
 - The round-23 tripwire repair (frame leak and escape-gated callback sweep) is instrument work:
   evidence `.ufo/waves/round-23/`, lesson23. No province frontier moves because of it.
+- Round-24 correction (routed defect 2 of `lessons/round-23-verifier-spotcheck.md` §7): the round-23
+  tripwire repair was **withdrawn** before landing closed. `tools/mado-tripwire.py` at the round-23 tip is
+  byte-identical to base (sha256: `cd9da20c2f562efb…`); the withdrawn candidate is kept as evidence at
+  `.ufo/waves/round-23/evidence/candidate-classifier-e1dc8029.py` (sha256: `e1dc8029ced9fcc6…`), and C1 ended
+  6/12 against its 12/12 target (lesson23 "Final C1 disposition", SCORECARD round-23 final C1 disposition).

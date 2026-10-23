@@ -227,3 +227,11 @@ a regression as a registered discovery population first, then repair sweep timin
 | id | class | evidence pointer | captured-by | fix / demonstrated boundary |
 |---|---|---|---|---|
 | M23-7 | survivor | `w2/reports/AttackLateCell.md` addendum, `w2/reports/ReClosureNeighbour.md` | no registered guard (only base-versus-tip discovery attacks) | Production bytes withdrawn to base; the next registration must include these fixtures before any patch. |
+
+### Correction (round 24, append-only; routed defect 1 of `round-23-verifier-spotcheck.md` §7)
+
+The paragraph at :197-199 ("**The note file does not yet exist** … until the integrator creates the note") is a
+copied scribe draft and is false at the round-23 tip: `corpus/knowledge/terminal-trees-r23.md` was first added in
+lane commit `c8cb3930` (2026-10-22 08:49:46 −03; `git log --format='%h %ci' -- corpus/knowledge/terminal-trees-r23.md`)
+and amended append-only in `3732c7a7`, and the closure re-measured the ghostty route at 3/3. Read that paragraph as
+the pre-integration draft it was.
