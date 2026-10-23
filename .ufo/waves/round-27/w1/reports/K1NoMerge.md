@@ -166,3 +166,53 @@ Restoration/immutability evidence: no pre-existing bytes were mutated, and these
 
 The bounded disk-capacity command reported 94G available on `/fast` before these runs. Both receipts reported `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent bounded coredump measurements also returned 1,338 before and after, delta 0, with exit 0 and empty stderr. Both counter processes completed normally; no background service, host-service change, git/jj write, or tool installation was introduced.
 
+
+## v4 rescore — NO-MERGE and supplied FileScope controls unchanged
+
+CONTROL K1NoMerge v4 best: PRED-C1-r27-v4 cases_pass=9/41 verdict=TARGET_MISSED — not met
+
+CONTROL K1FileScope v4 best: PRED-C1-r27-v4 cases_pass=32/41 verdict=TARGET_MISSED — not met
+
+L1 retired v3 before data and requested two fresh-seed v4 measurements of each unchanged control. The supplied FileScope control was measured, not authored or edited, by this seat. This follow-up changed only the four requested receipt paths and this report.
+
+Working directory: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Each exact command below ran twice; the four independent invocations ran concurrently, using the harness's host-wide oracle-slot locks:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NoMerge.py --jobs 4
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1FileScope.py --jobs 4
+```
+
+| Control / run | Fresh seed | Actual PRED output | Process exit | Elapsed | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- | --- |
+| K1NoMerge / 1 | `ae05fa9a659a346f` | `PRED-C1-r27-v4 cases_pass=7/41 verdict=TARGET_MISSED` | 1 | 201.129 s | `.ufo/waves/round-27/controls/v4/K1NoMerge-seed1.txt` |
+| K1NoMerge / 2 | `538061af089eeeab` | `PRED-C1-r27-v4 cases_pass=9/41 verdict=TARGET_MISSED` | 1 | 199.076 s | `.ufo/waves/round-27/controls/v4/K1NoMerge-seed2.txt` |
+| K1FileScope / 1 | `73c12a6b620017e9` | `PRED-C1-r27-v4 cases_pass=29/41 verdict=TARGET_MISSED` | 1 | 180.674 s | `.ufo/waves/round-27/controls/v4/K1FileScope-seed1.txt` |
+| K1FileScope / 2 | `5ec3ce7e2621b702` | `PRED-C1-r27-v4 cases_pass=32/41 verdict=TARGET_MISSED` | 1 | 192.884 s | `.ufo/waves/round-27/controls/v4/K1FileScope-seed2.txt` |
+
+All four counter stderr captures were empty. All receipts end in `exit=1`; no run exited 2 and no guard retry was necessary. Receipt bytes were saved directly from captured stdout through the write tool and compared equal:
+
+| Receipt | Bytes | SHA-256 |
+| --- | --- | --- |
+| K1NoMerge-seed1 | 5,992 | `7bf103c0c3f7873abdd2bfaa1cc1912d2f35fbb2c5029e7e643c53ba0c4ff33b` |
+| K1NoMerge-seed2 | 5,994 | `0daea933a8d64bc9b211cd7c56e0cb53f4fc06f9d34606d8d9c9c7ac993b47a9` |
+| K1FileScope-seed1 | 5,840 | `5e383a4817ca50adc10108e0c94a06c9e6e844267243830a0762679ce4d39ddb` |
+| K1FileScope-seed2 | 5,721 | `5789d0eb5ab0990903741611f66c39ac813d3e55993ce79e39b5ef0b2bb0a815` |
+
+Every run passed BASE, reported `ORACLE_CHECK base_twice equal rules=0`, confirmed the pinned Hyprland commit/tag, and used the same 79-file snapshot digest recorded above. The measured revision was `2fdca5caaab6859386effbb8fa6acc5250c90633`.
+
+Expected detector and observed defect evidence:
+
+- NO-MERGE: all 34 seed-1 failures and all 32 seed-2 failures had excess entries; there were no tool-process failures. The exact-array detector distinguished append-only insertion from Hyprland's selector merge.
+- FileScope: all 12 seed-1 failures and all 9 seed-2 failures carried SRCDEF labels. Seed 1 included two tool exits with unresolved-variable integer-conversion errors; seed 2 included one. Other failures were JSON mismatches. These tool-error excerpts are preserved inside the counter's stdout receipts; empty counter stderr does not mean those case tools emitted no stderr.
+
+Restoration/immutability evidence: neither control, the counter, nor the oracle was modified. These before/after SHA-256 values matched exactly:
+
+| File | Before = after SHA-256 |
+| --- | --- |
+| K1NoMerge.py | `918501eb066d36b811a6ac0ec759e2b510c2285261c58d5f9058291ead785947` |
+| K1FileScope.py | `f56e20a77dc511b10963cf70a69c2971499244ee035d309f224525c1cd553bcb` |
+| C1 counter v4 | `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1` |
+| Oracle | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+
+The bounded disk command reported 84G available on `/fast` before the measurements. All four receipts recorded `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Independent bounded coredump measurements also gave 1,338 before and after, delta 0, exit 0, empty stderr. All counter processes completed normally; no background service, host-service change, git/jj write, or tool installation was introduced.
+

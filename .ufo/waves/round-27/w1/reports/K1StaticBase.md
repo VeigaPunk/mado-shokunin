@@ -157,3 +157,39 @@ V3 receipt SHA-256 values:
 - Seed 2: `57a1215ecbf0dcbc27e3a1acefaaf5dde1c11cc8295e9c12948c542e54c5c07d`.
 
 No control or subject bytes changed, so no restoration was needed. Only the two assigned v3 receipts were created and this report was appended. No tool installation, git/jj write, direct compositor launch, or unrelated test occurred.
+
+## V4 re-score — unchanged control
+
+CONTROL K1StaticBase v4 best: PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v3 before data after two partial variable readers met it. Re-scored the original STATIC-BASE control under v4, which adds value-embedded variables, definitions in sourced files, use before definition, and a file sourced twice. The control remains byte-identical and still prints the original live capture `[]`; no further live query was made.
+
+Executed this exact command twice from `/home/vgpnk/Projects/shokunin/mado-shokunin`, concurrently with four oracle workers each:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1StaticBase.py --jobs 4
+```
+
+Two initial asynchronous tool launch requests returned `Background job limit reached (100). Wait for running jobs to finish or cancel one.` They produced no counter receipt. Re-read the detector and launched the commands synchronously instead; those are the two measured runs below. There was no detector exit-2 guard or guard retry.
+
+| Run | Fresh seed | Result | Process status | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `6b95779bb66f3bab` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1StaticBase-seed1.txt` |
+| 2 | `dbeaa0c35a3822a7` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1StaticBase-seed2.txt` |
+
+Both runs passed BASE and failed all 25 APPEND and all 15 SYNTH cases. Both confirmed the base twice with zero rules and the pinned Hyprland v0.56.2 commit. Resolved revision: `2fdca5caaab6859386effbb8fa6acc5250c90633`. Both retained the same 79-file snapshot digest recorded above. The control was rejected under v4.
+
+The same bounded free-space query showed 84G available before these runs (804G total, 720G used, 90%). The bounded coredump query returned `1338` before and after: delta 0. Both receipts independently report `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Both counter processes completed with code 1 using the existing oracle/counter teardown paths. No long-lived service or direct compositor process was started.
+
+Before and after SHA-256 values, measured using the same bounded hash command pattern with `count-v4.py`, were identical:
+
+- Control: `857cd2de4de199a99fc48527ae64b17938c72cf9dc6f0b9768271297d0a76873`.
+- V4 counter: `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1`.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+V4 receipt SHA-256 values:
+
+- Seed 1: `8c0964021d2183116144a95a6f73a03f6e1f34b00b6d28799094dcf897811c55`.
+- Seed 2: `527ab4c7024ef51b2b3362f5c05e656033f48b107a25ea5e66c411b42a096a48`.
+
+No control or subject bytes changed, so no restoration was needed. Only the assigned v4 receipts were created and this report was appended. No tool installation, git/jj write, additional live query, or unrelated test occurred.

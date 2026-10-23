@@ -162,3 +162,36 @@ Receipt SHA-256 values:
 - `controls/v3/K1DoNothing-seed2.txt` (5,767 bytes): `9844dcca7603c599a150fc23117a4a67183e772ea1fee31f77f0d4358f98b911`.
 
 Repeated the same bounded, clean-environment coredump listing before and after both scores: each listing exited 0 with empty stderr, **1338 before, 1338 after, delta 0**. Both receipts independently print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Score subprocesses completed; the oracle retains its process-group cleanup. No persistent processes, installations, control mutations, empty-file reruns, or unrelated checks were introduced.
+
+## v4 re-score — unchanged control
+
+CONTROL K1DoNothing v4 best: PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED — not met
+
+L1 retired v3 before data and assigned this v4 re-score. The v4 detector adds embedded-value variables, sourced definitions, use before definition, and repeated sourcing while retaining the 41-case, type-strict ordered JSON comparison. The control remained unchanged throughout; no mutation or restoration was necessary in this follow-up.
+
+Ran the following exact command twice concurrently, using a clean outer environment, four jobs per run, and the frozen oracle's host-wide slot controls:
+
+```sh
+cd /home/vgpnk/Projects/shokunin/mado-shokunin
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1DoNothing.py --jobs 4
+```
+
+| Run | Fresh seed | Exact PRED output | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| v4 seed 1 | `8b1b1caa8415be87` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v4/K1DoNothing-seed1.txt` |
+| v4 seed 2 | `bf84153533e19bc2` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v4/K1DoNothing-seed2.txt` |
+
+Both runs passed only BASE (`rules=0`) and failed all 40 generated cases, whose oracle tables were nonempty. Both printed `exit=1`, with empty stderr. No exit-2 retry was needed. Receipts identify revision `2fdca5caaab6859386effbb8fa6acc5250c90633`, the unchanged 79-file snapshot and pinned oracle version recorded above, and agreeing BASE oracle repetitions.
+
+Before/after SHA-256 values matched:
+
+- Unchanged control: `a3381e95441354d833917bdaf481a5b210edf2b8cda6419b5e1805dfe143fd3b`.
+- Frozen v4 counter: `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1`.
+- Frozen harness: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+Receipt SHA-256 values:
+
+- `controls/v4/K1DoNothing-seed1.txt` (6,145 bytes): `7e4725ed7d0151a4d9a3f3cb2da6c415bd37b723f22e17b5e70555c450204ed3`.
+- `controls/v4/K1DoNothing-seed2.txt` (6,336 bytes): `6bdfe3a0f75573c4e2fbd5fdcf47fc3ad527bee3685cf5aebc9f10b01a91c748`.
+
+The bounded clean-environment coredump listings before and after these scores both exited 0 with empty stderr: **1338 before, 1338 after, delta 0**. Both receipts independently print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. All score subprocesses completed; nested process-group cleanup remains in the frozen oracle. No persistent processes, installations, extra mutations, empty-file reruns, or unrelated checks were introduced.

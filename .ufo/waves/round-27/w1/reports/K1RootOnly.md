@@ -141,3 +141,45 @@ Receipt SHA-256:
 - v3 seed 2: `b7c3d5bd785df50a7bb95e9e77dbe3d5f21952c352242ea009ec696e182aa8a5`.
 
 Before rescore, bounded `df -h /fast` reported 94G available. Independent Hyprland coredump counts before and after were both 1338, delta 0; both receipts independently print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Only the frozen counter/oracle launched nested compositors. Both awaited counter processes exited with code 1 and their oracle calls executed harness process-group cleanup. No persistent service or tool install was started. No control, frozen counter, oracle, production code, or sibling file was modified; no restoration was necessary. The source-omission control is rejected under v3.
+
+## C1 v4 rescore — unchanged RootOnly and GlobalOnce controls
+
+CONTROL K1RootOnly v4 best: PRED-C1-r27-v4 cases_pass=4/41 verdict=TARGET_MISSED — not met
+
+CONTROL K1GlobalOnce v4 best: PRED-C1-r27-v4 cases_pass=17/41 verdict=TARGET_MISSED — not met
+
+The L1 retired counter v3 before data after two partial-variable readers met it. These are the replacement v4 measurements, including the additionally assigned GlobalOnce control. Neither control was edited. Counter v4 adds embedded-value variables, sourced definitions, use-before-definition and repeated-source cases; the preceding counter-version measurements remain historical.
+
+From the lane directory, executed each of these exact commands twice with fresh counter-generated seeds, four concurrent processes total, each with a clean parent environment containing only `PATH=/usr/bin`:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1RootOnly.py --jobs 4
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1GlobalOnce.py --jobs 4
+```
+
+All four runs resolved revision `2fdca5caaab6859386effbb8fa6acc5250c90633`. Complete stdout, including the terminal `exit=1`, was saved verbatim to the following receipts; stderr was empty in every run. No run returned guard code 2 and no retry was required.
+
+| Control/run | Fresh seed | Actual predicate output | Exit | Receipt | Elapsed |
+| --- | --- | --- | --- | --- | --- |
+| RootOnly 1 | `e825b5546cbce3dc` | `PRED-C1-r27-v4 cases_pass=2/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1RootOnly-seed1.txt` | 210.630 s |
+| RootOnly 2 | `46b396d0210888e4` | `PRED-C1-r27-v4 cases_pass=4/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1RootOnly-seed2.txt` | 199.779 s |
+| GlobalOnce 1 | `3ef4f2738806c3b3` | `PRED-C1-r27-v4 cases_pass=17/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1GlobalOnce-seed1.txt` | 197.787 s |
+| GlobalOnce 2 | `62a8d764b772bd03` | `PRED-C1-r27-v4 cases_pass=17/41 verdict=TARGET_MISSED` | `exit=1` | `.ufo/waves/round-27/controls/v4/K1GlobalOnce-seed2.txt` | 211.784 s |
+
+Every receipt confirms repeated BASE equality, pinned Hyprland v0.56.2 at `efb50993780079460b0cbed1363e2166a2de1d9f`, and the same 79-file snapshot digest `fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727`.
+
+Before/after SHA-256 values were identical:
+
+- RootOnly: `bf9a86af4f5f34679d77a47d19ba67614a1715c2b6d74df175469fee20b3544a`, unchanged from all earlier measurements.
+- GlobalOnce: `5fe54d4992578bb69f7ceabe4af166c894e5a80a16bda43e7e811d9ba8c4ca39`.
+- Counter v4: `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1`, matching the L1 pin and registration.
+- Oracle: `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601`.
+
+Receipt SHA-256:
+
+- RootOnly seed 1: `f1696cf0107658088be5bbc3e04c949de93656f8aac080de2f7f018ad6535deb`.
+- RootOnly seed 2: `8c8d64f86770266f6782619ec93c881b235e1ca63208ef0569153ef746d858c0`.
+- GlobalOnce seed 1: `cc3bb9f938d254f4a92dd7fb4bbdbf26770a3fa91077dda275cfb324c099643d`.
+- GlobalOnce seed 2: `a2b0bc34669009dbf57af0b1a874db6aa3880472f890e28ed0b3ba71a1eb5cc4`.
+
+Bounded `df -h /fast` reported 84G available before these runs. Independent before/after Hyprland coredump counts were both 1338, delta 0. All four receipts also print `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`. Only the frozen counter/oracle launched nested compositors; its host-wide slot locks enforced the 12-instance bound. All four awaited counter processes exited with code 1, and their oracle calls executed harness process-group cleanup. No persistent service or installation was started. Neither control, the counter, the oracle nor any sibling source was modified, so restoration was unnecessary. Both controls are rejected under v4.

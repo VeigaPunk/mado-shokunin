@@ -193,3 +193,51 @@ The bounded scratch-capacity command recorded above reported `/fast` 89% used, 9
 
 Both bounded counter processes completed using the pinned oracle for compositor isolation and cleanup. The control and frozen inputs were unchanged; no restoration was necessary. Only the two authorized v3 receipts and this report append were written for this follow-up. No tools were installed or updated.
 
+## v4 re-score
+CONTROL K1NaiveGrep v4 best: PRED-C1-r27-v4 cases_pass=2/41 verdict=TARGET_MISSED — not met
+
+L1 retired v3 before data after separate GlobalOnce and FileScope partial readers met its target. The earlier receipts remain historical evidence. Re-scored this control without changing its bytes under frozen v4, which adds value-embedded variables, definitions in sourced files, use before definition, and repeated sourcing with a conflicting rule between visits.
+
+Ran this exact command twice concurrently from `/home/vgpnk/Projects/shokunin/mado-shokunin`, using the requested reduced `--jobs 4` and independent fresh seeds drawn by the counter:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NaiveGrep.py --jobs 4
+```
+
+| Verbatim stdout receipt | Fresh seed | PRED line | Exit |
+| --- | --- | --- | --- |
+| `.ufo/waves/round-27/controls/v4/K1NaiveGrep-seed1.txt` | `8181b2b3d7e653d2` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | 1 |
+| `.ufo/waves/round-27/controls/v4/K1NaiveGrep-seed2.txt` | `43e44544cc382be0` | `PRED-C1-r27-v4 cases_pass=2/41 verdict=TARGET_MISSED` | 1 |
+
+Both resolved REV to `2fdca5caaab6859386effbb8fa6acc5250c90633`, confirmed duplicate BASE oracle equality with zero rules, and confirmed oracle commit `efb50993780079460b0cbed1363e2166a2de1d9f`, tag `v0.56.2`. Both used the unchanged 79-file snapshot digest recorded above. Seed1 passed only BASE and failed all 40 generated cases. Seed2 passed BASE and this generated case, failing the remaining 39:
+
+```text
+CASE C16   PASS rules=3 oracle_rules=3 (APPEND:GAPSHORT+ONEMPTY)
+```
+
+Both runs rejected the unchanged NAIVE-GREP control against the 41/41 target. Neither was inconclusive or exited 2, so no guard retry was required. This control did not trigger the target-meeting-control redesign rule.
+
+Before-and-after SHA-256 evidence:
+
+| Path | SHA-256 before and after |
+| --- | --- |
+| `.ufo/waves/round-27/c1/count-v4.py` | `635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1` |
+| `.ufo/waves/round-27/harness/oracle.py` | `0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601` |
+| `.ufo/waves/round-27/controls/K1NaiveGrep.py` | `f26dfb60602b57297fba5c4e5b1153dd22964f2b1cb7fee33a2539f77550e611` |
+
+Receipt SHA-256 values:
+
+- v4 seed1: `d91a32e8643f1154e97ffc8c3a997f0f62a5f30a449af300dcab825af6b31b8a`
+- v4 seed2: `5922aae35cfba03c77fb6a953ed59cfc6ec38b06b92e468ef14590bdd3434f36`
+
+Exact hash commands:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v4.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 10 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v4.py .ufo/waves/round-27/harness/oracle.py .ufo/waves/round-27/controls/K1NaiveGrep.py .ufo/waves/round-27/controls/v4/K1NaiveGrep-seed1.txt .ufo/waves/round-27/controls/v4/K1NaiveGrep-seed2.txt
+```
+
+The same bounded scratch-capacity command recorded above reported `/fast` 90% used, 84G available before the v4 runs. The same independent bounded coredump-count command recorded above reported `1338` before and after (delta 0). Both v4 receipts contain `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0` and end in `exit=1`.
+
+Both bounded counter processes completed using the pinned oracle's compositor isolation and cleanup. The control and frozen inputs remained unchanged, so restoration was unnecessary. Only the authorized v4 receipts and this report append were written for this follow-up. No tools were installed or updated.
+

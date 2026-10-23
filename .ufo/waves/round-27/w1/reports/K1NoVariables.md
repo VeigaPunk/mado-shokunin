@@ -236,3 +236,51 @@ ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd  .ufo/waves/rou
 The same bounded `df -h /fast` command used previously returned `/dev/nvme1n1p2 804G 710G 94G 89% /fast` before scratch writes. The same bounded crash-census command returned `1338` before and after v3 measurement: delta `0`. Both receipts independently report `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
 
 Both counter jobs completed; nested compositor startup and teardown remained within the frozen harness. No control or subject bytes were changed, so no restoration was needed. Only the two v3 receipts and this report appendix were written during this follow-up. No subagents, installations, other runtime, build, lint, formatter, or extra behavioral checks were used.
+
+## v4 rescoring
+CONTROL K1NoVariables v4 best: PRED-C1-r27-v4 cases_pass=7/41 verdict=TARGET_MISSED — not met
+
+Re-scored the unchanged control under v4, whose additional shapes cover embedded variable values, definitions in sourced files, use before definition, and repeated sourcing. Both fresh-seed runs rejected the control. Neither returned exit 2; no guard retry was required.
+
+| Run | Fresh seed | Actual PRED output | Exit | Verbatim stdout receipt |
+| --- | --- | --- | --- | --- |
+| 1 | `a925bfbf44d81d7a` | `PRED-C1-r27-v4 cases_pass=7/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v4/K1NoVariables-seed1.txt` |
+| 2 | `5488cc34a3a8e0be` | `PRED-C1-r27-v4 cases_pass=1/41 verdict=TARGET_MISSED` | 1 | `.ufo/waves/round-27/controls/v4/K1NoVariables-seed2.txt` |
+
+Every failing case carries `VARIABLE`, `VARREDEF`, or `USEBEFOREDEF`; cases carrying none of those three features passed. Run 2 passed only BASE. These results detect the intentional variable-handling omission and do not establish correctness on inputs outside the measured population.
+
+### Exact command and outputs
+
+Working directory remained `/home/vgpnk/Projects/shokunin/mado-shokunin`. Ran the following command twice with fresh seeds selected by the counter, four workers per run, and the harness's shared host-wide instance locks:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 900 prlimit --core=0 -- python3 -I .ufo/waves/round-27/c1/count-v4.py 2fdca5ca --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/controls/K1NoVariables.py --jobs 4
+```
+
+Both receipts identify revision `2fdca5caaab6859386effbb8fa6acc5250c90633` and the same 79-file snapshot digest as the earlier runs. Both print `ORACLE_CHECK base_twice equal rules=0`, verify nested Hyprland commit `efb50993780079460b0cbed1363e2166a2de1d9f` and tag `v0.56.2`, and end with `exit=1`. Complete stdout, including every case line, is preserved at the two receipt paths above.
+
+### Unchanged bytes and safety
+
+Before scoring, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/c1/count-v4.py .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/harness/oracle.py
+```
+
+After scoring, ran:
+
+```sh
+env -i PATH=/usr/bin HOME=/home/vgpnk timeout 20 prlimit --as=4000000000 -- sha256sum .ufo/waves/round-27/controls/K1NoVariables.py .ufo/waves/round-27/c1/count-v4.py .ufo/waves/round-27/harness/oracle.py
+```
+
+The before/after hashes and both measurement receipts agree:
+
+```text
+65672716b17daf24f7a4f7d69ab4b922cc47066c2d02e5cdd0586423e3cc0b44  .ufo/waves/round-27/controls/K1NoVariables.py
+635ae788fd897c8f1fba88e4ab2ffcb95e7f79a88703b82e49a8729ce7d271a1  .ufo/waves/round-27/c1/count-v4.py
+0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601  .ufo/waves/round-27/harness/oracle.py
+```
+
+The bounded scratch-capacity command returned `/dev/nvme1n1p2 804G 720G 84G 90% /fast` before scoring. The same bounded crash-census command used in preceding sections returned `1338` before and after this follow-up: seat-observed delta `0`. Both receipts also report `HOST_SAFETY hyprland_coredumps_before=1338 after=1338 delta=0`.
+
+Both counter runs completed. Nested compositor lifecycle stayed inside the frozen harness. Only the requested v4 receipts and this appendix were written; the control remained byte-identical to its original implementation and no subject bytes needed restoration. No installations, subagents, builds, linters, formatters, or extra behavioral checks were used.
