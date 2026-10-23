@@ -123,3 +123,45 @@ more characters; target: cases_pass=37/37 and embed_hits=0.
   result is reported, not substituted.
 - Before data, the strongest v1 controls are re-scored under v2 and a fresh seat builds the named shape
   (embedded table + generator-grammar parser + source reachability); receipts land before wave 1 is created.
+
+## Attempt 2 (L1 `MadoR25A2`, dispatched 05:26Z) — C1 counter v3, before any seat scored v2 and before any data seat
+
+Attempt 1 (`MadoR25`) died with the orchestrator at 05:25:25Z after landing `04051723` and `7228299d`; its untracked
+`w1-spec.json` was never dispatched and is deleted unread-as-evidence. No wave-1 seat exists. Re-checked by attempt 2:
+`count-v2.py` keeps v2's bytes (sha256 `b251ddec…81a8`), and v3 replays v2's 37 case lines byte-identically for seed
+`0123456789abcdef` (`diff` of the CASE lines, `evidence/c1-before-v2-41cc04c8.txt` vs `evidence/c1-before-v3-41cc04c8.txt`).
+
+Why v3 (a design gap, not an observed score — no seat has scored v2): a tool holding an encoded cache of the snapshot's
+lines, normalized (case, whitespace, comments), plus a parser for only the easy grammar (`bind[d] = MODS, KEY, [DESC,]
+DISPATCHER, ARG`) could pass every v2 case: REWRITE's edits are easy-grammar lines, SYNTH uses only the generator's easy
+grammar, and the cache supplies every real line that uses keycodes, mouse binds, `$(…)` args or flag combinations. v3
+adds 4 **HARD** cases: whole synthetic trees whose fresh random lines use the hard grammar of legacy
+`ConfigManager::handleBind` (v0.56.2 `efb50993` `src/config/legacy/ConfigManager.cpp:1481-1674`) — modifier aliases and
+separators (`stringToModMask`, `KeybindManager.cpp:221-242`), empty mods, `code:NN` / bare-number keycodes, mouse binds
+(dispatcher `mouse`, arg = the named action), every valid flag letter, dispatcher case (lowered), comma-bearing args
+(`CVarList` last field), variables in mods/description/dispatcher/arg, trailing comments, and lines Hyprland rejects
+(invalid flag, e/r/o conflicts, m with l/e/r, c with g, mod string with no modifier, unknown dispatcher, too few or too
+many args, empty key, catchall outside a submap), plus unbinds with alias/keycode re-spellings and a case-mismatched key
+(`removeKeybind` compares the key string exactly). v3 also checks its own line model against the live table before
+scoring: `MODEL_CHECK modeled=190 drift=0` at base; drift exits 2.
+
+**PRED-C1 (v3, the claim's rule)** — the same sentence as the v3 counter docstring and the receipt label `PRED-C1`:
+At REV, the committed bytes of tools/mado-binds.py, run in a bubblewrap sandbox (no network, no /run, cleared
+environment, HOME = a fresh case directory), reproduce the expected bind multiset exactly over all 18 hyprctl JSON
+fields for the unperturbed snapshot of the four Hyprland config roots and for each of 40 counter-generated cases (4
+each of ADD, UNBIND, VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT and REWRITE on that snapshot, 4 SYNTH whole synthetic
+config trees, and 4 HARD whole synthetic trees whose lines exercise modifier aliases, keycodes, mouse binds, flag
+combinations, dispatcher case, comma-bearing args, variables and rejected lines), and the tool bytes contain none of the
+live capture's arg or description strings of 12 or more characters; target: cases_pass=41/41 and embed_hits=0.
+
+- Counter v3: `python3 -I .ufo/waves/round-25/c1/count.py REV`, sha256:`8532d3e96cc201ce2506a07d5f4b943e25b645e5ca1b461d9a35d08d4ff78375`.
+- Before @ `41cc04c8` under v3: `MODEL_CHECK modeled=190 drift=0`, `PRED-C1 cases_pass=0/41 embed_hits=0
+  verdict=TARGET_MISSED`, exit 1 (`evidence/c1-before-v3-41cc04c8.txt`, seed `0123456789abcdef`).
+- Kill rule unchanged: one measurement run at the measured commit on a fresh seed, receipt committed; any result other
+  than `TARGET_MET` is a miss, reported, never amended or re-scaled; an exit-2 run is re-run and both receipts kept.
+  v1 and v2 are also run once each at the measured commit and reported, never substituted.
+- Order from here: this commit → pre-data control call (fresh critic / mutation-tester seats: every committed v1
+  control re-scored under v3, plus new shortcut shapes: normalized encoded cache + easy-grammar parser, counter-copy
+  glue, permissive parser, partial-grammar mutants, no-source / no-variable / no-unbind readers) together with
+  non-data repair and source-opening items → control receipts landed → wave 1 (data). If any control meets v3 before
+  data, C1 is re-designed before data or the round reports it.

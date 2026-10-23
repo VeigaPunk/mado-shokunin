@@ -1,30 +1,45 @@
 #!/usr/bin/env python3
-"""mado round 25 C1 counter v2 (frozen before any data seat).
+"""mado round 25 C1 counter v3 (frozen before any v3-scoring seat and before any data seat).
 
-v2 adds the REWRITE case type after the v1 control call (receipts in
+v2 added the REWRITE case type after the v1 control call (receipts in
 ../controls/, all `not met` under v1; CtlLabelKeyed's critique showed that an
 embedded live table plus a parser for only the counter's own generator grammar
 could pass every v1 case without parsing a real config line).
+v3 (attempt 2, before any seat scored v2) adds the HARD case type: an encoded
+cache of the snapshot's normalized lines plus a parser for the easy grammar
+could still pass every v2 case, because every v2 edit of real lines is
+parsable with the easy grammar and SYNTH used only the easy grammar. HARD
+trees put the hard grammar (modifier aliases, keycodes, mouse binds, flag
+combinations, dispatcher case, comma-bearing args, variables in every field,
+rejected lines, case-sensitive unbind) into fresh random lines, so no cache
+of the operator's lines helps. v3 also checks its own line model against the
+live table before scoring (MODEL_CHECK; drift exits 2).
 
 PRED-C1 (same sentence in registration.md, this code and the receipt label):
   At REV, the committed bytes of tools/mado-binds.py, run in a bubblewrap
   sandbox (no network, no /run, cleared environment, HOME = a fresh case
   directory), reproduce the expected bind multiset exactly over all 18
   hyprctl JSON fields for the unperturbed snapshot of the four Hyprland config
-  roots and for each of 36 counter-generated cases (4 each of ADD, UNBIND,
-  VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT and REWRITE on that snapshot, and
-  4 SYNTH whole synthetic config trees), and the tool bytes contain none of the
-  live capture's arg or description strings of 12 or more characters; target:
-  cases_pass=37/37 and embed_hits=0.
+  roots and for each of 40 counter-generated cases (4 each of ADD, UNBIND,
+  VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT and REWRITE on that snapshot,
+  4 SYNTH whole synthetic config trees, and 4 HARD whole synthetic trees whose
+  lines exercise modifier aliases, keycodes, mouse binds, flag combinations,
+  dispatcher case, comma-bearing args, variables and rejected lines), and the
+  tool bytes contain none of the live capture's arg or description strings of
+  12 or more characters; target: cases_pass=41/41 and embed_hits=0.
 
 Expected multisets: the unperturbed case expects the live `hyprctl binds -j`
 capture taken immediately before and after the snapshot copy (the two
 captures must be equal, else the run is UNSTABLE and exits 2). Each perturbed
 case expects that capture plus or minus the delta the counter itself wrote;
-a SYNTH case expects exactly the binds of the tree the counter generated. Both
-derive from Hyprland v0.56.2 semantics (efb50993: legacy
-ConfigManager::handleBind/handleUnbind/parseKey, KeybindManager::
-stringToModMask/removeKeybind, HyprCtl bindsRequest JSON fields).
+a SYNTH or HARD case expects exactly the binds of the tree the counter
+generated. All derive from Hyprland v0.56.2 semantics (efb50993: legacy
+ConfigManager::handleBind :1492-1655 / handleUnbind :1657-1674 / parseKey
+:1481-1490, KeybindManager::stringToModMask :221-242 / removeKeybind
+:197-202, HyprCtl bindsRequest :1026-1080 JSON fields; hyprutils a21e87b8
+CVarList). The HARD line model (line_entry) must reproduce, for every
+modelable real bind line of the snapshot, an entry present in the live
+capture (MODEL_CHECK), else the run exits 2 and measures nothing.
 
 Usage: python3 -I count.py REV [--tool-file PATH] [--seed HEX] [--live-json PATH]
   REV          lane revision whose tools/mado-binds.py is measured.
@@ -46,7 +61,7 @@ FIELDS = ["locked", "mouse", "release", "repeat", "longPress", "non_consuming", 
           "description", "allow_input_capture", "dispatcher", "arg"]
 ROOTS = [".config/hypr", ".config/omarchy/current/theme", ".local/share/omarchy/default/hypr",
          ".local/state/omarchy/toggles/hypr"]
-TYPES = ["ADD", "UNBIND", "VARIABLE", "SOURCE", "GLOB", "UNSOURCED", "COMMENT", "SYNTH", "REWRITE"]
+TYPES = ["ADD", "UNBIND", "VARIABLE", "SOURCE", "GLOB", "UNSOURCED", "COMMENT", "SYNTH", "REWRITE", "HARD"]
 PER_TYPE = 4
 MODBITS = [("SHIFT", 1), ("CTRL", 4), ("ALT", 8), ("SUPER", 64)]
 KEYS = [c for c in string.ascii_uppercase] + [str(d) for d in range(10)] + ["F%d" % i for i in range(1, 25)] + \
@@ -259,6 +274,8 @@ def perturb(kind, rng, home, live, gen):
         return synth(rng, home, gen)
     if kind == "REWRITE":
         return rewrite(rng, home, live, gen, bindfiles, files)
+    if kind == "HARD":
+        return hard(rng, home, live, gen)
     raise ValueError(kind)
 
 
@@ -415,6 +432,300 @@ def synth(rng, home, gen):
     return "SYNTH tree binds=%d unbound=1 vars=%d" % (len(exp), len(variables)), exp
 
 
+# ---- v3: the hard bind grammar (legacy ConfigManager::handleBind, v0.56.2 efb50993 :1492-1655) ----
+WS = " \t\n\r\f\v"
+VALID_FLAGS = set("lremnatisodpcgukx")
+MOD_ALIASES = {1: ["SHIFT", "shift", "Shift"], 4: ["CTRL", "CONTROL", "ctrl", "Control"], 8: ["ALT", "MOD1", "alt"],
+               64: ["SUPER", "WIN", "LOGO", "MOD4", "META", "super", "win"]}
+
+
+def varlist(s, last=0):
+    """hyprutils CVarList(in, lastArgNo, ',', removeEmpty=false) (a21e87b8): split, trim each field; field
+    number lastArgNo takes the rest of the string."""
+    if s == "":
+        return [""]
+    out, pos = [], 0
+    for idx, p in enumerate(s.split(","), 1):
+        if idx == last:
+            out.append(s[pos:].strip(WS))
+            break
+        pos += len(p) + 1
+        out.append(p.strip(WS))
+    return out
+
+
+def parse_key(k):
+    """parseKey :1481-1490 -> (key, keycode, catch_all)."""
+    if k.isascii() and k.isdigit() and int(k) > 9:
+        return "", int(k), False
+    if k.startswith("code:") and k[5:].isascii() and k[5:].isdigit():
+        return "", int(k[5:]), False
+    if k == "catchall":
+        return "", 0, True
+    return k, 0, False
+
+
+def line_entry(kw, val, dispatchers):
+    """One expanded, comment-free bind line -> hyprctl entry, None when Hyprland rejects it (outside a submap),
+    "UNMODELED" for the s/k flags (multi-key, per-device), which neither the snapshot nor HARD uses."""
+    flags = kw.strip(WS)[4:]
+    if any(c not in VALID_FLAGS for c in flags):
+        return None
+    f = set(flags)
+    if f & set("sk"):
+        return "UNMODELED"
+    rel, rep, lp, mouse = bool(f & set("rcg")), "e" in f, "o" in f, "m" in f
+    if (lp or rel) and rep:
+        return None
+    if mouse and (rep or rel or "l" in f):
+        return None
+    if "c" in f and "g" in f:
+        return None
+    dd = 1 if "d" in f else 0
+    args = varlist(val, 4 + dd)
+    if len(args) < 3 or (not mouse and len(args) > 4 + dd) or (mouse and len(args) > 3 + dd):
+        return None
+    at = lambda i: args[i] if i < len(args) else ""  # noqa: E731  CVarList::operator[] returns "" past the end
+    mod, modstr, key = mod_mask(args[0]), args[0], args[1]
+    desc = at(2) if dd else ""
+    handler = at(2 + dd)
+    command = handler if mouse else at(3 + dd)
+    if mouse:
+        handler = "mouse"
+    handler = handler.lower()
+    if handler not in dispatchers or (mod == 0 and modstr != "") or key == "":
+        return None
+    k, kc, ca = parse_key(key)
+    if ca:
+        return None  # catchall is only allowed inside a submap
+    return {"locked": "l" in f, "mouse": mouse, "release": rel, "repeat": rep, "longPress": lp,
+            "non_consuming": "n" in f, "auto_consuming": "a" in f, "has_description": bool(dd), "modmask": mod,
+            "submap": "", "submap_universal": "true" if "u" in f else "false", "key": k, "keycode": kc,
+            "catch_all": False, "description": desc, "allow_input_capture": "x" in f, "dispatcher": handler,
+            "arg": command}
+
+
+def unbind_apply(exp, val):
+    """handleUnbind :1657-1674 + removeKeybind :197-202 (exact key string, keycode, catch_all)."""
+    args = varlist(val)
+    if len(args) == 1 and args[0] == "all":
+        exp.clear()
+        return
+    mod = mod_mask(args[0])
+    k, kc, ca = parse_key(args[1] if len(args) > 1 else "")
+    exp[:] = [e for e in exp if not (e["modmask"] == mod and e["key"] == k and e["keycode"] == kc
+                                     and e["catch_all"] == ca)]
+
+
+def model_check(snap, live):
+    """Run line_entry over every real bind line of the snapshot whose only '$' is '$(' and with no '##';
+    every modeled entry must be in the live capture (multiset containment) and none may be rejected."""
+    dispatchers = {e["dispatcher"] for e in live} | {"mouse"}
+    pool = collections.Counter(key_of(e) for e in live)
+    modeled = bad = 0
+    for f in sourced_files(snap):
+        for l in open(f, errors="replace").read().split("\n"):
+            if not BIND_RE.match(l) or "##" in l:
+                continue
+            l = l.split("#", 1)[0]
+            if re.search(r"\$(?!\()", l):
+                continue
+            kw, _, val = l.partition("=")
+            e = line_entry(kw, val.strip(WS), dispatchers)
+            modeled += 1
+            if not isinstance(e, dict) or pool[key_of(e)] == 0:
+                bad += 1
+                if bad <= 3:
+                    print("MODEL_DRIFT %r -> %r" % (l[:90], e if not isinstance(e, dict) else brief(key_of(e))))
+                continue
+            pool[key_of(e)] -= 1
+    return modeled, bad
+
+
+def spell_mods(rng, mask):
+    names = [rng.choice(MOD_ALIASES[b]) for b in (1, 4, 8, 64) if mask & b]
+    rng.shuffle(names)
+    return rng.choice([" ", "_", "  "]).join(names)
+
+
+def hard(rng, home, live, gen):
+    """Replace the snapshot with a whole synthetic tree written in the hard grammar; expected = line_entry
+    over the tree in Hyprland's processing order (root lines, each `source` inline, globs sorted)."""
+    shutil.rmtree(home)
+    hyp = os.path.join(home, ".config/hypr")
+    os.makedirs(os.path.join(hyp, "d"))
+    disps = sorted({e["dispatcher"] for e in live} - {"mouse"})
+    dispatchers = set(disps) | {"mouse"}
+    variables = {}
+
+    def newvar(value):
+        name = "h" + "".join(rng.choice(string.ascii_lowercase) for _ in range(7))
+        variables[name] = value
+        return name
+
+    v_mods = newvar(spell_mods(rng, rng.choice([64, 65, 68, 72, 73])))
+    v_disp = newvar(rng.choice(["exec", "Exec", "EXEC"]))
+    v_arg = newvar(rng.choice(["notify-send", "printf", "logger"]) + " " + gen.tok(5) + "," + gen.tok(3))
+    v_desc = newvar(gen.tok(4).capitalize() + " " + gen.tok(5))
+
+    def expand(s):
+        for n in sorted(variables, key=len, reverse=True):
+            s = s.replace("$" + n, variables[n])
+        return s
+
+    def pad(s):
+        return rng.choice(["", " ", "  "]) + s + rng.choice(["", " ", "   "])
+
+    def mods_text(mask):
+        if mask == 0:
+            return ""
+        if rng.random() < 0.15:
+            return "$" + v_mods
+        return spell_mods(rng, mask)
+
+    def key_text():
+        r = rng.random()
+        if r < 0.45:
+            return rng.choice(KEYS)
+        if r < 0.65:
+            return "code:%d" % rng.randint(10, 250)
+        if r < 0.8:
+            return "%d" % rng.randint(10, 250)
+        if r < 0.9:
+            return "%d" % rng.randint(0, 9)
+        return rng.choice(["mouse_down", "mouse_up", "mouse:274"])
+
+    def arg_for(d):
+        if d == "exec":
+            parts = [rng.choice(["notify-send", "uwsm-app --", "printf", "logger -t"]), gen.tok(6)]
+            r = rng.random()
+            if r < 0.25:
+                parts.append('"$(%s %s)"' % (gen.tok(5), gen.tok(3)))
+            elif r < 0.5:
+                parts.append("%s, %s" % (gen.tok(4), gen.tok(4)))
+            elif r < 0.65:
+                parts.append("$" + v_arg)
+            elif r < 0.8:
+                parts.append('"%s %s"' % (gen.tok(3), gen.tok(5)))
+            return " ".join(parts)
+        if d == "sendshortcut":
+            return "%s, %s, activewindow" % (spell_mods(rng, rng.choice([1, 4, 5])), rng.choice(KEYS))
+        if d in ("workspace", "movetoworkspace", "movetoworkspacesilent"):
+            return rng.choice(["%d" % rng.randint(1, 20), "e+1", "e-1", "special:%s" % gen.tok(4)])
+        if d in ("resizeactive",):
+            return "%d %d" % (rng.randint(-60, 60), rng.randint(-60, 60))
+        if d in ("movefocus", "swapwindow", "movecurrentworkspacetomonitor", "focusmonitor", "moveintogroup"):
+            return rng.choice(["l", "r", "u", "d"])
+        return rng.choice(["", gen.tok(4)])
+
+    def valid_line():
+        if rng.random() < 0.12:  # mouse bind: dispatcher "mouse", arg = the named action (case kept)
+            dd = rng.random() < 0.6
+            mask = rng.choice([64, 65, 72, 4])
+            parts = [mods_text(mask), "mouse:%d" % rng.choice([272, 273, 274])]
+            if dd:
+                parts.append(gen.tok(5).capitalize() + " " + gen.tok(4))
+            parts.append(rng.choice(["movewindow", "resizewindow", "MoveWindow"]))
+            return "bindm%s = %s" % ("d" if dd else "", ",".join(pad(p) for p in parts))
+        base = rng.choice(["", "", "l", "e", "r", "le", "lr", "n", "a", "x", "o", "lo", "c", "g", "t", "i", "p", "ln"])
+        flags = list(base + ("d" if rng.random() < 0.6 else ""))
+        rng.shuffle(flags)
+        flags = "".join(flags)
+        mask = 0 if rng.random() < 0.1 else rng.choice([1, 4, 8, 64, 65, 68, 72, 73, 76, 69, 13])
+        d = rng.choice(disps)
+        parts = [mods_text(mask), key_text()]
+        if "d" in flags:
+            parts.append("$" + v_desc if rng.random() < 0.15 else
+                         "%s %s (%s)" % (gen.tok(5).capitalize(), gen.tok(4), gen.tok(3)))
+        if d == "exec" and rng.random() < 0.15:
+            parts.append("$" + v_disp)
+        else:
+            parts.append(rng.choice([d, d, d.upper(), d.capitalize()]))
+        a = arg_for(d)
+        if a or rng.random() < 0.5:
+            parts.append(a)
+        return "bind%s = %s" % (flags, ",".join(pad(p) for p in parts))
+
+    def invalid_line():
+        mods, key = spell_mods(rng, 64), rng.choice(KEYS)
+        bad_mod = ""
+        while not bad_mod or mod_mask(bad_mod) != 0:
+            bad_mod = "".join(rng.choice("bdfghjknpqvxyz") for _ in range(5)).upper()
+        kind = rng.choice(["flag", "er", "ml", "mod", "disp", "few", "nokey", "mousemany", "catchall", "cg"])
+        return {"flag": "bind%s = %s, %s, exec, %s" % (rng.choice("yzbfhjqvw"), mods, key, gen.tok(6)),
+                "er": "bind%s = %s, %s, exec, %s" % (rng.choice(["er", "re", "eo", "ec"]), mods, key, gen.tok(6)),
+                "ml": "bind%s = %s, mouse:272, movewindow" % (rng.choice(["ml", "me", "mr"]), mods),
+                "mod": "bind = %s, %s, exec, %s" % (bad_mod, key, gen.tok(6)),
+                "disp": "bind = %s, %s, %s, %s" % (mods, key, "zq" + gen.tok(7), gen.tok(4)),
+                "few": "bind = %s, %s" % (mods, key),
+                "nokey": "bind = %s, , exec, %s" % (mods, gen.tok(6)),
+                "mousemany": "bindm = %s, mouse:273, resizewindow, %s" % (mods, gen.tok(4)),
+                "catchall": "bind = %s, catchall, exec, %s" % (mods, gen.tok(6)),
+                "cg": "bindcg = %s, %s, exec, %s" % (mods, key, gen.tok(6))}[kind]
+
+    exp = []
+
+    def apply(raw):
+        txt = expand(raw.split("#", 1)[0])
+        kw, _, val = txt.partition("=")
+        if kw.strip(WS) == "unbind":
+            unbind_apply(exp, val.strip(WS))
+            return
+        e = line_entry(kw, val.strip(WS), dispatchers)
+        assert e != "UNMODELED", raw
+        if e is not None:
+            exp.append(e)
+
+    def batch(n):
+        out = []
+        for _ in range(n):
+            line = invalid_line() if rng.random() < 0.2 else valid_line()
+            if rng.random() < 0.2:
+                line += " # " + gen.tok(5)
+            out.append(line)
+        return out
+
+    def unbind_for(line, mismatch):
+        txt = expand(line.split("#", 1)[0])
+        kw, _, val = txt.partition("=")
+        e = line_entry(kw, val.strip(WS), dispatchers)
+        if not isinstance(e, dict) or e["mouse"]:
+            return None
+        mods = spell_mods(rng, e["modmask"])
+        if e["keycode"]:
+            k = rng.choice(["code:%d" % e["keycode"], "%d" % e["keycode"]]) if e["keycode"] > 9 else "code:%d" % e["keycode"]
+        elif mismatch and e["key"].lower() != e["key"]:
+            k = e["key"].lower()
+        else:
+            k = e["key"]
+        return "unbind = %s, %s" % (mods, k)
+
+    head = ["# %s %s" % (gen.tok(5), gen.tok(7))] + ["$%s = %s" % (n, v) for n, v in variables.items()]
+    head += ["", "input {", "    kb_layout = us", "}", ""]
+    first = batch(rng.randint(8, 12))
+    a_lines = batch(rng.randint(5, 8))
+    x_lines, y_lines = batch(rng.randint(2, 4)), batch(rng.randint(2, 4))
+    rest = batch(rng.randint(4, 7))
+    unb = [u for u in (unbind_for(rng.choice(first), False), unbind_for(rng.choice(first), True),
+                       unbind_for(rng.choice(a_lines), False)) if u]
+    mid = rng.randint(1, len(a_lines) - 1)
+    a_lines = a_lines[:mid] + unb[-1:] + a_lines[mid:]
+    root = head + first + ["source = ~/.config/hypr/a.conf", "source = ~/.config/hypr/d/*.conf"] + rest + unb[:-1]
+    for l in head + first:
+        if BIND_RE.match(l) or l.startswith("unbind"):
+            apply(l)
+    for l in a_lines + x_lines + y_lines + rest + unb[:-1]:
+        apply(l)
+    for path, lines in ((os.path.join(hyp, "hyprland.conf"), root), (os.path.join(hyp, "a.conf"), a_lines),
+                        (os.path.join(hyp, "d", "x.conf"), x_lines), (os.path.join(hyp, "d", "y.conf"), y_lines),
+                        (os.path.join(hyp, "u.conf"), batch(3))):
+        with open(path, "w") as fh:
+            fh.write("\n".join(lines) + "\n")
+    return "HARD tree lines=%d binds=%d unbinds=%d vars=%d" % (
+        len(first) + len(a_lines) + len(x_lines) + len(y_lines) + len(rest) + len(unb[:-1]), len(exp), len(unb),
+        len(variables)), exp
+
+
 def run_tool(tool, home):
     cmd = ["timeout", "60", "bwrap", "--ro-bind", "/usr", "/usr", "--symlink", "usr/lib", "/lib",
            "--symlink", "usr/lib64", "/lib64", "--symlink", "usr/bin", "/bin", "--proc", "/proc", "--dev", "/dev",
@@ -491,6 +802,10 @@ def main():
             print("live=hyprctl binds -j sha256:%s" % sha(raw1))
         live = json.loads(raw1)
         print("snapshot files=%d digest sha256:%s live_binds=%d" % (nfiles, digest, len(live)))
+        modeled, drift = model_check(snap0, live)
+        print("MODEL_CHECK modeled=%d drift=%d" % (modeled, drift))
+        if drift or modeled < 100:
+            die("MODEL_DRIFT the HARD line model does not reproduce the live table", 2)
         embed_hits = 0
         if tb is not None:
             text = tb.decode("utf-8", errors="replace")
