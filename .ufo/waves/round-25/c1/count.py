@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
-"""mado round 25 C1 counter (frozen before any data seat).
+"""mado round 25 C1 counter v2 (frozen before any data seat).
+
+v2 adds the REWRITE case type after the v1 control call (receipts in
+../controls/, all `not met` under v1; CtlLabelKeyed's critique showed that an
+embedded live table plus a parser for only the counter's own generator grammar
+could pass every v1 case without parsing a real config line).
 
 PRED-C1 (same sentence in registration.md, this code and the receipt label):
   At REV, the committed bytes of tools/mado-binds.py, run in a bubblewrap
   sandbox (no network, no /run, cleared environment, HOME = a fresh case
   directory), reproduce the expected bind multiset exactly over all 18
   hyprctl JSON fields for the unperturbed snapshot of the four Hyprland config
-  roots and for each of 32 counter-generated cases (4 each of ADD, UNBIND,
-  VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT on that snapshot, and 4 SYNTH
-  whole synthetic config trees), and the tool bytes contain none of the live
-  capture's arg or description strings of 12 or more characters; target:
-  cases_pass=33/33 and embed_hits=0.
+  roots and for each of 36 counter-generated cases (4 each of ADD, UNBIND,
+  VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT and REWRITE on that snapshot, and
+  4 SYNTH whole synthetic config trees), and the tool bytes contain none of the
+  live capture's arg or description strings of 12 or more characters; target:
+  cases_pass=37/37 and embed_hits=0.
 
 Expected multisets: the unperturbed case expects the live `hyprctl binds -j`
 capture taken immediately before and after the snapshot copy (the two
@@ -41,7 +46,7 @@ FIELDS = ["locked", "mouse", "release", "repeat", "longPress", "non_consuming", 
           "description", "allow_input_capture", "dispatcher", "arg"]
 ROOTS = [".config/hypr", ".config/omarchy/current/theme", ".local/share/omarchy/default/hypr",
          ".local/state/omarchy/toggles/hypr"]
-TYPES = ["ADD", "UNBIND", "VARIABLE", "SOURCE", "GLOB", "UNSOURCED", "COMMENT", "SYNTH"]
+TYPES = ["ADD", "UNBIND", "VARIABLE", "SOURCE", "GLOB", "UNSOURCED", "COMMENT", "SYNTH", "REWRITE"]
 PER_TYPE = 4
 MODBITS = [("SHIFT", 1), ("CTRL", 4), ("ALT", 8), ("SUPER", 64)]
 KEYS = [c for c in string.ascii_uppercase] + [str(d) for d in range(10)] + ["F%d" % i for i in range(1, 25)] + \
@@ -252,7 +257,110 @@ def perturb(kind, rng, home, live, gen):
         return "COMMENT into %s" % os.path.relpath(f, home), exp
     if kind == "SYNTH":
         return synth(rng, home, gen)
+    if kind == "REWRITE":
+        return rewrite(rng, home, live, gen, bindfiles, files)
     raise ValueError(kind)
+
+
+def mod_mask(s):
+    """KeybindManager::stringToModMask (v0.56.2): uppercase, then substring tests."""
+    s = s.upper()
+    m = 0
+    for bit, names in ((1, ("SHIFT",)), (2, ("CAPS",)), (4, ("CTRL", "CONTROL")), (8, ("ALT", "MOD1")),
+                       (16, ("MOD2",)), (32, ("MOD3",)), (64, ("SUPER", "WIN", "LOGO", "MOD4", "META")),
+                       (128, ("MOD5",))):
+        if any(n in s for n in names):
+            m |= bit
+    return m
+
+
+def key_id(k):
+    """parseKey (v0.56.2) -> (key, keycode)."""
+    k = k.strip()
+    if k.isdigit() and int(k) > 9:
+        return "", int(k)
+    if k.startswith("code:") and k[5:].isdigit():
+        return "", int(k[5:])
+    return k, 0
+
+
+def rewrite(rng, home, live, gen, bindfiles, files):
+    """Re-spell every sourced file without changing its meaning (lower-case mod names, whitespace
+    around '=' and the first two commas of every bind line, inserted comment lines), then make three
+    semantic edits whose vocabulary is copied from the live table: replace the arg of one real bind,
+    add one bind, unbind one real bind."""
+    exp = [dict(e) for e in live]
+    plain = [e for e in live if not e["mouse"] and "#" not in e["arg"] and "$" not in e["arg"]
+             and "#" not in e["description"] and "," not in e["description"] and "$" not in e["description"]]
+    # locate real bind lines that map to exactly one live entry
+    where = collections.defaultdict(list)
+    for f in bindfiles:
+        for i, l in enumerate(open(f).read().split("\n")):
+            if not BIND_RE.match(l):
+                continue
+            kw, _, val = l.partition("=")
+            flags = kw.strip()[4:]
+            parts = val.split(",")
+            if len(parts) < 3 or "$" in l:
+                continue
+            k, kc = key_id(parts[1])
+            where[(mod_mask(parts[0]), k, kc)].append((f, i, flags))
+    cands = []
+    for (m, k, kc), locs in where.items():
+        hits = [e for e in live if e["modmask"] == m and e["key"] == k and e["keycode"] == kc]
+        if len(locs) == 1 and len(hits) == 1 and not set(locs[0][2]) & set("mks") and not hits[0]["mouse"]:
+            cands.append(((m, k, kc), locs[0], hits[0]))
+    (sm, sk, skc), (sf, si, sflags), starget = rng.choice(cands)
+    newarg = rng.choice([e["arg"] for e in plain if e["arg"] and e["arg"] != starget["arg"]])
+    lines = open(sf).read().split("\n")
+    kw, _, val = lines[si].partition("=")
+    nsep = 3 + ("d" in sflags)
+    head = val.split(",", nsep)[:nsep]
+    lines[si] = kw + "=" + ",".join(head) + ", " + newarg
+    with open(sf, "w") as fh:
+        fh.write("\n".join(lines))
+    for e in exp:
+        if e["modmask"] == sm and e["key"] == sk and e["keycode"] == skc:
+            e["arg"] = newarg
+    # unbind one other real bind
+    ucands = [e for e in live if not e["catch_all"] and not e["mouse"] and (e["key"] or e["keycode"])
+              and e["modmask"] & ~sum(b for _, b in MODBITS) == 0
+              and (e["modmask"], e["key"], e["keycode"]) != (sm, sk, skc)]
+    t = rng.choice(ucands)
+    append(os.path.join(home, ".config/hypr/hyprland.conf"),
+           ["unbind = %s, %s" % (mods_str(rng, t["modmask"]).lower(), t["key"] or "code:%d" % t["keycode"])])
+    exp = [e for e in exp if not (e["modmask"] == t["modmask"] and e["key"] == t["key"]
+                                  and e["keycode"] == t["keycode"] and not e["catch_all"])]
+    # add one bind whose dispatcher, arg and description are copied from the live table
+    src = rng.choice([e for e in plain if e["dispatcher"] != "mouse"])
+    _, e_new = gen.bind()
+    flags = rng.choice(FLAGSETS)
+    desc = rng.choice([e["description"] for e in plain if e["description"]] or ["Probe"])
+    mask, key = e_new["modmask"], e_new["key"]
+    parts = [mods_str(rng, mask), key] + ([desc] if "d" in flags else []) + [src["dispatcher"], src["arg"]]
+    e_add = entry(flags, mask, key, desc, src["arg"])
+    e_add["dispatcher"] = src["dispatcher"]
+    insert_before_bind(rng, rng.choice(bindfiles), ["bind%s = %s" % (flags, ", ".join(parts))])
+    exp.append(e_add)
+    # meaning-preserving re-spelling of every sourced file
+    for f in files:
+        out = []
+        for l in open(f, errors="replace").read().split("\n"):
+            if BIND_RE.match(l) or re.match(r"^\s*unbind\s*=", l):
+                kw, _, val = l.partition("=")
+                parts = val.split(",", 2)
+                if len(parts) == 3:
+                    mods = " ".join(w if w.startswith("$") else w.lower() for w in parts[0].split())
+                    sep = [rng.choice([",", ", ", " , ", ",   "]) for _ in range(2)]
+                    l = kw.rstrip() + rng.choice(["=", " = ", "  =   ", "= "]) + mods + sep[0] + \
+                        parts[1].strip() + sep[1] + parts[2].lstrip()
+            out.append(l)
+            if rng.random() < 0.08:
+                out.append("# " + gen.tok(5) + " " + gen.tok(7))
+        with open(f, "w") as fh:
+            fh.write("\n".join(out))
+    return "REWRITE argswap mask=%d key=%r code=%d; unbind mask=%d key=%r code=%d; add %s" % (
+        sm, sk, skc, t["modmask"], t["key"], t["keycode"], src["dispatcher"]), exp
 
 
 def synth(rng, home, gen):
@@ -282,7 +390,7 @@ def synth(rng, home, gen):
             exp.append(e)
         return out
 
-    root = ["# synthetic tree %s" % gen.tok(6)]
+    root = ["# %s %s" % (gen.tok(5), gen.tok(7))]
     root += ["$%s = %s" % (k, v) for k, v in variables.items()]
     root += ["", "general {", "    gaps_in = %d" % rng.randint(1, 9), "    border_size = 2", "}", ""]
     first = some_binds(rng.randint(3, 6), True)

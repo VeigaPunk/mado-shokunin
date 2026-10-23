@@ -90,3 +90,36 @@ C1 needs no SCORECARD or lesson text; C2 needs no tool. Harm watch at the measur
 file byte-identical to base; census exit 0; no line removed from LOG, SCORECARD, QUALITY, README, SOURCES except the
 R3 in-row correction (one line, reported); PROVINCE gains one tool row only if C1 lands; round-23 C3 counter = 0 and
 round-23 C2 counter = 3/3 re-run by wave 2.
+
+## C1 counter v2 — pre-data amendment (after the v1 control call, before any data seat)
+
+The v1 control call (10 seats, receipts `controls/Ctl*.md`) scored every shape under counter v1
+(sha256:`70f682ad95f2546875088b405be293dce567c42cd4b094ef6c70e6b863541895`, kept byte-identical as `c1/count-v1.py`):
+none met v1 (best: CtlCacheDelta 25/33, CtlLabelKeyed 25/33). CtlLabelKeyed's critique named a shape no seat built:
+an embedded (encoded) live table plus a parser for only the counter's own generator grammar plus source reachability
+could pass every v1 case without parsing one real config line, because every v1 edit of the real tree is a local
+delta and SYNTH uses the generator's vocabulary. v2 answers that design gap (not an observed score): it adds 4
+**REWRITE** cases, which re-spell every sourced real file without changing its meaning (mod names lower-cased,
+whitespace around `=` and the first two commas of every bind line, inserted comment lines) and make three edits whose
+vocabulary is copied from the live table (the arg of one real bind replaced by another real arg, one bind added with a
+real dispatcher/arg/description, one real bind unbound). No line keeps its cached bytes, and the new line cannot be
+told apart by vocabulary, so a cache or an embedded table needs a full parse of real lines to find the edits. SYNTH
+also lost its fixed `# synthetic tree` first line. Nothing else changed.
+
+**PRED-C1 (v2, the claim's rule)** — the same sentence as the v2 counter docstring and the receipt label `PRED-C1`:
+At REV, the committed bytes of tools/mado-binds.py, run in a bubblewrap sandbox (no network, no /run, cleared
+environment, HOME = a fresh case directory), reproduce the expected bind multiset exactly over all 18 hyprctl JSON
+fields for the unperturbed snapshot of the four Hyprland config roots and for each of 36 counter-generated cases (4
+each of ADD, UNBIND, VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT and REWRITE on that snapshot, and 4 SYNTH whole
+synthetic config trees), and the tool bytes contain none of the live capture's arg or description strings of 12 or
+more characters; target: cases_pass=37/37 and embed_hits=0.
+
+- Counter v2: `python3 -I .ufo/waves/round-25/c1/count.py REV`, sha256:`b251ddecb3a99993bbb8a7e9cb2363896da7f69ac58bf63e6b8deb2e0ccf81a8`.
+- Before @ `41cc04c8` under v2: `PRED-C1 cases_pass=0/37 embed_hits=0 verdict=TARGET_MISSED`, exit 1
+  (`evidence/c1-before-v2-41cc04c8.txt`).
+- Both rules are reported at the after-measurement: v2 (the claim's rule) and v1 (`python3 -I
+  .ufo/waves/round-25/c1/count-v1.py REV`, target 33/33), one fresh seed each, so the strict reading ("a rule changed
+  after any seat has scored is not the claim's rule") can be judged too. The claim is met only if v2 is met; a v1
+  result is reported, not substituted.
+- Before data, the strongest v1 controls are re-scored under v2 and a fresh seat builds the named shape
+  (embedded table + generator-grammar parser + source reachability); receipts land before wave 1 is created.
