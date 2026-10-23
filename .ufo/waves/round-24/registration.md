@@ -34,14 +34,18 @@ Surface moved: the `corpus/README.md` `## Frontier` item "Still open: rule *attr
 moves to documentary sourced ground in a new entry `corpus/knowledge/rule-attribution-r24.md`, built only on
 SOURCES rows opened 2026-10-23. The command that shows it unmoved is the same counter.
 
-Frozen predicate (identical in `c1/count.py` and every receipt):
+Frozen predicate v2 (identical in `c1/count.py` and every receipt). v1 (landed `d9fec1d3`) lacked the final
+claim-anchor clause; v2 adds it after the control wave was designed (control CtlC1LabelShortcut: real on-topic
+quotes beside claims they do not support) and before any data seat. Controls are scored under v1 and v2; v2
+is the counted rule.
 
 > PASS_ROW: a claim row `| A<n> | <claim> | S### | "<quote>" |` in corpus/knowledge/rule-attribution-r24.md at
 > REV whose S### is a SOURCES.md row with status `mined`, opened `2026-10-23`, used-by naming the note, a source
 > URL pinned to a tag or 40-hex commit under github.com or raw.githubusercontent.com /hyprwm/Hyprland or
 > /hyprwm/hyprland-wiki, and a recorded sha256 equal to the sha256 of the bytes re-fetched from that URL now,
 > where the quote (<=25 words, containing a rule-topic word) occurs verbatim (whitespace-collapsed) in those
-> bytes.
+> bytes, and whose claim cell contains a run of at least 4 consecutive words of that quote or a backticked
+> identifier of at least 4 characters that occurs in that quote.
 
 Counter: `python3 -I .ufo/waves/round-24/c1/count.py REV` (counted mode re-fetches every URL; `--offline` is
 diagnostic only). Before at base: `PASS_ROW=0`, note absent, exit 1. **Target: `TARGET_MET` at the landed tip

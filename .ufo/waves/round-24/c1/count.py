@@ -4,14 +4,18 @@ r"""mado round 24, claim C1 (coverage: Hyprland window-rule attribution route) f
 Usage: python3 -I .ufo/waves/round-24/c1/count.py REV [--offline] [--json]
 Run from anywhere; reads the lane repo read-only with `git show REV:<path>`.
 
-Frozen predicate (same sentence in registration.md, this code, and every receipt):
+Frozen predicate v2 (same sentence in registration.md, this code, and every receipt;
+v2 adds the claim-anchor clause before any data seat, after control CtlC1LabelShortcut's design):
 "PASS_ROW: a claim row `| A<n> | <claim> | S### | \"<quote>\" |` in
 corpus/knowledge/rule-attribution-r24.md at REV whose S### is a SOURCES.md row with
 status `mined`, opened `2026-10-23`, used-by naming the note, a source URL pinned to a
 tag or 40-hex commit under github.com or raw.githubusercontent.com /hyprwm/Hyprland or
 /hyprwm/hyprland-wiki, and a recorded sha256 equal to the sha256 of the bytes re-fetched
 from that URL now, where the quote (<=25 words, containing a rule-topic word) occurs
-verbatim (whitespace-collapsed) in those bytes."
+verbatim (whitespace-collapsed) in those bytes, and whose claim cell contains a run of
+at least 4 consecutive words of that quote or a backticked identifier of at least 4
+characters that occurs in that quote."
+COUNTER_VERSION = v2
 
 Counted value: number of distinct PASS_ROW rows. The round target needs PASS_ROW >= 6
 from >= 3 distinct S### rows AND the note indexed by a coverage-map row in
@@ -37,6 +41,15 @@ ROW_RE = re.compile(r'^\|\s*(A\d+)\s*\|(.*?)\|\s*(S\d{3,})\s*\|\s*"(.+)"\s*\|\s*
 def git_show(rev, path):
     r = subprocess.run(["git", "-C", LANE, "show", f"{rev}:{path}"], capture_output=True)
     return r.stdout.decode("utf-8", "replace") if r.returncode == 0 else None
+
+
+def anchored(claim, quote):
+    """v2 claim-anchor clause: a >=4-word run of the quote, or a backticked >=4-char identifier from it."""
+    c = collapse(claim).lower()
+    w = collapse(quote).lower().split()
+    if any(" ".join(w[i:i + 4]) in c for i in range(len(w) - 3)):
+        return True
+    return any(len(t) >= 4 and t in quote for t in re.findall(r"`([^`\s]+)`", claim))
 
 
 def collapse(s):
@@ -99,6 +112,8 @@ def main():
             why.append("quote-off-topic")
         if len(claim.split()) < 8:
             why.append("claim<8w")
+        if not anchored(claim, quote):
+            why.append("claim-not-anchored-to-quote")
         if q in seen_quotes:
             why.append("duplicate-quote")
         row = srows.get(sid)
@@ -145,7 +160,7 @@ def main():
     indexed = bool(re.search(r"^\| `knowledge/rule-attribution-r24\.md`", readme, re.M))
     met = len(passing) >= 6 and len(distinct) >= 3 and indexed
     me = hashlib.sha256(open(__file__, "rb").read()).hexdigest()
-    summary = {"revision": rev, "mode": "offline" if offline else "refetch", "note_present": note is not None,
+    summary = {"counter_version": "v2", "revision": rev, "mode": "offline" if offline else "refetch", "note_present": note is not None,
                "rows": len(results), "PASS_ROW": len(passing), "distinct_sources": len(distinct),
                "readme_indexed": indexed, "verdict": "TARGET_MET" if met else "TARGET_NOT_MET",
                "counter_sha256": me}
