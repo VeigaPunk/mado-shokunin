@@ -28,8 +28,8 @@ evidence.
 | report committed by lane identity | `git log --format='%an %H' -- .ufo/reports/round-27/mado.md` (fleet) | `mado-shokunin 9f966367582294f8037be224810a3935f58ff954`; ancestor of pushed fleet HEAD `0fdce71a` | pass |
 | `SHONEN` heading, one line per box | report `## SHONEN` | 4 lines, `[~]` each, one per `SHONEN.md` box; no `[x]` | pass |
 | cited lane commits exist and are ancestors | `git merge-base --is-ancestor <h> master` over `767b12db 20022a65 0b53bd86 48b9434a 5c1d495 86f7355 0be82d62 43fdd7e6 cb7c38f0 98ebd5b0 b6650d5` | 11/11 `OK` | pass |
-| no uncommitted round work | `git -C mado-shokunin status --porcelain` | empty | pass |
-| pushed | `scripts/hyaku/jj-lane.sh state mado-shokunin` | `branch=master local=767b12db remote=767b12db ahead=0 behind=0 tracked=0 untracked=0` | pass |
+| no uncommitted round work | `git -C mado-shokunin status --porcelain` | empty at first check; at closure one late post-landing modification appeared (defect 11) | defect |
+| pushed | `scripts/hyaku/jj-lane.sh state mado-shokunin` | after the report: `local=767b12db remote=767b12db ahead=0 behind=0`; this file's own landing is recorded in the closure entry | pass |
 | prompt carries the template contract | `.ufo/prompts/mado-round-27.md` §1–§5 | round-level (i) MISSION/AXES §1, (ii) L2 floor ≥8 one batched call §3, (iii) commit-then-push §5, (iv) push scope §5, (v) L0 §5; child-lane report path §4, commit-before-report §5, `SHONEN` heading §4, hash-citation rule §5, write scope §3. No L2 route map is quoted, so the route-map check is vacuous | pass |
 | report is real, not a marker | checkable commit + evidence pointers + required sections | real report → lane-round status `ok`; defects below are status-neutral | pass |
 
@@ -63,6 +63,13 @@ Conformance defects recorded in this round's notes (none changes `ok`):
    MutWsTool, RevProvenance, RevSourcesFinal, RevSpotcheckDebt`) and 7 names appear in the report. The eighth
    seat or its death is unnamed.
 9. Report cites `SKILL.md:631-636`; the six rows sit at `630-635` at tip (pointer drift).
+10. Late uncommitted lane artifact at closure: `.ufo/waves/round-27/w4/reports/RevRepair.md` is modified in
+    the worktree after the lane's last commit (`767b12db`) — mtime 2026-10-23 16:50:46 -03, +166/−33 against
+    the committed version. It is the expanded RevRepair audit relayed by the orchestrator (A1 `e36f12f2…`
+    empirically wider than landed A2; exact-≥3 residual). A live seat wrote it after the round landed; it is
+    not in any commit. The lane must land it as a r28 erratum (or revert it) — no lane commit may include
+    `.ufo/state/`, and the integrator does not commit another writer's file. This is the only dirty path at
+    closure; the round's own artifacts are all committed and pushed.
 
 ## 2. Per-claim re-check (C1, C2)
 
@@ -187,5 +194,6 @@ Census re-run (the round's end value): `/home/vgpnk/Projects/shokunin/scripts/so
 ## 7. Closure recommendation
 
 Every declared claim verifies against `767b12db…` and no owned axis is harmed; the lane-round is `ok` and
-admitted, with the routed defects above. SHONEN boxes remain `[~]` (promotion is operator-owned; nothing here
-supports `[x]`).
+admitted, with the routed defects above (including defect 10: the late uncommitted RevRepair expansion, which
+must land as an r28 erratum or be reverted). SHONEN boxes remain `[~]` (promotion is operator-owned; nothing
+here supports `[x]`).
