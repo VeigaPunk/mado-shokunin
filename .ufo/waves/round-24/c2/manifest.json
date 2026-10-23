@@ -1,0 +1,163 @@
+{
+  "schema": "mado-r24-c2-manifest-v1",
+  "lane_default": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "fleet": "/home/vgpnk/Projects/shokunin",
+  "note": "One frozen re-demonstration per capability named in the 12 SCORECARD capability-table rows at base 8e5d9369. Placeholders: {TREE} extracted REV tree, {LANE} MADO_LANE repo (read-only), {FLEET} fleet root, {REV} full commit, {CENSUS_ROOT} scratch root made by count.py (symlink mado-shokunin -> {TREE} plus a scratch shokunin.conf). Rules were written from each row's claim before the base smoke; no rule was changed after it.",
+  "capabilities": [
+    {
+      "name": "sources registry",
+      "argv": ["bash", "{FLEET}/scripts/sources-census.sh", "validate", "--root", "{CENSUS_ROOT}"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 120,
+      "exit_ok": [0],
+      "regex": "(?m)^mado\\tok\\t",
+      "min_matches": 1,
+      "requires": ["corpus/SOURCES.md"],
+      "why": "The row claims every contract census command runs clean and every mined row joins to an entry; sources-census.sh validate is that command (E01-E12 are the contract checks, E11 resolves each used-by path on disk) and its clean-lane line is `mado<TAB>ok`. The scratch root is the census's expected layout: a mado-shokunin symlink to REV plus a config file. W04 duplicate-url warnings do not change lane status."
+    },
+    {
+      "name": "verdict gate (live + file plane)",
+      "argv": ["bash", "{TREE}/tools/mado-verify.sh", "--no-live"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 180,
+      "exit_ok": [0, 1],
+      "regex": "(?m)^MADO_VERIFY: (CLEAN|DIVERGED) \\(",
+      "min_matches": 1,
+      "requires": ["tools/mado-verify.sh"],
+      "why": "The row's pointer is the live form; the task fixes --no-live as the read-only re-demonstration. 'Works' is the gate's verdict contract (a MADO_VERIFY line with exit 0/1, boundary check included), not the host's current CLEAN state, so both verdicts are allowed and exit 2 (usage error) is not."
+    },
+    {
+      "name": "hermetic self-test",
+      "argv": ["bash", "{TREE}/tools/mado-verify.sh", "--selftest"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 300,
+      "exit_ok": [0],
+      "regex": "(?m)^MADO_SELFTEST: (\\d+)/\\1 assertions passed$",
+      "min_matches": 1,
+      "requires": ["tools/mado-verify.sh"],
+      "why": "The pointer's 269/269 is the round-12 count; the capability is the hermetic suite itself, so the frozen rule requires the gate's own N/N self-report with N equal at REV (460/460 at base), not the dated number."
+    },
+    {
+      "name": "mutation regression with re-cut",
+      "argv": ["bash", "{TREE}/tools/mado-verify.sh", "--regression"],
+      "cwd": "{TREE}",
+      "env": {"MADO_VERIFY_HARNESS": "{FLEET}/tameshi-shokunin/tools/mutate-and-run.sh"},
+      "timeout_s": 600,
+      "exit_ok": [0],
+      "regex": "(?m)^MADO_REGRESSION: PASS \\(case=mado-verify-hardened; ",
+      "min_matches": 1,
+      "requires": ["tools/mado-verify.sh"],
+      "why": "SCORECARD's round-12 table and SKILL name the fleet mutation harness; the command is the gate's own --regression mode with that harness used read-only via MADO_VERIFY_HARNESS. PASS is printed only when the recorded 10-defect kill table reproduces; SETUP or a surviving mutant exits non-zero."
+    },
+    {
+      "name": "post-hoc transcript tripwire",
+      "argv": ["bash", "-c", "for d in core compound hardening w2-regressions; do python3 -I tools/mado-tripwire.py --selftest \".ufo/waves/round-17/tripwire/$d\" || exit 1; done"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 180,
+      "exit_ok": [0],
+      "regex": "(?m)^SELFTEST_SUMMARY: (\\d+)/\\1 passed failed=\\[\\]$",
+      "min_matches": 4,
+      "requires": ["tools/mado-tripwire.py"],
+      "why": "The pointer's `{core,compound,hardening,w2-regressions}` is brace shorthand, but the shipped CLI accepts exactly one --selftest DIR (four args exit 2), so the frozen command runs the four dirs in sequence. Four N/N summaries with empty failed lists at REV are the claim; the totals are not pinned to the round-17 counts."
+    },
+    {
+      "name": "tripwire frozen replay (gate entry)",
+      "argv": ["python3", "-I", "{TREE}/tools/mado-tripwire.py", "--frozen", ".ufo/waves/round-18/frozen"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 120,
+      "exit_ok": [0, 1],
+      "regex": "(?m)^MADO_TRIPWIRE_FROZEN: frozen_(match|verdict_mismatch)$",
+      "min_matches": 1,
+      "forbid_regex": "\"ok\": false",
+      "requires": ["tools/mado-tripwire.py", ".ufo/waves/round-18/frozen/expected.json"],
+      "why": "The row's contract is digest verification plus comparison with the pinned verdict: frozen_match and frozen_verdict_mismatch are both correct replays (round 19 records the r18 pin's expected mismatch), while exit 2/tampered and any `\"ok\": false` input digest are not. The frozen corpus is read as data; no transcript bytes are executed."
+    },
+    {
+      "name": "landedness check",
+      "argv": ["bash", "{TREE}/.ufo/waves/round-19/landed-check.sh", "{LANE}", "{REV}"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 120,
+      "exit_ok": [0, 1],
+      "regex": "(?m)^(LANDED|LOCAL_ONLY|MISSING) {REV}\\b",
+      "min_matches": 1,
+      "requires": [".ufo/waves/round-19/landed-check.sh"],
+      "why": "One hash shows the classifier's three-way answer; LANDED, LOCAL_ONLY and MISSING are all 'works' (exit 0/1), while exit 2 (not a repo, no origin/refs/heads/master, ls-remote failure) is not. {LANE} is read-only and the tool never fetches or writes git state; the row is network-dependent by its own ls-remote contract."
+    },
+    {
+      "name": "tripwire evidence marker",
+      "argv": ["python3", "{LANE}/.ufo/waves/round-20/tw-precision.py", "{REV}"],
+      "cwd": "{LANE}",
+      "env": {},
+      "timeout_s": 600,
+      "exit_ok": [0],
+      "regex": "(?s)\"commit\": \"{REV}\".*?\"L\": \\{\"passed\": 17, \"total\": 18\\}.*?\"P\": \\{\"passed\": 66, \"total\": 66\\}",
+      "min_matches": 1,
+      "requires": [".ufo/waves/round-20/tw-precision.py"],
+      "why": "The pointer is tw-precision.py with a revision argument and the dated score P 66/66, L 17/18; the revision argument is the REV under test (substituted), so the rule requires the row's own two family numbers at REV. The counter reads tool/suite bytes through git and derives its repo root from its own path, so it runs with cwd {LANE} (MADO_LANE) while `requires` pins the script's existence at REV."
+    },
+    {
+      "name": "harness fail-closed check",
+      "argv": ["bash", "{TREE}/.ufo/waves/round-20/isolation-check.sh", ".ufo/waves/round-20/isolate.sh"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 300,
+      "exit_ok": [0, 1],
+      "regex": "(?m)^(FAIL_OPEN|FAIL_CLOSED) isolate\\.sh mode=",
+      "min_matches": 6,
+      "regex_all": ["(?m)^POSITIVE_CONTROL_OK isolate\\.sh$"],
+      "requires": [".ufo/waves/round-20/isolation-check.sh", ".ufo/waves/round-20/isolate.sh"],
+      "why": "The pointer is generic in HARNESS; the re-demonstration uses the lane's own isolate.sh, the subject of the crit29-isolate receipt. The capability is to show a definite verdict for each of six forced setup failures plus a positive control, so either FAIL_OPEN or FAIL_CLOSED counts per mode and exit 0/1 is allowed; exit 2/could-not-evaluate is not."
+    },
+    {
+      "name": "tripwire reached-body sweep",
+      "argv": ["python3", "{LANE}/.ufo/waves/round-20/a2/a2-guards.py", "{REV}", "--fixtures-rev", "6a7d9ca0d2124a4077074b800c94a9bc1184441c"],
+      "cwd": "{LANE}",
+      "env": {},
+      "timeout_s": 600,
+      "exit_ok": [0],
+      "regex": "(?m)^ \"recall_lost\": 0,?$",
+      "min_matches": 1,
+      "regex_all": ["(?m)^ \"rev\": \"{REV}\",?$"],
+      "requires": [".ufo/waves/round-20/a2/a2-guards.py"],
+      "why": "The pointer's first argument is the tripwire revision under test (a8960de then); {REV} replaces it and the fixture pin 6a7d9ca stays frozen. The row's own zero is recall_lost 0, and the rev line proves the JSON describes REV; fixtures are scanned as data, never executed."
+    },
+    {
+      "name": "detector removal-side guard",
+      "argv": ["python3", "{LANE}/.ufo/waves/round-20/a2/a2-guards.py", "{REV}", "--fixtures-rev", "6a7d9ca0d2124a4077074b800c94a9bc1184441c"],
+      "cwd": "{LANE}",
+      "env": {},
+      "timeout_s": 600,
+      "exit_ok": [0],
+      "regex": "(?m)^ \"recall_lost\": 0,?$",
+      "min_matches": 1,
+      "regex_all": [
+        "(?m)^ \"crash_flip\": 0,?$",
+        "(?m)^ \"vcs_fn\": 0,?$",
+        "(?m)^ \"a2_mismatch\": 0,?$",
+        "(?m)^ \"dup_rows\": 0,?$",
+        "(?m)^ \"pure_rows\": 0,?$",
+        "(?m)^ \"rev\": \"{REV}\",?$"
+      ],
+      "requires": [".ufo/waves/round-20/a2/a2-guards.py"],
+      "why": "The pointer is evidence files only; its producing script exists at REV, so the row is re-demonstrated by running it rather than by asserting the files. The r21 disposition records recall_lost/crash_flip/vcs_fn/a2_mismatch/dup_rows all 0 and the row names dropped findings, crash flips and pure-data rows, so those zeros (plus pure_rows) are the rule. vcs_fp is a false-positive count outside this removal-side claim and is not asserted."
+    },
+    {
+      "name": "artifact-only assessment integrity",
+      "argv": ["python3", "-I", "{TREE}/tools/mado-assessment.py", "--selftest", ".ufo/waves/round-21/assessment-fixtures"],
+      "cwd": "{TREE}",
+      "env": {},
+      "timeout_s": 300,
+      "exit_ok": [0],
+      "regex": "(?s)\"pass\": (\\d+), \"result\": \"selftest\".*?\"total\": \\1\\}",
+      "min_matches": 1,
+      "requires": ["tools/mado-assessment.py", ".ufo/waves/round-21/assessment-fixtures"],
+      "why": "The pointer's --selftest is self-contained at REV (no git, host or network). The tool prints a JSON case list plus pass/total; the rule requires the self-reported pass count to equal total, so a failed fixture case is visible as a drop and a could-not-evaluate exits non-zero."
+    }
+  ]
+}
