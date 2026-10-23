@@ -36,8 +36,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
 
-REVREPAIR_SHA = "e2a5427"   # prefix; full sha pinned in evidence/closure-defects-r28.md
-A1REPORT_SHA = "5e17"        # prefix; full sha pinned in evidence/closure-defects-r28.md
+REVREPAIR_SHA = "2ee4116"   # prefix; full sha pinned in evidence/closure-defects-r28.md
+A1REPORT_SHA = "94d6"       # prefix; full sha pinned in evidence/closure-defects-r28.md
 M27_2_CORRECTED_POINTER = "S178"
 W3_RECON = ".ufo/waves/round-28/evidence/w3-seats-reconciliation.txt"
 E01_RED_BEFORE = ".ufo/waves/round-28/evidence/e01-red-before.txt"
