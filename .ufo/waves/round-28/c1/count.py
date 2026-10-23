@@ -35,6 +35,7 @@ H2_SEAL_REL = ".ufo/waves/round-28/c2/heldout2-seal.txt"
 H2_SEAL = os.path.join(LANE, H2_SEAL_REL)
 REF_HELDOUT = os.path.join(LANE, ".ufo/waves/round-28/c1/refpub")
 REF_SEAL_REL = ".ufo/waves/round-28/c1/refpub-seal.txt"
+REF_SEAL = os.path.join(LANE, REF_SEAL_REL)
 R28C1V5 = ".ufo/waves/round-28/c1/count-v5.py"
 EXACTBOOL_TOOL = ".ufo/waves/round-28/c1/ref-mutants/exactbool-tool.py"
 V5_SEED = "28c1a8c0ffee0001"
@@ -154,7 +155,8 @@ def main():
         normal.group(0) if normal else "missing", mutant.group(0) if mutant else "missing"))
 
     # --- leg h2-rotate ------------------------------------------------------
-    seal_ok = blob(rev, H2_SEAL_REL) == seal_bytes(H2_SEAL)
+    local_seal = seal_bytes(H2_SEAL)
+    seal_ok = local_seal is not None and blob(rev, H2_SEAL_REL) == local_seal
     rc, out, err = run_counter(rev, H2_HELDOUT, H2_SEAL)
     met = re.search(r"verdict=(TARGET_MET|TARGET_MISSED)", out)
     h2_ok = seal_ok and rc == 0 and met and met.group(1) == "TARGET_MET"
@@ -162,7 +164,8 @@ def main():
               "seal-at-rev=%s rc=%d %s" % (seal_ok, rc, met.group(1) if met else "no-verdict"))
 
     # --- leg refpub-kills ----------------------------------------------------
-    seal_ok = blob(rev, REF_SEAL_REL) == seal_bytes(REF_SEAL)
+    local_seal = seal_bytes(REF_SEAL)
+    seal_ok = local_seal is not None and blob(rev, REF_SEAL_REL) == local_seal
     rc, out, err = run_counter(rev, REF_HELDOUT, REF_SEAL)
     m = re.search(r"h_killed=(\d+)/(\d+) h_need=\d+ h_valid=(\d+) h_min_per_subject=(\d+)", out)
     ref_ok = False
