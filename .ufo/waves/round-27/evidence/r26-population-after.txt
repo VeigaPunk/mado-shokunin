@@ -1,0 +1,48 @@
+# routed defect 6 -- round-26 SCORECARD population-line re-run
+# date=2026-10-23  lane=mado-shokunin  harness=none (checker reads text only, runs no tool)
+# cwd=/home/vgpnk/Projects/shokunin/mado-shokunin
+# sha256 .ufo/waves/round-26/quality/check-population.py 803e0096c994d301fa7fe9a9dd7e35255ee1f5bcf3f63d15956cdba8943d0f64
+# sha256 .ufo/waves/round-26/registration.md c79bf244f696ccae9ef01aea8604f26c58ef9e34c9f7d8b9682548dee9875a01
+# sha256 .ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt f5d6ccb2615f25947dacbf65604c4af6821ab459f2c1fb69d0ae8cfa7d4bc8fe
+# sha256 .ufo/waves/round-26/evidence/c2-after-a496b02a.txt 150a834aa4b32cb595ad8c454e3b4570a9a1e7e29b77c0053ced8d85974174c8
+# note: each run was launched under `env -i PATH=/usr/bin HOME=/home/vgpnk` so no WAYLAND_DISPLAY /
+#       HYPRLAND_INSTANCE_SIGNATURE reaches the child (host-safety bound); the checker spawns nothing.
+
+# both after-receipts
+$ env -i PATH=/usr/bin HOME=/home/vgpnk python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt .ufo/waves/round-26/evidence/c2-after-a496b02a.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C1-r26-v2,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt pred=PRED-C1-r26-v2 cases_pass=41/41 case_lines=41 registered=41 agree=ok
+POPULATION receipt=.ufo/waves/round-26/evidence/c2-after-a496b02a.txt pred=PRED-C2-r26 cases_pass=51/51 case_lines=51 registered=51 agree=ok
+POPULATION verdict=PASS receipts=2 agree=2 mismatch=0 unreadable=0
+exit=0
+stderr_lines=0
+rc=0
+
+# C1 after-receipt alone
+$ env -i PATH=/usr/bin HOME=/home/vgpnk python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C1-r26-v2,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt pred=PRED-C1-r26-v2 cases_pass=41/41 case_lines=41 registered=41 agree=ok
+POPULATION verdict=PASS receipts=1 agree=1 mismatch=0 unreadable=0
+exit=0
+stderr_lines=0
+rc=0
+
+# C2 after-receipt alone
+$ env -i PATH=/usr/bin HOME=/home/vgpnk python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/evidence/c2-after-a496b02a.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C1-r26-v2,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c2-after-a496b02a.txt pred=PRED-C2-r26 cases_pass=51/51 case_lines=51 registered=51 agree=ok
+POPULATION verdict=PASS receipts=1 agree=1 mismatch=0 unreadable=0
+exit=0
+stderr_lines=0
+rc=0
+
+# auxiliary (not part of the routed-defect command): sensitivity probe. Same two after-receipts checked
+# against the registration blob at commit 05319e0 (pre-v2 section, sha256 ca98430f7feee74290d32e392bebdb1ab603d1a0f3008703b67c5b1a14d7c9f5),
+# extracted read-only with `git show 05319e0:.ufo/waves/round-26/registration.md`; the temp file was removed after the run.
+$ env -i PATH=/usr/bin HOME=/home/vgpnk python3 -I .ufo/waves/round-26/quality/check-population.py --registration /tmp/r26-reg-qoRBAx.md .ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt .ufo/waves/round-26/evidence/c2-after-a496b02a.txt
+POPULATION registration=/tmp/r26-reg-qoRBAx.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c1-after-v2-2b3487f7.txt pred=PRED-C1-r26-v2 cases_pass=41/41 case_lines=41 registered=- agree=MISMATCH legs=registration_total
+POPULATION receipt=.ufo/waves/round-26/evidence/c2-after-a496b02a.txt pred=PRED-C2-r26 cases_pass=51/51 case_lines=51 registered=51 agree=ok
+POPULATION verdict=FAIL receipts=2 agree=1 mismatch=1 unreadable=0
+exit=1
+rc=1

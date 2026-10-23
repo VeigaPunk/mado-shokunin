@@ -12,7 +12,8 @@ PRED-C1-r27-v2 (same sentence in registration.md, this code and the receipt labe
   counter on a copy with exec lines removed); target: cases_pass=41/41.
 
 Comparison: both sides are parsed JSON; a case passes only when the two lists are equal (same length,
-same order, each entry the same object: same keys, same values).
+same order, each entry the same object: same keys, same values), compared type-strictly as canonical JSON
+(`json.dumps(..., sort_keys=True)`), so `1` is not `true` and `5` is not `5.0` (w1 CritC1Counter).
 
 Guards (exit 2, nothing measured): harness binary pins differ (oracle.check_build); harness/oracle.py bytes
 differ from ORACLE_SHA; a nested instance fails to answer (ORACLE_FAIL); two oracle runs of the
@@ -175,7 +176,8 @@ def sourced_existing(home):
     return out
 
 
-TRAPS = {"MERGE", "GAPSHORT", "VARIABLE", "SOURCED", "NEWSRC", "ONEMPTY", "BOOLWORD", "DECOY", "ORDER", "NESTED", "GLOB"}
+TRAPS = {"MERGE", "GAPSHORT", "VARIABLE", "SOURCED", "NEWSRC", "ONEMPTY", "BOOLWORD", "DECOY", "ORDER", "NESTED", "GLOB",
+         "VARREDEF"}
 
 
 def fname(rng):
@@ -260,6 +262,18 @@ def build_case(rng, home, fam):
         if rng.random() < 0.6:
             body.insert(rng.randint(0, len(body)), "# source = ~/" + os.path.relpath(pd, home))
         feats.add("DECOY")
+    if rng.random() < 0.35:
+        # VARREDEF (w1 CritC1Counter): a variable is used, redefined, and used again; a global-prepass reader
+        # that binds each name once gives both rules the last value
+        v = "$wsr" + rand_name(rng, 4)
+        s1, s2 = selector(rng), selector(rng)
+        while s2 == s1:
+            s2 = selector(rng)
+        blk = ["%s = %s" % (v, s1), "workspace = %s, bordersize:%d" % (v, rng.randint(0, 5)),
+               "%s = %s" % (v, s2), "workspace = %s, rounding:%s" % (v, rng.choice(["true", "false"]))]
+        i = rng.randint(0, len(body))
+        body[i:i] = blk
+        feats.add("VARREDEF")
     if ex_lines:
         write(rng.choice(existing), ex_lines)
         feats.add("SOURCED")
@@ -351,7 +365,7 @@ def main():
             if not isinstance(got, list):
                 verdict[lab] = (False, "output is not a JSON array")
                 continue
-            ok = got == exp
+            ok = json.dumps(got, sort_keys=True) == json.dumps(exp, sort_keys=True)
             if ok:
                 info = "rules=%d" % len(exp)
             else:

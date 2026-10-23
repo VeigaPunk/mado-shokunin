@@ -1,0 +1,627 @@
+Q36 SUCCESSOR RECEIPTS — round-27 quality repair of routed defects 2 and 5 (round-26 spot-check §7: M26-9 seeds, .txt receipts)
+$ /usr/bin/python3 /fast/scratch/hyaku/mado-r27/q36/run_fixtures.py --out .ufo/waves/round-27/quality/q36-successor-receipts.txt
+generated_utc=2026-10-23T10:39:33Z
+successor=/home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py sha256=2233db1d489fa325c3b4bd9b5b1dccc68eb9311864a0d975303907463fa65af2
+round-26 checker (read-only, not edited)=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/check-control-receipts.py sha256=351127bd0d735665f899129fa3ad408b8d23c85d9f71969b44e3b63d86b6d3b4
+run_fixtures.py=/fast/scratch/hyaku/mado-r27/q36/run_fixtures.py sha256=f32ea076e9764e49f1e67ae32c138dbb8d95476955298a3f358cf4683e42fe26
+scratch_root=/fast/scratch/hyaku/mado-r27/q36  (synthetic repos + mutated copies only)
+python=3.14.8 git=git version 2.56.0
+lane=/home/vgpnk/Projects/shokunin/mado-shokunin head=a4dc0da round=26 tip=5ddc5885
+free_space_fast=/dev/nvme1n1p2  804G  690G  114G  86% /fast
+
+== Isolation ==
+Every fixture git write happens under /fast/scratch/hyaku/mado-r27/q36 with GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE
+unset, GIT_CONFIG_NOSYSTEM=1 and a scratch HOME; the lane is read-only (git log/show and
+the two stored round-24/25 receipts). No compositor, shell or display process is started by
+this runner: no Hyprland, tinywl or bwrap invocation appears in any transcript below.
+
+== Invocation the round-27 pre-data gate uses (not scored in this receipt) ==
+python3 -I quality/check-control-receipts.py --round 27 --seeds 2 \
+  --data-registry .ufo/waves/round-27/<data-wave>/reports/swarm-registry.json \
+  --shapes <registered shape list> --tip <landing rev>
+Wave-1 receipts are still landing while this receipt was generated, so no round-27
+verdict is claimed here.
+
+== Lane runs: round-26 control receipts at 5ddc5885 (read-only git history) ==
+--- r26-v2-seeds2
+why=RED, repair 2: the registered two-seed rule over the v2 control set (one seed per v2 control) must fail; EmptyTable is the lone shape at 2 because 'K1EmptyTableZeroNodes' contains it
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --receipt-glob v2/*.txt --seeds 2
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=10 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=36 seeds=2
+receipt_commit=1b0b91e9889c committed=2026-10-23T09:16:22+00:00 data_registry=.ufo/waves/round-26/w2/reports/swarm-registry.json createdAt=2026-10-23T09:16:39.175Z
+order=ok gap_s=17 shapes_missing=- seeds_short=DoNothing(1<2),EmptyTableZeroNodes(1<2),Junk(1<2),LabelKeyed(1<2),NaiveGrep(1<2),NoValidation(1<2),RootOnly(1<2),SnapshotCache(1<2),StaticDefault(1<2)
+shape_counts=DoNothing:1,EmptyTable:2,EmptyTableZeroNodes:1,Junk:1,LabelKeyed:1,NaiveGrep:1,NoValidation:1,RootOnly:1,SnapshotCache:1,StaticDefault:1
+CONTROL_RECEIPTS verdict=FAIL
+exit=1 expected=1
+
+--- r26-v2-seeds1
+why=GREEN, repair 5: the same .txt receipts qualify and chronology passes against the w2 registry (receipts 09:16:22Z, createdAt 09:16:39.175Z)
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --receipt-glob v2/*.txt --seeds 1
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=10 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=36 seeds=1
+receipt_commit=1b0b91e9889c committed=2026-10-23T09:16:22+00:00 data_registry=.ufo/waves/round-26/w2/reports/swarm-registry.json createdAt=2026-10-23T09:16:39.175Z
+order=ok gap_s=17 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,EmptyTable:2,EmptyTableZeroNodes:1,Junk:1,LabelKeyed:1,NaiveGrep:1,NoValidation:1,RootOnly:1,SnapshotCache:1,StaticDefault:1
+CONTROL_RECEIPTS verdict=PASS
+exit=0 expected=0
+
+--- r26-all-seeds2
+why=RED at the seed rule when the whole round-26 controls tree counts (w1 K1 logs, v2 logs and the K2 logs share shape slugs): only EmptyTableZeroNodes is short
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --seeds 2
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=29 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=17 seeds=2
+receipt_commit=1b0b91e9889c committed=2026-10-23T09:16:22+00:00 data_registry=.ufo/waves/round-26/w2/reports/swarm-registry.json createdAt=2026-10-23T09:16:39.175Z
+order=ok gap_s=17 shapes_missing=- seeds_short=EmptyTableZeroNodes(1<2)
+shape_counts=DoNothing:7,EmptyTable:3,EmptyTableZeroNodes:1,Junk:2,LabelKeyed:3,NaiveGrep:2,NoValidation:2,RootOnly:2,SnapshotCache:2,StaticDefault:2
+CONTROL_RECEIPTS verdict=FAIL
+exit=1 expected=1
+
+--- r26-all-seeds1
+why=GREEN: every named shape has at least one qualifying receipt and the oldest receipt commit precedes the w2 registry
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --seeds 1
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=29 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=17 seeds=1
+receipt_commit=1b0b91e9889c committed=2026-10-23T09:16:22+00:00 data_registry=.ufo/waves/round-26/w2/reports/swarm-registry.json createdAt=2026-10-23T09:16:39.175Z
+order=ok gap_s=17 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:7,EmptyTable:3,EmptyTableZeroNodes:1,Junk:2,LabelKeyed:3,NaiveGrep:2,NoValidation:2,RootOnly:2,SnapshotCache:2,StaticDefault:2
+CONTROL_RECEIPTS verdict=PASS
+exit=0 expected=0
+
+--- r26-v2-w1-registry
+why=RED chronology control: the same receipts against the w1 registry are LATE, so the pass above is the declaration and the commit order, not a missing rule
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w1/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --receipt-glob v2/*.txt --seeds 1
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=10 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=36 seeds=1
+receipt_commit=1b0b91e9889c committed=2026-10-23T09:16:22+00:00 data_registry=.ufo/waves/round-26/w1/reports/swarm-registry.json createdAt=2026-10-23T08:43:17.229Z
+order=LATE gap_s=-1985 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,EmptyTable:2,EmptyTableZeroNodes:1,Junk:1,LabelKeyed:1,NaiveGrep:1,NoValidation:1,RootOnly:1,SnapshotCache:1,StaticDefault:1
+CONTROL_RECEIPTS verdict=FAIL
+exit=1 expected=1
+
+== Before: the round-26 checker on the same bytes ==
+--- r26-checker-on-txt
+why=defect 5 before: the round-26 checker asks for .md only and exits 1 on round-26's .txt receipts
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault
+tip=5ddc5885188a1de8606464526d636c9e2fc433e6 round=26 receipts=0 counter_sha=- excluded_by_counter_sha=0
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-26/controls/
+exit=1 expected=1
+
+--- r26-checker-on-seeds-flag
+why=defect 2 before: the round-26 checker has no --seeds, so a two-seed rule cannot even be stated
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 26 --data-registry .ufo/waves/round-26/w2/reports/swarm-registry.json --tip 5ddc5885 --shapes DoNothing,EmptyTable,EmptyTableZeroNodes,Junk,LabelKeyed,NaiveGrep,NoValidation,RootOnly,SnapshotCache,StaticDefault --seeds 2
+
+stderr=check-control-receipts.py: error: unrecognized arguments: --seeds 2
+exit=2 expected=2
+
+== Legacy parity on the lane (stored round-24/25 receipts, unchanged) ==
+--- round-24
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 24 --data-registry .ufo/waves/round-24/w1/reports/swarm-registry.json --tip 41cc04c8 --any-md
+tip=41cc04c8d593837a0d5078bffaacdaa163d12897 round=24 receipts=12 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=10 seeds=1
+receipt_commit=464a02452bbe committed=2026-10-23T03:53:36+00:00 data_registry=.ufo/waves/round-24/w1/reports/swarm-registry.json createdAt=2026-10-23T03:35:33.205Z
+order=LATE gap_s=-1083 shapes_missing=EmptyArray|AllFalse,Echo,LabelKeyed seeds_short=EmptyArray|AllFalse(0<1),Echo(0<1),LabelKeyed(0<1)
+shape_counts=DoNothing:2,EmptyArray|AllFalse:0,Junk:1,Echo:0,LabelKeyed:0,NoReader:1
+CONTROL_RECEIPTS verdict=FAIL
+exit=1 expected=1
+parity_with_q36-red-round24.txt=ok
+
+--- round-25
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --round 25 --data-registry .ufo/waves/round-25/a3w2/reports/swarm-registry.json --tip ef94763c
+tip=ef94763c6a75d1b0860091b19bb61c9bd7cda9e3 round=25 receipts=19 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=20 seeds=1
+receipt_commit=7228299d94b1 committed=2026-10-23T05:23:06+00:00 data_registry=.ufo/waves/round-25/a3w2/reports/swarm-registry.json createdAt=2026-10-23T07:31:20.779Z
+order=ok gap_s=7695 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:2,EmptyArray|AllFalse:2,Junk:2,Echo:2,LabelKeyed:1,NoReader:2
+CONTROL_RECEIPTS verdict=PASS
+exit=0 expected=0
+parity_with_q36-green-round25.txt=ok
+
+== Fixture baselines (pristine successor) ==
+fixture                expect actual why
+green-one-seed         0      0      baseline: one marked .md receipt per shape, receipt commit 240 s before createdAt
+green-two-seeds        0      0      two distinct receipts per shape satisfy --seeds 2 (repair 2 green)
+red-seeds-short        1      1      RED, repair 2: the green-one-seed set at --seeds 2 must fail on every shape
+red-seeds-partial      1      1      RED: only the shapes below N are reported short (DoNothing has two seeds)
+green-txt-glob         0      0      GREEN, repair 5: bare .txt counter logs (no CONTROL marker) qualify under the default globs at any depth
+green-txt-v2-seeds2    0      0      GREEN: two .txt seeds per shape in a v2/ subdirectory satisfy --seeds 2 and the default globs reach that depth
+red-md-marker          1      1      RED: markdown receipts without a CONTROL marker line do not qualify
+green-any-md           0      0      GREEN: --any-md admits those markdown receipts (round-26 flag kept)
+red-glob-md-only       1      1      RED: --receipt-glob *.md rejects every .txt receipt (the defect-5 shape inverted)
+red-glob-late          1      1      RED: the glob scopes the receipt set to v2/*.txt, whose commit is after createdAt; an ignored glob would pick the earlier .md and pass
+green-glob-subdir      0      0      GREEN: the same glob selects the early v2/*.txt and ignores a later .md decoy
+equal-time             1      1      RED: the receipt second equals createdAt; strict '<' must fail it
+later-receipt          0      0      GREEN: a later receipt-adding commit must not supply the oldest timestamp
+updated-at             0      0      GREEN: updatedAt is before the receipt commit while createdAt is after it; only createdAt may decide
+missing-shape          1      1      RED: order and seeds ok but no receipt name contains the EmptyArray alternative
+sha-green              0      0      GREEN: every receipt's first line names the selected counter sha256
+sha-not-first-line     1      1      RED: the selected sha appears only below line 1, which names the decoy
+sha-prefix             1      1      RED: the first line names only the leading 12 hex chars of the counter sha
+sha-late               1      1      RED: the only receipt naming the selected sha lands after createdAt; an earlier one names the decoy
+red-no-receipts-py     1      1      RED: control tool sources (.py) are not receipts under the default globs
+bad-tip                2      2      exit 2: the tip does not resolve
+missing-registry       2      2      exit 2: the data registry is absent at the tip
+unreadable-createdAt   2      2      exit 2: the registry createdAt is not ISO 8601
+no-adding-commit       2      2      exit 2: the receipts reach the tip only through a merge commit, so the default log pass reports no adding commit
+
+--- fixture green-one-seed: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-one-seed --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=d25d3efa7b82671ec2af07a42afe2c841dac197e round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=d25d3efa7b82 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture green-two-seeds: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-two-seeds --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=ee8633762da406d8f2bcb7602b58385ec7133857 round=98 receipts=6 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=ee8633762da4 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:2,Junk:2,EmptyArray|AllFalse:2
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture red-seeds-short: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-seeds-short --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=b8b96eef8262a06b3321b56e46044875e7f47161 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=b8b96eef8262 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=DoNothing(1<2),Junk(1<2),EmptyArray|AllFalse(1<2)
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture red-seeds-partial: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-seeds-partial --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=4a2207a64ca38446c582c5f97f35adbdaef71872 round=98 receipts=4 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=4a2207a64ca3 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=Junk(1<2),EmptyArray|AllFalse(1<2)
+shape_counts=DoNothing:2,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture green-txt-glob: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-txt-glob --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=05b504d639466ebdfd97aa4a2366559213f961b2 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=05b504d63946 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture green-txt-v2-seeds2: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-txt-v2-seeds2 --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=0edb12537c36ff258bf54037dce1b426d69c3157 round=98 receipts=6 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=0edb12537c36 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:2,Junk:2,EmptyArray|AllFalse:2
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture red-md-marker: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-md-marker --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=c4e86684881b729570834133a1c0f4f12d27d258 round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- fixture green-any-md: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-any-md --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --any-md
+tip=24efa7ac9d4d43844031fdab1db855a4924ae2ee round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=24efa7ac9d4d committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture red-glob-md-only: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-glob-md-only --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob *.md
+tip=c8b61fb62a7a44003924b46642ca465839824ce8 round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md excluded_by_glob=3 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- fixture red-glob-late: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-glob-late --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=9d1d3c56da00ba912c6059ea9f737e70efe7b367 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=3 seeds=1
+receipt_commit=9d1d3c56da00 committed=2026-10-22T00:09:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=LATE gap_s=-240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture green-glob-subdir: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-glob-subdir --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=060961a3864b1739bb79839e8838a6268bf082dd round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=3 seeds=1
+receipt_commit=1867cbff38b0 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture equal-time: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/equal-time --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=65f8204740cd06f1af9960bacfd59c4941ec41f2 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=65f8204740cd committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:01:00Z
+order=LATE gap_s=0 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture later-receipt: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/later-receipt --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=3eadf7d70eba67aa130c965cbdacbbdaf7df5b1a round=98 receipts=4 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=652cfb2dbd4a committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:2,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture updated-at: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/updated-at --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=a88d32b40ec819172b09cfe7c701f713f405ce49 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=a88d32b40ec8 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture missing-shape: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/missing-shape --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=5fdf497ab17fcb2e8612cee28d3f186c21b15d4f round=98 receipts=2 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=5fdf497ab17f committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=EmptyArray|AllFalse seeds_short=EmptyArray|AllFalse(0<1)
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:0
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture sha-green: pristine exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-green --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=e29d3923411c146db52492821c15ee8fc9130902 round=98 receipts=3 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=e29d3923411c committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- fixture sha-not-first-line: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-not-first-line --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=0a40fb820c1589955eb611d46be7bb1c3d35c05c round=98 receipts=0 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=1 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- fixture sha-prefix: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-prefix --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=e73b9e6e2ad2896c213eed6dea6a446c5adf06fe round=98 receipts=0 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=1 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- fixture sha-late: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-late --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=34d8feeed6e450fcc7f769579eed2b828b9b7860 round=98 receipts=1 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=1 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=34d8feeed6e4 committed=2026-10-22T00:09:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=LATE gap_s=-240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- fixture red-no-receipts-py: pristine exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-no-receipts-py --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=2fa54012b4e1819e7111c08bbb94c409ec498074 round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=3 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- fixture bad-tip: pristine exit=2
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/bad-tip --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --tip deadbeef00
+UNEVALUABLE bad tip deadbeef00
+
+--- fixture missing-registry: pristine exit=2
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/missing-registry --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=5704972d725265379c4ab22c7f036baa7e5cccf0 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+UNEVALUABLE data registry .ufo/waves/round-98/w1/reports/swarm-registry.json absent at tip
+
+--- fixture unreadable-createdAt: pristine exit=2
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/unreadable-createdAt --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=041c4de49234d672d8f1b81b40db4906dcd8972c round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+UNEVALUABLE createdAt unreadable: ValueError("Invalid isoformat string: 'soon'")
+
+--- fixture no-adding-commit: pristine exit=2
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/no-adding-commit --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=ac1fe6b8cb98f337ae6051452ec14ab70652cbe5 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+UNEVALUABLE no adding commit found
+
+== Fixture declarations (rebuilt by the runner named at the top) ==
+round=98 controls=.ufo/waves/round-98/controls/ registry=.ufo/waves/round-98/w1/reports/swarm-registry.json shapes=DoNothing,Junk,EmptyArray|AllFalse
+
+[green-one-seed] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=0
+
+[green-two-seeds] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--seeds 2
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1DoNothing-seed2.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed2.md, .ufo/waves/round-98/controls/K1Junk-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed2.md
+  expect_exit=0
+
+[red-seeds-short] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--seeds 2
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=1
+
+[red-seeds-partial] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--seeds 2
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1DoNothing-seed2.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=1
+
+[green-txt-glob] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.txt, .ufo/waves/round-98/controls/K1EmptyArray-seed1.txt, .ufo/waves/round-98/controls/K1Junk-seed1.txt
+  expect_exit=0
+
+[green-txt-v2-seeds2] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--seeds 2
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/v2/K1DoNothing-seed1.txt, .ufo/waves/round-98/controls/v2/K1DoNothing-seed2.txt, .ufo/waves/round-98/controls/v2/K1EmptyArray-seed1.txt, .ufo/waves/round-98/controls/v2/K1EmptyArray-seed2.txt, .ufo/waves/round-98/controls/v2/K1Junk-seed1.txt, .ufo/waves/round-98/controls/v2/K1Junk-seed2.txt
+  expect_exit=0
+
+[red-md-marker] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=1
+
+[green-any-md] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--any-md
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=0
+
+[red-glob-md-only] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--receipt-glob *.md
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.txt, .ufo/waves/round-98/controls/K1EmptyArray-seed1.txt, .ufo/waves/round-98/controls/K1Junk-seed1.txt
+  expect_exit=1
+
+[red-glob-late] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--receipt-glob v2/*.txt
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  commit 2 at=2026-10-22T00:09:00+0000 .ufo/waves/round-98/controls/v2/K1DoNothing-seed1.txt, .ufo/waves/round-98/controls/v2/K1EmptyArray-seed1.txt, .ufo/waves/round-98/controls/v2/K1Junk-seed1.txt
+  expect_exit=1
+
+[green-glob-subdir] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--receipt-glob v2/*.txt
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/v2/K1DoNothing-seed1.txt, .ufo/waves/round-98/controls/v2/K1EmptyArray-seed1.txt, .ufo/waves/round-98/controls/v2/K1Junk-seed1.txt
+  commit 2 at=2026-10-22T00:09:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=0
+
+[equal-time] created=2026-10-22T00:01:00Z updated=2026-10-22T00:01:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=1
+
+[later-receipt] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  commit 2 at=2026-10-22T00:09:00+0000 .ufo/waves/round-98/controls/K1Junk-seed2.md
+  expect_exit=0
+
+[updated-at] created=2026-10-22T00:05:00Z updated=2026-10-22T00:00:30Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=0
+
+[missing-shape] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=1
+
+[sha-green] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=0
+
+[sha-not-first-line] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-Junk-EmptyArray-seed1.md
+  expect_exit=1
+
+[sha-prefix] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-Junk-EmptyArray-seed1.md
+  expect_exit=1
+
+[sha-late] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-Junk-EmptyArray-seed1.md
+  commit 2 at=2026-10-22T00:09:00+0000 .ufo/waves/round-98/controls/K1DoNothing-Junk-EmptyArray-seed2.md
+  expect_exit=1
+
+[red-no-receipts-py] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing.py, .ufo/waves/round-98/controls/K1EmptyArray.py, .ufo/waves/round-98/controls/K1Junk.py
+  expect_exit=1
+
+[bad-tip] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=--tip deadbeef00
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=2
+
+[missing-registry] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=2
+
+[unreadable-createdAt] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=2
+
+[no-adding-commit] created=2026-10-22T00:05:00Z updated=2026-10-22T00:05:00Z args=-
+  commit 0 at=2026-10-22T00:00:00+0000 (registry commit)
+  commit 1 at=2026-10-22T00:01:00+0000 (registry commit)
+  commit 2 at=2026-10-22T00:02:00+0000 (registry commit)
+  commit 3 at=2026-10-22T00:03:00+0000 .ufo/waves/round-98/controls/K1DoNothing-seed1.md, .ufo/waves/round-98/controls/K1EmptyArray-seed1.md, .ufo/waves/round-98/controls/K1Junk-seed1.md
+  expect_exit=2
+
+== Mutant kill table ==
+green column: the same mutant on fixture green-one-seed must keep the healthy exit (0).
+
+| mutant | change | green | killer fixture | pristine | mutant | verdict |
+|---|---|---:|---|---:|---:|---|
+| M1-seeds-ignored | L195: seed rule dropped: --seeds is parsed and never enforced | 0 | red-seeds-short | 1 | 0 | killed |
+| M2-seeds-collapsed | L192: seed count collapses to one per shape, so two seeds count like one | 0 | green-two-seeds | 0 | 1 | killed |
+| M3-glob-ignored | L136: --receipt-glob accepted but never applied | 0 | red-glob-late | 1 | 0 | killed |
+| M4-basename-only | L99: globs matched against the basename only, so a subdirectory scoped pattern covers every depth | 0 | green-glob-subdir | 0 | 1 | killed |
+| M5-marker-all-formats | L143: the CONTROL marker is demanded of .txt logs too, restoring defect 5 | 0 | green-txt-glob | 0 | 1 | killed |
+| M6-marker-ignored | L143: markdown marker predicate dropped, so any .md under controls/ qualifies | 0 | red-md-marker | 1 | 0 | killed |
+| M7-newest-receipt | L156: git log --reverse removed, so the newest receipt-adding commit supplies the time | 0 | later-receipt | 0 | 1 | killed |
+| M8-nonstrict | L185: order comparison uses <= so a receipt in the same second as createdAt passes | 0 | equal-time | 1 | 0 | killed |
+| M9-sha-prefix | L92: counter sha matched as a 12-hex prefix instead of the full 64 | 0 | sha-prefix | 1 | 0 | killed |
+
+== Designated killer transcripts (red = mutant output) ==
+--- pristine on fixture red-seeds-short: exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-seeds-short --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=b8b96eef8262a06b3321b56e46044875e7f47161 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=b8b96eef8262 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=DoNothing(1<2),Junk(1<2),EmptyArray|AllFalse(1<2)
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- M1-seeds-ignored on fixture red-seeds-short: exit=0
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M1-seeds-ignored.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-seeds-short --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=b8b96eef8262a06b3321b56e46044875e7f47161 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=b8b96eef8262 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- pristine on fixture green-two-seeds: exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-two-seeds --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=ee8633762da406d8f2bcb7602b58385ec7133857 round=98 receipts=6 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=ee8633762da4 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:2,Junk:2,EmptyArray|AllFalse:2
+CONTROL_RECEIPTS verdict=PASS
+
+--- M2-seeds-collapsed on fixture green-two-seeds: exit=1
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M2-seeds-collapsed.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-two-seeds --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --seeds 2
+tip=ee8633762da406d8f2bcb7602b58385ec7133857 round=98 receipts=6 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=2
+receipt_commit=ee8633762da4 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=DoNothing(1<2),Junk(1<2),EmptyArray|AllFalse(1<2)
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- pristine on fixture red-glob-late: exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-glob-late --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=9d1d3c56da00ba912c6059ea9f737e70efe7b367 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=3 seeds=1
+receipt_commit=9d1d3c56da00 committed=2026-10-22T00:09:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=LATE gap_s=-240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- M3-glob-ignored on fixture red-glob-late: exit=0
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M3-glob-ignored.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-glob-late --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=9d1d3c56da00ba912c6059ea9f737e70efe7b367 round=98 receipts=6 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=0 seeds=1
+receipt_commit=be2dd76b00e3 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:2,Junk:2,EmptyArray|AllFalse:2
+CONTROL_RECEIPTS verdict=PASS
+
+--- pristine on fixture green-glob-subdir: exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-glob-subdir --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=060961a3864b1739bb79839e8838a6268bf082dd round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=3 seeds=1
+receipt_commit=1867cbff38b0 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- M4-basename-only on fixture green-glob-subdir: exit=1
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M4-basename-only.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-glob-subdir --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --receipt-glob v2/*.txt
+tip=060961a3864b1739bb79839e8838a6268bf082dd round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=6 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- pristine on fixture green-txt-glob: exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-txt-glob --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=05b504d639466ebdfd97aa4a2366559213f961b2 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=05b504d63946 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- M5-marker-all-formats on fixture green-txt-glob: exit=1
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M5-marker-all-formats.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/green-txt-glob --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=05b504d639466ebdfd97aa4a2366559213f961b2 round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- pristine on fixture red-md-marker: exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-md-marker --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=c4e86684881b729570834133a1c0f4f12d27d258 round=98 receipts=0 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- M6-marker-ignored on fixture red-md-marker: exit=0
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M6-marker-ignored.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/red-md-marker --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=c4e86684881b729570834133a1c0f4f12d27d258 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=c4e86684881b committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- pristine on fixture later-receipt: exit=0
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/later-receipt --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=3eadf7d70eba67aa130c965cbdacbbdaf7df5b1a round=98 receipts=4 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=652cfb2dbd4a committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:2,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- M7-newest-receipt on fixture later-receipt: exit=1
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M7-newest-receipt.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/later-receipt --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=3eadf7d70eba67aa130c965cbdacbbdaf7df5b1a round=98 receipts=4 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=3eadf7d70eba committed=2026-10-22T00:09:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=LATE gap_s=-240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:2,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- pristine on fixture equal-time: exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/equal-time --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=65f8204740cd06f1af9960bacfd59c4941ec41f2 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=65f8204740cd committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:01:00Z
+order=LATE gap_s=0 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=FAIL
+
+--- M8-nonstrict on fixture equal-time: exit=0
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M8-nonstrict.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/equal-time --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD
+tip=65f8204740cd06f1af9960bacfd59c4941ec41f2 round=98 receipts=3 counter_sha=- excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=65f8204740cd committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:01:00Z
+order=ok gap_s=0 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+--- pristine on fixture sha-prefix: exit=1
+$ /usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-control-receipts.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-prefix --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=e73b9e6e2ad2896c213eed6dea6a446c5adf06fe round=98 receipts=0 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=1 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+CONTROL_RECEIPTS verdict=FAIL reason=no-receipt-under-.ufo/waves/round-98/controls/
+
+--- M9-sha-prefix on fixture sha-prefix: exit=0
+$ /usr/bin/python3 -I -B /fast/scratch/hyaku/mado-r27/q36/checkers/M9-sha-prefix.py --repo /fast/scratch/hyaku/mado-r27/q36/repos/sha-prefix --round 98 --shapes DoNothing,Junk,EmptyArray|AllFalse --data-registry .ufo/waves/round-98/w1/reports/swarm-registry.json --tip HEAD --counter-sha 3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f
+tip=e73b9e6e2ad2896c213eed6dea6a446c5adf06fe round=98 receipts=1 counter_sha=3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f excluded_by_counter_sha=0 receipt_glob=*.md,*.txt excluded_by_glob=0 seeds=1
+receipt_commit=e73b9e6e2ad2 committed=2026-10-22T00:01:00+00:00 data_registry=.ufo/waves/round-98/w1/reports/swarm-registry.json createdAt=2026-10-22T00:05:00Z
+order=ok gap_s=240 shapes_missing=- seeds_short=-
+shape_counts=DoNothing:1,Junk:1,EmptyArray|AllFalse:1
+CONTROL_RECEIPTS verdict=PASS
+
+== Mutation definitions (each applied alone to a scratch copy) ==
+[M1-seeds-ignored] line 195 sha256=1be3f92f9d12ed79b614370afd4c36f679985e28cab9ee9d2001b1552adb12e0
+  defect: seed rule dropped: --seeds is parsed and never enforced
+  old:     short = [s for s in counts if counts[s] < a.seeds]
+  new:     short = []
+
+[M2-seeds-collapsed] line 192 sha256=4e6457a3f8c9628af60da2f281d011fd6b6ba5566023db4c4f6b8760cca98d51
+  defect: seed count collapses to one per shape, so two seeds count like one
+  old:         counts[shape] = n
+  new:         counts[shape] = min(n, 1)
+
+[M3-glob-ignored] line 136 sha256=3e6630977fc8b9bb1a397c0df74293e4840631d1e271bb0c13caedbf385db04c
+  defect: --receipt-glob accepted but never applied
+  old:         if not selected(rel, globs):
+  new:         if False:
+
+[M4-basename-only] line 99 sha256=43de3a43d862810465026caf31a9f14b5862b06cb5f684452ea40bace58357d7
+  defect: globs matched against the basename only, so a subdirectory scoped pattern covers every depth
+  old:     return any(fnmatch.fnmatchcase(rel, p.lower()) or fnmatch.fnmatchcase(base, p.lower())\n               for p in globs)
+  new:     return any(fnmatch.fnmatchcase(base, p.lower())\n               for p in globs)
+
+[M5-marker-all-formats] line 143 sha256=b7b074f4364e19d32e17c79b87f988be185900b2f8d62eb56ffd12b48dba0538
+  defect: the CONTROL marker is demanded of .txt logs too, restoring defect 5
+  old:         if f.lower().endswith(".md") and not (a.any_md or has_marker(text)):
+  new:         if not (a.any_md or has_marker(text)):
+
+[M6-marker-ignored] line 143 sha256=b604daa54dd8323e24e6f288c45e71a3de096f39f5770d747c71a4b07667c81d
+  defect: markdown marker predicate dropped, so any .md under controls/ qualifies
+  old:  and not (a.any_md or has_marker(text)):
+  new:  and False:
+
+[M7-newest-receipt] line 156 sha256=5030d235730072aaea2be74e94d366661b2d6b81132ce0f30593509b64d669f1
+  defect: git log --reverse removed, so the newest receipt-adding commit supplies the time
+  old: "--reverse", "--diff-filter=A"
+  new: "--diff-filter=A"
+
+[M8-nonstrict] line 185 sha256=ac12e551c23de8ef36999e5fa635109e355b43d805332f7ce811af5a69054faa
+  defect: order comparison uses <= so a receipt in the same second as createdAt passes
+  old:     order_ok = first[1] < cts
+  new:     order_ok = first[1] <= cts
+
+[M9-sha-prefix] line 92 sha256=3f2f0579ad10c2bda59ec655e28affe5021bc62fec71247d6e16fa9eab0256e7
+  defect: counter sha matched as a 12-hex prefix instead of the full 64
+  old:     return any(s in first for s in counter_shas)
+  new:     return any(s[:12] in first for s in counter_shas)
+
+QS36SEEDS lane_runs=5 fixtures=24 mutants_killed=9/9
+Q36SUCCESSOR verdict=PASS

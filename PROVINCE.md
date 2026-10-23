@@ -37,3 +37,12 @@ state; every claim is file-byte- or screenshot-verified.
 wider than "under `--home DIR`": like Hyprland, it follows absolute `source =` paths anywhere, and it seeds config
 variables from the whole process environment (`os.environ`), so `source = $VAR` can also leave `DIR`. It still writes
 nothing, opens no socket and runs no process; run it on trees you mean to read.
+
+**Round-27 correction (append-only; M26-10, round-26 spot-check §7 items 1 and 3):** the round-25 residual correction
+above is stale as to environment seeding. Since `a496b02a`, `tools/mado-binds.py` does not seed config variables from
+`os.environ`: a `$NAME` supplied only by the environment stays literal, and `source = $VAR` using only an environment
+value is not followed (unlike hyprlang v0.6.8). Variables declared in the config tree still expand, and absolute
+`source =` paths are still followed anywhere, so the tool still reads outside `DIR` when the tree says so. The tool's
+docstring states the same limit. Sweep (`git grep -n -i 'environ\|environment' 5ddc5885 -- PROVINCE.md corpus
+tools/mado-binds.py`): the other hits are historical lessons (round-25, round-26 and their spot-checks), left as
+records, and `tools/mado-anims.py` notes, which are unrelated.

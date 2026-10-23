@@ -26,6 +26,12 @@ S171 (Hyprland -c config handoff), hyprlang v0.6.8 src/config.cpp (parseLine, pa
 Built in mado round 25 by wave seat ExecBindToolA and extended in round 26 by seat
 ExecArithToolB; measured by the round-26 C2 counter.
 
+Environment limit (round-27 note, M26-10): environment variables are not imported into the
+config variable table, unlike hyprlang v0.6.8, which seeds variables from the process
+environment.  A `$NAME` supplied only by the environment stays literal, and `source = $VAR`
+using only an environment value is not followed.  Variables defined in the config tree are
+still expanded.
+
 Usage: python3 -I mado-binds.py --home DIR
 """
 

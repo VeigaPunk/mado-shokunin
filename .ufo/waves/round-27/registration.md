@@ -102,3 +102,39 @@ Counter: `python3 -I .ufo/waves/round-27/c1/count-v2.py REV [--seed HEX] [--jobs
 `543f0445`): `tool=MISSING_TOOL`, 0/41 (`evidence/c1v2-before-543f0445.txt`). L1 pilot of the flat reader under v2:
 9/41 (`controls/v2/K1FlatScan-L1pilot.txt`). Every C1 control is re-scored under v2 with two fresh seeds by the seat
 that built it (receipts `controls/v2/<Control>-seed{1,2}.txt`) before any data seat.
+
+### C1 v2 amendment (10:42Z, before any seat scored v2)
+
+Two more w1 `CritC1Counter` findings were folded into v2 before any control or data seat ran it: the comparison is
+type-strict canonical JSON (`json.dumps(..., sort_keys=True)`; Python's `1 == True` and `5 == 5.0` let a wrong type
+pass), and a VARREDEF trap (a variable used, redefined and used again) defeats a reader that binds each name once.
+Final v2 sha256 `258118841448530d63cc07804115b3eca5780c23e62a8d6f238779a2a090bf87` (the `f7f86d75…` above was the
+unamended file; only the L1 pilot ran it). PRED-C1-r27-v2's sentence is unchanged. Pilots on the final file:
+`evidence/c1v2-before-543f0445.txt` 0/41; `controls/v2/K1FlatScan-L1pilot.txt` 1/41.
+
+## C2 redesign before data: counter v2 (10:45Z, before any data seat)
+
+w1 `CritC2Counter` showed a normalised-source pin accepting all 8 public green runs and rejecting all 15 W mutants
+without executing a subject, and synthetic held-out rows that are equivalent, uncompilable or duplicates being
+accepted; w1 `SentinelC2Clone` (HIGH) showed suites running unsandboxed against a `--shared` clone. Counter v2
+`c2/count-v2.py` (sha256 `4dfb34b5551a908aa7fd56e75526417b43659018c47fa5993ad39a72b6b109d3`): sealed
+behaviour-preserving edits written by the w1 Held* seats join the green set; every sealed row must compile, differ
+from the pristine AST and be byte-distinct from the pristine subject, every W mutant and every other row; sealed
+files are read once and must match `--seal FILE`; runs are shuffled, each in its own directory; clones are
+`--no-local`; suites run under bubblewrap with `/home` and `/fast` hidden except the run directory. v1 and its
+receipts stay.
+
+**PRED-C2-r27-v2**: At REV, the committed suites quality/counter-selftest.py (gate over the round-26 counters
+c1/count-v2.py and c2/count.py) and quality/population-suite.py (gate over the round-26 checker
+quality/check-population.py), each run on a fresh no-local clone of REV inside a sandbox that hides the lane and the
+host home, exit 0 on every green run (each pristine subject set, each subject with one of two public
+behaviour-preserving edits, and each valid sealed behaviour-preserving edit, with at least 3 valid sealed edits
+covering all three subjects), exit non-zero on each of the 15 W mutants (the round-26 wave-2 mutation probes of those
+subjects, re-expressed on the active C1 v2 counter) and exit non-zero on at least three quarters of the valid sealed
+held-out mutants, with at least 6 valid held-out mutants and at least 2 per subject; target: green=all,
+w_killed=15/15, h_killed>=ceil(0.75*h_valid), h_valid>=6.
+
+Counter: `python3 -I .ufo/waves/round-27/c2/count-v2.py REV --heldout /fast/scratch/hyaku/mado-r27/heldout --seal
+.ufo/waves/round-27/c2/heldout-seal.txt`. Before (L1 pilot, REV `543f0445`, no sealed set):
+`evidence/c2v2-before-543f0445.txt` green=0/8 w_killed=0/15. Every C2 control is re-scored under v2 by its seat, and
+by the L1 with the sealed set once sealed, before any data seat.

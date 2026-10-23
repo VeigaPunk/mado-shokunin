@@ -1,0 +1,355 @@
+mado round 27 - M26-5 isolation probe (ExecIsolationProbe)
+recorded: 2026-10-23 (host clock) - host: linux 7.2.11-arch1-1, x86_64, Arch
+scope: (a) variable NAMES visible in /proc/1/environ and /proc/self/environ inside the run_tool
+       sandbox of the round-26 and round-27 oracle harnesses, with MADO_R27_CANARY in the
+       launcher environment; (b) whether each harness's snapshot() copies the bytes of a case-home
+       file that is a symlink pointing outside HOME.
+No Hyprland was started by this probe; run_tool spawns bubblewrap only.
+
+ARTIFACTS
+  probe           /fast/scratch/hyaku/mado-r27/iso/probe.py  sha256 e7e03d3ef77736b96b7c67b71461a505d764ff8c16181bfd24901d1464b18f77  1572 B
+  launcher        /fast/scratch/hyaku/mado-r27/iso/launcher.py  sha256 99174d171f68ba94fe79bfc1ff0bafe6fa59fa9d9bbbc24c5ad7c533ee55ff0b  4165 B
+  harness r26     /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py  sha256 680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441
+  harness r27     /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/harness/oracle.py  sha256 0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601
+  case home       /fast/scratch/hyaku/mado-r27/iso/case-home
+    .config/hypr/hyprland.conf     regular file, 53 B, sha256 2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879  (contents: "# case home root config\nworkspace = 1, monitor:eDP-1\n")
+    .config/hypr/local-link.conf   symlink -> hyprland.conf (resolves INSIDE the case home)
+    .config/hypr/outside-link.conf symlink -> /fast/scratch/hyaku/mado-r27/iso/outside/canary.conf (resolves OUTSIDE the case home)
+  outside canary  /fast/scratch/hyaku/mado-r27/iso/outside/canary.conf  82 B  sha256 4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa
+
+COMMANDS (same shape for run 1 and run 2; each run gets a fresh random 33-char canary token)
+  cd /fast/scratch/hyaku/mado-r27/iso && env -i PATH=/usr/bin HOME=/home/vgpnk MADO_R27_CANARY=<random 33-char token> \
+    timeout 300 prlimit --core=0 --as=4000000000 -- python3 -I launcher.py > runN.json 2>runN.err
+  exit=0 both runs; run1 stdout 3677 B (sha256 25e2c6e8ae01d0a97cc9f678dd6e45a3aa5d2e9aee1bfaccd0abb4423c31c8b6), run2 stdout 3677 B (sha256 8d0d7a81d8fedd76ebdc39a6c7f3a42957d08f52dcffdf7b6b520bc3a7cfdf72);
+  both stderr files 0 B.
+
+RUN 1 STDOUT (verbatim run1.json)
+{
+  "canary_name_present_in_launcher": true,
+  "canary_value_len": 33,
+  "environ_names_in_launcher": [
+    "HOME",
+    "LC_CTYPE",
+    "MADO_R27_CANARY",
+    "PATH",
+    "_"
+  ],
+  "harnesses": {
+    "round-26": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py",
+      "run_tool": {
+        "canary_in_pid1": true,
+        "canary_in_self": false,
+        "error": "",
+        "probe": {
+          "argv": [
+            "--home",
+            "/snap/home"
+          ],
+          "home": "/snap/home",
+          "pid": 2,
+          "pid1_comm": "bwrap",
+          "pid1_names": [
+            "HOME",
+            "LC_CTYPE",
+            "MADO_R27_CANARY",
+            "PATH",
+            "_"
+          ],
+          "pid_ns": "pid:[4026533996]",
+          "ppid": 1,
+          "self_names": [
+            "HOME",
+            "PATH",
+            "PWD"
+          ]
+        }
+      },
+      "sha256": "680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441",
+      "snapshot": {
+        "copied": [
+          [
+            ".config/hypr/hyprland.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/local-link.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/outside-link.conf",
+            82,
+            "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+          ]
+        ],
+        "digest": "4351a259bab44b4b9ea2afa676cf07f2154d0ab9a97d48d7b64f15359b228f8b",
+        "local_link_copied": true,
+        "local_link_sha256": "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879",
+        "nfiles": 3,
+        "outside_link_copied": true,
+        "outside_link_is_symlink": false,
+        "outside_link_matches_canary": true,
+        "outside_link_sha256": "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+      }
+    },
+    "round-27": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/harness/oracle.py",
+      "run_tool": {
+        "canary_in_pid1": false,
+        "canary_in_self": false,
+        "error": "",
+        "probe": {
+          "argv": [
+            "--home",
+            "/snap/home"
+          ],
+          "home": "/snap/home",
+          "pid": 2,
+          "pid1_comm": "bwrap",
+          "pid1_names": [
+            "PATH"
+          ],
+          "pid_ns": "pid:[4026534125]",
+          "ppid": 1,
+          "self_names": [
+            "HOME",
+            "PATH",
+            "PWD"
+          ]
+        }
+      },
+      "sha256": "0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601",
+      "snapshot": {
+        "copied": [
+          [
+            ".config/hypr/hyprland.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/local-link.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ]
+        ],
+        "digest": "d2e9a9417ca534be2680be584bbdf92df5920a874b90f344c4c4c7a51ac27142",
+        "local_link_copied": true,
+        "local_link_sha256": "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879",
+        "nfiles": 2,
+        "outside_link_copied": false,
+        "outside_link_is_symlink": null,
+        "outside_link_matches_canary": false,
+        "outside_link_sha256": null
+      }
+    }
+  },
+  "outside_canary_bytes": 82,
+  "outside_canary_sha256": "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+}
+
+RUN 2 STDOUT (verbatim run2.json)
+{
+  "canary_name_present_in_launcher": true,
+  "canary_value_len": 33,
+  "environ_names_in_launcher": [
+    "HOME",
+    "LC_CTYPE",
+    "MADO_R27_CANARY",
+    "PATH",
+    "_"
+  ],
+  "harnesses": {
+    "round-26": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py",
+      "run_tool": {
+        "canary_in_pid1": true,
+        "canary_in_self": false,
+        "error": "",
+        "probe": {
+          "argv": [
+            "--home",
+            "/snap/home"
+          ],
+          "home": "/snap/home",
+          "pid": 2,
+          "pid1_comm": "bwrap",
+          "pid1_names": [
+            "HOME",
+            "LC_CTYPE",
+            "MADO_R27_CANARY",
+            "PATH",
+            "_"
+          ],
+          "pid_ns": "pid:[4026533573]",
+          "ppid": 1,
+          "self_names": [
+            "HOME",
+            "PATH",
+            "PWD"
+          ]
+        }
+      },
+      "sha256": "680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441",
+      "snapshot": {
+        "copied": [
+          [
+            ".config/hypr/hyprland.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/local-link.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/outside-link.conf",
+            82,
+            "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+          ]
+        ],
+        "digest": "4351a259bab44b4b9ea2afa676cf07f2154d0ab9a97d48d7b64f15359b228f8b",
+        "local_link_copied": true,
+        "local_link_sha256": "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879",
+        "nfiles": 3,
+        "outside_link_copied": true,
+        "outside_link_is_symlink": false,
+        "outside_link_matches_canary": true,
+        "outside_link_sha256": "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+      }
+    },
+    "round-27": {
+      "path": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-27/harness/oracle.py",
+      "run_tool": {
+        "canary_in_pid1": false,
+        "canary_in_self": false,
+        "error": "",
+        "probe": {
+          "argv": [
+            "--home",
+            "/snap/home"
+          ],
+          "home": "/snap/home",
+          "pid": 2,
+          "pid1_comm": "bwrap",
+          "pid1_names": [
+            "PATH"
+          ],
+          "pid_ns": "pid:[4026533594]",
+          "ppid": 1,
+          "self_names": [
+            "HOME",
+            "PATH",
+            "PWD"
+          ]
+        }
+      },
+      "sha256": "0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601",
+      "snapshot": {
+        "copied": [
+          [
+            ".config/hypr/hyprland.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ],
+          [
+            ".config/hypr/local-link.conf",
+            53,
+            "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879"
+          ]
+        ],
+        "digest": "d2e9a9417ca534be2680be584bbdf92df5920a874b90f344c4c4c7a51ac27142",
+        "local_link_copied": true,
+        "local_link_sha256": "2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879",
+        "nfiles": 2,
+        "outside_link_copied": false,
+        "outside_link_is_symlink": null,
+        "outside_link_matches_canary": false,
+        "outside_link_sha256": null
+      }
+    }
+  },
+  "outside_canary_bytes": 82,
+  "outside_canary_sha256": "4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa"
+}
+
+MEASUREMENTS
+  bwrap is pid 1 inside the sandbox in both harnesses; the probe runs as pid 2 (ppid 1) in the same
+  pid namespace. bwrap's --clearenv applies only to the exec'd tool, so the pid-1 supervisor keeps the
+  environment that run_tool itself was launched with. That is the vector M26-5 fixes.
+    round-26 run_tool: pid1_names = [HOME, LC_CTYPE, MADO_R27_CANARY, PATH, _]  -> CANARY NAME PRESENT in pid-1 environ
+    round-27 run_tool: pid1_names = [PATH]                                     -> canary name ABSENT from pid-1 environ
+    tool's own environ (pid 2, /proc/self/environ) both harnesses: [HOME, PATH, PWD] (canary absent)
+  Because the probe read /proc/1/environ successfully and split entries on '=', the canary VALUE was
+  equally readable by the sandboxed tool under the round-26 harness; the probe prints names only and
+  no value bytes are recorded here.
+  snapshot(), same case home, fresh destination per harness:
+    round-26: nfiles=3 digest=4351a259bab44b4b9ea2afa676cf07f2154d0ab9a97d48d7b64f15359b228f8b
+              outside-link.conf copied: 82 B, sha256 4f318a7af00d01a19a0730d5a3cc14d6cc180293d124b948974f78b505f989aa == outside canary -> TRUE
+              local-link.conf copied (inside-HOME symlink): 53 B, sha256 2152bf6a8492dc07a59b30c0bf22537e50da6dcbb5d35a2aabe7a37f3a592879
+    round-27: nfiles=2 digest=d2e9a9417ca534be2680be584bbdf92df5920a874b90f344c4c4c7a51ac27142
+              outside-link.conf copied -> FALSE (destination absent)
+              local-link.conf copied (inside-HOME symlink): 53 B, same sha256 as above
+  Code anchors:
+    r26 run_tool  line 232: cmd = ["timeout", ... "bwrap", ...]                  (no env -i)
+    r27 run_tool  line 234: cmd = ["env", "-i", "PATH=/usr/bin", "timeout", ...] (M26-5)
+    r26 snapshot  lines 65-85: no islink check, open(p) follows symlinks
+    r27 snapshot  line 78: os.path.islink(p) and not realpath(p).startswith(realpath(home_src)+os.sep) -> skip
+  Residual observation (code read, not exercised here because it starts Hyprland):
+    both harnesses' oracle() still copy the case tree with shutil.copytree(..., symlinks=False)
+    (r26 line 139, r27 line 141), which follows symlinks; the r27 outside-HOME guard exists only in
+    snapshot(). Callers that feed oracle() a tree not first passed through snapshot() still pull
+    outside bytes into the oracle home (or fail on a dangling link).
+
+HOST SAFETY
+  coredumpctl Hyprland count before: 1338  after: 1338  delta=0
+  no Hyprland/tinywl started by this probe; no hyprctl invocation; no WAYLAND_DISPLAY or
+  HYPRLAND_INSTANCE_SIGNATURE set or inherited by anything started; /dev/dri untouched.
+  df -h /fast before/after: 804G total, 115G/114G avail, 86% used.
+  process check after both runs: no bwrap/python process left by these runs (run_tool is synchronous
+  and returned exit=0); a transient bwrap pair seen in one ps snapshot had already exited on inspection.
+
+SUPPLEMENTARY MEASUREMENT - the walk ROOT itself is an outside-HOME symlink
+  helper  /fast/scratch/hyaku/mado-r27/iso/rootlink-snapshot.py  sha256 9baaa6549cee42defb45ec83de722ddf885d6ad0425c23cd7aafc10c0dd01867  2755 B
+  layout  /fast/scratch/hyaku/mado-r27/iso/rootlink-home/.config/hypr  ->  /fast/scratch/hyaku/mado-r27/iso/outside/rootdir  (directory symlink resolving OUTSIDE HOME)
+          /fast/scratch/hyaku/mado-r27/iso/outside/rootdir/root-canary.conf  72 B  sha256 4064eb49a2fa1b157e069506f3fc863549f47259129cd2f8e4d30d8c5a95526f
+  command cd /fast/scratch/hyaku/mado-r27/iso && env -i PATH=/usr/bin HOME=/home/vgpnk timeout 120 prlimit --core=0 --as=4000000000 -- \
+            python3 -I rootlink-snapshot.py > rootlink.json 2>rootlink.err
+  exit=0; stdout 1085 B (sha256 dc698f41c78930bb6a453c1bc31e0afd612e6498c09be021b91dc934d4a5e987); stderr 0 B.
+
+  STDOUT (verbatim rootlink.json)
+{
+  "harnesses": {
+    "round-26": {
+      "digest": "d5a5ee48d2843222ae75a93ebe10d521f0c44584d915961614539b4c7cf1ff37",
+      "nfiles": 1,
+      "root_canary_copied": true,
+      "root_canary_sha256": "4064eb49a2fa1b157e069506f3fc863549f47259129cd2f8e4d30d8c5a95526f",
+      "sha256": "680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441"
+    },
+    "round-27": {
+      "digest": "d5a5ee48d2843222ae75a93ebe10d521f0c44584d915961614539b4c7cf1ff37",
+      "nfiles": 1,
+      "root_canary_copied": true,
+      "root_canary_sha256": "4064eb49a2fa1b157e069506f3fc863549f47259129cd2f8e4d30d8c5a95526f",
+      "sha256": "0da5b85570e1325242ff33838d5520328b50cdc72894b3424e7d3d6504c87601"
+    }
+  },
+  "layout": {
+    "canary_sha256": "4064eb49a2fa1b157e069506f3fc863549f47259129cd2f8e4d30d8c5a95526f",
+    "home": "/fast/scratch/hyaku/mado-r27/iso/rootlink-home",
+    "root_symlink": "/fast/scratch/hyaku/mado-r27/iso/rootlink-home/.config/hypr",
+    "root_symlink_resolves_outside_home": true,
+    "root_symlink_target": "/fast/scratch/hyaku/mado-r27/iso/outside/rootdir"
+  }
+}
+
+  reading: BOTH harnesses copy the outside bytes (nfiles=1, root_canary_copied=true, sha256 matches
+  the outside file). snapshot() resolves each of the four roots with os.path.realpath(src) before
+  os.walk, and the round-27 guard (oracle.py:78) tests only symlinked *files* met during the walk,
+  so an outside-HOME *root* symlink is followed by both harnesses. The r27 fix is scoped to
+  file-level symlinks; a root symlink is not covered. Consequence for callers that snapshot a home
+  whose one of the four roots is such a symlink: outside bytes enter the snapshot (and, for C1, any
+  tree copied from it) under either harness.
