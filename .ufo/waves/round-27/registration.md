@@ -138,3 +138,17 @@ Counter: `python3 -I .ufo/waves/round-27/c2/count-v2.py REV --heldout /fast/scra
 .ufo/waves/round-27/c2/heldout-seal.txt`. Before (L1 pilot, REV `543f0445`, no sealed set):
 `evidence/c2v2-before-543f0445.txt` green=0/8 w_killed=0/15. Every C2 control is re-scored under v2 by its seat, and
 by the L1 with the sealed set once sealed, before any data seat.
+
+## C1 redesign before data: counter v3 (11:0xZ, before any data seat)
+
+w1 `CritC1Counter`, attacking v2 on the L1's request, met v2 at 41/41 on two fresh seeds with a reader that follows
+`source =` but binds variables globally, except for names starting with `$wsr` (the prefix v2 gave its
+redefinition probes): a shortcut keyed on a fixture label (`controls/K1PrefixKeyed.py`, receipts
+`controls/v2/K1PrefixKeyed-seed{1,2}.txt`). Under the kill rule v2 is retired before data; v2 and its receipts stay.
+Counter v3 `c1/count-v3.py` (sha256 `ee4cea19c11a1a8160115f4754e88c11c58aac9a3bff40ccfd16920cd1d691bd`) is v2 with
+every generated variable name drawn as `$` + 5-9 random letters (no fixed prefix). L1 pilots: before (REV `543f0445`)
+0/41 (`evidence/c1v3-before-543f0445.txt`); K1PrefixKeyed 23/41, K1FlatScan 2/41 (`controls/v3/*-L1pilot.txt`).
+
+**PRED-C1-r27-v3**: the PRED-C1-r27-v2 sentence above, word for word, with the counter `c1/count-v3.py`; target:
+cases_pass=41/41. Every C1 control is re-scored under v3 with two fresh seeds by the seat that built it before any
+data seat (`controls/v3/<Control>-seed{1,2}.txt`).
