@@ -44,6 +44,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/walker-route-r18.md` (round 18; surface P3) | Documentary upstream contract for Walker v2.17.2 and elephant v2.22.1 (config load order, theme lookup, socket path) and the omarchy v3.8.4 launcher, joined to declared host config by sha256 and line anchor. Declared configuration is not observed launcher behaviour; provider resolution at runtime, the elephant service, wire schema and rendered UI stay `[UNK]`. | `source:` S072–S091 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No walker or elephant process is started or queried. |
 | `knowledge/theme-route-r18.md` (round 18; surface P5) | Documentary upstream contract for the omarchy v3.8.4 theme-set and wallpaper writers and swaybg v1.2.2, joined to `current/theme`, the `current/background` link and consumer imports by sha256 and line anchor. The declared chain is not runtime theme application; reload effects and the rendered wallpaper stay `[UNK]`. | `source:` S092–S095 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No theme, wallpaper or swaybg command is run. |
 | `knowledge/tripwire-precision-r20.md` (round 20; lane tooling, no surface) | What a tripwire row means (`evidence: observed`, `lead` for an opaque callee or a swept reached body, no row for pure data), which git 2.56.0 / jj 0.45.1 help and dry-run forms write, and the fail-closed rule for stub/namespace harnesses. | `source:` S099–S115 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-20/fetch/`. The tripwire reads transcripts as data; harness checks use `/tmp` canaries, never a host probe. |
+| `knowledge/rule-attribution-r24.md` (round 24; frontier rule attribution) | What Hyprland 0.56.2 offers to tell which window/layer rule produced an applied effect: no upstream channel maps an applied property back to its rule (hyprctl, Lua, socket2, logs, window object, plugin bus swept); the user-built route is a unique `tag` effect read from `hyprctl clients` tags; named rules can be toggled by handle (operator only). Host behaviour stays `[UNK]`. | `source:` S153–S160, S162–S168 in [SOURCES](SOURCES.md) (S161 queued); fetched bytes `.ufo/waves/round-24/fetch/S###.bin`; recheck on-release. |
 
 ## Quality bar
 
@@ -193,3 +194,12 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
   byte-identical to base (sha256: `cd9da20c2f562efb…`); the withdrawn candidate is kept as evidence at
   `.ufo/waves/round-23/evidence/candidate-classifier-e1dc8029.py` (sha256: `e1dc8029ced9fcc6…`), and C1 ended
   6/12 against its 12/12 target (lesson23 "Final C1 disposition", SCORECARD round-23 final C1 disposition).
+
+### Round-24 rule attribution route
+
+- Round 24 moves the round-12 frontier item "Still open: rule *attribution*" onto documentary sourced ground:
+  [rule attribution](knowledge/rule-attribution-r24.md) (S153–S160, S162–S168; Hyprland v0.56.2 pinned at
+  `efb50993`, hyprland-wiki at `c66e8de2`). Answer: no upstream channel maps an applied property back to the
+  rule that set it; the usable route is a unique `tag` effect read from `hyprctl clients`. Still open: observed
+  attribution on this host (no rule was toggled and no tag value read), plugin-side match recording, and
+  output management, the input ladder and Waybar module text as listed above.
