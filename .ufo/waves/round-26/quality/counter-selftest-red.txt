@@ -1,0 +1,309 @@
+# R2 red runs: the same offline self-test against mutated scratch copies of the frozen counters
+# counters under /fast/scratch/hyaku/mado-r26/q-r2-<mutation>/ ; each section names its mutation.
+# sections 1-3 are the three mutants named in the assignment; 4-5 falsify the remaining two
+# assertion classes (perfect tool, oracle failure) so all nine checks are shown able to fail.
+
+== skip-guard ==
+76ab36383e4eab3254417d9dad42ac188bcb6b93030f520305b19f2f16ed2044  /fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c1/count.py
+ed51ef0bd65b914e1507c706ed62416ed1889d46cb545a82da4e4acd218b50a8  /fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c2/count.py
+COMMAND: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --c1 /fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c1/count.py --c2 /fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c2/count.py --rev 05319e0f
+MADO R26 QUALITY R2 counter self-test (offline; synthetic tables; no Hyprland)
+selftest sha256:0754f5013800a1f61a04259b1a4bbbbee389788b251a1b831fd82994385b642a
+c1=/fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c1/count.py sha256:76ab36383e4eab3254417d9dad42ac188bcb6b93030f520305b19f2f16ed2044 pin=no(override/mutant)
+c2=/fast/scratch/hyaku/mado-r26/q-r2-skip-guard/.ufo/waves/round-26/c2/count.py sha256:ed51ef0bd65b914e1507c706ed62416ed1889d46cb545a82da4e4acd218b50a8 pin=no(override/mutant)
+rev=05319e0f seed=0badc0de12345678 scratch=/fast/scratch/hyaku/mado-r26/q-r2-selftest-mvyuk68o
+CHECK c1-perfect         PASS rc=0 cases_pass=41/41 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MET
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-one-field       PASS rc=1 cases_pass=0/41 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=0/41 verdict=TARGET_MISSED
+      CASE BASE  FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-drift           FAIL rc=1 ORACLE_UNSTABLE=no
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=1/41 verdict=TARGET_MISSED
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure
+CHECK c2-perfect         PASS rc=0 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-one-field       PASS rc=1 cases_pass=0/51 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=0/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      CASE A00            FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+CHECK c2-embed           PASS rc=1 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      EMBED_HIT 'notify-send r26-embed-fixture-0123456789'
+      PRED-C2-r26 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-drift           FAIL rc=1 ORACLE_UNSTABLE=no
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=1/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="X" code=0 disp="exec" arg="firefox" | extra mask=64 key="W" code=0 disp="exec" 
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="X" code=0 disp="exec" arg="firefox" | extra mask=64 key="W" code=0 disp="exec" 
+CHECK c2-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure synthetic oracle failure
+
+SELFTEST pass=7 total=9
+FAILED c1-drift,c2-drift
+exit=1
+RUN_EXIT=1
+
+== embed-threshold-1000 ==
+f98e264b272f47bb93a72538294ea8a0805d724847baf0879f741e2f43d352cd  /fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c1/count.py
+e5f08b47947cc998a7af202f17498b5110808c9c3062d33c15793eff0790c3fc  /fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c2/count.py
+COMMAND: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --c1 /fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c1/count.py --c2 /fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c2/count.py --rev 05319e0f
+MADO R26 QUALITY R2 counter self-test (offline; synthetic tables; no Hyprland)
+selftest sha256:0754f5013800a1f61a04259b1a4bbbbee389788b251a1b831fd82994385b642a
+c1=/fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c1/count.py sha256:f98e264b272f47bb93a72538294ea8a0805d724847baf0879f741e2f43d352cd pin=yes
+c2=/fast/scratch/hyaku/mado-r26/q-r2-embed-threshold-1000/.ufo/waves/round-26/c2/count.py sha256:e5f08b47947cc998a7af202f17498b5110808c9c3062d33c15793eff0790c3fc pin=no(override/mutant)
+rev=05319e0f seed=0badc0de12345678 scratch=/fast/scratch/hyaku/mado-r26/q-r2-selftest-nj12yzls
+CHECK c1-perfect         PASS rc=0 cases_pass=41/41 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MET
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-one-field       PASS rc=1 cases_pass=0/41 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=0/41 verdict=TARGET_MISSED
+      CASE BASE  FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree
+CHECK c1-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure
+CHECK c2-perfect         PASS rc=0 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-one-field       PASS rc=1 cases_pass=0/51 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=0/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      CASE A00            FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+CHECK c2-embed           FAIL rc=0 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree (1/1)
+CHECK c2-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure synthetic oracle failure
+
+SELFTEST pass=8 total=9
+FAILED c2-embed
+exit=1
+RUN_EXIT=1
+
+== field-dropped ==
+1b7a07a3c9a451b9da184556b18494c98fe6df8f90cdd652e65409578637e0d4  /fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c1/count.py
+a33a3d140ac0bb916b482a34dc3e97547d8f1372b76c991f9e9df015fa411a0a  /fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c2/count.py
+COMMAND: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --c1 /fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c1/count.py --c2 /fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c2/count.py --rev 05319e0f
+MADO R26 QUALITY R2 counter self-test (offline; synthetic tables; no Hyprland)
+selftest sha256:0754f5013800a1f61a04259b1a4bbbbee389788b251a1b831fd82994385b642a
+c1=/fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c1/count.py sha256:1b7a07a3c9a451b9da184556b18494c98fe6df8f90cdd652e65409578637e0d4 pin=no(override/mutant)
+c2=/fast/scratch/hyaku/mado-r26/q-r2-field-dropped/.ufo/waves/round-26/c2/count.py sha256:a33a3d140ac0bb916b482a34dc3e97547d8f1372b76c991f9e9df015fa411a0a pin=no(override/mutant)
+rev=05319e0f seed=0badc0de12345678 scratch=/fast/scratch/hyaku/mado-r26/q-r2-selftest-hmlaqhwp
+CHECK c1-perfect         PASS rc=0 cases_pass=41/41 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MET
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-one-field       FAIL rc=0 cases_pass=41/41 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MET
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree
+CHECK c1-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure
+CHECK c2-perfect         PASS rc=0 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-one-field       FAIL rc=0 cases_pass=51/51 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-embed           PASS rc=1 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      EMBED_HIT 'notify-send r26-embed-fixture-0123456789'
+      PRED-C2-r26 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree (1/1)
+CHECK c2-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure synthetic oracle failure
+
+SELFTEST pass=7 total=9
+FAILED c1-one-field,c2-one-field
+exit=1
+RUN_EXIT=1
+
+== final-threshold ==
+a5fc9c620d99eb22fb6bed8399534045ec1228b937e1efd5d171b7951beb51fd  /fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c1/count.py
+abee34af91247c703c7bb964062a2e9c8515a80288e6134da7f18fe235996e69  /fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c2/count.py
+COMMAND: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --c1 /fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c1/count.py --c2 /fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c2/count.py --rev 05319e0f
+MADO R26 QUALITY R2 counter self-test (offline; synthetic tables; no Hyprland)
+selftest sha256:0754f5013800a1f61a04259b1a4bbbbee389788b251a1b831fd82994385b642a
+c1=/fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c1/count.py sha256:a5fc9c620d99eb22fb6bed8399534045ec1228b937e1efd5d171b7951beb51fd pin=no(override/mutant)
+c2=/fast/scratch/hyaku/mado-r26/q-r2-final-threshold/.ufo/waves/round-26/c2/count.py sha256:abee34af91247c703c7bb964062a2e9c8515a80288e6134da7f18fe235996e69 pin=no(override/mutant)
+rev=05319e0f seed=0badc0de12345678 scratch=/fast/scratch/hyaku/mado-r26/q-r2-selftest-pk1mog6u
+CHECK c1-perfect         FAIL rc=1 cases_pass=41/41 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MISSED
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-one-field       PASS rc=1 cases_pass=0/41 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=0/41 verdict=TARGET_MISSED
+      CASE BASE  FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree
+CHECK c1-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure
+CHECK c2-perfect         FAIL rc=1 cases_pass=51/51 embed_hits=0 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-one-field       PASS rc=1 cases_pass=0/51 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=0/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      CASE A00            FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+CHECK c2-embed           PASS rc=1 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      EMBED_HIT 'notify-send r26-embed-fixture-0123456789'
+      PRED-C2-r26 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree (1/1)
+CHECK c2-oracle-fail     PASS rc=2 ORACLE_FAIL=yes
+      SETUP_ERROR ORACLE_FAIL BASE: synthetic oracle failure synthetic oracle failure
+
+SELFTEST pass=7 total=9
+FAILED c1-perfect,c2-perfect
+exit=1
+RUN_EXIT=1
+
+== fail-open ==
+9e7ad73aa124c930e7eea4914b7435f50db69129a5f24b2e90aefc8d4aa6e8df  /fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c1/count.py
+273bcce3fec2a11b9a8db23fc72b1a7369fd2d325482667fcea708c5d346c430  /fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c2/count.py
+COMMAND: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py --c1 /fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c1/count.py --c2 /fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c2/count.py --rev 05319e0f
+MADO R26 QUALITY R2 counter self-test (offline; synthetic tables; no Hyprland)
+selftest sha256:0754f5013800a1f61a04259b1a4bbbbee389788b251a1b831fd82994385b642a
+c1=/fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c1/count.py sha256:9e7ad73aa124c930e7eea4914b7435f50db69129a5f24b2e90aefc8d4aa6e8df pin=no(override/mutant)
+c2=/fast/scratch/hyaku/mado-r26/q-r2-fail-open/.ufo/waves/round-26/c2/count.py sha256:273bcce3fec2a11b9a8db23fc72b1a7369fd2d325482667fcea708c5d346c430 pin=no(override/mutant)
+rev=05319e0f seed=0badc0de12345678 scratch=/fast/scratch/hyaku/mado-r26/q-r2-selftest-wuafjigg
+CHECK c1-perfect         PASS rc=0 cases_pass=41/41 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=41/41 verdict=TARGET_MET
+      CASE BASE  PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   PASS nodes missing=0 extra=0 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-one-field       PASS rc=1 cases_pass=0/41 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal nodes=3 beziers=2
+      PRED-C1-r26 cases_pass=0/41 verdict=TARGET_MISSED
+      CASE BASE  FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (unperturbed)
+      CASE C00   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (UNSOURCED+ORDER+SOURCED)
+      ... 38 CASE lines omitted ...
+      CASE C39   FAIL nodes missing=1 extra=1 beziers missing=0 extra=0 (SPACING+ROOT)
+CHECK c1-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree
+CHECK c1-oracle-fail     FAIL rc=None ORACLE_FAIL=no
+      EXCEPTION TypeError: TypeError("'NoneType' object is not subscriptable")
+CHECK c2-perfect         PASS rc=0 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-one-field       PASS rc=1 cases_pass=0/51 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      PRED-C2-r26 cases_pass=0/51 embed_hits=0 verdict=TARGET_MISSED
+      CASE BASE           FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      CASE A00            FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        FAIL oracle_binds=3 missing=1 extra=1 | missing mask=64 key="Q" code=0 disp="exec" arg="kitty" | extra mask=64 key="Q" code=0 disp="exec" ar
+CHECK c2-embed           PASS rc=1 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      ORACLE_CHECK base_twice equal binds=3
+      EMBED_HIT 'notify-send r26-embed-fixture-0123456789'
+      PRED-C2-r26 cases_pass=51/51 embed_hits=1 verdict=TARGET_MISSED
+      CASE BASE           PASS oracle_binds=3 missing=0 extra=0 (unperturbed)
+      CASE A00            PASS oracle_binds=3 missing=0 extra=0 (ARITH[escaped+move+var+exec]@sourced)
+      ... 48 CASE lines omitted ...
+      CASE VHARD-1        PASS oracle_binds=3 missing=0 extra=0 (HARD tree lines=27 binds=18 unbinds=2 vars=4)
+CHECK c2-drift           PASS rc=2 ORACLE_UNSTABLE=yes
+      SETUP_ERROR ORACLE_UNSTABLE two oracle runs of the unperturbed snapshot disagree (1/1)
+CHECK c2-oracle-fail     FAIL rc=None ORACLE_FAIL=no
+      EXCEPTION TypeError: TypeError("'NoneType' object is not subscriptable")
+
+SELFTEST pass=7 total=9
+FAILED c1-oracle-fail,c2-oracle-fail
+exit=1
+RUN_EXIT=1
+

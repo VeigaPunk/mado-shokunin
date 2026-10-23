@@ -1,0 +1,144 @@
+mado round 26 w1 — oracle readiness/determinism probe (scratch tool, evidence file)
+utc=2026-10-23T08:59:52Z lane_tip=05319e0fed2ce25cf0a883380af2763a85fd4936
+harness/oracle.py sha256:680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441
+c1/count.py sha256:f98e264b272f47bb93a72538294ea8a0805d724847baf0879f741e2f43d352cd
+c2/count.py sha256:b92c32da632bc9cfaeae72b6a0be2202e5a25653274cc0b33fc0ae3f37a716a8
+snapshot files=79 digest sha256:fe1b2d8ba8e61ec3756fac0820c88ddda861db7f833f1c47e371934efa983727
+seeds=6dedf12e62b907b0,35e62f3811a39022
+method: oracle.py imported by path; per seed, 12 generated trees (6 c1/count.py apply_op over OPS, 6 c2/count.py arith_case over V3.sourced_files) are each answered by three independent nested-instance runs of the same tree: plain (harness timing), traced (same timing, every `-i <sig> <verb> -j` read recorded at the _hyprctl boundary), delayed (traced, the first read attempt of each verb sleeps 3.0 s). Acceptance in every run is the harness rule: three byte-identical reads 0.3 s apart. Comparisons use the counters' canonical forms: C1 node/bezier sets, C2 18-field bind multiset.
+host safety: hyprland_coredumps before=1335 after=1335 delta=0; every instance ran through harness/oracle.py (bwrap --unshare-all --clearenv, private XDG_RUNTIME_DIR, tinywl headless parent, render node only); nothing inherited WAYLAND_DISPLAY or HYPRLAND_INSTANCE_SIGNATURE.
+readiness mechanism (source, pin efb50993780079460b0cbed1363e2166a2de1d9f): hyprctl discovers an instance only by parsing <XDG_RUNTIME_DIR>/hypr/<sig>/hyprland.lock (hyprctl/src/main.cpp:104), which Hyprland creates at the end of startCompositor (src/Compositor.cpp:812) after Config::initConfigManager() (src/Compositor.cpp:665) and Config::mgr()->init() (src/Compositor.cpp:683) ran in initManagers(STAGE_PRIORITY) (src/Compositor.cpp:296); instance visibility therefore postdates config application.
+
+== seed 6dedf12e62b907b0 ==
+-- 1. accepted answers: plain vs delayed (and plain vs traced), per tree --
+T01  C1apply:NEWSRC+REBEZ+DISABLE                   animations:equal (n=41) | binds:equal (n=192)
+T02  C2arith:ARITH[var+desc]@sourced                animations:equal (n=41) | binds:equal (n=193)
+T03  C1apply:ROOT+SOURCED+CATEGORY                  animations:equal (n=42) | binds:equal (n=192)
+T04  C2arith:ARITH[unclosed+var+unclosed+escaped]@s animations:equal (n=41) | binds:equal (n=196)
+T05  C1apply:COMMENT+BEZIER+DISABLE+INVALID         animations:equal (n=42) | binds:equal (n=192)
+T06  C2arith:ARITH[resize+desc+resize+exec]@sourced animations:equal (n=41) | binds:equal (n=193)
+T07  C1apply:BEZIER+ORDER                           animations:equal (n=42) | binds:equal (n=192)
+T08  C2arith:ARITH[desc+resize]@sourced             animations:equal (n=41) | binds:equal (n=192)
+T09  C1apply:ORDER+ROOT                             animations:equal (n=41) | binds:equal (n=192)
+T10  C2arith:ARITH[desc+resize+escaped]@sourced     animations:equal (n=41) | binds:equal (n=193)
+T11  C1apply:UNSOURCED+NEWSRC+CATEGORY              animations:equal (n=42) | binds:equal (n=192)
+T12  C2arith:ARITH[escaped+desc+exec+desc]@sourced  animations:equal (n=41) | binds:equal (n=196)
+tree_three_way_equal=12/12 trees
+-- 2. first successful read vs accepted value (traced / delayed runs, per verb) --
+(a first-read mismatch is the premature-read hazard the three-identical rule absorbs)
+T01/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.01s delay=0.00s reads=3 same
+T01/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T02/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T02/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T03/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T03/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T04/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T04/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T05/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T05/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T06/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T06/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T07/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T07/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T08/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T08/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T09/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T09/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T10/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T10/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T11/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.01s delay=0.00s reads=3 same
+T11/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T12/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.01s delay=0.00s reads=3 same
+T12/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+first_read_moved=0/48 run-verb pairs (traced 0, delayed 0); reads_to_acceptance={"3": 48}
+-- 3. BASE (unperturbed snapshot) 10 plain runs + one delayed run vs run #1 --
+BASE#01/plain    animations:equal | binds:equal
+BASE#02/plain    animations:equal | binds:equal
+BASE#03/plain    animations:equal | binds:equal
+BASE#04/plain    animations:equal | binds:equal
+BASE#05/plain    animations:equal | binds:equal
+BASE#06/plain    animations:equal | binds:equal
+BASE#07/plain    animations:equal | binds:equal
+BASE#08/plain    animations:equal | binds:equal
+BASE#09/plain    animations:equal | binds:equal
+BASE#10/plain    animations:equal | binds:equal
+BASE/delayed     animations:equal | binds:equal
+BASE/delayed first-read-vs-accepted: animations:same | binds:same
+base_equal=11/11 runs (all compared to BASE#01)
+
+== seed 35e62f3811a39022 ==
+-- 1. accepted answers: plain vs delayed (and plain vs traced), per tree --
+T01  C1apply:UNSOURCED+SPACING+DISABLE              animations:equal (n=41) | binds:equal (n=192)
+T02  C2arith:ARITH[var+desc+exec+unclosed]@sourced  animations:equal (n=41) | binds:equal (n=196)
+T03  C1apply:ORDER+SPACING+ROOT                     animations:equal (n=41) | binds:equal (n=192)
+T04  C2arith:ARITH[move+desc+ws+move]@sourced       animations:equal (n=41) | binds:equal (n=194)
+T05  C1apply:BEZIER+SOURCED                         animations:equal (n=42) | binds:equal (n=192)
+T06  C2arith:ARITH[move+unclosed]@sourced           animations:equal (n=41) | binds:equal (n=194)
+T07  C1apply:DISABLE+VARIABLE+NEWSRC+CATEGORY       animations:equal (n=42) | binds:equal (n=192)
+T08  C2arith:ARITH[var+move+resize+desc]@sourced    animations:equal (n=41) | binds:equal (n=194)
+T09  C1apply:INVALID+REBEZ+BEZIER                   animations:equal (n=42) | binds:equal (n=192)
+T10  C2arith:ARITH[resize+var+desc]@sourced         animations:equal (n=41) | binds:equal (n=194)
+T11  C1apply:VARIABLE+INVALID+COMMENT+UNSOURCED     animations:equal (n=41) | binds:equal (n=192)
+T12  C2arith:ARITH[resize+unclosed]@sourced         animations:equal (n=41) | binds:equal (n=193)
+tree_three_way_equal=12/12 trees
+-- 2. first successful read vs accepted value (traced / delayed runs, per verb) --
+(a first-read mismatch is the premature-read hazard the three-identical rule absorbs)
+T01/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T01/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T02/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T02/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T03/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T03/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T04/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T04/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T05/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T05/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T06/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T06/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T07/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.01s delay=0.00s reads=3 same
+T07/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T08/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T08/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T09/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T09/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T10/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T10/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T11/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T11/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+T12/traced       animations:first_dt=0.00s delay=0.00s reads=3 same | binds:first_dt=0.00s delay=0.00s reads=3 same
+T12/delayed      animations:first_dt=3.00s delay=3.00s reads=3 same | binds:first_dt=3.00s delay=3.00s reads=3 same
+first_read_moved=0/48 run-verb pairs (traced 0, delayed 0); reads_to_acceptance={"3": 48}
+-- 3. BASE (unperturbed snapshot) 10 plain runs + one delayed run vs run #1 --
+BASE#01/plain    animations:equal | binds:equal
+BASE#02/plain    animations:equal | binds:equal
+BASE#03/plain    animations:equal | binds:equal
+BASE#04/plain    animations:equal | binds:equal
+BASE#05/plain    animations:equal | binds:equal
+BASE#06/plain    animations:equal | binds:equal
+BASE#07/plain    animations:equal | binds:equal
+BASE#08/plain    animations:equal | binds:equal
+BASE#09/plain    animations:equal | binds:equal
+BASE#10/plain    animations:equal | binds:equal
+BASE/delayed     animations:equal | binds:equal
+BASE/delayed first-read-vs-accepted: animations:same | binds:same
+base_equal=11/11 runs (all compared to BASE#01)
+
+== aggregate ==
+tree_three_way_equal=48/48 tree-verb comparisons (2 seeds)
+base_cross_seed_equal=44/44 BASE answers across both seeds vs seed-1 BASE#01
+first_read_moved=0/96 run-verb pairs; oracle_errors=0; hyprland_coredumps_delta=0
+
+ORACLE_READY stable — plain_vs_delayed_equal=48/48 tree-verb comparisons; base_cross_seed_equal=44/44; first_read_moved=0/96; oracle_errors=0; hyprland_coredumps_delta=0
+wall_seconds=107.7
+
+== addendum seed 62a5aca0bb51dfcd == (binds-only runs: the verb c2/count.py requests, first read at instance discovery; 3.0 s delay on the delayed side)
+A01  ARITH[resize+ws+escaped]@sourced                     binds:equal (n=194) | first plain:same delayed:same
+A02  ARITH[unclosed+move]@sourced                         binds:equal (n=194) | first plain:same delayed:same
+A03  ARITH[exec+ws+desc+ws]@sourced                       binds:equal (n=195) | first plain:same delayed:same
+A04  ARITH[unclosed+escaped+ws+move]@sourced              binds:equal (n=195) | first plain:same delayed:same
+A05  ARITH[desc+escaped+move+var]@sourced                 binds:equal (n=195) | first plain:same delayed:same
+A06  ARITH[unclosed+ws]@sourced                           binds:equal (n=193) | first plain:same delayed:same
+addendum_plain_vs_delayed_equal=6/6 trees
+addendum_first_read_moved=0/12 run-verb pairs
+addendum_base_equal=11/11 runs (10 plain + 1 delayed, binds only, vs BASE#01); delayed BASE first-read-vs-accepted=same
+ADDENDUM_READY stable — plain_vs_delayed_equal=6/6 trees; base_equal=11/11; first_read_moved=0/12; oracle_errors=0; hyprland_coredumps_delta=0; wall_seconds=26.7

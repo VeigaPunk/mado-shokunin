@@ -1,0 +1,75 @@
+# Q37 population check (M25-4) - red/green matrix, round 26, 2026-10-23
+# commands run from /home/vgpnk/Projects/shokunin/mado-shokunin with python3 3.14.8
+
+# green synthetic C1 receipt (41 CASE lines) (want exit=0)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/quality/population-fixtures/receipt-c1-green.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/receipt-c1-green.txt pred=PRED-C1-r26 cases_pass=41/41 case_lines=41 registered=41 agree=ok
+POPULATION verdict=PASS receipts=1 agree=1 mismatch=0 unreadable=0
+exit=0
+rc=0 OK
+
+# red: one CASE line removed (want exit=1)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/quality/population-fixtures/receipt-red-case-removed.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/receipt-red-case-removed.txt pred=PRED-C1-r26 cases_pass=41/41 case_lines=40 registered=41 agree=MISMATCH legs=case_lines
+POPULATION verdict=FAIL receipts=1 agree=0 mismatch=1 unreadable=0
+exit=1
+rc=1 OK
+
+# red: receipt denominator changed (want exit=1)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/quality/population-fixtures/receipt-red-denominator.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/receipt-red-denominator.txt pred=PRED-C1-r26 cases_pass=41/42 case_lines=41 registered=41 agree=MISMATCH legs=denominator
+POPULATION verdict=FAIL receipts=1 agree=0 mismatch=1 unreadable=0
+exit=1
+rc=1 OK
+
+# red: registration total changed (want exit=1)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/quality/population-fixtures/registration-red-total.md .ufo/waves/round-26/quality/population-fixtures/receipt-c1-green.txt
+POPULATION registration=.ufo/waves/round-26/quality/population-fixtures/registration-red-total.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/receipt-c1-green.txt pred=PRED-C1-r26 cases_pass=41/41 case_lines=41 registered=42 agree=MISMATCH legs=case_lines,denominator
+POPULATION verdict=FAIL receipts=1 agree=0 mismatch=1 unreadable=0
+exit=1
+rc=1 OK
+
+# red: self-consistent 40-case shrink (40/40 and 40 CASE lines vs registered 41) (want exit=1)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/quality/population-fixtures/receipt-red-selfconsistent-40.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/receipt-red-selfconsistent-40.txt pred=PRED-C1-r26 cases_pass=40/40 case_lines=40 registered=41 agree=MISMATCH legs=case_lines,denominator
+POPULATION verdict=FAIL receipts=1 agree=0 mismatch=1 unreadable=0
+exit=1
+rc=1 OK
+
+# real base C1 receipt (41 CASE lines, cases_pass=0/41) (want exit=0)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/evidence/c1-before-96101be5.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c1-before-96101be5.txt pred=PRED-C1-r26 cases_pass=0/41 case_lines=41 registered=41 agree=ok
+POPULATION verdict=PASS receipts=1 agree=1 mismatch=0 unreadable=0
+exit=0
+rc=0 OK
+
+# real base C2 receipt (51 CASE lines, cases_pass=22/51) (want exit=0)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/evidence/c2-before-96101be5.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/evidence/c2-before-96101be5.txt pred=PRED-C2-r26 cases_pass=22/51 case_lines=51 registered=51 agree=ok
+POPULATION verdict=PASS receipts=1 agree=1 mismatch=0 unreadable=0
+exit=0
+rc=0 OK
+
+# unreadable receipt (want exit=2)
+$ python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-26/registration.md .ufo/waves/round-26/quality/population-fixtures/missing-receipt.txt
+POPULATION registration=.ufo/waves/round-26/registration.md predicates=PRED-C1-r26,PRED-C2-r26
+POPULATION receipt=.ufo/waves/round-26/quality/population-fixtures/missing-receipt.txt verdict=UNREADABLE error=FileNotFoundError
+POPULATION verdict=UNREADABLE receipts=1 agree=0 mismatch=0 unreadable=1
+exit=2
+rc=2 OK
+
+# artifact sha256
+803e0096c994d301fa7fe9a9dd7e35255ee1f5bcf3f63d15956cdba8943d0f64  .ufo/waves/round-26/quality/check-population.py
+56608ea38ecf4195217431c9eb481b39cfcf9c413255552e00e68206d93f873a  .ufo/waves/round-26/registration.md
+45c04c00aea88e1ab71f8eb7c002748fd043bb7e1b7558e883b469ccf111e58f  .ufo/waves/round-26/quality/population-fixtures/receipt-c1-green.txt
+bbbeda734e73bdf3d6f98ac6a56a98335de91614bda143f2740a8af60c62bf8d  .ufo/waves/round-26/quality/population-fixtures/receipt-red-case-removed.txt
+21e47a997ca2e2d8797e518566cd644388a2956481b63ae1f70452e31fff8041  .ufo/waves/round-26/quality/population-fixtures/receipt-red-denominator.txt
+3cc95b6d37f003aeea6927686cc6de13dcda0cb9646a15ce25fc0a7233527d07  .ufo/waves/round-26/quality/population-fixtures/registration-red-total.md
+89043adaa73bde06d09a35b0d69e07b8b7ca915c48078eac33d371cad2625512  .ufo/waves/round-26/quality/population-fixtures/receipt-red-selfconsistent-40.txt

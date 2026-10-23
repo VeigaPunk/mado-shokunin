@@ -233,3 +233,7 @@ characters; target: cases_pass=41/41 and embed_hits=0.
 - Reading of a crash (RevCounterV4, minor defect, counter unchanged): a run whose output has no `PRED-C1 (v4)` line
   (an uncaught exception exits 1 with a traceback) measured nothing; it is classified with exit-2 runs (re-run once,
   both receipts kept), never as `TARGET_MISSED` or `TARGET_MET`.
+
+## Correction (2026-10-23, round 26; spot-check routed defect 5)
+
+R8's disposition above is inaccurate: no hardened MutCheckRegOrder or MutCheckReceipt checks landed under `round-25/quality/`. That directory contains only `check-control-receipts.py` and `q36-red-round24.txt` / `q36-green-round25.txt` (`ls`; `git log --oneline -- .ufo/waves/round-25/quality/` lists `2896dc4` and `9022467` only); the QUALITY 33–35 survivors MutCheckRegOrder and MutCheckReceipt were not hardened in round 25 and remain open. Drafted by round-26 seat R5R6Corrections (`.ufo/waves/round-26/w1/reports/R5R6Corrections.md`).

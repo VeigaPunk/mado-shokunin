@@ -117,3 +117,41 @@ from LOG, SCORECARD, QUALITY, README, SOURCES except logged in-place `used-by` c
 an empty-output tool and a snapshot-cache tool written by the L1 (C1 0/41 and 2/41, C2 0/51; scratch, not
 receipts): they tested the plumbing and led to one generator change before landing (every C1 case carries at
 least one table-changing operation). No control or data seat has run.
+
+## Errata (appended after landing; the rule above is unchanged)
+
+- Host-safety paragraph: "The four failed pilot runs" should read "The five failed pilot runs" (the unpatched-tinywl
+  run was executed twice, the second time with debug logs); the count 1330 → 1335 was right
+  (`harness/pilot-receipt.txt` errata; flagged by w1 ScribeMistakes).
+
+## C1 redesign before data: counter v2 (appended 08:59Z; no data seat exists yet)
+
+w1 `CritC1Design` (`w1/reports/CritC1Design.md` B, C, E1) found, before any data seat: (1) every v1 case appends to
+the same snapshot, so a tool that caches the snapshot's own directives and parses only appended lines could meet v1
+without reading the original config bytes (an untested cache-plus-delta shortcut); (2) v1 does not check which
+Hyprland answered; (3) the sentence above "every C1 case carries at least one table-changing operation" is false —
+v1 guarantees only an operation from the EFFECTIVE list (the K1SnapshotCache receipts pass 1–2 unchanged cases).
+v1 (`c1/count.py`) and its w1 control receipts stay as they are. **C1 is now judged by counter v2**
+(`c1/count-v2.py`, sha256 `4ed70b5427f2e223a8d816679e6d1fad7d2e76d2ed57aa0fe7f135496e836428`), frozen here, before any data seat:
+
+**PRED-C1-r26-v2** (same sentence in `c1/count-v2.py`'s docstring and the receipt label): At REV, the committed
+bytes of tools/mado-anims.py, run in the tool sandbox (no network, no /run, cleared environment, the case tree
+read-only at /snap/home from a randomly named directory), print for the unperturbed snapshot of the four Hyprland
+config roots and for each of 40 generated cases (20 that append directives to the snapshot, 10 that edit or
+delete the snapshot's own directives, 10 independent trees that contain none of the snapshot's files) the same
+animation-node set (name, overridden, bezier, enabled, speed, style) and the same bezier set (name, X0, Y0, X1, Y1)
+that Hyprland v0.56.2 itself reports with `hyprctl animations -j` for the same tree (a nested, headless,
+session-isolated instance run by the counter on a copy with exec lines removed); target: cases_pass=41/41.
+
+New guard: `ORACLE_VERSION` (exit 2) unless the nested instance's `hyprctl version -j` commit is
+`efb50993780079460b0cbed1363e2166a2de1d9f`. Per-case `changed=yes|no` is printed as a diagnostic only. The
+cache-plus-delta shape is bounded by construction under v2: the 10 SYNTH trees contain none of the snapshot's
+files and the 10 EDIT cases change the snapshot's own lines, so a cache of the snapshot's events applies to at most
+BASE + 20 APPEND = 21 of 41 cases. Every committed C1 control program is re-scored under v2 before the data wave
+(receipts `controls/v2/`); the kill rule and landing rule above apply to v2 unchanged. C2 and its counter are
+unchanged.
+
+C2 notes from w1 `CritC2Design` (no rule change): the ARITH cases cover hyprlang's one-operator expressions,
+decimals, `$var` substitution, one escape form and unclosed braces, not every expression rule (bare-name
+variables, backslash parity, nested braces are not generated); the V3 half re-checks round-25 behaviour on 20
+sampled cases, it is not an exhaustive no-harm proof — "the no-harm half" above means exactly that sample.

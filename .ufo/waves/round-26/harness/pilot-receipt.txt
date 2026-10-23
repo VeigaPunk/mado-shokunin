@@ -17,3 +17,9 @@ after: hyprland_coredumps=1335 live_instances=1 delta_coredumps=0
 leftover private runtime dirs: 0; nested processes alive: 0
 PILOT ISOLATED_OK
 exit=0
+
+Errata (2026-10-23, L1, after w1 seat ScribeMistakes flagged it): the failed-run list above has five entries of
+which the fifth is the success; the coredump count rose by five (1330 -> 1335), so there were five failed runs, not
+four. Run 3 (unpatched tinywl) was executed twice — once as listed, once again with Hyprland debug logs and AQ_TRACE
+enabled to read the allocator error — before run 4 (WAYLAND_DEBUG=client). Each of those five failed runs aborted
+(SIGABRT) and added one record; the patched method (run 5 and every run after it) added none.
