@@ -114,3 +114,10 @@ v2 limit (CtlC1OffTopic): an off-topic line that happens to contain a topic word
 restates its words. The counter cannot judge whether a claim is supported, so wave-2 reviewers re-read every
 claim row against its bytes, and any unsupported row is reported against C1. No control meets the counted C1 v2 or
 C2 target; the C2 before value is 1/12 (do-nothing), so C2 is valid.
+
+## Correction (round 25; append-only)
+
+The receipts table heading above says "Control receipts (committed before any data seat)". That is false: the receipts
+commit `464a0245` landed at 00:53:36 −03, about 18 minutes after the wave-1 data seats were created (registry
+`createdAt` 00:35:33 −03), and two controls scored at 00:36, after wave 1 spawned. It is true only as "committed before
+any data landed" (`cf86f9e0`, 01:03:16 −03). Source: `corpus/lessons/round-24-verifier-spotcheck.md:117-122` (§2.3).

@@ -22,7 +22,7 @@ What exists is narrower:
 | which rule fired on a window | **tag route**: give the rule a unique `tag` effect, then read `tags` in `hyprctl clients` (A10, A22) | the tag set the applicator's tag keeper holds (A9, A10) | provenance when two rules add the same tag; dynamic tags carry a `*` suffix (A22) |
 | enable or disable a rule to test it | named rule handle: Lua `set_enabled`/`is_enabled` (A12–A14; layer rules A23) | whether the effect disappears when the rule is off | this mutates compositor state — operator only, never a mado probe |
 | per-property origin | applicator stores a value plus a **rule-property mask** and a priority class (A5–A8) | which *match properties* a setting came through, and that it was a window rule | the rule's identity; neither is exported by hyprctl, Lua or socket2 |
-| logs | none name a rule; the one matched-by log line is the workspace-rule path (A18) | — | window/layer rule identity |
+| logs | none name a rule; the one matched-by log line (A18) logs the window-rule `workspace` *effect* being applied, not a workspace-rule path (in-row correction, round 25: the round-24 text said "is the workspace-rule path"; see Errata item 5) | — | window/layer rule identity |
 
 Ordering still decides which value wins: named rules first, then anonymous, top to bottom, last match wins (A21,
 A25, A26). Attribution by reasoning therefore means reading the declared files in that order; it is an inference,
@@ -163,3 +163,10 @@ logs, the applicator) ties an applied property to the rule that set it. These co
    config bytes under hyprlang but no rule list (AtkHyprctlChannel). Lua can also read `window.tags` and filter
    `hl.get_windows({tag=…})`; neither names a rule (AtkLuaChannel). Host join: 23 files carry rule sites (not 24),
    and 4 lines carry both a tag effect and `match:tag`; no tag string was read or recorded (AtkHostJoin).
+
+## Errata (round 25; append-only)
+
+- Row `logs` (`:25`) was corrected in place in round 25 (repair R3, routed by the round-24 closure
+  `corpus/lessons/round-24-verifier-spotcheck.md:72-73,184-185`): its body said the A18 line "is the workspace-rule
+  path", which item 5 above already contradicted. The row now says what item 5 says. This is the only body line
+  changed after round 24; the heading of the round-24 errata ("the body above is unchanged") was true when written.

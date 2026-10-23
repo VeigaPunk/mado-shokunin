@@ -437,6 +437,11 @@ Source mutations and all new-row opening quotes are in lesson § Gate.
 | source-fragment collision screen | Stop a repeated active canonical URL despite different scope wording; preserve rejected history and valid supersedes links | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --selftest` 25/25; real historical registry exits 1 naming S017/S030, current exits 0; `evidence/collision-*-corrected.txt` | 13 |
 | digest-pinned frozen regression | Verify both committed gate/harness input digests before evaluating the recorded regression, with tamper refusal | `python3 .ufo/waves/round-13/frozen/verify.py` → `frozen_match`, exit 0; `--selftest` 12/12; `frozen/expected.json` | 13 |
 
+Round-25 pointer (append-only, repair R6): the `source-fragment collision screen` row's "current exits 0" is stale —
+at round-24 base and tip `MistakeFix.py --registry corpus/SOURCES.md` prints `collisions=4`, exit 1 (round-24
+section "Capability status", scope paragraph; closure `corpus/lessons/round-24-verifier-spotcheck.md:106-111`). See
+`## Current state (round 25)` for the round-25 re-run.
+
 These demonstrations belong to C1's frontier and C2's gate conformance,
 not additional claims. Short `evidence/` and `frozen/` paths above resolve
 under `.ufo/waves/round-13/`. Saturation line remains 9.0 and stagnation
@@ -1341,6 +1346,10 @@ tripwire rows — observed vs lead; fail-closed harnesses (round 20)".
 |---|---|---|---|
 | tripwire evidence marker | Tell an observed command from a lead (argv stated, executing body not visible) on every finding row, and drop provably pure data | `python3 -I .ufo/waves/round-20/tw-precision.py 28c6837` (P 66/66, L 17/18); `tw-recall-split.py 28c6837` (5 observed + 1 lead) | 20 |
 | harness fail-closed check | Show whether a stub/namespace harness runs its payload after any of six forced setup failures | `bash .ufo/waves/round-20/isolation-check.sh HARNESS` (`evidence/crit29-*.txt`) | 20 |
+
+Round-25 pointer (append-only, repair R6): the `tripwire evidence marker` row's "L 17/18" was measured at `28c6837`
+and is superseded: `tw-precision.py` gives L 15/18 at `8e5d9369` (round-24 section "Capability status", row
+`tripwire evidence marker` = `fails`). See `## Current state (round 25)` for the round-25 re-run.
 
 ## Round 20 — attempt-2 recovery registration (2026-10-21)
 

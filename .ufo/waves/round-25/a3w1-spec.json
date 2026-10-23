@@ -1,0 +1,207 @@
+{
+ "wave": "mado-r25-a3w1",
+ "reportDir": ".ufo/waves/round-25/a3w1/reports",
+ "context": "# Goal\nmado round 25 (attempt 3) wave a3w1 \u2014 PRE-DATA wave: control receipts against the frozen C1 counter v4, attacks on that counter and its Hyprland oracle, source opening, and C2 capability-row re-runs. No item in this wave builds or edits the claimed tool `tools/mado-binds.py`, and no item builds a full bind resolver: controls are shapes that SKIP the claimed work.\nLane repo /home/vgpnk/Projects/shokunin/mado-shokunin (jj-colocated, branch master, tip 1ed41fa8). Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/registration.md first; its last section \"Attempt 3\" is the current rule (counter v4, PRED-C1 (v4)).\nC1 (operability, capability acquisition, sourced): a static Hyprland bind-table resolver `python3 -I tools/mado-binds.py --home DIR` that reads DIR/.config/hypr/hyprland.conf (following `source =`, globs, `~`=DIR) and prints the JSON array `hyprctl binds -j` would print (18 fields). Frozen counter v4: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count.py (sha256 323a384925d1cc259a6b80418630ef956bf0c651cacf615e4cd615bda4d342e2), generator /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count-v3.py (pinned). v4's expected table for each of 41 cases comes from Hyprland v0.56.2 itself (a nested instance on a copy of the case tree, read with `hyprctl -i <inst> binds -j`); the tool runs in bubblewrap (no network, no /run, cleared env, HOME=/snap/home; single python3 stdlib file). Target cases_pass=41/41 and embed_hits=0. Each counter run opens ~41 short-lived nested Hyprland windows on the operator's session (\u22646 at once host-wide, lock files) and takes about 15\u201390 s.\nC2 is exploratory (no counter): a current-state ledger of every SCORECARD capability row, re-run at base 41cc04c8.\nPins: Hyprland v0.56.2 = efb50993780079460b0cbed1363e2166a2de1d9f; hyprlang 0.6.8; hyprutils 0.14.2; aquamarine 0.15.1 (host packages). Raw URLs: https://raw.githubusercontent.com/hyprwm/<repo>/<commit-or-tag>/<path>; wiki repo hyprwm/hyprland-wiki pin c66e8de21f5ecdc4bc5e278e7d94800ea10957af. Use curl on raw URLs (the GitHub API is rate-limited).\n\n# Control contract (items named K4*)\n- Write your control program ONLY at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/controls/v4/<YourItemName>.py (single python3 stdlib file, same CLI as the tool: `--home DIR`, JSON array on stdout). Build the STRONGEST version the shape allows \u2014 the point is to learn whether the frozen counter can be met by that shape \u2014 and never do work the shape forbids.\n- Score it: `cd /home/vgpnk/Projects/shokunin/mado-shokunin && timeout 1200 python3 -I .ufo/waves/round-25/c1/count.py 1ed41fa8 --tool-file /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/controls/v4/<YourItemName>.py` (fresh seed each run). Run it twice; paste both receipts verbatim (stdout + `exit=`). First line of your report's verdict section: `CONTROL <YourItemName> v4 best: cases_pass=N/41 embed_hits=E verdict=<V> \u2014 met|not met` (met = TARGET_MET). An exit-2 run (ORACLE_*/UNSTABLE) is reported verbatim and re-run once.\n- Never edit the counter or change its rule; if you believe the counter is wrong, say so with a concrete demonstration.\n\n# Source-opener contract (scribe items named Src*/Wiki*)\nFor each file: `curl -fsSL <raw URL> -o /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/fetch/a3w1/<YourItemName>.bin` (text files under 2 MB only); record URL, `sha256:`, byte count and line anchors. Draft one SOURCES row in the 11-cell shape `| S? | <title> \u2014 <raw URL> | code|docs | A | <scope> | <path:lines @ commit, sha256:<64hex>, <bytes> B> | <teaches> | mined | 2026-10-23 | on-release | corpus/knowledge/bind-table-r25.md |` (no `|` inside cells), and 2\u20134 located quotes (each \u226425 words, copied byte-for-byte; check with python that the whitespace-collapsed quote is a substring of the whitespace-collapsed decoded bytes; give `path:line`), each with one sentence on what it teaches about how Hyprland builds the bind table or how the counter's oracle works. Read the existing rows in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md (S153\u2013S168 are Hyprland/wiki rows) and say whether your URL duplicates one (the census flags duplicate URLs across scopes). Write nothing in corpus/; your report carries the draft.\n\n# C2 row contract (executor items named Cap*)\nRead the named SCORECARD.md row at base 41cc04c8 (`git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 41cc04c8:SCORECARD.md`) and its section. Identify the row's stated capability, its demonstration command and evidence pointer. Make a sandbox clone: `git clone -q /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r25a3/c2/<YourItemName>` then `git -C /fast/scratch/hyaku/mado-r25a3/c2/<YourItemName> checkout -q --detach 41cc04c8` (GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE unset). Re-run the demonstration command there (`timeout 600`, `prlimit --as=4000000000`), never in the lane. If the command is not runnable as written, try the nearest documented form and say so. Grep the whole SCORECARD.md at 41cc04c8 for later rows or text that supersede or contradict this row. Output one ledger line: `| SCORECARD.md:<line> | <capability> | <stated claim, \u226420 words> | <observed at 41cc04c8: works / fails / not runnable, with exit code and key output> | <exact command> | <superseding pointer or \u2014> |` plus the verbatim command output (trim to \u226480 lines). Delete your clone before returning.\n\n# Hard bounds\n- Never run git/jj write commands in the lane or the fleet repo (/home/vgpnk/Projects/shokunin); never edit lane files except your own report and the one output path your item names. Sandbox git only in clones under /fast/scratch/hyaku/mado-r25a3/ with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE unset.\n- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.\n- Host safety: never change packages, services, ~/.config files or live compositor state; hyprctl read verbs only (binds, version, configerrors, instances, -i <your own nested instance> binds); never dispatch, keyword, reload, kill the live compositor. Never start a nested Hyprland on a tree containing exec keyword lines (exec, exec-once, execr, execr-once, exec-shutdown). Kill every process tree you start before returning. Wrap commands in `timeout`; cap memory; never write unbounded files; never point a log or marker at a file Python imports (a seat once grew sitecustomize.py to 262 GB); check `df -h /fast` before large writes; never run du/find over /fast/scratch with the bash tool's builtins (use /usr/bin/du).\n- Tooling authorization (operator, 2026-10-19): you and every seat may install or upgrade tools that help the task \u2014 read /home/vgpnk/.omp/agent/RULES.md first (official channels, record tool/version/channel/reason). All pacman transactions are PAUSED host-wide: install via uv tool / npx / an official binary in ~/.local/bin; never pacman -S/-Sy/-Syu/-U/-R.\n- Sources: ordinary fetch only; never bypass a bot challenge or access control; an unopenable source is recorded as unopened.\n- Never message agent://all. Leaf seat: no spawns. Never pass a model parameter.\n- Plain English. Report: what you did, exact commands, outputs or receipt paths, verdict line. An unrun check has not passed; never fabricate.\n",
+ "items": [
+  {
+   "name": "K4DoNothing",
+   "role": "critic",
+   "prompt": "Shape: DO-NOTHING. The tool file is empty (0 bytes) or exits 0 without output \u2014 whichever scores higher. Also score an absent-tool baseline by running the counter at REV 41cc04c8 (no tool) once and quote it. Follow the control contract."
+  },
+  {
+   "name": "K4EmptyArray",
+   "role": "mutation-tester",
+   "prompt": "Shape: ALL-FALSE. The tool prints `[]` for every tree. Also try a variant that prints one constant bind entry; report the better. Follow the control contract."
+  },
+  {
+   "name": "K4Junk",
+   "role": "critic",
+   "prompt": "Shape: JUNK. The tool prints well-formed but content-free entries (all 18 fields, random keys/args/flags), with the entry count derived from the number of lines starting with `bind` in the root file only. No parsing of fields. Follow the control contract."
+  },
+  {
+   "name": "K4Echo",
+   "role": "mutation-tester",
+   "prompt": "Shape: SERVER ECHO. The tool tries every way to obtain the compositor's own table from inside the sandbox: `hyprctl binds -j`, hunting for any Hyprland socket under /run, /tmp, $XDG_RUNTIME_DIR or abstract sockets, reading /proc for compositor processes. Print whatever it gets, else `[]`. Report which avenues were blocked and how. Follow the control contract."
+  },
+  {
+   "name": "K4ShellOut",
+   "role": "critic",
+   "prompt": "Shape: ORACLE SHELL-OUT. The tool tries to start Hyprland itself inside the sandbox on the case tree (`Hyprland -c ...` with every backend/env trick you can find: headless, no WAYLAND_DISPLAY, AQ_* variables, --verify-config output parsing) and read binds back (hyprctl -i, or parsing its log). Print whatever it gets, else `[]`. Report exactly where it fails. Never start Hyprland outside the counter's sandbox for this item except a single quick local probe with exec-free trees. Follow the control contract."
+  },
+  {
+   "name": "K4EncodedTable",
+   "role": "mutation-tester",
+   "prompt": "Shape: ENCODED CACHE + DELTA. At build time capture the live table (`hyprctl binds -j`, read verb) and embed it compressed/base64 (so the counter's plain-string embed check may miss it), plus encoded sha256 digests of the snapshot's files; at run time, for each file whose digest matches the snapshot use the cached entries; parse only changed/new files with an easy-grammar parser (`bind[flags] = MODS, KEY, [DESC,] DISPATCHER, ARG`, canonical mod names, `unbind`, `$var`, `#` comments, `source` reachability). Make it as strong as the shape allows. Follow the control contract."
+  },
+  {
+   "name": "K4GrepAll",
+   "role": "critic",
+   "prompt": "Shape: GREP EVERY BIND LINE. Read every file under the four roots (.config/hypr, .config/omarchy/current/theme, .local/share/omarchy/default/hypr, .local/state/omarchy/toggles/hypr) regardless of `source`, take every line starting with `bind`, split on commas with canonical mod names; no source graph, no variables, no unbind, no comment stripping beyond whole-line `#`. Follow the control contract."
+  },
+  {
+   "name": "K4EasyOnly",
+   "role": "mutation-tester",
+   "prompt": "Shape: PARTIAL GRAMMAR, NO CACHE. An honest resolver for the easy grammar only: full source walk (`~`, globs), `$var` expansion, `#` comments, `unbind`, `bind[d|l|e|r combos] = MODS, KEY, [DESC,] DISPATCHER, ARG` with canonical mod names (SUPER/SHIFT/CTRL/ALT) and named keys. It must NOT implement modifier aliases/separators, keycodes (`code:NN`/numbers), mouse binds, rejected-line rules, dispatcher validation or case lowering. No embedded data. Follow the control contract."
+  },
+  {
+   "name": "K4LabelKeyed",
+   "role": "critic",
+   "prompt": "Shape: FIXTURE/LABEL-KEYED. Detect from file names, directory layout, line counts or generator fingerprints which kind of case the tree is (unperturbed snapshot, new toggles file, new sourced file, synthetic tree, etc.) and key the output on that detection, using an encoded embedded copy of the live table where it helps and the cheapest possible handling elsewhere. The point is to see whether case identity alone leaks the answer. Follow the control contract."
+  },
+  {
+   "name": "K4NoReader",
+   "role": "mutation-tester",
+   "prompt": "Shape: NO READER. The tool opens no file. It prints a plausible table synthesized from vocabulary statistics you gather now from `hyprctl binds -j` (dispatcher frequencies, mod masks, key names) without embedding any arg/description string of 12+ characters. Make it as plausible as possible. Follow the control contract."
+  },
+  {
+   "name": "SentOracleBoundary",
+   "role": "sentinel",
+   "prompt": "Attack counter v4's trust boundary (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count.py, read-only). (1) From inside the tool sandbox (`run_tool` in count-v3.py, imported by v4), can a tool reach the oracle's nested instances, the live compositor, the host home, or any file the oracle writes (tmp dirs, /fast/scratch/hyaku/mado-r25a3/../mado-r25-oracle-slots, $XDG_RUNTIME_DIR/hypr)? Write probe tools under /fast/scratch/hyaku/mado-r25a3/sent/ and score them with the counter (`--tool-file`, REV 1ed41fa8). (2) Can a tool influence the oracle (e.g. by writing into the case tree, or timing)? (3) Does `strip_exec` or ORACLE_EXTRA change any bind the tool should predict (find a tree where the oracle's table differs from Hyprland's table of the unstripped tree \u2014 use only exec-free trees or reason from source)? (4) Is ORACLE_CHECK a real guard (what does it prove, what not)? Verdict line `SENTINEL v4 boundary: <holds|breach: ...>`."
+  },
+  {
+   "name": "MutCounterV4",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test the frozen counter v4 itself, never in place: copy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count.py and count-v3.py into /fast/scratch/hyaku/mado-r25a3/mut/<n>/ (keep the pin: the copy of count-v3.py must stay byte-identical; v4 resolves LANE from count-v3.py's location, so set up the copy so REV resolution still works, e.g. symlink a lane path, or patch only LANE in your mutant and say so). Apply one mutation per copy \u2014 e.g. compare against the live table instead of the oracle for all cases; skip ORACLE_CHECK; treat ORACLE_FAIL as an empty expected table; drop `--clearenv`/`--unshare-all` in run_tool; lower the embed threshold to 1000 chars; compare only keys not all 18 fields; count PASS on missing==0 only \u2014 and run each mutant against two tools: `[]` and a junk tool. For each, report whether the mutant's verdict differs from the original's on those tools and whether the original fails closed where the mutant does not. Verdict line `MUTCOUNTER v4: <k>/<n> mutants change a verdict; surviving: ...`."
+  },
+  {
+   "name": "ExecReplayIdentity",
+   "role": "executor",
+   "prompt": "Verify the registration claim that v4 replays v3's case trees for a seed. In /fast/scratch/hyaku/mado-r25a3/replay/, write a harness that imports /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count-v3.py (importlib, read-only) and reproduces both counters' generation loops (v3: copytree + perturb per case in order; v4: same loop in its step 1) for seeds 0123456789abcdef, 00000000deadbeef and one fresh seed, and compares per-case tree digests (sorted relpath + sha256 of bytes) and expected-model lists. Also check that v4's loop consumes the rng exactly as v3's (no extra draws). Do not run the oracle. Verdict line `REPLAY v4==v3 trees: <k>/41 per seed ...`."
+  },
+  {
+   "name": "ExecOracleDeterminism",
+   "role": "executor",
+   "prompt": "Check the v4 oracle is deterministic and faithful. In /fast/scratch/hyaku/mado-r25a3/oracle/, import /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count.py's functions read-only (importlib; it imports count-v3.py) and: (a) for seed 0123456789abcdef build the 41 case trees (same loop as v4 main), run `oracle()` twice per tree and compare the two tables (multiset over 18 fields); (b) for the 4 SYNTH and 4 HARD trees (exec-free, generated), compare oracle() with a variant that does NOT append ORACLE_EXTRA; (c) time per instance. Respect the slot lock (call oracle() as is). Never launch a nested instance on a tree with exec lines yourself. Verdict line `ORACLE determinism: <k>/41 identical; extra-lines effect: <none|...>`."
+  },
+  {
+   "name": "RevCounterV4",
+   "role": "reviewer",
+   "prompt": "Review /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/c1/count.py (v4) against the PRED-C1 (v4) sentence in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/registration.md section 'Attempt 3' and the docstring. Does the code compute exactly what the sentence says (population 41, all 18 fields, exact multiset, embed rule, sandbox description)? Are the guards (UNSTABLE, ORACLE_DRIFT, ORACLE_FAIL, pin) fail-closed? Is there any path where a missing/failed oracle counts as a pass, or where the tool's output is compared against something other than the oracle? Is the predicate meetable by a correct resolver (no impossible case)? Read-only; you may run the counter on REV 41cc04c8 once. Verdict line `REVIEW v4: <sound|defects: ...>`."
+  },
+  {
+   "name": "SrcHandleSource",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: Hyprland src/config/legacy/ConfigManager.cpp @ efb50993780079460b0cbed1363e2166a2de1d9f \u2014 the `source` keyword handler (glob expansion, `~` handling, relative paths, missing-file behavior) and the `$variable` handling if it lives there. Quote the lines that decide which files a config reads. Follow the source-opener contract."
+  },
+  {
+   "name": "SrcHyprctlInstance",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: Hyprland hyprctl client source @ efb50993780079460b0cbed1363e2166a2de1d9f (find the path: hyprctl/main.cpp or hyprctl/src/*.cpp) \u2014 how `-i/--instance` selects an instance, how `instances` lists pid/signature, and where the socket path comes from. This grounds the counter's oracle readback. Follow the source-opener contract."
+  },
+  {
+   "name": "SrcAquamarineBackend",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: aquamarine v0.15.1 (tag or commit matching the host package aquamarine 0.15.1) src/backend/Backend.cpp \u2014 backend selection (wayland when WAYLAND_DISPLAY is set, DRM otherwise, headless) and the failure path behind `CBackend::create() failed`. This grounds why the oracle runs nested and why a sandboxed tool cannot start Hyprland. Follow the source-opener contract."
+  },
+  {
+   "name": "SrcHyprlandMain",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: Hyprland src/main.cpp @ efb50993780079460b0cbed1363e2166a2de1d9f \u2014 `--config`/`-c` handling, `--verify-config`, and how the config path is chosen; quote what a nested launch with -c relies on. Follow the source-opener contract."
+  },
+  {
+   "name": "WikiVariablesKeywords",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: hyprland-wiki @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af \u2014 find the page(s) documenting hyprlang-era `$variables` and the `source` / `exec` / `exec-once` keywords (list the content/ tree via raw URLs you can guess from the repo layout or the GitHub web tree page; ordinary fetch). Quote variable definition/expansion rules and source semantics. Follow the source-opener contract."
+  },
+  {
+   "name": "WikiHyprlang",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: hyprland-wiki @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af \u2014 the hyprlang page (comments `#`, the `##` escape, categories, `source`); quote the comment and escape rules a static resolver must follow. Follow the source-opener contract."
+  },
+  {
+   "name": "WikiUsingHyprctl",
+   "role": "scribe",
+   "prompt": "Source opener (C1 sourced part). Open: hyprland-wiki @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af \u2014 the 'Using hyprctl' page: `binds`, `instances`, `-i`/`--instance`, `-j`. Note S016 already cites the live wiki URL for getprop: say whether this pinned raw URL duplicates it. Follow the source-opener contract."
+  },
+  {
+   "name": "CapSourcesRegistry308",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:308 at 41cc04c8, capability `sources registry`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapVerdictGateLiveFilePlane309",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:309 at 41cc04c8, capability `verdict gate (live + file plane)`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapHermeticSelfTest310",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:310 at 41cc04c8, capability `hermetic self-test`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapMutationRegressionWithRe311",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:311 at 41cc04c8, capability `mutation regression with re-cut`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapSourceFragmentCollisionS437",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:437 at 41cc04c8, capability `source-fragment collision screen`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapDigestPinnedFrozenRegres438",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:438 at 41cc04c8, capability `digest-pinned frozen regression`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapFiniteDeclaredActionClas782",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:782 at 41cc04c8, capability `finite declared-action classifier`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapPostHocTranscriptTripwir919",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:919 at 41cc04c8, capability `post-hoc transcript tripwire`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapTripwireFrozenReplayGate1020",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1020 at 41cc04c8, capability `tripwire frozen replay (gate entry)`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapLandednessCheck1158",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1158 at 41cc04c8, capability `landedness check`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapTripwireEvidenceMarker1342",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1342 at 41cc04c8, capability `tripwire evidence marker`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapHarnessFailClosedCheck1343",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1343 at 41cc04c8, capability `harness fail-closed check`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapTripwireReachedBodySweep1409",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1409 at 41cc04c8, capability `tripwire reached-body sweep`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapDetectorRemovalSideGuard1410",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1410 at 41cc04c8, capability `detector removal-side guard`. Follow the C2 row contract."
+  },
+  {
+   "name": "CapArtifactOnlyAssessmentIn1464",
+   "role": "executor",
+   "prompt": "C2 row re-run: SCORECARD.md:1464 at 41cc04c8, capability `artifact-only assessment integrity`. Follow the C2 row contract."
+  },
+  {
+   "name": "ScoutBindSurface",
+   "role": "scout",
+   "prompt": "Per-surface recon for C1 (read-only). Walk the host's Hyprland config tree exactly as Hyprland would (start ~/.config/hypr/hyprland.conf, follow `source =` with ~ and globs) and report: the ordered list of files read; per file, counts of bind keyword variants (bind, bindd, bindl, binde, bindm, bindr, bindo, bindn, bindt, bindi, bindc, bindg, bindu, bindk, bindx, other), `unbind`, `submap`, `$var` definitions, lines with trailing comments, lines with `##`, keycode keys, mouse keys, modifier spellings used. Compare the total bind count you derive with `hyprctl binds -j | jq length` (read verb). This informs the tool builder; write nothing but your report."
+  },
+  {
+   "name": "ConnOracleGaps",
+   "role": "connector",
+   "prompt": "Cross-axis pattern scan (read-only): across mado's own history (/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-*.md, *-verifier-spotcheck.md, SCORECARD.md), find every claim whose instrument compared a lane artifact against the lane's own model or transcription rather than an independent ground truth (the shape v4 removes from C1: self-model expectations). List each with pointer, which closure caught it (if any), and whether an external oracle existed for it. Also scan sibling lanes /home/vgpnk/Projects/shokunin/*-shokunin/corpus/lessons/ for lanes that used a running program as an oracle in a counter (pointer + one line). Output feeds this round's mined mistake. Verdict line `CONNECTOR self-model instruments: <n> in mado, <m> sibling oracle patterns`."
+  },
+  {
+   "name": "CritC2Ledger",
+   "role": "critic",
+   "prompt": "Attack C2 (exploratory, no counter): /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-25/registration.md section 'C2 \u2014 calibration (lowest scored axis), exploratory'. The planned artifact is an appended SCORECARD section `## Current state (round 25)` listing all 15 capability-table rows (SCORECARD.md:308-311, 437, 438, 782, 919, 1020, 1158, 1342, 1343, 1409, 1410, 1464 at 41cc04c8; :204 is the 'none yet' placeholder) with stated claim, observed status at base (re-run), command and superseding pointer. Before data: what would make such a ledger NOT better than the prior state (transcription of a counter, copying observed outputs without re-running, missing rows, stale pointers)? Enumerate the capability-table rows yourself from `git show 41cc04c8:SCORECARD.md` and say whether 15 is the full population (any table whose header is not `| Capability |`?). Give the non-author acceptance test a reviewer should apply. Verdict line `CRITIC C2: population <n>; risks: ...`."
+  }
+ ]
+}

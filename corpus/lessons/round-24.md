@@ -112,3 +112,16 @@ Wave 2: 40 seats (15 reviewer, 12 critic, 10 scout, 3 mutation-tester), reports 
   `:1014-1015`, not the closure's `:1013-1014` (AtkS149Span, ScribeS149Anchor). The S149 anchor cell (`Home.md:1011-1015`)
   already contains it and is not edited.
 - **Routed defects 1, 2, 6.** Hold (AtkLesson23Fix, AtkReadmeFrontier, AtkCarry).
+
+## Corrections (round 25; append-only)
+
+- **S161 rationale (`:58-59`) is false.** It says S161 is `queued` because "its only quote cell contains `||`". The
+  committed S161 quote (`query.className = …`, 15 words) contains no `|`; the `||` was in a discarded wave-1 quote
+  (round-24 closure `round-24-verifier-spotcheck.md:145`, CloseSpotCheck). The decision (`queued`) stands for the
+  reason the closure gives: no note row cites S161 and the file is a query filter, not attribution.
+- **"control receipts `464a0245`, all before any data seat" (`:6`) is false.** The receipts were committed at
+  00:53:36 −03, about 18 minutes after the wave-1 data seats were created (registry `createdAt` 00:35:33 −03); two
+  controls scored at 00:36, after wave 1 spawned. True only as "before any data landed" (first data landing
+  `cf86f9e0`, 01:03:16 −03). Source: round-24 closure §2.3 (`round-24-verifier-spotcheck.md:117-122`). The same
+  correction is appended to `.ufo/waves/round-24/registration.md`. Round 25 lands its control receipts before its
+  data wave is created (QUALITY criterion 36).
