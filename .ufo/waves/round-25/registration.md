@@ -221,3 +221,15 @@ characters; target: cases_pass=41/41 and embed_hits=0.
   control receipts landed → wave `a3w2` (data: the tool) → residual attack call on the landed tool → measurement.
   C2 stays exploratory as declared above. Routed repairs R3–R6 are done by the L1 (attempt 2's repair seats are dead and
   their tasks are not re-sent).
+
+### Attempt 3 — after the control receipts (`459dd17f`), before any data seat
+
+- Control receipts: 10 shapes under v4, none met (`controls/v4/*.md`; best K4LabelKeyed 37/41, K4EncodedTable 31/41,
+  K4EasyOnly 4/41, the rest 0/41). Known weaknesses reported, not amended: the case directory name (`cases/<LABEL>/home`)
+  is visible to a tool through `/proc/self/mountinfo`, so a tool can learn the case type (K4LabelKeyed); an encoded copy
+  of the live table evades the plain-string embed check (K4EncodedTable, K4LabelKeyed). Neither meets the target: HARD
+  trees fail every shortcut that does not parse the hard grammar. The oracle does not see binds an exec'd command would
+  create at runtime (SentOracleBoundary); no generated case adds exec lines and ORACLE_CHECK equals the live table.
+- Reading of a crash (RevCounterV4, minor defect, counter unchanged): a run whose output has no `PRED-C1 (v4)` line
+  (an uncaught exception exits 1 with a traceback) measured nothing; it is classified with exit-2 runs (re-run once,
+  both receipts kept), never as `TARGET_MISSED` or `TARGET_MET`.
