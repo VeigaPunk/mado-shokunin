@@ -48,6 +48,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/tripwire-binding-boundaries-r21.md` (round 21; lane tooling, no surface; index row added round 24) | Binding, value-use, partialmethod, process-capability and strict-write boundaries for the transcript tripwire; its final section names the factory-lifetime, global, returned-name, direct-run and synthetic-name counterexamples left open. Round 21 closed harmed; not a restored-recall authority. | `source:` S116–S118 in [SOURCES](SOURCES.md); evidence `.ufo/waves/round-21/residual/`, lesson21. |
 | `knowledge/tripwire-lifetime-recovery-r22.md` (round 22; lane tooling, no surface; index row added round 24) | Lexical-frame versus late-global boundary, conditional standard Timer invocation, and finding-row versus incident-line evidence arithmetic. Not an admitted recovery capability; read its final round-22 withdrawal before using any candidate count. | `source:` S121, S122 in [SOURCES](SOURCES.md); lesson22 and `.ufo/waves/round-22/evidence/resume/`. |
 | `knowledge/terminal-trees-r23.md` (round 23; surface P4 foot/kitty/ghostty; index row added round 24) | Documentary config search path, format, include and reload routes for foot 1.28.0, kitty v0.49.2 and ghostty v1.3.1, joined to the declared host trees. None of the three terminals is installed, so each tree is declared bytes with no consumer; reload effects stay `[UNK]`. | `source:` S123–S152 in [SOURCES](SOURCES.md) (S132 queued); in-note errata; recheck on-release. |
+| `knowledge/bind-table-r25.md` (round 25; surface P1 Hyprland binds) | How Hyprland v0.56.2 builds its bind table from a hyprlang config tree (source graph, variables, comments and `##`, bind flags, modifiers, keycodes, mouse binds, rejected lines, unbind, the 18 `hyprctl binds -j` fields) and how the round-25 counter reads Hyprland's own table through a nested instance. Runtime binds created by exec'd commands are outside it. Tool: `tools/mado-binds.py`. | `source:` S162, S167, S169–S172 in [SOURCES](SOURCES.md); lesson25 § Gate. |
 
 ## Quality bar
 
@@ -206,3 +207,10 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
   rule that set it; the usable route is a unique `tag` effect read from `hyprctl clients`. Still open: observed
   attribution on this host (no rule was toggled and no tag value read), plugin-side match recording, and
   output management, the input ladder and Waybar module text as listed above.
+
+### Round-25 bind-table route
+
+- New surface instrumented: the Hyprland bind table can now be predicted from config bytes before the operator
+  applies them — [bind table](knowledge/bind-table-r25.md) and `tools/mado-binds.py` (round-25 C1, counter v4
+  compares it with Hyprland v0.56.2's own table from a nested instance). Still open: binds created at runtime
+  (`exec`/`hyprctl keyword`), the Lua config era, and submaps/`k`/`s` flags beyond what the counter generates.

@@ -1632,8 +1632,10 @@ C2 of round 25 (calibration, **exploratory**: no counter, no score change claime
 reviewer). One place that says, for every capability the file names, what it claims, what a fresh run at one base did,
 how to re-run it, and which statement now governs. Base `41cc04c8d593837a0d5078bffaacdaa163d12897` (round-25 base);
 each row was re-run by its own wave-a3w1 executor seat in a detached sandbox clone at that base (`timeout 600`,
-`prlimit --as=4000000000`), and re-derived independently by a wave-a3w2 reviewer seat. Receipts:
-`.ufo/waves/round-25/a3w1/reports/Cap*.md` (run) and `.ufo/waves/round-25/a3w2/reports/Rc*.md` (re-check).
+`prlimit --as=4000000000`), and re-derived independently by a second reviewer seat (wave a3w2 for 14 rows, the
+residual call for `:311`); all 15 re-checks agree, with nits only. Receipts: `.ufo/waves/round-25/a3w1/reports/Cap*.md`
+(run), `.ufo/waves/round-25/a3w2/reports/Rc*.md` and `.ufo/waves/round-25/a3res/reports/RcMutationRegression311.md`
+(re-check).
 
 Population (enumerated from the base blob without a case-sensitive header filter; a3w1 `CritC2Ledger.md`): 15
 capability identities in 9 tables whose first header cell is `Capability` (rows `:308-311`, `:437-438`, `:782`, `:919`,
@@ -1666,3 +1668,45 @@ pointers at their rows); four rows carry documentation defects a reader would tr
 written, `:1343` placeholder argument, `:1020` exits 1 by design, `:310`/`:308` stale counts). Not claimed: any score
 change, admission or restored capability. This section is bookkeeping for the next reader; the C2 verdict is the
 non-author reviewer's.
+
+## Round 25 — results and author verdicts (2026-10-23)
+
+Registration `.ufo/waves/round-25/registration.md` (sections "Attempt 3" and "after the control receipts"). Base
+`41cc04c8d593837a0d5078bffaacdaa163d12897`. C1 measured at lane commit `ef94763c6a75d1b0860091b19bb61c9bd7cda9e3`
+(receipt `.ufo/waves/round-25/evidence/c1-after-v4-ef94763c.txt`, one run, seed `ed0d8a943980d2f2`).
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 operability, capability acquisition (sourced): static Hyprland v0.56.2 bind-table resolver `tools/mado-binds.py` | `41cc04c8`: `tool=MISSING_TOOL`, `PRED-C1 (v4) cases_pass=0/41`, exit 1 → `ef94763c`: `cases_pass=41/41 embed_hits=0 verdict=TARGET_MET`, exit 0 | `python3 -I .ufo/waves/round-25/c1/count.py REV` (v4, sha256:`323a3849…42e2`; generator `count-v3.py` sha256:`8532d3e9…8375`) | target met under the frozen v4 rule; controls (10 shapes, landed `459dd17f` before data) best 37/41; v1 33/33, v2 37/37, v3 41/41 reported, not substituted |
+| C2 calibration, exploratory: `## Current state (round 25)` ledger | no single present-tense place; round-24 status table covered 12 of 15 identities and ran `:309` `--no-live` only → 15 identities, each run fresh at base and re-derived by a second seat | none (exploratory) | judged by the named non-author reviewer (round report) |
+
+### Capabilities (round 25)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| static bind-table resolver | Print, from config bytes only, the bind table Hyprland v0.56.2 would build from a hyprlang config tree (source graph, variables, comments, bind grammar, unbind), as the 18-field `hyprctl binds -j` array | `python3 -I tools/mado-binds.py --home DIR`; measured `python3 -I .ufo/waves/round-25/c1/count.py ef94763c` → 41/41 against Hyprland's own tables (`evidence/c1-after-v4-ef94763c.txt`) | 25 |
+
+Scope limits found after data (residual call, not the predicate): `{{…}}` arithmetic expressions are evaluated by
+Hyprland and left literal by the tool (`.ufo/waves/round-25/a3res/reports/ResC1Remeasure.md`, 9/10 hand-made trees
+agree); binds created at runtime by exec'd commands are outside any static reading. Harm watch: at the measured commit
+the round-23 C3 inventory counter read 1 (the PROVINCE row for the new tool landed in the next commit, `90224671`,
+because the registration made that row depend on the measurement); it reads 0 from `90224671` on.
+
+### Round 25 — C2 ledger errata after the non-author judgment (append-only; the ledger above is the judged object)
+
+The named non-author reviewer (`.ufo/waves/round-25/a3res/reports/RevC2Judgment.md`) judged the ledger
+`unprovable-but-better` and listed five errors; they are corrected here, not in the ledger rows:
+
+- F1: the ledger's receipt sentence is wrong twice. As first written it said every row was re-derived by a wave-a3w2
+  seat; while the review was running the author changed it to "wave a3w2 for 14 rows, the residual call for `:311`;
+  all 15 re-checks agree". Both are false: a3w2 re-derived 12 rows (`:308`, `:309`, `:310`, `:437`, `:438`, `:782`,
+  `:919`, `:1020`, `:1158`, `:1342`, `:1343`, `:1464`), the residual call re-derived `:311`, and `:1409` and `:1410`
+  have one run each (a3w1 only). The results-table row above ("each run fresh at base and re-derived by a second
+  seat") inherits the same error: 13 of 15 rows were re-derived.
+- F2: row `:308`'s command is the fleet script `bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate
+  --root <census root>`, not a lane-relative `scripts/sources-census.sh` (absent at base).
+- F3: the R6 pointers added 5 lines after `:438` and 4 after `:1343`, so rows after `:1343` shift by 9, not 10.
+- F4: row `:1158`'s `LANDED` verdicts depend on the remote tip observed at run time (`2896dc4a` for a3w1, `fa466833`
+  for the a3w2 re-check); verdicts were equal at both.
+- F5: row `:1410`'s "all guarded counters 0" leaves out `vcs_fp 26`, which the row's own receipt scopes out of the
+  guard.

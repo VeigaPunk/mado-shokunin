@@ -1607,3 +1607,25 @@ content), five prose errors in the new note (tag latch, enable/disable scope, lo
 count), and that C2's population is 12 of 15 capability rows with one outside row stale. Corrections are appended:
 note errata, a SCORECARD scope note, lesson-24 M24-5 and wave-2 dispositions, and README index rows for the three
 notes that the navigation counter showed unindexed since rounds 21–23. No predicate, manifest or claim row changed.
+
+## Round 25 — Hyprland oracle counter, bind-table resolver, current-state ledger (2026-10-23)
+
+Three attempts (two died with the orchestrator). Attempt 1 landed registration, counter v1, ten v1 control receipts
+and counter v2; attempt 2 landed counter v3; attempt 3 found that v1–v3 took every generated case's expected bind
+table from the counter's own line model, so a transcription of the model would meet them whatever Hyprland does.
+Counter v4 (`1ed41fa8`) keeps v3's case generator and asks Hyprland v0.56.2 itself: a nested instance per case tree
+(exec lines removed), read back with `hyprctl -i <instance> binds -j`; the unperturbed tree must equal the live table.
+
+Before any data seat, ten control shapes were scored under v4 and landed (`459dd17f`): do-nothing, `[]`, junk, server
+echo, Hyprland shell-out, encoded table + delta parser, grep of every bind line, easy-grammar parser, label-keyed
+detector, no-reader. None met it (best 37/41: the label-keyed detector, which learned the case type from
+`/proc/self/mountinfo` — lesson M25-2). Then two data seats wrote independent resolvers; the first returned
+(`ExecBindToolA`) landed as `tools/mado-binds.py` at `ef94763c`, and the single measurement gave
+`PRED-C1 (v4) cases_pass=41/41 embed_hits=0 verdict=TARGET_MET` (seed `ed0d8a943980d2f2`). Sources S169–S172 opened;
+S162 and S167 gained the new note in used-by; `corpus/knowledge/bind-table-r25.md` landed.
+
+C2 (exploratory): SCORECARD `## Current state (round 25)` lists the 15 capability identities with a fresh run at
+base each (13 work, `:437` and `:1342` fail as stated, four documentation defects), every row re-derived by a second
+seat. Routed round-24 repairs: A18 in-row correction, S161 and receipt-chronology corrections, SCORECARD pointers,
+QUALITY 36 with a check red on round 24 (its mutant coverage is weak: lesson M25-3); the population-equality part of
+routed defect 2 stays open (M25-4).

@@ -70,3 +70,17 @@ The nested read depends on a backend being available: Aquamarine's startup retur
 The a3w1 sentinel records a source-based, unexecuted boundary: because v4 removes standalone `exec` directives, a command launched by one that adds a bind through the `hyprctl keyword` API can create a runtime bind absent from the stripped oracle table. [observed: `.ufo/waves/round-25/a3w1/reports/SentOracleBoundary.md:7,36`]
 
 That boundary is about standalone exec directives, not a normal bind whose dispatcher is `exec`; the sentinel says `bind = ..., exec, ...` is not matched by the strip rule. [observed: `.ufo/waves/round-25/a3w1/reports/SentOracleBoundary.md:36`]
+
+## Errata (round 25 residual review; append-only — the body above is unchanged)
+
+A non-author review (`.ufo/waves/round-25/a3res/reports/RevBindNote.md`) found all 58 quotes verbatim at their lines
+and every cited row `mined`, and found ten sentences that say more than their quoted excerpts show. Read them as
+resting on adjacent lines of the same pinned file that are not quoted here, not as quoted fact:
+
+- `:7` variables as overwritable options (S172 lines 18–21 not quoted); `:15` the restore of the including file's path
+  (S162 line 1840); `:17` the error return and `continue` behind "reported as an error" and "skipped"; `:38` the
+  `MOD, KEY, DISPATCHER, ARG` positions and the `k` device field; `:40` the one-fewer-field mouse comparison (S162
+  1561–1562); `:46` the keycode and catch-all return values of `parseKey`; `:52` rejection before `addKeybind` (the
+  return paths are not quoted); `:54` the other clear/reset operations and how `unbind` parses `MOD`/`KEY`; `:66`
+  `--config` validation (S171) and signature-versus-index selection and socket connection (S169); `:68` the
+  `return false` after the no-backend message (S170 line 151).
