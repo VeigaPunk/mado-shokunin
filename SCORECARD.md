@@ -1584,3 +1584,13 @@ the earlier rows stay as written.
 | tripwire reached-body sweep | works | `a2-guards.py <rev>`: `recall_lost` 0, at `8e5d9369` |
 | detector removal-side guard | works | same `a2-guards.py` run: removal, crash-flip and pure-row counters all 0, at `8e5d9369` |
 | artifact-only assessment integrity | works | `mado-assessment.py --selftest`: pass = total, exit 0 at `8e5d9369` |
+
+Scope of the table above (wave-2 correction, append-only; `.ufo/waves/round-24/w2/reports/AtkC2Calibration.md`): the
+frozen C2 population is the 12 capability rows under `Capabilities` headings, not every capability row in this file.
+Three repertoire rows sit under other headings and are outside the counted population; wave 2 re-ran them once at
+`39c59630`: `digest-pinned frozen regression` (round 13) prints `MADO_FROZEN: MATCH`, exit 0; `finite declared-action
+classifier` (round 16) prints `SELFTEST_SUMMARY: 52/52 passed`, exit 0; `source-fragment collision screen` (round 13,
+line 437 "current exits 0") is **stale**: `MistakeFix.py --registry corpus/SOURCES.md` prints
+`MISTAKE_FIX: COLLISION S120 -> S121`, `collisions=4`, exit 1, at base and tip alike (its selftest still passes 25/25).
+The sentence "Each capability in the tables above was re-run" is therefore true only of the 12 counted rows. The
+collision-screen mismatch is recorded here, not counted, and is routed to a later round.

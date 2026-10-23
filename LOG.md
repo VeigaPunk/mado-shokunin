@@ -1598,3 +1598,12 @@ counter `c2/count.py` 1 → 0 at `81955bd5`. Two base runs gave identical rows (
 
 Mistakes mined: lesson-24 M24-1..M24-4 (v1 counter met by two controls and fixed before data; v2
 residual hole; round-23 seat reports rewritten after the tip; a one-character `agent://all` message).
+
+### Round 24 — wave 2 (append-only)
+
+Wave 2 (40 seats) re-opened all 16 new sources (all hold) and re-ran both counters at `39c59630` (C1 TARGET_MET
+23/26; C2 0/12). It found the C1 counter met by generic rule lines (12 of 23 passing rows carry attribution
+content), five prose errors in the new note (tag latch, enable/disable scope, log label, ordering scope, socket2
+count), and that C2's population is 12 of 15 capability rows with one outside row stale. Corrections are appended:
+note errata, a SCORECARD scope note, lesson-24 M24-5 and wave-2 dispositions, and README index rows for the three
+notes that the navigation counter showed unindexed since rounds 21–23. No predicate, manifest or claim row changed.

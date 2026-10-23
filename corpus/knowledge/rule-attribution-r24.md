@@ -120,3 +120,46 @@ this host; which rule produced a given tag is still not observed. Report
 - A24: drafted by wave-1 seat `WikiHyprctl` (`.ufo/waves/round-24/w1/reports/WikiHyprctl.md`)
 - A25: drafted by wave-1 seat `WikiDebugging` (`.ufo/waves/round-24/w1/reports/WikiDebugging.md`)
 - A26: drafted by wave-1 seat `WikiDebugging` (`.ufo/waves/round-24/w1/reports/WikiDebugging.md`)
+
+## Errata (round 24, wave 2; append-only — the body above is unchanged)
+
+Wave 2 re-opened every source and attacked every channel (reports under `.ufo/waves/round-24/w2/reports/`). All 15
+cited sources re-fetch to their recorded sha256 and every quote occurs in its bytes. The body's conclusion holds: no
+v0.56.2 channel (39 hyprctl commands, Lua window/query/handle APIs, 45 socket2 event names, 69 plugin-bus events,
+logs, the applicator) ties an applied property to the rule that set it. These corrections narrow what the body says:
+
+1. **Counted rows.** The heading "counted by `count.py`" overstates: A5, A7 and A8 are `FAIL_ROW quote-off-topic`
+   (their rule words sit inside identifiers such as `PRIORITY_WINDOW_RULE`), so the counter passes 23 of 26 rows
+   from 14 sources; S156 has no passing row (AtkNoteProse D1). Wave 2 judged 12 of the 23 passing rows to carry
+   attribution content (A6, A10–A16, A18, A22–A24); the other 11 are rule mechanics, and 10 restate what
+   `keybind-rule-semantics.md` and `window-rule-effects-getprop.md` already hold (AtkC1Coverage). The answer rests
+   on the uncounted sweeps, not on the counted rows.
+2. **Tag route (row "which rule fired").** A rule's `tag` effect is applied only on the dynamic path, so a rule tag
+   always reads back as `<name>*` in `hyprctl clients`. The form matters: bare `tag = X` toggles and is re-normalized
+   on each map and rule update, so it tracks the current match; `+X` is sticky — `resetProps` removes `+X` while the
+   keeper holds `X*`, so the tag is not removed when the rule stops matching (a latch). Two rules that set the same
+   bare tag cancel; with `+` they merge. A dispatcher can add an identical `X*` string. Use a unique bare tag per
+   rule and read `X*`; treat a present tag as "matched at the last re-evaluation", not as live provenance
+   (AtkTagRoute F1–F4, TagKeeper.cpp at the pin).
+3. **Enable/disable route.** `set_enabled` plus `updateAllRules` reverts dynamic effects only; static effects stay
+   until the window is re-mapped. The route exists only under a Lua config (`hyprctl eval` refuses under hyprlang,
+   `HyprCtl.cpp:1111`); this host runs hyprlang (AtkNamedRules).
+4. **Per-property origin.** The value-plus-mask-plus-priority form holds for the generated dynamic properties only;
+   static effects keep a bare value, tags and custom props keep a mask without a priority, and `tonemap` writes its
+   mask to another slot. The masks are written and never read or exported, so they show nothing to an outside
+   reader. The applicator does hold rule objects in the private `m_execRules` (exec rules only), with no accessor
+   (AtkWindowObject, ReopenS156).
+5. **Logs.** The A18 line (`Window.cpp:2187`) logs the window-rule `workspace` *effect* being applied, not a
+   workspace-rule path; `Window.cpp:2167` logs the `monitor` effect the same way; `HyprCtl.cpp:1252` echoes the
+   text of a rule set with `hyprctl keyword`. None of them names the rule (AtkLogChannel).
+6. **Ordering.** "Named rules first" is the hyprlang reload order (`reloadRules`, `legacy/ConfigManager.cpp:946-966`);
+   under a Lua config rules register in call order. "Last match wins" is exact on a full static read; on a dynamic
+   re-evaluation a later rule can be skipped by its own property mask (AtkEraWiki, AtkNamedRules). A25 ("all props
+   must match") supports matching, not ordering.
+7. **Smaller fixes.** `IRule::name()` is read only by `Engine.cpp:22` (`unregisterRule`), not by the Lua registry,
+   and the full anchor is `src/config/legacy/ConfigManager.cpp:2019`. `hyprctl workspacerules` with plain output
+   prints `unknown request` on this host when the set is empty; `-j` prints `[]` (AtkEraWiki). The socket2
+   inventory is 45 distinct names from 76 `postEvent` call sites, not 35 (AtkSocketChannel). `systeminfo -c` dumps
+   config bytes under hyprlang but no rule list (AtkHyprctlChannel). Lua can also read `window.tags` and filter
+   `hl.get_windows({tag=…})`; neither names a rule (AtkLuaChannel). Host join: 23 files carry rule sites (not 24),
+   and 4 lines carry both a tag effect and `match:tag`; no tag string was read or recorded (AtkHostJoin).

@@ -80,3 +80,35 @@ ScoutWikiEra (25) receipts under `fetch/w1/` (used for negative sweeps and era c
    `carry/base-run.txt`, classifier sha256:`cd9da20c…ea84` unchanged).
 7. H2 precision 166/175 — not repaired; L0 question at fleet `.ufo/l0-questions.md:103` still open. C2's status table now
    records its effect on the `tripwire evidence marker` capability (L 15/18).
+
+## Mistakes (continued, from wave 1 and wave 2)
+
+| id | class | evidence pointer | captured-by | fix / demonstrated boundary |
+|---|---|---|---|---|
+| M24-5 | counter design | C2's predicate says "a capability named in a SCORECARD.md capability table", but `c2/count.py` reads only tables under `Capabilities` headings: 12 of the 15 capability rows (`w1/reports/RevRegistration.md` H2, `w2/reports/AtkC2Table.md`). Rows 8, 10 and 11 run the lane's working-tree scripts, so a dirty clone with two edited meters scores 0/12 at base (`w1/reports/CritC2Manifest.md`); the zero is reachable by transcribing the observed column (`w2/reports/AtkC2Calibration.md`, `w1/reports/CritAxisFit.md`) | none of the five C2 controls (all used a clean tree and the heading-scoped population) | Not fixed (frozen). The SCORECARD scope note names the 12-row population and records the three outside rows (two pass; the round-13 collision screen is stale: exit 1, `collisions=4`). Next counter: population = every table whose header starts `Capability`, meters read from the REV tree only, and a base-versus-tip `works → fails` flip counted as harm. |
+
+## Wave-2 dispositions
+
+Wave 2: 40 seats (15 reviewer, 12 critic, 10 scout, 3 mutation-tester), reports in `w2/reports/`.
+
+- **Sources.** All 16 new rows re-opened by fetch: pins resolve, sha256 and byte counts equal the rows and
+  `fetch/S###.bin` (ReopenS153–S168). One anchor nit: S157's `:407-409` omits the `break;` at `:410` that A9 quotes.
+- **C1 counter re-run.** `TARGET_MET`, PASS_ROW 23/26 from 14 sources at `39c59630`, base 0 (ReRunC1Tip).
+- **C1 row relevance (M24-2 on landed bytes).** 12 of the 23 passing rows carry attribution content; 11 are rule
+  mechanics; a sandbox note keeping only nine generic rows also reaches `TARGET_MET` (AtkC1Coverage). The answer rests
+  on the uncounted sweeps; the note's errata section records this and the prose corrections (tag latch, enable/disable
+  scope, log label, ordering scope, socket2 count 45).
+- **C2 counter re-run.** `mismatches=0/12` at `39c59630`; manifest and counter unchanged since `4f21d995` (ReRunC2Tip).
+- **No-harm guards.** `tools/` identical to base; round-23 C3 counter 0; round-23 C2 counter 3/3; census exit 0;
+  removal column 0 in SCORECARD, SOURCES, LOG, PROVINCE, QUALITY (AtkNoHarm). Navigation counter 35/38 at base
+  (pre-existing gap); round 24 adds index rows for the three unindexed notes and the new note.
+- **QUALITY 33–35 checks.** Both are shown able to fail (red on round 23), but mutation testing left survivors:
+  `check-registration-order.py` ignores `--base` in one mutant and accepts a same-commit population and a manifest-less
+  `attack` path; `check-receipt-provenance.py` does not enforce "results removed before the run" or "read path equals
+  write path" (MutCheckRegOrder, MutCheckReceipt, AtkQualityCriteria). The criteria stand as written; their checks
+  cover order and digest form only.
+- **Routed defect 5 (S149).** Re-opened blob `2475351…:Home.md` (sha256:`78bd64dc27cff31a668cd3a0c58391905b9967e51eec5c0a309fe5e7035a5ff7`, 32,739 B):
+  "There is no way to dynamically reload the configuration." runs from `:1014` col 21 to `:1015`; the span is
+  `:1014-1015`, not the closure's `:1013-1014` (AtkS149Span, ScribeS149Anchor). The S149 anchor cell (`Home.md:1011-1015`)
+  already contains it and is not edited.
+- **Routed defects 1, 2, 6.** Hold (AtkLesson23Fix, AtkReadmeFrontier, AtkCarry).
