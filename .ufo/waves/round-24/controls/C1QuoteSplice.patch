@@ -1,0 +1,64 @@
+From ca20844a8b5ac21c7b0f8da19ffa4d3f59c49159 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 00:36:45 -0300
+Subject: [PATCH] control: C1 quote splicing, duplicate ids, wraps, and
+ overlong span
+
+---
+ corpus/README.md                         |  1 +
+ corpus/SOURCES.md                        |  3 +++
+ corpus/knowledge/rule-attribution-r24.md | 16 ++++++++++++++++
+ 3 files changed, 20 insertions(+)
+ create mode 100644 corpus/knowledge/rule-attribution-r24.md
+
+diff --git a/corpus/README.md b/corpus/README.md
+index f6cd54f..9834a4d 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -44,6 +44,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
+ | `knowledge/walker-route-r18.md` (round 18; surface P3) | Documentary upstream contract for Walker v2.17.2 and elephant v2.22.1 (config load order, theme lookup, socket path) and the omarchy v3.8.4 launcher, joined to declared host config by sha256 and line anchor. Declared configuration is not observed launcher behaviour; provider resolution at runtime, the elephant service, wire schema and rendered UI stay `[UNK]`. | `source:` S072–S091 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No walker or elephant process is started or queried. |
+ | `knowledge/theme-route-r18.md` (round 18; surface P5) | Documentary upstream contract for the omarchy v3.8.4 theme-set and wallpaper writers and swaybg v1.2.2, joined to `current/theme`, the `current/background` link and consumer imports by sha256 and line anchor. The declared chain is not runtime theme application; reload effects and the rendered wallpaper stay `[UNK]`. | `source:` S092–S095 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No theme, wallpaper or swaybg command is run. |
+ | `knowledge/tripwire-precision-r20.md` (round 20; lane tooling, no surface) | What a tripwire row means (`evidence: observed`, `lead` for an opaque callee or a swept reached body, no row for pure data), which git 2.56.0 / jj 0.45.1 help and dry-run forms write, and the fail-closed rule for stub/namespace harnesses. | `source:` S099–S115 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-20/fetch/`. The tripwire reads transcripts as data; harness checks use `/tmp` canaries, never a host probe. |
++| `knowledge/rule-attribution-r24.md` (C1QuoteSplice adversarial control) | Eight quote-splicing, reversed-fragment, overlong, duplicate and flattened-line-wrap claim rows; not admitted attribution work. | S901–S903 in [SOURCES](SOURCES.md); pinned upstream bytes with full sha256 digests. |
+ 
+ ## Quality bar
+ 
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index c50c8cb..93f540d 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -162,6 +162,9 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S150 | ghostty `macos/Sources/App/macOS/AppDelegate.swift` @ v1.3.1 — https://github.com/ghostty-org/ghostty/blob/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift | code | A | the macOS half of the in-process reload route, corroborating that `SIGUSR2` is upstream's cross-platform reload signal rather than a GTK-only one | tag `v1.3.1` (peeled commit `332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28`); `setupSignals` lines 535–561 (`signal(SIGUSR2, SIG_IGN)` at 543, `DispatchSource.makeSignalSource(signal: SIGUSR2, …)` at 547, `self.ghostty.reloadConfig()` at 551), `@IBAction func reloadConfig` 947–949, `syncMenuShortcut(config, action: "reload_config", …)` 1155; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift, 59,504 B sha256 `2ca56276a8525c593c3db2c939c27a5ac6f3273277105bd22e7f5ec485040a91` | the macOS app registers `SIGUSR2` and reloads the config in response, so the signal route is a property of ghostty and not of one windowing backend; macOS-only, documentary, no macOS runtime was exercised | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S151 | ghostty `src/config/Config.zig` @ v1.2.3 — https://github.com/ghostty-org/ghostty/blob/v1.2.3/src/config/Config.zig | code | A | the pre-rename default config filename upstream used, to date the boundary at which `config` became `config.ghostty` | tag `v1.2.3` (annotated tag object `ae9b7892fa099e2e72c4f913a593ad0c2f0d0286`, peeled commit `6d2dd585a5d8`, tagger 2025-10-23); `loadDefaultFiles` doc lines 3375–3380 ("configuration file is at `$XDG_CONFIG_HOME/ghostty/config`"), `defaultXdgPath` 3411–3416 (`subdir = "ghostty/config"`), `config-default-files` doc 1987–1990; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.2.3/src/config/Config.zig, 339,217 B sha256 `ed2eb047c44c3ad82d4e1e5d23240198e289e8bf34520c444105b4a3008a6e1e` | at v1.2.3 the only XDG default filename upstream used was `config`; the rename to `config.ghostty` is a later change, which is the boundary fact behind finding F1 | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S152 | foot 1.28.0 changelog — https://codeberg.org/dnkl/foot/raw/tag/1.28.0/CHANGELOG.md | docs | A | the identity of the pinned tag and the 1.28.0 removal of the older colour-section and keybinding names that the upstream wiki still uses | CHANGELOG.md:73 § 1.28.0, :110-118 § Removed (`[colors]`, `[colors2]`, `color-theme-switch-1`, `color-theme-switch-2` removed; replaced by `[colors-dark]`, `[colors-light]`, `color-theme-switch-dark`, `color-theme-switch-light`) @ tag 1.28.0 = commit ab33c9a19d626f8d0ac0bd1adfdba21946ada948 (sha256 3d6c7d68224763e71f238234fbb50379ca7d2c6a66eb33ba66ae04c7334661f5, 141338 B) | the pinned bytes belong to foot 1.28.0; that release removed the colour-section names the wiki FAQ still uses, so the wiki's reload answer is the durable part and its theme spelling is not | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
++| S901 | C1QuoteSplice pinned window-rule documentation — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c66e8de21f5ecdc4bc5e278e7d94800ea10957af/content/configuring/core/rules/window-rules.md | docs | A | Adversarial quotation integrity and duplicate control, not admitted attribution evidence | lines 315-316; sha256:9ecff146ada23ba11f44b0ddbda15bf82bb3b32bcec29f98388466def101ed95 | Real pinned bytes isolate quote handling from provenance failures | mined | 2026-10-23 | on-change | corpus/knowledge/rule-attribution-r24.md |
++| S902 | C1QuoteSplice pinned getprop implementation — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/debug/HyprCtl.cpp | code | A | Adversarial non-adjacent reversed fragment control, not admitted attribution evidence | lines 1467 and 1470; sha256:798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa | Real pinned bytes isolate source-fragment order from provenance failures | mined | 2026-10-23 | on-change | corpus/knowledge/rule-attribution-r24.md |
++| S903 | C1QuoteSplice alternate source id for pinned window-rule documentation — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c66e8de21f5ecdc4bc5e278e7d94800ea10957af/content/configuring/core/rules/window-rules.md | docs | A | Duplicate quotes across source ids and the thirty-word control | lines 315-316; sha256:9ecff146ada23ba11f44b0ddbda15bf82bb3b32bcec29f98388466def101ed95 | Reusing an existing quotation under another source id supplies no new attribution work | mined | 2026-10-23 | on-change | corpus/knowledge/rule-attribution-r24.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/rule-attribution-r24.md b/corpus/knowledge/rule-attribution-r24.md
+new file mode 100644
+index 0000000..fb23853
+--- /dev/null
++++ b/corpus/knowledge/rule-attribution-r24.md
+@@ -0,0 +1,16 @@
++# C1QuoteSplice — adversarial control only
++
++This sandbox fixture is not admitted rule-attribution knowledge. It tries to satisfy the coverage counter without adding documentary attribution work.
++
++| Claim id | Claim | Source | Quote |
++|---|---|---|---|
++| A1 | This window attribution sentence repeats one documentary quotation without new evidence. | S901 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color`" |
++| A2 | This window attribution sentence repeats one documentary quotation without new evidence. | S903 | "Effects  marked  as  _dynamic_  are  re-evaluated  whenever  the  matching  property  of  the  window  changes.  For  instance,  if  a  rule  changes  the  `border_color`" |
++| A3 | This window attribution sentence repeats one documentary quotation without new evidence. | S901 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color`" |
++| A4 | This window attribution sentence repeats one documentary quotation without new evidence. | S903 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color`" |
++| A5 | This window attribution sentence repeats one documentary quotation without new evidence. | S901 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color`" |
++| A6 | This window attribution sentence repeats one documentary quotation without new evidence. | S903 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color`" |
++| A7 | This attribution sentence is assembled from disconnected reversed source code fragments. | S902 | "const auto PROP = vars[2]; return "not enough args";" |
++| A8 | This window attribution sentence exceeds the frozen twenty five word quotation limit. | S903 | "Effects marked as _dynamic_ are re-evaluated whenever the matching property of the window changes. For instance, if a rule changes the `border_color` when a window is floating, the color reverts" |
++
++A1–A6 repeat the same 22-word normalized quote under six claim IDs and alternating source IDs. The source contains a newline after `changes.`; each row flattens it, and A2 also doubles spaces. A7 joins two non-adjacent source fragments in reverse source order, jointly testing splicing and word-order manipulation. A8 is an exact whitespace-collapsed 30-word source span. Combining the splice and order manipulation keeps the full fixture at exactly eight claim rows.
+-- 
+2.56.0
+

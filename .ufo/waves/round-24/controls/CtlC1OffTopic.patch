@@ -1,0 +1,77 @@
+From 0b354079ba7210e0cd9a91d7607b9b3203520b63 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 00:36:30 -0300
+Subject: [PATCH] C1 control: off-topic real pinned rows (S900-S907) +
+ rule-attribution note + README coverage row
+
+---
+ corpus/README.md                         |  1 +
+ corpus/SOURCES.md                        |  8 ++++++++
+ corpus/knowledge/rule-attribution-r24.md | 24 ++++++++++++++++++++++++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 corpus/knowledge/rule-attribution-r24.md
+
+diff --git a/corpus/README.md b/corpus/README.md
+index f6cd54f..5adcb17 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -44,6 +44,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
+ | `knowledge/walker-route-r18.md` (round 18; surface P3) | Documentary upstream contract for Walker v2.17.2 and elephant v2.22.1 (config load order, theme lookup, socket path) and the omarchy v3.8.4 launcher, joined to declared host config by sha256 and line anchor. Declared configuration is not observed launcher behaviour; provider resolution at runtime, the elephant service, wire schema and rendered UI stay `[UNK]`. | `source:` S072–S091 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No walker or elephant process is started or queried. |
+ | `knowledge/theme-route-r18.md` (round 18; surface P5) | Documentary upstream contract for the omarchy v3.8.4 theme-set and wallpaper writers and swaybg v1.2.2, joined to `current/theme`, the `current/background` link and consumer imports by sha256 and line anchor. The declared chain is not runtime theme application; reload effects and the rendered wallpaper stay `[UNK]`. | `source:` S092–S095 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-18/fetch/`. No theme, wallpaper or swaybg command is run. |
+ | `knowledge/tripwire-precision-r20.md` (round 20; lane tooling, no surface) | What a tripwire row means (`evidence: observed`, `lead` for an opaque callee or a swept reached body, no row for pure data), which git 2.56.0 / jj 0.45.1 help and dry-run forms write, and the fail-closed rule for stub/namespace harnesses. | `source:` S099–S115 in [SOURCES](SOURCES.md); fetch receipts under `.ufo/waves/round-20/fetch/`. The tripwire reads transcripts as data; harness checks use `/tmp` canaries, never a host probe. |
++| `knowledge/rule-attribution-r24.md` (round 24; C1 coverage control) | Off-topic control note: real pinned, re-fetchable, correctly hashed Hyprland v0.56.2 (and kitty/foot) quotes whose lines sit off the window-rule *attribution* topic; scored under the frozen C1 predicate pre-data. | `source:` S900–S907 in [SOURCES](SOURCES.md); fetch receipts for the v0.56.2 files and the kitty conf.rst at control time. | The quoted lines do not say which window a rule matched; the row is an anti-example, not a rule-attribution claim. |
+ 
+ ## Quality bar
+ 
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index c50c8cb..e58d6ca 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -162,6 +162,14 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S150 | ghostty `macos/Sources/App/macOS/AppDelegate.swift` @ v1.3.1 — https://github.com/ghostty-org/ghostty/blob/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift | code | A | the macOS half of the in-process reload route, corroborating that `SIGUSR2` is upstream's cross-platform reload signal rather than a GTK-only one | tag `v1.3.1` (peeled commit `332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28`); `setupSignals` lines 535–561 (`signal(SIGUSR2, SIG_IGN)` at 543, `DispatchSource.makeSignalSource(signal: SIGUSR2, …)` at 547, `self.ghostty.reloadConfig()` at 551), `@IBAction func reloadConfig` 947–949, `syncMenuShortcut(config, action: "reload_config", …)` 1155; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift, 59,504 B sha256 `2ca56276a8525c593c3db2c939c27a5ac6f3273277105bd22e7f5ec485040a91` | the macOS app registers `SIGUSR2` and reloads the config in response, so the signal route is a property of ghostty and not of one windowing backend; macOS-only, documentary, no macOS runtime was exercised | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S151 | ghostty `src/config/Config.zig` @ v1.2.3 — https://github.com/ghostty-org/ghostty/blob/v1.2.3/src/config/Config.zig | code | A | the pre-rename default config filename upstream used, to date the boundary at which `config` became `config.ghostty` | tag `v1.2.3` (annotated tag object `ae9b7892fa099e2e72c4f913a593ad0c2f0d0286`, peeled commit `6d2dd585a5d8`, tagger 2025-10-23); `loadDefaultFiles` doc lines 3375–3380 ("configuration file is at `$XDG_CONFIG_HOME/ghostty/config`"), `defaultXdgPath` 3411–3416 (`subdir = "ghostty/config"`), `config-default-files` doc 1987–1990; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.2.3/src/config/Config.zig, 339,217 B sha256 `ed2eb047c44c3ad82d4e1e5d23240198e289e8bf34520c444105b4a3008a6e1e` | at v1.2.3 the only XDG default filename upstream used was `config`; the rename to `config.ghostty` is a later change, which is the boundary fact behind finding F1 | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S152 | foot 1.28.0 changelog — https://codeberg.org/dnkl/foot/raw/tag/1.28.0/CHANGELOG.md | docs | A | the identity of the pinned tag and the 1.28.0 removal of the older colour-section and keybinding names that the upstream wiki still uses | CHANGELOG.md:73 § 1.28.0, :110-118 § Removed (`[colors]`, `[colors2]`, `color-theme-switch-1`, `color-theme-switch-2` removed; replaced by `[colors-dark]`, `[colors-light]`, `color-theme-switch-dark`, `color-theme-switch-light`) @ tag 1.28.0 = commit ab33c9a19d626f8d0ac0bd1adfdba21946ada948 (sha256 3d6c7d68224763e71f238234fbb50379ca7d2c6a66eb33ba66ae04c7334661f5, 141338 B) | the pinned bytes belong to foot 1.28.0; that release removed the colour-section names the wiki FAQ still uses, so the wiki's reload answer is the durable part and its theme spelling is not | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
++| S900 | Hyprland v0.56.2 AGENTS.md — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/AGENTS.md | docs | A | the repo's own style-contract, not rule semantics | AGENTS.md:16-17 @ tag v0.56.2 (sha256 7f79966027424964b91a6cdd1f34ef9c9d5b11081618ec0ff37cec731b021252, 3145 B) | the "rule" word names a coding-style obligation and says nothing about window-rule attribution or effect routing | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S901 | Hyprland v0.56.2 CODE_OF_CONDUCT.md — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/CODE_OF_CONDUCT.md | docs | A | community standards, with no relation to window rules | CODE_OF_CONDUCT.md:25,96-98 @ tag v0.56.2 (sha256 a18cd02e4bbc4cedf6b6f51764abad24ff6ecf725b904c2a6b9128c16a1bc6be, 3357 B) | both "rule" mentions describe conduct enforcement; neither says anything about Hyprland's window-rule attribution | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S902 | Hyprland v0.56.2 hyprctl CLI usage text — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/hyprctl/hyprctl.usage | code | A | the CLI's own grammar: command names with their help strings | hyprctl/hyprctl.usage:89,94,134-136 @ tag v0.56.2 (sha256 ceacd04565ed0c594b9937e6e909edc47d381e53b4d17f31a99237b0f447ab29, 13192 B) | `getprop`/`setprop`/`workspacerules`/`tagwindow` are verb entries in a regenerate list; the grammar does not say which window a rule matched | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S903 | Hyprland v0.56.2 README.md — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/README.md | docs | A | the feature bullet list at the top of the README | README.md:55-58 @ tag v0.56.2 (sha256 36682e45e7e359c33fdecc0dfb5711e53cf916ca5383ca75c99a8aa417300454, 4086 B) | the bullet list advertises existence; it does not name which claim a rule matched or any attribution route | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S904 | Hyprland v0.56.2 example configuration — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/example/hyprland.lua | code | A | the shipped example configuration, with Lua window-rules syntax commented | example/hyprland.lua:312-315,349-352 @ tag v0.56.2 (sha256 e35a9ed7463d5f7430db7e817024bfd1594738645d5a18b2173ff4107b242d14, 12405 B) | the comments and code show rule blocks, not which rule matched which window | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S905 | Hyprland v0.56.2 LICENSE — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/LICENSE | docs | A | the license text, which names no feature | LICENSE:1-21 @ tag v0.56.2 (sha256 e01df754903af0ab26babb317b5f5a62dd95f770b733c5275414dd3245d00ae7, 1521 B) | no rule-topic word occurs anywhere in this file; it cannot ground a rule claim | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S906 | kitty v0.49.2 docs of conf.html — https://raw.githubusercontent.com/kovidgoyal/kitty/b2cb871254fbdac19a085188813c8dfb258b95cd/docs/conf.rst | docs | A | kitty config-file documentation; this row deliberately keeps the r23 pinned bytes | docs/conf.rst:16-22 @ commit b2cb871254fbdac19a085188813c8dfb258b95cd (sha256 da42c340321755a25718b5c9a467f0a6bba33f88342d7c4a35e87a6795d4f498, 3901 B) | the config-file sentence is terminal documentation, not Hyprland window-rule attribution; the URL fails the hyprwm repo check | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S907 | foot 1.28.0 README — https://codeberg.org/dnkl/foot/raw/tag/1.28.0/README.md | docs | A | foot's README; a second non-hyprwm source for the off-topic control | README.md:78-86 @ tag 1.28.0 = commit ab33c9a19d626f8d0ac0bd1adfdba21946ada948 (sha256 874e192a7f322421e6c762c18dadd47239f7a5366bc47b966d12b516fd6f626d, 24450 B) | foot config-file documentation has no attribution link to Hyprland either | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/rule-attribution-r24.md b/corpus/knowledge/rule-attribution-r24.md
+new file mode 100644
+index 0000000..0e87d43
+--- /dev/null
++++ b/corpus/knowledge/rule-attribution-r24.md
+@@ -0,0 +1,24 @@
++# Rule attribution in Hyprland v0.56.2 — off-topic control note
++
++source: S900, S901, S902, S903, S904, S905, S906, S907 (all opened 2026-10-23, status mined).
++verified-at: 2026-10-23; each row's pinned bytes re-fetched from the URL in its source row and hashed at control time
++recheck: re-fetch each cited row's pinned bytes and compare sha256; no host probe, no hyprctl read, no compositor action
++self-label: control note — the rows are admitted with quotes that are real, pinned, re-fetchable and correctly hashed, but the quoted lines are off the rule-attribution topic; they are placed in the claims table only to exercise the frozen predicate
++surface: C1 coverage — window-rule *attribution* route
++
++This note records what the frozen C1 predicate accepts. The 0.56.2 files it cites are real; every quote occurs
++verbatim in the pinned bytes (whitespace-collapsed), and every recorded sha256 equals the hash of the bytes
++re-fetched from the tagged URL. The rows are off-topic by construction: none of them says which window a rule
++matched, or how a rule is attributed to a window. Some quotes still carry the predicate's loose topic words
++(`rule`, `rules`, `matching`, `tag`), so they pass the topic check while failing the round's actual question.
++
++| id | claim | source | quote |
++|---|---|---|---|
++| A1 | In Hyprland's AGENTS.md the word "rule" occurs in the coding-style clause: it obliges single-line if and else statements to come without braces, with no window-rule meaning anywhere in the sentence. | S900 | "This rule applies only to if / else, not do / while / other." |
++| A2 | The CODE_OF_CONDUCT.md also contains the word "rule" twice: once in the list of breaking behaviours, once in the note that outside communities may have their own additional sets of rules; neither mention is about window-rule attribution. | S901 | "Examples of breaking each rule respectively include:" |
++| A3 | The same code-of-conduct file continues by stating that official communities outside GitHub might keep their own additional sets of rules, which again is a community-governance sentence, not a Hyprland window-rule claim. | S901 | "additional sets of rules." |
++| A4 | Hyprctl's usage text lists the command verbs: it documents `getprop`, `setprop`, `workspacerules` and `tagwindow`, including the help string for focusing the first matching window; the list is a command grammar, not an attribution of rules to windows. | S902 | "Focus the first window matching" |
++| A5 | The same usage grammar documents that `tagwindow` applies a tag to a window; applying a tag is a rule verb, not evidence of which rule matched the window. | S902 | "Apply a tag to the window" |
++| A6 | The README advertises powerful window, monitor and layer rules in its feature bullet list; the bullet asserts existence and says nothing about how a rule is attributed to a window. | S903 | "Powerful window/monitor/layer rules" |
++| A7 | The README also lists native IME and input panel support; this bullet contains no rule-topic word at all and cannot ground any rule claim. | S903 | "Native IME and Input Panels Support" |
++| A8 | The kitty configuration documentation states where the kitty configuration file lives; this is terminal documentation sourced outside the hyprwm repositories, and the only clause that fails is the URL clause. | S906 | "The configuration file for kitty is kitty.conf." |
+-- 
+2.56.0
+

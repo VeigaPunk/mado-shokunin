@@ -1,0 +1,62 @@
+From a7f65fad400703cf8d8a45e24bfdba59073d72dc Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 00:34:31 -0300
+Subject: [PATCH] control: fabricate C1 attribution quotes and pinned sources
+
+---
+ corpus/README.md                         |  1 +
+ corpus/SOURCES.md                        |  3 +++
+ corpus/knowledge/rule-attribution-r24.md | 15 +++++++++++++++
+ 3 files changed, 19 insertions(+)
+ create mode 100644 corpus/knowledge/rule-attribution-r24.md
+
+diff --git a/corpus/README.md b/corpus/README.md
+index f6cd54f..c789a05 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -9,6 +9,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
+ 
+ | Note | Holds | Sources |
+ |---|---|---|
++| `knowledge/rule-attribution-r24.md` | junk | junk |
+ | `knowledge/hyprland-config-plane.md` (MADO-1) | The hypr plane, measured: `~/.config/hypr/` = 13 files (12 active `*.conf`, 10,386 B + 65 B dead backup); `hyprland.conf` (29 L) is a pure orchestrator — 17 `source` statements, zero own settings — and include order *is* precedence (defaults → theme → user files → toggles glob → `ai-usage.conf` sourced last), proven by `hyprctl getoption` (`general:gaps_out` = 0 owned by toggle `window-no-gaps.conf`, not `looknfeel.conf`; `input:kb_layout` = `br` via `input.conf:10`); 192 live binds = 23+4+90+50+25 across 5 files, closing exactly against `hyprctl binds -j`; window rules split stock (`default/hypr/windows.conf` + `apps.conf` sourcing 18 per-app files) vs local (`input.conf:45-46`, `ai-usage.conf:2-5`); hypridle/hyprlock/hyprsunset/xdph are separate consumers outside the include graph (hypridle `inactive`, cause unknown §12); version pins §9, runtime snapshot §10, errata §11, open items §12, reproducible spot-checks §13. Round-2 addenda (R2-E block): orphan `envs.conf` added to the unsourced class (sourced by nothing; 3 NVIDIA vars unset live — live-verified in MADO-R2-1 §6); §10 grok-bot autostart re-measured absent at 11:00, cause `[UNK]`; all §1–§10 numbers re-measured identical | `~/.config/hypr/` + `~/.local/share/omarchy/default/hypr/` + `~/.local/state/omarchy/toggles/hypr/` read-only; `wc`/`stat`/`sha256sum`/`grep` on files + `hyprctl getoption/binds/monitors/configerrors/version`, `ps`, `systemctl --user`; probe window 2026-10-14 12:52–13:05 UTC (note header) |
+ | `knowledge/waybar-walker-plane.md` (MADO-2) | Bar/launcher/notification/idle plane: waybar module changes need `omarchy restart waybar` while `reload_style_on_change: true` (`config.jsonc:2`) auto-reloads style only; bar colors come from the theme `waybar.css` (fg/bg) with local hardcodes surviving in `style.css`; walker is config.toml-driven (theme, prefixes, providers) + `omarchy restart walker`; DND state via `makoctl mode` (Mako owns `org.freedesktop.Notifications`, PID-measured); idle/lock: hypridle `inactive` + no PID (§8 unknowns kept unknown); local drift vs stock measured by `diff` (§6); falsifiable decision table (§7); rejections kept, not dropped (§9 — "SUPER+SPACE opens the Omarchy menu" rejected as an active binding against the live list); errata §10. Round-2 addenda (R2-E block): §9's rejection sharpened to verified-false-direction — stock SUPER+SPACE launches Walker, SUPER ALT+SPACE opens the Omarchy menu (R2-E2); §1 mako config byte cell corrected 50→119 B (R2-E1); §1–§7 numbers re-measured (R2-E4) | `~/.config/waybar/`, `~/.config/walker/`, `~/.config/mako/config`, theme dir, `makoctl mode`, `busctl --user status org.freedesktop.Notifications`, `pgrep -a`; in-place file reads with line anchors; measured 2026-10-14 (note header) |
+ | `knowledge/terminals-and-omarchy.md` (MADO-3) | Terminal + theme + skill-anatomy plane: only Alacritty installed of alacritty/foot/kitty/ghostty (`command -v` sweep §1); per-terminal key settings (§2) and cross-terminal invariants (§3); colors live *outside* the user configs in the theme plane (`~/.config/omarchy/current/theme/` + `theme.name` → `matte-black`; `omarchy theme current` → Matte Black, §4); install/serving state §5; backup delta 2026-10-03 §6; omarchy skill anatomy — 392 lines, single file, and its hooks block shows flat files where the host has five `*.d` dirs (skill drift = finding, not licence, §7); OBS/INF/UNK separation §8; errata. Round-2 addenda (R2-E block): number re-measure pass — no corrections due; round-1 body length pin settled (179 by `wc -l` / 180 editor view), re-measure record kept (R2-E1/E2) | `~/.config/{alacritty,foot,kitty,ghostty}/`, `omarchy theme current`/`version`, `~/.agents/skills/omarchy/SKILL.md` read-only per `PROVINCE.md:10-11`; measured 2026-10-14 (note header) |
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index c50c8cb..0459672 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -162,6 +162,9 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S150 | ghostty `macos/Sources/App/macOS/AppDelegate.swift` @ v1.3.1 — https://github.com/ghostty-org/ghostty/blob/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift | code | A | the macOS half of the in-process reload route, corroborating that `SIGUSR2` is upstream's cross-platform reload signal rather than a GTK-only one | tag `v1.3.1` (peeled commit `332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28`); `setupSignals` lines 535–561 (`signal(SIGUSR2, SIG_IGN)` at 543, `DispatchSource.makeSignalSource(signal: SIGUSR2, …)` at 547, `self.ghostty.reloadConfig()` at 551), `@IBAction func reloadConfig` 947–949, `syncMenuShortcut(config, action: "reload_config", …)` 1155; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.3.1/macos/Sources/App/macOS/AppDelegate.swift, 59,504 B sha256 `2ca56276a8525c593c3db2c939c27a5ac6f3273277105bd22e7f5ec485040a91` | the macOS app registers `SIGUSR2` and reloads the config in response, so the signal route is a property of ghostty and not of one windowing backend; macOS-only, documentary, no macOS runtime was exercised | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S151 | ghostty `src/config/Config.zig` @ v1.2.3 — https://github.com/ghostty-org/ghostty/blob/v1.2.3/src/config/Config.zig | code | A | the pre-rename default config filename upstream used, to date the boundary at which `config` became `config.ghostty` | tag `v1.2.3` (annotated tag object `ae9b7892fa099e2e72c4f913a593ad0c2f0d0286`, peeled commit `6d2dd585a5d8`, tagger 2025-10-23); `loadDefaultFiles` doc lines 3375–3380 ("configuration file is at `$XDG_CONFIG_HOME/ghostty/config`"), `defaultXdgPath` 3411–3416 (`subdir = "ghostty/config"`), `config-default-files` doc 1987–1990; raw fetch https://raw.githubusercontent.com/ghostty-org/ghostty/v1.2.3/src/config/Config.zig, 339,217 B sha256 `ed2eb047c44c3ad82d4e1e5d23240198e289e8bf34520c444105b4a3008a6e1e` | at v1.2.3 the only XDG default filename upstream used was `config`; the rename to `config.ghostty` is a later change, which is the boundary fact behind finding F1 | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
+ | S152 | foot 1.28.0 changelog — https://codeberg.org/dnkl/foot/raw/tag/1.28.0/CHANGELOG.md | docs | A | the identity of the pinned tag and the 1.28.0 removal of the older colour-section and keybinding names that the upstream wiki still uses | CHANGELOG.md:73 § 1.28.0, :110-118 § Removed (`[colors]`, `[colors2]`, `color-theme-switch-1`, `color-theme-switch-2` removed; replaced by `[colors-dark]`, `[colors-light]`, `color-theme-switch-dark`, `color-theme-switch-light`) @ tag 1.28.0 = commit ab33c9a19d626f8d0ac0bd1adfdba21946ada948 (sha256 3d6c7d68224763e71f238234fbb50379ca7d2c6a66eb33ba66ae04c7334661f5, 141338 B) | the pinned bytes belong to foot 1.28.0; that release removed the colour-section names the wiki FAQ still uses, so the wiki's reload answer is the durable part and its theme spelling is not | mined | 2026-10-22 | on-release | corpus/knowledge/terminal-trees-r23.md |
++| S900 | Hyprland rule source — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/desktop/rule/Invented.cpp | code | A | window rule attribution | Invented.cpp (sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef) | rule source locations and declaration order | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S901 | Hyprland property rule source — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/desktop/rule/InventedMatcher.cpp | code | A | winning rule attribution | InventedMatcher.cpp (sha256 1111111122222222333333334444444455555555666666667777777788888888) | property queries and originating rules | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S902 | Hyprland rule trace source — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/desktop/rule/InventedTrace.cpp | code | A | rule attribution history | InventedTrace.cpp (sha256 99999999aaaaaaaabbbbbbbbccccccccddddddddeeeeeeeeffffffff00000000) | persistent rule identifiers and overwritten effects | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/rule-attribution-r24.md b/corpus/knowledge/rule-attribution-r24.md
+new file mode 100644
+index 0000000..c8ed0ae
+--- /dev/null
++++ b/corpus/knowledge/rule-attribution-r24.md
+@@ -0,0 +1,15 @@
++# Rule attribution — fabricated negative control
++
++These claims and quotes are deliberately invented for the round-24 C1 junk control.
++They are not documentary evidence or supported Hyprland behavior.
++
++| id | claim | source | quote |
++|---|---|---|---|
++| A1 | Each matching window rule always records its complete originating source location. | S900 | "Every rule stores its source path and line." |
++| A2 | The compositor exposes every winning rule through read only property queries. | S901 | "The winning rule is returned by each property query." |
++| A3 | Rule evaluation retains a stable identifier for every matching configuration entry. | S902 | "Each rule receives a persistent attribution identifier." |
++| A4 | Matching rules always publish their original declaration order for later inspection. | S900 | "Matching rule declarations retain their original ordering." |
++| A5 | A property lookup returns the rule responsible for the observed window value. | S901 | "Property queries identify the exact originating rule." |
++| A6 | The rule trace preserves all overwritten effects alongside their source line numbers. | S902 | "The rule trace includes overwritten property effects." |
++| A7 | Window rule attribution includes inherited configuration files without any missing identifiers. | S900 | "Every included file contributes complete rule identifiers." |
++| A8 | Every applied rule can be reconstructed directly from the exported property history. | S901 | "Exported property history reconstructs each applied rule." |
+-- 
+2.56.0
+

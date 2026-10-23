@@ -88,3 +88,29 @@ Each control is scored with the frozen counter and its receipt is committed befo
 - Sources census exit 0 (`scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado`).
 - No removed line in SCORECARD.md, SOURCES.md, LOG.md, PROVINCE.md (`git diff --numstat` removals 0, except
   in-place SOURCES `status`/`recheck`/`used-by` cells logged old→new in lesson 24).
+
+## Control receipts (committed before any data seat)
+
+Fresh seats, one control each, scored with the frozen counters (C1 under v1 and v2; C2 counter sha256:`a2809501…`,
+manifest sha256:`e02c76d1…`). Receipts and patches in `controls/`.
+
+| Control | Seat (role) | C1 v1 | C1 v2 (counted) / C2 | Meets target |
+|---|---|---|---|---|
+| do-nothing, base and tip | CtlC1DoNothing (mutation-tester) | PASS_ROW 0 | PASS_ROW 0 | no |
+| fabricated rows and URLs | CtlC1Junk (mutation-tester) | 0/8 | 0/8 | no |
+| real off-topic pinned rows | CtlC1OffTopic (critic) | **6, TARGET_MET** | 0 (`claim-not-anchored-to-quote`) | v1 yes, v2 no |
+| earlier-opened rows S016–S020 | CtlC1Stale (critic) | 0 | 0 | no |
+| self-made bytes, matching recorded sha256 | CtlC1FabFetch (mutation-tester) | counted 0 (offline 8, diagnostic) | counted 0 (offline 8) | no |
+| real on-topic quotes, unsupported claims | CtlC1LabelShortcut (critic) | **6, TARGET_MET** | 0 | v1 yes, v2 no |
+| spliced / reordered / long / repeated quotes | CtlC1QuoteSplice (mutation-tester) | 1 | 0 | no |
+| C2 do-nothing, base and tip | CtlC2DoNothing (mutation-tester) | — | 1/12 (tripwire evidence marker) | no |
+| C2 all `works` | CtlC2AllWorks (critic) | — | 1/12 | no |
+| C2 all `fails` | CtlC2AllFails (critic) | — | 11/12 | no |
+| C2 capability rows deleted / headings renamed | CtlC2DeleteRows (mutation-tester) | — | 12/12, 12/12 | no |
+| C2 no-reader stubs, all `works` | CtlC2StubTools (mutation-tester) | — | 11/12 | no |
+
+v1 is met by two controls, which is why v2 (claim-anchor clause, landed `c9b76646`) is the counted C1 rule. Known
+v2 limit (CtlC1OffTopic): an off-topic line that happens to contain a topic word still passes if the claim
+restates its words. The counter cannot judge whether a claim is supported, so wave-2 reviewers re-read every
+claim row against its bytes, and any unsupported row is reported against C1. No control meets the counted C1 v2 or
+C2 target; the C2 before value is 1/12 (do-nothing), so C2 is valid.

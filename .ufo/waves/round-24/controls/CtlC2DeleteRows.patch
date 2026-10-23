@@ -1,0 +1,183 @@
+From 3c47f03795c293d7c819cff2738f84e489f98c3d Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 00:33:45 -0300
+Subject: [PATCH] control C2 A: remove every capability table body row
+
+---
+ SCORECARD.md | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 4aa8ae2..f644083 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -201,7 +201,6 @@ claim, not the measured navigation delta; round status remains blocked.
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| — none yet — | | | |
+ 
+ Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+ 
+@@ -305,10 +304,6 @@ Gate bytes: `93e43f8f…` (3,231 L) → `ea798ad078f139f3…` (3,245 L / 151,131
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| sources registry | Curate where mado learns: 39 opened, scoped-tier rows (mined/queued/rejected), study paths, search log; every contract census command runs clean and every mined row joins to an entry that cites it | `corpus/SOURCES.md`; census block in `.ufo/evidence/round-12/after.txt` | 12 |
+-| verdict gate (live + file plane) | Read-only verdict over the declared config plane and live hyprctl surfaces, exit 0/1/2, boundary check | `bash tools/mado-verify.sh` → `MADO_VERIFY: CLEAN (52 pass, 8 notes …)`, `.ufo/evidence/round-12/gate-live-after.txt` | 5 (re-demonstrated 12) |
+-| hermetic self-test | 269 assertions over isolated fixtures | `bash tools/mado-verify.sh --selftest` → 269/269, `gate-selftest-after.txt` | 5 (re-demonstrated 12) |
+-| mutation regression with re-cut | Replays the 10-defect kill table against the gate's derived target; SETUP on a moved gate, re-cut via the printed command | `gate-regression-setup-3.txt`, `gate-recut-3.txt`, `gate-regression-after.txt` | 7 (re-demonstrated 12) |
+ 
+ Stagnation window resets: a capability entered this round.
+ 
+@@ -916,7 +911,6 @@ Saturation 9.0 / N=3 unchanged; retired: none.
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| post-hoc transcript tripwire | Classify commands issued in OMP session JSONL (bash; python eval `!`/`%%bash`/literal spawns; shell/python heredocs) into host_mutation / package_query / live_probe with exit 0/1/2 | `python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/{core,compound,hardening,w2-regressions}`; `evidence/tripwire-anchor-r15.txt`, `tripwire-pacmanlog-join.txt` | 17 |
+ 
+ ### Planned (round 18; intent only)
+ 
+@@ -1017,7 +1011,6 @@ retired: none.
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| tripwire frozen replay (gate entry) | Verify digests of committed incident transcript lines and compare the tripwire's verdict with a pinned expected verdict (0 match / 1 mismatch / 2 tampered, unpinned or baseline error) | `python3 -I tools/mado-tripwire.py --frozen .ufo/waves/round-18/frozen`; `--selftest .ufo/waves/round-18/tripwire/frozen`; `evidence/final/tripwire-frozen-*.txt` | 18 |
+ 
+ ### Planned (round 19; intent only)
+ 
+@@ -1155,7 +1148,6 @@ operator-owned: colocation is structural while `HYAKU_VCS=jj` (w1 JjIncidentScan
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| landedness check | Say whether each cited lane hash is an ancestor of the live remote tip (`LANDED`/`LOCAL_ONLY`/`MISSING`) without fetching or writing | `bash .ufo/waves/round-19/landed-check.sh LANE HASH...`; w1 `LandedCheck.md` (T1-T9 matrix) | 19 |
+ 
+ ### Round 19 — wave-2 corrections to the results above (append-only)
+ 
+@@ -1339,8 +1331,6 @@ tripwire rows — observed vs lead; fail-closed harnesses (round 20)".
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| tripwire evidence marker | Tell an observed command from a lead (argv stated, executing body not visible) on every finding row, and drop provably pure data | `python3 -I .ufo/waves/round-20/tw-precision.py 28c6837` (P 66/66, L 17/18); `tw-recall-split.py 28c6837` (5 observed + 1 lead) | 20 |
+-| harness fail-closed check | Show whether a stub/namespace harness runs its payload after any of six forced setup failures | `bash .ufo/waves/round-20/isolation-check.sh HARNESS` (`evidence/crit29-*.txt`) | 20 |
+ 
+ ## Round 20 — attempt-2 recovery registration (2026-10-21)
+ 
+@@ -1406,8 +1396,6 @@ files w2 CorpusRuntime timed at 30 s / 14 s took 25.85 s / 4.77 s at `28c6837` a
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| tripwire reached-body sweep | Report every visible body the executed text reaches but the call path does not follow (thread targets, callbacks, decorators, closures, dunders, scheduled coroutines, recursion, past-depth helpers) as a `lead` row instead of dropping it | `python3 .ufo/waves/round-20/a2/a2-guards.py a8960de --fixtures-rev 6a7d9ca` (`recall_lost` 0; 52 at `28c6837`) | 20 |
+-| detector removal-side guard | Count, for a tripwire change, the findings an older tool reported that the new one drops, the crash flips and the pure-data rows, over frozen adversarial populations | `a2/evidence/guards-before-28c6837.txt` vs `guards-after-a8960de….txt` | 20 |
+ 
+ ### Final residual-review disposition (supersedes author verdicts above)
+ 
+@@ -1461,7 +1449,6 @@ Legacy screens at delivered code remain unchanged populations:11/11 scan/frozen
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-| artifact-only assessment integrity | Validate declared chronology/order, actual input/expectation hashes, historical rejection disclosure and the four canonical SHONEN subjects, without a C1 dependency; distinguish clean/failed/could-not-evaluate, not authenticate identities or prove evidence sufficiency | `python3 -I tools/mado-assessment.py --selftest .ufo/waves/round-21/assessment-fixtures`; same C2 output under three C1 intervention states and killed digest-check mutant, receipts above |21|
+ 
+ Claim admission and current outside-lane admit/reject spot-check remain the non-author closure's duty. No exploratory claim, axis retirement, promotion, host recovery or next round is declared. The four fresh residual reviewers inspect these final repairs separately; their eventual findings/dispositions are retained with the report rather than pre-claimed here.
+ 
+-- 
+2.56.0
+
+From d9bb4fae7c04f0525a03a3029d17b61fa94dc39a Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 00:34:18 -0300
+Subject: [PATCH] control C2 B: rename every capability heading beyond parser
+ grammar
+
+---
+ SCORECARD.md | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 4aa8ae2..25b443e 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -197,7 +197,7 @@ Full outputs and invocation evidence:
+ This correction supersedes the earlier literal-command reproducibility
+ claim, not the measured navigation delta; round status remains blocked.
+ 
+-## Capabilities
++## Capability inventory
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -301,7 +301,7 @@ recommended freshness. U3–U6 derive from the ART dossier's `[INFERENCE]`-tagge
+ `remaining-planes-census.md:227-233`) — the new entries add the upstream era/routing/lifecycle layer.
+ Gate bytes: `93e43f8f…` (3,231 L) → `ea798ad078f139f3…` (3,245 L / 151,131 B) (`sha256sum tools/mado-verify.sh` @ `6e3b75f`).
+ 
+-### Capabilities (round 12)
++### Capability inventory (round 12)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -912,7 +912,7 @@ harmed by lane action; operability carries R15-V1 (operator-owned, `[UNK]`).
+ Sources 55 → 71 (A 51 → 64, C 3 → 6; mined 43 → 56, rejected 4 → 7).
+ Saturation 9.0 / N=3 unchanged; retired: none.
+ 
+-### Capabilities (round 17)
++### Capability inventory (round 17)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -1013,7 +1013,7 @@ operator-owned; R15-V1 unchanged and operator-owned.
+ Sources 71 → 95 (A 64 → 88; mined 56 → 80). Saturation 9.0 / N=3 unchanged;
+ retired: none.
+ 
+-### Capabilities (round 18)
++### Capability inventory (round 18)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -1151,7 +1151,7 @@ HEAD still reports MOVED) and F9 (`rev-parse --git-dir`); frozen F1/F2; tripwire
+ write; `landed-check.sh` (F16 narrowed: a probe, not a gate row). F17 stays
+ operator-owned: colocation is structural while `HYAKU_VCS=jj` (w1 JjIncidentScan).
+ 
+-### Capabilities (round 19)
++### Capability inventory (round 19)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -1195,7 +1195,7 @@ regression PASS, 11/11 suites, classifier 52/52, U 7/7, navigation 34/34, census
+ → `EXPECT_SUMMARY: 16/16`. Gate selftest 389 → 452 (+63), no prior assertion lost
+ (w2 CriticAdmission label diff at 443; the 9 added since are OM1 guard, OM17, WL1).
+ 
+-### Capabilities (round 19, addendum)
++### Capability inventory (round 19, addendum)
+ 
+ Tripwire classes `tool_install` and `vcs_write` are not entered as capabilities: their
+ w2 precision findings (help/dry-run rows, eval-surface misses, synthetic rule-B false
+@@ -1335,7 +1335,7 @@ Non-claim repairs: R19-V2/V4/V5/V6 corrections in `corpus/lessons/round-20.md`
+ tier A, mined). Knowledge `corpus/knowledge/tripwire-precision-r20.md`; SKILL §"Reading
+ tripwire rows — observed vs lead; fail-closed harnesses (round 20)".
+ 
+-### Capabilities (round 20)
++### Capability inventory (round 20)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -1402,7 +1402,7 @@ V 6/6 (c2 6, `u_routes` 7), navigation 35/35, census exit 0. Runtime: the two co
+ files w2 CorpusRuntime timed at 30 s / 14 s took 25.85 s / 4.77 s at `28c6837` and
+ 0.062 s / 0.142 s at v3 in one L1 run (2026-10-21, host shared with other lanes).
+ 
+-### Capabilities (round 20, attempt 2; append-only)
++### Capability inventory (round 20, attempt 2; append-only)
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+@@ -1457,7 +1457,7 @@ Code measured at `a6cef8984d3815775587ab634ce558e13338b0eb`: classifier SHA256 `
+ 
+ Legacy screens at delivered code remain unchanged populations:11/11 scan/frozen selftest suites,247/247 assertions; r19 frozen_match; r18 expected old frozen_verdict_mismatch; six incident lines still detected. `tw-precision.py a6cef8984d3815775587ab634ce558e13338b0eb` now166/175 under the **unchanged** historic wants(P66/66,S17/17,W21/22,H47/52,L15/18): the old three disagreements persist and six additional disagreements reflect reset-invalidated helper leads and the strict commit/index-write boundary. Never call this175/175 or retroactively admit round20. The old A2 guard at a1e1b608 recorded recall_lost0/crash_flip0/vcs_fn0/a2_mismatch0/dup_rows0, plus two logging false leads; the delivered whole-corpus replay rechecks its exact24 pure inputs against fixture pin6a7d9ca, all hashes match and all24 emit0 findings. Its VCS26-vs20 old-truth disagreements are retained for effect-boundary adjudication, not hidden as a pass.
+ 
+-### Capabilities demonstrated this round
++### Capability inventory demonstrated this round
+ 
+ | Capability | What it can now do | Evidence pointer | First-working round |
+ |---|---|---|---|
+-- 
+2.56.0
+
