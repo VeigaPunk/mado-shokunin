@@ -77,3 +77,28 @@ numbers, source cycles); each data seat reports its own coredump delta (M26-6).
 Every nested Hyprland runs inside the round-26 tinywl + bubblewrap sandbox (`harness/oracle.py`), now launched under
 `env -i PATH=/usr/bin` (M26-5); the tool sandbox likewise. Receipts print `HOST_SAFETY ... delta=`. The live session
 is only read with `hyprctl -j` query verbs.
+
+## C1 redesign before data: counter v2 (10:38Z, before any data seat)
+
+w1 `CritC1Counter` (non-author critic) showed a source-blind reader that never follows `source =` (it scans every
+file in the tree and orders them by file-name buckets) meeting v1 at 41/41 on two fresh seeds
+(`controls/K1FlatScan-v1-seed{1,2}.txt`, tool `controls/K1FlatScan.py` sha256 `68339595…abf1ea`): v1 sourced every
+file it wrote, at the end of the root. Under the kill rule v1 is retired as C1's rule before data; v1 and its receipts
+stay. Counter v2 `c1/count-v2.py` (sha256 `f7f86d75eb45a2dcd6a2094dcb614b701c948d6fee90f46da911831213c1a2c4`) adds
+unsourced DECOY files carrying workspace rules (mentioned only in a commented-out source line or sourced only from
+another unsourced decoy), places each new `source =` line at a random position among the root's rule lines (ORDER),
+sources files from sourced files (NESTED) and through glob patterns (GLOB), and draws file names of random length and
+extension. Same comparison, guards, oracle and population (BASE + 25 APPEND + 15 SYNTH).
+
+**PRED-C1-r27-v2**: At REV, the committed bytes of tools/mado-wsrules.py, run in the tool sandbox (no network, no /run,
+cleared environment, the case tree read-only at /snap/home from a randomly named directory), print for the
+unperturbed snapshot of the four Hyprland config roots and for each of 40 generated cases (25 that add workspace
+rules to the snapshot, 15 independent trees that contain none of the snapshot's files; cases carry unsourced decoy
+files, nested and glob sources and source lines placed among rule lines) a JSON array equal, entry by entry and in
+order, to the array Hyprland v0.56.2 itself prints with `hyprctl workspacerules -j` for the same tree (a nested,
+headless, session-isolated instance run by the counter on a copy with exec lines removed); target: cases_pass=41/41.
+
+Counter: `python3 -I .ufo/waves/round-27/c1/count-v2.py REV [--seed HEX] [--jobs N]`. Before (L1 pilot, REV
+`543f0445`): `tool=MISSING_TOOL`, 0/41 (`evidence/c1v2-before-543f0445.txt`). L1 pilot of the flat reader under v2:
+9/41 (`controls/v2/K1FlatScan-L1pilot.txt`). Every C1 control is re-scored under v2 with two fresh seeds by the seat
+that built it (receipts `controls/v2/<Control>-seed{1,2}.txt`) before any data seat.
