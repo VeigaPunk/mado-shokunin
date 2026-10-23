@@ -1625,3 +1625,44 @@ exploratory claim, no retirement; probation checklist unchanged (four `[~]`).
 Re-cut both counters before data on the M24-2/M24-5 lessons (distinct-sha256 documents and rule-context terms for C1;
 full `Capability` population, REV-only meters and `works → fails` harm for C2); route the stale collision-screen row
 and H2; harden the two QUALITY checks against the wave-2 survivors.
+
+## Current state (round 25)
+
+C2 of round 25 (calibration, **exploratory**: no counter, no score change claimed; verdict only from a named non-author
+reviewer). One place that says, for every capability the file names, what it claims, what a fresh run at one base did,
+how to re-run it, and which statement now governs. Base `41cc04c8d593837a0d5078bffaacdaa163d12897` (round-25 base);
+each row was re-run by its own wave-a3w1 executor seat in a detached sandbox clone at that base (`timeout 600`,
+`prlimit --as=4000000000`), and re-derived independently by a wave-a3w2 reviewer seat. Receipts:
+`.ufo/waves/round-25/a3w1/reports/Cap*.md` (run) and `.ufo/waves/round-25/a3w2/reports/Rc*.md` (re-check).
+
+Population (enumerated from the base blob without a case-sensitive header filter; a3w1 `CritC2Ledger.md`): 15
+capability identities in 9 tables whose first header cell is `Capability` (rows `:308-311`, `:437-438`, `:782`, `:919`,
+`:1020`, `:1158`, `:1342-1343`, `:1409-1410`, `:1464`; a tenth such table, `:202`, holds only the `— none yet —`
+placeholder `:204`), plus 12 repeated
+status rows in the round-24 table (`| capability | status | observed evidence |`, `:1575-1586`), mapped below as the
+earlier governing statement. Line numbers are at the base blob; this round inserted 5-line pointer paragraphs after
+`:438` and after `:1343` (repair R6), so at this revision `:1342-1343` read `:1347-1348` and rows after them shift by 10.
+
+| base row | capability | stated (abbreviated) | observed at `41cc04c8` (fresh run) | command (cwd = clone at base) | governs now |
+|---|---|---|---|---|---|
+| `:308` | sources registry | registry rows; every census command clean; mined rows join citing entries | works: `validate` `mado ok`, exit 0, 0 E-codes, 7 W04; 168 rows (row says 39: round-12 count) | `scripts/sources-census.sh validate --root <root>` | this row; r24 `:1575` agrees |
+| `:309` | verdict gate (live + file plane) | read-only verdict over config plane and live hyprctl, exit 0/1/2 | works: `MADO_VERIFY: CLEAN (53 pass, 7 notes; file + live planes verified read-only)`, exit 0; usage exit 2; empty root exit 1 | `bash tools/mado-verify.sh` | this row; r24 `:1576` ran `--no-live` only — the live arm now observed |
+| `:310` | hermetic self-test | 269 assertions over isolated fixtures | works: `MADO_SELFTEST: 460/460`, exit 0 (row's 269 is the round-12 count) | `bash tools/mado-verify.sh --selftest` | this row; r24 `:1577`; hermeticity caveat `:1179-1181` (two non-reproducible fixture-loss failures under concurrent runs) |
+| `:311` | mutation regression with re-cut | 10-defect kill table vs derived target; SETUP + printed re-cut on a moved gate | works: `MADO_REGRESSION: PASS`, 10/10 killed, exit 0; pin-flipped copy SETUP exit 2, printed re-cut re-run 10/10 exit 0 | `MADO_VERIFY_HARNESS=<tameshi>/tools/mutate-and-run.sh bash tools/mado-verify.sh --regression` | this row; r24 `:1578` |
+| `:437` | source-fragment collision screen | stop repeated active canonical URL; "current exits 0" | **fails as stated**: selftest 25/25 exit 0; historical registry exit 1 (S017→S030); current `corpus/SOURCES.md` exit 1, `collisions=4` | `python3 .ufo/waves/round-13/w1/reports/MistakeFix.py --registry corpus/SOURCES.md` | this ledger; pointer after the row (R6) |
+| `:438` | digest-pinned frozen regression | verify gate/harness digests before replay; refuse tamper | works: `MADO_FROZEN: MATCH`, exit 0; selftest 12/12; one appended byte → `snapshot_tampered` exit 2 | `python3 .ufo/waves/round-13/frozen/verify.py` | this row |
+| `:782` | finite declared-action classifier | refuse blocked kinds, 12 pinned argv[0] names, malformed input; frozen replay | works: selftest 52/52 exit 0; `--frozen` `frozen_match` exit 0; red plan exit 1, green plan exit 0 | `python3 -I tools/mado-action-plan.py --selftest` / `--frozen .ufo/waves/round-16/frozen` | this row |
+| `:919` | post-hoc transcript tripwire | classify OMP JSONL commands into three classes, exit 0/1/2 | works, **command not runnable as written** (brace form exits 2: `--selftest` takes one DIR); per-dir 9/9, 16/16, 33/33, 30/30 exit 0 | `python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/<dir>` per dir | this row; r24 `:1579` |
+| `:1020` | tripwire frozen replay (gate entry) | verify digests, compare verdict with pinned expectation | works as designed, exit 1: `frozen_verdict_mismatch` (5/5 digests ok, 3 extra findings the r18 pin predates); tamper exit 2; r19 pin `frozen_match` exit 0 | `python3 -I tools/mado-tripwire.py --frozen .ufo/waves/round-18/frozen` | r24 `:1580`; an exit-0 reading of this row is wrong |
+| `:1158` | landedness check | cited hash ancestor of live remote tip, no fetch/write | works: `LANDED` exit 0; `LOCAL_ONLY`/`MISSING` exit 1; non-hex exit 2 (remote tip observed at run time) | `bash .ufo/waves/round-19/landed-check.sh <lane> <hash>…` | this row; r24 `:1581` |
+| `:1342` | tripwire evidence marker | observed vs lead on every finding row; drop pure data | **fails**: at base P 66/66 but L 15/18 (three lead cases give no finding); the row's literal command pins `28c6837` (L 17/18, historical) | `python3 -I .ufo/waves/round-20/tw-precision.py 41cc04c8` | r24 `:1582` (fails); pointer after the row (R6) |
+| `:1343` | harness fail-closed check | payload never runs after any of six forced setup failures | works: six `FAIL_CLOSED`, positive control OK, exit 0 (`HARNESS` placeholder resolved to `.ufo/waves/round-20/isolate.sh`) | `bash .ufo/waves/round-20/isolation-check.sh .ufo/waves/round-20/isolate.sh` | this row; r24 `:1583` |
+| `:1409` | tripwire reached-body sweep | unfollowed reachable bodies reported as leads | works with the present tool: `recall_lost 0`, `crash_flip 0`, exit 0; at the row's own revision `a8960de` one `MemoryError` crash flip under the 4 GB cap (memory-contingent) | `python3 .ufo/waves/round-20/a2/a2-guards.py 41cc04c8 --fixtures-rev 6a7d9ca` (present tool) and `… a8960de …` (row's revision) | this row; r24 `:1584`; harm context `:1412-1420` |
+| `:1410` | detector removal-side guard | count findings dropped, crash flips, pure-data rows | works: all guarded counters 0 at base, exit 0; before receipt `28c6837` reproduces `recall_lost 52` | `python3 -I .ufo/waves/round-20/a2/a2-guards.py 41cc04c8 --fixtures-rev 6a7d9ca` | this row; r24 `:1585` |
+| `:1464` | artifact-only assessment integrity | chronology, hashes, rejection disclosure, four SHONEN subjects without C1 | works: selftest `pass=20 total=20`, exit 0, two runs byte-identical | `python3 -I tools/mado-assessment.py --selftest .ufo/waves/round-21/assessment-fixtures` | this row; r24 `:1586` |
+
+Read this way: 13 of 15 capabilities work at base; `:437` and `:1342` fail as stated (both already known, now with
+pointers at their rows); four rows carry documentation defects a reader would trip on (`:919` command not runnable as
+written, `:1343` placeholder argument, `:1020` exits 1 by design, `:310`/`:308` stale counts). Not claimed: any score
+change, admission or restored capability. This section is bookkeeping for the next reader; the C2 verdict is the
+non-author reviewer's.
