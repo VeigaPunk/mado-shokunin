@@ -1555,3 +1555,32 @@ shapes, measured at `2f1134f3`, not re-measured at `3732c7a7`). A trade is not a
 `.ufo/waves/round-23/evidence/candidate-classifier-e1dc8029.py`. **C1 after-value at the landed tip:
 6/12 — target 12/12 not met (honest stop).** Author verdict C1: unchanged (no production change).
 C2 and C3 stand as recorded. Operability is not harmed: production bytes equal base.
+
+## Round 24 — registration and C2 re-demonstration (2026-10-23)
+
+Registration `.ufo/waves/round-24/registration.md` (landed before any data seat; control receipts in
+`.ufo/waves/round-24/controls/`). Base `8e5d93691e2f7baa3d4a0a61c9428e5acb5d2122`. Claims: C1 coverage (Hyprland
+window-rule attribution route, counter `python3 -I .ufo/waves/round-24/c1/count.py REV`, v2), C2 calibration
+(capability table versus frozen re-demonstration, counter `python3 -I .ufo/waves/round-24/c2/count.py REV`).
+
+### Capability status (round 24 re-demonstration)
+
+Each capability in the tables above was re-run with its frozen command (`.ufo/waves/round-24/c2/manifest.json`,
+sha256:`e02c76d1adb4f523fccf11e1e5ad4cd40f6d0da460b75c7f811b66306e188a02`) on the base tree. Status is what the
+command did, not what the original row asserted. This table supersedes the implied `works` of every earlier row;
+the earlier rows stay as written.
+
+| capability | status | observed evidence |
+|---|---|---|
+| sources registry | works | census `mado ok`, exit 0 at `8e5d9369` |
+| verdict gate (live + file plane) | works | `--no-live` prints a `MADO_VERIFY:` verdict, exit 0 at `8e5d9369`; live layer not exercised |
+| hermetic self-test | works | `MADO_SELFTEST: N/N assertions passed`, exit 0 at `8e5d9369` |
+| mutation regression with re-cut | works | `MADO_REGRESSION: PASS`, exit 0 at `8e5d9369` (tameshi `mutate-and-run.sh` consumed read-only) |
+| post-hoc transcript tripwire | works | four round-17 selftest dirs all `SELFTEST_SUMMARY: n/n`, exit 0 at `8e5d9369` |
+| tripwire frozen replay (gate entry) | works | `MADO_TRIPWIRE_FROZEN: frozen_verdict_mismatch`, exit 1 — the replay runs and reports; the mismatch is the frozen verdict, not a replay failure |
+| landedness check | works | `LANDED <rev>`, at `8e5d9369` |
+| tripwire evidence marker | fails | `tw-precision.py <rev>`: L 15/18 (P 66/66) at `8e5d9369`, not the row's L 17/18 (that was `28c6837`). Two reset-cleared helper leads (`L-CasePureCrossCell-reset-clears-helper`, `L-CaseLeadsInvisible-reset-cleared-helper`) pass at `28c6837` and fail now: round-21 harm H2, still unrepaired (`.ufo/waves/round-24/w1/reports/ScribeC2Evidence.md`) |
+| harness fail-closed check | works | six forced setup failures classified, `POSITIVE_CONTROL_OK isolate.sh`, at `8e5d9369` |
+| tripwire reached-body sweep | works | `a2-guards.py <rev>`: `recall_lost` 0, at `8e5d9369` |
+| detector removal-side guard | works | same `a2-guards.py` run: removal, crash-flip and pure-row counters all 0, at `8e5d9369` |
+| artifact-only assessment integrity | works | `mado-assessment.py --selftest`: pass = total, exit 0 at `8e5d9369` |
