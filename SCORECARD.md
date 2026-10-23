@@ -1746,3 +1746,26 @@ receipt delta 0) — lesson M26-1/M26-2/M26-6.
 Successor harness (bwrap under `env -i`, symlink-safe snapshot, resource bounds); gate-check fixtures for the
 surviving self-test/Q37/Q36 mutants; candidate frontier move: window/workspace rules tables (`hyprctl workspacerules
 -j`) through the same oracle.
+
+## Round 27 — results and author verdicts (2026-10-23, attempt 2)
+
+Registration `.ufo/waves/round-27/registration.md` (frozen before any control or data seat; C1 rule chain v1→v4 retired pre-data under the kill rule, C2 counter v2). Base `543f0445e9d60bdfa026c54772d29e8b96bc844b`. Attempt 1 (phase-4 orchestrator) committed counters, controls, sealed H, and both C2 suites, then died before data; attempt 2 inherited, landed data, measured. Expected values come from Hyprland v0.56.2 itself in the isolated oracle (`harness/oracle.py`, coredump delta 0 on every receipt).
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage (sourced: S178–S182, S158, S162): the workspace-rule table (`hyprctl workspacerules -j`) becomes a measured lane tool `tools/mado-wsrules.py` + note `corpus/knowledge/workspace-rules-r27.md`; no lane tool or note derived it at base (`git grep -n -i "workspacerules\|workspace rule" 543f0445 -- tools corpus/knowledge` finds only verb mentions) | `543f0445`: `tool=MISSING_TOOL`, 0/41 (`evidence/c1v4-before-543f0445.txt`) → `20022a65`: `PRED-C1-r27-v4 cases_pass=41/41 verdict=TARGET_MET`, exit 0 (`evidence/c1-after-20022a65.txt`, official seed `4cfdf858277ad362`); 13 v4 controls best 32/41 (FileScope, `controls/v4/`) | `python3 -I .ufo/waves/round-27/c1/count-v4.py REV [--seed HEX] --jobs 6` (sha256 `635ae788…71a1`) | target met under the frozen v4 rule. Data rule: two independent builds; ExecWsToolA died mid-flight unreturned (its inherited bytes piloted 19/41, `evidence/c1-after-48b9434a.txt`, ONEMPTY cluster), ExecWsToolC returned and its bytes landed unmodified (`dcf5c8c0…a389`); provenance audit PROVENANCE_OK (w3 RevProvenance); 3/3 tool-level mutants killed on the 13-tree oracle probes (w3 MutWsTool) |
+| C2 operability: the lane's two offline gates (`quality/counter-selftest.py`, `quality/population-suite.py`) fail when their subjects are broken | `543f0445`: suites missing, `green=0/8 w_killed=0/15` (`evidence/c2v2-before-543f0445.txt`) → measurement 1 at `48b9434a` (suites from ExecSuiteA1/B2 first-returned bytes): green=17/17, w_killed=15/15, h_killed=12/18 vs h_need=14, `verdict=TARGET_MISSED` (`evidence/c2-after-48b9434a.txt`); three named survivors (HeldC2-extra-disjunction, -unstable-conjunction, -embed-boundary). Registration repair flow: w4 seats built own class mutants from the public names (sealed H never read), ExecRepairA2's repair returned first and landed unmodified at `0b53bd86`; measurement 2: green=17/17, w_killed=15/15, h_killed=15/18 vs h_need=14, `verdict=TARGET_MET`, exit 0 (`evidence/c2-after-0b53bd86.txt`) | `python3 -I .ufo/waves/round-27/c2/count-v2.py REV --heldout /fast/scratch/hyaku/mado-r27/heldout --seal .ufo/waves/round-27/c2/heldout-seal.txt` (sha256 `4dfb34b5…09d3`) | target met at the final REV under the frozen v2 rule (the REV-parametric predicate at `0b53bd86`); measurement-1 miss retained as evidence; residuals: 3 surviving held-c1v2 rows (c1-counter subject) and H-set rotation advice (w3 CritC2Claim) routed |
+
+Population check (QUALITY 37): `python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-27/registration.md .ufo/waves/round-27/evidence/c1-after-20022a65.txt` → exit 2 UNREADABLE — the checker parses only distinct numeric totals and PRED-C2-r27(-v2) states open-ended targets (`green=all`, ratios); not a population mismatch (routed: extend Q37 for ratio/all targets). The C1 receipt's own counts are internally consistent: 41 CASE lines against the registered 41-case total.
+
+### Capabilities (round 27)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| static workspace-rule table resolver | Print, from config bytes only, the JSON table Hyprland v0.56.2 reports (`hyprctl workspacerules -j`) for a hyprlang config tree (sources, variables with redefinition, `{{…}}`, merge-in-place, gaps shorthand, parseInt bools, on-created-empty) | `python3 -I tools/mado-wsrules.py --home DIR`; measured `count-v4.py 20022a65` → 41/41 against Hyprland's own tables; `python3 -I tools/mado-wsrules.py --home ~` matches live `hyprctl workspacerules -j` (closure re-derivable) | 27 |
+
+Harm watch: `git diff --stat 543f0445 -- tools/` touches only `tools/mado-wsrules.py` (new); suites/repairs touch only `quality/`. Census `validate` exit 0 at end (rows 177 → 182; W04 duplicate-url warnings unchanged from round 26). Host: Hyprland coredump records 1338 → 1338 across both measurements and all w3/w4 seat probes (every receipt `HOST_SAFETY delta=0`).
+
+### Planned (round 28; intent only)
+
+C2 residual: H-set rotation on re-measurement (w3 CritC2Claim) and the two Q36-successor survivors (glob-case, marker-case, w2 MutQ36Successor); the ExactBool blind spot noted by w3 CritC1Claim (counter BOOLWORD values are exact words; the 13-tree `bools` probe is the discriminator); suite-A sandbox residuals (output-flood DoS, `.git` metadata leak, w3 CritC2Claim).
