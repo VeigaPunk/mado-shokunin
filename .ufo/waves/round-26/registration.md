@@ -155,3 +155,7 @@ C2 notes from w1 `CritC2Design` (no rule change): the ARITH cases cover hyprlang
 decimals, `$var` substitution, one escape form and unclosed braces, not every expression rule (bare-name
 variables, backslash parity, nested braces are not generated); the V3 half re-checks round-25 behaviour on 20
 sampled cases, it is not an exhaustive no-harm proof — "the no-harm half" above means exactly that sample.
+- (appended after measurement; no rule change) The v2 section's "a cache of the snapshot's events applies to at most
+  BASE + 20 APPEND = 21 of 41 cases" is not a ceiling: an EDIT case whose rewrite leaves the table unchanged can also
+  be met by a cache (`controls/v2/K1SnapshotCache.txt` C28 `changed=no`). Measured cache controls: 1–4/41 (w2
+  CritMistakes).

@@ -1629,3 +1629,20 @@ base each (13 work, `:437` and `:1342` fail as stated, four documentation defect
 seat. Routed round-24 repairs: A18 in-row correction, S161 and receipt-chronology corrections, SCORECARD pointers,
 QUALITY 36 with a check red on round 24 (its mutant coverage is weak: lesson M25-3); the population-equality part of
 routed defect 2 stays open (M25-4).
+
+## Round 26 — isolated Hyprland oracle, animation-table resolver, hyprlang arithmetic in binds (2026-10-23)
+
+Round 25's oracle ran nested Hyprland on the operator's live session (windows on the desktop, ~1330 SIGABRT coredump
+records). Hyprland 0.56.2 cannot run headless alone (no allocator without a DRM fd), so each nested instance now gets
+a private headless tinywl (wlroots 0.20.2, patched to offer wl_compositor/xdg_wm_base v6) inside bubblewrap: no host
+`/run`, cleared env, private runtime dir, only the amdgpu render node, `dispatch exit` to stop. Pilot ISOLATED_OK;
+w1 IsolationProbe sampled 288 nested pids during a counter run: all private, live clients unchanged, no coredumps.
+
+C1 (coverage): counter v1 froze first; w1 critic showed its append-only cases could be met by a snapshot cache, so v2
+(append/edit/independent trees + Hyprland version guard) froze before data and every control was re-scored (best
+9/41). `tools/mado-anims.py` (ExecAnimToolA) landed at `2b3487f7`: 41/41. Note `animation-table-r26.md`, sources
+S173–S177. C2 (operability): `tools/mado-binds.py` now evaluates hyprlang's one-operator float `{{…}}` expressions
+(ExecArithToolB) at `a496b02a`: 51/51 (round-25 tool 22/51). Repairs: label-free case paths (M25-2), counter
+self-test with drift and embed witnesses, QUALITY 37 population equality, Q36 successor with `--counter-sha`,
+round-25 R8 correction, ledger rows `:1409`/`:1410` second-derived. Open: tool-sandbox `/proc/1/environ` leak,
+surviving gate-check mutants, three coredumps from seat crash probes (lesson M26-5…M26-8).

@@ -1710,3 +1710,39 @@ The named non-author reviewer (`.ufo/waves/round-25/a3res/reports/RevC2Judgment.
   for the a3w2 re-check); verdicts were equal at both.
 - F5: row `:1410`'s "all guarded counters 0" leaves out `vcs_fp 26`, which the row's own receipt scopes out of the
   guard.
+
+## Round 26 — results and author verdicts (2026-10-23)
+
+Registration `.ufo/waves/round-26/registration.md` (C1 rule: section "C1 redesign before data: counter v2"). Base
+`96101be523b2f6e897eee743d5b396b0225bf9ed`. Every expected value comes from Hyprland v0.56.2 itself in a headless,
+session-isolated nested instance (`.ufo/waves/round-26/harness/oracle.py`; pilot `harness/pilot-receipt.txt`).
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage (sourced: S175–S177, S158, S162): the animation directive→entry expansion (`hyprctl animations -j`), held as `[INF]` at `corpus/knowledge/hyprctl-verification-layer.md:158`, becomes a measured tool `tools/mado-anims.py` + note `corpus/knowledge/animation-table-r26.md` | `96101be5`: `tool=MISSING_TOOL`, 0/41 (v1 receipt `evidence/c1-before-96101be5.txt`; v2 controls best 9/41) → `2b3487f7`: `PRED-C1-r26-v2 cases_pass=41/41 verdict=TARGET_MET`, exit 0 (`evidence/c1-after-v2-2b3487f7.txt`, seed `4408656415ee7578`) | `python3 -I .ufo/waves/round-26/c1/count-v2.py REV` (sha256 `4ed70b54…6428`) | target met under the frozen v2 rule; controls (9 shapes, landed `1b0b91e9` before data) best 9/41 (w2 re-scores ≤13/41) |
+| C2 operability: `tools/mado-binds.py` works on trees whose binds/variables use hyprlang `{{…}}` expressions, keeping round-25 behaviour on the 20-case V3 sample | `96101be5` (round-25 tool): `cases_pass=22/51` (`evidence/c2-before-96101be5.txt`) → `a496b02a`: `PRED-C2-r26 cases_pass=51/51 embed_hits=0 verdict=TARGET_MET`, exit 0 (`evidence/c2-after-a496b02a.txt`, seed `629fd25ee94fb42a`) | `python3 -I .ufo/waves/round-26/c2/count.py REV` (sha256 `b92c32da…16a8`) | target met; controls (6 shapes) best 24/51 |
+
+Population check (QUALITY 37): `python3 -I .ufo/waves/round-26/quality/check-population.py --registration
+.ufo/waves/round-26/registration.md` on both after-receipts → `POPULATION verdict=PASS`, exit 0.
+
+### Capabilities (round 26)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| static animation-table resolver | Print, from config bytes only, the `[nodes, beziers]` table Hyprland v0.56.2 would report (`hyprctl animations -j`) for a hyprlang config tree | `python3 -I tools/mado-anims.py --home DIR`; measured `count-v2.py 2b3487f7` → 41/41 against Hyprland's own tables | 26 |
+| isolated Hyprland oracle | Run Hyprland v0.56.2 headless under a private tinywl in bubblewrap and read any `hyprctl -j` verb, with no contact with the live session | `python3 harness/pilot.py` (`harness/pilot-receipt.txt`: ISOLATED_OK, coredumps 1335→1335); w1 IsolationProbe 770/770 samples private | 26 |
+
+Ledger repair (round-25 routed defect 7): rows `:1409`/`:1410` of `## Current state (round 25)` are now second-derived
+(w1 Rc1409, Rc1410; reviewed by w2 ReviewRc): both agree; `:1410` holds under errata F5's scoping (`vcs_fp 26` outside
+the guard).
+
+Harm watch: `git diff --stat 96101be5 -- tools/` touches only `tools/mado-anims.py` (new) and `tools/mado-binds.py`
+(C2; its round-25 behaviour is the counter's V3 half, 20/20 + BASE). Census `validate` exit 0 at start and end (rows
+172 → 177). Host: Hyprland coredump records 1330 → 1338 this round (5 failed pilots, 3 seat probes; every counter
+receipt delta 0) — lesson M26-1/M26-2/M26-6.
+
+### Planned (round 27; intent only)
+
+Successor harness (bwrap under `env -i`, symlink-safe snapshot, resource bounds); gate-check fixtures for the
+surviving self-test/Q37/Q36 mutants; candidate frontier move: window/workspace rules tables (`hyprctl workspacerules
+-j`) through the same oracle.

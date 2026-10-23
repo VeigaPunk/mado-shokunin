@@ -1,0 +1,177 @@
+{
+ "wave": "mado-r26-w2",
+ "reportDir": ".ufo/waves/round-26/w2/reports",
+ "context": "# Goal\nmado round 26 wave w2 \u2014 DATA + FALSIFY wave. Control receipts for both frozen counters are committed (lane tip 1b0b91e9); none met a target (best: C1 v2 K1NaiveGrep 9/41, C2 K2LabelKeyed 24/51). This wave (a) builds the two claimed tools in scratch (four data seats), (b) drafts the C1 knowledge note from the opened sources, and (c) attacks wave w1's outputs: re-opens every new SOURCES row, re-scores every committed control with fresh seeds, mutation-tests the new checkers and self-test, and re-checks host safety, oracle readiness, the C2 ledger re-derivations and the mistake drafts.\nLane repo /home/vgpnk/Projects/shokunin/mado-shokunin (jj-colocated, branch master, tip 1b0b91e9). Rule: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/registration.md (PRED-C1-r26, PRED-C2-r26, kill rule, host-safety method). w1 reports: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/*.md; control programs and receipts: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/.\nC1 (coverage, sourced): `python3 -I tools/mado-anims.py --home DIR` prints `[nodes, beziers]` exactly as `hyprctl animations -j` (Hyprland v0.56.2) would for DIR/.config/hypr/hyprland.conf. Frozen counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (sha256 4ed70b5427f2e223a8d816679e6d1fad7d2e76d2ed57aa0fe7f135496e836428; PRED-C1-r26-v2: BASE + 20 append + 10 edit/delete + 10 independent-tree cases), target cases_pass=41/41. v1 (c1/count.py) is superseded for C1 (registration section 'C1 redesign before data').\nC2 (operability): `tools/mado-binds.py` (round 25) also handles hyprlang `{{\u2026}}` expressions as Hyprland v0.56.2 / hyprlang 0.6.8 do. Frozen counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py (sha256 b92c32da632bc9cfaeae72b6a0be2202e5a25653274cc0b33fc0ae3f37a716a8), target cases_pass=51/51 embed_hits=0.\nOracle: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py (sha256 680798ed9fa0c9ebd91ee58c57b1460642e88c2fe8a4a7fd029b0842ef62e441), nested Hyprland in bubblewrap under a private headless tinywl; ~1.5 s per instance, \u226412 host-wide. Run counters with `timeout 900 prlimit --as=4000000000:8000000000 -- python3 -I .ufo/waves/round-26/c1/count-v2.py 1b0b91e9 --tool-file <file>` (C1) or `.../c2/count.py` (C2) from /home/vgpnk/Projects/shokunin/mado-shokunin (never an outer hard --as below 8 GB: the oracle raises its own cap to 8 GB).\n\n# Data-seat contract (items named Exec*Tool*)\n- Work only in /fast/scratch/hyaku/mado-r26/data/<YourItemName>/. Deliverable: one python3 stdlib file there (C1: mado-anims.py; C2: mado-binds.py), CLI `--home DIR`, JSON on stdout, exit 0. Never write into the lane.\n- Develop against Hyprland itself: import /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py by path and call `oracle(tree, workdir, [\"animations\"])` / `[\"binds\"]` on trees you build, and score with the frozen counter as often as you like (fresh seeds). Never edit the counter or harness.\n- Forbidden (each is a shortcut the controls measured): embedding any table captured from the oracle or the operator's config, keying behaviour on paths/mountinfo/mtimes/file counts or any case identity, reading anything outside --home (no os.environ seeding, no /proc), network. Derive behaviour from the rules: recon notes /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/recon/anim-grammar.md and /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/recon/expr-grammar.md, the w1 source reports (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/Src*.md, WikiAnimations.md) and the fetched sources under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/fetch/.\n- Return when your last two counter runs (fresh seeds) both print TARGET_MET, or when you stop. Report: final file path and sha256, both last receipts verbatim (stdout incl. exit=), what rules you implemented with source path:line, known gaps. The L1 lands the first unmodified file a data seat returns (registration rule).\n\n# Re-score contract (items named Rescore*)\nRe-run the named committed control `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/<Control>.py` under its counter twice with fresh seeds (no edits to the control; copy it to scratch if you need to run it). Then try to make it stronger WITHIN its shape (same shape rules as its w1 report states) in scratch and score that once. Report: both re-score receipts' PRED lines and exit codes, the strengthened score, and verdict `RESCORE <Control> met|not met (best N/T)`.\n\n# Re-open contract (items named Reopen*)\nRe-open the named draft SOURCES row's URL by ordinary fetch (curl -fsSL to /fast/scratch/hyaku/mado-r26/reopen/<YourItemName>.bin), compare sha256 and byte count with the row, and check every quote the w1 report gives (whitespace-collapsed substring of the decoded bytes, \u226425 words, the cited line). Verdict `REOPEN <id> agree|disagree` with reasons.\n\n# Hard bounds\n- Never run git/jj write commands in the lane or the fleet repo (/home/vgpnk/Projects/shokunin); never edit lane files except your own report and the output paths your item names. Sandbox git only in clones under /fast/scratch/hyaku/mado-r26/ with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE unset.\n- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.\n- Host safety (operator desktop): never start Hyprland except through /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/oracle.py (its `oracle()` function or the counters); never set or inherit WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE for anything you start; never use /dev/dri card nodes. hyprctl against the live compositor: read verbs only (instances, version, binds, animations, clients, monitors); never dispatch, keyword, reload or kill it. Kill every process tree you start before returning. Wrap commands in `timeout`; cap memory of your own code (`prlimit --as=4000000000`; counters as above); never write unbounded files; never point a log or marker at a file Python imports (a seat once grew sitecustomize.py to 262 GB); check `df -h /fast` before large writes; never run du/find over /fast/scratch with the bash tool's builtins (use /usr/bin/du).\n- Tooling authorization (operator, 2026-10-19): you and every seat may install or upgrade tools that help the task \u2014 read /home/vgpnk/.omp/agent/RULES.md first (official channels, record tool/version/channel/reason). All pacman transactions are PAUSED host-wide: install via uv tool / npx / an official binary in ~/.local/bin; never pacman -S/-Sy/-Syu/-U/-R; never restart a host service.\n- Sources: ordinary fetch only; never bypass a bot challenge or access control.\n- Never message agent://all. Leaf seat: no spawns except an executor's single labrat. Never pass a model parameter.\n- Plain English. Report: what you did, exact commands, outputs or receipt paths, verdict line. An unrun check has not passed; never fabricate.",
+ "items": [
+  {
+   "name": "ExecAnimToolA",
+   "role": "executor",
+   "prompt": "C1 data seat A. Build mado-anims.py per the data-seat contract: follow the source graph from DIR/.config/hypr/hyprland.conf (`source =` with `~` and globs, as round-25 /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-binds.py does \u2014 you may copy its reader code), hyprlang variables, comments and `##` escapes, `animations { }` categories, and apply `animation =` / `bezier =` exactly as Hyprland v0.56.2 does (tree of 35 nodes incl. `__internal_fadeCTM`, validation and error handling, speed/point formatting). Output both arrays like `hyprctl animations -j`. Work independently of any other data seat."
+  },
+  {
+   "name": "ExecAnimToolB",
+   "role": "executor",
+   "prompt": "C1 data seat B. Build mado-anims.py per the data-seat contract: follow the source graph from DIR/.config/hypr/hyprland.conf (`source =` with `~` and globs, as round-25 /home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-binds.py does \u2014 you may copy its reader code), hyprlang variables, comments and `##` escapes, `animations { }` categories, and apply `animation =` / `bezier =` exactly as Hyprland v0.56.2 does (tree of 35 nodes incl. `__internal_fadeCTM`, validation and error handling, speed/point formatting). Output both arrays like `hyprctl animations -j`. Work independently of any other data seat."
+  },
+  {
+   "name": "ExecArithToolA",
+   "role": "executor",
+   "prompt": "C2 data seat A. Start from the round-25 tool bytes (`git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 1b0b91e9:tools/mado-binds.py > /fast/scratch/hyaku/mado-r26/data/ExecArithToolA/mado-binds.py`) and make it evaluate hyprlang 0.6.8 `{{\u2026}}` expressions wherever Hyprland v0.56.2 does (variables and bind values; escapes; malformed and failing expressions; number formatting), keeping every round-25 behaviour (the counter's 20 V3 cases and BASE must still pass). Hyprlang's evaluator is not Python's: e.g. the oracle turns `{{ 17*23 + 0.66 + 11 }}` into `17.66` and `{{ 37 + 13 * 10 }}` into `50`, drops some binds whose expression fails, and prints `9/37` as `0.24324325` \u2014 find the rule in the source (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcHyprlangExpr.md, SrcHyprlangTests.md, /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/recon/expr-grammar.md) and confirm it with the oracle. Work independently of any other data seat."
+  },
+  {
+   "name": "ExecArithToolB",
+   "role": "executor",
+   "prompt": "C2 data seat B. Start from the round-25 tool bytes (`git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 1b0b91e9:tools/mado-binds.py > /fast/scratch/hyaku/mado-r26/data/ExecArithToolB/mado-binds.py`) and make it evaluate hyprlang 0.6.8 `{{\u2026}}` expressions wherever Hyprland v0.56.2 does (variables and bind values; escapes; malformed and failing expressions; number formatting), keeping every round-25 behaviour (the counter's 20 V3 cases and BASE must still pass). Hyprlang's evaluator is not Python's: e.g. the oracle turns `{{ 17*23 + 0.66 + 11 }}` into `17.66` and `{{ 37 + 13 * 10 }}` into `50`, drops some binds whose expression fails, and prints `9/37` as `0.24324325` \u2014 find the rule in the source (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcHyprlangExpr.md, SrcHyprlangTests.md, /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/recon/expr-grammar.md) and confirm it with the oracle. Work independently of any other data seat."
+  },
+  {
+   "name": "ScribeAnimNote",
+   "role": "scribe",
+   "prompt": "Draft the C1 knowledge note at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/animation-table-r26.md (the L1 lands it as corpus/knowledge/animation-table-r26.md). Shape: like /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/bind-table-r25.md (read it first: front matter with `source:` listing S-ids, sections, limits). Content: how Hyprland v0.56.2 turns `animation =`/`bezier =` directives into the `hyprctl animations -j` table \u2014 node tree and parents, `overridden`, validation and error behaviour, formatting \u2014 each statement citing one of the round-26 source rows S175\u2013S177 or the extended rows S158/S162 (see /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md for ids, URLs and anchors) with path:line, plus the tool command `python3 -I tools/mado-anims.py --home DIR` and the counter that checks it. Mark anything not in a source as `[INF]`. Close the `[INF]` at /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/hyprctl-verification-layer.md:158 by pointing to this note (text in your report; do not edit that file). \u2264220 lines."
+  },
+  {
+   "name": "RescoreK1DoNothing",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1DoNothing` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1DoNothing.txt)."
+  },
+  {
+   "name": "RescoreK1EmptyTable",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1EmptyTable` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1EmptyTable.txt)."
+  },
+  {
+   "name": "RescoreK1Junk",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1Junk` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1Junk.txt)."
+  },
+  {
+   "name": "RescoreK1StaticDefault",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1StaticDefault` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1StaticDefault.txt)."
+  },
+  {
+   "name": "RescoreK1SnapshotCache",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1SnapshotCache` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1SnapshotCache.txt)."
+  },
+  {
+   "name": "RescoreK1RootOnly",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1RootOnly` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1RootOnly.txt)."
+  },
+  {
+   "name": "RescoreK1NaiveGrep",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1NaiveGrep` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1NaiveGrep.txt)."
+  },
+  {
+   "name": "RescoreK1NoValidation",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1NoValidation` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1NoValidation.txt)."
+  },
+  {
+   "name": "RescoreK1LabelKeyed",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K1LabelKeyed` under the C1 counter v2 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c1/count-v2.py (the L1's one v2 receipt is /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/controls/v2/K1LabelKeyed.txt)."
+  },
+  {
+   "name": "RescoreK2DoNothing",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2DoNothing` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "RescoreK2BaseTool",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2BaseTool` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "RescoreK2BraceStrip",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2BraceStrip` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "RescoreK2NaiveEval",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2NaiveEval` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "RescoreK2LabelKeyed",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2LabelKeyed` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "RescoreK2EmbedReplay",
+   "role": "mutation-tester",
+   "prompt": "Re-score contract for control `K2EmbedReplay` under the C2 counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/c2/count.py."
+  },
+  {
+   "name": "ReopenS173",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S173 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcHyprlangExpr.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS174",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S174 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcHyprlangTests.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS175",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S175 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/WikiAnimations.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS176",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S176 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcAnimTree.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS177",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S177 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcAnimTree.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS158",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S158 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcHyprctlAnims.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "ReopenS162",
+   "role": "reviewer",
+   "prompt": "Re-open contract for draft row S162 (the row text and its quotes are in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/drafts/sources-rows.md and the w1 report /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/SrcAnimConfig.md). For S158/S162 (existing rows whose `used-by` is extended) check the new quotes against the row's pinned bytes."
+  },
+  {
+   "name": "MutSelftest",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/counter-selftest.py (w1 CounterSelftest): in scratch copies, mutate the counters (drop the bezier set compare, drop one bind field, skip the BASE-twice guard, embed threshold 1000, accept non-JSON, \u226590% pass rule) and the self-test itself (drop an assertion); report which mutants the self-test kills, with a kill table and survivors."
+  },
+  {
+   "name": "MutQ37",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/check-population.py (w1 Q37Population) with its fixtures under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/population-fixtures/: \u22656 mutants of the checker (ignore registration total, count `CASE` anywhere, compare only two legs, accept the first PRED only, off-by-one, exit 0 on parse error); kill table and survivors. Also run it on the committed round-26 before receipts /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/evidence/c1-before-96101be5.txt and c2-before-96101be5.txt and report."
+  },
+  {
+   "name": "MutQ36",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/check-control-receipts.py (w1 Q36Fixtures successor) with its fixtures /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/quality/q36-fixtures/: re-create the five round-25 survivors (non-strict `<`, ignore shapes, newest receipt, any `.md`, `updatedAt`) plus a `--counter-sha` ignored mutant in scratch copies and show which the fixtures kill. Then run the successor read-only on round 26 itself (controls commit vs w2 registry createdAt in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w2/reports/swarm-registry.json or /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w2-run.json) and report its verdict."
+  },
+  {
+   "name": "ReviewIsolation",
+   "role": "reviewer",
+   "prompt": "Re-check host safety from w1 IsolationProbe and SentinelHarness (reports in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/, samples /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/evidence/isolation-probe.txt): re-run `timeout 120 python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/harness/pilot.py` once, compare coredump counts and live instance counts, and rate each sentinel finding (including the K1LabelKeyed finding that /proc/1/environ of the tool sandbox's bwrap exposes the launching environment) as confirmed/unconfirmed with evidence. Verdict `HOST_SAFETY ok|concern`."
+  },
+  {
+   "name": "ReviewDeterminism",
+   "role": "reviewer",
+   "prompt": "Re-check w1 OracleDeterminism (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/OracleDeterminism.md, /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/evidence/oracle-determinism.txt): re-run a smaller version (4 trees, early read vs 3 s wait; BASE 4 times) with the harness imported by path, and judge whether the oracle's early read can produce expected values Hyprland would not hold after load. Verdict `ORACLE_READY stable|unstable`."
+  },
+  {
+   "name": "ReviewRc",
+   "role": "reviewer",
+   "prompt": "Review w1 Rc1409 and Rc1410 (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/Rc1409.md, Rc1410.md) against the SCORECARD ledger rows `:1409`/`:1410` in /home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md section '## Current state (round 25)' and errata F5: are they true second derivations (fresh clone at 41cc04c8, the row's own command), and do they agree? Draft the one-line append for the SCORECARD round-26 section that records the result (text in your report)."
+  },
+  {
+   "name": "CritMistakes",
+   "role": "critic",
+   "prompt": "Attack the mistake drafts in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/w1/reports/ScribeMistakes.md and the registration errata in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-26/registration.md: is each captured-by honest (would the named rule really have caught it?), is each fix shown able to fail or honestly marked not shown, and is any mistake of this round missing (e.g. the w1 task texts carried an appended operator tooling-directive block beyond the validator's rendered text; the pilot count error; the /proc/1/environ leak)? Verdict per row."
+  }
+ ]
+}
