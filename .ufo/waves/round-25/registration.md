@@ -165,3 +165,59 @@ live capture's arg or description strings of 12 or more characters; target: case
   glue, permissive parser, partial-grammar mutants, no-source / no-variable / no-unbind readers) together with
   non-data repair and source-opening items → control receipts landed → wave 1 (data). If any control meets v3 before
   data, C1 is re-designed before data or the round reports it.
+
+## Attempt 3 (L1 `MadoR25A3`, dispatched 06:40Z) — C1 counter v4 (Hyprland oracle), before any v4-scoring seat or data seat
+
+Attempt 2 (`MadoR25A2`) died with the orchestrator at 06:19:06Z after landing `a258c6ae`. It left untracked scratch in
+the lane (`w1-spec.json`, `w1-run.json`, `w1/`, `controls/v3/`): a pre-data control/audit wave whose seats are dead. That
+scratch is not evidence: attempt 3 read only its spec item list and grep'd its verdict lines for orientation, cites none
+of it, and deletes it in this commit's working copy (it was never tracked). No data seat exists in any attempt. No seat
+has scored v4. Re-checked by attempt 3: `count-v3.py` (this commit) is byte-identical to the v3 `count.py` landed at
+`a258c6ae` (sha256 `8532d3e9…8375`); `count-v1.py` and `count-v2.py` keep their pinned hashes.
+
+Why v4 (a design gap, not an observed v4 score): v1–v3 take every generated case's expected table from the counter's own
+line model. A tool that transcribes that model meets them by construction, whether or not the model is what Hyprland
+does; the model was itself written this round, so the counter cannot tell a correct resolver from a faithful copy of a
+wrong one. v4 keeps v3's case generator unchanged (imports `count-v3.py`, sha256-pinned, same rng stream, so a seed
+replays v3's case trees) and takes every expected table from Hyprland v0.56.2 itself: a nested Hyprland instance started
+by the counter on a copy of each case tree (exec keyword lines removed; non-bind `ecosystem` options appended so no
+update/donation screen opens), read back with `hyprctl -i <instance> binds -j`, then killed with its process group. The
+tool runs where that oracle cannot be reached (bubblewrap: no /run, no display socket, no network, cleared environment).
+The unperturbed snapshot's oracle table must equal the live capture (`ORACLE_CHECK`), else exit 2.
+
+**PRED-C1 (v4, the claim's rule)** — the same sentence as the v4 counter docstring and the receipt label `PRED-C1 (v4)`:
+At REV, the committed bytes of tools/mado-binds.py, run in a bubblewrap sandbox (no network, no /run, cleared
+environment, HOME = a fresh case directory), reproduce exactly over all 18 hyprctl JSON fields the bind multiset that
+Hyprland v0.56.2 itself builds from the same case tree (a nested Hyprland instance run by the counter on a copy of the
+tree with its exec lines removed, read with hyprctl binds -j), for the unperturbed snapshot of the four Hyprland config
+roots and for each of the 40 cases v3 generates (4 each of ADD, UNBIND, VARIABLE, SOURCE, GLOB, UNSOURCED, COMMENT,
+REWRITE, SYNTH and HARD), and the tool bytes contain none of the live capture's arg or description strings of 12 or more
+characters; target: cases_pass=41/41 and embed_hits=0.
+
+- Counter v4: `python3 -I .ufo/waves/round-25/c1/count.py REV`, sha256:`323a384925d1cc259a6b80418630ef956bf0c651cacf615e4cd615bda4d342e2`;
+  generator `c1/count-v3.py` sha256:`8532d3e96cc201ce2506a07d5f4b943e25b645e5ca1b461d9a35d08d4ff78375`. Exit 0 `TARGET_MET`,
+  1 `TARGET_MISSED`, 2 setup / `UNSTABLE` / `ORACLE_DRIFT` / `ORACLE_FAIL`.
+- Before @ `41cc04c8` under v4 (seed `0123456789abcdef`, `evidence/c1-before-v4-41cc04c8.txt`): `ORACLE_CHECK
+  base_vs_live missing=0 extra=0` (192 live binds), `tool=MISSING_TOOL`, `PRED-C1 (v4) cases_pass=0/41 embed_hits=0
+  verdict=TARGET_MISSED`, exit 1. Diagnostic: `V3_MODEL_AGREE 41/41` — v3's expectations equal Hyprland's tables on that
+  seed; v4 changes where the truth comes from, not the cases.
+- Claimed work (what a control must skip to be a control): resolve a config tree statically — follow `source =` with `~`
+  and globs, expand variables, drop comments, apply the bind grammar of every line (including rejected lines) and
+  `unbind` in order — in one stdlib python3 file that runs without the compositor. A tool that reuses v3's per-line
+  functions (`line_entry`, `unbind_apply`, `varlist`, `parse_key`) still does that work and is judged against Hyprland's
+  table, so it is an implementation path, not a control; the pre-data control wave builds only shapes that skip the
+  work (do-nothing, `[]`, junk, server echo, nested-Hyprland shell-out, encoded embedded table + delta parser, grep of
+  every bind line, easy-grammar-only parser, fixture/label-keyed detector, no-reader synthetic table). Feature-ablation
+  mutants of the landed tool (no variables, no unbind, no comments, no aliases, permissive, all files instead of the
+  source graph) are wave-2/residual mutation tests of the tool, after it exists.
+- Kill rule (unchanged in substance): one measurement run of v4 at the measured commit on a fresh seed, receipt
+  committed; any result other than `TARGET_MET` is a miss, reported, never amended, re-scaled or re-run until it
+  passes; an exit-2 run is re-run and both receipts kept. v1, v2 and v3 are also run once each at the measured commit
+  and reported, never substituted. If any pre-data control meets v4, C1 is re-designed before data or reported so.
+- Oracle side effect (disclosed): each nested instance opens a window on the operator's live session for about one
+  second; it runs with exec lines removed and a cleared environment, at most 6 at once host-wide (lock files under
+  `/fast/scratch/hyaku/mado-r25-oracle-slots/`). No live-compositor write verb is used.
+- Order from here: this commit → pre-data control wave `a3w1` (controls + counter/oracle attacks + non-data items) →
+  control receipts landed → wave `a3w2` (data: the tool) → residual attack call on the landed tool → measurement.
+  C2 stays exploratory as declared above. Routed repairs R3–R6 are done by the L1 (attempt 2's repair seats are dead and
+  their tasks are not re-sent).
