@@ -1594,3 +1594,25 @@ line 437 "current exits 0") is **stale**: `MistakeFix.py --registry corpus/SOURC
 `MISTAKE_FIX: COLLISION S120 -> S121`, `collisions=4`, exit 1, at base and tip alike (its selftest still passes 25/25).
 The sentence "Each capability in the tables above was re-run" is therefore true only of the 12 counted rows. The
 collision-screen mismatch is recorded here, not counted, and is routed to a later round.
+
+## Round 24 — results and author verdicts (2026-10-23)
+
+Measured at lane commit `eb14fa3d53d42c1568dd3fe2708c64eaf2024364` (receipts `.ufo/waves/round-24/evidence/c1-after-eb14fa3d.txt`,
+`c2-after-eb14fa3d.txt`). Base `8e5d9369`.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage: frontier "rule attribution" → sourced route (`corpus/knowledge/rule-attribution-r24.md`, S153–S168) | PASS_ROW 0, note absent → PASS_ROW 23/26 from 14 sources, README-indexed, `TARGET_MET` | `python3 -I .ufo/waves/round-24/c1/count.py REV` (v2, sha256:`b2f37c57…efc66`) | target met under the frozen v2 rule; the rule is shown weak (lesson M24-2): 12 of 23 passing rows carry attribution content and a generic-only note also meets it. The closure must judge the note itself. |
+| C2 calibration: capability table vs frozen re-demonstration | 1/12 mismatches → 0/12 | `python3 -I .ufo/waves/round-24/c2/count.py REV` (sha256:`a2809501…`, manifest sha256:`e02c76d1…`) | target met over the 12 heading-scoped rows; the predicate wording says "capability table", which literally covers 15 rows — read that way three rows have no command and one (collision screen) is stale (lesson M24-5). |
+
+No-harm at `eb14fa3d`: `tools/` byte-identical to base; round-23 C3 counter 0, round-23 C2 counter 3/3; census exit 0
+(the same 7 W04 warnings as at start); removed lines 0 in LOG, SCORECARD, QUALITY, README, SOURCES; PROVINCE, SHONEN,
+SKILL unchanged. Not claimed: the calibration literal lesson-citation rubric moves 23/32 = 7.1875 → 26/35 = 7.4286 as a
+side effect of the routed QUALITY criteria 33–35; navigation 35/38 → 39/39 rows indexed. No capability row, no
+exploratory claim, no retirement; probation checklist unchanged (four `[~]`).
+
+### Planned (round 25; intent only)
+
+Re-cut both counters before data on the M24-2/M24-5 lessons (distinct-sha256 documents and rule-context terms for C1;
+full `Capability` population, REV-only meters and `works → fails` harm for C2); route the stale collision-screen row
+and H2; harden the two QUALITY checks against the wave-2 survivors.
