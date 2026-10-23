@@ -1,7 +1,7 @@
 # ConnSiblingOverlap — round 24 (mado), wave 1
 
 **Seat** `MadoR24.ConnSiblingOverlap` (connector, leaf; no dispatch, no git/jj write, no commit).
-**Target** `/home/vgpnk/Projects/shokunin/mado-shokunin` (read-only) and the 21 sibling lanes under
+**Target** `/home/vgpnk/Projects/shokunin/mado-shokunin` (read-only) and the 20 sibling lanes under
 `/home/vgpnk/Projects/shokunin/*-shokunin` (read-only).
 **Round base** `8e5d9369` (registration). **Lane HEAD at scan** `81955bd` (commits are landing during
 the wave; every lane pin below is the live byte read at scan time, not a committed pin of mine).
@@ -67,6 +67,14 @@ S6  capability-table convention outside mado (tables of their own, not a shared 
       kotoba-shokunin/corpus/knowledge/instruction-surface-census-round13.md
       kagi-shokunin/SCORECARD.md · kaidoku-shokunin/SCORECARD.md
       kumitate-shokunin/SCORECARD.md · tsukuroi-shokunin/SCORECARD.md
+
+S7  hyprctl outside mado:
+    grep -n 'hyprctl' */PROVINCE.md */SKILL.md */SCORECARD.md 2>/dev/null | grep -v '^mado-shokunin'
+    → (no output; 0 hits)
+    grep -rIl 'hyprctl' --include='*.md' --include='*.py' --include='*.sh' */corpus 2>/dev/null \
+      | grep -v '^mado-shokunin'
+    → game-dev-2d-shokunin/corpus/live/r79-boundary-exec/run_love_probe.py
+      tameshi-shokunin/corpus/knowledge/mutation-case-mado-verify.md
 ```
 
 Live digests taken at scan (not pins of this report; both are sibling-owned files that can move):
@@ -88,7 +96,7 @@ grep -n 'HARNESS_SHA_RECORDED' mado-shokunin/tools/mado-verify.sh
 
 **Observed.** mado's province is "desktop & compositor craft — the Hyprland/waybar/walker
 configuration plane and display behavior" (`mado-shokunin/PROVINCE.md:3`), owning "`~/.config/hypr/`
-(hyprland.conf, keybinds, rules, animations)" (`:6`). Two siblings route *into* that ownership and
+(hyprland.conf, keybinds, rules, animations)" (`:6`). Siblings route *into* that ownership and
 none claim it:
 
 - tsukuroi's ADJ-03 locator quotes mado's own province verbatim and concludes "Mado owns the
@@ -133,10 +141,13 @@ no REA lane is crossed by C1.
 **Observed.** mado's gate reads "`hyprctl` read verbs only (version, instances, configerrors,
 getoption, binds, monitors, layers)" (`mado-shokunin/PROVINCE.md:28`, round-23 inventory row for
 `tools/mado-verify.sh`; verb list unchanged by round 24). No sibling lists `hyprctl` on a scope
-surface (S3). One sibling *calls* it as an observation instrument: game-dev-2d's live boundary probe
+surface (S7: 0 hits). One sibling *calls* it as an observation instrument: game-dev-2d's live boundary probe
 runs `["hyprctl", "clients", "-j"]` and filters for its own window class
 (`game-dev-2d-shokunin/corpus/live/r79-boundary-exec/run_love_probe.py:42`), with results reported at
-`game-dev-2d-shokunin/reports/round-79/r79-boundary.md:196,202`.
+`game-dev-2d-shokunin/reports/round-79/r79-boundary.md:196,202`. The only other sibling corpus hit is
+tameshi's historical mutation case, which PATH-starves `hyprctl` to test mado's gate
+(`tameshi-shokunin/corpus/knowledge/mutation-case-mado-verify.md:46,48,141`) — a read-only probe of
+mado's instrument, not a hyprctl claim of its own.
 
 **Disposition.** Report, never absorb. Two consequences are real and bounded:
 
@@ -144,11 +155,13 @@ runs `["hyprctl", "clients", "-j"]` and filters for its own window class
    (`game-dev-2d`'s love probe; `kake`'s "spawn Grok Bot app on Hyprland ws 3, silent/unfocused",
    `kake-shokunin/corpus/knowledge/ops-automation.md:83`). A live `clients` reading during another
    lane's run is not a quiescent-host reading.
-2. Round 24 does not take that risk: C1 is documentary (no host verb), and C2's manifest arms are
-   `--no-live`, `--selftest`, `--regression`, and file-plane scripts
-   (`mado-shokunin/.ufo/waves/round-24/c2/manifest.json:8-151`). No `hyprctl` is executed by this
-   round. Any later round that resumes live reads must state the shared-compositor caveat; it is a
-   reporting obligation of that round, not a claim on the other lanes' probes.
+2. Round 24 takes no host-verb risk: C1 is documentary, and C2's manifest arms are `--no-live`,
+   `--selftest`, `--regression`, file-plane scripts, and one network read (the landedness arm runs
+   `git ls-remote origin`, `mado-shokunin/.ufo/waves/round-19/landed-check.sh:28,87`); none issues a
+   `hyprctl`, systemd, or package verb
+   (`mado-shokunin/.ufo/waves/round-24/c2/manifest.json:8-151`). Any later round that resumes live
+   reads must state the shared-compositor caveat; it is a reporting obligation of that round, not a
+   claim on the other lanes' probes.
 
 **What the bytes do not establish.** That a sibling probe was running during any mado measurement —
 no host state was read here, and no `hyprctl` was invoked.

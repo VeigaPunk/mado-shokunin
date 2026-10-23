@@ -1573,3 +1573,28 @@ no registered guard covers. One more fix attempt broke the repair set (11/12) an
 The production classifier is restored to base bytes `cd9da20c…`; the candidate stays as evidence.
 C1 is an honest stop at 6/12. Fourteen still-running wave-2 seats were cancelled at the wrap-up
 point (their partial reports, if any, are kept); no seat was replaced.
+
+## 2026-10-23 — round 24: repair-first routing, rule attribution route, capability re-demonstration
+
+Base `8e5d9369` (round-23 closure commit). Dispatched 03:02Z. Anti-loop: no change under `tools/`; the
+tripwire streak (rounds 20–23) is not worked. Registration, both frozen counters and twelve control
+receipts landed before any data seat (`8efd00af`, `d9fec1d3`, `4f21d995`, `c9b76646`, `464a0245`).
+
+Repairs routed from the round-23 outside spot-check: lesson-23 stale sentence corrected; README
+withdrawal pointer; QUALITY criteria 33–35 with two checks shown able to fail on round-23 bytes;
+the round-23 wave-2 regression fixtures frozen as `carry/` (28 fixtures, no classifier change).
+
+C1 (coverage, sourced). The README frontier item "rule attribution" moves to
+`corpus/knowledge/rule-attribution-r24.md`: no Hyprland 0.56.2 channel maps an applied property back to
+the rule that set it; the usable route is a unique `tag` effect read from `hyprctl clients`. SOURCES
+S153–S168 (S161 queued). Counter v2 `c1/count.py` 0 → PASS_ROW 23/26 from 14 sources, TARGET_MET at
+`cf86f9e0` (re-fetch mode). Wave-1 reviewer and critic showed v2 can also be met by true but
+non-attribution rule lines (lesson M24-2); wave 2 judged each row by hand.
+
+C2 (calibration). SCORECARD's twelve capability rows were re-run with frozen commands
+(`c2/manifest.json`). Base 1/12 mismatches: `tripwire evidence marker` claims L 17/18 but the current
+classifier gives L 15/18 (round-21 harm H2). A round-24 status table records each observed status;
+counter `c2/count.py` 1 → 0 at `81955bd5`. Two base runs gave identical rows (no flake).
+
+Mistakes mined: lesson-24 M24-1..M24-4 (v1 counter met by two controls and fixed before data; v2
+residual hole; round-23 seat reports rewritten after the tip; a one-character `agent://all` message).
