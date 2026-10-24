@@ -1774,3 +1774,56 @@ Two claims: C1 operability (repaired six-leg composite, `PRED-C1-r29`), C2 calib
 Measurements land in the round records; the round report cites the pushed lane hash
 at write time. Round shape, seat mix, trend verdicts and the verbatim composite output
 are in the round report `.ufo/reports/round-29/mado.md`.
+
+## Round 30 (2026-10-24, attempt 1)
+
+Registration `.ufo/waves/round-30/registration.md`, frozen `451e8b3c`
+(with counters `c2/count.py`, gate `quality/check-index.py`, controls
+C1/C2/C3 and the before-receipts). Base `8f51071b` (round-29 closure:
+admitted; the inherited 41/43 navigation gap routed here per
+`corpus/lessons/round-29-verifier-spotcheck.md`). Data commit `446dc396`.
+Three claims: C1 coverage (index rows), C2 calibration (lowest axis),
+C3 operability capability (sourced: S185).
+
+- C1: `corpus/README.md` gains index rows for `knowledge/workspace-rules-r27.md`
+  and `knowledge/mutation-testing-r28.md` (r27/r28 inherited gap). Frozen
+  fence: `indexed=41/43` exit 1 at base → `indexed=43/43 missing=0
+  dangling=0 duplicates=0` exit 0 at `446dc396`
+  (`evidence/c1-{before-8f51071b,after-446dc396}.txt`). Do-nothing control:
+  the same fence at base is red — registered K1.
+- C2: `corpus/QUALITY.md` grounds every active criterion — rows 41–45
+  supersede the citation-less seed 1–5 (ground `MINT.md` + M30-1), 46/47
+  move 18/19's citations onto the numbered line, 48 canonicalizes 32's
+  `lesson round21` spelling, 49–51 give 38–40 canonical paths, 52 is the
+  new record-then-claim criterion (M30-2). Counter
+  `python3 -I .ufo/waves/round-30/c2/count.py REV`: base literal 28/40
+  resolved-active 31/39 TARGET_MISSED (`controls/C2K1-donothing.txt`) →
+  `446dc396` literal 40/52 resolved-active 40/40 TARGET_MET exit 0
+  (`evidence/c2-after-446dc396.txt`). Superseded lines leave both
+  denominators (criterion 21→20 precedent); literal and resolved metrics
+  reported side by side per criterion 22.
+- C3 (capability, sourced S185): `quality/check-index.py` implements the
+  frozen fence's row-set semantics — red at base (`indexed=41/43` exit 1),
+  green at tip (`indexed=43/43` exit 0), `--selftest` 6/6
+  (missing/dangling/duplicate/symlink-refused/empty). All three receipts
+  in `evidence/c3-after-446dc396.txt`. Capability row enters SCORECARD.
+- Freeze smoke (criterion 49): all three counters run at the freeze commit
+  `451e8b3c` and print real tallies (`evidence/freeze-smoke-451e8b3c.txt`).
+- Sources census: 184 → 185 rows (+S185, own-work; validate exit 0 at the
+  archived base tree and at tip; W04 warnings re-checked under criterion 17
+  — each pair is supersession or distinct-scope reuse, no action).
+- Lesson `corpus/lessons/round-30.md`: M30-1 (ungrounded criteria, fix
+  shown able to fail at the base control) + M30-2 (the inherited index
+  gap's two-round persistence; the sweep recorded it, no gate caught it).
+- Harm watch: `MADO_SELFTEST: 460/460` exit 0; `git diff --stat 8f51071b
+  master -- tools/ corpus/knowledge/ SKILL.md PROVINCE.md` empty; no
+  compositor/config mutation; misroot sweep clean.
+- Wave: `.ufo/waves/round-30/w1-spec.json` (33 seats) validated under
+  policy v1 (`w1-plan.json`, plan exit 0). PREPARED, not dispatched — this
+  L1 seat has no swarm-dispatch tool; the orchestrator dispatches prepared
+  waves between rounds. Itemized in the report.
+- L0: none new. The two r28/r29 answered-by-implementation questions stay
+  open for operator overrule (fleet `.ufo/l0-questions.md:133-135`).
+
+The round report `.ufo/reports/round-30/mado.md` cites the pushed lane hash
+at write time.

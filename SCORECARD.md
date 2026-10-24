@@ -1898,3 +1898,41 @@ gate quote in the lesson). Saturation 9.0 / N=3 unchanged; retired: none. Planne
 (round 30; intent only): the inherited navigation gap (41/43 — index the two missing
 notes); re-dispatch the prepared wave-1 (33 seats, plan exit 0) if the operator lands the
 route bindings; any operator ruling on the two answered-by-implementation L0 questions.
+
+## Round 30 — results and author verdicts (2026-10-24, attempt 1)
+
+Registration `.ufo/waves/round-30/registration.md` frozen `451e8b3c` (controls
+and before-receipts committed pre-data; freeze smoke
+`evidence/freeze-smoke-451e8b3c.txt` ran all three counters at the freeze).
+Base `8f51071b` (round-29 closure: admitted; index gap routed). Data commit
+`446dc396`. Axis selection re-derived every scored sub-axis at base
+(criterion 22): calibration literal 0.7000 / resolved-active 0.7949 is
+lowest; coverage-nav 0.9535; sourced-art and operability 1.0.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage / admitted-note reachability (routed defect; sourced S185): index rows for `workspace-rules-r27.md`, `mutation-testing-r28.md` | `8f51071b`: `indexed=41/43 missing=2` exit 1 (`evidence/c1-before-8f51071b.txt`) → `446dc396`: `indexed=43/43 missing=0 dangling=0 duplicates=0` exit 0 (`evidence/c1-after-446dc396.txt`) | frozen literal fence (S185; the SCORECARD "Counting command" block) run at REV | target met; K1 do-nothing at base stays red |
+| C2 calibration / lesson-grounded admission criteria (lowest scored axis): every active QUALITY criterion resolves a `lessons/` citation | `8f51071b`: literal 28/40, resolved-active 31/39, UNRESOLVED {1..5,38..40}, `PRED-C2-r30 verdict=TARGET_MISSED` exit 1 (`controls/C2K1-donothing.txt`) → `446dc396`: literal 40/52, resolved-active 40/40 = 1.0000, TARGET_MET exit 0 (`evidence/c2-after-446dc396.txt`); superseded {1-5,18-20,32,38-40} excluded per criterion 21→20 precedent | `python3 -I .ufo/waves/round-30/c2/count.py REV` | target met; K2 do-nothing names the 8 unresolved base criteria |
+| C3 operability, capability acquisition (sourced S185): `quality/check-index.py` index-completeness gate | absent at base → at `446dc396`: gate prints `indexed=41/43` exit 1 at base rev, `indexed=43/43` exit 0 at tip, `MADO_INDEX_SELFTEST: 6/6` exit 0 (`evidence/c3-after-446dc396.txt`) | `python3 -I quality/check-index.py --rev REV --repo .` / `--selftest` | target met; K3: gate is red at base (cannot be vacuous) |
+
+### Capabilities (round 30)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| index-completeness gate | Score the coverage map's index rows against `corpus/knowledge/*.md` at any committed revision or tree — reports missing/dangling/duplicate rows, refuses non-regular members | `python3 -I quality/check-index.py --rev REV --repo .` → `MADO_INDEX: indexed=N/N`; red at `8f51071b`, green at `446dc396`, `--selftest` 6/6 (`evidence/c3-after-446dc396.txt`) | 30 |
+
+Harm watch at `446dc396`: `MADO_SELFTEST: 460/460` exit 0; census validate
+exit 0 (184 → 185 rows, +S185; W04 warnings re-checked under criterion 17 —
+supersession/distinct-scope reuse only); `git diff --stat 8f51071b master --
+tools/ corpus/knowledge/ SKILL.md PROVINCE.md` empty; no compositor/config
+mutation.
+
+### Sources, saturation, planned
+
+Sources 184 → 185 (A 177 → 178 own-work; mined 165 → 166; queued 10;
+rejected 9; +S185 gate quote in `corpus/lessons/round-30.md`). Saturation
+9.0 / N=3 unchanged; retired: none. Planned (round 31; intent only): any
+operator ruling on the two answered-by-implementation L0 questions;
+semantic index-row accuracy (row text vs note contents — the fence counts
+rows, not truth); residual QUALITY-line citation polish under the new
+resolved-active rubric.
