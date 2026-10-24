@@ -1856,3 +1856,45 @@ Composite at 77cdda86 prints `PRED-C1-r28 verdict=TARGET_MISSED` exit 1 — repo
 ### Sources, saturation, planned
 
 Sources 182 → 183 (A 175 → 176; mined 163 → 164; rejected 9; +S183 mined by `corpus/knowledge/mutation-testing-r28.md`, opened 2026-10-23, gate quote in lesson `## Gate`). Saturation 9.0 / N=3 unchanged; retired: none. Planned (round 29; intent only): new pre-data registration to fix the composite's count-v4 guard pin and re-run a smoke pass at freeze; the spotcheck §6.6 tenth record defect; ephemeral-input preservation policy (L0 question open).
+
+## Round 29 — results and author verdicts (2026-10-24, attempt 1)
+
+Registration `.ufo/waves/round-29/registration.md`, frozen `aeb4f58b`, re-frozen `3ae437ca`
+(QUALITY-38 smoke caught the composite's stale `c1-r28` self-print label; fixed, re-frozen,
+re-smoked; both receipts committed). Base `f652ca99` (round-28 closure: rejected-honest-stop;
+the r28 records and its missed `PRED-C1-r28` stand untouched — this round registers new
+predicates on repaired counters, never rewrites frozen bytes). Both claims verify at the
+data commit `cb4e1c00`; receipts `.ufo/waves/round-29/evidence/c1-after-cb4e1c00.txt` and
+`c2-after-cb4e1c00.txt`.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 operability (sourced: S184 for the refpub/equivalent-mutant method): the round-28 six-leg composite is repaired — count-v4 guard pin `3d7d301f…` → committed `635ae788…71a1` (M28-1), leg h1 re-based per QUALITY 39 to the committed receipt `ReviewerSuiteMonotone.md` (M28-2) — and re-frozen with a freeze smoke run (QUALITY 38) | base `f652ca99`: `LEG boolword-v5 FAIL normal=missing mutant=missing`, `LEG h1-rotation FAIL rc=2 no-tally`, `PRED-C1-r28 verdict=TARGET_MISSED` exit 1 (`evidence/c1-before-f652ca99.txt`) → `cb4e1c00`: `LEG h1-receipt PASS`, `LEG boolword-v5 PASS normal=41/41 mutant=0/2`, all six legs PASS, `PRED-C1-r29 verdict=TARGET_MET` exit 0 (`evidence/c1-after-cb4e1c00.txt`); freeze smokes green at `aeb4f58b` and `3ae437ca` | `python3 -I .ufo/waves/round-29/c1/count.py REV` (counter sha256 `4fa91407…a3829`) | target met under the frozen rule; controls C1K1 (unrepaired r28 composite) and C1K2 (pin-only, h1 ephemeral) both MISS as registered (`controls/C1K1-r28composite.txt`, `controls/C1K2-pinonly.txt`) |
+| C2 calibration (lowest active scored axis): the four round-28-closure routed defects are repaired in committed records — R1 guard-pin repair with red-before control, R2 ephemeral-input policy named at data time (QUALITY 39), R3 standalone v5 receipts committed, R4 §6.6 tenth-record erratum | base `f652ca99`: `CHECK R1..R4 FAIL`, `PRED-C2-r29 verdict=TARGET_MISSED` exit 1 (`controls/C2K1-donothing.txt`) → `cb4e1c00`: `CHECK R1..R4 PASS`, `PRED-C2-r29 verdict=TARGET_MET` exit 0 (`evidence/c2-after-cb4e1c00.txt`) | `python3 -I .ufo/waves/round-29/c2/count.py REV` | target met; each fix shown able to fail (R4 red: `CHECK R4 FAIL` at the do-nothing control; R3 red: `R3 FAIL` at freeze) |
+
+Harm watch at `cb4e1c00`: `bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: 460/460
+assertions passed`, exit 0; census validate exit 0 (183 → 184 rows, +S184); `git diff --stat
+f652ca99 cb4e1c00 -- tools/ corpus/knowledge/ SKILL.md PROVINCE.md quality/` touches no
+tools/knowledge/skill bytes (SCORECARD/LOG/SOURCES/lessons + `.ufo/waves/round-29/` only);
+no compositor/config mutation; every oracle receipt `HOST_SAFETY` coredumps 1338→1338.
+Inherited finding, recorded not repaired (claim discipline): the navigation counter reads
+41/43 at base and tip alike — `mutation-testing-r28.md` and `workspace-rules-r27.md` are
+absent from `corpus/README.md` index rows (r27/r28 debt); routed to round 30. Calibration
+lesson-citation rubric NOT re-scored by C2 (its four checks are routed repairs, not new
+criteria); bounded scores unchanged this round.
+
+### Capabilities (round 29)
+
+No new capability row: the repaired composite re-demonstrates the round-28 "rotating
+held-out mutation gate" (its row stands); the round's work is repair, not new repertoire.
+The r29 composite runs end-to-end from committed bytes — recorded in the C1 row, not
+pre-claimed as a capability.
+
+### Sources, saturation, planned
+
+Sources 183 → 184 (A 176 → 177; mined 164 → 165; queued 10; rejected 9; +S184 mined by
+`.ufo/waves/round-29/registration.md` and `corpus/lessons/round-29.md`, opened 2026-10-24,
+gate quote in the lesson). Saturation 9.0 / N=3 unchanged; retired: none. Planned
+(round 30; intent only): the inherited navigation gap (41/43 — index the two missing
+notes); re-dispatch the prepared wave-1 (33 seats, plan exit 0) if the operator lands the
+route bindings; any operator ruling on the two answered-by-implementation L0 questions.
