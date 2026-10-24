@@ -1758,6 +1758,20 @@ Registration `.ufo/waves/round-27/registration.md` (frozen before any control or
 
 Population check (QUALITY 37): `python3 -I .ufo/waves/round-26/quality/check-population.py --registration .ufo/waves/round-27/registration.md .ufo/waves/round-27/evidence/c1-after-20022a65.txt` → exit 2 UNREADABLE — the checker parses only distinct numeric totals and PRED-C2-r27(-v2) states open-ended targets (`green=all`, ratios); not a population mismatch (routed: extend Q37 for ratio/all targets). The C1 receipt's own counts are internally consistent: 41 CASE lines against the registered 41-case total.
 
+### §6.6 erratum (round 29)
+
+The round-27 report and this section's C1 row say "the tool's docstring and the
+knowledge entry cite them [S178–S182]". The round-27 verifier spotcheck item 6
+(`corpus/lessons/round-27-verifier-spotcheck.md`) found the sentence overclaims:
+`tools/mado-wsrules.py`'s docstring cites the upstream source files
+(`src/config/legacy/ConfigManager.cpp`, `src/config/shared/workspace/WorkspaceRuleManager.cpp`,
+`ParserUtils.cpp`, …) — not `S###` ids; only `corpus/knowledge/workspace-rules-r27.md`'s
+frontmatter cites the S178–S182 rows. Correction: the S### citation lives in the
+knowledge entry frontmatter; the docstring citation is upstream-file-level. This was
+the tenth routed record defect (r28 spotcheck's routed queue item 4); repaired here
+append-only. No tool byte changes (the docstring's upstream citations stand as
+source-level provenance).
+
 ### Capabilities (round 27)
 
 | Capability | What it can now do | Evidence pointer | First-working round |

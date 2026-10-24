@@ -1716,3 +1716,61 @@ Correction to the round-28 entry (same round, append-only): the no-in-tree-repor
 w1 33 (39 declared − 6 reports), w1b 32 (32 − 0), w2 23 (34 − 11), all named in the three committed swarm
 registries. "No in-tree report" is not "no work": those seats' outputs are carried by the integration commit
 317ff19; the count measures reports, not production.
+
+## Round 29 (2026-10-24, attempt 1)
+
+Registration `.ufo/waves/round-29/registration.md`, frozen at `aeb4f58b`, re-frozen at
+`3ae437ca` (the QUALITY-38 freeze smoke caught a cosmetic defect — the repaired composite's
+self-print label still read `c1-r28`; fixed, re-frozen, re-smoked; both receipts committed).
+Base `f652ca99` (round-28 closure: rejected-honest-stop; r28 records stand untouched).
+Two claims: C1 operability (repaired six-leg composite, `PRED-C1-r29`), C2 calibration
+(four routed record repairs, `PRED-C2-r29`).
+
+- C1: the round-28 composite's guard pin (count-v4.py `3d7d301f…` vs committed
+  `635ae788…`, M28-1) is corrected in the re-frozen `.ufo/waves/round-29/c1/count.py`;
+  leg h1 adopts the QUALITY-39 named committed-receipt basis
+  (`.ufo/waves/round-28/w2/reports/ReviewerSuiteMonotone.md`, owner mado, named at data
+  time in the registration). Freeze smoke at `3ae437ca`: all six legs PASS,
+  `PRED-C1-r29 verdict=TARGET_MET` exit 0 (`evidence/c1-freeze-smoke-3ae437ca.txt`);
+  first smoke at `aeb4f58b` is kept as `evidence/c1-freeze-smoke-aeb4f58b.txt`.
+  Before-state at base: `evidence/c1-before-f652ca99.txt` — h1 FAIL (ephemeral),
+  boolword FAIL (`normal=missing mutant=missing`), four legs PASS, `TARGET_MISSED` exit 1.
+- Kill-rule controls (committed with the freeze): `controls/C1K1-r28composite.txt`
+  (unrepaired r28 composite at base → TARGET_MISSED), `controls/C1K2-pinonly.txt`
+  (pin fixed, h1 still ephemeral → h1-rotation FAIL rc=2 no-tally → TARGET_MISSED;
+  the same run proves the repaired pin makes the boolword leg print real tallies),
+  `controls/C2K1-donothing.txt` (C2 counter at base → `R1..R4 FAIL` exit 1).
+- Routed item 3: standalone v5 receipts committed —
+  `evidence/v5-standalone-normal.txt` (41/41, boolword 2/2, exit 0) and
+  `evidence/v5-standalone-mutant.txt` (boolword 0/2, exit 1), full outputs with
+  counter self-print lines; HOST_SAFETY coredumps 1338→1338.
+- Routed item 4 (§6.6 tenth record defect): append-only erratum in SCORECARD.md's
+  round-27 section (`§6.6 erratum (round 29)`) — the r27 report sentence "the tool's
+  docstring and the knowledge entry cite them [S178–S182]" overclaims; the S### citation
+  lives in the knowledge entry frontmatter; the docstring cites upstream filenames.
+  Shown able to fail: `CHECK R4 FAIL` at the C2 do-nothing control.
+- Sources census: before 183 rows (committed base blob receipt
+  `evidence/census-before.txt`; matches the r28 census-end receipt) → after 184 rows
+  (+S184 Schuler & Zeller "Covering and Uncovering Equivalent Mutants", STVR 2013,
+  opened 2026-10-24 at the DOI reader, title-level grounding per the S183 treatment;
+  gate in `corpus/lessons/round-29.md`); census validate exit 0 at round end.
+- Lesson `corpus/lessons/round-29.md`: M27-4 (the §6.6 reference-drift, fix shown able
+  to fail) + the honest sweep row (selftest 460/460 exit 0; controls re-verified; the
+  navigation counter reads 41/43 at base AND tip — an inherited r27/r28 index gap,
+  routed to round 30, not an r29 regression and not silently repaired).
+- Wave-1 spec `.ufo/waves/round-29/w1-spec.json` (33 seats) validated under policy v1
+  (`w1-plan.json`, plan exit 0). PREPARED but NOT dispatched: this L1 seat has no
+  swarm-dispatch tool on this host surface; the orchestrator dispatches prepared waves
+  between rounds. Itemized in the round report.
+- Host safety: no compositor/config mutation; oracle pins verified (tinywl
+  `227a74af…`, libwlroots `1f3d7036…`); every oracle receipt HOST_SAFETY delta=0.
+- L0: the two round-28 questions are answered-by-implementation (receipt-basis adopted;
+  pin repair shipped as a NEW r29 claim, r28 record untouched) and remain open for
+  operator overrule; a round-29 L0 line notes the adoption.
+- Inherited finding (not repaired, claim discipline): navigation counter 41/43 —
+  `mutation-testing-r28.md` and `workspace-rules-r27.md` missing from
+  `corpus/README.md` index rows at base and tip alike.
+
+Measurements land in the round records; the round report cites the pushed lane hash
+at write time. Round shape, seat mix, trend verdicts and the verbatim composite output
+are in the round report `.ufo/reports/round-29/mado.md`.
