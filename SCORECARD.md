@@ -1969,3 +1969,38 @@ circularity guard, and the SKILL gate-registry/selftest wiring —
 see `corpus/lessons/round-30.md` w1 addendum. A seat-regenerated
 `quality/q36-successor-receipts.txt` (ephemeral paths only, no verdict
 moved) was reverted to committed bytes, same handling as round 29.
+
+### Round-30 w1 erratum part 2 — counter repair + record corrections (append-only)
+
+Continuation of the w1 erratum; lane tip at write: pending this commit.
+
+- **Counter `count.py` repaired to the frozen rubric** (RevC2Counter S3–S6):
+  `M<a>-M<b>` id ranges expand fully (was: endpoint singles only, so
+  `M01-M07` checked 2 ids of 7); `M<a>-<b>` round-prefixed compounds stay
+  literal regardless of `a<=b`; `SUPER_RE` accepts `<N1>-<N2>` on every
+  list member (was: first only, losing `39, 40` in `1-5 and 38-40`);
+  supersession is position-guarded ("later line"); `active=0` can never
+  pass. Implementation repair only — output is byte-identical at
+  `8f51071b`, `446dc396`, `d72243e`, `15ddd7d`; no verdict moves.
+- **Gate repair v2** (RevC1Fence post-review addendum): `%(path)` C-quoting
+  under `-z` dropped non-ASCII note names — now `git -c core.quotepath=off
+  ls-tree -z`; selftest 8→9 cases adds a real git fixture (`café.md`,
+  `a b.md`). Selftest `9/9`; base/data/tip verdicts unchanged
+  (`evidence/c3-repair-d72243e.txt` refreshed).
+- **Record repairs** (RevRecordsChain F1/F2; ScribeRecords D1/D2/D4):
+  `evidence/freeze-smoke-451e8b3c-full.txt` re-captures all three legs
+  with complete output (the old truncated file is kept);
+  `evidence/selftest-d72243e.txt` commits the 460/460 harm-watch run;
+  criterion row 48 regains criterion 32's normative accounting sentence
+  (append-only text correction).
+- **Errata noted, files not edited**: `registration.md:61` "12 lines
+  superseded by rows 41–51" is off-by-one (line 20 is superseded by
+  pre-existing row 21); SCORECARD's bare `controls/C2K1-donothing.txt`
+  resolves under `.ufo/waves/round-30/`, not the repo root; the
+  harm-watch head label says `446dc396` though the 460/460 tally was
+  measured at `d72243e` (now receipted).
+- **Recorded limit** (RevRecordsChain F3; RevC2Counter S7): the C2 rubric
+  measures citation resolvability, not lesson derivation — rows 41–45
+  legitimately resolve through M30-1 under the rubric, but the metric's
+  name overstates; anchor+id section-scoped conjunction is routed to the
+  round-31 counter v2 together with the fence/table-context tighten.

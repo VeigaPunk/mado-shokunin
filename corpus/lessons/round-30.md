@@ -74,3 +74,19 @@ The remaining reports (executor re-runs, scribe audits, scout recon,
 connector overlap, trend-verdict attacks, records chain) are the
 non-author verification wave's evidence; none reported a live defect in
 the three claims' measured outcomes.
+
+### w1 addendum part 2 — counter + record repairs (same-day, append-only)
+
+| finding | pointer | disposition |
+|---|---|---|
+| `check-index.py` `%(path)` still C-quoted under `-z` (non-ASCII note dropped) | `w1/reports/RevC1Fence.md` post-review addendum | **Repaired**: `git -c core.quotepath=off ls-tree -z`; selftest case 9 pins non-ASCII + space names via a real git fixture. Selftest now `9/9`. |
+| `count.py` `M<a>-M<b>` ranges parsed as endpoint singles (`M01-M07` → {M1,M7}); `M<a>-<b>` a<=b widened compounds to ranges; `SUPER_RE` dropped ranges after the first member; no "later line" ordering; `active=0` passed | `w1/reports/RevC2Counter.md` S3–S6 | **Repaired** (implementation restored to the frozen rubric's grammar): `M<a>-M<b>` ranges, `M<a>-<b>` compounds always literal, multi-range lists complete, position-guarded supersession, `act_n>0` required. **Byte-identical output** at `8f51071b`, `446dc396`, `d72243e`, `15ddd7d` — all registered verdicts reproduce. |
+| freeze-smoke receipt's C2 leg truncated (5 lines of 14; criterion 49 needs full output) | `w1/reports/RevRecordsChain.md` F1; `ScribeRecords.md` D1 | **Repaired**: `evidence/freeze-smoke-451e8b3c-full.txt` carries all 14 C2 lines + EXIT; the truncated receipt is kept with this erratum. |
+| row 48 lost criterion 32's normative accounting sentence ("no retroactive pass … no numeric C2 credit") — "verbatim" overclaim | `w1/reports/RevRecordsChain.md` F2; `ScribeRecords.md` D2 | **Repaired**: sentence restored to row 48 (append-only correction to its text). |
+| seed-five grounding resolves through M30-1 — the audit row recording their own defect; counter anchor/id checks are independent whole-file substrings | `w1/reports/RevRecordsChain.md` F3; `RevC2Counter.md` S7 | Recorded as the rubric's stated limit (resolvability ≠ derivation); anchor-scoped section matching routed to round 31 counter v2. |
+| registration.md:61 off-by-one ("12 lines superseded by rows 41–51"; line 20 belongs to row 21); harm-watch head labelled `446dc396` but measured at `d72243e`; bare `controls/` path unresolvable at repo root | `w1/reports/ScribeRecords.md` D3–D5 | D3/D5: erratum entries below (frozen file can't be edited; path disambiguated). D4: **committed receipt** `evidence/selftest-d72243e.txt` (`MADO_SELFTEST: 460/460`, EXIT=0). |
+
+Remaining latent counter items routed to round 31 (counter v2 alongside the
+fence/table-context tighten): anchor+id conjunction scoped to the cited
+section; `M` vs `m` id casing; compound `M<a>-<b>-<c>` spellings documented
+as literal.

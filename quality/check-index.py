@@ -47,7 +47,8 @@ def _git(repo, *args):
 def load_rev(repo, rev):
     try:
         names = _git(
-            repo, "ls-tree", "-z", "--format=%(objecttype) %(path)",
+            repo, "-c", "core.quotepath=off", "ls-tree", "-z",
+            "--format=%(objecttype) %(path)",
             rev + ":corpus/knowledge",
         )
         readme = _git(repo, "show", rev + ":corpus/README.md")
@@ -241,6 +242,36 @@ def selftest():
             "symlinked note refused with exit 1",
             r.returncode == 1 and "REFUSED" in r.stdout,
         )
+
+        # Case 9: --rev mode reads non-ASCII and space-bearing note
+        # names correctly (quotepath=off + NUL records; RevC1Fence S3).
+        import shutil
+        t9 = os.path.join(tmp, "gitfixture")
+        if shutil.which("git"):
+            kd = os.path.join(t9, "corpus", "knowledge")
+            os.makedirs(kd)
+            for name in ("café.md", "a b.md"):
+                with open(os.path.join(kd, name), "w", encoding="utf-8") as fh:
+                    fh.write(f"# {name}\n")
+            rows = "".join(f"| `knowledge/{n}` | h |\n" for n in ("café.md", "a b.md"))
+            with open(os.path.join(t9, "corpus", "README.md"), "w", encoding="utf-8") as fh:
+                fh.write(rows)
+            env = dict(
+                os.environ,
+                GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+                GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t",
+            )
+            for cmd in (
+                ("git", "init", "-q", t9),
+                ("git", "-C", t9, "add", "-A"),
+                ("git", "-C", t9, "commit", "-qm", "t"),
+            ):
+                subprocess.run(cmd, check=True, capture_output=True, env=env)
+            r = _run(tool, "--rev", "HEAD", "--repo", t9)
+            check(
+                "non-ASCII + space names indexed at --rev, exit 0",
+                r.returncode == 0 and "indexed=2/2" in r.stdout,
+            )
 
     failed = [n for n, ok in checks if not ok]
     passed = len(checks) - len(failed)

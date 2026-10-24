@@ -299,3 +299,49 @@ moves a verdict.
 5. Resolve the default rev inside the `try` that maps to `SETUP_ERROR`/2, or
    drop the `master` default and require `--rev`; today a missing bookmark
    prints a traceback and exits 1, which every caller will read as a gap.
+
+## Post-review addendum — spot-check of the repair commit (not the reviewed diff)
+
+After I filed this report, `L1-mado-r30` landed a repair:
+`quality/check-index.py` at `15ddd7d6` (sha256
+`373680fe4fb97332baa9b2d644ebe8cbef2fac30fb8da8d68923572cd91edb36`), with
+`evidence/c3-repair-d72243e.txt`. I re-ran the committed blob read-only against
+the fixtures above. The repair is **not** the diff under this review; this is a
+verification of the claims made for it.
+
+**Closed by the repair (verified):**
+
+| Class | Fixture | Repaired gate | Fence |
+|---|---|---|---|
+| S1 | two-space / no-space / tab / pipe-then-newline row | `missing=1` exit 1 | exit 1 |
+| S1 | canonical + widened twin | `indexed=1/1` exit 0 | exit 0 |
+| S2 | no `corpus/knowledge` (`--root` and `--rev`) | `SETUP_ERROR` exit 2 (both) | — |
+| S2 | empty `corpus/knowledge` | `SETUP_ERROR: empty note set` exit 2 | `ZeroDivisionError` |
+| S4 | note named `a b.md` | parsed as one note | one note |
+| S5 | no `--rev`/`--root` | `SETUP_ERROR: --rev or --root is required` exit 2 | — |
+| — | base/data/tip | 41/43 exit 1 / 43/43 exit 0 / 43/43 exit 0 | identical |
+| — | selftest | 8/8 exit 0 | — |
+
+**Still open — S3 is not fixed, and the new docstring claims it is.** The
+repaired `load_rev` runs `git ls-tree -z --format=%(objecttype) %(path)`.
+`-z` sets the record separator but `%(path)` is still C-quoted, so a non-ASCII
+note arrives as `"caf\303\251.md"`, fails `.endswith(".md")` and is dropped:
+
+```
+tree with café.md and a b.md, both indexed:
+  --rev  -> indexed=1/1 missing=0 dangling=1 exit 1
+  --root -> indexed=2/2 missing=0 dangling=0 exit 0
+```
+
+The docstring now says "mode/space/non-ASCII names handled by NUL parsing"
+(`check-index.py:19-20`) — false for non-ASCII. Verified fixes, cheapest first:
+`git -c core.quotepath=off ls-tree -z --format=…` (measured: `blob café.md`), or
+drop `--format` and split the default `-z` record on `\t` (also unquoted), or
+`--name-only -z` (unquoted, but loses `objecttype`).
+
+Symlinked note at a rev is counted by `--rev` (`objecttype` is `blob`) while
+`--root` REFUSED — that is fence parity at a rev (the fence counts it too) and
+the docstring scopes refusal to `--root`, so it is not a defect; only note that
+"blob entries only" does not mean "regular files only" on the `--rev` side.
+
+No lane byte was written by me in this addendum; no restore of the q36 receipt.

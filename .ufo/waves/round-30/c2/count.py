@@ -41,29 +41,41 @@ LIT_RE = re.compile(r"^[0-9]+\.\s")
 PATH_RE = re.compile(r"lessons/(round-[\w.-]+\.md)")
 ANCH_RE = re.compile(r"lessons/(round-[\w.-]+\.md)#([\w-]+)\s*(M[0-9/\-]*)")
 SPELL_RE = re.compile(r"lesson\s+round(\d+)\s+M([0-9/\-]+)")
+# Repaired under w1 RevC2Counter S3/S4/S5/S6: the frozen rubric's grammar
+# is `M<n>`, `<N1>-<N2>` and `N and M` lists, plus the observed in-repo
+# spellings `M<a>-M<b>` (range) and `M<round>-<n>` (literal compound).
+# A bare `M<a>-<b>` is a literal compound id (M23-4, M28-1, M30-1), never
+# a numeric range — the a<=b discriminator mis-parsed the compound
+# quadrant; ranges on lesson ids are spelled `M<a>-M<b>` (M01-M07).
 SUPER_RE = re.compile(
-    r"[Ss]upersedes\s+criteri\w+\s+([0-9]+(?:\s*[-–—]\s*[0-9]+)?(?:\s*(?:,|and)\s*[0-9]+)*)"
+    r"[Ss]upersedes\s+criteri\w+\s+([0-9]+(?:\s*[-–—]\s*[0-9]+)?"
+    r"(?:\s*(?:,|and)\s*[0-9]+(?:\s*[-–—]\s*[0-9]+)?)*)"
 )
-MID_RE = re.compile(r"M(\d+)(?:-(\d+))?")
+MID_RE = re.compile(r"M(\d+)-M(\d+)|M(\d+)((?:-\d+)*)")
+
+
+def expand_ids(s):
+    """Return id patterns to look up: `M<n>` singles -> ``M0*<n>``;
+    `M<a>-M<b>` ranges expand to each id; `M<a>-<b>` compounds
+    (``M23-4``, ``M28-1``, ``M30-1`` — round-prefixed ids) stay literal."""
+    pats = []
+    for m in MID_RE.finditer(s):
+        if m.group(1) is not None:
+            a, b = int(m.group(1)), int(m.group(2))
+            lo, hi = min(a, b), max(a, b)
+            pats.extend(rf"\bM0*{i}\b" for i in range(lo, hi + 1))
+        else:
+            a, b = int(m.group(3)), m.group(4)
+            if b:
+                pats.append(rf"\bM{a}{b}\b")
+            else:
+                pats.append(rf"\bM0*{a}\b")
+    return pats
 
 
 def git(*args):
     return subprocess.check_output(["git", *args], text=True)
 
-def expand_ids(s):
-    """Return id patterns to look up: singles -> ``M0*<n>``; ranges
-    ``M<a>-<b>`` with a<=b expand to each id; compounds with a>b
-    (``M23-4``, ``M28-1``, ``M30-1`` — round-prefixed ids) stay literal."""
-    pats = []
-    for m in MID_RE.finditer(s):
-        a, b = int(m.group(1)), m.group(2)
-        if b and int(b) >= a:
-            pats.extend(rf"\bM0*{i}\b" for i in range(a, int(b) + 1))
-        elif b:
-            pats.append(rf"\bM{a}-{b}\b")
-        else:
-            pats.append(rf"\bM0*{a}\b")
-    return pats
 
 
 def expand_super(s):
@@ -100,10 +112,15 @@ def main():
         c["lit"] = bool(re.match(LIT_RE, c["first"]) and "lessons/" in c["first"])
 
     superseded = set()
-    for c in crits:
+    # Rubric: "a line is superseded when a LATER line says
+    # `Supersedes criterion N`" — position-guarded, self-reference and
+    # retro-kills (a later row superseded by an earlier one) excluded.
+    superseded = set()
+    pos = {c["num"]: i for i, c in enumerate(crits)}
+    for i, c in enumerate(crits):
         for m in SUPER_RE.finditer(c["text"]):
             for n in expand_super(m.group(1)):
-                if n != c["num"]:
+                if n != c["num"] and pos.get(n, -1) < i:
                     superseded.add(n)
     for c in crits:
         c["superseded"] = c["num"] in superseded
@@ -186,7 +203,9 @@ def main():
             continue
         if c["superseded"]:
             print(f"LINE {c['num']} superseded excluded")
-    target = (not unresolved_active) and float(lit_f) >= 0.70
+    # Degenerate population guard: an empty active set is never a pass
+    # (mutual supersession would print 0/0 MET otherwise).
+    target = act_n > 0 and (not unresolved_active) and float(lit_f) >= 0.70
     print(f"PRED-C2-r30 verdict={'TARGET_MET' if target else 'TARGET_MISSED'}")
     return 0 if target else 1
 
