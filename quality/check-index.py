@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """mado index-completeness gate (round 30, claim C3 / capability row;
 repaired under the w1 RevC1Fence/MutC3Gate/RevC3Gate findings — see the
-round-30 erratum in SCORECARD.md and corpus/lessons/round-30.md).
+round-30 erratum in SCORECARD.md and corpus/lessons/round-30.md; hardened
+further under the round-31 routed queue).
 
 Navigation-completeness gate only: it checks that every admitted
 `corpus/knowledge/*.md` note has exactly one index row in `corpus/README.md`.
@@ -9,20 +10,26 @@ The row set is byte-level rows matching the fence's literal regex
 ``^\\| `knowledge/<name>.md` `` — column-0 pipe, one literal space, backticked
 name — the same semantics as the SCORECARD.md fleet-round-1 counting
 command (source row S185).  Like the fence it does not require the row to
-sit inside the coverage-map table (table context is unenforced in both).
+sit inside the coverage-map table (table context is unenforced in both;
+row *fidelity* is `check-index-rows.py`'s job, not this gate's).
 This gate says nothing about note truth, freshness, or the semantic
 accuracy of the row text; an index row is a route, not a verdict.
 
 Reads: `corpus/knowledge/` and `corpus/README.md` at a git revision
-(`--rev`, via `git ls-tree -z`/`git show` under `--repo`) or on a plain
-filesystem tree (`--root DIR`; regular files only — symlinked or
-non-regular members are REFUSED).  `--rev` counts blob entries only
-(mode/space/non-ASCII names handled by NUL parsing); a missing or empty
-`corpus/knowledge` is a setup error in both modes — the fence is
-undefined on an empty note set, so this gate invents no clean state.
-Writes: nothing; stdout only.  `--selftest` writes ephemeral fixtures
-inside a private temporary directory it removes on exit and runs a copy
-of itself as a child process.
+(`--rev`, resolved once via `git rev-parse --verify --end-of-options`
+then read as `<sha>:path` — a crafted rev can never reach a `git show`
+write path) or on a plain filesystem tree (`--root DIR`; regular files
+only — symlinked or non-regular members are REFUSED, and `corpus/` or
+the root itself being a symlink to an outside tree is refused too:
+realpath containment on ancestors).  `--rev` counts blob entries only
+(mode/space/non-ASCII names handled by `core.quotepath=off` + NUL
+records); a symlinked note IS a blob at a rev — counted, fence parity —
+while `--root` refuses it.  A missing or empty `corpus/knowledge` is a
+setup error in both modes — the fence is undefined on an empty note set,
+so this gate invents no clean state.
+Writes: nothing; stdout only (SETUP_ERROR goes to stderr).  `--selftest`
+writes ephemeral fixtures inside a private temporary directory it
+removes on exit and runs a copy of itself as a child process.
 
 Exit: 0 complete; 1 gap (missing/dangling/duplicate) or refused input;
 2 setup error.
@@ -46,12 +53,16 @@ def _git(repo, *args):
 
 def load_rev(repo, rev):
     try:
+        sha = _git(
+            repo, "rev-parse", "--verify", "--end-of-options",
+            rev + "^{commit}",
+        ).strip()
         names = _git(
             repo, "-c", "core.quotepath=off", "ls-tree", "-z",
             "--format=%(objecttype) %(path)",
-            rev + ":corpus/knowledge",
+            sha + ":corpus/knowledge",
         )
-        readme = _git(repo, "show", rev + ":corpus/README.md")
+        readme = _git(repo, "show", sha + ":corpus/README.md")
     except subprocess.CalledProcessError as exc:
         print(f"SETUP_ERROR: {exc.output.strip()}", file=sys.stderr)
         sys.exit(2)
@@ -70,6 +81,14 @@ def _refuse(path):
 
 
 def load_root(root):
+    rroot = os.path.realpath(root)
+    for cand in ("corpus",):
+        ap = os.path.join(root, cand)
+        if os.path.islink(ap):
+            _refuse(ap)
+        rp = os.path.realpath(ap)
+        if os.path.commonpath([rroot, rp]) != rroot:
+            _refuse(ap)
     kdir = os.path.join(root, "corpus", "knowledge")
     rpath = os.path.join(root, "corpus", "README.md")
     for path in (kdir, rpath):
@@ -272,6 +291,38 @@ def selftest():
                 "non-ASCII + space names indexed at --rev, exit 0",
                 r.returncode == 0 and "indexed=2/2" in r.stdout,
             )
+        # Case 10: a crafted --rev is rejected before any git lookup can
+        # turn it into a `git show --output=` write path (SentScope F5;
+        # RevC3Gate L1).
+        if shutil.which("git"):
+            r = _run(tool, "--rev=--output=/tmp/x", "--repo", t9)
+            check(
+                "option-shaped --rev is SETUP_ERROR exit 2, no write",
+                r.returncode == 2 and not os.path.exists("/tmp/x:corpus"),
+            )
+
+        # Case 11: --root refuses a symlinked corpus ancestor instead of
+        # certifying the outside tree it resolves to (SentScope F2).
+        t11 = os.path.join(tmp, "ancestor")
+        foreign = os.path.join(tmp, "foreign")
+        _write_tree(foreign, ["a.md"], ["a.md"])
+        os.makedirs(t11, exist_ok=True)
+        os.symlink(
+            os.path.join(foreign, "corpus"), os.path.join(t11, "corpus")
+        )
+        r = _run(tool, "--root", t11)
+        check(
+            "symlinked corpus ancestor refused with exit 1",
+            r.returncode == 1 and "REFUSED" in r.stdout,
+        )
+
+        # Case 12: --repo has no meaning under --root; silently ignoring
+        # it was RevC3Gate L4. Both must not combine.
+        r = _run(tool, "--root", t11, "--repo", "/nonexistent")
+        check(
+            "--repo with --root is SETUP_ERROR exit 2",
+            r.returncode == 2 and "SETUP_ERROR" in r.stderr,
+        )
 
     failed = [n for n, ok in checks if not ok]
     passed = len(checks) - len(failed)
@@ -290,8 +341,8 @@ def main():
     args = ap.parse_args()
     if args.selftest:
         return selftest()
-    if args.root and args.rev:
-        print("SETUP_ERROR: choose --rev or --root, not both", file=sys.stderr)
+    if args.root and (args.rev or args.repo != "."):
+        print("SETUP_ERROR: --root takes neither --rev nor --repo", file=sys.stderr)
         return 2
     if args.root:
         notes, readme = load_root(args.root)
