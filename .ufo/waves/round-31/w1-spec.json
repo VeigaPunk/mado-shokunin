@@ -1,0 +1,82 @@
+{
+ "wave": "mado-r31-w1",
+ "reportDir": ".ufo/waves/round-31/w1/reports",
+ "context": "# Goal\nmado round 31, wave 1 (PREPARED spec \u2014 the L1's seat has no swarm-dispatch tool on this host surface; the orchestrator dispatches prepared waves between rounds). Lane repo: /home/vgpnk/Projects/shokunin/mado-shokunin \u2014 every path you touch is ABSOLUTE under that root. Your tools start at the FLEET root (/home/vgpnk/Projects/shokunin), so a relative lane path lands in the wrong repo.\n\nRead first: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-31/registration.md (the frozen registration: C1 row-fidelity gate PRED-C1-r31, C2 resolved-citation counter v2 PRED-C2-r31-v2, C3 hardened index gate PRED-C3-r31, kill rules, routed queue). It is FROZEN: attack it in your report, never edit it, and never edit .ufo/waves/round-31/c2/count.py, quality/check-index-rows.py or quality/check-index.py \u2014 they are the measured artifacts. Base=274f7355366d38d6e78f641ad62472e68df4686a; data commit=f621e3c004858e01334f4de4ccffe8693a137da6.\n\nReport only at .ufo/waves/round-31/w1/reports/<YourName>.md inside the lane repo. Lane bytes are read-only for every seat; run counters, never edit them. Evidence = committed bytes at named revisions (`git show REV:path`) plus exact command transcripts.\n",
+ "items": [
+  {
+   "name": "ExecC1Rerun",
+   "role": "executor",
+   "prompt": "RUNNER (no writes beyond your report).\n\nRe-run the C1 row-fidelity gate at both revisions from /home/vgpnk/Projects/shokunin/mado-shokunin: `python3 -I quality/check-index-rows.py --rev 274f7355366d38d6e78f641ad62472e68df4686a --repo .` (expect `rows=43 errors=1` with `row-cells: knowledge/animation-table-r26.md at line 52 carries 2 cells`, exit 1) and `--rev f621e3c004858e01334f4de4ccffe8693a137da6` (expect `rows=43 errors=0`, exit 0). Then `--selftest` (expect `10/10 assertions passed`) and `--root .` on the worktree. Record every line + exit code. Attack: try to make a row pass the gate while sitting outside the coverage-map table, or with a third cell that never quotes its note \u2014 a control that produces errors=0 on a falsified row is a kill-rule K1 hit; report it."
+  },
+  {
+   "name": "ExecC2Rerun",
+   "role": "executor",
+   "prompt": "RUNNER (no writes beyond your report).\n\nRe-run `python3 -I .ufo/waves/round-31/c2/count.py` at 274f7355366d38d6e78f641ad62472e68df4686a (expect `UNRESOLVED criterion 35` \u2026 `TARGET_MISSED`, exit 1) and at f621e3c004858e01334f4de4ccffe8693a137da6 (expect `resolved_active=41/41` `TARGET_MET`, exit 0). Then run all four negative fixtures: `python3 -I .ufo/waves/round-31/c2/count.py --active-min 2 --quality .ufo/waves/round-31/c2/negative/<d>/corpus/QUALITY.md --lessons-root .ufo/waves/round-31/c2/negative/<d>` for d in n1-empty n2-wrongfile n3-section n4-collapse. Expected: n1 UNRESOLVED empty file; n2 TARGET_MET (existence is the rubric; flag as a residual cheat); n3 UNRESOLVED wrong section; n4 FLOOR_VIOLATION. Record each verdict + exit. Attack: construct a fifth fixture that drains the denominator or cites a nonexistent section differently \u2014 e.g. `Supersedes criteria 1-53` on an umbrella line, or a spell-form `lesson round99 M1` against an absent file. If any drains-to-MET or resolves-to-MET, the kill rule K2 fires; report."
+  },
+  {
+   "name": "ExecC3Rerun",
+   "role": "executor",
+   "prompt": "RUNNER (no writes beyond your report).\n\nRe-run `python3 -I quality/check-index.py --selftest` (expect `12/12 assertions passed`), `--rev 274f7355366d38d6e78f641ad62472e68df4686a` and `--rev f621e3c004858e01334f4de4ccffe8693a137da6` (both `indexed=43/43`), `--root .`, and the adversarial calls: `--rev=--output=/tmp/x` (expect SETUP_ERROR exit 2, no /tmp/x* created), `--root <dir-with-symlinked-corpus>` (expect REFUSED exit 1), `--root . --repo /nonexistent` (expect SETUP_ERROR exit 2). Build the symlink fixture under /tmp yourself. Record each exit + stderr. Attack: any invocation that either silently writes outside /tmp (SentScope F5 residual) or certifies a tree it should have refused is a K3 hit; report."
+  },
+  {
+   "name": "ExecCensusRerun",
+   "role": "executor",
+   "prompt": "RUNNER (no writes beyond your report).\n\nRun `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado`; capture full output + exit. Then `git -C /home/vgpnk/Projects/shokunin/mado-shokunin diff --stat 274f7355366d38d6e78f641ad62472e68df4686a f621e3c004858e01334f4de4ccffe8693a137da6 -- corpus/knowledge/ tools/ SKILL.md PROVINCE.md` \u2014 confirm only the claimed paths changed (nothing under corpus/knowledge or tools/). Record."
+  },
+  {
+   "name": "ScribeCriteria",
+   "role": "scribe",
+   "prompt": "WRITER of no lane files; your report only.\n\nAudit new rows 53 and 54 of corpus/QUALITY.md at f621e3c004858e01334f4de4ccffe8693a137da6: (a) does row 53 restate criterion 48's rule verbatim (byte-compare the rule text), and does its citation `lessons/round-23.md#final-c1-disposition-withdrawn-to-base-bytes-honest-stop M23-7` resolve to a real heading + real table row in corpus/lessons/round-23.md; (b) does row 54's claim about the round-30 rubric match `.ufo/waves/round-30/registration.md` and the r30 counter's actual behavior; (c) does the corrected criterion-35 citation now point at the section that actually contains M23-7. Report any drift."
+  },
+  {
+   "name": "ScribeRecords",
+   "role": "scribe",
+   "prompt": "WRITER of no lane files; your report only.\n\nAudit round-31 records: `.ufo/waves/round-31/registration.md` vs the committed `.ufo/waves/round-31/c2/count.py` rubric \u2014 is every frozen kill rule implemented as stated; does the registration's claimed base 274f7355 match `git rev-parse 274f7355^{commit}`; is every metric line in the registration reproducible from the committed counters. Also check that .ufo/waves/round-30 registration and reports are byte-identical to before round 31 (`git diff 274f7355..f621e3c0 -- .ufo/waves/round-30` must be empty). Report."
+  },
+  {
+   "name": "CritPredicates",
+   "role": "critic",
+   "prompt": "FALSIFIER. Attack PRED-C1-r31 / PRED-C2-r31-v2 / PRED-C3-r31 as the r30 wave attacked its predecessors: every control is a committed revision in a scratch clone, fixtures under /tmp only, lane bytes read-only.\n\n(a) C1: `check-index-rows.py` measures README *row fidelity* \u2014 table region, >=3 cells, resolvable paths, Holds overlap. Can a row with three non-empty cells and resolvable cites still lie (e.g. Holds paraphrases a different note; sources cell cites real S-ids that describe nothing)? Build the control. (b) C2: `count.py` v2 resolves file#anchor and spell-form citations \u2014 can a criterion resolve its citation while citing a lesson whose content contradicts the rule (resolution is syntactic; relevance is out of scope \u2014 is that a loophole the kill rule misses)? Build the control. (c) C3: the gate now refuses option-shaped revs and symlink ancestors \u2014 find another adversarial surface: `--repo` pointing at a different repo whose tree coincidentally matches; a rev that's a tag pointing at an unsigned blob; `--root` on a bind-mount-looking path. Report any TARGET_MET on a control that skips the claimed work."
+  },
+  {
+   "name": "CritKillRules",
+   "role": "critic",
+   "prompt": "FALSIFIER of the round-31 kill rules K1/K2/K3 (see registration). For each, build the cheapest committed state that satisfies the predicate while failing its intent: K1 (a row that errors=0 but is not a faithful index row), K2 (a state that reaches TARGET_MET without every active criterion being grounded \u2014 e.g. via supersession edge cases, or a criterion with zero grounding cites but trivially-resolving `outside` corroboration), K3 (a mutation that changes gate behavior while all 12 selftest assertions still pass). Controls under /tmp; lane read-only. Report which kill rules fail to rule out their cheapest shortcut."
+  },
+  {
+   "name": "RevC1Rows",
+   "role": "reviewer",
+   "prompt": "REVIEWER (report only). Read `quality/check-index-rows.py` at f621e3c004858e01334f4de4ccffe8693a137da6 line by line. Check: the `table_region` boundaries (does a row after `## Quality bar` get rejected?), the cell-count rule on a row whose third cell is `| |`, the Holds-overlap threshold (5 shared words \u2014 can a generic sentence like 'How X works and the tool that checks it' reach 5 words against a different note?), glob-vs-literal classification on paths like `.ufo/evidence/round-12/drift-*.txt` (which WARN rather than ERROR \u2014 is that the right call when the r12 evidence is ephemeral?), and the `outside`-only criterion loophole (a criterion whose only grounding is `outside R13-V1` \u2014 does it resolve, and should it). Report concrete findings with line citations."
+  },
+  {
+   "name": "RevC2Resolution",
+   "role": "reviewer",
+   "prompt": "REVIEWER (report only). Read `.ufo/waves/round-31/c2/count.py` at f621e3c004858e01334f4de4ccffe8693a137da6 line by line. Check: GitHub slugification parity for the `### Final C1 disposition: withdrawn to base bytes (honest stop)` heading (spaces, colon, parens, hyphens \u2014 does the counter's slug function produce exactly what GitHub anchors generate?); the `outside` corroboration rule (a criterion with ONLY `outside` cites \u2014 resolved or not, and what does the docstring claim); the ACTIVE_MIN=30 floor (does a fixture with `--active-min 2` still honor the other kill conditions); the ITEM_RE `item 1` rule (criteria 11-14 use `item 1` \u2014 do they resolve, or is item 1 silently absent everywhere and WARN-less); the seeded-criterion non-superseding path. Report."
+  },
+  {
+   "name": "RevC3Gate",
+   "role": "reviewer",
+   "prompt": "REVIEWER (report only). Read `quality/check-index.py` at f621e3c004858e01334f4de4ccffe8693a137da6. Check: `rev-parse --verify --end-of-options` on refs like `master^{commit}` vs raw `master`; `%(objecttype)` filter for symlinks-at-rev (blob-only \u2014 verify a symlinked `.md` under corpus/knowledge in a committed tree IS a `blob` type and counted \u2014 parity with the fence, which counts it); `os.path.commonpath` ancestor checks (does a root that is itself a symlink pass or refuse); the `--root + --repo` SETUP_ERROR (is the error text accurate). Also re-run the 12-assertion selftest independently. Report."
+  },
+  {
+   "name": "MutGates",
+   "role": "mutation-tester",
+   "prompt": "MUTATE-RUN-REVERT probe (report only; lane restored byte-identical after each run).\n\nMutate `quality/check-index-rows.py` and `quality/check-index.py` in a scratch clone under /tmp (never in the lane): (a) for the rows gate \u2014 remove the `table_region` check, lower the overlap threshold to 1, make glob-nomatch an ERROR; run --selftest + a seeded defect each; does each mutant change at least one assertion outcome (killed) or pass silently (survivor \u2014 report). (b) for check-index \u2014 remove `--end-of-options`, drop the ancestor-containment check, make `--repo`+`--root` allowed; each must be killed by one of the 12 assertions or reported as a survivor. Table: mutant | expected detector | killed/survived."
+  },
+  {
+   "name": "SentScope",
+   "role": "sentinel",
+   "prompt": "SECURITY review (report only; lane read-only; /tmp fixtures only).\n\nRe-probe the C3 gate's adversarial surface after the r31 hardening: (a) a `--rev` value that IS a valid ref yet weird (`refs/heads/../x`, unicode branch name, a ref whose tree entry for corpus is a submodule/gitlink \u2014 mode 160000 \u2014 does `ls-tree` show it and does the gate count it as a note?); (b) `--root` where `corpus` is a hardlink-heavy tree or a mount point; (c) `--root` where `corpus/knowledge` contains a FIFO (non-regular \u2014 expect REFUSED); (d) `--root` on a path containing `..` components. Each must produce REFUSED/SETUP_ERROR, never a silent pass or a write outside /tmp. Also verify no code path in check-index-rows.py / count.py can write outside /tmp (no open(...,'w'), no subprocess without capture). Report."
+  },
+  {
+   "name": "ScoutAxisTable",
+   "role": "scout",
+   "prompt": "READ-ONLY reconnaissance (report only).\n\nRe-derive the round-31 axis table at base 274f7355366d38d6e78f641ad62472e68df4686a: navigation fence 43/43; calibration resolved_active 39/40 (criterion 35 UNRESOLVED); operability selftest count at base (9/9 \u2014 the gate was already repaired in r30); row-fidelity did not exist at base (new surface, C1). Confirm coverage (new row-fidelity surface), discernment (calibration 39/40\u219241/41), operability (gate robustness) are the three distinct axes the registration claims, and that no claim double-counts another's surface. Report."
+  },
+  {
+   "name": "RevengerRowGap",
+   "role": "revenger",
+   "prompt": "READ-ONLY (report only).\n\nReconstruct how the r26 README row lost its Sources cell: `git log --follow -p corpus/README.md` around the row's lifetime; name the commit that dropped the `| source:` cell (or prove it was never there), and check whether the r30 fence would ever have caught it (it wouldn't \u2014 that's the C1 blind spot). Also reconstruct why criterion 35's citation named `#mistakes` when M23-7 lives under `### Final C1 disposition` \u2014 was it a rubric-amnesia miss in r30's wave, or an older error. Report with commit hashes."
+  }
+ ]
+}
