@@ -135,7 +135,7 @@ def main():
     if p.returncode != 0:
         raise SystemExit("SETUP_ERROR bad REV %s" % a.rev)
     rev = p.stdout.strip()
-    print("counter c1-r28 sha256:%s rev=%s" % (sha(open(__file__, "rb").read()), rev))
+    print("counter c1-r29 sha256:%s rev=%s" % (sha(open(__file__, "rb").read()), rev))
     ok = True
 
     # --- leg h1-receipt (QUALITY 39 named committed-receipt basis) -------------
