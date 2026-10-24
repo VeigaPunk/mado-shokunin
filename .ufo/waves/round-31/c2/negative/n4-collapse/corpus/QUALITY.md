@@ -1,0 +1,5 @@
+1. First rule. (lesson: lessons/round-10.md#mistakes M1)
+2. Second rule. (lesson: lessons/round-10.md#mistakes M2)
+3. Third rule. (lesson: lessons/round-10.md#mistakes M3)
+4. Fourth rule. (lesson: lessons/round-10.md#mistakes M4)
+5. New umbrella line supersedes all. Supersedes criteria 1-4. (lesson: lessons/round-10.md#mistakes M5)
