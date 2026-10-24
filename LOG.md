@@ -1670,3 +1670,44 @@ Spotcheck debt (r26 §7): items 1/3 (M26-10 PROVINCE + binds docstring) landed a
   (run once at each revision) returned 630 r26-counter-selftest, 631
   r26-population, 632 r26-control-receipts, and 633/634/635 the three
   round-27 rows above at both revisions.
+
+## Round 28 (2026-10-24, attempt 1 after stale-claim reset; completing attempt)
+
+Inherited seven dead attempts (watchdog `lane-dead-no-report mado round=28` ×7, last OOM-killed mid-work);
+reused committed work through 317ff19 and completed the round. Attempt-1 (2026-10-23) waves ran in-session:
+w1 39 seats one batched dispatch (6 reports landed), w1b 32 seats prepared (registry, 0 reports), w2 34 seats
+one batched task call (w2-run.json; 11 reports landed). Round total 105 seats; 72 seats died with the attempt
+and are recorded name-by-name in the three swarm registries.
+
+Evidence landed this attempt, all measured 2026-10-24 against committed bytes:
+
+- C2 calibration: `python3 -I .ufo/waves/round-28/c2/count.py 77cdda869ec616cb38cda494d992e57153a4a602`
+  → nine CHECK lines PASS, `PRED-C2-r28 verdict=TARGET_MET`, exit 0
+  (`.ufo/waves/round-28/evidence/c2-after-77cdda86.txt`). Before: 1/9, TARGET_MISSED
+  (`.ufo/waves/round-28/controls/K2DoNothing.txt`). Eight unresolved round-27 record conditions repaired,
+  D9 retained; the lesson-citation rubric is not re-scored by this claim.
+- C1 operability (sourced S183): composite `count.py 77cdda86` → per-leg vector
+  `.ufo/waves/round-28/evidence/c1-after-77cdda86.txt` (h2-rotate, refpub-kills 12/12, q36-witness,
+  q37-open-ended PASS; h1-rotation and boolword-v5 FAIL inside the composite for two evidenced reasons).
+  - h1-rotation after-state: `.ufo/waves/round-28/w2/reports/ReviewerSuiteMonotone.md` — new suite
+    `h_killed=18/18 verdict=TARGET_MET`, monotone, three `held-c1v2` survivors KILLED; H1's ephemeral
+    dependency was declared in the registration and the directory was cleaned before closure.
+  - boolword-v5 after-state: `count-v5.py 77cdda86 --seed 28c1a8c0ffee0001` → 41/41, boolword 2/2,
+    exit 0; `--tool-file ref-mutants/exactbool-tool.py` → boolword 0/2, TARGET_MISSED, exit 1. The composite
+    guard pins count-v4.py at 3d7d301f… (never matched committed 635ae788…, verified at 5198cc8 and 20022a65)
+    — frozen-counter defect reported verbatim; composite prints TARGET_MISSED exit 1.
+  - Oracle restored by byte-identical rebuild: `.ufo/waves/round-26/harness/build-tinywl.sh` reproduced
+    tinywl `227a74af…` and libwlroots `1f3d7036…` exactly (recipe pinned in `.ufo/waves/27/harness/oracle.py`);
+    no package installs; meson 1.12.1 / ninja 1.13.2 / gcc 16.2.1 already present.
+  - refpub public reference set authored from the three committed public subjects, 4 mutants + 2 benign rows
+    per subject, sealed `c1/refpub-seal.txt`, scored 12/12 by the frozen round-27 counter.
+- Sources census: validate exit 0 at start (182 rows, `evidence/census-start.txt`) and end (183 rows,
+  `evidence/census-end.txt`; +S183 mined by `corpus/knowledge/mutation-testing-r28.md`; W04 warnings unchanged).
+- Lesson `corpus/lessons/round-28.md` gained M28 rows (composite guard pin; ephemeral-input preservation;
+  blind mutant authoring) alongside the inherited M27-3 row and the S183 gate.
+- Fleet misroot sweep re-run at write time: 0 mado-owned fleet-root files (foreign untracked files untouched).
+- Host safety: Hyprland coredumps 1338→1338 on every oracle receipt; no compositor/config mutation.
+
+Lane tip at write: 77cdda869ec616cb38cda494d992e57153a4a602 (push verified by the lane helper). Round-shape,
+wave seat-mix, dead seats, trend verdicts and the verbatim composite output are in the round report
+`.ufo/reports/round-28/mado.md`.

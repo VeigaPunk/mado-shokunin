@@ -1801,3 +1801,44 @@ commit b6650d583924d670c9e98594ffb1c6f25e8e7682
 Classification: an introduced docstring/contract change was unrecorded by the harm watch. It makes no behavior change; the omission is an S3 record defect.
 
 Correction: the `543f0445e9d60bdfa026c54772d29e8b96bc844b` → `4f610066efd90804b055c42ae20c41a7f44404f9` `tools/` diff changes both `tools/mado-wsrules.py` (new) and `tools/mado-binds.py` (six added docstring lines). The harm watch must include the latter's environment-limit note as a docstring-only change, not a behavior change.
+
+## Round 28 — results and author verdicts (2026-10-24, attempt 1 after stale-claim reset; completing attempt)
+
+Frozen registration `.ufo/waves/round-28/registration.md` (b84348d; counters hardened 123d8cd; pre-data controls K1*/K2 committed). Two claims: C1 operability (sourced S183, six-leg composite PRED-C1-r28), C2 calibration (nine-condition record audit PRED-C2-r28). This attempt inherited seven dead attempts' committed work (tip 317ff19) and completed measurement, the refpub leg, environment restoration, and the records. Waves: w1 39 seats (one batched dispatch), w1b 32 (registry, 0 reports), w2 34 (one batched task call, w2-run.json); 105 seats total.
+
+### C2 — calibration (lowest active scored axis): committed measurements and author verdict
+
+| Before → after | Counting command | Verdict |
+|---|---|---|
+| 1/9 conditions pass, `verdict=TARGET_MISSED` exit 1 (K2DoNothing control at the registration commit, `controls/K2DoNothing.txt`) → 9/9 `CHECK D1..D9 PASS`, `PRED-C2-r28 verdict=TARGET_MET` exit 0 at 77cdda86 | `python3 -I .ufo/waves/round-28/c2/count.py REV` — before receipt `evidence/` absent at registration, control `controls/K2DoNothing.txt`; after receipt `.ufo/waves/round-28/evidence/c2-after-77cdda86.txt` | locally verified improved (bounded): eight unresolved record conditions repaired in a frozen nine-condition audit, D9 retained (it passed pre-round at dac4aef — not an r28 gain); the lesson-citation rubric 26/35 is NOT re-scored by this claim (CritCalibration advisory §3) |
+
+Honest residual: the round-27 spotcheck routed **ten** record defects; the frozen population measures nine. The omitted item (§6.6: report overclaims that the wsrules docstring cites S178–S182) is real and unclaimed — see RevengerNineDefects.md cross-cutting; carried to round 29 intent. C1/C2 share the D4/q36 witness artifact (CritCalibration §4) — disclosed, not independent.
+
+### C1 — operability (sourced S183): per-leg results and author verdict
+
+Command: `python3 -I .ufo/waves/round-28/c1/count.py REV` (composite, sha256 dcca084f…). Before: all six legs FAIL at 123d8cd (`evidence/c1-before.txt`). After at 77cdda86 — full vector, committed verbatim in `evidence/c1-after-77cdda86.txt`:
+
+| Leg | Result at 77cdda86 | Basis |
+|---|---|---|
+| h1-rotation | composite FAIL rc=2 no-tally (H1 dir absent at closure) | after-state verified by committed w2 receipt `.ufo/waves/round-28/w2/reports/ReviewerSuiteMonotone.md`: new suite `h_killed=18/18 verdict=TARGET_MET`, green 17/17, w 15/15, exactly the three `held-c1v2` survivors flip SURVIVED→KILLED, monotone. H1 dependency was declared in the registration ("Leg 1 alone depends on the inherited ephemeral H1 directory"); `/fast/scratch/hyaku/mado-r27/heldout` was cleaned before closure |
+| boolword-v5 | composite FAIL "normal=missing mutant=missing" — frozen guard pins count-v4.py at `3d7d301f…` vs committed `635ae788…` (pin never matched: verified at freeze 5198cc8 and r27 tip 20022a65) | leg's declared commands verified live at 77cdda86: `count-v5.py 77cdda86 --seed 28c1a8c0ffee0001` → `cases_pass=41/41 boolword_pass=2/2 verdict=TARGET_MET` exit 0; with `--tool-file ref-mutants/exactbool-tool.py` → `boolword_pass=0/2 verdict=TARGET_MISSED` exit 1. Oracle restored by byte-identical tinywl rebuild (both sha256 pins matched; `.ufo/waves/round-26/harness/build-tinywl.sh`; HOST_SAFETY coredumps 1338→1338) |
+| h2-rotate | PASS seal-at-rev=True rc=0 TARGET_MET | committed H2 + seal at tip, frozen round-27 counter |
+| refpub-kills | PASS seal-at-rev=True rc=0 `h_killed=12/12 h_valid=12 h_min_per_subject=4` | public reference set authored this attempt from the three committed public subjects (4 mutants + 2 benign rows each), sealed `c1/refpub-seal.txt`, scored by the frozen counter (receipt in run output; first draft's comment-only benign rows were AST-invalid and one anchor-class mutant survived — both iterated and caught by the counter itself) |
+| q36-witness | PASS rc=0 names=True | committed runner + regenerated receipts (`quality/q36-successor-receipts.txt`, Q36WITNESS rows=4 failed=0) |
+| q37-open-ended | PASS rc=0 r26sha=803e0096c994 | `quality/check-population.py` open-ended targets; frozen round-26 artifact untouched |
+
+Composite at 77cdda86 prints `PRED-C1-r28 verdict=TARGET_MISSED` exit 1 — reported verbatim. Author verdict: **improved on committed evidence, with two declared/evidenced boundaries** — every leg's frozen predicate holds on committed bytes or committed receipts; the AND-bit is blocked by (a) the registration's own declared ephemeral-H1 boundary (environment cleaned pre-closure) and (b) a frozen-counter guard defect (v4 pin never matched; composite was never smoke-run before freeze). Both are reported for the operator; no leg's rule was changed after data.
+
+### Harm watch and limits
+
+`git diff --stat 317ff19..77cdda86` touches only `.ufo/waves/round-28/c1/{refpub,refpub-seal.txt}` and `quality/q36-successor-receipts.txt` — no `tools/`, no compositor/config writes, no sibling-lane writes. Census validate exit 0 start (182 rows) → end (183 rows, +S183); W04 duplicate-url warnings unchanged. Suicide/bystander check: Hyprland coredumps 1338→1338 on every oracle run this attempt. Bound: finite offline suites; no live-health or whole-domain operability claimed. Coverage U-route stays a harm watch; no U-item moved.
+
+### Capabilities (round 28)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| rotating held-out mutation gate | Rotate and score a sealed held-out mutant set against the committed offline suites with the frozen counter (H2 rotated in-round; first public reference set scored 12/12) | `count-v2.py 77cdda86 --heldout .ufo/waves/round-28/c2/heldout2 …` TARGET_MET; refpub run 12/12 in `evidence/c1-after-77cdda86.txt` context; w2-run.json | 28 |
+
+### Sources, saturation, planned
+
+Sources 182 → 183 (A 175 → 176; mined 163 → 164; rejected 9; +S183 mined by `corpus/knowledge/mutation-testing-r28.md`, opened 2026-10-23, gate quote in lesson `## Gate`). Saturation 9.0 / N=3 unchanged; retired: none. Planned (round 29; intent only): new pre-data registration to fix the composite's count-v4 guard pin and re-run a smoke pass at freeze; the spotcheck §6.6 tenth record defect; ephemeral-input preservation policy (L0 question open).
