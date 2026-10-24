@@ -54,3 +54,23 @@ side per criterion 22 — literal 28/40 → 40/52, resolved-active 31/39 → 40/
 **C3:** the capability is the gate, not the green verdict: it must print
 `indexed=41/43` exit 1 at base and `indexed=43/43` exit 0 at tip, and its
 `--selftest` (6/6) covers missing/dangling/duplicate/symlink-refused/empty.
+
+## w1 addendum — dispatched-wave findings (post-report, append-only)
+
+The orchestrator dispatched `w1-spec.json` between rounds; 24 seat reports
+land under `.ufo/waves/round-30/w1/reports/`. Two are mine to act on now:
+
+| finding | pointer | disposition |
+|---|---|---|
+| C3 gate was a strict superset of the fence (`ROW_RE ^\|\s*` vs `^\| `, `split()` vs `splitlines()`, non-ASCII ls-tree quoting, `--root` 0/0 false-green, silent `master` default) — all latent on committed bytes (43/43 both ways, all receipts reproduce) | `w1/reports/RevC1Fence.md` S1–S6; `MutC3Gate.md` F1/F1b/M1/M3a; `RevC3Gate.md` H1 | **Repaired same-round** (gate blob rewritten; fence-literal `^\| `, `-z` NUL ls-tree blob-only, empty/missing knowledge → `SETUP_ERROR` exit 2, `--rev`/`--root` required; selftest 6 → 8 cases incl. fence-literal row forms + note-symlink refusal). Receipt `evidence/c3-repair-d72243e.txt`: base red, both tips green, `8/8`. Predicates unchanged; `PRED-C3-r30` re-verified at `d72243e`. |
+| Kill rules are bypassable by cheapest cheats (C1 rows outside the table / garbage cells; C2 an empty lesson file + supersedes-all row; C3 hash-keyed echo gate); fence/gate both ignore table context | `w1/reports/CritKillRules.md`; `CritPredicates.md` A1–A4; `RevC1Fence.md` S6 | **Routed to round 31** — tightening the frozen instruments mid-closure would invalidate the registered predicates; recorded honestly. |
+| C2 resolves citations only (file exists + anchor word + M-id present); a criterion citing an empty lesson file "resolves" — grounding quality is outside the rubric | `CritKillRules.md` K2 | Routed to round 31 (counter v2). |
+| `S185` own-work chain valid (bytes predate round, content-pinned anchor) but own-work sourcing has no anti-circularity guard; 3 formality defects | `w1/reports/CritSourcedClaim.md` | Routed to round 31. |
+| q36 receipts regenerated out-of-scope mid-review (ephemeral paths only, no verdict moved) — same class as r29's regeneration | seat observation | Reverted to committed bytes; identical to r29 handling. |
+| Gate not wired into `tools/mado-verify.sh --selftest`; SKILL gate-registry row owed | `RevC1Fence.md` S7 + r30 spot-check routing | Routed to round 31. |
+| `K2` literal < 0.70 floor holds vacuous ground forever | `CritKillRules.md` | Routed (counter v2 raises the floor with the active rubric). |
+
+The remaining reports (executor re-runs, scribe audits, scout recon,
+connector overlap, trend-verdict attacks, records chain) are the
+non-author verification wave's evidence; none reported a live defect in
+the three claims' measured outcomes.

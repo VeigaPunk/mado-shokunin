@@ -1,19 +1,28 @@
 #!/usr/bin/env python3
-"""mado index-completeness gate (round 30, claim C3 / capability row).
+"""mado index-completeness gate (round 30, claim C3 / capability row;
+repaired under the w1 RevC1Fence/MutC3Gate/RevC3Gate findings — see the
+round-30 erratum in SCORECARD.md and corpus/lessons/round-30.md).
 
 Navigation-completeness gate only: it checks that every admitted
 `corpus/knowledge/*.md` note has exactly one index row in `corpus/README.md`.
-The row set is the coverage-map table cells ``| `knowledge/<name>.md` `` — the
-same semantics as the SCORECARD.md fleet-round-1 counting command (source row
-S185).  This gate says nothing about note truth, freshness, or the semantic
+The row set is byte-level rows matching the fence's literal regex
+``^\\| `knowledge/<name>.md` `` — column-0 pipe, one literal space, backticked
+name — the same semantics as the SCORECARD.md fleet-round-1 counting
+command (source row S185).  Like the fence it does not require the row to
+sit inside the coverage-map table (table context is unenforced in both).
+This gate says nothing about note truth, freshness, or the semantic
 accuracy of the row text; an index row is a route, not a verdict.
 
-Reads: `corpus/knowledge/` and `corpus/README.md` at a git revision (`--rev`,
-via `git ls-tree`/`git show` under `--repo`) or on a plain filesystem tree
-(`--root DIR`; regular files only — symlinked or non-regular members are
-REFUSED).  Writes: nothing; stdout only.  `--selftest` writes ephemeral
-fixtures inside a private temporary directory it removes on exit and runs a
-copy of itself as a child process.
+Reads: `corpus/knowledge/` and `corpus/README.md` at a git revision
+(`--rev`, via `git ls-tree -z`/`git show` under `--repo`) or on a plain
+filesystem tree (`--root DIR`; regular files only — symlinked or
+non-regular members are REFUSED).  `--rev` counts blob entries only
+(mode/space/non-ASCII names handled by NUL parsing); a missing or empty
+`corpus/knowledge` is a setup error in both modes — the fence is
+undefined on an empty note set, so this gate invents no clean state.
+Writes: nothing; stdout only.  `--selftest` writes ephemeral fixtures
+inside a private temporary directory it removes on exit and runs a copy
+of itself as a child process.
 
 Exit: 0 complete; 1 gap (missing/dangling/duplicate) or refused input;
 2 setup error.
@@ -26,7 +35,7 @@ import sys
 import tempfile
 from collections import Counter
 
-ROW_RE = re.compile(r"^\|\s*`knowledge/([^`]+\.md)`", re.M)
+ROW_RE = re.compile(r"^\| `knowledge/([^`]+\.md)`", re.M)
 
 
 def _git(repo, *args):
@@ -37,18 +46,26 @@ def _git(repo, *args):
 
 def load_rev(repo, rev):
     try:
-        names = _git(repo, "ls-tree", "--name-only", rev + ":corpus/knowledge")
+        names = _git(
+            repo, "ls-tree", "-z", "--format=%(objecttype) %(path)",
+            rev + ":corpus/knowledge",
+        )
         readme = _git(repo, "show", rev + ":corpus/README.md")
     except subprocess.CalledProcessError as exc:
         print(f"SETUP_ERROR: {exc.output.strip()}", file=sys.stderr)
         sys.exit(2)
-    notes = {n for n in names.split() if n.endswith(".md")}
+    notes = {
+        rec.split(" ", 1)[1]
+        for rec in names.split("\0")
+        if rec.startswith("blob ") and rec.split(" ", 1)[1].endswith(".md")
+    }
     return notes, readme
 
 
 def _refuse(path):
     print(f"REFUSED: non-regular member {path}")
     sys.exit(1)
+
 
 
 def load_root(root):
@@ -60,17 +77,21 @@ def load_root(root):
     if not os.path.isfile(rpath):
         print(f"SETUP_ERROR: {rpath} not a regular file", file=sys.stderr)
         sys.exit(2)
+    if not os.path.isdir(kdir):
+        print(f"SETUP_ERROR: {kdir} not a directory", file=sys.stderr)
+        sys.exit(2)
     notes = set()
-    if os.path.isdir(kdir):
-        for name in sorted(os.listdir(kdir)):
-            fpath = os.path.join(kdir, name)
-            if os.path.islink(fpath) or not os.path.isfile(fpath):
-                _refuse(fpath)
-            if name.endswith(".md"):
-                notes.add(name)
+    for name in sorted(os.listdir(kdir)):
+        fpath = os.path.join(kdir, name)
+        if os.path.islink(fpath) or not os.path.isfile(fpath):
+            _refuse(fpath)
+        if name.endswith(".md"):
+            notes.add(name)
     with open(rpath, encoding="utf-8") as fh:
         readme = fh.read()
     return notes, readme
+
+
 
 
 def evaluate(notes, readme):
@@ -83,9 +104,14 @@ def evaluate(notes, readme):
 
 
 def report(tag, notes, readme):
+    if not notes:
+        # The fence is undefined on an empty note set (ZeroDivisionError);
+        # report no invented clean state — a 0-note tree is a setup error.
+        print(f"SETUP_ERROR: empty note set ({tag})", file=sys.stderr)
+        return 2
     covered, missing, dangling, duplicates = evaluate(notes, readme)
     total = len(notes)
-    score = (10 * covered / total) if total else 0.0
+    score = 10 * covered / total
     print(
         f"MADO_INDEX: {tag} indexed={covered}/{total} "
         f"missing={len(missing)} dangling={len(dangling)} "
@@ -176,13 +202,44 @@ def selftest():
             r.returncode == 1 and "REFUSED" in r.stdout,
         )
 
-        # Case 6: empty knowledge dir is a 0-note clean state, not an error.
-        t6 = os.path.join(tmp, "empty")
-        _write_tree(t6, [], [])
+        # Case 6: no corpus/knowledge dir — a wrong root is a setup error,
+        # never a clean 0/0 (the fence dies on an empty note set too).
+        t6 = os.path.join(tmp, "noroot")
+        os.makedirs(os.path.join(t6, "corpus"), exist_ok=True)
+        with open(os.path.join(t6, "corpus", "README.md"), "w") as fh:
+            fh.write("x\n")
         r = _run(tool, "--root", t6)
         check(
-            "empty tree exits 0 with indexed=0/0",
-            r.returncode == 0 and "indexed=0/0" in r.stdout,
+            "missing knowledge dir is SETUP_ERROR exit 2",
+            r.returncode == 2 and "SETUP_ERROR" in r.stderr + r.stdout,
+        )
+
+        # Case 7: the row grammar is the fence's literal `^\\| ` —
+        # no-space, double-space, tab and indented rows are NOT counted.
+        t7 = os.path.join(tmp, "rowforms")
+        _write_tree(t7, ["a.md", "b.md", "c.md", "d.md"], [])
+        with open(os.path.join(t7, "corpus", "README.md"), "a") as fh:
+            fh.write("|`knowledge/a.md` | h |\n")          # no space: not a row
+            fh.write("|  `knowledge/b.md` | h |\n")         # two spaces: not a row
+            fh.write("|\t`knowledge/c.md` | h |\n")          # tab: not a row
+            fh.write("  | `knowledge/d.md` | h |\n")          # indented: not a row
+        r = _run(tool, "--root", t7)
+        check(
+            "non-fence row forms count as missing, exit 1",
+            r.returncode == 1 and "missing=4" in r.stdout,
+        )
+
+        # Case 8: a symlinked note is REFUSED (MutC3Gate M3a coverage).
+        t8 = os.path.join(tmp, "linksym")
+        _write_tree(t8, ["a.md"], ["a.md"])
+        os.symlink(
+            os.path.join(t8, "corpus", "knowledge", "a.md"),
+            os.path.join(t8, "corpus", "knowledge", "link.md"),
+        )
+        r = _run(tool, "--root", t8)
+        check(
+            "symlinked note refused with exit 1",
+            r.returncode == 1 and "REFUSED" in r.stdout,
         )
 
     failed = [n for n, ok in checks if not ok]
@@ -208,11 +265,14 @@ def main():
     if args.root:
         notes, readme = load_root(args.root)
         return report(f"root={args.root}", notes, readme)
-    rev = args.rev
-    if not rev:
-        rev = _git(args.repo, "rev-parse", "master").strip()
-    notes, readme = load_rev(args.repo, rev)
-    return report(f"rev={rev}", notes, readme)
+    if not args.rev:
+        # No silent default: a bare invocation must name its revision —
+        # `rev-parse master` measures the bookmark, not the lane tip
+        # (RevC3Gate H1; RevC1Fence S5). Explicit rev only.
+        print("SETUP_ERROR: --rev or --root is required", file=sys.stderr)
+        return 2
+    notes, readme = load_rev(args.repo, args.rev)
+    return report(f"rev={args.rev}", notes, readme)
 
 
 if __name__ == "__main__":

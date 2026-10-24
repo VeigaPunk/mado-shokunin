@@ -1936,3 +1936,36 @@ operator ruling on the two answered-by-implementation L0 questions;
 semantic index-row accuracy (row text vs note contents — the fence counts
 rows, not truth); residual QUALITY-line citation polish under the new
 resolved-active rubric.
+
+### Round-30 w1 erratum — C3 gate repair (append-only)
+
+The orchestrator dispatched the prepared 33-seat wave between rounds; seat
+reports land under `.ufo/waves/round-30/w1/reports/`. RevC1Fence S1–S6,
+MutC3Gate F1/M3a and RevC3Gate H1 found `quality/check-index.py` (blob
+`df01b20f…`) was a *strict superset* of the frozen fence it claims to
+implement: `ROW_RE` `^\|\s*` vs the fence's `^\| `, `split()` vs
+`splitlines()`, non-ASCII ls-tree quoting, `--root` printing a clean
+`indexed=0/0` on a root with no `corpus/knowledge`, and a silent
+`rev-parse master` default that can measure a stale bookmark. All classes
+were latent on committed bytes (every registered receipt reproduces
+verbatim; both tools print 41/43 and 43/43 at the same revisions).
+
+Repair (this erratum's commit): the gate is rewritten fence-faithful —
+literal `^\| ` row regex, `ls-tree -z` NUL parsing of blob entries, a
+missing or empty `corpus/knowledge` is `SETUP_ERROR` exit 2 in both modes
+(the fence is undefined there; no invented clean state), and `--rev` or
+`--root` is now required (no silent `master` measurement). Selftest 6 → 8
+cases: missing-dir setup error, fence-literal row forms (no-space,
+double-space, tab, indented all count as missing), and a symlinked note
+refusal. Receipt `.ufo/waves/round-30/evidence/c3-repair-d72243e.txt`:
+`MADO_INDEX_SELFTEST: 8/8`, base `8f51071b` red `41/43` exit 1, data
+`446dc396` and tip `d72243e` green `43/43` exit 0, bare invocation exit 2.
+
+Claim status unchanged: `PRED-C3-r30` re-verified at `d72243e` (the
+capability is the gate; its verdicts are identical under the repair).
+Routed forward: fence/gate table-context laxity (both), C2 counter
+resolves-citation-not-grounding, weak kill-rule shortcuts, own-work
+circularity guard, and the SKILL gate-registry/selftest wiring —
+see `corpus/lessons/round-30.md` w1 addendum. A seat-regenerated
+`quality/q36-successor-receipts.txt` (ephemeral paths only, no verdict
+moved) was reverted to committed bytes, same handling as round 29.
