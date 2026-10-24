@@ -1711,3 +1711,8 @@ Evidence landed this attempt, all measured 2026-10-24 against committed bytes:
 Lane tip at write: 77cdda869ec616cb38cda494d992e57153a4a602 (push verified by the lane helper). Round-shape,
 wave seat-mix, dead seats, trend verdicts and the verbatim composite output are in the round report
 `.ufo/reports/round-28/mado.md`.
+
+Correction to the round-28 entry (same round, append-only): the no-in-tree-report seat count is 88, not 72 —
+w1 33 (39 declared − 6 reports), w1b 32 (32 − 0), w2 23 (34 − 11), all named in the three committed swarm
+registries. "No in-tree report" is not "no work": those seats' outputs are carried by the integration commit
+317ff19; the count measures reports, not production.
