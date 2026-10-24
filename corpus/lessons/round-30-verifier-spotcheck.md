@@ -107,3 +107,61 @@ with the standing 7 W04 warnings (S030/S042/S045/S097/S119/S120/S121).
   operator-owned.
 
 No tools were installed or updated by this closure.
+
+## Post-closure wave-1 digest (appended 2026-10-24 ~04:10 -03)
+
+After the ledger append (`rounds[590]`), the prepared wave-1's seat reports
+landed under `.ufo/waves/round-30/w1/reports/` (untracked, 21 reports). All
+attacks ran in scratch clones; all predicate transcripts were byte-reproduced.
+No finding overturns a claim on committed bytes — the closure verdicts stand —
+but the instruments and two rows carry real defects routed to round 31 below.
+
+| Seat report | Finding | Live at `446dc396`? |
+|---|---|---|
+| CritPredicates | All three predicates admit cheapest-control states: the fence counts bare `| \`knowledge/x.md\`` lines even inside HTML comments and fenced code blocks (A3/A4 → 43/43 exit 0); a `Supersedes criteria 1-40` line or empty `round-99.md` + 8 token appends reach TARGET_MET; a hardcoded echo gate satisfies C3. Predicates measure transcript shape, not the claim's prose qualifier. | Latent — the data commit did the real work |
+| CritKillRules | Same conclusion per kill rule (K1/K2/K3 all bypassable). | Latent |
+| RevC3Gate | **H1**: default `rev-parse master` can print green on a stale revision where `HEAD` is red (false-green class C3's own kill rule names). | Latent on committed bytes |
+| RevC1Fence | Gate `ROW_RE` `^\|\s*` is a strict superset of the fence's `^\| ` — admits no-space/tab rows the fence misses and fabricates duplicates the fence cannot see; `--root` prints `indexed=0/0` green on an empty tree where `--rev` exits 2; non-ASCII/space-bearing names diverge (`split()` vs `splitlines()`); default invocation diffs (fence 8/22 at its pinned baseline vs gate 43/43 at `master`). | Latent — identical outputs on all committed revisions |
+| MutC3Gate | Selftest 6/6 misses the `\s*` divergence; supplementary probes (indented row, symlink member, dir symlink) reveal classes the six cases do not cover. | Latent |
+| MutC2Counter | Counter's citation guards fire when triggered, but no negative control leg exists (a criterion citing a missing file/anchor would still credit). | Latent coverage gap |
+| SentScope | **F1**: C2 counter argv-verbatim `git show` lets a `--output=<path>` REV write a file — violates the counter's writes-nothing contract. **F2/F3**: `--root` provenance/vacuity defects (mirrors RevC1Fence). | Live contract violation, latent trigger |
+| CritCausal | Claim deltas landed in ONE commit; C3's agreement leg depends on C1's README rows (hidden coupling); suggested PRED-C3a/C3b split. | Design note |
+| CritSourcedClaim | S185→C3 self-citation attack **fails to falsify** (fence predates the round; defenses hold) — SOURCED-LEG VALID; but no anti-circularity guard exists on own-work sourcing. | Latent systemic absence |
+| ScribeRowAccuracy | **F1 (live)**: `mutation-testing-r28.md` index row's Holds cell overclaims — promises more than the note holds; fence cannot see it (names-only). Rows otherwise well-formed. | **Live — routed** |
+| RevengerPrior | **D2 (live)**: `animation-table-r26` index row (r26) has no Sources cell; citation stranded in Holds. Fence blind to cell content by design. | **Live (pre-existing) — routed** |
+| ScoutAxisScores | Axis-selection table re-derivation: all five base values byte-reproduced; C2 lowest-axis selection confirmed. | Confirms |
+| ScoutIndexHistory | Gap formed r27 (`86f7355`) + r28 (`317ff19`) — both commits added notes without touching `corpus/README.md`; first README touch since `ca135237` is the r30 data commit. | Confirms |
+| ScoutW04 | 7 W04 warnings identical; criterion-17 disposition confirmed. | Confirms |
+| ScribeLesson | Lesson/commit provenance audit; bytes identical across data/records/HEAD. | Confirms |
+| ExecC1/C2/C3/Census/FreezeSmoke/Selftest | All receipts byte-reproduced; no divergence. | Confirms |
+
+**Out-of-scope worktree write observed at closure+ε:** `git status` now shows
+`M quality/q36-successor-receipts.txt` (mtime 2026-10-24 04:06:46 -03) — a
+committed evidence file rewritten in the worktree with fresh ephemeral
+`/tmp` + `/fast/scratch` run dirs (all rc/expected/PASS lines unchanged, no
+verdict moved; RevC1Fence reported it first). My step-1 `tracked=0
+untracked=0` snapshot preceded this write. The lane owns resolving it
+(restore committed bytes or commit it under a named entry) — flagged here
+because the next round's `jj-lane.sh state` will see `tracked=1`.
+
+### Routed to round 31 (supersedes/extends the list above)
+
+1. `check-index.py`: add the SKILL.md gate-registry row (§Gate Delivery).
+2. `check-index.py` hardening or documented divergence: `^\|\s*` superset vs
+   the fence's `^\| ` (unify semantics or register the gate as
+   not-byte-identical to the fence); H1 `master` default → resolve `HEAD` or
+   require explicit `--rev`; `--root` empty-tree vacuous green; name-splitting
+   on non-ASCII/whitespace names.
+3. C2 counter: `--output=`-style argv smuggling writes a file — prefix-check
+   REV or pass `--`; add one negative-control leg (dead citation).
+4. Row-content defects the fence cannot see: `mutation-testing-r28` row F1
+   overclaim (ScribeRowAccuracy) and `animation-table-r26` row's missing
+   Sources cell (RevengerPrior D2) — correct append-only per the rows-are-
+   claims rule; extend the gate to cell-level checks if adopted.
+5. Predicate/kill-rule tightening: CritPredicates A1–A4 classes (non-table
+   rows, comment/code-block rows, empty cells) and CritKillRules' cheap
+   supersede/echo shortcuts — future registrations should scope the row regex
+   to the coverage table and require cell presence.
+6. S185 lesson quote: restate as literal bytes (carried from above).
+7. Wave-1 reports `.ufo/waves/round-30/w1/` are untracked wave evidence —
+   land or explicitly discard under round 31's records entry.
