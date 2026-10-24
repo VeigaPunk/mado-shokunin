@@ -1,0 +1,11 @@
+Working...
+Sentinel sweep complete — **clean**, two observations. Report: `.ufo/waves/round-32/w1/reports/SentinelScope.md`.
+
+Findings:
+1. **Write envelope**: all 32 spec items' declared write targets resolve inside the lane — `w1/reports/`, `scratch/<Seat>/`, `assimilation/`, `c1|c2/controls/`. Zero outside `/home/vgpnk/Projects/shokunin/mado-shokunin/`.
+2. **Fleet-root sweep**: no untracked file names `mado`/`round-32` — including `.ufo/waves/round-37/residual/ResCorrections.md` (sibling wave artifact). Modified entries are driver runtime (`.ufo/state/*`, watchdog.log). Nothing deleted.
+3. **jj/Git**: index empty (`git diff --cached` blank); `@` = `571e178b` on tip `91862344`/`master`, timestamped 04:29 — predates wave-1 by ~16 h; registered base `25622289` confirmed ancestor. No mutating `jj`/`git` in any seat log.
+4. **Protected paths**: `corpus/`, `SCORECARD.md`, `corpus/SOURCES.md` clean against tip — no seat mutation.
+5. **Compositor/host**: no seat command can touch the live compositor; the only `hyprctl dispatch` strings are a quoted grep pattern; fetches are pinned read-only URLs.
+
+Observations flagged for L1: `quality/check-axis-scores.py` (untracked, mtime 20:04:55 — inside wave window but outside seat scope; evidenced as L1-staged C2 instrument per ConnectorInstrumentReuse) and round-30 report residue (04:15–04:17, verifier closeout, uncommitted).

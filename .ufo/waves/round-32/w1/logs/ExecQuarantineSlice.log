@@ -1,0 +1,19 @@
+Working...
+Done. Slice derived, all 13 rows hand-checked, report and LOG entry written.
+
+**Slice** (`.ufo/waves/round-32/assimilation/quarantine-slice`): 13 mado data rows — 6 `payload-absent` + 7 never-checked (2 unreachable, 5 "no locator").
+
+**Verdicts** (full table + anchors in `.ufo/waves/round-32/w1/reports/ExecQuarantineSlice.md`):
+
+- **PRESENT / adoptable (5):**
+  - `S189` — quote verbatim in `EventManager.cpp` `formatEvent` at pinned commit (checker JSON-escape miss).
+  - `S195` — both zh quotes verbatim in `zh-cn/Hyprland.html` extracted from the lane's package copy; remote HEAD 200.
+  - `S201` — quotes absent from the *abstract page* but present in the full LaTeX source (lane artifact lines 97, 430). Adoptable only with re-anchor to the full source.
+  - `S205` — `zh-hans`/`zh-hant` entries verbatim as the last two `interwikimap` entries in the live API response.
+  - `S228` — present under quote normalization: file has `使用“模板:过时”…` (curly quotes), cited string used straight `"`.
+- **ABSENT as quoted (1):** `S224` — cited `"updated_at": "2026-10-23T22:52:44Z"` not in `~/.cache/ai-usage/status.json` (now `2026-10-24T23:01:21Z`; `"version": 2` still holds). Rotating value — stale snapshot, refuse the literal quote.
+- **UNVERIFIABLE (7, prose cells):** `S199`/`S200` remotes answer HTTP 521, but lane fetch artifacts corroborate all four gate quotes verbatim; `S209`/`S222`/`S223`/`S225`/`S235` marked UNVERIFIABLE per the prose-cell rule, yet their gate blocks *do* name locators — S222/S223 verified verbatim on host files, S209/S225/S235 claims re-verified on the successor Hyprland instance (0 marker occurrences; dir 700, sockets 755).
+
+**Register defects named:** `By lane` says mado 6 but the register carries 13; §2 id cells have stray trailing backticks; "gate block named no locator" is inaccurate for all five mado gate rows. No mado row lacks an S-id.
+
+**Notable:** five of six `payload-absent` rows are checker misses, not fabrications. Register never edited. `LOG.md` entry appended per lane rule.

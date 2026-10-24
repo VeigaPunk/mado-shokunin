@@ -1,0 +1,12 @@
+Working...
+Done. Both artifacts landed; `corpus/` untouched.
+
+**Deliverables**
+- Draft: `.ufo/waves/round-32/scratch/ScribeEntryDispatchers/dispatcher-semantics-r25.md`
+- Report: `.ufo/waves/round-32/w1/reports/ScribeEntryDispatchers.md`
+
+**Write-time verification** (re-run, not copied from the scout): `sha256sum` of the re-opened bytes → `c830ce0717f92776…` (12879 bytes), matching the staged recheck expectation; anchors confirmed by `grep -n` — instability L9, wrapper L14, bare-call L15, `event`→socket2 L59, `force_idle` L69, keybind warning L82; §4 recheck `grep -c 'hl.dispatch'` → 7. Draft URL and commit strings diff byte-identical against the staged pin; every claim carries S188, 15 S-id tags total.
+
+**Deltas vs staged** (from the scout's flags): `force_idle` quote completed to the full L69 cell (the dropped "next activity / no keybind" clauses were load-bearing for the clock-operation INF); added the L15 supporting OBS; UNK re-scoped to what S188 supports (bytes pin a wiki commit, no 0.56.x marker → shipped-v0.56.2 surface stays unverified; unknown kept, `CANNOT-ANSWER.md` pointer kept); recheck/verified dates advanced to 2026-10-24 with observed values.
+
+**Theme verdict — different surface.** Every S188-grounded claim in both files is about the Lua dispatcher API: describe-vs-execute semantics, per-dispatcher behavior, contents instability. Nothing socket-level — no request grammar, no `EVENT>>DATA` framing, no catalogue in the claims or the bytes. The single overlap is one table row, `event( string )` → "Send an event to socket2" (S188:59), which names socket2 as a destination but carries no wire semantics. The two-socket contract itself is the sibling `ipc-contract-r25.md` entry's subject. Adjacent, not identical: the dispatcher API is the config-layer action surface with exactly one documented bridge row into socket2 — which is why it rides the C1 theme package without being the theme's surface.

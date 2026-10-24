@@ -1,0 +1,16 @@
+Working...
+Report written to `.ufo/waves/round-32/w1/reports/MutExistingGates.md`. Results:
+
+**Killed (3):**
+- **M1** — `check-index.py` `dangling = []` accepted the ghost registry row (exit 0 on tree-m1) but selftest case 3 fired: `11/12`, `FAILED: dangling row exits 1 and names the row`. Kill: `--selftest`.
+- **M3** — `count.py` minus the `PATH_RE` `elif not body.strip()` turned `n1-empty` into `resolved_active=2/2 TARGET_MET`. Killed by the committed negative-fixture expectation (`w1-spec.json`), not by any self-check — `count.py` has no `--selftest`.
+- **M4** — `scope = body` (whole-file blindness, r30 S8 regression) turned `n3-section` into `TARGET_MET`. Same procedural kill caveat.
+
+**Survivors (2) → named defects:**
+- **MEG-S1** — `check-index-rows.py` skips dangling rows via `nt is None → continue` *before* the overlap WARN only; my mutant hoisted the bail above all per-row checks and a dangling row carrying `S9999` + missing `tools/nope.py` passed with `errors=0`. Selftest `10/10` — no dangling-row fixture exists in its suite. "The completeness gate owns this finding" leaves row cells wholly unexamined.
+- **MEG-S2** (pre-existing, literal reading) — a Holds cell naming `knowledge/ghost-mut2b.md` is accepted by the gate **as shipped**: baseline `errors=0 warns=0` on tree-m2b. Backticked paths are checked only in the Sources cell, and `RP_RE`'s allowlist excludes `knowledge/` — an equivalent mutant, no edit needed.
+- **MEG-S3** — M5 deleted one `check()` call; selftest self-normalized to `11/11 assertions passed`. Composite proof: M5+M1 in one copy prints a green 11/11 while accepting dangling rows. The pass denominator is unpinned in both gates' selftests.
+
+**Observations:** dead `exists_nonempty()` in `count.py:213`; `\bS\d{3}\b` silently ignores 4+-digit S-ids (`S9999` never evaluated in F-M2).
+
+Lane files and `round-31/` verified unmodified (`git status` clean; md5s recorded). All artifacts under `scratch/MutExistingGates/` — mutants, fixtures, diffs (`logs/all-diffs.txt`), tree, clone.

@@ -1,0 +1,14 @@
+Working...
+Report landed at `.ufo/waves/round-32/w1/reports/CriticC2Predicate.md`. Summary of the five attacks, all run against current bytes (repo moved `9186234`→`50e6a8f` and the gate file mutated mid-analysis; verdicts are against the live 9448 B file):
+
+1. **"Stale" vs honest base record — SURVIVES.** The r31 line is a true base-scoped record (verified: `count.py 274f7355` → `resolved_active=39 active=40`). But the lane consumes the last-published table as its current self-assessment — this round's own registration imports 39/40 as "the lane's own scored axes." AXES.md's "entries match observed repo state" supports the stale reading *at the consumption point*. Repair is wording-only: name the currency convention, not falsity.
+
+2. **Comparison rule — SURVIVES.** Literal `A/B` string equality; `82/82` fails, absence fails. Only the instrument's literal output satisfies it.
+
+3. **Missing/unparsable publication — DEAD.** Missing → `mismatched=3` exit 1 is correctly fail-closed (verified at `274f7355`). But the locator is broken twice, demonstrated live: `rfind("Axis table re-derived at")` over flattened text means **a later quotation of the marker shadows the real publication** — and C2's own fix (append a correction ledger entry; this lane's errata style quotes prior text) can poison its own gate. Plus a hard 400-char window silently truncates a verbose publication to NOT-PUBLISHED. Repair: exclude quoted/erratum occurrences or reserve the marker phrase; window = the publication's paragraph.
+
+4. **Re-derivable axes — SURVIVES.** All three instruments derive at HEAD (43/43, 41/41, 12/12); non-derivable prints `NOT-RE-DERIVABLE` + named cause and counts bad. Two spec gaps: `checked` is hardcoded `len(AXES)` (printed `checked=3` with only 2 derivable), and the pass domain is silently floored at the youngest instrument's birth rev.
+
+5. **Control (c) — DEAD.** One-axis perturbation only proves the calibration comparator; a gate that always MATCHes navigation/operability passes all three controls. Also (a)'s `mismatched>=1` is loose (honest value is exactly 2) and no control covers missing-publication or the shadowing case. Repair: per-axis perturbations, tighten (a) to `=2`, add a quoted-marker control.
+
+Two spec-level repairs required (locator, controls); two wording repairs (currency semantics, `checked`/pass-domain). Target `mismatched=0` untouched in all repairs.

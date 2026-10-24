@@ -1,0 +1,20 @@
+Working...
+Review complete. Report: `.ufo/waves/round-32/w1/reports/ReviewRowSchema.md`; `LOG.md` entry appended per lane rule.
+
+**Verdict: all five rows PASS every enumerated check** — zero refused cells.
+
+| Row | Result |
+|---|---|
+| S186 (docs/A, mined) | PASS — `on-release`, used-by `ipc-contract-r25.md` |
+| S187 (docs/A, mined) | PASS — `on-compositor-release`, used-by `ipc-contract-r25.md` |
+| S188 (docs/A, mined) | PASS — `on-release`, used-by `dispatcher-semantics-r25.md` |
+| S189 (code/A, mined) | PASS — `on-compositor-release`, used-by `ipc-contract-r25.md` |
+| S196 (docs/A, mined) | PASS — `on-compositor-release`, used-by `dispatcher-surface-and-request-grammar-r26.md` |
+
+Structural facts: NF=13 on `|` split for all 5 lines; zero literal/escaped `|` in cells; `opened=2026-10-24` valid and ≤ UTC today; both cadence tokens are symbolic (validator regex) with lane precedent (`on-release`×131, `on-compositor-release`×1 in live registry); all `mined` rows carry non-`—` used-by (no W03); no tier-C rows (W01 vacuous); all rows insert byte-identically into the mirror Registry.
+
+**Census on scratch mirror (`validate/corpus/SOURCES.md`): exit 1** — but none of it touches the new rows. The 12 E11 findings name pre-existing rows (S096/S173/S174/S178–S182/S184/S185) whose used-by paths live outside `corpus/` (`tools/`, `SKILL.md`, `quality/`, `.ufo/waves/`), which the corpus-only mirror can't resolve; all 12 exist on the live lane root. The 7 W04 warnings are informational and identical to the live-lane run.
+
+**Frozen manual commands on the mirror**: 190 rows (185+5), 0 malformed, 0 duplicate ids, 0 enum/tier violations, histograms consistent (A=183 B=1 C=6 = mined=171 queued=10 rejected=9). The dangling-used-by command prints the same 12 mirror-scope misses.
+
+One sequencing fact flagged, not a schema defect: the three `corpus/knowledge/` used-by targets exist in the mirror but not yet in the live lane root — the append must land together with them or all five rows trip E11 against the live registry.

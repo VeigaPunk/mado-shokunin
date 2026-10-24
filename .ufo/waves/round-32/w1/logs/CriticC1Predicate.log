@@ -1,0 +1,12 @@
+Working...
+**CLAIM DEAD (predicate falsified).** Report written to `.ufo/waves/round-32/w1/reports/CriticC1Predicate.md`; scratch evidence at `.ufo/waves/round-32/c2/controls/c1-predicate-attack/`.
+
+Findings, all executed:
+
+- **Junk reaches the target.** Three variants print `entries=3 rows=5 cited_entries=3`: v1 (5 stub rows whose `used-by` names an absent file + 13-byte `source:`-only entries), v2 (`| S186 |` duplicated ×5 — one id, zero 11-col rows — with all citations in one file and two empty entries), v3 (correct rows + extra unregistered `S998/S999` citations, invisible). v4 inverts: *correct* work fails — `cited_entries=4` — because `grep -c` counts `source:` **lines**, not entries or ids.
+- **Regexes are weaker than the schema the claim invokes.** Rows need only `| <id> |`; `source:` has no id boundary (`S1866` matches `S186`, verified), matches inside code fences (verified), and `used-by`/`status`/`recheck` are never read. The lane's own `sources-census.sh validate` exits 1 on both junk registries (`E01 fields=1`, `E12 row outside Registry section`) — the kill rule sits below the schema floor; only unmeasured process gates keep junk out.
+- **The set is never enumerated.** No distinct-id count either direction: missing ids pass (v2), extra ids pass (v3), `used-by` reciprocity unchecked.
+- **Theme = two topics.** S186/187/189 + S196 cover the IPC socket layer (transport + dispatcher *command* surface); S188 is the Lua `hl.dsp.*` deferred-action API ("describe, they do not act") — a scripting-layer subject sharing only the word "dispatcher", fused under a socket-contract title. Also: `keybind-rule-semantics.md §3` already holds a 24-dispatcher inventory — the dispatcher half isn't as unheld as the title implies.
+- K1's declared do-nothing controls test only *one-sided* commits; the two-sided junk path they were meant to exclude is exactly the one that passes.
+
+Minimal freeze-time repairs in report §Verdict (distinct-id row count, per-file citation check with `\b`, cited-set equality, `used-by` existence, substance floor). `ExecThemeHoldCheck.md` did not exist — log still "Working..." — so the theme-not-held question was re-derived from the live corpus.

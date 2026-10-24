@@ -1,0 +1,13 @@
+Working...
+Report written to `.ufo/waves/round-32/w1/reports/ReviewGatesExist.md`. Key findings:
+
+**Validator contract** (all cites `sources-census.sh:N`, read end to end, 806 lines):
+1. `--file` reads exactly one registry file; used-by paths are **existence-probed** (`[ -e "$dir/$path" ]`, L566) relative to the file's parent-of-parent (`$dir_abs`, L501) — the lane repo root for `<lane>/corpus/SOURCES.md`. No sibling file contents are ever read.
+2. `recheck` accepts exactly: real-calendar ISO date, `/^[0-9]+d$/`, or symbolic `/^[A-Za-z][A-Za-z0-9 _-]*$/` (L663-667, L582). Mandatory — `—` or empty is E09.
+3. `opened`: real ISO date, `<= today` UTC (`date -u`, L90; strict `>` at L661); impossible dates like `2026-02-30` rejected via mktime round-trip.
+4. `used-by` = column 12, **comma-separated**, trimmed; `—`/empty skipped (L562-565).
+5. 0-3 leading **spaces** tolerated (`^ {0,3}\|`, L615/L541); 4+ = code, ignored; tab-indented rows silently ignored too.
+6. Codes E01-E12 + W01-W04 tabled in report (script has E12 and W04 beyond the E01-E11/W01-W03 the task listed).
+7. **Decisive**: E11 fires only for `mined` rows (`[ "$status" = mined ] || continue`, L559). Empirically confirmed on the live script: queued row with dangling path → no finding, counted, clean; mined row with dangling path → E11, exit 1. So appended rows **can** point at knowledge files before they land iff `status=queued`.
+
+**Append block**: `.ufo/waves/round-32/assimilation/append-block.md` does not exist anywhere in the lane (only unrelated round-24 fixtures match `*append*`); `assimilation/` holds gate proofs and id lists only. Zero cells to refuse — report includes a 7-point composer checklist so the eventual append passes first time.

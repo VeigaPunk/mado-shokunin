@@ -1,0 +1,13 @@
+Working...
+Done. Report at `.ufo/waves/round-32/w1/reports/ScoutIPCEventMgr.md`.
+
+**Fetch**: HTTP 200 · 6479 bytes · sha256 `eea605dfe5ce09e1…` · accessed 2026-10-24 · staged copy under scratch.
+
+**Five items** (all in `EventManager.cpp`):
+1. Path: line 21 — `g_pCompositor->m_instancePath + "/.socket2.sock"`
+2. Type/backlog: line 14 `socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0)`; line 35 `listen(…, 10)` (`// 10 max queued.` at 34)
+3. Framing: line 128 — `std::format("{}>>{}\n", event.event, …)`
+4. Truncation: line 128 — `data.substr(0, 1024)`
+5. Newline sanitisation: line 129 — `std::replace(… +2, …-1, '\n', ' ')`; range excludes the framing `\n`
+
+**Staged entry check**: 6/6 S189-attributed claims **agree** — file and line attributions all correct, all staged quotes byte-identical. Extras verified: `src/ipc/` returns 404 at the pinned commit (confirms the negative tree claim); `grep -c 'substr(0, 1024)'` = 1 matches the §6 recheck. One nit recorded: `// 10 max queued.` sits at line 34, one above the cited `:35` — cosmetic only. S186/S187 claims out of scope for this byte check.

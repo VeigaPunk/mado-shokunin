@@ -1,0 +1,21 @@
+Working...
+Report written to `.ufo/waves/round-32/w1/reports/ReviewUsedByClosure.md`.
+
+**Verdict: closure holds.** Forward and reverse verified over the staged package (132 rows S186–S317 × 61 entries, escape-aware pipe splitting — 21 rows carry `\|` inside recheck cells and break naive parsers).
+
+| row | status | staged `used-by` | citing entry | fwd | rev | path match |
+|---|---|---|---|---|---|---|
+| S186 | mined | `corpus/knowledge/ipc-contract-r25.md` | `ipc-contract-r25.md` `source: S186` | OK | OK | match |
+| S187 | mined | `corpus/knowledge/ipc-contract-r25.md` | `ipc-contract-r25.md` `source: S187` | OK | OK | match |
+| S188 | mined | `corpus/knowledge/dispatcher-semantics-r25.md` | `dispatcher-semantics-r25.md` `source: S188` | OK | OK | match |
+| S189 | mined | `corpus/knowledge/ipc-contract-r25.md` | `ipc-contract-r25.md` `source: S189` | OK | OK | match |
+| S196 | mined | `corpus/knowledge/dispatcher-surface-and-request-grammar-r26.md` | `dispatcher-surface-and-request-grammar-r26.md` `source: S196` | OK | OK | match |
+
+- The three admitted entries are `ipc-contract-r25.md` (S186, S187, S189), `dispatcher-semantics-r25.md` (S188), `dispatcher-surface-and-request-grammar-r26.md` (S196); exactly those five rows name them back. Package-wide: forward 0 violations; reverse clean but for S203.
+- **Correction table:** none of the five appended rows is among the 8 corrected ids (intersection empty); all 8 staged `used-by` strings match the report's "now" column verbatim and reverse-verify. **No path difference** on the five rows — `knowledge/` is the staging prefix consumed by adopt step 4.
+- **The L1's drafts do not exist** — `round-32/scratch/` holds only Scout fetch material and ExecCensusManual outputs; all verdicts are from the staged files.
+
+Mismatches found:
+1. **S203:** MERGE-REPORT says its `used-by` names `corpus/knowledge/idle-lock-runtime-state-r28.md`; the staged cell is `—` (status `queued`), and that entry exists without mentioning S203. Report stale, package clean.
+2. **Stale wave-draft ids in wave-2/3 prose** (`+2` renumbering residue, `[INFERENCE]`): `event-delivery-limits-r26.md` merge note "add wave-1 rows S187 (the compositor's event manager) and S188 (Waybar's IPC backend)" → should be S189/S190; same for its §1/§2 inline `(S187)` ×4 and "(wave-1 rows S187 and S188)"; `event-queue-host-measurement-r28.md` note "wave-2 row S187 (the compositor's event manager…)" → S189; `dispatcher-surface-and-request-grammar-r26.md` "(wave-1 row S186)" for the current-git dispatchers page → S188. Following those merge notes literally would mis-wire S189/S190.
+3. Adoption debts (informational): lane rows S018, S158, S053, S054, S184 cited inline by staged entries need `used-by` appends at adoption.

@@ -1,0 +1,62 @@
+mado round-12 drift evidence — Waybar
+Observed 2026-10-19; file reads and JSON parsing were read-only.
+
+$ date -u +%FT%TZ
+2026-10-19T22:08:23Z
+
+$ wc -l -c /home/vgpnk/.config/waybar/config.jsonc.bak.1792203278 /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+  249  6068 /home/vgpnk/.config/waybar/config.jsonc.bak.1792203278
+  249  6068 /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+$ sha256sum /home/vgpnk/.config/waybar/config.jsonc.bak.1792203278 /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+07f7d663106b72e4c2a7da90883ef2ade044d7e6cb791e81ead777f7d8a08e71  /home/vgpnk/.config/waybar/config.jsonc.bak.1792203278
+07f7d663106b72e4c2a7da90883ef2ade044d7e6cb791e81ead777f7d8a08e71  /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+$ wc -l -c /home/vgpnk/.config/waybar/config.jsonc /home/vgpnk/.config/waybar/style.css /home/vgpnk/.config/waybar/style.css.pre-ai-readability
+  260  6354 /home/vgpnk/.config/waybar/config.jsonc
+  155  2256 /home/vgpnk/.config/waybar/style.css
+  150  2118 /home/vgpnk/.config/waybar/style.css.pre-ai-readability
+$ sha256sum /home/vgpnk/.config/waybar/config.jsonc /home/vgpnk/.config/waybar/style.css /home/vgpnk/.config/waybar/style.css.pre-ai-readability
+a408a33df48a39dc16214124dd0b86d6ab03e13802bac173146ae8a858aae829  /home/vgpnk/.config/waybar/config.jsonc
+8f335ca01da53d32eb968c2f7752f3149f073e8e56411980913f4dd25d385fdf  /home/vgpnk/.config/waybar/style.css
+c9215e9ee3053e19a07fb5618150fa46f6b3af36cc75aba930db31bd022b4782  /home/vgpnk/.config/waybar/style.css.pre-ai-readability
+$ wc -l -c /home/vgpnk/.config/waybar/style.css.bak.1792203278 /home/vgpnk/.config/waybar/style.css.bak.1792267376
+  136  1887 /home/vgpnk/.config/waybar/style.css.bak.1792203278
+  136  1887 /home/vgpnk/.config/waybar/style.css.bak.1792267376
+$ sha256sum /home/vgpnk/.config/waybar/style.css.bak.1792203278 /home/vgpnk/.config/waybar/style.css.bak.1792267376
+8316c08ceaa7e3f0624e1b82b1e03523096820fbf775362a930d7f831b0c4e8f  /home/vgpnk/.config/waybar/style.css.bak.1792203278
+8316c08ceaa7e3f0624e1b82b1e03523096820fbf775362a930d7f831b0c4e8f  /home/vgpnk/.config/waybar/style.css.bak.1792267376
+
+$ jq -c '{left:(.["modules-left"]|length),center:(.["modules-center"]|length),right:(.["modules-right"]|length),right_items:.["modules-right"],drawer_children:(.["group/tray-expander"].modules|length)}' <file>
+config.jsonc.bak.1792203278:
+{"left":2,"center":8,"right":7,"right_items":["group/tray-expander","custom/ai-usage","bluetooth","network","pulseaudio","cpu","battery"],"drawer_children":2}
+config.jsonc.bak.1792267376:
+{"left":2,"center":8,"right":7,"right_items":["group/tray-expander","custom/ai-usage","bluetooth","network","pulseaudio","cpu","battery"],"drawer_children":2}
+config.jsonc (current):
+{"left":2,"center":8,"right":8,"right_items":["group/tray-expander","custom/gkeep","custom/ai-usage","bluetooth","network","pulseaudio","cpu","battery"],"drawer_children":2}
+
+$ date -u +%FT%TZ
+2026-10-19T22:12:23Z
+$ jq '(.[\"modules-left\"]|length) + (.[\"modules-center\"]|length) + (.[\"modules-right\"]|length)' /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+17
+$ jq '(.[\"modules-left\"]|length) + (.[\"modules-center\"]|length) + (.[\"modules-right\"]|length)' /home/vgpnk/.config/waybar/config.jsonc
+18
+$ jq '.[\"group/tray-expander\"].modules|length' /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376
+2
+$ jq '.[\"group/tray-expander\"].modules|length' /home/vgpnk/.config/waybar/config.jsonc
+2
+MADO-R3-1 counts the drawer leader plus both children: old 2+8+(7+2)=19, current 2+8+(8+2)=20. The observed rail arrays and drawer children are in the `jq -c` projection above. Current `config.jsonc:21-29` places `custom/gkeep` immediately before `custom/ai-usage`.
+
+$ stat -c '%n %s bytes %y' config.jsonc style.css style.css.pre-ai-readability
+/home/vgpnk/.config/waybar/config.jsonc 6354 bytes 2026-10-17 17:02:56.289420985 -0300
+/home/vgpnk/.config/waybar/style.css 2256 bytes 2026-10-17 20:32:18.864722765 -0300
+/home/vgpnk/.config/waybar/style.css.pre-ai-readability 2118 bytes 2026-10-17 17:02:56.289669985 -0300
+
+$ date -u -d @1792203278
+Sat 17 Oct 2026 02:14:38 AM UTC
+$ date -u -d @1792267376
+Sat 17 Oct 2026 08:02:56 PM UTC
+
+$ sha256sum /home/vgpnk/Projects/gkeep/install.sh
+f17617de4060b3b18e7aa17a332cb732bd557dd08bf430238ba92de7f5b7db26  /home/vgpnk/Projects/gkeep/install.sh
+$ git -C /home/vgpnk/Projects/gkeep show HEAD:install.sh | sha256sum
+f17617de4060b3b18e7aa17a332cb732bd557dd08bf430238ba92de7f5b7db26  -
+HEAD is 133b86717a02548aeaff3f1411bf301d936c5308 (2026-10-18). The opened source anchors are `install.sh:60-82` (module and CSS changes); no installer was run. The `style.css.pre-ai-readability` file is the measured intermediate, not a freshly generated output.

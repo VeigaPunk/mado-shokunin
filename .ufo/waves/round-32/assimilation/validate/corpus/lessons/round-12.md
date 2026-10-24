@@ -1,0 +1,126 @@
+# Round 12 lessons — mado-shokunin (2026-10-19)
+
+Scope: calibrate claim admission from mined mistakes at lane HEAD `a6528e6`, and distinguish reopened upstream documentation from host incidents.
+Grounding sources: S001 (round-10 method lessons), S003 (fleet evidence and gate standard), S004 (SOURCES contract v1) — `corpus/SOURCES.md`.
+Only this lesson and the append-only block in `corpus/QUALITY.md` are in scope; the compositor, config trees, sibling lanes and fleet substrates remain read-only.
+
+## Mistakes
+
+Tags: `[OBS]` is a measured file/command result; `[OBS-record]` is a prior durable record; `[INF]` is an inference; `[INF-docs]` is upstream documentation, not host state; `[UNK]` remains unknown. Lane pointers below were checked against `HEAD a6528e6` unless explicitly marked fleet-level.
+
+| # | class | evidence pointer | captured-by criterion | fix |
+|---|---|---|---|---|
+| M1 | A prose-copied pin tail propagated as a value although it was not a suffix of the full pin. | [OBS] `corpus/knowledge/closeout-r11.md:196-198`; `corpus/lessons/round-10.md:188-193`. The committed-tree census agrees with the dossier: 52 — `git grep -c 'a5171' HEAD -- '*.md' \| awk -F: '{s+=$NF;n++} END{print s,n}'` 2026-10-19; 17 — `git grep -c 'a5171' HEAD -- '*.md' \| awk -F: '{s+=$NF;n++} END{print s,n}'` 2026-10-19. | 6 | Publish a pinned value with a re-derivation command and named revision; a shortened hash must be a true suffix, and corrections retain both old and new values. |
+| M2 | A pre-commit artifact sha was cited as if it described the landed artifact. | [OBS] `SKILL.md:1313-1318,1499-1505`; `sha256sum reports/r9-aud-m9.md` and `git show HEAD:reports/r9-aud-m9.md \| sha256sum` both returned `866272eeda09bc0898da16ca96b9738b166c60bb96734ce144bfe537a71ed954` on 2026-10-19. | 7 | For a committed artifact, hash `git show <commit>:<path>`; label a work-window hash as provisional and bind it again at the commit. |
+| M3 | A planned filename was used where a landed path was required. | [OBS] `corpus/knowledge/gate-standing-use.md:13-14` names `ten-round-synthesis.md`; `LOG.md:310-312` records `arc-closeout.md` as unlanded and the actual `closeout-r11.md`. `git cat-file -e HEAD:corpus/knowledge/arc-synthesis.md` succeeds; `git cat-file -e HEAD:corpus/knowledge/ten-round-synthesis.md` fails (both checked 2026-10-19). | 8 | Treat a path as landed or as a recheck target only after confirming it exists at the named commit; label predicted names as planned. |
+| M4 | Record debt was carried across rounds instead of being closed or explicitly rejected in its round. | [OBS-record] `corpus/lessons/round-10.md:108-118`; current pending-draft counts: 22 — `grep -c PENDING plans/*.md` 2026-10-19 (`plans/round-10-record-draft.md`); 19 — `grep -c PENDING plans/*.md` 2026-10-19 (`plans/round-8-record-draft.md`); 19 — `grep -c PENDING plans/*.md` 2026-10-19 (`plans/round-9-record-draft.md`); 13 — `grep -c PENDING plans/*.md` 2026-10-19 (`plans/round-7-record-draft.md`). | none — round-closure process rule for SKILL/integrator, not a claim-admission criterion | Land the round's index row, lesson with `## Gate`, and scorecard row in that round; name a rejection rather than carrying the debt. |
+| M5 | A planned gate clause was treated as delivered when it only shipped as a note. | [OBS-record] `reports/r7-aud-m7.md:34-35`; `reports/r9-aud-m9.md:40`; `corpus/knowledge/gate-standing-use.md:203-211` already requires covering mutants for widened clauses. | none — already captured by gate maintenance rules at `gate-standing-use.md:203-226`, not the claim-admission bar | Keep non-landed clauses explicitly non-landed; a note is not a gate row, and a widened clause needs its covering mutant. |
+| M6 | A verdict from a moving tree or truncated harness output was treated as a stable judgment. | [OBS-record] `reports/r8-aud-m8.md:35-36`; `reports/r8-ver-m8.md:102-110`; the revision-binding rule is in `corpus/lessons/round-10.md:98-107`. The former selftest failures were explicitly in-flight; the latter regression FAIL's cause stayed `[UNK]`. | 9 | Bind each audit verdict to a commit or frozen-copy sha; label mid-edit failures in-flight, never as settled defects. |
+| M7 | Counts were copied or summarized incorrectly. | [OBS-record] `LOG.md:138-141,253-256`; `corpus/knowledge/walker-deep-r9.md:294-300`. Remeasures: 315 — `wc -l corpus/knowledge/keybind-rule-semantics.md` 2026-10-19; 7 — `grep -cE '^### F[0-9]+ .*\(S3' corpus/knowledge/config-health-report-r3.md` 2026-10-19; 119 — `wc -c ~/.config/mako/config` 2026-10-19; 2,887 — `git show 12c8f08:tools/mado-verify.sh \| wc -l` 2026-10-19. | 10 | Report every count as `<n> — <command> <date>`; rederive it from the named revision instead of transcribing a previous summary. |
+| M8 | A negative tool-capability claim was published without sweeping the tool's own help. | [OBS] On Hyprland 0.56.2 (`hyprctl version` 2026-10-19), `hyprctl --help \| grep -nE 'getprop|workspacerules'` returned `getprop` at line 51 and `workspacerules` at line 58. 0 — `grep -rc getprop corpus SKILL.md \| awk -F: '{s+=$2} END{print s}'` 2026-10-19. [INF] `getprop` may expose effective per-window properties; that does not prove rule attribution or any tested rule effect. | 11 | A negative tool-capability claim includes that tool's own `--help`/man/source sweep, the pinned version and matching locations; do not extrapolate the verb name into unmeasured behavior. |
+| M9 | `[x]` promotion marks were asserted without established verifier independence. | [OBS] `SHONEN.md:5-12` now says outside-lane independence is not established. 4 — `git show c03c249:SHONEN.md \| grep -c '^- \\[x\\]'` 2026-10-19; 4 — `git show 7cd7f33:SHONEN.md \| grep -c '^- \\[~\\]'` 2026-10-19; 4 — `grep -c '^- \\[~\\]' SHONEN.md` 2026-10-19. | 12 | An `[x]` requires a named non-author verifier and its dispatching lane; a lane-dispatched seat is `[~]`, not independent clearance. |
+| M10 | A published counting block was not initially exercised literally. | [OBS-record] `LOG.md:609-640`; `SCORECARD.md:181-198` records the corrected complete fenced block, its sha and its unchanged `bash -s` invocation. | none — execution/process discipline, not a claim-admission criterion; the literal-block erratum is recorded | Execute the published fenced bytes verbatim, recording their sha and the selected revision, before claiming the result. |
+| M11 | Ephemeral scratch paths were used as durable evidence pointers. | [OBS] `corpus/lessons/round-10.md:74-78`; `corpus/knowledge/gate-standing-use.md:200-201`; `SCORECARD.md:19`. The re-run sweep found 79 — `grep -ohE '/tmp/[A-Za-z0-9._/-]+' -r corpus SCORECARD.md SKILL.md LOG.md \| sort -u \| wc -l` 2026-10-19; 51 — `grep -ohE '/tmp/[A-Za-z0-9._-]+' -r corpus SCORECARD.md SKILL.md LOG.md \| sort -u \| wc -l` 2026-10-19; 0 — `grep -ohE '/tmp/[A-Za-z0-9._-]+' -r corpus SCORECARD.md SKILL.md LOG.md \| sort -u \| while read -r p; do [ -e "$p" ] && printf '%s\\n' "$p"; done \| wc -l` 2026-10-19. | 13 | Evidence meant to outlive a round is a committed path or quoted lines plus sha; `/tmp` records provenance only. |
+| M12 | A report was placed at the lane-local path rather than the fleet-required path. | Fleet-level: fleet repo (branch `kaika/ledger`) `.ufo/prompts/mado-round-1.md:39-45` requires the fleet-root report; the lane-local copy exists at `.ufo/reports/round-1/mado.md`. The discrepancy is recorded in fleet repo (branch `kaika/ledger`) `.ufo/waves/kaika-w1/mado-state.md:283`; not an incident in this round's lane commit. | none — fleet-level; fix routed to the integrator | File and reconcile shared reports at the fleet-required destination; a lane-local report does not substitute. |
+| M13 | The drift instrument can detect a count mismatch without naming the set delta, and presence checks do not establish set equality. | [OBS] `tools/mado-verify.sh:2211-2238,2249-2256` compares include counts then checks target existence and local-file presence; the set-blind finding is fleet repo (branch `kaika/ledger`) `.ufo/waves/kaika-w1/mado-state.md:284`. The module-membership boundary was also re-searched in the gate source at HEAD. | 14 | A census compares expected and observed sets and names both missing and extra members; pin module membership where it is a claim. |
+| M14 | Fleet ledger verdicts were not consistently bound to the report's claim verdicts. | Fleet-level: fleet repo (branch `kaika/ledger`) `.ufo/waves/kaika-w1/mado-state.md:285`; the claim-level reporting rule is fleet `AXES.md:27-36`. This is outside lane HEAD `a6528e6`. | none — fleet-level; fix routed to the integrator | Bind each manifest verdict to the round report's claim verdicts; mark unclaimed axes `unchanged`. |
+
+## Inference traps (external, not incidents)
+
+These are documentation-grounded counterexamples reopened on 2026-10-19. They are `[INF-docs]`, not measurements of the installed host or reports of mado incidents.
+
+| # | rejected inference | reopened evidence and boundary | discernment criterion |
+|---|---|---|---|
+| M01 | A protocol in `staging` is a stable, backward-compatible guarantee. | [INF-docs] wayland-protocols README, “Protocol phases” and “Releases” (`https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/main/README.md`); governance “Introducing new protocols” §2.3 (`https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/main/GOVERNANCE.md`). Phase and release version change the compatibility claim. | 15 |
+| M02 | `zwlr_output_manager_v1` is generic stable Wayland monitor metadata. | [INF-docs] wlroots `wlr-output-management-unstable-v1.xml`, protocol description and `zwlr_output_manager_v1` description (`https://gitlab.freedesktop.org/wlroots/wlroots/-/raw/master/protocol/wlr-output-management-unstable-v1.xml`): explicitly experimental and only for output configuration; generic properties are outside its scope. | 15 |
+| M03 | XDPH supplies every portal interface, including a file chooser. | [INF-docs] Hyprland Wiki, “Using the KDE file picker with XDPH,” lines 513-515 in the reopened page (`https://wiki.hypr.land/Hypr-Ecosystem/xdg-desktop-portal-hyprland/`): XDPH does not implement the file picker and GTK is the default fallback. Frontend, backend routing and served interface are distinct. | 16 |
+| M04 | `libinput list-devices` proves the compositor-applied keyboard/touchpad settings. | [INF-docs] libinput 1.32.0 helper tools, “libinput list-devices” (`https://wayland.freedesktop.org/libinput/doc/latest/tools.html`): the tool reports libinput built-in defaults, not desktop configuration. | 15 |
+| M05 | wlroots 0.19 color-management protocol support proves a complete HDR path. | [INF-docs] Simon Ser, “Status update, May 2025,” 2025-05-15 (`https://emersion.fr/blog/2025/status-update-76/`): the 0.19 release calls it the first stone; backend and renderer pieces were still under review. No host end-to-end result follows. | 16 |
+| M06 | Hyprland 0.55 immediately rejects all existing hyprlang configurations. | [INF-docs] Hyprland 0.55 announcement, “Lua configs” (`https://hypr.land/news/update55/`), and “Lua-ification of Hyprland configs,” “Lua configs” / “Old hyprlang syntax” (`https://hypr.land/news/26_lua/`): old syntax remained supported for a limited release window; config selection depends on the file present at startup. This does not establish the host's loaded config or era. | 15, 16 |
+| M07 | The wlroots 0.19 HDR caveat still describes wlroots 0.20.0. | [INF-docs] official wlroots 0.20.0 release, 2026-03-26 (`https://gitlab.freedesktop.org/wlroots/wlroots/-/releases/0.20.0`): release notes add full Vulkan renderer/backend/scene-graph color-management support. Neither release alone establishes this host's compositor, renderer or hardware path. | 16 |
+
+## Disposition
+
+- QUALITY criteria 6-14 capture M1, M2, M3, M6, M7, M8, M9, M11 and M13.
+- Criteria 15-16 preserve phase/layer/version labels and keep upstream documentation separate from host facts.
+- M5 remains captured by `gate-standing-use.md:203-226`; no second quality rule is needed for gate-maintenance practice.
+- M4 and M10 remain round-closure/execution process rules for SKILL or gate ownership, not claim-admission criteria.
+- M12 and M14 are fleet-level and routed to the integrator; this lesson does not patch shared ledgers.
+- M01-M07 are external inference traps, not new host incidents or proof of host behavior.
+
+## Gate
+
+Source-row gate records for this round: corpus/SOURCES.md rows opened 2026-10-19 (integrator appends the per-row records below).
+
+- S001 — corpus/lessons/round-10.md — opened 2026-10-19 — "Re-derivable documents survive the lane; prose copies decay." — :65, method-lessons block :63-123 (verified at a6528e6; sha256 d7b4708e864fca29…).
+- S002 — corpus/knowledge/arc-synthesis.md — opened 2026-10-19 — "no rule-read verb in Hyprland 0.56 (r2/R3-2)" — :300, §6 gap-ledger table :290-307 (sha256 a5b4833141461810…).
+- S003 — PROTOCOL.md (fleet root, HEAD 31baf5c) — opened 2026-10-19 — "A tool that cannot fail is a **probe**, and is registered as one." — :363-364; "Self-test green is capability, not a measurement" — :375; "never a naked assertion" — :330 (sections: §Evidence standard :328-358, §Gate standard :360-408).
+- S004 — .ufo/waves/kaika/SOURCES-CONTRACT-v1.md — opened 2026-10-19 — "A row is a claim. Write it only after opening the source in the round that writes the row." — :45, Rule 1; committed at fleet-ledger 5b471e4.
+- S005 — https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/README.md — accessed 2026-10-19 — "Protocols have three currently used phases: the experimental phase, the staging phase, and the stable phase." — §Protocol phases (raw README fetched; revision pinned via API path=README.md).
+- S006 — https://wayland.freedesktop.org/extras.html — accessed 2026-10-19 — "Running `wayland-info` will list all global interfaces advertized by the compositor." — §Compositor features (typo "advertized" as published).
+- S007 — https://wayland.freedesktop.org/libinput/doc/latest/tools.html — accessed 2026-10-19 — "Most of the tools must be run as root to have access to the kernel’s `/dev/input/event*` device files." — §Helper tools.
+- S008 — https://wayland-book.com/introduction/high-level-design.html — accessed 2026-10-19 — "the role of the **Wayland compositor** is to dispatch input events to the appropriate **Wayland client**" — §High-level design.
+- S009 — https://wayland.freedesktop.org/architecture.html — accessed 2026-10-19 — "In wayland the compositor *is* the display server." — §Wayland Architecture.
+- S010 — https://wayland.app/protocols/ — accessed 2026-10-19 — "The most popular Wayland protocols all in one place and without having to sift through different repositories and XML files." — index intro paragraph.
+- S011 — MANIFEST.json (fleet-ledger 959b746) — opened 2026-10-19 — "training r1 (lane round 2): live-verification layer — 65 hyprctl claim->live pairs, 0 mismatch" — :1767; rejection grounded on re-measure: 45 improved keys (jq) with 28 manifest-only vs SCORECARD.md:11-26.
+- S012 — https://filipmikina.com/blog/hyprwhenthen — accessed 2026-10-19 — "This works if the window class/title is known at creation time." — FAQ, "What's the difference between static window rules and event-based automation?"; full page (335 lines) names no Hyprland version.
+- S013 — `/home/vgpnk/Projects/gkeep/install.sh` — accessed 2026-10-19 — "main_text += \"\\n# gkeep local notes\\nsource = ~/.config/hypr/gkeep.conf\\n\"" — `HEAD` 133b867, `install.sh:34`.
+- S014 — `tools/mado-verify.sh` — accessed 2026-10-19 — "17→18 source lines (+ ~/.config/hypr/gkeep.conf after ai-usage.conf" — round-12 Erratum comment above `declare -a EXPECT`.
+- S015 — `corpus/knowledge/omarchy-drift-watch.md` — accessed 2026-10-19 — "requires an appended erratum naming old→new values, the reason, and the re-measure command" — lines 285-286.
+- S016 — https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/ — accessed 2026-10-19 — "Gets a property value of a window." — `#getprop`.
+- S017 — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ — accessed 2026-10-19 — "All props must match for a rule to be applied." — `#syntax`.
+- S018 — https://github.com/hyprwm/Hyprland/blob/v0.56.2/src/debug/HyprCtl.cpp — accessed 2026-10-19 — `return alphaToString(PWINDOW->m_ruleApplicator->alpha(), true);` — lines 1565-1566 at tag commit efb50993780079460b0cbed1363e2166a2de1d9f.
+- S019 — .ufo/evidence/round-12/getprop-measure.txt — accessed 2026-10-19 — "0.97" — `hyprctl getprop address:0x55b5ee84e440 opacity`.
+- S020 — /home/vgpnk/.local/share/omarchy/default/hypr/apps/terminals.conf — accessed 2026-10-19 — "windowrule = opacity 0.97 0.9, match:tag terminal" — line 4.
+- S021 — https://hypr.land/news/update53/ — accessed 2026-10-19 — “Windowrule syntax has been completely overhauled.” — “Breaking changes”.
+- S022 — https://wiki.hypr.land/0.54.0/Configuring/Start/ — accessed 2026-10-19 — “The config is located in $XDG_CONFIG_HOME/hypr/hyprland.conf.” — “Start”, intro.
+- S023 — https://wiki.hypr.land/0.54.0/Configuring/Window-Rules/ — accessed 2026-10-19 — “windowrule = match:class my-window, border_size 10” — “Syntax”, basic anonymous rule.
+- S024 — https://hypr.land/news/26_lua/ — accessed 2026-10-19 — “The old hyprlang syntax will continue to be supported for 1 - 2 releases starting from 0.55. After that, hyprlang will be dropped.” — “Old hyprlang syntax”.
+- S025 — https://hypr.land/news/update55/ — accessed 2026-10-19 — “This does not mean your hyprlang config is now broken - it will still work, for a few releases.” — “Lua configs”.
+- S026 — https://github.com/hyprwm/Hyprland/releases/tag/v0.55.0 — accessed 2026-10-19 — “desktop/windowRule: add confine_pointer window rule” — “New features”.
+- S027 — https://hypr.land/news/update56 — accessed 2026-10-19 — “This time, get it, no breaking changes!” — opening paragraph.
+- S028 — https://github.com/hyprwm/Hyprland/releases/tag/v0.56.2 — accessed 2026-10-19 — “desktop/rules: fix gaps_out rule overriding float_gaps” — “Fixes backported”.
+- S029 — https://wiki.hypr.land/Configuring/Start/ — accessed 2026-10-19 — “The config is located in $XDG_CONFIG_HOME/hypr/hyprland.lua.” — config location.
+- S030 — https://wiki.hypr.land/Configuring/Basics/Window-Rules/ — accessed 2026-10-19 — “hl.window_rule({ match = { class = "my-window" }, border_size = 10 })” — “Syntax”, basic anonymous rule.
+- S031 — https://wiki.hypr.land/Hypr-Ecosystem/xdg-desktop-portal-hyprland/ — accessed 2026-10-19 — “XDPH does not implement a file picker and uses the GTK one as a fallback by default” — “Using the KDE File Picker With XDPH” (page modified 2026-08-26).
+- S032 — https://flatpak.github.io/xdg-desktop-portal/docs/ — accessed 2026-10-19 — “To implement most portals, xdg-desktop-portal relies on a desktop environment specific backend to provide a part of the functionality.” — “Backends”.
+- S033 — https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html — accessed 2026-10-19 — “xdg-desktop-portal uses a configuration file to determine which portal backend should be used to provide the implementation for the requested interface.” — “DESCRIPTION”.
+- S034 — https://flatpak.github.io/xdg-desktop-portal/docs/requests.html — accessed 2026-10-19 — “When the user interaction is over, the portal sends a Response signal back to the application with the results from the interaction, if any.” — “General Flow”.
+- S035 — https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.ScreenCast.html — accessed 2026-10-19 — “Calling Start() typically presents a dialog to the user and, upon success, returns the list of PipeWire streams.” — “Session lifecycle”, v6.
+- S036 — https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.RemoteDesktop.html — accessed 2026-10-19 — “A remote desktop session is created with CreateSession().” — “Session lifecycle”, v2.
+- S037 — https://github.com/hyprwm/xdg-desktop-portal-hyprland/releases/tag/v1.4.1 — accessed 2026-10-19 — “screencopy: add option to override default cursor_mode” — release v1.4.1, “Changes”.
+- S038 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.21.0 — accessed 2026-10-19 — “Add the ConfigureShortcuts method to the Global Shortcuts Portal” — release 1.21.0, “New Features” (marked pre-release).
+- S039 — https://github.com/flatpak/xdg-desktop-portal/releases/tag/1.22.0 — accessed 2026-10-19 — “Improve Document Portal document path resolving for the File Chooser and OpenURI Portals” — release 1.22.0, “Bug Fixes”.
+
+## Errata (round 12, post-integration)
+
+- S003's second quote "never a naked assertion" sits at `PROTOCOL.md:331` (fleet `31baf5c`), not `:330` — `grep -n 'never a naked' PROTOCOL.md`, 2026-10-19 (post-integration reviewer, `.ufo/evidence/round-12/l2-postreviewer.md` item 5).
+- Criteria 15–16 rest on the external inference traps above, not on lane incidents; criterion 8's secondary pointer `lessons/round-10.md:108-118` grounds M4, not M3 (`QUALITY.md` provenance notes).
+
+## Mistakes made in this round (caught in-round)
+
+| # | class | evidence pointer | captured-by criterion | fix |
+|---|---|---|---|---|
+| R12-a | A gate list was widened (`LOCAL+=(gkeep)`) with no behavioural covering mutant — only the pin check R10 killed its removal | `.ufo/evidence/round-12/gate-shas.txt` (intermediate `d41a884b…`); `LOG.md` round-12 entry, C2 | `gate-standing-use.md` §5 rule 2 (gate maintenance, not QUALITY) | dropped before commit; probe a mutant per widened list before landing |
+| R12-b | The pre-registration cited `omarchy-drift-watch.md`'s re-anchor protocol for gate `EXPECT`, which that protocol does not govern | `.ufo/evidence/round-12/l2-reviewer.md` F1 | 8 (a cited rule must govern the cited object — same family as path-exists) | the gate erratum and drift entry cite `gate-standing-use.md` §5 rule 4 as well; operator intent routed to L0 |
+| R12-c | `after.txt` printed a command that differed from the one executed, and three counts without commands | `.ufo/evidence/round-12/l2-postreviewer.md` items 3–4 | 10 | `after-measure.sh` prints each command verbatim before its output |
+| R12-d | Two criteria grounded in external traps were filed under "Criteria from mined mistakes" | `.ufo/evidence/round-12/l2-postcritic.md` item 2 | 15–16 provenance note in `QUALITY.md` | score reported under both readings (11/16 and 9/16) |
+
+Correction to R12-b (same round): the gate erratum and `config-drift-r12.md` still cite only
+`omarchy-drift-watch.md:284-287`; neither cites `gate-standing-use.md` §5 rule 4. The rule actually
+followed is rule 4's "a MOVED pin … re-verification and an appended erratum" (`gate-standing-use.md:222-226`);
+citing it at the gate is round-13 work alongside M13.
+
+## Outside spot-check (orchestrator, non-author, 2026-10-19)
+
+Orchestrator adjudication of round 12 (reviewing `e1d81d4`/`aeb33b5`): C1, C2 and C3 numbers reproduce; provenance, append-only and credential checks pass. Admit sample **agreed**: U1 `window-rule-effects-getprop.md` (`hyprctl getprop` as an effect read). Reject sample **agreed**: S012 (version-unanchored blog). **Disagreed**: S030 — admitted as `mined` while it re-registered S017's URL for the same scope with no supersedes link. Lesson: the merge renumbered five seat fragments without a cross-fragment URL check, so two seats' openings of one page became two rows. Fix below; next merge runs a URL-duplicate pass before renumbering.
+
+## Post-review registry changes (contract rule 2 — in-place cells, old → new)
+
+| row | cell | old | new | reason |
+|---|---|---|---|---|
+| S030 | status | mined | rejected | duplicate of S017 (same URL, overlapping current-wiki syntax scope, no supersedes link); flip: a distinct anchor at a pinned revision not covered by S017 |
+| S030 | used-by | corpus/knowledge/hyprland-config-era-r12.md | — | moved to S017 |
+| S017 | used-by | corpus/knowledge/window-rule-effects-getprop.md | corpus/knowledge/window-rule-effects-getprop.md, corpus/knowledge/hyprland-config-era-r12.md | takes S030's citation; the U2 entry carries an erratum mapping S030 → S017 |
+
+Search-log errata (ART-id vs registry-id confusion in the portal note; owed anchors for S006, S008, S009, S010) are appended in `corpus/SOURCES.md` § Search log.

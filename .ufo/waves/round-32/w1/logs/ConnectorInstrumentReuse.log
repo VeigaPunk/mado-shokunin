@@ -1,0 +1,6 @@
+Working...
+Report: `.ufo/waves/round-32/w1/reports/ConnectorInstrumentReuse.md`.
+
+**C2.** No committed gate detects a stale published axis score. `quality/check-index.py` and `.ufo/waves/round-31/c2/count.py` re-derive live fractions and never open the `Axis table re-derived` line, so a published `39/40` against a live `41/41` still passes. The only comparison is the untracked draft `quality/check-axis-scores.py` (not at base `25622289`). Do not write a second file.
+
+**C1.** Nothing in `quality/`, `tools/`, or `round-3*` catches a malformed or dangling `SOURCES.md` append. `check-index-rows.py:195-196` only sets ids from `^\|\s*(S\d{3})\s*\|`. The fleet census (`scripts/sources-census.sh`, outside those trees) does emit `E01`/`E03`/`E11`, and it is still insufficient: exit 0 on warnings (`:16`), `W03` for `used-by = —` (`:32`), `E11` is `[ ! -e "$dir/$path" ]` only (`:566`), and `E03` is intra-file (`:641`).

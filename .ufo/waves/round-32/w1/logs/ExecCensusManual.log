@@ -1,0 +1,20 @@
+Working...
+Done. Row count: **185**.
+
+**Frozen census (all verbatim, cwd = lane root):**
+1. Rows → `185`
+2. Malformed rows → `0` ✓
+3. Tier histogram → `A=178 B=1 C=6`
+4. Status histogram → `mined=166 queued=10 rejected=9`
+5. Duplicate ids → no output ✓
+6. Enum violations / tier inflation → no output ✓
+7. Mined rows with missing used-by paths → no output ✓
+
+Histograms cross-check: 178+1+6 = 166+10+9 = 185.
+
+**Maintained CLI** (`sources-census.sh validate --root …/shokunin mado`): `mado ok`, **exit 0**, with 7 informational `W04` duplicate-url-across-scopes warnings — S030/S045 (hypr.land window-rules), S120/S121 (cpython executionmodel.rst), plus S042, S097, S119. Same URL on distinct scoped rows; contract v1 dedups on `id`, not URL — signal, not defect.
+
+**Artifacts:**
+- Transcripts → `.ufo/waves/round-32/scratch/ExecCensusManual/01…08-*.txt` (8 files, command + verbatim output)
+- Report → `.ufo/waves/round-32/w1/reports/ExecCensusManual.md`
+- `LOG.md` entry appended (lane rule); `corpus/SOURCES.md` untouched. No subagent dispatched — leaf bounds.

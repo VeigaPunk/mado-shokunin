@@ -1,0 +1,64 @@
+================ m1-check-index
+--- a/check-index.py	2026-10-24 20:09:07.745960893 -0300
++++ b/m1-check-index.py	2026-10-24 20:11:12.455458124 -0300
+@@ -117,7 +117,7 @@
+ def evaluate(notes, readme):
+     counts = Counter(ROW_RE.findall(readme))
+     missing = sorted(notes - set(counts))
+-    dangling = sorted(set(counts) - notes)
++    dangling = []
+     duplicates = sorted(p for p, n in counts.items() if n != 1)
+     covered = sum(1 for p in notes if counts.get(p) == 1)
+     return covered, missing, dangling, duplicates
+================ m2-check-index-rows
+--- a/check-index-rows.py	2026-10-24 20:09:07.745960893 -0300
++++ b/m2-check-index-rows.py	2026-10-24 20:11:12.455458124 -0300
+@@ -229,6 +229,9 @@
+         if not (region[0] <= i < region[1]):
+             continue
+         line = lines[i]
++        nt = note_text(name)
++        if nt is None:
++            continue  # dangling row: the completeness gate owns this finding
+         cells = [c.strip() for c in line.split("|")]
+         # leading/trailing pipes produce empty edge cells
+         inner = cells[1:-1] if len(cells) >= 2 else cells
+================ m3-count
+--- a/count.py	2026-10-24 20:09:07.745960893 -0300
++++ b/m3-count.py	2026-10-24 20:11:12.455458124 -0300
+@@ -306,9 +306,6 @@
+             if body is None:
+                 c["fail"] = f"missing {path}"
+                 ok = False
+-            elif not body.strip():
+-                c["fail"] = f"empty {path}"
+-                ok = False
+         c["resolved"] = ok
+     for c in crits:
+         if not c["resolved"]:
+================ m4-count
+--- a/count.py	2026-10-24 20:09:07.745960893 -0300
++++ b/m4-count.py	2026-10-24 20:11:12.455458124 -0300
+@@ -274,7 +274,7 @@
+                 c["fail"] = f"anchor '#{anchor}' matches no heading in {path}"
+                 ok = False
+                 continue
+-            scope = "\n".join(secs)
++            scope = body
+             for pat in expand_ids(idexpr):
+                 if not re.search(pat, scope):
+                     c["fail"] = f"id {pat} absent in section '#{anchor}' of {path}"
+================ m5-check-index
+--- a/check-index.py	2026-10-24 20:09:07.745960893 -0300
++++ b/m5-check-index.py	2026-10-24 20:11:12.455458124 -0300
+@@ -196,10 +196,6 @@
+         t3 = os.path.join(tmp, "dangling")
+         _write_tree(t3, ["a.md"], ["a.md", "ghost.md"])
+         r = _run(tool, "--root", t3)
+-        check(
+-            "dangling row exits 1 and names the row",
+-            r.returncode == 1 and "dangling: knowledge/ghost.md" in r.stdout,
+-        )
+ 
+         # Case 4: duplicate row — one note indexed twice.
+         t4 = os.path.join(tmp, "duplicate")

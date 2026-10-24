@@ -1,0 +1,14 @@
+Working...
+Done. All three deliverables landed.
+
+**Verdict: 0 collisions — append is green.**
+
+1. **Real check** (`.ufo/waves/round-32/assimilation/`): registry `corpus/SOURCES.md` → `reg-ids.txt` = 185 ids, S001–S185 contiguous, no dups. Staged `SOURCES.append.md` → `staged-ids.txt` = 132 ids, S186–S317 contiguous, no dups. `comm -12` → `collisions.txt` empty. All three files committed; contents pasted verbatim into the report.
+
+2. **Guard proof**: scratch fixture `guard-proof-registry-fixture.md` carries `  | S002 | …` (2-space indent); staged fixture also claims S002. Tolerant extractor → `guard-proof-collisions-tolerant.txt` = `S002` (non-empty); column-zero extractor → `guard-proof-reg-ids-col0.txt` = S001/S003 only, `guard-proof-collisions-col0.txt` empty — false-green proven on the naive pattern. Fixture + both outputs committed.
+
+3. **Renumber map**: not applicable; no collisions.
+
+Boundary risk flagged in report: green is valid only against the registry head at extraction (S001–S185); any new registry row before the append lands → re-run.
+
+Commits: `b1b740d16875b91ac37546b2958d5b016db97c06` (artifacts), `50e6a8f32bfaf0487b2762eb3b5c9f51ed54b75c` (report). Report: `.ufo/waves/round-32/w1/reports/ExecCollisionGuard.md`. No writes to registry or `/home/vgpnk/Projects/shokuknow/merge/mado/`.
