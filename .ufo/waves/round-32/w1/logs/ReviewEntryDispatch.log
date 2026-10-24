@@ -1,1 +1,26 @@
 Working...
+Review complete. Report: `.ufo/waves/round-32/w1/reports/ReviewEntryDispatch.md` (LOG.md appended).
+
+**Inputs note:** both drafts landed mid-review (seats were still writing at dispatch time); all checks ran against the final bytes. Both fetch chains verified: draft A's wiki-commit pin equals the `w1-spec.json` pin, and both full sha256s match their seat reports byte-for-byte.
+
+**Verdicts:**
+
+| Check | Draft A (semantics r25) | Draft B (surface r26) |
+|---|---|---|
+| 1. Quote-at-anchor | PASS (7/7; force_idle anchors as seat's two split fragments) | **FAIL** — 6 claims unanchored |
+| 2. Claims with no quote | none | **FAIL** |
+| 3. Quotes >25 words | **FAIL** — one | PASS (max 19 w) |
+| 4. Missing provenance | one dangling pointer | **FAIL** |
+| 5. Documented-not-measured | one nit | **FAIL** |
+| 6. Cross-draft overlap | **PASS** — zero duplicated dispatcher facts | PASS |
+
+**Key failing lines:**
+- A L32: the S188:69 `force_idle` cell quoted as one **28-word** blockquote — seat W deliberately split it to stay ≤25; the joined form isn't a contiguous seat quote (it is verbatim in the scratch bytes).
+- B L30: "…is **45** distinct names" — contradicts its **own 47-name enumeration** and seat F's "Distinct dispatcher base names across all `hl.dsp.*` tables: **47**". The enumeration itself verified perfect: 47 == 47, zero item-level diff.
+- B L43–53: `reload_config`, both `fullscreen({…})` orderings, `resize()` fold, "45 vs 46" totals — no seat measures any of it; I byte-verified the drift forms TRUE against the sha-matched raw fetches, but the totals are wrong/unverified (current page crude count ≈ 48, not 46).
+- B L15/L124: "re-checked/re-fetched 2026-10-24" 404 claim — no artifact in either scribe scratch dir; my live probe confirms **404 today**, so fact true, receipt absent.
+- B L108–109 (`flags` zero-occurrence) and L44–45 (S188-half `exec` absence): both byte-TRUE, both unanchored.
+- B L66: "S018 was not re-opened in round 32" — the §2 block is correctly disclosed as carried (commit pin matches the spec); not a defect, owed re-verification.
+- A L60: `Queued in CANNOT-ANSWER.md` — file doesn't exist in lane or merge trees (inherited); same for the `arc-synthesis` `ground:` pointer in both drafts.
+
+**Disposition:** draft A landable after one edit (split the 28-word quote; repoint the dangling queue line). Draft B not landable: fix the 45→47 contradiction, receipt-or-demote the §1 measurement block, add the missing re-derivation commands. Word-count labels at B L122–123 also misstate (15→9, 8→6) — cosmetic, in the report.

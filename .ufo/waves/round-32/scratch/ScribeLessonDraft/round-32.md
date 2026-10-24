@@ -94,7 +94,14 @@ this round's adoption set is M32-12. `ReviewEntryIPC` — the scribe IPC draft
 FAILED 2 blocking items (M32-10, M32-11), both corrected in the landing copy
 which this seat re-checked; 15/15 quote-at-anchor checks, word limits,
 provenance trio, sha256s and 44-event re-derivation all PASS.
-`ReviewEntryDispatch` — pending; the dispatchers entry is unreviewed.
+`ReviewEntryDispatch` — fetch-chain integrity PASS; draft A (dispatchers)
+landable after two edits, both folded into M32-15 (28-word `force_idle`
+blockquote still in the landing copy) and the `CANNOT-ANSWER.md` half of
+M32-16; draft B (dispatcher surface) **not landable as drafted** — the
+landing copy carries none of its blocking items (45-vs-47 contradiction,
+unanchored measurement block, unreceipted 404/`exec`/`flags` claims: all
+byte-verified or dropped in landing). Overlap check PASS — the two entries
+split dispatcher facts with no duplication.
 
 ### ADMITS
 
@@ -250,10 +257,10 @@ carries the `ReviewEntryIPC` corrections (M32-10/11) and the dispatcher-surface
 copy carries the id-pointer fix (M32-12). The C2 counter is untracked
 (M32-9); the axis table is unpublished-for-r32; the README frontier bullet
 ("dispatcher behavior") is not yet retired (`corpus/README.md` has a 2-line
-uncommitted index edit at write time); one wave seat remains pending —
-`ReviewEntryDispatch` (dispatchers entry unreviewed) — and can still move the
-record. `RevengerPriorDefects` names the round-33 material: the r31 lesson
-backfill + five UNCAPTURED criterion candidates. Per
+uncommitted index edit at write time); the `force_idle` blockquote split
+(M32-15) is the one remaining pre-landing edit the entry reviewer named.
+All 32 seats have reported; `RevengerPriorDefects` names the round-33
+material: the r31 lesson backfill + five UNCAPTURED criterion candidates. Per
 `considerthese/2026-10-24.md`'s own debt line, no `tools/` or
 `corpus/knowledge/` change had landed since round 27 — this round ends that
 domain-drift streak *iff* the append lands. `round-31.md` was never filed

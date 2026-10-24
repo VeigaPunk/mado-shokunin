@@ -37,7 +37,7 @@ Draft B §1 (S196): the three signature quotes `exec_cmd(cmd, rules?)` / `dpms({
 - FAIL — B L50–52 (fullscreen signature-order drift, `resize()` fold): the two quoted forms are byte-verbatim in the respective scratch fetches, but neither seat report quotes or measures any dispatcher signature.
 - FAIL — B L15: "answers **404** (re-checked 2026-10-24)" and B L124: "→ HTTP 404, re-fetched 2026-10-24" — no fetch artifact exists in the scribe scratch dirs (each holds only the draft .md), and neither seat report records a this-round 404 check. Independent probe 2026-10-24 (urllib GET): **404 confirmed** — fact true, receipt absent.
 - FAIL — B L44–45: "`exec` … on the current page not at all" — the S196 half is anchored (seat F: `exec` only in prose snippets); the S188-half absence is not anchored. Byte check: TRUE (`\bexec\b` count 0 in scratch wiki bytes).
-- FAIL — B L108–109: "`flags` has zero occurrences in its bytes" — absence claim with no anchor or re-derivation command. Byte check: TRUE (0 case-insensitive occurrences in the scratch 0.56.0 HTML).
+- FAIL — B L108–109: "`flags` has" / "zero occurrences in its bytes." (line-wrapped) — absence claim with no anchor or re-derivation command. Byte check: TRUE (0 case-insensitive occurrences of "flags" in the scratch 0.56.0 HTML).
 
 Draft B §2 (S018): all five code quotes anchor to S018 by declaration, and B L66 states plainly: "S018 was not re-opened in round 32". Per this check they do not appear in the seat reports — correctly disclosed, not a honesty defect (see Check 5).
 
