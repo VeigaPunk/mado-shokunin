@@ -322,26 +322,39 @@ verification of the claims made for it.
 | — | base/data/tip | 41/43 exit 1 / 43/43 exit 0 / 43/43 exit 0 | identical |
 | — | selftest | 8/8 exit 0 | — |
 
-**Still open — S3 is not fixed, and the new docstring claims it is.** The
-repaired `load_rev` runs `git ls-tree -z --format=%(objecttype) %(path)`.
-`-z` sets the record separator but `%(path)` is still C-quoted, so a non-ASCII
-note arrives as `"caf\303\251.md"`, fails `.endswith(".md")` and is dropped:
+**S3 was still open at `15ddd7d6`; closed at `a0dd664a` (verified).** At
+`15ddd7d6` the repaired `load_rev` ran `git ls-tree -z --format=%(objecttype)
+%(path)`; `-z` sets the record separator but `%(path)` is still C-quoted, so a
+non-ASCII note arrived as `"caf\303\251.md"`, failed `.endswith(".md")` and was
+dropped:
 
 ```
-tree with café.md and a b.md, both indexed:
+15ddd7d6, tree with café.md and a b.md, both indexed:
   --rev  -> indexed=1/1 missing=0 dangling=1 exit 1
   --root -> indexed=2/2 missing=0 dangling=0 exit 0
 ```
 
-The docstring now says "mode/space/non-ASCII names handled by NUL parsing"
-(`check-index.py:19-20`) — false for non-ASCII. Verified fixes, cheapest first:
-`git -c core.quotepath=off ls-tree -z --format=…` (measured: `blob café.md`), or
-drop `--format` and split the default `-z` record on `\t` (also unquoted), or
-`--name-only -z` (unquoted, but loses `objecttype`).
+`a0dd664a` (gate sha256
+`51b513f53b667788c8603a4cf851c0097661fa9ba75709147ea0998cb299292b`) adds
+`-c core.quotepath=off` to the `ls-tree` call and selftest case 9 (git fixture
+with `café.md` + `a b.md`). Re-run read-only on the committed blob:
+
+```
+rev 8f51071b -> indexed=41/43 missing=2 exit 1
+rev 446dc396 -> indexed=43/43 exit 0
+rev d72243e1 -> indexed=43/43 exit 0
+--selftest   -> MADO_INDEX_SELFTEST: 9/9 assertions passed exit 0
+café.md + a b.md: --rev 2/2 exit 0 ; --root 2/2 exit 0   (was 1/1 vs 2/2)
+```
+
+Residual nit only: the docstring still describes the mechanism as "handled by
+NUL parsing" without naming `core.quotepath=off`, and "`--rev` counts blob
+entries only" does not tell a reader that a symlinked note is a `blob` and is
+therefore counted at a rev (fence parity, so correct — just unstated). Not
+worth another round.
 
 Symlinked note at a rev is counted by `--rev` (`objecttype` is `blob`) while
 `--root` REFUSED — that is fence parity at a rev (the fence counts it too) and
-the docstring scopes refusal to `--root`, so it is not a defect; only note that
-"blob entries only" does not mean "regular files only" on the `--rev` side.
+the docstring scopes refusal to `--root`, so it is not a defect.
 
 No lane byte was written by me in this addendum; no restore of the q36 receipt.

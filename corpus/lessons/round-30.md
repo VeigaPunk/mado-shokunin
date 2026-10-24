@@ -90,3 +90,23 @@ Remaining latent counter items routed to round 31 (counter v2 alongside the
 fence/table-context tighten): anchor+id conjunction scoped to the cited
 section; `M` vs `m` id casing; compound `M<a>-<b>-<c>` spellings documented
 as literal.
+
+### w1 addendum part 3 — expansion verdict correction (append-only)
+
+`w1/reports/RevTrendExpansion.md` F1–F4: the recorded expansion verdict
+("improved" with three supports) padded the claim with two supports the
+lane itself has ruled non-expansion — a SOURCES registry row (r21/r29
+precedent: source growth alone is not expansion) and C1's index rows
+(the notes were already booked as r27/r28 expansion; double-count).
+Corrected reading (capability-inclusive, adopted): **expansion —
+improved, narrow, capability-only** — this is the lane's first
+capability-only expansion verdict, a reading of `LEARNING.md:33`'s
+observable column plus `LOG.md:1447/1529` vocabulary, not a
+self-evident application of the entries-only cell (0 new knowledge
+entries). The strict entries-only reading would be `unchanged`; the
+record now states which reading is taken and why. F2 is also corrected:
+the capability row's genuinely new surfaces are `--root` plain-tree,
+symlink/refusal semantics, `--selftest`, setup-error exit 2, and the
+exit-code contract (revision scoring pre-existed); the corrected row is
+appended under the capabilities table and the evidence pointer now
+names the repaired-gate receipt.

@@ -1920,6 +1920,7 @@ lowest; coverage-nav 0.9535; sourced-art and operability 1.0.
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
 | index-completeness gate | Score the coverage map's index rows against `corpus/knowledge/*.md` at any committed revision or tree — reports missing/dangling/duplicate rows, refuses non-regular members | `python3 -I quality/check-index.py --rev REV --repo .` → `MADO_INDEX: indexed=N/N`; red at `8f51071b`, green at `446dc396`, `--selftest` 6/6 (`evidence/c3-after-446dc396.txt`) | 30 |
+| index-completeness gate — corrected scope (w1 RevTrendExpansion F2) | Above is the *current* capability; the genuinely new surfaces are the plain-tree mode (`--root`), symlink/refusal semantics, `--selftest`, setup-error exit 2, and a lane-owned exit contract — revision-mode scoring pre-existed (fence via `REV=` since fleet round 1). Evidence at tip: `evidence/c3-repair-d72243e.txt` (`9/9` selftest; red `8f51071b`, green `446dc396`/`d72243e`); the original demonstration `evidence/c3-after-446dc396.txt` pins the pre-repair blob `df01b20f` and stays as its record. | `python3 -I quality/check-index.py --rev REV --repo .` / `--root` / `--selftest` | 30 |
 
 Harm watch at `446dc396`: `MADO_SELFTEST: 460/460` exit 0; census validate
 exit 0 (184 → 185 rows, +S185; W04 warnings re-checked under criterion 17 —
