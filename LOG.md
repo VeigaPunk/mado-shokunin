@@ -1862,3 +1862,55 @@ three distinct surfaces, each measured without the others:
 
 The round report `.ufo/reports/round-31/mado.md` cites the pushed lane
 hash at write time.
+
+## 2026-10-24 — round-32 w1 ReviewEntryDispatch
+
+Reviewed the two scribe drafts (dispatcher-semantics-r25,
+dispatcher-surface-and-request-grammar-r26) against QUALITY.md and the
+S188/S196 re-open seat reports. Evidence:
+`.ufo/waves/round-32/w1/reports/ReviewEntryDispatch.md`; every quote,
+count, hash and absence claim mechanically checked against the seat-report
+bytes and the sha-matched scratch fetches. Result: r25 landable after
+splitting one 28-word quote (S188:69 cell); r26 not landable — claims
+"45 distinct names" against its own 47-name enumeration and the seat's 47
+(47 — token-set diff of draft enumeration vs ScoutDispatchers0560.md
+§vocabulary union, 2026-10-24), plus an unanchored §1 measurement block
+(reload_config, signature drift, 404/flags/exec claims — all byte-checked
+TRUE against the raw fetches except the 45/46 totals). No duplicated
+dispatcher fact between the drafts.
+
+## Round 32 — assimilation of the Hyprland IPC two-socket theme, and a calibration gate for the published axis table (2026-10-24, attempt 1)
+
+Motivation: the round-31 outside spot-check admitted round 31 but recorded that
+the lane published an axis table it never republished after its own commits moved
+the counters (`SCORECARD.md:2014` still says calibration 39/40 and operability
+9/9 while the lane's own instruments at that tip print 41/41 and 12/12), and the
+operator's 2026-10-24 directive requires the lane to assimilate the shokuknow
+corpus and mine `considerthese/`.
+
+Work: (1) C1 — re-opened five sources myself on 2026-10-24 (fetched bytes
+`.ufo/waves/round-32/fetch/S186.bin` 6,539 B sha256 `535bc4c385a06162…`,
+`S187.bin` 268,731 B, `S188.bin` 12,879 B sha256 `c830ce0717f92776…`,
+`S189.bin` 6,479 B sha256 `eea605dfe5ce09e1…`, `S196.bin` 297,863 B sha256
+`f9b51362f2440e02…`) and admitted three entries on the IPC two-socket contract
+theme with five normalized registry rows (S186, S187, S188, S189, S196);
+evidence `corpus/knowledge/ipc-contract-r25.md`,
+`corpus/knowledge/dispatcher-semantics-r25.md`,
+`corpus/knowledge/dispatcher-surface-and-request-grammar-r26.md`,
+`corpus/SOURCES.md:198-202`, `corpus/lessons/round-32.md` §Gate. The id-collision
+guard was proven able to fail on an indented `  | S002 |` scratch fixture before
+the first append (`collisions` file empty on the real pair: 185 registry ids vs
+132 staged ids, 0 collisions). (2) C2 — landed `quality/check-axis-scores.py`
+(selftest 17/17): the base revision measures `MADO_AXIS: checked=3 mismatched=2`
+exit 1 and the tip measures `mismatched=0` exit 0. (3) Frontier step — the
+census ran before and after; the round-32 lesson carries the Gate block (3
+admits, 1 reject with reason and flip, the quarantine verdicts) and four
+`## Mistakes` rows, two of them about this round's own seat scope violation.
+
+Honest notes: two wave seats wrote outside their declared scope (the lane's
+`corpus/README.md` and `LOG.md`); both files were restored from the branch tip
+and re-applied under the L1 alone — evidence `.ufo/waves/round-32/w1/reports/`
+and the `## Mistakes` rows. A seat's 187 MB scratch clone trees were committed at
+`f5910876` and removed at `48f9fe09`; the bytes remain in history. The staged
+package's **line** anchors were wrong (byte sizes and digests were right) and
+were re-derived; see the lesson's `reference-drift` row.

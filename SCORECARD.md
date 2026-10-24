@@ -2055,3 +2055,33 @@ semantic Holds↔note accuracy (overlap ≥5 words is syntactic — a row can
 still paraphrase the wrong note); criterion-relevance grounding (a lesson
 that contradicts its criterion still resolves); the r24 `S###.bin`
 evidence path convention.
+
+## Round 32 — results and author verdicts (2026-10-24, attempt 1)
+
+Assimilation round (operator directive 2026-10-24, item 10). Registration
+`.ufo/waves/round-32/registration.md` frozen before any data; data commit
+`f5910876`; scratch cleanup `48f9fe09`; docs commit below. Axis table
+re-derived at tip (criterion 22): navigation 46/46 = 1.0; calibration
+resolved-active 41/41 = 1.0; sourced-art 1.0; operability selftest 12/12 = 1.0.
+Two claims, two distinct surfaces; each measured without the other.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage — the Hyprland IPC two-socket contract theme (frontier → core): 3 admitted entries + 5 registry rows, every source re-opened by the lane on 2026-10-24 | base `25622288`: `entries=0 rows=0 cited_entries=0` → tip: `entries=3 rows=5 cited_entries=3`; registry 185 → 190 rows; coverage map 43 → 46 rows over 46 notes (`indexed=46/46 missing=0 dangling=0 duplicates=0`) | the frozen shell counter in `.ufo/waves/round-32/registration.md` §C1 | target met; controls: rows-only and entries-only scratch copies both fall short of the target |
+| C2 calibration (lowest scored axis) — the published axis table must not be stale against the counters it names | base `25622288`: `MADO_AXIS: checked=3 mismatched=2` (published calibration 39/40 vs derived 41/41; published operability 9/9 vs derived 12/12) exit 1 → tip: `mismatched=0` exit 0; the round's own commits moved navigation to 46/46, so the pre-fix tip measured `mismatched=3` | `python3 -I quality/check-axis-scores.py --rev <rev> --repo .` | target met; perturbation control `41/41` → `40/41` bites (`mismatched=1`) |
+
+### Capabilities (round 32)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| published-axis staleness gate | Re-derive the lane's published axis fractions at a revision with the lane's own instruments and fail when the publication no longer matches the repo it describes | `python3 -I quality/check-axis-scores.py --rev <rev> --repo .` → `MADO_AXIS`; `--selftest` → `17/17` | 32 |
+
+### Sources, saturation, planned
+
+Sources 185 → 190 rows (S186, S187, S188, S189, S196 added; no row touched old→new;
+no frontier row advanced). Saturation 9.0 / N=3 unchanged; retired: none.
+Planned (round 33; intent only): the wave's open attacks — semantic Holds↔note
+accuracy beyond the ≥5-words proxy, criterion-relevance grounding, the n2
+relevance-free citation cheat, and the r24 `S###.bin` glob convention; plus the
+lane hygiene defect this round shipped (seat scratch trees committed at
+`f5910876`, removed at `48f9fe09` — the bytes stay in history).
