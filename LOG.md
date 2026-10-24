@@ -1827,3 +1827,38 @@ C3 operability capability (sourced: S185).
 
 The round report `.ufo/reports/round-30/mado.md` cites the pushed lane hash
 at write time.
+
+## Round 31 (2026-10-24, attempt 2 — attempt 1 died pre-prompt on a Kimi 429)
+
+Registration `.ufo/waves/round-31/registration.md` frozen `6803a999`;
+data `f621e3c0`; wave spec `72021ded`. Base `274f7355`. Three claims on
+three distinct surfaces, each measured without the others:
+
+- C1 (coverage, row-fidelity surface — the routed C1 blind spot): new
+  `quality/check-index-rows.py`. Base `rows=43 errors=1` on the r26 row's
+  2-cell defect; tip `errors=0` after the README cell repair; selftest
+  10/10. The r30 fence's byte-stream name-match stays the navigation gate;
+  this gate checks what a row *carries*.
+- C2 (calibration — lowest sub-axis at base, resolved-active 0.9750):
+  counter v2 resolves every grounding citation (slugged heading in the
+  named file, spell form in bytes, bare path non-empty, `outside`
+  corroboration-only, `active≥30` floor vs supersede-all). Base UNRESOLVED
+  criterion 35 (`M23-7` cited under `#mistakes`, actually under
+  `### Final C1 disposition`); tip resolved-active 41/41 TARGET_MET after
+  rows 53–54 + the criterion-35 cite repair. Four negative fixtures
+  committed; n2 (non-empty unrelated lesson) still passes — the rubric is
+  resolution, not relevance; routed.
+- C3 (operability — routed C3 findings): `check-index.py` hardened —
+  rev pinned through `rev-parse --verify --end-of-options`, symlinked
+  corpus ancestors refused under `--root`, `--repo`+`--root` SETUP_ERROR;
+  selftest 9/9 → 12/12; `43/43` unchanged at base and tip.
+- Routed queue closed per registration §Routed queue items 1–3; item 4
+  (no seat dispatch tool) recorded as expected surface.
+- Harm watch: `git diff 274f7355..72021ded` touches only the five claimed
+  paths; no compositor/config mutation; misroot sweep clean.
+- L0: none new. Residual cheats routed forward: relevance-free lesson
+  resolution (n2), Holds semantic accuracy, `outside`-only criteria 19/22/
+  23/26/28 warnings.
+
+The round report `.ufo/reports/round-31/mado.md` cites the pushed lane
+hash at write time.

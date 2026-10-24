@@ -2005,3 +2005,53 @@ Continuation of the w1 erratum; lane tip at write: pending this commit.
   legitimately resolve through M30-1 under the rubric, but the metric's
   name overstates; anchor+id section-scoped conjunction is routed to the
   round-31 counter v2 together with the fence/table-context tighten.
+
+## Round 31 — results and author verdicts (2026-10-24, attempt 2)
+
+Attempt 1 died pre-prompt (Kimi 429; no lane work). Round 30's non-author
+admission stands; this round re-verified the routed w1 findings and repaired
+them. Registration `.ufo/waves/round-31/registration.md` frozen `6803a999`
+before the data commit `f621e3c0` (base `274f7355`, r30 tip). Axis table
+re-derived at base (criterion 22): navigation 43/43 = 1.0; calibration
+resolved-active 39/40 = 0.9750 (lowest — criterion 35's mis-scoped M23-7);
+sourced-art 1.0; operability selftest 9/9 = 1.0. Three claims, three
+distinct surfaces; each measured without the others.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage / index-row *fidelity* surface (routed C1 blind spot): `quality/check-index-rows.py` — row inside the coverage-map table, ≥3 non-empty cells, defined S-ids, resolvable repo-relative artifact cites, Holds↔note overlap | absent at base → `274f7355`: `rows=43 errors=1` (`row-cells: knowledge/animation-table-r26.md` 2 cells) exit 1; `f621e3c0`: `rows=43 errors=0` exit 0 (3 glob WARN — ephemeral r12/r24 evidence dirs) | `python3 -I quality/check-index-rows.py --rev REV --repo .` / `--selftest` | target met; r26 row repaired; K1 red at base on the real defect |
+| C2 calibration / resolved-citation rubric v2 (routed C2 loopholes): every grounding cite resolves — `file#anchor` slugged heading *in the named file*, spell form in file bytes, bare `round-<num>.md` non-empty; `outside` corroborates only; `active ≥ 30` bounds supersede-all | `274f7355`: literal 40/52, resolved 39/40, UNRESOLVED criterion 35 → `f621e3c0`: literal 42/54, resolved 41/41 = 1.0000 TARGET_MET (new rows 53–54 supersede 48; criterion 35's cite re-sectioned) | `python3 -I .ufo/waves/round-31/c2/count.py REV` | target met; K2: the frozen S8 miscite is UNRESOLVED at base |
+| C3 operability / gate robustness (routed C3 findings): `--rev` pinned via `rev-parse --verify --end-of-options`; symlinked `corpus` ancestors REFUSED under `--root`; `--repo`+`--root` SETUP_ERROR; selftest 9→12 | `274f7355`: `indexed=43/43` + selftest 9/9 → `f621e3c0`: `indexed=43/43` + `12/12 assertions passed` (option-shaped rev, symlink ancestor, repo-under-root each refused with the right exit) | `python3 -I quality/check-index.py --selftest` / `--rev REV --repo .` | target met; hardened gate does not regress the honest 43/43 |
+
+Negative controls committed (`.ufo/waves/round-31/c2/negative/`):
+n1-empty → UNRESOLVED; n2-wrongfile → TARGET_MET (existence is the rubric;
+relevance stays out of scope — routed forward as a residual cheat);
+n3-section → UNRESOLVED; n4-collapse → FLOOR_VIOLATION on the
+supersede-all drain. All receipts reproduce under `--active-min 2`.
+
+### Capabilities (round 31)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| index-row fidelity gate | Score each coverage-map row's *shape* (table membership, cells, defined S-ids, resolvable artifact cites, Holds overlap) at a revision or tree — the surface the r30 fence was measured not to check | `python3 -I quality/check-index-rows.py --rev REV --repo .` → `MADO_INDEX_ROWS` | 31 |
+| resolved-citation admissions counter v2 | Reject miscited/unverifiable grounding (wrong section, empty file, supersede-drain); the r30 counter stays frozen as the v1 record | `python3 -I .ufo/waves/round-31/c2/count.py REV` → `PRED-C2-r31-v2` | 31 |
+
+Harm watch at `f621e3c0`: `git diff --stat 274f7355..72021ded -- tools/
+corpus/knowledge/ SKILL.md PROVINCE.md` — touched only
+`quality/check-index-rows.py` (new), `quality/check-index.py`,
+`.ufo/waves/round-31/`, `corpus/QUALITY.md`, `corpus/README.md`; no
+compositor/config mutation; misroot sweep at fleet root clean (only
+`mado-shokunin/` exists). The 33 r30 w1 reports + swarm-registry.json
+stay untracked orchestrator artifacts — preserved, not committed by this
+lane. `quality/q36-successor-receipts.txt` untouched (peer-reported
+restored to HEAD). Wave: `.ufo/waves/round-31/w1-spec.json` (15 seats)
+PREPARED, not dispatched — expected seat surface; orchestrator dispatches.
+
+### Sources, saturation, planned
+
+Sources 185 unchanged. Saturation 9.0 / N=3 unchanged; retired: none.
+Planned (round 32; intent only): the w1 falsification wave's findings;
+semantic Holds↔note accuracy (overlap ≥5 words is syntactic — a row can
+still paraphrase the wrong note); criterion-relevance grounding (a lesson
+that contradicts its criterion still resolves); the r24 `S###.bin`
+evidence path convention.
