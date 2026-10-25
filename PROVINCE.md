@@ -79,3 +79,17 @@ This is a *channel* rule, which is what the lane has actually done: the English 
 remain admissible for config-plane claims (round-35's S203 flip rests on one), while the localized documentation
 channel and its mechanics stay out. It does not widen any owned surface and leaves line 10's omarchy ownership
 intact.
+
+
+## Round-38 addendum — request-socket knowledge ground (append-only)
+
+The lane's two-socket IPC contract (`corpus/knowledge/ipc-contract-r25.md`)
+and its round-38 edge classes live here as documentation/source-read knowledge:
+the request socket's published flag vocabulary (`hyprctl-flags-r28.md`), its
+live bound — a five-second poll timeout, not a byte cap, read at the host's own
+commit — (`request-socket-live-bound-r8.md`), and the upstream request/follow
+ceilings at a later revision (`request-limits-upstream-r31.md`). All are
+read-only byte work: no socket is ever connected, no request is sent, and no
+compositor or config state is touched. This anchors the runtime-IPC knowledge
+half (tsukuroi's OUT-004 routes only this file's lines 3–16, the config-plane
+half).
