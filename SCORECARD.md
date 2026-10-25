@@ -203,8 +203,7 @@ claim, not the measured navigation delta; round status remains blocked.
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| counter-discrimination audit | score an admission counter against a frozen manifest of accept/reject controls in sandbox clones, per claim | `quality/check-r38-discrimination.py` + `.ufo/waves/round-38/controls/manifest.json` (19 controls); receipts `before/after-discrimination-*.txt` | 38 |
-| request-socket admission | admit a knowledge entry on the request socket only when every cited id has a unique mined row, a pin-bound Gate receipt, verbatim quotes and lineage | `quality/counters/c2-r38-request-ground.py`; admitted=3/3 at rev efb0ec2 | 38 |
+| — none yet — | | | |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -2407,3 +2406,17 @@ commit adds no knowledge entry or criterion): navigation 52/52; calibration reso
    cases.
 2. The next desktop surface from `considerthese/2026-10-24.md` proposal 4, ranked by wave-1
    `ConnFrontier`: the config-option table (who owns each key, checked against `getoption`).
+
+
+### Capabilities (round 38)
+
+|Capability|What it can now do|Evidence pointer|First-working round|
+|---|---|---|---|
+| request-socket admission | admit a knowledge entry on the request socket only when every cited source id has a unique mined registry row, a pin-bound Gate receipt, a verbatim quote and the frozen lineage vocabulary — the crib classes of M37-5 close | `quality/counters/c2-r38-request-ground.py` admitted=3/3 at `efb0ec2`; controls 19/19 in `.ufo/waves/round-38/receipts/after-discrimination-v3.txt` | 38 |
+
+Sources, saturation, planned: Sources 207 → 211 rows (S221, S253, S258, S277, `mined`,
+2026-10-25); S158 and S187 `used-by` extended. Assimilation: 3 package entries admitted
+re-grounded, 2 refused (null channel; follow-queue-vs-request conflation). Saturation 9.0 / N=3
+unchanged; retired: none this round. Axis table at `f0c9432`: navigation 52/52, calibration
+resolved-active 50/50, operability selftest 12/12 — the moves above are instrument and domain
+moves, not axis-score changes.
