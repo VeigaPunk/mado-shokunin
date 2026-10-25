@@ -94,9 +94,9 @@ future claim.
   written; the campaign package still holds refused material from round 35 and
   nothing from it is re-adopted while its evidence chain is under repair
   (`Assimilation: none this round`, registered before data).
-- **Spot-check duty** — a non-author seat re-opened the quote this round
-  (`.ufo/waves/round-36/w1/reports/RevSourceQuotes.md`); its verdict is recorded in
-  the round report, and the independent closure spot-check still re-opens a sample.
+- **Spot-check duty** — the quote was re-opened by a non-author seat in this round's
+  wave and its verdict is recorded in the round report; the independent closure
+  spot-check still re-opens a sample.
 
 ## Mistakes
 
@@ -278,3 +278,23 @@ receipts describe the host. The idle-lock surface's remaining unknown — whethe
 operator wants the idle lock off — is unchanged and answerable only by the operator.
 C2's gate scores the lane's paperwork, never the truth of the facts the paperwork
 reports.
+
+## D9 — the provenance convention, counted
+
+Two wave seats settled D9 from the bytes. The **refusal boundary** is now stated once in
+`PROVINCE.md` (round-36 refinement: the localized documentation channel is out, the English
+config-plane channels are in, the omarchy skill's own files stay read-only documentation
+surface) — it decides the r28/r29/r30 package entries and the round-16 Chinese config guide
+the same way, which is what the spot-check asked for.
+
+The **provenance-trio convention** is counted, not asserted: **29 of 50** knowledge notes
+carry `source:`, `verified-at:` and `recheck:` within their first 15 lines; **21** do not,
+and **20 of those 21** carry no trio member anywhere in the file (the 2026-10-14 arc notes
+plus `bind-table-r25.md`); `animation-table-r26.md` is the only partial. Command: a
+per-file `head -15 | grep -q '^<key>:'` loop plus a full-file anchored grep, both recorded
+in `.ufo/waves/round-36/w1/reports/ScoutD9Provenance.md`.
+
+Ruling, append-only: a **new** entry opens with the trio (CORPUS.md's rule); an **existing**
+entry is normalized by an appended `## Provenance (normalized)` trailer restating the trio
+as anchored lines, never by rewriting its committed bytes. This round admits no knowledge
+entry, so the ruling lands with no entry to apply it to; it binds from round 37.
