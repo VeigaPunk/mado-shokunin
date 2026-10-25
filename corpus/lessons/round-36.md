@@ -266,7 +266,9 @@ dangling=0 duplicates=0`.
 
 `.ufo/waves/round-35/scratch` is **retained** as round-35 evidence: tracked paths=124
 (`git ls-tree -r --name-only master .ufo/waves/round-35/scratch | wc -l`), the
-seat mutation and mutation-run trees the round-35 lesson's M35-2 receipts cite. It is
+seat mutation and mutation-run trees the round-35 lesson's M35-2 receipts cite. Size, measured
+after the round: 1,962,263 bytes ≈ 1.87 MiB (`git ls-tree -rl`), not the ~2.2 MB the round-35
+records carry — same order, corrected here. It is
 not deleted because deleting it would orphan those receipts, and it is not extended:
 this round writes its fixtures under `/tmp` from the committed generator instead.
 Round-36 scratch lives under `.ufo/waves/round-36/scratch/` per seat and is committed
