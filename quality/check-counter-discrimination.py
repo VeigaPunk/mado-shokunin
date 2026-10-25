@@ -47,6 +47,7 @@ PROFILES = {
     },
 }
 GENERATOR = ".ufo/waves/round-36/c2/gen-mutants.py"
+FROZEN_MANIFEST = ".ufo/waves/round-36/controls/manifest.json"
 VERDICT = re.compile(r"verdict=(TARGET_MET|TARGET_MISSED)")
 TIMEOUT = 180
 
@@ -98,6 +99,22 @@ def main() -> None:
     controls = manifest.get("controls") or []
     if not controls:
         die("manifest-empty")
+    frozen_manifest = (repo / FROZEN_MANIFEST).resolve()
+    if not frozen_manifest.is_file():
+        die("frozen-manifest-missing")
+    frozen = json.loads(frozen_manifest.read_text())
+    if manifest.get("id") != frozen.get("id"):
+        die(f"manifest-id-drift:{manifest.get('id')!r}")
+    if sorted(c["id"] for c in controls) != sorted(c["id"] for c in frozen["controls"]):
+        die("manifest-control-set-drift")
+    expected_expect = {c["id"]: c["expect"] for c in frozen["controls"]}
+    for control in controls:
+        if expected_expect.get(control["id"]) != control.get("expect"):
+            die(f"manifest-expectation-drift:{control['id']}")
+    # F2: every frozen spec the profile names must exist before anything is scored.
+    for inst in ("c1", "c2"):
+        if not (repo / prof[inst]["frozen"]).is_file():
+            die(f"frozen-spec-missing:{inst}")
 
     # Strip every ambient GIT_* variable first: `git -C <dir>` does not override an
     # inherited GIT_DIR, so an attacker-controlled environment could redirect every git

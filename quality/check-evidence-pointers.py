@@ -168,7 +168,15 @@ def main() -> None:
     dangling35_closed = 1 if (record_intact and named == len(SUPERSEDED_POINTERS)
                               and closed == len(dangling35)) else 0
 
-    dirty = [ln for ln in git(repo, "status", "--porcelain", "--", *INHERITED_PATHS).splitlines() if ln.strip()]
+    status_out = git(repo, "status", "--porcelain", "--", *INHERITED_PATHS)
+    status_rc = subprocess.run(["git", "-C", str(repo), "status", "--porcelain", "--",
+                                *INHERITED_PATHS], capture_output=True, text=True).returncode
+    if status_rc != 0:
+        # "unmeasurable" must never read as "clean": a bare clone or a broken work tree
+        # cannot answer the question, so the observable fails closed.
+        print(f"PRED-PTR-r36-v1 error=git-status-unusable rc={status_rc} verdict=TARGET_MISSED")
+        raise SystemExit(1)
+    dirty = [ln for ln in status_out.splitlines() if ln.strip()]
     inherited_dirty = len(dirty)
 
     scratch_count = len([f for f in files if f.startswith(".ufo/waves/round-35/scratch/")])
