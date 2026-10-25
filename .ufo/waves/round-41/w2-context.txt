@@ -1,0 +1,36 @@
+# Goal
+mado round 41 (hyaku run 7, 2026-10-25), inline v1 wave w2 of two (34 seats: FALSIFY what wave 1 and the L1 produced). Lane repo: %(L)s
+State: v1 freeze 60c3914154333180450d5da27ba222d5763cc56a -> wave w1 (34 seats, reports in %(W)s/w1/) -> v2 freeze 294c667901a8c7b7165ba849d03cba9a24c14fa4
+(%(W)s/registration-v2.md; counters quality/counters/c1-r41-globals-v2.py PRED-C1-r41-v2 = 39 fixtures + clauses a,b,b2,b3,g, and quality/counters/c2-r41-focus-entry-v2.py
+PRED-C2-r41-v2 = clauses a-i; controls %(W)s/ctl/run-c1-v2-controls.py (98 controls) and run-c2-v2-controls.py (67 controls); reference %(W)s/c1/ctl-ref-tool-v2.py.txt)
+-> DATA commit 07f2641696b5ac73de1404ea737a9f27e9819aa1 (base ab2bfaab661c846d1de9d58c01651cd156a13949): tools/mado-globals.py (byte-identical to the v2 reference),
+corpus/knowledge/hyprland-focus-grab-r41.md (entry draft A of w1 with two one-id-per-line fixes), registry rows S283-S289 (+ S037 used-by), corpus/README.md row,
+corpus/lessons/round-41.md, .ufo/waves/round-41/fetch/xdph-installed-version.txt. Read the data with `git -C %(L)s show 07f2641696b5ac73de1404ea737a9f27e9819aa1:<path>`
+(the working tree may carry later uncommitted edits by the L1).
+Two claims (frozen): C1 operability (capability acquisition) `tools/mado-globals.py`, target fixtures=39/39 TARGET_MET (base 0/39); C2 coverage (sourced) the entry,
+target admitted=1/1 (base 0/1). Your job is to ATTACK: every item names what it attacks and reports a finding with a reproduction, or an honest "no defect found" with the
+command that was run. A finding on the DATA is a defect fixed before the round lands; a finding on a PREDICATE is reported as an open defect (no third registration).
+Seats never edit tracked lane files; the L1 integrates. Pre-fetched source receipts: %(W)s/fetch/. Host: Hyprland 0.56.2 (efb50993780079460b0cbed1363e2166a2de1d9f), xdph v1.4.1.
+The staged package is /home/vgpnk/Projects/shokuknow/merge/mado (READ-ONLY; never run a campaign tool there). Wave-1 reports: %(W)s/w1/<Seat>.md.
+# Write scope and safety
+- Write ONLY inside /home/vgpnk/Projects/shokunin/mado-shokunin. NEVER write/edit the fleet repo (/home/vgpnk/Projects/shokunin except as your task names), sibling lanes,
+  templates/, scripts/, MANIFEST.json, .ufo/state/, .ufo/watchdog.log, .scratch/, the shokuknow checkout, or the lane's jj/git index.
+  Never run mutating git/jj anywhere in the lane or the fleet (no add/commit/push/checkout/reset/stash/describe/bookmark). Read-only git
+  (log/show/diff/status/rev-parse/ls-tree/cat-file) is fine.
+- Write ONLY to your own seat directory /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-41/w2/<YourSeatName>/ (create it), plus any explicit destination your task names. Never edit an
+  existing tracked file (the counters, controls, registrations, reference, fetch receipts and every committed lane file are FROZEN for you); the L1 is the only integrator.
+  Write your Report file FIRST (a short status), then refine it; a seat that dies without a report is a dead seat.
+- Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin - write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.
+- Host safety: pacman is PAUSED host-wide - never run pacman or any package transaction. No host-service or compositor mutation, no input
+  injection, no Wayland-client or compositor-socket connection of your own (so no wayland-info, no hyprctl except `hyprctl version`). The
+  ONLY journal verb allowed is read-only `journalctl --user -u <unit> --no-pager -o short-iso [-b N | --list-boots]`; no `journalctl --vacuum`/`--rotate`/`--flush`.
+  Host config trees and binaries are READ-ONLY.
+- Git fixtures (run-6 incident): any fixture repo is `D=$(mktemp -d) && git -C "$D" init -q`, every later git call names `-C "$D"`, and
+  `git -C "$D" rev-parse --show-toplevel` must equal `$D` before the first commit; never `git commit` with a throwaway identity anywhere
+  else. Use /tmp (mktemp -d) for scratch; clean it up.
+- Tooling authorization (operator, 2026-10-19): install tools that help the task (read /home/vgpnk/.omp/agent/RULES.md first; official
+  channels only: uv tool / npx / official binaries in ~/.local/bin; never pacman, never -Sy/-Syu/-U/-R). Record tool/version/channel/reason in your report.
+- Seat tool state: your tools start at the fleet root, not the lane: use absolute paths everywhere.
+- You are a leaf: no subagent dispatch, no background jobs, no spawning (an executor MAY spawn one read-only labrat probe).
+- Every finding names what it attacks or supports (a path:line, a command and its output, or a hash). Never fabricate: an unrun check has
+  not passed. Quotes lifted from a source are <= 25 words, located (file:line or section), and verified by a script that greps your receipt.
