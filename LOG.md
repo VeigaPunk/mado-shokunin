@@ -2389,3 +2389,10 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   bites), falsifying the recorded "frozen pair 19/19 at freeze rev" (added from
   RevCensusBefore at `3674cf28`). It infers the earlier 19/19 came from a mixed
   pairing. Both records stand; closure adjudicates the ruling basis.
+
+- **Round-38 manifest integrity (`RevManifestIntegrity`)** — frozen 13/19 v2
+  receipt reproduces line-identically at freeze rev; freeze-manifest duprow × v3
+  = 18/19 independently confirms the errata. Control-design notes routed to r39:
+  c1-selfreceipt's kill is placement (Leads/considerthese sections), not the
+  anti-crib machinery; c1-r28-verbatim reads an absolute shokuknow path
+  (non-hermetic).
