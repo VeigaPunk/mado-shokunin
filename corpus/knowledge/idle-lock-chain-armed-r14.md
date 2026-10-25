@@ -46,3 +46,18 @@ chain is armed; whether it fires, and what the operator prefers, stay unknown.
   overstatement. The pid-1667 liveness and the 150/152 chain are unaffected, and wave-2
   seat `RevQuoteS205` confirmed the transient-scope inference first-hand from uwsm's
   `systemd-run --user --scope --unit=app-Hyprland-hypridle-…` log line.
+- **E2 - the two lines are two boots' first starts, and only one step locks.** E1 above
+  is corrected: neither `Started hypridle.` line is a restart. `13:25:00` belongs to the
+  systemd[1529] manager (boot -1) and `22:14:11` to systemd[1493] (boot 0); each is its
+  own boot's **first** start, which the receipt already carried - one session has one
+  `systemd --user` pid and the receipt prints two. Separately, Section 1's "both fire the
+  desktop's own lock command" is **withdrawn**: the 150 s step runs
+  `omarchy-launch-screensaver`, whose 59 lines contain no `hyprlock`,
+  `omarchy-system-lock` or `swaylock` call (TTE animation only); only the 152 s step runs
+  `omarchy-system-lock`. The title's "the chain will fire" is a forecast this entry's own
+  Section 3 **UNK** does not license. The transient-scope inference is materially true but
+  **unlicensed by S205**: the journal carries it in
+  `uwsm_app-daemon … sent: exec systemd-run --user --scope … --unit=app-Hyprland-hypridle-d4bd7533.scope … -- hypridle`,
+  which S205 did not quote, and `is-active` prints the same `inactive` for rc=3 (exists,
+  stopped) and rc=4 (no such unit) - S205 recorded neither the unit name nor the code.
+  Found by wave-2 seats `RevEntryR14` and `RevQuoteS205`.

@@ -1995,3 +1995,114 @@ axis-gate selftest is now re-executed with a committed transcript:
 `MADO_AXIS: checked=3 mismatched=0` exit 0
 (`.ufo/waves/round-34/controls/axis-selftest.txt`). SHONEN stays `[~]` on all
 four boxes; nothing was self-promoted.
+
+## Round 35 — SimplifyCounter seat scratch (2026-10-24, wave-1)
+
+Seat task: propose a minimal form of `.ufo/waves/round-35/c1/count.py` keeping
+the nine live clauses and the PRED-C1-r35-v1 predicate. Proposal lives in
+`.ufo/waves/round-35/scratch/SimplifyCounter/` (`count-min.py`, 104 lines vs
+218, plus `analysis.md`); the committed counter is untouched. Evidence:
+differential run over `controls/golden` + ten c1 control trees + `.txt`
+root-misses + `--root .` gave 21/21 identical stdout/exit pairs; tampered and
+missing `--frozen` both exit 2. Drops split into provably dead weight
+(`hashlib`/`digest` computed-but-unread, `import os`, `__future__`, helper
+folding, regex alternation) and out-of-scope defence (`MAX_BYTES` cap,
+`nlink != 1`, explicit `S_ISLNK` branches subsumed by `lstat`+`S_ISDIR`/`S_ISREG`,
+`O_NOFOLLOW` — declared non-load-bearing in `c1/clauses.json`, and the
+root-symlink gate). Residual divergences (symlinked root, hardlinks, >8MB
+files, merged drift message) are enumerated per drop; none is clause-visible.
+Findings: `.ufo/waves/round-35/w1/reports/SimplifyCounter.md`.
+
+## Round 35 — MutC1Drop seat scratch (2026-10-24, wave-1)
+
+Seat task: mutation-test the PRED-C1-r35-v1 counter
+(`.ufo/waves/round-35/c1/count.py`) by dropping one clause at a time on
+copies under `.ufo/waves/round-35/scratch/MutC1Drop/mutants/` (15 mutants,
+`gen_and_run.py`), each run over all 11 frozen control trees. Baseline
+reproduced all committed `.txt` receipts. Seven conjuncts are verdict-live
+with a 1:1 control each (row-unique, used-by-exact, status-mined,
+recheck-valid, digest-match, word-bound, quote-substring). Dead under the
+frozen spec: ledger-"live" `row-well-formed` (c1-row-extra-field's shifted
+cells are killed by status/used-by first) and `entry-regular`
+(c1-entry-symlink's leaf resolves to an entry with no S205 gate-quote);
+non-ledger `blob is not None`, `st_nlink != 1`, `entry_closed` seed,
+S_ISLNK walk (masked by S_ISREG+O_NOFOLLOW for leaf links), and O_NOFOLLOW
+(declared non-load-bearing; confirmed). `quote is not None` is verdict-dead
+but counter-live on c1-entry-symlink (8/0 vs 7/1). Committed counter
+untouched (sha256 78c25892…d12abad6). Findings:
+`.ufo/waves/round-35/w1/reports/MutC1Drop.md`.
+
+## Round 35 — the idle-lock control surface lands; the ledger claim is falsified against itself (2026-10-24/25, attempt 2 of 2)
+
+Motivation: `corpus/lessons/round-34-verifier-spotcheck.md` routed four defects into this
+round — the `1-25` word bound in `PRED-C1-r34-v1` was dead code under its own frozen spec, the
+`S_ISLNK`/`O_NOFOLLOW` pair was presented as load-bearing while protecting only against a TOCTOU
+race no static tree can kill, `RevFrozenBlobs.md` labelled `fa7ba113` the lane tip, and the merge
+package's id remap is stale on the campaign side (already filed as L0 `ae2c52b8`). Attempt 1
+froze both predicates, dispatched the 64-seat wave 1 and died without a report; attempt 2
+inherited every artifact and finished the round.
+
+Work: two NEW predicates were frozen before any corpus append at
+`19e4ab3171c1540c40d6b12097745af98053b07d`: `PRED-C1-r35-v1`
+(`TARGET_MET iff closed_entries=3 AND closed_rows=8 AND open_cites=0`) over the idle-lock
+control surface, and `PRED-C2-r35-v1`
+(`TARGET_MET iff uncovered=0 AND retired=1 AND toctou_declared=1 AND ledger_tip_ok=1`) over the
+lane's own evidence ledger, with eleven committed control receipts and the re-issued
+`ledger/RevFrozenBlobs-r35.md`. The data landed at
+`02088b4dff0da153df30ff174611d1257c92d0cd`: three entries
+(`corpus/knowledge/idle-lock-never-asked-r12.md`, `idle-lock-chain-armed-r14.md`,
+`idle-lock-offered-in-the-bar-r15.md`) and eight registry rows S203–S210, adopted from
+`shokuknow/merge/mado/` with ids re-pointed by document (package ids S315/S316/S327/S335/
+S336/S337/S340/S342 → S203–S210 — the registration's own list of those ids is wrong and is
+recorded as M35-1). Counters at `02088b4`: C1 `closed_entries=3 closed_rows=8 open_cites=0
+verdict=TARGET_MET` exit 0; C2 `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1
+verdict=TARGET_MET` exit 0; root census exit 0 with the same seven pre-existing `W04`
+warnings; index gate 47/47 → 50/50; operability suite `MADO_SELFTEST: 460/460 assertions
+passed`. Round shape: two v1 waves, 64 + 40 = 104 seats, one batched `task` call per wave.
+
+Then wave 2 attacked the landed bytes and falsified more than it confirmed, which is the
+round's main result:
+
+- The C1 counter is **shape-scored**. `count.py:174` computes the receipt digest and never
+  reads it, so a tree whose receipts are fabricated at the frozen paths still prints
+  `TARGET_MET` (`w1/reports/CritVacuous.md`, `RevTarget.md`; wave-2 `CritVacuousRecheck`
+  rebuilt it on the real tree with 87% of prose and 90% of receipt bytes changed, and
+  `RevRowsDigest` reproduced five mutants on the live anchors). The real receipts do hash to
+  their frozen values 8/8 — honest bytes, invisible to the counter. A one-line repair
+  (`and digest == receipt["sha256"]`, on a scratch copy) keeps the real root and
+  `controls/golden` at `TARGET_MET` and turns both committed cribs
+  (`controls-content/c1-shape-only`, `controls-content/c1-fabricated-payload`) to
+  `TARGET_MISSED`; it is a round-36 claim, because the predicate was frozen before data.
+- The **C2 claim's substance is falsified**: `ledger_tip_ok` prints `TARGET_MET` on the very
+  round-34 defect it claims to repair (stale `fa7ba113` label; `MutC2Real` M3a/M3c/M3d,
+  `RevTipLedger` control C), `uncovered=0` is fail-open if a clause is deleted together with
+  its control, covered-receipts are token greps, and the round-34 "real tip" is disputed
+  (`dff3941` was master for 17 minutes; the last round-34-labelled commit is `6d754bd`; the
+  blob ids verify at both). C2 stays `TARGET_MET` as written and is reported **not admitted**
+  for operator ruling.
+- Semantic falsifications **applied as append-only errata**, not rewrites: the "operator never
+  toggled" inference is withdrawn (the journal shows the daemon's scope consumed at
+  `2026-10-23T19:24:38` and restarted at `22:14:11`; zero `omarchy-toggle` lines is a null
+  channel), the 150 s step is a screensaver with no lock call, the two start lines are two
+  boots' first starts, "built not to remember" is replaced by the process-shaped mechanism
+  with `autostart.conf` re-arming the daemon, and "never taken it" is withdrawn. The C1
+  counter stayed `TARGET_MET` through every errata append — which is the point.
+- Census gaps recorded, not repaired (fleet tool): alphabetic `recheck` prose validates
+  clean (`MutCensusRow`, `RevValidate`), a blank `used-by` on a `mined` row is silent, and
+  `used-by` is unchecked on non-mined rows. The id-collision guard fires on an indented row
+  (spec pipeline `S203`; a seat's variant that dropped the id-extraction stage returned 0 and
+  is corrected in the lesson), and the real 8 collisions are a genuine double allocation of
+  S203–S210 between the lane and the merge package — campaign-side, unresolved.
+- Misroot swept: seat `RevLogEvidence` wrote its report at the fleet root; copied byte-exact
+  into the lane, `cmp`-verified, fleet copy deleted, recorded as M35-3.
+
+Honest notes: the axis publication went stale for the ~15 minutes between the data commit and
+this row (`mismatched=2`, navigation 47/47 vs 50/50, calibration 41/41 vs 41/43 — the
+criterion citation needed its M-ids at section level), and this row republishes
+`navigation 50/50; calibration 43/43; operability 12/12`. The pre-data `golden` control's rows
+differ from the shipped registry in anchor/teaches cells, so the controls never exercise the
+live bytes. `c1/clauses.json` names nine controlled live clauses, one `not-load-bearing`
+(`o-nofollow-open`, TOCTOU-only) and one retired (`r34-word-bound-1-25`); wave-1
+mutation-testing found `row-well-formed` and `entry-regular` verdict-dead on the frozen
+controls, which round 36 must re-cut. SHONEN stays `[~]` on all four boxes; nothing was
+self-promoted.

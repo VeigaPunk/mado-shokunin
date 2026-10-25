@@ -38,3 +38,32 @@ choice". That framing is too broad and is corrected here: this entry is about th
 **setup path** only. The running interface does offer the choice, and
 `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` (adopted in the same round)
 states that correction with its own evidence.
+
+### Errata (round 35, wave 2)
+
+- **E1 - "never toggled" withdrawn.** Section 2's inference that the operator never
+  exercised the toggle is **withdrawn**. The toggle does not log under its own name, so
+  a zero `omarchy-toggle` count is a null-channel reading, not a negative. The journal
+  does record the daemon's lifecycle: scope `app-Hyprland-hypridle-9408787a` is
+  `Consumed` at `2026-10-23T19:24:38-03:00` with no `Stopping`/`Stopped` pair (a process
+  exit, not a unit stop) and the next start is `22:14:11` - a 2h50m window with the idle
+  daemon down, inside the retained journal. `omarchy-toggle-idle` stops hypridle; no
+  coredump exists for hypridle (`coredumpctl list hypridle` empty) and earlyoom reports
+  90.86% free memory at 19:24:59, so a crash or OOM is ruled out. That a toggle-off
+  happened is `[INFERENCE-STRONG]`; that it was a click, menu or keybind is unverified.
+  The setup-path negative (§1) stands unchanged: no first-run script asks about the idle
+  lock. See `.ufo/waves/round-35/w2/reports/RevQuoteS204.md` (seat `RevQuoteS204`).
+- **E2 - thirteen items, twelve of them scripts.** The installer body executes 13 items:
+  12 `bash …/*.sh` plus `omarchy-hook-install post-update …/install-voxtype.hook`. The
+  phrase "twelve first-run scripts" holds for `*.sh` only; `install/first-run/` holds 13
+  entries today and its mtime (`2026-10-03 17:42:32`) predates the receipt, so nothing
+  changed after the read. The receipt recorded no command for its `count: 12` line.
+- **E3 - the title's second clause and "two independent negatives".** This entry's title
+  reads "…and the operator never toggled it afterwards"; that clause is withdrawn for the
+  same reason as E1, and the title is kept as landed rather than rewritten. Section 2's
+  "two independent negatives agree" is also corrected: S204's `count: 12` re-derives S203's
+  own script list rather than independently confirming it, so the two readings are one
+  measurement and one re-count. Finally, Section 1's "None of the twelve asks about the
+  idle lock" is true on the host but is not licensed by S203/S204, which carry no body of
+  any script; wave-2 seat `RevEntryR12` re-derived it (0 `idle` matches across all 13
+  files) and the claim should cite that scan.

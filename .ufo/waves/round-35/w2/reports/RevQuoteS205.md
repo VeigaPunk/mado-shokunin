@@ -1,0 +1,358 @@
+# RevQuoteS205 — adversarial re-quote of row S205 (wave 2, falsify)
+
+Scope: registry row S205, receipt `.ufo/waves/round-35/fetch/S205.receipt.txt`, and the one
+entry that cites it, `corpus/knowledge/idle-lock-chain-armed-r14.md`.
+Seat posture: read-only attacks. Wrote only under
+`.ufo/waves/round-35/scratch/RevQuoteS205/` and this report. No tool installs (nothing was
+needed); no pacman transaction was attempted.
+
+## Verdict
+
+**S205 AGREES.** The gate-quote recorded in the entry is a contiguous substring of the receipt
+bytes (single occurrence, byte 1091..1193 of 1194), all three facts it asserts re-verify on the
+live host today, and the recomputed receipt digest equals the row's anchor digest exactly.
+
+Five defects were found **outside** the gate-quote and the digest; none is read by any C1 clause.
+They are reported below rather than folded into a disagreement claim:
+
+- **P1** entry §1 "both fire the desktop's own lock command" — false, and contradicted by S205's
+  own `declared timeouts` block (150 → `omarchy-launch-screensaver`, 152 → `omarchy-system-lock`).
+- **P2** receipt's unit probe is bare `inactive`: no unit name, no exit code. Measured here,
+  `inactive` is stdout for both rc=3 (exists, dead) and rc=4 (no such unit), so S205 cannot even
+  establish that the unit existed.
+- **P3** receipt heading "journal start lines in the current session" is false for the 13:25:00 line
+  (boot −1).
+- **P4** "a restart, not a first start" is wrong; each boot has exactly one start, and "two lines" is
+  a journal-retention fact (boot −3 shows a pre-retention start via `Stopped` + scope `Consumed 1d 8h`).
+- **P5** title "the chain will fire" contradicts the entry's own §3 UNK.
+- **P6** C1 passes unchanged with the false body sentences still in place and two errata retracting
+  them (`TARGET_MET`, rc=0; body lines 1/17/20 byte-identical). The predicate closes cites, not
+  claims, and the errata carry no receipt/hash — verified after E2 landed (3768 B, 03:35:30).
+
+Findings P1/P2 were sharpened to the peer's corrections after a cross-check with `RevEntryR14`
+(both verified here); the verdict did not change. P3/P4 now quote user-journal windows, which is the
+scope S205 read.
+
+## (a) Live host re-open — 2026-10-25, ~03:23–03:31 -03
+
+| command | output | exit |
+|---|---|---|
+| `pgrep -x hypridle` | `1667` | 0 |
+| `pgrep -ax hypridle` | `1667 /usr/bin/hypridle` (single instance) | 0 |
+| `systemctl --user is-active hypridle` | `inactive` | 3 |
+| `sha256sum /home/vgpnk/.config/hypr/hypridle.conf` | `e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41` | 0 |
+| `grep -n timeout /home/vgpnk/.config/hypr/hypridle.conf` | `10: timeout = 150`, `16: timeout = 152` (plus the two `on-timeout` lines; exactly two `timeout` declarations) | 0 |
+
+Supporting host facts, same run:
+
+- `ps -o pid,ppid,lstart,etimes,cmd -p 1667` → `1667 1619 Fri Oct 23 22:14:10 2026 105367 /usr/bin/hypridle`.
+  Parent 1619 is `Hyprland --watchdog-fd 4`.
+- `cat /proc/1667/cgroup` → `/user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/app-Hyprland-hypridle-d4bd7533.scope`.
+- `systemctl --user status app-Hyprland-hypridle-d4bd7533.scope` → `active (running) since Fri 2026-10-23 22:14:11`,
+  `Transient: yes`, `CGroup: … └─1667 /usr/bin/hypridle`, last journal line
+  `Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.` (exit 0).
+- `systemctl --user show hypridle.service -p ActiveState -p SubState -p UnitFileState` →
+  `ActiveState=inactive`, `SubState=dead`, `UnitFileState=disabled` (exit 0).
+- `loginctl` → session 1 (manager, leader 1493) and session 2 (wayland, leader 1523), both with
+  timestamp `Fri 2026-10-23 22:14:08 -03`, both `Active=yes`. `uptime -s` → `2026-10-23 22:14:06`.
+- `pgrep -ax hyprlock` → no output, exit 1 (receipt's `hyprlock process: none` holds).
+
+Every value matches the receipt's own probe block, down to the pid.
+
+## (b) Gate-quote contiguity and fact match
+
+Entry line 11 of `corpus/knowledge/idle-lock-chain-armed-r14.md`:
+
+```
+gate-quote: S205 located: hypridle runs as pid 1667 and started in this session; hypridle.conf sets timeout 150 and 152
+```
+
+Byte check against the receipt (`python3`, read-only):
+
+```
+quote_len 102 words 17
+offset 1091 end 1193 file 1194
+tail_after b'\n'
+occurs 1
+```
+
+So: one occurrence, contiguous, 17 words (within the 1–25 bound), ending at the receipt's final
+line plus newline. `grep -boF '<quote>'` independently reports `1091:<quote>`.
+
+The counter's own extractor (`c1/count.py`, `gate_quote`) uses needle `gate-quote: S205 ` and takes
+the rest of the line, i.e. exactly the 102-byte string above — the `S205 ` prefix is a source label,
+not part of the quote. Consistent with my measurement.
+
+Fact-by-fact, against the host reading in (a):
+
+| gate-quote fact | host evidence | verdict |
+|---|---|---|
+| `hypridle runs as pid 1667` | `pgrep -ax hypridle` → `1667 /usr/bin/hypridle`; scope CGroup lists `└─1667` | TRUE |
+| `started in this session` | pid 1667 `lstart` = 2026-10-23 22:14:10; sessions stamped 22:14:08; boot 0 since 22:14:06; scope active since 22:14:11 with the `Started hypridle.` line from systemd[1493] (this boot) | TRUE |
+| `hypridle.conf sets timeout 150 and 152` | live conf lines 10 and 16; exactly two `timeout` declarations | TRUE |
+
+The pid is not a fresh coincidence: the receipt was written 2026-10-24, the process lstart is
+2026-10-23 22:14:10, and pid 1667 is still the live daemon on 2026-10-25 — the number in the
+receipt was valid at write time and remains the same live process.
+
+## (c) Receipt digest vs row anchor
+
+```
+sha256(.ufo/waves/round-35/fetch/S205.receipt.txt) = f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a
+```
+
+Row S205 (`corpus/SOURCES.md:207`) anchor cell carries:
+`… hypridle.conf sha256 e7d3b8dd…07de41; receipt sha256 f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a`.
+
+- Receipt digest equals anchor digest: **exact, all 64 hex chars**.
+- Conf digest in the anchor equals the live conf digest: **exact**.
+- The anchor digest also equals `c1/frozen.json` receipts.S205.sha256.
+- Row shape: 11 cells (`awk -F'|' 'NR==207'` → `fields=11`), status `mined`, recheck `90d`,
+  used-by exactly `corpus/knowledge/idle-lock-chain-armed-r14.md` (the only entry citing S205;
+  `grep -rn S205 corpus/knowledge/*.md` returns only r14).
+
+Context run of the two frozen counters (read-only; no writes):
+
+```
+python3 -I .ufo/waves/round-35/c1/count.py --root … --frozen …  → TARGET_MET closed_entries=3 closed_rows=8 open_cites=0  exit=0
+python3 -I .ufo/waves/round-35/c2/count.py --repo … --frozen …  → TARGET_MET uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1  exit=0
+```
+
+## Findings (severity-ordered; none of these is read by a C1 clause)
+
+### P1 — Entry §1 "both fire the desktop's own lock command" is false, and S205 contradicts it
+
+Entry sentence: "**OBS** The declared chain is a screensaver at 150 seconds and a lock at 152
+(S205), and both fire the desktop's own lock command."
+
+The receipt's own `declared timeouts` block already refutes the second clause:
+
+```
+10:    timeout = 150
+11:    on-timeout = pidof hyprlock || omarchy-launch-screensaver
+16:    timeout = 152
+17:    on-timeout = omarchy-system-lock
+```
+
+So S205 licenses "screensaver at 150, lock at 152" and explicitly shows that the 150 s action is
+`omarchy-launch-screensaver`, not the lock command.
+
+Host bytes confirm the launcher never reaches a lock:
+
+- `/home/vgpnk/.local/share/omarchy/bin/omarchy-launch-screensaver` (59 lines): `grep -cE
+  'hyprlock|omarchy-system-lock|swaylock'` → `0`, exit 1.
+- It execs `omarchy-screensaver` (35 lines, same directory): same grep → `0`, exit 1; that script
+  is a `tte` (TerminalTextEffects 0.15.0, present at `/usr/bin/tte`) animation loop with no lock call.
+- Only the 152 s listener runs `omarchy-system-lock`.
+
+The 150 s step starts a screensaver; the surface at 152 s locks. The clause is withdrawn in the
+entry's own errata E2, but the sentence in §1 is still present and still cites (S205) for it.
+This is a false claim *contradicted by the cited receipt*, not merely an unlicensed inference.
+
+### P2 — Receipt's unit probe is unit-ambiguous and exit-code-free
+
+Receipt lines 5–6 are:
+
+```
+--- unit probe ---
+inactive
+```
+
+`grep -cE 'systemctl|is-active|pgrep|journalctl|sha256sum' S205.receipt.txt` → `0`: the receipt
+names no command, no unit, and records no exit code.
+
+The omission is load-bearing. Measured on this host:
+
+| invocation | stdout | rc |
+|---|---|---|
+| `systemctl --user is-active hypridle` (unit exists, dead) | `inactive` | 3 |
+| `systemctl --user is-active definitely-not-a-unit-xyz` | `inactive` | 4 |
+
+Identical stdout; only the exit code discriminates "exists but stopped" from "no such unit".
+S205 carries `inactive` with no code, so it cannot establish that `hypridle.service` existed at all.
+
+Consequently entry §2's "`systemctl --user is-active hypridle` answers `inactive` (S205)" attributes
+a command string the receipt never records, and the entry's INF (the unit probe measures the wrong
+thing) is not licensed by S205: it needs the transient-scope evidence (cgroup, scope unit, uwsm
+`systemd-run` line) that I gathered from the host, not from the receipt. Errata E2 states this
+correctly; §2 of the entry still reads as if S205 licensed it.
+
+### P3 — Receipt heading mislabels the earlier start line as this session's
+
+Receipt section heading: `--- journal start lines in the current session ---`, listing
+
+```
+Oct 23 13:25:00 plazir27 systemd[1529]: Started hypridle.
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+```
+
+Windows are journal-scope-dependent, and both readings are right for their own journal (peer
+correction verified):
+
+| scope | earliest | boot −1 | boot 0 |
+|---|---|---|---|
+| `journalctl --user --list-boots` | `−2` 07:18:30–13:21:44 | 13:24:57–22:10:20 | 22:14:08–… |
+| `journalctl --list-boots` (system) | `−3` 07:18:30–13:21:50; `−2` 41 s boot 13:22:32–13:23:13 | 13:24:36–22:12:24 | 22:14:07–… |
+
+Boot ids agree across scopes: user −2 = system −3 = `6a7f4fdf…`, user −1 = system −1 =
+`e55f9cd9…`, user 0 = system 0 = `0a3785aa…`. The 41 s boot `d577c6e0…` exists only in the system
+journal (`journalctl --user --list-boots` omits it; it has no user-journal entries). S205's lines are
+`systemd[NNNN]` user-manager messages, so the **user** windows `13:24:57–22:10:20` and `22:14:08–…`
+are the ones to quote; the system windows I first published are the same boots seen from PID 1's
+journal, indexed one higher because of the 41 s boot.
+
+Verbose journal metadata confirms the provenance:
+
+- 13:25:00 line → `_PID=1529`, `_BOOT_ID=e55f9cd9ec4e4dd5bf0ce775977af5a5` (boot −1), `_SYSTEMD_USER_UNIT=init.scope`.
+- 22:14:11 line → `_PID=1493`, `_BOOT_ID=0a3785aac7104585a914f6cda41795a7` (boot 0, `/proc/sys/kernel/random/boot_id`).
+
+Only the later line is in the current session; the 13:25:00 line is from the previous boot, present
+because the journal is persistent. The row's `teaches` cell ("the journal holds two start lines on
+2026-10-23") is literally true and does not carry the bad label, and no C1 clause reads receipt
+headings — so this is a receipt-internal imprecision, not a frozen-claim break. It is the exact
+kind of cross-boot/provenance slip a reader would inherit if they quoted the heading.
+
+Recommendation: retitle to `journal start lines across the last two boots` (or annotate the 13:25
+line with `boot -1`). No change to the gate-quote, digest, or row is warranted by this finding.
+
+### P4 — "a restart, not a first start" is wrong; "two lines" is a retention fact
+
+`corpus/knowledge/idle-lock-chain-armed-r14.md` §1: "the user journal holds two `Started hypridle.`
+lines dated 2026-10-23, the later at 22:14:11 - a restart, not a first start."
+
+Per-boot start counts, user-journal numbering (`journalctl --user --boot=<n> | grep -c 'Started hypridle\.'`), with the system index in parentheses:
+
+| user index (system) | starts | note |
+|---|---|---|
+| −2 (system −3) | 0 | holds `Stopping hypridle` / `Stopped hypridle.` plus `app-Hyprland-hypridle-59197064.scope: Consumed … 1d 8h 25min 52.144s` |
+| — (system −2) | — | 41 s boot, `d577c6e0…`, no user-journal entries and no hypridle line in either scope |
+| −1 | 1 | 13:25:00, systemd[1529]; first and only start of that boot |
+| 0 | 1 | 22:14:11, systemd[1493]; first and only start of that boot |
+
+The same counts read through the system journal (`journalctl --boot=<n>`) are `−3:0, −2:0, −1:1,
+0:1` — identical boots, shifted index. The conclusion is scope-independent.
+
+So neither line is a restart: each is its boot's first and only start. My earlier P3 wording
+("defensible under the cross-boot reading") was too generous — "restart" implies an instance
+restarting itself inside a boot, and no such event exists in the retained journal. Correct phrasing:
+two boots, one start each, each the first of its boot.
+
+Retention boundary: oldest journal entry is `2026-10-23 07:18:30` (user −2 / system −3). That boot's
+`Stopped hypridle.` and its scope's `Consumed … 1d 8h 25min` line prove a start predating the
+retained window. The statement "the journal holds two `Started hypridle.` lines" is therefore a fact
+about journal retention, not about the daemon's start history.
+
+The `13:24:57` / `22:10:20` pair the peer quoted is the user-manager window (first/last `--user`
+entries for that boot); `13:24:36` / `22:12:24` is the system window (kernel first line, UFW last
+line); `22:14:07` vs `22:14:08` is system vs user first entry for the current boot. All six values
+reproduce; none changes the start-count conclusion.
+
+### P5 — Title forecasts what §3 declares unknown
+
+Entry line 1: `# The idle lock is armed on this host - the daemon is running and the chain will fire`,
+while §3 states "No lock, screensaver or suspend transition was triggered or observed. … whether it
+fires … stay[s] unknown." Errata E2 records the contradiction but the title itself is unchanged. On
+the bytes I can check, the title's "the chain will fire" is a forecast with zero firing observation
+behind it — and P1 shows that even the 150 s half of the chain does not lock. Editorial, not a
+frozen-claim break.
+
+### P6 — C1 is invariant under an assertion plus its retraction (verified)
+
+State at 03:40: entry `3768 B`, mtime `2026-10-25 03:35:30`; errata E1 at line 41, E2 at line 49;
+body lines 1, 17, 20 are byte-identical to the pre-errata text:
+
+```
+1  # The idle lock is armed on this host - the daemon is running and the chain will fire
+17 at 22:14:11 - a restart, not a first start.
+20 (S205), and both fire the desktop's own lock command.
+```
+
+C1 re-run with E1+E2 in the file: `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`,
+rc=0. C2 likewise `TARGET_MET`, rc=0. Gate-quote line 11 is unchanged; the receipt digest is
+unchanged (`f3387bfc…`).
+
+So the frozen predicate closes **cites**, not claims: an entry can carry a false body sentence,
+append two errata retracting it, and still count as `mined`/closed, because the only truth test is
+the gate-line substring. The retraction is also unbacked — neither E1 nor E2 carries a receipt path
+or hash and S205's digest is unchanged, so nothing in the artifact set records the correction. That
+makes the peer's A4 lift ("remove the falsified body sentence; errata need their own receipt+hash or
+they do not count") the right remedy: an errata that changes what an entry asserts must itself be a
+cited, hashed artifact, or the entry's truth status stays unmeasured. The file currently holds E1
+and E2 as competing statements about one event, and the counter cannot arbitrate between them.
+
+
+
+## Positive corroboration of the entry's INF
+
+The entry infers that `is-active` measures the wrong thing because the daemon runs in a transient
+scope. The uwsm log for the same second makes this first-hand rather than inferred:
+
+```
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+```
+
+The `Started hypridle.` message names the **scope description** `hypridle`, not
+`hypridle.service`; that service is `inactive/dead/disabled`. The entry's INF is therefore
+supported verbatim by primary evidence — **but not by S205**, which never quotes the uwsm line, the
+scope name, the cgroup, or an exit code (P2). The support is my host reading, and it is the reason
+the INF is materially true despite S205 under-licensing it.
+
+Scope-measurement nit, confirmed: `systemctl --user show …scope -p MainPID` prints an empty value
+and exits 0 — a scope tracks no main pid. The process binding must be read from `ControlGroup`
+(`… /app-Hyprland-hypridle-d4bd7533.scope` → `└─1667 /usr/bin/hypridle`) or from the scope's
+`status`, not from `MainPID`.
+
+## Cross-check with `RevEntryR14` (errata E1/E2)
+
+Peer message received after my first report; every corrective claim was re-measured here, not
+accepted on assertion:
+
+| peer claim | independent check | result |
+|---|---|---|
+| 13:25:00 is boot −1's first start | `journalctl --boot=-1 \| grep -c 'Started hypridle\.'` → 1 | confirmed |
+| 22:14:11 is boot 0's first start | `journalctl --boot=0 \| grep -c 'Started hypridle\.'` → 1 | confirmed |
+| neither is a restart | per-boot counts 1/1; no second start in either boot | confirmed |
+| boot −2 has no hypridle line | `journalctl --boot=-2 \| grep -ci hypridle` → 0 | confirmed |
+| journal oldest entry 07:18:30 | `journalctl \| head -1` → `Oct 23 07:18:30` | confirmed |
+| "two lines" is retention, not history | boot −3 holds `Stopping/Stopped hypridle` + scope `Consumed … 1d 8h 25min` (pre-retention start) | confirmed |
+| 150 s step never locks | launcher 59 lines, screensaver 35 lines, 0 matches for `hyprlock\|omarchy-system-lock\|swaylock` | confirmed |
+| `MainPID` empty for a scope | `-p MainPID` empty, exit 0 | confirmed |
+| `inactive` cannot separate rc=3 from rc=4 | `is-active` existing → `inactive`/3; nonexistent → `inactive`/4 | confirmed |
+| boot −1 spans 13:24:57–22:10:20 | `journalctl --user --list-boots` → `13:24:57–22:10:20`; system `--list-boots` → `13:24:36–22:12:24` | **scope distinction, not an error: both verified; S205 is user-journal so the user window is the one to quote** |
+
+Ownership note: I did not append errata E1 or E2 to
+`corpus/knowledge/idle-lock-chain-armed-r14.md`. This seat is read-only over the lane corpus; my
+deliverable is this report. Both errata postdate my first report write (03:32): E1 landed at 03:33
+(file 2505 B), E2 at 03:35:30 (file 3768 B). E1's "holds only *across boots*" phrasing is the one the
+peer asks to fix; E2 directly below it already corrects it (neither line is a restart; each boot's
+first start), so E2 supersedes E1 and the pair should be collapsed to a single errata entry. Their
+coexistence is itself evidence for P6: the document holds two competing statements, and C1 cannot
+tell them apart.
+
+## Residual risk / verification gaps
+
+- All live probes are point samples from 2026-10-25 03:23–03:41 -03. A daemon exit or restart after
+  the write would date the gate-quote's pid; the quote is session-scoped ("in this session"), so the
+  snapshot is honest but not durable across a reboot.
+- I did not and cannot observe the host state at receipt-write time (2026-10-24); what I verified is
+  that the pid/digest/session facts hold now and that the lstart (2026-10-23 22:14:10) predates the
+  receipt, so no pid-reuse explanation is available.
+- The 13:25:00 line's boot attribution is **direct**, not by exclusion: `journalctl --list-boots`
+  prints boot −1's full id `e55f9cd9ec4e4dd5bf0ce775977af5a5`, and the verbose entry for that line
+  carries `_BOOT_ID=e55f9cd9ec4e4dd5bf0ce775977af5a5`. The 22:14:11 line carries
+  `_BOOT_ID=0a3785aac7104585a914f6cda41795a7`, which equals boot 0's id and
+  `/proc/sys/kernel/random/boot_id`. (An earlier draft hedged this as exclusion — it is a direct
+  match; `--list-boots` does print full ids.)
+- Entry prose semantics ("restart, not a first start") is not machine-checked by any counter; my
+  reading of it is a human judgment and is filed as P4, not as a claim failure.
+- The retention conclusion (P4) assumes the journal was not vacuumed *and* that a start line could
+  not have been written to a different journal file; the `Consumed 1d 8h` scope line in boot −3 is
+  positive evidence of a pre-retention start, but the absolute start count of the daemon over the
+  host's lifetime is unknowable from what is retained.
+
+## Evidence artifacts
+
+- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 143-line transcript of every command
+  above (including the peer cross-check block) with its exit code.

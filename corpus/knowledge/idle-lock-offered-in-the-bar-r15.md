@@ -74,3 +74,29 @@ carrying the handler (4) agrees. The lane's measured figure is the one recorded 
   mtime, so the creation clock and the content clock disagree. The served claim ("the
   offer is not a recent addition") holds on either clock. Found by wave-2 seat
   `RevQuoteS209` (`.ufo/waves/round-35/w2/reports/RevQuoteS209.md`).
+
+- **E2 - "never taken it" withdrawn.** Section 4's closing inference and this entry's
+  title overstate the evidence: the journal shows the idle daemon's scope `Consumed` at
+  `2026-10-23T19:24:38-03:00` with no `Stopping`/`Stopped` pair and a new start at
+  `22:14:11`, which is what `omarchy-toggle-idle` produces when it stops hypridle. So a
+  toggle-off happened in the retained window; who performed it and by which surface is
+  unverified. What survives: the choice leaves no state in the toggles directory, and
+  the bar and the menu both offer it. See
+  `.ufo/waves/round-35/w2/reports/RevQuoteS204.md`.
+
+- **E3 - "built not to remember" withdrawn.** `omarchy-toggle-idle` stops or starts the
+  `hypridle` process and writes no file, and
+  `default/hypr/autostart.conf:1` carries `exec-once = uwsm-app -- hypridle`, which re-arms
+  the daemon at every login. The toggles directory's `flags.conf` is byte-identical to the
+  omarchy template placeholder whose own text reads "This directory is intended for
+  permanent config toggle flags. Do not remove this file" - so an absent idle entry is the
+  toggle's process-shaped design, not a desktop that refuses to remember. Section 3's
+  causal reading is replaced by that mechanism; the measurement (2 files, 0 naming idle)
+  is unchanged.
+- **E4 - one state is named, the other is silence.** Section 2's heading overstates S207:
+  the indicator prints `{"text": ""}` while `hypridle` runs, and an icon whose tooltip
+  reads `Idle lock disabled` when it does not. Exactly one state carries words.
+
+- **E5 - scope of the "leaves no trace" heading.** It holds for on-disk state. The toggle
+  also calls `notify-send`, so a notification may survive in the session's notification
+  history; no such history was read.

@@ -2157,3 +2157,71 @@ dead code under its own frozen spec, the `S_ISLNK`/`O_NOFOLLOW` pair is
 redundant against every static tree (TOCTOU-only), and the merge package's
 id remap base ("registry ends at S196") is stale now that the lane registry
 ends at S202.
+
+## Round 35 — the idle-lock control surface lands; the ledger claim is falsified against itself (2026-10-24/25, two attempts)
+
+Registration `.ufo/waves/round-35/registration.md` froze both predicates at
+`19e4ab3171c1540c40d6b12097745af98053b07d` before any round-35 data. Attempt 1 dispatched the
+64-seat wave 1 and died without a report; attempt 2 inherited the wave-1 evidence, landed the
+data at `02088b4dff0da153df30ff174611d1257c92d0cd`, dispatched a 40-seat wave 2 against it, and
+applied the wave-2 falsifications as append-only errata. Round shape: two v1 waves, 64 + 40 =
+**104 seats** (wave 1: executor 13, scout 12, reviewer 11, critic 8, scribe 7, connector 4,
+mutation-tester 3, sentinel 2, revenger 2, simplifier 2; wave 2: reviewer 21, executor 3,
+mutation-tester 3, critic 3, sentinel 2, revenger 2, scout 2, scribe 2, simplifier 1,
+connector 1). The §3 planner seat is held by the L1; the planning data-walk rode the
+`connector`/`revenger` items, as the validator rejects a `planner` seat.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 **coverage** — the idle-lock control surface (frontier → core): three admitted entries + eight registry rows S203–S210, adopted from `merge/mado/` with ids re-pointed by document | freeze `19e4ab3`: `closed_entries=0 closed_rows=0 open_cites=8 TARGET_MISSED` exit 1 → data `02088b4`: `closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET` exit 0 (re-run after every errata append, unchanged); registry 192 → 200 rows; navigation 47/47 → 50/50 | `python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json` | **ADMITTED, with three routed defects** — the counter is shape-scored (dead `digest` clause; shape-only and fabricated-payload cribs both reach `TARGET_MET`: `controls-content/`), so its `TARGET_MET` is not truth evidence; wave-2 seats falsified three inferences in the admitted text (withdrawn by errata) and all eight receipts were re-opened and re-hashed 8/8; a one-line digest repair keeps the real root `TARGET_MET` and kills both cribs (round-36 claim) |
+| C2 **calibration** — the lane's own evidence ledger: retire the r34 dead word-bound clause, split the S_ISLNK/O_NOFOLLOW pair, re-issue the frozen-blob ledger at the real r34 tip | r34 tip `dff3941` had no clause ledger (`error=clause-ledger-missing` exit 2) → `02088b4`: `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 TARGET_MET` exit 0 | `python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json` | **NOT ADMITTED — the claim's substance is falsified.** The counter prints `TARGET_MET` exactly as its predicate says, but wave-2 seats showed: (a) `ledger_tip_ok` scores `TARGET_MET` on the round-34 defect itself (stale `fa7ba113` label, `MutC2Real` M3a/M3c/M3d, `RevTipLedger` control C) — the repaired label is not observed; (b) the round-34 "real tip" is disputed — `dff3941` was master for 0:17:37 and the last round-34-labelled commit is `6d754bd`; the blob ids verify identically at both; (c) `uncovered=0` is fail-open on clause deletion with its control, and covered-receipts are token greps (`RevC2Tip` F1/F2). Operator ruling required before this claim is counted as a repair |
+
+**Axis table re-derived at `02088b4dff0da153df30ff174611d1257c92d0cd` plus the round-35 errata:** navigation 50/50; calibration 43/43; operability 12/12.
+
+Three tied sub-axes sat at 1.0 at the round-34 tip (`navigation 47/47`, `calibration 41/41`,
+`operability 12/12`) and the capabilities table gained a row in round 34, so the AXES.md
+stagnation nudge does not waive the lowest-axis obligation; C1 and C2 sit on the lowest two.
+No axis is claimed harmed: the index gate reads 50/50 exit 0, the axis gate re-derives all
+three rows to MATCH, and the operability suite reads `MADO_SELFTEST: 460/460 assertions passed`
+(byte-identical suite to the round-34 tip). Two measured defects are recorded rather than
+hidden: the axis publication was stale for ~15 minutes while the data commit landed ahead of
+this row (`mismatched=2`), and the pre-data `golden` control's rows differ from the shipped
+registry in anchor/teaches cells, so the controls never exercise the live bytes.
+
+### Capabilities (round 35)
+
+None entered. The proposed row — "clause-ledger audit of an admission counter" — would
+misdescribe what runs: wave-2 seats showed three of its four observables are self-authored
+token checks that a clause deletion, a receipt substitution or a stale label all pass
+(`RevC2Tip` F1–F5, `MutC2Real` M3a/M3c/M3d). A capability table row is a claim that the lane
+can *do* the thing; this round can demonstrate it only in the degenerate sense of "audits
+whatever ledger it is handed".
+
+### Sources, saturation, planned
+
+Sources 192 → 200 rows (S203–S210: eight `own-work` tier-A rows, all `mined`, opened
+2026-10-24; no existing row's status/recheck/used-by changed; four new rows' `scope`/`teaches`
+cells were corrected in-round to match the entry errata). Frontier advanced: the round-35
+idle-lock offer route (consumer half measured; transitions remain open). Saturation 9.0 / N=3
+unchanged; retired: none.
+Planned (round 36; intent only): (1) bind the C1 digest to the bytes read and add the two
+content cribs as committed controls — the patch and both miss receipts exist; (2) make
+`ledger_tip_ok` parse the ledger's own table, cross-check the clause ledger against the
+counter's clause set, and pin one tip definition; (3) census gaps found by `MutCensusRow`
+(alphabetic recheck prose accepted; blank `used-by` silent; `used-by` unchecked on non-mined
+rows); (4) the `used-by`/`opened` columns are not measured by C1 at all (`RevRowsUsedBy` F1/F2).
+
+**Correction to the C1 before-state (append-only, found by wave-2 `CritAxisClaims`).** The
+registration's before-state says the idle-lock *offer* "was never opened by this lane". That
+overstates the gap: `knowledge/waybar-walker-semantics.md:139` already carried the waybar
+run payload, tooltip and click, and `knowledge/idle-lock-plane.md:284-289` already reviewed
+the offer at `dff3941`. What this round actually added is the menu surface (S208), the dated
+bar-config copies (S209), the toggles directory (S210), the setup path (S203/S204) and live
+chain liveness (S205). The claim still stands as a coverage move; its before-state was
+larger than the registration said.
+
+**Correction to the lowest-axis quote (append-only, same seat).** The round-32 publication
+carried a fourth cell (`sourced-art 1.0`) that round 34 dropped while `## Retired` still
+reads "none retired". The three-cell quote in the registration is therefore incomplete but
+not wrong on value; the lowest-axis conclusion (two tied-lowest axes, no nudge waiver)
+survives. Recorded for round 36: `sourced-art` must be retired explicitly or republished.

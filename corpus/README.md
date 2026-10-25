@@ -56,9 +56,9 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/dispatcher-semantics-r25.md` (MADO-R32-2, round 32) | A dispatcher describes, it does not act: the wiki's own sentence that a dispatcher returns a table describing an action and does not invoke it immediately, that its contents are not guaranteed stable, and that it only runs when wrapped in `hl.dispatch()`. Plus the two dispatchers that touch compositor surfaces — `event(string)` sends to socket2 and `force_idle` sets elapsed idle time ignoring inhibitors — and the wiki's own warning against setting DPMS or `force_idle` from a keybind. | `source:` S188 in [SOURCES](SOURCES.md); fetched bytes `.ufo/waves/round-32/fetch/S188.bin` (sha256 `c830ce0717f92776`); recheck 90d. |
 | `knowledge/dispatcher-surface-and-request-grammar-r26.md` (MADO-R32-3, round 32) | The dispatcher surface as published for the host's own release line: the 0.56.0 page already exposes the Lua `hl.dsp.*` API and its per-object groups (`window.`, `workspace.`, `group.`, `cursor.`), so the host's v0.56.2 carries the same vocabulary as current upstream — and the boundary between the two surfaces, the socket request grammar (`[flags]/command args`) and the dispatcher table that must be wrapped in `hl.dispatch()`, whose only documented bridge is the `event` dispatcher. | `source:` S186, S188, S196 in [SOURCES](SOURCES.md); fetched bytes `.ufo/waves/round-32/fetch/S196.bin` (sha256 `f9b51362f2440e02`); recheck 90d. |
 | `knowledge/waybar-module-text-route-r25.md` (round 34; Waybar event-socket client) | The Hyprland backend derives a socket folder and warns when the runtime directory is absent. The window module registers for activewindow. Upstream bytes only; host bar use is unknown. | `source:` S201, S202 in [SOURCES](SOURCES.md); fetched bytes `.ufo/waves/round-34/fetch/S201.bin` and `.ufo/waves/round-34/fetch/S202.bin`; recheck 90d. |
-| `knowledge/idle-lock-never-asked-r12.md` (MADO-R35-1, round 35) | The setup path asks nothing about the idle lock: `omarchy-first-run` runs twelve first-run scripts and none of the twelve concerns the idle lock, and the user journal holds zero `omarchy-toggle` invocations. Scope is the setup path only — the running interface does offer the choice, stated in the sibling note. | `source:` S203, S204 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S203.receipt.txt` and `S204.receipt.txt`; recheck on-request. |
-| `knowledge/idle-lock-chain-armed-r14.md` (MADO-R35-2, round 35) | The idle lock is armed on this host: `hypridle` runs as pid 1667 with two start lines in the session journal, the declared chain is a screensaver at 150 s and a lock at 152 s, and the unit probe reads `inactive` only because the daemon runs inside a transient scope. No transition was fired. | `source:` S205 in [SOURCES](SOURCES.md); receipt `.ufo/waves/round-35/fetch/S205.receipt.txt`; recheck 90d. |
-| `knowledge/idle-lock-offered-in-the-bar-r15.md` (MADO-R35-3, round 35) | The desktop does offer the idle-lock choice in two independent surfaces — the bar's `custom/idle-indicator` click and the menu's Idle Lock toggle — and renders the off state as an icon tooltip; four dated bar-config copies carry the handler (oldest 2026-10-03), and the toggle-state directory holds no idle-lock entry, so the choice is offered, displayed and never recorded. | `source:` S206, S207, S208, S209, S210 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S206.receipt.txt`–`S210.receipt.txt`; recheck on-change (S209, S210: 90d). |
+| `knowledge/idle-lock-never-asked-r12.md` (MADO-R35-1, round 35) | The setup path asks nothing about the idle lock: `omarchy-first-run` runs thirteen items (twelve `*.sh` plus a hook install) and none concerns the idle lock. Its first reading that the operator therefore never toggled is withdrawn in the entry's own errata: the journal shows the daemon's scope consumed at 19:24:38 and restarted at 22:14:11 on 2026-10-23, consistent with a toggle-off. | `source:` S203, S204 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S203.receipt.txt` and `S204.receipt.txt`; recheck on-change. |
+| `knowledge/idle-lock-chain-armed-r14.md` (MADO-R35-2, round 35) | The idle lock is armed on this host: `hypridle` runs as pid 1667 with one start line in the current boot's journal, the declared chain is a screensaver at 150 s (no lock call in `omarchy-launch-screensaver`) and a lock at 152 s, and the unit probe reads `inactive` only because the daemon runs inside a transient scope. No transition was fired. | `source:` S205 in [SOURCES](SOURCES.md); receipt `.ufo/waves/round-35/fetch/S205.receipt.txt`; recheck 90d. |
+| `knowledge/idle-lock-offered-in-the-bar-r15.md` (MADO-R35-3, round 35) | The desktop offers the idle-lock choice in two independent surfaces - the bar's `custom/idle-indicator` click and the menu's Idle Lock toggle - and names the off state with an icon tooltip while the on state is silence; four dated bar-config copies carry the handler (oldest 2026-10-03 by content mtime, 2026-10-06 by creation clock), and the toggle writes no file, re-arming `hypridle` at login from `autostart.conf`. | `source:` S206, S207, S208, S209, S210 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S206.receipt.txt`–`S210.receipt.txt`; recheck on-change (S210: 90d). |
 
 ## Quality bar
 
@@ -100,7 +100,9 @@ Index completeness does not retire these unresolved surfaces:
   §6. No screenshot, input injection or socket connection is added here.
 - Idle/lock transitions and daemon stop-cause: [idle/lock unknowns](knowledge/idle-lock-plane.md)
   §11 and [terminal dispositions](knowledge/closeout-r11.md) §5. No new
-  consumer or transition measurement is claimed.
+  consumer or transition measurement is claimed *here*; round 35 moved the
+  consumer half onto measured ground (see the round-35 route below), and the
+  transition half stays open.
 - Unlanded theme/Walker live rows and outstanding mutation/branch coverage:
   [gate residual ledger](knowledge/gate-standing-use.md) §6. Note rows do
   not make proposed gate rows executable.
@@ -238,9 +240,15 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
 - The idle-lock control surface now has measured ground instead of a gap: the setup path asks nothing
   ([never-asked](knowledge/idle-lock-never-asked-r12.md)), the chain is armed on this host
   ([chain armed](knowledge/idle-lock-chain-armed-r14.md)), and the choice is offered in two independent
-  surfaces while leaving no state behind ([offered in the bar](knowledge/idle-lock-offered-in-the-bar-r15.md)).
-  This supersedes the earlier "the desktop never offers the choice" over-read, which was true of the setup
-  path only. Still open: idle/lock *transitions* (nothing was fired), lock success, hyprlock's own config,
-  rendered bar pixels and tooltip rendering, the transient-scope unit name, and the operator's preference —
-  the one question no source can answer. The C1 counter is shape-scored and its digest clause is dead
-  (lesson M35-2), so these three notes rest on re-opened receipts, not on the counter.
+  surfaces while leaving no on-disk state behind (the toggle writes no file; its state is the daemon's
+  process, re-armed at login from `autostart.conf`; a `notify-send` may survive in notification history)
+  ([offered in the bar](knowledge/idle-lock-offered-in-the-bar-r15.md)).
+  This supersedes the package's round-12 framing that the desktop never offers the choice, which was true
+  of the setup path only. Wave-2 attacks falsified three inferences in the admitted text and all are
+  withdrawn by errata: the journal's zero `omarchy-toggle` count is a null channel (the daemon's scope was
+  consumed at 19:24:38 and restarted at 22:14:11, so a toggle-off is indicated), the 150 s step is a
+  screensaver with no lock call, and "built not to remember" is replaced by the process-shaped mechanism.
+  Still open: idle/lock *transitions* (nothing was fired), lock success, hyprlock's own config,
+  rendered bar pixels and tooltip rendering, the transient-scope unit name, notification history, and the
+  operator's preference — the one question no source can answer. The C1 counter is shape-scored and its digest
+  clause is dead (lesson M35-2), so these three notes rest on re-opened receipts, not on the counter.

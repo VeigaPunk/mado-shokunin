@@ -44,8 +44,21 @@ mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc
 mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
 ```
 
-**After** (registry 200 data rows), exit **0**: the same seven `W04` warnings on
-old ids (S030…S121), none on S203–S210, and the same `mado ok` line. Row count:
+**After** (registry 200 data rows), exit **0**:
+
+```text
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+```
+
+Same seven `W04` warnings on old ids (S030…S121), none on S203–S210, same `mado ok`
+line, `AFTER_RC=0`. Row count:
 `grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md` → **192 → 200**.
 Exit 0 at round end is the conformance requirement; it holds.
 
@@ -162,7 +175,39 @@ admitting entries), then
 (wave-1 `RevValidate`, re-proved by this round's own run). The real append then
 re-ran the root census → exit 0.
 
+## Wave-2 falsifications applied as errata
+
+The wave-2 seats were assigned to falsify the landed text, and two did. Their findings
+are applied as append-only errata blocks (criterion 44), not as rewrites:
+
+- `idle-lock-never-asked-r12.md` E1 — the "never toggled" inference is withdrawn: the
+  journal's zero `omarchy-toggle` count is a null channel, and the daemon's scope was
+  consumed at `2026-10-23T19:24:38-03:00` and restarted at `22:14:11`, a 2h50m window
+  with the idle lock down, with no coredump and no OOM. E2 — thirteen executed items,
+  twelve of them `*.sh`.
+- `idle-lock-chain-armed-r14.md` E1/E2 — the two start lines are two boots' first starts,
+  not a restart; the 150 s step calls no lock (`omarchy-launch-screensaver` has no
+  `hyprlock`/`omarchy-system-lock`); the title's "the chain will fire" is withdrawn; the
+  transient-scope inference is materially true but unlicensed by its own receipt.
+- `idle-lock-offered-in-the-bar-r15.md` E1–E5 — the dating clock (mtime vs creation),
+  "never taken it" withdrawn, "built not to remember" replaced by the actual mechanism
+  (`omarchy-toggle-idle` is process-shaped and `autostart.conf` re-arms the daemon), the
+  indicator names one state and is silent for the other, and "leaves no trace" scoped to
+  on-disk state.
+
+`PRED-C1-r35-v1` is unchanged at `closed_entries=3 closed_rows=8 open_cites=0` after every
+errata append, because the predicate scores shape, quote legality and digest presence —
+not truth. That gap is the round's central finding (M35-2) and the reason the counters
+are reported with their limits rather than as evidence of correctness.
+
 ## Mistakes
+
+Four mistakes, named here at section level so a citation check that reads `#mistakes`
+sees them: **M35-1** id-space citation (the registration's package-id list was copied,
+not derived) · **M35-2** instrument vacuity (the C1 counter's digest clause is dead and
+a shape-only tree passes) · **M35-3** misrooted seat output (swept clean — no lane file
+at the fleet root) · **M35-4** a repaired label is still a dead observable (C2's
+`ledger_tip_ok` cannot separate the defect it repairs from the fix).
 
 ### M35-1 — id-space citation (class: id-space)
 
@@ -192,13 +237,20 @@ able to fail: run the derivation against the registration's list and the diff is
 nonempty —
 
 ```sh
-diff <(echo "S309 S310 S321 S329 S330 S331 S334 S336" | tr ' ' '\n') \
-     <(grep -h '^source: S' merge/mado/knowledge/corpus/knowledge/idle-lock-*.md \
-       | sed -E 's/^source: (S[0-9]+).*/\1/' | sort -u)
+comm -3 <(echo "S309 S310 S321 S329 S330 S331 S334 S336" | tr ' ' '\n' | sort) \
+  <(grep -h '^source: S' /home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/idle-lock-never-asked-r12.md \
+      /home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/idle-lock-chain-armed-r14.md \
+      /home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/idle-lock-offered-in-the-bar-r15.md \
+    | sed -E 's/^source: (S[0-9]+).*/\1/' | sort)
 ```
 
-→ 7 differing lines. The check passes only on a derived list; it fails on the
-copied one.
+→ **14 lines**: 7 left-only (S309, S310, S321, S329, S330, S331, S334 — ids the
+registration claims that no adopted entry cites) and 7 right-only (S315, S316,
+S327, S335, S337, S340, S342 — the ids the entries do cite); S336 is the single
+shared id. The check passes only on a derived list; it fails on the copied one.
+Wave-2 seat `RevIdRemap` then found the mechanism: the claimed list is exactly
+the `was` column of the package's own `lanes/mado/ID-REMAP.md`, uniformly +6
+(S309→S315 … S336→S342), i.e. staging ids read from a superseded base.
 
 ### M35-2 — instrument vacuity (class: instrument)
 
@@ -237,24 +289,43 @@ python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/scratch/Cr
 A criterion that cannot fail on the artifact that produced it is decoration. The
 round-35 predicate was frozen before data and is not amended; the repair is a
 round-36 claim: bind the digest to the bytes read, and add the content cribs as
-committed controls.
+committed controls. **The repair is demonstrated on a scratch copy** —
+`scratch/L1DigestFix/count-fixed.py`, one added conjunct
+`and digest == receipt["sha256"]`:
+
+```text
+--root .                     -> closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   rc=0
+--root controls/golden       -> closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   rc=0
+--root scratch/CritVacuous   -> closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED rc=1
+```
+
+So the round's data survives its instrument's repair while the fabrication does
+not; the two cribs are committed as `controls-content/c1-shape-only/` and
+`controls-content/c1-fabricated-payload/`, each printing `TARGET_MET` on the
+frozen counter.
 
 ### M35-3 — misrooted seat output (class: hygiene)
 
-**What happened.** Wave 1's `ExecIndex` and `ExecAxis` reports cite a jj `@`
-(`ba507b2b…`) with a tree identical to git HEAD `19e4ab31…`; no seat wrote into
-the fleet root this round (`git -C /home/vgpnk/Projects/shokunin status
---porcelain` shows only driver/state files and other lanes' leftovers). The
-sweep found no lane-authored file at the fleet root, so this is recorded as a
-**clean** sweep, not a defect — the class is named because the item requires the
-sweep be run and reported.
+**What happened.** A wave-2 seat wrote its report into the **fleet** root at
+`/home/vgpnk/Projects/shokunin/.ufo/waves/round-35/w2/reports/RevLogEvidence.md`
+(seat `RevLogEvidence`), because seat tools start at the fleet root and the
+renderer's `Report:` trailer is lane-relative. The lane copy did not exist.
 
-**Evidence pointer.** `git -C /home/vgpnk/Projects/shokunin status --porcelain`
-at round end: no untracked file whose content names mado round 35.
+**Evidence pointer.** `find /home/vgpnk/Projects/shokunin/.ufo/waves/round-35 -type f`
+→ 1 file before the sweep, 0 after; `cmp` between the fleet copy and
+`mado-shokunin/.ufo/waves/round-35/w2/reports/RevLogEvidence.md` → identical;
+fleet-root `git status --porcelain | grep round-35` → empty after the sweep.
 
-**Captured-by.** the item's misroot sweep rule.
+**Captured-by.** the item's misroot rule, applied at round end — but the wave
+`context` already carried the sentence "Any `Report:` trailer path the renderer
+gives you is RELATIVE to …", and this seat still resolved it from the fleet root.
+The context sentence is necessary and was not sufficient.
 
-**Fix.** none needed; the sweep stays in the round report.
+**Fix.** The sweep procedure was run as specified: copy byte-exact into the lane,
+`cmp`, delete the fleet copy. Demonstrated able to fail: with the file planted at
+the fleet root the sweep's `git status` finds it (it did, at 03:41); after the
+repatriation the same command prints nothing (`no round-35 at fleet root`). The
+sweep, not the context sentence, is the control.
 
 ### M35-4 — a repaired label is still a dead observable (class: instrument)
 
@@ -280,9 +351,20 @@ failing case and no such control existed before data.
 **Fix.** C2's predicate is frozen and `TARGET_MET` as written; the verdict is reported
 with its limit rather than upgraded. Round-36 claim: make `ledger_tip_ok` parse the
 ledger's own table and require every row to name the tip and a re-verifying blob id,
-with `MutC2Real`'s M3a/M3c/M3d as committed controls. Demonstrated able to fail: the
-mutant receipts above are `TARGET_MET` on the current counter and `TARGET_MISSED` on the
-proposed one (the seat's M3a run is the receipt).
+with `MutC2Real`'s M3a/M3c/M3d as committed controls. Demonstrated able to fail on the
+*proposal's* evidence, not on a built counter — no proposed counter exists this round,
+so by the fix-counts-only-once-shown-able-to-fail rule this is a routed claim, not a
+landed fix. What the round does show: the current counter prints `TARGET_MET` on M3a
+(the receipt in `MutC2Real.md`), which is the failing case a future control must turn
+to `TARGET_MISSED`.
+
+Two further fail-open paths on the same counter, found by wave-2 seat `RevC2Tip` and
+recorded, not repaired: deleting a live clause **together with its control** from
+`c1/clauses.json` leaves `uncovered=0` and the verdict `TARGET_MET`, because nothing
+cross-checks the ledger against the counter's own clause set; and a covered clause's
+receipt is a token grep, so pointing a clause at any file containing
+`verdict=TARGET_MISSED` (including a one-line file) leaves the clause "covered". The
+ledger's `retired` entry is likewise an unbound string set.
 
 ## What this lesson does not license
 

@@ -1,0 +1,288 @@
+# RevQuoteS203 — wave 2 falsification of registry row S203
+
+Seat: `L1Mado35.RevQuoteS203` (leaf reviewer). Round 35, wave 2.
+Lane repo: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only attack; no lane corpus,
+counter, control, `SOURCES.md`, jj/Git state, or `/home/vgpnk/Projects/shokuknow` byte was modified.
+Scratch evidence: `.ufo/waves/round-35/scratch/RevQuoteS203/evidence.log`.
+Host reads only (sha256sum/wc/ls/grep/python read); no first-run script was executed.
+No tool installed or upgraded this seat.
+
+## Verdict
+
+**CONFIRM — no divergence.** The S203 gate quote is a contiguous substring of the receipt, the
+facts it states still match the live host, and the receipt hash equals the anchor cell of row S203.
+All three assigned checks pass; the claim survives attack intact.
+
+**Scope caveat — this verdict covers row S203's evidence only.** Entry `idle-lock-never-asked-r12.md`,
+the entry this row gates, is **not** clean: its second conjunct ("the operator never toggled it
+afterwards", gated on S204) is unsupported and now positively contradicted. See
+"Entry-level defect inherited through S204". C1 still reports `TARGET_MET` because its frozen
+predicate tests quote-contiguity and registry hygiene, **not** the truth of the entry's prose — that
+gap is reported below as the round's main residual risk.
+
+Axes named: **A1** quote-contiguity · **A2** live-fact fidelity · **A3** hash-anchor fidelity ·
+**A4** claim honesty/scope.
+
+## A1 — quote contiguity (PASS)
+
+Entry-side gate quote, `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/idle-lock-never-asked-r12.md:12`:
+
+```
+gate-quote: S203 located: install/first-run/ lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock
+```
+
+Quoted portion checked against receipt bytes:
+
+```
+python3 -I -c "q='located: install/first-run/ lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock'; b=open('.ufo/waves/round-35/fetch/S203.receipt.txt','rb').read(); qb=q.encode(); print('count',b.count(qb),'offset',b.find(qb),'words',len(q.split()))"
+→ count 1 offset 3033 words 14          EXIT=0
+```
+
+- Contiguous: yes, exactly **1** occurrence, at byte offset **3033** of a **3137**-byte receipt
+  (`wc -c` → 3137, EXIT=0), i.e. the final line; the only tail after it is the single `\n`.
+- Word count **14**, inside the frozen predicate's 1–25 word window
+  (`.ufo/waves/round-35/c1/frozen.json` → `"a contiguous substring of the receipt bytes and is 1-25 words long"`).
+- Receipt is LF-only (`\r\n` absent) and newline-terminated, so the quote is not an artifact of
+  normalization.
+
+## A2 — live-fact fidelity (PASS, all three clauses)
+
+Re-opened `/home/vgpnk/.local/share/omarchy/bin/omarchy-first-run` on the host:
+
+| Fact asserted by the quote | Live observation | Command / exit |
+|---|---|---|
+| file identity | `20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630` — equal to receipt and to the row's file hash | `sha256sum …/omarchy-first-run` → EXIT=0 |
+| size | `1089` B — equal to receipt | `wc -c …` → EXIT=0 |
+| "install/first-run/ lists 12 scripts" | dir holds **13** entries, of which **12** are `*.sh`; the 13th is `install-voxtype.hook` | `ls -1 …/install/first-run \| wc -l` → 13 EXIT=0; `ls -1 …/*.sh \| wc -l` → 12 EXIT=0 |
+| "the omarchy-first-run body runs all 12" | body contains **12** `install/first-run/*.sh` invocations; invocation set is **exactly equal** to the dir's `*.sh` set (body∖dir = ∅, dir∖body = ∅) | `grep -c 'install/first-run/.*\.sh' …` → 12 EXIT=0; python set-diff → `SET_EQUAL True` |
+| "none is idle-lock" | no `idle`/`lock` match anywhere under `install/first-run/`; likewise no match in the installer body | `grep -rq -i 'idle' …/install/first-run/` → `IDLE_ABSENT` EXIT=0 |
+
+Supporting checks, all exit 0:
+
+- Receipt-embedded body is **byte-identical** to the live body (28/28 lines, `EMBEDDED_EQ_LIVE: True`) —
+  the receipt is not a paraphrase of a drifted file.
+- `nl -ba` confirms the row's cited range `body lines 3 and 8-27`: line 3 is the
+  `omarchy:summary=Finish the installation of Omarchy …` comment; lines 8–27 are the mode-file gate,
+  the 12 invocations, the hook registration and the sudoers cleanup.
+- `install-voxtype.hook` is *registered*, not `bash`-run (`omarchy-hook-install post-update …`, line 23),
+  which is why "12 scripts" and "runs all 12" are consistent with a 13-entry directory.
+- Hidden-file test: `ls -A1` = 13 and `find -mindepth 1 -maxdepth 1` = 13 — no suppressed entries.
+
+### Homonym disarmed (recorded so no later seat re-raises it)
+
+`install/login/default-keyring.sh:12` contains `lock-on-idle=false`. This is a **GNOME-keyring**
+setting (`[keyring]` section of `Default_keyring.keyring`), invoked from `install/login/all.sh:2` —
+it is **not** the desktop idle lock and therefore **not** a counterexample to "none is idle-lock".
+The only other `idle` hit in the install tree is `hypridle` in `install/omarchy-base.packages:53`.
+
+## A3 — hash-anchor fidelity (PASS)
+
+```
+sha256sum .ufo/waves/round-35/fetch/S203.receipt.txt
+→ 1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646   EXIT=0
+awk -F'|' '$2 ~ /S203/ {print $7}' corpus/SOURCES.md   → 1b7fa87…1646   EXIT=0
+```
+
+Row S203 (`corpus/SOURCES.md:205`; 950 B at first read, **990 B after the 03:40:12 rewrite** — see
+"Concurrent mutation of the artifacts") anchor cell:
+`…; receipt .ufo/waves/round-35/fetch/S203.receipt.txt sha256 1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646`.
+
+- **Equal.** No divergence to report. Re-verified against the post-rewrite file: the anchor cell is
+  byte-identical and still the unique match.
+- The hash is **unique** in the registry (`grep -c <hash> corpus/SOURCES.md` → 1), so the anchor is
+  not a copy-paste placeholder shared across rows.
+- Cell hygiene matches the frozen predicate: exactly one well-formed S203 row, no literal/escaped
+  pipe inside any cell (12 pipes → 11 content cells: id, description, origin, admit, axis,
+  evidence, note, status, date, recheck, used-by; `escaped_pipe False`), status `mined`, used-by
+  `corpus/knowledge/idle-lock-never-asked-r12.md`. Recheck cell changed from `on-request` (first read)
+  to `on-change` (post-rewrite); both are cadence tokens, and the frozen predicate only requires a
+  valid token, so C1 is unaffected — recorded because it proves the registry moved under this review.
+- `frozen.json` receipt entry for S203 carries the same sha256, so anchor and frozen target agree.
+- Corroboration the claim is still load-bearing (read-only run):
+  `python3 -I .ufo/waves/round-35/c1/count.py --root … --frozen …` →
+  `PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, **EXIT=0**.
+
+## Findings by severity
+
+### BLOCKING / HIGH — none
+
+No divergence in quote, facts, or hash. Nothing here supports reopening C1.
+
+### LOW-1 — receipt's own enumeration is count-vs-names inconsistent
+
+`S203.receipt.txt` prints `12` under `--- first-run scripts on this host ---` and then lists
+**13** filenames (the 13th being `install-voxtype.hook`). The gate quote inherits the word "scripts",
+which is only true under `scripts ≡ *.sh`. This is not a false statement — the hook is *installed*,
+not executed — but the receipt section title ("first-run scripts") presents 13 names under a
+12-count heading, so a future seat re-deriving "12" from the filenames gets 13 and must repeat the
+`*.sh` reasoning. Suggest the receipt label the block `*.sh` / note the hook, at next re-mint.
+
+The `*.sh` boundary is the *correct* one, proven rather than assumed:
+
+- `omarchy-hook-install` (`bin/omarchy-hook-install`) only materialises the file — `mkdir -p
+  "$HOOK_DIR"`, `cp "$HOOK_FILE" "$HOOK_PATH"`, `chmod 755` (lines 27–29). It never `bash`es or
+  `source`s it; the hook is dispatched later by `omarchy-hook` (`bin/omarchy-hook:3`), outside
+  `omarchy-first-run`.
+- The hook self-deletes on first run (`install-voxtype.hook:6` → `rm -f "$0"`). It is **still
+  present** at `~/.config/omarchy/hooks/post-update.d/install-voxtype.hook` (174 B, mode 755,
+  mtime 17:48), which proves it has **never executed** on this host.
+
+Therefore "the omarchy-first-run body runs all 12" is exactly right: 12 `bash *.sh` lines, set-equal
+to the directory's 12 scripts. Only the receipt's *label* for the 13 listed names is loose.
+
+### Cross-row resolution — S204 peer's "executes 13 items" is refuted
+
+Peer `L1Mado35.RevQuoteS204` reported (and asked me to confirm on my row) that the count "12" is
+wrong because `ls …/install/first-run/ | wc -l` = 13 and `omarchy-first-run` "executes 13 items:
+12 `bash *.sh` lines plus `omarchy-hook-install post-update …/install-voxtype.hook`".
+
+Resolved as follows, with the evidence above:
+
+- **`wc -l` = 13 is correct but counts files, not scripts.** 13 files = 12 `*.sh` + 1 `*.hook`.
+  "12 first-run scripts" is true of the directory's script population; the assertion that it is
+  "wrong" rests on equating "files in the directory" with "scripts".
+- **"Executes 13 items" is false.** `omarchy-hook-install` is a copy-and-chmod installer, and the
+  installed hook is still on disk with a self-delete on line 6 — it never ran. First-run executes
+  12 items; it *installs* a 13th artifact for a later `omarchy-hook post-update` dispatch.
+- **The substantive leg survives on my reading too**, independent of the peer's grep: `idle`/`lock`
+  absent from both the directory and the installer body (`IDLE_ABSENT`).
+- **Neither point is a C1 falsifier.** C1's frozen predicate is quote-contiguity (contiguous
+  substring, 1–25 words) plus registry/anchor hygiene; it does not adjudicate the truth of the
+  quote's prose. The quote remains a legitimate contiguous receipt substring, and the anchor hash
+  matches. LOW-1 stays a presentation defect for the receipt/row, to be fixed at re-mint — it does
+  **not** reopen C1 and does not support an entry correction beyond clarifying the hook.
+
+### LOW-2 — row gloss "post-login questionnaire" is unsupported by the body
+
+Row S203's description calls the installer "the desktop's post-login questionnaire".
+`grep -rn 'gum confirm\|gum choose\|read -\|read -r' install/first-run/` → `NO_INTERACTIVE_PROMPTS`
+(EXIT=0). `omarchy-first-run` asks the operator **nothing**; it is a one-shot bootstrap.
+No factual error propagates into the entry (r12 correctly says "runs a fixed list of twelve
+first-run scripts"), but the row's noun overstates interactivity and should be narrowed to
+"post-login bootstrap" to avoid implying the choice existed and was declined rather than never offered.
+
+### LOW-3 — frozen evidence is narrower than the row's stated axis (scope boundary, material)
+
+The row's axis reads "Whether **the desktop's setup path** asks the operator about the idle lock…
+whether an intent could have been recorded at setup", but S203's evidence covers only
+`install/first-run/` plus the `omarchy-first-run` body. The wider setup path does more than nothing:
+
+- `install/config/config.sh:3` → `cp -R ~/.local/share/omarchy/config/* ~/.config/`
+- ships `config/hypr/hypridle.conf` (765 B), whose live copy at `~/.config/hypr/hypridle.conf`
+  enables locking by default (`on-timeout = omarchy-system-lock` after ~5 min, plus
+  `before_sleep_cmd`), and `hypridle` is installed via `install/omarchy-base.packages:53`.
+
+So the setup path **silently sets the idle lock to ON** while asking nothing. That **confirms**
+rather than contradicts "never offered as a choice" (no intent could be recorded because no
+question was posed), and the entry's own scope section is careful. The risk is reader over-read:
+"the setup path asks nothing about the idle lock" can be mis-read as "setup never touches the idle
+lock". Recommend the entry add one sentence stating that setup installs an idle-lock **default**
+(ON) without asking; this is the one place where the frozen claim's coverage is narrower than its
+axis wording.
+
+## Entry-level defect inherited through S204 (escalation) — C1 passes, claim fails
+
+Entry r12's title is "The idle lock was never offered as a choice at setup, **and the operator never
+toggled it afterwards**". S203 supports only the first conjunct (A1–A3 above). The second conjunct
+rests entirely on S204, and verified independently it does **not** hold.
+
+### 1. The S204 counter cannot measure toggle usage (vacuous instrument)
+
+`journalctl --user --no-pager | grep -c 'omarchy-toggle'` → `0`, **grep EXIT=1** (zero matches),
+reproducing the receipt. But `bin/omarchy-toggle-idle` (13 lines) contains **no journal primitive**:
+`grep -n 'logger\|systemd-cat\|journal\|echo'` → `NO_LOGGING_PRIMITIVE`. Its entire body is
+`pgrep -x hypridle` → `pkill -x hypridle` (OFF path) / `uwsm-app -- hypridle &` (ON path), two
+`notify-send`, and `pkill -RTMIN+9 waybar`.
+
+- The OFF path writes **nothing** anywhere.
+- The ON path writes `uwsm_app-daemon: received: app -- hypridle`, which does **not** contain the
+  string `omarchy-toggle`.
+
+Therefore the count is `0` **whether or not** the operator used the toggle. The receipt's sentence
+is literally true and measures nothing; the entry's move from "0 journal hits" to "never exercised"
+is invalid.
+
+### 2. A positive event carries the toggle's exact signature
+
+`journalctl --user -g hypridle`:
+
+```
+Oct 23 13:21:39 systemd[1490]: Stopping hypridle...
+Oct 23 13:21:39 systemd[1490]: Stopped hypridle.
+Oct 23 13:21:39          app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52s
+-- Boot e55f9cd9ec4e4dd5bf0ce775977af5a5 --
+Oct 23 13:25:00 uwsm_app-daemon[1838]: received: app -- hypridle
+Oct 23 13:25:00 systemd[1529]: Started hypridle.
+Oct 23 19:24:38 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s   <-- no Stopping/Stopped
+-- Boot 0a3785aac7104585a914f6cda41795a7 --
+Oct 23 22:14:11 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 systemd[1493]: Started hypridle.
+```
+
+Every alternative cause is excluded, each by its own command (all EXIT=0 unless noted):
+
+| Hypothesis | Evidence | Ruled out |
+|---|---|---|
+| session boundary | boot heading `0a3785…` precedes 22:14:11; 19:24:38 sits inside the 13:22:32 boot, unlike the 13:21:39 stop which has Stopping/Stopped | yes |
+| crash | `coredumpctl list \| grep -i hypridle` → `NO_COREDUMP` | yes |
+| OOM / earlyoom | at 19:24:59 earlyoom reports `19479 of 21438 MiB (90.86%)`, swap `92.30%` free; the 8 "kill/SIG" matches that day are earlyoom's startup policy lines (13:24:57, 22:14:08) — no kill records | yes |
+| package update | pacman.log per-day 10-21:20, 10-22:2, **10-23:0**, 10-24:22, 10-25:31 | yes |
+| Hyprland restart | 19:20–19:30 contains one DEBUG heartbeat (19:23:53) plus the scope line | yes |
+| config edit / refresh | `hypridle.conf` sha256 `e7d3b8dd…` identical to the shipped default; mtime `2026-10-03 17:44:32` | yes |
+
+Only two code paths `pkill -x hypridle`: `omarchy-toggle-idle:6` (kill, **no** relaunch) and
+`omarchy-restart-app:6` used by `omarchy-restart-hypridle` (kill **plus** immediate
+`uwsm-app -- hypridle`). The restart path is excluded because its ON write would emit
+`received: app -- hypridle`, and no such line follows until the next boot. The one
+evidence-compatible cause left is the toggle's OFF path.
+
+**Conclusion.** "The operator never toggled it afterwards" is dead. Proven: a mid-session hypridle
+kill with no relaunch. Not proven: who sent the signal. The entry may say at most "no journal trace
+of a toggle exists, and this journal could not record one" — which is no evidence at all.
+
+### 3. Effect on the frozen targets — and why TARGET_MET must not be over-read
+
+- **C1 is unaffected in its own terms.** Its frozen predicate (quoted from `frozen.json`) is
+  quote-contiguity (contiguous receipt substring, 1–25 words) plus registry/anchor hygiene. r12's
+  S204 gate-quote is also a clean contiguous substring of `S204.receipt.txt` (count 1, offset 351,
+  12 words, EXIT=0). `c1/count.py` → `closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET`, EXIT=0.
+- **But `TARGET_MET` is not a truth verdict** and must not be reported as one. In this entry the two
+  legs differ in kind: S203 verified clean (A1/A2/A3 above); S204 a vacuous counter plus a
+  contradicted inference. Recommend r12's title and Section 2 be corrected before the round treats
+  it as established knowledge.
+
+## Residual risk
+
+- Host-side drift only: S203 is `recheck: on-request`, so edits to `~/.local/share/omarchy`
+  (an external upstream tree, currently `omarchy-first-run` @ sha256 `20508471…`) would invalidate
+  A2 without touching anything in the lane. Live values are recorded above, so drift is detectable
+  by re-running the A2 block.
+- Low-3 means the S203 receipt cannot alone support any future sentence about "setup never
+  configured the idle lock"; only about "setup never asked". Any later entry asserting the stronger
+  form would be unsupported by S203's evidence.
+- **Predicate-vs-truth gap (the round's main risk).** `c1/count.py` → `TARGET_MET` means "the three
+  entries' gate-quotes are contiguous receipt substrings and the eight rows are registry-clean". It
+  says nothing about whether the entries' claims are true. Entry r12's second conjunct is now
+  contradicted (section above). Any wave-2 conclusion of the form "C1 met, so the idle-lock story
+  holds" is unsupported by C1's own predicate.
+- **Sender of the 19:24:38 SIGTERM is unrecoverable.** `systemctl is-active auditd` → `inactive`;
+  no psacct/`/var/log/account/pacct`; zero audit records around the event; `~/.bash_history` is
+  only 4572 B with 0 hits (an uninformative negative). So the *attribution* to the toggle is an
+  inference from an exhaustive-exclusion signature, not direct proof. It is enough to destroy a
+  "never" claim; it is not enough to assert the toggle was used.
+
+## Verification gaps
+
+- None of the three assigned checks is unverified; every verdict above quotes its command and exit code.
+- `lsp` device not used: this seat performs byte/hash/grep verification of a text receipt against a
+  host shell script, where no language server answers the artifact (no server registered for
+  `.ufo/**` or `corpus/**`); text grep is the correct primitive here, and set-equality of the
+  script sets was proven in python rather than asserted from grep counts alone.
+- Not in scope, therefore not run: C2 (`c2/count.py`), the other seven rows, and the other two entries.
+  The three entries' own internal consistency is other seats' assignment; this seat verified r12's
+  S203 gate-quote line as the exact receipt substring, and additionally r12's S204 leg (contiguity +
+  the truth of its inference) because that conjunct sits in the entry my row gates. Row S204's own
+  receipt/anchor hygiene remains `L1Mado35.RevQuoteS204`'s assignment.
+- The 19:24:38 attribution is an exclusion argument, not direct attribution; with auditd and psacct
+  both inactive there is no process-accounting instrument that could close it. Reported as an
+  inference, never as observed fact.
