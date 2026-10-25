@@ -69,3 +69,6 @@ Format: seat | finding (normalized target) | claim | status
 - RevShonen | F3: box 4 cites VER-M4B absent from receipt | C2 | open low
 - RevAxisNow | all 3 fractions MATCH at master; derivation commit in prose informational only | harm-watch | refuted (+ open low w/ MutPublication F-1)
 - LabratGateOracle | FALSIFIED: exit 0 reachable without repairs — (a) trimmed manifest w/ r35 counters 14/14; (b) echo-stub full manifest 25/25; no manifest id/N binding; receipts path unvalidated (auto-create; existing-file crash) | C1 | open HIGH
+- CritManifestBalance | gate does not authenticate manifest (expect-flip on r35 → 25/25 exit 0; shrink → 1/1); kill rule passes for degenerate instruments on frozen manifest | C1 | open HIGH
+- CritManifestBalance | verdict-token first-match parser weakness (first token wins) | C1 | open low
+- ExecClausePins | clause pin holds for delete/second-decl/remove-retired-duplicate(deleted); residual fail-open: duplicated CONTROLLED clause passes (set equality) | C2 | open low
