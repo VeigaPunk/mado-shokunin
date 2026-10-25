@@ -95,8 +95,9 @@ rev-mode run reports `cited-glob-nomatch`. Proof the warnings are spurious:
 `.ufo/evidence/round-12/getprop-help.txt` and `getprop-measure.txt` are
 committed at HEAD (`git ls-tree -r HEAD .ufo/evidence/round-12/` lists both),
 `drift-hypr.txt`/`drift-precedence.txt` likewise, and `S###` re-patterned to
-`S[0-9][0-9][0-9]` matches `S153.bin`…`S169.bin` (17 files on disk; the same
-directory is committed at HEAD). `--root .` mode resolves the same three
+`S[0-9][0-9][0-9]` matches the 16 committed members of
+`.ufo/waves/round-24/fetch/` at HEAD (`S153.bin`…`S168.bin`; 17 files on disk,
+one untracked). `--root .` mode resolves the same three
 citations cleanly: `warns=0`.
 
 Severity: **low-but-real instrument drift**. Warns are non-fatal (exit 0), so

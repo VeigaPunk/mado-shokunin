@@ -2293,3 +2293,36 @@ unchanged; retired: `sourced-art` (above). `Assimilation: none this round`.
 
 Axis table re-derived at `a3094c99ab85bec35534de2447552c47dd2b647f` (this round's data
 commit): navigation 50/50; calibration resolved-active 48/48; operability selftest 12/12.
+
+### Measured at (round 36, self-verdicts pending non-author closure)
+
+- **C1.** Before at `4243d03`: `controls=25 correct=14/25 verdict=TARGET_MISSED`
+  (`receipts/before-discrimination.txt` under the round-36 wave directory).
+  After at `cf175c716faecec78f97258851c4ca353dea8b0b`:
+  `controls=25 correct=25/25 verdict=TARGET_MET` (`receipts/after-discrimination.txt`).
+  Clause attribution proved separately: `receipts/clause-attribution.txt` (every frozen
+  crib re-scored from a copy with only the competing fence removed still dies with exactly
+  one open cite).
+- **C2.** Before at `4243d03`: `TARGET_MISSED` with `dangling_r35_closed=0`,
+  `scratch_disposition_ok=0`, `tip_axis_transcript=0`, `setup=missing-r36-sections`
+  (`receipts/before-pointers.txt`, whose header records the live-tree `inherited_dirty=10`
+  the re-run cannot reproduce). After at `cf175c716faecec78f97258851c4ca353dea8b0b`:
+  `TARGET_MET` with `dangling_r35_closed=1 dangling_r36=0 inherited_dirty=0
+  scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok`
+  (`receipts/after-pointers.txt`).
+- **Harm watch at the same revisions.** `tools/mado-verify.sh --selftest` →
+  `MADO_SELFTEST: 460/460 assertions passed`, gate blob `9113c7c0…` (byte-identical to the
+  round-35 tip); `quality/check-index.py --rev 520c631 --repo .` → `indexed=50/50
+  missing=0 dangling=0 duplicates=0`; census exit 0 with the same seven pre-existing `W04`
+  warnings; no row's `status`/`recheck`/`used-by` changed.
+
+### Planned (round 37; intent only)
+
+1. Route the wave's `c2`-side finding that a *fixture* which cannot resolve its environment
+   is a vacuous control into the manifest's own construction check (criterion 59's
+   executable form).
+2. Harden the tip-transcript observable: authenticate the transcript by its `MADO_AXIS_ROW:`
+   rows (one per checked axis) rather than by three substrings (`RevAxisTranscriptAsk` F1).
+3. Resume the shokuknow assimilation the round-35 evidence chain interrupted.
+4. Move one domain-facing surface: the round-27 `tools/` plane is the last domain change;
+   the ratio (criterion 60) is the forcing function.

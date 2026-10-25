@@ -298,3 +298,16 @@ Ruling, append-only: a **new** entry opens with the trio (CORPUS.md's rule); an 
 entry is normalized by an appended `## Provenance (normalized)` trailer restating the trio
 as anchored lines, never by rewriting its committed bytes. This round admits no knowledge
 entry, so the ruling lands with no entry to apply it to; it binds from round 37.
+
+## Gate — corroboration of S211 by a second non-author seat
+
+`ScoutPriorArt` re-opened the same document independently and located the definitional
+sentence rather than the example this lesson quotes: anchor `#S1` §"Experimental biology:
+threats to causal inference and the use of negative controls", paragraph `#P8`, quote
+(22 words) "under conditions in which it is expected to produce a null result and verify
+that it does indeed produce a null result". Two independent openings of one URL, two
+different located anchors, both supporting the row's `teaches`; the registry's own quote
+stays the Jackson-example sentence recorded above, which is the one this lesson's receipt
+carries. The seat's guess at a first PMCID (`PMC2833407`) resolved to a proteomics paper
+and was rejected before citation — kept here because a wrong-id guess that is checked is
+the behaviour the row wants.
