@@ -2326,3 +2326,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   control fix. Also: the v3 E2 lineage floor (2/3) rejects the round-37 honest
   proxies h2/h3 (`lineage=1/2`) — the accept path is calibrated to the landed
   vocabulary (landed entries pass E1 6/4, E2 2/2).
+
+- **Round-38 C1 v3 residual refinement (`RevC1v3`)** — post-freeze, verdict-locked:
+  F1 `norm()` lowercases before the uppercase-`S` strip, so the `"1024"` lineage
+  phrase remains a one-token crib (dilutes the l-floor below the declared residual);
+  F2 body-cited ids (provenance/INF lines) escape the per-id clauses — the honest
+  pass depends on the narrow head[:15] mining window; F4 `RECHECK_RE` accepts `0d`.
+  Clause fixes are routed to round 39; no further post-freeze counter patch is made
+  beyond the declared `859d0cf` (the ruling scope stays as narrowed by `RevM37Routing`).
