@@ -178,13 +178,15 @@ toggles. Three scripts do converge on the tree (`omarchy-toggle` → `toggles/<n
 `omarchy-hyprland-toggle` → `toggles/hypr/<name>.conf`), which makes the claim plausible, but the
 entry cites none of them and S210 cannot support it.
 
-Read at `corpus/SOURCES.md` sha256 `0bf117e2…0d51` (HEAD `4f35c80`), where rows S206-S210 are
-byte-identical to the text this review quotes — S210's `teaches` cell included. That pin matters,
-because the registry is not stable: seat RevRowsUsedBy documents five in-place cell rewrites at
-03:40:12 (S203/S204/S205 `teaches` and `scope`, plus two `recheck` flips) that sit outside the columns
-`SOURCES.md:6-7` permits to change. So F5 judges the cell as it stands at `0bf117e2…`; if that cell is
-rewritten later, re-read the receipt before trusting either version, and note that C1 cannot see the
-change (see the row-truth bullet under residual risk).
+Read at commit `4f35c80` — registry blob `28fd7e31`, content sha256 `0bf117e2…0d51`; HEAD `2909fea`
+carries the same blob — where rows S206-S210 are byte-identical to the text this review quotes,
+S210's `teaches` cell included. That pin matters, because the registry is not stable: seat
+RevRowsUsedBy documents five in-place cell rewrites at 03:40:12 (S203/S204/S205 `teaches` and `scope`,
+plus two `recheck` flips) that sit outside the columns `SOURCES.md:6-7` permits to change, and
+`git diff --numstat 02088b4 4f35c80 -- corpus/SOURCES.md` reads `3 3` — the commit titled "as errata"
+rewrites three row lines rather than appending. So F5 judges the cell as it stands at `0bf117e2…`; if
+that cell is rewritten later, re-read the receipt before trusting either version, and note that C1
+cannot see the change (see the row-truth bullet under residual risk).
 
 ### F6 — LOW-MEDIUM — "Why the choice leaves no trace" is unscoped
 
@@ -312,8 +314,9 @@ against this revision, not the next one.
   `hyprland.conf:23`). Registering those four in S210's anchor cell, together with
   `bin/omarchy-toggle-idle`, `default/hypr/toggles/` and `default/hypr/autostart.conf` for E3, closes
   N1 and L2 in one edit rather than two separate errata.
-- **Closure is formal, not semantic.** `corpus/SOURCES.md` moved at 03:40:12 (`0bf117e2…`) with five
-  cells rewritten in place outside the permitted columns (seat RevRowsUsedBy), and seat RevQuoteS205
+- **Closure is formal, not semantic.** `corpus/SOURCES.md` moved at 03:40:12 (`02088b4` → `4f35c80`,
+  content `848a7680…` → `0bf117e2…`, `git diff --numstat … 3 3`) with five cells rewritten in place
+  outside the permitted columns (seat RevRowsUsedBy), and seat RevQuoteS205
   caught row S205's `teaches` changing wording while C1 stayed `TARGET_MET` rc=0. C1 checks identity,
   digest containment, status, cadence, used-by and the gate-quote substring — never the `teaches` cell.
   So `closed_rows=8` certifies well-formedness and anchoring, not row truth, which is exactly why F5's

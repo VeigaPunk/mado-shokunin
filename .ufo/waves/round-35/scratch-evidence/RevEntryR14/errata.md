@@ -27,6 +27,43 @@ finding (no hypridle/hyprlock dumps exist, one continuous run since 2026-10-23 2
 unchanged; only the exit code this seat attributed to the query was wrong. Correct usage in the
 report is now rc=1, and the pipeline-status trap is the reason.
 
+Lesson to carry: in `cmd | head ; echo rc=$?`, `$?` is the last pipeline element's status. A probe
+whose value matters must read `PIPESTATUS[0]` (or run unpiped and capture separately). This is the
+same class of error as the audit contaminating its own journal: the number recorded came from the
+wrong process.
+
+## E-D. The counter's receipt-integrity clause is text-only; `digest` is dead code
+
+`c1/count.py` computes the receipt bytes' hash and never uses it:
+
+```
+174:            digest = hashlib.sha256(blob).hexdigest() if blob is not None else ""
+192:                and receipt["sha256"] in cs[5]          # cs[5] = the ROW's anchor cell text
+195:                and quote.encode() in blob               # quote must appear in the receipt bytes
+```
+
+`digest` appears nowhere else; `ok` never compares it to `receipt["sha256"]`. The only integrity
+test is a substring test against the row's anchor cell, so the receipt's actual bytes are
+unconstrained except for containing the gate-quote. Verified against the committed controls:
+
+```
+sha256(controls-content/c1-shape-only/.ufo/…/S205.receipt.txt)        = 22bdd47a10235e40f46b8e03c76d44167e3d69598632068a1e8efc615b5bb76c
+sha256(controls-content/c1-fabricated-payload/.ufo/…/S205.receipt.txt) = 75e98ef620ef50674511a311f7c06b90128f2a9c387b1436053e8e5063f9f5e6
+frozen S205 sha                                                        = f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a
+grep -c f3387bfc… controls-content/{c1-shape-only,c1-fabricated-payload}/corpus/SOURCES.md → 1, 1
+```
+
+Neither receipt hashes to the frozen sha, both rows carry it as text, and both roots print
+`verdict=TARGET_MET` rc=0. So the two committed controls are **positive** controls: they show shape
+is sufficient, not that integrity is checked. The artifact that would catch this — a root whose
+receipt bytes do not hash to the frozen sha and must print `TARGET_MISSED` — does not exist.
+
+The fix is one line: put `digest == receipt["sha256"]` in `ok`. Both mutants then fail, and the real
+lane root (receipt sha `f3387bfc…`, verified) still passes. Note also that the frozen predicate text
+only requires the anchor cell to "carry the sha256 of the named receipt", so even a faithful reading
+of the predicate is shape-only until the counter hashes bytes.
+
+
 ## E-B. The registry row S205 was rewritten mid-round; C1 never reads it
 
 `corpus/SOURCES.md` mtime `2026-10-25 03:40:12`. Row S205's `teaches` cell (index 6):

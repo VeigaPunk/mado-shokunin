@@ -266,9 +266,17 @@ at `/home/vgpnk/.gitignore:23` with 0 tracked files; the omarchy checkout at
 `8fcc9d604` is clean and versions 0 paths under `state/omarchy/toggles`; no package
 owns it). Measured-only subjects need the publication-date form, and S210 has one
 available: the receipt is headed `host re-open 2026-10-24` and the `opened` cell
-already says `2026-10-24`. Writing that date into the anchor ("… @ 2026-10-24 host
-re-open") closes A2 without inventing a commit and without touching the digest or the
-gate-quote.
+already says `2026-10-24`.
+
+The repair cannot be an in-place cell edit, and that is a second defect avoided:
+this file's own preamble (`corpus/SOURCES.md:5-6`) says "Only `status`, `recheck` and
+`used-by` change in place, each logged old→new in that round's lesson". `anchor` is
+not in that set, so writing the date into row 212 in place would repeat exactly the
+violation `RevRowsUsedBy` reports for the 03:40 write (S203.teaches, S204.scope,
+S204.teaches, S205.teaches changed outside the allowed trio). The compliant vehicles
+are a superseding row carrying `@ 2026-10-24` in its anchor, or an explicit exception
+logged in the round's lesson. A2 is a content recommendation with a shape constraint,
+not a licence to edit the cell.
 
 ### L3 — LOW (wave-1 artifact, not corpus) — `ScoutS210.md` swaps the two file sizes
 

@@ -310,7 +310,7 @@ denies for the idle lock.
 reads no errata: cell 7 and r15 §3 are what a reader or a counter sees. E3 withdraws
 exactly the clause the row still teaches, so the repair cannot live only in the
 appended block; it has to land in the teaches cell (and §3). Independently, the
-Independently, the measured subject has no revision key to anchor: `~/.local/state/omarchy/toggles/hypr`
+measured subject has no revision key to anchor: `~/.local/state/omarchy/toggles/hypr`
 is outside the omarchy checkout (HEAD `8fcc9d6048af`, clean) and is ignored by the
 home repo — `git check-ignore` → `.gitignore:23:/.local/*`, 0 tracked files. So S210's
 anchor is section + receipt digest only: **no revision token at all**. A publication

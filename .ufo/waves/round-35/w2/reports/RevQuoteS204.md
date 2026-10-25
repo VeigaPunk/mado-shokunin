@@ -106,7 +106,13 @@ toggled it" and not "it was disabled for 2h50m" (a bare `hypridle &` from a term
 journal-invisible, and no instrument here can attribute the kill).
 
 Blast radius: the *first* negative survives (`grep -ril idle` and `grep -ril lock` over
-`install/first-run/` return no match, exit 1 each). The *second* negative fails. The S206/bar-side
+`install/first-run/` return no match, exit 1 each, covering all 13 files). But it is **true, not
+licensed**: S204's receipt carries only a count and a journal grep — no body of any of the twelve
+scripts — so "none of the twelve asks about the idle lock" was never readable from the sources the
+entry cites. Making it true required the scan this review ran; that scan is lane-reported here and
+needs its own receipted row (or an explicit "lane-reported, not admitted" label) before the claim
+can rest on it. The same gap applies to S203, per `RevEntryR12`'s independent 13-file scan.
+The *second* negative fails. The S206/bar-side
 claim is corroborated (`config.jsonc:208` `on-click: omarchy-toggle-idle`). Note for re-measurers:
 my own read-only probes have since added `sudo[...]: COMMAND=/usr/bin/coredumpctl list hypridle`
 lines to this journal (2026-10-25 03:34 and 03:37), so future `grep -i hypridle` runs are no
