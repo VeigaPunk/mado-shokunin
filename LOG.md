@@ -2348,3 +2348,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   is a bare prefix test (`on-every-release` passes, `0d` passes). The frozen
   19-control manifest constrains the clause from above only. Fix routed to round
   39 with `RevC1v3` F1/F2/F4 (no further post-freeze counter patch).
+
+- **Round-38 C2 control-coverage gaps (`MutC2`)** — six v3 clause mutants SURVIVE
+  the frozen 19-control manifest: drop ss_sha256 consistency, drop full_table,
+  accept tool_sha256 mismatch, drop the `connect(` test, drop tool-presence, drop
+  the four fixture cases (M7/M7b), each scoring 19/19; the M4+M7 compound is
+  caught only by `c2-missall`. The `full_table` clause is redundant as coded
+  (replay_ok implies it). All routed to round 39 with `RevC2v3` F1/F2 — the
+  manifest's reject-control set needs the killing fixtures, not the counter.
