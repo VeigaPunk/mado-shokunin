@@ -213,10 +213,12 @@ Verbose journal metadata confirms the provenance:
 - 22:14:11 line → `_PID=1493`, `_BOOT_ID=0a3785aac7104585a914f6cda41795a7` (boot 0, `/proc/sys/kernel/random/boot_id`).
 
 Only the later line is in the current session; the 13:25:00 line is from the previous boot, present
-because the journal is persistent. The row's `teaches` cell ("the journal holds two start lines on
-2026-10-23") is literally true and does not carry the bad label, and no C1 clause reads receipt
-headings — so this is a receipt-internal imprecision, not a frozen-claim break. It is the exact
-kind of cross-boot/provenance slip a reader would inherit if they quoted the heading.
+because the journal is persistent. The row's `teaches` cell **was rewritten during this round**
+(`corpus/SOURCES.md` mtime `2026-10-25 03:40:12`): it first read "the journal holds two start lines
+on 2026-10-23", and now reads "the journal holds one start line in the current boot (two across two
+boots) on 2026-10-23" — consistent with E2 (see P8). No C1 clause reads receipt headings or the
+`teaches` cell, so this is prose-level imprecision, not a frozen-claim break. It is the exact kind
+of cross-boot/provenance slip a reader would inherit if they quoted the heading.
 
 Recommendation: retitle to `journal start lines across the last two boots` (or annotate the 13:25
 line with `boot -1`). No change to the gate-quote, digest, or row is warranted by this finding.
@@ -334,6 +336,30 @@ activity and can be misread as daemon restarts. The closed claim itself is safe:
 frozen bytes (`1194 B`, mtime `2026-10-24 23:21:21`, digest `f3387bfc…` unchanged), so audit growth
 can only corrupt *re-derivation*, not the archived artifact. That is the same class of failure as
 P6: the predicate measures an artifact, while the world underneath it keeps moving.
+
+### P8 — The registry row itself was rewritten mid-round, and C1 did not move
+
+`corpus/SOURCES.md` mtime is `2026-10-25 03:40:12`, and row S205's `teaches` cell (the counter's
+`cs[6]`) changed between my first read and my post-E2 re-read:
+
+- first read: `… the journal holds two start lines on 2026-10-23, while the unit probe reads inactive …`
+- now: `… the journal holds one start line in the current boot (two across two boots) on 2026-10-23, while the unit probe reads inactive …`
+
+Everything C1 constrains is unchanged: 11 fields, status `mined`, recheck `90d`, used-by exactly
+`corpus/knowledge/idle-lock-chain-armed-r14.md`, anchor still carrying `f3387bfc…`. C1 re-run after
+the rewrite: `TARGET_MET`, rc=0. The rewrite is semantically correct (it agrees with E2), and I did
+not make it — this seat is read-only over the corpus.
+
+The point is structural, and it is P6's point one level out: a row's prose is free text that no
+clause reads. The registry can be edited to agree with an errata, or to disagree with it, and the
+frozen predicate cannot tell — it checks file identity, digest containment, status, cadence, used-by,
+and the gate-quote substring. So `closed_rows=8` certifies that eight rows are well-formed and
+receipt-anchored; it does **not** certify that their `teaches` text is true. Any inference from
+closure to row truth is unsupported by the predicate.
+
+Recommendation: bind the `teaches` cell to a hashed snapshot at freeze time, or state in the
+criterion that closure is formal rather than semantic. Without one of those, a mid-round rewrite of
+the thing being certified is invisible to the measurement — which is exactly what happened here.
 
 ## Positive corroboration of the entry's INF
 

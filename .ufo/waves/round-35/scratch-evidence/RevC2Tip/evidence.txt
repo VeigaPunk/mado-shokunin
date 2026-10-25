@@ -1,0 +1,99 @@
+# RevC2Tip evidence transcript
+# rebuilt 2026-10-25T03:46:38-03:00 from the seat transcript after the ~03:45 external sweep
+# that removed the whole .ufo/waves/round-35/scratch/ tree; w2/reports/ was intact.
+# lane counter/spec/ledger/controls unmodified; C2 inputs clean at HEAD b632f0b
+
+## 1. canonical command
+$ python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+rc=0
+
+## 2. seven blob ids at dff3941 (rev-parse)
+.ufo/waves/round-33/c1/count.py 4ab3db435dd2e396402d1d83039e35082f1138fe
+.ufo/waves/round-33/c1/frozen.json 60d1094baa2992294533bae37e0990ae23077609
+.ufo/waves/round-33/c2/count.py df563528e725951b447ef31b324ec4b7d264e91b
+.ufo/waves/round-34/c1/count.py 49089c186fb75f1bd2cc4c45c0161282ea6e8a46
+.ufo/waves/round-34/c1/frozen.json 0bfe0d866c4e9a2d17da297a11dae389150b488b
+.ufo/waves/round-34/c2/count.py 3a499a7eaa6cf5e861a5849992c37f1a7bede962
+.ufo/waves/round-34/c2/frozen.json ef3392b45f638513ff98dda95808f3f3938705e0
+rc=0
+
+## 3. ledger table parsed vs spec frozen_blobs
+doc rows: 7 spec entries: 7 table == spec: True
+
+## 4. attack.py (per-observable mutation matrix)
+== baseline: unmodified copies in scratch ==
+baseline                     rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+== O1 uncovered: what bytes produce it ==
+u1-no-control                rc=1 PRED-C2-r35-v1 uncovered=1 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+u2-receipt-swapped           rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+u3-grep-only-receipt         rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+u4-missing-receipt           rc=1 PRED-C2-r35-v1 uncovered=1 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+u5-met-receipt               rc=1 PRED-C2-r35-v1 uncovered=1 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+== O2 retired ==
+r1-no-retired                rc=1 PRED-C2-r35-v1 uncovered=0 retired=0 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+r2-invented-id               rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+r3-retired-is-live-renewal   rc=1 PRED-C2-r35-v1 uncovered=0 retired=0 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+r4-two-retired               rc=1 PRED-C2-r35-v1 uncovered=0 retired=2 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+== O3 toctou_declared ==
+t1-second-declaration        rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=0 ledger_tip_ok=1 verdict=TARGET_MISSED
+t2-declaration-removed       rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=0 ledger_tip_ok=1 verdict=TARGET_MISSED
+t3-empty-reason              rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+t4-reordered-live            rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+== O4 ledger_tip_ok ==
+l1-blob-corrupt              rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=0 verdict=TARGET_MISSED
+l2-blob-dropped              rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+l3-tip-swapped               rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=0 verdict=TARGET_MISSED
+l4-doc-without-tip           rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=0 verdict=TARGET_MISSED
+l5-doc-table-wrong-tip-present rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+l6-path-blob-mismatch        rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=0 verdict=TARGET_MISSED
+== gates ==
+g1-predicate-drift           rc=2 PRED-C2-r35-v1 error=predicate-drift
+g2-target-drift              rc=2 PRED-C2-r35-v1 error=target-drift
+rc=0
+
+## 5. probes.py (clause-list shrink + retired.why non-use)
+h1-drop-one-load-bearing           rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+h1-live-only-declaration           rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+h1-drop-declaration                rc=1 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=0 ledger_tip_ok=1 verdict=TARGET_MISSED
+h1-drop-into-retired               rc=1 PRED-C2-r35-v1 uncovered=0 retired=2 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+empty-why                          rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+no-why                             rc=0 PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+rc=0
+
+## 6. digest-match probe: corrupt S203 receipt bytes in a golden copy
+actual=15c5fe4353ca90571697b9d5ac06f9d8f8da70ab54d03092a34f98501d27678e
+frozen=1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+-- digest uses in c1/count.py --
+174:            digest = hashlib.sha256(blob).hexdigest() if blob is not None else ""
+
+## 7. control trees re-run against committed receipts
+c1-digest          PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-donothing       PRED-C1-r35-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
+  exit=1
+c1-entry-symlink   PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-quote-absent    PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-quote-long      PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-recheck-prose   PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-row-duplicate   PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-row-extra-field PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-status-queued   PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+c1-usedby-extra    PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+  exit=1
+golden             PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+  exit=0
+
+## 8. committed C2 negative control
+$ python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen /fast/scratch/mado-r35/c2-donothing/frozen.json
+PRED-C2-r35-v1 uncovered=1 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+rc=1

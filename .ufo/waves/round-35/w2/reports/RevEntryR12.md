@@ -2,7 +2,10 @@
 
 Seat: L1Mado35.RevEntryR12. Round 35, wave 2 (falsify). Read-only on every substrate;
 writes confined to `.ufo/waves/round-35/scratch/RevEntryR12/` and this report.
-Raw transcript of every command quoted below: `.ufo/waves/round-35/scratch/RevEntryR12/evidence.txt`.
+Raw transcript of every command quoted below: `.ufo/waves/round-35/scratch/RevEntryR12/evidence.txt`
+(**[REBUILT]**: an external sweep deleted the entire `scratch/` tree at ~03:45, this seat's directory
+included, mid-review; the file was reassembled from this seat's transcript at ~03:47 and carries a
+provenance header. `w2/reports/` was untouched. Content is transcript-faithful, not a re-run.)
 
 ## Verdict
 
@@ -354,14 +357,54 @@ missing strengthens the click/menu story without proving it: `walker` — the dm
 `omarchy-menu`, whose Toggle submenu carries `Idle Lock` (`omarchy-menu:21-43`, `:207`, `:212`) —
 logged a frame-timing line at `19:24:37`, one second before the kill.
 
-**Net effect on the entry.** §1's setup-path negative survives (true, still unlicensed — F2);
-§2 is withdrawn (correctly, on verified facts); the title and §1 still assert the withdrawn claim
-(F8); F3's "two independent negatives agree" is untouched in the live bytes and is now doubly
-wrong, since one of its two legs has been retracted.
+### 7.3 Residuals the errata introduces or leaves (each re-measured)
+
+**(a) "2h50m window with the idle daemon down" is a wall-clock gap across a reboot.** System-journal
+boundaries: boot -1's last entry is `22:12:24`, boot 0's first is `22:14:07` (kernel line), `hypridle`
+starts `22:14:11`. The gap `19:24:38 → 22:14:11` is `2h49m33s`, of which the machine was off for
+~`1m43s`; the in-session absence is `19:24:38 → 22:10:20` = `2h45m42s` (user-journal last entry).
+The daemon being down is a fact; that the *operator* left it down is the inference an earlier
+revision dropped and E1 quietly restores.
+
+**(b) Re-enable is only visible through `uwsm-app`.** Every supported re-enable path logs the same
+signature — the toggle's ON branch (`uwsm-app -- hypridle`) and `omarchy-restart-hypridle:5` →
+`omarchy-restart-app:7` (`setsid uwsm-app -- "$@"`). A bare `hypridle &` produces nothing. So the
+journal proves no *supported* re-enable ran in that session; it does not prove the daemon was never
+restarted. (`omarchy-restart-app:6` is off by one — the `setsid uwsm-app` line is 7.)
+
+**(c) The count is 15 / 14 / 12, not 13.** Inside the mode-file guard: `rm -f "$FIRST_RUN_MODE"` (1)
++ 12 `bash` (12) + `omarchy-hook-install` (1) + `sudo rm -f /etc/sudoers.d/first-run` (1) = **15**;
+excluding the guard's own state-file rm, **14**; scripts, **12**. E2's "13 items" matches none — and
+it is the same miscount the errata was written to remove.
+
+**(d) The hook was installed, never executed.** `omarchy-hook-install` copies `install-voxtype.hook`
+to `~/.config/omarchy/hooks/post-update.d/`; the artifact is there (174 B, mode 755), and its own
+line 6 `rm -f "$0"` has never run — the file would be gone. `voxtype` is not installed
+(`/usr/bin/voxtype` absent). So the thirteenth artifact neither asks the operator anything nor has
+ever run; E2's framing of it as an executed "item" is wrong in verb and in count.
+
+**(e) E3's support for §1 is a seat, not a source.** E3 records that §1's claim is unlicensed and
+"should cite that scan", naming `RevEntryR12`. The scan is real (13 files, 0 `idle` hits — §2/F2),
+but a seat report is not a registry row; citing it puts the entry's one surviving content claim on
+the same unreceipted footing as the rest of the errata (F9).
+
+**Net effect on the entry.** §1's setup-path negative survives (true; still unreceipted — F2/F9).
+§2 is withdrawn *in the errata* while its sentence still reads as a claim, and the title keeps the
+withdrawn clause by explicit decision (F8). F3 is corrected in prose, not in text. F4 is half-answered
+by an E2 that miscounts at every reading (§7.3c). E3 supports the one surviving content claim with a
+seat name rather than a row (§7.3e). Both counters print `TARGET_MET` on these bytes, so the lane's
+closure metric cannot see any of it.
 
 ## 8. Tooling
 
-No installs; no package manager invoked (PACMAN paused). Only `journalctl`, `grep`, `sha256sum`,
-`stat`, `pgrep`, `coredumpctl`, `python3 -I` — all read-only. One C1 counter run
-(`python3 -I .ufo/waves/round-35/c1/count.py …`, exit 0, `TARGET_MET`) to confirm the mid-wave
-corpus edit did not move the frozen target.
+No installs; no package manager invoked (PACMAN paused). Only `journalctl` (user and system),
+`grep`, `sha256sum`, `stat`, `pgrep`, `coredumpctl`, `find`, `diff`, `python3 -I` — all read-only.
+Two counter runs on the post-edit bytes: C1 `…/c1/count.py` → `closed_entries=3 closed_rows=8
+open_cites=0 TARGET_MET` (exit 0); C2 `…/c2/count.py` → `uncovered=0 retired=1 toctou_declared=1
+ledger_tip_ok=1 TARGET_MET` (exit 0).
+
+**Environment note.** The `scratch/` tree was deleted by an external sweep at ~03:45 mid-review; this
+seat's evidence file was rebuilt from transcript (§0 header). The live entry itself was written twice
+during the review by an unattributed writer (§7.2/F9), so every finding above is stamped with the
+bytes it was measured against: assigned 40-line state (`21c1d06d…`) for §1-§5, current 69-line state
+(`0bcef21f…`) for §7.

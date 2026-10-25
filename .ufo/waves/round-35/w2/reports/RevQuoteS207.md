@@ -212,17 +212,29 @@ closing inference) are absent from the file and overlap E3's real target (line 5
 is to re-point E2 at §4's **UNK** (lines 59-60), which the journal does answer ("that a toggle-off
 happened"). Agreed; that fix is entry-level and outside row S207.
 
-**INFO-5 — line 57 carries two separate overstatements, one of them S207-attributable (add to N2).**
+**INFO-5 — line 57's state clause is weak; my date objection is WITHDRAWN after measurement.**
 Entry §4 OBS (lines 56-57) reads "The premise is corrected: the desktop offers the choice in two
 surfaces, since at least 2026-10-03 on this host, and **shows which state is in force**."
 (i) The S207 half survives only weakly: the display differs between states (icon+tooltip vs
 `{"text": ""}`), but under E4's own standard ("exactly one state carries words") the armed state is
 silence, so the reader gets one named state and one inferred one — overstated, not false.
-(ii) The date half is the content-mtime reading; E1 itself records the oldest copy's creation time
-as `2026-10-06 16:21:10`, so on the creation clock the literal "since at least 2026-10-03" is
-unsupported even though E1's coarse claim ("not a recent addition") does hold on both clocks.
-RevEntryR15's N2 already lists line 57; this adds the date half. Neither half is counted by any
-predicate, and row S207's own claims are untouched.
+(ii) **Retraction.** I first recorded the "since at least 2026-10-03" half as unsupported on the
+creation clock. RevEntryR15's rebuttal is correct and I reproduced it: the copy's birth time cannot
+refute a content bound. Measured here — `config.jsonc.bak.1791314470` is 5114 B and **byte-identical
+to the shipped default** `~/.local/share/omarchy/config/waybar/config.jsonc`
+(`ff387b21ab51f4d5c4752142de31d1cfb2e8a459647a8f84849a522aee57c061` both, handler=1 both); its
+btime is `2026-10-06 16:21:10.082789105` while its mtime is `2026-10-03 17:44:32.097653608`
+(mtime < btime ⇒ inherited), which is **119.801 s** after the omarchy install stamp
+`17:42:32.296286539` — so that mtime is not the package stamp but a distinct local write; and the
+default itself carries mtime `17:42:32.296286539` == btime `17:42:32.296177350` (ctime 17:42:36.944),
+a **non-inherited** local write at 10-03. The content therefore existed on the host from
+2026-10-03, and the literal bound holds. What survives is narrower: the entry does not say which
+clock the bound uses, and the preserving copy's creator is inferred — `omarchy-refresh-config:23` is
+a plain `cp -f` (no `-p`), which cannot preserve an mtime, and the other three backups show exactly
+the plain-copy signature (`.bak` 10-11: btime==mtime==ctime; `.1792203278`: all three identical;
+`.1792267376`: btime .289181525 / mtime .289334445). So: unlabelled clock plus inferred provenance,
+not an unsupported bound. RevEntryR15 has adopted the state half as its N2 item; the date half is
+not a defect.
 
 ## Residual risk
 

@@ -1,17 +1,56 @@
-# RevQuoteS204 verification transcript 2026-10-25T03:34:00-03:00
-## journalctl count
-0
-exit=1
-## first-run entries
+# RevQuoteS204 verification log — REBUILT after the external scratch sweep (~03:45, 2026-10-25)
+# Original log destroyed by the sweep; section A is transcribed from this seat transcript
+# (observed values, original mtime 03:37:07). Section B is a fresh replay run at rebuild time.
+# Rebuilt: 2026-10-25T03:46:20-03:00
+
+## A. TRANSCRIPT (observed during the run, original file destroyed)
+-- journalctl count (2026-10-25 ~03:33): 0, exit 1 (grep no-match)
+-- first-run entries: 13, exit 0 ; *.sh only: 12, exit 0
+-- receipt sha256: 4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad, exit 0
+-- quote_in_receipt_bytes: True ; quote_in_entry: True ; hash_equals_anchor: True
+-- hypridle journal: 10 lines; 19:24:38 scope Consumed-only; next start 22:14:11
+-- session starts (user journal): 2 ; boots: -3/boot-2/boot-1/0 per --list-boots
+-- pacman 2026-10-23 transactions: 0 ; hypridle.conf sha e7d3b8dd... == shipped copy
+-- hook artifact present: 174 B mode 755 => never ran ; hook-install = mkdir/cp/chmod
+-- set check: bash_targets=12 dir_sh=12 SET_EQUAL=True body_sudo_rm=1
+-- auditd/psacct/acct inactive ; no /var/log/account/pacct ; bash_history 4572 B, 0 hypridle hits
+-- overlap probe at 03:41 (historical, now self-matching): 0/0/0
+
+## B. FRESH REPLAY (rebuild time; commands and exit codes)
+
+$ sha256sum .ufo/waves/round-35/fetch/S204.receipt.txt
+4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  .ufo/waves/round-35/fetch/S204.receipt.txt
+exit=0
+
+$ ls /home/vgpnk/.local/share/omarchy/install/first-run/
+battery-monitor.sh
+cleanup-reboot-sudoers.sh
+dns-resolver.sh
+elephant.sh
+firewall.sh
+gnome-theme.sh
+gtk-primary-paste.sh
+install-voxtype.hook
+recover-internal-monitor.sh
+swayosd.sh
+text-scaling.sh
+welcome.sh
+wifi.sh
+exit=0
+
+$ ls .../first-run | wc -l
 13
 exit=0
-## .sh only
+
+$ ls .../first-run/*.sh | wc -l
 12
 exit=0
-## sha256
-4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S204.receipt.txt
-exit=0
-## hypridle journal
+
+$ journalctl --user --no-pager | grep -c omarchy-toggle
+0
+exit=1
+
+$ journalctl --user --no-pager | grep -i hypridle
 Oct 23 13:21:39 plazir27 systemd[1490]: Stopping hypridle...
 Oct 23 13:21:39 plazir27 systemd[1490]: Stopped hypridle.
 Oct 23 13:21:39 plazir27 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
@@ -22,29 +61,48 @@ Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Co
 Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
 Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
 Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+Oct 25 03:34:38 plazir27 sudo[2181728]:    vgpnk : PWD=/home/vgpnk/Projects/shokunin/mado-shokunin ; USER=root ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
+Oct 25 03:37:19 plazir27 sudo[2637509]:    vgpnk : PWD=/home/vgpnk/Projects/shokunin/mado-shokunin ; USER=root ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
 exit=0
-## session starts
-2
+
+$ journalctl --list-boots --no-pager | tail -5
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -3 6a7f4fdfac624e2ea6c1b3c55d6f94f4 Fri 2026-10-23 07:18:30 -03 Fri 2026-10-23 13:21:50 -03
+ -2 d577c6e020934012a19ce97122158487 Fri 2026-10-23 13:22:32 -03 Fri 2026-10-23 13:23:13 -03
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5 Fri 2026-10-23 13:24:36 -03 Fri 2026-10-23 22:12:24 -03
+  0 0a3785aac7104585a914f6cda41795a7 Fri 2026-10-23 22:14:07 -03 Sun 2026-10-25 03:46:17 -03
 exit=0
-## current hypridle
+
+$ pgrep -ax hypridle
 1667 /usr/bin/hypridle
- PID STARTED                  COMMAND
-1667 Fri Oct 23 22:14:10 2026 /usr/bin/hypridle
+exit=0
 
-## rev2 addenda
-## hook-install is copy+chmod only
-mkdir -p "$HOOK_DIR"
-cp "$HOOK_FILE" "$HOOK_PATH"
-chmod 755 "$HOOK_PATH"
-
-echo "Installed $HOOK_TYPE hook: $HOOK_PATH"
-## installed hook (still present => never ran)
--rwxr-xr-x 1 vgpnk vgpnk 174 Oct  3 17:48 /home/vgpnk/.config/omarchy/hooks/post-update.d/install-voxtype.hook
-## pacman per-day
+$ for d in 10-21..10-25: pacman counts
 2026-10-21 20
 2026-10-22 2
 2026-10-23 0
 2026-10-24 22
 2026-10-25 31
-## set check
-12 12 True
+exit=0
+
+$ sha256sum /home/vgpnk/.config/hypr/hypridle.conf /home/vgpnk/.local/share/omarchy/config/hypr/hypridle.conf
+e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41  /home/vgpnk/.config/hypr/hypridle.conf
+e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41  /home/vgpnk/.local/share/omarchy/config/hypr/hypridle.conf
+exit=0
+
+$ coredumpctl list hypridle --no-pager
+No coredumps found.
+exit=0
+
+$ c1 counter
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+$ c2 counter
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+exit=0
+
+$ sha256sum corpus/SOURCES.md corpus/knowledge/idle-lock-never-asked-r12.md
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  corpus/SOURCES.md
+0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504  corpus/knowledge/idle-lock-never-asked-r12.md
+exit=0

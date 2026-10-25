@@ -1,48 +1,38 @@
-# RevIndex evidence log
-utc=2026-10-25T06:33:50Z
+# RevIndex evidence log (REBUILT after external scratch sweep)
+utc=2026-10-25T06:46:19Z
+sweep=the whole .ufo/waves/round-35/scratch/ tree was removed by an external sweep ~03:45; w2/reports/ intact
 lane=/home/vgpnk/Projects/shokunin/mado-shokunin
-master=19e4ab3171c1540c40d6b12097745af98053b07d
-head=19e4ab3171c1540c40d6b12097745af98053b07d
-readme_sha256=a3769befe3558c54c79c015910ba514a7009aa6a825e15f2bafdfd896fc5e83a
-scratch_repo=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/repo
-scratch_commit=285314d3fe9f58dfda5eb7adb4b693f82daa1e08
+master=b632f0b980772aad4be9ab20f8b26e9329d62239
+readme_sha256=de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6
+readme_lines=254
 
 ## 1. ASSIGNED COMMAND (rev=master)
 $ python3 -I quality/check-index.py --repo . --rev $(git rev-parse master)
-MADO_INDEX: rev=19e4ab3171c1540c40d6b12097745af98053b07d indexed=47/47 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+MADO_INDEX: rev=b632f0b980772aad4be9ab20f8b26e9329d62239 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 rc=0
 
 ## 2. master universe
-master knowledge blobs: 47
-master README index rows: 47
-master knowledge names containing idle-lock: 2
-new notes tracked at HEAD: 0
-git status of the three notes:
-?? corpus/knowledge/idle-lock-chain-armed-r14.md
-?? corpus/knowledge/idle-lock-never-asked-r12.md
-?? corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
-README uncommitted additions:
-15	0	corpus/README.md
+master knowledge blobs: 50
+master README index rows: 50
+master knowledge names containing idle-lock: 5
+new notes tracked at HEAD: 3
 
-## 3. WORKING TREE (root mode)
+## 3. LANE WORKING TREE (root mode)
 $ python3 -I quality/check-index.py --root .
-MADO_INDEX: root=. indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+MADO_INDEX_ROWS: root=/home/vgpnk/Projects/shokunin/mado-shokunin rows=50 errors=0 warns=0
 rc=0
 
-## 4. SCRATCH COPY OF WORKING TREE (root mode)
-copied README sha256: a3769befe3558c54c79c015910ba514a7009aa6a825e15f2bafdfd896fc5e83a
+## 4. SCRATCH COPY OF WORKING TREE (root + rev mode)
+copied README sha256: de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6
 MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/repo indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 rc=0
-
-## 5. SCRATCH SNAPSHOT COMMITTED (rev mode)
-MADO_INDEX: rev=285314d3fe9f58dfda5eb7adb4b693f82daa1e08 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+scratch_commit=abad0092b1a32886e598e6d34a113d786f7a9705
+MADO_INDEX: rev=abad0092b1a32886e598e6d34a113d786f7a9705 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 rc=0
 
-## 6. determinism (two root-mode runs, lane)
-rc1=0 rc2=0
-byte-identical
-
-## 7. per-note row census (lane working tree)
+## 5. per-note row census (lane working tree)
 notes_total 50 row_occurrences 50 distinct_row_names 50
 new_row idle-lock-never-asked-r12.md: count=1 note_present=True
 new_row idle-lock-chain-armed-r14.md: count=1 note_present=True
@@ -51,15 +41,15 @@ notes_with_count_ne_1 []
 rows_with_unknown_note []
 rc=0
 
-## 8. gate selftest
+## 6. determinism (two root-mode runs, lane)
+rc1=0 rc2=0
+byte-identical
+
+## 7. gate selftest
 MADO_INDEX_SELFTEST: 12/12 assertions passed
 rc=0
 
-## 9. row-fidelity gate (lane working tree)
-MADO_INDEX_ROWS: root=. rows=50 errors=0 warns=0
-rc=0
-
-## 10. negative controls on refreshed scratch copy
+## 8. negative controls rebuilt on top of the copy
 --- neg-missing rc=1
 MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/neg-missing indexed=49/50 missing=1 dangling=0 duplicates=0 coverage=9.8000/10
 missing: knowledge/idle-lock-never-asked-r12.md
@@ -77,11 +67,12 @@ missing: knowledge/idle-lock-offered-in-the-bar-r15.md
 MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/neg-fence indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 --- neg-secondtable rc=0
 MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/neg-secondtable indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
-
-## 11. context controls: row outside the coverage table
-neg-fence: r15 row inside a ``` fence -> rc=0, 50/50 (accepted)
-neg-secondtable: r15 row in an unrelated '## Unrelated table' -> rc=0, 50/50 (accepted)
-neg-prose: r15 cited by a '- ' bullet (no leading pipe) -> missing=1 rc=1 (not accepted)
 --- neg-prose rc=1
 MADO_INDEX: root=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex/neg-prose indexed=49/50 missing=1 dangling=0 duplicates=0 coverage=9.8000/10
 missing: knowledge/idle-lock-offered-in-the-bar-r15.md
+
+## 9. historical (pre-sweep) values, from the seat transcript — NOT re-runnable, the trees were swept
+readme_sha256_at_audit=a3769befe3558c54c79c015910ba514a7009aa6a825e15f2bafdfd896fc5e83a (246 L)
+scratch_commit_pre_sweep=285314d3fe9f58dfda5eb7adb4b693f82daa1e08 -> indexed=50/50, rc=0
+negatives pre-sweep: missing=1 rc=1 | duplicates=1 rc=1 | missing=1+dangling=1 rc=1 | missing=1 rc=1 | fence 50/50 rc=0 | secondtable 50/50 rc=0 | prose missing=1 rc=1
+determinism pre-sweep: rc1=0 rc2=0, byte-identical

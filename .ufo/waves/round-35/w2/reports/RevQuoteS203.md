@@ -3,7 +3,10 @@
 Seat: `L1Mado35.RevQuoteS203` (leaf reviewer). Round 35, wave 2.
 Lane repo: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only attack; no lane corpus,
 counter, control, `SOURCES.md`, jj/Git state, or `/home/vgpnk/Projects/shokuknow` byte was modified.
-Scratch evidence: `.ufo/waves/round-35/scratch/RevQuoteS203/evidence.log`.
+Scratch evidence: `.ufo/waves/round-35/scratch/RevQuoteS203/evidence.log` — **rebuilt from this
+seat's transcript** after an external sweep deleted the entire `scratch/` tree at ~03:45. The report
+is self-sufficient: every command and every output it relies on is inlined below, so the log is a
+convenience copy, not the authority.
 Host reads only (sha256sum/wc/ls/grep/python read); no first-run script was executed.
 No tool installed or upgraded this seat.
 

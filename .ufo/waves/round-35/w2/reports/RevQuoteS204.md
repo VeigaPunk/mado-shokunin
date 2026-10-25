@@ -2,7 +2,9 @@
 
 Seat: `L1Mado35.RevQuoteS204` (leaf, no dispatch). Read-only: no lane corpus file, counter,
 `SOURCES.md`, receipt, or host state was written. Scratch:
-`.ufo/waves/round-35/scratch/RevQuoteS204/`. Installs/upgrades: none.
+`.ufo/waves/round-35/scratch/RevQuoteS204/` — **rebuilt** after the external sweep at ~03:45
+destroyed the original; the rebuild carries a transcript section plus a fresh replay with exit
+codes. Installs/upgrades: none.
 
 **Revision 3.** Rev 2 withdrew my "executes 13 items" claim. Rev 3 incorporates the peer check
 with `RevQuoteS203`: the counter is **vacuous**, not merely weak; the boot timeline sharpens the
@@ -75,7 +77,7 @@ Both kill paths, read directly:
 Exclusions, each run with its exit code:
 
 - **Not OOM.** `journalctl --no-pager --since '2026-10-23 19:20' --until '2026-10-23 19:30' | grep -Ei 'oom|killed process|hypridle'` → only the Consumed line (exit 0); earlyoom at 19:24:59 reports `mem avail: 19479 of 21438 MiB (90.86%)`, swap 92.30% free.
-- **Not a crash.** `coredumpctl list --since 2026-10-23 --until 2026-10-25 | grep -Ei 'hypridle'` → no match (exit 1); `journalctl -k --since '2026-10-23 19:20' --until '2026-10-23 19:30' | grep -Ei 'segv|oom|hypridle|killed'` → no match (exit 1).
+- **Not a crash.** `coredumpctl list hypridle --no-pager` → `No coredumps found.` (exit 0, replayed at rebuild time — a direct instrument, not a no-match grep). The earlier date-scoped form `coredumpctl list --since 2026-10-23 --until 2026-10-25 | grep -Ei 'hypridle'` returned no match (exit 1); `journalctl -k --since '2026-10-23 19:20' --until '2026-10-23 19:30' | grep -Ei 'segv|oom|hypridle|killed'` → no match (exit 1).
 - **Not a boot/session boundary.** Boot -1 spans 13:24:36–22:12:24; 19:24:38 is deep inside it. `journalctl --user --no-pager | grep -c 'Starting hyprland.desktop and waiting'` → `2` (13:25:00, 22:14:09), exit 0 — nothing at 19:24. The compositor logged a heartbeat at 19:23:53.
 - **Not a config event.** `sha256sum ~/.config/hypr/hypridle.conf ~/.local/share/omarchy/config/hypr/hypridle.conf` → both `e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41`, mtime `2026-10-03 17:44:32` (exit 0). No refresh and no edit.
 - **Not a package update.** `grep -c '^\[2026-10-23' /var/log/pacman.log` → `0` (exit 0), with the log demonstrably covering the day: per-day counts `10-21: 20, 10-22: 2, 10-23: 0, 10-24: 22, 10-25: 31`.
@@ -154,7 +156,9 @@ Between 03:35:08 and 03:41:38 on 2026-10-25 the frozen entry
 `corpus/knowledge/idle-lock-never-asked-r12.md` was written twice by **another seat**:
 3586 B at 03:35:08 (E1+E2), then 4344 B / sha256 `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`
 / 69 lines at 03:41:38 (adds E3). This seat did not write to lane corpus; its only writes are
-this report and the scratch log (`stat`: report 03:40:46, log 03:37:07). The errata text is not a
+this report and the scratch log. Pre-sweep `stat` gave report 03:40:46 and log 03:37:07; the log
+was then destroyed by the ~03:45 sweep and rebuilt (transcript + fresh replay), so its present
+mtime is not the original. The errata text is not a
 copy of this report: an overlap probe run at 03:41 against the then-current report
 (`grep -c` for "thirteen items, twelve of them scripts" / "null-channel reading" / "2h50m window
 with the idle daemon down") returned 0 / 0 / 0. That probe is **historical and cannot be re-run

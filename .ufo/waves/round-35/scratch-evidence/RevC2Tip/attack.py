@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """RevC2Tip: per-observable mutation harness for PRED-C2-r35-v1.
 
+REBUILT 2026-10-25 ~03:50 from the seat transcript after an external sweep
+deleted the whole `.ufo/waves/round-35/scratch/` tree at ~03:45 (reported by
+L1Mado35.RevEntryR15). Content is the pre-sweep script as written by this seat.
+
 Writes ONLY under the scratch dir. Reads lane bytes read-only.
 Each case copies the committed frozen spec and clause ledger into scratch,
 mutates exactly one input, and runs the committed counter unchanged.

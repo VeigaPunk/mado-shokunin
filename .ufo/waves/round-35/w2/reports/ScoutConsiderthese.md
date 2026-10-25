@@ -11,6 +11,11 @@ LSP note: no language server answers `considerthese/*.md`, `corpus/**` or `.ufo/
 used file reads plus literal text search, which is the correct primitive for prose inventory.
 Every claim below is either a quoted byte range or a command with its exit code (appendix A).
 
+Scratch note: `.ufo/waves/round-35/scratch/ScoutConsiderthese/evidence.log` was rebuilt from this
+seat's transcript on 2026-10-25 after an external sweep removed the whole round-35 scratch tree
+(~03:45). This report cites **no** round-35 scratch path, so nothing here dangles; the round-34
+scratch files cited in §5 were outside the sweep and are still present.
+
 ---
 
 ## 0. Verdict

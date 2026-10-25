@@ -184,4 +184,6 @@ Self-correction on my own probe: the per-boot loop in the log prints `boot -3: 0
 
 ## 9. Tooling
 
-No installs, no upgrades, no pacman transaction (host-wide pause respected). All probes used in-tree `python3`, `systemctl`, `journalctl`, `ps`, `pgrep`, `stat`, `sha256sum`, `hyprctl`, `loginctl`, `sed`. Scratch: `.ufo/waves/round-35/scratch/RevEntryR14/` (probe log only). No file outside my report and scratch was written.
+No installs, no upgrades, no pacman transaction (host-wide pause respected). All probes used in-tree `python3`, `systemctl`, `journalctl`, `ps`, `pgrep`, `stat`, `sha256sum`, `hyprctl`, `loginctl`, `sed`. No file outside my report and my scratch directory was written.
+
+**Scratch sweep.** An external sweep removed the whole `.ufo/waves/round-35/scratch/` tree at ~03:45, including this seat's directory (`ls scratch` → exit 2). I rebuilt `scratch/RevEntryR14/probe-log.md` from the session transcript with a header recording the removal; no value was re-derived or guessed. **No verdict depends on it** — every finding in §1–§7 quotes its command and exit code inline. I re-ran the load-bearing invariants after the rebuild (03:46): entry sha256 `583c708c…0bf3` and 3768 B / 03:35:30 unchanged, S205 sha256 `f3387bfc…` unchanged, conf digest `e7d3b8dd…de41` unchanged, `pgrep -x hypridle` → `1667`, scope `active` rc=0, `hypridle.service` `inactive` rc=3, C1 `TARGET_MET` rc=0, C2 `TARGET_MET` rc=0.

@@ -2,16 +2,18 @@
 
 Seat: sentinel (leaf, no dispatch). Read-only audit. Window: 2026-10-25 03:29–03:45 -0300.
 Wave-2 was dispatched at 03:28 (`w2-spec.json` mtime); the wave was still in flight at every
-snapshot below. Lane HEAD at close: `4efaf63` (03:43:55) — four round-35 commits, three of them
-during this wave.
+snapshot below. Round 35 produced **seven** lane commits, **six during this wave**; the tree was at
+`b632f0b` when last observed (03:46). The claim data under test — the three entries and the
+`SOURCES.md` rows — has been byte-stable since `4f35c80` (03:42:04); only `lessons/round-35.md`
+churned after that.
 
 Raw command/output pairs: `.ufo/waves/round-35/scratch-evidence/SentBoundary/evidence.txt` (written
 under `scratch/`, then relocated and committed as `scratch-evidence/` by `4efaf63` mid-wave).
 
-**Concurrency warning first, because it shapes every verdict:** the lane HEAD moved *three times
-during this wave* — `02088b4` 03:34:26, `4f35c80` 03:42:04, `7b745a1` 03:42:29, `4efaf63`
-03:43:55 (four in round 35 counting `19e4ab3` 23:24:06) — and the six corpus files under test were
-rewritten between the first two. A `git status` taken at 03:29 and the same command at 03:45 do
+**Concurrency warning first, because it shapes every verdict:** the lane HEAD moved six times
+during this wave (`02088b4` 03:34:26, `4f35c80` 03:42:04, `7b745a1` 03:42:29, `4efaf63` 03:43:55,
+`8889bdc` 03:45:15, `b632f0b` 03:46:02) and the six corpus files under test were rewritten between
+the first two. A `git status` taken at 03:29 and the same command at 03:45 do
 not describe the same tree, and neither matches every reviewer's input. Every number below is
 stamped with its measurement time.
 
@@ -78,6 +80,15 @@ Git index."*
    so the very path the wave-2 contract names as the only allowed write target ceased to exist
    mid-wave. At **03:45** the lane tree is clean except `?? .ufo/waves/round-35/w2-plan.err` and
    reports the seats are still editing.
+7. **03:45:15 — HEAD → `8889bdc`** *"point the digest-repair receipt at the commit that keeps it
+   (the working tree was cleaned)"* — `M corpus/lessons/round-35.md` only; the three entries and
+   `SOURCES.md` are untouched here.
+8. **03:46:02 — HEAD → `b632f0b`** *"the last two seat reports, the seats' revised reports, and the
+   scratch-evi…"* — reports/evidence only.
+
+Verified at 03:46: `git diff --numstat 4f35c80..HEAD -- corpus/knowledge corpus/SOURCES.md` → empty
+(rc=0), and `git diff --stat 4f35c80..HEAD -- corpus` → `corpus/lessons/round-35.md | 3 ++-`.
+So **the claim data is pinned at `4f35c80`** while the tree keeps moving.
 
 ### The reproducible defect
 
@@ -131,9 +142,10 @@ breadth-first `**/fetch/S20*.receipt.txt` away from poisoning a copied root or a
 
 ### Smallest remediation
 
-1. Pin the round verdict to `4efaf63` (the corpus blobs have been stable since `4f35c80`) and record
-   the three entry blob ids; re-run both counters against an export of that commit, not the mutable
-   worktree.
+1. Pin the claim data to `4f35c80` — the three entries and the `SOURCES.md` rows are byte-identical
+   from `4f35c80` through `b632f0b` (`git diff --numstat 4f35c80..HEAD -- corpus/knowledge
+   corpus/SOURCES.md` empty, rc=0) — record the three entry blob ids, and re-run both counters
+   against an export of a named commit, not the mutable worktree.
 2. Move `controls-content/` under the seat evidence dir (`.ufo/waves/round-35/scratch-evidence/CritControls/`)
    **or** add it to the registration control table; then re-run the receipt census to prove no forged
    receipt is reachable from the scored root.

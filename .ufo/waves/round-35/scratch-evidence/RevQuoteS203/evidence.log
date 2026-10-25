@@ -1,87 +1,127 @@
-### A3 anchor
-1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  .ufo/waves/round-35/fetch/S203.receipt.txt
-EXIT=0
-1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646
-EXIT=0
-### A1 contiguity
-count 1 offset 3033 words 14
-EXIT=0
-### A2 live facts
-20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630  /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
-EXIT=0
-1089 /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
-EXIT=0
-13
-EXIT=0
-12
-EXIT=0
-12
-EXIT=0
-IDLE_ABSENT
-EXIT=0
-### C1 counter
-PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
-EXIT=0
+# RevQuoteS203 evidence log — REBUILT after external sweep
 
-### CROSS-ROW S204: hook execution semantics
--- omarchy-hook-install body (27-29) --
-mkdir -p "$HOOK_DIR"
-cp "$HOOK_FILE" "$HOOK_PATH"
-chmod 755 "$HOOK_PATH"
--- hook self-delete line 6 --
-rm -f "$0"
--- installed hook still present --
--rwxr-xr-x 1 vgpnk vgpnk 174 Oct  3 17:48 /home/vgpnk/.config/omarchy/hooks/post-update.d/install-voxtype.hook
--- who dispatches --
-# omarchy:summary=Run a named hook from ~/.config/omarchy/hooks/<name> and ~/.config/omarchy/hooks/<name>.d/.
-RESULT: first-run executes 12, installs 1 hook; hook never ran
+Original `scratch/RevQuoteS203/` (append-only `evidence.log` plus intermediate runs) was removed by
+an external sweep of the whole `.ufo/waves/round-35/scratch/` tree at ~2026-10-25 03:45. `w2/reports/`
+was untouched. This file was rebuilt at ~03:47 from the seat transcript.
 
-### ENTRY r12 SECOND LEG (S204) — vacuity + positive event
--- counter --
-0
-grep EXIT=1
--- toggle script has no journal primitive --
-NO_LOGGING_PRIMITIVE
--- kill paths --
-/home/vgpnk/.local/share/omarchy/bin/omarchy-restart-app:6:pkill -x $1
-/home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle:6:  pkill -x hypridle
--- hypridle journal --
-Oct 23 13:21:39 plazir27 systemd[1490]: Stopping hypridle...
-Oct 23 13:21:39 plazir27 systemd[1490]: Stopped hypridle.
-Oct 23 13:21:39 plazir27 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
+**The report is self-sufficient:** every command and every output it relies on is inlined in
+`.ufo/waves/round-35/w2/reports/RevQuoteS203.md`. This log is a convenience copy, not the authority.
+
+---
+
+## A3 — anchor
+
+```
+sha256sum .ufo/waves/round-35/fetch/S203.receipt.txt
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646   EXIT=0
+awk -F'|' '$2 ~ /S203/ {print $7}' corpus/SOURCES.md
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646   EXIT=0
+grep -c 1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646 corpus/SOURCES.md   -> 1
+```
+
+## A1 — contiguity
+
+```
+python3 -I -c "q='located: install/first-run/ lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock'; b=open('.ufo/waves/round-35/fetch/S203.receipt.txt','rb').read(); qb=q.encode(); print('count',b.count(qb),'offset',b.find(qb),'words',len(q.split()))"
+count 1 offset 3033 words 14    EXIT=0
+```
+Receipt: 3137 B, no CRLF, newline-terminated. Tail after quote: `b'\n'`.
+Post-mutation re-check on the current entry: `gate_quote_lines 1 | receipt_has_quote 1 |
+line_matches_receipt_tail True | line 12`.
+
+## A2 — live host facts
+
+```
+sha256sum ~/.local/share/omarchy/bin/omarchy-first-run
+20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630   EXIT=0
+wc -c …/omarchy-first-run                                            1089   EXIT=0
+ls -1 …/install/first-run | wc -l                                    13     EXIT=0
+ls -1 …/install/first-run/*.sh | wc -l                               12     EXIT=0
+grep -c 'install/first-run/.*\.sh' …/omarchy-first-run               12     EXIT=0
+grep -rq -i idle …/install/first-run/ && echo IDLE_FOUND || echo IDLE_ABSENT
+IDLE_ABSENT                                                          EXIT=0
+```
+Set equality body↔dir (python): `body_sh_count 12 | dir_sh_count 12 | SET_EQUAL True |
+only_in_body [] | only_in_dir [] | non_sh_entries ['install-voxtype.hook'] | hook_registered True`.
+Embedded body vs live: `EMBEDDED_EQ_LIVE: True | embedded_lines 28 | live_lines 28`.
+Dir mtime `2026-10-03 17:42:32.317470188 -0300`; receipt mtime `2026-10-24 23:21:13`.
+
+## Hook semantics (why "12 executed" is exact)
+
+```
+nl -ba ~/.local/share/omarchy/bin/omarchy-hook-install     # 27-29:
+  mkdir -p "$HOOK_DIR"
+  cp "$HOOK_FILE" "$HOOK_PATH"
+  chmod 755 "$HOOK_PATH"
+sed -n '6p' …/install/first-run/install-voxtype.hook       -> rm -f "$0"
+ls -la ~/.config/omarchy/hooks/post-update.d/install-voxtype.hook
+  -rwxr-xr-x 174 B   -> still present, so it has never run
+```
+
+## Body statement census (settles "13 items")
+
+Executable actions **15**: 12 `bash …/first-run/*.sh`, 1 `omarchy-hook-install` (line 23),
+1 `sudo rm -f /etc/sudoers.d/first-run` (line 24), 1 `rm -f "$FIRST_RUN_MODE"` (line 11).
+14 excluding the guard's own cleanup; **12 are scripts**.
+
+## Homonym disarmed
+
+`install/login/default-keyring.sh:12 lock-on-idle=false` is inside the `[keyring]` stanza of
+`Default_keyring.keyring` (GNOME-keyring), invoked from `install/login/all.sh:2`. Not the desktop
+idle lock. Only other install-tree hit: `hypridle` in `install/omarchy-base.packages:53`.
+
+## Entry r12's S204 leg — vacuous instrument + positive event
+
+```
+journalctl --user --no-pager | grep -c 'omarchy-toggle'     -> 0 (grep EXIT=1)
+grep -n 'logger\|systemd-cat\|journal\|echo' ~/.local/share/omarchy/bin/omarchy-toggle-idle
+  (no matches: OFF path = pkill only; ON path logs 'received: app -- hypridle', never the script name)
+```
+Journal:
+```
+Oct 23 13:21:39 Stopping hypridle... / Stopped hypridle. / scope Consumed 22.796s over 1d 8h
 -- Boot e55f9cd9ec4e4dd5bf0ce775977af5a5 --
-Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: received: app -- hypridle
-Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope --description=hypridle --quiet --collect --same-dir -- hypridle
-Oct 23 13:25:00 plazir27 systemd[1529]: Started hypridle.
-Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+Oct 23 13:25:00 uwsm_app-daemon: received: app -- hypridle ; Started hypridle.
+Oct 23 19:24:38 app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s over 5h 59min 38.213s   (NO Stopping/Stopped)
 -- Boot 0a3785aac7104585a914f6cda41795a7 --
-Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
-Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
-Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
--- exclusions --
-0
-coredump_hits=1
-pacman 2026-10-21 20
-pacman 2026-10-22 2
-pacman 2026-10-23 0
-pacman 2026-10-24 22
-pacman 2026-10-25 31
-inactive
-inactive
+Oct 23 22:14:11 received: app -- hypridle ; Started hypridle.
+```
+Exclusions: `coredumpctl list | grep -i hypridle` → none; earlyoom 19:24:59 = 19479/21438 MiB
+(90.86%) avail, swap 92.30% free, and the day's 8 "kill/SIG" strings are startup policy lines
+(13:24:57, 22:14:08); pacman.log per-day 10-21:20, 10-22:2, 10-23:0, 10-24:22, 10-25:31;
+no Hyprland restart 19:20–19:30 (heartbeat 19:23:53 only); `hypridle.conf` sha256
+`e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41` identical to shipped default,
+mtime `2026-10-03 17:44:32`. Kill paths: `omarchy-toggle-idle:6` (kill only) and
+`omarchy-restart-app:6` via `omarchy-restart-hypridle` (kill + immediate uwsm relaunch — excluded,
+no `received: app -- hypridle` follows until the next boot).
+Attribution limit: `systemctl is-active auditd psacct` → inactive, inactive; no
+`/var/log/account/pacct`; `~/.bash_history` 4572 B with 0 hits (uninformative).
 
-### CONCURRENT MUTATION OBSERVED
-2026-10-25 03:40:12.893966805 -0300 171446 corpus/SOURCES.md
-0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  corpus/SOURCES.md
-0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504  corpus/knowledge/idle-lock-never-asked-r12.md
-1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  .ufo/waves/round-35/fetch/S203.receipt.txt
--- withdrawn claims still in place --
-1:# The idle lock was never offered as a choice at setup, and the operator never toggled it afterwards
-23:**OBS** And the operator never exercised the toggle afterwards (S204): the user
-29:and the toggle was never run in any session the journal still keeps.
-44:- **E1 - "never toggled" withdrawn.** Section 2's inference that the operator never
-62:  reads "…and the operator never toggled it afterwards"; that clause is withdrawn for the
--- row 205 new note --
- The post-login questionnaire runs thirteen items, twelve of them first-run scripts - battery monitor, internal monitor, sudoers cleanup, firewall, DNS resolver, GNOME theme, swayosd, primary paste, text scaling, elephant, welcome and wifi - and none of the thirteen executed items asks about the idle lock 
-recheck ' on-change '
--- C1 after mutation --
-PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+## Concurrent mutation of scored artifacts
+
+```
+first read:  corpus/SOURCES.md 848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80
+             r12  21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1 (2078 B)
+after:       corpus/SOURCES.md 0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51
+             171446 B, mtime 2026-10-25 03:40:12; row 205 990 B; note "thirteen items … thirteen
+             executed items"; recheck on-request -> on-change
+             r12 7f27ced0…4dd58 (3586 B, 60 lines, E1/E2 @42)
+             r12 0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504 (4344 B, 69 lines,
+                 E3 @61, mtime 2026-10-25 03:41:38)
+receipt S203 unchanged (1b7fa87…1646)
+```
+Withdrawn claims still unmarked: line 1 (H1), line 23 (§1 OBS), line 29 (§2). E3 says the title "is
+kept as landed rather than rewritten".
+
+## Counters on final bytes
+
+```
+python3 -I .ufo/waves/round-35/c1/count.py --root … --frozen …
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   EXIT=0
+frozen.json keys: id, predicate, target, entries, receipts   (no registry hash, no entry hash)
+```
+
+## Scratch sweep
+
+`scratch/RevQuoteS203/` absent at 03:46; only `scratch/RevC1Tip/` present (rebuilt by another seat).
+This log rebuilt from transcript; report unaffected except its pointer line.

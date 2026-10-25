@@ -234,3 +234,61 @@ own bar gained the criterion its falsification produced (55), which is a quality
 cited evidence is uncommitted and mis-rooted, and the SHONEN surface is unchanged, so no promotion
 inference is available. `coverage` is untouched by this report beyond observing that C1's `TARGET_MET`
 is shape-satisfiable at the data revision.
+
+## 7. Erratum (append-only, 2026-10-25 ~03:50 local) — the scratch tree was swept
+
+**Event.** `.ufo/waves/round-35/scratch/` was emptied by an external sweep at 2026-10-25T03:46
+(`stat .ufo/waves/round-35/scratch` mtime `Oct 25 03:46`; `ls` now shows only `RevC1Tip`, re-created by a
+seat after the sweep). Every seat directory is gone: `CritVacuous`, `RevTarget`, `RevShonen` and the rest.
+`w2/reports/` is intact (`ls .ufo/waves/round-35/w2/reports` → 8 seat reports, newest 03:45).
+
+**References in this report that now dangle** (left in place; this block supersedes them):
+
+1. Header: "`…/scratch/RevShonen/QUALITY-HEAD.md` (a HEAD snapshot for the diff)". Removed. **Re-derivation,
+   byte-identical and durable:** `git show 19e4ab3:corpus/QUALITY.md` — 360 lines ending at criterion 54
+   (observed: `wc -l` → 360). No rebuild is needed; the git blob is the same bytes.
+2. §3 item 1: the six counter runs under `--root …/scratch/RevTarget{,/quote-only,/fake-all,/empty}` and
+   `--root …/scratch/CritVacuous`. Those trees are gone; the outputs quoted there are **transcript-level
+   only** now and cannot be re-run. The trees' construction and the same outputs are preserved in
+   committed reports: `git ls-tree HEAD -- .ufo/waves/round-35/w1/reports/CritVacuous.md
+   .ufo/waves/round-35/w1/reports/RevTarget.md` → both present (rc 0).
+3. §3 item 2 ("the crib evidence is not committed") — **upgraded, not weakened.** Criterion 55's cited
+   cribs were uncommitted at `02088b4` (`git ls-tree -r --name-only HEAD -- .ufo/waves/round-35/scratch |
+   wc -l` → `0`) and the external sweep has now deleted them from disk as well. Criterion 50's decision
+   ("commit the bytes **or** name, in the frozen registration, the committed receipt that serves as its
+   verification basis when the bytes are gone") is now forced for real: the only preserved basis is the
+   two committed w1 reports above. They document the trees and quote their outputs; they cannot be
+   re-executed.
+4. §4 bullet "No new crib controls" — unchanged in substance: `controls/` still holds the freeze set, and
+   the sweep did not create the cribs. `controls/` and the corpus are committed, so the counter's
+   real-root, `golden` and `c1-donothing` runs remain re-runnable:
+   `python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json` →
+   `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` rc=0;
+   `--root .ufo/waves/round-35/controls/golden` → `TARGET_MET` rc=0;
+   `--root .ufo/waves/round-35/controls/c1-donothing` → `TARGET_MISSED` rc=1.
+
+**Durable replacement for the lost behavioural evidence** — the same defect proved from committed bytes
+alone, no scratch required:
+
+- `git hash-object .ufo/waves/round-35/c1/count.py` = `git rev-parse HEAD:.ufo/waves/round-35/c1/count.py`
+  = `56ce2b5770c234678418816cd0b7ff0b1c9df9dd` (tool clean at HEAD).
+- `git show HEAD:.ufo/waves/round-35/c1/count.py | grep -n digest` → **one** line, `:174`
+  (`digest = hashlib.sha256(blob).hexdigest() …`), and the `ok` predicate (`:185-195`:
+  `blob is not None and row is not None and nf_ok and used_by == citing and cs[7] == "mined" and
+  valid_recheck(cs[9]) and receipt["sha256"] in cs[5] and quote is not None and 1 <= len(words) <= 25
+  and quote.encode() in blob`) never compares `digest` to anything. A receipt file at the frozen path
+  whose bytes differ from `receipt["sha256"]` therefore passes; the clause `digest-match` in
+  `c1/clauses.json` checks only that the row text *contains* the recorded digest. That is criterion 55's
+  "dead clause, not a defence", readable from committed bytes at `02088b4`.
+
+**Not attempted, deliberately.** I did not rebuild the swept crib trees: the sweep is external, the
+committed counter source plus the committed w1 reports carry the same proof, and re-creating a tree the
+sweep removed would reintroduce the exact durability defect finding 2 names. No lane file, control, or
+counter was edited; this report is the only write of this seat after the sweep.
+
+**Commands for this erratum.** `stat .ufo/waves/round-35/scratch` (mtime `Oct 25 03:46`); `ls` → only
+`RevC1Tip`; `git ls-tree HEAD -- …/w1/reports/{CritVacuous,RevTarget}.md` → both, rc 0;
+`git hash-object` / `git rev-parse HEAD:` on `c1/count.py` → equal `56ce2b57…`, rc 0;
+`git show HEAD:.ufo/waves/round-35/c1/count.py | grep -n digest` → `:174` only, rc 0;
+`git show 19e4ab3:corpus/QUALITY.md | wc -l` → `360`, rc 0.
+

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """YAGNI deletion harness for the round-35 row set.
 
+REBUILT 2026-10-25 ~03:47 from this seat's transcript after an external sweep
+removed all of .ufo/waves/round-35/scratch/ at ~03:45. Behaviour is unchanged;
+`rerun.log` records the re-run against the current lane bytes.
+
 Builds a throwaway root that mirrors only what PRED-C1-r35-v1 reads
 (corpus/ + .ufo/waves/round-35/fetch), applies one mutation, runs the
 unmodified lane counter, and prints the verdict. Never writes outside

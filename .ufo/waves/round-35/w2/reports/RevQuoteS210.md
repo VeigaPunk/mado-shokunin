@@ -4,8 +4,21 @@ Seat: `L1Mado35.RevQuoteS210` · leaf · read-only attack · 2026-10-25
 Target row: `corpus/SOURCES.md:212` (S210, host toggle-state directory)
 Attacked entry: `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md`
 Receipt: `.ufo/waves/round-35/fetch/S210.receipt.txt`
-Evidence: `.ufo/waves/round-35/scratch/RevQuoteS210/rederive.sh` →
-`.ufo/waves/round-35/scratch/RevQuoteS210/rederive.out` (script run exit 0)
+Evidence (live path after the 03:45 relocation):
+`.ufo/waves/round-35/scratch-evidence/RevQuoteS210/rederive.sh`
+(3727 B, sha256 `468c54a6e2e2e2c79931ea416cadd4f027655199c4bcfb6e40174b90b6e675df`) →
+`.ufo/waves/round-35/scratch-evidence/RevQuoteS210/rederive.out`
+(2714 B, sha256 `4b7b77d6d3fd8bc661a61d5b02c53feebd4db68fbca3b8ad860649911c0a2026`);
+re-run rc=0 with output discarded (no write).
+
+**Evidence relocation (external sweep, ~03:45).** `.ufo/waves/round-35/scratch/` was
+*moved*, not deleted: the whole tree now lives at
+`.ufo/waves/round-35/scratch-evidence/`, per-seat directories and mtimes preserved
+(03:43). `RevQuoteS210/` arrived byte-intact — the shas above are the same files I
+wrote and ran, so no transcript rebuild was needed and these citations are live at
+the new path. Reports that still say `scratch/<Seat>/` are dangling by one path
+segment; the fix is to prepend `-evidence`, not to rebuild content, which would
+risk divergence from the bytes actually measured.
 
 Axes attacked: (A1) gate-quote byte contiguity, (A2) host fact agreement,
 (A3) receipt-digest vs row anchor, (A4) assertion mechanism support.
@@ -241,7 +254,8 @@ errata E1–E5**). All three required checks were re-run against those current b
 occurrences 1), words 15, receipt sha unchanged `ef282e38…0b8726`, and the C1
 counter still `TARGET_MET` (rc=0). My results are timestamped against the 5806 B /
 `82c08a46…` state, not the pre-errata file. Because the file is still moving,
-re-run `scratch/RevQuoteS210/rederive.sh` (rc=0) before quoting any of these figures.
+re-run `scratch-evidence/RevQuoteS210/rederive.sh` (rc=0) before quoting any of these
+figures.
 
 ## Residual risk (not defects; each checked)
 
@@ -256,8 +270,9 @@ re-run `scratch/RevQuoteS210/rederive.sh` (rc=0) before quoting any of these fig
   S212/S215/S216/S217 and contains **0** occurrences of S210; the registry has
   exactly one S210 row and zero S211 rows. No live collision; only a merge hazard
   if an older staged revision resurfaces.
-- **Peer convergence.** `scratch/SentProvenance/S210.rederive.txt` independently
-  reached the same 2-file / 0-idle result; `scratch/SentProvenance/S210.semantics.txt`
+- **Peer convergence.** `.ufo/waves/round-35/scratch-evidence/SentProvenance/S210.rederive.txt`
+  independently reached the same 2-file / 0-idle result;
+  `.ufo/waves/round-35/scratch-evidence/SentProvenance/S210.semantics.txt`
   independently found that `omarchy-toggle-idle` never touches the store (M1). Two
   seats, same bytes.
 

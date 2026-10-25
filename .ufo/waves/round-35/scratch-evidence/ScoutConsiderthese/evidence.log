@@ -1,7 +1,12 @@
-# ScoutConsiderthese — scratch evidence log
+# ScoutConsiderthese — scratch evidence log (REBUILT after the sweep)
 
-Round 35, wave 2. Read-only outside this directory and the report at
-`.ufo/waves/round-35/w2/reports/ScoutConsiderthese.md`. No installs, no pacman, no host mutation.
+Rebuilt 2026-10-25 from this seat's own transcript after an external sweep removed the whole
+`.ufo/waves/round-35/scratch/` tree at ~03:45 (all seat directories; `w2/reports/` intact).
+Content is the original log plus the two late checks (items 16–17). The authoritative record is the
+report itself: `.ufo/waves/round-35/w2/reports/ScoutConsiderthese.md` (its §2 tables and appendix A
+carry every command and exit code; nothing there depends on this file).
+
+Read-only outside this directory and the report. No installs, no pacman, no host mutation.
 
 ## Commands run and what they established
 
@@ -28,14 +33,11 @@ Round 35, wave 2. Read-only outside this directory and the report at
 15. `grep -n "S190" considerthese/2026-10-24.md` → no match, **exit 1**; `S178` → 2 hits;
     `S183` → 1 hit. Confirms the round-33 seat's argument that the S190 open does not ground any
     2026-10-24 claim.
-16. `git log --oneline -1 -- corpus/knowledge/idle-lock-never-asked-r12.md` → `02088b4`;
+16. (late) `git log --oneline -1 -- corpus/knowledge/idle-lock-never-asked-r12.md` → `02088b4`;
     `git status --porcelain` on the three entries → ` M` each (uncommitted wave-2 errata).
-17. `grep -rl "considerthese" .ufo/waves/*/w*/reports/*.md` — prior sweeps located: round-17
-    (2026-10-20), round-18 (2026-10-19), round-32 (2026-10-23), round-33 (2026-10-24 #5),
-    round-34 A/B/Conn (2026-10-24, B also 2026-10-23), round-35 w1 ScoutConsider (2026-10-24) and
-    CritConsider (groundability).
-18. `grep -rln "2026-10-21.md\|2026-10-22.md" .ufo/waves/*/w*/reports/*.md` — only round-35
-    CritConsider and this seat's report; no prior item-level inventory of those two files.
+17. (late) `grep -rl "considerthese" .ufo/waves/*/w*/reports/*.md` and
+    `grep -rln "2026-10-21.md\|2026-10-22.md" …` — prior sweeps located (round-17, 18, 32, 33,
+    34 A/B/Conn, 35 w1); no prior item-level inventory of `2026-10-21` / `2026-10-22`.
 
 ## Files read in full
 
@@ -47,11 +49,12 @@ Round 35, wave 2. Read-only outside this directory and the report at
 `round-35/w2/reports/RevQuoteS203.md`; `round-17/w1/reports/ConsiderTheseJoin.md:39-63`;
 `round-17/w2/reports/ConnectConsiderThese.md:129-203`; `round-32/w1/reports/ScoutConsiderThese.md`;
 `round-33/w1/reports/ScoutConsider.md`; `round-34/scratch/ScoutConsiderA/list.md`,
-`ScoutConsiderB/list.md`, `ConnConsiderLatest/table.md`.
+`ScoutConsiderB/list.md`, `ConnConsiderLatest/table.md` (round-34 scratch survived the sweep).
 
 ## Notes
 
 - Long-running `find` over `.ufo` was abandoned after 60 s of shell contention; targeted `ls`/`grep`
   replaced it. No result in the report depends on the abandoned scan.
-- No LSP server covers these paths; literal text search was used deliberately (documented in the
-  report's header).
+- No LSP server covers these paths; literal text search was used deliberately.
+- The report cites no path under `.ufo/waves/round-35/scratch/`, so the sweep left no dangling
+  reference in it; this log is a convenience copy, not load-bearing evidence.

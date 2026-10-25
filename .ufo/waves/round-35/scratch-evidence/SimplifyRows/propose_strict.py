@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Proposal, not a replacement: a document-anchored variant of PRED-C1-r35-v1.
 
+REBUILT 2026-10-25 ~03:47 from this seat's transcript after an external sweep
+removed all of .ufo/waves/round-35/scratch/ at ~03:45. Behaviour is unchanged.
+
 The frozen predicate scores a row when its anchor cell *contains the receipt
 digest*. It never asks whether the row names a document a reader can open, and
 it never verifies a file-level digest or a line span. This checker adds those

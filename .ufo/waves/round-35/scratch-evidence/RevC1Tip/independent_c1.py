@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Independent re-derivation of PRED-C1-r35-v1 from bytes; no import of count.py.
-Reports the predicate's three numbers twice:
-  strictA = counter's reading (anchor carries frozen spec digest string)
-  strictB = literal reading (anchor carries sha256 of the receipt bytes)
+
+strictA = counter's reading: anchor cell carries the digest string frozen.json records.
+strictB = literal reading: anchor cell carries the sha256 of the receipt bytes, and those
+          bytes hash to the frozen value.
 """
 import hashlib, json, os, re, stat, sys
 
@@ -17,8 +18,8 @@ def path_ok(rel):
     try:
         st = os.lstat(p)
         if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1: return None
-        real = os.path.realpath(p)
-        if not real.startswith(os.path.realpath(ROOT) + os.sep) and real != os.path.realpath(ROOT): return None
+        real = os.path.realpath(p); rootreal = os.path.realpath(ROOT)
+        if not (real == rootreal or real.startswith(rootreal + os.sep)): return None
         return open(p, 'rb').read()
     except OSError:
         return None
@@ -36,8 +37,7 @@ for ln in sources.splitlines():
     m = ROW.match(ln)
     if m: rows.setdefault(m.group(1), []).append(ln)
 
-tally = {'A': {'closed_entries': 0, 'closed_rows': 0, 'open_cites': 0},
-         'B': {'closed_entries': 0, 'closed_rows': 0, 'open_cites': 0}}
+tally = {m: {'closed_entries': 0, 'closed_rows': 0, 'open_cites': 0} for m in ('A', 'B')}
 detail = []
 for mode in ('A', 'B'):
     for rel, ids in spec['entries'].items():
@@ -58,7 +58,7 @@ for mode in ('A', 'B'):
                 digest_ok = spec['receipts'][sid]['sha256'] in anchor
                 if mode == 'B': digest_ok = digest_ok and actual in anchor
                 ok = (ub == citing and cs[7] == 'mined'
-                      and (ISO.match(cs[9]) or CAD.match(cs[9]) or SYM.match(cs[9]))
+                      and bool(ISO.match(cs[9]) or CAD.match(cs[9]) or SYM.match(cs[9]))
                       and digest_ok and quote is not None
                       and 1 <= len(quote.split()) <= 25 and quote.encode() in blob)
             if ok: tally[mode]['closed_rows'] += 1
@@ -68,9 +68,12 @@ for mode in ('A', 'B'):
                 detail.append({
                     'sid': sid, 'entry': rel,
                     'row_count': len(rws), 'cells': len(cs),
+                    'status': cs[7] if len(cs) == 11 else None,
+                    'recheck': cs[9] if len(cs) == 11 else None,
                     'anchor_has_frozen_digest': blob is not None and row is not None and len(cs) == 11 and spec['receipts'][sid]['sha256'] in cs[5],
                     'anchor_has_actual_digest': blob is not None and row is not None and len(cs) == 11 and actual in cs[5],
                     'receipt_digest_matches_freezer': actual == spec['receipts'][sid]['sha256'],
+                    'quote_lines': len(lines),
                     'quote_words': len(quote.split()) if quote is not None else None,
                     'quote_is_substring': bool(blob is not None and quote is not None and quote.encode() in blob),
                     'closed_counter_reading': ok,

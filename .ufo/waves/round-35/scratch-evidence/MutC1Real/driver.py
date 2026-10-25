@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """MutC1Real driver: single-clause mutation matrix for PRED-C1-r35-v1 on the REAL tree copy.
 
+REBUILT FROM TRANSCRIPT after the ~03:45 external sweep removed scratch/MutC1Real/.
+Behaviour is the script that produced the 28 runs reported in
+.ufo/waves/round-35/w2/reports/MutC1Real.md.
+
 Arm A: drop exactly one clause from the counter (code-only; PREDICATE string untouched so
        frozen.json still matches -> no predicate-drift) and run on pristine real bytes.
 Arm B: violate exactly one clause in a fresh copy of the real bytes and run the pristine
@@ -71,10 +75,6 @@ def rowline(sources: str, sid: str) -> tuple[list[str], int]:
     hits = [i for i, l in enumerate(lines) if pat.match(l)]
     assert len(hits) == 1, (sid, len(hits))
     return lines, hits[0]
-
-
-def write_lines(p: pathlib.Path, lines: list[str]) -> None:
-    p.write_text("\n".join(lines) + ("\n" if not lines[-1].endswith("\n") else ""))
 
 
 def put_row(root: pathlib.Path, sid: str, fn) -> str:
@@ -374,7 +374,6 @@ results["X:entry-regular-drop x hardlink-data"] = run(
     ARMS / "A-entry-regular/count.py", pathlib.Path(results["B:o-nofollow-open"]["root"]))
 
 # symbolic-cadence weakness: valid_recheck accepts bare prose
-sys_path = str(ROOT / ".ufo/waves/round-35/c1")
 import importlib.util
 spec_ = importlib.util.spec_from_file_location("c1count", ROOT / ".ufo/waves/round-35/c1/count.py")
 mod = importlib.util.module_from_spec(spec_)

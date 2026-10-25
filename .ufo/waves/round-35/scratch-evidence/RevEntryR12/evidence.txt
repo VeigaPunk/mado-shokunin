@@ -1,120 +1,97 @@
-RevEntryR12 — raw evidence (read-only; 2026-10-25). Commands and captured output.
+RevEntryR12 — raw evidence (read-only; 2026-10-25).
+REBUILT from this seat's transcript at 2026-10-25 ~03:47 after an external sweep deleted the whole
+`.ufo/waves/round-35/scratch/` tree at ~03:45 (all seat directories; `w2/reports/` intact). The
+original file was byte-identical in content to this one up to [E21]; [E22]-[E30] were added after
+the entry was edited mid-review. Content is transcript-faithful, not a re-run.
 
 [E1] sha256sum /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
 20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630  (exit 0)
-== SOURCES.md:205 anchor sha256 == match.
+     == SOURCES.md:205 anchor sha256. 1089 B, 28 lines.
 
-[E2] wc -l < omarchy-first-run  -> 28
+[E2] wc -l < omarchy-first-run -> 28
 [E3] ls -1 /home/vgpnk/.local/share/omarchy/install/first-run/ | wc -l -> 13
      ls -1 .../first-run/*.sh | wc -l -> 12
-     13 entries: battery-monitor.sh cleanup-reboot-sudoers.sh dns-resolver.sh elephant.sh
-     firewall.sh gnome-theme.sh gtk-primary-paste.sh install-voxtype.hook
-     recover-internal-monitor.sh swayosd.sh text-scaling.sh welcome.sh wifi.sh
+     entries: battery-monitor.sh cleanup-reboot-sudoers.sh dns-resolver.sh elephant.sh firewall.sh
+     gnome-theme.sh gtk-primary-paste.sh install-voxtype.hook recover-internal-monitor.sh swayosd.sh
+     text-scaling.sh welcome.sh wifi.sh
+     stat dir -> 2026-10-03 17:42:32.317470188 -0300
 
-[E4] for f in .../first-run/*; grep -ci idle -> 0 for all 13 files (max 607 B each)
-     transitive calls inside the 12: omarchy-battery-present, omarchy-battery-monitor.timer,
-     omarchy-recover-internal-monitor.service, omarchy-hw-match. None touches hypridle/idle lock.
+[E4] grep -ci idle over all 13 files -> 0 each (largest 607 B).
+     transitive calls inside the twelve: omarchy-battery-present, omarchy-battery-monitor.timer,
+     omarchy-recover-internal-monitor.service, omarchy-hw-match. None touches hypridle.
 
-[E5] sha256sum S203.receipt.txt S204.receipt.txt
-1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  S203.receipt.txt
-4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  S204.receipt.txt
-== both equal the anchor hashes in SOURCES.md:205-206.
+[E5] receipt hashes (== SOURCES.md:205-206 anchors):
+     1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  S203.receipt.txt
+     4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  S204.receipt.txt
 
-[E6] journalctl --user --no-pager | grep -c 'omarchy-toggle'   -> 0   (pipeline exit 1 under pipefail)
-[E7] journalctl --user --no-pager | wc -l                      -> 165725
-[E8] journalctl --user --list-boots --no-pager
- -2 2026-10-23 07:18:30 .. 2026-10-23 13:21:44
- -1 2026-10-23 13:24:57 .. 2026-10-23 22:10:20
-  0 2026-10-23 22:14:08 .. 2026-10-25 03:31:21  (at measurement time)
+[E6] journalctl --user --no-pager | grep -c 'omarchy-toggle' -> 0 (pipeline exit 1 under pipefail)
+[E7] journalctl --user --no-pager | wc -l -> 165725
+[E8] user-journal boots: -2 2026-10-23 07:18:30..13:21:44; -1 13:24:57..22:10:20; 0 22:14:08..
+[E9] all hypridle journal lines (10):
+     13:21:39 Stopping/Stopped hypridle + scope 59197064 Consumed 1d 8h 25m 52.144s   (prior teardown)
+     13:25:00 uwsm_app-daemon received: app -- hypridle ; sent: exec systemd-run ... unit=app-Hyprland-hypridle-9408787a.scope ; Started hypridle.
+     19:24:38 app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU over 5h 59min 38.213s
+     22:14:11 uwsm_app-daemon received: app -- hypridle ; sent: exec ... unit=app-Hyprland-hypridle-d4bd7533.scope ; Started hypridle.
+     counts: Started=2, Stopped=1, Stopping=1 (both at 13:21:39), received=2
+[E10] 2026-10-23 13:25:00 + 5:59:38.213 = 19:24:38.213 (python, exit 0) -> no Stopping/Stopped for
+     that scope. coredumpctl list hypridle -> "No coredumps found."
+[E11] suspend/hibernate in -b -1 system journal: 18 hits, all kernel PM setup lines at 13:24:36.
+[E12] system-journal boot boundaries: boot -1 last entry 22:12:24; boot 0 first 22:14:07
+     ("Linux version 7.2.11-arch1-1"). In-session absence 19:24:38 -> 22:10:20 = 2h45m42s.
+[E13] pgrep -ax hypridle -> 1667 /usr/bin/hypridle (boot 0 autostart).
+[E14] /home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf:1  exec-once = uwsm-app -- hypridle
+[E15] /home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle (316 B):
+     5 if pgrep -x hypridle >/dev/null; then
+     6   pkill -x hypridle
+     7   notify-send -u low "Stop locking computer when idle"
+     9   uwsm-app -- hypridle >/dev/null 2>&1 &
+    10   notify-send -u low "Now locking computer when idle"
+    13 pkill -RTMIN+9 waybar
+     Neither branch emits 'omarchy-toggle'.
+[E16] three call sites of the same command:
+     ~/.config/waybar/config.jsonc:208  "on-click": "omarchy-toggle-idle"      (S206)
+     /home/vgpnk/.local/share/omarchy/bin/omarchy-menu:212  *Idle*) omarchy-toggle-idle ;;
+     .../default/hypr/bindings/utilities.conf:30  bindd = SUPER CTRL, I, Toggle locking on idle, exec, omarchy-toggle-idle
+[E17] 2026-10-23T19:24:37 walker[1831] gdk_frame_timings_throttling_hint warning; 19:24:38 scope Consumed.
+     walker is the dmenu front-end of omarchy-menu (omarchy-menu:21-43,207,212).
+[E18] journal lines containing 'toggle': 2, both "Recover the internal monitor toggle ... skipped".
+[E19] unrelated: 2026-10-25T02:06:16 systemd-coredump Process 1669 (waybar) Signal 11 (SEGV) si_code
+     SI_USER; restarted 02:06:20. Toggle sends SIGRTMIN+9, so not toggle evidence.
+[E20] gate-quote contiguity (python3 -I): S203 contiguous=True words=14; S204 contiguous=True words=13.
+     body bash calls regex -> 12 names in the entry's prose order.
+[E21] SOURCES.md:205 S203, :206 S204: 13 cols, tier A, status=mined, recheck=on-request,
+     used-by=corpus/knowledge/idle-lock-never-asked-r12.md. Entry front matter: recheck: on-change.
 
-[E9] journalctl --user --no-pager -o short-iso | grep -i hypridle  (all 10 lines)
-2026-10-23T13:21:39 Stopping hypridle...
-2026-10-23T13:21:39 Stopped hypridle.
-2026-10-23T13:21:39 app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU over 1d 8h 25min 52.144s
-2026-10-23T13:25:00 uwsm_app-daemon[1838]: received: app -- hypridle
-2026-10-23T13:25:00 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope
-             --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope ... -- hypridle
-2026-10-23T13:25:00 Started hypridle.
-2026-10-23T19:24:38 app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU over 5h 59min 38.213s
-2026-10-23T22:14:11 uwsm_app-daemon[1805]: received: app -- hypridle
-2026-10-23T22:14:11 uwsm_app-daemon[1805]: sent: exec systemd-run ... --unit=app-Hyprland-hypridle-d4bd7533.scope ... -- hypridle
-2026-10-23T22:14:11 Started hypridle.
-counts: Started hypridle=2, Stopped hypridle=1, received: app -- hypridle=2
-
-[E10] python3 scope arithmetic: 2026-10-23 13:25:00 + 5:59:38.213 = 2026-10-23 19:24:38.213  (exit 0)
-      => hypridle's process ended at 19:24:38, mid-session (session ended 22:10:20), with
-      NO "Stopping/Stopped hypridle" line for that scope.
-
-[E11] coredumpctl list hypridle --no-pager -> "No coredumps found."  (no crash)
-[E12] journalctl --no-pager -q -o short-iso -b -1 | grep -ci 'suspend|hibernat' -> 18
-      All 18 are kernel PM setup lines at 2026-10-23T13:24:36 (boot). None near 19:24.
-[E13] pgrep -ax hypridle -> 1667 /usr/bin/hypridle   (present again, boot 0 autostart)
-
-[E14] hypridle start surface: /home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf:1
-      exec-once = uwsm-app -- hypridle
-      (identical command to the toggle's enable branch)
-
-[E15] /home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle (316 B, mtime Oct 3 17:42), body:
- 1 #!/bin/bash
- 3 # omarchy:summary=Toggle hypridle idle locking
- 5 if pgrep -x hypridle >/dev/null; then
- 6   pkill -x hypridle
- 7   notify-send -u low "Stop locking computer when idle"
- 8 else
- 9   uwsm-app -- hypridle >/dev/null 2>&1 &
-10   notify-send -u low "Now locking computer when idle"
-11 fi
-13 pkill -RTMIN+9 waybar
-      => neither branch emits the string 'omarchy-toggle'; the script never names itself in output.
-
-[E16] invocation surfaces of the same command:
-      /home/vgpnk/.config/waybar/config.jsonc:208  "on-click": "omarchy-toggle-idle"   (S206)
-      /home/vgpnk/.local/share/omarchy/bin/omarchy-menu:212  *Idle*) omarchy-toggle-idle ;;
-      /home/vgpnk/.local/share/omarchy/default/hypr/bindings/utilities.conf:30
-        bindd = SUPER CTRL, I, Toggle locking on idle, exec, omarchy-toggle-idle
-      Three surfaces, none journaled by name.
-
-[E17] journal lines near the 19:24:38 teardown:
-2026-10-23T19:24:37 walker[1831]: gdk_frame_timings_throttling_hint: runtime check failed
-2026-10-23T19:24:38 app-Hyprland-hypridle-9408787a.scope: Consumed ... 5h 59min 38.213s
-      (walker is the dmenu front-end of omarchy-menu — it renders the Toggle submenu.)
-
-[E18] journalctl --user --no-pager | grep -i toggle -> 2 lines, both 2026-10-23T13:24:58 and
-      22:14:09, both "Recover the internal monitor toggle ... skipped, unmet condition check".
-      Nothing else in 165725 lines names any toggle.
-
-[E19] waybar death (context, not toggle): 2026-10-25T02:06:16 systemd-coredump: Process 1669
-      (waybar) dumped core; coredumpctl info 1669 -> Signal: 11 (SEGV) si_code: SI_USER;
-      restarted 02:06:20. Shows the journal does record process deaths with signal detail.
-
-[E20] gate-quote contiguity (python3 -I):
-      S203 contiguous=True words=14 len_ok=True
-      S204 contiguous=True words=13 len_ok=True
-      body bash calls regex -> 12 names, in the entry's prose order.
-
-[E21] registry:
-      SOURCES.md:205 S203 status=mined recheck=on-request used-by=corpus/knowledge/idle-lock-never-asked-r12.md (13 cols)
-      SOURCES.md:206 S204 status=mined recheck=on-request used-by=corpus/knowledge/idle-lock-never-asked-r12.md (13 cols)
-      entry front matter: recheck: on-change  (divergence, low severity)
-
-[E22] MID-REVIEW DELTA: live entry changed at 2026-10-25 03:35:08
-      assigned state: sha256 21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1, 40 lines,
-                      == controls/golden/corpus/knowledge/idle-lock-never-asked-r12.md
-      live state:     sha256 7f27ced01e9edf627e2e4693ec57663fa14dd739cd8f9065cf177d0bfae4dd58, 60 lines
-      diff golden-vs-live: 20 changed lines (### Errata (round 35, wave 2), E1 + E2)
-
-[E23] C1 after the edit: python3 -I .ufo/waves/round-35/c1/count.py --root ... --frozen ...
-      -> PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET  (exit 0)
-
+[E22] MID-REVIEW WRITES to the live entry (a frozen-claim artifact):
+     assigned: sha256 21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1, 40 lines,
+               == controls/golden/corpus/knowledge/idle-lock-never-asked-r12.md
+     write 1:  03:35:08, 3586 B, 60 lines, sha 7f27ced0..., adds E1+E2
+     write 2:  03:41:38, 4344 B, 69 lines, sha 0bcef21f..., adds E3  (current)
+[E23] counters on current bytes: C1 closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET exit 0;
+     C2 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 TARGET_MET exit 0.
+     Gate-quotes still contiguous, 14 and 13 words. OBS=3, UNK=1 unchanged.
 [E24] errata facts re-measured:
-      coredumpctl list hypridle -> No coredumps found.
-      journal only Stopping/Stopped hypridle lines: 13:21:39 (1 each; prior session teardown)
-      19:24:38 -> 22:14:11 = 2h49m33s
-      journalctl --no-pager | grep earlyoom -c = 61 (SYSTEM journal; --user = 0)
-      2026-10-23T19:24:59 plazir27 earlyoom[1381]: mem avail: 19479 of 21438 MiB (90.86%), swap free: 28594 of 30979 MiB (92.30%)
-      stat install/first-run/ -> 2026-10-03 17:42:32.317470188 -0300 (13 entries)
-      installer body statements: 12 bash + omarchy-hook-install + sudo rm = 14 (errata says 13 items)
-
-[E25] errata retraction gap: title line 1 and Section-1 OBS (lines 23-24) still assert
-      "the operator never toggled it afterwards" / "never exercised the toggle"; only Section 2
-      is named by E1 as withdrawn.
+     coredumpctl list hypridle -> No coredumps found.
+     earlyoom: 61 lines in the SYSTEM journal; 0 in --user.
+       2026-10-23T19:24:59 earlyoom[1381]: mem avail: 19479 of 21438 MiB (90.86%), swap free: 28594 of 30979 MiB (92.30%)
+     install/first-run/ mtime 2026-10-03 17:42:32.317470188 -0300, 13 entries.
+[E25] installer body statements inside the mode-file guard: 1 rm -f "$FIRST_RUN_MODE" + 12 bash
+     + 1 omarchy-hook-install + 1 sudo rm -f /etc/sudoers.d/first-run = 15; 14 excluding the guard's
+     own state-file rm; 12 scripts. E2's "13 items" matches none.
+[E26] omarchy-hook-install copies the hook, does not execute it: artifact present at
+     /home/vgpnk/.config/omarchy/hooks/post-update.d/install-voxtype.hook (174 B, mode 755, mtime
+     Oct 3 17:48); its line 6 `rm -f "$0"` has never run. /usr/bin/voxtype absent.
+[E27] re-enable paths: omarchy-restart-hypridle:5 -> `omarchy-restart-app hypridle`;
+     omarchy-restart-app:7 -> `setsid uwsm-app -- "$@"`. All log via uwsm_app-daemon; a bare
+     `hypridle &` would not.
+[E28] attribution forensics for the two writes:
+     journalctl | grep -i idle-lock-never-asked -> 0 lines.
+     no `mount --bind`/`umount` on the lane today; sudo lines 03:30-03:45 are read-only
+     journalctl/coredumpctl. Agent file writes reach neither journal -> writer unattributed.
+     E1 cites RevQuoteS204.md, whose mtime was 03:40:46 (revised 03:43:39) - 5m38s AFTER the E1
+     write at 03:35:08. Peer's declared writes: report + scratch/RevQuoteS204/verify.log (03:37:07).
+     assimilation/ stage last wrote 03:30:46 (before both writes); no w2 seat chartered to edit corpus.
+[E29] 2026-10-25 ~03:45: external sweep deleted the entire scratch/ tree (this seat's dir included);
+     w2/reports/ intact. This file rebuilt at ~03:47 per [E30].
+[E30] rebuild provenance: content reassembled from this seat's tool transcript after [E29]; not a
+     re-run of the commands.

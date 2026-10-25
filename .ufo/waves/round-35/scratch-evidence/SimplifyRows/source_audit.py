@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Read-only source-class audit of S203-S210: document vs transcript.
 
+REBUILT 2026-10-25 ~03:47 from this seat's transcript after an external sweep
+removed all of .ufo/waves/round-35/scratch/ at ~03:45. Behaviour is unchanged.
+
 Splits each row's `source` cell into its title and its trailing path, then
 classifies the path: live document (regular file, outside the fetch tree),
-fetch transcript (.ufo/waves/*/fetch/*), or unresolvable. Also reports whether
-the row's `scope` is a proposition the receipt can address, as a hand-coded
-column justified in the report (never inferred from the path class alone).
+fetch transcript (.ufo/waves/*/fetch/*), or unresolvable.
 """
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
