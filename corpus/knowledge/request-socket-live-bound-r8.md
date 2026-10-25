@@ -6,7 +6,7 @@ package, re-grounded against bytes fetched this round). **Amends**
 names the five-second timeout in prose without reading the code that
 implements it.
 
-source: S158 — Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ `efb50993780079460b0cbed1363e2166a2de1d9f` (the host's own commit; the package's S272 at tag `v0.56.2` is the same bytes); S187 — the 0.56.0 IPC page (the package's S276, same document); S277 — `iconidentify/chonkstep` `docs/hyprland-ipc.md` (community measurement, tier C)
+source: S158 — Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ `efb50993780079460b0cbed1363e2166a2de1d9f` (the host's own commit; same bytes as the package's tag-URL citation); S187 — the 0.56.0 IPC page (same document as the package's); S277 — `iconidentify/chonkstep` `docs/hyprland-ipc.md` (community measurement, tier C)
 verified-at: 2026-10-25
 recheck: on-release
 ground: a new edge class under the held IPC contract (`knowledge/ipc-contract-r25.md`): what actually bounds a request on the request socket — the host's own accept loop, read at its own commit
@@ -53,7 +53,8 @@ before the host's own memory or socket buffer objects — is still not
 measured; measuring it would mean sending an oversized request to the live
 socket, an action this lane declines.
 
-Corrections applied while re-grounding: the package's S272 (tag URL) and S276
-(0.56.0 page) are re-pointed to the lane's held rows S158 and S187 — same
-documents, byte-identical re-fetches (sha256 in the round-38 Gate block). S277
-stays a community-tier row; its grammar cross-check is kept at tier C weight.
+Corrections applied while re-grounding: the package's two citations —
+HyprCtl.cpp at tag `v0.56.2` and the 0.56.0 IPC page — re-point to the held
+rows named in the `source:` line above (same documents, byte-identical
+re-fetches; sha256 in the round-38 Gate block). The chonkstep row stays a
+community-tier source; its grammar cross-check is kept at tier C weight.
