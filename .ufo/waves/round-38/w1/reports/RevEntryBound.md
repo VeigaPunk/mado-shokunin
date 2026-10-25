@@ -141,3 +141,56 @@ in-kernel only (no files written outside this report).
   corrections paragraph points to.
 - All receipts are committed bytes; I did not re-fetch over the network (bounds: no
   unnecessary network; digests anchor everything).
+
+## Addendum — disposition of these findings at the moving tip (2026-10-25, later the same wave)
+
+Checked after `ScoutS253` reported that commit `5e4c2ba`'s message claims F2/F4/F6 while
+its diff contains only the F6 line. Verified: `git show 5e4c2ba` is exactly one
+insertion/one deletion (the "stray directory word" fix); the message also names "short-read
+break :2279-2280" and "EVENT framing escape note", which are not in any commit —
+`git log -S ':2279' -- <entry>` is empty and the anchor `:2278` is unchanged since the
+landing commit `245065c`. Status at tip `166c795` (tip advanced `5e4c2ba` → `919d7d0` →
+`85276d4` → `4aad0e8` → `b68b8cc` → `166c795` while I checked):
+
+- **F2 OPEN.** Entry line 24 still reads "`:2278` break on a short read"; no `:2279`/
+  `:2280` anywhere in the entry.
+- **F4 OPEN.** No escaping note and no S186 pointer (`grep -ci escap` = 0,
+  `grep -c S186` = 0 in the entry).
+- **F6 PARTIALLY OPEN, and deliberately so — with a correction to my earlier note.**
+  `5e4c2ba` removed the stray word, then `919d7d0` ("keep S258 Gate quote verbatim in the
+  transport OBS") reverted the sentence to "the instance directory — `directory
+  /run/user/1000/hypr/` — carries mode 0700". ScoutS253 (§7.6) verified this revert is
+  **required by the counter as pinned, not a regression**: clause d
+  (`c2-r38-request-ground.py:214-222`) pins (receipt path, digest) and requires the
+  SOURCES row's Gate quote to be byte-present in the receipt; clause g (`:223-225`,
+  `g_ok = … stated …`) requires that same row quote verbatim in the entry body — and the
+  pinned quote includes the word "directory", so the tidier wording breaks `g`. My
+  earlier "satisfiable honestly by quoting the full receipt path" holds only as a
+  **coordinated change** (row quote in `corpus/SOURCES.md` + entry body together);
+  an entry-side edit alone fails the instrument. The citation defect stands either way:
+  the pinned span names the parent path, not the measured instance directory.
+- **F1 fully fixed.** The S277 row now reads "35421 B sha256 `ff561fe0…`" (correct size).
+- **F3 fixed** (S258 now on the entry's `source:` line).
+- **F5 OPEN.** The S187 SOURCES row (line 199) still records size only, no sha256.
+
+**New residue touching this entry (ScoutS253 §7.7, corrected after their refinement):**
+S277's upstream locator diverges between the entry and the registry row, in opposite
+directions. The entry (r8:9) pins **no commit** — `S277 — iconidentify/chonkstep
+docs/hyprland-ipc.md (community measurement, tier C)` — which still resolves at main and
+is byte-identical to `fetch/S277.bin` (ScoutS253: `cmp` IDENTICAL; the rename preserves
+the redirect under both owner spellings). The row (`corpus/SOURCES.md:223`) has the
+stronger shape but pins a ref that does not exist:
+`chriskearney/chonkstep@707cf7f8…` → unreachable (`grep -c 707cf7f8 corpus/SOURCES.md` =
+1; `grep -c c37fbe3e` = 0 at tip `c46f868` — repair not applied). Single change that
+repairs both: re-pin the row to `c37fbe3e439dc27db9ce8176546febb58680dfc5` (verified
+byte-identical to the receipt) and let the entry cite the same commit under the
+`chriskearney` spelling. Note the domain counter cannot catch a dead ref: clause c
+checks row shape/count, never digest presence or upstream reachability, so it scores 3/3
+at this tip — the same "committed bytes only" residual the registration declared.
+F5 re-confirmed at `c46f868` (S187 row: no sha256).
+
+Net: the open items at tip `c46f868` are F2, F4, F5, the S277 dead pin, and the F6
+path imprecision (currently load-bearing for clause g). Anyone auditing the log rather
+than the files will believe F2/F4 are closed — `5e4c2ba`'s message claims them and its
+diff contains only the (since-reverted) F6 line — consistent with the lane's own rule
+that commits are the evidence.

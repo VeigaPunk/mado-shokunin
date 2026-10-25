@@ -25,10 +25,13 @@ file was modified. No tool was installed (stock `curl`, `git`, `python3`, `grep`
 > non-existent commit `707cf7f8…` under the `chriskearney` spelling, and r8
 > still carries the `:2278` anchor. See §7.4.
 >
-> **Extended at tip `919d7d0` / `85276d4`:** the S253 repairs still hold; the
-> `:2278` anchor and the S277 dead pin are both still open; and a new
-> commit-hygiene finding appears — `5e4c2ba`'s message claims F2/F4/F6 fixed
-> while its diff contains only F6 (§7.5).
+> **Extended at tip `c46f868`:** the S253 repairs still hold; the `:2278` anchor
+> (F2), the S187 escaping note (F4) and the S277 dead pin are all still open;
+> a commit-hygiene finding appears — `5e4c2ba`'s message claims F2/F4/F6 fixed
+> while its diff contains only F6 (§7.5); the F6 revert at `919d7d0` is
+> shown to be *required* by the counter's g-clause rather than a regression
+> (§7.6); and the S277 entry and row are shown to diverge in citation *shape*,
+> with only the row actually broken (§7.7).
 
 ---
 
@@ -430,10 +433,10 @@ would have caught F1 mechanically.
 
 ---
 
-## 7. Post-fold re-verification (against current HEAD `85276d4`)
+## 7. Post-fold re-verification (against current HEAD `c46f868`)
 
 The seat-fix fold `b8400aa` (2026-10-25 11:23:56) landed mid-run. Current HEAD
-is `85276d4`; `corpus/SOURCES.md` is clean against it (`git status --porcelain
+is `c46f868`; `corpus/SOURCES.md` is clean against it (`git status --porcelain
 corpus/SOURCES.md` → empty).
 
 ### 7.1 F1 and the byte-count slip are now repaired
@@ -675,6 +678,122 @@ genuine mismatch rather than a message-only slip, since the diff contains no
 other hunks and `git log -S ':2279'` shows the corrected anchor was never
 committed. Reported to `L1Mado38.RevEntryBound` and `L1Mado38.RevRegistry`.
 
+### 7.6 The F6 revert at `919d7d0` is *required* by the g-clause, not a regression
+
+`RevEntryBound` reports that F6 was reverted by `919d7d0` ("keep S258 Gate
+quote verbatim in the transport OBS"). I verified the revert's rationale is
+**correct and necessary** — it is not a step backwards.
+
+The `GATE` line pins S258's quote as a byte-exact span:
+
+```
+GATE S258 receipt=.ufo/waves/round-38/fetch/stat-sockets.txt sha256=fcc608203f66879f469b61761619e555e04b67127f215d495bd35b9b27421928 quote="directory /run/user/1000/hypr/"
+```
+
+and that span is a genuine byte-substring of the receipt (count 1), because the
+`stat -Lc '%a %F %n'` output's `%F` field puts the word `directory` immediately
+before the path:
+
+```
+3	700 directory /run/user/1000/hypr/efb5099…_1792804449_426444678
+```
+
+The counter's clause `g` requires that the pinned quote appear **verbatim in the
+entry body** (`c2-r38-request-ground.py:221`: `stated = stated or quote in body`).
+So the two constraints are in direct tension:
+
+```
+g-clause quote-in-body, F6-fixed form ("the instance directory `/run/user/1000/hypr/` …"): False
+g-clause quote-in-body, reverted form ("the instance directory — `directory /run/user/1000/hypr/` — …"): True
+```
+
+The F6 "fix" (replacing the code span with the bare path) **breaks clause `g`**,
+because the pinned quote includes the `directory` word that the fix deleted. The
+revert restores clause `g` at the cost of the prose nit RevEntryBound flagged.
+
+That is a genuine conflict between a counter clause and a wording preference —
+the kind of interaction worth recording, because the fix that reads better is
+precisely the one the gate forbids. The honest resolutions are to change the
+`GATE` quote to the bare path (and re-verify it is still byte-present in the
+receipt) or to accept the awkward-but-verbatim phrasing. The current tip does
+the latter, and the counter still passes:
+
+```
+$ python3 quality/counters/c2-r38-request-ground.py --repo . --rev HEAD
+PRED-C2-r38-v1 admitted=3/3 verdict=TARGET_MET rev=9c6e6135049f6754ee9c3f05c33538b024bae332 …
+```
+
+**Residue status at tip `9c6e613`** — all three remain open:
+
+```
+r8 ':2278' count:                1     (F2 — anchor still wrong)
+r8 'S186' refs:                  0     (F4 — escaping note still absent)
+r8 'escap' mentions:             0
+S277 pin: chonkstep/707cf7f8b39d0b4e2cba46d0a2559b562d8821ce   (residue B — dead pin)
+```
+
+The S253-specific repairs (F1 and the byte-count class) continue to hold at this
+tip: the row reads `:43-44` / `11602 B sha256`, all six registry byte figures
+match their receipts, and the counter is unchanged since the freeze commit
+`58e55ec`.
+
+### 7.7 The entry and the row disagree on how S277 is cited — and only the row is broken
+
+`RevEntryBound` reports that "entry source: line + SOURCES:223 still pin
+`707cf7f8` under the `iconidentify` spelling while the row now spells
+`chriskearney`". Verifying that precisely, the entry does **not** pin a commit
+at all — it cites the repo and path only:
+
+```
+entry  (r8:9):  S277 — `iconidentify/chonkstep` `docs/hyprland-ipc.md` (community measurement, tier C)
+row (SOURCES:223): https://raw.githubusercontent.com/chriskearney/chonkstep/707cf7f8b39d0b4e2cba46d0a2559b562d8821ce/docs/hyprland-ipc.md
+```
+
+So there are two independent divergences, and the one that is *not* a defect is
+the one the entry happens to have:
+
+| | repo spelling | commit | resolves? | bytes == `S277.bin`? |
+|---|---|---|---|---|
+| entry (r8:9) | `iconidentify` | none | **yes** (at `main`) | **yes** (`cmp` IDENTICAL) |
+| row (SOURCES:223) | `chriskearney` | `707cf7f8…` | **no** (404) | n/a — unreachable |
+
+Both owner spellings serve identical bytes at `main` (GitHub preserves the
+redirect across the rename), so the entry's uncommitted form is currently
+fetchable and byte-exact against the receipt:
+
+```
+iconidentify/chonkstep     main: 200 CMP IDENTICAL to S277.bin
+chriskearney/chonkstep     main: 200 CMP IDENTICAL to S277.bin
+```
+
+The entry's form is nevertheless the weaker citation for a lane whose whole
+calibration axis is committed, pinned bytes: it names no commit, so the bytes
+it resolves to can move under it. The row's form is the stronger shape but
+pins a ref that does not exist, so it resolves to nothing at all.
+
+**The single change that repairs both:** re-pin the row to
+`c37fbe3e439dc27db9ce8176546febb58680dfc5` (§7.2b — verified byte-identical to
+the receipt) and let the entry cite the same commit, ideally under the
+canonical `chriskearney` spelling so the two agree. Alternatively, pin the row
+to `main` with a recheck cadence and mark the row as a moving reference — but
+that forfeits the pin the lane's recheck cadence depends on.
+
+At tip `c46f868` none of this is applied yet:
+
+```
+$ grep -c c37fbe3e corpus/SOURCES.md
+0
+$ grep -c 707cf7f8 corpus/SOURCES.md
+1
+$ grep -c '707cf7f8\|c37fbe3e' corpus/knowledge/request-socket-live-bound-r8.md
+0
+```
+
+Note also that `S187`'s row still carries **no** `sha256` (F5 in
+`RevEntryBound.md`), which I re-confirmed at this tip (`grep -c sha256` on the
+S187 row → `0`) — and that the counter passes regardless, since clause `c`
+checks cell count and shape, not whether the digest is present.
+
 ---
 
 ## Verdict
@@ -696,7 +815,7 @@ that I could test — the two constants, their values, both check sites, the
 no-byte-bound contrast against the host, the later-revision caveat, and the
 64 KiB correction — verified against the fetched bytes.
 
-**Disposition at current HEAD (`85276d4`): F1 and the byte-count slip are
+**Disposition at current HEAD (`c46f868`): F1 and the byte-count slip are
 repaired** by the seat-fix fold `b8400aa` (§7.1) — the row now reads `:43-44`
 and `11602 B`, and all six registry byte figures match their receipts (§7.4).
 Two residue items from the same class remain open at this tip and are reported

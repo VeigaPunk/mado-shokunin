@@ -178,3 +178,11 @@ that row.
   at HEAD; the commit remains unresolvable (`git fetch --depth=1 origin 707cf7f8…`
   → "not our ref"). Verified fix: re-pin `c37fbe3e439dc27db9ce8176546febb58680dfc5`
   (blob byte-identical to `S277.bin`, sha `ff561fe0…`, under both owner spellings).
+
+Refinement (ScoutS253 §7.7): the broken citation is **row-only** — r8:9 cites
+`iconidentify/chonkstep` with no commit (grep -c '707cf7f8|c37fbe3e' on r8 → 0),
+which resolves at `main` and is `cmp`-identical to `S277.bin` under both owner
+spellings. The row's dead pin is the only defect. Repair for both: re-pin the row to
+`c37fbe3e439dc27db9ce8176546febb58680dfc5` (verified byte-identical) and let the entry
+cite the same commit canonically as `chriskearney`, so entry and row agree; the
+`main`+cadence alternative forfeits the pin the recheck cadence depends on.
