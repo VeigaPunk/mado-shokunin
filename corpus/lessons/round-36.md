@@ -311,3 +311,14 @@ stays the Jackson-example sentence recorded above, which is the one this lesson'
 carries. The seat's guess at a first PMCID (`PMC2833407`) resolved to a proteomics paper
 and was rejected before citation — kept here because a wrong-id guess that is checked is
 the behaviour the row wants.
+
+## Gate — S211 anchor correction (old → new)
+
+`ScoutPriorArt` reported that the row's anchor cell was loose ("Introduction, the Jackson
+example"): the quoted paragraph is `<p id="P15">` under the section heading "Examples of the
+use of negative controls in epidemiology" (§S2), not in the Introduction. The anchor cell was
+corrected in place — `Introduction, the Jackson et al. negative-control-outcome example` →
+`#S2 section Examples of the use of negative controls in epidemiology, paragraph #P15 (the
+Jackson et al. negative-control-outcome example)`. No other cell changed; the quote, tier,
+scope, status, `recheck` and `used-by` stand. This is the same in-round cell-correction
+discipline round 35 applied to S203–S205, and it is counted here rather than left silent.

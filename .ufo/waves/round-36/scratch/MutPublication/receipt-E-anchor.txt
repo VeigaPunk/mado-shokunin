@@ -1,0 +1,14 @@
+### E. COVERAGE PROBE: publication anchor names a nonexistent commit (fractions kept)
+$ git log -1 --format=%H
+a6eb2dcf29b2bda0e1eb042345f73e0683c69fd4
+$ sha256sum SCORECARD.md
+6c2a1e6860a8a9bb60ae895ebd4cd0186b131a95d251a0aa006532b247e0d9d5  SCORECARD.md
+$ git cat-file -e deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{commit}
+fatal: Not a valid object name deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{commit}
+rc=128
+$ python3 quality/check-axis-scores.py --repo /tmp/mado-axis-mut-pub --rev master
+MADO_AXIS_ROW: axis=navigation published=50/50 derived=50/50 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=48/48 derived=48/48 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=a6eb2dcf29b2bda0e1eb042345f73e0683c69fd4
+rc=0

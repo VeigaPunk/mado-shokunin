@@ -17,7 +17,9 @@ PRED-PTR-r36-v1: TARGET_MET iff
                         pointers the round-35 spot-check found dangling
                         (rewriting the record is not a repair);
   dangling_r36 == 0     the same pointer class, cited by the round-36 `LOG.md`
-                        entry, `SCORECARD.md` sections and `corpus/lessons/round-36.md`;
+                        entry, `SCORECARD.md` sections and `corpus/lessons/round-36.md`,
+                        except pointers written as the `old` side of a correction
+                        pair — a superseded pointer is named, not cited;
   inherited_dirty == 0  the ten round-35 closure paths `git status --porcelain` reports;
   scratch_disposition_ok the round-36 lesson names a disposition for
                         `.ufo/waves/round-35/scratch` with a `tracked paths=N` count
@@ -147,7 +149,8 @@ def main() -> None:
     ptr36 += [p for p in pointers(lesson) if p not in ptr36]
 
     dangling35 = [p for p in ptr35 if not resolves(p, files)]
-    dangling36 = [p for p in ptr36 if not resolves(p, files)]
+    superseded_old = {m.group(1).strip() for m in (PAIR.match(ln) for ln in log36.splitlines()) if m}
+    dangling36 = [p for p in ptr36 if not resolves(p, files) and p not in superseded_old]
 
     record_intact = all(p in ptr35 for p in SUPERSEDED_POINTERS)
     pairs = [m for m in (PAIR.match(ln) for ln in log36.splitlines()) if m]
