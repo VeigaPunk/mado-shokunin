@@ -1914,3 +1914,20 @@ and the `## Mistakes` rows. A seat's 187 MB scratch clone trees were committed a
 `f5910876` and removed at `48f9fe09`; the bytes remain in history. The staged
 package's **line** anchors were wrong (byte sizes and digests were right) and
 were re-derived; see the lesson's `reference-drift` row.
+
+## Round 33 — the round-32 C1 row was false, and the replacement counter was killed before data (2026-10-24, attempt 1)
+
+Motivation: `corpus/lessons/round-32-verifier-spotcheck.md` rejected round 32.
+The SCORECARD round-32 C1 row said target met at `cited_entries=3`. A re-run of
+the frozen round-32 counter on `d9ed38166cc3be8ef4c52b41d66ad94010feb047` prints
+`cited_entries=7`. The same closure measured the committed wave tree at
+`f5910876` as 11.6 MB / 554 blobs, not 187 MB, and named twelve defects.
+
+Work: a new calibration gate (`.ufo/waves/round-33/c2/count.py`) appends the
+correction line rather than rewriting the false row. A new coverage counter was
+frozen and scored against junk before any corpus append; a seat then showed a
+symlink crib meets it. The entries were not appended. The axis-score gate's
+locator no longer treats a quoted marker as the publication, and the round-32
+before/after (`mismatched=2` at `256222890d935212874a09751ff9b7869943c2d7`,
+`mismatched=0` at `d9ed38166cc3be8ef4c52b41d66ad94010feb047`) still holds.
+`quality/check-axis-scores.py` is now in the SKILL.md gate registry.

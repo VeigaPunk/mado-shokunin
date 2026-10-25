@@ -1,15 +1,70 @@
 # SentScope — round-30 w1 security / write-scope sentinel
 
-Report only. No lane bytes edited; this file and nothing else was written by
-this seat. Lane audited at `d72243e1` (tip at audit time; wave receipts cite
-`92d3c86`). Methods: source read, read-only gate/counter runs at base and tip,
-`strace` of write syscalls, adversarial argv/root tests under `/tmp`, git/jj
-state inspection.
+Report only. This seat wrote only this file. Audit window: `d72243e1` (start)
+through `a0dd664` (04:14 snapshot); later commits exist (see §0). Methods:
+source read, read-only gate/counter runs at base/data/tip/HEAD, `strace` of
+write syscalls, adversarial argv/root tests under `/tmp`, git/jj state
+inspection.
 
-Verdict: **no shell injection and no credential leak**; one *writes-nothing*
-contract violation in the C2 counter, two `--root`-mode provenance/vacuity
-defects in the C3 gate, and no seat write outside the round's declared
-artifacts aside from the integrator closure commit noted in §2.
+Verdict: **no shell injection and no credential leak**. Open security items:
+the C2 counter still creates a file from a crafted REV (F1), the gate follows a
+symlinked `--root` ancestor (F2), has no `--end-of-options` guard (F5), and
+`--rev` still counts symlink notes (F7, partial). Write scope: no wave-seat
+artifact outside the granted report dir was found; the r28 q36 receipt was
+transiently rewritten out of scope and reverted (F10), and the L1's own addenda
+rewrote the frozen gate/counter and one data byte while the wave ran (F12).
+
+## 0. Baseline movement during this audit (read first)
+
+The lane was **actively rewritten while wave 1 ran**, by commits authored as the
+lane identity `mado-shokunin <mado@shokunin.local>` (the L1 identity used by the
+freeze/data/records commits, not a seat name). Snapshot: **2026-10-24 04:14
+-0300**, working tree dirty again.
+
+| commit | author / time (author date) | instrument movement |
+|---|---|---|
+| `451e8b3` | mado-shokunin 03:5x | freeze: registration, counter, gate blob `df01b20f…`, selftest 6/6 |
+| `446dc39` / `92d3c86` | mado-shokunin | data (README/QUALITY/SOURCES/lesson) and records |
+| `d72243e` | protocol-shokunin 04:03:37 | integrator closure: verifier spot-check lesson |
+| `15ddd7d` | mado-shokunin 04:08:40 (jj 04:09:51) | **part 1 addendum:** rewrote `quality/check-index.py` (8/8), appended SCORECARD/lesson errata, committed 27 seat reports, added `evidence/c3-repair-d72243e.txt`, reverted the q36 receipt |
+| `a0dd664` | mado-shokunin 04:11:15 | **part 2 addendum:** gate v2 `sha256 51b513f5…` (9/9), repaired `.ufo/waves/round-30/c2/count.py`, edited `corpus/QUALITY.md` row 48 (one line), refreshed the repair receipt, added 3 reports + 2 receipts |
+
+Consequences: the *frozen* registration (`451e8b3`) still specifies gate blob
+`df01b20f…` and `--selftest` 6/6; the current gate is `51b513f5…` and prints
+9/9. Wave-1 receipts therefore span **two gate implementations and two counter
+implementations**. My §1 text records evidence against the as-frozen
+instruments and the in-progress worktree; the matrix below is the status at
+`a0dd664` (re-tested read-only). Any receipt that does not name its gate/counter
+sha is not reproducible from the round record alone.
+
+Status at `a0dd664` (re-tested unless marked):
+
+| finding | status at `a0dd664` | evidence |
+|---|---|---|
+| F1 counter `--output=` write | **OPEN** | crafted REV still creates `<X>:corpus/QUALITY.md` (75,464 B written, 04:13) |
+| F2 `--root` symlinked `corpus` ancestor | **OPEN** | `/tmp/sentinel-anc/root` -> foreign tree: `indexed=1/1` exit 0 |
+| F3 `--root` missing knowledge dir | **FIXED** | `SETUP_ERROR: ... not a directory`, exit 2 |
+| F4 default `master` traceback | **FIXED** | bare invocation: `SETUP_ERROR: --rev or --root is required`, exit 2 |
+| F5 no `--end-of-options`/leading-`-` guard | **OPEN** (blocked by ls-tree order) | `--rev='--output=…'` exit 2 today; no guard in code |
+| F6 cwd trust | **PARTIAL** | silent default rev removed; `--repo .` and the counter's cwd still trusted |
+| F7 `--rev` accepts symlink notes | **PARTIAL** | NUL/`quotepath=off` fixed spaces/non-ASCII; a git-symlink note still counts (`indexed=1/1` exit 0) |
+| F8 gate vs fence regex | **FIXED** | `ROW_RE` is now the fence-literal `^\| ` |
+| F9 S185 "verbatim" quote | **UNCHANGED** | schematic f-string quote still in the lesson; routed by hyaku |
+| F10 q36 receipt rewrite | **CLOSED** | reverted to HEAD bytes (`git diff` empty at 04:10); erratum records it |
+| F11 out-of-lane scratch | **OPEN** | `SCRATCH_ROOT` still hard-coded to `/fast/scratch/hyaku/mado-r28/ExecQ36Runner` |
+| F12 baseline moved mid-wave | **SEE §1 F12** | two addendum commits + dirty worktree at snapshot |
+
+Verdicts re-measured at `a0dd664`: gate base `8f51071b` `41/43` exit 1,
+`446dc396`/`d72243e`/`15ddd7d`/`a0dd664` `43/43` exit 0; counter
+`8f51071b` literal 28/40, active 31/39, MISSED; `446dc396`, `d72243e`,
+`15ddd7d`, `a0dd664` literal 40/52, active 40/40, MET. The repaired
+instruments reproduce the registered verdicts; the churn is a provenance
+problem, not (so far) a verdict change.
+
+Post-snapshot (not re-audited): `274f735` "part 3" (expansion verdict /
+capability row) landed after the 04:14 snapshot; `RevTrendExpansion.md` was
+modified again and `SimplifierC2.md` is untracked. Re-pin any final receipt to
+the actual final tip and to the gate/counter hashes above.
 
 ## 1. Findings (severity / exploit path / evidence / impact / smallest fix)
 
@@ -161,6 +216,9 @@ artifacts aside from the integrator closure commit noted in §2.
   output under `.ufo/waves/round-30/evidence/`; restore the tracked bytes
   (`git checkout -- quality/q36-successor-receipts.txt`) or commit the change
   deliberately with its rationale. Not restored here (report-only seat).
+- **Status at `a0dd664`:** reverted to committed bytes in `15ddd7d` (erratum
+  part 1 records the same handling as round 29; `git diff` empty at 04:10).
+  The runner still writes the tracked path, so the latent write remains.
 
 ### F11 — LOW (out-of-lane scratch): processes created dirs under `/fast/scratch/hyaku/mado-r28/`
 - `/fast/scratch/hyaku/mado-r28/ExecQ36Runner/` was created at 04:06 by
@@ -175,9 +233,41 @@ artifacts aside from the integrator closure commit noted in §2.
 - Smallest fix: point `SCRATCH_ROOT` at `mktemp -d` under `/tmp`, or declare
   `/fast/scratch/hyaku/mado-r28` as an allowed scratch path in the wave context.
 
-## 2. Write-scope audit (8f51071b..d72243e1)
+### F12 — MEDIUM (integrity/process): the frozen instruments and one data byte were rewritten by two L1 addenda while wave 1 ran
+- The wave context and registration declare `quality/check-index.py` and
+  `.ufo/waves/round-30/c2/count.py` frozen/L1-owned. Both were edited after the
+  freeze and after the data/records commits: `15ddd7d` rewrote the gate
+  (8/8) and `a0dd664` rewrote it again (`sha256 51b513f5…`, 9/9) and repaired
+  the counter (supersession position guard, `expand_ids` grammar, `active=0`
+  guard). `a0dd664` also edited `corpus/QUALITY.md` row 48 (one line) — a named
+  data-rule byte — and both addenda appended SCORECARD/lesson errata. See §0.
+- Attribution: git author `mado-shokunin <mado@shokunin.local>`, the same lane
+  identity as the freeze/data/records commits; jj committed at 04:09:51. This
+  reads as the L1's own integration rather than a wave-seat write. If the
+  orchestrator did not authorize it, it is a direct violation of the wave's
+  "never edit" freeze; either way the wave's baseline moved twice under the
+  running seats.
+- Live state at the 04:14 snapshot: the worktree is dirty again
+  (`M w1/reports/RevC1Fence.md`, `M w1/reports/RevRecordsChain.md`,
+  `M SCORECARD.md`, `?? w1/reports/RevTrendExpansion.md`); 31 reports exist,
+  27 committed in part 1, 3 in part 2, 1 untracked. Part 1's lesson text says
+  "24 seat reports"; that count was already stale when committed.
+- Impact: any receipt/claim that does not pin its gate/counter sha is not
+  reproducible from the round record; a seat re-running the gate before/after
+  04:09 measured different artifacts. The registered verdicts themselves were
+  unchanged in my re-runs (gate 41/43 -> 43/43; counter 28/40,31/39 -> 40/52,40/40),
+  but the frozen registration still describes the pre-repair instruments
+  (`df01b20f…`, 6/6) and was not amended.
+- Smallest remediation: stop instrument edits now; publish one labeled
+  addendum that (a) names the final gate/counter sha256 and commit, (b) re-pins
+  every C1/C2/C3 receipt to those hashes and the final tip, (c) records the
+  registration delta explicitly (do not edit the frozen registration in
+  place), and (d) commits the remaining report. Route further repairs to round
+  31.
 
-Committed set (full `git diff --name-status 8f51071b d72243e1`):
+## 2. Write-scope audit (8f51071b..a0dd664, addenda noted)
+
+Committed set at `d72243e` (full `git diff --name-status 8f51071b d72243e1`):
 - **Named/allowed:** `corpus/README.md`, `corpus/QUALITY.md`, `corpus/SOURCES.md`,
   `corpus/lessons/round-30.md`, `quality/check-index.py` (C3), and all 14
   `.ufo/waves/round-30/**` files (registration, c2/count.py, controls, evidence,
@@ -191,14 +281,23 @@ Committed set (full `git diff --name-status 8f51071b d72243e1`):
   wave 1 was running. Same artifact class as `round-29-verifier-spotcheck.md`
   (base commit `8f51071b`). Not authored by a wave-1 seat; it moved master one
   commit past the receipts' cited tip.
-- **Wave-1 seat writes:** only `.ufo/waves/round-30/w1/reports/` (13 `.md` plus
-  the harness `swarm-registry.json`), untracked; inside the granted report dir.
-- **Other:** at audit start `git status` was clean except
-  `?? .ufo/waves/round-30/w1/`; at 04:06:46 a live process rewrote
-  `quality/q36-successor-receipts.txt` (F10), so the current status is
-  `M quality/q36-successor-receipts.txt` plus `?? .ufo/waves/round-30/w1/`.
-  jj working copy empty at audit start, parent `d72243e1`; no lane jj/index
-  mutation by this seat. No world-writable or setuid/setgid files under the
+- **L1 addenda (lane identity, in-role but outside the seat scope):** `15ddd7d`
+  and `a0dd664` wrote `quality/check-index.py` (frozen instrument, twice),
+  `.ufo/waves/round-30/c2/count.py` (frozen instrument), `corpus/QUALITY.md`
+  (one line), `SCORECARD.md` + `corpus/lessons/round-30.md` (append-only
+  errata), the refreshed `evidence/c3-repair-d72243e.txt`, two new evidence
+  files, and the wave reports. `q36-successor-receipts.txt` was mutated by an
+  unidentified process and reverted in `15ddd7d` (F10).
+- **Wave-1 seat writes:** only `.ufo/waves/round-30/w1/reports/` (31 `.md`
+  plus the harness `swarm-registry.json`): 27 committed in `15ddd7d`, 3 in
+  `a0dd664`, 1 (`RevTrendExpansion.md`) untracked at snapshot. All inside the
+  granted report dir; no seat artifact outside it was found.
+- **Other:** at first audit (04:02) the tree was clean except
+  `?? .ufo/waves/round-30/w1/`; at the 04:14 snapshot the tree is dirty again
+  (`M w1/reports/RevC1Fence.md`, `M w1/reports/RevRecordsChain.md`,
+  `M SCORECARD.md`, `?? RevTrendExpansion.md`) and `c3-repair-d72243e.txt` was
+  refreshed at 04:12:16. This seat wrote only this report; it did not touch
+  jj or the lane index. No world-writable or setuid/setgid files under the
   round tree; new scripts `0755`, artifacts `0644`.
 - **Fleet repo:** no lane-side write path targets `/home/vgpnk/Projects/shokunin`
   (grep of the gate/counter/round-30 specs finds only prompt/context text). The
@@ -220,32 +319,44 @@ matched only sha256 provenance digests in `SOURCES.md` (expected, not secrets).
 
 ## 4. Verified non-findings
 
-- **No shell injection:** neither new script contains `shell=True`,
-  `os.system`, `os.popen`, `eval`, or string-form subprocess; every git call is
-  an argv list (`check-index.py:32-36,105-110`; `count.py:50-51`). The frozen
+- **No shell injection:** neither script contains `shell=True`,
+  `os.system`, `os.popen`, `eval`, or a string-form subprocess; every git call
+  is an argv list (`check-index.py:41-44` `_git`, `:132` `_run`, and the new
+  git-fixture call at `:265-269` uses argv tuples; `count.py:76-77`). The frozen
   SCORECARD fence uses a single-quoted heredoc (`<<'PY'`), passes REV via the
   environment, and interpolates nothing into shell text.
 - **Normal runs write nothing:** `strace -f -e openat,creat,unlink,rename,mkdir`
-  on `check-index.py --rev 8f51071b` shows only `/dev/null` `O_RDWR` (2 events);
-  a normal `count.py 8f51071b` run likewise shows only `/dev/null` write opens
+  on the frozen gate `--rev 8f51071b` shows only `/dev/null` `O_RDWR`; on the
+  repaired gate (`a0dd664`) it shows **0** non-`/dev/null` write opens; a
+  normal `count.py 8f51071b` run likewise shows only `/dev/null` write opens
   (90 events). All real writes are confined to `selftest()`'s
-  `TemporaryDirectory` (`check-index.py:123-186`).
-- **C3 kill rule holds (independently reproduced, read-only):** gate at base
-  `8f51071b` -> `indexed=41/43 missing=2`, exit 1; at `92d3c86` -> `43/43`,
-  exit 0; `--root .` -> `43/43`, exit 0; `--selftest` -> `6/6`, exit 0.
+  `TemporaryDirectory`.
+- **C3/C2 verdicts reproduce (read-only):** frozen gate at base `8f51071b` ->
+  `indexed=41/43 missing=2`, exit 1; at `92d3c86` -> `43/43`, exit 0; selftest
+  6/6. Repaired gate (`a0dd664`, sha256 `51b513f5…`): selftest 9/9; base
+  `41/43` exit 1; `446dc396`, `d72243e`, `15ddd7d`, `a0dd664` `43/43` exit 0.
+  Counter: `8f51071b` literal 28/40, active 31/39, TARGET_MISSED; `446dc396`,
+  `d72243e`, `15ddd7d`, `a0dd664` literal 40/52, active 40/40, TARGET_MET.
 - **`--rev`/`--root` mutual exclusion and bad-repo handling** return
-  `SETUP_ERROR`, exit 2 as documented (`--rev --root`, nonexistent `--repo`).
+  `SETUP_ERROR`, exit 2 as documented (`--rev --root`, nonexistent `--repo`);
+  the repaired gate also requires one of `--rev`/`--root` (exit 2).
 
 ## 5. Remediation priority
 
-1. Reject leading `-` revs (or add `--end-of-options`) in `count.py` and
-   `check-index.py` — closes F1/F5 in ~4 lines.
-2. `--root`: realpath containment (F2) and `isdir(kdir)` setup error (F3).
-3. Wrap the gate's `rev-parse` fallback in the existing setup-error handler (F4).
-4. F6-F9 are documentation/consistency; no lane state changes needed.
-5. F10: restore `quality/q36-successor-receipts.txt` from HEAD (or commit the
-   regenerated receipt deliberately); redirect future runner output out of the
-   tracked path.
-6. F11: move `SCRATCH_ROOT` under `/tmp` or declare it in the wave context.
+1. **F1/F5 (open at `a0dd664`)**: reject leading `-` revs or add
+   `--end-of-options` in `count.py` and `check-index.py`; the counter still
+   creates `<X>:corpus/QUALITY.md` from a crafted REV. Highest security item.
+2. **F2 (open)**: realpath containment for `--root`; F3 is fixed. **F7
+   (partial)**: `--rev` still counts symlink blobs — filter on `%(objectmode)`
+   (`100644`/`100755`) if the "regular files only" promise is to hold in both
+   modes. **F6 (partial)**: require `--repo` (or `-C`) instead of trusting cwd.
+3. F4 and F8 are fixed; F9 is a documentation correction.
+4. F10 is closed (bytes reverted); redirect `q36-successor-run.sh` output so it
+   cannot recur.
+5. F11: move `SCRATCH_ROOT` under `/tmp` or declare it in the wave context.
+6. **F12**: publish one labeled addendum naming the final gate/counter sha256
+   and commit, re-pin every C1/C2/C3 receipt to those hashes and the final tip,
+   record the registration delta without editing the frozen registration, and
+   commit the remaining report; then stop instrument edits for the round.
 
 No tools were installed or upgraded for this review; nothing was fetched.

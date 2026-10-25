@@ -34,18 +34,28 @@ PUB_RE = re.compile(r"Axis table re-derived at")
 
 
 def published_fractions(text):
-    """Parse the last axis publication in a SCORECARD.md body.
+    """Parse the last unquoted axis publication in a SCORECARD.md body.
 
     The publication is prose and may wrap across lines, so the body is flattened
-    to one space-normalised string and the LAST "Axis table re-derived at" is
-    read from it. The window is the publication plus its trailing prose; only
-    the axis fractions inside it are parsed.
+    to one space-normalised string. The marker is the last "Axis table re-derived
+    at" that is not immediately preceded by a quote or backtick (a later erratum
+    that quotes the phrase must not replace the publication). The window is 2000
+    characters, not 400, so a long publication is not silently truncated.
     """
     flat = re.sub(r"\s+", " ", text)
-    idx = flat.rfind("Axis table re-derived at")
+    marker = "Axis table re-derived at"
+    idx = -1
+    start = 0
+    while True:
+        found = flat.find(marker, start)
+        if found < 0:
+            break
+        if found == 0 or flat[found - 1] not in "'\"`":
+            idx = found
+        start = found + len(marker)
     if idx < 0:
         return None, None
-    line = flat[idx:idx + 400]
+    line = flat[idx:idx + 2000]
     out = {}
     m = re.search(r"navigation (\d+)/(\d+)", line)
     if m:
@@ -201,7 +211,37 @@ def selftest():
 
     check("no-publication", published_fractions("nothing here")[0] is None)
 
-    print("MADO_AXIS_SELFTEST: %d/%d assertions passed" % (17 - fails, 17))
+    quoted = (
+        "Axis table re-derived at tip: navigation 46/46 = 1.0; calibration "
+        "resolved-active 41/41 = 1.0; operability selftest 12/12 = 1.0. "
+        "Erratum: the older line 'Axis table re-derived at base: navigation "
+        "43/43 = 1.0; calibration resolved-active 39/40 = 0.9750; operability "
+        "selftest 9/9 = 1.0' is a quotation."
+    )
+    _, shadowed = published_fractions(quoted)
+    check("quoted-marker-does-not-shadow", shadowed.get("calibration") == "41/41")
+    check("quoted-marker-keeps-operability", shadowed.get("operability") == "12/12")
+
+    long_pub = (
+        "Axis table re-derived at tip: navigation 46/46 = 1.0; " + ("x" * 500)
+        + " calibration resolved-active 41/41 = 1.0; operability selftest 12/12 = 1.0."
+    )
+    _, long_parsed = published_fractions(long_pub)
+    check("long-publication-not-truncated", long_parsed.get("operability") == "12/12")
+
+    bad, _ = compare(
+        {"navigation": "40/46", "calibration": "41/41", "operability": "12/12"},
+        {"navigation": "46/46", "calibration": "41/41", "operability": "12/12"},
+    )
+    check("navigation-perturbation-bites", bad == 1)
+    bad, _ = compare(
+        {"navigation": "46/46", "calibration": "41/41", "operability": "9/12"},
+        {"navigation": "46/46", "calibration": "41/41", "operability": "12/12"},
+    )
+    check("operability-perturbation-bites", bad == 1)
+
+    total = 18
+    print("MADO_AXIS_SELFTEST: %d/%d assertions passed" % (total - fails, total))
     return 1 if fails else 0
 
 

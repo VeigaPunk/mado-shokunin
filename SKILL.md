@@ -671,6 +671,13 @@ row and snapshots remain immutable historical evidence, not aliases for
 the current gate. Round-14's expected file pins both executable inputs
 before the replay compares the recorded historical kill table.
 
+### Round 33 — published-axis gate and claim-verdict gate
+
+| name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| mado-axis-scores | gate | `python3 -I quality/check-axis-scores.py --rev REV --repo .` | 0 clean (`mismatched=0`); 1 failed (`mismatched>0`); 2 could-not-evaluate (usage, bad rev, no SCORECARD) | `python3 -I quality/check-axis-scores.py --selftest`; prints `MADO_AXIS_SELFTEST: N/N assertions passed`; 0 clean, 1 failed | publication marker `Axis table re-derived at`, unquoted, 2000-character window; instruments `quality/check-index.py` and `.ufo/waves/round-31/c2/count.py` | reads committed bytes via `git show`; selftest writes nothing | mado |
+| mado-r33-claim-verdict | gate | `python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md` | 0 `TARGET_MET`; 1 `TARGET_MISSED`; 2 usage | the pre-data receipts under `.ufo/waves/round-33/controls/c2-*.txt` | predicate sentence in the script and in `.ufo/waves/round-33/registration.md`; frozen rev `d9ed38166cc3be8ef4c52b41d66ad94010feb047` | reads a scorecard path and `git archive` of the named rev; writes nothing | mado |
+
 ## Evidence trail & sources
 
 - Round 1: `corpus/knowledge/hyprland-config-plane.md` (MADO-1, 217 L by `wc -l`; editor

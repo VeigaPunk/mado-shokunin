@@ -2085,3 +2085,22 @@ accuracy beyond the ≥5-words proxy, criterion-relevance grounding, the n2
 relevance-free citation cheat, and the r24 `S###.bin` glob convention; plus the
 lane hygiene defect this round shipped (seat scratch trees committed at
 `f5910876`, removed at `48f9fe09` — the bytes stay in history).
+
+## Round 33 — correction of the round-32 C1 row, and author verdicts (2026-10-24, attempt 1)
+
+The round-32 C1 row above is not rewritten. It says target met and cites base
+`25622288`. That short hash does not resolve. The full hash is
+`256222890d935212874a09751ff9b7869943c2d7`. The frozen round-32 counter on
+`d9ed38166cc3be8ef4c52b41d66ad94010feb047` prints `cited_entries=7`, not 3.
+This line is the correction:
+
+r33-claim-verdict: r32-C1 cited_entries=7 verdict=honest-stop rev=d9ed38166cc3be8ef4c52b41d66ad94010feb047
+
+Round-33 claims were frozen in `.ufo/waves/round-33/registration.md` before any
+corpus append. C1's predicate was then killed by a seat, before data, and was
+not rewritten.
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage — Waybar event-socket client (new surface, not a re-score of round 32) | lane tree before append: `closed_entries=0 closed_rows=0 open_cites=4 verdict=TARGET_MISSED`; after: same, because the entries were not appended | `python3 -I .ufo/waves/round-33/c1/count.py --root . --frozen .ufo/waves/round-33/c1/frozen.json` | honest stop / unprovable. A symlink crib under `.ufo/waves/round-33/scratch/CriticC1Junk/` prints `TARGET_MET`. The frozen kill rule is not a certification. The predicate was not changed after seats scored it. |
+| C2 calibration (tied for lowest; every scored axis is 1.0 and a capability entered in round 32, so the stagnation nudge does not waive) — the published r32-C1 verdict must match a re-run | before: `claim_mismatch=1 reason=absent verdict=TARGET_MISSED` exit 1; after: `claim_mismatch=0 reason=match published=7 measured=7 verdict_word=honest-stop verdict=TARGET_MET` exit 0 | `python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md` | target met on the correction line; the round-32 row above is not rewritten |
