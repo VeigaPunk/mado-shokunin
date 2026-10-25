@@ -21,7 +21,7 @@ accept loop answers differently (S158):
 **OBS** S158: the `5000` is a poll timeout in milliseconds — the compositor
 waits five seconds for data on an accepted connection and closes it if nothing arrives (`:2264` poll, `:2266-2268` close on `ret <= 0`). The read that
 follows is a 1023-byte chunk loop (`:2274` `read(ACCEPTEDCONNECTION,
-readBuffer.data(), 1023)`, `:2278` break on a short read); the request is the
+readBuffer.data(), 1023)`, `:2279-2280` break on a short read); the request is the
 accumulation of the chunks, with no byte bound anywhere in the handler.
 
 **OBS** S187: upstream states the same contract in prose at the host's

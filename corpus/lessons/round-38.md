@@ -39,7 +39,7 @@ three (r30 included), per the frozen registration:
 | (package own-work stat receipt) → S258 | own-work stat receipt | adopt — host measurement re-taken this round | S258, `request-socket-live-bound-r8.md` §2 |
 | (new) | event-queue-host-measurement-r28.md | **refuse** — "never overflowed" leans on a null channel (debug:disable_logs=1); corrected by round-37's event-queue-observability-r37.md | none |
 | (new) | event-queue-journal-measurement-r29.md | **refuse** — same null channel; its journal reading (21 core-logger lines, zero markers) is observability-r37.md's measurement | none |
-| (new) | socket-client-contract-measurements-r29.md | **refuse** — "requests capped at 64 KiB" is the follow-queue bound; its socket census is superseded by S258's stat and round-37's live census | none |
+| (new) | socket-client-contract-measurements-r29.md | **refuse** — "requests capped at 64 KiB" is chonkstep's own request cap (S277 `:61`), not upstream's follow-queue bound; its socket census is superseded by S258's stat and round-37's live census | none |
 | (new) | socket-modes-and-request-read-r30.md | **refuse** — frozen registration declines the package's successor chain; the request-socket facts are covered by the adopted S158/S187/S253 entries | none |
 
 Id collisions: 15 of 147 staged ids (S203–S217) conflicted with held rows

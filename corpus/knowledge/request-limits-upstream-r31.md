@@ -28,8 +28,9 @@ FOLLOW_QUEUE_LIMIT)` inside `addFollowData` (`:166`).
 and a followed stream's queue at **64 KiB**. Two corrections follow for the
 lane's record: the 64 KiB figure in the refused package draft
 (`merge/mado/…/socket-client-contract-measurements-r29.md`, "requests are
-capped at 64 KiB") is the *follow-queue* ceiling of a different
-implementation, not a request ceiling; and this host's v0.56.2 declares
+capped at 64 KiB") is that re-implementation's own request cap — S277 `:61`
+("Requests are capped at 64 KiB") is byte-identical to the draft's cited
+S243 — not upstream's `FOLLOW_QUEUE_LIMIT`; and this host's v0.56.2 declares
 neither — its handler accumulates 1023-byte chunks with no total bound
 (S158 `:2270-2280`, `knowledge/request-socket-live-bound-r8.md` §1).
 
