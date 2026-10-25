@@ -147,7 +147,8 @@ EDITS = [
     ("M37-stdin-inherited",
      '                                stdin=subprocess.DEVNULL,\n', ''),
     ("M38-reply-cap-dropped",
-     'too_long = len(raw) > REPLY_CAP', 'too_long = False'),
+     '        raw = proc.stdout.read(REPLY_CAP + 1)\n        too_long = len(raw) > REPLY_CAP',
+     '        raw = proc.stdout.read()\n        too_long = False'),
     ("M39-set-type-unchecked",
      'if not isinstance(reply["set"], bool) or not _typed(forms[0],',
      'if False or not _typed(forms[0],'),
@@ -159,9 +160,8 @@ EDITS = [
      '    if False:'),
     ("M42-getoption-with-live-allowed",
      '    if args.live and args.getoption:', '    if False:'),
-    ("M43-alpha-float64",
-     'return int(math.floor(f32(f32(float(token)) * 255.0) + 0.5)) & 0xFF',
-     'return int(math.floor(float(token) * 255.0 + 0.5)) & 0xFF'),
+    # M43 (float64 instead of float32 alpha) is an equivalent mutant: no alpha with <= 3 decimals
+    # (1..999 / 1000) rounds or floors differently in float32 - measured, receipts/f32-equivalence.txt.
     ("M44-gradient-alpha-rounded",
      'return int(math.floor(f32(f32(float(token)) * 255.0)))',
      'return int(math.floor(f32(f32(float(token)) * 255.0) + 0.5))'),
