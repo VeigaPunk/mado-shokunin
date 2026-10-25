@@ -2277,3 +2277,19 @@ removal paths" → "the two removal markers" (a third, hangup, removal path logs
 writes to the journal" → "reaches the journal only through stdout before that point"; the refusal
 pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run at the records tip
 (`receipts/after-c1-v2-records.txt`); no OBS line's source or quote changed.
+
+### Round 37 — late seat findings folded into the record (append-only)
+
+- **R2 erratum widened** (wave-1 `RevR1R5`): the round-36 report names a wrong after-revision on
+  seven lines — 6, 196, 215, 231, 303, 339, 381 — not the four listed above. No receipt ever named
+  `64979ef` (at `64979ef` the receipts named `ea89bde`; from `fe55a90` on, `4d28b19`), and both
+  gates changed between `64979ef` and `4d28b19`, so "the claim is unaffected" holds only against
+  the `4d28b19` receipts. R5 is also wider: the pointer gate checks ten hard-coded round-35 paths
+  (an untracked round-36 seat report still reads clean), and two of them no longer exist, which
+  counts as clean.
+- **C1 counter limits, additional** (M37-5): clause b is exercised by no control (`MutC1Clauses`,
+  force-b survived), and the refused r28 package entry pasted in verbatim meets the target
+  (`CritAxisClaim`). Both go to the round-38 v3 counter with the self-receipt crib.
+- **r29 flip condition** (`ScoutPkgRefuse`): the journal needs both `debug:disable_logs = false`
+  and `debug:enable_stdout_logs = true` (`Logger.cpp:47`); the lesson's assimilation table already
+  says so, but the registration's flip names only the first.
