@@ -1,0 +1,79 @@
+$ git log --oneline 57a772b..f6e3247 | wc -l
+[rc=0] commits 57a772b..f6e3247
+68
+
+$ git show 57a772b:corpus/SOURCES.md | grep -c '^| S[0-9]'
+[rc=0] SOURCES rows @57a772b
+185
+
+$ git show f6e3247:corpus/SOURCES.md | grep -c '^| S[0-9]'
+[rc=0] SOURCES rows @f6e3247
+207
+
+$ git show ab2bfaab661c846d1de9d58c01651cd156a13949:corpus/SOURCES.md | grep -c '^| S[0-9]'
+[rc=0] SOURCES rows @base ab2bfaa
+219
+
+$ git diff 57a772b..f6e3247 -- corpus/SOURCES.md | grep -c '^+| S[0-9]'
+[rc=0] SOURCES rows added in window
+22
+
+$ git ls-tree -r --name-only 57a772b corpus/knowledge | wc -l
+[rc=0] knowledge files @57a772b
+43
+
+$ git ls-tree -r --name-only f6e3247 corpus/knowledge | wc -l
+[rc=0] knowledge files @f6e3247
+52
+
+$ git diff -M --name-status 57a772b..f6e3247 -- corpus/knowledge | grep -c '^A'
+[rc=0] knowledge added (rename-aware)
+9
+
+$ git diff -M --name-status 57a772b..f6e3247 -- corpus/knowledge | grep -c '^D' || true
+[rc=0] knowledge deleted in window
+0
+
+$ git log --diff-filter=A --format= --name-only 57a772b..f6e3247 -- tools/ | grep -c .
+[rc=0] tools added in window
+1
+
+$ git log --diff-filter=A --format= --name-only 57a772b..f6e3247 -- tools/
+[rc=0] tools added names
+tools/mado-eventq.py
+
+$ git show f6e3247:corpus/QUALITY.md | grep -c '^[0-9]\{1,3\}\. '
+[rc=0] QUALITY criteria @f6e3247
+63
+
+$ git show ab2bfaab661c846d1de9d58c01651cd156a13949:corpus/QUALITY.md | grep -c '^[0-9]\{1,3\}\. '
+[rc=0] QUALITY criteria @base ab2bfaa
+68
+
+$ git show ab2bfaab661c846d1de9d58c01651cd156a13949:corpus/QUALITY.md | grep -n considerthese || true
+[rc=0] QUALITY citations of considerthese @base
+367:60. Every round report states the lane's last-30-commit domain-versus-meta ratio with its command, and a lane that goes two or more rounds without a domain-facing change says so plainly in that section. Domain-facing means `tools/`, `corpus/knowledge/`, `PROVINCE.md` or `SKILL.md`; records and instruments are meta. Ground: `considerthese/2026-10-24.md` proposal 1 (2026-10-24), measured this round at 3 domain / 27 meta. (lesson: lessons/round-36.md#mistakes M36-5)
+
+$ git show ab2bfaab661c846d1de9d58c01651cd156a13949:corpus/QUALITY.md | grep -n 'considerthese/2026-10-25' || true
+[rc=0] QUALITY 2026-10-25 mention @base
+
+
+$ git show ab2bfaab661c846d1de9d58c01651cd156a13949:corpus/QUALITY.md | grep -ni 'relay\|first-hand\|first hand' || true
+[rc=0] QUALITY relay/first-hand @base
+
+
+$ git log --diff-filter=A --format='%h' --name-only 57a772b..f6e3247 -- corpus/knowledge | awk 'NF==1{print}'
+[rc=0] knowledge-add commits
+3f42425
+corpus/knowledge/event-delivery-limits-r26.md
+corpus/knowledge/event-queue-observability-r37.md
+02088b4
+corpus/knowledge/idle-lock-chain-armed-r14.md
+corpus/knowledge/idle-lock-never-asked-r12.md
+corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
+fa7ba11
+corpus/knowledge/waybar-module-text-route-r25.md
+f591087
+corpus/knowledge/dispatcher-semantics-r25.md
+corpus/knowledge/dispatcher-surface-and-request-grammar-r26.md
+corpus/knowledge/ipc-contract-r25.md

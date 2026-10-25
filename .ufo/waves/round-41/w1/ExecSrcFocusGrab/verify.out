@@ -1,0 +1,134 @@
+receipt focus-grab-v1.xml sha256=0bc60c14d27f9079e0d1d9d706f91e67ad7da585f3b7f34ff7186a376c0285b4 bytes=5447
+receipt Hyprland-FocusGrab.cpp sha256=53b762f7149bf1c3105ec1da2137d02cc7bece90043d9a2ce253a784b092aff1 bytes=6242
+receipt Hyprland-FocusGrab.hpp sha256=dce47251853f8d95eeec0eb357665efdceccd52b111e633c56412e5c55103421 bytes=2607
+OK   xml interfaces=['hyprland_focus_grab_manager_v1', 'hyprland_focus_grab_v1'] versions=['1', '1']
+OK   xml requests=['create_grab', 'destroy', 'add_surface', 'remove_surface', 'commit', 'destroy']
+OK   xml events=['cleared']
+OK   Hyprland-FocusGrab.cpp mentions 'touch' 0x
+OK   Hyprland-FocusGrab.hpp mentions 'touch' 0x
+OK   xml mentions '<enum' 0x
+OK   xml mentions 'error' 0x
+OK   xml mentions 'since=' 0x
+OK   focus-grab-v1.xml:34 words=12 gate=yes norm=yes sha=0bc60c14d27f :: This protocol allows clients to limit input focus to a specific set
+OK   focus-grab-v1.xml:35 words=12 gate=yes norm=yes sha=0bc60c14d27f :: of surfaces and receive a notification when the limiter is removed as
+OK   focus-grab-v1.xml:39 words=3  gate=no  norm=no  sha=0bc60c14d27f :: <interface name="hyprland_focus_grab_manager_v1" version="1">
+OK   focus-grab-v1.xml:46 words=5  gate=yes norm=yes sha=0bc60c14d27f :: Create a surface grab object.
+OK   focus-grab-v1.xml:55 words=7  gate=yes norm=yes sha=0bc60c14d27f :: This doesn't destroy existing focus grab objects.
+OK   focus-grab-v1.xml:60 words=3  gate=no  norm=no  sha=0bc60c14d27f :: <interface name="hyprland_focus_grab_v1" version="1">
+OK   focus-grab-v1.xml:62 words=10 gate=yes norm=yes sha=0bc60c14d27f :: This interface restricts input focus to a specified whitelist of
+OK   focus-grab-v1.xml:63 words=13 gate=yes norm=yes sha=0bc60c14d27f :: surfaces as long as the focus grab object exists and has at least
+OK   focus-grab-v1.xml:64 words=3  gate=yes norm=yes sha=0bc60c14d27f :: one comitted surface.
+OK   focus-grab-v1.xml:66 words=11 gate=yes norm=yes sha=0bc60c14d27f :: Mouse and touch events inside a whitelisted surface will be passed
+OK   focus-grab-v1.xml:67 words=11 gate=yes norm=yes sha=0bc60c14d27f :: to the surface normally, while events outside of a whitelisted surface
+OK   focus-grab-v1.xml:68 words=13 gate=yes norm=yes sha=0bc60c14d27f :: will clear the grab object. Keyboard events will be passed to the clie
+OK   focus-grab-v1.xml:70 words=10 gate=yes norm=yes sha=0bc60c14d27f :: wl_keyboard::enter event if a whitelisted surface is not already enter
+OK   focus-grab-v1.xml:72 words=9  gate=yes norm=yes sha=0bc60c14d27f :: Upon meeting implementation-defined criteria usually meaning a mouse o
+OK   focus-grab-v1.xml:73 words=10 gate=yes norm=yes sha=0bc60c14d27f :: touch input outside of any whitelisted surfaces, the compositor will
+OK   focus-grab-v1.xml:74 words=11 gate=yes norm=yes sha=0bc60c14d27f :: clear the whitelist, rendering the grab inert and sending the cleared
+OK   focus-grab-v1.xml:75 words=12 gate=yes norm=yes sha=0bc60c14d27f :: event. The same will happen if another focus grab or similar action
+OK   focus-grab-v1.xml:76 words=6  gate=yes norm=yes sha=0bc60c14d27f :: is started at the compositor's discretion.
+OK   focus-grab-v1.xml:81 words=12 gate=yes norm=yes sha=0bc60c14d27f :: Add a surface to the whitelist. Destroying the surface is treated the
+OK   focus-grab-v1.xml:82 words=11 gate=yes norm=yes sha=0bc60c14d27f :: same as an explicit call to remove_surface and duplicate additions are
+OK   focus-grab-v1.xml:85 words=8  gate=yes norm=yes sha=0bc60c14d27f :: Does not take effect until commit is called.
+OK   focus-grab-v1.xml:94 words=9  gate=yes norm=yes sha=0bc60c14d27f :: the same as an explicit call to this function.
+OK   focus-grab-v1.xml:97 words=8  gate=yes norm=yes sha=0bc60c14d27f :: keyboard, another surface will be entered on commit.
+OK   focus-grab-v1.xml:99 words=8  gate=yes norm=yes sha=0bc60c14d27f :: Does not take effect until commit is called.
+OK   focus-grab-v1.xml:107 words=7  gate=yes norm=yes sha=0bc60c14d27f :: Commit pending changes to the surface whitelist.
+OK   focus-grab-v1.xml:109 words=15 gate=yes norm=yes sha=0bc60c14d27f :: If the list previously had no entries and now has at least one, the gr
+OK   focus-grab-v1.xml:110 words=14 gate=yes norm=yes sha=0bc60c14d27f :: will start. If it previously had entries and now has none, the grab wi
+OK   focus-grab-v1.xml:111 words=2  gate=no  norm=yes sha=0bc60c14d27f :: become inert.
+OK   focus-grab-v1.xml:117 words=10 gate=yes norm=yes sha=0bc60c14d27f :: Destroy the grab object and remove the grab if active.
+OK   focus-grab-v1.xml:123 words=10 gate=yes norm=yes sha=0bc60c14d27f :: Sent when an active grab is cancelled by the compositor,
+OK   focus-grab-v1.xml:124 words=3  gate=yes norm=yes sha=0bc60c14d27f :: regardless of cause.
+OK   Hyprland-FocusGrab.cpp:20 words=3  gate=yes norm=yes sha=53b762f7149b :: m_grab->m_keyboard = true;
+OK   Hyprland-FocusGrab.cpp:21 words=3  gate=yes norm=yes sha=53b762f7149b :: m_grab->m_pointer = true;
+OK   Hyprland-FocusGrab.cpp:22 words=4  gate=yes norm=yes sha=53b762f7149b :: m_grab->setCallback([this]() { finish(true); });
+OK   Hyprland-FocusGrab.cpp:24 words=5  gate=yes norm=yes sha=53b762f7149b :: m_resource->setDestroy([this](CHyprlandFocusGrabV1* pMgr) { PROTO::foc
+OK   Hyprland-FocusGrab.cpp:26 words=7  gate=yes norm=yes sha=53b762f7149b :: m_resource->setAddSurface([this](CHyprlandFocusGrabV1* pMgr, wl_resour
+OK   Hyprland-FocusGrab.cpp:28 words=5  gate=yes norm=yes sha=53b762f7149b :: m_resource->setCommit([this](CHyprlandFocusGrabV1* pMgr) { commit(); }
+OK   Hyprland-FocusGrab.cpp:32 words=1  gate=no  norm=yes sha=53b762f7149b :: finish(false);
+OK   Hyprland-FocusGrab.cpp:48 words=3  gate=yes norm=yes sha=53b762f7149b :: if (!m_grabActive) {
+OK   Hyprland-FocusGrab.cpp:50 words=1  gate=no  norm=yes sha=53b762f7149b :: g_pSeatManager->setGrab(m_grab);
+OK   Hyprland-FocusGrab.cpp:54 words=1  gate=no  norm=yes sha=53b762f7149b :: g_pInputManager->simulateMouseMovement();
+OK   Hyprland-FocusGrab.cpp:55 words=1  gate=no  norm=yes sha=53b762f7149b :: refocusKeyboard();
+OK   Hyprland-FocusGrab.cpp:59 words=3  gate=yes norm=yes sha=53b762f7149b :: if (m_grabActive) {
+OK   Hyprland-FocusGrab.cpp:62 words=4  gate=yes norm=yes sha=53b762f7149b :: if (g_pSeatManager->m_seatGrab == m_grab)
+OK   Hyprland-FocusGrab.cpp:65 words=1  gate=no  norm=yes sha=53b762f7149b :: m_grab->clear();
+OK   Hyprland-FocusGrab.cpp:66 words=1  gate=no  norm=yes sha=53b762f7149b :: m_surfaces.clear();
+OK   Hyprland-FocusGrab.cpp:68 words=2  gate=no  norm=yes sha=53b762f7149b :: if (sendCleared)
+OK   Hyprland-FocusGrab.cpp:69 words=1  gate=no  norm=yes sha=53b762f7149b :: m_resource->sendCleared();
+OK   Hyprland-FocusGrab.cpp:75 words=4  gate=yes norm=yes sha=53b762f7149b :: if (iter == m_surfaces.end())
+OK   Hyprland-FocusGrab.cpp:76 words=3  gate=no  norm=no  sha=53b762f7149b :: m_surfaces.emplace(surface, makeUnique<CFocusGrabSurfaceState>(this, s
+OK   Hyprland-FocusGrab.cpp:82 words=4  gate=yes norm=yes sha=53b762f7149b :: if (iter->second->m_state == CFocusGrabSurfaceState::PendingAddition)
+OK   Hyprland-FocusGrab.cpp:85 words=3  gate=yes norm=yes sha=53b762f7149b :: iter->second->m_state = CFocusGrabSurfaceState::PendingRemoval;
+OK   Hyprland-FocusGrab.cpp:91 words=1  gate=no  norm=yes sha=53b762f7149b :: commit(true);
+OK   Hyprland-FocusGrab.cpp:96 words=4  gate=yes norm=yes sha=53b762f7149b :: if (keyboardSurface && isSurfaceCommitted(keyboardSurface.lock()))
+OK   Hyprland-FocusGrab.cpp:101 words=5  gate=yes norm=yes sha=53b762f7149b :: if (state->m_state == CFocusGrabSurfaceState::Committed) {
+OK   Hyprland-FocusGrab.cpp:108 words=1  gate=no  norm=yes sha=53b762f7149b :: Desktop::focusState()->rawSurfaceFocus(surface);
+OK   Hyprland-FocusGrab.cpp:110 words=11 gate=yes norm=yes sha=53b762f7149b :: LOGM(Log::ERR, "CFocusGrab::refocusKeyboard called with no committed s
+OK   Hyprland-FocusGrab.cpp:119 words=1  gate=no  norm=yes sha=53b762f7149b :: m_grab->remove(iter->first.lock());
+OK   Hyprland-FocusGrab.cpp:126 words=1  gate=no  norm=yes sha=53b762f7149b :: m_grab->add(iter->first.lock());
+OK   Hyprland-FocusGrab.cpp:137 words=3  gate=yes norm=yes sha=53b762f7149b :: if (surfacesChanged) {
+OK   Hyprland-FocusGrab.cpp:139 words=1  gate=no  norm=yes sha=53b762f7149b :: start();
+OK   Hyprland-FocusGrab.cpp:141 words=1  gate=no  norm=yes sha=53b762f7149b :: finish(true);
+OK   Hyprland-FocusGrab.cpp:158 words=10 gate=yes norm=yes sha=53b762f7149b :: std::erase_if(m_managers, [&](const auto& other) { return other->resou
+OK   Hyprland-FocusGrab.cpp:162 words=10 gate=yes norm=yes sha=53b762f7149b :: std::erase_if(m_grabs, [&](const auto& other) { return other.get() == 
+OK   Hyprland-FocusGrab.cpp:166 words=3  gate=no  norm=no  sha=53b762f7149b :: m_grabs.push_back(makeUnique<CFocusGrab>(makeShared<CHyprlandFocusGrab
+OK   Hyprland-FocusGrab.cpp:170 words=1  gate=no  norm=yes sha=53b762f7149b :: pMgr->noMemory();
+OK   Hyprland-FocusGrab.hpp:51 words=3  gate=no  norm=no  sha=dce47251853f :: std::unordered_map<WP<CWLSurfaceResource>, UP<CFocusGrabSurfaceState>>
+OK   Hyprland-FocusGrab.hpp:24 words=4  gate=yes norm=yes sha=dce47251853f :: } m_state = PendingAddition;
+OK   Hyprland-FocusGrab.hpp:52 words=2  gate=no  norm=no  sha=dce47251853f :: SP<CSeatGrab> m_grab;
+OK   Hyprland-FocusGrab.hpp:71 words=2  gate=no  norm=no  sha=dce47251853f :: std::vector<UP<CFocusGrab>> m_grabs;
+OK   Hyprland-FocusGrab.hpp:70 words=2  gate=no  norm=no  sha=dce47251853f :: std::vector<UP<CHyprlandFocusGrabManagerV1>> m_managers;
+OK   Hyprland-FocusGrab.hpp:54 words=4  gate=yes norm=yes sha=dce47251853f :: bool m_grabActive = false;
+
+checked=72 failed=0 gate_ready=48
+gate-ready quotes (3-25 words, present in the counter's normalised text):
+  focus-grab-v1.xml:34 words=12 :: This protocol allows clients to limit input focus to a specific set
+  focus-grab-v1.xml:35 words=12 :: of surfaces and receive a notification when the limiter is removed as
+  focus-grab-v1.xml:46 words=5 :: Create a surface grab object.
+  focus-grab-v1.xml:55 words=7 :: This doesn't destroy existing focus grab objects.
+  focus-grab-v1.xml:62 words=10 :: This interface restricts input focus to a specified whitelist of
+  focus-grab-v1.xml:63 words=13 :: surfaces as long as the focus grab object exists and has at least
+  focus-grab-v1.xml:64 words=3 :: one comitted surface.
+  focus-grab-v1.xml:66 words=11 :: Mouse and touch events inside a whitelisted surface will be passed
+  focus-grab-v1.xml:67 words=11 :: to the surface normally, while events outside of a whitelisted surface
+  focus-grab-v1.xml:68 words=13 :: will clear the grab object. Keyboard events will be passed to the client
+  focus-grab-v1.xml:70 words=10 :: wl_keyboard::enter event if a whitelisted surface is not already entered.
+  focus-grab-v1.xml:72 words=9 :: Upon meeting implementation-defined criteria usually meaning a mouse or
+  focus-grab-v1.xml:73 words=10 :: touch input outside of any whitelisted surfaces, the compositor will
+  focus-grab-v1.xml:74 words=11 :: clear the whitelist, rendering the grab inert and sending the cleared
+  focus-grab-v1.xml:75 words=12 :: event. The same will happen if another focus grab or similar action
+  focus-grab-v1.xml:76 words=6 :: is started at the compositor's discretion.
+  focus-grab-v1.xml:81 words=12 :: Add a surface to the whitelist. Destroying the surface is treated the
+  focus-grab-v1.xml:82 words=11 :: same as an explicit call to remove_surface and duplicate additions are
+  focus-grab-v1.xml:85 words=8 :: Does not take effect until commit is called.
+  focus-grab-v1.xml:94 words=9 :: the same as an explicit call to this function.
+  focus-grab-v1.xml:97 words=8 :: keyboard, another surface will be entered on commit.
+  focus-grab-v1.xml:99 words=8 :: Does not take effect until commit is called.
+  focus-grab-v1.xml:107 words=7 :: Commit pending changes to the surface whitelist.
+  focus-grab-v1.xml:109 words=15 :: If the list previously had no entries and now has at least one, the grab
+  focus-grab-v1.xml:110 words=14 :: will start. If it previously had entries and now has none, the grab will
+  focus-grab-v1.xml:117 words=10 :: Destroy the grab object and remove the grab if active.
+  focus-grab-v1.xml:123 words=10 :: Sent when an active grab is cancelled by the compositor,
+  focus-grab-v1.xml:124 words=3 :: regardless of cause.
+  Hyprland-FocusGrab.cpp:20 words=3 :: m_grab->m_keyboard = true;
+  Hyprland-FocusGrab.cpp:21 words=3 :: m_grab->m_pointer = true;
+  Hyprland-FocusGrab.cpp:22 words=4 :: m_grab->setCallback([this]() { finish(true); });
+  Hyprland-FocusGrab.cpp:24 words=5 :: m_resource->setDestroy([this](CHyprlandFocusGrabV1* pMgr) { PROTO::focusGrab->destroyGrab(this); });
+  Hyprland-FocusGrab.cpp:26 words=7 :: m_resource->setAddSurface([this](CHyprlandFocusGrabV1* pMgr, wl_resource* surface) { addSurface(CWLSurfaceResource::fromResource(surface)); });
+  Hyprland-FocusGrab.cpp:28 words=5 :: m_resource->setCommit([this](CHyprlandFocusGrabV1* pMgr) { commit(); });
+  Hyprland-FocusGrab.cpp:48 words=3 :: if (!m_grabActive) {
+  Hyprland-FocusGrab.cpp:59 words=3 :: if (m_grabActive) {
+  Hyprland-FocusGrab.cpp:62 words=4 :: if (g_pSeatManager->m_seatGrab == m_grab)
+  Hyprland-FocusGrab.cpp:75 words=4 :: if (iter == m_surfaces.end())
+  Hyprland-FocusGrab.cpp:82 words=4 :: if (iter->second->m_state == CFocusGrabSurfaceState::PendingAddition)
+  Hyprland-FocusGrab.cpp:85 words=3 :: iter->second->m_state = CFocusGrabSurfaceState::PendingRemoval;
+  Hyprland-FocusGrab.cpp:96 words=4 :: if (keyboardSurface && isSurfaceCommitted(keyboardSurface.lock()))
+  Hyprland-FocusGrab.cpp:101 words=5 :: if (state->m_state == CFocusGrabSurfaceState::Committed) {
+  Hyprland-FocusGrab.cpp:110 words=11 :: LOGM(Log::ERR, "CFocusGrab::refocusKeyboard called with no committed surfaces. This should never happen.");
+  Hyprland-FocusGrab.cpp:137 words=3 :: if (surfacesChanged) {
+  Hyprland-FocusGrab.cpp:158 words=10 :: std::erase_if(m_managers, [&](const auto& other) { return other->resource() == res; });
+  Hyprland-FocusGrab.cpp:162 words=10 :: std::erase_if(m_grabs, [&](const auto& other) { return other.get() == grab; });
+  Hyprland-FocusGrab.hpp:24 words=4 :: } m_state = PendingAddition;
+  Hyprland-FocusGrab.hpp:54 words=4 :: bool m_grabActive = false;

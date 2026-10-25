@@ -1,0 +1,37 @@
+== kill fixtures (reference must reproduce the contract; mutant must diverge)
+KILL N07-expect-case-insensitive        ref_matches_model=1 rc=1 mutant_diverges=1 mutant_rc=0
+     model_line3='MADO_GLOBALS: sessions=1 latest_pid=100 interfaces=1 classes=other:1 expected_missing=WL_SEAT verdict=MISSING_EXPECTED'
+     mutant_line3='MADO_GLOBALS: sessions=1 latest_pid=100 interfaces=1 classes=other:1 expected_missing=- verdict=OK'
+KILL N12-version-string-compare         ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line2='MADO_GLOBAL: name=wl_seat ver=10 count=2 class=other'
+     mutant_line2='MADO_GLOBAL: name=wl_seat ver=9 count=2 class=other'
+KILL N16-log-case-insensitive           ref_matches_model=1 rc=3 mutant_diverges=1 mutant_rc=0
+     model_line1='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS'
+     mutant_line1='MADO_GLOBALS_SESSION: n=1 boot=- pid=100 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+KILL N20-expect-any-session             ref_matches_model=1 rc=1 mutant_diverges=1 mutant_rc=0
+     model_line4='MADO_GLOBALS: sessions=2 latest_pid=201 interfaces=1 classes=other:1 expected_missing=wl_seat verdict=MISSING_EXPECTED'
+     mutant_line4='MADO_GLOBALS: sessions=2 latest_pid=201 interfaces=1 classes=other:1 expected_missing=- verdict=OK'
+KILL N22-sort-case-insensitive-globals  ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line2='MADO_GLOBAL: name=Zz_g ver=1 count=1 class=other'
+     mutant_line2='MADO_GLOBAL: name=aa_g ver=1 count=1 class=other'
+KILL N23-pid-int-compare                ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line1='MADO_GLOBALS_SESSION: n=1 boot=- pid=011 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+     mutant_line1='MADO_GLOBALS_SESSION: n=1 boot=- pid=011 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=2 adverts=2'
+KILL N24-ver-5-digits-max               ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=3
+     model_line1='MADO_GLOBALS_SESSION: n=1 boot=- pid=100 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+     mutant_line1='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS'
+KILL N38-boot-reset-per-session         ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line2='MADO_GLOBALS_SESSION: n=2 boot=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa pid=301 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+     mutant_line2='MADO_GLOBALS_SESSION: n=2 boot=- pid=301 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+KILL N43-boot-repeat-same-id-no-split   ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line1='MADO_GLOBALS_SESSION: n=1 boot=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa pid=300 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+     mutant_line1='MADO_GLOBALS_SESSION: n=1 boot=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa pid=300 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=2 adverts=2'
+KILL N40-class-lowercased               ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=0
+     model_line2='MADO_GLOBAL: name=HYPRLAND_FOCUS_GRAB_MANAGER_V1 ver=1 count=1 class=other'
+     mutant_line2='MADO_GLOBAL: name=HYPRLAND_FOCUS_GRAB_MANAGER_V1 ver=1 count=1 class=focus-grab'
+KILL N39-expect-hyphen-allowed          ref_matches_model=1 rc=2 mutant_diverges=1 mutant_rc=1 mutant_last='MADO_GLOBALS: sessions=1 latest_pid=100 interfaces=1 classes=other:1 expected_missing=a-b verdict=MISSING_EXPECTED'
+KILL N15-decode-latin-1                 ref_matches_model=1 rc=0 mutant_diverges=1 mutant_rc=3
+     model_line1='MADO_GLOBALS_SESSION: n=1 boot=- pid=100 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1'
+     mutant_line1='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS'
+EQUIVALENT none (every survivor has a kill fixture)
+KILLFIX fails=0

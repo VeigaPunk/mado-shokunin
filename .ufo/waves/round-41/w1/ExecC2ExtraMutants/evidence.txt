@@ -1,0 +1,66 @@
+== A. clause b reads RAW lines: head = text.splitlines()[:20]
+-- M20-fenced-verified-at ids=['S050', 'S301', 'S302', 'S303', 'S304']
+   L3  '```'
+   L4  'verified-at: 2026-10-25'
+   L5  'recheck: 90d'
+   L6  '```'
+   L8  'source: S050 - held parser'
+   L9  'source: S301 - protocol xml'
+   L10 'source: S302 - own-work journal'
+   L11 'source: S303 - client source'
+   L12 'source: S304 - docs'
+   L13 'verified-at: 2026-10-23'
+   L14 'recheck: whenever'
+   tail citations: []
+-- M27-source-inside-fence ids=['S050', 'S301', 'S302', 'S303', 'S304']
+   L3  'source: S050 - held parser'
+   L4  'source: S301 - protocol xml'
+   L5  'source: S302 - own-work journal'
+   L6  'source: S303 - client source'
+   L7  '```'
+   L8  'source: S304 - docs'
+   L9  '```'
+   L10 'verified-at: 2026-10-25'
+   L11 'recheck: 90d'
+   tail citations: []
+-- M28-source-moved-past-line-20 ids=['S050', 'S301', 'S302', 'S303']
+   L3  'source: S050 - held parser'
+   L4  'source: S301 - protocol xml'
+   L5  'source: S302 - own-work journal'
+   L6  'source: S303 - client source'
+   L7  'verified-at: 2026-10-25'
+   L8  'recheck: 90d'
+   tail citations: ['source: S304 - docs']
+-- M02-cited-id-lowercase ids=['S050', 'S301', 'S302', 'S303']
+   L3  'source: S050 - held parser'
+   L4  'source: S301 - protocol xml'
+   L5  'source: S302 - own-work journal'
+   L6  'source: S303 - client source'
+   L7  'source: s304 - docs'
+   L8  'verified-at: 2026-10-25'
+   L9  'recheck: 90d'
+   tail citations: []
+== B. M22: cited ids vs new ids (docstring c says >= 3 new)
+   cited=['S050', 'S051', 'S301', 'S302'] new=['S301', 'S302']
+== C. M16/M17 journal parses (runner's second implementation)
+   M16-no-boot counts(S,A,D,F)=(3, 72, 24, 1) bootlines=0 first_ts=2026-10-25T13:10:00-03:00 last_ts=2026-10-25T13:12:00-03:00
+   M17-replayed counts(S,A,D,F)=(3, 72, 24, 1) bootlines=0 first_ts=2026-10-25T13:10:00-03:00 last_ts=2026-10-25T13:10:00-03:00
+== D. M08: the receipt is a git symlink (mode 120000), not bytes
+   ls-tree: 120000 blob fd8e885cb715eb8cb0bd8e00efe028f8c4cba834	.ufo/waves/round-41/fetch/S301.link.txt
+   show bytes=532 sha256=562be87412b1deee39a9e84282eab44f7962ceb02b02263b59316e1400e44c50
+   gate sha256 in lesson: 562be87412b1deee39a9e84282eab44f7962ceb02b02263b59316e1400e44c50
+   on-disk is symlink: True -> 'pad/pad/pad/pad/pad/pad/pad/pad/pad/pad/...'
+== E. M05/M18/M30: what norm() does to the receipt
+   norm(M05 html) contains quote: True (raw contains: False)
+   norm(M18 entity) contains quote: True (raw contains: False)
+   norm(M30 newline) contains quote: True (raw contains: False)
+== F. M12: quotes distinct as raw strings, identical after norm()
+   raw distinct=True norm equal=True
+== G. M21: held row cell 11 before/after (cells 1-10 unchanged)
+   after : | S050 | held hyprlang config source - https://example.org/config.cpp | code | A | scope | anchor | teaches | mined | 2026-10-24 | on-change | corpus/knowledge/old.md, corpus/knowledge/hyprland-focus-grab-r41.md |
+   base  : | S050 | held hyprlang config source - https://example.org/config.cpp | code | A | scope | anchor | teaches | mined | 2026-10-24 | on-change | corpus/knowledge/old.md |
+   m21   : | S050 | held hyprlang config source - https://example.org/config.cpp | code | A | scope | anchor | teaches | mined | 2026-10-24 | on-change | corpus/knowledge/hyprland-focus-grab-r41.md |
+== H. M10/M11/M26: rows whose cell 1 is not a locatable source
+   M10 loc_token='surfaces' anchor='anchor'
+   M11 loc_token='https://example.org/d.md' anchor='https://amgsk.dev/posts/hyprland-rules/'
+   M26 loc_token='https://example.org/a.xml#frag' anchor='anchor'

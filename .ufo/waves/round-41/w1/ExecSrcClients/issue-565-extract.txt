@@ -1,0 +1,51 @@
+PATH .payload.issueViewerRoute.data.repository.issue
+NUMBER 565
+TITLE 'New windows in inactive workspaces stealing focus'
+STATE CLOSED stateReason=COMPLETED
+CREATED 2022-08-23T14:03:55Z CLOSED None
+AUTHOR rrredface
+URL https://github.com/hyprwm/Hyprland/issues/565
+BODY_VERBATIM_BEGIN
+To reproduce:
+One way is to first make sure you have a window rule assigning whatever browser you use to a specific workspace. I have these rules:
+```
+windowrule = workspace 1 silent,^(librewolf)$
+windowrule = workspace 1 silent,^(firefox)$
+```
+Then you can go to [this page](https://www.bennish.net/web-notifications.html), give it permission to display notifications, then click show in 5s. Switch to a fullscreen window in a different workspace, wait the 5 seconds for the notification window to open, and the active window will then be un-fullscreened.
+
+Another way is by opening a terminal window and running something like this:
+```sh
+sleep 5; pavucontrol
+```
+And then again, switch to a fullscreen window in any workspace other than the one to which pavucontrol (or whatever program you choose to run) is assigned.
+I have this window rule:
+```
+windowrule = workspace 4 silent,^(pavucontrol)$
+```
+
+Expected behavior:
+If a workspace windowrule contains `silent` then matching windows should not get focus, unless that window's workspace is already the active one.
+
+Actual behavior:
+If the new window is in the same workspace as the focused one, that new window gets focus and the previous one does not get it back. I would say that's pretty normal behavior. When the new window opens in a different workspace, it seems to steal it momentarily and then give it right back to the previously focused window. The previously focused window regains focus whether `follow_mouse` is enabled or disabled.
+
+I'm running both Hyprland and wlroots built from source, cloned less than an hour before posting this issue so I'm up to date.
+BODY_VERBATIM_END
+TEXT_NODES_BEGIN
+000| To reproduce:
+001| One way is to first make sure you have a window rule assigning whatever browser you use to a specific workspace. I have these rules:
+002| windowrule = workspace 1 silent,^(librewolf)$
+003| windowrule = workspace 1 silent,^(firefox)$
+004| Then you can go to this page (https://www.bennish.net/web-notifications.html), give it permission to display notifications, then click show in 5s. Switch to a fullscreen window in a different workspace, wait the 5 seconds for the notification window to open, and the active window will then be un-fullscreened.
+006| Another way is by opening a terminal window and running something like this:
+007| sleep 5; pavucontrol
+008| And then again, switch to a fullscreen window in any workspace other than the one to which pavucontrol (or whatever program you choose to run) is assigned.
+009| I have this window rule:
+010| windowrule = workspace 4 silent,^(pavucontrol)$
+012| Expected behavior:
+013| If a workspace windowrule contains `silent` then matching windows should not get focus, unless that window's workspace is already the active one.
+015| Actual behavior:
+016| If the new window is in the same workspace as the focused one, that new window gets focus and the previous one does not get it back. I would say that's pretty normal behavior. When the new window opens in a different workspace, it seems to steal it momentarily and then give it right back to the previously focused window. The previously focused window regains focus whether `follow_mouse` is enabled or disabled.
+018| I'm running both Hyprland and wlroots built from source, cloned less than an hour before posting this issue so I'm up to date.
+TEXT_NODES_END

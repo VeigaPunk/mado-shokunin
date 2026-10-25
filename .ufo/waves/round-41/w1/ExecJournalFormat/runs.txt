@@ -1,0 +1,63 @@
+journalctl --version: systemd 262 (262-1-arch)
+hyprctl version: Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+short              adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+short-iso          adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=0  ref_last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,ou
+short-iso-precise  adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+short-full         adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+cat                adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+json               adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+nohost             adverts=78  two_space=78  one_space=0  trailing_sp=0  cr=0  ref_rc=3  ref_last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+short              empty_last=-- No entries --|
+short-iso          empty_last=-- No entries --|
+short-iso-precise  empty_last=-- No entries --|
+short-full         empty_last=-- No entries --|
+cat                empty_last=
+json               empty_last=
+b0         rc=0 lines=75 bootlines=0 last=MADO_GLOBALS: sessions=1 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3
+bm1        rc=0 lines=77 bootlines=0 last=MADO_GLOBALS: sessions=1 latest_pid=1918 interfaces=8 classes=capture:2,other:6 expected_missing=- verdict=OK
+since2020  rc=0 lines=153 bootlines=1 last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3
+until2020  rc=3 lines=1 bootlines=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+b0         --diff rc=0 MADO_GLOBALS_DIFF: sessions=1 none
+bm1        --diff rc=0 MADO_GLOBALS_DIFF: sessions=1 none
+-- probe: a journalctl-style header line injected into a short-iso copy
+inject-iso   rc=0 last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus
+inject-iso2  rc=0 last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus
+-- probe: short + short-iso concatenated (mixed shapes in one file)
+mixed rc=0 adverts=156 last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus
+-- mixed report vs short-iso-only report (expect: only the session-1 boot= field differs)
+1c1
+< MADO_GLOBALS_SESSION: n=1 boot=- pid=1918 first=2026-10-25T13:16:45-03:00 last=2026-10-25T13:16:45-03:00 interfaces=8 adverts=15
+---
+> MADO_GLOBALS_SESSION: n=1 boot=7ab69ee4149c4811a3faf6c08c9d119b pid=1918 first=2026-10-25T13:16:45-03:00 last=2026-10-25T13:16:45-03:00 interfaces=8 adverts=15
+-- stderr sizes on the two rc-3 runs (a non-empty advert file vs a genuinely empty one)
+cap-short rc=3 stderr_bytes=0
+empty-short-iso rc=3 stderr_bytes=0
+-- probe: --live through a wrapper that reformats to -o short
+livewrap rc=3 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO
+-- the counter judge model on the same captures (model_out from c1-r41-globals.py)
+short              model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+short-iso          model_rc=0 sessions=2 last=MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input
+short-iso-precise  model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+short-full         model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+cat                model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+json               model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+nohost             model_rc=3 sessions=0 last=MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- verdict=NO_SESSIONS
+-- sha256 of the captures
+fef58aeb06792fffdc44a16ab0a26d63ed05b2117aaa3b44f5cd27cbae33a420  /tmp/tmp.GSNIrhrHiJ/cap-cat.txt
+fa56891b2dfb0aed9b5475da567d2ee3fa6f64b41176c72221f91ae5ef0841c7  /tmp/tmp.GSNIrhrHiJ/cap-json.txt
+9c4a0a2877e3b714041989649274c46eafa5aa5aa963bc05859b0394c6ca45cf  /tmp/tmp.GSNIrhrHiJ/cap-nohost.txt
+d42265f3ff09818c7640e87cbf8be2ddee7942d1b332c2db365ab57796aeeb86  /tmp/tmp.GSNIrhrHiJ/cap-short-full.txt
+e2fd9944d5a4620ed403c1b7267453ecf95be8bb33b10283a43f558ba46c2a4c  /tmp/tmp.GSNIrhrHiJ/cap-short-iso-precise.txt
+bf8fa91a321197277cf9c1260d17524e9ddf862f7f76ddf440fc057aa600aaf7  /tmp/tmp.GSNIrhrHiJ/cap-short-iso.txt
+beab26855f3d6ad8b6ccf8ecd9f896d5d46fc362909c6a6fc826e4e89486c5b8  /tmp/tmp.GSNIrhrHiJ/cap-short.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /tmp/tmp.GSNIrhrHiJ/empty-cat.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /tmp/tmp.GSNIrhrHiJ/empty-json.txt
+19c4e28b2f54ea8f217db4e622b0a5c758efa7b77ce2dc0394b6d159568c0b2e  /tmp/tmp.GSNIrhrHiJ/empty-short-full.txt
+19c4e28b2f54ea8f217db4e622b0a5c758efa7b77ce2dc0394b6d159568c0b2e  /tmp/tmp.GSNIrhrHiJ/empty-short-iso-precise.txt
+19c4e28b2f54ea8f217db4e622b0a5c758efa7b77ce2dc0394b6d159568c0b2e  /tmp/tmp.GSNIrhrHiJ/empty-short-iso.txt
+19c4e28b2f54ea8f217db4e622b0a5c758efa7b77ce2dc0394b6d159568c0b2e  /tmp/tmp.GSNIrhrHiJ/empty-short.txt
+1ff1497d46e8b3056bcb5011394636614a79d7eb963c40f7956363e7e63969d3  /tmp/tmp.GSNIrhrHiJ/b0.txt
+d14279a275f32f67a24a13a51047d96ff5cd10058dc36ea4ca5ef54e6f27121c  /tmp/tmp.GSNIrhrHiJ/bm1.txt
+bf8fa91a321197277cf9c1260d17524e9ddf862f7f76ddf440fc057aa600aaf7  /tmp/tmp.GSNIrhrHiJ/since2020.txt
+19c4e28b2f54ea8f217db4e622b0a5c758efa7b77ce2dc0394b6d159568c0b2e  /tmp/tmp.GSNIrhrHiJ/until2020.txt
+OUT=/tmp/tmp.GSNIrhrHiJ

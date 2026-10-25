@@ -1,0 +1,512 @@
+[
+ {
+  "name": "baseline-G",
+  "expect": "admit",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=3d330027a952df4557edff6b7f9a9b71b2c24b00",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "BASELINE"
+ },
+ {
+  "name": "baseline-G2",
+  "expect": "admit",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=d66177ecc59de7bcddefea57a6262056592daea8",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "BASELINE"
+ },
+ {
+  "name": "M01-citation-past-line-20",
+  "expect": "admit",
+  "why": "c: every cited id needs exactly one row (a source: line at line 23 is a citation)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=a390a0223d97a1edb9a0a666d577cb55efe480b1",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M02-cited-id-lowercase",
+  "expect": "admit",
+  "why": "b/c: a lowercase id is a citation the counter never sees, so no row is required",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=8594e56caf9796d5846785b83f3c38958015ecbc",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M03-two-entry-lines-per-id",
+  "expect": "admit",
+  "why": "g: 'one entry line' per id (counter uses any())",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=ca783ad1d5c75559984864e471197d52c0652206",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M04-one-line-serves-two-ids",
+  "expect": "admit",
+  "why": "g: one line per id (nested quotes let one line satisfy two ids)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=82465576b2158cb79b269000a4d3a0f1a43fa790",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M05-quote-across-paragraphs",
+  "expect": "admit",
+  "why": "d: the quote must occur contiguously in the receipt (norm() joins <p> blocks)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=6cd456dc8793495c374cfc376cbad25847163410",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M06-gate-line-outside-section",
+  "expect": "admit",
+  "why": "d: EXACTLY ONE GATE line per id (a second one outside ## Gate is invisible)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=5f5a8351dde4bd5c960ef2710b452824253b1204",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M07-receipt-dot-segment",
+  "expect": "admit",
+  "why": "d: the receipt path must resolve under FETCH (git refuses ./ segments)",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=c16da538c9f911f72f6fb3e65fcb38b5ef0f8aa5",
+  "clauses": "a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "d:0",
+   "g:0"
+  ]
+ },
+ {
+  "name": "M08-receipt-symlink",
+  "expect": "admit",
+  "why": "d: the receipt must be committed bytes, not a symlink whose blob is a path string",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=668701bf720318d5c838adbadc199b8e8bd67a79",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M09-new-row-recheck-junk",
+  "expect": "admit",
+  "why": "c: a new row's recheck cell is never validated",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=3b7303281d26e52ce85e9ec784988e0aa0d84ccf",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M10-new-row-no-location",
+  "expect": "admit",
+  "why": "e: cell 1 must end with a locatable source, not a bare word",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=47eda7a5df6d99c854a0096ab670288813587b99",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M11-badloc-in-anchor-cell",
+  "expect": "admit",
+  "why": "i: the localized-channel ban must cover the whole row, not only cell 1",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=fe73b4f964a78ffc430bfc39e5b22b51cc5b2aff",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M12-quote-whitespace-variant",
+  "expect": "admit",
+  "why": "d: quotes must be distinct after normalization, not only as raw strings",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=4c7d160ac741c1954e298d4be185fdfb230c1bd9",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M13-refuse-reason-20-filler",
+  "expect": "admit",
+  "why": "i: a reason must be prose about the refused entry, not 20 filler chars",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=3ba8b281bf4c154802dd0906716311e9b60e15eb",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M14-admit-self",
+  "expect": "admit",
+  "why": "i: the admitted package path must be a staged package, not the entry itself",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=26a4fcff6aeb364b8cc7d468bb46c3fd21761b78",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M15-admit-nonexistent-package",
+  "expect": "admit",
+  "why": "i: the admitted package path must exist in the staged package",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=2eda15fbc0aa8f86d5089d1bc5aadfa9c17eb962",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M16-journal-no-boot-line",
+  "expect": "admit",
+  "why": "h: sessions must be separated by a boot boundary, not only a PID change",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=33a026527b21669ff784b08150be25154604657a",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M17-journal-duplicate-sessions",
+  "expect": "admit",
+  "why": "h: replayed blocks with identical timestamps must not count as extra sessions",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=40a66db4fab589eb2a2f8540cf5ac960150c7477",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M18-quote-entity-encoded",
+  "expect": "admit",
+  "why": "d: the quote must occur literally in a plain-text receipt (norm() unescapes entities)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=103ae6d6a6f0abacdf4598cd6d8edf28a71d4153",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M19-recheck-impossible-date",
+  "expect": "admit",
+  "why": "b: recheck must be a real date/interval, not any NN-NN-NN shape",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=da10e912063fcb6be960ea6abd7a7c9b63216b63",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M20-fenced-verified-at",
+  "expect": "admit",
+  "why": "b: the preamble removes fences before any line is matched; head uses raw lines",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=ceb5c72a0e744fb26a603797f685b2934d71507f",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M21-held-row-usedby-substituted",
+  "expect": "admit",
+  "why": "c: a held row must keep its used-by items and gain the entry (superset)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=076923ad92f5331fa9c2d9f06950f96977c7429f",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M22-two-new-ids-only",
+  "expect": "admit",
+  "why": "c: docstring says at least 3 new ids; the code accepts >= 2",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=4bc7b572802f631c68e656b6376ec1b8beedceef",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M23-admit-inside-fence",
+  "expect": "admit",
+  "why": "i: the lesson is never unfenced, so a fenced ADMIT counts",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=9ba2020b2c35b8b5fdb51d69114b8246f50fd90a",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M24-gate-lines-inside-fence",
+  "expect": "admit",
+  "why": "d: the lesson is never unfenced, so fenced GATE lines count",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=ef1dea409ba20704b0e24566cbb49973659210dc",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M25-refuse-same-package",
+  "expect": "admit",
+  "why": "i: the refused package must differ from the admitted one",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=be3d1cff42ed23a0bfeed0115f93a9ec75a5bde2",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M26-location-url-fragment",
+  "expect": "admit",
+  "why": "e: locations must be unique after URL normalization (a fragment is the same document)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=06f5c619a1120512fd1bbccfa62b43a635e5e6a8",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M27-source-inside-fence",
+  "expect": "admit",
+  "why": "b: the preamble removes fences before any line is matched; a fenced source: counts",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=36eb0309c2b4f966cc3eb39390a7c29ff1a17731",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M28-source-moved-past-line-20",
+  "expect": "admit",
+  "why": "b/c: a citation moved past line 20 leaves the id set and every row/gate check",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=55b4995cf97d9eb5d0a4b01334437d1b613c75ff",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M29-source-id-cited-twice",
+  "expect": "admit",
+  "why": "none: 'distinct' is by design, so this is benign (recorded, not a defect)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=eb385ed284c0c77abfee7a838c0ac5b56bebe58c",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "M30-quote-split-by-newline",
+  "expect": "admit",
+  "why": "none: normalization collapses a wrapped line, so this is benign (recorded)",
+  "rc": 0,
+  "last": "PRED-C2-r41-v1: admitted=1/1 verdict=TARGET_MET rev=fcbffc67eababb434c5c74e3d4aea189e205b532",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "SURVIVOR",
+  "failed": []
+ },
+ {
+  "name": "K01-ten-cell-row",
+  "expect": "reject",
+  "why": "c: 11 cells",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=61eec521a42a026fcf2a5ef50fee8cb1062f6aa9",
+  "clauses": "a:1 b:1 c:0 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "c:0"
+  ]
+ },
+ {
+  "name": "K02-quote-case-differs",
+  "expect": "reject",
+  "why": "d: quote occurs in the receipt",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=86240bce4dda588ccb26df6075de2a61fbfda87e",
+  "clauses": "a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "d:0",
+   "g:0"
+  ]
+ },
+ {
+  "name": "K03-gate-extra-field",
+  "expect": "reject",
+  "why": "d: GATE line shape",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=7b13018d62bf72d47cfbe0dadada5c65ac27c7ed",
+  "clauses": "a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "d:0",
+   "g:0"
+  ]
+ },
+ {
+  "name": "K04-refuse-reason-19-chars",
+  "expect": "reject",
+  "why": "i: reason >= 20 characters",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=1953eed50c56b1d0f571c6d78766ff513544a986",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:0",
+  "verdict": "killed",
+  "failed": [
+   "i:0"
+  ]
+ },
+ {
+  "name": "K05-verified-at-past-line-20",
+  "expect": "reject",
+  "why": "b: verified-at within the first 20 lines",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=04a55705e84618b1ce81191b4e81bf50551521e9",
+  "clauses": "a:1 b:0 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "b:0"
+  ]
+ },
+ {
+  "name": "K06-source-past-line-20",
+  "expect": "reject",
+  "why": "b: >= 4 distinct source lines in the head",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=bbb4534a8f81039fe0473c3023ea5a91cb0b6323",
+  "clauses": "a:1 b:0 c:1 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "b:0"
+  ]
+ },
+ {
+  "name": "K07-journal-single-space-log",
+  "expect": "reject",
+  "why": "h: ADVERT grammar",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=a2a0cd2512f353ab9c9668574b70d3ecf1d92bcf",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1",
+  "verdict": "killed",
+  "failed": [
+   "h:0"
+  ]
+ },
+ {
+  "name": "K08-focus-grab-earlier-session",
+  "expect": "reject",
+  "why": "h: F is counted in the latest session",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=c6392b7f8ba6afdbfb26c2f0fbfc57c3fdd3553f",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1",
+  "verdict": "killed",
+  "failed": [
+   "h:0"
+  ]
+ },
+ {
+  "name": "K09-row-four-space-indent",
+  "expect": "reject",
+  "why": "c: rows may be indented 0-3 spaces",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=0e876107bed984289c4fd0bce7b7996348074710",
+  "clauses": "a:1 b:1 c:0 d:1 e:1 f:1 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "c:0"
+  ]
+ },
+ {
+  "name": "K10-two-readme-rows",
+  "expect": "reject",
+  "why": "f: exactly one index row",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=4e7f9ede70a4fe896936ea7e5629dbb031483b22",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:0 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "f:0"
+  ]
+ },
+ {
+  "name": "K11-two-own-work-rows",
+  "expect": "reject",
+  "why": "h: exactly one new own-work row",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=6cd1c92c7284f8cb9c81b799bd528bb34855dc6f",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1",
+  "verdict": "killed",
+  "failed": [
+   "h:0"
+  ]
+ },
+ {
+  "name": "K12-journal-line-double-space",
+  "expect": "reject",
+  "why": "h: census line verbatim",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=3bd6b71a21d7b59f99e3d1761ebbac634d493c7b",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1",
+  "verdict": "killed",
+  "failed": [
+   "h:0"
+  ]
+ },
+ {
+  "name": "K13-admit-path-with-spaces",
+  "expect": "reject",
+  "why": "i: ADMIT line shape",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=164cb67a48a00cc05d3b2f2f268a2fb52dfd7e18",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:0",
+  "verdict": "killed",
+  "failed": [
+   "i:0"
+  ]
+ },
+ {
+  "name": "K14-receipt-dotdot-segment",
+  "expect": "reject",
+  "why": "d: the receipt path must resolve under FETCH",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=d27b9c53ce8c5113811ce285fc4bb065793f1084",
+  "clauses": "a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "d:0",
+   "g:0"
+  ]
+ },
+ {
+  "name": "K15-readme-row-other-name",
+  "expect": "reject",
+  "why": "f: exactly one index row for THIS entry",
+  "rc": 1,
+  "last": "PRED-C2-r41-v1: admitted=0/1 verdict=TARGET_MISSED rev=13d3123cb23a1632e3250d0d406640b2946427ce",
+  "clauses": "a:1 b:1 c:1 d:1 e:1 f:0 g:1 h:1 i:1",
+  "verdict": "killed",
+  "failed": [
+   "f:0"
+  ]
+ },
+ {
+  "name": "SETUP-entry-present-at-base",
+  "expect": "setup",
+  "rc": 2,
+  "last": "PRED-C2-r41-v1 SETUP precondition_failed entry_present_at_base corpus/knowledge/hyprland-focus-grab-r41.md",
+  "clauses": "-",
+  "verdict": "setup-guard-ok"
+ }
+]

@@ -1,0 +1,14 @@
+# Evidence for QUALITY 72: a partial patch of the reply-cap property is an equivalent mutant.
+# Reference: .ufo/waves/round-40/c1/ctl-ref-tool-v2.py.txt (== tools/mado-options.py at 91f0a2b),
+# sites at :942-951 -- a bounded read AND a post-check on the length AND the raise.
+# Committed control M38 (.ufo/waves/round-40/ctl/run-c1-v2-controls.py:149-151) removes the read
+# bound and the post-check together. This file records the ONE-SITE patch, which removes only the
+# read bound and leaves `too_long = len(raw) > REPLY_CAP` enforcing the cap:
+-        raw = proc.stdout.read(REPLY_CAP + 1)
++        raw = proc.stdout.read()
+         too_long = len(raw) > REPLY_CAP
+# Scored with the frozen round-40 v2 counter (read-only, sandboxed, own nonce):
+#   python3 -I quality/counters/c1-r40-live-v2.py --repo . --rev 91f0a2b \
+#     --tool <patched copy> --nonce 41a1b2c3d4e5f607
+# Output: PRED-C1-r40-v2: fixtures=19/19 tool=present verdict=TARGET_MET rev=91f0a2b8b3d396b23376700ecbad6e8b07f062ee nonce=41a1b2c3d4e5f607
+# exit=0   -> the mutant survives: the redundant post-check still enforces the property.

@@ -1,0 +1,61 @@
+fuzz: ref=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-41/w1/ExecDiffFuzz/variants/str-max.py sha256=52230d1af9dda2c31cd9451178154651490eec299d70f47cf942346e6c8ebadb
+fuzz: counter=/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r41-globals.py model_out/model_sessions/gen_fixture imported via importlib (main not executed)
+fuzz: seeds=committed:19130B,allnames:9590B,gen0:2662B,gen1:7230B,gen2:5114B,gen3:6674B,gen4:9825B,gen5:9278B,gen6:4419B,gen7:2460202B,sample1:769B,sample2:1504B,sample3:2251B
+fuzz: advert-regex-identical=True boot-regex-identical=True table-identical=True
+fuzz: adv_re_matches_contract_text=True
+fuzz: corpus=2673 (random=2171 systematic=502)
+fuzz: ran 250/2673
+fuzz: ran 500/2673
+fuzz: ran 750/2673
+fuzz: ran 1000/2673
+fuzz: ran 1250/2673
+fuzz: ran 1500/2673
+fuzz: ran 1750/2673
+fuzz: ran 2000/2673
+fuzz: ran 2250/2673
+fuzz: ran 2500/2673
+fuzz: mutants=2673 disagreements=6
+fuzz: DISAGREE class='stdout-line:MADO_GLOBAL: name=hyprland_global_shortc|MADO_GLOBAL: name=hyprland_global_shortc' n=1 minimal=276B rc want=1 got=1
+fuzz: DISAGREE class='stdout-line:MADO_GLOBAL: name=hyprland_toplevel_mapp|MADO_GLOBAL: name=hyprland_toplevel_mapp' n=1 minimal=278B rc want=1 got=1
+fuzz: DISAGREE class='stdout-line:MADO_GLOBAL: name=wl_seat ver=10 count=2|MADO_GLOBAL: name=wl_seat ver=9 count=2 ' n=2 minimal=200B rc want=1 got=1
+fuzz: DISAGREE class='stdout-line:MADO_GLOBAL: name=zz_4396_v3 ver=10 coun|MADO_GLOBAL: name=zz_4396_v3 ver=3 count' n=1 minimal=226B rc want=1 got=1
+fuzz: DISAGREE class='stdout-line:MADO_GLOBAL: name=zz_6759_v3 ver=10 coun|MADO_GLOBAL: name=zz_6759_v3 ver=4 count' n=1 minimal=226B rc want=1 got=1
+fuzz: live cases=26 disagreements=0
+fuzz: cli cases=23 contract-mismatches=0 ambiguous-mismatches=3
+fuzz: CLI-AMBIGUOUS expect dash value argv=['/tmp/c1fuzz-6vr3l20q/cli-ok.txt', '--expect', '-x'] want='MADO_GLOBALS: SETUP bad_expect\n'/2 got='MADO_GLOBALS: SETUP usage\n'/2
+fuzz: CLI-AMBIGUOUS empty path alone argv=[''] want='MADO_GLOBALS: SETUP unreadable\n'/2 got='MADO_GLOBALS: SETUP usage\n'/2
+fuzz: CLI-AMBIGUOUS empty path + live argv=['', '--live', '--journalctl', '/tmp/c1fuzz-6vr3l20q/cli-stub'] want='MADO_GLOBALS: SETUP usage\n'/2 got='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026'/0
+fuzz: fixture-census accepted_versions=[1, 2, 3, 4, 5, 6, 7, 8, 9] max_version_digits=1 accepted_pids_with_leading_zero=[] sources=17
+DISAGREEMENT stdout-line:MADO_GLOBAL: name=hyprland_global_shortc|MADO_GLOBAL: name=hyprland_global_shortc
+  minimal=b'2026-10-11T03:50:01-03:00 plazir0 xdg-desktop-portal-hyprland[9244]: [LOG]  | Got interface: hyprland_global_shortcuts_manager_v1 (ver 10)\n2026-10-14T14:02:26-03:00 plazir4 xdg-desktop-portal-hyprland[9244]: [LOG]  | Got interface: hyprland_global_shortcuts_manager_v1 (ver 2)'
+  argv=['--expect', 'zz_fa1c_v2']
+  want_rc=1 got_rc=1
+  want='MADO_GLOBALS_SESSION: n=1 boot=- pid=9244 first=2026-10-11T03:50:01-03:00 last=2026-10-14T14:02:26-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=hyprland_global_shortcuts_manager_v1 ver=10 count=2 class=input-capture\nMADO_GLOBALS: sessions=1 latest_pid=9244 interfaces=1 classes=input-capture:1 expected_missing=zz_fa1c_v2 verdict=MISSING_EXPECTED\n'
+  got='MADO_GLOBALS_SESSION: n=1 boot=- pid=9244 first=2026-10-11T03:50:01-03:00 last=2026-10-14T14:02:26-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=hyprland_global_shortcuts_manager_v1 ver=2 count=2 class=input-capture\nMADO_GLOBALS: sessions=1 latest_pid=9244 interfaces=1 classes=input-capture:1 expected_missing=zz_fa1c_v2 verdict=MISSING_EXPECTED\n'
+DISAGREEMENT stdout-line:MADO_GLOBAL: name=hyprland_toplevel_mapp|MADO_GLOBAL: name=hyprland_toplevel_mapp
+  minimal=b'2026-10-10T17:57:02-03:00 plazir7 xdg-desktop-portal-hyprland[39846]: [LOG]  | Got interface: hyprland_toplevel_mapping_manager_v1 (ver 10)\n2026-10-10T02:20:14-03:00 plazir0 xdg-desktop-portal-hyprland[39846]: [LOG]  | Got interface: hyprland_toplevel_mapping_manager_v1 (ver 2)'
+  argv=['--diff', '--expect', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+  want_rc=1 got_rc=1
+  want='MADO_GLOBALS_SESSION: n=1 boot=- pid=39846 first=2026-10-10T17:57:02-03:00 last=2026-10-10T02:20:14-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=hyprland_toplevel_mapping_manager_v1 ver=10 count=2 class=toplevel-control\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=39846 interfaces=1 classes=toplevel-control:1 expected_missing=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa verdict=MISSING_EXPECTED\n'
+  got='MADO_GLOBALS_SESSION: n=1 boot=- pid=39846 first=2026-10-10T17:57:02-03:00 last=2026-10-10T02:20:14-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=hyprland_toplevel_mapping_manager_v1 ver=2 count=2 class=toplevel-control\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=39846 interfaces=1 classes=toplevel-control:1 expected_missing=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa verdict=MISSING_EXPECTED\n'
+DISAGREEMENT stdout-line:MADO_GLOBAL: name=wl_seat ver=10 count=2|MADO_GLOBAL: name=wl_seat ver=9 count=2 
+  minimal=b'2026-10-25T13:36:24-03:00 h xdg-desktop-portal-hyprland[1]: [LOG]  | Got interface: wl_seat (ver 9)\n2026-10-25T13:36:24-03:00 h xdg-desktop-portal-hyprland[1]: [LOG]  | Got interface: wl_seat (ver 10)'
+  argv=['--diff', '--expect', 'zz_absent_a', '--expect', 'zz_absent_b', '--expect', 'zz_absent_a']
+  want_rc=1 got_rc=1
+  want='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=wl_seat ver=10 count=2 class=other\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=1 interfaces=1 classes=other:1 expected_missing=zz_absent_a,zz_absent_b verdict=MISSING_EXPECTED\n'
+  got='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=wl_seat ver=9 count=2 class=other\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=1 interfaces=1 classes=other:1 expected_missing=zz_absent_a,zz_absent_b verdict=MISSING_EXPECTED\n'
+DISAGREEMENT stdout-line:MADO_GLOBAL: name=zz_4396_v3 ver=10 coun|MADO_GLOBAL: name=zz_4396_v3 ver=3 count
+  minimal=b'2026-10-19T15:48:41-03:00 plazir0 xdg-desktop-portal-hyprland[17864]: [LOG]  | Got interface: zz_4396_v3 (ver 3)\n2026-10-20T23:41:42-03:00 plazir4 xdg-desktop-portal-hyprland[17864]: [LOG]  | Got interface: zz_4396_v3 (ver 10)'
+  argv=['--diff', '--expect', 'zz_absent_a', '--expect', 'zz_absent_b', '--expect', 'zz_absent_a']
+  want_rc=1 got_rc=1
+  want='MADO_GLOBALS_SESSION: n=1 boot=- pid=17864 first=2026-10-19T15:48:41-03:00 last=2026-10-20T23:41:42-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=zz_4396_v3 ver=10 count=2 class=other\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=17864 interfaces=1 classes=other:1 expected_missing=zz_absent_a,zz_absent_b verdict=MISSING_EXPECTED\n'
+  got='MADO_GLOBALS_SESSION: n=1 boot=- pid=17864 first=2026-10-19T15:48:41-03:00 last=2026-10-20T23:41:42-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=zz_4396_v3 ver=3 count=2 class=other\nMADO_GLOBALS_DIFF: sessions=1 none\nMADO_GLOBALS: sessions=1 latest_pid=17864 interfaces=1 classes=other:1 expected_missing=zz_absent_a,zz_absent_b verdict=MISSING_EXPECTED\n'
+DISAGREEMENT stdout-line:MADO_GLOBAL: name=zz_6759_v3 ver=10 coun|MADO_GLOBAL: name=zz_6759_v3 ver=4 count
+  minimal=b'2026-10-09T06:41:43-03:00 plazir6 xdg-desktop-portal-hyprland[12390]: [LOG]  | Got interface: zz_6759_v3 (ver 4)\n2026-10-03T05:32:48-03:00 plazir0 xdg-desktop-portal-hyprland[12390]: [LOG]  | Got interface: zz_6759_v3 (ver 10)'
+  argv=['--expect', 'zwlr_output_manager_v1', '--expect', 'zz_absent_v1']
+  want_rc=1 got_rc=1
+  want='MADO_GLOBALS_SESSION: n=1 boot=- pid=12390 first=2026-10-09T06:41:43-03:00 last=2026-10-03T05:32:48-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=zz_6759_v3 ver=10 count=2 class=other\nMADO_GLOBALS: sessions=1 latest_pid=12390 interfaces=1 classes=other:1 expected_missing=zwlr_output_manager_v1,zz_absent_v1 verdict=MISSING_EXPECTED\n'
+  got='MADO_GLOBALS_SESSION: n=1 boot=- pid=12390 first=2026-10-09T06:41:43-03:00 last=2026-10-03T05:32:48-03:00 interfaces=1 adverts=2\nMADO_GLOBAL: name=zz_6759_v3 ver=4 count=2 class=other\nMADO_GLOBALS: sessions=1 latest_pid=12390 interfaces=1 classes=other:1 expected_missing=zwlr_output_manager_v1,zz_absent_v1 verdict=MISSING_EXPECTED\n'
+CLI-MISMATCH expect dash value argv=['/tmp/c1fuzz-6vr3l20q/cli-ok.txt', '--expect', '-x'] want='MADO_GLOBALS: SETUP bad_expect\n' rc=2 got='MADO_GLOBALS: SETUP usage\n' rc=2 stderr=''
+CLI-MISMATCH empty path alone argv=[''] want='MADO_GLOBALS: SETUP unreadable\n' rc=2 got='MADO_GLOBALS: SETUP usage\n' rc=2 stderr=''
+CLI-MISMATCH empty path + live argv=['', '--live', '--journalctl', '/tmp/c1fuzz-6vr3l20q/cli-stub'] want='MADO_GLOBALS: SETUP usage\n' rc=2 got='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1\nMADO_GLOBAL: name=wl_seat ver=1 count=1 class=other\nMADO_GLOBALS: sessions=1 latest_pid=1 interfaces=1 classes=other:1 expected_missing=- verdict=OK\n' rc=0 stderr=''
