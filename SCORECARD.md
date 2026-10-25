@@ -215,7 +215,14 @@ Populated by the lane at each round start per the `AXES.md` §SCORECARD.md contr
 
 ## Retired
 
-- none retired; record with justification when an axis is retired.
+- none retired in the historical arc; record with justification when an axis is retired.
+- `sourced-art` — **retired round 36.** Published at 1.0 in round 32 as `10 × covered U-items /
+  7`, dropped from the publication in round 34 while this list still read "none" (round-35
+  spot-check routed the disagreement). Retired rather than republished: its denominator was the
+  fixed U1–U7 uncovered-ground list, five of whose items have since been closed by admitted
+  entries, so the fraction no longer measures the ground it was built for and a saturated 1.0
+  would read as coverage progress it is not. `corpus/README.md`'s per-round frontier rows
+  remain the measured record of that ground.
 
 
 ## Round 12 (kaika) — pre-registered claims, baselines and rubrics
@@ -2247,11 +2254,15 @@ planning data-walk rode the connector and scout items, since the validator rejec
 | C1 **calibration** — the two round-35 admission counters are repaired and shown to discriminate (routed defects D3, D4) | `--profile r35` (the round-35 counters as frozen): `controls=25 correct=14/25 verdict=TARGET_MISSED` exit 1 → `--profile r36`: `controls=25 correct=25/25 verdict=TARGET_MET` exit 0. The eleven wrong lines in the before run are exactly the fabrication and document-observable classes the spot-check routed: `c1-shape-only`, `c1-fabricated-payload`, `c1-no-registry-heading`, `c1-row-moved-out` and seven of the eight `c2` mutants | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-counter-discrimination.py --profile <r35\|r36> --manifest .ufo/waves/round-36/controls/manifest.json --receipts .ufo/waves/round-36/controls/receipts[-r35]` | **improved** — the counters reject what they used to accept, and still accept the live bytes and a registry-shaped copy of them; the fail-open paths the spot-check named are now controls with `TARGET_MISSED` receipts |
 | C2 **operability** — the lane's records pass an evidence-pointer durability gate (routed defects D2, D5, D8, D10) | `dangling_r35=2, dangling_r35_closed=0, inherited_dirty=10, scratch_disposition_ok=0, tip_axis_transcript=0, setup=missing-r36-sections → TARGET_MISSED` exit 1 → `dangling_r35=2, dangling_r35_closed=1, inherited_dirty=0, scratch_disposition_ok=1, tip_axis_transcript=1, setup=ok → TARGET_MET` exit 0 | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-evidence-pointers.py --rev <rev>` | **improved** — the gate is the deliverable and it is red before the repairs and green after, on the same command |
 
-Both claims are causally separable: C1 reads only the manifest, the two counters and the
-fixture generator; C2 reads only `LOG.md`, `SCORECARD.md`, `corpus/lessons/round-36.md`,
-the tree at one revision and `git status`. Neither reads the other's output, and each was
-measured with the other's artifacts absent (C1's before run predates every round-36
-counter; C2's before run predates every round-36 record section).
+The claims are separable in what they *measure*, with one named one-way dependency. C1 reads
+only the manifest, the two counters and the fixture generator; its result is unchanged with
+`LOG.md`, `SCORECARD.md` and the round-36 lesson deleted (verified in a clean clone by wave-1
+`CritLanding`). C2 reads only the lane's records, the tree at one revision and `git status`,
+and its before state was measured before any round-36 record section existed. The dependency:
+C2's *records* cite C1's artifacts, so C2's pointer set is only resolvable once C1's files are
+committed — C2 can be measured without C1's *repair being correct*, never without C1's *files
+existing*. That sentence replaces an earlier "neither reads the other's output", which the
+same seat falsified by deleting C1's files and watching C2 go red.
 
 No harm: the axis fractions below move up or stay; `tools/mado-verify.sh` is byte-identical
 to the round-35 tip (`9113c7c0…`) and its suite reads `MADO_SELFTEST: 460/460 assertions
@@ -2300,8 +2311,11 @@ plane (two counters, two gates) and says so; the domain-vs-meta ratio for the la
 commits is 3 domain / 27 meta (lesson M36-5, criterion 60). Saturation 9.0 / N=3
 unchanged; retired: `sourced-art` (above). `Assimilation: none this round`.
 
-Axis table re-derived at `a3094c99ab85bec35534de2447552c47dd2b647f` (this round's data
-commit): navigation 50/50; calibration resolved-active 48/48; operability selftest 12/12.
+Axis table re-derived at `520c631d2925807aadadb041eeda13f8b829b0c5` (this round's records
+commit — the first revision where all five new criteria, including 61, are committed and the
+publication itself is in the tree; at the data commit `a3094c9` the same publication reads
+`47/47`, which the lane's red receipt records as `STALE`): navigation 50/50; calibration
+resolved-active 48/48; operability selftest 12/12.
 
 ### Measured at (round 36, self-verdicts pending non-author closure)
 

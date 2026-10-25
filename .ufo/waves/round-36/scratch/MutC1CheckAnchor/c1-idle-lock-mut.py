@@ -190,7 +190,6 @@ def main() -> None:
                 and used_by == citing
                 and cs[7] == "mined"
                 and valid_recheck(cs[9])
-                and receipt["sha256"] in cs[5]
                 and digest == receipt["sha256"]
                 and quote is not None
                 and 1 <= len(words) <= 25

@@ -40,7 +40,7 @@ PROFILES = {
     },
     "r36": {
         "label": "round-36 repaired counters",
-        "c1": {"script": "quality/counters/c1-idle-lock.py",
+        "c1": {"script": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/scratch/MutC1CheckAnchor/c1-idle-lock-mut.py",
                "frozen": ".ufo/waves/round-36/c1/frozen.json"},
         "c2": {"script": "quality/counters/c2-ledger.py",
                "frozen": ".ufo/waves/round-36/c2/frozen.json"},
