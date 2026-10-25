@@ -1,0 +1,19 @@
+Working...
+**Verdict: PRED-C1-r35-v1 is vacuous — `TARGET_MET`, exit 0**, on a tree containing zero verified bytes:
+
+```sh
+$ python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/scratch/CritVacuous --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+```
+
+**Construction** (`.ufo/waves/round-35/scratch/CritVacuous/`, 12 files): SOURCES rows of `junk` cells carrying only `anchor:<frozen-sha>`/`mined`/`30d`/used-by; entries containing *only* `gate-quote: S### <nonsense>` lines; receipts of pure filler with the chosen quote embedded. All 8 receipt sha256s mismatch `frozen.json` — confirmed by `sha256sum`.
+
+**What the predicate fails to check:**
+
+1. **Receipt bytes are unpinned.** `count.py:166` computes `digest` and never uses it; `:189` tests `receipt["sha256"] in cs[5]` — the *recorded* digest as row-text substring, never compared to file content. Receipts may be any bytes containing the quote.
+2. **Entry content** — only `gate-quote:` lines are read. No topic/claim/anchor semantics; the quote is a free variable I chose then embedded in my own junk receipt, so `quote in blob` is trivially satisfiable.
+3. **Row cells 0–4, 6, 8** — never read; `nf_ok` counts fields only.
+4. **No provenance** — no fetch, URL resolution, or temporal ordering; `used-by == citing` merely quotes the admit list back.
+
+Report: `.ufo/waves/round-35/w1/reports/CritVacuous.md`, with three smallest repairs (`digest ==` comparison, entry content outside gate-quote lines, anchor grammar).

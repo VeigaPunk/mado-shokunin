@@ -1,0 +1,16 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/ExecMutation.md`; harness at `.ufo/waves/round-35/scratch/ExecMutation/` (committed `count.py` untouched — sha256 `78c25892` verified after the run).
+
+**Result: no mutant changes any control's verdict — under either reading of Mutant A.**
+
+| mutant | mutation | verdict delta over 11 trees |
+|---|---|---|
+| mutantA | whole component walk (73–88) removed, O_NOFOLLOW sole guard | none — `c1-entry-symlink` still 2/7/1 MISSED |
+| mutantA1 | S_ISLNK check only removed | none |
+| mutantB | O_NOFOLLOW removed | none |
+| mutantC | walk + flag both removed | none — even fully weakened, still MISSED |
+
+**Claim verdict:**
+- *"S_ISLNK walk is load-bearing"* → **not supported.** `c1-entry-symlink`, the control `clauses.json` names as its failing case, is killed independently by O_NOFOLLOW's `ELOOP` (probe: `errno=40` on the static symlink, no race) *and* by the missing `gate-quote: S205` in the symlink target — the control is overdetermined. The `S_ISLNK` line itself is static dead code: S_ISDIR/S_ISREG cover it two lines below.
+- *"O_NOFOLLOW is TOCTOU-only, no static tree can kill it"* → **refuted at mechanism level.** The committed static symlink dies on `ELOOP` whenever the walk is absent (mutantA kills via the open; mutantC follows the link and reads 2078 bytes). Its `not-load-bearing` marking holds only because the walk redundantly covers the same tree — the guards are mutually redundant, not independent.
+- Real gap found: the walk uniquely covers **symlinked intermediate components** (O_NOFOLLOW guards only the leaf) and `st_nlink != 1`; no committed control exercises either. A walk-killing fixture needs a mid-path symlink or a symlinked leaf resolving to a fully-closing entry.

@@ -1,0 +1,12 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/ScoutStaged.md`. Findings:
+
+**Sources (all 8 resolve):**
+- r12 cites S309/S310 → `lanes/mado/round12/fetch/host-{omarchy-first-run,idle-lock-never-asked}.txt`
+- r14 cites S321 → `lanes/mado/round14/fetch/host-idle-lock-chain-state.txt`
+- r15 cites S329/S330/S331 (host paths: waybar `config.jsonc`, `idle.sh`, `omarchy-menu`) + S334/S336 (`lanes/mado/round15/fetch/` sweeps)
+- `lanes/mado/…` resolves only under `/home/vgpnk/Projects/shokuknow/` — the package carries knowledge/amendments only, not the fetch payloads.
+
+**Package ids — the trap:** the entries' `source:` headers are *pre-renumber* ids. `shokuknow/lanes/mado/ID-REMAP.md` shifted all staged rows (first staged id = S203). Effective package rows: S309→S315, S310→S316, S321→S327, S329→S335, S330→S336, S331→S337, S334→S340, S336→S342. A literal id read against `SOURCES.append.md` mis-resolves all eight to different documents — worst case cited-S336 lands on package-S336 (idle.sh), a wrong-document hit inside the same topic.
+
+**S201/S202 sharing:** no entry cites ids in S201/S202's numeric range. Document-level: the same Waybar `backend.cpp`/`window.cpp` sources (same URLs, tag, sizes, sha256 prefixes) are already in the package as **S207/S208** — the lane's S201/S202 are not new documents to the merge.

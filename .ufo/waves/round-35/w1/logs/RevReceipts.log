@@ -1,0 +1,7 @@
+Working...
+All 11 controls reproduce. Report at `.ufo/waves/round-35/w1/reports/RevReceipts.md`.
+
+- **stdout**: every re-run printed the recorded `PRED-*` line byte-for-byte — golden `TARGET_MET`, nine c1 controls `TARGET_MISSED` at `2/7/1` (c1-donothing at `0/0/8`), c2-donothing `TARGET_MISSED` at `uncovered=1`.
+- **exit codes**: all agree — golden 0, all others 1. No stderr anywhere.
+- **Caveat**: `c2-donothing` is not self-contained — it reads `/fast/scratch/mado-r35/c2-donothing/{frozen.json,clauses.json}`, uncommitted bytes outside the repo. Reproduces today; scratch wipe → `error=frozen-missing` exit 2, not 1.
+- Side-verified by the re-run itself: c2's `ledger_tip_ok=1` re-resolved all seven frozen blobs at r34 tip `dff3941…` via `git rev-parse` — every blob id still matches `c2/frozen.json`.

@@ -1,0 +1,12 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/CritDeadClause.md`.
+
+**Verdict: no dead clauses in either r35 predicate; the r34 repair is complete.**
+
+Per-clause results:
+
+- **C1, nine live clauses** — all failable. Eight have committed kill controls; the word bound needed probes: `c1-quote-long` kills the >25 side (the 26-word substring exists in the 222-word receipt S203 — the repair made the quote a free variable), and my whitespace-quote probe kills the <1 side. The exactly-one extraction check fails on a duplicated line (probe `CritDeadClause/dup`).
+- **C1 residual flag:** `blob is not None` (receipt-path regularity) is a live conjunct with **no entry in clauses.json** — invisible to C2's `uncovered` audit. And the spec's "escaped pipe" wording is unimplemented dead text: `split('|')` makes `\|` never fail, despite clauses.json claiming both cases are covered by the field count.
+- **C1 summary thresholds:** `closed_entries=3` and `open_cites=0` are *logically equivalent* to `closed_rows=8` under the frozen spec (8 cites, 3 entries, all must close) — dead weight, not dead clauses.
+- **C2, four conjuncts** — all failable, each probe-verified: `uncovered` (committed donothing control), `retired` (empty-retired probe → `retired=0`), `toctou_declared` (renamed id → 0), `ledger_tip_ok` (stale-tip doc → `ledger_tip_ok=0` in isolation).
+- **r34 repair completeness:** quote unpinned in frozen.json, both bound directions failable, dead id retired and absent from live, C2 audits the retirement. Complete. Residual weakness: C2 checks *count* not *identity* of the retired clause, receipts only need to *mention* `TARGET_MISSED`, and a clause can carry both `control` and `not-load-bearing` to dodge a false control — satisfaction-shaped checks, flagged for the next round.

@@ -1,0 +1,14 @@
+Working...
+Done. Committed counter untouched; proposal + evidence live in scratch, findings in the wave report, LOG.md entry appended.
+
+**Proposal** — `.ufo/waves/round-35/scratch/SimplifyCounter/`:
+- `count-min.py`: 104 lines vs 218, same predicate string, same 0/1/2 exit contract.
+- `analysis.md`: per-clause map, drop list, safety arguments, residual divergences.
+
+**Drops**
+- *Provably dead*: `hashlib`/`digest` (computed, never read — clause is `sha256 in cs[5]`, not recomputation), `import os`, `__future__`, `rows_for`/`gate_quote`/`valid_recheck` helpers (folded), three recheck regexes → one alternation.
+- *Out-of-scope defence*: `MAX_BYTES` chunked cap, `st_nlink != 1`, explicit `S_ISLNK` branches (subsumed by `lstat` + `S_ISDIR`/`S_ISREG`), `O_NOFOLLOW` (declared non-load-bearing in `clauses.json`), root-symlink gate. Each is safe because no clause/control names it; residual divergences (symlinked root, hardlinks, >8MB files, merged drift message) are enumerated — none clause-visible.
+
+**Verification** — differential run, committed vs minimal, over `controls/golden` + all ten c1 control trees + `.txt` root-misses + `--root .`: 21/21 identical stdout and exit code. Drift: tampered frozen → exit 2, missing frozen → exit 2, usage → exit 2.
+
+**Report**: `.ufo/waves/round-35/w1/reports/SimplifyCounter.md`. Recommendation there: safest adoption is the dead-weight subset alone (zero observable change on every tree); the defence drops are legitimate but encode strictness the protocol tolerates losing.

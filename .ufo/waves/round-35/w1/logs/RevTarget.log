@@ -1,0 +1,21 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/RevTarget.md`.
+
+**Axes attacked:** entry-content scoredness, receipt-integrity binding, literal-nothing floor.
+
+**Verdict: the counter accepts the do-nothing tree — twice over.**
+
+| tree (under `scratch/RevTarget/`) | shape | result |
+|---|---|---|
+| `quote-only/` | entries = gate-quote lines only, zero prose; real receipts | `TARGET_MET` exit 0 |
+| `fake-all/` | invented quotes + **fabricated** receipts (sha256 ≠ frozen, 8/8) | `TARGET_MET` exit 0 |
+| `empty/` | zero-byte entries; real receipts | `TARGET_MISSED` exit 1 |
+| `.` live lane root | do-nothing baseline | `TARGET_MISSED` exit 1 |
+
+Findings:
+
+1. **Entry prose is unscored.** `gate_quote` (count.py:127–135) reads only `gate-quote: <sid>` lines; every other byte is ignored. 1–5 lines per entry closes `closed_entries=3`.
+2. **Dead `digest` at count.py:174** — `hashlib.sha256(blob)` is computed and never read (only occurrence in file). The sole digest check is `receipt["sha256"] in cs[5]`: the *row's text* must contain the frozen hex string; the *blob's bytes* are never bound to it. The r33 `hash-mismatch` control covered exactly this and was lost in the r34/r35 row-text pivot — `c1-digest` flips only the row's digest string, no control mutates blob bytes.
+3. **What holds:** empty files can't close (gate-quote line required), symlink/hardlink paths die in `read_regular`, and the row grammar (unique row, 11 cells, used-by exact, `mined`, recheck token) is enforced with covered controls.
+
+Suggested fix travels in the report: wire `digest == receipt["sha256"]` into `ok` and add a blob-mismatch control — boring restoration of the r33 binding. Write scope clean: `git status` on scored paths empty; only `scratch/RevTarget/` + report touched.

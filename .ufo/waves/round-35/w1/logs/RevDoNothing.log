@@ -1,0 +1,10 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/RevDoNothing.md`.
+
+**Verdict: do-nothing TARGET_MET is reachable — but not via the prompt's example.**
+
+- **V1 (passes, smallest)**: truncate `live` to only `o-nofollow-open` → `uncovered=0` vacuously, `declared` still exactly `[toctou]` → `TARGET_MET`, exit 0. One deletion, no fabrication.
+- **V2 (fails)**: declaring every clause not-load-bearing → `toctou_declared=0`, `TARGET_MISSED`. The counter requires `declared == ["o-nofollow-open"]` *exactly* — a singleton guard that also kills `live=[]`.
+- **V3 (passes)**: repoint all 8 receipts to the already-committed `c2-donothing.txt` (which contains `verdict=TARGET_MISSED`) → `TARGET_MET`. Receipt check is only `is_file()` + regex; no clause↔receipt binding, no uniqueness.
+
+What the claim means: the counter verifies the *shape* of a self-reported ledger, not coverage. `clauses.json` and receipts are read from the worktree — "committed bytes" is never enforced for them; only `ledger_tip_ok` does real git work against the r34 tip. Scratch artifacts live in `.ufo/waves/round-35/scratch/RevDoNothing/` (3 clauses + 3 frozen files).

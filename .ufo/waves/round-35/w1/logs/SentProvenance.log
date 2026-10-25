@@ -1,0 +1,12 @@
+Working...
+Provenance check complete — **all pointers PASS**. Report at `.ufo/waves/round-35/w1/reports/SentProvenance.md`.
+
+Findings:
+
+- **Frozen specs/counters/clause ledger** (5 files): all resolve, all committed at the r35 freeze `19e4ab3`, disk bytes identical to committed blobs. No self-recorded digest exists; the pin is the commit, held.
+- **Control receipts** (12): all committed, recorded verdict lines **byte-identical** to a live re-run — 11 × `TARGET_MISSED` exit 1, `golden` `TARGET_MET` exit 0. The `c2-donothing` scratch fixture at `/fast/scratch/mado-r35/` still resolves and reproduces `uncovered=1`.
+- **Fetch receipts** (8): every sha256 in `c1/frozen.json` matches a fresh hash of the bytes on disk; all committed.
+- **Blob ledger**: resolves; all 7 blob ids re-derive identically at `dff3941` via `git rev-parse`; write-once history confirmed (`9a46ccf` for r33 paths, `3420e827` for r34 paths — exactly one commit each). The stale-label claim re-verified: the r34 artifact does call `fa7ba113` the lane tip.
+- **r34 tip ancestry**: `dff3941` is an ancestor of `master` and `origin/master` (grandparent via `6d754bd`).
+
+One wording caveat, not a defect: the ledger's "`master` = `dff3941`" label has drifted by one commit since writing — `master` now sits at the r35 freeze `19e4ab3`. Also noted: the three adopted corpus entries are absent on disk (expected pre-data), and wave-runtime files under `w1/`/`dispatch*` are untracked but uncited.

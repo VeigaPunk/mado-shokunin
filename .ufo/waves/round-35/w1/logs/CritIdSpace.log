@@ -1,0 +1,14 @@
+Working...
+Report delivered to `.ufo/waves/round-35/w1/reports/CritIdSpace.md`. Findings:
+
+**Legal — but with one live defect.** Assigning lane S203–S210 satisfies the frozen contract (`CORPUS.md` §SOURCES.md): append-only (new rows only), never-reused (lane id set confirmed ending at S202; S190–S195 and S197–S200 never allocated per `git log -G`), and "next unused" under the lane's established tail convention — gaps already exist and no census check requires contiguity.
+
+**The real attack lands elsewhere:**
+
+1. **Package id drift observed mid-flight.** `SOURCES.append.md` was renumbered during this wave (mtime 2026-10-24 23:26:50): the same documents that read S197–S336 at my first read now read S203–S342. `MERGE-REPORT.md` confirms intent ("first staged id is **S203**"). The task premise "package starts at S197" was true at registration time and false now.
+
+2. **Stale provenance map.** The frozen registration records the adopted docs' package ids as {S309, S310, S321, S329, S330, S331, S334, S336}. The committed file now carries them at **{S315, S316, S327, S335, S336, S337, S340, S342}** — and S336 survived the renumbering denoting a *different* document (old: toggle-state dir; new: indicator script), so the campaign itself reused an id. If the lesson copies the frozen set verbatim it mis-cites all eight; it must re-derive the map at adoption time and record the file's sha256.
+
+3. **Same-id/different-doc ambiguity.** Lane S203–S210 (idle-lock docs) will numerically collide with package S203–S210 (IPC/Waybar docs). A verbatim append of the staged file would land duplicate ids; the lesson map is the only mitigation, hence verdict 2's fix.
+
+4. **S197–S200 may never be allocated in practice.** Contractually free (never used), but backfilling collides with the old package numbering (package S197–S200 = today's lane S186–S189) and breaks id⇄time order. Disposition: permanently skipped, like S190–S195.

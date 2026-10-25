@@ -1,0 +1,18 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/ConnIdle.md` (9,270 B). Findings:
+
+**Per `idle-lock-plane.md`** — nothing wrong; two statements are dated point samples:
+- §1/§7 "hypridle not running": true sample of 2026-10-14; **S205 measures it running** (pid 1667, journal `Started hypridle.` 2026-10-23 ×2). State moved, not a false record.
+- §8 "toggles/ contains only hypr/": `hypr/` now holds 2 files; the load-bearing negative (no idle flag) still holds.
+- §8 module anchor drifted: `config.jsonc:206-208` → block now **207-212** (new sha `a408a33d…`); content claims confirmed.
+- E2's "systemctl can't see it" confirmed a third time: `is-active=inactive` while `pgrep` shows live pid — transient scope unit, not the packaged service.
+- §8's deferred menu enumeration now filled (S208: `omarchy-menu:207`/`:212`).
+- UNK-1 narrowed but **not closed**: starts leave journal traces; stops remain file-traceless, and S204's zero `omarchy-toggle` journal count does not exclude a manual kill. UNK-2 (live transitions) still open — armed ≠ fired.
+
+**Per `idle-lock-route-r17.md`** — nothing wrong:
+- "Running state not observed" `[UNK]` **resolved for present state** (S205); the declared autostart route is now observed firing via transient scope. The 2026-10-14 absence cause stays `[UNK]`.
+- `hypridle.conf` digest pin `e7d3b8dd…` re-verified — no drift.
+
+**Sweep appends**: E3 block to the plane (running state, third unit/pgrep confirmation, UNK-1 narrowing with the S204 caveat, §8 re-anchor + menu enumeration, `toggles/hypr/` precision); a dated resolution note to route-r17's Unexercised list.
+
+**Package errors already fixed in adopted texts** (flagged for awareness): r14's "probe artefact" overreach, r15's oldest-backup date 2026-10-06 → measured 2026-10-03, r12's unscoped "never offered" → setup path only.

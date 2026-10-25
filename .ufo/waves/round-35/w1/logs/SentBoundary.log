@@ -1,0 +1,11 @@
+Working...
+Report written to `mado-shokunin/.ufo/waves/round-35/w1/reports/SentBoundary.md`.
+
+**Verdict: hold, with two in-scope deviations.**
+
+- **Fleet root outside mado**: no mado-r35 seat writes found. All observed writes (MANIFEST.json 23:05, `.ufo/reports/round-{43,60,68}`, closure prompts, watchdog log, fleet `.git`/`.jj` at 23:31) are fleet-driver or sibling-lane round activity (mori-r43, kumitate-r60, kotoba-r68, kama-r36 — corroborated by `/tmp` seat dirs). shokuknow's 2 804 writes since 23:15 are the campaign-side bulk regen (all lanes, same-second burst), not a mado seat.
+- **Sibling lanes**: untouched by mado seats — sibling writes name their own rounds; `.git` mtime burst is the driver sweep.
+- **Lane jj/git**: no file-level writes post-dispatch. Last real ops 23:24:06–07 (L1 freeze commit). `.git/index` rewrite at 23:25:56 is a stat-cache refresh — no objects/refs/reflog written. `.jj` dir-mtime bump at 23:28:43 is transient lock churn only.
+- **Lane production surface**: zero writes since 23:15 outside `.ufo/waves/round-35/`.
+- **Deviations**: six seats used `/tmp` instead of scratch (ExecRecheck, RevReceipts, RevengerRepair, RevDedup, a Scribe*, plus unattributed id files matching ScoutReg/ScoutStaged work); five `scratch/Probe*` mirror trees sit outside any `scratch/<Seat>/` dir — same nanosecond mtime as `scratch/RevValidate`, matching its five published probes.
+- **Caveats**: wave still in flight (~10 seats unreported); fleet sweep was depth-bounded after a full recursive find timed out at 300 s; nothing cleaned up.

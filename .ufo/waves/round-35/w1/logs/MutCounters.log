@@ -1,0 +1,16 @@
+Working...
+Done. Mutation matrix executed; report at `.ufo/waves/round-35/w1/reports/MutCounters.md`.
+
+**c1 suite — 3/4 mutants killed, one hole:**
+- `closed_rows+1` and `NF==12` — killed only by `golden` at verdict level; the 10 defect trees detect them only via count mismatch (e.g. `c1-digest` prints `closed_rows=8` vs receipt's 7). `nf12` is fully invisible to `c1-donothing`.
+- dropped `recheck` — killed precisely by `c1-recheck-prose` (false-accept `TARGET_MET`), its designated control.
+- `hash16` — **survives all 11 controls**: `c1-digest` poisons the anchor with `000…`, which fails even a prefix-16 comparator. Suite lacks a same-prefix/different-suffix digest control.
+- Incidental frozen-file defect (reported, not fixed): `c1/count.py:174` computes `digest` and never uses it — receipt bytes are never hashed; the clause checks anchor text only.
+
+**c2 suite — weak: 1/5 mutants killed.**
+- The only committed control (`c2-donothing`) exercises `uncovered` alone; it verdict-kills nothing, count-kills only `uncplus1`.
+- `uncplus1` dies solely on the lane-root baseline (`uncovered=1` → MISSED).
+- `toctoumemb`, `noverdict`, `hash16`, `noreason` all survive: no fixture drives `retired`, `toctou_declared`, or `ledger_tip_ok` off-target.
+- The 11 `controls/` trees have zero power over c2: every run — original included — dies `clause-ledger-missing` exit=2.
+
+The c2-donothing fixture's original `/fast/scratch` location was gone; I reconstructed it in scratch and it replays the committed receipt verbatim (`uncovered=1 … MISSED exit=1`). All frozen files untouched — `git status` clean over `c1/ c2/ controls/ ledger/ fetch/`.

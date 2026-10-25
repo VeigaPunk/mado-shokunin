@@ -1,0 +1,11 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/ScoutS203.md`; evidence at `.ufo/waves/round-35/scratch/ScoutS203/findings.txt`.
+
+Findings:
+
+- **sha256**: `20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630` — **matches** receipt line 3.
+- **Bytes**: `1089` — **matches** receipt line 4.
+- **`install/first-run/`**: 13 entries — 12 `.sh` + `install-voxtype.hook`.
+- **Scripts the body runs: 12** — `bash` calls at lines 13–22 and 26–27, gated by `FIRST_RUN_MODE` (lines 10, 28). Line 23 (`omarchy-hook-install post-update …/install-voxtype.hook`) registers the hook for later; it is not run in the body.
+- **Idle lock**: **confirmed absent** — grep for `idle|lock|hypridle|swayidle|loginctl|screensaver|blank` over all 13 files: no match, exit 1.
+- **Receipt diff**: none substantive. One precision: receipt line 35 says `12` but its own list (lines 36–48) prints 13 names including the `.hook`; the directory does contain 13 entries. The receipt's summary claim (line 51: "lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock") holds — `12` counts the `.sh` scripts, which is exactly what the body executes.

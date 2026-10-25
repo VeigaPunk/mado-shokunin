@@ -1,0 +1,22 @@
+Working...
+Done. Both artifacts written.
+
+**Deliverables**
+- Draft section: `.ufo/waves/round-35/scratch/ScribeFrontier/draft.md`
+- Seat report: `.ufo/waves/round-35/w1/reports/ScribeFrontier.md`
+
+**Re-derived numbers** (all commands run this seat, none copied):
+
+| measure | value | derivation |
+|---|---|---|
+| registry before | 192 | `git show 19e4ab31:corpus/SOURCES.md \| grep -c '^| S[0-9]'` (same at r34 tip `dff3941`) |
+| registry after | 200 | simulated land: base + 8-row append block after `corpus/SOURCES.md:204` → +8/−0, count 200 |
+| rows added | 8, all `own-work`/tier A, `mined`, 2026-10-24, contiguous S203–S210 | append block `uniq -c` |
+| id remap | S315→203, S316→204, S327→205, S335→206, S336→207, S337→208, S340→209, S342→210 | derived from adopted entries' own `source:` lines, cross-agrees with ExecAppendBlock |
+| rows touched old→new | 0 | entries cite only new rows; diff is pure insertion |
+| index rows | 47 → 50 | `git ls-tree` = 47 at base; ExecIndex independently expects `50/50` |
+| refused | 139/147 rows; 62 new-file + 4 amendment entries | 147−8; 65−3+4 |
+
+**Key correction the draft carries:** the merge package reports "rows refused: 0" — that's the *package's* count; the lane refuses 139 at admission (frozen predicate counts exactly `closed_rows=8, open_cites=0`). Both numbers are cited unmixed. The adopted bar entry re-grounds the oldest `config.jsonc` copy to 2026-10-03 (superseding the package's 2026-10-06), recorded in its §5.
+
+**Residual flagged:** `after=200` is proven on the simulated union; the draft embeds the post-land re-run commands verbatim.

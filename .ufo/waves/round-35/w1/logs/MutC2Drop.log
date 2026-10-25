@@ -1,0 +1,13 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/MutC2Drop.md`; artifacts under `.ufo/waves/round-35/scratch/MutC2Drop/` (`mutants/m01..m24.py`, `fixtures/f00..f20`, `matrix.tsv` — 525 runs, `mutant-diffs.patch`, `build.py`, `run_matrix.py`).
+
+**Outcome: 23/24 checks load-bearing, 1 dead.**
+
+- **15 mutants wrongly `TARGET_MET`** a must-miss fixture — each conjunction term (m17–m20), both receipt disjuncts (m07/m08), the bare-clause check (m06), retired-absent (m09), toctou identity (m10, m21), tip-in-ledger (m12), blob-id equality (m14), both `reason`-requirements (m15, m16), and the drift guards (m02, m03).
+- **7 mutants change the exit-class contract** — clean `die()` rc2 or clean rc1 `MISSED` becomes a traceback (m01, m04, m07, m11, m13, m22, m24).
+- **m05** wrongly `TARGET_MISSED` on golden — the `not-load-bearing`+reason exemption is what keeps the declared TOCTOU clause out of `uncovered`.
+- **m23 (`check=True`) — SURVIVED all 21 fixtures, provably redundant**: with `check=False` a failed `rev-parse` yields empty stdout, and the kept `raw != blob_id` equality sets `ok=False` on exactly the same inputs the exception did. It only matters in combination with the try/except (m13 crashes without it); alone it is unobservable to any fixture.
+
+Fixture note: empty-dict declarations (f07/f08) can't exercise the `reason` requirement — `{}` is falsy, so `if nl` and `if nl and reason` agree. Truthy reasonless declarations (f19/f20) were needed to kill m15/m16.
+
+Counter verified pristine: `git status` clean on `c2/count.py`, sha256 `4f0106c6…`, still tracked. f01 reproduces the committed `controls/c2-donothing.txt` receipt's metric line exactly.

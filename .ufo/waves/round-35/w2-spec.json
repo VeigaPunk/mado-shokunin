@@ -1,0 +1,207 @@
+{
+ "wave": "mado-r35-w2",
+ "reportDir": ".ufo/waves/round-35/w2/reports",
+ "context": "# Goal\nmado round 35, wave 2 \u2014 falsify. You are a Godspeed-enabled subagent.\n1. Name the axes.\n2. Iterate cheap, in parallel.\n3. Keep moves that improve any axis and harm none.\n4. Don't aim - let the frontier walk itself.\nIMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently. Do not serialize what can run in parallel.\n\nLane repo: /home/vgpnk/Projects/shokunin/mado-shokunin. Every path you touch is ABSOLUTE under that lane repo. Any `Report:` trailer path the renderer gives you is RELATIVE to /home/vgpnk/Projects/shokunin/mado-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.\n\nRound shape: wave 1 (64 seats, inherited from the dead attempt) already built the frozen claim artifacts. This wave attacks them. The two frozen claims are:\n- C1 (coverage): counter `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json` must print TARGET_MET with closed_entries=3 closed_rows=8 open_cites=0.\n- C2 (calibration): counter `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c2/count.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c2/frozen.json` must print TARGET_MET with uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1.\nData under attack: three entries `corpus/knowledge/idle-lock-never-asked-r12.md`, `idle-lock-chain-armed-r14.md`, `idle-lock-offered-in-the-bar-r15.md`; eight registry rows S203-S210 in `corpus/SOURCES.md`; eight receipts `.ufo/waves/round-35/fetch/S20[3-9].receipt.txt` and `S210.receipt.txt`; the lane census.\n\nRULES (all seats):\n- Read-only attacks. Write ONLY under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/<YourSeatName>/ and your own report file. Never edit lane corpus files, counters, controls, SOURCES.md, or the fleet repo, a sibling lane, the lane's jj state or Git index.\n- `/home/vgpnk/Projects/shokuknow` is READ-ONLY: read bytes, run nothing that writes there.\n- Tooling: you may install or upgrade tools that help the task, full privilege, passwordless sudo. Channel order: sudo pacman -S --needed --noconfirm <pkg> -> uv tool install -> official release binary into ~/.local/bin -> cargo/npm -g. Official sources only. PACMAN IS PAUSED host-wide: do not run any pacman transaction; use uv/npx/an official binary instead, or file nothing and work around it. Record any install (tool, version, channel, reason) in your report.\n- An unrun check has not passed. Quote the command and its exit code for every verdict. A claim you cannot verify is reported as unverified, never as passing.",
+ "items": [
+  {
+   "name": "RevC1Tip",
+   "role": "reviewer",
+   "prompt": "Re-derive claim C1 from committed-and-working bytes only. Run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json; echo rc=$?`. Paste the exact line. Attack: does `closed_entries=3 closed_rows=8 open_cites=0` hold without any seat's help? Then sha256 the counter and the frozen spec and report both. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip. Report: .ufo/waves/round-35/w2/reports/RevC1Tip.md"
+  },
+  {
+   "name": "RevC2Tip",
+   "role": "reviewer",
+   "prompt": "Re-derive claim C2. Run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json; echo rc=$?` and paste it. Attack the four observables one at a time: name for each the file bytes that produce it. Confirm `ledger_tip_ok` really re-verifies the seven blob ids at `dff3941` (run the git command yourself). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC2Tip. Report: .ufo/waves/round-35/w2/reports/RevC2Tip.md"
+  },
+  {
+   "name": "RevCensus",
+   "role": "reviewer",
+   "prompt": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado; echo rc=$?` and paste stdout. Attack: count the registry data rows with `grep -cE '^ {0,3}\\|[[:space:]]*S[0-9]{3,}' /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`; it must be 200 (192 before + 8). Confirm every warning names an OLD id (S030..S121), none S203-S210. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevCensus. Report: .ufo/waves/round-35/w2/reports/RevCensus.md"
+  },
+  {
+   "name": "RevQuoteS203",
+   "role": "reviewer",
+   "prompt": "Attack row S203. (a) Re-open the live source: sha256sum and wc -c, then grep the first-run script list. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S203.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: install/first-run/ lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S203.receipt.txt` and confirm it equals the anchor cell of row S203 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS203. Report: .ufo/waves/round-35/w2/reports/RevQuoteS203.md"
+  },
+  {
+   "name": "RevQuoteS204",
+   "role": "reviewer",
+   "prompt": "Attack row S204. (a) Re-open the live source: `journalctl --user --no-pager | grep -c omarchy-toggle` (expect 0) and `ls /home/vgpnk/.local/share/omarchy/install/first-run/ | wc -l` (expect 12). (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S204.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: journalctl --user shows 0 omarchy-toggle invocations; the installer runs 12 first-run scripts` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S204.receipt.txt` and confirm it equals the anchor cell of row S204 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS204. Report: .ufo/waves/round-35/w2/reports/RevQuoteS204.md"
+  },
+  {
+   "name": "RevQuoteS205",
+   "role": "reviewer",
+   "prompt": "Attack row S205. (a) Re-open the live source: `pgrep -x hypridle`, `systemctl --user is-active hypridle`, `sha256sum /home/vgpnk/.config/hypr/hypridle.conf`, and grep its timeout lines. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S205.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: hypridle runs as pid 1667 and started in this session; hypridle.conf sets timeout 150 and 152` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S205.receipt.txt` and confirm it equals the anchor cell of row S205 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS205. Report: .ufo/waves/round-35/w2/reports/RevQuoteS205.md"
+  },
+  {
+   "name": "RevQuoteS206",
+   "role": "reviewer",
+   "prompt": "Attack row S206. (a) Re-open the live source: sha256sum/wc -c then print lines 200-215 with numbers. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S206.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: waybar config.jsonc line 207 opens the custom/idle-indicator module; line 208 runs omarchy-toggle-idle` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S206.receipt.txt` and confirm it equals the anchor cell of row S206 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS206. Report: .ufo/waves/round-35/w2/reports/RevQuoteS206.md"
+  },
+  {
+   "name": "RevQuoteS207",
+   "role": "reviewer",
+   "prompt": "Attack row S207. (a) Re-open the live source: sha256sum/wc -c then print the whole 159-byte script. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: idle.sh pgreps hypridle and prints the tooltip Idle lock disabled when it is absent` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt` and confirm it equals the anchor cell of row S207 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS207. Report: .ufo/waves/round-35/w2/reports/RevQuoteS207.md"
+  },
+  {
+   "name": "RevQuoteS208",
+   "role": "reviewer",
+   "prompt": "Attack row S208. (a) Re-open the live source: sha256sum/wc -c then print lines 205-214 with numbers. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S208.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: omarchy-menu line 207 lists Idle Lock among the toggles; line 212 dispatches omarchy-toggle-idle` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S208.receipt.txt` and confirm it equals the anchor cell of row S208 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS208. Report: .ufo/waves/round-35/w2/reports/RevQuoteS208.md"
+  },
+  {
+   "name": "RevQuoteS209",
+   "role": "reviewer",
+   "prompt": "Attack row S209. (a) Re-open the live source: list `/home/vgpnk/.config/waybar/config.jsonc.bak*` with mtimes and count how many carry the idle handler. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S209.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: four dated copies of the bar's configuration each carry the omarchy-toggle-idle handler` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S209.receipt.txt` and confirm it equals the anchor cell of row S209 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS209. Report: .ufo/waves/round-35/w2/reports/RevQuoteS209.md"
+  },
+  {
+   "name": "RevQuoteS210",
+   "role": "reviewer",
+   "prompt": "Attack row S210. (a) Re-open the live source: list the directory and grep its files for idle. (b) Read the receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S210.receipt.txt` and confirm the gate-quote recorded in the entry \u2014 `located: the toggles/hypr directory holds 2 files and 0 of them name the idle lock` \u2014 is a contiguous substring of the receipt bytes and that the facts it states still match what you just saw on the host. (c) Recompute `sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S210.receipt.txt` and confirm it equals the anchor cell of row S210 in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Any divergence: report the exact values and STOP claiming agreement. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteS210. Report: .ufo/waves/round-35/w2/reports/RevQuoteS210.md"
+  },
+  {
+   "name": "RevEntryR12",
+   "role": "reviewer",
+   "prompt": "Attack the entry `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/idle-lock-never-asked-r12.md`. For every **OBS** sentence, name the receipt bytes that license it (S203, S204). Then attack the entry's own honesty: does it claim more than the receipts support, and is the 12-script list in the text exactly the list in the receipt? Verify the `source:` ids resolve to rows in `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md`. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevEntryR12. Report: .ufo/waves/round-35/w2/reports/RevEntryR12.md"
+  },
+  {
+   "name": "RevEntryR14",
+   "role": "reviewer",
+   "prompt": "Attack `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/idle-lock-chain-armed-r14.md`. Every **OBS** must be licensed by `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S205.receipt.txt`; every **INF** must be an inference from those OBS and marked `**INF**`; every **UNK** must be genuinely unknown. Specifically attack the claim that the unit probe is a probe artefact and that the daemon runs in a transient scope \u2014 is that inference supported by the receipt, or does the receipt only show `inactive` plus a live pid? Name the gap. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevEntryR14. Report: .ufo/waves/round-35/w2/reports/RevEntryR14.md"
+  },
+  {
+   "name": "RevEntryR15",
+   "role": "reviewer",
+   "prompt": "Attack `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` against receipts S206-S210. Check the oldest-copy date (text says 2026-10-03) against the receipt's own mtime lines, and the '2 files, 0 name the idle lock' figure. Verify the entry's `gate-quote:` lines are exactly one per cited id and each is 1-25 words (`awk`). Report any figure the receipt does not carry. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevEntryR15. Report: .ufo/waves/round-35/w2/reports/RevEntryR15.md"
+  },
+  {
+   "name": "RevRowsUsedBy",
+   "role": "reviewer",
+   "prompt": "Attack the eight rows' `used-by` column. Build, independently: for each id S203..S210, the set of admitted entries whose `source:` line names it, and the set in the row's 11th cell. Print a table with both and any difference. Then attack `status` (all `mined`), `opened` (all 2026-10-24) and `recheck` (a cadence token). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevRowsUsedBy. Report: .ufo/waves/round-35/w2/reports/RevRowsUsedBy.md"
+  },
+  {
+   "name": "RevRowsDigest",
+   "role": "reviewer",
+   "prompt": "Recompute every receipt's sha256 and compare with the digest embedded in each row's anchor cell and with `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json` `receipts[<id>].sha256`. Print a 3-column table. Attack: is any anchor cell carrying a digest of the wrong file, and does any row's anchor cite a file whose bytes changed after freeze? Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevRowsDigest. Report: .ufo/waves/round-35/w2/reports/RevRowsDigest.md"
+  },
+  {
+   "name": "RevIndex",
+   "role": "executor",
+   "prompt": "Run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-index.py --repo . --rev $(git rev-parse master)`. Paste stdout and rc. Attack: the three new notes must be indexed with no missing/dangling/duplicate rows; if the index does not read the working tree, copy the working tree to a scratch dir and run there so the three new entries are counted. Report the coverage number before (47/47) and after. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIndex. Report: .ufo/waves/round-35/w2/reports/RevIndex.md"
+  },
+  {
+   "name": "RevSelftest",
+   "role": "executor",
+   "prompt": "Attack for axis harm: run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && bash tools/mado-verify.sh --selftest; echo rc=$?` and paste the summary line. The claim is 'no axis is harmed' \u2014 operability is measured by this suite (12/12 at round-34 tip). Confirm the assertion count is unchanged or higher and no assertion now fails. If the suite needs the live session and fails for that reason, say exactly which assertion and why it is not a regression. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevSelftest. Report: .ufo/waves/round-35/w2/reports/RevSelftest.md"
+  },
+  {
+   "name": "MutC1Real",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test the C1 counter against the REAL tree, not a frozen control. Copy the lane's `corpus/`, `.ufo/waves/round-35/fetch/` and `c1/` into `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutC1Real/root/`, then for each live clause id in `c1/clauses.json` drop or weaken exactly one clause and run the counter against that copy. Build a table: clause -> mutant verdict (still TARGET_MET = clause is verdict-dead on this data / TARGET_MISSED = live). Report every verdict-dead clause as a finding for round 36. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutC1Real. Report: .ufo/waves/round-35/w2/reports/MutC1Real.md"
+  },
+  {
+   "name": "MutC2Real",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test C2 against the real repo state. Copy `/home/vgpnk/Projects/shokunin/mado-shokunin` shallowly (corpus/ + .ufo/waves/round-35/c2 + .ufo/waves/round-35/ledger + the git objects needed) into `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutC2Real/`, then break one observable at a time: (1) remove a control receipt's TARGET_MISSED text, (2) drop the not-load-bearing declaration's reason, (3) alter the blob ledger's tip label, (4) add a second not-load-bearing clause. Each must flip the verdict to TARGET_MISSED; a mutation that leaves TARGET_MET is a dead observable and must be reported. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutC2Real. Report: .ufo/waves/round-35/w2/reports/MutC2Real.md"
+  },
+  {
+   "name": "CritControls",
+   "role": "critic",
+   "prompt": "Re-run the eleven C1 control trees and compare each stdout+rc with its committed receipt `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/controls/*.txt`. Build the table control -> receipt line -> your line -> agree/disagree. Then attack the kill rule itself: name the cheapest tree that still reaches TARGET_MET and say whether the round's real data is distinguishable from it using the counter alone (quote w1 reports `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/w1/reports/CritVacuous.md` and `RevTarget.md` as prior art, but re-derive your own minimal tree). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/CritControls. Report: .ufo/waves/round-35/w2/reports/CritControls.md"
+  },
+  {
+   "name": "CritVacRecheck",
+   "role": "critic",
+   "prompt": "Attack the vacuity finding on the REAL data. Wave 1 showed a shape-only junk tree reaches TARGET_MET (`/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/w1/reports/CritVacuous.md`). Question for this wave: does the round's real tree differ from that junk tree in any way the counter can see, or only in content the counter cannot see? Answer with a differential: run the counter on the real tree and on a copy of the real tree whose entry prose is deleted and whose receipts are replaced by 8 files of the same length but different bytes; report which fields move. Then state in one sentence what admission evidence the counter does and does not supply. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/CritVacRecheck. Report: .ufo/waves/round-35/w2/reports/CritVacRecheck.md"
+  },
+  {
+   "name": "SentBoundary",
+   "role": "sentinel",
+   "prompt": "Boundary attack. Verify: (a) `git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain` against the list of files this round claims to have written \u2014 name any file that is lane-authored but was not claimed; (b) no write landed in `/home/vgpnk/Projects/shokunin` outside `.ufo/reports/round-35/`; (c) `/home/vgpnk/Projects/shokuknow` is unmodified (compare `git -C /home/vgpnk/Projects/shokuknow status --porcelain` mtimes/aggregate with `git -C /home/vgpnk/Projects/shokuknow rev-parse HEAD`); (d) no sibling lane repo changed. Report each with the command and its output. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/SentBoundary. Report: .ufo/waves/round-35/w2/reports/SentBoundary.md"
+  },
+  {
+   "name": "SentProvenance",
+   "role": "sentinel",
+   "prompt": "Provenance attack on the eight receipts. For each receipt decide: is it a real host read (its commands are runnable, its figures match the live host now) or a fabricated/synthesised document? Re-derive at least three figures per receipt independently. Rank each receipt real / partly-unverifiable / fabricated, with the command that decided it. A receipt that cannot be re-derived must be marked unverifiable, not passed. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/SentProvenance. Report: .ufo/waves/round-35/w2/reports/SentProvenance.md"
+  },
+  {
+   "name": "RevIdRemap",
+   "role": "revenger",
+   "prompt": "Attack the id remap. The registration `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/registration.md` claims the package's own ids for the same eight documents are `S309, S310, S321, S329, S330, S331, S334, S336`. Open the three staged entries under `/home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/` and read their own `source:` lines. Build the by-document map package-id -> document -> lane id (S203..S210), and state plainly whether the registration's list is right or wrong. Do not edit the registration. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevIdRemap. Report: .ufo/waves/round-35/w2/reports/RevIdRemap.md"
+  },
+  {
+   "name": "RevCollision",
+   "role": "executor",
+   "prompt": "Prove the id-collision guard once. Build the two id lists as the round item specifies, with the 0-3 leading-space parser: `grep -oE '^ {0,3}\\|[[:space:]]*S[0-9]{3,}'` over the lane registry and over `/home/vgpnk/Projects/shokuknow/merge/mado/SOURCES.append.md`, then `comm -12`. Paste both sorted lists' tails, the collision count, and also prove the guard can fail: inject an indented `  | S203 |` row into a scratch registry and show the same pipeline reports a collision. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevCollision. Report: .ufo/waves/round-35/w2/reports/RevCollision.md"
+  },
+  {
+   "name": "RevQuarantineSlice",
+   "role": "scout",
+   "prompt": "Re-derive the lane's absent-defect register slice and compare with wave 1's finding (`/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/w1/reports/ScoutQuar.md`, `CritQuar.md`). Command: `awk -F'|' -v l='mado' '$2 ~ (\"`\" l \"`\") && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4, $5}' /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md`. Count data rows, split the two tables, and confirm wave 1's 13-row figure. Report whether any slice row's id collides with the eight adopted ids S203-S210 (`comm`). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuarantineSlice. Report: .ufo/waves/round-35/w2/reports/RevQuarantineSlice.md"
+  },
+  {
+   "name": "ScoutConsiderthese",
+   "role": "scout",
+   "prompt": "Read `/home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/` (operator-authored, never edit). List every file, its date, and every proposal still unimplemented ('proposals only ... not implemented'). Pick at most ONE and check whether the round's landed work already reflects it; if not, say what ground it would need. Report the full inventory; do not implement anything. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/ScoutConsiderthese. Report: .ufo/waves/round-35/w2/reports/ScoutConsiderthese.md"
+  },
+  {
+   "name": "RevLessonGate",
+   "role": "scribe",
+   "prompt": "Attack the round lesson `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-35.md` (mado writes it this round). Check: `## Gate` records for EVERY new row S203-S210 the path, the access date 2026-10-24, and a located quote of <=25 words that is a contiguous substring of its receipt; `## Mistakes` names class, evidence pointer, captured-by and a fix that has been shown able to fail; the census before/after outputs are pasted with exit codes; >=1 admit and >=1 reject from the assimilation set with reason+flip. If the lesson is missing or any element is missing, write the exact defect list (you do not fix it). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevLessonGate. Report: .ufo/waves/round-35/w2/reports/RevLessonGate.md"
+  },
+  {
+   "name": "RevScorecard",
+   "role": "reviewer",
+   "prompt": "Attack the round-35 scorecard rows in `/home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md`. Re-derive every number in each new row from committed bytes with the row's own counting command and report agreement/divergence cell by cell. Also check: claims name distinct axes; at least one works the lowest non-retired axis; no axis is claimed harmed; the capabilities table is untouched (no row entered without a demonstration). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevScorecard. Report: .ufo/waves/round-35/w2/reports/RevScorecard.md"
+  },
+  {
+   "name": "RevLogEvidence",
+   "role": "reviewer",
+   "prompt": "Attack the round-35 `LOG.md` entries. Every evidence pointer must resolve: open each named file/line/hash and confirm it exists and says what the entry says. Report broken pointers with the exact path tried. Also confirm the LOG entry names the frozen commit `19e4ab3` and the claim rows. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevLogEvidence. Report: .ufo/waves/round-35/w2/reports/RevLogEvidence.md"
+  },
+  {
+   "name": "RevReadmeFrontier",
+   "role": "reviewer",
+   "prompt": "Attack `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/README.md`. Check the frontier list: does it still say the idle-lock offer/measurement is unknown where this round now holds measurement? Name each stale sentence with its line number and the note that supersedes it. Also check the knowledge index table: the three new notes need rows; run `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-index.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev $(git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse master)` after mirroring the working tree to scratch to see whether the working set would be 50/50. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevReadmeFrontier. Report: .ufo/waves/round-35/w2/reports/RevReadmeFrontier.md"
+  },
+  {
+   "name": "RevShonen",
+   "role": "reviewer",
+   "prompt": "Attack `/home/vgpnk/Projects/shokunin/mado-shokunin/SHONEN.md`. No box may be `[x]` without a named non-author verifier, and no box may be self-promoted by this round. Check each box against its stated evidence pointer; report each box's state and whether the round changed it. Also check `/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/QUALITY.md` for a criterion this round's findings should have added (vacuity/shape-only admission) and say whether it is there. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevShonen. Report: .ufo/waves/round-35/w2/reports/RevShonen.md"
+  },
+  {
+   "name": "CritAxisClaims",
+   "role": "critic",
+   "prompt": "Attack the claim/axis binding. Read `/home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md` published axis table at the round-34 tip and `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/registration.md`. Verify: (a) C1 is coverage and C2 is calibration \u2014 distinct axes; (b) at least one claim works the lowest-scoring non-retired axis per the published table (quote the three tied sub-axes and their scores); (c) the stagnation nudge does not apply (a capability entered the table in round 34 \u2014 check the capabilities table); (d) claims are causally separable (each counter runs without the other's data). Name any violation. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/CritAxisClaims. Report: .ufo/waves/round-35/w2/reports/CritAxisClaims.md"
+  },
+  {
+   "name": "MutCensusRow",
+   "role": "mutation-tester",
+   "prompt": "Prove the census can fail on this registry. Copy `corpus/SOURCES.md` to `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutCensusRow/corpus/SOURCES.md`, then mutate row S207 one field at a time (status -> queued; recheck -> 'after the next hypridle release'; used-by -> a stray token; delete a cell; duplicate the row). Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <copy>` for each mutant and record the E-code and rc. A mutation that exits 0 is a census gap and must be reported (wave 1's RevValidate already found the alphabetic-recheck gap \u2014 confirm or refute it on a real row). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutCensusRow. Report: .ufo/waves/round-35/w2/reports/MutCensusRow.md"
+  },
+  {
+   "name": "RevQuoteWords",
+   "role": "reviewer",
+   "prompt": "For each of the eight gate-quote lines in the three entries, compute the word count with `awk` and confirm 1<=n<=25; confirm each line appears exactly once per id per entry (`grep -c '^gate-quote: S2xx '`). Also attack the OTHER direction: is any quote merely the `located:` line copied whole (which would make the 25-word bound a formality)? Report per-id word counts and where each quote sits inside its receipt (byte offset). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevQuoteWords. Report: .ufo/waves/round-35/w2/reports/RevQuoteWords.md"
+  },
+  {
+   "name": "RevTipLedger",
+   "role": "revenger",
+   "prompt": "Attack the ledger tip chain. Run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json` (expect ledger_tip_ok=1), then independently re-verify every blob id in `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/ledger/RevFrozenBlobs-r35.md` with `git cat-file blob <id>` at `dff394109f3cc3d851309ad7c67dd3b35b46adf2`. Attack the round-34 stale label claim: confirm `fa7ba113` is NOT the round-34 tip and `dff3941` is, using `git log --oneline dff3941 -1` and `git cat-file -t fa7ba113`. Report each blob's verdict. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevTipLedger. Report: .ufo/waves/round-35/w2/reports/RevTipLedger.md"
+  },
+  {
+   "name": "SimplifyRows",
+   "role": "simplifier",
+   "prompt": "Attack the eight new rows for YAGNI. For each row: is the source a real, distinct document a reader would need, or is it a restatement of another row (e.g. S204 vs S203)? Is `tier A` justified by the lane's tier rules? Is any row's anchor cell carrying information the receipt does not support? Propose deletions only where a row is provably redundant for the admitted entries; a deletion must leave C1 at TARGET_MET in a scratch copy (prove it). Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/SimplifyRows. Report: .ufo/waves/round-35/w2/reports/SimplifyRows.md"
+  },
+  {
+   "name": "ConnOverlap",
+   "role": "connector",
+   "prompt": "Sibling-overlap scan. Check whether any other lane (souji, kake, kumitate, tsukuroi, kotoba, kama...) holds rows or notes about omarchy's idle-lock toggle, waybar idle indicator, or the `omarchy-toggle-idle` command, i.e. whether this round's S203-S210 duplicate another lane's ground. Grep their SOURCES.md files read-only under `/home/vgpnk/Projects/shokunin/*-shokunin/corpus/SOURCES.md` for `omarchy-toggle-idle`, `idle-indicator`, `hypridle`, `omarchy-first-run`. Report hits with lane and row id; state whether mado's province covers them and whether a contested-scope note is owed. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/ConnOverlap. Report: .ufo/waves/round-35/w2/reports/ConnOverlap.md"
+  },
+  {
+   "name": "RevReportShape",
+   "role": "scribe",
+   "prompt": "Attack the round report `/home/vgpnk/Projects/shokunin/mado-shokunin/../.ufo/reports/round-35/mado.md` (the fleet repo path is `/home/vgpnk/Projects/shokunin/.ufo/reports/round-35/mado.md`). Required sections in order: Work performed, Landed changes, Before -> after measurements, Sources & frontier, Trend verdicts, SHONEN, plus the canonical Stale-lane line. Check each exists and carries an evidence pointer; check the marker rule (no placeholder text, no missing required section). Report the defect list only; do not edit the report. Scratch: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevReportShape. Report: .ufo/waves/round-35/w2/reports/RevReportShape.md"
+  }
+ ]
+}

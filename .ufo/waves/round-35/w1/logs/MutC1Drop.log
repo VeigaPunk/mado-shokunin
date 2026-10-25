@@ -1,0 +1,23 @@
+Working...
+Done. Mutation battery: 15 single-clause drops on `scratch/MutC1Drop/mutants/`, each × 11 control trees; committed `count.py` untouched (sha256 `78c25892…d12abad6`). Baseline re-run reproduced all committed receipts.
+
+**Verdict-live (killed, 1:1 with ledger control):**
+
+| dropped clause | killing control |
+|---|---|
+| `row is not None` (exactly one row) | c1-row-duplicate → MET |
+| `used_by == citing` | c1-usedby-extra → MET |
+| `cs[7] == "mined"` | c1-status-queued → MET |
+| `valid_recheck(cs[9])` | c1-recheck-prose → MET |
+| `receipt["sha256"] in cs[5]` | c1-digest → MET |
+| `1 <= len(words) <= 25` | c1-quote-long → MET |
+| `quote.encode() in blob` | c1-quote-absent → MET |
+
+**Dead under the frozen spec — two are ledger-"live":**
+
+- `nf_ok` / `row-well-formed`: c1-row-extra-field's 12th cell is inserted before `mined`, so `status-mined` and `used-by-exact` kill the cite at shifted positions anyway. The named control never isolates the field-count clause.
+- `read_regular` on entry / `entry-regular`: c1-entry-symlink's leaf resolves to `idle-lock-never-asked-r12.md`, which has no `gate-quote: S205` — the cite fails on quote clauses even when followed. Control doesn't exercise regularity.
+- `O_NOFOLLOW` (declared non-load-bearing; empirically confirmed), `S_ISLNK` walk (masked by `S_ISREG`+`O_NOFOLLOW` for leaf links), `blob is not None`, `st_nlink != 1`, `entry_closed` seed.
+- `quote is not None`: verdict-dead but **counter-live** — `closed_rows=8 open_cites=0` vs 7/1 on c1-entry-symlink; verdict masked by the unreadable-entry penalty. Near-miss worth noting.
+
+Report: `.ufo/waves/round-35/w1/reports/MutC1Drop.md`; artifacts + `results.json` under `scratch/MutC1Drop/`; LOG.md appended.

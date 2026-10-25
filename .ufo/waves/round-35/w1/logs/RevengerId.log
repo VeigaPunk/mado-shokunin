@@ -1,0 +1,13 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/RevengerId.md`. Findings:
+
+**The collision is already scheduled, not constructible.** Live registry ends at S202. Frozen predicate assigns wave receipts S203–S210; the staged package (`SOURCES.append.md`, 147 rows S203–S349) independently claimed the same ids for *different* documents — both parties read "max S202" and drew the same next-free ids.
+
+- **C1 — row dup (loud at predicate, silent elsewhere):** adopt step 3 appends verbatim → two rows per id S203–S210. `count.py` needs `len(rows)==1` → `TARGET_MISSED`; census E03 fires only if the census runs — the adopt checklist never invokes it.
+- **C2 — silent land via `count.py` blind spot:** it checks only `used-by`/`status`/`recheck`/`anchor∋sha256`; `source`/`teaches` are unbound. A dedup pass keeping the staged row + pasting the receipt sha into its anchor closes the cite on the wrong document → green predicate, corrupt registry.
+- **C3 — same-name entries:** all three frozen entry paths exist only in the staged package, citing S315/S316/S327/S335-340-342 with no `gate-quote:` lines. Adopt's copy-overwrite loses one cite set whichever order runs.
+- **C4 — same document, two ids:** wave receipts re-open the exact staged S315/316/327/335/336/337/340/342 documents (sha-verified for idle.sh) → E04/S045-precedent issue even after renumbering.
+- **C5 — silent land needing no dup:** the 3 amendment payloads cite staged-meaning S203–S208 into *live* files (`ipc-contract-r25.md` etc.); post-append those `source:` lines resolve to wave rows — well-formed, existing, wrong. Untracked by any gate.
+- **C6 — package regenerated mid-wave:** append file on disk changed numbering generations (earlier read S197–S336 → now S203–S349); MERGE-REPORT's "registry holds 192, first staged S203" premise is stale at adopt time.
+
+**Recommendation:** never append while wave S203–S210 stand. Prefer renumbering the wave (S350–S357: re-freeze, rename receipts, rewrite 3 entries) — or if the wave rows are committed first, renumber the package. Fold the three same-name entries as amendments keeping both cite sets; drop/supersede the 8 same-document staged rows; add an adopt-time `comm -12` id-freeness precondition + sha-pin the package at freeze.

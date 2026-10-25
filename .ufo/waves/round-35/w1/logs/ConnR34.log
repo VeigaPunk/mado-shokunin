@@ -1,0 +1,12 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/ConnR34.md`. Verdicts:
+
+| # | Defect | Verdict |
+|---|---|---|
+| 1 | Dead word-bound clause | **Repaired** — `r34-word-bound-1-25` retired in `c1/clauses.json`; live `gate-quote-word-bound` fails on `controls/c1-quote-long.txt` (TARGET_MISSED, exit 1) |
+| 2 | TOCTOU-only `S_ISLNK`/`O_NOFOLLOW` | **Repaired** — split: walk load-bearing (`c1-entry-symlink.txt` kills it), open flag declared `not-load-bearing` + reason; justification also in `count.py:18–20,59–60`; enforced by C2's `toctou_declared` |
+| 3 | Stale tip label `fa7ba113` | **Repaired** — `ledger/RevFrozenBlobs-r35.md` re-issued at `dff3941`; r34 artifact untouched; `ledger_tip_ok` re-verifies blobs |
+| 4 | Stale merge-package id remap | **Partially** — campaign half correctly left at L0 `ae2c52b8`; lane's id-handling record points at `corpus/lessons/round-35.md`, which does not exist yet (wave in flight) |
+| 5 | Three open L0 questions | **Not repaired** — operator-owned by design; registration names only the id-remap one |
+
+Missed: no routed defect wholly ignored. One new observation: the `st_nlink` check survived (`count.py:87`) but its r34 hardlink control was dropped — `entry-regular` is covered only via the symlink control, so the hardlink sub-condition lost its failing case. Cosmetic: heading says "two routed defects," repairs three.

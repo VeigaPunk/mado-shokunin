@@ -1,0 +1,18 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/RevValidate.md`.
+
+**Contract check: PASS** — `sources-census.sh validate --file .../scratch/RevValidate/corpus/SOURCES.md` → exit 0, zero findings on S203–S210 (only the 7 pre-existing W04s that also fire on the real corpus baseline).
+
+**Mirror:** `.ufo/waves/round-35/scratch/RevValidate/` — full `corpus/` copy (E11 checks every mined row's used-by, resolved against the mirror root), 8 rows inserted inside `## Registry` at `:205–212`, 3 golden entries into `corpus/knowledge/`, plus the non-corpus used-by closure (`tools/`, `quality/check-index.py`, `SKILL.md`, `.ufo/waves/round-{29,30}/registration.md`) and the 8 round-35 fetch receipts.
+
+**Caught / not caught:**
+
+| Mutation | Verdict |
+|---|---|
+| Row with escaped pipe `\|` | **Caught** — `E01 S211 fields=12`, exit 1. `-F'\|'` honors no escape; no cell can carry a pipe at all. |
+| Prose recheck, alphabetic (`after the next hypridle release`) | **NOT caught** — `symbolic()` at `sources-census.sh:582` accepts any letter-led words as a cadence. Real gap. |
+| Prose recheck, punctuated (`~6 months (by 2027-04)`) | **Caught** — `E09`, exit 1. |
+| Free-text recheck line inside Registry | **NOT caught** — parser only reads `^ {0,3}\|` lines; silently ignored. |
+| Bonus: rows appended at EOF instead of table end | **Caught** — `E12` ×8, exit 1. |
+
+Operational note recorded: "append" must mean end-of-Registry-table (before `## Paths`, currently line 206), not EOF.

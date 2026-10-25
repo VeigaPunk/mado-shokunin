@@ -1,0 +1,7 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/RevDedup.md`. Findings:
+
+- **(a) ids:** clean. S203–S210 unique, absent from live registry (ends S202); zero E03 on merged-registry `validate`.
+- **(b) duplicate URLs/paths:** clean. All eight locators are paths (census `url_of()` → `""`, E04/W04 can't fire); direct grep of the full registry for all eight doc paths finds zero matches. Within the eight, distinct documents despite the shared idle-lock scope.
+- **(c) dangling `used-by`:** **8 E11 findings** — all eight rows cite three `corpus/knowledge/idle-lock-*` entries that don't exist in the lane yet (they're the merge package's adopted entries at `…/shokuknow/merge/mado/…`). Post-merge mirror validate: `ok`, exit 0. Ordering constraint: entries must land before/with the row append.
+- **(d) tier-C sole support:** none — all eight are tier A, all citations into the three entries are tier A.

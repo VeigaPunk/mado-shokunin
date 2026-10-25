@@ -1,0 +1,10 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/ScoutS205.md`. Findings:
+
+- **pid 1667** — `hypridle` still running, same pid as the receipt; not respawned.
+- **hyprlock** — absent (`pgrep` exit 1); screen not locked.
+- **Journal** — exactly two `Started hypridle` lines: `Oct 23 13:25:00` (systemd[1529]) and `Oct 23 22:14:11` (systemd[1493]). No start event today.
+- **Unit vs process: yes, they disagree** — process alive at pid 1667 while `systemctl --user is-active hypridle` → `inactive` (exit 3). The running process has no corresponding active unit; disagreement identical to the receipt.
+- **Timeouts** — unchanged: 150 s → screensaver, 152 s → `omarchy-system-lock`; conf sha256 `e7d3b8dd…de41` matches the receipt digest.
+
+Zero drift since the receipt; fully corroborated. Side note recorded in the report: the S207 waybar indicator probes `pgrep -x hypridle`, so the stray process keeps the "Idle lock disabled" icon hidden despite the inactive unit.

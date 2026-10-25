@@ -1,0 +1,7 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/ScoutS207.md`.
+
+Findings:
+- **sha256**: `6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750` — matches receipt line 3 exactly; file unchanged.
+- **Branch**: the `else` branch (line 6) renders `Idle lock disabled`. It runs when `pgrep -x hypridle` fails — i.e., hypridle is absent. The `then` branch (hypridle running) emits `{"text": ""}`, hiding the indicator.
+- **Drift**: none. Body, tooltip count (1), and the receipt's "absent → disabled" summary all corroborated. Script never executed.

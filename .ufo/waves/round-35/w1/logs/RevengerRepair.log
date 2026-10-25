@@ -1,0 +1,11 @@
+Working...
+Report committed at `.ufo/waves/round-35/w1/reports/RevengerRepair.md`. Both repairs survived revenge.
+
+**Defect 1 — dead word bound → DISCHARGED.** r34 deadness confirmed (`found == quote` pinned the checked value to 8w/2w frozen quotes). r35's `gate-quote-word-bound` is genuinely failable: I built two scratch trees from golden — a 0-word quote and a 31-word *contiguous* receipt substring — each produces `TARGET_MISSED` with `gate-quote-word-bound` the **sole** failing clause under conjunct attribution. Committed `c1-quote-long` re-verified (35w contiguous quote, same sole kill).
+
+**Defect 2 — TOCTOU split → DISCHARGED, one cosmetic caveat.** Mutant matrix over three trees:
+- **Walk is load-bearing** — `parent-symlink` tree (`corpus/knowledge` → `../knowledge-real`): walk-off mutant → `TARGET_MET`; flag-off mutant → `MISSED`. `O_NOFOLLOW` guards only the leaf; it cannot substitute.
+- **Flag is not statically load-bearing** — `entry-symlink-ident` (leaf link → identical bytes): MISSED under each single mutant; only *both* removed → `TARGET_MET`.
+- **Flag carries exactly the TOCTOU load** — live race: `os.lstat` patched to swap a planted symlink into the stat→open window; flagged counter MISSED (ELOOP), flagless mutant read through and MET.
+
+**Caveat (non-blocking):** the named walk-killer `c1-entry-symlink` is a *leaf* link — either half alone rejects it (verified: still MISSED under the honest nowalk mutant), so the receipt cannot isolate the walk. The claim is true; the witness is non-discriminating. A parent-component symlink would have been the honest control. Also noted: c2's `uncovered` check only regex-matches receipt text — authenticity rests on re-execution, which I performed for all 11 receipts (all reproduce verbatim).

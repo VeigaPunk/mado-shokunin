@@ -1,0 +1,17 @@
+Working...
+Done. Eight rows drafted in scratch, verified against the frozen counter.
+
+**Artifacts**
+- Draft: `.ufo/waves/round-35/scratch/ScribeRows/draft.md` (lane untouched)
+- Report: `.ufo/waves/round-35/w1/reports/ScribeRows.md`
+
+**Verification (run, not asserted)**: probe root = golden entries + committed receipts + my rows → `PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, exit 0. All eight receipt sha256s re-hashed live and match `c1/frozen.json`.
+
+**Cadence choices**
+- `on-request` — S203, S204: evidence is a one-shot measurement and a command output (`journalctl | grep -c` → 0); the honest recheck is the re-run, no calendar makes an absence fresher.
+- `90d` — S205, S210: live state (daemon pid, toggle-dir contents) drifts with no documented trigger; only a periodic sweep is honest.
+- `on-change` — S206–S209: host files and dated copies under `~/.config/waybar/` / omarchy paths; a file change is the only meaningful trigger.
+
+**Two findings worth flagging**
+- Package rows S327/S340/S342 carry `find … \| wc -l` prose inside `recheck` — 12 cells, unrescuable in a pipe-delimited schema. Cadence stem kept, prose dropped.
+- The package's same-document ids are S315, S316, S327, S335–S337, S340, S342 — the registration's guessed id set (S309, S310, S321, S329–S331, S334, S336) is wrong; only S336 coincides.

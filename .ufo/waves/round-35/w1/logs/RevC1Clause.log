@@ -1,0 +1,12 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/RevC1Clause.md`; 23 attack trees + per-run counter output receipts under `.ufo/waves/round-35/scratch/RevC1Clause/`.
+
+**Broken (4):**
+- **digest-match** — count.py:174 computes `sha256(blob)` then never compares it; `ok` binds the anchor to the *spec constant*. `break-digest-append` (one tampered byte in S203's receipt) → `TARGET_MET` while anchor sha `1b7fa87f…` ≠ file sha `c237f810…`. `break-digest-fabricate` (receipts replaced by planted text) → `TARGET_MET` with authentic bytes absent.
+- **gate-quote-substring** — only reachable jointly: with fabricated receipt bytes the quote is a substring of the file but not of the named receipt.
+- **recheck-valid** — `2026-02-30` passes `^\d{4}-\d{2}-\d{2}$` → `TARGET_MET`; census `epoch()` rejects it (`E09`), so the cell is not an ISO date.
+- **row-unique** — BOM-prefixed (`\ufeff| S203 |…`) duplicate row is invisible to `^ {0,3}\|` → `TARGET_MET` with two row-shaped carriers. Blockquote/indent variants also MET (weaker semantics).
+
+**Not broken (5):** entry-regular (symlink/dir-symlink/hardlink/fifo all MISSED), row-well-formed (literal+escaped pipes MISSED), used-by-exact (extra token MISSED; dup-token MET is compliant "token set"), status-mined (`Mined` MISSED), gate-quote-word-bound (26-word substring + empty quote MISSED).
+
+**Arguable, recorded:** `break-row-unique-section` (rows under `## Notes`, census E12 ×8) and `att-quote-shadow` (malformed second `gate-quote:` line invisible to `startswith`) — both MET, both dependent on debatable readings.

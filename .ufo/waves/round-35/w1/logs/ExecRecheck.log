@@ -1,0 +1,8 @@
+Working...
+Zero drift — all eight receipts reproduce byte-identically.
+
+**Method**: rebuilt each receipt from live host state (same probes: `sha256sum`/`wc -c`/`cat -n`/`pgrep`/`systemctl --user`/`journalctl --user`/`ls`/`stat`/`grep` counts), then `diff -u` committed-vs-fresh per receipt → 8× `(byte-identical)`. Receipts confirmed committed at `19e4ab3`; worktree bytes match. Nothing edited under `fetch/`; fresh builds in `/tmp/rr35/`.
+
+**Re-observed host values** (unchanged): hypridle pid 1667 + `is-active` → `inactive` (pre-existing probe disagreement); 0 `omarchy-toggle` journal lines; hypridle.conf `e7d3b8dd…`; waybar config `a408a33d…`; 4 dated `.bak` copies all handler=1, oldest `2026-10-03 17:44` — settles the 10-03 vs 10-06 question for 10-03; `toggles/hypr` still 2 files, 0 idle.
+
+Report: `.ufo/waves/round-35/w1/reports/ExecRecheck.md`.

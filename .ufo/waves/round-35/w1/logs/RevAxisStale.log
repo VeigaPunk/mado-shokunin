@@ -1,0 +1,12 @@
+Working...
+Report written to `.ufo/waves/round-35/w1/reports/RevAxisStale.md`. Hash verified character-exact against HEAD.
+
+**Verdict: not stale.** All three published fractions match re-derivation at HEAD `19e4ab3171c1540c40d6b12097745af98053b07d`; gate `quality/check-axis-scores.py` exits 0 with three MATCH rows.
+
+| Axis | Published (`SCORECARD.md:2110`) | Derived at HEAD |
+|---|---|---|
+| navigation | 47/47 = 1.0 | `indexed=47/47 missing=0 dangling=0 duplicates=0` |
+| calibration resolved-active | 41/41 = 1.0 | `active=41 resolved_active=41 fraction=1.0000` |
+| operability selftest | 12/12 = 1.0 | `12/12 assertions passed` |
+
+Why it carries: the round-35 freeze commit `19e4ab31` touched only `.ufo/` paths (`git show --name-only -- . ':!.ufo'` → empty) — no counter surface moved. Untracked round-35 runtime can't move commit-based instruments. Caveat recorded in the report: the publication's label says "round-34 data tree" while HEAD is the round-35 freeze — fractions current, label one round behind; any round-35 landing of a knowledge note or SCORECARD/SHONEN cite without a fresh `Axis table re-derived at` line will trip the gate red, as designed.

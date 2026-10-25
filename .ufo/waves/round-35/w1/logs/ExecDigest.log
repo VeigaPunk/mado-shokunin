@@ -1,0 +1,9 @@
+Working...
+Done — report at `.ufo/waves/round-35/w1/reports/ExecDigest.md`.
+
+Findings:
+- **8/8 receipts recompute clean**: `sha256sum` of each file at `receipts[].path` equals the frozen spec's recorded `sha256` (S203–S210).
+- **8/8 anchor cells carry the digest**: verified by splitting each row on `|` and testing the `anchor` column (header-indexed), not a loose row-substring — an initial off-by-one that probed `teaches` was caught and corrected.
+- Each anchor cell also names the same receipt path it hashes; no digest appears outside the anchor column.
+
+Out of scope per the task: used-by token sets, `status`, `recheck` cadence, pipe escaping, and gate-quote checks — named as unexercised in the report.

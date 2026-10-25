@@ -1,0 +1,19 @@
+Working...
+Done. Report written to `.ufo/waves/round-35/w1/reports/RevC2Clause.md`; fixtures + builder in `.ufo/waves/round-35/scratch/RevC2Clause/` (untracked, per scratch convention).
+
+**Findings — every cheap path to TARGET_MET, all observed:**
+
+| Attack | Result |
+|---|---|
+| Handwritten `verdict=TARGET_MISSED` receipt, nonexistent control tree | `TARGET_MET` |
+| Every clause's receipt → committed `controls/c2-donothing.txt` (contains the kill string) | `TARGET_MET` |
+| `frozen_blobs: []` + `r34_tip: ""` + empty blob ledger | `TARGET_MET` (git loop vacuous) |
+| `toctou_clause` renamed to invented id in scratch spec | `TARGET_MET` (field not drift-checked) |
+| Absolute-path receipt escaping `--repo` | `TARGET_MET` |
+| Invented retired id (string, never a real clause) | `retired=1` |
+
+**Escape hatch:** yes — `o-nofollow-open` carrying both a control with a **nonexistent receipt** and `not-load-bearing.reason` is covered; the `nl` check at `count.py:83-85` runs before control resolution. Only one clause may dodge (list-equality at line 100); `{"reason": true}` also passes — truthiness, not content.
+
+**Boundary:** two hatch clauses → `toctou_declared=0`, correctly MISSED; tip string absent from ledger file → `ledger_tip_ok=0`.
+
+**Root cause:** drift guard covers only `predicate`/`target`; `uncovered` measures *receipt text*, never control execution — a receipt that records a kill is indistinguishable from the string `verdict=TARGET_MISSED`.

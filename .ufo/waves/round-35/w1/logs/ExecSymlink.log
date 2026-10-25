@@ -1,0 +1,13 @@
+Working...
+Done. Two scratch controls under `.ufo/waves/round-35/scratch/ExecSymlink/`, counter re-run live, golden sanity-confirmed.
+
+| control | mutation | counter output | verdict | exit |
+|---------|----------|----------------|---------|-----:|
+| `c1-entry-hardlink` | `idle-lock-never-asked-r12.md` nlink=2 | `closed_entries=2 closed_rows=6 open_cites=2` | TARGET_MISSED | 1 |
+| `c1-receipt-symlink` | `S203.receipt.txt` → symlink to regular sibling | `closed_entries=2 closed_rows=7 open_cites=1` | TARGET_MISSED | 1 |
+
+- Invariants proven at write time: `stat` nlink=2 on both hardlink names; `stat`/`stat -L` showed `symbolic link` → `regular file`; real receipt sha256 `1b7fa87f…dd1646` still matches `frozen.json`, so the miss is the `S_ISLNK` walk, not missing bytes.
+- Signatures differ from the committed set: hardlink drops the whole entry (2 open cites: S203+S204); receipt-symlink drops only S203 (1 open cite). Complements `c1-entry-symlink`, which covers `S_ISLNK` on the entry side only.
+- Golden re-run at write time: `TARGET_MET`, exit 0 — counter and spec stable.
+- Committed `controls/` untouched; scratch-only per directive.
+- Report: `.ufo/waves/round-35/w1/reports/ExecSymlink.md`

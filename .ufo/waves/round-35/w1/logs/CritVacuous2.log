@@ -1,0 +1,10 @@
+Working...
+Done. Report at `.ufo/waves/round-35/w1/reports/CritVacuous2.md`; attempts at `.ufo/waves/round-35/scratch/CritVacuous2/`.
+
+**Findings — PRED-C2-r35-v1 is satisfiable with zero r34 repairs:**
+
+- **Attempt A** (real repo, vacuous clause ledger, blob doc that merely names `dff3941…` + a fabricated `deadbeef` table): `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET`, exit 0.
+- **Attempt B** (declare all 10 real clauses not-load-bearing): `toctou_declared=0 verdict=TARGET_MISSED`, exit 1. The `declared == ["o-nofollow-open"]` uniqueness fence catches the blunt move — the only non-vacuous clause under a self-authored spec.
+- **Attempt C** (fully fake repo in scratch tree, `toctou_clause` doctored to a decoy id, `frozen_blobs` emptied, hand-typed forged receipt): `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET`, exit 0.
+
+**Root cause:** the drift guard checks only `predicate` and `target`; `clause_ledger`, `blob_ledger`, `toctou_clause`, `r34_tip`, `frozen_blobs` are taken from whatever `--frozen` file is passed. The blob ledger doc is substring-matched for the tip but its table is never parsed — `git rev-parse` re-verifies the *spec's* `frozen_blobs`, and an empty list vacuates the check. `uncovered`/`retired`/`toctou_declared` count authored strings (any non-empty `reason`, any absent retired id, forged `verdict=TARGET_MISSED` receipt text). The committed run prints TARGET_MET because honest artifacts were written; the counter cannot tell honesty from attempt C.
