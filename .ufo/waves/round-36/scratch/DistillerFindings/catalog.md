@@ -1,0 +1,71 @@
+# Working catalog (raw findings as read; final report derives the table)
+Format: seat | finding (normalized target) | claim | status
+- RevSelftest | gate selftest green 460/460 at freeze, bytes = r35 tip | harm-watch | refuted (no regression)
+- RevIndexGate | registration harm-watch line `--repo .` exit 2; correct form --rev HEAD/--root | harm-watch | open (stale text; needs L1)
+- RevIndexGate | check-index-rows.py rev-mode exists_glob broken under git 2.56 (`--format`+`--name-only` fatal; swallowed → warns=3 false positives) | frontier/instrument | open low
+- RevCensusNow | census exit 0, 200 rows, W04 set identical at master | harm-watch | refuted
+- RevRowsUnchanged | SOURCES.md byte-identical 7a068cb..master | harm-watch | refuted
+- RevAxisTranscriptAsk | tip_axis_transcript binds rev, not instrument; hand-authored 1-line receipt passes; substring looseness | C2 | open low
+- RevLogScaffold | heading/citation/pair form identified; setup also requires lesson+disposition+axis transcript; all `## Round 36` headings fold into one blob | C2 | refuted (guidance)
+- ScoutD7Counts | D7 upheld: report's "38 reports" never committed; 37@4f35c80/7b745a1, 40@tip; erratum owed | C2 | open
+- CritD9Boundary | refusal boundary practised only; PROVINCE.md has no stated rule; propose one sentence | frontier | needs L1
+- MutC2HardcodedTip | r36 tip rule kills 4/4 tip/blob mutants that r35 substring rule passed | C1 | refuted (attack failed)
+- ScoutD9Provenance | 21/50 notes lack provenance trio in head-15; append-only trailer policy proposed | C2 | needs L1
+- ScoutD9Provenance | prompt cites non-existent CORPUS.md | frontier | open low
+- MutC1RejectAll | always-reject killed 23/25; accept controls kill; pair disjoint | C1 | refuted
+- MutC1AcceptAll | always-accept killed 11/25; all 14 rejects kill | C1 | refuted
+- MutC1CheckAnchor | anchor-cell digest test removal survives 25/25 (manifest gap: digest controls never reach digest clauses; fence dominates; r35 cribs lack ## Registry) | C1 | open
+- MutC2NoClausePin | pin removal reproduces D4 fail-open; duplicate-id blind spot in pin (set arithmetic) uncovered by manifest | C2 | open low
+- MutC2NoReceiptBind | token-grep regression caught by token/unbound controls; binding load-bearing | C2 | refuted
+- MutC2NoTable | table-parse removal survives blob-corrupt/row-deleted; parse is the only observable killing them | C2 | refuted
+- MutPtrDisposition | tracked paths=N equality load-bearing; drop → wrong/no count accepted | C2 | refuted
+- MutPtrExistingOnly | dangling-count-only-existing is vacuous; other observables can't catch it | C2 | refuted (hardening note)
+- MutPtrNoSetup | setup_ok conjunct load-bearing; absence-is-a-pass prevented | C2 | refuted
+- MutPtrTipAncestor | ancestor+rev checks load-bearing; both fabrications rejected | C2 | refuted
+- ExecPtrFixtures | 4 fixture classes discriminated; F1: MADO_AXIS line schema not enforced (substring) | C2 | open low
+- MutPublication | axis publication checked by value equality; F-1 anchor commit unverified (green w/ nonexistent sha); F-2 dirty worktree invisible | C2 | open low
+- RevAfterC2 | F1 HIGH: SCORECARD C2 after-pin cites cf175c7; receipt re-pinned to a5f76c9; claim false at cf175c7 | C2 | open
+- RevAfterC2 | F2 HIGH: supersede exemption global string set, unconstrained target → any dangling pointer laundered | C2 | open
+- RevAfterC2 | F3 HIGH: dangling_r35_closed=1 satisfiable by zero dangling + 0-byte placeholders (existence-only resolves) | C2 | open
+- RevAfterC2 | F4 HIGH: D5 pair targets unconstrained (`new` can be any tracked file) | C2 | open
+- RevAfterC2 | F5 MED: scratch_disposition_ok substring match (negated sentence passes) | C2 | open
+- RevAfterC2 | F6 MED: inherited_dirty reads live worktree, --rev-independent; docs claim committed bytes | C2 | open
+- RevAfterC2 | F7 MED: pointer class shape test; over-count 3 (old sides) / under-count 8 (PATHY prefix allowlist; lesson token dropped) | C2 | open
+- RevAfterC2 | recommendation: verdict line should print instrument identity; receipt header should require it | C2 | open
+- RevFleetMisroot | zero strays; fleet-side no round-36 | harm-watch | refuted
+- RevRecordIntact | record_intact is operative anti-rewrite guard; verified | C2 | refuted
+- RevSourceS211 | lesson round-36.md:74 still says Introduction; §S2/P15; self-contradiction; no instrument consumes anchor | C2 | open med
+- RevSourceS211 | S211 receipt raw-HTML sha unreproducible (rotating phid/csrf) | C2 | open low
+- RevSourceS211 | lesson receipt size 1033 vs actual 1037 | C2 | open low
+- ScoutRound35Defects | D9 unresolved: no gate observable, no owner → L1 decision | C2 | needs L1
+- SentBoundary | PROVINCE.md modified post-freeze; attributed to L1 (confirm-authorship flag) | harm-watch | needs L1 (confirm)
+- SentGateExec | GIT_DIR env injection (ambient GIT_* unscrubbed) → spoofable verdicts | C1/C2 | open HIGH
+- SentGateExec | receipt filename traversal via control["id"] (no validation→ escape write; can forge axis receipts | C1/C2 | open HIGH
+- SentGateExec | gen-mutants receipt path traversal read/write outside dest/repo | C2 | open med-high
+- SentGateExec | fixed /tmp fixture path + unguarded rmtree (DoS/race) | C1/C2 | open med
+- SentGateExec | secret-shaped output captured into committed receipts | C1/C2 | open low-med
+- SentGateExec | git() fail-open (broken git → inherited_dirty=0); unvalidated --rev/--branch | C2 | open low
+- SentGateExec | manifest/receipts/control root traversal out of --repo | C1 | open low-med
+- SentGateExec | generator output parsing fragile (dir with spaces) | C1 | open low
+- SentGateExec | symlink following in writes | C1/C2 | open low
+- RevAfterC1 | F1 MED: 13/14 c1 rejects return identical 0/0/8; 10/11 c1 clauses unexercised; D3 digest repair not falsified by landed controls | C1 | open
+- RevAfterC1 | F2 MED: "one input differ" false for 9 c1 rejects (heading+cell) | C1 | open
+- RevAfterC1 | F3 LOW: `## Registry` prefix match (`## Registry archive` passes) | C1 | open low
+- RevAfterC1 | F4 LOW: manifest bytes not bound in receipts (digest absent) | C1 | open low
+- RevAfterC1 | F5 LOW: gate trusts verdict token over exit code for rc∈{0,1} (lie-positive) | C1 | open low
+- RevAfterC1 | F6 LOW: every c2 fixture +1 byte (trailing newline) vs live | C1 | open low
+- MutC1NoDigest | digest-bytes conjunct dead wrt manifest; removal survives 25/25 | C1 | open
+- MutC1NoFence | fence removal killed 23/25 by the two fence controls | C1 | refuted
+- RevDiscrimBefore | before 14/25 reproduces byte-identical; 11/11 ok=0 attributed | C1 | refuted
+- RevPtrExtract | all 4 plants caught; F1: pair-closure unreachable in older gate (old sides become dangling_r36); F2: actual pass = commit real evidence; F3: pair validator OK when it runs | C2 | open (design; superseded by exemption — merge w/ RevAfterC2 F2)
+- RevSourceQuotes | ScoutPriorArt/2 absent at run time; quotes self-verified | frontier | refuted (info)
+- ScoutE12Source | E12 rules recorded; census stricter (tab/4-space/exact Registry) | C1 | refuted (info)
+- ScoutHostProbe | config planes all match; walker 2.17.2 ledgered; gkeep.conf sha pin absent by design | harm-watch | refuted
+- ScoutPriorArt | S211 already cites same paper w/ loose anchor; tighten anchor in place | frontier | open low (info)
+- ConnGateReuse | ordering hazard (manifest order load-bearing); manifest["id"] unchecked (KeyError mid-loop); regex first-match brittle; stdout+stderr merge lie-positive; labels | C1 | open low
+- ConnOverlap | tameshi owns mutation method; pointer-audit class held by siblings; keep scope | frontier | needs L1 (phrasing watch)
+- RevShonen | F1: LOG.md:417 stale "4/4 [x]" | C2 | open low
+- RevShonen | F2: box 2 cites round-3 VER-M3; actually round-4 | C2 | open low
+- RevShonen | F3: box 4 cites VER-M4B absent from receipt | C2 | open low
+- RevAxisNow | all 3 fractions MATCH at master; derivation commit in prose informational only | harm-watch | refuted (+ open low w/ MutPublication F-1)
+- LabratGateOracle | FALSIFIED: exit 0 reachable without repairs — (a) trimmed manifest w/ r35 counters 14/14; (b) echo-stub full manifest 25/25; no manifest id/N binding; receipts path unvalidated (auto-create; existing-file crash) | C1 | open HIGH
