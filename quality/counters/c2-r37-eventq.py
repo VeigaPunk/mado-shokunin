@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PRED-C2-r37-v1 — the event-socket subscriber census runs and discriminates.
+"""PRED-C2-r37-v2 — the event-socket subscriber census runs and discriminates.
 
 Exports tools/mado-eventq.py from one committed revision into a private
 scratch directory and scores it on the ten frozen fixture cases below (inputs
@@ -13,7 +13,12 @@ Clauses:
   live      .ufo/waves/round-37/receipts/eventq-live.txt is committed at REV,
             carries `tool_sha256=<sha256 of the tool blob at REV>`, one
             `MADO_EVENTQ:` summary line whose `subscribers=N` (N >= 1) equals
-            its count of `MADO_EVENTQ_CLIENT:` lines, and a `comm=waybar` client
+            its count of `MADO_EVENTQ_CLIENT:` lines, and a `comm=waybar` client;
+            and the committed raw snapshot .ufo/waves/round-37/receipts/eventq-live-ss.txt
+            replayed through the tool (`--ss-file` on it, empty log and journal,
+            `--disable-logs 1`) yields the same multiset of (comm, pid, fd) client
+            triples as the receipt (v1 lacked the replay: a hand-written receipt
+            carrying the right digest passed)
 
 Target: all three -> TARGET_MET, exit 0; otherwise TARGET_MISSED, exit 1.
 Setup or usage errors exit 2. Git runs with every ambient GIT_* variable
@@ -28,9 +33,11 @@ import subprocess
 import sys
 import tempfile
 
-PRED = "PRED-C2-r37-v1"
+PRED = "PRED-C2-r37-v2"
 TOOL = "tools/mado-eventq.py"
 LIVE = ".ufo/waves/round-37/receipts/eventq-live.txt"
+LIVE_SS = ".ufo/waves/round-37/receipts/eventq-live-ss.txt"
+TRIPLE = re.compile(r"^MADO_EVENTQ_CLIENT: comm=(\S+) pid=(\S+) fd=(\S+)")
 ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 SOCK = "/run/user/1000/hypr/HIS/.socket2.sock"
 REQ = "/run/user/1000/hypr/HIS/.socket.sock"
@@ -132,6 +139,7 @@ def main():
     blob = git(repo, "show", f"{rev}:{TOOL}")
     root = "/dev/shm" if os.path.isdir("/dev/shm") else None
     work = tempfile.mkdtemp(prefix="mado-c2-r37-", dir=root)
+    live = 0
     try:
         passed = 0
         if blob is not None:
@@ -142,22 +150,37 @@ def main():
             ok, rc = run_case(tool, work, case) if blob is not None else (False, None)
             passed += ok
             print(f"{PRED} case={case[0]} want_rc={case[3]} rc={rc} ok={int(ok)}")
+        receipt = git(repo, "show", f"{rev}:{LIVE}")
+        snap = git(repo, "show", f"{rev}:{LIVE_SS}")
+        if blob is not None and receipt is not None and snap is not None:
+            text = receipt.decode("utf-8", "replace").splitlines()
+            sums = [l for l in text if l.startswith("MADO_EVENTQ: ")]
+            clients = [l for l in text if l.startswith("MADO_EVENTQ_CLIENT: ")]
+            m = re.search(r"\bsubscribers=(\d+)\b", sums[0]) if len(sums) == 1 else None
+            d = os.path.join(work, "live-replay")
+            os.makedirs(d)
+            for fname, data in (("ss.txt", snap), ("hyprland.log", b""), ("journal.txt", b"")):
+                with open(os.path.join(d, fname), "wb") as f:
+                    f.write(data)
+            try:
+                p = subprocess.run([sys.executable, "-I", tool, "--ss-file", os.path.join(d, "ss.txt"),
+                                    "--log", os.path.join(d, "hyprland.log"), "--journal-file",
+                                    os.path.join(d, "journal.txt"), "--disable-logs", "1"],
+                                   capture_output=True, text=True, timeout=20, cwd=d)
+                replay = p.stdout.splitlines()
+            except (subprocess.TimeoutExpired, OSError):
+                replay = []
+            triples = lambda ls: sorted(m2.groups() for m2 in map(TRIPLE.match, ls) if m2)
+            live = int(f"tool_sha256={hashlib.sha256(blob).hexdigest()}" in text
+                       and m is not None and int(m.group(1)) >= 1 and int(m.group(1)) == len(clients)
+                       and any(" comm=waybar " in l + " " for l in clients)
+                       and triples(clients) == triples(replay) and len(triples(clients)) == len(clients))
     finally:
         shutil.rmtree(work, ignore_errors=True)
     src = (blob or b"").decode("utf-8", "replace")
     readonly = int(blob is not None
                    and not re.search(r"^\s*(import\s+socket\b|from\s+socket\s+import)", src, re.M)
                    and "connect(" not in src)
-    live = 0
-    receipt = git(repo, "show", f"{rev}:{LIVE}")
-    if blob is not None and receipt is not None:
-        text = receipt.decode("utf-8", "replace").splitlines()
-        sums = [l for l in text if l.startswith("MADO_EVENTQ: ")]
-        clients = [l for l in text if l.startswith("MADO_EVENTQ_CLIENT: ")]
-        m = re.search(r"\bsubscribers=(\d+)\b", sums[0]) if len(sums) == 1 else None
-        live = int(f"tool_sha256={hashlib.sha256(blob).hexdigest()}" in text
-                   and m is not None and int(m.group(1)) >= 1 and int(m.group(1)) == len(clients)
-                   and any(" comm=waybar " in l + " " for l in clients))
     met = passed == len(CASES) and readonly and live
     verdict = "TARGET_MET" if met else "TARGET_MISSED"
     print(f"{PRED} fixtures={passed}/{len(CASES)} readonly={readonly} live={live} "

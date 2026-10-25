@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PRED-C1-r37-v1 — event-socket delivery ground admitted into the corpus.
+"""PRED-C1-r37-v2 — event-socket delivery ground admitted into the corpus.
 
 Counts, at one committed revision, the frozen target entries that land on
 coverage ground the lane did not hold at the round base. An entry counts only
@@ -18,6 +18,10 @@ when every clause holds:
      `knowledge/<basename>` in its first cell
   f  each of the entry's frozen surface tokens occurs in the entry and in at
      least one receipt its Gate lines bind
+  g  the entry states its evidence: for every cited S-id, the body carries one
+     of that id's located Gate quotes verbatim and at least one `**OBS**` line
+     naming the id (v1 lacked g: a token-only stub wired to real receipts
+     reached the target — the v1 golden control)
 
 Precondition (exit 2 when false): no corpus/knowledge/ file at BASE contains
 any frozen surface token — the ground is unheld at the base.
@@ -33,7 +37,7 @@ import re
 import subprocess
 import sys
 
-PRED = "PRED-C1-r37-v1"
+PRED = "PRED-C1-r37-v2"
 BASE_DEFAULT = "b4e47e980bfb0cbc8a4e788f59a41db858751fd8"
 TARGETS = {
     "corpus/knowledge/event-delivery-limits-r26.md": ["MAX_QUEUED_EVENTS", "overflowed event queue"],
@@ -119,7 +123,7 @@ def main():
     admitted = 0
     for path, tokens in TARGETS.items():
         body = show(repo, rev, path)
-        c = dict.fromkeys("abcdef", 0)
+        c = dict.fromkeys("abcdefg", 0)
         c["a"] = int(body is not None and show(repo, base, path) is None)
         body = body or ""
         head = body.splitlines()[:15]
@@ -133,17 +137,21 @@ def main():
                 for r in rows.get(i, []))
             for i in ids))
         receipts = []
-        d_ok = bool(ids)
+        d_ok = g_ok = bool(ids)
+        lines = body.splitlines()
         for i in ids:
-            good = False
+            good, stated = False, False
             for rpath, digest, quote in gates.get(i, []):
                 blob = show(repo, rev, rpath, binary=True)
                 if (blob is not None and hashlib.sha256(blob).hexdigest() == digest
                         and len(quote.split()) <= 25 and quote.encode() in blob):
                     good = True
                     receipts.append(blob)
+                    stated = stated or quote in body
             d_ok = d_ok and good
+            g_ok = g_ok and stated and any("**OBS**" in l and re.search(rf"\b{i}\b", l) for l in lines)
         c["d"] = int(d_ok)
+        c["g"] = int(g_ok)
         base_name = "knowledge/" + path.rsplit("/", 1)[1]
         c["e"] = int(any(base_name in cell for cell in map_cells))
         c["f"] = int(all(t in body and any(t.encode() in b for b in receipts) for t in tokens))

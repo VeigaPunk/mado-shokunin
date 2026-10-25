@@ -99,3 +99,22 @@ source (instance `_1792772698_564628331`) no longer exists on the host. Flip: a 
 
 No score change on any axis is claimed by either counter; no transition, event or socket
 connection is made; no config, service or compositor state is touched.
+
+## Amendment 1 — re-freeze as v2, before any data (append-only)
+
+Found by the L1 applying the cheapest-control rule to its own v1 controls, before any wave seat
+was dispatched and before any entry, row or tool existed: the v1 `c1-golden` control is a
+token-only stub ("body naming MAX_QUEUED_EVENTS and …") wired to the real receipts, and it
+reached `admitted=2/2 TARGET_MET` — the junk-commit pattern of the kake r34 closure. On C2 the
+v1 `live` clause trusted a receipt a hand could write with the right digest.
+
+- `PRED-C1-r37-v2` adds clause **g**: for every cited S-id the entry body carries one of that
+  id's located Gate quotes verbatim and an `**OBS**` line naming the id. The v1 golden is kept
+  as control `c1-token-stub` (must miss); `c1-golden-v2` (minimal entries that state their
+  located quotes) must meet.
+- `PRED-C2-r37-v2` adds the replay: the committed raw `ss -xpa` snapshot
+  `receipts/eventq-live-ss.txt` re-run through the committed tool must yield the receipt's
+  (comm, pid, fd) client set.
+- Targets, kill rules, counting commands and the target entry set are unchanged; the v1
+  receipts (`receipts/controls.txt`, `before-c1.txt`, `before-c2.txt`) stay as the v1 record,
+  and the v2 receipts carry a `-v2` suffix. Nothing measured under v1 is reused.

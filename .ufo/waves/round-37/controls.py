@@ -47,9 +47,10 @@ def write(sb, rel, text, mode="w"):
         f.write(text)
 
 
-def entry(ids, tokens):
+def entry(ids, tokens, stated=False):
+    evidence = "".join(f"**OBS** {i}: `{QUOTES[i]}`\n" for i in ids) if stated else ""
     return (f"# synthetic control entry\n\nsource: {', '.join(ids)}\nverified-at: 2026-10-25\n"
-            f"recheck: 90d\n\nbody naming {' and '.join(tokens)}.\n")
+            f"recheck: 90d\n\nbody naming {' and '.join(tokens)}.\n{evidence}")
 
 
 def row(i, used_by, status="mined"):
@@ -58,12 +59,12 @@ def row(i, used_by, status="mined"):
 
 
 def wire(sb, e1_ids=("S189", "S201", "S212"), e2_ids=("S213", "S214"), quote=None,
-         digest=None, readme=True, status="mined"):
+         digest=None, readme=True, status="mined", stated=True):
     os.makedirs(os.path.join(sb, FETCH), exist_ok=True)
     for rel in RECEIPT.values():
         shutil.copy(os.path.join(LANE, FETCH, rel), os.path.join(sb, FETCH, rel))
-    write(sb, E1, entry(e1_ids, ["MAX_QUEUED_EVENTS", "overflowed event queue"]))
-    write(sb, E2, entry(e2_ids, ["debug:disable_logs", "m_logsEnabled"]))
+    write(sb, E1, entry(e1_ids, ["MAX_QUEUED_EVENTS", "overflowed event queue"], stated))
+    write(sb, E2, entry(e2_ids, ["debug:disable_logs", "m_logsEnabled"], stated))
     src = open(os.path.join(sb, "corpus/SOURCES.md")).read()
     users = {}
     for i in e1_ids:
@@ -120,7 +121,8 @@ CONTROLS = [
     ("c1-token-ungrounded", C1, lambda sb: wire(sb, e2_ids=("S213",)), "TARGET_MISSED"),
     ("c1-unindexed", C1, lambda sb: wire(sb, readme=False), "TARGET_MISSED"),
     ("c1-not-mined", C1, lambda sb: wire(sb, status="queued"), "TARGET_MISSED"),
-    ("c1-golden", C1, wire, "TARGET_MET"),
+    ("c1-token-stub", C1, lambda sb: wire(sb, stated=False), "TARGET_MISSED"),
+    ("c1-golden-v2", C1, wire, "TARGET_MET"),
     ("c2-do-nothing", C2, lambda sb: None, "TARGET_MISSED"),
     ("c2-stub-clean", C2, lambda sb: write(sb, "tools/mado-eventq.py", STUB_CLEAN), "TARGET_MISSED"),
     ("c2-stub-grep", C2, lambda sb: write(sb, "tools/mado-eventq.py", STUB_GREP), "TARGET_MISSED"),
