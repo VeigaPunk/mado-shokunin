@@ -1,235 +1,180 @@
-# RevScorecard — round-35 scorecard rows, attacked
+# RevScorecard — round-35 scorecard rows re-derived cell by cell
 
-Seat: RevScorecard (round 35, wave 2, mado). Leaf member: zero subagent dispatch.
-Wrote only under `.ufo/waves/round-35/scratch/RevScorecard/` and this report. No lane
-corpus file, counter, control, `SOURCES.md`, `SCORECARD.md`, `LOG.md`, Git index or
-sibling repo was written; `/home/vgpnk/Projects/shokuknow` was read only.
-Installs: none (python3 3.14 + git + bash sufficed).
+Seat: `L1Mado35.RevScorecard` (round 35, wave 2, mado). Leaf member: no subagent dispatch.
+Read-only against the lane: I wrote only this report and
+`.ufo/waves/round-35/scratch/RevScorecard/` (re-created after the
+`scratch/` → `scratch-evidence/` relocation; my directory holds
+`git archive` extractions at `19e4ab3`, `02088b4`, `dff3941`, nothing else).
+No corpus file, counter, control, `SOURCES.md`, `SCORECARD.md`, Git index or sibling repo was
+written. `/home/vgpnk/Projects/shokuknow` read only. Installs: none.
 
-## 0. The rows under test, and where they actually live
+Tip under test: `7b745a1d943e5db5e8b9f8a7f4bee7af65b13990` (`master`). The round-35 rows are
+`SCORECARD.md:2161-2232`.
 
-`SCORECARD.md` at the lane tip `19e4ab3171c1540c40d6b12097745af98053b07d` contains
-**no round-35 rows**:
+Reproduction recipe for any revision cited below (no clone needed):
 
-```
-$ git status --porcelain=v1 | grep SCORECARD      -> (empty)
-$ grep -n "Round 35" SCORECARD.md                 -> (empty)
-$ tail -60 SCORECARD.md | head -3                 -> "## Round 34 — …"
-```
-
-The only round-35 row text in the tree is the wave-1 draft
-`.ufo/waves/round-35/scratch/ScribeScorecard/draft.md` (lines 24-38, + axis line 29-32,
-+ harm watch). This seat therefore re-derives every number **in that draft** with the
-row's own counting command, and reports where the draft would publish an
-unmeasured value if applied as-is.
-
-Method. All committed-byte measurements were taken from `git clone --shared` copies of
-this repo under `scratch/RevScorecard/`: `clone` at `19e4ab3` (the freeze commit) and
-`clone34` at `dff3941` (the commit the row calls the r34 tip). `--shared` reads the
-lane's objects through alternates and writes nothing into the lane `.git`. Worktree
-measurements are labelled as such.
-
-## 1. Cell-by-cell — C1 row (draft line 26)
-
-```
-$ (clone@19e4ab3) python3 -I .ufo/waves/round-35/c1/count.py --root . \
-      --frozen .ufo/waves/round-35/c1/frozen.json
-PRED-C1-r35-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
-exit=1
-
-$ (lane worktree) same command
-PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
-exit=0
-
-$ (committed control tree, clone@19e4ab3)
-python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/controls/golden \
-      --frozen .ufo/waves/round-35/c1/frozen.json
-PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
-exit=0
+```sh
+git -C /home/vgpnk/Projects/shokunin/mado-shokunin archive <rev> | tar -x -C <dir>
+python3 -I <dir>/.ufo/waves/round-35/c1/count.py --root <dir> \
+        --frozen <dir>/.ufo/waves/round-35/c1/frozen.json
 ```
 
-| Cell | Published | Re-derived from committed bytes | Verdict |
+---
+
+## 1. C1 row (`coverage`) — cell by cell
+
+Command in the row, run verbatim:
+`python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json`
+
+| Cell | Published claim | Re-derived | Verdict |
 |---|---|---|---|
-| axis | `C1 coverage` | Published axis set carries `navigation` as the coverage sub-axis, at 47/47 = 1.0 (below) | AGREE (label) |
-| "three admitted entries" (`idle-lock-never-asked-r12.md`, `…chain-armed-r14.md`, `…offered-in-the-bar-r15.md`) | exist | `git status --porcelain` → all three are `??` (untracked); counter needs them to read as regular files, and does on the worktree | AGREE on worktree bytes; **not committed at any revision** |
-| "eight registry rows S203–S210" | exist, 11 cells, `mined`, used-by exact | `corpus/SOURCES.md` (worktree) `grep -cE '^\| S[0-9]'` → 200; S203–S210 each present once, 11 cells, `status=mined`, `used-by` exactly the citing entry; `git show HEAD:corpus/SOURCES.md` → 192 rows, **0** of S203–S210 | AGREE on worktree bytes; **not committed** |
-| "package ids S309/S310/S321/S329/S330/S331/S334/S336 recorded in the round lesson" | mapping | **No.** The round lesson records that this exact set is the registration's erratum: "Seven of the eight are wrong … Only S336 matches", and gives the authoritative remap `S315, S316, S327, S335, S336, S337, S340, S342` (`corpus/lessons/round-35.md:122-131,162-163`). The package originals' own `source:` lines confirm it (`/home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/idle-lock-*.md` cite S315/S316, S327, S335/S336/S337/S340/S342). The lesson itself is `??` (untracked) | **DIVERGE** — the row publishes the pre-erratum list that its own cited lesson falsifies |
-| "pre-data freeze `19e4ab3`: `closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED` exit 1" | before | exact string reproduced at `19e4ab3`; `exit=1` | AGREE |
-| "data commit ⟨fill commit hash⟩" | after commit | no such commit exists: `git rev-parse HEAD` = `19e4ab3`; `git rev-parse master` = `19e4ab3`; no commit contains the entries (`git cat-file -e HEAD:corpus/knowledge/idle-lock-never-asked-r12.md` fails) | **UNMEASURED / no referent** |
-| "`closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` exit 0" | after | TRUE only on the uncommitted worktree and on the committed `controls/golden` fixture; at HEAD the same command prints `0/0/8 TARGET_MISSED` exit 1 | **DIVERGE at every commit that exists**; agrees on uncommitted bytes |
-| "registry 192 → 200 rows" | 192 → 200 | left: `git show 6d754bd:corpus/SOURCES.md \| grep -cE '^\| S[0-9]'` → 192 and `git show HEAD:…` → 192. right: worktree `grep -cE` → 200; `git show HEAD` → 192 | left AGREE; right **worktree-only** (mixed provenance) |
-| "navigation 47/47 → ⟨50/50⟩" | 47/47 → 50/50 | `python3 -I quality/check-index.py --rev HEAD --repo .` → `indexed=47/47 … exit 0`; worktree `--root .` → `indexed=50/50 … exit 0` | left AGREE; right **worktree-only** |
-| counting command cell | `python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen …/frozen.json` | byte-equal to `registration.md` §C1 | AGREE |
-| verdict cell `⟨pending data commit — expected: target met⟩` | pending | not a measurement | **UNMEASURED** |
-| "kill rule discharged by the eleven committed pre-data receipts: every defect control `TARGET_MISSED` exit 1, `controls/golden` `3/8/0 TARGET_MET` exit 0; all eleven reproduced byte-for-byte" | 11 controls | re-ran all 11 committed trees at `19e4ab3`: 10 defect trees `TARGET_MISSED` exit 1, `golden` `3/8/0 TARGET_MET` exit 0; every receipt's `PRED-C1` line matched the re-run stdout byte-for-byte and every recorded `exit=` matched | **AGREE** |
-| "scratch additions: entry `nlink=2` → MISSED; receipt-side `S_ISLNK` → MISSED (w1 ExecSymlink)" | scratch | re-ran both scratch trees: `closed_entries=2 closed_rows=6 open_cites=2 TARGET_MISSED` exit 1 and `closed_entries=2 closed_rows=7 open_cites=1 TARGET_MISSED` exit 1; `stat -c %h` on the hardlinked entry → 2 | **AGREE** (scratch-only, as the cell says) |
+| axis | `C1 **coverage**` — idle-lock control surface | `coverage` is the `navigation` sub-axis in the lane's table; the surface is named in `PROVINCE.md:9` ("screen/idle behavior (hypridle/hyprlock where present)") | AGREE |
+| "three admitted entries + eight registry rows S203–S210, adopted from `merge/mado/` with ids re-pointed by document" | — | `git ls-tree --name-only HEAD corpus/knowledge/` carries all three `idle-lock-{never-asked-r12,chain-armed-r14,offered-in-the-bar-r15}.md`; `corpus/SOURCES.md` carries exactly one 11-cell row for each of S203–S210; the entries' `source:` lines use the lane ids, and the package originals under `shokuknow/merge/mado/knowledge/…` cite S315/S316, S327, S335/S336/S337/S340/S342 — the lesson's own remap table (`corpus/lessons/round-35.md:106-131`) | AGREE |
+| freeze `19e4ab3`: `closed_entries=0 closed_rows=0 open_cites=8 TARGET_MISSED` exit 1 | before | archive of `19e4ab3`: `PRED-C1-r35-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED`, `exit=1` | AGREE |
+| data `02088b4`: `closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET` exit 0 | after | archive of `02088b4`: `PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, `exit=0`; at `HEAD` (after all errata appends to the entries): same line, `exit=0` | AGREE |
+| "(re-run after every errata append, unchanged)" | stability | `git diff --stat 02088b4..HEAD -- .ufo/waves/round-35/fetch/` → empty, so the eight receipts never moved; the entry errata appends do change the entries, and the counter still reads 3/8/0 | AGREE |
+| "registry 192 → 200 rows" | 192 → 200 | `git show 19e4ab3:corpus/SOURCES.md \| grep -cE '^\| S[0-9]'` → **192**; `git show 02088b4:…` → **200**; `HEAD` → 200; `git diff --numstat 19e4ab3 02088b4 -- corpus/SOURCES.md` → `8 0` (additions only) | AGREE |
+| "navigation 47/47 → 50/50" | 47/47 → 50/50 | `quality/check-index.py --rev 19e4ab3` → `indexed=47/47 … exit 0`; `--rev 02088b4` → `indexed=50/50 … exit 0`; `--rev HEAD` → `indexed=50/50 … exit 0` | AGREE |
+| counting-command cell | as published | byte-equal to `registration.md` §C1 | AGREE |
+| "shape-scored (dead `digest` clause; shape-only and fabricated-payload cribs both reach `TARGET_MET`: `controls-content/`)" | — | `count.py:174` computes `digest = hashlib.sha256(blob).hexdigest()` and never reads it (the conjunct is `receipt["sha256"] in cs[5]`, the spec digest in the cell). `python3 -I …count.py --root .ufo/waves/round-35/controls-content/c1-shape-only …` → `3/8/0 TARGET_MET` `exit=0`; same for `c1-fabricated-payload` | AGREE |
+| "all eight receipts were re-opened and re-hashed 8/8" | 8/8 | `sha256sum` of `.ufo/waves/round-35/fetch/S20{3..9,10}.receipt.txt` equals the frozen digest for 8/8 (`1b7fa87f…`, `4cd5ba65…`, `f3387bfc…`, `1d30e4a9…`, `81c33e79…`, `6e72f0db…`, `a170c7a5…`, `ef282e38…`) | AGREE |
+| "a one-line digest repair keeps the real root `TARGET_MET` and kills both cribs" | — | committed patch `git show HEAD:.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py` differs from the counter by exactly `+ and digest == receipt["sha256"]` (line 193). Root: `3/8/0 TARGET_MET` `exit=0`; shape-only: `0/0/8 TARGET_MISSED` `exit=1`; fabricated-payload: `0/0/8 TARGET_MISSED` `exit=1` | AGREE (demonstrated, though labelled a round-36 claim) |
+| "wave-2 seats falsified three inferences in the admitted text (withdrawn by errata)" | 3 | see F5: the errata set is 10 bullets (r12: E1–E3; r14: E1–E2; r15: E1–E5) plus two in-section correction blocks; no plain reading yields three | **DIVERGE** |
 
-## 2. Cell-by-cell — C2 row (draft line 27)
+## 2. C2 row (`calibration`) — cell by cell
 
-```
-$ (clone@19e4ab3) python3 -I .ufo/waves/round-35/c2/count.py --repo . \
-      --frozen .ufo/waves/round-35/c2/frozen.json
-PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
-exit=0
+Command in the row, run verbatim:
+`python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json`
 
-$ (clone34@dff3941) python3 -I <clone@19e4ab3>/…/c2/count.py --repo <clone34> \
-      --frozen <clone@19e4ab3>/…/c2/frozen.json
-PRED-C2-r35-v1 error=clause-ledger-missing
-exit=2
-```
-
-| Cell | Published | Re-derived | Verdict |
+| Cell | Published claim | Re-derived | Verdict |
 |---|---|---|---|
-| axis | `calibration`, "tied for lowest; all three scored sub-axes at 1.0" | `MADO_AXIS_ROW: axis=navigation published=47/47 derived=47/47 MATCH`, `calibration 41/41 MATCH`, `operability 12/12 MATCH`; `MADO_AXIS: checked=3 mismatched=0 rev=19e4ab3` exit 0 | AGREE — all three at 1.0, so all three are jointly lowest |
-| "capability entered in round 34, so the stagnation nudge does not waive" | no waiver | `SCORECARD.md:2142` `### Capabilities (round 34)` carries the row `crib-rejecting coverage counter`, first-working round 34; declared window N=3; round 34 is one round prior | AGREE (see residual R2 on the two capability tables) |
-| before `@ dff3941`: `error=clause-ledger-missing` exit 2 — "no clause ledger, no re-issued blob ledger existed" | before | reproduced with the committed r35 counter over the `dff3941` tree; `.ufo/waves/round-35/` does not exist at `dff3941` (`ls` → No such file) | AGREE |
-| after `@ 19e4ab3`: `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET` exit 0 | after | exact string, exit 0, from the clone at `19e4ab3` | AGREE |
-| counting command cell | as given | byte-equal to `registration.md` §C2 | AGREE |
-| "do-nothing receipt (`controls/c2-donothing.txt`) prints `uncovered=1 … TARGET_MISSED` exit 1" | control | committed receipt says `uncovered=1 … verdict=TARGET_MISSED` / `exit=1`; rebuilt the defect from the committed clause ledger (drop one clause's `control`): `uncovered=1 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED` exit 1 | AGREE |
-| caveat "ledger membership is unauthenticated worktree bytes — RevDoNothing V1 (truncated live pool) and V3 (receipt aliasing) also print TARGET_MET" | caveat | w1 RevDoNothing records V1 `TARGET_MET` exit 0 and V3 `TARGET_MET` exit 0 against scratch ledgers; the counter reads `repo / spec["clause_ledger"]` with `is_file()` and only `ledger_tip_ok` touches git | AGREE |
-| "retire the r34 dead word-bound clause" | repair by retirement | r34 counter (`git show dff3941:.ufo/waves/round-34/c1/count.py`) line 152 is `found == quote`, which pins the quote, so the 1-25 word bound could not fail; r35 `frozen.json` carries no `quotes` block and `controls/c1-quote-long` kills the bound (`TARGET_MISSED` exit 1). `clauses.json.retired` = `r34-word-bound-1-25`, absent from `live` | AGREE |
-| "split S_ISLNK/O_NOFOLLOW: load-bearing vs declared-TOCTOU" | split | `clauses.json`: `o-nofollow-open` carries `not-load-bearing.reason`; `entry-regular` (S_ISLNK component walk) carries `control.receipt=c1-entry-symlink.txt`, which prints `TARGET_MISSED`; `toctou_declared=1` requires the singleton | AGREE |
-| "re-issue the frozen-blob ledger at the real r34 tip" | `dff3941` = r34 tip | **No.** `RevFrozenBlobs-r35.md:9-13` asserts "Round-34 lane tip = `master` = `dff394109…`". `git rev-parse master` = `19e4ab3`; `git rev-list --count dff3941..master` = **2** (the intervening commit `6d754bd` is itself titled "round-34 verifier spot-check"). Blob ids in the ledger are nonetheless correct at `dff3941`, `6d754bd` and `19e4ab3` for all seven paths (verified by `git rev-parse <rev>:<path>`; identical) | **DIVERGE** — the re-issue repeats the stale-label defect it was written to repair; `ledger_tip_ok=1` passes on a false premise the counter cannot see |
+| axis | `C2 **calibration**` | distinct from C1's coverage; both sit on the tied-lowest set (§4) | AGREE |
+| "r34 tip `dff3941` had no clause ledger (`error=clause-ledger-missing` exit 2)" | before | committed r35 counter with `--repo` = archive of `dff3941`: `PRED-C2-r35-v1 error=clause-ledger-missing`, `exit=2` (`.ufo/waves/round-35/` does not exist at that revision) | AGREE |
+| "`02088b4`: `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 TARGET_MET` exit 0" | after | at `HEAD`: same line, `exit=0`; `git diff --stat 02088b4 HEAD -- .ufo/waves/round-35/{c1/clauses.json,c2,ledger,controls,c1/frozen.json,c1/count.py}` → empty, so the HEAD run is the data-commit run | AGREE |
+| counting-command cell | as published | byte-equal to `registration.md` §C2 | AGREE |
+| "(a) `ledger_tip_ok` scores `TARGET_MET` on the round-34 defect itself (stale `fa7ba113` label …)" | mechanism | scratch spec pinned to `r34_tip=fa7ba113…` + a ledger doc naming it → `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET`, `exit=0`; the check is a literal substring plus `git rev-parse <tip>:<path>` blob ids (`count.py:104-131`) | AGREE |
+| "(b) `dff3941` was master for 0:17:37 and the last round-34-labelled commit is `6d754bd`; the blob ids verify identically at both" | disputed tip | `git show -s --format=%ct dff3941` = 1792892809, `6d754bd` = 1792893866 → **1057 s = 17m37s**; `6d754bd` is titled "round-34 verifier spot-check"; all seven frozen blob ids are identical at `dff3941`, `6d754bd` and `19e4ab3` | AGREE |
+| "(c) `uncovered=0` is fail-open on clause deletion with its control, and covered-receipts are token greps" | mechanism | deleting one live clause **and** its control from the ledger → `uncovered=0 … verdict=TARGET_MET`, `exit=0`; the receipt check is `is_file()` plus `re.search("verdict=TARGET_MISSED")`, with no binding to the clause | AGREE |
+| verdict "NOT ADMITTED" | author verdict | consistent with (a)–(c) as reproduced; the counter's four observables are shape checks | AGREE (as a verdict about the claim, not a re-score) |
 
-## 3. Section-level numbers (draft header, axis line, sources block, capabilities)
+## 3. Section prose — numbers and labels
 
 | Claim | Re-derived | Verdict |
 |---|---|---|
-| "frozen at `19e4ab3` — the same commit carries both frozen predicates, both counters, the clause ledger, the eleven committed control receipts and the re-issued frozen-blob ledger" | `git ls-tree HEAD` has both `count.py`, both `frozen.json`, `c1/clauses.json`, `ledger/RevFrozenBlobs-r35.md`; `.ufo/waves/round-35/controls/*.txt` = **12** (10 c1 defect + `golden.txt` + `c2-donothing.txt`) | mostly AGREE; **count is 12, not 11** |
-| "round-34 counters are NOT amended — blob ids unchanged at the r34 freeze, the r34 tip `dff3941` and this tip (`RevFrozenBlobs-r35.md` §3 re-verifies all seven at the real tip)" | blob ids identical at `dff3941`, `6d754bd`, `19e4ab3` (all seven). The blob table is §1, not §3; §3 states the no-later-write argument; no section re-verifies at `19e4ab3` (this seat did) | AGREE on substance; **§ citation mis-numbered**; "real tip" false per §2 |
-| "One wave, 64 seats (13 executor, 12 scout, 11 reviewer, 8 critic, 3 mutation-tester, 2 each simplifier/sentinel/revenger, 7 scribe, 4 connector)" | `dispatch.out`: "launching 64 seats concurrently"; 64 files in `w1/reports/`; prefix census matches the listed composition exactly (`Scout*.md` = 12, `Rev*.md` = 11, `Exec*.md` = 13, `Crit*.md` = 8, …). `w1/seat-plan.tsv` holds only **63** data rows (11 scout) | AGREE against dispatch/report evidence; the seat plan is short one scout row (adjacent evidence defect, not the row's) |
-| axis line "Axis table re-derived at ⟨data commit⟩: navigation ⟨50/50⟩ = 1.0; calibration resolved-active ⟨N/N⟩ = 1.0; operability selftest 12/12 = 1.0" | navigation 50/50 only on the worktree (`47/47` at HEAD); calibration derives **41/41** (cell unfilled); operability `12/12` reproduced | operability AGREE; navigation and calibration **uncommitted / unfilled** |
-| "Sources 192 → ⟨200⟩ rows" | 192 committed; 200 worktree | same split as the row |
-| capabilities table | `## Capabilities` still `| — none yet — |`; `SCORECARD.md` has no diff | **UNTOUCHED** (see §4) |
-
-### 3a. Harm path the draft's ⟨fill⟩ cells create (demonstrated, not argued)
-
-```
-# (i) apply the draft section verbatim at 19e4ab3 (sim commit 53f91cd)
-MADO_AXIS_ROW: axis=navigation published=47/47 derived=47/47 verdict=MATCH
-MADO_AXIS_ROW: axis=calibration published=- derived=41/41 verdict=NOT-PUBLISHED
-MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
-MADO_AXIS: checked=3 mismatched=1                                   exit=1
-
-# (ii) commit the data without the publication line (sim commit 6a45c68)
-MADO_AXIS_ROW: axis=navigation published=47/47 derived=50/50 verdict=STALE
-MADO_AXIS: checked=3 mismatched=1                                   exit=1
-
-# (iii) positive control: data + navigation 50/50 + calibration 41/41 + operability 12/12
-MADO_AXIS: checked=3 mismatched=0  (sim commit 4bc38a96)            exit=0
-```
-
-So the three ⟨fill⟩ cells are load-bearing for a green axis gate. Applied as drafted
-today, the lane's own calibration gate goes red on `calibration NOT-PUBLISHED`; and the
-data cannot land without the filled publication line without going red on navigation.
+| "two v1 waves, 64 + 40 = **104 seats** … wave 1: executor 13, scout 12, reviewer 11, critic 8, scribe 7, connector 4, mutation-tester 3, sentinel 2, revenger 2, simplifier 2" | `w1-spec.json` role census → 13/12/11/8/7/4/3/2/2/2 = **64**; `w1/reports/*.md` = 64 | AGREE (note: `w1/seat-plan.tsv` carries only 63 data rows — 11 scout — so the plan file is short one row; the row's number matches the spec and the reports, not the plan) |
+| "wave 2: reviewer 21, executor 3, mutation-tester 3, critic 3, sentinel 2, revenger 2, scout 2, scribe 2, simplifier 1, connector 1" | `w2-spec.json` role census → exactly that, total **40**; `w2/reports/*.md` = 40 | AGREE |
+| "Axis table re-derived at `02088b4` plus the round-35 errata: navigation 50/50; calibration 43/43; operability 12/12." | at `02088b4`: `MADO_AXIS_ROW: axis=navigation published=47/47 derived=50/50 verdict=STALE`, `axis=calibration published=41/41 derived=41/43 verdict=STALE`, `operability 12/12 MATCH` → `checked=3 mismatched=2` `exit=1`. The `43/43` holds only at `HEAD`/`4f35c80`, not at `02088b4` | **DIVERGE on the label** (F2) |
+| "Axis table re-derived at `4f35c80` … (round-35 wave-2 close, **the publication the gate reads**): navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12." | `quality/check-axis-scores.py --rev 4f35c80` → `axis=calibration published=- derived=43/43 verdict=NOT-PUBLISHED`, `axis=operability published=- … NOT-PUBLISHED`, `checked=3 mismatched=2` `exit=1`. The parseable line landed in `7b745a1` ("republish the axis table in the gate's own format"); at `HEAD` the gate is `checked=3 mismatched=0` `exit=0` | **DIVERGE** (F1) |
+| "No axis is claimed harmed: index gate 50/50 exit 0, axis gate re-derives all three rows to MATCH, operability `MADO_SELFTEST: 460/460 assertions passed` (byte-identical suite to the round-34 tip)" | index at `HEAD` → `indexed=50/50 … exit 0`; axis gate at `HEAD` → 3× MATCH, `mismatched=0`, `exit=0`; `bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: 460/460 assertions passed`, `exit=0`; `tools/mado-verify.sh` blob `9113c7c05e58…` identical at `dff3941` and `HEAD` | AGREE at `HEAD`; the MATCH half is false at both mid-round revisions the section cites (F1) |
+| "the axis publication was stale for ~15 minutes … (`mismatched=2`)" | `mismatched=2` at `02088b4` confirmed. Data commit 03:23:36 → errata commit 03:34:26 = 10m50s → parseable publication (03:42:29) = 18m53s | AGREE on `mismatched=2`; "~15 minutes" is an honest midpoint, not a measured figure |
+| "the pre-data `golden` control's rows differ from the shipped registry in anchor/teaches cells" | cell 6 (`teaches`) differs for all of S203–S210; cell 5 (`anchor`) differs for all; **S204 also differs in cell 4 (`scope`) and cell 9 (`recheck`)** | **DIVERGE** — incomplete (F4) |
+| "Sources 192 → 200 … no existing row's status/recheck/used-by changed; **four** new rows' `scope`/`teaches` cells were corrected in-round" | 192→200 ✓ and the append is additions-only ✓, so no existing row changed ✓. Corrected rows since the data commit: **S203** (cells 6, 9), **S204** (4, 6, 9), **S205** (6) — three rows, and the corrected cells include `recheck` (9), not only `scope`/`teaches` | **DIVERGE** (F3) |
+| "Capabilities: None entered." | `## Capabilities` still `| — none yet — |`; `### Capabilities (round 35)` holds prose only, no table row; `git diff` of `SCORECARD.md` for a capability row is absent | AGREE |
+| "Saturation 9.0 / N=3 unchanged; retired: none." | unchanged text; `## Retired` still "none retired" | AGREE |
+| "Frontier advanced: the round-35 idle-lock offer route (consumer half measured; transitions remain open)" | no frontier list exists in `PROVINCE.md` or `SCORECARD.md` to check a frontier state transition against; the C1 correction block itself says part of the route was already reviewed at `dff3941` | **UNVERIFIED as a formal state change** (label follows rounds 32/34 usage) |
 
 ## 4. The four mandated structural checks
 
-1. **Claims name distinct axes.** AGREE. C1 = coverage (idle-lock control surface, the
-   navigation sub-axis), C2 = calibration (clause ledger / blob ledger). Two claims, two
-   axes; they are also causally separable (C1 reads `corpus/`; C2 reads the predicate
-   machinery and git blobs; neither counter reads the other's artifacts).
-2. **At least one claim works the lowest non-retired axis.** AGREE. The published axis
-   table is `navigation 47/47`, `calibration resolved-active 41/41`, `operability
-   selftest 12/12` — three sub-axes tied at 1.0, re-derived by
-   `quality/check-axis-scores.py --rev 19e4ab3` (`mismatched=0`, exit 0); no other scored
-   sub-axis sits below 1.0 in the current table. Both claims sit on two of the three
-   lowest-tied axes. The stagnation nudge does not waive (capability entered in round
-   34; see residual R2).
-3. **No axis is claimed harmed.** The registration says "no axis is lowered"; the draft's
-   harm-watch cell is `⟨fill after data commit⟩` with "expected unchanged" — i.e. the
-   claim cell itself is unmeasured. Measured at the worktree (where the data lives):
-   `MADO_INDEX: root=. indexed=50/50 missing=0 dangling=0 duplicates=0` exit 0;
-   `MADO_SELFTEST: 460/460 assertions passed` exit 0;
-   `MADO_AXIS: checked=3 mismatched=0 rev=19e4ab3` exit 0;
-   `MADO_REGRESSION: PASS (case=mado-verify-hardened; … target=367ff5ec9613701a…)`
-   exit 0. So **no measured harm**, but the row publishes no harm measurement.
-4. **Capabilities table untouched.** AGREE. `git status` shows no `SCORECARD.md` change;
-   the canonical `## Capabilities` table still reads `— none yet —`; no round-35 row has
-   entered any capability table. The draft's proposed row would be *eligible* on the
-   demonstration rule — I reproduced both halves from committed bytes (`TARGET_MET`
-   exit 0 at `19e4ab3`; the do-nothing ledger `uncovered=1 … TARGET_MISSED` exit 1) — but
-   its name ("audit of an admission counter") is wider than the demonstrated thing (a
-   shape audit of whatever ledger the caller's `--frozen` points at), which the draft's
-   own caveat states. That caveat must travel with the row, not sit three lines below it.
+1. **Distinct axes.** AGREE — C1 `coverage`, C2 `calibration`; causally separable (C1 reads
+   `corpus/` + receipts; C2 reads the clause ledger, receipts and git blobs; neither counter
+   reads the other's artifacts).
+2. **At least one claim works the lowest non-retired axis.** AGREE, and more strongly than the
+   row claims. At the round-34 tip the three published sub-axes were all at 1.0
+   (`navigation 47/47`, `calibration 41/41`, `operability 12/12`), the round-34 capability row
+   exists (`SCORECARD.md:2142`), and the declared window N=3, so the AXES.md stagnation nudge
+   does not waive. At the data commit calibration derived **41/43 = 0.9535**, making it the
+   uniquely lowest scored sub-axis, with C2 sitting on it. The row's own correction records the
+   fourth cell (`sourced-art 1.0`) that the three-cell quote omits; all four are tied, so the
+   conclusion survives.
+3. **No axis claimed harmed** — claimed, and the three measurements that carry it reproduce at
+   `HEAD` (§3). The one defect is locational: the section's "axis gate re-derives all three rows
+   to MATCH" is true at `7b745a1` only, not at the two mid-round revisions it cites (F1).
+4. **Capabilities table untouched** — AGREE, and no row was entered without a demonstration:
+   the round-35 section explicitly enters none, and the canonical table still reads
+   `— none yet —`. (The round-34 row lives in its own per-round subsection; that split predates
+   this round.)
 
 ## 5. Findings, by severity
 
-**F1 — HIGH — the C1 after-column is false at every commit that exists.**
-`closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` holds only on the
-uncommitted worktree (`git status`: `M corpus/SOURCES.md`, `M corpus/README.md`,
-`??` the three `idle-lock-*` entries) and on the committed `controls/golden` fixture. At
-`HEAD`/`19e4ab3` the same command prints `0/0/8 TARGET_MISSED` exit 1. The row's
-"data commit" is a ⟨fill⟩. Applying the row now would publish a measured-looking number
-that no commit contains.
+**F1 — MEDIUM — "the publication the gate reads" is mis-attributed; the lane's calibration gate
+was red at the revision it names.**
+`quality/check-axis-scores.py --rev 4f35c80` prints
+`calibration published=- derived=43/43 verdict=NOT-PUBLISHED` and
+`operability published=- derived=12/12 verdict=NOT-PUBLISHED`, `checked=3 mismatched=2`, exit 1.
+The parseable publication was added one commit later, in `7b745a1` ("republish the axis table in
+the gate's own format"), where the gate is `mismatched=0`. A reader re-deriving the sentence at
+the cited commit gets the opposite verdict. Reword to name `7b745a1`, or move the caption to the
+line that actually parses.
 
-**F2 — HIGH — the row publishes unmeasured cells as if ready.**
-Draft line 26-31 carries `data commit ⟨fill commit hash⟩`, `⟨re-run at that commit and
-paste actual⟩`, verdict `⟨pending data commit — expected…⟩`, axis `⟨50/50⟩`,
-`⟨N/N⟩`, and harm watch `⟨fill after data commit⟩`. Under the lane's own rule ("an unrun
-check has not passed") these are non-measurements; §3a shows two concrete ways the draft
-as-written turns `quality/check-axis-scores.py` red.
+**F2 — MEDIUM — the first axis line's numbers are not the values at the revision it names.**
+"Axis table re-derived at `02088b4` … calibration 43/43" is false there: the derivation is
+`41/43` (exit 1, `mismatched=2`). `43/43` becomes true only after `4f35c80`. The words "plus the
+round-35 errata" carry the repair, but the number is presented as measured at `02088b4`. State
+the two revisions separately (`02088b4`: navigation 50/50, calibration 41/43, operability 12/12;
+`4f35c80`: 50/50, 43/43, 12/12).
 
-**F3 — HIGH — the C1 row asserts the package-id mapping its own lesson calls wrong.**
-The row says "package ids S309/S310/S321/S329/S330/S331/S334/S336 recorded in the round
-lesson". That is precisely the registration's list which `corpus/lessons/round-35.md`
-records as erratum **M35-1**: seven of eight wrong, correct remap
-`S315, S316, S327, S335, S336, S337, S340, S342` — which the package originals' `source:`
-lines confirm. Additionally the lesson is untracked (`?? corpus/lessons/round-35.md`), so
-the cited proof resolves to no committed byte.
+**F3 — MEDIUM — the Sources prose miscounts the in-round row corrections and misnames their cells.**
+"four new rows' `scope`/`teaches` cells were corrected in-round": `git diff 02088b4 HEAD --
+corpus/SOURCES.md` is 3 insertions / 3 deletions over **three** rows — S203 (teaches, recheck),
+S204 (scope, teaches, recheck), S205 (teaches). There is no fourth row, and `recheck` is not
+named.
 
-**F4 — HIGH — the C2 row's "real r34 tip" is false; the re-issue repeats the defect it
-repairs.** `RevFrozenBlobs-r35.md` states "Round-34 lane tip = `master` = `dff394109…`".
-`git rev-parse master` = `19e4ab3` and `git rev-list --count dff3941..master` = 2; the
-intervening commit is titled "round-34 verifier spot-check". The seven blob ids are
-identical at `dff3941`, `6d754bd` and `19e4ab3`, so the ledger's *conclusion* survives —
-but the label is stale by two commits and "= master" is provably false. `ledger_tip_ok=1`
-is therefore true only relative to a false premise; the counter substring-matches the
-literal tip and cannot detect this.
+**F4 — LOW — the golden-vs-shipped divergence is under-described.** The pre-data `golden` rows
+differ from the shipped registry not only in `anchor` (cell 5) and `teaches` (cell 6), which is
+true for all eight, but S204 additionally differs in `scope` (cell 4) and `recheck` (cell 9).
+The conclusion ("the controls never exercise the live bytes") holds; the enumeration does not.
 
-**F5 — MEDIUM — the axis line as drafted reds the lane's calibration gate.**
-See §3a: verbatim application at the freeze commit → `calibration published=- derived=41/41
-verdict=NOT-PUBLISHED`, `checked=3 mismatched=1`, exit 1; data committed without the
-publication → navigation `STALE 47/47 vs 50/50`, exit 1. The filled form is exactly what
-produces `mismatched=0`. The publication line must be filled and ride the data commit.
+**F5 — LOW — "three inferences … withdrawn by errata" does not match the errata set.** Committed
+errata bullets: `idle-lock-never-asked-r12.md` 3 (E1 never-toggled, E2 thirteen-items, E3
+title/independent-negatives), `idle-lock-chain-armed-r14.md` 2 (E1 transient-scope unlicensed,
+E2 two boots / "both fire" withdrawn), `idle-lock-offered-in-the-bar-r15.md` 5 (E1 mtime, E2
+"never taken it", E3 "built not to remember", E4 one-state-named, …) — 10 bullets, each
+withdrawing at least one assertion, plus two in-section correction blocks. Either name the three
+it means or publish the measured count.
 
-**F6 — MEDIUM — `digest-match` does not implement the frozen predicate's sentence.**
-`count.py:174` computes `digest = hashlib.sha256(blob).hexdigest()` and never reads it;
-the conjunct is `receipt["sha256"] in cs[5]` — the *spec's* digest appearing in the row's
-anchor cell, not the receipt bytes' hash. Probe (scratch copy of `controls/golden`, one
-line appended to `S203.receipt.txt`; new sha256 `ef2f322c815054fa…`, cell still
-`1b7fa87ffe93…`):
-`PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` exit 0.
-On the committed bytes all eight spec digests equal the committed receipt hashes
-(verified), so the published `closed_rows=8` stands; the predicate text ("whose anchor
-cell carries the sha256 of the named receipt") does not.
+**F6 — LOW — transcription and adjacent-file nits.**
+(a) Both row cells quote counter output with the `verdict=` token elided
+(`… open_cites=8 TARGET_MISSED`, `… ledger_tip_ok=1 TARGET_MET`); the counters print
+`verdict=TARGET_MISSED` / `verdict=TARGET_MET`. (b) `w1/seat-plan.tsv` has 63 data rows (11
+scout) although wave 1 dispatched 64 seats and produced 64 reports — the row's seat numbers are
+right against the spec and reports, but the plan file contradicts them.
 
-**F7 — LOW — three count/label nits.** (a) "the eleven committed control receipts": 12
-`.txt` are committed at `19e4ab3` (11 c1 kill set + `c2-donothing.txt`); (b) the C1 row
-asserts "registry 192 → 200 rows" while the Sources block prints the same value as
-`⟨200⟩`; (c) "`RevFrozenBlobs-r35.md` §3" is §1 for the blob table. Also the C1 row's
-"(frontier → core)" label has no mado frontier list behind it — `PROVINCE.md` already
-names "screen/idle behavior (hypridle/hyprlock where present)" in the owned surface list
-(the label follows rounds 32/34 precedent, not a PROVINCE frontier entry).
+**F7 — NOTE — the digest-repair patch survives only in git.** The worktree shows
+`.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py` as deleted (`git status: D`), and the
+`scratch/` tree was relocated to `scratch-evidence/`. The evidence is the committed blob
+(`git show HEAD:.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py`, and
+`scratch-evidence/L1DigestFix/count-fixed.py`). Cite those, not a `scratch/` path.
 
-## 6. Residual risk and verification gaps
+## 6. What the rows get right (verified, so it is not re-argued)
 
-- **R1 — two tables named "capabilities".** The round-34 row lives in
-  `### Capabilities (round 34)`, while the canonical `## Capabilities` table still reads
-  `— none yet —`. The nudge argument ("a capability entered in round 34") depends on
-  reading the per-round subsection as the table. If the canonical table were the only
-  one, the nudge would be *available* — which would not harm the round, only weaken the
-  necessity of the lowest-axis claim.
-- **R2 — ledger authentication.** The C2 capability's limit is real and correctly
-  caveated: V1 (truncate `live` to the TOCTOU clause) and V3 (alias all eight receipts to
-  one committed MISSED receipt) both reach `TARGET_MET`. Nothing in either counter pins
-  `clauses.json` or any receipt to a blob id.
-- **R3 — golden ≠ lane data.** The committed golden fixture is byte-identical to the
-  worktree only for `idle-lock-never-asked-r12.md`; `…chain-armed-r14.md`,
-  `…offered-in-the-bar-r15.md` and `SOURCES.md` differ (`sha256` differ). The golden tree
-  is an anti-vacuity fixture, not a preview of the data: its `TARGET_MET` must not be
-  quoted as the data's verdict.
-- **Unverified by this seat:** nothing claimed in the draft remains unrun except (i) the
-  after-state at a nonexistent data commit, and (ii) the two scratch link controls, which
-  I did re-run and which agreed. `--regression` was run at the worktree and passed
-  (harm-watch expectation), though the draft leaves that cell unfilled.
+- Both frozen targets reproduce at their stated commits: C1 `0/0/8 MISSED exit 1` at `19e4ab3`
+  and `3/8/0 MET exit 0` at `02088b4`/`HEAD`; C2 `clause-ledger-missing exit 2` at `dff3941`
+  and `0/1/1/1 MET exit 0` at `02088b4`/`HEAD`.
+- Registry 192 → 200 and navigation 47/47 → 50/50 reproduce exactly, with an additions-only append.
+- The C1 verdict's three routed defects are all real, and the one-line digest repair demonstrably
+  keeps the root green and kills both content cribs.
+- The C2 verdict's (a), (b) and (c) all reproduce; `0:17:37` is exact (1057 s), the last
+  round-34-labelled commit is `6d754bd`, and the seven blobs are identical at both revisions.
+- Seat counts and role breakdowns for both waves are exact against the plans; 104 total.
+- No axis is harmed as measured at the tip: index 50/50, axis gate 3× MATCH, selftest 460/460 on
+  a gate blob byte-identical to the round-34 tip.
+
+## 7. Residual risk and verification gaps
+
+- **R1 — the nudge depends on which "capabilities table" counts.** The round-34 row sits in
+  `### Capabilities (round 34)` while the canonical `## Capabilities` table still reads
+  `— none yet —`. Reading only the canonical table would make the stagnation nudge *available*
+  (it waives the lowest-axis duty; it does not harm). The round-35 conclusion is unaffected
+  either way here, but the two tables should be reconciled.
+- **R2 — inputs are worktree bytes.** `clauses.json` and every receipt are read through
+  `repo / path`; only `ledger_tip_ok` touches git. The C2 row says this (F1–F5 of `RevC2Tip`),
+  and my deletion probe confirms it.
+- **R3 — shape vs truth for C1.** The admitted `TARGET_MET` is a shape verdict; the round says
+  so and routes the repair. `closed_rows=8` is not a truth claim about the eight receipts.
+- **Unverified by this seat:** the claim that the wave validator "rejects a `planner` seat"
+  (no validator transcript is cited in the tree I read); the construction of the two
+  `controls-content/` cribs (I ran them, not their provenance); and the "~15 minutes" interval,
+  which is an approximation between 10m50s and 18m53s depending on which commit ends the window.
+- **Environment note:** the `scratch/` tree was relocated to `scratch-evidence/` mid-run. Every
+  measurement above is from committed bytes or `git archive <rev>` extractions, not from
+  seat scratch, so the relocation affects no number in this report.

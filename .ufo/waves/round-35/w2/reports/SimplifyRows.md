@@ -1,7 +1,9 @@
 # SimplifyRows — YAGNI attack on the eight round-35 rows (S203–S210)
 
-Seat: `L1Mado35.SimplifyRows`. Read-only attack; every write is under
-`.ufo/waves/round-35/scratch/SimplifyRows/` plus this report.
+Seat: `L1Mado35.SimplifyRows`. Read-only attack; every write was under
+`.ufo/waves/round-35/scratch/SimplifyRows/` — relocated by an external mover to
+`.ufo/waves/round-35/scratch-evidence/SimplifyRows/` mid-task — plus this report,
+which is the durable artifact.
 
 ## Verdict
 
@@ -62,6 +64,40 @@ line; `coredumpctl list hypridle` → `No coredumps found.`;
 record the daemon's lifecycle. That makes S204's new scope ("the daemon's
 stop/start is consistent with a toggle-off") true on the host — and still absent
 from S204's own anchor (F2).
+
+## Artifact relocation and what is durable (03:43–03:47)
+
+The lane moved its scratch tree while this report was being written:
+`.ufo/waves/round-35/scratch/<Seat>/` became
+`.ufo/waves/round-35/scratch-evidence/<Seat>/` (an external mover, ~03:43–03:45;
+sibling seats report byte-intact arrivals). `scratch/` is not stable — a second sweep
+re-created and deleted seat directories at ~03:46, and my own re-created directory was
+moved out again.
+
+What survived for this seat, and what did not:
+
+| artifact | where | status |
+|---|---|---|
+| `harness.py` (8068 B, `2c5cf6ee…cacd8`) | `scratch-evidence/SimplifyRows/` | **rebuild**, 03:46, not the bytes measured at 03:2x |
+| `source_audit.py` (1879 B, `24fb92e8…7aa8b8ea`) | `scratch-evidence/SimplifyRows/` | **rebuild**, 03:46 |
+| `propose_strict.py` (4811 B, `f3d4f142…8e9249`) | `scratch-evidence/SimplifyRows/` | **rebuild**, 03:46 |
+| `exp/` mirrors (incl. the pre-edit `SOURCES.md` snapshot) | — | **lost**; no `exp/` in the relocated dir |
+| `simplifyrows_repro.py` (3291 B, `c139251d…98ed06`) | `scratch/SimplifyRows/` | re-created 03:47; may be moved again |
+
+A rebuild is not evidence, so this report does not lean on those files. The
+load-bearing proof — the deletion impossibility and the transcript-only audit — is
+**inlined as Appendix A** and was re-run at 03:48 against the current lane bytes:
+
+```
+[baseline] exit=0 PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+[drop S204] exit=1 PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+[audit] transcript-only rows: S204 S209 S210
+REPRO PASS
+```
+
+The pre-edit `SOURCES.md` snapshot (sha256 `848a7680…`) was diffed at 03:40 — 6 lines
+over S203/S204/S205 — but it did not survive the relocation; the diff result stands as
+recorded, the baseline bytes do not.
 
 ## Axes (named before touching anything)
 

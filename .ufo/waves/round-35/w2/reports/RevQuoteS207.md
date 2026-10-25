@@ -3,7 +3,16 @@
 Seat: RevQuoteS207 (leaf reviewer, no dispatch). Lane: mado-shokunin. Date: 2026-10-25.
 Substrates read-only: no bar started, no indicator executed, no toggle run, no menu opened,
 nothing written outside `scratch/RevQuoteS207/` and this report.
-Machine log with per-command exit codes: `.ufo/waves/round-35/scratch/RevQuoteS207/verify.log`
+Evidence log (originally `scratch/RevQuoteS207/verify.log`, 159 lines / 8220 B): preserved in git —
+`git show 4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS207/verify.log`, blob
+`c1a76490b428971652306ee7da7784169f455c2d`, sha256 `64d433f970c2ef3fd99adcf1a71f991258a9514e3a641c395e477af1d6bf4d5f`.
+The tree was **moved** `scratch/` → `scratch-evidence/` at ~03:43 (not deleted); relocation churn
+then moved a rebuilt 8377 B file over the worktree copy, so
+`scratch-evidence/RevQuoteS207/verify.log` on disk is now sha256 `dffe5da6…` — a replica, not the
+measured bytes. A corrected replica with a truthful header sits at
+`scratch/RevQuoteS207/verify.replica.log` (8459 B, sha256 `96beb608efc2efb896091a48f861d73aa475f3de74836973752acfa1c2bce8cb`)
+and is likewise **not** evidence. Nothing depends on either replica: appendix A1 inlines every
+load-bearing probe.
 
 ## Axes
 
@@ -140,6 +149,12 @@ still reads "The indicator does more than toggle (S207)…"; and PRED-C1 still p
 `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` (rc=0), PRED-C2
 `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET` (rc=0) after the
 edit. The certification below therefore applies to the current entry hash, not a stale one.
+
+A second live change followed at 03:40:12: `corpus/SOURCES.md` moved from `848a7680…` (the hash in
+my 03:37 closing snapshot) to `0bf117e2…` (171446 B, 200 rows). Row S207 is **byte-identical**
+across that edit — all 11 cells, anchor and claims cell unchanged — and both counters still print
+`TARGET_MET` with rc=0 when re-run against the post-edit file, so the edit lies outside this row's
+evidence.
 
 ## Findings by severity
 

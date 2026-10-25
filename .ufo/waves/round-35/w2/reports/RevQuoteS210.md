@@ -11,14 +11,33 @@ Evidence (live path after the 03:45 relocation):
 (2714 B, sha256 `4b7b77d6d3fd8bc661a61d5b02c53feebd4db68fbca3b8ad860649911c0a2026`);
 re-run rc=0 with output discarded (no write).
 
-**Evidence relocation (external sweep, ~03:45).** `.ufo/waves/round-35/scratch/` was
-*moved*, not deleted: the whole tree now lives at
-`.ufo/waves/round-35/scratch-evidence/`, per-seat directories and mtimes preserved
-(03:43). `RevQuoteS210/` arrived byte-intact — the shas above are the same files I
-wrote and ran, so no transcript rebuild was needed and these citations are live at
-the new path. Reports that still say `scratch/<Seat>/` are dangling by one path
-segment; the fix is to prepend `-evidence`, not to rebuild content, which would
-risk divergence from the bytes actually measured.
+**Evidence relocation (03:45), and why the citation is now durable.** The pre-03:43
+`.ufo/waves/round-35/scratch/` content was moved to
+`.ufo/waves/round-35/scratch-evidence/` (per-seat dirs, mtimes 03:43) and then
+checked in: `scratch-evidence/RevQuoteS210/rederive.sh` and `rederive.out` are
+**tracked at HEAD** (blobs `0ac004a4…` and `53d8daa6…`), and `git hash-object` of
+the worktree files returns those same blob ids — so the bytes I pin above are the
+bytes at HEAD, not a worktree chance. The tree holds **261 tracked paths across 59
+seat dirs** at HEAD; the checkpoint commit `4efaf63` ("checkpoint the 235 seat
+evidence files…") carries 235, with `b632f0b`, `ca870e9`, `1bb25c7` adding the rest
+— pin the count to the revision you cite, not to the live index.
+
+Two cautions, both observed, neither affecting this seat:
+
+- `scratch/` still churns. It has been re-created and re-swept repeatedly since the
+  move (I saw 1 entry — `CritAxisClaims` — and no `RevQuoteS210`; peers saw 7 seat
+  dirs, then none). A bare `scratch/<Seat>/` path therefore names a *different
+  namespace* from the one measured, and can resolve to a transcript rebuild rather
+  than the measured bytes. Cite `scratch-evidence/<Seat>/` with the shas above.
+- The move was **not complete for every seat**: `scratch-evidence/CritVacuous` and
+  `scratch-evidence/RevTarget` are absent (found by `RevShonen`), so for those seats
+  prepending `-evidence` does not recover anything. Here both cited peer files are
+  present and sha-verified, so S210's chain is intact; the general rule is
+  "check before assuming the move recovered it", not "prepend and trust".
+
+A rebuilt file is not the measured bytes, so no transcript reconstruction was used
+anywhere in this seat; the script is also reproduced inline in Appendix A, which
+makes the report self-sufficient even if both trees vanish.
 
 Axes attacked: (A1) gate-quote byte contiguity, (A2) host fact agreement,
 (A3) receipt-digest vs row anchor, (A4) assertion mechanism support.
@@ -301,3 +320,104 @@ is not falsified. Recommended action: keep the gate-quote and digest as they are
 reword cell 7 to attribute "never recorded" to `omarchy-toggle-idle`'s lack of a
 persistence mechanism, correct "entries" to the one real toggle entry, and cite the
 writer scripts in the anchor cell.
+
+## Appendix A — re-derivation script, inline
+
+Reproduced verbatim so this report does not depend on either scratch tree. It is a
+read-only script: it lists, greps and hashes; it writes nothing. Run it from any
+directory. Its output against the 5806 B / `82c08a46…` entry is the `rederive.out`
+pinned at the top (sha256 `4b7b77d6…a2026`), and the script itself hashes
+`468c54a6…e675df`.
+
+```bash
+#!/bin/bash
+# RevQuoteS210 — read-only re-derivation of row S210 (wave 2, round 35).
+# Run from anywhere. Writes nothing outside this scratch directory.
+set -u
+LANE=/home/vgpnk/Projects/shokunin/mado-shokunin
+DIR=/home/vgpnk/.local/state/omarchy/toggles/hypr
+REC=$LANE/.ufo/waves/round-35/fetch/S210.receipt.txt
+ENTRY=$LANE/corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
+ROW=$LANE/corpus/SOURCES.md
+
+echo "## live directory: $DIR"
+ls -la "$DIR"; echo "ls-rc=$?"
+echo "--- regular files (includes dotfiles) ---"
+find "$DIR" -maxdepth 1 -type f | sort; echo "find-rc=$?"
+echo "--- entry count, hidden included ---"
+ls -A "$DIR" | wc -l
+echo "--- files whose text names the idle lock (case-insensitive) ---"
+grep -ril idle "$DIR"; echo "grep-rc=$? (1 = no match)"
+grep -ril idle "$DIR" 2>/dev/null | wc -l
+echo "--- per-file keyword counts ---"
+for f in "$DIR"/*.conf; do
+  printf '%s idle=%s lock=%s hypridle=%s size=%s mtime=%s\n' \
+    "$(basename "$f")" "$(grep -ci idle "$f")" "$(grep -ci lock "$f")" \
+    "$(grep -ci hypridle "$f")" "$(stat -c %s "$f")" "$(stat -c %y "$f")"
+done
+echo "--- directory mtime vs window-no-gaps.conf mtime (entry-set stability) ---"
+stat -c '%n %y' "$DIR" "$DIR/window-no-gaps.conf"
+
+echo
+echo "## receipt bytes and gate-quote contiguity"
+python3 -I - "$REC" "$ENTRY" <<'PY'
+import sys
+rec_path, entry_path = sys.argv[1], sys.argv[2]
+rec = open(rec_path, 'rb').read()
+quote = b"located: the toggles/hypr directory holds 2 files and 0 of them name the idle lock"
+print("receipt bytes:", len(rec))
+print("quote bytes:", len(quote))
+i = rec.find(quote)
+print("first index:", i, "occurrences:", rec.count(quote))
+print("contiguous_substring:", i != -1)
+print("after-quote bytes:", None if i == -1 else repr(rec[i+len(quote):]))
+line = [l for l in open(entry_path, 'rb').read().split(b'\n') if b'gate-quote: S210' in l][0]
+prefix = b'gate-quote: S210 '
+assert line.startswith(prefix), line
+entry_quote = line[len(prefix):]
+print("entry_quote_equal_to_receipt_substring:", entry_quote in rec)
+print("entry_quote_words:", len(entry_quote.split()))
+print("gate_quote_lines_for_S210:", sum(1 for l in open(entry_path, 'rb').read().split(b'\n') if b'gate-quote: S210' in l))
+PY
+echo "py-rc=$?"
+
+echo
+echo "## receipt sha256 vs row anchor"
+sha256sum "$REC"; echo "sha-rc=$?"
+stat -c '%n type=%F size=%s mtime=%y' "$REC"
+grep -c "ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726" "$ROW"
+python3 -I - "$ROW" <<'PY'
+import sys
+rows = [l for l in open(sys.argv[1], encoding='utf-8').read().split('\n') if l.startswith('| S210 ')]
+print("S210 row count:", len(rows))
+cells = [c.strip() for c in rows[0].strip().strip('|').split('|')]
+print("cells:", len(cells))
+print("status:", repr(cells[7]), "opened:", repr(cells[8]), "recheck:", repr(cells[9]))
+print("used-by tokens:", cells[10].split(','))
+print("escaped pipe in row:", '\\|' in rows[0])
+print("sha in anchor cell (6):", 'ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726' in cells[5])
+PY
+echo "py-rc=$?"
+
+echo
+echo "## provenance discriminator: score runs on the state dir, not the default dir"
+find /home/vgpnk/.local/share/omarchy/default/hypr/toggles -maxdepth 1 -type f | wc -l
+
+echo
+echo "## who writes the toggle store / does the idle toggle persist anything"
+grep -n "toggles/hypr" /home/vgpnk/.config/hypr/hyprland.conf
+sed -n '16,20p' /home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-toggle
+sed -n '17,19p' /home/vgpnk/.local/share/omarchy/bin/omarchy-toggle
+sed -n '1,14p' /home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle
+echo "--- idle-named state anywhere under omarchy state (depth<=2) ---"
+timeout 20 find /home/vgpnk/.local/state/omarchy -maxdepth 2 -iname '*idle*'; echo "find-rc=$?"
+```
+
+Its key lines on the measured revision, for a reader who runs nothing:
+`receipt bytes: 385`, `first index: 302 occurrences: 1`,
+`contiguous_substring: True`, `after-quote bytes: b'\n'`,
+`entry_quote_equal_to_receipt_substring: True`, `entry_quote_words: 15`,
+`gate_quote_lines_for_S210: 1`, `S210 row count: 1`, `cells: 11`,
+`status: 'mined' opened: '2026-10-24' recheck: '90d'`,
+`used-by tokens: ['corpus/knowledge/idle-lock-offered-in-the-bar-r15.md']`,
+`escaped pipe in row: False`, `sha in anchor cell (6): True`.

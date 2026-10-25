@@ -292,3 +292,61 @@ counter was edited; this report is the only write of this seat after the sweep.
 `git show HEAD:.ufo/waves/round-35/c1/count.py | grep -n digest` → `:174` only, rc 0;
 `git show 19e4ab3:corpus/QUALITY.md | wc -l` → `360`, rc 0.
 
+## 8. Erratum 2 (append-only, post-close) — §7 said "swept"; it was a **relocation**, and the crib trees are the exception
+
+§7's event sentence is wrong and is superseded here; its path consequence survives only for two trees.
+
+**Corrected event.** `scratch/` was **moved** to `scratch-evidence/`, not deleted. Observed:
+`stat .ufo/waves/round-35/scratch-evidence` → `2026-10-25 03:45:56`; `ls -d …/scratch-evidence/*/ | wc -l`
+→ **59 seat dirs**; `scratch-evidence/RevShonen/QUALITY-HEAD.md` sha256
+`c8d4d0078b91e7ecb1f244e74a92afe2defd4d56cf7fbab2369080c436ffd088` — byte-identical to
+`git show 19e4ab3:corpus/QUALITY.md`. So §7 item 1 is discharged by prepending `-evidence`, and no rebuild
+was needed; I rebuilt nothing, so the "a rebuild is not evidence" caveat does not apply to this report.
+Peer bytes verified independently: `scratch-evidence/RevQuoteS210/rederive.sh` sha256 `468c54a6…`,
+`rederive.out` sha256 `4b7b77d6…`, exactly the shas that seat reported.
+
+**Revisions moved under §7, again.** HEAD advanced `02088b4` → `4efaf63` ("checkpoint the 235 seat
+evidence files and drop the 3.2 GB mutant trees") → `b632f0b` (03:46:02, checkpoint) → `ca870e9`
+(03:46:46) → **`1bb25c7`** (03:47:25, "the seats' closing report revisions … lane closes without scratch
+trees"). §7's revision-bound statements stand only for `02088b4`. Tracked counts drift across those
+commits (peer measured 235 @ `4efaf63` and 240 mid-seat; I measured 245 at an intermediate HEAD and
+**261 at `1bb25c7`**, with `git ls-tree -r --name-only HEAD -- .ufo/waves/round-35/scratch | wc -l` = 0 and
+`scratch-evidence/RevShonen/QUALITY-HEAD.md` tracked), so this report quotes paths and shas, not a file
+count. My own report's §7 version is committed at `1bb25c7` (blob `11bf1dfc…`); this §8 is a post-close
+working-tree revision pending the integrator's commit.
+
+**The exception that still bites criterion 55.** `scratch-evidence/CritVacuous` and
+`scratch-evidence/RevTarget` do not exist (`ls -d` → "No such file or directory"), and neither does any
+copy anywhere under `.ufo/waves/round-35`: `find .ufo/waves/round-35 -maxdepth 4 \( -name 'CritVacuous*'
+-o -name 'RevTarget*' \)` returns only committed report/log/prompt files plus
+`scratch-evidence/CritVacuous2` (a different seat, C2's vacuity attempt). They were never tracked:
+`git rev-list --all --objects | grep -E '(scratch|scratch-evidence)/(CritVacuous|RevTarget)/'` → empty.
+Those two trees are irrecoverable; the checkpoint's "235 seat evidence files" is not the set that was in
+`scratch/`. Consequence for this report: criterion 55's cited paths (`scratch/CritVacuous/`,
+`scratch/RevTarget/`) resolve at **neither** the old nor the new location, and my §3 crib runs are
+transcript evidence observed pre-move (~06:35Z), not re-runnable. §7's durable substitutes stand:
+`w1/reports/{CritVacuous,CritVacuous2,RevTarget}.md` with their logs and prompts, and the committed
+dead-digest proof (`count.py:174` computes `digest`; `ok` at `:185-195` never compares it).
+
+**New finding F7 — a missing `--root` is reported as `TARGET_MISSED`, not as a setup error.** Observed
+after the move:
+
+```
+python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/scratch-evidence/CritVacuous --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED   rc=1
+```
+
+The same output and rc come from `…/scratch-evidence/RevTarget`, from each of its former subdirectory
+names, and from a wholly nonexistent root (`.ufo/waves/round-35/does-not-exist` → `TARGET_MISSED` rc=1),
+while `frozen-missing` exits 2. So the natural post-move command "re-run the crib" prints the same text a
+genuine rejection would, and a careless reader can conclude the counter now *rejects* the shape-only
+cribs — the exact opposite of §3's finding. That is a live misreading hazard the relocation created, and
+a counter signal defect on its own: a setup error must not be byte-identical to a failed predicate. It
+does not change C1's verdict at `1bb25c7` (the lane-root, `golden` and `c1-donothing` runs are committed
+inputs and still read `MET` / `MET` / `MISSED`), but any regenerated receipt for those cribs must be
+labelled "root absent", never "predicate failed".
+
+**Scope.** No lane file, counter, control, corpus entry or registry row was edited; nothing was rebuilt;
+no installs. Corrections to my §7 are appended here rather than rewritten, per the lane's errata practice.
+
+

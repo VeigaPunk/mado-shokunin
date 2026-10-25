@@ -1,11 +1,15 @@
 # RevEntryR12 — attack on `corpus/knowledge/idle-lock-never-asked-r12.md`
 
 Seat: L1Mado35.RevEntryR12. Round 35, wave 2 (falsify). Read-only on every substrate;
-writes confined to `.ufo/waves/round-35/scratch/RevEntryR12/` and this report.
-Raw transcript of every command quoted below: `.ufo/waves/round-35/scratch/RevEntryR12/evidence.txt`
-(**[REBUILT]**: an external sweep deleted the entire `scratch/` tree at ~03:45, this seat's directory
-included, mid-review; the file was reassembled from this seat's transcript at ~03:47 and carries a
-provenance header. `w2/reports/` was untouched. Content is transcript-faithful, not a re-run.)
+writes confined to this seat's own evidence dir (now `scratch-evidence/RevEntryR12/`) and this
+report. No lane corpus, counter, control, registry, jj or index write.
+Raw transcript: `.ufo/waves/round-35/scratch-evidence/RevEntryR12/evidence.txt` — 8848 B, sha256
+`e91e1b5be95f352fe2cf35fd1908c2ac5751ff94c2d84813e92cf777c91c3bff`. Its first **7170 B are the
+git-attested segment from checkpoint `4efaf63`** (sha256 `28996a7c…`), holding `[E1]-[E25]` — the
+commands actually run against the named bytes; the tail is a clearly marked post-checkpoint append.
+The harness *moved* `scratch/` to `scratch-evidence/` at ~03:45 (not a deletion) and swept
+re-created dirs under `scratch/` at 03:46, so scratch is a convenience copy only. **This report is
+self-contained**: §9 inlines every load-bearing command, output and exit code.
 
 ## Verdict
 
@@ -257,10 +261,13 @@ and the grep still prints 0.
   differs from live by 29 lines. Neither `count.py` uses a golden comparison, so both counters still
   print `TARGET_MET` (exit 0) — but any control seat that diffs golden against live now sees a
   deviation that is not an injected mutation, and the golden baseline is stale.
-- **The scratch tree was deleted mid-review.** An external sweep removed all of
-  `.ufo/waves/round-35/scratch/` at ~03:45; this seat's evidence file was rebuilt from transcript at
-  ~03:47 (header in that file, note at the top of this report). Commands quoted here are transcript
-  quotes, not a fresh re-run against the swept state; `w2/reports/` was untouched.
+- **The scratch tree was relocated mid-review, and `scratch/` is not stable.** The harness moved
+  `.ufo/waves/round-35/scratch/` to `.ufo/waves/round-35/scratch-evidence/` at ~03:45 (59 seat dirs,
+  contents intact), then a second pass removed seat dirs re-created under `scratch/` at 03:46. My
+  evidence file was restored from the git checkpoint `4efaf63` (7170 B attested segment, sha
+  `28996a7c…`) plus a marked post-checkpoint append, and now sits at
+  `scratch-evidence/RevEntryR12/evidence.txt` (8848 B, sha `e91e1b5b…`). Because scratch has moved
+  twice, §9 inlines the load-bearing commands so no finding depends on it.
 - **My earlyoom probe initially looked like a false errata claim and is not one.** `grep -ci
   earlyoom` over `journalctl --user` returns 0; earlyoom is a *system* unit and the line the errata
   cites exists in the system journal (`2026-10-23T19:24:59 earlyoom[1381]: mem avail: 19479 of
@@ -413,3 +420,36 @@ seat's evidence file was rebuilt from transcript (note at the top of this report
 itself was written twice during the review by an unattributed writer (§7.2/F9), so every finding
 above is stamped with the bytes it was measured against: assigned 40-line state (`21c1d06d…`) for
 §1-§5, current 69-line state (`0bcef21f…`) for §7.
+
+## 9. Appendix — load-bearing commands, outputs, exit codes
+
+Scratch has been relocated and swept twice during this review, so the evidence is inlined. Entry
+state over time: assigned `21c1d06d…` (40 lines) → `7f27ced0…` (60, 03:35:08) → `0bcef21f…`
+(69, 03:41:38, current).
+
+| # | command (cwd = lane root unless absolute) | output | exit |
+|---|---|---|---|
+| A1 | `sha256sum /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run` | `20508471…` = SOURCES.md:205 anchor, 1089 B | 0 |
+| A2 | `ls -1 /home/vgpnk/.local/share/omarchy/install/first-run \| wc -l` ; `ls -1 …/*.sh \| wc -l` | `13` ; `12` | 0 |
+| A3 | `for f in …/first-run/*; do grep -ci idle "$f"; done` | `0` for all 13 files | 1 per file (no match) |
+| A4 | `sha256sum .ufo/waves/round-35/fetch/S203.receipt.txt S204.receipt.txt` | `1b7fa87f…` / `4cd5ba65…` = anchors | 0 |
+| A5 | `journalctl --user --no-pager \| grep -c 'omarchy-toggle'` | `0` | 1 (pipefail: grep no match) |
+| A6 | `journalctl --user --no-pager \| wc -l` | `165725` | 0 |
+| A7 | `journalctl --user --no-pager -o short-iso \| grep -i hypridle` | 10 lines; `19:24:38 … Consumed 2.783s CPU over 5h 59min 38.213s` | 0 |
+| A8 | `python3 -c "2026-10-23T13:25:00 + 5:59:38.213"` | `2026-10-23 19:24:38.213000` | 0 |
+| A9 | `journalctl --user --no-pager \| grep -c 'Stopped hypridle'` / `'Stopping hypridle'` | `1` / `1`, both `13:21:39` (prior session teardown) | 0 |
+| A10 | `coredumpctl list hypridle --no-pager` | `No coredumps found.` | 1 |
+| A11 | `journalctl --no-pager -o short-iso -b -1 \| grep -ci 'suspend\|hibernat'` | `18`, all kernel PM setup at `13:24:36`; none near 19:24 | 0 |
+| A12 | `journalctl --no-pager -o short-iso -b -1 \| tail -2` ; `-b 0 \| head -2` | last `22:12:24`; first `22:14:07` (`Linux version 7.2.11-arch1-1`) | 0 |
+| A13 | `stat -c '%y' /home/vgpnk/.local/share/omarchy/install/first-run` | `2026-10-03 17:42:32.317470188 -0300` | 0 |
+| A14 | `journalctl --no-pager \| grep -ci earlyoom` ; `journalctl --user …` | `61` ; `0` | 0 ; 1 |
+| A15 | `journalctl --no-pager -o short-iso \| grep '2026-10-23T19:24:59.*earlyoom'` | `mem avail: 19479 of 21438 MiB (90.86%), swap free: 28594 of 30979 MiB (92.30%)` | 0 |
+| A16 | `python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen …/c1/frozen.json` | `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` | 0 |
+| A17 | `python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen …/c2/frozen.json` | `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET` | 0 |
+| A18 | python `-I` gate-quote substring check | `S203 contiguous=True words=14`; `S204 contiguous=True words=13` | 0 |
+| A19 | `grep -n 'omarchy-toggle-idle' ~/.local/share/omarchy/default/hypr/bindings/utilities.conf` | `30:bindd = SUPER CTRL, I, Toggle locking on idle, exec, omarchy-toggle-idle` | 0 |
+| A20 | `cat /home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle` | 316 B; `pkill -x hypridle` / `uwsm-app -- hypridle` / `pkill -RTMIN+9 waybar`; no branch emits `omarchy-toggle` | 0 |
+| A21 | `ls -l ~/.config/omarchy/hooks/post-update.d/install-voxtype.hook` ; `cat` | 174 B, mode 755, line 6 `rm -f "$0"` — file still present ⇒ never executed; `/usr/bin/voxtype` absent | 0 ; 2 |
+| A22 | `diff .ufo/waves/round-35/controls/golden/… -r12.md corpus/knowledge/… -r12.md \| grep -c '^[<>]'` | `29` | 1 (diff) |
+| A23 | `git show 4efaf63:.ufo/waves/round-35/scratch-evidence/RevEntryR12/evidence.txt \| sha256sum` | `28996a7c…`, 7170 B (attested segment) | 0 |
+| A24 | `journalctl --no-pager \| grep -i idle-lock-never-asked` ; `mount --bind`/`umount` today | `0` lines ; none (writer unattributed) | 1 |

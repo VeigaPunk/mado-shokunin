@@ -11,10 +11,22 @@ LSP note: no language server answers `considerthese/*.md`, `corpus/**` or `.ufo/
 used file reads plus literal text search, which is the correct primitive for prose inventory.
 Every claim below is either a quoted byte range or a command with its exit code (appendix A).
 
-Scratch note: `.ufo/waves/round-35/scratch/ScoutConsiderthese/evidence.log` was rebuilt from this
-seat's transcript on 2026-10-25 after an external sweep removed the whole round-35 scratch tree
-(~03:45). This report cites **no** round-35 scratch path, so nothing here dangles; the round-34
-scratch files cited in §5 were outside the sweep and are still present.
+Scratch note (relocation, not deletion, plus one rebuild). `.ufo/waves/round-35/scratch/` was moved
+to `.ufo/waves/round-35/scratch-evidence/` at ~03:43–03:45; per-seat directories arrived intact
+(`git ls-files .ufo/waves/round-35/scratch-evidence/ | wc -l` → 261 at read time). This seat's log
+has two distinct byte states, both pinned:
+
+- **pre-move original** — commit `4efaf63`, path
+  `.ufo/waves/round-35/scratch-evidence/ScoutConsiderthese/evidence.log`, blob `ee0ba0ea`, **3933 B,
+  sha256 `4e04d8abceab2195da484e2a2b0e85cfbb7e517df618d5a155c0447811a37c1f`**;
+- **this seat's 03:46 transcript rebuild** — worktree and lane HEAD `1bb25c7` (blob `1fccb18a`),
+  **4279 B, sha256
+  `97b3e89b7223b36b42c31d529663328b4be4a9d0f7a54c2a40e592010ba07124`**. A rebuild is a command log,
+  not evidence.
+
+Nothing in this report's findings depends on either copy: appendix A is the durable locus, and the
+round-34 scratch files cited in §5 were outside the relocation and still resolve. A third sweep
+deleted the re-created `scratch/ScoutConsiderthese/` once; no further copy will be made.
 
 ---
 

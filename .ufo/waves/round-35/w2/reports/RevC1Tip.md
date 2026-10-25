@@ -1,12 +1,14 @@
 # RevC1Tip — C1 re-derived from bytes, and what the counter cannot see
 
 Seat: `L1Mado35.RevC1Tip` (leaf reviewer, no dispatch). Lane: mado-shokunin. Wave 2, round 35.
-Verified at **2026-10-25T03:43:12-03:00**, HEAD `7b745a1` (`round-35: republish the axis table in
-the gate's own format, plus the wave-2 reports that landed after the first pass`). The same three
-numbers reproduce at `02088b4`, at the pre-commit `19e4ab3` working tree, and at the committed
-`7b745a1` tree (§6); the lane was under concurrent edit throughout and §1 pins the exact bytes.
+Verified at **2026-10-25T03:43:12-03:00** (HEAD `7b745a1`) and re-run at **03:46:48** (HEAD
+`ca870e9`) on byte-identical corpus data; the lane's closing HEAD is `1bb25c7`, corpus clean.
+The same three numbers reproduce at `02088b4`, at the pre-commit `19e4ab3` working tree, and at the
+committed `7b745a1`/`ca870e9` trees (§6).
 Read-only: no lane corpus, counter, control, `SOURCES.md`, jj state or Git index was written.
-Everything written lives under `.ufo/waves/round-35/scratch/RevC1Tip/` plus this file.
+Everything written lives under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/` (the lane relocated
+`scratch/` to `scratch-evidence/` at 03:45 and tracks it at HEAD; the live `scratch/` is swept).
+Shas of the tracked evidence are pinned in §8; the report body quotes every command and verdict.
 No tool was installed (nothing was needed).
 
 ## Axes
@@ -26,11 +28,11 @@ No tool was installed (nothing was needed).
 |---|---|---|
 | A1 numbers on current bytes | **CONFIRMED** — `3 / 8 / 0`, `rc=0`, exact line in §1 | HIGH |
 | A2 committed-only run | **CONFIRMED** — `git archive HEAD` → `3 / 8 / 0`, `rc=0` | HIGH |
-| A3 no seat's help at run time | **CONFIRMED** — reads 12 files (192,875 B) + frozen spec; zero network syscalls; cwd-independent; deterministic ×3 | HIGH |
+| A3 no seat's help at run time | **CONFIRMED** — reads 12 files (193,832 B) + frozen spec; zero network syscalls; cwd-independent; deterministic ×3 | HIGH |
 | A4 fidelity of `digest-match` | **FALSIFIED as coded** — receipt bytes are never hashed; a rotated receipt still closes (F1, §4.1) | HIGH |
 | A4 fidelity of the row clause | **FALSIFIED as coded** — the row may sit outside `## Registry`; the lane census calls that E12 (F2, §4.2) | HIGH |
 | A5 failable | **CONFIRMED** — six independent mutations each give `2 / 7 / 1` `TARGET_MISSED`, `rc=1` | HIGH |
-| A6 durability | **CONFIRMED at `02088b4` and `7b745a1`** — an earlier mid-wave snapshot (`19e4ab3`) returned `0 / 0 / 8`; the commit that landed the data makes the claim reproducible from committed bytes | HIGH |
+| A6 durability | **CONFIRMED at `02088b4`, `7b745a1`, `ca870e9`, `1bb25c7`** — an earlier mid-wave snapshot (`19e4ab3`) returned `0 / 0 / 8`; the commit that landed the data makes the claim reproducible from committed bytes, and the closing tree is clean | HIGH |
 
 Both fidelity defects are **latent on the current bytes**: all 8 receipts do hash to their frozen
 values and the 8 rows do sit inside `## Registry` (lines 205-212, between `## Registry` at 9 and

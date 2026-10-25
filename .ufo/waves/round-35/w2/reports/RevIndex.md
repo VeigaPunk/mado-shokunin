@@ -66,8 +66,12 @@ MADO_INDEX: root=. indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0
 rc=0
 ```
 
-Scratch copy (rsync of `corpus/` + `quality/`, `.git`/`.jj`/`.ufo` excluded), README sha256
-`a3769bef…c5e83a` identical to the lane's:
+Scratch copy at audit time (rsync of `corpus/` + `quality/`, `.git`/`.jj`/`.ufo` excluded), README
+sha256 `a3769bef…c5e83a` identical to the lane's. The whole `scratch/` tree was then **relocated**
+(moved, not deleted) to `.ufo/waves/round-35/scratch-evidence/` at ~03:43–03:45; checkpoint commit
+`4efaf63` carries only the four result files from this seat (`evidence.log`, `scratch-sha.txt`,
+`run1.txt`, `run2.txt`) — the copied tree and the seven `neg-*/` trees were **not** checkpointed and
+do not survive on disk. Output, quoted from the checkpointed log (restored byte-identically, see §5):
 
 ```
 $ python3 -I quality/check-index.py --root .ufo/waves/round-35/scratch/RevIndex/repo
@@ -78,6 +82,11 @@ $ python3 -I quality/check-index.py --repo .../scratch/RevIndex/repo --rev 28531
 MADO_INDEX: rev=285314d3fe9f58dfda5eb7adb4b693f82daa1e08 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 rc=0
 ```
+
+A post-relocation **rebuild** (harness `rebuild.sh`, `evidence.rebuild.log`) reproduced a fresh copy
+and commit `abad0092…` and the same `50/50` on current bytes; the rebuilt trees were swept in turn.
+A rebuild is not evidence — its numbers are labelled as such, and the audited numbers above come
+from the checkpointed original.
 
 Per-note census (independent regex, lane working tree):
 
@@ -107,6 +116,11 @@ receipts) resolve.
 | `neg-fence` | r15 row moved inside a ``` fence | **50/50** | **0** |
 | `neg-secondtable` | r15 row moved to an unrelated `## Unrelated table` | **50/50** | **0** |
 
+Provenance: every row above was produced twice — pre-relocation (original log §10–§11) and again
+by the post-relocation rebuild (`evidence.rebuild.log` §8) with identical strings and rc. The
+control **trees** were never checkpointed and no longer exist, so the table is cited from the two
+logs, not re-runnable from retained bytes.
+
 ## 4. Residual weakness (not a claim failure, but scope-defining)
 
 `check-index.py` is a literal-row gate: any line at column 0 beginning ``| `knowledge/<name>.md` ``
@@ -117,10 +131,12 @@ an index row is a route, not a verdict"), so this is the gate behaving as docume
 notes the rows do sit in the coverage table (README lines 59–61, immediately before
 `## Quality bar`), and `check-index-rows.py` on the real tree is clean.
 
-Second, structural: `--rev` reads blobs at a commit only. Any wave output judged solely by
-`--rev master` excludes untracked notes and uncommitted index rows — exactly the three entries
-under test. Any C1 judgement for this wave must use `--root` on the working tree (or a commit
-that contains them); otherwise the claim is untestable, not proven.
+Second, structural (now historical): `--rev` reads blobs at a commit only, so at audit time it
+excluded the untracked notes and uncommitted rows — exactly the three entries under test, which is
+why the assignment's copy-to-scratch clause was necessary. The lane has since committed them
+(`b632f0b`, HEAD == master), and the same `--rev master` command now returns `50/50`. The durable
+lesson: a wave judged before its commit is measured on the wrong universe; judge `--rev` on a
+commit that contains the entries or use `--root`, and record which one was used.
 
 ## 5. Notes on method
 

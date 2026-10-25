@@ -3,11 +3,15 @@
 Seat: `L1Mado35.RevQuoteS203` (leaf reviewer). Round 35, wave 2.
 Lane repo: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only attack; no lane corpus,
 counter, control, `SOURCES.md`, jj/Git state, or `/home/vgpnk/Projects/shokuknow` byte was modified.
-Scratch evidence: `.ufo/waves/round-35/scratch-evidence/RevQuoteS203/evidence.log` (127 lines,
-6531 B). The tree was **relocated, not deleted**: the original `scratch/RevQuoteS203/` was swept at
-~03:45, this log was rebuilt from the seat transcript, and the sweep then moved it to
-`scratch-evidence/` — where it now sits at byte-identical size. The report is authoritative and
-self-sufficient: every command and output it relies on is inlined below.
+Scratch evidence — **original measured bytes**: git blob
+`4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS203/evidence.log`, 4282 B / 87 lines, sha256
+`b5cc5c04e890aa06052f95860ad650070779ea29457c3f68c59b73d741d249d9` (checkpoint commit
+`4efaf639ffb6aeb1fed1adeea12350dbb2c38082`, 2026-10-25 03:43:55). The `scratch/` tree was **moved**
+to `scratch-evidence/`, not deleted. The *working-tree* file at that path is a transcript
+reconstruction (sha256 `c70cafb44c5bf5f5a9ae518738c6876f2bb7deb6df55547827ba9ae97b35a4ae`,
+6531 B / 127 lines) written after the move — **a rebuild is not evidence**, so the committed blob is
+the cited source. Its full content is inlined as Appendix A, which is the durable copy: this report
+body is authoritative and needs neither path.
 Host reads only (sha256sum/wc/ls/grep/python read); no first-run script was executed.
 No tool installed or upgraded this seat.
 
@@ -379,3 +383,107 @@ quote/hygiene result and never as "the entries are true".
 - The 19:24:38 attribution is an exclusion argument, not direct attribution; with auditd and psacct
   both inactive there is no process-accounting instrument that could close it. Reported as an
   inference, never as observed fact.
+- **Scratch provenance.** The pre-sweep log was briefly lost (the `scratch/` tree moved to
+  `scratch-evidence/` at ~03:45; the working-tree copy there is my later reconstruction) and was
+  recovered from checkpoint `4efaf63`, blob sha256 `b5cc5c04…`, 4282 B / 87 lines. It is inlined
+  verbatim in Appendix A, so no conclusion in this report depends on a file path surviving.
+
+## Appendix A — evidence log (original measured bytes, inlined)
+
+Source: `git show 4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS203/evidence.log`
+(4282 B, 87 lines, sha256 `b5cc5c04e890aa06052f95860ad650070779ea29457c3f68c59b73d741d249d9`).
+Verbatim; nothing edited.
+
+```text
+### A3 anchor
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  .ufo/waves/round-35/fetch/S203.receipt.txt
+EXIT=0
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646
+EXIT=0
+### A1 contiguity
+count 1 offset 3033 words 14
+EXIT=0
+### A2 live facts
+20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630  /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+EXIT=0
+1089 /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+EXIT=0
+13
+EXIT=0
+12
+EXIT=0
+12
+EXIT=0
+IDLE_ABSENT
+EXIT=0
+### C1 counter
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+EXIT=0
+
+### CROSS-ROW S204: hook execution semantics
+-- omarchy-hook-install body (27-29) --
+mkdir -p "$HOOK_DIR"
+cp "$HOOK_FILE" "$HOOK_PATH"
+chmod 755 "$HOOK_PATH"
+-- hook self-delete line 6 --
+rm -f "$0"
+-- installed hook still present --
+-rwxr-xr-x 1 vgpnk vgpnk 174 Oct  3 17:48 /home/vgpnk/.config/omarchy/hooks/post-update.d/install-voxtype.hook
+-- who dispatches --
+# omarchy:summary=Run a named hook from ~/.config/omarchy/hooks/<name> and ~/.config/omarchy/hooks/<name>.d/.
+RESULT: first-run executes 12, installs 1 hook; hook never ran
+
+### ENTRY r12 SECOND LEG (S204) — vacuity + positive event
+-- counter --
+0
+grep EXIT=1
+-- toggle script has no journal primitive --
+NO_LOGGING_PRIMITIVE
+-- kill paths --
+/home/vgpnk/.local/share/omarchy/bin/omarchy-restart-app:6:pkill -x $1
+/home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle:6:  pkill -x hypridle
+-- hypridle journal --
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopping hypridle...
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopped hypridle.
+Oct 23 13:21:39 plazir27 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
+-- Boot e55f9cd9ec4e4dd5bf0ce775977af5a5 --
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: received: app -- hypridle
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 13:25:00 plazir27 systemd[1529]: Started hypridle.
+Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+-- Boot 0a3785aac7104585a914f6cda41795a7 --
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+-- exclusions --
+0
+coredump_hits=1
+pacman 2026-10-21 20
+pacman 2026-10-22 2
+pacman 2026-10-23 0
+pacman 2026-10-24 22
+pacman 2026-10-25 31
+inactive
+inactive
+
+### CONCURRENT MUTATION OBSERVED
+2026-10-25 03:40:12.893966805 -0300 171446 corpus/SOURCES.md
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  corpus/SOURCES.md
+0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504  corpus/knowledge/idle-lock-never-asked-r12.md
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  .ufo/waves/round-35/fetch/S203.receipt.txt
+-- withdrawn claims still in place --
+1:# The idle lock was never offered as a choice at setup, and the operator never toggled it afterwards
+23:**OBS** And the operator never exercised the toggle afterwards (S204): the user
+29:and the toggle was never run in any session the journal still keeps.
+44:- **E1 - "never toggled" withdrawn.** Section 2's inference that the operator never
+62:  reads "…and the operator never toggled it afterwards"; that clause is withdrawn for the
+-- row 205 new note --
+ The post-login questionnaire runs thirteen items, twelve of them first-run scripts - battery monitor, internal monitor, sudoers cleanup, firewall, DNS resolver, GNOME theme, swayosd, primary paste, text scaling, elephant, welcome and wifi - and none of the thirteen executed items asks about the idle lock 
+recheck ' on-change '
+-- C1 after mutation --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+```
+
+**Reading note on `coredump_hits=1`** (log line 63): that is the *exit status* of a
+`grep -ci hypridle` that matched **0** lines, not a count of coredumps. The clean re-run in A2 prints
+`NO_COREDUMP` for `coredumpctl list | grep -i hypridle`. Zero hypridle coredumps exist.

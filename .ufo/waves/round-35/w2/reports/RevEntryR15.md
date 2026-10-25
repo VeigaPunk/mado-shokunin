@@ -6,12 +6,24 @@ Target: `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` — re-taken at t
 the 3428 B revision this seat first read was mutated mid-review and now carries Errata E1-E5.
 Every quoted body passage below was re-read in the current bytes.
 Substrates read-only: no bar started, no indicator executed, no menu opened, no toggle run.
-Evidence: the full 42-probe log is inlined as the Appendix below (durable through any scratch sweep).
-Pre-sweep copies are tracked at `.ufo/waves/round-35/scratch-evidence/RevEntryR15/{verify.log,findings.md}`
-(commit `4efaf63`, sha256 `61631900…c14a90` / `e5d010f3…9b165e`); that checkpoint's `verify.log` holds
-the re-take segment only (probes 28-37) because this seat had replaced the file before the checkpoint,
-so the Appendix supersedes it. `scratch/RevEntryR15/` was re-created twice during this seat and lost
-once more by a second sweep — it is not a durable locus and no verdict here depends on it.
+Evidence locus: the Appendix below — a transcription of the 42 probes, durable because it lives in this
+report, but **not** the bytes that were measured. The measured bytes are preserved: the round-35
+`scratch/` tree was **relocated**, not deleted, into `.ufo/waves/round-35/scratch-evidence/` at
+03:43-03:45: 235 files at commit `4efaf63`, 261 files at HEAD `1bb25c7`, 59 seat dirs. Quote a commit,
+not a count — this seat's first measurement of the index read 240 and 26 files landed afterwards in
+`b632f0b`, `ca870e9` and `1bb25c7`. Coverage is also not universal: `CritVacuous` and `RevTarget` sit in
+neither the checkpoint nor the tree (seat RevShonen: `find -maxdepth 4 -name 'CritVacuous*' -o -name
+'RevTarget*'` is empty), so "relocated, not deleted" holds for the 59 seat dirs that exist and not for
+those two.
+This seat's checkpoint copies are `findings.md` 3323 B sha256 `e5d010f3…9b165e` and `verify.log`
+2049 B sha256 `61631900…c14a90`; that `verify.log` holds the re-take segment only (probes 28-37)
+because this seat had replaced its own log with that segment before the checkpoint ran, so the
+Appendix supersedes it for probes 1-27. At HEAD the directory carries both `verify.log` and
+`verify.recovered.log` as one and the same git blob (`41ac5231`), so the truncated segment is all that
+was ever preserved: probes 01-27 and 38-42 exist only in the Appendix, and no fuller original is
+recoverable anywhere. That is a negative result worth stating, because it means nothing was lost by
+the relocation — only by this seat's own earlier overwrite. `scratch/RevEntryR15/` was re-created twice during this seat
+and is a convenience copy, never evidence; no verdict here depends on it.
 
 ## Axes
 
@@ -298,7 +310,11 @@ against this revision, not the next one.
   behaviour is established by file reads only — the same limit the entry declares.
 - No install or upgrade was performed; no package manager was invoked (pacman paused host-wide).
 
-## Appendix — probe log (durable copy; 42 probes)
+## Appendix — probe log (transcription of 42 probes; not the measured artifact)
+
+Transcribed from the seat transcript after `scratch/` was relocated. It records what was run and what
+came back; the measured originals are the checkpoint files named above. A reader comparing hashes
+should treat this appendix as a re-derivation, not as evidence bytes.
 
 Reads only. `R` = result, `x` = exit code. Entry revision throughout: sha
 `82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe`, 5806 B, mtime 03:35:30.

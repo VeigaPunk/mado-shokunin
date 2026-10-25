@@ -246,11 +246,12 @@ behaviour, not an overlap.
   else was written outside `.ufo/waves/round-35/scratch-evidence/SentBoundary/` and this report.
   Note the path move: this seat wrote `scratch/SentBoundary/evidence.txt`, and commit `4efaf63`
   renamed the whole `scratch/` tree to `scratch-evidence/` and committed it at 03:43:55.
-- At ~03:45 an external sweep deleted the `scratch/` directories the contract names as the only
-  allowed write target; twelve seats have since recreated directories there. This seat's evidence
-  survived only because `4efaf63` had committed a copy to `scratch-evidence/` shortly before the
-  sweep. The allowed write target was mutated out from under the wave, twice (`scratch` →
-  `scratch-evidence` → deleted).
+- At 03:43:55 the harness **moved** the contract's only allowed write target: `scratch/<Seat>/`
+  became `scratch-evidence/<Seat>/` (commit `4efaf63`, 235 files, 59 seat dirs). `scratch/` then
+  reappeared as seats re-created 7 directories, so the same relative path meant different trees
+  before and after 03:43. Citations must use `scratch-evidence/`. This seat's evidence is the moved
+  original, not a rebuild: `scratch-evidence/SentBoundary/evidence.txt`, 6969 B, sha256
+  `c9ac7c2626a8d4370ac9051360d06721cae7791f119aa8d8aca14122201c6362`.
 - `git status` may refresh `.git/index` stat data; that is a read-side cache touch, not a content write.
 - This report does **not** re-score C1/C2 — that is the mutation seats' surface. It records only that
   the bytes those counters read were committed twice during the wave (03:34:26, 03:42:04) and the

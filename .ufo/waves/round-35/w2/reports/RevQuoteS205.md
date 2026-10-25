@@ -3,7 +3,8 @@
 Scope: registry row S205, receipt `.ufo/waves/round-35/fetch/S205.receipt.txt`, and the one
 entry that cites it, `corpus/knowledge/idle-lock-chain-armed-r14.md`.
 Seat posture: read-only attacks. Wrote only under
-`.ufo/waves/round-35/scratch/RevQuoteS205/` and this report. No tool installs (nothing was
+`.ufo/waves/round-35/scratch/RevQuoteS205/` (later relocated by an external sweep to
+`scratch-evidence/` — see Evidence artifacts) and this report. No tool installs (nothing was
 needed); no pacman transaction was attempted.
 
 ## Verdict
@@ -444,12 +445,24 @@ tell them apart.
 
 ## Evidence artifacts
 
-- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 203-line regenerated transcript (every
-  command above, both journal scopes, no-crash and audit-hazard blocks, both counters) with exit
-  codes. **The `scratch/` tree was swept externally twice (~03:45, ~03:47), deleting this file each
-  time**; it was rebuilt from live re-runs both times. Because the sweep can recur, the report itself
-  carries every decisive value and exit code inline, so no finding depends on the scratch file
-  surviving.
+Evidence was relocated mid-review. `scratch/` was **moved** (not deleted) to `scratch-evidence/` at
+~03:45 by an external sweep; `scratch/` was then partly re-created and swept again. Two copies
+matter, and they are not the same bytes:
 
-Every command quoted in this report was run on this host during the review; no value is copied from
-the receipt or from another seat's report without a re-run recorded here.
+1. **Pre-move transcript, commit-pinned.** `4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS205/evidence.txt`
+   — blob `9620ca1580e92256558870e17f905d07cc80c7c2`, 8205 B, 190 lines, header
+   `# RevQuoteS205 evidence 2026-10-25T03:31:59-03:00`. It carries the live probes, the gate-quote
+   byte offset, row checks, both journal scopes, per-boot counts, provenance, and the post-E2
+   C1/C2 runs. It predates the no-crash block (`grep coredumpctl` there = 0).
+2. **Rebuild — explicitly not the measured bytes.** `scratch-evidence/RevQuoteS205/evidence.txt` in
+   the worktree: 9858 B, 203 lines, sha256
+   `e6c8e30e9542874d63260741db8535ac0a5ad42e2835000ae8d903f584097283` (git blob `a3355706…`, staged
+   in the index while HEAD is `4efaf63`). It adds the P7 no-crash/coredump and audit-hazard blocks.
+   A rebuild is a convenience copy, not evidence.
+
+P7 and P8 were measured after the checkpoint, so their decisive commands and outputs are inlined in
+those sections above; no finding depends on either scratch copy. The report body is the durable
+evidence locus — the checkpoint is a 03:43 snapshot and `scratch/` is not stable.
+
+Every command quoted here was run on this host during the review; no value is copied from the receipt
+or from another seat's report without a re-run recorded here.

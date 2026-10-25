@@ -3,11 +3,11 @@
 Seat: `L1Mado35.CritAxisClaims` (critic, UFO-FSD). Read-only attack: every lane byte was
 read; the only writes are under
 `.ufo/waves/round-35/scratch/CritAxisClaims/` and this report. No install or upgrade was
-needed (no tool installed). That scratch tree was removed by an external sweep at ~03:45;
-the probes and receipts had already been checkpointed at
-`.ufo/waves/round-35/scratch-evidence/CritAxisClaims/` (`b632f0b`), and the scratch copy was
-restored **byte-identically from that commit** (not from memory). Every verdict below is
-inlined, so no finding depends on a scratch path surviving.
+needed (no tool installed). `scratch/<Seat>/` was then **moved** to
+`scratch-evidence/<Seat>/` at ~03:43 and committed (`4efaf63`, `b632f0b`); the writable
+copy was removed by a later sweep and restored **byte-identically from that checkpoint**
+(not rebuilt from memory — see §Limits). Every verdict below is inlined, so no finding
+depends on a scratch path surviving.
 
 ## Measured revisions (state as observed, 2026-10-25)
 
@@ -299,14 +299,28 @@ bytes at the frozen blob id.
 computed and discarded.** `c1/count.py` computes `digest = hashlib.sha256(blob).hexdigest()`
 and never uses it; the `ok` block tests `receipt["sha256"] in cs[5]` (the *frozen* digest
 string present in the row's anchor cell), so mutating the receipt bytes leaves the verdict
-unchanged. Reproduced on the seat's own junk tree:
+unchanged. Re-proved after the scratch move with a self-contained minimal root (no junk tree
+and no git needed; script `scratch/CritAxisClaims/digest.sh`, receipt `digest-out.txt`):
 
 ```
-python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/scratch/CritVacuous \
-  --frozen .ufo/waves/round-35/c1/frozen.json
-PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
-c1_on_junk_tree_exit=0
+== D0 minimal root, real receipts =========================================
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   exit=0
+== D1 one receipt mutated (one byte appended) ==============================
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   exit=0
+== D4 S203 receipt fabricated: different bytes, gate-quote still present ====
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   exit=0
+   sha256 of the fabricated receipt = 5b262a2ed88a28061b9c9235ab6cd0d2549203b28a91d33f6fd5cfb0dbee75d5
+   frozen digest for S203            = 1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646
+== D3 control bite: S203 row's anchor digest zeroed =========================
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED exit=1
 ```
+
+D4 is the decisive case: a receipt whose bytes hash to something else still closes the cite,
+because `digest` is computed and discarded. D3 shows what `controls/c1-digest` actually
+kills — the *row's* digest token, not the receipt's bytes. The lane's own durable junk-tree
+receipt is `.ufo/waves/round-35/w1/reports/CritVacuous.md:1-13` (same command,
+`TARGET_MET`); the `scratch/CritVacuous` tree itself was among the 3.2 GB mutant trees
+dropped by the evidence checkpoint, so it is no longer re-runnable.
 This is the lane's own M35-2, stated in the round's committed lesson; the registration's
 predicate sentence ("whose anchor cell carries the sha256 of the named receipt") reads
 stronger than the implementation. The clause ledger lists `digest-match` as a live,
@@ -343,3 +357,15 @@ is lowered."
   read-only); no lane file, index, jj state, or sibling repo was written.
 - The lane moved during the run (data commit `02088b4` landed mid-review); the
   working-tree state at the final read is recorded above.
+- **Scratch provenance.** `scratch/<Seat>/` was *moved* to `scratch-evidence/<Seat>/` at
+  ~03:43 and the checkpoint committed (`4efaf63`, 240 files / 59 seat dirs; a later commit
+  `ca870e9` records the lane without scratch trees). This seat's `sep.sh`, `sep-out.txt`,
+  `reuse.sh`, `reuse-out.txt` were checkpointed byte-identically at
+  `scratch-evidence/CritAxisClaims/` (first committed in `b632f0b`), and the writable
+  `scratch/CritAxisClaims/` copy was restored **from that commit** (md5 equal:
+  `sep-out.txt bd38a7a4…`, `reuse-out.txt 9493f268…`) — not rebuilt from memory. New
+  post-checkpoint probes (`digest.sh`/`digest-out.txt`) live only in the writable scratch;
+  their verdicts are inlined in V3 above, so the report body is the durable locus.
+  `scratch-evidence/CritVacuous` does not exist: that tree was among the 3.2 GB mutant
+  trees dropped by `4efaf63`, which is why V3 now carries a receipt-free minimal-root probe
+  instead of a junk tree.

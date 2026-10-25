@@ -1,10 +1,15 @@
 # RevQuoteS204 — wave 2 falsification of row S204
 
 Seat: `L1Mado35.RevQuoteS204` (leaf, no dispatch). Read-only: no lane corpus file, counter,
-`SOURCES.md`, receipt, or host state was written. Scratch:
-`.ufo/waves/round-35/scratch/RevQuoteS204/` — **rebuilt** after the external sweep at ~03:45
-destroyed the original; the rebuild carries a transcript section plus a fresh replay with exit
-codes. Installs/upgrades: none.
+`SOURCES.md`, receipt, or host state was written. Installs/upgrades: none.
+
+**Evidence locus.** `round-35/scratch/` was *moved* to `round-35/scratch-evidence/` at ~03:43–03:45
+(per-seat dirs intact, 59 seats), not deleted. For this seat: the pre-sweep original is 2140 B,
+sha256 `f983ba8539b60bd1d484c3e20f441571acbca4c73a55c47e845921530be105b0`, preserved in commit
+`4efaf63`; the copy now in the worktree and HEAD is 5081 B, sha256
+`53b5fd38558dfcfe323b1d514e793a02e585e40570acc78e6d82ee48c820c598`, and is a **rebuild from this
+seat's transcript** — not the bytes measured, therefore not evidence. Every command and exit code
+this report relies on is inlined in Appendix A, so the report body is the durable locus.
 
 **Revision 3.** Rev 2 withdrew my "executes 13 items" claim. Rev 3 incorporates the peer check
 with `RevQuoteS203`: the counter is **vacuous**, not merely weak; the boot timeline sharpens the
@@ -156,9 +161,9 @@ Between 03:35:08 and 03:41:38 on 2026-10-25 the frozen entry
 `corpus/knowledge/idle-lock-never-asked-r12.md` was written twice by **another seat**:
 3586 B at 03:35:08 (E1+E2), then 4344 B / sha256 `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`
 / 69 lines at 03:41:38 (adds E3). This seat did not write to lane corpus; its only writes are
-this report and the scratch log. Pre-sweep `stat` gave report 03:40:46 and log 03:37:07; the log
-was then destroyed by the ~03:45 sweep and rebuilt (transcript + fresh replay), so its present
-mtime is not the original. The errata text is not a
+this report and the scratch log (pre-sweep `stat`: report 03:40:46, log 03:37:07; that log was
+relocated to `scratch-evidence/` and a 03:46 rebuild replaced it in the worktree — both shas in the
+header and Appendix A). The errata text is not a
 copy of this report: an overlap probe run at 03:41 against the then-current report
 (`grep -c` for "thirteen items, twelve of them scripts" / "null-channel reading" / "2h50m window
 with the idle daemon down") returned 0 / 0 / 0. That probe is **historical and cannot be re-run
@@ -176,7 +181,10 @@ Residuals I cannot close from outside that file:
    (title line 1), `never exercised the toggle afterwards` (§1 OBS) and `the toggle was never run
    in any session the journal still keeps` (§2 OBS) all remain as text; E3 explicitly keeps the
    title "as landed". Retraction-by-errata leaves the claim live for a reader who stops at the
-   title. That is a lane decision, not this seat's; recorded, not edited.
+   title. That is a lane decision, not this seat's; recorded, not edited. Recommended fix: a
+   banner above H1 plus inline withdrawal markers at §1 line 23 and §2 line 29, since anything
+   quoting the title inherits the withdrawn claim (concurring with `RevEntryR15` and
+   `RevQuoteS203`).
 2. **E2 reproduces my withdrawn error.** "The installer body executes 13 items: 12 `bash …/*.sh`
    plus `omarchy-hook-install`" — `omarchy-hook-install` is `mkdir`/`cp`/`chmod` and does not
    execute the hook, and the enumeration omits `sudo rm -f /etc/sudoers.d/first-run`. Mechanically
@@ -222,10 +230,11 @@ Row-level residuals in the mutated registry:
   (§Residual risk), and only the toggle-OFF and restart paths are excluded by the ON-path
   visibility, not a manual kill.
 - **Row 205 (S203), note cell regressed in precision:** "runs thirteen items … none of the
-  thirteen executed items asks about the idle lock". There are 13 *commands*, one of which
-  (`omarchy-hook-install`) installs rather than executes, and the body also runs
-  `sudo rm -f /etc/sudoers.d/first-run`. Accurate form: "thirteen commands — twelve run scripts,
-  one installs a hook that does not run in first-run".
+  thirteen executed items asks about the idle lock". "Thirteen commands" is also wrong — it drops
+  L24 (`sudo rm -f /etc/sudoers.d/first-run`) — and the hook is installed, not executed. The body
+  runs 15 commands (14 excluding its own mode-file cleanup). A line true under both readings:
+  "thirteen first-run artifacts — twelve scripts that run, one hook that is installed and does not
+  run; the body also clears `/etc/sudoers.d/first-run`".
 - The `recheck` cell moved `on-request` → `on-change`; still a valid cadence token under C1.
 
 ## Residual risk and verification gaps

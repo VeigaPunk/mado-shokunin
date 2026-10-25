@@ -1,0 +1,155 @@
+# RevQuoteS207 verification log — REPLICA (not the measured bytes)
+#
+# Status: this file is a transcript-derived replica. It is NOT evidence.
+# The seat's ORIGINAL log (159 lines, 8220 B) is preserved in git and is the evidence:
+#   git show 4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS207/verify.log
+#   blob c1a76490b428971652306ee7da7784169f455c2d, sha256 64d433f970c2ef3fd99adcf1a71f991258a9514e3a641c395e477af1d6bf4d5f
+#
+# What happened (corrected 2026-10-25T03:5x): .ufo/waves/round-35/scratch/ was MOVED to
+# scratch-evidence/ (~03:43 per-seat dirs, tree 03:45), not deleted. A subsequent sweep
+# re-created scratch/ and the relocation then moved this seat's rebuilt 8377 B file over
+# the original worktree copy at scratch-evidence/RevQuoteS207/verify.log (now sha256
+# dffe5da6f187cafa7d2986f8b3e9c4edad3c3e0e9e76ddac0ff8833a8c6a47cb). The original bytes
+# survive only in commit 4efaf63. Commands below were re-run against the live tree; the
+# values marked "===" matched the original log's captured values at audit time.
+== (a) live source ==
+$ sha256sum /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750  /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+rc=0
+
+$ wc -c /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+159 /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+rc=0
+
+$ wc -l /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+7 /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+rc=0
+
+$ stat -c %n type=%F nlink=%h mode=%A mtime=%y inode=%i uid=%u /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+/home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh type=regular file nlink=1 mode=-rwxr-xr-x mtime=2026-10-03 17:42:32.308984887 -0300 inode=929 uid=1000
+rc=0
+
+$ readlink -f /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+/home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+rc=0
+
+$ cat /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+#!/bin/bash
+
+if pgrep -x hypridle >/dev/null; then
+  echo '{"text": ""}'
+else
+  echo '{"text": "󱫖", "tooltip": "Idle lock disabled", "class": "active"}'
+fi
+rc=0
+
+== (b) receipt ==
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt
+81c33e7926f0bad071d31e9fc67e1d06967e3142da40ea3c93b16510b0adec59  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt
+rc=0
+
+$ wc -c /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt
+705 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt
+rc=0
+
+$ stat -c %n type=%F nlink=%h /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S207.receipt.txt type=regular file nlink=1
+rc=0
+
+$ pgrep -x hypridle
+1667
+rc=0
+
+$ python3 -I - # contiguity, embedded body, JSON payloads
+gate-quote: located: idle.sh pgreps hypridle and prints the tooltip Idle lock disabled when it is absent
+bytes 92 words 15 contiguous True offset 612 count 1
+after quote b'\n' CR False ends_LF True
+embedded==live True sha 6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750
+live bytes 159 sha 6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750
+line 4 keys=['text'] text='' tooltip=None class=None
+line 6 keys=['text', 'tooltip', 'class'] text='\U000f1ad6' tooltip='Idle lock disabled' class='active'
+entry sha 82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe
+rc=0
+
+== (c) row S207 / counters ==
+$ sha256sum corpus/SOURCES.md
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  corpus/SOURCES.md
+rc=0
+
+$ stat -c %s bytes mtime=%y corpus/SOURCES.md
+171446 bytes mtime=2026-10-25 03:40:12.893966805 -0300
+rc=0
+
+$ grep -cE '^ {0,3}\|[[:space:]]*S207[[:space:]]*\|' corpus/SOURCES.md
+1
+rc=0
+
+$ awk -F'|' '$2 ~ /S207 /{print $7}' corpus/SOURCES.md
+ lines 3-6 at /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh, 159 B, file sha256 6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750; receipt .ufo/waves/round-35/fetch/S207.receipt.txt sha256 81c33e7926f0bad071d31e9fc67e1d06967e3142da40ea3c93b16510b0adec59 
+rc=0
+
+$ c1
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+$ c2
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+rc=0
+$ c1 golden
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+
+== (d) five gate-quotes ==
+S206 lines=1 bytes=111 words=13 in_receipt=True occ=1
+S207 lines=1 bytes=92 words=15 in_receipt=True occ=1
+S208 lines=1 bytes=105 words=14 in_receipt=True occ=1
+S209 lines=1 bytes=96 words=13 in_receipt=True occ=1
+S210 lines=1 bytes=82 words=15 in_receipt=True occ=1
+rc=0
+
+== (e) entry lines cited ==
+$ sed -n '16p;37p;56,57p' entry
+gate-quote: S207 located: idle.sh pgreps hypridle and prints the tooltip Idle lock disabled when it is absent
+**OBS** The indicator does more than toggle (S207): it asks whether `hypridle` is
+**OBS** The premise is corrected: the desktop offers the choice in two surfaces,
+since at least 2026-10-03 on this host, and shows which state is in force.
+rc=0
+
+== (f) date-half measurements (INFO-5 retraction) ==
+$ sha256sum oldest backup + omarchy default
+ff387b21ab51f4d5c4752142de31d1cfb2e8a459647a8f84849a522aee57c061  /home/vgpnk/.config/waybar/config.jsonc.bak.1791314470
+ff387b21ab51f4d5c4752142de31d1cfb2e8a459647a8f84849a522aee57c061  /home/vgpnk/.local/share/omarchy/config/waybar/config.jsonc
+rc=0
+  /home/vgpnk/.config/waybar/config.jsonc.bak size=5892
+    btime=2026-10-11 10:36:07.022252901 -0300 mtime=2026-10-11 10:36:07.023252903 -0300 ctime=2026-10-11 10:36:07.023252903 -0300
+  /home/vgpnk/.config/waybar/config.jsonc.bak.1791314470 size=5114
+    btime=2026-10-06 16:21:10.082789105 -0300 mtime=2026-10-03 17:44:32.097653608 -0300 ctime=2026-10-06 16:21:10.083846414 -0300
+  /home/vgpnk/.config/waybar/config.jsonc.bak.1792203278 size=6068
+    btime=2026-10-16 23:14:38.105347715 -0300 mtime=2026-10-16 23:14:38.105347715 -0300 ctime=2026-10-16 23:14:38.105347715 -0300
+  /home/vgpnk/.config/waybar/config.jsonc.bak.1792267376 size=6068
+    btime=2026-10-17 17:02:56.289181525 -0300 mtime=2026-10-17 17:02:56.289334445 -0300 ctime=2026-10-17 17:02:56.289334445 -0300
+delta 119.801367 s
+$ sed -n '22,25p' omarchy-refresh-config
+default_config_file="${HOME}/.local/share/omarchy/config/$config_file"
+backup_config_file="$user_config_file.bak.$(date +%s)"
+
+mkdir -p "$(dirname "$user_config_file")"
+rc=0
+
+== (g) closing hashes ==
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  corpus/SOURCES.md
+0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504  corpus/knowledge/idle-lock-never-asked-r12.md
+583c708c338ecb063f8ef38071d415c79476088f27994551fd964384be1e0bf3  corpus/knowledge/idle-lock-chain-armed-r14.md
+82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe  corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
+1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646  .ufo/waves/round-35/fetch/S203.receipt.txt
+4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  .ufo/waves/round-35/fetch/S204.receipt.txt
+f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a  .ufo/waves/round-35/fetch/S205.receipt.txt
+1d30e4a999b53d5288369edc7573d7ceee0aef99570a55d781c4625440a938d5  .ufo/waves/round-35/fetch/S206.receipt.txt
+81c33e7926f0bad071d31e9fc67e1d06967e3142da40ea3c93b16510b0adec59  .ufo/waves/round-35/fetch/S207.receipt.txt
+6e72f0db3d7bbfecf4096b0aa22f716f417c00caa50b6d3319106387d6ce4654  .ufo/waves/round-35/fetch/S208.receipt.txt
+a170c7a50b9305b3448fc85ecddb0d7b1f1c3ff5e42c78cdc2d07718c3bdd27c  .ufo/waves/round-35/fetch/S209.receipt.txt
+ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726  .ufo/waves/round-35/fetch/S210.receipt.txt
+78c2589286a2d70c9b109672c85cd4e9bcb85438bc80ab888d10b73ad12abad6  .ufo/waves/round-35/c1/count.py
+e18e7aef81e78fc385b3fa9d524a6c875182273517d65d97bb94c463b7743b30  .ufo/waves/round-35/c1/frozen.json
+4f0106c6a46c25912013e9b9780e1d0b5aa77f98d04455013df7a8e4bdeea11f  .ufo/waves/round-35/c2/count.py
+b6a8ac0181035c1ef6b756ffc7ca67bc5bc46e52d872d7ef8ed86f483a6eb78f  .ufo/waves/round-35/c2/frozen.json
+rc=0
