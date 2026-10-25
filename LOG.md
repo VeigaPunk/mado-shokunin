@@ -2300,8 +2300,7 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   receipts and the live eventq triplet committed before any round-38 data.
 - Data `245065c`/`efb0ec2`: three adopted shokuknow package entries re-grounded —
   `hyprctl-flags-r28.md` (S221), `request-socket-live-bound-r8.md` (S158/S187/S258/S277),
-  `request-limits-upstream-r31.md` (S253); two refusals stand (null-channel r28/r29, the
-  64 KiB-as-request-cap r29 draft). Registry: 4 new rows, S158/S187 used-by extended.
+  `request-limits-upstream-r31.md` (S253); three refusals stand (event-queue-host-measurement-r28, event-queue-journal-measurement-r29 - both null-channel - and socket-client-contract-measurements-r29, the 64 KiB-as-request-cap draft). Registry: 4 new rows, S158/S187 used-by extended.
 - Counters MET at `b6c1d31`: C1 v3 admitted=2/2; C2 v3 fixtures=14/14 live=1; domain 3/3.
 - Manifest/receipts fix `b6c1d31` (duprow in-table insert, docconn receipt-sha update).
 - Wave 1: 35 attack seats dispatched (validated under ufo-wave-policy.json).

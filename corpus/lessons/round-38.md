@@ -42,8 +42,8 @@ two:
 | (new) | socket-client-contract-measurements-r29.md | **refuse** — "requests capped at 64 KiB" is the follow-queue bound; its socket census is superseded by S258's stat and round-37's live census | none |
 
 Id collisions: 15 of 147 staged ids (S203–S217) conflicted with held rows —
-all in the refused register's block. The three adopted new ids (S221, S253,
-S277, S258) were free. The staged register is left unassimilated (its rows
+all in the refused register's block. The four adopted new ids (S221, S253,
+S258, S277) were free. The staged register is left unassimilated (its rows
 covered only the refused entries).
 
 ## Findings — open items for round 39+
@@ -70,3 +70,20 @@ covered only the refused entries).
 5. **The `has-tool` discipline is per-path, not per-binary.** C2's
    `tool_present` clause checks `tools/mado-eventq.py` exists at `rev`; a
    rename or a sibling tool would need the clause re-pinned.
+
+## Mistakes
+
+- Freeze-discipline failure (RevCommitChain F1-F3): the C1 counter (859d0cf)
+  and the discrimination manifest (b6c1d31) were patched after the freeze. The
+  claim as frozen fails its own instrument contract; the landed pair is a new
+  predicate routed for a re-registration ruling. Refined by the wave's replays:
+  frozen instruments x frozen manifest = 19/19 at the freeze rev (the c1-duprow
+  control's `append` landed outside `## Registry`), 18/19 under HEAD instruments x
+  frozen manifest, 19/19 under the repaired pair.
+- The frozen registration refused `socket-modes-and-request-read-r30.md`'s
+  successor chain as a package entry; the ledger above records the three refusals
+  explicitly (r28, r29 journal, r29 socket-client) - earlier LOG wording said
+  "two" and is corrected.
+- S258 was cited in r8's body but omitted from its `source:` header at data time;
+  the counter's per-id clauses therefore did not enforce it (RevDomCounter). Fixed
+  at `b8400aa7` after the counter admitted 3/3 with the hole open.
