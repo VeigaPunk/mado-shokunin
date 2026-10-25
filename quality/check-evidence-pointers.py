@@ -148,19 +148,25 @@ def main() -> None:
     ptr36 = pointers(log36) + [p for p in pointers(sc36) if p not in pointers(log36)]
     ptr36 += [p for p in pointers(lesson) if p not in ptr36]
 
+    # A pair counts only when its replacement is itself a pointer-shaped path that
+    # resolves: `- `ghost.md` -> `LOG.md`` must not launder a dangling citation.
+    pairs = [(m.group(1).strip(), m.group(2).strip())
+             for m in (PAIR.match(ln) for ln in log36.splitlines())
+             if m and pointerish(m.group(2).strip()) and resolves(m.group(2).strip(), files)]
     dangling35 = [p for p in ptr35 if not resolves(p, files)]
-    superseded_old = {m.group(1).strip() for m in (PAIR.match(ln) for ln in log36.splitlines()) if m}
+    superseded_old = {o for o, _ in pairs}
     dangling36 = [p for p in ptr36 if not resolves(p, files) and p not in superseded_old]
 
     record_intact = all(p in ptr35 for p in SUPERSEDED_POINTERS)
-    pairs = [m for m in (PAIR.match(ln) for ln in log36.splitlines()) if m]
     closed = 0
     for old in dangling35:
-        for m in pairs:
-            if m.group(1).strip() == old and resolves(m.group(2).strip(), files):
-                closed += 1
-                break
-    dangling35_closed = 1 if (record_intact and closed == len(dangling35)) else 0
+        if any(old == o for o, _ in pairs):
+            closed += 1
+    # Closure is owed even when the two pointers happen to resolve at the checked
+    # revision: restoring the tree is not the same act as naming the supersession.
+    named = sum(1 for p in SUPERSEDED_POINTERS if any(p == o for o, _ in pairs))
+    dangling35_closed = 1 if (record_intact and named == len(SUPERSEDED_POINTERS)
+                              and closed == len(dangling35)) else 0
 
     dirty = [ln for ln in git(repo, "status", "--porcelain", "--", *INHERITED_PATHS).splitlines() if ln.strip()]
     inherited_dirty = len(dirty)
@@ -170,7 +176,14 @@ def main() -> None:
     for line in lesson.splitlines():
         if ".ufo/waves/round-35/scratch" in line:
             m = DISPOSITION.search(line)
-            if m and int(m.group(1)) == scratch_count:
+            if not m or int(m.group(1)) != scratch_count:
+                continue
+            # A negated sentence ("NOT retained") is not a disposition: the keyword
+            # must stand on its own within the line.
+            low = line.lower()
+            if re.search(r"\b(not|never|no longer)\b[^.]{0,40}\b(retain\w*|kept|keep|deleted|removed)\b", low):
+                continue
+            if re.search(r"\b(retained|retain|deleted|removed|kept)\b", low):
                 scratch_disposition_ok = 1
                 break
 

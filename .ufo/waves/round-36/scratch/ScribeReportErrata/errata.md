@@ -9,7 +9,6 @@ All numbers below are the ones `ScoutD1Facts`, `ScoutD6Rows` and
 `ScoutD7Counts` report under `.ufo/waves/round-36/w1/reports/` (all read at
 final draft time).
 
-
 ---
 
 ## D1 — report-lands-last and tip citation
@@ -23,18 +22,25 @@ Round-35 report text (`.ufo/reports/round-35/mado.md:94` at `763734e1`):
 > then evidence-and-closure sweeps — which is the provenance defect
 > `SentBoundary` routed.
 
-Correction: the round-35 lane tip at closure is
+Correction (`ScoutD1Facts` verdict: **D1 upheld, sharpened**): the round-35
+lane tip at closure is
 `7a068cbee3b0983230b8fb8467c02e12772832dd` ("round-35: close",
-2026-10-25 03:53:37 -0300). The report named no fixed tip hash; it deferred
-to `rev-parse master` at read time. The report's **last** committed version
-(`763734e1`, committer 2026-10-25 03:53:15 -0300, "mado report — the
-row-section gap and the dead digest store named per seat") landed **before**
-three lane commits — `567945e`, `2eddc38`, `7a068cb` (committer dates
-03:53:26 / 03:53:32 / 03:53:37) — so the report did not land last and did not
-cite the tip hash. `[pending scout]` ScoutD1Facts re-derivation of the exact
-one-sentence erratum wording and the fleet-commit report first-land. The
-round-36 report should state the tip hash `7a068cb…` and follow the
-report-after-last-commit convention going forward.
+2026-10-25 03:53:37 -0300) — the direct parent of the spot-check commit
+`4243d03`; the report's last commit `763734e1` preceded it and cited no tip
+hash. The report-lands-last defect holds under either clock: by committer
+date three lane commits (`567945e` 03:53:26, `2eddc38` 03:53:32,
+`7a068cb` 03:53:37) follow the report's last commit (committer 03:53:15);
+by author date a fourth, `ee22d39` (03:53:13), also follows it (author
+03:53:03) — the spot-check's "three" enumeration is committer-consistent
+only. The one-sentence erratum the round-36 report owes (ScoutD1Facts):
+
+> The round-35 lane tip is `7a068cbee3b0983230b8fb8467c02e12772832dd`
+> ("round-35: close", committed 2026-10-25 03:53:37 -0300): the round-35
+> report's last commit `763734e1` preceded it and cited no tip hash —
+> routed as spot-check defect D1, corrected here.
+
+Future rounds should write the report after the last lane commit and name the
+clock (author vs committer) in any ordering spec.
 
 ---
 

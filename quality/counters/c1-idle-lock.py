@@ -108,8 +108,8 @@ def registry_section(sources: str) -> str:
     out: list[str] = []
     keep = False
     for line in sources.splitlines():
-        if re.match(r"^ {0,3}##[ ]", line):
-            keep = line.strip().lower().startswith("## registry")
+        if re.match(r"^ {0,3}##[ \t]", line):
+            keep = line.strip()[2:].strip() == "Registry"
             continue
         if keep:
             out.append(line)

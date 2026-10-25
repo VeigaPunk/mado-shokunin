@@ -66,10 +66,17 @@ def run(argv: list[str], cwd: Path, env: dict[str, str]) -> tuple[int, str]:
 
 
 def observed_of(rc: int, out: str) -> str:
-    if rc == 2:
-        return "ERROR"
+    """A verdict counts only when the instrument's exit code agrees with it.
+
+    MET must exit 0, MISSED must exit 1; anything else (2, an unexpected code, no
+    verdict line) is ERROR. Without this a counter that prints `TARGET_MET` and exits
+    non-zero would be scored as meeting the target.
+    """
     m = VERDICT.search(out)
-    return m.group(1) if m else "ERROR"
+    if not m:
+        return "ERROR"
+    expected_rc = 0 if m.group(1) == "TARGET_MET" else 1
+    return m.group(1) if rc == expected_rc else "ERROR"
 
 
 def main() -> None:
@@ -92,7 +99,10 @@ def main() -> None:
     if not controls:
         die("manifest-empty")
 
-    env = dict(os.environ)
+    # Strip every ambient GIT_* variable first: `git -C <dir>` does not override an
+    # inherited GIT_DIR, so an attacker-controlled environment could redirect every git
+    # call this gate makes. Only the fixture plumbing below sets one.
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
     env["GIT_DIR"] = str(repo / ".git")
     env["PYTHONDONTWRITEBYTECODE"] = "1"
 
@@ -134,6 +144,8 @@ def main() -> None:
     correct = 0
     rows: list[tuple[str, str, str, str, bool]] = []
     for control in controls:
+        if not re.fullmatch(r"[A-Za-z0-9._-]+", control.get("id", "")):
+            die(f"control-id-not-a-safe-name:{control.get('id')!r}")
         inst = control["instrument"]
         expected = control["expect"]
         if inst not in scripts:
