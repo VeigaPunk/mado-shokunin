@@ -290,7 +290,8 @@ A criterion that cannot fail on the artifact that produced it is decoration. The
 round-35 predicate was frozen before data and is not amended; the repair is a
 round-36 claim: bind the digest to the bytes read, and add the content cribs as
 committed controls. **The repair is demonstrated on a scratch copy** —
-`scratch/L1DigestFix/count-fixed.py`, one added conjunct
+`.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py` (committed at `4f35c80`; its
+working-tree copy was dropped with the mutant trees), one added conjunct
 `and digest == receipt["sha256"]`:
 
 ```text
