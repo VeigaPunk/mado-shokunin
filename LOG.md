@@ -2190,3 +2190,22 @@ critic 5, sentinel 2, connector 2, simplifier 2, revenger 1). Evidence: the spec
 validator's task-call payload and the 64 rendered seat prompts under the round-36
 wave directory, and the seat reports under its `w1/reports/` subdirectory.
 
+
+## Round 36 — correction (the D10 transcript path)
+
+The D10 bullet in the round-36 entry above names a transcript file under
+`quality/receipts/` after the data commit; that name was renamed before landing. The
+green tip transcript is
+`quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt`, produced at the
+records commit (`MADO_AXIS: checked=3 mismatched=0`, `MADO_INDEX: indexed=50/50`), and
+the red half — the axis gate at the data commit with the previous publication still in
+force, `mismatched=1` — is
+`quality/receipts/red-axis-publication-stale-at-data-commit.txt`. Nothing else in the
+entry changes.
+
+## Round 36 — the sixth mistake, carried by a wave seat
+
+`corpus/lessons/round-36.md` M36-6 and `corpus/QUALITY.md` criterion 61 record a defect a
+wave seat found: a command in the frozen registration could not run as written
+(`quality/check-index.py --repo .` exits 2). The seat's verbatim run and the corrected
+form are in `.ufo/waves/round-36/w1/reports/RevIndexGate.md`.
