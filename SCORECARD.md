@@ -2200,8 +2200,9 @@ whatever ledger it is handed".
 ### Sources, saturation, planned
 
 Sources 192 → 200 rows (S203–S210: eight `own-work` tier-A rows, all `mined`, opened
-2026-10-24; no existing row's status/recheck/used-by changed; four new rows' `scope`/`teaches`
-cells were corrected in-round to match the entry errata). Frontier advanced: the round-35
+2026-10-24; no existing row's status/recheck/used-by changed; three new rows (S203, S204, S205) had
+`scope`/`teaches`/`recheck` cells corrected in-round to match the entry errata
+(`git diff --numstat 02088b4 HEAD -- corpus/SOURCES.md` → 3 insertions, 3 deletions)). Frontier advanced: the round-35
 idle-lock offer route (consumer half measured; transitions remain open). Saturation 9.0 / N=3
 unchanged; retired: none.
 Planned (round 36; intent only): (1) bind the C1 digest to the bytes read and add the two
@@ -2226,4 +2227,4 @@ reads "none retired". The three-cell quote in the registration is therefore inco
 not wrong on value; the lowest-axis conclusion (two tied-lowest axes, no nudge waiver)
 survives. Recorded for round 36: `sourced-art` must be retired explicitly or republished.
 
-**Axis table re-derived at `4f35c80ed31b4745a462c0216187583528393620` (round-35 wave-2 close, the publication the gate reads):** navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12.
+**Axis table re-derived at `7b745a1d943e5db5e8b9f8a7f4bee7af65b13990` (the first commit whose publication the gate parses; at `4f35c80` it read `mismatched=2`, calibration and operability NOT-PUBLISHED):** navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12.

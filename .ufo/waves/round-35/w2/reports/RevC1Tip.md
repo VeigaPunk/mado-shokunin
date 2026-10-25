@@ -253,9 +253,12 @@ PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
 rc=0
 ```
 
-The claim is therefore committed-durable at `02088b4`, `4f35c80` and `7b745a1`, and at 03:43 committed
-bytes and working bytes coincide, so "committed-and-working bytes" no longer need to be distinguished
-for this claim. The +61 inserted lines that wave-2 added to the entries are committed in `4f35c80`;
+The claim is therefore committed-durable at `02088b4`, `4f35c80`, `7b745a1` and `ca870e9`, and at
+03:43 committed bytes and working bytes coincide, so "committed-and-working bytes" no longer need to
+be distinguished for this claim. A second `git archive HEAD` run at **03:46:48** (HEAD `ca870e9`)
+returns the same `3/8/0`, `rc=0`; the lane's closing HEAD `1bb25c7` has a clean corpus with the same
+`SOURCES.md`/entry blob hashes (verified by `git status --porcelain -- corpus` empty and `git
+cat-file` hashes). The +61 inserted lines that wave-2 added to the entries are committed in `4f35c80`;
 they do not touch a quote and did not change the verdict. RevSelftest's caveat ("the C1/C2 verdicts
 are only durable once the wave is committed") is discharged.
 
@@ -279,22 +282,40 @@ are only durable once the wave is committed") is discharged.
 
 ## 8. Reproduction
 
-All under `.ufo/waves/round-35/scratch/RevC1Tip/`:
+**Location and relocation.** The lane moved `.ufo/waves/round-35/scratch/` to
+`.ufo/waves/round-35/scratch-evidence/` at 03:45 and committed the result (`240` files, 59 seat dirs);
+the live `scratch/` is not stable (my re-created copy there was removed again). Cite the relocated,
+tracked paths below. The large mutant trees (`tree/`, `m*`, `headtree2/`, `censusB-*`) did not
+survive the checkpoint — the checkpoint dropped the mutant trees — but `reproduce.sh` rebuilds every
+one of them from the lane bytes.
 
-| path | what |
-|---|---|
-| `reproduce.sh` | rebuilds the minimal tree and every probe from the lane tree, including the committed-`HEAD` archive run |
-| `evidence.txt` | state (i) transcript (pre-commit working copy, `HEAD=19e4ab3`) |
-| `evidence2.txt` | state (ii) transcript (`HEAD=02088b4`) |
-| `evidence3.txt` | **authoritative** transcript on state (iii), `HEAD=7b745a1` |
-| `independent_c1.py` | own-parser re-derivation; prints `strictA`/`strictB` and per-cite facts |
-| `tree/`, `tree2/` | 12-file minimal scored trees (192,875 B) |
-| `m1b/`, `m9b/` | the two successful falsifications on current bytes |
-| `m2/ … m8/` | negative controls from §5 |
-| `headtree2/` | `git archive HEAD` extraction, run with committed counter + spec |
-| `headtree/` | the earlier `19e4ab3` HEAD-only run (`0/0/8`) |
-| `censusB-clean/`, `censusB-m9/` | full-lane census A/B fixtures (`ok` vs `E12`) |
-| `census-ab.txt` | census A/B transcript with hashes |
-| `strace.txt`, `strace-net.txt` | read-set and zero-network traces |
+Tracked under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/` at `HEAD`:
+
+| path | sha256 | what |
+|---|---|---|
+| `evidence3.txt` | `d9682541476dad0ad8c5a4bab2d941d8211eefb9764bb5ceba894dabd29cc322` | **authoritative** transcript: §1–§7 on state (iii), `HEAD=7b745a1`, 9,079 B |
+| `evidence2.txt` | `ca2c8088bd45d37a3a59a8a3e5740b69d8ab9b1ed7106172e77c38f91345bbde` | state (ii) transcript (`HEAD=02088b4`) |
+| `reproduce.sh` | `95649cc57f3d634bdef2c62f0c8efb80bb3fa4e2bad0e192a9abc04a8bdb3b5c` | rebuilds the tree and every probe and the committed-`HEAD` archive run; resolves `independent_c1.py` beside itself (post-relocation fix). Verified end-to-end: 9 `TARGET_MET` + 6 `TARGET_MISSED` verdict lines, `rc=0` |
+| `independent_c1.py` | `dd2afd7a0200866d27c97334c1b5b6b5ee289ccadef2239002d5632f97012cbc` | own-parser re-derivation; rebuilt after the move (pre-move copy sha `36309af7…`), same `strictA`/`strictB` and per-cite verdicts |
+| `census-ab.txt` | `00bd4c867b81c97de0dd95f7f431455e2ba51c3971ca2973ea5b35fb67b2c6ec` | census A/B on the current `SOURCES.md` (`ok` vs `E12`, `rc=0` vs `rc=1`); inner paths are pre-move |
+| `census-e12.out` | `ff6b58b0436aa3fe781047f1ee263e3c0c001e9d6a334b351c69319f7d02c4b6` | raw E12 finding |
+| `strace.txt` | `d755c571c75e0dabab679cb89bef449d60c4f83f14b142c51f2d86be0388d729` | read-set trace over the 12-file tree |
+| `strace-net.txt` | `8f70a8bdcf874f043cb09b6ccc97cb52c4e589b2ac405f31a555f9be66164e29` | zero network syscalls |
+| `final.out` / `final.err` | `d8fcd1b4b6fe3845e56d3ecfac67b29dca3868bd5bd80699382c2321df86a69a` / `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` (empty file) | assigned run, stdout 78 B, stderr 0 B |
+| `evidence.txt` | `61308bbd96e34ae5629426b0043a5c2429a84c8558476fa9520b82233d0c00fc` | **not evidence**: 46-byte failed-invocation stub from the relocation window |
+
+Rebuild with:
+
+```
+$ cd /home/vgpnk/Projects/shokunin/mado-shokunin
+$ bash .ufo/waves/round-35/scratch-evidence/RevC1Tip/reproduce.sh
+```
+
+It prints the hash block, the assigned run, the cwd/determinism runs, the 12-file tree, F1, M2-M8,
+F2, the `git archive HEAD` run, the independent checker, and the strace counts. It builds its mutant
+trees under the pre-move output root `scratch/RevC1Tip/` (which the lane sweeps); the stdout is the
+evidence, and the tracked transcripts above are the record. Run from the tracked path — the script
+finds `independent_c1.py` beside itself. Last verified run: `rc=0`, 9 `TARGET_MET` + 6
+`TARGET_MISSED` verdict lines, `HEAD=a80f8cb`, all corpus blob hashes as pinned in §1.
 
 No package installs were required or performed (pacman stayed untouched, as directed).

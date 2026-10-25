@@ -22,7 +22,16 @@ Appendix supersedes it for probes 1-27. At HEAD the directory carries both `veri
 `verify.recovered.log` as one and the same git blob (`41ac5231`), so the truncated segment is all that
 was ever preserved: probes 01-27 and 38-42 exist only in the Appendix, and no fuller original is
 recoverable anywhere. That is a negative result worth stating, because it means nothing was lost by
-the relocation — only by this seat's own earlier overwrite. `scratch/RevEntryR15/` was re-created twice during this seat
+the relocation — only by this seat's own earlier overwrite.
+Locator to cite, commit-pinned: `git show 1bb25c7:.ufo/waves/round-35/scratch-evidence/RevEntryR15/verify.log`
+(blob `41ac5231`) and `…/findings.md` (blob `c3e48109`). The worktree copy under `scratch-evidence/` is
+not safe on its own — seat RevQuoteS205 found its own file there was a rebuild staged in the index while
+HEAD held the measured original — so a reader must compare against the blob, not the path.
+Checked for this seat specifically: working tree, `HEAD` and `4efaf63` carry the same sha256 for both
+files (`61631900…` and `e5d010f3…`), so no post-move rebuild overwrote them here; other seats
+(RevQuoteS204, RevQuoteS205, RevQuoteS207, ConnOverlap) were not so lucky, which is why the blob-pinned
+form above is the one to cite.
+`scratch/RevEntryR15/` was re-created twice during this seat
 and is a convenience copy, never evidence; no verdict here depends on it.
 
 ## Axes
@@ -169,6 +178,14 @@ toggles. Three scripts do converge on the tree (`omarchy-toggle` → `toggles/<n
 `omarchy-hyprland-toggle` → `toggles/hypr/<name>.conf`), which makes the claim plausible, but the
 entry cites none of them and S210 cannot support it.
 
+Read at `corpus/SOURCES.md` sha256 `0bf117e2…0d51` (HEAD `4f35c80`), where rows S206-S210 are
+byte-identical to the text this review quotes — S210's `teaches` cell included. That pin matters,
+because the registry is not stable: seat RevRowsUsedBy documents five in-place cell rewrites at
+03:40:12 (S203/S204/S205 `teaches` and `scope`, plus two `recheck` flips) that sit outside the columns
+`SOURCES.md:6-7` permits to change. So F5 judges the cell as it stands at `0bf117e2…`; if that cell is
+rewritten later, re-read the receipt before trusting either version, and note that C1 cannot see the
+change (see the row-truth bullet under residual risk).
+
 ### F6 — LOW-MEDIUM — "Why the choice leaves no trace" is unscoped
 
 `omarchy-toggle-idle` lines 7 and 10 run `notify-send -u low "… Now locking computer when idle"`.
@@ -219,8 +236,8 @@ appending.
 Line 57 carries two clauses and they fail differently. The *state* half ("shows which state is in
 force") is weak on E4's own standard: exactly one state carries words. The *date* half ("since at
 least 2026-10-03") is sound, but only on the content clock, and the entry never labels the clock:
-mtime `2026-10-03 17:44:32.097653608` is 2 min after the omarchy package stamp
-`2026-10-03 17:42:32` carried by every file under `~/.local/share/omarchy/`, so it is not the
+mtime `2026-10-03 17:44:32.097653608` is 119.801 s after the omarchy package stamp
+`2026-10-03 17:42:32` (measured against `config/waybar/config.jsonc` at `17:42:32.296286539`), so it is not the
 package's stamp; and `omarchy-refresh-config:23` makes `.bak.$(date +%s)` with `cp -f`, which does
 not preserve mtime (the other three copies carry `mtime ≈ btime`), so the one copy that preserved
 10-03 was made by a preserving path whose invocation is inferred, not demonstrated. A creation-clock
@@ -295,6 +312,12 @@ against this revision, not the next one.
   `hyprland.conf:23`). Registering those four in S210's anchor cell, together with
   `bin/omarchy-toggle-idle`, `default/hypr/toggles/` and `default/hypr/autostart.conf` for E3, closes
   N1 and L2 in one edit rather than two separate errata.
+- **Closure is formal, not semantic.** `corpus/SOURCES.md` moved at 03:40:12 (`0bf117e2…`) with five
+  cells rewritten in place outside the permitted columns (seat RevRowsUsedBy), and seat RevQuoteS205
+  caught row S205's `teaches` changing wording while C1 stayed `TARGET_MET` rc=0. C1 checks identity,
+  digest containment, status, cadence, used-by and the gate-quote substring — never the `teaches` cell.
+  So `closed_rows=8` certifies well-formedness and anchoring, not row truth, which is exactly why F5's
+  defect survives the gate; binding `teaches` to a hashed freeze-time snapshot would close it.
 - The errata are correct but appended: five body sentences the entry now calls false are still
   readable above them (N2). Fixing the body is the only way a reader who stops at §5 gets the true
   version; `idle-lock-never-asked-r12.md` §3 is the in-body precedent.
@@ -373,8 +396,8 @@ Reads only. `R` = result, `x` = exit code. Entry revision throughout: sha
 38 stat -c '%w|%y|%z' four copies -> only .1791314470 has mtime < btime;
    others mtime≈btime≈ctime                                                             x0
 39 omarchy-refresh-config:23-24 -> .bak.$(date +%s) then cp -f (no -p)                  x0
-40 stat omarchy package files -> all 2026-10-03 17:42:32; backup mtime 17:44:32.097653608
-   (+2m00.1s) -> preserved stamp is NOT the package stamp                              x0
+40 stat omarchy package files -> all 2026-10-03 17:42:32 (config.jsonc .296286539);
+   backup mtime 17:44:32.097653608 = +119.801 s -> preserved stamp is NOT the package stamp  x0
 41 type -a cp -> /usr/bin/cp, GNU coreutils 9.12                                       x0
 42 grep -c omarchy-toggle-idle default config/waybar/config.jsonc -> 1                  x0
 ```

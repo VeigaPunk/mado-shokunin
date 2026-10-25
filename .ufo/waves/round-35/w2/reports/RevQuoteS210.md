@@ -22,6 +22,25 @@ seat dirs** at HEAD; the checkpoint commit `4efaf63` ("checkpoint the 235 seat
 evidence files…") carries 235, with `b632f0b`, `ca870e9`, `1bb25c7` adding the rest
 — pin the count to the revision you cite, not to the live index.
 
+**Cite the commit, not the path.** Durable anchor for the two files:
+`git show HEAD:.ufo/waves/round-35/scratch-evidence/RevQuoteS210/rederive.sh`
+(HEAD = `1bb25c7`, blob `0ac004a4…`) and `…/rederive.out` (blob `53d8daa6…`).
+`git hash-object` of both worktree files returns those same blob ids, and — the
+decisive check — `git show HEAD:<path> | sha256sum` and
+`git show 4efaf63:<path> | sha256sum` both print the pinned values
+(`468c54a6…` / `4b7b77d6…`), with `git diff --name-only HEAD -- …/RevQuoteS210`
+producing no output. Checkpoint, HEAD and worktree are therefore byte-identical at
+this seat: the bytes I pin are the tracked bytes, and no rebuild was merged over
+them. That check is not academic — six seats reported the trap materialising at the
+same relative path: `RevEntryR14` restored its 8446 B measured log from `4efaf63`
+after a rebuild overwrote it, `RevQuoteS203`/`S204` worktree logs are reconstructions
+while their checkpoint blobs carry the measured bytes, `RevQuoteS207`'s copied file
+now hashes `dffe5da6…` where the checkpoint has `64d433f9…`, `RevQuoteS205`'s
+worktree file is a 9858 B rebuild against an 8205 B original, and `RevC2Tip`'s
+`attack.py` differs from the checkpoint by four rebuild-header lines. Presence in
+`scratch-evidence/` is not provenance: hash the file and compare it to the commit
+before citing it.
+
 Two cautions, both observed, neither affecting this seat:
 
 - `scratch/` still churns. It has been re-created and re-swept repeatedly since the
@@ -29,6 +48,12 @@ Two cautions, both observed, neither affecting this seat:
   dirs, then none). A bare `scratch/<Seat>/` path therefore names a *different
   namespace* from the one measured, and can resolve to a transcript rebuild rather
   than the measured bytes. Cite `scratch-evidence/<Seat>/` with the shas above.
+- The move carried **top-level files only** (reported by `RevRowsUsedBy`): whole
+  subdirectories — snapshots, mutant trees — were dropped, so prepending `-evidence`
+  recovers a `<Seat>/file` citation but never a `<Seat>/subdir/file` one. Checked
+  here: `find …/scratch-evidence/RevQuoteS210 -mindepth 1 -type d | wc -l` → **0**,
+  so this seat lost nothing to that limit, and both files still hash to the values
+  pinned at the top.
 - The move was **not complete for every seat**: `scratch-evidence/CritVacuous` and
   `scratch-evidence/RevTarget` are absent (found by `RevShonen`), so for those seats
   prepending `-evidence` does not recover anything. Here both cited peer files are
@@ -184,6 +209,13 @@ citing `omarchy-toggle-idle` and say the store is where *flag* toggles
 `install/config/omarchy-toggles.sh:1-3`) record state, while the idle toggle
 records nothing anywhere — hence "could never have been recorded" directly.
 
+**The contradiction is now between two live artifacts.** The entry's errata E3
+withdraws exactly the clause the row still teaches ("the place where a choice about
+other toggles would have left one"), yet SOURCES.md pays no attention to errata: the
+row is the version that survives into the registry, so the repair has to be made in
+cell 7 (and in the entry's §3 sentence), not only in an appended block. Noted
+independently by `SimplifyRows`.
+
 ### L1 — LOW — "holds entries for other toggles" is plural; only one is a toggle entry
 
 Of the two files, `flags.conf` is explicitly not a toggle entry:
@@ -282,6 +314,26 @@ figures.
   removed later makes the quote false; `90d` is the right cadence and the
   directory-mtime argument above shows it is stable today. Family-level note: every
   S206–S210 quote embeds a count or a dated copy sense, so this is not S210-specific.
+- **No revision key — S210 is the odd row of the eight.** Its source is a mutable
+  host path outside any checkout: `readlink -f ~/.local/state/omarchy/toggles/hypr`
+  resolves to itself (no symlink), it is **outside** `~/.local/share/omarchy`, and
+  that checkout versions **0** paths under `state/omarchy/toggles` (it is clean at
+  `8fcc9d604`, `git status --porcelain` empty). So unlike S203/S207/S208 there is no
+  commit to cite: the receipt sha plus the recheck trigger (`90d`, operator-action)
+  are the only anchor, which is exactly why the re-derivation script is inlined in
+  Appendix A and why the directory-mtime argument is load-bearing. Confirmed
+  independently by `ConnOverlap`.
+- **Registry moved under this seat, without touching the row.** `corpus/SOURCES.md`
+  changed at `2026-10-25 03:40:12 -0300` (171446 B; S203/S204 `recheck`
+  `on-request` → `on-change`). Re-verified after that write: S210 is still 1 row, 11
+  cells, `mined` / `2026-10-24` / `90d` / used-by `[r15]`, anchor cell still carries
+  `ef282e38…`, and the C1 counter returns `TARGET_MET` rc=0. Row S210 is also
+  byte-identical (**832 B, `cmp` rc=0**) to its pre-repair form at `d2b6972`, so the
+  in-place cell rewrites that landed in that commit did not reach this row.
+  `RevRowsUsedBy` reports the ones that did — S203.teaches, S204.scope,
+  S204.teaches, S205.teaches, outside the `{status, recheck, used-by}` set — which
+  is a registry-governance finding for those rows, not this one; I verified only
+  that S210 is unchanged.
 - **Historical id reuse.** `corpus/lessons/round-33-verifier-spotcheck.md:110` and
   `round-34.md:88-91` record a then-staged literature file citing S210/S211 as CSDN
   posts. The current staged file

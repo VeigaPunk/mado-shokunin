@@ -3,8 +3,8 @@
 Seat: L1Mado35.RevEntryR12. Round 35, wave 2 (falsify). Read-only on every substrate;
 writes confined to this seat's own evidence dir (now `scratch-evidence/RevEntryR12/`) and this
 report. No lane corpus, counter, control, registry, jj or index write.
-Raw transcript: `.ufo/waves/round-35/scratch-evidence/RevEntryR12/evidence.txt` — 8848 B, sha256
-`e91e1b5be95f352fe2cf35fd1908c2ac5751ff94c2d84813e92cf777c91c3bff`. Its first **7170 B are the
+Raw transcript: `.ufo/waves/round-35/scratch-evidence/RevEntryR12/evidence.txt` — 9410 B, sha256
+`e486fef4229fded9e90f91f7d6beaf9b8ef8ef22406fc70bb1a4adaca991b583`. Its first **7170 B are the
 git-attested segment from checkpoint `4efaf63`** (sha256 `28996a7c…`), holding `[E1]-[E25]` — the
 commands actually run against the named bytes; the tail is a clearly marked post-checkpoint append.
 The harness *moved* `scratch/` to `scratch-evidence/` at ~03:45 (not a deletion) and swept
@@ -96,7 +96,11 @@ The entry's title (l.1) and OBS-2 (l.23-24) assert an unbounded "never". The onl
 Three invocation surfaces exist and none is journaled by name: the bar click
 (`config.jsonc:208`, S206), the menu arm (`omarchy-menu:212`, S208), and a **keybinding**
 (`default/hypr/bindings/utilities.conf:30`: `bindd = SUPER CTRL, I, Toggle locking on idle, exec, omarchy-toggle-idle`).
-Zero detection power is therefore structural, not a matter of sample size.
+Zero detection power is therefore structural, not a matter of sample size — and stronger than
+"weak inference": the script contains **no journal primitive at all**
+(`grep -nE 'logger|systemd-cat|journal|echo|printf|tee' omarchy-toggle-idle` → no match, exit 1;
+`notify-send` goes to the notification daemon, not the journal). The count is a constant, not a
+measurement.
 
 The same journal contains a mid-session `hypridle` termination whose shape is the toggle's disable branch:
 
@@ -266,7 +270,7 @@ and the grep still prints 0.
   contents intact), then a second pass removed seat dirs re-created under `scratch/` at 03:46. My
   evidence file was restored from the git checkpoint `4efaf63` (7170 B attested segment, sha
   `28996a7c…`) plus a marked post-checkpoint append, and now sits at
-  `scratch-evidence/RevEntryR12/evidence.txt` (8848 B, sha `e91e1b5b…`). Because scratch has moved
+  `scratch-evidence/RevEntryR12/evidence.txt` (9410 B, sha `e486fef4…`). Because scratch has moved
   twice, §9 inlines the load-bearing commands so no finding depends on it.
 - **My earlyoom probe initially looked like a false errata claim and is not one.** `grep -ci
   earlyoom` over `journalctl --user` returns 0; earlyoom is a *system* unit and the line the errata
@@ -373,10 +377,13 @@ logged a frame-timing line at `19:24:37`, one second before the kill.
 
 **(a) "2h50m window with the idle daemon down" is a wall-clock gap across a reboot.** System-journal
 boundaries: boot -1's last entry is `22:12:24`, boot 0's first is `22:14:07` (kernel line), `hypridle`
-starts `22:14:11`. The gap `19:24:38 → 22:14:11` is `2h49m33s`, of which the machine was off for
-~`1m43s`; the in-session absence is `19:24:38 → 22:10:20` = `2h45m42s` (user-journal last entry).
-The daemon being down is a fact; that the *operator* left it down is the inference an earlier
-revision dropped and E1 quietly restores.
+starts `22:14:11`. The gap `19:24:38 → 22:14:11` is `2h49m33s`; measured to boot 0's kernel start
+(`22:14:07`) it is `2h49m29s`; measured to boot -1's own last entry (`22:12:24`) it is `2h47m46s`;
+measured to the last *activity* line in the user journal (`22:10:20`) it is `2h45m42s`. The figures
+differ only by which boundary you cut at — they are not competing measurements (RevQuoteS204 reports
+the `2h47m46s` boot-boundary form; both are reproducible from the lines above). What none of them
+establishes is that the *operator* left the daemon down: that is the inference an earlier revision
+dropped and E1 quietly restores.
 
 **(b) Re-enable is only visible through `uwsm-app`.** Every supported re-enable path logs the same
 signature — the toggle's ON branch (`uwsm-app -- hypridle`) and `omarchy-restart-hypridle:5` →

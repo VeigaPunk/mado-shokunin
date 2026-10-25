@@ -162,8 +162,8 @@ Between 03:35:08 and 03:41:38 on 2026-10-25 the frozen entry
 3586 B at 03:35:08 (E1+E2), then 4344 B / sha256 `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`
 / 69 lines at 03:41:38 (adds E3). No journal, mount, or charter evidence names the writer, and the
 errata's citation of this report **post-dates the E1 write by 5m38s** (E1 03:35:08 vs report
-03:40:46), so this seat cannot be the author — it wrote no corpus file at any point.
-this report and the scratch log (pre-sweep `stat`: report 03:40:46, log 03:37:07; that log was
+03:40:46), so this seat cannot be the author. Its only writes were this report and the scratch log
+(pre-sweep `stat`: report 03:40:46, log 03:37:07; that log was
 relocated to `scratch-evidence/` and a 03:46 rebuild replaced it in the worktree — both shas in the
 header and Appendix A). The errata text is not a
 copy of this report: an overlap probe run at 03:41 against the then-current report
@@ -257,3 +257,78 @@ Row-level residuals in the mutated registry:
 - **The journal is no longer pristine for `hypridle` greps.** This seat's read-only probes added
   `sudo[...]: COMMAND=/usr/bin/coredumpctl list hypridle` lines (2026-10-25 03:34, 03:37). The
   `omarchy-toggle` count is unaffected.
+
+## Appendix A — inlined evidence log
+
+The report does not depend on any scratch path. A.1 is what was observed during the run (original
+log, 2140 B, sha256 `f983ba8539b60bd1d484c3e20f441571acbca4c73a55c47e845921530be105b0`, committed
+at `4efaf63`); A.2 is the hypridle journal; A.3 is a replay run at 03:46, after the relocation,
+with commands and exit codes; A.4 is the boot frame.
+
+### A.1 Observed during the run
+
+```
+journalctl --user --no-pager | grep -c omarchy-toggle   -> 0   (exit 1: grep no-match)
+ls .../install/first-run/ | wc -l                       -> 13  (exit 0)
+ls .../install/first-run/*.sh | wc -l                   -> 12  (exit 0)
+sha256sum .../fetch/S204.receipt.txt
+  -> 4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad
+quote_in_receipt_bytes=True  quote_in_entry=True  hash_equals_anchor=True
+journalctl --user --no-pager | grep -c 'Starting hyprland.desktop and waiting' -> 2
+grep -ril idle <install/first-run/>  -> no match (exit 1)
+grep -ril lock <install/first-run/>  -> no match (exit 1)
+set check: bash_targets=12  dir_sh=12  SET_EQUAL=True  hook_not_run=['install-voxtype.hook']
+hook artifact: ~/.config/omarchy/hooks/post-update.d/install-voxtype.hook -- 174 B, mode 755,
+  its line 6 `rm -f "$0"` never fired; /usr/bin/voxtype absent
+hypridle.conf: ~/.config/hypr and omarchy/config/hypr both
+  e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41, mtime 2026-10-03 17:44:32
+auditd/psacct/acct: inactive ; /var/log/account/pacct absent ; ~/.bash_history 4572 B, 0 hits
+```
+
+### A.2 hypridle journal (10 lines, decisive fields exact)
+
+```
+Oct 23 13:21:39 systemd[1490]: Stopping hypridle...
+Oct 23 13:21:39 systemd[1490]: Stopped hypridle.
+Oct 23 13:21:39 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
+Oct 23 13:25:00 uwsm_app-daemon[1838]: received: app -- hypridle
+Oct 23 13:25:00 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 13:25:00 systemd[1529]: Started hypridle.
+Oct 23 19:24:38 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+Oct 23 22:14:11 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 22:14:11 systemd[1493]: Started hypridle.
+```
+
+Note the 19:24:38 line carries no `Stopping`/`Stopped` partner, unlike 13:21:39; and no
+`received: app -- hypridle` appears between 19:24:38 and 22:14:11.
+
+### A.3 Replay at 03:46 (post-relocation), commands and exit codes
+
+```
+sha256sum .ufo/waves/round-35/fetch/S204.receipt.txt  -> 4cd5ba65...54ad (full value in A.1)  exit 0
+ls .../install/first-run/ | wc -l                     -> 13    exit 0
+ls .../install/first-run/*.sh | wc -l                 -> 12    exit 0
+journalctl --user --no-pager | grep -c omarchy-toggle -> 0     exit 1
+journalctl --user --no-pager | grep -i hypridle       -> 10 lines (as A.2)   exit 0
+journalctl --list-boots --no-pager | tail -5          -> 4 rows (as A.4)     exit 0
+pgrep -ax hypridle                                    -> 1667 /usr/bin/hypridle  exit 0
+for d in 10-21..10-25: pacman counts                  -> 20 / 2 / 0 / 22 / 31   exit 0
+sha256sum hypridle.conf (both copies)                 -> e7d3b8dd...de41 (full in A.1)  exit 0
+coredumpctl list hypridle --no-pager                  -> No coredumps found.   exit 0
+c1/count.py -> closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET          exit 0
+c2/count.py -> uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 TARGET_MET  exit 0
+sha256sum corpus/SOURCES.md
+  -> 0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51          exit 0
+sha256sum corpus/knowledge/idle-lock-never-asked-r12.md
+  -> 0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504          exit 0
+```
+
+### A.4 Boot frame
+
+```
+ -3 6a7f4fdfac624e2ea6c1b3c55d6f94f4  2026-10-23 07:18:30 → 2026-10-23 13:21:50
+ -2 d577c6e020934012a19ce97122158487  2026-10-23 13:22:32 → 2026-10-23 13:23:13
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5  2026-10-23 13:24:36 → 2026-10-23 22:12:24
+  0 0a3785aac7104585a914f6cda41795a7  2026-10-23 22:14:07 → (current)
+```

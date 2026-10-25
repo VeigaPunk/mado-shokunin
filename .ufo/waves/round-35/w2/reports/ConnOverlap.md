@@ -93,8 +93,8 @@ Cheap second and third passes, so a lane that words the ground differently canno
 |---|---|---|
 | sibling `corpus/knowledge/` notes | `grep -rliE 'hypridle\|omarchy-toggle\|idle-indicator' <lane>/corpus/knowledge` over 20 lanes | **0 files** |
 | sibling `corpus/` trees for `toggle-idle\|idle-indicator\|idle\.sh\|omarchy-first-run\|idle lock\|idle-lock` | `grep -rniE …` over 20 lanes, mado excluded | **12 lines, all tabi**: `corpus/evidence/tabi-r4-1-network/**/step-5-async-idle.shape.txt` plus its `journey.json`/`MANIFEST.txt`/`.check` references — a network-run fixture named `async-idle`. Unrelated subject, no claim. Filtering tabi away: **rc=1, no output**. |
-| `waybar` anywhere in sibling `corpus/knowledge/` | `grep -rli wordbar` over 20 lanes | kaidoku `2026-10-13-crash-evidence.md`, `2026-10-13-r2-crash-inspect-probe.md` (crash-scope process listing); kotoba `sibling-overlap-census-round49.md` (assigns the *config plane* to mado); tameshi `mutation-case-mado-verify.md` (mutates mado's verifier); tsukuroi `degraded-triage-r4.md:481,500`, `kill-event-deep-r8.md:141` (waybar as an OOM/kill scope member), `adjacency-anchors-r19.{md,json}`. **None claims the bar or its indicator.** |
-| tsukuroi `corpus/SOURCES.md` `omarchy` rows | 22 hits, ids **S036 S037 S042 S043 S045 S100 S101 S102 S103 S113 S114** | boot chain, snapshot/rollback, stable-mirror headers, installer `pacman.sh`, update helpers — **omarchy as an OS substrate object**, not the desktop's idle toggle. No `hypridle`/`idle-indicator`/toggle row. |
+| `waybar` anywhere in sibling `corpus/knowledge/` | `grep -rli 'waybar' <lane>/corpus/knowledge` over 20 lanes | kaidoku `2026-10-13-crash-evidence.md`, `2026-10-13-r2-crash-inspect-probe.md` (crash-scope process listing); kotoba `sibling-overlap-census-round49.md` (assigns the *config plane* to mado); tameshi `mutation-case-mado-verify.md` (mutates mado's verifier); tsukuroi `degraded-triage-r4.md:481,500`, `kill-event-deep-r8.md:141` (waybar as an OOM/kill scope member), `adjacency-anchors-r19.{md,json}`. **None claims the bar or its indicator.** |
+| tsukuroi `corpus/SOURCES.md` `omarchy`/`hypr` rows | 22 matching lines: **14 rows** — S036 S037 S042 S043 S045 S056 S059 S064 S100 S101 S102 S103 S113 S114 — plus 8 prose lines (`:223,225,237,241,259,271,285,294`) | boot chain, snapshot/rollback, stable-mirror headers, installer `pacman.sh`, update helpers, boot-capture supplements — **omarchy as an OS substrate object**, not the desktop's idle toggle. No `hypridle`/`idle-indicator`/toggle row (exact-term scan: 0). |
 | tsukuroi's instrument | `grep -n -iE 'hypridle\|hyprlock\|idle' tsukuroi-shokunin/tools/tsukuroi-census.sh` | no output, **rc=1** — tsukuroi's census does not even probe the daemon, so no duplicate measurement instrument exists. |
 | sibling `PROVINCE.md` for `omarchy\|waybar\|hypridle\|idle` | `grep -niE … */PROVINCE.md` | only: game-dev-3d `:75`, kotoba `:61`, tsukuroi `:48,:124` (all routing *to* mado, §3), mado's own. **`~/.local/share/omarchy` appears in no sibling province at all.** |
 
@@ -161,9 +161,13 @@ integrator, never to whichever lane answered first."
   health". The row's *question* (is the idle lock armed?) is mado's; the *unit-model
   explanation* ("the daemon runs inside a transient scope") is tsukuroi's retained
   mechanism. The lane has already demoted the explanation on evidence grounds — errata
-  **E2** of `idle-lock-chain-armed-r14.md` says the inference is "materially true but
+  `idle-lock-chain-armed-r14.md` says the inference is "materially true but
   **unlicensed by S205**", found by seats `RevEntryR14`/`RevQuoteS205` — but it does not yet
-  say *whose ground the explanation is*. That is one clause, not a contest.
+  say *whose ground the explanation is*. That is one clause, not a contest. **The lane has
+  already ruled on the ownership half, in its own words:** `PROVINCE.md:32` says
+  `mado-verify.sh`'s "unit-state rows sit next to tsukuroi's unit-health ground, which stays
+  tsukuroi's". So the attribution clause is not new policy — it is applying an existing
+  province line to the one entry that reasons from that ground.
 - **S204's journal negative.** Same mechanic, and w1's `ConnIdle.md` already recorded its
   limit ("S204's zero journal count does NOT clear a manual toggle — `omarchy-toggle-idle`
   kills via `uwsm-app`, which the journal would log only as a process stop"). Again: the
@@ -191,8 +195,9 @@ The non-obvious part, and why it is worth one move rather than a wave:
    (2026-05-08), `default/waybar/indicators/idle.sh` → `bf962f004` (2026-02-20).
 3. `S210`'s `~/.local/state/omarchy/toggles/hypr` is **outside** the checkout (`readlink -f`
    is itself, 0 versioned paths) — its trigger stays operator action; do not revision-key it.
-4. `PROVINCE.md` already permits the instrument: `mado-verify.sh` runs "read-only git on the
-   omarchy checkout" (`PROVINCE.md:24-28` table row). No new privilege, no new tool.
+4. `PROVINCE.md` already permits the instrument: the round-23 wave-2 correction records that
+   `mado-verify.sh` runs "three `omarchy` read subcommands, read-only git on the omarchy
+   checkout" (`PROVINCE.md:32`). No new privilege, no new tool.
 
 **Realisation, in the only two places the corpus contract allows** (see §7 risks):
 (a) an errata block in `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` recording
@@ -257,6 +262,43 @@ Baseline captured this session, before any proposal:
 The exact-term scan itself is re-runnable from `scratch-evidence/ConnOverlap/scan.txt`; the sibling
 file digests are in `scratch-evidence/ConnOverlap/sibling-sources-manifest.txt`.
 
+### 8.1 Observation window — the corpus moved under this seat
+
+Three edits and one relocation landed while this seat ran. Nothing below changes a verdict;
+it is recorded because a later reader comparing digests would otherwise see a mismatch.
+
+| when (local) | what | evidence |
+|---|---|---|
+| 03:35:30 | all three entries gained `### Errata (round 35, wave 2)` (E1/E2) | `ls --time-style=full-iso`; also reported by `RevRowsUsedBy.md` and `RevEntryR15` |
+| 03:40:12 | `corpus/SOURCES.md` — rows **S203 and S204 `recheck` `on-request` → `on-change`** | my first read at 03:38 saw `on-request`; the 03:46 re-read sees `on-change`; rows block sha256 `f70fcf24…` → `21508b03…` |
+| 03:41:38 | `corpus/knowledge/idle-lock-never-asked-r12.md` rewritten (append-only errata) | mtime; `omarchy-toggle-idle` count still 1 |
+| 03:43-03:47 | `scratch/` → `scratch-evidence/` relocation, twice re-copied (§10) | commit `4efaf63`, `ca870e9`, `1bb25c7` |
+
+Re-run **after** the change, at 06:47Z:
+
+```
+python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json
+# closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET      exit 0
+python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
+# uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET   exit 0
+```
+
+Also re-verified post-change: all eight rows still `nf=11`; `status` still `mined`; `used-by`
+still exactly `{r12}` for S203/S204, `{r14}` for S205, `{r15}` for S206-S210; all eight
+receipt sha256 still equal `c1/frozen.json`; all eight `gate-quote:` counts still `1`; E2's
+sentence ("unlicensed by S205") still present. **The freshness correction is contract-legal**
+— `recheck` is one of the three columns `corpus/SOURCES.md:6-7` allows to change in place —
+and it did not move the counter.
+
+The exact file identity every statement above was made against, stable across three re-reads
+(03:46, 03:48, and after `RevQuoteS210`'s independent parse):
+
+```
+corpus/SOURCES.md   171446 B   mtime 2026-10-25 03:40:12.893966805 -0300
+sha256 0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51
+rows 200 | rows-block (205-212) sha256 21508b03… | S210 row untouched (11 cells, mined, 90d, used-by [r15])
+```
+
 ## 9. Residual / what this seat did not verify
 
 - Sibling **live branches** were read at their working-tree state, not at pinned commits; the
@@ -275,6 +317,36 @@ file digests are in `scratch-evidence/ConnOverlap/sibling-sources-manifest.txt`.
   distinguishing rc=3 from rc=4, which S205 did not record).
 - The proposal in §6 is **not executed**. Any or all of it may be refused without changing
   §1–§5.
+
+## 10. Scratch provenance (relocated, not deleted — and a rebuild is not evidence)
+
+`.ufo/waves/round-35/scratch/` was **moved** to `.ufo/waves/round-35/scratch-evidence/`
+(~03:43-03:45 local; reported by `L1Mado35.RevQuoteS210`, corroborated by
+`L1Mado35.RevEntryR15`, checkpoint commit `4efaf63`). Two further re-copies (~03:46, ~03:47)
+then laid later builds of this seat's files over earlier ones, so the **working-tree** copies
+are not the bytes first measured. The originals are durable in git and are pinned here:
+
+| artefact | commit | bytes | sha256 | status |
+|---|---|---|---|---|
+| `scan.txt` | `4efaf63` (also `9c83b50`) | 381 | `6311f9e1c82b…` | **ORIGINAL**, header `06:38:32Z`, rows-block `f70fcf24…` |
+| `scan.txt` | `ca870e9` | 918 | `f3b6949ea4fc…` | rebuild `06:46:12Z` |
+| `scan.txt` | `1bb25c7` = working tree | 763 | `5c3616b99af6…` | rebuild `06:47:05Z` |
+| `sibling-sources-manifest.txt` | `4efaf63` (also `ca870e9`) | 2058 | `029a0bbab7bb…` | **ORIGINAL**, header `06:39:29Z`, 20 sibling digests |
+| `sibling-sources-manifest.txt` | `1bb25c7` = working tree | 2112 | `deea68c455a3…` | rebuild `06:47:05Z` |
+| `REBUILD-NOTE.txt` | — | 1153 | `4879bb3cb8bc…` | UNTRACKED note carrying this table |
+
+Read an original without touching anything:
+
+```sh
+git -C /home/vgpnk/Projects/shokunin/mado-shokunin cat-file -p \
+  4efaf63:.ufo/waves/round-35/scratch-evidence/ConnOverlap/scan.txt
+```
+
+The two originals agree with each other and with every number inlined in this report
+(§1's mado-only counts, the 21-file denominator, `rc=1` on the sibling scan). The rebuilds
+were re-derived at their own timestamps, which is why the rebuild's rows-block digest is the
+post-03:40 value `21508b03…` and the original's is `f70fcf24…` — not a contradiction, a
+different moment. Treat this report body, not the directory, as the evidence locus.
 
 ## Scope executed (commands, in order)
 

@@ -4,10 +4,11 @@ Seat: `L1Mado35.CritAxisClaims` (critic, UFO-FSD). Read-only attack: every lane 
 read; the only writes are under
 `.ufo/waves/round-35/scratch/CritAxisClaims/` and this report. No install or upgrade was
 needed (no tool installed). `scratch/<Seat>/` was then **moved** to
-`scratch-evidence/<Seat>/` at ~03:43 and committed (`4efaf63`, `b632f0b`); the writable
-copy was removed by a later sweep and restored **byte-identically from that checkpoint**
-(not rebuilt from memory — see §Limits). Every verdict below is inlined, so no finding
-depends on a scratch path surviving.
+`scratch-evidence/<Seat>/` at ~03:43 and committed (`4efaf63`, `b632f0b`). The writable
+`scratch/` copy is transient — it has been swept twice and was restored once,
+byte-identically from that checkpoint (not rebuilt from memory). Every citation below
+points at `scratch-evidence/`, never at `scratch/`; all verdicts are also inlined, so no
+finding depends on any scratch path surviving.
 
 ## Measured revisions (state as observed, 2026-10-25)
 
@@ -316,6 +317,11 @@ PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   
 PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED exit=1
 ```
 
+Condensed from the committed `digest-out.txt` (command lines and banner padding cut; every
+verdict, exit code and hash is verbatim). D2 — the receipt emptied — is omitted here and
+reads `TARGET_MISSED` in the receipt: an empty file fails because the gate-quote substring
+is absent, not because the digest is checked.
+
 D4 is the decisive case: a receipt whose bytes hash to something else still closes the cite,
 because `digest` is computed and discarded. D3 shows what `controls/c1-digest` actually
 kills — the *row's* digest token, not the receipt's bytes. The lane's own durable junk-tree
@@ -360,13 +366,16 @@ is lowered."
   working-tree state at the final read is recorded above.
 - **Scratch provenance.** `scratch/<Seat>/` was *moved* to `scratch-evidence/<Seat>/` at
   ~03:43 and the checkpoint committed (`4efaf63`, 240 files / 59 seat dirs; a later commit
-  `ca870e9` records the lane without scratch trees). This seat's `sep.sh`, `sep-out.txt`,
-  `reuse.sh`, `reuse-out.txt` were checkpointed byte-identically at
-  `scratch-evidence/CritAxisClaims/` (first committed in `b632f0b`), and the writable
-  `scratch/CritAxisClaims/` copy was restored **from that commit** (md5 equal:
-  `sep-out.txt bd38a7a4…`, `reuse-out.txt 9493f268…`) — not rebuilt from memory. New
-  post-checkpoint probes (`digest.sh`/`digest-out.txt`) live only in the writable scratch;
-  their verdicts are inlined in V3 above, so the report body is the durable locus.
-  `scratch-evidence/CritVacuous` does not exist: that tree was among the 3.2 GB mutant
-  trees dropped by `4efaf63`, which is why V3 now carries a receipt-free minimal-root probe
-  instead of a junk tree.
+  `ca870e9` records the lane without scratch trees, and the 3.2 GB mutant trees were
+  dropped). This seat's `sep.sh`, `sep-out.txt`, `reuse.sh`, `reuse-out.txt` were
+  checkpointed byte-identically (first committed in `b632f0b`), and the post-checkpoint
+  probe `digest.sh`/`digest-out.txt` is committed in the same directory. md5 of the two
+  receipts: `sep-out.txt bd38a7a4c11dac4efe44e89621706909`,
+  `reuse-out.txt 9493f2683270e5380dbbdf33f69c4e76` — identical in the checkpoint and in the
+  copy that was briefly restored to `scratch/`. Nothing was rebuilt from transcript.
+  The writable `scratch/` tree has been swept twice and is not a citation target. The
+  committed `scratch-evidence/CritAxisClaims/README.md` was written before the peers'
+  relocation correction and still says "removed"; this section is authoritative.
+  `scratch-evidence/CritVacuous` does not exist — that tree was among the dropped mutant
+  trees, which is why V3 now carries a receipt-free minimal-root probe instead of a junk
+  tree.

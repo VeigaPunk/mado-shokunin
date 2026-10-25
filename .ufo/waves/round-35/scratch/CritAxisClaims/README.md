@@ -1,44 +1,38 @@
-# CritAxisClaims scratch — restored from the committed evidence checkpoint
+# CritAxisClaims scratch — pointer, not a store
 
 `.ufo/waves/round-35/scratch/<Seat>/` was **moved** to
 `.ufo/waves/round-35/scratch-evidence/<Seat>/` at ~03:43 (tree mtime 03:45) and the
-checkpoint committed. A later sweep removed the writable `scratch/` tree again.
+checkpoint committed. The writable `scratch/` tree has since been swept **twice**; this
+directory may contain only this file.
 
-This directory's four original files were **not** rebuilt from memory: they were restored
-byte-identically from the committed checkpoint
+**Durable evidence lives in the committed checkpoint, not here:**
 
 ```
 .ufo/waves/round-35/scratch-evidence/CritAxisClaims/
-at  b632f0b  (round-35: the last two seat reports, the seats' revised reports, and the
-              scratch-evidence checkpoint; checkpoint introduced in 4efaf63)
+  sep.sh, sep-out.txt        T0–T6 separability probes      (md5 sep-out bd38a7a4c11dac4efe44e89621706909)
+  reuse.sh, reuse-out.txt    T7 shared-receipt probe        (md5 reuse-out 9493f2683270e5380dbbdf33f69c4e76)
+  digest.sh, digest-out.txt  receipt-digest-binding probe   (post-checkpoint; V3)
 ```
 
-| File | md5 | Provenance |
-|---|---|---|
-| `sep.sh` | — | the script run at the working tree during wave 2 |
-| `sep-out.txt` | `bd38a7a4c11dac4efe44e89621706909` | verbatim receipt of that run (T0–T6), md5-equal to the checkpoint copy |
-| `reuse.sh` | — | the shared-receipt probe (T7) |
-| `reuse-out.txt` | `9493f2683270e5380dbbdf33f69c4e76` | verbatim receipt of that mutant, md5-equal to the checkpoint copy |
-| `digest.sh` / `digest-out.txt` | — | **new**, post-checkpoint probe (V3: receipt bytes unbound to the frozen digest); not in `4efaf63` |
+First committed in `b632f0b`; the checkpoint itself came in `4efaf63` (240 files / 59 seat
+dirs), and `ca870e9` records the lane without scratch trees.
+
+These bytes are **not** a rebuild from transcript: the four pre-sweep files were restored
+once from the committed checkpoint and verified md5-equal before the second sweep took them
+again. The committed `README.md` in the checkpoint directory was written before the peers'
+relocation correction and says "removed"; the report's §Limits is authoritative.
 
 The T0–T8 mirror clones and the `scratch/CritVacuous` junk tree no longer exist (the junk
-trees were among the 3.2 GB mutant trees dropped by the checkpoint commit). They are
-reproducible from `sep.sh` / `reuse.sh` / `digest.sh`, which clone the lane with
-`git clone --shared` (read-only against the lane) or copy only the files C1 reads, and
-mutate only the copy.
+trees were among the 3.2 GB mutants dropped by `4efaf63`). They are reproducible with:
 
-Durable evidence pointer for the report:
-`.ufo/waves/round-35/scratch-evidence/CritAxisClaims/` (committed), plus the verdicts
-inlined in `w2/reports/CritAxisClaims.md`. The report body, not scratch, is the locus: the
-scratch tree is not stable (a second sweep already removed the re-created dirs once).
-
-Reproduce:
 ```sh
-cd .ufo/waves/round-35/scratch/CritAxisClaims
-bash sep.sh    2>&1 | tee sep-rerun.txt
+cd .ufo/waves/round-35/scratch-evidence/CritAxisClaims
+bash sep.sh    2>&1 | tee sep-rerun.txt      # clones the lane with git clone --shared (read-only)
 bash reuse.sh  2>&1 | tee reuse-rerun.txt
-bash digest.sh 2>&1 | tee digest-rerun.txt
+bash digest.sh 2>&1 | tee digest-rerun.txt   # copies only the files C1 reads; needs no git
 ```
-A re-run measures the lane as it stands at the re-run revision, not necessarily the
-working-tree state recorded in the original receipts; that is why the committed receipt,
-not the re-run, is cited.
+
+A re-run measures the lane at the re-run revision, not the working-tree state recorded in
+the original receipts; the committed receipt, not the re-run, is what the report cites.
+Report: `.ufo/waves/round-35/w2/reports/CritAxisClaims.md` — every verdict is inlined there,
+so nothing in it depends on any scratch directory existing.

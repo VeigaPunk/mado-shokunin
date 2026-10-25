@@ -1,0 +1,51 @@
+# S203 receipt — omarchy first-run installer (host re-open 2026-10-24)
+path: /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630  /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+1089 /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+--- script body ---
+     1	#!/bin/bash
+     2	
+     3	# omarchy:summary=Finish the installation of Omarchy with items that can only be done after logging in.
+     4	# omarchy:requires-sudo=true
+     5	
+     6	set -e
+     7	
+     8	FIRST_RUN_MODE=~/.local/state/omarchy/first-run.mode
+     9	
+    10	if [[ -f $FIRST_RUN_MODE ]]; then
+    11	  rm -f "$FIRST_RUN_MODE"
+    12	
+    13	  bash "$OMARCHY_PATH/install/first-run/battery-monitor.sh"
+    14	  bash "$OMARCHY_PATH/install/first-run/recover-internal-monitor.sh"
+    15	  bash "$OMARCHY_PATH/install/first-run/cleanup-reboot-sudoers.sh"
+    16	  bash "$OMARCHY_PATH/install/first-run/firewall.sh"
+    17	  bash "$OMARCHY_PATH/install/first-run/dns-resolver.sh"
+    18	  bash "$OMARCHY_PATH/install/first-run/gnome-theme.sh"
+    19	  bash "$OMARCHY_PATH/install/first-run/swayosd.sh"
+    20	  bash "$OMARCHY_PATH/install/first-run/gtk-primary-paste.sh"
+    21	  bash "$OMARCHY_PATH/install/first-run/text-scaling.sh"
+    22	  bash "$OMARCHY_PATH/install/first-run/elephant.sh"
+    23	  omarchy-hook-install post-update "$OMARCHY_PATH/install/first-run/install-voxtype.hook"
+    24	  sudo rm -f /etc/sudoers.d/first-run
+    25	
+    26	  bash "$OMARCHY_PATH/install/first-run/welcome.sh"
+    27	  bash "$OMARCHY_PATH/install/first-run/wifi.sh"
+    28	fi
+--- first-run scripts on this host ---
+12
+battery-monitor.sh
+cleanup-reboot-sudoers.sh
+dns-resolver.sh
+elephant.sh
+firewall.sh
+gnome-theme.sh
+gtk-primary-paste.sh
+install-voxtype.hook
+recover-internal-monitor.sh
+swayosd.sh
+text-scaling.sh
+welcome.sh
+wifi.sh
+--- script body joined to one line (tr '\n' ' ') ---
+body-joined: #!/bin/bash  # omarchy:summary=Finish the installation of Omarchy with items that can only be done after logging in. # omarchy:requires-sudo=true  set -e  FIRST_RUN_MODE=~/.local/state/omarchy/first-run.mode  if [[ -f $FIRST_RUN_MODE ]]; then   rm -f "$FIRST_RUN_MODE"    bash "$OMARCHY_PATH/install/first-run/battery-monitor.sh"   bash "$OMARCHY_PATH/install/first-run/recover-internal-monitor.sh"   bash "$OMARCHY_PATH/install/first-run/cleanup-reboot-sudoers.sh"   bash "$OMARCHY_PATH/install/first-run/firewall.sh"   bash "$OMARCHY_PATH/install/first-run/dns-resolver.sh"   bash "$OMARCHY_PATH/install/first-run/gnome-theme.sh"   bash "$OMARCHY_PATH/install/first-run/swayosd.sh"   bash "$OMARCHY_PATH/install/first-run/gtk-primary-paste.sh"   bash "$OMARCHY_PATH/install/first-run/text-scaling.sh"   bash "$OMARCHY_PATH/install/first-run/elephant.sh"   omarchy-hook-install post-update "$OMARCHY_PATH/install/first-run/install-voxtype.hook"   sudo rm -f /etc/sudoers.d/first-run    bash "$OMARCHY_PATH/install/first-run/welcome.sh"   bash "$OMARCHY_PATH/install/first-run/wifi.sh" fi
+located: install/first-run/ lists 12 scripts; the omarchy-first-run body runs all 12; none is idle-lock

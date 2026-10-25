@@ -293,6 +293,23 @@ of a toggle exists, and this journal could not record one" — which is no evide
   contradicted inference. Recommend r12's title and Section 2 be corrected before the round treats
   it as established knowledge.
 
+**The withdrawal propagated to neither the headline nor the registry.** On current `SOURCES.md`
+(`0bf117e2…`, 171446 B) row **S204** still asserts, in its own cells:
+
+- PURPOSE: "…the idle lock was **never asked about and never toggled** — the installer's script count
+  and the journal's **absence of any omarchy-toggle invocation**"; and
+- NOTE: "**Two independent negatives agree**: the setup path offers no idle-lock question (12
+  first-run scripts, none about idle) and the user journal holds zero omarchy-toggle invocations,
+  **which is a null channel rather than a negative**".
+
+One sentence affirming agreement *and* nullity in the same breath; the 12-count survives in the NOTE
+while the entry's own E3 concedes it is a re-count, not an independent confirmation. Row 206's
+evidence cell meanwhile says the daemon stop/start is merely "consistent with a toggle-off". So the
+registry contradicts itself across three cells, and the entry contradicts itself across four sites —
+the errata withdrew the claim in prose only. Verdict: the *artifact of record* still carries the
+withdrawn assertion in five places (entry H1/§1/§2, row PURPOSE, row NOTE), which is why
+`TARGET_MET` cannot be read as endorsement of content.
+
 ## Concurrent mutation of the artifacts (observed during this review)
 
 Both scored artifacts changed under me mid-wave. Recorded with hashes and times, because a review

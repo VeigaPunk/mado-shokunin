@@ -1,7 +1,8 @@
 # RevIndex — index completeness attack (round 35, wave 2)
 
 Seat: `L1Mado35.RevIndex` (leaf). Lane: `/home/vgpnk/Projects/shokunin/mado-shokunin`.
-Read-only attack; writes confined to `.ufo/waves/round-35/scratch/RevIndex/` and this file.
+Read-only attack; writes confined to this seat's evidence dir
+(`.ufo/waves/round-35/scratch-evidence/RevIndex/`) and this file.
 
 ## Verdict
 
@@ -10,10 +11,10 @@ Read-only attack; writes confined to `.ufo/waves/round-35/scratch/RevIndex/` and
 - **At audit time** (master = `19e4ab31…`): `--rev master` reported `indexed=47/47` — a correct
   count of a 47-note universe from which the three round-35 notes were excluded (untracked
   then, their rows uncommitted). Rev mode could not test the claim on those bytes.
-- **The lane has since committed them**: master is now `b632f0b98077…` (HEAD == master), and
-  the three note blobs and `corpus/README.md` at master are byte-identical to the working tree.
-  The same assigned command on the current master reports `indexed=50/50 missing=0 dangling=0
-  duplicates=0 coverage=10.0000/10`, rc=0.
+- **The lane has since committed them**: master has advanced `19e4ab31…` → `b632f0b9…` →
+  `a80f8cb4…` (HEAD == master), and the three note blobs and `corpus/README.md` at master are
+  byte-identical to the working tree. The same assigned command on every post-commit master
+  reports `indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10`, rc=0.
 - Working tree / byte-identical scratch copy (`--root`): `indexed=50/50 … coverage=10.0000/10`,
   rc=0. Scratch snapshot committed then read with `--rev`: `50/50`, rc=0.
 - Each of the three new notes has **exactly one** column-0 index row, and no row names a note
@@ -44,19 +45,20 @@ Universe check at that rev: `git ls-tree master:corpus/knowledge` = 47 blobs;
 So on those bytes the three entries were **outside the measured universe** of `--rev master` by
 construction. The assay required the working tree, so the tree was copied to scratch and
 measured there. **The lane then committed** (`b632f0b`, "round-35: the last two seat reports … and
-the scratch-evidence checkpoint"): master == HEAD == `b632f0b98077…`, and the three note blobs
-plus `corpus/README.md` at master are byte-identical to the working tree (sha256 compare, SAME
-for all four). Re-running the *same* assigned command now:
+the scratch-evidence checkpoint"; master has since advanced to `a80f8cb4`, HEAD == master), and
+the three note blobs plus `corpus/README.md` at master are byte-identical to the working tree
+(sha256 compare, SAME for all four). Re-running the *same* assigned command now:
 
 ```
 $ python3 -I quality/check-index.py --repo . --rev $(git rev-parse master)
-MADO_INDEX: rev=b632f0b980772aad4be9ab20f8b26e9329d62239 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+MADO_INDEX: rev=a80f8cb472212569982cc70b2d388633b8c9e02e indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 rc=0
 ```
 
-Current master universe: 50 knowledge blobs (all three round-35 notes tracked, five names
-containing `idle-lock`), 50 index rows in `master:corpus/README.md`. The rev-mode blindness was a
-property of the pre-commit state, not of the tool, and the commit closed it.
+(An identical `50/50` row was recorded at the earlier post-commit master `b632f0b98077…`.) Current
+master universe: 50 knowledge blobs (all three round-35 notes tracked, five names containing
+`idle-lock`), 50 index rows in `master:corpus/README.md`. The rev-mode blindness was a property of
+the pre-commit state, not of the tool, and the commit closed it.
 
 ## 2. Working tree and scratch measurements
 
@@ -71,7 +73,8 @@ sha256 `a3769bef…c5e83a` identical to the lane's. The whole `scratch/` tree wa
 (moved, not deleted) to `.ufo/waves/round-35/scratch-evidence/` at ~03:43–03:45; checkpoint commit
 `4efaf63` carries only the four result files from this seat (`evidence.log`, `scratch-sha.txt`,
 `run1.txt`, `run2.txt`) — the copied tree and the seven `neg-*/` trees were **not** checkpointed and
-do not survive on disk. Output, quoted from the checkpointed log (restored byte-identically, see §5):
+do not survive on disk. Output, as recorded **pre-relocation** (the `scratch/…` paths in the
+quoted commands are the old location), from the checkpointed log restored byte-identically (§5):
 
 ```
 $ python3 -I quality/check-index.py --root .ufo/waves/round-35/scratch/RevIndex/repo

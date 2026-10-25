@@ -3,6 +3,8 @@
 set -u
 L=/home/vgpnk/Projects/shokunin/mado-shokunin
 S=$L/.ufo/waves/round-35/scratch/RevC1Tip
+D=$(cd "$(dirname "$0")" && pwd)
+IC="$D/independent_c1.py"; [ -f "$IC" ] || IC="$S/independent_c1.py"
 C=$L/.ufo/waves/round-35/c1/count.py
 F=$L/.ufo/waves/round-35/c1/frozen.json
 CENSUS=/home/vgpnk/Projects/shokunin/scripts/sources-census.sh
@@ -135,4 +137,4 @@ echo "\$ python3 -I $S/headtree2/.ufo/waves/round-35/c1/count.py --root $S/headt
 python3 -I "$S/headtree2/.ufo/waves/round-35/c1/count.py" --root "$S/headtree2" --frozen "$S/headtree2/.ufo/waves/round-35/c1/frozen.json"; echo "rc=$?"
 
 echo '## 7 independent re-derivation (own parser, no import of count.py)'
-( cd "$L" && python3 -I "$S/independent_c1.py" . .ufo/waves/round-35/c1/frozen.json; echo "rc=$?" )
+( cd "$L" && python3 -I "$IC" . .ufo/waves/round-35/c1/frozen.json; echo "rc=$?" )

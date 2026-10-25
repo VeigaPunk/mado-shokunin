@@ -1,38 +1,54 @@
 # RevRowsUsedBy — the eight rows' `used-by`, `status`, `opened`, `recheck` and the clauses that read them
 
 Seat: reviewer (leaf, no dispatch). Round 35, wave 2 — falsify. Date: 2026-10-25.
-Lane: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only on the lane; every write is
-under `.ufo/waves/round-35/scratch/RevRowsUsedBy/`. Repro driver:
-`scratch/RevRowsUsedBy/run.sh`; full transcript: `scratch/RevRowsUsedBy/evidence.txt`;
-snapshot of the observed bytes: `scratch/RevRowsUsedBy/snapshot/` + `snapshot.sha256`.
+Lane: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only on the lane; my writes are
+under `.ufo/waves/round-35/scratch-evidence/RevRowsUsedBy/` only.
+
+Evidence locus: the report body below is authoritative. Supporting files live at
+`.ufo/waves/round-35/scratch-evidence/RevRowsUsedBy/` (the round-35 `scratch/` tree was
+moved to `scratch-evidence/` at ~03:43 and the old path is not stable). That directory
+holds `RELOCATION.md` (move/recovery record), `evidence.txt` (03:36 transcript, sha
+`3dd4a384…`), `evidence-now.txt` (current-bytes re-run, 03:48:48), `cell-diff.txt`,
+`usedby-table-now.txt`, `snapshot/` and `snapshot.sha256`.
+
+## Observation timeline (all times -03:00, 2026-10-25)
+
+| time | event | pin |
+|---|---|---|
+| 03:25:48 | rows S203–S210 written | SOURCES.md sha `848a7680…` |
+| 03:30:31 | jj snapshot commit `d2b6972` | same registry sha, byte-recoverable |
+| 03:35:08–43 | entries get `### Errata`; README updated | r12 `7f27ced0…`, r14 `583c708c…`, r15 `82c08a46…` |
+| ~03:36 | **this seat's measurement** | `evidence.txt` sha `3dd4a384…` |
+| 03:40:12 | **registry rows edited in place** | SOURCES.md sha `0bf117e2…` |
+| 03:41:38 | r12 errata body refined | r12 `0bcef21f…` |
+| 03:43 | `scratch/` moved to `scratch-evidence/` | 59 seat dirs, top-level files only |
+| 03:45:09 | lesson gains wave-2 errata section | `corpus/lessons/round-35.md` |
+
+The registry changed **after** my measurement. Everything below states which state it is
+about; the live-data table is recomputed on the final observed bytes
+`corpus/SOURCES.md` sha `0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51`
+(pinned copy `snapshot/SOURCES.final-observed.md`).
 
 ## Axes
 
 1. **Used-by provenance** — is each row's 11th cell *independently* equal to the set of
    admitted entries whose `source:` line names the id?
-2. **Column truth** — are the `status` / `opened` / `recheck` values on rows S203–S210
-   actually true of the tree and the receipts?
+2. **Column truth** — are `status` / `opened` / `recheck` actually true of the tree?
 3. **Clause fidelity** — does `PRED-C1-r35-v1` measure the value it names for each column?
+4. **Repair integrity** — did the wave-2 repairs change the registry in the way the
+   registry's own contract and the round's record say they did?
 
-## Observation window (important)
-
-The corpus moved while this seat ran. At 03:35 local a sibling edited all three entries
-(adding `### Errata (round 35, wave 2)`) and `corpus/README.md`. The SOURCES.md rows were
-not touched (mtime 03:25:48). My snapshot is the post-repair state; the counter was re-run
-after the edits and still prints `TARGET_MET` exit 0. Findings below are stated against the
-snapshot hashes in `evidence.txt` §0.
-
-## 1. Independent used-by table
+## 1. Independent used-by table (final observed `0bf117e2…`)
 
 Built without the counter: parse every `corpus/knowledge/*.md` for `^source:\s*(S\d+)`,
-keep the entries listed in `c1/frozen.json.entries` ("admitted"), and compare that set with
-the row's 11th cell and with the frozen set. Non-admitted knowledge entries were scanned
-too, for "and by nothing else".
+intersect with the entries listed in `c1/frozen.json.entries` (the "admitted" set), and
+compare that set with the row's 11th cell and with the frozen set. Non-admitted knowledge
+entries were scanned too, for "and by nothing else".
 
-| id | used-by cell (cell 11) | entries whose `source:` names it | frozen.json set | difference | status | opened | recheck | other citers |
+| id | used-by cell (c11) | entries whose `source:` names it | frozen.json set | difference | status | opened | recheck | other citers |
 |---|---|---|---|---|---|---|---|---|
-| S203 | `corpus/knowledge/idle-lock-never-asked-r12.md` | same | same | **none** | mined | 2026-10-24 | on-request | none |
-| S204 | `corpus/knowledge/idle-lock-never-asked-r12.md` | same | same | **none** | mined | 2026-10-24 | on-request | none |
+| S203 | `corpus/knowledge/idle-lock-never-asked-r12.md` | same | same | **none** | mined | 2026-10-24 | on-change¹ | none |
+| S204 | `corpus/knowledge/idle-lock-never-asked-r12.md` | same | same | **none** | mined | 2026-10-24 | on-change¹ | none |
 | S205 | `corpus/knowledge/idle-lock-chain-armed-r14.md` | same | same | **none** | mined | 2026-10-24 | 90d | none |
 | S206 | `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | same | same | **none** | mined | 2026-10-24 | on-change | none |
 | S207 | `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | same | same | **none** | mined | 2026-10-24 | on-change | none |
@@ -40,13 +56,17 @@ too, for "and by nothing else".
 | S209 | `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | same | same | **none** | mined | 2026-10-24 | on-change | none |
 | S210 | `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | same | same | **none** | mined | 2026-10-24 | 90d | none |
 
+¹ At the 03:36 measurement S203 and S204 read `on-request`; the 03:40 edit changed both
+to `on-change` (see F4). The used-by, status and opened cells are unchanged between the
+two states.
+
 8/8 rows: cell set = source-line set = frozen set; one token per cell; no id has a second
 citer inside or outside the admitted set; every token resolves to an existing regular file
-(census `E11` clean). The live column is **correct as data**.
+(census `E11` clean). **The used-by column is correct as data.**
 
 ## Findings
 
-### F1 — HIGH (core of the assignment): `used-by-exact` is bound to `frozen.json`, never to the entries
+### F1 — HIGH: `used-by-exact` is bound to `frozen.json`, never to the entries
 
 `c1/count.py:182-189`:
 
@@ -58,143 +78,230 @@ citing = {rel for rel, rel_ids in spec["entries"].items() if sid in rel_ids}
 and used_by == citing
 ```
 
-`citing` is a projection of the frozen spec. No `source:` line of any entry is read anywhere
-in the counter. So the predicate sentence — "whose used-by token set is **exactly the
-admitted entries citing it**" — is implemented as "equals the set the frozen spec says
-cites it". That is row↔freeze agreement, not row↔entry provenance. The clause is not
-vacuous (a wrong token does fail: below), but the provenance half is unmeasured.
+`citing` is a projection of the frozen spec. No entry's `source:` line is read anywhere in
+the counter. The predicate sentence — "whose used-by token set is **exactly the admitted
+entries citing it**" — is implemented as "equals the set the frozen spec says cites it".
+That is row↔freeze agreement, not row↔provenance. The clause is not vacuous (a wrong token
+does fail: `usedby-lesson` below), but the provenance half is unmeasured.
 
-Falsifiers on the post-repair snapshot (`base2` — the snapshot itself scores
-`TARGET_MET`, exit 0), each an independent tree, counter unchanged:
+Falsifiers, re-run on a base built from the **current** bytes (`evidence-now.txt`,
+03:48:48; the base itself scores `TARGET_MET` exit 0). Each is an independent tree; the
+counter and frozen spec are untouched:
 
-| mutant | change to the entry text | counter |
+| mutant | change to entry text | verdict |
 |---|---|---|
-| `src-drop-S204` | delete `source: S204 …` from r12 (S204 still cited by the row) | `closed_rows=8 … TARGET_MET` exit 0 |
+| `src-drop-S204` | delete r12's `source: S204 …` (row S204 still names r12) | `TARGET_MET` exit 0 |
 | `src-retag-S204-S999` | retag that line to `source: S999 …` | `TARGET_MET` exit 0 |
 | `src-drop-all-S205` | delete r14's only `source:` line (S205) | `TARGET_MET` exit 0 |
-| `src-add-S204-r15` | **add** `source: S204 …` to r15, making it a second citer | `TARGET_MET` exit 0 |
+| `src-add-S204-r15` | **add** `source: S204 …` to r15, a second citer | `TARGET_MET` exit 0 |
 
-The last one is the crisp one: in that tree the set of entries whose `source:` line names
-S204 is `{r12, r15}`, the row's cell says `{r12}`, and the frozen clause says the cell is
-"exactly the admitted entries citing it". C1 prints `TARGET_MET`.
-
-Practical consequence: an entry may silently drop or gain a citation and the registry's
-`used-by` plus C1 stay green. The lane's census does not close this either — `E11` only
-checks that the named path exists (F6). Nothing in the toolchain compares a row's `used-by`
-with the entry's `source:` block.
+The last one is decisive: in that tree the set of entries whose `source:` line names S204
+is `{r12, r15}`, the row's cell says `{r12}`, and the frozen clause calls the cell "exactly
+the admitted entries citing it". C1 prints `TARGET_MET`. An entry may silently drop or gain
+a citation and both the registry's `used-by` and C1 stay green.
 
 ### F2 — HIGH: the `opened` column is never read
 
-`grep -c opened .ufo/waves/round-35/c1/count.py` → `0` (exit 1). The predicate does not name
-`opened`, and the implementation has no access to column 9. Mutants on `base2`:
+`grep -c opened .ufo/waves/round-35/c1/count.py` → `0` (exit 1). The predicate does not
+name `opened` and the implementation never touches column 9. Mutants on the current base:
 
-| mutant | opened cell (all 8 rows) | counter |
+| mutant | `opened` on all 8 rows | verdict |
 |---|---|---|
-| `opened-garbage` | `not-a-date` | `TARGET_MET` exit 0 |
+| `opened-1999` | `1999-01-01` | `TARGET_MET` exit 0 |
 | `opened-future` | `2099-01-01` | `TARGET_MET` exit 0 |
+| `opened-garbage` | `not-a-date` | `TARGET_MET` exit 0 |
+| `opened-empty` | `` (empty) | `TARGET_MET` exit 0 |
 
-(The earlier battery also passed `1999-01-01` and an empty cell.) So `closed_rows=8` is no
-evidence that `opened` is right. The live value is right, out-of-band: all eight receipts
-open with `(host re-open 2026-10-24)` (`evidence.txt` §9), the entries carry
-`verified-at: 2026-10-24`, and census `E08 --today 2026-10-25` passes. The claim should
-not lean on C1 for this column.
+`closed_rows=8` is therefore no evidence that `opened` is right. The live value is right
+out-of-band: all eight receipts open with `(host re-open 2026-10-24)` (quoted in
+`evidence.txt` §9), the entries carry `verified-at: 2026-10-24`, and census
+`E08 --today 2026-10-25` passes. The claim should not lean on C1 for this column.
 
 ### F3 — MEDIUM: "valid cadence token" means "any word starting with a letter"
 
 `c1/count.py:46-48,138-146`: a recheck cell passes if it is an ISO date, `^\d+d$`, or
-`^[A-Za-z][A-Za-z0-9 _-]*$`. `recheck-banana` (S205 → `banana`) → `TARGET_MET` exit 0.
-By the same regex `on change` and `0d` pass; only an empty cell fails. This matches census
-`E09`, so it is the lane's own rule, but the ledger's phrase "a valid cadence token" is
-weaker than it reads: no vocabulary, no ordering, no due date.
+`^[A-Za-z][A-Za-z0-9 _-]*$`. Verdicts (`evidence-now.txt`):
 
-Live coherence defects in the same column (both survive C1, both are `E09`-valid):
-
-- **S209.** Row `recheck=on-change`; `corpus/README.md:61` states "recheck on-change
-  (**S209, S210: 90d**)". S210 is `90d`; S209 is not. One of the two is wrong.
-- **S203/S204 vs r12.** Rows are `on-request`; the citing entry's own header says
-  `recheck: on-change` (`corpus/knowledge/idle-lock-never-asked-r12.md:10`), and
-  `README.md:59` says "recheck on-request". `on-request` occurs on exactly these two rows
-  in the whole registry (2/200) and is not among the symbolic examples the lane has
-  enumerated (`on-release/on-change/on-session-change/on-gate-change/on-capture-change/
-  on-compositor-release`, `.ufo/waves/round-18/w1/reports/SourcesRowShape.md:71`). The
-  entry is the outlier and was not updated with its row.
-- Freeze transfer: the pre-data golden row had `S203 recheck=on-change`; live is
-  `on-request` (`evidence.txt` §6). The recheck cell changed after the control receipts
-  were committed. New-row edits are legal, but the committed control did not exercise the
-  live value.
-
-### F4 — MEDIUM (live data, adjacent to `status`; route to the row owners)
-
-The wave-2 errata rewritten into the entries at 03:35 now contradict **immutable** row
-cells, and `status=mined` on those rows still counts:
-
-| row cell (unchanged, 03:25) | entry erratum / README (03:35) |
+| cell | verdict |
 |---|---|
-| S203 `teaches`: "runs twelve first-run scripts … none of the twelve asks" | r12 E2: "thirteen items: 12 `bash …/*.sh` plus `omarchy-hook-install`" |
-| S204 `scope`: "the idle lock was never asked about **and never toggled**" | r12 E1: the "never toggled" inference is **withdrawn** (null-channel reading) |
-| S205 `teaches`: "the journal holds **two start lines**" | README:60: "**one** start line in the current boot's journal" |
+| `banana` | `TARGET_MET` exit 0 |
+| `0d` | `TARGET_MET` exit 0 |
+| `on change` | `TARGET_MET` exit 0 |
+| `` (empty) | `TARGET_MISSED` exit 1 |
 
-SOURCES.md's own header says only `status`, `recheck`, `used-by` change in place, so these
-cells cannot be repaired without a new row or an appended errata. C1 does not read them, so
-`closed_rows=8` is unaffected — which is exactly why the mismatch is worth recording: the
-8/8 covers four columns, not the row's truth. The entry-side repairs belong to the seats
-that wrote them; this seat only records that the registry no longer matches its entries.
+This matches census `E09` (the lane's own rule), so it is not a counter bug — but the
+ledger's phrase "a valid cadence token" reads stronger than the implementation: no
+vocabulary, no ordering, no due date. The live tokens (`on-change` ×6, `90d` ×2) are
+`E09`-valid; `on-change` is the same token 26 other rows use.
+
+The two live coherence defects I measured at 03:35 (README claiming `S209: 90d` against a
+row reading `on-change`; entry r12 `recheck: on-change` against rows reading
+`on-request`) **were repaired at 03:40** — rows went to `on-change`, README now reads
+"recheck on-change (S210: 90d)" and "recheck on-change" for r12. That repair is the
+subject of F4.
+
+### F4 — HIGH (new; measured): the wave-2 repair rewrote registry cells in place and the record says it did not
+
+The registry's own header (`corpus/SOURCES.md:6-7`) says:
+
+> Only `status`, `recheck` and `used-by` change in place, each logged old→new in that
+> round's lesson.
+
+The 03:45 lesson (`corpus/lessons/round-35.md:181`) and `LOG.md` both say the wave-2
+findings were "applied as append-only errata blocks (criterion 44), **not as rewrites**".
+
+Measured against the byte-recovered `d2b6972` registry (sha `848a7680…`, identical to the
+03:36 snapshot) and the final observed registry (sha `0bf117e2…`), **five cells changed**,
+four of them outside the allowed set (`cell-diff.txt` has the full strings):
+
+| row | cell | allowed in place? | old → new |
+|---|---|---|---|
+| S203 | `teaches` | **no** | "runs **twelve first-run scripts** … none of the twelve asks" → "runs **thirteen items**, twelve of them first-run scripts … none of the thirteen executed items asks" |
+| S204 | `scope` | **no** | "…and the operator never made it afterwards either" → "…the journal's zero omarchy-toggle count is a null channel, and the daemon's stop/start is consistent with a toggle-off" |
+| S204 | `teaches` | **no** | "…holds zero omarchy-toggle invocations" → "…holds zero omarchy-toggle invocations, which is a null channel rather than a negative" |
+| S205 | `teaches` | **no** | "the journal holds **two start lines** on 2026-10-23" → "**one start line** in the current boot (two across two boots)" |
+| S203 | `recheck` | yes | `on-request` → `on-change` |
+| S204 | `recheck` | yes | `on-request` → `on-change` |
+
+Consequences:
+
+1. **The header rule is broken.** `teaches` and `scope` are not in the allowed set, yet
+   they were rewritten in the same registry that declares them immutable.
+2. **The required log is missing.** The two `recheck` changes are in the allowed set but
+   no `old→new` record exists: `grep -n "old→new" corpus/lessons/round-35.md` has no such
+   line for these rows (the only hit is line 134, about `registration.md`), and `LOG.md`
+   does not name them either.
+3. **The record is false.** `round-35.md:181` and `LOG.md` say "not as rewrites" while the
+   registry bytes show four out-of-set rewrites. The errata blocks themselves are
+   append-only; the *registry reconciliation* was not.
+4. **The repair improved content and destroyed provenance.** The live rows now agree with
+   their entries (that is why the S203/S204 recheck and S209 README defects disappeared),
+   but the recorded history no longer explains how. A reader comparing the lesson to the
+   registry cannot reconstruct the change.
+
+C1 is blind to all of this: `teaches`/`scope` are never read, and a `recheck` change
+between two `E09`-valid tokens cannot fail. The counter stayed `TARGET_MET` through the
+rewrite (`evidence-now.txt` §live counter), which is exactly the limit M35-2 names.
 
 ### F5 — info: `status` is the one column enforced exactly, and the live value is justified
 
-`c1/count.py:190` is a literal `cs[7] == "mined"`; `status-Mined` (capital M) →
-`TARGET_MISSED` exit 1. Census `E07` agrees, and all eight rows are legitimately `mined`:
-each id is cited by an admitted entry, so `W03` (mined with `used-by —`) does not apply.
-No defect.
+`c1/count.py:190` is a literal `cs[7] == "mined"`; `status-Mined` (capital M) and
+`status-queued` both → `TARGET_MISSED` exit 1. Census `E07` agrees, and all eight rows are
+legitimately `mined`: each id is cited by an admitted entry, so `W03` (mined with
+`used-by —`) does not apply. No defect.
 
-### F6 — info: division of labour leaves `used-by` semantics with no independent guard
+### F6 — info: `used-by` semantics have no independent guard outside C1
 
-Census `E11` checks only that the used-by path exists. A tree whose S203 cell names the
-existing `corpus/lessons/round-35.md` (i.e. a wrong but resolvable user) produces **no
-`E11`/`E0x` line for S203**, while C1 correctly returns `TARGET_MISSED open_cites=1`
-(`scratch/RevRowsUsedBy/m-usedby-lesson2`, `census-mut.txt`). So the only thing that can
-reject a wrong-but-existing token is the frozen equality of F1 — whose reference set is
-never checked against the entries. The chain is closed on itself.
+Census `E11` checks only that the used-by path exists on disk. A tree whose S203 cell names
+the existing `corpus/lessons/round-35.md` (wrong but resolvable) produces **no `E0x`
+finding for S203** (`census-mut.txt`: `grep -c S203` → 0), while C1 returns
+`TARGET_MISSED open_cites=1`. So the only thing that rejects a wrong-but-existing token is
+the frozen equality of F1 — and the frozen set is never checked against the entries. The
+chain closes on itself.
 
 ## Non-findings (checked, clean)
 
-- No difference of any kind between the eight cells and the independently reconstructed
-  source-line sets (§1).
+- No difference of any kind between the eight `used-by` cells and the independently
+  reconstructed source-line sets (§1), in either observed state.
 - No id cited by a non-admitted knowledge entry; no entry cites an id absent from rows.
-- No duplicate ids, no duplicate rows, no extra cells for S203–S210; census `validate`
-  on the live registry is `ok`, exit 0, with the seven pre-existing `W04` warnings on
-  old ids (S030, S042, S045, S097, S119, S120, S121) and none on S203–S210.
-- `status`/`opened`/`recheck` match the round-35 lesson's admit block
-  (`corpus/lessons/round-35.md:67-83`, entries at `:84`): all eight `own-work`, tier A,
-  `mined`, `opened 2026-10-24`.
-- `usedby-dupe` and a reordered cell pass (set semantics) — harmless, not a defect.
+- No duplicate ids or rows, no extra cells for S203–S210; census `validate` on the live
+  registry is `ok`, exit 0, with the seven pre-existing `W04` warnings on old ids (S030,
+  S042, S045, S097, S119, S120, S121) and none on S203–S210.
+- `status`, `opened` and the final `recheck` values match the lesson's admit block
+  (`corpus/lessons/round-35.md:67-83`): all eight `own-work`, tier A, `mined`,
+  `opened 2026-10-24`.
+- `usedby-dupe` (same token twice) and a reordered cell pass — set semantics, harmless.
 
 ## Residual risk and verification gaps
 
-- Line/cell checks are textual: my independent scan matches `^source:\s*(S\d+)` at column 0;
-  the three entries have no indented or comma-joined `source:` lines (`grep -nE
-  "^[[:space:]]+source:"` empty), so the reconstruction is complete for this data.
-- The entries and README were being edited concurrently (03:35, sibling seats). My snapshot
-  hashes pin what I judged; a later edit that removes a `source:` line would invalidate
-  §1's "as observed" statement without invalidating F1 (which predicts C1 stays green).
-- F1's mutants change only entry/row text; `gate-quote` lines were left intact so the
-  failure cannot be confused with the quote clauses.
-- Out of scope, not exercised: gate-quote contents and word bounds, anchor digests
-  (sibling `RevRowsDigest`), C2, the three entries' claim truth.
-- Tooling: no installs or upgrades; only `python3 -I`, `sha256sum`, `stat`, `grep`, `git`,
-  and the fleet `scripts/sources-census.sh` (read-only, stdout). No `pacman` transaction.
+- The registry was edited twice after my measurement (03:40, and the live file's sha moved
+  again during the session). The report pins `0bf117e2…`; later edits are outside it.
+- The 03:36 entry bytes for r12 and README are not recoverable (jj `d2b6972` predates r12;
+  README was rewritten at 03:40). The source lines, `recheck` line and `gate-quote` lines
+  this seat cites are identical in the recovered/current copies; the errata body is not
+  what I measured. See `RELOCATION.md`.
+- The mutation tables are re-runs on current bytes; the original 03:36 run (sha-pinned
+  `evidence.txt`) gave the same verdicts for every case it covered.
+- Out of scope, not exercised: gate-quote substrings and word bounds, anchor digests
+  (sibling `RevRowsDigest`), entry claim truth, C2.
+- Tooling: no installs or upgrades; `python3 -I`, `sha256sum`, `stat`, `grep`, `jj file
+  show`, and the fleet `scripts/sources-census.sh` (read-only stdout). No `pacman`
+  transaction.
+
+## Appendix A — exact verdicts (durable)
+
+Live, `corpus/SOURCES.md` sha `0bf117e2…`:
+
+```
+$ python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md --today 2026-10-25
+file	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+… (six more W04 on S042, S045, S097, S119, S120, S121) …
+file	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+Mutation battery on `base-now` (`evidence-now.txt`, full list):
+
+```
+base-now (unmutated)   exit=0 TARGET_MET
+src-drop-S204          exit=0 TARGET_MET
+src-retag-S204-S999    exit=0 TARGET_MET
+src-add-S204-r15       exit=0 TARGET_MET
+src-drop-all-S205      exit=0 TARGET_MET
+opened-1999            exit=0 TARGET_MET
+opened-future          exit=0 TARGET_MET
+opened-garbage         exit=0 TARGET_MET
+opened-empty           exit=0 TARGET_MET
+recheck-banana         exit=0 TARGET_MET
+recheck-zero-d         exit=0 TARGET_MET
+recheck-space          exit=0 TARGET_MET
+recheck-empty          exit=1 TARGET_MISSED
+status-Mined           exit=1 TARGET_MISSED
+status-queued          exit=1 TARGET_MISSED
+usedby-dupe            exit=0 TARGET_MET
+usedby-reorder         exit=0 TARGET_MET
+usedby-lesson          exit=1 TARGET_MISSED
+usedby-dotprefix       exit=1 TARGET_MISSED
+usedby-absolute        exit=1 TARGET_MISSED
+```
+
+Byte-recovery of the pre-repair registry:
+
+```
+$ jj file show -r d2b6972 corpus/SOURCES.md | sha256sum
+848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80  -
+$ grep SOURCES snapshot.sha256
+848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80  .../snapshot/SOURCES.md
+```
+
+Counter clauses:
+
+```
+184:            citing = {rel for rel, rel_ids in spec["entries"].items() if sid in rel_ids}
+189:                and used_by == citing
+190:                and cs[7] == "mined"
+191:                and valid_recheck(cs[9])
+$ grep -c opened .ufo/waves/round-35/c1/count.py
+0
+```
 
 ## Verdict
 
-For the live data: **PASS** — 8/8 `used-by` cells equal the independently reconstructed
-citing-entry sets and the frozen sets; every `status=mined` is supported by an admitted
-entry; `opened 2026-10-24` is corroborated by the receipt headers and `E08`; every
-`recheck` is accepted by `E09`, with two coherence defects to route (S209 vs README,
-r12 entry vs its rows).
+For the live data: **PASS on the four columns as data** — 8/8 `used-by` cells equal the
+independently reconstructed citing-entry sets and the frozen sets; `status=mined` is
+supported for all eight; `opened 2026-10-24` is corroborated by the receipt headers and
+`E08`; every `recheck` is `E09`-valid.
 
-For the frozen counter: **FAIL on clause fidelity for this scope.** `used-by-exact`
-measures row↔frozen agreement, not the entries that cite the id (four mutants, all
-`TARGET_MET` exit 0); `opened` is never read (two mutants, both `TARGET_MET`); `recheck`
-accepts any alphabetic word. The claim's live numbers are correct today, but the predicate
-cannot prove two of the four columns it is credited with, and cannot notice a stale
-`used-by` after an entry edit.
+For the frozen counter: **FAIL on clause fidelity.** `used-by-exact` measures row↔frozen
+agreement, not the entries that cite the id (four mutants, `TARGET_MET` exit 0); `opened`
+is never read (four mutants, `TARGET_MET`); `recheck` accepts any alphabetic word.
+
+For repair integrity: **FAIL.** Four `teaches`/`scope` cells outside the registry's allowed
+in-place set were rewritten at 03:40, the two allowed `recheck` changes carry no `old→new`
+log, and the lesson and `LOG.md` both describe the repair as "append-only … not as
+rewrites". The live rows are now *more* coherent than at 03:36; the record of how they got
+there is not.

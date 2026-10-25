@@ -131,10 +131,10 @@ The conclusion ("the controls never exercise the live bytes") holds; the enumera
 **F5 — LOW — "three inferences … withdrawn by errata" does not match the errata set.** Committed
 errata bullets: `idle-lock-never-asked-r12.md` 3 (E1 never-toggled, E2 thirteen-items, E3
 title/independent-negatives), `idle-lock-chain-armed-r14.md` 2 (E1 transient-scope unlicensed,
-E2 two boots / "both fire" withdrawn), `idle-lock-offered-in-the-bar-r15.md` 5 (E1 mtime, E2
-"never taken it", E3 "built not to remember", E4 one-state-named, …) — 10 bullets, each
-withdrawing at least one assertion, plus two in-section correction blocks. Either name the three
-it means or publish the measured count.
+E2 two boots / "both fire" withdrawn), `idle-lock-offered-in-the-bar-r15.md` 5 (E1 dating clock,
+E2 "never taken it", E3 "built not to remember", E4 one-state-named, E5 "leaves no trace" scope)
+— 10 bullets, each withdrawing or narrowing at least one assertion, plus two in-section
+correction blocks. Either name the three it means or publish the measured count.
 
 **F6 — LOW — transcription and adjacent-file nits.**
 (a) Both row cells quote counter output with the `verdict=` token elided
@@ -143,11 +143,13 @@ it means or publish the measured count.
 scout) although wave 1 dispatched 64 seats and produced 64 reports — the row's seat numbers are
 right against the spec and reports, but the plan file contradicts them.
 
-**F7 — NOTE — the digest-repair patch survives only in git.** The worktree shows
-`.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py` as deleted (`git status: D`), and the
-`scratch/` tree was relocated to `scratch-evidence/`. The evidence is the committed blob
-(`git show HEAD:.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py`, and
-`scratch-evidence/L1DigestFix/count-fixed.py`). Cite those, not a `scratch/` path.
+**F7 — NOTE — the digest-repair patch's evidence path moved at the close.**
+`scratch/` was dropped from the lane at `1bb25c7` ("lane closes without scratch trees"); the
+patch is now tracked at `.ufo/waves/round-35/scratch-evidence/L1DigestFix/count-fixed.py`
+(sha256 `a833da2a4008a13f182c63ce8c2968bed1294d1ce303f20a387ab3de847a0cfd`, re-verified at this
+tip: root `TARGET_MET` exit 0, shape-only `TARGET_MISSED` exit 1). Any citation of a
+`.ufo/waves/round-35/scratch/…` path for this artifact is now dangling; cite the
+`scratch-evidence/` file or its sha256.
 
 ## 6. What the rows get right (verified, so it is not re-argued)
 
@@ -179,6 +181,7 @@ right against the spec and reports, but the plan file contradicts them.
   (no validator transcript is cited in the tree I read); the construction of the two
   `controls-content/` cribs (I ran them, not their provenance); and the "~15 minutes" interval,
   which is an approximation between 10m50s and 18m53s depending on which commit ends the window.
-- **Environment note:** the `scratch/` tree was relocated to `scratch-evidence/` mid-run. Every
-  measurement above is from committed bytes or `git archive <rev>` extractions, not from
-  seat scratch, so the relocation affects no number in this report.
+- **Environment note:** the `scratch/` tree was relocated to `scratch-evidence/` mid-run and then
+  dropped from the lane at `1bb25c7`. Every measurement above is from committed bytes or
+  `git archive <rev>` extractions, so the relocation/deletion affects no number in this report.
+  `w1/reports` holds 64 `.md` seat reports at the closing tip, `w2/reports` 40.

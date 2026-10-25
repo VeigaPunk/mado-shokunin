@@ -1,9 +1,9 @@
 # RevReadmeFrontier — corpus README frontier and index attack (round 35, wave 2)
 
 Seat: `L1Mado35.RevReadmeFrontier` (leaf, no dispatch). Lane: `/home/vgpnk/Projects/shokunin/mado-shokunin`.
-Mode: read-only falsification. Writes confined to `.ufo/waves/round-35/scratch/RevReadmeFrontier/` and this
-file. No lane corpus file, counter, control, `SOURCES.md`, sibling lane, jj state or Git index was modified.
-Installs/upgrades: none (coreutils, grep, python3 sufficed; pacman not touched).
+Mode: read-only falsification. Writes confined to `.ufo/waves/round-35/scratch-evidence/RevReadmeFrontier/` and
+this file. No lane corpus file, counter, control, `SOURCES.md`, sibling lane, jj state or Git index was
+modified. Installs/upgrades: none (coreutils, grep, python3 sufficed; pacman not touched).
 
 **Audited snapshots (two, because the owner edited mid-report):**
 
@@ -12,8 +12,19 @@ Installs/upgrades: none (coreutils, grep, python3 sufficed; pacman not touched).
   The "Revision-4 re-audit" section below gives each finding's current status and current line number; the
   F1–F9 bodies remain the record of what was wrong in the revision they cite.
 
-Frozen copies: `…/scratch/RevReadmeFrontier/README.audited.md` (`3bb9865f…`) and `…/README.audited.rev4.md`
-(`de5b885a…`). Both carry 50 index rows over 50 notes.
+Frozen copies, and how to read them after the scratch relocation:
+
+```
+git cat-file -p 4efaf63:.ufo/waves/round-35/scratch-evidence/RevReadmeFrontier/README.audited.md | sha256sum
+→ 3bb9865fd12793f9adbb204175f33ca5ab69adb6103df2048bfc54300933694f   # 249 L, the audited revision
+git cat-file -p 4efaf63:.ufo/waves/round-35/scratch-evidence/RevReadmeFrontier/README.audited.rev4.md | sha256sum
+→ de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6   # 254 L, the current bytes
+```
+
+Both carry 50 index rows over 50 notes. **On-disk hazard:** the worktree copy of `README.audited.md` is
+sha `7547ccfe…` — this seat's partial 03:46 reconstruction, not the audited snapshot — because the second
+sweep moved the rebuild over the relocated file. `…/scratch-evidence/RevReadmeFrontier/PROVENANCE.md`
+records the mapping; cite the commit blob, never the on-disk `README.audited.md`.
 
 **The file moved under me four times** (`7f348944…` 234 L → `a3769bef…` 246 L → `3bb9865f…` 249 L →
 `de5b885a…` 254 L), by an unnamed seat that owns `corpus/README.md`. Peer `L1Mado35.RevIndex` is read-only on
@@ -48,10 +59,12 @@ moves the index verdict.
 
 ## Revision-4 re-audit (current bytes)
 
-Full diff of the owner's edit, `git`-free, against the frozen copy:
+Full diff of the owner's edit against the audited snapshot. The snapshot is reproducible from the checkpoint
+commit, so this command survives any further scratch churn (first run used the on-disk copy before the
+relocation: `diff .ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md corpus/README.md`):
 
 ```
-$ diff .ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md corpus/README.md
+$ diff <(git cat-file -p 4efaf63:.ufo/waves/round-35/scratch-evidence/RevReadmeFrontier/README.audited.md) corpus/README.md
 59c59   … recheck on-request → on-change
 61c61   … recheck "on-change (S209, S210: 90d)" → "on-change (S210: 90d)"
 103c103,105  "+ consumer or transition measurement is claimed *here*; round 35 moved the
@@ -68,9 +81,10 @@ exit=1   # expected: the files differ
 Gates re-run on those bytes:
 
 ```
-$ python3 -I quality/check-index.py --root …/scratch/RevReadmeFrontier/mirror4
-MADO_INDEX: root=…/mirror4 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+$ python3 -I quality/check-index.py --root /tmp/rr35-mirror
+MADO_INDEX: root=/tmp/rr35-mirror indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 exit=0
+# first run: --root …/scratch/RevReadmeFrontier/mirror4, same verdict, before the relocation
 $ python3 -I quality/check-index-rows.py --root /home/vgpnk/Projects/shokunin/mado-shokunin
 MADO_INDEX_ROWS: root=… rows=50 errors=0 warns=0
 exit=0
@@ -100,10 +114,16 @@ sitting on `on-change` is a registry cadence question, outside this row's text a
 ## Assigned commands and gate results (quoted with exit codes)
 
 ```
-# working tree mirrored to scratch (rsync, .git and .ufo excluded), then
-$ python3 -I quality/check-index.py --root …/.ufo/waves/round-35/scratch/RevReadmeFrontier/mirror2
-MADO_INDEX: root=…/scratch/RevReadmeFrontier/mirror2 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+# working tree copied outside the lane (the in-lane scratch mirrors were relocated away), then
+$ rsync -a --exclude=.git --exclude=.ufo ./ /tmp/rr35-mirror/ && sha256sum /tmp/rr35-mirror/corpus/README.md
+de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6  /tmp/rr35-mirror/corpus/README.md
+$ python3 -I quality/check-index.py --root /tmp/rr35-mirror
+MADO_INDEX: root=/tmp/rr35-mirror indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
 exit=0
+
+# the same verdict was first obtained on scratch/RevReadmeFrontier/mirror2, again on …/mirror4, and a third
+# time on /tmp after the relocation; all three ran on byte-identical corpus bytes. The first two mirrors
+# were lost with the scratch move (see "Evidence artifacts (post-relocation)").
 
 # the assigned rev-mode command, at master
 $ python3 -I quality/check-index.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev $(git -C … rev-parse master)
@@ -338,13 +358,30 @@ to whoever owns `corpus/README.md`, not to `RevIndex`.
   taken from S205's receipt and the landed `RevQuoteS205`/`RevQuoteS204` reports. My own host reads were the
   two script bodies and the receipts' bytes.
 - **Notification history was not read** (r15 E5 leaves it open); nothing in this report depends on it.
+- **Scratch relocation, and why this report inlines its evidence.** `scratch/` was moved, not deleted, to
+  `scratch-evidence/` (59 seat dirs, checkpoint `4efaf63`); a second sweep then moved this seat's 03:46 rebuild
+  over its own relocated dir. Peer `RevEntryR15` warns the checkpoint can carry *older* segments for seats that
+  rewrote files before 03:43; for this seat both snapshot blobs were hash-verified against digests the audit had
+  already quoted (`3bb9865f…`, `de5b885a…`), so they are exact, not stale. The on-disk `README.audited.md` is
+  `7547ccfe…` and is **not** the audited snapshot (see `PROVENANCE.md`). Nothing in F1–F9 reads from scratch:
+  every audited sentence is quoted with its line number and every command with its exit code.
 - **C2 was not run** by this seat; the README quotes only C1, and the C1 run above is context, not a verdict
   on the notes' truth.
 
-## Scratch artifacts
+## Evidence artifacts (post-relocation)
 
-- `.ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md` — frozen 249-line snapshot (`3bb9865f…`).
-- `…/README.audited.rev4.md` — frozen 254-line snapshot (`de5b885a…`), the current bytes.
-- `…/mirror/` — first mirror (`7f348944…`, 234 L, rows present, no round-35 section).
-- `…/mirror2/` — mirror (`3bb9865f…`) used for the first `50/50` run.
-- `…/mirror4/` — mirror (`de5b885a…`) used for the revision-4 `50/50` run.
+The `scratch/` tree was **moved** to `scratch-evidence/` at 03:43–03:45 (59 seat dirs; checkpointed in commit
+`4efaf63`) and a second sweep then removed re-created `scratch/` dirs at 03:46, moving this seat's rebuild over
+its own relocated directory. Current state of this seat's evidence:
+
+| artifact | where | status |
+|---|---|---|
+| audited snapshot, 249 L, `3bb9865f…` | `git cat-file -p 4efaf63:.ufo/waves/round-35/scratch-evidence/RevReadmeFrontier/README.audited.md` | **canonical** — exact bytes |
+| current snapshot, 254 L, `de5b885a…` | same commit, `…/README.audited.rev4.md`; also on disk at `scratch-evidence/RevReadmeFrontier/README.audited.rev4.md` | **canonical** — exact bytes, verified on disk |
+| on-disk `…/README.audited.md`, `7547ccfe…` | `scratch-evidence/RevReadmeFrontier/` | **not evidence** — partial reconstruction, left as HEAD has it so the tree stays clean |
+| three mirrors (`7f348944…`, `3bb9865f…`, `de5b885a…`) | gone with the relocation | verdict re-run on `/tmp/rr35-mirror` (`de5b885a…`, `50/50`, exit 0) |
+| provenance map | `scratch-evidence/RevReadmeFrontier/PROVENANCE.md` | read this before citing any file above |
+
+`scratch/` is not a stable store this round: 12+ seat dirs were re-created at 03:46 and at least one was deleted
+again. **This report is the durable locus** — every finding quotes the audited sentence with its line number,
+and every command is quoted with its exit code, so nothing depends on a surviving scratch file.

@@ -376,3 +376,68 @@ real but the *real-tree run* does not exercise them; it is a one-bit fingerprint
 `open_cites == 0` (F2). F3–F5 and F9 add four calibration defects that a round-36 reader of
 `uncovered=0` would otherwise not see: two unnamed load-bearing checks, a vacuous-quote survivor,
 a prose-accepting cadence regex, and six unchecked row cells.
+
+## 9. Appendix — inlined detector transcript (durable copy)
+
+Verbatim `exit` + `stdout` for all 28 runs, read back out of
+`scratch-evidence/MutC1Real/results.json` (`sha256 ee68b1b3…`). Counter = `counter-pristine.py`
+(`sha256 78c25892…`, byte-identical to `.ufo/waves/round-35/c1/count.py`); tree = the §1 v2
+snapshot. `PRED-C1-r35-v1 ` prefix omitted per line for width; counts are
+`closed_entries/closed_rows/open_cites`.
+
+```
+A:entry-regular                            exit 0  3/8/0  TARGET_MET
+A:entry-metric                             exit 0  3/8/0  TARGET_MET
+A:row-unique                               exit 0  3/8/0  TARGET_MET
+A:row-well-formed                          exit 0  3/8/0  TARGET_MET
+A:used-by-exact                            exit 0  3/8/0  TARGET_MET
+A:status-mined                             exit 0  3/8/0  TARGET_MET
+A:recheck-valid                            exit 0  3/8/0  TARGET_MET
+A:digest-match                             exit 0  3/8/0  TARGET_MET
+A:gate-quote-substring                     exit 0  3/8/0  TARGET_MET
+A:gate-quote-word-bound                    exit 0  3/8/0  TARGET_MET
+A:o-nofollow-open                          exit 0  3/8/0  TARGET_MET
+B:entry-regular                            exit 1  2/6/2  TARGET_MISSED
+B:row-unique                               exit 1  2/7/1  TARGET_MISSED
+B:row-well-formed                          exit 1  2/7/1  TARGET_MISSED
+B:used-by-exact                            exit 1  2/7/1  TARGET_MISSED
+B:status-mined                             exit 1  2/7/1  TARGET_MISSED
+B:recheck-valid                            exit 1  2/7/1  TARGET_MISSED
+B:digest-match                             exit 1  2/7/1  TARGET_MISSED
+B:gate-quote-substring                     exit 1  2/7/1  TARGET_MISSED
+B:gate-quote-word-bound                    exit 1  2/7/1  TARGET_MISSED
+B:o-nofollow-open                          exit 1  2/6/2  TARGET_MISSED
+C:walk-off+NOFOLLOW                        exit 1  2/6/2  TARGET_MISSED
+C:walk-off+NO-NOFOLLOW                     exit 0  3/8/0  TARGET_MET
+B:quote-uniqueness (undeclared)            exit 1  2/7/1  TARGET_MISSED
+B:receipt-regularity (undeclared)          exit 1  2/7/1  TARGET_MISSED
+B:gate-quote-evidence-strength (vacuous)   exit 0  3/8/0  TARGET_MET      <- survivor
+X:o-nofollow-drop x symlink-data           exit 1  2/6/2  TARGET_MISSED
+X:entry-regular-drop x hardlink-data       exit 0  3/8/0  TARGET_MET
+A+B cross: 8/10 TARGET_MET; exceptions entry-regular (2/6/2 MISSED) and o-nofollow-open
+(2/6/2 MISSED); all other eight restore 3/8/0 MET.
+baseline (snapshot, before arms)           exit 0  3/8/0  TARGET_MET
+restored (same command, after all arms)    exit 0  3/8/0  TARGET_MET
+```
+
+Data mutations with the sha256 of the mutated artifact (`SOURCES.md` unless stated):
+
+| arm | mutation | sha256 |
+|---|---|---|
+| `entry-regular` | r12 entry -> symlink to byte-identical `.real` copy | `7f27ced0…` (content unchanged) |
+| `row-unique` | duplicate S205 row | `471ab9c5…` |
+| `row-well-formed` | +1 cell on S206 row | `e61f128b…` |
+| `used-by-exact` | +1 used-by token on S207 | `f2fdb27b…` |
+| `status-mined` | S203 status `mined` -> `queued` | `b70771cc…` |
+| `recheck-valid` | S204 recheck `on-change` -> `2026/Q1` | `7cf9e397…` |
+| `digest-match` | S208 receipt sha256 `…ce4654` -> `…ce4650` | `1a28a14c…` |
+| `gate-quote-substring` | S209 quote absent from receipt (13 words) | `cb33505b…` (r15 entry) |
+| `gate-quote-word-bound` | S203 quote = 26-word contiguous receipt substring | `d8dd243b…` (r12 entry) |
+| `o-nofollow-open` | r12 entry -> hardlink (`nlink=2`) | `7f27ced0…` (content unchanged) |
+| `quote-uniqueness` | duplicate S203 `gate-quote:` line | `6fc23911…` (r12 entry) |
+| `receipt-regularity` | `S206.receipt.txt` -> symlink | `1d30e4a9…` (content unchanged) |
+| `evidence-strength` | S203 quote -> `the` (1 word) | `e030118a…` (r12 entry) |
+
+`valid_recheck` probe (counter's own function):
+`on-change/90d/2026-10-24/some day maybe/review whenever we feel like it/when the mood strikes/never`
+→ `True`; `next sprint/when free`, `2026/Q1`, `TBD!` → `False`.

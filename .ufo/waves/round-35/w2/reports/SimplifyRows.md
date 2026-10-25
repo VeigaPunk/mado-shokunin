@@ -82,7 +82,7 @@ What survived for this seat, and what did not:
 | `source_audit.py` (1879 B, `24fb92e8…7aa8b8ea`) | `scratch-evidence/SimplifyRows/` | **rebuild**, 03:46 |
 | `propose_strict.py` (4811 B, `f3d4f142…8e9249`) | `scratch-evidence/SimplifyRows/` | **rebuild**, 03:46 |
 | `exp/` mirrors (incl. the pre-edit `SOURCES.md` snapshot) | — | **lost**; no `exp/` in the relocated dir |
-| `simplifyrows_repro.py` (3291 B, `c139251d…98ed06`) | `scratch/SimplifyRows/` | re-created 03:47; may be moved again |
+| `simplifyrows_repro.py` (3291 B, `c139251d…98ed06`) | `scratch-evidence/SimplifyRows/` | moved there ~03:48, byte-identical to Appendix A (diffed); the appendix is the durable copy |
 
 A rebuild is not evidence, so this report does not lean on those files. The
 load-bearing proof — the deletion impossibility and the transcript-only audit — is
@@ -123,7 +123,7 @@ fetch transcript. "Anchor supported" is judged against the cited receipt only.
 | S207 | doc `default/waybar/indicators/idle.sh` | the desktop renders the off state itself (r15 §2) | yes | yes; scope says "two-state vocabulary" but one state is an empty string (F6) | keep; scope word too wide |
 | S208 | doc `bin/omarchy-menu` | the menu is the second surface (r15 §1) | yes | yes, lines 207/212 verified | keep |
 | S209 | **tr** `fetch/S209.receipt.txt` | the offer dates back at least to the oldest copy (r15 §2) | yes for "each copy carries the handler"; the date needs its field named (F5) | handler counts yes; "oldest dated 2026-10-03" is mtime, not the filename date | keep; one field ambiguity |
-| S210 | **tr** `fetch/S210.receipt.txt` | no recorded entry, so the choice leaves no trace (r15 §3) | **no** — the directory cannot record the idle lock at all (F1) | the listing yes; "the place where a choice about other toggles would have left one" is **false** | **vacuous row**: witness cannot witness |
+| S210 | **tr** `fetch/S210.receipt.txt` | no recorded entry, so the choice leaves no trace (r15 §3) | **no** — the directory cannot record the idle lock at all (F1); subject also unversioned | the listing yes; "the place where a choice about other toggles would have left one" is **false**, and r15 E3 now denies it | **vacuous row**: witness cannot witness; contradicts its own entry's E3 |
 
 Distinctness details:
 
@@ -306,11 +306,24 @@ section. The row's teaches still says the toggles directory "is the place where 
 choice about other toggles would have left one", which is exactly what the entry now
 denies for the idle lock.
 
+**Status at 03:52 — the contradiction is now between two live artifacts.** `SOURCES.md`
+reads no errata: cell 7 and r15 §3 are what a reader or a counter sees. E3 withdraws
+exactly the clause the row still teaches, so the repair cannot live only in the
+appended block; it has to land in the teaches cell (and §3). Independently, the
+measured subject has no revision key to anchor: `~/.local/state/omarchy/toggles/hypr`
+is outside the omarchy checkout (HEAD `8fcc9d6048af`, clean) and is ignored by the
+home repo — `git check-ignore` → `.gitignore:23:/.local/*`, 0 tracked files. So S210's
+anchor is section + receipt digest only; the `CORPUS.md:99` requirement of a revision
+(version, commit, or publication date) for the subject is met by neither. Peer
+`RevQuoteS210` reports the same contradiction; the git facts above are re-derived here.
+
 ## Deletion proofs (scratch, unmodified counter)
 
-Harness: `scratch/SimplifyRows/harness.py` builds a root containing only what C1
-reads (`corpus/` + `.ufo/waves/round-35/fetch/`), applies one mutation, then runs the
-lane's counter with `python3 -I`. Command shape:
+Harness: `harness.py` builds a root containing only what C1 reads (`corpus/` +
+`.ufo/waves/round-35/fetch/`), applies one mutation, then runs the lane's counter with
+`python3 -I`. The relocated copy at `scratch-evidence/SimplifyRows/harness.py` is a
+03:46 rebuild (sha256 `2c5cf6ee…cacd8`); the `exp/` trees the original made did not
+survive the relocation. The decisive case is reproduced by Appendix A. Command shape:
 
 ```
 python3 -I harness.py <experiment>
@@ -358,9 +371,10 @@ receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.
    is load-bearing by arithmetic. A round-36 row test of the form *"a row is closed
    only when it names a document (source path or verified digest) outside the fetch
    tree"* makes redundancy measurable. Working checker:
-   `scratch/SimplifyRows/propose_strict.py` (adds source-document, file-digest and
-   line-span checks to C1's row test). On the lane it prints
-   `document_anchored_rows=5/8`, exit 1 —
+   `scratch-evidence/SimplifyRows/propose_strict.py` (03:46 rebuild, sha256
+   `f3d4f142…8e9249`; adds source-document, file-digest and line-span checks to C1's
+   row test; re-run after the relocation prints the same numbers). On the lane it
+   prints `document_anchored_rows=5/8`, exit 1 —
 
    ```
    S203 PASS   S204 FAIL (no document)   S205 PASS (hypridle.conf digest)
@@ -394,9 +408,10 @@ receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.
 
 ## Preserved contract
 
-- This seat wrote nothing into the lane. All writes are under
-  `.ufo/waves/round-35/scratch/SimplifyRows/` (`harness.py`, `source_audit.py`,
-  `propose_strict.py`, `exp/…`) plus this report.
+- This seat wrote nothing into the lane's corpus, counters, controls or entries. All
+  writes were under `.ufo/waves/round-35/scratch/SimplifyRows/` — relocated by the
+  external mover to `scratch-evidence/SimplifyRows/` — plus this report. The relocated
+  scripts are 03:46 rebuilds, pinned by sha256 in the relocation section.
 - Lane state at close (03:45:24; the lane was edited three times during this attack
   and may move again), with the concurrent-edit provenance recorded above:
 
@@ -408,17 +423,18 @@ receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.
   ```
   The three fetch receipts and the other five rows were not touched by the siblings
   (receipts still hash to the frozen digests: C1 closes them).
-- My analysis started on `SOURCES.md` sha256 `848a7680…`; the pre-edit snapshot is
-  preserved byte-for-byte at
-  `scratch/SimplifyRows/exp/e0-base/root/corpus/SOURCES.md`, and the diff between it
-  and the current file is 6 lines over S203/S204/S205 only.
+- My analysis started on `SOURCES.md` sha256 `848a7680…`. I diffed the live mirror
+  against that snapshot at 03:40: 6 lines over S203/S204/S205 only. Both the snapshot
+  and the mirror were lost in the relocation; the diff result is what stands, not the
+  baseline bytes.
 - Census on the lane: `rows=200 malformed=0 dups=(none) tier A=193 B=1 C=6`.
   S203–S210 are 8 of the 200; four of those eight name a fetch transcript as their
   source (S204, S205, S209, S210), and three of those four (S204, S209, S210) name
   no document anywhere in the row.
 - C1 and C2 both exit 0 TARGET_MET at open (pre-edit), mid-attack and at close
-  (post-edit); every mutation was applied to a copy under
-  `scratch/SimplifyRows/exp/`.
+  (post-edit); every mutation was applied to a throwaway mirror. The `exp/` trees did
+  not survive the relocation, so Appendix A regenerates the two decisive cases in a
+  `tempfile` and leaves the lane untouched.
 - No tool installed or upgraded (nothing was needed); no pacman transaction; nothing
   written under `/home/vgpnk/Projects/shokuknow`.
 
@@ -445,8 +461,12 @@ still says "two-state vocabulary". So the registry is now a stale second authori
 for the same claims. YAGNI would retire those rows; the frozen target forbids it
 (e14), and rule 2 forbids rewriting them in place (e11/e12 pass C1 but are contract
 violations). The only compliant move is to append superseding rows (e13) — which
-raises weight while leaving the stale rows scored. I recommend that move *and* a
-round-36 target that scores document-anchored rows, so the stale text stops being
+raises weight while leaving the stale rows scored. Note what makes this worse than
+duplication: **`SOURCES.md` reads no errata**. A reader or a counter sees cell 7 and
+the entry body, never the appended correction, so an errata-only repair cannot fix a
+scored row — the repair has to land in the teaches cell (and in the section it
+supports), which rule 2 forbids doing in place. I recommend the superseding rows *and*
+a round-36 target that scores document-anchored rows, so the stale text stops being
 load-bearing instead of being contradicted in place.
 
 ## Not verified
@@ -465,3 +485,135 @@ load-bearing instead of being contradicted in place.
 - C2's clause ledger content beyond running its counter.
 - The four superseding rows proposed above are sketched, not built; only the
   mechanical shape was tested (e13/e11).
+
+## Appendix A — self-contained reproducer
+
+Durable copy of the load-bearing proof (the original `harness.py`/`exp/` trees were
+lost in the scratch relocation). Drop this in any file, run it **from the lane root**
+with `python3 -I`, and it prints the C1 baseline, the deletion proof and the
+source-class audit. It writes only under a `tempfile` and leaves the lane untouched.
+Reference copy: `scratch-evidence/SimplifyRows/simplifyrows_repro.py` (3291 B, sha256
+`c139251dd8e38697c9b87b3585e89620ef4545edae39f5e237e2e6802098ed06`, byte-identical to
+the block below — the extracted block was diffed against it). Because `scratch*` has
+been moved twice during this task, treat the block as the durable copy. Verified output
+(extracted to `/tmp/appendix_repro.py`, run from the lane root, exit 0) follows the code.
+
+```python
+#!/usr/bin/env python3
+"""Standalone reproducer for the SimplifyRows findings (round 35, wave 2).
+
+Run from the lane root:   python3 -I simplifyrows_repro.py
+Prints: (1) the frozen C1 baseline, (2) a deletion proof, (3) a source-class
+audit of the eight scored rows. Exit 0 iff every expectation holds.
+Writes only under a tempdir; the lane is read-only.
+"""
+from __future__ import annotations
+
+import json
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+LANE = Path.cwd()
+C1 = LANE / ".ufo/waves/round-35/c1/count.py"
+FROZEN = LANE / ".ufo/waves/round-35/c1/frozen.json"
+SRC = "corpus/SOURCES.md"
+ROW = re.compile(r"^ {0,3}\|\s*(S[0-9]+)\s*\|")
+DIGEST = re.compile(r"([\w./-]+) sha256 ([0-9a-f]{64})")
+
+
+def cells(line: str) -> list[str]:
+    parts = line.split("|")
+    if parts and parts[0] == "":
+        parts = parts[1:]
+    if parts and parts[-1] == "":
+        parts = parts[:-1]
+    return [p.strip() for p in parts]
+
+
+def run(root: Path) -> tuple[str, int]:
+    proc = subprocess.run(
+        [sys.executable, "-I", str(C1), "--root", str(root), "--frozen", str(FROZEN)],
+        capture_output=True, text=True,
+    )
+    return (proc.stdout.strip() + proc.stderr.strip()).strip(), proc.returncode
+
+
+def main() -> int:
+    ok = True
+
+    out, rc = run(LANE)
+    print(f"[baseline] exit={rc} {out}")
+    ok &= rc == 0 and "closed_rows=8" in out and "TARGET_MET" in out
+
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        shutil.copytree(LANE / "corpus", root / "corpus")
+        shutil.copytree(LANE / ".ufo/waves/round-35/fetch", root / ".ufo/waves/round-35/fetch")
+        p = root / SRC
+        lines = p.read_text().splitlines(keepends=True)
+        p.write_text("".join(l for l in lines if not l.lstrip().startswith("| S204 |")))
+        out2, rc2 = run(root)
+        print(f"[drop S204] exit={rc2} {out2}")
+        ok &= rc2 == 1 and "closed_rows=7" in out2 and "open_cites=1" in out2
+
+    rows: dict[str, list[str]] = {}
+    for line in (LANE / SRC).read_text().splitlines():
+        m = ROW.match(line)
+        if m:
+            rows.setdefault(m.group(1), []).append(cells(line))
+    sids = [sid for ids in json.loads(FROZEN.read_text())["entries"].values() for sid in ids]
+    transcript_only = []
+    for sid in sids:
+        cs = rows[sid][0]
+        src, anchor = cs[1], cs[5]
+        tail = src.rsplit(" - ", 1)[-1].strip()
+        is_transcript = "/fetch/" in tail and tail.endswith(".receipt.txt")
+        doc_digest = [
+            n for n, _ in DIGEST.findall(anchor)
+            if not n.endswith(".receipt.txt") and n != "receipt"
+        ]
+        doc_source = (not is_transcript) and (
+            Path(tail).is_file() if tail.startswith("/") else (LANE / tail).is_file()
+        )
+        if not (doc_source or doc_digest):
+            transcript_only.append(sid)
+        print(
+            f"[audit] {sid} source={'transcript' if is_transcript else 'document'} "
+            f"document_digest={int(bool(doc_digest))}"
+        )
+    print(f"[audit] transcript-only rows: {' '.join(transcript_only)}")
+    ok &= transcript_only == ["S204", "S209", "S210"]
+
+    print("REPRO", "PASS" if ok else "FAIL")
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+```
+
+Verified output (exit 0):
+
+```
+[baseline] exit=0 PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+[drop S204] exit=1 PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+[audit] S203 source=document document_digest=1
+[audit] S204 source=transcript document_digest=0
+[audit] S205 source=transcript document_digest=1
+[audit] S206 source=document document_digest=1
+[audit] S207 source=document document_digest=1
+[audit] S208 source=document document_digest=1
+[audit] S209 source=transcript document_digest=0
+[audit] S210 source=transcript document_digest=0
+[audit] transcript-only rows: S204 S209 S210
+REPRO PASS
+```
+
+The other twelve experiments in the table above (e2–e14) were run against the mirror
+at 03:2x–03:43 and are recorded there; only e0 and e1 are regenerated here, because
+they carry the deletion verdict. `propose_strict.py` (5/8 document-anchored) is a
+rebuild at `scratch-evidence/SimplifyRows/propose_strict.py`, sha256 `f3d4f142…8e9249`.

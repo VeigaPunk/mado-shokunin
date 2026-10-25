@@ -9,10 +9,11 @@ Evidence log (originally `scratch/RevQuoteS207/verify.log`, 159 lines / 8220 B):
 The tree was **moved** `scratch/` → `scratch-evidence/` at ~03:43 (not deleted); relocation churn
 then moved a rebuilt 8377 B file over the worktree copy, so
 `scratch-evidence/RevQuoteS207/verify.log` on disk is now sha256 `dffe5da6…` — a replica, not the
-measured bytes. A corrected replica with a truthful header sits at
-`scratch/RevQuoteS207/verify.replica.log` (8459 B, sha256 `96beb608efc2efb896091a48f861d73aa475f3de74836973752acfa1c2bce8cb`)
-and is likewise **not** evidence. Nothing depends on either replica: appendix A1 inlines every
-load-bearing probe.
+measured bytes. A corrected replica was written at
+`scratch/RevQuoteS207/verify.replica.log` (155 lines, 8459 B, sha256
+`96beb608efc2efb896091a48f861d73aa475f3de74836973752acfa1c2bce8cb`) and was then removed by the
+next sweep of `scratch/` — it was never evidence, and its loss costs nothing. Nothing depends on
+either replica: appendix A1 inlines every load-bearing probe.
 
 ## Axes
 
@@ -271,6 +272,37 @@ not a defect.
   lane's artifacts anyway. The proofs here are byte/hash/process measurements, which are the
   appropriate evidence for anchoring claims.
 - The glyph check establishes font coverage, not that the running bar draws it.
+- Evidence durability: `scratch/` was relocated to `scratch-evidence/` at ~03:43 and the churn then
+  moved a rebuilt file over this seat's worktree log copy; the measured log survives only as commit
+  `4efaf63` blob `c1a76490…`. Replicas are labelled as replicas, and appendix A1 restates every
+  load-bearing value, so no finding depends on a scratch path.
+
+## Appendix A1 — load-bearing probes (inline, so no replica is required)
+
+Re-run against the live tree on 2026-10-25 after the relocation; every probe exited 0. Full original
+log: commit `4efaf63`, blob `c1a76490b428971652306ee7da7784169f455c2d` (8220 B).
+
+| # | probe | output |
+|---|---|---|
+| 1 | `sha256sum <idle.sh>` | `6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750` |
+| 2 | `wc -c` / `wc -l` `<idle.sh>` | `159` / `7` (LF-only, ends `fi\n`) |
+| 3 | `stat` `<idle.sh>` | `type=regular file nlink=1 mode=-rwxr-xr-x mtime=2026-10-03 17:42:32.308984887 -0300 inode=929 uid=1000` |
+| 4 | `readlink -f` `<idle.sh>` | itself (not a symlink) |
+| 5 | `sha256sum …/fetch/S207.receipt.txt` | `81c33e7926f0bad071d31e9fc67e1d06967e3142da40ea3c93b16510b0adec59` |
+| 6 | `wc -c` `<receipt>` | `705`, 15 LF-terminated lines, no CR |
+| 7 | gate-quote extracted from entry bytes | 92 B, 15 words, contiguous at offset 612, occurrence 1, tail `\n` |
+| 8 | receipt embedded body vs live file | `embedded==live True`, 159 B, sha `6d8d2c11…` |
+| 9 | `json.loads` of both echo payloads | line 4 `['text']` / `''`; line 6 `['text','tooltip','class']`, `tooltip='Idle lock disabled'`, `class='active'`, glyph U+F1AD6 |
+| 10 | row S207 in `corpus/SOURCES.md` | 1 row, 11 cells, no pipe; anchor carries `6d8d…` (file) + `81c3…` (receipt) |
+| 11 | `c1/count.py --root $PWD` | `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET` |
+| 12 | `c2/count.py --repo $PWD` | `uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET` |
+| 13 | `c1` on `controls/golden` | `verdict=TARGET_MET` |
+| 14 | five gate-quotes S206-S210 | 111/92/105/96/82 B; 13/15/14/13/15 words; each unique substring, occ 1 |
+| 15 | `pgrep -x hypridle` / `-af` | `1667` / `1667 /usr/bin/hypridle` |
+| 16 | oldest backup vs shipped default | both `ff387b21ab51f4d5c4752142de31d1cfb2e8a459647a8f84849a522aee57c061`; btime `2026-10-06 16:21:10.082789105`, mtime `2026-10-03 17:44:32.097653608`, delta `119.801 s` |
+| 17 | shipped default `stat` | mtime `17:42:32.296286539` == btime `17:42:32.296177350`, ctime `17:42:36.944` |
+| 18 | entry greps | `never taken` 1 (78), `title` 1 (79), `built not to remember` 2 (52, 87), `does more than toggle` 1 (37), `names the two states` 1 (35) |
+| 19 | `sha256sum corpus/SOURCES.md` (post-03:40 edit) | `0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51` |
 
 ## Installs
 

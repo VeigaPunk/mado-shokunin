@@ -356,6 +356,12 @@ Everything C1 constrains is unchanged: 11 fields, status `mined`, recheck `90d`,
 the rewrite: `TARGET_MET`, rc=0. The rewrite is semantically correct (it agrees with E2), and I did
 not make it — this seat is read-only over the corpus.
 
+Provenance of the comparison: the pre-rewrite text is from this seat's first read at ~03:33 (before
+the `03:40:12` mtime); the commit-pinned checkpoint blob does not carry a row capture
+(`grep '^| S205 |'` on `4efaf63:…/evidence.txt` = 0), so that half is transcript-based rather than
+blob-pinned. The post-rewrite text is measured in the working tree and recorded in the rebuilt
+transcript.
+
 The point is structural, and it is P6's point one level out: a row's prose is free text that no
 clause reads. The registry can be edited to agree with an errata, or to disagree with it, and the
 frozen predicate cannot tell — it checks file identity, digest containment, status, cadence, used-by,

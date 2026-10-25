@@ -1,0 +1,92 @@
+{
+ "id": "CLAUSES-r35-v1",
+ "counter": ".ufo/waves/round-35/c1/count.py",
+ "live": [
+  {
+   "id": "entry-regular",
+   "why": "The entry path is a regular file inside the scored root.",
+   "control": {
+    "tree": "controls/c1-entry-symlink",
+    "receipt": ".ufo/waves/round-35/controls/c1-entry-symlink.txt"
+   }
+  },
+  {
+   "id": "row-unique",
+   "why": "Exactly one registry row carries the id.",
+   "control": {
+    "tree": "controls/c1-row-duplicate",
+    "receipt": ".ufo/waves/round-35/controls/c1-row-duplicate.txt"
+   }
+  },
+  {
+   "id": "row-well-formed",
+   "why": "The row has eleven cells; a pipe inside a cell adds a field, so the literal-pipe and escaped-pipe cases are both covered by the field count.",
+   "control": {
+    "tree": "controls/c1-row-extra-field",
+    "receipt": ".ufo/waves/round-35/controls/c1-row-extra-field.txt"
+   }
+  },
+  {
+   "id": "used-by-exact",
+   "why": "The row's used-by token set is exactly the admitted entries citing the id.",
+   "control": {
+    "tree": "controls/c1-usedby-extra",
+    "receipt": ".ufo/waves/round-35/controls/c1-usedby-extra.txt"
+   }
+  },
+  {
+   "id": "status-mined",
+   "why": "The row's status is `mined`.",
+   "control": {
+    "tree": "controls/c1-status-queued",
+    "receipt": ".ufo/waves/round-35/controls/c1-status-queued.txt"
+   }
+  },
+  {
+   "id": "recheck-valid",
+   "why": "The row's recheck cell is an ISO date, an NNd cadence or a symbolic cadence.",
+   "control": {
+    "tree": "controls/c1-recheck-prose",
+    "receipt": ".ufo/waves/round-35/controls/c1-recheck-prose.txt"
+   }
+  },
+  {
+   "id": "digest-match",
+   "why": "The row's anchor cell carries the sha256 of the named receipt.",
+   "control": {
+    "tree": "controls/c1-digest",
+    "receipt": ".ufo/waves/round-35/controls/c1-digest.txt"
+   }
+  },
+  {
+   "id": "gate-quote-substring",
+   "why": "The entry's gate-quote for the id is a contiguous substring of the receipt bytes.",
+   "control": {
+    "tree": "controls/c1-quote-absent",
+    "receipt": ".ufo/waves/round-35/controls/c1-quote-absent.txt"
+   }
+  },
+  {
+   "id": "gate-quote-word-bound",
+   "why": "The entry's gate-quote for the id is 1-25 words long.",
+   "control": {
+    "tree": "controls/c1-quote-long",
+    "receipt": ".ufo/waves/round-35/controls/c1-quote-long.txt"
+   }
+  },
+  {
+   "id": "o-nofollow-open",
+   "why": "The O_NOFOLLOW flag on the final open() call.",
+   "not-load-bearing": {
+    "reason": "TOCTOU-only defence in depth. The S_ISLNK component walk already rejects every static symlinked tree, and no static tree can kill the open-time flag, so this clause is never counted as load-bearing. The r34 closure routed it as TOCTOU-only; the r35 split names the S_ISLNK walk as load-bearing (controls/c1-entry-symlink kills it) and this open-time flag as the non-load-bearing half."
+   }
+  }
+ ],
+ "retired": [
+  {
+   "id": "r34-word-bound-1-25",
+   "why": "In PRED-C1-r34-v1 the word bound was checked against `found`, which was pinned by `found == quote` to a frozen short quote, so the bound could never fail. It was dead code under its own frozen spec. The r35 counter makes the entry's quote a free variable, so the bound is live and has a failing case (controls/c1-quote-long)."
+  }
+ ],
+ "note": "A clause is covered when it names a control whose committed receipt records a TARGET_MISSED verdict, or when it carries a not-load-bearing declaration with a reason. Exactly one clause may carry such a declaration."
+}

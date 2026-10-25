@@ -1,0 +1,191 @@
+## 0 hashes
+78c2589286a2d70c9b109672c85cd4e9bcb85438bc80ab888d10b73ad12abad6  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py
+e18e7aef81e78fc385b3fa9d524a6c875182273517d65d97bb94c463b7743b30  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+4f0106c6a46c25912013e9b9780e1d0b5aa77f98d04455013df7a8e4bdeea11f  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c2/count.py
+b6a8ac0181035c1ef6b756ffc7ca67bc5bc46e52d872d7ef8ed86f483a6eb78f  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c2/frozen.json
+## 0b HEAD blob hashes vs worktree
+78c2589286a2d70c9b109672c85cd4e9bcb85438bc80ab888d10b73ad12abad6  HEAD:.ufo/waves/round-35/c1/count.py
+78c2589286a2d70c9b109672c85cd4e9bcb85438bc80ab888d10b73ad12abad6  worktree:.ufo/waves/round-35/c1/count.py
+e18e7aef81e78fc385b3fa9d524a6c875182273517d65d97bb94c463b7743b30  HEAD:.ufo/waves/round-35/c1/frozen.json
+e18e7aef81e78fc385b3fa9d524a6c875182273517d65d97bb94c463b7743b30  worktree:.ufo/waves/round-35/c1/frozen.json
+## 1 assigned command, verbatim
+$ cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json; echo rc=$?
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 1b cwd-independent run with absolute paths
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 1c determinism, three consecutive runs
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+run1 rc=0
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+run2 rc=0
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+run3 rc=0
+## 2 minimal rebuild of the scored tree
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/tree --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 3 F1: receipt bytes rotated after freeze (S206), anchors untouched
+actual sha256: 889be5a1940f9d63aa40a6c8bf9e0ea637e40a1f2bda3f91bbf1dd93fae29b8c
+frozen sha256: 1d30e4a999b53d5288369edc7573d7ceee0aef99570a55d781c4625440a938d5
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m1 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 4 negative controls (counter must be failable)
+status_columns_mutated= 1
+-- M2 status mined->queued
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m2 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+-- M3 S207 quote padded to 26 words
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m3 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+-- M5 S205 quote not a receipt substring
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m5 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+usedby_extra_mutations= 1
+-- M4 S208 used-by gains a foreign entry
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m4 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+-- M7 S209 receipt deleted
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m7 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+-- M8 S210 anchor digest zeroed (mirrors committed c1-digest control)
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m8 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+rc=1
+## 5 F2: the only S206 row moved outside ## Registry
+registry_section_ends_at: 213
+s206_row_now_at: [425]
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/m9 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 6 F3: committed HEAD bytes only (git archive; committed counter + committed frozen spec)
+HEAD=a80f8cb
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/headtree2/.ufo/waves/round-35/c1/count.py --root /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/headtree2 --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/RevC1Tip/headtree2/.ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+## 7 independent re-derivation (own parser, no import of count.py)
+INDEPENDENT-C1 strictA closed_entries=3 closed_rows=8 open_cites=0
+INDEPENDENT-C1 strictB closed_entries=3 closed_rows=8 open_cites=0
+per-cite: [
+ {
+  "sid": "S203",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 14,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S204",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 13,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S205",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "90d",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 17,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S206",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 13,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S207",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 15,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S208",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 14,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S209",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "on-change",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 13,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ },
+ {
+  "sid": "S210",
+  "row_count": 1,
+  "cells": 11,
+  "status": "mined",
+  "recheck": "90d",
+  "anchor_has_frozen_digest": true,
+  "anchor_has_actual_digest": true,
+  "receipt_digest_matches_freezer": true,
+  "quote_lines": 1,
+  "quote_words": 15,
+  "quote_is_substring": true,
+  "closed_counter_reading": true
+ }
+]
+sids_mentioned_in_entries: ['S203', 'S204', 'S205', 'S206', 'S207', 'S208', 'S209', 'S210']
+rc=0
