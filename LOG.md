@@ -2305,3 +2305,14 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Counters MET at `b6c1d31`: C1 v3 admitted=2/2; C2 v3 fixtures=14/14 live=1; domain 3/3.
 - Manifest/receipts fix `b6c1d31` (duprow in-table insert, docconn receipt-sha update).
 - Wave 1: 35 attack seats dispatched (validated under ufo-wave-policy.json).
+
+- **Errata (round 38, wave-1 `RevCommitChain`, F1–F3)**: the C1 v3 counter was patched
+  post-freeze (`859d0cf`, clause-c uniqueness) and the discrimination manifest was
+  patched post-data (`b6c1d31`, `c1-duprow` in-table insert). At the frozen pair
+  (`58e55ec`) the gate scores 18/19 — `c1-duprow` observed `TARGET_MET` — so the C1
+  claim **as frozen** fails its own instrument contract ("a later counter change is
+  a new predicate and the claim fails as declared"). The landed pair measures 19/19
+  as a *new predicate*; a re-registration ruling is routed to the non-author closure.
+  C2's counter itself was not touched post-freeze; the manifest's `c2-docconn`
+  control was repaired at the same commit (manifest is the shared instrument, so the
+  frozen-manifest verdict is likewise 18/19, not 19/19).
