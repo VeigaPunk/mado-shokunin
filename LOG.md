@@ -2341,3 +2341,10 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   tightened unique-row clause). The divergence between the two seat measurements is
   a bytes-at-which-rev difference; both are recorded and the re-registration ruling
   covers the manifest control rewrite.
+
+- **Round-38 counter-clause hole (`LabratClockSkew`)** — `DATE_RE` (c1-r38:103,
+  domain:100) is glyph-shape only: `2026-13-45`, `0000-00-00`, `2026-02-30` all
+  pass, `k=1`, and a phony-date sandbox entry scores `TARGET_MET`; `RECHECK_RE`
+  is a bare prefix test (`on-every-release` passes, `0d` passes). The frozen
+  19-control manifest constrains the clause from above only. Fix routed to round
+  39 with `RevC1v3` F1/F2/F4 (no further post-freeze counter patch).
