@@ -348,11 +348,14 @@ tell them apart.
 - Entry prose semantics ("restart, not a first start") is not machine-checked by any counter; my
   reading of it is a human judgment and is filed as P4, not as a claim failure.
 - The retention conclusion (P4) assumes the journal was not vacuumed *and* that a start line could
-  not have been written to a different journal file; the `Consumed 1d 8h` scope line in boot −3 is
-  positive evidence of a pre-retention start, but the absolute start count of the daemon over the
-  host's lifetime is unknowable from what is retained.
+  not have been written to a different journal file; the `Consumed 1d 8h` scope line in user −2 /
+  system −3 is positive evidence of a pre-retention start, but the absolute start count of the daemon
+  over the host's lifetime is unknowable from what is retained.
+- Journal-scope caveat: `--user` and system `--list-boots` number the same boots differently once the
+  41 s system-only boot `d577c6e0…` is in range. Ids, not indices, are the join key; every count here
+  is stated with its scope.
 
 ## Evidence artifacts
 
-- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 143-line transcript of every command
-  above (including the peer cross-check block) with its exit code.
+- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 190-line transcript of every command
+  above (including the peer cross-check and post-E2 blocks) with its exit code.

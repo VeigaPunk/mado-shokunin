@@ -108,6 +108,27 @@ Row S203 (`corpus/SOURCES.md:205`; 950 B at first read, **990 B after the 03:40:
 
 No divergence in quote, facts, or hash. Nothing here supports reopening C1.
 
+### MEDIUM-1 — the post-rewrite row note asserts the hook was *executed*; refuted
+
+After the 03:40:12 rewrite, row S203's note reads: "The post-login questionnaire runs **thirteen
+items, twelve of them first-run scripts** … **none of the thirteen executed items** asks about the
+idle lock".
+
+The first half is an improvement (13 items, 12 of them scripts). The second half is not: it calls all
+thirteen items *executed*, and the thirteenth item is `install-voxtype.hook`. Refuted by:
+
+- `omarchy-first-run:23` runs `omarchy-hook-install post-update …/install-voxtype.hook`, and that
+  command only copies and chmods (`bin/omarchy-hook-install:27-29`) — it does not execute the hook.
+- The hook self-deletes on run (`install-voxtype.hook:6` → `rm -f "$0"`) and is still on disk at
+  `~/.config/omarchy/hooks/post-update.d/install-voxtype.hook` (174 B, mode 755) ⇒ it has never
+  executed, on this host, at any point.
+
+Correct wording: "thirteen commands — twelve run first-run scripts, one installs a hook that does not
+run during first-run". The substantive claim ("none asks about the idle lock") survives either way;
+only the word "executed" misapplied to the hook is wrong. Note the entry's Errata E2 uses the
+defensible form ("executes 13 items: 12 `bash …/*.sh` plus `omarchy-hook-install …`"), so row and
+entry currently disagree in precision on the same point.
+
 ### LOW-1 — receipt's own enumeration is count-vs-names inconsistent
 
 `S203.receipt.txt` prints `12` under `--- first-run scripts on this host ---` and then lists
@@ -251,12 +272,52 @@ of a toggle exists, and this journal could not record one" — which is no evide
   contradicted inference. Recommend r12's title and Section 2 be corrected before the round treats
   it as established knowledge.
 
+## Concurrent mutation of the artifacts (observed during this review)
+
+Both scored artifacts changed under me mid-wave. Recorded with hashes and times, because a review
+that quotes stale bytes is worthless:
+
+| Artifact | First read | After mutation | Evidence |
+|---|---|---|---|
+| `corpus/SOURCES.md` | sha256 `848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80`; row 950 B; note "runs **twelve** first-run scripts"; recheck `on-request` | sha256 `0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51`; row 990 B; note "**thirteen** items … thirteen executed items"; recheck `on-change` | `stat` mtime `2026-10-25 03:40:12 -0300`, 171446 B |
+| `corpus/knowledge/idle-lock-never-asked-r12.md` | sha256 `21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1`, 2078 B | sha256 `7f27ced01e9edf627e2e4693ec57663fa14dd739cd8f9065cf177d0bfae4dd58`, 3586 B, 60 lines, `### Errata (round 35, wave 2)` appended at line 42 | `wc -lc` / `sha256sum` |
+| `.ufo/…/fetch/S203.receipt.txt` | sha256 `1b7fa87…1646`, 3137 B | **unchanged** | `sha256sum` = anchor cell |
+
+Every check was re-run against the current bytes after the rewrite: the S203 gate-quote is still
+**exactly one** line, still the exact receipt tail (`line_matches_receipt_tail True`,
+`receipt_has_quote 1`); the receipt sha still equals the anchor cell; `c1/count.py` →
+`TARGET_MET`, EXIT=0. So A1/A3 survive the mutation and this report's verdict is against live bytes,
+not the first snapshot.
+
+**The errata did not propagate.** E1 withdraws "never toggled", yet the same file still asserts it in
+three *unmarked* places:
+
+- line 1 (H1): "…and the operator never toggled it afterwards"
+- line 23 (§1 OBS): "And the operator never exercised the toggle afterwards (S204)…"
+- line 29 (§2): "…and the toggle was never run in any session the journal still keeps."
+
+By its own errata the entry's headline is false, and the headline is what downstream citations copy.
+Fix in place (edit the three sites, or mark them withdrawn inline and move the errata to the top);
+an append-only errata leaves a false title as the artifact of record.
+
+**Why C1 cannot see any of this:** `frozen.json` has keys `id, predicate, target, entries, receipts`
+only — there is **no registry hash and no entry hash**. Receipts are pinned by sha256; the registry
+and the entries are not. The counter therefore recomputes `TARGET_MET` against whatever bytes are on
+disk, so a scribe rewriting a row note or appending errata (including a new false "thirteen executed
+items" clause) leaves the verdict untouched. That is precisely why `TARGET_MET` must be reported as a
+quote/hygiene result and never as "the entries are true".
+
 ## Residual risk
 
-- Host-side drift only: S203 is `recheck: on-request`, so edits to `~/.local/share/omarchy`
-  (an external upstream tree, currently `omarchy-first-run` @ sha256 `20508471…`) would invalidate
-  A2 without touching anything in the lane. Live values are recorded above, so drift is detectable
-  by re-running the A2 block.
+- Drift is no longer only host-side. The host tree can change independently
+  (`omarchy-first-run` @ sha256 `20508471…`), and the lane artifacts themselves moved during this
+  review (S203 now `recheck: on-change`). Every live value is recorded above with its hash, so both
+  are detectable by re-running the A1–A3 blocks.
+- **Registry and entries are unpinned.** `frozen.json` pins receipt sha256 only (keys `id, predicate,
+  target, entries, receipts`); there is no registry hash and no entry hash. `TARGET_MET` therefore
+  follows mutable registry and entry bytes, which is why a sibling rewrite at 03:40:12 (including a
+  new false "thirteen executed items" clause) left the verdict unchanged. Pin registry and entry
+  hashes if the round needs C1 to certify anything beyond quote-contiguity.
 - Low-3 means the S203 receipt cannot alone support any future sentence about "setup never
   configured the idle lock"; only about "setup never asked". Any later entry asserting the stronger
   form would be unsupported by S203's evidence.

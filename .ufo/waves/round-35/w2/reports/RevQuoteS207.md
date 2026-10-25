@@ -212,6 +212,18 @@ closing inference) are absent from the file and overlap E3's real target (line 5
 is to re-point E2 at §4's **UNK** (lines 59-60), which the journal does answer ("that a toggle-off
 happened"). Agreed; that fix is entry-level and outside row S207.
 
+**INFO-5 — line 57 carries two separate overstatements, one of them S207-attributable (add to N2).**
+Entry §4 OBS (lines 56-57) reads "The premise is corrected: the desktop offers the choice in two
+surfaces, since at least 2026-10-03 on this host, and **shows which state is in force**."
+(i) The S207 half survives only weakly: the display differs between states (icon+tooltip vs
+`{"text": ""}`), but under E4's own standard ("exactly one state carries words") the armed state is
+silence, so the reader gets one named state and one inferred one — overstated, not false.
+(ii) The date half is the content-mtime reading; E1 itself records the oldest copy's creation time
+as `2026-10-06 16:21:10`, so on the creation clock the literal "since at least 2026-10-03" is
+unsupported even though E1's coarse claim ("not a recent addition") does hold on both clocks.
+RevEntryR15's N2 already lists line 57; this adds the date half. Neither half is counted by any
+predicate, and row S207's own claims are untouched.
+
 ## Residual risk
 
 - The receipt proves content identity, not display: `modules-center` membership and font coverage are

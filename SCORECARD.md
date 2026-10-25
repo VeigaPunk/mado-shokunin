@@ -2225,3 +2225,5 @@ carried a fourth cell (`sourced-art 1.0`) that round 34 dropped while `## Retire
 reads "none retired". The three-cell quote in the registration is therefore incomplete but
 not wrong on value; the lowest-axis conclusion (two tied-lowest axes, no nudge waiver)
 survives. Recorded for round 36: `sourced-art` must be retired explicitly or republished.
+
+**Axis table re-derived at `4f35c80ed31b4745a462c0216187583528393620` (round-35 wave-2 close, the publication the gate reads):** navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12.

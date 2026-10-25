@@ -111,8 +111,9 @@ symbolic. No drift.
    `--root` (`count.py:156,162,168,173`).
 2. **Minimal tree.** A 12-file, 192,875-byte tree containing only `corpus/SOURCES.md`, the three
    entries and the eight receipts already yields
-   `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, `rc=0`. Eleven of those twelve
-   files are the scored data; the twelfth is the manifest the spec names.
+   `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, `rc=0`. All twelve are the
+   scored data — the registry, the three entries and the eight receipts; the frozen spec is the
+   thirteenth input and is passed separately as `--frozen`.
 3. **Syscall trace.** `strace -f -e trace=openat,stat,newfstatat` over a run of that tree: after
    excluding the interpreter's own PATH resolution, the complete read set is the counter, the frozen
    spec, and those twelve files. `strace -f -e trace=network` records **0** socket/connect/bind/send
@@ -154,7 +155,7 @@ rc=0
 
 The receipt no longer hashes to the anchor's digest, yet the cite closes. Smallest correct fix is
 one conjunct after the existing anchor test: `and digest == receipt["sha256"]` (CritControls tested
-the patched counter: real tree stays `3/8/0`, the corrupted-receipt tree drops to `2/7/1`). The
+the patched counter: real tree stays `3/8/0`, the corrupted-receipt tree drops to `2/7/1`).
 The committed `c1-digest` control does not cover this: its deliberate defect is `S210` cell 5 →
 64 zeros, i.e. it exercises the row cell, never the receipt file. The control tree's `SOURCES.md` is
 a pre-data snapshot that differs from the live registry in other cells as well, so it cannot be read

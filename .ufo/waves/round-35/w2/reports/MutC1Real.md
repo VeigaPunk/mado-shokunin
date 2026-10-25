@@ -163,8 +163,9 @@ a second failure).
 S203's status cell to `queued` → `TARGET_MISSED [2,7,1]`, exit 1. A+B → MET.
 
 **`recheck-valid`.** Arm A: `and valid_recheck(cs[9])` → `and True` (`f2240ced…`) → MET. Arm B
-sets S204's recheck cell to `2026/Q1` → `TARGET_MISSED [2,7,1]`, exit 1. A+B → MET. Note F5: the
-clause is live only against tokens that begin with a non-letter or contain punctuation.
+sets S204's recheck cell (currently `on-change`) to `2026/Q1`; the anchor token is read from the
+row at run time → `TARGET_MISSED [2,7,1]`, exit 1. A+B → MET. Note F5: the clause is live only
+against tokens that begin with a non-letter or contain punctuation.
 
 **`digest-match`.** Arm A: `and receipt["sha256"] in cs[5]` → `and True` (`20285091…`) → MET.
 Arm B mutates S208's anchor digest (`…ce4654` → `…ce4650`, one hex digit, right length) →
@@ -290,6 +291,18 @@ the bound was dead code does not recur in r35.
 **F8 — no finding against the one-clause-per-artifact arms.** Each of the 13 data mutants changes
 exactly one logical artifact (§7), and 8/10 clause mutants are fully explained by their own
 clause (A+B restores `MET`); the two exceptions are F6, not contamination.
+
+**F9 — C1 constrains identity metadata, not the row's claim.** `ok` reads only `cs[5]` (contains
+the receipt digest), `cs[7]` (status), `cs[9]` (recheck class) and `cs[10]` (used-by); cells 1–4,
+6 and 8 (description, source kind, grade, relevance, claim/quote text, date) are never read. A
+material correction to a row's own prose is therefore invisible to C1: during this wave sibling
+seats changed S205's row from "two start lines" to "one start line" and rewrote S204's relevance
+and claim cells, and the counter still printed `TARGET_MET` both before and after
+(`corpus/SOURCES.md` `848a7680…` → `0bf117e2…`, same verdict). So `TARGET_MET` must not be read as
+"each row's claim agrees with its receipt": that leg rests on the entry's single `gate-quote`
+line per cite, and the row's own prose and date are uncertified. Round 36 should either certify
+the claim cell (e.g. the existing row→receipt substring discipline) or state explicitly that C1
+covers identity metadata only.
 
 ## 7. Integrity, scope and reproduction
 
