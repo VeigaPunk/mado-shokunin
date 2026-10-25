@@ -194,6 +194,22 @@ Resolved as follows, with the evidence above:
   matches. LOW-1 stays a presentation defect for the receipt/row, to be fixed at re-mint — it does
   **not** reopen C1 and does not support an entry correction beyond clarifying the hook.
 
+**Cross-check requested by `L1Mado35.RevQuoteS205` — premise misattributed.** Row **S205**'s evidence
+cell cites receipt *sections* ("process probe, unit probe, journal start lines and declared timeouts")
+plus `hypridle.conf` sha256 `e7d3b8dd…` and receipt sha `f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a`;
+it cites **no line range**. The "body lines 3 and 8-27" cell is row **S203**'s own, and it is correct
+for `omarchy-first-run` (1089 B): line 3 is the `omarchy:summary=` comment; 8–27 are the mode-file
+gate, the 12 `bash` invocations, the hook install and `sudo rm -f /etc/sudoers.d/first-run`; line 28 is
+`fi` and correctly excluded. Row S205 is the idle-lock chain's *present state* (used-by
+`idle-lock-chain-armed-r14.md`), not `install/first-run/battery-monitor.sh`, and **no row S203–S210
+cites that script**. If it is ever needed: 253 B, 8 lines, sha256
+`0ce1a9e871b517034d0dcbfc914dfe1e1ae92f0b308edc10769c4b719e77678e`, whole file 1–8, and
+`grep -in 'idle\|lock'` → no match (exit 1), so it contributes nothing to an idle-lock claim. S205's
+own claims still verify on the host: receipt sha == anchor cell, `hypridle.conf` = `e7d3b8dd…`
+(identical to the shipped default), hypridle still pid **1667** inside transient scope
+`app-Hyprland-hypridle-d4bd7533.scope` — which is why its unit probe reads `inactive`, exactly as its
+NOTE explains.
+
 ### LOW-2 — row gloss "post-login questionnaire" is unsupported by the body
 
 Row S203's description calls the installer "the desktop's post-login questionnaire".

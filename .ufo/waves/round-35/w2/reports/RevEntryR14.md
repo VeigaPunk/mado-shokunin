@@ -29,6 +29,7 @@ Mode: read-only. No corpus/counter/registry/fleet file touched. No lock, screens
 | 10 | Title: "the daemon is running and **the chain will fire**" | **FALSIFIED as a finding** | §3 of the same entry says firing is unknown; a prediction is not a measurement |
 | 11 | Appended errata E1 + E2 (file now 3768 B) | **DEFECT: annotated, not applied** | E2 withdraws #3 and #5 and concedes #7's gap, yet lines 1, 17, 20 are unchanged and E1's wrong wording remains in-file (§6) |
 | 12 | Registry row S205 `teaches` (rewritten mid-round in `4f35c80`) | **TRUE text, unread by C1, contradicts the entry** | now "one start line in the current boot (two across two boots)"; entry line 17 still says "a restart"; cell 6 is never checked, so C1 stayed green (§6) |
+| 13 | C1's receipt-integrity clause (`count.py:174,192`) | **DEFECT: dead `digest`, text-only anchor** | receipt bytes never hashed; mutants whose receipts hash to `22bdd47a…` / `75e98ef6…` ≠ frozen `f3387bfc…` still print `TARGET_MET` rc=0 (§6, errata E-D) |
 
 Mechanical status is green: both frozen counters pass, rc=0.
 
@@ -169,7 +170,26 @@ PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   
 
 The shape-only entry is **one line** — `gate-quote: S205 snarfg plugh` — over a receipt reading `111111111111 snarfg plugh 999999999999 lorem ipsum void`; the fabricated entry is one line over a 78-byte receipt that says `THIS IS NOT A FETCHED RECEIPT … ZERO REAL BYTES`. The negative controls (`controls/c1-quote-absent`, `c1-digest`, `c1-donothing`, `c1-entry-symlink`, `c1-quote-long`) are correctly rejected, so the predicate does everything a substring test can do. This seat did not discover that: commit `4f35c80` names it, "the shape-scored counter". The open item is therefore not the predicate's behaviour but the claim built on it — `TARGET_MET` cannot be reported as coverage of the census, only as closure of shape.
 
-**And the row it certifies was rewritten mid-round.** `corpus/SOURCES.md` mtime `03:40:12`; row S205's `teaches` cell went from `"… holds two start lines on 2026-10-23 …"` in `02088b4` to `"… holds one start line in the current boot (two across two boots) …"` in `4f35c80` (verified with `git show <rev>:corpus/SOURCES.md`; worktree matches HEAD `a80f8cb`). C1 stayed `TARGET_MET` rc=0 across that rewrite because it reads only cells 0/5/7/9/10 and row shape — never cell 6. So `closed_rows=8` certifies well-formedness and receipt anchoring, and the row now *contradicts the entry it counts as closed* (row: "one start line in the current boot"; entry line 17: "a restart, not a first start"). The rewritten cell also asserts the transient-scope mechanism as fact — true, but unlicensed by S205, in a cell no clause reads.
+**The reason is a specific code defect, not a design choice — the receipt bytes are never hashed.** In `c1/count.py`:
+
+```
+174:  digest = hashlib.sha256(blob).hexdigest() if blob is not None else ""
+192:      and receipt["sha256"] in cs[5]        # cs[5] = the ROW's anchor cell TEXT
+195:      and quote.encode() in blob            # receipt bytes only have to contain the quote
+```
+
+`digest` is computed and never read again; `ok` never compares it to the frozen sha. So the anchor check is a substring test against registry markup, and a receipt's bytes are unconstrained apart from holding the gate-quote. Measured:
+
+```
+sha256(c1-shape-only/…/S205.receipt.txt)        = 22bdd47a…5b76c
+sha256(c1-fabricated-payload/…/S205.receipt.txt) = 75e98ef6…f5e6
+frozen S205 sha                                   = f3387bfc…ae1a
+grep -c f3387bfc… in each mutant SOURCES.md       → 1, 1
+```
+
+Neither receipt hashes to the frozen sha, both rows carry it as text, both roots print `TARGET_MET` rc=0. The committed controls are therefore **positive** controls — they show shape is sufficient, not that integrity is checked — and the artifact that would catch this (a root whose receipt bytes do not match the frozen sha and must print `TARGET_MISSED`) is absent. Fix: one clause, `digest == receipt["sha256"]`; both mutants then fail and the real root (receipt `f3387bfc…`, verified) still passes. Note the frozen predicate text only requires the anchor cell to "carry the sha256 of the named receipt", so even a faithful reading is shape-only until bytes are compared.
+
+**And the row it certifies was rewritten mid-round.** `corpus/SOURCES.md` mtime `03:40:12`; row S205's `teaches` cell went from `"… holds two start lines on 2026-10-23 …"` in `02088b4` to `"… holds one start line in the current boot (two across two boots) …"` in `4f35c80` (verified with `git show <rev>:corpus/SOURCES.md`; worktree matches HEAD `a80f8cb`). C1 stayed `TARGET_MET` rc=0 across that rewrite because it reads only cells 0/5/7/9/10 and row shape — never cell 6. (Provenance: `4f35c80` is the last commit touching `corpus/SOURCES.md`; HEAD has since moved — `2909fea` at 03:52:52 — but the worktree bytes are unchanged since mtime 03:40:12.) So `closed_rows=8` certifies well-formedness and receipt anchoring, and the row now *contradicts the entry it counts as closed* (row: "one start line in the current boot"; entry line 17: "a restart, not a first start"). The rewritten cell also asserts the transient-scope mechanism as fact — true, but unlicensed by S205, in a cell no clause reads.
 
 ## 7. A5 — unknowns the receipt raises and the entry omits
 
@@ -200,6 +220,6 @@ Self-correction on my own probe: the per-boot loop in the log prints `boot -3: 0
 
 No installs, no upgrades, no pacman transaction (host-wide pause respected). All probes used in-tree `python3`, `systemctl`, `journalctl`, `ps`, `pgrep`, `stat`, `sha256sum`, `hyprctl`, `loginctl`, `sed`. No file outside my report, my seat evidence directory (`scratch-evidence/RevEntryR14/`) and the lane's committed control fixtures was written.
 
-Corrections to this seat's own record live in `scratch-evidence/RevEntryR14/errata.md` (4823 B, sha256 `77ffa25f…b63f`): **E-A** fixes an exit code I recorded wrongly (filtered `coredumpctl list hypridle` is rc=1; my logged rc=0 was `head`'s pipeline status), **E-B** pins the mid-round registry-row rewrite to `4f35c80`, **E-C** records the mutant runs. The as-measured log is deliberately left unmodified, errors included.
+Corrections to this seat's own record live in `scratch-evidence/RevEntryR14/errata.md` (7144 B, sha256 `5700288a…60ff`): **E-A** fixes an exit code I recorded wrongly (filtered `coredumpctl list hypridle` is rc=1; my logged rc=0 was `head`'s pipeline status — read `PIPESTATUS[0]`), **E-B** pins the mid-round registry-row rewrite to `4f35c80`, **E-C** records the mutant runs, **E-D** records the text-only anchor clause and the dead `digest` at `c1/count.py:174`. The as-measured log is deliberately left unmodified, errors included.
 
 **Scratch relocation, and a self-inflicted overwrite — repaired.** What happened, in order: `scratch/` was **relocated** to `scratch-evidence/` at ~03:45, not deleted — 59 seat dirs intact, 235 files checkpointed in commit `4efaf63`. This seat saw only the source path vanish (`ls scratch` → exit 2), read that as a deletion, and re-created `scratch/RevEntryR14/probe-log.md` at 03:46; a second relocation then merged that rebuild over the as-measured copy at the same relative path. Recovery beat reconstruction: the as-measured bytes are checkpointed at commit `4efaf63` — `scratch-evidence/RevEntryR14/probe-log.md`, 8446 B, sha256 `2bde25ab…36da` — and I restored them from that object (verified after restore: 8446 B, sha256 `2bde25ab…36da`). The transcript rebuild is kept beside it as `probe-log.rebuilt.md`, 9779 B, sha256 `0c9f7777…62b` (9471 B / `fb349c37…2e58` before I corrected its header to say "not the as-measured artefact"), explicitly **not evidence**: it is a superset (adds a header and the 03:46 spot-check) and its bytes are not the bytes that were measured. **No verdict depends on either file** — every finding in §1–§7 quotes its command and exit code inline. I re-ran the load-bearing invariants after the restore (03:47): entry sha256 `583c708c…0bf3` and 3768 B / 03:35:30 unchanged, S205 sha256 `f3387bfc…` unchanged, conf digest `e7d3b8dd…de41` unchanged, `pgrep -x hypridle` → `1667`, scope `active` rc=0, `hypridle.service` `inactive` rc=3, C1 `TARGET_MET` rc=0, C2 `TARGET_MET` rc=0.
