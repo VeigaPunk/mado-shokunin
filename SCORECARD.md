@@ -2489,3 +2489,5 @@ Registration `.ufo/waves/round-40/registration.md` (freeze `5e7e885`) re-registe
 ### Planned (round 41; intent only)
 
 1. Take the remaining package themes under PROVINCE (`ScoutMergeRest`); 2. an independent non-author re-run of both v2 counters with fresh nonces.
+
+Axis table re-derived at `3c80537a54b4fd3b534f5cc3496a4bdc37c11371` plus the round-40 axis-line commit (two new indexed entries): navigation 58/58; calibration resolved-active 55/55; operability selftest 12/12.
