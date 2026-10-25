@@ -42,16 +42,25 @@ Contract the counter enforces (the code below is the same sentence):
   * the declared string is converted the way the host converts it:
       int     hyprlang v0.6.8 src/config.cpp:185-264 configStringToInt (0x
               hex; rgba(rrggbbaa | r,g,b,a) / rgb(rrggbb | r,g,b) as ARGB with
-              the alpha byte round-half-away; true/on/yes prefixes -> 1,
-              false/off/no -> 0; decimal);
+              the alpha byte std::round(stof(a) * 255.f) in float32,
+              half away from zero; true/on/yes prefixes -> 1, false/off/no
+              -> 0; decimal);
       float   stof within 1e-6;  str  exact trimmed equality;
       vec2    exactly `x y` (one space, hyprlang config.cpp:474-486), stof each;
+              a numeric font weight is not modelled (host: parseWeight leaves
+              the value unchanged), so generated weights are names only;
       custom  by the live string's shape (Hyprland v0.56.2 ConfigManager.cpp
               :103-170, ComplexDataTypes.hpp:69-77, 80-136, 154-175):
-                gradient `<hex> ... <N>deg`: colours as ARGB, one lowercase
-                  unpadded hex word each; the angle is `stoi` of the `deg`
-                  token (prefix parse), and with no `deg` token the angle the
-                  previous declarer of the same option left (0 when none);
+                gradient `<hex> ... <N>deg`: colour tokens through Hyprland's
+                  ParserUtils::parseColor (ParserUtils.cpp:23-152: `#rgb`,
+                  `#rrggbb`, `#rrggbbaa`, `0x` hex, rgba(8 hex) shifted,
+                  rgba(r,g,b,a) with uint8 channels and alpha
+                  floor(stof(a) * 255.F) in float32 - NOT rounded, unlike the
+                  int options -, rgb(6 hex), rgb(r,g,b), a plain number),
+                  one lowercase unpadded ARGB hex word each; the angle is
+                  `stoi` of the `deg` token (prefix parse), and with no `deg`
+                  token the angle the previous declarer of the same option
+                  left (0 when none);
                 gap `a b c d`: declared 1-4 integers expanded CSS-style;
                 font weight `<N>`: declared name, case-insensitive;
     labels: `agreement` (equal, set, one declarer), `agreement*` (equal, set,
@@ -63,8 +72,23 @@ Contract the counter enforces (the code below is the same sentence):
   * failures exit 5 with exactly the failing key of the fixture on stderr (no
     other fixture key): compositor program missing, non-zero exit (message on
     stdout), malformed JSON, a reply with no known form, a probe key failing;
-  * a hostile probe key (empty, or starting with `-`; both `--probe -x` and
-    `--probe=-x` spellings) exits 2 with `probe` on stderr, sends no request;
+  * a hostile key never reaches argv: every key (declared in the config tree or
+    given by `--probe`) must fully match `[A-Za-z0-9_.][A-Za-z0-9_.:-]{0,127}`
+    (a key such as `x/--batch` would make the compositor's own client turn one
+    getoption into a `[[BATCH]]` request that runs `dispatch exec`); a key
+    outside it exits 2 naming the key on stderr and NO request is sent (the
+    check runs before the first one); both `--probe -x` and `--probe=-x`
+    spellings, `--probe=a/--batch`, `--probe="a b"`, and `--live` together with
+    `--getoption` exit 2;
+  * the compositor program is resolved to an absolute regular executable file
+    that is not group- or other-writable; otherwise exit 5 naming it, no
+    request; it is run with stdin /dev/null and an environment limited to
+    PATH, HYPRLAND_INSTANCE_SIGNATURE, XDG_RUNTIME_DIR and LC_CTYPE (the
+    stub reports both and the judge checks them);
+  * a reply is read to at most 64 KiB (a 200 KiB reply exits 5 naming the
+    key), and is typed strictly: `set` is a JSON boolean, int is an integer,
+    float a number, str/custom a string, vec2 a two-number array; a reply that
+    is not a JSON object, or has a mistyped field, exits 5 naming the key;
   * the default program lookup works (`hyprctl` found through PATH);
   * the config tree is mounted read-only and its listing+digests are re-checked
     after every run, valid or not.
@@ -76,13 +100,13 @@ absent from BASE) >= 12 comparison sites exist, 6 chosen by the nonce are each
 flipped in a copy, and the copy's selftest fails (non-zero, k < n, or no
 summary) for >= 4 of the 6; g  top-level imports are standard library only
 (no socket, urllib, http, requests, ssl, ftplib) and the source calls none of
-exec, eval, compile, __import__ and names no `/proc`, `c1-r40` or
+exec, eval, compile, __import__ (as a name or on builtins) and names no `/proc`, `c1-r40` or
 `quality/counters` string; k  the native-capture receipt at REV holds 70
 non-blank lines, one form each, the four forms int|float|str|custom all seen;
 k2  the all-options capture `.ufo/waves/round-40/c1/native-capture-all.jsonl`
 holds 353 lines, one form each, int|float|str|custom|vec2 all seen.
 
-Final line: `PRED-C1-r40-v2: fixtures=P/16 tool=present|absent
+Final line: `PRED-C1-r40-v2: fixtures=P/19 tool=present|absent
 verdict=TARGET_MET|TARGET_MISSED rev=<full hash> nonce=<hex>`. TARGET_MET iff
 a, b, b2, g, k, k2 hold and P == 16; exit 0, else exit 1.
 Residual (declared): a tool that CONTAINS a copy of the reference conversion
@@ -104,6 +128,7 @@ import re
 import secrets
 import shutil
 import socketserver
+import struct
 import subprocess
 import sys
 import tempfile
@@ -114,7 +139,7 @@ BASE_DEFAULT = "9fc511ddce708327377161202f358ce37dc266ba"
 TOOL = "tools/mado-options.py"
 CAPTURE = ".ufo/waves/round-40/c1/native-capture.jsonl"
 CAPTURE_ALL = ".ufo/waves/round-40/c1/native-capture-all.jsonl"
-N_GEN, TOTAL = 8, 16
+N_GEN, TOTAL = 8, 19
 MIN_SELFTEST = 79
 MIN_SITES, N_MUT, KILL_NEED = 12, 6, 4
 ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
@@ -123,7 +148,7 @@ STDLIB_ALLOW = {
     "argparse", "ast", "collections", "fnmatch", "glob", "hashlib", "io",
     "itertools", "json", "math", "os", "pathlib", "re", "shutil", "stat",
     "string", "subprocess", "sys", "tempfile", "textwrap", "time", "typing",
-    "functools", "dataclasses", "errno",
+    "functools", "dataclasses", "errno", "struct", "threading",
 }
 CALL_DENY = {"exec", "eval", "compile", "__import__"}
 STR_DENY = ("/proc", "c1-r40", "quality/counters")
@@ -132,7 +157,7 @@ WEIGHTS = {"thin": 100, "ultralight": 200, "light": 300, "semilight": 350,
            "bold": 700, "ultrabold": 800, "heavy": 900, "ultraheavy": 1000}
 FORMS = ("int", "float", "str", "custom")
 FORMS5 = FORMS + ("vec2",)
-ALPHAS = ("1", "0.8", "0.5", "0.4", "0.1", "0.3")
+ALPHAS = ("1", "0.8", "0.5", "0.4", "0.1", "0.3", "0.7")
 
 
 class Setup(Exception):
@@ -153,6 +178,20 @@ def resolve(repo, rev):
 
 
 # ---------------------------------------------------------- reference model
+def f32(x):
+    return struct.unpack("f", struct.pack("f", x))[0]
+
+
+def alpha_round(tok):
+    """hyprlang: uint8_t(std::round(stof(a) * 255.f)), float32, half away."""
+    return int(math.floor(f32(f32(float(tok)) * 255.0) + 0.5)) & 0xFF
+
+
+def alpha_floor(tok):
+    """Hyprland ParserUtils::parseColor: floor(a * 255.F), float32."""
+    return int(math.floor(f32(f32(float(tok)) * 255.0)))
+
+
 def stoi_prefix(s):
     m = re.match(r"\s*([+-]?\d+)", s)
     if not m:
@@ -173,7 +212,7 @@ def hl_int(v):
             parts = [p.strip() for p in inner.split(",")]
             r, g, b = (hl_int(p) for p in parts[:3])
             try:
-                a = int(math.floor(float(parts[3]) * 255.0 + 0.5)) & 0xFF
+                a = alpha_round(parts[3])
             except ValueError:
                 return None
             if None in (r, g, b):
@@ -208,6 +247,70 @@ def hl_int(v):
     return None
 
 
+def parse_hex(t):
+    try:
+        return int(t, 16)
+    except ValueError:
+        return None
+
+
+def u8(t):
+    t = t.strip()
+    if re.fullmatch(r"\d+", t) and 0 <= int(t) <= 255:
+        return int(t)
+    return None
+
+
+def grad_color(v):
+    """Hyprland ParserUtils::parseColor (ParserUtils.cpp:23-152); None = error."""
+    if v.startswith("#"):
+        h = v[1:]
+        if not re.fullmatch(r"[0-9a-fA-F]+", h):
+            return None
+        if len(h) == 3:
+            r, g, b = (int(c, 16) for c in h)
+            return 0xFF000000 | ((r | r << 4) << 16) | ((g | g << 4) << 8) \
+                | (b | b << 4)
+        if len(h) == 6:
+            return 0xFF000000 | int(h, 16)
+        if len(h) == 8:
+            return ((int(h[6:8], 16) << 24) | (int(h[0:2], 16) << 16)
+                    | (int(h[2:4], 16) << 8) | int(h[4:6], 16))
+        return None
+    if v.startswith("0x"):
+        return parse_hex(v)
+    if v.startswith("rgba(") and v.endswith(")"):
+        inner = v[5:-1].strip()
+        if inner.count(",") == 3:
+            p = [x.strip() for x in inner.split(",")]
+            r, g, b = u8(p[0]), u8(p[1]), u8(p[2])
+            try:
+                a = alpha_floor(p[3])
+            except ValueError:
+                return None
+            if None in (r, g, b):
+                return None
+            return (a << 24) | (r << 16) | (g << 8) | b
+        if len(inner) == 8:
+            x = parse_hex(inner)
+            return None if x is None else (x >> 8) + 0x1000000 * (x & 0xFF)
+        return None
+    if v.startswith("rgb(") and v.endswith(")"):
+        inner = v[4:-1].strip()
+        if inner.count(",") == 2:
+            r, g, b = (u8(x) for x in inner.split(","))
+            if None in (r, g, b):
+                return None
+            return 0xFF000000 | (r << 16) | (g << 8) | b
+        if len(inner) == 6:
+            x = parse_hex(inner)
+            return None if x is None else x + 0xFF000000
+        return None
+    if re.fullmatch(r"\d+", v) and int(v) < 2 ** 32:
+        return int(v)
+    return None
+
+
 def gradient_text(declared, inherited=0):
     """Hyprland configHandleGradientSet: colours cleared, angle set only by a
     `deg` token (stoi prefix), kept otherwise."""
@@ -216,7 +319,7 @@ def gradient_text(declared, inherited=0):
         if "deg" in tok:
             angle = stoi_prefix(tok[:tok.index("deg")])
             break
-        c = hl_int(tok)
+        c = grad_color(tok)
         if c is None:
             return None
         cols.append(c)
@@ -293,6 +396,7 @@ class Judge:
         self.table = table
         self.mode = mode
         self.log = []
+        self.envs = []
         self.replies = {}
         outer = self
 
@@ -304,6 +408,8 @@ class Judge:
                 except (ValueError, KeyError, TypeError):
                     argv = ["<malformed>"]
                 outer.log.append(list(argv))
+                outer.envs.append((req.get("env"), req.get("stdin"))
+                                  if isinstance(req, dict) else (None, None))
                 self.wfile.write((json.dumps(outer.answer(argv)) + "\n")
                                  .encode())
 
@@ -323,6 +429,18 @@ class Judge:
                                         "(is hyprland running?)\n\n"}
             if kind == "bad":
                 return {"rc": 0, "out": "{not json\n"}
+            if kind == "huge":
+                return {"rc": 0, "out": '{"option": "%s", "str": "%s", '
+                                        '"set": true }\n'
+                                        % (esc(key), "x" * 200000)}
+            if kind == "typeset":
+                return {"rc": 0, "out": '{"option": "%s", "int": 1, '
+                                        '"set": "yes" }\n' % esc(key)}
+            if kind == "typeint":
+                return {"rc": 0, "out": '{"option": "%s", "int": "7", '
+                                        '"set": true }\n' % esc(key)}
+            if kind == "null":
+                return {"rc": 0, "out": "null\n"}
             if kind == "noform":
                 return {"rc": 0, "out": '{"option": "%s", "vec3": [1,2,3], '
                                         '"set": true }\n' % esc(key)}
@@ -342,7 +460,9 @@ import json, os, socket, sys
 here = os.path.dirname(os.path.abspath(__file__))
 s = socket.socket(socket.AF_UNIX)
 s.connect(open(os.path.join(here, "sockpath")).read().strip())
-s.sendall((json.dumps({"argv": sys.argv[1:]}) + "\n").encode())
+s.sendall((json.dumps({"argv": sys.argv[1:], "env": sorted(os.environ),
+                       "stdin": os.readlink("/proc/self/fd/0")}) + "\n")
+          .encode())
 data = b""
 while True:
     chunk = s.recv(65536)
@@ -430,6 +550,25 @@ def colour_decl(rng, i, j):
     return "0x%02x%02x%02x%02x" % (a, r, g, b)
 
 
+def grad_colour_decl(rng, i, j):
+    """Gradient colour spellings a config FILE can carry (`#` starts a comment
+    in hyprlang, so the `#rrggbb` forms ParserUtils accepts are not emitted)."""
+    r, g, b = rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255)
+    a = rng.randint(0x10, 0xFF)
+    which = (i + j) % 6
+    if which == 0:
+        return "rgba(%02x%02x%02x%02x)" % (r, g, b, a)
+    if which == 1:
+        return "rgba(%d,%d,%d,%s)" % (r, g, b, ALPHAS[(i + j) % len(ALPHAS)])
+    if which == 2:
+        return "rgb(%02x%02x%02x)" % (r, g, b)
+    if which == 3:
+        return "rgb(%d,%d,%d)" % (r, g, b)
+    if which == 4:
+        return "%d" % ((a << 24) | (r << 16) | (g << 8) | b)
+    return "0x%02x%02x%02x%02x" % (a, r, g, b)
+
+
 class Fixture:
     def __init__(self, rng, tag, i):
         self.rng, self.tag, self.i = rng, tag, i
@@ -455,14 +594,14 @@ class Fixture:
         elif kind == "str":
             o.update(form="str", declared=pick(STRS))
         elif kind == "grad":
-            cols = [colour_decl(rng, i, self.n + c)
+            cols = [grad_colour_decl(rng, i, self.n + c)
                     for c in range(1 + (i + self.n) % 3)]
             ang = ANGLES[(i + self.n) % len(ANGLES)] if quirk \
                 else rng.choice(ANGLES)
             o.update(form="custom", shape="gradient",
                      declared=" ".join(cols + ([ang] if ang else [])))
         elif kind == "ginh":
-            cols = [colour_decl(rng, i, self.n + c)
+            cols = [grad_colour_decl(rng, i, self.n + c)
                     for c in range(1 + (i + self.n) % 2)]
             o.update(form="custom", shape="gradient",
                      declared=" ".join(cols),
@@ -690,6 +829,11 @@ def valid_run(tool, tmp, name, fx, probes=(), extra_table=None, flags=()):
     if len(asked) != len(run.judge.log) or sorted(asked) != expected_asks \
             or len(asked) != len(set(asked)):
         return False, "requests %s" % run.judge.log[:2], run
+    allowed = {"PATH", "HYPRLAND_INSTANCE_SIGNATURE", "XDG_RUNTIME_DIR",
+               "LC_CTYPE"}
+    for env, stdin in run.judge.envs:
+        if env is None or not set(env) <= allowed or stdin != "/dev/null":
+            return False, "child env %s stdin %s" % (env, stdin), run
     table = dict(fx.table())
     table.update(extra_table or {})
     for r in rows:
@@ -817,14 +961,81 @@ def score_hostile(tool, tmp, rev, nonce):
     good = True
     try:
         for argv in (["--probe=-x"], ["--probe=-1"], ["--probe=--version"],
-                     ["--probe="], ["--probe", ""], ["--probe", "-x"]):
+                     ["--probe="], ["--probe", ""], ["--probe", "-x"],
+                     ["--probe=a/--batch"], ["--probe=a b"],
+                     ["--probe=a;dispatch"], ["--getoption", "/dev/null"]):
             n0 = len(run.judge.log)
             rc, out, err = run.run(["--live", "--hyprctl", run.stub()] + argv)
-            good &= (rc == 2 and "probe" in err.lower()
+            good &= (rc == 2 and ("probe" in err.lower()
+                                  or "getoption" in err.lower())
                      and len(run.judge.log) == n0 and run.unchanged())
-        return good, "all six refused=%d" % good
+        return good, "all ten refused=%d" % good
     finally:
         run.close()
+
+
+def score_hostile_key(tool, tmp, rev, nonce):
+    """A hostile key DECLARED in the config tree must never reach argv."""
+    fx = fixture_for(rev, nonce, "hostilekey", 1)
+    ok, why, run = valid_run(tool, tmp, "k0", fx)
+    run.close()
+    if not ok:
+        return False, "valid run: " + why
+    run = Run(tmp, "k1", tool, fx)
+    try:
+        with open(os.path.join(run.home, ".config", "hypr", "hyprland.conf"),
+                  "a") as fh:
+            fh.write("zzbad {\n    x/--batch = 1\n    y;dispatch = 2\n}\n")
+        run.before = snapshot(run.home)
+        rc, out, err = run.run(["--live", "--hyprctl", run.stub()])
+        good = (rc == 2 and "x/--batch" in err and not run.judge.log
+                and run.unchanged())
+        return good, "rc=%s named=%d requests=%d" % (
+            rc, "x/--batch" in err, len(run.judge.log))
+    finally:
+        run.close()
+
+
+def score_writable(tool, tmp, rev, nonce):
+    """A world-writable compositor program, and a directory, are refused."""
+    fx = fixture_for(rev, nonce, "writable", 1)
+    ok, why, run = valid_run(tool, tmp, "w0", fx)
+    run.close()
+    if not ok:
+        return False, "valid run: " + why
+    run = Run(tmp, "w1", tool, fx)
+    try:
+        os.chmod(run.stub(), 0o777)
+        rc1, out, err1 = run.run(["--live", "--hyprctl", run.stub()])
+        rc2, out, err2 = run.run(["--live", "--hyprctl", run.bin])
+        good = (rc1 == 5 and "hyprctl" in err1 and rc2 == 5
+                and not run.judge.log and run.unchanged())
+        return good, "rc=%s,%s requests=%d" % (rc1, rc2, len(run.judge.log))
+    finally:
+        run.close()
+
+
+def score_reply_limits(tool, tmp, rev, nonce):
+    """Oversized and mistyped replies exit 5 naming exactly the key."""
+    fx = fixture_for(rev, nonce, "limits", 1)
+    ok, why, run = valid_run(tool, tmp, "l0", fx)
+    run.close()
+    if not ok:
+        return False, "valid run: " + why
+    victim = sorted(fx.opts)[2]
+    good, notes = True, []
+    for kind in ("huge", "typeset", "typeint", "null"):
+        run = Run(tmp, "l-" + kind, tool, fx, mode="%s:%s" % (kind, victim))
+        try:
+            rc, out, err = run.run(["--live", "--hyprctl", run.stub()])
+            others = [k for k in fx.opts if k != victim and k in err]
+            this = (rc == 5 and victim in err and not others
+                    and "Traceback" not in err and run.unchanged())
+            good &= this
+            notes.append("%s=%d" % (kind, this))
+        finally:
+            run.close()
+    return good, " ".join(notes)
 
 
 # ------------------------------------------------------------------ clauses
@@ -841,9 +1052,11 @@ def imports_ok(src):
             mods.add((node.module or "").split(".")[0])
         elif isinstance(node, ast.Call):
             f = node.func
-            name = f.id if isinstance(f, ast.Name) else (
-                f.attr if isinstance(f, ast.Attribute) else "")
-            if name in CALL_DENY:
+            if isinstance(f, ast.Name) and f.id in CALL_DENY:
+                return False
+            if (isinstance(f, ast.Attribute) and f.attr in CALL_DENY
+                    and isinstance(f.value, ast.Name)
+                    and f.value.id in ("builtins", "__builtins__")):
                 return False
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):
             if any(s in node.value for s in STR_DENY):
@@ -1005,7 +1218,13 @@ def main():
                                                          nonce, "fail", True)),
                     ("missing0", lambda: score_missing(tool, tmp, rev, nonce)),
                     ("hostile0", lambda: score_hostile(tool, tmp, rev,
-                                                       nonce))):
+                                                       nonce)),
+                    ("hostilekey0", lambda: score_hostile_key(tool, tmp, rev,
+                                                              nonce)),
+                    ("writable0", lambda: score_writable(tool, tmp, rev,
+                                                         nonce)),
+                    ("limits0", lambda: score_reply_limits(tool, tmp, rev,
+                                                           nonce))):
                 ok, why = fn()
                 passed += ok
                 print("%s fixture=%s ok=%d %s" % (PRED, name, ok, why))
