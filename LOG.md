@@ -2410,3 +2410,14 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   `c2-r38-request-ground.py:198` crashes (TypeError int(list)) when a source line
   lacks verified-at; the eventq `why` detail's `agree` regex (`OVERALL:.AGREE`)
   differs from the scoring regex (`OVERALL:\s*AGREE`).
+
+- **Round-38 freeze-pair resolution (`ScoutConsiderThese`)** — cross-pair replays
+  settle the dispute: frozen counter × frozen manifest = 18/19; frozen counter ×
+  landed manifest = 19/19; landed counter × frozen manifest = 18/19; landed pair =
+  19/19. The `859d0cf` counter patch was a verdict no-op (clause j already
+  enforced unique rows); the 19/19 belongs to the post-data manifest rewrite
+  `b6c1d31` (c1-duprow moved inside `## Registry`). SCORECARD move-row wording
+  corrected to say the repaired pair reaches 19/19. Also: the request-ground
+  counter has no frozen manifest control (gate maps --c2 to the eventq counter
+  only); its M37-5 crib classes reject correctly but have no committed replayable
+  control set — routed to r39.
