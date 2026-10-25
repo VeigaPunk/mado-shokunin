@@ -2209,3 +2209,10 @@ entry changes.
 wave seat found: a command in the frozen registration could not run as written
 (`quality/check-index.py --repo .` exits 2). The seat's verbatim run and the corrected
 form are in `.ufo/waves/round-36/w1/reports/RevIndexGate.md`.
+
+## Round 36 — correction (superseded transcript pointer, machine form)
+
+The D10 bullet's transcript path is superseded, not cited; the machine-readable form the
+pointer gate reads:
+
+- `quality/receipts/axis-a3094c99ab85bec35534de2447552c47dd2b647f.txt` -> `quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt`
