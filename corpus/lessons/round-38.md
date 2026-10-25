@@ -27,7 +27,7 @@ S277's is the third-party grammar corroboration.
 
 Staged table: 5 knowledge entries + register + 147-row `SOURCES.append`.
 This round adopted the three usable knowledge entries and refuses the other
-two:
+three (r30 included), per the frozen registration:
 
 | Staged id | Package source | Decision | Lane row / entry |
 | --- | --- | --- | --- |
@@ -36,14 +36,18 @@ two:
 | S276 → S187 | 0.56.0 IPC page | adopt — byte-identical to held S187 | S187 (used-by + r8) |
 | S277 → S277 | chonkstep docs | adopt — community tier C | S277, `request-socket-live-bound-r8.md` §2 |
 | S253 → S253 | upstream `ipc/s1/Unix.cpp` | adopt — first-party code at a later revision | S253, `request-limits-upstream-r31.md` |
-| S212a → S258 | own-work stat receipt | adopt — host measurement re-taken this round | S258, `request-socket-live-bound-r8.md` §2 |
+| (package own-work stat receipt) → S258 | own-work stat receipt | adopt — host measurement re-taken this round | S258, `request-socket-live-bound-r8.md` §2 |
 | (new) | event-queue-host-measurement-r28.md | **refuse** — "never overflowed" leans on a null channel (debug:disable_logs=1); corrected by round-37's event-queue-observability-r37.md | none |
-| (new) | event-queue-journal-measurement-r29.md | **refuse** — same null channel; its 0/21-marker journal reading is observability-r37.md's measurement | none |
+| (new) | event-queue-journal-measurement-r29.md | **refuse** — same null channel; its journal reading (21 core-logger lines, zero markers) is observability-r37.md's measurement | none |
 | (new) | socket-client-contract-measurements-r29.md | **refuse** — "requests capped at 64 KiB" is the follow-queue bound; its socket census is superseded by S258's stat and round-37's live census | none |
+| (new) | socket-modes-and-request-read-r30.md | **refuse** — frozen registration declines the package's successor chain; the request-socket facts are covered by the adopted S158/S187/S253 entries | none |
 
-Id collisions: 15 of 147 staged ids (S203–S217) conflicted with held rows —
-all in the refused register's block. The four adopted new ids (S221, S253,
-S258, S277) were free. The staged register is left unassimilated (its rows
+Id collisions: 15 of 147 staged ids (S203–S217) conflicted with held rows
+(their entries span ipc-contract/dispatcher/waybar and two literature amendments,
+not only the refused register block). A 16th id clash is unrecorded yet:
+staged S258 is the English ArchWiki drift document (unadopted); the lane's
+S258 is this round's host stat receipt — same id, disjoint documents. The four
+adopted new lane ids (S221, S253, S258, S277) were free against held rows. The staged register is left unassimilated (its rows
 covered only the refused entries).
 
 ## Findings — open items for round 39+
