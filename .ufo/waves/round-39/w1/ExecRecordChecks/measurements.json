@@ -1,0 +1,195 @@
+{
+  "schema": "mado-round39-w1-measurements-v1",
+  "seat": "ExecRecordChecks",
+  "generated_at_utc": "2026-10-25T19:14:00Z",
+  "lane_repo": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "base_rev": "08be4eb7fd13358ed29b096e8924005d46ac409c",
+  "freeze_rev": "457d1b125932c1e0d797061a2156b917bcd7edaa",
+  "status": "final_measured_snapshot",
+  "finalized_at_utc": "2026-10-25T19:21:00Z",
+  "data_commit_landed": false,
+  "note": "Data commit had not landed at finalization; C2/C3 after entries remain pending and are reported as missing receipts. Freeze-commit, baseline, and gate evidence is complete and cross-checked.",
+  "claims": {
+    "C1": {
+      "axis": "calibration",
+      "claim": "re-register repaired round-38 discrimination pair (re-frozen manifest + unchanged counters) scores controls=19 correct=19/19 verdict=TARGET_MET at freeze commit",
+      "counting_command": "cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-r38-discrimination.py --c1 quality/counters/c1-r38-event-ground.py --c2 quality/counters/c2-r38-eventq.py --manifest .ufo/waves/round-39/c1/manifest.json --rev <rev>",
+      "before": {
+        "receipt_path": ".ufo/waves/round-39/receipts/c1-redbefore.txt",
+        "receipt_out_twin": ".ufo/waves/round-39/receipts/c1-redbefore-out.txt",
+        "committed": true,
+        "exists": true,
+        "sha256": "7fe05ad9986656bb7580a0784fc5961a2128661321017c7bda70f0f986f62154",
+        "verdict": "controls=19 correct=18/19 verdict=TARGET_MISSED",
+        "exit_code": 1,
+        "failing_control": "c1-duprow (expected TARGET_MISSED, observed TARGET_MET)",
+        "measured_at_rev": "08be4eb7fd13358ed29b096e8924005d46ac409c"
+      },
+      "after_freeze": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecC1After/after-freeze.txt",
+        "exists": true,
+        "committed": false,
+        "verdict": "controls=19 correct=19/19 verdict=TARGET_MET",
+        "exit_code": 0,
+        "measured_at_rev": "457d1b125932c1e0d797061a2156b917bcd7edaa"
+      },
+      "after_tip": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecC1After/after-tip.txt",
+        "exists": true,
+        "committed": false,
+        "verdict": "controls=19 correct=19/19 verdict=TARGET_MET",
+        "exit_code": 0,
+        "measured_at_rev": "457d1b125932c1e0d797061a2156b917bcd7edaa",
+        "note": "tip == freeze commit at measurement time"
+      },
+      "self_reproduction_at_freeze": {
+        "command": "python3 -I quality/check-r38-discrimination.py --c1 quality/counters/c1-r38-event-ground.py --c2 quality/counters/c2-r38-eventq.py --manifest .ufo/waves/round-39/c1/manifest.json --rev 457d1b125932c1e0d797061a2156b917bcd7edaa",
+        "exit_code": 0,
+        "verdict": "controls=19 correct=19/19 verdict=TARGET_MET"
+      },
+      "manifest": {
+        "re_frozen_path": ".ufo/waves/round-39/c1/manifest.json",
+        "re_frozen_sha256": "96965518dc8ad98b52b28b406d66841758c80fd75610f9b94e0239b8adf838c8",
+        "frozen_r38_path": ".ufo/waves/round-39/receipts/manifest-frozen-r38.json",
+        "frozen_r38_sha256": "14c49d9fec35dc9bc307fbdd5c732e2ce80fabeaadfe3327b9121f50b9553edb",
+        "byte_copy_claim": "c1/manifest.json == round-38 landed controls manifest at base (ExecC1After cmp + sha256)"
+      }
+    },
+    "C2": {
+      "axis": "operability",
+      "claim": "new tool tools/mado-options.py + counter quality/counters/c3-r39-options.py; fixtures=N/N tool=present verdict=TARGET_MET at data commit",
+      "counting_command": "cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c3-r39-options.py --repo . --rev <rev>",
+      "before": {
+        "receipt_path": null,
+        "declared_before": "tools/mado-options.py absent at base (ls exit 2); counter reports tool=absent exit 1",
+        "verified_before": {
+          "tool_ls_exit_at_freeze": 2,
+          "frozen_repro_at_freeze": "PRED-C3-r39-v1: fixtures=0/1 tool=absent verdict=TARGET_MISSED rev=457d1b125932c1e0d797061a2156b917bcd7edaa (exit 1)"
+        }
+      },
+      "after": {
+        "receipt_path": null,
+        "exists": false,
+        "verdict": null,
+        "measured_at_rev": null,
+        "blocker": "data commit not yet landed; tool (worktree, 37358 B) and counter (worktree, 7002 B) present but uncommitted; counter resolves tools via git show <rev>:tools/mado-options.py, so measurement requires data commit"
+      }
+    },
+    "C3": {
+      "axis": "coverage",
+      "claim": "sourced knowledge entry corpus/knowledge/config-option-table-r39.md + SOURCES rows S218/S219; counter quality/counters/c4-r39-options-entry.py admitted=1/1 verdict=TARGET_MET at data commit",
+      "counting_command": "cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c4-r39-options-entry.py --repo . --rev <rev>",
+      "before": {
+        "receipt_path": null,
+        "declared_before": "no entry exists at base and no rows S218/S219 exist -> admitted=0/1 verdict=TARGET_MISSED exit 1",
+        "verified_before": {
+          "c4_counter_exists": false,
+          "knowledge_entry_exists": false,
+          "sources_row_S218_S219_exists": false
+        }
+      },
+      "after": {
+        "receipt_path": null,
+        "exists": false,
+        "verdict": null,
+        "measured_at_rev": null,
+        "blocker": "data commit not yet landed; c4 counter, config-option-table-r39.md, and SOURCES S218/S219 rows absent (S219 own-work receipt needs data-tip sha256 of tools/mado-options.py per ScrSourcesRows)"
+      }
+    }
+  },
+  "harm_watch": {
+    "axis": {
+      "before": {
+        "receipt_path": ".ufo/waves/round-39/receipts/axis-base.txt",
+        "committed": true,
+        "content": "MADO_AXIS: checked=3 mismatched=0 rev=08be4eb7fd13358ed29b096e8924005d46ac409c",
+        "rows": "navigation published=55/55, calibration published=50/50, operability published=12/12 all MATCH"
+      },
+      "after": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecGateHealth/gate3-axis-scores.out",
+        "exists": true,
+        "committed": false,
+        "content": "MADO_AXIS: checked=3 mismatched=0 rev=457d1b125932c1e0d797061a2156b917bcd7edaa"
+      }
+    },
+    "navigation": {
+      "before": {
+        "receipt_path": ".ufo/waves/round-39/receipts/nav-base.txt",
+        "committed": true,
+        "content": "MADO_INDEX: rev=08be4eb7fd13358ed29b096e8924005d46ac409c indexed=55/55 missing=0 dangling=0 duplicates=0 coverage=10.0000/10"
+      },
+      "after": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecGateHealth/gate1-check-index.out",
+        "exists": true,
+        "committed": false,
+        "content": "MADO_INDEX: rev=457d1b125932c1e0d797061a2156b917bcd7edaa indexed=55/55 missing=0 dangling=0 duplicates=0 coverage=10.0000/10"
+      }
+    },
+    "selftest": {
+      "before": {
+        "receipt_path": ".ufo/waves/round-39/receipts/selftest-base.txt",
+        "committed": true,
+        "content": "MADO_SELFTEST: 460/460 assertions passed"
+      },
+      "after": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecSelftestAfter/selftest-after.txt",
+        "exists": true,
+        "committed": false,
+        "content": "MADO_SELFTEST: 460/460 assertions passed",
+        "command": "bash tools/mado-verify.sh --selftest (exit 0)"
+      }
+    },
+    "census": {
+      "before": {
+        "receipt_path": ".ufo/waves/round-39/receipts/census-before.txt",
+        "committed": true,
+        "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado",
+        "result": "exit 0; W04 x7 duplicate-url warnings + W01 S277; final 'mado ok .../corpus/SOURCES.md'"
+      },
+      "after": {
+        "receipt_path": ".ufo/waves/round-39/w1/ExecCensusAfter/census-after.txt",
+        "exists": true,
+        "committed": false,
+        "command": "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado",
+        "result": "exit 0 (EXIT_CODE=0); same warning set as baseline"
+      }
+    },
+    "eventq_related_receipt": {
+      "receipt_path": ".ufo/waves/round-39/w1/ExecEventqSnapshot/eventq-after.txt",
+      "exists": true,
+      "committed": false,
+      "content": "fixtures=14/14 readonly=1 live=1 tool=present verdict=TARGET_MET (c2-r38-eventq.py at freeze rev)"
+    }
+  },
+  "receipt_crosscheck": {
+    "committed_paths_verified": [
+      ".ufo/waves/round-39/receipts/axis-base.txt",
+      ".ufo/waves/round-39/receipts/nav-base.txt",
+      ".ufo/waves/round-39/receipts/selftest-base.txt",
+      ".ufo/waves/round-39/receipts/census-before.txt",
+      ".ufo/waves/round-39/receipts/c1-redbefore.txt",
+      ".ufo/waves/round-39/receipts/c1-redbefore-out.txt",
+      ".ufo/waves/round-39/receipts/manifest-frozen-r38.json",
+      ".ufo/waves/round-39/c1/manifest.json"
+    ],
+    "committed_instruments_verified": [
+      "quality/check-r38-discrimination.py",
+      "quality/counters/c1-r38-event-ground.py",
+      "quality/counters/c2-r38-eventq.py",
+      "quality/check-index.py",
+      "tools/mado-verify.sh"
+    ],
+    "missing_receipts": [
+      "C2 after receipt (pending data commit)",
+      "C3 before receipt (none declared / none exists)",
+      "C3 after receipt (pending data commit)",
+      "committed data-commit after receipts (data commit not yet landed)"
+    ],
+    "missing_deliverables_as_of_report": [
+      "quality/counters/c4-r39-options-entry.py",
+      "corpus/knowledge/config-option-table-r39.md",
+      "corpus/SOURCES.md rows S218/S219 (S220 drafted in seat, uncommitted)",
+      "commit of tools/mado-options.py and quality/counters/c3-r39-options.py"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+# M4 red receipt — mado round-39 w1 MutC2Tool
+mutant: M4 — parse_line `##` escape branch disabled
+  old: `if pos + 1 < len(line) and line[pos + 1] == "#":`
+  new: `if False and pos + 1 < len(line) and line[pos + 1] == "#":`   (tools/mado-options.py:344)
+defect class: `##` escapes mishandled
+detector: python3 -I /tmp/mutc2-tool/mado-options.py --selftest
+output (stderr):
+selftest FAIL: ## escape: value #000000
+output (stdout): MADO_OPTIONS_SELFTEST: 68/69 passed
+exit code: 1
+observed effect: decoration:shadow:color declared with empty value (`##000000` truncated at the first `#`)
+mutant sha256: 4c915273f1497438e30ae3d3f6c1ab00f29d736abad3716a3e44e03a8f95f7a3
+verdict: KILLED (pristine baseline 69/69 RC=0; restored run 69/69 RC=0, hash back to cee78d99de2e3420572aa028f439240ac12e5eb6d595de75e2fc62e5ea9ce61e)

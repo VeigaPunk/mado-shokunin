@@ -2419,3 +2419,54 @@ Sources, saturation, planned: Sources 207 → 211 rows (S221, S253, S258, S277, 
 2026-10-25); S158 and S187 `used-by` extended. Assimilation: 3 package entries admitted
 re-grounded, 2 refused (null channel; follow-queue-vs-request conflation). Saturation 9.0 / N=3
 unchanged; retired: none this round. Axis table re-derived at `bb1adce40fdbe9de9b2040f70bc64cee7a0ab0c5` (the round-38 tip; data commits `245065c`/`efb0ec2` add three indexed entries and no criterion, the records commits add neither): navigation 55/55; calibration resolved-active 50/50; operability selftest 12/12.
+
+## Round 39 — the option-ownership table: a tool, its ground, and the re-registered discrimination pair (2026-10-25, attempt 2)
+
+Registration `.ufo/waves/round-39/registration.md` (attempt-1 freeze `457d1b1`: C1 manifest,
+base receipts) and its attempt-2 addendum `.ufo/waves/round-39/registration-a2.md` (freeze
+`d9b4e4a65ad63ddcd0b86d2468f41508a131b7fa`, both C2/C3 counters and their controls committed
+before any C2/C3 data). Lowest-axis rule: every published axis tied at its maximum at base
+(`receipts/axis-base.txt`), so each is a lowest axis; C1 works calibration. Round shape: one
+v2 wave `w1` of **64 seats** (dispatched by attempt 1, integrated by attempt 2); no residual
+call; round total 64. The §3 planner seat is held by the L1.
+
+| Claim / axis | Before → after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **calibration** — the repaired round-38 discrimination pair re-registered with a fresh freeze | frozen r38 manifest × unchanged counters `controls=19 correct=18/19 verdict=TARGET_MISSED` exit 1 at base `08be4eb` (`receipts/c1-redbefore.txt`) → re-frozen manifest `controls=19 correct=19/19 verdict=TARGET_MET` exit 0 at the freeze `457d1b1` and at the tip `3628472` (`receipts/c1-after-freeze-L1.txt`, `receipts/c1-after-tip.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-r38-discrimination.py --c1 quality/counters/c1-r38-event-ground.py --c2 quality/counters/c2-r38-eventq.py --manifest .ufo/waves/round-39/c1/manifest.json --rev <rev>` | **improved** (re-registration; the pair is the round-38 landed pair, so the move is calibration of the record, not new discrimination power) |
+| C2 **operability** (capability acquisition) — `tools/mado-options.py`, the config-option ownership table | `fixtures=0/11 tool=absent verdict=TARGET_MISSED` exit 1 at base → `fixtures=11/11 tool=present verdict=TARGET_MET` exit 0 at the data commit `4ec582e68acaae647911e31334f0b018b4c772bf` and the tip (`receipts/c2-*.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c3-r39-options.py --repo . --rev <rev>` (`PRED-C3-r39-v2`) | **improved under v2, frozen before data; the v1 draft named by registration.md is an honest miss** — it was never in a freeze commit and could not reach MET for any tool (`w1/CritC2Control.md`, `w1/RevC2Counter.md`); the wave-built tool scores `1/11` under v2 (`c2/ctl-wave-v1.txt`) |
+| C3 **coverage** (sourced) — `corpus/knowledge/config-option-table-r39.md` + S218/S219 (and S220) | `admitted=0/1 verdict=TARGET_MISSED` exit 1 at base → first data commit `3783961` `admitted=0/1` (clause g: the S219 OBS line wrapped its quote off the id's line; `c3/measure-first-data-commit.txt`) → `admitted=1/1 verdict=TARGET_MET` exit 0 at `362847279eccb77b22789a37cbbe3b83b205d49c` (entry-only rewrap; counter unchanged) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c4-r39-options-entry.py --repo . --rev <rev>` (`PRED-C4-r39-v1`) | **improved, with a disclosed first-data miss** for the operator to rule on; residual: a fabricated self-consistent set passes (control P) |
+
+Separable: C2 met at `4ec582e` before any C3 data existed; C3's control P met with a dummy
+tool in place of C2's (`c3/c4ctl-P.txt`), so C3 depends on *a* committed tool for its
+own-work row, not on C2's verdict; C1 shares no file with either.
+
+No harm: `tools/mado-verify.sh --selftest` `460/460` (`receipts/selftest-after.txt`); index
+`indexed=56/56 missing=0 dangling=0 duplicates=0` (one new row; `receipts/nav-after.txt`,
+seat ExecNavAfter); census exit 0 with the same seven W04 and one W01 as at base; the eventq
+counter stays `fixtures=14/14 … TARGET_MET` with a census-only live receipt
+(`w1/ExecEventqSnapshot/`); the held dispatcher entry gains an appended section only; no
+config tree, service or compositor state touched.
+
+### Capabilities (round 39)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| config-option ownership table | resolve every option key of a hyprlang config tree to its last declarer (owner file, line, layer) through the `source` graph — excluding handler calls (flag-variant binds, env/gesture) and keyed special-category fields per the host's own handler table — and label a `getoption` dump with the five divergence classes | `tools/mado-options.py` (selftest 71/71); `quality/counters/c3-r39-options.py` 11/11 at `4ec582e`; host tree: 70 options from 6 owner files (`.ufo/waves/round-39/fetch/S219.receipt.txt`) | 39 |
+
+### Sources, saturation, planned
+
+Sources 211 → 214 rows (S218, S219, S220; tier A; `mined`; opened 2026-10-25); S018, S162,
+S173 `used-by` extended (old→new in `corpus/lessons/round-39.md`). Assimilation: the
+dispatcher-surface amendment admitted re-grounded (S018, S196 re-opened); three other package
+amendments not this round's theme; no staged row appended. Round-38 correction: its
+"2 refused" line counts 3 refusals (r28, r29 journal, r29 socket-client), per the round-38
+lesson. Domain-versus-meta ratio of the last 30 commits (criterion 60), measured at
+`3628472`: **10 domain / 20 meta**. Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `362847279eccb77b22789a37cbbe3b83b205d49c` plus the round-39 records commit (one new indexed entry, criterion 64): navigation 56/56; calibration resolved-active 51/51; operability selftest 12/12.
+
+### Planned (round 40; intent only)
+
+1. Take one live `hyprctl getoption` dump (read-only) and merge it into the table: the §4
+   labels against the running compositor, and the falsifiable consequence's live half.
+2. Next shokuknow theme or considerthese proposal per the frontier.

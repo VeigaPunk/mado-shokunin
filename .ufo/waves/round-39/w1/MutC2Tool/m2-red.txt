@@ -1,0 +1,12 @@
+# M2 red receipt — mado round-39 w1 MutC2Tool
+mutant: M2 — layer_of toggles branch relabeled
+  old: `if rel.startswith(".local/state/omarchy/toggles/hypr/"):\n        return "toggles"`
+  new: same guard, `return "defaults"`   (tools/mado-options.py:228-229)
+defect class: toggle layer ignored
+detector: python3 -I /tmp/mutc2-tool/mado-options.py --selftest
+output (stderr):
+selftest FAIL: gaps_out: layer toggles
+output (stdout): MADO_OPTIONS_SELFTEST: 68/69 passed
+exit code: 1
+mutant sha256: 03714474f4b286e8cf674d5f3f24c186c369ef5d7d9d67eab95fa4989c481dc5
+verdict: KILLED (pristine baseline 69/69 RC=0; restored run 69/69 RC=0, hash back to cee78d99de2e3420572aa028f439240ac12e5eb6d595de75e2fc62e5ea9ce61e)

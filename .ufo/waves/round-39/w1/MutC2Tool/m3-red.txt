@@ -1,0 +1,13 @@
+# M3 red receipt — mado round-39 w1 MutC2Tool
+mutant: M3 — parse_line inline-comment truncation removed
+  old: `else:\n            line = line[:pos]\n            break`
+  new: `else:\n            break`   (tools/mado-options.py:348-350)
+defect class: comment tokens parsed as settings (comment tail kept in the declared value)
+detector: python3 -I /tmp/mutc2-tool/mado-options.py --selftest
+output (stderr):
+selftest FAIL: trailing comment dropped
+output (stdout): MADO_OPTIONS_SELFTEST: 68/69 passed
+exit code: 1
+observed effect: general:col.inactive_border declared as `rgba(595959aa) # trailing comment dropped`
+mutant sha256: f3d2c4bf4c6a18fae19da0831f1fcd0bc8179ec780803e15c789e3e553c82e1a
+verdict: KILLED (pristine baseline 69/69 RC=0; restored run 69/69 RC=0, hash back to cee78d99de2e3420572aa028f439240ac12e5eb6d595de75e2fc62e5ea9ce61e)

@@ -1,0 +1,123 @@
+# mado round-39 w1 — SOURCES.md registry census snapshot
+
+Seat: SctRegistrySnapshot   Wave: round-39/w1   Generated (UTC): 2026-10-25T19:13:17+00:00
+Repo: /home/vgpnk/Projects/shokunin/mado-shokunin
+File: corpus/SOURCES.md
+sha256(corpus/SOURCES.md) = 9bfd25da6a89a0cf09819803f6075f67c1f8da5694c8e5e30541fbd2f9083e62
+Data tip: 457d1b125932c1e0d797061a2156b917bcd7edaa — 457d1b1 round-39: freeze registration + base receipts + inherited r38 seat reports
+SOURCES.md modified in worktree at snapshot time: False
+Note: no round-39 data commit has landed yet; corpus/SOURCES.md is byte-identical to the freeze commit 457d1b1
+
+==============================================================================
+SUMMARY (data tip)
+==============================================================================
+row_count                        = 211
+duplicate_ids                    = [] (count 0 — must be none)
+unique_id_count                  = 211
+max_id                           = S277
+tier_histogram                   = {'A': 203, 'B': 1, 'C': 7}
+status_histogram                 = {'mined': 192, 'queued': 10, 'rejected': 9}
+malformed_row_count (NF != 13)   = 0  (must be 0)
+enum_violations (tier/status/kind/tier-inflation) = 0
+missing used-by paths (mined rows) = 0
+registry sections containing S-rows = ['## Registry']
+
+==============================================================================
+MANUAL CENSUS COMMANDS (verbatim from fleet CORPUS.md § Census)
+==============================================================================
+
+--- rows  (exit 0) ---
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+211
+
+--- malformed_rows_NF_not_13  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+0
+
+--- tier_histogram  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; gsub(/[[:space:]]/,"",t); n[t]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+A=203 B=1 C=7 
+
+--- status_histogram  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {s=$9; gsub(/[[:space:]]/,"",s); n[s]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+mined=192 queued=10 rejected=9 
+
+--- duplicate_ids  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}' corpus/SOURCES.md | sort | uniq -d
+(no output)
+
+--- enum_violations  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {i=$2;k=$4;t=$5;s=$9; gsub(/[[:space:]]/,"",i); gsub(/[[:space:]]/,"",k); gsub(/[[:space:]]/,"",t); gsub(/[[:space:]]/,"",s); if (t !~ /^[ABC]$/) print "tier", i, t; if (s !~ /^(queued|mined|rejected)$/) print "status", i, s; if (k !~ /^(spec|docs|paper|code|tool|dataset|talk|book|community|own-work)$/) print "kind", i, k; if (t=="A" && k=="community") print "tier-inflation", i}' corpus/SOURCES.md
+(no output)
+
+--- missing_usedby_paths  (exit 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {s=$9; gsub(/[[:space:]]/,"",s); if (s=="mined") {n=split($12, a, /[,;]/); for (j=1;j<=n;j++) {p=a[j]; gsub(/^[[:space:]]+|[[:space:]]+$/,"",p); if (p!="" && p!="—") print p}}}' corpus/SOURCES.md | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done
+(no output)
+
+==============================================================================
+MAINTAINED CLI CROSS-CHECK (fleet scripts/sources-census.sh)
+==============================================================================
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin mado   -> exit 0
+mado	rows	211
+mado	tier.A	203
+mado	tier.B	1
+mado	tier.C	7
+mado	status.mined	192
+mado	status.queued	10
+mado	status.rejected	9
+FLEET	rows	211
+FLEET	tier.A	203
+FLEET	tier.B	1
+FLEET	tier.C	7
+FLEET	tier.invalid	0
+FLEET	status.queued	10
+FLEET	status.mined	192
+FLEET	status.rejected	9
+FLEET	status.invalid	0
+FLEET	missing	0
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado   -> exit 0
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+
+Both manual and maintained censuses agree: rows=211, tier A=203/B=1/C=7,
+status mined=192/queued=10/rejected=9, malformed=0, duplicate ids=0.
+The seven W04/W01 warnings are pre-existing (identical to the round-start
+baseline .ufo/waves/round-39/receipts/census-before.txt) and do not change exit status.
+
+==============================================================================
+S-IDS USED BY THIS ROUND'S ENTRIES
+==============================================================================
+new rows expected this round      = ['S218', 'S219', 'S220']
+  present in registry now          = []
+  NOT yet in registry              = ['S218', 'S219', 'S220']
+used-by extension (existing row)   = ['S018']
+all S-ids cited by round-39 drafts = ['S018', 'S158', 'S196', 'S218', 'S219', 'S220']
+
+Per-draft cited ids:
+  ScrKnowledgeEntry/config-option-table-r39.md: ['S218', 'S219']
+  ScrDispatcherAmendment/dispatcher-amendment-section.md: ['S018', 'S158', 'S196', 'S220']
+  ScrSourcesRows/rows.md: ['S018', 'S196', 'S218', 'S219', 'S220']
+  ScrLesson/round-39.md: ['S018', 'S158', 'S187', 'S218', 'S219', 'S220', 'S253', 'S258', 'S277']
+
+Drafted row shape: {"S218": 13, "S219": 13, "S220": 13, "S018_change_line_NF": 7, "note": "the S018 row in rows.md is a 4-column old->new change table, not an 11-column registry row; it must not be appended verbatim"}
+
+==============================================================================
+PROJECTED STATE AFTER THE ROUND-39 APPEND  [INFERENCE]
+==============================================================================
+[INFERENCE] if S218/S219/S220 land as drafted (all tier A, status mined) and no row is otherwise changed
+  row_count        = 214
+  tier_histogram   = {'A': 206, 'B': 1, 'C': 7}
+  status_histogram = {'mined': 195, 'queued': 10, 'rejected': 9}
+  risk note        = S220 duplicates the S196 URL (wiki.hypr.land/0.56.0/Configuring/Basics/Dispatchers/, same sha256 f9b51362f2440e02) with a different scope -> maintained validator emits W04 (warning), not E04, and does not change the exit status; ScrSourcesRows flagged this conflict verbatim for the judge
+
+==============================================================================
+RAW JSON: registry.json (same directory)
+==============================================================================

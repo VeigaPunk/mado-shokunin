@@ -2428,3 +2428,31 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   append is refused (schema breaks, census flip); the adoptable
   `dispatcher-surface-and-request-grammar-r26.md` amendment and ~54 deferred rows
   go to round 39. Lesson ledger sentence corrected.
+
+## Round 39 — the option-ownership table; the discrimination pair re-registered (2026-10-25, attempt 2)
+
+- Attempt 1 (L1 `MadoR39`) froze `457d1b1` (registration, C1 manifest, base receipts,
+  inherited round-38 seat reports) and dispatched v2 wave `w1` (64 seats), then ended with no
+  data commit. Attempt 2 (L1 `MadoR39a2`) inherited the wave and integrated it.
+- Motivating evidence: `considerthese/2026-10-24.md` proposal 4 (who owns each key, checked
+  against `getoption`); the held ownership proof covered 6 keys
+  (`knowledge/hyprctl-verification-layer.md` §5); `config-drift-r12.md` says the live layer does
+  not establish all ownership. Seats SctHeldEntries and the L1 found the wave-built tool listed
+  9 handler/rule rows as options on the host tree (M39-2).
+- Freeze `d9b4e4a` (attempt 2, before data): C2 counter `PRED-C3-r39-v2` (generated trees seeded
+  by the revision) and C3 counter `PRED-C4-r39-v1`, with controls; the attempt-1 C2 draft
+  preserved as `c2/c3-r39-options.v1-draft.py.txt` (unreachable by construction, M39-1).
+- C2 data `4ec582e`: `tools/mado-options.py` (handler/special-category boundary from S162/S173;
+  selftest 71/71) → `fixtures=11/11 TARGET_MET`.
+- C3 data `3783961` → `admitted=0/1` (clause g, S219 OBS line wrapped) → fix `3628472`
+  (entry rewrap only) → `admitted=1/1 TARGET_MET`. Rows S218-S220 added; S018/S162/S173
+  used-by extended.
+- Assimilation: dispatcher-surface amendment appended to
+  `knowledge/dispatcher-surface-and-request-grammar-r26.md` (S018, S196 re-opened,
+  byte-identical); S220-as-Dispatchers refused (duplicate of S196).
+- C1: re-frozen manifest 19/19 at freeze `457d1b1` and tip `3628472`; red-before 18/19.
+- Records: lesson `corpus/lessons/round-39.md` (Gate, M39-1, M39-2), QUALITY criterion 64,
+  SCORECARD round-39 section.
+- Wave `w1`: 64 seats; 60 reports; no report from ExecAssimAppendBlock, ScrReportFrontier,
+  MutC3Row (no output retained: the orchestrator's results file notes a kernel restart
+  mid-wave), ScrReportMain left its draft without a report.

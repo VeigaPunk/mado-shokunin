@@ -1,0 +1,6 @@
+# ScrErratum — round-38 report erratum evidence
+
+- Read-only inputs: `/home/vgpnk/Projects/shokunin/.ufo/reports/round-38/mado.md` lines 162–166; lane `corpus/lessons/round-38.md` and `LOG.md` records at `c46f868` and `f551b70`.
+- Exact superseded addendum-5 text (report line 166): “Refines the errata: frozen C1 × fixed manifest = 19/19 — the `859d0cf` counter patch was not load-bearing; the frozen-pair failure is the `c1-duprow` manifest control alone, narrowing the re-registration ruling.”
+- Resolution: frozen counter × frozen manifest = 18/19; 19/19 belongs to the repaired pair. `LOG.md` dispute record at c46f868 records RevFrozenClaims’s 18/19 replay at both data and freeze rev and explicitly disputes the quoted 19/19 refinement. The f551b70 cross-pair resolution states frozen×frozen 18/19, frozen×landed 19/19, landed×frozen 18/19, landed×landed 19/19; `859d0cf` was a verdict no-op and the 19/19 rests on the post-data manifest rewrite `b6c1d31`. Round-38 lesson Mistakes lines 83–89 is superseded on its frozen×frozen 19/19 clause by this resolution.
+- No checks or commands run; this is a report-text draft based on the specified records. No files other than this report and the requested `erratum.md` were written.

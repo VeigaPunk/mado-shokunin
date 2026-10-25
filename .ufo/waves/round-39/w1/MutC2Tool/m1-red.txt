@@ -1,0 +1,16 @@
+# M1 red receipt — mado round-39 w1 MutC2Tool
+mutant: M1 — State.declare owner-layer resolution shifted one dirname
+  old: `layer = layer_of(path, self.home)`
+  new: `layer = layer_of(os.path.dirname(path), self.home)`   (tools/mado-options.py:262)
+defect class: owner resolution picks the wrong layer
+detector: python3 -I /tmp/mutc2-tool/mado-options.py --selftest
+output (stderr):
+selftest FAIL: gaps_out: layer toggles
+selftest FAIL: kb_layout: layer user
+selftest FAIL: rounding: layer ai-usage
+selftest FAIL: root option: layer root
+selftest FAIL: theme layer
+output (stdout): MADO_OPTIONS_SELFTEST: 64/69 passed
+exit code: 1
+mutant sha256: dc6bf92e611fdf01f4b51b2323b4250bcdc5b0ec93b8875182b41ff68697e311
+verdict: KILLED (pristine baseline 69/69 RC=0; restored run 69/69 RC=0, hash back to cee78d99de2e3420572aa028f439240ac12e5eb6d595de75e2fc62e5ea9ce61e)

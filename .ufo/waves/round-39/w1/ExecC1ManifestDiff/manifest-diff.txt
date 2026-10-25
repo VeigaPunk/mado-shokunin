@@ -1,0 +1,360 @@
+diff --git a/.ufo/waves/round-38/controls/manifest.json b/.ufo/waves/round-38/controls/manifest.json
+index 93f168c..ec34732 100644
+--- a/.ufo/waves/round-38/controls/manifest.json
++++ b/.ufo/waves/round-38/controls/manifest.json
+@@ -1,101 +1,256 @@
+ {
+-  "id": "MANIFEST-r38-v1",
+-  "frozen_at": "2026-10-25",
+-  "note": "Frozen before the round-38 data commit. Accept controls prove the instruments still accept the real corpus and the real tool; reject controls are the wave-1 cribs recorded in corpus/lessons/round-37.md M37-5 (self-receipt, quote floor, duplicate row, no-lineage, verbatim-refused, forged snapshot, socket-importing, constant lagging, always-missing, one-pass) plus held discriminations (do-nothing, token stub, always-clean). `rev` names the sandbox clone's checkout; `--rev` supplies the default (the data revision at green). Every sandbox commits with the identity sandbox <sandbox@invalid>; the lane is never touched.",
+-  "controls": [
+-    {"id": "c1-live", "instrument": "c1", "expect": "TARGET_MET", "clause": "accept-path",
+-     "note": "the lane at --rev: the real round-37 entries"},
+-    {"id": "c1-donothing", "instrument": "c1", "rev": "b4e47e980bfb0cbc8a4e788f59a41db858751fd8",
+-     "expect": "TARGET_MISSED", "clause": "a", "note": "round-37 base: no entries"},
+-    {"id": "c1-selfreceipt", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "h",
+-     "note": "the 19-line crib: fabricated S999, entries are their own Gate receipts, quote 'e'",
+-     "writes": [
+-       {"op": "py", "code": "for p,toks in [('corpus/knowledge/event-delivery-limits-r26.md',('MAX_QUEUED_EVENTS','overflowed event queue')),('corpus/knowledge/event-queue-observability-r37.md',('debug:disable_logs','m_logsEnabled'))]:\n    write(p, '# synthetic self-receipt entry\\n\\nsource: S999\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nbody naming ' + ' and '.join(toks) + '.\\n**OBS** S999: `e`\\n')"},
+-       {"op": "append", "path": "corpus/SOURCES.md", "text": "| S999 | fabricated self-receipt control source — https://example.invalid/S999 | code | A | scope | anchor | teaches | mined | 2026-10-25 | 90d | corpus/knowledge/event-delivery-limits-r26.md, corpus/knowledge/event-queue-observability-r37.md |\n"},
+-       {"op": "py", "code": "write('corpus/lessons/round-37.md', read('corpus/lessons/round-37.md').decode() + 'GATE S999 receipt=corpus/knowledge/event-delivery-limits-r26.md sha256=' + digest('corpus/knowledge/event-delivery-limits-r26.md') + ' quote=\"e\"\\n' + 'GATE S999 receipt=corpus/knowledge/event-queue-observability-r37.md sha256=' + digest('corpus/knowledge/event-queue-observability-r37.md') + ' quote=\"e\"\\n')"}
+-     ]},
+-    {"id": "c1-quotefloor", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "i",
+-     "note": "real receipts, one-character quotes",
+-     "writes": [
+-       {"op": "py", "code": "t = read('corpus/lessons/round-37.md').decode()\nimport re as _re\nt = _re.sub(r'quote=\"[^\"]*\"', 'quote=\"e\"', t)\nwrite('corpus/lessons/round-37.md', t)\nfor p in ['corpus/knowledge/event-delivery-limits-r26.md','corpus/knowledge/event-queue-observability-r37.md']:\n    b = read(p).decode()\n    b = _re.sub(r'`[^`]+`', '`e`', b)\n    write(p, b)"}
+-     ]},
+-    {"id": "c1-duprow", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "j",
+-     "note": "a contradicting second S189 row",
+-     "writes": [
+-       {"op": "append", "path": "corpus/SOURCES.md", "text": "| S189 | contradicting duplicate — https://example.invalid/S189-dupe | code | A | scope | anchor | teaches | mined | 2026-10-25 | 90d | corpus/knowledge/event-delivery-limits-r26.md, corpus/knowledge/event-queue-observability-r37.md |\n"}
+-     ]},
+-    {"id": "c1-nolineage", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "l",
+-     "note": "the k3 crib: stated real quotes, no package claim content",
+-     "writes": [
+-       {"op": "py", "code": "write('corpus/knowledge/event-delivery-limits-r26.md', 'source: S189, S201, S212\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming MAX_QUEUED_EVENTS and overflowed event queue.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S201: `std::array<char, 1024> buffer;  // Hyprland socket2 events are max 1024 bytes`\\n**OBS** S212: `m_ipc.registerForIPC(\"workspacev2\", this);`\\n')\nwrite('corpus/knowledge/event-queue-observability-r37.md', 'source: S189, S213, S214, S215, S216, S217\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming debug:disable_logs and m_logsEnabled.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S213: `debug:disable_logs: {\"option\":\"debug:disable_logs\",\"int\":1,\"set\":false}`\\n**OBS** S214: `m_logsEnabled = !*PDISABLELOGS;`\\n**OBS** S215: `MS<Bool>(\"debug:disable_logs\", \"disable logging to a file\", true),`\\n**OBS** S216: `conn->setName(\"aquamarine\");`\\n**OBS** S217: `if (!m_logsEnabled)`\\n')"}
+-     ]},
+-    {"id": "c1-r28-verbatim", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "l",
+-     "note": "the refused package measurement pasted into the E2 path with honest wiring",
+-     "writes": [
+-       {"op": "py", "code": "pkg = open('/home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/event-queue-host-measurement-r28.md').read()\nhead = 'source: S189, S213, S214, S215, S216, S217\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming debug:disable_logs and m_logsEnabled.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S213: `debug:disable_logs: {\"option\":\"debug:disable_logs\",\"int\":1,\"set\":false}`\\n**OBS** S214: `m_logsEnabled = !*PDISABLELOGS;`\\n**OBS** S215: `MS<Bool>(\"debug:disable_logs\", \"disable logging to a file\", true),`\\n**OBS** S216: `conn->setName(\"aquamarine\");`\\n**OBS** S217: `if (!m_logsEnabled)`\\n\\n## verbatim refused package text\\n\\n'\nwrite('corpus/knowledge/event-queue-observability-r37.md', head + pkg)"}
+-     ]},
+-    {"id": "c1-token-stub", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "g",
+-     "note": "the r37 v1 stub: tokens only, no stated quotes — held discrimination",
+-     "writes": [
+-       {"op": "py", "code": "for p,toks,ids in [('corpus/knowledge/event-delivery-limits-r26.md',('MAX_QUEUED_EVENTS','overflowed event queue'),('S189','S201','S212')),('corpus/knowledge/event-queue-observability-r37.md',('debug:disable_logs','m_logsEnabled'),('S189','S213','S214','S215','S216','S217'))]:\n    write(p, 'source: ' + ', '.join(ids) + '\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nbody naming ' + ' and '.join(toks) + '.\\n')"}
+-     ]},
+-    {"id": "c1-clause-b", "instrument": "c1", "expect": "TARGET_MISSED", "clause": "b",
+-     "note": "entries missing verified-at — the clause b control M37-5 named",
+-     "writes": [
+-       {"op": "py", "code": "import re as _re\nfor p in ['corpus/knowledge/event-delivery-limits-r26.md','corpus/knowledge/event-queue-observability-r37.md']:\n    b = read(p).decode()\n    b = _re.sub(r'(?m)^verified-at:.*\\n', '', b)\n    write(p, b)"}
+-     ]},
+-
+-    {"id": "c2-live", "instrument": "c2", "expect": "TARGET_MET", "clause": "accept-path",
+-     "note": "the lane at --rev: the real tool and the real three-artifact receipt"},
+-    {"id": "c2-donothing", "instrument": "c2", "rev": "b4e47e980bfb0cbc8a4e788f59a41db858751fd8",
+-     "expect": "TARGET_MISSED", "clause": "tool", "note": "round-37 base: no tool"},
+-    {"id": "c2-forged", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "live-v3",
+-     "note": "RevC2Code F1: the counter's own fixture committed as the live snapshot",
+-     "writes": [
+-       {"op": "counter_fixture", "counter": "c2", "attr": "CLEAN_SS",
+-        "path": ".ufo/waves/round-38/receipts/eventq-live-ss.txt"},
+-       {"op": "tool_run", "ss": ".ufo/waves/round-38/receipts/eventq-live-ss.txt",
+-        "path": ".ufo/waves/round-38/receipts/eventq-live.txt"},
+-       {"op": "literal", "path": ".ufo/waves/round-38/receipts/eventq-live-proc.txt",
+-        "text": "# forged proc artifact\nOVERALL: AGREE\n"}
+-     ]},
+-    {"id": "c2-impsock", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "readonly",
+-     "note": "RevC2Code F6: a socket-importing tool — the read-only clause must kill it",
+-     "writes": [
+-       {"op": "literal", "path": "tools/mado-eventq.py",
+-        "text": "#!/usr/bin/env python3\nimport socket\nimport sys\nsys.exit(0)\n"}
+-     ]},
+-    {"id": "c2-lagconst", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "lagging",
+-     "note": "RevC2Code F4: lagging is constant 1 — the clean case must discriminate it",
+-     "writes": [
+-       {"op": "py", "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('lagging = sum(1 for c in clients if isinstance(c[\"peer_recv_q\"], int) and c[\"peer_recv_q\"] > 0)', 'lagging = 1')\nwrite('tools/mado-eventq.py', b)"}
+-     ]},
+-    {"id": "c2-missall", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "expect-present",
+-     "note": "RevC2Code F5: every --expect-client reports missing — a positive case must discriminate it",
+-     "writes": [
+-       {"op": "py", "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('missing = [e for e in dict.fromkeys(a.expect_client) if e not in comms and re.sub(r\"\\\\s\", \"_\", e) not in comms]', 'missing = list(dict.fromkeys(a.expect_client))')\nwrite('tools/mado-eventq.py', b)"}
+-     ]},
+-    {"id": "c2-onepass", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "clients-first",
+-     "note": "RevC2Code F3: a one-pass parser that requires server-before-client order misses live tables",
+-     "writes": [
+-       {"op": "py", "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('by_inode = {}\\n    for r in rows:\\n        by_inode.setdefault(r[\"inode\"], r)', 'by_inode = {}\\n    for r in rows:\\n        if r[\"local\"] == sock or r[\"state\"] != \"ESTAB\":\\n            by_inode.setdefault(r[\"inode\"], r)')\nwrite('tools/mado-eventq.py', b)"}
+-     ]},
+-    {"id": "c2-docconn", "instrument": "c2", "expect": "TARGET_MET", "clause": "readonly-doc",
+-     "note": "RevC2Code F6: a genuine tool whose docstring mentions connect( must not false-miss",
+-     "writes": [
+-       {"op": "py", "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('never opens any socket', 'never calls connect( on any socket')\nassert 'connect(' in b\nwrite('tools/mado-eventq.py', b)\nr = read('.ufo/waves/round-38/receipts/eventq-live.txt').decode()\nr = re.sub(r'tool_sha256=[0-9a-f]{64}', 'tool_sha256=' + digest('tools/mado-eventq.py'), r)\nwrite('.ufo/waves/round-38/receipts/eventq-live.txt', r)"}
+-     ]},
+-    {"id": "c2-stub-clean", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "fixtures",
+-     "note": "an always-clean stub — held discrimination",
+-     "writes": [
+-       {"op": "literal", "path": "tools/mado-eventq.py",
+-        "text": "#!/usr/bin/env python3\nprint('MADO_EVENTQ: socket2=x subscribers=0 overflow=0 write_fail=0 lagging=0 missing_client=- markers_observable=yes verdict=CLEAN')\n"}
+-     ]},
+-    {"id": "c2-proc-mismatch", "instrument": "c2", "expect": "TARGET_MISSED", "clause": "live-v3",
+-     "note": "the triplet lies about the proc binding: fabricated inodes named as held",
+-     "writes": [
+-       {"op": "literal", "path": ".ufo/waves/round-38/receipts/eventq-live-proc.txt",
+-        "text": "# forged proc binding\nss_sha256=0000000000000000000000000000000000000000000000000000000000000000\nserver ESTAB inode=99999999 held by Hyprland/1619\nOVERALL: AGREE\n"}
+-     ]}
+-  ]
++ "id": "MANIFEST-r38-v1",
++ "frozen_at": "2026-10-25",
++ "note": "Frozen before the round-38 data commit. Accept controls prove the instruments still accept the real corpus and the real tool; reject controls are the wave-1 cribs recorded in corpus/lessons/round-37.md M37-5 (self-receipt, quote floor, duplicate row, no-lineage, verbatim-refused, forged snapshot, socket-importing, constant lagging, always-missing, one-pass) plus held discriminations (do-nothing, token stub, always-clean). `rev` names the sandbox clone's checkout; `--rev` supplies the default (the data revision at green). Every sandbox commits with the identity sandbox <sandbox@invalid>; the lane is never touched.",
++ "controls": [
++  {
++   "id": "c1-live",
++   "instrument": "c1",
++   "expect": "TARGET_MET",
++   "clause": "accept-path",
++   "note": "the lane at --rev: the real round-37 entries"
++  },
++  {
++   "id": "c1-donothing",
++   "instrument": "c1",
++   "rev": "b4e47e980bfb0cbc8a4e788f59a41db858751fd8",
++   "expect": "TARGET_MISSED",
++   "clause": "a",
++   "note": "round-37 base: no entries"
++  },
++  {
++   "id": "c1-selfreceipt",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "h",
++   "note": "the 19-line crib: fabricated S999, entries are their own Gate receipts, quote 'e'",
++   "writes": [
++    {
++     "op": "py",
++     "code": "for p,toks in [('corpus/knowledge/event-delivery-limits-r26.md',('MAX_QUEUED_EVENTS','overflowed event queue')),('corpus/knowledge/event-queue-observability-r37.md',('debug:disable_logs','m_logsEnabled'))]:\n    write(p, '# synthetic self-receipt entry\\n\\nsource: S999\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nbody naming ' + ' and '.join(toks) + '.\\n**OBS** S999: `e`\\n')"
++    },
++    {
++     "op": "append",
++     "path": "corpus/SOURCES.md",
++     "text": "| S999 | fabricated self-receipt control source — https://example.invalid/S999 | code | A | scope | anchor | teaches | mined | 2026-10-25 | 90d | corpus/knowledge/event-delivery-limits-r26.md, corpus/knowledge/event-queue-observability-r37.md |\n"
++    },
++    {
++     "op": "py",
++     "code": "write('corpus/lessons/round-37.md', read('corpus/lessons/round-37.md').decode() + 'GATE S999 receipt=corpus/knowledge/event-delivery-limits-r26.md sha256=' + digest('corpus/knowledge/event-delivery-limits-r26.md') + ' quote=\"e\"\\n' + 'GATE S999 receipt=corpus/knowledge/event-queue-observability-r37.md sha256=' + digest('corpus/knowledge/event-queue-observability-r37.md') + ' quote=\"e\"\\n')"
++    }
++   ]
++  },
++  {
++   "id": "c1-quotefloor",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "i",
++   "note": "real receipts, one-character quotes",
++   "writes": [
++    {
++     "op": "py",
++     "code": "t = read('corpus/lessons/round-37.md').decode()\nimport re as _re\nt = _re.sub(r'quote=\"[^\"]*\"', 'quote=\"e\"', t)\nwrite('corpus/lessons/round-37.md', t)\nfor p in ['corpus/knowledge/event-delivery-limits-r26.md','corpus/knowledge/event-queue-observability-r37.md']:\n    b = read(p).decode()\n    b = _re.sub(r'`[^`]+`', '`e`', b)\n    write(p, b)"
++    }
++   ]
++  },
++  {
++   "id": "c1-duprow",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "j",
++   "note": "a contradicting second S189 row",
++   "writes": [
++    {
++     "op": "py",
++     "code": "p='corpus/SOURCES.md'\nlines=read(p).decode().splitlines(keepends=True)\ndup='| S189 | contradicting duplicate — https://example.invalid/S189-dupe | code | A | scope | anchor | teaches | mined | 2026-10-25 | 90d | corpus/knowledge/event-delivery-limits-r26.md, corpus/knowledge/event-queue-observability-r37.md |\\n'\nfor i in range(len(lines)-1,-1,-1):\n    if lines[i].startswith('| S217 |'):\n        lines[i+1:i+1]=[dup]\n        break\nwrite(p, ''.join(lines))"
++    }
++   ]
++  },
++  {
++   "id": "c1-nolineage",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "l",
++   "note": "the k3 crib: stated real quotes, no package claim content",
++   "writes": [
++    {
++     "op": "py",
++     "code": "write('corpus/knowledge/event-delivery-limits-r26.md', 'source: S189, S201, S212\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming MAX_QUEUED_EVENTS and overflowed event queue.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S201: `std::array<char, 1024> buffer;  // Hyprland socket2 events are max 1024 bytes`\\n**OBS** S212: `m_ipc.registerForIPC(\"workspacev2\", this);`\\n')\nwrite('corpus/knowledge/event-queue-observability-r37.md', 'source: S189, S213, S214, S215, S216, S217\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming debug:disable_logs and m_logsEnabled.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S213: `debug:disable_logs: {\"option\":\"debug:disable_logs\",\"int\":1,\"set\":false}`\\n**OBS** S214: `m_logsEnabled = !*PDISABLELOGS;`\\n**OBS** S215: `MS<Bool>(\"debug:disable_logs\", \"disable logging to a file\", true),`\\n**OBS** S216: `conn->setName(\"aquamarine\");`\\n**OBS** S217: `if (!m_logsEnabled)`\\n')"
++    }
++   ]
++  },
++  {
++   "id": "c1-r28-verbatim",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "l",
++   "note": "the refused package measurement pasted into the E2 path with honest wiring",
++   "writes": [
++    {
++     "op": "py",
++     "code": "pkg = open('/home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/event-queue-host-measurement-r28.md').read()\nhead = 'source: S189, S213, S214, S215, S216, S217\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nBody naming debug:disable_logs and m_logsEnabled.\\n\\n**OBS** S189: `Socket2 fd {} overflowed event queue, removing`\\n**OBS** S213: `debug:disable_logs: {\"option\":\"debug:disable_logs\",\"int\":1,\"set\":false}`\\n**OBS** S214: `m_logsEnabled = !*PDISABLELOGS;`\\n**OBS** S215: `MS<Bool>(\"debug:disable_logs\", \"disable logging to a file\", true),`\\n**OBS** S216: `conn->setName(\"aquamarine\");`\\n**OBS** S217: `if (!m_logsEnabled)`\\n\\n## verbatim refused package text\\n\\n'\nwrite('corpus/knowledge/event-queue-observability-r37.md', head + pkg)"
++    }
++   ]
++  },
++  {
++   "id": "c1-token-stub",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "g",
++   "note": "the r37 v1 stub: tokens only, no stated quotes — held discrimination",
++   "writes": [
++    {
++     "op": "py",
++     "code": "for p,toks,ids in [('corpus/knowledge/event-delivery-limits-r26.md',('MAX_QUEUED_EVENTS','overflowed event queue'),('S189','S201','S212')),('corpus/knowledge/event-queue-observability-r37.md',('debug:disable_logs','m_logsEnabled'),('S189','S213','S214','S215','S216','S217'))]:\n    write(p, 'source: ' + ', '.join(ids) + '\\nverified-at: 2026-10-25\\nrecheck: 90d\\n\\nbody naming ' + ' and '.join(toks) + '.\\n')"
++    }
++   ]
++  },
++  {
++   "id": "c1-clause-b",
++   "instrument": "c1",
++   "expect": "TARGET_MISSED",
++   "clause": "b",
++   "note": "entries missing verified-at — the clause b control M37-5 named",
++   "writes": [
++    {
++     "op": "py",
++     "code": "import re as _re\nfor p in ['corpus/knowledge/event-delivery-limits-r26.md','corpus/knowledge/event-queue-observability-r37.md']:\n    b = read(p).decode()\n    b = _re.sub(r'(?m)^verified-at:.*\\n', '', b)\n    write(p, b)"
++    }
++   ]
++  },
++  {
++   "id": "c2-live",
++   "instrument": "c2",
++   "expect": "TARGET_MET",
++   "clause": "accept-path",
++   "note": "the lane at --rev: the real tool and the real three-artifact receipt"
++  },
++  {
++   "id": "c2-donothing",
++   "instrument": "c2",
++   "rev": "b4e47e980bfb0cbc8a4e788f59a41db858751fd8",
++   "expect": "TARGET_MISSED",
++   "clause": "tool",
++   "note": "round-37 base: no tool"
++  },
++  {
++   "id": "c2-forged",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "live-v3",
++   "note": "RevC2Code F1: the counter's own fixture committed as the live snapshot",
++   "writes": [
++    {
++     "op": "counter_fixture",
++     "counter": "c2",
++     "attr": "CLEAN_SS",
++     "path": ".ufo/waves/round-38/receipts/eventq-live-ss.txt"
++    },
++    {
++     "op": "tool_run",
++     "ss": ".ufo/waves/round-38/receipts/eventq-live-ss.txt",
++     "path": ".ufo/waves/round-38/receipts/eventq-live.txt"
++    },
++    {
++     "op": "literal",
++     "path": ".ufo/waves/round-38/receipts/eventq-live-proc.txt",
++     "text": "# forged proc artifact\nOVERALL: AGREE\n"
++    }
++   ]
++  },
++  {
++   "id": "c2-impsock",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "readonly",
++   "note": "RevC2Code F6: a socket-importing tool — the read-only clause must kill it",
++   "writes": [
++    {
++     "op": "literal",
++     "path": "tools/mado-eventq.py",
++     "text": "#!/usr/bin/env python3\nimport socket\nimport sys\nsys.exit(0)\n"
++    }
++   ]
++  },
++  {
++   "id": "c2-lagconst",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "lagging",
++   "note": "RevC2Code F4: lagging is constant 1 — the clean case must discriminate it",
++   "writes": [
++    {
++     "op": "py",
++     "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('lagging = sum(1 for c in clients if isinstance(c[\"peer_recv_q\"], int) and c[\"peer_recv_q\"] > 0)', 'lagging = 1')\nwrite('tools/mado-eventq.py', b)"
++    }
++   ]
++  },
++  {
++   "id": "c2-missall",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "expect-present",
++   "note": "RevC2Code F5: every --expect-client reports missing — a positive case must discriminate it",
++   "writes": [
++    {
++     "op": "py",
++     "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('missing = [e for e in dict.fromkeys(a.expect_client) if e not in comms and re.sub(r\"\\\\s\", \"_\", e) not in comms]', 'missing = list(dict.fromkeys(a.expect_client))')\nwrite('tools/mado-eventq.py', b)"
++    }
++   ]
++  },
++  {
++   "id": "c2-onepass",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "clients-first",
++   "note": "RevC2Code F3: a one-pass parser that requires server-before-client order misses live tables",
++   "writes": [
++    {
++     "op": "py",
++     "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('by_inode = {}\\n    for r in rows:\\n        by_inode.setdefault(r[\"inode\"], r)', 'by_inode = {}\\n    for r in rows:\\n        if r[\"local\"] == sock or r[\"state\"] != \"ESTAB\":\\n            by_inode.setdefault(r[\"inode\"], r)')\nwrite('tools/mado-eventq.py', b)"
++    }
++   ]
++  },
++  {
++   "id": "c2-docconn",
++   "instrument": "c2",
++   "expect": "TARGET_MET",
++   "clause": "readonly-doc",
++   "note": "RevC2Code F6: a genuine tool whose docstring mentions connect( must not false-miss",
++   "writes": [
++    {
++     "op": "py",
++     "code": "b = read('tools/mado-eventq.py').decode()\nb = b.replace('never opens any socket', 'never calls connect( on any socket')\nassert 'connect(' in b\nwrite('tools/mado-eventq.py', b)\nr = read('.ufo/waves/round-38/receipts/eventq-live.txt').decode()\nr = re.sub(r'tool_sha256=[0-9a-f]{64}', 'tool_sha256=' + digest('tools/mado-eventq.py'), r)\nwrite('.ufo/waves/round-38/receipts/eventq-live.txt', r)"
++    }
++   ]
++  },
++  {
++   "id": "c2-stub-clean",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "fixtures",
++   "note": "an always-clean stub — held discrimination",
++   "writes": [
++    {
++     "op": "literal",
++     "path": "tools/mado-eventq.py",
++     "text": "#!/usr/bin/env python3\nprint('MADO_EVENTQ: socket2=x subscribers=0 overflow=0 write_fail=0 lagging=0 missing_client=- markers_observable=yes verdict=CLEAN')\n"
++    }
++   ]
++  },
++  {
++   "id": "c2-proc-mismatch",
++   "instrument": "c2",
++   "expect": "TARGET_MISSED",
++   "clause": "live-v3",
++   "note": "the triplet lies about the proc binding: fabricated inodes named as held",
++   "writes": [
++    {
++     "op": "literal",
++     "path": ".ufo/waves/round-38/receipts/eventq-live-proc.txt",
++     "text": "# forged proc binding\nss_sha256=0000000000000000000000000000000000000000000000000000000000000000\nserver ESTAB inode=99999999 held by Hyprland/1619\nOVERALL: AGREE\n"
++    }
++   ]
++  }
++ ]
+ }
