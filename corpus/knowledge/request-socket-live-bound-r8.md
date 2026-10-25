@@ -44,7 +44,7 @@ grammar off a real client and reports the same — `There is no length prefix or
 community-tier cross-check, not first-party evidence.
 
 **OBS** S258: on this host the transport is equally modest — the instance
-directory `directory /run/user/1000/hypr/` carries mode 0700, its sockets
+the instance directory `/run/user/1000/hypr/` carries mode 0700, its sockets
 0755, so the directory's mode is the effective access control; nothing
 outside the user's own UID reaches the socket path.
 
