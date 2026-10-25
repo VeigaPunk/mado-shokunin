@@ -7,9 +7,11 @@ Seat: `L1Mado35.RevQuoteS204` (leaf, no dispatch). Read-only: no lane corpus fil
 (per-seat dirs intact, 59 seats), not deleted. For this seat: the pre-sweep original is 2140 B,
 sha256 `f983ba8539b60bd1d484c3e20f441571acbca4c73a55c47e845921530be105b0`, preserved in commit
 `4efaf63`; the copy now in the worktree and HEAD is 5081 B, sha256
-`53b5fd38558dfcfe323b1d514e793a02e585e40570acc78e6d82ee48c820c598`, and is a **rebuild from this
-seat's transcript** — not the bytes measured, therefore not evidence. Every command and exit code
-this report relies on is inlined in Appendix A, so the report body is the durable locus.
+`53b5fd38558dfcfe323b1d514e793a02e585e40570acc78e6d82ee48c820c598` (`scratch-evidence/RevQuoteS204/verify.log`;
+the member name matters — a probe at `evidence.log` returns git's empty-blob sha `e3b0c442…`), and is
+a **rebuild from this seat's transcript** — not the bytes measured, therefore not evidence.
+Appendix A reproduces the pre-sweep log verbatim (A.0) and inlines every command and exit code the
+report relies on (A.1, A.3), so the report body is the durable locus.
 
 **Revision 3.** Rev 2 withdrew my "executes 13 items" claim. Rev 3 incorporates the peer check
 with `RevQuoteS203`: the counter is **vacuous**, not merely weak; the boot timeline sharpens the
