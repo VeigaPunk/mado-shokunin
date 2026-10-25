@@ -30,7 +30,11 @@ files it snapshotted.
 `snapshot/SOURCES.md` was recovered byte-exact from the jj snapshot commit `d2b6972`
 (2026-10-25T03:30:31) with `jj file show -r d2b6972 corpus/SOURCES.md`. Its sha256 is
 `848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80` — identical to the
-`SOURCES.md` line in `snapshot.sha256`. It is the bytes this seat measured.
+`SOURCES.md` line in `snapshot.sha256`, and identical to the blob committed as
+`02088b4:corpus/SOURCES.md`. So the pre-repair bytes are recoverable two ways; the git
+commit is the primary route and the snapshot file is a working copy:
+`git show 02088b4:corpus/SOURCES.md`. The post-repair bytes are `4f35c80:corpus/SOURCES.md`
+(`0bf117e2…`), still current at HEAD `7d708cf`.
 
 `snapshot/idle-lock-chain-armed-r14.md` (`583c708c…`) and
 `snapshot/idle-lock-offered-in-the-bar-r15.md` (`82c08a46…`) were copied from the live

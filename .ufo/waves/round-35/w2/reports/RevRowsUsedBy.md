@@ -17,12 +17,15 @@ holds `RELOCATION.md` (move/recovery record), `evidence.txt` (03:36 transcript, 
 |---|---|---|
 | 03:25:48 | rows S203–S210 written | SOURCES.md sha `848a7680…` |
 | 03:30:31 | jj snapshot commit `d2b6972` | same registry sha, byte-recoverable |
+| 03:34:26 | data commit `02088b4` lands the rows | `02088b4:corpus/SOURCES.md` = `848a7680…` |
 | 03:35:08–43 | entries get `### Errata`; README updated | r12 `7f27ced0…`, r14 `583c708c…`, r15 `82c08a46…` |
 | ~03:36 | **this seat's measurement** | `evidence.txt` sha `3dd4a384…` |
 | 03:40:12 | **registry rows edited in place** | SOURCES.md sha `0bf117e2…` |
 | 03:41:38 | r12 errata body refined | r12 `0bcef21f…` |
+| 03:42:04 | commit `4f35c80` "wave-2 falsifications **as errata**" | `4f35c80:corpus/SOURCES.md` = `0bf117e2…` |
 | 03:43 | `scratch/` moved to `scratch-evidence/` | 59 seat dirs, top-level files only |
 | 03:45:09 | lesson gains wave-2 errata section | `corpus/lessons/round-35.md` |
+| 03:51:25 | HEAD `7d708cf` (scorecard corrections) | registry still `0bf117e2…` |
 
 The registry changed **after** my measurement. Everything below states which state it is
 about; the live-data table is recomputed on the final observed bytes
@@ -150,9 +153,10 @@ The registry's own header (`corpus/SOURCES.md:6-7`) says:
 The 03:45 lesson (`corpus/lessons/round-35.md:181`) and `LOG.md` both say the wave-2
 findings were "applied as append-only errata blocks (criterion 44), **not as rewrites**".
 
-Measured against the byte-recovered `d2b6972` registry (sha `848a7680…`, identical to the
-03:36 snapshot) and the final observed registry (sha `0bf117e2…`), **five cells changed**,
-four of them outside the allowed set (`cell-diff.txt` has the full strings):
+Measured against the pre-repair registry (sha `848a7680…`; byte-identical at the jj
+snapshot `d2b6972` and at git commit `02088b4`) and the post-repair registry (sha
+`0bf117e2…`, committed in `4f35c80`), **five cells changed**, four of them outside the
+allowed set (`cell-diff.txt` has the full strings):
 
 | row | cell | allowed in place? | old → new |
 |---|---|---|---|
@@ -173,7 +177,15 @@ Consequences:
    does not name them either.
 3. **The record is false.** `round-35.md:181` and `LOG.md` say "not as rewrites" while the
    registry bytes show four out-of-set rewrites. The errata blocks themselves are
-   append-only; the *registry reconciliation* was not.
+   append-only; the *registry reconciliation* was not. The commit record carries the same
+   misdescription: `4f35c80` is titled "round-35: wave-2 falsifications **as errata** —
+   the shape-scored counter, the falsified ledger claim, the census gaps and the misroot",
+   yet `git diff --numstat 02088b4 4f35c80 -- corpus/SOURCES.md` → `3 3`: the commit
+   rewrites three row lines in place. The pre-repair and post-repair registries are both
+   committed (`02088b4` = `848a7680…`, `4f35c80` = `0bf117e2…`), so the rewrite is
+   git-visible as a diff — no reader has to trust this seat's snapshot. Seat
+   `RevEntryR15` independently reports the same in-place rewrite from the entry side
+   (five cells plus S205's rewording, `TARGET_MET` throughout).
 4. **The repair improved content and destroyed provenance.** The live rows now agree with
    their entries (that is why the S203/S204 recheck and S209 README defects disappeared),
    but the recorded history no longer explains how. A reader comparing the lesson to the
@@ -214,8 +226,10 @@ chain closes on itself.
 
 ## Residual risk and verification gaps
 
-- The registry was edited twice after my measurement (03:40, and the live file's sha moved
-  again during the session). The report pins `0bf117e2…`; later edits are outside it.
+- The registry was edited after my measurement and is now committed: `02088b4` (03:34:26)
+  carries the pre-repair `848a7680…`, `4f35c80` (03:42:04) the post-repair `0bf117e2…`,
+  and HEAD `7d708cf` (03:51:25) still equals `0bf117e2…` in both tree and worktree. The
+  report pins `0bf117e2…`; later edits are outside it.
 - The 03:36 entry bytes for r12 and README are not recoverable (jj `d2b6972` predates r12;
   README was rewritten at 03:40). The source lines, `recheck` line and `gate-quote` lines
   this seat cites are identical in the recovered/current copies; the errata body is not
@@ -276,6 +290,23 @@ $ jj file show -r d2b6972 corpus/SOURCES.md | sha256sum
 848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80  -
 $ grep SOURCES snapshot.sha256
 848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80  .../snapshot/SOURCES.md
+```
+
+The same old and new bytes are in git, so F4 needs no snapshot at all:
+
+```
+$ git show 02088b4:corpus/SOURCES.md | sha256sum
+848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80  -
+$ git show 4f35c80:corpus/SOURCES.md | sha256sum
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  -
+$ git diff --numstat 02088b4 4f35c80 -- corpus/SOURCES.md
+3	3	corpus/SOURCES.md
+$ git log -1 --format=%s 4f35c80
+round-35: wave-2 falsifications as errata — the shape-scored counter, the falsified ledger claim, the census gaps and the misroot
+$ git log -1 --format='%H %cI' HEAD
+7d708cffad386606b403393522312a4a5cc01997 2026-10-25T03:51:25-03:00
+$ git show HEAD:corpus/SOURCES.md | sha256sum
+0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  -
 ```
 
 Counter clauses:

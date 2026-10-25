@@ -6,8 +6,9 @@ Verified at **2026-10-25T03:43:12-03:00** (HEAD `7b745a1`) and re-run at **03:46
 The same three numbers reproduce at `02088b4`, at the pre-commit `19e4ab3` working tree, and at the
 committed `7b745a1`/`ca870e9` trees (§6).
 Read-only: no lane corpus, counter, control, `SOURCES.md`, jj state or Git index was written.
-Everything written lives under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/` (the lane relocated
-`scratch/` to `scratch-evidence/` at 03:45 and tracks it at HEAD; the live `scratch/` is swept).
+Everything durable lives under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/` (the lane relocated
+`scratch/` there at 03:45 and tracks it at `HEAD`; transient mutant trees are written to
+`scratch/RevC1Tip/`, which the lane sweeps).
 Shas of the tracked evidence are pinned in §8; the report body quotes every command and verdict.
 No tool was installed (nothing was needed).
 
@@ -32,7 +33,7 @@ No tool was installed (nothing was needed).
 | A4 fidelity of `digest-match` | **FALSIFIED as coded** — receipt bytes are never hashed; a rotated receipt still closes (F1, §4.1) | HIGH |
 | A4 fidelity of the row clause | **FALSIFIED as coded** — the row may sit outside `## Registry`; the lane census calls that E12 (F2, §4.2) | HIGH |
 | A5 failable | **CONFIRMED** — six independent mutations each give `2 / 7 / 1` `TARGET_MISSED`, `rc=1` | HIGH |
-| A6 durability | **CONFIRMED at `02088b4`, `7b745a1`, `ca870e9`, `1bb25c7`, `a80f8cb`** — an earlier mid-wave snapshot (`19e4ab3`) returned `0 / 0 / 8`; the commit that landed the data makes the claim reproducible from committed bytes, and the closing tree is clean | HIGH |
+| A6 durability | **CONFIRMED, archive-tested at `02088b4`, `7b745a1`, `ca870e9`** (`git archive HEAD` → `3/8/0`, `rc=0`); the later `1bb25c7` and `a80f8cb` trees carry byte-identical corpus blobs with a clean worktree. The mid-wave `19e4ab3` snapshot returned `0 / 0 / 8` | HIGH |
 
 Both fidelity defects are **latent on the current bytes**: all 8 receipts do hash to their frozen
 values and the 8 rows do sit inside `## Registry` (lines 205-212, between `## Registry` at 9 and
@@ -95,7 +96,7 @@ rc=0
 ```
 
 Per cite (all 8 identical in shape): exactly one row, 11 cells (NF=13 under the census's
-`-F'|'`), status `mined`, opened `2026-10-24`, recheck in {`on-request`, `on-change`, `90d`}, anchor
+`-F'|'`), status `mined`, opened `2026-10-24`, recheck in {`on-change`, `90d`}, anchor
 contains both the frozen digest **and** the actual receipt digest, receipt digest == frozen digest,
 exactly one `gate-quote:` line, 13-17 words, contiguous substring of the receipt bytes,
 `closed_counter_reading=true`.
@@ -290,7 +291,10 @@ tracked paths below. The large mutant trees (`tree/`, `m*`, `headtree2/`, `censu
 survive the checkpoint — the checkpoint dropped the mutant trees — but `reproduce.sh` rebuilds every
 one of them from the lane bytes.
 
-Tracked under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/` at `HEAD`:
+Under `.ufo/waves/round-35/scratch-evidence/RevC1Tip/`, tracked at `HEAD`. `reproduce.sh` is pinned
+at the fixed sha; the pre-fix blob `acf3949f…` failed at §7 from the relocated path because it looked
+for the checker under the swept `scratch/` path. No other working-tree change exists in this
+directory.
 
 | path | sha256 | what |
 |---|---|---|

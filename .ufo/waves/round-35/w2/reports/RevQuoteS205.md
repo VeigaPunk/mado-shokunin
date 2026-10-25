@@ -357,10 +357,14 @@ the rewrite: `TARGET_MET`, rc=0. The rewrite is semantically correct (it agrees 
 not make it — this seat is read-only over the corpus.
 
 Provenance of the comparison: the pre-rewrite text is from this seat's first read at ~03:33 (before
-the `03:40:12` mtime); the commit-pinned checkpoint blob does not carry a row capture
-(`grep '^| S205 |'` on `4efaf63:…/evidence.txt` = 0), so that half is transcript-based rather than
-blob-pinned. The post-rewrite text is measured in the working tree and recorded in the rebuilt
-transcript.
+the `03:40:12` mtime); it is also commit-pinned independently — `git show 02088b4:corpus/SOURCES.md`
+carries "…holds two start lines on 2026-10-23…", and `git show 4f35c80:corpus/SOURCES.md` carries
+"…holds one start line in the current boot (two across two boots)…". Commit `4f35c80` is dated
+`2026-10-25 03:42:04` and its subject is `round-35: wave-2 falsifications as errata — the
+shape-scored counter, the falsified ledger claim, the census gaps and the misroot`. `git status` is
+clean for `corpus/SOURCES.md` at HEAD `25536e6` (`round-35: closure sweep`), so the rewrite is
+committed, not staged. The checkpoint transcript carries no row capture (`grep '^| S205 |'` on
+`4efaf63:…/evidence.txt` = 0), so the 03:33 half of the comparison is transcript-based.
 
 The point is structural, and it is P6's point one level out: a row's prose is free text that no
 clause reads. The registry can be edited to agree with an errata, or to disagree with it, and the
@@ -372,6 +376,52 @@ closure to row truth is unsupported by the predicate.
 Recommendation: bind the `teaches` cell to a hashed snapshot at freeze time, or state in the
 criterion that closure is formal rather than semantic. Without one of those, a mid-round rewrite of
 the thing being certified is invisible to the measurement — which is exactly what happened here.
+
+### P9 — C1 never compares the receipt digest: fabricated receipts close with TARGET_MET
+
+`c1/count.py:174` computes `digest = hashlib.sha256(blob).hexdigest()` and the variable is never used
+again. The anchor clause is `receipt["sha256"] in cs[5]` — the **row text** must contain the frozen
+sha; the receipt's actual bytes are never hashed against it. The repository's own content controls
+prove the hole (run by me, read-only, rc as printed):
+
+```
+$ python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/controls-content/c1-shape-only --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+$ python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/controls-content/c1-fabricated-payload --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+```
+
+Payloads, measured:
+
+| root | r14 entry (whole file) | S205 "receipt" | receipt sha256 |
+|---|---|---|---|
+| `c1-shape-only` | `gate-quote: S205 snarfg plugh` | 56 B: `111111111111 snarfg plugh 999999999999 lorem ipsum void` | `22bdd47a10235e40f46b8e03c76d44167e3d69598632068a1e8efc615b5bb76c` |
+| `c1-fabricated-payload` | `gate-quote: S205 fabricated attestation for S205` | 78 B: `THIS IS NOT A FETCHED RECEIPT` / `fabricated attestation for S205` / `ZERO REAL BYTES` | `75e98ef620ef50674511a311f7c06b90128f2a9c387b1436053e8e5063f9f5e6` |
+
+Frozen S205 sha is `f3387bfc…`. Neither receipt matches; both close. The entry that "closes" in the
+fabricated root contains nothing except a gate-quote over a 78-byte non-receipt.
+
+Consequences:
+
+- `TARGET_MET` certifies **shape**: three entry files exist; eight rows have 11 cells carrying the
+  frozen digest *text*, correct status/cadence/used-by; and a 1–25-word quote is a substring of
+  whatever bytes sit at the receipt path. It does not certify that any receipt was fetched, nor that
+  S205's content is the measured host state.
+- My S205 agreement is therefore **not** a counter result. I compared `sha256sum` of the receipt to
+  the row anchor and to `c1/frozen.json` myself (all three `f3387bfc…`), byte-checked the 102-byte
+  quote at offset 1091, and re-ran every host probe. That independent chain is what makes S205 real;
+  the predicate alone would accept a 56-byte impostor.
+- Both committed controls are **positive** (they pass). A content-integrity predicate needs a
+  **negative** control — a root whose receipt bytes do not hash to the frozen sha and must print
+  `TARGET_MISSED`. Without it the pair demonstrates "shape is sufficient", not "integrity is
+  checked".
+- One-line fix: use the computed value in `ok` (`digest == receipt["sha256"]`). Both mutants then
+  fail, and the current lane must still pass.
+
+Recommendation: report C1 as *shape closure*, never as coverage, and add the negative control before
+any reader takes `closed_rows=8` as evidence that receipts are genuine.
 
 ## Positive corroboration of the entry's INF
 

@@ -236,6 +236,10 @@ Row-level residuals in the mutated registry:
   accurate but should say *a disable event, unattributed* — sender identity is unrecoverable
   (§Residual risk), and only the toggle-OFF and restart paths are excluded by the ON-path
   visibility, not a manual kill.
+- **Row 206 fix (edits, not annotations):** the purpose cell drops "and never toggled" and "the
+  journal's absence of any omarchy-toggle invocation"; the note cell drops "Two independent
+  negatives agree" and the "12 first-run scripts" count. After E3 concedes the `count: 12` is a
+  re-count, this row is the only place in the pair that still asserts independence.
 - **Row 205 (S203), note cell regressed in precision:** "runs thirteen items … none of the
   thirteen executed items asks about the idle lock". "Thirteen commands" is also wrong — it drops
   L24 (`sudo rm -f /etc/sudoers.d/first-run`) — and the hook is installed, not executed. The body
@@ -265,10 +269,67 @@ Row-level residuals in the mutated registry:
 
 ## Appendix A — inlined evidence log
 
-The report does not depend on any scratch path. A.1 is what was observed during the run (original
-log, 2140 B, sha256 `f983ba8539b60bd1d484c3e20f441571acbca4c73a55c47e845921530be105b0`, committed
-at `4efaf63`); A.2 is the hypridle journal; A.3 is a replay run at 03:46, after the relocation,
-with commands and exit codes; A.4 is the boot frame.
+The report does not depend on any scratch path. **A.0 reproduces the pre-sweep log verbatim** — 50
+lines, 2140 B, sha256 `f983ba8539b60bd1d484c3e20f441571acbca4c73a55c47e845921530be105b0`, recovered
+with `git cat-file -p 4efaf63:.ufo/waves/round-35/scratch-evidence/RevQuoteS204/verify.log` and
+byte-comparable to that blob. A.1 *condenses* the same observations — it is a summary, not the blob.
+A.2 is the hypridle journal with decisive fields exact; A.3 is a replay run at 03:46, after the
+relocation, with commands and exit codes; A.4 is the boot frame.
+
+### A.0 Pre-sweep log, verbatim
+
+```
+# RevQuoteS204 verification transcript 2026-10-25T03:34:00-03:00
+## journalctl count
+0
+exit=1
+## first-run entries
+13
+exit=0
+## .sh only
+12
+exit=0
+## sha256
+4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S204.receipt.txt
+exit=0
+## hypridle journal
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopping hypridle...
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopped hypridle.
+Oct 23 13:21:39 plazir27 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: received: app -- hypridle
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 13:25:00 plazir27 systemd[1529]: Started hypridle.
+Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+exit=0
+## session starts
+2
+exit=0
+## current hypridle
+1667 /usr/bin/hypridle
+ PID STARTED                  COMMAND
+1667 Fri Oct 23 22:14:10 2026 /usr/bin/hypridle
+
+## rev2 addenda
+## hook-install is copy+chmod only
+mkdir -p "$HOOK_DIR"
+cp "$HOOK_FILE" "$HOOK_PATH"
+chmod 755 "$HOOK_PATH"
+
+echo "Installed $HOOK_TYPE hook: $HOOK_PATH"
+## installed hook (still present => never ran)
+-rwxr-xr-x 1 vgpnk vgpnk 174 Oct  3 17:48 /home/vgpnk/.config/omarchy/hooks/post-update.d/install-voxtype.hook
+## pacman per-day
+2026-10-21 20
+2026-10-22 2
+2026-10-23 0
+2026-10-24 22
+2026-10-25 31
+## set check
+12 12 True
+```
 
 ### A.1 Observed during the run
 

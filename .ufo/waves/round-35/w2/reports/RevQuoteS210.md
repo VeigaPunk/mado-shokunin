@@ -72,7 +72,7 @@ Axes attacked: (A1) gate-quote byte contiguity, (A2) host fact agreement,
 **AGREE on all three required checks. No falsification found.** The gate-quote is
 byte-exact and contiguous, both stated facts still hold on the host, and the
 receipt digest equals the row's anchor cell. Assertion-precision defects are
-reported below (M1, L1, L2 on the row; L3 on a wave-1 report; A1 adjacent in the
+reported below (M1, L1, L2, A2 on the row; L3 on a wave-1 report; A1 adjacent in the
 r15 entry); none touches the quote, the digest, or the measured negative, and none
 changes the C1 verdict. On the current 5806 B bytes, errata **E3/E4** record the M1
 and A1 corrections, but the falsified body sentences remain live above them
@@ -255,6 +255,21 @@ the writer citation to be self-supporting. Add
 `omarchy-hyprland-toggle:18` / `install/config/omarchy-toggles.sh:1-3` to the
 anchor cell.
 
+### A2 — LOW — the anchor cell carries no revision element, which the contract requires
+
+`CORPUS.md:99-100` defines `anchor` as "exact section / heading / page / line plus
+revision (version, commit, or publication date). Never a bare homepage." S210's
+anchor cell gives the two sections and a receipt sha256 — more than a homepage, but
+it names **no revision**. That is not an oversight the row could fix by looking
+harder: the subject is unversioned everywhere on this host (`/.local/*` is gitignored
+at `/home/vgpnk/.gitignore:23` with 0 tracked files; the omarchy checkout at
+`8fcc9d604` is clean and versions 0 paths under `state/omarchy/toggles`; no package
+owns it). Measured-only subjects need the publication-date form, and S210 has one
+available: the receipt is headed `host re-open 2026-10-24` and the `opened` cell
+already says `2026-10-24`. Writing that date into the anchor ("… @ 2026-10-24 host
+re-open") closes A2 without inventing a commit and without touching the digest or the
+gate-quote.
+
 ### L3 — LOW (wave-1 artifact, not corpus) — `ScoutS210.md` swaps the two file sizes
 
 `.ufo/waves/round-35/w1/reports/ScoutS210.md:13-14` gives `flags.conf` 135 B and
@@ -317,15 +332,25 @@ figures.
   removed later makes the quote false; `90d` is the right cadence and the
   directory-mtime argument above shows it is stable today. Family-level note: every
   S206–S210 quote embeds a count or a dated copy sense, so this is not S210-specific.
-- **No revision key — S210 is the odd row of the eight.** Its source is a mutable
-  host path outside any checkout: `readlink -f ~/.local/state/omarchy/toggles/hypr`
-  resolves to itself (no symlink), it is **outside** `~/.local/share/omarchy`, and
-  that checkout versions **0** paths under `state/omarchy/toggles` (it is clean at
-  `8fcc9d604`, `git status --porcelain` empty). So unlike S203/S207/S208 there is no
-  commit to cite: the receipt sha plus the recheck trigger (`90d`, operator-action)
-  are the only anchor, which is exactly why the re-derivation script is inlined in
-  Appendix A and why the directory-mtime argument is load-bearing. Confirmed
-  independently by `ConnOverlap`.
+- **No revision key — S210 is the odd row of the eight, and its anchor cannot
+  satisfy the contract's revision element.** Three checks, all run here: `readlink -f
+  ~/.local/state/omarchy/toggles/hypr` resolves to itself (no symlink); the path is
+  **outside** `~/.local/share/omarchy` (clean checkout `8fcc9d604`,
+  `git status --porcelain` empty, **0** versioned paths under `state/omarchy/toggles`,
+  and `pacman -Qo` reports "No package owns" it — query only, no transaction); and it
+  is gitignored by the home repo, which is the stronger reason: `/home/vgpnk/.gitignore:23:/.local/*`
+  matches it (`git check-ignore -v` rc=0) with **0** tracked files at home HEAD
+  `870a976`. So no repo on this host versions the subject. The contract's anchor rule
+  (`/home/vgpnk/Projects/shokunin/CORPUS.md:99-100`) demands "exact section / heading
+  / page / line **plus revision (version, commit, or publication date)**"; S210's
+  cell gives the sections and a receipt digest but no revision, and none is
+  obtainable. Recommendation for the row: state the measurement date
+  (`2026-10-24`, already in the `opened` cell and in the receipt header) as the
+  publication-date form of the revision, so the anchor is conformant rather than
+  silently short one required element. The receipt sha remains the only byte-level
+  anchor — which is why the re-derivation script is inlined in Appendix A and why the
+  directory-mtime argument is load-bearing. Gitignore and package-ownership facts
+  corroborated by `SimplifyRows` and `ConnOverlap`.
 - **Registry moved under this seat, without touching the row.** `corpus/SOURCES.md`
   changed at `2026-10-25 03:40:12 -0300` (171446 B; S203/S204 `recheck`
   `on-request` → `on-change`). Re-verified after that write: S210 is still 1 row, 11
