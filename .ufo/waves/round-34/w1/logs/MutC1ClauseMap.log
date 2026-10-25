@@ -1,0 +1,19 @@
+Working...
+Done. Eight mutant trees under `.ufo/waves/round-34/scratch/MutC1ClauseMap/`, each cloned from `controls/golden` with exactly one clause violated on S201; counter and controls untouched (git status clean).
+
+| case | tree | exit | stdout |
+|---|---|---|---|
+| a fetch symlink | `a-fetch-symlink` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| b entry symlink | `b-entry-symlink` | 1 | `closed_entries=0 closed_rows=0 open_cites=2 verdict=TARGET_MISSED` |
+| c fetch nlink=2 | `c-fetch-hardlink` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| d 26-word quote | `d-quote-26-words` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| e quote not substring | `e-quote-not-substring` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| f wrong used-by | `f-usedby-wrong-path` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| g duplicate row | `g-duplicate-row` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+| h sha256 differs | `h-sha-mismatch` | 1 | `closed_entries=0 closed_rows=1 open_cites=1 verdict=TARGET_MISSED` |
+
+Golden re-run: `closed_entries=1 closed_rows=2 open_cites=0 verdict=TARGET_MET`, exit 0.
+
+Notes: (b) opens both cites since the unreadable entry blanks all gate-quotes. (e) is not fully isolatable — removing the quote substring necessarily flips the sha256 clause too; every other case violates only its named clause. In (d) the frozen S201 quote is 8 words, so 18 pad words were embedded in the fetch bytes to reach exactly 26 while keeping `found == quote` and the substring check true.
+
+Report written to `.ufo/waves/round-34/w1/reports/MutC1ClauseMap.md` with per-case mutation details and the summary table.

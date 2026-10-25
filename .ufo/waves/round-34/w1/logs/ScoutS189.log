@@ -1,0 +1,14 @@
+Working...
+Done.
+
+**Verification of `.ufo/waves/round-32/fetch/S189.bin`:**
+- sha256 `eea605df…9540d` confirmed; 6479 bytes confirmed; 192 lines total.
+- Line 128: `    auto             eventString = std::format("{}>>{}\n", event.event, data.substr(0, 1024));`
+- Line 169: `    const size_t MAX_QUEUED_EVENTS = 64;`
+- `const size_t MAX_QUEUED_EVENTS = 64;` is at **line 169**; `overflowed event queue, removing` is at **line 175** (inside `Log::logger->log(Log::ERR, "Socket2 fd {} overflowed event queue, removing", …)`).
+
+**Correction:** the queue-cap statement is on line **169**, not 128. Line 128 is the `std::format` building `eventString`.
+
+Artifacts written:
+- `.ufo/waves/round-34/scratch/ScoutS189/lines.txt`
+- `.ufo/waves/round-34/w1/reports/ScoutS189.md`

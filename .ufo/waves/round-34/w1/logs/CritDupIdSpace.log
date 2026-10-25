@@ -1,0 +1,10 @@
+Working...
+Report written to `.ufo/waves/round-34/w1/reports/CritDupIdSpace.md`.
+
+**Verdict:** The register uses the shokuknow campaign's **per-round, pre-remap staging ids**, not the lane registry's id space.
+
+- **S189 check:** URLs match — but incidentally. The campaign round-1 restaged the same four sources in the same order; post-remap its EventManager row is S200 (pre-remap S189), coinciding numerically with the lane's committed S189.
+- **Arxiv history:** `git log -S'2604.18860' -- corpus/SOURCES.md` → empty. Never committed; exists only in round-32/33 scratch and reports.
+- **Collision?** Not inside this repo — S201/S202 are unambiguous here. Inside the *campaign package*, yes: `lanes/mado/SOURCES-PROPOSED.md` already holds S201/S202 as the same Waybar files, and S197–S200 duplicate lane S186–S189. The package's remap base ("registry ends at S196") is already stale.
+- **Renumber in scratch?** No — S201/S202 are committed (fa7ba11); continue S203+. Collisions are the package's remap problem by design.
+- **Later adopter of the arxiv row hits:** (1) an existing copy as packaged S212, (2) the already-adjudicated anchor defect — quotes live in `arxiv.org/html/2604.18860v1`, not `/abs/` — plus the round-32 out-of-province refusal, (3) merge-time remap hazard for any id in S203–S336.

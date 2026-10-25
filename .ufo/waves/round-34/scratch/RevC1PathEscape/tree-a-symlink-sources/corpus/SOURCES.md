@@ -1,0 +1,1 @@
+/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md

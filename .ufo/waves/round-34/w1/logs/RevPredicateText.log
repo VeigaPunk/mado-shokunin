@@ -1,0 +1,18 @@
+Working...
+Done. Report written to `.ufo/waves/round-34/w1/reports/RevPredicateText.md`.
+
+**Findings:**
+
+- **Path note**: `registration.md` is a single shared file at `.ufo/waves/round-34/registration.md` — no per-case copies exist. C2's section is titled `## C2 calibration`, not "C2 coverage".
+
+- **PRED-C1-r34-v1** — identical (len=535) across `c1/count.py` PREDICATE, `c1/count.py` docstring, `c1/frozen.json.predicate`, and `## C1 coverage`:
+  > `PRED-C1-r34-v1: TARGET_MET iff closed_entries=1 AND closed_rows=2 AND open_cites=0, where a frozen cite is closed only when the entry path and the fetch path are both regular files (not symlinks, nlink=1) whose every path component stays inside the scored root, the fetch bytes read with O_NOFOLLOW have sha256 equal to the digest in c1/frozen.json, the entry contains a 1-25 word gate-quote line for that id that is a contiguous substring of those bytes, and the registry row for that id lists the entry path as a whole used-by token.`
+
+  Same sentence: yes. Same target triple: yes — `closed_entries=1, closed_rows=2, open_cites=0`, matching `EXPECTED_TARGET` in count.py and `"target"` in frozen.json.
+
+- **PRED-C2-r34-v1** — identical (len=405) across `c2/count.py` PREDICATE, docstring, `c2/frozen.json.predicate`, and `## C2 calibration`:
+  > `PRED-C2-r34-v1: TARGET_MET iff mismatch=0, where mismatch is 0 only when the last SCORECARD line matching r34-s189-line: publishes line=169 and line 169 of the regular-file fetch .ufo/waves/round-32/fetch/S189.bin opened with O_NOFOLLOW (nlink=1, sha256 eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d) strip-equals const size_t MAX_QUEUED_EVENTS = 64; and line 128 of that file does not.`
+
+  Same sentence: yes. C2's target is `mismatch=0` (scalar fields in frozen.json: `published_line=169`, `false_line=128`), not a closed/open triple — all embedded literals agree across sources.
+
+**Verdict**: zero drift; both predicates verbatim-identical on every surface.

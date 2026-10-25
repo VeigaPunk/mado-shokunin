@@ -1,0 +1,11 @@
+Working...
+Done. Report at `.ufo/waves/round-34/w1/reports/MutC1Drop.md`; committed `c1/count.py` untouched (verified by final golden run, MET/exit 0).
+
+**Verdicts:**
+- **M6 wrongly METs `extra/symlink-parent`** — leaf-only `lstat` resolves through the symlinked `fetch/` dir; the per-component walk is load-bearing.
+- **M4 wrongly METs `extra/used-by-prefix`** (committed control beyond the required three) — used-by equality load-bearing.
+- **M1, M3**: invisible on required trees (no hardlink/corruption controls). Scratch cribs kill both: hardlinked `S201.bin` (nlink=2) → M1 wrongly MET; last-byte XOR (quote untouched) → M3 wrongly MET.
+- **M2 redundant**: surviving `lstat`-based `S_ISREG`/`S_ISDIR` checks already reject leaf and intermediate symlinks; `O_NOFOLLOW`/`S_ISLNK` only cover the TOCTOU race, unkillable by a static tree.
+- **M5 dead clause**: `found == quote` implies `len(words) == len(quote.split())`, and frozen quotes are inside [1,25] — bound can never fail independently.
+
+Gap for operators: add `controls/hardlink` + `controls/corrupt` cribs so the required suite alone distinguishes all mutants. Mutants and cribs live in `scratch/MutC1Drop/`.

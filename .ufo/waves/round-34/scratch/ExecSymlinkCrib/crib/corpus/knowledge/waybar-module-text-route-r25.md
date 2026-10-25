@@ -1,0 +1,1 @@
+/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/waybar-module-text-route-r25.md

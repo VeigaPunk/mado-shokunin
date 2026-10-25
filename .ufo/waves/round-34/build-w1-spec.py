@@ -1,0 +1,294 @@
+#!/usr/bin/env python3
+"""Build the mado round-34 wave-1 spec.
+
+Contract: emits a wave spec JSON for `ufo-swarm-wave.mjs plan|run --spec`.
+64 seats, one wave, 25 of them attack roles (reviewer, critic, mutation-tester,
+revenger, sentinel) = 39% >= the 25% floor. Every item is a distinct,
+concrete work item: no padding, no duplicate prompt.
+
+Exit 0 on success, 1 on a bad seat count or a duplicate prompt.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+LANE = Path("/home/vgpnk/Projects/shokunin/mado-shokunin")
+W = LANE / ".ufo/waves/round-34"
+REPORTS = ".ufo/waves/round-34/w1/reports"
+SCRATCH = "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/scratch"
+
+CONTEXT = """# Goal
+mado round 34, wave 1. You are a Godspeed-enabled subagent.
+1. Name the axes.
+2. Iterate cheap, in parallel.
+3. Keep moves that improve any axis and harm none.
+4. Don't aim — let the frontier walk itself.
+IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently. Do not serialize what can run in parallel.
+
+Lane repo: /home/vgpnk/Projects/shokunin/mado-shokunin. Every path you touch is ABSOLUTE under that root. Your tools start at the FLEET root (/home/vgpnk/Projects/shokunin), so a relative lane path lands in the wrong repo.
+
+Read first, never edit: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/registration.md. This round is RESUMED: a prior attempt froze the claims and landed the data before its provider route died. Two NEW claims were frozen before data at commit 3420e827bd7b21b1374b23245526554ffd20d096 and the data landed at commit fa7ba11346116672352b5d41494141c5c4d738d0. The round-33 predicates are FROZEN and MUST NOT be edited or amended: .ufo/waves/round-33/c1/count.py and .ufo/waves/round-33/c2/count.py. C1 is PRED-C1-r34-v1 (TARGET_MET iff closed_entries=1 AND closed_rows=2 AND open_cites=0). C2 is PRED-C2-r34-v1 (TARGET_MET iff mismatch=0; the last SCORECARD line matching "r34-s189-line:" publishes line=169, and line 169 of the regular-file fetch .ufo/waves/round-32/fetch/S189.bin strip-equals "const size_t MAX_QUEUED_EVENTS = 64;" while line 128 does not).
+
+Write scope: seats NEVER mutate the fleet repo, sibling lanes, lane jj state, or the lane Git index. No git add/commit/checkout/reset/push and no mutating jj (commit, new, describe, squash, rebase, abandon, bookmark, undo, op restore, git push/fetch). A seat may write ONLY (a) its own report and (b) its named scratch directory under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/scratch. Production edits to corpus/, SCORECARD.md, SKILL.md, LOG.md, PROVINCE.md, lessons and the round report are the L1's job. Do not edit any already-committed counter, receipt or control file under .ufo/waves/round-34/ — copy it into your own scratch directory before mutating a copy.
+
+READ-ONLY: /home/vgpnk/Projects/shokuknow is read-only. Never write, commit, fetch or push there. Never run renumber-staged.py, merge-plan.py, quote-lint.py, or absent-defect-register.py — they write into that repo.
+
+Tooling: you may install or upgrade tools that help the task — read /home/vgpnk/.omp/agent/RULES.md first. Pacman is PAUSED host-wide: no pacman -S/-Sy/-Syu/-U/-R, no downgrade, no host-service restart. Install via uv tool, npx, or an official binary in ~/.local/bin, or stop.
+
+Planner mapping: the validator rejects planner. The L1 holds that seat. You are a leaf: do not spawn a swarm, do not spawn a labrat.
+
+Honesty: an unrun check has not passed. Quote the command output you actually observed. If a fetch fails, paste the exact error and stop. If you cannot finish, say so — a seat that dies is reported as a dead seat, never replaced.
+
+Every Report: trailer path is relative to /home/vgpnk/Projects/shokunin/mado-shokunin — write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>."""
+
+ITEMS: list[tuple[str, str, str]] = []
+
+
+def add(name: str, role: str, prompt: str) -> None:
+    ITEMS.append((name, role, prompt))
+
+
+# ---------------------------------------------------------------- scouts (12)
+add("ScoutS201", "scout", f"""Re-open https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/hyprland/backend.cpp and write the bytes to {SCRATCH}/ScoutS201/backend.cpp. Confirm sha256 equals 799bf02f6d18ae041ee95e136505ac98190890200c702e29791d446278bb4f9e and byte length 6550. Locate the contiguous substring `$XDG_RUNTIME_DIR/hypr does not exist, falling back to /tmp/hypr` and report its 1-based line number, the enclosing function name, and the three lines before and after it. If the fetch fails, paste the exact error and stop; do not infer from the committed blob.
+Report: {REPORTS}/ScoutS201.md""")
+
+add("ScoutS202", "scout", f"""Re-open https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/hyprland/window.cpp and write the bytes to {SCRATCH}/ScoutS202/window.cpp. Confirm sha256 equals 5df496eb3cfe5cae4506d7aa10c6bb54eb0a0b28d9489dcf19dd68ba570c9846 and byte length 8324. Locate `m_ipc.registerForIPC("activewindow", this);` and report its 1-based line number and enclosing function. Then list every other registerForIPC call in the file with its line number and event name. If the fetch fails, paste the exact error and stop.
+Report: {REPORTS}/ScoutS202.md""")
+
+add("ScoutS189", "scout", f"""Open /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-32/fetch/S189.bin as a regular file (do not refetch; if it is missing, say so and stop). Confirm sha256 eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d and byte length 6479. Print line 128 and line 169 with their line numbers. Then report the 1-based line number of `const size_t MAX_QUEUED_EVENTS = 64;` and of `overflowed event queue, removing`. State which of line 128 and line 169 actually carries the queue-cap statement, and quote what line 128 really is. Copy both lines into {SCRATCH}/ScoutS189/lines.txt.
+Report: {REPORTS}/ScoutS189.md""")
+
+add("ScoutQuarantineA", "scout", f"""Read /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md (READ-ONLY; never edit it). Take the six `payload-absent` rows of the mado slice: S189, S195, S201, S205, S224, S228. For each row print the register's URL and the register's quoted span. Then grep the lane registry /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md for that URL and for that id. Classify each row as IN-REGISTRY-SAME-ID, IN-REGISTRY-DIFFERENT-ID, or NOT-IN-REGISTRY. Write the table to {SCRATCH}/ScoutQuarantineA/table.md and paste it in your report.
+Report: {REPORTS}/ScoutQuarantineA.md""")
+
+add("ScoutQuarantineB", "scout", f"""Read /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md (READ-ONLY). Take the seven prose-class mado slice rows: S199, S200, S209, S222, S223, S225, S235. For each, print the register's class cell and its URL or locator, then grep /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md for that id and that URL. Classify each as IN-REGISTRY-SAME-ID, IN-REGISTRY-DIFFERENT-ID, NOT-IN-REGISTRY, or UNVERIFIABLE (the register names no locator, so no quote could be checked — `unreachable` is not fabrication). Write the table to {SCRATCH}/ScoutQuarantineB/table.md and paste it.
+Report: {REPORTS}/ScoutQuarantineB.md""")
+
+add("ScoutConsiderA", "scout", f"""Read /home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/2026-10-24.md (operator-authored input; READ-ONLY, never edit it). List every proposal with its number, its one-line demand, and whether the file's own text marks it as implemented or not implemented. Quote the marking sentence verbatim for each. Recommend at most three that the file marks as proposals only and not implemented. Write the list to {SCRATCH}/ScoutConsiderA/list.md.
+Report: {REPORTS}/ScoutConsiderA.md""")
+
+add("ScoutConsiderB", "scout", f"""Read /home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/2026-10-23.md (READ-ONLY, never edit). List every proposal with its number, its one-line demand, and the file's own implemented/not-implemented marking, quoting the marking sentence. Then check whether the lane already covers any of them: grep /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/ and corpus/SOURCES.md for a matching subject. Write the list to {SCRATCH}/ScoutConsiderB/list.md.
+Report: {REPORTS}/ScoutConsiderB.md""")
+
+add("ScoutRound30", "scout", f"""Five round-30 seat reports under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-30/w1/reports/ were rewritten at the round-33 repairs commit d40b35f90ad8bf630ad9404d25aeee1d9737f300: RevRecordsChain.md, RevTrendExpansion.md, RevTrendDiscernment.md, SentScope.md, SimplifierC2.md. For each: report the byte size at commit 69f72100bee31a60b811f8fbbe7796db883e17b3 and at the current lane tip, and quote one line that shows it is a real seat report (a finding, a command output, an evidence pointer) rather than filler. State whether the current bytes are a rewrite of the round-30 committed bytes or of some other source. Write the table to {SCRATCH}/ScoutRound30/table.md.
+Report: {REPORTS}/ScoutRound30.md""")
+
+add("ScoutScratch12", "scout", f"""Twelve untracked round-33 scratch trees live under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-33/scratch/: CriticC1FalseNeg, ExecAppendDraft, ExecCollision, MutC1Counter, ReviewC2Predicate, ReviewRound30, ScoutConsider, ScoutQuarantine, ScoutS189Quote, ScoutS190, ScoutS191, ScoutS197. For each: list its files, its byte size (du -sb), and whether its content is byte-identical to content already committed under .ufo/waves/round-33/w1/reports/ or .ufo/waves/round-33/controls/. Verdict per tree: REDUNDANT (the bytes are already committed elsewhere) or UNIQUE (holds bytes nowhere committed). Write the table to {SCRATCH}/ScoutScratch12/table.md. Do not delete or move anything.
+Report: {REPORTS}/ScoutScratch12.md""")
+
+add("ScoutK2", "scout", f"""Inspect /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-33/scratch/ExecK2Receipts/. Report its du -sb byte size, its file count, and its five largest files by size. Then compare each receipt text file it holds against the committed bytes under .ufo/waves/round-33/c2/controls/k2-a.txt, k2-b.txt and k2-c.txt (and any other committed k2-* file): for each, is the receipt already committed byte-identically, or does it hold content nowhere committed? Write the table to {SCRATCH}/ScoutK2/table.md. Read-only; do not delete.
+Report: {REPORTS}/ScoutK2.md""")
+
+add("ScoutControls7", "scout", f"""Inspect the seven disclosed round-33 leftovers under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-33/: the controls/ trees entries-only, extra-source, golden, hash-mismatch, junk, rows-only, and the scratch/ExecK2Receipts tree. For each controls tree: list its files, its byte size, and say whether the tree's content is already committed as a receipt under .ufo/waves/round-33/controls/*.txt. Then say, per tree, whether the tree adds anything the committed receipt does not already carry. Write the table to {SCRATCH}/ScoutControls7/table.md. Do not delete anything.
+Report: {REPORTS}/ScoutControls7.md""")
+
+add("ScoutQuality", "scout", f"""Read /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/QUALITY.md and /home/vgpnk/Projects/shokunin/CORPUS.md. Report as a numbered checklist the bar a new corpus/knowledge entry and a new corpus/SOURCES.md row must meet: the SOURCES contract version, the required Gate fields, the quote word bound, the accepted recheck forms, the used-by rule, the rule about appending rows, and any rule on quoting a source the lane did not open. Quote each rule with its source file and line number. Write it to {SCRATCH}/ScoutQuality/bar.md.
+Report: {REPORTS}/ScoutQuality.md""")
+
+# -------------------------------------------------------------- reviewers (10)
+add("RevC1Matrix", "reviewer", f"""Re-run the frozen round-34 coverage counter over the lane tree and every committed control tree. Command shape: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py --root <TREE> --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/frozen.json. Trees: the lane root /home/vgpnk/Projects/shokunin/mado-shokunin, then each of .ufo/waves/round-34/controls/golden, controls/symlink-crib, controls/entries-only, controls/rows-only, controls/extra/symlink-entry, controls/extra/symlink-parent, controls/extra/symlink-sources, controls/extra/used-by-prefix. Paste every stdout line and its exit code as a table. Do not edit the counter or the controls.
+Report: {REPORTS}/RevC1Matrix.md""")
+
+add("RevC2Matrix", "reviewer", f"""Re-run the frozen round-34 calibration counter. Command shape: python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c2/count.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --scorecard <CARD> --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c2/frozen.json. Cards: the lane SCORECARD.md; .ufo/waves/round-34/controls/c2-junk-card.md; .ufo/waves/round-34/controls/c2-reachable-card.md; .ufo/waves/round-34/controls/c2-junk.txt if it is a card; and a card you write at {SCRATCH}/RevC2Matrix/absent-card.md that contains no r34-s189-line marker at all. Paste every stdout line and its exit code as a table. Do not edit the counter.
+Report: {REPORTS}/RevC2Matrix.md""")
+
+add("RevFrozenBlobs", "reviewer", f"""Prove the round-33 counters were not amended and that the round-34 counters were frozen before data. For each of these paths print the git blob hash at the freeze commit 3420e827bd7b21b1374b23245526554ffd20d096 and at the lane tip: .ufo/waves/round-33/c1/count.py, .ufo/waves/round-33/c1/frozen.json, .ufo/waves/round-33/c2/count.py, .ufo/waves/round-34/c1/count.py, .ufo/waves/round-34/c1/frozen.json, .ufo/waves/round-34/c2/count.py, .ufo/waves/round-34/c2/frozen.json. Then print the round-33 c1/count.py and c1/frozen.json blob hashes at 9a46ccf3282117f960b8d53cd71599a91f388ee3 (the round-33 freeze), at 69f72100bee31a60b811f8fbbe7796db883e17b3 (the round-33 tip) and at the lane tip. Report which blobs are identical and which differ. Finish with `git -C /home/vgpnk/Projects/shokunin/mado-shokunin log --format='%H %an %ae %ad %s' --date=iso -6 master` pasted verbatim.
+Report: {REPORTS}/RevFrozenBlobs.md""")
+
+add("RevPredicateText", "reviewer", f"""Extract the PRED-C1-r34-v1 predicate string from three places: the PREDICATE constant and the docstring of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py, the `predicate` value in .../c1/frozen.json, and the `## C1 coverage` section of .../registration.md. Compare them byte-for-byte after stripping markdown fences and surrounding quote marks. Report whether all three carry the same sentence and the same target triple (closed_entries=1, closed_rows=2, open_cites=0). Then do exactly the same for PRED-C2-r34-v1 across .../c2/count.py, .../c2/frozen.json and registration.md. Paste both extractions and the comparison result.
+Report: {REPORTS}/RevPredicateText.md""")
+
+add("RevC1ClauseImpl", "reviewer", f"""Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py clause by clause against the frozen predicate. For EACH clause of the predicate sentence, name the lines of code that implement it and judge the implementation faithful, stricter, or weaker. The clauses: (a) entry path and fetch path are both regular files; (b) neither is a symlink; (c) nlink == 1; (d) every path component stays inside the scored root; (e) the fetch bytes are read with O_NOFOLLOW; (f) their sha256 equals the digest in c1/frozen.json; (g) the entry contains a 1-25 word gate-quote line for that id which is a contiguous substring of those bytes; (h) the registry row lists the entry path as a whole used-by token; (i) exactly one registry row exists for the id; (j) the target triple. Report each clause with a verdict and a code line number, and flag any clause the code does not implement.
+Report: {REPORTS}/RevC1ClauseImpl.md""")
+
+add("RevC1PathEscape", "reviewer", f"""Attack the path walk in /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py. Build three trees under {SCRATCH}/RevC1PathEscape/: (a) a tree whose corpus/SOURCES.md is a SYMLINK to a real registry file outside the tree; (b) a tree whose corpus/knowledge/ is a SYMLINK to a directory outside the tree; (c) a tree whose corpus/SOURCES.md contains a row whose used-by cell is an absolute path or contains `..`. Run the counter with --root pointing at each tree and paste stdout and exit code. Report whether each is refused. Do not edit the committed counter.
+Report: {REPORTS}/RevC1PathEscape.md""")
+
+add("RevC2Truth", "reviewer", f"""Verify the round-34 calibration claim's ground truth. Open /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-32/fetch/S189.bin; confirm sha256 eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d; confirm line 169 strip-equals `const size_t MAX_QUEUED_EVENTS = 64;`; and confirm line 128 does NOT strip-equal it. Print both lines. Then grep /home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md for `r34-s189-line` and report every matching line with its line number, and state whether the LAST such line publishes line=169. Paste the command output.
+Report: {REPORTS}/RevC2Truth.md""")
+
+add("RevReceiptsBytes", "reviewer", f"""Every file under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/controls/ ending in .txt is a committed pre-data receipt. For each: read it, re-derive the numbers it claims by re-running the counter it names, and report whether the receipt matches a fresh run in every numeric field. List every receipt whose numbers do NOT match a fresh run, with the receipt's claimed value and the fresh value. Do not edit the receipts or the controls.
+Report: {REPORTS}/RevReceiptsBytes.md""")
+
+add("RevAssimilUsedBy", "reviewer", f"""Check the two rows appended to /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md at commit fa7ba11346116672352b5d41494141c5c4d738d0 (S201 and S202). For each row: count the columns, print the used-by cell verbatim, then list the knowledge files under corpus/knowledge/ that cite that id (grep for the id), and state whether used-by equals exactly that set. Report any extra, missing, malformed or whole-token-partial token.
+Report: {REPORTS}/RevAssimilUsedBy.md""")
+
+add("RevKnowledge", "reviewer", f"""Review /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/waybar-module-text-route-r25.md against the lane's bar in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/QUALITY.md. Report criterion by criterion: does it carry a decision table, an error signature, a located quote for each cited id, a Gate block with URL and access date, and does it avoid filler? Quote the offending lines. Give a verdict per criterion.
+Report: {REPORTS}/RevKnowledge.md""")
+
+# --------------------------------------------------------------- critics (8)
+add("CritC1FalseNeg", "critic", f"""Try to make the round-34 coverage counter print TARGET_MET on a tree that is NOT the claimed corpus. Attack avenues: a fetch file whose bytes are right but whose path is a hardlink to a file outside the scored root; an entry file that is a hardlink; a registry row whose used-by cell holds the entry path plus a trailing space; a registry row whose used-by cell holds the entry path in a different case; a tree where corpus/SOURCES.md has TWO rows for S201, one of which is correct. Build each avenue under {SCRATCH}/CritC1FalseNeg/ and run the counter with --root pointing at it. Report the verdict: if the counter wrongly METs, that is a defect and you must say so loudly.
+Report: {REPORTS}/CritC1FalseNeg.md""")
+
+add("CritC1Overfit", "critic", f"""Attack the SHAPE of the round-34 coverage claim, not its code. The frozen predicate hard-codes target closed_entries=1, closed_rows=2, open_cites=0 and names one entry path. Is this a coverage claim (a surface moved from frontier to core) or a tautology that only counts one file? Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/registration.md, the landed entry corpus/knowledge/waybar-module-text-route-r25.md, and the frontier table in corpus/README.md. Give an honest verdict with reasons, and say whether the axis the surface actually moves is the axis the claim names. Read-only.
+Report: {REPORTS}/CritC1Overfit.md""")
+
+add("CritC1DataSourcing", "critic", f"""Attack whether the lane actually opened the two adopted sources this round and whether the landed entry satisfies the corpus contract's Gate rule. Check the Gate block of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/waybar-module-text-route-r25.md: does it carry the URL, the access date, and a located quote of at most 25 words for EACH of S201 and S202? Count the words of each quote. Check that .ufo/waves/round-34/fetch/S201.bin and S202.bin are regular files whose sha256 equal the digests recorded in corpus/SOURCES.md. Report any missing field, over-long quote, or digest mismatch.
+Report: {REPORTS}/CritC1DataSourcing.md""")
+
+add("CritProvince", "critic", f"""Attack the province boundary of the round-34 adoption. Read /home/vgpnk/Projects/shokunin/mado-shokunin/PROVINCE.md and the landed entry corpus/knowledge/waybar-module-text-route-r25.md. Waybar's Hyprland backend and window module are upstream C++ source of the bar's Hyprland modules; PROVINCE.md owns ~/.config/waybar/ and the bar/compositor configuration plane. Is upstream Waybar source inside that province, or is it foreign surface? Weigh it against the lane already holding Hyprland compositor source (S186-S196) and Waybar config-plane knowledge. Give a verdict; if you disagree, name the alternative lane and the evidence.
+Report: {REPORTS}/CritProvince.md""")
+
+add("CritSchema", "critic", f"""Attack the two appended registry rows against the corpus schema in /home/vgpnk/Projects/shokunin/CORPUS.md. For S201 and S202 in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md: count the columns against the schema's expected count; check no cell contains a literal or escaped pipe; check the recheck cell is a valid ISO date, an `NNd` form, or a symbolic cadence; check status is `mined`; check the opened date; and check the anchor cell names a real location. Report each defect with the row and the offending cell, quoted.
+Report: {REPORTS}/CritSchema.md""")
+
+add("CritDupIdSpace", "critic", f"""Attack the id space of the round-34 appends. The lane registry now holds S201 = Waybar backend.cpp and S202 = Waybar window.cpp. The campaign register /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md names a DIFFERENT S201 (https://arxiv.org/abs/2604.18860) and different S195, S205, S224 and S228 rows. Determine which id space the register uses: check whether its S189 row's URL equals the lane registry's S189 URL, and whether the lane registry has ever carried a row for the arxiv URL (check `git -C /home/vgpnk/Projects/shokunin/mado-shokunin log -S'2604.18860' -- corpus/SOURCES.md`). Then state whether the lane's new S201 can collide with a campaign row, whether the lane should renumber in scratch, and exactly what a later adopter of the arxiv row would hit. Verdict required.
+Report: {REPORTS}/CritDupIdSpace.md""")
+
+add("CritLiterature", "critic", f"""The round-33 lesson rejected a staged literature entry citing an id that does not exist in the opened file. Locate the staged file (search under /home/vgpnk/Projects/shokuknow/merge/mado/knowledge/ for a file named two-literature-drift-r26.md) and list the S-ids it actually cites. Then state the reject RESTATED against those ids — with the PROVINCE.md reason and the tier reason. The reject must name the ids the opened file really carries, not S199. Quote the id list from the file and the reject text you propose.
+Report: {REPORTS}/CritLiterature.md""")
+
+add("CritRound30Rewrite", "critic", f"""The round-33 repairs commit d40b35f90ad8bf630ad9404d25aeee1d9737f300 rewrote five round-30 seat reports. For each of RevRecordsChain.md, RevTrendExpansion.md, RevTrendDiscernment.md, SentScope.md, SimplifierC2.md under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-30/w1/reports/: determine whether the current bytes could have been produced by the original round-30 seat, and whether /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-33/w1/reports/ScoutRound30.md exists and what it says about them. State the exact citation the round-34 report must use whenever it relies on those rewritten files. Read-only.
+Report: {REPORTS}/CritRound30Rewrite.md""")
+
+# ------------------------------------------------------------- executors (14)
+add("ExecC1Matrix", "executor", f"""Produce the machine-readable control matrix for the r34 coverage counter. Write {SCRATCH}/ExecC1Matrix/matrix.tsv with one row per tree (lane root, controls/golden, controls/symlink-crib, controls/entries-only, controls/rows-only, controls/extra/symlink-entry, controls/extra/symlink-parent, controls/extra/symlink-sources, controls/extra/used-by-prefix) and columns: tree, exit code, stdout. Drive it with a loop over `python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py --root <tree> --frozen /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/frozen.json`. Paste the tsv into your report.
+Report: {REPORTS}/ExecC1Matrix.md""")
+
+add("ExecC2Matrix", "executor", f"""Produce the machine-readable matrix for the r34 calibration counter. Write {SCRATCH}/ExecC2Matrix/matrix.tsv with columns: card, exit code, stdout. Cards: /home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md, .ufo/waves/round-34/controls/c2-junk-card.md, .ufo/waves/round-34/controls/c2-reachable-card.md, and two cards you create in {SCRATCH}/ExecC2Matrix/: one whose last r34-s189-line marker says line=128, and one with no marker at all. Every run keeps --repo /home/vgpnk/Projects/shokunin/mado-shokunin and --frozen .ufo/waves/round-34/c2/frozen.json. Paste the tsv.
+Report: {REPORTS}/ExecC2Matrix.md""")
+
+add("ExecSelftest", "executor", f"""Run the lane's axis gate selftest and capture a transcript. Read /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-axis-scores.py first and say how its total is computed and what `18/18` or `12/12` would mean. Then run its selftest, writing the full stdout, stderr and exit code to {SCRATCH}/ExecSelftest/selftest.txt. Report the exact final line and the real pass count. Do not edit the gate.
+Report: {REPORTS}/ExecSelftest.md""")
+
+add("ExecAxisRun", "executor", f"""Run the axis gate against the lane's own SCORECARD and repository state, not the selftest. Read /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-axis-scores.py to learn its real CLI, then run it in its non-selftest mode over the lane root /home/vgpnk/Projects/shokunin/mado-shokunin and its SCORECARD.md. Write stdout, stderr and the exit code to {SCRATCH}/ExecAxisRun/run.txt and report the MADO_AXIS line verbatim. If the non-selftest mode needs a different argument, say which you used. Do not edit the gate.
+Report: {REPORTS}/ExecAxisRun.md""")
+
+add("ExecCollision", "executor", f"""Re-prove the id-collision guard. Run the 0-3-leading-space extractor exactly as the round-34 prompt gives it against /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md and /home/vgpnk/Projects/shokuknow/merge/mado/SOURCES.append.md; write reg-ids, staged-ids and collisions into {SCRATCH}/ExecCollision/. Then build the indented scratch fixture: a scratch registry containing an INDENTED row `  | S002 |` whose id is in the staged set, and show the 0-3-space extractor yields a NONEMPTY collisions file while a column-zero-only extractor yields an EMPTY one. Paste both outputs and the collision count for the real pair.
+Report: {REPORTS}/ExecCollision.md""")
+
+add("ExecCensus", "executor", f"""Run the source census for the mado lane and capture a receipt. Command: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado. Write stdout, stderr and the exit code to {SCRATCH}/ExecCensus/census.txt. Then count the registry rows with `grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md` and report the row count and the exit code. Do not edit corpus/SOURCES.md.
+Report: {REPORTS}/ExecCensus.md""")
+
+add("ExecSizes", "executor", f"""Measure the byte size of every untracked path in the lane working tree. Run `git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain` and for each `??` path run `du -sb` plus a file count. Write the table to {SCRATCH}/ExecSizes/sizes.tsv and report the total bytes, the single largest path and its size, and how many paths are round-33 leftovers versus round-34 artifacts. Do not delete anything.
+Report: {REPORTS}/ExecSizes.md""")
+
+add("ExecGolden", "executor", f"""Rebuild the golden control tree in scratch from the lane's own committed bytes: copy /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md, corpus/knowledge/waybar-module-text-route-r25.md, .ufo/waves/round-34/fetch/S201.bin and .ufo/waves/round-34/fetch/S202.bin into {SCRATCH}/ExecGolden/golden/ preserving the relative paths. Then run the r34 C1 counter with --root pointing at that tree. Paste stdout and exit code. Also confirm every copied file is a regular file with nlink=1 (`stat -c '%n %F %h'`).
+Report: {REPORTS}/ExecGolden.md""")
+
+add("ExecSymlinkCrib", "executor", f"""Rebuild the symlink crib in scratch. Make {SCRATCH}/ExecSymlinkCrib/crib/corpus/knowledge/waybar-module-text-route-r25.md a SYMLINK to a regular file, and make {SCRATCH}/ExecSymlinkCrib/crib/.ufo/waves/round-34/fetch/S201.bin and S202.bin SYMLINKS to the lane's committed fetch blobs; copy the lane's corpus/SOURCES.md into the crib. Then run the r34 C1 counter with --root pointing at the crib and paste stdout and exit code. The crib MUST print TARGET_MISSED. If it prints TARGET_MET, that is a defect in the counter and you must report it loudly. Do not edit the committed counter or the committed controls.
+Report: {REPORTS}/ExecSymlinkCrib.md""")
+
+add("ExecDonothing", "executor", f"""Rebuild the do-nothing control in scratch: take the lane's corpus/SOURCES.md as of the pre-data freeze commit 3420e827bd7b21b1374b23245526554ffd20d096 (`git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 3420e827bd7b21b1374b23245526554ffd20d096:corpus/SOURCES.md`), write it to {SCRATCH}/ExecDonothing/tree/corpus/SOURCES.md, copy .ufo/waves/round-34/fetch/S201.bin and S202.bin into {SCRATCH}/ExecDonothing/tree/.ufo/waves/round-34/fetch/, and do NOT add the knowledge entry. Run the r34 C1 counter with --root pointing at that tree; paste stdout and exit code. It MUST print TARGET_MISSED.
+Report: {REPORTS}/ExecDonothing.md""")
+
+add("ExecAppendAudit", "executor", f"""Audit the two rows appended at commit fa7ba11346116672352b5d41494141c5c4d738d0 against the append block and the corpus schema. Compare each row of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md (S201, S202) field by field with the corresponding row of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/assimilation/append-block.md. Write a field-by-field diff table to {SCRATCH}/ExecAppendAudit/audit.tsv and report every field where they differ, quoting both values.
+Report: {REPORTS}/ExecAppendAudit.md""")
+
+add("ExecQuoteLint", "executor", f"""Verify that each admitted row's located quote is a contiguous substring of the committed fetch bytes. The frozen gate quotes are `$XDG_RUNTIME_DIR/hypr does not exist, falling back to /tmp/hypr` for S201 and `m_ipc.registerForIPC("activewindow", this);` for S202; the registry rows carry prose quote cells instead. The Gate block of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/waybar-module-text-route-r25.md is the authority on which quote is the located one. For each id: grep the gate quote and the registry prose text in the corresponding committed fetch blob under .ufo/waves/round-34/fetch/ and report whether each is a contiguous substring, with its line number. Report any prose cell that is NOT a substring of the bytes.
+Report: {REPORTS}/ExecQuoteLint.md""")
+
+add("ExecKnowledgeIndex", "executor", f"""Verify the corpus index row added at commit fa7ba11346116672352b5d41494141c5c4d738d0. Read the new row of /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/README.md that names corpus/knowledge/waybar-module-text-route-r25.md. Check that every path it names (corpus/knowledge/..., .ufo/waves/round-34/fetch/...) resolves to an existing regular file in the lane tree, that the named S-ids exist in corpus/SOURCES.md, and that the row states the surface, the provenance and the recheck. Report any broken path or missing id.
+Report: {REPORTS}/ExecKnowledgeIndex.md""")
+
+add("ExecFetches", "executor", f"""Re-verify the committed fetch blobs byte-for-byte against the registry digests. For S201 and S202 run `git -C /home/vgpnk/Projects/shokunin/mado-shokunin cat-file blob fa7ba11346116672352b5d41494141c5c4d738d0:.ufo/waves/round-34/fetch/S201.bin | sha256sum` (and S202.bin) and compare the digest with the digest recorded in corpus/SOURCES.md and the digest in .ufo/waves/round-34/c1/frozen.json. Paste the three digests per id and state whether they agree. Also report each blob's byte length.
+Report: {REPORTS}/ExecFetches.md""")
+
+# --------------------------------------------------------------- scribes (7)
+add("ScribeLesson", "scribe", f"""Draft the `## Mistakes` block for /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-34.md. Use the house style of corpus/lessons/round-33.md: one row per mistake with class, evidence pointer, captured-by (the criterion or rule that should have caught it, or `none`), and fix. Draft 5 rows drawn from: the round-33 false SCORECARD row; the round-33 counter accepting a symlink crib; the round-33 lesson's wrong S189 line number; the 12 undisclosed round-33 scratch trees; the round-33 overclaimed quality trend. Write to {SCRATCH}/ScribeLesson/mistakes.md. Do NOT edit the lesson file — the L1 writes it.
+Report: {REPORTS}/ScribeLesson.md""")
+
+add("ScribeGate", "scribe", f"""Draft the `## Gate` block for corpus/lessons/round-34.md. It must record, for every source opened this round: the URL, the access date, and a located quote of at most 25 words, for each row the lane ADMITS; and for each row the lane REFUSES, the reason and the flip condition. The set must contain at least one admit and at least one reject drawn from the assimilation package. Use the lane's own house style from corpus/lessons/round-33.md. Write to {SCRATCH}/ScribeGate/gate.md.
+Report: {REPORTS}/ScribeGate.md""")
+
+add("ScribeLog", "scribe", f"""Draft the round-34 LOG.md entry for /home/vgpnk/Projects/shokunin/mado-shokunin/LOG.md, in the house style of the existing entries (a heading line with the round number, the date and the attempt, then Motivation:, Work:, Honest notes:). It must state that the round-33 coverage counter was killed by a symlink crib, that a NEW counter PRED-C1-r34-v1 was frozen at commit 3420e827bd7b21b1374b23245526554ffd20d096 with pre-data receipts, that the data landed at fa7ba11346116672352b5d41494141c5c4d738d0, and which repairs were made. Write to {SCRATCH}/ScribeLog/log.md. Do not append to LOG.md.
+Report: {REPORTS}/ScribeLog.md""")
+
+add("ScribeScorecard", "scribe", f"""Draft the round-34 SCORECARD rows for /home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md, in the style of the round-33 rows: one row per claim with the axis, the before and after measurement text, the exact counting command, and the verdict. The two claims are C1 coverage (PRED-C1-r34-v1) and C2 calibration (PRED-C2-r34-v1). The before measurement is the pre-data control (TARGET_MISSED, exit 1) and the after measurement is the lane tree run (TARGET_MET, exit 0). Name the axis the surface moves, not the number it produces. Write to {SCRATCH}/ScribeScorecard/rows.md.
+Report: {REPORTS}/ScribeScorecard.md""")
+
+add("ScribeLessonCorrect", "scribe", f"""Draft the append-only correction to the lane's own lesson about the S189 queue-cap line number. The false statement is in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-32.md line 73, which lists S189's anchors as `:14`/`:21`/`:35`/`:126`/`:128`/`:129`; the queue-cap quote `const size_t MAX_QUEUED_EVENTS = 64;` is at line 169 of .ufo/waves/round-32/fetch/S189.bin, and line 128 is a different statement (formatEvent's eventString assignment). Draft the correction as an appended dated entry in the lane's house style, naming the evidence pointer. Write to {SCRATCH}/ScribeLessonCorrect/correction.md. Do NOT edit corpus/lessons/round-32.md — lessons are append-only and the L1 appends.
+Report: {REPORTS}/ScribeLessonCorrect.md""")
+
+add("ScribeConsider", "scribe", f"""Mine ONE unimplemented proposal from /home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/. Take the newest file (2026-10-24.md) and a proposal that the file itself marks as a proposal and not implemented. Ground it through the lane's own bar: open what it POINTS AT (a file, a URL, a command — not the proposal text itself), verify one cited fact first-hand, and write the note: what the proposal demands, what the lane already holds, what the grounded evidence says, and whether it becomes a QUALITY.md criterion, a lesson, or a SOURCES row. Cite considerthese/<file> and the date. Write to {SCRATCH}/ScribeConsider/note.md. Never edit the considerthese file.
+Report: {REPORTS}/ScribeConsider.md""")
+
+add("ScribeReport", "scribe", f"""Draft the round-34 report's Trend verdicts and SHONEN sections as scratch text for /home/vgpnk/Projects/shokunin/.ufo/reports/round-34/mado.md. Trend verdicts must be exactly one verdict each for expansion, quality and discernment, drawn from improved / harmed / unchanged / unprovable-but-better, each with the evidence pointer that supports it — no scalar. The quality verdict must NOT be improved unless you can point at evidence that a weaker knowledge entry was superseded or an admitted entry was re-verified. SHONEN must be four `[~]` lines, one per box of /home/vgpnk/Projects/shokunin/mado-shokunin/SHONEN.md, each with a resolvable evidence pointer; never `[x]`. Write to {SCRATCH}/ScribeReport/sections.md.
+Report: {REPORTS}/ScribeReport.md""")
+
+# ------------------------------------------------------------ connectors (4)
+add("ConnSibling", "connector", f"""Sibling-overlap scan, READ-ONLY. Which sibling lanes' corpora already carry the Waybar Hyprland IPC / event-socket theme? For each directory under /home/vgpnk/Projects/shokunin/ that is a `*-shokunin` repo, grep its corpus/SOURCES.md and corpus/knowledge/ for `waybar`, `hyprland` and `socket2`. Report each hit with the repo, the file and the line. Then state what the round-34 entry adds that no sibling holds, and confirm you edited no sibling file. Read-only; never write into a sibling repo.
+Report: {REPORTS}/ConnSibling.md""")
+
+add("ConnRound30Cite", "connector", f"""Locate the round-33 scout report that reviews the rewritten round-30 seat reports. Find /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-33/w1/reports/ScoutRound30.md and quote its verdict on each of the five rewritten files (RevRecordsChain.md, RevTrendExpansion.md, RevTrendDiscernment.md, SentScope.md, SimplifierC2.md). Then write the exact citation sentence the round-34 report must use whenever it relies on those rewritten round-30 reports. Write to {SCRATCH}/ConnRound30Cite/cite.md.
+Report: {REPORTS}/ConnRound30Cite.md""")
+
+add("ConnConsiderLatest", "connector", f"""Determine which file under /home/vgpnk/Projects/shokunin/mado-shokunin/considerthese/ is the latest and which proposals in it are still unimplemented by the lane's corpus. For each proposal, grep the lane's corpus/knowledge/ and corpus/SOURCES.md for a matching entry and state implemented or not implemented, with the evidence path. Write the table to {SCRATCH}/ConnConsiderLatest/table.md. Never edit the considerthese dir.
+Report: {REPORTS}/ConnConsiderLatest.md""")
+
+add("ConnFreshness", "connector", f"""Freshness check on the round-34 sources. For S201 and S202 in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md: report the registry's opened date and recheck value, the commit date of the fetch blob under .ufo/waves/round-34/fetch/, and the upstream tag the row names. Compute the age of the opened date against today (2026-10-24) and state whether the recheck value is consistent with the lane's convention (compare other rows in corpus/SOURCES.md). Report any row whose recheck form differs from the lane's norm. Read-only.
+Report: {REPORTS}/ConnFreshness.md""")
+
+# -------------------------------------------------------------- sentinels (2)
+add("SentinelScope", "sentinel", f"""Scope sentinel. Verify that no seat of this wave wrote outside /home/vgpnk/Projects/shokunin/mado-shokunin. Run `git -C /home/vgpnk/Projects/shokunin status --porcelain` (no pathspec) and list every untracked or modified path at the FLEET root; for each, say whether its content names the mado lane or round 34 (a seat wrote there — report it) or belongs to another lane or the driver (leave it alone). Also list the new files under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/scratch/ and confirm every one is under that tree. Do not delete or move anything.
+Report: {REPORTS}/SentinelScope.md""")
+
+add("SentinelState", "sentinel", f"""State sentinel. Record the lane's VCS state WITHOUT mutating it: `git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain` (the index must hold nothing staged), `git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse master`, `/home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh state /home/vgpnk/Projects/shokunin/mado-shokunin`, and `git -C /home/vgpnk/Projects/shokunin/mado-shokunin log --format='%H %an %ae %ad %s' --date=iso -6 master`. Confirm the last two commits are the round-34 freeze and data commits under the lane identity (mado-shokunin <mado@shokunin.local>) and that the Git index holds nothing staged. Paste the output verbatim.
+Report: {REPORTS}/SentinelState.md""")
+
+# ------------------------------------------------------------- revengers (2)
+add("RevengerC1", "revenger", f"""Revenge the round-34 coverage claim. Your job is to FALSIFY it. Use the frozen counter /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py and its frozen.json. Try to construct a tree where the counter prints TARGET_MET but the lane's corpus is NOT the admitted corpus: a tree with the right file names but wrong content; a tree whose corpus/SOURCES.md is a regular file but whose knowledge entry is a symlink to a file outside the tree; a tree where the fetch blob has the right sha256 but the entry's gate-quote line is a different 1-25 word string that also happens to appear in the bytes; a tree where the registry row's used-by cell holds the entry path among other tokens. Build each attempt under {SCRATCH}/RevengerC1/ and paste stdout and exit code. If you cannot break it, say so plainly and list your three strongest attempts.
+Report: {REPORTS}/RevengerC1.md""")
+
+add("RevengerData", "revenger", f"""Revenge the round-34 DATA. Re-fetch https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/hyprland/backend.cpp and https://raw.githubusercontent.com/Alexays/Waybar/0.15.0/src/modules/hyprland/window.cpp from the network into {SCRATCH}/RevengerData/. Compare the live bytes' sha256 and length with the committed blobs /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/fetch/S201.bin and S202.bin and with the digests recorded in corpus/SOURCES.md. Also verify that the tag 0.15.0 is the real upstream tag by checking the tag URL resolves. Report whether the lane's fetched bytes are the upstream bytes of that tag, and paste every digest.
+Report: {REPORTS}/RevengerData.md""")
+
+# -------------------------------------------------------- mutation-testers (3)
+add("MutC1Drop", "mutation-tester", f"""Mutate the round-34 coverage counter in scratch, NEVER in the lane. Copy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py into {SCRATCH}/MutC1Drop/ and make one mutant per dropped clause: M1 drop the nlink!=1 check; M2 drop the O_NOFOLLOW open and the lstat symlink checks; M3 drop the sha256 comparison; M4 drop the used-by equality; M5 drop the 1-25 word bound; M6 drop the path-component walk. For each mutant, run it against the committed controls/symlink-crib tree, controls/extra/symlink-parent tree and controls/golden tree (all under /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/). Report per mutant which tree it wrongly METs. A mutant that METs the crib proves its clause is load-bearing; a mutant that still misses proves the clause is redundant. Paste the mutant diffs and the outputs. The committed counter must not be edited.
+Report: {REPORTS}/MutC1Drop.md""")
+
+add("MutC2Drop", "mutation-tester", f"""Mutate the round-34 calibration counter in scratch, never in the lane. Copy /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c2/count.py into {SCRATCH}/MutC2Drop/. Mutants: M1 drop the `line 128 does not` clause; M2 drop the sha256 pin; M3 drop the `last matching line` rule (use any matching line); M4 drop the strip-equals comparison. Run each against the lane SCORECARD.md and against the committed cards .ufo/waves/round-34/controls/c2-junk-card.md and .ufo/waves/round-34/controls/c2-reachable-card.md (keep --repo /home/vgpnk/Projects/shokunin/mado-shokunin and --frozen .ufo/waves/round-34/c2/frozen.json). Report which mutants wrongly MET a card that must miss. Paste the diffs and the outputs.
+Report: {REPORTS}/MutC2Drop.md""")
+
+add("MutC1ClauseMap", "mutation-tester", f"""Build a clause-violation map for the round-34 coverage counter. For each clause of the frozen predicate, construct ONE tree under {SCRATCH}/MutC1ClauseMap/ that violates exactly that clause and nothing else, and confirm the counter prints TARGET_MISSED for it: (a) the fetch file is a symlink; (b) the entry file is a symlink; (c) the fetch file is a hardlink with nlink=2; (d) the gate-quote line has 26 words; (e) the gate-quote is not a contiguous substring of the bytes; (f) the registry row's used-by cell names a different path; (g) the registry has two rows for the same id; (h) the fetch bytes' sha256 differs from frozen.json. Paste one stdout and exit code per case. The committed counter and controls must not be edited.
+Report: {REPORTS}/MutC1ClauseMap.md""")
+
+# ------------------------------------------------------------ simplifiers (2)
+add("SimplC1", "simplifier", f"""Simplify review of the round-34 coverage counter and its predicate. Read /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-34/c1/count.py, c1/frozen.json and registration.md. Write the shortest honest English sentence that states exactly what the counter accepts as closed, and say whether the code implements that sentence with no clause weaker and none stronger. Flag any construct that could cause a FALSE NEGATIVE on a genuine corpus — a correct admit that the counter would miss — because that matters more than verbosity. Write to {SCRATCH}/SimplC1/simplify.md.
+Report: {REPORTS}/SimplC1.md""")
+
+add("SimplLesson", "simplifier", f"""Simplify the round-34 lesson. Read /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-33.md and the SOURCES contract section of /home/vgpnk/Projects/shokunin/CORPUS.md, then propose the SHORTEST lesson structure for round 34 that still satisfies the frontier contract: the Gate block (URL, access date and located quote for every row opened; reason and flip for every refusal), the Mistakes block, and the census before/after. Give the exact section headings the lane uses. Write to {SCRATCH}/SimplLesson/structure.md.
+Report: {REPORTS}/SimplLesson.md""")
+
+
+def main() -> int:
+    items = []
+    for name, role, prompt in ITEMS:
+        items.append({"name": name, "role": role, "prompt": prompt})
+    names = [i["name"] for i in items]
+    if len(names) != len(set(names)):
+        print("duplicate seat name", file=sys.stderr)
+        return 1
+    prompts = [i["prompt"] for i in items]
+    if len(prompts) != len(set(prompts)):
+        print("duplicate prompt", file=sys.stderr)
+        return 1
+    attack = {"reviewer", "critic", "mutation-tester", "revenger", "sentinel"}
+    n_attack = sum(1 for i in items if i["role"] in attack)
+    if len(items) < 32 or len(items) > 128:
+        print(f"seat count {len(items)} outside 32-128", file=sys.stderr)
+        return 1
+    if n_attack * 4 < len(items):
+        print(f"attack share {n_attack}/{len(items)} below 25%", file=sys.stderr)
+        return 1
+    spec = {
+        "wave": "mado-r34-w1",
+        "reportDir": REPORTS,
+        "context": CONTEXT,
+        "items": items,
+    }
+    out = W / "w1-spec.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(spec, indent=1))
+    roles: dict[str, int] = {}
+    for i in items:
+        roles[i["role"]] = roles.get(i["role"], 0) + 1
+    print(f"wrote {out} seats={len(items)} attack={n_attack} ({n_attack * 100 // len(items)}%)")
+    print("roles: " + ", ".join(f"{k}={v}" for k, v in sorted(roles.items())))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

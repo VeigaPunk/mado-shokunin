@@ -1,0 +1,13 @@
+Working...
+Report written to `.ufo/waves/round-34/w1/reports/RevReceiptsBytes.md`.
+
+**Verdict: 13/15 receipts match a fresh run in every numeric field. 2 do not:**
+
+| receipt | claimed | fresh |
+|---|---|---|
+| `c1-donothing.txt` | exit=1, 0/0/2, TARGET_MISSED | exit=0, closed_entries=1 closed_rows=2 open_cites=0, TARGET_MET |
+| `c2-donothing.txt` | exit=1, published=absent, mismatch=1, TARGET_MISSED | exit=0, published=169, mismatch=0, TARGET_MET |
+
+Both are the live-lane do-nothing controls — stale by design post-data: the entry + S201/S202 rows now exist (`corpus/SOURCES.md:203-204`) and `SCORECARD.md:2108` publishes `r34-s189-line: line=169`. No receipt was wrong at write time; the recorded values are honest pre-data state.
+
+All fixture-tree receipts (golden, rows/entries-only, three symlink shapes, used-by-prefix `.evil` token, hardlink nlink=2 via same-filesystem rebuild), both frozen C2 card controls, the r33 crib counter (2/4/0 MET), and the indented-guard pipelines (S197 collision, empty column-zero) reproduce exactly. Controls untouched — `git status` clean; hardlink rebuild at `~/.r34-hardlink-check` removed.

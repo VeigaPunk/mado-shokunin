@@ -1,0 +1,17 @@
+Working...
+**Verdict: no defect — the counter failed closed on all five avenues.**
+
+| Avenue | Result |
+|---|---|
+| baseline forged lookalike | `TARGET_MET` (exit 0) — expected; predicate genuinely holds |
+| a: fetch hardlink to outside root | `TARGET_MISSED` — `st_nlink=2` rejected even with correct bytes |
+| b: entry is a hardlink | `TARGET_MISSED` — same nlink guard |
+| c: used-by trailing space | `TARGET_MET` — **not** a defect: cell/token `.strip()` makes the token byte-identical to `entry_rel`; Markdown cell whitespace is padding, "whole used-by token" is a token-identity clause |
+| d: used-by different case | `TARGET_MISSED` — byte-exact set compare |
+| e: two S201 rows (one correct) | `TARGET_MISSED` — `len(rows) == 1` fails |
+
+Lane-root control prints `TARGET_MET` as expected.
+
+Residual observations logged in the report (none produce a wrong MET): `used_by_tokens` assumes the last `|` cell is the used-by column (column-name-blind), and `rows_for` counts `| S201 |` lines anywhere including fenced blocks — but that direction fails closed (extra rows → MISS).
+
+Report: `.ufo/waves/round-34/w1/reports/CritC1FalseNeg.md`; all trees left under `.ufo/waves/round-34/scratch/CritC1FalseNeg/` for re-execution.

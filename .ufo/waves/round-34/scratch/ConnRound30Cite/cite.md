@@ -1,0 +1,1 @@
+The round-30 `<REPORT>` cited here is the rewritten, final-pass seat report verified by ScoutRound30 (round-33 w1) and committed at `d40b35f90ad8bf630ad9404d25aeee1d9737f300`; its earlier committed drafts (from the `15ddd7d`/`a0dd664`/`274f735` repair window) are superseded and must not be quoted.

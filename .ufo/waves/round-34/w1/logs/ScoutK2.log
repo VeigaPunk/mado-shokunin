@@ -1,0 +1,19 @@
+Working...
+Done. Deliverables written; scratch untouched.
+
+**Census** — `.ufo/waves/round-33/scratch/ExecK2Receipts/`: 495,961,904 bytes (`du -sb`), 30,892 files — three independent lane clones (`a-stale`, `b-rederived`, `c-perturb`). Five largest: the three identical 18,414,193-byte `.git` packfiles, then two 4,207,542-byte `full-sweep.jsonl` copies (each size tripled across clones).
+
+**Receipt comparison** — key finding: the tree holds *no* captured k2 receipt files (`find -name '*k2*'` → empty, `git status` clean in all clones). The real receipts live only as text blocks in the committed `ExecK2Receipts.md`/`.log`; I re-ran the gate live in all three clones and reproduced them verbatim.
+
+Against committed `k2-{a,b,c}.txt` (commit `d40b35f`; the round-32 set is byte-identical):
+
+| Receipt | Byte-identical? | Verdict |
+|---|---|---|
+| (a) stale @ `4590b980` | No | Nowhere committed; committed file cites `rev=ff9d6af9…` — resolves in **no** git object store on disk |
+| (b) re-derived @ `9a46ccf` | No | Committed cites `rev=99eebf89…` — unresolvable everywhere |
+| (c) perturb @ `a3a79ce` | No | Committed cites `rev=91887e68…` — unresolvable everywhere |
+| 39 clone `controls/*.txt` + `RECEIPT.md` | Yes, all `cmp`-SAME | Already committed at `.ufo/waves/round-33/controls/` |
+
+md5 sweep: zero of 26,304 non-`.git` scratch files match any committed k2 hash. Committed k2 files are a different format (no command line, `x_exit=` footers), were committed **before** the ExecK2Receipts run (21:08 vs 21:12), and cite revs that exist nowhere — they record a run whose clones were never persisted. The honest scratch receipts remain uncommitted.
+
+Table: `.ufo/waves/round-34/scratch/ScoutK2/table.md` · Report: `.ufo/waves/round-34/w1/reports/ScoutK2.md`

@@ -1,0 +1,18 @@
+Working...
+Done. Crib built and counter verified.
+
+**Crib** — `.ufo/waves/round-34/scratch/ExecSymlinkCrib/crib`:
+- `corpus/knowledge/waybar-module-text-route-r25.md` → symlink to lane's regular file `mado-shokunin/corpus/knowledge/waybar-module-text-route-r25.md`
+- `.ufo/waves/round-34/fetch/S201.bin` → symlink to committed fetch blob
+- `.ufo/waves/round-34/fetch/S202.bin` → symlink to committed fetch blob
+- `corpus/SOURCES.md` → regular copy of lane's real 164674-byte registry
+
+**Counter run** — `python3 .ufo/waves/round-34/c1/count.py --root <crib> --frozen .ufo/waves/round-34/c1/frozen.json`:
+
+```
+PRED-C1-r34-v1 closed_entries=0 closed_rows=0 open_cites=2 verdict=TARGET_MISSED
+```
+
+Exit code: **1**. Correct behavior — no defect. `read_regular()` lstats each component and rejects symlinks (count.py:59-60), so the symlink entry and both symlink blobs are unreadable; both ids fail → `open_cites=2`. Matches committed control `controls/c1-symlink-crib.txt` (same counts, exit 1), which symlinks only the fetch blobs.
+
+Committed counter and controls untouched. Report: `.ufo/waves/round-34/w1/reports/ExecSymlinkCrib.md`.

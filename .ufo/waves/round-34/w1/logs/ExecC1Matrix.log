@@ -1,0 +1,23 @@
+Working...
+Done.
+
+**Artifacts**
+- `.ufo/waves/round-34/scratch/ExecC1Matrix/matrix.tsv` — header + 10 rows
+- `.ufo/waves/round-34/w1/reports/ExecC1Matrix.md` — driver, verbatim TSV, findings
+
+**Result matrix**
+
+| tree | exit | verdict |
+|---|---|---|
+| lane | 0 | TARGET_MET (1/2/0) |
+| controls/golden | 0 | TARGET_MET (1/2/0) |
+| controls/symlink-crib | 1 | TARGET_MISSED (0/0/2) |
+| controls/entries-only | 1 | TARGET_MISSED (0/0/2) |
+| controls/rows-only | 1 | TARGET_MISSED (0/0/2) |
+| controls/extra/symlink-entry | 1 | TARGET_MISSED (0/0/2) |
+| controls/extra/symlink-parent | 1 | TARGET_MISSED (0/0/2) |
+| controls/extra/symlink-sources | 1 | TARGET_MISSED (0/0/2) |
+| controls/extra/used-by-prefix | 1 | TARGET_MISSED (0/0/2) |
+| controls/symlink-entry | 1 | TARGET_MISSED (0/0/2) |
+
+**Spec deviation flagged**: `controls/extra/symlink-entry` does not exist — the tree is at `controls/symlink-entry`. I ran the literal path anyway (counter degrades to `0/0/2` exit 1 on unreadable root) and appended the real path as row 10. Risk noted in report: missing-root output is indistinguishable from a fully-broken tree.

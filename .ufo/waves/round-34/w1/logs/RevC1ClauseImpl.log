@@ -1,0 +1,9 @@
+Working...
+Report written to `.ufo/waves/round-34/w1/reports/RevC1ClauseImpl.md`.
+
+Findings: all ten clauses implemented — none missing.
+
+- **Faithful**: (a) lines 66/133/139/145, (c) 66, (e) 69, (i) 99-105/156, (j) 30/131-132/166-176.
+- **Stricter (safe direction)**: (b) whole-path symlink ban 59/50; (d) `..` banned outright 44; (g) exactly-one gate-quote line + exact frozen-quote equality 113-114/152; (h) `used_by_tokens == {entry_rel}` singleton 157.
+- **Weaker**: (f) the digest file comes from `--frozen` argv (122,125) rather than being pinned to `c1/frozen.json` — the only literal gap.
+- **Flagged**: TOCTOU between `lstat` walk and `os.open` (56→69); `MAX_BYTES` 8MB cap counts oversized fetches as open (80-81); unreadable `SOURCES.md` silently yields zero rows → open cites instead of erroring (133-134); unchecked `spec` keys can `KeyError` (143-144).

@@ -1,0 +1,14 @@
+Working...
+Done. Four trees run against `c1/count.py` (unmodified), `--frozen` = `c1/frozen.json`:
+
+| Tree | stdout | exit | Refused |
+|---|---|---|---|
+| golden (baseline) | `closed_entries=1 closed_rows=2 open_cites=0 TARGET_MET` | 0 | — |
+| (a) `SOURCES.md`→ real registry outside | `0 0 2 TARGET_MISSED` | 1 | yes |
+| (b) `corpus/knowledge/`→ dir outside | `0 0 2 TARGET_MISSED` | 1 | yes |
+| (c1) used-by `corpus/../…` | `0 1 1 TARGET_MISSED` | 1 | yes |
+| (c2) used-by absolute path | `0 1 1 TARGET_MISSED` | 1 | yes |
+
+Key finding on (c): the used-by cell never reaches the filesystem — it's a raw-string set comparison against the frozen `entry_rel`, so `..`/absolute tokens fail equality rather than resolve. Only frozen-spec paths go through `read_regular`. Residual risk noted: a TOCTOU window between the per-component `lstat` walk and the final `os.open(O_NOFOLLOW)`, not exploitable via static trees.
+
+Report: `.ufo/waves/round-34/w1/reports/RevC1PathEscape.md`; trees: `.ufo/waves/round-34/scratch/RevC1PathEscape/`.

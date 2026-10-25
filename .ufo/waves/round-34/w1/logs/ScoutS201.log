@@ -1,0 +1,8 @@
+Working...
+Done. Fetch succeeded; hash `799bf02f…bb4f9e` and 6550 bytes both match.
+
+- **Line 38** in `IPC::getSocketFolder(const char* instanceSig)` (starts line 19): `spdlog::warn("$XDG_RUNTIME_DIR/hypr does not exist, falling back to /tmp/hypr");`
+- Before (35–37): `exists(xdgRuntimeDir / "hypr")` check → `socketFolder_ = xdgRuntimeDir / "hypr"` → `else`
+- After (39–41): `socketFolder_ = path("/tmp") / "hypr"` → `}` → `socketFolder_ = socketFolder_ / instanceSig`
+
+Report: `.ufo/waves/round-34/w1/reports/ScoutS201.md`; blob at `.ufo/waves/round-34/scratch/ScoutS201/backend.cpp`.

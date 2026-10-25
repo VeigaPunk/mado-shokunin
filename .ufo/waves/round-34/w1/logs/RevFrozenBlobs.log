@@ -1,0 +1,29 @@
+Working...
+Report written to `.ufo/waves/round-34/w1/reports/RevFrozenBlobs.md`. Findings:
+
+**Blob hashes @ r34 freeze `3420e827` vs tip `fa7ba113`** — all identical:
+
+| Path | blob (both refs) |
+|---|---|
+| round-33/c1/count.py | `4ab3db435dd2e396402d1d83039e35082f1138fe` |
+| round-33/c1/frozen.json | `60d1094baa2992294533bae37e0990ae23077609` |
+| round-33/c2/count.py | `df563528e725951b447ef31b324ec4b7d264e91b` |
+| round-34/c1/count.py | `49089c186fb75f1bd2cc4c45c0161282ea6e8a46` |
+| round-34/c1/frozen.json | `0bfe0d866c4e9a2d17da297a11dae389150b488b` |
+| round-34/c2/count.py | `3a499a7eaa6cf5e861a5849992c37f1a7bede962` |
+| round-34/c2/frozen.json | `ef3392b45f638513ff98dda95808f3f3938705e0` |
+
+**Round-33 c1 blobs** — `count.py` `4ab3db43…` and `frozen.json` `60d1094b…` identical at `9a46ccf3` (freeze), `69f72100` (r33 tip), and `fa7ba113` (lane tip).
+
+**Stronger proof:** `git log master -- <path>` shows exactly one commit per path — the freeze commit only. Nothing amended post-freeze, not even write-then-revert. Subjectless commits touching these paths (`dbc1f8a`, `735f7e5`, etc.) are discarded jj working-copy snapshots, none ancestors of master; they corroborate ordering (pre-freeze snapshots already held the final blobs).
+
+**Ordering:** r33 freeze `9a46ccf3` 20:54 precedes r33 data commits `d40b35f9`/`69f72100`. R34 freeze `3420e827` 21:40 is followed only by `fa7ba113`, which touches `SCORECARD.md`/`corpus/` — `.ufo/waves/round-34/` is byte-identical freeze→tip. Counters frozen before data, both rounds.
+
+```
+fa7ba11346116672352b5d41494141c5c4d738d0 mado-shokunin mado@shokunin.local 2026-10-24 21:58:15 -0300 round-34: admit the waybar event-socket entry after the frozen counter
+3420e827bd7b21b1374b23245526554ffd20d096 mado-shokunin mado@shokunin.local 2026-10-24 21:40:03 -0300 round-34: freeze C1 and C2 predicates and pre-data control receipts
+fefdefd4cca6adfd847826f1e406f7aa712007d3 protocol-shokunin protocol@shokunin.local 2026-10-24 21:40:03 -0300 round-33 verifier spot-check (integrator, hyaku): non-author admit/reject
+69f72100bee31a60b811f8fbbe7796db883e17b3 mado-shokunin mado@shokunin.local 2026-10-24 21:29:04 -0300 round-33: wave-1 evidence, 32 dispatched, ScribeLesson dead, critic junk tree kept
+d40b35f90ad8bf630ad9404d25aeee1d9737f300 mado-shokunin mado@shokunin.local 2026-10-24 21:08:35 -0300 round-33: correct the false r32 C1 row, register the axis gate, and keep the killed coverage counter frozen
+9a46ccf3282117f960b8d53cd71599a91f388ee3 mado-shokunin mado@shokunin.local 2026-10-24 20:54:21 -0300 round-33: freeze C1 and C2 predicates and pre-data control receipts
+```

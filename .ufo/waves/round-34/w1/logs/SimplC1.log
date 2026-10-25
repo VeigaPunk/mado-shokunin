@@ -1,0 +1,11 @@
+Working...
+Done. Report: `.ufo/waves/round-34/w1/reports/SimplC1.md`; full analysis: `.ufo/waves/round-34/scratch/SimplC1/simplify.md`.
+
+Key findings:
+
+- **Verdict**: code is *not* an exact match to the predicate sentence — 3 clauses stronger, 1 weaker. Live tree scores `TARGET_MET` exit 0, so the risk is forward.
+- **Worst false negative**: `count.py:157` demands used-by set equality (`== {entry_rel}`); the sentence only requires membership, and real corpus rows already carry comma lists (S017). Mutant test: adding a second token → `TARGET_MISSED`.
+- **Confirmed false negatives** (mutant runs on `controls/golden/`): trailing space after quote → MISSED; `- gate-quote:` bullet → MISSED.
+- **Weaker clause**: `rows_for` is fence-blind — golden's table wrapped in a code fence still printed `TARGET_MET`.
+- Latent: 8 MB `MAX_BYTES` cap, duplicate-quote rejection, cell-1/indent-≤3 `ROW_RE`, BOM, within-root symlinked parents.
+- `registration.md` lives at `.ufo/waves/round-34/registration.md`, not `c1/` — noted in report.

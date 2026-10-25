@@ -1,0 +1,20 @@
+Working...
+Done. `matrix.tsv` (also at `.ufo/waves/round-34/scratch/ExecC2Matrix/matrix.tsv`):
+
+```tsv
+card	exit_code	stdout
+/home/vgpnk/Projects/shokunin/mado-shokunin/SCORECARD.md	0	PRED-C2-r34-v1 published=169 measured=169 mismatch=0 verdict=TARGET_MET
+.ufo/waves/round-34/controls/c2-junk-card.md	1	PRED-C2-r34-v1 published=128 measured=169 mismatch=1 verdict=TARGET_MISSED
+.ufo/waves/round-34/controls/c2-reachable-card.md	0	PRED-C2-r34-v1 published=169 measured=169 mismatch=0 verdict=TARGET_MET
+.ufo/waves/round-34/scratch/ExecC2Matrix/card-line128.md	1	PRED-C2-r34-v1 published=128 measured=169 mismatch=1 verdict=TARGET_MISSED
+.ufo/waves/round-34/scratch/ExecC2Matrix/card-no-marker.md	1	PRED-C2-r34-v1 published=absent measured=169 mismatch=1 verdict=TARGET_MISSED
+```
+
+Command per row (cwd = repo root so `--frozen` resolves): `python3 .ufo/waves/round-34/c2/count.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --scorecard <CARD> --frozen .ufo/waves/round-34/c2/frozen.json`.
+
+Notes:
+- `measured=169` is constant: `S189.bin` is a regular file, `nlink=1`, sha256 matches the pin, line 169 is the quote, line 128 is not.
+- `card-line128.md` carries an earlier `line=169` then a later `line=128`, proving last-marker-wins — stdout identical to the junk control.
+- No run hit exit 2: frozen predicate matches the script's compiled-in `PREDICATE`; stderr empty on all rows.
+
+Report: `.ufo/waves/round-34/w1/reports/ExecC2Matrix.md`. No installs.

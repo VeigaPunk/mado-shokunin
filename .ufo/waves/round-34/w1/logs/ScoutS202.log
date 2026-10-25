@@ -1,0 +1,17 @@
+Working...
+Done.
+
+**Fetch:** `window.cpp` → `.ufo/waves/round-34/scratch/ScoutS202/window.cpp`. sha256 `5df496eb…c9846` ✓, 8324 bytes ✓.
+
+**Target line:** 27 — `m_ipc.registerForIPC("activewindow", this);` inside `Window::Window(const std::string& id, const Bar& bar, const Json::Value& config)` (ctor, lines 20–38), under the `windowIpcSmtx` unique lock.
+
+**All registrations** (all in ctor, lines 27–31):
+- 27 `activewindow`
+- 28 `closewindow`
+- 29 `movewindow`
+- 30 `changefloatingmode`
+- 31 `fullscreen`
+
+Teardown: line 42, `unregisterForIPC(this)` in `~Window()`.
+
+Report written to `.ufo/waves/round-34/w1/reports/ScoutS202.md`.

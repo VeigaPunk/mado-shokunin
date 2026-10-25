@@ -1,0 +1,20 @@
+Working...
+Done. Claim confirmed on all four checks.
+
+**Command output:**
+
+```
+$ sha256sum .ufo/waves/round-32/fetch/S189.bin
+eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d  S189.bin   ✓ matches
+
+$ sed -n '128p;169p' S189.bin
+    auto             eventString = std::format("{}>>{}\n", event.event, data.substr(0, 1024));   ← line 128 (NOT the literal)
+    const size_t MAX_QUEUED_EVENTS = 64;                                                        ← line 169 (strip-equals literal)
+
+$ grep -n 'r34-s189-line' mado-shokunin/SCORECARD.md
+2108:r34-s189-line: line=169    ← sole match; last line publishes line=169 ✓
+```
+
+**Caveat found:** `r34-s189-line` exists only in the lane-local `mado-shokunin/SCORECARD.md`; the fleet-root `/home/vgpnk/Projects/shokunin/SCORECARD.md` has zero matches. Claim is accurate only when read against the lane scorecard — flagged in the report.
+
+Report: `.ufo/waves/round-34/w1/reports/RevC2Truth.md` (2156 bytes).

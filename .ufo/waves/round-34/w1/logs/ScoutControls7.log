@@ -1,0 +1,19 @@
+Working...
+Done. Both artifacts written; nothing deleted.
+
+**Findings** — all seven trees untracked (`??` in `git status`); committed `controls/*.txt` receipts carry verdict lines only, not fixture bytes:
+
+| Tree | Files | Bytes | Receipt committed? | Adds beyond receipt? |
+|---|---|---|---|---|
+| entries-only | 2 | 256 | yes, verdict only | No |
+| extra-source | 7 | 63,492 | yes | No — bins byte-identical to committed copies |
+| golden | 7 | 63,451 | yes | No |
+| hash-mismatch | 7 | 63,452 | yes | Bytes yes (unique doctored S190 `117f29…`); evidence no |
+| junk | 7 | 665 | yes | Bytes yes (unique placeholders); evidence no |
+| rows-only | 1 | 462 | yes | No — file identical to junk's SOURCES.md |
+| ExecK2Receipts | 30,892 | 545,942,365 | no controls txt; receipt = committed w1 report | Bytes yes — sole copies of control commits `4590b98`, `a3a79ce`; evidence no |
+
+- ~546 MB of the leftover volume is ExecK2Receipts' three full lane clones; its report marks it uncommitted-by-design.
+- Every control outcome is receipted; no tree carries evidence the receipts lack. All seven are safe-to-clean candidates — deletion left to the operator.
+
+Artifacts: `.ufo/waves/round-34/scratch/ScoutControls7/table.md` (full table), `.ufo/waves/round-34/w1/reports/ScoutControls7.md` (report).

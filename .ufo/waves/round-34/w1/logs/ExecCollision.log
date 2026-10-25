@@ -1,0 +1,13 @@
+Working...
+Done. Guard re-proved; report at `.ufo/waves/round-34/w1/reports/ExecCollision.md`.
+
+**Real pair** (extractor verbatim from round-34 prompt, into `scratch/ExecCollision/`):
+- `reg-ids`: 192 ids (S001–S189, S196, S201, S202)
+- `staged-ids`: 140 ids (S197–S336)
+- `collisions`: **2** — `S201`, `S202`. Registry moved post-package-build; staged rows must renumber in scratch.
+
+**Indented fixture** (`  | S002 |`, census-valid registry — `sources-census.sh validate` exit 0, warnings only, confirming the parser accepts leading spaces):
+- 0–3-space extractor: `collisions` = `S002` (**NONEMPTY**)
+- column-zero extractor: `collisions` empty (**EMPTY** — false-green)
+
+Second fixture with real staged id `  | S201 |` reproduces the same split against the real staged set. Note: the seat prompt's claim that S002 is "in the staged set" predates this package (staged = S197–S336); fixture A uses a staged set containing S002 to reproduce the literal proof, fixture B grounds it in real data — both documented in the report.

@@ -1,0 +1,13 @@
+Working...
+Done. Report: `.ufo/waves/round-34/w1/reports/MutC2Drop.md`.
+
+**Mutants wrongly MET a must-miss card: none.** The junk card (`line=128`) stayed `TARGET_MISSED` under all four mutants.
+
+| Mutant | Clause dropped | Result |
+|---|---|---|
+| M1 | `line 128 does not` | SURVIVED — no fixture where fetch line 128 is the quote |
+| M2 | sha256 pin | SURVIVED — pinned fetch immutable to the probe |
+| M3 | `last matching line` | SURVIVED — every fixture card has exactly one marker line |
+| M4 | strip-equals | KILLED — wrongly `TARGET_MISSED` on both must-MET cards (`measured=absent`; line 169 of S189.bin is indented `    const size_t MAX_QUEUED_EVENTS = 64;`, so `.strip()` is load-bearing) |
+
+Mutants confined to `.ufo/waves/round-34/scratch/MutC2Drop/` (`count.py` pristine copy + `m1.py`–`m4.py`); lane counter untouched. Diffs and verbatim outputs embedded in the report, plus the three named fixture gaps (fetch-side drift fixture for M1/M2; a two-marker control card kills M3).

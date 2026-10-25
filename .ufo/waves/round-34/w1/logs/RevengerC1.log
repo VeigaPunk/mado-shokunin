@@ -1,0 +1,12 @@
+Working...
+Done. Report at `.ufo/waves/round-34/w1/reports/RevengerC1.md`; 8 attack trees staged under `.ufo/waves/round-34/scratch/RevengerC1/`; bind mount cleanly unmounted (`findmnt` confirms no leftover).
+
+**Claim falsified.** `TARGET_MET` is achievable on trees that are not the admitted corpus:
+
+- **A1 — fabricated content, right names:** `TARGET_MET rc=0`. Entry = fabricated body + the two frozen gate-quote lines; registry = fabricated rows inside a fenced code block. `ROW_RE` can't see fences; entry body and all other registry cells are unpinned.
+- **A6 — bind mount:** `TARGET_MET rc=0`. Single-file bind mount over the entry path from `/tmp` — every `lstat`/`O_NOFOLLOW` check passes while the read bytes live outside the scored root.
+- **A4b — duplicated used-by token:** `TARGET_MET rc=0`. `path,path` collapses to `{path}` under set equality.
+
+Held: **A2** symlink entry (MISSED), **A3** different in-blob quote line (MISSED — frozen comparison is exact), **A4a** extra used-by token (MISSED), **A5** hardlink nlink=2 (MISSED).
+
+Net: the counter pins digests, quote lines, file shape, and one row shape — but neither corpus content nor containment of the entry bytes.

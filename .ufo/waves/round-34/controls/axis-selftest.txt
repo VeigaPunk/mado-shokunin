@@ -1,0 +1,32 @@
+# mado round-34 — axis-gate selftest and live gate transcript
+# date: 2026-10-24 · author: Kimi fresh L1 · lane tip at write time: fa7ba11346116672352b5d41494141c5c4d738d0
+# routed repair: the round-33 closure found the gate registered in SKILL.md but never re-executed
+
+$ python3 -I quality/check-axis-scores.py --selftest
+PASS parse-navigation
+PASS parse-calibration
+PASS parse-operability
+PASS ignore-sourced-art
+PASS stale-detected
+PASS stale-rows
+PASS nonzero-on-stale
+PASS clean-is-zero
+PASS clean-rows
+PASS missing-publication-is-not-a-pass
+PASS missing-instrument-is-not-a-pass
+PASS one-perturbation-bites
+PASS no-publication
+PASS quoted-marker-does-not-shadow
+PASS quoted-marker-keeps-operability
+PASS long-publication-not-truncated
+PASS navigation-perturbation-bites
+PASS operability-perturbation-bites
+MADO_AXIS_SELFTEST: 18/18 assertions passed
+exit=0
+
+$ python3 -I quality/check-axis-scores.py --rev master --repo .
+MADO_AXIS_ROW: axis=navigation published=47/47 derived=47/47 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=41/41 derived=41/41 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=fa7ba11346116672352b5d41494141c5c4d738d0
+exit=0

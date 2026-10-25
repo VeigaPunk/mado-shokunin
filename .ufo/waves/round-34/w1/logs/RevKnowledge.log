@@ -1,0 +1,12 @@
+Working...
+Report written to `.ufo/waves/round-34/w1/reports/RevKnowledge.md`. Verdict: **2/5 — reject/repair before keeping.**
+
+| Criterion | Verdict |
+|---|---|
+| Decision table | **FAIL** — no table anywhere; siblings (`bind-table-r25.md:29`, `theme-route-r18.md:19`) carry them |
+| Error signature | **PASS** — `gate-quote: S201` (`:12`) is verbatim `spdlog::warn` at `backend.cpp:38`, re-fetched and confirmed |
+| Located quote per cited id | **PASS** — S201 quote at `backend.cpp:38`, S202 `registerForIPC("activewindow")` at `window.cpp:27`, both verified upstream |
+| Gate block with URL + access date | **FAIL** — no `## Gate` heading; URLs (`:7-8`) and `verified-at` (`:9`) exist only as flat header, missing the fetch-receipt path and per-source sha256 that `dispatcher-semantics-r25.md:14-22` carries |
+| No filler | **PASS** — 27 lines, all load-bearing |
+
+One substantive defect beyond shape: `:18-19` claims the `$XDG_RUNTIME_DIR/hypr` warning "is the event-socket client path, not the request socket" — false. `getSocketFolder()` is shared by `.socket2.sock` (`backend.cpp:98`) and `.socket.sock` (`backend.cpp:198`); the warn covers both. Flagged in the report as an overclaim needing an append-only correction.
