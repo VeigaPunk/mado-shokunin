@@ -6,10 +6,12 @@ Target: `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` — re-taken at t
 the 3428 B revision this seat first read was mutated mid-review and now carries Errata E1-E5.
 Every quoted body passage below was re-read in the current bytes.
 Substrates read-only: no bar started, no indicator executed, no menu opened, no toggle run.
-Evidence: `.ufo/waves/round-35/scratch/RevEntryR15/verify.log` (42 probes, per-command exit codes) and
-`.ufo/waves/round-35/scratch/RevEntryR15/findings.md`. Both were re-created from the seat transcript
-after an external sweep removed the entire round-35 scratch tree at ~03:45; contents are unchanged
-and the sweep is recorded in the log header.
+Evidence: the full 42-probe log is inlined as the Appendix below (durable through any scratch sweep).
+Pre-sweep copies are tracked at `.ufo/waves/round-35/scratch-evidence/RevEntryR15/{verify.log,findings.md}`
+(commit `4efaf63`, sha256 `61631900…c14a90` / `e5d010f3…9b165e`); that checkpoint's `verify.log` holds
+the re-take segment only (probes 28-37) because this seat had replaced the file before the checkpoint,
+so the Appendix supersedes it. `scratch/RevEntryR15/` was re-created twice during this seat and lost
+once more by a second sweep — it is not a durable locus and no verdict here depends on it.
 
 ## Axes
 
@@ -295,3 +297,68 @@ against this revision, not the next one.
 - I did not execute the bar, the indicator, the menu entry or the toggle, so the *offer's*
   behaviour is established by file reads only — the same limit the entry declares.
 - No install or upgrade was performed; no package manager was invoked (pacman paused host-wide).
+
+## Appendix — probe log (durable copy; 42 probes)
+
+Reads only. `R` = result, `x` = exit code. Entry revision throughout: sha
+`82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe`, 5806 B, mtime 03:35:30.
+
+```
+01 date -d @1791314470 -> 2026-10-06 16:21:10 -0300                                  x0
+02 date -d @1792203278 -> 2026-10-16 23:14:38 -0300                                  x0
+03 date -d @1792267376 -> 2026-10-17 17:02:56 -0300                                  x0
+04 ls --time-style=full-iso config.jsonc* -> 5 files:
+   config.jsonc 6354 10-17 17:02:56.289420985 | .bak 5892 10-11 10:36:07.023252903
+   .1791314470 5114 10-03 17:44:32.097653608 | .1792203278 6068 10-16 23:14:38.105347715
+   .1792267376 6068 10-17 17:02:56.289334445                                          x0
+05 grep -c omarchy-toggle-idle per copy -> 1 1 1 1                                     x0
+06 grep -c omarchy-toggle-idle live config.jsonc -> 1                                  x0
+07 find ~ -maxdepth 5 -name 'config.jsonc.bak*' | wc -l -> 4                           x0
+08 grep -c '^gate-quote:' -> 5; per-id S206=1 S207=1 S208=1 S209=1 S210=1              x0
+09 quote.split() + q in receipt bytes -> S206 13w S207 15w S208 14w S209 13w S210 15w;
+   all 1-25, all substring True                                                         x0
+10 c1/count.py --root . --frozen c1/frozen.json
+   -> PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET     x0
+11 sha256sum fetch/S20[6-9].receipt.txt S210.receipt.txt -> equal registry anchors     x0
+   S206 1d30e4a9… S207 81c33e79… S208 6e72f0db… S209 a170c7a5… S210 ef282e38…
+12 cat bin/omarchy-toggle-idle -> pkill/uwsm-app hypridle + notify-send + waybar signal;
+   no file write                                                                        x0
+13 grep -n hypridle default/hypr/autostart.conf -> 1:exec-once = uwsm-app -- hypridle  x0
+14 cat state toggles/hypr/flags.conf -> "…permanent config toggle flags… always needs at
+   least one file"                                                                      x0
+15 cat default/hypr/toggles/flags.conf -> identical text                                x0
+16 cmp -s state flags.conf template flags.conf -> 0                                     x0
+17 ls default/hypr/toggles/ -> flags.conf, single-window-aspect-ratio.conf,
+   window-no-gaps.conf (state dir installs only window-no-gaps)                         x0
+18 grep -ril idle state toggles/ -> no match                                            x1
+19 cat indicators/idle.sh; wc -c -> 159 B, 7 lines, pgrep gate + two echoes             x0
+20 pgrep -ax hypridle -> 1667 /usr/bin/hypridle                                         x0
+21 sed -n '200,215p' config.jsonc -> 207 module, 208 on-click                           x0
+22 grep -in 'max-saved|persist|history|on-notify' mako/config -> none                   x1
+23 grep -n notify-send omarchy-toggle-idle -> lines 7, 10                               x0
+24 S209 '--- oldest dated copy ---': line1 = config.jsonc.bak (table 10-11),
+   line2 = 2026-10-03 17:44:32.097653608 -0300 .1791314470                              x0
+25 grep -n '^| *S206…S210' SOURCES.md -> rows 208-212; S210(212) "holds entries…"      x0
+26 grep -rn offered-in-the-bar corpus/knowledge -> r12:39 links r15                     x0
+27 wc -lc entry (first read) -> 66 3428                                                 x0
+28 stat entry -> 5806 2026-10-25 03:35:30.276175284                                     x0
+29 sha256sum entry -> 82c08a46…fadfe                                                    x0
+30 gate re-audit on new bytes -> 5 lines, counts 1 each, 13/15/14/13/15, occ=1          x0
+31 c1 counter on current tree -> TARGET_MET                                             x0
+32 stat .1791314470 -> Birth 2026-10-06 16:21:10.082789105,
+   Change .083846414, Modify 2026-10-03 17:44:32.097653608                             x0
+33 journalctl --user 2026-10-23 18:00-23:59 | grep hypridle -> 4 lines:
+   app-Hyprland-hypridle-9408787a.scope: Consumed 19:24:38 (no Stopping/Stopped);
+   uwsm received/sent at 22:14:11; Started hypridle. 22:14:11                             x0
+34 grep -n 'never taken|never toggled|taken it|title' entry -> only E2 lines 78-79    x0
+35 errata ids -> S204 x1 (report name), S207 x1 (E4), S209 x3 (E1); E3/E5 none         x0
+36 grep -n 'toggle-idle|toggles/hypr' SOURCES.md -> no idle-toggle row                  x0
+37 idle.sh re-read -> no toggle path; toggle is config.jsonc:208 (S206)                 x0
+38 stat -c '%w|%y|%z' four copies -> only .1791314470 has mtime < btime;
+   others mtime≈btime≈ctime                                                             x0
+39 omarchy-refresh-config:23-24 -> .bak.$(date +%s) then cp -f (no -p)                  x0
+40 stat omarchy package files -> all 2026-10-03 17:42:32; backup mtime 17:44:32.097653608
+   (+2m00.1s) -> preserved stamp is NOT the package stamp                              x0
+41 type -a cp -> /usr/bin/cp, GNU coreutils 9.12                                       x0
+42 grep -c omarchy-toggle-idle default config/waybar/config.jsonc -> 1                  x0
+```

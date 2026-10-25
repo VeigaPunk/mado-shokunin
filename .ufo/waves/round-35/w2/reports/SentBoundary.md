@@ -1,6 +1,6 @@
 # SentBoundary — mado round-35 wave-2 boundary attack
 
-Seat: sentinel (leaf, no dispatch). Read-only audit. Window: 2026-10-25 03:29–03:45 -0300.
+Seat: sentinel (leaf, no dispatch). Read-only audit. Window: 2026-10-25 03:29–03:46 -0300.
 Wave-2 was dispatched at 03:28 (`w2-spec.json` mtime); the wave was still in flight at every
 snapshot below. Round 35 produced **seven** lane commits, **six during this wave**; the tree was at
 `b632f0b` when last observed (03:46). The claim data under test — the three entries and the
@@ -246,7 +246,12 @@ behaviour, not an overlap.
   else was written outside `.ufo/waves/round-35/scratch-evidence/SentBoundary/` and this report.
   Note the path move: this seat wrote `scratch/SentBoundary/evidence.txt`, and commit `4efaf63`
   renamed the whole `scratch/` tree to `scratch-evidence/` and committed it at 03:43:55.
+- At ~03:45 an external sweep deleted the `scratch/` directories the contract names as the only
+  allowed write target; twelve seats have since recreated directories there. This seat's evidence
+  survived only because `4efaf63` had committed a copy to `scratch-evidence/` shortly before the
+  sweep. The allowed write target was mutated out from under the wave, twice (`scratch` →
+  `scratch-evidence` → deleted).
 - `git status` may refresh `.git/index` stat data; that is a read-side cache touch, not a content write.
 - This report does **not** re-score C1/C2 — that is the mutation seats' surface. It records only that
-  the bytes those counters read were committed twice during the wave (03:34:26, 03:42:04) and are now
-  stable at `4efaf63`.
+  the bytes those counters read were committed twice during the wave (03:34:26, 03:42:04) and the
+  claim data is stable from `4f35c80` onward.

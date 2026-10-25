@@ -3,7 +3,11 @@
 Seat: `L1Mado35.CritAxisClaims` (critic, UFO-FSD). Read-only attack: every lane byte was
 read; the only writes are under
 `.ufo/waves/round-35/scratch/CritAxisClaims/` and this report. No install or upgrade was
-needed (no tool installed).
+needed (no tool installed). That scratch tree was removed by an external sweep at ~03:45;
+the probes and receipts had already been checkpointed at
+`.ufo/waves/round-35/scratch-evidence/CritAxisClaims/` (`b632f0b`), and the scratch copy was
+restored **byte-identically from that commit** (not from memory). Every verdict below is
+inlined, so no finding depends on a scratch path surviving.
 
 ## Measured revisions (state as observed, 2026-10-25)
 
@@ -45,7 +49,9 @@ T1  C2 on a tree with the 3 entries + S203–S210 + index rows absent:
 T2  C1 on a tree with .ufo/waves/round-35/{c2,ledger} deleted:
     PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET                exit=0
 ```
-Receipts: `scratch/CritAxisClaims/sep-out.txt` (script `sep.sh`), run at the working tree.
+Receipts: `.ufo/waves/round-35/scratch-evidence/CritAxisClaims/sep-out.txt` (script
+`sep.sh`), committed at `b632f0b`; the writable copy under `scratch/CritAxisClaims/` was
+restored byte-identically from it after the 03:45 sweep (see that directory's `README.md`).
 
 **Caveat (not a blocking violation).** C2's subject *is* C1's instrument: 9 of its 10 live
 clauses are clauses of the round-35 admission counter, and `uncovered` is a property of

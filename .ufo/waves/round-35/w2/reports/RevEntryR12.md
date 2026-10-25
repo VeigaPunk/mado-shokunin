@@ -251,11 +251,16 @@ and the grep still prints 0.
   the toggle sends `SIGRTMIN+9` to waybar, so this is not toggle evidence.
 - **Not checked:** the round-12 package text the entry says it corrects (outside this entry's own
   claims); the twelve bodies under *historical* versions (only the live copy was read).
-- **The substrate moved during the review.** The live entry changed at 03:35:08 (§7). The golden
-  control `controls/golden/corpus/knowledge/idle-lock-never-asked-r12.md` (sha `21c1d06d…`) no
-  longer matches the live entry (`7f27ced0…`; 20 changed lines). C1's `count.py` has no golden
-  comparison, so `TARGET_MET` is unaffected (re-run: still `TARGET_MET`, exit 0), but any control
-  seat that diffs golden against live now sees a deviation that is not an injected mutation.
+- **The substrate moved during the review — twice — by an unattributed writer.** The live entry went
+  40 lines (`21c1d06d…`) → 60 (`7f27ced0…`, 03:35:08) → 69 (`0bcef21f…`, 03:41:38). The golden
+  control `controls/golden/corpus/knowledge/idle-lock-never-asked-r12.md` (sha `21c1d06d…`) now
+  differs from live by 29 lines. Neither `count.py` uses a golden comparison, so both counters still
+  print `TARGET_MET` (exit 0) — but any control seat that diffs golden against live now sees a
+  deviation that is not an injected mutation, and the golden baseline is stale.
+- **The scratch tree was deleted mid-review.** An external sweep removed all of
+  `.ufo/waves/round-35/scratch/` at ~03:45; this seat's evidence file was rebuilt from transcript at
+  ~03:47 (header in that file, note at the top of this report). Commands quoted here are transcript
+  quotes, not a fresh re-run against the swept state; `w2/reports/` was untouched.
 - **My earlyoom probe initially looked like a false errata claim and is not one.** `grep -ci
   earlyoom` over `journalctl --user` returns 0; earlyoom is a *system* unit and the line the errata
   cites exists in the system journal (`2026-10-23T19:24:59 earlyoom[1381]: mem avail: 19479 of
@@ -404,7 +409,7 @@ open_cites=0 TARGET_MET` (exit 0); C2 `…/c2/count.py` → `uncovered=0 retired
 ledger_tip_ok=1 TARGET_MET` (exit 0).
 
 **Environment note.** The `scratch/` tree was deleted by an external sweep at ~03:45 mid-review; this
-seat's evidence file was rebuilt from transcript (§0 header). The live entry itself was written twice
-during the review by an unattributed writer (§7.2/F9), so every finding above is stamped with the
-bytes it was measured against: assigned 40-line state (`21c1d06d…`) for §1-§5, current 69-line state
-(`0bcef21f…`) for §7.
+seat's evidence file was rebuilt from transcript (note at the top of this report). The live entry
+itself was written twice during the review by an unattributed writer (§7.2/F9), so every finding
+above is stamped with the bytes it was measured against: assigned 40-line state (`21c1d06d…`) for
+§1-§5, current 69-line state (`0bcef21f…`) for §7.

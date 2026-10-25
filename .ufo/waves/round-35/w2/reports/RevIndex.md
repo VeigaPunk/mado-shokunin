@@ -5,24 +5,28 @@ Read-only attack; writes confined to `.ufo/waves/round-35/scratch/RevIndex/` and
 
 ## Verdict
 
-**The claim holds on the working tree, and the assigned command cannot test it.**
+**The claim holds — at the assigned revision as well as on the working tree.**
 
-- Assigned command (`--rev master`): `indexed=47/47`, the 47-note universe **that exists at
-  master** — the three round-35 notes are untracked and their three index rows are
-  uncommitted, so rev mode sees neither. It is a correct count of a different universe, not
-  evidence about the new notes.
-- Working tree / byte-identical scratch copy (`--root`): `indexed=50/50 missing=0 dangling=0
-  duplicates=0 coverage=10.0000/10`, rc=0. Scratch snapshot committed then read with `--rev`:
-  `50/50`, rc=0.
+- **At audit time** (master = `19e4ab31…`): `--rev master` reported `indexed=47/47` — a correct
+  count of a 47-note universe from which the three round-35 notes were excluded (untracked
+  then, their rows uncommitted). Rev mode could not test the claim on those bytes.
+- **The lane has since committed them**: master is now `b632f0b98077…` (HEAD == master), and
+  the three note blobs and `corpus/README.md` at master are byte-identical to the working tree.
+  The same assigned command on the current master reports `indexed=50/50 missing=0 dangling=0
+  duplicates=0 coverage=10.0000/10`, rc=0.
+- Working tree / byte-identical scratch copy (`--root`): `indexed=50/50 … coverage=10.0000/10`,
+  rc=0. Scratch snapshot committed then read with `--rev`: `50/50`, rc=0.
 - Each of the three new notes has **exactly one** column-0 index row, and no row names a note
   outside the 50-note set (direct regex census, not just the gate's own verdict).
 - Negative controls fire on all three failure modes for these exact entries (missing=1,
   duplicates=1, dangling=1; all rc=1). The gate is not vacuous here.
 
-**Coverage: before (master rev) 47/47 = 10.0000/10; after (working tree + scratch copy)
-50/50 = 10.0000/10.**
+**Coverage: before (master `19e4ab31`) 47/47 = 10.0000/10; after (master `b632f0b9` and the
+working tree) 50/50 = 10.0000/10.**
 
 ## 1. Assigned command — exact stdout and rc
+
+**At audit time** (master `19e4ab31…`, the revision named in the assignment):
 
 ```
 $ cd /home/vgpnk/Projects/shokunin/mado-shokunin && \
@@ -37,8 +41,22 @@ Universe check at that rev: `git ls-tree master:corpus/knowledge` = 47 blobs;
 `git ls-files` on the three round-35 notes = 0 (all `??`); `git diff --numstat -- corpus/README.md`
 = 15 added lines (3 index rows + a 12-line prose section appended by a sibling late in the wave).
 
-So the three entries are **outside the measured universe** of `--rev master` by construction.
-The assay required the working tree, so the tree was copied to scratch and measured there.
+So on those bytes the three entries were **outside the measured universe** of `--rev master` by
+construction. The assay required the working tree, so the tree was copied to scratch and
+measured there. **The lane then committed** (`b632f0b`, "round-35: the last two seat reports … and
+the scratch-evidence checkpoint"): master == HEAD == `b632f0b98077…`, and the three note blobs
+plus `corpus/README.md` at master are byte-identical to the working tree (sha256 compare, SAME
+for all four). Re-running the *same* assigned command now:
+
+```
+$ python3 -I quality/check-index.py --repo . --rev $(git rev-parse master)
+MADO_INDEX: rev=b632f0b980772aad4be9ab20f8b26e9329d62239 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+```
+
+Current master universe: 50 knowledge blobs (all three round-35 notes tracked, five names
+containing `idle-lock`), 50 index rows in `master:corpus/README.md`. The rev-mode blindness was a
+property of the pre-commit state, not of the tool, and the commit closed it.
 
 ## 2. Working tree and scratch measurements
 

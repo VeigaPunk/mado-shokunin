@@ -35,9 +35,14 @@ They are reported below rather than folded into a disagreement claim:
   `hypridle` grep now yields 5 in boot 0 against 1 real start; rechecks must match `Started
   hypridle\.`.
 
+- **P8** the registry row was rewritten mid-round (`SOURCES.md` mtime `03:40:12`; the `teaches` cell
+  now says "one start line in the current boot (two across two boots)") while C1 stayed `TARGET_MET`.
+  C1 never reads `teaches`, so closure is formal, not semantic; the rewrite itself is correct and was
+  not mine (read-only seat).
+
 Findings P1/P2 were sharpened to the peer's corrections after a cross-check with `RevEntryR14`
-(both verified here); the verdict did not change. P3/P4 now quote user-journal windows, which is the
-scope S205 read.
+(both verified here); P3/P4 quote user-journal windows, the scope S205 read. The verdict on the
+frozen claim did not change under any finding.
 
 ## (a) Live host re-open — 2026-10-25, ~03:23–03:31 -03
 
@@ -439,5 +444,12 @@ tell them apart.
 
 ## Evidence artifacts
 
-- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 190-line transcript of every command
-  above (including the peer cross-check and post-E2 blocks) with its exit code.
+- `.ufo/waves/round-35/scratch/RevQuoteS205/evidence.txt` — 203-line regenerated transcript (every
+  command above, both journal scopes, no-crash and audit-hazard blocks, both counters) with exit
+  codes. **The `scratch/` tree was swept externally twice (~03:45, ~03:47), deleting this file each
+  time**; it was rebuilt from live re-runs both times. Because the sweep can recur, the report itself
+  carries every decisive value and exit code inline, so no finding depends on the scratch file
+  surviving.
+
+Every command quoted in this report was run on this host during the review; no value is copied from
+the receipt or from another seat's report without a re-run recorded here.

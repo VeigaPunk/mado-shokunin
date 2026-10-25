@@ -1,0 +1,23 @@
+Re-take after the 2026-10-25 mutation (entry now 102 lines / 5806 B / sha256 82c08a46...fadfe, mtime 03:35:30).
+
+[28] stat -c '%s %y' entry -> 5806 2026-10-25 03:35:30.276175284 -0300            exit=0
+[29] sha256sum entry -> 82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe  exit=0
+[30] gate-quote re-audit on new bytes: 5 lines, S206=1 S207=1 S208=1 S209=1 S210=1;
+     words 13/15/14/13/15 (bound 1-25 True); substring True, occurrence=1 each          exit=0
+[31] c1 counter on current tree -> PRED-C1-r35-v1 closed_entries=3 closed_rows=8
+     open_cites=0 verdict=TARGET_MET                                                    EXIT=0
+[32] stat config.jsonc.bak.1791314470 -> Birth 2026-10-06 16:21:10.082789105 -0300
+     Change 2026-10-06 16:21:10.083846414 -0300, Modify 2026-10-03 17:44:32.097653608 -0300
+     -> E1 exact (epoch 1791314470 == 2026-10-06 16:21:10)                             exit=0
+[33] journalctl --user --since '2026-10-23 18:00' --until '2026-10-23 23:59' | grep -i hypridle
+     -> 4 lines: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s ... at 19:24:38-03:00
+        (no Stopping/Stopped); uwsm_app-daemon received: app -- hypridle at 22:14:11;
+        Started hypridle. at 22:14:11          -> E2 exact                               exit=0
+[34] grep -n 'never taken\|never toggled\|taken it\|title' entry -> only E2's own lines 78-79
+     -> E2 referents absent from body (§4 closes with the UNK; title claims no such thing)  exit=0
+[35] errata S-ids: S204 x1 (only as RevQuoteS204.md), S207 x1 (E4), S209 x3 (E1)
+     -> E3 and E5 anchor to no source id                                                exit=0
+[36] grep -n 'toggle-idle|toggles/hypr' SOURCES.md -> no idle-toggle row (hits are S088/S089/
+     S093/S095 walker/theme and S207 indicators/idle.sh)                                exit=0
+[37] idle.sh body re-read: 7 lines, pgrep -x hypridle + two echoes, NO toggle path; the only
+     toggle is config.jsonc:208 "on-click": "omarchy-toggle-idle" (S206)  -> N5 (RevQuoteS207)  exit=0

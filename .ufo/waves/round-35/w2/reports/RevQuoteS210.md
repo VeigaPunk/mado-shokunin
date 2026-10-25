@@ -289,8 +289,10 @@ figures.
   history, editor session, operator memory) — out of scope for this row, which is
   scoped to the toggle store.
 - Read-only throughout: no lane corpus file, counter, control, `SOURCES.md`, jj
-  state, or Git index was modified; only `scratch/RevQuoteS210/` and this report
-  were written. No tool installs were needed (python3, coreutils, grep, find only).
+  state, or Git index was modified; only `.ufo/waves/round-35/scratch/RevQuoteS210/`
+  and this report were written (the scratch tree was later relocated wholesale to
+  `scratch-evidence/` by the external sweep, not by me). No tool installs were
+  needed (python3, coreutils, grep, find only).
 
 ## Bottom line
 
