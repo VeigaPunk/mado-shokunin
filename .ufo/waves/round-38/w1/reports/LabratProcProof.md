@@ -271,7 +271,42 @@ python3 -I /tmp/mado38-LabratProcProof/summary.py
 
 Artefacts: `/tmp/mado38-LabratProcProof/{probe.py,forge.py,strace_probe.py,forge_kit.py,summary.py,strace.out}`.
 
-## 10. Unresolved / not covered
+## 10. Cross-reference — overlap with the sibling `CritV3Residual` seat
+
+`CritV3Residual.md` (landed in `master` as `166c795`, 11:32, after my runs) reaches the **same core
+conclusion**: *"Nothing binds any of it to the live host: the forger invents the inodes in the
+snapshot they themselves wrote, so consistency is free"*, and quotes the same deciding lines
+(`:241-243` proc check, `:248` conjunction). **Not a duplicate.** The deltas from my seat, which
+that report does not contain:
+
+1. **The honest two artifacts need not be forged at all.** CritV3Residual's cheapest C2 shapes
+   forge the tool + receipt + snapshot + proc together (1,505–14,190 B). My rows 1/3 and the
+   `forge_kit.py` output keep the **committed `eventq-live.txt` receipt and the committed
+   `eventq-live-ss.txt` snapshot byte-identical** and rewrite **only** the proc artifact —
+   **112 B / 5 lines**, vs their 220 B floor (and their 220 B still needed a forged snapshot).
+2. **The `holders:` claim is not merely unchecked — it can be affirmatively false.** Row 7: an
+   artifact asserting `holders: bash/4242/fd7` for the three real socket2 inodes passes
+   (`proc=3/3`). CritV3Residual proposes "proc-holder consistency" as a *narrowing clause*; I
+   measure that the clause is **absent**, so the current counter accepts a false holder claim.
+3. **The docstring's three promised properties are all unenforced** (F4): `as /proc rows` (row 6,
+   prose-only passes), `held only by the compositor` (row 7), `ends OVERALL: AGREE` (rows 4-5 —
+   `re.search` is neither end-anchored nor `\b`-delimited, so a trailing `OVERALL: DISAGREE` and a
+   `NOT_OVERALL: AGREED_THIS_IS_A_LIE` both pass).
+4. **The manifest's reject control `c2-proc-mismatch` does not discriminate forgery** (§4, row 10):
+   it rejects a snapshot↔proc *mismatch*; supply the snapshot's real digest + real inode numbers
+   and the same artifact class — including a fabricated inode still labelled "held by Hyprland" —
+   is accepted. CritV3Residual classifies the C2 residual as "accepted tradeoff (declared, not a
+   defect)"; my measurement shows the **declared residual is wider than the docstring's own
+   declaration** (docstring lines 40-41 say "forge three mutually consistent artifacts"; the
+   measured crib is "forge one artifact against a public snapshot").
+5. **Line-level ablation**: 15 of the 17 committed proc-artifact lines are deletable with the
+   verdict unchanged — including all three `holders:` lines and all three `/proc/net/unix` rows.
+
+Together: F1/F3 (no live re-derivation; 112 B single-artifact crib) and F4/F5 (unenforced docstring
+properties; the reject control tests consistency, not forgery) sharpen the C2 residual from
+"declared, accepted tradeoff" to "the declared residual is materially understated".
+
+## 11. Unresolved / not covered
 
 - I did **not** test whether C1's `c1-r38-event-ground.py` has an analogous committed-text hole;
   it has no `/proc` clause (`grep 'proc\|OVERALL\|ss_sha256'` → only `import re/subprocess` hits),

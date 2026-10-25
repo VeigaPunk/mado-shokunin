@@ -2371,3 +2371,13 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   220 B). Classified as accepted tradeoffs matching the registration's declared
   residual; cheapest narrowing clauses proposed for r39 (located-quote depth;
   proc-holder/ss-users consistency + full-output replay equality).
+
+- **Round-38 C2 residual confirmation (`LabratProcProof`)** — the live clause
+  never re-derives /proc: `proc` is read from git (:194), "named" is an inode
+  substring (:241), and only digest + inodes + AGREE are checked (:242-244).
+  A 112-byte forged proc (honest receipt+snapshot kept) scores `TARGET_MET`; 15
+  of 17 committed proc lines are deletable with the verdict unchanged; the
+  docstring's three promised properties are unenforced. The committed artifact is
+  truthful today — the defect is instrument reachability. Routed with
+  `CritV3Residual` to r39 (proc-holder/ss-users consistency + full-output replay
+  equality).
