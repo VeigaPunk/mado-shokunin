@@ -2316,3 +2316,13 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   C2's counter itself was not touched post-freeze; the manifest's `c2-docconn`
   control was repaired at the same commit (manifest is the shared instrument, so the
   frozen-manifest verdict is likewise 18/19, not 19/19).
+
+- **Errata refinement (round 38, wave-1 `RevM37Routing`)** — re-running the frozen pair
+  at `3f14bd2`/`ff81aaf` shows frozen C1 × frozen manifest = 18/19 (sole failure
+  `c1-duprow`), but **frozen C1 × fixed manifest = 19/19**: the `859d0cf` counter
+  patch was not load-bearing (clause j already enforced uniqueness at freeze). The
+  claim's failure at the frozen pair is the manifest control `c1-duprow`'s
+  out-of-table append alone; the re-registration ruling scope narrows to that
+  control fix. Also: the v3 E2 lineage floor (2/3) rejects the round-37 honest
+  proxies h2/h3 (`lineage=1/2`) — the accept path is calibrated to the landed
+  vocabulary (landed entries pass E1 6/4, E2 2/2).
