@@ -2104,3 +2104,7 @@ not rewritten.
 |---|---|---|---|
 | C1 coverage — Waybar event-socket client (new surface, not a re-score of round 32) | lane tree before append: `closed_entries=0 closed_rows=0 open_cites=4 verdict=TARGET_MISSED`; after: same, because the entries were not appended | `python3 -I .ufo/waves/round-33/c1/count.py --root . --frozen .ufo/waves/round-33/c1/frozen.json` | honest stop / unprovable. A symlink crib under `.ufo/waves/round-33/scratch/CriticC1Junk/` prints `TARGET_MET`. The frozen kill rule is not a certification. The predicate was not changed after seats scored it. |
 | C2 calibration (tied for lowest; every scored axis is 1.0 and a capability entered in round 32, so the stagnation nudge does not waive) — the published r32-C1 verdict must match a re-run | before: `claim_mismatch=1 reason=absent verdict=TARGET_MISSED` exit 1; after: `claim_mismatch=0 reason=match published=7 measured=7 verdict_word=honest-stop verdict=TARGET_MET` exit 0 | `python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md` | target met on the correction line; the round-32 row above is not rewritten |
+
+r34-s189-line: line=169
+
+Axis table re-derived at the round-34 data tree (criterion 22): navigation 47/47 = 1.0; calibration resolved-active 41/41 = 1.0; operability selftest 12/12 = 1.0. Not an axis-score claim. The publication is updated so the existing gate does not go red when the new note is indexed.
