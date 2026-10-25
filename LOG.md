@@ -2456,3 +2456,10 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Wave `w1`: 64 seats; 60 reports; no report from ExecAssimAppendBlock, ScrReportFrontier,
   MutC3Row (no output retained: the orchestrator's results file notes a kernel restart
   mid-wave), ScrReportMain left its draft without a report.
+
+## Round 40
+
+- Freeze `5e7e885` (v1 predicates), wave `w1` (64 seats) falsified them; v2 predicates, controls and receipts frozen at `8122293` before data.
+- Data: `tools/mado-options.py --live`, entries `hyprctl-getoption-native-forms-r40.md` and `host-bar-producer-census-r40.md`, rows S278-S282, lesson `corpus/lessons/round-40.md`, QUALITY 65-68.
+- Host finding: gradient angle inheritance (`ffe68e0d 45deg`); a fifth native form `vec2`; hostile config key `x/--batch` reaches the compositor's batch path unless allowlisted.
+- Errata: round-39 lesson's S224 "fabrication class" label is `unverifiable` (rotated volatile value).

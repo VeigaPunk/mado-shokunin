@@ -1,0 +1,82 @@
+# host-k2-reads.txt — quotable host evidence for the K2 (host bar producers) entry
+# Seat ExecK2HostReads, mado round-40 w1, captured 2026-10-25. Read-only.
+# RULE APPLIED: no volatile timestamp appears in any QUOTABLE block below. The
+# ai-usage cache `updated_at` value rotated between the candidate's read and now,
+# so only the freshness predicate is recorded; the raw value is deliberately absent.
+# Secret-shaped material: none captured. status.json was opened for key names only.
+
+[PIN-1] config.jsonc identity (pin, not a quote)
+path=/home/vgpnk/.config/waybar/config.jsonc
+size=6354 sha256=a408a33df48a39dc16214124dd0b86d6ab03e13802bac173146ae8a858aae829
+lines=260 top_level_keys=28 json_modules=7
+
+[QUOTE-A] custom/gkeep module block, config.jsonc lines 236-245 (verbatim)
+  "custom/gkeep": {
+    "exec": "~/.local/bin/gkeep waybar",
+    "return-type": "json",
+    "interval": 30,
+    "signal": 12,
+    "tooltip": true,
+    "format": "{}",
+    "on-click": "~/.local/bin/gkeep capture",
+    "on-click-right": "~/.local/bin/gkeep list"
+  },
+
+[QUOTE-B] custom/ai-usage module block, config.jsonc lines 246-259 (verbatim)
+  "custom/ai-usage": {
+    "exec": "~/.local/bin/ai-usage waybar",
+    "return-type": "json",
+    "interval": 60,
+    "signal": 11,
+    "tooltip": true,
+    "escape": false,
+    "exec-on-event": false,
+    "format": "{}",
+    "on-scroll-up": "~/.local/bin/ai-usage cycle next",
+    "on-scroll-down": "~/.local/bin/ai-usage cycle prev",
+    "on-click": "~/.local/bin/ai-usage cycle next",
+    "on-click-right": "~/.local/bin/ai-usage identity next"
+  }
+
+[PIN-2] producer resolution (pin, not a quote)
+~/.local/bin/gkeep      -> symlink -> /home/vgpnk/Projects/gkeep/bin/gkeep
+   target size=252  sha256=c1b147a07f0c34af9fdafd184252c6cd97f4a26073d75aa88a72f97c748cfbf8
+~/.local/bin/ai-usage   -> symlink -> /home/vgpnk/Projects/omarchy-usage-tray/bin/ai-usage
+   target size=114246 sha256=0ccd33ab7e83edd0141bfec722488cc7518c70f64122b1198470d144c50a0254
+
+[QUOTE-C] gkeep shim, /home/vgpnk/Projects/gkeep/bin/gkeep line 9 (verbatim)
+from gkeep.cli import main
+
+[QUOTE-D] gkeep producer contract, gkeep/waybar.py line 1 (verbatim)
+"""One-line JSON for a waybar custom module. Local count only."""
+
+[QUOTE-E] ai-usage contract, omarchy-usage-tray/bin/ai-usage line 2 (verbatim)
+"""Cache AI CLI usage windows and render a Waybar chip. waybar reads cache only."""
+
+[QUOTE-F] ai-usage cache resolution, bin/ai-usage line 64 (verbatim)
+    return Path(os.environ.get("AI_USAGE_CACHE", Path.home() / ".cache/ai-usage/status.json"))
+
+[QUOTE-G] screen-recording indicator, host copy line 3 (verbatim)
+if pgrep -f "^gpu-screen-recorder" >/dev/null; then
+
+[QUOTE-H] notification-silencing indicator, host copy line 3 (verbatim)
+if makoctl mode | grep -q 'do-not-disturb'; then
+
+[QUOTE-I] idle indicator, host copy line 3 (verbatim)
+if pgrep -x hypridle >/dev/null; then
+
+[QUERY-1] pgrep -f '^gpu-screen-recorder'   -> no output, exit status 1
+[QUERY-2] makoctl mode                      -> default (exit status 0)
+[QUERY-3] pgrep -a -x hypridle              -> 1680 /usr/bin/hypridle
+[QUERY-4] pgrep -a -x waybar                -> 1683 /usr/bin/waybar
+[QUERY-5] command -v voxtype                -> exit status 1 (absent)
+
+[CACHE-META] ~/.cache/ai-usage/status.json (metadata only; no values)
+size=29865 mode=-rw------- sha256=e7f45d27d9ad61cc653dc0d7ae572149a092dc4cb44a6ec55bf889b57dd0438f
+top_level_keys=providers,selected,updated_at,version
+provider_keys=12 (anthropic,codex,commandcode,cursor,devin,google,grok,inception,kimi,minimax,opencode-go,zai)
+updated_at_within_24h=true   <- quotable property; the raw timestamp is NOT quotable
+
+[NOT-QUOTABLE] every mtime/ctime/date, the cache `updated_at` string, byte sizes that
+drift with upstream commits (e.g. the ai-usage program size), and any live percentage
+or usage figure read out of the cache.

@@ -1,0 +1,149 @@
+ENTRIES: 188  agree: 164  disagree: 24
+SCOPE gen        entries= 28 disagree= 0
+SCOPE ood        entries=152 disagree=18
+SCOPE structural entries=  8 disagree= 6
+
+DISAGREE h05 [hex/ood] error-vs-value
+  decl    : '0xffffffffffffffff'
+  body    : 'x = 0xffffffffffffffff\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: invalid hex 0xffffffffffffffff
+  model   : 18446744073709551615
+
+DISAGREE h06 [hex/ood] error-vs-value
+  decl    : '0x1ffffffffffffffff'
+  body    : 'x = 0x1ffffffffffffffff\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: invalid hex 0x1ffffffffffffffff
+  model   : 36893488147419103231
+
+DISAGREE h08 [hex/ood] error-vs-value
+  decl    : '0x8000000000000000'
+  body    : 'x = 0x8000000000000000\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: invalid hex 0x8000000000000000
+  model   : 9223372036854775808
+
+DISAGREE h17 [hex/ood] error-vs-value
+  decl    : '0x1_0'
+  body    : 'x = 0x1_0\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: invalid hex 0x1_0
+  model   : 16
+
+DISAGREE c20 [rgba_csv/ood] model-raised
+  decl    : 'rgba(1,2,3,inf)'
+  body    : 'x = rgba(1,2,3,inf)\n'
+  native  : 66051
+  model   : ERROR
+
+DISAGREE c21 [rgba_csv/ood] value-vs-error
+  decl    : 'rgba(1,2,3,nan)'
+  body    : 'x = rgba(1,2,3,nan)\n'
+  native  : 66051
+  model   : ERROR
+
+DISAGREE c24 [rgba_csv/ood] value-vs-value
+  decl    : 'rgba(1,2,3,0.49999999)'
+  body    : 'x = rgba(1,2,3,0.49999999)\n'
+  native  : 2147549699
+  model   : 2130772483
+
+DISAGREE a06 [rgba_alpha/ood] value-vs-value
+  decl    : 'rgba(1,2,3,0.3)'
+  body    : 'x = rgba(1,2,3,0.3)\n'
+  native  : 1291911683
+  model   : 1275134467
+
+DISAGREE a14 [rgba_alpha/ood] value-vs-value
+  decl    : 'rgba(1,2,3,0.7)'
+  body    : 'x = rgba(1,2,3,0.7)\n'
+  native  : 3003187715
+  model   : 2986410499
+
+DISAGREE a21 [rgba_alpha/ood] value-vs-value
+  decl    : 'rgba(1,2,3,1.5)'
+  body    : 'x = rgba(1,2,3,1.5)\n'
+  native  : 2130772483
+  model   : 2113995267
+
+DISAGREE a23 [rgba_alpha/ood] value-vs-value
+  decl    : 'rgba(1,2,3,3.5)'
+  body    : 'x = rgba(1,2,3,3.5)\n'
+  native  : 2097218051
+  model   : 2080440835
+
+DISAGREE a25 [rgba_alpha/ood] value-vs-value
+  decl    : 'rgba(1,2,3,5.5)'
+  body    : 'x = rgba(1,2,3,5.5)\n'
+  native  : 2063663619
+  model   : 2046886403
+
+DISAGREE d19 [dec/ood] error-vs-value
+  decl    : '9223372036854775808'
+  body    : 'x = 9223372036854775808\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: stoll threw: stoll
+  model   : 9223372036854775808
+
+DISAGREE d21 [dec/ood] error-vs-value
+  decl    : '-9223372036854775809'
+  body    : 'x = -9223372036854775809\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: stoll threw: stoll
+  model   : -9223372036854775809
+
+DISAGREE d22 [dec/ood] error-vs-value
+  decl    : '99999999999999999999'
+  body    : 'x = 99999999999999999999\n'
+  native  : ERROR Config error in file /tmp/hl-oracle-utYtgG/cfg.conf at line 1: stoll threw: stoll
+  model   : 99999999999999999999
+
+DISAGREE j09 [junk/ood] value-vs-error
+  decl    : 'rgba(1,2,3,0.5) # note'
+  body    : 'x = rgba(1,2,3,0.5) # note\n'
+  native  : 2147549699
+  model   : ERROR
+
+DISAGREE j10 [junk/ood] value-vs-error
+  decl    : '0x1 # note'
+  body    : 'x = 0x1 # note\n'
+  native  : 1
+  model   : ERROR
+
+DISAGREE j11 [junk/ood] value-vs-error
+  decl    : '0xff#note'
+  body    : 'x = 0xff#note\n'
+  native  : 255
+  model   : ERROR
+
+DISAGREE t01 [raw/structural] value-vs-error
+  decl    : '$v = 7\\nx = $v'
+  body    : '$v = 7\nx = $v'
+  native  : 7
+  model   : ERROR
+
+DISAGREE t03 [raw/structural] value-vs-error
+  decl    : 'x = {{ 2 + 2 }}'
+  body    : 'x = {{ 2 + 2 }}'
+  native  : 4
+  model   : ERROR
+
+DISAGREE t04 [raw/structural] value-vs-error
+  decl    : 'x = 0x1\\nx = 0x2'
+  body    : 'x = 0x1\nx = 0x2'
+  native  : 2
+  model   : ERROR
+
+DISAGREE t05 [raw/structural] value-vs-error
+  decl    : 'x = 5 # c\\nx = 6 # c'
+  body    : 'x = 5 # c\nx = 6 # c'
+  native  : 6
+  model   : ERROR
+
+DISAGREE t07 [raw/structural] value-vs-error
+  decl    : '$c = rgb(e68e0d)\\nx = $c'
+  body    : '$c = rgb(e68e0d)\nx = $c'
+  native  : 4293299725
+  model   : ERROR
+
+DISAGREE t08 [raw/structural] value-vs-error
+  decl    : '$c = rgb(e68e0d) # host theme line\\nx = $c # resolved'
+  body    : '$c = rgb(e68e0d) # host theme line\nx = $c # resolved'
+  native  : 4293299725
+  model   : ERROR
+

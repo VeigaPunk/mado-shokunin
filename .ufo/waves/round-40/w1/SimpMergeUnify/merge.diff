@@ -1,0 +1,138 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-40/c1/ctl-ref-tool.py.txt	2026-10-25 17:39:41.994868190 -0300
++++ unified.py	2026-10-25 17:57:11.716004788 -0300
+@@ -463,7 +463,9 @@
+     del st.categories[base:]
+ 
+ 
+-def values_equal(custom_type, declared, live):
++def values_equal(custom_type, declared, live, *_angle):
++    """The file-mode comparison.  The merge's shared call shape passes the
++    native angle last; the file mode carries the angle in the value."""
+     ds = declared.strip()
+     ls = str(live).strip()
+     if custom_type in ("int", "float"):
+@@ -485,6 +487,7 @@
+ 
+ 
+ def load_live(path):
++    """key -> (form, value, set) from a `hyprctl getoption` JSON dump."""
+     try:
+         with open(path, "r", encoding="utf-8") as handle:
+             data = json.load(handle)
+@@ -499,34 +502,8 @@
+         if "value" not in rec or "custom_type" not in rec or "set" not in rec:
+             raise LiveError("%s: entry for %r lacks value/custom_type/set"
+                             % (path, key))
+-        live[key] = rec
++        live[key] = (rec["custom_type"], rec["value"], bool(rec["set"]))
+     return live
+-
+-
+-def merge_rows(rows, options, live):
+-    seen = set()
+-    for row in rows:
+-        seen.add(row["key"])
+-        rec = live.get(row["key"])
+-        if rec is None:
+-            row["agreement"] = "config-only"
+-            continue
+-        equal = values_equal(rec.get("custom_type"), row["value"],
+-                             rec.get("value"))
+-        if not bool(rec.get("set")) or not equal:
+-            row["agreement"] = "mismatch"
+-        elif options[row["key"]]["_decls"] > 1:
+-            row["agreement"] = "agreement*"
+-        else:
+-            row["agreement"] = "agreement"
+-    for key, rec in live.items():
+-        if key not in seen:
+-            rows.append({
+-                "key": key, "value": str(rec.get("value")), "owner": None,
+-                "layer": None, "line": None, "set": bool(rec.get("set")),
+-                "agreement": "live-default",
+-            })
+-    rows.sort(key=lambda r: r["key"])
+ 
+ 
+ class CtlError(Exception):
+@@ -641,34 +618,49 @@
+     return forms[0], rec[forms[0]], bool(rec["set"])
+ 
+ 
+-def merge_live(rows, options, hyprctl, probes):
++def label(equal, isset, decls):
++    """The one labeller: the `agreement` label of a declared row."""
++    if not isset or not equal:
++        return "mismatch"
++    return "agreement*" if decls > 1 else "agreement"
++
++
++def merge_rows(rows, options, source, extra=(), record_live=False,
++               equal=native_equal):
++    """The one merge for both live sources.  `source(key)` returns
++    (form, value, set) or None for `no such option`; `extra` names the keys
++    with no declarer, appended as `live-default` rows.  `equal` compares a
++    declared value with the source's (form, value); `record_live` copies the
++    live value into a `live` field (the compositor mode)."""
+     seen = set()
+     for row in rows:
+-        seen.add(row["key"])
+-        rec = native_query(hyprctl, row["key"])
++        key = row["key"]
++        seen.add(key)
++        opt = options[key]
++        rec = source(key)
+         if rec is None:
+             row["agreement"] = "config-only"
+-            row["live"] = None
++            if record_live:
++                row["live"] = None
+             continue
+         form, value, isset = rec
+-        row["live"] = str(value)
+-        if not isset or not native_equal(form, row["value"], value,
+-                                         options[row["key"]].get("_angle", 0)):
+-            row["agreement"] = "mismatch"
+-        elif options[row["key"]]["_decls"] > 1:
+-            row["agreement"] = "agreement*"
+-        else:
+-            row["agreement"] = "agreement"
+-    for key in probes:
++        if record_live:
++            row["live"] = str(value)
++        row["agreement"] = label(
++            isset and equal(form, row["value"], value, opt.get("_angle", 0)),
++            isset, opt["_decls"])
++    for key in extra:
+         if key in seen:
+             continue
+         seen.add(key)
+-        rec = native_query(hyprctl, key)
++        rec = source(key)
+         if rec is None:
+             continue
+-        rows.append({"key": key, "value": str(rec[1]), "owner": None,
+-                     "layer": None, "line": None, "set": rec[2],
+-                     "agreement": "live-default", "live": str(rec[1])})
++        row = {"key": key, "value": str(rec[1]), "owner": None, "layer": None,
++               "line": None, "set": rec[2], "agreement": "live-default"}
++        if record_live:
++            row["live"] = str(rec[1])
++        rows.append(row)
+     rows.sort(key=lambda r: r["key"])
+ 
+ 
+@@ -717,9 +709,11 @@
+         rows = run_static(st)
+         if args.getoption:
+             live = load_live(args.getoption)
+-            merge_rows(rows, st.options, live)
++            merge_rows(rows, st.options, live.get, live, equal=values_equal)
+         if args.live:
+-            merge_live(rows, st.options, args.hyprctl, args.probe)
++            merge_rows(rows, st.options,
++                       lambda key: native_query(args.hyprctl, key),
++                       args.probe, record_live=True)
+     except CtlError as exc:
+         sys.stderr.write("mado-options.py: %s\n" % exc)
+         return 5

@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Own-work census driver over the throwaway reference tool (never delivered).
+
+Loads /tmp/mado-options-ref.py, records every declarer (owner, layer, line,
+value) per key, runs the same static parse over $HOME, then asks the
+compositor through the module's own native_query() - one
+`hyprctl getoption -j KEY` per declared key - and re-uses merge_live() for the
+labels. Read-only: writes nothing outside stdout.
+"""
+import collections
+import importlib.util
+import json
+import os
+import sys
+
+REF = "/tmp/mado-options-ref.py"
+
+
+def load(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+m = load(REF, "refopts")
+HOME = os.path.abspath(os.path.expanduser("~"))
+HIST = collections.defaultdict(list)
+_orig = m.State.declare
+
+
+def declare(self, key, value, path, lineno):
+    _orig(self, key, value, path, lineno)
+    owner = path[len(self.home) + 1:] if path.startswith(self.home + "/") \
+        else path
+    HIST[key].append({"owner": owner, "layer": m.layer_of(path, self.home),
+                      "line": lineno, "value": value})
+
+
+m.State.declare = declare
+
+st = m.State(HOME)
+m.parse_file(os.path.join(HOME, ".config", "hypr", "hyprland.conf"), st)
+rows = m.run_static(st)
+
+forms = collections.Counter()
+form_keys = collections.defaultdict(list)
+for row in rows:
+    rec = m.native_query("hyprctl", row["key"])
+    if rec is None:
+        form_keys["no such option"].append(row["key"])
+        continue
+    forms[rec[0]] += 1
+    form_keys[rec[0]].append(row["key"])
+
+m.merge_live(rows, st.options, "hyprctl", [])
+labels = collections.Counter(r["agreement"] for r in rows)
+label_keys = collections.defaultdict(list)
+for r in rows:
+    label_keys[r["agreement"]].append(r["key"])
+
+out = {
+    "home": HOME,
+    "declared": len(rows),
+    "forms": dict(forms),
+    "form_keys": {k: sorted(v) for k, v in form_keys.items()},
+    "labels": dict(labels),
+    "label_keys": {k: sorted(v) for k, v in label_keys.items()},
+    "multi": {k: HIST[k] for k in sorted(HIST) if len(HIST[k]) > 1},
+}
+json.dump(out, sys.stdout, indent=1, sort_keys=True)
+sys.stdout.write("\n")

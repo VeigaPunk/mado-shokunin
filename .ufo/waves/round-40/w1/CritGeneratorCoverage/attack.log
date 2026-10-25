@@ -1,0 +1,57 @@
+REF fixtures=13/13
+MUT X01-vec2-reply-swallowed     fixtures=13/13 ref=None(r5) mut=config-only(r0) class_wrong=1 ok=1
+    class: fifth reply form `vec2` (real: hyprctl getoption -j decoration:shadow:offset)
+    evidence: hyprctl getoption -j decoration:shadow:offset -> {"option": "decoration:shadow:offset", "vec2": [0,0], "set": false}
+MUT X02-float-two-decimals       fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: float declared with other than 2 decimals (host: 0.4)
+    evidence: .config/hypr/input.conf:33  touchpad { scroll_factor = 0.4 }
+MUT X03-str-empty                fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: empty str value
+    evidence: .config/hypr/input.conf:5  kb_model = '' ; live reply is "str": ""
+MUT X04-str-first-token          fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: str value containing spaces
+    evidence: .config/hypr/hyprlock.conf:29  font_family = JetBrainsMono Nerd Font
+MUT X05-weight-no-lower          fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: uppercase font-weight name
+    evidence: ComplexDataTypes.hpp:163-169  parseWeight lowercases before the lookup
+MUT X06-weight-numeric           fixtures=13/13 ref=mismatch(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: numeric font-weight
+    evidence: ComplexDataTypes.hpp:171  parseWeight falls back to std::stoi
+MUT X07-gradient-three-stops     fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: gradient with 4+ colour stops
+    evidence: ConfigManager.cpp:126  gradient handler: max colors is 10
+MUT X08-gap-nonneg-only          fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: gap with negative values
+    evidence: ComplexDataTypes.hpp:95  parseGapData toInt = std::stoi (negatives kept)
+MUT X09-gap-max-four             fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: gap with 5+ values (hyprland uses the first four)
+    evidence: ComplexDataTypes.hpp:114-118  default: uses varlist[0..3]
+MUT X10-hex-eight-digits-only    fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: short `0x` hex (6 digits, or 0x1)
+    evidence: ParserUtils.cpp parseHex -> strToNumber<uint64_t>: any hex length; gtest parseColor("1") == 0x1
+MUT X11-hex-lowercase-only       fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: uppercase hex digits
+    evidence: ParserUtils.cpp parseHex/strToNumber: case-insensitive; gtest parseColor("#DEFFaDAA") == 0xAADEFFAD
+MUT X12-negative-angle           fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: negative gradient angle
+    evidence: ConfigManager.cpp:120  gradient angle = std::stoi(token before deg)
+MUT X13-key-depth-collapse       fixtures=13/13 ref=agreement(r0) mut=ABSENT(r0) class_wrong=1 ok=1
+    class: keys with two colons (29 of the host's 70)
+    evidence: native-capture.jsonl: decoration:blur:brightness, group:groupbar:*
+MUT X14-var-not-expanded         fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: $variable in a declared value
+    evidence: themes/kanagawa/hyprland.conf:1,4  $activeBorderColor = rgb(dcd7ba) / col.active_border = $activeBorderColor
+MUT X15-source-ignored           fixtures=13/13 ref=agreement(r0) mut=None(r0) class_wrong=1 ok=1
+    class: `source =` layering (every one of the host's 70 keys but the main file's arrive through it)
+    evidence: default/hypr/hyprland.conf sources looknfeel.conf/input.conf/... ; the whole 70-key census depends on it
+MUT X16-expression-not-evaluated fixtures=13/13 ref=agreement(r0) mut=mismatch(r0) class_wrong=1 ok=1
+    class: `{{ expr }}` arithmetic in a value
+    evidence: hyprlang v0.6.8 config.cpp:619 parseExpression ({{ a + b }})
+CGC: mutants=16 blind_and_wrong=16/16
+MODEL P1-alpha-floor-vs-round  ref_label=mismatch rc=0 truth=agreement defect=1
+    why: gradient token alpha is std::floor(a*255.F) (ParserUtils.cpp:88); the model rounds -> 0x80, hyprland's own gtest asserts parseColor("rgba(20, 21, 22, 0.5)") == 0x7F141516
+MODEL P2-numeric-weight        ref_label=mismatch rc=0 truth=agreement defect=1
+    why: ComplexDataTypes.hpp:171 parseWeight falls back to std::stoi; model returns -1 for any non-name
+MODEL P3-vec2-reply            ref_label=None rc=5 truth=agreement defect=1
+    why: real getoption reply form; the tool exits 5 (claims a compositor failure) on a healthy compositor
+    stderr: mado-options.py: decoration:shadow:offset: unknown reply form from /tmp/mado-cgc-mlqqapt9/probe-P3-vec2-reply/stub/hyprc

@@ -1,0 +1,84 @@
+# mado round-40 w1 - own-work census receipt (C2 clause h candidate)
+# seat: ExecLiveCensus   date: 2026-10-25
+# command: python3 -I mado-options-ref.py --home $HOME --live   (exit 0)
+# tool: throwaway reference .ufo/waves/round-40/c1/ctl-ref-tool.py.txt
+tool-reference sha256 f96d9e0a0d2fe1bccb87940244db079de88c6794f03d66a36304d574694a08aa
+tool sha256 <TOOLSHA>
+# config root: $HOME/.config/hypr/hyprland.conf (read-only parse; no write)
+
+## host
+host hyprland 0.56.2 commit efb50993780079460b0cbed1363e2166a2de1d9f tag v0.56.2
+host hyprlang 0.6.8 (pkg-config --modversion hyprlang)
+
+## census over the 70 declared keys
+forms int=44 float=5 str=8 custom=13
+labels agreement=62 agreement*=8 mismatch=0 config-only=0 live-default=0
+
+## native reply form per declared key (one `hyprctl getoption -j KEY` each)
+int=44 keys: animations:enabled binds:hide_special_on_workspace_change cursor:hide_on_key_press cursor:warp_on_change_workspace decoration:blur:enabled decoration:blur:passes decoration:blur:size decoration:blur:special decoration:rounding decoration:shadow:enabled decoration:shadow:range decoration:shadow:render_power dwindle:force_split dwindle:preserve_split ecosystem:no_update_news general:allow_tearing general:border_size general:resize_on_border group:groupbar:font_size group:groupbar:gaps_in group:groupbar:gaps_out group:groupbar:gradient_round_only_edges group:groupbar:gradient_rounding group:groupbar:gradients group:groupbar:height group:groupbar:indicator_gap group:groupbar:indicator_height group:groupbar:text_color group:groupbar:text_color_inactive input:follow_mouse input:numlock_by_default input:repeat_delay input:repeat_rate input:touchpad:clickfinger_behavior input:touchpad:natural_scroll misc:anr_missed_pings misc:disable_hyprland_logo misc:disable_scale_notification misc:disable_splash_rendering misc:focus_on_activate misc:key_press_enables_dpms misc:mouse_move_enables_dpms misc:on_focus_under_fullscreen xwayland:force_zero_scaling
+float=5 keys: decoration:blur:brightness decoration:blur:contrast input:sensitivity input:touchpad:scroll_factor scrolling:column_width
+str=8 keys: general:layout group:groupbar:font_family input:kb_layout input:kb_model input:kb_options input:kb_rules input:kb_variant master:new_status
+custom=13 keys: decoration:shadow:color general:col.active_border general:col.inactive_border general:gaps_in general:gaps_out group:col.border_active group:col.border_inactive group:col.border_locked_active group:col.border_locked_inactive group:groupbar:col.active group:groupbar:col.inactive group:groupbar:font_weight_active group:groupbar:font_weight_inactive
+
+## label per declared key (agreement* = native value matches and the key has >1 declarer)
+agreement=62 keys: animations:enabled binds:hide_special_on_workspace_change cursor:hide_on_key_press cursor:warp_on_change_workspace decoration:blur:brightness decoration:blur:contrast decoration:blur:enabled decoration:blur:passes decoration:blur:size decoration:blur:special decoration:shadow:color decoration:shadow:enabled decoration:shadow:range decoration:shadow:render_power dwindle:force_split dwindle:preserve_split ecosystem:no_update_news general:allow_tearing general:col.inactive_border general:layout general:resize_on_border group:col.border_inactive group:col.border_locked_active group:col.border_locked_inactive group:groupbar:col.active group:groupbar:col.inactive group:groupbar:font_family group:groupbar:font_size group:groupbar:font_weight_active group:groupbar:font_weight_inactive group:groupbar:gaps_in group:groupbar:gaps_out group:groupbar:gradient_round_only_edges group:groupbar:gradient_rounding group:groupbar:gradients group:groupbar:height group:groupbar:indicator_gap group:groupbar:indicator_height group:groupbar:text_color group:groupbar:text_color_inactive input:follow_mouse input:kb_model input:kb_rules input:kb_variant input:numlock_by_default input:repeat_delay input:repeat_rate input:sensitivity input:touchpad:clickfinger_behavior input:touchpad:natural_scroll input:touchpad:scroll_factor master:new_status misc:anr_missed_pings misc:disable_hyprland_logo misc:disable_scale_notification misc:disable_splash_rendering misc:focus_on_activate misc:key_press_enables_dpms misc:mouse_move_enables_dpms misc:on_focus_under_fullscreen scrolling:column_width xwayland:force_zero_scaling
+agreement*=8 keys: decoration:rounding general:border_size general:col.active_border general:gaps_in general:gaps_out group:col.border_active input:kb_layout input:kb_options
+mismatch=0 keys: (none)
+config-only=0 keys: (none)
+live-default=0 keys: (none)
+
+## variant: reference patched with angle inheritance OFF (merge_live passes inherited=0)
+variant-noinherit labels agreement=62 agreement*=6 mismatch=2 config-only=0 live-default=0
+variant-noinherit flipped: general:col.active_border group:col.border_active
+variant-noinherit general:col.active_border: declared='rgb(e68e0d)' live='ffe68e0d 45deg' base=agreement* variant=mismatch
+variant-noinherit group:col.border_active: declared='rgb(e68e0d)' live='ffe68e0d 45deg' base=agreement* variant=mismatch
+
+## keys with more than one declarer (8)
+decoration:rounding declarers=2 live='0'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:29 value=0
+  declarer 2: .local/state/omarchy/toggles/hypr/window-no-gaps.conf:9 value=0
+general:border_size declarers=2 live='0'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:12 value=2
+  declarer 2: .local/state/omarchy/toggles/hypr/window-no-gaps.conf:5 value=0
+general:col.active_border declarers=2 live='ffe68e0d 45deg'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:15 value=rgba(33ccffee) rgba(00ff99ee) 45deg
+  declarer 2: .config/omarchy/current/theme/hyprland.conf:4 value=rgb(e68e0d)
+general:gaps_in declarers=2 live='0 0 0 0'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:9 value=5
+  declarer 2: .local/state/omarchy/toggles/hypr/window-no-gaps.conf:4 value=0
+general:gaps_out declarers=2 live='0 0 0 0'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:10 value=10
+  declarer 2: .local/state/omarchy/toggles/hypr/window-no-gaps.conf:3 value=0
+group:col.border_active declarers=2 live='ffe68e0d 45deg'
+  declarer 1: .local/share/omarchy/default/hypr/looknfeel.conf:51 value=rgba(33ccffee) rgba(00ff99ee) 45deg
+  declarer 2: .config/omarchy/current/theme/hyprland.conf:8 value=rgb(e68e0d)
+input:kb_layout declarers=2 live='br'
+  declarer 1: .local/share/omarchy/default/hypr/input.conf:3 value=us
+  declarer 2: .config/hypr/input.conf:10 value=br
+input:kb_options declarers=2 live='compose:caps'
+  declarer 1: .local/share/omarchy/default/hypr/input.conf:6 value=compose:caps
+  declarer 2: .config/hypr/input.conf:11 value=compose:caps
+
+## direct read-only corroboration (hyprctl getoption -j, the tool's own verb)
+general:col.active_border custom="ffe68e0d 45deg" set=true
+group:col.border_active custom="ffe68e0d 45deg" set=true
+general:gaps_in custom="0 0 0 0" set=true
+group:groupbar:font_weight_active custom="1000" set=true
+
+## provenance
+driver census-driver.py.txt sha256 a6bbbf3ef1366a8fda5453ed75f3f044eb2df9f1c2bb055a0c7316073218dea2
+raw-live live-out.json sha256 cde4b2dfb586e5d9765af1df6f73188da3537b53f13a9525d21b693684905462
+variant-noinherit ref-noinherit.py.txt sha256 fe149ffbf6d2fffca2de3583acdb88c908afc3e00968884054cc2b4657999e6f
+
+## notes
+- owner paths are relative to $HOME, exactly the reference tool's `owner` field.
+- live values for the two gradient keys read the theme's single colour plus the
+  45deg angle declared earlier by the defaults tree (angle inheritance).
+- forms were counted by importing the reference module's own native_query()
+  (argv `hyprctl getoption -j KEY`, one call per declared key): the `--live`
+  row JSON carries no form field. The labels come from the `--live` run
+  itself (raw-live above).
+- the only open(...,'w') in the reference sits in selftest._write() and
+  writes under a mktemp home; the host run wrote nothing.
+- `tool sha256 <TOOLSHA>` is a placeholder: the delivered tools/mado-options.py
+  sha256 at REV replaces it; this receipt is produced from the throwaway reference.

@@ -1,0 +1,1 @@
+| S906 | scratch-mirror gate fixture — one column short, to prove E01 reaches the exit code (not a source) | own-work | A | fixture: malformed row | anchor @ scratch | a short row is E01 malformed row; the gate must exit non-zero | queued | 2026-10-25 | 180d |

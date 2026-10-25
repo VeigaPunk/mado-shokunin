@@ -1,0 +1,158 @@
+# ExecK2HostReads — host capture (full), 2026-10-25, read-only
+# Seat: mado round-40 w1 ExecK2HostReads. Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+# Every line below is an observed command + its output, or a verbatim byte range of a file.
+# No token-shaped value was printed. The ai-usage cache was opened for KEY NAMES ONLY.
+# Compositor verbs used: `hyprctl version` only. No keyword/dispatch/reload/setprop/--batch.
+
+## 0. capture context
+$ hyprctl version | head -3
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Tag: v0.56.2, commits: 7661
+$ echo "$OMARCHY_PATH"
+/home/vgpnk/.local/share/omarchy
+$ pgrep -a -x waybar
+1683 /usr/bin/waybar
+$ pgrep -a -x hypridle
+1680 /usr/bin/hypridle
+
+## 1. ~/.config/waybar/config.jsonc — identity
+$ ls -l ~/.config/waybar/config.jsonc
+-rw-r--r-- 1 vgpnk vgpnk 6354 Oct 17 17:02 /home/vgpnk/.config/waybar/config.jsonc
+$ sha256sum ~/.config/waybar/config.jsonc
+a408a33df48a39dc16214124dd0b86d6ab03e13802bac173146ae8a858aae829  /home/vgpnk/.config/waybar/config.jsonc
+$ stat -c 'size=%s mtime=%y' ~/.config/waybar/config.jsonc
+size=6354 mtime=2026-10-17 17:02:56.289420985 -0300
+$ wc -l ~/.config/waybar/config.jsonc
+260
+parsed (comments stripped, json.loads): top-level keys = 28
+modules with "return-type": "json" = 7:
+  custom/weather, custom/screenrecording-indicator, custom/idle-indicator,
+  custom/notification-silencing-indicator, custom/voxtype, custom/gkeep, custom/ai-usage
+
+## 2. the two host-local producers — resolution
+$ ls -l ~/.local/bin/gkeep ~/.local/bin/ai-usage
+lrwxrwxrwx 1 vgpnk vgpnk 36 Oct 17 17:02 /home/vgpnk/.local/bin/gkeep -> /home/vgpnk/Projects/gkeep/bin/gkeep
+lrwxrwxrwx 1 vgpnk vgpnk 52 Oct  6 16:21 /home/vgpnk/.local/bin/ai-usage -> /home/vgpnk/Projects/omarchy-usage-tray/bin/ai-usage
+$ readlink -f ~/.local/bin/gkeep
+/home/vgpnk/Projects/gkeep/bin/gkeep
+$ readlink -f ~/.local/bin/ai-usage
+/home/vgpnk/Projects/omarchy-usage-tray/bin/ai-usage
+$ sha256sum <both link and target>   # sha256sum follows the symlink; link and target agree
+c1b147a07f0c34af9fdafd184252c6cd97f4a26073d75aa88a72f97c748cfbf8  /home/vgpnk/Projects/gkeep/bin/gkeep
+0ccd33ab7e83edd0141bfec722488cc7518c70f64122b1198470d144c50a0254  /home/vgpnk/Projects/omarchy-usage-tray/bin/ai-usage
+$ stat -c '%n size=%s mode=%A' <targets>
+/home/vgpnk/Projects/gkeep/bin/gkeep size=252 mode=-rwxr-xr-x
+/home/vgpnk/Projects/omarchy-usage-tray/bin/ai-usage size=114246 mode=-rwxr-xr-x
+(the ~/.local/bin entries themselves are symlinks: 36 B and 52 B, i.e. the length of the target path)
+
+### 2a. gkeep — first 12 lines, verbatim (no secret-shaped content)
+#!/usr/bin/env python3
+import os
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from gkeep.cli import main
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+### 2b. ai-usage — first 12 lines, verbatim (no secret-shaped content)
+#!/usr/bin/env python3
+"""Cache AI CLI usage windows and render a Waybar chip. waybar reads cache only."""
+
+from __future__ import annotations
+
+import argparse
+import base64
+import json
+import math
+import os
+import re
+import signal
+
+## 3. custom/gkeep and custom/ai-usage blocks of config.jsonc (lines 236-260, verbatim)
+  "custom/gkeep": {
+    "exec": "~/.local/bin/gkeep waybar",
+    "return-type": "json",
+    "interval": 30,
+    "signal": 12,
+    "tooltip": true,
+    "format": "{}",
+    "on-click": "~/.local/bin/gkeep capture",
+    "on-click-right": "~/.local/bin/gkeep list"
+  },
+  "custom/ai-usage": {
+    "exec": "~/.local/bin/ai-usage waybar",
+    "return-type": "json",
+    "interval": 60,
+    "signal": 11,
+    "tooltip": true,
+    "escape": false,
+    "exec-on-event": false,
+    "format": "{}",
+    "on-scroll-up": "~/.local/bin/ai-usage cycle next",
+    "on-scroll-down": "~/.local/bin/ai-usage cycle prev",
+    "on-click": "~/.local/bin/ai-usage cycle next",
+    "on-click-right": "~/.local/bin/ai-usage identity next"
+  }
+
+## 4. the two process/mode queries
+$ pgrep -f '^gpu-screen-recorder' ; echo pgrep_rc=$?
+pgrep_rc=1            # no matching process; no output
+$ makoctl mode ; echo makoctl_rc=$?
+default
+makoctl_rc=0
+$ command -v voxtype ; echo rc=$?
+rc=1                  # voxtype absent
+
+## 5. ~/.cache/ai-usage/status.json — metadata ONLY (key names; no values)
+$ ls -l ~/.cache/ai-usage/status.json
+-rw------- 1 vgpnk vgpnk 29865 Oct 25 17:47 /home/vgpnk/.cache/ai-usage/status.json
+$ stat -c 'size=%s mtime=%y' ...
+size=29865 mtime=2026-10-25 17:47:21.642603113 -0300
+$ sha256sum ...
+e7f45d27d9ad61cc653dc0d7ae572149a092dc4cb44a6ec55bf889b57dd0438f  /home/vgpnk/.cache/ai-usage/status.json
+top-level keys: providers, selected, updated_at, version
+nested key names (depth<=1): providers.{anthropic, codex, commandcode, cursor, devin,
+  google, grok, inception, kimi, minimax, opencode-go, zai}   (12 providers)
+updated_at: type str, ISO-8601 "Z"
+updated_at_within_24h: True     (age 0.04 h at capture)
+No provider value, credential, key or token field was read or printed.
+
+## 6. the indicator producers the candidate K2 quotes (host copies, not upstream raw)
+/home/vgpnk/.local/share/omarchy/default/waybar/indicators/screen-recording.sh
+  size=169 sha256=28491cd3fdaaea78143432d6e2d5b609f06f90e420874d8bdd83a25a199bc63c
+  line 3: if pgrep -f "^gpu-screen-recorder" >/dev/null; then
+/home/vgpnk/.local/share/omarchy/default/waybar/indicators/notification-silencing.sh
+  size=174 sha256=312900d1a9ca772e944e626d86cb54af6dec4dd5619510ecb262562da9d6de69
+  line 3: if makoctl mode | grep -q 'do-not-disturb'; then
+/home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+  size=159 sha256=6d8d2c11d3c3b15fa0aa31a830410c98d9e630a7683a9cedffb888d10f0f1750
+  line 3: if pgrep -x hypridle >/dev/null; then
+         (else branch prints {"text": "<icon>", "tooltip": "Idle lock disabled", "class": "active"})
+/home/vgpnk/.local/share/omarchy/default/waybar/weather.sh
+  size=221 sha256=cce74e55f746726f6d928f2a8cf48f2cf5e8036c2b03f14e35ac4153854734ec
+  line 3: icon=$(omarchy-weather-icon 2>/dev/null)   -> omarchy-weather-icon curls https://wttr.in?format=j1
+
+## 7. the remaining producer contracts (decidability, read-only source reads)
+custom/update -> $OMARCHY_PATH/bin/omarchy-update-available: `git -C "$OMARCHY_PATH" ls-remote --tags origin`
+  => network; not decidable offline (unchanged from the candidate's UNK).
+custom/voxtype -> $OMARCHY_PATH/bin/omarchy-voxtype-status: `if omarchy-cmd-present voxtype; ... else echo '{"alt": "", "tooltip": ""}'`
+  => decidable offline; voxtype is absent (rc=1), so the chip renders {"alt": "", "tooltip": ""}.
+custom/gkeep -> gkeep/waybar.py docstring "One-line JSON for a waybar custom module. Local count only."
+  payload() = {"text": f"{ICON} {count}", "tooltip": ..., "class": ...} from list_notes() over
+  $XDG_DATA_HOME/gkeep/notes.json  => decidable offline, no network.
+  notes.json: top-level keys [notes, version]; notes is a list of 10 dicts with keys [body, created, id].
+  => gkeep chip text today = "<icon> 10" (count only; note bodies were NOT read or printed).
+custom/ai-usage -> bin/ai-usage cmd_waybar() reads load_cache() only; load_cache() does
+  json.loads(cache_path().read_text())  => decidable offline, no network.
+  cache_path(): line 64 `return Path(os.environ.get("AI_USAGE_CACHE", Path.home() / ".cache/ai-usage/status.json"))`
+
+## 8. redaction / safety statement
+- Only the key names and the freshness predicate of status.json were extracted; no values.
+- No credential, oauth, token or session material was read, printed or copied.
+- Host config trees were read only; nothing was written outside the two seat/fetch files.
+- Tools installed: none. No package transaction was run.

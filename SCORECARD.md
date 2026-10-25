@@ -2470,3 +2470,22 @@ Axis table re-derived at `362847279eccb77b22789a37cbbe3b83b205d49c` plus the rou
 1. Take one live `hyprctl getoption` dump (read-only) and merge it into the table: the §4
    labels against the running compositor, and the falsifiable consequence's live half.
 2. Next shokuknow theme or considerthese proposal per the frontier.
+
+## Round 40 - live option-table merge and the getoption native-forms entry (2026-10-25, attempt 1)
+
+Registration `.ufo/waves/round-40/registration.md` (freeze `5e7e885`) re-registered as `registration-v2.md` (freeze `8122293`, before any data): the 64-seat wave `w1` falsified the v1 predicates (judge-leak cheat 13/13, forged log, echo selftest, seed replay, a fifth form `vec2`, a `[[BATCH]]` key injection). Lowest-axis rule: every published axis ties at its maximum (`receipts/axis-base.txt`). Round shape: one v2 wave of 64 seats, no residual call, total 64.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability) `--live` | v2 `fixtures=0/19` exit 1 at base -> see report for the data-tip receipt | `python3 -I quality/counters/c1-r40-live-v2.py --repo . --rev <rev>` | reported in the fleet report; v1 and v2 both scored |
+| C2 **coverage** (sourced) native-forms entry | `admitted=0/1` at base -> see report | `python3 -I quality/counters/c2-r40-forms-entry-v2.py --repo . --rev <rev>` | reported in the fleet report; residual: fabricated self-consistent set passes |
+
+### Capabilities (round 40)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| live option-table merge | query the running compositor with `hyprctl getoption -j` (one read verb, allowlisted keys, bounded reply) and label every declared key against its native reply with host conversions and angle inheritance | `tools/mado-options.py --live`; `.ufo/waves/round-40/fetch/census-receipt.txt` (62 agreement / 8 agreement* / 0 mismatch) | 40 |
+
+### Planned (round 41; intent only)
+
+1. Take the remaining package themes under PROVINCE (`ScoutMergeRest`); 2. an independent non-author re-run of both v2 counters with fresh nonces.
