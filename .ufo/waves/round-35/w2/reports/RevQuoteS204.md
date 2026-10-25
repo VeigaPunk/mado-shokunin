@@ -32,8 +32,8 @@ only as a receipt-reproducibility defect (P1).
 
 ## P0.1 — the instrument is vacuous, not merely unsound
 
-`bin/omarchy-toggle-idle` contains no journaling primitive at all: `grep -n 'logger\|systemd-cat\|journal\|echo'`
-over it → **no match, exit 1**. Its OFF path is `pkill -x hypridle` + `notify-send` (writes
+`bin/omarchy-toggle-idle` contains no journaling primitive at all: `grep -nE 'logger|systemd-cat|journal|echo|printf|tee'`
+over it → **no match, exit 1** (its `notify-send` calls target the notification daemon, not the journal). Its OFF path is `pkill -x hypridle` + `notify-send` (writes
 nothing); its ON path is `uwsm-app -- hypridle >/dev/null 2>&1 &`, whose only journal trace is
 `uwsm_app-daemon: received: app -- hypridle` — a string that never contains `omarchy-toggle`.
 Therefore `grep -c omarchy-toggle` returns 0 **whether or not the toggle was ever used**: the

@@ -151,7 +151,8 @@ function. The only anchor test is `count.py:192`, `receipt["sha256"] in cs[5]`: 
 the **manifest's recorded string** inside the row cell. Hash the receipt against nothing, and the
 clause "whose anchor cell carries the sha256 **of the named receipt**" is unimplemented.
 
-Probe (fresh tree rebuilt from the current bytes, `scratch/RevC1Tip/m1b`): append one line to
+Probe (fresh tree rebuilt from the current bytes by `reproduce.sh`, which writes mutants under the
+pre-move root `scratch/RevC1Tip/`; `m1b`): append one line to
 `S206.receipt.txt` after the freeze, leave every row and anchor untouched.
 
 ```
@@ -176,7 +177,7 @@ ten** `c1-*` control trees, every one of the eight receipt files is byte-identic
 
 The predicate says "**the registry** holds exactly one well-formed row for that id". `rows_for`
 (`count.py:118-124`) scans every line of `SOURCES.md` and matches `^ {0,3}\|\s*(S[0-9]+)\s*\|`
-regardless of section. Probe (`scratch/RevC1Tip/m9b`): delete S206's only row from `## Registry`
+regardless of section. Probe (`scratch/RevC1Tip/m9b`, same rebuild): delete S206's only row from `## Registry`
 and re-insert the identical line under `## Leads (unopened)`. Row shape, cells, used-by, status,
 recheck, digest are unchanged.
 
