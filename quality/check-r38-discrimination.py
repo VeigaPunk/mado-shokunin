@@ -28,6 +28,7 @@ import importlib.util
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -50,34 +51,32 @@ def load_counter(path):
     spec.loader.exec_module(mod)
     return mod
 
-
 def apply_writes(sb, writes, ctx):
+    # Confined file primitives (SentManifestScope HIGH): every path resolves
+    # against the sandbox and must stay inside it; the env carries no
+    # subprocess/os/sys — py controls get re/json/hashlib (hashlib-free,
+    # digest is a helper) and the confined lambdas only.
     env = {
         "sb": sb,
         "write": lambda rel, s: _write(sb, rel, s),
         "append": lambda rel, s: _append(sb, rel, s),
-        "delete": lambda rel: os.remove(os.path.join(sb, rel)),
-        "read": lambda rel: open(os.path.join(sb, rel), "rb").read(),
+        "delete": lambda rel: os.remove(_confine(sb, rel)),
+        "read": lambda rel: open(_confine(sb, rel), "rb").read(),
         "digest": lambda rel: hashlib.sha256(_read(sb, rel)).hexdigest(),
-        "ctx": ctx,
         "re": re,
-        "os": os,
         "json": json,
-        "subprocess": subprocess,
-        "sys": sys,
         "hashlib": hashlib,
-        "counters": ctx["counters"],
     }
     for step in writes:
         kind = step["op"]
         if kind == "literal":
             _write(sb, step["path"], step["text"])
         elif kind == "file":
-            _write(sb, step["path"], open(os.path.join(ctx["controls_dir"], step["src"]), "rb").read())
+            _write(sb, step["path"], open(_confine(ctx["controls_dir"], step["src"]), "rb").read())
         elif kind == "append":
             _append(sb, step["path"], step["text"])
         elif kind == "delete":
-            os.remove(os.path.join(sb, step["path"]))
+            os.remove(_confine(sb, step["path"]))
         elif kind == "counter_fixture":
             mod = ctx["counters"][step["counter"]]
             _write(sb, step["path"], getattr(mod, step["attr"]).encode())
@@ -89,7 +88,6 @@ def apply_writes(sb, writes, ctx):
             os.makedirs(d, exist_ok=True)
             for rel, name in (("ss.txt", "ss.txt"), ("hyprland.log", "hyprland.log"),
                               ("journal.txt", "journal.txt")):
-                src = os.path.join(sb, step["ss"]) if rel == "ss.txt" else os.path.join(d, name)
                 if rel == "ss.txt":
                     data = _read(sb, step["ss"])
                 else:
@@ -107,12 +105,20 @@ def apply_writes(sb, writes, ctx):
             raise SystemExit(f"{PRED} SETUP unknown op {kind}")
 
 
+def _confine(root, rel):
+    base = os.path.realpath(root)
+    p = os.path.realpath(os.path.join(base, rel))
+    if p != base and not p.startswith(base + os.sep):
+        raise ValueError(f"path escapes sandbox: {rel}")
+    return p
+
+
 def _read(sb, rel):
-    return open(os.path.join(sb, rel), "rb").read()
+    return open(_confine(sb, rel), "rb").read()
 
 
 def _write(sb, rel, data):
-    p = os.path.join(sb, rel)
+    p = _confine(sb, rel)
     os.makedirs(os.path.dirname(p), exist_ok=True)
     mode = "wb" if isinstance(data, (bytes, bytearray)) else "w"
     with open(p, mode) as f:
@@ -120,7 +126,7 @@ def _write(sb, rel, data):
 
 
 def _append(sb, rel, text):
-    with open(os.path.join(sb, rel), "a") as f:
+    with open(_confine(sb, rel), "a") as f:
         f.write(text)
 
 
@@ -154,10 +160,15 @@ def main():
         cid, inst = ctl["id"], ctl["instrument"]
         rev = ctl.get("rev", a.rev)
         sb = os.path.join(root, cid)
-        p = sh(["git", "clone", "-q", "--no-local", LANE, sb])
+        p = sh(["git", "clone", "-q", "--shared", LANE, sb])
         if p.returncode != 0:
             lines.append(f"control={cid} instrument={inst} expected={ctl['expect']} observed=ERROR ok=0 note=clone-failed")
             continue
+        # sparse: controls only ever touch corpus/, tools/, quality/ and this
+        # round's wave dir — the full wave history is GBs per clone.
+        sh(["git", *IDENT, "sparse-checkout", "init", "--cone"], cwd=sb)
+        sh(["git", *IDENT, "sparse-checkout", "set",
+            "corpus", "tools", "quality", ".ufo/waves/round-38"], cwd=sb)
         p = sh(["git", *IDENT, "checkout", "-q", rev], cwd=sb)
         if p.returncode != 0:
             lines.append(f"control={cid} instrument={inst} expected={ctl['expect']} observed=ERROR ok=0 note=checkout-failed")
@@ -178,8 +189,7 @@ def main():
         ok = obs == ctl["expect"]
         correct += ok
         lines.append(f"control={cid} instrument={inst} expected={ctl['expect']} observed={obs} ok={int(ok)}")
-        if a.out:
-            pass
+        shutil.rmtree(sb, ignore_errors=True)
     for l in lines:
         print(l)
     met = correct == len(controls)
@@ -188,6 +198,7 @@ def main():
     if a.out:
         with open(a.out, "w") as f:
             f.write("\n".join(lines) + "\n" + summary + "\n")
+    shutil.rmtree(root, ignore_errors=True)
     return 0 if met else 1
 
 

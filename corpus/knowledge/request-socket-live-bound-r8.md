@@ -6,7 +6,7 @@ package, re-grounded against bytes fetched this round). **Amends**
 names the five-second timeout in prose without reading the code that
 implements it.
 
-source: S158 — Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ `efb50993780079460b0cbed1363e2166a2de1d9f` (the host's own commit; same bytes as the package's tag-URL citation); S187 — the 0.56.0 IPC page (same document as the package's); S277 — `iconidentify/chonkstep` `docs/hyprland-ipc.md` (community measurement, tier C)
+source: S158 — Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ `efb50993780079460b0cbed1363e2166a2de1d9f` (the host's own commit; same bytes as the package's tag-URL citation); S187 — the 0.56.0 IPC page (same document as the package's); S277 — `iconidentify/chonkstep` `docs/hyprland-ipc.md` (community measurement, tier C); S258 — host socket stat receipt `.ufo/waves/round-38/fetch/stat-sockets.txt` (own-work)
 verified-at: 2026-10-25
 recheck: on-release
 ground: a new edge class under the held IPC contract (`knowledge/ipc-contract-r25.md`): what actually bounds a request on the request socket — the host's own accept loop, read at its own commit
