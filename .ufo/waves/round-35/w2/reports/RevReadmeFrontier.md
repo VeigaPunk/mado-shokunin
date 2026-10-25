@@ -5,31 +5,97 @@ Mode: read-only falsification. Writes confined to `.ufo/waves/round-35/scratch/R
 file. No lane corpus file, counter, control, `SOURCES.md`, sibling lane, jj state or Git index was modified.
 Installs/upgrades: none (coreutils, grep, python3 sufficed; pacman not touched).
 
-**Audited snapshot:** `corpus/README.md`, sha256 `3bb9865fd12793f9adbb204175f33ca5ab69adb6103df2048bfc54300933694f`,
-249 lines, 50 index rows, 50 `corpus/knowledge/*.md` notes. Every line number below is pinned to that hash.
-Frozen copy: `.ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md` (same digest).
+**Audited snapshots (two, because the owner edited mid-report):**
 
-**The file moved under me three times** during the attack (`7f348944…` 234 L → `a3769bef…` 246 L →
-`3bb9865f…` 249 L), by the README-owning sibling. Findings below are stated against the final snapshot; where
-the earlier snapshots carried an additional defect that has since been repaired, it is recorded in
-"Already repaired" so the verdict is not read as stale.
+- F1–F9 were written against sha256 `3bb9865fd12793f9adbb204175f33ca5ab69adb6103df2048bfc54300933694f`, 249 lines.
+- The owner then shipped revision 4, sha256 `de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6`, 254 lines.
+  The "Revision-4 re-audit" section below gives each finding's current status and current line number; the
+  F1–F9 bodies remain the record of what was wrong in the revision they cite.
+
+Frozen copies: `…/scratch/RevReadmeFrontier/README.audited.md` (`3bb9865f…`) and `…/README.audited.rev4.md`
+(`de5b885a…`). Both carry 50 index rows over 50 notes.
+
+**The file moved under me four times** (`7f348944…` 234 L → `a3769bef…` 246 L → `3bb9865f…` 249 L →
+`de5b885a…` 254 L), by an unnamed seat that owns `corpus/README.md`. Peer `L1Mado35.RevIndex` is read-only on
+the lane and did not edit it; this seat's first IRC note wrongly attributed the edits there and the report
+carries the correction.
 
 ## Verdict
 
-The frontier **does still deny the round's own measurement, and it also carries one withdrawn inference**:
+At the revision under attack (`3bb9865f…`) the frontier **did** deny the round's own measurement and carry a
+withdrawn inference. At the current revision (`de5b885a…`, verified after peer `L1Mado35.RevIndex` reported the
+same digest) the owner repaired four and **five remain open**:
 
-- `L101–103` denies that any new consumer measurement exists, while `L238–249` of the same file announces it.
-- `L241` keeps the unqualified phrase "leaving no state behind", which the round's own errata withdraw.
-- `L82` (the surface route) never leads to any of the three round-35 notes or the new section.
-- `L246` lists `hyprlock`'s config as open, contradicting the r17 row at `L42`.
+| Finding | Claim | Status at `de5b885a…` |
+|---|---|---|
+| F1 `L101–103` | "No new consumer or transition measurement is claimed" | **REPAIRED** — `L103–105` now says "*here*", names the round-35 route and keeps only the transition half open |
+| F2 `L241` | "leaving no state behind" | **REPAIRED** — `L243–246` now "no on-disk state behind (the toggle writes no file; its state is the daemon's process …; a `notify-send` may survive)" |
+| F3 `L82` | surface route omits the round | **OPEN** (unchanged) |
+| F4 `L246` | "hyprlock's own config" listed as open | **OPEN** at `L251` |
+| F5 `L13` | daemon-absence row without a supersession pointer | **OPEN** (unchanged) |
+| F6 `L60` | transient-scope INF stated as receipt content | **OPEN** (unchanged) |
+| F7 `L242` | over-read quoted, carrier unnamed | **REPAIRED** — now "the package's round-12 framing" |
+| F8 `L243` | "two inferences" undercount | **REPAIRED** — now "three inferences … and all are withdrawn" |
+| F9 `L236` | heading names only the offer | **OPEN** at `L238` |
 
-The index table itself is **complete and clean**: three rows at `L59–61`, `50/50`, row fidelity `0 errors`.
+The index table is **complete and clean at both revisions**: three rows at `L59–61`, `50/50`, row fidelity
+`0 errors`, `rc=0` on each.
 
-**Tally after peer review:** three prose inconsistencies (F1, F2, F4) plus one route gap (F3), one missing
-supersession pointer (F5) and one evidence-class drop (F6). **F7's original premise is retracted** — it was
-this seat's error, see the retraction under F7; F8–F9 are wording nits. Peer `L1Mado35.RevIndex` independently
-confirmed F1/F2/F4 against the same bytes and independently found the F7 premise wrong. None of this moves
-the index verdict.
+**Tally:** of the original seven non-retracted findings, two prose defects and two wording defects are fixed;
+F3 (route), F4 (r17 contradiction), F5 (pointer) and F6 (evidence class) stay open, plus the heading nit F9.
+**F7's original premise is retracted** — it was this seat's error, see the retraction under F7. None of this
+moves the index verdict.
+
+## Revision-4 re-audit (current bytes)
+
+Full diff of the owner's edit, `git`-free, against the frozen copy:
+
+```
+$ diff .ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md corpus/README.md
+59c59   … recheck on-request → on-change
+61c61   … recheck "on-change (S209, S210: 90d)" → "on-change (S210: 90d)"
+103c103,105  "+ consumer or transition measurement is claimed *here*; round 35 moved the
+              + consumer half onto measured ground (see the round-35 route below), and the
+              + transition half stays open."
+241,245c243,250  "leaving no state behind" → "leaving no on-disk state behind (… its state is the
+                 daemon's process, re-armed at login from `autostart.conf`; a `notify-send` may
+                 survive in notification history)"; "the earlier" → "the package's round-12 framing";
+                 "two inferences" → "three inferences … and all are withdrawn", with
+                 '"built not to remember" is replaced by the process-shaped mechanism'
+exit=1   # expected: the files differ
+```
+
+Gates re-run on those bytes:
+
+```
+$ python3 -I quality/check-index.py --root …/scratch/RevReadmeFrontier/mirror4
+MADO_INDEX: root=…/mirror4 indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0
+$ python3 -I quality/check-index-rows.py --root /home/vgpnk/Projects/shokunin/mado-shokunin
+MADO_INDEX_ROWS: root=… rows=50 errors=0 warns=0
+exit=0
+```
+
+What is still wrong, with current line numbers:
+
+1. **`L82`** (F3) — the Screen/idle/lock route still lists only `idle-lock-plane` §§2–5, §§7–11 and
+   `config-health-report-r3` F1. A reader entering by surface still cannot reach r12/r14/r15 or the round-35
+   route at `L238`. **Fix:** link the three notes and the section.
+2. **`L251`** (F4) — `Still open: … hyprlock's own config, …` still contradicts `L42` and
+   `idle-lock-route-r17.md:72-73,95–105`; the open item is parse assurance (`idle-lock-plane.md:335–337`).
+3. **`L13`** (F5) — `idle/lock: hypridle \`inactive\` + no PID (§8 unknowns kept unknown);` still carries the
+   2026-10-14 absence with no pointer to r14's pid-1667 measurement, while `L6–8` tells the reader that
+   inherited unknowns govern.
+4. **`L60`** (F6) — `… the unit probe reads \`inactive\` only because the daemon runs inside a transient
+   scope.` remains an unclassed INF that S205 does not carry (`grep -c "systemd-run\|uwsm\|scope"` on the
+   receipt = **0**, exit 1); r14 errata E2 says "materially true but unlicensed by S205".
+5. **`L238`** (F9) — `### Round-35 idle-lock offer route` still names only the offer while the section carries
+   the setup-path negative, the daemon measurement and the withdrawal register.
+
+Also checked in revision 4 and **not** a defect: the row-61 recheck narrowed from "(S209, S210: 90d)" to
+"(S210: 90d)", which is faithful to `SOURCES.md` (S209 recheck = `on-change`, S210 recheck = `90d`, parsed from
+the registry row tails). The observation that S209's gate-quote embeds a copy count (`four dated copies`) while
+sitting on `on-change` is a registry cadence question, outside this row's text and outside this seat's scope.
 
 ## Assigned commands and gate results (quoted with exit codes)
 
@@ -59,9 +125,12 @@ The `--rev master` run is a correct count of a **different universe**: the three
 and their rows uncommitted at master, so rev mode sees 47/47 and cannot test this wave. `--root` on the
 byte-identical mirror is the only valid working-set assay, and it is `50/50`.
 
-## Findings
+## Findings at `3bb9865f…` (audited record)
 
-### F1 — HIGH — `L101–103`: the frontier still says the consumer measurement does not exist
+Statuses below are the `3bb9865f…` state; the table in "Verdict" and the "Revision-4 re-audit" section carry
+the current status and current line numbers for each.
+
+### F1 — HIGH — `L101–103`: the frontier still says the consumer measurement does not exist *(REPAIRED at `de5b885a`)*
 
 > `- Idle/lock transitions and daemon stop-cause: [idle/lock unknowns](knowledge/idle-lock-plane.md)`
 > `  §11 and [terminal dispositions](knowledge/closeout-r11.md) §5. No new`
@@ -83,7 +152,7 @@ README `L238–249`.
 current boot); transitions, lock success and stop-cause still unobserved.* The "transition" half of the
 current sentence is correct and survives.
 
-### F2 — HIGH — `L241`: "leaving no state behind" is the withdrawn form of the claim
+### F2 — HIGH — `L241`: "leaving no state behind" is the withdrawn form of the claim *(REPAIRED at `de5b885a`)*
 
 > `  surfaces while leaving no state behind ([offered in the bar](knowledge/idle-lock-offered-in-the-bar-r15.md)).`
 
@@ -257,8 +326,9 @@ to whoever owns `corpus/README.md`, not to `RevIndex`.
 - **No semantic LSP applies.** The artifacts are markdown/text; the strongest available check is byte,
   hash, grep and gate execution. Caller/definition analysis here means reading the producer scripts directly,
   which I did (`idle.sh`, `omarchy-toggle-idle` — read-only `cat`, sha256 above).
-- **The file is a live edit target.** Three hash changes during this run. If the README owner edits again,
-  F1–F9 line numbers shift; re-resolve against `3bb9865f…` or the frozen copy.
+- **The file is a live edit target.** Four hash changes during this run (`7f348944` → `a3769bef` → `3bb9865f`
+  → `de5b885a`). If the owner edits again, F1–F9's pinned line numbers shift; re-resolve against
+  `de5b885a…`/`README.audited.rev4.md` or the earlier frozen copy.
 - **F7 retraction, and its blast radius.** The first version of F7 printed a two-line summary as if it were
   the output of the quoted `grep`; the command in fact returns r15 `:32`, r12 `:36` and `SOURCES.md:206` as
   well. No other finding rested on it, and the corrected block above now reproduces the real output. Peer
@@ -274,5 +344,7 @@ to whoever owns `corpus/README.md`, not to `RevIndex`.
 ## Scratch artifacts
 
 - `.ufo/waves/round-35/scratch/RevReadmeFrontier/README.audited.md` — frozen 249-line snapshot (`3bb9865f…`).
+- `…/README.audited.rev4.md` — frozen 254-line snapshot (`de5b885a…`), the current bytes.
 - `…/mirror/` — first mirror (`7f348944…`, 234 L, rows present, no round-35 section).
-- `…/mirror2/` — final mirror (`3bb9865f…`) used for the `50/50` run.
+- `…/mirror2/` — mirror (`3bb9865f…`) used for the first `50/50` run.
+- `…/mirror4/` — mirror (`de5b885a…`) used for the revision-4 `50/50` run.

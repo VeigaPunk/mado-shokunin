@@ -16,9 +16,11 @@ All three assigned checks pass; the claim survives attack intact.
 **Scope caveat — this verdict covers row S203's evidence only.** Entry `idle-lock-never-asked-r12.md`,
 the entry this row gates, is **not** clean: its second conjunct ("the operator never toggled it
 afterwards", gated on S204) is unsupported and now positively contradicted. See
-"Entry-level defect inherited through S204". C1 still reports `TARGET_MET` because its frozen
-predicate tests quote-contiguity and registry hygiene, **not** the truth of the entry's prose — that
-gap is reported below as the round's main residual risk.
+"Entry-level defect inherited through S204". Mid-review the entry gained an Errata section whose E1
+withdraws exactly that conjunct, while the title and §1/§2 still assert it unmarked — and
+`SOURCES.md` was rewritten too (see "Concurrent mutation of the artifacts"). C1 still reports
+`TARGET_MET` because its frozen predicate tests quote-contiguity and registry hygiene, **not** the
+truth of the entry's prose — that gap is reported below as the round's main residual risk.
 
 Axes named: **A1** quote-contiguity · **A2** live-fact fidelity · **A3** hash-anchor fidelity ·
 **A4** claim honesty/scope.
@@ -128,6 +130,17 @@ run during first-run". The substantive claim ("none asks about the idle lock") s
 only the word "executed" misapplied to the hook is wrong. Note the entry's Errata E2 uses the
 defensible form ("executes 13 items: 12 `bash …/*.sh` plus `omarchy-hook-install …`"), so row and
 entry currently disagree in precision on the same point.
+
+A statement census of the body settles the arithmetic. Executable actions are **15**: 12
+`bash …/first-run/*.sh`, 1 `omarchy-hook-install` (line 23), 1 `sudo rm -f /etc/sudoers.d/first-run`
+(line 24), 1 `rm -f "$FIRST_RUN_MODE"` (line 11); **14** excluding the guard's own cleanup, and
+**12** of them are scripts. Hence "thirteen items" is coherent only as "the 13 files in
+`install/first-run/`" (12 `*.sh` + 1 `*.hook`) — and under that reading "the thirteen **executed**
+items" is precisely the wrong word. Any command-centred reading of "thirteen" additionally drops
+`sudo rm -f /etc/sudoers.d/first-run`. E2's own bullet mixes the two itemizations: its heading counts
+files (13, twelve scripts) while its body counts commands. Recommended wording, true under both
+readings: "thirteen first-run artifacts — twelve scripts that run, one hook that is installed and does
+not run; the body also clears `/etc/sudoers.d/first-run`".
 
 ### LOW-1 — receipt's own enumeration is count-vs-names inconsistent
 
@@ -280,7 +293,7 @@ that quotes stale bytes is worthless:
 | Artifact | First read | After mutation | Evidence |
 |---|---|---|---|
 | `corpus/SOURCES.md` | sha256 `848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80`; row 950 B; note "runs **twelve** first-run scripts"; recheck `on-request` | sha256 `0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51`; row 990 B; note "**thirteen** items … thirteen executed items"; recheck `on-change` | `stat` mtime `2026-10-25 03:40:12 -0300`, 171446 B |
-| `corpus/knowledge/idle-lock-never-asked-r12.md` | sha256 `21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1`, 2078 B | sha256 `7f27ced01e9edf627e2e4693ec57663fa14dd739cd8f9065cf177d0bfae4dd58`, 3586 B, 60 lines, `### Errata (round 35, wave 2)` appended at line 42 | `wc -lc` / `sha256sum` |
+| `corpus/knowledge/idle-lock-never-asked-r12.md` | sha256 `21c1d06db35d189b62f0ecaa098f97ac0d282e39422d5d19662caf83c05dd2e1`, 2078 B | **two further edits:** `7f27ced0…4dd58`, 3586 B, 60 lines, E1/E2 at line 42 → `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`, 4344 B, **69 lines**, E3 at line 61, mtime `2026-10-25 03:41:38` | `wc -lc` / `sha256sum` / `stat` |
 | `.ufo/…/fetch/S203.receipt.txt` | sha256 `1b7fa87…1646`, 3137 B | **unchanged** | `sha256sum` = anchor cell |
 
 Every check was re-run against the current bytes after the rewrite: the S203 gate-quote is still
@@ -299,6 +312,21 @@ three *unmarked* places:
 By its own errata the entry's headline is false, and the headline is what downstream citations copy.
 Fix in place (edit the three sites, or mark them withdrawn inline and move the errata to the top);
 an append-only errata leaves a false title as the artifact of record.
+
+**E3 makes this explicit rather than accidental.** The third edit (03:41:38) adds E3, which states in
+its own words: "This entry's title reads '…and the operator never toggled it afterwards'; that clause
+is withdrawn for the same reason as E1, and **the title is kept as landed rather than rewritten.**"
+So the entry now *knowingly* carries a false H1 plus two unmarked false sentences (§1 line 23, §2
+line 29), with the correction 40+ lines below. For an artifact of record that is the worst
+arrangement: anything quoting the title, or reading only to line 29, inherits a withdrawn claim.
+Require inline withdrawal markers at lines 1/23/29, or a status banner above H1.
+
+E3 does earn two credits, both of which my own checks corroborate: it concedes that S204's `count: 12`
+is a **re-count of S203's list, not an independent confirmation** (so "two independent negatives" was
+never two), and it flags that §1's host fact "None of the twelve asks about the idle lock" is not
+licensed by S203/S204 — neither receipt carries any script body — crediting wave-2 seat
+`RevEntryR12`'s 13-file scan. My A2 independently reproduces that scan (`IDLE_ABSENT` across all 13
+files), so the fact is true; only its provenance was missing.
 
 **Why C1 cannot see any of this:** `frozen.json` has keys `id, predicate, target, entries, receipts`
 only — there is **no registry hash and no entry hash**. Receipts are pinned by sha256; the registry

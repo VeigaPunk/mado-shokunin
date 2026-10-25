@@ -6,12 +6,14 @@ Raw transcript of every command quoted below: `.ufo/waves/round-35/scratch/RevEn
 
 ## Verdict
 
-**The file changed under this review.** I was assigned the 40-line entry
-(sha256 `21c1d06d…`, the golden control). At `2026-10-25 03:35:08`, mid-analysis, a sibling's
-errata was written into the live entry; it is now 60 lines (`7f27ced0…`) and carries an
-`### Errata (round 35, wave 2)` block that withdraws the exact inference my §2/F1 attack was
-aimed at. Both states are assessed below; §1-§6 quote the assigned bytes with line numbers that
-still hold, §7 assesses the errata that now sits under them.
+**The file changed under this review, twice.** I was assigned the 40-line entry
+(sha256 `21c1d06d…`, the golden control). Two writes landed while I was analysing it:
+`03:35:08` (3586 B, 60 lines, sha `7f27ced0…`, adds E1+E2) and `03:41:38` (4344 B, 69 lines, sha
+`0bcef21f…`, adds E3). The live entry now carries an `### Errata (round 35, wave 2)` block that
+withdraws the exact inference my §2/F1 attack was aimed at and the independence claim in F3.
+**The author is unattributed** — see §7.2/F9; the errata's own citation points at a seat that
+disclaims it. Both states are assessed below; §1-§6 quote the assigned bytes with line numbers that
+still hold, §7 assesses the errata that now sits under them and the residuals it introduces.
 
 The entry has **two load-bearing claims**. One is true on today's bytes but is licensed by
 **neither** cited receipt (it is an unlicensed negative over twelve file bodies). The other is
@@ -21,11 +23,16 @@ termination that is exactly the toggle's disable effect. The entry's gate-quotes
 ids and its twelve-name list all check out; the honesty failure is in what those bytes are said
 to prove.
 
-Current state, after the errata: **F1 acknowledged but only half-retracted** (the title and the
-Section-1 OBS still assert it — §7.2/F8), **F2/F3/F5/F6/F7 stand unchanged**, **F4 partly answered
-by E2** while E2 itself miscounts. C1 still prints `TARGET_MET closed_entries=3 closed_rows=8
-open_cites=0` (exit 0) against the post-edit entry: the counter is format-only and does not read
-the errata.
+Current state, after E1-E3: **F1 acknowledged but only half-retracted** — E1 retracts §2, E3
+retracts the title clause "for the same reason" yet deliberately keeps the title "as landed", and
+the §1 OBS is untouched (§7.2/F8). **F3 is corrected by E3 in prose while §2's sentence still
+reads "Two independent negatives agree"**; **F2 is now cited to my scan** (`RevEntryR12`), which is
+a seat report, not a source row (§7.2/F9); **F4 is half-answered** — E2's "13 items" is
+indefensible at any count (§7.3); **F5/F6/F7 are unaddressed**. Both counters print `TARGET_MET`
+against the current bytes (C1 `closed_entries=3 closed_rows=8 open_cites=0`, C2
+`uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1`, both exit 0) and both gate-quotes are
+still byte-exact contiguous receipt substrings: the edits did not break the frozen claim, they left
+the withdrawn assertions readable.
 
 ---
 
@@ -252,7 +259,10 @@ and the grep still prints 0.
   21438 MiB (90.86%)`). Recorded because a reader repeating the user-journal grep would wrongly
   conclude the errata invented it.
 
-## 7. Delta — the errata written into the entry at 03:35:08 (`### Errata (round 35, wave 2)`)
+## 7. Delta — the errata written into the entry at 03:35:08 and 03:41:38 (`### Errata (round 35, wave 2)`)
+
+Author unattributed (§7.2/F9). E1+E2 landed at 03:35:08; E3 landed at 03:41:38. All three are
+assessed below against the current bytes (69 lines, sha `0bcef21f…`).
 
 ### 7.1 What the errata gets right (it corroborates §2/F1 and §2/F4)
 
@@ -261,6 +271,9 @@ and the grep still prints 0.
   `Stopping`/`Stopped` pair, next start `22:14:11`, no coredump.
 - **E2** corrects "twelve first-run scripts" to 12 `bash` scripts plus one hook and states that
   `install/first-run/` holds 13 entries.
+- **E3** withdraws the title's second clause ("for the same reason as E1" — but see F8: it keeps
+  the title as landed), corrects §2's "two independent negatives agree" in prose, and records that
+  §1's "none of the twelve" is true on the host but unlicensed by S203/S204, citing my scan.
 
 I re-measured every fact the errata introduces:
 
@@ -268,41 +281,69 @@ I re-measured every fact the errata introduces:
 |---|---|---|
 | no coredump for `hypridle` | `coredumpctl list hypridle` → `No coredumps found.` | **true** |
 | scope died without a `Stopping`/`Stopped` pair | only `Stopping`/`Stopped hypridle` lines in the journal are at 13:21:39 (prior session teardown) | **true** |
-| next start 22:14:11; "2h50m window" | 19:24:38 → 22:14:11 = 2 h 49 m 33 s | **true** (rounded) |
+| next start 22:14:11; "2h50m window" | 19:24:38 → 22:14:11 = 2 h 49 m 33 s wall clock, **across a reboot** (system journal: boot -1 last entry 22:12:24, boot 0 first 22:14:07). In-session absence: 19:24:38 → 22:10:20 = 2 h 45 m 42 s | **true as a gap, not as operator state** — see §7.3(a) |
 | earlyoom 90.86 % free at 19:24:59 | system journal: `2026-10-23T19:24:59 earlyoom[1381]: mem avail: 19479 of 21438 MiB (90.86%)` | **true** |
 | `install/first-run/` mtime `2026-10-03 17:42:32` predates the receipt | `stat` matches to the nanosecond | **true** |
-| installer body "executes 13 items" | 12 `bash` + `omarchy-hook-install` + `sudo rm -f /etc/sudoers.d/first-run` = **14** external commands | **imprecise** — the sudoers rm is dropped |
+| installer body "executes 13 items" | inside the `if`: 1 `rm -f "$FIRST_RUN_MODE"` + 12 `bash` + 1 `omarchy-hook-install` + 1 `sudo rm -f /etc/sudoers.d/first-run` = **15**; **14** excluding the guard's own state-file rm; **12** scripts | **false at every count** — "13 items" matches none; see §7.3(c) |
+| `omarchy-hook-install` counted as an "item" | it *copies* the hook; the hook's own `rm -f "$0"` (line 6) has not run — artifact present at `~/.config/omarchy/hooks/post-update.d/install-voxtype.hook`, 174 B, 755 — and `/usr/bin/voxtype` is absent | **wrong verb** — installed, never executed; see §7.3(d) |
+| E3: title "kept as landed rather than rewritten" | live l.1 still reads *"…and the operator never toggled it afterwards"* | **accurate description, defective policy** — see F8 |
+| E3: §1 claim unlicensed, cites `RevEntryR12` | my scan: 13 files, 0 `idle` hits — accurate; but a seat report is not a registry row | **true and mis-sourced** — see F9 |
 
 ### 7.2 Findings on the errata itself
 
-**F8 — HIGH: the retraction is incomplete; the entry now contradicts itself.**
-E1 retracts "Section 2's inference". The identical assertion still stands, unqualified, twice
-above it in the live file:
+**F8 — HIGH: the retraction is incomplete, and E3 makes the omission deliberate.**
+E1 retracts "Section 2's inference"; E3 retracts the title clause "for the same reason as E1" and
+then says the title *"is kept as landed rather than rewritten."* All three assertion sites are
+therefore live in the current bytes while the errata calls all three withdrawn:
 
 - title, l.1: *"… and the operator never toggled it afterwards"*
 - §1 OBS, l.23-24: *"And the operator never exercised the toggle afterwards (S204): the user
   journal holds zero `omarchy-toggle` invocations."*
+- §2 OBS, l.28-29: *"Two independent negatives agree… the toggle was never run in any session the
+  journal still keeps."*
 
-Only §2 (l.28-29) carries the withdrawal. A reader who stops at the title or §1 takes away the
-claim the entry itself has withdrawn — and the title is the one line every index and `used-by`
-consumer reproduces. Required: retitle to the setup-path claim alone, strike or explicitly mark
-§1's second OBS, and put the pointer to the errata at the top of the file, not after §3.
+Retraction-by-errata is a note, not an edit: a reader who stops at the title, or who consumes the
+entry through an index or a `used-by` link, takes away claims the entry has itself withdrawn. The
+title is the worst place to keep one — it is the line every downstream consumer reproduces, and
+"kept as landed" converts an oversight into a decision. Required: rewrite l.1 to the setup-path
+claim alone, strike or inline-mark both OBS sentences, and put the errata pointer above §1.
 
-**F9 — HIGH (process): the lane corpus was written during a read-only wave, and the appended facts
-are unreceipted.**
-The wave-2 seat contract says *"Write ONLY under `.ufo/waves/round-35/scratch/<YourSeatName>/` and
-your own report file. Never edit lane corpus files, counters, controls, SOURCES.md…"*. The live
-entry changed mid-wave anyway. Beyond the contract breach, the errata's new measurements
-(earlyoom, `coredumpctl`, directory mtime) carry **no source id and no receipt** — the evidence
-line is another seat's report path. Under this lane's own contract every measurable claim enters
-through a registry row whose anchor carries a receipt sha256; as it stands, a file C1 treats as
-closed now contains unreceipted measurements. Either open a receipted row for the `hypridle`-death
-measurement or label the errata explicitly as lane-reported and not admitted.
+**F9 — HIGH (process and provenance): the lane corpus was written twice during a read-only wave by
+an unattributed writer, and the appended facts carry no source row.**
 
-**F10 — LOW: the errata is undated and unattributed.** It says "round 35, wave 2" and defers
-authorship to a peer report; the front matter still reads `verified-at: 2026-10-24`. An
-append-only errata needs its own date and author, or `verified-at` must move forward with it —
-otherwise the file's top says one date and its last section is from another.
+What is measured:
+
+- Two writes during this review: `03:35:08` (3586 B, 60 lines, sha `7f27ced0…`, E1+E2) and
+  `03:41:38` (4344 B, 69 lines, sha `0bcef21f…`, +E3).
+- The wave-2 seat contract forbids it: *"Write ONLY under `.ufo/waves/round-35/scratch/<YourSeatName>/`
+  and your own report file. Never edit lane corpus files, counters, controls, SOURCES.md…"*.
+- **Host forensics cannot name the writer, and I checked.** No journal line mentions the entry path
+  (`journalctl | grep idle-lock-never-asked` → 0); no `mount --bind`/`umount` on the lane today; the
+  only privileged commands in 03:30-03:45 are read-only `journalctl`/`coredumpctl`; agent file writes
+  reach neither journal. This is *unattributed* — do not name a seat.
+- **The file's own citation does not survive contact.** E1 says *"See
+  `.ufo/waves/round-35/w2/reports/RevQuoteS204.md` (seat `RevQuoteS204`)"*, but that seat states it
+  never wrote under `corpus/` (its declared writes: the report, and
+  `scratch/RevQuoteS204/verify.log` at 03:37:07 — verified), and the cited report's mtime (03:40:46,
+  since revised 03:43:39) **post-dates the E1 write by 5 m 38 s**. A citation to an artifact that did
+  not yet exist in that form is not provenance. Phrase-matching the report proves nothing: it now
+  quotes the errata, so the phrases appear there by quotation.
+- The only lane-side process active at plan time, `.ufo/waves/round-35/assimilation/` (registration
+  collision check), last wrote `03:30:46` — before both corpus writes — and is not the writer. No
+  wave-2 seat in `w2-plan.json` (40 tasks) is chartered to edit corpus.
+
+**Provenance of the appended facts.** E1's earlyoom reading, its `coredumpctl` result, the directory
+mtime — and E3's citation of my twelve-file scan — enter through a **seat report**, not a registry
+row whose anchor carries a receipt sha256, which is how every measurable claim enters this lane.
+Either open receipted rows for the `hypridle`-death measurement and the `idle` scan E3 now depends
+on, or label the errata explicitly "lane-reported, not admitted". As it stands, a frozen-claim
+artifact C1 treats as closed carries unreceipted measurements and a citation to a seat.
+
+**F10 — LOW: the errata is unattributed and its dates disagree with its own header.** It says
+"round 35, wave 2", defers authorship to a peer report, and leaves the front matter at
+`verified-at: 2026-10-24` while the appended material is from 2026-10-25 03:35/03:41. Two writes five
+minutes apart, no author, no per-entry date: the append-only trail cannot be reconstructed from the
+file. Stamp each errata item with its date, and move `verified-at` forward with the last one.
 
 **F11 — LOW: `[INFERENCE-STRONG]` on "a toggle-off happened" is still an attribution.** The errata
 concedes "that it was a click, menu or keybind is unverified", but `pkill -x hypridle` is not

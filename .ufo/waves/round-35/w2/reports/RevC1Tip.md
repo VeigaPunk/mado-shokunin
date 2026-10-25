@@ -1,8 +1,10 @@
 # RevC1Tip — C1 re-derived from bytes, and what the counter cannot see
 
 Seat: `L1Mado35.RevC1Tip` (leaf reviewer, no dispatch). Lane: mado-shokunin. Wave 2, round 35.
-Verified at **2026-10-25T03:39:33-03:00**, HEAD `02088b4` (`round-35: the idle-lock control
-surface lands — three entries, eight rows S203-S210, errata, and the wave-1 evidence`).
+Verified at **2026-10-25T03:43:12-03:00**, HEAD `7b745a1` (`round-35: republish the axis table in
+the gate's own format, plus the wave-2 reports that landed after the first pass`). The same three
+numbers reproduce at `02088b4`, at the pre-commit `19e4ab3` working tree, and at the committed
+`7b745a1` tree (§6); the lane was under concurrent edit throughout and §1 pins the exact bytes.
 Read-only: no lane corpus, counter, control, `SOURCES.md`, jj state or Git index was written.
 Everything written lives under `.ufo/waves/round-35/scratch/RevC1Tip/` plus this file.
 No tool was installed (nothing was needed).
@@ -28,7 +30,7 @@ No tool was installed (nothing was needed).
 | A4 fidelity of `digest-match` | **FALSIFIED as coded** — receipt bytes are never hashed; a rotated receipt still closes (F1, §4.1) | HIGH |
 | A4 fidelity of the row clause | **FALSIFIED as coded** — the row may sit outside `## Registry`; the lane census calls that E12 (F2, §4.2) | HIGH |
 | A5 failable | **CONFIRMED** — six independent mutations each give `2 / 7 / 1` `TARGET_MISSED`, `rc=1` | HIGH |
-| A6 durability | **CONFIRMED at `02088b4`** — an earlier mid-wave snapshot (`19e4ab3`) returned `0 / 0 / 8`; the commit that landed the data makes the claim reproducible from committed bytes | HIGH |
+| A6 durability | **CONFIRMED at `02088b4` and `7b745a1`** — an earlier mid-wave snapshot (`19e4ab3`) returned `0 / 0 / 8`; the commit that landed the data makes the claim reproducible from committed bytes | HIGH |
 
 Both fidelity defects are **latent on the current bytes**: all 8 receipts do hash to their frozen
 values and the 8 rows do sit inside `## Registry` (lines 205-212, between `## Registry` at 9 and
@@ -57,16 +59,19 @@ committed predicate. The scored data at the same moment:
 
 | artifact | sha256 | bytes |
 |---|---|---|
-| `corpus/SOURCES.md` | `848a7680c175f1ac64ffa4c63673adab19edc7963393d3b24b8b189e78d4fe80` | 171,446 |
-| `corpus/knowledge/idle-lock-never-asked-r12.md` | `7f27ced01e9edf627e2e4693ec57663fa14dd739cd8f9065cf177d0bfae4dd58` | 3,586 |
+| `corpus/SOURCES.md` | `0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51` | 171,446 |
+| `corpus/knowledge/idle-lock-never-asked-r12.md` | `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504` | 4,344 |
 | `corpus/knowledge/idle-lock-chain-armed-r14.md` | `583c708c338ecb063f8ef38071d415c79476088f27994551fd964384be1e0bf3` | 3,768 |
 | `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | `82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe` | 5,806 |
 
-Note on a moving target: between 03:31 and 03:38 this lane was being written by other seats. My
-first measurements ran against the pre-commit working copy (entries 2,078 / 1,789 / 3,428 B,
-`HEAD=19e4ab3`). The report below is the **final re-run on the current bytes**; every attack that
-matters was re-executed after the lane settled (§4.1, §4.2, §5, §3). The earlier transcript is kept
-as `scratch/RevC1Tip/evidence.txt`; the authoritative one is `scratch/RevC1Tip/evidence2.txt`.
+Note on a moving target: this lane was written by other seats throughout. Three states were
+measured: (i) 03:31, pre-commit working copy, `HEAD=19e4ab3`, entries 2,078 / 1,789 / 3,428 B;
+(ii) 03:38, `HEAD=02088b4` (data committed), entries 2,078 / 2,505 / 4,037 B in `HEAD` plus wave-2
+appends on disk; (iii) 03:43, `HEAD=7b745a1`, `SOURCES.md 0bf117e2…`, entries 4,344 / 3,768 / 5,806 B.
+The claim is `3 / 8 / 0` in all three. This report is pinned to state (iii); every attack was
+re-executed there (§4.1, §4.2, §5, §3). The authoritative transcript is
+`scratch/RevC1Tip/evidence3.txt`; `evidence.txt` (state i) and `evidence2.txt` (state ii) are kept
+for the timeline.
 
 ## 2. Independent re-derivation (A1) — own parser, no import of `count.py`
 
@@ -201,10 +206,10 @@ live tree. No sibling ran the C1 counter against a moved row — this finding is
 
 ## 5. A5 — the counter is failable (negative-control matrix)
 
-Fresh trees rebuilt from the current bytes. `SOURCES.md` is the same `848a7680…` bytes as live, and
+Fresh trees rebuilt from the current bytes. `SOURCES.md` is the same `0bf117e2…` bytes as live, and
 the entries' `gate-quote` lines are byte-identical to the live ones (the wave-2 edits to the entries
-are 61 inserted lines with 0 deletions and do not touch a quote — verified by hashing the
-`gate-quote:` line sets of `HEAD` vs worktree).
+are insertions with 0 deletions and do not touch a quote — verified by hashing the `gate-quote:`
+line sets of `HEAD` vs worktree).
 
 | probe | mutation | stdout | rc |
 |---|---|---|---|
@@ -228,9 +233,12 @@ killable is the receipt-bytes clause (F1) and the registry-section scoping (F2).
   plus the committed receipts and no entries returned
   `closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED`, `rc=1`. The claim then was
   reproducible from the working tree, but **not** from committed bytes.
-* **At 03:38 (`HEAD 02088b4`):** the commit message is exactly "three entries, eight rows S203-S210".
-  `git cat-file -e HEAD:` confirms the entries, `SOURCES.md` rows (8), counter, frozen spec and
-  receipts are all tracked. A tree extracted with
+* **At 03:38–03:43 (`HEAD 02088b4` → `4f35c80` → `7b745a1`):** `02088b4` is the commit that lands
+  "three entries, eight rows S203-S210"; `4f35c80` commits the wave-2 errata into the entries;
+  `7b745a1` republishes the reports. `git cat-file -e HEAD:` confirms the entries, `SOURCES.md` rows
+  (8), counter, frozen spec and receipts are all tracked, and at 03:43 `git status --porcelain --
+  corpus` is **empty** — HEAD blobs equal the worktree blobs for all three entries and for
+  `SOURCES.md`. A tree extracted with
   `git archive HEAD corpus/SOURCES.md corpus/knowledge/idle-lock-*.md .ufo/waves/round-35/fetch .ufo/waves/round-35/c1`
   run with the **committed** counter and **committed** frozen spec returns:
 
@@ -240,10 +248,11 @@ PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
 rc=0
 ```
 
-The claim is therefore committed-durable at `02088b4`. The worktree still carries +61 uncommitted
-lines across the three entries (wave-2 scribe work), but the claim does not depend on them: quotes
-are identical, and both HEAD bytes and worktree bytes close. RevSelftest's caveat ("the C1/C2
-verdicts are only durable once the wave is committed") is discharged by `02088b4`.
+The claim is therefore committed-durable at `02088b4`, `4f35c80` and `7b745a1`, and at 03:43 committed
+bytes and working bytes coincide, so "committed-and-working bytes" no longer need to be distinguished
+for this claim. The +61 inserted lines that wave-2 added to the entries are committed in `4f35c80`;
+they do not touch a quote and did not change the verdict. RevSelftest's caveat ("the C1/C2 verdicts
+are only durable once the wave is committed") is discharged.
 
 ## 7. Residual risk and verification gaps
 
@@ -270,8 +279,9 @@ All under `.ufo/waves/round-35/scratch/RevC1Tip/`:
 | path | what |
 |---|---|
 | `reproduce.sh` | rebuilds the minimal tree and every probe from the lane tree, including the committed-`HEAD` archive run |
-| `evidence.txt` | first transcript (pre-commit working copy, `HEAD=19e4ab3`) |
-| `evidence2.txt` | authoritative transcript on current bytes/`HEAD=02088b4` |
+| `evidence.txt` | state (i) transcript (pre-commit working copy, `HEAD=19e4ab3`) |
+| `evidence2.txt` | state (ii) transcript (`HEAD=02088b4`) |
+| `evidence3.txt` | **authoritative** transcript on state (iii), `HEAD=7b745a1` |
 | `independent_c1.py` | own-parser re-derivation; prints `strictA`/`strictB` and per-cite facts |
 | `tree/`, `tree2/` | 12-file minimal scored trees (192,875 B) |
 | `m1b/`, `m9b/` | the two successful falsifications on current bytes |

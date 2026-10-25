@@ -165,6 +165,16 @@ The quote is the receipt's own `located:` summary — the one line that asserts 
 
 Also worth stating: the sample was unlocked (`LockedHint=no`, `hyprctl layers` shows only `wallpaper` and `waybar`, no lock surface) — consistent with item 1.
 
+4. **The audit is writing into the substrate it audits.** `journalctl --user --boot=0 | grep -ic hypridle` now returns **5**, not 3: the extra two are a wave-2 seat's own read-only probes, written to the journal as sudo records —
+   ```
+   2026-10-25T03:34:38 sudo[2181728]: vgpnk : PWD=…/mado-shokunin ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
+   2026-10-25T03:37:19 sudo[2637509]: vgpnk : PWD=…/mado-shokunin ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
+   ```
+   Starts remain 1. Consequence for the entry's `recheck: 90d`: a later naive `grep -c hypridle` over boot 0 reads 5 (and will keep growing), and the persistent journal (198.1 MB, `/var/log/journal`) keeps these lines. Any re-measurement must match `Started hypridle\.` or filter `sudo`/`coredumpctl`. This is a hazard of the entry's own method — a journal read as evidence — not of the claim.
+5. **No crash, which the receipt did not check and the entry did not claim or deny.** `coredumpctl list hypridle` → `No coredumps found` (rc=0); `coredumpctl list` has no hypridle/hyprlock entry (grep rc=1); no `segfault`/`crash`/`dumped` line for hypridle in the user journal (rg rc=1); and boot 0 holds no `Stopped hypridle.` line. So the single 22:14:11 start is one continuous run, refuting a crash-restart reading of the `inactive` probe. That supports "the daemon is running" while leaving "whether it fires" exactly where §3 puts it.
+
+Self-correction on my own probe: the per-boot loop in the log prints `boot -3: 0`, but **user numbering has no boot −3** — `journalctl --user -b -3` answers `No journal boot entry found for the specified boot (-3)` (rc=1). The `0` was `grep -c` counting an empty stream, i.e. an absent index, not a boot with zero starts. The user-journal indices are −2, −1, 0; a zero-start boot under that numbering is only −2, and it is not empty — it carries `Stopping`/`Stopped`/`Consumed` lines for the pre-retention scope.
+
 ## 8. Unverified / limits of this review
 
 - I did not reproduce a firing, and would not: no idle/lock/suspend command was run. Items in §7.1 remain UNK for this review too; my probes are point samples at 2026-10-25 03:30–03:35 −03:00.

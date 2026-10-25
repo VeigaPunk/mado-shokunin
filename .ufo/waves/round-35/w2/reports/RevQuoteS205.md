@@ -29,6 +29,12 @@ They are reported below rather than folded into a disagreement claim:
   them (`TARGET_MET`, rc=0; body lines 1/17/20 byte-identical). The predicate closes cites, not
   claims, and the errata carry no receipt/hash — verified after E2 landed (3768 B, 03:35:30).
 
+- **P7** no crash: one start, no stop, no coredump, pid 1667 continuous 1 d 5 h 29 m — refutes a
+  crash-restart reading of `inactive`, a positive the entry omitted. Same section records the
+  method hazard: the audit writes `sudo coredumpctl` lines into the journal it reads, so a loose
+  `hypridle` grep now yields 5 in boot 0 against 1 real start; rechecks must match `Started
+  hypridle\.`.
+
 Findings P1/P2 were sharpened to the peer's corrections after a cross-check with `RevEntryR14`
 (both verified here); the verdict did not change. P3/P4 now quote user-journal windows, which is the
 scope S205 read.
@@ -282,6 +288,53 @@ and E2 as competing statements about one event, and the counter cannot arbitrate
 
 
 
+### P7 — No crash (a positive the entry never made), and the audit mutates its own substrate
+
+No-crash check, measured 2026-10-25 ~03:44:
+
+```
+$ coredumpctl list hypridle --no-pager
+No coredumps found.
+rc=1
+$ coredumpctl list --no-pager >/dev/null; echo $?      # all coredumps, list succeeds
+0
+$ coredumpctl list | grep -iE 'hypridle|hyprlock'      # no match
+rc=1
+$ journalctl --user --boot=0 | grep -iE 'hypridle.*(segfault|crash|dumped)'
+rc=1
+$ journalctl --user --boot=0 | grep -c 'Stopped hypridle\.'
+0
+$ journalctl --user --boot=0 | grep -c 'Started hypridle\.'
+1
+$ ps -o pid,lstart,etime,cmd -p 1667
+1667 Fri Oct 23 22:14:10 2026 1-05:29:03 /usr/bin/hypridle
+```
+
+One start, no stop, no coredump, same pid for 1 d 5 h 29 m: the 22:14:11 start is a single
+continuous run. That **refutes a crash-restart reading** of the `inactive` unit probe (rc=3 dead, yet
+the process has never crashed and lives in a scope), and it is a positive the entry never made while
+asserting the unsupported scope mechanism. Correction to the peer's note: `coredumpctl list
+hypridle` exits **1**, not 0 (the message is `No coredumps found.`); only bare `coredumpctl list`
+exits 0. In a lane that grades on (command, exit code), that rc matters.
+
+**Method hazard — the audit writes into the substrate it audits.** The journal is persistent and
+grows: `journalctl --disk-usage` reports `249.9M` system-wide and `journalctl --user --disk-usage`
+`198.1M` (the peer's 198.1 MB is the user-scope figure — same scope split again), and boot 0's loose
+`grep -ic hypridle` count is now `5` while `Started hypridle\.` remains `1` and the `sudo` probe
+count is `2`. The two extra lines are wave-2 seats' own probes:
+
+```
+Oct 25 03:34:38 … sudo[2181728]: vgpnk : PWD=…/mado-shokunin ; USER=root ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
+Oct 25 03:37:19 … sudo[2637509]: vgpnk : PWD=…/mado-shokunin ; USER=root ; COMMAND=/usr/bin/coredumpctl list hypridle --no-pager
+```
+
+So any 90-day re-measurement of this row must count `Started hypridle\.` (or exclude
+`sudo`/`coredumpctl`), never a loose `hypridle` grep — otherwise the count inflates with reviewer
+activity and can be misread as daemon restarts. The closed claim itself is safe: the receipt is
+frozen bytes (`1194 B`, mtime `2026-10-24 23:21:21`, digest `f3387bfc…` unchanged), so audit growth
+can only corrupt *re-derivation*, not the archived artifact. That is the same class of failure as
+P6: the predicate measures an artifact, while the world underneath it keeps moving.
+
 ## Positive corroboration of the entry's INF
 
 The entry infers that `is-active` measures the wrong thing because the daemon runs in a transient
@@ -321,6 +374,9 @@ accepted on assertion:
 | `MainPID` empty for a scope | `-p MainPID` empty, exit 0 | confirmed |
 | `inactive` cannot separate rc=3 from rc=4 | `is-active` existing → `inactive`/3; nonexistent → `inactive`/4 | confirmed |
 | boot −1 spans 13:24:57–22:10:20 | `journalctl --user --list-boots` → `13:24:57–22:10:20`; system `--list-boots` → `13:24:36–22:12:24` | **scope distinction, not an error: both verified; S205 is user-journal so the user window is the one to quote** |
+| no coredumps for hypridle | `coredumpctl list hypridle` → `No coredumps found.` | confirmed content; **rc=1, not 0** (bare `coredumpctl list` is the rc=0 case) |
+| boot 0 has no `Stopped hypridle.` | `grep -c 'Stopped hypridle\.'` → 0; `Started` → 1 | confirmed; one continuous run |
+| audit pollutes loose counts | loose `grep -ic hypridle` on user boot 0 → 5 vs `Started` → 1; the 2 extras are `sudo … coredumpctl list hypridle` probe lines at 03:34:38/03:37:19 | confirmed; rechecks must match `Started hypridle\.` |
 
 Ownership note: I did not append errata E1 or E2 to
 `corpus/knowledge/idle-lock-chain-armed-r14.md`. This seat is read-only over the lane corpus; my
@@ -333,7 +389,7 @@ tell them apart.
 
 ## Residual risk / verification gaps
 
-- All live probes are point samples from 2026-10-25 03:23–03:41 -03. A daemon exit or restart after
+- All live probes are point samples from 2026-10-25 03:23–03:45 -03. A daemon exit or restart after
   the write would date the gate-quote's pid; the quote is session-scoped ("in this session"), so the
   snapshot is honest but not durable across a reboot.
 - I did not and cannot observe the host state at receipt-write time (2026-10-24); what I verified is

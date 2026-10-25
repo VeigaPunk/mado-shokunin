@@ -6,8 +6,10 @@ Target: `corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` — re-taken at t
 the 3428 B revision this seat first read was mutated mid-review and now carries Errata E1-E5.
 Every quoted body passage below was re-read in the current bytes.
 Substrates read-only: no bar started, no indicator executed, no menu opened, no toggle run.
-Evidence: `.ufo/waves/round-35/scratch/RevEntryR15/verify.log` (per-command exit codes) and
-`.ufo/waves/round-35/scratch/RevEntryR15/findings.md`.
+Evidence: `.ufo/waves/round-35/scratch/RevEntryR15/verify.log` (42 probes, per-command exit codes) and
+`.ufo/waves/round-35/scratch/RevEntryR15/findings.md`. Both were re-created from the seat transcript
+after an external sweep removed the entire round-35 scratch tree at ~03:45; contents are unchanged
+and the sweep is recorded in the log header.
 
 ## Axes
 
@@ -194,10 +196,22 @@ evidence that is itself unregistered — the same A5 gap as F3, now load-bearing
 Every erratum says a body claim is withdrawn, and every one of those sentences is still printed
 above it. Line numbers on the current bytes: §2's heading (line 35, E4), §2's *"does more than
 toggle"* (line 37, no erratum), §3's INF *"built not to remember"* (line 52, E3), §4's *"shows which
-state is in force"* (line 57, E4), §5's *"Divergence ... the lane's measured figure"* (lines 62-66, E1). A reader who stops at §5 — the natural stopping point, since the errata
-are an appendix — reads the version the entry itself now calls false. `idle-lock-never-asked-r12.md`
-handles the same situation in-body (§3, "The scope of this entry"), so the corpus has a precedent
-for fixing rather than appending.
+state is in force"* (line 57, E4), §5's *"Divergence ... the lane's measured figure"* (lines 62-66, E1).
+A reader who stops at §5 — the natural stopping point, since the errata are an appendix — reads the
+version the entry itself now calls false. `idle-lock-never-asked-r12.md` handles the same situation
+in-body (§3, "The scope of this entry"), so the corpus has a precedent for fixing rather than
+appending.
+
+Line 57 carries two clauses and they fail differently. The *state* half ("shows which state is in
+force") is weak on E4's own standard: exactly one state carries words. The *date* half ("since at
+least 2026-10-03") is sound, but only on the content clock, and the entry never labels the clock:
+mtime `2026-10-03 17:44:32.097653608` is 2 min after the omarchy package stamp
+`2026-10-03 17:42:32` carried by every file under `~/.local/share/omarchy/`, so it is not the
+package's stamp; and `omarchy-refresh-config:23` makes `.bak.$(date +%s)` with `cp -f`, which does
+not preserve mtime (the other three copies carry `mtime ≈ btime`), so the one copy that preserved
+10-03 was made by a preserving path whose invocation is inferred, not demonstrated. A creation-clock
+objection to this bound is a category error: 10-06 is when the copy was written, not when the offer
+began.
 
 ### N3 — MEDIUM-LOW — "entries for other toggles" survives E3 and is false
 

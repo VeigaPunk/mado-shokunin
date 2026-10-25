@@ -10,8 +10,8 @@ Installs/upgrades: **none** (Python 3.14.8 stdlib only; host kernel 7.2.11-arch1
 test**: 11/11 single-clause counter mutants still print `TARGET_MET` with unchanged counts
 (exit 0). All ten are **individually live** when the real bytes are mutated instead: 10/10
 one-clause data mutants are killed (`TARGET_MISSED`, exit 1). The real tree therefore witnesses
-none of its own clauses — only the synthetic control trees do. Four further calibration defects
-are reported in §6 (F2–F5).
+none of its own clauses — only the synthetic control trees do. Six further calibration defects
+are reported in §6 (F2–F6, F9).
 
 ## 1. Isolated copy and baselines
 
@@ -306,12 +306,20 @@ covers identity metadata only.
 
 ## 7. Integrity, scope and reproduction
 
-- **Restoration.** The lane was never written: all 15 artifacts under attack hash identically to
-  `lane-snapshot.sha256` before and after the whole series (`15/15`, zero changed). All writes are
-  under `scratch/MutC1Real/` (2022 files, 34 MB) — `root/` (pristine snapshot), `arms/A-*/count.py`
+- **Restoration and concurrent lane edits.** I never wrote to the lane: every write of mine is
+  under `scratch/MutC1Real/` plus this report. The 15 artifacts under attack were identical to
+  `lane-snapshot-v2.sha256` at the end of the run series. After that, sibling seats kept editing
+  the lane (03:43:18 check: 14/15 still match; `corpus/knowledge/idle-lock-never-asked-r12.md`
+  grew 3586 → 4344 bytes by appending errata, last write 03:41:38). The live predicate state was
+  re-checked at 03:43:18: `PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0
+  verdict=TARGET_MET`, exit 0. The appended bytes start with the snapshot bytes verbatim and the
+  two `gate-quote:` lines are byte-identical, so the v2 matrix still describes the
+  predicate-relevant live state.
+  Scratch contents (2002 files, 37 MB): `root/` (pristine v2 snapshot), `arms/A-*/count.py`
   (11 mutants), `arms/B-*` and `arms/C-*` (13+2 data trees), `counter-pristine.py`, `driver.py`,
-  `run.log`, `results.json`, `verify-deltas.json`, `lane-before.sha256`, `lane-snapshot.sha256`.
-  No `git`/`jj` command was run against the lane; the Git index and jj state are untouched.
+  `run.log`, `results.json`, `verify-deltas.json`, `lane-before.sha256`,
+  `lane-snapshot-v1.sha256`, `lane-snapshot-v2.sha256`. No `git`/`jj` command was run against the
+  lane; the Git index and jj state are untouched.
 - **One artifact per mutant (verified by full-tree manifest diff).** Of the 13 B arms, 11 change
   exactly one path; the two symlink arms change two paths each (a byte-identical `.real` copy plus
   the link) — one logical artifact. Both C arms carry the same single entry-symlink change. The
@@ -323,8 +331,8 @@ covers identity metadata only.
   `recheck-valid f2240ced…`, `digest-match 20285091…`, `gate-quote-substring 48629166…`,
   `gate-quote-word-bound b78b976e…`, `o-nofollow-open 063d6654…`.
 - **Reproduce.** `python3 -I driver.py` in the scratch directory rebuilds every arm from `root/`
-  and rewrites `results.json` + `run.log` (1.4 s, exit 0). Arm order: 11 A counters → 13 B trees →
-  2 C TOCTOU pair → 10 A×B cross runs → 2 X attribution runs.
+  and rewrites `results.json` + `run.log` (exit 0; seconds, longer under sibling load). Arm order:
+  11 A counters → 13 B trees → 2 C TOCTOU pair → 10 A×B cross runs → 2 X attribution runs.
 - **Installs.** None. Detector, driver and probes are Python 3.14.8 stdlib (`hashlib`, `re`,
   `stat`, `os`, `pathlib`, `shutil`, `importlib`). No network access, no pacman transaction, no
   `uv`/`cargo`/`npm` install.
@@ -336,6 +344,6 @@ and each is reported above as a round-36 finding under F1. The complement is equ
 **ten of ten are individually live** when the real bytes are mutated one clause at a time (Arm B:
 all `TARGET_MISSED`, exit 1), with `A+B` restoring `MET` for eight of ten. So the C1 gates are
 real but the *real-tree run* does not exercise them; it is a one-bit fingerprint of
-`open_cites == 0` (F2). F3–F5 add three calibration defects that a round-36 reader of
+`open_cites == 0` (F2). F3–F5 and F9 add four calibration defects that a round-36 reader of
 `uncovered=0` would otherwise not see: two unnamed load-bearing checks, a vacuous-quote survivor,
-and a prose-accepting cadence regex.
+a prose-accepting cadence regex, and six unchecked row cells.

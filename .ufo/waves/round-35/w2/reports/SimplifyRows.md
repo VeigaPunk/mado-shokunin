@@ -19,6 +19,50 @@ those three cite a witness that cannot witness the proposition it is filed for**
 (S204, S210). Those are row-level defects that a deletion cannot fix and that the
 counter cannot see.
 
+## Concurrent edits during this attack (adaptation)
+
+This lane was being written by sibling wave-2 seats while I read it. Observed with
+`stat`/`diff` against the scratch mirror that preserves my starting snapshot
+(`scratch/SimplifyRows/exp/e0-base/root/corpus/`):
+
+| when (host) | what changed | by whom |
+|---|---|---|
+| 2026-10-25 03:35:30 | `corpus/knowledge/idle-lock-chain-armed-r14.md` and `idle-lock-offered-in-the-bar-r15.md` grew `### Errata (round 35, wave 2)` sections | sibling seats (r14 E1 names `RevQuoteS205`, r15 E1 `RevQuoteS209`, r12 E1/E2 `RevQuoteS204`) |
+| 2026-10-25 03:40:12 | `corpus/SOURCES.md`: exactly three rows rewritten — S203, S204, S205 (6 diff lines, no other row touched) | sibling seat |
+| 2026-10-25 03:41:38 | `corpus/knowledge/idle-lock-never-asked-r12.md` grew errata E1-E3 | sibling seat |
+
+Consequence for this report: **the entries now carry most of the semantic
+corrections; the rows mostly do not.** r12 E1 withdraws "never toggled" (null
+channel + a `Consumed`-scope window that shows a daemon-down period), E2 fixes the
+13-vs-12 item count, E3 withdraws "two independent negatives" and "built not to
+remember"; r14 E1 says the transient-scope inference is "unlicensed by S205" and
+names the uwsm scope line, E2 withdraws "both fire the lock command"; r15 E1
+explains the dating clock, E2 withdraws "never taken it", E3 supplies the
+`omarchy-toggle-idle` mechanism, E4 says one state is named and the other is
+silence, E5 narrows "leaves no trace" to on-disk state. The S203/S204/S205 row
+edits absorbed only the count, the null-channel label and the boot count. They did
+not land consistently: S203's teaches now says "thirteen items, twelve of them
+first-run scripts" while S204's still says "(12 first-run scripts, none about idle)";
+S204's teaches still opens "Two independent negatives agree" and ends "which is a null
+channel rather than a negative".
+
+Re-verified after the edits, on the current bytes: C1 and C2 still exit 0
+TARGET_MET; `e0-base`/`e1-drop-s204`/`e2-drop-s210` rebuild from the current tree and
+give the same `MET` / `7 closed, 1 open` / `7 closed, 1 open`; `source_audit.py` and
+`propose_strict.py` still report 5/8 document-anchored. The deletion proof is
+structural and does not depend on cell text: the target is `closed_rows=8` and the
+spec admits eight sids.
+
+I verified the errata's central new fact (read-only):
+`journalctl --user | grep 'app-Hyprland-hypridle-9408787a'` → two lines, the
+`Consumed … 19:24:38` line and the 13:25:00 uwsm `systemd-run --scope --unit=…`
+line; `coredumpctl list hypridle` → `No coredumps found.`;
+`default/hypr/autostart.conf:1` → `exec-once = uwsm-app -- hypridle`;
+`toggles/hypr/flags.conf` → the two-line placeholder text. So the journal *does*
+record the daemon's lifecycle. That makes S204's new scope ("the daemon's
+stop/start is consistent with a toggle-off") true on the host — and still absent
+from S204's own anchor (F2).
+
 ## Axes (named before touching anything)
 
 | axis | test | instrument |
@@ -36,9 +80,9 @@ fetch transcript. "Anchor supported" is judged against the cited receipt only.
 
 | id | source class | distinct proposition in the entry | tier A for the row's scope? | anchor supported by receipt? | YAGNI verdict |
 |---|---|---|---|---|---|
-| S203 | doc `bin/omarchy-first-run` | the setup path's 12-script list contains no idle question (r12 §1) | yes for the file list; **no** for "whether an intent could have been recorded" | partly — "questionnaire" and the record clause are not in the receipt (F3) | keep; source, scope and anchor each over-claim (F3) |
-| S204 | **tr** `fetch/S204.receipt.txt` | the journal holds zero `omarchy-toggle` invocations (r12 §2) | **no** — non-diagnostic instrument, past window (F2) | the count is literal, the inference is not | **weakest row**: null instrument, duplicated measurement |
-| S205 | **tr** (anchor names `hypridle.conf`) | the daemon is live and the chain declared (r14 §1-§2) | yes for liveness/timeouts; the causal clause needs a probe the receipt lacks (F4) | process, conf digest, timeouts, journal lines: yes; "transient scope": **no** | keep; anchor one clause short |
+| S203 | doc `bin/omarchy-first-run` | the setup path's item list contains no idle question (r12 §1) | yes for the item list; **no** for "whether an intent could have been recorded" | partly — the current teaches says "thirteen items, twelve of them first-run scripts"; "questionnaire" and the record clause are still not in the receipt (F3) | keep; source and scope over-claim; r12 E2 fixed the count |
+| S204 | **tr** `fetch/S204.receipt.txt` | the journal holds zero `omarchy-toggle` invocations — now labelled a null channel (r12 §2) | **no** — the row's own teaches calls its payload "a null channel rather than a negative" | count yes; the new scope clause "the daemon's stop/start is consistent with a toggle-off" is not in the receipt | **weakest row**: self-refuting instrument; teaches still says "two independent negatives agree" |
+| S205 | **tr** (anchor names `hypridle.conf`) | the daemon is live and the chain declared (r14 §1-§2) | yes for liveness/timeouts; the causal clause needs a probe the receipt lacks (F4) | process, conf digest, timeouts, journal lines: yes; "transient scope": **no**, and r14 E1 says so | keep; anchor one clause short (row now says one start line in the boot) |
 | S206 | doc `~/.config/waybar/config.jsonc` | the bar offers the choice via `custom/idle-indicator` (r15 §1) | yes | yes, lines 18-19 and 207-212 verified | keep |
 | S207 | doc `default/waybar/indicators/idle.sh` | the desktop renders the off state itself (r15 §2) | yes | yes; scope says "two-state vocabulary" but one state is an empty string (F6) | keep; scope word too wide |
 | S208 | doc `bin/omarchy-menu` | the menu is the second surface (r15 §1) | yes | yes, lines 207/212 verified | keep |
@@ -105,8 +149,23 @@ journalctl --user | grep -c 'pkill'            → 0
 journalctl --user | grep -c 'uwsm-app'         → 2   (elephant config lines only)
 journalctl --user | grep -c 'omarchy'          → 31565
 ```
-So `grep -c 'omarchy-toggle'` returns 0 whether or not the toggle ran. Second
-defect: the retained user journal starts **after** the setup it is filed against.
+So `grep -c 'omarchy-toggle'` returns 0 whether or not the toggle ran. That does not
+mean the journal is silent about the daemon: it records the scope lifecycle, and a
+sibling errata (r12 E1) is built on exactly that —
+
+```
+journalctl --user | grep 'app-Hyprland-hypridle-9408787a'
+→ Oct 23 13:25:00 uwsm_app-daemon: sent: exec systemd-run --user --scope … --unit=app-Hyprland-hypridle-9408787a.scope … -- hypridle
+→ Oct 23 19:24:38 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU … 5h 59min 38.213s wall clock
+coredumpctl list hypridle → No coredumps found.
+```
+So a competent probe exists (scope `Consumed` with no `Stopping`/`Stopped`, then a
+new start at 22:14:11) and S204's receipt did not run it. **The defect is the chosen
+statistic, not the journal's capacity** — and the row's 03:40 scope edit now asserts
+that very lifecycle fact while its anchor still cites only the count and the grep.
+
+Second defect: the retained user journal starts **after** the setup it is filed
+against, so "never afterwards" outruns the window even for a competent probe.
 
 ```
 journalctl --user -o short-iso | head -1  → 2026-10-23T07:18:30-03:00
@@ -118,6 +177,13 @@ The row's scope says "the operator never made it afterwards either"; the instrum
 covers 2026-10-23 onward. The entry is careful in §2 ("in any session the journal
 still keeps"); the **row** is not. Under `CORPUS.md:93` tier A is scoped to the
 `scope`, so tier A cannot be granted here: the source cannot bear on the scope.
+
+**Status at 03:41.** r12 E1 now withdraws "never toggled" in the entry and r12 E3
+withdraws "two independent negatives"; the row's 03:40 edit labels its payload "a
+null channel rather than a negative" but keeps the sentence "Two independent
+negatives agree … which is a null channel rather than a negative" — an internal
+contradiction and a direct conflict with its own entry's E3. The row is now
+self-refuting; it is not corrected.
 
 **F3 — S203's "post-login questionnaire" is not a questionnaire.** The installer's
 own summary is "Finish the installation of Omarchy with items that can only be done
@@ -136,6 +202,12 @@ have been recorded at setup", but the installer touches only
 `~/.local/state/omarchy/first-run.mode` (read, then `rm -f`). No record surface is
 named by source or receipt.
 
+**Status at 03:41.** r12 E2 fixes the 13-vs-12 count (F7 below is resolved in the
+entry and in the row's teaches) and r12 E3 withdraws the licensing of "none asks"
+on the ground that S203/S204 carry no script bodies. The row still calls the path a
+"post-login questionnaire" and still claims to scope "whether an intent could have
+been recorded at setup"; neither is in the receipt.
+
 **F4 — S205's causal clause is true but not in the receipt.** Host verification:
 
 ```
@@ -149,6 +221,11 @@ contains only `process probe`, `unit probe`, `journal start lines`, `declared
 timeouts`, `hypridle.conf digest`. The anchor cites receipt sections and
 `hypridle.conf`; the cgroup/scope probe that settles the INF was dropped. A one-line
 anchor fix (add the `/proc/1667/cgroup` or scope-listing line) closes it.
+
+**Status at 03:41.** r14 E1 now says the transient-scope inference is "materially
+true but **unlicensed by S205**" and names the uwsm `systemd-run --scope` line as its
+warrant. The row's teaches still asserts the inference with an anchor that does not
+carry it.
 
 **F5 — S209's "dated" is two different timestamps.** The oldest copy's **mtime** is
 2026-10-03; its **filename epoch** is 2026-10-06:
@@ -164,21 +241,34 @@ dated 2026-10-03" without naming the field; entry r15 §5 then calls the package
 2026-10-06 "divergence" — that is a field comparison, not a correction. The row's
 tier A survives for the handler counts; the date claim needs `mtime` in the cell.
 
+**Status at 03:41.** r15 E1 landed exactly this explanation ("the dated copy preserved
+the source file's older mtime, so the creation clock and the content clock
+disagree"); the row's cell is unchanged.
+
 **F6 — S207's "two-state vocabulary" is one label plus an empty string.** The
 receipt shows `{"text": ""}` for the running state and one tooltip
 `Idle lock disabled` for the other. The entry states this exactly; the row's scope
 does not.
 
-**F7 — the S203 receipt prints 13 names under a `12` count.** The 13th is
-`install-voxtype.hook`; the count is right for `.sh` files and for `bash`
-invocations (12), but a reader counting the printed list gets 13. `ls
-install/first-run | wc -l` → 13; `ls install/first-run/*.sh | wc -l` → 12. The
-rows' "twelve first-run scripts" is correct under the `.sh` reading; the anchor
-should say so. (S204's receipt prints only `count: 12`, no names.)
+**Status at 03:41.** r15 E4 landed the same sentence ("exactly one state carries
+words"); the row's scope is unchanged.
+
+**F7 — (resolved concurrently by r12 E2) the S203 receipt prints 13 names under a
+`12` count.** Reached independently here; r12 E2 now records the same 13/12
+distinction, the S203 and S204 row teaches cells were edited to "thirteen items,
+twelve of them first-run scripts", and `ls install/first-run/*.sh | wc -l` → 12
+still supports the `.sh` reading.
 
 **F8 — S210's "entries for other toggles" is one toggle.** The directory holds
 `flags.conf` and `window-no-gaps.conf`; `flags.conf` is a flags file, not a toggle
 record. Teaches' plural is generous.
+
+**Status at 03:41.** r15 E3 supplies the mechanism (`omarchy-toggle-idle` stops or
+starts the process and writes no file; `autostart.conf:1` re-arms it at login) and
+reads `flags.conf` as the template placeholder — both verified in the adaptation
+section. The row's teaches still says the toggles directory "is the place where a
+choice about other toggles would have left one", which is exactly what the entry now
+denies for the idle lock.
 
 ## Deletion proofs (scratch, unmodified counter)
 
@@ -209,7 +299,7 @@ python3 -I harness.py <experiment>
 | e13-supersede-append | append well-formed `S211` (`supersedes S210 — …`), S210 untouched | 0 | `3/8/0 MET`; census `malformed=0` | the only rule-2-compliant instrument |
 | e14-supersede-and-uncite | S211 appended **and** S210's `source:` + gate-quote dropped | 1 | `2/7/1 MISSED` | no retirement path exists |
 
-Baseline on the untouched lane, same commands:
+Baseline on the lane, re-run after the concurrent edits (03:41), same commands:
 
 ```
 python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json
@@ -217,6 +307,10 @@ python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35
 python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
 → exit 0  PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
 ```
+
+`e0-base`, `e1-drop-s204` and `e2-drop-s210` were rebuilt from the post-edit tree and
+return `MET`, `7 closed / 1 open`, `7 closed / 1 open` — the deletion result is
+independent of the cell text.
 
 C2 is unaffected by any row edit by construction: it reads the clause ledger, control
 receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.md`.
@@ -244,16 +338,19 @@ receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.
    `/home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-idle`: the no-record property
    is in that script, not in the directory listing. Keep the toggles-directory
    receipt as the digest only.
-3. **Supersede S204** with a row that names the query **and its window**
-   (`journalctl --user --since 2026-10-23T07:18:30 | grep -c omarchy-toggle`) and
-   states the result as a null ("no matching line in the retained window; the toggle
-   emits no journal line, so the null is not evidence of non-use"). Tier A then fits
-   the narrower scope or is honestly dropped to B.
-4. **Correct S203's** `source`/`scope`: "post-login finisher", drop "intent could have
-   been recorded", anchor line 8-27 only. **S209:** name the field (`mtime`) and the
-   four `.bak` paths, so r15 §5's "divergence" can be withdrawn. **S205:** add the
-   `/proc/1667/cgroup` (or scope-listing) line to the anchor. **S207:** scope says
-   one label, not "two-state vocabulary".
+3. **Supersede S204** with a row that names a journal probe with diagnostic power —
+   the scope lifecycle, not the toggle's name — **and its window**, e.g.
+   `journalctl --user --since 2026-10-23T07:18:30 | grep 'app-Hyprland-hypridle-'`
+   plus `systemctl --user list-units --type=scope`. State the result as what it is
+   (`Consumed … 19:24:38` with no `Stopping`/`Stopped`, next start 22:14:11 → a
+   daemon-down window; a toggle-off is `[INFERENCE-STRONG]`, the surface is unknown)
+   and record that `grep omarchy-toggle` is a null channel. Tier A then fits the
+   narrower scope or the row is honestly dropped to B.
+4. **Carry these content corrections into the superseding rows** (never in place):
+   S203 "post-login finisher", drop "intent could have been recorded", anchor line
+   8-27 only; S209 name the field (`mtime`) and the four `.bak` paths, so r15 §5's
+   "divergence" can be withdrawn; S205 add the `/proc/1667/cgroup` (or scope-listing)
+   line to the anchor; S207 scope says one label, not "two-state vocabulary".
 5. Do none of these by editing the rows in place: rule 2 permits only
    `status`/`recheck`/`used-by`, and a correction must be a new row opening
    `supersedes S0NN —`. e13 proves an appended correction row leaves C1 at MET; e14
@@ -261,15 +358,31 @@ receipts and the frozen-blob ledger only (`c2/count.py`), never `corpus/SOURCES.
 
 ## Preserved contract
 
-- Lane tree untouched: I read only. Lane digests at close (for the next seat to
-  compare): `corpus/SOURCES.md` `848a7680…e78d4fe80`, r12 entry
-  `7f27ced0…e4dd58`, r14 entry `583c708c…e0bf3`, r15 entry `82c08a46…f91fadfe`.
+- This seat wrote nothing into the lane. All writes are under
+  `.ufo/waves/round-35/scratch/SimplifyRows/` (`harness.py`, `source_audit.py`,
+  `propose_strict.py`, `exp/…`) plus this report.
+- Lane state at close (03:45:24; the lane was edited three times during this attack
+  and may move again), with the concurrent-edit provenance recorded above:
+
+  ```
+  SOURCES.md                0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51  2026-10-25 03:40:12
+  idle-lock-never-asked-r12 0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504  2026-10-25 03:41:38
+  idle-lock-chain-armed-r14 583c708c338ecb063f8ef38071d415c79476088f27994551fd964384be1e0bf3  2026-10-25 03:35:30
+  idle-lock-offered-in-bar  82c08a4675863f69e0905b02810cae6299cdfe3038fb1255172f7b44f91fadfe  2026-10-25 03:35:30
+  ```
+  The three fetch receipts and the other five rows were not touched by the siblings
+  (receipts still hash to the frozen digests: C1 closes them).
+- My analysis started on `SOURCES.md` sha256 `848a7680…`; the pre-edit snapshot is
+  preserved byte-for-byte at
+  `scratch/SimplifyRows/exp/e0-base/root/corpus/SOURCES.md`, and the diff between it
+  and the current file is 6 lines over S203/S204/S205 only.
 - Census on the lane: `rows=200 malformed=0 dups=(none) tier A=193 B=1 C=6`.
   S203–S210 are 8 of the 200; four of those eight name a fetch transcript as their
   source (S204, S205, S209, S210), and three of those four (S204, S209, S210) name
   no document anywhere in the row.
-- C1 and C2 both exit 0 TARGET_MET before and after this attack; every mutation was
-  applied to a copy under `scratch/SimplifyRows/exp/`.
+- C1 and C2 both exit 0 TARGET_MET at open (pre-edit), mid-attack and at close
+  (post-edit); every mutation was applied to a copy under
+  `scratch/SimplifyRows/exp/`.
 - No tool installed or upgraded (nothing was needed); no pacman transaction; nothing
   written under `/home/vgpnk/Projects/shokuknow`.
 
@@ -280,14 +393,37 @@ and would need the three transcript-only rows (S204, S209, S210) replaced before
 target could be met again — a real cost in a round whose job is to prove C1, not to
 grow it. The alternative (keep the sid-based target) keeps C1 green and keeps two
 rows whose evidence cannot move the needle (S204, S210) inside the scored set. I
-recommend the first only in a round that is allowed to re-target, and the cell
-corrections in `S203/S205/S207/S209` regardless: they are C1-neutral (e12) and fix
-statements that are currently stronger than their receipts.
+recommend the first only in a round that is allowed to re-target, and the content
+corrections (carried by superseding rows) for `S203/S205/S207/S209` regardless: they
+are C1-neutral (e12) and fix statements that are currently stronger than their
+receipts.
+
+The concurrent edits add a second cost that this round cannot pay down. The entries
+now carry errata that withdraw four claims (S204's negative, "two independent
+negatives", "built not to remember", S205's "both fire the lock"), while the rows
+keep text that asserts them: S204's teaches still opens "Two independent negatives
+agree" and then calls its payload a null channel; S210's teaches still names the
+toggles directory as the place the idle choice would have left a mark; S205's teaches
+still asserts the transient scope its own entry now calls unlicensed; S207's scope
+still says "two-state vocabulary". So the registry is now a stale second authority
+for the same claims. YAGNI would retire those rows; the frozen target forbids it
+(e14), and rule 2 forbids rewriting them in place (e11/e12 pass C1 but are contract
+violations). The only compliant move is to append superseding rows (e13) — which
+raises weight while leaving the stale rows scored. I recommend that move *and* a
+round-36 target that scores document-anchored rows, so the stale text stops being
+load-bearing instead of being contradicted in place.
 
 ## Not verified
 
-- Whether the operator ever toggled the idle lock. Unobservable from these sources:
-  the toggle emits nothing, and the journal begins after setup. I ran no toggle.
+- Whether the operator ever toggled the idle lock. What I verified is narrower: the
+  journal's scope `app-Hyprland-hypridle-9408787a` line exists with a `Consumed`
+  timestamp and a later start, and there is no hypridle coredump. That is consistent
+  with a toggle-off; who did it and by which surface is not established here.
+- The errata written by sibling seats beyond the four facts I re-read in the
+  adaptation section: r12 E1's earlyoom/memory figures, r14 E2's screensaver-script
+  scan, r15 E3's byte-identity of `flags.conf` to the template file, and r15 E5's
+  notification-history caveat. I read the placeholder text and `autostart.conf:1`, not
+  those arguments in full.
 - Whether S209's four `config.jsonc.bak*` copies are the complete backup set; I
   re-`stat`ed only those four files.
 - C2's clause ledger content beyond running its counter.

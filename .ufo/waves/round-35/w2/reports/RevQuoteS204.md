@@ -147,3 +147,98 @@ entries are true. It must not be reported as truth of content.
    22:14:07 reboot"* — and drop the vacuous `grep omarchy-toggle` leg entirely.
 3. S203's parallel defect is its receipt listing 13 names under `12` (their LOW-1); same re-mint
    pass, different fix.
+
+## Entry-side errata — attribution and residuals (not authored here)
+
+Between 03:35:08 and 03:41:38 on 2026-10-25 the frozen entry
+`corpus/knowledge/idle-lock-never-asked-r12.md` was written twice by **another seat**:
+3586 B at 03:35:08 (E1+E2), then 4344 B / sha256 `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`
+/ 69 lines at 03:41:38 (adds E3). This seat did not write to lane corpus; its only writes are
+this report and the scratch log (`stat`: report 03:40:46, log 03:37:07). The errata text is not a
+copy of this report: an overlap probe run at 03:41 against the then-current report
+(`grep -c` for "thirteen items, twelve of them scripts" / "null-channel reading" / "2h50m window
+with the idle daemon down") returned 0 / 0 / 0. That probe is **historical and cannot be re-run
+now**: this paragraph and item 3 quote the strings, so a fresh grep would match itself. Recorded
+here as the observed result, not as a reproducible step.
+
+Post-edit integrity, re-checked after both writes: `c1/count.py` → `closed_entries=3 closed_rows=8
+open_cites=0 verdict=TARGET_MET` (exit 0); `c2/count.py` → `uncovered=0 retired=1
+toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET` (exit 0); both gate-quotes still contiguous
+byte-exact receipt substrings and still present in the entry.
+
+Residuals I cannot close from outside that file:
+
+1. **The withdrawn assertion is still asserted three times.** `never toggled it afterwards`
+   (title line 1), `never exercised the toggle afterwards` (§1 OBS) and `the toggle was never run
+   in any session the journal still keeps` (§2 OBS) all remain as text; E3 explicitly keeps the
+   title "as landed". Retraction-by-errata leaves the claim live for a reader who stops at the
+   title. That is a lane decision, not this seat's; recorded, not edited.
+2. **E2 reproduces my withdrawn error.** "The installer body executes 13 items: 12 `bash …/*.sh`
+   plus `omarchy-hook-install`" — `omarchy-hook-install` is `mkdir`/`cp`/`chmod` and does not
+   execute the hook, and the enumeration omits `sudo rm -f /etc/sudoers.d/first-run`. Mechanically
+   counted, the body invokes **15** external commands inside the mode-file guard: 1
+   `rm -f "$FIRST_RUN_MODE"`, 12 `bash …/*.sh`, 1 `omarchy-hook-install post-update`, 1
+   `sudo rm -f /etc/sudoers.d/first-run`. Excluding the guard's own state-file `rm`: **14**.
+   Twelve remains the correct *script* count; "13 items" is not defensible under any of the three
+   readings.
+3. **E1 reintroduces an inference this report withdrew.** E1 states "a 2h50m window with the idle
+   daemon down". Rev 3 drops that framing: the journal proves the *scoped* daemon was down and
+   that no supported re-enable ran (toggle ON and `omarchy-restart-app` both log
+   `received: app -- hypridle`); a bare `hypridle &` is journal-invisible, so the window is
+   bounded, not proven. Defensible sentence: "the idle lock was disabled at 19:24:38 and no
+   supported re-enable ran before the 22:14:07 reboot".
+4. **E1's boundary is a reboot, not a session.** `journalctl --list-boots`: boot -1 `e55f9cd9…`
+   runs 13:24:36 → **22:12:24**; boot 0 `0a3785aa…` starts 22:14:07.
+5. **Unsourced measurements.** E1/E2/E3 carry figures (the 19:24:38 scope release, 90.86 % free,
+   0 `idle` matches) with no source id and no receipt; under the lane contract they need a
+   receipted row or an explicit "lane-reported, not admitted" label. This report is review-grade
+   evidence — commands and exit codes quoted — not an admitted source.
+
+## Registry mutation (SOURCES.md) — observed, not authored here
+
+At 2026-10-25 03:40:12 `corpus/SOURCES.md` was rewritten: sha256
+`0bf117e2f472ec4f80adec17d58fe50b4fbd4fa9568ffa8523a4bfc272950d51`, 171446 B (earlier state per
+peer report: `848a7680…`). `c1/frozen.json` pins `id`, `predicate`, `target`, `entries` and
+`receipts{path,sha256}` — **no registry hash and no entry hash** — so C1 cannot see registry or
+entry prose rewrites; it re-checks only that each anchor cell carries the pinned receipt sha256
+and that each entry gate-quote is contiguous. Verified after the rewrite: row 206 anchor still
+`4cd5ba65…54ad`, row 205 anchor still `1b7fa87f…1646`, both `c1` and `c2` → TARGET_MET (exit 0).
+
+Row-level residuals in the mutated registry:
+
+- **Row 206 (S204), purpose cell still asserts the withdrawn claim:** "host evidence that the idle
+  lock was never asked about and never toggled … the journal's absence of any omarchy-toggle
+  invocation". The evidence cell now calls the same count "a null channel" — the two cells
+  contradict each other.
+- **Row 206, note cell is self-contradictory:** it opens "Two independent negatives agree" and
+  ends "which is a null channel rather than a negative". A null channel cannot be the second of
+  two agreeing negatives.
+- **Row 206, evidence cell wording:** "the daemon's stop/start is consistent with a toggle-off" is
+  accurate but should say *a disable event, unattributed* — sender identity is unrecoverable
+  (§Residual risk), and only the toggle-OFF and restart paths are excluded by the ON-path
+  visibility, not a manual kill.
+- **Row 205 (S203), note cell regressed in precision:** "runs thirteen items … none of the
+  thirteen executed items asks about the idle lock". There are 13 *commands*, one of which
+  (`omarchy-hook-install`) installs rather than executes, and the body also runs
+  `sudo rm -f /etc/sudoers.d/first-run`. Accurate form: "thirteen commands — twelve run scripts,
+  one installs a hook that does not run in first-run".
+- The `recheck` cell moved `on-request` → `on-change`; still a valid cadence token under C1.
+
+## Residual risk and verification gaps
+
+- **Compatible causes beyond the toggle.** A manual `pkill -x hypridle` from a terminal, or a
+  keybind wrapper that calls it, is equally compatible with the 19:24:38 release: both are
+  journal-invisible, and `~/.bash_history` holds no `hypridle` command (0 hits). The evidence
+  identifies the *effect* (daemon killed mid-boot), never the *agent*.
+- **Sender identity is unrecoverable.** `auditd`, `psacct`, `acct` all `inactive`; no
+  `/var/log/account/pacct`; `~/.bash_history` 4572 B with `0` hits for `hypridle` and
+  `omarchy-toggle`. So "'never toggled' is dead" is verified; "the operator toggled" is not, and
+  is not claimed anywhere in this report.
+- **The stop differential is inference.** Stopping/Stopped (systemd-initiated) vs Consumed-only
+  (self-exit of a `--collect` scope) is systemd semantics, `[INFERENCE-STRONG]`, not reproduced —
+  reproducing it would mutate host state.
+- **A bare `hypridle &` is invisible** to every instrument used here. `bash_history` shows no such
+  command, which weakens but does not eliminate the possibility.
+- **The journal is no longer pristine for `hypridle` greps.** This seat's read-only probes added
+  `sudo[...]: COMMAND=/usr/bin/coredumpctl list hypridle` lines (2026-10-25 03:34, 03:37). The
+  `omarchy-toggle` count is unaffected.
