@@ -2364,3 +2364,10 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   clause diagnostics in `w1/reports/MutC1.md`; counter/manifest/claims untouched.
   Also flagged: the C1 run's /tmp cleanup of `mado38-dsc-*` may have touched a
   concurrent sibling's ephemeral gate scratch (recorded, no loss).
+
+- **Round-38 residual-confirmation (`CritV3Residual`)** — the two declared
+  fabrications remain cheapest-path: C1 ≈12 KB (3 copied pinned receipts + hollow
+  entries), C2 ≈8.8 KB (behavior-exact stub + forged triplet, proc self-forge
+  220 B). Classified as accepted tradeoffs matching the registration's declared
+  residual; cheapest narrowing clauses proposed for r39 (located-quote depth;
+  proc-holder/ss-users consistency + full-output replay equality).
