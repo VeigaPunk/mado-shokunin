@@ -1,0 +1,327 @@
+{
+ "wave": "mado-r36-w1",
+ "reportDir": ".ufo/waves/round-36/w1/reports",
+ "context": "# Goal\nmado round 36, wave 1 \u2014 build and first falsifiers. /skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n1. Name the axes.\n2. Iterate cheap, in parallel.\n3. Keep moves that improve any axis and harm none.\n4. Don't aim \u2014 let the frontier walk itself.\nIMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel.\n\nLane repo (call it LANE): /home/vgpnk/Projects/shokunin/mado-shokunin\nEvery lane path you touch is ABSOLUTE under that root. Your tools start at the FLEET root (/home/vgpnk/Projects/shokunin), so a relative lane path lands in the wrong repo. Every `Report:` trailer path the renderer gives you is relative to LANE \u2014 write it at LANE/<that path>.\n\n## The freeze (read-only; never edit)\nLANE/.ufo/waves/round-36/registration.md \u2014 two claims, both predicates frozen at commit dbf8b579aeac0f023aaf595770f1cb0049e4baa2 before any round-36 data:\n- C1 calibration: LANE/quality/check-counter-discrimination.py scores a frozen 25-control manifest (3 accept, 22 reject) over an admission counter; target `correct == controls`; before = 14/25 (LANE/.ufo/waves/round-36/receipts/before-discrimination.txt). The repaired counters do NOT exist yet (LANE/quality/counters/ is this round's data), so attack the DESIGN, the CONTROLS, the FROZEN SPECS and the GATES.\n- C2 operability: LANE/quality/check-evidence-pointers.py (PRED-PTR-r36-v1) over the lane's own records; before = TARGET_MISSED (receipts/before-pointers.txt).\nManifest: LANE/.ufo/waves/round-36/controls/manifest.json. Frozen specs: LANE/.ufo/waves/round-36/{c1,c2}/frozen.json. Fixture generator: LANE/.ufo/waves/round-36/c2/gen-mutants.py. Round-35 routed defects: LANE/corpus/lessons/round-35-verifier-spotcheck.md (D1\u2013D10).\n\n## Bounds (hard)\n- READ-ONLY on every production file. Write ONLY your own report and, if you need scratch, LANE/.ufo/waves/round-36/scratch/<YourName>/ plus /tmp. Never edit LANE/quality/, LANE/corpus/, LANE/tools/, LANE/LOG.md, LANE/SCORECARD.md, LANE/SKILL.md, LANE/PROVINCE.md, or anything under LANE/.ufo/waves/round-36/{registration.md,controls,receipts,c1,c2,ledger,c2/mutants}. Never write the fleet root's scripts/ or templates/, /home/vgpnk/.omp/agent/ (operator-owned) or /home/vgpnk/Projects/shokuknow (read-only campaign source). Never touch a sibling lane repo.\n- Never mutate a compositor, a config tree, a service or a package; no hyprctl write verbs. The host's live planes are read-only for this lane.\n- Never pass a `model` parameter to anything; the host role map routes. Never message `agent://all`; seats only by id.\n- Tooling: you MAY install or upgrade tools that help (read /home/vgpnk/.omp/agent/RULES.md first). PACMAN IS PAUSED HOST-WIDE: run no pacman transaction of any kind; use `uv tool`, `npx`, or an official binary into ~/.local/bin. Record every install (tool, version, channel, reason) in your report.\n- No fabricated evidence: a command you did not run has not passed. Quote the exact output lines you rely on.\n\n## Deliverable\nYour report: what you checked, the exact commands, the quoted output, and a PASS/FAIL/finding verdict per item, with file:line or command-output pointers. If an item is impossible as written, say what blocked it and what you ran instead.",
+ "items": [
+  {
+   "name": "RevDiscrimBefore",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevDiscrimBefore.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "CritManifestBalance",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/CritManifestBalance.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC1AcceptAll",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC1AcceptAll.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC1RejectAll",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC1RejectAll.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC1NoDigest",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC1NoDigest.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC1NoFence",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC1NoFence.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC1CheckAnchor",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC1CheckAnchor.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC2NoClausePin",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC2NoClausePin.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC2NoReceiptBind",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC2NoReceiptBind.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC2HardcodedTip",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC2HardcodedTip.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutC2NoTable",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutC2NoTable.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ExecDigestCribs",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ExecDigestCribs.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevFenceSemantics",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevFenceSemantics.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ExecReceiptForge",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ExecReceiptForge.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevTipRule",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevTipRule.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ExecClausePins",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ExecClausePins.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevAcceptControls",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevAcceptControls.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "LabratGateOracle",
+   "role": "revenger",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/LabratGateOracle.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "CritFailClosed",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/CritFailClosed.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "SentGateExec",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/SentGateExec.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutE12Source",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutE12Source.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutPriorArt",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutPriorArt.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutPriorArt2",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutPriorArt2.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevSourceQuotes",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevSourceQuotes.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScribeQualityCrit",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScribeQualityCrit.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevPtrBefore",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevPtrBefore.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevPtrExtract",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevPtrExtract.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutPtrNoSetup",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutPtrNoSetup.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutPtrExistingOnly",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutPtrExistingOnly.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutPtrDisposition",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutPtrDisposition.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "MutPtrTipAncestor",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/MutPtrTipAncestor.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ExecPtrFixtures",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ExecPtrFixtures.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevSupersedeBind",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevSupersedeBind.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevRecordIntact",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevRecordIntact.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutDisposition124",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutDisposition124.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutInheritedTen",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutInheritedTen.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevAxisTranscriptAsk",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevAxisTranscriptAsk.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutD9Provenance",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutD9Provenance.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "CritD9Boundary",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/CritD9Boundary.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutD6Rows",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutD6Rows.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutD7Counts",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutD7Counts.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutD1Facts",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutD1Facts.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScribeReportErrata",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScribeReportErrata.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutConsiderRatio",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutConsiderRatio.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScribeQualityRatio",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScribeQualityRatio.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScribeLessonGate",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScribeLessonGate.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevSelftest",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevSelftest.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevIndexGate",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevIndexGate.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevAxisNow",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevAxisNow.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevCensusNow",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevCensusNow.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevRowsUnchanged",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevRowsUnchanged.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "SentBoundary",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/SentBoundary.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ConnOverlap",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ConnOverlap.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ConnGateReuse",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ConnGateReuse.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevFleetMisroot",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevFleetMisroot.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "SimplifierGates",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/SimplifierGates.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "DistillerFindings",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/DistillerFindings.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevLogScaffold",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevLogScaffold.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutHostProbe",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutHostProbe.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "CritClaimSizing",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/CritClaimSizing.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "CritSeparability",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/CritSeparability.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "RevShonen",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/RevShonen.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScribeFrontier",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScribeFrontier.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  },
+  {
+   "name": "ScoutRound35Defects",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nRead your assignment at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/prompts/ScoutRound35Defects.md and execute it exactly. It carries your deliverable; this task's shared context carries the lane bounds, the freeze and the write scope. 63 other seats run beside you read-only: write only your own report and your own scratch directory, never a production file."
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+{
+ "id": "CLAUSES-r36-v1",
+ "counter": "quality/counters/c1-idle-lock.py",
+ "live": [
+  {
+   "id": "entry-regular",
+   "why": "The entry path is a regular file inside the scored root.",
+   "control": {
+    "control_id": "c1-entry-symlink",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-entry-symlink.txt"
+   }
+  },
+  {
+   "id": "row-unique",
+   "why": "Exactly one registry row inside `## Registry` carries the id.",
+   "control": {
+    "control_id": "c1-row-duplicate",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-row-duplicate.txt"
+   }
+  },
+  {
+   "id": "row-well-formed",
+   "why": "The row has eleven cells; a pipe inside a cell adds a field, so literal and escaped pipes are both covered.",
+   "control": {
+    "control_id": "c1-row-extra-field",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-row-extra-field.txt"
+   }
+  },
+  {
+   "id": "row-in-registry",
+   "why": "The row sits inside the `## Registry` section (fleet census E12); a row under any other heading scores nothing.",
+   "control": {
+    "control_id": "c1-row-moved-out",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-row-moved-out.txt"
+   }
+  },
+  {
+   "id": "used-by-exact",
+   "why": "The row's used-by token set is exactly the admitted entries citing the id.",
+   "control": {
+    "control_id": "c1-usedby-extra",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-usedby-extra.txt"
+   }
+  },
+  {
+   "id": "status-mined",
+   "why": "The row's status is `mined`.",
+   "control": {
+    "control_id": "c1-status-queued",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-status-queued.txt"
+   }
+  },
+  {
+   "id": "recheck-valid",
+   "why": "The row's recheck cell is an ISO date, an NNd cadence or a symbolic cadence.",
+   "control": {
+    "control_id": "c1-recheck-prose",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-recheck-prose.txt"
+   }
+  },
+  {
+   "id": "digest-match",
+   "why": "The anchor cell carries the receipt's sha256 AND the bytes at the receipt path hash to it.",
+   "control": {
+    "control_id": "c1-fabricated-payload",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-fabricated-payload.txt"
+   }
+  },
+  {
+   "id": "gate-quote-substring",
+   "why": "The entry's gate-quote for the id is a contiguous substring of the receipt bytes.",
+   "control": {
+    "control_id": "c1-quote-absent",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-quote-absent.txt"
+   }
+  },
+  {
+   "id": "gate-quote-word-bound",
+   "why": "The entry's gate-quote for the id is 1-25 words long.",
+   "control": {
+    "control_id": "c1-quote-long",
+    "receipt": ".ufo/waves/round-36/controls/receipts/c1-quote-long.txt"
+   }
+  },
+  {
+   "id": "o-nofollow-open",
+   "why": "The O_NOFOLLOW flag and the S_ISLNK component walk.",
+   "not-load-bearing": {
+    "reason": "TOCTOU-only defence in depth: the S_ISLNK component walk already rejects every static symlinked tree (control c1-entry-symlink kills it), and no static tree can kill the open-time flag. Inherited unchanged from the round-35 ledger."
+   }
+  }
+ ],
+ "retired": [
+  {
+   "id": "r34-word-bound-1-25",
+   "why": "Dead code under the round-34 frozen spec: the bound was checked against `found`, which `found == quote` pinned to a frozen short quote. Retired in round 35 and kept retired: the round-36 counter keeps the quote a free variable, so the bound is live there and control c1-quote-long kills it."
+  }
+ ],
+ "note": "A clause is covered when its control's committed discrimination receipt records observed=TARGET_MISSED and names both the clause id and the control id; a clause naming no control is uncovered. Exactly one clause may carry a not-load-bearing declaration with a reason, and it must be the frozen toctou clause."
+}

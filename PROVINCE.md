@@ -46,3 +46,20 @@ value is not followed (unlike hyprlang v0.6.8). Variables declared in the config
 docstring states the same limit. Sweep (`git grep -n -i 'environ\|environment' 5ddc5885 -- PROVINCE.md corpus
 tools/mado-binds.py`): the other hits are historical lessons (round-25, round-26 and their spot-checks), left as
 records, and `tools/mado-anims.py` notes, which are unrelated.
+
+**Round-36 refinement (append-only; two counters and two record gates; no new desktop surface):** the lane
+now tracks four record instruments under `quality/`, and they are named here for the same reason the round-23
+table names the `tools/` instruments — the province accounts for every tracked tool it runs, and none of these
+touches a declared config plane.
+`quality/counters/c1-idle-lock.py` (`PRED-C1-r36-v1`) reads `corpus/SOURCES.md`, the three round-35 idle-lock
+entries and the eight fetch receipts under `.ufo/waves/round-35/fetch/`, plus the frozen spec
+`.ufo/waves/round-36/c1/frozen.json`; it writes nothing and prints one verdict line.
+`quality/counters/c2-ledger.py` (`PRED-C2-r36-v1`) reads the clause ledger, the frozen-blob ledger, the
+committed discrimination receipts and — for the tip rule and the blob ids — read-only git in the lane; it writes
+nothing. `quality/check-counter-discrimination.py` reads the frozen manifest, runs the two counters as child
+processes and writes one receipt per control (and nothing else); its fixtures are generated outside the lane by
+`.ufo/waves/round-36/c2/gen-mutants.py`, which writes only beneath `--out`.
+`quality/check-evidence-pointers.py` (`PRED-PTR-r36-v1`) reads `LOG.md`, `SCORECARD.md`,
+`corpus/lessons/round-36.md`, the tree at one revision and read-only `git status`; it writes nothing.
+All four are record instruments: they score the lane's own evidence and paperwork, never a compositor, a config
+plane or a host service, and none of them is a desktop surface.

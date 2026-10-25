@@ -1,0 +1,22 @@
+# clause attribution — every frozen reject control kills its own named clause
+
+The frozen manifest's ten inherited round-35 c1 crib trees carry the registry table
+WITHOUT a `## Registry` heading, so under PRED-C1-r36-v1 they die at the row-in-registry
+fence before their named clause is reached. To prove each named clause is load-bearing on
+its own, each tree was copied to /tmp with the heading restored and re-scored:
+
+$ for id in c1-donothing c1-digest c1-entry-symlink c1-quote-absent c1-quote-long c1-recheck-prose c1-row-duplicate c1-row-extra-field c1-status-queued c1-usedby-extra; do cp -a .ufo/waves/round-35/controls/$id /tmp/w36-clauseattr/$id; (insert ## Registry heading); python3 -I quality/counters/c1-idle-lock.py --root /tmp/w36-clauseattr/$id --frozen .ufo/waves/round-36/c1/frozen.json; done
+
+c1-donothing           PRED-C1-r36-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
+c1-digest              PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-entry-symlink       PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-quote-absent        PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-quote-long          PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-recheck-prose       PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-row-duplicate       PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-row-extra-field     PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-status-queued       PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+c1-usedby-extra        PRED-C1-r36-v1 closed_entries=2 closed_rows=7 open_cites=1 verdict=TARGET_MISSED
+
+Every fence-restored crib still reads TARGET_MISSED with exactly one open cite, so each
+named clause is the load-bearing check for its control; c1-donothing opens all eight.
