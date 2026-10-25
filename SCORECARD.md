@@ -2270,6 +2270,15 @@ touched.
 table under `## Capabilities` is the fleet-round-1 rollout snapshot and is not maintained
 by later rounds.)
 
+**Adjacency boundaries for both rows (wave-1 `ConnOverlap`).** The mutation *method* belongs to
+`tameshi-shokunin` (`tameshi/PROVINCE.md:3-5,7-11,29-36`), which names this lane's gate as a
+read-only surface; `gen-mutants.py` and the discrimination gate therefore stay lane-internal
+fixtures and are never offered as a reusable harness or a sibling service. The pointer-audit
+*instrument class* already exists at `kaidoku` (`citation-drift-probe.py`), `kagi`
+(`claim-ledger.sh citations`) and `chousa` (`verify-integrity`); C2's claim is exactly and only
+"mado's own records pass this gate", not that the lane invented the ground. Nothing is
+absorbed from either lane.
+
 ### Retirement (round 36): `sourced-art`
 
 `sourced-art` was published at 1.0 in round 32 as `10 × covered U-items / 7`, was dropped

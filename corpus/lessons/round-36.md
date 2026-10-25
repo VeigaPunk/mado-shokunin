@@ -65,14 +65,17 @@ appended line).
 **Admitted — S211.** Negative controls in observational studies. URL
 `https://pmc.ncbi.nlm.nih.gov/articles/PMC3053408/` (PMCID PMC3053408; free author
 manuscript of *Epidemiology* 2010;21(3):383–388), opened **2026-10-25**, HTTP 200,
-receipt `.ufo/waves/round-36/fetch/S211.receipt.txt` (1,033 B; the fetched HTML's
-sha256 is recorded in the receipt header). Located quote, 17 words, contiguous in
+receipt `.ufo/waves/round-36/fetch/S211.receipt.txt` (1,037 B; the fetched HTML's
+per-request sha256 is recorded in the receipt header but is *not* stable — see the receipt's
+note on the extraction digest). Located quote, 17 words, contiguous in
 the receipt:
 
 > the protective effect was observed even in circumstances where the vaccine could not have caused the protection
 
-Location: Introduction, the Jackson et al. negative-control-outcome example. It
-grounds exactly the rule this round's C1 instrument is built on — a claimed effect
+Location: §S2 "Examples of the use of negative controls in epidemiology", paragraph
+`#P15` (the Jackson et al. negative-control-outcome example) — the row's first anchor said
+"Introduction"; a non-author re-open located the paragraph in S2 and the row's anchor cell
+was corrected in place (old → new recorded under `## Gate`). It grounds exactly the rule this round's C1 instrument is built on — a claimed effect
 that appears where the claimed cause is impossible is instrument failure, not
 evidence — and it is what the reject half of the 25-control manifest applies to the
 lane's own counters. It does **not** license anything about software counters

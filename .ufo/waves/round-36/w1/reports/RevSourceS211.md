@@ -267,7 +267,7 @@ citation_author : Ted Cohen
 
 **Verdict: CONFIRMED** — title, `PMC3053408`, journal, `2010;21(3):383-…` and the three
 authors all match the receipt header; `http: 200` matches; `fetched_bytes: 150283` matches
-all four fetches.
+the receipt and all three fresh fetches.
 
 ## 6. Incidental number drift in the lesson
 
