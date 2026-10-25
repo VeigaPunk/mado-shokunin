@@ -2293,3 +2293,15 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - **r29 flip condition** (`ScoutPkgRefuse`): the journal needs both `debug:disable_logs = false`
   and `debug:enable_stdout_logs = true` (`Logger.cpp:47`); the lesson's assimilation table already
   says so, but the registration's flip names only the first.
+
+## Round 38 — request-socket bound; M37-5 repairs (2026-10-25)
+
+- Freeze `58e55ec`: registration, three v3/v1 counters, 19-control manifest, six opened-source
+  receipts and the live eventq triplet committed before any round-38 data.
+- Data `245065c`/`efb0ec2`: three adopted shokuknow package entries re-grounded —
+  `hyprctl-flags-r28.md` (S221), `request-socket-live-bound-r8.md` (S158/S187/S258/S277),
+  `request-limits-upstream-r31.md` (S253); two refusals stand (null-channel r28/r29, the
+  64 KiB-as-request-cap r29 draft). Registry: 4 new rows, S158/S187 used-by extended.
+- Counters MET at `b6c1d31`: C1 v3 admitted=2/2; C2 v3 fixtures=14/14 live=1; domain 3/3.
+- Manifest/receipts fix `b6c1d31` (duprow in-table insert, docconn receipt-sha update).
+- Wave 1: 35 attack seats dispatched (validated under ufo-wave-policy.json).

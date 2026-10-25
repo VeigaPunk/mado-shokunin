@@ -1,0 +1,182 @@
+{
+ "wave": "mado-r38-w1",
+ "reportDir": ".ufo/waves/round-38/w1/reports",
+ "context": "# Goal\nmado round 38, wave 1 — falsify the landed round. /skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nLane repo (call it LANE): /home/vgpnk/Projects/shokunin/mado-shokunin\nEvery lane path you touch is ABSOLUTE under that root. Your tools start at the FLEET root (/home/vgpnk/Projects/shokunin), so a relative lane path lands in the wrong repo. Every `Report:` trailer path is relative to LANE — write it at /home/vgpnk/Projects/shokunin/mado-shokunin/<that path>.\n\n## The landed round under attack (read-only)\nLane axes: coverage + operability. Round 38's data is already committed at lane `master` HEAD. Frozen spec: LANE/.ufo/waves/round-38/registration.md. Three claims, all TARGET_MET at HEAD:\n- C1 (calibration): LANE/quality/counters/c1-r38-event-ground.py — v3 of the M37-5 counter. Repairs over v2: pinned Gate digests (digest gate), quote floor (>1 token, no bare ids), unique registry row per cited id, lineage and OBS-quote clauses per entry.\n- C2 (operability): LANE/quality/counters/c2-r38-eventq.py — v3 of the eventq counter. Repairs: the live clause now demands an internally-consistent triplet (live receipt, ss snapshot, /proc binding) — not just a replayed snapshot; 14 fixtures, readonly clause, tool-presence clause.\n- Domain claim (coverage): LANE/quality/counters/c2-r38-request-ground.py — admits 3/3 request-socket entries (hyprctl-flags-r28.md, request-socket-live-bound-r8.md, request-limits-upstream-r31.md) with Gate-pinned receipts in LANE/.ufo/waves/round-38/fetch/.\n- Discrimination: LANE/quality/check-r38-discrimination.py replays LANE/.ufo/waves/round-38/controls/manifest.json (19 controls) — before: v2=13/19; after: v3=19/19.\n\n## Bounds (hard)\n- READ-ONLY on every lane production file. Write ONLY your own report and scratch under LANE/.ufo/waves/round-38/w1/scratch/<YourName>/ and /tmp/mado38-<YourName>/. Never edit LANE/quality/, LANE/corpus/, LANE/tools/, LANE/LOG.md, LANE/SCORECARD.md, or anything else committed.\n- Never mutate the fleet repo, a sibling lane, the lane's jj state or Git index: no git add/commit/stash/checkout/reset/push in LANE. Tests needing git writes run in your own sandbox clone: `git clone -q --no-local /home/vgpnk/Projects/shokunin/mado-shokunin /tmp/mado38-<YourName>/sb` with `git -C sb -c user.name=s -c user.email=s@i commit` — never in LANE.\n- Git fixture safety (fleet incident): any repo you init must be `$D=$(mktemp -d) && git -C \"$D\" init -q`, every later git call with `-C \"$D\"`, verify `rev-parse --show-toplevel` = `$D` first.\n- Never mutate a compositor, config, service or package. hyprctl read verbs only. Never connect to a Hyprland socket (no socat/nc/python socket).\n- Never pass `model`; never `agent://all`. You are a leaf: no task spawns.\n- Tooling: you MAY install tools that help (read /home/vgpnk/.omp/agent/RULES.md first; no pacman transaction — pacman is paused host-wide; use `uv tool`/`npx`/~/.local/bin). Record installs in your report.\n- No fabricated evidence: quote the exact output lines you rely on. Privacy: counts and digests only, never raw journal lines or window titles.\n\n## Deliverable\nWhat you attacked, the exact commands, quoted output, and PASS/FAIL/finding per item with file:line or output pointers. If the item is impossible as written, say what blocked it and what you ran instead.",
+ "items": [
+  {
+   "name": "RevC1v3",
+   "role": "reviewer",
+   "prompt": "Review LANE/quality/counters/c1-r38-event-ground.py line-by-line against the registration's C1 v3 spec (LANE/.ufo/waves/round-38/registration.md). For each clause a–l: quote the implementing code and say whether it matches the sentence. Hunt: the clause-c uniqueness check `len(rows.get(i, [])) == 1` — does it really run before the lambda (short-circuit ok?), does `rows` include rows outside `## Registry`, does the registry_rows parser's `r[7]`/`r[10]` indexing match the 11-column SOURCES schema, are head[:15] src_lines correctly limited, does `## Gate` section parsing stop at the next `## `, is DATE_RE/RECHECK_RE right, are PINS digests equal to `sha256sum` of the committed fetch receipts. Run it at rev b6c1d3124555d7d4c38bc467d85d5efa4a65c053 and at base b4e47e980bfb0cbc8a4e788f59a41db858751fd8, quote both outputs. Findings with severity."
+  },
+  {
+   "name": "RevC2v3",
+   "role": "reviewer",
+   "prompt": "Review LANE/quality/counters/c2-r38-eventq.py against the registration's C2 v3 spec. Clause by clause: the live triplet (replay multiset equality, tool_sha256 match, full-table row count ≥ 2 socket2 rows, /proc binding: 3/3 server inodes named + /proc AGREE + ss_sha256 consistency), readonly clause (no `socket` import, no `connect(` text — does it catch `import socket` variants and the docstring case c2-docconn), tool-presence clause (tools/mado-eventq.py exists at rev), all 14 fixture CASES vs real `ss -xpa` shapes (run `ss -xpa | grep -F .socket2.sock` live, compare row formats). Run at rev HEAD and at base, quote outputs. Findings with severity."
+  },
+  {
+   "name": "RevDomCounter",
+   "role": "reviewer",
+   "prompt": "Review LANE/quality/counters/c2-r38-request-ground.py against its role (admission counter for three request-socket entries). Check: TARGETS tokens appear only in the intended entry bodies (run `git -C LANE grep -F` each token over corpus/knowledge at base f6e3247 — the ground_held_at_base precondition), clause c's 11-cell/mined/used-by check per id (S158, S187, S221, S253, S277 — but S258 is only in an OBS line: is its row required? Should it be?), clause d/f/g binding to pin-matching Gate lines, the lineage lists, why ids shows only 3 ids for the r8 entry while S258 has a row+quote. Run at HEAD and quote all clause letters for each entry; list divergences as findings."
+  },
+  {
+   "name": "RevGateScript",
+   "role": "reviewer",
+   "prompt": "Review LANE/quality/check-r38-discrimination.py: clone into sandbox (sandbox root /tmp now, not /dev/shm — why did it move?), manifest JSON load, each `writes` op (literal/append/py — the py sandbox env: read/write/append/delete/digest/ctx/re/os/json/subprocess/sys/hashlib/counters — is anything dangerous missing or over-permissive?), counter loading via importlib (path from --c1/--c2 — is it copied into the sandbox or run against it?), verdict comparison per control, summary arithmetic (controls=19 correct=N). Check: could a control's py op read or write OUTSIDE the sandbox (e.g. absolute path)? Is the sandbox deleted after? Run it at HEAD with the real manifest and quote the summary. Findings with severity."
+  },
+  {
+   "name": "CritV3Residual",
+   "role": "critic",
+   "prompt": "Attack the v3 counters' residual surface: after the 19 controls all discriminate, what crib still passes v3? Build the cheapest TARGET_MET against c1-r38 in a /tmp sandbox at base b4e47e9 (e.g. entries with real entries + real rows + real gates but hollow prose, or lineage phrases harvested verbatim). Measure bytes and name the cheapest surviving shape. Do the same for c2-r38 (a stub tool + hand-written consistent triplet: what does it cost to forge the /proc binding honestly? read the live clause code carefully — the proc artifact must match the snapshot's digests and inodes). Report whether each residual is a fixable defect or an accepted tradeoff, and propose the cheapest additional frozen clause that would close it."
+  },
+  {
+   "name": "MutC1",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test LANE/quality/counters/c1-r38-event-ground.py: in /tmp scratch, create mutants that (1) skip clause-c uniqueness (len(rows)==1 check removed), (2) drop the quote floor (quote_floor_ok always True), (3) skip pin matching in clause d (accept any Gate line), (4) accept entries present at base, (5) drop the OBS-line id requirement in g, (6) drop lineage clause l. For each mutant, run the discrimination gate with a scratch manifest copy (--c1 pointing at the mutant) at HEAD and report which controls still kill the mutant (kill table). Any mutant passing 19/19 is a finding: a clause no control exercises."
+  },
+  {
+   "name": "MutC2",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test LANE/quality/counters/c2-r38-eventq.py: mutants that (1) drop the proc-binding subclause of live_check, (2) drop ss_sha256 consistency, (3) drop the full_table requirement, (4) accept tool_sha256 mismatch, (5) drop the readonly `connect(` check, (6) drop tool-presence, (7) reduce fixtures to the easy subset. Score each against a scratch copy of the manifest via LANE/quality/check-r38-discrimination.py --c2 <mutant> at HEAD. Kill table; surviving mutants = unexercised clauses = findings."
+  },
+  {
+   "name": "RevEntryFlags",
+   "role": "reviewer",
+   "prompt": "Sentence-level audit of LANE/corpus/knowledge/hyprctl-flags-r28.md against LANE/.ufo/waves/round-38/fetch/S221.bin: every OBS/INF/UNK claim — is each supported by a verbatim or faithful reading of the receipt bytes (grep -n the receipt for each quoted phrase; note the HTML &gt; unescaping and the flag list: code block)? Check the amend-chain claim (dispatcher-surface-and-request-grammar-r26.md §3 open item) by reading that entry. Check header schema vs sibling entries (source/verified-at/recheck/ground lines; values a bare ISO date/cadence). List every overreach."
+  },
+  {
+   "name": "RevEntryBound",
+   "role": "reviewer",
+   "prompt": "Sentence-level audit of LANE/corpus/knowledge/request-socket-live-bound-r8.md against receipts: S158.bin lines 2240-2290 (poll/close/read loop — verify the :2264 poll, :2266-2268 close, :2274 read(1023), :2278 break citations), S187.bin (synchronous-evaluation sentences verbatim), S277.bin (`There is no length prefix or newline.` verbatim; [[BATCH]] claim), stat-sockets.txt (0700 dir, 0755 sockets). Check each quoted line is verbatim in its receipt (python bytes-in check), every file:line citation is right, and the amend of ipc-contract-r25.md is fair (read that entry's §2). Findings with severity."
+  },
+  {
+   "name": "RevEntryLimits",
+   "role": "reviewer",
+   "prompt": "Sentence-level audit of LANE/corpus/knowledge/request-limits-upstream-r31.md against S253.bin: the two constants verbatim (exact whitespace in `REQUEST_LIMIT      = 1024 * 1024`), the :118 check inside readRequest, the :166 check inside addFollowData, the 'file does not exist at host tag' claim — verify: `curl -fsSIL https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/ipc/s1/Unix.cpp` returns 404. Check the refused-draft characterization (the r29 package draft's 64 KiB claim — read /home/vgpnk/Projects/shokuknow/merge/mado/knowledge/corpus/knowledge/socket-client-contract-measurements-r29.md). Findings."
+  },
+  {
+   "name": "RevRegistry",
+   "role": "reviewer",
+   "prompt": "Audit the LANE/corpus/SOURCES.md changes at HEAD: rows S221, S253, S258, S277 against the 11-column schema (count | per row, no | inside cells, recheck a bare ISO date or cadence — S258's is `on-change`, the URL rows' is `on-release` or `90d`), the used-by cells naming exactly the entries that cite them (cross-check each entry's source: and OBS ids), S158 and S187 used-by append correctness (only request-socket-live-bound-r8.md added; no existing entry dropped). Run the fleet census validator if it exists: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado and quote output. Findings."
+  },
+  {
+   "name": "RevLessonGate",
+   "role": "reviewer",
+   "prompt": "Audit LANE/corpus/lessons/round-38.md: every `GATE <id> receipt=... sha256=... quote=...` line — recompute each receipt's sha256 (`sha256sum LANE/.ufo/waves/round-38/fetch/*`), check each quote is verbatim in its receipt bytes AND in the entry body (python: quote.encode() in blob), ≤25 words. Audit the assimilation ledger table: do the mapped ids match .ufo/waves/round-38/assimilation/collisions and the staged register? Are the three refused entries accurately characterized (read the package files). Check the claims section matches registration.md. Findings."
+  },
+  {
+   "name": "RevLiveTriplet",
+   "role": "reviewer",
+   "prompt": "Independently re-derive the live triplet under LANE/.ufo/waves/round-38/receipts/: run the tool yourself `python3 -I LANE/tools/mado-eventq.py` (read-only) and compare with eventq-live.txt (client rows, markers, verdict — expect tool_sha256 to differ only if the tool changed since); run `ss -xpa | grep -F .socket2.sock` and compare with eventq-live-ss.txt rows and inodes; read eventq-live-proc.txt and re-derive its claims from /proc/net/unix + /proc/<pid>/fd. Report same/moved/mismatched per line with reasons (a new instance dir epoch or new client is expected — decide whether it invalidates the committed triplet or is an honest aging)."
+  },
+  {
+   "name": "RevCensusBefore",
+   "role": "reviewer",
+   "prompt": "Re-run the before-state commands verbatim: `cd LANE && python3 -I quality/counters/c2-r38-request-ground.py --repo . --rev f6e3247f73152a39afb86066af48f3cedf95fb0a` and compare with LANE/.ufo/waves/round-38/receipts/before-c2.txt (must be identical); run c1-r38 and c2-r38 counters at base b4e47e980bfb0cbc8a4e788f59a41db858751fd8 and at f6e3247 — quote verdicts (expected: SETUP/base-ground misses, honest). Confirm the freeze order: git log -5 --format='%H %ad %s' --date=iso; show the freeze commit 58e55ec9 predates every data file (git ls-tree 58e55ec9 for the three entries — should be absent)."
+  },
+  {
+   "name": "ScoutS221",
+   "role": "scout",
+   "prompt": "Re-open the hyprctl flags source independently: fetch https://wiki.hypr.land/0.56.0/Configuring/Advanced-and-Cool/Using-hyprctl/ to /tmp/mado38-ScoutS221/, cmp with LANE/.ufo/waves/round-38/fetch/S221.bin (moved bytes expected — the wiki is a living page; report sha256 of both). Extract the `flag list:` block and the synchronous warning verbatim; check the entry's three flag quotes are verbatim (account for HTML entities). Report whether today's page still says what the entry claims."
+  },
+  {
+   "name": "ScoutS253",
+   "role": "scout",
+   "prompt": "Re-open the upstream limits source: fetch https://raw.githubusercontent.com/hyprwm/Hyprland/a1c2428f79b3b05c3fd36c27378e3538c8c6a014/src/ipc/s1/Unix.cpp to /tmp/mado38-ScoutS253/, cmp with S253.bin (must be identical — pinned commit). Verify: REQUEST_LIMIT/FOLLOW_QUEUE_LIMIT at :19-20, the readRequest check at :118, addFollowData at :166. Also check the CURRENT upstream head of src/ipc/s1/Unix.cpp on master — do the constants still exist? And confirm src/debug/HyprCtl.cpp at that commit has no byte bound (the contrast the entry draws). Line-cited report."
+  },
+  {
+   "name": "ScoutGrammar",
+   "role": "scout",
+   "prompt": "Cross-check the request-grammar claims against a SECOND independent source: search for other Hyprland IPC re-implementations or docs (e.g. hyprland-rs, pyprland, hypridle, the wiki's current IPC page https://wiki.hypr.land/IPC/). For each opened: does it confirm `[flag(s)]/command args`, no length prefix/newline, and the flag list? Quote ≤25 words per source with URL and access date. Verdict: does S277's community-tier grammar corroborate independently or is it the only non-first-party voice?"
+  },
+  {
+   "name": "ScoutTransport",
+   "role": "scout",
+   "prompt": "Re-derive the transport claim of request-socket-live-bound-r8.md §2 S258 OBS live on this host, read-only: `stat -Lc '%a %F %n' $XDG_RUNTIME_DIR/hypr/<instance> $XDG_RUNTIME_DIR/hypr/<instance>/.socket.sock $XDG_RUNTIME_DIR/hypr/<instance>/.socket2.sock` (find the instance dir; it may differ from the receipt's). Check whether the directory is really 0700 and sockets 0755, whether any ACL/xattr changes the story (`getfacl -p` on the dir), and whether a non-owner could stat inside (try `sudo -u nobody stat` — harmless read-only; if sudo absent, say so). Report agreement/moved per field."
+  },
+  {
+   "name": "ScoutR29Refusal",
+   "role": "scout",
+   "prompt": "Try to falsify the refusal of the package's socket-client-contract-measurements-r29.md: its claim 'requests are capped at 64 KiB' is corrected by request-limits-upstream-r31.md, but is there ANY reading under which the host's v0.56.2 limits a request near 64 KiB (kernel socket buffer defaults — `sysctl net.unix.max_dgram_qlen` n/a for stream; SO_SNDBUF on the accepted fd — check `ss -xpmi` or /proc/net/unix socket options, the 1023-byte chunk loop's effective bound, poll 5 s × read rate)? Line-cited verdict: refused-correctly / partially-wrong."
+  },
+  {
+   "name": "ScoutNullChannelRecheck",
+   "role": "scout",
+   "prompt": "Re-run the null-channel basis under a new instance epoch: the host rebooted since round-37 (the instance dir in the receipts carries epoch 1792804449 vs round-37's). `hyprctl getoption debug:disable_logs -j` (read verb) — still 1? `journalctl --user -u wayland-wm@hyprland.desktop.service --no-pager -q -o cat | grep -c 'Socket2 fd'` — still 0? `grep -c 'Socket2 fd' $XDG_RUNTIME_DIR/hypr/*/hyprland.log` — still 0? Any NEW channel where the markers would land (hyprctl rollinglog prefix histogram — count only)? Verdict: null-channel claim still holds / moved."
+  },
+  {
+   "name": "ScoutPkgAudit",
+   "role": "scout",
+   "prompt": "Audit the remainder of the staged shokuknow package for missed adoptions: /home/vgpnk/Projects/shokuknow/merge/mado/ — the staged register, the knowledge/ tree, the corpus/knowledge entries not adopted (event-queue-host-measurement-r28.md, event-queue-journal-measurement-r29.md, socket-client-contract-measurements-r29.md) and anything else present (scripts/, reports/). For each: adopt/refuse verdict with the deciding fact. Also verify the 15 collisions S203–S217 in LANE/.ufo/waves/round-38/assimilation/collisions are real held ids (`git -C LANE grep -c '| S203 |' corpus/SOURCES.md` etc). Report the ledger's completeness."
+  },
+  {
+   "name": "ConnOverlap",
+   "role": "connector",
+   "prompt": "Sibling-overlap scan: does any other lane claim Hyprland request socket, hyprctl flags, or upstream IPC ceilings? `grep -il 'hyprctl\\|socket.sock\\|hyprland' /home/vgpnk/Projects/shokunin/*-shokunin/PROVINCE.md /home/vgpnk/Projects/shokunin/*-shokunin/SKILL.md` then read hits; check kama/tsukuroi/kaidoku coverage maps. Report contested scope with file:line. Also check LANE/PROVINCE.md — which declared surface this theme sits under; does PROVINCE need a line naming the request socket's bound half (quote current lines)?"
+  },
+  {
+   "name": "ConnFrontierFit",
+   "role": "connector",
+   "prompt": "Fit-check the round-38 frontier route added to LANE/corpus/README.md (### Round-38 request-socket bound route): does it accurately say what moved (a second edge class under ipc-contract; flags vocabulary; temporal-not-volumetric bound; upstream ceilings) and what stays open (no socket connected, effective size bound unmeasured)? Check it against the three entries and the registration's declared claims. Then map: which PROVINCE.md surface row does this increment, and which arc-synthesis.md §6 item (U?) does it close or advance? Propose the NEXT request-socket surface for round 39 (server-side flag handling? hyprctl i usage sweep? batch requests [[BATCH]]?) with the sources that would ground it."
+  },
+  {
+   "name": "RevManifestIntegrity",
+   "role": "reviewer",
+   "prompt": "Audit LANE/.ufo/waves/round-38/controls/manifest.json itself: is it valid JSON, does every control have id/instrument/expect/clause/note/writes, do the py write ops only touch sandbox-relative paths (no absolute paths, no `..`), are the `expect` values sane given the counter's contract (e.g. c1-donothing expects MISSED — verify by reading what its writes produce), and does any control's note misdescribe what it builds? Run the gate against the v2 counters (LANE/quality/counters/c1-r37-event-ground.py, c2-r37-eventq.py) at the freeze rev and confirm the recorded 13/19 still reproduces."
+  },
+  {
+   "name": "RevCommitChain",
+   "role": "reviewer",
+   "prompt": "Audit the round's commit chain: `git -C LANE log --format='%H %ad %s' --date=iso -8 master` — the freeze commit (58e55ec9) must precede all data commits and contain registration.md + counters + manifest + fetch receipts + live triplet (git ls-tree 58e55ec9 --name-only .ufo/waves/round-38). Check: are the fetch receipts and live triplet committed at the freeze (counters need them)? Is registration.md's frozen_at honest? Any file under .ufo/waves/round-38 modified after the data commit that the counters depend on (git log -3 --format=%H -- .ufo/waves/round-38)? Findings."
+  },
+  {
+   "name": "RevFrozenClaims",
+   "role": "reviewer",
+   "prompt": "Verify the registration's frozen claims against the delivered work, clause by clause: read LANE/.ufo/waves/round-38/registration.md's three claim specs and the kill rules; run each counter's before/after pair verbatim (before at the named base rev, after at HEAD) and confirm the verdict letters match the frozen promise (C1 0→2/2, C2 0→14/14+triplet, domain 0→3/3). Check the do-nothing control verdicts. Report any claim that over- or under-delivers versus its frozen wording."
+  },
+  {
+   "name": "SentSocketSafety",
+   "role": "sentinel",
+   "prompt": "Security review of what the round committed: (1) the live triplet under .ufo/waves/round-38/receipts/ — does it leak anything sensitive (process names, pids, the instance dir signature)? Is the HYPRLAND_INSTANCE_SIGNATURE a secret (it randomizes per session — assess)? (2) tools/mado-eventq.py — could its live mode stall the compositor (subprocess timeouts? read the code), could a maliciously-crafted ss/log fixture line trick it (injection into the summary fields)? (3) the counters' py manifest ops — sandbox escape surface. Findings with severity; counts/digests only."
+  },
+  {
+   "name": "SentManifestScope",
+   "role": "sentinel",
+   "prompt": "Adversarial read of the discrimination manifest's py sandbox: LANE/quality/check-r38-discrimination.py apply_writes env exposes `subprocess`, `os`, `sys`, `hashlib`, `counters` — could a malicious manifest control escape to the host (subprocess.run anything, os.path absolute writes via write() bypass? — check whether _write sanitizes paths). Should the env drop `subprocess`/`os`? Is the threat model real (manifest is lane-committed, but a crib COULD ship a malicious control)? Verdict: acceptable / needs path sanitization + env reduction, with the exact lines."
+  },
+  {
+   "name": "SimplifyV3",
+   "role": "simplifier",
+   "prompt": "Find deletable dead weight in the three v3 counters and check-r38-discrimination.py: dead code after my edits (e.g. c2-r38-eventq.py's srv_inodes leftovers, unused imports, unreachable branches, the `why` string's double-format), duplicated parsing between c1 and c2-r38-request-ground.py, PINS duplication with the Gate block. For each candidate: show the gate still scores 19/19 with the file patched in a /tmp sandbox. Report a deletion list only — never edit lane files."
+  },
+  {
+   "name": "LabratProcProof",
+   "role": "scout",
+   "prompt": "Empirically probe one hypothesis: 'the /proc binding can be forged by a committed artifact that claims fabricated inodes are held by Hyprland'. Write a minimal script at /tmp/mado38-LabratProcProof/probe.py that, given only the committed eventq-live-proc.txt (no live /proc access), outputs its verdict field — then check: does c2-r38's live clause re-derive /proc at counter-run time or trust the committed text? Read the live_check code (srv_inodes regexes over the COMMITTED proc text). If it trusts committed text, a forged triplet passes — quantify. Report the exact lines deciding."
+  },
+  {
+   "name": "LabratClockSkew",
+   "role": "scout",
+   "prompt": "Empirically probe: does c1-r38's `verified-at` DATE_RE accept malformed dates (e.g. 2026-13-45, 0000-00-00)? Construct a sandbox entry with a fake date at base b4e47e9 and score with the real counter + a crafted Gate/row. Also test RECHECK_RE against `on-release`, `90d`, `on-change`, `whenever`. Report which strings pass each regex (exact regexes quoted)."
+  },
+  {
+   "name": "RevReportDraft",
+   "role": "reviewer",
+   "prompt": "Read the round-37 report /home/vgpnk/Projects/shokunin/.ufo/reports/round-37/mado.md and the report contract in /home/vgpnk/Projects/shokunin/.ufo/prompts/mado-round-38.md (the five child-lane items: axes, capabilities, SCORECARD, mistakes, lessons). Draft a report skeleton at /tmp/mado38-RevReportDraft/mado38-skeleton.md listing every required section and what evidence pointer goes in each for THIS round (commits 58e55ec9..HEAD, counters c1-r38/c2-r38/request-ground, manifest, entries S221/S253/S258/S277, refusals). Then audit the evidence pointers I must cite: verify `git -C LANE log --format='%h %s' -8` hashes and each receipt file exists. Return the skeleton."
+  },
+  {
+   "name": "RevScorecardMath",
+   "role": "reviewer",
+   "prompt": "Independently recompute the axis math the report will claim: read LANE/SCORECARD.md's AXES block and Move log tail, then compute what the r38 round's moves do to navigation/calibration/operability scores (the r37 report claims navigation 52/52, calibration resolved-active 50/50, operability selftest 12/12). What is the correct after-state for each axis given this round's landed artifacts (v3 counters, the new tool counter, three entries)? Quote the SCORECARD lines and propose the exact row to append to the Move log."
+  },
+  {
+   "name": "ScoutConsiderThese",
+   "role": "scout",
+   "prompt": "Read LANE/considerthese/2026-10-25.md and 2026-10-24.md (the newest): is there a proposal this round's request-socket work already lands or should route? For each proposal file: quote the proposal, state whether r38's entries/counters cover it, partially cover it, or leave it for round 39 (with the next concrete step). If a proposal names an opened source this round's fetch receipts already cover (e.g. wiki pages, upstream files), say so with the receipt path."
+  },
+  {
+   "name": "RevM37Routing",
+   "role": "reviewer",
+   "prompt": "Verify the M37-5 routing is fully discharged: read LANE/corpus/lessons/round-37.md's M37-5 entry and the two attack reports (LANE/.ufo/waves/round-37/w1/reports/CritC1Cheap.md, RevC2Code.md). Enumerate every crib they demonstrated (receipt-not-pinned, quote-no-floor, non-unique-rows, forged snapshot, docconn trap, fixture gaps). For each, name the v3 clause or manifest control that now kills it — and flag any demonstrated crib with NO named killer. Verdict: routed-complete / residual-list."
+  }
+ ]
+}

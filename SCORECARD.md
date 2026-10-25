@@ -197,11 +197,14 @@ Full outputs and invocation evidence:
 This correction supersedes the earlier literal-command reproducibility
 claim, not the measured navigation delta; round status remains blocked.
 
+| 38 | calibration | both round-37 admission counters still passed the five recorded cribs (M37-5: self-receipt, quote floor, non-unique rows, forged snapshot, docconn) | v3 repairs landed — pin-bound Gate digests, unique registry rows, quote floor, lineage clauses (c1); internally-consistent live triplet with /proc binding (c2); frozen 19-control manifest discriminates v2 13/19 → v3 19/19 | `python3 -I quality/counters/c1-r38-event-ground.py --repo . --rev <rev>` → admitted=2/2; `python3 -I quality/check-r38-discrimination.py --manifest .ufo/waves/round-38/controls/manifest.json` → controls=19 correct=19/19 |
+| 38 | operability | the request-socket domain had no admission counter (PRED-C2-r38-v1 did not exist); corpus/knowledge held 0 request-socket entries | `quality/counters/c2-r38-request-ground.py` ships and admits 3/3 entries (flags vocabulary, the five-second live bound at the host's own commit, upstream 1 MiB/64 KiB ceilings) at rev efb0ec2 | `python3 -I quality/counters/c2-r38-request-ground.py --repo . --rev HEAD` → admitted=3/3 TARGET_MET (before: admitted=0/3 at f6e3247) |
 ## Capabilities
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| — none yet — | | | |
+| counter-discrimination audit | score an admission counter against a frozen manifest of accept/reject controls in sandbox clones, per claim | `quality/check-r38-discrimination.py` + `.ufo/waves/round-38/controls/manifest.json` (19 controls); receipts `before/after-discrimination-*.txt` | 38 |
+| request-socket admission | admit a knowledge entry on the request socket only when every cited id has a unique mined row, a pin-bound Gate receipt, verbatim quotes and lineage | `quality/counters/c2-r38-request-ground.py`; admitted=3/3 at rev efb0ec2 | 38 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
