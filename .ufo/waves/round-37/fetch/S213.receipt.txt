@@ -1,0 +1,32 @@
+# S213 receipt — the compositor's log channels on this host, and whether they can carry the event-socket failure markers (read-only)
+taken: 2026-10-25T09:00:04-03:00
+hyprland_version: v0.56.2 efb50993780079460b0cbed1363e2166a2de1d9f
+## session log
+path: /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1792804449_426444678/hyprland.log
+bytes: 4259033
+lines: 27331
+mtime: 2026-10-25 04:24:03.444802113 -0300
+log_count "overflowed event queue": 0
+log_count "failed writing event": 0
+log_count "Socket2 fd": 0
+origin_histogram:
+    27280 DEBUG from aquamarine ]
+       31 ERR from aquamarine ]
+       21 DEBUG ]
+core_logger_lines (prefix 'LEVEL ]', no 'from'): 21
+last_core_logger_line_number: 21
+config_load_line_numbers: 12 18 
+## compositor unit journal
+command: journalctl --user -u wayland-wm@hyprland.desktop.service --no-pager -q -o cat
+unit_journal_lines: 717
+unit_journal_count "overflowed event queue": 0
+unit_journal_count "failed writing event": 0
+unit_journal_count "Socket2 fd": 0
+probe_string: "drm: getCurrentCRTC: No CRTC 0" in_log=7 in_unit_journal=0
+unit_journal_using_config_lines: 4
+## live options (hyprctl getoption, read verb)
+debug:disable_logs: {"option":"debug:disable_logs","int":1,"set":false}
+debug:enable_stdout_logs: {"option":"debug:enable_stdout_logs","int":0,"set":false}
+## reading
+The core logger wrote its last line (line 21) three lines after the second config load (line 18); every later line is from aquamarine. With debug:disable_logs = 1 the core logger returns before writing (S214 Logger.cpp:15-16, :48), and the two socket2 markers are core-logger lines (S189 EventManager.cpp:155, :175). A zero marker count in either channel therefore cannot distinguish 'never overflowed' from 'not logged'.
+note: counts and digests only; no journal line is reproduced.
