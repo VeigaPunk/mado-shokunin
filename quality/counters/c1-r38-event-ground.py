@@ -199,8 +199,11 @@ def main():
                      and any(re.match(r"^[-* ]*verified-at *:", l) for l in head)
                      and any(re.match(r"^[-* ]*recheck *:", l) for l in head))
         c["c"] = int(bool(ids) and all(
-            any(len(r) == 11 and r[7] == "mined" and path in [u.strip() for u in r[10].split(",")]
-                for r in rows.get(i, []))
+            # registry rows are unique per id and must bind the entry in used-by
+            len(rows.get(i, [])) == 1 and (
+                lambda r: len(r) == 11 and r[7] == "mined"
+                          and path in [u.strip() for u in r[10].split(",")]
+            )(rows[i][0])
             for i in ids))
         # k: header values actually parse
         ver = [l.split(":", 1)[1].strip() for l in head if re.match(r"^[-* ]*verified-at *:", l)]
