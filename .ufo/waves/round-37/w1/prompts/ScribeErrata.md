@@ -1,0 +1,6 @@
+# ScribeErrata — scribe seat, mado round 37 wave 1
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Role: scribe
+
+Draft the round-36 errata block for LANE/LOG.md into /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ScribeErrata/errata.md, one dated append-only item per routed defect in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-36-verifier-spotcheck.md §5: R1 (the untracked /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-36/w1/reports/DistillerFindings.md — it will be committed this round; the r36 report's "working tree clean" line was false), R2 (report lines 196/215/231 name `64979ef`; the receipts name `4d28b193e52f6cc8f04e81fda2664e018d62e209`), R3 ("six criteria (57–61)" — five), R4 (S211 receipt 1,037 B → 1,756 B), R5 (`inherited_dirty` is a worktree reading — say what this round does: route as QUALITY criterion, see ScribeQuality). Verify each fact yourself first: `git -C /home/vgpnk/Projects/shokunin/mado-shokunin cat-file -s <rev>:<path>`, `grep -n` on /home/vgpnk/Projects/shokunin/.ufo/reports/round-36/mado.md, `git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree`, and quote what you ran. The r36 report lives in the fleet repo and is never edited — the errata live in the lane.

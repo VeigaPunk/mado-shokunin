@@ -1,0 +1,6 @@
+# ScribeQuality — scribe seat, mado round 37 wave 1
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Role: scribe
+
+Draft two QUALITY.md criteria (62, 63) into /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ScribeQuality/criteria.md in the exact style of LANE/corpus/QUALITY.md criteria 56–61 (read them; each ends with its lesson anchor). 62 — null channel: a zero count is evidence of absence only when the channel is shown, in the same round, to carry the class being counted (a positive probe: a line of the same logger/level present in that channel), otherwise the reading is refused; ground it in this round's finding (/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/fetch/S213.receipt.txt, /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/fetch/S214.bin Logger.cpp:15-16,:48) and the lane's own round-35 null-channel withdrawal (grep LANE/corpus/lessons/round-35*.md for "null channel"). 63 — witness for worktree observables: a receipt observable read from the working tree (e.g. `git status`) commits the raw witness beside the receipt, so the reading re-derives from committed bytes (round-36 spot-check R5). Each criterion must name the command that would show it violated.

@@ -1,0 +1,6 @@
+# ExecPointerEnv — executor seat, mado round 37 wave 1
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Role: executor
+
+Mined-mistake fix, shown able to fail. Attempt 1 of this round found that LANE/quality/check-evidence-pointers.py gives a different result under an ambient GIT_DIR / GIT_WORK_TREE (its `git -C` calls inherit the caller's environment). (1) Prove it red-before: run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e` plain, then again with `GIT_DIR=/home/vgpnk/Projects/shokunin/.git` and with `GIT_WORK_TREE=/dev/shm` exported; quote both summaries. (2) Write a fixed copy at /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py whose every git subprocess runs with all `GIT_*` variables removed from the environment (the only delta), and show the same three runs now agree. (3) Sweep LANE/quality/*.py and LANE/tools/*.py and LANE/tools/mado-verify.sh for the same defect class (git subprocesses that inherit GIT_*): list each file:line and whether an ambient GIT_DIR changes its output (run it). Write the red/green transcripts to /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/red-green.txt.

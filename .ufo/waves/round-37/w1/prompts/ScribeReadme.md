@@ -1,0 +1,6 @@
+# ScribeReadme — scribe seat, mado round 37 wave 1
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Role: scribe
+
+Draft the corpus/README.md changes into /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ScribeReadme/readme.md: (a) two `## Coverage map` table rows in the existing 3-column form (Note | Holds | Sources) for `knowledge/event-delivery-limits-r26.md` and `knowledge/event-queue-observability-r37.md` (see the last rows of that table in /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/README.md for style; Sources cell cites `source:` S-ids and receipts), and (b) a `### Round-37 event-socket delivery route` subsection for the `## Frontier` area in the style of the existing `### Round-35 idle-lock offer route`, stating what moved (the event-socket client half: queue cap, removal, partial writes; host observability — logs are a null channel while debug:disable_logs = 1) and what stays open (no event was observed, no client was stalled, the 64-event cap was never exercised, Waybar's behaviour after removal unless ScoutWaybarDrop shows it). Then run `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-index.py --repo .` and `python3 -I quality/check-index-rows.py --repo .` read-only and report what those gates require of a new row (cells, S-ids, artifact cites).
