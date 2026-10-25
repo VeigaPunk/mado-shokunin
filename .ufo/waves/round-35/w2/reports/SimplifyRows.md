@@ -123,7 +123,7 @@ fetch transcript. "Anchor supported" is judged against the cited receipt only.
 | S207 | doc `default/waybar/indicators/idle.sh` | the desktop renders the off state itself (r15 §2) | yes | yes; scope says "two-state vocabulary" but one state is an empty string (F6) | keep; scope word too wide |
 | S208 | doc `bin/omarchy-menu` | the menu is the second surface (r15 §1) | yes | yes, lines 207/212 verified | keep |
 | S209 | **tr** `fetch/S209.receipt.txt` | the offer dates back at least to the oldest copy (r15 §2) | yes for "each copy carries the handler"; the date needs its field named (F5) | handler counts yes; "oldest dated 2026-10-03" is mtime, not the filename date | keep; one field ambiguity |
-| S210 | **tr** `fetch/S210.receipt.txt` | no recorded entry, so the choice leaves no trace (r15 §3) | **no** — the directory cannot record the idle lock at all (F1); subject also unversioned | the listing yes; "the place where a choice about other toggles would have left one" is **false**, and r15 E3 now denies it | **vacuous row**: witness cannot witness; contradicts its own entry's E3 |
+| S210 | **tr** `fetch/S210.receipt.txt` | no recorded entry, so the choice leaves no trace (r15 §3) | **no** — the directory cannot record the idle lock at all (F1); anchor also carries no revision token (date available) | the listing yes; "the place where a choice about other toggles would have left one" is **false**, and r15 E3 now denies it | **vacuous row**: witness cannot witness; contradicts its own entry's E3 |
 
 Distinctness details:
 
@@ -310,12 +310,16 @@ denies for the idle lock.
 reads no errata: cell 7 and r15 §3 are what a reader or a counter sees. E3 withdraws
 exactly the clause the row still teaches, so the repair cannot live only in the
 appended block; it has to land in the teaches cell (and §3). Independently, the
-measured subject has no revision key to anchor: `~/.local/state/omarchy/toggles/hypr`
+Independently, the measured subject has no revision key to anchor: `~/.local/state/omarchy/toggles/hypr`
 is outside the omarchy checkout (HEAD `8fcc9d6048af`, clean) and is ignored by the
 home repo — `git check-ignore` → `.gitignore:23:/.local/*`, 0 tracked files. So S210's
-anchor is section + receipt digest only; the `CORPUS.md:99` requirement of a revision
-(version, commit, or publication date) for the subject is met by neither. Peer
-`RevQuoteS210` reports the same contradiction; the git facts above are re-derived here.
+anchor is section + receipt digest only: **no revision token at all**. A publication
+date does exist — the receipt header reads `host re-open 2026-10-24` and the `opened`
+cell is the same date — so the minimal content repair is to carry `@ 2026-10-24` in
+the anchor (peer `RevQuoteS210`'s A2). The compliant mechanism is still a superseding
+row: rule 2 does not permit editing `anchor` in place. The git facts above are
+re-derived here; the row itself is 832 B, 11 cells, unchanged by the 03:40 registry
+write (my diff of that write names S203/S204/S205 only).
 
 ## Deletion proofs (scratch, unmodified counter)
 

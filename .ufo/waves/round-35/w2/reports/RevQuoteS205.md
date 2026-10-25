@@ -41,9 +41,16 @@ They are reported below rather than folded into a disagreement claim:
   C1 never reads `teaches`, so closure is formal, not semantic; the rewrite itself is correct and was
   not mine (read-only seat).
 
+- **P9** C1's receipt digest is dead code: `count.py:174` computes `digest`, `ok` never uses it, and
+  the anchor clause only requires the frozen sha to appear in the row *text*. The repo's own content
+  controls — `c1-shape-only` (56 B receipt, sha `22bdd47a…`) and `c1-fabricated-payload` (78 B, sha
+  `75e98ef6…`) — both print `TARGET_MET` rc=0 against frozen `f3387bfc…`. `TARGET_MET` is shape
+  closure, not provenance; both committed controls are positive and no negative control exists.
+
 Findings P1/P2 were sharpened to the peer's corrections after a cross-check with `RevEntryR14`
-(both verified here); P3/P4 quote user-journal windows, the scope S205 read. The verdict on the
-frozen claim did not change under any finding.
+(both verified here); P3/P4 quote user-journal windows, the scope S205 read. The material verdict did
+not change. P9 bounds what the frozen result can mean, though: S205's agreement rests on my
+independent digest, byte-offset and host checks — never on the counter alone.
 
 ## (a) Live host re-open — 2026-10-25, ~03:23–03:31 -03
 
@@ -515,6 +522,10 @@ matter, and they are not the same bytes:
    `e6c8e30e9542874d63260741db8535ac0a5ad42e2835000ae8d903f584097283` (git blob `a3355706…`, staged
    in the index while HEAD is `4efaf63`). It adds the P7 no-crash/coredump and audit-hazard blocks.
    A rebuild is a convenience copy, not evidence.
+
+3. **Control roots (P9).** `.ufo/waves/round-35/controls-content/{c1-shape-only,c1-fabricated-payload}`
+   — 24 tracked files, worktree clean at HEAD `25536e6`; the S205 payload shas are pinned in P9.
+   Both close `TARGET_MET` rc=0 when re-run by me.
 
 P7 and P8 were measured after the checkpoint, so their decisive commands and outputs are inlined in
 those sections above; no finding depends on either scratch copy. The report body is the durable
