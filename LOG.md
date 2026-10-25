@@ -2356,3 +2356,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   caught only by `c2-missall`. The `full_table` clause is redundant as coded
   (replay_ok implies it). All routed to round 39 with `RevC2v3` F1/F2 — the
   manifest's reject-control set needs the killing fixtures, not the counter.
+
+- **Round-38 C1 verification-gap (`MutC1`)** — all six single-point v3 clause
+  mutants SURVIVE 19/19: the frozen verdict does not depend on c-uniqueness,
+  quote-floor, d-pin-matching, a-new-at-base, g-OBS-id, or l-lineage (each
+  reject is carried by another clause; verdict-level masking). Full kill table and
+  clause diagnostics in `w1/reports/MutC1.md`; counter/manifest/claims untouched.
+  Also flagged: the C1 run's /tmp cleanup of `mado38-dsc-*` may have touched a
+  concurrent sibling's ephemeral gate scratch (recorded, no loss).
