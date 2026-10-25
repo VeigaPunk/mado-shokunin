@@ -1,0 +1,61 @@
+--- a/c2-r37-eventq.py
++++ b/c2-r37-eventq.py
+@@ -103,22 +103,25 @@
+     return p.stdout if p.returncode == 0 else None
+ 
+ 
+-def run_case(tool, work, case):
+-    name, inp, extra, want_rc, must, must_not = case
+-    d = os.path.join(work, name)
++def run_tool(tool, d, ss_text, log, journal, dl, extra=()):
+     os.makedirs(d)
+-    paths = {}
+-    for key, fname in (("ss", "ss.txt"), ("log", "hyprland.log"), ("journal", "journal.txt")):
+-        paths[key] = os.path.join(d, fname)
+-        with open(paths[key], "w") as f:
+-            f.write(inp[key])
+-    cmd = [sys.executable, "-I", tool, "--ss-file", paths["ss"], "--log", paths["log"],
+-           "--journal-file", paths["journal"], "--disable-logs", inp["dl"], *extra]
++    paths = [os.path.join(d, f) for f in ("ss.txt", "hyprland.log", "journal.txt")]
++    for path, data in zip(paths, (ss_text, log, journal)):
++        with open(path, "wb") as f:
++            f.write(data)
++    cmd = [sys.executable, "-I", tool, "--ss-file", paths[0], "--log", paths[1],
++           "--journal-file", paths[2], "--disable-logs", dl, *extra]
+     try:
+         p = subprocess.run(cmd, capture_output=True, text=True, timeout=20, cwd=d)
+-        rc, lines = p.returncode, p.stdout.splitlines()
++        return p.returncode, p.stdout.splitlines()
+     except (subprocess.TimeoutExpired, OSError):
+-        rc, lines = None, []
++        return None, []
++
++
++def run_case(tool, work, case):
++    name, inp, extra, want_rc, must, must_not = case
++    rc, lines = run_tool(tool, os.path.join(work, name), inp["ss"].encode(), inp["log"].encode(),
++                         inp["journal"].encode(), inp["dl"], extra)
+     ok = (rc == want_rc
+           and all(any(re.search(m, l) for l in lines) for m in must)
+           and not any(re.search(m, l) for m in must_not for l in lines))
+@@ -157,19 +160,7 @@
+             sums = [l for l in text if l.startswith("MADO_EVENTQ: ")]
+             clients = [l for l in text if l.startswith("MADO_EVENTQ_CLIENT: ")]
+             m = re.search(r"\bsubscribers=(\d+)\b", sums[0]) if len(sums) == 1 else None
+-            d = os.path.join(work, "live-replay")
+-            os.makedirs(d)
+-            for fname, data in (("ss.txt", snap), ("hyprland.log", b""), ("journal.txt", b"")):
+-                with open(os.path.join(d, fname), "wb") as f:
+-                    f.write(data)
+-            try:
+-                p = subprocess.run([sys.executable, "-I", tool, "--ss-file", os.path.join(d, "ss.txt"),
+-                                    "--log", os.path.join(d, "hyprland.log"), "--journal-file",
+-                                    os.path.join(d, "journal.txt"), "--disable-logs", "1"],
+-                                   capture_output=True, text=True, timeout=20, cwd=d)
+-                replay = p.stdout.splitlines()
+-            except (subprocess.TimeoutExpired, OSError):
+-                replay = []
++            replay = run_tool(tool, os.path.join(work, "live-replay"), snap, b"", b"", "1")[1]
+             triples = lambda ls: sorted(m2.groups() for m2 in map(TRIPLE.match, ls) if m2)
+             live = int(f"tool_sha256={hashlib.sha256(blob).hexdigest()}" in text
+                        and m is not None and int(m.group(1)) >= 1 and int(m.group(1)) == len(clients)

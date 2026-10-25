@@ -12,7 +12,7 @@ client).
 
 ## §1 Both removal markers are core-logger lines
 
-**OBS** S189: the two removal paths log through the compositor's own logger —
+**OBS** S189: the two removal markers are written by the compositor's own logger —
 `Log::logger->log(Log::ERR, "Socket2 fd {} overflowed event queue, removing", …)` at `:175`
 and `Socket2 fd {} failed writing event: {}` at `:155`.
 
@@ -44,12 +44,12 @@ instead (`conn->setName("aquamarine");`, `:304-307`), so its lines bypass the sw
 three lines after the second config load (line 18); every later line is from aquamarine
 (27,280 DEBUG, 31 ERR). Zero lines match either removal marker.
 
-**OBS** S213: the compositor's unit journal (717 lines over four service runs) holds no
-ERR-class line; a string the session log carries 7 times (`drm: getCurrentCRTC: No CRTC 0`)
-appears 0 times there. Zero lines match either marker.
+**OBS** S213: the compositor's unit journal (717 lines) carries 4 start-up `Using config` lines
+and none of the runtime log: a string the session log carries 7 times
+(`drm: getCurrentCRTC: No CRTC 0`) appears 0 times there. Zero lines match either marker.
 
 **INF** S213, S214, S217: the zero counts are a null channel, not a measurement — the logger
-that would write the markers stopped writing at line 21 and never writes to the journal, so
+that would write the markers stopped writing at line 21, and reaches the journal only through stdout before that point, so
 "never overflowed" and "not logged" give the same zero. The open window before line 21 cannot
 carry a marker: no event client is accepted until the event loop runs (wave-1
 `CritNullChannel` SC2). A second, independent lag: the file is written without a flush, so the
@@ -62,7 +62,7 @@ growing `hyprland.log` proves only that aquamarine is logging.
 
 **INF** S213, S214, S215: the package readings "the event queue has never overflowed on this
 host" (session log) and "the overflow markers appear nowhere in the retained history" (journal)
-are refused (round-37 lesson `## Gate`). The blind spot is the shipped default, not a local
+are refused (round-37 lesson, `### Assimilation` and M37-2). The blind spot is the shipped default, not a local
 choice, so it applies to any v0.56.2 host that has not set `debug:disable_logs = false`.
 
 ## §5 The route that does work: the kernel's socket table

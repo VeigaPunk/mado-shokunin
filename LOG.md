@@ -2216,3 +2216,64 @@ The D10 bullet's transcript path is superseded, not cited; the machine-readable 
 pointer gate reads:
 
 - `quality/receipts/axis-a3094c99ab85bec35534de2447552c47dd2b647f.txt` -> `quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt`
+
+## Round 37 — event-socket delivery: what the compositor does to a stalled client, and why this host cannot see it (2026-10-25, attempt 2)
+
+Motivation. Rounds 28–36 were self-audit: the last-30-commit ratio stood at 3 domain / 27 meta
+(criterion 60), and the round-36 scorecard planned "move one domain-facing surface". The shokuknow
+package `merge/mado/` held an unadmitted event-delivery entry on ground the lane held only as a
+quoted line in lessons (`MAX_QUEUED_EVENTS` appears in no knowledge entry at `b4e47e9`). Attempt 1
+(06:05–06:46 -03) left one empty directory and no file; nothing was inherited from it.
+
+Claims (registration frozen v1 `8f0a9e3`, v2 `893a8aa` before any data): **C1 coverage** — two
+entries on a new edge class under the held IPC contract; **C2 operability** — a read-only
+event-socket subscriber census (capability acquisition).
+
+Work.
+
+- **Freeze discipline.** The L1 scored its own v1 controls with the cheapest-control rule and found
+  its golden control was a token stub that met C1, and that C2's live clause trusted a hand-writable
+  receipt; both counters were re-frozen as v2 before any seat ran (`receipts/controls-v2.txt`,
+  13/13).
+- **C1.** `corpus/knowledge/event-delivery-limits-r26.md` (package entry, every sentence re-checked
+  against re-fetched bytes, five corrections) and `corpus/knowledge/event-queue-observability-r37.md`
+  (lane-authored: on a default v0.56.2 host the core logger that writes both removal markers is off
+  after start-up, so log and journal zeros are a null channel). Rows S212–S217. Two package entries
+  refused (r28, r29). `admitted=0/2` → `2/2`.
+- **C2.** `tools/mado-eventq.py` (wave-1 `ExecEventqA`, chosen over the independent `ExecEventqB`
+  after both met 10/10 and an out-of-fixture probe): live, it lists `waybar` pid 935660 and `socat`
+  pid 2293 on `.socket2.sock`, zero markers, `markers_observable=no`. `fixtures=0/10` → `10/10
+  readonly=1 live=1`.
+- **Mined mistake, fixed and shown able to fail (M37-4).** Four lane gates inherited `GIT_*`:
+  under `GIT_WORK_TREE=/dev/shm` the round-36 pointer gate read `inherited_dirty=8` instead of 0;
+  under `GIT_DIR` the axis gate read `mismatched=2`. Every git subprocess now runs with `GIT_*`
+  removed; plain and ambient outputs are byte-identical (`receipts/git-env-green.txt`).
+- **QUALITY 62** (a zero count needs a positive probe on the same channel) and **63** (worktree
+  observables commit their witness).
+
+### Round-36 errata (spot-check §5, append-only; the round-36 report lives in the fleet repo and is not edited)
+
+- **R1.** `.ufo/waves/round-36/w1/reports/DistillerFindings.md` (19,033 B, a lane-authored seat
+  report) was untracked at the round-36 close while the report said "working tree clean"; it is
+  committed at `80b83c8`. The clean-tree sentence was false when written.
+- **R2.** Round-36 report lines 196, 215, 231 (and 303, found by wave-1 `ScribeErrata`) name the
+  after state `64979ef`; the receipts and the scorecard name
+  `4d28b193e52f6cc8f04e81fda2664e018d62e209`, and the round closed at `a5aaa09`. The gate blobs are
+  identical across `4d28b19..a5aaa09`, so the claim is unaffected.
+- **R3.** "six criteria (57–61)" — five: `57.`–`60.` at `a3094c9`, `61.` at `520c631`.
+- **R4.** The S211 receipt is 1,756 B at the tip, not 1,037 B (1,037 at `a3094c9`, 1,756 from
+  `f77b554`, the identity note).
+- **R5.** `inherited_dirty` is a worktree reading; routed to QUALITY criterion 63 (witness beside
+  the receipt).
+
+Evidence: `.ufo/waves/round-37/` (registration, receipts, fetch, controls, w1 and res reports),
+`corpus/lessons/round-37.md`, SCORECARD `## Round 37`.
+
+### Round 37 — residual-call corrections to the observability entry (after the data measurement)
+
+Residual `CritEntryE2` F1/F3/F4 and `RevAfterC1`'s low finding: "717 lines over four service runs"
+→ "717 lines … 4 start-up `Using config` lines" (the run count was not backed by S213); "the two
+removal paths" → "the two removal markers" (a third, hangup, removal path logs at DEBUG); "never
+writes to the journal" → "reaches the journal only through stdout before that point"; the refusal
+pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run at the records tip
+(`receipts/after-c1-v2-records.txt`); no OBS line's source or quote changed.

@@ -1,0 +1,80 @@
+date=2026-10-25T12:18:24Z lane_head=80b83c856b8cad60b88e63d8d3ab06b1d8dfea5b git=git version 2.56.0
+--- index sha256 before
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+50af9f378517e3fcc67b5db2d022c2ab011229bc273dd43c41ab9d806348b089  /home/vgpnk/Projects/shokunin/.git/index
+
+### quality/check-axis-scores.py --repo . --rev master
+axis.plain rc=0 sha=6065f5252110b6fe lines=4
+axis.gitdir rc=1 sha=ee93e36d22907cf5 lines=7
+  [axis.plain] MADO_AXIS_ROW: axis=navigation published=50/50 derived=50/50 verdict=MATCH
+  [axis.gitdir] MADO_AXIS_ROW: axis=navigation published=- derived=- verdict=NOT-PUBLISHED
+  [axis.gitdir] MADO_AXIS_ROW: axis=calibration published=- derived=- verdict=NOT-PUBLISHED
+  => axis.plain vs axis.gitdir: DIFFERENT
+
+### quality/check-index.py --rev master --repo .
+index.plain rc=0 sha=1cb91da21a5846e0 lines=1
+index.gitdir rc=2 sha=35efe820b8d57e40 lines=1
+  [index.plain] MADO_INDEX: rev=master indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+  [index.gitdir] SETUP_ERROR: fatal: Not a valid object name a409e65dfaef0b4441c0643b0f57f5a7432a4c47:corpus/knowledge
+  => index.plain vs index.gitdir: DIFFERENT
+
+### quality/check-index-rows.py --rev master --repo .
+rows.plain rc=0 sha=752a8879cd9ec8f6 lines=4
+rows.gitdir rc=2 sha=38fabe9e1dd01a0d lines=1
+  [rows.plain] MADO_INDEX_ROWS: rev=master rows=50 errors=0 warns=3
+  [rows.plain] WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+  [rows.gitdir] SETUP_ERROR: fatal: path 'corpus/README.md' exists on disk, but not in 'a409e65dfaef0b4441c0643b0f57f5a7432a4c47'
+  => rows.plain vs rows.gitdir: DIFFERENT
+
+### quality/check-control-receipts.py (round-27 committed invocation)
+ccr.plain rc=1 sha=90d7b111b0ac5dc4 lines=5
+ccr.gitdir rc=1 sha=90d7b111b0ac5dc4 lines=5
+ccr.commondir rc=2 sha=57d0adf02e5af671 lines=1
+ccr.objdir rc=2 sha=57d0adf02e5af671 lines=1
+  [ccr.plain] tip=2fdca5caaab6859386effbb8fa6acc5250c90633 round=27 receipts=39 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=100 seeds=2
+  [ccr.plain] receipt_commit=a4dc0da0394a committed=2026-10-23T10:38:49+00:00 data_registry=.ufo/waves/round-27/w2/reports/swarm-registry.json createdAt=2026-10-23T10:52:15.411Z
+  [ccr.gitdir] tip=2fdca5caaab6859386effbb8fa6acc5250c90633 round=27 receipts=39 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=100 seeds=2
+  [ccr.gitdir] receipt_commit=a4dc0da0394a committed=2026-10-23T10:38:49+00:00 data_registry=.ufo/waves/round-27/w2/reports/swarm-registry.json createdAt=2026-10-23T10:52:15.411Z
+  [ccr.commondir] UNEVALUABLE bad tip 2fdca5ca
+  [ccr.objdir] UNEVALUABLE bad tip 2fdca5ca
+  => ccr.plain vs ccr.gitdir: IDENTICAL
+  => ccr.plain vs ccr.commondir: DIFFERENT
+  => ccr.plain vs ccr.objdir: DIFFERENT
+
+### quality/check-counter-discrimination.py --profile r36 --no-receipts
+ccd.plain rc=0 sha=463e36a36e569d97 lines=36
+ccd.gitdir rc=0 sha=463e36a36e569d97 lines=36
+ccd.commondir rc=0 sha=463e36a36e569d97 lines=36
+  [ccd.plain] MADO_DISCRIMINATION: profile=r36 instruments=c1,c2 controls=25 correct=25/25 label='round-36 repaired counters' verdict=TARGET_MET
+  [ccd.gitdir] MADO_DISCRIMINATION: profile=r36 instruments=c1,c2 controls=25 correct=25/25 label='round-36 repaired counters' verdict=TARGET_MET
+  => ccd.plain vs ccd.gitdir: IDENTICAL
+  => ccd.plain vs ccd.commondir: IDENTICAL
+
+### quality/counter-selftest.py (round-26 counters, offline)
+cst.plain rc=0 sha=789491347d829565 lines=457
+cst.gitdir rc=0 sha=d26c4ab1d7542be1 lines=457
+  [cst.plain] SELFTEST pass=59 total=59
+  [cst.gitdir] SELFTEST pass=59 total=59
+  => cst.plain vs cst.gitdir: DIFFERENT
+
+### tools/mado-verify.sh live omarchy git rows (real $HOME root, sandbox PATH)
+sandbox PATH entries=3706; hyprctl=absent omarchy=absent
+verify.plain rc=1 sha=f1f7078346223c09 lines=46
+verify.gitdir rc=1 sha=e1eac22bce1b8cf3 lines=46
+verify.worktree rc=1 sha=f1f7078346223c09 lines=46
+  [verify.plain] omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at refs/heads/master (P3 pin)
+  [verify.plain] omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 at refs/heads/master (P3 pin)
+  [verify.plain] omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+  [verify.gitdir] omarchy   omarchy.git.tag                 UNKNOWN git describe failed (rc=128) — tag pin unverified
+  [verify.gitdir] omarchy   omarchy.git.head                FAIL    MOVED: HEAD → 'a409e65dfaef0b4441c0643b0f57f5a7432a4c47' != pin 8fcc9d60… (every pin held at the old tip needs re-verification)
+  [verify.gitdir] omarchy   omarchy.skill.vs_head           UNKNOWN cannot read HEAD:default/omarchy-skill/SKILL.md (rc=128) — worktree/HEAD relation unverified
+  [verify.worktree] omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at refs/heads/master (P3 pin)
+  [verify.worktree] omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 at refs/heads/master (P3 pin)
+  [verify.worktree] omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+  => verify.plain vs verify.gitdir: DIFFERENT
+  => verify.plain vs verify.worktree: IDENTICAL
+  non-omarchy-git line diff plain vs gitdir: 3
+
+--- index sha256 after
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+50af9f378517e3fcc67b5db2d022c2ab011229bc273dd43c41ab9d806348b089  /home/vgpnk/Projects/shokunin/.git/index

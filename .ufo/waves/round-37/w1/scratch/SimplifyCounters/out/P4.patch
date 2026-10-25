@@ -1,0 +1,26 @@
+--- a/controls.py
++++ b/controls.py
+@@ -36,18 +36,18 @@
+            "S213": "S213.receipt.txt", "S214": "S214.bin"}
+ 
+ 
+-def sh(*cmd, cwd=None):
+-    return subprocess.run(cmd, cwd=cwd, env=ENV, capture_output=True, text=True)
++def sh(*cmd):
++    return subprocess.run(cmd, env=ENV, capture_output=True, text=True)
+ 
+ 
+-def write(sb, rel, text, mode="w"):
++def write(sb, rel, text):
+     p = os.path.join(sb, rel)
+     os.makedirs(os.path.dirname(p), exist_ok=True)
+-    with open(p, mode) as f:
++    with open(p, "w") as f:
+         f.write(text)
+ 
+ 
+-def entry(ids, tokens, stated=False):
++def entry(ids, tokens, stated):
+     evidence = "".join(f"**OBS** {i}: `{QUOTES[i]}`\n" for i in ids) if stated else ""
+     return (f"# synthetic control entry\n\nsource: {', '.join(ids)}\nverified-at: 2026-10-25\n"
+             f"recheck: 90d\n\nbody naming {' and '.join(tokens)}.\n{evidence}")

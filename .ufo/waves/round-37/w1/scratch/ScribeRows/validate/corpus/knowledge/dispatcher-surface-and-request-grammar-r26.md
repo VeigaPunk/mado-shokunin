@@ -1,0 +1,78 @@
+# The dispatcher surface on the host's release line, and how the request socket resolves a dispatcher
+
+Lane: mado-shokunin. Round: 32 (assimilation round, theme: the Hyprland IPC
+two-socket contract). Substrates READ-ONLY: nothing under `~/.config/`, `/etc/`,
+the runtime dir or any domain source tree was written; **no socket was connected**;
+no dispatcher was dispatched; no compositor state was touched. All evidence is a
+documentation page read over HTTP on 2026-10-24 by the lane itself.
+
+source: S186 — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c04680a28301ab4b5ee5f94eaff5395efe28dbac/content/ipc/_index.md — `# Hyprland IPC` — wiki commit `c04680a28301ab4b5ee5f94eaff5395efe28dbac`
+source: S188 — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c04680a28301ab4b5ee5f94eaff5395efe28dbac/content/configuring/core/dispatchers.md — `# Dispatchers` — wiki commit `c04680a28301ab4b5ee5f94eaff5395efe28dbac`
+source: S196 — https://wiki.hypr.land/0.56.0/Configuring/Basics/Dispatchers/ — `# Dispatchers` — page revision "Last updated on July 15, 2026"
+verified-at: 2026-10-24
+recheck: 90d
+
+## Gate
+
+Re-opened by the lane on **2026-10-24** (fetched bytes kept at
+`.ufo/waves/round-32/fetch/S196.bin`).
+
+- **S196** — https://wiki.hypr.land/0.56.0/Configuring/Basics/Dispatchers/ — opened 2026-10-24; 297,863 B, sha256 `f9b51362f2440e02999089a255c5d7f3feb103f3cdeb6124c86a9f285c14b6e2`; page revision "Last updated on July 15, 2026".
+  Quote (rendered text line 302): "hl.dsp. contains:".
+  Quote (rendered text line 459): "hl.dispatch ( hl.dsp . dpms ({ action = \"disable\" }))".
+
+**GRANTED** — the page's own dispatcher groups and its `hl.dsp.*` exposure were
+read in the fetched bytes on 2026-10-24; the anchors named here are canonical for
+this entry (the staged package carried the revision without its date).
+
+### §1 The 0.56.x line already publishes the Lua dispatcher API
+
+**OBS** The dispatcher page published for the **0.56.0** line — the release line
+this host runs (v0.56.2) — already exposes the Lua dispatcher API under
+`hl.dsp.` (S196 rendered text 302) and shows it invoked through `hl.dispatch`
+(S196 rendered text 459):
+
+> "hl.dispatch ( hl.dsp . dpms ({ action = \"disable\" }))"
+
+**INF** The Lua dispatcher surface is not a post-0.56 addition: the host's own
+release line carries the same dispatcher vocabulary as current upstream. Basis:
+the 0.56.0 page publishes `hl.dsp.*` groups (S196).
+
+### §2 The dispatcher groups the 0.56.0 page publishes
+
+**OBS** The page groups the vocabulary under `hl.dsp.` and then by object:
+`hl.dsp.window.` (S196 rendered text 348), `hl.dsp.workspace.` (414),
+`hl.dsp.group.` (426) and `hl.dsp.cursor.` (444).
+
+**OBS** Reading the fetched page text, these dispatcher names occur:
+`exec_cmd`, `exec_raw`, `focus`, `exit`, `submap`, `pass`, `send_shortcut`,
+`dpms`, `event`, `global`, `force_idle`, `workspace`, `window`, `group`,
+`cursor`, `monitor` (16 names; counted over the fetched text on 2026-10-24).
+
+**INF** The published 0.56.0 vocabulary covers the general dispatchers
+(`exec_cmd`, `exec_raw`, `focus`, `exit`, `submap`, `pass`, `send_shortcut`,
+`dpms`, `event`, `global`, `force_idle`) plus per-object groups
+(`workspace`, `window`, `group`, `cursor`, `monitor`). This is the *documented*
+surface on the host's release line; it is not a claim that any of them was
+dispatched here.
+
+### §3 How the request socket relates to a dispatcher
+
+**OBS** The request socket's grammar is a flag-prefixed command line
+(S186:19, the `hyprctl` request socket) and the event socket carries the
+`EVENT>>DATA` framing (S186:30). A dispatcher is not itself a socket request:
+it is a table that must be wrapped in `hl.dispatch()` to run (S188:14).
+
+**INF** Two different surfaces meet here and must not be conflated: the *socket
+request* surface (what `hyprctl` writes) and the *dispatcher* surface (what a
+Lua config builds). The only documented bridge is the `event` dispatcher, which
+sends to socket2 (S188:59).
+
+### §4 What this entry does not claim
+
+- Nothing was dispatched, requested or observed on the host.
+- The name list is what the fetched page text contains, not an exhaustive API
+  inventory; the wiki keeps layout-specific dispatchers on the layout pages
+  (S188:12).
+- The page's "Last updated on July 15, 2026" is the revision string observed on
+  2026-10-24; a later fetch may show a different one.

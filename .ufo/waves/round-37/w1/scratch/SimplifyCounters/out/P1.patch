@@ -1,0 +1,20 @@
+--- a/c1-r37-event-ground.py
++++ b/c1-r37-event-ground.py
+@@ -126,7 +126,8 @@
+         c = dict.fromkeys("abcdefg", 0)
+         c["a"] = int(body is not None and show(repo, base, path) is None)
+         body = body or ""
+-        head = body.splitlines()[:15]
++        lines = body.splitlines()
++        head = lines[:15]
+         src_lines = [l for l in head if re.match(r"^[-* ]*source *:", l)]
+         ids = sorted(set(re.findall(r"\bS\d{3,}\b", " ".join(src_lines))))
+         c["b"] = int(bool(ids)
+@@ -138,7 +139,6 @@
+             for i in ids))
+         receipts = []
+         d_ok = g_ok = bool(ids)
+-        lines = body.splitlines()
+         for i in ids:
+             good, stated = False, False
+             for rpath, digest, quote in gates.get(i, []):

@@ -1,0 +1,23 @@
+--- a/c1-r37-event-ground.py
++++ b/c1-r37-event-ground.py
+@@ -99,9 +99,9 @@
+         raise Setup("unresolvable revision")
+     rev, base = rev.strip(), base.strip()
+ 
+-    base_files = git(repo, "ls-tree", "-r", "--name-only", base, "--", "corpus/knowledge") or ""
++    base_files = (git(repo, "ls-tree", "-r", "--name-only", base, "--", "corpus/knowledge") or "").split()
+     held = []
+-    for path in base_files.split():
++    for path in base_files:
+         body = show(repo, base, path) or ""
+         for toks in TARGETS.values():
+             held += [f"{path}:{t}" for t in toks if t in body]
+@@ -124,7 +124,7 @@
+     for path, tokens in TARGETS.items():
+         body = show(repo, rev, path)
+         c = dict.fromkeys("abcdefg", 0)
+-        c["a"] = int(body is not None and show(repo, base, path) is None)
++        c["a"] = int(body is not None and path not in base_files)
+         body = body or ""
+         head = body.splitlines()[:15]
+         src_lines = [l for l in head if re.match(r"^[-* ]*source *:", l)]

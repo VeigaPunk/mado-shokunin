@@ -1,0 +1,56 @@
+--- a/controls.py
++++ b/controls.py
+@@ -47,6 +47,11 @@
+         f.write(text)
+ 
+ 
++def splice(sb, rel, heading, add):
++    head, tail = open(os.path.join(sb, rel)).read().split("\n" + heading, 1)
++    write(sb, rel, head.rstrip("\n") + "\n" + add + "\n" + heading + tail)
++
++
+ def entry(ids, tokens, stated=False):
+     evidence = "".join(f"**OBS** {i}: `{QUOTES[i]}`\n" for i in ids) if stated else ""
+     return (f"# synthetic control entry\n\nsource: {', '.join(ids)}\nverified-at: 2026-10-25\n"
+@@ -65,15 +70,13 @@
+         shutil.copy(os.path.join(LANE, FETCH, rel), os.path.join(sb, FETCH, rel))
+     write(sb, E1, entry(e1_ids, ["MAX_QUEUED_EVENTS", "overflowed event queue"], stated))
+     write(sb, E2, entry(e2_ids, ["debug:disable_logs", "m_logsEnabled"], stated))
+-    src = open(os.path.join(sb, "corpus/SOURCES.md")).read()
+     users = {}
+     for i in e1_ids:
+         users.setdefault(i, []).append(E1)
+     for i in e2_ids:
+         users.setdefault(i, []).append(E2)
+     rows = "".join(row(i, ", ".join(u), status) for i, u in sorted(users.items()))
+-    head, tail = src.split("\n## Paths", 1)
+-    write(sb, "corpus/SOURCES.md", head.rstrip("\n") + "\n" + rows + "\n## Paths" + tail)
++    splice(sb, "corpus/SOURCES.md", "## Paths", rows)
+     gate = []
+     for i in sorted(users):
+         blob = open(os.path.join(sb, FETCH, RECEIPT[i]), "rb").read()
+@@ -82,20 +85,16 @@
+         gate.append(f'GATE {i} receipt={FETCH}/{RECEIPT[i]} sha256={d} quote="{q}"')
+     write(sb, "corpus/lessons/round-37.md", "# round 37 control\n\n## Gate\n\n" + "\n".join(gate) + "\n")
+     if readme:
+-        rd = open(os.path.join(sb, "corpus/README.md")).read()
+-        add = (f"| `knowledge/{E1.rsplit('/', 1)[1]}` (control) | x | y |\n"
++        splice(sb, "corpus/README.md", "## Quality bar",
++               f"| `knowledge/{E1.rsplit('/', 1)[1]}` (control) | x | y |\n"
+                f"| `knowledge/{E2.rsplit('/', 1)[1]}` (control) | x | y |\n")
+-        head, tail = rd.split("\n## Quality bar", 1)
+-        write(sb, "corpus/README.md", head.rstrip("\n") + "\n" + add + "\n## Quality bar" + tail)
+ 
+ 
+ def package_copy(sb):
+     shutil.copy(os.path.join(PKG, "event-delivery-limits-r26.md"), os.path.join(sb, E1))
+     shutil.copy(os.path.join(PKG, "event-queue-host-measurement-r28.md"), os.path.join(sb, E2))
+-    rd = open(os.path.join(sb, "corpus/README.md")).read()
+-    head, tail = rd.split("\n## Quality bar", 1)
+-    add = "| `knowledge/event-delivery-limits-r26.md` | x | y |\n| `knowledge/event-queue-observability-r37.md` | x | y |\n"
+-    write(sb, "corpus/README.md", head.rstrip("\n") + "\n" + add + "\n## Quality bar" + tail)
++    splice(sb, "corpus/README.md", "## Quality bar",
++           "| `knowledge/event-delivery-limits-r26.md` | x | y |\n| `knowledge/event-queue-observability-r37.md` | x | y |\n")
+ 
+ 
+ STUB_CLEAN = '''import sys

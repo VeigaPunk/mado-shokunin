@@ -2351,3 +2351,56 @@ resolved-active 48/48; operability selftest 12/12.
 3. Resume the shokuknow assimilation the round-35 evidence chain interrupted.
 4. Move one domain-facing surface: the round-27 `tools/` plane is the last domain change;
    the ratio (criterion 60) is the forcing function.
+
+## Round 37 — event-socket delivery: two entries on a new edge class, and a read-only subscriber census (2026-10-25, attempt 2)
+
+Registration `.ufo/waves/round-37/registration.md`: frozen v1 at `8f0a9e3`, re-frozen v2 at
+`893a8aadc80ab19bc163e366d674a8ac32feacd0` before any data (Amendment 1: the L1's own v1 golden
+control was a token stub that met C1). Lowest-axis rule: all three published axes tie at their
+maximum at base (`receipts/axis-base.txt`), so each is a lowest axis; C1 works coverage. Round
+shape: one v1 wave of **38 seats** (wave-1 build + first falsifiers) plus one residual call of
+**8** reviewer/critic seats; round total 46. The §3 planner seat is held by the L1.
+
+| Claim / axis | Before → after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **coverage** (assimilation, sourced) — two entries land on a new edge class under the held IPC contract: what the compositor does to an event client that stops reading, and whether a removal is observable on this host | `admitted=0/2 verdict=TARGET_MISSED` exit 1 at `b4e47e9` → `admitted=2/2 verdict=TARGET_MET` exit 0 at `3f424257a1ea69cd2655770259ba00b423293f4f` | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r37-event-ground.py --repo . --rev <rev>` | **improved on the counter, with a named instrument limit**: wave-1 `CritC1Cheap` reached the same target with a 19-line self-receipt crib, so the counter is necessary, not sufficient; the content rests on the hand re-checks named in the lesson (every source re-fetched by a second seat, byte-identical) |
+| C2 **operability** (capability acquisition) — `tools/mado-eventq.py` | `fixtures=0/10 readonly=0 live=0 tool=absent` exit 1 at `b4e47e9` → `fixtures=10/10 readonly=1 live=1 verdict=TARGET_MET` exit 0 at `3f424257a1ea69cd2655770259ba00b423293f4f` | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r37-eventq.py --repo . --rev <rev>` | **improved, with a named instrument limit**: the live clause is reachable with a snapshot built from the counter's own fixture rows (wave-1 `RevC2Code` F1) and `lagging`/`--expect-client` lack a discriminating case (F4, F5); the live receipt is corroborated independently by `receipts/eventq-live-proc-crosscheck.txt` (`/proc` shows the same two server inodes, `OVERALL: AGREE`) |
+
+Separable: wave-1 `CritSeparability` measured each claim with the other's files deleted, both
+directions, and neither verdict moved.
+
+No harm: `tools/mado-verify.sh` unchanged (`MADO_SELFTEST: 460/460 assertions passed`); the four
+lane gates touched by the `GIT_*` scrub print byte-identical plain output before and after
+(`receipts/git-env-green.txt` against the red-before digests in
+`w1/scratch/ExecPointerEnv/sweep.txt`); census exit 0 with the same seven `W04`; no existing
+knowledge entry edited; no config, service or compositor state touched.
+
+### Capabilities (round 37)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| event-socket subscriber census | list who holds the client end of Hyprland's `.socket2.sock`, each subscriber's unread bytes and the compositor's server fds, count the two removal markers, and say whether those markers are observable at all (`debug:disable_logs`) — from the kernel's socket table, never connecting | `tools/mado-eventq.py`; `quality/counters/c2-r37-eventq.py` 10/10 fixtures, `receipts/eventq-live.txt` (waybar pid 935660, socat pid 2293, `markers_observable=no`) | 37 |
+
+Adjacency (wave-1 `ConnOverlap`): the tool reads ground five siblings also read — the journal
+(tsukuroi, mori), `/proc` fd listings (souji), `ss` socket enumeration (kama), the mutation method
+(tameshi). Shared evidence, not shared ownership; nothing is absorbed.
+
+### Sources, saturation, planned
+
+Sources 201 → 207 rows (S212–S217, tier A, `mined`, opened 2026-10-25); S189 and S201 `used-by`
+extended (old→new in `corpus/lessons/round-37.md`). Assimilation: one package entry admitted
+re-grounded, two refused (null channel). Domain-versus-meta ratio of the last 30 commits
+(criterion 60): **3 domain / 27 meta**; this round's data commit `3f42425` is the first
+domain-facing change since round 27. Saturation 9.0 / N=3 unchanged; retired: none this round.
+
+Axis table re-derived at `3f424257a1ea69cd2655770259ba00b423293f4f` (the data commit; the records
+commit adds no knowledge entry or criterion): navigation 52/52; calibration resolved-active 50/50; operability selftest 12/12.
+
+### Planned (round 38; intent only)
+
+1. Counter v3 for both round-37 instruments: bind each Gate receipt to `fetch/` and to a re-fetch
+   digest (kills the self-receipt crib), and cross-check a live snapshot's server inodes against
+   `/proc` (kills the fixture-row snapshot); add discriminating `lagging` and `--expect-client`
+   cases.
+2. The next desktop surface from `considerthese/2026-10-24.md` proposal 4, ranked by wave-1
+   `ConnFrontier`: the config-option table (who owns each key, checked against `getoption`).

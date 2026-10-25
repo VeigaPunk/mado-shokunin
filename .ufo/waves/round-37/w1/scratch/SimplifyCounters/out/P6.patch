@@ -1,0 +1,12 @@
+--- a/controls.py
++++ b/controls.py
+@@ -144,8 +144,7 @@
+             build(sb)
+             sh("git", "-C", sb, "add", "-A")
+             sh("git", "-C", sb, "commit", "-q", "--allow-empty", "-m", f"control {name}")
+-            p = subprocess.run([sys.executable, "-I", counter, "--repo", sb, "--rev", "HEAD"]
+-                               + (["--base", BASE] if counter == C1 else []),
++            p = subprocess.run([sys.executable, "-I", counter, "--repo", sb, "--rev", "HEAD"],
+                                capture_output=True, text=True, env=ENV)
+             summary = p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr.strip()[-200:]
+             got = "TARGET_MET" if "verdict=TARGET_MET" in summary else "TARGET_MISSED"

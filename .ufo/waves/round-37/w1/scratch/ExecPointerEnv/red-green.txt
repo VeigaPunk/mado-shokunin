@@ -1,0 +1,225 @@
+date=2026-10-25T12:16:02Z lane_head=80b83c856b8cad60b88e63d8d3ab06b1d8dfea5b git=git version 2.56.0
+ambient GIT_* names: GIT_EDITOR GIT_OPTIONAL_LOCKS GIT_PAGER GIT_TERMINAL_PROMPT 
+ec75954a18f071b0430c1965c8628fed28c560dbbe99e26218c25f14d8ef1146  quality/check-evidence-pointers.py
+3b6907cc4dacf062a6628b29f2a137bf68f86590bc9d911bdf9d38bb55ba277a  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py
+--- index sha256 before
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+9e443386cdc7f757061390fdbda6aecee613adc5ed050045c912a75c1f8591bf  /home/vgpnk/Projects/shokunin/.git/index
+--- delta (original -> fixed)
+--- quality/check-evidence-pointers.py	2026-10-25 04:58:52.669263184 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py	2026-10-25 09:15:23.964564474 -0300
+@@ -39,6 +39,7 @@
+ 
+ import argparse
+ import fnmatch
++import os
+ import re
+ import subprocess
+ import sys
+@@ -65,6 +66,9 @@
+     ".ufo/waves/round-35/scratch/RevQuoteS203/",
+     ".ufo/waves/round-35/scratch/RevQuoteS205/",
+ )
++# `git -C <repo>` does not override an inherited GIT_DIR / GIT_WORK_TREE, so every git
++# call runs without the caller's GIT_* variables.
++GIT_ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+ 
+ 
+ def die(msg: str) -> None:
+@@ -73,7 +77,8 @@
+ 
+ 
+ def git(repo: Path, *args: str) -> str:
+-    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
++    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True,
++                          env=GIT_ENV)
+     if proc.returncode != 0:
+         return ""
+     return proc.stdout
+@@ -170,7 +175,8 @@
+ 
+     status_out = git(repo, "status", "--porcelain", "--", *INHERITED_PATHS)
+     status_rc = subprocess.run(["git", "-C", str(repo), "status", "--porcelain", "--",
+-                                *INHERITED_PATHS], capture_output=True, text=True).returncode
++                                *INHERITED_PATHS], capture_output=True, text=True,
++                               env=GIT_ENV).returncode
+     if status_rc != 0:
+         # "unmeasurable" must never read as "clean": a bare clone or a broken work tree
+         # cannot answer the question, so the observable fails closed.
+@@ -202,7 +208,7 @@
+         if not HEX40.match(candidate):
+             continue
+         if subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
+-                           candidate, args.branch]).returncode != 0:
++                           candidate, args.branch], env=GIT_ENV).returncode != 0:
+             continue
+         text = show(name)
+         for line in text.splitlines():
+
+=== RED plain
+$ python3 -I quality/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+dangling_r35: .ufo/waves/round-35/scratch/SimplifyCounter/
+dangling_r35: .ufo/waves/round-35/scratch/MutC1Drop/mutants/
+tip_axis: quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt@520c631d2925807aadadb041eeda13f8b829b0c5
+rc=0
+=== RED GIT_DIR=/home/vgpnk/Projects/shokunin/.git
+$ GIT_DIR=/home/vgpnk/Projects/shokunin/.git python3 -I quality/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 error=revision-not-readable:a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+rc=2
+=== RED GIT_WORK_TREE=/dev/shm
+$ GIT_WORK_TREE=/dev/shm python3 -I quality/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=8 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MISSED
+dangling_r35: .ufo/waves/round-35/scratch/SimplifyCounter/
+dangling_r35: .ufo/waves/round-35/scratch/MutC1Drop/mutants/
+dirty:  D .ufo/waves/round-35/scratch-evidence/RevEntryR12/evidence.txt
+dirty:  D .ufo/waves/round-35/w2/reports/RevC1Tip.md
+dirty:  D .ufo/waves/round-35/w2/reports/RevEntryR12.md
+dirty:  D .ufo/waves/round-35/w2/reports/RevEntryR14.md
+dirty:  D .ufo/waves/round-35/w2/reports/RevQuoteS203.md
+dirty:  D .ufo/waves/round-35/w2/reports/RevQuoteS204.md
+dirty:  D .ufo/waves/round-35/w2/reports/RevQuoteS205.md
+dirty:  D .ufo/waves/round-35/w2/reports/SimplifyRows.md
+tip_axis: quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt@520c631d2925807aadadb041eeda13f8b829b0c5
+rc=1
+
+=== GREEN plain
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+dangling_r35: .ufo/waves/round-35/scratch/SimplifyCounter/
+dangling_r35: .ufo/waves/round-35/scratch/MutC1Drop/mutants/
+tip_axis: quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt@520c631d2925807aadadb041eeda13f8b829b0c5
+rc=0
+=== GREEN GIT_DIR=/home/vgpnk/Projects/shokunin/.git
+$ GIT_DIR=/home/vgpnk/Projects/shokunin/.git python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+dangling_r35: .ufo/waves/round-35/scratch/SimplifyCounter/
+dangling_r35: .ufo/waves/round-35/scratch/MutC1Drop/mutants/
+tip_axis: quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt@520c631d2925807aadadb041eeda13f8b829b0c5
+rc=0
+=== GREEN GIT_WORK_TREE=/dev/shm
+$ GIT_WORK_TREE=/dev/shm python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py --rev a5aaa09ad38bfd90c13d76ccf371e36c45a2697e
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+dangling_r35: .ufo/waves/round-35/scratch/SimplifyCounter/
+dangling_r35: .ufo/waves/round-35/scratch/MutC1Drop/mutants/
+tip_axis: quality/receipts/axis-520c631d2925807aadadb041eeda13f8b829b0c5.txt@520c631d2925807aadadb041eeda13f8b829b0c5
+rc=0
+
+=== GREEN extra: GIT_DIR and GIT_WORK_TREE together
+PRED-PTR-r36-v1 rev=a5aaa09ad38bfd90c13d76ccf371e36c45a2697e pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET
+rc=0
+=== able-to-fail: 4243d03 (round-35 spot-check, before any round-36 section), plain and GIT_DIR
+PRED-PTR-r36-v1 rev=4243d031e3441f5063f92c33aa58377c6f9ff120 pointers_r35=8 dangling_r35=2 dangling_r35_closed=0 pointers_r36=0 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=0 tip_axis_transcript=0 setup=missing-r36-sections verdict=TARGET_MISSED
+rc=1 env=plain script=quality/check-evidence-pointers.py
+PRED-PTR-r36-v1 error=revision-not-readable:4243d031e3441f5063f92c33aa58377c6f9ff120
+rc=2 env=GIT_DIR script=quality/check-evidence-pointers.py
+PRED-PTR-r36-v1 rev=4243d031e3441f5063f92c33aa58377c6f9ff120 pointers_r35=8 dangling_r35=2 dangling_r35_closed=0 pointers_r36=0 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=0 tip_axis_transcript=0 setup=missing-r36-sections verdict=TARGET_MISSED
+rc=1 env=plain script=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py
+PRED-PTR-r36-v1 rev=4243d031e3441f5063f92c33aa58377c6f9ff120 pointers_r35=8 dangling_r35=2 dangling_r35_closed=0 pointers_r36=0 dangling_r36=0 inherited_dirty=0 scratch_tracked=124 scratch_disposition_ok=0 tip_axis_transcript=0 setup=missing-r36-sections verdict=TARGET_MISSED
+rc=1 env=GIT_DIR script=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-37/w1/scratch/ExecPointerEnv/check-evidence-pointers.py
+--- index sha256 after
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+9e443386cdc7f757061390fdbda6aecee613adc5ed050045c912a75c1f8591bf  /home/vgpnk/Projects/shokunin/.git/index
+.git/index mtime=1792930379
+/home/vgpnk/Projects/shokunin/.git/index mtime=1792930416
+
+######## (3) SWEEP — sweep.sh
+date=2026-10-25T12:18:24Z lane_head=80b83c856b8cad60b88e63d8d3ab06b1d8dfea5b git=git version 2.56.0
+--- index sha256 before
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+50af9f378517e3fcc67b5db2d022c2ab011229bc273dd43c41ab9d806348b089  /home/vgpnk/Projects/shokunin/.git/index
+
+### quality/check-axis-scores.py --repo . --rev master
+axis.plain rc=0 sha=6065f5252110b6fe lines=4
+axis.gitdir rc=1 sha=ee93e36d22907cf5 lines=7
+  [axis.plain] MADO_AXIS_ROW: axis=navigation published=50/50 derived=50/50 verdict=MATCH
+  [axis.gitdir] MADO_AXIS_ROW: axis=navigation published=- derived=- verdict=NOT-PUBLISHED
+  [axis.gitdir] MADO_AXIS_ROW: axis=calibration published=- derived=- verdict=NOT-PUBLISHED
+  => axis.plain vs axis.gitdir: DIFFERENT
+
+### quality/check-index.py --rev master --repo .
+index.plain rc=0 sha=1cb91da21a5846e0 lines=1
+index.gitdir rc=2 sha=35efe820b8d57e40 lines=1
+  [index.plain] MADO_INDEX: rev=master indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+  [index.gitdir] SETUP_ERROR: fatal: Not a valid object name a409e65dfaef0b4441c0643b0f57f5a7432a4c47:corpus/knowledge
+  => index.plain vs index.gitdir: DIFFERENT
+
+### quality/check-index-rows.py --rev master --repo .
+rows.plain rc=0 sha=752a8879cd9ec8f6 lines=4
+rows.gitdir rc=2 sha=38fabe9e1dd01a0d lines=1
+  [rows.plain] MADO_INDEX_ROWS: rev=master rows=50 errors=0 warns=3
+  [rows.plain] WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+  [rows.gitdir] SETUP_ERROR: fatal: path 'corpus/README.md' exists on disk, but not in 'a409e65dfaef0b4441c0643b0f57f5a7432a4c47'
+  => rows.plain vs rows.gitdir: DIFFERENT
+
+### quality/check-control-receipts.py (round-27 committed invocation)
+ccr.plain rc=1 sha=90d7b111b0ac5dc4 lines=5
+ccr.gitdir rc=1 sha=90d7b111b0ac5dc4 lines=5
+ccr.commondir rc=2 sha=57d0adf02e5af671 lines=1
+ccr.objdir rc=2 sha=57d0adf02e5af671 lines=1
+  [ccr.plain] tip=2fdca5caaab6859386effbb8fa6acc5250c90633 round=27 receipts=39 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=100 seeds=2
+  [ccr.plain] receipt_commit=a4dc0da0394a committed=2026-10-23T10:38:49+00:00 data_registry=.ufo/waves/round-27/w2/reports/swarm-registry.json createdAt=2026-10-23T10:52:15.411Z
+  [ccr.gitdir] tip=2fdca5caaab6859386effbb8fa6acc5250c90633 round=27 receipts=39 counter_sha=- excluded_by_counter_sha=0 receipt_glob=v2/*.txt excluded_by_glob=100 seeds=2
+  [ccr.gitdir] receipt_commit=a4dc0da0394a committed=2026-10-23T10:38:49+00:00 data_registry=.ufo/waves/round-27/w2/reports/swarm-registry.json createdAt=2026-10-23T10:52:15.411Z
+  [ccr.commondir] UNEVALUABLE bad tip 2fdca5ca
+  [ccr.objdir] UNEVALUABLE bad tip 2fdca5ca
+  => ccr.plain vs ccr.gitdir: IDENTICAL
+  => ccr.plain vs ccr.commondir: DIFFERENT
+  => ccr.plain vs ccr.objdir: DIFFERENT
+
+### quality/check-counter-discrimination.py --profile r36 --no-receipts
+ccd.plain rc=0 sha=463e36a36e569d97 lines=36
+ccd.gitdir rc=0 sha=463e36a36e569d97 lines=36
+ccd.commondir rc=0 sha=463e36a36e569d97 lines=36
+  [ccd.plain] MADO_DISCRIMINATION: profile=r36 instruments=c1,c2 controls=25 correct=25/25 label='round-36 repaired counters' verdict=TARGET_MET
+  [ccd.gitdir] MADO_DISCRIMINATION: profile=r36 instruments=c1,c2 controls=25 correct=25/25 label='round-36 repaired counters' verdict=TARGET_MET
+  => ccd.plain vs ccd.gitdir: IDENTICAL
+  => ccd.plain vs ccd.commondir: IDENTICAL
+
+### quality/counter-selftest.py (round-26 counters, offline)
+cst.plain rc=0 sha=789491347d829565 lines=457
+cst.gitdir rc=0 sha=d26c4ab1d7542be1 lines=457
+  [cst.plain] SELFTEST pass=59 total=59
+  [cst.gitdir] SELFTEST pass=59 total=59
+  => cst.plain vs cst.gitdir: DIFFERENT
+
+### tools/mado-verify.sh live omarchy git rows (real $HOME root, sandbox PATH)
+sandbox PATH entries=3706; hyprctl=absent omarchy=absent
+verify.plain rc=1 sha=f1f7078346223c09 lines=46
+verify.gitdir rc=1 sha=e1eac22bce1b8cf3 lines=46
+verify.worktree rc=1 sha=f1f7078346223c09 lines=46
+  [verify.plain] omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at refs/heads/master (P3 pin)
+  [verify.plain] omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 at refs/heads/master (P3 pin)
+  [verify.plain] omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+  [verify.gitdir] omarchy   omarchy.git.tag                 UNKNOWN git describe failed (rc=128) — tag pin unverified
+  [verify.gitdir] omarchy   omarchy.git.head                FAIL    MOVED: HEAD → 'a409e65dfaef0b4441c0643b0f57f5a7432a4c47' != pin 8fcc9d60… (every pin held at the old tip needs re-verification)
+  [verify.gitdir] omarchy   omarchy.skill.vs_head           UNKNOWN cannot read HEAD:default/omarchy-skill/SKILL.md (rc=128) — worktree/HEAD relation unverified
+  [verify.worktree] omarchy   omarchy.git.tag                 PASS    HELD: v3.8.4 exactly at refs/heads/master (P3 pin)
+  [verify.worktree] omarchy   omarchy.git.head                PASS    HELD: 8fcc9d60 at refs/heads/master (P3 pin)
+  [verify.worktree] omarchy   omarchy.skill.vs_head           PASS    worktree == HEAD blob (index-free; no local edit)
+  => verify.plain vs verify.gitdir: DIFFERENT
+  => verify.plain vs verify.worktree: IDENTICAL
+  non-omarchy-git line diff plain vs gitdir: 3
+
+--- index sha256 after
+53c85c246d68cc3f3fed7a9e0b4a6c0e49824a7f341652aaf81f1c1c6983b9db  .git/index
+50af9f378517e3fcc67b5db2d022c2ab011229bc273dd43c41ab9d806348b089  /home/vgpnk/Projects/shokunin/.git/index
+
+######## (3) SELFTEST WRITE REDIRECT — decoy.sh
+=== check-index --selftest plain
+rc=0 last: MADO_INDEX_SELFTEST: 12/12 assertions passed
+=== check-index --selftest GIT_DIR=<decoy>/.git
+rc=0 last: MADO_INDEX_SELFTEST: 12/12 assertions passed
+  decoy commits after: 2 (was 1); tip subject: t
+  decoy index entries after: 3 (was 0)
+=== check-index-rows --selftest plain
+rc=0 last: MADO_INDEX_ROWS_SELFTEST: 10/10 assertions passed
+=== check-index-rows --selftest GIT_DIR=<decoy>/.git
+rc=0 last: MADO_INDEX_ROWS_SELFTEST: 10/10 assertions passed
+  decoy commits after: 2 (was 1); tip subject: t
+  decoy index entries after: 3 (was 0)
+
+######## (3) counter-selftest residual GIT_* (beyond the three it pops)
+cst plain rc=0 SELFTEST pass=59 total=59
+cst GIT_OBJECT_DIRECTORY rc=1 SELFTEST pass=1 total=59
+cst GIT_COMMON_DIR rc=1 SELFTEST pass=1 total=59
