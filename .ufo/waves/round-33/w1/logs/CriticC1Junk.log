@@ -1,0 +1,18 @@
+Working...
+Claim dies. Pasted output:
+
+```
+PRED-C1-r33-v1 closed_entries=2 closed_rows=4 open_cites=0 verdict=TARGET_MET
+exit=0
+```
+
+**Tree**: `.ufo/waves/round-33/scratch/CriticC1Junk/` — 3 junk files + 4 symlinks, ~700 authored bytes:
+- Entry files hold only `gate-quote:` lines **copied from `frozen.json`'s own `quotes` map** (the spec is a crib — no mining needed).
+- `SOURCES.md` rows are self-authored; `used_by` is unvalidated attacker text.
+- Fetch `.bin` paths are **absolute symlinks into the lane's real blobs**, so `read_bytes()`+sha256 pass on bytes the tree doesn't own.
+
+**Second frontier**: `--frozen` accepts a doctored spec — `predicate` verbatim passes the drift check while `entries={}`/`target={0,0,0}` on an empty root also prints `TARGET_MET`.
+
+**Boundary**: pure-fake blobs still fail (hash-mismatch control: `closed_entries=1, TARGET_MISSED`). The counter verifies closure-*shape*, not provenance — "right bytes reachable at path" ≠ "bytes this tree produced."
+
+Counter, `frozen.json`, and lane corpus untouched (`git status` clean on both paths). Report: `.ufo/waves/round-33/w1/reports/CriticC1Junk.md`.

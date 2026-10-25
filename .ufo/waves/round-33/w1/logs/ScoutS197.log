@@ -1,0 +1,8 @@
+Working...
+Done. Report at `.ufo/waves/round-33/w1/reports/ScoutS197.md`.
+
+Findings:
+- **sha256 confirmed**: `1e19d92638e7923f0e72f6e65c83f579e32b41d588d166d6efef543c3f97d7e9` — exact match on fresh fetch (41392 B, `S197.bin`).
+- **`Workspaces::registerIpc`** spans lines 803–829; **14** `registerForIPC` calls, the only such calls in the file.
+- **Events**: 12 unconditional — `workspacev2`, `activespecial`, `createworkspacev2`, `destroyworkspacev2`, `focusedmonv2`, `moveworkspacev2`, `renameworkspace`, `openwindow`, `closewindow`, `movewindowv2`, `urgent`, `configreloaded`; 2 conditional — `windowtitlev2` (line 821), `activewindowv2` (line 827).
+- **Frozen quote confirmed**: `m_ipc.registerForIPC("workspacev2", this);` at line 804, first statement of the function.

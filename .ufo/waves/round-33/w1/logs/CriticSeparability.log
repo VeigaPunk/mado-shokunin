@@ -1,0 +1,22 @@
+Working...
+Report written to `.ufo/waves/round-33/w1/reports/CriticSeparability.md`. Findings:
+
+**C1 command** (no SCORECARD read path — `count.py` opens only `frozen.json`, `corpus/SOURCES.md`, the two entry paths, fetch blobs):
+```sh
+python3 -I .ufo/waves/round-33/c1/count.py --root . --frozen .ufo/waves/round-33/c1/frozen.json
+```
+Ran it anyway: `closed_entries=0 closed_rows=0 open_cites=4 verdict=TARGET_MISSED` exit 1 — byte-identical to the frozen do-nothing receipt. `grep -c r33-claim-verdict SCORECARD.md` → 0.
+
+**C2 command** (reads only `--scorecard` + a `git archive <rev> corpus` tempdir extraction; working-tree knowledge files never touched):
+```sh
+python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md
+```
+
+**C2 run pasted** (current SCORECARD, both knowledge files absent — confirmed `ls` fails on both, `corpus/knowledge/` holds 46 notes):
+```
+PRED-C2-r33-v1 claim_mismatch=1 reason=absent verdict=TARGET_MISSED
+exit=1
+```
+Byte-identical to `controls/c2-donothing.txt`. Note: `measured=` absent because the counter exits before `r32_cited` on the `reason=absent` path (`count.py:73-81`) — matches the honest-control shape, not a defect.
+
+Verdict: **SEPARABLE** — each counter missed on the un-landed tree without the other's artifacts; no knowledge files created; lane HEAD `9a46ccf…`.

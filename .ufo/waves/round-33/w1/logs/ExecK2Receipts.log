@@ -1,0 +1,32 @@
+Working...
+K2 receipts reproduced and reported. All three controls match the promised behavior exactly:
+
+**(a) stale publication** — clone `a-stale` (`4590b980`), r31 axis text restored:
+```
+MADO_AXIS_ROW: axis=navigation published=43/43 derived=46/46 verdict=STALE
+MADO_AXIS_ROW: axis=calibration published=39/40 derived=41/41 verdict=STALE
+MADO_AXIS_ROW: axis=operability published=9/9 derived=12/12 verdict=STALE
+MADO_AXIS: checked=3 mismatched=3 rev=4590b9803cbbb276f942054d2120d54c4851c757
+```
+**(b) re-derived text** — clone `b-rederived` at tip `9a46ccf`:
+```
+MADO_AXIS_ROW: axis=navigation published=46/46 derived=46/46 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=41/41 derived=41/41 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=9a46ccf3282117f960b8d53cd71599a91f388ee3
+```
+**(c) perturb 41/41 → 40/41** — clone `c-perturb` (`a3a79ce`):
+```
+MADO_AXIS_ROW: axis=navigation published=46/46 derived=46/46 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=40/41 derived=41/41 verdict=STALE
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=1 rev=a3a79cee6a48e9a7294edce538ee410a12f5d402
+```
+
+Findings:
+- `.ufo/waves/round-32/c2/controls/` holds only `c1-predicate-attack/` fixtures — the promised C2 receipts were never committed. Reproduced under `.ufo/waves/round-33/scratch/ExecK2Receipts/`; round-32 directory left as found.
+- Gate not vacuous: single-fraction perturbation bites while other axes match.
+- Side observation: `SCORECARD.md` cites r31 base `25622288`, which doesn't resolve at current tip — stale short-rev, not a gate failure.
+- `SCORECARD.md` and `quality/check-axis-scores.py` untouched (`git diff` empty); pre-existing round-30 report modifications are sibling in-flight work, not mine.
+
+Report: `.ufo/waves/round-33/w1/reports/ExecK2Receipts.md` (79 lines, untracked wave artifact).

@@ -1,0 +1,11 @@
+Working...
+Done. Report at `.ufo/waves/round-33/w1/reports/ScoutQuarantine.md`.
+
+**Slice** (prompt awk verbatim → `scratch/ScoutQuarantine/slice.txt`): 13 rows — 6 `payload-absent` (S189, S195, S201, S205, S224, S228) + 7 unchecked-family (S199, S200, S209, S222, S223, S225, S235). S190/S191/S197 absent from the mado slice entirely.
+
+**Hand-checks — all three PRESENT:**
+- **S189** — raw.githubusercontent.com pinned `EventManager.cpp`, HTTP 200/6479B. Quote byte-identical at line 128. Register `payload-absent` is a **false negative** against the very commit it pins.
+- **S201** — arxiv.org/abs/2604.18860, HTTP 200. Quotes not in the abstract but verbatim in the linked HTML fulltext (`/html/2604.18860v1`, 243019B): "Desktop agents interact across disjoint applications, manage overlapping windows" and "notification overlays and X11 window focus hijacking — can redirect agent actions with up to 100% success rates".
+- **S205** — archwiki interwikimap JSON, HTTP 200/8313B. Both zh-hans/zh-hant rows present verbatim modulo whitespace + `\u` escaping; live API now serves compact JSON vs the pretty-printed form quoted.
+
+Uncovered: S195 (pkg.tar.zst mirror), S224 (host-local cache path), S228 (lane-local artifact path), plus the 7 unchecked-family rows — named in the report for the next seat.

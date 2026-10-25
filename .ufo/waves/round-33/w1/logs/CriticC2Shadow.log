@@ -1,0 +1,8 @@
+Working...
+Done. Findings in `.ufo/waves/round-33/w1/reports/CriticC2Shadow.md`.
+
+**Result:** Hypothesis falsified — `count.py` does not share the rfind defect.
+
+- `count.py:72-80` scans every line, regex-anchored to `^r33-claim-verdict: r32-C1 cited_entries=… verdict=… rev=[0-9a-f]{40}$`, last match wins. Zero `rfind`, zero `Axis table re-derived` references.
+- Scratch scorecard with `Axis table re-derived at scratch-decoy …` **after** a correct verdict line → `verdict=TARGET_MET`, `exit=0` (published=7 measured=7, measured live via `git archive` + frozen r32 counter). Decoy inert.
+- `quality/check-axis-scores.py:45` still carries the defect: `flat.rfind("Axis table re-derived at")` over whitespace-flattened text; `PUB_RE` compiled but unused for the lookup. Not edited, per scope.

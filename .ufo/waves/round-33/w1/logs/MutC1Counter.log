@@ -1,0 +1,14 @@
+Working...
+DETECTED. Report: `.ufo/waves/round-33/w1/reports/MutC1Counter.md`.
+
+- Mutant: `.ufo/waves/round-33/scratch/MutC1Counter/count.py` — one-line deletion of `and digest == fetch["sha256"]` (line 85). Lane counter untouched.
+- Control: `.ufo/waves/round-33/controls/hash-mismatch` (present; used as-is, no fabricated tree).
+
+Outputs:
+
+```
+ORIGINAL:  PRED-C1-r33-v1 closed_entries=1 closed_rows=3 open_cites=1 verdict=TARGET_MISSED  exit=1
+MUTANT:    PRED-C1-r33-v1 closed_entries=2 closed_rows=4 open_cites=0 verdict=TARGET_MET     exit=0
+```
+
+The corrupted S189 blob becomes a closed cite only under the mutant — the sha256 clause is the sole conjunct holding it open.

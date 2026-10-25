@@ -1,0 +1,16 @@
+Working...
+**Agree — no quote absent.** All four frozen quotes pass both checks.
+
+```
+$ python3 -c "import json,hashlib; d=json.load(open('.ufo/waves/round-33/c1/frozen.json')); [print(qid, 'words=%d in1-25=%s'%(len(q.split()),1<=len(q.split())<=25), 'substring=%s'%(q.encode()in open(d['fetches'][qid]['path'],'rb').read()), 'sha256_ok=%s'%(hashlib.sha256(open(d['fetches'][qid]['path'],'rb').read()).hexdigest()==d['fetches'][qid]['sha256'])) for qid,q in d['quotes'].items()]"
+S190 words=8 in1-25=True substring=True sha256_ok=True
+S191 words=2 in1-25=True substring=True sha256_ok=True
+S197 words=2 in1-25=True substring=True sha256_ok=True
+S189 words=5 in1-25=True substring=True sha256_ok=True
+```
+
+- Word counts 2–8, all inside 1–25.
+- `substring` = exact byte containment (`q.encode() in blob`) → contiguous, unmodified; each blob also matches its frozen sha256.
+- Observation (outside scope, noted in report): both entry files in `frozen.json.entries` don't exist yet, so PRED-C1-r33-v1's `closed_entries=2` can't hold until they're created.
+
+Report: `.ufo/waves/round-33/w1/reports/ReviewQuoteAnchors.md`.

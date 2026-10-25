@@ -1,0 +1,15 @@
+Working...
+**Verdict: the predicate survives.** Report at `.ufo/waves/round-33/w1/reports/ReviewC1Predicate.md`.
+
+Why no junk tree can decouple quotes from frozen-hash blobs:
+
+1. **Single-read binding** — `count.py` reads each blob once into one bytes object; `quote.encode() in blob` and `sha256(blob) == frozen` test those same bytes. No second read, no TOCTOU surface.
+2. **Second-preimage wall** — any file matching the frozen sha256 is the frozen content for practical purposes, so any `TARGET_MET` tree necessarily has quote ⊆ frozen-hash blob. Escaping needs a sha256 collision.
+3. **Hatches closed** — empty blob → digest `""` ≠ frozen; quotes all non-empty so `"" in blob` vacuity unavailable; `found == quote` ties the entry line to the same frozen string.
+
+Empirical (counter untouched, scratch in `/tmp`):
+- Attack tree (perfect entries + registry, quotes stripped from blobs): `closed_entries=0 closed_rows=0 open_cites=4 verdict=TARGET_MISSED`
+- Control tree (same, real blob bytes): `closed_entries=2 closed_rows=4 open_cites=0 verdict=TARGET_MET` — construction proven complete; digest binding is the sole blocker.
+- Real fetch blobs: 4/4 hash-match, 4/4 contain their quote.
+
+Residual softness (noted in report, doesn't enable the attack): `used_by` is a substring match on the last registry cell, not exact-cell; live root prints `TARGET_MISSED` in-flight because both frozen entry files are absent and only S189 has a `SOURCES.md` row.

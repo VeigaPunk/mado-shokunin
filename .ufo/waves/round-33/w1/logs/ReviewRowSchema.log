@@ -1,0 +1,10 @@
+Working...
+Report written: `.ufo/waves/round-33/w1/reports/ReviewRowSchema.md`. Nothing appended.
+
+**Failing cells (validator-confirmed, exit 1):**
+- **E09 `recheck`, all three rows** — prose (`on-release — re-pull at tag … (ran 2026-10-23)`) breaks the symbolic-token regex `^[A-Za-z][A-Za-z0-9 _-]*$`. Em dash/backticks/parens are the killers. Normalized: bare `on-release` (registry's own dominant shape, 131 rows; S053/S054 use it). Tag+sha provenance already in `anchor`; ran-date belongs in `LOG.md`. Side effect found: prose rechecks also vanish from `overdue` tracking (exit 0, silent).
+- **E11 `used-by`, all three rows** — every path dangling: S190/S191 → `waybar-module-text-route-r25.md`; S197 → `host-bar-and-idle-binding-r26.md` + `event-delivery-limits-r26.md`; none of the 46 adopted knowledge files matches. Normalized: `—` (takes W03, a warning) unless the append also adopts the entries; verified candidates needing a coverage read first: `ipc-contract-r25.md` (S190), `waybar-observation-boundaries-r16.md` (S191/S197).
+
+**Passed:** NF=13, no escaped pipes in these rows, no id/URL collisions, kind/tier/status/opened all clean.
+
+**Adjacent blockers (same file, out of scope):** S186–S189 + S196 already in the registry → E03 ×5 on whole-file append; staged file lacks `## Registry` heading (E12 standalone); `\|` in rows at lines 42, 51, 52, 71, 121–138 → E01 via awk field split when appended.

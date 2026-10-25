@@ -1,0 +1,19 @@
+Working...
+Attack complete. Report: `.ufo/waves/round-33/w1/reports/ReviewC2Predicate.md`; cards + canonical `TRANSCRIPT.txt` under `.ufo/waves/round-33/scratch/ReviewC2Predicate/`. `count.py` untouched; `git status --porcelain -- SCORECARD.md` → empty. No tool installs.
+
+**All three mandated attacks hit the wall (no false PASS):**
+
+```
+case1  cited_entries=7, verdict=target-met, rev=frozen → claim_mismatch=1 … verdict=TARGET_MISSED exit=1
+case2  cited_entries=7, verdict=honest-stop, rev=HEAD(9a46ccf3…) → claim_mismatch=1 … verdict=TARGET_MISSED exit=1
+case3  no claim line (+prefixed decoy in prose)        → claim_mismatch=1 reason=absent verdict=TARGET_MISSED exit=1
+```
+
+Case 2 is maximally strong: measured on HEAD is also **7**, so published==measured==7 with the right verdict — only the `rev == FROZEN_REV` literal check rejects it. It holds.
+
+**Validity control:** exact-match card → `claim_mismatch=0 … verdict=TARGET_MET exit=0`; last-line-wins confirmed both directions (8-then-7 passes, 7-then-8 misses); leading/trailing space, uppercase rev, 39-hex → `reason=absent`; uppercase verdict → miss. Hashes in the report diff-verified byte-identical against the re-run transcript.
+
+**Observations (no fix demanded):**
+1. `cited_entries=07` normalizes via `int()` → TARGET_MET — cosmetic.
+2. Well-formed nonexistent rev → `error=archive-failed`, **exit 2**, not a clean miss — consumers must treat any nonzero exit as not-met.
+3. `measured=7` on both frozen rev and HEAD: the rev-identity literal is currently the only discriminator; correct, but load-bearing if citation counts drift between revs.

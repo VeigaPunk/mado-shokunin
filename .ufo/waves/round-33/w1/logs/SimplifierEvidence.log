@@ -1,0 +1,13 @@
+Working...
+Report written: `.ufo/waves/round-33/w1/reports/SimplifierEvidence.md`. Registration untouched.
+
+**C1 — re-derivable: YES.** `python3 -I .ufo/waves/round-33/c1/count.py --root . --frozen .ufo/waves/round-33/c1/frozen.json`. All inputs are committed/landing-committed bytes (frozen.json, count.py, SOURCES.md, four tracked fetch bins incl. round-32's `S189.bin`); quote-match is substring + sha256 against committed blobs, no network. Re-ran now: live tree `TARGET_MISSED` exit 1 (after-state pending — both cited entry files not yet created), golden scratch `closed_entries=2 closed_rows=4 open_cites=0 TARGET_MET` exit 0. `open_cites=0` enumerates every frozen cite via the frozen.json loop (S190, S191, S197, S189); `predicate-drift` guard pins frozen.json to the counter text.
+
+**C2 — re-derivable: YES.** `python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md`. Measurement is truly committed-bytes: `git archive d9ed3816…` (verified ancestor of HEAD) → verbatim-embedded r32 counter. Re-ran now: current SCORECARD `reason=absent TARGET_MISSED` exit 1 (verdict line not yet appended); honest control `published=7 measured=7 TARGET_MET` exit 0.
+
+**Universal-word flags:**
+- "Every scored axis is tied at 1.0" — enumerated by **neither** counter (context, outside both PREDs, but machine-unenumerated).
+- Minor: C1's "the registry row" reads only the *first* matching row; used-by check is substring.
+- Enumerated, no flag: C1 "extra `source:` lines" (counter never parses them; `c1-extra-source.txt` receipt shows MET), C1 "anything else = honest stop" (exit-code complement), C2 "any verdict word other than honest-stop" (strict case-sensitive equality — case flips honestly stop).
+
+Caveat: both commands read the worktree (`--root .`/SCORECARD), so closure re-derivation means a clean checkout of the landing rev — untracked scratch can't affect either (only enumerated paths are opened).

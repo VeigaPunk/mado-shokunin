@@ -1,0 +1,19 @@
+Working...
+Done. Both deliverables landed and verified.
+
+**Draft** — `.ufo/waves/round-33/scratch/ScribeEntryStall/event-delivery-limits-r26.md` (8,420 B), house format matching the r25/r26 scribe precedents:
+
+- **S189 cited for the queue cap** (`MAX_QUEUED_EVENTS = 64`, L169), not campaign S187 — the old draft's S187/S188 were the +2 renumbering residue flagged in round-32 M32-12. Backend claims that belonged to staged S190 are bounded out as UNK rather than re-attributed.
+- **Producer side (S189, v0.56.2):** 1024-char truncation in `formatEvent` (:128-129), shared event string per-client queue, `EAGAIN`-tolerant `flushClient` (:133-161), cap → **disconnect, not throttle** (:174-176), ERR trace `Socket2 fd {} overflowed event queue, removing`.
+- **Consumer side (S197, Waybar 0.15.0):** `Workspaces::registerIpc` :803-829 — 14 `registerForIPC` calls, `workspacev2` first at :804; shared `IPC::inst()` handle :21; destructor unregister :37.
+- **Gate block** carries both lines verbatim at draft :120-121: `gate-quote: S197 m_ipc.registerForIPC("workspacev2", this);` and `gate-quote: S189 const size_t MAX_QUEUED_EVENTS = 64;`.
+- **UNK kept verbatim:** whether this host ever hit the cap is unobserved — source-verified mechanism, not witnessed occurrence. Also UNK: S190 backend reconnect behavior, installed bar version.
+
+**Verification re-run at write time** (all observed, none copied):
+- `sha256sum`: S189 `eea605df…9540d`, S197 `1e19d926…d7e9` — both equal `c1/frozen.json` digests.
+- `grep -F` substring check: both gate-quotes contiguous in their blobs (S189:169, S197:804).
+- Recheck expectations executed: `MAX_QUEUED_EVENTS` → `2`, `m_ipc\.registerForIPC` → `14` (excludes `unregisterForIPC` :37).
+- `git ls-remote` re-confirmed `efb50993…` = lightweight `refs/tags/v0.56.2`, no peel line.
+- Bounds: `corpus/` and `LOG.md` untouched; no subagents (leaf bound honored).
+
+**Report** — `.ufo/waves/round-33/w1/reports/ScribeEntryStall.md` with outcome, evidence transcript, correction note, and residual (staged, not admitted; needs non-author review before corpus adoption).

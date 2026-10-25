@@ -1,0 +1,8 @@
+Working...
+Done. Findings:
+
+- **sha256 confirmed**: `eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d` matches `c1/frozen.json` and `corpus/SOURCES.md:201`. Blob is 192-line C source, `EventManager.cpp` @ `efb5099` (v0.56.2).
+- **Locations**: `const size_t MAX_QUEUED_EVENTS = 64;` → **S189:169**; `overflowed event queue, removing` → **S189:175** (inside `CEventManager::postEvent`, S189:163–192).
+- **S187 citation verdict**: wrong. S187 is the 0.56.0 IPC wiki page (268,731 B HTML; zero hits for `MAX_QUEUED_EVENTS`/`EventManager.cpp`). S189 is the sole registered `EventManager.cpp` source. An S187 gate-quote could never close under PRED-C1-r33-v1 — not a substring of the S187 blob, and the frozen cite-map binds the entry to `["S197","S189"]`. No committed staged entry cites S187; all control variants and the ScribeEntryStall prompt use S189.
+
+Report: `.ufo/waves/round-33/w1/reports/ScoutS189Quote.md` · Receipts: `.ufo/waves/round-33/scratch/ScoutS189Quote/receipts.txt`

@@ -1,0 +1,15 @@
+Working...
+Done. Both artifacts landed and the gate contract verified mechanically at write time.
+
+**Deliverables**
+- Draft: `.ufo/waves/round-33/scratch/ScribeEntryWaybar/waybar-module-text-route-r25.md` — S190+S191 only, `verified-at: 2026-10-24`, `recheck: 90d`, both gate-quote lines exact, `corpus/` untouched.
+- Report: `.ufo/waves/round-33/w1/reports/ScribeEntryWaybar.md`.
+
+**Gate preflight (python3, re-run at write):** `line-exact=True in-blob=True blob-sha==frozen=True digest-in-entry=True` for S190 (`799bf02f…78bb4f9e`) and S191 (`5df496eb…570c9846`) against `.ufo/waves/round-33/c1/frozen.json`; `corpus-untouched: True`.
+
+**Staged claims dropped (bytes don't support):**
+- S190 staged anchors `:17-33`/`:77-99`/`:109-116` — stale; `:17-33` misses the :38 gate-quoted fallback line and `:109-116` lands inside `socketListener`, not `parseIPC`. Re-derived from the fetch bytes: `getSocketFolder` :19-44, `socketListener` :77-139 (1024-byte buffer :115), `parseIPC` :141-150.
+- S191 staged `:22-28` + two-event claim — understated; bytes carry five registrations :27-31. Markup route pinned :58-64, `onEvent`→`dp.emit()` :240-241.
+- Staged `recheck: on-release` prose not carried into the entry (lane instruction: 90d); left recorded verbatim in `ExecAppendDraft/append-block.md`.
+
+**Entry scope:** source-read only — socket-folder derivation + `/tmp/hypr` fallback (S190:37-39), socket2 subscription/dispatch (S190:98,115,141-150; S191:27-31), text route event→`dp.emit`→socket1 `activeworkspace`/`clients`→`set_markup` (S191:240-241, :114, :58-64). Rendering/host state explicitly not claimed; cross-references `ipc-contract-r25.md` and `waybar-observation-boundaries-r16.md`.
