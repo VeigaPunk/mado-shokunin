@@ -20,7 +20,11 @@ ground: a new edge class under the held IPC contract (`knowledge/ipc-contract-r2
 per-dispatcher options: `j` changes the reply's encoding, `i` chooses which
 compositor instance answers, and `r` asks the compositor to force a state refresh
 after issuing commands (the page's own wording; the refresh runs after the
-reply is built in the host's handler, S158 `:2107`/`:2126`). Basis: the three
+reply is built in the host's handler, S158 `:2107`/`:2126`). The published list
+is the CLI-facing flag list: the server's own request parser accepts `j`, `r`,
+`a`, `c` (S158 `:2085-2092`) — `i` never reaches the socket (it selects the
+instance in the client, `hyprctl/src/main.cpp:427`), and `a`/`c` are
+undisclosed socket flags. Basis: the three
 flag descriptions read together with the request grammar
 (`knowledge/ipc-contract-r25.md` §1 line 42, S186 `:19`).
 
@@ -37,11 +41,10 @@ why spamming `hyprctl` hurts.
 
 ### §3 What remains unmeasured
 
-**UNK** The server-side handling of each flag was not re-read this round — the
-IPC contract established that a leading flag segment is stripped before the
-dispatcher name is matched, not what the server then does with `j`, `i` or
-`r`. **UNK** Whether the host's own configuration ever issues a flagged
-request was not inspected.
+**OBS** S158: the server strips a leading flag segment before matching the
+dispatcher name and accepts `j`, `r`, `a`, `c` (`:2085-2096`); the published
+list omits `a`/`c`, and `i` is client-side. **UNK** Whether the host's own
+configuration ever issues a flagged request was not inspected.
 
 Corrections applied while re-grounding (package draft → this entry): the
 package's `recheck` cell carried prose and a run note; the lane's schema keeps
