@@ -61,9 +61,9 @@ selftest assertions that each kill a one-line mutant (`c2/selftest-mutA.txt`,
 
 ## §3 The host's table (static, measured)
 
-**OBS** S219 (own-work receipt `.ufo/waves/round-39/fetch/S219.receipt.txt`, the tool at
-`4ec582e` over the 49 host config files copied read-only into
-`.ufo/waves/round-39/w1/ExecOptionsRealTree/host-tree/`): "rows=70 owner files=6 layers defaults=57 user=7 toggles=4 theme=2".
+**OBS** S219: "rows=70 owner files=6 layers defaults=57 user=7 toggles=4 theme=2" (own-work
+receipt `.ufo/waves/round-39/fetch/S219.receipt.txt`: the tool at `4ec582e` over the 49 host
+config files copied read-only into `.ufo/waves/round-39/w1/ExecOptionsRealTree/host-tree/`).
 
 **INF** 57 of the 70 options the host sets are owned by the read-only Omarchy defaults tree
 (47 by `default/hypr/looknfeel.conf` alone); the operator's own surface owns 13: 7 in
