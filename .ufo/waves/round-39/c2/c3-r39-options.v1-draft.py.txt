@@ -1,0 +1,164 @@
+#!/usr/bin/env python3
+"""PRED-C3-r39-v1 — option-table tool presence and fixture behavior.
+
+Clauses a–g score one committed revision using only revision-addressed Git
+reads (with ambient GIT_* removed):
+  a tool exists at REV;
+  b its --selftest passes in an isolated sandbox copy and reports assertions;
+  c the round-39 fixture checker passes against that copy;
+  d fixture output contains rows with the required fields;
+  e a non-regular input is refused with its name in the diagnostic;
+  f the BASE revision lacks the tool (precondition, exit 2 if false);
+  g the implementation uses only Python's standard library.
+Target: fixtures=N/N tool=present verdict=TARGET_MET, exit 0; any miss exits 1.
+"""
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+PRED = "PRED-C3-r39-v1"
+BASE_DEFAULT = "08be4eb7fd13358ed29b096e8924005d46ac409c"
+TOOL = "tools/mado-options.py"
+FIXTURE = ".ufo/waves/round-39/w1/ExecOptionsFixtures/run-fixtures.sh"
+ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+FIELDS = {"key", "value", "owner", "layer", "line", "set"}
+
+
+class Setup(Exception):
+    pass
+
+
+def git(repo, *args):
+    p = subprocess.run(["git", "-C", repo, *args], capture_output=True, env=ENV)
+    return p.stdout if p.returncode == 0 else None
+
+
+def show(repo, rev, path):
+    return git(repo, "show", f"{rev}:{path}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repo", required=True)
+    ap.add_argument("--rev", required=True)
+    ap.add_argument("--base", default=BASE_DEFAULT)
+    a = ap.parse_args()
+    repo = os.path.abspath(a.repo)
+    rev = git(repo, "rev-parse", "--verify", f"{a.rev}^{{commit}}")
+    base = git(repo, "rev-parse", "--verify", f"{a.base}^{{commit}}")
+    if not rev or not base:
+        raise Setup("unresolvable revision")
+    rev, base = rev.decode().strip(), base.decode().strip()
+    if show(repo, base, TOOL) is not None:
+        raise Setup("precondition_failed tool_present_at_base")
+
+    blob = show(repo, rev, TOOL)
+    tool_present = blob is not None
+    passed = 0
+    clauses = {}
+    with tempfile.TemporaryDirectory(prefix="mado-c3-r39-") as work:
+        tool = os.path.join(work, "mado-options.py")
+        if blob is not None:
+            with open(tool, "wb") as f:
+                f.write(blob)
+            os.chmod(tool, 0o700)
+        def run(cmd, cwd=work):
+            try:
+                return subprocess.run(cmd, cwd=cwd, env={k:v for k,v in os.environ.items() if not k.startswith("GIT_")}, capture_output=True, text=True, timeout=120)
+            except (OSError, subprocess.TimeoutExpired) as e:
+                return None
+
+        selftest = run([sys.executable, "-I", tool, "--selftest"]) if tool_present else None
+        selftext = (selftest.stdout + selftest.stderr) if selftest else ""
+        assertions = 0
+        import re
+        for m in re.finditer(r"(\d+)\s*/\s*(\d+)\s+assertions?", selftext, re.I):
+            assertions = max(assertions, int(m.group(1)))
+        clauses["b"] = int(bool(selftest and selftest.returncode == 0 and assertions > 40))
+        print(f"{PRED} clause=b selftest_rc={selftest.returncode if selftest else 'unavailable'} assertions={assertions} ok={clauses['b']}")
+
+        fixture_blob = show(repo, rev, FIXTURE)
+        fixture_ok = False
+        fixture_stdout = ""
+        if tool_present and fixture_blob is not None:
+            fixture = os.path.join(work, "run-fixtures.sh")
+            with open(fixture, "wb") as f:
+                f.write(fixture_blob)
+            os.chmod(fixture, 0o700)
+            fp = run(["/bin/sh", fixture, "--tool", tool, "--repo", repo], cwd=work)
+            if fp:
+                fixture_stdout = fp.stdout + fp.stderr
+                fixture_ok = fp.returncode == 0
+        # Checker is revision-pinned; count its declared N and passed results.
+        declared = re.search(r"fixtures=(\d+)/(\d+)", fixture_stdout)
+        if declared:
+            passed, total = map(int, declared.groups())
+        else:
+            passed = int(fixture_ok)
+            total = 1
+        clauses["c"] = int(fixture_ok)
+        clauses["a"] = int(tool_present)
+        print(f"{PRED} clause=c fixtures={passed}/{total} rc={0 if fixture_ok else 1} ok={clauses['c']}")
+
+        shape_ok = False
+        if fixture_ok:
+            try:
+                # Fixture checker emits observed row JSON as a one-line marker.
+                for line in fixture_stdout.splitlines():
+                    if line.startswith("MADO_OPTIONS_ROWS:"):
+                        rows = json.loads(line.split(":", 1)[1])
+                        shape_ok = bool(rows) and all(FIELDS <= set(row) for row in rows)
+                        break
+            except (ValueError, TypeError):
+                shape_ok = False
+        clauses["d"] = int(shape_ok)
+        print(f"{PRED} clause=d row_shape={clauses['d']}")
+
+        strict = ""
+        # A FIFO is a deterministic non-regular target and is not opened for data.
+        if tool_present and hasattr(os, "mkfifo"):
+            tree = os.path.join(work, "strict-home")
+            config = os.path.join(tree, ".config", "hypr")
+            os.makedirs(config)
+            fifo = os.path.join(config, "hyprland.conf")
+            os.mkfifo(fifo)
+            ep = run([sys.executable, "-I", tool, "--home", tree])
+            strict = (ep.stdout + ep.stderr) if ep else ""
+        clauses["e"] = int("hyprland.conf" in strict and bool(strict) and (ep.returncode != 0))
+        print(f"{PRED} clause=e strict_named_refusal={clauses['e']}")
+
+    clauses["f"] = int(not tool_present)
+    # Clause g: import graph from source AST; imports must be stdlib-only.
+    stdlib = {"argparse", "glob", "json", "os", "pathlib", "re", "shlex", "sys", "tempfile", "subprocess", "hashlib", "stat", "collections", "fnmatch", "textwrap", "shutil", "math", "copy"}
+    imports_ok = False
+    if blob is not None:
+        try:
+            import ast
+            tree = ast.parse(blob.decode("utf-8"))
+            names = set()
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    names.update(alias.name.split(".")[0] for alias in node.names)
+                elif isinstance(node, ast.ImportFrom) and node.module:
+                    names.add(node.module.split(".")[0])
+            imports_ok = names <= stdlib
+        except (SyntaxError, UnicodeDecodeError):
+            pass
+    clauses["g"] = int(imports_ok)
+    print(f"{PRED} clauses=" + "".join(f"{k}:{v} " for k,v in clauses.items()).strip())
+    met = all(clauses.values()) and passed == total and tool_present
+    verdict = "TARGET_MET" if met else "TARGET_MISSED"
+    print(f"{PRED}: fixtures={passed}/{total} tool={'present' if tool_present else 'absent'} verdict={verdict} rev={rev}")
+    return 0 if met else 1
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Setup as e:
+        print(f"{PRED} SETUP {e}")
+        sys.exit(2)
