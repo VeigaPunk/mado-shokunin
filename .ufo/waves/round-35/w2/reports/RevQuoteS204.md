@@ -158,9 +158,11 @@ entries are true. It must not be reported as truth of content.
 ## Entry-side errata — attribution and residuals (not authored here)
 
 Between 03:35:08 and 03:41:38 on 2026-10-25 the frozen entry
-`corpus/knowledge/idle-lock-never-asked-r12.md` was written twice by **another seat**:
+`corpus/knowledge/idle-lock-never-asked-r12.md` was written twice by an **unattributed writer**:
 3586 B at 03:35:08 (E1+E2), then 4344 B / sha256 `0bcef21fc93fe32f5f926b21d4f6f9655ffb32bd41f49280b0c074fb4469c504`
-/ 69 lines at 03:41:38 (adds E3). This seat did not write to lane corpus; its only writes are
+/ 69 lines at 03:41:38 (adds E3). No journal, mount, or charter evidence names the writer, and the
+errata's citation of this report **post-dates the E1 write by 5m38s** (E1 03:35:08 vs report
+03:40:46), so this seat cannot be the author — it wrote no corpus file at any point.
 this report and the scratch log (pre-sweep `stat`: report 03:40:46, log 03:37:07; that log was
 relocated to `scratch-evidence/` and a 03:46 rebuild replaced it in the worktree — both shas in the
 header and Appendix A). The errata text is not a

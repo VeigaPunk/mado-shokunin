@@ -143,18 +143,34 @@ commit that contains the entries or use `--root`, and record which one was used.
 - Copied-tree artifact: `check-index-rows.py --root` on the scratch copy reports 20
   `cited-path-missing` errors because the copy excluded `.ufo/` (the cited evidence lives there).
   That is my rsync's exclusion, **not** a lane defect; the lane run is `rows=50 errors=0 warns=0`.
+- Scratch **relocated, not deleted**: `.ufo/waves/round-35/scratch/` was moved to
+  `.ufo/waves/round-35/scratch-evidence/` (~03:43–03:45). Checkpoint commit `4efaf63` carries 235
+  files across 59 seat dirs; this seat's four result files were recovered from it byte-identically
+  — the restored `evidence.log` hashes to git blob `152a068d…`, exactly the pre-relocation bytes,
+  and `scratch-sha.txt` is `285314d3…`. `scratch/` is not stable (a re-created seat dir was swept
+  again), so the report body is the primary evidence locus and the seat dir a convenience copy.
+- Rebuild ≠ evidence: the 03:46 rebuild (`rebuild.sh`; log kept as `evidence.rebuild.log`, sha256
+  `a2b39bfe…`; fresh copy commit `abad0092…`) reproduced every result above identically, but it is
+  a **reconstruction of commands, not the measured bytes**, so it is retained separately and is
+  never cited as the audit record.
 - Concurrency: `corpus/README.md` changed under me mid-investigation (sha256 `7f348944b0e7…` →
   `a3769befe355…`, a sibling appending the prose section after the table). The scratch copy was
-  refreshed and re-committed after that change; **every number above is pinned to README sha256
-  `a3769befe3558c54c79c015910ba514a7009aa6a825e15f2bafdfd896fc5e83a`** (re-verified at end of
-  run; the gate still reports 50/50 and 50 notes). It has since advanced twice —
-  `3bb9865f…694f` (249 lines) then `de5b885a793f5a773ab1dc69016ea38e185e8f77b920d2ad7b300bc7c6310ac6`
-  (254 lines) — and re-running on the latest bytes still gives `50/50` and
-  `rows=50 errors=0 warns=0`, both rc=0. No lane file, counter, pairing, `SOURCES.md` row, jj
-  state or git index was modified by this seat.
+  refreshed and re-committed after that change; the audit numbers are pinned to README sha256
+  `a3769befe3558c54c79c015910ba514a7009aa6a825e15f2bafdfd896fc5e83a`. It then advanced twice —
+  `3bb9865f…694f` (249 lines) then `de5b885a793f…0ac6` (254 lines) — and master advanced from
+  `19e4ab31…` to `b632f0b9…`, committing the three notes and rows. Re-running on the current
+  bytes gives `50/50` (rev and root) and `rows=50 errors=0 warns=0`, all rc=0. No lane file,
+  counter, pairing, `SOURCES.md` row, jj state or git index was modified by this seat.
 - Installs: none (no package manager transaction attempted; PACMAN pause irrelevant here).
-- Evidence: `.ufo/waves/round-35/scratch/RevIndex/evidence.log` (commands + stdout + rc),
-  `neg-*/` trees, `scratch-sha.txt`, `run1.txt`, `run2.txt`.
+- Evidence, originals in `.ufo/waves/round-35/scratch-evidence/RevIndex/`:
+  `evidence.log` 4355 B sha256 `c464d46194812ef9340411415b1a01c3493dc3f4fbd6298149f15fc24fa3fde5`
+  (87 lines, git blob `152a068d…`, includes §10–§11 negative controls);
+  `scratch-sha.txt` = `285314d3fe9f58dfda5eb7adb4b693f82daa1e08`;
+  `run1.txt`/`run2.txt` sha256 `4e6be0bc…4318` (byte-identical pair).
+  Rebuild copies (not evidence): `evidence.rebuild.log` sha256 `a2b39bfe…d633`,
+  `scratch-sha.rebuild.txt` (`abad0092…`), `run{1,2}.rebuild.txt`, `rebuild.sh`.
+  Checkpoint commit: `4efaf63`. The copied `repo/` and `neg-*/` trees were never checkpointed and
+  do not survive; their outputs are the quoted log sections.
 
 ## Appendix — peer check requested by `L1Mado35.RevReadmeFrontier` (2026-10-25)
 

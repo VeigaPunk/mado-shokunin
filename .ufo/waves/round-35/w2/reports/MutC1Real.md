@@ -2,7 +2,7 @@
 
 Seat: `L1Mado35.MutC1Real` (mutation-tester, leaf, no dispatch). Round 35, wave 2.
 Lane repo (read-only): `/home/vgpnk/Projects/shokunin/mado-shokunin`
-Scratch: `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch/MutC1Real/`
+Scratch (relocated): `/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/scratch-evidence/MutC1Real/` (moved from `scratch/` at 03:45; §7)
 Target: `PRED-C1-r35-v1` — `.ufo/waves/round-35/c1/count.py`, `c1/frozen.json`, `c1/clauses.json`.
 Installs/upgrades: **none** (Python 3.14.8 stdlib only; host kernel 7.2.11-arch1-1).
 
@@ -15,7 +15,8 @@ are reported in §6 (F2–F6, F9).
 
 ## 1. Isolated copy and baselines
 
-Copy, no clone (the counter needs only `corpus/`, the receipts and `c1/`):
+Copy, no clone (the counter needs only `corpus/`, the receipts and `c1/`). Paths as executed;
+the tree was later relocated to `scratch-evidence/` (see §7):
 
 ```
 mkdir -p scratch/MutC1Real/root/.ufo/waves/round-35
@@ -24,7 +25,7 @@ cp -a .ufo/waves/round-35/fetch   scratch/MutC1Real/root/.ufo/waves/round-35/fet
 cp -a .ufo/waves/round-35/c1      scratch/MutC1Real/root/.ufo/waves/round-35/c1
 ```
 
-Snapshot identity (`scratch/MutC1Real/lane-snapshot-v2.sha256`, taken 03:40:45, verified stable
+Snapshot identity (`scratch-evidence/MutC1Real/lane-snapshot-v2.sha256`, taken 03:40:45, verified stable
 across the copy — the copy loop retries if the lane moves mid-copy, and it did once):
 
 ```
@@ -306,20 +307,41 @@ covers identity metadata only.
 
 ## 7. Integrity, scope and reproduction
 
-- **Restoration and concurrent lane edits.** I never wrote to the lane: every write of mine is
-  under `scratch/MutC1Real/` plus this report. The 15 artifacts under attack were identical to
-  `lane-snapshot-v2.sha256` at the end of the run series. After that, sibling seats kept editing
+- **Evidence locus (scratch was relocated, not deleted).** At ~03:45 the wave runner moved
+  `.ufo/waves/round-35/scratch/<Seat>/` to `.ufo/waves/round-35/scratch-evidence/<Seat>/` and
+  committed the small evidence files as `4efaf63`. My evidence now lives at
+  `.ufo/waves/round-35/scratch-evidence/MutC1Real/`; **this report is the durable record** and §9
+  inlines the detector transcript. The files there, with the sha256 of the bytes that produced the
+  numbers above (each verified equal to its `4efaf63` blob):
+
+  | file | bytes | sha256 |
+  |---|---|---|
+  | `results.json` | 19355 | `ee68b1b31a666007…` |
+  | `run.log` | 3809 | `69924f3ff67995b5…` |
+  | `driver.py` | 15895 | `3bca9cdff43da6b4…` |
+  | `counter-pristine.py` | 7882 | `78c2589286a2d70c…` |
+  | `lane-snapshot-v1.sha256` | 1600 | `b9025f261a4d754a…` |
+  | `lane-snapshot-v2.sha256` | 1600 | `992c0e0362c42095…` |
+  | `lane-before.sha256` | 1600 | `fa9753cd41bc5571…` |
+  | `verify-deltas.json` | 1008 | `dcc4f33faf13cc64…` |
+
+  Disclosure: the checkpoint's commit message drops the 3.2 GB mutant trees, so `root/` and
+  `arms/` were **not** carried over; every arm's verdict, exit and counts are inlined in §9 and in
+  `results.json`, and the rebuild recipe is in the Reproduce bullet. Two files were clobbered in
+  the working tree by later sweep/merge activity (`driver.py` by my transcript reconstruction,
+  `run.log` by a failed re-run); I restored both **byte-exactly from `4efaf63`** and verified the
+  hashes above — they are the measured bytes, not reconstructions. (I then abandoned the
+  transcript rebuild: `scratch/` is swept repeatedly and a rebuilt file is not evidence.)
+  I never wrote to the lane's corpus: every write of mine went to the (now relocated) scratch
+  seat directory plus this report. The 15 artifacts under attack were identical to
+  `lane-snapshot-v2.sha256` at the end of the run series; after that sibling seats kept editing
   the lane (03:43:18 check: 14/15 still match; `corpus/knowledge/idle-lock-never-asked-r12.md`
   grew 3586 → 4344 bytes by appending errata, last write 03:41:38). The live predicate state was
   re-checked at 03:43:18: `PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0
   verdict=TARGET_MET`, exit 0. The appended bytes start with the snapshot bytes verbatim and the
   two `gate-quote:` lines are byte-identical, so the v2 matrix still describes the
-  predicate-relevant live state.
-  Scratch contents (2002 files, 37 MB): `root/` (pristine v2 snapshot), `arms/A-*/count.py`
-  (11 mutants), `arms/B-*` and `arms/C-*` (13+2 data trees), `counter-pristine.py`, `driver.py`,
-  `run.log`, `results.json`, `verify-deltas.json`, `lane-before.sha256`,
-  `lane-snapshot-v1.sha256`, `lane-snapshot-v2.sha256`. No `git`/`jj` command was run against the
-  lane; the Git index and jj state are untouched.
+  predicate-relevant live state. No `git`/`jj` **write** command was run against the lane; the
+  Git index and jj state are untouched (`git show`/`ls-tree`/`cat-file` reads only).
 - **One artifact per mutant (verified by full-tree manifest diff).** Of the 13 B arms, 11 change
   exactly one path; the two symlink arms change two paths each (a byte-identical `.real` copy plus
   the link) — one logical artifact. Both C arms carry the same single entry-symlink change. The
@@ -330,9 +352,16 @@ covers identity metadata only.
   `row-well-formed af5a2e12…`, `used-by-exact 352c083b…`, `status-mined b48ef12e…`,
   `recheck-valid f2240ced…`, `digest-match 20285091…`, `gate-quote-substring 48629166…`,
   `gate-quote-word-bound b78b976e…`, `o-nofollow-open 063d6654…`.
-- **Reproduce.** `python3 -I driver.py` in the scratch directory rebuilds every arm from `root/`
-  and rewrites `results.json` + `run.log` (exit 0; seconds, longer under sibling load). Arm order:
-  11 A counters → 13 B trees → 2 C TOCTOU pair → 10 A×B cross runs → 2 X attribution runs.
+- **Reproduce.** Rebuild `root/` first (2 MB, three copies plus one truncation): from the lane,
+  `mkdir -p root/.ufo/waves/round-35 && cp -a corpus root/corpus &&
+  cp -a .ufo/waves/round-35/fetch root/.ufo/waves/round-35/fetch &&
+  cp -a .ufo/waves/round-35/c1 root/.ufo/waves/round-35/c1`, then restore the exact v2 entry by
+  truncating the errata append: `head -c 3586 corpus/knowledge/idle-lock-never-asked-r12.md >
+  root/corpus/knowledge/idle-lock-never-asked-r12.md` — verified to yield `7f27ced0…`, i.e. the
+  v2 bytes measured here (the other 14 files still match v2 byte-for-byte in the lane). Then
+  `python3 -I driver.py` (in `scratch-evidence/MutC1Real/`) rebuilds every arm and rewrites
+  `results.json` + `run.log` (exit 0; seconds, longer under sibling load). Arm order: 11 A
+  counters → 13 B trees → 2 C TOCTOU pair → 10 A×B cross runs → 2 X attribution runs.
 - **Installs.** None. Detector, driver and probes are Python 3.14.8 stdlib (`hashlib`, `re`,
   `stat`, `os`, `pathlib`, `shutil`, `importlib`). No network access, no pacman transaction, no
   `uv`/`cargo`/`npm` install.

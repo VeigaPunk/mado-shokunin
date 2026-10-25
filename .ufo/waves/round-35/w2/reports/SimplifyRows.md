@@ -24,8 +24,8 @@ counter cannot see.
 ## Concurrent edits during this attack (adaptation)
 
 This lane was being written by sibling wave-2 seats while I read it. Observed with
-`stat`/`diff` against the scratch mirror that preserves my starting snapshot
-(`scratch/SimplifyRows/exp/e0-base/root/corpus/`):
+`stat`/`diff` against the then-live scratch mirror of my starting snapshot (the
+prefix is now relocated to `scratch-evidence/SimplifyRows/`):
 
 | when (host) | what changed | by whom |
 |---|---|---|
@@ -103,11 +103,11 @@ recorded, the baseline bytes do not.
 
 | axis | test | instrument |
 |---|---|---|
-| distinct document | does the row's `source` tail resolve to a regular file outside the fetch tree? | `scratch/SimplifyRows/source_audit.py` (exit 0) |
+| distinct document | does the row's `source` tail resolve to a regular file outside the fetch tree? | `source_audit.py` (relocated; its logic is inlined in Appendix A) — exit 0 |
 | distinct proposition | does the entry cite this sid for a sentence no sibling row supports? | the three admitted entries, read in full |
 | tier fit | is tier A justified *for the row's scope*, per `CORPUS.md:93-97` ("tier — scoped to `scope`, never global")? | contract text + host bytes |
 | anchor support | does the receipt carry the tokens the anchor attributes to it? | receipts re-read against host files |
-| frozen-target compatibility | can the redundancy be removed and C1 still print TARGET_MET? | `scratch/SimplifyRows/harness.py` against the unmodified counter |
+| frozen-target compatibility | can the redundancy be removed and C1 still print TARGET_MET? | `harness.py` (relocated) against the unmodified counter; Appendix A reproduces the decisive case |
 
 ## Row table
 

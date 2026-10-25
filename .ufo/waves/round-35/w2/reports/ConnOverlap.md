@@ -3,7 +3,9 @@
 Seat: connector (leaf, no subagent dispatch). Round 35, wave 2 — falsify. Date: 2026-10-25.
 Lane: `/home/vgpnk/Projects/shokunin/mado-shokunin`. Read-only on the lane and on every
 sibling: the only writes are this report and two artefacts under
-`.ufo/waves/round-35/scratch/ConnOverlap/` (`scan.txt`, `sibling-sources-manifest.txt`).
+`.ufo/waves/round-35/scratch-evidence/ConnOverlap/` (`scan.txt`,
+`sibling-sources-manifest.txt`; the directory was `scratch/` when first written and was
+relocated by an external sweep — provenance and commit pins in §10).
 No lane corpus file, counter, control, `SOURCES.md`, sibling lane, fleet file, jj state or
 Git index was modified. **No installs and no upgrades: nothing was installed through any
 channel and no pacman transaction was run (pacman is host-paused; nothing needed it).**
@@ -48,7 +50,7 @@ grep -rn --include=SOURCES.md -iE 'omarchy-toggle-idle|idle-indicator|hypridle|o
 | audio, chousa, game-dev-2d, game-dev-3d, kagi, kaidoku, kake, kama, kasegi, kengaku, kotoba, kotodama, kumitate, lore, mori, revenger, souji, tabi, tameshi, tsukuroi | **0** each | 0 | **NONE** |
 
 All 21 files exist; the manifest with per-file sha256 of the 20 sibling files is
-`scratch/ConnOverlap/sibling-sources-manifest.txt` (20 lines + header). Every name on the
+`scratch-evidence/ConnOverlap/sibling-sources-manifest.txt` (20 lines + header). Every name on the
 fleet roster (`MANIFEST.json` → 13 lanes) is contained in the 21 scanned.
 
 **Precision worth having, because the brief's probe list would hide it on a re-run:** the
@@ -80,7 +82,7 @@ for f in *-shokunin/corpus/SOURCES.md; do for t in omarchy-toggle-idle idle-indi
 # hypridle      12  mado-shokunin/corpus/SOURCES.md
 # omarchy-first-run 1 mado-shokunin/corpus/SOURCES.md
 # omarchy-toggle   1 mado-shokunin/corpus/SOURCES.md
-# rc_of_loop=1        (scratch/ConnOverlap/scan.txt)
+# rc_of_loop=1        (scratch-evidence/ConnOverlap/scan.txt)
 ```
 
 ## 2. Wider corroboration (rows, notes, declarations)
@@ -252,8 +254,8 @@ Baseline captured this session, before any proposal:
 | one gate-quote per id survives the errata append | `grep -c 'gate-quote: S207 ' corpus/knowledge/idle-lock-offered-in-the-bar-r15.md` | must stay `1` (append prose only) |
 | revision keys reproduce | `git -C ~/.local/share/omarchy rev-parse HEAD`; `git -C ~/.local/share/omarchy log -1 --format=%h -- <file>` | `8fcc9d604…`, `f1fa7f694`, `1537547f9`, `bf962f004` |
 
-The exact-term scan itself is re-runnable from `scratch/ConnOverlap/scan.txt`; the sibling
-file digests are in `scratch/ConnOverlap/sibling-sources-manifest.txt`.
+The exact-term scan itself is re-runnable from `scratch-evidence/ConnOverlap/scan.txt`; the sibling
+file digests are in `scratch-evidence/ConnOverlap/sibling-sources-manifest.txt`.
 
 ## 9. Residual / what this seat did not verify
 
@@ -277,7 +279,7 @@ file digests are in `scratch/ConnOverlap/sibling-sources-manifest.txt`.
 ## Scope executed (commands, in order)
 
 `ls -d *-shokunin`; per-file `wc -l`; `grep -ci` term loop over 21 `corpus/SOURCES.md`
-(`scratch/ConnOverlap/scan.txt`); sibling-only `grep -rn --include=SOURCES.md` (rc=1);
+(`scratch-evidence/ConnOverlap/scan.txt`); sibling-only `grep -rn --include=SOURCES.md` (rc=1);
 `grep -ciE 'idle|waybar|omarchy|hypr'` per lane; `grep -rniE 'toggle-idle|idle-indicator|idle\.sh|omarchy-first-run|idle lock|idle-lock'` over 20 sibling `corpus/` trees and over
 `.md`-only non-`.ufo` trees; `grep -rliE` over 20 sibling `corpus/knowledge/`; `grep -niE` over
 all `*/PROVINCE.md`; reads of `mado/PROVINCE.md`, `souji/PROVINCE.md:1-42`,
@@ -292,5 +294,5 @@ of `controls/golden/corpus/SOURCES.md` (8 rows) vs live (200 rows); read-only ho
 `git -C ~/.local/share/omarchy rev-parse HEAD|status --porcelain|ls-files|log -1`,
 `pacman -Qo`, `ls -ld`/`readlink -f` of `~/.local/state/omarchy`, `cat /proc/1667/cgroup`,
 `systemctl --user is-active hypridle` (rc=3), `systemctl --user list-units --type=scope`.
-No write outside `scratch/ConnOverlap/` and this report; no package, service, unit, lock,
+No write outside `scratch-evidence/ConnOverlap/` and this report; no package, service, unit, lock,
 toggle or compositor action.

@@ -50,8 +50,8 @@ T2  C1 on a tree with .ufo/waves/round-35/{c2,ledger} deleted:
     PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET                exit=0
 ```
 Receipts: `.ufo/waves/round-35/scratch-evidence/CritAxisClaims/sep-out.txt` (script
-`sep.sh`), committed at `b632f0b`; the writable copy under `scratch/CritAxisClaims/` was
-restored byte-identically from it after the 03:45 sweep (see that directory's `README.md`).
+`sep.sh`), committed at `b632f0b`; the writable `scratch/CritAxisClaims/` copy is transient
+(it has been swept twice) and is not a citation target.
 
 **Caveat (not a blocking violation).** C2's subject *is* C1's instrument: 9 of its 10 live
 clauses are clauses of the round-35 admission counter, and `uncovered` is a property of
@@ -300,7 +300,8 @@ computed and discarded.** `c1/count.py` computes `digest = hashlib.sha256(blob).
 and never uses it; the `ok` block tests `receipt["sha256"] in cs[5]` (the *frozen* digest
 string present in the row's anchor cell), so mutating the receipt bytes leaves the verdict
 unchanged. Re-proved after the scratch move with a self-contained minimal root (no junk tree
-and no git needed; script `scratch/CritAxisClaims/digest.sh`, receipt `digest-out.txt`):
+and no git needed; script and receipt committed at
+`.ufo/waves/round-35/scratch-evidence/CritAxisClaims/{digest.sh,digest-out.txt}`):
 
 ```
 == D0 minimal root, real receipts =========================================

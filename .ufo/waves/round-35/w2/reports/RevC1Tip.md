@@ -71,9 +71,11 @@ measured: (i) 03:31, pre-commit working copy, `HEAD=19e4ab3`, entries 2,078 / 1,
 (ii) 03:38, `HEAD=02088b4` (data committed), entries 2,078 / 2,505 / 4,037 B in `HEAD` plus wave-2
 appends on disk; (iii) 03:43, `HEAD=7b745a1`, `SOURCES.md 0bf117e2…`, entries 4,344 / 3,768 / 5,806 B.
 The claim is `3 / 8 / 0` in all three. This report is pinned to state (iii); every attack was
-re-executed there (§4.1, §4.2, §5, §3). The authoritative transcript is
-`scratch/RevC1Tip/evidence3.txt`; `evidence.txt` (state i) and `evidence2.txt` (state ii) are kept
-for the timeline.
+re-executed there (§4.1, §4.2, §5, §3). The authoritative transcript is `scratch-evidence/RevC1Tip/evidence3.txt`
+(sha256 `d9682541…`, 9,079 B, HEAD=7b745a1, generated at 03:43 against the state-(iii) hashes above);
+`evidence2.txt` (sha256 `ca2c8088…`) is the state-(ii) run. Both are tracked at `HEAD`. The
+`evidence.txt` that survives under `scratch-evidence/RevC1Tip/` is a 46-byte failed-invocation stub
+from the relocation window, not a transcript — do not read it as one.
 
 ## 2. Independent re-derivation (A1) — own parser, no import of `count.py`
 
@@ -116,7 +118,7 @@ symbolic. No drift.
    it contains no `socket`/`urllib`/`requests`/`subprocess`; it never mentions `clauses.json`,
    `controls/`, `scratch/`, `w1/` or `w2/`. Its only data reads are `frozen.json` plus paths under
    `--root` (`count.py:156,162,168,173`).
-2. **Minimal tree.** A 12-file, 192,875-byte tree containing only `corpus/SOURCES.md`, the three
+2. **Minimal tree.** A 12-file, 193,832-byte tree containing only `corpus/SOURCES.md`, the three
    entries and the eight receipts already yields
    `closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET`, `rc=0`. All twelve are the
    scored data — the registry, the three entries and the eight receipts; the frozen spec is the
@@ -185,7 +187,8 @@ rc=0
 ```
 
 The lane's own registry validator disagrees on the byte-identical `SOURCES.md`
-(`sha256 69783280b76522ef7a279a9ab7332930210a2685da16d9481563d639e23fe137` in both fixtures):
+(`sha256 d9ec1ec0ada97df655b818d918ac5a581a328f49fd28a684f66a6fc7cca06759`, i.e. the live
+`0bf117e2…` bytes plus the moved row; captured in `scratch-evidence/RevC1Tip/census-ab.txt`):
 
 ```
 $ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file …/censusB-clean/mado/corpus/SOURCES.md

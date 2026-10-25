@@ -1,15 +1,19 @@
 # RevScorecard — round-35 scorecard rows re-derived cell by cell
 
 Seat: `L1Mado35.RevScorecard` (round 35, wave 2, mado). Leaf member: no subagent dispatch.
-Read-only against the lane: I wrote only this report and
-`.ufo/waves/round-35/scratch/RevScorecard/` (re-created after the
-`scratch/` → `scratch-evidence/` relocation; my directory holds
-`git archive` extractions at `19e4ab3`, `02088b4`, `dff3941`, nothing else).
-No corpus file, counter, control, `SOURCES.md`, `SCORECARD.md`, Git index or sibling repo was
-written. `/home/vgpnk/Projects/shokuknow` read only. Installs: none.
+Read-only against the lane: I wrote only this report. No corpus file, counter, control,
+`SOURCES.md`, `SCORECARD.md`, Git index or sibling repo was written;
+`/home/vgpnk/Projects/shokuknow` read only. Installs: none.
 
-Tip under test: `7b745a1d943e5db5e8b9f8a7f4bee7af65b13990` (`master`). The round-35 rows are
-`SCORECARD.md:2161-2232`.
+Every number below comes from committed bytes or from `git archive <rev>` extractions. The
+`scratch/` tree was relocated and then dropped from the lane mid-run (the closing commit says
+"lane closes without scratch trees"); no claim in this report depends on a scratch path, and the
+extraction directory is disposable.
+
+Tip under test: `1bb25c751409f67f1f9b6d8ac5a91faf3d92f948` (`master`). `SCORECARD.md` blob
+`66ff21b98d6ce92296a1a7e72689044e3f61996f` is identical at `7b745a1` and `1bb25c7`, so the
+round-35 rows (`SCORECARD.md:2161-2232`) measured here are the published ones; all three
+measurements were re-run at `1bb25c7` after the closing commit.
 
 Reproduction recipe for any revision cited below (no clone needed):
 
@@ -38,7 +42,7 @@ Command in the row, run verbatim:
 | counting-command cell | as published | byte-equal to `registration.md` §C1 | AGREE |
 | "shape-scored (dead `digest` clause; shape-only and fabricated-payload cribs both reach `TARGET_MET`: `controls-content/`)" | — | `count.py:174` computes `digest = hashlib.sha256(blob).hexdigest()` and never reads it (the conjunct is `receipt["sha256"] in cs[5]`, the spec digest in the cell). `python3 -I …count.py --root .ufo/waves/round-35/controls-content/c1-shape-only …` → `3/8/0 TARGET_MET` `exit=0`; same for `c1-fabricated-payload` | AGREE |
 | "all eight receipts were re-opened and re-hashed 8/8" | 8/8 | `sha256sum` of `.ufo/waves/round-35/fetch/S20{3..9,10}.receipt.txt` equals the frozen digest for 8/8 (`1b7fa87f…`, `4cd5ba65…`, `f3387bfc…`, `1d30e4a9…`, `81c33e79…`, `6e72f0db…`, `a170c7a5…`, `ef282e38…`) | AGREE |
-| "a one-line digest repair keeps the real root `TARGET_MET` and kills both cribs" | — | committed patch `git show HEAD:.ufo/waves/round-35/scratch/L1DigestFix/count-fixed.py` differs from the counter by exactly `+ and digest == receipt["sha256"]` (line 193). Root: `3/8/0 TARGET_MET` `exit=0`; shape-only: `0/0/8 TARGET_MISSED` `exit=1`; fabricated-payload: `0/0/8 TARGET_MISSED` `exit=1` | AGREE (demonstrated, though labelled a round-36 claim) |
+| "a one-line digest repair keeps the real root `TARGET_MET` and kills both cribs" | — | `.ufo/waves/round-35/scratch-evidence/L1DigestFix/count-fixed.py` (sha256 `a833da2a4008a13f…`) differs from the counter by exactly `+ and digest == receipt["sha256"]` (line 193). Root: `3/8/0 TARGET_MET` `exit=0`; shape-only: `0/0/8 TARGET_MISSED` `exit=1`; fabricated-payload: `0/0/8 TARGET_MISSED` `exit=1` | AGREE (demonstrated, though labelled a round-36 claim) |
 | "wave-2 seats falsified three inferences in the admitted text (withdrawn by errata)" | 3 | see F5: the errata set is 10 bullets (r12: E1–E3; r14: E1–E2; r15: E1–E5) plus two in-section correction blocks; no plain reading yields three | **DIVERGE** |
 
 ## 2. C2 row (`calibration`) — cell by cell
