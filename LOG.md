@@ -2396,3 +2396,9 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   c1-selfreceipt's kill is placement (Leads/considerthese sections), not the
   anti-crib machinery; c1-r28-verbatim reads an absolute shokuknow path
   (non-hermetic).
+
+- **Round-38 bases entry corrections (`ScoutS221`)** — F3 fixed: the `r` flag
+  INF now matches the page's safer wording (reload runs after the reply is built,
+  S158 `:2107`/`:2126`). F2/F4 routed to r39: server-side flags `j`/`r`/`a`/`c`
+  are in S158 `:2068-2096` (`i` is CLI-only); the domain counter binds only the
+  lesson Gate lines, not the SOURCES locator cell's sha/size/stamp.

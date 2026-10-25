@@ -18,8 +18,9 @@ ground: a new edge class under the held IPC contract (`knowledge/ipc-contract-r2
 
 **INF** S221: the flags are *client-facing output and targeting modifiers*, not
 per-dispatcher options: `j` changes the reply's encoding, `i` chooses which
-compositor instance answers, and `r` asks the compositor to re-read its state
-after a mutating command so the reply reflects the new state. Basis: the three
+compositor instance answers, and `r` asks the compositor to force a state refresh
+after issuing commands (the page's own wording; the refresh runs after the
+reply is built in the host's handler, S158 `:2107`/`:2126`). Basis: the three
 flag descriptions read together with the request grammar
 (`knowledge/ipc-contract-r25.md` §1 line 42, S186 `:19`).
 
