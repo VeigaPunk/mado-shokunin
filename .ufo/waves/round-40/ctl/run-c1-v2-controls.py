@@ -147,7 +147,7 @@ EDITS = [
     ("M37-stdin-inherited",
      '                                stdin=subprocess.DEVNULL,\n', ''),
     ("M38-reply-cap-dropped",
-     'raw = proc.stdout.read(REPLY_CAP + 1)', 'raw = proc.stdout.read()'),
+     'too_long = len(raw) > REPLY_CAP', 'too_long = False'),
     ("M39-set-type-unchecked",
      'if not isinstance(reply["set"], bool) or not _typed(forms[0],',
      'if False or not _typed(forms[0],'),

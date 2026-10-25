@@ -499,12 +499,23 @@ def check_sandbox():
         raise Setup("interpreter_outside_usr %s" % sys.executable)
 
 
+def run_piped(cmd, timeout):
+    """Run CMD with stdin an open, empty pipe (never /dev/null, never ours), so
+    a child that fails to redirect its own children's stdin is visible."""
+    r, w = os.pipe()
+    try:
+        return subprocess.run(cmd, capture_output=True, text=True,
+                              timeout=timeout, env=ENV, stdin=r)
+    finally:
+        os.close(r)
+        os.close(w)
+
+
 def run_sandboxed(tool, scratch, argv, path_env, timeout=120):
     py = os.path.realpath(sys.executable)
     cmd = sandbox_cmd([py, "-I", tool, *argv], [scratch], scratch, path_env)
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True,
-                           timeout=timeout, env=ENV)
+        p = run_piped(cmd, timeout)
     except subprocess.TimeoutExpired:
         return None, "", "timeout"
     return p.returncode, p.stdout, p.stderr
@@ -536,13 +547,15 @@ VEC2S = ["0 0", "1.5 2", "-3 4.25", "10 10"]
 
 
 def colour_decl(rng, i, j):
+    """An int-option colour; spelling and alpha come from the tree index, so
+    every spelling and every alpha of ALPHAS is drawn across the trees."""
     r, g, b = rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255)
     a = rng.randint(0x10, 0xFF)
-    which = (i + j) % 5
+    which = i % 5
     if which == 0:
         return "rgba(%02x%02x%02x%02x)" % (r, g, b, a)
     if which == 1:
-        return "rgba(%d,%d,%d,%s)" % (r, g, b, ALPHAS[(i + j) % len(ALPHAS)])
+        return "rgba(%d,%d,%d,%s)" % (r, g, b, ALPHAS[i % len(ALPHAS)])
     if which == 2:
         return "rgb(%02x%02x%02x)" % (r, g, b)
     if which == 3:
@@ -750,8 +763,7 @@ class Run:
                           [self.root, os.path.dirname(self.tool)], self.root,
                           self.bin + ":/usr/bin")
         try:
-            p = subprocess.run(cmd, capture_output=True, text=True,
-                               timeout=60, env=ENV)
+            p = run_piped(cmd, 60)
         except subprocess.TimeoutExpired:
             return None, "", "timeout"
         return p.returncode, p.stdout, p.stderr
