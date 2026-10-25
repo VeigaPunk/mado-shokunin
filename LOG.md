@@ -2402,3 +2402,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   S158 `:2107`/`:2126`). F2/F4 routed to r39: server-side flags `j`/`r`/`a`/`c`
   are in S158 `:2068-2096` (`i` is CLI-only); the domain counter binds only the
   lesson Gate lines, not the SOURCES locator cell's sha/size/stamp.
+
+- **Round-38 counter hygiene (`SimplifyV3`)** — deletions measured at 19/19 are
+  NOT applied (frozen counters/manifest; clause names j/b are manifest-referenced;
+  C7/C9 rejected: deriving tokens breaks the base precondition, deriving PINS from
+  the Gate block admits fabricated ids). Two latent defects recorded for r39:
+  `c2-r38-request-ground.py:198` crashes (TypeError int(list)) when a source line
+  lacks verified-at; the eventq `why` detail's `agree` regex (`OVERALL:.AGREE`)
+  differs from the scoring regex (`OVERALL:\s*AGREE`).
