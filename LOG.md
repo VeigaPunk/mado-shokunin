@@ -2381,3 +2381,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   truthful today — the defect is instrument reachability. Routed with
   `CritV3Residual` to r39 (proc-holder/ss-users consistency + full-output replay
   equality).
+
+- **Round-38 freeze-verdict dispute (`RevFrozenClaims` vs `RevCensusBefore`)** —
+  RevFrozenClaims's direct replay of the frozen `58e55ec` counter+manifest gives
+  18/19 at BOTH the data rev and the freeze rev (`c1-duprow observed=TARGET_MET
+  ok=0`; the frozen control appends outside `## Registry`, so the crib never
+  bites), falsifying the recorded "frozen pair 19/19 at freeze rev" (added from
+  RevCensusBefore at `3674cf28`). It infers the earlier 19/19 came from a mixed
+  pairing. Both records stand; closure adjudicates the ruling basis.
