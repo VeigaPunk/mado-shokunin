@@ -166,3 +166,7 @@ dead, 5 of 8 dirty. The lane's own closure receipts, not the watchdog, are the d
 is added for it (no mistake of this round backs one); the proposals 1 and 3-6 of the same file stay open.
 
 Round-39's planned item 1 ("take one live `hyprctl getoption` dump and merge it") is C1.
+
+## Census and measurements at the data commit `91f0a2b`
+
+Census before (`receipts/census-before.txt`): `mado ok`, W04 x7 + W01 S277, exit 0. After (`receipts/census-after.txt`): same warnings, `mado ok`, exit 0. Registry rows 214 -> 219 (S278-S282; tier A +5). `PRED-C1-r40-v2` `fixtures=19/19 TARGET_MET` (nonce `239e2809b1850614`), `PRED-C2-r40-v2` `admitted=1/1 TARGET_MET`; the superseded v1 counters at the same rev: C2 v1 `1/1 TARGET_MET`, C1 v1 `fixtures=13/13` with `TARGET_MISSED` because its clause g allowlist (frozen) refuses the `struct` and `threading` imports the security repairs added. Gates: `MADO_SELFTEST 460/460`, `MADO_OPTIONS_SELFTEST 211/211`, index `58/58`, index rows `errors=0`.
