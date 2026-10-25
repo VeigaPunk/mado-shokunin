@@ -179,7 +179,10 @@ structurally over-determined, not evidence about a choice.
 The re-arm half of the mechanism is also uncited anywhere in S206–S210:
 `/home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf:1` is
 `exec-once = uwsm-app -- hypridle` — every login starts the lock again, so the only
-per-session record is process state (`pgrep -x hypridle` → 1 right now). `grep -n
+per-session record is process state (`pgrep -x hypridle` → **1667**, inside
+`app-Hyprland-hypridle-d4bd7533.scope`; `systemctl --user is-active hypridle` →
+`inactive`, **rc=3**). That record is a transient app scope, not a persisted unit or
+a service state, which is why no file and no unit state survive the session. `grep -n
 autostart` over `.ufo/waves/round-35/fetch/*.receipt.txt` and the entry returns no
 hit for any of these ids (`corpus/SOURCES.md` hits at lines 100-107 are unrelated
 rows). Cross-seat corroboration: `L1Mado35.RevEntryR15` reached the same mechanism

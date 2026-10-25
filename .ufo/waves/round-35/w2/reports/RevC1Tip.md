@@ -257,7 +257,7 @@ rc=0
 The claim is therefore committed-durable at `02088b4`, `4f35c80`, `7b745a1` and `ca870e9`, and at
 03:43 committed bytes and working bytes coincide, so "committed-and-working bytes" no longer need to
 be distinguished for this claim. A second `git archive HEAD` run at **03:46:48** (HEAD `ca870e9`)
-returns the same `3/8/0`, `rc=0`; the lane's closing HEAD `1bb25c7` has a clean corpus with the same
+returns the same `3/8/0`, `rc=0`; the lane's latest HEAD `a80f8cb` has a clean corpus with the same
 `SOURCES.md`/entry blob hashes (verified by `git status --porcelain -- corpus` empty and `git
 cat-file` hashes). The +61 inserted lines that wave-2 added to the entries are committed in `4f35c80`;
 they do not touch a quote and did not change the verdict. RevSelftest's caveat ("the C1/C2 verdicts

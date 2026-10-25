@@ -68,8 +68,11 @@ Boot frame, from `journalctl --list-boots --no-pager` (exit 0):
   0 0a3785aa...  2026-10-23 22:14:07 → (current)
 ```
 
-The 19:24:38 kill sits **5h59m into boot -1** and ~2h48m before that boot's last entry; the next
-boundary is a **reboot** (boot 0, 22:14:07), not a session restart. Both observed hypridle starts
+The 19:24:38 kill sits **5h59m into boot -1** and **2h47m46s** before that boot's last entry
+(22:12:24); the next boundary is a **reboot** (boot 0, 22:14:07), not a session restart. Peer
+windows differ only by the cut: 2h45m42s to the user-journal last activity (22:10:20), 2h47m46s to
+boot -1's last entry, 2h49m29s to boot 0's kernel start, 2h49m33s to the 22:14:11 restart. None of
+them licenses "the operator left it down". Both observed hypridle starts
 follow boot headings and are autostart (`exec-once = uwsm-app -- hypridle`,
 `default/hypr/autostart.conf:1`). **No `received: app -- hypridle` line exists between 19:24:38
 and 22:14:11** — so neither of the two supported re-enable paths ran for the rest of that boot.
