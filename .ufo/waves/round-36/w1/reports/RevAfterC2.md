@@ -171,7 +171,10 @@ claim does not hold, and the receipt that would prove it is from a later revisio
 re-pin pass fixed the receipt and left the scorecard line untouched. The pointer gate cannot
 see this: both paths resolve, and the gate never compares a receipt's pinned revision to the
 revision it is cited for. Fix: change the two `After at cf175c7` pins (C1 at line 2310, C2 at
-line 2318) to the revisions their receipts name — one line each.
+line 2318) to the revisions their receipts name. For C1 both receipts now pin `a5f76c9` as
+well (`# C1 after-state — … at a5f76c9…`), so that pin is at least a citation mismatch; I did
+not re-run C1's counter at `cf175c7` and do not claim its number is false there. For C2 the
+falsehood at the pinned revision is demonstrated above.
 
 **F2 — HIGH. The supersede exemption is a global string set with an unconstrained target,
 so any dangling pointer in LOG/SCORECARD/lesson can be laundered.** Clone `A2` = clone `A`

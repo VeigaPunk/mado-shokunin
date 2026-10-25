@@ -118,7 +118,7 @@ def registry_section(sources: str) -> str:
 
 def rows_for(sources: str, sid: str) -> list[str]:
     out = []
-    for line in sources.splitlines():
+    for line in registry_section(sources).splitlines():
         m = ROW_RE.match(line)
         if m and m.group(1) == sid:
             out.append(line)

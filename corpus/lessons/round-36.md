@@ -325,3 +325,26 @@ corrected in place — `Introduction, the Jackson et al. negative-control-outcom
 Jackson et al. negative-control-outcome example)`. No other cell changed; the quote, tier,
 scope, status, `recheck` and `used-by` stand. This is the same in-round cell-correction
 discipline round 35 applied to S203–S205, and it is counted here rather than left silent.
+
+## Limits the wave left on the instruments (recorded, routed to round 37)
+
+1. **Pointer extraction is prefix-scoped.** `PRED-PTR-r36-v1` counts a token as a pointer only
+   when it starts with a repo-root path prefix, so four evidence pointers written bare in the
+   round-35 entry (`c1/clauses.json`, `ledger/RevFrozenBlobs-r35.md`, and two knowledge-entry
+   names) are invisible to it. None of them dangles, so the verdict stands; the *coverage* is
+   narrower than the record (`w1/reports/RevPtrBefore.md`).
+2. **A duplicated live clause id passes.** The clause-set pin compares sorted sets, so a
+   duplicated id in `clauses.json` reports `extra` in the detail line yet scores `uncovered=0`
+   under both the pinned and the unpinned counter; the manifest has no control for that kind
+   (`w1/reports/MutC2NoClausePin.md`).
+3. **The digest clause's anchor half is unexercised by the frozen manifest** (every `c1` crib
+   dies at the registry fence first) and **the tip transcript is a three-substring test**; both
+   are proven only by fence-restored probes (`w1/reports/MutC1CheckAnchor.md`,
+   `w1/reports/RevAxisTranscriptAsk.md`).
+4. **Control order is load-bearing** — the `c2` fixtures embed the gate's own `c1` receipts —
+   and that dependency is undocumented in the gate (`w1/reports/ConnGateReuse.md`).
+5. **The axis publication's anchor commit is never checked**, and the gate reads the committed
+   card, so a dirty tree is invisible to it (`w1/reports/MutPublication.md`).
+6. **`quality/check-index-rows.py`'s rev-mode glob check is dead** on host git 2.56.0
+   (`--name-only` with `--format`), so every glob citation warns spuriously in rev mode
+   (`w1/reports/RevIndexGate.md`). Routed as its own repair, not patched here (criterion 52).

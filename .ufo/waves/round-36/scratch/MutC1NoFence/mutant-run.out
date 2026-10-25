@@ -1,0 +1,36 @@
+control=c1-live instrument=c1 clause=- expected=TARGET_MET observed=TARGET_MET ok=1
+control=c1-golden-r36 instrument=c1 clause=- expected=TARGET_MET observed=TARGET_MET ok=1
+control=c1-donothing instrument=c1 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-digest instrument=c1 clause=digest-match expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-entry-symlink instrument=c1 clause=entry-regular expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-quote-absent instrument=c1 clause=gate-quote-substring expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-quote-long instrument=c1 clause=gate-quote-word-bound expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-recheck-prose instrument=c1 clause=recheck-valid expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-row-duplicate instrument=c1 clause=row-unique expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-row-extra-field instrument=c1 clause=row-well-formed expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-status-queued instrument=c1 clause=status-mined expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-usedby-extra instrument=c1 clause=used-by-exact expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-shape-only instrument=c1 clause=digest-match expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-fabricated-payload instrument=c1 clause=digest-match expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-no-registry-heading instrument=c1 clause=row-in-registry expected=TARGET_MISSED observed=TARGET_MET ok=0
+control=c1-row-moved-out instrument=c1 clause=row-in-registry expected=TARGET_MISSED observed=TARGET_MET ok=0
+control=c2-live instrument=c2 clause=- expected=TARGET_MET observed=TARGET_MET ok=1
+control=c2-tip-stale instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-tip-one-copy instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-blob-corrupt instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-blob-row-deleted instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-clause-deleted instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-receipt-token instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-receipt-unbound instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c2-retired-also-live instrument=c2 clause=- expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+clause=digest-match controls=3 missed=3
+clause=entry-regular controls=1 missed=1
+clause=gate-quote-substring controls=1 missed=1
+clause=gate-quote-word-bound controls=1 missed=1
+clause=recheck-valid controls=1 missed=1
+clause=row-in-registry controls=2 missed=0
+clause=row-unique controls=1 missed=1
+clause=row-well-formed controls=1 missed=1
+clause=status-mined controls=1 missed=1
+clause=used-by-exact controls=1 missed=1
+MADO_DISCRIMINATION: profile=r36 instruments=c1,c2 controls=25 correct=23/25 label='round-36 repaired counters' verdict=TARGET_MISSED
