@@ -2106,3 +2106,87 @@ live bytes. `c1/clauses.json` names nine controlled live clauses, one `not-load-
 mutation-testing found `row-well-formed` and `entry-regular` verdict-dead on the frozen
 controls, which round 36 must re-cut. SHONEN stays `[~]` on all four boxes; nothing was
 self-promoted.
+
+## Round 36 — the two admission counters are repaired and shown to discriminate; the lane's records pass a pointer gate (2026-10-25, attempt 1)
+
+Motivation. Round 35 closed on the non-author spot-check
+`corpus/lessons/round-35-verifier-spotcheck.md`: C1 re-measured `improved`, **C2
+`unprovable` — "the round demonstrates the instrument is vacuous"**, and ten defects
+routed (D1–D10). D3 (the C1 counter computes a receipt digest and never compares it
+to the bytes) and D4 (the C2 counter scans its own clause list, greps receipts for a
+token and substring-tests a prose document for a hardcoded tip) are the two the
+operator's claim-sizing lesson names: *every declared claim must be one a do-nothing
+control cannot reach and that your instrument cannot pass fail-open*. This round
+takes exactly those two as its claims and closes all ten routed defects.
+
+Claims, both frozen at `dbf8b579aeac0f023aaf595770f1cb0049e4baa2` before any round-36
+data (`registration.md` under the round-36 wave directory): **C1 calibration** — the
+two round-35 admission counters are repaired as standing tools and shown to
+discriminate over a frozen 25-control manifest; **C2 operability** — the lane's own
+records pass an evidence-pointer durability gate covering D2, D5, D8 and D10.
+
+Work.
+
+- **C1.** Two instruments: `quality/counters/c1-idle-lock.py` (`PRED-C1-r36-v1`) and
+  `quality/counters/c2-ledger.py` (`PRED-C2-r36-v1`). The first binds the declared
+  sha256 to the bytes actually read and reproduces the census's E12 `## Registry`
+  fence; the second pins the live clause set in its frozen spec, requires each live
+  load-bearing clause to name a control whose committed receipt records
+  `observed=TARGET_MISSED` **and** names the clause, and parses the blob ledger's own
+  table at a tip **computed** from git by one rule (the newest commit whose subject
+  names `round-34` → `6d754bd`), with every tip-labelled token required to equal it.
+  The falsifier is `quality/check-counter-discrimination.py`: 3 accept controls
+  (the lane, a registry-shaped copy, the live ledger) and 22 reject controls (14
+  `c1` cribs — the eleven round-35 skip cribs, the two committed content cribs, and
+  two new fence cribs — plus 8 `c2` mutation fixtures generated from whichever ledger
+  the profile names). Before, on the round-35 counters: **14/25**; after, on the
+  repaired ones: **25/25**. Both degenerate instruments are excluded by construction
+  (an always-accept fails the 22 rejects, an always-reject fails the 3 accepts).
+- **C2.** `quality/check-evidence-pointers.py` (`PRED-PTR-r36-v1`) re-derives five
+  observables from committed bytes. Before: `dangling_r35=2`, no correction pair, no
+  scratch disposition, no tip transcript, no round-36 sections. After: all five at
+  target.
+- **D2** (uncommitted round work at round-35 closure) resolved: the eight modified
+  seat reports and `scratch-evidence/RevEntryR12/evidence.txt` were rewritten from
+  the branch (the round-35 evidence the spot-check examined), and the two untracked
+  probe directories under `.ufo/waves/round-35/scratch/` were removed — their
+  receipts are the evidence and the probes are regenerable.
+- **D5** (dangling evidence pointers) closed by a correction pair, not by rewriting
+  the round-35 record — the gate's `record_intact` clause refuses a record edit:
+  - `.ufo/waves/round-35/scratch/SimplifyCounter/` -> `.ufo/waves/round-35/scratch-evidence/SimplifyCounter/`
+  - `.ufo/waves/round-35/scratch/MutC1Drop/mutants/` -> `.ufo/waves/round-35/scratch-evidence/MutC1Drop/`
+- **D8** (the "no scratch tree left" claim against 124 tracked paths) closed by a
+  named disposition, counted and re-derived: `corpus/lessons/round-36.md`
+  § Scratch disposition, `tracked paths=124`.
+- **D10** (no tip-revision axis transcript) closed by committing
+  `quality/receipts/axis-a3094c99ab85bec35534de2447552c47dd2b647f.txt`, produced by
+  `quality/check-axis-scores.py` at this round's data commit.
+- **D9** (provenance-trio convention) recorded as a convention ruling in this
+  round's lesson and applied to the round's own artifacts; the committed round-35
+  entries are not rewritten (append-only).
+- **D3/D4** are the claims; **D1/D6/D7** are report-side errata carried in the
+  round-36 report (the round-35 tip hash, the corrected row-correction count and the
+  per-revision seat counts).
+- Frontier step: one new registry row, **S211** (negative controls in observational
+  studies, tier A, opened 2026-10-25, receipt
+  `.ufo/waves/round-36/fetch/S211.receipt.txt`), which grounds the reject half of
+  the manifest. No knowledge entry and no other row; `Assimilation: none this
+  round` as registered. Census 200 → 201 rows, exit 0 before and after with the same
+  seven pre-existing `W04` warnings.
+- Lesson and criteria: `corpus/lessons/round-36.md` with five mistakes (M36-1…M36-5)
+  and the Gate block; `corpus/QUALITY.md` criteria 57–60 (clause attribution,
+  document-table parsing with a bytes-bound digest, fixture-environment parity, and
+  the domain-versus-meta ratio required in every report). Calibration's resolved
+  criteria move 43/43 → 47/47, all four new ones grounded.
+- **Domain-versus-meta.** The lane's last 30 commits at this round's start touched a
+  domain-facing path (`tools/`, `corpus/knowledge/`, `PROVINCE.md`, `SKILL.md`) in
+  **3** cases and records or instruments in **27**; the desktop plane has not moved
+  since round 27's `tools/mado-wsrules.py`. Recorded as M36-5 and criterion 60 — this
+  round is meta work too, and says so.
+
+Round shape: two v1 waves under the frozen band; wave 1 dispatched 64 seats in one
+batched call (reviewer 17, mutation-tester 13, scout 12, executor 5, scribe 5,
+critic 5, sentinel 2, connector 2, simplifier 2, revenger 1). Evidence: the spec, the
+validator's task-call payload and the 64 rendered seat prompts under the round-36
+wave directory, and the seat reports under its `w1/reports/` subdirectory.
+

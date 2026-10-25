@@ -2228,3 +2228,68 @@ not wrong on value; the lowest-axis conclusion (two tied-lowest axes, no nudge w
 survives. Recorded for round 36: `sourced-art` must be retired explicitly or republished.
 
 **Axis table re-derived at `7b745a1d943e5db5e8b9f8a7f4bee7af65b13990` (the first commit whose publication the gate parses; at `4f35c80` it read `mismatched=2`, calibration and operability NOT-PUBLISHED):** navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12.
+
+## Round 36 — the two admission counters are repaired and shown to discriminate; the records pass a pointer gate (2026-10-25, attempt 1)
+
+Registration `.ufo/waves/round-36/registration.md`, frozen at
+`dbf8b579aeac0f023aaf595770f1cb0049e4baa2` before any round-36 data. The round works the
+two axes tied at the lowest published score (`calibration` and `operability`, both at
+their rubric's 1.0 against a 9.0 saturation line) because the `AXES.md` stagnation nudge
+does not apply: a capability row entered in round 34 and the window is 3 rounds.
+Round shape: two v1 waves; wave 1 dispatched **64 seats** in one batched `task` call
+(reviewer 17, mutation-tester 13, scout 12, executor 5, scribe 5, critic 5, sentinel 2,
+connector 2, simplifier 2, revenger 1). The §3 planner seat is held by the L1; the
+planning data-walk rode the connector and scout items, since the validator rejects a
+`planner` seat.
+
+| Claim / axis | Before → after | Counting command | Verdict |
+|---|---|---|---|
+| C1 **calibration** — the two round-35 admission counters are repaired and shown to discriminate (routed defects D3, D4) | `--profile r35` (the round-35 counters as frozen): `controls=25 correct=14/25 verdict=TARGET_MISSED` exit 1 → `--profile r36`: `controls=25 correct=25/25 verdict=TARGET_MET` exit 0. The eleven wrong lines in the before run are exactly the fabrication and document-observable classes the spot-check routed: `c1-shape-only`, `c1-fabricated-payload`, `c1-no-registry-heading`, `c1-row-moved-out` and seven of the eight `c2` mutants | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-counter-discrimination.py --profile <r35\|r36> --manifest .ufo/waves/round-36/controls/manifest.json --receipts .ufo/waves/round-36/controls/receipts[-r35]` | **improved** — the counters reject what they used to accept, and still accept the live bytes and a registry-shaped copy of them; the fail-open paths the spot-check named are now controls with `TARGET_MISSED` receipts |
+| C2 **operability** — the lane's records pass an evidence-pointer durability gate (routed defects D2, D5, D8, D10) | `dangling_r35=2, dangling_r35_closed=0, inherited_dirty=10, scratch_disposition_ok=0, tip_axis_transcript=0, setup=missing-r36-sections → TARGET_MISSED` exit 1 → `dangling_r35=2, dangling_r35_closed=1, inherited_dirty=0, scratch_disposition_ok=1, tip_axis_transcript=1, setup=ok → TARGET_MET` exit 0 | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/check-evidence-pointers.py --rev <rev>` | **improved** — the gate is the deliverable and it is red before the repairs and green after, on the same command |
+
+Both claims are causally separable: C1 reads only the manifest, the two counters and the
+fixture generator; C2 reads only `LOG.md`, `SCORECARD.md`, `corpus/lessons/round-36.md`,
+the tree at one revision and `git status`. Neither reads the other's output, and each was
+measured with the other's artifacts absent (C1's before run predates every round-36
+counter; C2's before run predates every round-36 record section).
+
+No harm: the axis fractions below move up or stay; `tools/mado-verify.sh` is byte-identical
+to the round-35 tip (`9113c7c0…`) and its suite reads `MADO_SELFTEST: 460/460 assertions
+passed`; the registry census exits 0 before and after with the same seven pre-existing
+`W04` warnings; no knowledge entry, config plane, compositor state or sibling repo is
+touched.
+
+### Capabilities (round 36)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| counter-discrimination audit | score an admission counter against a frozen manifest of accept and reject controls, so a degenerate instrument (always-accept, always-reject, crash) cannot reach the target | `quality/check-counter-discrimination.py`; 25/25 on the repaired counters, 14/25 on the frozen round-35 ones | 36 |
+| evidence-pointer durability audit | re-derive, from committed bytes, every evidence pointer a round's records cite, the inherited uncommitted set, a named scratch disposition with its counted size, and a tip-revision axis transcript | `quality/check-evidence-pointers.py`; `TARGET_MISSED` before the repairs, `TARGET_MET` after | 36 |
+
+(The repertoire's live rows are the per-round `### Capabilities (round N)` sections; the
+table under `## Capabilities` is the fleet-round-1 rollout snapshot and is not maintained
+by later rounds.)
+
+### Retirement (round 36): `sourced-art`
+
+`sourced-art` was published at 1.0 in round 32 as `10 × covered U-items / 7`, was dropped
+from the publication in round 34 while `## Retired` still read "none", and round 35's
+spot-check recorded the discrepancy. It is **retired explicitly** here, not republished:
+its denominator was the fixed seven-item uncovered-ground list U1–U7, five of which have
+since been closed by admitted entries, so the fraction no longer measures what it was
+built to measure and a saturated 1.0 would read as coverage progress it is not. The
+ground itself stays measured by the per-round frontier rows in `corpus/README.md`. No
+other axis is retired.
+
+### Sources, saturation, planned
+
+Sources 200 → 201 rows: **S211** (negative controls in observational studies, tier A,
+`paper`, opened 2026-10-25, `used-by` exactly `corpus/lessons/round-36.md`; gate quote and
+location in that lesson's `## Gate`). No row's `status`, `recheck` or `used-by` changed.
+Frontier advanced: not on the domain plane — this round advances the lane's **instrument**
+plane (two counters, two gates) and says so; the domain-vs-meta ratio for the last 30
+commits is 3 domain / 27 meta (lesson M36-5, criterion 60). Saturation 9.0 / N=3
+unchanged; retired: `sourced-art` (above). `Assimilation: none this round`.
+
+Axis table re-derived at `a3094c99ab85bec35534de2447552c47dd2b647f` (this round's data
+commit): navigation 50/50; calibration resolved-active 48/48; operability selftest 12/12.

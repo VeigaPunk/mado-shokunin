@@ -100,13 +100,14 @@ future claim.
 
 ## Mistakes
 
-Five mistakes, named at section level so a citation check reading `#mistakes` sees
+Six mistakes, named at section level so a citation check reading `#mistakes` sees
 them: **M36-1** a fixture generator shipped with a dead branch (instrument) ·
 **M36-2** a ledger drafted below its own frozen minimum (number-drift) ·
 **M36-3** a control whose receipt says `TARGET_MISSED` does not prove which clause
 killed it (instrument) · **M36-4** the before-measurement nearly passed fail-open
 because a fixture lost its git context (vacuous) · **M36-5** record work crowded
-out the domain and no round said so (stale-premise).
+out the domain and no round said so (stale-premise) · **M36-6** a frozen
+registration carried a command that cannot run as written (reference-drift).
 
 ### M36-1 — a fixture generator shipped with a dead branch
 
@@ -233,6 +234,30 @@ its command, and a lane two or more rounds without a domain-facing change says s
 Demonstrated able to fail: the round-35 report carries no ratio line
 (`grep -c 'domain-versus-meta'` on the round-35 report is 0), while this round's
 report and this lesson carry one with the command.
+
+### M36-6 — a frozen registration carried a command that cannot run as written
+
+**What happened.** The registration's harm-watch line named
+`python3 quality/check-index.py --repo .`. That invocation exits 2
+(`SETUP_ERROR: --rev or --root is required`): `--repo` only qualifies `--rev` mode.
+A wave seat ran it verbatim, hit the setup error and reported it; the lane's own
+harm-watch used the working form `--rev <rev> --repo .` throughout. A command in a
+freeze document is read as runnable, so the defect would have been inherited by any
+reader re-running the round.
+
+**Evidence pointer.** `.ufo/waves/round-36/registration.md` (the harm-watch line);
+the seat's verbatim run and `SETUP_ERROR` text are quoted in
+`.ufo/waves/round-36/w1/reports/RevIndexGate.md`.
+
+**Captured-by.** none — criteria 38 and 49 require a counter to be smoke-run at the
+freeze, but nothing requires the *prose commands* in a registration to be executed
+once before the freeze.
+
+**Fix.** `corpus/QUALITY.md` criterion 61: every command a registration names is run
+verbatim at the freeze and its output committed, or it is written with its required
+arguments. Demonstrated able to fail: the verbatim run exits 2 with `SETUP_ERROR`,
+the corrected form exits 0 with `MADO_INDEX: rev=… indexed=50/50 missing=0
+dangling=0 duplicates=0`.
 
 ## Scratch disposition
 

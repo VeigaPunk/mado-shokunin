@@ -1,0 +1,25 @@
+# red-before receipt (not a tip transcript): the axis gate at the data commit
+#
+# At `a3094c99ab85bec35534de2447552c47dd2b647f` the data commit exists but the round-36 axis
+# publication is not yet committed, so the last publication the gate can read is round 35's
+# 43/43 while the four new QUALITY criteria already derive 47/47: `calibration ... STALE`,
+# `mismatched=1`. Kept as the red half of the axis gate. The green receipt is
+# `quality/receipts/axis-<records-commit>.txt`, produced after the publication landed.
+
+# axis + index + suite transcript at the round-36 data commit a3094c99ab85bec35534de2447552c47dd2b647f
+# produced 2026-10-25 by the lane's own instruments, read-only
+
+$ python3 -I quality/check-axis-scores.py --repo . --rev a3094c99ab85bec35534de2447552c47dd2b647f
+MADO_AXIS_ROW: axis=navigation published=50/50 derived=50/50 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=43/43 derived=47/47 verdict=STALE
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=1 rev=a3094c99ab85bec35534de2447552c47dd2b647f
+exit=1
+
+$ python3 -I quality/check-index.py --rev a3094c99ab85bec35534de2447552c47dd2b647f --repo .
+MADO_INDEX: rev=a3094c99ab85bec35534de2447552c47dd2b647f indexed=50/50 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0
+
+$ bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+

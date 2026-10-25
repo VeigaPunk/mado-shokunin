@@ -1,0 +1,490 @@
+                 NASA-CR-2068OI
+
+
+
+
+                      Faultinjection
+                                                                                                                                         /   ..
+
+
+
+
+                      Techniques andTools
+                       Fault injection    is important               to evaluating    the dependability              of computer
+                       systems.    Researchers      and             engineers     have created   many             novel   methods            to
+                       inject   faults,     which       can   be implemented               in both   hardware      and    software.
+
+
+
+
+Mei-Chen
+                                                                                       measurements.     Testing a prototype,   on the other
+Hsueh ,                      failures and errors. The destructive nature of            hand, allows us to evaluate the system without any
+                             ependability evaluation involves the study of
+Timothy                      a crash and long error latency make it difficult          assumptions about system design, which yields more
+K. Tsai,              to identify the causes of failures in the operational            accurate results. In prototype-based   fault iniection,
+and                   environment.     It is particularly   hard to recreate a         we inject faults into the system to
+                      failure scenario for a large, complex system.
+Ravishankar               To identify and understand potential failures, we                • identify dependability bottlenecks,
+K. Iyer               use an experiment-based       approach for studying the              • study system behavior in the presence of faults,
+University. of        dependability     of a system. Such an approach            is        • determine the coverage of error detection and
+Illinois at           applied not only during the conception and design                      recovery mechanisms, and
+                      phases, but also during the prototype         and opera-             • evaluate the effectiveness of fault tolerance
+Urbana-
+Champaign             tional phases, t;                                                      mechanisms (such as reconfiguration      schemes)
+                         To take an experiment-based       approach, we must                 and performance loss.
+                      first understand a system's architecture,       structure,
+                      and behavior. Specifically, we need to know its tol-                To do prototype-based fault injection, faults are
+                      erance for faults and failures, including its built-in          injected either at the hardware Level (logical or elec-
+                      detection and recovery mechanisms, 3 and we need                trical faults) or at the software level (code or data
+                      specific instruments and tools to inject faults, create         corruption) and the effects are monitored. The sys-
+                      failures or errors, and monitor their effects.                  tem used for evaluation can be either a prototype or
+                                                                                      a fully operational system. Injecting faults into an
+                      DIFFERENT PHASES, DIFFERENT TECHNIQUES                          operational system can provide information       about
+                          Engineers most often use low-cost, simulation-              the failure process. However, fault injection is suit-
+                      based fault injection to evaluate the dependability             able for studying emulated faults only. It also fails
+                      of a system that is in the conceptual        and design         to provide dependability      measures such as mean
+                      phases. At this point, the system under study is only           time between failures and availability.
+                      a series of high-level abstractions;    implementation             Instead of injecting faults, engineers can direcdy
+                      details have yet to be determined,     Thus the system          measure operational      systems as they handle real
+                      is simulated on the basis of simplified assumptions.            workloads. 2Measurement-based      analysis uses actual
+                         Simulation-based    fault injection, which assumes           data, which contains much information about nat-
+                      that errors or failures occur according to-predeter-            urally occurring errors and failures and sometimes'
+                      mined dismbutio_ is mefd, for evaluating theeffe¢-!             aboulDrecovery attempts. Analyzing these data can-!
+                      tiveaemof fault-toleran__                 and a_                _ovide uaderstanding.obactuat        error and failure
+                                                                                      _e_'csaad             imighgfm=,anaiyticat       models.. _
+
+                                   whid/hre:difflcult    to_supp_                     '_          d'_. Furthemaor_dammust          be collected_
+Figure1. Basic
+components ofa fault
+                                                                                                                Fault injection   system
+injection
+environment.
+                                                             P-[   Controller
+
+
+
+
+                                Fault injector                                           Monitor
+                                                                                                             -_ Data collector 1
+                                                                                                                       Data analyzer       J
+
+
+
+
+                                                                         Target      system
+                                                                                                   9
+
+
+
+
+                       infrequently. Field conditions can vary, widely, thus           The workload generator, monitor, and other compo-
+                       casting doubt on the statistical validity of the result.        nents can be implemented the same way.
+                          Although each of the three experimental methods
+                       has its limitations, their unique values complement             1lSmellm mmtlm Im Ininmama
+                       one another and allow for a wide spectrum of depend-               Choosing     between hardware and software fault
+                       ability, studies.                                               injection depends on the type of faults you are inter-
+                                                                                       ested in and the effort required to create them. For
+                       FAULT INJECTION TECHNIQUES                                      example, if you are interested in stuck-at faults (faults
+                          Engineers use fault injection to test fault-tolerant         that force a permanent value onto a point in a circuit),
+                       systems or components.      Fault injection tests fault         a hardware injector is preferable because you can con-
+                       detection, fault isolation, and recontiguration      and        trol the location of the fault. The iniection of perma-
+                       recovery capabilities.                                          nent faults using software methods either incurs a high
+                                                                                       overhead or is impossible, depending on the fault.
+                       ramm_                                                           However, if you are interested in data corruption, the
+                          Figure 1 shows a fault injection environment, which          software approach might suffice. Some faults, such as
+                       typically consists of the target system plus a fault injec-     bit-flips in memory ceils, can be injected by either
+                       tor_ fault library,, workload generator, workload library.,     method. In a case like this, additional requirements,
+                       controller, monitor, data collector, and data analyzer.         such as cost, accuracy, intrusiveness, and repeatabil-
+                          The fault injector injects faults into the target system     ity may guide the choice of approach. Table 1 sum-
+                       as it executes commands from the workload generator             marizes    commonly     studied faults and injection
+                       (applications,     benchmarks, or synthetic workloads).         methods.
+                       The monitor tracks the execution of the commands and
+                       initiates data collection whenever necessary. The data          HARDWARE FAULT INJECTION
+                       collector performs online data collection, and the data            Hardware-implemented       fault injection uses addi-
+                       analyzer, which can be offline, performs data process-          tional hardware to introduce faults into the target sys-
+                       mg and analysis. The controller controls the experiment.        tem's hardware.    Depending on the faults and their
+                          Physically, the controller is a program that can run         locations, hardware-implemented     fault injection meth-
+                       on the target system or on a separate compute_ The              ods fall into two categories:
+                       fault injector can be custom-built hardware or soft-
+                       ware. The fault injector itself can support different             • Hardware fault iniection with contact. The injec-
+                       fault types, fault locations, fault times, and appropri-            tor has direct physical contact with the target sys-
+                       ate hardware semantics or software structure--the                   tem, producing      voltage or current changes
+                       values of which are drawn from a fault library. The                 externally to the target chip. Examples are meth-
+                       fault library in Figure 1 is a separate component,                  ods that use pin-level probes and sockets.
+                       which allows for greater flexibility and portability.             • Hardware fault injection without contact. The
+
+
+
+                Computer
+     injector has no direct physical contact with the
+     target system. Instead, an external source pro-
+                                                              • '        .Hardware,                   Software.        "++-' .   :,   :_. -
+     duces some physical phenomenon, such as heavy-
+     ion radiation and electromagnetic    interference,      :-_   Open+'+
+                                                               .. +:+  _"                      ;++_:_ Storagedatacorraptiom" . -+. :..    :.-
+     causing spurious currents inside the target chip.        • _'-.. Bridging" '
+                                                               •    ;+
+                                                                                      ? -              (sucha_mCmr,_omom,
+                                                                                                                      mdalsk_":
+                                                             ;,_+ . Bit-flip" •         ....       +--._,++--:
+                                                                                                    _++_Communil_atlon'd,_tz_+rruotlort
+                                                                                                                                     ':+:.'"++,
+   These methods are well suited for studying the                  -_ Spuriouscurrent" .+      • " ' : (such'asbusand;communication    network)
+dependability,   characteristics     of prototypes   that             Powersurge                        Manifestation
+                                                                                                                    otSoflwaredefects
+require high time-resolution     for hardware triggering              Stuck-at                          • (suchas machinelevelandhigherlevels)
+                                                                                                               +   •
+
+and monitoring (fault latency in the CPU, for exam-
+ple) or require access to locations that cannot be eas-
+ily reached by other fault injection methods.               of error detection circuits, using these iniection meth-
+   Engineers generally model hardware methods on            ods. Active probes attached to the power supply hard-
+low-level fault models; for example, a bridging fault       ware inject power supply disturbance faults. However,
+might be a short circuit. Hardware also triggers faults     this can damage the injected device or increase the risk
+and monitors their impact, thus providing high time-        of destructive injection.
+resolution and low perturbation. Normally, the hard-
+ware triggers faults after a specified time has expired     Illgllll  mlllll   emlllgt
+on a hardware timer or after it has detected an event,         These faults are injected by creating heavy-ion radi-
+such as a specified address on the address bus.             ation. An ion passes through the depletion region of
+                                                            the target device and generates current. Placing the
+Injection with contact                                      target hardware in or near an electromagnetic       field
+   Hardware fault injection using direct contact with       also injects faults. Engineers      like these methods
+circuit pins, often called pin-level iniection, is prob-    because they mimic natural physical phenomena.
+ably the most common            method   of hardware-       However, it is difficult to exactly trigger the time and
+implemented     fault injection. There are two main         location of a fault injection using this technique
+techniques for altering electrical currents and volt-       because you cannot precisely          control the exact
+ages at the pins:                                           moment of heavy-ion emission or electromagnetic
+                                                            field creation.
+  • Active probes. This technique adds current via
+    the probes attached to the pins, altering their elec-   l_SUlll INil
+    trical currents. The probe method is usually lim-          Messaline, 4developed at LAAS-CNRS,       in Toulouse,
+    ited to stuck-at faults, although it is possible to     France, uses both active probes and sockets to con-
+    attain bridging faults by placing a probe across        duct pin-level fault injectaon. Figure 2 on the next page
+    two or more pins. Care must be taken when using         shows Messaline's general architecture and its envi-
+    active probes to force additional current into the      ronment. Messaline can inject stuck-at, open, bridg-
+    target device, as an inordinate amount of current       ing, and complex logical faults, among others. It can
+    can damage the target hardware.                         also control the length of fault existence and the fre-
+  • Socket insertion. This technique inserts a socket       quency. Signals collected from the target system can
+    between the target hardware         and its circuit     provide feedback to the injector. Mso, a device is asso-
+    board. The inserted socket injects stuck-at, open,      ciated with each injection point to sense when and if
+    or more complex Logicfaults into the target hard-       each fault is activated and produces an error. It can
+    ware by forcing the analog signals that represent       also inject up to 32 injection points simultaneously.
+    desired logic values onto the pins of the target        This tool has been used in experiments on a central-
+    hardware.     The pin signals can be inverted,          ized, interlocking system employed in a computerized
+    ANDed, or ORed with adjacent pin signals or             railway control system and on a distributed system
+    even with previous signals on the same pin.             for the Esprit Delta-4 Project.
+                                                                FIST s (Fault Injection System for Study ofTransient
+   Both of these methods provide good controllabil-         Fault Effect), developed at the Chalmers University of
+ity of fault times and locations with little or no per-     Technology in Sweden, employs both contact and con-
+turbation    to the target system. Note that because        tactless methods to create transient faults inside the
+faults are modeled at the pin level, they are not iden-     target system. This tool uses heavy-ion radiation to
+tical to traditional stuck-at and bridging fault models     create transient faults at random locations inside a
+that generally occur inside the chip. Nonetheless, you      chip when the chip is exposed to the radiation and
+can achieve many of the same effects, like the exercise     can thus cause single- or multiple-bit-flips. The radi-
+
+
+
+                                                                                                                       Apfl11997
+Figure2. General
+architectureof
+Messaline.
+
+
+
+
+                        ation      source       is mounted                 inside      a vacuum              chamber         in terms         ot their capability,         to exerc:se          the ,MARS error
+                         together with a small two-processor      computer  sys-                                             detection         mechanisms.            Results      showed             that    the three
+                        tem. The computer     is positioned  so that one of the                                              methods           are complementary                  and     generate            different
+                        processors           is exposed    directly under    the radiation.                                  t'ypes of errors.            Pin-level     iniections            cause       error   detec-
+                        The other          processor    is used as a reference   for detect-                                 tion mechanisms               outside     the CPU to be exercised                        more
+                        ing whether      the radiation  results  in any                                      bit-flips.      effectively   than            heavy-ion   radiation or electromag-
+                        Figure 3 illustrates   the FIST environment.                                                         netic interference.             The latter two methods     were bet-
+                              FIST can        inject      faults     directly         inside      a chip,        which       ter suited for exercising  software                     and application-level
+                       cannot        be done           with      pin-level          injections.         It can      pro-     error detection   mechanisms.
+                       duce transient            faults         at random            locations          evenly       in a
+                       chip, which           leads to a large variation                      in the errors          seen     SOFTWAREFAULTINJECTION
+                       on the        output       pins.          In addition            to radiation,              FIST         In recent        years,     researchers          have         taken      more        inter-
+                       allows       for the injection                of power              disturbance           faults.
+                                                                                                                            est in developing               solk'ware-implemented                         fault   injec-
+                       This is done           by placing           a MOS           transistor         between        the
+                                                                                                                            tion     tools.      Software         fauh-iniection                 techniques             are
+                       power       supply       and the Vcc pin of the processor                               chip to      attractive         because        they don't        require         expensive         hard-
+                       control      the amplitude                of the voltage              drop.     Power        sup-    ware. Furthermore,    they can be used to target                                      appli-
+                       ply disturbances            usually         affect multiple             locations         within     cations and operatang systems,  which is difficult                                     to do
+                       a chip and can cause gate propagation                                  delay faults. The             with     hardware         fault     injection.
+                       experimental           results show            that the errors             resulting       from         If the target         is an application,                 the     fault      injector         is
+                       both      methods         cause          similar     effects         on program             con-     inserted     into     the application             itself or layered               between
+                       trol-flow      and data            errors.         However,           heavy-ion           radia-     the application           and the operating                 system.          If the target
+                       tion    causes        mostly        address          bus errors,              while     power        is the     operating           system,      the     fault         iniector        must      be
+                       supply      disturbances            affect         mostly      control         signals.              embedded           in the operating         system,         as it is very difficult
+                            MARS _ (Maintainable                      Real-Time              System)         is a dis-      to add a layer         between        the machine             and the operating
+                       tributed,      fault-tolerant               architecture              developed           at the     system.
+                      Technical         University              of Vienna.           In addition to using                      Although          the software           approach              is flexible,        it has
+                      heavy-ion         radiation               as is used          in FIST, 2vLARS uses                    its shortcomings.
+                      electromagnetic                  fields      to conduct               contactless           fault
+                      injection:      A circuit         board        placed         between          two charged               * It cannot inject faults                into locations              that     are inac-
+                      plates       or a chip       placed          near      a charged            probe        causes            cessible to software.
+                      fault     injection.       Dangling             wires         that     act as antennas                   • The      software          instrumentation                   may       disturb       the
+                      placed       on individual              chip pins accentuate                    the electro-                 workload         running          on the target            system         and even
+                      magnetic        field effect         on those          pins.         Researchers           com-              change       the structure         of original         software.           Careful
+                      pared        these      three       methods             (heavy-ion               radiation,                  design of the injection              environment               can minimize
+                      pin-level      injection,          and electromagnetic                      interference)                    perturbation            to the workload.
+
+
+
+                 Computer
+                                                                                                                                       Figure3. FIST
+                                                                                                                                       environment.
+      Inside vacuum chamber
+                                                                       Reset
+
+                 i.
+        l Reference   CPU ]                                                                                         j   .
+
+
+
+
+                              Data             _
+
+      External                                                                                    External
+           bus                                                                                         bus
+
+
+                                        error flip-flops
+                                         Comparator                =
+
+
+                                                                                                  Serial
+                                                                                                   port    Memory
+                                                                       bus
+
+                                               Trigger[      External
+
+                                                                                                    Commands and
+                                Error               _         Logic
+                                                                                                    program loading
+
+                                data                I l analyzer
+                                                    I Error
+
+                                          ,,        I data
+                      Error data         Monitoring
+                                          computer             [                                   Reset
+     computer
+       Host      ]"
+                                                               i
+
+
+
+
+  • The poor time-resolution     of the approach may                    ing injection. Injection generates an erroneous soft-
+    cause fideli_ problems. For long latency faults,                    ware image, and when the system executes the fault
+    such as memory, faults, the low time-resolution                     image, it activates the fault.
+    may not be a problem. For short latency faults,                        This method requires the modification of the pro-
+    such as bus and CPU faults, the approach may fail                   gram that will evaluate fault effect, and it requires no
+    to capture certain error behavior, like propagation.                additional software during runtime. In addition, it
+    Engineers can solve this problem by taking a                        causes no perturbation    to the target system during
+    hybrid approach, which combines the versatility.                    execution. Because the fault effect is hard-coded, engi-
+    of software fault injection and the accuracy of                     neers can use it to emulate permanent        faults. This
+    hardware monitoring. The hybrid approach is well                    method's implementation       is very simple, but it does
+    suited for measuring extremely short latencies.                     not allow the injection of faults as the workload pro-
+    However, the hardware monitoring involved can                       gram runs.
+    cost more and decrease flexibility, by limiting
+    observation points and data storage size.                           Runtlmeinjections
+                                                                           During runtime, a mechanism is needed to trigger
+   We can categorize software injection methods oh                      fault injection. Commonly    used triggering mecha-
+the basis of when the faults are injected: during com-                  nisms include:
+pile-time or during runtime.
+                                                                             • Time-out. In this simplest of techniques, a timer
+Compile-timeInjectlN                                                           expires at a predetermined time, triggering injec-
+    To inject faults at compile-time,      the program                         tion. Specifically, the time-out event generates an
+instruction    must be modified before the program                             5.n=errupt      to invoke fault injection. The timer
+image is loaded and executed. Rather than injecting                            can be a hardware         or software timer. This
+faults into the hardware of the target system, this                            method requires no modification to the applica-
+method iniects errors into the source code or assem-                           tion or workload      program. A hardware timer
+bly code of the target program to emulate the effect                           must be [inked to the system's interrupt handler
+of hardware, software, and transient faults. The mod-                          vector. Since it injects faults on the basis of time
+ified code alters the target program instructions, caus-                       rather than specific events or system state, it pro-
+
+
+
+                                                                                                                                  April 1997
+                                                                                                                                    Workload
+              Fault injection
+              specifications                                                                                                      specifications
+                                                                        Workload                      I
+           Injection strategy:                                                                                               Composition
+                                                                      specifications                 _ WeOrek_O(d
+              Random                                                                                                          relative mix of):
+              Stress-based                                                                                                      CPU function
+                                                                                                                                Memory function
+"["
+           CPU parameters:                                                                                                      I/0 function
+             Register set
+                                                                                                                             Level of dataflow
+                                                                                                                               between functions
+           Memory parameters:
+             Kernel/user space
+             Text/d ata/h ea p/                                                                                              Intensity   of functions
+                                                      Faults               _:                             Workload
+               stack space
+
+           I/0 parameters:
+              Disk controller
+                error set
+                                                               CPU      Memory
+
+
+
+
+                                               Workload                                      1
+
+
+                                           .... a..ct!v!_ .... _          _        (_1   _   Normalize     d
+
+                                                                        Measure
+
+
+
+
+      Figure4. Ftape
+      environment.                   duces unpredictable     fault effects and program           Injection), developed     at the University. of Texas at
+                                     behavior. It is, however, suitable for emulating            Austin, uses software traps to inject CPU, memory,
+                                     transient faults and intermittent hardware faults.          and bus faults. Ferrari consists of four components:
+                                  • Exceptiontrap.       In this case, a hardware excep-         the initializer and activator, the user information, the
+                                    tion or a software trap transfer control to the              fault-and-error    injector, and the data collector and
+                                    fault injector. Unlike time-out, exception/trap can          analyzer.
+                                    inject the fault whenever certain events or con-                The fault-and-error    injector uses software trap and
+                                    ditions occur. For example, a software            trap       trap handling routines. Software traps are triggered
+                                    instruction    inserted into a target program will           either by the program counter when it points to the
+                                    invoke the fault injection before the program exe-           desired program locations or by a timer. When the
+                                    cutes a particular instruction. When the trap exe-           traps are triggered, the trap handling routines iniect
+                                    cutes, an interrupt is generated that transfers              faults at the specific fault locations, typically by chang-
+                                    control to an interrupt         handler. A hardware          ing the content of selected registers or memory, loca-
+                                    exception invokes injection when a hardware-                 tions to emulate actual data corruptions.        The faults
+                                    observed event occurs (when a particular mem-                injected can be those permanent or transient faults
+                                    ory location is accessed, for example).          Both        that result in an address line error, a data line error,
+                                    mechanisms must be linked to the interrupt han-              and a condition bit error.
+                                    dler vector.                                                     Experiments     conducted      on Sun SparcStations
+                                  • Code insertion. In this technique, instructions are          showed that error detection is highly dependent on
+                                    added to the target program that allow fault                 the fault type. Faults in the task memo_ resulted in
+                                    injection to occur before particular instructions,           the highest level of detection,        due mainly to the
+                                    much like the code-modification         method. Unlike       repeated injection of faults when trap instructions
+                                    code modification, code insertion performs fault             were placed in program loops. Also, many faults
+                                    injection during runtime and adds instructions               injected into I/O routines and system libraries went
+                                    rather than changing original instructions. Unlike           undetected because these routines were less frequently
+                                    the trap method, the fault injector may exist as             exercised?
+                                    part of the target program and run at user mode                  The Fault Tolerance and Performance           Evaluator
+                                    rather than system mode.                                     (Ftape), s developed at the University, of Illinois, con-
+                                                                                                 sists of the components shown in Figure 4. Engineers
+                                $eiKtN tul$                                                      can inject faults into user-accessible registers in CPU
+                                   Ferrari r (Fault   and Error      Automatic   Real-Time       modules, memory, locations, and the disk subsystem.
+
+
+
+                       Computer
+The faults are injected as bit-flips to emulate error as      ery model and to evaluate different message delivery,
+a result of faults.                                           methods.
+   Disk system faults are injected by executing a rou-           Xception, _° developed       at the University       of
+tine in the driver code that emulates 1/O errors (bus         Coimbra      in Portugal,    takes advantage      of the
+error and timer error, for example). Fault injection dri-     advanced debugging        and performance    monitoring
+vers added to the operating system inject the faults,         features present in many modern processors to inject
+so no additional hardware or modification of appli-           more realistic faults. It requires no modification       in
+cation code is needed. A synthetic workload genera-           application    software and no insertion of software
+tor creates a workload containing specified amounts           traps. Xception, in fact, uses a processor's built-in
+of CPU, memory, and I/O activity, and faults are              hardware exception triggers to trigger fault injection.
+injected with a strategy that considers the character-        The fault injector is implemented       as an exception
+istics of the workload at the time of injection (which        handler and requires modification       of the interrupt
+components are experiencing the greatest amount of            handler vector. Xception faults are triggered based
+workload activity, for example). Ftape has been used          on access to specific addresses (rather than on a time
+on several Tandem fault-tolerant computers and serves         period following an event), so the experiments are
+as the basis of a benchmark for fault tolerance, which        reproducible.    The following events can trigger fault
+measures the occurrence of system failures and the            injection:
+amount of performance degradation under fault con-
+ditions.                                                         •   opcode fetch from a specified address,
+    Doctor _ (Integrated      Software    Fault Injection        •   operand load from a specified address,
+Environment),        developed    at the University      of      •   operand store to a specified address,
+Michigan, allows injection of CPU faults, memo_                  •   a specified time passed since start-up, and
+faults, and network communication faults. It uses three          •   a combination   of the above fault triggers.
+triggering methodsmtame-out,        trap, and code modifi-
+cation-to     trigger fault injection. Time-out triggers          Each fault has a specified fault mask: a set of bits
+memory fault injection. Once time-out occurs, it trig-         that determines which corresponding        bits in the tar-
+gers the fault injector to overwrite the memory con-           get location will be injected. Bits in the fault mask set
+ tent to emulate occurrence of a memory fault. For             to 1 can use several bit-level operations: stuck-at-zero,
+nonpermanent CPU faults, traps trigger fault injection.        stuck-at-one, bit-flip, and bridging. Xception has been
+For permanent CPU faults, fault injection is done by           implemented on a Parsytec parallel machine based on
+changing program instructions during compilation to           the PowerPC 601 processor. Experiments revealed the
+emulate instruction and data corruptions due to the            deficiency in the error detection mechanisms by show-
+faults. Doctor has been used on Harts, a distributed,          ing that up to 73 percen¢ of injected faults resulted in
+real-time system, to investigate the effect of intermit-       incorrect results that were undetected         for certain
+tent message losses between two adjacent nodes and            processor functional units.
+the effect of routing using failure data. The researchers        Table 2 classifies the hardware     and software    fault
+used experimental results to validate a message deliv-        injection   methods.
+
+
+
+                                                                                                                         April1997
+               he contrast           between             the hardware               and software                          Fault-Tolerant        Computing,            IEEE CS Press, Los Alami-
+
+               methods  lies mainly in the fault injection   points                                                      tos, Calif., 1992,        pp. 336-344.
+               they can access, cost, and level of perturbation.                                                    8. T.K. Tsai and R.K. Iyet; ",Ma Approach                              to Benchmark-
+      Hardware                methods          can       inject     faults       into      chip       pins               ing of Fault-Tolerant             Commercial             Systems,"         Proc. 26th
+      and internal              components,               such      as combinational                    cir-             Ann. lnt'l Syrup. Fault-Tolerant                         Computing,            IEEE CS
+      cuits and registers                 that    are not software-addressable.                                          Press, Los Alamitos,             Calif.,     1996, pp. 314-323.
+      On the other              hand,      software           methods            are convenient                     9. S. Han, K.G. Shin, and H.A. Rosenberg,                                     "Doctor:        An
+      for directly            producing           changes           at the software-state                                Integrated     Software Fault-lnjecnon                   Environment             for Dis-
+      level (memory,   register,   for example).    Thus, we use                                                         tributed Real-T'tme Systems,"                    Proc. Second Annual IEEE
+      hardware   methods     to evaluate  low-level   error de.tec-                                                      Int'l Computer         Performance               and Dependability               Symp.,
+      tion     and      masking           mechanisms                 and software                  meth-                 IEEE CS Press, Los Alamitos,                     Calif., 1995, pp. 204-213.
+      ods       to     test      higher          level      mechanisms.                    Software               I0. J. Carreira,        H. Madeira,         and J.G. Silva, "Xception:                        Soft-
+      methods            are     less expensive,                  but     they      also        incur       a            ware Fault Injection          and Monitoring                  in Processor         Func-
+      higher         perturbation              overhead            because          they execute                         tional Units,"      Proc. Fifth Ann. IEEE Int'l Working Conf.
+      software          on the target             system.          "_'                                                   Dependable         Computing         for Critlcal Applications,                     IEEE
+                                                                                                                         CS Press, Los Alamitos,              CaliL, pp. 135-149.
+
+
+      Acknowledgments                                                                                            Mei-Chen          Hsueh        is a visiting             research       associate           pro-
+           This      research           was      supported               in part        by the          US       fessor      at the     Coordinated             Science            Laboratory             in the
+      Department               of Defense            Advanced             Research              Projects          University       of illinois        at Urbana-Cbampatgn.                          She is on
+      Agency          under       contract           DABT63-94-C-0045,                             ONR           a leave of absence from Digital Equipment      Corpora-
+      contract         N00014-91-J-1116,                           and     by NASA                Grant          tion. Her interests    are in high-performance       and
+      NAG            1-613,        in      cooperation                   with       the          Illinois        dependable           system     design,       fault-tolerance                computing,
+      Computer                Laboratory             for Aerospace                 Systems           and         and      large complex           system            design.        Hsueh          received            a
+      Software          (ICLASS).                                                                                PhD       in computer          science        from         the      University           of Illi-
+                                                                                                                 nois      at Urbana-Champaign.                       She is a member                     of the
+       References                                                                                                IEEE       and the IEEE              Computer              Society.
+       1. J.A.        Clark      and      D.K.       Pradhan,            "Fault      Injection:             ,(
+             Method       for Validating           Compuung-System                   Dependabil-                 Timothy.       IC Tsai is a member                       of the technical              staff      at
+             ity," Computer,            June      1995, pp. 47-56.                                               Bell Labs,        Lucent      Technologies.                His research             interests
+       2. D. Tang and R.K. lyer, "Experimental                               Analysis of Com-                    include      fault-tolerant           computing,                 software         engineer-
+             puter System Dependability.,"                         in Fault.Tolerant               Com-          ing, and distributed             systems.           Tsai received           a BS in elec-
+             puter System          Destgn,        D.K. Pradhan,              ed., Prentice-Hall                  trical engineering            from    Brigham              Young        University          and
+             Prof. Tech. Ref., Upper Saddle River, N.J., pp. 282-392.                                            an MS and            a PhD      in electrical              engineering             from        the
+       3. J.A. Abraham,                "Challenges           in Fault Detection,"                  Prec.         University        of illinois        at Urbana-Cbampazgn.                              He is a
+             25th Ann. lnt'l Syrup. Fault-Tolerant                           Computing,             IEEE         member        of the IEEE            and the IEEE                Computer              Society.
+             CS Press, Los Alamitos,                  Calif., 1995, pp. 96-114.
+      4. J. Arlat, Y. Crouzet,                   and J.C. Laprie,               "Fault      Injection            Ravisbankar           K. lyer     is a professor              in the departments
+             for Dependability,            Validation             of Fault-Tolerant                Com-          of Electrical         and     Computer               Engineering                 and     Com-
+             puter     Systems,"          Proc.      19th         Ann. Int'l        Syrup. Fault-                puter     Science,       and at the Coordinated                        Science          Labo-
+             Tolerant         Computing,             IEEE CS Press,              Los Alamitos,                   ratory,      at    the      University              of     Illinois         at     Urbana-
+             Calif., 1989, pp. 348-355.                                                                          Champaign.            He is also          codirector              of the Center                for
+      5. O. Gunnedo,               J. Karlsson,           and J. Torm, "Evaluation                       of      Reliable      and High-Performance                           Computing              and the
+            Error      Detection          Schemes           Using        Fault      Injection           by       Illinois Computing   Laboratory                           for Aerospace             Systems
+            Heavy-ion           Radiation,"           Proc. I9th             Ann.       lnt'l     Syrup.         and Software,   a NASA    Center                         for Excellence            in Aero-
+            Fault-Tolerant          Computing,              IEEE CS Press, Los Mami-                             space     Computing.            Iyer's      research          interests          are in the
+            tos, Calif., 1989, pp. 340-347.                                                                      area of reliable         computing,            measurement                  and evalua-
+      6. J. Karlsson, J. Arlat, and G. Leber, "AppLication of Three                                              tion,    and automated            design.           He is an associate                  fellow
+            Physical Fault Injection Techniques to the Experimen-                                                of the AIAA          and a fellow            of the IEEE.
+            tal Assessment of the MARS Architecture,"   Proc. Fifth
+            Ann. IEEE Int'l Working                       Conf. Dependable                  Comput-
+            ing for Critical Applica_ons,                    IEEE CS Press, Los Mami-                            Readers       can contact            Hsueb          and      Iyer     at the Coordi-
+            tos, Calif., 1995, pp. 150-161.                                                                      nated      Science         Laboratory,               University             of     Illinois,
+      7. G.A. Kanawati,  N.A. Kanawati,  and J.A. Abraham,                                                       Urbana,       IL 61801;          hsueb,       iyer@crch.uiuc.edu.                        Con-
+         "FERRARI:     A Tool for the Validation of System                                                       tact Tsai at Lucent Technologies, 600 Mountain                                           Ave.,
+            Dependability          Properties,"           Proc. 22nd Ann. Int'l Syrup.                           Murray Hill, NJ 07954; ttsai@researcb.bell-labs.com.
+
+
+
+Computer
+

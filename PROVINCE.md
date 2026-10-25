@@ -63,3 +63,19 @@ processes and writes one receipt per control (and nothing else); its fixtures ar
 `corpus/lessons/round-36.md`, the tree at one revision and read-only `git status`; it writes nothing.
 All four are record instruments: they score the lane's own evidence and paperwork, never a compositor, a config
 plane or a host service, and none of them is a desktop surface.
+
+**Round-36 refinement (append-only; resolves spot-check D9 and `CritD9Boundary`):** the refusal boundary for
+documentation-localization material was practised in four rounds of lessons and spot-checks and stated nowhere in
+this file (`git log -S 'localiz' -- PROVINCE.md` → empty). It is stated now, once, and it decides the r28
+(URL), r29 (snapshot semantics) and r30 (revision bookkeeping) entries and the round-16 Chinese config guide the
+same way:
+
+> Material about the *documentation artifacts* of the desktop plane and their localization — the Chinese/Japanese
+> ArchWiki channel, its URLs, snapshot semantics, revision bookkeeping and translation drift, and any
+> documentation written in a localized channel — is outside the province; only the omarchy skill's own files
+> (`~/.agents/skills/omarchy/`) are documentation surface, and those are read-only.
+
+This is a *channel* rule, which is what the lane has actually done: the English upstream documentation channels
+remain admissible for config-plane claims (round-35's S203 flip rests on one), while the localized documentation
+channel and its mechanics stay out. It does not widen any owned surface and leaves line 10's omarchy ownership
+intact.
