@@ -54,7 +54,8 @@ WORD_RE = re.compile(r"[a-zA-Z][a-zA-Z0-9_-]{2,}")
 
 def _git(repo, *args):
     return subprocess.check_output(
-        ["git", "-C", repo, *args], text=True, stderr=subprocess.STDOUT
+        ["git", "-C", repo, *args], text=True, stderr=subprocess.STDOUT,
+        env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")},
     )
 
 

@@ -95,7 +95,8 @@ def compare(published, derived):
 
 
 def git(repo, *args):
-    return subprocess.run(["git", "-C", repo] + list(args), capture_output=True, text=True)
+    return subprocess.run(["git", "-C", repo] + list(args), capture_output=True, text=True,
+                          env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")})
 
 
 def show(repo, rev, path):
@@ -116,7 +117,8 @@ def run_script(repo, rev, path, args, timeout=300):
             fh.write(src)
         try:
             p = subprocess.run([sys.executable, "-I", f] + list(args), cwd=repo,
-                               capture_output=True, text=True, timeout=timeout)
+                               capture_output=True, text=True, timeout=timeout,
+                               env={k: v for k, v in os.environ.items() if not k.startswith("GIT_")})
         except subprocess.TimeoutExpired:
             return None, "instrument timed out: %s" % path
         return (p.stdout + p.stderr), None

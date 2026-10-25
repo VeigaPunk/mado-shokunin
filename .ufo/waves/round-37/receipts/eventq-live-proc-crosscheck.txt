@@ -1,0 +1,20 @@
+# proc-census (read-only: /proc/net/unix + /proc/*/fd; no socket opened)
+/proc/net/unix rows: 1072; socket inodes mapped to fds: 923; pids with unreadable fd dir: 1573; pids vanished mid-scan: 0
+socket2 rows identical before/after fd scan: True
+
+## instance efb50993… path HYPR/efb50993…/.socket2.sock
+listener inodes: [38117]  accepted (St=03) inodes: [10029, 181151236]  other: []
+  listener 38117: held by Hyprland/1619/fd10, Hyprland/1619/fd11
+compositor pid(s) (hold the listener): [1619]
+  accepted 10029: held by Hyprland/1619/fd145, Hyprland/1619/fd147
+  accepted 181151236: held by Hyprland/1619/fd236, Hyprland/1619/fd250
+PROC-PROVES: 2 live accepted connection(s), all held only by the compositor: True
+client-end candidates (unbound, stream, St=03, held outside compositor): 506; after uid filter (uid 1000 or 0, socket dir is 0700): 506
+unbound stream St=03 rows with no visible fd holder (unreadable pid or in-flight fd): 57
+heuristic H1 (nearest candidate inode to each server inode) — NOT a proof:
+  server 10029 -> nearest 9903 (|d|=126) swayosd-server/1803/fd7
+  server 181151236 -> nearest 181153240 (|d|=2004) waybar/935660/fd12
+heuristic H2 (candidate holders whose cmdline names .socket2.sock) — NOT a proof: socat/2293
+no --ss capture: client ends left unpaired (see module docstring)
+
+OVERALL: AGREE

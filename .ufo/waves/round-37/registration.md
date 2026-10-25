@@ -118,3 +118,14 @@ v1 `live` clause trusted a receipt a hand could write with the right digest.
 - Targets, kill rules, counting commands and the target entry set are unchanged; the v1
   receipts (`receipts/controls.txt`, `before-c1.txt`, `before-c2.txt`) stay as the v1 record,
   and the v2 receipts carry a `-v2` suffix. Nothing measured under v1 is reused.
+
+## Erratum 1 — the cited Frontier row (append-only; no rule change)
+
+Wave-1 `CritAxisClaim` (counterexample A): the Frontier row this file names under *Theme and
+surface* ("Waybar module text, Walker socket protocol … No … socket connection is added here")
+points at `arc-synthesis.md` §6, whose socket item is the Walker launcher's own sockets, not
+Hyprland's `.socket2.sock`. The gloss "the event-socket client half" was this file's, not the
+row's. Corrected reading: C1 moves a **new edge class** under the held IPC-contract ground
+(`knowledge/ipc-contract-r25.md`) — delivery to a client that stops reading, and whether a
+removal is observable on this host — and moves no Frontier row. The predicate, counter, targets
+and kill rule are unchanged; the counter never read the Frontier sentence.

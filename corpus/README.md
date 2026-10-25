@@ -59,6 +59,8 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/idle-lock-never-asked-r12.md` (MADO-R35-1, round 35) | The setup path asks nothing about the idle lock: `omarchy-first-run` runs thirteen items (twelve `*.sh` plus a hook install) and none concerns the idle lock. Its first reading that the operator therefore never toggled is withdrawn in the entry's own errata: the journal shows the daemon's scope consumed at 19:24:38 and restarted at 22:14:11 on 2026-10-23, consistent with a toggle-off. | `source:` S203, S204 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S203.receipt.txt` and `S204.receipt.txt`; recheck on-change. |
 | `knowledge/idle-lock-chain-armed-r14.md` (MADO-R35-2, round 35) | The idle lock is armed on this host: `hypridle` runs as pid 1667 with one start line in the current boot's journal, the declared chain is a screensaver at 150 s (no lock call in `omarchy-launch-screensaver`) and a lock at 152 s, and the unit probe reads `inactive` only because the daemon runs inside a transient scope. No transition was fired. | `source:` S205 in [SOURCES](SOURCES.md); receipt `.ufo/waves/round-35/fetch/S205.receipt.txt`; recheck 90d. |
 | `knowledge/idle-lock-offered-in-the-bar-r15.md` (MADO-R35-3, round 35) | The desktop offers the idle-lock choice in two independent surfaces - the bar's `custom/idle-indicator` click and the menu's Idle Lock toggle - and names the off state with an icon tooltip while the on state is silence; four dated bar-config copies carry the handler (oldest 2026-10-03 by content mtime, 2026-10-06 by creation clock), and the toggle writes no file, re-arming `hypridle` at login from `autostart.conf`. | `source:` S206, S207, S208, S209, S210 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-35/fetch/S206.receipt.txt`–`S210.receipt.txt`; recheck on-change (S210: 90d). |
+| `knowledge/event-delivery-limits-r26.md` (MADO-R37-1, round 37; package entry re-grounded) | What Hyprland v0.56.2 does to an event client that stops reading: client sockets are non-blocking and never read; each client queues at most `MAX_QUEUED_EVENTS = 64` events, checked only when an event is posted, so removal comes after the kernel send buffer fills and 64 more events queue; partial writes resume from `writeOffset`, `EAGAIN` keeps the event, other write errors remove the client. Waybar 0.15.0 reads the socket through a 1023-character `fgets` (a long event splits), connects once and never reconnects or logs on EOF, so a removed bar runs on with no compositor events. | `source:` S189, S201, S212 in [SOURCES](SOURCES.md); receipts `.ufo/waves/round-37/fetch/S189.bin`, `S201.bin`, `S212.bin`; Gate in `corpus/lessons/round-37.md`; recheck 90d. |
+| `knowledge/event-queue-observability-r37.md` (MADO-R37-2, round 37; lane-authored) | On this host a removal is logged nowhere: both markers are core-logger lines, `debug:disable_logs` defaults to true and reads 1 here, and the core logger returns before every write while it is set (the session log's 21 core lines end at line 21; the unit journal and `hyprctl rollinglog` carry none). Zero marker counts are a null channel, so the package's two "never overflowed" readings are refused. The working route is the kernel's unix-socket table: who holds the client end of `.socket2.sock` and its unread bytes. | `source:` S213, S217, S214, S215, S216, S189 in [SOURCES](SOURCES.md); receipt `.ufo/waves/round-37/fetch/S213.receipt.txt`; Gate in `corpus/lessons/round-37.md`; recheck on-change. |
 
 ## Quality bar
 
@@ -252,3 +254,18 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
   rendered bar pixels and tooltip rendering, the transient-scope unit name, notification history, and the
   operator's preference — the one question no source can answer. The C1 counter is shape-scored and its digest
   clause is dead (lesson M35-2), so these three notes rest on re-opened receipts, not on the counter.
+
+### Round-37 event-socket delivery route
+
+- A new edge class under the held IPC contract ([ipc contract](knowledge/ipc-contract-r25.md)) moves onto
+  sourced ground; no Frontier bullet above is moved by it (the "Walker socket protocol" item is the
+  launcher's own sockets, not the compositor's event socket). What the compositor does to a client that stops reading, and what the bar this host runs does when it is
+  removed ([event delivery limits](knowledge/event-delivery-limits-r26.md)). The host half moves onto
+  measured ground as a negative result: while `debug:disable_logs` is at its shipped default the
+  compositor writes neither removal marker anywhere, so a zero count is a null channel
+  ([observability](knowledge/event-queue-observability-r37.md)); the package's two host readings that
+  took that zero as "never overflowed" are refused. `tools/mado-eventq.py` reads the subscriber set
+  and each subscriber's unread bytes from the kernel's socket table without connecting (round-37 C2).
+  Still open: no event was observed, no client was stalled and no socket was connected, so the cap,
+  the removal path and the partial-write resume were never exercised here; the send-buffer size on
+  these sockets; whether any removal happened before `debug:disable_logs` could be read.

@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import os
 import re
 import subprocess
 import sys
@@ -65,6 +66,9 @@ INHERITED_PATHS = (
     ".ufo/waves/round-35/scratch/RevQuoteS203/",
     ".ufo/waves/round-35/scratch/RevQuoteS205/",
 )
+# `git -C <repo>` does not override an inherited GIT_DIR / GIT_WORK_TREE, so every git
+# call runs without the caller's GIT_* variables.
+GIT_ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 
 
 def die(msg: str) -> None:
@@ -73,7 +77,8 @@ def die(msg: str) -> None:
 
 
 def git(repo: Path, *args: str) -> str:
-    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
+    proc = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True,
+                          env=GIT_ENV)
     if proc.returncode != 0:
         return ""
     return proc.stdout
@@ -170,7 +175,8 @@ def main() -> None:
 
     status_out = git(repo, "status", "--porcelain", "--", *INHERITED_PATHS)
     status_rc = subprocess.run(["git", "-C", str(repo), "status", "--porcelain", "--",
-                                *INHERITED_PATHS], capture_output=True, text=True).returncode
+                                *INHERITED_PATHS], capture_output=True, text=True,
+                               env=GIT_ENV).returncode
     if status_rc != 0:
         # "unmeasurable" must never read as "clean": a bare clone or a broken work tree
         # cannot answer the question, so the observable fails closed.
@@ -202,7 +208,7 @@ def main() -> None:
         if not HEX40.match(candidate):
             continue
         if subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
-                           candidate, args.branch]).returncode != 0:
+                           candidate, args.branch], env=GIT_ENV).returncode != 0:
             continue
         text = show(name)
         for line in text.splitlines():
