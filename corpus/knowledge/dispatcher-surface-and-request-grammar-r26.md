@@ -76,3 +76,56 @@ sends to socket2 (S188:59).
   (S188:12).
 - The page's "Last updated on July 15, 2026" is the revision string observed on
   2026-10-24; a later fetch may show a different one.
+
+## Amendment — re-grounded dispatcher surface and request-socket resolution (2026-10-25)
+
+Lane: mado-shokunin. Round: 39 (assimilation theme from the shokuknow `merge/mado/`
+package: its deferred amendment to this entry, re-grounded here against bytes re-opened
+this round; the package's own text and quotes are not cited). The held text above is
+unchanged; this section is appended.
+
+source: S018 — Hyprland v0.56.2 `src/debug/HyprCtl.cpp` @ `efb50993780079460b0cbed1363e2166a2de1d9f`; S196 — the 0.56.0 Dispatchers page
+verified-at: 2026-10-25
+recheck: on-release
+
+Re-opened 2026-10-25: S018 raw bytes → `.ufo/waves/round-39/fetch/S018-r39.bin`, 97582 B,
+sha256 `798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa` (equal to the held
+round-24 receipt, so the line numbers below are the host commit's); S196 →
+`.ufo/waves/round-39/fetch/S196-r39.bin`, 297863 B, sha256
+`f9b51362f2440e02999089a255c5d7f3feb103f3cdeb6124c86a9f285c14b6e2` (byte-identical to the
+round-32 receipt; same "Last updated on July 15, 2026" revision).
+
+### §A1 The 0.56.0 page states what a dispatcher value is for (S196)
+
+**OBS** S196, opening paragraph of the `#dispatchers` section: "Their purpose is to be fed
+into hl.bind() or hl.dispatch()." — preceded by "Dispatchers return tables that describe an
+action you want to make."
+
+**INF** On the host's release line a Lua dispatcher is a value, not an action: nothing runs
+until `hl.bind()` or `hl.dispatch()` consumes it.
+
+### §A2 The request socket resolves a dispatcher by name (S018)
+
+**OBS** `dispatchRequest` (S018:1126) looks the first word up in the keybind manager's
+registry — S018:1149 `const auto DISPATCHER = g_pKeybindManager->m_dispatchers.find(DISPATCHSTR);`
+— and an unknown name returns the literal S018:1151 `return "Invalid dispatcher";`.
+
+**OBS** Under the Lua config provider the request is wrapped instead of looked up:
+S018:1131 "For lua, this is just a wrapper for `eval("hl.dispatch(in)")" and S018:1132
+`std::string evalStr = std::format("return hl.dispatch({})", in);`.
+
+**OBS** Batches split on `;` outside brackets: `dispatchBatch` (S018:1309), comment at
+S018:1310 "split by ; ignores ; inside [] and adds ; on last command".
+
+**OBS** Request flags (`j`, `r`, `a`, `c` at S018:2085-2093) are stripped before the command
+is compared: S018:2096 "remove flags and separator so we can compare the rest of the string".
+
+**INF** The socket-side surface this entry's §3 kept apart from the Lua surface is: one name
+resolved against `m_dispatchers` (hyprlang provider) or one `hl.dispatch(...)` evaluation
+(Lua provider); an unknown name is the string `Invalid dispatcher`, not a socket error.
+
+### §A3 What this amendment does not claim
+
+- **[UNK]** Host-observable effects of each request flag: S018:2085-2093 shows only which
+  internal switch each flag sets.
+- No request was sent and no dispatcher dispatched; this is a source reading.
