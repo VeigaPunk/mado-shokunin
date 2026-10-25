@@ -1931,3 +1931,67 @@ locator no longer treats a quoted marker as the publication, and the round-32
 before/after (`mismatched=2` at `256222890d935212874a09751ff9b7869943c2d7`,
 `mismatched=0` at `d9ed38166cc3be8ef4c52b41d66ad94010feb047`) still holds.
 `quality/check-axis-scores.py` is now in the SKILL.md gate registry.
+
+## Round 34 — a counter that rejects the crib, then the data (2026-10-24, attempt 1)
+
+Motivation: `corpus/lessons/round-33-verifier-spotcheck.md` rejected round 33.
+The round-33 coverage counter was killed before data — a seat showed that the
+frozen counter prints `TARGET_MET` on a symlink crib, so the entries were not
+appended and the round closed as an honest stop. The closure also routed
+defects: the S189 line number, the literature reject's id, twelve undisclosed
+seat scratch trees and seven disclosed leftovers, the round-30 report
+citation, and the un-re-executed axis-gate selftest.
+
+Work: a NEW coverage counter, `PRED-C1-r34-v1`, was frozen before any corpus
+append at `3420e827bd7b21b1374b23245526554ffd20d096` with its predicate
+sentence identical in `c1/count.py`, `c1/frozen.json` and
+`registration.md`. Its committed pre-data receipts show the symlink crib, the
+symlinked-entry, symlinked-parent and symlinked-sources trees, the hardlink
+tree, the entries-only, rows-only and used-by-prefix trees and the do-nothing
+control all printing `TARGET_MISSED` exit 1, and only a regular-file golden
+tree printing `TARGET_MET` exit 0. The round-33 counters are not amended —
+their blob ids are identical at the round-33 freeze, the round-33 tip and this
+round's tip. The data landed afterwards at
+`fa7ba11346116672352b5d41494141c5c4d738d0`: one admitted entry
+`corpus/knowledge/waybar-module-text-route-r25.md` and two normalized
+registry rows S201 and S202, both sources re-opened by the lane on 2026-10-24
+(fetch digests agree three ways — committed blob, `corpus/SOURCES.md`,
+`c1/frozen.json`). The id-collision guard was re-proved able to fail on an
+indented `  | S002 |` scratch fixture before the first append
+(`controls/indented-guard.txt`), and the real pair produced an empty
+`collisions` file (190 registry ids vs 140 staged ids). A NEW calibration
+counter, `PRED-C2-r34-v1`, pins the published S189 queue-cap line number
+against the pinned fetch: the publication was absent before and matches after
+(`published=169 measured=169 mismatch=0` exit 0), while a `line=128` card and
+a marker-less card both miss. One wave ran under
+`scripts/hyaku/ufo-wave-policy-v2.json`: 64 seats validated by
+`ufo-swarm-wave.mjs` (band 64–128, one task call), 25 of them attack roles
+(reviewer 10, critic 8, mutation-tester 3, revenger 2, sentinel 2) = 39%; 64
+dispatched, 64 finished, 64 reports, 0 dead seats. The frontier step mined
+`considerthese/2026-10-24.md` item 4 — grounded by host probes, not by the
+proposal text — and restated the literature reject against the opened file's
+own ids (S206, S209, S210, S211), not S199.
+
+Honest notes: the round-33 closure routed the S189 line-128 statement as
+false; re-verification shows both line numbers are correct for their own
+quote — line 128 holds the register's quoted `formatEvent` span and line 169
+holds the queue-cap constant — so the repair is an appended disambiguation in
+`corpus/lessons/round-33.md`, not a retraction. The wave's own mutation
+testing found two clauses of the new counter that are honestly redundant
+under its frozen spec: the 1–25 word bound cannot fail once the quote string
+matches, and the `S_ISLNK`/`O_NOFOLLOW` pair protects only against a TOCTOU
+race that no static tree can kill; both are recorded, neither is hidden. The
+coverage claim is a bounded documentary-route increment, not a surface move —
+the live bar module text stays open as frontier item U7. The twelve
+undisclosed round-33 seat scratch trees and the six round-33 control fixture
+trees are committed this round, so every round-33 receipt is re-derivable from
+committed bytes;
+`.ufo/waves/round-33/scratch/ExecK2Receipts` (495,961,904 bytes, three
+throwaway git clones whose outputs are pasted verbatim into the committed
+`.ufo/waves/round-33/w1/reports/ExecK2Receipts.md`) was moved out of the lane
+tree to `/fast/scratch/mado-r33-k2-receipts/` rather than swept. The
+axis-gate selftest is now re-executed with a committed transcript:
+`MADO_AXIS_SELFTEST: 18/18 assertions passed` exit 0, live gate
+`MADO_AXIS: checked=3 mismatched=0` exit 0
+(`.ufo/waves/round-34/controls/axis-selftest.txt`). SHONEN stays `[~]` on all
+four boxes; nothing was self-promoted.

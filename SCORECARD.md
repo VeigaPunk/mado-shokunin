@@ -2108,3 +2108,52 @@ not rewritten.
 r34-s189-line: line=169
 
 Axis table re-derived at the round-34 data tree (criterion 22): navigation 47/47 = 1.0; calibration resolved-active 41/41 = 1.0; operability selftest 12/12 = 1.0. Not an axis-score claim. The publication is updated so the existing gate does not go red when the new note is indexed.
+
+## Round 34 — a counter that rejects the crib, then the data (2026-10-24, attempt 1)
+
+Resumed round. A prior attempt froze the two predicates and landed the data
+before its provider route died; this attempt inherited both, re-verified
+them, and did not re-declare or narrow either. The round-33 counters are
+NOT amended — their blob ids are identical at the round-33 freeze
+`9a46ccf3282117f960b8d53cd71599a91f388ee3`, the round-33 tip
+`69f72100bee31a60b811f8fbbe7796db883e17b3` and this round's tip.
+
+Registration `.ufo/waves/round-34/registration.md` was frozen before any data
+at `3420e827bd7b21b1374b23245526554ffd20d096`; the data landed afterwards at
+`fa7ba11346116672352b5d41494141c5c4d738d0`. Both claims sit on the lowest
+non-retired axes (coverage and calibration are tied at 1.0; a capability
+entered in round 32, so the stagnation nudge does not waive). One wave, 64
+seats, 25 of them attack roles (39%).
+
+| Claim / axis | Before → after | Counting command | Author verdict |
+|---|---|---|---|
+| C1 coverage — the Waybar event-socket client theme (frontier → core): one admitted entry `corpus/knowledge/waybar-module-text-route-r25.md` plus registry rows S201 and S202, both sources re-opened by the lane on 2026-10-24 | pre-data freeze `3420e827`: `PRED-C1-r34-v1 closed_entries=0 closed_rows=0 open_cites=2 verdict=TARGET_MISSED` exit 1 → tip `fa7ba113`: `closed_entries=1 closed_rows=2 open_cites=0 verdict=TARGET_MET` exit 0; registry 190 → 192 rows; navigation 46/46 → 47/47 | `python3 -I .ufo/waves/round-34/c1/count.py --root . --frozen .ufo/waves/round-34/c1/frozen.json` | target met on the frozen counter. Kill rule discharged by the committed pre-data receipts: the symlink crib, the symlinked-entry, symlinked-parent and symlinked-sources trees, the hardlink tree, the entries-only, rows-only and used-by-prefix trees and the do-nothing control ALL print `TARGET_MISSED` exit 1; only the regular-file golden tree prints `TARGET_MET`. The round-33 counter still prints `TARGET_MET` on its crib and was not replaced. Scoped honestly: a bounded documentary-route increment, not a surface move — the live bar module text stays open (`corpus/README.md` frontier U7). |
+| C2 calibration (lowest scored axis, tied) — the published S189 queue-cap line number must match a re-read of the pinned fetch | before: the publication was absent, `PRED-C2-r34-v1 published=absent measured=169 mismatch=1 verdict=TARGET_MISSED` exit 1 → after: `published=169 measured=169 mismatch=0 verdict=TARGET_MET` exit 0 | `python3 -I .ufo/waves/round-34/c2/count.py --repo . --scorecard SCORECARD.md --frozen .ufo/waves/round-34/c2/frozen.json` | target met. The counter rejects a card whose last marker tail is `line=128` (`published=128 mismatch=1` exit 1) and a card with no marker at all (`published=absent mismatch=1` exit 1). The published line is `line=169`; `.ufo/waves/round-32/fetch/S189.bin` line 169 is `const size_t MAX_QUEUED_EVENTS = 64;` (sha256 `eea605dfe5ce09e1…`). The false round-32 row is still visible above and is NOT rewritten. |
+
+Correction to the note appended by the data commit: that note wrote "operability
+selftest 12/12". 12/12 is the operability AXIS fraction (the index
+instrument's own assertions); the axis-gate selftest is **18/18**. The
+committed transcript is `.ufo/waves/round-34/controls/axis-selftest.txt`
+(selftest `MADO_AXIS_SELFTEST: 18/18 assertions passed` exit 0; live gate
+`MADO_AXIS: checked=3 mismatched=0 rev=fa7ba11346116672352b5d41494141c5c4d738d0`
+exit 0). This is a transcription repair of a published number, made by
+appending; the axis table itself is unchanged.
+
+### Capabilities (round 34)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| crib-rejecting coverage counter | Score a corpus admission with a counter that refuses symlinked, hardlinked and path-escaping evidence trees, and re-run that verdict from committed fixture bytes alone | `python3 -I .ufo/waves/round-34/c1/count.py --root . --frozen .ufo/waves/round-34/c1/frozen.json` → `TARGET_MET`; the same command over `.ufo/waves/round-34/controls/symlink-crib` → `TARGET_MISSED` exit 1 | 34 |
+
+### Sources, saturation, planned
+
+Sources 190 → 192 rows (S201, S202 added; no row touched old→new; no frontier
+row advanced — the Waybar module-text frontier item U7 stays open because this
+round documents the route, not the rendered module text). Saturation 9.0 / N=3
+unchanged; retired: none.
+Planned (round 35; intent only): the three findings this round's own wave
+produced but did not fix — the `PRED-C1-r34-v1` word-bound clause is provably
+dead code under its own frozen spec, the `S_ISLNK`/`O_NOFOLLOW` pair is
+redundant against every static tree (TOCTOU-only), and the merge package's
+id remap base ("registry ends at S196") is stale now that the lane registry
+ends at S202.

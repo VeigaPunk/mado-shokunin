@@ -46,3 +46,29 @@ control meets. The predicate was not rewritten after seats scored it.
   scratch 187 MB. The closure measured 11.6 MB / 554 blobs at `f5910876`, and
   `48f9fe09` deleted 130 files. captured-by: none. fix: this lesson; the filed
   round-32 report is not edited.
+
+## Correction (appended 2026-10-24, round 34)
+
+The round-33 verification routed a defect reading this lesson's S189 line
+number as false. Re-verified this round against the pinned bytes
+`.ufo/waves/round-32/fetch/S189.bin` (6479 B, sha256
+`eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d`), the
+closure's own line 128 reading is right and this lesson's line 128 reading is
+also right — each about a DIFFERENT quote, which is what the routing missed:
+
+- Line 128 is the `formatEvent` assignment
+  `auto             eventString = std::format("{}>>{}\n", event.event, data.substr(0, 1024));`.
+  That is the span the absent-defect register quotes for its `S189` row, and
+  this lesson's Gate block was speaking about the register row, so "the quote
+  is at line 128 of the pinned EventManager.cpp" was correct.
+- Line 169 is `const size_t MAX_QUEUED_EVENTS = 64;`, the queue-cap constant.
+  That is the quote the round-33 report cited, and it is the quote the round-34
+  calibration counter pins.
+
+Both numbers stand; the ambiguity was that this lesson did not say which quote
+it meant. Fix: this appended entry names both lines and both quotes, and the
+round-34 lesson repeats the pairing. The lesson body above is not rewritten,
+and the round-33 report and the round-33 counters are not edited. Evidence:
+`.ufo/waves/round-34/w1/reports/ScoutS189.md`,
+`.ufo/waves/round-34/w1/reports/MutC2Drop.md`,
+`.ufo/waves/round-34/w1/reports/RevC2Truth.md`.
