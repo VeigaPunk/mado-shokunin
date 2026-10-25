@@ -2334,3 +2334,11 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   pass depends on the narrow head[:15] mining window; F4 `RECHECK_RE` accepts `0d`.
   Clause fixes are routed to round 39; no further post-freeze counter patch is made
   beyond the declared `859d0cf` (the ruling scope stays as narrowed by `RevM37Routing`).
+
+- **Round-38 freeze-verdict refinement (`RevCensusBefore`)** — direct replay at the
+  freeze rev `58e55ec9` shows frozen instruments × frozen manifest = 19/19: the
+  claim as frozen was internally coherent (its `c1-duprow` append landed outside
+  `## Registry`). HEAD instruments × frozen manifest = 18/19 (duprow fails the
+  tightened unique-row clause). The divergence between the two seat measurements is
+  a bytes-at-which-rev difference; both are recorded and the re-registration ruling
+  covers the manifest control rewrite.
