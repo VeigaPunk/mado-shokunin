@@ -34,6 +34,7 @@ GATE S214 receipt=.ufo/waves/round-37/fetch/S214.bin sha256=d04e3a2fe5c73ad86843
 GATE S215 receipt=.ufo/waves/round-37/fetch/S215.bin sha256=a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754 quote="MS<Bool>("debug:disable_logs", "disable logging to a file", true),"
 GATE S216 receipt=.ufo/waves/round-37/fetch/S216.bin sha256=74833ecbf0e2b6f8ad84345ac0716a3295a0e347420a188be0ab4f6a684af7c0 quote="conn->setName("aquamarine");"
 GATE S217 receipt=.ufo/waves/round-37/fetch/S217.bin sha256=aeb07ba1ba1fd5cfdb75aaf7434910c887096c24952f1a6788f71a4d7dbe78fe quote="if (!m_logsEnabled)"
+GATE S217 receipt=.ufo/waves/round-37/fetch/S217.bin sha256=aeb07ba1ba1fd5cfdb75aaf7434910c887096c24952f1a6788f71a4d7dbe78fe quote="bool                    m_logsEnabled = true;"
 
 | id | URL / artefact | located at |
 |---|---|---|
