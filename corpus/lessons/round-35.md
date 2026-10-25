@@ -376,3 +376,15 @@ bytes the digest names. The receipts themselves were re-opened and re-derived
 this round by wave-2 seats, and the report says which of those verdicts landed.
 The entries' remaining unknown — whether the operator wants the idle lock off —
 is unchanged and answerable only by the operator.
+
+## Routed findings that did not become criteria
+
+- **Row section is unscoped in C1** (wave-2 `RevC1Tip` F2): `count.py`'s "the registry
+  holds a row" is a whole-file scan, so moving S206's only row out of `## Registry` into
+  `## Leads` still prints `closed_entries=3 closed_rows=8 open_cites=0 TARGET_MET`,
+  while the lane census on the same bytes returns `E12 S206 row outside Registry
+  section` exit 1. Round 36 should either delegate the section fence to the census or
+  reproduce E12 in the counter. Recorded, not repaired: the predicate is frozen.
+- **C1 certifies wiring, not truth** (`RevC1Tip`, `CritVacRecheck`): an entry carrying a
+  real gate-quote and no prose still closes. That is criterion 55's content-crib family
+  and the reason the round reports the counter as shape evidence only.
