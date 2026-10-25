@@ -1,0 +1,39 @@
+## S210 semantics attack 2026-10-25T03:30:56-03:00
+--- omarchy-toggle-idle body ---
+     1	#!/bin/bash
+     2	
+     3	# omarchy:summary=Toggle hypridle idle locking
+     4	
+     5	if pgrep -x hypridle >/dev/null; then
+     6	  pkill -x hypridle
+     7	  notify-send -u low "󱫖    Stop locking computer when idle"
+     8	else
+     9	  uwsm-app -- hypridle >/dev/null 2>&1 &
+    10	  notify-send -u low "󱫖    Now locking computer when idle"
+    11	fi
+    12	
+    13	pkill -RTMIN+9 waybar
+--- does it reference toggles dir? ---
+--- flags.conf ---
+     1	# This directory is intended for permanent config toggle flags.
+     2	# Do not remove this file (as the directory always needs at least one file).
+--- window-no-gaps.conf ---
+     1	# Remove all window gaps and borders
+     2	general {
+     3	    gaps_out = 0
+     4	    gaps_in = 0
+     5	    border_size = 0
+     6	}
+     7	
+     8	decoration {
+     9	    rounding = 0
+    10	}
+--- every writer of toggles/hypr in omarchy ---
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hw-recover-internal-monitor
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal-mirror
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-toggle
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-toggle-disabled
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-toggle-enabled
+/home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-touchpad
+/home/vgpnk/.local/share/omarchy/bin/omarchy-toggle-touchscreen

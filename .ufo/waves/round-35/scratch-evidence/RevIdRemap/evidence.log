@@ -1,0 +1,153 @@
+### RevIdRemap evidence log — 2026-10-25T03:35:35-03:00
+
+### E1. verify_id_remap.py
+append: /home/vgpnk/Projects/shokuknow/merge/mado/SOURCES.append.md
+  bytes=135617 sha256=684efe8c23b8b64d789187dab61bfbf7c0dcef4f0428e447c94d7be4e73a27c0
+  rows=147 base=S203 tip=S349 contiguous=True
+
+-- staged entries' own source: lines --
+idle-lock-never-asked-r12.md  sha256=11111379365bd03fda1a538db7d7024955c4704412cbb8c96caa33a8df586763
+    source: S315 — lanes/mado/round12/fetch/host-omarchy-first-run.txt — `§ script body` — the desktop's post-login questionnaire, as it exists on this ho
+    source: S316 — lanes/mado/round12/fetch/host-idle-lock-never-asked.txt — `§ script list, journal count, flag listing` — the paired negative, measured
+idle-lock-chain-armed-r14.md  sha256=c272cfa5fba6aef2ce86c81e47df62e001e235e71d5b96f7b612c542a6e11968
+    source: S327 — lanes/mado/round14/fetch/host-idle-lock-chain-state.txt — `§ the process probe, the unit probe, and the current session's own start lin
+idle-lock-offered-in-the-bar-r15.md  sha256=ee16fc34db28660a89da9d71efb0aee4f96f6638ac01240fa13d309d319aa34c
+    source: S335 — /home/vgpnk/.config/waybar/config.jsonc — `§ the custom/idle-indicator module block` — the bar's own configuration
+    source: S336 — /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh — `§ the indicator's state test, and the tooltip it renders` — the i
+    source: S337 — /home/vgpnk/.local/share/omarchy/bin/omarchy-menu — `§ the Toggle submenu's option list, and the case arm that dispatches it` — the des
+    source: S340 — lanes/mado/round15/fetch/host-waybar-dated-backups-sweep.txt — `§ the per-copy lines, each naming a dated copy and its handler count` —
+    source: S342 — lanes/mado/round15/fetch/host-omarchy-toggles-state-sweep.txt — `§ the directory listing lines, and the sweep's two figures` — the desk
+
+-- cross-check: entry source ids == rows whose used-by names the entry --
+  idle-lock-never-asked-r12.md: entry=['S315', 'S316'] usedby=['S315', 'S316'] agree=True
+  idle-lock-chain-armed-r14.md: entry=['S327'] usedby=['S327'] agree=True
+  idle-lock-offered-in-the-bar-r15.md: entry=['S335', 'S336', 'S337', 'S340', 'S342'] usedby=['S335', 'S336', 'S337', 'S340', 'S342'] agree=True
+
+TRUE package id set (8): ['S315', 'S316', 'S327', 'S335', 'S336', 'S337', 'S340', 'S342']
+CLAIMED set            : ['S309', 'S310', 'S321', 'S329', 'S330', 'S331', 'S334', 'S336']
+
+-- by-document map --
+  pkg S315  ->  lane S203  | idle-lock-never-asked-r12.md
+      envelope: omarchy's first-run installer — the one place the desktop asks the ope
+  pkg S316  ->  lane S204  | idle-lock-never-asked-r12.md
+      envelope: host evidence that the idle lock was never asked about and never toggl
+  pkg S327  ->  lane S205  | idle-lock-chain-armed-r14.md
+      envelope: host idle-lock chain — the daemon's present liveness and the two timeo
+  pkg S335  ->  lane S206  | idle-lock-offered-in-the-bar-r15.md
+      envelope: host waybar configuration — the idle-indicator module whose click togg
+  pkg S336  ->  lane S207  | idle-lock-offered-in-the-bar-r15.md
+      envelope: host waybar indicator script — the idle indicator, which renders the i
+  pkg S337  ->  lane S208  | idle-lock-offered-in-the-bar-r15.md
+      envelope: host omarchy menu script — the Toggle submenu entry that switches the 
+  pkg S340  ->  lane S209  | idle-lock-offered-in-the-bar-r15.md
+      envelope: host waybar configuration backups — the dated copies of the bar's conf
+  pkg S342  ->  lane S210  | idle-lock-offered-in-the-bar-r15.md
+      envelope: host toggle-state directory — the desktop's own record of its configur
+
+set intersection = ['S336']  (|hit|=1/8)
+positional matches = 0/8
+
+-- what each CLAIMED id actually names in the live file --
+  S309: host systemd journal — the idle daemon's start/stop lifecycle across e
+  S310: host gkeep rule file and the path it selects, with gkeep's own request
+  S321: Hyprland (ArchWiki, Chinese wiki) — the article's own Chinese wikitext
+  S329: xdg-desktop-portal-hyprland 1.4.1 — the registry handler that logs eve
+  S330: Quickshell — the focus-grab client implementation, the client half of 
+  S331: hyprland-protocols — the upstream repository's own description of the 
+  S334: WaylandとX11の違い｜構造・セキュリティ・確認方法【2026年版】 (Japanese) — the archived revisi
+  S336: host waybar indicator script — the idle indicator, which renders the i
+      ^ is one of the eight, but mapped to lane S207
+
+-- implied append base for each CLAIMED id (id - row_index) --
+  S309 -> row_index 112 -> implied base S197
+  S310 -> row_index 113 -> implied base S197
+  S321 -> row_index 124 -> implied base S197
+  S329 -> row_index 132 -> implied base S197
+  S330 -> row_index 133 -> implied base S197
+  S331 -> row_index 134 -> implied base S197
+  S334 -> row_index 137 -> implied base S197
+  S336 -> row_index 139 -> implied base S197
+  implied bases: [197]
+
+verdict: ID_REMAP_WRONG
+  - claimed set != true set
+  - positional matches 0/8
+EXIT=1
+
+### E2. verify_doc_identity.py
+triples from the three staged entries: 8
+  S327  idle-lock-chain-armed-r14.md
+     entry path : lanes/mado/round14/fetch/host-idle-lock-chain-state.txt
+     in row     : True   row used-by names entry: True
+  S315  idle-lock-never-asked-r12.md
+     entry path : lanes/mado/round12/fetch/host-omarchy-first-run.txt
+     in row     : True   row used-by names entry: True
+  S316  idle-lock-never-asked-r12.md
+     entry path : lanes/mado/round12/fetch/host-idle-lock-never-asked.txt
+     in row     : True   row used-by names entry: True
+  S335  idle-lock-offered-in-the-bar-r15.md
+     entry path : /home/vgpnk/.config/waybar/config.jsonc
+     in row     : True   row used-by names entry: True
+  S336  idle-lock-offered-in-the-bar-r15.md
+     entry path : /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh
+     in row     : True   row used-by names entry: True
+  S337  idle-lock-offered-in-the-bar-r15.md
+     entry path : /home/vgpnk/.local/share/omarchy/bin/omarchy-menu
+     in row     : True   row used-by names entry: True
+  S340  idle-lock-offered-in-the-bar-r15.md
+     entry path : lanes/mado/round15/fetch/host-waybar-dated-backups-sweep.txt
+     in row     : True   row used-by names entry: True
+  S342  idle-lock-offered-in-the-bar-r15.md
+     entry path : lanes/mado/round15/fetch/host-omarchy-toggles-state-sweep.txt
+     in row     : True   row used-by names entry: True
+
+pairs checked: 8; failures: 0
+verdict: DOC_IDENTITY_OK
+EXIT=0
+
+### E3. line numbers — package rows
+119:| S315 |
+120:| S316 |
+131:| S327 |
+139:| S335 |
+140:| S336 |
+141:| S337 |
+144:| S340 |
+146:| S342 |
+
+### E4. line numbers — claimed ids in live file
+113:| S309 |
+114:| S310 |
+125:| S321 |
+133:| S329 |
+134:| S330 |
+135:| S331 |
+138:| S334 |
+140:| S336 |
+
+### E5. ID-REMAP rows for the eight (was -> now)
+36:| round11 | `S303` | `S309` |
+37:| round11 | `S304` | `S310` |
+42:| round12 | `S309` | `S315` |
+43:| round12 | `S310` | `S316` |
+48:| round13 | `S315` | `S321` |
+54:| round14 | `S321` | `S327` |
+56:| round14 | `S323` | `S329` |
+57:| round14 | `S324` | `S330` |
+58:| round14 | `S325` | `S331` |
+61:| round14 | `S328` | `S334` |
+62:| round15 | `S329` | `S335` |
+63:| round15 | `S330` | `S336` |
+64:| round15 | `S331` | `S337` |
+67:| round15 | `S334` | `S340` |
+69:| round15 | `S336` | `S342` |
+
+### E6. staged entry source lines with line numbers
+idle-lock-never-asked-r12.md:10:source: S315 — lanes/mado/round12/fetch/host-omarchy-first-run.txt — `§ script body` — the desktop's post-login questionnaire, as it exists on this host
+idle-lock-never-asked-r12.md:11:source: S316 — lanes/mado/round12/fetch/host-idle-lock-never-asked.txt — `§ script list, journal count, flag listing` — the paired negative, measured
+idle-lock-chain-armed-r14.md:9:source: S327 — lanes/mado/round14/fetch/host-idle-lock-chain-state.txt — `§ the process probe, the unit probe, and the current session's own start line` — the chain's present state, measured on this host
+idle-lock-offered-in-the-bar-r15.md:10:source: S335 — /home/vgpnk/.config/waybar/config.jsonc — `§ the custom/idle-indicator module block` — the bar's own configuration
+idle-lock-offered-in-the-bar-r15.md:11:source: S336 — /home/vgpnk/.local/share/omarchy/default/waybar/indicators/idle.sh — `§ the indicator's state test, and the tooltip it renders` — the indicator's script
+idle-lock-offered-in-the-bar-r15.md:12:source: S337 — /home/vgpnk/.local/share/omarchy/bin/omarchy-menu — `§ the Toggle submenu's option list, and the case arm that dispatches it` — the desktop's own menu
+idle-lock-offered-in-the-bar-r15.md:13:source: S340 — lanes/mado/round15/fetch/host-waybar-dated-backups-sweep.txt — `§ the per-copy lines, each naming a dated copy and its handler count` — the dated copies of the bar's configuration
+idle-lock-offered-in-the-bar-r15.md:14:source: S342 — lanes/mado/round15/fetch/host-omarchy-toggles-state-sweep.txt — `§ the directory listing lines, and the sweep's two figures` — the desktop's toggle-state directory

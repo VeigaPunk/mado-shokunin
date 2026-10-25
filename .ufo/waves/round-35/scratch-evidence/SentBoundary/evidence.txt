@@ -1,0 +1,97 @@
+SentBoundary r35 w2 — raw evidence
+Snapshot window: 2026-10-25 03:29–03:44 -0300. Wave-2 dispatched 03:28 (w2-spec mtime).
+Lane HEAD at close of audit: 4f35c80 (moved 3 times in-round: 19e4ab3 23:24:06, 02088b4 03:34:26, 4f35c80 03:42:04).
+
+A1) git -C mado-shokunin status --porcelain -uall -- ':!.ufo/waves/round-35/scratch'
+    rc=0, 70 lines at 03:44. Non-scratch/report lines:
+      M LOG.md
+      M corpus/QUALITY.md
+      M corpus/README.md
+      M corpus/SOURCES.md
+      M corpus/knowledge/idle-lock-chain-armed-r14.md
+      M corpus/knowledge/idle-lock-never-asked-r12.md
+      M corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
+      M corpus/lessons/round-35.md
+      ?? .ufo/waves/round-35/w2-plan.err
+    Same command at 03:45 (after commit 4f35c80): only '?? .ufo/waves/round-35/w2-plan.err' remains.
+    At 03:29 (wave start) the same surface was: M LOG.md, M corpus/SOURCES.md, ?? three entries.
+
+A2) git -C mado-shokunin reflog -4 --date=iso; rc=0
+      4f35c80 HEAD@{2026-10-25 03:42:04 -0300}: export from jj
+      02088b4 HEAD@{2026-10-25 03:34:26 -0300}: export from jj
+      19e4ab3 HEAD@{2026-10-24 23:24:06 -0300}: export from jj
+      6d754bd HEAD@{2026-10-24 23:04:26 -0300}: export from jj
+    git log -1 4f35c80: author mado-shokunin <mado@shokunin.local>, "round-35: wave-2 falsifications as errata — the shape-scored counter"
+    git log -1 02088b4: "round-35: the idle-lock control surface lands — three entries, eight rows S203-S210, errata, and the wave-1 evidence"
+
+A3) Files in 02088b4 outside scratch/w1 (rc=0):
+      A .ufo/waves/round-35/assimilation/{collisions,collisions-pre,reg-ids,reg-ids-pre,staged-ids}
+      A .ufo/waves/round-35/assimilation/guard/{collisions,ids,reg.md,staged-ids,staged.md}
+      A .ufo/waves/round-35/{dispatch-w1.sh,dispatch.out,w1-spec.json,w1-taskcall.json,w2-plan.json,w2-spec.json,w2-taskcall.json}
+      M corpus/QUALITY.md
+      M corpus/README.md
+      M corpus/SOURCES.md
+      A corpus/knowledge/idle-lock-chain-armed-r14.md
+      A corpus/knowledge/idle-lock-never-asked-r12.md
+      A corpus/knowledge/idle-lock-offered-in-the-bar-r15.md
+      A corpus/lessons/round-35.md
+    219 files total; 212 under .ufo/waves/round-35.
+
+A4) Files in 4f35c80 (71 total), non-scratch:
+      A .ufo/waves/round-35/controls-content/c1-shape-only/{corpus/…, .ufo/waves/round-35/fetch/S203..S210}
+      A .ufo/waves/round-35/controls-content/c1-fabricated-payload/{same shape}
+      A .ufo/waves/round-35/w2/reports/*.md (39 seat reports)
+      M LOG.md, SCORECARD.md, corpus/QUALITY.md, corpus/README.md, corpus/SOURCES.md,
+        corpus/knowledge/{three entries}, corpus/lessons/round-35.md
+    24 controls-content files; the 'c1-fabricated-payload' tree carries 8 receipt files with real names.
+
+A5) Blob divergence during the wave (git show 02088b4:<path> vs worktree, sha256 first 16):
+      idle-lock-never-asked-r12.md   committed 21c1d06db35d189b  worktree 7f27ced01e9edf62
+      idle-lock-chain-armed-r14.md   committed 31275b4d84f7b34f  worktree 583c708c338ecb06
+      idle-lock-offered-in-the-bar-r15.md committed 1594a36fbfc57f43 worktree 82c08a4675863f69
+      corpus/README.md               committed a3769befe3558c54  worktree 3bb9865fd12793f9
+    Resolved by 4f35c80 at 03:42:04; at 03:44 all six are clean.
+    RevEntryR14.md:4 records the change under it: "The file changed under me mid-review (1789 B → 2505 B at 03:33:57)".
+    RevEntryR15.md:36: "The entry changed under me at 03:35:30 (5806 B, Errata E1-E5 appended".
+    RevIndex.md:112 records corpus/README.md changing under it (7f348944b0e7… → a3769befe355…).
+
+A6) Claim ledger: registration.md enumerates only: 3 entries, 8 rows in SOURCES.md, 8 fetch receipts,
+    c1/c2 counters + frozen.json, c1/clauses.json, controls/ (11), ledger/RevFrozenBlobs-r35.md.
+    Not in the claim ledger but lane-authored and committed: LOG.md (+36), SCORECARD.md, corpus/README.md,
+    corpus/QUALITY.md (+2 criteria 55/56), corpus/lessons/round-35.md, assimilation/** (10),
+    controls-content/** (24), w2-plan/spec/taskcall.
+
+A7) Stable and claimed: fetch/S20[3-9].receipt.txt + S210 (mtime 2026-10-24 23:21), c1/c2 count.py+frozen.json
+    (23:22–23:23), SOURCES.md S203–S210 rows present (grep -c '^| S2(0[3-9]|10) ' = 8, rc=0).
+
+B1) git -C /home/vgpnk/Projects/shokunin status --porcelain -uall | grep -c '\.ufo/reports/round-35/'  -> 0, rc=1
+B2) same | grep -vc '\.ufo/reports/round-35/' -> 32, rc=0
+B3) .ufo/reports/round-35/ contains 8 lane files; newest kama.md 2026-10-24 21:32; find -newermt '2026-10-24 22:00' -> empty.
+B4) mtimes of the 32 entries: 17 at 2026-10-24 18:07; then 03:22:37 hyaku.env, 03:22:48 .scratch/goal-20261025-hyaku-12h.md,
+    03:23:06 lane-addendum.md, 03:23:32–03:23:48 six .ufo/state/*.report-baseline + .ufo/watchdog.log.
+B5) fleet HEAD moved during audit: 04411e8 -> … -> 8052650d (03:33:51) -> 3f8b0d1 (03:40:22);
+    commits are hyaku closures for other lanes (kama r36, kaidoku r34, tabi r22); MANIFEST.json content == HEAD (git diff empty).
+B6) grep for write redirections from mado artifacts into the fleet root: 0 hits.
+
+C1) git -C /home/vgpnk/Projects/shokuknow rev-parse HEAD -> 8b94c5c12c0521e4cd9ed8e5b6939afd8518c715, rc=0
+    reflog -3: last commit 2026-10-24 11:02:02 "Stage wave 13…"; no commit in the round window.
+C2) git -C shokuknow status --porcelain -uall | wc -l -> 5217, rc=0
+C3) git -C shokuknow diff --shortstat -> 1429 files changed, 20904 insertions(+), 14907 deletions(-), rc=0
+C4) changed paths with mtime > 2026-10-24 23:18 -> 1999, clustered 23:26:45–23:33:21:
+      116 lanes/mado, 109 lanes/mori, 107 lanes/kake, 106 lanes/kotoba, 105 lanes/kumitate,
+      103 lanes/chousa, 99 lanes/revenger, 97 lanes/kama, 96 lanes/tameshi; merge/* mirrors;
+      plus MANIFEST.json 23:33:21.
+C5) non-symmetric post-wave write: lanes/tabi/round8/.work/ratelimit-series.tsv 2026-10-25 03:38:09.
+C6) lanes/mado newest = 23:26:45 (bulk); no mado-only path after the bulk.
+C7) mado w1/w2 artifacts: 0 write-redirection hits into shokuknow; MutC2Real.md:199 and ScribeLesson.md:9
+    both state shokuknow was not written/executed against.
+
+D1) sibling dirty counts at 03:43 (porcelain -uall): audio 12, chousa 3, game-dev-2d 0, game-dev-3d 0,
+    kagi 770810, kaidoku 0, kake 90, kama 821, kasegi 27, kengaku 4, kotoba 24, kotodama 23,
+    kumitate 85, lore 0, mado 6832, mori 0, revenger 2, souji 186, tabi 0, tameshi 28, tsukuroi 0.
+D2) rev-list --count --since='2026-10-24 23:18' HEAD: kake 3, kasegi 1, kengaku 1, kotoba 1, kotodama 3,
+    kumitate 1, mori 3, revenger 5, tabi 3, tameshi 1, mado 2; all others 0. rc=0.
+D3) commit authors of those: the lane itself or protocol-shokunin (hyaku integrator), e.g.
+    "1429c791 protocol-shokunin | round-43 verifier spot-check" (mori).
+D4) git log --all --author=mado across all siblings: 0 matches (rc=1, no output; mado itself excluded).
+D5) mado artifacts: 0 write-redirection hits into any sibling path.

@@ -1,0 +1,154 @@
+## cause of the 19:24:38 exit 2026-10-25T03:34:38-03:00
+--- coredumpctl hypridle ---
+No coredumps found.
+--- coredumps (any) around that date ---
+Fri 2026-10-23 20:04:17 -03 4171899 1000 1000 SIGABRT none     /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node      -
+Fri 2026-10-23 20:13:16 -03 3563925 1000 1000 SIGSEGV none     /home/vgpnk/.local/bin/omp                                                     -
+Fri 2026-10-23 20:23:17 -03 1074218 1000 1000 SIGSEGV none     /home/vgpnk/.local/bin/omp                                                     -
+Fri 2026-10-23 20:41:53 -03 1990852 1000 1000 SIGSEGV present  /home/vgpnk/.local/bin/omp.real                                           308.2M
+Fri 2026-10-23 20:54:10 -03 3524644 1000 1000 SIGTRAP none     /home/vgpnk/.local/share/mise/installs/node/26.12.0/bin/node                   -
+Fri 2026-10-23 20:54:46 -03 3525305 1000 1000 SIGTRAP none     /home/vgpnk/.local/share/mise/installs/node/26.12.0/bin/node                   -
+Fri 2026-10-23 20:55:24 -03 3525898 1000 1000 SIGTRAP none     /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node      -
+Fri 2026-10-23 20:55:47 -03 3527882 1000 1000 SIGTRAP none     /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node      -
+--- system journal segfault/oom/kill in 19:00-22:30 ---
+Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+Oct 23 19:24:59 plazir27 earlyoom[1381]: mem avail: 19479 of 21438 MiB (90.86%), swap free: 28594 of 30979 MiB (92.30%)
+Oct 23 19:34:13 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 19:34:13 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 19:34:13 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 19:34:13 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-1543070-1792794853076-737891.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-1543070-1792794853076-737891.scope,task=MainThread,pid=1543201,uid=1000
+Oct 23 19:34:13 plazir27 kernel: Memory cgroup out of memory: Killed process 1543201 (MainThread) total-vm:1670880kB, anon-rss:260248kB, file-rss:35848kB, shmem-rss:0kB, UID:1000 pgtables:1048kB oom_score_adj:200
+Oct 23 19:34:13 plazir27 systemd[1529]: cap-run-1543070-1792794853076-737891.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:34:13 plazir27 systemd[1529]: cap-run-1543070-1792794853076-737891.scope: Failed with result 'oom-kill'.
+Oct 23 19:34:13 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:36:57 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 19:36:57 plazir27 systemd[1529]: cap-run-2267035-1792795017186-94780f.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:36:57 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:36:57 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 19:36:57 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 19:36:57 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-2267035-1792795017186-94780f.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-2267035-1792795017186-94780f.scope,task=MainThread,pid=2267116,uid=1000
+Oct 23 19:36:57 plazir27 kernel: Memory cgroup out of memory: Killed process 2267116 (MainThread) total-vm:1670880kB, anon-rss:260308kB, file-rss:35992kB, shmem-rss:0kB, UID:1000 pgtables:1068kB oom_score_adj:200
+Oct 23 19:51:54 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 19:51:54 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 19:51:54 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 19:51:54 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-2719985-1792795914227-97a047.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-2719985-1792795914227-97a047.scope,task=MainThread,pid=2720147,uid=1000
+Oct 23 19:51:54 plazir27 kernel: Memory cgroup out of memory: Killed process 2720147 (MainThread) total-vm:1670880kB, anon-rss:260284kB, file-rss:36004kB, shmem-rss:0kB, UID:1000 pgtables:1056kB oom_score_adj:200
+Oct 23 19:51:54 plazir27 systemd[1529]: cap-run-2719985-1792795914227-97a047.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:51:54 plazir27 systemd[1529]: cap-run-2719985-1792795914227-97a047.scope: Failed with result 'oom-kill'.
+Oct 23 19:51:54 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:58:37 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 19:58:37 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 19:58:37 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 19:58:37 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-3686118-1792796317308-b59132.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-3686118-1792796317308-b59132.scope,task=MainThread,pid=3686127,uid=1000
+Oct 23 19:58:37 plazir27 kernel: Memory cgroup out of memory: Killed process 3686127 (MainThread) total-vm:1670880kB, anon-rss:260276kB, file-rss:35952kB, shmem-rss:0kB, UID:1000 pgtables:1064kB oom_score_adj:200
+Oct 23 19:58:37 plazir27 systemd[1529]: cap-run-3686118-1792796317308-b59132.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 19:58:37 plazir27 systemd[1529]: cap-run-3686118-1792796317308-b59132.scope: Failed with result 'oom-kill'.
+Oct 23 19:58:37 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:01:37 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:01:37 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:01:37 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:01:37 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-3959209-1792796497050-0f4b1e.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-3959209-1792796497050-0f4b1e.scope,task=MainThread,pid=3959218,uid=1000
+Oct 23 20:01:37 plazir27 kernel: Memory cgroup out of memory: Killed process 3959218 (MainThread) total-vm:1670880kB, anon-rss:260252kB, file-rss:35892kB, shmem-rss:0kB, UID:1000 pgtables:1064kB oom_score_adj:200
+Oct 23 20:01:37 plazir27 systemd[1529]: cap-run-3959209-1792796497050-0f4b1e.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:01:37 plazir27 systemd[1529]: cap-run-3959209-1792796497050-0f4b1e.scope: Failed with result 'oom-kill'.
+Oct 23 20:01:37 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:14 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:03:14 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:03:14 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:03:14 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4055565-1792796594902-47b9bc.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4055565-1792796594902-47b9bc.scope,task=MainThread,pid=4055603,uid=1000
+Oct 23 20:03:14 plazir27 kernel: Memory cgroup out of memory: Killed process 4055603 (MainThread) total-vm:1670880kB, anon-rss:260292kB, file-rss:35880kB, shmem-rss:0kB, UID:1000 pgtables:1064kB oom_score_adj:200
+Oct 23 20:03:14 plazir27 systemd[1529]: cap-run-4055565-1792796594902-47b9bc.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:14 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:14 plazir27 systemd[1529]: cap-run-4055565-1792796594902-47b9bc.scope: Failed with result 'oom-kill'.
+Oct 23 20:03:27 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:03:27 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:03:27 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:03:27 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4077107-1792796607458-71ba46.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4077107-1792796607458-71ba46.scope,task=MainThread,pid=4077254,uid=1000
+Oct 23 20:03:27 plazir27 kernel: Memory cgroup out of memory: Killed process 4077254 (MainThread) total-vm:1670880kB, anon-rss:260280kB, file-rss:35940kB, shmem-rss:0kB, UID:1000 pgtables:1068kB oom_score_adj:200
+Oct 23 20:03:27 plazir27 systemd[1529]: cap-run-4077107-1792796607458-71ba46.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:27 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:27 plazir27 systemd[1529]: cap-run-4077107-1792796607458-71ba46.scope: Failed with result 'oom-kill'.
+Oct 23 20:03:29 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:03:29 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:03:29 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:03:29 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4082126-1792796608996-98cfd5.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4082126-1792796608996-98cfd5.scope,task=MainThread,pid=4082197,uid=1000
+Oct 23 20:03:29 plazir27 kernel: Memory cgroup out of memory: Killed process 4082197 (MainThread) total-vm:1670880kB, anon-rss:260324kB, file-rss:35868kB, shmem-rss:0kB, UID:1000 pgtables:1048kB oom_score_adj:200
+Oct 23 20:03:29 plazir27 systemd[1529]: cap-run-4082126-1792796608996-98cfd5.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:29 plazir27 systemd[1529]: cap-run-4082126-1792796608996-98cfd5.scope: Failed with result 'oom-kill'.
+Oct 23 20:03:29 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:53 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:03:53 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:03:53 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:03:53 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4122929-1792796633437-3ccffe.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-4122929-1792796633437-3ccffe.scope,task=MainThread,pid=4122971,uid=1000
+Oct 23 20:03:53 plazir27 kernel: Memory cgroup out of memory: Killed process 4122971 (MainThread) total-vm:1670880kB, anon-rss:260328kB, file-rss:35868kB, shmem-rss:0kB, UID:1000 pgtables:1080kB oom_score_adj:200
+Oct 23 20:03:53 plazir27 systemd[1529]: cap-run-4122929-1792796633437-3ccffe.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:03:53 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:04:50 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:04:50 plazir27 systemd[1529]: cap-run-38411-1792796690127-080c2a.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:04:50 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:04:50 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:04:50 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:04:50 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-38411-1792796690127-080c2a.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-38411-1792796690127-080c2a.scope,task=MainThread,pid=38459,uid=1000
+Oct 23 20:04:50 plazir27 kernel: Memory cgroup out of memory: Killed process 38459 (MainThread) total-vm:1670880kB, anon-rss:260360kB, file-rss:35876kB, shmem-rss:0kB, UID:1000 pgtables:1056kB oom_score_adj:200
+Oct 23 20:05:01 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:05:01 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:05:01 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:05:01 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-53875-1792796701681-3c0ccd.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-53875-1792796701681-3c0ccd.scope,task=MainThread,pid=53934,uid=1000
+Oct 23 20:05:01 plazir27 kernel: Memory cgroup out of memory: Killed process 53934 (MainThread) total-vm:1670880kB, anon-rss:260288kB, file-rss:35880kB, shmem-rss:0kB, UID:1000 pgtables:1068kB oom_score_adj:200
+Oct 23 20:05:01 plazir27 systemd[1529]: cap-run-53875-1792796701681-3c0ccd.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:05:01 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:05:01 plazir27 systemd[1529]: cap-run-53875-1792796701681-3c0ccd.scope: Failed with result 'oom-kill'.
+Oct 23 20:09:40 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:09:40 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:09:40 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:09:40 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-900607-1792796980082-81c6ea.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-900607-1792796980082-81c6ea.scope,task=MainThread,pid=900617,uid=1000
+Oct 23 20:09:40 plazir27 kernel: Memory cgroup out of memory: Killed process 900617 (MainThread) total-vm:1670880kB, anon-rss:260300kB, file-rss:35944kB, shmem-rss:0kB, UID:1000 pgtables:1064kB oom_score_adj:200
+Oct 23 20:09:40 plazir27 systemd[1529]: cap-run-900607-1792796980082-81c6ea.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:09:40 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:09:40 plazir27 systemd[1529]: cap-run-900607-1792796980082-81c6ea.scope: Failed with result 'oom-kill'.
+Oct 23 20:12:13 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:12:13 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:12:13 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:12:13 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-983239-1792797133883-19e1d2.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-983239-1792797133883-19e1d2.scope,task=MainThread,pid=983277,uid=1000
+Oct 23 20:12:13 plazir27 kernel: Memory cgroup out of memory: Killed process 983277 (MainThread) total-vm:1670880kB, anon-rss:260080kB, file-rss:35952kB, shmem-rss:0kB, UID:1000 pgtables:1060kB oom_score_adj:200
+Oct 23 20:12:13 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:12:13 plazir27 systemd[1529]: cap-run-983239-1792797133883-19e1d2.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:12:13 plazir27 systemd[1529]: cap-run-983239-1792797133883-19e1d2.scope: Failed with result 'oom-kill'.
+Oct 23 20:12:13 plazir27 systemd[1529]: app.slice: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:13:52 plazir27 kernel: MainThread invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+Oct 23 20:13:52 plazir27 kernel:  oom_kill_process.cold+0x8/0x91
+Oct 23 20:13:52 plazir27 kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+Oct 23 20:13:52 plazir27 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-1066820-1792797232022-067dbe.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/cap-run-1066820-1792797232022-067dbe.scope,task=MainThread,pid=1066829,uid=1000
+Oct 23 20:13:52 plazir27 kernel: Memory cgroup out of memory: Killed process 1066829 (MainThread) total-vm:1670880kB, anon-rss:260292kB, file-rss:35924kB, shmem-rss:0kB, UID:1000 pgtables:1060kB oom_score_adj:200
+Oct 23 20:13:52 plazir27 systemd[1]: user@1000.service: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:13:52 plazir27 systemd[1529]: cap-run-1066820-1792797232022-067dbe.scope: The kernel OOM killer killed some processes in this unit.
+Oct 23 20:13:52 plazir27 systemd[1529]: cap-run-1066820-1792797232022-067dbe.scope: Failed with result 'oom-kill'.
+Oct 23 20:25:00 plazir27 earlyoom[1381]: mem avail: 20144 of 24332 MiB (82.79%), swap free: 26843 of 30979 MiB (86.65%)
+Oct 23 21:25:00 plazir27 earlyoom[1381]: mem avail: 16715 of 20397 MiB (81.95%), swap free: 26173 of 30979 MiB (84.49%)
+Oct 23 22:14:08 plazir27 systemd[1]: Started Early OOM Daemon.
+Oct 23 22:14:08 plazir27 earlyoom[1375]: earlyoom 1.9.0
+Oct 23 22:14:08 plazir27 earlyoom[1375]: Preferring to kill process names that match regex '(^|/)(java|node|chromium|python3?)$'
+Oct 23 22:14:08 plazir27 earlyoom[1375]: Will avoid killing process names that match regex '(^|/)(Hyprland|Xwayland|sddm|init|systemd|sshd|pipewire|wireplumber|waybar)$'
+Oct 23 22:14:08 plazir27 earlyoom[1375]: mem total: 30978 MiB, user mem total: 29239 MiB, swap total: 30979 MiB
+Oct 23 22:14:08 plazir27 earlyoom[1375]: sending SIGTERM when mem avail <= 10.00% and swap free <= 10.00%,
+Oct 23 22:14:08 plazir27 earlyoom[1375]:         SIGKILL when mem avail <=  5.00% and swap free <=  5.00%
+Oct 23 22:14:08 plazir27 earlyoom[1375]: mem avail: 29155 of 29231 MiB (99.74%), swap free: 30979 of 30979 MiB (100.00%)
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: received: app -- hypridle
+Oct 23 22:14:11 plazir27 uwsm_app-daemon[1805]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-d4bd7533.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+--- the single suspend hit 18:00-23:00 ---
+Oct 23 22:14:07 plazir27 kernel: nvme 0000:02:00.0: platform quirk: setting simple suspend
+--- logind lock/session events 19:00-22:30 ---
+Oct 23 22:14:08 plazir27 systemd[1]: Starting User Login Management...
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: New seat seat0.
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event2 (Yubico YubiKey OTP+FIDO+CCID)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event4 (Razer Razer DeathAdder V2 Keyboard)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event6 (Razer Razer DeathAdder V2)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event7 (HP, Inc HyperX Alloy Origins Core)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event8 (HP, Inc HyperX Alloy Origins Core Keypad)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event9 (HP, Inc HyperX Alloy Origins Core Consumer Control)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event1 (Power Button)
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: Watching system buttons on /dev/input/event0 (Power Button)
+Oct 23 22:14:08 plazir27 systemd[1]: Started User Login Management.
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: New session '1' of user 'vgpnk' with class 'manager' and type 'unspecified'.
+Oct 23 22:14:08 plazir27 systemd-logind[1384]: New session '2' of user 'vgpnk' with class 'user' and type 'wayland'.

@@ -1,0 +1,55 @@
+## S203 rederive 2026-10-25T03:30:29-03:00
+-rwxr-xr-x 1 vgpnk vgpnk 1089 Oct  3 17:42 /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630  /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run
+1089
+28
+--- body 1-28 ---
+     1	#!/bin/bash
+     2	
+     3	# omarchy:summary=Finish the installation of Omarchy with items that can only be done after logging in.
+     4	# omarchy:requires-sudo=true
+     5	
+     6	set -e
+     7	
+     8	FIRST_RUN_MODE=~/.local/state/omarchy/first-run.mode
+     9	
+    10	if [[ -f $FIRST_RUN_MODE ]]; then
+    11	  rm -f "$FIRST_RUN_MODE"
+    12	
+    13	  bash "$OMARCHY_PATH/install/first-run/battery-monitor.sh"
+    14	  bash "$OMARCHY_PATH/install/first-run/recover-internal-monitor.sh"
+    15	  bash "$OMARCHY_PATH/install/first-run/cleanup-reboot-sudoers.sh"
+    16	  bash "$OMARCHY_PATH/install/first-run/firewall.sh"
+    17	  bash "$OMARCHY_PATH/install/first-run/dns-resolver.sh"
+    18	  bash "$OMARCHY_PATH/install/first-run/gnome-theme.sh"
+    19	  bash "$OMARCHY_PATH/install/first-run/swayosd.sh"
+    20	  bash "$OMARCHY_PATH/install/first-run/gtk-primary-paste.sh"
+    21	  bash "$OMARCHY_PATH/install/first-run/text-scaling.sh"
+    22	  bash "$OMARCHY_PATH/install/first-run/elephant.sh"
+    23	  omarchy-hook-install post-update "$OMARCHY_PATH/install/first-run/install-voxtype.hook"
+    24	  sudo rm -f /etc/sudoers.d/first-run
+    25	
+    26	  bash "$OMARCHY_PATH/install/first-run/welcome.sh"
+    27	  bash "$OMARCHY_PATH/install/first-run/wifi.sh"
+    28	fi
+--- install/first-run listing ---
+battery-monitor.sh
+cleanup-reboot-sudoers.sh
+dns-resolver.sh
+elephant.sh
+firewall.sh
+gnome-theme.sh
+gtk-primary-paste.sh
+install-voxtype.hook
+recover-internal-monitor.sh
+swayosd.sh
+text-scaling.sh
+welcome.sh
+wifi.sh
+count_all: 13
+count_sh: 12
+count_hook: 1
+--- bash invocations in body ---
+12
+--- idle mentions in first-run dir ---
+0

@@ -1,0 +1,81 @@
+## A. assigned command (verbatim)
+ S189   `payload-absent` 
+ S195   `payload-absent` 
+ S201   `payload-absent` 
+ S205   `payload-absent` 
+ S224   `payload-absent` 
+ S228   `payload-absent` 
+ S199`   the cited source could not be fetched, so no quote was checked 
+ S200`   the cited source could not be fetched, so no quote was checked 
+ S209`   the gate block named no locator, so no quote was checked 
+ S222`   the gate block named no locator, so no quote was checked 
+ S223`   the gate block named no locator, so no quote was checked 
+ S225`   the gate block named no locator, so no quote was checked 
+ S235`   the gate block named no locator, so no quote was checked 
+awk_exit=0
+rows=13
+
+## B. split the two tables (line boundary of each section header)
+T1  S189   round1 
+T1  S195   round2 
+T1  S201   round2 
+T1  S205   round3 
+T1  S224   round4 
+T1  S228   round5 
+T2  S199`   round2 
+T2  S200`   round2 
+T2  S209`   round3 
+T2  S222`   round4 
+T2  S223`   round4 
+T2  S225`   round4 
+T2  S235`   round5 
+T1_rows=6  T2_rows=7
+T1_exit=0  T2_exit=0
+
+## C. independent recount: all lines whose lane cell is exactly `mado`
+14
+grep_exit=0
+line_numbers:
+141 142 143 144 145 146 248 349 350 351 352 353 354 355 
+
+## D. register-wide table sizes (for the share denominators)
+S1_all_lanes=194
+S2_all_lanes=109
+by_lane_sum=194
+by_lane_mado_row=248:| `mado` | 6 |
+
+## E. comm: slice ids vs the eight adopted ids S203-S210
+slice_ids=S189 S195 S199 S200 S201 S205 S209 S222 S223 S224 S225 S228 S235 
+adopted  =S203 S204 S205 S206 S207 S208 S209 S210 
+intersection:
+S205
+S209
+comm_exit=0
+adopted_not_in_slice:
+S203 S204 S206 S207 S208 S210 
+
+## F. packaging offset: does register id + 17 name the same document downstream?
+S189 -> S206 :  Hyprland v0.56.2 event-socket implementation — https://raw.githubuserco
+S195 -> S212 :  Arch Linux 中文维基 — Hyprland (简体中文) — https://mirror.sjtu.edu.cn/archlinu
+S199 -> S216 :  Hyprland 窗口规则配置解析（含 opacity 规则） — CSDN blog by 2301_76324845 — https://
+S200 -> S217 :  2026 Hyprland 学习笔记（Lua 配置与 hl.dsp 绑定） — CSDN blog by lxyoucan — https:/
+S201 -> S218 :  Temporal UI State Inconsistency in Desktop GUI Agents: Formalizing and 
+S205 -> S222 :  ArchWiki interwiki map (siteinfo) — https://wiki.archlinux.org/api.php?
+S209 -> S226 :  host compositor log bytes (~//run/user/1000/hypr/<HIS>/hyprland.log) — 
+S222 -> S239 :  host gkeep producer shim (~/.local/bin/gkeep) — /home/vgpnk/.local/bin/
+S223 -> S240 :  host AI-usage producer (~/.local/bin/ai-usage) — /home/vgpnk/.local/bin
+S224 -> S241 :  host AI-usage cache (~/.cache/ai-usage/status.json) — /home/vgpnk/.cach
+S225 -> S242 :  host compositor journal (wayland-wm@hyprland.desktop.service) — /var/lo
+S228 -> S245 :  Chinese ArchWiki export of the Hyprland article (lane's own copy of the
+S235 -> S252 :  host compositor socket directory and sockets — /run/user/1000/hypr/efb5
+
+## G. slice ids after packaging that land inside the adopted band S203-S210
+S206 (from S189)
+
+## H. lane ledger size / max id / the two colliding rows
+200
+S210
+207:| S205 | host idle-lock chain - the daemon's present liveness, the unit probe, the journal start lines and the two d
+211:| S209 | host waybar configuration backups - the dated copies of the bar's configuration and the idle-lock handler i
+
+DONE rc=0

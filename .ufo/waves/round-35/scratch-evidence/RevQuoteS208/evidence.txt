@@ -1,0 +1,63 @@
+Seat: RevQuoteS208   Round: 35 wave 2   Date: 2026-10-25
+Target: registry row S208 in corpus/SOURCES.md against live host source + receipt.
+
+(a) LIVE SOURCE RE-OPEN
+$ sha256sum /home/vgpnk/.local/share/omarchy/bin/omarchy-menu
+d196b086e961d524945a899c5eb6e1aa532d9594c924d78b78c1fff183a0f79d  /home/vgpnk/.local/share/omarchy/bin/omarchy-menu
+$ wc -c /home/vgpnk/.local/share/omarchy/bin/omarchy-menu
+33017 /home/vgpnk/.local/share/omarchy/bin/omarchy-menu
+exit 0
+
+$ nl -ba .../omarchy-menu | sed -n '205,214p'
+   205
+   206 show_toggle_menu() {
+   207   local options="\uf444  Screensaver\n\uf313  Nightlight\n\uf9d6  Idle Lock\n\uf09b  Notifications\n\uf01c  Top Bar\n\uf(…)  Workspace Layout\n…  Window Gaps\n…  1-Window Ratio\n\uf03b9  Monitor Scaling\n…  Direct Boot\n…  Passwordless Sudo"
+   208
+   209   case $(menu "Toggle" "$options") in
+   210   *Screensaver*) omarchy-toggle-screensaver ;;
+   211   *Nightlight*) omarchy-toggle-nightlight ;;
+   212   *Idle*) omarchy-toggle-idle ;;
+   213   *Notifications*) omarchy-toggle-notification-silencing ;;
+   214   *Bar*) omarchy-toggle-waybar ;;
+
+(b) GATE-QUOTE
+quote (105 bytes, 14 words):
+located: omarchy-menu line 207 lists Idle Lock among the toggles; line 212 dispatches omarchy-toggle-idle
+$ grep -c -F <quote> receipt     -> 1, grep_ex=0
+$ grep -bo -F <quote> receipt    -> 662:<quote>
+byte 661 = LF, byte 767 (right after quote) = LF, receipt len 768 -> quote is one complete line.
+entry line 'gate-quote: S208 ' remainder == quote bytes exactly: True
+receipt excerpt line "207:…" == live line 207 bytes: True (235 B each)
+receipt excerpt line "212:…" == live line 212 bytes: True (32 B each)
+receipt "dispatch arm count": 1 == grep -c 'omarchy-toggle-idle' live: 1
+
+(c) RECEIPT HASH ANCHOR
+$ sha256sum .ufo/waves/round-35/fetch/S208.receipt.txt
+6e72f0db3d7bbfecf4096b0aa22f716f417c00caa50b6d3319106387d6ce4654  (768 B)
+SOURCES.md S208 cell[5] (anchor) contains live-file sha  : True
+SOURCES.md S208 cell[5] (anchor) contains receipt sha     : True
+frozen.json c1 receipts["S208"].sha256                    : 6e72f0db…4654 (equal)
+
+ROW SHAPE (machine)
+cells=11 (== header count), no embedded pipe, one S208 row in file
+status='mined'  recheck='on-change'  used-by='corpus/knowledge/idle-lock-offered-in-the-bar-r15.md'
+scope='The second surface that offers the idle-lock choice'
+
+COUNTERS (reproduced, read-only)
+$ python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET   c1_exit=0
+$ python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET   c2_exit=0
+
+REACHABILITY (supports the row's "offers")
+omarchy-menu:851 show_main_menu -> "Trigger" -> :96/101 *Toggle*) show_toggle_menu
+omarchy-menu:860 go_to_menu *toggle*) show_toggle_menu ; :886-888 argv dispatch
+default/hypr/bindings/utilities.conf:5  bindd = SUPER CTRL, O, Toggle menu, exec, omarchy-menu toggle
+~/.config/hypr/hyprland.conf:8 sources utilities.conf
+no unbind of that chord in ~/.config/hypr (grep exit 1 = no match)
+
+IDENTITY
+type -a omarchy-menu -> single copy, exactly the receipt path; regular file mode -rwxr-xr-x
+omarchy version file: 3.8.3 ; menu mtime 2026-10-03 17:42:32 (older than verified-at 2026-10-24)
+
+DIVERGENCE: none.

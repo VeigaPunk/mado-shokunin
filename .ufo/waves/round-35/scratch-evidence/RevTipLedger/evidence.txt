@@ -1,0 +1,57 @@
+# RevTipLedger evidence transcript 2026-10-25T03:32:05-03:00
+
+## E1 counter
+$ python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+EXIT=0
+
+## E2 blob re-verification (cat-file -t / -s / blob|hash-object)
+.ufo/waves/round-33/c1/count.py type=blob size=3969 rehash=4ab3db435dd2e396402d1d83039e35082f1138fe
+.ufo/waves/round-33/c1/frozen.json type=blob size=1564 rehash=60d1094baa2992294533bae37e0990ae23077609
+.ufo/waves/round-33/c2/count.py type=blob size=3630 rehash=df563528e725951b447ef31b324ec4b7d264e91b
+.ufo/waves/round-34/c1/count.py type=blob size=6365 rehash=49089c186fb75f1bd2cc4c45c0161282ea6e8a46
+.ufo/waves/round-34/c1/frozen.json type=blob size=1235 rehash=0bfe0d866c4e9a2d17da297a11dae389150b488b
+.ufo/waves/round-34/c2/count.py type=blob size=5196 rehash=3a499a7eaa6cf5e861a5849992c37f1a7bede962
+.ufo/waves/round-34/c2/frozen.json type=blob size=679 rehash=ef3392b45f638513ff98dda95808f3f3938705e0
+
+## E3 tip chain
+19e4ab3 round-35: freeze C1 and C2 predicates, the clause ledger, the control receipts and the re-issued blob ledger
+6d754bd round-34 verifier spot-check (integrator, hyaku): non-author admit/reject
+dff3941 round-34: the lesson, the log entry, and the round-34 claim rows
+57622b8 round-34: wave-1 evidence (64 seats, 0 dead), the named r33 scratch dispositions, and the axis-gate selftest transcript
+fa7ba11 round-34: admit the waybar event-socket entry after the frozen counter
+3420e82 round-34: freeze C1 and C2 predicates and pre-data control receipts
+
+## E4 round-34-labelled commits on master
+6d754bd round-34 verifier spot-check (integrator, hyaku): non-author admit/reject
+dff3941 round-34: the lesson, the log entry, and the round-34 claim rows
+57622b8 round-34: wave-1 evidence (64 seats, 0 dead), the named r33 scratch dispositions, and the axis-gate selftest transcript
+fa7ba11 round-34: admit the waybar event-socket entry after the frozen counter
+3420e82 round-34: freeze C1 and C2 predicates and pre-data control receipts
+
+## E5 frozen paths changed dff3941..master (empty=unchanged)
+EXIT=0
+
+## E6 forgeries
+-- forged-A --
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+EXIT=0
+-- forged-B --
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+EXIT=0
+
+## E7 jj-keep sibling commits on frozen paths
+3420e82 2026-10-24 21:55:08 -0300 round-34: freeze C1 and C2 predicates and pre-data control receipts
+735f7e5 2026-10-24 21:55:08 -0300 
+c42a21f 2026-10-24 21:55:07 -0300 
+
+## E8 FORGERY C: r34_tip = fa7ba113 (the label the re-issue calls stale)
+blob@fa7ba113 for .ufo/waves/round-34/c1/count.py = 49089c186fb75f1bd2cc4c45c0161282ea6e8a46
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+EXIT=0
+
+## E9 master windows
+fa7ba113 master 2026-10-24 21:58:15 -> 22:46:39 (0:48:24)
+dff3941  master 2026-10-24 22:46:49 -> 23:04:26 (0:17:37)
+re-issue committed 23:24:06, i.e. 0:19:40 after dff3941 ceased being master
+round-34 artifact written ~22:34, inside fa7ba113's master window

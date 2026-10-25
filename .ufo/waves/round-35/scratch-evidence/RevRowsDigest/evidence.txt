@@ -1,0 +1,45 @@
+=== 0. baseline (live lane) ===
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+=== 1. per-receipt: working tree vs frozen vs HEAD blob ===
+S203 wt=OK head=OK anchor=OK wt=1b7fa87ffe933990ee59acf3629ffbe3a90106bc9ebcce082237f7f495dd1646
+S204 wt=OK head=OK anchor=OK wt=4cd5ba6518e4a6d950fcb510d2482e33be78abb20d22bef41d21a66f7d1c54ad
+S205 wt=OK head=OK anchor=OK wt=f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a
+S206 wt=OK head=OK anchor=OK wt=1d30e4a999b53d5288369edc7573d7ceee0aef99570a55d781c4625440a938d5
+S207 wt=OK head=OK anchor=OK wt=81c33e7926f0bad071d31e9fc67e1d06967e3142da40ea3c93b16510b0adec59
+S208 wt=OK head=OK anchor=OK wt=6e72f0db3d7bbfecf4096b0aa22f716f417c00caa50b6d3319106387d6ce4654
+S209 wt=OK head=OK anchor=OK wt=a170c7a50b9305b3448fc85ecddb0d7b1f1c3ff5e42c78cdc2d07718c3bdd27c
+S210 wt=OK head=OK anchor=OK wt=ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726
+
+=== 2. anchor rows at the freeze commit ===
+rows S203-S210 in HEAD:corpus/SOURCES.md: 0
+rows in worktree: 8
+worktree diff vs HEAD (numstat):
+8	0	corpus/SOURCES.md
+receipts diff vs HEAD (numstat, empty = identical):
+
+=== 3. falsifiers: mutations the C1 counter does not see ===
+m1 S210 actual sha 32754fd8cb4ecc6dd89defc586a337d073f43e1f654d49ca8e24f36e2ae84488 frozen ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726
+m5 S208 new sha 2b1a0387bf8af2d4ed10621c11a965cc038309a0a898e8803770bcbaed95c43e anchor+frozen re-pointed
+-- m1 (lane frozen.json) --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+-- m2 (lane frozen.json) --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+-- m3 (lane frozen.json) --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+-- m4 (lane frozen.json) --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+-- m5 (doubly re-pointed frozen.json) --
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+=== 4. clause the digest test actually implements ===
+174:            digest = hashlib.sha256(blob).hexdigest() if blob is not None else ""
+192:                and receipt["sha256"] in cs[5]
+-- is 'digest' ever read again? (grep count) --
+1

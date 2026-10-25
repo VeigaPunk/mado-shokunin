@@ -1,0 +1,75 @@
+## live directory: /home/vgpnk/.local/state/omarchy/toggles/hypr
+total 8
+drwxr-xr-x 1 vgpnk vgpnk  58 Oct  3 17:53 .
+drwxr-xr-x 1 vgpnk vgpnk   8 Oct 16 22:54 ..
+-rw-r--r-- 1 vgpnk vgpnk 141 Oct  3 17:44 flags.conf
+-rw-r--r-- 1 vgpnk vgpnk 135 Oct  3 17:53 window-no-gaps.conf
+ls-rc=0
+--- regular files (includes dotfiles) ---
+/home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf
+/home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf
+find-rc=0
+--- entry count, hidden included ---
+2
+--- files whose text names the idle lock (case-insensitive) ---
+grep-rc=1 (1 = no match)
+0
+--- per-file keyword counts ---
+flags.conf idle=0 lock=0 hypridle=0 size=141 mtime=2026-10-03 17:44:36.862636852 -0300
+window-no-gaps.conf idle=0 lock=0 hypridle=0 size=135 mtime=2026-10-03 17:53:16.247826301 -0300
+--- directory mtime vs window-no-gaps.conf mtime (entry-set stability) ---
+/home/vgpnk/.local/state/omarchy/toggles/hypr 2026-10-03 17:53:16.247826301 -0300
+/home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf 2026-10-03 17:53:16.247826301 -0300
+
+## receipt bytes and gate-quote contiguity
+receipt bytes: 385
+quote bytes: 82
+first index: 302 occurrences: 1
+contiguous_substring: True
+after-quote bytes: b'\n'
+entry_quote_equal_to_receipt_substring: True
+entry_quote_words: 15
+gate_quote_lines_for_S210: 1
+py-rc=0
+
+## receipt sha256 vs row anchor
+ef282e386cdfb686fd331f4ed2fa7f0a33faf3ef4714844639b3eee4790b8726  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S210.receipt.txt
+sha-rc=0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-35/fetch/S210.receipt.txt type=regular file size=385 mtime=2026-10-24 23:21:21.663538555 -0300
+1
+S210 row count: 1
+cells: 11
+status: 'mined' opened: '2026-10-24' recheck: '90d'
+used-by tokens: ['corpus/knowledge/idle-lock-offered-in-the-bar-r15.md']
+escaped pipe in row: False
+sha in anchor cell (6): True
+py-rc=0
+
+## provenance discriminator: score runs on the state dir, not the default dir
+3
+
+## who writes the toggle store / does the idle toggle persist anything
+23:source = ~/.local/state/omarchy/toggles/hypr/*.conf
+
+FLAG_NAME="$1"
+FLAG="$HOME/.local/state/omarchy/toggles/hypr/$FLAG_NAME.conf"
+FLAG_SOURCE="$OMARCHY_PATH/default/hypr/toggles/$FLAG_NAME.conf"
+
+FLAG_NAME="$1"
+FLAG="$HOME/.local/state/omarchy/toggles/$FLAG_NAME"
+
+#!/bin/bash
+
+# omarchy:summary=Toggle hypridle idle locking
+
+if pgrep -x hypridle >/dev/null; then
+  pkill -x hypridle
+  notify-send -u low "󱫖    Stop locking computer when idle"
+else
+  uwsm-app -- hypridle >/dev/null 2>&1 &
+  notify-send -u low "󱫖    Now locking computer when idle"
+fi
+
+pkill -RTMIN+9 waybar
+--- idle-named state anywhere under omarchy state (depth<=2) ---
+find-rc=0

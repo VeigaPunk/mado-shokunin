@@ -1,0 +1,190 @@
+# RevQuoteS205 evidence 2026-10-25T03:31:59-03:00
+
+$ pgrep -x hypridle
+1667
+exit=0
+
+$ pgrep -ax hypridle
+1667 /usr/bin/hypridle
+exit=0
+
+$ systemctl --user is-active hypridle
+inactive
+exit=3
+
+$ sha256sum /home/vgpnk/.config/hypr/hypridle.conf
+e7d3b8dd983523e4defbfbacfd7ed73fc55407e175766bf44542e5708307de41  /home/vgpnk/.config/hypr/hypridle.conf
+exit=0
+
+$ grep -n timeout /home/vgpnk/.config/hypr/hypridle.conf
+10:    timeout = 150
+11:    on-timeout = pidof hyprlock || omarchy-launch-screensaver
+16:    timeout = 152
+17:    on-timeout = omarchy-system-lock
+exit=0
+
+$ sha256sum .ufo/waves/round-35/fetch/S205.receipt.txt
+f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a  .ufo/waves/round-35/fetch/S205.receipt.txt
+exit=0
+
+$ ps -o pid,ppid,lstart,etimes,cmd -p 1667
+ PID PPID STARTED                  ELAPSED COMMAND
+1667 1619 Fri Oct 23 22:14:10 2026  105469 /usr/bin/hypridle
+exit=0
+
+$ cat /proc/1667/cgroup
+0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/app-Hyprland-hypridle-d4bd7533.scope
+exit=0
+
+$ systemctl --user status app-Hyprland-hypridle-d4bd7533.scope
+● app-Hyprland-hypridle-d4bd7533.scope - hypridle
+     Loaded: loaded (/run/user/1000/systemd/transient/app-Hyprland-hypridle-d4bd7533.scope; transient)
+  Transient: yes
+     Active: active (running) since Fri 2026-10-23 22:14:11 -03; 1 day 5h ago
+ Invocation: 2442255cb0e04a94a860b80ec46c1aac
+      Tasks: 2 (limit: 36859)
+     Memory: 1.6M (peak: 509.5M, swap: 404K, swap peak: 72.4M, zswap: 4.1K)
+        CPU: 11.009s
+     CGroup: /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/app-Hyprland-hypridle-d4bd7533.scope
+             └─1667 /usr/bin/hypridle
+
+Oct 23 22:14:11 plazir27 systemd[1493]: Started hypridle.
+
+$ systemctl --user show hypridle.service -p ActiveState -p SubState -p UnitFileState
+ActiveState=inactive
+SubState=dead
+UnitFileState=disabled
+exit=0
+
+$ journalctl --list-boots
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -3 6a7f4fdfac624e2ea6c1b3c55d6f94f4 Fri 2026-10-23 07:18:30 -03 Fri 2026-10-23 13:21:50 -03
+ -2 d577c6e020934012a19ce97122158487 Fri 2026-10-23 13:22:32 -03 Fri 2026-10-23 13:23:13 -03
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5 Fri 2026-10-23 13:24:36 -03 Fri 2026-10-23 22:12:24 -03
+  0 0a3785aac7104585a914f6cda41795a7 Fri 2026-10-23 22:14:07 -03 Sun 2026-10-25 03:31:57 -03
+exit=0
+
+$ journalctl MESSAGE='Started hypridle.' -o verbose | key fields
+    _PID=1529
+    _SYSTEMD_UNIT=user@1000.service
+    _SYSTEMD_USER_UNIT=init.scope
+    _BOOT_ID=e55f9cd9ec4e4dd5bf0ce775977af5a5
+    MESSAGE=Started hypridle.
+    _SYSTEMD_UNIT=user@1000.service
+    _SYSTEMD_USER_UNIT=init.scope
+    _PID=1493
+    _BOOT_ID=0a3785aac7104585a914f6cda41795a7
+    MESSAGE=Started hypridle.
+exit=0
+
+# --- wave-2 peer cross-check, 2026-10-25T03:38:35-03:00 ---
+
+$ journalctl --list-boots --no-pager
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -3 6a7f4fdfac624e2ea6c1b3c55d6f94f4 Fri 2026-10-23 07:18:30 -03 Fri 2026-10-23 13:21:50 -03
+ -2 d577c6e020934012a19ce97122158487 Fri 2026-10-23 13:22:32 -03 Fri 2026-10-23 13:23:13 -03
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5 Fri 2026-10-23 13:24:36 -03 Fri 2026-10-23 22:12:24 -03
+  0 0a3785aac7104585a914f6cda41795a7 Fri 2026-10-23 22:14:07 -03 Sun 2026-10-25 03:38:25 -03
+exit=0
+
+$ journalctl --boot=-3 | grep -c 'Started hypridle\.'
+0
+$ journalctl --boot=-2 | grep -c 'Started hypridle\.'
+0
+$ journalctl --boot=-1 | grep -c 'Started hypridle\.'
+1
+$ journalctl --boot=0 | grep -c 'Started hypridle\.'
+1
+
+$ journalctl --boot=-3 | grep -i hypridle
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopping hypridle...
+Oct 23 13:21:39 plazir27 systemd[1490]: Stopped hypridle.
+Oct 23 13:21:39 plazir27 systemd[1490]: app-Hyprland-hypridle-59197064.scope: Consumed 22.796s CPU time over 1d 8h 25min 52.144s wall clock time, 189.2M memory peak, 460K memory swap peak.
+
+$ journalctl --boot=-1 | grep -i hypridle
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: received: app -- hypridle
+Oct 23 13:25:00 plazir27 uwsm_app-daemon[1838]: sent: exec systemd-run --user --scope --slice=app-graphical.slice --unit=app-Hyprland-hypridle-9408787a.scope --description=hypridle --quiet --collect --same-dir -- hypridle
+Oct 23 13:25:00 plazir27 systemd[1529]: Started hypridle.
+Oct 23 19:24:38 plazir27 systemd[1529]: app-Hyprland-hypridle-9408787a.scope: Consumed 2.783s CPU time over 5h 59min 38.213s wall clock time, 525.7M memory peak, 384K memory swap peak.
+
+$ journalctl --no-pager | head -1
+Oct 23 07:18:30 plazir27 systemd[1490]: Started [systemd-run] /usr/bin/env -i PATH=/usr/bin bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /run --bind /tmp/cap-run-selftest.mzy5bW /tmp/cap-run-selftest.mzy5bW --chdir /tmp/cap-run-selftest.mzy5bW --unshare-pid --die-with-parent --new-session --clearenv --setenv PATH /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin:/usr/bin --argv0 node /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node -e "process.stdout.write(\"OUT_92AB980954\"+\"\\n\");process.exit(7)".
+
+$ journalctl --boot=-1 | grep -v ' kernel: ' | tail -1
+Oct 23 22:10:20 plazir27 systemd[1529]: ai-usage.service: Consumed 4.846s CPU time over 50.535s wall clock time, 203.5M memory peak.
+
+$ systemctl --user show scope -p MainPID | cat -A
+exit=0
+
+$ systemctl --user is-active hypridle; echo RC
+inactive
+RC=3
+
+$ systemctl --user is-active definitely-not-a-unit-xyz; echo RC
+inactive
+RC=4
+
+$ grep -cE 'systemctl|is-active|pgrep|journalctl|sha256sum' S205.receipt.txt
+0
+exit=1
+
+$ wc -l launcher screensaver
+  59 /home/vgpnk/.local/share/omarchy/bin/omarchy-launch-screensaver
+  35 /home/vgpnk/.local/share/omarchy/bin/omarchy-screensaver
+  94 total
+
+$ grep -cE 'hyprlock|omarchy-system-lock|swaylock' launcher screensaver
+/home/vgpnk/.local/share/omarchy/bin/omarchy-launch-screensaver:0
+/home/vgpnk/.local/share/omarchy/bin/omarchy-screensaver:0
+exit=1
+
+$ command -v tte && tte --version
+/usr/bin/tte
+TerminalTextEffects 0.15.0
+
+# --- post-E2 state + journal scope, 2026-10-25T03:41:47-03:00 ---
+
+$ journalctl --user --list-boots --no-pager
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -2 6a7f4fdfac624e2ea6c1b3c55d6f94f4 Fri 2026-10-23 07:18:30 -03 Fri 2026-10-23 13:21:44 -03
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5 Fri 2026-10-23 13:24:57 -03 Fri 2026-10-23 22:10:20 -03
+  0 0a3785aac7104585a914f6cda41795a7 Fri 2026-10-23 22:14:08 -03 Sun 2026-10-25 03:40:53 -03
+exit=0
+
+$ journalctl --list-boots --no-pager
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -3 6a7f4fdfac624e2ea6c1b3c55d6f94f4 Fri 2026-10-23 07:18:30 -03 Fri 2026-10-23 13:21:50 -03
+ -2 d577c6e020934012a19ce97122158487 Fri 2026-10-23 13:22:32 -03 Fri 2026-10-23 13:23:13 -03
+ -1 e55f9cd9ec4e4dd5bf0ce775977af5a5 Fri 2026-10-23 13:24:36 -03 Fri 2026-10-23 22:12:24 -03
+  0 0a3785aac7104585a914f6cda41795a7 Fri 2026-10-23 22:14:07 -03 Sun 2026-10-25 03:41:44 -03
+
+user boot -2 starts=0
+user boot -2 hypridle_lines=3
+user boot -1 starts=1
+user boot -1 hypridle_lines=4
+user boot 0 starts=1
+user boot 0 hypridle_lines=5
+
+$ stat -c 'size=%s mtime=%y' corpus/knowledge/idle-lock-chain-armed-r14.md
+size=3768 mtime=2026-10-25 03:35:30.276175284 -0300
+
+$ sed -n '1p;11p;17p;20p' entry
+# The idle lock is armed on this host - the daemon is running and the chain will fire
+gate-quote: S205 located: hypridle runs as pid 1667 and started in this session; hypridle.conf sets timeout 150 and 152
+at 22:14:11 - a restart, not a first start.
+(S205), and both fire the desktop's own lock command.
+
+$ grep -n 'Err ata|E1|E2' entry
+39:### Errata (round 35, wave 2)
+41:- **E1 - boot ids.** The two `Started hypridle.` lines dated 2026-10-23 do not both
+49:- **E2 - the two lines are two boots' first starts, and only one step locks.** E1 above
+
+$ sha256sum S205.receipt.txt
+f3387bfcbac79016034be38bab6548ae31df5860e5aafaa03105aca84b08ae1a  .ufo/waves/round-35/fetch/S205.receipt.txt
+
+$ C1 after E2
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+rc=0
+$ C2 after E2
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+rc=0

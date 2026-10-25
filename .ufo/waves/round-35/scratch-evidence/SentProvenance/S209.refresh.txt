@@ -1,0 +1,41 @@
+## omarchy-refresh-config lines 1-40 2026-10-25T03:35:16-03:00
+     1	#!/bin/bash
+     2	
+     3	# omarchy:summary=Copies the named config from ~/.local/share/omarchy/config/X/Y/Z -> ~/.config/X/Y/Z.
+     4	# omarchy:args=<config-path>
+     5	
+     6	config_file=$1
+     7	
+     8	if [[ -z $config_file ]]; then
+     9	  cat <<USAGE
+    10	  Usage: $0 [config_file]
+    11	
+    12	  Must provide a file path from the .config directory to be refreshed.
+    13	  To copy ~/.local/share/omarchy/config/hypr/hyprlock.conf to ~/.config/hypr/hyprlock.conf
+    14	
+    15	    $0 hypr/hyprlock.conf
+    16	USAGE
+    17	  exit 1
+    18	fi
+    19	
+    20	# Backup the destination file (with timestamp) to avoid clobbering (Ex: hyprlock.conf.bak.1753817951)
+    21	user_config_file="${HOME}/.config/$config_file"
+    22	default_config_file="${HOME}/.local/share/omarchy/config/$config_file"
+    23	backup_config_file="$user_config_file.bak.$(date +%s)"
+    24	
+    25	mkdir -p "$(dirname "$user_config_file")"
+    26	
+    27	if [[ -f $user_config_file ]]; then
+    28	  # Create preliminary backup
+    29	  cp -f "$user_config_file" "$backup_config_file" 2>/dev/null
+    30	
+    31	  # Replace config with new default
+    32	  cp -f "$default_config_file" "$user_config_file" 2>/dev/null
+    33	
+    34	  # Compare and delete/inform accordingly
+    35	  if cmp -s "$user_config_file" "$backup_config_file"; then
+    36	    rm "$backup_config_file"
+    37	  else
+    38	    echo -e "\e[31mReplaced $user_config_file with new Omarchy default.\nSaved backup as ${backup_config_file}.\n\n\e[32mChanges:\e[0m"
+    39	    diff "$user_config_file" "$backup_config_file" || true
+    40	  fi

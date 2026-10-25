@@ -1,0 +1,26 @@
+== T0 base: all data present ==
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+  exit=0
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+  exit=0
+== T1 C2 with C1 claim data absent (no 3 entries, no S203-S210, no index rows) ==
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+  exit=0
+  (C1 must now fail, proving the data really is absent)
+PRED-C1-r35-v1 closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
+  exit=1
+== T2 C1 with C2 artifacts absent (no round-35 c2 dir, no ledger dir) ==
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+  exit=0
+== T3 C2 with the C1 clause ledger absent ==
+PRED-C2-r35-v1 error=clause-ledger-missing
+  exit=2
+== T4 C2 with C1 control receipts absent ==
+PRED-C2-r35-v1 uncovered=9 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MISSED
+  exit=1
+== T5 C2 with a phantom retired id (never existed in r34) ==
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+  exit=0
+== T6 C1 with the clause ledger and controls absent (C1 reads neither) ==
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+  exit=0

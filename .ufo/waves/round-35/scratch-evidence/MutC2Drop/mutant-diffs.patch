@@ -1,0 +1,215 @@
+--- count.py
++++ m01-frozen-missing.py
+@@ -64,4 +64,3 @@
+     frozen_path = Path(args.frozen)
+-    if not frozen_path.is_file():
+-        die("frozen-missing")
++    # dropped: frozen-missing guard
+     spec = json.loads(frozen_path.read_text())
+
+--- count.py
++++ m02-predicate-drift.py
+@@ -67,4 +67,3 @@
+     spec = json.loads(frozen_path.read_text())
+-    if spec.get("predicate") != PREDICATE:
+-        die("predicate-drift")
++    # dropped: predicate-drift guard
+     if spec.get("target") != EXPECTED_TARGET:
+
+--- count.py
++++ m03-target-drift.py
+@@ -69,4 +69,3 @@
+         die("predicate-drift")
+-    if spec.get("target") != EXPECTED_TARGET:
+-        die("target-drift")
++    # dropped: target-drift guard
+ 
+
+--- count.py
++++ m04-ledger-missing.py
+@@ -73,4 +73,3 @@
+     ledger_path = repo / spec["clause_ledger"]
+-    if not ledger_path.is_file():
+-        die("clause-ledger-missing")
++    # dropped: clause-ledger-missing guard
+     ledger = json.loads(ledger_path.read_text())
+
+--- count.py
++++ m05-nl-skip.py
+@@ -82,5 +82,2 @@
+     for clause in live:
+-        nl = clause.get("not-load-bearing")
+-        if nl and nl.get("reason"):
+-            continue
+         control = clause.get("control")
+
+--- count.py
++++ m06-bare-clause.py
+@@ -87,4 +87,3 @@
+         if not control:
+-            uncovered += 1
+-            continue
++            continue  # dropped: bare clause counts as covered
+         receipt = repo / control["receipt"]
+
+--- count.py
++++ m07-receipt-exists.py
+@@ -90,3 +90,3 @@
+         receipt = repo / control["receipt"]
+-        if not receipt.is_file() or not MISSED.search(receipt.read_text()):
++        if not MISSED.search(receipt.read_text()):
+             uncovered += 1
+
+--- count.py
++++ m08-receipt-missed.py
+@@ -90,3 +90,3 @@
+         receipt = repo / control["receipt"]
+-        if not receipt.is_file() or not MISSED.search(receipt.read_text()):
++        if not receipt.is_file():
+             uncovered += 1
+
+--- count.py
++++ m09-retired-absent.py
+@@ -95,3 +95,3 @@
+     for clause in retired:
+-        if clause["id"] not in live_ids:
++        if True:  # dropped: retired id must be absent from live
+             retired_count += 1
+
+--- count.py
++++ m10-toctou-exact.py
+@@ -99,3 +99,3 @@
+     declared = [c["id"] for c in live if (c.get("not-load-bearing") or {}).get("reason")]
+-    toctou_declared = 1 if declared == [spec["toctou_clause"]] else 0
++    toctou_declared = 1 if declared else 0  # dropped: exact singleton identity
+ 
+
+--- count.py
++++ m11-blobledger-exists.py
+@@ -103,3 +103,3 @@
+     ledger_doc = repo / spec["blob_ledger"]
+-    if ledger_doc.is_file():
++    if True:  # dropped: blob-ledger is_file guard
+         text = ledger_doc.read_text()
+
+--- count.py
++++ m12-tip-in-ledger.py
+@@ -105,3 +105,3 @@
+         text = ledger_doc.read_text()
+-        if spec["r34_tip"] in text:
++        if True:  # dropped: r34 tip must appear in ledger text
+             ok = True
+
+--- count.py
++++ m13-revparse-try.py
+@@ -109,12 +109,8 @@
+                 rev_path = f"{spec['r34_tip']}:{blob['path']}"
+-                try:
+-                    raw = subprocess.run(
+-                        ["git", "-C", str(repo), "rev-parse", rev_path],
+-                        capture_output=True,
+-                        check=True,
+-                        text=True,
+-                    ).stdout.strip()
+-                except subprocess.CalledProcessError:
+-                    ok = False
+-                    break
++                raw = subprocess.run(
++                    ["git", "-C", str(repo), "rev-parse", rev_path],
++                    capture_output=True,
++                    check=True,
++                    text=True,
++                ).stdout.strip()  # dropped: CalledProcessError catch
+                 if raw != blob["blob_id"]:
+
+--- count.py
++++ m14-blob-id-eq.py
+@@ -119,5 +119,3 @@
+                     break
+-                if raw != blob["blob_id"]:
+-                    ok = False
+-                    break
++                # dropped: blob id equality check
+             if ok:
+
+--- count.py
++++ m15-declared-reason.py
+@@ -98,3 +98,3 @@
+ 
+-    declared = [c["id"] for c in live if (c.get("not-load-bearing") or {}).get("reason")]
++    declared = [c["id"] for c in live if c.get("not-load-bearing")]  # dropped: reason required
+     toctou_declared = 1 if declared == [spec["toctou_clause"]] else 0
+
+--- count.py
++++ m16-nl-reason.py
+@@ -83,4 +83,4 @@
+         nl = clause.get("not-load-bearing")
+-        if nl and nl.get("reason"):
+-            continue
++        if nl:
++            continue  # dropped: declaration must carry a reason
+         control = clause.get("control")
+
+--- count.py
++++ m17-met-uncovered.py
+@@ -131,3 +131,3 @@
+     }
+-    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET)
++    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET if k != "uncovered")
+     verdict = "TARGET_MET" if met else "TARGET_MISSED"
+
+--- count.py
++++ m18-met-retired.py
+@@ -131,3 +131,3 @@
+     }
+-    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET)
++    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET if k != "retired")
+     verdict = "TARGET_MET" if met else "TARGET_MISSED"
+
+--- count.py
++++ m19-met-toctou.py
+@@ -131,3 +131,3 @@
+     }
+-    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET)
++    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET if k != "toctou_declared")
+     verdict = "TARGET_MET" if met else "TARGET_MISSED"
+
+--- count.py
++++ m20-met-tip.py
+@@ -131,3 +131,3 @@
+     }
+-    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET)
++    met = all(observed[k] == EXPECTED_TARGET[k] for k in EXPECTED_TARGET if k != "ledger_tip_ok")
+     verdict = "TARGET_MET" if met else "TARGET_MISSED"
+
+--- count.py
++++ m21-toctou-len1.py
+@@ -99,3 +99,3 @@
+     declared = [c["id"] for c in live if (c.get("not-load-bearing") or {}).get("reason")]
+-    toctou_declared = 1 if declared == [spec["toctou_clause"]] else 0
++    toctou_declared = 1 if len(declared) == 1 else 0  # dropped: clause identity
+ 
+
+--- count.py
++++ m22-retired-get.py
+@@ -77,3 +77,3 @@
+     live = ledger["live"]
+-    retired = ledger.get("retired", [])
++    retired = ledger["retired"]  # dropped: absent-retired tolerance
+     live_ids = {c["id"] for c in live}
+
+--- count.py
++++ m23-revparse-check.py
+@@ -113,3 +113,3 @@
+                         capture_output=True,
+-                        check=True,
++                        check=False,  # dropped
+                         text=True,
+
+--- count.py
++++ m24-control-get.py
+@@ -85,3 +85,3 @@
+             continue
+-        control = clause.get("control")
++        control = clause["control"]  # dropped: absent-control tolerance
+         if not control:

@@ -1,0 +1,79 @@
+# CritVacRecheck — raw run log (all commands, exit codes, outputs)
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Scratch: .ufo/waves/round-35/scratch/CritVacRecheck
+
+## A. Baselines on the real tree
+
+$ python3 -I .ufo/waves/round-35/c1/count.py --root . --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+$ python3 -I .ufo/waves/round-35/c2/count.py --repo . --frozen .ufo/waves/round-35/c2/frozen.json
+PRED-C2-r35-v1 uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 verdict=TARGET_MET
+exit=0
+
+$ python3 -I .ufo/waves/round-35/c1/count.py --root .ufo/waves/round-35/scratch/CritVacuous \
+    --frozen .ufo/waves/round-35/c1/frozen.json
+PRED-C1-r35-v1 closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+exit=0
+
+## B. Differential arms (built by scratch/CritVacRecheck/build.py, manifest.json)
+
+$ for arm in T0-real-copy T1-prose-deleted T2-receipts-replaced T3-both \
+           T4-receipts-all-diff T5-both-all-diff T6-unread-junk; do ...
+T0-real-copy             exit=0  closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+T1-prose-deleted         exit=0  closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+T2-receipts-replaced     exit=0  closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+T3-both                  exit=0  closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+T4-receipts-all-diff     exit=1  closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
+T5-both-all-diff         exit=1  closed_entries=0 closed_rows=0 open_cites=8 verdict=TARGET_MISSED
+T6-unread-junk           exit=0  closed_entries=3 closed_rows=8 open_cites=0 verdict=TARGET_MET
+
+## C. c2 on copies (support files only; no corpus at all in C3)
+
+C1-support-real        exit=0  uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 MET
+C2-support-mutated     exit=0  uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 MET
+C3-ledger-only         exit=0  uncovered=0 retired=1 toctou_declared=1 ledger_tip_ok=1 MET
+
+$ git -C .../c2/C3-ledger-only rev-parse --show-toplevel
+/home/vgpnk/Projects/shokunin/mado-shokunin
+$ git -C .../c2/C3-ledger-only rev-parse dff3941...:.ufo/waves/round-33/c1/count.py
+4ab3db435dd2e396402d1d83039e35082f1138fe
+
+## D. Predicate-visible tuple (scratch/CritVacRecheck/probe.py)
+
+real vs T0 / T3 / T6: IDENTICAL (8/8 cites, all 9 fields).
+real vs CritVacuous junk: differs only in quote_words (13-17 vs 2); ok=true on all 8 cites.
+
+## E. strace
+
+c1 on T3: opens exactly corpus/SOURCES.md, the 3 entries, the 8 receipts, frozen.json.
+          0 opens of any cited host path (config.jsonc, omarchy-menu, idle.sh, first-run),
+          0 opens of the census, 0 opens of the real corpus.
+c2 on C3-ledger-only: 0 opens of corpus/, 0 of knowledge/idle-lock*, 0 of fetch/S2*,
+          0 of SOURCES.md; opens clauses.json + 10 control receipts + blob ledger, then
+          git on the real repo's .git (287 .git path references).
+
+## F. AST (digest is write-only)
+
+assignments to digest: [174]; reads of digest: []; hashlib occurrences: 2 (import + call).
+
+## G. Repair validation (scratch/CritVacRecheck/repair/count_digest.py)
+
+one added conjunct: digest == receipt["sha256"] (keeps the row-substring test too)
+
+REAL-LANE              exit=0  MET   (3/8/0)
+T0-real-copy           exit=0  MET
+golden                 exit=0  MET
+T1-prose-deleted       exit=0  MET   <-- residual: prose emptiness still passes
+T6-unread-junk         exit=0  MET   <-- residual: unread cells still pass
+T3-both                exit=1  MISSED (0/0/8)
+CritVacuous junk       exit=1  MISSED (0/0/8)
+
+all 10 control trees: exit=1 TARGET_MISSED (kill rule preserved).
+
+## H. c2 coupling of the repair
+
+new live clause digest-bytes-match, no control -> uncovered=1 TARGET_MISSED exit=1
+same clause + control receipt (T3 run)           -> uncovered=0 TARGET_MET   exit=0

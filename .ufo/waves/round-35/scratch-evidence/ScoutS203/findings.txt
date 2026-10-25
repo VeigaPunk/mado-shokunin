@@ -1,0 +1,71 @@
+ScoutS203 — host re-open of omarchy-first-run — 2026-10-24
+=========================================================
+
+TARGET: /home/vgpnk/.local/share/omarchy/bin/omarchy-first-run (read-only re-open)
+
+MEASURED
+--------
+sha256 : 20508471d8237a60e630baf58f87c0b5a4391e34196ce11e5034745f6a062630
+bytes  : 1089
+(sha256sum + stat -c '%s', run 2026-10-24)
+
+DIRECTORY /home/vgpnk/.local/share/omarchy/install/first-run/ — 13 entries total
+------------------------------------------------------------------------------
+battery-monitor.sh            253B
+cleanup-reboot-sudoers.sh     124B
+dns-resolver.sh               176B
+elephant.sh                    64B
+firewall.sh                   607B
+gnome-theme.sh                251B
+gtk-primary-paste.sh           72B
+install-voxtype.hook          174B   <- not a .sh
+recover-internal-monitor.sh    65B
+swayosd.sh                     84B
+text-scaling.sh               238B
+welcome.sh                    159B
+wifi.sh                       344B
+12 *.sh files + 1 *.hook file.
+
+RUN COUNT — what the installer body actually executes
+-----------------------------------------------------
+Direct `bash "$OMARCHY_PATH/install/first-run/*.sh"` invocations: 12
+  script lines 13-22 (battery-monitor, recover-internal-monitor,
+  cleanup-reboot-sudoers, firewall, dns-resolver, gnome-theme,
+  swayosd, gtk-primary-paste, text-scaling, elephant)
+  and lines 26-27 (welcome, wifi).
+Script line 23 does NOT run a first-run script now:
+  `omarchy-hook-install post-update "$OMARCHY_PATH/install/first-run/install-voxtype.hook"`
+  — registers install-voxtype.hook as a post-update hook (deferred).
+Line 24 removes /etc/sudoers.d/first-run.
+So: 12 first-run scripts run immediately; the .hook is installed, not run.
+
+IDLE-LOCK CHECK — CONFIRMED none concerns the idle lock
+-------------------------------------------------------
+`grep -inE 'idle|lock|hypridle|swayidle|loginctl|screensaver|blank' *.sh *.hook`
+inside install/first-run/ returned nothing (exit 1).
+No script name references idle/lock either — names listed above.
+
+COMPARISON vs .ufo/waves/round-35/fetch/S203.receipt.txt
+------------------------------------------------------
+receipt line 3 sha256 : MATCH (20508471…062630, identical)
+receipt line 4 bytes  : MATCH (1089)
+receipt line 35 "12"  : consistent if read as ".sh count"; the name list
+  at receipt lines 36-48 prints 13 names including install-voxtype.hook.
+  Exact directory enumeration on re-open = 13 entries (12 .sh + 1 .hook).
+receipt line 51 "install/first-run/ lists 12 scripts; the omarchy-first-run
+  body runs all 12; none is idle-lock":
+  CONFIRMED with one precision — the directory lists 13 entries; 12 are .sh
+  scripts that the body runs directly, and install-voxtype.hook is installed
+  as a post-update hook (script line 23), not run in the body.
+  Net difference: none substantive. Clarification only.
+
+LINES RELIED ON
+---------------
+omarchy-first-run line 10: `if [[ -f $FIRST_RUN_MODE ]]; then`
+  (whole body is gated on the mode file; line 11 removes it first)
+omarchy-first-run lines 13-22 + 26-27: the 12 `bash "$OMARCHY_PATH/…/*.sh"` calls
+omarchy-first-run line 23: `omarchy-hook-install post-update "$OMARCHY_PATH/install/first-run/install-voxtype.hook"`
+omarchy-first-run line 28: `fi`
+receipt lines 3-4: hash + size (both match re-measurement)
+receipt lines 35-48: count line "12" vs the 13-name list it precedes
+receipt line 51: receipt's own summary claim

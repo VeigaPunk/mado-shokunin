@@ -1,0 +1,39 @@
+## S210 toggle-registry semantics 2026-10-25T03:33:23-03:00
+--- omarchy-hyprland-toggle (the toggles/hypr writer) ---
+     1	#!/bin/bash
+     2	
+     3	# omarchy:summary=Toggle permanent Hyprland flags by copying them into a directory that's sourced entirely.
+     4	# omarchy:args=[--enabled-notification <text>] [--disabled-notification <text>] <flag-name>
+     5	
+     6	ENABLED_NOTIFICATION=""
+     7	DISABLED_NOTIFICATION=""
+     8	
+     9	while [[ $# -gt 1 ]]; do
+    10	  case $1 in
+    11	    --enabled-notification) ENABLED_NOTIFICATION="$2"; shift 2 ;;
+    12	    --disabled-notification) DISABLED_NOTIFICATION="$2"; shift 2 ;;
+    13	    *) break ;;
+    14	  esac
+    15	done
+    16	
+    17	FLAG_NAME="$1"
+    18	FLAG="$HOME/.local/state/omarchy/toggles/hypr/$FLAG_NAME.conf"
+    19	FLAG_SOURCE="$OMARCHY_PATH/default/hypr/toggles/$FLAG_NAME.conf"
+    20	
+    21	if [[ -f $FLAG ]]; then
+    22	  rm $FLAG
+    23	  [[ -n $DISABLED_NOTIFICATION ]] && notify-send -u low "$DISABLED_NOTIFICATION"
+    24	elif [[ -f $FLAG_SOURCE ]]; then
+    25	  cp $FLAG_SOURCE $FLAG
+    26	  [[ -n $ENABLED_NOTIFICATION ]] && notify-send -u low "$ENABLED_NOTIFICATION"
+    27	else
+    28	  echo "Flag not found: $FLAG_NAME"
+    29	  exit 1
+    30	fi
+    31	
+    32	hyprctl reload
+--- does any toggles/hypr file mention window-no-gaps writer? ---
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-window-gaps-toggle:5:omarchy-hyprland-toggle window-no-gaps
+--- toggle-idle write test (static) ---
+5:if pgrep -x hypridle >/dev/null; then
+9:  uwsm-app -- hypridle >/dev/null 2>&1 &

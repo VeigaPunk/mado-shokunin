@@ -1,0 +1,83 @@
+{
+ "id": "CLAUSES-r35-v1",
+ "counter": ".ufo/waves/round-35/c1/count.py",
+ "live": [
+  {
+   "id": "entry-regular",
+   "why": "The entry path is a regular file inside the scored root.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "row-unique",
+   "why": "Exactly one registry row carries the id.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "row-well-formed",
+   "why": "The row has eleven cells; a pipe inside a cell adds a field, so the literal-pipe and escaped-pipe cases are both covered by the field count.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "used-by-exact",
+   "why": "The row's used-by token set is exactly the admitted entries citing the id.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "status-mined",
+   "why": "The row's status is `mined`.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "recheck-valid",
+   "why": "The row's recheck cell is an ISO date, an NNd cadence or a symbolic cadence.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "digest-match",
+   "why": "The row's anchor cell carries the sha256 of the named receipt.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "gate-quote-substring",
+   "why": "The entry's gate-quote for the id is a contiguous substring of the receipt bytes.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "gate-quote-word-bound",
+   "why": "The entry's gate-quote for the id is 1-25 words long.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  },
+  {
+   "id": "o-nofollow-open",
+   "why": "The O_NOFOLLOW flag on the final open() call.",
+   "not-load-bearing": {
+    "reason": "declared away: reason content unchecked"
+   }
+  }
+ ],
+ "retired": [
+  {
+   "id": "r34-word-bound-1-25",
+   "why": "In PRED-C1-r34-v1 the word bound was checked against `found`, which was pinned by `found == quote` to a frozen short quote, so the bound could never fail. It was dead code under its own frozen spec. The r35 counter makes the entry's quote a free variable, so the bound is live and has a failing case (controls/c1-quote-long)."
+  }
+ ],
+ "note": "A clause is covered when it names a control whose committed receipt records a TARGET_MISSED verdict, or when it carries a not-load-bearing declaration with a reason. Exactly one clause may carry such a declaration."
+}
