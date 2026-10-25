@@ -2421,3 +2421,10 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
   counter has no frozen manifest control (gate maps --c2 to the eventq counter
   only); its M37-5 crib classes reject correctly but have no committed replayable
   control set — routed to r39.
+
+- **Round-38 package-audit (`ScoutPkgAudit`)** — the three refusals hold on
+  re-derived grounds; two more gkeep entries repeat the same null-channel defect
+  (r13/r14) and are refused by the same principle; the staged register's bulk
+  append is refused (schema breaks, census flip); the adoptable
+  `dispatcher-surface-and-request-grammar-r26.md` amendment and ~54 deferred rows
+  go to round 39. Lesson ledger sentence corrected.

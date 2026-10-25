@@ -47,8 +47,11 @@ Id collisions: 15 of 147 staged ids (S203–S217) conflicted with held rows
 not only the refused register block). A 16th id clash is unrecorded yet:
 staged S258 is the English ArchWiki drift document (unadopted); the lane's
 S258 is this round's host stat receipt — same id, disjoint documents. The four
-adopted new lane ids (S221, S253, S258, S277) were free against held rows. The staged register is left unassimilated (its rows
-covered only the refused entries).
+adopted new lane ids (S221, S253, S258, S277) were free against held rows. The staged register is left unassimilated: only 4 of its 147 rows name
+refused entries, and 33 rows break the 11-column schema (the fleet census would
+flip to exit 1, E01×33/E03×19/E09×58/E11×137). Bulk append refused; further
+assimilation (an adoptable `dispatcher-surface-and-request-grammar-r26.md`
+amendment, ~54 rows of real unheld ground) is deferred to round 39.
 
 ## Findings — open items for round 39+
 
