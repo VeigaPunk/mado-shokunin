@@ -72,3 +72,6 @@ Format: seat | finding (normalized target) | claim | status
 - CritManifestBalance | gate does not authenticate manifest (expect-flip on r35 → 25/25 exit 0; shrink → 1/1); kill rule passes for degenerate instruments on frozen manifest | C1 | open HIGH
 - CritManifestBalance | verdict-token first-match parser weakness (first token wins) | C1 | open low
 - ExecClausePins | clause pin holds for delete/second-decl/remove-retired-duplicate(deleted); residual fail-open: duplicated CONTROLLED clause passes (set equality) | C2 | open low
+- RevSupersedeBind | as-frozen correction-pair rule unsatisfiable (pair old sides re-poison dangling_r36); supersession exemption (a5f76c9) closed it but exempts ANY pair old side (residual laundering gap) | C2 | open (merge w/ RevAfterC2 F2)
+- RevSupersedeBind | both D5 pairs honest & closable; D10 pair old never resolved (supersedes legitimately) | C2 | refuted
+- ScoutDisposition124 | tracked paths=124 PASS at 3 revs; size finding: 1.87 MiB not 2.2 MB (~10% overstated); m6 never existed; lesson already matches retain-124 | C2 | open low

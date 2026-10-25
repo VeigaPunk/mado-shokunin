@@ -2321,7 +2321,8 @@ resolved-active 48/48; operability selftest 12/12.
 
 - **C1.** Before at `4243d03`: `controls=25 correct=14/25 verdict=TARGET_MISSED`
   (`receipts/before-discrimination.txt` under the round-36 wave directory).
-  After at `cf175c716faecec78f97258851c4ca353dea8b0b`:
+  After at `4d28b193e52f6cc8f04e81fda2664e018d62e209` (the revision both receipts name; the
+  gate, manifest and frozen specs are bound by sha256 inside them):
   `controls=25 correct=25/25 verdict=TARGET_MET` (`receipts/after-discrimination.txt`).
   Clause attribution proved separately: `receipts/clause-attribution.txt` (every frozen
   crib re-scored from a copy with only the competing fence removed still dies with exactly
@@ -2329,7 +2330,8 @@ resolved-active 48/48; operability selftest 12/12.
 - **C2.** Before at `4243d03`: `TARGET_MISSED` with `dangling_r35_closed=0`,
   `scratch_disposition_ok=0`, `tip_axis_transcript=0`, `setup=missing-r36-sections`
   (`receipts/before-pointers.txt`, whose header records the live-tree `inherited_dirty=10`
-  the re-run cannot reproduce). After at `cf175c716faecec78f97258851c4ca353dea8b0b`:
+  the re-run cannot reproduce). After at `4d28b193e52f6cc8f04e81fda2664e018d62e209` (the revision both receipts name; the
+  gate, manifest and frozen specs are bound by sha256 inside them):
   `TARGET_MET` with `dangling_r35_closed=1 dangling_r36=0 inherited_dirty=0
   scratch_tracked=124 scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok`
   (`receipts/after-pointers.txt`).
