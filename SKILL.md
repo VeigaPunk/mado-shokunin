@@ -2095,3 +2095,8 @@ python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fix
 ```
 
 Only fixture directories are created; no snapshot byte, symlink, label or expected result changes. `.ufo/waves/round-22/evidence/resume/empty-directory-materialization.json` pins the setup. The bounded intervention driver recreates the same manifest-declared directories inside its throwaway tree and passed235 command-state runs at78b1824; its two earlier setup failures remain could-not-evaluate, not green evidence. Active-path equality does not prove absence of every historical classifier read or semantic truth.
+
+
+## Monitor rule versus running output (round 45)
+
+`hyprctl monitors all -j | python3 tools/mado-monitors.py --monitors - --config ~/.config/hypr/monitors.conf` joins the `monitor =` lines of the given config files with one dump: per output AGREE / DIFFER (fields mode, position, scale, transform, mirror, disabled) / DISABLED / UNRULED / NOT_COMPARED (scale with no clean divisor); top verdict NO_RULES 4 | NOT_COMPARED 5 (monitorv2 block, unmodelled line, unpredicted scale) | DIFFER 1 | NO_MATCHING_MONITOR 3 | OK 0; setup 2. Contract and limits in the tool docstring; ground in `corpus/knowledge/hyprland-monitor-rule-r45.md`. Use `monitors all -j`: plain `monitors -j` omits disabled outputs. A DIFFER is a join, not a blame: a runtime `keyword monitor`, an output-management client or a missing mode explains it as well as the config. A rule without `@RATE` asks for 60 Hz. Host run 2026-10-26: DP-1 AGREE, `verdict=OK`, exit 0 (`.ufo/waves/round-45/receipts/live-monitors-host-r45.txt`). The `monitor =` line form exists only on the 0.56.x line (upstream a9902ea removes it).

@@ -95,3 +95,6 @@ read-only byte work: no socket is ever connected, no request is sent, and no
 compositor or config state is touched. This anchors the runtime-IPC knowledge
 half (tsukuroi's OUT-004 routes only this file's lines 3–16, the config-plane
 half).
+
+
+**Round-45 refinement (append-only; one tool, two counters, one record gate; no new write surface):** `tools/mado-monitors.py` reads caller-supplied config files (`--config`, regular files, 1 MiB cap) and one `hyprctl monitors all -j` dump (`--monitors`, file or stdin); it writes nothing, starts no process, opens no socket. `quality/counters/c1-r45-monitors*.py` and `c2-r45-monitor-entry*.py` score round evidence (the v2 C1 counter runs the tool under bubblewrap); `quality/check-session-material.py` reads tracked blobs at one revision and writes nothing. Output configuration stays operator-owned: the lane reads `monitors`, never `keyword` or `output`.
