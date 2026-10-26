@@ -44,17 +44,17 @@ GATE S297 receipt=.ufo/waves/round-43/fetch/gkeep-ui-excerpt.py sha256=3695b788c
 
 ADMIT merge/mado/knowledge/corpus/knowledge/gkeep-size-to-real-size-r11.md as corpus/knowledge/hyprland-gkeep-geometry-r43.md
 REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-size-rule-application-r10.md reason=its central inference that the client decides the reported size is overturned by the pinned floating-algorithm and window-target path; flip if a pinned source shows the reported size coming from the client's acknowledgement
-REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-geometry-unobservable-r8.md reason=superseded by the r9 to r11 chain, its residual stale, and its S275 receipt a path this lane does not hold; flip if its identity receipt is re-sourced inside this lane
-REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-observation-route-r11.md reason=single-source restatement of r11 on the same host receipt, adding no independent ground beside the rule text; flip if an independent witness for the observation route is added
-REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-element-rules-r30.md reason=the 875x600 explanation rests on a config comment and not on any pinned measurement; flip if the stock floating-tag size is measured or sourced from the shipped config
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-geometry-unobservable-r8.md reason=superseded by the r9 to r11 chain, its census of three clients and its nothing-else-is-missing residual both refuted by this round's receipts; flip if a lane row registers the host build identity it rests on and a fresh census matches it
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-observation-route-r11.md reason=single-source restatement of r11 on the same host receipt, adding no ground beyond the held S158 GOAL read and this round's census; flip if it carries a route step those two do not
 
 Receipts above: the ten pre-wave pins (`git ls-tree -r <rev> .ufo/waves/round-43/fetch/`, all mode 100644), hashes equal to
 `receipts/fetch-sha256.txt`. The seven Hyprland pins are byte-identical to the round-42 pins; `host-gkeep.conf` is byte-identical to round 42's
 copy; `host-clients-r43.json` is a new capture (4 clients, none floating) and `gkeep-ui-excerpt.py` is regenerated (M43-5). Each quote was checked
 by the L1 with the v2 counter's own functions (`quote_at`, `occurrences`, `quote_in_code`, imported read-only): 3-11 words, exactly one
 word-bounded occurrence, outside comments, absent from every other cited receipt. Locators the entry carries (computed): `Hyprland-RegexMatchEngine.cpp:16`,
-`Hyprland-WindowRuleApplicator.cpp:426`, `Hyprland-DefaultFloatingAlgorithm.cpp:56`, `Hyprland-Target.cpp:10`, `Hyprland-WindowTarget.cpp:70`,
-`Hyprland-GeometricMovableAnimated.cpp:19`, `Hyprland-HyprCtl.cpp:428`, `host-gkeep.conf:4`, `host-clients-r43.json:50`, `gkeep-ui-excerpt.py:33`.
+`Hyprland-WindowRuleApplicator.cpp:426`, `Hyprland-DefaultFloatingAlgorithm.cpp:56`, `Hyprland-Target.cpp:10`, `Hyprland-WindowTarget.cpp:70-71`,
+`Hyprland-GeometricMovableAnimated.cpp:19`, `Hyprland-HyprCtl.cpp:428-429`, `host-gkeep.conf:4`, `host-clients-r43.json:50-51`, `gkeep-ui-excerpt.py:33-34`
+(ranges where the quote spans two receipt lines; the counter reads the start line, M43-7).
 The scribe drafts' first quotes for HyprCtl.cpp and the clients JSON occurred twice in their receipts (lines 427/447-448; two 1720x1414
 objects), which v2's d+ refuses; the quotes above replace them.
 
@@ -75,7 +75,7 @@ reservation S290-S299 shrinks to S290-S297; S298 and S299 stay free).
 | `gkeep-size-rule-application-r10.md` | in | — | its §1 inference ("the number the compositor reports is whatever the client actually used") is refuted by the pinned path: S291 writes the rule's value into `windowGeometry`, S293 pushes the target box onto the window. The package's own r11 §2 says so | **refused**; flip if a pinned source shows the reported size coming from the client's acknowledgement instead of the rule |
 | `gkeep-geometry-unobservable-r8.md` | in | — | superseded twice (r9 amends it, r10-r11 amend the chain); its "nothing else is missing" residual predates the two gates r13/r14 found; its cited receipt path `lanes/mado/round8/…` does not exist in this lane (`git ls-tree -r --name-only HEAD \| grep -c 'round8/fetch'` → 0) | **refused**; flip if a round-43 row re-sources its S275 identity receipt inside this lane |
 | `gkeep-observation-route-r11.md` | in | — | one source (`S310`), a restatement of its sibling round; the observation route it names is now sourced directly as held S158 (`w->size(GEOMETRIC_GOAL)`) | **refused** as a duplicate; flip if an independent witness for the observation route is added |
-| `gkeep-element-rules-r30.md` | in, narrowly | — | the three rule lines are real and re-grounded as S295, but the entry's explanation of 875×600 rests on the config file's own comment, not on a measurement, and it predates the whole source chain | **refused**; flip if the 875×600 stock size is measured or sourced from the desktop's shipped config |
+| `gkeep-element-rules-r30.md` | in, narrowly | — | the three rule lines are real and re-grounded as S295, but the entry's explanation of 875×600 rests on the config file's own comment, not on a measurement, and it predates the whole source chain | refused at the data commit; **refusal withdrawn after w2**: the flip had already fired (`apps/system.conf:4`, see Post-data corrections); not adopted this round, first candidate for the next |
 | `gkeep-rendered-geometry-chain-r9.md` | in | partly held as prose (no lane row cites it) | its class-is-app_id link rests on `Window.cpp` and the window-rules wiki, neither of which is among this round's pins | not adopted this round: its one unique link (`fetchClass`) is outside the pins; residue for a later round |
 | `gkeep-client-size-request-r12.md` | in | — | rests on `Window.cpp::sendWindowSize`, not among this round's pins | not adopted; residue |
 | `gkeep-rendered-geometry-record-r13.md`, `-r14.md`, `gkeep-geometry-never-recorded-r15.md` | in | — | their decisive sources are `Window.cpp::onAck`, the map-time DEBUG log and three journal sweeps; none is among this round's pins, and the entry makes no log claim | not adopted; residue (the journal route stays open for a later entry) |
@@ -186,6 +186,53 @@ and one upstream file is `admitted=1/1` under `PRED-C2-r43` (`w1/CritClaimSizing
 receipt at all) likewise. Captured-by: §6 item 9 of the round prompt, which the round-42 freeze did not apply to C2's clause b. Fix:
 `PRED-C2-r43-v2` (i+: the Gate receipts of the cited ids must cover every PINS name), frozen before data at `496340d`. Shown able to fail:
 `ctl/v2-forgeries/more-v2.log` — `X3-own-work-only … admitted=0/1` under v2, `1/1` under v1 (`w1/CritC2Cheat/run-more.log`).
+
+**M43-9 — an INF line said "never" from a walk of the pinned excerpts, and the counterexample sat in a file the round had already pinned.**
+Class: a universal inference drawn from a partial source set (the round-38 "absence in a log" class, for source code). Evidence: the data
+commit's entry §2 said "A tiled window never takes this branch … the rule's 420x500 is inert"; `Window.cpp:2402-2408` (pinned by w1 seat
+`ExecGoalVsValue` at `.ufo/waves/round-43/w1/ExecGoalVsValue/pins/window.cpp`) stores the same size as the tiled target's pseudo size
+(`w2/CritEntryInf.md` F1). Captured-by: none mechanically (the C2 counter scores quotes, not inferences; the locator checker scores
+locators); the w2 critic. Fix: the entry's INF lines carry a `Basis:` pointer, and "never/only" in an INF is written only after a
+whole-tree grep of the variable it is about (`grep -rn 'static_.size'` at the pinned commit), which is the check that would have failed
+here (two read sites, not one). Shown able to fail: `w2/CritEntryInf/receipts/grep-static-size-src.txt` lists both sites.
+
+## Post-data corrections (wave w2; data commit `1959770657f1f8665097c1aed4be6c1cbb07139f`)
+
+Every correction below landed in the round's correction commit after the data commit; the C2 v2 counter still reads `admitted=1/1`
+on the corrected bytes (`receipts/c2-after-tip.txt`), C1 is untouched (`receipts/c1-after-tip.txt`).
+
+- **Entry, tiled path** (`w2/CritEntryInf.md` F1, `w2/CritEntryOverreach.md`): "a tiled window never takes this branch … the rule's 420x500
+  is inert" was false. `mapWindow`'s non-floating arm evaluates the same `static_.size` and stores it as the target's pseudo size
+  (`Window.cpp:2402-2408` in `w1/ExecGoalVsValue/pins/window.cpp`), which decides the box when the window is pseudo-tiled. The entry's §2
+  INF and the SKILL.md TILED licence row were rewritten. The tool's docstring (`tools/mado-geometry.py:6`, "a tiled window never reads
+  it") and its TILED verdict carry the same premise; the tool is left byte-identical and the defect is open for the next C1 registration.
+- **Entry, first map** (`w2/CritEntryInf.md` F2): `m_firstMap` is set on every map (`Window.cpp:2079`) and cleared at its end (`:2513`), so
+  "evaluated on first map only" became "re-applied on every map; nothing re-evaluates it while mapped".
+- **Entry, precision** (`w2/CritEntryOverreach.md`): RE2 dots exclude newline by default; `negative:` is stripped at line 9 and inverted by
+  the comparison at line 16; "no read verb" became "no geometry read verb"; the census row says "none floating", not "tiled"; the
+  `Gtk.ApplicationWindow` is excerpt line 31. The link `*m_realSize = x.size();` (`Hyprland-GeometricMovableAnimated.cpp:45`) was added
+  (`w2/CritAssimilation.md` F2: the ADMIT claimed a four-link chain the entry did not show), and "four-link chain" in the header became
+  the named chain.
+- **Entry, oracle sentence** (`w2/CritOracleClaim.md`): the run is an adaptation of the round-27 harness (a headless output added), the
+  client is a shm stand-in that requests no size, and the 200x200 control ran a separate build of it; the sentence now says so and is
+  tagged OBS for the isolated oracle only.
+- **Assimilation** (`w2/CritAssimilation.md` F1, F3, F4): the `gkeep-element-rules-r30.md` refusal is withdrawn — its flip condition had
+  already fired (`~/.local/share/omarchy/default/hypr/apps/system.conf:4` `windowrule = size 875 600, match:tag floating-window`, captured in
+  `w1/ExecLiveHost/live-census.txt:232`); it is not admitted this round (no pin, no row) and is the first candidate for the next one. The r8
+  and obs-route flips were rewritten to conditions that can fire. Residue-row notes (F5, F6: the r10 refusal also has an experimental
+  falsifier, the oracle's 200x200 stand-in reporting 420x500; "three journal sweeps" is two journal sweeps and one artifact sweep; r14
+  borders tsukuroi's journal ground) are recorded here and not re-graded.
+- **Registry wording** (`w2/ScoutRowsA.md`, `ScoutRowsB.md`, `ScoutRowsC.md`): S290's teaches cell mixes the host regex in; S291's title
+  overstates (the tiled pseudo-size consumer exists); S292's and S294's teaches cells end in a cross-row inference; S293's teaches cell
+  simplifies the desired-geometry fallbacks (`WindowTarget.cpp:323-364`). CORPUS.md rule 2 lets only status, recheck and used-by change in
+  place, so these cells stay as landed and the next round supersedes the rows with corrected text. Hashes, URLs, anchors, quotes and
+  Gate lines of all ten cited rows were re-opened today and hold.
+- **PROVINCE.md** (`w2/SentLiveRun.md` F3): `--selftest` opens `/nonexistent/none`, `/` and `/dev/null` read-only to test refusals; the row
+  said it opens no file. Corrected.
+- **SKILL.md** (`w2/CritC1Capability.md` F3, `w1/RevRefTool.md` V1): the support ceiling (single `match:class` criterion only, `source` not
+  followed: 3 of the host's 7 size rules) and the backtracking hang with its `timeout 5` guard are now stated.
+- **Locator checker limits** (`w2/CritLocatorGate.md`): numbers are never compared and a shared identifier can pass a wrong range;
+  criterion 77 states a stronger rule than the checker enforces. Open; the checker is a floor, not the rule.
 
 ## Spot-check (non-author closure; placeholders)
 

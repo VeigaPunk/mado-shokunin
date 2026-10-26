@@ -251,6 +251,12 @@ and one `hyprctl clients -j` dump. It starts no process, opens no socket and rea
 runs `hyprctl clients -j | python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf`. Output: one
 `MADO_GEOM_RULE:` line per supported rule, one `MADO_GEOM_CLIENT:` line per matched client, then a `MADO_GEOMETRY:` summary.
 
+Support ceiling (round-43 wave w2, `CritC1Capability` F3): only a `windowrule` line whose single criterion is `match:class` is
+counted; `match:tag`, `match:title`, any extra `match:` field, `windowrulev2` and the block form are dropped (size and float lines
+alike are counted in `unsupported=`), and `source` statements are not followed, so pass every rule file yourself. On 2026-10-26 the
+tool reads 3 of the host's 7 size rules across the sourced files, and `--rules ~/.config/hypr/hyprland.conf` alone returns `rules=0`,
+`NO_SIZE_RULES`, exit 4 (`.ufo/waves/round-43/w2/CritC1Capability/findings.md`).
+
 What the reported size is. The `clients` reply prints `"size": [{}, {}]` (`Hyprland-HyprCtl.cpp:395`, command
 registered at `:2007`) from `w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL)` (`:427-428` in the JSON format, `:448`
 in the plain one), and `GEOMETRIC_GOAL` is `m_realSize->goal()` while `GEOMETRIC_CURRENT` is `m_realSize->value()`
@@ -267,7 +273,7 @@ Per-verdict licence — a verdict reads two printed values, it never calls a fau
 |---|---|---|
 | AGREE | the reported goal box equals the rule's `size` for that client: the rule's size reached this client's goal | that the window renders at that size (the dump prints the goal, not the current value); that the rule is the only writer (a resize, a center or a later effect can set the same value); that the client asked for it |
 | DIFFER | the goal box differs from the rule's `size` | a defect or a cause: a user resize, a compositor clamp or a later effect all produce it — a report, not a fault |
-| TILED | the matched client is not floating, so the first-map floating branch that reads `static_.size` never ran for it: the rule's size is inert for this client | that the rule is inert for the class — a later floating instance of the same class reads it |
+| TILED | the matched client is not floating, so the floating algorithm's map branch never ran for it: the tiler, not the floating rule path, set its box | that the rule is inert: at map a non-floating window stores the rule's size as its pseudo size (`Window.cpp:2402-2408`, round-43 pin), which decides the box when the window is pseudo-tiled, and `clients -j` has no pseudo field; nor that a later floating instance of the class ignores the rule |
 | BADSIZE | only that there was no size to compare (no `size` value, or not two integers) | any agreement claim |
 | NO_MATCHING_CLIENT (rc 3) | no mapped client matched any supported `size` rule — a null observation | that the rule works, or that the file declares none |
 | NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
