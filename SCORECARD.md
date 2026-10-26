@@ -2621,3 +2621,32 @@ Axis table re-derived at `ee6659b` (`receipts/axis-data.txt`): navigation 62/62;
 1. Wave w2 falsification of the round-45 data (not run this round: the run's request budget stopped the round after w1; round total 41 seats).
 2. Triage the 48 pre-existing and 49 synthetic session-material findings (`receipts/session-material-data.txt`); teach the gate a synthetic marker.
 3. S290-S297 supersession (round-44 D6) under its own registration.
+
+## Round 46 - mado-devices and the input-device entry (2026-10-26, attempt 1)
+
+Registration `.ufo/waves/round-46/registration.md` (freeze `8c5434c60e03f147ee1f75ab195e8bc3f0db4dec`, base `b22ea56bff2faec39ce9ff75d2107eaf4612ecbe`), superseded before any data by `registration-v2.md` (freeze `2bcc335f236c950fded185a6e7d00c0cda5d80c7`) after the 66-seat v2 wave `w1` met PRED-C1-r46 with tools that implement nothing (an ambient copy of the reference, a deletable marker, an absolute-path `hyprctl`) and PRED-C2-r46 with six undeclared forgeries, and found the v1 contract wrong on strtof rounding, hex/inf/out-of-range scroll factors, a final continuation line, the directive trigger and `source =` inside a block; C1 re-registered again as `registration-v3.md` (freeze `7f7932807135f18722072210412a343d8824e789`) when the v2 counter failed its own TRIP controls (`receipts/ctl-c1-v2.txt`). Data commit `1001bda0472f1fdc0679fb88ced5d159f5d32c62`. Lowest-axis rule: every published axis tied at its maximum at base (`receipts/axis-base.txt`).
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-devices.py` | `fixtures=0/110 generated=0/150 selftest=fail readonly=fail tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-v3-before-base.txt`) -> `fixtures=110/110 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET` exit 0 at `1001bda` (`receipts/c1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r46-devices-v3.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r46-v3`; controls `receipts/ctl-c1-v3.txt` PASS 0 of 40) | **TARGET_MET** |
+| C2 **coverage** (sourced) - `corpus/knowledge/hyprland-input-devices-r46.md` | `admitted=0/1` exit 1 at base (`receipts/c2-v2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at `1001bda` (`receipts/c2-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r46-input-device-entry-v2.py --repo . --rev <rev>` (`PRED-C2-r46-v2`; controls `receipts/ctl-c2-v2.txt` PASS wrong 0 of 22) | **TARGET_MET** |
+
+Separable: `w1/ExecC1Separability` (tool-only tree: C1 MET, C2 0/1; data-only tree: C1 MISSED, C2 1/1).
+
+### Capabilities (round 46)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| input-device config versus running devices join | read the `input`/`device` lines of named config files (hyprlang 0.6.8 comment, continuation, bracket-key and special-category rules) and one `hyprctl devices -j` dump; per keyboard AGREE / DIFFER / FALLBACK / VIRTUAL over the five stored XKB names, per pointer AGREE / DIFFER over `scrollFactor` (strtof-faithful, clamped 0..100, else -1), per device block MATCHED / NO_SUCH_DEVICE; starts no process, opens no socket | `tools/mado-devices.py` (selftest 59/59); `quality/counters/c1-r46-devices-v3.py` 110/110 + 150/150 at `1001bda`; live host run `.ufo/waves/round-46/receipts/live-devices-host-r46.txt` (9 AGREE, 1 VIRTUAL, 4 pointers AGREE, OK, exit 0) | 46 |
+
+### Sources, saturation, planned
+
+Sources 252 -> 262 rows (S316-S325, tier A, `mined`, opened 2026-10-26; S317, S318, S320, S321, S324 repeat held URLs under new scopes: census W04). Knowledge entries 62 -> 63. Assimilation: none (no `merge/mado/` theme on the plane). considerthese `2026-10-26.md` proposal 3 -> QUALITY 90 + `w1/ScrRoutedAges/ages.md`. Mistakes M46-1..16; QUALITY 87-90. Round-45 closure D1 (w2 of the round-45 data run inside this wave), D2 (M46-10), D3 (registry row; marker drafted, not installed), D4 (digest) and D5 (lesson note) addressed; D6 open (M46-16). Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `1001bda` (`receipts/axis-data.txt`): navigation 63/63; calibration resolved-active 77/77; operability selftest 12/12.
+
+### Planned (round 47; intent only)
+
+1. Land the S290-S297 supersession drafted at `.ufo/waves/round-46/w1/ExecSupersede/rows.md` (open since round 43; M46-16) under its own registration, before any new claim.
+2. Install the synthetic-material marker for `quality/check-session-material.py` (`w1/ExecSessionTriage/`) and the prose serial rule (`w1/ExecSerialRule/`), shown able to fail both ways.
+3. Errata for the round-45 entry's six non-supported sentence units (`w1/CritW2Entry.md`) and the round-44 `w2/ConnCalibration` mismatches (`w1/ScrErrata/errata.md`).
