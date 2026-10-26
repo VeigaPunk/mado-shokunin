@@ -1,0 +1,11 @@
+C1 reference ReDoS measurements (reference = .ufo/waves/round-44/c1/ctl-ref-tool.py.txt, sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d)
+host: python Python 3.14.8
+regex=(a|aa)+$    class=len(39)  rc=3  6.88s  stdout=218 bytes
+regex=(a+)+$      class=len(31)  rc=3  43.92s  stdout=216 bytes
+regex=^(a|aa)+$   class=len(31)  rc=3  0.18s  stdout=219 bytes
+regex=(a|aa)+$    class=len(1025)  under `timeout 5`: rc=124  5.00s  stdout=0 bytes  stderr=0 bytes
+
+SAFE alphabet / regex_ok acceptance of the three regexes (reference regex_ok, imported):
+  (a|aa)+$    SAFE=True regex_ok=True
+  (a+)+$      SAFE=True regex_ok=True
+  ^(a|aa)+$   SAFE=True regex_ok=True

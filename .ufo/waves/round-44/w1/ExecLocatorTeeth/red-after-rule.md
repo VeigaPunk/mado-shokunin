@@ -1,0 +1,1 @@
+**OBS** S295 - the host declares exactly one size for the class: `windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$` (host-gkeep.conf:4); the same file holds one `float on` line (line 2) and one `center on` line (line 3) for the same regex, and its comment says it avoids the floating-window tag on purpose.

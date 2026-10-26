@@ -1,0 +1,20 @@
+legit old_filter= ['S298 gives the ack list.', 'S301 carries 420x500.']
+legit new_filter= ['gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep', 'hyprland sendWindowSize xdg_setSize=1 x11_configure=1', 'S298 gives the ack list.', 'S301 carries 420x500.']
+legit difference= {'hyprland sendWindowSize xdg_setSize=1 x11_configure=1', 'gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep'}
+forged old_filter= ['S298 gives the ack list.', 'S301 carries 420x500.']
+forged new_filter= ['gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep', 'hyprland sendWindowSize xdg_setSize=1 x11_configure=1', 'S298 gives the ack list.', 'S301 carries 420x500.', 'gkeep client S164 this line cites a held id with no quote']
+forged difference= {'hyprland sendWindowSize xdg_setSize=1 x11_configure=1', 'gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep', 'gkeep client S164 this line cites a held id with no quote'}
+id tokens in census line: [] 'gkeep client default_size=420x'
+id tokens in census line: [] 'hyprland sendWindowSize xdg_se'
+== can a census line ever be judged by clause g or g+ if the exemption is removed?
+  line: gkeep client default_size=420x500 size_request_calls=0 appli
+   cited-id search for S164/S298/S301: [False, False, False]
+   g's hit condition needs one of those -> False, so the line is skipped
+   all_body_lines_bound: 'if not re.search(id, l): continue' -> skipped
+  line: hyprland sendWindowSize xdg_setSize=1 x11_configure=1
+   cited-id search for S164/S298/S301: [False, False, False]
+   g's hit condition needs one of those -> False, so the line is skipped
+   all_body_lines_bound: 'if not re.search(id, l): continue' -> skipped
+
+== shop: the exempt prefixes are broader than the two census lines
+   any line startswith('gkeep client ') escapes g, e.g.: True

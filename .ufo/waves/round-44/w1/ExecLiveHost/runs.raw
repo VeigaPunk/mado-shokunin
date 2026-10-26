@@ -1,0 +1,46 @@
+=== RUN tool=mado-geometry.py dump=live-clients.json cmd=timeout 30 python3 -I mado-geometry.py --clients live-clients.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=3
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr:0 bytes
+=== RUN tool=mado-geometry.py dump=fs2.json cmd=timeout 30 python3 -I mado-geometry.py --clients fs2.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=0
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000001" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=OK
+stderr:0 bytes
+=== RUN tool=mado-geometry.py dump=max1.json cmd=timeout 30 python3 -I mado-geometry.py --clients max1.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=0
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000002" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=MAXIMIZED
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=OK
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=live-clients.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients live-clients.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=3
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=fs2.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients fs2.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=1
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000001" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=max1.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients max1.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=1
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000002" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr:0 bytes

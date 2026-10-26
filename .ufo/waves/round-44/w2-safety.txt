@@ -1,0 +1,27 @@
+# Write scope and safety
+- Write ONLY inside %(L)s. NEVER write/edit the fleet repo (/home/vgpnk/Projects/shokunin outside the lane), sibling lanes, templates/, scripts/,
+  MANIFEST.json, .ufo/state/, .ufo/watchdog.log, .scratch/, the shokuknow checkout, ~/Projects/gkeep, or the lane's jj/git index. Never run mutating
+  git/jj anywhere in the lane or the fleet (no add/commit/push/checkout/reset/stash/describe/bookmark). Read-only git (log/show/diff/status/rev-parse/ls-tree/cat-file) is fine.
+- Write ONLY to your own seat directory %(W)s/w2/<YourSeatName>/ (create it), plus any explicit destination your task names. Never edit an existing
+  tracked file (counters, controls, registration, reference, pins are FROZEN); the L1 is the only integrator. Write your Report file FIRST (a short
+  status), then refine it; a seat that dies without a report is a dead seat.
+- Every `Report:` trailer path is relative to %(L)s - write it at %(L)s/<that path>.
+- SCRATCH (operator directive 2026-10-25): every clone, venv, build, fixture and counter work dir lives under %(S)s/<YourSeatName>/ (mkdir -p; pass it
+  explicitly as TMPDIR/--work/dir=, never rely on an inherited TMPDIR); /tmp only for files under 50 MB; keep it under 2 GB; copy receipts into your
+  seat dir first, then delete your scratch dir before you finish (`trap 'rm -rf -- "$S"' EXIT`). The reaper deletes idle scratch after 45 min, so a
+  /tmp or scratch path is never citable evidence: cite only files in your seat dir. A tree you leave on disk is your own reported defect.
+- Host safety: pacman is PAUSED host-wide - never run pacman or any package transaction. No host-service or compositor mutation, no input injection,
+  no Wayland-client connection of your own on the host session. Allowed compositor reads: `hyprctl version`, `hyprctl clients -j`, `hyprctl monitors -j`,
+  `hyprctl workspaces -j`, `hyprctl getoption <name> -j`; NEVER `dispatch`, `keyword`, `reload`, `setprop`, `--batch`, `output`, `plugin`, `kill`.
+  Host config trees and binaries are READ-ONLY.
+- Git fixtures (run-6 incident): any fixture repo is `D=$(mktemp -d -p %(S)s/<YourSeatName>)` then `git -C "$D" init -q` (or `git clone -q --shared <lane> "$D"`),
+  every later git call names `-C "$D"`, and `git -C "$D" rev-parse --show-toplevel` must equal `$D` before the first commit; never `git commit` with a
+  throwaway identity anywhere else.
+- Tooling authorization (operator, 2026-10-19): you may install tools that help the task (read /home/vgpnk/.omp/agent/RULES.md first; official channels only:
+  uv tool / uv pip into a scratch venv / npx / official binaries in ~/.local/bin). pacman guard (orchestrator ruling 2026-10-20): all pacman transactions
+  are PAUSED host-wide until the operator resolves the host-recovery L0 question; never -Sy, -Syu, -U, -R, a downgrade, or a restart of a host service.
+  Record tool/version/channel/reason in your report.
+- Seat tool state: your tools start at the fleet root, not the lane: use absolute paths everywhere.
+- You are a leaf: no subagent dispatch, no background jobs, no spawning (an executor MAY spawn one read-only labrat probe).
+- Every finding names what it attacks or supports (a path:line, a command and its output, or a hash). Never fabricate: an unrun check has not passed.
+  Quotes lifted from a source are <= 25 words, located (file:line), and verified by a script that greps your receipt; locators are computed (grep -n), never typed.

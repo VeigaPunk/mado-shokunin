@@ -1,0 +1,26 @@
+diff --git a/corpus/knowledge/hyprland-gkeep-size-request-r44.md b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+index 8c72c46e..005af11b 100644
+--- a/corpus/knowledge/hyprland-gkeep-size-request-r44.md
++++ b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+@@ -23,7 +23,7 @@ assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-reques
+ 
+ ## §1 The compositor sends a size after it sets the box
+ 
+-**OBS** S164 - `sendWindowSize` derives the size it reports from the animated size rather than from the layout box it just wrote: `const auto REPORTSIZE = realToReportSize();` (Hyprland-Window.cpp:1741); when `force` is false and the pending report already equals the current one it returns early, so a repeated call with an unchanged size sends nothing.
++**OBS** S164 - `sendWindowSize` derives the size it reports from the animated size rather than from the layout box it just wrote: `TODO: this should be decoupled from setWindowSize IMO` (Hyprland-Window.cpp:1738); when `force` is false and the pending report already equals the current one it returns early, so a repeated call with an unchanged size sends nothing.
+ 
+ **OBS** The xdg arm stores the serial the toplevel hands back: `m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());` (Hyprland-Window.cpp:1753), while the X11 arm calls `configure` on the xwayland surface instead (line 1751). The two are alternatives in one if/else, so a Wayland client is told with a configure and an X11 client with an xcb-style configure, never both.
+ 
+diff --git a/corpus/lessons/round-44.md b/corpus/lessons/round-44.md
+index 550f70e0..544f636d 100644
+--- a/corpus/lessons/round-44.md
++++ b/corpus/lessons/round-44.md
+@@ -10,7 +10,7 @@ GTK does with it, and what gkeep itself declares.
+ 
+ ## Gate
+ 
+-GATE S164 receipt=.ufo/waves/round-44/fetch/Hyprland-Window.cpp sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded quote="const auto REPORTSIZE = realToReportSize();"
++GATE S164 receipt=.ufo/waves/round-44/fetch/Hyprland-Window.cpp sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded quote="TODO: this should be decoupled from setWindowSize IMO"
+ GATE S298 receipt=.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp sha256=d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 quote="m_stateUpdate = g_pEventLoopManager->doLaterLock([this] { configure(); });"
+ GATE S299 receipt=.ufo/waves/round-44/fetch/xdg-shell.xml sha256=7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df quote="This configure event asks the client to resize its toplevel surface or to change its state."
+ GATE S300 receipt=.ufo/waves/round-44/fetch/gdktoplevel-wayland.c sha256=0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe quote="if (saved_size && !fixed_size && was_fixed_size)"

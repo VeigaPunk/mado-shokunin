@@ -1,0 +1,61 @@
+== E2: is the parenthetical enumeration entailed by E1?
+E1 antecedent: a JSON integer (not a boolean, not a float) equal to 1 or 2 -> fsmode
+value            E1-holds fsmode   docstring
+'absent'         False    0        0       
+None             False    0        0       
+0                False    0        0       
+3                False    0        0       
+-1               False    0        0       
+True             False    0        0       
+2.0              False    0        0       
+'2'              False    0        0       
+[2]              False    0        0       
+{'internal': 2}  False    0        0       
+every enumerated value falsifies E1's antecedent, so E1 alone yields 0 for each.
+
+== coverage of those values by the frozen lattice (clause f)
+FS_POOL sgen draw: ["absent", "absent", "absent", 0, 1, 1, 2, 2, 2, true, 3, "2", 2.0, -1, null]
+fsvals0 values   : [true, false, 3, 2.0, "2", -1, null, [2], {"internal": 2}, 0]
+fsmany0 draws from FS_POOL (200 clients).
+=> no enumerated value is left to the table alone; the fixtures already pin each one.
+
+== E6: with no state client the extended summary equals the r42 summary
+docs without a fullscreen field: inputs=500 differing=0 (r42 model vs extended tool)
+
+== C2 clause h: does `with # comments removed` change any computed value?
+raw       set_default_size=[('420', '500')] application_id=['org.omarchy.gkeep'] set_size_request(=0 set_default_size(=1
+stripped  set_default_size=[('420', '500')] application_id=['org.omarchy.gkeep'] set_size_request(=0 set_default_size(=1
+lines carrying any of the three patterns:
+  449: '            application_id="org.omarchy.gkeep",'
+  476: '            window.set_default_size(420, 500)'
+=> identical values; the pin holds no commented-out occurrence.
+
+== C2 clause h: what does the body scope change?
+signature line (1-based) 1732; first following line exactly '}' is line 1754; brace-match end line 1754; same=True
+lines exactly '}' strictly between signature and end: []
+body   ->setSize(=1 ->configure(=1
+file   ->setSize(=2 ->configure(=3
+=> the *scope* (body) is load-bearing (1/1 vs 2/3); the *end rule* ('first following line
+   exactly }') is equivalent to brace matching on this pin.
+
+== C2 clause h: the two census lines are constants of the pin
+host_census(entry carries neither line)=False, (entry carries both)=True, lines stable=True ->
+  'gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep'
+  'hyprland sendWindowSize xdg_setSize=1 x11_configure=1'
+neither line can vary with the entry: the receipts are sha256 pins (PINS at lines 167-173).
+
+== C2 clause h: is `l not in census_lines` reachable?
+ui_line starts with an exempt prefix: True / False
+hy_line starts with an exempt prefix: False / True
+=> every string in census_lines is already excluded by the two startswith tests (lines 560-563).
+
+== C2 clause i already requires every PINS name (line 604: `bad |= not set(PINS) <= used`)
+PINS names: ['Hyprland-Window.cpp', 'Hyprland-XDGShell.cpp', 'gdktoplevel-wayland.c', 'gkeep-ui.py', 'xdg-shell.xml']
+both census receipts are PINS members: True True
+
+== hashes of the files this receipt reasons about
+f6b42b059b6b1f6f16657d37b0d15bd11541b04962e60154596f9037c614de65  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r44-geometry-states.py
+5b72c16d5f1bdef43a5374c4b3a0de0acef9bd0d4ed427776dd205ee47860a68  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r44-gkeep-size-request.py
+8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/c1/ctl-ref-tool.py.txt
+07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/gkeep-ui.py
+d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp

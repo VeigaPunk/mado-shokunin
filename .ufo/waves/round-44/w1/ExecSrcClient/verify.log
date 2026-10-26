@@ -1,0 +1,64 @@
+pins:
+  xdg-shell.xml            63846 bytes sha256=7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df PIN-OK
+  gdktoplevel-wayland.c    97548 bytes sha256=0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe PIN-OK
+  gkeep-ui.py              14639 bytes sha256=07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a PIN-OK
+  Hyprland-Window.cpp      124226 bytes sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded PIN-OK
+  Hyprland-XDGShell.cpp    35458 bytes sha256=d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 PIN-OK
+grep_locator_ok=42/42 fails=0
+census_clause_h ok=True
+  census 'gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep' expected_match=True
+  census 'hyprland sendWindowSize xdg_setSize=1 x11_configure=1' expected_match=True
+struct gkeep calls set_default_size exactly once, with 420, 500       calls=1 args=420x500         gkeep-ui.py:476
+struct gkeep calls set_size_request zero times                        calls=0                      gkeep-ui.py (whole file)
+struct gkeep declares one application_id                              calls=1 value=org.omarchy.gkeep gkeep-ui.py:449
+struct gkeep turns CSD off                                            window.set_decorated(False)  gkeep-ui.py:475
+struct min-height at line 87 sits under the selector declared at line 80 button.ink {{ / min-height: 30px gkeep-ui.py:87
+struct min-width at line 88 sits under the selector declared at line 80 button.ink {{ / min-width: 72px gkeep-ui.py:88
+struct the file declares this many min-* CSS properties in total      count=2                      gkeep-ui.py (whole file)
+struct number of `window...{` CSS blocks that themselves declare min-* count=0                      gkeep-ui.py (whole file)
+struct GTK acks the configure exactly once per handle_configure       ack_configure calls=1        gdktoplevel-wayland.c (whole file)
+struct GTK never sends set_min_size/max_size anywhere else            set_min_size=1 set_max_size=1 gdktoplevel-wayland.c (whole file)
+struct Hyprland never sends xdg_toplevel.configure_bounds             configure_bounds occurrences=0 Hyprland-XDGShell.cpp (whole file)
+row sec=A file=xdg-shell.xml line=1150 words=11 occ=1 code=True sha=7ba7f9c8473d .. configure width/height is a HINT, in window-geometry coord
+row sec=A file=xdg-shell.xml line=1154 words=18 occ=1 code=True sha=7ba7f9c8473d .. configure 0x0 means the client picks its own dimension
+row sec=A file=xdg-shell.xml line=1159 words=14 occ=1 code=True sha=7ba7f9c8473d .. the configured size is interpreted THROUGH the states arra
+row sec=A file=xdg-shell.xml line=841 words=14 occ=1 code=True sha=7ba7f9c8473d .. state maximized=1 makes the configure geometry EXACT (must
+row sec=A file=xdg-shell.xml line=851 words=21 occ=1 code=True sha=7ba7f9c8473d .. state fullscreen=2 makes the configure geometry a MAXIMUM,
+row sec=A file=xdg-shell.xml line=860 words=22 occ=1 code=True sha=7ba7f9c8473d .. state resizing=3 also makes the configure geometry a maxim
+row sec=A file=xdg-shell.xml line=875 words=24 occ=1 code=True sha=7ba7f9c8473d .. tiled_* states carry NO size semantics in the protocol, on
+row sec=A file=xdg-shell.xml line=564 words=18 occ=1 code=True sha=7ba7f9c8473d .. every configure must be acked before the commit that respo
+row sec=A file=xdg-shell.xml line=571 words=22 occ=1 code=True sha=7ba7f9c8473d .. intermediate configures may be dropped: only the last need
+row sec=A file=xdg-shell.xml line=1191 words=15 occ=1 code=True sha=7ba7f9c8473d .. configure_bounds (since v4) may precede a configure and bo
+row sec=A file=xdg-shell.xml line=1009 words=13 occ=1 code=True sha=7ba7f9c8473d .. client min size is advisory: the compositor may ignore it
+row sec=B file=gdktoplevel-wayland.c line=785 words=9 occ=1 code=True sha=0ee384588284 .. the xdg_toplevel.configure handler only STORES width/heigh
+row sec=B file=gdktoplevel-wayland.c line=644 words=3 occ=1 code=True sha=0ee384588284 .. the xdg_surface.configure handler is where pending width/h
+row sec=B file=gdktoplevel-wayland.c line=647 words=9 occ=1 code=True sha=0ee384588284 .. GTK reads a 0 width AND 0 height as 'no size given' (saved
+row sec=B file=gdktoplevel-wayland.c line=656 words=13 occ=1 code=True sha=0ee384588284 .. on 0x0 while leaving a fixed state GTK restores its own sa
+row sec=B file=gdktoplevel-wayland.c line=633 words=11 occ=1 code=True sha=0ee384588284 .. a floating configure (no maximized/fullscreen/tiled, not r
+row sec=B file=gdktoplevel-wayland.c line=681 words=3 occ=1 code=True sha=0ee384588284 .. a non-zero configure size is latched as configured_width/c
+row sec=B file=gdktoplevel-wayland.c line=680 words=3 occ=1 code=True sha=0ee384588284 .. and is marked fixed only when the state says so (floating 
+row sec=B file=gdktoplevel-wayland.c line=664 words=6 occ=1 code=True sha=0ee384588284 .. a fresh non-zero configure asks for constraint against GTK
+row sec=B file=gdktoplevel-wayland.c line=513 words=8 occ=1 code=True sha=0ee384588284 .. compute_size takes the compositor size when one was latche
+row sec=B file=gdktoplevel-wayland.c line=523 words=5 occ=1 code=True sha=0ee384588284 .. the latched size is clamped by GTK's geometry hints before
+row sec=B file=gdktoplevel-wayland.c line=532 words=6 occ=1 code=True sha=0ee384588284 .. a non-fixed latched size is cleared after one application 
+row sec=B file=gdktoplevel-wayland.c line=492 words=3 occ=1 code=True sha=0ee384588284 .. GTK's min size is the compute_size callback's min_width, s
+row sec=B file=gdktoplevel-wayland.c line=490 words=3 occ=1 code=True sha=0ee384588284 .. the constraint mask is MIN-only for a resizable window: no
+row sec=B file=gdktoplevel-wayland.c line=494 words=3 occ=1 code=True sha=0ee384588284 .. so the clamp applied to a latched size is a floor, not a c
+row sec=B file=gdktoplevel-wayland.c line=498 words=10 occ=1 code=True sha=0ee384588284 .. a non-resizable window pins min=max=natural size
+row sec=B file=gdktoplevel-wayland.c line=1333 words=6 occ=1 code=True sha=0ee384588284 .. those hints leave as xdg_toplevel.set_min_size/set_max_siz
+row sec=B file=gdktoplevel-wayland.c line=706 words=5 occ=1 code=True sha=0ee384588284 .. the ack is sent at the END of handle_configure, with the p
+row sec=B file=gdktoplevel-wayland.c line=210 words=7 occ=1 code=True sha=0ee384588284 .. the saved size strips GTK's shadow margins
+row sec=B file=gdktoplevel-wayland.c line=476 words=4 occ=1 code=True sha=0ee384588284 .. with no configure_bounds GTK falls back to the union of al
+row sec=B file=gdktoplevel-wayland.c line=480 words=6 occ=1 code=True sha=0ee384588284 .. and passes that fallback in as the size-request bound
+row sec=C file=gkeep-ui.py line=475 words=3 occ=1 code=True sha=07a3c4a50bf2 .. gkeep sets a default size of 420x500, immediately after tu
+row sec=C file=gkeep-ui.py line=448 words=4 occ=1 code=True sha=07a3c4a50bf2 .. gkeep's application_id, the token the windowrule class mat
+row sec=C file=gkeep-ui.py line=86 words=7 occ=1 code=True sha=07a3c4a50bf2 .. the only CSS min-* properties in the file: 30px tall, 72px
+row sec=D file=Hyprland-Window.cpp line=1686 words=6 occ=1 code=True sha=d735d454cc4b .. Wayland targets are reported with a 0 lower clamp (X11 use
+row sec=D file=Hyprland-Window.cpp line=1741 words=5 occ=1 code=True sha=d735d454cc4b .. sendWindowSize calls realToReportSize, then setSize on the
+row sec=D file=Hyprland-Window.cpp line=1752 words=6 occ=1 code=True sha=d735d454cc4b .. the serial from setSize is queued with the size, for onAck
+row sec=D file=Hyprland-Window.cpp line=1750 words=6 occ=1 code=True sha=d735d454cc4b .. the X11 branch instead pushes an xcb configure
+row sec=D file=Hyprland-Window.cpp line=1520 words=3 occ=1 code=True sha=d735d454cc4b .. onAck applies the acked size to the surface's pending stat
+row sec=D file=Hyprland-XDGShell.cpp line=355 words=3 occ=1 code=True sha=d90b534c9097 .. setSize latches the size and schedules a configure for the
+row sec=D file=Hyprland-XDGShell.cpp line=452 words=14 occ=1 code=True sha=d90b534c9097 .. the configure carries exactly the latched size and the lat
+row sec=D file=Hyprland-XDGShell.cpp line=467 words=5 occ=1 code=True sha=d90b534c9097 .. Hyprland tracks a client min size for the layout
+rows=42 fails=0 pin_mismatch=0 census_ok=True grep_fails=0 wrote=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/w1/ExecSrcClient/facts.md

@@ -1,0 +1,18 @@
+$ grep -n "domain-versus-meta ratio" considerthese/2026-10-25.md
+46:1. **Track the domain-versus-meta ratio as a running number.** This window went 4 domain rounds to 2 calibration rounds, against 1 to 4 in yesterday's window. Reporting the ratio over a rolling window would show João the lane's balance at a glance instead of in prose.
+exit=0
+
+$ awk -F". " "/^[0-9]+\. /{if (\$1+0>m) m=\$1+0} END{print \"max=\"m}" corpus/QUALITY.md
+max=81
+exit=0
+
+$ grep -n "^81\. " corpus/QUALITY.md
+409:81. A round's closure row counts three things separately, each from a named 
+exit=0
+
+$ grep -n "^| C[0-9]" SCORECARD.md | awk -F: "\$1>=2122" | wc -l
+17
+
+$ git cat-file -e HEAD:corpus/lessons/round-44.md
+fatal: path 'corpus/lessons/round-44.md' does not exist in 'HEAD'
+exit=128

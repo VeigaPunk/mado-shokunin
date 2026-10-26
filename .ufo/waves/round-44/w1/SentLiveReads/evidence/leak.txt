@@ -1,0 +1,39 @@
+S1 evidence - session material in live-host artifacts (title VALUES withheld on purpose:
+this file must not repeat the leak it reports; only key names, counts and value hashes).
+
+== A. round-44 (w1, untracked at review time) ==
+live-clients.json  clients=3 keys=32
+  keys: acceptsInput,address,allowedOverFullscreen,at,class,contentType,floating,focusHistoryID,fullscreen,fullscreenClient,fullscreenHandler,grouped,hidden,inhibitingIdle,initialClass,initialTitle,mapped,monitor,pid,pinFullscreened,pinned,size,stableId,swallowing,tags,tearingHint,title,visible,workspace,xdgDescription,xdgTag,xwayland
+  carries title/initialTitle/pid: True
+  client class='grok-bot' title_len=8 title_sha256=edb1068f03be7b5b pid=1705
+  client class='Alacritty' title_len=48 title_sha256=d5b62d4d74e6403a pid=3173
+  client class='zcode' title_len=5 title_sha256=b905cec48d8c6583 pid=2063593
+fs2.json           clients=1 keys=32
+  keys: acceptsInput,address,allowedOverFullscreen,at,class,contentType,floating,focusHistoryID,fullscreen,fullscreenClient,fullscreenHandler,grouped,hidden,inhibitingIdle,initialClass,initialTitle,mapped,monitor,pid,pinFullscreened,pinned,size,stableId,swallowing,tags,tearingHint,title,visible,workspace,xdgDescription,xdgTag,xwayland
+  carries title/initialTitle/pid: True
+  client class='org.omarchy.gkeep' title_len=5 title_sha256=9e4380f7911c7231 pid=3173
+max1.json          clients=1 keys=32
+  keys: acceptsInput,address,allowedOverFullscreen,at,class,contentType,floating,focusHistoryID,fullscreen,fullscreenClient,fullscreenHandler,grouped,hidden,inhibitingIdle,initialClass,initialTitle,mapped,monitor,pid,pinFullscreened,pinned,size,stableId,swallowing,tags,tearingHint,title,visible,workspace,xdgDescription,xdgTag,xwayland
+  carries title/initialTitle/pid: True
+  client class='org.omarchy.gkeep' title_len=5 title_sha256=9e4380f7911c7231 pid=3173
+
+live-states.txt: 408 lines, 3 '"title"' occurrences (verbatim dump embedded)
+
+== B. the intended shape, and the pre-existing leak at base ==
+round-43 PINNED receipt fetch/host-clients-r43.json clients=4 keys=['address', 'at', 'class', 'floating', 'mapped', 'monitor', 'size']
+round-43 SEAT file w1/ExecLiveHost/host-clients-live.json clients=4 keys=32 carries title/pid: True
+git-tracked at base: '.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json'
+round-44 ExecLiveHost tracked files at review time: '' (w1 not yet committed)
+
+== C. mutating-verb sweep over the whole round-44 wave directory ==
+matches outside fetch/ pins: 22
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/SOURCES.md:198:| S186 | Hyprland IPC page — current upstream source — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c04680a28301ab4b5ee5f94eaff5395efe28dbac/content/ipc/_index.md | docs | A | The documented dual-socket IPC contract of the Hyprland compositor: request-socket path and request grammar, the synchronous-evaluation freeze rule, event-socket framing and the event catalogue | `content/ipc/_index.md:6` (two UNIX sockets), `:14` (`.socket.sock`), `:19` (request grammar), `:22` (synchronous freeze), `:25` (`.socket2.sock`), `:30` (event framing), `:36-81` (44-event table) @ wiki commit `c04680a28301ab4b5ee5f94eaff5395efe28dbac`, 6539 B, sha256 prefix `535bc4c385a06162` | A request is written as `[flags]/command args` on a socket the compositor evaluates synchronously, so an unclosed request connection freezes it; the event socket emits one framed event line per event | mined | 2026-10-24 | 90d | corpus/knowledge/ipc-contract-r25.md, corpus/knowledge/dispatcher-surface-and-request-grammar-r26.md |
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/SOURCES.md:199:| S187 | Hyprland IPC page — version-matched 0.56.0 — https://wiki.hypr.land/0.56.0/IPC/ | docs | A | The IPC contract as published for the 0.56.x line, the release line this lane's host runs (v0.56.2) | rendered text `:235` (two UNIX sockets), `:239` (`.socket.sock`), `:248` (`.socket2.sock`), `:251` (event framing) @ page revision "Last updated on May 2, 2026", 268731 B | The event catalogue published for 0.56.0 is identical to the current upstream catalogue — 44 events, none added or removed — so the host's event vocabulary is stable across the 0.56 to 0.57 boundary | mined | 2026-10-24 | 90d | corpus/knowledge/ipc-contract-r25.md, corpus/knowledge/request-socket-live-bound-r8.md |
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:17:| `knowledge/waybar-walker-semantics.md` (MADO-R3-1, round 3) | The bar/launcher plane at semantic depth over the round-1 file bytes: 13 tables / 89 data rows — module-by-module semantics for all 19 modules (§3.1 2 + §3.2 8 + §3.3 9; each row Displays/Source/Actions/Fails/Live under the OBS/MAN/RUN/INF/UNK tag legend), bar-level config-vs-`waybar(5)` table §2.1 (8 declared keys, undeclared-defaults list), introspection-capability ledgers §2.3/§6.8 — waybar 0.15.0 has **no IPC/query verb**, so the round-3 anti-claim branch is applied and labeled (module text = UNK, reconstructed via pure-read producers, RUN); signal bus §4 (consumers RTMIN+7…11 + 5 producers; delivery re-proved on-host: `pkill -x -RTMIN+11` → caught=45 under procps-ng 4.0.7, contradicting the `ai-usage:150-153` docstring); style map §5 (theme owns exactly fg/bg; the 4 literal `#a55555` sites stay theme-independent); walker key-by-key §6.2 against the 298-L packaged table incl. the `[columns]` correction §6.3 (grid columns, not "queried providers" — the user file's own inline comment is wrong); launch/restart paths + standing binds §6.7 (menu is a walker dmenu dependency); cross-plane failure modes §7 (7 rows); 7 divergence candidates §8 (voxtype `trap 'kill 0'` producer hazard — direct invocation killed the caller, exit 143 contained re-run; battery has no device on this host; omarchy version two-pin 3.8.3 vs v3.8.4; tray empty by data); unknowns §9 (11); boundary proof §10 (4 substrate sha256 equal before/after, mtimes unchanged, no network command executed) | `~/.config/waybar/{config.jsonc,style.css}`, `~/.config/walker/config.toml`, `/etc/xdg/{waybar,walker}/`, omarchy theme/default dirs read-only; `man 5 waybar*`, `hyprctl layers/monitors/workspaces/binds`, `busctl` (D-Bus ownership, tray props, `org.gtk.Actions.List`), `systemctl --user`, `ps/pgrep`, `fc-list`, `pacman -Ql`; producer scripts run only when pure-read (network producers read, never run); scratch `/tmp/mado-r3-1-probe/`; measured 2026-10-14 (note header) |
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:242:  environment-seeded variables, runtime `hyprctl keyword animation`, the Lua config era.
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:249:  (`exec`/`hyprctl keyword`), the Lua config era, and submaps/`k`/`s` flags beyond what the counter generates.
+  .ufo/waves/round-44/w1/ExecHarmBase/harm-base.txt:183:CASE xargs-pkill ok
+  .ufo/waves/round-44/w1/ExecHarmBase/gate-log.txt:124:CASE xargs-pkill ok
+  .ufo/waves/round-44/w1/SentLiveReads/evidence/strace.txt:15:hyprctl clients -j                  connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+  .ufo/waves/round-44/w1/SentLiveReads/evidence/strace.txt:17:hyprctl getoption general gaps out -j connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+  .ufo/waves/round-44/w1/SentLiveReads/evidence/strace.txt:19:hyprctl monitors -j                 connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock

@@ -1,0 +1,52 @@
+Host-read inventory for round 44 wave w1 (what the fence allows, what the seats ran).
+
+== A. the fence, as written ==
+wave context, .ufo/waves/round-44/w1-spec.json:78 (same text in w1-dispatch.json):
+  Allowed compositor reads: `hyprctl version`, `hyprctl clients -j`, `hyprctl monitors -j`,
+  `hyprctl workspaces -j`, `hyprctl getoption <name> -j`; NEVER `dispatch`, `keyword`, `reload`,
+  `setprop`, `--batch`, `output`, `plugin`, `kill`.
+SKILL.md:315 (allowlist, 12 verbs): getoption, monitors, workspaces, activeworkspace, clients,
+  binds, animations, devices, instances, layers, configerrors, version.
+
+== B. each allowed verb: read-only, and what it writes on the wire ==
+measured with strace -f -qq -e trace=connect,write (evidence/strace.txt section B):
+  version            -> write(3, "/version", 8)            read-only, no argument
+  clients -j         -> write(3, "j/clients", 9)            read-only
+  monitors -j        -> write(3, "j/monitors", 10)          read-only
+  workspaces -j      -> write(3, "j/workspaces", 12)        read-only
+  getoption <name> -j-> write(3, "j/getoption <name>", 28)  read-only (handler reads only)
+  every one: exactly 1 connect() to the compositor request socket, 1 request write, then a read.
+  there is no verb-less read path: 'read-only' is a property of the verb string, not of the transport.
+
+== C. what the seats actually spawned or issued ==
+literal host-binary spawns across every seat script: 1
+  .ufo/waves/round-44/w1/ExecLiveHost/build-live-states.py:58:rc, so, se = run(["hyprctl", "version"])
+
+ExecLiveHost (the only seat that touched the host):
+  spawned by script: the one line above (hyprctl version).
+  shell reads whose output it captured: clients -j, monitors -j, workspaces -j
+    (live-clients.json / live-monitors.json / live-workspaces.json, all present in the seat dir).
+  host files read: ~/.config/hypr/gkeep.conf (config tree, read), /proc/sys/kernel/osrelease.
+  local spawns: python3 -I on its two tool copies and on its own build script.
+  no --instance, no --batch, no dispatch/keyword/reload/setprop/output/plugin/kill.
+
+ExecHarmBase (oracle-free): ran the lane's own tool selftests inside a shared clone under
+  /fast/scratch; its `CASE xargs-pkill ok` lines are mado-tripwire.py --selftest CASES
+  (string classification), not executed commands.
+ExecIndepA/ExecIndepB, ExecC1ExtraMutants, ExecC2ExtraMutants, ExecC2Positive, ExecLocatorTeeth,
+  ExecDomainMetaRatio, ExecSrcClient, ExecSrcHyprland, the critics and scribes: python3/git/bash
+  inside their own seat or scratch dirs; no host binary, no compositor verb.
+
+== D. mutating-verb sweep over every wave file ==
+matches: 11 -- all prose, pin tables or classifier fixtures, zero invocations:
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/SOURCES.md:198:| S186 | Hyprland IPC page — current upstream source — https://raw.githubusercont
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/SOURCES.md:199:| S187 | Hyprland IPC page — version-matched 0.56.0 — https://wiki.hypr.land/0.56
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:17:| `knowledge/waybar-walker-semantics.md` (MADO-R3-1, round 3) | The bar/launcher pl
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:242:  environment-seeded variables, runtime `hyprctl keyword animation`, the Lua confi
+  .ufo/waves/round-44/w1/ExecC2Positive/positive/corpus/README.md:249:  (`exec`/`hyprctl keyword`), the Lua config era, and submaps/`k`/`s` flags beyond
+  .ufo/waves/round-44/w1/ExecHarmBase/harm-base.txt:183:CASE xargs-pkill ok
+  .ufo/waves/round-44/w1/ExecHarmBase/gate-log.txt:124:CASE xargs-pkill ok
+  .ufo/waves/round-44/w1/ExecLocatorTeeth/LOG-r42.md:41:  PATH (hyprctl omarchy makoctl busctl grim slurp hyprpicker systemctl pgrep
+  .ufo/waves/round-44/w1/ExecLocatorTeeth/LOG-r42.md:177:  producers; delivery re-proved: `pkill -x -RTMIN+11` → caught=45 under
+  .ufo/waves/round-44/w1/ExecLocatorTeeth/LOG-r42.md:805:The first L1 replay lacked WAYLAND_DISPLAY and correctly returned UNKNOWN;
+  .ufo/waves/round-44/w1/ScrEntryA.md:89:- No tool installed (nothing needed), no pacman, no `hyprctl dispatch`/`keyword`/`reload`, no host-service acti

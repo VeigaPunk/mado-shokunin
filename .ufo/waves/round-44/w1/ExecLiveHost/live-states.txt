@@ -1,0 +1,400 @@
+ExecLiveHost - C1 live host receipt (mado round 44, wave w1, seat ExecLiveHost)
+generated: 2026-10-26T14:10:20-0300 (host clock)
+lane: /home/vgpnk/Projects/shokunin/mado-shokunin  base rev: 6a1a90528fe533cadee506a9fa3e9d13d15cc41f
+
+This file is REPORTED, not scored. Every read verb below is one of the four allowed
+compositor reads (version, clients -j, monitors -j, workspaces -j); no dispatch,
+keyword, reload, setprop, --batch, output, plugin or kill was issued.
+
+== shape-only projection (SKILL.md:332: `clients` for length/tags, never window titles) ==
+The dumps below are projections of the raw hyprctl output; the raw bytes are not retained.
+Dropped and never read by any tool or claim here: title, initialTitle, pid, stableId,
+grouped, tags, swallowing, xdgTag, xdgDescription, contentType, focusHistoryID, hidden,
+visible, acceptsInput, allowedOverFullscreen, pinned, pinFullscreened, inhibitingIdle,
+tearingHint, xwayland, initialClass, workspace; monitor description/make/model/serial/
+physical*/specialWorkspace/availableModes/colour fields; workspace lastwindow and
+lastwindowtitle. project-dumps.py records what was kept and the raw sha256:
+
+clients raw_sha256=931ed70a0b9bc173e4b07e7f4cf7d8e4e2ef9acbf35db19a339f39aa5c811452 raw_bytes=2619 raw_keys=['acceptsInput', 'address', 'allowedOverFullscreen', 'at', 'class', 'contentType', 'floating', 'focusHistoryID', 'fullscreen', 'fullscreenClient', 'fullscreenHandler', 'grouped', 'hidden', 'inhibitingIdle', 'initialClass', 'initialTitle', 'mapped', 'monitor', 'pid', 'pinFullscreened', 'pinned', 'size', 'stableId', 'swallowing', 'tags', 'tearingHint', 'title', 'visible', 'workspace', 'xdgDescription', 'xdgTag', 'xwayland'] kept=address,mapped,class,floating,size,at,monitor,fullscreen,fullscreenClient,fullscreenHandler items=3 -> live-clients.json sha256=983c3a1736c2a09ff84f11c79a911582d1ad87405560ec7983d16a14311cd8ed
+monitors raw_sha256=f1894f45f290b6da0f707b5846bc5bbf5540c49b61b41057eb07efef82fa5411 raw_bytes=1334 raw_keys=- kept=id,name,width,height,x,y,reserved,scale,transform,refreshRate,activeWorkspace,focused,disabled items=1 -> live-monitors.json sha256=a0fa6f2b0d454e208370f1614f5e9f504b8e58ee8e632fb01973afdc072802d6
+workspaces raw_sha256=bdc9791ee3a6a23abb709c0f8a996cd5f377dfe7048fee57b8a77c4d3d8478b9 raw_bytes=545 raw_keys=- kept=id,name,monitor,monitorID,windows,hasfullscreen,ispersistent,tiledLayout items=2 -> live-workspaces.json sha256=4e4fb15029e8014c963c98aeebe5d8ba4bc602125afea34378e0e973031dc52e
+
+projection invariance (projection-invariance.txt, sha256 33efbb47f7577563c75e5c1a850ffdfee9bbbdb96dda0a295a43f91360ea9ae5): the tool reads only
+address/class/floating/mapped/size/fullscreen, so raw and projected clients give identical
+stdout under both tools; that file shows the cmp and both outputs.
+
+== tools under test ==
+new (reference control copy)  w1/ExecLiveHost/mado-geometry.py
+  sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d
+  source .ufo/waves/round-44/c1/ctl-ref-tool.py.txt sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d
+  bytes identical: True
+round-43 baseline            w1/ExecLiveHost/mado-geometry-r43.py
+  sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+  extracted verbatim: git -C <lane> show 6a1a9052...:tools/mado-geometry.py
+  grep 'fullscreen' over that file: 0 hits (it has no state model)
+
+== host ==
+$ hyprctl version   (rc=0, stderr=0 bytes)
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+Tag: v0.56.2, commits: 7661
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.15.1, system has 0.15.1
+
+Version ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+
+kernel: 7.2.11-arch1-1
+
+== hyprctl monitors -j, projected (live-monitors.json sha256 a0fa6f2b0d454e208370f1614f5e9f504b8e58ee8e632fb01973afdc072802d6) ==
+[
+    {
+        "id": 0,
+        "name": "DP-1",
+        "width": 3440,
+        "height": 1440,
+        "x": 0,
+        "y": 0,
+        "reserved": [
+            0,
+            26,
+            0,
+            0
+        ],
+        "scale": 1,
+        "transform": 0,
+        "refreshRate": 99.997,
+        "activeWorkspace": {
+            "id": 1,
+            "name": "1"
+        },
+        "focused": true,
+        "disabled": false
+    }
+]
+
+== hyprctl workspaces -j, projected (live-workspaces.json sha256 4e4fb15029e8014c963c98aeebe5d8ba4bc602125afea34378e0e973031dc52e) ==
+[
+    {
+        "id": 1,
+        "name": "1",
+        "monitor": "DP-1",
+        "monitorID": 0,
+        "windows": 2,
+        "hasfullscreen": false,
+        "ispersistent": false,
+        "tiledLayout": "dwindle"
+    },
+    {
+        "id": 2,
+        "name": "2",
+        "monitor": "DP-1",
+        "monitorID": 0,
+        "windows": 1,
+        "hasfullscreen": false,
+        "ispersistent": false,
+        "tiledLayout": "dwindle"
+    }
+]
+
+== hyprctl clients -j, projected (live-clients.json sha256 983c3a1736c2a09ff84f11c79a911582d1ad87405560ec7983d16a14311cd8ed, 1108 bytes) ==
+[
+    {
+        "address": "0x55de529f7c90",
+        "mapped": true,
+        "class": "grok-bot",
+        "floating": false,
+        "size": [
+            1720,
+            1414
+        ],
+        "at": [
+            0,
+            26
+        ],
+        "monitor": 0,
+        "fullscreen": 0,
+        "fullscreenClient": 0,
+        "fullscreenHandler": "default"
+    },
+    {
+        "address": "0x55de52f75ff0",
+        "mapped": true,
+        "class": "Alacritty",
+        "floating": false,
+        "size": [
+            1720,
+            1414
+        ],
+        "at": [
+            1720,
+            26
+        ],
+        "monitor": 0,
+        "fullscreen": 0,
+        "fullscreenClient": 0,
+        "fullscreenHandler": "default"
+    },
+    {
+        "address": "0x55de52ffdf80",
+        "mapped": true,
+        "class": "zcode",
+        "floating": false,
+        "size": [
+            3440,
+            1414
+        ],
+        "at": [
+            0,
+            26
+        ],
+        "monitor": 0,
+        "fullscreen": 0,
+        "fullscreenClient": 0,
+        "fullscreenHandler": "default"
+    }
+]
+
+== state fields carried by the projected live dump, per client (computed) ==
+both `fullscreen` and `fullscreenClient` are present on every client: True
+addr=0x55de529f7c90 class='grok-bot' mapped=True floating=False size=[1720, 1414] at=[0, 26] fullscreen=0 (type int) fullscreenClient=0 (type int) fullscreenHandler='default'
+addr=0x55de52f75ff0 class='Alacritty' mapped=True floating=False size=[1720, 1414] at=[1720, 26] fullscreen=0 (type int) fullscreenClient=0 (type int) fullscreenHandler='default'
+addr=0x55de52ffdf80 class='zcode' mapped=True floating=False size=[3440, 1414] at=[0, 26] fullscreen=0 (type int) fullscreenClient=0 (type int) fullscreenHandler='default'
+distinct `fullscreen` values across the live dump: [0]
+
+== geometry the live monitor reports (computed) ==
+monitor DP-1: box 3440x1440 at (0,0), reserved=[0, 26, 0, 0], scale=1, transform=0
+monitor box (what fullscreen 2 is pinned to): 3440x1440
+work area = monitor box minus reserved (l,t,r,b): 3440x1414 (what maximized 1 is pinned to)
+cross-check on live bytes: the tiled zcode client occupies [3440, 1414] at [0, 26]
+
+== rules file used for the gkeep join (verbatim /home/vgpnk/.config/hypr/gkeep.conf, sha256 3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949) ==
+# gkeep — local post-it. No floating-window tag: Omarchy sizes that tag at 875×600.
+windowrule = float on, match:class ^(org.omarchy.gkeep)$
+windowrule = center on, match:class ^(org.omarchy.gkeep)$
+windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$
+
+== rules file used for the live-bytes probe (verbatim live-bytes.conf, sha256 c6c92493bd30fd0b76b0b1f7a8e7dccceb07b234c36ba86051e11c751320111a) ==
+# live-bytes probe: the real Alacritty client from live-clients.json (tiled, size 1720x1414)
+windowrule = size 1720 1414, match:class ^Alacritty$
+
+== A. the reference tool on the running desktop (stdin, raw pipe at read time) ==
+$ hyprctl clients -j | python3 -I mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+rc=3
+stdout (verbatim live-run-ref.out, sha256 634af233da58ad87392a8bb068f895f8eedeb0c0bf7457ca34656b696dfae881):
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr: 0 bytes (live-run-ref.err sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)
+expected NO_MATCHING_CLIENT rc 3 while no gkeep window is open: True
+
+== B. live bytes with a rule that MATCHES a real client (no-hazard check) ==
+The live desktop has no gkeep window, so the gkeep join cannot exercise a match; a rule
+written against the real Alacritty client (tiled, size 1720x1414) does. Both tools must
+print the round-43 line byte-identically here, because no matched client is in a state.
+
+$ python3 -I mado-geometry.py --clients live-clients.json --rules live-bytes.conf   [new]  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=1720x1414 class=^Alacritty$
+MADO_GEOM_CLIENT: addr="0x55de52f75ff0" class="Alacritty" floating=false size=1720x1414 want=1720x1414 float_rule=- verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=3 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+stderr: 0 bytes
+
+$ python3 -I mado-geometry-r43.py --clients live-clients.json --rules live-bytes.conf   [r43]  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=1720x1414 class=^Alacritty$
+MADO_GEOM_CLIENT: addr="0x55de52f75ff0" class="Alacritty" floating=false size=1720x1414 want=1720x1414 float_rule=- verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=3 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+stderr: 0 bytes
+
+byte-identical stdout on the live match: True
+
+== C. hand-made state dumps (built by make-state-dumps.py from the projected client record) ==
+fs2.json   class=org.omarchy.gkeep floating=true size=3440x1440 at=(0,0) fullscreen=2  (monitor box)
+max1.json  class=org.omarchy.gkeep floating=true size=3440x1414 at=(0,26) fullscreen=1  (work area)
+  fs2.json sha256 f883344868ade73ebc46aecb2a05f9e988aa405baa075219976ebe3ef126b910, 10 keys, verbatim:
+[
+    {
+        "address": "0xf5000001",
+        "mapped": true,
+        "class": "org.omarchy.gkeep",
+        "floating": true,
+        "size": [
+            3440,
+            1440
+        ],
+        "at": [
+            0,
+            0
+        ],
+        "monitor": 0,
+        "fullscreen": 2,
+        "fullscreenClient": 2,
+        "fullscreenHandler": "default"
+    }
+]
+  max1.json sha256 f37c3a5aa89507c4ee39155ec6a22c39d4650553ff56485be70bd83af3c13fac, 10 keys, verbatim:
+[
+    {
+        "address": "0xf5000002",
+        "mapped": true,
+        "class": "org.omarchy.gkeep",
+        "floating": true,
+        "size": [
+            3440,
+            1414
+        ],
+        "at": [
+            0,
+            26
+        ],
+        "monitor": 0,
+        "fullscreen": 1,
+        "fullscreenClient": 1,
+        "fullscreenHandler": "default"
+    }
+]
+
+=== RUN tool=mado-geometry.py dump=live-clients.json cmd=timeout 30 python3 -I mado-geometry.py --clients live-clients.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=3
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr:0 bytes
+=== RUN tool=mado-geometry.py dump=fs2.json cmd=timeout 30 python3 -I mado-geometry.py --clients fs2.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=0
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000001" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=OK
+stderr:0 bytes
+=== RUN tool=mado-geometry.py dump=max1.json cmd=timeout 30 python3 -I mado-geometry.py --clients max1.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=0
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000002" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=MAXIMIZED
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=OK
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=live-clients.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients live-clients.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=3
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=fs2.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients fs2.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=1
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000001" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr:0 bytes
+=== RUN tool=mado-geometry-r43.py dump=max1.json cmd=timeout 30 python3 -I mado-geometry-r43.py --clients max1.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+rc=1
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf5000002" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr:0 bytes
+
+== D. before/after table (computed from section C) ==
+dump      client size   fullscreen  round-43 verdict (rc)  new verdict (rc)
+fs2.json  3440x1440     2           DIFFER (rc 1)            FULLSCREEN (rc 0)
+max1.json 3440x1414     1           DIFFER (rc 1)            MAXIMIZED (rc 0)
+
+Both state dumps are DIFFER (rc 1) under the round-43 tool and FULLSCREEN/MAXIMIZED (rc 0)
+under the new tool: the round-43 tool cannot tell a rule miss from a compositor-owned box.
+
+== F. pin cross-check: what the two state dumps encode, and which JSON field the tool reads ==
+Locators below are computed at build time (line scan), never typed; verify-quotes.py re-checks
+every quote against the pin file at that line and against this receipt.
+
+-- Hyprland-FullscreenHandler.cpp: modes map to the boxes the dumps use --
+  fetch-c1/Hyprland-FullscreenHandler.cpp:191  if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+  fetch-c1/Hyprland-FullscreenHandler.cpp:220  if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+  fetch-c1/Hyprland-FullscreenHandler.cpp:192  const CBox MONBOX                                  = MONITOR->logicalBox();
+  fetch-c1/Hyprland-FullscreenHandler.cpp:222  const CBox MONBOX         = MONITOR->logicalBox();
+  fetch-c1/Hyprland-FullscreenHandler.cpp:195  } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+  fetch-c1/Hyprland-FullscreenHandler.cpp:236  } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+  fetch-c1/Hyprland-FullscreenHandler.cpp:196  const CBox WORKAREA                                = WORKSPACE->m_space->workArea(target->floating());
+  fetch-c1/Hyprland-FullscreenHandler.cpp:238  const auto WORK_AREA       = WORKSPACE->m_space->workArea(FS_TARGET->floating());
+
+-- Hyprland-HyprCtl.cpp: which JSON field carries which mode --
+  fetch-c1/Hyprland-HyprCtl.cpp:410  "fullscreen": {},
+  fetch-c1/Hyprland-HyprCtl.cpp:431  (w->m_pinned ? "true" : "false"), (w->m_pinFullscreened ? "true" : "false"), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal),
+  fetch-c1/Hyprland-HyprCtl.cpp:451  sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client),
+  fetch-c1/Hyprland-HyprCtl.cpp:411  "fullscreenClient": {},
+  fetch-c1/Hyprland-HyprCtl.cpp:432  sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client), escapeJSONStrings(Fullscreen::controller()->getFullscreenHandlerNameAsString(w)),
+  fetch-c1/Hyprland-HyprCtl.cpp:451  sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client),
+  fetch-c1/Hyprland-HyprCtl.cpp:427  sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+  fetch-c1/Hyprland-HyprCtl.cpp:448  sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+  fetch-c1/Hyprland-HyprCtl.cpp:428  sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+  fetch-c1/Hyprland-HyprCtl.cpp:448  sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+
+-- Hyprland-FullscreenController.hpp: the numeric encoding --
+  fetch-c1/Hyprland-FullscreenController.hpp:12  enum eFullscreenMode : int8_t {
+  fetch-c1/Hyprland-FullscreenController.hpp:13  FSMODE_NONE = 0,
+  fetch-c1/Hyprland-FullscreenController.hpp:14  FSMODE_MAXIMIZED,
+  fetch-c1/Hyprland-FullscreenController.hpp:15  FSMODE_FULLSCREEN,
+  fetch-c1/Hyprland-FullscreenController.hpp:16  };
+  fetch-c1/Hyprland-FullscreenController.hpp:34  eFullscreenMode internal = FSMODE_NONE;
+  fetch-c1/Hyprland-FullscreenController.hpp:35  eFullscreenMode client   = FSMODE_NONE;
+
+=> eFullscreenMode: NONE=0, MAXIMIZED=1, FULLSCREEN=2 = the contract's fsmode 1/2.
+=> `fullscreen` in the JSON dump is the INTERNAL mode; `fullscreenClient` is the separate client
+   mode. The tool reads `fullscreen`; today's live dump carries both, all zero.
+
+Contract clauses the live run exercises, quoted from the tool docstring (located, <= 25 words):
+  w1/ExecLiveHost/mado-geometry.py:54  a string, else "-"; fsmode is the `fullscreen` value when it is a JSON integer
+  w1/ExecLiveHost/mado-geometry.py:59  FULLSCREEN (fsmode 2) | MAXIMIZED (fsmode 1) | TILED (not floating) | AGREE
+  w1/ExecLiveHost/mado-geometry.py:68  (the bracketed pair is printed exactly when maximized + fullscreen > 0, so a dump
+
+pin sha256 (fetch-c1, re-hashed here against .ufo/waves/round-44/receipts/fetch-sha256.txt):
+  Hyprland-FullscreenHandler.cpp         5bfed3aa05f2e6f013e7776efaa754e3e107aa7688eb5d523bdbdfa87f51bc85  matches receipt
+  Hyprland-FullscreenController.hpp      7f3585f23e4d756f3f165670a604de39717eb3fd704114e2a230bdd6ffba2378  matches receipt
+  Hyprland-HyprCtl.cpp                   798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  matches receipt
+
+== G. selftests of the two tools (not scored here), each bounded by timeout=30 s ==
+$ python3 -I mado-geometry.py --selftest   rc=0
+MADO_GEOMETRY_SELFTEST: 91/91 passed
+$ python3 -I mado-geometry-r43.py --selftest   rc=0
+MADO_GEOMETRY_SELFTEST: 73/73 passed
+
+== file bounds ==
+every subprocess in this builder runs with timeout=30 s; a run that exceeds it is recorded
+as rc 124 with a TIMEOUT marker, never as a verdict. SKILL.md:300's shell form is
+`timeout 5 python3 tools/mado-geometry.py --clients - --rules <file>` with exit 124 as no verdict.
+
+== files in this seat dir (this receipt and the verifier output excluded: they change per run) ==
+build-live-states.py        15461 bytes  sha256 0a894e7b81746cbd0b2d528e0352752f1ab92415e76b7ff8d510153be43759dc
+dumps-built.txt               241 bytes  sha256 962fca32e45811933dfe6e53c3e4812bc6c7c4d1ed39b28bb8e1ae2fbac8e733
+fs2.json                      374 bytes  sha256 f883344868ade73ebc46aecb2a05f9e988aa405baa075219976ebe3ef126b910
+live-bytes.conf               146 bytes  sha256 c6c92493bd30fd0b76b0b1f7a8e7dccceb07b234c36ba86051e11c751320111a
+live-bytes.mado-geometry-r43.out      337 bytes  sha256 558c7b86518e9a57daf1d61204cc78161e6018336527cdc405ac00517cc3cfff
+live-bytes.mado-geometry.out      337 bytes  sha256 558c7b86518e9a57daf1d61204cc78161e6018336527cdc405ac00517cc3cfff
+live-clients.err                0 bytes  sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+live-clients.json            1108 bytes  sha256 983c3a1736c2a09ff84f11c79a911582d1ad87405560ec7983d16a14311cd8ed
+live-monitors.json            440 bytes  sha256 a0fa6f2b0d454e208370f1614f5e9f504b8e58ee8e632fb01973afdc072802d6
+live-run-ref.err                0 bytes  sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+live-run-ref.out              306 bytes  sha256 634af233da58ad87392a8bb068f895f8eedeb0c0bf7457ca34656b696dfae881
+live-run-ref.rc                 5 bytes  sha256 6287af74aad3b917a89c5439f344047420fcf7e089e04e310d3c41259b0c9332
+live-workspaces.json          443 bytes  sha256 4e4fb15029e8014c963c98aeebe5d8ba4bc602125afea34378e0e973031dc52e
+mado-geometry-r43.py        20507 bytes  sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+mado-geometry.py            24315 bytes  sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d
+make-state-dumps.py          1958 bytes  sha256 cc2fe1902cf5a56ca9af031c27ee587f07f4520672a0df17bbbc2754c7113044
+max1.json                     375 bytes  sha256 f37c3a5aa89507c4ee39155ec6a22c39d4650553ff56485be70bd83af3c13fac
+project-dumps.out            1339 bytes  sha256 33c1b5f69640a96dacbf54203a9befb13dee0ba8b4a05231a0aad0efb59ac6bc
+project-dumps.py             3739 bytes  sha256 59f8f99c3306433acb32a4ab1e7ec5b60d7ca04aa8bd68cc6b92f24db350354b
+projection-invariance.txt     1111 bytes  sha256 33efbb47f7577563c75e5c1a850ffdfee9bbbdb96dda0a295a43f91360ea9ae5
+r43-extract.err                 0 bytes  sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+raw-dumps.sha256             1339 bytes  sha256 33c1b5f69640a96dacbf54203a9befb13dee0ba8b4a05231a0aad0efb59ac6bc
+runs.raw                     3501 bytes  sha256 2391149a74ea1c63b70863c6c5f5058ebbc83b87b6a57625604d4a86d7d180a4
+verify-quotes.py             6330 bytes  sha256 1444ee819b9b081f57fa91523b0b51109fceb9229a2674082c4e314d22261fc3

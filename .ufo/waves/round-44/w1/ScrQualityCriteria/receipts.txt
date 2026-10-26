@@ -1,0 +1,180 @@
+# re-derivation transcript: QUALITY criteria 82+ (round 44, seat ScrQualityCriteria)
+# lane=/home/vgpnk/Projects/shokunin/mado-shokunin revs base=6a1a90528fe533cadee506a9fa3e9d13d15cc41f data=1959770657f1f8665097c1aed4be6c1cbb07139f tip=58466627de847d6502283c3bb9e652caea97b411 freeze=e2289516a9a857f55cda7be635933e89b931c3da
+# host Linux 7.2.11-arch1-1; python3 3.14.8; util-linux sha256sum
+
+$ sha256sum of the five checkers
+bc373ca12eb2a8f9e658449623ed0d1be967e8889c500817751951d98bd60819  .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py
+2be1d523282861e83ac4310541624698d943cbeb8da8a99489dcfb8ad51ad7fb  .ufo/waves/round-44/w1/ScrQualityCriteria/check83.py
+a18c4cb369e96a6935b77ba2a5262c68aae3e673ca755cbf28bf38a515c6903c  .ufo/waves/round-44/w1/ScrQualityCriteria/check84.py
+04c1845748a2531721997bc4d3c7510a148be2bbafc9a966910df61172c2f07f  .ufo/waves/round-44/w1/ScrQualityCriteria/check85.py
+514404f2b44fbcacd75fa7f0b55b9170c1826964837c5ea37e55ff0c168f1541  .ufo/waves/round-44/w1/ScrQualityCriteria/check86.py
+85cc43ed8c49f76a1e3b35c95b538a39618b8d7a8c373af33cb4defcfa375560  .ufo/waves/round-44/w1/ScrQualityCriteria/verify-quotes.py
+
+# --- check82: L1/L2/L3 on three tools; keys parsed from the pinned serializer
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py --source .ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp --tool .ufo/waves/round-44/c1/ctl-ref-tool.py.txt --must fullscreen:Hyprland-HyprCtl.cpp:410 --audit
+BLOCK Hyprland-HyprCtl.cpp:389-423 keys=31 scalar=17 string=10 list=4
+DECLARED 0 -
+FIELD fullscreen src=Hyprland-HyprCtl.cpp:410 loc=OK block=scalar mention=31 declare=0 case=10 ok
+AUDIT unmentioned-undeclared=15 acceptsInput allowedOverFullscreen focusHistoryID fullscreenClient grouped hidden id inhibitingIdle pid pinFullscreened pinned tags tearingHint visible xwayland
+CHECK82: verdict=PASS fields=1 violations=0
+exit=0
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py --source .ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp --tool /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/base-tool.py --must fullscreen:Hyprland-HyprCtl.cpp:410 --audit
+BLOCK Hyprland-HyprCtl.cpp:389-423 keys=31 scalar=17 string=10 list=4
+DECLARED 0 -
+FIELD fullscreen src=Hyprland-HyprCtl.cpp:410 loc=OK block=scalar mention=0 declare=0 case=0 L2-unmentioned-undeclared
+AUDIT unmentioned-undeclared=17 acceptsInput allowedOverFullscreen focusHistoryID fullscreen fullscreenClient grouped hidden id inhibitingIdle monitor pid pinFullscreened pinned tags tearingHint visible xwayland
+CHECK82: verdict=FAIL fields=1 violations=1
+exit=1
+# control A: reference tool, every selftest line naming fullscreen removed (13 lines)
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py --source .ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp --tool /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/ctl82/ref-no-case.py --must fullscreen:Hyprland-HyprCtl.cpp:410
+BLOCK Hyprland-HyprCtl.cpp:389-423 keys=31 scalar=17 string=10 list=4
+DECLARED 0 -
+FIELD fullscreen src=Hyprland-HyprCtl.cpp:410 loc=OK block=scalar mention=14 declare=0 case=0 L3-no-selftest-case
+CHECK82: verdict=FAIL fields=1 violations=1
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py --source .ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp --tool /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/ctl82/base-declared.py --must fullscreen:Hyprland-HyprCtl.cpp:410 --declare /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/ctl82/declare.txt
+BLOCK Hyprland-HyprCtl.cpp:389-423 keys=31 scalar=17 string=10 list=4
+DECLARED 1 fullscreen
+FIELD fullscreen src=Hyprland-HyprCtl.cpp:410 loc=OK block=scalar mention=0 declare=1 case=0 ok
+CHECK82: verdict=PASS fields=1 violations=0
+exit=0
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check82.py --source .ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp --tool .ufo/waves/round-44/c1/ctl-ref-tool.py.txt --must fullscreen:Hyprland-HyprCtl.cpp:400
+BLOCK Hyprland-HyprCtl.cpp:389-423 keys=31 scalar=17 string=10 list=4
+DECLARED 0 -
+FIELD fullscreen src=Hyprland-HyprCtl.cpp:400 loc=MISS block=scalar mention=31 declare=0 case=10 L1-source-miss
+CHECK82: verdict=FAIL fields=1 violations=1
+exit=1
+
+# --- check83: the round-43 entry at its data commit and at its tip
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check83.py --repo . --rev 1959770657f1f8665097c1aed4be6c1cbb07139f --doc corpus/knowledge/hyprland-gkeep-geometry-r43.md --prefix .ufo/
+LATE .ufo/waves/round-43/w1/ExecGoalVsValue/finding.md (added 2a3707c after 1959770)
+LATE .ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt (added 2a3707c after 1959770)
+OK .ufo/waves/round-43/receipts/live-geometry-host.txt -> .ufo/waves/round-43/receipts/live-geometry-host.txt
+CHECK83: verdict=FAIL citations=3 violations=2 outside=0 rev=1959770
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check83.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --doc corpus/knowledge/hyprland-gkeep-geometry-r43.md --prefix .ufo/
+OK .ufo/waves/round-43/w1/ExecGoalVsValue/pins/window.cpp -> .ufo/waves/round-43/w1/ExecGoalVsValue/pins/window.cpp
+OK .ufo/waves/round-43/w2/CritEntryInf/findings.md -> .ufo/waves/round-43/w2/CritEntryInf/findings.md
+OK .ufo/waves/round-43/w1/ExecGoalVsValue/finding.md -> .ufo/waves/round-43/w1/ExecGoalVsValue/finding.md
+OK .ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt -> .ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt
+OK .ufo/waves/round-43/w2/CritOracleClaim/findings.md -> .ufo/waves/round-43/w2/CritOracleClaim/findings.md
+OK .ufo/waves/round-43/receipts/live-geometry-host.txt -> .ufo/waves/round-43/receipts/live-geometry-host.txt
+CHECK83: verdict=PASS citations=6 violations=0 outside=0 rev=5846662
+exit=0
+
+# --- check84: round-43 tip and round-44 freeze, then a synthetic tip receipt
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check84.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --receipts .ufo/waves/round-43/receipts
+AXIS .ufo/waves/round-43/receipts/axis-base.txt rev=a35cfdf checked=3 mismatched=0 OTHER
+CHECK84: verdict=FAIL no receipt names the closing revision 5846662 (only earlier revisions: a base/data reading)
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check84.py --repo . --rev e2289516a9a857f55cda7be635933e89b931c3da --receipts .ufo/waves/round-44/receipts
+AXIS .ufo/waves/round-44/receipts/axis-base.txt rev=6a1a905 checked=3 mismatched=0 OTHER
+CHECK84: verdict=FAIL no receipt names the closing revision e228951 (only earlier revisions: a base/data reading)
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check84.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --receipts /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green84 --disk
+AXIS /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green84/axis-tip.txt rev=5846662 checked=3 mismatched=0 TIP
+CHECK84: verdict=PASS tip_receipt=/fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green84/axis-tip.txt rev=5846662 checked=3 mismatched=0
+exit=0
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check84.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --receipts /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/red84 --disk
+AXIS /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/red84/axis-tip.txt rev=5846662 checked=3 mismatched=1 TIP
+CHECK84: verdict=FAIL tip receipt /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/red84/axis-tip.txt mismatched=1 failed_line=0
+exit=1
+
+# --- check85: round-43 plan vs results, round-44 bound form, synthetic equal form
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check85.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --registration .ufo/waves/round-43/registration.md --results w1=.ufo/waves/round-43/w1-results.json --results w2=.ufo/waves/round-43/w2-results.json
+REGISTRATION .ufo/waves/round-43/registration.md waves=w1:37 w2:32 total=[69] bound=0
+RESULTS w1:seats=38 rows=38 w2:seats=32 rows=32
+VIOLATION WAVE w1 plan=37 results_seats=38 results_rows=38 (.ufo/waves/round-43/w1-results.json)
+VIOLATION TOTAL plan=69 results_rows=70
+CHECK85: verdict=FAIL violations=2
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check85.py --repo . --rev e2289516a9a857f55cda7be635933e89b931c3da --registration .ufo/waves/round-44/registration.md
+REGISTRATION .ufo/waves/round-44/registration.md waves=- total=- bound=1
+NOTE bound-form: counts are to be read from the results files, none stated
+CHECK85: verdict=PASS
+exit=0
+# synthetic results files written: w1 38 rows, w2 32 rows
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check85.py --repo . --rev HEAD --registration /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green85/registration.md --results w1=/fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green85/w1-results.json --results w2=/fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green85/w2-results.json --text
+REGISTRATION /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/green85/registration.md waves=w1:38 w2:32 total=[70] bound=0
+RESULTS w1:seats=38 rows=38 w2:seats=32 rows=32
+CHECK85: verdict=PASS
+exit=0
+
+# --- check86: the round-43 oracle receipt's gkeep-shm.c locators, as committed and corrected
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check86.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --file .ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt --only gkeep-shm.c
+OUTSIDE gkeep-shm.c:156-164 ids_inside=0 ids_outside=app_id@34
+OK gkeep-shm.c:152-155 ids_inside=- skipped=-
+CHECK86: verdict=FAIL locators=3 violations=1
+exit=1
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/check86.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --file-file /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/obs-fixed.txt --text --only gkeep-shm.c
+OK gkeep-shm.c:150-159 ids_inside=app_id skipped=-
+OK gkeep-shm.c:152-155 ids_inside=- skipped=-
+CHECK86: verdict=PASS locators=2 violations=0
+exit=0
+
+# --- criterion 69 on the round-43 report (fleet repo): lane-only is a setup error
+# read-only input: $ git -C /home/vgpnk/Projects/shokunin show 906cfe70:.ufo/reports/round-43/mado.md > /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/report-43.md
+
+$ python3 -I .ufo/waves/round-41/w1/ScrQualityCriteria/check69.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --report .ufo/reports/round-43/mado.md --receipts .ufo/waves/round-43/receipts
+MISSING-REPORT .ufo/reports/round-43/mado.md at 58466627de847d6502283c3bb9e652caea97b411
+exit=2
+
+$ python3 -I .ufo/waves/round-41/w1/ScrQualityCriteria/check69.py --repo . --rev 58466627de847d6502283c3bb9e652caea97b411 --report /fast/scratch/hyaku/mado-r44/ScrQualityCriteria/replay/report-43.md --receipts .ufo/waves/round-43/receipts --text
+MISSING 5846662 cited at 58466627de847d6502283c3bb9e652caea97b411: no committed receipt under .ufo/waves/round-43/receipts names it
+FAIL 1/1 cited revisions lack a committed receipt
+exit=1
+
+# --- every committed MADO_AXIS receipt in rounds 35-44: carrying commit vs rev=
+# rule: carrier = `git log -1 --format=%H -- <receipt>` (the commit that last wrote it)
+AXIS-RECEIPT .ufo/waves/round-37/receipts/axis-base.txt carrier=8f0a9e3 rev=b4e47e9 match=0
+AXIS-RECEIPT .ufo/waves/round-37/receipts/axis-data.txt carrier=f6ae0c3 rev=3f42425 match=0
+AXIS-RECEIPT .ufo/waves/round-37/receipts/axis-records.txt carrier=372a3ef rev=f6ae0c3 match=0
+AXIS-RECEIPT .ufo/waves/round-37/receipts/git-env-green.txt carrier=3f42425 rev=80b83c8 match=0
+AXIS-RECEIPT .ufo/waves/round-37/receipts/git-env-green.txt carrier=3f42425 rev=80b83c8 match=0
+AXIS-RECEIPT .ufo/waves/round-37/receipts/git-env-green.txt carrier=3f42425 rev=80b83c8 match=0
+AXIS-RECEIPT .ufo/waves/round-38/receipts/axis-base.txt carrier=58e55ec rev=f6e3247 match=0
+AXIS-RECEIPT .ufo/waves/round-39/receipts/axis-base.txt carrier=457d1b1 rev=08be4eb match=0
+AXIS-RECEIPT .ufo/waves/round-40/receipts/axis-base.txt carrier=5e7e885 rev=9fc511d match=0
+AXIS-RECEIPT .ufo/waves/round-41/receipts/axis-base.txt carrier=60c3914 rev=ab2bfaa match=0
+AXIS-RECEIPT .ufo/waves/round-42/receipts/axis-base.txt carrier=8af0263 rev=62dd798 match=0
+AXIS-RECEIPT .ufo/waves/round-43/receipts/axis-base.txt carrier=b2e2efd rev=a35cfdf match=0
+AXIS-RECEIPT .ufo/waves/round-44/receipts/axis-base.txt carrier=e228951 rev=6a1a905 match=0
+AXIS-RECEIPT rows=13 naming_carrier=0-or-see-above
+
+# --- verify-quotes on criteria.md (prose quotes located, checker output via receipts)
+
+$ python3 -I .ufo/waves/round-44/w1/ScrQualityCriteria/verify-quotes.py --repo . --criteria .ufo/waves/round-44/w1/ScrQualityCriteria/criteria.md --extra .ufo/waves/round-44/w1/ScrQualityCriteria/receipts.txt
+OK line=21 '"fullscreen": {},'
+OK line=22 'PASS citations=6'
+OK line=24 '37 seats'
+OK line=24 'plan=37 results_seats=38'
+OK line=24 'plan=69 results_rows=70'
+OK line=46 'mention=0 declare=0 case=0'
+OK line=47 'mention=31 declare=0 case=10 ok'
+OK line=48 'mention=14 declare=0 case=0'
+OK line=50 'the tiler, not the floating rule path, set its box'
+OK line=64 'citations=6 violations=0'
+OK line=65 'they did not exist at data commit 1959770'
+OK line=76 'CHECK84: verdict=FAIL no receipt names the closing r'
+OK line=91 '37 seats'
+OK line=92 'VIOLATION WAVE w1 plan=37 results_seats=38'
+OK line=106 'OUTSIDE gkeep-shm.c:156-164 ids_inside=0 ids_outside'
+OK line=124 'the tiler, not the floating rule path, set its box'
+VERIFY_QUOTES: verdict=PASS
+exit=0

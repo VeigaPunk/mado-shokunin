@@ -1,0 +1,71 @@
+# round-44 ScrSkillProvince — gate receipt (scratch clone; never the lane index)
+# lane FROZEN at base; all commits below are in /fast/scratch/hyaku/mado-r44/ScrSkillProvince/gitfix2
+$ git clone -q --shared <lane> /fast/scratch/hyaku/mado-r44/ScrSkillProvince/gitfix2  -> rc=0
+$ git -C <fixture> rev-parse --show-toplevel -> /fast/scratch/hyaku/mado-r44/ScrSkillProvince/gitfix2
+base HEAD ae996fcf5e50d2d882dcf543a4ab2df5604dada2
+
+## baseline (unmodified tree)
+rc=0 MADO_INDEX_ROWS: rev=HEAD rows=60 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+row sha256 d70340393ef5d9f772a9c368c4ec6e49ed97a2da3fe2e6751e38f7389aa7317a len 1270 cells 3
+$ git -C <fixture> commit (add -A) -> rc=0 
+
+## G1 fidelity gate, row + registry rows, note absent
+rc=0 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## G2 completeness gate, row present, note absent (dangling expected)
+rc=1 MADO_INDEX: rev=HEAD indexed=60/60 missing=0 dangling=1 duplicates=0 coverage=10.0000/10
+dangling: knowledge/hyprland-gkeep-size-request-r44.md
+
+## G2b completeness gate with the note present
+rc=0 MADO_INDEX: rev=HEAD indexed=61/61 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+
+## G3 fidelity gate with the note present
+rc=0 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## C1 control: provisional registry rows removed (teeth on the ids)
+rc=1 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=4 warns=3
+ERROR cited-s-undefined: S298 in row knowledge/hyprland-gkeep-size-request-r44.md
+ERROR cited-s-undefined: S299 in row knowledge/hyprland-gkeep-size-request-r44.md
+ERROR cited-s-undefined: S300 in row knowledge/hyprland-gkeep-size-request-r44.md
+ERROR cited-s-undefined: S301 in row knowledge/hyprland-gkeep-size-request-r44.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## C2 control: empty Sources cell
+rc=1 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=1 warns=3
+ERROR row-cells: knowledge/hyprland-gkeep-size-request-r44.md at line 72 carries 3 cells (need 3 non-empty)
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## C3 control: backticked path that does not exist
+rc=1 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=1 warns=3
+ERROR cited-path-missing: `tools/nope-r44.py` in row knowledge/hyprland-gkeep-size-request-r44.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## RESTORED
+rc=0 MADO_INDEX_ROWS: rev=HEAD rows=61 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+
+## fixture commits
+72300c69 restore
+466ebe6e control 3
+4837ec0c control 2
+af43c2ff control 1
+c8be73ce fixture: note stub
+f9871fd6 fixture: drafted README row + Frontier block + provisional S298-S301 rows (scratch validation only)
+ae996fcf round-44: w1 spec, dispatch and generator (38 seats)

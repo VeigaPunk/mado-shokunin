@@ -1,0 +1,81 @@
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp	12	enum eFullscreenMode : int8_t {
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp	13	FSMODE_NONE = 0,
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp	14	FSMODE_MAXIMIZED,
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp	15	FSMODE_FULLSCREEN,
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp	109	List of FSMODE_MAX windows
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	294	internal = std::clamp(internal.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	296	client = std::clamp(client.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp	294	internalMode = std::clamp(internalMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp	295	clientMode   = std::clamp(clientMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp	299	const Fullscreen::SFullscreenMode NEW_MODES = {.internal = internalMode, .client = clientMode};
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-DispatcherTranslator.cpp	197	internalMode = std::stoi(std::string(ARGS[0]));
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-DispatcherTranslator.cpp	203	sc<Fullscreen::eFullscreenMode>(internalMode)
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp	2198	.internal = sc<Fullscreen::eFullscreenMode>(m_ruleApplicator->static_.fullscreenStateInternal.value_or(0)),
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp	2469	requestedClientFSMode = sc<Fullscreen::eFullscreenMode>(sc<uint8_t>(requestedClientFSMode.value_or(Fullscreen::FSMODE_NONE)) & ~sc<uint8_t>(Fullscreen::FSMODE_FULLSCREEN));
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	139	ITR->second.internal = mode;
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	137	m_fsTargets.emplace(target, SFullscreenMode{.internal = mode});
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	260	ITR->second.mode.internal = FSMODE_NONE;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	264	ITR->second.mode.internal = mode;
+.ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp	431	sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal)
+.ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp	451	sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal)
+.ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp	427	sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x)
+.ufo/waves/round-44/fetch-c1/Hyprland-HyprCtl.cpp	426	sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x)
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	88	if (!request.target || !request.target->window() || !request.target->workspace() || !request.target->workspace()->m_monitor)
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	182	if (TARGET_INTERNAL_MODE == FSMODE_NONE)
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	192	const CBox MONBOX                                  = MONITOR->logicalBox();
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	194	LAYOUT_TARGET->setPositionGlobal(MONBOX);
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	196	const CBox WORKAREA                                = WORKSPACE->m_space->workArea(target->floating());
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	198	LAYOUT_TARGET->setPositionGlobal(WORKAREA);
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	193	Fullscreen::controller()->m_windowPosSettingQueued = true;
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	130	if (target->window() && target->window()->m_isFloating && mode != FSMODE_NONE && !isFullscreen(target))
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	131	target->rememberFloatingSize(target->position().size());
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp	41	A window group's FS modes are considered to be owned by its current window
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-LayoutTarget.cpp	10	void ITarget::setPositionGlobal(const STargetBox& box, uint8_t) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-LayoutTarget.cpp	12	m_box.logicalBox.round();
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	36	void CWindowTarget::setPositionGlobal(const STargetBox& box, uint8_t flags) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	37	ITarget::setPositionGlobal(box, flags);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	39	updatePos(flags);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	63	if (!validMapped(m_window)) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	70	if (floating() && m_window && !Fullscreen::controller()->isFullscreen(m_window.lock())) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	84	if (!Fullscreen::controller()->m_windowPosSettingQueued)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	85	return;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	89	// Default Handled FS (floating or tiling)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	94	m_window->setBox(m_box.logicalBox);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	105	m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	114	// Layout handled FS
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	123	m_window->setBox(visualBox);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	128	m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	285	void CWindowTarget::setFloating(bool x) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	291	m_window->m_isFloating = x;
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp	2130	m_isFloating    = true;
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp	2191	m_isFloating = m_ruleApplicator->static_.floating.value_or(m_isFloating);
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp	2408	m_target->setPseudoSize(*COMPUTED);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	448	if (window->m_isFloating && WINDOW_FS_MODE.internal == FSMODE_NONE && mode != FSMODE_NONE)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	478	if (mode == FSMODE_NONE && window->m_isFloating)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	480	ALGORITHM->recenter(window->layoutTarget());
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	430	if (!window || !validMapped(window) || !window->m_monitor || !window->m_workspace || !window->m_workspace->m_space || !window->m_workspace->m_space->algorithm())
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	242	eFullscreenHandler CFullscreenController::getFullscreenHandlerName(const PHLWINDOW window) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp	258	if (DEFAULT_FS_HANDLER->isFullscreen(window->m_target) || DEFAULT_FS_HANDLER->getFullscreenModes(window->m_target).client != FSMODE_NONE)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-GeometricMovableAnimated.cpp	45	*m_realSize     = x.size();
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-GeometricMovableAnimated.cpp	43	void CGeometricMovableAnimated::setBox(const CBox& x) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/hyprutils-0.14.2-AnimatedVariable.hpp	244	m_Goal  = v;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/hyprutils-0.14.2-AnimatedVariable.hpp	217	const VarType& goal() const {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Space.cpp	85	auto        workArea = m_parent->m_monitor->logicalBoxMinusReserved();
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Space.cpp	105	m_workArea         = workArea;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Space.cpp	110	return floating ? m_floatingWorkArea : m_workArea;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FloatingAlgorithm.cpp	20	void IFloatingAlgorithm::recenter(SP<ITarget> t) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FloatingAlgorithm.cpp	21	const auto LAST = t->lastFloatingSize();
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FloatingAlgorithm.cpp	26	t->setPositionGlobal({m_parent->space()->workArea().middle() - LAST / 2.F, LAST});
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	301	void CScrollingFullscreenHandler::setTargetSizeAndPosition(const SP<Layout::ITarget> target) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	302	We don't need to do anything explicitly here
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	307	We don't need anything here as scrolling handled pos setting in its recalculate() anyway
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	197	currentCol->setColumnWidth(fullscreenColumnWidth());
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp	232	currentCol->setColumnWidth(1.F);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowGroupTarget.cpp	26	void CWindowGroupTarget::setPositionGlobal(const STargetBox& box, uint8_t flags) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowGroupTarget.cpp	34	w->m_target->setPositionGlobal(m_box, flags);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-CMakeLists.txt	150	set(HYPRUTILS_MINIMUM_VERSION 0.14.0)
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp	91	FSMODES.internal != Fullscreen::FSMODE_NONE && !Fullscreen::controller()->layoutManagedFS(m_self->window()))
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Space.cpp	87	CConfigValue<Config::IComplexConfigValue>("general:gaps_out")
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Space.cpp	88	CConfigValue<Config::IComplexConfigValue>("general:float_gaps")
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-Group.cpp	133	w->m_target->setFloating(m_target->floating());
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-LayoutManager.cpp	19	void CLayoutManager::newTarget(SP<ITarget> target, SP<CSpace> space) {

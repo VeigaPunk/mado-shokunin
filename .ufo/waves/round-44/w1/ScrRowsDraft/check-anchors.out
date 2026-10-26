@@ -1,0 +1,79 @@
+== S298 fetch/Hyprland-XDGShell.cpp
+PASS Hyprland-XDGShell.cpp:354 holds [setSize definition]
+PASS Hyprland-XDGShell.cpp:443 holds [scheduleStateApplication definition]
+PASS Hyprland-XDGShell.cpp:455 holds [the pending size leaves in one sendConfigure]
+PASS Hyprland-XDGShell.cpp:601 holds [the ack hook]
+PASS Hyprland-XDGShell.cpp:629 holds [scheduleConfigure definition]
+PASS Hyprland-XDGShell.cpp:635 holds [the serial is minted here]
+PASS Hyprland-XDGShell.cpp:640 holds [configure definition]
+PASS Hyprland-XDGShell.cpp:642 holds [configure performs the send]
+== S299 fetch/xdg-shell.xml
+PASS xdg-shell.xml:560 holds [ack_configure request]
+PASS xdg-shell.xml:598 holds [xdg_surface configure event]
+PASS xdg-shell.xml:615 holds [may discard all but the last]
+PASS xdg-shell.xml:1144 holds [xdg_toplevel configure event]
+PASS xdg-shell.xml:1150 holds [width and height are a hint]
+PASS xdg-shell.xml:1154 holds [zero means the client decides]
+PASS xdg-shell.xml:1166 holds [clients must ack]
+PASS xdg-shell.xml:1169 holds [width argument]
+PASS xdg-shell.xml:1170 holds [height argument]
+PASS xdg-shell.xml:409 holds [xdg_surface version 7]
+PASS xdg-shell.xml:622 holds [xdg_toplevel version 7]
+== S300 fetch/gdktoplevel-wayland.c
+PASS gdktoplevel-wayland.c:606 holds [configure handler]
+PASS gdktoplevel-wayland.c:633 holds [fixed_size assignment]
+PASS gdktoplevel-wayland.c:635 holds [fullscreen in fixed_size]
+PASS gdktoplevel-wayland.c:636 holds [tiled in fixed_size]
+PASS gdktoplevel-wayland.c:639 holds [was_fixed_size assignment]
+PASS gdktoplevel-wayland.c:644 holds [pending width]
+PASS gdktoplevel-wayland.c:645 holds [pending height]
+PASS gdktoplevel-wayland.c:647 holds [zero as saved_size]
+PASS gdktoplevel-wayland.c:656 holds [restore branch]
+PASS gdktoplevel-wayland.c:658 holds [restored width]
+PASS gdktoplevel-wayland.c:662 holds [positive-size branch]
+PASS gdktoplevel-wayland.c:680 holds [size_is_fixed]
+PASS gdktoplevel-wayland.c:681 holds [configured_width]
+PASS gdktoplevel-wayland.c:683 holds [branch closes]
+PASS gdktoplevel-wayland.c:382 holds [update_size definition]
+PASS gdktoplevel-wayland.c:441 holds [update_size applies the size]
+== S301 fetch/gkeep-ui.py
+PASS gkeep-ui.py:446 holds [GkeepApp]
+PASS gkeep-ui.py:449 holds [application id]
+PASS gkeep-ui.py:472 holds [do_activate]
+PASS gkeep-ui.py:475 holds [undecorated]
+PASS gkeep-ui.py:476 holds [the default size]
+PASS gkeep-ui.py set_size_request( occurrences = 0
+== sizes and hashes against receipts/fetch-sha256.txt
+PASS Hyprland-XDGShell.cpp sha256 d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 bytes 35458
+PASS xdg-shell.xml sha256 7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df bytes 63846
+PASS gdktoplevel-wayland.c sha256 0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe bytes 97548
+PASS gkeep-ui.py sha256 07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a bytes 14639
+== clause-e containment: location last path component vs receipt file name
+PASS S298 location=xdgshell.cpp receipt=hyprland-xdgshell.cpp (one contains the other)
+PASS S299 location=xdg-shell.xml receipt=xdg-shell.xml (one contains the other)
+PASS S300 location=gdktoplevel-wayland.c receipt=gdktoplevel-wayland.c (one contains the other)
+PASS S301 location=ui.py receipt=gkeep-ui.py (one contains the other)
+SKIP S164 clause e applies to new ids only; the held row keeps its BASE anchor
+== cited locators: range check and echo of the cited line (new rows)
+ECHO S298 Hyprland-XDGShell.cpp:354 | uint32_t CXDGToplevelResource::setSize(const Vector2D& size) {
+ECHO S298 Hyprland-XDGShell.cpp:443 | void CXDGToplevelResource::scheduleStateApplication() {
+ECHO S298 Hyprland-XDGShell.cpp:455 |         m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+ECHO S298 Hyprland-XDGShell.cpp:601 |     m_resource->setAckConfigure([this](CXdgSurface* r, uint32_t serial) {
+ECHO S298 Hyprland-XDGShell.cpp:629 | uint32_t CXDGSurfaceResource::scheduleConfigure() {
+ECHO S298 Hyprland-XDGShell.cpp:640 | void CXDGSurfaceResource::configure() {
+ECHO S299 xdg-shell.xml:560 |     <request name="ack_configure">
+ECHO S299 xdg-shell.xml:598 |     <event name="configure">
+ECHO S299 xdg-shell.xml:1144 |     <event name="configure">
+ECHO S299 xdg-shell.xml:1166 | 	Clients must send an ack_configure in response to this event. See
+ECHO S300 gdktoplevel-wayland.c:606 | gdk_wayland_toplevel_handle_configure (GdkWaylandSurface *wayland_surface)
+ECHO S300 gdktoplevel-wayland.c:633 |   fixed_size =
+ECHO S300 gdktoplevel-wayland.c:644 |   width = wayland_toplevel->pending.width;
+ECHO S300 gdktoplevel-wayland.c:656 |   if (saved_size && !fixed_size && was_fixed_size)
+ECHO S300 gdktoplevel-wayland.c:662 |   if (width > 0 && height > 0)
+ECHO S300 gdktoplevel-wayland.c:382 | gdk_wayland_toplevel_update_size (GdkSurface               *surface,
+ECHO S301 gkeep-ui.py:446 | class GkeepApp(Gtk.Application):
+ECHO S301 gkeep-ui.py:449 |             application_id="org.omarchy.gkeep",
+ECHO S301 gkeep-ui.py:472 |     def do_activate(self):
+ECHO S301 gkeep-ui.py:475 |             window.set_decorated(False)
+ECHO S301 gkeep-ui.py:476 |             window.set_default_size(420, 500)
+SUMMARY failures=0

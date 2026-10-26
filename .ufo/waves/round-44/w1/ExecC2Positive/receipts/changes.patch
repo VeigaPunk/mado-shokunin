@@ -1,0 +1,145 @@
+From 35bcd576a031651b80036b6b240b5207a10e3b1c Mon Sep 17 00:00:00 2001
+From: ExecC2Positive <exec-c2-positive@scratch.invalid>
+Date: Mon, 26 Oct 2026 14:03:08 -0300
+Subject: [PATCH] round-44 w1: C2 positive control - gkeep size-request entry,
+ S298-S301 rows, lesson gate, README row
+
+---
+ corpus/README.md                              |  1 +
+ corpus/SOURCES.md                             |  6 +-
+ .../hyprland-gkeep-size-request-r44.md        | 65 +++++++++++++++++++
+ corpus/lessons/round-44.md                    | 14 ++++
+ 4 files changed, 85 insertions(+), 1 deletion(-)
+ create mode 100644 corpus/knowledge/hyprland-gkeep-size-request-r44.md
+ create mode 100644 corpus/lessons/round-44.md
+
+diff --git a/corpus/README.md b/corpus/README.md
+index c69dbdd9..6ee54444 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -69,6 +69,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
+ | `knowledge/host-bar-producer-census-r40.md` (MADO-R40-2, round 40; assimilation of the bar-producers theme, successor to refused `host-producer-outputs-r29`) | The bar's JSON producers counted over the host's own config bytes: 7 custom modules return JSON, two of them host-local (`custom/gkeep`, `custom/ai-usage`) and absent from the stock set; the shims resolve to projects outside the owned plane; the screen-recording and do-not-disturb indicator scripts are byte-identical to omarchy v3.8.4; with `hypridle` running the idle chip renders empty, the reverse of the held 2026-10-14 state. | S280, S281, S282 |
+ | `knowledge/hyprland-focus-grab-r41.md` (MADO-R41-1, round 41; assimilation of the focus-control theme, successor to the staged `focus-grab-protocol-live-on-host-r14` and the English-channel part of `focus-control-surfaces-r28`) | Focus as a protocol surface: the Hyprland focus-grab protocol (two interfaces, six requests, one `cleared` event), the compositor-side seat grab that enforces it, what this host advertised to its portal (63 globals in the latest portal session, one focus-grab manager advert, logged and not bound by the portal), one real client's grab lifecycle (quickshell), and the rule-level counterpart (issue 565); a decision table of what is observed, inferred and unknown. | S283-S289, S037 |
+ | `knowledge/hyprland-gkeep-geometry-r43.md` (MADO-R43-1, round 43; assimilation of the gkeep-geometry theme, successor to the staged `gkeep-size-to-real-size-r11`) | What sets the size of the host's gkeep window: the host rule text (`float on`, `center on`, `size 420 500` for `^(org.omarchy.gkeep)$`), the rule engine's anchored `re2::RE2::FullMatch`, the size effect stored as an expression and evaluated only in the floating algorithm's first-map branch, the target and window that store the box, `hyprctl clients -j` printing the animation GOAL rather than the current value, the app's own `set_default_size(420, 500)`, an isolated-oracle observation of 420x500 floating, and today's census (4 clients, none floating, no gkeep window). Tool `tools/mado-geometry.py`; the drawn size and a live gkeep window on the host stay UNK. | S290, S291, S292, S293, S294, S295, S296, S297, S155, S158 |
++| `knowledge/hyprland-gkeep-size-request-r44.md` (MADO-R44-1, round 44; assimilation of the gkeep size-request theme, successor to the staged `gkeep-client-size-request-r12`) | What happens to the gkeep window's box after the rule sets it: `sendWindowSize` reporting the animated goal through `realToReportSize`, the pending-serial list and `onAck`, the X11 configure branch, the xdg configure that carries the size and its serial, xdg-shell 1.49 calling the size a hint and the zero case the client's own decision, GTK 4.24.1 applying configured size plus shadow margins and acking, gkeep's own `set_default_size(420, 500)` with no `set_size_request`, and a client-side census of the pinned bytes. | S164, S298-S301 |
+ 
+ ## Quality bar
+ 
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 3c564e7d..07244317 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -173,7 +173,7 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S161 | Lua query bindings — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/lua/bindings/LuaBindingsQuery.cpp | code | A | Lua window query filters and query-binding registrations | src/config/lua/bindings/LuaBindingsQuery.cpp:62-65,83-123,392-411 @ efb50993780079460b0cbed1363e2166a2de1d9f, sha256:af0d274b5616ae69b8f62bdf2534a29586eab2a3d20b28c1b0e620d313ca66db, 12451 B | `get_windows` filter inputs and tag-match behavior; no matched-rule result is listed in this file's query bindings | queued | 2026-10-23 | on-release | — |
+ | S162 | Hyprland ConfigManager.cpp — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp | code | A | Hyprlang-era legacy windowrule keyword handlers, named special-category reconstruction, and reload traversal | src/config/legacy/ConfigManager.cpp:419-451,590-623,893-968,2016-2093 @ efb50993780079460b0cbed1363e2166a2de1d9f, sha256:9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b, 90963 B | Shows callback parsing, name-keyed category consumption, and local reload call sequence; does not establish Hyprlang block grammar or engine precedence | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/bind-table-r25.md, corpus/knowledge/animation-table-r26.md, corpus/knowledge/workspace-rules-r27.md, corpus/knowledge/config-option-table-r39.md, corpus/knowledge/hyprctl-getoption-native-forms-r40.md |
+ | S163 | LayerRuleApplicator.cpp — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/layerRule/LayerRuleApplicator.cpp | code | A | layer-rule application and matched effects | src/desktop/rule/layerRule/LayerRuleApplicator.cpp:40-149 @ efb50993780079460b0cbed1363e2166a2de1d9f, sha256:9321999ac030e8da73abab53f6a0d6f0cf82ddc3c8c63befa845ade8716568ba, 6193 B | filters layer rules and property masks, applies matched effects, emits layer updateRules | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
+-| S164 | Hyprland v0.56.2 CWindow implementation — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/view/Window.cpp | code | A | CWindow applicator construction, static-rule application, and property-change hooks | src/desktop/view/Window.cpp:103-108,141-146,1484-1486,1791-1795,2143-2281,2497 @ commit efb50993780079460b0cbed1363e2166a2de1d9f, sha256:d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded, 124226 B | Static applicator results feed window state, and propertiesChanged is called with property flags; the source does not identify a particular originating config rule | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
++| S164 | Hyprland v0.56.2 CWindow implementation — https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/view/Window.cpp | code | A | CWindow applicator construction, static-rule application, and property-change hooks | src/desktop/view/Window.cpp:103-108,141-146,1484-1486,1791-1795,2143-2281,2497 @ commit efb50993780079460b0cbed1363e2166a2de1d9f, sha256:d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded, 124226 B | Static applicator results feed window state, and propertiesChanged is called with property flags; the source does not identify a particular originating config rule | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/hyprland-gkeep-size-request-r44.md |
+ | S165 | Window Rules — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c66e8de21f5ecdc4bc5e278e7d94800ea10957af/content/configuring/core/rules/window-rules.md | docs | A | Window-rule syntax, matching props, effects, tags, order, and named-rule handles | content/configuring/core/rules/window-rules.md:6-15, 22-44, 63-64, 132-134, 229-238, 315-342 @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af, sha256:9ecff146ada23ba11f44b0ddbda15bf82bb3b32bcec29f98388466def101ed95, 16200 B | Documents declaration and match syntax, static/dynamic effects, ordering, tag inspection, and named-rule enablement/status | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
+ | S166 | Layer rules — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c66e8de21f5ecdc4bc5e278e7d94800ea10957af/content/configuring/core/rules/layer-rules.md | docs | A | layer-rule API, match property, effects, and handles | content/configuring/core/rules/layer-rules.md:18-22, 26-43, 68-76 @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af, sha256:a513798fec803eed723678a2acf24c6e8bdb896fbc7358b01d3201aea2e19836, 2129 B | documents separate layer rules, shared window-rule syntax, namespace matching, effects, and enablement handles | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md |
+ | S167 | Using hyprctl — https://raw.githubusercontent.com/hyprwm/hyprland-wiki/c66e8de21f5ecdc4bc5e278e7d94800ea10957af/content/configuring/core/advanced-configuration/using-hyprctl.md | docs | A | hyprctl clients/getprop, defined workspace-rule listing, refresh and log descriptions | content/configuring/core/advanced-configuration/using-hyprctl.md:192-200,238-262,284-295 @ c66e8de21f5ecdc4bc5e278e7d94800ea10957af, sha256:95d8b8422a1fd25229bfe350e05624d8a318c746803efb7f3893015bf7c417f0, 8239 B | Documents window property/client queries, a defined workspace-rule listing, and log/refresh commands; not rule-to-effect attribution | mined | 2026-10-23 | on-release | corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/bind-table-r25.md |
+@@ -244,6 +244,10 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S295 | mado host gkeep rule file - the three lines the compositor reads (measured on this host, read-only) - .ufo/waves/round-43/fetch/host-gkeep.conf | own-work | A | The exact host rule text for class `^(org.omarchy.gkeep)$` | whole file .ufo/waves/round-43/fetch/host-gkeep.conf, 5 lines (4 content plus an empty line 5, wc -l -c reports 5 264), 264 B sha256:3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949; :2 float on, :3 center on, :4 size 420 500, all three on match:class ^(org.omarchy.gkeep)$; host copy ~/.config/hypr/gkeep.conf byte-identical 264 B same sha256, re-checked 2026-10-26 | The host declares float, center and size 420 500 as three separate rules on one class regex, so the size is a declared rule value and the file alone shows nothing of what the window received | mined | 2026-10-26 | 2027-01-24 | corpus/knowledge/hyprland-gkeep-geometry-r43.md |
+ | S296 | mado host clients census - the four clients open on 2026-10-26 (measured on this host, read-only) - .ufo/waves/round-43/fetch/host-clients-r43.json | own-work | A | Which windows the dump held when it was taken, and that gkeep was not among them | whole file .ufo/waves/round-43/fetch/host-clients-r43.json, 62 lines, 711 B sha256:21db902e1f1234b9f52411cf7885097a18d67b00b9dd0110f9bbd2b36fb442ad; :2,17,32,47 the four client objects Alacritty, zcode, grok-bot, chromium, each mapped true, floating false, size 1720 1414, no org.omarchy.gkeep entry; live re-read of hyprctl clients -j on 2026-10-26 agrees on all four classes, sizes and flags | A dump taken with gkeep closed holds four tiled clients and no gkeep entry, so the rule's size cannot be joined to a window that was never mapped, and the join reports nothing rather than a value | mined | 2026-10-26 | 2027-01-24 | corpus/knowledge/hyprland-gkeep-geometry-r43.md |
+ | S297 | gkeep client window request - the app's own size (read-only excerpt, gkeep 133b867) - .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py | own-work | A | The one place the client states its identity and its default size | excerpt of ~/Projects/gkeep/gkeep/ui.py:446-488 (end of file) at gkeep HEAD 133b86717a02548aeaff3f1411bf301d936c5308, 1625 B sha256:3695b788c6d766b8e87c01916a6594158a26c2cf816f991ccf30b72d9c5d1713; :6 application_id="org.omarchy.gkeep", :33 window.set_default_size(420, 500); full-file sha256:07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a | The client asks for the same 420 500 the host rule declares and names itself org.omarchy.gkeep, so a rule-versus-reported-size agreement cannot by itself say which of the two values produced the number | mined | 2026-10-26 | 2027-01-24 | corpus/knowledge/hyprland-gkeep-geometry-r43.md |
++| S298 | Hyprland v0.56.2 XDG shell toplevel - how a compositor-sent size becomes a configure - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/XDGShell.cpp | code | A | The toplevel resource's setSize and the surface resource's deferred configure with its serial | src/protocols/XDGShell.cpp:354-358 setSize stores the pending size and returns a configure serial, :443-461 the deferred sendConfigure carrying that size, :629-636 scheduleConfigure allocates or reuses the serial, :640-643 configure sends it @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 35458 B sha256:d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0; receipt .ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp | A compositor size leaves as an xdg_toplevel.configure that carries the size and a serial, is sent on a deferred pass, and the returned serial is what the window's pending-size list waits to see acked | mined | 2026-10-26 | 30d | corpus/knowledge/hyprland-gkeep-size-request-r44.md |
++| S299 | wayland-protocols 1.49 xdg-shell protocol - what a configure's width and height mean to the client - https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.49/stable/xdg-shell/xdg-shell.xml | spec | A | The xdg_toplevel configure event's description of the size arguments and of the zero case | stable/xdg-shell/xdg-shell.xml:1144-1166 the toplevel configure event, :1146-1148 the state is not applied immediately, :1150-1152 width and height are a hint in window geometry coordinates, :1154-1157 zero means the client decides its own dimension, :610-612 the client arranges and acks @ wayland-protocols 1.49, 63846 B sha256:7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df; receipt .ufo/waves/round-44/fetch/xdg-shell.xml | The protocol makes the compositor's size a hint the client may satisfy, adjust or ignore as long as it acks, so a configure is not a command and its width and height carry no guarantee about the size the client applies | mined | 2026-10-26 | 30d | corpus/knowledge/hyprland-gkeep-size-request-r44.md |
++| S300 | GTK 4.24.1 Wayland toplevel - what the toolkit does with a configure size - https://gitlab.gnome.org/GNOME/gtk/-/raw/4.24.1/gdk/wayland/gdktoplevel-wayland.c | code | A | The xdg_toplevel configure handler and the layout pass that applies the configured size | gdk/wayland/gdktoplevel-wayland.c:710-790 xdg_toplevel_configure fills pending width and height, :513-537 the configured size plus shadow margins is constrained and applied, then cleared unless the size is fixed, :539-549 a zero configure falls back to the geometry size, :693 request layout, :706 ack_configure @ GTK 4.24.1, 97548 B sha256:0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe; receipt .ufo/waves/round-44/fetch/gdktoplevel-wayland.c | A normal GTK toplevel adopts a nonzero configure size plus its shadow margins; a zero configure leaves the toolkit's own default size in charge, so the surface size GTK ends with is not the configure's width and height byte for byte | mined | 2026-10-26 | 30d | corpus/knowledge/hyprland-gkeep-size-request-r44.md |
++| S301 | gkeep client window declaration - the application id and the default size (full file, gkeep 133b867) - https://raw.githubusercontent.com/VeigaPunk/gkeep/133b86717a02548aeaff3f1411bf301d936c5308/gkeep/ui.py | own-work | A | The one place the client states its identity and its default size, and the absence of a size request | gkeep/ui.py:446-488 class GkeepApp and do_activate, :449 application_id="org.omarchy.gkeep", :474-476 the application window and set_default_size(420, 500); no set_size_request call in the file @ gkeep 133b86717a02548aeaff3f1411bf301d936c5308, 14639 B sha256:07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a; receipt .ufo/waves/round-44/fetch/gkeep-ui.py | The client asks for 420x500 as a default size, not as a size request or a fixed size, so the compositor's configure is what decides the mapped size and the declared number is only the toolkit's fallback | mined | 2026-10-26 | 30d | corpus/knowledge/hyprland-gkeep-size-request-r44.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/hyprland-gkeep-size-request-r44.md b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+new file mode 100644
+index 00000000..69b79218
+--- /dev/null
++++ b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+@@ -0,0 +1,65 @@
++# What happens to the gkeep window's box after Hyprland sets it: the size the compositor reports, the xdg configure that carries it, what the protocol permits, what GTK 4 does with it, and what gkeep itself declares
++
++source: S164 - hyprwm/Hyprland src/desktop/view/Window.cpp @ efb5099 (v0.56.2, held row) - sendWindowSize, realToReportSize, the pending-ack list, onAck, and the X11 configure branch
++source: S298 - hyprwm/Hyprland src/protocols/XDGShell.cpp @ efb5099 (v0.56.2) - CXDGToplevelResource::setSize, the state application, the deferred configure and its serial
++source: S299 - wayland-protocols 1.49 stable/xdg-shell/xdg-shell.xml - what the width and height of a toplevel configure mean to the client
++source: S300 - GTK 4.24.1 gdk/wayland/gdktoplevel-wayland.c - the xdg_toplevel configure handler and the layout that applies the configured size
++source: S301 - own-work: gkeep gkeep/ui.py at 133b867 (full file), pinned at .ufo/waves/round-44/fetch/gkeep-ui.py - the app's application id and default size
++verified-at: 2026-10-26
++recheck: 30d - re-pull the four upstream files at their tags and the gkeep file at 133b867 and re-run the counter; a Hyprland tag after v0.56.2, a GTK 4.24.x bump or a wayland-protocols bump is the earlier trigger
++ground: what the compositor does with the gkeep window's box after the rule sets it, what the client is permitted to do with the size it is sent, and what gkeep itself asks for
++Lane: mado-shokunin. Round: 44.
++assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-request-r12.md (its post-rule size-request chain, re-derived at the pinned commits; the refused residue and its flip conditions are in corpus/lessons/round-44.md)
++
++## What this adds to round 43
++
++Round 43 ended at the box: the rule's size expression is evaluated in the floating algorithm's first-map branch, written to the target and the window, and `hyprctl clients -j` prints the animation goal (entry `hyprland-gkeep-geometry-r43.md`). This entry starts one step later and follows the box out of the compositor: the size the compositor hands to the client, the protocol event that carries it, the one thing the client may do with it, what the host's toolchain (GTK 4.24.1) does, and what gkeep itself declares about its size. Nothing here is measured on a live gkeep window; the host census of round 43 still has no gkeep client.
++
++## §1 The compositor reports the goal box to the client
++
++**OBS** S164 - the report branch sends the size and keeps the serial: in `CWindow::sendWindowSize(bool force)` the X11 arm configures the xwayland surface and the Wayland arm pushes the returned serial together with the size onto the pending list, so the size that was sent is not yet the size the client acknowledged: `if (m_isX11 && m_xwaylandSurface) m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE}); else if (m_xdgSurface && m_xdgSurface->m_toplevel) m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());` (Hyprland-Window.cpp:1750).
++
++**OBS** - the size sent is `REPORTSIZE = realToReportSize()` (Window.cpp:1741): for a Wayland window that function returns the goal of the animated size, clamped to non-negative (Window.cpp:1685-1689), never the current animated value. The entry point is a callback on the animated size (Window.cpp:800-810) and the function returns early unless it is forced or the pending reported size or the reported position changed (Window.cpp:1743-1747).
++
++**OBS** - the acknowledgement half is `CWindow::onAck(uint32_t serial)` (Window.cpp:1514-1529): it finds the last pending entry whose serial is not newer than the acked one, drops every pending entry up to it, and for Wayland copies that entry's size, the size the compositor itself pushed at Window.cpp:1753, into the surface's `m_pending.ackedSize`, with the comment that the window has ponged; X11 returns before that. The ack carries a serial and no size, so the size the client actually applied never reaches this code, and `getReportedSize()` returns the recorded value on Wayland (Window.cpp:1861-1867), a reader with no caller in this file.
++
++## §2 The size becomes an xdg configure with a serial
++
++**OBS** S298 - setSize stores the wanted size, schedules the state application and returns a configure serial: `uint32_t CXDGToplevelResource::setSize(const Vector2D& size) { m_pendingApply.size = size; scheduleStateApplication(); return m_owner->scheduleConfigure(); }` (Hyprland-XDGShell.cpp:354). The stored size reaches the wire in `scheduleStateApplication()`'s deferred body as `m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr)` (XDGShell.cpp:455), and `scheduleConfigure()` (XDGShell.cpp:629-636) registers the deferred configure, allocates a fresh serial from the display and reuses an in-flight one instead of queueing a second, while `configure()` (XDGShell.cpp:640-643) sends the configure for that serial. So the serial in `m_pendingSizeAcks` is the serial the client is expected to ack.
++
++## §3 What the protocol permits the client to do
++
++**OBS** S299 - the protocol calls the width and height a hint and tells the client not to apply the state at once: `The width and height arguments specify a hint to the window about how its surface should be resized in window geometry coordinates.` (xdg-shell.xml:1150). The same description says the configured state should not be applied immediately (lines 1146-1148) and that a width or height of zero means the client should decide its own window dimension (lines 1154-1157). The client must ack the configure before committing the surface it arranged for it (lines 610-612, 560-566).
++
++**INF** A client may therefore take the compositor's size, adjust it (subject to any constraints it was given) or ignore it, and the protocol is satisfied as long as it acks. The compositor's pending list cannot tell those cases apart: it stores the size it sent, not the size the client applied.
++
++## §4 What GTK 4.24.1 does with the configure
++
++**OBS** S300 - GTK adds its shadow margins to the configured size before it updates the surface: `width = wayland_surface->next_layout.configured_width + wayland_surface->shadow_left + wayland_surface->shadow_right;` (gdktoplevel-wayland.c:518). The condition is that both configured dimensions are greater than zero (lines 513-514); GTK then constrains the result to the geometry hints when the surface is resizing, updates the surface size, and clears the configured dimensions unless the size was fixed (lines 523-537). With a zero configure it uses the geometry's own width and height instead (lines 539-549). The handler that fills `pending.width`/`pending.height` is `xdg_toplevel_configure` (line 710 onward), the layout is requested at line 693, and the configure is acked at line 706.
++
++**INF** For a normal toplevel the configured size is adopted plus shadow margins, so a maximized or fullscreen compositor box becomes a GTK surface at that size; a 0x0 configure leaves GTK's own default size in charge. The shadow margins mean the surface size GTK reports back is not byte-equal to the configure the compositor sent.
++
++## §5 What gkeep declares
++
++**OBS** S301 - the app sets only a default size and hands the window to its board: `window.set_default_size(420, 500) self.board = Board(window)` (gkeep-ui.py:476). Its application id is `org.omarchy.gkeep` (gkeep-ui.py:449) and `set_size_request` is never called in the file.
++
++**INF** `set_default_size` is GTK's initial size for an unconfigured toplevel, so it is the size GTK uses when the compositor sends a zero configure and the fallback the compositor's configure replaces. It cannot by itself pin the window, which is why the round-43 rule and the app's declared size can agree without either deciding the outcome.
++
++## §6 Client-side census of the pinned bytes
++
++Both lines are recomputed by the counter from the pinned receipts, not copied from a run:
++
++gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep
++hyprland sendWindowSize xdg_setSize=1 x11_configure=1
++
++The first line is gkeep's own declaration: one `set_default_size(420, 500)`, zero `set_size_request` calls, one application id. The second is the body of `CWindow::sendWindowSize(bool force)`: one `->setSize(` for the Wayland arm and one `->configure(` for the X11 arm, both inside the single report branch quoted in §1.
++
++## §7 What this does not establish
++
++- No live gkeep window: the round-43 census has four mapped clients, none floating, none of them gkeep, so no `sendWindowSize` round trip for this window has been observed on the host.
++- The size the client actually applied is never reported back: the ack carries only a serial, and `getReportedSize()` hands out the compositor's own sent value (Window.cpp:1861-1867); whether GTK's surface ends at the configure size is unobserved here.
++- The X11 branch is read, not exercised: gkeep is a Wayland GTK application on this host.
++
++## Receipts
++
++The five pins are committed at `.ufo/waves/round-44/fetch/` (mode 100644) with the sha256 values in `corpus/lessons/round-44.md` `## Gate`. Locators above are the counter's computed first-occurrence lines of the quotes (`Hyprland-Window.cpp:1750`, `Hyprland-XDGShell.cpp:354`, `xdg-shell.xml:1150`, `gdktoplevel-wayland.c:518`, `gkeep-ui.py:476`); the line ranges are read from the pinned files.
+diff --git a/corpus/lessons/round-44.md b/corpus/lessons/round-44.md
+new file mode 100644
+index 00000000..aa2f0f4a
+--- /dev/null
++++ b/corpus/lessons/round-44.md
+@@ -0,0 +1,14 @@
++# round 44 - lesson
++
++## Gate
++
++GATE S164 receipt=.ufo/waves/round-44/fetch/Hyprland-Window.cpp sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded quote="if (m_isX11 && m_xwaylandSurface) m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE}); else if (m_xdgSurface && m_xdgSurface->m_toplevel) m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());"
++GATE S298 receipt=.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp sha256=d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 quote="uint32_t CXDGToplevelResource::setSize(const Vector2D& size) { m_pendingApply.size = size; scheduleStateApplication(); return m_owner->scheduleConfigure(); }"
++GATE S299 receipt=.ufo/waves/round-44/fetch/xdg-shell.xml sha256=7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df quote="The width and height arguments specify a hint to the window about how its surface should be resized in window geometry coordinates."
++GATE S300 receipt=.ufo/waves/round-44/fetch/gdktoplevel-wayland.c sha256=0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe quote="width = wayland_surface->next_layout.configured_width + wayland_surface->shadow_left + wayland_surface->shadow_right;"
++GATE S301 receipt=.ufo/waves/round-44/fetch/gkeep-ui.py sha256=07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a quote="window.set_default_size(420, 500) self.board = Board(window)"
++
++ADMIT merge/mado/knowledge/corpus/knowledge/gkeep-client-size-request-r12.md as corpus/knowledge/hyprland-gkeep-size-request-r44.md
++REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-geometry-never-recorded-r15.md reason=its journal route rests on unpinned observations, so it stays out until a pinned log of a size round trip exists; the pinned send and configure path in this entry needs no journal read
++
++The five receipts are the pre-wave pins (`git ls-tree -r <rev> .ufo/waves/round-44/fetch/`, mode 100644); each sha256 above equals `receipts/fetch-sha256.txt`. Held S164 keeps its lane row and gains this entry in used-by; S298-S301 are new rows appended after S297.
+-- 
+2.56.0
+

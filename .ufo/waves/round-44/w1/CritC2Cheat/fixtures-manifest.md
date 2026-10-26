@@ -1,0 +1,14 @@
+# fixture commits (throwaway clones of the lane at e2289516)
+
+| variant | commit | entry lines |
+|---|---|---|
+| F0-BASE | b996e119571af6e45bb74c61aae12fc6d0436c47 | 69 |
+| F1-CLAIM-INVERSION | c08c3d068a5d0705ebbb3bbdfac3461a61926451 | 69 |
+| F2-FORGED-PIN | 4a59d120c4e1b4dac151a613b0efabb275d8da18 | 69 |
+| F3-LOCATION-DRIFT | bb9cc419209fe0e6dc319cc75ccb06dd25ba3d1b | 69 |
+| F4-SIZE-REQUEST-PROSE | 1bcd58a7dddf33715ff5a3c39c66b27482d1453b | 71 |
+| F5-DEFAULT-SIZE-PROSE | 7fc0e06da7144351431a1b6afcfd2df5bdb04829 | 71 |
+| F6-OVERCLAIM-TABLE | fc4681f4832b2b7abd45a887ff50f14f9e9d80af | 75 |
+| F7-CONTENT-FREE-SHELL | ec5b6f9bb58bec6e56be508787b0bc7566f3748a | 17 |
+| F8-REGISTRY-ANCHOR-LIE | 267bbd289d6aeba66517a0dcb705bce3925d978d | 69 |
+| F9-REGISTRY-ANCHOR-OUT-OF-RANGE | efb95b6f93231ffeebac6fd7ea16d5b4a4e01d18 | 69 |

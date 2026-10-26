@@ -1,0 +1,379 @@
+SEAT ExecHarmBase — harm-check BASELINE at the round-44 base 6a1a90528fe533cadee506a9fa3e9d13d15cc41f
+lane /home/vgpnk/Projects/shokunin/mado-shokunin · measured 2026-10-26 · every row below was executed, not inferred.
+
+Clone: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf  (git clone -q --shared <lane>; verified
+`git rev-parse --show-toplevel` == clone root before any command; `git -C <clone> checkout -q --detach 6a1a905…`;
+clone deleted after these receipts were copied here — the scratch path is not citable evidence).
+Host env: Python 3.14.8, GNU bash 5.3.20(1)-release. No host service, compositor, package or network state was touched.
+
+Scope rule applied: a tool is listed as having a selftest only when its own argument parser accepts a selftest
+token. At 6a1a905 the twelve tools/*.py|*.sh files are:
+  mado-action-plan.py mado-anims.py mado-assessment.py mado-binds.py mado-eventq.py mado-evidence-audit.py
+  mado-geometry.py mado-globals.py mado-options.py mado-tripwire.py mado-verify.sh mado-wsrules.py
+Eight offer one (counted by reading each usage/docstring); four do not:
+  tools/mado-anims.py  (only --home DIR)   `grep -c -- '--selftest' tools/mado-anims.py` = 0
+  tools/mado-binds.py  (only --home DIR)   `grep -c -- '--selftest' tools/mado-binds.py` = 0
+  tools/mado-eventq.py (flags only, no selftest)  = 0
+  tools/mado-wsrules.py (only --home DIR)  = 0
+Those four were therefore NOT run as selftests: they have none to run at this revision.
+
+== A. THE FIFTEEN EXECUTED GATES, all with CWD = the clone root ==
+
+#   command (as executed)                                                                    rc   summary line (verbatim)
+1   bash tools/mado-verify.sh --selftest                                                      0    MADO_SELFTEST: 460/460 assertions passed
+2   python3 -I tools/mado-options.py --selftest                                               0    MADO_OPTIONS_SELFTEST: 211/211 passed
+3   python3 -I tools/mado-globals.py --selftest                                               0    MADO_GLOBALS_SELFTEST: 63/63 passed
+4   python3 -I tools/mado-geometry.py --selftest                                              0    MADO_GEOMETRY_SELFTEST: 73/73 passed
+5   python3 -I tools/mado-action-plan.py --selftest                                           0    SELFTEST_SUMMARY: 52/52 passed
+6   python3 -I tools/mado-assessment.py --selftest .ufo/waves/round-21/assessment-fixtures    0    {"cases":20, all pass:20, failed:[], code:0, total:20, tool_sha256:66aefd03…, seal_sha256:99516c34…}
+7   python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures     2    {"code":2,"error":"FileNotFoundError","finding_ids":["evidence_audit_input_invalid"],"result":"could-not-evaluate"}   <- BASE-RED IN A FRESH CLONE, see §D
+8   python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/core            0    SELFTEST_SUMMARY: 9/9 passed failed=[]
+9   python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/compound        0    SELFTEST_SUMMARY: 16/16 passed failed=[]
+10  python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/hardening       0    SELFTEST_SUMMARY: 33/33 passed failed=[]
+11  python3 -I quality/check-index.py --rev 6a1a905… --repo .                                 0    MADO_INDEX: rev=6a1a905… indexed=60/60 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+12  python3 -I quality/check-index-rows.py --rev 6a1a905… --repo .                            0    MADO_INDEX_ROWS: rev=6a1a905… rows=60 errors=0 warns=3
+13  python3 -I quality/check-axis-scores.py --rev 6a1a905… --repo .                           0    nav 60/60 MATCH · calib 68/68 MATCH · oper 12/12 MATCH · checked=3 mismatched=0
+14  python3 -I quality/check-locators.py --selftest                                           0    SELFTEST: cases=18 passed=18 locators=19 miss=6 / teeth flips=11 ok_to_miss=4 miss_to_ok=5 / SELFTEST: PASS
+15  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado  0   mado ok corpus/SOURCES.md + 7×W04 + 1×W01 (warnings only)
+
+Note on #12: the usage is `check-index-rows.py [--rev REV] [--repo REPO] [--root ROOT] [--selftest]` (its -h), so
+the assigned bare `python3 -I quality/check-index-rows.py` cannot run; the --rev/--repo form is the shipped mode and
+is what row 12 records. The same three warns are the ones round 43 measured, on the same three rows:
+  WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+  WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+  WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+Note on #15: the census lane row is `mado  ok  …/mado-shokunin/corpus/SOURCES.md`; the eight warnings are
+W04 duplicate-url (S030, S042, S045, S097, S119, S120, S121) and W01 tierC-mined-with-used-by (S277). Exit 0 is the
+contract's "clean or warnings" status; no E-code fired.
+
+== B. COUNTS AT THE BASE (each command run in the clone) ==
+
+tools files                 12          ls tools/*.py tools/*.sh | wc -l      (11 .py + 1 .sh)
+corpus/knowledge entries    60          ls corpus/knowledge/*.md | wc -l
+registry rows               234         grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+QUALITY criteria            81          last numbered line is 81; numbers are 1..81 contiguous (count=81, min=1, max=81)
+
+== C. VERBATIM GATE LOG ==
+
+(the block after this line is the unedited driver output for all fifteen gates; stderr is marked where non-empty)
+
+
+===== tools/mado-verify.sh --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+--- rc=0
+
+===== tools/mado-options.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-options.py --selftest
+MADO_OPTIONS_SELFTEST: 211/211 passed
+--- rc=0
+
+===== tools/mado-globals.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-globals.py --selftest
+MADO_GLOBALS_SELFTEST: 63/63 passed
+--- rc=0
+
+===== tools/mado-geometry.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-geometry.py --selftest
+MADO_GEOMETRY_SELFTEST: 73/73 passed
+--- rc=0
+
+===== tools/mado-action-plan.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-action-plan.py --selftest
+SELFTEST_SCRIPT_SHA256: 226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3
+SELFTEST PASS safe-read-repo: want 0/plan_safe got 0/plan_safe
+SELFTEST PASS empty-actions: want 0/plan_safe got 0/plan_safe
+SELFTEST PASS unlisted-argv0-unscreened: want 0/plan_safe got 0/plan_safe
+SELFTEST PASS omarchy-prefix-unscreened: want 0/plan_safe got 0/plan_safe
+SELFTEST PASS package-install-libinput: want 1/blocked_action_kind:package-install got 1/blocked_action_kind:package-install
+SELFTEST PASS service-mutate: want 1/blocked_action_kind:service-mutate got 1/blocked_action_kind:service-mutate
+SELFTEST PASS compositor-mutate: want 1/blocked_action_kind:compositor-mutate got 1/blocked_action_kind:compositor-mutate
+SELFTEST PASS input-capture: want 1/blocked_action_kind:input-capture got 1/blocked_action_kind:input-capture
+SELFTEST PASS unknown-kind: want 1/unknown_action_kind got 1/unknown_action_kind
+SELFTEST PASS first-refusal-wins: want 1/blocked_action_kind:service-mutate got 1/blocked_action_kind:service-mutate
+SELFTEST PASS read-disguised-pacman: want 1/denied_executable:pacman got 1/denied_executable:pacman
+SELFTEST PASS read-sudo: want 1/denied_executable:sudo got 1/denied_executable:sudo
+SELFTEST PASS read-shell: want 1/denied_executable:bash got 1/denied_executable:bash
+SELFTEST PASS repo-env-wrapper: want 1/denied_executable:env got 1/denied_executable:env
+SELFTEST PASS read-empty-argv: want 1/empty_argv got 1/empty_argv
+SELFTEST PASS read-blank-argv0: want 1/empty_argv got 1/empty_argv
+SELFTEST PASS plan-not-object: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-missing-argv: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-nonstring-argv: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-action-unknown-key: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-duplicate-key: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-nonfinite: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-bad-utf8: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-is-directory: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS policy-not-object: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-missing-paused: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-paused-false: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-paused-string: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-allows-package-install: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-removes-denial-kind: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-adds-allow-kind: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-unknown-key: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-shrunk-deny-exec: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-shrunk-paused-scope: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-before-plan: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-paused-one: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS policy-paused-null: want 2/policy_malformed got 2/policy_malformed
+SELFTEST PASS blocked-kind-empty-argv: want 1/blocked_action_kind:package-install got 1/blocked_action_kind:package-install
+SELFTEST PASS unknown-kind-empty-argv: want 1/unknown_action_kind got 1/unknown_action_kind
+SELFTEST PASS denied-before-blocked-order: want 1/denied_executable:sudo got 1/denied_executable:sudo
+SELFTEST PASS plan-is-symlink: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS plan-is-fifo: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS malformed-later-beats-denied: want 2/plan_malformed got 2/plan_malformed
+SELFTEST PASS frozen-match: want 0/frozen_match got 0/frozen_match
+SELFTEST PASS frozen-denied-match: want 0/frozen_match got 0/frozen_match
+SELFTEST PASS frozen-tampered-plan: want 2/snapshot_tampered got 2/snapshot_tampered
+SELFTEST PASS frozen-missing-pin: want 2/frozen_error got 2/frozen_error
+SELFTEST PASS frozen-verdict-mismatch: want 1/frozen_verdict_mismatch got 1/frozen_verdict_mismatch
+SELFTEST PASS frozen-tampered-policy: want 2/snapshot_tampered got 2/snapshot_tampered
+SELFTEST PASS frozen-invalid-pair: want 2/frozen_error got 2/frozen_error
+SELFTEST PASS frozen-empty-finding: want 2/frozen_error got 2/frozen_error
+SELFTEST PASS frozen-nonhex-pin: want 2/frozen_error got 2/frozen_error
+SELFTEST_SUMMARY: 52/52 passed
+--- rc=0
+
+===== tools/mado-assessment.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-assessment.py --selftest .ufo/waves/round-21/assessment-fixtures
+{"cases": [{"exit": 0, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 0, "finding_ids": ["assessment_clean"], "result": "clean"}, "id": "baseline_valid", "pass": true, "want": {"code": 0, "result": "clean"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["late_registration"], "result": "failed"}, "id": "late_registration_after_measurement", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["late_registration"], "result": "failed"}, "id": "late_registration_after_implementation", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-mutated.txt", "sha256": "c02069a203b8c1306e61b8470c8fe916e08fd5db23fd433c95b6f87ed82e84fc"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["population_digest_changed"], "result": "failed"}, "id": "population_file_mutated", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 2, "got": {"code": 2, "error": "missing or invalid sha256", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "missing_registered_input_sha256", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["oracle_not_independent"], "result": "failed"}, "id": "oracle_tool_generated_not_independent", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["expectations_changed"], "result": "failed"}, "id": "expectation_digest_changed", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 2, "got": {"code": 2, "error": "canonical four-box assessment incomplete", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "shonen_missing_box", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 2, "got": {"code": 2, "error": "canonical four-box assessment incomplete", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "shonen_duplicate_box", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["unnamed_nonauthor_verifier"], "result": "failed"}, "id": "shonen_x_without_nonauthor", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 2, "got": {"code": 2, "error": "empty assessment evidence", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "shonen_empty_evidence", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["historical_target_rewritten"], "result": "failed"}, "id": "history_suppresses_old_three_misses", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["historical_target_rewritten"], "result": "failed"}, "id": "history_round20_admitted_true", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["historical_target_rewritten"], "result": "failed"}, "id": "history_c2_independent_true", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 2, "got": {"code": 2, "error": "month must be in 1..12, not 19", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "malformed_timestamp", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 2, "got": {"code": 2, "error": "empty or oversized population/measurements", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "population_empty", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 2, "got": {"code": 2, "error": "missing or invalid author", "finding_ids": ["assessment_input_invalid"], "result": "could-not-evaluate"}, "id": "oracle_author_missing", "pass": true, "want": {"code": 2, "result": "could-not-evaluate"}}, {"exit": 0, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 0, "finding_ids": ["assessment_clean"], "result": "clean"}, "id": "shonen_x_with_named_nonauthor", "pass": true, "want": {"code": 0, "result": "clean"}}, {"exit": 1, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 1, "finding_ids": ["wrong_topic_shonen"], "result": "failed"}, "id": "round20_wrong_topic_shonen", "pass": true, "want": {"code": 1, "result": "failed"}}, {"exit": 0, "got": {"actual_expectations_sha256": "aa691e53f2771a79a7fa185fb56a0b949f7893b129e4fd8eaecd108c02f33a5e", "actual_inputs": [{"path": "snapshots/population-baseline.txt", "sha256": "16e14eaa77f0094660d269b88208e56df589b30c8cada50ee04a9dba7d4d07ed"}], "authority": "artifact assertions only; no authenticated chronology, authorship, semantic proof or promotion authority", "code": 0, "finding_ids": ["assessment_clean"], "result": "clean"}, "id": "round20_canonical_shonen_corrected", "pass": true, "want": {"code": 0, "result": "clean"}}], "code": 0, "finding_ids": ["assessment_oracle_match"], "pass": 20, "result": "selftest", "seal_sha256": "99516c349637f2aefaef5c106ec7973c8af638bd4a22c79c835a49e0559fe686", "tool_sha256": "66aefd03f25d834fbfcfee6b295c1c032f01b2a94ca321396b7558cca59de9d4", "total": 20}
+--- rc=0
+
+===== tools/mado-evidence-audit.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures
+{"authority": "artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion", "code": 2, "error": "FileNotFoundError", "finding_ids": ["evidence_audit_input_invalid"], "result": "could-not-evaluate"}
+--- rc=2
+
+===== tools/mado-tripwire.py --selftest core
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/core
+CASE incident-replica ok
+CASE package-query-only ok
+CASE live-probe-only ok
+CASE live-probe-permitted ok
+CASE clean-reads ok
+CASE mention-only ok
+CASE malformed-json-line ok
+CASE no-jsonl-dir ok
+CASE dir-scan-two-files ok
+SELFTEST_SCRIPT_SHA256: cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+SELFTEST_SUMMARY: 9/9 passed failed=[]
+--- rc=0
+
+===== tools/mado-tripwire.py --selftest compound
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/compound
+CASE compound-and-sudo-pacman ok
+CASE abs-path-pacman-upgrade ok
+CASE env-prefix-pacman-remove ok
+CASE var-assign-pacman-query ok
+CASE var-assign-pacman-query-permitted ok
+CASE bash-c-sudo-systemctl-restart ok
+CASE cmdsub-pacman-query ok
+CASE timeout-nohup-hyprctl-mutations ok
+CASE xargs-pkill ok
+CASE quoted-data-clean ok
+CASE eval-bang-sudo-pacman ok
+CASE eval-nonbang-clean ok
+CASE user-daemon-reload ok
+CASE omarchy-mutating-verbs ok
+CASE omarchy-permitted ok
+CASE dir-scan-all-permitted ok
+SELFTEST_SCRIPT_SHA256: cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+SELFTEST_SUMMARY: 16/16 passed failed=[]
+--- rc=0
+
+===== tools/mado-tripwire.py --selftest hardening
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I tools/mado-tripwire.py --selftest .ufo/waves/round-17/tripwire/hardening
+CASE newline-second-line ok
+CASE backslash-continuation ok
+CASE heredoc-data-clean ok
+CASE heredoc-into-shell ok
+CASE multiline-quoted-commit-vcs ok
+CASE multi-toolcall-line ok
+CASE eval-subprocess-list ok
+CASE eval-bash-c-recipe ok
+CASE eval-shell-true ok
+CASE eval-tool-bash ok
+CASE eval-nonliteral-unparsed-clean ok
+CASE eval-js-unparsed-clean ok
+CASE kill-zero-clean ok
+CASE kill-term ok
+CASE systemctl-suspend ok
+CASE loginctl-lock ok
+CASE loginctl-show-probe ok
+CASE omarchy-quoted-grep-clean ok
+CASE omarchy-bare-launch ok
+CASE result-and-marker-only-clean ok
+CASE pacman-sync-print-query ok
+CASE pacman-downloadonly-mutation ok
+CASE run0-and-systemd-run ok
+CASE hyprctl-batch ok
+CASE dollar-paren-in-double-quotes ok
+CASE pacman-log-read-clean ok
+CASE refused-db-name ok
+CASE seat-name-with-credential-word-allowed ok
+CASE refused-symlink ok
+CASE command-v-lookup-clean ok
+CASE python-heredoc-spawn ok
+CASE python-heredoc-data-clean ok
+CASE python-c-spawn ok
+SELFTEST_SCRIPT_SHA256: cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+SELFTEST_SUMMARY: 33/33 passed failed=[]
+--- rc=0
+
+===== quality/check-index.py
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I quality/check-index.py --rev 6a1a90528fe533cadee506a9fa3e9d13d15cc41f --repo .
+MADO_INDEX: rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f indexed=60/60 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+--- rc=0
+
+===== quality/check-index-rows.py
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I quality/check-index-rows.py --rev 6a1a90528fe533cadee506a9fa3e9d13d15cc41f --repo .
+MADO_INDEX_ROWS: rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f rows=60 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+--- rc=0
+
+===== quality/check-axis-scores.py
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I quality/check-axis-scores.py --rev 6a1a90528fe533cadee506a9fa3e9d13d15cc41f --repo .
+MADO_AXIS_ROW: axis=navigation published=60/60 derived=60/60 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=68/68 derived=68/68 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f
+--- rc=0
+
+===== quality/check-locators.py --selftest
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: python3 -I quality/check-locators.py --selftest
+SELFTEST: cases=18 passed=18 locators=19 miss=6
+SELFTEST: teeth flipped_table_broken=yes flips=11 ok_to_miss=4 miss_to_ok=5
+SELFTEST: PASS
+--- rc=0
+
+===== sources-census.sh validate mado
+CWD: /fast/scratch/hyaku/mado-r44/ExecHarmBase/base.AOJf
+CMD: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+--- rc=0
+
+== D. THE ONE BASE-RED GATE: tools/mado-evidence-audit.py --selftest is not reproducible from a clone (§A row 7) ==
+
+Measured on the pristine clone (no writes yet), CWD = clone root:
+  $ python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures
+  {"authority": "...", "code": 2, "error": "FileNotFoundError",
+   "finding_ids": ["evidence_audit_input_invalid"], "result": "could-not-evaluate"}          rc=2
+Same argv with an absolute fixture root: identical rc=2 output (not a relative-path problem).
+
+Cause, measured: the fixture manifest declares two EMPTY directories as inputs, and git cannot store an empty
+directory, so no clone of any revision contains them:
+  .ufo/waves/round-22/audit/fixtures/expected.json input_entries include
+    {"kind": "directory", "path": "cases/AuditRawPathEscape/root"}
+    {"kind": "directory", "path": "cases/AuditRawPathDotDotInternal/root/sub"}
+  tracked files under those two directories at 6a1a905: `git ls-tree -r --name-only 6a1a905 | grep -cE
+  'AuditRawPathEscape/root/|AuditRawPathDotDotInternal/root/sub/'` = 0  (same command at HEAD = 0)
+  lane worktree: `ls -d` both directories succeeds — they exist only as untracked, git-invisible directories.
+
+Controlled A/B on the same clone, changing only those two directories:
+  $ mkdir -p .ufo/waves/round-22/audit/fixtures/cases/AuditRawPathEscape/root \
+             .ufo/waves/round-22/audit/fixtures/cases/AuditRawPathDotDotInternal/root/sub
+  $ python3 -I tools/mado-evidence-audit.py --selftest .ufo/waves/round-22/audit/fixtures
+  {"code": 0, "result": "clean", "finding_ids": ["evidence_audit_selftest_clean"],
+   "passed": 46, "total": 46,
+   "expected_sha256": "b5df74b5b3ce19e944ebafffd72c1b67c43f5ef39bf3bc1a4cc71f4838c2fd09",
+   "tool_sha256": "277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca"}          rc=0
+(`git status --porcelain` in the clone stays empty after the mkdir — the two directories are invisible to git,
+which is exactly why the fixture set cannot ride a commit.)
+
+Classification for this round: PRE-EXISTING at the base. `git log --oneline --all -- <the two case directories>`
+returns exactly one landing commit, 5c7b9831 "round-22: land normalized immutable fixtures and runnable measurement
+harnesses", and the manifest has declared both paths `kind: directory` since that landing; the omission is therefore
+a round-22 property of the fixture set, not a round-44 change.
+It is therefore a base-red row, NOT a base-green gate: it cannot contribute to a round-44 no-harm comparison, and any
+later receipt that reports this selftest green must say where it got the two directories.
+
+== E. INSTRUMENT DIGESTS AT THE BASE (sha256, clone root) ==
+
+tools/mado-action-plan.py      226220ae41436506c048258aff15fff83577acf0ae71ffa955d585a18ba5aea3
+tools/mado-anims.py            2beda3f7b1a5a7901f6a2cfc7e5b314b68ea9be8d0da27d3a92879946d9cab7d
+tools/mado-assessment.py       66aefd03f25d834fbfcfee6b295c1c032f01b2a94ca321396b7558cca59de9d4
+tools/mado-binds.py            0cda0e6ff5e2868bafbda28fff7227fb28d1ebfaaf69740a5e7de93f5bb41cf9
+tools/mado-eventq.py           436f550e9939a783b7b95d154d099b788ad9daaed2282e19de89413e39371f24
+tools/mado-evidence-audit.py   277eced250774a5d2a2c1985828de522377839a794a2151ddedd232e11458fca
+tools/mado-geometry.py         e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+tools/mado-globals.py          8db1334035962bf8623244570b7e58e3af8a9e2520dd8f83cd0434a8a9a49795
+tools/mado-options.py          63b5ebd9446405ad0b29a79940244b45b145312cddb30b5e827250ed571fef13
+tools/mado-tripwire.py         cd9da20c2f562efbd30967e00c0c630026de6e6d06ef74399eb1a46ccf00ea84
+tools/mado-wsrules.py          dcf5c8c05b2d5b68ef967df339f7539a762e56c8a3811d7fbef33db9936ca389
+tools/mado-verify.sh           050efc720599345a73bdce6c1d13d50eadeee9769c2ece02462223d0156703f1
+quality/check-index.py         2c8798ce27e71f8622b8e596c8f6d175e64233f5ff0653a84544c70123c5f684
+quality/check-index-rows.py    2fd1c0033e649b77e7cf7a8a5335bd0a254c0e57940642072c25e589677772b4
+quality/check-axis-scores.py   461f913a4d1dc8ba19aebee00bbafdb70ad7be09f3531008896c3d9569ce8dde
+quality/check-locators.py      c1ea52ad5db21fdf81022d0425e7cad42fc3e34dd5083915b127a46ab948a27e
+
+mado-geometry.py at this base is byte-identical to the round-42 reference control
+(`sha256sum .ufo/waves/round-42/c1/ctl-ref-tool.py.txt` = e3c2e471…, the same digest the round-43 harm receipt printed
+for both sides). It is NOT round-44's reference control: `.ufo/waves/round-44/c1/ctl-ref-tool.py.txt` hashes
+8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d, i.e. the round-44 C1 target differs from the base
+tool by construction, and the base tool is the unmodified round-43 instrument.
+
+== F. COMPARISON WITH .ufo/waves/round-43/w2/ExecHarmTip/harm.txt (present; read in full) ==
+
+Their file measures the round-43 pair base a35cfdf → data 1959770 with eight gates. This file measures the
+round-44 BASE 6a1a905 only. Differences, each stated with the row it comes from:
+
+D1  Base revision differs by nine commits: mine 6a1a905 ("round-43 verifier spot-check …", 9 commits after
+    a35cfdf, 5 after the round-43 data commit 1959770, and after 2a3707c). Their base column is a35cfdf.
+D2  Gate set: theirs 8 commands; mine 15. Newly covered here, none of which their file ran:
+    mado-action-plan.py --selftest (52/52), mado-assessment.py --selftest (20/20), mado-evidence-audit.py
+    --selftest (rc 2 in a clone, §D), mado-tripwire.py --selftest over core/compound/hardening (9/9, 16/16, 33/33),
+    and sources-census.sh validate (lane ok, 8 warnings, rc 0).
+D3  Row 4 (mado-geometry.py --selftest): absent at their base, 73/73 at their data; 73/73 at my base.
+D4  Row 5 (check-index): their base 59/59, data 60/60; my base 60/60 — the +1 entry of round 43 is in my base tree.
+D5  Row 6 (check-index-rows): identical shape, rows 60 errors=0 warns=3, and the same three warns (their §8 names the
+    same three); their base was rows=59.
+D6  Row 7 (check-axis-scores): their data column was RED (nav published 59/59 vs derived 60/60; calib 63/63 vs 68/68,
+    mismatched=2, rc 1) and they predicted green at 2a3707c with published 60/60 and 68/68. My base measures exactly
+    that prediction: nav 60/60 MATCH, calib 68/68 MATCH, oper 12/12 MATCH, mismatched=0, rc 0. The round-43 lag window
+    is closed before the round-44 base; no axis row is stale here.
+D7  Row 8 (check-locators --selftest): my base summary is character-for-character the one their data column printed
+    (cases=18 passed=18 locators=19 miss=6; teeth flipped_table_broken=yes flips=11 ok_to_miss=4 miss_to_ok=5; PASS).
+D8  Rows 1-3 (verify/options/globals): identical counts to their data column (460/460, 211/211, 63/63).
+D9  Their file has no base-red gate. Mine has one: §D's evidence-audit selftest (clone-only missing empty dirs).
+    It is pre-existing, so it does not weaken the round's no-harm comparison but it must never be cited as base-green.
+D10 Their file reported no sources-census row; mine does (rc 0 with 8 contract warnings). Their file also declined
+    check-control-receipts / check-population / counter-selftest / check-counter-discrimination / check-r38-discrimination
+    for the same reason I do: they take round-specific registry/manifest/registration/counter arguments this seat's
+    assignment does not name.
+
+== G. LIMITS OF THIS BASELINE ==
+
+This file is the BASE side of the round-44 no-harm comparison, not a verdict. It establishes what is green, and what
+counts, at 6a1a905 on a clone: 14 of the 15 executed commands exit 0, one (evidence-audit selftest) is red for the
+pre-existing reason in §D, tools=12, knowledge=60, registry rows=234, QUALITY criteria=81. The comparison against the
+round's data commit is measured by the integrating seat, not here.
+Not run, with reason: quality/check-control-receipts.py, check-population.py, counter-selftest.py,
+check-counter-discrimination.py, check-r38-discrimination.py (each requires a round-specific registry/manifest/
+registration/counter path that this assignment does not name), and the host compositor was not queried (no live
+probe in scope for a clone baseline).

@@ -1,0 +1,25 @@
+fsmode probe: client_fsmode({'fullscreen': v}) per body (contract: 0 for everything but 1 and 2)
+value	REF	M01-fsmode-extra-3	M04-fsmode-admit-0	M05-fsmode-admit-neg	M06-fsmode-range-chain	M22-fallback-none	M51-return-any-int
+1	1	1	1	1	1	1	1
+2	2	2	2	2	2	2	2
+0	0	0	0	0	0	None	0
+3	0	3	0	0	0	None	3
+-1	0	0	0	-1	0	None	-1
+-7	0	0	0	0	0	None	-7
+True	0	0	0	0	0	None	0
+False	0	0	0	0	0	None	0
+2.0	0	0	0	0	0	None	0
+'2'	0	0	0	0	0	None	0
+None	0	0	0	0	0	None	0
+[2]	0	0	0	0	0	None	0
+{"internal":2}	0	0	0	0	0	None	0
+
+counter selftest case that pins these values (c1-r44 fixture text, from the reference):
+  chk("fsmode-values", [client_fsmode({"fullscreen": v}) for v in (1, 2, 0, 3, True, 2.0, "1", None)], [1, 2, 0, 0, 0, 0, 0, 0])
+  -> covers 1, 2, 0, 3, True, 2.0, '2', None; does NOT cover any negative integer.
+  M01-fsmode-extra-3: client_fsmode(fullscreen=-1) = 0 (reference 0), eight-case selftest tuple unchanged
+  M04-fsmode-admit-0: client_fsmode(fullscreen=-1) = 0 (reference 0), eight-case selftest tuple unchanged
+  M05-fsmode-admit-neg: client_fsmode(fullscreen=-1) = -1 (reference 0), eight-case selftest tuple unchanged
+  M06-fsmode-range-chain: client_fsmode(fullscreen=-1) = 0 (reference 0), eight-case selftest tuple unchanged
+  M22-fallback-none: client_fsmode(fullscreen=-1) = None (reference 0), eight-case selftest tuple unchanged
+  M51-return-any-int: client_fsmode(fullscreen=-1) = -1 (reference 0), eight-case selftest tuple unchanged

@@ -1,0 +1,1 @@
+**OBS** S297 - the app asks for the same size the rule asks for: `window.set_default_size(640, 720) self.board = Board(window)` (gkeep-ui-excerpt.py:33-34), on a `Gtk.ApplicationWindow` (line 31) of the application whose id is `org.omarchy.gkeep` (line 6).

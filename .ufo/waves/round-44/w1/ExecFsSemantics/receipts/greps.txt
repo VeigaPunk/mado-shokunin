@@ -1,0 +1,198 @@
+## greps: 2026-10-26T14:01:00-03:00 rev=efb50993780079460b0cbed1363e2166a2de1d9f
+--- enum
+12:    enum eFullscreenMode : int8_t {
+13:        FSMODE_NONE = 0,
+14:        FSMODE_MAXIMIZED,
+15:        FSMODE_FULLSCREEN,
+65:        // FS windows must be fullscreen (FSMODE_FULLSCREEN) to be considered as FS by monitor
+--- clamp controller
+294:        internal = std::clamp(internal.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+296:        client = std::clamp(client.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+--- clamp actions
+291:    const bool KEEP_INTERNAL = (internalMode == -1);
+294:    internalMode = std::clamp(internalMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+295:    clientMode   = std::clamp(clientMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+--- dispatch casts
+197:        internalMode = std::stoi(std::string(ARGS[0]));
+203:    Fullscreen::eFullscreenMode im = internalMode != -1 ? sc<Fullscreen::eFullscreenMode>(internalMode) : Fullscreen::controller()->getFullscreenModes(PWINDOW).internal;
+204:    Fullscreen::eFullscreenMode cm = clientMode != -1 ? sc<Fullscreen::eFullscreenMode>(clientMode) : Fullscreen::controller()->getFullscreenModes(PWINDOW).client;
+--- rule cast
+2198:                .internal = sc<Fullscreen::eFullscreenMode>(m_ruleApplicator->static_.fullscreenStateInternal.value_or(0)),
+--- hyprctl print
+426:            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+427:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+428:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+431:            (w->m_pinned ? "true" : "false"), (w->m_pinFullscreened ? "true" : "false"), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal),
+432:            sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client), escapeJSONStrings(Fullscreen::controller()->getFullscreenHandlerNameAsString(w)),
+447:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+448:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+451:            sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client),
+--- handler boxes
+191:    if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+192:        const CBox MONBOX                                  = MONITOR->logicalBox();
+194:        LAYOUT_TARGET->setPositionGlobal(MONBOX);
+195:    } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+196:        const CBox WORKAREA                                = WORKSPACE->m_space->workArea(target->floating());
+198:        LAYOUT_TARGET->setPositionGlobal(WORKAREA);
+220:    if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+222:        const CBox MONBOX         = MONITOR->logicalBox();
+234:            LAYOUT_TARGET->setPositionGlobal(MONBOX);
+236:    } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+--- target setpos
+10:void ITarget::setPositionGlobal(const STargetBox& box, uint8_t) {
+12:    m_box.logicalBox.round();
+16:void ITarget::setPositionGlobal(const CBox& box, uint8_t flags) {
+--- windowtarget setpos
+36:void CWindowTarget::setPositionGlobal(const STargetBox& box, uint8_t flags) {
+37:    ITarget::setPositionGlobal(box, flags);
+39:    updatePos(flags);
+--- default FS branch
+71:        m_window->setBox(m_box.logicalBox);
+93:        if (FSMODES.internal == Fullscreen::FSMODE_FULLSCREEN) {
+94:            m_window->setBox(m_box.logicalBox);
+96:        } else if (FSMODES.internal == Fullscreen::FSMODE_MAXIMIZED) {
+122:        if (FSMODES.internal == Fullscreen::FSMODE_FULLSCREEN) {
+124:        } else if (FSMODES.internal == Fullscreen::FSMODE_MAXIMIZED) {
+--- layout FS branch
+105:            m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+114:    // Layout handled FS
+123:            m_window->setBox(visualBox);
+128:            m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+--- setBox
+43:void CGeometricMovableAnimated::setBox(const CBox& x) {
+45:    *m_realSize     = x.size();
+--- goal semantics
+217:        const VarType& goal() const {
+244:            m_Goal  = v;
+--- floating kept
+70:    if (floating() && m_window && !Fullscreen::controller()->isFullscreen(m_window.lock())) {
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-WindowTarget.cpp:291:    m_window->m_isFloating = x;
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2130:        m_isFloating    = true;
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2191:        m_isFloating = m_ruleApplicator->static_.floating.value_or(m_isFloating);
+285:void CWindowTarget::setFloating(bool x) {
+--- remember
+131:        target->rememberFloatingSize(target->position().size());
+--- exit recenter
+478:    if (mode == FSMODE_NONE && window->m_isFloating)
+480:        ALGORITHM->recenter(window->layoutTarget());
+--- recenter impl
+20:void IFloatingAlgorithm::recenter(SP<ITarget> t) {
+21:    const auto LAST = t->lastFloatingSize();
+26:    t->setPositionGlobal({m_parent->space()->workArea().middle() - LAST / 2.F, LAST});
+--- scrolling noop
+197:        currentCol->setColumnWidth(fullscreenColumnWidth());
+232:        currentCol->setColumnWidth(1.F);
+301:void CScrollingFullscreenHandler::setTargetSizeAndPosition(const SP<Layout::ITarget> target) {
+306:void CScrollingFullscreenHandler::syncTargetSizeAndPosition() {
+657:float CScrollingFullscreenHandler::fullscreenColumnWidth() const {
+--- workarea
+85:    auto        workArea = m_parent->m_monitor->logicalBoxMinusReserved();
+105:    m_workArea         = workArea;
+110:    return floating ? m_floatingWorkArea : m_workArea;
+--- group
+26:void CWindowGroupTarget::setPositionGlobal(const STargetBox& box, uint8_t flags) {
+34:        w->m_target->setPositionGlobal(m_box, flags);
+--- guards
+430:    if (!window || !validMapped(window) || !window->m_monitor || !window->m_workspace || !window->m_workspace->m_space || !window->m_workspace->m_space->algorithm())
+88:    if (!request.target || !request.target->window() || !request.target->workspace() || !request.target->workspace()->m_monitor)
+63:    if (!validMapped(m_window)) {
+--- visibility guard count
+isHidden in WindowTarget.cpp = 0
+isHidden in FullscreenHandler.cpp = 0
+--- covering guard
+193:        Fullscreen::controller()->m_windowPosSettingQueued = true;
+197:        Fullscreen::controller()->m_windowPosSettingQueued = true;
+233:            controller()->m_windowPosSettingQueued = true;
+252:            controller()->m_windowPosSettingQueued = true;
+84:        if (!Fullscreen::controller()->m_windowPosSettingQueued)
+86:        Fullscreen::controller()->m_windowPosSettingQueued = false;
+--- map-time FS
+2139:    if (m_wantsInitialFullscreen || (m_isX11 && m_xwaylandSurface->m_fullscreen))
+2140:        requestedClientFSMode = Fullscreen::FSMODE_FULLSCREEN;
+2196:        if (m_ruleApplicator->static_.fullscreenStateClient || m_ruleApplicator->static_.fullscreenStateInternal) {
+--- int->enum conversions across pins+fetch-c1
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp:294:        internal = std::clamp(internal.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-FullscreenController.cpp:296:        client = std::clamp(client.value(), sc<eFullscreenMode>(0), FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-DispatcherTranslator.cpp:203:    Fullscreen::eFullscreenMode im = internalMode != -1 ? sc<Fullscreen::eFullscreenMode>(internalMode) : Fullscreen::controller()->getFullscreenModes(PWINDOW).internal;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-DispatcherTranslator.cpp:204:    Fullscreen::eFullscreenMode cm = clientMode != -1 ? sc<Fullscreen::eFullscreenMode>(clientMode) : Fullscreen::controller()->getFullscreenModes(PWINDOW).client;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp:294:    internalMode = std::clamp(internalMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp:295:    clientMode   = std::clamp(clientMode, sc<Fullscreen::eFullscreenMode>(0), Fullscreen::FSMODE_FULLSCREEN);
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2198:                .internal = sc<Fullscreen::eFullscreenMode>(m_ruleApplicator->static_.fullscreenStateInternal.value_or(0)),
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2199:                .client   = sc<Fullscreen::eFullscreenMode>(m_ruleApplicator->static_.fullscreenStateClient.value_or(0)),
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2469:        requestedClientFSMode = sc<Fullscreen::eFullscreenMode>(sc<uint8_t>(requestedClientFSMode.value_or(Fullscreen::FSMODE_NONE)) & ~sc<uint8_t>(Fullscreen::FSMODE_FULLSCREEN));
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:2471:        requestedClientFSMode = sc<Fullscreen::eFullscreenMode>(sc<uint8_t>(requestedClientFSMode.value_or(Fullscreen::FSMODE_NONE)) & ~sc<uint8_t>(Fullscreen::FSMODE_MAXIMIZED));
+--- writes to .internal
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp:260:            ITR->second.mode.internal = FSMODE_NONE;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp:262:        m_fsTargets.emplace(target, SFullscreenScrollState{.mode = {.internal = mode}});
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ScrollingFullscreenHandler.cpp:264:        ITR->second.mode.internal = mode;
+.ufo/waves/round-44/w1/ExecFsSemantics/pins/Hyprland-ConfigActions.cpp:299:    const Fullscreen::SFullscreenMode NEW_MODES = {.internal = internalMode, .client = clientMode};
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenController.hpp:34:        eFullscreenMode internal = FSMODE_NONE;
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp:135:            ITR->second.internal = FSMODE_NONE;
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp:137:        m_fsTargets.emplace(target, SFullscreenMode{.internal = mode});
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp:139:        ITR->second.internal = mode;
+.ufo/waves/round-44/fetch-c1/Hyprland-FullscreenHandler.cpp:304:            const SFullscreenMode MODE = SFullscreenMode{.internal = it->second.internal, .client = it->second.client};
+--- precise windowtarget
+71:        m_window->setBox(m_box.logicalBox);
+89:    // Default Handled FS (floating or tiling)
+94:            m_window->setBox(m_box.logicalBox);
+105:            m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+114:    // Layout handled FS
+123:            m_window->setBox(visualBox);
+128:            m_window->setBox({visualBox.pos() + RESERVED.topLeft, visualBox.size() - (RESERVED.topLeft + RESERVED.bottomRight)});
+--- handler mode check + remember ctx
+     1	}
+     2	
+     3	void IFullscreenHandler::setTargetFullscreenModeInternal(const SP<Layout::ITarget> target, const eFullscreenMode mode) {
+     4	
+     5	    if (!target)
+     6	        return;
+     7	
+     8	    const auto ITR = m_fsTargets.find(target);
+     9	
+    10	    if (target->window() && target->window()->m_isFloating && mode != FSMODE_NONE && !isFullscreen(target))
+    11	        target->rememberFloatingSize(target->position().size());
+    12	
+    13	    const auto TARGET_INTERNAL_MODE = getFullscreenModes(target).internal;
+    14	
+    15	    // If not FS, let the layout's recalculate() handle window pos/size
+    16	    if (TARGET_INTERNAL_MODE == FSMODE_NONE)
+    17	        return;
+    18	
+--- exact: mode none return
+182:    if (TARGET_INTERNAL_MODE == FSMODE_NONE)
+--- scrolling handler body
+302:    // We don't need to do anything explicitly here because in scrolling, pos/size setting as well as managing window/workspace rules are done in scrolling's recalculate()
+307:    // We don't need anything here as scrolling handled pos setting in its recalculate() anyway
+--- group current
+41:    // A window group's FS modes are considered to be owned by its current window
+44:            target = WINDOW_GROUP_TARGET->getGroup()->current()->m_target;
+75:            target = WINDOW_GROUP_TARGET->getGroup()->current()->m_target;
+--- pseudo
+2408:                m_target->setPseudoSize(*COMPUTED);
+--- damage-only floating guard + handler name
+448:    if (window->m_isFloating && WINDOW_FS_MODE.internal == FSMODE_NONE && mode != FSMODE_NONE)
+242:eFullscreenHandler CFullscreenController::getFullscreenHandlerName(const PHLWINDOW window) {
+258:    if (DEFAULT_FS_HANDLER->isFullscreen(window->m_target) || DEFAULT_FS_HANDLER->getFullscreenModes(window->m_target).client != FSMODE_NONE)
+--- remember guard exact
+130:    if (target->window() && target->window()->m_isFloating && mode != FSMODE_NONE && !isFullscreen(target))
+--- scrolling sync noop
+307:    // We don't need anything here as scrolling handled pos setting in its recalculate() anyway
+--- windowtarget guard lines 83-87
+82:    // prevent re-setting an FS window's pos after it is set by the FS calls
+--- hyprutils minimum version
+150:set(HYPRUTILS_MINIMUM_VERSION 0.14.0)
+156:pkg_check_modules(hyprutils_dep REQUIRED IMPORTED_TARGET hyprutils>=${HYPRUTILS_MINIMUM_VERSION})
+--- FSMODE_MAX comment
+109:        // List of FSMODE_MAX windows
+--- visible-workspace guards
+grep -c isHidden WindowTarget.cpp=0 FullscreenHandler.cpp=0
+--- layoutManagedFS guard
+89:    // Default Handled FS (floating or tiling)
+91:        FSMODES.internal != Fullscreen::FSMODE_NONE && !Fullscreen::controller()->layoutManagedFS(m_self->window())) {
+116:        FSMODES.internal != Fullscreen::FSMODE_NONE && Fullscreen::controller()->layoutManagedFS(m_self->window())) {
+--- gaps keys
+87:    static auto PGAPSOUTDATA   = CConfigValue<Config::IComplexConfigValue>("general:gaps_out");
+88:    static auto PFLOATGAPSDATA = CConfigValue<Config::IComplexConfigValue>("general:float_gaps");
+--- group copy + layout newTarget
+133:    w->m_target->setFloating(m_target->floating());
+19:void CLayoutManager::newTarget(SP<ITarget> target, SP<CSpace> space) {

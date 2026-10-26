@@ -1,0 +1,46 @@
+# ScrLessonSkeleton — the round-43 tool's false verdicts on a fullscreen / maximized client (M44-8)
+# run 2026-10-26 by this seat, in /fast/scratch/hyaku/mado-r44/ScrLessonSkeleton/demo (deleted before the report);
+# the inputs and outputs below are the byte copies kept in this directory. Read-only: both tools open files and
+# stdin only, start no process and open no socket; nothing on the host was touched.
+
+## the two tool revisions compared (file bytes, not a run of the lane)
+# base tool  = git show 6a1a90528fe533cadee506a9fa3e9d13d15cc41f:tools/mado-geometry.py
+#              sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+# reference  = .ufo/waves/round-44/c1/ctl-ref-tool.py.txt
+#              sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d
+
+## rules (the host's gkeep rule text, one line)
+# rules.conf: windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$    sha256 b35ad5c6bf280f40b7ab56bade1416f3f8c4022a6481e613b89893528f5f9ba9
+
+## case 1 — a fullscreen client (fullscreen: 2, floating true, size 2560x1440, the monitor box)
+# client1.json sha256 b3eb93735a2e309eba3c0e0aa3f48335eb9f83fe026bc00fb3ba89c34e79167f
+#   python3 -I base-tool.py --clients client1.json --rules rules.conf
+#     exit=1  MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=2560x1440 want=420x500 float_rule=- verdict=DIFFER
+#             MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+#     (out2-base-tool.py-1.txt, sha256 7ba2b6a514488627f1f4347787528c1bb73e332df9f7d27d0900ade34416b170)
+#   python3 -I ref-tool.py  --clients client1.json --rules rules.conf
+#     exit=0  MADO_GEOM_CLIENT: … verdict=FULLSCREEN
+#             MADO_GEOMETRY: … agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=OK
+#     (out2-ref-tool.py-1.txt, sha256 b51eb5bcabdbb327a03c1810afb7a5021d4a08a1320308801de34100e9e780de)
+
+## case 2 — a maximized client (fullscreen: 1, floating false, size 2544x1380, the work area)
+# client2.json sha256 cd22e33b0227448364385b9474719fa5db386f7cb0bd454b8de9c76fb14f1bb9
+#   python3 -I base-tool.py --clients client2.json --rules rules.conf
+#     exit=0  MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=2544x1380 want=420x500 float_rule=- verdict=TILED
+#             MADO_GEOMETRY: … tiled=1 … verdict=OK          <- a false clearance: the compositor replaced the box
+#     (out2-base-tool.py-2.txt, sha256 1c75f289652aac4705437306ba98c94910474c15019adb03f9c9e618bf445137)
+#   python3 -I ref-tool.py  --clients client2.json --rules rules.conf
+#     exit=0  MADO_GEOM_CLIENT: … verdict=MAXIMIZED
+#             MADO_GEOMETRY: … maximized=1 fullscreen=0 verdict=OK
+#     (out2-ref-tool.py-2.txt, sha256 041f6474b7ea14bbc4ffe7dbad47f647acaca093b4c0650e7e212a0d98d6c2e1)
+
+## reproduction from this directory
+#   S=$(mktemp -d); git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 6a1a905:tools/mado-geometry.py > "$S/base.py"
+#   cp /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/c1/ctl-ref-tool.py.txt "$S/ref.py"
+#   for t in base ref; do for i in 1 2; do python3 -I "$S/$t.py" --clients client$i.json --rules rules.conf; echo "exit=$?"; done; done
+#   expected: base DIFFER(1)/TILED-OK(0); ref FULLSCREEN(0)/MAXIMIZED(0)
+
+## one caveat, stated
+# both fixtures are synthetic clients on stdin: they show what each tool does with the field, not what a live
+# maximized/fullscreen gkeep window reports. No gkeep window was open during this read (w1), and no Wayland client
+# was started on the host session (host-safety rule).

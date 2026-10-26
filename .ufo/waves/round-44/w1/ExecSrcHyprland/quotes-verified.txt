@@ -1,0 +1,77 @@
+PASS F1   Hyprland-Window.cpp     1687  [1687 ]
+PASS F2   Hyprland-Window.cpp     1691  [1691 ]
+PASS F3   Hyprland-Window.cpp     1732  [1732 ]
+PASS F4   Hyprland-Window.cpp     1743  [1743 ]
+PASS F5   Hyprland-Window.cpp     1751  [1751 ]
+PASS F6   Hyprland-Window.cpp     1753  [1753 ]
+PASS F7   Hyprland-Window.cpp     1515  [1515 ]
+PASS F8   Hyprland-Window.cpp     1517  [1517 ]
+PASS F9   Hyprland-Window.cpp     1521  [1521 ]
+PASS F10  Hyprland-Window.cpp     1523  [752 840 1269 1523 1806 1835 1862 2739 ]
+PASS F11  Hyprland-Window.cpp     1526  [1526 ]
+PASS F12  Hyprland-Window.cpp     1528  [1528 ]
+PASS F13  Hyprland-Window.cpp     1865  [1865 ]
+PASS F14  Hyprland-Window.cpp      184  [184 ]
+PASS F15  Hyprland-Window.cpp      809  [809 ]
+PASS F16  Hyprland-Window.cpp     1559  [1559 2852 ]
+PASS F17  Hyprland-Window.cpp     2852  [1559 2852 ]
+PASS F18  Hyprland-XDGShell.cpp    355  [355 ]
+PASS F19  Hyprland-XDGShell.cpp    357  [357 373 389 405 421 426 440 ]
+PASS F20  Hyprland-XDGShell.cpp    445  [445 630 ]
+PASS F21  Hyprland-XDGShell.cpp    455  [455 ]
+PASS F22  Hyprland-XDGShell.cpp    635  [635 ]
+PASS F23  Hyprland-XDGShell.cpp    642  [642 ]
+PASS F24  Hyprland-XDGShell.cpp    602  [602 ]
+PASS F25  Hyprland-XDGShell.cpp    605  [605 ]
+PASS F26  Hyprland-XDGShell.cpp    519  [519 ]
+PASS F26b Hyprland-Window.cpp     1527  [1527 ]
+PASS F27  Hyprland-XDGShell.cpp    610  [610 ]
+PASS F28  Hyprland-Window.cpp     2732  [2732 ]
+PASS F29  Hyprland-Window.cpp     1280  [1280 ]
+--- function locators ---
+PASS Vector2D CWindow::realToReportSize() {       1685
+PASS void CWindow::onAck(uint32_t serial) {       1514
+PASS void CWindow::onMap() {                      759
+PASS void CWindow::onX11ConfigureRequest(CBox box) { 1544
+PASS void CWindow::unmanagedSetGeometry() {       2839
+PASS bool CWindow::clampWindowSize                1277
+PASS Vector2D CWindow::getReportedSize() {        1861
+PASS uint32_t CXDGToplevelResource::setSize(const Vector2D& size) { 354
+PASS void CXDGToplevelResource::scheduleStateApplication() { 443
+PASS uint32_t CXDGSurfaceResource::scheduleConfigure() { 629
+PASS void CXDGSurfaceResource::configure() {      640
+--- pin hashes ---
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp: OK
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp: OK
+--- negative-fact checks (must be EMPTY / must match the stated count) ---
+N1 m_realSize hits in W: 26
+N2 ackedSize hits across pins: 2 ->
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp:1526:    m_wlSurface->resource()->m_pending.ackedSize          = m_pendingSizeAck->second; // apply pending size. We pinged, the window ponged.
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp:1865:        return m_wlSurface->resource()->m_current.ackedSize;
+N3 geometry() hits in W: 0 (expect 0)
+N4 m_pendingSizeAcks hits in W: 4 ->
+1515:    const auto SERIAL = std::ranges::find_if(m_pendingSizeAcks | std::views::reverse, [serial](const auto& e) { return e.first <= serial; });
+1517:    if (SERIAL == m_pendingSizeAcks.rend())
+1521:    std::erase_if(m_pendingSizeAcks, [&](const auto& el) { return el.first <= SERIAL->first; });
+1753:        m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+N5 reportedSize hits in W: 7
+N6 m_pendingApply in X (no initializer line): 23
+N7 gtk/gkeep/default_size hits: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp:0 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp:0 (expect 0)
+N8 error( calls in X: 8 ->
+215:            r->error(XDG_TOPLEVEL_ERROR_INVALID_RESIZE_EDGE, "Invalid resize edge");
+303:            m_resource->error(XDG_TOPLEVEL_ERROR_INVALID_PARENT, "Parent cannot be self");
+321:            m_resource->error(XDG_TOPLEVEL_ERROR_INVALID_PARENT, "Parent cannot be a descendant of itself");
+524:            m_resource->error(-1, "Buffer attached before initial commit");
+656:            r->error(XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size");
+665:            r->error(XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid box");
+851:            r->error(-1, "Invalid surface passed");
+856:            r->error(-1, "Surface already has a different role");
+N11 updated.bits.acked hits W/X: 1 ->
+1527:    m_wlSurface->resource()->m_pending.updated.bits.acked = true;
+N11 updated.bits.acked hits in X: 0 (expect 0)
+site-count sendWindowSize W/X: 5 / 0 (expect 5 / 0)
+site-count setSize in W: 2 (expect 2 -> W:1753, W:2732)
+N10 doLaterLock hits: 2
+448:    m_stateUpdate = g_pEventLoopManager->doLaterLock([this] {
+633:    m_stateUpdate = g_pEventLoopManager->doLaterLock([this] { configure(); });
+CHECKS=41 FAILURES=0

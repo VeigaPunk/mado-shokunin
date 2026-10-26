@@ -1,0 +1,132 @@
+# CritFsPremise receipts - round 44 w1 - 2026-10-26 - read-only lane, no counter run
+# host reads: see receipt-host.txt (session shell; HYPRLAND_INSTANCE_SIGNATURE present)
+$ cmp -s pins/ref-tool.py .ufo/waves/round-44/c1/ctl-ref-tool.py.txt
+IDENTICAL  (ref-tool sha256 8e871a00fcf1a615e3683ebe5204f67cfe679182ff15d008b83fed34131c788d)
+$ sha256sum tools/mado-geometry.py
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  tools/mado-geometry.py (base e2289516, run as r43)
+$ grep -c fullscreen quality/counters/c1-r42-geometry.py   # count of the token in the round-43 counter
+0
+rc=1
+$ python3 -I pins/ref-tool.py --selftest   # rc=0
+MADO_GEOMETRY_SELFTEST: 91/91 passed
+
+## scenario dumps read by the two tools (scenarios/*.json)
+S1-float-fullscreen-rule420.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [3440, 1440], "floating": true, "fullscreen": 2}]
+S2-float-maximized-rule420.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [3440, 1414], "floating": true, "fullscreen": 1}]
+S3-tiled-maximized.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [1720, 1414], "floating": false, "fullscreen": 1}]
+S4-float-agree.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": true}]
+S5-float-fullscreen-size-equals-rule.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": true, "fullscreen": 2}]
+S6-client-only-fullscreen-fs0.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [3440, 1440], "floating": true, "fullscreen": 0, "fullscreenClient": 2}]
+S7-two-fullscreen-both-mismatch.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [3440, 1440], "floating": true, "fullscreen": 2}, {"address": "0x2", "class": "org.omarchy.gkeep", "size": [3440, 1414], "floating": true, "fullscreen": 1}]
+S8-fullscreen-plus-real-differ.json [{"address": "0x1", "class": "org.omarchy.gkeep", "size": [3440, 1440], "floating": true, "fullscreen": 2}, {"address": "0x2", "class": "org.omarchy.gkeep", "size": [700, 900], "floating": true, "fullscreen": 0}]
+
+## rules: scenarios/rules.conf
+windowrule = float on, match:class ^(org\.omarchy\.gkeep)$
+windowrule = size 420 500, match:class ^(org\.omarchy\.gkeep)$
+
+## runs: r43 = tools/mado-geometry.py (lane base e2289516), r44 = pins/ref-tool.py
+=== r43 S1-float-fullscreen-rule420.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+=== r44 S1-float-fullscreen-rule420.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=OK
+--- byte-identical r43/r44 stdout: NO
+
+=== r43 S2-float-maximized-rule420.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+=== r44 S2-float-maximized-rule420.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=MAXIMIZED
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=OK
+--- byte-identical r43/r44 stdout: NO
+
+=== r43 S3-tiled-maximized.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=1720x1414 want=420x500 float_rule=on verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+=== r44 S3-tiled-maximized.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=1720x1414 want=420x500 float_rule=on verdict=MAXIMIZED
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=OK
+--- byte-identical r43/r44 stdout: NO
+
+=== r43 S4-float-agree.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+=== r44 S4-float-agree.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+--- byte-identical r43/r44 stdout: YES
+
+=== r43 S5-float-fullscreen-size-equals-rule.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+=== r44 S5-float-fullscreen-size-equals-rule.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=OK
+--- byte-identical r43/r44 stdout: NO
+
+=== r43 S6-client-only-fullscreen-fs0.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+=== r44 S6-client-only-fullscreen-fs0.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+--- byte-identical r43/r44 stdout: YES
+
+=== r43 S7-two-fullscreen-both-mismatch.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=2 matched=2 unmapped=0 agree=0 differ=2 tiled=0 badsize=0 verdict=DIFFER
+=== r44 S7-two-fullscreen-both-mismatch.json  rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=3440x1414 want=420x500 float_rule=on verdict=MAXIMIZED
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=2 matched=2 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=1 verdict=OK
+--- byte-identical r43/r44 stdout: NO
+
+=== r43 S8-fullscreen-plus-real-differ.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=700x900 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=2 matched=2 unmapped=0 agree=0 differ=2 tiled=0 badsize=0 verdict=DIFFER
+=== r44 S8-fullscreen-plus-real-differ.json  rc=1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org\.omarchy\.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=700x900 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=2 matched=2 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=DIFFER
+--- byte-identical r43/r44 stdout: NO
+
+
+$ git show e2289516a9a857f55cda7be635933e89b931c3da:tools/mado-geometry.py | sha256sum
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  -
+$ sha256sum tools/mado-geometry.py   # working tree, == the freeze blob (r43 arm of every scenario run)
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  tools/mado-geometry.py

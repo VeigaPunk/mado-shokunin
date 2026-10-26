@@ -1,0 +1,24 @@
+syscall evidence (strace -f -qq). Instance signature redacted to <SIG> per SKILL.md safety rule 4
+(shape-checked, never printed in full); every write() payload, length and return value is verbatim.
+
+== A. C1 reference tool: `python3 -I ref.py --clients d.json --rules gk.conf` ==
+socket/connect/bind/sendto calls: 0
+execve calls: 1 (the python interpreter only): 3440522 execve("/usr/bin/python3", ["python3", "-I", "ref.py", "--clients", "d.json", "--rules", "gk.conf"], 0x7fffda10f
+opens with O_WRONLY/O_RDWR/O_CREAT: 0
+openat calls total (all O_RDONLY library/input opens): 71
+tool stdout: MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$ | MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=FUL
+tool stderr bytes: 0
+
+== B. hyprctl read verbs: the transport write each one performs ==
+each allowed verb opens ONE connection to the compositor IPC socket and writes ONE request string;
+there is no verb-less read path. `-j` is not a flag on the wire: it is the `j/` prefix of the same request.
+hyprctl clients -j                  connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+                                    request: 3442869 write(3, "j/clients", 9)        = 9
+hyprctl getoption general gaps out -j connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+                                    request: 3445022 write(3, "j/getoption general:gaps_out", 28) = 28
+hyprctl monitors -j                 connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+                                    request: 3443426 write(3, "j/monitors", 10)      = 10
+hyprctl version                     connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+                                    request: 3441790 write(3, "/version", 8)         = 8
+hyprctl workspaces -j               connect() sun_path=/run/user/1000/hypr/<SIG>/.socket.sock
+                                    request: 3444287 write(3, "j/workspaces", 12)    = 12

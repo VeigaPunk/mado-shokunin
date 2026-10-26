@@ -1,0 +1,19 @@
+## forged lines (grep -n, seat-local fixtures)
+52:**INF** So GTK 4.24.1 always adopts the configured size exactly: the minimum cannot override it and the client has no other choice. Whether Hyprland 0.56.2 sends a tiled state with a floating window's configure is not read here (UNK; it would only mark the size fixed, not change it).
+30:**OBS** The compositor never notifies an xdg client of a size change: the body of sendWindowSize holds no setSize and no configure call (Hyprland-Window.cpp:1732), so the census line above is the whole path. **OBS** The same function (Hyprland-Window.cpp:1732) returns early when the pending reported size is unchanged and the call is not forced (Hyprland-Window.cpp:1743-1744); otherwise it configures an X11 surface directly (Hyprland-Window.cpp:1751) or, for an xdg toplevel, appends the serial returned by setSize and the floored size to the pending-ack list (Hyprland-Window.cpp:1753).
+32:hyprland sendWindowSize xdg_setSize=0 x11_configure=0
+60:**OBS** gkeep declares 420x500 as a minimum through set_size_request(420, 500), so the configure of §2 cannot shrink it.
+60:**OBS** gkeep calls set_default_size(800, 600) before the window is realized.
+46:| Does a client have to adopt the configured size? | yes, always | OBS |
+48:**OBS** No client may differ from the configure; the protocol and GTK agree, so the box Hyprland sends is the box the client commits.
+3:| S299 | wayland-protocols 1.49 stable/xdg-shell/xdg-shell.xml - the configure event's size semantics - https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.48/stable/xdg-shell/xdg-shell.xml | code | A | what an xdg_toplevel.configure size means to a client | xdg-shell.xml:1144-1161 @ 1.49 | the configure width and height are a hint; zero leaves the dimension to the client | mined | 
+5:| S301 | VeigaPunk/gkeep gkeep/ui.py @ 133b867 (full file) - the window gkeep builds and the only size it declares - https://raw.githubusercontent.com/VeigaPunk/gkeep/0000000000000000000000000000000000000000/gkeep/ui.py | code | A | the window gkeep builds and the only size it declares | gkeep-ui.py:446-488 @ 133b867 | one undecorated window with set_default_size(420, 500), no set_size_request, 
+4:| S300 | GNOME/gtk gdk/wayland/gdktoplevel-wayland.c @ 4.24.1 - how a GTK toplevel stores a configured size - https://gitlab.gnome.org/GNOME/gtk/-/raw/4.24.1/gdk/wayland/gdktoplevel-wayland.c | code | A | GTK forbids a client from deviating from the configured size and proves the protocol's size is mandatory | gdktoplevel-wayland.c:518-544, 633-637, 681 @ 4.24.1 | the configured size is mandator
+4:| S300 | GNOME/gtk gdk/wayland/gdktoplevel-wayland.c @ 4.24.1 - how a GTK toplevel stores a configured size - https://gitlab.gnome.org/GNOME/gtk/-/raw/4.24.1/gdk/wayland/gdktoplevel-wayland.c | code | A | how GTK 4.24.1 applies a configured size | gdktoplevel-wayland.c:9999-10005 @ 4.24.1 | a non-zero configured size is kept for the next layout and becomes the surface size, raised to the minimum
+## pins (grep -n, lane fetch)
+## pins (grep -n, lane .ufo/waves/round-44/fetch, read-only)
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:1687:        return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp:455:        m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+.ufo/waves/round-44/fetch/gdktoplevel-wayland.c:681:      wayland_surface->next_layout.configured_width = width;
+.ufo/waves/round-44/fetch/gkeep-ui.py:476:            window.set_default_size(420, 500)
+.ufo/waves/round-44/fetch/Hyprland-Window.cpp:1732:void CWindow::sendWindowSize(bool force) {
