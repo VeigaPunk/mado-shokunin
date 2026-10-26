@@ -18,7 +18,7 @@ assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-reques
 | Which size does Hyprland report to a Wayland client? | the report-size function: the GOAL of the animated size, clamped at zero | OBS (source) |
 | How does that size reach the client? | the toplevel's setSize, which defers one xdg_toplevel.configure carrying the size | OBS (source) |
 | Does Hyprland remember which configure the client acknowledged? | the pending-ack list of (serial, size) pairs and the ack handler | OBS (source) |
-| Must the client use the configured size? | the protocol text: the size is a hint; zero means the client decides | OBS (spec) |
+| Must the client use the configured size? | the protocol text: a plain configure's size is a hint and a zero dimension leaves it to the client; `maximized` makes it mandatory and `fullscreen`/`resizing` make it a maximum | OBS (spec) |
 | What does GTK 4.24.1 do with a non-zero configured size? | the toplevel's configure handler and its layout pass | OBS (source) + INF (gkeep's case) |
 | Does gkeep declare a size that could compete with 420x500? | gkeep's window construction | OBS (source) |
 | Has a gkeep window been seen acknowledging 420x500 on this host? | no gkeep window open in round 43 or round 44 | UNK |
@@ -27,7 +27,7 @@ assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-reques
 
 **OBS** S164 - for a Wayland client the report size is the GOAL of the animated size, clamped below at zero: `return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);` (Hyprland-Window.cpp:1687). Round 43 traced the rule's size into that GOAL (corpus/knowledge/hyprland-gkeep-geometry-r43.md), so the size sent to a floating gkeep window is the box the floating algorithm set.
 
-**OBS** The report size comes from realToReportSize (Hyprland-Window.cpp:1685-1699), which for an X11 client clamps at 1x1 and may scale by the monitor instead. The same file's sendWindowSize (Hyprland-Window.cpp:1732) returns early when the pending reported size is unchanged and the call is not forced (Hyprland-Window.cpp:1743-1744); otherwise it configures an X11 surface directly (Hyprland-Window.cpp:1751) or, for an xdg toplevel, appends the serial returned by setSize and the floored size to the pending-ack list (Hyprland-Window.cpp:1753).
+**OBS** The report size comes from realToReportSize (Hyprland-Window.cpp:1685-1699), which for an X11 client clamps at 1x1 and may scale by the monitor instead. The same file's sendWindowSize (Hyprland-Window.cpp:1732) returns early when the call is not forced and the pending reported size is unchanged - and, for an X11 client, the reported position is unchanged too (Hyprland-Window.cpp:1743-1744); otherwise it configures an X11 surface directly (Hyprland-Window.cpp:1751) or, for an xdg toplevel, appends the serial returned by setSize and the floored size to the pending-ack list (Hyprland-Window.cpp:1753).
 
 hyprland sendWindowSize xdg_setSize=1 x11_configure=1
 
@@ -35,25 +35,27 @@ hyprland sendWindowSize xdg_setSize=1 x11_configure=1
 
 **OBS** S298 - setSize stores the size as pending state and returns the next configure serial (Hyprland-XDGShell.cpp:354-358); the deferred state application sends it to the client: `m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);` (Hyprland-XDGShell.cpp:455).
 
-**OBS** When the client acknowledges, onAck (Hyprland-Window.cpp:1514) takes the newest pending pair whose serial is not after the acknowledged one, drops it and every older pair, and for a Wayland client writes that pair's size into the surface's pending state as the acked size (Hyprland-Window.cpp:1526).
+**OBS** Before onAck runs, the xdg_surface ack handler drops any ack whose serial is older than the last one it accepted (Hyprland-XDGShell.cpp:601-605). onAck (Hyprland-Window.cpp:1514) then takes the newest pending pair whose serial is not after the acknowledged one, drops every pair whose serial is not after that pair's - including any pair sharing that serial (Hyprland-Window.cpp:1521) - and for a Wayland client writes that pair's size into the surface's pending state as the acked size (Hyprland-Window.cpp:1526-1527).
 
-**INF** The ack records which size the client says it is answering; it does not force the client's next buffer to be that size. What Hyprland does with a buffer of another size after the ack is outside this entry's pins (UNK).
+**INF** The ack carries a serial only; it names which of the compositor's own pending (serial, size) pairs the client is answering, and the size written back is the compositor's (Hyprland-Window.cpp:1520-1526), not one the client chose. getReportedSize then returns that acked size as the window's reported size (Hyprland-Window.cpp:1861-1865); no line in either Hyprland pin compares a committed buffer size with it, and the pending-to-current promotion lies outside these pins (UNK).
 
 ## §3 What the protocol lets the client do
 
-**OBS** S299 - the configure size binds nobody: `The width and height arguments specify a hint to the window about how its surface should be resized` (xdg-shell.xml:1150); a zero width or height leaves the dimension to the client (xdg-shell.xml:1154-1157), and the states sent with it say how to interpret the size (xdg-shell.xml:1159-1161). The client answers a configure with the xdg_surface ack_configure request (xdg-shell.xml:560) before it commits the matching state; that ack is what Hyprland's onAck receives.
+**OBS** S299 - for a plain configure the size is a hint: `The width and height arguments specify a hint to the window about how its surface should be resized` (xdg-shell.xml:1150-1152, the sentence ending "in window geometry coordinates"); a zero width or height leaves the dimension to the client (xdg-shell.xml:1154-1157), and the states sent with it say how to read the size (xdg-shell.xml:1159-1161) - under `maximized` the window geometry must be obeyed (xdg-shell.xml:841-842), under `fullscreen` or `resizing` the client cannot resize beyond it (xdg-shell.xml:852,861). The client answers a configure with the xdg_surface ack_configure request (xdg-shell.xml:560-596, whose only argument is the serial) before it commits the matching state; that ack is what Hyprland's onAck receives.
 
 ## §4 What GTK 4.24.1 does with it
 
 **OBS** S300 - a non-zero configured size is kept for the next layout: `wayland_surface->next_layout.configured_width = width;` (gdktoplevel-wayland.c:681), with the size marked fixed only when the configure's states are maximized, fullscreen or tiled, or a resize is in progress (gdktoplevel-wayland.c:633-637).
 
-**OBS** In the layout pass the configured size plus the shadow margins becomes the surface size (gdktoplevel-wayland.c:518-521), constrained by the window's geometry hints when the configure was not a 0x0 one (gdktoplevel-wayland.c:523-528); the hints carry the widget tree's minimum size for a resizable window (gdktoplevel-wayland.c:490-494). A 0x0 configure is recognised as one (gdktoplevel-wayland.c:647) and instead keeps the size GTK computes itself (gdktoplevel-wayland.c:539-544).
+**OBS** In the layout pass the configured size plus the shadow margins becomes the surface size (gdktoplevel-wayland.c:518-521), constrained by the window's geometry hints when the configure was not a 0x0 one (gdktoplevel-wayland.c:523-528); the hints carry the widget tree's minimum size for a resizable window (gdktoplevel-wayland.c:490-494), while a non-resizable window gets minimum and maximum both set to its computed size (gdktoplevel-wayland.c:496-501). A 0x0 configure is recognised as one (gdktoplevel-wayland.c:647) and keeps the size GTK computes itself, constrained by the same hints (gdktoplevel-wayland.c:539-547) - except after a maximized, fullscreen or tiled state, where GTK restores the size it saved before that state (gdktoplevel-wayland.c:656-660).
 
-**INF** So a GTK 4.24.1 window adopts a non-zero configured size unless that size is below its minimum, in which case it is raised to the minimum. Whether Hyprland 0.56.2 sends a tiled state with a floating window's configure is not read here (UNK; it would only mark the size fixed, not change it).
+**OBS** Hyprland 0.56.2 puts the four per-edge tiled states on every xdg_toplevel.configure: the toplevel constructor appends them for clients at version 2 or above (Hyprland-XDGShell.cpp:176-181) and the deferred application copies the whole list into the configure (Hyprland-XDGShell.cpp:452-455). GTK 4.24.1 maps them to its tiled state (gdktoplevel-wayland.c:746-760), which marks the size fixed (gdktoplevel-wayland.c:633-637), so the latched configured size is kept for later layouts (gdktoplevel-wayland.c:532-537).
+
+**INF** So a resizable GTK 4.24.1 window adopts a non-zero configured size unless that size is below its minimum, in which case it is raised to the minimum; a non-resizable one drops it. gkeep calls no `set_resizable` (gkeep-ui.py:474-476), but the layout's resizable flag comes from GtkWindow, which is not pinned (UNK).
 
 ## §5 What gkeep declares
 
-**OBS** S301 - gkeep builds one undecorated application window and declares a default size only: `window.set_decorated(False) window.set_default_size(420, 500)` (gkeep-ui.py:475); its application id is set in the application constructor (gkeep-ui.py:449).
+**OBS** S301 - gkeep builds one undecorated application window and declares a default size only: `window.set_decorated(False) window.set_default_size(420, 500)` (gkeep-ui.py:475-476); its application id is set in the application constructor (gkeep-ui.py:449).
 
 gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep
 

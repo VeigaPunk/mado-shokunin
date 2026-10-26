@@ -264,3 +264,17 @@ Re-derived by `w1/ScoutQuarantine` (13 data rows, byte-identical to `assimilatio
 files (r9, r12, r13, r14, r15, r30, r31) at id or source level, so nothing is adopted or refused from the slice this round; 7 prose rows stay
 `unverifiable` (unreachable or no locator, not fabrication). New observation recorded, register not edited: S189's register quote is present
 at `EventManager.cpp@efb5099` line 128, so the register's "absent" is false for it (`w1/ScoutQuarantine/verdicts.md`).
+
+## Post-data corrections (round-44 wave w2)
+
+Content findings of w2 on the landed text, corrected in the w2-corrections commit (no predicate changed; both v2 counters re-run after):
+- Entry §1-§2 (`w2/CritEntryHyprland.md` F1-F5): the X11 position conjunct of sendWindowSize's early return; the xdg ack gate before onAck
+  (`Hyprland-XDGShell.cpp:601-605`); equal-serial pairs dropped together; "the size the client says it is answering" replaced (the ack
+  carries a serial only, the size written is the compositor's); the acked size's consumer `getReportedSize` (`Hyprland-Window.cpp:1861-1865`).
+- Entry §3-§5 (`w2/CritEntryClient.md` F1-F6): "the configure size binds nobody" was false — `maximized` binds it and `fullscreen`/
+  `resizing` make it a maximum (`xdg-shell.xml:841-842,852,861`); the GTK universal holds only for a resizable window (`:496-501`); the 0x0
+  restore case; the tiled-state UNK was decided by the pins (Hyprland sends the four tiled edge states, `Hyprland-XDGShell.cpp:176-181`);
+  the S301 span 475-476.
+- SKILL.md (`w2/CritSkillLicence.md` F1-F4): FULLSCREEN/MAXIMIZED licences stated the default handler's geometry as Hyprland's (the
+  scrolling layout's handler sizes a column); the remembered box is floating-only; the D3 correction called a true sentence false and
+  cited the pseudo-size store, not the tiler (`Hyprland-WindowTarget.cpp:197-215`); exit 5 added to the exit-map line.
