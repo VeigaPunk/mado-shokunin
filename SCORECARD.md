@@ -2560,3 +2560,32 @@ Axis table re-derived at `1959770657f1f8665097c1aed4be6c1cbb07139f` plus the rou
 Wave `w2` (32 seats, 0 dead; `ScoutRowsD` degraded: summary only) re-ran both counting commands and agreed (`w2/RerunC1Data.md`: six invocations `fixtures=37/37 TARGET_MET`; `w2/RerunC2Data.md`: byte-identical, ten Gate bindings re-derived independently), re-ran the v2 controls byte-identically (`w2/RerunControlsV2.md`), confirmed separability in both directions (`w2/ExecSeparability.md`), the census and the 226 -> 234 rows (`w2/RerunCensus.md`), no harm beyond the declared two-phase axis publication (`w2/ExecHarmTip.md`), and 0 self-assessment mismatches at `2a3707c` (`w2/ConnCalibration.md`). Tip receipts at `875001662c69feeefa98699883da67de1bdb56ac`: C1 `fixtures=37/37 tool=present verdict=TARGET_MET` exit 0 (`receipts/c1-after-tip.txt`), C2 v2 `admitted=1/1 verdict=TARGET_MET` exit 0 (`receipts/c2-after-tip.txt`), census same set exit 0 (`receipts/census-after.txt`), `MADO_AXIS checked=3 mismatched=0`.
 
 Open predicate defects reported by w2 (no re-registration after data): C2 v2 admits 14 of 14 shape-keeping do-nothing controls (landed entry plus or minus prose, `w2/ExecDoNothingV2.md`) and 6 of 16 weakening mutants of its own tightenings survive every control (`w2/MutC2V2.md`) - v2 scores the bookkeeping of a sourced entry, and whether the entry's claims are the receipts' claims is the non-author reading; C1 keeps the w1 cheats 4 and 6 and a TILED premise that is false for pseudo-tiled windows (`w2/CritEntryInf.md` F1); the locator checker compares identifiers, not numbers (`w2/CritLocatorGate.md`), and 12 of 37 of its mutants survive its selftest (`w2/MutCheckLocators.md`). Landed-content defects w2 found were corrected in `875001662c69feeefa98699883da67de1bdb56ac` (entry tiled/pseudo path, first-map scope, oracle scope; r30 refusal withdrawn; SKILL/PROVINCE wording); registry wording defects stay for supersession (CORPUS rule 2).
+
+## Round 44 - mado-geometry state verdicts and the gkeep size-request entry (2026-10-26, attempt 1)
+
+Registration `.ufo/waves/round-44/registration.md` (freeze `e2289516a9a857f55cda7be635933e89b931c3da`, base `6a1a90528fe533cadee506a9fa3e9d13d15cc41f`), superseded before any data by `registration-v2.md` (freeze `03fa5c618b089064a657b3d79d3d4272ae4b6894`) after wave `w1` (38 seats) met both v1 predicates with cheats and forgeries (`w1/CritC1Cheat.md`, `w1/CritC2Cheat.md`, `w1/CritClaimSizing.md`, `w1/RevC2Counter.md`) and showed the v1 premise wording ("a false report") wrong (`w1/CritFsPremise.md`). Lowest-axis rule: every published axis ties at its maximum at base (`receipts/axis-base.txt`), so each is a lowest axis; the claims' after-states are their counters' lines.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (contract extension of the round-43 capability) - `tools/mado-geometry.py` names FULLSCREEN / MAXIMIZED clients and ends NOT_COMPARED (exit 5) when only state clients matched and none agreed | `fixtures=11/26 … TARGET_MISSED` exit 1 at base (`receipts/c1-v2-before-base.txt`) -> see `receipts/c1-after-data.txt` | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r44-geometry-states-v2.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r44-v2`) | recorded in the round report from the receipts |
+| C2 **coverage** (sourced; assimilation of the gkeep residue) - `corpus/knowledge/hyprland-gkeep-size-request-r44.md` | `admitted=0/1` exit 1 at base (`receipts/c2-v2-before-base.txt`) -> see `receipts/c2-after-data.txt` | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r44-gkeep-size-request-v2.py --repo . --rev <rev>` (`PRED-C2-r44-v2`) | recorded in the round report from the receipts |
+
+Separable: C1's counter reads only the tool and the round-42 counter; C2's reads only entry, registry, lesson, README and pins (`w1/ConnCrossClaim.md`, `w1/CritClaimSizing.md` F10).
+
+### Capabilities (round 44)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| state-aware rule size versus reported size join | the round-43 join, plus: reads each matched client's `fullscreen` integer (1 maximized, 2 fullscreen; Hyprland's internal mode) and reports FULLSCREEN / MAXIMIZED instead of comparing the monitor box or work area with the rule, `maximized=`/`fullscreen=` summary fields only when present, top verdict NOT_COMPARED (exit 5); byte-identical round-43 output when no state client matched | `tools/mado-geometry.py` (selftest 94/94); `quality/counters/c1-r44-geometry-states-v2.py`; live run `receipts/live-geometry-host-r44.txt` (`NO_MATCHING_CLIENT`, exit 3, every live `fullscreen` 0) | 44 |
+
+### Sources, saturation, planned
+
+Sources 234 -> 238 rows (S298-S301, tier A, `mined`, opened 2026-10-26); S164 `used-by` extended by one item (old->new in `corpus/lessons/round-44.md`); knowledge entries 60 -> 61. Assimilation: the gkeep residue admitted as one successor entry (`gkeep-client-size-request-r12.md`, three of its sentences corrected); r13, r14, r15 and r9 refused with reasons and flips. considerthese `2026-10-25.md` proposal 1 landed as QUALITY 82 (`quality/ratio-domain-meta.py`: `DOMAIN_META: domain=12 meta=5 window=34-43 default=1`). Mistakes M44-1..9 mined (`grep -c '^\*\*M44-' corpus/lessons/round-44.md`); QUALITY 83-84 from M44-4 and M44-8. Erratum (round-43 closure D5): the Round 43 section's "Mistakes M43-1..8" should read M43-1..9 (`grep -c '^\*\*M43-' corpus/lessons/round-43.md` -> 9). Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at the round-44 data tree (one new indexed entry, criteria 82-84): navigation 61/61; calibration resolved-active 71/71; operability selftest 12/12.
+
+### Planned (round 45; intent only)
+
+1. A live gkeep window read with `tools/mado-geometry.py` (operator opens gkeep; mado reads only) - the entry's UNKs (ack round-trip, drawn size, gkeep's widget minimum).
+2. Supersede the S290-S297 registry cells the round-43 w2 found imprecise (round-44 `w1/ScrSupersedeRows`: needs a census-clean supersession form).
+3. The w2 open predicate defects of round 44, under a new registration.

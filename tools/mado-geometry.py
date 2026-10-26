@@ -6,6 +6,15 @@ Hyprland 0.56.2 consumes a window rule `size W H` when a floating window opens
 a tiled window never reads it. The compositor reports each mapped client's size
 in `hyprctl clients -j`. This tool joins the two read-only inputs: the rule
 lines of one or more Hyprland config files and one `hyprctl clients -j` dump.
+While a window is maximized or fullscreen the compositor sets its box to the
+workspace work area or the monitor box and remembers the floating box for the
+way back (Hyprland 0.56.2 FullscreenHandler.cpp, setTargetSizeAndPosition and
+setTargetFullscreenModeInternal); `hyprctl clients -j` carries that internal
+mode as the integer `fullscreen` (FullscreenController.hpp eFullscreenMode:
+0 none, 1 maximized, 2 fullscreen; HyprCtl.cpp prints `.internal`). For such a
+client the dump shows the state's box, not the rule's, so the tool names the
+state (FULLSCREEN, MAXIMIZED) instead of comparing; the round-43 tool printed
+DIFFER there, true about the box and silent about the cause.
 
     hyprctl clients -j | mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
     mado-geometry.py --clients clients.json --rules a.conf --rules b.conf
@@ -43,19 +52,30 @@ Clients. An element whose `mapped` is JSON false is unmapped and skipped. For th
 others class is the `class` value when a string, else ""; floating is true only
 for JSON true; size is the `size` value when a list of exactly two JSON
 integers (not booleans, not floats) >= 0, else none; address is `address` when
-a string, else "-". Rules apply in order: the last matching `size` rule gives
-want, the last matching `float` rule gives float_rule (`on`, `off`, else `-`). A
-client with at least one matching size rule is MATCHED and reports a verdict:
-BADSIZE (size none) | TILED (not floating) | AGREE (size == want) | DIFFER.
+a string, else "-"; fsmode is the `fullscreen` value when it is a JSON integer
+(not a boolean, not a float) equal to 1 or 2, else 0. Rules apply in order: the
+last matching `size` rule gives want, the last matching `float` rule gives
+float_rule (`on`, `off`, else `-`). A client with at least one matching size rule
+is MATCHED and reports a verdict, tested in this order: BADSIZE (size none) |
+FULLSCREEN (fsmode 2) | MAXIMIZED (fsmode 1) | TILED (not floating) | AGREE
+(size == want) | DIFFER. TILED claims only that the client is not floating: a
+pseudo-tiled client takes its size from its stored pseudo size, and the dump
+carries no pseudo field, so TILED does not say which path set the box.
 
-Output (stdout; nothing else; stderr empty on exit 0/1/3/4), in order:
+Output (stdout; nothing else; stderr empty on exit 0/1/3/4/5), in order:
   per supported rule   MADO_GEOM_RULE: n=<n> file=<k> effect=<size|float> arg=<WxH|on|off> class=<REGEX>
   per matched client   MADO_GEOM_CLIENT: addr=<json> class=<json> floating=<true|false> size=<WxH|-> want=<WxH> float_rule=<on|off|-> verdict=<V>
-  last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> verdict=<V>
+  last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n>[ maximized=<n> fullscreen=<n>] verdict=<V>
+(the bracketed pair is printed exactly when maximized + fullscreen > 0, so a dump
+with no maximized or fullscreen matched client prints the round-43 line unchanged)
 (<json> is json.dumps with ensure_ascii.) V = NO_SIZE_RULES (exit 4, rules=0) |
-DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT (exit 3, matched=0) | OK (exit 0),
-tested in that order. DIFFER is a report, not a fault: a user may have resized the
-window, or the compositor may have clamped the rule's size.
+DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT (exit 3, matched=0) |
+NOT_COMPARED (exit 5, agree=0 and maximized + fullscreen > 0) | OK (exit 0),
+tested in that order. NOT_COMPARED says no matched client was compared and at
+least one was skipped for its state; OK says at least one comparison agreed or
+(as in round 43) every matched client was TILED or BADSIZE. DIFFER is a report,
+not a fault: a user may have resized the window, or the compositor may have
+clamped the rule's size.
 """
 import json
 import os
@@ -177,6 +197,13 @@ def client_size(c):
     return None
 
 
+def client_fsmode(c):
+    f = c.get("fullscreen")
+    if isinstance(f, int) and not isinstance(f, bool) and f in (1, 2):
+        return f
+    return 0
+
+
 def matches(rx, cls):
     if any(ord(ch) < 0x20 for ch in cls):
         return False
@@ -186,7 +213,7 @@ def matches(rx, cls):
 def evaluate(clients, rules):
     out = []
     tally = {"clients": 0, "matched": 0, "unmapped": 0, "agree": 0, "differ": 0,
-             "tiled": 0, "badsize": 0}
+             "tiled": 0, "badsize": 0, "maximized": 0, "fullscreen": 0}
     for c in clients:
         if c.get("mapped") is False:
             tally["unmapped"] += 1
@@ -205,8 +232,13 @@ def evaluate(clients, rules):
         tally["matched"] += 1
         size = client_size(c)
         floating = c.get("floating") is True
+        fsmode = client_fsmode(c)
         if size is None:
             verdict = "BADSIZE"
+        elif fsmode == 2:
+            verdict = "FULLSCREEN"
+        elif fsmode == 1:
+            verdict = "MAXIMIZED"
         elif not floating:
             verdict = "TILED"
         elif size == want:
@@ -236,13 +268,18 @@ def report(clients_data, rule_texts):
         verdict, rc = "DIFFER", 1
     elif t["matched"] == 0:
         verdict, rc = "NO_MATCHING_CLIENT", 3
+    elif t["agree"] == 0 and t["maximized"] + t["fullscreen"] > 0:
+        verdict, rc = "NOT_COMPARED", 5
     else:
         verdict, rc = "OK", 0
+    states = ""
+    if t["maximized"] + t["fullscreen"] > 0:
+        states = " maximized=%d fullscreen=%d" % (t["maximized"], t["fullscreen"])
     lines.append("MADO_GEOMETRY: rules=%d float_rules=%d other=%d unsupported=%d clients=%d "
-                 "matched=%d unmapped=%d agree=%d differ=%d tiled=%d badsize=%d verdict=%s" % (
+                 "matched=%d unmapped=%d agree=%d differ=%d tiled=%d badsize=%d%s verdict=%s" % (
                      size_rules, len(rules) - size_rules, counts["other"], counts["unsupported"],
                      t["clients"], t["matched"], t["unmapped"], t["agree"], t["differ"],
-                     t["tiled"], t["badsize"], verdict))
+                     t["tiled"], t["badsize"], states, verdict))
     return lines, rc
 
 
@@ -398,6 +435,41 @@ def selftest():
     chk("regex-safe-rejects-bad-escape", regex_ok("\\d"), False)
     chk("matches-ctl", matches("a", "a\x01"), False)
     chk("matches-full", matches("a", "ab"), False)
+    def fs(size, mode, floating=True):
+        c = cl(g, size, floating=floating)
+        c["fullscreen"] = mode
+        return c
+
+    s, rc = last([fs([2560, 1440], 2)], gk)
+    chk("fullscreen-line", s, "MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED")
+    chk("fullscreen-rc", rc, 5)
+    s, rc = last([fs([420, 500], 2)], gk)
+    chk("fullscreen-not-agree", " agree=0 " in s and " fullscreen=1 " in s, True)
+    s, rc = last([fs([2560, 1400], 1, floating=False)], gk)
+    chk("maximized-before-tiled", " tiled=0 " in s and " maximized=1 " in s and rc == 5, True)
+    s, rc = last([fs([2560, 1400], 1), cl(g, [420, 500], addr="0x2")], gk)
+    chk("state-with-agree-ok", s.endswith("agree=1 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=OK") and rc == 0, True)
+    s, rc = last([fs([2560, 1400], 2), cl(g, [420, 500], floating=False, addr="0x2")], gk)
+    chk("state-with-tiled-not-compared", s.endswith("tiled=1 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED") and rc == 5, True)
+    s, rc = last([cl(g, [420, 500], floating=False)], gk)
+    chk("tiled-only-still-ok", s.endswith("tiled=1 badsize=0 verdict=OK") and rc == 0, True)
+    s, rc = last([fs(None, 2)], gk)
+    chk("badsize-before-fullscreen", s.endswith("badsize=1 verdict=OK"), True)
+    s, rc = last([fs([421, 500], True)], gk)
+    chk("fullscreen-bool-ignored", s.endswith("differ=1 tiled=0 badsize=0 verdict=DIFFER"), True)
+    for mode, label in ((3, "three"), (2.0, "float"), ("2", "string"), (-1, "negative"), (0, "zero"), (None, "null")):
+        s, rc = last([fs([420, 500], mode)], gk)
+        chk("fullscreen-%s-ignored" % label, s.endswith("agree=1 differ=0 tiled=0 badsize=0 verdict=OK"), True)
+    s, rc = last([fs([1, 1], 2), cl(g, [421, 500], addr="0x2")], gk)
+    chk("fullscreen-with-differ", s.endswith("differ=1 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=DIFFER") and rc == 1, True)
+    s, rc = last([cl("other", [1, 1]) | {"fullscreen": 2}], gk)
+    chk("fullscreen-unmatched-uncounted", s.endswith("badsize=0 verdict=NO_MATCHING_CLIENT"), True)
+    s, rc = last([dict(fs([1, 1], 1), mapped=False)], gk)
+    chk("fullscreen-unmapped-uncounted", " unmapped=1 " in s and "maximized=" not in s, True)
+    lines, rc = report(json.dumps([fs([2560, 1440], 2)]).encode(), [gk])
+    chk("fullscreen-client-line", lines[2], 'MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=2560x1440 want=420x500 float_rule=on verdict=FULLSCREEN')
+    chk("fsmode-values", [client_fsmode({"fullscreen": v}) for v in (1, 2, 0, 3, True, 2.0, "1", None)], [1, 2, 0, 0, 0, 0, 0, 0])
+    chk("fsmode-absent", client_fsmode({}), 0)
     bad = [c for c in cases if not c[1]]
     for name, _ok, got, want in bad:
         print("SELFTEST FAIL %s: got %r want %r" % (name, got, want))

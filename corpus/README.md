@@ -69,6 +69,7 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/host-bar-producer-census-r40.md` (MADO-R40-2, round 40; assimilation of the bar-producers theme, successor to refused `host-producer-outputs-r29`) | The bar's JSON producers counted over the host's own config bytes: 7 custom modules return JSON, two of them host-local (`custom/gkeep`, `custom/ai-usage`) and absent from the stock set; the shims resolve to projects outside the owned plane; the screen-recording and do-not-disturb indicator scripts are byte-identical to omarchy v3.8.4; with `hypridle` running the idle chip renders empty, the reverse of the held 2026-10-14 state. | S280, S281, S282 |
 | `knowledge/hyprland-focus-grab-r41.md` (MADO-R41-1, round 41; assimilation of the focus-control theme, successor to the staged `focus-grab-protocol-live-on-host-r14` and the English-channel part of `focus-control-surfaces-r28`) | Focus as a protocol surface: the Hyprland focus-grab protocol (two interfaces, six requests, one `cleared` event), the compositor-side seat grab that enforces it, what this host advertised to its portal (63 globals in the latest portal session, one focus-grab manager advert, logged and not bound by the portal), one real client's grab lifecycle (quickshell), and the rule-level counterpart (issue 565); a decision table of what is observed, inferred and unknown. | S283-S289, S037 |
 | `knowledge/hyprland-gkeep-geometry-r43.md` (MADO-R43-1, round 43; assimilation of the gkeep-geometry theme, successor to the staged `gkeep-size-to-real-size-r11`) | What sets the size of the host's gkeep window: the host rule text (`float on`, `center on`, `size 420 500` for `^(org.omarchy.gkeep)$`), the rule engine's anchored `re2::RE2::FullMatch`, the size effect stored as an expression and evaluated only in the floating algorithm's first-map branch, the target and window that store the box, `hyprctl clients -j` printing the animation GOAL rather than the current value, the app's own `set_default_size(420, 500)`, an isolated-oracle observation of 420x500 floating, and today's census (4 clients, none floating, no gkeep window). Tool `tools/mado-geometry.py`; the drawn size and a live gkeep window on the host stay UNK. | S290, S291, S292, S293, S294, S295, S296, S297, S155, S158 |
+| `knowledge/hyprland-gkeep-size-request-r44.md` (MADO-R44-1, round 44; assimilation of the gkeep-theme residue, successor path to the held excerpt S297) | What happens after Hyprland sets the gkeep window's box: the compositor takes the real box and reports it (`CWindow::sendWindowSize` calls `realToReportSize`, `Hyprland-Window.cpp:1732` and `:1741`), hands it to the client as an xdg toplevel configure (`setSize` stores the pending size and calls `scheduleConfigure`, `Hyprland-XDGShell.cpp:354-357` and `:629-643`) or as an X11 configure (`Hyprland-Window.cpp:1751`), and queues the configure serial on its pending-size-ack list, cleared by `onAck` (`Hyprland-Window.cpp:1514-1521`); xdg-shell 1.49 calls the configure width and height "a hint to the window" that a client need only acknowledge (`xdg-shell.xml:1144-1165`, ack at `:1163`), GTK 4.24.1's Wayland toplevel applies the configured size through `gdk_wayland_toplevel_update_size` (`gdktoplevel-wayland.c:513-536`), and gkeep 133b867 declares `set_default_size(420, 500)` under `application_id="org.omarchy.gkeep"` with zero `set_size_request` calls (`gkeep-ui.py:449`, `:476`). No client was run and no socket was opened; the ack round-trip and the drawn size stay UNK. | S164, S298, S299, S300, S301 |
 
 ## Quality bar
 
@@ -299,3 +300,21 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
   `size` is the animation's goal, not the value on screen, and a tiled client never reads the rule. Still open: a live
   gkeep window on the host session (none was open; the 420x500 observation is from the isolated round-27 oracle), the
   drawn size during and after the open animation, the client's acknowledgement path, and rule attribution.
+
+### Round-44 gkeep size-request route
+
+- Advances the Round-43 route's open item "the client's acknowledgement path" onto sourced ground. What the
+  compositor does after it sets the box: `CWindow::sendWindowSize` reports the goal size (`realToReportSize`,
+  `Hyprland-Window.cpp:1685-1699,1732`) and hands it to the client as an xdg toplevel configure (`setSize` stores
+  it and the deferred state application sends it, `Hyprland-XDGShell.cpp:354-358,455`) or as an X11 configure
+  (`Hyprland-Window.cpp:1751`), queueing the serial for `onAck` (`Hyprland-Window.cpp:1514-1526`); the configure
+  size is "a hint to the window" (`xdg-shell.xml:1150`) that the client acknowledges with `ack_configure`
+  (`xdg-shell.xml:560`); GTK 4.24.1's Wayland toplevel adopts a non-zero configured size constrained by its
+  minimum-size hints (`gdktoplevel-wayland.c:518-528,681`); and gkeep 133b867 declares `set_default_size(420, 500)`
+  and no size request ([size request](knowledge/hyprland-gkeep-size-request-r44.md), rows S164 plus S298-S301).
+  The same round moves the tool's vocabulary: `tools/mado-geometry.py` prints FULLSCREEN and MAXIMIZED for a
+  client whose `fullscreen` field is 2 or 1 instead of comparing the monitor box or the work area with the rule,
+  a NOT_COMPARED top verdict (exit 5) when such clients are the only ones and none agreed, and TILED is narrowed
+  to "not floating" (a pseudo-tiled client takes its box from the stored pseudo size, which `clients -j` does not
+  print). Still open: no live gkeep window was observed, so the ack round-trip under a real client, gkeep's
+  widget-tree minimum and the drawn size remain unmeasured.

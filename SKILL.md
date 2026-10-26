@@ -277,9 +277,18 @@ Per-verdict licence — a verdict reads two printed values, it never calls a fau
 | BADSIZE | only that there was no size to compare (no `size` value, or not two integers) | any agreement claim |
 | NO_MATCHING_CLIENT (rc 3) | no mapped client matched any supported `size` rule — a null observation | that the rule works, or that the file declares none |
 | NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
+| FULLSCREEN (round 44) | the matched client's `fullscreen` field is 2: Hyprland set its box to the monitor box (`fetch-c1/Hyprland-FullscreenHandler.cpp:191-194`, round-44 pin) and the rule's size is not compared | that the rule failed, or what the window will measure when it leaves fullscreen (the floating box is remembered, `Hyprland-FullscreenHandler.cpp:130-131`, and the dump cannot show it) |
+| MAXIMIZED (round 44) | the field is 1: the box is the workspace work area (`Hyprland-FullscreenHandler.cpp:195-198`); not compared | the same as FULLSCREEN; `fullscreenClient` (the client's requested mode) is never read — only the compositor's internal mode decides |
+| NOT_COMPARED (rc 5, round 44) | at least one matched client was skipped for its state and none agreed: no comparison was made | AGREE; and it is not DIFFER either — a dump with any differing client still exits 1 |
 
 Exit map: 0 `OK` · 1 `DIFFER` (at least one matched client differs) · 2 `SETUP` (usage | unreadable | too_large |
 bad_json) · 3 `NO_MATCHING_CLIENT` · 4 `NO_SIZE_RULES`.
+Round 44 adds exit 5 `NOT_COMPARED` (tested after `NO_MATCHING_CLIENT`, before `OK`); a dump with no maximized or
+fullscreen matched client prints the round-43 summary line byte for byte, so the round-43 contract still holds
+(`quality/counters/c1-r44-geometry-states-v2.py` clause r). Correction (round-43 closure D3): the TILED row's
+Licenses cell overstates — "the tiler, not the floating rule path, set its box" is false for a pseudo-tiled client,
+whose box comes from the rule's size stored as its pseudo size (`Hyprland-Window.cpp:2402-2408`, round-44 pin
+`.ufo/waves/round-44/fetch/Hyprland-Window.cpp`); read TILED as "not floating" only.
 
 Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
 clients, so nothing matches.
