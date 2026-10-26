@@ -1,0 +1,113 @@
+2c2
+< """PRED-C2-r43 - the Hyprland gkeep-geometry entry is admitted (C2, coverage, sourced).
+---
+> """PRED-C2-r43-v2 - the Hyprland gkeep-geometry entry is admitted (C2, coverage, sourced).
+3a4,21
+> v2 of PRED-C2-r43 (quality/counters/c2-r43-gkeep-entry.py, frozen at b2e2efd), re-registered BEFORE
+> any data commit because wave w1 found that the v1 target is reached by entries that skip the claimed
+> coverage (seat CritClaimSizing: a 17-line entry citing three own-work receipts and one upstream file is
+> admitted; seat CritC2Cheat: 16 admitted forgeries, 8 of them closed by the tightenings below). v2 is v1
+> plus exactly these conditions (each also stated in its clause below):
+>   d+ the Gate quote occurs EXACTLY ONCE, word-bounded, in its receipt's normalized text, and it
+>      occurs in the receipt with comments removed (C/C++ `//` and `/* */`; `#` in .py and .conf);
+>   e+ an id whose receipt name starts with `Hyprland-` (case-insensitive) has a location that starts
+>      with https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/;
+>   g+ EVERY unfenced entry line that names a cited id (other than its `source:` line) carries that
+>      id's Gate quote and, for a non-HTML receipt, its computed locator;
+>   i+ ADMIT/REFUSE paths are exactly merge/mado/knowledge/corpus/knowledge/<one of STAGED>; a REFUSE
+>      reason holds a flip word (superseded|until|unless|once|when|if|after); no BAD_LOC marker occurs
+>      in any unfenced entry line; and the Gate receipts of the cited ids cover EVERY name in PINS (all
+>      ten pinned receipts are cited: the whole chain the claim names, not any four of it).
+> Final line: `PRED-C2-r43-v2: admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`.
+> The v1 text follows unchanged; where it says PRED-C2-r43 read PRED-C2-r43-v2.
+> 
+99c117
+< PRED = "PRED-C2-r43"
+---
+> PRED = "PRED-C2-r43-v2"
+275a294,349
+> 
+> 
+> def occurrences(blob, nq):
+>     isw = lambda c: c.isalnum() or c == "_"
+>     if looks_html(blob):
+>         text = norm(blob.decode("utf-8", "replace"))
+>     else:
+>         text = collapse_with_lines(blob.decode("utf-8", "replace"))[0]
+>     out, start = [], 0
+>     while True:
+>         k = text.find(nq, start)
+>         if k < 0:
+>             return out
+>         before = text[k - 1] if k > 0 else " "
+>         after = text[k + len(nq)] if k + len(nq) < len(text) else " "
+>         if not (isw(nq[0]) and isw(before)) and not (isw(nq[-1]) and isw(after)):
+>             out.append(k)
+>         start = k + 1
+> 
+> 
+> def strip_comments(text, path):
+>     ext = os.path.splitext(path)[1].lower()
+>     if ext in (".cpp", ".hpp", ".h", ".cc"):
+>         text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
+>         return re.sub(r"//[^\n]*", " ", text)
+>     if ext in (".py", ".conf"):
+>         return re.sub(r"#[^\n]*", " ", text)
+>     return text
+> 
+> 
+> def quote_in_code(blob, nq, path):
+>     flat = re.sub(r"\s+", " ", strip_comments(blob.decode("utf-8", "replace"), path))
+>     return nq in flat
+> 
+> 
+> def all_body_lines_bound(ids, entry_lines, gates, receipts_raw):
+>     for i in ids:
+>         gl = gates.get(i, [])
+>         if len(gl) != 1 or i not in receipts_raw:
+>             return False
+>         path, digest, quote = gl[0]
+>         q = re.sub(r"\s+", " ", quote)
+>         at = quote_at(receipts_raw[i], q)
+>         bn = os.path.basename(path)
+>         for l in entry_lines:
+>             if not re.search(r"\b%s\b" % i, l):
+>                 continue
+>             if l.startswith("source:"):
+>                 continue
+>             if q not in l:
+>                 return False
+>             if at and ("%s:%d" % (bn, at)) not in l:
+>                 return False
+>     return True
+> 
+> 
+427c501,503
+<                     and quote_at(blob, nq) is not None):
+---
+>                     and quote_at(blob, nq) is not None
+>                     and len(occurrences(blob, nq)) == 1
+>                     and quote_in_code(blob, nq, path)):
+458a535,537
+>         if rb.startswith('hyprland-') and not cells_[1].split()[-1].startswith(
+>                 'https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/'):
+>             e_ok = False
+497c576
+<     cl["g"] = int(g_ok)
+---
+>     cl["g"] = int(g_ok and all_body_lines_bound(ids, entry_lines, gates, receipts_raw))
+503c582,583
+<     staged_ok = lambda p: os.path.basename(p) in STAGED
+---
+>     staged_ok = lambda p: (p == 'merge/mado/knowledge/corpus/knowledge/' + os.path.basename(p)
+>                            and os.path.basename(p) in STAGED)
+507c587,589
+<            and all(m.group(1) != a.group(1) for a in adm)]
+---
+>            and all(m.group(1) != a.group(1) for a in adm)
+>            and re.search(r'\b(superseded|until|unless|once|when|if|after)\b',
+>                          m.group(2).lower())]
+513a596,598
+>     used = set(os.path.basename(gates[i][0][0]) for i in receipts)
+>     bad |= not set(PINS) <= used
+>     bad |= any(b_ in l.lower() for l in lines for b_ in BAD_LOC)
