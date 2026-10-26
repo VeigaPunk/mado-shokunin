@@ -767,6 +767,7 @@ before the replay compares the recorded historical kill table.
 | name | gate/probe | entry command | verdict map | self-test command / spelling | pinned-value path | write scope | owner |
 |---|---|---|---|---|---|---|---|
 | mado-axis-scores | gate | `python3 -I quality/check-axis-scores.py --rev REV --repo .` | 0 clean (`mismatched=0`); 1 failed (`mismatched>0`); 2 could-not-evaluate (usage, bad rev, no SCORECARD) | `python3 -I quality/check-axis-scores.py --selftest`; prints `MADO_AXIS_SELFTEST: N/N assertions passed`; 0 clean, 1 failed | publication marker `Axis table re-derived at`, unquoted, 2000-character window; instruments `quality/check-index.py` and `.ufo/waves/round-31/c2/count.py` | reads committed bytes via `git show`; selftest writes nothing | mado |
+| mado-session-material | gate | `python3 -I quality/check-session-material.py --repo . --rev REV` | 0 clean (`findings=0`); 1 findings (`findings>0`); 2 usage or git error | `python3 -I quality/check-session-material.py --selftest`; prints `SELFTEST: passed=N/N failed=N`; 0 clean, 1 failed | summary line `SESSION_MATERIAL: files=<n> findings=<n> rev=<40 hex>`; rules `R1_CLIENT_DUMP` `R2_PROC_TABLE` `R3_MONITOR_IDENT` `R4_HOME_LISTING` (round-45 closure D3; triage of the 97 findings at `4d22eeb`: `.ufo/waves/round-46/w1/ExecSessionTriage/triage.tsv`, 15 real, 82 synthetic; no synthetic marker yet, so a red exit is expected until it lands) | reads committed bytes via `git show`; selftest writes nothing | mado |
 | mado-r33-claim-verdict | gate | `python3 -I .ufo/waves/round-33/c2/count.py --repo . --scorecard SCORECARD.md` | 0 `TARGET_MET`; 1 `TARGET_MISSED`; 2 usage | the pre-data receipts under `.ufo/waves/round-33/controls/c2-*.txt` | predicate sentence in the script and in `.ufo/waves/round-33/registration.md`; frozen rev `d9ed38166cc3be8ef4c52b41d66ad94010feb047` | reads a scorecard path and `git archive` of the named rev; writes nothing | mado |
 
 ## Evidence trail & sources
@@ -2100,3 +2101,45 @@ Only fixture directories are created; no snapshot byte, symlink, label or expect
 ## Monitor rule versus running output (round 45)
 
 `hyprctl monitors all -j | python3 tools/mado-monitors.py --monitors - --config ~/.config/hypr/monitors.conf` joins the `monitor =` lines of the given config files with one dump: per output AGREE / DIFFER (fields mode, position, scale, transform, mirror, disabled) / DISABLED / UNRULED / NOT_COMPARED (scale with no clean divisor); top verdict NO_RULES 4 | NOT_COMPARED 5 (monitorv2 block, unmodelled line, unpredicted scale) | DIFFER 1 | NO_MATCHING_MONITOR 3 | OK 0; setup 2. Contract and limits in the tool docstring; ground in `corpus/knowledge/hyprland-monitor-rule-r45.md`. Use `monitors all -j`: plain `monitors -j` omits disabled outputs. A DIFFER is a join, not a blame: a runtime `keyword monitor`, an output-management client or a missing mode explains it as well as the config. A rule without `@RATE` asks for 60 Hz. Host run 2026-10-26: DP-1 AGREE, `verdict=OK`, exit 0 (`.ufo/waves/round-45/receipts/live-monitors-host-r45.txt`). The `monitor =` line form exists only on the 0.56.x line (upstream a9902ea removes it).
+
+## Input-device rules versus running devices (round 46)
+
+`hyprctl devices -j | python3 tools/mado-devices.py --devices - --config <file>...` joins the `input`/`device` lines of
+the config files you name (in the order Hyprland sources them; no `source =` line is followed) with one dump: per
+keyboard AGREE / DIFFER / FALLBACK / VIRTUAL over the five stored XKB names (device block value when the block sets
+it, else `input:kb_*`, else `us`/empty), per pointer AGREE / DIFFER over `scrollFactor` (the block's `scroll_factor`
+read as std::stof reads it and clamped to 0..100, else -1; the global `input:scroll_factor` never reaches the field),
+per `device` block MATCHED / NO_SUCH_DEVICE. Exit 0 OK, 1 DIFFER, 2 SETUP, 3 NO_KEYBOARDS, 4 STALE_BLOCK, 5
+NOT_COMPARED (tested NOT_COMPARED, DIFFER, NO_KEYBOARDS, STALE_BLOCK, OK). It reads files and stdin only; it starts no
+process and opens no socket. Ground: `corpus/knowledge/hyprland-input-devices-r46.md` (rows S316-S325). On this host
+the chain is `~/.local/share/omarchy/default/hypr/input.conf` then `~/.config/hypr/input.conf`:
+
+    $ hyprctl devices -j | python3 tools/mado-devices.py --devices - \
+        --config ~/.local/share/omarchy/default/hypr/input.conf --config ~/.config/hypr/input.conf
+    MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+
+(`.ufo/waves/round-46/receipts/live-devices-host-r46.txt`). The fcitx5 virtual keyboard appears only while the input
+method holds it, so `keyboards=` compares only within one capture (`.ufo/waves/round-46/w1/ScrSkill/`).
+
+| verdict | where it prints | what it means | next read-only step |
+|---|---|---|---|
+| `AGREE` | keyboard line | the five printed names equal the ones the tool computed from the `device` block, the global option or the default | none for that keyboard — but it is agreement with the files you passed: pass the rest of the chain before reading it as agreement about the host |
+| `DIFFER` + `differ=<names>` | keyboard line | those printed names are unequal to the computed ones: a join, not a blame — a runtime `hyprctl keyword`, a file not passed or a block under another name produces it too | `hyprctl getoption input:kb_<name> -j` for the global the compositor holds: a value the file does not set means a runtime `keyword` wrote it; else re-run with one `--config` file at a time to find the writer |
+| `FALLBACK` | keyboard line | the printed rules are exactly `us` and four empty names while the config expected something else — the shape left after a keymap that does not compile (`Hyprland-IKeyboard.cpp:101-116`) | `xkbcli compile-keymap --layout <L> --variant <V> --options <O> --rules <R> --model <M>` on the expected names: rc 1 with `Failed to compile xkb_symbols` reproduces the failure off-compositor, and `hyprctl getoption input:kb_layout -j` says whether `us` came from the global instead |
+| `VIRTUAL` | keyboard line | the name starts `hl-virtual-keyboard`: the client's keymap is not in the dump, so the printed names witness the config at creation only (`Hyprland-VirtualKeyboard.cpp:41`, `Hyprland-IKeyboard.cpp:60-64`); it exists only while its IME holds one, so `virtual=0` in a run is not a fault | none in the dump; and a virtual keyboard never moves the top verdict — a contradicting block still prints `differ=` and exits 0 (`receipts/synthetic-verdicts.txt`) |
+| `AGREE` | mouse line | the block's factor (clamped 0..100), or `-1` when the block does not set it, equals `scrollFactor` at two decimals | none; `input:scroll_factor` is a separate global option and is never the printed field (`Hyprland-ConfigValues.cpp:296`) |
+| `DIFFER` | mouse line | the factor the block sets, or the `-1` of "not set", differs from `scrollFactor` | `hyprctl getoption input:scroll_factor -j` for the global (it reaches no pointer's printed field), then re-read the block's value, then re-run per file |
+| `MATCHED` | block line | the block's name equals the `name` of a printed device (or of one its `belongsTo` object names) | none |
+| `NO_SUCH_DEVICE` | block line | no printed device carries that name; names are normalised (`Hyprland-MiscFunctions.cpp:777-789`), so a product name as the kernel reports it cannot match | compare verbatim with the names from the same dump (`hyprctl devices -j`); an unplugged device explains it |
+| `NOT_COMPARED` | summary, rc 5 | an unmodelled line is present — `$`, `{{` or a backslash in a relevant line, a `name =` rename, a `device { }` whose first assignment is not `name`, a `source =` inside a block, a hyprlang `if`/`endif`/`noerror` directive, or a `nan` scroll factor — and "an unmodelled line can change any expectation" (`mado-devices.py:87`); it outranks `DIFFER` | the count is not line-attributed: grep the files for those three tokens and for a `device {` block whose first key is not `name` (`receipts/synthetic-verdicts.txt`) |
+| `DIFFER` | summary, rc 1 | at least one keyboard differs or falls back, or one mouse differs | read the per-device lines, not the top verdict; a `stale=` block also surfaces here when something else differs |
+| `NO_KEYBOARDS` | summary, rc 3 | the dump held no `keyboards` element | re-capture with `hyprctl devices -j`: an empty list means the dump did not come from a live session (this host's lists ten, one of them the fcitx5 virtual keyboard) |
+| `STALE_BLOCK` | summary, rc 4 | a `device` block matched no device **and nothing else differed** — rc 4 is reachable only in that clean case, because `DIFFER` is tested before it (`receipts/synthetic-verdicts.txt`) | the `MADO_DEV_BLOCK:` line names the block; same verbatim comparison as `NO_SUCH_DEVICE` |
+| `SETUP` | single line, rc 2 | `usage`, `unreadable` (missing, unreadable, a directory, a FIFO or any non-regular path), `too_large` (> 1048576 B; stdin at most 1048577) or `bad_json` (not UTF-8 JSON with `keyboards` and `mice` lists of objects that each carry a string `name`) | fix the argument: a setup failure reads no further and is never a verdict (`mado-devices.py:29-34`) |
+
+Licence notes: DIFFER is a join, not a blame (a runtime `hyprctl keyword`, a file not passed, a block under a name
+the compositor never gives); FALLBACK is the printed shape of the compositor's reset, not proof of a compile failure;
+with `kb_file` set an AGREE only says the stored names match (the keymap is the file's); VIRTUAL never moves the top
+verdict; NOT_COMPARED is counted, not located - grep the same files for the forms listed above; capture the whole
+dump, a trimmed keyboard object reads DIFFER.
+

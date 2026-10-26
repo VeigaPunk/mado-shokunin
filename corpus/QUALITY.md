@@ -418,3 +418,42 @@ canonical citation; corrections land as new rows, never rewrites.
 85. Committed round evidence passes `python3 -I quality/check-session-material.py --repo . --rev <rev>` for the files the round adds: no live `hyprctl clients -j` element with a title, no `ss -p` process table, no monitor serial with its description, no home-directory listing; a seat that needs live state projects it to the fields it uses before writing. Shown able to fail: base `0c89478a` reports both round-43 client dumps, the projected tree does not (lesson: lessons/round-45.md M45-1).
 
 86. A counter that scores a tool runs it where it cannot see the judge (a sandbox hiding the counter, its lane and its parent process) and adds cases drawn from a nonce and judged by a pinned reference, so neither an answer table nor a fixture-narrowed tool reaches the target; the controls include every cheat the attacking wave built. Shown able to fail: v1 met 16 cheat and do-nothing tools, v2 misses all of them (lesson: lessons/round-45.md M45-3).
+
+87. A control battery's receipt is complete or it is no evidence: every declared control is scored exactly once, a
+final verdict line is present, and a fixture addresses its mutation by row identity — never by a global string
+count over a corpus that legitimately holds the same value twice. A battery that aborts on its own precondition
+has produced no control evidence, whatever its exit code. Check: `python3 -I
+.ufo/waves/round-46/w1/ScrMistakes/check87.py --receipt <round>/receipts/ctl-c2.txt --controls 15` — it reads
+the receipt's `controls=` header, the distinct `CTL_* <NAME> want=` rows, the verdict line and the `ok`/`WRONG`
+marks. Shown able to fail: the committed receipt reads `verdict=PASS` (15/15); the aborted shape reads
+`verdict=FAIL scored=7 want=15 verdict_line=absent` (`.ufo/waves/round-46/w1/ScrMistakes/receipts/check87-run.txt`).
+(lesson: lessons/round-46.md#mistakes M46-2)
+
+88. A counter that reads tree shape carries a committed forgery suite — revisions a reader rejects — and a
+tightening candidate is admitted only when the positive control passes every candidate and each **undeclared**
+admitted forgery fails the intended one (F5d fails two); a forgery the counter's own docstring declares is named as declared and not
+counted as a kill. Check: `python3 -I .ufo/waves/round-46/w1/ScrMistakes/check88.py --forge
+.ufo/waves/round-46/w1/CritC2Forgery/forge.out --tighten .ufo/waves/round-46/w1/CritC2Forgery/tighten.out
+--positive-rev 072da817379c2bdf5403ceca39e973301fc2d907 --declared F1,F2,F3,F9`. Shown able to fail: it reads
+`verdict=PASS` on the attack seat's own two receipts and `verdict=FAIL admitted_uncovered=F10,F4,F5d,F6,F7,F8`
+when only the positive control's candidate line is committed, and `FAIL admitted_passing=F1,F2,F3,F9` when no
+residual is declared (`.ufo/waves/round-46/w1/ScrMistakes/receipts/check88-run.txt`). The instrument is a seat
+instrument (provenance, not credit under criterion 25); the round registers the rule, the next round owns the
+lane instrument. (lesson: lessons/round-46.md#mistakes M46-4)
+
+89. A harness that scores untrusted code contains it by allowlist, not by denylist: the scored tool sees only the
+system directories and its own run directory (no home, scratch, /run or /tmp of the host, so no copy of the
+judge and no live IPC socket), and "runs nothing" is tested by watched binaries on PATH and over their absolute
+paths that report to a listener the tool cannot reach, with the selftest run in the same environment. Check:
+`ctl/run-c1-controls-v3.py` under `.ufo/waves/round-46/` scores DELEGATE-ANY, DELEGATOR-W1, CHEAT-A..D,
+TRIP-ABSOLUTE-PATH and TRIP-SELFTEST-ONLY, all of which must read `TARGET_MISSED`. Shown able to fail: under the
+v1 harness the delegator and the PATH-only tripwire met the target (`w1/CritClaimSizing/receipt-c1-delegator.txt`,
+`w1/SentTool/evidence/clause-r-bypass-*.txt`), and under v2 the pipe tripwire let both TRIP controls meet it
+(`receipts/ctl-c1-v2.txt`). (lesson: lessons/round-46.md#mistakes M46-12, M46-14, M46-15)
+
+90. Every routed defect keeps one identity and an age from the round that first routed it: each round's lesson
+carries the open routed items with their first locator (`round-N-verifier-spotcheck.md:<line>`) and their age in
+rounds, and an item routed a third time without landing is mined as a `landing` mistake. First instance:
+`.ufo/waves/round-46/w1/ScrRoutedAges/ages.md` (42 rows, 15 open, oldest 8 rounds at R38-3). Shown able to fail:
+the S290-S297 supersession is open since round 43 and became M46-16. (lesson: lessons/round-46.md#mistakes M46-16;
+considerthese/2026-10-26.md proposal 3)

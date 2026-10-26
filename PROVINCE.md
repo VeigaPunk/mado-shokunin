@@ -98,3 +98,18 @@ half).
 
 
 **Round-45 refinement (append-only; one tool, two counters, one record gate; no new write surface):** `tools/mado-monitors.py` reads caller-supplied config files (`--config`, regular files, 1 MiB cap) and one `hyprctl monitors all -j` dump (`--monitors`, file or stdin); it writes nothing, starts no process, opens no socket. `quality/counters/c1-r45-monitors*.py` and `c2-r45-monitor-entry*.py` score round evidence (the v2 C1 counter runs the tool under bubblewrap); `quality/check-session-material.py` reads tracked blobs at one revision and writes nothing. Output configuration stays operator-owned: the lane reads `monitors`, never `keyword` or `output`.
+
+**Round-46 refinement (append-only; one tool, three counters, one entry; no new write surface):** the input-device
+plane of the owned config tree - the `input` block's `kb_layout`, `kb_variant`, `kb_options`, `kb_model`, `kb_rules`,
+`kb_file` keys and the `device` / `device[NAME]` blocks with the `kb_*` and `scroll_factor` values they set - is owned
+here at the resolution Hyprland 0.56.2 gives it. `tools/mado-devices.py` reads only the config files the caller names
+(`--config`, regular files, 1 MiB cap) and one `hyprctl devices -j` dump (`--devices`, file or stdin); it follows no
+`source =`, writes nothing, starts no process and opens no socket; the operator captures the dump with the read verb
+and applies any change. The round's record instruments are `quality/counters/c1-r46-devices.py` (v1, superseded),
+`c1-r46-devices-v2.py` (v2, failed its own controls), `c1-r46-devices-v3.py` (`PRED-C1-r46-v3`: runs the scored tool
+under bubblewrap with an allowlist root of /usr and /etc, its own run directory writable, and a unix-socket tripwire
+it listens on outside the sandbox), and `c2-r46-input-device-entry.py` / `-v2.py` (read git objects of the entry,
+registry, lesson, README and the ten pins under `.ufo/waves/round-46/fetch/`; write nothing). None touches a config
+plane, the compositor or a host service. Global `input:scroll_factor` and the libinput settings stay readable only
+through `hyprctl getoption`; the keybind keymap (`resolve_binds_by_sym`) is not part of this join.
+
