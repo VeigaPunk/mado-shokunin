@@ -2589,3 +2589,35 @@ Axis table re-derived at the round-44 data tree (one new indexed entry, criteria
 1. A live gkeep window read with `tools/mado-geometry.py` (operator opens gkeep; mado reads only) - the entry's UNKs (ack round-trip, drawn size, gkeep's widget minimum).
 2. Supersede the S290-S297 registry cells the round-43 w2 found imprecise (round-44 `w1/ScrSupersedeRows`: needs a census-clean supersession form).
 3. The w2 open predicate defects of round 44, under a new registration.
+
+
+## Round 45 - mado-monitors and the monitor-rule entry (2026-10-26, attempt 1)
+
+Registration `.ufo/waves/round-45/registration.md` (freeze `22a8dedd02f507689c567777e0f20b5e645c8ce0`, base `0c89478af821a6424c9ac922eafe02e39630cf4f`), superseded before any data by `registration-v2.md` (freeze `7c0b00350d70f6e5d3b0259a132d25ee030d525e`) after wave `w1` (41 seats) met PRED-C1-r45 with 16 cheat/do-nothing tools and PRED-C2-r45 with 9 forgeries, and found six Hyprland forms the v1 contract mis-modelled. Data commit `ee6659b90f7bf69aa03283dba804dd90081b7ff5`. Lowest-axis rule: every published axis tied at its maximum at base (`receipts/axis-base.txt`).
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-monitors.py` | `fixtures=0/81 generated=0/150 ... tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-v2-before-base.txt`) -> `fixtures=81/81 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET` exit 0 at `ee6659b` (`receipts/c1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r45-monitors-v2.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r45-v2`) | **TARGET_MET** |
+| C2 **coverage** (sourced) - `corpus/knowledge/hyprland-monitor-rule-r45.md` | `admitted=0/1` exit 1 at base (`receipts/c2-v2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at `ee6659b` (`receipts/c2-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r45-monitor-entry-v2.py --repo . --rev <rev>` (`PRED-C2-r45-v2`) | **TARGET_MET** |
+
+Round-44 after values (closure D2, appended, never rewritten): C1 `fixtures=26/26 tool=present verdict=TARGET_MET` (`.ufo/waves/round-44/receipts/c1-after-data.txt`), C2 `admitted=1/1 verdict=TARGET_MET` (`.ufo/waves/round-44/receipts/c2-after-data.txt`).
+
+Separable: `w1/ConnCrossClaim.md` (tool-only tree: C1 MET, C2 0/1; data-only tree: C1 MISSED, C2 1/1).
+
+### Capabilities (round 45)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| monitor rule versus running output join | read `monitor =` lines from config files and one `hyprctl monitors all -j` dump and report, per output, the effective rule (one per selector, newest match, empty-selector fallback, `desc:` short/long) and AGREE / DIFFER (mode within 1 Hz with the 60 Hz default, position, Hyprland's 1/120 scale correction, transform, mirror, disabled) / DISABLED / UNRULED / NOT_COMPARED; starts no process, opens no socket | `tools/mado-monitors.py` (selftest 48/48); `quality/counters/c1-r45-monitors-v2.py` 81/81 + 150/150 at `ee6659b`; live host run `.ufo/waves/round-45/receipts/live-monitors-host-r45.txt` (DP-1 AGREE, OK, exit 0) | 45 |
+
+### Sources, saturation, planned
+
+Sources 238 -> 252 rows (S302-S315, tier A, `mined`, opened 2026-10-26; S303 and S307 repeat held URLs under the monitor scope: census W04). Knowledge entries 61 -> 62. Assimilation: none. considerthese `2026-10-26.md` proposal 1 -> `quality/check-session-material.py` + QUALITY 85. Mistakes M45-1..6; QUALITY 85-86. Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `ee6659b` (`receipts/axis-data.txt`): navigation 62/62; calibration resolved-active 73/73; operability selftest 12/12.
+
+### Planned (round 46; intent only)
+
+1. Wave w2 falsification of the round-45 data (not run this round: the run's request budget stopped the round after w1; round total 41 seats).
+2. Triage the 48 pre-existing and 49 synthetic session-material findings (`receipts/session-material-data.txt`); teach the gate a synthetic marker.
+3. S290-S297 supersession (round-44 D6) under its own registration.
