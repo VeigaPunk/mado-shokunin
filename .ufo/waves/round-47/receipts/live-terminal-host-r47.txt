@@ -1,0 +1,35 @@
+# live read-only resolver capture, 2026-10-26T20:04:38-03:00; no terminal launched; XDG_CACHE_HOME pointed into an empty scratch dir (cold cache)
+command=XDG_CACHE_HOME=<empty scratch dir> xdg-terminal-exec --print-id --print-path --print-cmd
+resolver=/usr/bin/xdg-terminal-exec
+resolver_sha256=89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+rc=0
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_CONFIG_HOME=/home/vgpnk/.config
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_DATA_HOME=/home/vgpnk/.local/share
+observed=.ufo/waves/round-47/receipts/live-terminal-observed-r47.txt
+observed_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc
+user_entry_sha256=713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683
+system_entry_sha256=d420b0f418d9039f324bdb423181f874dee36c47ce2ab643435a4c04aac243d8
+list_sha256=d035da571a6bfc7d626d4a88846ea86a8adb6f6662f1f8b4abe2330e53ceb71b
+# landed tool tools/mado-terminal.py (these bytes are the data commit's), same environment:
+tool_sha256=b84d5c4f723049c0fd14189ffc7b6db1f71eb70fb97e0c476d20ddeca6de2222
+$ XDG_CACHE_HOME=<empty scratch dir> python3 -I tools/mado-terminal.py explain --observed .ufo/waves/round-47/receipts/live-terminal-observed-r47.txt
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: list /home/vgpnk/.config/xdg-terminals.list
+MADO_TERM_TRACE:   /home/vgpnk/.config/xdg-terminals.list:3 entry Alacritty.desktop
+MADO_TERM_TRACE: list /usr/share/xdg-terminal-exec/xdg-terminals.list
+MADO_TERM_TRACE:   /usr/share/xdg-terminal-exec/xdg-terminals.list:6 drop org.kde.yakuake.desktop from the fallback
+MADO_TERM_TRACE:   /usr/share/xdg-terminal-exec/xdg-terminals.list:7 drop kitty-open.desktop from the fallback
+MADO_TERM_TRACE:   /usr/share/xdg-terminal-exec/xdg-terminals.list:8 drop foot-server.desktop from the fallback
+MADO_TERM_TRACE:   /usr/share/xdg-terminal-exec/xdg-terminals.list:11 drop footclient.desktop from the fallback
+MADO_TERM_TRACE:   candidate Alacritty.desktop: /usr/share/applications/./Alacritty.desktop is shadowed by /home/vgpnk/.local/share/applications/./Alacritty.desktop (the later application dir wins)
+MADO_TERM_TRACE:   candidate Alacritty.desktop (listed) /home/vgpnk/.local/share/applications/./Alacritty.desktop: SELECTED
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=AGREE
+tool_rc=0
+$ python3 -I tools/mado-terminal.py print --print-id ""   # empty argument: refused
+MADO_TERM_OUT_OF_CONTRACT: empty-string argument (the script loops forever)
+tool_rc=2
+$ python3 -I tools/mado-terminal.py --selftest
+MADO_TERMINAL_SELFTEST: 43/43 passed

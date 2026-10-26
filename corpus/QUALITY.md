@@ -457,3 +457,48 @@ rounds, and an item routed a third time without landing is mined as a `landing` 
 `.ufo/waves/round-46/w1/ScrRoutedAges/ages.md` (42 rows, 15 open, oldest 8 rounds at R38-3). Shown able to fail:
 the S290-S297 supersession is open since round 43 and became M46-16. (lesson: lessons/round-46.md#mistakes M46-16;
 considerthese/2026-10-26.md proposal 3)
+
+91. A knowledge entry that cites a run receipt for a claim about a *landed* surface cites a receipt whose producer
+line names that surface, at the same revision — and the round applies the check to its own entry before the data commit,
+not only a later non-author closure. Check: `python3 -I .ufo/waves/round-47/w1/ScrMistakes/check91.py --repo . --rev REV
+--entry <entry> --tool tools/<tool>.py` (prints one `PRODUCER` line per cited receipt and
+`CHECK91: … differ= unparsed= absent= verdict=AGREE|DIFFER`). Shown able to fail: `verdict=DIFFER`, exit 1, on
+`corpus/knowledge/hyprland-input-devices-r46.md` at `1001bda` (`:57` → `l1-draft/mado-devices.py`), and `verdict=AGREE`,
+exit 0, on the same bytes with the citation corrected to `live-devices-host-r46.txt` (`.ufo/waves/round-47/w1/ScrMistakes/receipts/check91-run.txt`).
+(lesson: lessons/round-47.md#mistakes M47-1)
+
+92. A seat directory's produced set and its committed set are compared at the round tip and both are named: a tool's
+own announced skip (size cap, ignore rule) is a gate for the integrator, not a footnote in the report, and a file the tool
+announced is either committed (with `--include-ignored` where its size demands it, or a committed digest beside it) or its
+retention is stated with that digest. Check: `python3 -I .ufo/waves/round-47/w1/ScrMistakes/check92.py --repo . --rev REV
+--dir .ufo/waves/round-N/w1/<Seat>` (prints `UNCOMMITTED <bytes> <path>` lines and
+`CHECK92: … worktree= tracked= uncommitted= uncommitted_bytes= verdict=`). Shown able to fail: `verdict=DIFFER`, exit 1,
+on `w1/ExecStofOracle` at HEAD (`uncommitted=1 uncommitted_bytes=3282451`) and `verdict=OK`, exit 0, on
+`w1/ExecSerialRule` (17/17) and `w1/ExecSupersede` (23/23) (`.ufo/waves/round-47/w1/ScrMistakes/receipts/check92-run.txt`).
+(lesson: lessons/round-47.md#mistakes M47-2)
+
+93. A detector is registered as a gate only with its clean-state receipt at the revision it scores: a registry cell
+that declares a non-zero exit expected is a standing waiver, and a gate carrying one counts as a gate that cannot fail
+(extends 56 from a counter clause to the gate registry) — the clean receipt and a planted-defect receipt that still trips
+are both required at the same revision. Check: `grep -n 'expected until it lands' SKILL.md` must print nothing for a
+registered gate, and the round carries `<GATE>: … findings=0` plus a planted-defect run reading `findings>0`. Shown able
+to fail: `SKILL.md:770` carries the waiver and the round's only receipt reads `SESSION_MATERIAL: … findings=115` / `exit=1`
+(the gate is red at `1001bda` and still red at the round-47 base, `files=18377 findings=115 rev=c24adef2`), while the
+drafted marker's own receipts show the two sides (`04-marked-49.txt` 97→48, `06-planted-real-dump.txt` flagged).
+(lesson: lessons/round-47.md#mistakes M47-3)
+
+94. Every carried number about a routed defect is emitted by the ledger that owns it, never transcribed: an age is the
+ledger's own cell (or the ledger prints the sentence), and a deferral count is derived from the round number and the
+first-routing round by one command that appears in the lesson. Check: the lesson's age sentence and the ledger's cell for
+the same id are read by one command; a disagreement is a violation. Shown able to fail: `ages.md:88` prints **3** for
+R43-D2 at round 46 while `round-46.md:311` says "age now 4 rounds"; and the four deferral sites (r44:93, r45:68, r46:307-308,
+r47:116) count four against the closure's "third deferral" at `round-46-verifier-spotcheck.md:116`.
+(lesson: lessons/round-47.md#mistakes M47-4, M47-5)
+
+95. A scoring instrument writes only under its `--work`: it loads its pinned model from a copy there, never by
+in-process import from the tree it scores, and its receipt carries a before/after inventory of that tree. Check: run the
+counter once and diff `find <scored tree> -newer <marker>` before and after; the inventory must be empty. Shown able to
+fail: the unguarded import writes `__pycache__/mado-devices.cpython-314.pyc` beside the model while the guarded one leaves
+no directory (`.ufo/waves/round-47/w1/ScrMistakes/receipts/pyc-header.txt`), and the frozen tree carries such a pyc with
+today's mtime (40 149 B, `2026-10-26T18:45:35`) under `.gitignore:3`.
+(lesson: lessons/round-47.md#mistakes M47-6)
