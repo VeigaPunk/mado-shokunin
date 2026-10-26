@@ -1,0 +1,219 @@
+2c2
+< """PRED-C1-r44 - mado-geometry reports maximized and fullscreen clients as such (C1, operability).
+---
+> """PRED-C1-r44-v2 - mado-geometry names maximized and fullscreen clients instead of comparing them (C1, operability).
+4,6c4,8
+< Frozen at the round-44 freeze, before any round-44 data. Scores one committed revision REV of the
+< lane (revision-addressed git reads, ambient GIT_* removed; nothing in the lane is written). The tool
+< under test is `tools/mado-geometry.py` at REV (or `--tool PATH` for a control).
+---
+> Re-registered BEFORE any round-44 data commit (registration-v2.md), replacing PRED-C1-r44 (frozen at
+> e2289516a9a857f55cda7be635933e89b931c3da, quality/counters/c1-r44-geometry-states.py), because wave w1 found:
+> a tool that enables the state logic only inside the counter's sandbox reaches TARGET_MET (w1/CritC1Cheat cheat E);
+> a tool whose selftest asserts no state verdict reaches TARGET_MET (cheats C, F); and a dump whose matched clients
+> are all maximized/fullscreen printed `verdict=OK` exit 0 although nothing was compared (w1/CritFsPremise S1).
+8,14c10,11
+< Why. Hyprland 0.56.2 sets a maximized window's box to the workspace work area and a fullscreen
+< window's box to the monitor box (src/managers/fullscreen/handler/FullscreenHandler.cpp,
+< setTargetSizeAndPosition), and `hyprctl clients -j` prints the internal mode as the integer
+< `fullscreen` (src/debug/HyprCtl.cpp; eFullscreenMode in FullscreenController.hpp: 0 none,
+< 1 maximized, 2 fullscreen). The round-43 tool ignores that field, so a fullscreen gkeep window
+< whose rule asks 420x500 is reported DIFFER (a false report) and a maximized tiled one TILED.
+< Pins: .ufo/waves/round-44/fetch-c1/ (receipts/fetch-sha256.txt).
+---
+> Scores one committed revision REV of the lane (revision-addressed git reads, ambient GIT_* removed; nothing in the
+> lane is written). The tool under test is `tools/mado-geometry.py` at REV, or `--tool PATH` for a control.
+16,25c13,21
+< The contract extension (the reference is .ufo/waves/round-44/c1/ctl-ref-tool.py.txt; everything
+< the round-43 contract of PRED-C1-r42 says stays in force): fsmode is the `fullscreen` value when
+< it is a JSON integer (not a boolean, not a float) equal to 1 or 2, else 0 (absent, null, 0, 3, -1,
+< true, 2.0, "2", lists and objects are 0). A matched client's verdict is tested in the order
+< BADSIZE (size none) | FULLSCREEN (fsmode 2) | MAXIMIZED (fsmode 1) | TILED | AGREE | DIFFER.
+< The client line is unchanged except for the two new verdict words. The summary line carries
+< ` maximized=<n> fullscreen=<n>` between `badsize=<n>` and ` verdict=` exactly when
+< maximized + fullscreen > 0; otherwise it is byte-identical to the round-43 line. FULLSCREEN and
+< MAXIMIZED clients count as matched and never as differ, so the top verdict rules (NO_SIZE_RULES,
+< DIFFER, NO_MATCHING_CLIENT, OK and their exit codes) are unchanged.
+---
+> Contract. Everything the PRED-C1-r42 docstring (quality/counters/c1-r42-geometry.py) states, plus: fsmode is the
+> `fullscreen` value when it is a JSON integer (not a boolean, not a float) equal to 1 or 2, else 0 (absent, null, 0,
+> 3, -1, true, 2.0, "2", lists and objects are 0); a matched client's verdict is tested in the order BADSIZE (size
+> none) | FULLSCREEN (fsmode 2) | MAXIMIZED (fsmode 1) | TILED | AGREE | DIFFER; the client line is unchanged except
+> for the two new words; the summary line carries ` maximized=<n> fullscreen=<n>` between `badsize=<n>` and
+> ` verdict=` exactly when maximized + fullscreen > 0, else it is byte-identical to the round-43 line; the top
+> verdict is tested in the order NO_SIZE_RULES (rules=0; exit 4) | DIFFER (differ>0; exit 1) | NO_MATCHING_CLIENT
+> (matched=0; exit 3) | NOT_COMPARED (agree=0 and maximized + fullscreen > 0; exit 5) | OK (exit 0). The reference is
+> .ufo/waves/round-44/c1/ctl-ref-tool-v2.py.txt. Grounding pins: .ufo/waves/round-44/fetch-c1/.
+27,29c23,25
+< Clauses (all must hold; the counter imports the round-42 counter c1-r42-geometry.py from its own
+< directory and reuses its bubblewrap sandbox, RLIMIT_NPROC = 1 fixture runs, nonce, generator and
+< byte-exact judge, with its model extended by exactly the paragraph above):
+---
+> Clauses (all must hold; the counter imports c1-r42-geometry.py from its own directory and reuses its bubblewrap
+> sandbox, RLIMIT_NPROC = 1 fixture runs, per-run nonce, generator and byte-exact judge; its model is the round-42
+> model extended by exactly the paragraph above; fixture runs and selftests happen in that sandbox):
+31,44c27,43
+<   f   fixtures: sgen0..sgen11 (the round-42 nonce lattice with a `fullscreen` value drawn per
+<       client from absent, 0, 1, 2, true, 3, "2", 2.0, -1, null and sometimes a `fullscreenClient`
+<       value) and the fixed fixtures of FIXED below; each compares rc and stdout byte-exactly with
+<       the extended model; on rc 0/1/3/4 stderr must be empty (TOTAL = 26);
+<   b   `--selftest` in the sandbox exits 0 printing `MADO_GEOMETRY_SELFTEST: k/n passed`, k == n,
+<       n >= 80;
+<   b4  state teeth: the comparison sites of every function (selftest, main, usage and functions
+<       nested in selftest excluded) whose body holds a string constant containing `fullscreen`
+<       (any case) number >= 6; each is flipped in a copy at the real layout and the copy's
+<       selftest must fail for >= 75 % of them (rounded up);
+<   g   the round-42 clause g holds (standard-library imports json os re stat sys only, no denied
+<       call, name, string or keyword unpacking);
+<   r   no harm to the round-43 contract: `c1-r42-geometry.py --repo REPO --rev REV --tool <the
+<       same bytes> --nonce <derived>` exits 0 and prints `verdict=TARGET_MET`.
+---
+>   f   26 fixtures - sgen0..sgen11 (the round-42 nonce lattice with a `fullscreen` value drawn per client from
+>       absent, 0, 1, 2, true, 3, "2", 2.0, -1, null, and sometimes a `fullscreenClient` value) and the 14 fixed
+>       fixtures of FIXED; each compares rc and stdout byte-exactly with the model; on rc 0/1/3/4/5 stderr is empty;
+>   b   `--selftest` exits 0 printing `MADO_GEOMETRY_SELFTEST: k/n passed`, k == n, n >= 80;
+>   b4  the comparison sites of every function (selftest, main, usage and functions nested in selftest excluded)
+>       whose body holds a string constant containing `fullscreen` (any case) number >= 6, and flipping each one in a
+>       copy at the real layout makes the copy's selftest fail for >= 75 % of them (rounded up) - a heuristic;
+>   b5  state-blind teeth: a copy of the tool whose first lines rebind `json.loads` so that every decoded object's
+>       `fullscreen` key is renamed `_b5_fullscreen` (so no client carries a state) must FAIL its own selftest
+>       (non-zero exit, k != n, or no summary line): the selftest asserts state verdicts through the JSON path;
+>   e   environment invariance: the inputs of the fixed fixtures fs0, max0, fsmix0, fsclient0 and fsagree0 are run a
+>       second time OUTSIDE the sandbox (plain `python3 -I <tool>`, the counter's own environment minus GIT_*, the
+>       real HOME, cwd = the fixture directory, 30 s timeout) and stdout and exit code must equal the sandboxed run;
+>   g   the round-42 clause g holds (standard-library imports json os re stat sys only; no denied call, name, string
+>       or keyword unpacking);
+>   r   no harm to the round-43 contract: `c1-r42-geometry.py --repo REPO --rev REV --tool <the same bytes>
+>       --nonce <derived>` exits 0 and its last line holds ` verdict=TARGET_MET ` (a timeout is a failure).
+46,48c45,49
+< Final line: `PRED-C1-r44: fixtures=k/26 clauses=<...> tool=present|absent verdict=TARGET_MET|TARGET_MISSED
+< rev=<full hash> nonce=<nonce>`. TARGET_MET (exit 0) iff every clause holds and k == 26; else exit 1;
+< setup failure exit 2. Scratch: `--work DIR`, else $C1R44_TMP, else $TMPDIR (never a hardcoded /tmp).
+---
+> Output: one line per clause/fixture, a `PRED-C1-r44-v2 clauses=<k:v ...>` line, and the final line
+> `PRED-C1-r44-v2: fixtures=k/26 tool=present|absent verdict=TARGET_MET|TARGET_MISSED rev=<full hash> nonce=<nonce>`.
+> TARGET_MET (exit 0) iff every clause holds and k == 26; else exit 1; a setup failure (no sandbox, unresolved
+> revision, unreadable --tool, missing --work directory) prints `PRED-C1-r44-v2 SETUP <reason>` and exits 2.
+> Scratch: `--work DIR`, else $C1R44_TMP, else $TMPDIR (never a hardcoded /tmp).
+50,54c51,55
+< Residuals (declared): a tool that holds a model of the contract is an implementation; b4 counts
+< sites only in functions that name `fullscreen`, so a tool can move its state logic into an
+< unnamed helper and keep the clause vacuous-but-satisfied only if it still has >= 6 sites there;
+< the sandbox is detectable (round-43 CritC1Cheat cheat 6); whether a live maximized or fullscreen
+< window reports the work-area or monitor box is the compositor's fact (pinned source, not scored).
+---
+> Residuals (declared): a tool that holds a model of the contract is an implementation; b4 counts sites only in
+> functions naming `fullscreen` (b5 is the load-bearing teeth clause); b5 binds the JSON path only - a tool that
+> parses JSON without json.loads, or detects the rebinding, defeats it; e compares one second environment (a tool
+> can still detect an unusual one); whether a live maximized or fullscreen window reports the work-area or monitor
+> box is the pinned sources' fact, not scored; the documentation rows (SKILL.md, PROVINCE.md) are not scored.
+71c72
+< PRED = "PRED-C1-r44"
+---
+> PRED = "PRED-C1-r44-v2"
+158a160,161
+>     elif t["AGREE"] == 0 and t["MAXIMIZED"] + t["FULLSCREEN"] > 0:
+>         verdict, rc = "NOT_COMPARED", 5
+173a177,187
+> _old_judge = old.judge
+> 
+> 
+> def judge_v2(rc, out, err, want_out, want_rc):
+>     ok, why = _old_judge(rc, out, err, want_out, want_rc)
+>     if ok and want_rc == 5 and err:
+>         return 0, "stderr=%r" % err[:80]
+>     return ok, why
+> 
+> 
+> old.judge = judge_v2
+263a278,288
+> INVARIANT_INPUTS = {
+>     "fs0": [G([2560, 1440], 2)],
+>     "max0": [G([2544, 1380], 1, fl=False)],
+>     "fsmix0": [G([2560, 1440], 2, address="0x1"), G([421, 500], address="0x2"),
+>                G([420, 500], address="0x3"), G([1, 1], fl=False, address="0x4"),
+>                G([2544, 1380], 1, address="0x5")],
+>     "fsclient0": [G([421, 500], 0, fullscreenClient=2), G([421, 500], fullscreenClient=1)],
+>     "fsagree0": [G([420, 500], 2)],
+> }
+> 
+> 
+313,315c338,344
+<     p = subprocess.run([os.path.realpath(sys.executable), "-I", OLD_PATH, "--repo", repo,
+<                         "--rev", rev, "--tool", tool, "--nonce", sub],
+<                        capture_output=True, env=env, timeout=1800)
+---
+>     try:
+>         p = subprocess.run([os.path.realpath(sys.executable), "-I", OLD_PATH, "--repo", repo,
+>                             "--rev", rev, "--tool", tool, "--nonce", sub],
+>                            capture_output=True, env=env, timeout=1800)
+>     except subprocess.TimeoutExpired:
+>         print("%s clause=r timeout" % PRED)
+>         return False
+322a352,401
+> B5_PREFIX = (
+>     "import json as _b5_json\n"
+>     "_b5_loads = _b5_json.loads\n"
+>     "def _b5_hook(d):\n"
+>     "    return {('_b5_' + k if k == 'fullscreen' else k): v for k, v in d.items()}\n"
+>     "def _b5_patched(s, *a, **k):\n"
+>     "    k['object_hook'] = _b5_hook\n"
+>     "    return _b5_loads(s, *a, **k)\n"
+>     "_b5_json.loads = _b5_patched\n")
+> 
+> 
+> def state_blind(src, tmp):
+>     text = src
+>     lines = text.split("\n")
+>     k = 1 if lines and lines[0].startswith("#!") else 0
+>     text = "\n".join(lines[:k] + [B5_PREFIX] + lines[k:])
+>     rc, k_, n, has = old.run_selftest_copy(text, tmp, "b5")
+>     dead = rc != 0 or not has or k_ != n
+>     print("%s clause=b5 state_blind_selftest rc=%s selftest=%d/%d failed=%d" % (PRED, rc, k_, n, dead))
+>     return dead
+> 
+> 
+> INVARIANCE = ("fs0", "max0", "fsmix0", "fsclient0", "fsagree0")
+> 
+> 
+> def invariance(tool, tmp):
+>     """Clause e: the same inputs, sandboxed (old.execute) and unsandboxed, must give the same stdout and rc."""
+>     ok_all = True
+>     for name, fn in FIXED:
+>         if name not in INVARIANCE:
+>             continue
+>         clients = INVARIANT_INPUTS[name]
+>         d = old.prepare(tmp, "inv-" + name)
+>         cpath = old.put(d, "c.json", json.dumps(clients))
+>         rpath = old.put(d, "r0.conf", GKCONF)
+>         argv = ["--clients", cpath, "--rules", rpath]
+>         rc1, out1, _e1 = old.execute(tool, d, argv)
+>         env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+>         try:
+>             p = subprocess.run([os.path.realpath(sys.executable), "-I", tool] + argv, cwd=d, env=env,
+>                                capture_output=True, timeout=30, stdin=subprocess.DEVNULL)
+>             rc2, out2 = p.returncode, p.stdout
+>         except subprocess.TimeoutExpired:
+>             rc2, out2 = None, b""
+>         same = rc1 == rc2 and out1 == out2 and rc1 is not None
+>         ok_all &= same
+>         print("%s clause=e fixture=%s sandbox_rc=%s plain_rc=%s same=%d" % (PRED, name, rc1, rc2, same))
+>     return ok_all
+> 
+> 
+336c415,420
+<     src = open(args.tool, "rb").read() if args.tool else old.git(repo, "show", "%s:%s" % (rev, TOOL))
+---
+>     if args.work and not os.path.isdir(args.work):
+>         raise Setup("work_dir_missing %s" % args.work)
+>     try:
+>         src = open(args.tool, "rb").read() if args.tool else old.git(repo, "show", "%s:%s" % (rev, TOOL))
+>     except OSError as exc:
+>         raise Setup("unreadable_tool %s" % exc)
+338c422
+<     cl = {"a": int(present), "b": 0, "b4": 0, "g": 0, "r": 0}
+---
+>     cl = {"a": int(present), "b": 0, "b4": 0, "b5": 0, "e": 0, "g": 0, "r": 0}
+357a442,443
+>                 cl["b5"] = int(state_blind(src.decode("utf-8", "replace"), tmp))
+>             cl["e"] = int(invariance(tool, tmp))
