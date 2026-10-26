@@ -1,0 +1,56 @@
+# seat receipt: receipt paths named by the data commit (1959770) that do not exist there (mado round 43, w2 CritClaimSizingData)
+$ git show 1959770:corpus/lessons/round-43.md | grep -n "after-data\|after-tip"
+150:(`quality/counters/c2-r43-gkeep-entry.py:396-446`); measured at the data commit: `receipts/c2-after-data.txt`.
+169:w1 has 38 dispatched seats (`.ufo/waves/round-43/w1-spec.json`) and this round's verdict is read from the two counters at the data commit (`receipts/c1-after-data.txt`, `receipts/c2-after-data.txt`).
+205:- C1 at the data commit: `receipts/c1-after-data.txt`; at the tip: `receipts/c1-after-tip.txt`. Base: `fixtures=0/37
+207:- C2 (v2) at the data commit: `receipts/c2-after-data.txt`; at the tip: `receipts/c2-after-tip.txt`. Base: `admitted=0/1`
+exit=0
+
+$ for p in receipts/c1-after-data.txt receipts/c2-after-data.txt receipts/c1-after-tip.txt receipts/c2-after-tip.txt; do git cat-file -e 1959770:.ufo/waves/round-43/$p; done
+c1-after-data.txt @1959770: ABSENT
+c2-after-data.txt @1959770: ABSENT
+c1-after-tip.txt @1959770: ABSENT
+c2-after-tip.txt @1959770: ABSENT
+exit=0
+
+$ same four at HEAD 2a3707c
+c1-after-data.txt @HEAD: PRESENT
+c2-after-data.txt @HEAD: PRESENT
+c1-after-tip.txt @HEAD: ABSENT
+c2-after-tip.txt @HEAD: ABSENT
+exit=0
+
+$ git ls-tree --name-only HEAD .ufo/waves/round-43/receipts/
+.ufo/waves/round-43/receipts/axis-base.txt
+.ufo/waves/round-43/receipts/base-rev.txt
+.ufo/waves/round-43/receipts/c1-after-data.txt
+.ufo/waves/round-43/receipts/c1-before-base.txt
+.ufo/waves/round-43/receipts/c2-after-data.txt
+.ufo/waves/round-43/receipts/c2-before-base.txt
+.ufo/waves/round-43/receipts/c2-v1-after-data.txt
+.ufo/waves/round-43/receipts/c2-v1-to-v2.diff
+.ufo/waves/round-43/receipts/c2-v2-before-base.txt
+.ufo/waves/round-43/receipts/census-after-data.txt
+.ufo/waves/round-43/receipts/census-before.txt
+.ufo/waves/round-43/receipts/ctl-c1.txt
+.ufo/waves/round-43/receipts/ctl-c2-v2.txt
+.ufo/waves/round-43/receipts/ctl-c2.txt
+.ufo/waves/round-43/receipts/fetch-sha256.txt
+.ufo/waves/round-43/receipts/freeze-counter-check.txt
+.ufo/waves/round-43/receipts/live-geometry-host.txt
+exit=0
+
+# the entry (committed at 1959770) names three w1 paths
+$ git show 1959770:corpus/knowledge/hyprland-gkeep-geometry-r43.md | grep -n "ExecOracleGkeep\|ExecGoalVsValue"
+56:**INF** So a `clients -j` size equal to the rule's size says that the compositor's target equals the rule, not that the window is drawn at that size at that moment: while the open animation runs, the current value differs from the goal (the host's `windowsIn` animation uses `popin 87%`, `.ufo/waves/round-43/w1/ExecGoalVsValue/finding.md`), and no read verb of the request socket exposes the current value.
+62:**INF** Two agreeing numbers are not one observation: the client's default size and the rule's size coincide, so a 420x500 report alone cannot say which of the two set it. In the isolated round-27 oracle (a Hyprland 0.56.2 nested under tinywl in bubblewrap, never the host session) a client with that app id reported `"size": [420, 500]`, `"floating": true` under the host's three rules; with the size line removed the same client reported its own 200x200 buffer, with `size 300 300` it reported 300x300, and with the `float on` line removed it was tiled (`.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt`, `10-cases.txt`). In that oracle, the rule, not the client, is the origin of 420x500.
+exit=0
+
+$ for p in ExecOracleGkeep/20-observation.txt ExecOracleGkeep/10-cases.txt ExecGoalVsValue/finding.md; do git cat-file -e 1959770:.ufo/waves/round-43/w1/$p; done
+ExecOracleGkeep/20-observation.txt @1959770: ABSENT
+ExecOracleGkeep/20-observation.txt @HEAD: PRESENT
+ExecOracleGkeep/10-cases.txt @1959770: ABSENT
+ExecOracleGkeep/10-cases.txt @HEAD: PRESENT
+ExecGoalVsValue/finding.md @1959770: ABSENT
+ExecGoalVsValue/finding.md @HEAD: PRESENT
+exit=0

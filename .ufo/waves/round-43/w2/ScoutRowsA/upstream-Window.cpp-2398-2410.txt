@@ -1,0 +1,13 @@
+        Desktop::windowState()->raise(m_self.lock());
+    } else {
+        bool setPseudo = false;
+
+        if (m_ruleApplicator->static_.size) {
+            const auto COMPUTED = calculateExpression(*m_ruleApplicator->static_.size);
+            if (!COMPUTED)
+                Log::logger->log(Log::ERR, "failed to parse {} as an expression", m_ruleApplicator->static_.size->toString());
+            else {
+                setPseudo = true;
+                m_target->setPseudoSize(*COMPUTED);
+                setHidden(false);
+            }

@@ -55,8 +55,8 @@ word-bounded occurrence, outside comments, absent from every other cited receipt
 `Hyprland-WindowRuleApplicator.cpp:426`, `Hyprland-DefaultFloatingAlgorithm.cpp:56`, `Hyprland-Target.cpp:10`, `Hyprland-WindowTarget.cpp:70-71`,
 `Hyprland-GeometricMovableAnimated.cpp:19`, `Hyprland-HyprCtl.cpp:428-429`, `host-gkeep.conf:4`, `host-clients-r43.json:50-51`, `gkeep-ui-excerpt.py:33-34`
 (ranges where the quote spans two receipt lines; the counter reads the start line, M43-7).
-The scribe drafts' first quotes for HyprCtl.cpp and the clients JSON occurred twice in their receipts (lines 427/447-448; two 1720x1414
-objects), which v2's d+ refuses; the quotes above replace them.
+The scribe drafts' first HyprCtl.cpp quote occurred twice in its receipt (lines 427 and 447-448) and ScrEntryB's clients-JSON quote four
+times (one per 1720x1414 object, lines 6/21/36/51; `w2/RevLesson.md` F3), which v2's d+ refuses; the quotes above replace them.
 
 **Held rows instead of two new rows (the drafting seat's caveat 1, resolved (b)).** The lane already holds `S155`
 (`…/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/windowRule/WindowRuleApplicator.cpp`) and `S158` (`…/efb5099…/src/debug/HyprCtl.cpp`),
@@ -129,14 +129,14 @@ quotes the report as "46 controls (absent base, 3 do-nothing, 5 cheats, 37 mutan
 `receipts/ctl-c1.txt:1` reads `controls=46` and `:50` reads `0 of 47`; the receipt holds 48 `ok` lines of which 38 are `M*` mutants
 (`grep -cE '^ok  M[0-9]' receipts/ctl-c1.txt` → 38), and the runner prints `controls=%d` as `len(jobs) - 2`, excluding REF and BASE-absent
 (`.ufo/waves/round-42/ctl/run-c1-controls.py:139`). Three numbers (45, 46, 47) name three different sets. Captured-by: none — the report's own
-prose; the closure caught it. Fix: `registration.md:59` states the count and its definition once for round 43, and this lesson uses only that
+prose; the closure caught it. Fix: `registration.md:59-61` states the count and its definition once for round 43, and this lesson uses only that
 form. Shown able to fail: not shown this round — no checker recounts a report's tally (`grep -cE '^ok  M[0-9]' receipts/ctl-c1.txt` → 38 is the manual check); open.
 
 **M43-3 — a SHONEN box pointed at a LOG.md entry that was never written, and the assertion behind it lived only in the registration.** Class: a
 pointer to a run that was never recorded. Evidence: the closure's spot-check row (`round-42-verifier-spotcheck.md:66`) reproduces the live run
 and records that "the report says the run is 'recorded in LOG.md Round 42'", but `git grep -n NO_MATCHING a62f2e0 -- LOG.md` finds nothing
 (re-run by this seat: no hit) and the only tracked assertion is round-42 `registration.md:24`; at `a62f2e0` the `NO_MATCHING_CLIENT` string
-appears in `ctl-ref-tool.py.txt`, `run-c1-controls.py`, `make-w1-spec.py`, `w1-spec.json`, the counter, and `registration.md` — never in a run
+appears in `ctl-ref-tool.py.txt`, `run-c1-controls.py`, `make-w1-spec.py`, `w1-spec.json`, `w1-dispatch.json`, the counter, and `registration.md` — never in a run
 receipt. Captured-by: none in round 42; the closure. Fix: this round's wave dir carries `.ufo/waves/round-43/receipts/live-geometry-host.txt` — untracked at this seat's read, landed by the data commit — (11 lines:
 `hyprctl version`, the two sha256 sums, the run, `verdict=NO_MATCHING_CLIENT`, `exit=3`), so the box can point at bytes instead of at a claim;
 the box itself: the report's SHONEN box 2. Shown able to fail: `grep -c 'verdict=NO_MATCHING_CLIENT' .ufo/waves/round-43/receipts/live-geometry-host.txt` → 1 here, 0 on round 42's
@@ -147,7 +147,8 @@ frontier step skipped, not deferred. Evidence: `git ls-tree -r --name-only a62f2
 states the same: "0 of 59 files"), so there was no `## Gate`, no `## Mistakes` and no admit/refuse decision to sample; the closure had to sample
 non-gate decisions instead (`:58-59`). Captured-by: none at the round; the closure's step-1 read. Fix: this file, landed before the data commit.
 Shown able to fail: PRED-C2-r43 clause d — a lesson with no `## Gate` prints `gates=0 bound=0` for every cited id and `clause=d:0`
-(`quality/counters/c2-r43-gkeep-entry.py:396-446`); measured at the data commit: `receipts/c2-after-data.txt`.
+(`quality/counters/c2-r43-gkeep-entry.py:396-446`); the fail was demonstrated by w2 seat `RevLesson` on a scratch fixture with the Gate section removed (`gates=0 bound=0`, `d:0`,
+`admitted=0/1`, `.ufo/waves/round-43/w2/RevLesson/receipt-nogate-demo.txt`); the pass at the data commit is `receipts/c2-after-data.txt`.
 
 **M43-5 — a generated excerpt's header named lines 446-495 of a 488-line file and its body carried one extra blank line.** Class: a generated
 artifact whose header was asserted rather than computed. Evidence: round-42 `fetch/gkeep-ui-excerpt.py:1` says "lines 446-495", while
@@ -233,6 +234,13 @@ on the corrected bytes (`receipts/c2-after-tip.txt`), C1 is untouched (`receipts
   followed: 3 of the host's 7 size rules) and the backtracking hang with its `timeout 5` guard are now stated.
 - **Locator checker limits** (`w2/CritLocatorGate.md`): numbers are never compared and a shared identifier can pass a wrong range;
   criterion 77 states a stronger rule than the checker enforces. Open; the checker is a floor, not the rule.
+
+- **Dating** (`w2/RevLesson.md` F6): this file landed in the data commit `1959770`, but several things it names landed later — LOG.md
+  Round 43 and the w1 evidence at `2a3707c`, the after-tip receipts and `receipts/census-after.txt` with the closing commit, the report on
+  the fleet repo after that. Read every pointer at the lane tip, not at `1959770`.
+- **Degraded seat**: w2 `ScoutRowsD` returned only a summary in `w2-results.json` (its `rows.md` was never written and its report file
+  says `status: started`); its S295-S297 findings (two-line Gate quotes, S296 teaches overreach, S297 kind/scope/anchor wording) are kept
+  from that summary and are part of the supersession note above.
 
 ## Spot-check (non-author closure; placeholders)
 

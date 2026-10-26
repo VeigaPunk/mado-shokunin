@@ -1,0 +1,51 @@
+# strace of --selftest and of a real run (tool copy sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99)
+
+## selftest: strace -f -e trace=openat,write,clone,clone3,fork,vfork,execve,socket,connect python3 -I mado-geometry.py --selftest
+stdout: MADO_GEOMETRY_SELFTEST: 73/73 passed
+
+$ openat of the three selftest fixture paths:
+993770 openat(AT_FDCWD, "/nonexistent/none", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+993770 openat(AT_FDCWD, "/", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+993770 openat(AT_FDCWD, "/dev/null", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+
+$ write() targets seen:
+write(1
+
+$ count of O_WRONLY or O_CREAT anywhere:
+0
+$ count of socket(/connect(/clone/fork:
+0
+$ count of execve(:
+1
+
+## source lines holding the reads that selftest performs
+77:def read_regular(path):
+258:        data = read_regular(clients)
+259:    texts = [read_regular(p).decode("utf-8", "replace") for p in rules]
+388:            read_regular(path)
+
+
+## real run: strace -f -e trace=openat,write,clone,clone3,fork,vfork,execve,socket,connect python3 -I mado-geometry.py --clients clients.json --rules ~/.config/hypr/gkeep.conf
+exit=3
+stdout:
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+$ openat of the caller-supplied paths (and any other /home path that is not python runtime):
+993816 openat(AT_FDCWD, "clients.json", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/home/vgpnk/.config/hypr/gkeep.conf", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+
+$ every openat outside the python runtime/libc/locale:
+993816 openat(AT_FDCWD, "/usr/lib/libpython3.14.so.1.0", O_RDONLY|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/usr/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/usr/lib/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/usr/lib/gconv/gconv-modules.cache", O_RDONLY|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "clients.json", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+993816 openat(AT_FDCWD, "/home/vgpnk/.config/hypr/gkeep.conf", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+
+$ count of socket(/connect(/clone/fork:
+0
+$ execve line (the caller-started interpreter itself):
+993816 execve("/usr/bin/python3", ["python3", "-I", "mado-geometry.py", "--clients", "clients.json", "--rules", "/home/vgpnk/.config/hypr/gkeep.c"...], 0x7ffc376f9418 /* 

@@ -1,0 +1,52 @@
+== entry §4 lines (corpus/knowledge/hyprland-gkeep-geometry-r43.md) ==
+62:**INF** Two agreeing numbers are not one observation: the client's default size and the rule's size coincide, so a 420x500 report alone cannot say which of the two set it. In the isolated round-27 oracle (a Hyprland 0.56.2 nested under tinywl in bubblewrap, never the host session) a client with that app id reported `"size": [420, 500]`, `"floating": true` under the host's three rules; with the size line removed the same client reported its own 200x200 buffer, with `size 300 300` it reported 300x300, and with the `float on` line removed it was tiled (`.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt`, `10-cases.txt`). In that oracle, the rule, not the client, is the origin of 420x500.
+
+== entry §4 paragraph with line numbers ==
+58:## §4 The client's half
+59:
+60:**OBS** S297 - the app asks for the same size the rule asks for: `window.set_default_size(420, 500) self.board = Board(window)` (gkeep-ui-excerpt.py:33-34), on a `Gtk.ApplicationWindow` of the application whose id is `org.omarchy.gkeep` (line 6).
+61:
+62:**INF** Two agreeing numbers are not one observation: the client's default size and the rule's size coincide, so a 420x500 report alone cannot say which of the two set it. In the isolated round-27 oracle (a Hyprland 0.56.2 nested under tinywl in bubblewrap, never the host session) a client with that app id reported `"size": [420, 500]`, `"floating": true` under the host's three rules; with the size line removed the same client reported its own 200x200 buffer, with `size 300 300` it reported 300x300, and with the `float on` line removed it was tiled (`.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt`, `10-cases.txt`). In that oracle, the rule, not the client, is the origin of 420x500.
+63:
+64:## §5 Today's census on the host
+65:
+66:**OBS** S296 - the pinned dump holds four mapped clients and none is floating, for example `"class": "chromium", "floating": false,` (host-clients-r43.json:50-51); no object has the class `org.omarchy.gkeep`.
+67:
+68:**UNK** No gkeep window was open when the dump was taken, so this host session has not been seen to give gkeep 420x500; `tools/mado-geometry.py` answers `NO_MATCHING_CLIENT` today (`.ufo/waves/round-43/receipts/live-geometry-host.txt`) and is the read-only check to run while gkeep is open.
+69:
+
+== gkeep-shm.c cited range vs actual lines ==
+   148	    s.toplevel = xdg_surface_get_toplevel(s.xdg_surface);
+   149	    xdg_toplevel_add_listener(s.toplevel, &toplevel_listener, &s);
+   150	    xdg_toplevel_set_app_id(s.toplevel, s.app_id);
+   151	    xdg_toplevel_set_title(s.toplevel, "gkeep-oracle-probe");
+   152	    /* deliberately no set_min_size / set_max_size / set_fullscreen / set_maximized unless asked */
+   153	    if (s.min_w > 0 && s.min_h > 0) {
+   154	        xdg_toplevel_set_min_size(s.toplevel, s.min_w, s.min_h);
+   155	        fprintf(stderr, "CLIENT_MIN_SIZE %dx%d\n", s.min_w, s.min_h);
+   156	    }
+   157	    wl_surface_attach(s.surface, s.buffer, 0, 0);
+   158	    wl_surface_damage_buffer(s.surface, 0, 0, s.width, s.height);
+   159	    wl_surface_commit(s.surface);
+   160	
+
+== seat-doc locators for the client ==
+.ufo/waves/round-43/w1/ExecOracleGkeep.md:46:(`gkeep-shm.c:152-164`).
+.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt:24:sets app_id and title, attaches a 200x200 shm buffer and commits (gkeep-shm.c:156-164); the only
+.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt:25:path that sends a size request is the optional --min-size flag (gkeep-shm.c:152-155).
+
+== receipt line anchors ==
+8: "client_sha": "227cf4191871be51ce8daa44f95c73b627da2d347649511b3d24b44c4a81f9c4",
+21:   "floating": true,
+36:   "size": [
+67:   "floating": true,
+82:   "size": [
+427:  "floating": true,
+8: "client_sha": "a3319a744d0bda04851d12bee95c7918342ebfb267fcb541ad67b95e073842c2",
+36:   "size": [
+82:   "size": [
+425:  "size": [
+7: "client_log": "CLIENT_MIN_SIZE 800x700\nTOPLEVEL_CONFIGURE w=420 h=500\nCLIENT_READY app_id=org.omarchy.gkeep buffer=200x200\nTOPLEVEL_CONFIGURE w=0 h=0\nDISPLAY_DISPATCH_END\n",
+36:   "size": [
+82:   "size": [
+425:  "size": [

@@ -1,0 +1,19 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/ctl/v2-forgeries/forge.py	2026-10-26 04:46:00.461406671 -0300
++++ forge/forge.py	2026-10-26 05:38:18.541939371 -0300
+@@ -15,10 +15,12 @@
+ import tempfile
+ 
+ LANE = "/home/vgpnk/Projects/shokunin/mado-shokunin"
+-WORK = "/fast/scratch/hyaku/mado-r43/L1/forge"
+-SEAT = os.path.join(LANE, ".ufo/waves/round-43/ctl/v2-forgeries")
+-COUNTER = os.path.join(LANE, "quality/counters/c2-r43-gkeep-entry-v2.py")
+-CTL = os.path.join(LANE, ".ufo/waves/round-43/ctl/run-c2-controls-v2.py")
++WORK = "/fast/scratch/hyaku/mado-r43/MutC2V2/forge"
++SEAT = "/fast/scratch/hyaku/mado-r43/MutC2V2/forge/dumped-fixtures"
++COUNTER = os.environ.get(
++    "MUTANT_COUNTER",
++    os.path.join(LANE, "quality/counters/c2-r43-gkeep-entry-v2.py"))
++CTL = "/fast/scratch/hyaku/mado-r43/MutC2V2/run-c2-controls-v2.py"
+ ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+ os.environ["TMPDIR"] = os.path.join(WORK, "tmp")
+ os.makedirs(os.environ["TMPDIR"], exist_ok=True)

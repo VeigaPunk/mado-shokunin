@@ -1,0 +1,44 @@
+# What the landed SKILL.md / PROVINCE.md actually say about the C1 tool's support limit
+# files: receipts/SKILL-data.md, receipts/PROVINCE-data.md (blobs at 1959770657f1f8665097c1aed4be6c1cbb07139f)
+
+$ grep -n "unsupported" SKILL-data.md
+225:| `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf` | whether a `windowrule = size W H, match:class RX` line's size matches the size the compositor reports for the client that line matches: a read-only join of config bytes and one `clients` dump, per matched client AGREE / DIFFER / TILED / BADSIZE; `--selftest` | host run 2026-10-26 (no gkeep window open): `MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT`, rc 3; the size line it parsed: `MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$`; per-verdict licence in § "Rule size versus reported size" |
+273:| NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
+284:    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+$ sed -n "246,290p" SKILL-data.md | grep -n "unsupported\\|source\\|match:tag\\|match:title\\|multi"
+28:| NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
+39:    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+(no output above = the subsection never names the counter's meaning, source statements, or the tag/title forms)
+
+$ grep -c "match:tag" SKILL-data.md ; grep -c "match:title" SKILL-data.md ; grep -c "windowrulev2" SKILL-data.md
+0
+0
+0
+
+$ grep -n "supported" SKILL-data.md
+225:| `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf` | whether a `windowrule = size W H, match:class RX` line's size matches the size the compositor reports for the client that line matches: a read-only join of config bytes and one `clients` dump, per matched client AGREE / DIFFER / TILED / BADSIZE; `--selftest` | host run 2026-10-26 (no gkeep window open): `MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT`, rc 3; the size line it parsed: `MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$`; per-verdict licence in § "Rule size versus reported size" |
+252:`MADO_GEOM_RULE:` line per supported rule, one `MADO_GEOM_CLIENT:` line per matched client, then a `MADO_GEOMETRY:` summary.
+272:| NO_MATCHING_CLIENT (rc 3) | no mapped client matched any supported `size` rule — a null observation | that the rule works, or that the file declares none |
+273:| NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
+284:    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+441:| "Is hyprlang still supported?" | Lua is the forward config since 0.55; hyprlang kept "for 1 - 2 releases starting from 0.55" | `hyprctl version`; `hyprctl systeminfo` `configProvider`; re-check on every release (MADO-R12-2) |
+517:For the gate's supported declared-source policy, every direct target
+2064:Final classifier restores v2's bounded ownership/caller-argument fixes (SHA256cd9da20c), not v3's unsafe consumer-sweep suppression. The latter could hide callbacks escaping through container/attribute stores. Primary57/57 does not cure supplemental2/4 or source-supported caller-frame leakage (`.ufo/waves/round-22/residual/ResidualForward.md`; sourced note's final withdrawal). Strict C1 and unchanged-row historical C2 targets remain unprovable/not admitted. The46/46 artifact audit and killed digest-check mutant do not supply semantic precision, outside-lane admission, host clearance or authorization to advance the round.
+
+$ sed -n "32p" PROVINCE-data.md | fold -w 200 | head -40
+| `tools/mado-geometry.py` | the bytes of one or more caller-supplied Hyprland config files (`--rules`, each read whole, 1048576 B cap; a missing, unreadable, directory, FIFO or any non-regular path i
+s a setup error) and one caller-supplied `hyprctl clients -j` dump (`--clients`, a regular file or `-` for standard input, at most 1048577 B, UTF-8 JSON holding a list of objects); no compositor socke
+t, no Wayland client, no network, no config tree, no process started | nothing — stdout only (`MADO_GEOM_RULE:`, `MADO_GEOM_CLIENT:`, `MADO_GEOMETRY:` lines); `--selftest` opens no file and writes not
+hing (its cases are in-memory strings; `grep -n 'mkfifo\|O_WRONLY\|O_CREAT' tools/mado-geometry.py` finds none) | mado, round 43 (a read-only join of a rule's declared size against the goal box the co
+mpositor prints; it never reads the compositor itself — the caller supplies the dump — and an AGREE verdict says nothing about the rendered size, the client's own request or which rule wrote the box; 
+the operator applies any rule change) |
+
+$ grep -o "\\`--selftest\\` opens no file and writes nothing[^;]*" PROVINCE-data.md
+`--selftest` opens no file and writes nothing (its cases are in-memory strings
+
+$ grep -o "at most 1048577 B" PROVINCE-data.md
+at most 1048577 B
+
+$ grep -o "the matched client is not floating, so the first-map floating branch[^:]*" SKILL-data.md
+the matched client is not floating, so the first-map floating branch that reads `static_.size` never ran for it

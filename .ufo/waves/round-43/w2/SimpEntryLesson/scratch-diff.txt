@@ -1,0 +1,119 @@
+# scratch clone of the lane at the data commit 1959770657f1f8665097c1aed4be6c1cbb07139f, with the SimpEntryLesson deletions applied
+# clone: /fast/scratch/hyaku/mado-r43/SimpEntryLesson/lane (deleted at seat end)
+
+commit c8c3769472f8f7c27302d9640fe328950dc7728b
+scratch: SimpEntryLesson dead-weight deletions
+
+ SKILL.md                                        |  8 +++-----
+ corpus/knowledge/hyprland-gkeep-geometry-r43.md |  2 +-
+ corpus/lessons/round-43.md                      | 18 +++++++++---------
+ 3 files changed, 13 insertions(+), 15 deletions(-)
+
+commit c8c3769472f8f7c27302d9640fe328950dc7728b
+Author: SimpEntryLesson <simp@local>
+Date:   Mon Oct 26 05:32:32 2026 -0300
+
+    scratch: SimpEntryLesson dead-weight deletions
+
+diff --git a/SKILL.md b/SKILL.md
+index aa794bba..00ce79de 100644
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -275,17 +275,15 @@ Per-verdict licence — a verdict reads two printed values, it never calls a fau
+ Exit map: 0 `OK` · 1 `DIFFER` (at least one matched client differs) · 2 `SETUP` (usage | unreadable | too_large |
+ bad_json) · 3 `NO_MATCHING_CLIENT` · 4 `NO_SIZE_RULES`.
+ 
+-Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
+-clients, so nothing matches.
++Host run 2026-10-26 with no gkeep window open:
+ 
+     $ hyprctl clients -j | python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+     MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+     MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+ 
+-NO_MATCHING_CLIENT is not "the rule works": it says only that no mapped window carried the class. What a live gkeep
+-window would report needs that window open — an operator act, not a mado probe, and the rendered size after the
+-animation stays `[UNK]` either way.
++What a live gkeep window would report needs that window open — an operator act, not a mado probe, and the rendered size
++after the animation stays `[UNK]`.
+ 
+ ### Mutating commands — operator only, mado never runs
+ 
+diff --git a/corpus/knowledge/hyprland-gkeep-geometry-r43.md b/corpus/knowledge/hyprland-gkeep-geometry-r43.md
+index 56d2c393..1944d710 100644
+--- a/corpus/knowledge/hyprland-gkeep-geometry-r43.md
++++ b/corpus/knowledge/hyprland-gkeep-geometry-r43.md
+@@ -75,6 +75,6 @@ gkeep request default_size=420x500 application_id=org.omarchy.gkeep
+ 
+ ## What this entry does not establish
+ 
+-- The current (drawn) size of a gkeep window at any moment on the host; the GOAL is what every read verb reports.
++- The current (drawn) size of a gkeep window at any moment on the host.
+ - What happens after the first map (a user resize, a monitor change, a later rule reload): the size rule is evaluated on first map only, per the branch quoted above.
+ - Behaviour on any Hyprland other than 0.56.2 at `efb5099`.
+diff --git a/corpus/lessons/round-43.md b/corpus/lessons/round-43.md
+index 6056542c..9d220b25 100644
+--- a/corpus/lessons/round-43.md
++++ b/corpus/lessons/round-43.md
+@@ -26,8 +26,8 @@ Axes: every published axis ties at its maximum at base (`receipts/axis-base.txt`
+ 
+ **Access date.** Every row opened this round carries `opened 2026-10-26` — S290-S297 are all new rows (the lane registry tops at S289 = 226
+ rows; `grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` prints 226 at this round's base) — and the entry's header
+-carries exactly one `verified-at: 2026-10-26` (PRED-C2-r43 clauses b and c). No held row's opened/recheck date changes this round; the only
+-held-row edits this round are the used-by additions on S155 and S158, logged below.
++carries exactly one `verified-at: 2026-10-26` (PRED-C2-r43 clauses b and c). No held row's `opened`/`recheck` cell changes this round; the used-by
++additions are logged below.
+ 
+ ## Gate
+ 
+@@ -71,7 +71,7 @@ reservation S290-S299 shrinks to S290-S297; S298 and S299 stay free).
+ 
+ | candidate | scope (PROVINCE) | held | quality bar | verdict |
+ |---|---|---|---|---|
+-| `gkeep-size-to-real-size-r11.md` | in (upstream code at the host's tag, host rule file) | the lane holds no rendered-geometry text at base (`git grep -ciE 'set_default_size\|GEOMETRIC_GOAL\|RE2::FullMatch\|rendered geometry' a35cfdf -- corpus/knowledge PROVINCE.md SKILL.md tools` finds none) | four of its five sources are this round's pins (S302-S305 ↔ S291-S294); its `S310` host receipt is re-grounded as S295/S296 | **admitted as the successor** (`ADMIT` above) |
++| `gkeep-size-to-real-size-r11.md` | in (upstream code at the host's tag, host rule file) | the lane holds no rendered-geometry text at base (`git grep -ciE 'set_default_size|GEOMETRIC_GOAL|RE2::FullMatch|rendered geometry' a35cfdf -- corpus/knowledge PROVINCE.md SKILL.md tools` finds none) | four of its five sources are this round's pins (S302-S305 ↔ S291-S294); its `S310` host receipt is re-grounded as S295/S296 | **admitted as the successor** (`ADMIT` above) |
+ | `gkeep-size-rule-application-r10.md` | in | — | its §1 inference ("the number the compositor reports is whatever the client actually used") is refuted by the pinned path: S291 writes the rule's value into `windowGeometry`, S293 pushes the target box onto the window. The package's own r11 §2 says so | **refused**; flip if a pinned source shows the reported size coming from the client's acknowledgement instead of the rule |
+ | `gkeep-geometry-unobservable-r8.md` | in | — | superseded twice (r9 amends it, r10-r11 amend the chain); its "nothing else is missing" residual predates the two gates r13/r14 found; its cited receipt path `lanes/mado/round8/…` does not exist in this lane (`git ls-tree -r --name-only HEAD \| grep -c 'round8/fetch'` → 0) | **refused**; flip if a round-43 row re-sources its S275 identity receipt inside this lane |
+ | `gkeep-observation-route-r11.md` | in | — | one source (`S310`), a restatement of its sibling round; the observation route it names is now sourced directly as held S158 (`w->size(GEOMETRIC_GOAL)`) | **refused** as a duplicate; flip if an independent witness for the observation route is added |
+@@ -90,7 +90,7 @@ reservation S290-S299 shrinks to S290-S297; S298 and S299 stay free).
+   `S158` `used-by` `…, corpus/knowledge/hyprctl-getoption-native-forms-r40.md` → `…, corpus/knowledge/hyprctl-getoption-native-forms-r40.md, corpus/knowledge/hyprland-gkeep-geometry-r43.md` (one item appended; cells 1-10 untouched).
+ - No row's `status` and no row's `recheck` cell changes this round; S290-S294 carry `on-release`, S295-S297 carry `2027-01-24` (own-work, 90 days);
+   the entry's own `recheck: 90d` names the triggers.
+-- Census after the data commit: `receipts/census-after.txt` (expected: the same W04 ×7 (S030, S042, S045, S097, S119, S120, S121) + W01 S277 set as `receipts/census-before.txt`, exit 0).
++- Census after the data commit: `receipts/census-after-data.txt` — the same W04 ×7 (S030, S042, S045, S097, S119, S120, S121) + W01 S277 set as `receipts/census-before.txt`, `mado ok`, exit 0.
+ 
+ ## Round-42 closure items (from `corpus/lessons/round-42-verifier-spotcheck.md` §6)
+ 
+@@ -121,7 +121,7 @@ re-open the report copy of that string because the report commit `da384db4…` d
+ compares a prose locator against receipt line numbers; the non-author closure caught it one round later. Fix: this round quotes only bytes it
+ opened, and the entry's claim lines carry the counter-computed locator (`<receipt>:<line>`, the list above the ledger); the checker that must
+ show the fix can fail is the wave's own `ExecLocatorGate`, whose receipt is `.ufo/waves/round-43/w1/ExecLocatorGate/receipt.txt`, landed as `quality/check-locators.py`. Shown able to fail:
+-`receipt.txt:60` — `LOC …/LOG-a35cfdf.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS`, `CHECK_LOCATORS: locators=1 miss=1`,
++`receipt.txt:60-61` — `LOC …/LOG-a35cfdf.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS`, `CHECK_LOCATORS: locators=1 miss=1`,
+ and `miss=0` on the corrected copy (`:67`); the same MISS on round-42 `registration.md:61` (`:72-73`). It then caught M43-7 below.
+ 
+ **M43-2 — the C1 control tally was stated three ways in one report.** Class: a count published without its definition. Evidence: the closure
+@@ -167,7 +167,7 @@ to count). Evidence: the fleet digest reads `2026-10-26T01:03:32-03:00 complete
+ (`untracked=0`, `round-42-verifier-spotcheck.md:21`). Captured-by: none — a driver line and `git status` are both orthogonal to whether any work happened; the closure's manual read
+ is what named it. Fix: the round's outcome is read from its seat reports and counter receipts, never from the digest or the tree state; round 43's
+ w1 has 38 dispatched seats (`.ufo/waves/round-43/w1-spec.json`) and this round's verdict is read from the two counters at the data commit (`receipts/c1-after-data.txt`, `receipts/c2-after-data.txt`).
+-Shown able to fail: `ls .ufo/waves/round-42/w1/*.md 2>/dev/null | wc -l` → 0 against round 43's `ls .ufo/waves/round-43/w1/*.md | wc -l` → 36 or more; the count separates a
++Shown able to fail: `ls .ufo/waves/round-42/w1/*.md 2>/dev/null | wc -l` → 0 against round 43's `ls .ufo/waves/round-43/w1/*.md | wc -l` → 38; the count separates a
+ round whose wave ran from one whose wave never spawned. Not yet a gate (open).
+ 
+ **M43-7 — this round's own entry first carried single-line locators for quotes that span two receipt lines.** Class: the M43-1 class,
+@@ -202,10 +202,10 @@ receipt at all) likewise. Captured-by: §6 item 9 of the round prompt, which the
+ 
+ ## Census and measurements
+ 
+-- C1 at the data commit: `receipts/c1-after-data.txt`; at the tip: `receipts/c1-after-tip.txt`. Base: `fixtures=0/37
++- C1 at the data commit: `receipts/c1-after-data.txt`; the tip is measured by the spot-check command above. Base: `fixtures=0/37
+   tool=absent verdict=TARGET_MISSED` (`receipts/c1-before-base.txt`).
+-- C2 (v2) at the data commit: `receipts/c2-after-data.txt`; at the tip: `receipts/c2-after-tip.txt`. Base: `admitted=0/1`
+-  (`receipts/c2-before-base.txt`).
++- C2 (v2) at the data commit: `receipts/c2-after-data.txt`; the tip is measured by the spot-check command above. Base:
++  `admitted=0/1` (`receipts/c2-v2-before-base.txt`).
+ - Controls at the freeze (evidence-verified by this seat as bytes, not executed): `CTL_C1: controls=46` and `CTL_C1 VERDICT: PASS (controls
+   scoring TARGET_MET: 0 of 47; reference met: 1)` (`receipts/ctl-c1.txt:1`, `:50`); `CTL_C2: controls=74 correct=74/74`
+   (`receipts/ctl-c2.txt`: 74 `ok=1` lines, last line `CTL_C2: controls=74 correct=74/74`; v2: `receipts/ctl-c2-v2.txt`, the same tally).

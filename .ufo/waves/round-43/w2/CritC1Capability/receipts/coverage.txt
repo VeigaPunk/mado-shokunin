@@ -1,0 +1,57 @@
+# host rule set vs the tool, at data commit 1959770657f1f8665097c1aed4be6c1cbb07139f (host read-only, 2026-10-26)
+
+## 1. source closure of ~/.config/hypr/hyprland.conf (transitive, globs expanded)
+total=40
+$ wc -l sources.txt
+40
+
+## 2. windowrule lines in the closure, by effect
+    windowrule = size 875 600, match:class ^(org.omarchy.ai-usage)$
+FLOAT /home/vgpnk/.config/hypr/gkeep.conf:2 SUPPORTED
+    windowrule = float on, match:class ^(org.omarchy.gkeep)$
+SIZE /home/vgpnk/.config/hypr/gkeep.conf:4 SUPPORTED
+    windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$
+
+## 3. the tool over every closure file as --rules, and over hyprland.conf alone
+$ hyprctl clients -j > clients.json   # 3537 bytes, 4 clients
+$ python3 mado-geometry.py --clients clients.json --rules <40 closure files>
+MADO_GEOM_RULE: n=1 file=18 effect=float arg=on class=(Share|localsend)
+MADO_GEOM_RULE: n=2 file=18 effect=size arg=1100x700 class=localsend
+MADO_GEOM_RULE: n=3 file=22 effect=float arg=on class=steam
+MADO_GEOM_RULE: n=4 file=25 effect=float arg=on class=org.gnome.Calculator
+MADO_GEOM_RULE: n=5 file=25 effect=float arg=on class=org.omarchy.screensaver
+MADO_GEOM_RULE: n=6 file=39 effect=float arg=on class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=7 file=39 effect=size arg=875x600 class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=8 file=40 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=9 file=40 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=3 float_rules=6 other=61 unsupported=7 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+
+$ python3 mado-geometry.py --clients clients.json --rules ~/.config/hypr/hyprland.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+exit=4
+
+## 4. every size/float line in the closure, classified independently of the tool
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/localsend.conf:2 SUPPORTED
+SIZE /home/vgpnk/.local/share/omarchy/default/hypr/apps/localsend.conf:4 SUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf:4 UNSUPPORTED
+SIZE /home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf:6 UNSUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf:2 SUPPORTED
+SIZE /home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf:6 UNSUPPORTED
+SIZE /home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf:7 UNSUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf:2 UNSUPPORTED
+SIZE /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf:4 UNSUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf:8 SUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf:12 SUPPORTED
+FLOAT /home/vgpnk/.local/share/omarchy/default/hypr/apps/webcam-overlay.conf:2 UNSUPPORTED
+FLOAT /home/vgpnk/.config/hypr/ai-usage.conf:3 SUPPORTED
+SIZE /home/vgpnk/.config/hypr/ai-usage.conf:5 SUPPORTED
+FLOAT /home/vgpnk/.config/hypr/gkeep.conf:2 SUPPORTED
+SIZE /home/vgpnk/.config/hypr/gkeep.conf:4 SUPPORTED
+
+## 5. independent counts (python classify.py summary)
+closure_files=40 windowrule_lines=77 size_float_lines=16
+size_lines=7 supported=3 unsupported=4
+float_lines=9 supported=6 unsupported=3
+other=61
+unsupported_merged(size+float)=7

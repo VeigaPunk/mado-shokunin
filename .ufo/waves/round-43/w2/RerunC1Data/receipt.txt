@@ -1,0 +1,98 @@
+RerunC1Data — receipt: independent re-run of PRED-C1-r42 at the round-43 data commit
+Seat: .ufo/waves/round-43/w2/RerunC1Data/   Attacked: .ufo/waves/round-43/receipts/c1-after-data.txt
+Date: 2026-10-26
+
+== Environment (observed) ==
+host: linux 7.2.11-arch1-1 x64
+python3 -VV -> Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+bwrap --version -> bubblewrap 0.13.1
+counter (frozen, read-only): /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r42-geometry.py
+  sha256 ed78d6930545aedc1b529f06dd3f9bce0d1ead88832ae3f53a125263a316ff99
+  identical blob at revs 809dc2caef09d9cbf15a496e55a1b208803a3561 (round-42 freeze), a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f,
+  1959770657f1f8665097c1aed4be6c1cbb07139f (data), 2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa (w1-evidence tip)
+scratch: /fast/scratch/hyaku/mado-r43/RerunC1Data/ (clone only; removed after this receipt was copied)
+
+== Clone ==
+S=/fast/scratch/hyaku/mado-r43/RerunC1Data; D=$(mktemp -d -p "$S")  -> D=/fast/scratch/hyaku/mado-r43/RerunC1Data/tmp.nIlCar2Gci
+git clone -q --shared /home/vgpnk/Projects/shokunin/mado-shokunin "$D"        -> cloned
+git -C "$D" rev-parse --show-toplevel -> /fast/scratch/hyaku/mado-r43/RerunC1Data/tmp.nIlCar2Gci   (equals $D)
+No checkout of the lane worktree was needed: every run reads revs through `git -C "$D" show <rev>:<path>` with --repo "$D".
+
+== Tool blob identity (clause a input) ==
+git -C "$D" show 1959770657f1f8665097c1aed4be6c1cbb07139f:tools/mado-geometry.py | sha256sum
+  e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  -
+sha256sum .ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+  e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  .ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+  => byte-identical to the round-42 reference.
+git -C "$D" cat-file -e a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f:tools/mado-geometry.py  -> fails (ABSENT at base)
+git -C "$D" show 2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa:tools/mado-geometry.py | sha256sum
+  e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  -   (unchanged at tip)
+
+== Runs (each command verbatim; stderr empty in every run) ==
+run1  C1R42_TMP=$S python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r42-geometry.py --repo "$D" --rev 1959770657f1f8665097c1aed4be6c1cbb07139f
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=7f131378b08620f6
+  exit=0
+run2  (same, fresh nonce)
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=8682e74c0931ae7c
+  exit=0
+run3  (same, fresh nonce)
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=74851a7af63a7622
+  exit=0
+run4-replay  (same, --nonce 57661d91ef2f1d52 = the nonce printed in receipts/c1-after-data.txt)
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=57661d91ef2f1d52
+  exit=0
+run5-base  --rev a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+  PRED-C1-r42 clauses=a:0 b:0 b2:0 b3:0 g:0
+  PRED-C1-r42: fixtures=0/37 tool=absent verdict=TARGET_MISSED rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f nonce=6200a433b217cf5f
+  exit=1
+run6-tip (extra, supporting)  --rev 2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa nonce=43b3cfbf9f6bfe59
+  exit=0
+
+Full stdout of every run: run1.txt, run2.txt, run3.txt, run4-replay.txt, run5-base.txt, run6-tip.txt, run7-timed.txt; exit codes in the
+matching .rc files (run7-timed is described below with the replay section).
+
+== Nonce liveness (the fixtures are not fixed) ==
+clause=b2 site selection differs per nonce (so a fresh-nonce pass is not a replay of one fixed script):
+  run1        mutant0 report:232 forced | 1 evaluate:191 | 2 evaluate:208 | 3 evaluate:212 | 4 run:255 killed=0 | 5 parse_args:108 | sites=35 killed=5/6 forced_dead=1
+  run2        mutant0 report:233 forced | 1 parse_args:105 | 2 read_regular:95 killed=0 | 3 parse_args:108 | 4 evaluate:199 | 5 parse_rule_text:151 | sites=35 killed=5/6 forced_dead=1
+  run3        mutant0 report:233 forced | 1 parse_args:115 | 2 parse_args:108 | 3 parse_args:108 | 4 parse_args:110 | 5 parse_rule_text:149 | sites=35 killed=6/6 forced_dead=1
+  run4-replay mutant0 report:235 forced | 1 parse_args:115 | 2 report:232 | 3 evaluate:203 | 4 evaluate:212 | 5 run:253 killed=0 | sites=35 killed=5/6 forced_dead=1
+  run6-tip   mutant0 report:235 forced | 1 parse_args:105 | 2 parse_rule_text:147 | 3 matches:183 | 4 regex_ok:124 | 5 report:237 | sites=35 killed=6/6 forced_dead=1
+b2 needs the forced site plus >=3 of the other 5 killed; every run met it (5/6 or 6/6).
+
+== Replay vs the L1 receipt ==
+diff <(grep -v '^exit=' .ufo/waves/round-43/receipts/c1-after-data.txt) run4-replay.txt  -> no output (identical)
+  receipts/c1-after-data.txt  sha256 2d4cfe254729a8856f339004ee38b41564528a48422f26f77e4e77c064bec9e3 (50 lines incl. `exit=0`)
+  run4-replay.txt             sha256 f1c6a7d93c784800ace91e4b5254dfd5848b918e331fc7ad5680759011aef06d (49 lines; the receipt's 50th line is `exit=0`)
+The L1 nonce reproduces every one of its 49 stdout lines, including the b2 mutant sites, in a different clone, cwd and scratch dir.
+
+== Extra run (timed, load margin) ==
+run7-timed (extra, load margin)  --rev 1959770657f1f8665097c1aed4be6c1cbb07139f
+  PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=c036b4bda8622b9d
+  exit=0
+  wall: real 0m5.838s (run1: real 0m5.775s) with the 32-seat wave in flight.
+
+== No timeout path taken ==
+Across run1, run2, run3, run4-replay, run6-tip, run7-timed: 222/222 fixture lines are `fixture=<name> ok=1 ok`
+(grep -c 'fixture=.*ok=0' = 0 in every run file), so the 3-timeout breaker (w1 RevC1Counter F2) never fired here.
+
+== w1 findings re-checked at the data commit's tool blob (supporting; not new findings) ==
+Tool extracted as `git -C "$D" show 1959770…:tools/mado-geometry.py` -> tool-at-data.py (sha256 e3c2e471…, identical to the reference).
+- w1 MutRefSelftest U4 ("no fixture feeds a non-UTF-8 rules file"): rules file = b"windowrule = size 1 2, match:class a\n\xff\n",
+  clients = "[]" -> exit 3; stdout `MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a` and
+  `MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0
+  verdict=NO_MATCHING_CLIENT`; stderr empty (files u4.out, u4.err). Matches w1's account of the pristine tool; the counter has no
+  fixture over this input, so the U4 gap still holds at the data commit.
+- w1 MutRefSelftest N1 ("pristine reference violates the contract on deep-nested clients JSON"): clients = "[" * 60000 + "]" * 60000
+  -> exit 1, stdout empty, stderr ends `RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode
+  string` (files n1.out, n1.err), where the contract says `MADO_GEOMETRY: SETUP bad_json`, exit 2. Still holds at the data blob.
+  Neither input is scored by PRED-C1-r42; they qualify what the MET means, they do not contradict the receipt.
+
+== Verdict ==
+AGREE with receipts/c1-after-data.txt: at 1959770657f1f8665097c1aed4be6c1cbb07139f the frozen counter scores
+fixtures=37/37 tool=present verdict=TARGET_MET, exit 0, over four independent invocations (three fresh nonces + the L1 nonce),
+the tool blob is byte-identical to the round-42 reference (e3c2e471…), and the base rev a35cfdf is tool=absent / 0/37 / exit 1.
+No disagreement, no narrowing. (The counter's own declared residuals are untouched by this seat: a tool containing a model of the
+contract counts as an implementation; clause g is a name heuristic; the sandbox is detectable; Python `re` != RE2; live-application
+of a rule's size is not scored here.)

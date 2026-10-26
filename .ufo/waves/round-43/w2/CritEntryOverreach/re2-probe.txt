@@ -1,0 +1,25 @@
+== google-re2 version ==
+? /fast/scratch/hyaku/mado-r43/CritEntryOverreach/venv/lib/python3.13/site-packages/re2/__init__.py
+Options.dot_nl = False
+Options.one_line = False
+Options.log_errors = True
+Options.encoding = Encoding.UTF8
+
+== host regex under fullmatch, default Options ==
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'org.omarchy.gkeep'         -> True
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'org.omarchy.gkeep2'        -> False
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'orgXomarchy.gkeep'         -> True
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'org.omarchy.gkeep\n'       -> False
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'org.omarchy.gkeep\nX'      -> False
+FULLMATCH '^(org.omarchy.gkeep)$'            vs 'xorg.omarchy.gkeep'        -> False
+
+== dot semantics with default Options (C++ default dot_nl=false) ==
+FULLMATCH 'a.b'        vs 'a\nb'   -> False
+FULLMATCH 'a.b'        vs 'axb'    -> True
+FULLMATCH 'a.b'        vs 'a\rb'   -> True
+FULLMATCH '(?s)a.b'    vs 'a\nb'   -> True
+
+== anchor '$' before a trailing newline ==
+FULLMATCH 'abc$'       vs 'abc\n'  -> False
+FULLMATCH 'abc$'       vs 'abc'    -> True
+FULLMATCH '^abc$'      vs 'abc\n'  -> False

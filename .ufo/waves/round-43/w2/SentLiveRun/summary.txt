@@ -1,0 +1,38 @@
+# SentLiveRun strace summary - counts are computed over the tool process only
+# (for wrapper traces, after the last execve line; the bash harness's own
+#  syscalls - e.g. its /dev/tty open - are excluded)
+
+trace                      execve clone/fork  network write-open  mutating-fs nonblock-opens
+tr-devnull-fd.log               0          0        0          0            0         10
+tr-fifo-clients.log             1          0        0          0            0          8
+tr-fifo-fd.log                  0          0        0          0            0          8
+tr-fifo-rules.log               1          0        0          0            0          9
+tr-host-fd.log                  0          0        0          0            0          9
+tr-hostpipe.log                 1          0        0          0            0          8
+tr-ptmx-fd.log                  0          0        0          0            0          9
+tr-ptmx.log                     1          0        0          0            0          9
+tr-selftest.log                 1          0        0          0            0         10
+tr-stdin-closed3.log            1          0        0          0            0          7
+tr-write-host.log               0          0        0          0            0          8
+tr-write-selftest.log           0          0        0          0            0         10
+
+# nonblock-opens = openat(..., O_RDONLY|O_NONBLOCK|O_CLOEXEC); includes importlib's
+# O_DIRECTORY opens. The tool's own read_regular() opens are the two or three below:
+
+# the only write() syscalls of the tool (both traces):
+  write(1</fast/scratch/hyaku/mado-r43/SentLiveRun/out-write-host.txt>, "MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$\nMAD
+  write(1, "MADO_GEOMETRY_SELFTEST: 73/73 passed\n", 37) = 37
+
+  openat(AT_FDCWD, "/fast/scratch/hyaku/mado-r43/SentLiveRun/dump-now.json", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+  openat(AT_FDCWD, "/home/vgpnk/.config/hypr/gkeep.conf", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+  openat(AT_FDCWD, "/nonexistent/none", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+  openat(AT_FDCWD, "/", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+  openat(AT_FDCWD, "/dev/null", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+
+# scenario outcomes (captured stdout/stderr/rc):
+  selftest               stdout='MADO_GEOMETRY_SELFTEST: 73/73 passed' stderr_first='' stderr_bytes=0
+  host-pipe              stdout='MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT' stderr_first='' stderr_bytes=0
+  fifo-as-clients        stdout='MADO_GEOMETRY: SETUP unreadable' stderr_first='' stderr_bytes=0
+  fifo-as-rules          stdout='MADO_GEOMETRY: SETUP unreadable' stderr_first='' stderr_bytes=0
+  stdin-closed-wrapper   stdout='' stderr_first='Traceback (most recent call last):' stderr_bytes=405
+  ptmx-as-rules          stdout='MADO_GEOMETRY: SETUP unreadable' stderr_first='' stderr_bytes=0

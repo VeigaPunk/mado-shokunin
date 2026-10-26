@@ -1,0 +1,207 @@
+### selftest
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --selftest
+MADO_GEOMETRY_SELFTEST: 73/73 passed
+stderr_bytes=0 exit=0
+
+### no-args/usage
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### rules-too_large(1048577B)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules pad1048577.conf
+MADO_GEOMETRY: SETUP too_large
+stderr_bytes=0 exit=2
+
+### rules-exact-1048576B-accepted
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules pad1048576.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### rules-missing
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules /nonexistent/none
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-directory
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules dir
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-FIFO
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules fifo
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-chardev(/dev/null)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules /dev/null
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-devzero(/dev/zero)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules /dev/zero
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-perm000
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules noperm.conf
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### rules-symlink_to_regular
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules link.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### clients-FIFO
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients fifo --rules ctl.conf
+MADO_GEOMETRY: SETUP unreadable
+stderr_bytes=0 exit=2
+
+### clients-too_large(1048577B-file)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients pad1048577.conf --rules ctl.conf
+MADO_GEOMETRY: SETUP too_large
+stderr_bytes=0 exit=2
+
+### clients-exact-1048576B
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c1048576.json --rules ctl.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="-" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### bad_json-object
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients notlist.json --rules ctl.conf
+MADO_GEOMETRY: SETUP bad_json
+stderr_bytes=0 exit=2
+
+### exit0-AGREE
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules ctl.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### exit1-DIFFER
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_differ.json --rules ctl.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=11x20 want=10x20 float_rule=- verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr_bytes=0 exit=1
+
+### exit3-NO_MATCHING_CLIENT
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_nomatch.json --rules ctl.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr_bytes=0 exit=3
+
+### exit4-NO_SIZE_RULES
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules empty.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### windowrulev2-ignored-counted-nowhere
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules v2only.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### match:tag-unsupported
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules tagrule.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### match:title-conjunction-unsupported
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules titlematch.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### bracket-class-unsupported
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules bracket.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### regex-201-chars-unsupported
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules d201.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### regex-200-chars-supported
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients emptylist.json --rules d200.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+stderr_bytes=0 exit=3
+
+### duplicate-clients-flag
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --clients c_agree.json --rules ctl.conf
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### dangling-flag
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### bogus-flag
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules ctl.conf --bogus x
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### abbreviated-flag
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --client c_agree.json --rules ctl.conf
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### selftest-with-args
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --selftest --rules ctl.conf
+MADO_GEOMETRY: SETUP usage
+stderr_bytes=0 exit=2
+
+### two-files-last-size-wins(30x40 last)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules r10.conf --rules r30.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_RULE: n=2 file=2 effect=size arg=30x40 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=30x40 float_rule=- verdict=DIFFER
+MADO_GEOMETRY: rules=2 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+stderr_bytes=0 exit=1
+
+### two-files-last-size-wins(10x20 last)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules r30.conf --rules r10.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=30x40 class=a
+MADO_GEOM_RULE: n=2 file=2 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=2 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### tab-separated-rule
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules tabs.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### no-trailing-newline
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules noeol.conf
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+
+### BOM-prefixed-rule-line(vendor BOM)
+$ python3 /fast/scratch/hyaku/mado-r43/CritC1Capability/mado-geometry.py --clients c_agree.json --rules bom.conf
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+stderr_bytes=0 exit=4
+
+### stdin-1048577-bytes
+MADO_GEOMETRY: SETUP too_large
+stderr_bytes=0 exit=2
+
+### stdin-1048576-bytes-valid
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a
+MADO_GEOM_CLIENT: addr="-" class="a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+stderr_bytes=0 exit=0
+

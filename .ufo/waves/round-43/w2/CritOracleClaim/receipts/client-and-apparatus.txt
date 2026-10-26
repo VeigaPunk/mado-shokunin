@@ -1,0 +1,35 @@
+== rebuild of the kept client source (same command as 15-commands.txt §2) ==
+a3319a744d0bda04851d12bee95c7918342ebfb267fcb541ad67b95e073842c2  gkeep-shm
+recorded client_sha: headlesshost/host-r1..r3/nofloat/size300 = 227cf4191871be51ce8daa44f95c73b627da2d347649511b3d24b44c4a81f9c4
+recorded client_sha: floatonly/nomatch/minsize            = a3319a744d0bda04851d12bee95c7918342ebfb267fcb541ad67b95e073842c2
+
+== round-27 harness pins vs this build ==
+TINYWL = "/fast/scratch/hyaku/mado-r26/wlroots/build/tinywl/tinywl"
+TINYWL_SHA = "227a74af3455c4cd90ef0fc64edf3c927ddf7f0b9b4bf903bdc30b3aeea40cda"
+LIBWLR = "/fast/scratch/hyaku/mado-r26/wlroots/build/libwlroots-0.20.so"
+LIBWLR_SHA = "1f3d7036c91417c0b6efccf67ad0d368a30818df630f07bb92574a13527a7967"
+def check_build():
+    for path, want in ((TINYWL, TINYWL_SHA), (LIBWLR, LIBWLR_SHA)):
+        try:
+            got = sha(open(path, "rb").read())
+        except OSError as ex:
+            raise SetupError("harness binary missing %s: %s" % (path, ex))
+        if got != want:
+            raise SetupError("harness binary %s sha256 %s != pin %s" % (path, got, want))
+    if not os.path.exists(RENDER_NODE):
+
+== round-27 config roots (copied into the oracle home) ==
+ROOTS = [".config/hypr", ".config/omarchy/current/theme", ".local/share/omarchy/default/hypr",
+         ".local/state/omarchy/toggles/hypr"]
+
+== round-43 adapted config write (oracle-gkeep.py) ==
+    shutil.copyfile(a.rules, rule_dst)
+    strip_exec(rule_dst)
+    conf = os.path.join(hypr, "hyprland.conf")
+    with open(conf, "w", encoding="utf-8") as fh:
+        fh.write("# ExecOracleGkeep round-43 case: %s\nsource = %s\n" % (a.case, rule_dst))
+        fh.write("\n".join(ORACLE_EXTRA + DEBUG_EXTRA) + "\n")
+    xdg = tempfile.mkdtemp(prefix="r43o-", dir="/tmp")
+
+== C2 v2 counter references to the oracle seat ==
+(none)

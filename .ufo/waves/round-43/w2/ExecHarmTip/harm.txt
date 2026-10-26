@@ -1,0 +1,124 @@
+SEAT ExecHarmTip — no-harm check, base a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f -> data 1959770657f1f8665097c1aed4be6c1cbb07139f
+lane /home/vgpnk/Projects/shokunin/mado-shokunin · run 2026-10-26 · every row below was executed, not inferred.
+Clones (both verified `git rev-parse --show-toplevel` == clone root): /fast/scratch/hyaku/mado-r43/ExecHarmTip/base.g0K5 @a35cfdf,
+data.vVb1 @1959770. Logs cited are copies under w2/ExecHarmTip/logs/ (sha256 listed at the end).
+
+== THE EIGHT ASSIGNED GATES, base -> data ==
+
+#  gate                                                 base @a35cfdf                                   data @1959770                                    rc b->d  class
+1  bash tools/mado-verify.sh --selftest                   MADO_SELFTEST: 460/460 assertions passed       MADO_SELFTEST: 460/460 assertions passed         0 -> 0   EXPECTED: no change (byte-identical output, sha 58e720dd… both sides). mado-verify.sh --selftest does not enumerate tools/ or quality/ (`grep -c mado-geometry tools/mado-verify.sh` = 0, `grep -c check-locators tools/mado-verify.sh` = 0 at data), so a same count is correct, not a missed growth.
+2  python3 -I tools/mado-options.py --selftest             MADO_OPTIONS_SELFTEST: 211/211 passed         MADO_OPTIONS_SELFTEST: 211/211 passed            0 -> 0   EXPECTED: no change (byte-identical output, sha 647b6712… both sides).
+3  python3 -I tools/mado-globals.py --selftest             MADO_GLOBALS_SELFTEST: 63/63 passed            MADO_GLOBALS_SELFTEST: 63/63 passed              0 -> 0   EXPECTED: no change (byte-identical output, sha 94b6ae2f… both sides).
+4  python3 -I tools/mado-geometry.py --selftest            absent (python3: can't open file … tools/mado-geometry.py, rc 2)   MADO_GEOMETRY_SELFTEST: 73/73 passed   2 -> 0   EXPECTED: new tool (A tools/mado-geometry.py). Task scopes this gate to data; base has no such file.
+5  python3 -I quality/check-index.py --rev <rev> --repo .   indexed=59/59 missing=0 dangling=0 duplicates=0 coverage=10.0000/10   indexed=60/60 missing=0 dangling=0 duplicates=0 coverage=10.0000/10   0 -> 0   EXPECTED: new entry (+1 indexed row = knowledge/hyprland-gkeep-geometry-r43.md; README index 59 -> 60 rows). Every pre-existing row still indexes: missing=0 dangling=0 duplicates=0 and coverage still maxed at 10.0000/10.
+6  python3 -I quality/check-index-rows.py --rev <rev> --repo .  rows=59 errors=0 warns=3                   rows=60 errors=0 warns=3                         0 -> 0   EXPECTED: new entry. The same 3 warns (round-12 getprop-*, round-12 drift-*, round-24 S###.bin) on the same three rows at both revs; no new warn, no error.
+7  python3 -I quality/check-axis-scores.py --rev <rev> --repo .  nav 59/59 MATCH · calib 63/63 MATCH · oper 12/12 MATCH · mismatched=0   nav published=59/59 derived=60/60 STALE · calib published=63/63 derived=68/68 STALE · oper 12/12 MATCH · mismatched=2   0 -> 1   ** RED at the data commit ** — classified EXPECTED-BY-PROTOCOL, not content harm: see §Axis. It is a declared, transient publication lag, green again at 2a3707c.
+8  python3 -I quality/check-locators.py --selftest          absent (no such file, rc 2)                    SELFTEST: cases=18 passed=18 locators=19 miss=6 · teeth flipped_table_broken=yes flips=11 ok_to_miss=4 miss_to_ok=5 · SELFTEST: PASS   2 -> 0   EXPECTED: new gate (A quality/check-locators.py).
+
+Net: 1 gate red at the data commit (#7), 2 gates appear (#4, #8), 1 count grows (#5, #6), 3 gates byte-identical (#1, #2, #3).
+No base-green gate is red at data for any reason other than #7, and #7's two derived numbers are exactly the two additions the round declares.
+
+== §Axis — why #7 is expected, measured ==
+The publication the gate parses is the LAST "Axis table re-derived at" line in SCORECARD.md. At the data commit that is still the
+round-41 line (SCORECARD.md:2521 @1959770: "Axis table re-derived at 6fd2234… plus the round-41 records commit (one new indexed
+entry, criteria 69-76): navigation 59/59; calibration resolved-active 63/63; operability selftest 12/12") — hence published 59/59
+and 63/63, exactly the base values, while the tree has already moved.
+Derived halves, re-measured by me at the data commit with the axes' own instruments:
+  navigation   quality/check-index.py -> indexed=60/60  (the +1 is the new knowledge entry; gate #5 above)
+  calibration  .ufo/waves/round-31/c2/count.py -> METRIC active=68 resolved_active=68 fraction=1.0000, verdict=TARGET_MET
+               base: METRIC active=63 resolved_active=63 fraction=1.0000. +5 == criteria 76 -> 81 in corpus/QUALITY.md (77-81 are
+               appended at EOF; criteria 1-76 are byte-unchanged in the diff). unresolved_active=0 at data, so all 63 pre-existing
+               criteria still resolve — no old criterion was spent to buy the new five.
+  operability  check-index.py --selftest -> 12/12 at both revs.
+Re-derivation at the two later commits (read-only, same clone):
+  a47efeb (after-data receipts)  nav STALE 59/59 vs 60/60 · calib STALE 63/63 vs 68/68 · rc 1  — the lag is still open there.
+  2a3707c (round-43 records)     nav 60/60 MATCH · calib 68/68 MATCH · oper 12/12 MATCH · rc 0, and SCORECARD.md:2550 publishes
+               "Axis table re-derived at 1959770… plus the round-43 records commit (one new indexed entry, criteria 77-81):
+               navigation 60/60; calibration resolved-active 68/68; operability selftest 12/12" — the published cells equal my
+               derived cells to the digit.
+Precedent: the same two-phase shape is in the lane's own record (SCORECARD.md:2493 round-40, :2521 round-41 "plus the … records
+commit"). So the gate is red only in the window [1959770, 2a3707c); the harm window is real but declared and closed, and the numbers
+it reports are the intended additions, not a miscount.
+Residual (named, not fixed by me): a consumer that runs quality/check-axis-scores.py at the data commit itself gets exit 1. Whether
+the lane wants the publication to ride the data commit is an L1 protocol choice; I do not edit SCORECARD.md (frozen, L1 integrator).
+
+== §Supporting gates and instruments I ran beyond the eight (same code path, read-only) ==
+quality/check-evidence-pointers.py --repo . --rev <rev> --branch <rev>  base rc0 / data rc0, byte-identical verdict line:
+  "pointers_r35=8 dangling_r35=2 dangling_r35_closed=1 pointers_r36=35 dangling_r36=0 inherited_dirty=0 scratch_tracked=124
+   scratch_disposition_ok=1 tip_axis_transcript=1 setup=ok verdict=TARGET_MET" — so the data commit adds no dangling pointer, no
+  inherited dirty file and no tracked scratch (scratch_tracked 124 -> 124).
+quality/counters/c1-r42-geometry.py --repo . --rev 1959770 -> fixtures=37/37 tool=present verdict=TARGET_MET, rc 0 (supports the L1
+  C1 receipt).
+quality/counters/c2-r43-gkeep-entry-v2.py --repo . --rev 1959770 -> admitted=1/1 verdict=TARGET_MET, rc 0 (supports the L1 C2 v2
+  receipt). These two are named as supporting only; the C1/C2 seats own their judgement.
+Not run, with reason: quality/check-control-receipts.py, check-population.py, counter-selftest.py, check-counter-discrimination.py,
+  check-r38-discrimination.py all require round-specific arguments (registry/manifest/registration/counter paths) that this seat's
+  assignment does not name; none of them is a base-green gate that the data commit can flip by adding files (their inputs are the
+  registry/manifest of a round, and the data commit creates none of those).
+
+== §New gate applied to the data (not in the eight; reported because it is a gate the commit adds) ==
+quality/check-locators.py has no repo-wide default: usage is `[--fetch DIR] [--selftest] prose…` (check-locators.py:376-379). Driven
+over the round's own prose with --fetch .ufo/waves/round-43/fetch at 1959770:
+  corpus/knowledge/hyprland-gkeep-geometry-r43.md   locators=10 miss=0  rc 0   <- the knowledge entry the round adds is clean
+  corpus/README.md                                  locators=0  miss=0  rc 0
+  corpus/SOURCES.md                                 locators=0  miss=0  rc 0
+  corpus/lessons/round-43.md                        locators=22 miss=5  rc 1
+The 5 misses are all in the lesson and all are the checker's line-local attribution meeting prose that QUOTES a defective locator:
+  :115 Hyprland-HyprCtl.cpp:394-395,412-413 (fragments=3 supported=1) — the line quotes the wrong locator that lesson M43-1 exists to record
+  :118 Hyprland-RegexMatchEngine.cpp:10-16 — same, the pre-fix locator under M43-1
+  :124 Hyprland-HyprCtl.cpp:394-395,412-413 (fragments=3 supported=0) — the line quotes an ExecLocatorGate output line about a different tree (LOG-a35cfdf.md)
+  :216 host-gkeep.conf:2-4 and :216 gkeep-ui-excerpt.py:6,33 — the locator list ends a sentence whose identifiers sit on the preceding line (NOFRAG-class continuation)
+Classification: no harm to a base-green gate (this gate does not exist at base and no pre-existing gate turns red because of it), but a
+false green would be the wrong reading — the honest statement is "green on the entry, red on the lesson by the checker's own declared
+line-local limit (`Identifier tokens are a proxy for the fact`, check-locators.py:29-34)". Any closure row that claims the locator gate
+is green across the round's prose must scope it to the knowledge entry.
+
+== §No existing instrument was touched (the structural no-harm evidence) ==
+git diff --name-status a35cfdf 1959770 -- quality/ tools/ corpus/ PROVINCE.md SKILL.md:
+  M PROVINCE.md · M SKILL.md · M corpus/QUALITY.md · M corpus/README.md · M corpus/SOURCES.md
+  A corpus/knowledge/hyprland-gkeep-geometry-r43.md · A corpus/lessons/round-43.md · A quality/check-locators.py
+  A quality/counters/c2-r43-gkeep-entry-v2.py · A quality/counters/c2-r43-gkeep-entry.py · A tools/mado-geometry.py
+i.e. NOT ONE pre-existing checker, counter or tool byte changes; the four instruments under quality/+tools/ are additions.
+Every modified doc is append-only by construction:
+  PROVINCE.md          +1 row (tools/mado-geometry.py), nothing else
+  SKILL.md             +46 lines in 3 append-only hunks: 2 one-line table rows (:158, :225) + one new 44-line subsection
+                       "Rule size versus reported size" (:246-289)
+  corpus/QUALITY.md    +10 lines: criteria 77-81 appended after criterion 76 at EOF; 1-76 untouched
+  corpus/README.md     +10 lines: 1 index row (knowledge/…) + 1 frontier section at EOF
+  corpus/SOURCES.md    10+/2-: rows S290-S297 added (226 -> 234 rows), and the only two deletions are the row tails of S155 and S158
+                       replacing ' |' with ', corpus/knowledge/hyprland-gkeep-geometry-r43.md |' — cell count 12 -> 12 on both, the
+                       used-by list grows by one item, no other text in either row changes (opcode diff: exactly one replace).
+  tools/mado-geometry.py is byte-identical to the round-42 reference: sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+  on both sides (git show 1959770:tools/mado-geometry.py | sha256sum vs sha256sum .ufo/waves/round-42/c1/ctl-ref-tool.py.txt). Independent
+  hashing, matching the claim's e3c2e471… prefix.
+
+== §Verdict ==
+NO HARM to any gate that was green at a35cfdf, with one bounded and declared exception: quality/check-axis-scores.py exits 1 at the
+data commit because the axis publication rides the later records commit; it is green (60/60, 68/68) at 2a3707c and its derived cells
+equal the published cells there. Nothing else moved except the two additions the round names (+1 indexed entry, +5 lesson-grounded
+criteria) and the three new files whose gates are green.
+
+== §Log digests (sha256 of the copies in logs/) ==
+58e720ddd3eaf6aba84ad6d37efe309c3e6b5b1d3d9aede880e4230a62543d90  logs/base-verify.log   == logs/data-verify.log
+647b6712816c655002f1c8b16ce98c40255b53363bee7fe9693c411cc648a007  logs/base-options.log  == logs/data-options.log
+94b6ae2f5dc2bc694c1f28a723a3f254d2953f7bf14a4b03637253fd01262b53  logs/base-globals.log  == logs/data-globals.log
+eced72d2be6aaa736da51ab72bd249a622670e0f2ce5029dd7887bcb19d6b4bc  logs/data-geometry.log
+0c769436d2eb6256793e6f59d297f98d463fddbe63e3c23269c6ca790c101889  logs/base-index.log
+62ca228cb16e70572b3b5b65aea2514620ffb4701b28e88f849ae8eb23cd1008  logs/data-index.log
+a00df156d7baea8cdc5392138b4ecc1024b7905a60f58a224d0c764a698c070c  logs/base-index-rows.log
+a259ad2797c5956deaa875950fd835bec70800d4b25af4b7eef71d98c9f27af0  logs/data-index-rows.log
+55ce98669f1b8a43ada21eded025a115389ccfac22970cc6ce414b1a333a9375  logs/base-axis.log
+27953983f4217736d647e434d4f7ad4301b7bd5de1844df16e45b3cf835888bc  logs/data-axis.log
+0d0c327fb1305d4c68e3e939fd65404a3630fdbbd35a23c363d3bd2f156d6725  logs/base-locators.log   (file absent at base)
+d7ceb7fa2063b74613c6a0f33e960f497cf6c04dcd11b0a689472240139be3dd  logs/data-locators.log
+425106402f6c90dbdb0cd9fbf0340dbe1152f6dbf41cae6efbbd2194b1afa7af  logs/tip-a47efeb-axis.log
+efb3280c2c6ce018cbfb71cd994b66d84d5e523a64d899471860aeeba9f4fa49  logs/tip-2a3707c-axis.log
+5dddc9ab3d69b8b4bb6169147f143a8145ff68fd5d465e67fbf1492fd2d0ac5e  logs/base-evptr.log    == logs/data-evptr.log
+1a11a1cdc003aa76cbcc7dd0f1dad2b78cf0c0c88b77b8be09b7a667894b06f3  logs/calib-a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f.log
+d0df5da16f38e68bbca274a3c6b94bec46f382c9d49487ea08a851f73873e713  logs/calib-1959770657f1f8665097c1aed4be6c1cbb07139f.log
+7e3167cbd6fde480f67897d3a34cd6d6d4789b891a1702a8aeb3fe4246769fbd  logs/data-c1.log
+02730e5eb6d22ac56e1f9b46628769c87714cd0dae3126b95e6cfe63327d815e  logs/data-c2v2.log
+0adc124992f7824b9c7179c507893a0b4b1babaa3b09890325ad392dd9f488b6  logs/data-locators-repo.log
+54b7023c9c51eaf96179d7f66f7a552198b0f91bc0607ee3f4472789d5500a7c  logs/loc-hyprland-gkeep-geometry-r43.md.log
+c7da685a78792bb4ca10a27a85600c36a099c75e06e0adeda12a0037ff8ba8a4  logs/loc-round-43.md.log
+2dce90fd7ecfb196f9654ad90c06438f8b842fa5b480f4c418926fce4cdfe634  logs/loc-README.md.log == logs/loc-SOURCES.md.log

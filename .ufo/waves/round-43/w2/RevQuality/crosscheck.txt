@@ -1,0 +1,35 @@
+== QUALITY.md worktree vs data commit ==
+b5f2d278faf484829fa1730e2196348513dc9ef4505e7a91df130c6c7a7a4b3a  corpus/QUALITY.md
+b5f2d278faf484829fa1730e2196348513dc9ef4505e7a91df130c6c7a7a4b3a  -
+== LOG-at-5add5b4 sha (criterion 77 claims f6c27a36) ==
+f6c27a3650c7bf4b7f95688978b2979d2c9a39f262686525352c63ae8bc416e2  .ufo/waves/round-43/w1/ScrQualityCriteria/LOG-at-5add5b4.md
+== GEOMETRIC_GOAL counts per cited range ==
+range 394,395: 0
+range 412,413: 0
+range 426,428: 3
+range 447,448: 2
+== corrected ranges content ==
+            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+== lesson spot-check lines 83-87 ==
+2. Locator corrections (append a named correction entry to LOG.md; never rewrite): `Hyprland-HyprCtl.cpp:394-395,412-413` → `:427-428` (and `:448`) for
+   `w->size(GEOMETRIC_GOAL)`; `Hyprland-RegexMatchEngine.cpp:10-16` → `:7-8` (`negative:`) and `:16` (`FullMatch`). The same strings are in LOG.md Round 42 and the report.
+3. C1 control tally mismatch: report says "46 controls (absent base, 3 do-nothing, 5 cheats, 37 mutants)"; `receipts/ctl-c1.txt` has 38 `M*` lines,
+   header `controls=46` (excludes REF and BASE, `run-c1-controls.py:139`), verdict line "0 of 47". State one count with its definition.
+4. SHONEN box 2 pointer does not resolve: commit a receipt of the live reference run (command, output, exit) and point the box at it.
+== LOG.md at data commit lines 2483,2487,2488,2490 ==
+- Facts opened this round from the pinned v0.56.2 sources (not yet registry rows or entries): the rule match engine is `re2::RE2::FullMatch` (anchored, `negative:` prefix); `static_.size` is an expression consumed in the floating branch; `hyprctl clients -j` `size` is `w->size(GEOMETRIC_GOAL)` - the animation goal, not the current value (`Hyprland-HyprCtl.cpp:394-395,412-413`).
+== round-42 registration lines 59,61 ==
+`gkeep-ui-excerpt.py` (lines 446-495 of `~/Projects/gkeep/gkeep/ui.py` at gkeep `133b867`). Provisional facts the wave must re-open: the match engine is
+`w->size(GEOMETRIC_GOAL)` — the animation goal, not the current value (`Hyprland-HyprCtl.cpp:394-395,412-413`); the gkeep rule file declares float/center/size 420 500.
+== round-43 lesson M43-5/M43-6 ==
+53:copy; `host-clients-r43.json` is a new capture (4 clients, none floating) and `gkeep-ui-excerpt.py` is regenerated (M43-5). Each quote was checked
+106:5. **L2 floor unmet** (`:88` item 5 → M43-6): mined as a mistake this round rather than left as an orchestrator note.
+152:**M43-5 — a generated excerpt's header named lines 446-495 of a 488-line file and its body carried one extra blank line.** Class: a generated
+161:**M43-6 — a driver `complete` line and a clean `git status` were read as the round having succeeded, for a round that spawned no seat.** Class:
+== live-geometry-host receipt in data commit? ==
+COMMITTED
+== worktree dirt on cited tracked files ==
+== python ==
+Python 3.14.8

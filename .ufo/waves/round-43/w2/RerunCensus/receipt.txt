@@ -1,0 +1,146 @@
+# RerunCensus — receipt (mado round-43 w2, seat RerunCensus)
+
+Seat dir: `.ufo/waves/round-43/w2/RerunCensus/` (lane `/home/vgpnk/Projects/shokunin/mado-shokunin`).
+Run 2026-10-26T08:26–08:32Z. Host `linux 7.2.11-arch1-1`. No installs, no package transactions, no host mutation.
+Tooling: Python 3.14.8, GNU Awk 5.4.1, GNU bash 5.3.20 (pre-existing).
+
+## 0. Pins
+
+| what | value |
+|---|---|
+| census script | `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh` sha256 `3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30` (fleet file, read-only) |
+| base rev | `a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f` |
+| data rev | `1959770657f1f8665097c1aed4be6c1cbb07139f` |
+| lane HEAD during the run | `2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa` |
+| registry @ base | `SOURCES-base.md` (extracted from `git show a35cfdf:corpus/SOURCES.md`) sha256 `df130e81dbcf88c690e7cab60def2e1ed445774c688646badf1810192a9e13c4`, 480 lines |
+| registry @ data | `SOURCES-data.md` (extracted from `git show 1959770:corpus/SOURCES.md`) sha256 `b603fe4271c83ff052022270c2b8d4c023d8727a38169722e180ebbf98b8ae9f`, 488 lines |
+| registry blob @ data | `git rev-parse 1959770:corpus/SOURCES.md` = `3c564e7d46672851add5f9e2da72b0b18df3a7a2` = `git hash-object corpus/SOURCES.md` (worktree) |
+| `git diff 1959770 HEAD -- corpus/SOURCES.md` | 0 bytes — the registry has not changed since the data commit |
+| `git status --porcelain corpus/SOURCES.md` | 0 lines — worktree clean for the registry |
+
+## 1. Assigned command — fleet-root validate (attacks `receipts/census-after-data.txt`)
+
+```
+cd /home/vgpnk/Projects/shokunin && ./scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+```
+→ saved `census-validate-fleet-root.txt`, sha256 `858315d225193675535aafa5be0bfd7ee1fad308db763d22e2065021a097bcc3`, **exit 0**:
+
+```
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+```
+
+Receipt equivalence (committed `.ufo/waves/round-43/receipts/census-after-data.txt`, sha256
+`53f2201e360e10631ddc712cceb0e2345ea462315c074a5ed9e65175dd86919a`): `diff` of the receipt with its last line removed
+against the live stdout above is **empty** (`RECEIPT_EQ_LIVE_PLUS_EXITLINE`); the receipt is stdout + one `exit=0` line.
+**The receipt reproduces byte for byte at HEAD.**
+
+## 2. Row counts — the 226 → 234 claim
+
+`grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'`:
+
+| registry | count | claimed |
+|---|---|---|
+| `SOURCES-base.md` (a35cfdf) | **226** | 226 |
+| `SOURCES-data.md` (1959770) | **234** | 234 |
+
+Tool-native confirmation (`sources-census.sh census --file`, `census-rows-base.txt` / `census-rows-data.txt`, both exit 0):
+
+| metric | base | data | delta |
+|---|---|---|---|
+| `rows` | 226 | 234 | +8 |
+| `tier.A` | 216 | 224 | +8 |
+| `tier.B` | 3 | 3 | 0 |
+| `tier.C` | 7 | 7 | 0 |
+| `status.mined` | 207 | 215 | +8 |
+| `status.queued` | 10 | 10 | 0 |
+| `status.rejected` | 9 | 9 | 0 |
+| `status.invalid` | 0 | 0 | 0 |
+| `missing` | 0 | 0 | 0 |
+
+## 3. Registry diff (`diff SOURCES-base.md SOURCES-data.md` → `registry.diff`, 17 lines / 11047 B, exit 1)
+
+Hunks: `167c167` (S155), `170c170` (S158), `238a239,246` (8 added rows). Nothing else.
+
+`check-registry.py` (seat, 74 checks, **0 FAIL, exit 0**; full log `check-registry.txt`):
+
+- `base rows=226`, `data rows=234`, `delta=8` — PASS.
+- `added=['S290'..'S297']`, `removed=[]` — PASS (exactly the eight claimed ids).
+- base row order is a strict **prefix** of the data row order (append-only, new rows at the end) — PASS.
+- per new row S290–S297: `split('|')` len 13 ⇒ **11 cells**; `status=mined`; `opened=2026-10-26`;
+  `used-by=corpus/knowledge/hyprland-gkeep-geometry-r43.md`; `tier=A`; `kind ∈ {code, own-work}`; recheck non-empty — PASS ×56.
+- S155, S158: NF 13 both sides; **columns id..recheck (cells 1–10) byte-equal** — PASS.
+  used-by: base `…request-socket-live-bound-r8.md ` / `…rule-attribution-r24.md ` (trailing space, no trailing comma);
+  data = base items + `, corpus/knowledge/hyprland-gkeep-geometry-r43.md `; item lists 1→2 and 5→6, prior items unchanged
+  in order, appended item == the entry, count 1 — PASS ×6. (Not a strict byte-prefix: the base's trailing space is
+  replaced by `, <entry> `; semantics are "one item appended".)
+- `changed rows = ['S155','S158']`; the other **224** rows byte-identical — PASS.
+
+`cells-check.txt`: header has 11 named columns; no new row has an empty cell; `recheck − opened = 90d` for the three
+own-work rows (2027-01-24 − 2026-10-26); ids unique; the last eight ids in registry order are S290..S297.
+
+## 4. Census on the base registry (`--file`) and the W-set difference
+
+`--file` resolves the lane dir as `dirname(file)/..`, so a bare copy in the seat dir would emit spurious E11. The base
+registry was therefore run against a faithful base tree: `git archive a35cfdf | tar -x -C $S/base-tree` (232 M), whose
+`corpus/SOURCES.md` sha256 equals `SOURCES-base.md` (`df130e81…`). Same for the data commit (`$S/data-tree`, sha256
+`b603fe42…`).
+
+```
+./scripts/sources-census.sh validate --file $S/base-tree/corpus/SOURCES.md   # exit 0 -> census-validate-base-registry.txt
+./scripts/sources-census.sh validate --file $S/data-tree/corpus/SOURCES.md   # exit 0 -> census-validate-data-registry.txt
+```
+
+Normalized (lane label and registry path stripped): `diff wset-base.norm wset-data.norm` is **empty**
+(`WSET_IDENTICAL_BASE_DATA`), and `diff wset-data.norm wset-live.norm` is **empty** (`WSET_IDENTICAL_DATA_LIVE`).
+
+**W-set difference base → data = ∅.** Both sides: 7 × W04 (S030, S042, S045, S097, S119, S120, S121) + 1 × W01 (S277),
+`ok`, exit 0. No E-code at either rev; no new warning is introduced by the eight rows, and none is silenced. This matches
+the LOG claim "census `mado ok` exit 0 (same W04 x7 + W01 S277 as at base)" (`LOG.md:2492`).
+
+## 5. Teeth of the gate on the landed rows (mutation probes, scratch only)
+
+Six mutants written into `$S/data-tree/corpus/SOURCES-mut-<k>.md` and scored with `--file` (same dir, so E11 is
+comparable). Mut-0 is the rename control.
+
+| probe | mutation on the landed data | output | exit |
+|---|---|---|---|
+| mut-0 | none (rename control) | identical 9 lines, `ok` | 0 |
+| mut-1 | S293 `status` `mined`→`watch` | `E07 S293 status=watch` | 1 |
+| mut-2 | S294 recheck cell deleted (NF 13→12) | `E01 S294 fields=10` | 1 |
+| mut-3 | S295 `opened` `2026-10-26`→`2026-10-27` | `E08 S295 opened=2026-10-27` | 1 |
+| mut-4 | S296 used-by + `, corpus/knowledge/missing-r43.md` | `E11 S296 missing used-by corpus/knowledge/missing-r43.md` | 1 |
+| mut-5 | S297 id → `S296` (duplicate) | `E03 S296 duplicate id` | 1 |
+| mut-6 | S290 used-by → `—` | `W03 S290 mined but unused` | 0 |
+
+Every property I verified by hand (cell count, status enum, opened date, used-by existence, id uniqueness, used-by
+presence) is also enforced by the fleet gate on this registry — the clean exit is not vacuous.
+
+## 6. Ordering note (pre-existing, not round-43)
+
+Id order inversions: base 1 (`S277` before `S218`), data 1 (same pair) — unchanged by the data commit and unrelated to
+the appended rows; no w1 report mentions it. Harmless for the census parser (ids are not required to be sorted).
+
+## 7. Draft → landed id shift (context for LOG.md:2492)
+
+`w1/ScrEntryB/registry-rows.md` drafts ten rows S290–S299; the data commit lands eight, S290–S297. The two dropped drafts
+are S291 `WindowRuleApplicator.cpp` (pinned copy) and S296 `HyprCtl.cpp` (pinned copy) — the held rows S155/S158 already
+own those sources — and the remaining eight were renumbered compactly. So LOG.md:2492's "the drafts' S291/S296 rows were
+dropped" is true in **draft** numbering; in the landed numbering S291 (DefaultFloatingAlgorithm) and S296
+(host-clients-r43.json) exist with different content. Not an error; a reading hazard for the numbering.
+
+## 8. Files in this seat dir
+
+`SOURCES-base.md`, `SOURCES-data.md`, `registry.diff`, `check-registry.py`, `check-registry.txt`, `cells-check.txt`,
+`census-validate-fleet-root.txt`, `census-validate-base-registry.txt`, `census-validate-data-registry.txt`,
+`census-rows-base.txt`, `census-rows-data.txt`, `wset-base.norm`, `wset-data.norm`, `wset-live.norm`,
+`census-mut-0..6.txt`, this `receipt.txt`.
+
+Scratch `/fast/scratch/hyaku/mado-r43/RerunCensus` (base-tree 232 M, data-tree 232 M, mutants) deleted at finish.

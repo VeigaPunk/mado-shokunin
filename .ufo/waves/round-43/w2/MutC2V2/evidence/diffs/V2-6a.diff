@@ -1,0 +1,13 @@
+--- pristine-counter.py	2026-10-26 05:37:50.395142243 -0300
++++ mutants/V2-6a.py	2026-10-26 05:39:51.798942438 -0300
+@@ -584,9 +584,7 @@
+     adm = [m for m in admits if m.group(2) == entry and staged_ok(m.group(1))]
+     ref = [m for m in refuses if staged_ok(m.group(1))
+            and len(set(m.group(2).lower().split())) >= 4
+-           and all(m.group(1) != a.group(1) for a in adm)
+-           and re.search(r'\b(superseded|until|unless|once|when|if|after)\b',
+-                         m.group(2).lower())]
++           and all(m.group(1) != a.group(1) for a in adm)]
+     bad = False
+     for i in ids:
+         rows = reg_rev.get(i, [])

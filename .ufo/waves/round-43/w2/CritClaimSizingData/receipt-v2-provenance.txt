@@ -1,0 +1,39 @@
+# seat receipt: the frozen v2 C1 provenance sentence versus the round own receipts (mado round 43, w2 CritClaimSizingData)
+$ sed -n "40,46p" .ufo/waves/round-43/registration-v2.md
+None of them reaches TARGET_MET without the full contract behaviour on all 37 fixtures — the measured capability is
+present in every case; the cheats defeat only the selftest-teeth clause or the sandbox scope. The verbatim-copy finding
+is a provenance fact, not a hole: the C1 deliverable **is** the reference written at the round-42 freeze (lane-authored,
+never installed, never run on the host as a tool of the lane). The report states the capability as "the round-42
+reference installed as `tools/mado-geometry.py`, falsified by three independent implementations, mutation and security
+seats", and names cheats 4 and 6 as open defects of `PRED-C1-r42`.
+
+exit=0
+
+$ cat .ufo/waves/round-43/receipts/live-geometry-host.txt
+# L1 live read-only run of tools/mado-geometry.py on the host (2026-10-26T04:17:54-03:00)
+$ hyprctl version | head -1
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+$ sha256sum tools/mado-geometry.py ~/.config/hypr/gkeep.conf
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  tools/mado-geometry.py
+3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949  ~/.config/hypr/gkeep.conf
+$ hyprctl clients -j | python3 -I tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+exit=0
+
+$ sed -n "111,114p" .ufo/waves/round-43/w1/ExecLiveHost.md
+**F9 — the bytes the L1 already ran are the same bytes as the reference** (observation, not a correctness claim about the build):
+`sha256sum tools/mado-geometry.py` at this seat gives `e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99` — the reference's
+sha and this seat's copy sha, and the sha `.ufo/waves/round-43/receipts/live-geometry-host.txt` records at 04:17. So that L1 receipt's output
+line is reproducible from this seat's copy, byte for byte. This seat did not run the counter and did not otherwise use the build's tool.
+exit=0
+
+$ git log --format="%h %cI %s" -1 -- .ufo/waves/round-43/receipts/live-geometry-host.txt
+1959770 2026-10-26T04:53:45-03:00 round-43: data - tools/mado-geometry.py (C1), hyprland-gkeep-geometry-r43 entry, rows S290-S297, held S155/S158 used-by, lesson round-43, README index+frontier, PROVINCE/SKILL rows, QUALITY 77-81, quality/check-locators.py
+exit=0
+
+$ git cat-file -e 496340d:.ufo/waves/round-43/receipts/live-geometry-host.txt   # absent at the v2 freeze
+ABSENT
+exit=0

@@ -1,0 +1,37 @@
+# seat receipt: the exact source lines quoted in findings.md (mado round 43, w2 CritClaimSizingData)
+
+$ git show 1959770:corpus/lessons/round-43.md | sed -n "11p;24p;29,30p;52p;205p;207p"
+C1 lands `tools/mado-geometry.py` (operability, capability acquisition): a read-only join of the `windowrule = size W H, match:class RX`
+Axes: every published axis ties at its maximum at base (`receipts/axis-base.txt`: navigation 59/59, calibration 63/63, operability 12/12,
+carries exactly one `verified-at: 2026-10-26` (PRED-C2-r43 clauses b and c). No held row's opened/recheck date changes this round; the only
+held-row edits this round are the used-by additions on S155 and S158, logged below.
+`receipts/fetch-sha256.txt`. The seven Hyprland pins are byte-identical to the round-42 pins; `host-gkeep.conf` is byte-identical to round 42's
+- C1 at the data commit: `receipts/c1-after-data.txt`; at the tip: `receipts/c1-after-tip.txt`. Base: `fixtures=0/37
+- C2 (v2) at the data commit: `receipts/c2-after-data.txt`; at the tip: `receipts/c2-after-tip.txt`. Base: `admitted=0/1`
+exit=0
+
+$ git show 1959770:corpus/QUALITY.md | sed -n "405p"
+79. A pointer that asserts a run was recorded — a SHONEN box, a report sentence, a `LOG.md` line — names a committed receipt under that round's `receipts/`, and the receipt's own bytes carry the command (`$ …`), its output, and `exit=<n>`; a pointer to a prose section is a lead, not a receipt, because the section can be edited after the worktree is gone and a later reader cannot re-run what it describes. Check: `python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-repo <repo> --prose-rev <rev> --receipts-repo <lane> --receipts-rev <round tip> <prose files…>` — a `recorded in <target>` whose target is not a `receipts/` path prints `verdict=PROSE`, a target path failing `git cat-file -e <rev>:<path>` prints `verdict=ABSENT`, and a receipt lacking command, output or exit prints `verdict=INCOMPLETE`; `CHECK79: pointers=<n> non_ok=<n> verdict=FAIL` is a violation. Shown able to fail: the round-42 box 2 sentence `is recorded in LOG.md Round 42` reads `verdict=PROSE`, and the section it names carries no run — `git show a62f2e0:LOG.md | sed -n '/^## Round 42/,/^## Round 43/p' | grep -c NO_MATCHING_CLIENT` prints `0`, as does the whole file at that revision. The same checker reads `verdict=OK` for the round-41 harm-watch pointer whose receipt does carry `$ bash tools/mado-verify.sh --selftest`, its output and `exit=`, so the rule is satisfiable with bytes the lane has already produced. A live recurrence of the same class, observed this seat: `LOG.md:2490` names `.ufo/waves/round-43/receipts/live-geometry-host.txt`, which is untracked (`git status --porcelain` prints `?? …`) and absent from both `b2e2efd` and `HEAD`; that LOG line is worktree bytes (` M LOG.md`, sha256 `c1cf804b…`, witness `LOG-worktree-c1cf804b.md` in this seat) and the receipt itself is untracked (`?? .ufo/waves/round-43/receipts/live-geometry-host.txt`), so the pointer and the evidence are both outside every committed revision. Mistake class: dead pointer — the pointer outlives or precedes the evidence it names, so the claim is unverifiable at every revision the round commits. (lesson: `lessons/round-42-verifier-spotcheck.md:87` §6.4; round-43 witness in `receipts.txt` §4)
+exit=0
+
+$ git show 1959770:corpus/knowledge/hyprland-gkeep-geometry-r43.md | sed -n "62p"
+**INF** Two agreeing numbers are not one observation: the client's default size and the rule's size coincide, so a 420x500 report alone cannot say which of the two set it. In the isolated round-27 oracle (a Hyprland 0.56.2 nested under tinywl in bubblewrap, never the host session) a client with that app id reported `"size": [420, 500]`, `"floating": true` under the host's three rules; with the size line removed the same client reported its own 200x200 buffer, with `size 300 300` it reported 300x300, and with the `float on` line removed it was tiled (`.ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt`, `10-cases.txt`). In that oracle, the rule, not the client, is the origin of 420x500.
+exit=0
+
+$ sed -n "30,34p;41,46p" .ufo/waves/round-43/registration-v2.md
+  (a real quote at a true locator under a claim it does not support, a census contradiction in prose, an index-row lie).
+- **Residuals (declared, v2):** the claim-to-quote binding (A1/A2/D1/E2/H1/X1) is the non-author closure's reading; a held
+  id's receipt is not pinned (`w1/RevC2Counter/findings.md` F1 — the round's entry is expected to cite no held id, which the
+  report will check with `grep -c '^source: S0' <entry>`); a byte-identical GATE line outside `## Gate` and ids with fewer
+  than three digits are invisible (`w1/ExecC2ExtraMutants.md` F1, F3; low).
+present in every case; the cheats defeat only the selftest-teeth clause or the sandbox scope. The verbatim-copy finding
+is a provenance fact, not a hole: the C1 deliverable **is** the reference written at the round-42 freeze (lane-authored,
+never installed, never run on the host as a tool of the lane). The report states the capability as "the round-42
+reference installed as `tools/mado-geometry.py`, falsified by three independent implementations, mutation and security
+seats", and names cheats 4 and 6 as open defects of `PRED-C1-r42`.
+
+exit=0
+
+$ sed -n "2494p" LOG.md
+- The new locator checker caught the L1's own first draft (single-line locators for four quotes that span two receipt lines; M43-7) and one wrong SKILL.md locator (`Hyprland-WindowRuleApplicator.cpp:426` for `SExpressionVec2`, now `:422,426`); the entry and SKILL.md read `locators=15 miss=0`.
+exit=0

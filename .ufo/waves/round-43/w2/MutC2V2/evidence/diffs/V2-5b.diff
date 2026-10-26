@@ -1,0 +1,12 @@
+--- pristine-counter.py	2026-10-26 05:37:50.395142243 -0300
++++ mutants/V2-5b.py	2026-10-26 05:39:51.790942437 -0300
+@@ -579,8 +579,7 @@
+     cl["f"] = int(sum(1 for l in unfenced(readme) if pat.match(l)) == 1)
+     admits = [m for m in map(ADMIT_RE.match, glines) if m]
+     refuses = [m for m in map(REFUSE_RE.match, glines) if m]
+-    staged_ok = lambda p: (p == 'merge/mado/knowledge/corpus/knowledge/' + os.path.basename(p)
+-                           and os.path.basename(p) in STAGED)
++    staged_ok = lambda p: p == 'merge/mado/knowledge/corpus/knowledge/' + os.path.basename(p)
+     adm = [m for m in admits if m.group(2) == entry and staged_ok(m.group(1))]
+     ref = [m for m in refuses if staged_ok(m.group(1))
+            and len(set(m.group(2).lower().split())) >= 4

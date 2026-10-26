@@ -1,0 +1,56 @@
+# seat receipt: axis surfaces and universal clauses (mado round 43, w2 CritClaimSizingData)
+$ cat .ufo/waves/round-43/receipts/axis-base.txt
+MADO_AXIS_ROW: axis=navigation published=59/59 derived=59/59 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=63/63 derived=63/63 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+exit=0
+exit=0
+
+$ grep -n "AXES = " quality/check-axis-scores.py
+32:AXES = ("navigation", "calibration", "operability")
+exit=0
+
+$ git diff a35cfdf 1959770 -- PROVINCE.md | grep -c hyprland-gkeep
+0
+exit=0
+
+$ git diff a35cfdf 1959770 -- corpus/README.md | grep -c hyprland-gkeep-geometry-r43
+2
+exit=0
+
+$ git diff a35cfdf 1959770 -- PROVINCE.md | grep -c "mado-geometry"
+1
+exit=0
+
+# universal clauses: the seven Hyprland pins versus the round-42 fetch bytes
+$ for f in Hyprland-*.cpp; do cmp .ufo/waves/round-43/fetch/$f .ufo/waves/round-42/fetch/$f; done
+SAME Hyprland-DefaultFloatingAlgorithm.cpp
+SAME Hyprland-GeometricMovableAnimated.cpp
+SAME Hyprland-HyprCtl.cpp
+SAME Hyprland-RegexMatchEngine.cpp
+SAME Hyprland-Target.cpp
+SAME Hyprland-WindowRuleApplicator.cpp
+SAME Hyprland-WindowTarget.cpp
+exit=0
+
+# the only held-row edits claim
+$ git diff a35cfdf 1959770 -- corpus/SOURCES.md | grep -E "^[-+]\| S" | cut -d"|" -f1,2
+-| S155 
++| S155 
+-| S158 
++| S158 
++| S290 
++| S291 
++| S292 
++| S293 
++| S294 
++| S295 
++| S296 
++| S297 
+exit=0
+
+# the locators=15 claim (LOG.md:2494) reproduced with the committed checker
+$ python3 -I quality/check-locators.py --fetch .ufo/waves/round-43/fetch <entry> SKILL.md | tail -1
+CHECK_LOCATORS: locators=15 miss=0
+exit=0

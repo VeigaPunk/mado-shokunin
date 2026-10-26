@@ -1,0 +1,30 @@
+# seat receipt: both counters replayed at the data commit and at the tip (mado round 43, w2 CritClaimSizingData)
+$ git rev-parse 1959770 ; git rev-parse HEAD
+1959770657f1f8665097c1aed4be6c1cbb07139f
+2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa
+exit=0
+
+$ python3 -I quality/counters/c1-r42-geometry.py --repo . --rev 1959770 | tail -2
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=1bdbe7e30d441225
+exit=0
+
+$ python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo . --rev 1959770 | tail -2
+PRED-C2-r43-v2 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43-v2: admitted=1/1 verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f
+exit=0
+
+$ python3 -I quality/counters/c1-r42-geometry.py --repo . --rev HEAD | tail -2
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa nonce=10fd21bc58df93e7
+exit=0
+
+$ python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo . --rev HEAD | tail -2
+PRED-C2-r43-v2 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43-v2: admitted=1/1 verdict=TARGET_MET rev=2a3707c83d55eb1333e1bf6ff1c5c38001c11eaa
+exit=0
+
+$ python3 -I quality/check-index.py --rev a35cfdf --repo . ; python3 -I quality/check-index.py --rev 1959770 --repo .
+MADO_INDEX: rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f indexed=59/59 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+MADO_INDEX: rev=1959770657f1f8665097c1aed4be6c1cbb07139f indexed=60/60 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0

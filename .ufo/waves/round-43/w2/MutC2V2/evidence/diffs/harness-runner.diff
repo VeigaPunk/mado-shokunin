@@ -1,0 +1,15 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/ctl/run-c2-controls-v2.py	2026-10-26 04:45:23.084144745 -0300
++++ run-c2-controls-v2.py	2026-10-26 05:38:18.538939371 -0300
+@@ -21,8 +21,10 @@
+ import tempfile
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-LANE = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
+-COUNTER = os.path.join(LANE, "quality", "counters", "c2-r43-gkeep-entry-v2.py")
++LANE = "/home/vgpnk/Projects/shokunin/mado-shokunin"
++COUNTER = os.environ.get(
++    "MUTANT_COUNTER",
++    os.path.join(LANE, "quality", "counters", "c2-r43-gkeep-entry-v2.py"))
+ FETCHDIR = os.path.join(LANE, ".ufo", "waves", "round-43", "fetch")
+ ENTRY = "corpus/knowledge/hyprland-gkeep-geometry-r43.md"
+ PKG = "merge/mado/knowledge/corpus/knowledge/gkeep-size-to-real-size-r11.md"

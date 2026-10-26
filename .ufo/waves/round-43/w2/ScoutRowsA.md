@@ -1,0 +1,1 @@
+Report: see w2/ScoutRowsA/rows.md — S290/S291 hashes, anchors, GATE lines exact; wording defects: S290 scope/teaches mixes S295 host-regex text and unpinned class->regex binding (Rule.cpp:52,98; WindowRule.cpp:395-396); S291 title overstates (tiled consumer Window.cpp:2403) and teaches omits center/parse/clamp conditions.

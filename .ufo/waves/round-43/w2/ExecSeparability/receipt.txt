@@ -1,0 +1,122 @@
+# Seat ExecSeparability - round 43 w2 - receipt: causal separability of C1 and C2 at the data commit
+# Lane:   /home/vgpnk/Projects/shokunin/mado-shokunin
+# Target: registration.md "## Separability" (freeze b2e2efd6e268920d31f3c32cf52dc097dd6e1d22)
+#         registration-v2.md "## Separability (unchanged)" (freeze 496340dd53fabd800be42e8fb19090f35e2c235c)
+# Data commit 1959770657f1f8665097c1aed4be6c1cbb07139f ; base a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+# Replay:  bash .ufo/waves/round-43/w2/ExecSeparability/reproduce.sh
+# Driver:  ONE shared scratch clone under /fast/scratch/hyaku/mado-r43/ExecSeparability, removed by trap on exit;
+#          every git call names -C $D; toplevel asserted = $D before the first commit; the four scratch commits
+#          carry -c user.name=t -c user.email=t@t.invalid and fixed dates 2026-10-26T12:00:00 +0000, so their
+#          hashes are stable across replays (identical in the first and last replay). No lane file is written.
+# Below is verbatim driver output from the final replay (exit 0).
+
+## clone
+$ D=$(mktemp -d -p /fast/scratch/hyaku/mado-r43/ExecSeparability); git clone -q --shared /home/vgpnk/Projects/shokunin/mado-shokunin $D
+git -C $D rev-parse --show-toplevel -> /fast/scratch/hyaku/mado-r43/ExecSeparability/tmp.z1bQDid9WG
+TOPLEVEL_OK
+
+## baseline: both counters at the data commit (control)
+$ git -C $D checkout -q 1959770657f1f8665097c1aed4be6c1cbb07139f
+$ python3 -I quality/counters/c1-r42-geometry.py --repo $D --rev 1959770657f1f8665097c1aed4be6c1cbb07139f
+exit=0 (see final line below)
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=dd420845d611218d
+$ python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo $D --rev 1959770657f1f8665097c1aed4be6c1cbb07139f
+PRED-C2-r43-v2 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43-v2: admitted=1/1 verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f
+exit=0
+
+## (a) delete tools/mado-geometry.py -> C2 v2 must still admit
+$ git -C $D rm tools/mado-geometry.py && git -C $D commit -m 'scratch expA'
+expA=5437b3ee4241b59e7a5cd2aea4405549669a3345
+5437b3e scratch expA: delete tools/mado-geometry.py
+ tools/mado-geometry.py | 417 -------------------------------------------------
+ 1 file changed, 417 deletions(-)
+WORKTREE_TOOL=absent
+$ python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo $D --rev 5437b3ee4241b59e7a5cd2aea4405549669a3345
+PRED-C2-r43-v2 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43-v2: admitted=1/1 verdict=TARGET_MET rev=5437b3ee4241b59e7a5cd2aea4405549669a3345
+exit=0
+
+## (b) revert entry, lesson, SOURCES.md, README.md to base -> C1 must still score 37/37
+$ git -C $D checkout a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f -- corpus/SOURCES.md corpus/README.md
+$ git -C $D rm corpus/knowledge/hyprland-gkeep-geometry-r43.md corpus/lessons/round-43.md
+expB=6686fe2080c25d773871d878b2d6221a7aac0b37
+M	corpus/README.md
+M	corpus/SOURCES.md
+D	corpus/knowledge/hyprland-gkeep-geometry-r43.md
+D	corpus/lessons/round-43.md
+$ python3 -I quality/counters/c1-r42-geometry.py --repo $D --rev 6686fe2080c25d773871d878b2d6221a7aac0b37
+PRED-C1-r42 fixture=empty0 ok=1 ok
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=6686fe2080c25d773871d878b2d6221a7aac0b37 nonce=93973983a3666add
+exit=0
+
+## (c) EXTRA: revert every C2 content surface (corpus/, PROVINCE, SKILL, locator checker, fetch pins)
+expC=21d2a1a17149ee6b8af3012f88f47fd6000d0ed5
+ quality/check-locators.py                          |  405 ----
+ 18 files changed, 2 insertions(+), 4750 deletions(-)
+$ python3 -I quality/counters/c1-r42-geometry.py --repo $D --rev 21d2a1a17149ee6b8af3012f88f47fd6000d0ed5
+PRED-C1-r42 fixture=empty0 ok=1 ok
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=21d2a1a17149ee6b8af3012f88f47fd6000d0ed5 nonce=978e2f09e6f71e31
+exit=0
+
+## (d) EXTRA: delete C1's tool, C1's receipts and the control runners -> C2 must still admit
+expD=265ff109f96f674da30d9415b74c29bb8e01133d
+ tools/mado-geometry.py                             | 417 ---------------------
+ 80 files changed, 3037 deletions(-)
+$ python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo $D --rev 265ff109f96f674da30d9415b74c29bb8e01133d
+PRED-C2-r43-v2 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43-v2: admitted=1/1 verdict=TARGET_MET rev=265ff109f96f674da30d9415b74c29bb8e01133d
+exit=0
+
+## (e) EXTRA: rev-addressing control - worktree has NO tool, rev 1959770657f1f8665097c1aed4be6c1cbb07139f does
+WORKTREE_TOOL=absent
+$ python3 -I quality/counters/c1-r42-geometry.py --repo $D --rev 1959770657f1f8665097c1aed4be6c1cbb07139f
+PRED-C1-r42 clauses=a:1 b:1 b2:1 b3:1 g:1
+PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=1959770657f1f8665097c1aed4be6c1cbb07139f nonce=ec54e9a7dbf3726b
+exit=0
+
+## static dependency map (what each counter can read from the repo)
+c1 counter repo reads:
+963:    if git(repo, "show", "%s:%s" % (base, TOOL)) is not None:
+965:    src = open(args.tool, "rb").read() if args.tool else git(repo, "show", "%s:%s" % (rev, TOOL))
+c1 TOOL constant:
+108:TOOL = "tools/mado-geometry.py"
+c2 counter repo reads:
+174:def show(repo, rev, path):
+409:    raw = show(repo, rev, entry)
+489:            blob = show(repo, rev, path) if path.startswith(FETCH) else None
+617:        if show(repo, base, e) is not None:
+619:    reg_rev = registry(show(repo, rev, "corpus/SOURCES.md"))
+620:    reg_base = registry(show(repo, base, "corpus/SOURCES.md"))
+621:    lesson = (show(repo, rev, LESSON) or b"").decode("utf-8", "replace")
+622:    readme = (show(repo, rev, "corpus/README.md") or b"").decode(
+c2 path constants:
+119:ENTRIES = ("corpus/knowledge/hyprland-gkeep-geometry-r43.md",)
+120:LESSON = "corpus/lessons/round-43.md"
+121:FETCH = ".ufo/waves/round-43/fetch/"
+c2 child processes:
+169:    p = subprocess.run(["git", "-C", repo, *args], capture_output=True,
+c2 mentions of tools/ or mado-geometry:
+0
+c1 mentions of corpus/ or lessons or README:
+0
+
+## quoted-fragment verification (revision-addressed; 1 = the fragment occurs in that file at that rev)
+QUOTE b2e2efd6e268920d31f3c32cf52dc097dd6e1d22:.ufo/waves/round-43/registration.md :: 1
+QUOTE b2e2efd6e268920d31f3c32cf52dc097dd6e1d22:.ufo/waves/round-43/registration.md :: 1
+QUOTE 496340dd53fabd800be42e8fb19090f35e2c235c:.ufo/waves/round-43/registration-v2.md :: 1
+QUOTE 496340dd53fabd800be42e8fb19090f35e2c235c:.ufo/waves/round-43/registration-v2.md :: 1
+QUOTE 1959770657f1f8665097c1aed4be6c1cbb07139f:PROVINCE.md :: 1
+QUOTE 1959770657f1f8665097c1aed4be6c1cbb07139f:SKILL.md :: 1
+QUOTE 1959770657f1f8665097c1aed4be6c1cbb07139f:corpus/README.md :: 1
+QUOTE 1959770657f1f8665097c1aed4be6c1cbb07139f:corpus/lessons/round-43.md :: 1
+-- c1 counter, the one 'ctl-ref' occurrence (docstring only, no open call):
+13:The tool's contract is the docstring of the reference at `.ufo/waves/round-42/c1/ctl-ref-tool.py.txt`
+
+## tool identity at the data commit vs the round-42 reference
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  -
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+DONE

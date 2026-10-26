@@ -1,0 +1,21 @@
+# seat receipt: the round own criterion-79 checker on the data-commit lesson (mado round 43, w2 CritClaimSizingData)
+$ python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-repo . --prose-rev 1959770 --receipts-repo . --receipts-rev 1959770 corpus/lessons/round-43.md
+POINTER corpus/lessons/round-43.md:137 target='LOG.md Round 42\'", but `git grep -n NO_MATCHING a62f2e0 -- LOG.md` fin' verdict=PROSE why=names a prose section, not a receipt
+POINTER corpus/lessons/round-43.md:150 receipt=.ufo/waves/round-43/receipts/c2-after-data.txt verdict=ABSENT why=not in 195977065:.ufo/waves/round-43/receipts/c2-after-data.txt (fatal: path '.ufo/waves/round-43/receipts/c2-after-data.txt' exists on disk, but not in '1959770657f1f8665097c1aed4be6c1cbb07139f')
+CHECK79: pointers=2 non_ok=2 verdict=FAIL
+exit=1
+
+$ python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-rev 1959770 --receipts-rev HEAD corpus/lessons/round-43.md
+POINTER corpus/lessons/round-43.md:137 target='LOG.md Round 42\'", but `git grep -n NO_MATCHING a62f2e0 -- LOG.md` fin' verdict=PROSE why=names a prose section, not a receipt
+POINTER corpus/lessons/round-43.md:150 receipt=.ufo/waves/round-43/receipts/c2-after-data.txt verdict=INCOMPLETE why=missing command
+CHECK79: pointers=2 non_ok=2 verdict=FAIL
+exit=1
+
+$ grep -n "recorded|watch|ran|run|measured|observed|logged" .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py
+94:            if re.search(r"recorded|watch|ran\b|run\b|measured|observed|logged", line, re.I):
+exit=0
+
+$ python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-rev 1959770 --receipts-rev 1959770 corpus/knowledge/hyprland-gkeep-geometry-r43.md
+POINTER corpus/knowledge/hyprland-gkeep-geometry-r43.md:68 receipt=.ufo/waves/round-43/receipts/live-geometry-host.txt verdict=OK why=command+output+exit
+CHECK79: pointers=1 non_ok=0 verdict=OK
+exit=0
