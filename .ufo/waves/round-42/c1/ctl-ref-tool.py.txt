@@ -28,7 +28,7 @@ Rules. Each rules file is decoded as UTF-8 with errors replaced and split on
 counted nowhere). The body is split on "," and each field is stripped of spaces
 and tabs. The effect is the first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An
 effect other than `size` and `float` adds one to `other`. A `size` or `float`
-line is SUPPORTED when: the body holds no "#"; field 0 has exactly two argument
+line is SUPPORTED when: field 0 has exactly two argument
 tokens `[0-9]{1,5}` (size) or exactly one token `on` or `off` (float); there is
 exactly one more field and it is `match:class` + one or more spaces/tabs + REGEX;
 REGEX is 1-200 characters of `[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.`
@@ -144,7 +144,7 @@ def parse_rule_text(text, file_index, rules, counts):
             counts["other"] += 1
             continue
         args = toks[1:]
-        good = "#" not in body and len(fields) == 2
+        good = len(fields) == 2
         if good and effect == "size":
             good = len(args) == 2 and all(NUM.fullmatch(a) for a in args)
         elif good:

@@ -22,7 +22,6 @@ NONCE = "42aa42aa42aa42aa"
 MUTANTS = [
     ("M01-fifo-block", "os.O_RDONLY | os.O_NONBLOCK", "os.O_RDONLY"),
     ("M02-nonregular-ok", "if not stat.S_ISREG(os.fstat(fd).st_mode):", "if False:"),
-    ("M03-read-short", "while len(data) <= MAX_BYTES:", "while len(data) < MAX_BYTES:"),
     ("M04-toolarge-ge", 'if len(data) > MAX_BYTES:\n        raise Setup("too_large")\n    return data',
      'if len(data) >= MAX_BYTES:\n        raise Setup("too_large")\n    return data'),
     ("M05-stdin-short", "data = stdin.read(MAX_BYTES + 1)", "data = stdin.read(MAX_BYTES)"),
@@ -41,7 +40,6 @@ MUTANTS = [
     ("M17-no-rules-lost", "if size_rules == 0:", "if size_rules < 0:"),
     ("M18-differ-gt1", 'elif t["differ"] > 0:', 'elif t["differ"] > 1:'),
     ("M19-fields-ge2", 'len(fields) == 2', 'len(fields) >= 2'),
-    ("M20-hash-allowed", '"#" not in body and', "True and"),
     ("M21-float-true", 'args[0] in ("on", "off")', 'args[0] in ("on", "off", "true")'),
     ("M22-v2-prefix", 'RULE_LINE = re.compile(r"windowrule[ \\t]*=(.*)")', 'RULE_LINE = re.compile(r"windowrule.*?=(.*)")'),
     ("M23-strip-all", 'line = raw.strip(" \\t")', "line = raw.strip()"),
@@ -61,10 +59,18 @@ MUTANTS = [
     ("M35-class-str", 'cls = c.get("class") if isinstance(c.get("class"), str) else ""', 'cls = str(c.get("class", ""))'),
     ("M36-element-dict", "not all(isinstance(c, dict) for c in doc)", "False"),
     ("M37-addr-default", 'addr = c.get("address") if isinstance(c.get("address"), str) else "-"', 'addr = str(c.get("address", "-"))'),
-    ("M38-regex-empty", "{1,200}", "{0,200}"),
     ("M39-match-class-space", 'MATCH_FIELD = re.compile(r"match:class[ \\t]+(.+)")', 'MATCH_FIELD = re.compile(r"match:class[ \\t]*(.+)")'),
     ("M40-last-float", 'frule = r["want"]', 'frule = frule if frule != "-" else r["want"]'),
 ]
+
+
+# Mutants found equivalent while building the freeze (the counter cannot and need not kill them):
+#   M03 `while len(data) <= MAX_BYTES` -> `<`: the one os.read asks for MAX+1-len bytes, which a regular
+#       file returns whole, so the loop bound is never the deciding test (equivalent for regular files).
+#   M20 dropping `"#" not in body`: the regex alphabet has no `#`, and a `#` in field 0 breaks the token
+#       grammar, so the test was dead; the contract sentence and the code were deleted instead.
+#   M38 `{1,200}` -> `{0,200}`: MATCH_FIELD's `(.+)` already requires a non-empty regex.
+EQUIVALENT = ("M03-read-short", "M20-hash-allowed", "M38-regex-empty")
 
 
 def do_nothing():
@@ -130,7 +136,7 @@ def main():
         for f in concurrent.futures.as_completed(futs):
             results[futs[f]] = f.result()
     bad = 0
-    print("CTL_C1: rev=%s nonce=%s controls=%d" % (args.rev, NONCE, len(jobs) - 2))
+    print("CTL_C1: rev=%s nonce=%s controls=%d equivalent_mutants_excluded=%s" % (args.rev, NONCE, len(jobs) - 2, ",".join(EQUIVALENT)))
     for name, _ in jobs:
         rc, last, clauses, failed = results[name]
         met = "TARGET_MET" in last and "TARGET_MISSED" not in last

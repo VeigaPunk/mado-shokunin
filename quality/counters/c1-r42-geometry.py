@@ -28,8 +28,8 @@ stripped of spaces and tabs at both ends. A RULE LINE fully matches `windowrule[
 other line, `windowrulev2` and upper case `WindowRule` included, is ignored and counted nowhere). The
 body is split on "," and each field is stripped of spaces and tabs. The effect is the first
 first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An effect other than
-`size` and `float` adds one to `other`. A `size` or `float` line is SUPPORTED when: its body holds
-no "#"; it has exactly two fields; field 0 has exactly two argument tokens fully matching
+`size` and `float` adds one to `other`. A `size` or `float` line is SUPPORTED when: it has exactly
+two fields; field 0 has exactly two argument tokens fully matching
 `[0-9]{1,5}` (ASCII digits; size) or exactly one token equal to `on` or `off` (float); field 1 fully
 matches `match:class[ \\t]+(.+)`, the capture being REGEX; REGEX fully matches 1-200 characters of
 `[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.` `\\-` `\\(` `\\)` `\\|` `\\*` `\\+` `\\?` `\\^` `\\$`
@@ -61,6 +61,9 @@ fixed classes stdin0, stdinbig0, stdinok0, filecl0, multi0, usage0, unreadable0,
 boundary0, badjson0, nan0, regex0, size0, float0, space0, ignore0, other0, order0, client0,
 sizevals0, mapped0, dupkeys0, ctlclass0, unicode0, many0, empty0, plus the b-clauses below. Each
 fixture compares rc and stdout byte-exactly with the judge's model; on rc 0/1/3/4 stderr must be empty.
+
+Cost bound: a run that hits 3 timeouts (30 s each; 60 s for a selftest) is not run any further, and every
+remaining fixture and selftest fails.
 
 Clauses: a  the tool exists at REV and BASE lacks it; b  `--selftest` (in the sandbox) exits 0 printing
 `MADO_GEOMETRY_SELFTEST: k/n passed`, k == n and n >= 50; b2  the selftest has teeth: from the tool's
@@ -111,6 +114,7 @@ KILL_NEED = 4
 MAX_BYTES = 1048576
 ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
 NONCE = [""]
+TIMEOUTS = [0]
 STDLIB_ALLOW = {"json", "os", "re", "stat", "sys"}
 STDLIB_DENY = {"socket", "urllib", "http", "requests", "ssl", "ctypes",
                "importlib", "pty", "subprocess"}
@@ -200,9 +204,12 @@ def run_sandboxed(tool, scratch, argv, path_env, ro=(), rw=(), cwd=None,
     lead = ["/usr/bin/prlimit", "--nproc=1:1"] if nproc else []
     cmd = sandbox_cmd(lead + [py, "-I", tool, *argv], [scratch, *ro],
                       list(rw), cwd or scratch, path_env, extra_env or {})
+    if TIMEOUTS[0] >= 3:
+        return None, b"", b"skipped after 3 timeouts"
     try:
         p = run_piped(cmd, timeout)
     except subprocess.TimeoutExpired:
+        TIMEOUTS[0] += 1
         return None, b"", b"timeout"
     return p.returncode, p.stdout, p.stderr
 
@@ -237,7 +244,7 @@ def model_rules(texts):
                 other += 1
                 continue
             args = words[1:]
-            ok = "#" not in body and len(fields) == 2
+            ok = len(fields) == 2
             if ok and effect == "size":
                 ok = len(args) == 2 and all(NUM_RE.fullmatch(a) for a in args)
             elif ok:
@@ -421,7 +428,9 @@ def put(d, fname, data):
     return p
 
 
-def execute(tool, d, argv, stdin=None, timeout=60):
+def execute(tool, d, argv, stdin=None, timeout=30):
+    if TIMEOUTS[0] >= 3:
+        return None, b"", b"skipped after 3 timeouts"
     py = os.path.realpath(sys.executable)
     cmd = sandbox_cmd(["/usr/bin/prlimit", "--nproc=1:1", py, "-I", tool] + argv,
                       [d, os.path.dirname(tool)], [], d, "/usr/bin", {})
@@ -432,6 +441,7 @@ def execute(tool, d, argv, stdin=None, timeout=60):
             p = subprocess.run(cmd, capture_output=True, timeout=timeout,
                                env=ENV, input=stdin)
     except subprocess.TimeoutExpired:
+        TIMEOUTS[0] += 1
         return None, b"", b"timeout"
     return p.returncode, p.stdout, p.stderr
 
@@ -615,7 +625,8 @@ def score_boundary0(tool, tmp, rev, nonce):
 
 def score_badjson0(tool, tmp, rev, nonce):
     for k, raw in enumerate([b"{}", b"[1]", b"", b"\xff[]", b"[", b"null", b"\"[]\"",
-                             b"[{}, 3]", b"[[]]", b"\xef\xbb\xbf[]", b"[] x"]):
+                             b"[{}, 3]", b"[[]]", b"\xef\xbb\xbf[]", b"[] x",
+                             b'[{"class":"a\xffb","size":[1,2],"floating":true}]']):
         d = prepare(tmp, "badjson0-%d" % k)
         r = put(d, "r.conf", S(1, 2))
         c = put(d, "c.json", raw)
@@ -871,7 +882,7 @@ def mutate_source(src, site):
 
 def selftest_result(tool, scratch):
     rc, out, err = run_sandboxed(tool, scratch, ["--selftest"], "/usr/bin",
-                                 ro=[os.path.dirname(tool)], timeout=300)
+                                 ro=[os.path.dirname(tool)], timeout=60)
     m = re.search(r"MADO_GEOMETRY_SELFTEST: (\d+)/(\d+) passed",
                   (out or b"").decode("utf-8", "replace"))
     k, n = (int(m.group(1)), int(m.group(2))) if m else (0, 0)
