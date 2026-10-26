@@ -13,7 +13,8 @@ git call names -C <clone>; the scratch identity is used only inside the clone, c
   HIDDEN-LINE    P plus a line naming S316 with no quote or locator;
   FORGED-PIN     P with fetch/Hyprland-ConfigValues.cpp doctored to a `de` default, its Gate sha256, rows, quote and
                  census recomputed to match;
-  FALSE-URL      P with S321's location rewritten to https://example.com/MiscFunctions.cpp;
+  FALSE-URL      P with S323's location rewritten to https://example.com/VirtualKeyboard.cpp (S321's URL is also
+                 held by S182, so the first cut's single-occurrence assertion stopped the runner before any score);
   PROSE-CENSUS   P plus a line claiming `default_layout=de`;
   ANCHOR-PAST-EOF P with S322's anchor range moved past the receipt's end;
   PROSE-CENSUS-SPACED  P plus `scroll_factor_max = 10`;
@@ -121,9 +122,9 @@ def main():
 
     d = positive(a.repo, a.freeze, a.work, "FALSE-URL")
     reg = rd(d, "corpus/SOURCES.md")
-    url = "https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp"
+    url = "https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/VirtualKeyboard.cpp"
     assert reg.count(url) == 1, reg.count(url)
-    wr(d, "corpus/SOURCES.md", reg.replace(url, "https://example.com/MiscFunctions.cpp"))
+    wr(d, "corpus/SOURCES.md", reg.replace(url, "https://example.com/VirtualKeyboard.cpp"))
     commit(d, "FALSE-URL"); runs.append(("FALSE-URL", d, "HEAD", False))
 
     d = positive(a.repo, a.freeze, a.work, "PROSE-CENSUS")
