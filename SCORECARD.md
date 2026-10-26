@@ -2650,3 +2650,48 @@ Axis table re-derived at `1001bda` (`receipts/axis-data.txt`): navigation 63/63;
 1. Land the S290-S297 supersession drafted at `.ufo/waves/round-46/w1/ExecSupersede/rows.md` (open since round 43; M46-16) under its own registration, before any new claim.
 2. Install the synthetic-material marker for `quality/check-session-material.py` (`w1/ExecSessionTriage/`) and the prose serial rule (`w1/ExecSerialRule/`), shown able to fail both ways.
 3. Errata for the round-45 entry's six non-supported sentence units (`w1/CritW2Entry.md`) and the round-44 `w2/ConnCalibration` mismatches (`w1/ScrErrata/errata.md`).
+
+## Round 47 - mado-terminal and the terminal-selection entry (2026-10-26, attempt 1)
+
+Claims declared at `c24adef2` (`.ufo/waves/round-47/claims.md`) before wave `w1` (41 build seats); registration `.ufo/waves/round-47/registration.md` frozen at `d7527d608ad2b2e3cc398fdde34db7947b254a1a` (base `60edb66e2f1cb90acc6e9442fc93ded0ca42d750`) after w1 and before wave `w2` (44 falsify seats) and any data; no re-registration. Data commit `0c69960510bcd30705d222873cd9b860aa9329ba`. Lowest-axis rule: every published axis tied at its maximum at base (`receipts/axis-base.txt`, `checked=3 mismatched=0`).
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-terminal.py` | `fixtures=0/190 explained=0/190 generated=0/150 selftest=fail readonly=fail tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-before-base.txt`) -> `fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET` exit 0 at `0c699605` (`receipts/c1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r47-terminal.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r47`; judge = the real pinned xdg-terminal-exec v0.14.3; controls `receipts/ctl-c1.txt` PASS 0 of 28) | **TARGET_MET** |
+| C2 **coverage** (sourced) - `corpus/knowledge/xdg-terminal-selection-r47.md` | `admitted=0/1` exit 1 at base (`receipts/c2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at `0c699605` (`receipts/c2-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r47-terminal-entry.py --repo . --rev <rev>` (`PRED-C2-r47`; controls `receipts/ctl-c2/` POS admitted, 10 rejected) | **TARGET_MET** |
+
+Separable: `w2/ExecSeparability.md` (tool-only tree: C1 MET, C2 missed; entry-only tree: C1 missed, C2 MET).
+
+### Capabilities (round 47)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| terminal selection versus the resolver | answer which desktop entry `xdg-terminal-exec` 0.14.3 (SUPER+RETURN) selects and why: re-implements the selection in Python stdlib with no process and no socket; `print` reproduces the resolver's stdout and exit status, `explain` traces lists, candidates, shadowed paths and rejections, `--observed` compares with a captured run | `tools/mado-terminal.py` (selftest 43/43); `quality/counters/c1-r47-terminal.py` 190/190 + 190/190 + 150/150 at `0c699605`; live host run `.ufo/waves/round-47/receipts/live-terminal-host-r47.txt` (Alacritty.desktop, user override, AGREE, exit 0); `receipts/h12-check.txt` (32 pin-judged non-regular-path and option-name cases, diff 0) | 47 |
+
+### Sources, saturation, planned
+
+Sources 262 -> 276 rows (S326-S331 for the entry, tier A except S328 tier B, `mined`, opened 2026-10-26; S332-S339 supersede S290-S297, renumbered by document from the seat's S346-S353; S326/S327 repeat held URLs under new scopes and S332 repeats its predecessor S290's URL: census W04 14 -> 17). Knowledge entries 63 -> 64. Assimilation: none (no `merge/mado/` theme on the plane; id guard 70 collisions; 13 quarantined rows untouched). considerthese `2026-10-26.md` proposal 2 refused this round (ledger rows wrong per `w2/ExecToolLedger.md`). Mistakes M47-1..10; QUALITY 91-95. Round-46 closure: R1 erratum landed; R2 removed with digest; R4a landed; R4c landed below; R3 (marker install) and R4b (round-45 errata; the drafted block breaks the frozen round-45 counter) routed again. Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `0c699605` (`receipts/axis-data.txt`): navigation 64/64; calibration resolved-active 82/82; operability selftest 12/12.
+
+### Errata (round 47) — round-44 closure D7: `w2/ConnCalibration.md` mismatches, one line each (append-only; nothing above is rewritten; long form `.ufo/waves/round-46/w1/ScrErrata/errata.md`, every line re-confirmed at `c24adef2`)
+
+E1 (F1) `LOG.md:2499`'s "Mistakes M44-1..7" is the protocol-load snapshot, not the lesson's range: `grep -c '^\*\*M44-' corpus/lessons/round-44.md` → `9` (headers `:107`…`:187`), `SCORECARD.md:2583` publishes "Mistakes M44-1..9 mined", and M44-8 (`:178`, evidence `w1/CritC2Cheat.md` at `:181`) and M44-9 (`:187`, `w1/CritFsPremise` at `:189`) were minted after load — read the closed range as M44-1..9; F1 stands and no file is rewritten.
+
+E2 (F2) the renumber map is committed, wave-relative: `git cat-file -e e4678921:assimilation/renumber-map.tsv` → rc 128, but `git ls-tree e4678921 -- .ufo/waves/round-44/assimilation/renumber-map.tsv` → blob `c9639ce84472eaccb9ea14007dbbc843e2e0e556` (added in freeze `e2289516`, same blob at `HEAD`; rows S311→S164 and S312→S301 (provisional)) — read `corpus/lessons/round-44.md:26` ("maps the package by document"), `:71`, `:82` and `.ufo/waves/round-44/assimilation/id-guard.md:8` ("Mapping is by document (renumber-map.tsv)") with the `.ufo/waves/round-44/` prefix; F2's "the artifact was never committed" is withdrawn and its [MEDIUM] reduces to the path-prefix ambiguity (QUALITY 83 class, one directory up).
+
+E3 (F3) both client counts are true and belong to different runs: `SKILL.md:301` (at the data commit `:299`) reproduces the round-43 receipt `.ufo/waves/round-43/receipts/live-geometry-host.txt:10` (`clients=4 matched=0`), while the round-44 run is `.ufo/waves/round-44/receipts/live-geometry-host-r44.txt:5` (`clients=3 matched=0`); the paragraph pre-exists at base `6a1a905` (`SKILL.md:284`,`:290`; `git diff 6a1a905 e4678921 -- SKILL.md | grep -c '^[-+].*clients='` → `0`) and the same `clients=4` sits in the capability row `SKILL.md:225`, so read `SKILL.md:295-301` ("the dump holds four tiled") as the round-43 host run — the defect is adjacency, not the number.
+
+E4 (F4) the tip receipts exist and the calibration's "tip" was the tip's grandparent: absent at `290cddea`, present at `8ac15c41` (`axis-tip.txt` blob `486dbbe821394d56e2fd031334ac9cf86924f13f`, `c1-after-tip.txt` `8b3b3310c7ef6ae8bbdbdcdad66b7484d5f714f8`, `c2-after-tip.txt` `89149342fdcd38d74af49928934aea611d0bb50e`), with `8ac15c41^` = `74c606a` and `8ac15c41^^` = `290cddea` (`git rev-list --count 74c606a..8ac15c41` → `1`) and `axis-tip.txt:4` naming `rev=74c606a1c7fd52a6bb85bb1c786529c926040c73` (the one commit `74c606a..8ac15c41` adds 599 files, 0 outside `.ufo/`) — read every calibration "tip" measurement as `290cddea`; F4 is closed.
+
+E5 (F5) the w1 evidence pointers are `LATE`: `.ufo/waves/round-44/w1/` holds `0` files at `e4678921` and `03fa5c61`, `848` from `290cddea` through `HEAD`, and `.ufo/waves/round-44/w1-results.json` is absent at both pre-tip revisions — read `corpus/lessons/round-44.md:5` ("broke both v1 predicates"), `:7`, `:246` (`w1/ScrLessonSkeleton/c1-demo/`) and `SCORECARD.md:2566`,`:2573` against the tree at `290cddea` or later, never at the data commit; the finding stands unchanged.
+
+E6 (F6) criterion 83 is unrunnable at the commit that published it: `corpus/QUALITY.md:413` names `.ufo/waves/round-44/w1/ScrQualityCriteria/check83.py` in its check line (`check83.py --repo . --rev <REV> --doc <PATH-IN-REPO> --prefix .ufo/`), which has `0` rows at `e4678921` and `03fa5c61` and `1` from `290cddea` (added by `290cddea`; the directory holds nine files there) — checkable only from `290cddea` onward; recorded, not repaired.
+
+N1 (coverage, not one of the six) the two Round-44 claim rows carry no after *value*: `SCORECARD.md:2570` and `:2571` "give the after-state as" pointers ("see `receipts/c1-after-data.txt`", "…`c2-after-data.txt`"), while the receipts hold `fixtures=26/26 tool=present verdict=TARGET_MET` (`c1-after-data.txt:53`) and `admitted=1/1 verdict=TARGET_MET` (`c2-after-data.txt:29`); round-44 D2 (`corpus/lessons/round-44-verifier-spotcheck.md:107`) routes that append — a coverage gap, not a false statement.
+
+### Planned (round 48; intent only)
+
+1. C1 fixture schema v2: non-regular paths (directories, dangling symlinks) and option-like `Exec`/`TryExec` words (`w2/ExecC1Diff.md` H1/H2, M47-10), and the `explain --observed` DIFFER probe on the path and command lines (`w2/CritC1Explain.md`); counter wording errata F1-F4 (`w2/SentC1Sandbox.md`).
+2. R3: install the synthetic-material marker gate (`w1/ExecSessionMarker`, attacked by `w2/MutSessionMarker`, `w2/RevSessionMarker`).
+3. R4b: land the round-45 errata in a form that keeps the frozen round-45 counter's verdict (`w2/ExecErrataR45.md` H1).

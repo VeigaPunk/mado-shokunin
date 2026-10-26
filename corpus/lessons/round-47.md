@@ -58,7 +58,7 @@ S351→S337 (host-clients-r43.json), S352→S338 (gkeep-ui-excerpt.py), S353→S
 
 Census command (both ends): `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado`.
 Before: `.ufo/waves/round-47/receipts/census-before.txt` (W04 x14, W01 x1, `mado ok`, exit 0). After: `receipts/census-after.txt`
-(@AFTER@).
+(17 W04 lines: the base 14 plus S326, S327 (held xdg-terminal-exec URLs, new scopes) and S332 (S290's URL, the supersession); W01 S277; `mado ok`, exit 0).
 
 ## Search log
 
