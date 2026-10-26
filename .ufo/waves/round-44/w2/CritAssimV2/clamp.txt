@@ -1,0 +1,72 @@
+== clampWindowSize 1277-1315 ==
+1277: bool CWindow::clampWindowSize(const std::optional<Vector2D> minSize, const std::optional<Vector2D> maxSize) {
+1278:     const Vector2D REALSIZE = m_realSize->goal();
+1279:     const Vector2D MAX      = Fullscreen::controller()->isFullscreen(m_self.lock()) ? Vector2D{INFINITY, INFINITY} : maxSize.value_or(Vector2D{INFINITY, INFINITY});
+1280:     const Vector2D NEWSIZE  = REALSIZE.clamp(minSize.value_or(Vector2D{MIN_WINDOW_SIZE, MIN_WINDOW_SIZE}), MAX);
+1281:     const bool     changed  = !(NEWSIZE == REALSIZE);
+1282: 
+1283:     if (changed) {
+1284:         const Vector2D DELTA = REALSIZE - NEWSIZE;
+1285:         layoutTarget()->setPositionGlobal(CBox{m_realPosition->goal() + DELTA / 2.0, NEWSIZE});
+1286:     }
+1287: 
+1288:     return changed;
+1289: }
+1290: 
+1291: WORKSPACEID CWindow::workspaceID() {
+1292:     return m_workspace ? m_workspace->m_id : m_lastWorkspace;
+1293: }
+1294: 
+1295: MONITORID CWindow::monitorID() {
+1296:     return m_monitor ? m_monitor->m_id : MONITOR_INVALID;
+1297: }
+1298: 
+1299: bool CWindow::onSpecialWorkspace() {
+1300:     return m_workspace ? m_workspace->m_isSpecialWorkspace : State::workspaceState()->isSpecial(m_lastWorkspace);
+1301: }
+1302: 
+1303: std::unordered_map<std::string, std::string> CWindow::getEnv() {
+1304: 
+1305:     const auto PID = getPID();
+1306: 
+1307:     if (PID <= 1)
+1308:         return {};
+1309: 
+1310:     std::unordered_map<std::string, std::string> results;
+1311: 
+1312:     std::vector<char>                            buffer;
+1313:     size_t                                       needle = 0;
+1314: 
+1315: #if defined(__linux__)
+== XDGShell layoutMinSize 460-490 ==
+460:     });
+461: }
+462: 
+463: void CXDGToplevelResource::close() {
+464:     m_resource->sendClose();
+465: }
+466: 
+467: Vector2D CXDGToplevelResource::layoutMinSize() {
+468:     Vector2D minSize;
+469:     if (m_current.minSize.x > 1)
+470:         minSize.x = m_owner ? m_current.minSize.x + m_owner->m_current.geometry.pos().x : m_current.minSize.x;
+471:     if (m_current.minSize.y > 1)
+472:         minSize.y = m_owner ? m_current.minSize.y + m_owner->m_current.geometry.pos().y : m_current.minSize.y;
+473:     return minSize;
+474: }
+475: 
+476: Vector2D CXDGToplevelResource::layoutMaxSize() {
+477:     Vector2D maxSize;
+478:     if (m_current.maxSize.x > 1)
+479:         maxSize.x = m_owner ? m_current.maxSize.x + m_owner->m_current.geometry.pos().x : m_current.maxSize.x;
+480:     if (m_current.maxSize.y > 1)
+481:         maxSize.y = m_owner ? m_current.maxSize.y + m_owner->m_current.geometry.pos().y : m_current.maxSize.y;
+482:     return maxSize;
+483: }
+484: 
+485: CXDGSurfaceResource::CXDGSurfaceResource(SP<CXdgSurface> resource_, SP<CXDGWMBase> owner_, SP<CWLSurfaceResource> surface_) :
+486:     m_owner(owner_), m_surface(surface_), m_resource(resource_) {
+487:     if UNLIKELY (!good())
+488:         return;
+489: 
+490:     m_resource->setData(this);

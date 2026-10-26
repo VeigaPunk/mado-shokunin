@@ -1,0 +1,19 @@
+== ambiguity demo A: state counter is a verdict count, not a client attribute ==
+$ printf  | python3 mado-geometry-indep.py --clients - --rules gk.conf   (size=420.0 -> BADSIZE)
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="-" class="org.omarchy.gkeep" floating=true size=- want=420x500 float_rule=on verdict=BADSIZE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=1 verdict=OK
+exit=0
+== same client, usable size 420x500 -> FULLSCREEN, agree stays 0 -> NOT_COMPARED ==
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="-" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=FULLSCREEN
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED
+exit=5
+== ambiguity demo B: fullscreenClient is not the state key (ignored) ==
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="-" class="org.omarchy.gkeep" floating=true size=421x500 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+exit=1

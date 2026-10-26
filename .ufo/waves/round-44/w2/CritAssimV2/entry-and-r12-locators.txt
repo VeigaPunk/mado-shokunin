@@ -1,0 +1,35 @@
+== entry section boundaries ==
+14:## What the evidence licenses
+26:## §1 What the compositor reports
+34:## §2 The configure
+38:**OBS** When the client acknowledges, onAck (Hyprland-Window.cpp:1514) takes the newest pending pair whose serial is not after the acknowledged one, drops it and every older pair, and for a Wayland client writes that pair's size into the surface's pending state as the acked size (Hyprland-Window.cpp:1526).
+42:## §3 What the protocol lets the client do
+46:## §4 What GTK 4.24.1 does with it
+52:**INF** So a GTK 4.24.1 window adopts a non-zero configured size unless that size is below its minimum, in which case it is raised to the minimum. Whether Hyprland 0.56.2 sends a tiled state with a floating window's configure is not read here (UNK; it would only mark the size fixed, not change it).
+54:## §5 What gkeep declares
+64:## What the staged predecessor said, and what the pins correct
+69:- It names the request `xdg_toplevel.set_size`. The protocol has no such toplevel request; the size travels in the `xdg_toplevel.configure`
+71:- It reads the ack list as "the mechanism by which a client could report a different size". The client's ack_configure carries a serial only
+73:- It says a GTK 4 window "will adopt the size the compositor configures". GTK 4.24.1 adopts it after constraining it by the window's
+76:## What this entry does not establish
+== r12 §2/§3 boundaries ==
+17:### §1 The step round 11 had not traced
+37:### §2 The client side has no competing claim
+41:> "window = Gtk.ApplicationWindow(application=self, title=\"gkeep\")"
+43:> "window.set_default_size(420, 500)"
+45:**OBS** The file contains **no** `set_size_request` call at all: the only size
+46:gkeep declares is the *default*, and the only `min-width`/`min-height` in its
+57:### §3 What this closes and what it does not
+59:**INF** The chain is now complete on both sides: the rule's size reaches the
+65:**UNK** The observation itself. No gkeep window is open to read, and the
+== r9 X11 passage ==
+78: own tag.
+79: 
+80: **INF** One condition on the claim, from the same function: `fetchClass()`
+81: branches on `m_isX11`, and for an X11 surface the class comes from the
+82: XWayland toplevel's `appid` instead (S284). The derivation therefore holds
+83: for gkeep because it is a native GTK4 Wayland client declaring
+84: `application_id="org.omarchy.gkeep"` (S285) — not for the same app run under
+85: XWayland, where the class would be an X11 `WM_CLASS` rather than the app_id.
+86: 
+87: ### §5 What remains, and the third witness now closed off

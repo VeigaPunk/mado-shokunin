@@ -1,0 +1,32 @@
+injection probe: client text and rule text into tools/mado-geometry.py
+
+[newline+forged-summary in class] rc=3 stderr='' stdout_lines=2
+   MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[ESC in class] rc=3 stderr='' stdout_lines=2
+   MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[quote+percent in class] rc=0 stderr='' stdout_lines=3
+   MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   MADO_GEOM_CLIENT: addr="-" class="a\"b%sc" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+   MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+[unicode in class] rc=0 stderr='' stdout_lines=3
+   MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   MADO_GEOM_CLIENT: addr="-" class="h\u00e9llo\u00e9" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+   MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+
+[hostile rule bodies: lookaround, backref, no-space args, 9-digit arg, \d, control char, space, quote, percent]
+   rc=4 stderr=''
+   MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=9 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+
+[class carrying a decoy verdict token] rc=1 stderr=''
+   MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   MADO_GEOM_CLIENT: addr="-" class="x verdict=OK" floating=true size=421x500 want=420x500 float_rule=- verdict=DIFFER
+   MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   naive reader `grep -o 'verdict=[A-Z]*'` would print: ['verdict=OK', 'verdict=DIFFER', 'verdict=DIFFER']
+
+[top-not-list] rc=2 stderr='' out='MADO_GEOMETRY: SETUP bad_json'
+[elem-not-object] rc=2 stderr='' out='MADO_GEOMETRY: SETUP bad_json'
+[bad-utf8] rc=2 stderr='' out='MADO_GEOMETRY: SETUP bad_json'
+[empty] rc=3 stderr='' out='MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*\nMADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT'
+[too_large 1048577B] rc=2 stderr='' out='MADO_GEOMETRY: SETUP too_large'

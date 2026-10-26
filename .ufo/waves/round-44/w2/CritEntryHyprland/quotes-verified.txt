@@ -1,0 +1,199 @@
+# pins
+d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp
+d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp
+OK   01 receipt hash Hyprland-Window.cpp
+OK   02 receipt hash Hyprland-XDGShell.cpp
+
+# Window.cpp
+OK   03 Hyprland-Window.cpp:184  m_listeners.ack
+OK   04 Hyprland-Window.cpp:1514  void CWindow::onAck(uint32_t serial) {
+OK   05 Hyprland-Window.cpp:1515  return e.first <= serial; });
+OK   06 Hyprland-Window.cpp:1517  if (SERIAL == m_pendingSizeAcks.rend())
+OK   07 Hyprland-Window.cpp:1520  m_pendingSizeAck = *SERIAL;
+OK   08 Hyprland-Window.cpp:1521  std::erase_if(m_pendingSizeAcks, [&](const auto& el) { return el.first <= SERIAL->first; });
+OK   09 Hyprland-Window.cpp:1523  if (m_isX11)
+OK   10 Hyprland-Window.cpp:1526  m_pending.ackedSize
+OK   11 Hyprland-Window.cpp:1526  = m_pendingSizeAck->second;
+OK   12 Hyprland-Window.cpp:1527  m_pending.updated.bits.acked = true;
+OK   13 Hyprland-Window.cpp:1685  Vector2D CWindow::realToReportSize() {
+OK   14 Hyprland-Window.cpp:1687  m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+OK   15 Hyprland-Window.cpp:1691  clamp(Vector2D{1, 1}, Math::VECTOR2D_MAX);
+OK   16 Hyprland-Window.cpp:1694  if (*PXWLFORCESCALEZERO && PMONITOR)
+OK   17 Hyprland-Window.cpp:1696  return (REPORTSIZE * PMONITOR->m_scale).round();
+OK   18 Hyprland-Window.cpp:1698  return REPORTSIZE;
+OK   19 Hyprland-Window.cpp:1699  }
+OK   20 Hyprland-Window.cpp:1732  void CWindow::sendWindowSize(bool force) {
+OK   21 Hyprland-Window.cpp:1741  const auto REPORTSIZE = realToReportSize();
+OK   22 Hyprland-Window.cpp:1743  if (!force && m_pendingReportedSize == REPORTSIZE && (m_reportedPosition == REPORTPOS || !m_isX11))
+OK   23 Hyprland-Window.cpp:1744  return;
+OK   24 Hyprland-Window.cpp:1751  m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE});
+OK   25 Hyprland-Window.cpp:1753  m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+OK   26 Hyprland-Window.cpp:1861  Vector2D CWindow::getReportedSize() {
+OK   27 Hyprland-Window.cpp:1863  return m_reportedSize;
+OK   28 Hyprland-Window.cpp:1865  return m_wlSurface->resource()->m_current.ackedSize;
+
+# XDGShell.cpp
+OK   29 Hyprland-XDGShell.cpp:130  m_resource->sendConfigure(box.x, box.y, box.w, box.h);
+OK   30 Hyprland-XDGShell.cpp:132  m_surface->scheduleConfigure();
+OK   31 Hyprland-XDGShell.cpp:354  uint32_t CXDGToplevelResource::setSize(const Vector2D& size) {
+OK   32 Hyprland-XDGShell.cpp:355  m_pendingApply.size = size;
+OK   33 Hyprland-XDGShell.cpp:356  scheduleStateApplication();
+OK   34 Hyprland-XDGShell.cpp:357  return m_owner->scheduleConfigure();
+OK   35 Hyprland-XDGShell.cpp:443  void CXDGToplevelResource::scheduleStateApplication() {
+OK   36 Hyprland-XDGShell.cpp:445  if (m_stateUpdate)
+OK   37 Hyprland-XDGShell.cpp:455  m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+OK   38 Hyprland-XDGShell.cpp:601  m_resource->setAckConfigure([this](CXdgSurface* r, uint32_t serial) {
+OK   39 Hyprland-XDGShell.cpp:602  if (serial < m_lastConfigureSerial)
+OK   40 Hyprland-XDGShell.cpp:603  return;
+OK   41 Hyprland-XDGShell.cpp:604  m_lastConfigureSerial = serial;
+OK   42 Hyprland-XDGShell.cpp:605  m_events.ack.emit(serial);
+OK   43 Hyprland-XDGShell.cpp:629  uint32_t CXDGSurfaceResource::scheduleConfigure() {
+OK   44 Hyprland-XDGShell.cpp:630  if (m_stateUpdate)
+OK   45 Hyprland-XDGShell.cpp:631  return m_scheduledSerial;
+OK   46 Hyprland-XDGShell.cpp:635  m_scheduledSerial = wl_display_next_serial(g_pCompositor->m_wlDisplay);
+OK   47 Hyprland-XDGShell.cpp:637  return m_scheduledSerial;
+OK   48 Hyprland-XDGShell.cpp:640  void CXDGSurfaceResource::configure() {
+OK   49 Hyprland-XDGShell.cpp:641  m_stateUpdate.reset();
+OK   50 Hyprland-XDGShell.cpp:642  m_resource->sendConfigure(m_scheduledSerial);
+
+# structural counts
+OK   51 witness hyprland sendWindowSize xdg_setSize=1 x11_configure=1 (Window.cpp:1732-1754)
+OK   52 ackedSize occurrences in Window.cpp = 3 (1526,1527,1865)
+
+CHECKS=52 FAILURES=0
+# pins
+d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp
+d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp
+OK   01 receipt hash Hyprland-Window.cpp
+OK   02 receipt hash Hyprland-XDGShell.cpp
+
+# Window.cpp
+OK   03 Hyprland-Window.cpp:184  m_listeners.ack
+OK   04 Hyprland-Window.cpp:1514  void CWindow::onAck(uint32_t serial) {
+OK   05 Hyprland-Window.cpp:1515  return e.first <= serial; });
+OK   06 Hyprland-Window.cpp:1517  if (SERIAL == m_pendingSizeAcks.rend())
+OK   07 Hyprland-Window.cpp:1520  m_pendingSizeAck = *SERIAL;
+OK   08 Hyprland-Window.cpp:1521  std::erase_if(m_pendingSizeAcks, [&](const auto& el) { return el.first <= SERIAL->first; });
+OK   09 Hyprland-Window.cpp:1523  if (m_isX11)
+OK   10 Hyprland-Window.cpp:1526  m_pending.ackedSize
+OK   11 Hyprland-Window.cpp:1526  = m_pendingSizeAck->second;
+OK   12 Hyprland-Window.cpp:1527  m_pending.updated.bits.acked = true;
+OK   13 Hyprland-Window.cpp:1685  Vector2D CWindow::realToReportSize() {
+OK   14 Hyprland-Window.cpp:1687  m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+OK   15 Hyprland-Window.cpp:1691  clamp(Vector2D{1, 1}, Math::VECTOR2D_MAX);
+OK   16 Hyprland-Window.cpp:1694  if (*PXWLFORCESCALEZERO && PMONITOR)
+OK   17 Hyprland-Window.cpp:1696  return (REPORTSIZE * PMONITOR->m_scale).round();
+OK   18 Hyprland-Window.cpp:1698  return REPORTSIZE;
+OK   19 Hyprland-Window.cpp:1699  }
+OK   20 Hyprland-Window.cpp:1732  void CWindow::sendWindowSize(bool force) {
+OK   21 Hyprland-Window.cpp:1741  const auto REPORTSIZE = realToReportSize();
+OK   22 Hyprland-Window.cpp:1743  if (!force && m_pendingReportedSize == REPORTSIZE && (m_reportedPosition == REPORTPOS || !m_isX11))
+OK   23 Hyprland-Window.cpp:1744  return;
+OK   24 Hyprland-Window.cpp:1751  m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE});
+OK   25 Hyprland-Window.cpp:1753  m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+OK   26 Hyprland-Window.cpp:1861  Vector2D CWindow::getReportedSize() {
+OK   27 Hyprland-Window.cpp:1863  return m_reportedSize;
+OK   28 Hyprland-Window.cpp:1865  return m_wlSurface->resource()->m_current.ackedSize;
+
+# XDGShell.cpp
+OK   29 Hyprland-XDGShell.cpp:130  m_resource->sendConfigure(box.x, box.y, box.w, box.h);
+OK   30 Hyprland-XDGShell.cpp:132  m_surface->scheduleConfigure();
+OK   31 Hyprland-XDGShell.cpp:354  uint32_t CXDGToplevelResource::setSize(const Vector2D& size) {
+OK   32 Hyprland-XDGShell.cpp:355  m_pendingApply.size = size;
+OK   33 Hyprland-XDGShell.cpp:356  scheduleStateApplication();
+OK   34 Hyprland-XDGShell.cpp:357  return m_owner->scheduleConfigure();
+OK   35 Hyprland-XDGShell.cpp:443  void CXDGToplevelResource::scheduleStateApplication() {
+OK   36 Hyprland-XDGShell.cpp:445  if (m_stateUpdate)
+OK   37 Hyprland-XDGShell.cpp:455  m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+OK   38 Hyprland-XDGShell.cpp:601  m_resource->setAckConfigure([this](CXdgSurface* r, uint32_t serial) {
+OK   39 Hyprland-XDGShell.cpp:602  if (serial < m_lastConfigureSerial)
+OK   40 Hyprland-XDGShell.cpp:603  return;
+OK   41 Hyprland-XDGShell.cpp:604  m_lastConfigureSerial = serial;
+OK   42 Hyprland-XDGShell.cpp:605  m_events.ack.emit(serial);
+OK   43 Hyprland-XDGShell.cpp:629  uint32_t CXDGSurfaceResource::scheduleConfigure() {
+OK   44 Hyprland-XDGShell.cpp:630  if (m_stateUpdate)
+OK   45 Hyprland-XDGShell.cpp:631  return m_scheduledSerial;
+OK   46 Hyprland-XDGShell.cpp:635  m_scheduledSerial = wl_display_next_serial(g_pCompositor->m_wlDisplay);
+OK   47 Hyprland-XDGShell.cpp:637  return m_scheduledSerial;
+OK   48 Hyprland-XDGShell.cpp:640  void CXDGSurfaceResource::configure() {
+OK   49 Hyprland-XDGShell.cpp:641  m_stateUpdate.reset();
+OK   50 Hyprland-XDGShell.cpp:642  m_resource->sendConfigure(m_scheduledSerial);
+
+# structural counts
+OK   51 witness hyprland sendWindowSize xdg_setSize=1 x11_configure=1 (Window.cpp:1732-1754)
+OK   52 ackedSize in Window.cpp = 2 lines (1526 write, 1865 read)
+OK   53 ackedSize in XDGShell.cpp = 0
+OK   54 onAck body (Window.cpp:1514-1529) sends/emits nothing to the client = 0
+
+CHECKS=54 FAILURES=0
+# pins
+d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-Window.cpp
+d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp
+OK   01 receipt hash Hyprland-Window.cpp
+OK   02 receipt hash Hyprland-XDGShell.cpp
+
+# Window.cpp
+OK   03 Hyprland-Window.cpp:184  m_listeners.ack
+OK   04 Hyprland-Window.cpp:1514  void CWindow::onAck(uint32_t serial) {
+OK   05 Hyprland-Window.cpp:1515  return e.first <= serial; });
+OK   06 Hyprland-Window.cpp:1517  if (SERIAL == m_pendingSizeAcks.rend())
+OK   07 Hyprland-Window.cpp:1520  m_pendingSizeAck = *SERIAL;
+OK   08 Hyprland-Window.cpp:1521  std::erase_if(m_pendingSizeAcks, [&](const auto& el) { return el.first <= SERIAL->first; });
+OK   09 Hyprland-Window.cpp:1523  if (m_isX11)
+OK   10 Hyprland-Window.cpp:1526  m_pending.ackedSize
+OK   11 Hyprland-Window.cpp:1526  = m_pendingSizeAck->second;
+OK   12 Hyprland-Window.cpp:1527  m_pending.updated.bits.acked = true;
+OK   13 Hyprland-Window.cpp:1685  Vector2D CWindow::realToReportSize() {
+OK   14 Hyprland-Window.cpp:1687  m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+OK   15 Hyprland-Window.cpp:1691  clamp(Vector2D{1, 1}, Math::VECTOR2D_MAX);
+OK   16 Hyprland-Window.cpp:1694  if (*PXWLFORCESCALEZERO && PMONITOR)
+OK   17 Hyprland-Window.cpp:1696  return (REPORTSIZE * PMONITOR->m_scale).round();
+OK   18 Hyprland-Window.cpp:1698  return REPORTSIZE;
+OK   19 Hyprland-Window.cpp:1699  }
+OK   20 Hyprland-Window.cpp:1732  void CWindow::sendWindowSize(bool force) {
+OK   21 Hyprland-Window.cpp:1741  const auto REPORTSIZE = realToReportSize();
+OK   22 Hyprland-Window.cpp:1743  if (!force && m_pendingReportedSize == REPORTSIZE && (m_reportedPosition == REPORTPOS || !m_isX11))
+OK   23 Hyprland-Window.cpp:1744  return;
+OK   24 Hyprland-Window.cpp:1751  m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE});
+OK   25 Hyprland-Window.cpp:1753  m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+OK   26 Hyprland-Window.cpp:1861  Vector2D CWindow::getReportedSize() {
+OK   27 Hyprland-Window.cpp:1863  return m_reportedSize;
+OK   28 Hyprland-Window.cpp:1865  return m_wlSurface->resource()->m_current.ackedSize;
+
+# XDGShell.cpp
+OK   29 Hyprland-XDGShell.cpp:130  m_resource->sendConfigure(box.x, box.y, box.w, box.h);
+OK   30 Hyprland-XDGShell.cpp:132  m_surface->scheduleConfigure();
+OK   31 Hyprland-XDGShell.cpp:354  uint32_t CXDGToplevelResource::setSize(const Vector2D& size) {
+OK   32 Hyprland-XDGShell.cpp:355  m_pendingApply.size = size;
+OK   33 Hyprland-XDGShell.cpp:356  scheduleStateApplication();
+OK   34 Hyprland-XDGShell.cpp:357  return m_owner->scheduleConfigure();
+OK   35 Hyprland-XDGShell.cpp:443  void CXDGToplevelResource::scheduleStateApplication() {
+OK   36 Hyprland-XDGShell.cpp:445  if (m_stateUpdate)
+OK   37 Hyprland-XDGShell.cpp:455  m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+OK   38 Hyprland-XDGShell.cpp:601  m_resource->setAckConfigure([this](CXdgSurface* r, uint32_t serial) {
+OK   39 Hyprland-XDGShell.cpp:602  if (serial < m_lastConfigureSerial)
+OK   40 Hyprland-XDGShell.cpp:603  return;
+OK   41 Hyprland-XDGShell.cpp:604  m_lastConfigureSerial = serial;
+OK   42 Hyprland-XDGShell.cpp:605  m_events.ack.emit(serial);
+OK   43 Hyprland-XDGShell.cpp:629  uint32_t CXDGSurfaceResource::scheduleConfigure() {
+OK   44 Hyprland-XDGShell.cpp:630  if (m_stateUpdate)
+OK   45 Hyprland-XDGShell.cpp:631  return m_scheduledSerial;
+OK   46 Hyprland-XDGShell.cpp:635  m_scheduledSerial = wl_display_next_serial(g_pCompositor->m_wlDisplay);
+OK   47 Hyprland-XDGShell.cpp:637  return m_scheduledSerial;
+OK   48 Hyprland-XDGShell.cpp:640  void CXDGSurfaceResource::configure() {
+OK   49 Hyprland-XDGShell.cpp:641  m_stateUpdate.reset();
+OK   50 Hyprland-XDGShell.cpp:642  m_resource->sendConfigure(m_scheduledSerial);
+
+# structural counts
+OK   51 witness hyprland sendWindowSize xdg_setSize=1 x11_configure=1 (Window.cpp:1732-1754)
+OK   52 ackedSize in Window.cpp = 2 lines (1526 write, 1865 read)
+OK   53 ackedSize in XDGShell.cpp = 0
+OK   54 onAck body (Window.cpp:1514-1529) sends/emits nothing to the client = 0
+
+# C2 declared residuals
+OK   55 c2-r44-gkeep-size-request-v2.py:65  a true quote at a true locator can stand beside a claim it does
+OK   56 c2-r44-gkeep-size-request-v2.py:66  not support
+OK   57 c2-r44-gkeep-size-request-v2.py:67  clause j binds a locator and a
+OK   58 c2-r44-gkeep-size-request-v2.py:68  not the truth of the sentence around them
+
+CHECKS=58 FAILURES=0

@@ -1,0 +1,70 @@
+== r14 §2 exact lines ==
+43: ### §2 The other local route is closed too
+44: 
+45: **OBS** The gkeep window's own store holds no geometry. The keys in its note
+46: records are exactly three — `body`, `created`, `id` — and a count for each of
+47: the geometry words an application would persist returns zero.
+48: 
+49: **INF** So the two places where a rendered geometry could exist without the
+50: compositor being asked anything — the compositor's own log, and the
+51: application's own state — are both now measured and both empty on this host.
+52: 
+53: **INF** That leaves one route, and it is an act rather than a reading: a gkeep
+54: window has to exist. Nothing on this host has one — the word does not appear
+55: in either journal (S326) — and opening one would mean launching an
+56: application into the operator's live session.
+57: 
+== r9 §2 fetchClass quote lines ==
+26: ### §2 The link that was missing: class *is* the Wayland app_id
+27: 
+28: **OBS** Hyprland's own `fetchClass()` defines what a window's class is for a
+29: native Wayland surface (S284):
+30: 
+31: > "return m_xdgSurface->m_toplevel->m_state.appid;"
+32: 
+33: **OBS** gkeep declares that app_id itself (S285):
+34: 
+35: > "application_id=\"org.omarchy.gkeep\","
+36: 
+37: **OBS** The host's rule file matches on exactly that string (S292):
+38: 
+39: > "windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$"
+40: 
+41: **INF** The chain is therefore closed at every link that can be checked
+42: without a running window. The rule's `match:class` is tested against the
+43: Wayland `app_id`, not against an X11 `WM_CLASS` and not against a title;
+44: gkeep's app_id is the string the rule's regex matches; and because the rule
+45: also floats the window, the `size` effect applies — upstream's own description
+46: of that effect is that it "Resizes a floating window." (S287).
+47: 
+== r9 §4 app_id-absent line ==
+66: ### §4 An annotation on where this link is documented — and where it is not
+67: 
+68: **OBS** The window-rules page, which documents the `size` effect and every
+69: match property, never mentions `app_id` (0 occurrences in the page). So the
+70: derivation that Hyprland's `class` *is* the Wayland `app_id` for a native
+71: surface is stated in exactly one place — the compositor's own source (S284) —
+72: and in no piece of upstream documentation.
+73: 
+74: **INF** That is worth recording as a limitation of the whole chain. The rule
+75: key's provenance is undocumented, which is why four rounds treated `class` as
+76: an opaque label and why the match could not be decided from the wiki alone.
+== r13 §3 absence lines ==
+63: ### §3 Why this host has no such record
+64: 
+65: **OBS** The host's own compositor record does not carry it (S320):
+66: 
+67: > "Map request dispatched occurrences in the unit journal: 0"
+68: 
+69: > "Welcome to Hyprland! occurrences: 2"
+70: 
+71: > "Refocused popup parent window occurrences: 0"
+72: 
+73: > "gkeep occurrences in the unit journal: 0"
+74: 
+75: **OBS** The middle two lines are controls, and they are what make the first
+76: line mean something. The unit's journal carries the compositor's INFO output
+77: — the startup banner appears in it — so the journal is the compositor's own
+78: record and not a shell wrapper's. It carries no DEBUG line: a string the
+79: compositor emits only at DEBUG level appears zero times. The map-time size
+80: line is such a DEBUG line.

@@ -1,0 +1,123 @@
+=== Window.cpp 1730-1760 ===
+1730: }
+1731: 
+1732: void CWindow::sendWindowSize(bool force) {
+1733:     const auto PMONITOR = m_monitor.lock();
+1734: 
+1735:     Log::logger->log(Log::TRACE, "sendWindowSize: window:{:x},title:{} with real pos {}, real size {} (force: {})", rc<uintptr_t>(this), this->m_title, m_realPosition->goal(),
+1736:                      m_realSize->goal(), force);
+1737: 
+1738:     // TODO: this should be decoupled from setWindowSize IMO
+1739:     const auto REPORTPOS = realToReportPosition();
+1740: 
+1741:     const auto REPORTSIZE = realToReportSize();
+1742: 
+1743:     if (!force && m_pendingReportedSize == REPORTSIZE && (m_reportedPosition == REPORTPOS || !m_isX11))
+1744:         return;
+1745: 
+1746:     m_reportedPosition    = REPORTPOS;
+1747:     m_pendingReportedSize = REPORTSIZE;
+1748:     updateX11SurfaceScale();
+1749: 
+1750:     if (m_isX11 && m_xwaylandSurface)
+1751:         m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE});
+1752:     else if (m_xdgSurface && m_xdgSurface->m_toplevel)
+1753:         m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+1754: }
+1755: 
+1756: NContentType::eContentType CWindow::getContentType() {
+1757:     if (!m_wlSurface || !m_wlSurface->resource() || !m_wlSurface->resource()->m_contentType.valid())
+1758:         return CONTENT_TYPE_NONE;
+1759: 
+1760:     return m_wlSurface->resource()->m_contentType->m_value;
+=== Window.cpp 1510-1535 ===
+1510: 
+1511:     return "";
+1512: }
+1513: 
+1514: void CWindow::onAck(uint32_t serial) {
+1515:     const auto SERIAL = std::ranges::find_if(m_pendingSizeAcks | std::views::reverse, [serial](const auto& e) { return e.first <= serial; });
+1516: 
+1517:     if (SERIAL == m_pendingSizeAcks.rend())
+1518:         return;
+1519: 
+1520:     m_pendingSizeAck = *SERIAL;
+1521:     std::erase_if(m_pendingSizeAcks, [&](const auto& el) { return el.first <= SERIAL->first; });
+1522: 
+1523:     if (m_isX11)
+1524:         return;
+1525: 
+1526:     m_wlSurface->resource()->m_pending.ackedSize          = m_pendingSizeAck->second; // apply pending size. We pinged, the window ponged.
+1527:     m_wlSurface->resource()->m_pending.updated.bits.acked = true;
+1528:     m_pendingSizeAck.reset();
+1529: }
+1530: 
+1531: void CWindow::onResourceChangeX11() {
+1532:     if (m_xwaylandSurface->m_surface && !m_wlSurface->resource())
+1533:         m_wlSurface->assign(m_xwaylandSurface->m_surface.lock(), m_self.lock());
+1534:     else if (!m_xwaylandSurface->m_surface && m_wlSurface->resource())
+1535:         m_wlSurface->unassign();
+=== Window.cpp 2495-2525 ===
+2495: 
+2496:     updateSurfaceScaleTransformDetails(true);
+2497:     m_ruleApplicator->propertiesChanged(Desktop::Rule::RULE_PROP_ALL);
+2498: 
+2499:     if (workspaceSilent) {
+2500:         if (validMapped(PFOCUSEDWINDOWPREV)) {
+2501:             Desktop::focusState()->rawWindowFocus(PFOCUSEDWINDOWPREV, FOCUS_REASON_NEW_WINDOW);
+2502:             PFOCUSEDWINDOWPREV->updateWindowDecos(); // need to for some reason i cba to find out why
+2503:         } else if (!PFOCUSEDWINDOWPREV)
+2504:             Desktop::focusState()->rawWindowFocus(nullptr, FOCUS_REASON_NEW_WINDOW);
+2505:     }
+2506: 
+2507:     // swallow
+2508:     if (m_swallowee) {
+2509:         g_layoutManager->removeTarget(SWALLOWEE->layoutTarget());
+2510:         SWALLOWEE->setHidden(true);
+2511:     }
+2512: 
+2513:     m_firstMap = false;
+2514: 
+2515:     Log::logger->log(Log::DEBUG, "Map request dispatched, monitor {}, window pos: {:5j}, window size: {:5j}", PMONITOR->m_name, m_realPosition->goal(), m_realSize->goal());
+2516: 
+2517:     // apply data from default decos. Borders, shadows.
+2518:     g_pDecorationPositioner->forceRecalcFor(m_self.lock());
+2519:     updateWindowDecos();
+2520:     layoutTarget()->recalc();
+2521: 
+2522:     // do animations
+2523:     m_realPosition->setConfig(Config::animationTree()->getAnimationPropertyConfig("windowsIn"));
+2524:     m_realSize->setConfig(Config::animationTree()->getAnimationPropertyConfig("windowsIn"));
+2525:     alpha(WINDOW_ALPHA_FADE)->setConfig(Config::animationTree()->getAnimationPropertyConfig("fadeIn"));
+=== Window.cpp 2730-2760 ===
+2730:         Log::logger->log(Log::DEBUG, "Layout predicts size {} for {}", predSize, m_self.lock());
+2731: 
+2732:         m_xdgSurface->m_toplevel->setSize(predSize);
+2733:         return;
+2734:     }
+2735: 
+2736:     if (!m_isMapped || isHidden())
+2737:         return;
+2738: 
+2739:     if (m_isX11)
+2740:         m_reportedSize = m_pendingReportedSize;
+2741: 
+2742:     if (!m_isX11 && !Fullscreen::controller()->isFullscreen(m_self.lock()) && m_isFloating) {
+2743:         const auto MINSIZE = m_xdgSurface->m_toplevel->layoutMinSize();
+2744:         const auto MAXSIZE = m_xdgSurface->m_toplevel->layoutMaxSize();
+2745: 
+2746:         if (clampWindowSize(MINSIZE, MAXSIZE > Vector2D{1, 1} ? std::optional<Vector2D>{MAXSIZE} : std::nullopt))
+2747:             g_pHyprRenderer->damageWindow(m_self.lock());
+2748:     }
+2749: 
+2750:     if (!m_workspace->m_visible)
+2751:         return;
+2752: 
+2753:     const auto PMONITOR = m_monitor.lock();
+2754: 
+2755:     g_pHyprRenderer->damageSurface(wlSurface()->resource(), m_realPosition->goal().x, m_realPosition->goal().y, m_isX11 ? 1.0 / m_X11SurfaceScaledBy : 1.0);
+2756: 
+2757:     if (!m_isX11) {
+2758:         m_subsurfaceHead->recheckDamageForSubsurfaces();
+2759:         m_popupHead->recheckTree();
+2760:     }

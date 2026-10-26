@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""MutC2V2 harness: rebuild C2 v2 controls with the runner's own functions, baseline, mutate, run."""
+import concurrent.futures as cf
+import hashlib, importlib.util, json, os, py_compile, shutil, subprocess, sys
+
+LANE = "/home/vgpnk/Projects/shokunin/mado-shokunin"
+FREEZE = "03fa5c618b089064a657b3d79d3d4272ae4b6894"
+BASE = "6a1a90528fe533cadee506a9fa3e9d13d15cc41f"
+DATA = "e46789213830597348fe96a351ae004d10587385"
+S = "/fast/scratch/hyaku/mado-r44/MutC2V2"
+CTL = os.path.join(S, "ctl")
+MUT = os.path.join(S, "mut")
+COUNTER = "quality/counters/c2-r44-gkeep-size-request-v2.py"
+
+def load_ctl():
+    spec = importlib.util.spec_from_file_location(
+        "ctlrun", os.path.join(LANE, ".ufo/waves/round-44/ctl/run-c2-controls-v2.py"))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+def build_controls():
+    ctl = load_ctl()
+    os.makedirs(CTL, exist_ok=True)
+    runs = []
+    d = ctl.positive(LANE, FREEZE, CTL, "P"); ctl.commit(d, "P")
+    runs.append(("P", d, "HEAD", True))
+    runs.append(("C2-BASE", LANE, BASE, False))
+    pos_lesson = ctl.rd(d, ctl.LESSON)
+    readme_row = "| `knowledge/hyprland-gkeep-size-request-r44.md` | control row | - |\n"
+    for name, entry in (("STAGED-COPY", open(ctl.STAGED).read()),
+                        ("R12-REPOINT", open(os.path.join(ctl.W, "w1/CritClaimSizing/controls/entry-r12-repoint.md")).read()),
+                        ("MINIMAL-QUOTES", open(os.path.join(ctl.W, "w1/CritClaimSizing/controls/entry-minimal.md")).read())):
+        if name == "STAGED-COPY":
+            d = ctl.clone(LANE, FREEZE, CTL, name)
+            ctl.wr(d, ctl.ENTRY, entry); ctl.wr(d, ctl.LESSON, pos_lesson)
+            open(os.path.join(d, "corpus/README.md"), "a").write(readme_row)
+        else:
+            d = ctl.positive(LANE, FREEZE, CTL, name)
+            ctl.wr(d, ctl.ENTRY, entry)
+        ctl.commit(d, name); runs.append((name, d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, CTL, "SHELL")
+    ctl.wr(d, ctl.ENTRY, "\n".join(ctl.rd(d, ctl.ENTRY).split("\n")[:12]) + "\n\ngkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep\nhyprland sendWindowSize xdg_setSize=1 x11_configure=1\n")
+    ctl.commit(d, "SHELL"); runs.append(("SHELL", d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, CTL, "HIDDEN-LINE")
+    ctl.wr(d, ctl.ENTRY, ctl.rd(d, ctl.ENTRY) + "\ngkeep client follow-up: per S164 the compositor always waits for the ack before drawing.\n")
+    ctl.commit(d, "HIDDEN-LINE"); runs.append(("HIDDEN-LINE", d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, CTL, "FORGED-PIN")
+    src = ctl.rd(d, ctl.FETCH + "Hyprland-Window.cpp")
+    forged = src.replace("        m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());",
+                         "        m_pendingSizeAcks.emplace_back(0, REPORTSIZE.floor());")
+    assert forged != src
+    ctl.wr(d, ctl.FETCH + "Hyprland-Window.cpp", forged)
+    sha_old = hashlib.sha256(src.encode()).hexdigest(); sha_new = hashlib.sha256(forged.encode()).hexdigest()
+    ctl.wr(d, ctl.LESSON, ctl.rd(d, ctl.LESSON).replace(sha_old, sha_new))
+    ctl.wr(d, ctl.ENTRY, ctl.rd(d, ctl.ENTRY).replace("xdg_setSize=1", "xdg_setSize=0"))
+    ctl.commit(d, "FORGED-PIN"); runs.append(("FORGED-PIN", d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, CTL, "FALSE-URL")
+    reg = ctl.rd(d, "corpus/SOURCES.md")
+    url = "https://raw.githubusercontent.com/VeigaPunk/gkeep/133b86717a02548aeaff3f1411bf301d936c5308/gkeep/ui.py"
+    assert reg.count(url) == 1
+    ctl.wr(d, "corpus/SOURCES.md", reg.replace(url, "https://example.com/docs/ui.py"))
+    ctl.commit(d, "FALSE-URL"); runs.append(("FALSE-URL", d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, ctl_w(CTL), "PROSE-SIZE-REQUEST") if False else ctl.positive(LANE, FREEZE, CTL, "PROSE-SIZE-REQUEST")
+    ctl.wr(d, ctl.ENTRY, ctl.rd(d, ctl.ENTRY) + "\nINF gkeep also pins its window with `set_size_request(420, 500)`.\n")
+    ctl.commit(d, "PROSE-SIZE-REQUEST"); runs.append(("PROSE-SIZE-REQUEST", d, "HEAD", False))
+    d = ctl.positive(LANE, FREEZE, CTL, "ANCHOR-PAST-EOF")
+    reg = ctl.rd(d, "corpus/SOURCES.md")
+    old = "gdktoplevel-wayland.c:444-545 compute_size, gdktoplevel-wayland.c:606-700 handle_configure"
+    assert reg.count(old) == 1
+    ctl.wr(d, "corpus/SOURCES.md", reg.replace(old, "gdktoplevel-wayland.c:9999-10005 compute_size, gdktoplevel-wayland.c:9999-10005 handle_configure"))
+    ctl.commit(d, "ANCHOR-PAST-EOF"); runs.append(("ANCHOR-PAST-EOF", d, "HEAD", False))
+    # data clone (read-only use; counter only runs git show/rev-parse/ls-tree)
+    ddata = os.path.join(S, "data")
+    shutil.rmtree(ddata, ignore_errors=True)
+    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", LANE, ddata], check=True)
+    assert subprocess.run(["git", "-C", ddata, "rev-parse", "--show-toplevel"],
+                          capture_output=True, text=True).stdout.strip() == os.path.realpath(ddata)
+    json.dump([[n, r, v, w] for n, r, v, w in runs], open(os.path.join(S, "runs.json"), "w"))
+    return runs
+
+def ctl_w(x):
+    return x
+
+def targets():
+    runs = json.load(open(os.path.join(S, "runs.json")))
+    out = []
+    for name, repo, rev, want in runs:
+        out.append({"name": name, "repo": repo, "rev": rev, "expect": "admit" if want else "reject"})
+    return out
+
+def run_counter(counter, t):
+    try:
+        p = subprocess.run([sys.executable, "-I", counter, "--repo", t["repo"], "--rev", t["rev"],
+                            "--base", BASE], capture_output=True, text=True, timeout=300)
+        rc, out, err = p.returncode, p.stdout, p.stderr
+    except subprocess.TimeoutExpired:
+        return 124, "TIMEOUT", "TIMEOUT"
+    lines = [l for l in out.strip().splitlines() if l.strip()]
+    tail = lines[-1] if lines else (err.strip().splitlines()[-1] if err.strip() else "")
+    cl = next((l.split(" clauses=")[-1] for l in lines if " clauses=" in l), "-")
+    return rc, tail, cl
+
+def baseline():
+    ts = targets()
+    res = {}
+    for t in ts:
+        rc, tail, cl = run_counter(os.path.join(MUT, "base.py"), t)
+        res[t["name"]] = {"rc": rc, "tail": tail, "clauses": cl,
+                          "ok": (rc == 0) if t["expect"] == "admit" else (rc != 0)}
+        print(("BASE OK  " if res[t["name"]]["ok"] else "BASE BAD ") + t["name"], rc, tail[:110])
+    json.dump(res, open(os.path.join(S, "baseline.json"), "w"), indent=1)
+    return res
+
+MUTANTS = json.load(open(os.path.join(S, "mutants.json")))
+
+def gen_mutants():
+    os.makedirs(MUT, exist_ok=True)
+    base = open(os.path.join(MUT, "base.py")).read()
+    man = []
+    for m in MUTANTS:
+        old, new = m["old"], m["new"]
+        n = base.count(old)
+        assert n == 1, "pattern count %d for %s" % (n, m["name"])
+        line = base[:base.index(old)].count("\n") + 1
+        src = base.replace(old, new)
+        p = os.path.join(MUT, m["name"] + ".py")
+        open(p, "w").write(src)
+        py_compile.compile(p, doraise=True)
+        man.append({"name": m["name"], "target": m["target"], "line": line, "path": p})
+    json.dump(man, open(os.path.join(S, "manifest.json"), "w"), indent=1)
+    return man
+
+def run_mutant(man_entry, ts):
+    name = man_entry["name"]
+    out = {"name": name, "target": man_entry["target"], "line": man_entry["line"], "runs": {}}
+    for t in ts:
+        rc, tail, cl = run_counter(man_entry["path"], t)
+        got_adm = rc == 0
+        exp_adm = t["expect"] == "admit"
+        out["runs"][t["name"]] = {"rc": rc, "tail": tail[:160], "clauses": cl}
+        if not exp_adm and got_adm:
+            out.setdefault("admitted_controls", []).append(t["name"])
+        if exp_adm and not got_adm:
+            out.setdefault("broke", []).append(t["name"])
+    out["verdict"] = "KILLED" if (out.get("admitted_controls") or out.get("broke")) else "SURVIVED"
+    return out
+
+def main():
+    cmd = sys.argv[1]
+    if cmd == "build":
+        build_controls(); print("controls built")
+    elif cmd == "baseline":
+        baseline()
+    elif cmd == "mutate":
+        gen_mutants(); print("mutants generated:", len(MUTANTS))
+    elif cmd == "run":
+        man = json.load(open(os.path.join(S, "manifest.json")))
+        ts = targets()
+        # drop C2-BASE lane target from per-mutant sweep? keep it: repo=LANE rev=BASE read-only
+        res = []
+        with cf.ThreadPoolExecutor(max_workers=8) as ex:
+            futs = [ex.submit(run_mutant, me, ts) for me in man]
+            for i, f in enumerate(cf.as_completed(futs)):
+                res.append(f.result())
+                print("done", res[-1]["name"], res[-1]["verdict"],
+                      ",".join(res[-1].get("admitted_controls", [])),
+                      ",".join(res[-1].get("broke", [])))
+        res.sort(key=lambda r: r["name"])
+        json.dump(res, open(os.path.join(S, "results.json"), "w"), indent=1)
+        print("results written")
+
+if __name__ == "__main__":
+    main()

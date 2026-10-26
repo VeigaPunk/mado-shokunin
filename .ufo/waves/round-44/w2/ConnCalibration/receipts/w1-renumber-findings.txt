@@ -1,0 +1,20 @@
+=== matrix.md B8 ===
+### B8. renumber-map.tsv — mappings by document?
+File (3 lines incl. header), both rows name the same document on both sides and give the document-identity
+reason in `note`; no row maps by id. Coverage: exactly the C2 predecessor's two citations — sufficient for
+C2 scope; the unmapped colliding ids (B3) are outside r12 and must not be resolved by number.
+
+## C. Risks
+
+- R1: string-equality URL dedup (QUALITY.md:34) misses tag/commit aliases; document-aware screening (commit
+  resolution or sha256) is required, as applied in the renumber map.
+- R2: 7 residue-cited staged ids collide with different lane rows (B3); number-based lookup of staged citations
+  in the lane registry yields the wrong document for each.
+- R3: staged S287 (wiki.hypr.land 0.56.0 Window-Rules) and S286 (GTK docs) are genuinely unheld; if the r9
+=== CritAssimilation findings 5.4 ===
+17:  `d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded` (both files, id-receipts). The tag copy of
+24:  renumber map's own wording — "Mapping is by document (renumber-map.tsv)" — is what needs fixing; see §5.4.
+40:| 2 | §1 INF: "the acknowledgement is tracked — which is precisely the mechanism by which a client could report a different size than the one asked for" (r12:34-35) | **REFUTED** | `onAck` stores `m_pendingSizeAck->second` — the value the compositor asked for — as `ackedSize` (Window.cpp:1520, :1526); the ack itself carries only a serial (XDGShell.cpp:605; xdg-shell.xml:564); `getReportedSize` then returns `m_current.ackedSize` (Window.cpp:1865). The tracked ack is a reconciliation of the compositor's own number, not a client size channel. |
+62:  are the pinned Window.cpp:1514–1526 (r13:27,29,31), and its §2 map-line quote (r13:50) is the pinned Window.cpp:2515 —
+114:   (xdg-shell.xml:1166; the commit-side rule at :564). The entry must not say a client may decline to ack;
+143:4. Reword the renumber map to "by registered location/receipt", with the tag=commit sha256 equality noted.

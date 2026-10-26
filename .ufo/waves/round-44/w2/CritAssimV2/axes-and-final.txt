@@ -1,0 +1,47 @@
+== axes names ==
+107:22. Re-derive every active, non-retired axis under its recorded counting rule before selecting the lowest axis; do not compare coverage only with the hermetic-suite pass fraction while a lower calibration row remains active. Report literal versus semantic citation counters separately rather than silently changing the rubric. (lesson: lessons/round-16.md#mistakes M3; PlanningWalk is a lane-dispatched adviser, not an outside reviewer)
+385:69. A measurement a report quotes is evidence only when a receipt carrying that measurement is committed at the revision the report attributes it to, and the receipt's own bytes name that revision; a report's tip-state number therefore has a receipt in the tip tree, and a number measured at the tip that exists only in the working tree is not a receipt. Check: extract every revision token the report writes in measurement form (`rev=<hex>`, `rev <hex>`, `at <hex>`) and require, at the report's revision, one committed receipt under that round's `receipts/` whose bytes contain the token — `python3 .ufo/waves/round-41/w1/ScrQualityCriteria/check69.py --repo . --rev <rev> --report <report> --receipts .ufo/waves/round-<N>/receipts` (`--text` to read a report held outside the tree); a `MISSING <token>` line is a violation. Shown able to fail: round-40's tip `fb49621` — the report cites `MADO_AXIS checked=3 mismatched=0 at fb49621` (`corpus/lessons/round-40-verifier-spotcheck.md:19`, at `cd950ec`) while `git grep -l fb49621 fb49621 -- .ufo/waves/round-40/receipts/` prints nothing and the only committed axis receipt is `receipts/axis-base.txt` at `rev=9fc511d`; the check reads `MISSING fb49621 … FAIL 1/1`, exit 1. Passing instance, same shape: round-41's freeze `60c3914` carries `receipts/axis-base.txt` naming `rev=ab2bfaa…`, and the check reads `PASS 1/1`, exit 0. Extends criterion 63 (which commits a worktree reading beside its receipt) to the revision the reading is attributed to. Limit: the check binds the citation to a receipt's bytes, not the report's number to the receipt's number — a receipt naming the revision with a different count still passes, and the count itself stays the reader's re-derivation. (lesson: lessons/round-41.md#mistakes M41-4)
+411:82. A round's balance between desktop ground and the lane's own self-measurement is a re-runnable count, not prose: `python3 -I quality/ratio-domain-meta.py --repo . --rev <closure tip> --from <first round> --to <last round>` classifies every `| C<digit>` claim row of those SCORECARD round sections under a rule frozen in the tool's docstring before its first run — a claim whose deliverable is a desktop-facing artifact (a `tools/` tool, a `corpus/knowledge/` entry, a `SKILL.md` table) is **domain**; calibration, counters, manifests, ledgers, admission gates and record repairs are **meta**; a row no clause matches is meta by fail-closed default (`default=`) — and prints `DOMAIN_META: domain=<d> meta=<m> window=<a>-<b> default=<n>`, which the round lesson carries verbatim with one hand-labelled row where the reader's reading disagrees with the rule and its disposition. A round-level tally ("4 domain rounds to 2 calibration rounds") is not the count: rounds 34, 35 and 39 are mixed. Shown able to fail: the axis-word mutant `.ufo/waves/round-44/w1/ExecDomainMetaRatio/ratio-mutant-axis-token.py` prints a different `domain=` (13 against 12) on rounds 34-43, and draft 1 (`ratio-draft1-no-clause2.py`) classed round-40 C1 meta although its deliverable is `tools/mado-options.py`. (lesson: lessons/round-44.md `## considerthese`; considerthese/2026-10-25.md proposal 1)
+---
+9:| Round | Axis | Before | After | Evidence |
+44:| Axis / scored sub-axis | Starting score (0–10) | Counting rule and observed result | Measured commit | Last-change round |
+117:| Axis | Candidate verdict | Observable and limit |
+242:| Axis / sub-axis | Rubric | Counting command | Baseline @ `e1d81d4` |
+294:| Claim | Axis / sub-axis | Counting command | Before @ `e1d81d4` | After @ `6e3b75f` | Verdict |
+397:| Claim / axis sub-axis | Before | After | Score delta | Verdict and evidence |
+526:| Claim / axis sub-axis | Before | After | Score delta | Verdict and boundary |
+601:Saturation remains 9.0, stagnation window N=3; retired axes: none.
+650:| Claim / axis | Before | After | Delta / verdict | Evidence |
+685:| Axis | Verdict |
+768:| Claim / axis | Before → after | Verdict / measured evidence |
+772:| C3 calibration, original literal lesson-citation fraction | 12/20, 6.0000 → 14/22, 6.3636; +0.3636 | improved narrowly; lowest active scored axis worked; `before.json`, `after-final.json`; lesson M1/M2/M3 exact-id rows resolve |
+917:| Claim / axis | Before → after | Verdict / evidence |
+1009:| Claim / axis | Before → after | Verdict / evidence |
+1145:| Claim / axis | Before → after | Verdict / evidence |
+1342:| Claim / axis | Before → after | Verdict / evidence |
+1407:| Claim / axis | Before → after | Verdict / evidence |
+1467:| Claim / axis | Before → after; counting command | Score delta / evidence / measured revision |
+1470:| C1 resource guard, same axis | `python3 -I .ufo/waves/round-21/resource/measure.py --tool tools/mado-tripwire.py --mode module-main` (and separately `--mode cli`): frozen1000/2000/4000 assignments, one child,384MiB/15s. At `eaec245` API4000 fails allocation(exit1), CLI all3 exit2 on stack reservation; at delivered code API3/3 and CLI3/3 are clean, zero findings/unparsed errors. | API RSS KiB before47164/132160/381464(failed) →20292/22852/28904; final CLI29200/31748/38916. Raw `evidence/resource-before-{module-main,cli}.json`, `evidence/final/resource-after-{module-main,cli}-a6cef89.json`. No claim that every call-heavy workload is linear; W2 ResourceMemory remains a named complexity limit. |
+1471:| C2 calibration / artifact-assessment capability | Before0 available gate (`git cat-file -e eaec245731926827c72b2fff47cb61afdf5d7c91:tools/mado-assessment.py` exits128, absent). After1 demonstrated gate: `python3 -I tools/mado-assessment.py --selftest .ufo/waves/round-21/assessment-fixtures` gives20/20, including actual wrong-topic red and corrected-subject green; exact N/A mutant now fails1 with named finding. | Capability delta0→1, **no criterion-count or old-axis-score credit**. `evidence/final/assessment-delivered-a6cef89.json`, `assessment-na-a6cef89.json`, `assessment-mutation-a6cef89.json` (digest-check code mutant killed), `assessment-independence-a6cef89.json` (complete C2 stdout byte-identical with baseline-C1/changed-C1/absent-C1). All bind delivered code. Historical22/30 and21/29 remain conditional rejected-round accounting. |
+== min-width in gkeep pin ==
+87:  min-height: 30px;
+88:  min-width: 72px;
+== fetchClass body 1502-1512 ==
+1502: std::string CWindow::fetchClass() {
+1503:     if (!m_isX11) {
+1504:         if (m_xdgSurface && m_xdgSurface->m_toplevel)
+1505:             return m_xdgSurface->m_toplevel->m_state.appid;
+1506:     } else {
+1507:         if (m_xwaylandSurface)
+1508:             return m_xwaylandSurface->m_state.appid;
+1509:     }
+1510: 
+1511:     return "";
+1512: }
+== r44 entry §1/§5 lines ==
+3:source: S164 - hyprwm/Hyprland src/desktop/view/Window.cpp @ efb5099 (v0.56.2; held row) - the report size, sendWindowSize and the pending-ack list
+12:assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-request-r12.md (its sendWindowSize step and its client-side reading, re-derived at the host's own commit and package versions; its "the chain is now complete" and "the rendered geometry ... is 420x500" are not adopted; the refused residue files and their flip conditions are in corpus/lessons/round-44.md)
+30:**OBS** The report size comes from realToReportSize (Hyprland-Window.cpp:1685-1699), which for an X11 client clamps at 1x1 and may scale by the monitor instead. The same file's sendWindowSize (Hyprland-Window.cpp:1732) returns early when the pending reported size is unchanged and the call is not forced (Hyprland-Window.cpp:1743-1744); otherwise it configures an X11 surface directly (Hyprland-Window.cpp:1751) or, for an xdg toplevel, appends the serial returned by setSize and the floored size to the pending-ack list (Hyprland-Window.cpp:1753).
+32:hyprland sendWindowSize xdg_setSize=1 x11_configure=1
+56:**OBS** S301 - gkeep builds one undecorated application window and declares a default size only: `window.set_decorated(False) window.set_default_size(420, 500)` (gkeep-ui.py:475); its application id is set in the application constructor (gkeep-ui.py:449).
+64:## What the staged predecessor said, and what the pins correct

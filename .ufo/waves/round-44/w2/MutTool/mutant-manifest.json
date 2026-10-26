@@ -1,0 +1,261 @@
+{
+ "pristine_sha256": "1da3ddaed0d6e3cca32d3724daeb4a7fbd14939946ad57ab8db34bc0b2e31ff4",
+ "generator": "single-point string replacement; every old fragment asserted to occur exactly once in the pristine source",
+ "specs": [
+  [
+   "M01-fsmode-in1",
+   "f in (1, 2)",
+   "f in (1,)"
+  ],
+  [
+   "M02-fsmode-in2",
+   "f in (1, 2)",
+   "f in (2,)"
+  ],
+  [
+   "M03-fsmode-in012-EQ",
+   "f in (1, 2)",
+   "f in (0, 1, 2)"
+  ],
+  [
+   "M04-fsmode-boolinv",
+   "not isinstance(f, bool)",
+   "isinstance(f, bool)"
+  ],
+  [
+   "M05-fsmode-float",
+   "isinstance(f, int)",
+   "isinstance(f, (int, float))"
+  ],
+  [
+   "M06-fsmode-wrongkey",
+   "c.get(\"fullscreen\")",
+   "c.get(\"fullscreenClient\")"
+  ],
+  [
+   "M07-fsmode-ret1",
+   "        return f\n    return 0\n\n\ndef matches",
+   "        return f\n    return 1\n\n\ndef matches"
+  ],
+  [
+   "M08-fsmode-absent1",
+   "        return f\n    return 0\n\n\ndef matches",
+   "        return f\n    return 1\n\n\ndef matches"
+  ],
+  [
+   "M09-fsmode-in123",
+   "f in (1, 2)",
+   "f in (1, 2, 3)"
+  ],
+  [
+   "M10-fsmode-instr-EQ",
+   "f in (1, 2)",
+   "f in (1, 2, \"2\")"
+  ],
+  [
+   "M11-fsmode-reorder-EQ",
+   "if isinstance(f, int) and not isinstance(f, bool) and f in (1, 2):",
+   "if f in (1, 2) and isinstance(f, int) and not isinstance(f, bool):"
+  ],
+  [
+   "M12-fsmode-notTrue",
+   "not isinstance(f, bool)",
+   "f is not True"
+  ],
+  [
+   "M13-fsmode-neg1",
+   "f in (1, 2)",
+   "f in (-1, 1, 2)"
+  ],
+  [
+   "M14-fs-ge2-EQ",
+   "elif fsmode == 2:",
+   "elif fsmode >= 2:"
+  ],
+  [
+   "M15-max-ne0-EQ",
+   "elif fsmode == 1:",
+   "elif fsmode != 0:"
+  ],
+  [
+   "M16-label-FS-to-MAX",
+   "            verdict = \"FULLSCREEN\"",
+   "            verdict = \"MAXIMIZED\""
+  ],
+  [
+   "M17-label-MAX-to-FS",
+   "            verdict = \"MAXIMIZED\"",
+   "            verdict = \"FULLSCREEN\""
+  ],
+  [
+   "M18-if-not-floating",
+   "elif not floating:",
+   "if not floating:"
+  ],
+  [
+   "M19-badsize-and-fs0",
+   "if size is None:",
+   "if size is None and fsmode == 0:"
+  ],
+  [
+   "M20-tally-assign1",
+   "tally[verdict.lower()] += 1",
+   "tally[verdict.lower()] = 1"
+  ],
+  [
+   "M21-agree-and-fs0-EQ",
+   "elif size == want:",
+   "elif size == want and fsmode == 0:"
+  ],
+  [
+   "M22-fsmode-or0-EQ",
+   "fsmode = client_fsmode(c)",
+   "fsmode = client_fsmode(c) or 0"
+  ],
+  [
+   "M46-fs-in2-EQ",
+   "elif fsmode == 2:",
+   "elif fsmode in (2,):"
+  ],
+  [
+   "M47-max-in1-EQ",
+   "elif fsmode == 1:",
+   "elif fsmode in (1,):"
+  ],
+  [
+   "M23-nc-ge0",
+   "t[\"fullscreen\"] > 0:\n        verdict, rc = \"NOT_COMPARED\", 5",
+   "t[\"fullscreen\"] >= 0:\n        verdict, rc = \"NOT_COMPARED\", 5"
+  ],
+  [
+   "M24-nc-lt0",
+   "t[\"fullscreen\"] > 0:\n        verdict, rc = \"NOT_COMPARED\", 5",
+   "t[\"fullscreen\"] < 0:\n        verdict, rc = \"NOT_COMPARED\", 5"
+  ],
+  [
+   "M25-nc-agree-ge0",
+   "elif t[\"agree\"] == 0 and",
+   "elif t[\"agree\"] >= 0 and"
+  ],
+  [
+   "M26-nc-rc0",
+   "verdict, rc = \"NOT_COMPARED\", 5",
+   "verdict, rc = \"NOT_COMPARED\", 0"
+  ],
+  [
+   "M27-matched-and-nostate-EQ",
+   "elif t[\"matched\"] == 0:",
+   "elif t[\"matched\"] == 0 and t[\"maximized\"] + t[\"fullscreen\"] == 0:"
+  ],
+  [
+   "M28-nc-orform-EQ",
+   "elif t[\"agree\"] == 0 and t[\"maximized\"] + t[\"fullscreen\"] > 0:",
+   "elif t[\"agree\"] == 0 and (t[\"maximized\"] > 0 or t[\"fullscreen\"] > 0):"
+  ],
+  [
+   "M29-nc-agree-lt1-EQ",
+   "elif t[\"agree\"] < 1 and t[\"maximized\"] + t[\"fullscreen\"] > 0:",
+   "elif t[\"agree\"] < 1 and t[\"maximized\"] + t[\"fullscreen\"] > 0:"
+  ],
+  [
+   "M44-nc-ne0-EQ",
+   "t[\"fullscreen\"] != 0:\n        verdict, rc = \"NOT_COMPARED\", 5",
+   "t[\"fullscreen\"] == 0:\n        verdict, rc = \"NOT_COMPARED\", 5"
+  ],
+  [
+   "M48-differ-ne0-EQ",
+   "elif t[\"differ\"] > 0:",
+   "elif t[\"differ\"] != 0:"
+  ],
+  [
+   "M49-sizerules-lt1-EQ",
+   "if size_rules == 0:",
+   "if size_rules < 1:"
+  ],
+  [
+   "M30-states-ge0",
+   "if t[\"maximized\"] + t[\"fullscreen\"] > 0:\n        states = ",
+   "if t[\"maximized\"] + t[\"fullscreen\"] >= 0:\n        states = "
+  ],
+  [
+   "M31-states-swap",
+   "states = \" maximized=%d fullscreen=%d\" % (t[\"maximized\"], t[\"fullscreen\"])",
+   "states = \" maximized=%d fullscreen=%d\" % (t[\"fullscreen\"], t[\"maximized\"])"
+  ],
+  [
+   "M32-states-dupmax",
+   "states = \" maximized=%d fullscreen=%d\" % (t[\"maximized\"], t[\"fullscreen\"])",
+   "states = \" maximized=%d fullscreen=%d\" % (t[\"maximized\"], t[\"maximized\"])"
+  ],
+  [
+   "M33-states-after-verdict",
+   "badsize=%d%s verdict=%s",
+   "badsize=%d verdict=%s%s"
+  ],
+  [
+   "M34-states-space",
+   "    states = \"\"\n",
+   "    states = \" \"\n"
+  ],
+  [
+   "M45-states-ne0-EQ",
+   "if t[\"maximized\"] + t[\"fullscreen\"] > 0:\n        states = ",
+   "if t[\"maximized\"] + t[\"fullscreen\"] != 0:\n        states = "
+  ],
+  [
+   "M35-del-fullscreen-rc",
+   "    chk(\"fullscreen-rc\", rc, 5)\n",
+   ""
+  ],
+  [
+   "M36-del-fsmode-absent",
+   "    chk(\"fsmode-absent\", client_fsmode({}), 0)\n",
+   ""
+  ],
+  [
+   "M37-del-fullscreen-not-agree",
+   "    chk(\"fullscreen-not-agree\", \" agree=0 \" in s and \" fullscreen=1 \" in s, True)\n",
+   ""
+  ],
+  [
+   "M38-del-tiled-only-ok",
+   "    chk(\"tiled-only-still-ok\", s.endswith(\"tiled=1 badsize=0 verdict=OK\") and rc == 0, True)\n",
+   ""
+  ],
+  [
+   "M39-del-fs-bool-ignored",
+   "    chk(\"fullscreen-bool-ignored\", s.endswith(\"differ=1 tiled=0 badsize=0 verdict=DIFFER\"), True)\n",
+   ""
+  ],
+  [
+   "M40-del-ignored-mode-loop",
+   "    for mode, label in ((3, \"three\"), (2.0, \"float\"), (\"2\", \"string\"), (-1, \"negative\"), (0, \"zero\"), (None, \"null\")):\n        s, rc = last([fs([420, 500], mode)], gk)\n        chk(\"fullscreen-%s-ignored\" % label, s.endswith(\"agree=1 differ=0 tiled=0 badsize=0 verdict=OK\"), True)\n",
+   ""
+  ],
+  [
+   "M41-json-decoder",
+   "doc = json.loads(data.decode(\"utf-8\"))",
+   "doc = json.JSONDecoder().decode(data.decode(\"utf-8\"))"
+  ],
+  [
+   "M42-docstring-EQ",
+   "NOT_COMPARED (exit 5, agree=0 and maximized + fullscreen > 0) | OK (exit 0),",
+   "NOT_COMPARED (exit 5, agree=0 and maximized + fullscreen >= 0) | OK (exit 0),"
+  ],
+  [
+   "M43-tally-reorder-EQ",
+   "tally = {\"clients\": 0, \"matched\": 0, \"unmapped\": 0, \"agree\": 0, \"differ\": 0,\n             \"tiled\": 0, \"badsize\": 0, \"maximized\": 0, \"fullscreen\": 0}",
+   "tally = {\"maximized\": 0, \"fullscreen\": 0, \"clients\": 0, \"matched\": 0, \"unmapped\": 0,\n             \"agree\": 0, \"differ\": 0, \"tiled\": 0, \"badsize\": 0}"
+  ],
+  [
+   "M29-nc-agree-lt1-EQ",
+   "elif t[\"agree\"] == 0 and t[\"maximized\"] + t[\"fullscreen\"] > 0:",
+   "elif t[\"agree\"] < 1 and t[\"maximized\"] + t[\"fullscreen\"] > 0:"
+  ],
+  [
+   "M44-nc-ne0-EQ",
+   "t[\"fullscreen\"] > 0:\n        verdict, rc = \"NOT_COMPARED\", 5",
+   "t[\"fullscreen\"] != 0:\n        verdict, rc = \"NOT_COMPARED\", 5"
+  ]
+ ]
+}

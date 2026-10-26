@@ -1,0 +1,266 @@
+# Lessons — mado, round 44
+
+Round intent: registration `.ufo/waves/round-44/registration.md` (freeze `e2289516a9a857f55cda7be635933e89b931c3da`), **superseded before
+any data** by `.ufo/waves/round-44/registration-v2.md` (freeze `03fa5c618b089064a657b3d79d3d4272ae4b6894`) after wave `w1` (38 seats,
+`.ufo/waves/round-44/w1-results.json`) broke both v1 predicates. Base `6a1a90528fe533cadee506a9fa3e9d13d15cc41f` (the round-43 tip after
+its non-author closure). Host 2026-10-26: Hyprland 0.56.2-4 (`efb50993780079460b0cbed1363e2166a2de1d9f`), gtk4 1:4.24.1-1,
+wayland-protocols 1.49-1. Drafted from `w1/ScrLessonSkeleton` (scribe seat) and integrated by the L1 (`MadoR44`); every L1 mark of
+the draft is resolved below.
+
+C1 (operability; contract extension of the round-43 capability): `tools/mado-geometry.py` reads the client's `fullscreen` integer and names
+the state — FULLSCREEN (2), MAXIMIZED (1) — instead of comparing a box Hyprland set from the monitor or the work area
+(`fetch-c1/Hyprland-FullscreenHandler.cpp:191-198`; `fetch-c1/Hyprland-HyprCtl.cpp:431` prints `.internal`); the summary carries
+` maximized=<n> fullscreen=<n>` only when their sum is > 0, and a dump whose state clients are the only matched ones and none agreed ends
+`NOT_COMPARED`, exit 5. Judged by `PRED-C1-r44-v2` (`quality/counters/c1-r44-geometry-states-v2.py`).
+
+C2 (coverage, sourced; assimilation of the gkeep residue): `corpus/knowledge/hyprland-gkeep-size-request-r44.md` — what happens after the
+box is set: the report size, `sendWindowSize`, the xdg configure and its serial, `onAck`, the protocol's "hint", GTK 4.24.1's configured-size
+handling and gkeep's own declarations. Judged by `PRED-C2-r44-v2` (`quality/counters/c2-r44-gkeep-size-request-v2.py`). Base holds none of
+it (`receipts/c2-ground-base.txt`: `git grep` exit 1).
+
+Axes: every published axis ties at its maximum at base (`receipts/axis-base.txt`), so each is a lowest axis; the claims' countable
+after-states are their counters' lines, not a published axis number (w1/CritClaimSizing F6, F9 — recorded, not disputed).
+
+**Access date.** Every row opened this round carries `opened 2026-10-26`; the registry tops at `S297` (234 rows at base), so the four new rows
+are S298-S301. The id guard (`assimilation/id-guard.md`: the 0-3-space pattern fires on an indented scratch row, the column-zero pattern does
+not; real `collisions` 42, S203..S297) maps the package by document (`assimilation/renumber-map.tsv`): staged S311 (Window.cpp at tag
+v0.56.2) → held S164 (byte-identical at commit efb5099, `w1/CritAssimilation` id-receipts), staged S312 (gkeep ui.py) → new S301.
+
+## Gate
+
+GATE S164 receipt=.ufo/waves/round-44/fetch/Hyprland-Window.cpp sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded quote="return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);"
+GATE S298 receipt=.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp sha256=d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 quote="m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);"
+GATE S299 receipt=.ufo/waves/round-44/fetch/xdg-shell.xml sha256=7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df quote="The width and height arguments specify a hint to the window about how its surface should be resized"
+GATE S300 receipt=.ufo/waves/round-44/fetch/gdktoplevel-wayland.c sha256=0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe quote="wayland_surface->next_layout.configured_width = width;"
+GATE S301 receipt=.ufo/waves/round-44/fetch/gkeep-ui.py sha256=07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a quote="window.set_decorated(False) window.set_default_size(420, 500)"
+ADMIT merge/mado/knowledge/corpus/knowledge/gkeep-client-size-request-r12.md as corpus/knowledge/hyprland-gkeep-size-request-r44.md
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-rendered-geometry-record-r13.md reason=its decisive receipt is a round-13 journal sweep at a package path that does not exist in this lane, and its Window.cpp half is superseded by held S164; flip if a journal sweep is committed inside this lane and re-shows the map-time line
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-rendered-geometry-record-r14.md reason=one whole-journal sweep outside this lane carries the entire absence claim, and no pinned source of this round touches the journal; flip if the sweep is re-run and committed under this lane's receipts
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-geometry-never-recorded-r15.md reason=its corpus-wide absence claim rests on an artifacts sweep at a package path, which is a different ground from the size-request chain; flip if a lane-committed sweep over this lane's own artifacts reproduces it
+REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-rendered-geometry-chain-r9.md reason=its two distinctive links need the GTK default-size documentation page and the window-rules wiki, neither pinned this round, and its round-9 receipts are absent from this lane; flip if both pages are pinned and each gets a row
+
+Receipts: the five pre-wave pins (`fetch/`, mode 100644, sha256 equal to `receipts/fetch-sha256.txt`; PRED-C2-r44-v2 clause d now pins the
+held S164 receipt too). URLs (opened 2026-10-26): S164 `https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/view/Window.cpp`
+(held row, `opened 2026-10-23`); S298 `…/efb50993…/src/protocols/XDGShell.cpp`; S299
+`https://gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.49/stable/xdg-shell/xdg-shell.xml`; S300
+`https://gitlab.gnome.org/GNOME/gtk/-/raw/4.24.1/gdk/wayland/gdktoplevel-wayland.c`; S301
+`https://raw.githubusercontent.com/VeigaPunk/gkeep/133b86717a02548aeaff3f1411bf301d936c5308/gkeep/ui.py`. Locators the entry carries, computed
+by the counter's `quote_at`: `Hyprland-Window.cpp:1687`, `Hyprland-XDGShell.cpp:455`, `xdg-shell.xml:1150`, `gdktoplevel-wayland.c:681`,
+`gkeep-ui.py:475` (the S301 quote spans 475-476). The scribe draft's alternative quotes (S164 at :1752, S298 at :354, S301 at :476) were
+not used: the L1 draft's quotes are the ones the positive control P was frozen with (`receipts/ctl-c2-v2.txt`).
+
+Rejected staged material, with reasons and flips, is in the REFUSE lines above and the ledger below; the r12 claims the pins refute are
+listed in the entry's "What the staged predecessor said" section (w1/ScoutStagedResidue, w1/CritAssimilation).
+
+C1's three grounding pins (`fetch-c1/`) carry no GATE line: no registry row cites them; their sha256 are in `receipts/fetch-sha256.txt`.
+
+## Assimilation ledger (theme: the gkeep size request; package `merge/mado/`, read-only)
+
+| candidate | scope (PROVINCE) | held | quality bar | verdict |
+|---|---|---|---|---|
+| `gkeep-client-size-request-r12.md` | in (upstream code at the host's commit, the app's own source) | the lane holds the size chain up to the box (round 43) and the gkeep excerpt as S297; no lane text holds `sendWindowSize`, the ack list or the xdg configure | its two sources are re-grounded by document: staged S311 (`Window.cpp` at tag `v0.56.2`) → held S164 (commit URL), staged S312 (`gkeep/ui.py`) → new S301; the tag-form URL is not carried (clause e+ wants the commit form), and its `verified-at: 2026-10-24` is re-dated to 2026-10-26 with a fresh recheck | **admitted as the successor** (`ADMIT` above), extended by this round's three pins (S298-S300) which the r12 text does not have |
+| `gkeep-rendered-geometry-record-r13.md` | in, but its ground is the journal | — | its two `Window.cpp` sources (onAck, the map request log line) are pinned here and are what the successor cites; its decisive one (`S320`, `lanes/mado/round13/fetch/host-journal-map-log-sweep.txt`) does not exist in this lane (`git ls-tree -r --name-only HEAD \| grep -c 'lanes/mado/round1[345]/fetch'` → 0), and this round makes no log claim | **refused**; flip if a journal sweep is committed inside the lane |
+| `gkeep-rendered-geometry-record-r14.md` | in, journal only | — | a single whole-journal sweep (`S326`, same absent package path) is its entire evidence | **refused**; flip if the sweep is committed under this lane's receipts |
+| `gkeep-geometry-never-recorded-r15.md` | in, route | — | one artifacts sweep (`S339`, same absent package path); "never" over a corpus from one sweep is the M43-9 class | **refused**; flip if a lane-committed sweep reproduces it |
+| `gkeep-rendered-geometry-chain-r9.md` | in | partly (`fetchClass` is inside the pinned `Window.cpp`, `:1502`) | its chain needs `docs.gtk.org` `set_default_size` and the wiki's window-rules page — neither is a pin — plus two round-9 lane receipts that do not exist here; the successor covers the class-is-app_id link from a pinned file instead | **refused**; flip if both pages are pinned and get rows |
+| `gkeep-size-rule-application-r10.md` | in | — | refused in round 43 (`corpus/lessons/round-43.md:46`) for the premise that the client decides the reported size; nothing this round overturns that (the successor shows the client is *told* a hint and acks it, S299/S300) | **no new decision**; the round-43 refusal stands, its re-grounding is corrected in the errata below |
+| `gkeep-observation-route-r11.md` | in | — | refused in round 43 (`:48`) as a single-source restatement | **no new decision** |
+| `gkeep-geometry-unobservable-r8.md` | in | — | refused in round 43 (`:47`); its flip (a lane row for the host build identity plus a fresh census) is still unfired — S295/S296 hold the rule and a census, not a build identity | **no new decision** |
+| `gkeep-element-rules-r30.md` | in, narrowly | its three rule lines are re-grounded as S295 | refusal withdrawn in round 43 (`## Post-data corrections`) because the flip fired — `.ufo/waves/round-43/w1/ExecLiveHost/live-census.txt:232` records `windowrule = size 875 600, match:tag floating-window` (read at the tip; this seat did not re-open the host config); it is still **not adopted**: it has no pinned receipt and no pinned row this round, and its 875×600 explanation rests on a config comment | **not adopted**; first candidate for the next round that pins `apps/system.conf` |
+| `glyph-and-geometry-r31.md` | in, but off-theme | — | two themes; the glyph half belongs to the bar theme, and its gkeep half is r12's ground | **not adopted**; residue |
+| the staged ids `S203`-`S349` | — | — | collide with the lane's own S203-S297 | id mapping is by document (`assimilation/renumber-map.tsv`), never arithmetic; no package id is carried |
+
+## Registry changes logged old→new (CORPUS.md rule 2)
+
+- **New rows S298-S301** (four; registration reserved S298-S301): S298 `src/protocols/XDGShell.cpp`, S299
+  `stable/xdg-shell/xdg-shell.xml` (wayland-protocols 1.49), S300 `gdk/wayland/gdktoplevel-wayland.c` (GTK 4.24.1), S301
+  `gkeep/ui.py` (gkeep `133b867`, full file). Kind `code`, tier A, status `mined`, `opened 2026-10-26`,
+  `used-by` = `corpus/knowledge/hyprland-gkeep-size-request-r44.md`, `recheck: on-release` (upstream code at a fixed commit).
+- **Held row S164** (`corpus/SOURCES.md:176`): `used-by` `corpus/knowledge/rule-attribution-r24.md` →
+  `corpus/knowledge/rule-attribution-r24.md, corpus/knowledge/hyprland-gkeep-size-request-r44.md` (one item appended; cells 1-10
+  byte-equal). No other held row is edited this round.
+- **Old→new for the staged document** (`assimilation/renumber-map.tsv`): staged **S311** (`…/hyprwm/Hyprland/v0.56.2/src/desktop/view/Window.cpp`,
+  tag form) → held **S164** (the same document at commit `efb50993…`); nothing of S311 is carried, including its tag-form URL.
+  Staged **S312** (`…/VeigaPunk/gkeep/133b867…/gkeep/ui.py`) → new **S301**; held S297 keeps its excerpt row unchanged, so the lane now
+  holds the same document twice at different granularity — one row per document would forbid this only if the locations matched, and they
+  do not (`SOURCES.md:246` carries a lane path, S301 the upstream URL).
+- **Census after the data commit**: recorded in `receipts/census-after-data.txt` (run on the data tree before the commit; expected identical to `receipts/census-before.txt`, W04 ×7
+  (S030, S042, S045, S097, S119, S120, S121) + W01 S277, exit 0 — not re-run by this seat).
+
+## Round-43 closure items (from `corpus/lessons/round-43-verifier-spotcheck.md` §6)
+
+1. **D1, an under-cited refusal reason and a mis-mapped host receipt** (`:97` → M44-1): corrected by the append-only errata below.
+2. **D2, S293's title echoes the refuted premise** (`:100` → M44-2): not editable in place (CORPUS rule 2); supersession **not done this round**: `w1/ScrSupersedeRows` drafted superseding rows, but a superseding row with the same URL in the same scope is census E04 and a different-scope copy adds a W04 per row; the honest alternative this round is the erratum M44-2 — supersession waits for a round that also re-opens S290-S297 as sources.
+3. **D3, the SKILL.md TILED licence column** (`:102` → M44-3): lands with C1, whose tool docstring narrows TILED to the tiled case.
+4. **D4, entry pointers to files that did not exist at the data commit, and an off-by-six locator** (`:104` → M44-4).
+5. **D5, the frozen seat count and the published mistake range** (`:106` → M44-5): errata below; round 44's own registration records seat
+   counts from `*-results.json` (`registration.md:5`).
+6. **D6, open predicate defects** (`:107-108` → M44-6): the C1 predicate is rebuilt (clause b4 state teeth, new selftest cases) and the C2
+   clause h rebuilt; what stays open is listed in the row.
+7. **D7, no committed axis receipt at the closing tip** (`:109` → M44-7).
+8. **Driver:** the duplicate `complete mado round=43` line is driver-side and status-neutral; not mined.
+9. **Still open from round 41:** S041 held-row citation, tool ergonomics O1-O5, the `PROVINCE.md:75-76` cite. Status at this round's base:
+   still open; no round-44 claim covers them, and this seat did not touch them.
+
+## Mistakes
+
+**M44-1 — a refusal reason named the path that sets the box but not the field the claim is about, and its re-grounding named two of
+three receipts.** Class: a decision's reason citing a subset of the links it asserts (the round-41 locator class, in prose). Evidence:
+`corpus/lessons/round-43.md:46` refuses r10 with "overturned by the pinned floating-algorithm and window-target path" — S291/S293, the
+box path — while the field at issue is `hyprctl clients -j` `size`, which is S294 (`.ufo/waves/round-43/fetch/Hyprland-GeometricMovableAnimated.cpp:19`,
+`case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();`) and S158 (`.ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp:427-429`); the same lesson's ledger row at
+`:74` re-grounds staged `S310` as "S295/S296", while S310's own scope line names three things — rule lines, the app request, the client
+count — so S297 re-grounds it too. Captured-by: the non-author closure, one round later
+(`round-43-verifier-spotcheck.md:97`); no instrument compares a refusal reason against the entry that re-grounds the same file. Fix:
+appended erratum E1/E2 below (nothing above is rewritten), and this round's ADMIT carries all five pinned receipts so the reason's ground
+is the successor's own citations. Shown able to fail: not shown — this seat wrote no checker for reason-to-receipt coverage; open, and the
+first candidate for a `quality/` criterion (not added this round: no instrument yet, so no criterion without a control).
+
+**M44-2 — a registry row's title states the premise the round refuted, and the row's own teaches cell contradicts it.** Class: a row cell
+restating a superseded inference. Evidence: `corpus/SOURCES.md:242` titles S293 "the client's request as input", while the same row's
+teaches cell and `.ufo/waves/round-43/fetch/Hyprland-WindowTarget.cpp:70-71` show the target writing `m_box.logicalBox` derived from
+the rule's `static_.size` (`.ufo/waves/round-43/fetch/Hyprland-DefaultFloatingAlgorithm.cpp:56`) — the client is the recipient, not the input. Captured-by: round-43 w2
+(`corpus/lessons/round-43.md` `## Post-data corrections`, "Registry wording" bullet); CORPUS rule 2 forbids editing cells 1-9 in place, so
+the row stands. Fix: supersede S293 (with S290-S292, S296, S297) by corrected rows in a later round — not this round (see closure item 2 above). Shown able to
+fail: `grep -n 'the client.s request as input' corpus/SOURCES.md` → one line, the row itself; a supersession keeps that count at 1 by
+leaving the old row alone (the check is the new row's title, not a gate).
+
+**M44-3 — the licence column of the tool's own capability row asserted the premise the tool's TILED verdict cannot hold.** Class: a
+published support claim broader than the code under it. Evidence: `SKILL.md:276` reads "the tiler, not the floating rule path, set its box",
+while for a pseudo-tiled client the size arrives from the stored rule pseudo-size (`fetch/Hyprland-Window.cpp:2402-2408` at the pinned commit,
+`round-43.md` `## Post-data corrections` first bullet), which the same row's caveat column already concedes. Captured-by: round-43 w2
+`CritEntryInf` F1 (via the closure's D3, `round-43-verifier-spotcheck.md:102`). Fix: C1's landing rewrites that cell, because C1 changes the
+tool's docstring and verdicts in the same file — landed as an appended correction under the SKILL.md verdict table (round 44, after the exit map; the TILED row itself is not rewritten), and the tool docstring narrows TILED to "not floating". Shown able to fail: `grep -c 'read TILED as "not floating" only' SKILL.md` → 0 at base, 1 at the data commit.
+
+**M44-4 — an entry cited two seat receipts by bare path before they existed, and a receipt's locator range started six lines past the
+block and ended five past it.** Class: a pointer whose target is not committed at the cited revision, plus a typed locator. Evidence:
+`git ls-tree -r --name-only 1959770 .ufo/waves/round-43/w1/ExecOracleGkeep/` prints **nothing** (0 files at the data commit) while
+`git ls-tree -r --name-only HEAD .ufo/waves/round-43/w1/ExecOracleGkeep/ | grep -cE '20-observation|10-cases'` → 2 at the tip, so
+`corpus/knowledge/hyprland-gkeep-geometry-r43.md:66` pointed at files that landed later; and `20-observation.txt:24` cites
+`gkeep-shm.c:156-164` for "sets app_id and title, attaches a 200x200 shm buffer and commits", whose block is `:150-159`
+(`150` `xdg_toplevel_set_app_id`, `151` title, `157-159` attach/damage/commit, computed with `awk` on
+`.ufo/waves/round-43/w1/ExecOracleGkeep/gkeep-shm.c`). Captured-by: round-43's non-author closure (`:104`); no lane instrument resolves a
+cited path at a cited revision, and the locator checker scores locators against receipts, not a receipt against its own target. Fix: cite
+seat evidence only after it lands (or date the pointer), and compute the range; the round-43 entry is corrected by erratum, not rewritten
+(append-only). Shown able to fail: the two commands above, run at this seat's read.
+
+**M44-5 — a frozen registration under-counted its own wave by one, and the published mistake range stopped one short, while the lesson
+carried nine.** Class: a count and a range published without a command that recomputes them (the M43-2 class, one round later). Evidence:
+`.ufo/waves/round-43/registration.md:5` reads "37 seats", while `git show 5add5b4:.ufo/waves/round-43/w1-spec.json` has 38 items and
+`HEAD:.ufo/waves/round-43/w1-results.json` has 38 results; `SCORECARD.md:2548` says "Mistakes M43-1..8" while
+`grep -c '^\*\*M43-' corpus/lessons/round-43.md` → 9. Captured-by: the closure's L2-floor row (`round-43-verifier-spotcheck.md:106` §6 D5)
+and its step-1 table; nothing recomputes a lesson's mistake count against the SCORECARD. Fix: `registration.md:5` of this round records
+seat counts **from** `*-results.json` ("the seat counts are recorded from each wave's `*-results.json`"), and the SCORECARD append for
+round 44 reads its count off the grep (SCORECARD Round 44 section). Shown able to fail: the three commands above.
+
+**M44-6 — the round closed with predicate holes it had itself declared, so the next round re-registered both counters instead of building
+on them.** Class: declared residuals left as prose, with no kill rule. Evidence: `round-43-verifier-spotcheck.md:107-108` — C1 cheats 4
+(source-pin selftest) and 6 (sandbox detection) reach TARGET_MET; C2 v2 admits 14/14 shape-keeping do-nothing controls and 6/16 weakening
+mutants survive; `quality/check-locators.py` compares identifiers not numbers and 12/37 mutants survive its selftest. Captured-by: the
+lane's own control receipts (`receipts/ctl-c1.txt`, `receipts/ctl-c2-v2.txt`) plus the closure's reading. Fix: `PRED-C1-r44` adds clause b4
+(state teeth over >= 6 `fullscreen`-naming sites, >= 75 % must die) and raises the selftest floor to 80, which makes K13 (selftest cases
+removed, 26/26 fixtures) fail — `receipts/ctl-c1.txt:17` shows exactly that variant missing on b:0/b4:0; `PRED-C2-r44` rebuilds clause h as
+a client-side census computed from the pins. What stays open: C1's cheat 6 (the sandbox is detectable) and C2's do-nothing controls have no
+positive control at the v1 freeze (`receipts/ctl-c2.txt:5`). What w1 then found broke both v1 predicates before data: C1 cheats E (sandbox
+gate) and C/F (no state assertion) met v1 (`w1/CritC1Cheat`), C2 admitted 9 of 9 forgeries (`w1/CritC2Cheat`) and the re-pointed r12 (`w1/CritClaimSizing` F1).
+Both were re-registered as v2 before data (`registration-v2.md`): C1 adds b5 and e (`receipts/ctl-c1-v2.txt`: X1 caught by e only, X2 by
+b5 only, 0 of 20 met), C2 adds T1-T4, the exact-census exemption and clause j with a positive control P (`receipts/ctl-c2-v2.txt`, 10 of 10
+rejected, P admitted). `w1/ExecC1ExtraMutants`: 51 mutants, 20 surviving all proved equivalent; `w1/MutC1CounterGates`: lowering the
+selftest floor to 50 let K13 meet v1 — under v2, b5 rejects K13 independently of the floor.
+
+**M44-7 — the round's own closing publication had no committed axis receipt at its tip.** Class: a published statement read from a
+write-time run (the M43-6 class). Evidence: at the closing tip `5846662`, the committed axis logs stop at
+`.ufo/waves/round-43/w2/ExecHarmTip/logs/tip-2a3707c-axis.log:4` (`mismatched=0 rev=2a3707c…`); `git grep -n 'MADO_AXIS:' 5846662 --
+.ufo/waves/round-43/w2/ExecHarmTip/logs/` lists base, data (`mismatched=2`), `2a3707c` and `a47efeb` (`mismatched=2`), none at
+`5846662`. Captured-by: the closure (`:109`). Fix: this round commits an axis receipt at the base (`receipts/axis-base.txt`, three MATCH
+rows) and at the tip (`receipts/axis-tip.txt`, committed with the round's last commit). Shown able to fail: the `git grep` above (0 hits for the closing tip's rev).
+
+**M44-8 — four rounds of C2 counters pinned only new ids' receipts, so a held id's receipt could be swapped for a forgery.** Class:
+a gate that checks a subset of the inputs it names (the vacuous class). Evidence: `quality/counters/c2-r44-gkeep-size-request.py`
+sets `pin_ok = True` and checks the digest only `if i in new_ids` (the same branch in `c2-r43-gkeep-entry-v2.py`, `c2-r42-gkeep-entry.py`,
+`c2-r41-focus-entry-v2.py`, per `w1/CritC2Cheat.md`), while its own docstring promised the held receipt "must be byte-equal"; the forged
+`Hyprland-Window.cpp` for held S164 with the census inverted to `xdg_setSize=0` was admitted (`w1/CritC2Cheat/frozen-F2-FORGED-PIN.txt`,
+`w1/RevC2Counter/log-forged_s164.txt`). Captured-by: **none** for four rounds (the docstring sentence was the only guard). Fix: T1 in
+`PRED-C2-r44-v2` (every PINS receipt digest-checked, held ids included). Shown able to fail: control FORGED-PIN in
+`receipts/ctl-c2-v2.txt` is rejected (`d:0`) while P, identical but for the forged bytes, is admitted.
+
+**M44-9 — the v1 registration called a documented report "a false report".** Class: a premise overstated to size a claim (calibration).
+Evidence: `.ufo/waves/round-44/registration.md` ("a false report found while reading the pinned HyprCtl.cpp") against the round-43 tool's own
+docstring ("DIFFER is a report, not a fault", base `tools/mado-geometry.py:57`) and SKILL.md's DIFFER row; `w1/CritFsPremise` finding 1 and
+`w1/CritClaimSizing` F5. The box really differs; the tool could not say why. Captured-by: the w1 critics, not the L1 (none of
+`corpus/QUALITY.md`'s criteria compares a claim's premise wording with the shipped contract's own text). Fix: withdrawn in
+`registration-v2.md` ("Wording withdrawn"); C1 is booked once, as a contract extension, and the scribe draft's mistake row calling it a
+false report is not adopted. The same critic's second point — an all-state dump printed `verdict=OK`, exit 0 — became NOT_COMPARED (exit 5)
+in v2. Shown able to fail: v2 control K14 (NOT_COMPARED removed) is rejected (`receipts/ctl-c1-v2.txt`).
+
+## Round-43 errata (appended; nothing in `corpus/lessons/round-43.md` is rewritten)
+
+- **E1 (D1a).** `corpus/lessons/round-43.md:46` — the r10 refusal's ground is S291/S293 (the box path). Corrected reading: the reported
+  field is `hyprctl clients -j` `size`, which is S294 (`Hyprland-GeometricMovableAnimated.cpp:19`,
+  `case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();`) read out by S158 (`.ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp:427-429`); the refused premise is
+  refuted by those two as well as by the box path. The flip's phrase "the reported size" is to be read as "the `size` field of
+  `hyprctl clients -j`", not as `CWindow::getReportedSize()`, which on Wayland returns `m_current.ackedSize`
+  (`fetch/Hyprland-Window.cpp:1861-1866`, stored by `onAck` at `:1526`) — both halves are S164 here.
+- **E2 (D1b).** `corpus/lessons/round-43.md:74` re-grounds staged `S310` as "S295/S296". Corrected: S310's scope line names rule lines,
+  the app request and the client count, so the re-grounding is **S295/S296/S297** — the rule file, the census, and the gkeep excerpt.
+- **E3 (D5).** `.ufo/waves/round-43/registration.md:5` under-counts its own wave ("37 seats"): 38 seats ran
+  (`git show 5add5b4:.ufo/waves/round-43/w1-spec.json` → 38 items; `HEAD:.ufo/waves/round-43/w1-results.json` → 38 results), which
+  `corpus/lessons/round-43.md` already discloses. `SCORECARD.md:2548` says "Mistakes M43-1..8" while the lesson carries nine:
+  `grep -c '^\*\*M43-' corpus/lessons/round-43.md` → 9. A SCORECARD edit is outside this seat's write scope; the L1 applies it as an appended erratum line in the SCORECARD Round 44 section (no Round-43 line is rewritten).
+- **E4 (the routed defect's own locator).** The closure routes D1 as "`round-43.md:75`"; the r10 `REFUSE` line is at `:46` and `:74-75` is
+  the ledger row that re-grounds S310 (`grep -n 'REFUSE merge/mado/knowledge/corpus/knowledge/gkeep-size-rule-application-r10.md'
+  corpus/lessons/round-43.md` → 46). The D1 substance stands; its locator is the M44-1 class again, one layer up, which is why E1/E2 cite
+  computed line numbers.
+
+## Spot-check (non-author closure; placeholders)
+
+| check | command | expected |
+|---|---|---|
+| lesson landed, unfenced, Gate section complete | `grep -c '^## Gate' corpus/lessons/round-44.md`; `grep -c '^GATE S' corpus/lessons/round-44.md` | 1; 5 |
+| every GATE quote re-opened in its receipt | recompute `sha256sum`; locate each quote word-bounded; confirm it is absent from the other four pins | (closure) |
+| each new row's location unique, `opened 2026-10-26`, `used-by` names the entry | `grep -nE '^\| S(29[89]\|30[01])\b' corpus/SOURCES.md`; `sources-census.sh validate` | (closure) |
+| S164's row edited in `used-by` only | `git diff <base> <tip> -- corpus/SOURCES.md` | one appended item, cells 1-10 byte-equal |
+| C1 at the data commit and the tip | `python3 -I quality/counters/c1-r44-geometry-states-v2.py --repo . --rev <rev> --work <scratch>` | `fixtures=26/26 … TARGET_MET`, exit 0; and clause r still `37/37` |
+| C2 at the data commit and the tip | `python3 -I quality/counters/c2-r44-gkeep-size-request-v2.py --repo . --rev <rev>` | `admitted=1/1 … TARGET_MET`, exit 0 |
+| admission decisions re-read against the package | re-open the five ADMIT/REFUSE files in `merge/mado/knowledge/corpus/knowledge/` | (closure) |
+| axis + harm at the tip | `MADO_AXIS …`, the two counters, `--selftest` of the tool | (closure) |
+| the C1 finding's four fixtures still discriminate | re-run `c1-demo/commands.txt` against base and reference bytes | DIFFER/TILED (base) vs FULLSCREEN/MAXIMIZED (reference) |
+
+## Census and measurements
+
+- C1 at base: `receipts/c1-before-base.txt` (`fixtures=12/26 tool=present verdict=TARGET_MISSED`, exit 1). At the data commit / tip:
+  `receipts/c1-after-data.txt`, `receipts/c1-after-tip.txt` (PRED-C1-r44-v2; the v1 counter is superseded and is not the claim's rule).
+- C2 at base: `receipts/c2-before-base.txt` (`admitted=0/1`, exit 1). At the data commit / tip: `receipts/c2-after-data.txt`, `receipts/c2-after-tip.txt` (PRED-C2-r44-v2).
+- Controls at the freeze (evidence-verified as bytes by this seat for the two verdict lines only, not executed): `CTL_C1 VERDICT: PASS
+  (controls scoring TARGET_MET: 0 of 15; reference met: 1)` (`receipts/ctl-c1.txt:18`, with REF `26/26` at `:2`); `CTL_C2 VERDICT: PASS
+  (controls scoring TARGET_MET: 0 of 3)` (`receipts/ctl-c2.txt:5`) — **no positive control exists for C2** at the freeze.
+- The two census lines the entry must carry, recomputed here from the pins with the counter's own parsing rules:
+  `gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep` (one `set_default_size`, zero
+  `set_size_request(`, one `application_id=`) and `hyprland sendWindowSize xdg_setSize=1 x11_configure=1` (the body spans
+  `fetch/Hyprland-Window.cpp:1732-1754`: one `->setSize(`, one `->configure(`). The counter's `clause=h` and the twelve `clause=j` lines are in `receipts/c2-after-data.txt`.
+- Registry rows 234 → 238 (S298-S301); knowledge entries 60 → 61 (+1, the entry); one `corpus/README.md` index row for the entry
+  (clause f) and the Frontier section "Round-44 gkeep size-request route".
+- The live host receipt is reported, not scored: a gkeep window was not open during this round's w1 (`hyprctl clients -j` is the read that
+  would answer it, and `tools/mado-geometry.py` reports FULLSCREEN/MAXIMIZED instead of inventing DIFFER/TILED once C1 lands) — the data-tree run is `receipts/live-geometry-host-r44.txt` (`NO_MATCHING_CLIENT`, exit 3, three clients, every `fullscreen` 0).
+- Tools installed by this seat: **none**. Scratch: `/fast/scratch/hyaku/mado-r44/ScrLessonSkeleton/` (deleted before this report;
+  the citable copies are in `w1/ScrLessonSkeleton/c1-demo/`).
+
+## considerthese (`considerthese/2026-10-25.md` proposal 1, "track the domain-versus-meta ratio as a running number")
+
+Grounded through the lane's own bytes, not the reflection: the reflection's "4 domain rounds to 2 calibration rounds" is a pointer; the
+count is `quality/ratio-domain-meta.py` (promoted from `w1/ExecDomainMetaRatio/ratio.py`, rule frozen in its docstring before its first
+run). At the v2 freeze `03fa5c6`:
+
+    $ python3 -I quality/ratio-domain-meta.py --repo . --rev 03fa5c618b089064a657b3d79d3d4272ae4b6894 --from 34 --to 43
+    DOMAIN_META: domain=12 meta=5 window=34-43 default=1
+
+Hand-labelled disagreement: round-36 C2 (operability) is classed meta by the rule (its object is the lane's own records) while an
+axis-word reading would class it domain; the rule is retained — the axis word does not decide the object (`w1/ExecDomainMetaRatio.md`).
+Landed as QUALITY criterion 82.
+
+## Quarantine slice (§10)
+
+Re-derived by `w1/ScoutQuarantine` (13 data rows, byte-identical to `assimilation/quarantine-slice`): no slice row is cited by the residue
+files (r9, r12, r13, r14, r15, r30, r31) at id or source level, so nothing is adopted or refused from the slice this round; 7 prose rows stay
+`unverifiable` (unreachable or no locator, not fabrication). New observation recorded, register not edited: S189's register quote is present
+at `EventManager.cpp@efb5099` line 128, so the register's "absent" is false for it (`w1/ScoutQuarantine/verdicts.md`).

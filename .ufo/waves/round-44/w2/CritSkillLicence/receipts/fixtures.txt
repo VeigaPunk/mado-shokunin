@@ -1,0 +1,175 @@
+# CritSkillLicence fixtures — round-44 SKILL.md licence-row probes
+# lane HEAD tool sha256 1da3ddaed0d6e3cca32d3724daeb4a7fbd14939946ad57ab8db34bc0b2e31ff4
+# round-43 tool = git 6a1a9052:tools/mado-geometry.py sha256 e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99
+# rules.conf: float on + size 420 500 for ^(org.omarchy.gkeep)$
+
+== A_tiled identical=True stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+   r44 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+
+== B_agree identical=True stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+   r44 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+
+== C_differ identical=True stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+
+== D_unmapped_fs identical=True stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=1 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+   r44 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=1 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+
+== E_nonmatch_fs identical=True stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+   r44 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+
+== F_fs_only identical=False stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=5
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=FULLSCREEN
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED
+   DELTA: r44 output differs from the round-43 contract
+
+== G_fs_plus_differ identical=False stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=2 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=FULLSCREEN
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=DIFFER
+   DELTA: r44 output differs from the round-43 contract
+
+== H_max_only identical=False stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=3440x1414 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+   r44 rc=5
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=false size=3440x1414 want=420x500 float_rule=- verdict=MAXIMIZED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=1 fullscreen=0 verdict=NOT_COMPARED
+   DELTA: r44 output differs from the round-43 contract
+
+== I_fs_coincide identical=False stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+   r44 rc=5
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=FULLSCREEN
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED
+   DELTA: r44 output differs from the round-43 contract
+
+== J_nomatch_fs identical=True stderr_empty=True
+   r43 rc=3
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+   r44 rc=3
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+== K_fs_plus_tiled identical=False stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=1 tiled=1 badsize=0 verdict=DIFFER
+   r44 rc=5
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=FULLSCREEN
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=false size=800x600 want=420x500 float_rule=- verdict=TILED
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED
+   DELTA: r44 output differs from the round-43 contract
+
+== L_badsize_plus_fs identical=False stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=- want=420x500 float_rule=- verdict=BADSIZE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=1 tiled=0 badsize=1 verdict=DIFFER
+   r44 rc=5
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=FULLSCREEN
+     MADO_GEOM_CLIENT: addr="0x2" class="org.omarchy.gkeep" floating=true size=- want=420x500 float_rule=- verdict=BADSIZE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=2 matched=2 unmapped=0 agree=0 differ=0 tiled=0 badsize=1 maximized=0 fullscreen=1 verdict=NOT_COMPARED
+   DELTA: r44 output differs from the round-43 contract
+
+== M_fs_bool identical=True stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+
+== N_fs_zero identical=True stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=900x700 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+
+== O_fs3 identical=True stderr_empty=True
+   r43 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+   r44 rc=1
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=3440x1440 want=420x500 float_rule=- verdict=DIFFER
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+
+== P_badsize_fs_only identical=True stderr_empty=True
+   r43 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=- want=420x500 float_rule=- verdict=BADSIZE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=1 verdict=OK
+   r44 rc=0
+     MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+     MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=- want=420x500 float_rule=- verdict=BADSIZE
+     MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=1 verdict=OK
+

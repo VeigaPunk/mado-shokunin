@@ -1,0 +1,31 @@
+ReDoS probe: pattern acceptance (regex_ok) and cost
+
+pattern              r43.regex_ok  landed.regex_ok  same?
+'(a+)+'              True          True            SAME
+'(a|a)+'             True          True            SAME
+'(a*)*'              True          True            SAME
+'(a+)*'              True          True            SAME
+'(a|aa)+'            True          True            SAME
+'a(b+)+c'            True          True            SAME
+'(.*a){9}'           False         False           SAME
+'(?=x)y'             False         False           SAME
+'(a)\\1'             False         False           SAME
+'a++'                False         False           SAME
+'a*+'                False         False           SAME
+'^a$'                True          True            SAME
+'[a-z]+'             False         False           SAME
+'a\x01b'             False         False           SAME
+'a b'                False         False           SAME
+'a\\d'               False         False           SAME
+
+cost of the accepted nested quantifier (a+)+, identical shape on both tools:
+  n  py.re.fullmatch  r43 wall  landed wall  r43 rc  landed rc
+ 18          0.009s      0.034s       0.034s        3          3
+ 20          0.040s      0.069s       0.061s        3          3
+ 22          0.150s      0.174s       0.167s        3          3
+ 24          0.583s      0.622s       0.617s        3          3
+ 26          2.357s      2.383s       2.391s        3          3
+
+documented guard (SKILL.md:309 `timeout 5`):
+  n=31 class       rc=124 wall=5.00s stdout_bytes=0 stderr_bytes=0
+  1024-byte class  rc=124 wall=5.00s stdout_bytes=0 stderr_bytes=0

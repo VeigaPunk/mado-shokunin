@@ -1,0 +1,28 @@
+=== c1-v2-before-base ===
+PRED-C1-r44-v2 fixture=fsnorules0 ok=1 ok
+PRED-C1-r44-v2 clause=r rc=0 PRED-C1-r42: fixtures=37/37 tool=present verdict=TARGET_MET rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f nonce=40974a645ab764d0
+PRED-C1-r44-v2 clauses=a:1 b:0 b4:0 b5:0 e:1 g:1 r:1
+PRED-C1-r44-v2: fixtures=11/26 tool=present verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f nonce=4a027f783e5442e4
+exit=1
+=== c2-v2-before-base ===
+PRED-C2-r44-v2 hyprland-gkeep-size-request-r44.md clauses=a:0 b:0 c:0 d:0 e:0 f:0 g:0 h:0 i:0 j:0 admitted=0
+PRED-C2-r44-v2: admitted=0/1 verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f
+exit=1
+=== c1-before-base (v1) ===
+PRED-C1-r44 clauses=a:1 b:0 b4:0 g:1 r:1
+PRED-C1-r44: fixtures=12/26 tool=present verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f nonce=c207ce6303ef9781
+exit=1
+=== c2-before-base (v1) ===
+PRED-C2-r44 hyprland-gkeep-size-request-r44.md clauses=a:0 b:0 c:0 d:0 e:0 f:0 g:0 h:0 i:0 admitted=0
+PRED-C2-r44: admitted=0/1 verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f
+exit=1
+=== c2-ground-base ===
+$ git grep -ciE 'sendWindowSize|pendingSizeAcks|xdg_toplevel.configure|set_size_request' 6a1a905 -- corpus/knowledge PROVINCE.md SKILL.md tools
+exit=1
+=== ctl-c1-v2 ===
+CTL_C1v2 K13-no-new-selftest want=missed got=missed rc=1 ok | a:1 b:0 b4:0 b5:0 e:1 g:1 r:1 | fixtures=26/26 tool=present verdict=TARGET_MISSED rev=e2289516a9a857f55cda7be635933e89b931c3da nonce=32711db3361b5795
+CTL_C1v2 VERDICT: PASS (controls scoring TARGET_MET: 0 of 20; reference met: 1)
+=== ctl-c2-v2 ===
+CTL_C2v2 PROSE-SIZE-REQUEST want=rejected got=rejected rc=1 ok | a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1 j:1 admitted=0 | PRED-C2-r44-v2: admitted=0/1 verdict=TARGET_MISSED rev=3ac2bd8584008103082a060bd6752e8b78f0ccfa
+CTL_C2v2 ANCHOR-PAST-EOF want=rejected got=rejected rc=1 ok | a:1 b:1 c:1 d:1 e:0 f:1 g:1 h:1 i:1 j:1 admitted=0 | PRED-C2-r44-v2: admitted=0/1 verdict=TARGET_MISSED rev=ba977289823a3299f8aec6550c73b8c6f6ca038d
+CTL_C2v2 VERDICT: PASS (wrong=0 of 11; positive admitted=1)

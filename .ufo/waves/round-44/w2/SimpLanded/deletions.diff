@@ -1,0 +1,81 @@
+# fixture: git clone -q --shared of the lane at e4678921; deletion commit 155cdd3fa562007d0bcece1baf92f968b52febc4 (two fixture commits squashed)
+# produced by SimpLanded, round-44 w2; SCRATCH only, never landed
+diff --git a/SKILL.md b/SKILL.md
+index c609b5bb..27f20766 100644
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -286,9 +286,7 @@ bad_json) · 3 `NO_MATCHING_CLIENT` · 4 `NO_SIZE_RULES`.
+ Round 44 adds exit 5 `NOT_COMPARED` (tested after `NO_MATCHING_CLIENT`, before `OK`); a dump with no maximized or
+ fullscreen matched client prints the round-43 summary line byte for byte, so the round-43 contract still holds
+ (`quality/counters/c1-r44-geometry-states-v2.py` clause r). Correction (round-43 closure D3): the TILED row's
+-Licenses cell overstates — "the tiler, not the floating rule path, set its box" is false for a pseudo-tiled client,
+-whose box comes from the rule's size stored as its pseudo size (`Hyprland-Window.cpp:2402-2408`, round-44 pin
+-`.ufo/waves/round-44/fetch/Hyprland-Window.cpp`); read TILED as "not floating" only.
++Licenses cell overstates; read TILED as "not floating" only.
+ 
+ Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
+ clients, so nothing matches.
+diff --git a/corpus/README.md b/corpus/README.md
+index c1966bd8..1916ad19 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -315,6 +315,5 @@ Round-22 final disposition: unsafe v3 consumer suppression withdrawn; restored v
+   The same round moves the tool's vocabulary: `tools/mado-geometry.py` prints FULLSCREEN and MAXIMIZED for a
+   client whose `fullscreen` field is 2 or 1 instead of comparing the monitor box or the work area with the rule,
+   a NOT_COMPARED top verdict (exit 5) when such clients are the only ones and none agreed, and TILED is narrowed
+-  to "not floating" (a pseudo-tiled client takes its box from the stored pseudo size, which `clients -j` does not
+-  print). Still open: no live gkeep window was observed, so the ack round-trip under a real client, gkeep's
+-  widget-tree minimum and the drawn size remain unmeasured.
++  to "not floating". Still open: no live gkeep window was observed, so the ack round-trip under a real client,
++  gkeep's widget-tree minimum and the drawn size remain unmeasured.
+diff --git a/corpus/knowledge/hyprland-gkeep-size-request-r44.md b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+index 79ce3faf..146d5dac 100644
+--- a/corpus/knowledge/hyprland-gkeep-size-request-r44.md
++++ b/corpus/knowledge/hyprland-gkeep-size-request-r44.md
+@@ -6,7 +6,7 @@ source: S299 - wayland-protocols 1.49 stable/xdg-shell/xdg-shell.xml - what an x
+ source: S300 - GNOME/gtk gdk/wayland/gdktoplevel-wayland.c @ 4.24.1 - how a GTK 4 toplevel stores and applies a configured size
+ source: S301 - VeigaPunk/gkeep gkeep/ui.py @ 133b867 (full file) - the window gkeep builds and the only size it declares
+ verified-at: 2026-10-26
+-recheck: 90d - re-pull the five pinned files (Hyprland efb5099, wayland-protocols 1.49, GTK 4.24.1, gkeep 133b867) and re-run the counter; a Hyprland, gtk4 or wayland-protocols package update on the host or a gkeep commit is the earlier trigger
++recheck: 90d - re-pull the five pinned files and re-run the counter; a Hyprland, gtk4 or wayland-protocols package update on the host or a gkeep commit is the earlier trigger
+ ground: the step after corpus/knowledge/hyprland-gkeep-geometry-r43.md - once the compositor has set the window's goal box, how that size reaches the client and whether gkeep could answer with another
+ Lane: mado-shokunin. Round: 44.
+ assimilated-from: merge/mado/knowledge/corpus/knowledge/gkeep-client-size-request-r12.md (its sendWindowSize step and its client-side reading, re-derived at the host's own commit and package versions; its "the chain is now complete" and "the rendered geometry ... is 420x500" are not adopted; the refused residue files and their flip conditions are in corpus/lessons/round-44.md)
+@@ -37,7 +37,7 @@ hyprland sendWindowSize xdg_setSize=1 x11_configure=1
+ 
+ **OBS** When the client acknowledges, onAck (Hyprland-Window.cpp:1514) takes the newest pending pair whose serial is not after the acknowledged one, drops it and every older pair, and for a Wayland client writes that pair's size into the surface's pending state as the acked size (Hyprland-Window.cpp:1526).
+ 
+-**INF** The ack records which size the client says it is answering; it does not force the client's next buffer to be that size. What Hyprland does with a buffer of another size after the ack is outside this entry's pins (UNK).
++**INF** The ack records which size the client says it is answering; it does not force the client's next buffer to be that size.
+ 
+ ## §3 What the protocol lets the client do
+ 
+diff --git a/corpus/lessons/round-44.md b/corpus/lessons/round-44.md
+index bd354cd6..be97c4cb 100644
+--- a/corpus/lessons/round-44.md
++++ b/corpus/lessons/round-44.md
+@@ -49,8 +49,8 @@ by the counter's `quote_at`: `Hyprland-Window.cpp:1687`, `Hyprland-XDGShell.cpp:
+ `gkeep-ui.py:475` (the S301 quote spans 475-476). The scribe draft's alternative quotes (S164 at :1752, S298 at :354, S301 at :476) were
+ not used: the L1 draft's quotes are the ones the positive control P was frozen with (`receipts/ctl-c2-v2.txt`).
+ 
+-Rejected staged material, with reasons and flips, is in the REFUSE lines above and the ledger below; the r12 claims the pins refute are
+-listed in the entry's "What the staged predecessor said" section (w1/ScoutStagedResidue, w1/CritAssimilation).
++The r12 claims the pins refute are listed in the entry's "What the staged predecessor said" section
++(w1/ScoutStagedResidue, w1/CritAssimilation).
+ 
+ C1's three grounding pins (`fetch-c1/`) carry no GATE line: no registry row cites them; their sha256 are in `receipts/fetch-sha256.txt`.
+ 
+diff --git a/tools/mado-geometry.py b/tools/mado-geometry.py
+index d5f50df1..2c734b86 100755
+--- a/tools/mado-geometry.py
++++ b/tools/mado-geometry.py
+@@ -13,8 +13,7 @@ setTargetFullscreenModeInternal); `hyprctl clients -j` carries that internal
+ mode as the integer `fullscreen` (FullscreenController.hpp eFullscreenMode:
+ 0 none, 1 maximized, 2 fullscreen; HyprCtl.cpp prints `.internal`). For such a
+ client the dump shows the state's box, not the rule's, so the tool names the
+-state (FULLSCREEN, MAXIMIZED) instead of comparing; the round-43 tool printed
+-DIFFER there, true about the box and silent about the cause.
++state (FULLSCREEN, MAXIMIZED) instead of comparing.
+ 
+     hyprctl clients -j | mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+     mado-geometry.py --clients clients.json --rules a.conf --rules b.conf

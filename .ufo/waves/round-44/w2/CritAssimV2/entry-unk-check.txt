@@ -1,0 +1,94 @@
+== grep symbols in pinned Window.cpp ==
+187:    m_listeners.commit           = m_xdgSurface->m_events.commit.listen([this] { commitWindow(); });
+199:    m_listeners.commit           = m_xwaylandSurface->m_events.commit.listen([this] { commitWindow(); });
+1192:    if (m_isFloating)
+1205:    if (!m_isFloating || m_pinned || Fullscreen::controller()->isFullscreen(m_self.lock())) {
+1277:bool CWindow::clampWindowSize(const std::optional<Vector2D> minSize, const std::optional<Vector2D> maxSize) {
+1383:    if (m_isFloating)
+1526:    m_wlSurface->resource()->m_pending.ackedSize          = m_pendingSizeAck->second; // apply pending size. We pinged, the window ponged.
+1557:    if (!m_isFloating || Fullscreen::controller()->isFullscreen(m_self.lock()) || g_layoutManager->dragController()->target() == layoutTarget() ||
+1865:        return m_wlSurface->resource()->m_current.ackedSize;
+2130:        m_isFloating    = true;
+2191:        m_isFloating = m_ruleApplicator->static_.floating.value_or(m_isFloating);
+2290:    if (m_pinned && !m_isFloating)
+2377:        && !(m_isFloating && !Desktop::focusState()->window()->m_isFloating)               // do not auto-group a floated window into a tiled group
+2390:    if (m_isFloating) {
+2435:    if (Fullscreen::controller()->hasFullscreen(m_workspace) && !requestedInternalFSMode.has_value() && !requestedClientFSMode.has_value() && !m_isFloating) {
+2534:    if (PWORKSPACE && Fullscreen::controller()->hasFullscreen(PWORKSPACE) && Fullscreen::controller()->getFullscreenWindow(PWORKSPACE, true) != m_self.lock() && !m_isFloating) {
+2577:    if (m_isFloating && !m_isX11 && m_ruleApplicator->persistentSize().valueOrDefault()) {
+2668:                Desktop::focusState()->fullWindowFocus(candidate, m_self->m_isFloating ? FOCUS_REASON_UNMAP_WINDOW_FLOATING : FOCUS_REASON_UNMAP_WINDOW_TILING);
+2714:void CWindow::commitWindow() {
+2723:                && !m_isFloating                                                      // not floating
+2742:    if (!m_isX11 && !Fullscreen::controller()->isFullscreen(m_self.lock()) && m_isFloating) {
+2746:        if (clampWindowSize(MINSIZE, MAXSIZE > Vector2D{1, 1} ? std::optional<Vector2D>{MAXSIZE} : std::nullopt))
+2851:    if (Fullscreen::controller()->isFullscreen(m_self.lock()) || !m_isFloating) {
+== function context 2680-2745 ==
+2680:         // CWindow::onUnmap will remove this window's active status, but we can't really do it above.
+2681:         if (m_self.lock() == Desktop::focusState()->window() || !Desktop::focusState()->window()) {
+2682:             g_pEventManager->postEvent(SHyprIPCEvent{"activewindow", ","});
+2683:             g_pEventManager->postEvent(SHyprIPCEvent{"activewindowv2", ""});
+2684: 
+2685:             Event::bus()->m_events.window.active.emit(m_self.lock(), FOCUS_REASON_OTHER);
+2686:         }
+2687:     } else {
+2688:         Log::logger->log(Log::DEBUG, "Unmapped was not focused, ignoring a refocus.");
+2689:     }
+2690: 
+2691:     if (!m_X11DoesntWantBorders)                                            // don't animate out if they weren't animated in.
+2692:         *m_realPosition = m_realPosition->value() + Vector2D(0.01f, 0.01f); // it has to be animated, otherwise CesktopAnimationManager will ignore it
+2693: 
+2694:     const float FADEOUTALPHA = alphaValue(WINDOW_ALPHA_FADE) * alphaValue(WINDOW_ALPHA_FULLSCREEN) * alphaValue(WINDOW_ALPHA_LAYOUT);
+2695: 
+2696:     // FIXME: this shouldn't be needed but it is because style is decided by the fuckin anim from this
+2697:     m_realPosition->setConfig(Config::animationTree()->getAnimationPropertyConfig("windowsOut"));
+2698:     m_realSize->setConfig(Config::animationTree()->getAnimationPropertyConfig("windowsOut"));
+2699:     alpha(WINDOW_ALPHA_FADE)->setConfig(Config::animationTree()->getAnimationPropertyConfig("fadeOut"));
+2700: 
+2701:     Desktop::fadingOutState()->add(CWindowFadeout::create(m_self.lock(), SNAPSHOT, FADEOUTALPHA));
+2702: 
+2703:     // recheck idle inhibitors
+2704:     g_pInputManager->recheckIdleInhibitorStatus();
+2705: 
+2706:     // force report all sizes (QT sometimes has an issue with this)
+2707:     if (m_workspace)
+2708:         m_workspace->forceReportSizesToWindows();
+2709: 
+2710:     // update lastwindow after focus
+2711:     onUnmap();
+2712: }
+2713: 
+2714: void CWindow::commitWindow() {
+2715:     if (!m_isX11 && (!m_xdgSurface || !m_xdgSurface->m_toplevel))
+2716:         return;
+2717: 
+2718:     if (!m_isX11 && m_xdgSurface->m_initialCommit) {
+2719:         // try to calculate static rules already for any floats
+2720:         m_ruleApplicator->readStaticRules(true);
+2721: 
+2722:         const Vector2D predSize = !m_ruleApplicator->static_.floating.value_or(false) // no float rule
+2723:                 && !m_isFloating                                                      // not floating
+2724:                 && !parent()                                                          // no parents
+2725:                 && !g_pXWaylandManager->shouldBeFloated(m_self.lock(), true)          // should not be floated
+2726:             ?
+2727:             g_layoutManager->predictSizeForNewTiledTarget().value_or(Vector2D{}) :
+2728:             Vector2D{};
+2729: 
+2730:         Log::logger->log(Log::DEBUG, "Layout predicts size {} for {}", predSize, m_self.lock());
+2731: 
+2732:         m_xdgSurface->m_toplevel->setSize(predSize);
+2733:         return;
+2734:     }
+2735: 
+2736:     if (!m_isMapped || isHidden())
+2737:         return;
+2738: 
+2739:     if (m_isX11)
+2740:         m_reportedSize = m_pendingReportedSize;
+2741: 
+2742:     if (!m_isX11 && !Fullscreen::controller()->isFullscreen(m_self.lock()) && m_isFloating) {
+2743:         const auto MINSIZE = m_xdgSurface->m_toplevel->layoutMinSize();
+2744:         const auto MAXSIZE = m_xdgSurface->m_toplevel->layoutMaxSize();
+2745: 
+== clampWindowSize def ==
+1277:bool CWindow::clampWindowSize(const std::optional<Vector2D> minSize, const std::optional<Vector2D> maxSize) {
+2746:        if (clampWindowSize(MINSIZE, MAXSIZE > Vector2D{1, 1} ? std::optional<Vector2D>{MAXSIZE} : std::nullopt))

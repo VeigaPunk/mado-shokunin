@@ -1,0 +1,298 @@
+--- /fast/scratch/hyaku/mado-r44/ExecIndepV2/base-tool.py	2026-10-26 14:37:36.823010808 -0300
++++ .ufo/waves/round-44/w2/ExecIndepV2/mado-geometry-indep.py	2026-10-26 14:41:31.469523961 -0300
+@@ -3,9 +3,12 @@
+ 
+ Hyprland 0.56.2 consumes a window rule `size W H` when a floating window opens
+ (the floating algorithm reads the rule's size and stores it as the window's box);
+-a tiled window never reads it. The compositor reports each mapped client's size
+-in `hyprctl clients -j`. This tool joins the two read-only inputs: the rule
+-lines of one or more Hyprland config files and one `hyprctl clients -j` dump.
++a tiled window never reads it. A maximized or fullscreen window shows that state's
++box instead, so the rule's size is not what the client reports there: the tool names
++those clients instead of comparing them. The compositor reports each mapped client's
++size and `fullscreen` value in `hyprctl clients -j`. This tool joins the two read-only
++inputs: the rule lines of one or more Hyprland config files and one
++`hyprctl clients -j` dump.
+ 
+     hyprctl clients -j | mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+     mado-geometry.py --clients clients.json --rules a.conf --rules b.conf
+@@ -26,34 +29,42 @@
+ "\\n"; a line is stripped of spaces and tabs at both ends. A RULE LINE matches
+ `windowrule[ \\t]*=(.*)` (anything else, `windowrulev2` included, is ignored and
+ counted nowhere). The body is split on "," and each field is stripped of spaces
+-and tabs. The effect is the first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An
+-effect other than `size` and `float` adds one to `other`. A `size` or `float`
+-line is SUPPORTED when: field 0 has exactly two argument
+-tokens `[0-9]{1,5}` (size) or exactly one token `on` or `off` (float); there is
+-exactly one more field and it is `match:class` + one or more spaces/tabs + REGEX;
+-REGEX is 1-200 characters of `[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.`
+-`\\-` `\\(` `\\)` `\\|` `\\*` `\\+` `\\?` `\\^` `\\$` `\\\\`, contains none of `(?`,
+-`*+`, `++`, `?+`, and compiles under Python `re`. Any other size or float line adds
+-one to `unsupported`. Supported rules are numbered n=1.. across all files in order
+-and each reports the 1-based index of its file.
+-A client MATCHES a rule when its class holds no character below U+0020 and
++and tabs. The effect is the first token of field 0, tokens being separated by runs
++of spaces and tabs only (the empty string when there is none). An effect other than
++`size` and `float` adds one to `other`. A `size` or `float` line is SUPPORTED when:
++field 0 has exactly two argument tokens `[0-9]{1,5}` (size) or exactly one token
++`on` or `off` (float); there is exactly one more field and it is `match:class` + one
++or more spaces/tabs + REGEX; REGEX is 1-200 characters of
++`[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.` `\\-` `\\(` `\\)` `\\|` `\\*` `\\+`
++`\\?` `\\^` `\\$` `\\\\`, contains none of `(?`, `*+`, `++`, `?+`, and compiles under
++Python `re`. Any other size or float line adds one to `unsupported`. Supported rules
++are numbered n=1.. across all files in order and each reports the 1-based index of
++its file. A client MATCHES a rule when its class holds no character below U+0020 and
+ `re.fullmatch(REGEX, class)` succeeds (Hyprland: `RE2::FullMatch`).
+ 
+ Clients. An element whose `mapped` is JSON false is unmapped and skipped. For the
+ others class is the `class` value when a string, else ""; floating is true only
+ for JSON true; size is the `size` value when a list of exactly two JSON
+ integers (not booleans, not floats) >= 0, else none; address is `address` when
+-a string, else "-". Rules apply in order: the last matching `size` rule gives
+-want, the last matching `float` rule gives float_rule (`on`, `off`, else `-`). A
+-client with at least one matching size rule is MATCHED and reports a verdict:
+-BADSIZE (size none) | TILED (not floating) | AGREE (size == want) | DIFFER.
++a string, else "-". The window state is the `fullscreen` value when that is a JSON
++integer (not a boolean, not a float) equal to 2 (fullscreen) or 1 (maximized);
++absent, null, 0, 3, -1, true, 2.0, "2", lists and objects are no state. Rules apply
++in order: the last matching `size` rule gives want, the last matching `float` rule
++gives float_rule (`on`, `off`, else `-`). A client with at least one matching size
++rule is MATCHED and reports a verdict, tested in the order BADSIZE (size none) |
++FULLSCREEN (state 2) | MAXIMIZED (state 1) | TILED (not floating) | AGREE (size ==
++want) | DIFFER.
+ 
+-Output (stdout; nothing else; stderr empty on exit 0/1/3/4), in order:
++Output (stdout; nothing else; stderr empty on exit 0/1/3/4/5), in order:
+   per supported rule   MADO_GEOM_RULE: n=<n> file=<k> effect=<size|float> arg=<WxH|on|off> class=<REGEX>
+   per matched client   MADO_GEOM_CLIENT: addr=<json> class=<json> floating=<true|false> size=<WxH|-> want=<WxH> float_rule=<on|off|-> verdict=<V>
+-  last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> verdict=<V>
+-(<json> is json.dumps with ensure_ascii.) V = NO_SIZE_RULES (exit 4, rules=0) |
+-DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT (exit 3, matched=0) | OK (exit 0),
++  last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> maximized=<n> fullscreen=<n> verdict=<V>
++(<json> is json.dumps with ensure_ascii.) The summary carries
++` maximized=<n> fullscreen=<n>` between `badsize=<n>` and ` verdict=` exactly when
++maximized + fullscreen > 0; otherwise it is the round-43 line, unchanged. V =
++NO_SIZE_RULES (exit 4, rules=0) | DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT
++(exit 3, matched=0) | NOT_COMPARED (exit 5, agree=0 and maximized + fullscreen > 0:
++the matched clients were all in a state where nothing is compared) | OK (exit 0),
+ tested in that order. DIFFER is a report, not a fault: a user may have resized the
+ window, or the compositor may have clamped the rule's size.
+ """
+@@ -68,6 +79,8 @@
+ MATCH_FIELD = re.compile(r"match:class[ \t]+(.+)")
+ SAFE = re.compile(r"(?:[A-Za-z0-9_.^$()|*+?-]|\\[.\-()|*+?^$\\]){1,200}")
+ NUM = re.compile(r"[0-9]{1,5}")
++FULLSCREEN = 2
++MAXIMIZED = 1
+ 
+ 
+ class Setup(Exception):
+@@ -183,10 +196,44 @@
+     return re.fullmatch(rx, cls) is not None
+ 
+ 
++def fsmode_of(c):
++    """2 for a fullscreen client, 1 for a maximized one, 0 otherwise.
++
++    The `fullscreen` value counts only as a JSON integer equal to 1 or 2: a
++    boolean, a float, a string, null or any other number is no state.
++    """
++    f = c.get("fullscreen")
++    if type(f) is int:
++        if f == MAXIMIZED or f == FULLSCREEN:
++            return f
++    return 0
++
++
++def verdict_of(size, floating, want, c):
++    """BADSIZE | FULLSCREEN | MAXIMIZED | TILED | AGREE | DIFFER, in that order.
++
++    BADSIZE first: a client with no usable size cannot be compared at all. Then
++    the two states that own the box - a fullscreen or maximized window shows the
++    state's box, not the rule's size - then TILED, then the size comparison.
++    """
++    if size is None:
++        return "BADSIZE"
++    mode = fsmode_of(c)
++    if mode == FULLSCREEN:
++        return "FULLSCREEN"
++    if mode == MAXIMIZED:
++        return "MAXIMIZED"
++    if not floating:
++        return "TILED"
++    if size == want:
++        return "AGREE"
++    return "DIFFER"
++
++
+ def evaluate(clients, rules):
+     out = []
+     tally = {"clients": 0, "matched": 0, "unmapped": 0, "agree": 0, "differ": 0,
+-             "tiled": 0, "badsize": 0}
++             "tiled": 0, "badsize": 0, "maximized": 0, "fullscreen": 0}
+     for c in clients:
+         if c.get("mapped") is False:
+             tally["unmapped"] += 1
+@@ -205,14 +252,7 @@
+         tally["matched"] += 1
+         size = client_size(c)
+         floating = c.get("floating") is True
+-        if size is None:
+-            verdict = "BADSIZE"
+-        elif not floating:
+-            verdict = "TILED"
+-        elif size == want:
+-            verdict = "AGREE"
+-        else:
+-            verdict = "DIFFER"
++        verdict = verdict_of(size, floating, want, c)
+         tally[verdict.lower()] += 1
+         addr = c.get("address") if isinstance(c.get("address"), str) else "-"
+         out.append("MADO_GEOM_CLIENT: addr=%s class=%s floating=%s size=%s want=%dx%d float_rule=%s verdict=%s" % (
+@@ -230,19 +270,25 @@
+     clines, t = evaluate(parse_clients(clients_data), rules)
+     lines += clines
+     size_rules = sum(1 for r in rules if r["effect"] == "size")
++    states = t["maximized"] + t["fullscreen"]
+     if size_rules == 0:
+         verdict, rc = "NO_SIZE_RULES", 4
+     elif t["differ"] > 0:
+         verdict, rc = "DIFFER", 1
+     elif t["matched"] == 0:
+         verdict, rc = "NO_MATCHING_CLIENT", 3
++    elif t["agree"] == 0 and states > 0:
++        verdict, rc = "NOT_COMPARED", 5
+     else:
+         verdict, rc = "OK", 0
++    shown = ""
++    if states > 0:
++        shown = " maximized=%d fullscreen=%d" % (t["maximized"], t["fullscreen"])
+     lines.append("MADO_GEOMETRY: rules=%d float_rules=%d other=%d unsupported=%d clients=%d "
+-                 "matched=%d unmapped=%d agree=%d differ=%d tiled=%d badsize=%d verdict=%s" % (
++                 "matched=%d unmapped=%d agree=%d differ=%d tiled=%d badsize=%d%s verdict=%s" % (
+                      size_rules, len(rules) - size_rules, counts["other"], counts["unsupported"],
+                      t["clients"], t["matched"], t["unmapped"], t["agree"], t["differ"],
+-                     t["tiled"], t["badsize"], verdict))
++                     t["tiled"], t["badsize"], shown, verdict))
+     return lines, rc
+ 
+ 
+@@ -266,8 +312,10 @@
+     cases = []
+     gk = "windowrule = float on, match:class ^(org.omarchy.gkeep)$\nwindowrule = size 420 500, match:class ^(org.omarchy.gkeep)$\n"
+ 
+-    def cl(cls, size, floating=True, mapped=True, addr="0x1"):
+-        return {"class": cls, "size": size, "floating": floating, "mapped": mapped, "address": addr}
++    def cl(cls, size, floating=True, mapped=True, addr="0x1", **kw):
++        d = {"class": cls, "size": size, "floating": floating, "mapped": mapped, "address": addr}
++        d.update(kw)
++        return d
+ 
+     def last(clients, text):
+         lines, rc = report(json.dumps(clients).encode(), [text])
+@@ -276,6 +324,16 @@
+     def chk(name, got, want):
+         cases.append((name, got == want, got, want))
+ 
++    def state_line(verdict, states="", **kw):
++        f = dict(rules=1, float_rules=1, other=0, unsupported=0, clients=1, matched=1,
++                 unmapped=0, agree=0, differ=0, tiled=0, badsize=0)
++        f.update(kw)
++        f["verdict"] = verdict
++        return ("MADO_GEOMETRY: rules=%(rules)d float_rules=%(float_rules)d other=%(other)d "
++                "unsupported=%(unsupported)d clients=%(clients)d matched=%(matched)d "
++                "unmapped=%(unmapped)d agree=%(agree)d differ=%(differ)d tiled=%(tiled)d "
++                "badsize=%(badsize)d" % f) + states + " verdict=" + verdict
++
+     g = "org.omarchy.gkeep"
+     s, rc = last([cl(g, [420, 500])], gk)
+     chk("agree-rc", rc, 0)
+@@ -398,6 +456,88 @@
+     chk("regex-safe-rejects-bad-escape", regex_ok("\\d"), False)
+     chk("matches-ctl", matches("a", "a\x01"), False)
+     chk("matches-full", matches("a", "ab"), False)
++    # ---- round-44: the client state (fullscreen) is named, not compared
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2)]).encode(), [gk])
++    chk("fs-rc", rc, 5)
++    chk("fs-client-line", lines[-2], "MADO_GEOM_CLIENT: addr=\"0x1\" class=\"org.omarchy.gkeep\" floating=true size=2560x1440 want=420x500 float_rule=on verdict=FULLSCREEN")
++    chk("fs-summary", lines[-1], "MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 maximized=0 fullscreen=1 verdict=NOT_COMPARED")
++    s, rc = last([cl(g, [420, 500], fullscreen=2)], gk)
++    chk("fs-matching-size-not-agree", rc, 5)
++    chk("fs-matching-size-line", s, state_line("NOT_COMPARED", " maximized=0 fullscreen=1"))
++    lines, rc = report(json.dumps([cl(g, [2544, 1380], floating=False, fullscreen=1)]).encode(), [gk])
++    chk("max-rc", rc, 5)
++    chk("max-client-line", lines[-2].split(" verdict=")[1], "MAXIMIZED")
++    chk("max-summary", lines[-1], state_line("NOT_COMPARED", " maximized=1 fullscreen=0"))
++    s, rc = last([cl(g, [2544, 1380], fullscreen=1)], gk)
++    chk("max-float-rc", rc, 5)
++    chk("max-float-count", " maximized=1 fullscreen=0 " in s, True)
++    lines, rc = report(json.dumps([cl(g, [420.0, 500], fullscreen=2)]).encode(), [gk])
++    chk("fs-badsize-rc", rc, 0)
++    chk("fs-badsize-line", lines[-1], state_line("OK", "", badsize=1))
++    s, rc = last([cl(g, [True, 500], fullscreen=2)], gk)
++    chk("fs-bool-size-badsize", " badsize=1 " in s and " maximized=" not in s and rc == 0, True)
++    s, rc = last([cl(g, None, fullscreen=1)], gk)
++    chk("max-nosize-badsize", " badsize=1 " in s and " maximized=" not in s and rc == 0, True)
++    for v in (True, False, 3, 2.0, "2", -1, None, [2], {"internal": 2}, 0):
++        s, rc = last([cl(g, [421, 500], fullscreen=v)], gk)
++        chk("fs-value-ignored-%r" % (v,), (rc, " maximized=" in s, " differ=1 " in s), (1, False, True))
++    s, rc = last([cl(g, [2544, 1380], fullscreen=1, fullscreenClient=2)], gk)
++    chk("fsclient-ignored-maximized", " maximized=1 fullscreen=0 " in s and rc == 5, True)
++    s, rc = last([cl(g, [421, 500], fullscreenClient=2)], gk)
++    chk("fsclient-alone-ignored", " maximized=" not in s and rc == 1, True)
++    lines, rc = report(b'[{"class": "org.omarchy.gkeep", "size": [9, 9], "floating": true, "fullscreen": 0, "fullscreen": 2}]', [gk])
++    chk("fs-dupkeys-last-wins", (rc, lines[-2].split(" verdict=")[1]), (5, "FULLSCREEN"))
++    lines, rc = report(b'[{"class": "org.omarchy.gkeep", "size": [9, 9], "floating": true, "fullscreen": 2, "fullscreen": 0}]', [gk])
++    chk("fs-dupkeys-last-zero", (rc, lines[-2].split(" verdict=")[1]), (1, "DIFFER"))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2, addr="0x1"),
++                                   cl(g, [421, 500], addr="0x2"),
++                                   cl(g, [420, 500], addr="0x3"),
++                                   cl(g, [1, 1], floating=False, addr="0x4"),
++                                   cl(g, [2544, 1380], fullscreen=1, addr="0x5")]).encode(), [gk])
++    chk("fsmix-rc", rc, 1)
++    chk("fsmix-summary", lines[-1], state_line("DIFFER", " maximized=1 fullscreen=1",
++                                               clients=5, matched=5, agree=1, differ=1,
++                                               tiled=1, badsize=0))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2), cl(g, [420, 500])]).encode(), [gk])
++    chk("fs-plus-agree-rc", rc, 0)
++    chk("fs-plus-agree-summary", lines[-1], state_line("OK", " maximized=0 fullscreen=1",
++                                                       clients=2, matched=2, agree=1))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2), cl(g, [421, 500])]).encode(), [gk])
++    chk("fs-plus-differ-rc", rc, 1)
++    chk("fs-plus-differ-summary", lines[-1], state_line("DIFFER", " maximized=0 fullscreen=1",
++                                                        clients=2, matched=2, differ=1))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2), cl(g, [2544, 1380], fullscreen=1)]).encode(), [gk])
++    chk("fs-and-max-rc", rc, 5)
++    chk("fs-and-max-summary", lines[-1], state_line("NOT_COMPARED", " maximized=1 fullscreen=1",
++                                                    clients=2, matched=2))
++    lines, rc = report(json.dumps([{"class": "kitty", "size": [9, 9], "floating": True, "fullscreen": 2},
++                                   cl(g, [420, 500])]).encode(), [gk])
++    chk("fs-unmatched-not-counted", (rc, " maximized=" in lines[-1]), (0, False))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2, mapped=False),
++                                   cl(g, [420, 500])]).encode(), [gk])
++    chk("fs-unmapped-not-counted", (rc, " maximized=" in lines[-1]), (0, False))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2)]).encode(),
++                       ["windowrule = float on, match:class ^(org.omarchy.gkeep)$\n"])
++    chk("fs-no-size-rule", (rc, " maximized=" in lines[-1]), (4, False))
++    lines, rc = report(json.dumps([cl(g, [2560, 1440], fullscreen=2)]).encode(), [""])
++    chk("fs-no-rules", (rc, " maximized=" in lines[-1]), (4, False))
++    lines, rc = report(json.dumps([cl(g, [420, 500], floating=False)]).encode(), [gk])
++    chk("tiled-only-ok", (rc, lines[-1]), (0, state_line("OK", "", tiled=1)))
++    chk("fsmode-two", fsmode_of({"fullscreen": 2}), 2)
++    chk("fsmode-one", fsmode_of({"fullscreen": 1}), 1)
++    chk("fsmode-zero", fsmode_of({"fullscreen": 0}), 0)
++    chk("fsmode-three", fsmode_of({"fullscreen": 3}), 0)
++    chk("fsmode-bool", fsmode_of({"fullscreen": True}), 0)
++    chk("fsmode-float", fsmode_of({"fullscreen": 2.0}), 0)
++    chk("fsmode-string", fsmode_of({"fullscreen": "2"}), 0)
++    chk("fsmode-null", fsmode_of({"fullscreen": None}), 0)
++    chk("fsmode-absent", fsmode_of({}), 0)
++    chk("verdict-badsize-beats-state", verdict_of(None, True, (420, 500), {"fullscreen": 2}), "BADSIZE")
++    chk("verdict-state-beats-tiled", verdict_of((2560, 1440), False, (420, 500), {"fullscreen": 2}), "FULLSCREEN")
++    chk("verdict-maximized", verdict_of((2544, 1380), True, (420, 500), {"fullscreen": 1}), "MAXIMIZED")
++    chk("verdict-tiled", verdict_of((420, 500), False, (420, 500), {}), "TILED")
++    chk("verdict-agree", verdict_of((420, 500), True, (420, 500), {}), "AGREE")
++    chk("verdict-differ", verdict_of((1, 1), True, (420, 500), {}), "DIFFER")
+     bad = [c for c in cases if not c[1]]
+     for name, _ok, got, want in bad:
+         print("SELFTEST FAIL %s: got %r want %r" % (name, got, want))

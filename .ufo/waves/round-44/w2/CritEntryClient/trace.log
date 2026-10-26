@@ -1,0 +1,8 @@
+OK   A resizable, plain 420x500 configure           surface=(420, 500) want=(420, 500)  entry INF: adopted
+OK   B resizable, configure below the minimum       surface=(200, 150) want=(200, 150)  entry INF: raised to the minimum
+OK   C non-resizable, plain 600x700 configure       surface=(420, 500) want=(420, 500)  COUNTEREXAMPLE to entry:52 - the configured size is replaced by the computed one, not adopted
+OK   D resizable, 0x0 configure after maximized     surface=(500, 400) want=(500, 400)  COUNTEREXAMPLE to entry:50 - the saved size is restored, not the computed size (420x500)
+OK   E resizable, fresh 0x0 configure               surface=(420, 500) want=(420, 500)  entry:50's claim holds only on this path
+OK   F resizable, tiled configure then a later layout surface=(500, 400) want=(500, 400)  COUNTEREXAMPLE to entry:52's parenthetical - fixed is sticky (532-537), so a later layout re-applies the latched size instead of the newly computed 600x700
+OK   G resizable, plain configure then a later layout surface=(600, 700) want=(600, 700)  control for F: without the fixed state the latch is cleared and the computed size wins
+RESULT cases=7 fails=0

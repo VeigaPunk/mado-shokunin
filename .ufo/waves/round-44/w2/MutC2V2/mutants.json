@@ -1,0 +1,194 @@
+[
+ {
+  "name": "m01-t1-digest-drop",
+  "target": "T1 clause-d pin digest",
+  "old": "            pin_ok = PINS.get(os.path.basename(path)) in (None, digest) \\\n                and (os.path.basename(path) not in PINS\n                     or path == FETCH + os.path.basename(path))",
+  "new": "            pin_ok = (os.path.basename(path) not in PINS\n                     or path == FETCH + os.path.basename(path))"
+ },
+ {
+  "name": "m02-t1-path-drop",
+  "target": "T1 clause-d pin path",
+  "old": "            pin_ok = PINS.get(os.path.basename(path)) in (None, digest) \\\n                and (os.path.basename(path) not in PINS\n                     or path == FETCH + os.path.basename(path))",
+  "new": "            pin_ok = PINS.get(os.path.basename(path)) in (None, digest)"
+ },
+ {
+  "name": "m03-t1-digest-invert",
+  "target": "T1 clause-d pin digest (sanity)",
+  "old": "            pin_ok = PINS.get(os.path.basename(path)) in (None, digest) \\",
+  "new": "            pin_ok = PINS.get(os.path.basename(path)) not in (None, digest) \\"
+ },
+ {
+  "name": "m27-t1-held-only",
+  "target": "T1 held ids included",
+  "old": "            pin_ok = PINS.get(os.path.basename(path)) in (None, digest) \\\n                and (os.path.basename(path) not in PINS\n                     or path == FETCH + os.path.basename(path))",
+  "new": "            pin_ok = True if i not in new_ids else (PINS.get(os.path.basename(path)) in (None, digest) \\\n                and (os.path.basename(path) not in PINS\n                     or path == FETCH + os.path.basename(path)))"
+ },
+ {
+  "name": "m04-t2-invert",
+  "target": "T2 clause-e+ pin URL",
+  "old": "            if pin_url is not None and pin_url.split(\"#\")[0] != loc_:",
+  "new": "            if pin_url is not None and pin_url.split(\"#\")[0] == loc_:"
+ },
+ {
+  "name": "m05-t2-nop",
+  "target": "T2 clause-e+ pin URL",
+  "old": "            if pin_url is not None and pin_url.split(\"#\")[0] != loc_:",
+  "new": "            if False:"
+ },
+ {
+  "name": "m06-t2-held-skip",
+  "target": "T2 clause-e+ held ids",
+  "old": "    for i in ids:\n        gl_ = gates.get(i, [])\n        row_ = reg_rev.get(i, [])\n        if len(gl_) == 1 and row_ and len(row_[0]) == 11:\n            loc_ = row_[0][1].split()[-1].split(\"#\")[0] if row_[0][1].split() else \"\"\n            pin_url = PINS_URL.get(os.path.basename(gl_[0][0]))",
+  "new": "    for i in new_ids:\n        gl_ = gates.get(i, [])\n        row_ = reg_rev.get(i, [])\n        if len(gl_) == 1 and row_ and len(row_[0]) == 11:\n            loc_ = row_[0][1].split()[-1].split(\"#\")[0] if row_[0][1].split() else \"\"\n            pin_url = PINS_URL.get(os.path.basename(gl_[0][0]))"
+ },
+ {
+  "name": "m07-t2-hash-drop",
+  "target": "T2 clause-e+ fragment split",
+  "old": "pin_url.split(\"#\")[0] != loc_",
+  "new": "pin_url != loc_"
+ },
+ {
+  "name": "m35-t2-basename",
+  "target": "T2 clause-e+ basename-only",
+  "old": "            if pin_url is not None and pin_url.split(\"#\")[0] != loc_:",
+  "new": "            if pin_url is not None and os.path.basename(pin_url) != os.path.basename(loc_):"
+ },
+ {
+  "name": "m08-t3-guard-drop",
+  "target": "T3 clause-h N0 guard",
+  "old": "                if N0 == 0 and re.search(r\"set_size_request\\s*\\(\", l):",
+  "new": "                if re.search(r\"set_size_request\\s*\\(\", l):"
+ },
+ {
+  "name": "m24-t3-n0-one",
+  "target": "T3 clause-h N0 guard",
+  "old": "                if N0 == 0 and re.search(r\"set_size_request\\s*\\(\", l):",
+  "new": "                if N0 == 1 and re.search(r\"set_size_request\\s*\\(\", l):"
+ },
+ {
+  "name": "m09-t3-defaultsize-drop",
+  "target": "T3 clause-h set_default_size",
+  "old": "                for w, h in re.findall(r\"set_default_size\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)\", l):\n                    if (w, h) != (W0, H0):\n                        h_ok = False\n                        print(\"%s %s clause=h prose default size %sx%s != %sx%s\" % (\n                            PRED, name, w, h, W0, H0))\n",
+  "new": ""
+ },
+ {
+  "name": "m10-t3-xdg-drop",
+  "target": "T3 clause-h xdg_setSize",
+  "old": "                for v in re.findall(r\"xdg_setSize=(\\d+)\", l):\n                    if int(v) != X0:\n                        h_ok = False\n                        print(\"%s %s clause=h prose xdg_setSize=%s != %d\" % (PRED, name, v, X0))\n",
+  "new": ""
+ },
+ {
+  "name": "m11-t3-x11-drop",
+  "target": "T3 clause-h x11_configure",
+  "old": "                for v in re.findall(r\"x11_configure=(\\d+)\", l):\n                    if int(v) != Y0:\n                        h_ok = False\n                        print(\"%s %s clause=h prose x11_configure=%s != %d\" % (PRED, name, v, Y0))\n",
+  "new": ""
+ },
+ {
+  "name": "m15-census-atleast",
+  "target": "census exactly-once",
+  "old": "    ok = all(sum(1 for l in lines if l == w) == 1 for w in want)",
+  "new": "    ok = all(sum(1 for l in lines if l == w) >= 1 for w in want)"
+ },
+ {
+  "name": "m16-census-nop",
+  "target": "census presence",
+  "old": "    ok = all(sum(1 for l in lines if l == w) == 1 for w in want)",
+  "new": "    ok = True"
+ },
+ {
+  "name": "m12-census-kept",
+  "target": "exact census exemption",
+  "old": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if l not in census_lines\n]",
+  "new": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines]"
+ },
+ {
+  "name": "m13-census-prefix",
+  "target": "exact census exemption (v1 regression)",
+  "old": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if l not in census_lines\n]",
+  "new": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if not (l.startswith(\"gkeep client\") or l.startswith(\"hyprland sendWindowSize\"))\n]"
+ },
+ {
+  "name": "m14-census-norm",
+  "target": "exact census exemption (whitespace)",
+  "old": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if l not in census_lines\n]",
+  "new": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if re.sub(r\"\\s+\", \" \", l) not in census_lines\n]"
+ },
+ {
+  "name": "m33-census-hyprland-only",
+  "target": "exact census exemption (one line)",
+  "old": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if l not in census_lines\n]",
+  "new": "    entry_lines = [re.sub(r\"\\s+\", \" \", l) for l in lines\n                   if not l.startswith(\"hyprland sendWindowSize\")\n]"
+ },
+ {
+  "name": "m17-j-window",
+  "target": "clause-j header window",
+  "old": "        if not fenced and k >= 20:\n            body_lines.append(l)",
+  "new": "        if not fenced:\n            body_lines.append(l)"
+ },
+ {
+  "name": "m18-j-upper",
+  "target": "clause-j locator upper bound",
+  "old": "                if int(a) <= L <= int(b or a):",
+  "new": "                if int(a) <= L:"
+ },
+ {
+  "name": "m19-j-anchor-multi",
+  "target": "clause-j anchor uniqueness",
+  "old": "        if len(hits) != 1:",
+  "new": "        if not hits:"
+ },
+ {
+  "name": "m20-j-drop-surface",
+  "target": "clause-j surface list",
+  "old": "    (\"gkeep-ui.py\", 'application_id=\"org.omarchy.gkeep\",', r\"application id|application_id\", \"gkeep-id\"),\n",
+  "new": ""
+ },
+ {
+  "name": "m21-j-found-ignore",
+  "target": "clause-j citation requirement",
+  "old": "        ok &= found",
+  "new": "        ok &= True"
+ },
+ {
+  "name": "m22-j-case",
+  "target": "clause-j keyword case",
+  "old": "            if not re.search(kw, l, re.I):",
+  "new": "            if not re.search(kw, l):"
+ },
+ {
+  "name": "m23-j-anchor-absent",
+  "target": "clause-j anchor presence (sanity)",
+  "old": "    (\"Hyprland-Window.cpp\", \"void CWindow::sendWindowSize(bool force) {\", r\"sendWindowSize\", \"send\"),",
+  "new": "    (\"Hyprland-Window.cpp\", \"void CWindow::sendWindowSizeX(bool force) {\", r\"sendWindowSize\", \"send\"),"
+ },
+ {
+  "name": "m29-j-lookbehind",
+  "target": "clause-j locator word boundary",
+  "old": "        pat = re.compile(r\"(?<![\\w.-])%s:(\\d+)(?:-(\\d+))?(?!\\d)\" % re.escape(rname))",
+  "new": "        pat = re.compile(r\"%s:(\\d+)(?:-(\\d+))?(?!\\d)\" % re.escape(rname))"
+ },
+ {
+  "name": "m25-t4-loose",
+  "target": "T4 anchor range check",
+  "old": "        if not rng or any(int(b or a) > nlines_ for a, b in rng):",
+  "new": "        if not rng:"
+ },
+ {
+  "name": "m26-t4-crash",
+  "target": "T4 anchor range parsing",
+  "old": "        rng = re.findall(r\"%s:(\\d+)(?:-(\\d+))?\" % re.escape(rb_), anchor_)",
+  "new": "        rng = re.findall(r\"%s:(\\d+)\" % re.escape(rb_), anchor_)"
+ },
+ {
+  "name": "m31-d-occurrences",
+  "target": "clause-d quote once in receipt",
+  "old": "                    and len(occurrences(blob, nq)) == 1",
+  "new": "                    and len(occurrences(blob, nq)) >= 1"
+ },
+ {
+  "name": "m32-d-cross-receipt",
+  "target": "clause-d quote unique across receipts",
+  "old": "    # a quote occurs in its own receipt and in no other cited receipt\n    for i in receipts:\n        q = re.sub(r\"\\s+\", \" \", gates[i][0][2])\n        for j in receipts:\n            if j != i and q in norm_receipt(receipts_raw[j]):\n                d_ok = False\n                print(\"%s %s clause=d quote of %s also in receipt of %s\" % (\n                    PRED, name, i, j))\n",
+  "new": ""
+ }
+]

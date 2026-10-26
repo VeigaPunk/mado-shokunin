@@ -1,0 +1,22 @@
+# syscall trace of the landed tool on caller-supplied inputs (read-only, no compositor socket)
+#   strace -f -e trace=execve,execveat,socket,connect,bind,openat,open,unlink,rename,write -o strace.txt \
+#     python3 -I tools/mado-geometry.py --clients <live dump> --rules ~/.config/hypr/gkeep.conf
+# host /usr/bin/strace; dump = the 14:38 capture in scratch, projected evidence in live-clients-projected.json
+
+socket/connect/bind calls:   0
+execve calls:                1
+  execve("/usr/bin/python3"
+opens of the two inputs:
+openat(AT_FDCWD, "/fast/scratch/hyaku/mado-r44/SentLiveRun/clients-now.json", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/home/vgpnk/.config/hypr/gkeep.conf", O_RDONLY|O_NONBLOCK|O_CLOEXEC) = 3
+open flags used anywhere (counts):
+  O_WRONLY  0
+  O_RDWR    0
+  O_CREAT   0
+  O_TRUNC   0
+  O_APPEND  0
+unlink/rename:               0
+write calls:                 1
+  fd 1: 1   fd 2: 0
+  write(1, "MADO_GEOM_RULE: n=1 file=1 effec"..., 306) = 306
+total traced lines:          75

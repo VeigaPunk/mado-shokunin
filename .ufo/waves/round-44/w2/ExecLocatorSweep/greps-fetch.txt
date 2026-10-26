@@ -1,0 +1,71 @@
+### Hyprland-Window.cpp (fetch)
+1514:void CWindow::onAck(uint32_t serial) {
+1526:    m_wlSurface->resource()->m_pending.ackedSize          = m_pendingSizeAck->second; // apply pending size. We pinged, the window ponged.
+1685:Vector2D CWindow::realToReportSize() {
+1687:        return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+1691:    const auto  REPORTSIZE = m_realSize->goal().clamp(Vector2D{1, 1}, Math::VECTOR2D_MAX);
+1732:void CWindow::sendWindowSize(bool force) {
+1741:    const auto REPORTSIZE = realToReportSize();
+1743:    if (!force && m_pendingReportedSize == REPORTSIZE && (m_reportedPosition == REPORTPOS || !m_isX11))
+1751:        m_xwaylandSurface->configure({REPORTPOS, REPORTSIZE});
+1753:        m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());
+1861:Vector2D CWindow::getReportedSize() {
+1865:        return m_wlSurface->resource()->m_current.ackedSize;
+2396:        m_target->setPseudoSize(m_realSize->goal());
+2408:                m_target->setPseudoSize(*COMPUTED);
+2414:            m_target->setPseudoSize(m_realSize->goal() - Vector2D(10, 10));
+### Hyprland-XDGShell.cpp (fetch)
+354:uint32_t CXDGToplevelResource::setSize(const Vector2D& size) {
+355:    m_pendingApply.size = size;
+356:    scheduleStateApplication();
+357:    return m_owner->scheduleConfigure();
+371:    scheduleStateApplication();
+373:    return m_owner->scheduleConfigure();
+387:    scheduleStateApplication();
+389:    return m_owner->scheduleConfigure();
+403:    scheduleStateApplication();
+405:    return m_owner->scheduleConfigure();
+419:    scheduleStateApplication();
+421:    return m_owner->scheduleConfigure();
+426:        return m_owner->scheduleConfigure(); // SUSPENDED is since 6
+438:    scheduleStateApplication();
+440:    return m_owner->scheduleConfigure();
+443:void CXDGToplevelResource::scheduleStateApplication() {
+455:        m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+629:uint32_t CXDGSurfaceResource::scheduleConfigure() {
+640:void CXDGSurfaceResource::configure() {
+### xdg-shell.xml (fetch)
+560:    <request name="ack_configure">
+598:    <event name="configure">
+817:	The edges parameter specifies how the surface should be resized, and
+1144:    <event name="configure">
+1150:	The width and height arguments specify a hint to the window
+1151:	about how its surface should be resized in window geometry
+1154:	If the width or height arguments are zero, it means the client
+1155:	should decide its own window dimension. This may happen when the
+1159:	The states listed in the event specify how the width/height
+1163:	The states are sent as an array of 32-bit unsigned integers in
+1166:	Clients must send an ack_configure in response to this event. See
+1335:    <event name="configure">
+### gdktoplevel-wayland.c (fetch)
+105:    gboolean is_resizing;
+492:      geometry.min_width = size.min_width;
+518:      width = wayland_surface->next_layout.configured_width +
+525:          gdk_surface_constrain_size (&wayland_toplevel->geometry_hints,
+545:      gdk_surface_constrain_size (&geometry, mask,
+612:  gboolean is_resizing;
+623:  is_resizing = wayland_toplevel->pending.is_resizing;
+633:  fixed_size =
+637:    is_resizing;
+639:  was_fixed_size =
+647:  saved_size = (width == 0 && height == 0);
+681:      wayland_surface->next_layout.configured_width = width;
+### gkeep-ui.py (fetch)
+87:  min-height: 30px;
+88:  min-width: 72px;
+138:    def __init__(self, window: Gtk.Window):
+446:class GkeepApp(Gtk.Application):
+447:    def __init__(self):
+449:            application_id="org.omarchy.gkeep",
+475:            window.set_decorated(False)
+476:            window.set_default_size(420, 500)

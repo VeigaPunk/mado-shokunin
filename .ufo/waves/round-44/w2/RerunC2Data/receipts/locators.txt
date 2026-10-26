@@ -1,0 +1,33 @@
+# computed locators (grep -n) for RerunC2Data
+## counter doc/code
+32:     FETCH/<name> with exactly the pinned sha256 - held ids included (T1); a new id's receipt must be one of
+489:            pin_ok = PINS.get(os.path.basename(path)) in (None, digest) \
+646:    bad |= not set(PINS) <= used
+## lesson Gate
+31:GATE S164 receipt=.ufo/waves/round-44/fetch/Hyprland-Window.cpp sha256=d735d454cc4b7983f19626514d310669047da46780c509ffae68ccf072211ded quote="return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);"
+32:GATE S298 receipt=.ufo/waves/round-44/fetch/Hyprland-XDGShell.cpp sha256=d90b534c9097ab573f606c2dad4b5fab6dc31c4ca13240c43ef0bb74da7ed0c0 quote="m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);"
+33:GATE S299 receipt=.ufo/waves/round-44/fetch/xdg-shell.xml sha256=7ba7f9c8473deee674cb1f154a18abd0bb0cc072604fc055b0c15e459fc4c7df quote="The width and height arguments specify a hint to the window about how its surface should be resized"
+34:GATE S300 receipt=.ufo/waves/round-44/fetch/gdktoplevel-wayland.c sha256=0ee384588284574ee64fa08e45c73149b3ff2d20816d80cf3e055821bb867fbe quote="wayland_surface->next_layout.configured_width = width;"
+35:GATE S301 receipt=.ufo/waves/round-44/fetch/gkeep-ui.py sha256=07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a quote="window.set_decorated(False) window.set_default_size(420, 500)"
+## entry lines
+28:**OBS** S164 - for a Wayland client the report size is the GOAL of the animated size, clamped below at zero: `return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);` (Hyprland-Window.cpp:1687). Round 43 traced the rule's size into that GOAL (corpus/knowledge/hyprland-gkeep-geometry-r43.md), so the size sent to a floating gkeep window is the box the floating algorithm set.
+32:hyprland sendWindowSize xdg_setSize=1 x11_configure=1
+36:**OBS** S298 - setSize stores the size as pending state and returns the next configure serial (Hyprland-XDGShell.cpp:354-358); the deferred state application sends it to the client: `m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);` (Hyprland-XDGShell.cpp:455).
+44:**OBS** S299 - the configure size binds nobody: `The width and height arguments specify a hint to the window about how its surface should be resized` (xdg-shell.xml:1150); a zero width or height leaves the dimension to the client (xdg-shell.xml:1154-1157), and the states sent with it say how to interpret the size (xdg-shell.xml:1159-1161). The client answers a configure with the xdg_surface ack_configure request (xdg-shell.xml:560) before it commits the matching state; that ack is what Hyprland's onAck receives.
+48:**OBS** S300 - a non-zero configured size is kept for the next layout: `wayland_surface->next_layout.configured_width = width;` (gdktoplevel-wayland.c:681), with the size marked fixed only when the configure's states are maximized, fullscreen or tiled, or a resize is in progress (gdktoplevel-wayland.c:633-637).
+56:**OBS** S301 - gkeep builds one undecorated application window and declares a default size only: `window.set_decorated(False) window.set_default_size(420, 500)` (gkeep-ui.py:475); its application id is set in the application constructor (gkeep-ui.py:449).
+58:gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep
+## README index
+72:| `knowledge/hyprland-gkeep-size-request-r44.md` (MADO-R44-1, round 44; assimilation of the gkeep...
+## SOURCES rows
+176:| S164 | Hyprland v0.56.2 CWindow implementation — htt
+247:| S298 | Hyprland v0.56.2 xdg-shell protocol implementat
+248:| S299 | wayland-protocols 1.49 xdg-shell protocol XML -
+249:| S300 | GTK 4.24.1 Wayland toplevel - configure handlin
+250:| S301 | gkeep application window - the full ui.py at gk
+## receipt lines quoted
+Hyprland-Window.cpp:1687:         return m_realSize->goal().clamp(Vector2D{0, 0}, Math::VECTOR2D_MAX);
+Hyprland-XDGShell.cpp:455:         m_resource->sendConfigure(m_pendingApply.size.x, m_pendingApply.size.y, &arr);
+xdg-shell.xml:1150: 	The width and height arguments specify a hint to the window
+gdktoplevel-wayland.c:681:       wayland_surface->next_layout.configured_width = width;
+gkeep-ui.py:475:             window.set_decorated(False)

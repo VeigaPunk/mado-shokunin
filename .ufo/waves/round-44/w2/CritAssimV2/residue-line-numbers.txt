@@ -1,0 +1,27 @@
+== r12 locators ==
+10:source: S311 — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/desktop/view/Window.cpp — `§ sendWindowSize` — the client-facing size notification at the host's tag
+24:> "void CWindow::sendWindowSize(bool force) {"
+26:> "const auto REPORTSIZE = realToReportSize();"
+28:> "m_pendingSizeAcks.emplace_back(m_xdgSurface->m_toplevel->setSize(REPORTSIZE), REPORTSIZE.floor());"
+31:over the xdg-shell protocol, with `xdg_toplevel.set_size`, and files the
+47:stylesheet sit under the `button.ink` selector — a child widget, not the
+52:imposes; and a GTK4 window with no minimum-size request will adopt the size
+59:**INF** The chain is now complete on both sides: the rule's size reaches the
+62:refuse it. The rendered geometry of a gkeep window is 420×500 on this host's
+== r13 onAck quote locators ==
+27:> "m_pendingSizeAck = *SERIAL;"
+39:client can acknowledge or refuse; it cannot substitute a different number
+== r14 §2 ==
+45:**OBS** The gkeep window's own store holds no geometry. The keys in its note
+51:application's own state — are both now measured and both empty on this host.
+== r9 locators ==
+8:source: S284 — https://raw.githubusercontent.com/hyprwm/Hyprland/v0.56.2/src/desktop/view/Window.cpp — `§ fetchClass` — the compositor's own definition of a window's class, at the host's tag
+9:source: S285 — https://raw.githubusercontent.com/VeigaPunk/gkeep/133b86717a02548aeaff3f1411bf301d936c5308/gkeep/ui.py — `§ application_id, set_default_size` — the app's declared id and requested size
+10:source: S286 — https://docs.gtk.org/gtk4/method.Window.set_default_size.html — `§ description` — what a GTK4 default size means
+11:source: S287 — https://wiki.hypr.land/0.56.0/Configuring/Basics/Window-Rules/ — `§ size effect, precedence` — the upstream semantics of the rule the host uses
+12:source: S292 — lanes/mado/round9/fetch/gkeep-geometry-chain.txt — `§ rule lines, app id, live client list` — the host side of the chain
+13:source: S293 — lanes/mado/round9/fetch/host-compositor-log-scan.txt — `§ gkeep lines, focus-grab lines, log count` — the compositor log as a candidate witness
+31:> "return m_xdgSurface->m_toplevel->m_state.appid;"
+39:> "windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$"
+69:match property, never mentions `app_id` (0 occurrences in the page). So the
+81:branches on `m_isX11`, and for an X11 surface the class comes from the

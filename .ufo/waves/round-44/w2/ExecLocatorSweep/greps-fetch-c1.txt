@@ -1,0 +1,56 @@
+### FullscreenHandler.cpp (fetch-c1)
+130:    if (target->window() && target->window()->m_isFloating && mode != FSMODE_NONE && !isFullscreen(target))
+131:        target->rememberFloatingSize(target->position().size());
+191:    if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+192:        const CBox MONBOX                                  = MONITOR->logicalBox();
+194:        LAYOUT_TARGET->setPositionGlobal(MONBOX);
+195:    } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+196:        const CBox WORKAREA                                = WORKSPACE->m_space->workArea(target->floating());
+198:        LAYOUT_TARGET->setPositionGlobal(WORKAREA);
+220:    if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+222:        const CBox MONBOX         = MONITOR->logicalBox();
+223:        const CBox ROUNDED_MONBOX = MONITOR->logicalBox().round();
+234:            LAYOUT_TARGET->setPositionGlobal(MONBOX);
+236:    } else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+### FullscreenHandler.cpp 189-200 (verbatim)
+189	const auto LAYOUT_TARGET = target->window()->layoutTarget();
+190	     2	
+191	if (TARGET_INTERNAL_MODE == FSMODE_FULLSCREEN) {
+192	const CBox MONBOX                                  = MONITOR->logicalBox();
+193	Fullscreen::controller()->m_windowPosSettingQueued = true;
+194	LAYOUT_TARGET->setPositionGlobal(MONBOX);
+195	} else if (TARGET_INTERNAL_MODE == FSMODE_MAXIMIZED) {
+196	const CBox WORKAREA                                = WORKSPACE->m_space->workArea(target->floating());
+197	Fullscreen::controller()->m_windowPosSettingQueued = true;
+198	LAYOUT_TARGET->setPositionGlobal(WORKAREA);
+199	}
+200	}
+### HyprCtl.cpp (fetch-c1) GEOMETRIC_GOAL
+426:            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+427:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+428:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+447:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+448:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+### HyprCtl.cpp 394-395, 412-413, 426-428, 447-448 verbatim
+-- 394,395
+    "at": [{}, {}],
+    "size": [{}, {}],
+-- 412,413
+    "fullscreenHandler": "{}",
+    "allowedOverFullscreen": {},
+-- 426,428
+            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+-- 447,448
+            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+### HyprCtl grep counts (criterion 77's own command shape)
+394,395 -> 0
+412,413 -> 0
+426,428 -> 3
+447,448 -> 2
+### HyprCtl fullscreen field lines
+431:            (w->m_pinned ? "true" : "false"), (w->m_pinFullscreened ? "true" : "false"), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal),
+432:            sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client), escapeJSONStrings(Fullscreen::controller()->getFullscreenHandlerNameAsString(w)),
+451:            sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).internal), sc<uint8_t>(Fullscreen::controller()->getFullscreenModes(w).client),

@@ -1,0 +1,23 @@
+=== entry 3 sentences ===
+gkeep client default_size=420x500 size_request_calls=0 application_id=org.omarchy.gkeep
+
+**OBS** The file has no `set_size_request` call (the census line above, recomputed by the counter); its only `min-width`/`min-height` (gkeep-ui.py:87-88) sit in the `button.ink` rule, a child widget's style, not the window's.
+
+**INF** gkeep's default size equals the host rule's size (420x500, corpus/knowledge/hyprland-gkeep-geometry-r43.md), and its minimum is set by its widget tree, not by a declared request; the configure of §2 and gkeep's default therefore do not compete. Whether the widget tree's minimum is below 420x500 is not measured (UNK; it needs a live window or a GTK measurement).
+
+## What the staged predecessor said, and what the pins correct
+
+The staged `gkeep-client-size-request-r12.md` (package `merge/mado/`, read-only) is the predecessor; three of its sentences are not adopted
+(w1/ScoutStagedResidue, w1/CritAssimilation):
+
+- It names the request `xdg_toplevel.set_size`. The protocol has no such toplevel request; the size travels in the `xdg_toplevel.configure`
+  event (xdg-shell.xml:1144) that Hyprland sends from its deferred state application (Hyprland-XDGShell.cpp:455).
+- It reads the ack list as "the mechanism by which a client could report a different size". The client's ack_configure carries a serial only
+  (xdg-shell.xml:560); onAck writes the compositor's own stored size for that serial (Hyprland-Window.cpp:1526), not a size the client chose.
+- It says a GTK 4 window "will adopt the size the compositor configures". GTK 4.24.1 adopts it after constraining it by the window's
+  geometry hints (gdktoplevel-wayland.c:523-528), and gkeep's widget-tree minimum is not measured here (UNK).
+
+=== entry onAck sentence ===
+38:**OBS** When the client acknowledges, onAck (Hyprland-Window.cpp:1514) takes the newest pending pair whose serial is not after the acknowledged one, drops it and every older pair, and for a Wayland client writes that pair's size into the surface's pending state as the acked size (Hyprland-Window.cpp:1526).
+44:**OBS** S299 - the configure size binds nobody: `The width and height arguments specify a hint to the window about how its surface should be resized` (xdg-shell.xml:1150); a zero width or height leaves the dimension to the client (xdg-shell.xml:1154-1157), and the states sent with it say how to interpret the size (xdg-shell.xml:1159-1161). The client answers a configure with the xdg_surface ack_configure request (xdg-shell.xml:560) before it commits the matching state; that ack is what Hyprland's onAck receives.
+72:  (xdg-shell.xml:560); onAck writes the compositor's own stored size for that serial (Hyprland-Window.cpp:1526), not a size the client chose.

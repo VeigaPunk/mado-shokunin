@@ -1,0 +1,14 @@
+$ python3 -I quality/ratio-domain-meta.py --rule
+RULE (fixed before the first run; see ratio.py docstring):
+ A claim row = a `| C<digit>` line under a `## Round <N>` heading.
+ First matching clause over the row bytes at --rev decides:
+  1. axis calibration                                        -> meta
+  2. axis operability AND (fixtures= | tool=absent|present)   -> domain (tool)
+  3. claim cell names tools/<name>.py|.sh                     -> domain (tool)
+  4. claim cell names corpus/knowledge/<name>.md              -> domain (entry)
+  5. axis coverage AND (admitted= | entry|entries in claim)   -> domain (entry)
+  6. claim cell names SKILL.md                                -> domain (table)
+  7. otherwise                                                -> meta (fail-closed)
+ The immediate object decides, not the axis word: a tool or entry held against
+ the desktop outlives the lane; counters, manifests, ledgers and gates do not.
+exit=0

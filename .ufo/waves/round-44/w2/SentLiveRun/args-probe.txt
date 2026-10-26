@@ -1,0 +1,12 @@
+argument and path probe: tools/mado-geometry.py
+
+--selftest --clients $SEAT/.probe-empty.json                             rc=2 out='MADO_GEOMETRY: SETUP usage' err=''
+--clients $SEAT/.probe-empty.json                                        rc=2 out='MADO_GEOMETRY: SETUP usage' err=''
+--rules $SEAT/.probe-empty.conf                                          rc=2 out='MADO_GEOMETRY: SETUP usage' err=''
+--clients $SEAT/.probe-empty.json --clients $SEAT/.probe-empty.json --rules $SEAT/.probe-empty.conf rc=2 out='MADO_GEOMETRY: SETUP usage' err=''
+--rules - --clients $SEAT/.probe-empty.json                              rc=2 out='MADO_GEOMETRY: SETUP unreadable' err=''
+--clients - --rules $SEAT/.probe-empty.conf                              rc=4 out='MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 m' err=''
+--clients $SEAT/.probe-empty.json --rules $SEAT/.probe-empty.conf --extra rc=2 out='MADO_GEOMETRY: SETUP usage' err=''
+--clients $SEAT --rules $SEAT/.probe-empty.conf                          rc=2 out='MADO_GEOMETRY: SETUP unreadable' err=''
+--clients /dev/null --rules $SEAT/.probe-empty.conf                      rc=2 out='MADO_GEOMETRY: SETUP unreadable' err=''
+--clients /dev/zero --rules $SEAT/.probe-empty.conf                      rc=2 out='MADO_GEOMETRY: SETUP unreadable' err=''

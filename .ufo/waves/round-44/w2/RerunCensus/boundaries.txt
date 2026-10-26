@@ -1,0 +1,40 @@
+== gdktoplevel 543-556
+   543	      width = size.width;
+   544	      height = size.height;
+   545	      gdk_surface_constrain_size (&geometry, mask,
+   546	                                  width, height,
+   547	                                  &width, &height);
+   548	      gdk_wayland_toplevel_update_size (surface, width, height, &wayland_surface->scale);
+   549	    }
+   550	
+   551	  wayland_surface->next_layout.surface_geometry_dirty = FALSE;
+   552	
+   553	  return FALSE;
+   554	}
+   555	
+   556	static gboolean
+== gdktoplevel 698-708
+   698	                     (new_state & GDK_TOPLEVEL_STATE_FULLSCREEN) ? " fullscreen" : "",
+   699	                     (new_state & GDK_TOPLEVEL_STATE_MAXIMIZED) ? " maximized" : "",
+   700	                     (new_state & GDK_TOPLEVEL_STATE_FOCUSED) ? " focused" : "",
+   701	                     (new_state & GDK_TOPLEVEL_STATE_TILED) ? " tiled" : "",
+   702	                     (new_state & GDK_TOPLEVEL_STATE_SUSPENDED) ? " suspended" : "");
+   703	
+   704	  gdk_surface_queue_state_change (surface, ~0 & ~new_state, new_state);
+   705	
+   706	  XDG_SHELL_CALL (xdg_surface, ack_configure, wayland_surface, wayland_surface->pending.serial);
+   707	}
+   708	
+== xdg-shell 586-597
+   586		sent on this xdg_surface prior to the configure event referenced by
+   587		the committed serial.
+   588	
+   589		It is an error to issue multiple ack_configure requests referencing a
+   590		serial from the same configure event, or to issue an ack_configure
+   591		request referencing a serial from a configure event issued before the
+   592		event identified by the last ack_configure request for the same
+   593		xdg_surface. Doing so will raise an invalid_serial error.
+   594	      </description>
+   595	      <arg name="serial" type="uint" summary="the serial from the configure event"/>
+   596	    </request>
+   597	
