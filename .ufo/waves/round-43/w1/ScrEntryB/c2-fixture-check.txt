@@ -1,0 +1,54 @@
+# PRED-C2-r43 fixture self-check of the ScrEntryB draft (seat simulation of the L1 integration)
+# run 2026-10-26 in /fast/scratch/hyaku/mado-r43/ScrEntryB/fx, a --no-hardlinks clone of the lane at 5add5b45a65ddaa18fad00c6afa9dbfda29ee0b0
+# clone toplevel verified: /fast/scratch/hyaku/mado-r43/ScrEntryB/fx
+# fixture commit: a55c92e6c672fde5bc5648f2ca5cf971ef8815bc
+# entry bytes: a429672c7f33ea1b4a5c06a3c36ae72f00416279dd0ca3470a3b065dc4bbd2b5
+# integration simulated: 10 registry rows appended, corpus/lessons/round-43.md ## Gate with ADMIT/REFUSE/10 GATE lines, corpus/README.md index row
+$ python3 -I quality/counters/c2-r43-gkeep-entry.py --repo . --rev HEAD --base a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S290 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S291 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S292 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S293 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S294 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S295 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S296 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S297 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S298 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=c id=S299 new=1 status=mined used=1 ok=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S290 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S291 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S292 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S293 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S294 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S295 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S296 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S297 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S298 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=d id=S299 gates=1 bound=1
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S290 obs=1 locator_line=16
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S291 obs=1 locator_line=426
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S292 obs=1 locator_line=56
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S293 obs=1 locator_line=11
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S294 obs=1 locator_line=306
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S295 obs=1 locator_line=19
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S296 obs=1 locator_line=427
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S297 obs=1 locator_line=4
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S298 obs=1 locator_line=6
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clause=g id=S299 obs=1 locator_line=32
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 admitted=1
+PRED-C2-r43: admitted=1/1 verdict=TARGET_MET rev=a55c92e6c672fde5bc5648f2ca5cf971ef8815bc
+exit=0
+
+# base control: the same draft is absent at the round-43 base, so the predicate misses there
+$ python3 -I quality/counters/c2-r43-gkeep-entry.py --repo . --rev a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+PRED-C2-r43 hyprland-gkeep-geometry-r43.md clauses=a:0 b:0 c:0 d:0 e:0 f:0 g:0 h:0 i:0 admitted=0
+PRED-C2-r43: admitted=0/1 verdict=TARGET_MISSED rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+exit=1
+
+# index-row gate over the same fixture (my README row proposal)
+$ python3 -I quality/check-index-rows.py --repo . --rev HEAD
+MADO_INDEX_ROWS: rev=HEAD rows=60 errors=0 warns=3
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+exit=0

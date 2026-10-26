@@ -1,0 +1,118 @@
+# seat-fetched upstream sources (NOT lane pins): Hyprland efb50993780079460b0cbed1363e2166a2de1d9f, hyprlang main, hyprutils main
+## https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp:2019-2056
+    SP<Desktop::Rule::CWindowRule> rule = makeShared<Desktop::Rule::CWindowRule>();
+
+    const auto&                    PROPS   = Desktop::Rule::allMatchPropStrings();
+    const auto&                    EFFECTS = Desktop::Rule::windowEffects()->allEffectStrings();
+
+    for (const auto& el : data) {
+        // split on space, no need for a CVarList here
+        size_t spacePos = el.find(' ');
+        if (spacePos == std::string::npos)
+            return std::format("invalid field {}: missing a value", el);
+
+        const bool FIRST_IS_PROP = el.starts_with("match:");
+        const auto FIRST         = FIRST_IS_PROP ? el.substr(6, spacePos - 6) : el.substr(0, spacePos);
+        if (FIRST_IS_PROP && std::ranges::contains(PROPS, FIRST)) {
+            // it's a prop
+            const auto PROP = Desktop::Rule::matchPropFromString(FIRST);
+            if (!PROP.has_value())
+                return std::format("invalid prop {}", el);
+            rule->registerMatch(*PROP, std::string{el.substr(spacePos + 1)});
+        } else if (!FIRST_IS_PROP && std::ranges::contains(EFFECTS, FIRST)) {
+            // it's an effect
+            const auto EFFECT = Desktop::Rule::windowEffects()->get(FIRST);
+            if (!EFFECT.has_value())
+                return std::format("invalid effect {}", el);
+            auto res = rule->addEffect(*EFFECT, std::string{el.substr(spacePos + 1)});
+            if (!res)
+                return res.error();
+        } else
+            return std::format("invalid field type {}", FIRST);
+    }
+
+    m_keywordRules.emplace_back(std::move(rule));
+    if (g_pHyprCtl && g_pHyprCtl->m_currentRequestParams.isDynamicKeyword)
+        Desktop::Rule::ruleEngine()->registerRule(SP<Desktop::Rule::IRule>{m_keywordRules.back()});
+
+    return std::nullopt;
+}
+
+## .../src/config/legacy/ConfigManager.cpp:428-436 (windowrulev2)
+    return result;
+}
+
+static Hyprlang::CParseResult handleWindowrulev2(const char* c, const char* v) {
+    Hyprlang::CParseResult res;
+    res.setError("windowrulev2 is deprecated. Correct syntax can be found on the wiki.");
+    return res;
+}
+
+## .../src/config/legacy/ConfigManager.cpp:946-963 (reloadRules order)
+Hyprlang::CParseResult CConfigManager::reloadRules() {
+    Desktop::Rule::ruleEngine()->clearAllRules();
+
+    Hyprlang::CParseResult result;
+    for (const auto& name : m_config->listKeysForSpecialCategory("windowrule")) {
+        const auto error = addRuleFromConfigKey(name);
+        if (error.has_value())
+            result.setError(error.value().c_str());
+    }
+    for (const auto& name : m_config->listKeysForSpecialCategory("layerrule")) {
+        const auto error = addLayerRuleFromConfigKey(name);
+        if (error.has_value())
+            result.setError(error.value().c_str());
+    }
+
+    for (auto& rule : m_keywordRules) {
+        Desktop::Rule::ruleEngine()->registerRule(SP<Desktop::Rule::IRule>{rule});
+    }
+## .../src/desktop/rule/Engine.cpp:14-16,54-55
+void CRuleEngine::registerRule(SP<IRule>&& rule) {
+    m_rules.emplace_back(std::move(rule));
+}
+const std::vector<SP<IRule>>& CRuleEngine::rules() {
+    return m_rules;
+## .../src/desktop/rule/windowRule/WindowRule.cpp:376-379
+bool CWindowRule::matches(PHLWINDOW w, bool allowEnvLookup) {
+    if (!canMatch())
+        return false;
+
+## https://raw.githubusercontent.com/hyprwm/hyprlang/main/src/config.cpp:686,700-721
+    line = trim(line);
+    size_t lastHashPos = 0;
+
+    while (commentPos != std::string::npos) {
+        bool escaped = false;
+        if (commentPos < line.length() - 1) {
+            if (line[commentPos + 1] == '#') {
+                lastHashPos = commentPos + 2;
+                escaped     = true;
+            }
+        }
+
+        if (!escaped) {
+            line = line.substr(0, commentPos);
+            break;
+        } else {
+            line       = line.substr(0, commentPos + 1) + line.substr(commentPos + 2);
+            commentPos = line.find('#', lastHashPos);
+        }
+    }
+
+    line = trim(line);
+
+## https://raw.githubusercontent.com/hyprwm/hyprutils/main/src/string/VarList2.cpp:60-70
+            }
+        }
+
+        // here we found a delimiter and need to break up the string (not escaped)
+
+        if (escapedIndices.empty()) {
+            // we didn't escape anything, so we can use inString
+            const auto ARG = trim(std::string_view{m_inString}.substr(argBegin, i - argBegin));
+
+            if (!ARG.empty() || !removeEmpty)
+                m_args.emplace_back(ARG);
+## https://raw.githubusercontent.com/google/re2/main/doc/syntax.txt:5
+.	any character, possibly including newline (s=true)

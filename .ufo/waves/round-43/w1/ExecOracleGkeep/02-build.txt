@@ -1,0 +1,18 @@
+# tinywl / wlroots 0.20.2 rebuild for round 43 (adapted build-tinywl-r43.sh, D=/fast/scratch/hyaku/mado-r43/oracle)
+
+wlroots clone: git -C wlroots rev-parse HEAD -> d783533489e1f75d6886c2ab5c5960090ef268f8
+expected commit d783533489e1f75d6886c2ab5c5960090ef268f8 (wlroots tag 0.20.2)
+patch applied: tinywl-global-versions.patch (wlr_compositor_create version 5->6, wlr_xdg_shell_create 3->6)
+meson 1.12.1 (uv tool install --force meson; the pre-existing uv shim was dangling)
+ninja 1.13.2; gcc 16.2.1 20260810
+
+NEW shas (differ from the round-27 oracle.py pins by construction: new toolchain, same source+patch):
+  273151bd088a9389ce07a07afc84fb9c70fc59877005dc43cfcf14b5dfc64af0  wlroots/build/tinywl/tinywl
+  e6dfde744d0727eec764d4d294421cc9704c37e2781214dd45734e63c034364e  wlroots/build/libwlroots-0.20.so
+round-27 oracle.py pins: tinywl 227a74af3455c4cd90ef0fc64edf3c927ddf7f0b9b4bf903bdc30b3aeea40cda,
+                          libwlroots 1f3d7036c91417c0b6efccf67ad0d368a30818df630f07bb92574a13527a7967
+(oracle.py was NOT edited; it pins /fast/scratch/hyaku/mado-r26 paths that no longer exist.)
+
+ninja: 372/372 targets, rc=0. `ninja -C build -n` afterwards: no work to do.
+patch presence in the built tree: tinywl/tinywl.c:951 wlr_compositor_create(..., 6, ...);
+tinywl/tinywl.c:979 wlr_xdg_shell_create(..., 6).

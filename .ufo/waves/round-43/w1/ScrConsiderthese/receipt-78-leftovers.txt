@@ -1,0 +1,14 @@
+$ # round-41 routed leftovers: the two untracked scratch files named by the round-41 spot-check:17
+$ for f in s-grow s-size; do git cat-file -e a62f2e0:<p> ; done   # r42 tip
+absent-at-r42-tip .ufo/waves/round-41/w2/ExecDiffFuzzV2/scratch/s-grow
+absent-at-r42-tip .ufo/waves/round-41/w2/ExecDiffFuzzV2/scratch/s-size
+$ git ls-tree -r --name-only a62f2e0 -- .ufo/waves/round-41/w2/ExecDiffFuzzV2/scratch | grep -c .   # the dir itself is tracked, with committed fixtures
+93
+$ git ls-tree -r --name-only a62f2e0 -- .ufo/waves/round-41/w2/ExecDiffFuzzV2/scratch | grep -E "s-(grow|size)$" || echo "no s-grow/s-size entry"
+no s-grow/s-size entry
+$ sed -n "17p" corpus/lessons/round-41-verifier-spotcheck.md   # where the two names exist
+| uncommitted round work | `git status --porcelain` | none tracked; **2 untracked** scratch files `.ufo/waves/round-41/w2/ExecDiffFuzzV2/scratch/s-grow`, `s-size` (not round deliverables; status-neutral defect)
+$ sed -n "24p" corpus/lessons/round-42-verifier-spotcheck.md   # deletion recorded at the next round start
+| round-41 routed leftovers | `ls …/round-41/w2/ExecDiffFuzzV2/scratch/` | `s-grow`, `s-size` absent; tree clean — routed item 6.1 closed |
+NOTE: the two files were untracked at round-41 closure, so no commit ever carried them; their existence is
+      prose-only (spot-check :17) and their absence is tree-checkable at the next tip (above).

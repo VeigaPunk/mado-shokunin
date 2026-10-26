@@ -1,0 +1,71 @@
+# CritClaimSizing — re-registration / freeze provenance checks (2026-10-26)
+
+## $ git log --format="%h %s" -- quality/counters/c1-r42-geometry.py quality/counters/c2-r42-gkeep-entry.py
+809dc2c round-42: freeze - registration, counters c1-r42/c2-r42, controls, reference, pre-wave receipts
+8af0263 hyaku run 7 interrupted: in-flight snapshot committed by the orchestrator (not a landing); lane L1 resumes from here
+
+## $ git diff --stat 809dc2c a35cfdf -- quality/counters/c1-r42-geometry.py quality/counters/c2-r42-gkeep-entry.py
+(empty = frozen bytes are the bytes at the round-43 base)
+
+## $ git diff --stat 809dc2c 8af0263 -- quality/counters/
+ quality/counters/c1-r42-geometry.py | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
+
+## $ git log --format="%h %s" 809dc2c..a35cfdf
+a35cfdf round-42 verifier spot-check (integrator, hyaku): non-author admit/reject
+a62f2e0 round-42 attempt 1: honest stop - freeze landed, wave 1 planned not dispatched; census receipt, LOG entry
+17b3956 round-42: w1 spec and dispatch (36 seats)
+
+## round-42 wave: w1 members / agentIds, w2, reports
+w1 members=36 with-agentId=0
+ls: cannot access '.ufo/waves/round-42/w2': No such file or directory
+reports under round-42: 0
+
+## C1 controls receipt counts (receipts/ctl-c1.txt)
+CTL_C1: rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f nonce=42aa42aa42aa42aa controls=46 equivalent_mutants_excluded=M03-read-short,M20-hash-allowed,M38-regex-empty
+ok lines=48 M=38 D=3 K=5
+CTL_C1 VERDICT: PASS (controls scoring TARGET_MET: 0 of 47; reference met: 1)
+exit=0
+
+## C2 controls receipt counts (receipts/ctl-c2.txt)
+controls=74 ok=74
+exit=0
+
+## axis base receipt
+MADO_AXIS_ROW: axis=navigation published=59/59 derived=59/59 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=63/63 derived=63/63 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f
+exit=0
+## $ grep -n "AXES =" quality/check-axis-scores.py
+32:AXES = ("navigation", "calibration", "operability")
+
+## separability greps
+c2 counter refs to C1 tool: 0
+c1 counter refs to corpus/: 0
+c1 counter 'gkeep' hits (fixture pools only):
+345:CLASS_POOL = ["org.omarchy.gkeep", "org.omarchy.gkeep2", "Alacritty", "kitty",
+348:RX_POOL = ["^(org.omarchy.gkeep)$", "org\\.omarchy\\..*", "Alacritty|kitty",
+
+## seat count: registration vs committed w1 spec
+5:Shape: **two v1 waves** — `w1` (build + first falsifiers, 37 seats) and `w2` (falsify, dispatched after the data commit, 32 seats); planned
+5add5b4 round-43: w1 spec, dispatch and validator registry (38 seats)
+w1-spec items=38
+
+## tools/ at the two bases
+tools files at a35cfdf=11; geometry tool at a35cfdf=0
+git diff --stat 62dd798 a35cfdf -- tools/:
+(empty)
+
+## C2 PINS vs fetch/ bytes (all 10)
+Hyprland-DefaultFloatingAlgorithm.cpp      OK
+Hyprland-GeometricMovableAnimated.cpp      OK
+Hyprland-HyprCtl.cpp                       OK
+Hyprland-RegexMatchEngine.cpp              OK
+Hyprland-Target.cpp                        OK
+Hyprland-WindowRuleApplicator.cpp          OK
+Hyprland-WindowTarget.cpp                  OK
+gkeep-ui-excerpt.py                        OK
+host-clients-r43.json                      OK
+host-gkeep.conf                            OK
+PINS=10

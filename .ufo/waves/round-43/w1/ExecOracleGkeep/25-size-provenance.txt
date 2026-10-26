@@ -1,0 +1,12 @@
+# what field of the client object the observation reads (pinned source, fetch/S296)
+# fetch/Hyprland-HyprCtl.cpp is byte-verified against receipts/fetch-sha256.txt (sha256sum -c: OK).
+
+426:            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+427:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+428:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+447:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+448:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+
+# the two builders: the -j string (line 395 format table, arguments 426-428) and the text
+# builder (447-448). The seat's observation therefore reads the compositor's GOAL size,
+# which is the value an animation targets, not a sampled current size.

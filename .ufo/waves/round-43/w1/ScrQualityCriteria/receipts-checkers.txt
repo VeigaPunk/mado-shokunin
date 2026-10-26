@@ -1,0 +1,45 @@
+== check78: (b) control tally, fail then pass ==
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check78.py --receipt .ufo/waves/round-42/receipts/ctl-c1.txt --claim .ufo/waves/round-43/w1/ScrQualityCriteria/claim-r42.txt
+TALLY receipt=.ufo/waves/round-42/receipts/ctl-c1.txt rows=48 anchors=2 controls=46 M=38 D=3 K=5 other=0 header=46 verdict_of=47
+TALLY claim=.ufo/waves/round-43/w1/ScrQualityCriteria/claim-r42.txt repeated=D:3,K:5,M:37,controls:46
+TALLY_MISMATCH claim M=37 receipt=38
+CHECK78: verdict=FAIL mismatches=1
+exit=1
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check78.py --receipt .ufo/waves/round-43/receipts/ctl-c1.txt --claim .ufo/waves/round-43/w1/ScrQualityCriteria/claim-r43.txt
+TALLY receipt=.ufo/waves/round-43/receipts/ctl-c1.txt rows=48 anchors=2 controls=46 M=38 D=3 K=5 other=0 header=46 verdict_of=47
+TALLY claim=.ufo/waves/round-43/w1/ScrQualityCriteria/claim-r43.txt repeated=D:3,K:5,M:38,controls:46,rows:48
+CHECK78: verdict=OK mismatches=0
+exit=0
+
+== check79: (c) pointer to a run, round-42 report (PROSE) and round-41 report (OK on the conforming receipt) ==
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-repo /home/vgpnk/Projects/shokunin --prose-rev da384db4 --receipts-repo /home/vgpnk/Projects/shokunin/mado-shokunin --receipts-rev a62f2e0c3a5d1737bcf93ac45ae98a1b195e1341 .ufo/reports/round-42/mado.md
+POINTER .ufo/reports/round-42/mado.md:30 receipt=.ufo/waves/round-42/receipts/axis-base.txt verdict=INCOMPLETE why=missing command
+POINTER .ufo/reports/round-42/mado.md:34 target='LOG.md and above, to be lifted into `corpus/lessons/round-42.md` `## M' verdict=PROSE why=names a prose section, not a receipt
+POINTER .ufo/reports/round-42/mado.md:34 receipt=.ufo/waves/round-42/receipts/census-after.txt verdict=INCOMPLETE why=missing command
+POINTER .ufo/reports/round-42/mado.md:34 receipt=.ufo/waves/round-42/receipts/census-before.txt verdict=INCOMPLETE why=missing command
+POINTER .ufo/reports/round-42/mado.md:45 target='LOG.md Round 42' verdict=PROSE why=names a prose section, not a receipt
+CHECK79: pointers=5 non_ok=5 verdict=FAIL
+exit=1
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check79.py --prose-repo /home/vgpnk/Projects/shokunin --prose-rev 866affa3 --receipts-repo /home/vgpnk/Projects/shokunin/mado-shokunin --receipts-rev b20155b10a84e4c2a82a1f59bef417e470abd91e .ufo/reports/round-41/mado.md
+POINTER .ufo/reports/round-41/mado.md:8 receipt=.ufo/waves/round-41/receipts/ctl-c1-v2.txt verdict=INCOMPLETE why=missing command,exit
+POINTER .ufo/reports/round-41/mado.md:8 receipt=.ufo/waves/round-41/receipts/ctl-c2-v2.txt verdict=INCOMPLETE why=missing command,exit
+POINTER .ufo/reports/round-41/mado.md:32 receipt=.ufo/waves/round-41/receipts/harm-tip.txt verdict=OK why=command+output+exit
+CHECK79: pointers=3 non_ok=2 verdict=FAIL
+exit=1
+
+== check80: (d) excerpt header vs the command that cut it, round-42 fail, round-43 pass ==
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check80.py --excerpt .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py --source /home/vgpnk/Projects/gkeep/gkeep/ui.py
+EXCERPT .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py header=446-495 body=44 expected=50 src=488
+EXCERPT_MISMATCH length body=44 range=50
+EXCERPT_MISMATCH end=495 past_src=488
+EXCERPT_MISMATCH bytes first_diff_body_line=44
+CHECK80: verdict=FAIL mismatches=3
+exit=1
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ScrQualityCriteria/check80.py --excerpt .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py --source /home/vgpnk/Projects/gkeep/gkeep/ui.py
+EXCERPT .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py header=446-488 body=43 expected=43 src=488
+CHECK80: verdict=OK mismatches=0
+exit=0
+

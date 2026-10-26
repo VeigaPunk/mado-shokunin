@@ -1,0 +1,17 @@
+$ grep "mado round=28" /home/vgpnk/Projects/shokunin/.ufo/watchdog.log | sed -E "s/.*(attempt=[0-9]+).*/\1/" | sort | uniq -c
+      8 attempt=1
+      5 attempt=2
+      4 attempt=3
+$ grep -c "launch mado round=28 " /home/vgpnk/Projects/shokunin/.ufo/watchdog.log
+9
+$ grep -c "lane-dead-no-report mado round=28;" /home/vgpnk/Projects/shokunin/.ufo/watchdog.log
+7
+$ grep "lane-dead-no-report mado round=28;" /home/vgpnk/Projects/shokunin/.ufo/watchdog.log | sed -E "s/.*(attempt=[0-9]+).*/\1/" | sort | uniq -c
+      3 attempt=1
+      2 attempt=2
+      2 attempt=3
+
+CORRECTION of corpus/lessons/round-40.md:149 ("round 28 carries `attempt=1` seven times"), measured 2026-10-26:
+  launches=9, dead lines=7; the 7 dead lines carry attempt= 1,1,1,2,2,3,3; over all 17 round-28 lines the field
+  reads 1x8, 2x5, 3x4. Seven is the dead-line count, not an attempt=1 count. The rule stands (the field repeats)
+  and the number does not.

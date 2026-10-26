@@ -1,0 +1,49 @@
+# ExecOracleGkeep — every command this seat ran (each step's rc is in receipts/*.json "steps")
+# Host: read-only. All compositor verbs went to the NESTED instance over a private
+# XDG_RUNTIME_DIR under /tmp (bound into bwrap); no host-session socket was touched.
+
+## 0. host state (read-only)
+hyprctl version                     # Hyprland 0.56.2, commit efb50993780079460b0cbed1363e2166a2de1d9f
+coredumpctl list --no-pager         # 27 lines, 0 of them /usr/bin/Hyprland      -> 05-coredumps.txt
+gcc --version; ninja --version; pkg-config --modversion wayland-server wayland-client \
+  wayland-protocols libdrm gbm egl glesv2 xkbcommon pixman-1; bwrap --version   -> 00-toolchain.txt
+
+## 1. oracle parent compositor (adapted copy of round-26/harness/build-tinywl.sh; D=/fast/scratch/hyaku/mado-r43/oracle)
+uv tool install --force meson                          # 1.12.1; the pre-existing uv shim was dangling
+git clone -q --depth 1 --branch 0.20.2 https://gitlab.freedesktop.org/wlroots/wlroots.git wlroots
+git -C wlroots rev-parse HEAD                          # d783533489e1f75d6886c2ab5c5960090ef268f8
+git -C wlroots apply <seat>/tinywl-global-versions.patch
+meson setup build -Dbackends= -Dsession=disabled -Dxwayland=disabled -Drenderers=gles2 \
+  -Dallocators=gbm -Dexamples=true -Dprefix=/fast/scratch/hyaku/mado-r43/oracle/wlr-prefix
+ninja -C build                                         # 372/372, rc=0                  -> 02-build.txt
+sha256sum build/tinywl/tinywl build/libwlroots-0.20.so # new shas, recorded in 02-build.txt
+
+## 2. shm client (the window under test: app_id + buffer, no size request)
+cp <seat>/gkeep-shm.c .
+wayland-scanner client-header /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
+wayland-scanner private-code  /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
+gcc -O2 -o gkeep-shm gkeep-shm.c xdg-shell-protocol.c $(pkg-config --cflags --libs wayland-client)
+sha256sum gkeep-shm                                   # a3319a74...  (no-size build; 227cf419... was the pre---min-size build)
+
+## 3. cases (each = fresh bwrap + tinywl + nested Hyprland + one client; see oracle-gkeep.py)
+P=<seat>/oracle-gkeep.py
+python3 $P --case headlesshost --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case host-r1      --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case host-r2      --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case host-r3      --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case minsize      --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30 \
+        --client-args "--min-size 800x700"
+python3 $P --case nofloat      --rules rules-nofloat.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case size300      --rules rules-size300.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+python3 $P --case nomatch      --rules rules-host.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30 \
+        --app-id org.omarchy.gkeep2
+python3 $P --case floatonly    --rules rules-floatonly.conf --create-output HEADLESS-2 --wait-monitor 10 --timeout 30
+# negative: the plain round-27 layout, nothing created, no client
+python3 $P --case mwatch --rules rules-host.conf --no-client --monitor-watch 20 --timeout 1
+# negative: plain layout + a client (this is the seat's first attempt, kept as evidence)
+python3 $P --case host --rules rules-host.conf --client .../gkeep-shm
+
+## 4. reference control tool on the observed JSON (NOT the deliverable)
+python3 -I <round-42>/c1/ctl-ref-tool.py.txt --selftest                      # 73/73 passed
+python3 -I <round-42>/c1/ctl-ref-tool.py.txt --clients ref-<case>-clients.json --rules rules-<case>.conf
+                                                                            -> 30-reference-tool.txt

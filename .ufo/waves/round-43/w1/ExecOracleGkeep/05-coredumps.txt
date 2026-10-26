@@ -1,0 +1,24 @@
+# Host coredump count before/after. The oracle harness's own predicate (round-26/27 oracle.py
+# coredumps(): lines containing "/usr/bin/Hyprland") is 0 before and 0 after, and 0/0 in every
+# one of this seat's 11 receipts (field coredumps_before/coredumps_after).
+
+before  (seat start 2026-10-26 04:19 -03): `coredumpctl list --no-pager | wc -l` = 27, Hyprland lines = 0
+after   (2026-10-26 04:34 -03):            `coredumpctl list --no-pager | wc -l` = 26, Hyprland lines = 0
+
+The raw line count moved by one: one OLD head entry expired from the journal (host journal
+rotation), not an entry created by this seat. Evidence: the newest six entries are byte-identical
+before and after, and the newest entry (pid 698972, 04:18:18) predates this seat's first sandbox run
+(04:21:28); an entry newer than 04:18:18 would have to appear for any run of mine to have crashed.
+
+Before (tail 6, captured at 04:20 into this file's first version):
+Mon 2026-10-26 01:09:00 -03   91299 1000 1000 SIGSEGV present   /fast/scratch/hyaku/kaidoku-r36/L1-probe/e/d8                              4.9M
+Mon 2026-10-26 01:09:07 -03   92592 1000 1000 SIGSEGV present   /fast/scratch/hyaku/kaidoku-r36/L1-probe/e/d8                              4.9M
+Mon 2026-10-26 02:49:46 -03  171428 1000 1000 SIGSEGV present   /usr/bin/unsquashfs                                                       98.4K
+Mon 2026-10-26 02:50:26 -03  177406 1000 1000 SIGSEGV present   /usr/bin/unsquashfs                                                       95.9K
+Mon 2026-10-26 02:50:37 -03  180138 1000 1000 SIGSEGV present   /usr/bin/unsquashfs                                                       96.1K
+Mon 2026-10-26 04:18:18 -03  698972 1000 1000 SIGSEGV present   /fast/scratch/hyaku/tsukuroi-r40/C2ExecFeedTargets/harness                27.3K
+
+After (tail 6, 04:34): identical, same six lines, same timestamps.
+
+Why no dump was possible: the sandbox is started under `prlimit --core=0` (oracle-gkeep.py, same as
+oracle.py) and with `HYPRLAND_NO_CRASHREPORTER=1`, so a crashing child could not write a core.

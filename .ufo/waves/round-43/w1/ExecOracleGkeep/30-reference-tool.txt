@@ -1,0 +1,36 @@
+# reference control tool (round-42 c1/ctl-ref-tool.py.txt, NOT the deliverable) applied to the
+# observed dumps of this seat. command: python3 ctl-ref-tool.py.txt --clients <dump>.json --rules <rules>
+
+MADO_GEOMETRY_SELFTEST: 73/73 passed
+== case headlesshost (rules rules-host.conf) rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x564a9cdea6f0" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+
+== case nofloat (rules rules-nofloat.conf) rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x561dfd649370" class="org.omarchy.gkeep" floating=false size=918x498 want=420x500 float_rule=- verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=0 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+
+== case size300 (rules rules-size300.conf) rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=300x300 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x564efb05ac20" class="org.omarchy.gkeep" floating=true size=300x300 want=300x300 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+
+== case nomatch (rules rules-host.conf) rc=3
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+== case minsize (rules rules-host.conf) rc=0
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x55c373a42590" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+
+== case floatonly (rules rules-floatonly.conf) rc=4
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=0 float_rules=1 other=1 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+

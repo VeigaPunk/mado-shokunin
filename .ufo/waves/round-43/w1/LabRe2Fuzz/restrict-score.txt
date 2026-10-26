@@ -1,0 +1,30 @@
+POPULATION: accepted=77690 exhaustive_candidates=[177155, 30940, 11154] random_candidates=60000 seed=20261026
+RESTRICT R1 nested quantifier         refuses=3447 (4.44% of accepted)
+RESTRICT R2 quantified alternation    refuses=5990 (7.71% of accepted)
+RESTRICT R3 nested+duplicate-branch   refuses=4777 (6.15% of accepted)
+RESTRICT R5 nested+same-first-char branch refuses=4819 (6.20% of accepted)
+RESTRICT R4 any quantified group      refuses=12155 (15.65% of accepted)
+COST-FAMILY: patterns=8
+  R1 nested quantifier         refuses=5 leaves=['(a|a)*', '(a|aa)*', '(a|a)+']
+  R2 quantified alternation    refuses=3 leaves=['(a*)*', '(a+)+', '((a)*)*', '(a*)+', '(.*)*']
+  R3 nested+duplicate-branch   refuses=7 leaves=['(a|aa)*']
+  R5 nested+same-first-char branch refuses=8 leaves=[]
+  R4 any quantified group      refuses=8 leaves=[]
+REFERENCE-SELFTEST: 17 regexes
+  R1 nested quantifier         refuses=[]
+  R2 quantified alternation    refuses=['^(a|b)+\\.c$']
+  R3 nested+duplicate-branch   refuses=[]
+  R5 nested+same-first-char branch refuses=[]
+  R4 any quantified group      refuses=['^(a|b)+\\.c$']
+SLOW-PAIRS from /fast/scratch/hyaku/mado-r43/LabRe2Fuzz/result.json: recorded=49 of total=49
+  R1 nested quantifier                     refuses=47/49 leaves=['.(^a|.(..\\^|(-?(((.||)(|)\\)?|.(-*a*(.?N|', '.(b*a|((.((|)|)|)(|))+ab*|.)\\)\\.()$']
+  R2 quantified alternation                refuses=46/49 leaves=['(((\\-^(|)|-)-a+|)((.*.?a?)*.?)*).-.(|)a', '(((\\-^(|)|-)-a+|)((.*.?a?)*.?)*).-.(|)a', '(((\\-^(|)|-)-a+|)((.*.?a?)*.?)*).-.(|)a']
+  R3 nested+duplicate-branch               refuses=47/49 leaves=['.(^a|.(..\\^|(-?(((.||)(|)\\)?|.(-*a*(.?N|', '.(b*a|((.((|)|)|)(|))+ab*|.)\\)\\.()$']
+  R5 nested+same-first-char branch         refuses=47/49 leaves=['.(^a|.(..\\^|(-?(((.||)(|)\\)?|.(-*a*(.?N|', '.(b*a|((.((|)|)|)(|))+ab*|.)\\)\\.()$']
+  R4 any quantified group                  refuses=49/49 leaves=[]
+NEAR-MISS re-run under each restriction (limit 1.0 s per pair):
+  R1 nested quantifier         patterns=2 pairs=14 timeouts=4
+  R2 quantified alternation    patterns=2 pairs=14 timeouts=4
+  R3 nested+duplicate-branch   patterns=1 pairs=7 timeouts=2
+  R5 nested+same-first-char branch patterns=0 pairs=0 timeouts=0
+  R4 any quantified group      patterns=0 pairs=0 timeouts=0

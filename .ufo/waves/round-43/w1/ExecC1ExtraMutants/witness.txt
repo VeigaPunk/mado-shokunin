@@ -1,0 +1,34 @@
+== C. N01 (stdin.read(MAX_BYTES + 2)) — end-to-end at the stdin size boundary
+   both tools: --clients - --rules r.conf; stdin = b'[]' padded with spaces
+  size=2 (empty list) ref=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') mut=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') same=True
+  size=MAX-1      ref=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') mut=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') same=True
+  size=MAX        ref=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') mut=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') same=True
+  size=MAX+1      ref=(rc=2,'MADO_GEOMETRY: SETUP too_large') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large') same=True
+  size=MAX+2      ref=(rc=2,'MADO_GEOMETRY: SETUP too_large') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large') same=True
+  size=2*MAX      ref=(rc=2,'MADO_GEOMETRY: SETUP too_large') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large') same=True
+
+== D. N54 (os.read(fd, MAX_BYTES) chunk cap) — end-to-end at the file size boundary
+  clients file size=MAX-1      ref=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') mut=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') same=True
+  clients file size=MAX        ref=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') mut=(rc=3,'MADO_GEOM_RULE: n=1 file=1 eff') same=True
+  clients file size=MAX+1      ref=(rc=2,'MADO_GEOMETRY: SETUP too_large') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large') same=True
+  clients file size=2*MAX      ref=(rc=2,'MADO_GEOMETRY: SETUP too_large') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large') same=True
+  rules file size=MAX          ref=(rc=0,'MADO_GEOM_RULE: n=1 file=1 effect=size a') mut=(rc=0,'MADO_GEOM_RULE: n=1 file=1 effect=size a') same=True
+  rules file size=MAX+1        ref=(rc=2,'MADO_GEOMETRY: SETUP too_large|') mut=(rc=2,'MADO_GEOMETRY: SETUP too_large|') same=True
+
+== E. N48 (rules decode errors='ignore') — MISSING CHECK witness
+  rules file bytes: b'windowrule = size 1 2, match:class a\xff\n'
+  ref:  rc=4 stdout='MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES\n'
+  mut:  rc=0 stdout='MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a\nMADO_GEOM_CLIENT: addr="-" class="a" floating=true size=1x2 want=1x2 float_rule=- verdict=AGREE\nMADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK\n'
+  expectation (model): regex 'a\ufffd' is outside the SAFE alphabet -> unsupported=1, rules=0 -> NO_SIZE_RULES, exit 4
+
+== F. N51 (os.close(fd) -> pass) — MISSING CHECK witness under a low RLIMIT_NOFILE
+  nofile=128  files=300 ref=(rc=0,'MADO_GEOM_RULE: n=1 file=1 effect=') mut=(rc=2,'MADO_GEOMETRY: SETUP unreadable\n') same=False
+  nofile=64   files=300 ref=(rc=0,'MADO_GEOM_RULE: n=1 file=1 effect=') mut=(rc=2,'MADO_GEOMETRY: SETUP unreadable\n') same=False
+  nofile=32   files=300 ref=(rc=0,'MADO_GEOM_RULE: n=1 file=1 effect=') mut=(rc=2,'MADO_GEOMETRY: SETUP unreadable\n') same=False
+  expectation (model): 300 rules files of <= 1 MiB each, all readable, one supported size rule and one client that matches it -> MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK, exit 0
+
+== G. N68 (sys.stdout.write -> print) — end-to-end byte comparison
+  agree            ref=(rc=0,stderr='') mut=(rc=0,stderr='') same_stdout=True same_rc=True
+  differ           ref=(rc=1,stderr='') mut=(rc=1,stderr='') same_stdout=True same_rc=True
+  no-size-rules    ref=(rc=4,stderr='') mut=(rc=4,stderr='') same_stdout=True same_rc=True
+  setup-unreadable ref=(rc=2,stderr='') mut=(rc=2,stderr='') same_stdout=True same_rc=True

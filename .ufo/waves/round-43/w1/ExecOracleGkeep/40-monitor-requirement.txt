@@ -1,0 +1,46 @@
+# Negative: in the plain round-27 layout (tinywl + nested Hyprland, nothing else) the nested
+# Hyprland 0.56.2 never keeps an output, so mapWindow aborts and `clients -j` stays empty.
+# Every line below is a grep of a sandbox.log of this seat, line numbers preserved. The scratch
+# tree is deleted at seat end; the same greps are persisted as receipts/logexcerpt-<case>.txt and,
+# where the line falls in the last 12000 bytes, inside receipts/receipt-<case>.json:sandbox_log_tail.
+
+## mwatch (20 s monitor watch, no client)
+file: run-mwatch/sandbox.log (1820 lines)
+-- grep 'Creating headless backend'
+   2: 00:00:00.000 [INFO] [backend/headless/backend.c:60] Creating headless backend
+-- grep 'Running Wayland compositor on WAYLAND_DISPLAY'
+   533: 00:00:00.046 [INFO] [tinywl/tinywl.c:1068] Running Wayland compositor on WAYLAND_DISPLAY=wayland-0
+-- grep 'Output WAYLAND-1: initialized'
+   1038: [1;32mDEBUG [0mfrom aquamarine ]: Output WAYLAND-1: initialized
+-- grep 'Launch timeout of 2000ms exceeded'
+   1695: [1;33mWARN [0m]: [FallbackStateKeeper] Launch timeout of 2000ms exceeded, entering fallback state.
+-- grep 'New aquamarine output with name FALLBACK'
+   1696: [1;32mDEBUG [0m]: New aquamarine output with name FALLBACK
+-- grep 'Removed monitor FALLBACK!'
+   1734: [1;32mDEBUG [0m]: Removed monitor FALLBACK!
+-- grep 'onDisconnect called for FALLBACK'
+   1731: [1;32mDEBUG [0m]: onDisconnect called for FALLBACK
+
+monitor timeline over 20.0 s (distinct `monitors -j` states): [{"names": [], "t": 0.0}]
+
+## host (first attempt: dispatch exec with the default inherited WAYLAND_DISPLAY, no output created)
+file: run-host/sandbox.log (1877 lines)
+-- grep 'set class to org.omarchy.gkeep'
+   1701: [1;32mDEBUG [0m]: Window 562b1fb8ae20 set class to org.omarchy.gkeep
+-- grep 'closestTo: no close mon'
+   1703: [1;33mWARN [0m]: CMonitorQueryCore::closestTo: no close mon???
+-- grep 'mapWindow: no valid monitor'
+   1704: [1;31mERR [0m]: mapWindow: no valid monitor/workspace, aborting map for 562b1fb8ae20
+client log of that attempt: 'TOPLEVEL_CONFIGURE w=0 h=0\nCLIENT_READY app_id=org.omarchy.gkeep buffer=200x200\nTOPLEVEL_CONFIGURE w=0 h=0\nDISPLAY_DISPATCH_END\n'
+clients -j at fail: '[]\n'
+
+## headlesshost (with `hyprctl output create headless HEADLESS-2`)
+file: run-headlesshost/sandbox.log (1803 lines)
+-- grep 'output create'
+-- grep 'New aquamarine output with name HEADLESS-2'
+   1692: [1;32mDEBUG [0m]: New aquamarine output with name HEADLESS-2
+-- grep 'set class to'
+   1755: [1;32mDEBUG [0m]: Window 564a9cdea6f0 set class to org.omarchy.gkeep
+-- grep 'Applying monitor rule'
+   1696: [1;32mDEBUG [0m]: Applying monitor rule for HEADLESS-2
+client log: 'TOPLEVEL_CONFIGURE w=420 h=500\nCLIENT_READY app_id=org.omarchy.gkeep buffer=200x200\nTOPLEVEL_CONFIGURE w=0 h=0\nDISPLAY_DISPATCH_END\n'

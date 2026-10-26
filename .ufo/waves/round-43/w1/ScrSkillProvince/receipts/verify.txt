@@ -1,0 +1,93 @@
+# seat ScrSkillProvince — verifier runs
+# date 2026-10-26T04:30:34-03:00
+
+$ python3 -I .ufo/waves/round-43/w1/ScrSkillProvince/verify-quotes.py
+QUOTES: 51/51 checks passed
+exit=0
+
+$ python3 -I .ufo/waves/round-43/w1/ScrSkillProvince/verify-rows.py
+ROWS: 30/30 checks passed
+exit=0
+
+$ sha256sum of the three lane files this seat read (unmodified)
+8264434c43da1a90cecf90cfc9f08af0512e5db1c09c8ed588f0cf4eedf27e26  SKILL.md
+372b93f960f8360e7c62aca0cfd7508417f69e0c895562d90ad38a4d2f893cea  PROVINCE.md
+53aa91cd7fbdc1dc6a573d5f29e71bb3269ebeea60cc33c935c11bd0a5ffdd84  corpus/README.md
+
+$ git status --porcelain=v1 -- SKILL.md PROVINCE.md corpus/ tools/mado-geometry.py
+?? tools/mado-geometry.py
+
+$ git ls-tree -r --name-only b2e2efd -- .ufo/waves/round-43/fetch .ufo/waves/round-43/receipts
+.ufo/waves/round-43/fetch/Hyprland-DefaultFloatingAlgorithm.cpp
+.ufo/waves/round-43/fetch/Hyprland-GeometricMovableAnimated.cpp
+.ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp
+.ufo/waves/round-43/fetch/Hyprland-RegexMatchEngine.cpp
+.ufo/waves/round-43/fetch/Hyprland-Target.cpp
+.ufo/waves/round-43/fetch/Hyprland-WindowRuleApplicator.cpp
+.ufo/waves/round-43/fetch/Hyprland-WindowTarget.cpp
+.ufo/waves/round-43/fetch/gkeep-ui-excerpt.py
+.ufo/waves/round-43/fetch/host-clients-r43.json
+.ufo/waves/round-43/fetch/host-gkeep.conf
+.ufo/waves/round-43/receipts/axis-base.txt
+.ufo/waves/round-43/receipts/base-rev.txt
+.ufo/waves/round-43/receipts/c1-before-base.txt
+.ufo/waves/round-43/receipts/c2-before-base.txt
+.ufo/waves/round-43/receipts/census-before.txt
+.ufo/waves/round-43/receipts/ctl-c1.txt
+.ufo/waves/round-43/receipts/ctl-c2.txt
+.ufo/waves/round-43/receipts/fetch-sha256.txt
+.ufo/waves/round-43/receipts/freeze-counter-check.txt
+
+# both paths the drafted Sources cell cites are committed at the freeze commit b2e2efd,
+# so cited-path-missing cannot fire for them at any later REV.
+
+$ wc -l -c .ufo/waves/round-43/fetch/host-gkeep.conf
+  5 264 .ufo/waves/round-43/fetch/host-gkeep.conf
+$ od -c .ufo/waves/round-43/fetch/host-gkeep.conf | tail -2
+0000400   k   e   e   p   )   $  \n  \n
+0000410
+# 5 lines (4 content + one trailing blank line), 264 B — a registry anchor saying
+# "4 lines, 264 B" for S297 is one line short (reported by ScrEntryA and re-measured here).
+
+$ sha256sum .ufo/waves/round-43/w1/ScrRowsDraft/rows-block.txt
+2719d5823da4df6fb0f4793b5e85b4d429bddc4c9ff1032ad7e234f6a5087223  .ufo/waves/round-43/w1/ScrRowsDraft/rows-block.txt
+$ grep -c "^| S29[0-9] " .ufo/waves/round-43/w1/ScrRowsDraft/rows-block.txt
+10
+$ grep -o "5 lines[^|]*" .ufo/waves/round-43/w1/ScrRowsDraft/rows-block.txt
+5 lines (4 content plus an empty line 5, wc -l -c reports 5 264), 264 B sha256:3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949; :2 float on, :3 center on, :4 size 420 500, all three on match:class ^(org.omarchy.gkeep)$; host copy ~/.config/hypr/gkeep.conf byte-identical 264 B same sha256, re-checked 2026-10-26 
+# the registry seat fixed the S297 line count after this seat routed it; ten ids unchanged,
+# so the drafted Sources cell needs no edit.
+
+$ sed -n "30,35p;36,44p" quality/counters/c2-r43-gkeep-entry.py   # clause c and the head of clause d
+  c  every cited id has exactly one `## Registry` row (0-3 leading spaces), 11 cells,
+     status `mined`, a valid `recheck` cell, and its used-by cell, split on `,` and `;`
+     and trimmed, lists the entry's path as one item; ids absent from the BASE registry
+     (at least 3) carry opened 2026-10-26 and a location (last whitespace token of cell
+     1) holding a `/` and a `.`; ids present at BASE keep cells 1-9 byte-equal to their
+     BASE row and keep every BASE used-by item;
+  d  corpus/lessons/round-43.md `## Gate` (outside fences) holds, per cited id, EXACTLY
+     ONE line (starting in column 0) `GATE <id> receipt=<path> sha256=<64 hex>
+     quote="<q>"`, and no `GATE S###` line sits outside that section; the receipt is a
+     regular file (git mode 100644) committed at REV under .ufo/waves/round-43/fetch/
+     with exactly that sha256, >= 256 bytes, distinct per id (no two ids share a path, a
+     sha256 or a whitespace-normalized quote); for a NEW id the receipt's file name and
+     sha256 must be one of the PINS (the receipts the L1 fetched before the wave; the
+     table below is part of this counter); the quote is 3-25 words and occurs in the
+     receipt's normalized text (HTML receipts: tags replaced by a space, scripts and
+# clause c is per cited id and a BASE id only has to keep every BASE used-by item, so a
+# held S155/S158 passes it mechanically once its used-by cell gains the entry path; the
+# cost lands in clause d: one GATE line per cited id whose receipt is a regular file
+# committed under .ufo/waves/round-43/fetch/, >=256 B, DISTINCT per id - i.e. two more
+# re-fetched receipts in this round fetch dir, plus the lockstep entry rewrite.
+
+receipt check for the clause-d scope (held ids S155/S158, S291/S296 reversal)
+ 27092 .ufo/waves/round-43/fetch/Hyprland-WindowRuleApplicator.cpp
+ 97582 .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp
+124674 total
+100644 blob 060e25b096e682770e4be64a4e1570f355ce72b3	.ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp
+100644 blob 95524e59435b2bca80737665edee26eba75c4d6d	.ufo/waves/round-43/fetch/Hyprland-WindowRuleApplicator.cpp
+clause d scopes PIN-membership to a NEW id only, so a BASE id keeps the receipt requirement,
+and both files are already committed in the round-43 fetch dir (27092 B / 97582 B) with the
+pinned sha256s - no re-fetch, no new pin. Real cost of the reversal: two GATE lines whose
+quotes are distinct from each other and from every other cited id, plus the entry id rewrite
+and two used-by cell edits.

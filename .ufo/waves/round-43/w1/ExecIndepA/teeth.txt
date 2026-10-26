@@ -1,0 +1,12 @@
+# selftest teeth: flipped parser comparisons must fail the selftest
+$ python3 -I mado-geometry.py --selftest
+MADO_GEOMETRY_SELFTEST: 92/92 passed
+rc=0
+$ python3 -I mut-flip-digitcheck.py --selftest   # SIZE_TOKEN.fullmatch(token) is None -> is not None
+MADO_GEOMETRY_SELFTEST: 82/92 passed
+rc=1
+$ python3 -I mut-flip-argcount.py --selftest     # len(args) != 2 -> == 2
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecIndepA/mut-flip-argcount.py", line 160, in supported_size
+    return (int(args[0]), int(args[1]), pattern)
+                              ~~~~^^^
+IndexError: list index out of range

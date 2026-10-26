@@ -1,0 +1,48 @@
+# seat ScrSkillProvince — check-index-rows.py evidence for the drafted README row
+# tool: quality/check-index-rows.py sha256 2fd1c0033e649b77e7cf7a8a5335bd0a254c0e57940642072c25e589677772b4
+# lane corpus/README.md sha256 53aa91cd7fbdc1dc6a573d5f29e71bb3269ebeea60cc33c935c11bd0a5ffdd84 (unmodified; the row is applied only to the scratch tree)
+# scratch tree: copy of corpus/ + symlinks to .ufo, tools, quality;
+#   plus 10 SCRATCH-ONLY registry stub rows S290-S299 and a SCRATCH-ONLY stub note
+#   (written by this driver) — the entry seat owns the real registry append and note.
+
+## M0 drafted row (no mutation)
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=0 warns=0
+exit=0
+
+## M1 Sources cell emptied
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=1 warns=0
+ERROR row-cells: knowledge/hyprland-gkeep-geometry-r43.md at line 71 carries 3 cells (need 3 non-empty)
+exit=1
+
+## M2 two cells only (the round-41 failure shape)
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=1 warns=0
+ERROR row-cells: knowledge/hyprland-gkeep-geometry-r43.md at line 71 carries 2 cells (need 3 non-empty)
+exit=1
+
+## M3 an S-id the registry lacks
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=1 warns=0
+ERROR cited-s-undefined: S399 in row knowledge/hyprland-gkeep-geometry-r43.md
+exit=1
+
+## M4 a Sources path that does not exist
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=1 warns=0
+ERROR cited-path-missing: `.ufo/waves/round-43/fetch-nope/` in row knowledge/hyprland-gkeep-geometry-r43.md
+exit=1
+
+## M5 the same row outside the coverage map
+$ python3 -I quality/check-index-rows.py --root <scratch>
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=61 errors=1 warns=0
+ERROR row-outside-map: knowledge/hyprland-gkeep-geometry-r43.md at line 294
+exit=1
+
+## simulated integration (row + Frontier bullet in the scratch README)
+$ SIM_TREE=<scratch> python3 -I .ufo/waves/round-43/w1/ScrSkillProvince/simulate-integration.py
+MADO_INDEX_ROWS: root=/fast/scratch/hyaku/mado-r43/ScrSkillProvince/tree_ctl rows=60 errors=0 warns=0
+SIM: 19/19 checks passed
+exit=0
+

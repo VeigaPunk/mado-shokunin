@@ -1,0 +1,230 @@
+== 0. ambient (lane HEAD, seat inputs) ==
+$ git rev-parse HEAD
+5add5b45a65ddaa18fad00c6afa9dbfda29ee0b0
+exit=0
+
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ScrQualityCriteria/LOG-at-5add5b4.md; git show 5add5b45a65ddaa18fad00c6afa9dbfda29ee0b0:LOG.md | sha256sum
+f6c27a3650c7bf4b7f95688978b2979d2c9a39f262686525352c63ae8bc416e2  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ScrQualityCriteria/LOG-at-5add5b4.md
+f6c27a3650c7bf4b7f95688978b2979d2c9a39f262686525352c63ae8bc416e2  -
+exit=0
+
+$ sha256sum /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md; (cd /home/vgpnk/Projects/shokunin && git show da384db4:.ufo/reports/round-42/mado.md | sha256sum)
+539463545c870524fc06bdd1b6b295a12764e492c2754b6a84b01aa3935a14bb  /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md
+539463545c870524fc06bdd1b6b295a12764e492c2754b6a84b01aa3935a14bb  -
+exit=0
+
+== 1. QUALITY.md shape (form of criteria 60-76; next free number) ==
+$ wc -l corpus/QUALITY.md
+399 corpus/QUALITY.md
+exit=0
+
+$ grep -c '^[0-9]\+\. ' corpus/QUALITY.md
+76
+exit=0
+
+$ grep -n '^## ' corpus/QUALITY.md | tail -3
+326:## Criterion from the round-25 outside spot-check (round 26; routed defect 3, M25-4)
+330:## Criteria from the round-28 lesson (M28-1, M28-2, M28-3)
+338:## Grounding repair (round 30; every active criterion must resolve a `lessons/` citation)
+exit=0
+
+== 2. (a) locator typed in prose: the control shows MISS, then OK on the corrected copy ==
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch .ufo/waves/round-43/fetch .ufo/waves/round-42/registration.md
+LOC .ufo/waves/round-42/registration.md:61 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=1 supported=0 verdict=MISS
+CHECK_LOCATORS: locators=1 miss=1
+exit=1
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch .ufo/waves/round-43/fetch .ufo/waves/round-43/w1/ExecLocatorGate/registration-r42-corrected.md
+LOC .ufo/waves/round-43/w1/ExecLocatorGate/registration-r42-corrected.md:61 Hyprland-HyprCtl.cpp:427-428,448 fragments=1 supported=1 verdict=OK
+CHECK_LOCATORS: locators=1 miss=0
+exit=0
+
+$ PYTHONDONTWRITEBYTECODE=1 python3 -I .ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch .ufo/waves/round-43/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ScrQualityCriteria/LOG-at-5add5b4.md /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ScrQualityCriteria/LOG-at-5add5b4.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS
+LOC /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md:10 fetch/Hyprland-RegexMatchEngine.cpp:10-16 fragments=8 supported=1 verdict=MISS
+LOC /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md:10 fetch/Hyprland-DefaultFloatingAlgorithm.cpp:55-66 fragments=8 supported=2 verdict=OK
+LOC /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/mado.md:10 fetch/Hyprland-HyprCtl.cpp:394-395,412-413 fragments=8 supported=1 verdict=MISS
+CHECK_LOCATORS: locators=4 miss=3
+exit=1
+
+-- the cited ranges carry no GEOMETRIC_GOAL; the true ranges do --
+$ for r in 394,395 412,413 426,428 447,448; do printf 'range %s: %s lines\n' "$r" "$(sed -n "${r}p" .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp | grep -c GEOMETRIC_GOAL)"; done
+range 394,395: 0 lines
+range 412,413: 0 lines
+range 426,428: 3 lines
+range 447,448: 2 lines
+exit=0
+
+$ sed -n '394,395p;412,413p' .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp
+    "at": [{}, {}],
+    "size": [{}, {}],
+    "fullscreenHandler": "{}",
+    "allowedOverFullscreen": {},
+exit=0
+
+$ grep -n 'negative:\|FullMatch' .ufo/waves/round-43/fetch/Hyprland-RegexMatchEngine.cpp
+7:    if (regex.starts_with("negative:")) {
+16:    return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+exit=0
+
+== 3. (b) control tally: three numbers, two definitions ==
+$ grep -c '^ok  ' .ufo/waves/round-42/receipts/ctl-c1.txt
+48
+exit=0
+
+$ for p in REF BASE\-absent D K M; do printf '%s=%s\n' "$p" "$(grep -cE "^ok  ${p}" .ufo/waves/round-42/receipts/ctl-c1.txt)"; done
+REF=1
+BASE-absent=1
+D=3
+K=5
+M=38
+exit=0
+
+$ head -1 .ufo/waves/round-42/receipts/ctl-c1.txt
+CTL_C1: rev=8af026305bd93c1d6011c016b8a3b148832a4f07 nonce=42aa42aa42aa42aa controls=46 equivalent_mutants_excluded=M03-read-short,M20-hash-allowed,M38-regex-empty
+exit=0
+
+$ grep 'VERDICT' .ufo/waves/round-42/receipts/ctl-c1.txt
+CTL_C1 VERDICT: PASS (controls scoring TARGET_MET: 0 of 47; reference met: 1)
+exit=0
+
+$ grep -n 'controls=%d' .ufo/waves/round-42/ctl/run-c1-controls.py
+139:    print("CTL_C1: rev=%s nonce=%s controls=%d equivalent_mutants_excluded=%s" % (args.rev, NONCE, len(jobs) - 2, ",".join(EQUIVALENT)))
+exit=0
+
+-- the round-42 report's own breakdown --
+$ (cd /home/vgpnk/Projects/shokunin && git show da384db4:.ufo/reports/round-42/mado.md) | sed -n '28p' | grep -o '46 controls[^.]*'
+46 controls (absent base, 3 do-nothing, 5 cheats, 37 mutants), none reaches TARGET_MET; the reference does
+exit=0
+
+-- the repaired statement (round-43 registration) --
+$ sed -n '59p' .ufo/waves/round-43/registration.md | grep -o '48 .ok. lines[^;]*'
+48 `ok` lines (REF, BASE-absent and the 46 controls: 3 do-nothing, 5 cheats, 38 single-defect mutants), `CTL_C1 VERDICT: PASS (controls scoring TARGET_MET: 0 of 47
+exit=0
+
+== 4. (c) pointer to a run: round-42 box 2, and the round-43 recurrence ==
+$ (cd /home/vgpnk/Projects/shokunin && git show da384db4:.ufo/reports/round-42/mado.md) | sed -n '45p' | grep -o 'is recorded in [^;]*'
+is recorded in LOG.md Round 42
+exit=0
+
+-- the pointer's target is the LOG Round 42 section; the run is not in it (committed bytes at a62f2e0) --
+$ git show a62f2e0c3a5d1737bcf93ac45ae98a1b195e1341:LOG.md | sed -n '/^## Round 42/,/^## Round 43/p' | grep -c 'NO_MATCHING_CLIENT'
+0
+exit=1
+
+$ git show a62f2e0c3a5d1737bcf93ac45ae98a1b195e1341:LOG.md | grep -c 'NO_MATCHING_CLIENT'
+0
+exit=1
+
+-- round-43 recurrence: LOG.md:2490 names a receipt that is untracked and absent at freeze and at HEAD --
+$ grep -n 'SHONEN box 2 receipt' LOG.md | cut -c1-100
+2490:- SHONEN box 2 receipt (closure §6.4): `.ufo/waves/round-43/receipts/live-geometry-host.txt` - 
+exit=0
+
+$ sed -n '2490p' LOG.md | grep -o '\.ufo/waves/round-43/receipts/[a-z-]*\.txt'
+.ufo/waves/round-43/receipts/live-geometry-host.txt
+exit=0
+
+$ sha256sum LOG.md
+c1cf804bca3f3f3d9f03958df7eaf49a8c6614ab603bd482e547264f17d20afb  LOG.md
+exit=0
+
+$ git status --porcelain -- LOG.md
+ M LOG.md
+exit=0
+
+$ git cat-file -e b2e2efd6e268920d31f3c32cf52dc097dd6e1d22:.ufo/waves/round-43/receipts/live-geometry-host.txt && echo AT_FREEZE || echo ABSENT_AT_FREEZE
+fatal: path '.ufo/waves/round-43/receipts/live-geometry-host.txt' exists on disk, but not in 'b2e2efd6e268920d31f3c32cf52dc097dd6e1d22'
+ABSENT_AT_FREEZE
+exit=0
+
+$ git cat-file -e HEAD:.ufo/waves/round-43/receipts/live-geometry-host.txt && echo AT_HEAD || echo NOT_AT_HEAD
+fatal: path '.ufo/waves/round-43/receipts/live-geometry-host.txt' exists on disk, but not in 'HEAD'
+NOT_AT_HEAD
+exit=0
+
+$ git status --porcelain -- .ufo/waves/round-43/receipts/live-geometry-host.txt
+?? .ufo/waves/round-43/receipts/live-geometry-host.txt
+exit=0
+
+$ grep -n 'verdict=\|exit=\|^\$ ' .ufo/waves/round-43/receipts/live-geometry-host.txt | cut -c1-90
+2:$ hyprctl version | head -1
+4:$ sha256sum tools/mado-geometry.py ~/.config/hypr/gkeep.conf
+7:$ hyprctl clients -j | python3 -I tools/mado-geometry.py --clients - --rules ~/.config/h
+10:MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped
+11:exit=3
+exit=0
+
+== 5. (d) excerpt header range against the command that cut it ==
+$ wc -l /home/vgpnk/Projects/gkeep/gkeep/ui.py
+488 /home/vgpnk/Projects/gkeep/gkeep/ui.py
+exit=0
+
+$ head -1 .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py
+# excerpt of /home/vgpnk/Projects/gkeep/gkeep/ui.py lines 446-495 at gkeep HEAD 133b867 (operator project, read-only copy)
+exit=0
+
+$ head -1 .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py
+# excerpt of /home/vgpnk/Projects/gkeep/gkeep/ui.py lines 446-488 (end of file) at gkeep HEAD 133b867 (operator project, read-only copy)
+exit=0
+
+$ wc -l .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py
+  46 .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py
+  45 .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py
+  91 total
+exit=0
+
+$ printf 'body42=%s body43=%s src=%s\n' "$(tail -n +3 .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py | wc -l)" "$(tail -n +3 .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py | wc -l)" "$(sed -n '446,$p' /home/vgpnk/Projects/gkeep/gkeep/ui.py | wc -l)"
+body42=44 body43=43 src=43
+exit=0
+
+$ diff <(tail -n +3 .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py) <(sed -n '446,$p' /home/vgpnk/Projects/gkeep/gkeep/ui.py) && echo BODY43_EQUAL_SOURCE_RANGE
+BODY43_EQUAL_SOURCE_RANGE
+exit=0
+
+$ diff <(tail -n +3 .ufo/waves/round-42/fetch/gkeep-ui-excerpt.py) <(sed -n '446,488p' /home/vgpnk/Projects/gkeep/gkeep/ui.py)
+44d43
+< 
+exit=1
+
+$ sed -n '59p' .ufo/waves/round-42/registration.md | grep -o 'lines [0-9-]* of'
+lines 446-495 of
+exit=0
+
+== 6. receipt format across rounds (scope note for criterion 79) ==
+$ for f in .ufo/waves/round-42/receipts/*.txt; do printf '%s cmd=%s exit=%s\n' "$f" "$(grep -c '^\$ ' $f)" "$(grep -c '^exit=' $f)"; done
+.ufo/waves/round-42/receipts/axis-base.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/base-rev.txt cmd=0 exit=0
+.ufo/waves/round-42/receipts/c1-before-base.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/c2-before-base.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/census-after.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/census-before.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/ctl-c1.txt cmd=0 exit=1
+.ufo/waves/round-42/receipts/ctl-c2.txt cmd=0 exit=0
+.ufo/waves/round-42/receipts/fetch-sha256.txt cmd=0 exit=0
+.ufo/waves/round-42/receipts/freeze-counter-check.txt cmd=0 exit=0
+exit=0
+
+$ for f in .ufo/waves/round-41/receipts/harm-tip.txt .ufo/waves/round-41/receipts/ctl-c1-v2.txt .ufo/waves/round-41/receipts/ctl-c2-v2.txt; do printf '%s cmd=%s exit=%s\n' "$f" "$(grep -c '^\$ ' $f)" "$(grep -c '^exit=' $f)"; done
+.ufo/waves/round-41/receipts/harm-tip.txt cmd=6 exit=1
+.ufo/waves/round-41/receipts/ctl-c1-v2.txt cmd=0 exit=0
+.ufo/waves/round-41/receipts/ctl-c2-v2.txt cmd=0 exit=0
+exit=0
+
+== 7. the control criterion 77 names (ExecLocatorGate) is in flight, not a passed receipt ==
+$ ls .ufo/waves/round-43/w1/ExecLocatorGate/
+check-locators.py
+knowledge-base-manifest.txt
+lesson-r42-closure-a35cfdf.md
+LOG-a35cfdf.md
+LOG-corrected.md
+LOG-worktree-at-run.md
+receipt.txt
+registration-r42-corrected.md
+report.md
+exit=0
+
+$ test -f .ufo/waves/round-43/w1/ExecLocatorGate/receipt.txt && echo RECEIPT_PRESENT || echo NO_RECEIPT_YET
+RECEIPT_PRESENT
+exit=0
+

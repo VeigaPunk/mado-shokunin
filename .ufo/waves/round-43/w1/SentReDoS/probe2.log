@@ -1,0 +1,22 @@
+########## G. legal-size amplification (compact JSON, all inputs < 1 MiB)
+many0-shape clients json = 870001 bytes
+20000 clients x 300 rules        : 2.581s rc=1 out=1311146B MADO_GEOM_RULE: n=1 file=1 effect=size arg=0x2 class=a|b
+   26 clients x 40000 B class x   300 rules (in=1041093B, rules=12600B): 4.8s  rc=3
+   26 clients x 40000 B class x   600 rules (in=1041093B, rules=25200B): 9.5s  rc=3
+   26 clients x 40000 B class x  1200 rules (in=1041093B, rules=50400B): 19.3s  rc=3
+   26 clients x  4000 B class x 30000 rules (in=105093B, rules=1260000B): 0.0s  rc=2
+   13 clients x 40000 B class x 12000 rules (in=520547B, rules=504000B): 99.3s  rc=3
+
+########## H. output amplification from one client
+900000-char class, 1 rule: in=900043B out=900287B (x1.00) 0.032s rc=0
+
+########## I. depth bomb past json's C recursion guard (all <= 1 MiB)
+list depth  60000 in= 120000B: 0.029s rc=1 stdout=[] stderr_lines=24 RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode s
+list depth 100000 in= 200000B: 0.032s rc=1 stdout=[] stderr_lines=24 RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode s
+list depth 200000 in= 400000B: 0.029s rc=1 stdout=[] stderr_lines=24 RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode s
+list depth 400000 in= 800000B: 0.031s rc=1 stdout=[] stderr_lines=24 RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode s
+list depth 500000 in=1000000B: 0.032s rc=1 stdout=[] stderr_lines=24 RecursionError: Stack overflow (used 8144 kB) while decoding a JSON array from a unicode s
+dict depth 150000 in= 900003B: 0.032s rc=1 stdout='' stderr_lines=24 RecursionError: Stack overflow (used 8136 kB) while decoding a JSON object from a unicode 
+
+########## J. broken pipe with a large stdout
+reader closes after 4 KiB: rc=3 stderr=0B ''

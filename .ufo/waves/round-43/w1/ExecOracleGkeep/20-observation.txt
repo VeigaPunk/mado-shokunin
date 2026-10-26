@@ -1,0 +1,45 @@
+# Observation: Hyprland 0.56.2 (nested in the round-27 bubblewrap oracle, headless, no network)
+# reporting the size of a client with app_id org.omarchy.gkeep under the host's three gkeep rules.
+# Instance: Hyprland v0.56.2, commit efb50993780079460b0cbed1363e2166a2de1d9f (the host binary,
+#   read-only, run inside bwrap; see 00-toolchain.txt).
+
+## 1. clients -j line for the observed client (single line, verbatim from receipt)
+{"acceptsInput": true, "address": "0x564a9cdea6f0", "allowedOverFullscreen": true, "at": [270, 20], "class": "org.omarchy.gkeep", "contentType": "none", "floating": true, "focusHistoryID": 0, "fullscreen": 0, "fullscreenClient": 0, "fullscreenHandler": "default", "grouped": [], "hidden": false, "inhibitingIdle": false, "initialClass": "org.omarchy.gkeep", "initialTitle": "gkeep-oracle-probe", "mapped": true, "monitor": 0, "pid": 54, "pinFullscreened": false, "pinned": false, "size": [420, 500], "stableId": "18000002", "swallowing": "0x0", "tags": [], "tearingHint": false, "title": "gkeep-oracle-probe", "visible": true, "workspace": {"id": 1, "name": "1"}, "xdgDescription": "", "xdgTag": "", "xwayland": false}
+
+## 2. Hyprland's own map line (sandbox.log:1762 of that run; the line is persisted in
+##    receipts/logexcerpt-headlesshost.txt and in receipts/receipt-headlesshost.json)
+DEBUG ]: Map request dispatched, monitor HEADLESS-2, window pos: [270.00000, 20.00000], window size: [420.00000, 500.00000]
+(pos x=270 = (960-420)/2, y=20 = (540-500)/2 on the 1920x1080@scale2 monitor: the `center on` rule)
+The tiled control shows the same line with the layout size: sandbox.log:1750 of the nofloat run,
+persisted in receipts/logexcerpt-nofloat.txt
+DEBUG ]: Map request dispatched, monitor HEADLESS-2, window pos: [21.00000, 21.00000], window size: [918.00000, 498.00000]
+
+## 3. what the client was told (client stderr, .client-headlesshost.log)
+TOPLEVEL_CONFIGURE w=420 h=500
+CLIENT_READY app_id=org.omarchy.gkeep buffer=200x200
+TOPLEVEL_CONFIGURE w=0 h=0
+DISPLAY_DISPATCH_END
+
+the first configure carries the rule size 420x500. The client asked for nothing by default: it
+sets app_id and title, attaches a 200x200 shm buffer and commits (gkeep-shm.c:156-164); the only
+path that sends a size request is the optional --min-size flag (gkeep-shm.c:152-155).
+
+## 4. repeatability (same rules, fresh sandbox each time)
+  headlesshost sig=efb50993780079460b0cbed1363e2166a2de1d9f_1792999739_542277837 size=[420, 500] floating=True at=[270, 20]
+  host-r1      sig=efb50993780079460b0cbed1363e2166a2de1d9f_1792999782_421459827 size=[420, 500] floating=True at=[270, 20]
+  host-r2      sig=efb50993780079460b0cbed1363e2166a2de1d9f_1792999785_1871325721 size=[420, 500] floating=True at=[270, 20]
+  host-r3      sig=efb50993780079460b0cbed1363e2166a2de1d9f_1792999788_830851509 size=[420, 500] floating=True at=[270, 20]
+  minsize      sig=efb50993780079460b0cbed1363e2166a2de1d9f_1792999817_190357969 size=[420, 500] floating=True at=[270, 20]
+
+## 5. controls (same oracle, same client, one variable changed)
+  nofloat      size=[918, 498] floating=False at=[21, 21]  (rules: rules-nofloat.conf: float line removed)
+  size300      size=[300, 300] floating=True  at=[330, 120] (rules: rules-size300.conf: `size 300 300`)
+  nomatch      size=[918, 498] floating=False at=[21, 21]  (same rules, app_id org.omarchy.gkeep2)
+  floatonly    size=[200, 200] floating=True  at=[380, 170] (rules: rules-floatonly.conf: no size rule)
+`floatonly` is the isolating control: with the float rule but no size rule the reported size is the
+client's own 200x200 buffer, so the 420x500 in the host case comes from the size rule.
+`minsize` is the client-request control: the same rules plus a client that sends
+xdg_toplevel.set_min_size(800,700) still reports [420,500].
+
+## 6. monitors -j of the observed instance
+[{"currentFormat": "XRGB8888", "height": 1080, "id": 0, "name": "HEADLESS-2", "refreshRate": 60.0, "scale": 2, "width": 1920}]

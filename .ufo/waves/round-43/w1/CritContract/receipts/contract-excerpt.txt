@@ -1,0 +1,61 @@
+# quality/counters/c1-r42-geometry.py docstring, lines 1-60 (frozen contract), numbered
+     1	#!/usr/bin/env python3
+     2	"""PRED-C1-r42 - a read-only join of window-rule sizes and the compositor's reported client sizes (C1, operability).
+     3	
+     4	Scores one committed revision REV of the lane (revision-addressed git reads, ambient GIT_*
+     5	removed; nothing in the lane is written). The tool under test is `tools/mado-geometry.py` at REV
+     6	(or `--tool PATH` for a control); BASE must lack it. Every tool and selftest run happens inside a
+     7	bubblewrap sandbox (`bwrap --unshare-all --cap-drop ALL`, fresh /proc and /dev, tmpfs /tmp, the
+     8	interpreter's /usr read-only, the fixture tree read-only): the tool sees neither the lane, nor this
+     9	counter, nor /home; fixture runs also execute under RLIMIT_NPROC = 1, so any spawn fails. No bwrap ->
+    10	SETUP, exit 2. Fixtures mix a per-run nonce: sha256(REV:NONCE:tag:i); the nonce is printed and
+    11	replayable with `--nonce`. Fixture directories have opaque random names.
+    12	
+    13	The tool's contract is the docstring of the reference at `.ufo/waves/round-42/c1/ctl-ref-tool.py.txt`
+    14	(frozen at the round-42 freeze) and is restated here, the code below being the same sentence.
+    15	
+    16	CLI. `mado-geometry.py --selftest`, or `--clients V` exactly once and `--rules V` one or more times
+    17	(two-token form only, any order); anything else is usage. Setup failure: stdout is exactly one line
+    18	`MADO_GEOMETRY: SETUP <reason>`, exit 2, reason one of usage | unreadable | too_large | bad_json. A
+    19	PATH that is missing, unreadable, a directory, a FIFO or any non-regular file is unreadable (the tool
+    20	must return, never block on one); an input larger than 1048576 bytes is too_large; `--clients -` reads
+    21	standard input, at most 1048577 bytes; a clients input that is not UTF-8 JSON holding a list whose
+    22	every element is an object is bad_json (an empty input included). Order of checks: usage, then the
+    23	clients input (unreadable, too_large, bad_json), then the rules files in argument order
+    24	(unreadable, too_large).
+    25	
+    26	Rules. Each rules file is decoded as UTF-8 with errors replaced and split on "\\n"; a line is
+    27	stripped of spaces and tabs at both ends. A RULE LINE fully matches `windowrule[ \\t]*=(.*)` (every
+    28	other line, `windowrulev2` and upper case `WindowRule` included, is ignored and counted nowhere). The
+    29	body is split on "," and each field is stripped of spaces and tabs. The effect is the first
+    30	first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An effect other than
+    31	`size` and `float` adds one to `other`. A `size` or `float` line is SUPPORTED when: it has exactly
+    32	two fields; field 0 has exactly two argument tokens fully matching
+    33	`[0-9]{1,5}` (ASCII digits; size) or exactly one token equal to `on` or `off` (float); field 1 fully
+    34	matches `match:class[ \\t]+(.+)`, the capture being REGEX; REGEX fully matches 1-200 characters of
+    35	`[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.` `\\-` `\\(` `\\)` `\\|` `\\*` `\\+` `\\?` `\\^` `\\$`
+    36	`\\\\`; contains none of the substrings `(?`, `*+`, `++`, `?+`; and compiles under Python `re`. Any
+    37	other size or float line adds one to `unsupported`. Supported rules are numbered n=1.. across all
+    38	files in argument order; each carries the 1-based index of its file. A client MATCHES a rule when
+    39	its class holds no character below U+0020 and `re.fullmatch(REGEX, class)` succeeds.
+    40	
+    41	Clients. An element whose `mapped` is JSON false is unmapped and skipped (0, null and "false"
+    42	are not false). For the others: class is the `class` value when a string, else the empty string;
+    43	floating is true only for JSON true; size is the `size` value when a list of exactly two JSON
+    44	integers (not booleans, not floats) that are >= 0, else none; address is the `address` value
+    45	when a string, else "-". Rules apply in file order: the last matching `size` rule gives want, the
+    46	last matching `float` rule gives float_rule (`on`, `off`, else `-`). A client with at least one
+    47	matching size rule is MATCHED and has a verdict: BADSIZE (size none) | TILED (not floating) |
+    48	AGREE (size == want) | DIFFER. A duplicate JSON key keeps its last value.
+    49	
+    50	Output, in order (stdout, one line each; nothing else; stderr empty on exit 0/1/3/4):
+    51	  per supported rule (rule order)    MADO_GEOM_RULE: n=<n> file=<k> effect=<size|float> arg=<WxH|on|off> class=<REGEX>
+    52	  per matched client (input order)   MADO_GEOM_CLIENT: addr=<json> class=<json> floating=<true|false> size=<WxH|-> want=<WxH> float_rule=<on|off|-> verdict=<V>
+    53	  last                               MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> verdict=<V>
+    54	`<json>` is json.dumps(value) with ensure_ascii; WxH are decimal integers without leading zeros.
+    55	V = NO_SIZE_RULES (rules=0; exit 4) | DIFFER (differ>0; exit 1) | NO_MATCHING_CLIENT (matched=0;
+    56	exit 3) | OK (exit 0), tested in that order.
+    57	
+    58	Fixtures (P of TOTAL): gen0..gen9 (a nonce lattice: 1-3 rules files of mixed supported, unsupported,
+    59	other and ignored lines; 0-14 clients of mixed classes, sizes, floating and mapped values) and the
+    60	fixed classes stdin0, stdinbig0, stdinok0, filecl0, multi0, usage0, unreadable0, fifo0, toolarge0,

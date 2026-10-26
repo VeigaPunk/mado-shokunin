@@ -1,0 +1,61 @@
+# .ufo/waves/round-42/c1/ctl-ref-tool.py.txt docstring, lines 1-60 (contract reference), numbered
+     1	#!/usr/bin/env python3
+     2	"""mado-geometry - does the size a window rule asks for match the size the compositor reports?
+     3	
+     4	Hyprland 0.56.2 consumes a window rule `size W H` when a floating window opens
+     5	(the floating algorithm reads the rule's size and stores it as the window's box);
+     6	a tiled window never reads it. The compositor reports each mapped client's size
+     7	in `hyprctl clients -j`. This tool joins the two read-only inputs: the rule
+     8	lines of one or more Hyprland config files and one `hyprctl clients -j` dump.
+     9	
+    10	    hyprctl clients -j | mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+    11	    mado-geometry.py --clients clients.json --rules a.conf --rules b.conf
+    12	    mado-geometry.py --selftest
+    13	
+    14	It reads files and standard input only; it starts no process and opens no socket.
+    15	
+    16	Arguments (two-token form only; anything else is usage): `--selftest` alone, or
+    17	`--clients V` exactly once and `--rules V` one or more times, in any order.
+    18	Setup failure: stdout is exactly one line `MADO_GEOMETRY: SETUP <reason>`, exit 2,
+    19	reason one of usage | unreadable | too_large | bad_json. A PATH that is missing,
+    20	unreadable, a directory, a FIFO or any non-regular file is unreadable; an input
+    21	larger than 1048576 bytes is too_large (stdin, `--clients -`, is read at most
+    22	1048577 bytes); a clients input that is not UTF-8 JSON holding a list whose every
+    23	element is an object is bad_json.
+    24	
+    25	Rules. Each rules file is decoded as UTF-8 with errors replaced and split on
+    26	"\\n"; a line is stripped of spaces and tabs at both ends. A RULE LINE matches
+    27	`windowrule[ \\t]*=(.*)` (anything else, `windowrulev2` included, is ignored and
+    28	counted nowhere). The body is split on "," and each field is stripped of spaces
+    29	and tabs. The effect is the first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An
+    30	effect other than `size` and `float` adds one to `other`. A `size` or `float`
+    31	line is SUPPORTED when: field 0 has exactly two argument
+    32	tokens `[0-9]{1,5}` (size) or exactly one token `on` or `off` (float); there is
+    33	exactly one more field and it is `match:class` + one or more spaces/tabs + REGEX;
+    34	REGEX is 1-200 characters of `[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.`
+    35	`\\-` `\\(` `\\)` `\\|` `\\*` `\\+` `\\?` `\\^` `\\$` `\\\\`, contains none of `(?`,
+    36	`*+`, `++`, `?+`, and compiles under Python `re`. Any other size or float line adds
+    37	one to `unsupported`. Supported rules are numbered n=1.. across all files in order
+    38	and each reports the 1-based index of its file.
+    39	A client MATCHES a rule when its class holds no character below U+0020 and
+    40	`re.fullmatch(REGEX, class)` succeeds (Hyprland: `RE2::FullMatch`).
+    41	
+    42	Clients. An element whose `mapped` is JSON false is unmapped and skipped. For the
+    43	others class is the `class` value when a string, else ""; floating is true only
+    44	for JSON true; size is the `size` value when a list of exactly two JSON
+    45	integers (not booleans, not floats) >= 0, else none; address is `address` when
+    46	a string, else "-". Rules apply in order: the last matching `size` rule gives
+    47	want, the last matching `float` rule gives float_rule (`on`, `off`, else `-`). A
+    48	client with at least one matching size rule is MATCHED and reports a verdict:
+    49	BADSIZE (size none) | TILED (not floating) | AGREE (size == want) | DIFFER.
+    50	
+    51	Output (stdout; nothing else; stderr empty on exit 0/1/3/4), in order:
+    52	  per supported rule   MADO_GEOM_RULE: n=<n> file=<k> effect=<size|float> arg=<WxH|on|off> class=<REGEX>
+    53	  per matched client   MADO_GEOM_CLIENT: addr=<json> class=<json> floating=<true|false> size=<WxH|-> want=<WxH> float_rule=<on|off|-> verdict=<V>
+    54	  last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> verdict=<V>
+    55	(<json> is json.dumps with ensure_ascii.) V = NO_SIZE_RULES (exit 4, rules=0) |
+    56	DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT (exit 3, matched=0) | OK (exit 0),
+    57	tested in that order. DIFFER is a report, not a fault: a user may have resized the
+    58	window, or the compositor may have clamped the rule's size.
+    59	"""
+    60	import json

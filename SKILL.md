@@ -287,6 +287,13 @@ NO_MATCHING_CLIENT is not "the rule works": it says only that no mapped window c
 window would report needs that window open — an operator act, not a mado probe, and the rendered size after the
 animation stays `[UNK]` either way.
 
+Known limit (round-43 wave w1, `RevRefTool` V1): the match is Python `re.fullmatch`, which backtracks. A rule regex
+inside the accepted alphabet with an alternation under a repeat, such as `(a|aa)+$`, makes the tool hang on a long
+class string (`"a"*38+"b"` takes about 4.6 s; about 1 KB never finishes) with no output at all. The gkeep rule
+regex is a plain anchored literal, but a client chooses its own class: run the join as
+`hyprctl clients -j | timeout 5 python3 tools/mado-geometry.py --clients - --rules <file>` and treat exit 124 as
+"no verdict", never as a verdict. RE2, which Hyprland uses, does not backtrack, so this is the tool's limit, not the compositor's.
+
 ### Mutating commands — operator only, mado never runs
 
 - `hyprctl reload` — applies config to the live session (skill:147).

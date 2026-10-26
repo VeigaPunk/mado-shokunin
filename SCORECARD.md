@@ -2525,3 +2525,32 @@ Axis table re-derived at `6fd2234627558a052b2d96ff19b3234edf50e4d9` plus the rou
 1. The remaining package themes under PROVINCE (`w1/ScoutMergeRest.md`: gkeep rendered geometry is the ranked successor; socket-client-contract residue).
 2. An independent non-author re-run of both v2 counters with fresh nonces.
 3. Route the w2 open predicate defects (a tightened C1 predicate for selftest teeth; mid-word quote ends in C2).
+
+## Round 43 - mado-geometry and the gkeep-geometry entry (2026-10-26, attempt 1)
+
+Registration `.ufo/waves/round-43/registration.md` (freeze `b2e2efd6e268920d31f3c32cf52dc097dd6e1d22`, base `a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f`): round 42's never-scored claims re-registered, C1 unchanged (`PRED-C1-r42`), C2 with round constants only (`PRED-C2-r43`). Wave `w1` (38 seats) showed the C2 v1 target reachable without the claimed coverage (`w1/CritClaimSizing.md` finding 2; `w1/CritC2Cheat.md`: 16 forgeries admitted), so C2 was re-registered before any data as `PRED-C2-r43-v2` (`registration-v2.md`, freeze `496340dd53fabd800be42e8fb19090f35e2c235c`). Lowest-axis rule: every published axis ties at its maximum at base (`receipts/axis-base.txt`, `MADO_AXIS checked=3 mismatched=0`). Data commit `1959770657f1f8665097c1aed4be6c1cbb07139f`.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-geometry.py` | `fixtures=0/37 tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-before-base.txt`) -> `fixtures=37/37 tool=present verdict=TARGET_MET` exit 0 at the data commit (`receipts/c1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r42-geometry.py --repo . --rev <rev>` (`PRED-C1-r42`) | **TARGET_MET**; the tool is the round-42 reference installed byte-identically (sha256 `e3c2e471…`), falsified in round 43 by three independent implementations, mutation, cheat and security seats; open predicate defects: a source-pin selftest and a sandbox-detecting tool reach MET (`w1/CritC1Cheat.md` cheats 4, 6) |
+| C2 **coverage** (sourced; assimilation) - `corpus/knowledge/hyprland-gkeep-geometry-r43.md` | v2 `admitted=0/1` exit 1 at base (`receipts/c2-v2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at the data commit (`receipts/c2-after-data.txt`; v1 also 1/1, `receipts/c2-v1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r43-gkeep-entry-v2.py --repo . --rev <rev>` (`PRED-C2-r43-v2`) | **TARGET_MET under v2**; declared residual: claim-binding forgeries (A1, A2, D1, E2, H1, X1 of `ctl/v2-forgeries/`) still admit - the non-author reading decides whether the entry's claims are the receipts' claims |
+
+Separable: C1 reads only `tools/mado-geometry.py`; C2 reads only the entry, registry, lesson, README and the pinned receipts (w2 `ExecSeparability` re-checks it).
+
+### Capabilities (round 43)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| rule size versus reported size join | read one or more Hyprland config files and one `hyprctl clients -j` dump (file or stdin) and report, per client matched by a `windowrule = size W H, match:class RX` line (RE2-compatible regex subset, `re.fullmatch`), AGREE / DIFFER / TILED / BADSIZE against the reported goal box, with NO_MATCHING_CLIENT / NO_SIZE_RULES / SETUP verdicts and exit codes; starts no process, opens no socket | `tools/mado-geometry.py` (selftest 73/73); `quality/counters/c1-r42-geometry.py` 37/37 at `1959770`; live host run `receipts/live-geometry-host.txt` (`NO_MATCHING_CLIENT`, exit 3, no gkeep window open) | 43 |
+
+### Sources, saturation, planned
+
+Sources 226 -> 234 rows (S290-S297, tier A, `mined`, opened 2026-10-26); S155 and S158 `used-by` extended by one item each (old->new in `corpus/lessons/round-43.md`); knowledge entries 59 -> 60. Assimilation: the gkeep-geometry theme admitted as one successor entry (`gkeep-size-to-real-size-r11.md`); four staged files refused with reasons and flip conditions. considerthese `2026-10-25.md` proposal 2 mined as QUALITY 81. Mistakes M43-1..8 mined; QUALITY 77-80 from the round-42 closure's routed defects; `quality/check-locators.py` added (criterion 77). Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `1959770657f1f8665097c1aed4be6c1cbb07139f` plus the round-43 records commit (one new indexed entry, criteria 77-81): navigation 60/60; calibration resolved-active 68/68; operability selftest 12/12.
+
+### Planned (round 44; intent only)
+
+1. A live gkeep window on the host session, read with `tools/mado-geometry.py` (operator opens gkeep; mado reads only) - turns the entry's host UNK into OBS or DIFFER.
+2. Close the C1 predicate's open defects (source-pin selftest, sandbox detection) and the C2 held-receipt pin, under a new registration.
+3. The remaining gkeep-theme residue (`fetchClass`, `sendWindowSize`, the map-time journal route) as a second entry.

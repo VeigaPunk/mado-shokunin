@@ -1,0 +1,18 @@
+== reference (host, outside the bwrap sandbox)
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x55" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+rc=0
+== cheat-6-detect (host, outside the bwrap sandbox)
+MADO_GEOMETRY: SETUP usage
+rc=2
+== cheat-5-cache first host run (cold)
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+rc=4
+== cheat-5-cache second host run (warm: host /tmp persisted)
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x55" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+rc=0

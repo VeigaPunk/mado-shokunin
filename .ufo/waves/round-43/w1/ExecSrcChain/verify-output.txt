@@ -1,0 +1,140 @@
+SHASUM Hyprland-RegexMatchEngine.cpp 8ca655336cd111df1136be76bbdf91bd6830e7e8891df4bb8c766f1e55a3a282 OK
+F1 Hyprland-RegexMatchEngine.cpp:7 words=3 OK
+    grep:     if (regex.starts_with("negative:")) {
+F2 Hyprland-RegexMatchEngine.cpp:9 words=3 OK
+    grep:         m_regex    = makeUnique<re2::RE2>(regex.substr(9));
+F3 Hyprland-RegexMatchEngine.cpp:16 words=5 OK
+    grep:     return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+SHASUM Hyprland-WindowRuleApplicator.cpp fec33f9a0bc279ffc94ca27a6e9843964840d6269bc28d330d566e05fed3307b OK
+F4 Hyprland-WindowRuleApplicator.cpp:390 words=3 OK
+    grep:                 static_.floating = std::get<bool>(value);
+F5 Hyprland-WindowRuleApplicator.cpp:394 words=3 OK
+    grep:                 static_.floating = !std::get<bool>(value);
+F6 Hyprland-WindowRuleApplicator.cpp:421 words=3 OK
+    grep:             case WINDOW_RULE_EFFECT_SIZE: {
+F7 Hyprland-WindowRuleApplicator.cpp:422 words=5 OK
+    grep:                 const auto& expr = std::get<Math::SExpressionVec2>(value);
+F8 Hyprland-WindowRuleApplicator.cpp:424 words=1 OK
+    grep:                     static_.size.reset();
+F9 Hyprland-WindowRuleApplicator.cpp:426 words=3 OK
+    grep:                     static_.size = expr;
+F10 Hyprland-WindowRuleApplicator.cpp:183 words=9 OK
+    grep:                     if (VEC->x < 1 || VEC->y < 1) {
+F11 Hyprland-WindowRuleApplicator.cpp:188 words=4 OK
+    grep:                     m_maxSize.first = Types::COverridableVar(*VEC, Types::PRIORITY_WINDOW_RULE);
+F12 Hyprland-WindowRuleApplicator.cpp:190 words=4 OK
+    grep:                     if (*PCLAMP_TILED || m_window->m_isFloating)
+F13 Hyprland-WindowRuleApplicator.cpp:191 words=2 OK
+    grep:                         m_window->clampWindowSize(std::nullopt, m_maxSize.first.value());
+F14 Hyprland-WindowRuleApplicator.cpp:218 words=4 OK
+    grep:                     m_minSize.first = Types::COverridableVar(*VEC, Types::PRIORITY_WINDOW_RULE);
+F15 Hyprland-WindowRuleApplicator.cpp:219 words=4 OK
+    grep:                     if (*PCLAMP_TILED || m_window->m_isFloating)
+F16 Hyprland-WindowRuleApplicator.cpp:220 words=2 OK
+    grep:                         m_window->clampWindowSize(m_minSize.first.value(), std::nullopt);
+SHASUM Hyprland-DefaultFloatingAlgorithm.cpp f05f256150c8dcf5041ba71eaa9b8ba0ec16b94d231bff7a213d18fc23632e91 OK
+F17 Hyprland-DefaultFloatingAlgorithm.cpp:16 words=7 OK
+    grep: constexpr const Vector2D DEFAULT_SIZE = {640, 400};
+F18 Hyprland-DefaultFloatingAlgorithm.cpp:53 words=5 OK
+    grep:         WINDOW->sizeAnimation()->setValueAndWarp(DESIRED_GEOM ? DESIRED_GEOM->size : DEFAULT_SIZE);
+F19 Hyprland-DefaultFloatingAlgorithm.cpp:55 words=3 OK
+    grep:         if (WINDOW->m_ruleApplicator->static_.size) {
+F20 Hyprland-DefaultFloatingAlgorithm.cpp:56 words=5 OK
+    grep:             const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.size);
+F21 Hyprland-DefaultFloatingAlgorithm.cpp:60 words=3 OK
+    grep:                 windowGeometry.w = COMPUTED->x;
+F22 Hyprland-DefaultFloatingAlgorithm.cpp:61 words=3 OK
+    grep:                 windowGeometry.h = COMPUTED->y;
+F23 Hyprland-DefaultFloatingAlgorithm.cpp:64 words=1 OK
+    grep:                 WINDOW->positionAnimation()->setValueAndWarp(*COMPUTED);
+F24 Hyprland-DefaultFloatingAlgorithm.cpp:79 words=3 OK
+    grep:         if (WINDOW->m_ruleApplicator->static_.center.value_or(false)) {
+F25 Hyprland-DefaultFloatingAlgorithm.cpp:90 words=6 OK
+    grep:     if (!posOverridden && (!DESIRED_GEOM || !DESIRED_GEOM->pos))
+F26 Hyprland-DefaultFloatingAlgorithm.cpp:91 words=8 OK
+    grep:         windowGeometry = CBox{WORK_AREA.middle() - windowGeometry.size() / 2.F, windowGeometry.size()};
+F27 Hyprland-DefaultFloatingAlgorithm.cpp:95 words=1 OK
+    grep:         || WORK_AREA.containsPoint(windowGeometry.middle()))                                    // geometry within work area
+F28 Hyprland-DefaultFloatingAlgorithm.cpp:96 words=1 OK
+    grep:         target->setPositionGlobal(windowGeometry);
+SHASUM Hyprland-Target.cpp 49323833c6bc327656e6d02245ebbccf7643fc94f4fbee3cebbae035bbd4ca06 OK
+F29 Hyprland-Target.cpp:10 words=6 OK
+    grep: void ITarget::setPositionGlobal(const STargetBox& box, uint8_t) {
+F30 Hyprland-Target.cpp:11 words=3 OK
+    grep:     m_box = box;
+F31 Hyprland-Target.cpp:12 words=1 OK
+    grep:     m_box.logicalBox.round();
+F32 Hyprland-Target.cpp:17 words=4 OK
+    grep:     setPositionGlobal({.logicalBox = box}, flags);
+SHASUM Hyprland-WindowTarget.cpp 8bcaf37000cf55e1d2084bf732f0589b4ab49d36c778d8d4efa98949dd14734d OK
+F33 Hyprland-WindowTarget.cpp:36 words=7 OK
+    grep: void CWindowTarget::setPositionGlobal(const STargetBox& box, uint8_t flags) {
+F34 Hyprland-WindowTarget.cpp:39 words=1 OK
+    grep:     updatePos(flags);
+F35 Hyprland-WindowTarget.cpp:50 words=7 OK
+    grep:     const bool  CONFIGURECLIENT = !(flags & TARGET_UPDATE_NO_CLIENT_CONFIGURE);
+F36 Hyprland-WindowTarget.cpp:70 words=7 OK
+    grep:     if (floating() && m_window && !Fullscreen::controller()->isFullscreen(m_window.lock())) {
+F37 Hyprland-WindowTarget.cpp:71 words=1 OK
+    grep:         m_window->setBox(m_box.logicalBox);
+F38 Hyprland-WindowTarget.cpp:74 words=1 OK
+    grep:             m_window->sendWindowSize();
+F39 Hyprland-WindowTarget.cpp:297 words=6 OK
+    grep: Vector2D CWindowTarget::clampSizeForDesired(const Vector2D& size) const {
+F40 Hyprland-WindowTarget.cpp:300 words=3 OK
+    grep:         newSize = newSize.clamp(*m);
+F41 Hyprland-WindowTarget.cpp:302 words=5 OK
+    grep:         newSize = newSize.clamp(Vector2D{MIN_WINDOW_SIZE, MIN_WINDOW_SIZE}, *m);
+F42 Hyprland-WindowTarget.cpp:313 words=3 OK
+    grep:     requested.size = clampSizeForDesired(DESIRED_GEOM.size());
+F43 Hyprland-WindowTarget.cpp:227 words=3 OK
+    grep:     if (*PCLAMP_TILED) {
+F44 Hyprland-WindowTarget.cpp:231 words=4 OK
+    grep:         calcSize = calcSize.clamp(minSize, maxSize);
+SHASUM Hyprland-GeometricMovableAnimated.cpp 649f1a8d01d28e20e23380db65c5aeb35846d7ef48c8aada9b84ff0e4a1a207d OK
+F45 Hyprland-GeometricMovableAnimated.cpp:19 words=4 OK
+    grep:         case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();
+F46 Hyprland-GeometricMovableAnimated.cpp:20 words=4 OK
+    grep:         case IGeometric::GEOMETRIC_CURRENT: return m_realSize->value();
+F47 Hyprland-GeometricMovableAnimated.cpp:40 words=3 OK
+    grep:     *m_realSize = x;
+F48 Hyprland-GeometricMovableAnimated.cpp:45 words=3 OK
+    grep:     *m_realSize     = x.size();
+F49 Hyprland-GeometricMovableAnimated.cpp:50 words=1 OK
+    grep:     m_realSize->warp();
+F50 Hyprland-GeometricMovableAnimated.cpp:58 words=2 OK
+    grep:     return m_realSize;
+SHASUM Hyprland-HyprCtl.cpp 798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa OK
+F51 Hyprland-HyprCtl.cpp:395 words=3 OK
+    grep:     "size": [{}, {}],
+F52 Hyprland-HyprCtl.cpp:400 words=2 OK
+    grep:     "floating": {},
+F53 Hyprland-HyprCtl.cpp:427 words=2 OK
+    grep:             sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+F54 Hyprland-HyprCtl.cpp:428 words=6 OK
+    grep:             sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+F55 Hyprland-HyprCtl.cpp:448 words=2 OK
+    grep:             sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+F56 Hyprland-DefaultFloatingAlgorithm.cpp:21 words=5 OK
+    grep:     const auto DESIRED_GEOM = target->desiredGeometry();
+F57 Hyprland-DefaultFloatingAlgorithm.cpp:49 words=5 OK
+    grep:     if (target->window() && target->window()->m_firstMap) {
+F58 Hyprland-DefaultFloatingAlgorithm.cpp:85 words=11 OK
+    grep:     } else if (target->lastFloatingSize().x > 5 && target->lastFloatingSize().y > 5) {
+F59 Hyprland-DefaultFloatingAlgorithm.cpp:86 words=3 OK
+    grep:         windowGeometry.w = target->lastFloatingSize().x;
+F60 Hyprland-WindowTarget.cpp:77 words=1 OK
+    grep:         return;
+F61 Hyprland-WindowRuleApplicator.cpp:214 words=5 OK
+    grep:                         Log::logger->log(Log::ERR, "Invalid size for maxsize");
+F62 Hyprland-WindowRuleApplicator.cpp:378 words=5 OK
+    grep: CWindowRuleApplicator::SRuleResult CWindowRuleApplicator::applyStaticRule(const SP<CWindowRule>& rule) {
+F63 Hyprland-Target.cpp:65 words=2 OK
+    grep:     return m_box.logicalBox;
+F64 Hyprland-DefaultFloatingAlgorithm.cpp:194 words=1 OK
+    grep:     target->rememberFloatingSize(target->position().size());
+F65 Hyprland-DefaultFloatingAlgorithm.cpp:176 words=7 OK
+    grep: CBox CDefaultFloatingAlgorithm::fitBoxInWorkArea(const CBox& box, SP<ITarget> t) {
+
+rows=65 failures=0 distinct_receipts=7
+table_rows=65 table_failures=0

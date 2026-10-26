@@ -1,0 +1,410 @@
+[
+ {
+  "name": "N01-stdin-read-plus2",
+  "category": "value-domain",
+  "old": "data = stdin.read(MAX_BYTES + 1)",
+  "new": "data = stdin.read(MAX_BYTES + 2)"
+ },
+ {
+  "name": "N02-read-tail-ge",
+  "category": "boundary-shift",
+  "old": "    if len(data) > MAX_BYTES:\n        raise Setup(\"too_large\")\n    return data",
+  "new": "    if len(data) >= MAX_BYTES:\n        raise Setup(\"too_large\")\n    return data"
+ },
+ {
+  "name": "N03-maxbytes-minus1",
+  "category": "wrong-constant",
+  "old": "MAX_BYTES = 1048576",
+  "new": "MAX_BYTES = 1048575"
+ },
+ {
+  "name": "N04-num-1-4",
+  "category": "value-domain",
+  "old": "NUM = re.compile(r\"[0-9]{1,5}\")",
+  "new": "NUM = re.compile(r\"[0-9]{1,4}\")"
+ },
+ {
+  "name": "N05-num-1-6",
+  "category": "value-domain",
+  "old": "NUM = re.compile(r\"[0-9]{1,5}\")",
+  "new": "NUM = re.compile(r\"[0-9]{1,6}\")"
+ },
+ {
+  "name": "N06-safe-1-199",
+  "category": "value-domain",
+  "old": "){1,200}\")",
+  "new": "){1,199}\")"
+ },
+ {
+  "name": "N07-safe-2-200",
+  "category": "value-domain",
+  "old": "){1,200}\")",
+  "new": "){2,200}\")"
+ },
+ {
+  "name": "N08-matchfield-star",
+  "category": "value-domain",
+  "old": "MATCH_FIELD = re.compile(r\"match:class[ \\t]+(.+)\")",
+  "new": "MATCH_FIELD = re.compile(r\"match:class[ \\t]+(.*)\")"
+ },
+ {
+  "name": "N09-split-maxsplit",
+  "category": "value-domain",
+  "old": "fields = [f.strip(\" \\t\") for f in body.split(\",\")]",
+  "new": "fields = [f.strip(\" \\t\") for f in body.split(\",\", 1)]"
+ },
+ {
+  "name": "N10-fields-eq3",
+  "category": "wrong-constant",
+  "old": "good = len(fields) == 2",
+  "new": "good = len(fields) == 3"
+ },
+ {
+  "name": "N11-float-lower",
+  "category": "value-domain",
+  "old": "good = len(args) == 1 and args[0] in (\"on\", \"off\")",
+  "new": "good = len(args) == 1 and args[0].lower() in (\"on\", \"off\")"
+ },
+ {
+  "name": "N12-float-two-args",
+  "category": "boundary-shift",
+  "old": "good = len(args) == 1 and args[0] in (\"on\", \"off\")",
+  "new": "good = len(args) <= 2 and args[0] in (\"on\", \"off\")"
+ },
+ {
+  "name": "N13-size-first-arg-only",
+  "category": "dropped-check",
+  "old": "good = len(args) == 2 and all(NUM.fullmatch(a) for a in args)",
+  "new": "good = len(args) == 2 and NUM.fullmatch(args[0])"
+ },
+ {
+  "name": "N14-effect-no-default",
+  "category": "dropped-branch",
+  "old": "effect = toks[0] if toks else \"\"",
+  "new": "effect = toks[0]"
+ },
+ {
+  "name": "N15-effect-add-center",
+  "category": "value-domain",
+  "old": "if effect not in (\"size\", \"float\"):",
+  "new": "if effect not in (\"size\", \"float\", \"center\"):"
+ },
+ {
+  "name": "N16-line-rstrip-only",
+  "category": "dropped-branch",
+  "old": "line = raw.strip(\" \\t\")",
+  "new": "line = raw.rstrip(\" \\t\")"
+ },
+ {
+  "name": "N17-line-strip-cr",
+  "category": "value-domain",
+  "old": "line = raw.strip(\" \\t\")",
+  "new": "line = raw.strip(\" \\t\\r\")"
+ },
+ {
+  "name": "N18-rule-line-plus",
+  "category": "value-domain",
+  "old": "RULE_LINE = re.compile(r\"windowrule[ \\t]*=(.*)\")",
+  "new": "RULE_LINE = re.compile(r\"windowrule[ \\t]*=(.+)\")"
+ },
+ {
+  "name": "N19-rule-line-caret",
+  "category": "value-domain",
+  "old": "RULE_LINE = re.compile(r\"windowrule[ \\t]*=(.*)\")",
+  "new": "RULE_LINE = re.compile(r\"^windowrule[ \\t]*=(.*)\")"
+ },
+ {
+  "name": "N20-mapped-eq",
+  "category": "operator-swap",
+  "old": "if c.get(\"mapped\") is False:",
+  "new": "if c.get(\"mapped\") == False:"
+ },
+ {
+  "name": "N21-floating-eq",
+  "category": "operator-swap",
+  "old": "floating = c.get(\"floating\") is True",
+  "new": "floating = c.get(\"floating\") == True"
+ },
+ {
+  "name": "N22-size-gt-minus1",
+  "category": "boundary-shift",
+  "old": "isinstance(v, int) and not isinstance(v, bool) and v >= 0 for v in s):",
+  "new": "isinstance(v, int) and not isinstance(v, bool) and v > -1 for v in s):"
+ },
+ {
+  "name": "N23-size-type-is-int",
+  "category": "value-domain",
+  "old": "isinstance(v, int) and not isinstance(v, bool) and v >= 0 for v in s):",
+  "new": "type(v) is int and v >= 0 for v in s):"
+ },
+ {
+  "name": "N24-size-len3",
+  "category": "wrong-constant",
+  "old": "if isinstance(s, list) and len(s) == 2 and all(",
+  "new": "if isinstance(s, list) and len(s) == 3 and all("
+ },
+ {
+  "name": "N25-ctl-below-1f",
+  "category": "value-domain",
+  "old": "if any(ord(ch) < 0x20 for ch in cls):",
+  "new": "if any(ord(ch) < 0x1f for ch in cls):"
+ },
+ {
+  "name": "N26-ctl-below-7f",
+  "category": "value-domain",
+  "old": "if any(ord(ch) < 0x20 for ch in cls):",
+  "new": "if any(ord(ch) < 0x7f for ch in cls):"
+ },
+ {
+  "name": "N27-selftest-prefix",
+  "category": "dropped-check",
+  "old": "if argv == [\"--selftest\"]:",
+  "new": "if argv and argv[0] == \"--selftest\":"
+ },
+ {
+  "name": "N28-double-clients",
+  "category": "dropped-check",
+  "old": "if flag == \"--clients\" and clients is None:",
+  "new": "if flag == \"--clients\":"
+ },
+ {
+  "name": "N29-rules-optional",
+  "category": "dropped-check",
+  "old": "if clients is None or not rules:",
+  "new": "if clients is None:"
+ },
+ {
+  "name": "N30-ok-exit3",
+  "category": "exit-code",
+  "old": "verdict, rc = \"OK\", 0",
+  "new": "verdict, rc = \"OK\", 3"
+ },
+ {
+  "name": "N31-nosize-exit3",
+  "category": "exit-code",
+  "old": "verdict, rc = \"NO_SIZE_RULES\", 4",
+  "new": "verdict, rc = \"NO_SIZE_RULES\", 3"
+ },
+ {
+  "name": "N32-differ-exit2",
+  "category": "exit-code",
+  "old": "verdict, rc = \"DIFFER\", 1",
+  "new": "verdict, rc = \"DIFFER\", 2"
+ },
+ {
+  "name": "N33-nomatch-exit4",
+  "category": "exit-code",
+  "old": "verdict, rc = \"NO_MATCHING_CLIENT\", 3",
+  "new": "verdict, rc = \"NO_MATCHING_CLIENT\", 4"
+ },
+ {
+  "name": "N34-differ-and-matched",
+  "category": "reordered-check",
+  "old": "elif t[\"differ\"] > 0:",
+  "new": "elif t[\"differ\"] > 0 and t[\"matched\"] > 0:"
+ },
+ {
+  "name": "N35-summary-floatcount",
+  "category": "swapped-field",
+  "old": "len(rules) - size_rules,",
+  "new": "len(rules),"
+ },
+ {
+  "name": "N36-summary-size-sums-float",
+  "category": "wrong-constant",
+  "old": "size_rules = sum(1 for r in rules if r[\"effect\"] == \"size\")",
+  "new": "size_rules = sum(1 for r in rules if r[\"effect\"] == \"float\")"
+ },
+ {
+  "name": "N37-client-addr-class-swap",
+  "category": "swapped-output-field",
+  "old": "json.dumps(addr), json.dumps(cls), \"true\" if floating else \"false\",",
+  "new": "json.dumps(cls), json.dumps(addr), \"true\" if floating else \"false\","
+ },
+ {
+  "name": "N38-addr-default-empty",
+  "category": "value-domain",
+  "old": "addr = c.get(\"address\") if isinstance(c.get(\"address\"), str) else \"-\"",
+  "new": "addr = c.get(\"address\") if isinstance(c.get(\"address\"), str) else \"\""
+ },
+ {
+  "name": "N39-class-default-dash",
+  "category": "value-domain",
+  "old": "cls = c.get(\"class\") if isinstance(c.get(\"class\"), str) else \"\"",
+  "new": "cls = c.get(\"class\") if isinstance(c.get(\"class\"), str) else \"-\""
+ },
+ {
+  "name": "N40-file-index-from-2",
+  "category": "off-by-one",
+  "old": "for k, text in enumerate(rule_texts, 1):",
+  "new": "for k, text in enumerate(rule_texts, 2):"
+ },
+ {
+  "name": "N41-rule-number-from-0",
+  "category": "off-by-one",
+  "old": "for n, r in enumerate(rules, 1)]",
+  "new": "for n, r in enumerate(rules, 0)]"
+ },
+ {
+  "name": "N42-first-size-wins",
+  "category": "reordered-check",
+  "old": "            if matches(r[\"rx\"], cls):",
+  "new": "            if matches(r[\"rx\"], cls) and want is None:"
+ },
+ {
+  "name": "N43-size-resets-frule",
+  "category": "dropped-state",
+  "old": "                    want = r[\"want\"]",
+  "new": "                    want, frule = r[\"want\"], \"-\""
+ },
+ {
+  "name": "N44-tally-assign",
+  "category": "dropped-accumulation",
+  "old": "        tally[verdict.lower()] += 1",
+  "new": "        tally[verdict.lower()] = 1"
+ },
+ {
+  "name": "N45-unmapped-counts-clients",
+  "category": "swapped-field",
+  "old": "            tally[\"unmapped\"] += 1",
+  "new": "            tally[\"clients\"] += 1"
+ },
+ {
+  "name": "N46-doc-tuple",
+  "category": "value-domain",
+  "old": "if not isinstance(doc, list) or not all(isinstance(c, dict) for c in doc):",
+  "new": "if not isinstance(doc, (list, tuple)) or not all(isinstance(c, dict) for c in doc):"
+ },
+ {
+  "name": "N47-doc-any-not-all",
+  "category": "operator-swap",
+  "old": "if not isinstance(doc, list) or not all(isinstance(c, dict) for c in doc):",
+  "new": "if not isinstance(doc, list) or not any(isinstance(c, dict) for c in doc):"
+ },
+ {
+  "name": "N48-rules-decode-ignore",
+  "category": "value-domain",
+  "old": "texts = [read_regular(p).decode(\"utf-8\", \"replace\") for p in rules]",
+  "new": "texts = [read_regular(p).decode(\"utf-8\", \"ignore\") for p in rules]"
+ },
+ {
+  "name": "N49-json-decode-strict",
+  "category": "value-domain",
+  "old": "doc = json.loads(data.decode(\"utf-8\"))",
+  "new": "doc = json.loads(data.decode(\"utf-8\", \"strict\"))"
+ },
+ {
+  "name": "N50-summary-other-swap",
+  "category": "swapped-field",
+  "old": "counts[\"other\"], counts[\"unsupported\"],",
+  "new": "counts[\"unsupported\"], counts[\"other\"],"
+ },
+ {
+  "name": "N51-close-fd-pass",
+  "category": "dropped-branch",
+  "old": "        os.close(fd)",
+  "new": "        pass"
+ },
+ {
+  "name": "N52-size-truthiness",
+  "category": "value-domain",
+  "old": "\"%dx%d\" % size if size else \"-\"",
+  "new": "\"%dx%d\" % size if size is not None else \"-\""
+ },
+ {
+  "name": "N53-fullmatch-dotall",
+  "category": "value-domain",
+  "old": "return re.fullmatch(rx, cls) is not None",
+  "new": "return re.fullmatch(rx, cls, re.DOTALL) is not None"
+ },
+ {
+  "name": "N54-read-chunk-cap",
+  "category": "value-domain",
+  "old": "chunk = os.read(fd, MAX_BYTES + 1 - len(data))",
+  "new": "chunk = os.read(fd, MAX_BYTES)"
+ },
+ {
+  "name": "N55-client-order-reversed",
+  "category": "dropped-stability",
+  "old": "lines += clines",
+  "new": "lines += list(reversed(clines))"
+ },
+ {
+  "name": "N56-ctl-guard-dropped",
+  "category": "dropped-branch",
+  "old": "if any(ord(ch) < 0x20 for ch in cls):",
+  "new": "if False:"
+ },
+ {
+  "name": "N57-reverse-client-order",
+  "category": "dropped-stability",
+  "old": "    for c in clients:",
+  "new": "    for c in reversed(clients):"
+ },
+ {
+  "name": "N58-size-key-index",
+  "category": "dropped-branch",
+  "old": "    s = c.get(\"size\")",
+  "new": "    s = c[\"size\"]"
+ },
+ {
+  "name": "N59-size-tuple-swap",
+  "category": "swapped-output-field",
+  "old": "        return (s[0], s[1])",
+  "new": "        return (s[1], s[0])"
+ },
+ {
+  "name": "N60-safe-prefix-match",
+  "category": "operator-swap",
+  "old": "    if not SAFE.fullmatch(rx):",
+  "new": "    if not SAFE.match(rx):"
+ },
+ {
+  "name": "N61-regexok-call-dropped",
+  "category": "dropped-check",
+  "old": "        if not mm or not regex_ok(mm.group(1)):",
+  "new": "        if not mm:"
+ },
+ {
+  "name": "N62-parse-step-1",
+  "category": "off-by-one",
+  "old": "        i += 2",
+  "new": "        i += 1"
+ },
+ {
+  "name": "N63-parse-loop-le",
+  "category": "boundary-shift",
+  "old": "    while i < len(argv):",
+  "new": "    while i <= len(argv):"
+ },
+ {
+  "name": "N64-nosize-inverted",
+  "category": "reordered-check",
+  "old": "    if size_rules == 0:",
+  "new": "    if size_rules != 0:"
+ },
+ {
+  "name": "N65-badsize-key-rename",
+  "category": "wrong-constant",
+  "old": "\"tiled\": 0, \"badsize\": 0}",
+  "new": "\"tiled\": 0, \"bad_size\": 0}"
+ },
+ {
+  "name": "N66-summary-clients-key",
+  "category": "swapped-output-field",
+  "old": "unsupported=%d clients=%d \"",
+  "new": "unsupported=%d client=%d \""
+ },
+ {
+  "name": "N67-unreadable-as-toolarge",
+  "category": "wrong-constant",
+  "old": "raise Setup(\"unreadable\")\n        data = b\"\"",
+  "new": "raise Setup(\"too_large\")\n        data = b\"\""
+ },
+ {
+  "name": "N68-stdout-print",
+  "category": "value-domain",
+  "old": "    sys.stdout.write(\"\\n\".join(lines) + \"\\n\")",
+  "new": "    print(\"\\n\".join(lines))"
+ }
+]

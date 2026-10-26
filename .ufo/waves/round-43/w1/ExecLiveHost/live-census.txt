@@ -1,0 +1,404 @@
+# ExecLiveHost live census - round 43 w1 - read-only host receipt
+# generated 2026-10-26T04:20:24-03:00 on plazir27 kernel 7.2.11-arch1-1
+# cwd /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLiveHost
+
+## 0. identity
+$ python3 -V
+Python 3.14.8
+exit=0
+$ hyprctl version
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+Tag: v0.56.2, commits: 7661
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.15.1, system has 0.15.1
+
+Version ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+
+exit=0
+HYPRCTL_VERSION_LINE: Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+$ sha256sum mado-geometry.py (copy of .ufo/waves/round-42/c1/ctl-ref-tool.py.txt)
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  mado-geometry.py
+exit=0
+$ sha256sum .ufo/waves/round-42/c1/ctl-ref-tool.py.txt (reference, for equality)
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLiveHost/../../../round-42/c1/ctl-ref-tool.py.txt
+exit=0
+$ sha256sum ~/.config/hypr/gkeep.conf
+3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949  /home/vgpnk/.config/hypr/gkeep.conf
+exit=0
+
+## 1. selftest (the reference's own suite)
+$ python3 -I mado-geometry.py --selftest
+MADO_GEOMETRY_SELFTEST: 73/73 passed
+exit=0
+--- (selftest)
+
+## 2. the command from the claim, three times (no gkeep window open)
+$ hyprctl clients -j | python3 -I mado-geometry.py --clients - --rules /home/vgpnk/.config/hypr/gkeep.conf   # run 1
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3 (hyprctl exit=0)
+--- (run 1)
+$ hyprctl clients -j | python3 -I mado-geometry.py --clients - --rules /home/vgpnk/.config/hypr/gkeep.conf   # run 2
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3 (hyprctl exit=0)
+--- (run 2)
+$ hyprctl clients -j | python3 -I mado-geometry.py --clients - --rules /home/vgpnk/.config/hypr/gkeep.conf   # run 3
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3 (hyprctl exit=0)
+--- (run 3)
+
+## 3. hand-made clients files (fixtures in this directory)
+$ cat fx-agree.json
+[{"address": "0xf1", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": true, "mapped": true}]
+--- (fixture fx-agree.json)
+$ python3 -I mado-geometry.py --clients fx-agree.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+exit=0
+--- (fx-agree.json)
+$ cat fx-differ.json
+[{"address": "0xf2", "class": "org.omarchy.gkeep", "size": [421, 500], "floating": true, "mapped": true}]
+--- (fixture fx-differ.json)
+$ python3 -I mado-geometry.py --clients fx-differ.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf2" class="org.omarchy.gkeep" floating=true size=421x500 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+exit=1
+--- (fx-differ.json)
+$ cat fx-tiled.json
+[{"address": "0xf3", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": false, "mapped": true}]
+--- (fixture fx-tiled.json)
+$ python3 -I mado-geometry.py --clients fx-tiled.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf3" class="org.omarchy.gkeep" floating=false size=420x500 want=420x500 float_rule=on verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=0 tiled=1 badsize=0 verdict=OK
+exit=0
+--- (fx-tiled.json)
+$ cat fx-three.json
+[{"address": "0xf1", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": true, "mapped": true},
+ {"address": "0xf2", "class": "org.omarchy.gkeep", "size": [421, 500], "floating": true, "mapped": true},
+ {"address": "0xf3", "class": "org.omarchy.gkeep", "size": [420, 500], "floating": false, "mapped": true}]
+--- (fixture fx-three.json)
+$ python3 -I mado-geometry.py --clients fx-three.json --rules /home/vgpnk/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0xf1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+MADO_GEOM_CLIENT: addr="0xf2" class="org.omarchy.gkeep" floating=true size=421x500 want=420x500 float_rule=on verdict=DIFFER
+MADO_GEOM_CLIENT: addr="0xf3" class="org.omarchy.gkeep" floating=false size=420x500 want=420x500 float_rule=on verdict=TILED
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=3 unmapped=0 agree=1 differ=1 tiled=1 badsize=0 verdict=DIFFER
+exit=1
+--- (fx-three.json)
+
+## 4. the real host dump, saved then piped through --clients -
+$ hyprctl clients -j > host-clients-live.json
+exit=0
+$ sha256sum host-clients-live.json
+6cdada1a687201ebc42f73c58da27137189d5cc2b5f419c512c3956bab95e06b  host-clients-live.json
+$ python3 -c 'reduced view: class/floating/size/mapped/address'
+4 clients
+  0x55836b6e94f0 Alacritty [1720, 1414] floating=False mapped=True
+  0x55836cee37d0 zcode [1720, 1414] floating=False mapped=True
+  0x55836ce60d90 grok-bot [1720, 1414] floating=False mapped=True
+  0x55836cff7280 chromium [1720, 1414] floating=False mapped=True
+$ cat host-clients-live.json | python3 -I mado-geometry.py --clients - --rules /home/vgpnk/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+--- (host dump -> stdin)
+
+## 5. every rule file in the source closure of ~/.config/hypr/hyprland.conf, one run
+$ python3 -I closure-list.py | wc -l
+40
+$ python3 -I closure-list.py
+/home/vgpnk/.config/hypr/hyprland.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/bindings/media.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/bindings/utilities.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/envs.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/windows.conf
+/home/vgpnk/.config/omarchy/current/theme/hyprland.conf
+/home/vgpnk/.config/hypr/monitors.conf
+/home/vgpnk/.config/hypr/input.conf
+/home/vgpnk/.config/hypr/bindings.conf
+/home/vgpnk/.config/hypr/looknfeel.conf
+/home/vgpnk/.config/hypr/autostart.conf
+/home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf
+/home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf
+/home/vgpnk/.config/hypr/ai-usage.conf
+/home/vgpnk/.config/hypr/gkeep.conf
+/home/vgpnk/.config/omarchy/current/theme/gum.env.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/1password.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/bitwarden.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/browser.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/hyprshot.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/jetbrains.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/localsend.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/qemu.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/retroarch.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/geforce.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/moonlight.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/telegram.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/typora.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/terminals.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/walker.conf
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/webcam-overlay.conf
+exit=0
+$ python3 -I mado-geometry.py --clients host-clients-live.json --rules /home/vgpnk/.config/hypr/hyprland.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/bindings/media.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/bindings/clipboard.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/bindings/utilities.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/envs.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/input.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/windows.conf --rules /home/vgpnk/.config/omarchy/current/theme/hyprland.conf --rules /home/vgpnk/.config/hypr/monitors.conf --rules /home/vgpnk/.config/hypr/input.conf --rules /home/vgpnk/.config/hypr/bindings.conf --rules /home/vgpnk/.config/hypr/looknfeel.conf --rules /home/vgpnk/.config/hypr/autostart.conf --rules /home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf --rules /home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf --rules /home/vgpnk/.config/hypr/ai-usage.conf --rules /home/vgpnk/.config/hypr/gkeep.conf --rules /home/vgpnk/.config/omarchy/current/theme/gum.env.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/1password.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/bitwarden.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/browser.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/hyprshot.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/jetbrains.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/localsend.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/qemu.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/retroarch.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/geforce.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/moonlight.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/telegram.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/typora.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/terminals.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/walker.conf --rules /home/vgpnk/.local/share/omarchy/default/hypr/apps/webcam-overlay.conf
+MADO_GEOM_RULE: n=1 file=19 effect=float arg=on class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=2 file=19 effect=size arg=875x600 class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=3 file=20 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=4 file=20 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=5 file=28 effect=float arg=on class=(Share|localsend)
+MADO_GEOM_RULE: n=6 file=28 effect=size arg=1100x700 class=localsend
+MADO_GEOM_RULE: n=7 file=32 effect=float arg=on class=steam
+MADO_GEOM_RULE: n=8 file=35 effect=float arg=on class=org.gnome.Calculator
+MADO_GEOM_RULE: n=9 file=35 effect=float arg=on class=org.omarchy.screensaver
+MADO_GEOMETRY: rules=3 float_rules=6 other=61 unsupported=7 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+--- (full closure, host dump)
+
+## 6. blind-spot probes against the real closure
+# A client whose size Hyprland takes from an UNSUPPORTED rule (tag/title match) must show up as
+# unmatched, not DIFFER: the tool has no rule-to-tag/title graph. Reported, not scored.
+$ cat fx-tag-btop.json   # btop carries tag floating-window -> system.conf size 875 600, match:tag
+[{"address": "0xf4", "class": "org.omarchy.btop", "size": [875, 600], "floating": true, "mapped": true}]
+--- (fx-tag-btop.json)
+$ python3 -I mado-geometry.py --clients fx-tag-btop.json --rules (full closure)
+MADO_GEOM_RULE: n=1 file=19 effect=float arg=on class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=2 file=19 effect=size arg=875x600 class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=3 file=20 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=4 file=20 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=5 file=28 effect=float arg=on class=(Share|localsend)
+MADO_GEOM_RULE: n=6 file=28 effect=size arg=1100x700 class=localsend
+MADO_GEOM_RULE: n=7 file=32 effect=float arg=on class=steam
+MADO_GEOM_RULE: n=8 file=35 effect=float arg=on class=org.gnome.Calculator
+MADO_GEOM_RULE: n=9 file=35 effect=float arg=on class=org.omarchy.screensaver
+MADO_GEOMETRY: rules=3 float_rules=6 other=61 unsupported=7 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+--- (tag blind spot)
+$ cat fx-steam.json   # class steam: float rule supported, both size rules title-constrained
+[{"address": "0xf5", "class": "steam", "size": [1100, 700], "floating": true, "mapped": true}]
+--- (fx-steam.json)
+$ python3 -I mado-geometry.py --clients fx-steam.json --rules (full closure)
+MADO_GEOM_RULE: n=1 file=19 effect=float arg=on class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=2 file=19 effect=size arg=875x600 class=^(org.omarchy.ai-usage)$
+MADO_GEOM_RULE: n=3 file=20 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=4 file=20 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=5 file=28 effect=float arg=on class=(Share|localsend)
+MADO_GEOM_RULE: n=6 file=28 effect=size arg=1100x700 class=localsend
+MADO_GEOM_RULE: n=7 file=32 effect=float arg=on class=steam
+MADO_GEOM_RULE: n=8 file=35 effect=float arg=on class=org.gnome.Calculator
+MADO_GEOM_RULE: n=9 file=35 effect=float arg=on class=org.omarchy.screensaver
+MADO_GEOMETRY: rules=3 float_rules=6 other=61 unsupported=7 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+--- (title blind spot)
+
+## 7. shape checks over the same closure (what kinds of size line exist at all)
+$ grep -hnE 'windowrule[ \t]*=' <closure> | grep -cE '=[ \t]*size[ \t]+[0-9]{1,5}[ \t]+[0-9]{1,5}'
+7
+# ... = literal 'size W H' effect lines (the tool's rules= plus unsupported size lines)
+$ grep -hE 'windowrule[ \t]*=' <closure> | grep -E '=[ \t]*size[ \t]+[0-9]{1,5}[ \t]+[0-9]{1,5}'
+windowrule = size 875 600, match:class ^(org.omarchy.ai-usage)$
+windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$
+windowrule = size 1100 700, match:class localsend
+windowrule = size 600 338, match:tag pip
+windowrule = size 1100 700, match:class steam, match:title Steam
+windowrule = size 460 800, match:class steam, match:title Friends List
+windowrule = size 875 600, match:tag floating-window
+$ grep -rn 'border_size' <closure>   (the near-miss effect word, counted as other)
+/home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf:12:    border_size = 2
+/home/vgpnk/.config/hypr/looknfeel.conf:8:    # border_size = 0
+/home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf:5:    border_size = 0
+/home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf:8:windowrule = border_size 0, match:tag pip
+exit=0 (1 = none found)
+$ grep -rnE '(size[ \t]+[0-9.]+%|size[ \t]+\()' <closure>   (percentage or expression sizes)
+exit=1 (1 = none found)
+$ grep -rn 'initial_class' <closure>
+exit=1 (1 = none found)
+$ grep -rn 'negative:' <closure>   (RE2 negative matches)
+exit=1 (1 = none found)
+$ grep -rnE '^[ \t]*#[ \t]*windowrule' <closure> | wc -l   (commented-out rule lines, ignored by the tool)
+1
+
+## 8. per-file census with reasons (source-census.py)
+$ python3 -I source-census.py mado-geometry.py
+# closure of /home/vgpnk/.config/hypr/hyprland.conf: 40 files (order = source order, dedup by realpath)
+FILE ok /home/vgpnk/.config/hypr/hyprland.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/bindings/media.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/bindings/utilities.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/envs.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/input.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/windows.conf
+  RULE_LINES=4 rules=0 float_rules=0 other=4 unsupported=0 covered=4 residual=0
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = suppress_event maximize, match:class .*
+  L6 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +default-opacity, match:class .*
+  L9 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0, match:pin 0
+  L15 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 0.97 0.9, match:tag default-opacity
+FILE ok /home/vgpnk/.config/omarchy/current/theme/hyprland.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.config/hypr/monitors.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.config/hypr/input.conf
+  RULE_LINES=2 rules=0 float_rules=0 other=2 unsupported=0 covered=2 residual=0
+  L45 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = match:class (Alacritty|kitty|foot), scroll_touchpad 1.5
+  L46 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = match:class com.mitchellh.ghostty, scroll_touchpad 0.2
+FILE ok /home/vgpnk/.config/hypr/bindings.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.config/hypr/looknfeel.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.config/hypr/autostart.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.config/hypr/ai-usage.conf
+  RULE_LINES=4 rules=1 float_rules=1 other=2 unsupported=0 covered=4 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class ^(org.omarchy.ai-usage)$
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = center on, match:class ^(org.omarchy.ai-usage)$
+FILE ok /home/vgpnk/.config/hypr/gkeep.conf
+  RULE_LINES=3 rules=1 float_rules=1 other=1 unsupported=0 covered=3 residual=0
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = center on, match:class ^(org.omarchy.gkeep)$
+FILE ok /home/vgpnk/.config/omarchy/current/theme/gum.env.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/1password.conf
+  RULE_LINES=2 rules=0 float_rules=0 other=2 unsupported=0 covered=2 residual=0
+  L1 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_screen_share on, match:class ^(1[p|P]assword)$
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class ^(1[p|P]assword)$
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/bitwarden.conf
+  RULE_LINES=4 rules=0 float_rules=0 other=4 unsupported=0 covered=4 residual=0
+  L1 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_screen_share on, match:class ^(Bitwarden)$
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class ^(Bitwarden)$
+  L5 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_screen_share on, match:class chrome-nngceckbapebfimnlniiiahkandclblb-Default
+  L6 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class chrome-nngceckbapebfimnlniiiahkandclblb-Default
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/browser.conf
+  RULE_LINES=10 rules=0 float_rules=0 other=10 unsupported=0 covered=10 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +chromium-based-browser, match:class ((google-)?[cC]hrom(e|ium)|[bB]rave-browser|[mM]icrosoft-edge|Vivaldi-stable|helium)
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +firefox-based-browser, match:class ([fF]irefox|zen|librewolf)
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:tag chromium-based-browser
+  L5 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:tag firefox-based-browser
+  L8 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -chromium-based-browser, match:class (chrome-youtube.com__-Default|chrome-app.zoom.us__wc_home-Default)
+  L9 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:class (chrome-youtube.com__-Default|chrome-app.zoom.us__wc_home-Default)
+  L12 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tile on, match:tag chromium-based-browser
+  L15 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1.0 0.97, match:tag chromium-based-browser
+  L16 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1.0 0.97, match:tag firefox-based-browser
+  L19 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = workspace special silent, match:title .*is sharing.*
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/hyprshot.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/jetbrains.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/localsend.conf
+  RULE_LINES=3 rules=1 float_rules=1 other=1 unsupported=0 covered=3 residual=0
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = center on, match:class (Share|localsend)
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/pip.conf
+  RULE_LINES=9 rules=0 float_rules=0 other=7 unsupported=2 covered=9 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +pip, match:title (Picture.?in.?[Pp]icture)
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:tag pip
+  L4 class=unsupported reason=field[1] not 'match:class <regex>' (match kind 'match:tag') tool=unsupported agree=True :: windowrule = float on, match:tag pip
+  L5 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = pin on, match:tag pip
+  L6 class=unsupported reason=field[1] not 'match:class <regex>' (match kind 'match:tag') tool=unsupported agree=True :: windowrule = size 600 338, match:tag pip
+  L7 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = keep_aspect_ratio on, match:tag pip
+  L8 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = border_size 0, match:tag pip
+  L9 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1 1, match:tag pip
+  L10 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = move (monitor_w-window_w-40) (monitor_h*0.04), match:tag pip
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/qemu.conf
+  RULE_LINES=2 rules=0 float_rules=0 other=2 unsupported=0 covered=2 residual=0
+  L1 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:class qemu
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1 1, match:class qemu
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/retroarch.conf
+  RULE_LINES=4 rules=0 float_rules=0 other=4 unsupported=0 covered=4 residual=0
+  L1 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = fullscreen on, match:class com.libretro.RetroArch
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:class com.libretro.RetroArch
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1 1, match:class com.libretro.RetroArch
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = idle_inhibit fullscreen, match:class com.libretro.RetroArch
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/steam.conf
+  RULE_LINES=7 rules=0 float_rules=1 other=4 unsupported=2 covered=7 residual=0
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = center on, match:class steam, match:title Steam
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:class steam.*
+  L5 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1 1, match:class steam.*
+  L6 class=unsupported reason=field-count=3 (needs exactly 2: effect + one match:) tool=unsupported agree=True :: windowrule = size 1100 700, match:class steam, match:title Steam
+  L7 class=unsupported reason=field-count=3 (needs exactly 2: effect + one match:) tool=unsupported agree=True :: windowrule = size 460 800, match:class steam, match:title Friends List
+  L8 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = idle_inhibit fullscreen, match:class steam
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/geforce.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/moonlight.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/system.conf
+  RULE_LINES=13 rules=0 float_rules=2 other=9 unsupported=2 covered=13 residual=0
+  L2 class=unsupported reason=field[1] not 'match:class <regex>' (match kind 'match:tag') tool=unsupported agree=True :: windowrule = float on, match:tag floating-window
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = center on, match:tag floating-window
+  L4 class=unsupported reason=field[1] not 'match:class <regex>' (match kind 'match:tag') tool=unsupported agree=True :: windowrule = size 875 600, match:tag floating-window
+  L6 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class (org.omarchy.bluetui|org.omarchy.impala|org.omarchy.wiremix|org.omarchy.btop|org.omarchy.terminal|org.omarchy.bash|org.codeberg.dnkl.foot|org.gnome.NautilusPreviewer|org.gnome.Evince|com.gabm.satty|Omarchy|About|TUI.float|imv|mpv)
+  L7 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +floating-window, match:class (xdg-desktop-portal-gtk|sublime_text|DesktopEditors|org.gnome.Nautilus), match:title ^(Open.*Files?|Open [F|f]older.*|Save.*Files?|Save.*As|Save|All Files|.*wants to [open|save].*|[C|c]hoose.*)
+  L11 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = fullscreen on, match:class org.omarchy.screensaver
+  L13 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = animation slide, match:class org.omarchy.screensaver
+  L16 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:class ^(zoom|vlc|mpv|org.kde.kdenlive|com.obsproject.Studio|com.github.PintaProject.Pinta|imv|org.gnome.NautilusPreviewer)$
+  L17 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 1 1, match:class ^(zoom|vlc|mpv|org.kde.kdenlive|com.obsproject.Studio|com.github.PintaProject.Pinta|imv|org.gnome.NautilusPreviewer)$
+  L20 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = rounding 8, match:tag pop
+  L23 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = idle_inhibit always, match:tag noidle
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/telegram.conf
+  RULE_LINES=1 rules=0 float_rules=0 other=1 unsupported=0 covered=1 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = focus_on_activate off, match:class org.telegram.desktop
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/typora.conf
+  RULE_LINES=1 rules=0 float_rules=0 other=1 unsupported=0 covered=1 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = match:class ^Typora$, match:title ^Print$, float on, center on
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/terminals.conf
+  RULE_LINES=3 rules=0 float_rules=0 other=3 unsupported=0 covered=3 residual=0
+  L2 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag +terminal, match:class (Alacritty|kitty|com.mitchellh.ghostty|foot)
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = tag -default-opacity, match:tag terminal
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = opacity 0.97 0.9, match:tag terminal
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/walker.conf
+  RULE_LINES=0 rules=0 float_rules=0 other=0 unsupported=0 covered=0 residual=0
+FILE ok /home/vgpnk/.local/share/omarchy/default/hypr/apps/webcam-overlay.conf
+  RULE_LINES=5 rules=0 float_rules=0 other=4 unsupported=1 covered=5 residual=0
+  L2 class=unsupported reason=field[1] not 'match:class <regex>' (match kind 'match:title') tool=unsupported agree=True :: windowrule = float on, match:title WebcamOverlay
+  L3 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = pin on, match:title WebcamOverlay
+  L4 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_initial_focus on, match:title WebcamOverlay
+  L5 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = no_dim on, match:title WebcamOverlay
+  L6 class=other reason=effect-not-size-or-float tool=other agree=True :: windowrule = move (monitor_w-window_w-40) (monitor_h-window_h-40), match:title WebcamOverlay
+TOTAL rules=3 float_rules=6 other=61 unsupported=7
+TOTAL windowrule size lines in closure=7 supported_size=3
+CLASSIFIER_AGREEMENT: 68/68 disagree=0
+exit=0
+
+# END

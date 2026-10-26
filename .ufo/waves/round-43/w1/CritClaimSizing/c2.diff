@@ -1,0 +1,115 @@
+--- quality/counters/c2-r42-gkeep-entry.py	2026-10-25 22:50:15.191731587 -0300
++++ quality/counters/c2-r43-gkeep-entry.py	2026-10-26 04:12:19.623274191 -0300
+@@ -1,6 +1,12 @@
+ #!/usr/bin/env python3
+-"""PRED-C2-r42 - the Hyprland gkeep-geometry entry is admitted (C2, coverage, sourced).
++"""PRED-C2-r43 - the Hyprland gkeep-geometry entry is admitted (C2, coverage, sourced).
+ 
++Round-43 re-registration of PRED-C2-r42 (quality/counters/c2-r42-gkeep-entry.py, frozen at
++809dc2caef09d9cbf15a496e55a1b208803a3561 and never scored by a seat: round 42 stopped before its
++wave). Only the round constants differ: BASE, the entry/lesson/fetch paths, the opened and
++verified-at date 2026-10-26, the host-clients receipt name and the pins of the two re-captured
++own-work receipts (host-clients-r43.json, gkeep-ui-excerpt.py); every clause is unchanged.
++
+ Built from PRED-C2-r41-v2 (quality/counters/c2-r41-focus-entry-v2.py) with the two
+ holes its round-41 closure routed: a quote may begin or end in the middle of a word
+ (clause d now requires word boundaries at both ends) and a claim line may cite a real
+@@ -10,27 +16,27 @@
+ 
+ Scores one committed revision REV (revision-addressed git reads, every ambient GIT_*
+ variable removed; nothing in the lane is written). The entry is
+-corpus/knowledge/hyprland-gkeep-geometry-r42.md. Fenced code blocks (``` ... ```) of the
++corpus/knowledge/hyprland-gkeep-geometry-r43.md. Fenced code blocks (``` ... ```) of the
+ entry, the README and the lesson are removed before any line is matched. It is admitted
+ iff every clause holds:
+ 
+   a  the entry exists at REV and is absent at BASE (present at BASE is a setup error,
+      exit 2);
+   b  within its first 20 raw lines, outside fences: >= 4 distinct `source: S###` lines,
+-     exactly one `verified-at: 2026-10-25` and exactly one `recheck:` (an ISO calendar
++     exactly one `verified-at: 2026-10-26` and exactly one `recheck:` (an ISO calendar
+      date, `NNd` or `on-*`); no `source:`, `verified-at:` or `recheck:` line outside that
+      window (outside fences); and no `S###`/`s###` token anywhere in the entry (outside
+      fences) that is not one of the cited ids;
+   c  every cited id has exactly one `## Registry` row (0-3 leading spaces), 11 cells,
+      status `mined`, a valid `recheck` cell, and its used-by cell, split on `,` and `;`
+      and trimmed, lists the entry's path as one item; ids absent from the BASE registry
+-     (at least 3) carry opened 2026-10-25 and a location (last whitespace token of cell
++     (at least 3) carry opened 2026-10-26 and a location (last whitespace token of cell
+      1) holding a `/` and a `.`; ids present at BASE keep cells 1-9 byte-equal to their
+      BASE row and keep every BASE used-by item;
+-  d  corpus/lessons/round-42.md `## Gate` (outside fences) holds, per cited id, EXACTLY
++  d  corpus/lessons/round-43.md `## Gate` (outside fences) holds, per cited id, EXACTLY
+      ONE line (starting in column 0) `GATE <id> receipt=<path> sha256=<64 hex>
+      quote="<q>"`, and no `GATE S###` line sits outside that section; the receipt is a
+-     regular file (git mode 100644) committed at REV under .ufo/waves/round-42/fetch/
++     regular file (git mode 100644) committed at REV under .ufo/waves/round-43/fetch/
+      with exactly that sha256, >= 256 bytes, distinct per id (no two ids share a path, a
+      sha256 or a whitespace-normalized quote); for a NEW id the receipt's file name and
+      sha256 must be one of the PINS (the receipts the L1 fetched before the wave; the
+@@ -50,7 +56,7 @@
+      `<receipt file name>:<N>` where N is the 1-based line of the receipt on which the
+      quote starts (computed here), and that line is not one of the census lines of h;
+   h  the host census: exactly three new cited rows have kind own-work and their
+-     receipts are host-gkeep.conf, host-clients-r42.json and gkeep-ui-excerpt.py (the
++     receipts are host-gkeep.conf, host-clients-r43.json and gkeep-ui-excerpt.py (the
+      PINS); this counter computes from them, by its own parsers, (1) from the config
+      copy the lines `windowrule = size W H, match:class RX`, `windowrule = float V,
+      match:class RX` and `windowrule = center V, match:class RX` (exactly one of each,
+@@ -70,7 +76,7 @@
+      cell, lower-cased) contains a localized-documentation marker of BAD_LOC (the
+      localized-documentation channel is outside PROVINCE.md).
+ 
+-Final line: `PRED-C2-r42: admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`.
++Final line: `PRED-C2-r43: admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`.
+ TARGET_MET iff admitted=1/1 (exit 0), else exit 1.
+ Residual (declared): the pins are the trust root (a forged receipt committed before the
+ freeze would be pinned as genuine); a real receipt can be cited for a claim it does not
+@@ -90,12 +96,12 @@
+ import subprocess
+ import sys
+ 
+-PRED = "PRED-C2-r42"
+-BASE_DEFAULT = "62dd798bb08401a8697383552edcc36f109344fa"
+-ENTRIES = ("corpus/knowledge/hyprland-gkeep-geometry-r42.md",)
+-LESSON = "corpus/lessons/round-42.md"
+-FETCH = ".ufo/waves/round-42/fetch/"
+-OPENED = "2026-10-25"
++PRED = "PRED-C2-r43"
++BASE_DEFAULT = "a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f"
++ENTRIES = ("corpus/knowledge/hyprland-gkeep-geometry-r43.md",)
++LESSON = "corpus/lessons/round-43.md"
++FETCH = ".ufo/waves/round-43/fetch/"
++OPENED = "2026-10-26"
+ MIN_RECEIPT = 256
+ ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+ ROW_RE = re.compile(r"^ {0,3}\|\s*(S\d{3,})\s*\|")
+@@ -110,8 +116,8 @@
+ # the receipts the L1 fetched before the wave (fetch/ at the v2 freeze); a NEW
+ # cited id's receipt must be one of them, byte for byte
+ PINS = {
+-    "gkeep-ui-excerpt.py": "48a5c92f18fdf278955582a589e6c99da0d6b9b074209ba17a9bd9f93e726d12",
+-    "host-clients-r42.json": "98f1da8548d9f5c872200e2ab78e468261f6fe7aa7e9872db9d95afa7e643df7",
++    "gkeep-ui-excerpt.py": "3695b788c6d766b8e87c01916a6594158a26c2cf816f991ccf30b72d9c5d1713",
++    "host-clients-r43.json": "21db902e1f1234b9f52411cf7885097a18d67b00b9dd0110f9bbd2b36fb442ad",
+     "host-gkeep.conf": "3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949",
+     "Hyprland-DefaultFloatingAlgorithm.cpp": "f05f256150c8dcf5041ba71eaa9b8ba0ec16b94d231bff7a213d18fc23632e91",
+     "Hyprland-GeometricMovableAnimated.cpp": "649f1a8d01d28e20e23380db65c5aeb35846d7ef48c8aada9b84ff0e4a1a207d",
+@@ -282,7 +288,7 @@
+         gl = gates.get(i, [])
+         if len(gl) == 1 and i in receipts_raw:
+             byname[os.path.basename(gl[0][0])] = receipts_raw[i]
+-    if len(own) != 3 or set(byname) != {"host-gkeep.conf", "host-clients-r42.json",
++    if len(own) != 3 or set(byname) != {"host-gkeep.conf", "host-clients-r43.json",
+                                         "gkeep-ui-excerpt.py"}:
+         return False, []
+     conf = byname["host-gkeep.conf"].decode("utf-8", "replace")
+@@ -303,7 +309,7 @@
+     rules_line = "host rules size=%sx%s float=%s center=%s class=%s" % (
+         wh.group(1), wh.group(2), floats[0][0], centers[0][0], rx)
+     try:
+-        doc = json.loads(byname["host-clients-r42.json"].decode("utf-8"))
++        doc = json.loads(byname["host-clients-r43.json"].decode("utf-8"))
+         assert isinstance(doc, list) and all(isinstance(c, dict) for c in doc)
+         rxc = re.compile(rx)
+     except (ValueError, AssertionError, re.error):

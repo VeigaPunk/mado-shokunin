@@ -1,0 +1,35 @@
+PASS  redos.log      growth \(a\+\)\+\$ +len= +27 rx=\(a\+\)\+\$ +time= +1\.771s
+PASS  redos.log      linear \(a\|b\)\+\$ +len=100000 .*time= +0\.020s
+PASS  redos.log      wild \.\*\.\*\.\*\.\*b +len= +800 .*time= +8\.940s
+PASS  redos.log      wild \.\*\.\*\.\*b +len= 40000 .*TIMEOUT
+PASS  redos.log      mixed 300 rules: time=0\.721s
+PASS  probe3.log     rx=\(a\+\)\+\$ +class_len= 30 +18\.45s
+PASS  probe3.log     rx=\(a\+\)\+\$ +class_len= 31 +35\.66s
+PASS  probe3.log     rx=\(a\|aa\)\+\$ class_len= 100 +30\.03s +TIMEOUT@30s
+PASS  probe2.log     20000 clients x 300 rules +: +2\.581s
+PASS  probe2.log     26 clients x 40000 B class x +600 rules .*: +9\.5s
+PASS  probe2.log     26 clients x 40000 B class x +1200 rules .*: 19\.3s
+PASS  probe2.log     13 clients x 40000 B class x 12000 rules .*: 99\.3s
+PASS  probe2.log     list depth +60000 in= 120000B: .*rc=1 stdout=\[\] stderr_lines=24 Recurs
+PASS  probe2.log     dict depth 150000 .*rc=1 .*RecursionError
+PASS  probe2.log     900000-char class, 1 rule: in=900043B out=900287B \(x1\.00\)
+PASS  misc_abc.log   list-nest depth=50000 .*rc=2[\s\S]{0,200}SETUP bad_json
+PASS  misc_abc.log   dict-nest depth=50000 .*rc=3
+PASS  misc_abc.log   int digits=4300 .*rc=1
+PASS  misc_abc.log   int digits=4301 .*rc=2
+PASS  misc_abc.log   rules=/proc/self/environ +rc=4
+PASS  misc_abc.log   class=\"x\\\" verdict=DIFFER float_rule=on
+PASS  misc_abc.log   addr=\"0x1\\\" floating=false verdict=TILED
+PASS  misc_def.log   unreadable path echo: stdout=b'MADO_GEOMETRY: SETUP unreadable\\n' stder
+PASS  probe4.log     full run: 0\.036s rc=0 stdout=1042665B stderr=0B
+PASS  probe4.log     reader closes after 4 KiB: rc=1 stderr=522B
+PASS  probe4.log     classifications identical on 54/54 regex0 entries
+PASS  probe4.log     rules=/etc/passwd +rc=4
+PASS  probe4.log     '\(a\+\)\+\$': 'nested-quantifier'
+PASS  bound.log      clients file 1048576 B -> rc=3
+PASS  bound.log      clients file 1048577 B -> rc=2 .*too_large
+PASS  bound.log      rules file actual 1048576 B  rc=3
+PASS  bound.log      rules file actual 1048577 B  rc=2 .*too_large
+PASS  bound.log      stdin +1048576 B -> rc=3
+PASS  bound.log      stdin +1048577 B -> rc=2 .*too_large
+VERIFY: 34/34 checks pass

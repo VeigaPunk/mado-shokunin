@@ -1,0 +1,73 @@
+# reference tool runs: frozen round-42 reference .ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+# (copy sha256 e3c2e471... identical to the frozen file; see ref-sha.txt)
+## case baseline_effect_first
+IN (baseline_effect_first.conf): b'windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$\n'
+OUT:
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+RC: 0
+
+## case match_first
+IN (match_first.conf): b'windowrule = match:class ^(org.omarchy.gkeep)$, size 420 500\n'
+OUT:
+MADO_GEOMETRY: rules=0 float_rules=0 other=1 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+RC: 4
+
+## case multi_effect
+IN (multi_effect.conf): b'windowrule = float on, size 420 500, match:class ^(org.omarchy.gkeep)$\n'
+OUT:
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+RC: 4
+
+## case inline_comment
+IN (inline_comment.conf): b'windowrule = size 420 500, match:class ^(org.omarchy.gkeep)$ # pinned\n'
+OUT:
+MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+RC: 4
+
+## case host_input_conf_form
+IN (host_input_conf_form.conf): b'windowrule = match:class (Alacritty|kitty|foot), scroll_touchpad 1.5\n'
+OUT:
+MADO_GEOMETRY: rules=0 float_rules=0 other=1 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+RC: 4
+
+## case tab_separated
+IN (extra_tab.conf): b'windowrule\t=\tsize\t1\t2\t,\tmatch:class\ta\n'
+OUT:
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=420x500 want=1x2 float_rule=- verdict=DIFFER
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+RC: 1
+
+## case double_space_after_match
+IN (double_space.conf): b'windowrule = size 420 500, match:class  ^(org.omarchy.gkeep)$\n'
+OUT:
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+RC: 0
+
+## case false_agree_multieffect
+IN (false_agree_multieffect.conf): b'windowrule = size 420 500, match:class a\nwindowrule = float on, size 100 100, match:class a\n'
+OUT:
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=1 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+RC: 0
+
+## case false_agree_matchfirst
+IN (false_agree_matchfirst.conf): b'windowrule = size 420 500, match:class a\nwindowrule = match:class a, size 100 100\n'
+OUT:
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=a
+MADO_GEOM_CLIENT: addr="0x1" class="a" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=1 float_rules=0 other=1 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+RC: 0
+
+## case duplicate_rules
+IN: baseline_effect_first.conf passed twice
+MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=2 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOM_CLIENT: addr="0x1" class="org.omarchy.gkeep" floating=true size=420x500 want=420x500 float_rule=- verdict=AGREE
+MADO_GEOMETRY: rules=2 float_rules=0 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+RC: 0

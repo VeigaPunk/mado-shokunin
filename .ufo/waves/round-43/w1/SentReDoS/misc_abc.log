@@ -1,0 +1,101 @@
+
+########## A. output injection (attacker-chosen class / address)
+== class='quote+verdict forge'  time=0.016s rc=1 stdout=394B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1" class="x\" verdict=DIFFER float_rule=on \"" floating=true size=1x2 want=420x500 float_rule=on verdict=DIFFER
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+== class='newline in class'  time=0.016s rc=3 stdout=268B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+== class='carriage return'  time=0.015s rc=3 stdout=268B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+== class='LSEP U+2028'  time=0.016s rc=1 stdout=392B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1" class="gkeep\u2028MADO_GEOMETRY: rules=0" floating=true size=1x2 want=420x500 float_rule=on verdict=DIFFER
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+== class='NEL U+0085'  time=0.016s rc=1 stdout=392B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1" class="gkeep\u0085MADO_GEOMETRY: rules=0" floating=true size=1x2 want=420x500 float_rule=on verdict=DIFFER
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+== class='full forged line'  time=0.016s rc=1 stdout=392B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1" class="MADO_GEOMETRY: rules=0 verdict=OK" floating=true size=1x2 want=420x500 float_rule=on verdict=DIFFER
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+== class='backslash-quote'  time=0.016s rc=1 stdout=378B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1" class="a\\\" verdict=AGREE" floating=true size=1x2 want=420x500 float_rule=on verdict=DIFFER
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=0 differ=1 tiled=0 badsize=0 verdict=DIFFER
+== address='0x1" floating=false '  time=0.015s rc=0 stdout=399B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=420x500 class=.*
+   OUT| MADO_GEOM_RULE: n=2 file=1 effect=float arg=on class=.*
+   OUT| MADO_GEOM_CLIENT: addr="0x1\" floating=false verdict=TILED x=\"" class="gkeep" floating=true size=420x500 want=420x500 float_rule=on verdict=AGREE
+   OUT| MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK
+== rule regex='a=b'  time=0.015s rc=4 stdout=147B stderr=0B
+   OUT| MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+== rule regex='a b'  time=0.015s rc=4 stdout=147B stderr=0B
+   OUT| MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=1 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+== rule regex='a\nb'  time=0.016s rc=3 stdout=207B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+   OUT| MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+########## B. JSON depth bombs / big ints
+== list-nest depth=50 bytes=100  time=0.015s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== list-nest depth=500 bytes=1000  time=0.016s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== list-nest depth=1000 bytes=2000  time=0.017s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== list-nest depth=2000 bytes=4000  time=0.016s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== list-nest depth=5000 bytes=10000  time=0.019s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== list-nest depth=50000 bytes=100000  time=0.021s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== dict-nest depth=500 bytes=3003  time=0.016s rc=3 stdout=207B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+   OUT| MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+== dict-nest depth=2000 bytes=12003  time=0.016s rc=3 stdout=207B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+   OUT| MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+== dict-nest depth=50000 bytes=300003  time=0.025s rc=3 stdout=207B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+   OUT| MADO_GEOMETRY: rules=1 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+== int digits=4300 bytes=4357  time=0.017s rc=1 stdout=4591B stderr=0B
+   OUT| MADO_GEOM_RULE: n=1 file=1 effect=size arg=1x2 class=a
+   OUT| MADO_GEOM_CLIENT: addr="-" class="a" floating=true size=9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999x2 want=1x2 float_rule=- verdict=DIFFER
+   OUT| ... (1 more lines)
+== int digits=4301 bytes=4358  time=0.015s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+== int digits=5000 bytes=5057  time=0.016s rc=2 stdout=30B stderr=0B
+   OUT| MADO_GEOMETRY: SETUP bad_json
+
+########## C. path handling for --rules / --clients
+   rules=/proc/self/environ                             rc=4 0.014s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/proc/self/cmdline                             rc=4 0.015s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/proc/self/mem                                 rc=2 0.015s MADO_GEOMETRY: SETUP unreadable
+   rules=/proc/self/stat                                rc=4 0.017s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/proc/self/maps                                rc=4 0.017s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/dev/zero                                      rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/dev/null                                      rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/proc/kmsg                                     rc=2 0.015s MADO_GEOMETRY: SETUP unreadable
+   rules=/sys/kernel/mm/transparent_hugepage/enabled    rc=4 0.016s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc/fifo rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc/sock rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc/loop rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc/passwd-link rc=4 0.015s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 u
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc/fifo-link rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/dev/fd/0                                      rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/proc/self/fd/0                                rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/proc/self/cwd                                 rc=2 0.016s MADO_GEOMETRY: SETUP unreadable
+   rules=/fast/scratch/hyaku/mado-r43/SentReDoS/misc    rc=2 0.015s MADO_GEOMETRY: SETUP unreadable
+   rules=/etc/shadow                                    rc=2 0.015s MADO_GEOMETRY: SETUP unreadable
+   clients=/proc/self/environ                           rc=2 0.017s MADO_GEOMETRY: SETUP bad_json
+   clients=/proc/self/cmdline                           rc=2 0.015s MADO_GEOMETRY: SETUP bad_json

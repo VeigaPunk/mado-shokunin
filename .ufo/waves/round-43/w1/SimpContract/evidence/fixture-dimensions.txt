@@ -1,0 +1,237 @@
+== dimension coverage over the 37 fixtures ==
+any_address_key                            9  gen0,gen2,gen4,gen6,gen8,order0...
+any_run_with_rules_before_clients          1  usage0
+client_badsize_and_not_floating            4  gen3,gen9,client0
+empty_body_rule_line                       2  gen4:r0.conf,other0:r0.conf
+run_with_two_or_more_rules                12  gen0,gen1,gen3,gen4,gen6,gen7...
+stdin_exactly_max                          1  stdinok0
+stdin_over_max                             1  stdinbig0
+
+== reference lines never executed (149 executed) ==
+   2 """mado-geometry - does the size a window rule asks for match the size the compositor reports?
+   4 Hyprland 0.56.2 consumes a window rule `size W H` when a floating window opens
+   5 (the floating algorithm reads the rule's size and stores it as the window's box);
+   6 a tiled window never reads it. The compositor reports each mapped client's size
+   7 in `hyprctl clients -j`. This tool joins the two read-only inputs: the rule
+   8 lines of one or more Hyprland config files and one `hyprctl clients -j` dump.
+  10     hyprctl clients -j | mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+  11     mado-geometry.py --clients clients.json --rules a.conf --rules b.conf
+  12     mado-geometry.py --selftest
+  14 It reads files and standard input only; it starts no process and opens no socket.
+  16 Arguments (two-token form only; anything else is usage): `--selftest` alone, or
+  17 `--clients V` exactly once and `--rules V` one or more times, in any order.
+  18 Setup failure: stdout is exactly one line `MADO_GEOMETRY: SETUP <reason>`, exit 2,
+  19 reason one of usage | unreadable | too_large | bad_json. A PATH that is missing,
+  20 unreadable, a directory, a FIFO or any non-regular file is unreadable; an input
+  21 larger than 1048576 bytes is too_large (stdin, `--clients -`, is read at most
+  22 1048577 bytes); a clients input that is not UTF-8 JSON holding a list whose every
+  23 element is an object is bad_json.
+  25 Rules. Each rules file is decoded as UTF-8 with errors replaced and split on
+  26 "\\n"; a line is stripped of spaces and tabs at both ends. A RULE LINE matches
+  27 `windowrule[ \\t]*=(.*)` (anything else, `windowrulev2` included, is ignored and
+  28 counted nowhere). The body is split on "," and each field is stripped of spaces
+  29 and tabs. The effect is the first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An
+  30 effect other than `size` and `float` adds one to `other`. A `size` or `float`
+  31 line is SUPPORTED when: field 0 has exactly two argument
+  32 tokens `[0-9]{1,5}` (size) or exactly one token `on` or `off` (float); there is
+  33 exactly one more field and it is `match:class` + one or more spaces/tabs + REGEX;
+  34 REGEX is 1-200 characters of `[A-Za-z0-9_.^$()|*+?-]` and the escapes `\\.`
+  35 `\\-` `\\(` `\\)` `\\|` `\\*` `\\+` `\\?` `\\^` `\\$` `\\\\`, contains none of `(?`,
+  36 `*+`, `++`, `?+`, and compiles under Python `re`. Any other size or float line adds
+  37 one to `unsupported`. Supported rules are numbered n=1.. across all files in order
+  38 and each reports the 1-based index of its file.
+  39 A client MATCHES a rule when its class holds no character below U+0020 and
+  40 `re.fullmatch(REGEX, class)` succeeds (Hyprland: `RE2::FullMatch`).
+  42 Clients. An element whose `mapped` is JSON false is unmapped and skipped. For the
+  43 others class is the `class` value when a string, else ""; floating is true only
+  44 for JSON true; size is the `size` value when a list of exactly two JSON
+  45 integers (not booleans, not floats) >= 0, else none; address is `address` when
+  46 a string, else "-". Rules apply in order: the last matching `size` rule gives
+  47 want, the last matching `float` rule gives float_rule (`on`, `off`, else `-`). A
+  48 client with at least one matching size rule is MATCHED and reports a verdict:
+  49 BADSIZE (size none) | TILED (not floating) | AGREE (size == want) | DIFFER.
+  51 Output (stdout; nothing else; stderr empty on exit 0/1/3/4), in order:
+  52   per supported rule   MADO_GEOM_RULE: n=<n> file=<k> effect=<size|float> arg=<WxH|on|off> class=<REGEX>
+  53   per matched client   MADO_GEOM_CLIENT: addr=<json> class=<json> floating=<true|false> size=<WxH|-> want=<WxH> float_rule=<on|off|-> verdict=<V>
+  54   last                 MADO_GEOMETRY: rules=<size rules> float_rules=<n> other=<n> unsupported=<n> clients=<mapped> matched=<n> unmapped=<n> agree=<n> differ=<n> tiled=<n> badsize=<n> verdict=<V>
+  55 (<json> is json.dumps with ensure_ascii.) V = NO_SIZE_RULES (exit 4, rules=0) |
+  56 DIFFER (exit 1, differ>0) | NO_MATCHING_CLIENT (exit 3, matched=0) | OK (exit 0),
+  57 tested in that order. DIFFER is a report, not a fault: a user may have resized the
+  58 window, or the compositor may have clamped the rule's size.
+  59 """
+  60 import json
+  61 import os
+  62 import re
+  63 import stat
+  64 import sys
+  66 MAX_BYTES = 1048576
+  67 RULE_LINE = re.compile(r"windowrule[ \t]*=(.*)")
+  68 MATCH_FIELD = re.compile(r"match:class[ \t]+(.+)")
+  69 SAFE = re.compile(r"(?:[A-Za-z0-9_.^$()|*+?-]|\\[.\-()|*+?^$\\]){1,200}")
+  70 NUM = re.compile(r"[0-9]{1,5}")
+  73 class Setup(Exception):
+  74     pass
+  77 def read_regular(path):
+  92         raise Setup("unreadable")
+  93     finally:
+ 100 def parse_args(argv):
+ 102         return "selftest", None, None
+ 112         else:
+ 120 def regex_ok(rx):
+ 133 def parse_rule_text(text, file_index, rules, counts):
+ 162 def parse_clients(data):
+ 172 def client_size(c):
+ 180 def matches(rx, cls):
+ 186 def evaluate(clients, rules):
+ 201                 else:
+ 214         else:
+ 224 def report(clients_data, rule_texts):
+ 239     else:
+ 249 def run(argv, stdin):
+ 252         return selftest()
+ 257     else:
+ 265 def selftest():
+ 266     cases = []
+ 267     gk = "windowrule = float on, match:class ^(org.omarchy.gkeep)$\nwindowrule = size 420 500, match:class ^(org.omarchy.gkeep)$\n"
+ 269     def cl(cls, size, floating=True, mapped=True, addr="0x1"):
+ 270         return {"class": cls, "size": size, "floating": floating, "mapped": mapped, "address": addr}
+ 272     def last(clients, text):
+ 273         lines, rc = report(json.dumps(clients).encode(), [text])
+ 274         return lines[-1], rc
+ 276     def chk(name, got, want):
+ 277         cases.append((name, got == want, got, want))
+ 279     g = "org.omarchy.gkeep"
+ 280     s, rc = last([cl(g, [420, 500])], gk)
+ 281     chk("agree-rc", rc, 0)
+ 282     chk("agree-line", s, "MADO_GEOMETRY: rules=1 float_rules=1 other=0 unsupported=0 clients=1 matched=1 unmapped=0 agree=1 differ=0 tiled=0 badsize=0 verdict=OK")
+ 283     s, rc = last([cl(g, [421, 500])], gk)
+ 284     chk("differ-rc", rc, 1)
+ 285     chk("differ-verdict", s.endswith("differ=1 tiled=0 badsize=0 verdict=DIFFER"), True)
+ 286     s, rc = last([cl(g, [420, 500], floating=False)], gk)
+ 287     chk("tiled-rc", rc, 0)
+ 288     chk("tiled-count", " tiled=1 " in s, True)
+ 289     s, rc = last([cl(g, [420.0, 500])], gk)
+ 290     chk("float-size-badsize", " badsize=1 " in s, True)
+ 291     s, rc = last([cl(g, [True, 500])], gk)
+ 292     chk("bool-size-badsize", " badsize=1 " in s, True)
+ 293     s, rc = last([cl(g, [420])], gk)
+ 294     chk("short-size-badsize", " badsize=1 " in s, True)
+ 295     s, rc = last([cl(g, [-1, 500])], gk)
+ 296     chk("negative-size-badsize", " badsize=1 " in s, True)
+ 297     s, rc = last([cl(g, [420, 500], mapped=False)], gk)
+ 298     chk("unmapped-rc", rc, 3)
+ 299     chk("unmapped-count", " clients=0 matched=0 unmapped=1 " in s, True)
+ 300     s, rc = last([], gk)
+ 301     chk("empty-rc", rc, 3)
+ 302     s, rc = last([cl("other", [1, 1])], gk)
+ 303     chk("nomatch-rc", rc, 3)
+ 304     s, rc = last([cl(g + "x", [420, 500])], gk)
+ 305     chk("fullmatch-not-search", rc, 3)
+ 306     s, rc = last([cl(g, [420, 500])], "windowrule = float on, match:class ^(org.omarchy.gkeep)$\n")
+ 307     chk("no-size-rule-rc", rc, 4)
+ 308     s, rc = last([cl(g, [420, 500])], "")
+ 309     chk("empty-rules-rc", rc, 4)
+ 310     chk("empty-rules-line", s, "MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=1 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES")
+ 311     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class a\nwindowrule = size 30 40, match:class a\n")
+ 312     chk("last-size-wins", " differ=1 " in s, True)
+ 313     s, rc = last([cl("a", [10, 20])], "windowrule = size 30 40, match:class a\nwindowrule = size 10 20, match:class ^a$\n")
+ 314     chk("last-size-wins-agree", rc, 0)
+ 315     s, rc = last([cl("ab", [10, 20])], "windowrule = size 10 20, match:class a|ab\n")
+ 316     chk("alternation-fullmatch", rc, 0)
+ 317     s, rc = last([cl("a.b", [10, 20]), cl("axb", [1, 1])], "windowrule = size 10 20, match:class a\\.b\n")
+ 318     chk("escaped-dot-matches-one", " matched=1 " in s, True)
+ 319     s, rc = last([cl("a", [10, 20])], "  windowrule=size 10 20,match:class a  \n")
+ 320     chk("tight-spacing", rc, 0)
+ 321     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:title a\n")
+ 322     chk("title-unsupported", " unsupported=1 " in s and rc == 4, True)
+ 323     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20 30, match:class a\n")
+ 324     chk("three-args-unsupported", " unsupported=1 " in s, True)
+ 325     s, rc = last([cl("a", [10, 20])], "windowrule = size 1x 20, match:class a\n")
+ 326     chk("nondigit-unsupported", " unsupported=1 " in s, True)
+ 327     s, rc = last([cl("a", [10, 20])], "windowrule = size 123456 20, match:class a\n")
+ 328     chk("six-digits-unsupported", " unsupported=1 " in s, True)
+ 329     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class a, match:title b\n")
+ 330     chk("two-matches-unsupported", " unsupported=1 " in s, True)
+ 331     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class a # note\n")
+ 332     chk("hash-unsupported", " unsupported=1 " in s, True)
+ 333     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class negative:a\n")
+ 334     chk("negative-prefix-unsupported", " unsupported=1 " in s, True)
+ 335     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class (?i)a\n")
+ 336     chk("inline-flag-unsupported", " unsupported=1 " in s, True)
+ 337     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class a*+\n")
+ 338     chk("possessive-unsupported", " unsupported=1 " in s, True)
+ 339     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class (a\n")
+ 340     chk("uncompilable-unsupported", " unsupported=1 " in s, True)
+ 341     s, rc = last([cl("a", [10, 20])], "windowrule = float maybe, match:class a\nwindowrule = size 10 20, match:class a\n")
+ 342     chk("float-arg-unsupported", " unsupported=1 " in s and " float_rules=0 " in s, True)
+ 343     s, rc = last([cl("a", [10, 20])], "windowrule = center on, match:class a\nwindowrule = opacity 1, match:class a\nwindowrule = size 10 20, match:class a\n")
+ 344     chk("other-counted", " other=2 " in s, True)
+ 345     s, rc = last([cl("a", [10, 20])], "windowrulev2 = size 10 20, class:a\n# windowrule = size 10 20, match:class a\nwindowrule = size 10 20, match:class a\n")
+ 346     chk("v2-and-comment-ignored", " rules=1 float_rules=0 other=0 unsupported=0 " in s, True)
+ 347     s, rc = last([cl("a", [10, 20])], "windowrule = size 10 20, match:class a\r\n")
+ 348     chk("cr-breaks-regex", " unsupported=1 " in s, True)
+ 349     s, rc = last([cl("a\nb", [10, 20])], "windowrule = size 10 20, match:class a.b\n")
+ 350     chk("control-char-class-unmatched", rc, 3)
+ 351     s, rc = last([{"size": [10, 20], "floating": True}], "windowrule = size 10 20, match:class .*\n")
+ 352     chk("missing-class-empty", rc, 0)
+ 353     s, rc = last([{"class": 5, "size": [10, 20], "floating": True}], "windowrule = size 10 20, match:class .*\n")
+ 354     chk("non-string-class-empty", rc, 0)
+ 355     s, rc = last([{"class": "a", "size": [10, 20], "floating": 1}], "windowrule = size 10 20, match:class a\n")
+ 356     chk("non-true-floating-tiled", " tiled=1 " in s, True)
+ 357     s, rc = last([{"class": "a", "size": [10, 20], "floating": True, "mapped": 0}], "windowrule = size 10 20, match:class a\n")
+ 358     chk("non-false-mapped-counts", " clients=1 " in s and " unmapped=0 " in s, True)
+ 359     lines, rc = report(json.dumps([cl("ü a", [10, 20], addr="0xa\"b")]).encode(), ["windowrule = size 10 20, match:class .*\n"])
+ 360     chk("json-escaped-fields", lines[1], 'MADO_GEOM_CLIENT: addr="0xa\\"b" class="\\u00fc a" floating=true size=10x20 want=10x20 float_rule=- verdict=AGREE')
+ 361     chk("rule-line", lines[0], "MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=.*")
+ 362     lines, rc = report(b"[]", ["windowrule = size 10 20, match:class a\n", "windowrule = float off, match:class a\nwindowrule = size 07 08, match:class b\n"])
+ 363     chk("file-index-and-numbering", lines[:3], ["MADO_GEOM_RULE: n=1 file=1 effect=size arg=10x20 class=a",
+ 364                                                  "MADO_GEOM_RULE: n=2 file=2 effect=float arg=off class=a",
+ 365                                                  "MADO_GEOM_RULE: n=3 file=2 effect=size arg=7x8 class=b"])
+ 366     lines, rc = report(json.dumps([cl("a", [1, 2]), cl("b", [7, 8])]).encode(),
+ 367                        ["windowrule = float on, match:class a\nwindowrule = size 1 2, match:class a\nwindowrule = size 7 8, match:class b\n"])
+ 368     chk("float-rule-reported", lines[3].split(" float_rule=")[1].split(" ")[0], "on")
+ 369     chk("unset-float-rule", lines[4].split(" float_rule=")[1].split(" ")[0], "-")
+ 370     for bad, label in ((b"{}", "object"), (b"[1]", "list-of-int"), (b"", "empty"), (b"\xff", "bytes"), (b"[", "truncated")):
+ 371         try:
+ 372             report(bad, ["x"])
+ 373             chk("bad-json-" + label, "no-raise", "bad_json")
+ 374         except Setup as exc:
+ 375             chk("bad-json-" + label, str(exc), "bad_json")
+ 376     for argv, label in (([], "none"), (["--clients", "-"], "no-rules"), (["--rules", "x"], "no-clients"),
+ 377                         (["--clients", "-", "--clients", "-", "--rules", "x"], "double-clients"),
+ 378                         (["--clients"], "dangling"), (["--clients", "-", "--rules", "x", "--bogus"], "bogus"),
+ 379                         (["--selftest", "--rules", "x"], "selftest-with-args"), (["--client", "-", "--rules", "x"], "abbrev")):
+ 380         try:
+ 381             parse_args(argv)
+ 382             chk("usage-" + label, "no-raise", "usage")
+ 383         except Setup as exc:
+ 384             chk("usage-" + label, str(exc), "usage")
+ 385     chk("rules-repeat-ok", parse_args(["--rules", "a", "--clients", "-", "--rules", "b"]), ("run", "-", ["a", "b"]))
+ 386     for path, label in (("/nonexistent/none", "missing"), ("/", "dir"), ("/dev/null", "chardev")):
+ 387         try:
+ 388             read_regular(path)
+ 389             chk("unreadable-" + label, "no-raise", "unreadable")
+ 390         except Setup as exc:
+ 391             chk("unreadable-" + label, str(exc), "unreadable")
+ 392     chk("regex-safe-accepts", regex_ok("^(a|b)+\\.c$"), True)
+ 393     chk("regex-safe-rejects-brace", regex_ok("a{2}"), False)
+ 394     chk("regex-safe-rejects-class", regex_ok("[ab]"), False)
+ 395     chk("regex-safe-rejects-201", regex_ok("a" * 201), False)
+ 396     chk("regex-safe-accepts-200", regex_ok("a" * 200), True)
+ 397     chk("regex-safe-rejects-empty", regex_ok(""), False)
+ 398     chk("regex-safe-rejects-bad-escape", regex_ok("\\d"), False)
+ 399     chk("matches-ctl", matches("a", "a\x01"), False)
+ 400     chk("matches-full", matches("a", "ab"), False)
+ 401     bad = [c for c in cases if not c[1]]
+ 402     for name, _ok, got, want in bad:
+ 403         print("SELFTEST FAIL %s: got %r want %r" % (name, got, want))
+ 404     print("MADO_GEOMETRY_SELFTEST: %d/%d passed" % (len(cases) - len(bad), len(cases)))
+ 405     return 0 if not bad else 1
+ 408 def main():
+ 409     try:
+ 410         return run(sys.argv[1:], sys.stdin.buffer)
+ 411     except Setup as exc:
+ 412         print("MADO_GEOMETRY: SETUP %s" % exc)
+ 413         return 2
+ 416 if __name__ == "__main__":
+ 417     sys.exit(main())

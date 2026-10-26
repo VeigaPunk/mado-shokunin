@@ -1,0 +1,106 @@
+# pinned lane receipts (round-43/fetch), cited lines
+## Hyprland-RegexMatchEngine.cpp:10-16
+        return;
+    }
+    m_regex = makeUnique<re2::RE2>(regex);
+}
+
+bool CRegexMatchEngine::match(const std::string& other) {
+    return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+## Hyprland-WindowRuleApplicator.cpp:421-428
+            case WINDOW_RULE_EFFECT_SIZE: {
+                const auto& expr = std::get<Math::SExpressionVec2>(value);
+                if (expr.empty())
+                    static_.size.reset();
+                else
+                    static_.size = expr;
+                break;
+            }
+## Hyprland-WindowRuleApplicator.cpp:483-509
+bool CWindowRuleApplicator::readStaticRules(bool preRead) {
+    if (!m_window)
+        return false;
+
+    static_ = {};
+
+    m_execRules.clear();
+    bool tagsWereChanged = false;
+
+    for (const auto& r : ruleEngine()->rules()) {
+        if (r->type() != RULE_TYPE_WINDOW)
+            continue;
+
+        auto wr = reinterpretPointerCast<CWindowRule>(r);
+
+        if (!wr->matches(m_window.lock(), true))
+            continue;
+
+        if (wr->isExecRule()) {
+            m_execRules.emplace_back(wr);
+            continue;
+        }
+
+        applyStaticRule(wr);
+        const auto RES  = applyDynamicRule(wr);
+        tagsWereChanged = tagsWereChanged || RES.tagsChanged;
+    }
+## Hyprland-WindowRuleApplicator.cpp:526-543
+void CWindowRuleApplicator::recheckStaticRules() {
+    for (const auto& r : ruleEngine()->rules()) {
+        if (r->type() != RULE_TYPE_WINDOW)
+            continue;
+
+        if (!(r->getPropertiesMask() & propsToRecheck))
+            continue;
+
+        auto wr = reinterpretPointerCast<CWindowRule>(r);
+
+        if (!wr->matches(m_window.lock(), true))
+            continue;
+
+        applyStaticRule(wr);
+    }
+
+    for (const auto& wr : m_execRules) {
+        applyStaticRule(wr);
+## Hyprland-DefaultFloatingAlgorithm.cpp:49-77
+    if (target->window() && target->window()->m_firstMap) {
+        const auto WINDOW = target->window();
+
+        // set this here so that expressions can use it. This could be wrong of course.
+        WINDOW->sizeAnimation()->setValueAndWarp(DESIRED_GEOM ? DESIRED_GEOM->size : DEFAULT_SIZE);
+
+        if (WINDOW->m_ruleApplicator->static_.size) {
+            const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.size);
+            if (!COMPUTED)
+                Log::logger->log(Log::ERR, "failed to parse {} as an expression", WINDOW->m_ruleApplicator->static_.size->toString());
+            else {
+                windowGeometry.w = COMPUTED->x;
+                windowGeometry.h = COMPUTED->y;
+
+                // update for pos to work with size.
+                WINDOW->positionAnimation()->setValueAndWarp(*COMPUTED);
+            }
+        }
+
+        if (WINDOW->m_ruleApplicator->static_.position) {
+            const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.position);
+            if (!COMPUTED)
+                Log::logger->log(Log::ERR, "failed to parse {} as an expression", WINDOW->m_ruleApplicator->static_.position->toString());
+            else {
+                windowGeometry.x = COMPUTED->x + MONITOR_POS.x;
+                windowGeometry.y = COMPUTED->y + MONITOR_POS.y;
+                posOverridden    = true;
+            }
+        }
+## Hyprland-HyprCtl.cpp:426-430
+            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+            escapeJSONStrings(!w->m_workspace ? "" : w->m_workspace->m_name), (sc<int>(w->m_isFloating) == 1 ? "true" : "false"), w->monitorID(), escapeJSONStrings(w->m_class),
+            escapeJSONStrings(w->m_title), escapeJSONStrings(w->m_initialClass), escapeJSONStrings(w->m_initialTitle), w->getPID(), (sc<int>(w->m_isX11) == 1 ? "true" : "false"),
+## Hyprland-HyprCtl.cpp:446-449
+            rc<uintptr_t>(w.get()), w->m_title, sc<int>(w->m_isMapped), sc<int>(w->isHidden()), sc<int>(w->visible()), sc<int>(w->acceptsInput()),
+            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+            w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID, (!w->m_workspace ? "" : w->m_workspace->m_name), sc<int>(w->m_isFloating), w->monitorID(), w->m_class,

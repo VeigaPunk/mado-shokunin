@@ -1,0 +1,41 @@
+== C14 overlap matrix: which conditions hold for one input, and which reason the reference prints ==
+S/missing              kind=missing   size=0              reg=0 open=0 | unreadable=1 too_large=0 | clients:SETUP unreadable rules:SETUP unreadable
+S/adir                 kind=directory size=6              reg=0 open=0 | unreadable=1 too_large=0 | clients:SETUP unreadable rules:SETUP unreadable
+/dev/null              kind=chardev   size=0              reg=0 open=0 | unreadable=1 too_large=0 | clients:SETUP unreadable rules:SETUP unreadable
+S/fifo                 kind=fifo      size=0              reg=0 open=0 | unreadable=1 too_large=0 | clients:SETUP unreadable rules:SETUP unreadable
+S/empty.bin            kind=regular   size=0              reg=1 open=1 | unreadable=0 too_large=0 | clients:SETUP bad_json rules:MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+S/max.bin              kind=regular   size=1048576        reg=1 open=1 | unreadable=0 too_large=0 | clients:SETUP bad_json rules:MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+S/big.bin              kind=regular   size=1048577        reg=1 open=1 | unreadable=0 too_large=1 | clients:SETUP too_large rules:SETUP too_large
+S/bad.json             kind=regular   size=3              reg=1 open=1 | unreadable=0 too_large=0 | clients:SETUP bad_json rules:MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_SIZE_RULES
+S/hugebad.json         kind=regular   size=1048577        reg=1 open=1 | unreadable=0 too_large=1 | clients:SETUP too_large rules:SETUP too_large
+S/noperm.json          kind=regular   size=2              reg=1 open=0 | unreadable=1 too_large=0 | clients:SETUP unreadable rules:SETUP unreadable
+S/nopermbig.bin        kind=regular   size=1048577        reg=1 open=0 | unreadable=1 too_large=1 | clients:SETUP unreadable rules:SETUP unreadable
+/proc/kcore            kind=regular   size=140737471594496 reg=1 open=0 | unreadable=1 too_large=1 | clients:SETUP unreadable rules:SETUP unreadable
+
+== the 'integers, not floats' pair: no JSON token is both ==
+token=1                                python_type=int         accepted_size=yes    verdict=DIFFER
+token=1.0                              python_type=float       accepted_size=no     verdict=OK
+token=1e0                              python_type=float       accepted_size=no     verdict=OK
+token=1E0                              python_type=float       accepted_size=no     verdict=OK
+token=1.5                              python_type=float       accepted_size=no     verdict=OK
+token=0.0                              python_type=float       accepted_size=no     verdict=OK
+token=-0.0                             python_type=float       accepted_size=no     verdict=OK
+token=0                                python_type=int         accepted_size=yes    verdict=DIFFER
+token=-1                               python_type=int         accepted_size=no     verdict=OK
+token=1000000000000000000000000000000  python_type=int         accepted_size=yes    verdict=DIFFER
+token=true                             python_type=bool        accepted_size=no     verdict=OK
+token=false                            python_type=bool        accepted_size=no     verdict=OK
+token=null                             python_type=NoneType    accepted_size=no     verdict=OK
+token=1.                               python_type=(not JSON)  accepted_size=input is bad_json verdict=MADO_GEOMETRY: SETUP bad_json
+token=.5                               python_type=(not JSON)  accepted_size=input is bad_json verdict=MADO_GEOMETRY: SETUP bad_json
+token=01                               python_type=(not JSON)  accepted_size=input is bad_json verdict=MADO_GEOMETRY: SETUP bad_json
+
+== the fixture free-pass scan (what no fixture input contains) ==
+any run with --rules before --clients          1  usage0
+valid run with --rules before --clients        0  (none)
+rules file with invalid UTF-8                  0  (none)
+setup failure with two or more rules files     0  (none)
+rule line containing ';'                       0  (none)
+size effect with zero arguments                0  (none)
+duplicate address key                          0  (none)
+path with mode 000 (EACCES)                    0  (none)

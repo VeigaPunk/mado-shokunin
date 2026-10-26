@@ -1,0 +1,13 @@
+$ grep -n precedence quality/counters/c1-r42-geometry.py .ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+exit=1 (1 = no match)
+
+$ grep -n 'first first' quality/counters/c1-r42-geometry.py .ufo/waves/round-42/c1/ctl-ref-tool.py.txt
+exit=1 (1 = no match; the duplicate is split across lines 29-30)
+
+$ sed -n '29,30p;34p;44p;55,56p' quality/counters/c1-r42-geometry.py
+body is split on "," and each field is stripped of spaces and tabs. The effect is the first
+first token of field 0, tokens being separated by runs of spaces and tabs only (the empty string when there is none). An effect other than
+matches `match:class[ \\t]+(.+)`, the capture being REGEX; REGEX fully matches 1-200 characters of
+integers (not booleans, not floats) that are >= 0, else none; address is the `address` value
+V = NO_SIZE_RULES (rules=0; exit 4) | DIFFER (differ>0; exit 1) | NO_MATCHING_CLIENT (matched=0;
+exit 3) | OK (exit 0), tested in that order.

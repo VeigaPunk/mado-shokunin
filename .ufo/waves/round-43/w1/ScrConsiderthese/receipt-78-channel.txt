@@ -1,0 +1,27 @@
+$ grep -n 'WARN lane repo has uncommitted changes' /home/vgpnk/Projects/shokunin/scripts/hyaku/inline.sh
+172:  [ -n "$(git -C "$cwd" status --porcelain)" ] && echo "WARN lane repo has uncommitted changes: $(git -C "$cwd" status --porcelain | wc -l) paths"
+$ sed -n '170,177p' /home/vgpnk/Projects/shokunin/scripts/hyaku/inline.sh
+    else ev "push-failed lane=$lane round=$n"; echo "FAIL lane has $ahead unpushed commit(s) and a fast-forward push failed: not landed"; exit 1; fi
+  fi
+  [ -n "$(git -C "$cwd" status --porcelain)" ] && echo "WARN lane repo has uncommitted changes: $(git -C "$cwd" status --porcelain | wc -l) paths"
+  if [ "$(git -C "$FLEET" rev-list --count origin/master..HEAD 2>/dev/null || echo 0)" != 0 ]; then
+    "$H/fleet-commit.sh" --as "$lane" -m unused -- "$rep" >/dev/null 2>&1 || ev "fleet-push-pending"
+  fi
+  log "complete $lane round=$n; hyaku-inline attempt=$(claim "$lane" attempt)"
+  ev "complete lane=$lane round=$n attempt=$(claim "$lane" attempt)"
+$ git -C /home/vgpnk/Projects/shokunin show 5f4fa8d8^:scripts/hyaku/inline.sh | grep -n 'WARN lane repo has uncommitted changes'   # pre-disk-guard locator
+126:  [ -n "$(git -C "$cwd" status --porcelain)" ] && echo "WARN lane repo has uncommitted changes: $(git -C "$cwd" status --porcelain | wc -l) paths"
+$ grep -c 'uncommitted' /home/vgpnk/Projects/shokunin/.ufo/watchdog.log          # hits exist ...
+22
+$ grep -o 'uncommitted[^;)]*' /home/vgpnk/Projects/shokunin/.ufo/watchdog.log | sort | uniq -c   # ... but all are retry reasons, none is a path count
+     20 uncommitted files untrusted
+      1 uncommitted, no report
+      1 uncommitted work inherited by next attempt
+$ grep -c 'WARN lane repo has uncommitted' /home/vgpnk/Projects/shokunin/.ufo/watchdog.log   # the driver's dirt line never reaches the digest
+0
+$ ls /home/vgpnk/Projects/shokunin/.ufo/*.log
+/home/vgpnk/Projects/shokunin/.ufo/watchdog.log
+$ git -C /home/vgpnk/Projects/shokunin log -1 --format='%h %cI' -- scripts/hyaku/inline.sh
+5f4fa8d8 2026-10-25T23:48:57-03:00
+$ git -C /home/vgpnk/Projects/shokunin log -1 --format='%h %cI' -- .ufo/watchdog.log   # last digest commit (mutable file)
+ec238815 2026-10-25T12:11:10-03:00

@@ -1,0 +1,37 @@
+########## L. broken pipe with a >1 MiB stdout
+  full run: 0.036s rc=0 stdout=1042665B stderr=0B
+  reader closes after 4 KiB: rc=1 stderr=522B 'Traceback (most recent call last):\n  File "/fast/scratch/hyaku/mado-r43/SentReDoS/bin/mado-geometry.py", line 417, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File "/fast/scratch/hyaku/mado-r43/SentReDoS/bin/mado-geometry.py", line 410, in main\n    return run(sys.argv[1:], sys.stdin.buffe'
+  via '| head -c 100': bash rc=0 stderr='Traceback (most recent call last):\n  File "/fast/scratch/hyaku/mado-r43/SentReDoS/bin/mado-geometry.py", line 417, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File "/fast/scratch/hyaku/mado-r43/SentReDoS/bin/mado-geometry.py", line 410, in main\n    return run(sys.argv[1:], sys.stdin.buffe'
+
+########## M. rules sources: binary / other files (decode errors replaced)
+  rules=/fast/scratch/hyaku/mado-r43/SentReDoS/bin/mado-geometry.py rc=4 0.015s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 m
+  rules=/bin/ls                rc=4 0.015s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 m
+  rules=/etc/passwd            rc=4 0.014s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 m
+  rules=/proc/self/maps        rc=4 0.014s MADO_GEOMETRY: rules=0 float_rules=0 other=0 unsupported=0 clients=0 m
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/mado-r43/SentReDoS/probe4.py", line 75, in <module>
+    rxs = ast.literal_eval(node.value)
+  File "/usr/lib/python3.14/ast.py", line 106, in literal_eval
+    return _convert(node_or_string)
+  File "/usr/lib/python3.14/ast.py", line 86, in _convert
+    return list(map(_convert, node.elts))
+  File "/usr/lib/python3.14/ast.py", line 105, in _convert
+    return _convert_signed_num(node)
+  File "/usr/lib/python3.14/ast.py", line 79, in _convert_signed_num
+    return _convert_num(node)
+  File "/usr/lib/python3.14/ast.py", line 70, in _convert_num
+    _raise_malformed_node(node)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/ast.py", line 67, in _raise_malformed_node
+    raise ValueError(msg + f': {node!r}')
+ValueError: malformed node or string on line 650: BinOp(left=Constant(value='a', kind=None), op=Mult(), right=Constant(value=200, kind=None))
+########## N. mitigation compatibility with the counter's regex0 list (54 entries)
+  classifications identical on 54/54 regex0 entries
+  differences: []
+  supported today: 21 of 54
+  R2 verdicts on attack patterns: {'(a+)+$': 'nested-quantifier', '(a|aa)+$': 'overlapping-alternation', '(a*)*b': 'nested-quantifier', '.*.*.*b': 'stacked-wildcard', '.*.*.*.*b': 'stacked-wildcard', '(a|b)+$': None, '(a|ab)(c|d)': None, 'xxxxx|yyyyy': None, '^(org.omarchy.gkeep)$': None}
+  selftest assertions under R2: {'^(a|b)+\\.c$': (True, True), 'a{2}': (False, False), '[ab]': (False, False), 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa': (False, False), 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa': (True, True), '': (False, False), '\\d': (False, False)}
+
+########## O. match budget vs fixtures
+  many0: pairs=20000*300=6.0e6 chars=6.0e6 sum=1.2e7  (budget 5e7 -> fits)
+  13 clients x 40000B x 12000 rules: pairs=1.56e5 chars=6.24e9 sum>5e7 -> rejected (measured 99.3s)

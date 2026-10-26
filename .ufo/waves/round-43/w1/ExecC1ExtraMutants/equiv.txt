@@ -1,0 +1,28 @@
+== A. report()-level differential fuzz (ref vs mutant, identical (lines, rc) or Setup reason)
+  fuzz N08-matchfield-star        cases=2546 identical=2546 differ=0
+  fuzz N09-split-maxsplit         cases=2546 identical=2546 differ=0
+  fuzz N19-rule-line-caret        cases=2546 identical=2546 differ=0
+  fuzz N22-size-gt-minus1         cases=2546 identical=2546 differ=0
+  fuzz N23-size-type-is-int       cases=2546 identical=2546 differ=0
+  fuzz N34-differ-and-matched     cases=2546 identical=2546 differ=0
+  fuzz N46-doc-tuple              cases=2546 identical=2546 differ=0
+  fuzz N49-json-decode-strict     cases=2546 identical=2546 differ=0
+  fuzz N52-size-truthiness        cases=2546 identical=2546 differ=0
+  fuzz N53-fullmatch-dotall       cases=2546 identical=2546 differ=0
+
+== B. single-region check: each mutant differs from the reference in exactly one contiguous hunk
+  N08-matchfield-star        hunks=1 removed=1 added=1  -MATCH_FIELD = re.compile(r"match:class[ \t]+(.+)") -> +MATCH_FIELD = re.compile(r"match:class[ \t]+(.*)")
+  N09-split-maxsplit         hunks=1 removed=1 added=1  -        fields = [f.strip(" \t") for f in body.split(",")] -> +        fields = [f.strip(" \t") for f in body.split(",", 1)]
+  N19-rule-line-caret        hunks=1 removed=1 added=1  -RULE_LINE = re.compile(r"windowrule[ \t]*=(.*)") -> +RULE_LINE = re.compile(r"^windowrule[ \t]*=(.*)")
+  N22-size-gt-minus1         hunks=1 removed=1 added=1  -            isinstance(v, int) and not isinstance(v, bool) and v >= 0 -> +            isinstance(v, int) and not isinstance(v, bool) and v > -1
+  N23-size-type-is-int       hunks=1 removed=1 added=1  -            isinstance(v, int) and not isinstance(v, bool) and v >= 0 -> +            type(v) is int and v >= 0 for v in s):
+  N34-differ-and-matched     hunks=1 removed=1 added=1  -    elif t["differ"] > 0: -> +    elif t["differ"] > 0 and t["matched"] > 0:
+  N46-doc-tuple              hunks=1 removed=1 added=1  -    if not isinstance(doc, list) or not all(isinstance(c, dict) for c -> +    if not isinstance(doc, (list, tuple)) or not all(isinstance(c, di
+  N49-json-decode-strict     hunks=1 removed=1 added=1  -        doc = json.loads(data.decode("utf-8")) -> +        doc = json.loads(data.decode("utf-8", "strict"))
+  N52-size-truthiness        hunks=1 removed=1 added=1  -            "%dx%d" % size if size else "-", want[0], want[1], frule, -> +            "%dx%d" % size if size is not None else "-", want[0], wan
+  N53-fullmatch-dotall       hunks=1 removed=1 added=1  -    return re.fullmatch(rx, cls) is not None -> +    return re.fullmatch(rx, cls, re.DOTALL) is not None
+  N01-stdin-read-plus2       hunks=1 removed=1 added=1  -        data = stdin.read(MAX_BYTES + 1) -> +        data = stdin.read(MAX_BYTES + 2)
+  N48-rules-decode-ignore    hunks=1 removed=1 added=1  -    texts = [read_regular(p).decode("utf-8", "replace") for p in rule -> +    texts = [read_regular(p).decode("utf-8", "ignore") for p in rules
+  N51-close-fd-pass          hunks=1 removed=1 added=1  -        os.close(fd) -> +        pass
+  N54-read-chunk-cap         hunks=1 removed=1 added=1  -            chunk = os.read(fd, MAX_BYTES + 1 - len(data)) -> +            chunk = os.read(fd, MAX_BYTES)
+  N68-stdout-print           hunks=1 removed=1 added=1  -    sys.stdout.write("\n".join(lines) + "\n") -> +    print("\n".join(lines))

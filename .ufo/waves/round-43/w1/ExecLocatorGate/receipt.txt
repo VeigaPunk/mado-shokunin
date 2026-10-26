@@ -1,0 +1,400 @@
+# ExecLocatorGate — check-locators.py receipt
+# date: 2026-10-26T04:28:30-03:00  seat: .ufo/waves/round-43/w1/ExecLocatorGate
+# lane base: a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f (round-42 tip)
+$ sha256sum check-locators.py
+c1ea52ad5db21fdf81022d0425e7cad42fc3e34dd5083915b127a46ab948a27e  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py
+
+$ python3 -I --version
+Python 3.14.8
+
+$ sha256sum .ufo/waves/round-42/fetch/Hyprland-HyprCtl.cpp .ufo/waves/round-42/fetch/Hyprland-RegexMatchEngine.cpp
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch/Hyprland-HyprCtl.cpp
+8ca655336cd111df1136be76bbdf91bd6830e7e8891df4bb8c766f1e55a3a282  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch/Hyprland-RegexMatchEngine.cpp
+
+## 0 — the true locators, derived from the pinned receipt itself
+$ grep -n GEOMETRIC_GOAL .ufo/waves/round-42/fetch/Hyprland-HyprCtl.cpp
+426:            (w->acceptsInput() ? "true" : "false"), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+427:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x),
+428:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y), w->m_workspace ? w->workspaceID() : WORKSPACE_INVALID,
+447:            sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->position(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+448:            sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).x), sc<int>(w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL).y),
+
+$ grep -n "FullMatch\|negative" .ufo/waves/round-42/fetch/Hyprland-RegexMatchEngine.cpp
+7:    if (regex.starts_with("negative:")) {
+8:        m_negative = true;
+16:    return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+
+$ sed -n "392,396p;410,414p" .ufo/waves/round-42/fetch/Hyprland-HyprCtl.cpp   # the round-42 cited lines
+    "visible": {},
+    "acceptsInput": {},
+    "at": [{}, {}],
+    "size": [{}, {}],
+    "workspace": {{
+    "fullscreen": {},
+    "fullscreenClient": {},
+    "fullscreenHandler": "{}",
+    "allowedOverFullscreen": {},
+    "grouped": [{}],
+
+## 0b — the round-42 prose bytes (base revision, verbatim; sha256 == git blob)
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f:LOG.md | sha256sum
+f6c27a3650c7bf4b7f95688978b2979d2c9a39f262686525352c63ae8bc416e2  -
+$ sha256sum .ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+f6c27a3650c7bf4b7f95688978b2979d2c9a39f262686525352c63ae8bc416e2  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+
+$ sed -n "2483p" .ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+- Facts opened this round from the pinned v0.56.2 sources (not yet registry rows or entries): the rule match engine is `re2::RE2::FullMatch` (anchored, `negative:` prefix); `static_.size` is an expression consumed in the floating branch; `hyprctl clients -j` `size` is `w->size(GEOMETRIC_GOAL)` - the animation goal, not the current value (`Hyprland-HyprCtl.cpp:394-395,412-413`).
+
+$ sed -n "61p" .ufo/waves/round-42/registration.md
+`w->size(GEOMETRIC_GOAL)` — the animation goal, not the current value (`Hyprland-HyprCtl.cpp:394-395,412-413`); the gkeep rule file declares float/center/size 420 500.
+
+## 1 — selftest (fixture table + teeth)
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --selftest
+SELFTEST: cases=18 passed=18 locators=19 miss=6
+SELFTEST: teeth flipped_table_broken=yes flips=11 ok_to_miss=4 miss_to_ok=5
+SELFTEST: PASS
+[exit=0]
+
+## 2 — round-42 LOG bytes at the base: the mistake must MISS
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS
+CHECK_LOCATORS: locators=1 miss=1
+[exit=1]
+
+## 3 — corrected copy of the same LOG line: must be OK
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:2483 Hyprland-HyprCtl.cpp:427-428,448 fragments=6 supported=2 verdict=OK
+CHECK_LOCATORS: locators=1 miss=0
+[exit=0]
+
+## 4 — round-42 registration.md (frozen, round-42 bytes, read-only): must MISS
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/registration.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/registration.md:61 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=1 supported=0 verdict=MISS
+CHECK_LOCATORS: locators=1 miss=1
+[exit=1]
+
+## 5 — corrected copy of that line: must be OK
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/registration-r42-corrected.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/registration-r42-corrected.md:61 Hyprland-HyprCtl.cpp:427-428,448 fragments=1 supported=1 verdict=OK
+CHECK_LOCATORS: locators=1 miss=0
+[exit=0]
+
+## 6 — attribution (--explain) for runs 2, 3 and 4
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --explain --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:20 config.jsonc:2 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:38 hyprland.conf:29 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:49 PROTOCOL.md:419-428 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:267 PROTOCOL.md:419-431 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:374 SKILL.md:1314 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:449 LOG.md:383-388 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:715 arc-synthesis.md:300 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:731 MISSION.md:79 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1074 corpus/lessons/round-14-verifier-spotcheck.md:169 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1276 MadoR15.LibinputEvents.jsonl:54 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1661 SKILL.md:631-636 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1662 SKILL.md:630-635 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1886 SCORECARD.md:2014 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:1900 corpus/SOURCES.md:198-202 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:2066 count.py:174 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:2294 Logger.cpp:47 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:2410 c2-r38-request-ground.py:198 reason=unresolved-name
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 're2::RE2::FullMatch' tokens=FullMatch,RE2,re2 supported=no
+  FRAG 'negative:' tokens=negative supported=no
+  FRAG 'static_.size' tokens=size,static_ supported=no
+  FRAG 'hyprctl clients -j' tokens=clients,hyprctl supported=no
+  FRAG 'size' tokens=size supported=yes
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=no
+CHECK_LOCATORS: locators=1 miss=1
+[exit=1]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --explain --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:20 config.jsonc:2 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:38 hyprland.conf:29 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:49 PROTOCOL.md:419-428 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:267 PROTOCOL.md:419-431 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:374 SKILL.md:1314 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:449 LOG.md:383-388 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:715 arc-synthesis.md:300 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:731 MISSION.md:79 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1074 corpus/lessons/round-14-verifier-spotcheck.md:169 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1276 MadoR15.LibinputEvents.jsonl:54 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1661 SKILL.md:631-636 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1662 SKILL.md:630-635 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1886 SCORECARD.md:2014 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:1900 corpus/SOURCES.md:198-202 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:2066 count.py:174 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:2294 Logger.cpp:47 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:2410 c2-r38-request-ground.py:198 reason=unresolved-name
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-corrected.md:2483 Hyprland-HyprCtl.cpp:427-428,448 fragments=6 supported=2 verdict=OK
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 're2::RE2::FullMatch' tokens=FullMatch,RE2,re2 supported=no
+  FRAG 'negative:' tokens=negative supported=no
+  FRAG 'static_.size' tokens=size,static_ supported=no
+  FRAG 'hyprctl clients -j' tokens=clients,hyprctl supported=no
+  FRAG 'size' tokens=size supported=yes
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=yes
+CHECK_LOCATORS: locators=1 miss=0
+[exit=0]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --explain --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/registration.md
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/registration.md:61 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=1 supported=0 verdict=MISS
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=no
+CHECK_LOCATORS: locators=1 miss=1
+[exit=1]
+
+## 7 — every corpus/knowledge/*.md at the base, one run per entry
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree --name-only a35cfdfcdeb3bd42d1a2cd960faf22ceac1bef3f corpus/knowledge/ | wc -l  # then per-entry extraction
+59
+$ manifest verify: re-hash every git blob named in knowledge-base-manifest.txt
+manifest-verify: entries=59 mismatched=0
+
+animation-table-r26.md CHECK_LOCATORS: locators=0 miss=0
+arc-synthesis.md CHECK_LOCATORS: locators=0 miss=0
+bind-table-r25.md CHECK_LOCATORS: locators=0 miss=0
+closeout-r11.md CHECK_LOCATORS: locators=0 miss=0
+config-drift-r12.md CHECK_LOCATORS: locators=0 miss=0
+config-health-report-r3.md CHECK_LOCATORS: locators=0 miss=0
+config-option-table-r39.md CHECK_LOCATORS: locators=0 miss=0
+dispatcher-semantics-r25.md CHECK_LOCATORS: locators=0 miss=0
+dispatcher-surface-and-request-grammar-r26.md CHECK_LOCATORS: locators=0 miss=0
+event-delivery-limits-r26.md CHECK_LOCATORS: locators=0 miss=0
+event-queue-observability-r37.md CHECK_LOCATORS: locators=0 miss=0
+executor-test-sufficiency.md CHECK_LOCATORS: locators=0 miss=0
+gate-mutation-proof.md CHECK_LOCATORS: locators=0 miss=0
+gate-mutation-sweep-r8.md CHECK_LOCATORS: locators=0 miss=0
+gate-standing-use.md CHECK_LOCATORS: locators=0 miss=0
+host-bar-producer-census-r40.md CHECK_LOCATORS: locators=0 miss=0
+hyprctl-flags-r28.md CHECK_LOCATORS: locators=0 miss=0
+hyprctl-getoption-native-forms-r40.md CHECK_LOCATORS: locators=0 miss=0
+hyprctl-verification-layer.md CHECK_LOCATORS: locators=0 miss=0
+hyprland-config-era-r12.md CHECK_LOCATORS: locators=0 miss=0
+hyprland-config-plane.md CHECK_LOCATORS: locators=0 miss=0
+hyprland-focus-grab-r41.md CHECK_LOCATORS: locators=0 miss=0
+idle-lock-chain-armed-r14.md CHECK_LOCATORS: locators=0 miss=0
+idle-lock-never-asked-r12.md CHECK_LOCATORS: locators=0 miss=0
+idle-lock-offered-in-the-bar-r15.md CHECK_LOCATORS: locators=0 miss=0
+idle-lock-plane.md CHECK_LOCATORS: locators=0 miss=0
+idle-lock-route-r17.md CHECK_LOCATORS: locators=0 miss=0
+input-debugging-boundaries-r15.md CHECK_LOCATORS: locators=0 miss=0
+ipc-contract-r25.md CHECK_LOCATORS: locators=0 miss=0
+keybind-rule-semantics.md CHECK_LOCATORS: locators=0 miss=0
+mutation-testing-r28.md CHECK_LOCATORS: locators=0 miss=0
+omarchy-drift-watch.md CHECK_LOCATORS: locators=0 miss=0
+output-colour-boundaries-r14.md CHECK_LOCATORS: locators=0 miss=0
+province-accuracy-selfaudit.md CHECK_LOCATORS: locators=0 miss=0
+remaining-planes-census.md CHECK_LOCATORS: locators=0 miss=0
+request-limits-upstream-r31.md CHECK_LOCATORS: locators=0 miss=0
+request-socket-live-bound-r8.md CHECK_LOCATORS: locators=0 miss=0
+rule-attribution-r24.md CHECK_LOCATORS: locators=0 miss=0
+snapshot-diff-receipt-r9.md CHECK_LOCATORS: locators=0 miss=0
+terminal-route-r17.md CHECK_LOCATORS: locators=0 miss=0
+terminals-and-omarchy.md CHECK_LOCATORS: locators=0 miss=0
+terminal-trees-r23.md CHECK_LOCATORS: locators=0 miss=0
+theme-route-r18.md CHECK_LOCATORS: locators=0 miss=0
+theme-wallpaper-plane.md CHECK_LOCATORS: locators=0 miss=0
+tripwire-binding-boundaries-r21.md CHECK_LOCATORS: locators=0 miss=0
+tripwire-lifetime-recovery-r22.md CHECK_LOCATORS: locators=0 miss=0
+tripwire-precision-r20.md CHECK_LOCATORS: locators=0 miss=0
+walker-deep.md CHECK_LOCATORS: locators=0 miss=0
+walker-deep-r9.md CHECK_LOCATORS: locators=0 miss=0
+walker-live-surface.md CHECK_LOCATORS: locators=0 miss=0
+walker-route-r18.md CHECK_LOCATORS: locators=0 miss=0
+waybar-module-text-route-r25.md CHECK_LOCATORS: locators=0 miss=0
+waybar-observation-boundaries-r16.md CHECK_LOCATORS: locators=0 miss=0
+waybar-walker-plane.md CHECK_LOCATORS: locators=0 miss=0
+waybar-walker-semantics.md CHECK_LOCATORS: locators=0 miss=0
+wayland-protocol-boundaries-r13.md CHECK_LOCATORS: locators=0 miss=0
+window-rule-effects-getprop.md CHECK_LOCATORS: locators=0 miss=0
+workspace-rules-r27.md CHECK_LOCATORS: locators=0 miss=0
+xdg-portal-routing-r12.md CHECK_LOCATORS: locators=0 miss=0
+summary: entries=59 zero-locator=59 total-locators=0 total-miss=0
+
+## 8 — every corpus/lessons/*.md at the base (round-42 closure included)
+round-10.md CHECK_LOCATORS: locators=0 miss=0
+round-12.md CHECK_LOCATORS: locators=0 miss=0
+round-12-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-13.md CHECK_LOCATORS: locators=0 miss=0
+round-13-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-14.md CHECK_LOCATORS: locators=0 miss=0
+round-14-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-15.md CHECK_LOCATORS: locators=0 miss=0
+round-15-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-16.md CHECK_LOCATORS: locators=0 miss=0
+round-16-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-17.md CHECK_LOCATORS: locators=0 miss=0
+round-17-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-18.md CHECK_LOCATORS: locators=0 miss=0
+round-18-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-19.md CHECK_LOCATORS: locators=0 miss=0
+round-19-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-1.md CHECK_LOCATORS: locators=0 miss=0
+round-20.md CHECK_LOCATORS: locators=0 miss=0
+round-20-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-21.md CHECK_LOCATORS: locators=0 miss=0
+round-22.md CHECK_LOCATORS: locators=0 miss=0
+round-23.md CHECK_LOCATORS: locators=0 miss=0
+round-23-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-24.md CHECK_LOCATORS: locators=0 miss=0
+round-24-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-25.md CHECK_LOCATORS: locators=0 miss=0
+round-25-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-26.md CHECK_LOCATORS: locators=0 miss=0
+round-26-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-27.md CHECK_LOCATORS: locators=0 miss=0
+round-27-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-28.md CHECK_LOCATORS: locators=0 miss=0
+round-28-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-29.md CHECK_LOCATORS: locators=0 miss=0
+round-29-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-30.md CHECK_LOCATORS: locators=0 miss=0
+round-30-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-31-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-32.md CHECK_LOCATORS: locators=0 miss=0
+round-32-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-33.md CHECK_LOCATORS: locators=0 miss=0
+round-33-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-34.md CHECK_LOCATORS: locators=0 miss=0
+round-34-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-35.md CHECK_LOCATORS: locators=0 miss=0
+round-35-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-36.md CHECK_LOCATORS: locators=0 miss=0
+round-36-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-37.md CHECK_LOCATORS: locators=0 miss=0
+round-37-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-38.md CHECK_LOCATORS: locators=0 miss=0
+round-38-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-39.md CHECK_LOCATORS: locators=0 miss=0
+round-39-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-40.md CHECK_LOCATORS: locators=0 miss=0
+round-40-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-41.md CHECK_LOCATORS: locators=0 miss=0
+round-41-verifier-spotcheck.md CHECK_LOCATORS: locators=0 miss=0
+round-42-verifier-spotcheck.md CHECK_LOCATORS: locators=2 miss=1
+summary: lessons=60 zero-locator=59 with-locators=1
+
+$ sha256sum (seat copy and git blob of the round-42 closure lesson)
+118765c2b74f95b7d9320cd81445699b97350a3a2888d58a53b47f78649ce7e3  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md
+118765c2b74f95b7d9320cd81445699b97350a3a2888d58a53b47f78649ce7e3  -
+
+# the round-42 closure lesson in full (--explain): line-wrapped prose
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --explain --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:64 RegexMatchEngine.cpp:16 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:64 HyprCtl.cpp:427-428 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:65 ctl/run-c1-controls.py:72-73 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:66 registration.md:24 reason=unresolved-name
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:83 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=0 supported=0 verdict=NOFRAG
+  ATTR -
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:84 Hyprland-RegexMatchEngine.cpp:10-16 fragments=3 supported=1 verdict=MISS
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=no
+  FRAG 'negative:' tokens=negative supported=no
+  FRAG 'FullMatch' tokens=FullMatch supported=yes
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:86 run-c1-controls.py:139 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/lesson-r42-closure-a35cfdf.md:90 PROVINCE.md:75-76 reason=unresolved-name
+CHECK_LOCATORS: locators=2 miss=1
+[exit=1]
+
+## 9 — frozen round-43 registration.md against the round-43 fetch dir
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/registration.md
+CHECK_LOCATORS: locators=0 miss=0
+[exit=0]
+
+## 10 — usage errors exit 2
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py
+usage error: --fetch DIR is required
+[exit=2]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch
+usage error: at least one prose file is required
+[exit=2]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /nonexistent /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-a35cfdf.md
+usage error: --fetch /nonexistent is not a directory
+[exit=2]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch /nonexistent-prose.md
+usage error: prose file /nonexistent-prose.md does not exist
+[exit=2]
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --selftest --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-42/fetch
+usage: --selftest takes no other arguments
+[exit=2]
+
+## 11 — the working-tree LOG.md at run time (another seat is appending the round-43 entry)
+$ sha256sum LOG.md   # working tree, not the base blob
+c1cf804bca3f3f3d9f03958df7eaf49a8c6614ab603bd482e547264f17d20afb  /home/vgpnk/Projects/shokunin/mado-shokunin/LOG.md
+$ sha256sum .ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md
+c1cf804bca3f3f3d9f03958df7eaf49a8c6614ab603bd482e547264f17d20afb  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin diff LOG.md | grep "^+"   # the appended round-43 correction line
++++ w/LOG.md
++
++## Round 43, attempt 1 - the gkeep geometry round re-run: C1 operability (tools/mado-geometry.py) and C2 coverage (hyprland-gkeep-geometry-r43.md) (2026-10-26)
++
++- Locator correction for the Round 42 entry above (closure `corpus/lessons/round-42-verifier-spotcheck.md` §6.2; the Round 42 text is left as written): `w->size(GEOMETRIC_GOAL)` is at `Hyprland-HyprCtl.cpp:427-428` (the `clients -j` object) and `:448` (the second formatter), not `:394-395,412-413`; the `negative:` prefix is at `Hyprland-RegexMatchEngine.cpp:7-8` and `RE2::FullMatch` at `:16`, not `:10-16`. Computed with `grep -n 'GEOMETRIC_GOAL' .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp` and `grep -n 'negative\|FullMatch' .ufo/waves/round-43/fetch/Hyprland-RegexMatchEngine.cpp` (the round-43 pins are byte-identical to the round-42 ones, `receipts/fetch-sha256.txt`).
++- Freeze `b2e2efd6e268920d31f3c32cf52dc097dd6e1d22`: registration `.ufo/waves/round-43/registration.md`; C1 re-registered unchanged (`PRED-C1-r42`, counter frozen at `809dc2c`), C2 with round constants only (`quality/counters/c2-r43-gkeep-entry.py`, `PRED-C2-r43`); pins re-fetched 2026-10-26 (seven Hyprland files byte-identical to round 42; `host-clients-r43.json` re-captured; `gkeep-ui-excerpt.py` regenerated with `sed -n '446,$p'` because the round-42 excerpt's header claimed lines 446-495 of a 488-line file and carried one extra blank line). Controls at the round-43 base: `CTL_C1 controls=46` (REF and BASE-absent are anchors; `0 of 47` non-reference runs reach MET), `CTL_C2 controls=74 correct=74/74`. Before: C1 `fixtures=0/37 tool=absent TARGET_MISSED`, C2 `admitted=0/1 TARGET_MISSED`; census `mado ok` exit 0; axes `MADO_AXIS checked=3 mismatched=0`.
++- Wave `w1` spec/dispatch `5add5b45a65ddaa18fad00c6afa9dbfda29ee0b0`: 38 seats (executor 14, scribe 7, critic 4, scout 3, connector 3, reviewer 3, mutation-tester 2, simplifier 1, sentinel 1); the registration's planned 37 became 38 after the spec builder showed the attack share at 9/37 (24 %), so one critic (`CritClaimSizing`) was added before the handoff; the frozen registration text was not edited.
++- SHONEN box 2 receipt (closure §6.4): `.ufo/waves/round-43/receipts/live-geometry-host.txt` - the tool on the live host, `verdict=NO_MATCHING_CLIENT`, exit 3, 4 clients, no gkeep window.
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/check-locators.py --explain --fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/fetch /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:20 config.jsonc:2 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:38 hyprland.conf:29 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:49 PROTOCOL.md:419-428 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:267 PROTOCOL.md:419-431 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:374 SKILL.md:1314 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:449 LOG.md:383-388 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:715 arc-synthesis.md:300 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:731 MISSION.md:79 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1074 corpus/lessons/round-14-verifier-spotcheck.md:169 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1276 MadoR15.LibinputEvents.jsonl:54 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1661 SKILL.md:631-636 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1662 SKILL.md:630-635 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1886 SCORECARD.md:2014 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:1900 corpus/SOURCES.md:198-202 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2066 count.py:174 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2294 Logger.cpp:47 reason=unresolved-name
+SKIP /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2410 c2-r38-request-ground.py:198 reason=unresolved-name
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2483 Hyprland-HyprCtl.cpp:394-395,412-413 fragments=6 supported=1 verdict=MISS
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 're2::RE2::FullMatch' tokens=FullMatch,RE2,re2 supported=no
+  FRAG 'negative:' tokens=negative supported=no
+  FRAG 'static_.size' tokens=size,static_ supported=no
+  FRAG 'hyprctl clients -j' tokens=clients,hyprctl supported=no
+  FRAG 'size' tokens=size supported=yes
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=no
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2487 Hyprland-HyprCtl.cpp:427-428 fragments=8 supported=1 verdict=OK
+  ATTR 'w->size(GEOMETRIC_GOAL)'
+  FRAG 'corpus/lessons/round-42-verifier-spotcheck.md' tokens=corpus,lessons,round,spotcheck,verifier supported=no
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=yes
+  FRAG 'clients -j' tokens=clients supported=no
+  FRAG 'negative:' tokens=negative supported=no
+  FRAG 'RE2::FullMatch' tokens=FullMatch,RE2 supported=no
+  FRAG "grep -n 'GEOMETRIC_GOAL' .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp" tokens=GEOMETRIC_GOAL,HyprCtl,Hyprland,cpp,fetch,grep,round,ufo,waves supported=no
+  FRAG "grep -n 'negative\\|FullMatch' .ufo/waves/round-43/fetch/Hyprland-RegexMatchEngine.cpp" tokens=FullMatch,Hyprland,RegexMatchEngine,cpp,fetch,grep,negative,round,ufo,waves supported=no
+  FRAG 'receipts/fetch-sha256.txt' tokens=fetch,receipts,sha256,txt supported=no
+LOC /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-43/w1/ExecLocatorGate/LOG-worktree-at-run.md:2487 Hyprland-RegexMatchEngine.cpp:7-8 fragments=8 supported=1 verdict=OK
+  ATTR 'negative:'
+  FRAG 'corpus/lessons/round-42-verifier-spotcheck.md' tokens=corpus,lessons,round,spotcheck,verifier supported=no
+  FRAG 'w->size(GEOMETRIC_GOAL)' tokens=GEOMETRIC_GOAL,size supported=no
+  FRAG 'clients -j' tokens=clients supported=no
+  FRAG 'negative:' tokens=negative supported=yes
+  FRAG 'RE2::FullMatch' tokens=FullMatch,RE2 supported=no
+  FRAG "grep -n 'GEOMETRIC_GOAL' .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp" tokens=GEOMETRIC_GOAL,HyprCtl,Hyprland,cpp,fetch,grep,round,ufo,waves supported=no
+  FRAG "grep -n 'negative\\|FullMatch' .ufo/waves/round-43/fetch/Hyprland-RegexMatchEngine.cpp" tokens=FullMatch,Hyprland,RegexMatchEngine,cpp,fetch,grep,negative,round,ufo,waves supported=no
+  FRAG 'receipts/fetch-sha256.txt' tokens=fetch,receipts,sha256,txt supported=no
+CHECK_LOCATORS: locators=3 miss=1
+[exit=1]
+
+## 12 — stdlib only (no third-party import), runs under -I
+$ grep -nE "^(import|from) " check-locators.py
+45:import argparse
+46:import contextlib
+47:import io
+48:import os
+49:import re
+50:import shutil
+51:import sys
+52:import tempfile
