@@ -1,0 +1,5 @@
+$ timeout 5 python3 -I -c 'import sys; sys.stdin.buffer.read(10)' 0<&- ; echo rc=$?
+rc=124   # read() on the stdin object BLOCKS past 5 s when fd 0 is closed
+         # (fd0 becomes a blocking char device, mode 0o20620, per os.fstat(0))
+$ python3 -I mado-monitors.py --monitors - --config ok.conf 0<&-
+NO OUTPUT, killed at 60 s wall (bash job bg_9679) - tool blocks indefinitely, no SETUP line

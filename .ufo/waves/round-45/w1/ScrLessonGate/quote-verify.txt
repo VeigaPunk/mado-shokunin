@@ -1,0 +1,76 @@
+PINS table vs fetch/ bytes and sizes
+  Hyprland-HyprCtl.cpp                        97582 B sha256=798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa pin_match=1
+  Hyprland-Monitor.cpp                       112738 B sha256=9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927 pin_match=1
+  Hyprland-MonitorPositionController.cpp       4369 B sha256=3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49 pin_match=1
+  Hyprland-MonitorRule.hpp                     3148 B sha256=b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5 pin_match=1
+  Hyprland-MonitorRuleManager.cpp             10962 B sha256=17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016 pin_match=1
+  Hyprland-Parser.cpp                         10308 B sha256=616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589 pin_match=1
+  Hyprland-legacy-ConfigManager.cpp           90963 B sha256=9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b pin_match=1
+  hyprutils-String.cpp                         2700 B sha256=a92c131a45f41918388eece78f225dbeab7791bb3cd2d3761d840aefa1527bac pin_match=1
+  wiki-Monitors.md                            10563 B sha256=f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9 pin_match=1
+
+Gate quotes (counter semantics: collapsed whitespace, word-bounded,
+comments stripped for the code check; distinct path/sha/quote)
+  S302 Hyprland-Parser.cpp                        words= 5 occurrences=1 line=134 code=1 distinct=1 OK
+      quote="m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));"
+  S303 Hyprland-legacy-ConfigManager.cpp          words= 3 occurrences=1 line=1345 code=1 distinct=1 OK
+      quote='parser.parseMode(std::string(ARGS[1])); parser.parsePosition(std::string(ARGS[2])); parser.parseScale(std::string(ARGS[3]));'
+  S304 Hyprland-MonitorRuleManager.cpp            words=10 occurrences=1 line=38 code=1 distinct=1 OK
+      quote='std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });'
+  S305 Hyprland-MonitorRule.hpp                   words= 4 occurrences=1 line=46 code=1 distinct=1 OK
+      quote='float m_refreshRate = 60;'
+  S306 Hyprland-Monitor.cpp                       words= 6 occurrences=1 line=1001 code=1 distinct=1 OK
+      quote='float searchScale = std::round(m_scale * 120.0);'
+  S307 Hyprland-HyprCtl.cpp                       words= 4 occurrences=1 line=241 code=1 distinct=1 OK
+      quote='"physicalHeight": {}, "refreshRate": {:.5f},'
+  S308 Hyprland-MonitorPositionController.cpp     words= 5 occurrences=1 line=27 code=1 distinct=1 OK
+      quote='m->moveTo(*POS); arranged.push_back(m); it = toArrange.erase(it);'
+  S309 hyprutils-String.cpp                       words= 9 occurrences=1 line=59 code=1 distinct=1 OK
+      quote="if (i == 0 && str.at(i) == '-') {"
+  S310 wiki-Monitors.md                           words= 6 occurrences=1 line=11 code=1 distinct=1 OK
+      quote='monitor = name, resolution, position, scale'
+
+cross-receipt containment (must be 0)
+  S302 foreign=0 []
+  S303 foreign=0 []
+  S304 foreign=0 []
+  S305 foreign=0 []
+  S306 foreign=0 []
+  S307 foreign=0 []
+  S308 foreign=0 []
+  S309 foreign=0 []
+  S310 foreign=0 []
+
+held-row reuse check (S158/S162 anchor cells, frozen at base)
+  S158 scope: `clients` JSON tags, `getprop` property response, `layers` output, registered rule-list commands
+  S158 anchor: src/debug/HyprCtl.cpp:346-484, 613-630, 647-723, 1463-1645, 2003-2044 @ efb50993780079460b0cbed1363e2166a2de1d9f, sha256:798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa, 97582 B
+  S162 scope: Hyprlang-era legacy windowrule keyword handlers, named special-category reconstruction, and reload traversal
+  S162 anchor: src/config/legacy/ConfigManager.cpp:419-451,590-623,893-968,2016-2093 @ efb50993780079460b0cbed1363e2166a2de1d9f, sha256:9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b, 90963 B
+  S158 anchor covers HyprCtl.cpp:242 -> 0
+  S158 anchor covers HyprCtl.cpp:313-321 -> 0
+  S162 anchor covers ConfigManager.cpp:1293-1387 -> 0
+
+new row scopes (cells 5) and held scopes must differ for clause e
+  S302 scope=How a monitor line's mode, position, scale and transform fields are parsed (host Hyprland 0.56.2)
+      anchor=Hyprland-Parser.cpp:110-143 parseMode, Hyprland-Parser.cpp:145-191 parsePosition, Hyprland-Parser.cpp:193-227 parseScale and parseTransform (receipt Hyprland-Parser.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 10308 B sha256:616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589; receipt .ufo/waves/round-45/fetch/Hyprland-Parser.cpp
+  S303 scope=The monitor line grammar of the hyprlang-era config: modifiers, positional fields and the key loop
+      anchor=Hyprland-legacy-ConfigManager.cpp:1293-1387 handleMonitor, Hyprland-legacy-ConfigManager.cpp:788-880 handleMonitorv2 (receipt Hyprland-legacy-ConfigManager.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 90963 B sha256:9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b; receipt .ufo/waves/round-45/fetch/Hyprland-legacy-ConfigManager.cpp
+  S304 scope=Which stored monitor rule an output receives
+      anchor=Hyprland-MonitorRuleManager.cpp:37-42 add, Hyprland-MonitorRuleManager.cpp:44-117 get (receipt Hyprland-MonitorRuleManager.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 10962 B sha256:17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorRuleManager.cpp
+  S305 scope=Default values of a parsed monitor rule
+      anchor=Hyprland-MonitorRule.hpp:41-69 class CMonitorRule fields (receipt Hyprland-MonitorRule.hpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 3148 B sha256:b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorRule.hpp
+  S306 scope=How a rule's mode and scale become the running mode and scale, and how selectors match
+      anchor=Hyprland-Monitor.cpp:719-1082 applyMonitorRule, Hyprland-Monitor.cpp:1201-1211 matchesStaticSelector, Hyprland-Monitor.cpp:250-256 descriptions (receipt Hyprland-Monitor.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 112738 B sha256:9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927; receipt .ufo/waves/round-45/fetch/Hyprland-Monitor.cpp
+  S307 scope=The monitors request and the JSON fields it prints for each output
+      anchor=Hyprland-HyprCtl.cpp:224-288 getMonitorData JSON, Hyprland-HyprCtl.cpp:313-345 monitorsRequest (receipt Hyprland-HyprCtl.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 97582 B sha256:798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa; receipt .ufo/waves/round-45/fetch/Hyprland-HyprCtl.cpp
+  S308 scope=Where explicit and auto monitor positions are placed
+      anchor=Hyprland-MonitorPositionController.cpp:16-38 explicit positions, Hyprland-MonitorPositionController.cpp:61-101 auto directions (receipt Hyprland-MonitorPositionController.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 4369 B sha256:3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorPositionController.cpp
+  S309 scope=The number test Hyprland's scale and transform parsers call (host hyprutils 0.14.2-1)
+      anchor=hyprutils-String.cpp:46-84 isNumber and isNumber2 (receipt hyprutils-String.cpp) @ tag v0.14.2, 2700 B sha256:a92c131a45f41918388eece78f225dbeab7791bb3cd2d3761d840aefa1527bac; receipt .ufo/waves/round-45/fetch/hyprutils-String.cpp
+  S310 scope=The documented monitor line format and options for the hyprlang config
+      anchor=wiki-Monitors.md:5-30 General, wiki-Monitors.md:240-260 colour keys, wiki-Monitors.md:290-310 Monitor v2 (receipt wiki-Monitors.md) @ commit ecc06f3b6605e453c0ad533d979fccbefff788ef (2026-04-20), 10563 B sha256:f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9; receipt .ufo/waves/round-45/fetch/wiki-Monitors.md
+
+S307 scope equals S158 scope -> 0
+S303 scope equals S162 scope -> 0
+
+ALL_QUOTES_OK=1

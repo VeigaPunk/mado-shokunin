@@ -1,0 +1,20 @@
+## privacy gate draft anchors: .ufo/waves/round-45/w1/ExecPrivacyGate/check-session-material.py (sha256 9abd5d548683a7699a2ffb48f2e8ab660c413464db797c4042f62baeea0fbd33)
+9:Input: a git repository and a revision. Every file under ``.ufo/`` tracked at
+11:``git cat-file --batch``); the working tree is never touched, so the gate can
+16:R1_CLIENT_DUMP   an element of ``hyprctl clients -j``: a JSON object that
+23:R2_PROC_TABLE    a socket-table row from ``ss -xpa`` / ``ss -p``: the pattern
+26:R3_MONITOR_IDENT an element of ``hyprctl monitors all -j``: a JSON object with
+29:R4_HOME_LISTING  more than ``--home-limit`` (default 10) *distinct* lines that
+37:    SESSION_MATERIAL: files=<n> findings=<n> rev=<hash>
+39:Exit status: 0 no findings, 1 findings, 2 usage or git error.
+46:``--selftest`` builds positive and negative fixtures in a throwaway git
+51:counts only — never a title, a program name, a serial, a description or a home
+54:16 MiB are scanned for R2/R4 only, and their object scan reports
+68:MAX_TEXT = 16 << 20
+361:    stream.write("SESSION_MATERIAL: files=%d findings=%d rev=%s\n" % (files, len(findings), sha))
+597:        re.fullmatch(r"SESSION_MATERIAL: files=%d findings=%d rev=[0-9a-f]{40}" % (files, len(findings)),
+## tracked at HEAD? (expect no output from ls-files)
+Did you forget to 'git add'?
+9
+## gate draft present but untracked
+?? .ufo/waves/round-45/w1/ExecPrivacyGate/

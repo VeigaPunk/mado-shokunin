@@ -1,0 +1,10 @@
+$ git ls-tree -r --name-only 0c89478a .ufo/waves/round-43 | grep -c clients
+9
+$ for f in w1/ExecLiveHost/host-clients-live.json w2/SentLiveRun/dump-now.json; git show 0c89478a:.ufo/waves/round-43/$f | grep -c "\"title\""
+w1/ExecLiveHost/host-clients-live.json: 4
+w2/SentLiveRun/dump-now.json: 4
+$ git show 0c89478a:.ufo/waves/round-43/fetch/host-clients-r43.json | python3 -c "import json,sys; print(sorted(json.load(sys.stdin)[0].keys()))"
+['address', 'at', 'class', 'floating', 'mapped', 'monitor', 'size']
+$ git show 0c89478a:.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json | python3 -c "keys per client + title values count"
+type list n 4
+keys 32

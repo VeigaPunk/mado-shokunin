@@ -1,0 +1,111 @@
+# the forged lines themselves (git diff of each commit against P); nothing else changed
+
+==== F1-quote-beside-claim  rev=ebfb6fdbd94ed3700c40361d0698cdc4c9de1ad2 ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..67c4ff44 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -51,5 +51,5 @@ Lane: mado-shokunin. Round: 45.
+ 
+-**OBS** S304 - adding a rule first erases every rule with the same selector string: `std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });` (Hyprland-MonitorRuleManager.cpp:38). The add function (Hyprland-MonitorRuleManager.cpp:37-42) then appends, so a re-added selector moves to the end of the list.
++**OBS** S304 - adding a rule first erases every rule with the same selector string: `std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });` (Hyprland-MonitorRuleManager.cpp:38). The add function (Hyprland-MonitorRuleManager.cpp:37-42) appends, and the stored order is the order rules are honoured in.
+ 
+-**OBS** The lookup walks the list in reverse and returns the first match, so the newest matching rule wins; with none it returns the first rule whose selector is empty, then a built-in default (preferred, auto, auto) (Hyprland-MonitorRuleManager.cpp:96-106). An output-management client's committed state overrides the chosen rule's fields before it is applied (Hyprland-MonitorRuleManager.cpp:45-84), so a running state that differs from the config can be a client's doing.
++**OBS** The lookup does not run in reverse: it takes the first match from the top of the list, so a rule written in an earlier config file wins over a later one, and an exact selector always loses to a `desc:` rule (Hyprland-MonitorRuleManager.cpp:96-106). An output-management client's committed state overrides the chosen rule's fields before it is applied (Hyprland-MonitorRuleManager.cpp:45-84), so a running state that differs from the config can be a client's doing.
+ 
+
+==== F2-table-overclaim  rev=7296f03f0f8c8cf282d93834b16eb3766c24dc23 ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..85f0af31 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -21,3 +21,3 @@ Lane: mado-shokunin. Round: 45.
+ | Which rule does an output get? | the rule list: one rule per selector string, searched newest first; else the first empty-selector rule; else a built-in default | OBS (source) |
+-| What does `WxH` without `@RATE` request? | the rule keeps its 60 Hz default, so the mode closest to 60 Hz at that size is chosen | OBS (source) + INF (mode choice not exercised) |
++| What does `WxH` without `@RATE` request? | the output's fastest mode at that size | OBS (verified on the host) |
+ | When does a requested mode count as met? | Hyprland's own closeness test: within 1 px and 1 Hz of the request | OBS (source) |
+@@ -26,3 +26,3 @@ Lane: mado-shokunin. Round: 45.
+ | Which extra keys does the line form accept? | eight keys; any other key rejects the whole line | OBS (source) |
+-| Does the documented `sdr_eotf` key work on a `monitor =` line? | the wiki documents it; the host's handler reads it only in `monitorv2` blocks | OBS (source, docs) + INF (rejection not exercised) |
++| Does the documented `sdr_eotf` key work on a `monitor =` line? | yes, on `monitor =` lines too | OBS (host) |
+ | Does the host's output run what its config declares? | one output, one rule, AGREE on every compared field | OBS (host, 2026-10-26) |
+
+==== F3-spaced-census-token  rev=66b3f0cd7236c8db9abeed6cbbd34bfd70d3845c ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..78ee5469 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -90 +90,3 @@ hyprland monitor-rule default_refresh=60 refresh_tolerance=1 scale_step=1/120 sc
+ - The JSON carries only the short description, so a `desc:` selector that matches only the long description cannot be checked from the dump.
++
++INF The census line above is narrower than the searched grid: scale_search = 44 steps and default_refresh : 45 Hz, so a scale written with two decimals may land a whole screen away.
+
+==== F4-census-in-words  rev=024ddc44ada50a3820441be60da2ae1738e7c22d ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..288fd569 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -90 +90,3 @@ hyprland monitor-rule default_refresh=60 refresh_tolerance=1 scale_step=1/120 sc
+ - The JSON carries only the short description, so a `desc:` selector that matches only the long description cannot be checked from the dump.
++
++INF The mode is accepted within two hertz of the request, the scale search walks ninety steps up and down, and the line takes nine key pairs.
+
+==== F5-registry-supersession  rev=2fdaf8f2f5edb4480cf44a3e46674f6230922cc4 ====
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 65de21f8..d07db9e9 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -252,3 +252,3 @@ recorded in `lessons/round-13.md` § Gate. Only `status`, `recheck` and
+ | S303 | Hyprland v0.56.2 legacy config manager - the monitor keyword handler - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp | code | A | The monitor line grammar of the hyprlang-era config: modifiers, positional fields and the key loop | Hyprland-legacy-ConfigManager.cpp:1293-1387 handleMonitor, Hyprland-legacy-ConfigManager.cpp:788-880 handleMonitorv2 (receipt Hyprland-legacy-ConfigManager.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 90963 B sha256:9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b; receipt .ufo/waves/round-45/fetch/Hyprland-legacy-ConfigManager.cpp | Eight keys follow the scale; any other key rejects the whole line before the rule is added | mined | 2026-10-26 | 90d | corpus/knowledge/hyprland-monitor-rule-r45.md |
+-| S304 | Hyprland v0.56.2 monitor rule manager - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/monitor/MonitorRuleManager.cpp | code | A | Which stored monitor rule an output receives | Hyprland-MonitorRuleManager.cpp:37-42 add, Hyprland-MonitorRuleManager.cpp:44-117 get (receipt Hyprland-MonitorRuleManager.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 10962 B sha256:17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorRuleManager.cpp | One rule per selector string; the newest matching rule wins, else the first empty-selector rule, else a built-in default | mined | 2026-10-26 | 90d | corpus/knowledge/hyprland-monitor-rule-r45.md |
++| S304 | Hyprland v0.56.2 monitor rule manager - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/monitor/MonitorRuleManager.cpp | code | A | Which stored monitor rule an output receives | Hyprland-MonitorRuleManager.cpp:37-42 add, Hyprland-MonitorRuleManager.cpp:44-117 get (receipt Hyprland-MonitorRuleManager.cpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 10962 B sha256:17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorRuleManager.cpp | Supersedes S158 and S162; the first matching rule in file order wins and later files cannot override it | mined | 2026-10-26 | 90d | corpus/knowledge/hyprland-monitor-rule-r45.md |
+ | S305 | Hyprland v0.56.2 monitor rule fields - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/monitor/MonitorRule.hpp | code | A | Default values of a parsed monitor rule | Hyprland-MonitorRule.hpp:41-69 class CMonitorRule fields (receipt Hyprland-MonitorRule.hpp) @ commit efb50993780079460b0cbed1363e2166a2de1d9f, 3148 B sha256:b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5; receipt .ufo/waves/round-45/fetch/Hyprland-MonitorRule.hpp | A rule without an explicit rate carries 60 Hz; scale -1 means auto; the offset sentinel means auto position | mined | 2026-10-26 | 90d | corpus/knowledge/hyprland-monitor-rule-r45.md |
+
+==== F6-fenced-smuggle  rev=7efa0fbe1b15e52bc097de4941086f49a451b793 ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..e1371dd7 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -90 +90,9 @@ hyprland monitor-rule default_refresh=60 refresh_tolerance=1 scale_step=1/120 sc
+ - The JSON carries only the short description, so a `desc:` selector that matches only the long description cannot be checked from the dump.
++
++```
++| question | answer |
++|---|---|
++| which stored rule wins | the first matching rule, so later files are ignored |
++| mode without @RATE | the output's fastest mode |
++| disabled outputs in monitors all | never listed |
++```
+
+==== F7-false-live-verdict  rev=147faa7ea9f3352ce756e993420af6717ac395e1 ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..d73797b9 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -81,3 +81,3 @@ hyprland monitor-rule default_refresh=60 refresh_tolerance=1 scale_step=1/120 sc
+ 
+-**OBS** `~/.config/hypr/monitors.conf` declares one rule, DP-1 at 3440x1440@100, position 0x0, scale 1; `hyprctl monitors all -j` reports DP-1 at 3440x1440, 99.99700 Hz, 0x0, scale 1, transform 0, not disabled, mirroring none; the round's tool reports AGREE and verdict OK, exit 0 (.ufo/waves/round-45/receipts/live-monitors-host-l1.txt). The 0.003 Hz gap is inside the 1 Hz closeness bound.
++**OBS** `~/.config/hypr/monitors.conf` declares one rule, DP-1 at 3440x1440@100, position 0x0, scale 1; `hyprctl monitors all -j` reports DP-1 at 3440x1440, 59.94000 Hz, 0x0, scale 1.25, transform 1, not disabled, mirroring none; the round's tool reports DIFFER on the refresh rate and verdict 1, exit 1 (.ufo/waves/round-45/receipts/live-monitors-host-l1.txt).
+ 
+
+==== F8-readme-index-row  rev=aeb7919e1d7ddf5e8827f0222fe293291bb771c3 ====
+diff --git a/corpus/README.md b/corpus/README.md
+index 742db23d..f22a4937 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -72,3 +72,3 @@ before reusing a live value. A new index row does not close a behavioral gap.
+ | `knowledge/hyprland-gkeep-size-request-r44.md` (MADO-R44-1, round 44; assimilation of the gkeep-theme residue, successor path to the held excerpt S297) | What happens after Hyprland sets the gkeep window's box: the compositor takes the real box and reports it (`CWindow::sendWindowSize` calls `realToReportSize`, `Hyprland-Window.cpp:1732` and `:1741`), hands it to the client as an xdg toplevel configure (`setSize` stores the pending size and calls `scheduleConfigure`, `Hyprland-XDGShell.cpp:354-357` and `:629-643`) or as an X11 configure (`Hyprland-Window.cpp:1751`), and queues the configure serial on its pending-size-ack list, cleared by `onAck` (`Hyprland-Window.cpp:1514-1521`); xdg-shell 1.49 calls the configure width and height "a hint to the window" that a client need only acknowledge (`xdg-shell.xml:1144-1165`, ack at `:1163`), GTK 4.24.1's Wayland toplevel applies the configured size through `gdk_wayland_toplevel_update_size` (`gdktoplevel-wayland.c:513-536`), and gkeep 133b867 declares `set_default_size(420, 500)` under `application_id="org.omarchy.gkeep"` with zero `set_size_request` calls (`gkeep-ui.py:449`, `:476`). No client was run and no socket was opened; the ack round-trip and the drawn size stay UNK. | S164, S298, S299, S300, S301 |
+-| `knowledge/hyprland-monitor-rule-r45.md` (MADO-R45-1, round 45) | draft | S302-S310 |
++| `knowledge/hyprland-monitor-rule-r45.md` (MADO-R45-1, round 45) | merged | S290-S310 (supersedes S290-S297) |
+ 
+
+==== F9-surface-sentence-inverted  rev=d0e10a087bceb31994487a2545127cc2c21ca4d0 ====
+diff --git a/corpus/knowledge/hyprland-monitor-rule-r45.md b/corpus/knowledge/hyprland-monitor-rule-r45.md
+index add6177c..d811ce49 100644
+--- a/corpus/knowledge/hyprland-monitor-rule-r45.md
++++ b/corpus/knowledge/hyprland-monitor-rule-r45.md
+@@ -59,3 +59,3 @@ Lane: mado-shokunin. Round: 45.
+ 
+-**OBS** For a requested `WxH@R` the available modes are sorted by closeness in width, then height, then rate, and when the best one is not within 1 px and 1 Hz of the request the requested mode is tried first as a custom mode (Hyprland-Monitor.cpp:819-840); `highrr`, `highres` and `maxwidth` sort by rate or size instead (Hyprland-Monitor.cpp:784-817).
++**OBS** For a requested `WxH@R` the modes are taken in the order the kernel reports them, and the best one is accepted when it is within 100 px and 10 Hz of the request; anything further away silently keeps the previous mode (Hyprland-Monitor.cpp:819-840); `highrr`, `highres` and `maxwidth` sort by rate or size instead (Hyprland-Monitor.cpp:784-817).
+ 

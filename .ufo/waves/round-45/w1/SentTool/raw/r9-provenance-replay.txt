@@ -1,0 +1,32 @@
+# SUPPORTS: receipts/live-monitors-host-l1.txt is honest and replayable - its tool sha256 is the reference's bytes, its config sha256 is the host file's, and its projected dump reproduces the recorded three lines
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   reference /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ sha256sum l1-draft/mado-monitors.py; sha256sum ~/.config/hypr/monitors.conf; (cd fetch && sha256sum -c ../receipts/fetch-sha256.txt); python3 -I l1-draft/mado-monitors.py --monitors projection.json --config ~/.config/hypr/monitors.conf
+reference: c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py
+receipt line 4 says: # tool sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+
+host config: ~/.config/hypr/monitors.conf  69c9d8996dfdcd6747775e984a479c53a520bd2ef193d337e171927fdf6795ee  (content not printed)
+receipt line 3 says: # config: ~/.config/hypr/monitors.conf sha256 69c9d8996dfdcd6747775e984a479c53a520bd2ef193d337e171927fdf6795ee
+
+fetch pins:
+Hyprland-HyprCtl.cpp: OK
+Hyprland-Monitor.cpp: OK
+Hyprland-MonitorPositionController.cpp: OK
+Hyprland-MonitorRule.hpp: OK
+Hyprland-MonitorRuleManager.cpp: OK
+Hyprland-Parser.cpp: OK
+Hyprland-legacy-ConfigManager.cpp: OK
+hyprutils-String.cpp: OK
+wiki-Monitors.md: OK
+
+replay from the receipt's own projected dump (155 B, fields name/width/height/refreshRate/x/y/scale/transform/disabled/mirrorOf; description and id dropped):
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+# exit=0
+
+# privacy: the receipt holds no serial, description, make/model, window title, process table or home listing;
+# the only host values are the output name, the numeric geometry and the two content hashes. The projection
+# reproduces the verdict here because no desc:/mirror rule is in play (a projection without 'id' could not
+# agree on a mirror rule) - so the replay claim is scoped to this case, not to the receipt in general.

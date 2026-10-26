@@ -1,0 +1,57 @@
+== ConnCalibration mismatches ==
+3:Seat: ConnCalibration. Task: count mismatches between SCORECARD.md Round 44 / SHONEN.md / the
+10:`git diff e4678921 290cddea -- <paths>` empty). Evidence copies: `receipts/` next to this report.
+13:- **4 content mismatches** (F1, F2, F5, F6), **1 stale-transcript defect** (F3),
+15:- SHONEN.md: no mismatch. Its four checklist items carry historical assertions, not round-44
+16:  numbers; all referenced paths exist (`corpus/knowledge/executor-test-sufficiency.md`,
+61:### F5 [MEDIUM] SCORECARD Round-44 and the lesson cite w1 evidence paths that are empty/absent at the data commit (they land only at the tip)
+63:- SCORECARD.md:2566: `after wave \`w1\` (38 seats) met both v1 predicates with cheats and forgeries (\`w1/CritC1Cheat.md\`, \`w1/CritC2Cheat.md\`, \`w1/CritClaimSizing.md\`, \`w1/RevC2Counter.md\`) and showed the v1 premise wording ("a false report") wrong (\`w1/CritFsPremise.md\`)`.
+66:- Observed: at e4678921, `git ls-tree -r --name-only e4678921 .ufo/waves/round-44/w1/` → **0 files** and `w1-results.json` is absent; the whole w1 tree (848 files incl. results, reports, handoff) first appears at 290cddea. The v2 freeze 03fa5c6 also has 0 w1 files (registration-v2's `w1-results.json` reference is likewise dangling at its own revision).
+70:### F6 [LOW] QUALITY 83's check command cites `.ufo/waves/round-44/w1/ScrQualityCriteria/check83.py`, absent at the data commit
+78:  `receipts/axis-tip.txt` absent (axis-data.txt present, 3 MATCH at e4678921). Consistent with the
+79:  fix's own plan (round-close commit after w2), so not counted as a mismatch.
+89:- Controls: `receipts/ctl-c1-v2.txt` `CTL_C1v2 VERDICT: PASS (controls scoring TARGET_MET: 0 of 20; reference met: 1)`; `receipts/ctl-c2-v2.txt` `CTL_C2v2 VERDICT: PASS (wrong=0 of 11; positive admitted=1)`; v1 `ctl-c1.txt:18` `0 of 15`, `:2` REF met; `ctl-c2.txt:5` `0 of 3`.
+93:- Pins: all 8 sha256 in `receipts/fetch-sha256.txt` match the pinned bytes; mode 100644; GATE quotes word-bounded, present at lines 1687/455/1150/681/475, absent from the other four pins (verified by script).
+96:- QUALITY.md criteria 82-84 exist; 82 quotes `DOMAIN_META: domain=12 meta=5 window=34-43 default=1`; `python3 -I quality/ratio-domain-meta.py --repo . --rev 03fa5c618b089064a657b3d79d3d4272ae4b6894 --from 34 --to 43` prints exactly that (re-run by this seat, exit 0); QUALITY 83 (check83.py path), 84 (FORGED-PIN) present. `quality/ratio-domain-meta.py` tracked at e4678921 (mode 100755).
+104:- `considerthese/2026-10-25.md` exists; w1 named evidence files exist at the tip (CritC1Cheat, CritC2Cheat, CritClaimSizing, RevC2Counter, CritFsPremise, ConnCrossClaim; absent at e4678921, see F5).
+--- head
+# ConnCalibration — wave w2 seat report (round 44)
+
+Seat: ConnCalibration. Task: count mismatches between SCORECARD.md Round 44 / SHONEN.md / the
+round-44 lesson's statements and observed repo state at the data commit
+e46789213830597348fe96a351ae004d10587385. Calibration: self-assessment vs repo state.
+
+Method: every checkable statement extracted from the three surfaces was verified with read-only
+commands at e4678921 (and at tip 290cddea where the claim names the tip; the tracked claim files
+SCORECARD.md, SHONEN.md, corpus/lessons/round-44.md are byte-identical between the two commits —
+`git diff e4678921 290cddea -- <paths>` empty). Evidence copies: `receipts/` next to this report.
+## Verdict
+
+- **4 content mismatches** (F1, F2, F5, F6), **1 stale-transcript defect** (F3),
+  **1 pending-by-design** (F4).
+- SHONEN.md: no mismatch. Its four checklist items carry historical assertions, not round-44
+  numbers; all referenced paths exist (`corpus/knowledge/executor-test-sufficiency.md`,
+  `corpus/knowledge/config-health-report-r3.md`, `corpus/knowledge/province-accuracy-selfaudit.md`).
+- All SCORECARD Round-44 numeric claims verified consistent with repo state (details below).
+
+## Findings
+
+### F1 [LOW] LOG.md round-44 bullet undercounts the lesson's mistakes (the M44-5 class)
+Attacks: LOG.md round-44 statement vs lesson state.
+- LOG.md:2499: `routed into \`corpus/lessons/round-44.md\` (Mistakes M44-1..7, Round-43 errata E1-E4)`.
+- Observed: `grep -c '^\*\*M44-' corpus/lessons/round-44.md` → 9 (M44-1..9), matching
+  SCORECARD.md:2583 ("Mistakes M44-1..9 mined") and the lesson's own nine M44 headers.
+- Reproduction: `grep -c '^\*\*M44-' corpus/lessons/round-44.md`. 
+- Note: the LOG bullet is time-indexed to protocol load (before w1 added M44-8/M44-9 from w1
+  findings), so it is a stale count, not a false claim about what was routed at load. The round-44
+  SCORECARD line (2583) has the correct count; the LOG line was not updated.
+
+### F2 [MEDIUM] The lesson and the id guard cite `assimilation/renumber-map.tsv`, which does not exist at the data commit or the tip
+Attacks: lesson content (corpus/lessons/round-44.md:26, :71, :82) and
+.ufo/waves/round-44/assimilation/id-guard.md:8.
+- `corpus/lessons/round-44.md:26`: `maps the package by document (\`assimilation/renumber-map.tsv\`): staged S311 … → held S164 … staged S312 … → new S301`.
+- `corpus/lessons/round-44.md:71`: `id mapping is by document (\`assimilation/renumber-map.tsv\`), never arithmetic`.
+- `corpus/lessons/round-44.md:82`: `**Old→new for the staged document** (\`assimilation/renumber-map.tsv\`)`.
+- Observed: no `assimilation/` directory or any `renumber-map*` file exists in the repo at
+  e4678921 or at HEAD: `git ls-tree -r --name-only e4678921 assimilation/` → empty;
+  `git ls-tree -r --name-only HEAD assimilation/` → empty; `git log --oneline --all -- assimilation/` → empty;

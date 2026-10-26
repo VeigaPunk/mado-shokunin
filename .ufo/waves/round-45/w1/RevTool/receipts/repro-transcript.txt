@@ -1,0 +1,31 @@
+# RevTool w1 repro transcript - reference tool = .ufo/waves/round-45/l1-draft/mado-monitors.py
+# all files under /fast/scratch/hyaku/mado-r45/RevTool (deleted after report)
+
+$ python3 -I mado-monitors.py --monitors nan.json --config ok.conf   # nan.json contains scale: NaN
+rc=0
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+$ python3 -I mado-monitors.py --monitors inj.json --config bom.conf   # bom.conf starts with UTF-8 BOM
+rc=4
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+
+$ python3 -I mado-monitors.py --monitors inj.json --config crlf.conf   # crlf.conf has \r\n line ends
+rc=5
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+$ python3 -I mut_m1_noobjcheck.py --selftest   # parse_monitors list/object check disabled
+rc=0
+MADO_MONITORS_SELFTEST: 33/33 passed
+
+$ python3 -I mut_m1_noobjcheck.py --monitors arr.json --config ok.conf   # arr.json = [1, 2]
+rc=1
+stderr: Traceback (most recent call last):
+  File "/fast/scratch/hyaku/mado-r45/RevTool/mut_m1_noobjcheck.py", line 532, in <mod
+
+$ python3 -I mut_m2b_nocap.py --monitors big2.json --config ok.conf   # big2.json = 1048577 bytes; cap raised to 1048576000
+rc=0
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK

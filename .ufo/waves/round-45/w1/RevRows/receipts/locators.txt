@@ -1,0 +1,147 @@
+== Parser.cpp ==
+110:bool CMonitorRuleParser::parseMode(const std::string& value) {
+145:bool CMonitorRuleParser::parsePosition(const std::string& value, bool isFirst) {
+193:bool CMonitorRuleParser::parseScale(const std::string& value) {
+213:bool CMonitorRuleParser::parseTransform(const std::string& value) {
+229:bool CMonitorRuleParser::parseBitdepth(const std::string& value) {
+234:bool CMonitorRuleParser::parseCM(const std::string& value) {
+244:bool CMonitorRuleParser::parseSDRBrightness(const std::string& value) {
+254:bool CMonitorRuleParser::parseSDRSaturation(const std::string& value) {
+264:bool CMonitorRuleParser::parseVRR(const std::string& value) {
+275:bool CMonitorRuleParser::parseICC(const std::string& val) {
+134:                    m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+== legacy ConfigManager ==
+788:std::optional<std::string> CConfigManager::handleMonitorv2(const std::string& output) {
+881:Hyprlang::CParseResult CConfigManager::handleMonitorv2() {
+1293:std::optional<std::string> CConfigManager::handleMonitor(const std::string& command, const std::string& args) {
+1389:std::optional<std::string> CConfigManager::handleBezier(const std::string& command, const std::string& args) {
+1345:    parser.parseMode(std::string(ARGS[1]));
+1352:        if (ARGS[argno] == "mirror") {
+1355:        } else if (ARGS[argno] == "bitdepth") {
+1358:        } else if (ARGS[argno] == "cm") {
+1361:        } else if (ARGS[argno] == "sdrsaturation") {
+1364:        } else if (ARGS[argno] == "sdrbrightness") {
+1367:        } else if (ARGS[argno] == "transform") {
+1370:        } else if (ARGS[argno] == "vrr") {
+1373:        } else if (ARGS[argno] == "icc") {
+876:    Config::monitorRuleMgr()->add(std::move(parser.rule()));
+1341:        Config::monitorRuleMgr()->add(std::move(parser.rule()));
+1384:    Config::monitorRuleMgr()->add(std::move(parser.rule()));
+1378:            return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+576:    m_config->addSpecialConfigValue("monitorv2", "sdr_eotf", {"default"});
+819:    VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_eotf", output.c_str());
+== RuleManager ==
+24:CMonitorRuleManager::CMonitorRuleManager() {
+33:void CMonitorRuleManager::clear() {
+37:void CMonitorRuleManager::add(CMonitorRule&& x) {
+44:CMonitorRule CMonitorRuleManager::get(const PHLMONITOR PMONITOR) {
+119:const std::vector<CMonitorRule>& CMonitorRuleManager::all() {
+123:std::vector<CMonitorRule>& CMonitorRuleManager::allMut() {
+127:void CMonitorRuleManager::scheduleReload() {
+134:void CMonitorRuleManager::ensureMonitorStatus() {
+207:void CMonitorRuleManager::ensureVRR(PHLMONITOR pMonitor) {
+38:    std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+96:    for (auto const& r : m_rules | std::views::reverse) {
+104:        if (r.m_name.empty())
+== Rule.hpp ==
+34:    class CMonitorRule {
+44:        Vector2D                     m_offset        = Vector2D(-INT32_MAX, -INT32_MAX);
+45:        float                        m_scale         = -1;
+46:        float                        m_refreshRate   = 60; // Hz
+69:        std::optional<int> m_vrr;
+== Monitor.cpp ==
+108:void CMonitor::onConnect(bool noRule) {
+392:void CMonitor::onDisconnect(bool destroy) {
+542:void CMonitor::applyCMType(NCMType::eCMType cmType, NTransferFunction::eTF cmSdrEotf) {
+652:bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
+719:bool CMonitor::applyMonitorRule(Config::CMonitorRule&& pMonitorRule) {
+1084:void CMonitor::scheduleModeRetry() {
+1114:void CMonitor::clearModeRetry() {
+1125:void CMonitor::scheduleFrame(Aquamarine::IOutput::scheduleFrameReason reason) {
+1138:void CMonitor::addDamage(const pixman_region32_t* rg) {
+1146:void CMonitor::addDamage(const CRegion& rg) {
+1150:void CMonitor::addDamage(const CBox& box) {
+1161:bool CMonitor::shouldSkipScheduleFrameOnMouseEvent() {
+1181:bool CMonitor::isMirror() {
+1189:std::string_view CMonitor::name() const {
+1193:std::string_view CMonitor::description() const {
+1197:std::string_view CMonitor::shortDescription() const {
+1201:bool CMonitor::matchesStaticSelector(std::string_view selector) const {
+1237:bool CMonitor::enabled() const {
+1241:bool CMonitor::hasOutput() const {
+1268:void CMonitor::setXWaylandPosition(const Vector2D& pos) {
+1272:void CMonitor::setXWaylandScale(float scale_) {
+1290:void CMonitor::setupDefaultWS(const Config::CMonitorRule& monitorRule) {
+1334:void CMonitor::setMirror(const std::string& mirrorOf) {
+1439:void CMonitor::changeWorkspace(const PHLWORKSPACE& pWorkspace, bool internal, bool noMouseMove, bool noFocus) {
+1533:void CMonitor::changeWorkspace(const WORKSPACEID& id, bool internal, bool noMouseMove, bool noFocus) {
+1537:void CMonitor::setSpecialWorkspaceVisualState(bool active) {
+1552:void CMonitor::setSpecialWorkspace(const PHLWORKSPACE& pWorkspace) {
+1703:void CMonitor::setSpecialWorkspace(const WORKSPACEID& id) {
+1719:void CMonitor::moveTo(const Vector2D& pos) {
+1752:void CMonitor::updateMatrix() {
+836:            if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestMode->pixelSize.y, RULE->m_resolution.y, 1) ||
+837:                !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+1001:        float    searchScale = std::round(m_scale * 120.0);
+1010:            for (size_t i = 1; i < 90; ++i) {
+255:    m_shortDescription = trim(std::format("{} {} {}", m_output->make, m_output->model, m_output->serial));
+256:    std::erase(m_shortDescription, ',');
+388:    g_pEventManager->postEvent(SHyprIPCEvent{"monitoraddedv2", std::format("{},{},{}", m_id, m_name, m_shortDescription)});
+398:        g_pEventManager->postEvent(SHyprIPCEvent{"monitorremovedv2", std::format("{},{},{}", m_id, m_name, m_shortDescription)});
+== HyprCtl ==
+223:std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format) {
+313:static std::string monitorsRequest(eHyprCtlOutputFormat format, std::string request) {
+328:            result += CHyprCtl::getMonitorData(m, format);
+339:            result += CHyprCtl::getMonitorData(m, format);
+2027:    registerCommand(SHyprCtlCommand{"monitors", false, monitorsRequest});
+234:    "description": "{}",
+241:    "physicalHeight": {},
+242:    "refreshRate": {:.5f},
+277:            m->m_id, escapeJSONStrings(m->m_name), escapeJSONStrings(m->m_shortDescription), escapeJSONStrings(m->m_output->make), escapeJSONStrings(m->m_output->model),
+1015:    "description": "{}"
+1072:    "description": "{}",
+1868:    "description": "{}"
+315:    auto     allMonitors = false;
+321:        allMonitors = true;
+327:        for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+335:        for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+1771:        for (auto const& m : State::monitorState()->allMonitors()) {
+== PosCtrl ==
+16:void CMonitorPositionController::arrange(std::span<const SP<Monitor::IMonitorArrangeable>> monitors, bool xwaylandForceZeroScaling) const {
+18:    std::vector<SP<Monitor::IMonitorArrangeable>> arranged;
+19:    arranged.reserve(toArrange.size());
+24:        if (const auto POS = m->explicitPosition(); POS.has_value()) {
+25:            Log::logger->log(Log::DEBUG, "arrangeMonitors: {} explicit {:j}", m->name(), *POS);
+27:            m->moveTo(*POS);
+28:            arranged.push_back(m);
+52:        for (auto const& m : arranged) {
+65:        switch (m->autoDirection()) {
+98:        m->moveTo(newPosition);
+99:        Log::logger->log(Log::DEBUG, "arrangeMonitors: {} auto {:j}", m->name(), m->position());
+100:        arranged.emplace_back(m);
+105:        Log::logger->log(Log::DEBUG, "arrangeMonitors: {} xwayland [{}, {}]", m->name(), maxXOffsetRight, 0);
+== String ==
+46:bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+47:    return isNumber2(str, allowfloat);
+50:bool Hyprutils::String::isNumber2(const std::string_view& str, bool allowfloat) {
+== wiki ==
+6:## General
+11:monitor = name, resolution, position, scale
+150:### Custom modelines
+159:### Disabling a monitor
+164:monitor = name, disable
+173:## Custom reserved area
+179:monitor = name, addreserved, TOP, BOTTOM, LEFT, RIGHT
+186:## Extra args
+196:### Mirrored displays
+211:### 10 bit support
+225:### Color management presets
+253:The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`. The default (`0`) is to follow `render:cm_sdr_eotf`. This can be changed to piecewise sRGB with `1`, or  Gamma 2.2 with `2`.
+255:### ICC Profiles
+261:- having an ICC applied will automatically force sdr_eotf to `sRGB` for that monitor (for color accuracy)
+265:### VRR
+270:## Rotating
+292:## Monitor v2
+319:| sdr_eotf | Transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Gamma 2.2, srgb - sRGB piecewise | str |
+323:## Default workspace
+327:### Binding workspaces to a monitor

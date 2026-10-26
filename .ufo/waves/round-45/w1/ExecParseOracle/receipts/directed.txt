@@ -1,0 +1,151 @@
+# directed cases: pinned C++ behaviour vs the reference tool
+
+== V1-zero-mode ==
+why: Parser.cpp:139-141 stores (0,0) for '0x0'; Monitor.cpp:773 reads that as PREFERRED, so Hyprland picks the preferred mode, not a 0x0 mode. The tool compares width==0 and height==0 and says DIFFER.
+config: "monitor = DP-1, 0x0, 0x0, 1\n"
+model rules: [["DP-1", false, 0, 0, 60.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=0x0@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+tool rc=1
+
+== V2-valid-modeline ==
+why: Parser.cpp:132-142: a validated modeline becomes resolution (hdisplay,vdisplay) and refreshRate vrefresh/1000, so applyMonitorRule requests that custom mode (Monitor.cpp:838-846); the tool marks the rule 'modeline' and never compares mode, so it reports AGREE for a live mode the rule does not describe.
+config: "monitor = DP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync\n"
+model rules: [["DP-1", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=modeline pos=auto scale=auto transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+
+== V2b-malformed-modeline ==
+why: Parser.cpp:129-160: a modeline that fails parseModeLine (fewer than 10 args) falls through to the resolution branch and ends at (0,0) = preferred; the tool still reports mode=modeline.
+config: "monitor = DP-1, modeline 419.00 3440\n"
+model rules: [["DP-1", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=modeline pos=auto scale=auto transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+
+== V3-desc-long-description ==
+why: Monitor.cpp:1206 matches desc: against the long description OR the short one; the dump only carries the short one (HyprCtl.cpp:234), so the tool reports UNRULED. Declared in its docstring.
+config: "monitor = desc:BOE 0x095F REV, 2880x1920@120, 0x0, 1.6\n"
+model rules: [["desc:BOE 0x095F REV", false, 2880, 1920, 120.0, 0, 0, 1.600000023841858, 0, ""]]
+model assignment: [["eDP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="desc:BOE 0x095F REV" mode=2880x1920@120.00 pos=0x0 scale=1.6000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+tool rc=3
+
+== V4-dollar-in-comment ==
+why: hyprlang v0.6.8 config.cpp:697-706 strips the comment before the handler runs, so the value has no '$'; the tool tests the raw body for '$' before cutting the comment and reports NOT_COMPARED.
+config: "monitor = DP-1, 3440x1440@100, 0x0, 1 # $x\n"
+model rules: [["DP-1", false, 3440, 1440, 100.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+tool rc=5
+
+== V5-transform-out-of-range ==
+why: Parser.cpp:235 std::stoi is unguarded: '99999999999' makes isNumber true and stoi throw out_of_range, which escapes handleMonitor. The tool reports badrules (no rule change).
+config: "monitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-1, transform, 99999999999\n"
+model rules: [["DP-1", false, 1920, 1080, 60.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+model exceptions: [["DP-1, transform, 99999999999", "out_of_range"]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+tool| MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+tool rc=1
+
+== V6-transform-leading-zero ==
+why: Parser.cpp:228-240: isNumber('03') is true and stoi('03') is 3, so the existing rule is copied with transform 3 (ConfigManager.cpp:1300-1314); the tool calls the value invalid and changes nothing.
+config: "monitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-1, transform, 03\n"
+model rules: [["DP-1", false, 1920, 1080, 60.0, 0, 0, 1.0, 3, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+tool| MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+tool rc=1
+
+== V7-addreserved-stoi-prefix ==
+why: ConfigManager.cpp:1336-1347 parses the four numbers with std::stoi (prefix): '+5' and '1.5' and '0x10' are accepted and a default rule is added at :1367; the tool requires -?[0-9]{1,6} and adds nothing.
+config: "monitor = DP-1, addreserved, +5, 0, 0, 0\n"
+model rules: [["DP-1", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+tool rc=3
+
+== V8-crlf-single-field ==
+why: hyprlang config.cpp:672/706 trims with std::isspace and CVarList2 trims each field, so a CRLF leaves no '\r' in the selector; the tool strips only spaces and tabs, so its selector is 'DP-1\r' and the output is UNRULED.
+config: "monitor = DP-1\r\n"
+model rules: [["DP-1", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1\r" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+tool rc=3
+
+== V8b-crlf-scale ==
+why: Same trim gap, on the last field: the tool sees scale '1\r', finds no fullmatch and reports unsupported (NOT_COMPARED); Hyprland reads 1.
+config: "monitor = DP-1, 3440x1440@100, 0x0, 1\r\n"
+model rules: [["DP-1", false, 3440, 1440, 100.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+tool rc=5
+
+== C1-newest-match ==
+why: MonitorRuleManager.cpp:37-42 erase+append; :107-117 reverse scan. Both agree.
+config: "monitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-1, 3440x1440@100, 0x0, 1\n"
+model rules: [["DP-1", false, 3440, 1440, 100.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+
+== C2-empty-fallback ==
+why: MonitorRuleManager.cpp:110-115: an empty selector never matches by name, the first one is the fallback. Both agree.
+config: "monitor = , preferred, auto, 1\nmonitor = HDMI-A-1, 1920x1080@60, 0x0, 1\n"
+model rules: [["", false, 0, 0, 60.0, -2147483647, -2147483647, 1.0, 0, ""], ["HDMI-A-1", false, 1920, 1080, 60.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_RULE: n=2 sel="HDMI-A-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+
+== C3-modifier-transform ==
+why: Parser.cpp:157-159 + ConfigManager.cpp:1300-1314: a valid single-digit transform copies the rule.
+config: "monitor = DP-1, 3440x1440@100, 0x0, 1\nmonitor = DP-1, transform, 3\n"
+model rules: [["DP-1", false, 3440, 1440, 100.0, 0, 0, 1.0, 3, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=3 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=transform verdict=DIFFER
+tool| MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+tool rc=1
+
+== C4-desc-prefix ==
+why: Monitor.cpp:1202-1206. Both agree.
+config: "monitor = desc:Dell Inc. U34, 3440x1440@100, 0x0, 1\n"
+model rules: [["desc:Dell Inc. U34", false, 3440, 1440, 100.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U34" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+
+== C5-scale-correction ==
+why: Parser.cpp:216-224: 0.2 < 0.25 becomes 1. Both agree.
+config: "monitor = DP-1, 3440x1440@100, 0x0, 0.2\n"
+model rules: [["DP-1", false, 3440, 1440, 100.0, 0, 0, 1.0, 0, ""]]
+model assignment: [["DP-1", 1]]
+tool| MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+tool rc=0
+

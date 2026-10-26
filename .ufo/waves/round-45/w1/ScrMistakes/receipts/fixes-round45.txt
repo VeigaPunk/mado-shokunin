@@ -1,0 +1,52 @@
+== round-45 ctl receipts ==
+CTL_C2: freeze=22a8dedd02f507689c567777e0f20b5e645c8ce0 base=0c89478af821a6424c9ac922eafe02e39630cf4f controls=10 (P positive; 9 do-nothing/forged)
+CTL_C2 P want=admitted got=admitted rc=0 ok | a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 admitted=1 | PRED-C2-r45: admitted=1/1 verdict=TARGET_MET rev=2cbee932521ac036311afe64ba814b084f6aac0e
+CTL_C2 C2-BASE want=rejected got=rejected rc=1 ok | a:0 b:0 c:0 d:0 e:0 f:0 g:0 h:0 i:0 j:0 admitted=0 | PRED-C2-r45: admitted=0/1 verdict=TARGET_MISSED rev=0c89478af821a6424c9ac922eafe02e39630cf4f
+...
+CTL_C2 VERDICT: PASS (wrong=0 of 10; positive admitted=1)
+exit=0
+== ctl-c1 ==
+CTL_C1 REF (the reference (positive control)): rc=0 fixtures=49/49 TARGET_MET
+CTL_C1 K00-BASE-ABSENT (the base tree, tool absent): rc=1 fixtures=0/49 TARGET_MISSED
+CTL_C1 VERDICT: PASS (controls scoring TARGET_MET: 0 of 16; reference met: 1)
+exit=0
+== c2-r45 clause j ==
+8:case), and clause j given a range-width bound (round-44 closure D5: whole-file locator ranges satisfied it).
+12:FETCH = .ufo/waves/round-45/fetch/, BASE = 0c89478af821a6424c9ac922eafe02e39630cf4f, DATE = 2026-10-26. PINS
+53:     a locator `<receipt>:<a>[-<b>]` with a <= L <= b (b = a when absent) and b - a <= 30, and matches the keyword
+64:row are not read except the scope cell and the anchor ranges; clause j binds a locator and a keyword per surface,
+79:BASE_DEFAULT = "0c89478af821a6424c9ac922eafe02e39630cf4f"
+91:JWIDTH = 30
+98:    "Hyprland-legacy-ConfigManager.cpp": "9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b",
+103:    "Hyprland-MonitorPositionController.cpp": "3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49",
+105:    "wiki-Monitors.md": "f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9",
+== c1-r45 seed ==
+16:     stderr must be empty. Output names come from --seed: the placeholders {A} {B} {C} (output names) and {D}
+17:     (a description) are replaced by seed-derived strings in configs, dumps and expected lines alike, so the
+18:     expected bytes are not fixed text; the default seed is 45, so a run without --seed reproduces exactly.
+22:verdict=TARGET_MET|TARGET_MISSED rev=<full hash> seed=<n>`; exit 0 iff TARGET_MET, 1 if missed, 2 on setup
+245:def names(seed):
+246:    rng = random.Random(seed)
+325:def score(repo, rev, work, seed):
+354:        marker = os.path.join(work, "marker-%d" % seed)
+357:        table = names(seed)
+365:    print("%s: fixtures=%d/%d selftest=%s readonly=%s tool=%s verdict=%s rev=%s seed=%d" % (
+367:        "TARGET_MET" if met else "TARGET_MISSED", full, seed))
+376:    ap.add_argument("--seed", type=int, default=45)
+== after-data receipts at 8ac15c41 ==
+--c1-after-data.txt
+PRED-C1-r44-v2 clause=b rc=0 selftest=94/94
+PRED-C1-r44-v2 clause=b4 mutant=0 site=client_fsmode:202 killed=1
+PRED-C1-r44-v2: fixtures=26/26 tool=present verdict=TARGET_MET rev=e46789213830597348fe96a351ae004d10587385 nonce=65b72cf3b24db2b4
+exit=0
+--c2-after-data.txt
+PRED-C2-r44-v2 hyprland-gkeep-size-request-r44.md clause=c id=S164 new=0 status=mined used=1 ok=1
+PRED-C2-r44-v2 hyprland-gkeep-size-request-r44.md clause=c id=S298 new=1 status=mined used=1 ok=1
+PRED-C2-r44-v2: admitted=1/1 verdict=TARGET_MET rev=e46789213830597348fe96a351ae004d10587385
+exit=0
+== 15/26 in lane ==
+.ufo/waves/round-18/w1/reports/RevQualityOverlap.md:350:single-line; one wrapped drops to 17/26 = 6.5385, all three to 15/26 = 5.7692.
+.ufo/waves/round-44/receipts/ctl-c1.txt:12:CTL_C1 K08-client-mode want=missed got=missed rc=1 ok | a:1 b:0 b4:0 g:1 r:0 | fixtures=15/26 tool=present verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f nonce=c48a16bbeb4c1542
+.ufo/waves/round-44/receipts/ctl-c1.txt:16:CTL_C1 K12-field-order want=missed got=missed rc=1 ok | a:1 b:0 b4:0 g:1 r:0 | fixtures=15/26 tool=present verdict=TARGET_MISSED rev=6a1a90528fe533cadee506a9fa3e9d13d15cc41f nonce=4850edc859ea1318
+.ufo/waves/round-44/receipts/ctl-c1-v2.txt:3:CTL_C1v2 BASE-tool want=missed got=missed rc=1 ok | a:1 b:0 b4:0 b5:0 e:1 g:1 r:1 | fixtures=15/26 tool=present verdict=TARGET_MISSED rev=e2289516a9a857f55cda7be635933e89b931c3da nonce=729654e70c5fcca2
+.ufo/waves/round-44/receipts/ctl-c1-v2.txt:12:CTL_C1v2 K08-client-mode want=missed got=missed rc=1 ok | a:1 b:0 b4:0 b5:0 e:1 g:1 r:0 | fixtures=15/26 tool=present verdict=TARGET_MISSED rev=e2289516a9a857f55cda7be635933e89b931c3da nonce=ba9cae68b13dc20f

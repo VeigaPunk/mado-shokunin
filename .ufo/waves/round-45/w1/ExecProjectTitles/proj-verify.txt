@@ -1,0 +1,140 @@
+# round-45 w1 ExecProjectTitles — receipt
+# lane /home/vgpnk/Projects/shokunin/mado-shokunin
+# pin  0c89478af821a6424c9ac922eafe02e39630cf4f
+
+# A. emit + verify (9 checks per file + seat-dir hygiene)
+$ python3 -I .ufo/waves/round-45/w1/ExecProjectTitles/project.py /home/vgpnk/Projects/shokunin/mado-shokunin /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles
+[rc=0]
+ref key order: ['address', 'mapped', 'class', 'floating', 'size', 'at', 'monitor'] elements: 4
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: element count preserved
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: element order preserved
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: key set == ref key set
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: key order == ref key order
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: every kept value equals original
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: no title-family key remains
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: raw text has no "title" / "initialTitle" token
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: no original title-family value survives in text (0 leaked)
+  [ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: trailing newline + indent=2 shape
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: element count preserved
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: element order preserved
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: key set == ref key set
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: key order == ref key order
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: every kept value equals original
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: no title-family key remains
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: raw text has no "title" / "initialTitle" token
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: no original title-family value survives in text (0 leaked)
+  [ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: trailing newline + indent=2 shape
+  [ok] seat dir carries no title-only value (6 distinct checked, 0 hits)
+[
+ {
+  "path": ".ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json",
+  "elements": 4,
+  "titles_before": 20,
+  "titles_after": 0,
+  "sha_old": "6cdada1a687201ebc42f73c58da27137189d5cc2b5f419c512c3956bab95e06b",
+  "sha_new": "4f2a877634f33b0e3492b76c19d958eeafa17d3d2ab4a5a2d1ee1df5e8301c46",
+  "bytes_old": 3537,
+  "bytes_new": 839
+ },
+ {
+  "path": ".ufo/waves/round-43/w2/SentLiveRun/dump-now.json",
+  "elements": 4,
+  "titles_before": 20,
+  "titles_after": 0,
+  "sha_old": "e4b1fb7232e6709befddb92f1a23e8d9f08497d70f355b23523690671568ba0c",
+  "sha_new": "4f2a877634f33b0e3492b76c19d958eeafa17d3d2ab4a5a2d1ee1df5e8301c46",
+  "bytes_old": 3537,
+  "bytes_new": 839
+ }
+]
+
+# B. independent cross-check (jaq rebuild, style round-trip, diff scope)
+$ python3 -I .ufo/waves/round-45/w1/ExecProjectTitles/crosscheck.py /home/vgpnk/Projects/shokunin/mado-shokunin /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles
+[rc=0]
+[ok] reference file is json.dumps(indent=1)+newline (its own style)
+[ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: jq projection == emitted bytes (semantic + byte)
+[ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: emitted file is json.dumps(indent=2)+newline
+[ok] .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: 4 of 4 elements kept
+[ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: jq projection == emitted bytes (semantic + byte)
+[ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: emitted file is json.dumps(indent=2)+newline
+[ok] .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: 4 of 4 elements kept
+[ok] the two originals differ only in title-family fields: ['title']
+ALL CHECKS PASS
+
+# C. sweep classification at pin
+$ python3 -I .ufo/waves/round-45/w1/ExecProjectTitles/sweep.py /home/vgpnk/Projects/shokunin/mado-shokunin /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles
+[rc=0]
+{
+ "hits": 154,
+ "by_kind": {
+  "prose": 17,
+  "other": 15,
+  "upstream_xml": 6,
+  "fixture_jsonl": 8,
+  "upstream_source_pin": 86,
+  "client_dump": 22
+ },
+ "client_dumps": 22,
+ "live_dumps": [
+  ".ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json",
+  ".ufo/waves/round-43/w2/SentLiveRun/dump-now.json"
+ ],
+ "unclassified": []
+}
+synthetic: 20
+
+# D. every cited path:line + every number in report.md
+$ python3 -I .ufo/waves/round-45/w1/ExecProjectTitles/citecheck.py /home/vgpnk/Projects/shokunin/mado-shokunin
+[rc=0]
+[ok] .ufo/waves/round-43/w1/ExecLiveHost/live-census.txt:109 contains 'hyprctl clients -j > host-clients-live.json'
+[ok] .ufo/waves/round-43/w1/ExecLiveHost/live-census.txt:112 contains '6cdada1a'
+[ok] .ufo/waves/round-43/w1/ExecLiveHost.md:17 contains '6cdada1a'
+[ok] .ufo/waves/round-43/w1/ExecLiveHost.md:55 contains '6cdada1a'
+[ok] .ufo/waves/round-43/w1-results.json:40 contains '6cdada1a'
+[ok] .ufo/waves/round-43/w2/SentLiveRun/hashes.txt:1 contains 'e4b1fb72'
+[ok] .ufo/waves/round-44/w1/ExecLiveHost/live-states.txt:9 contains 'shape-only projection'
+[ok] .ufo/waves/round-44/w1/ExecLiveHost/live-states.txt:18 contains 'raw_sha256'
+[ok] .ufo/waves/round-44/w1/SentLiveReads/evidence/leak.txt:1 contains 'title VALUES withheld'
+[ok] .ufo/evidence/round-12/getprop-measure.txt:4 contains 'No window titles'
+[ok] .ufo/evidence/round-12/getprop-measure.txt:6 contains 'title-free projection'
+[ok] .ufo/waves/round-43/w1/ExecOracleGkeep/20-observation.txt:7 contains '"initialTitle"'
+[ok] claim: sweep hits == 154
+[ok] claim: client-shaped files == 22
+[ok] claim: live dumps == 2
+[ok] claim: synthetic dumps == 20
+[ok] claim: unclassified == 0
+[ok] claim: upstream_source_pin == 86
+[ok] claim: prose == 17
+[ok] claim: fixture_jsonl == 8
+[ok] claim: upstream_xml == 6
+[ok] claim: other == 15
+[ok] claim: .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: 839 B
+[ok] claim: .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json: sha 4f2a8776…
+[ok] claim: .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: 839 B
+[ok] claim: .ufo/waves/round-43/w2/SentLiveRun/dump-now.json: sha 4f2a8776…
+CITATIONS OK (12 of 12), CLAIMS OK (14)
+
+# E. title tokens in projections (rc=1 = no match)
+$ grep -c -E '"title"|initialTitle' /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w2/SentLiveRun/dump-now.json
+[rc=1]
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w2/SentLiveRun/dump-now.json:0
+
+# F. sha256 of projections
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w2/SentLiveRun/dump-now.json
+[rc=0]
+4f2a877634f33b0e3492b76c19d958eeafa17d3d2ab4a5a2d1ee1df5e8301c46  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json
+4f2a877634f33b0e3492b76c19d958eeafa17d3d2ab4a5a2d1ee1df5e8301c46  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecProjectTitles/proj/.ufo/waves/round-43/w2/SentLiveRun/dump-now.json
+
+# G. sha256 of originals at pin (via git show; files untouched)
+$ sh -c 'cd /home/vgpnk/Projects/shokunin/mado-shokunin && for r in .ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json .ufo/waves/round-43/w2/SentLiveRun/dump-now.json; do git show 0c89478af821a6424c9ac922eafe02e39630cf4f:$r | sha256sum; done'
+[rc=0]
+6cdada1a687201ebc42f73c58da27137189d5cc2b5f419c512c3956bab95e06b  -
+e4b1fb7232e6709befddb92f1a23e8d9f08497d70f355b23523690671568ba0c  -
+
+# H. lane status (originals untouched; only this wave dir is new)
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -- .
+[rc=0]
+?? .ufo/waves/round-45/w1.ready
+?? .ufo/waves/round-45/w1.ready.dispatched
+?? .ufo/waves/round-45/w1/

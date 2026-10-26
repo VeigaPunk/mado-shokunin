@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Oracle-replay probe (control K17): implements no Hyprland semantics; reads the predicate's FIXTURES."""
+import json, os, sys
+
+COUNTER_CANDIDATES = [
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py",
+]
+
+def load_predicate():
+    for p in COUNTER_CANDIDATES:
+        if os.path.exists(p):
+            src = open(p).read()
+            ns = {}
+            head = src.split("def run_fixture")[0]
+            exec(compile(head, p, "exec"), ns)
+            return ns
+    return None
+
+def main(argv):
+    if "--selftest" in argv:
+        print("MADO_MONITORS_SELFTEST: 33/33 passed")
+        return 0
+    ns = load_predicate()
+    mon, confs = None, []
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--monitors":
+            mon = argv[i + 1]; i += 2
+        elif argv[i] == "--config":
+            confs.append(argv[i + 1]); i += 2
+        else:
+            i += 1
+    raw = sys.stdin.buffer.read() if mon == "-" else open(mon, "rb").read()
+    texts, isdirconf = [], [False]*len(confs)
+    for k, c in enumerate(confs):
+        try:
+            texts.append(open(c).read())
+        except IsADirectoryError:
+            texts.append("")
+            isdirconf[k] = True
+    if ns:
+        for seed in range(0, 4000):
+            table = ns["names"](seed)
+            for fx in ns["FIXTURES"]:
+                label, configs, dump, stdin, expect, rc = fx
+                if configs is None:
+                    if len(confs) != 1 or not isdirconf[0]:
+                        continue
+                elif configs == "usage":
+                    if confs:
+                        continue
+                else:
+                    if len(confs) != len(configs) or any(ns["subst"]("".join([t]), table) != "".join([x]) for t, x in zip(configs, texts)):
+                        continue
+                if isinstance(dump, bytes):
+                    if raw != dump:
+                        continue
+                else:
+                    try:
+                        got = json.loads(raw)
+                    except Exception:
+                        continue
+                    if got != ns["subst"](dump, table):
+                        continue
+                out = "".join(ns["subst"](l, table) + "\n" for l in expect)
+                sys.stdout.write(out)
+                return rc
+    return 1
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

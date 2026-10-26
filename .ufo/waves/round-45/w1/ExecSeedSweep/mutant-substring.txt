@@ -1,0 +1,36 @@
+# mutant: reference with one line changed (scratch clone rev b42dd109):
+#   tools/mado-monitors.py:354  '-        elif sel == name:' -> '+        elif sel in name:'
+#   (selector matches by substring instead of exact equality; everything else identical)
+# measured, counter at --seed N:
+seed=40 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[mirror-agree mirror-missing ]
+seed=140 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[mirror-agree mirror-missing ]
+seed=430 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[fallback-first-empty-and-named unruled-only ]
+seed=444 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[fallback-first-empty-and-named unruled-only ]
+seed=714 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[mirror-agree mirror-missing ]
+seed=849 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[fallback-first-empty-and-named unruled-only ]
+seed=992 rc=1 fixtures=47/49 verdict=TARGET_MISSED fails=[mirror-agree mirror-missing ]
+seed=45 rc=0 fixtures=49/49 verdict=TARGET_MET (mutant survives the default seed)
+# all other seeds 1..1000: rc=0 fixtures=49/49 TARGET_MET
+# analytic prediction (script over names(1..1000)): mutant harms iff (C in A) or (B in A)
+#   C_in_A seeds=[430, 444, 849]  B_in_A seeds=[40, 140, 714, 992]  union=measured set above
+#   at expected seed=36 names are A=DP-5 B=eDP-1 C=DP-1 -> the pair DP-1/eDP-1 exists but not in a harmful role, so the mutant survives
+# lineage (each clone made with git clone -q --shared <lane> then checkout --detach 22a8dedd)
+pos clone rev                 = 979fcfc0f013905898dacafed6d441651ffc0c09 (freeze + reference installed unchanged)
+mutant clone rev              = b42dd109  (freeze + reference with the one-line mutation below)
+freeze                        = 22a8dedd02f507689c567777e0f20b5e645c8ce0
+sha256 reference (l1-draft)    = c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+sha256 pos clone tool         = c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+sha256 mutant clone tool      = 73b202af5628df28a31845c785036f97ef3d288bfb3ea327b6c8671ff1fcbce8
+reference installed unchanged: cmp l1-draft vs clone/tools/mado-monitors.py -> identical
+
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py	2026-10-26 15:30:01.795552752 -0300
++++ mut-substring/tools/mado-monitors.py	2026-10-26 15:57:04.349570884 -0300
+@@ -351,7 +351,7 @@
+         if sel.startswith("desc:"):
+             if desc.startswith(sel[5:].strip(" \t")):
+                 return n
+-        elif sel == name:
++        elif sel in name:
+             return n
+     for n, r in enumerate(rules, 1):
+         if r["sel"] == "":

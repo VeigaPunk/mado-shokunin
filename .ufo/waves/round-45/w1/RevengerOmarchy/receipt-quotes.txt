@@ -1,0 +1,60 @@
+monitors.conf:7: monitor=,preferred,auto,auto
+monitors.conf:6: env = GDK_SCALE,2
+monitors.conf:10: # env = GDK_SCALE,1.75
+monitors.conf:11: # monitor=,preferred,auto,1.6
+monitors.conf:11: # monitor=,preferred,auto,1.6
+monitors.conf:16: # monitor=,preferred,auto,1
+monitors.conf:19: # monitor = DP-2, preferred, auto, 1, transform, 1
+monitors.conf:22: # monitor = DP-5, 6016x3384@60, auto, 2
+monitors.conf:26: # monitor=DP-2,disable
+monitors.conf:14: # Or for ultrawide monitors like 34" 3440x1440 or 49" 5120x1440
+hyprland.conf:23: source = ~/.local/state/omarchy/toggles/hypr/*.conf
+hyprland.conf:16: source = ~/.config/hypr/monitors.conf
+looknfeel.conf:128: disable_scale_notification = true
+omarchy-hyprland-monitor-scaling-cycle:35: hyprctl keyword monitor "$ACTIVE_MONITOR,${WIDTH}x${HEIGHT}@${REFRESH_RATE},auto,$NEW_SCALE"
+omarchy-hyprland-monitor-scaling-cycle:41: mapfile -t ACTIVE_LINES < <(grep -E '^[[:space:]]*monitor=' "$MONITOR_CONF" | grep -vE 'disable[[:space:]]*$')
+omarchy-hyprland-monitor-scaling-cycle:42: if [[ ${#ACTIVE_LINES[@]} -eq 1 ]] && [[ "${ACTIVE_LINES[0]}" =~ ^monitor=,preferred,auto, ]]; then
+omarchy-hyprland-monitor-scaling-cycle:43: sed -i -E "s|^(monitor=,preferred,auto,).*|\\1${NEW_SCALE}|" "$MONITOR_CONF"
+omarchy-hyprland-monitor-scaling-cycle:13: SCALES=(1 1.25 1.6 2 3 4)
+omarchy-hyprland-monitor-scaling-cycle:10: REFRESH_RATE=$(echo "$MONITOR_INFO" | jq -r '.refreshRate')
+omarchy-hyprland-monitor-internal:25: echo "monitor=$INTERNAL,disable" >"$TOGGLE_FLAG"
+omarchy-hyprland-monitor-internal-mirror:31: echo "monitor=$EXTERNAL, preferred, auto, 1, mirror, $INTERNAL" > "$TOGGLE_FLAG"
+1776781957.sh:6: sed -i 's/^monitor=,preferred,auto,auto,vrr,1$/monitor=,preferred,auto,auto/' "$MONITORS_CONF"
+SKILL.md:292: monitor = eDP-1, 1920x1080@60, 0x0, 1
+Hyprland-Parser.cpp:134: m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+Hyprland-Parser.cpp:111: if (value.empty() || value.starts_with("pref"))
+Hyprland-HyprCtl.cpp:242: "refreshRate": {:.5f},
+Hyprland-Monitor.cpp:700: m_size            = (xfmd / m_scale).round();
+Hyprland-Monitor.cpp:1059: m_size            = (xfmd / m_scale).round();
+Hyprland-Monitor.cpp:1001: float    searchScale = std::round(m_scale * 120.0);
+Hyprland-Monitor.cpp:750: const bool autoScale = RULE->m_scale <= 0.1;
+Hyprland-Monitor.cpp:1413: if (PPI > 200 /* High PPI, 2x*/)
+Hyprland-Monitor.cpp:1415: else if (PPI > 140 /* Medium PPI, 1.5x*/)
+Hyprland-Monitor.cpp:997: if (!*PDISABLESCALECHECKS && (logicalSize.x != std::round(logicalSize.x) || logicalSize.y != std::round(logicalSize.y))) {
+Hyprland-MonitorRule.hpp:46: float                        m_refreshRate   = 60; // Hz
+Hyprland-MonitorRuleManager.cpp:38: std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+Hyprland-MonitorRuleManager.cpp:96: for (auto const& r : m_rules | std::views::reverse) {
+Hyprland-legacy-ConfigManager.cpp:1870: setenv(ARGS[0].c_str(), ARGS[1].c_str(), 1);
+Hyprland-legacy-ConfigManager.cpp:1299: if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1] == "addreserved" || ARGS[1] == "transform") {
+
+# sha256 of cited files
+9f305fd6f247438deab313a6f491944e8fbe42cf3adcac88f7e33f34527d6c38  /home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal
+fa651d4c3b0971f4b8e7b35a893a80f201a6f5387544fbe73f041b790184e607  /home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal-mirror
+6f7d3922b3cf2ae4afef74203aa19407d3645bb23e2fbeea1a7d35643bfa7004  /home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-scaling-cycle
+df2a32665e248e55b007c3df13b2ea7fb096b6fa2e1942804c4cd245a656dc0c  /home/vgpnk/.local/share/omarchy/config/hypr/hyprland.conf
+6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55  /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf
+daf547dbcc63cd5a9d3aeae6d74c000af035b38cf3392522f710100be3b2585a  /home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf
+becd149e4d1c0767a80bcc1eb84e86e509149dc1e4b3d680cf24ab54bea5256d  /home/vgpnk/.local/share/omarchy/default/omarchy-skill/SKILL.md
+7c3b2564df8b0df9ef6d5f0de340b5a13a6868b6391596006aff5357e367dac2  /home/vgpnk/.local/share/omarchy/migrations/1776781957.sh
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-HyprCtl.cpp
+9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-Monitor.cpp
+b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorRule.hpp
+17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorRuleManager.cpp
+616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-Parser.cpp
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-legacy-ConfigManager.cpp
+
+# omarchy provenance
+8fcc9d6048af4cb0e3af8512c78049857a3b53dd 2026-07-20 14:05:35 -0700 Merge branch 'master' into rc
+omarchy version file: 3.8.3
+
+# verification: ALL QUOTES LOCATED AND VERIFIED (n=36)

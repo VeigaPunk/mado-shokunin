@@ -1,0 +1,20 @@
+## reference tool contract anchors: .ufo/waves/round-45/l1-draft/mado-monitors.py
+22:It reads files and standard input only; it starts no process and opens no socket.
+24:Arguments (two-token form only; anything else is usage): `--selftest` alone, or `--monitors V` exactly once
+26:`MADO_MONITORS: SETUP <reason>`, exit 2, reason one of usage | unreadable | too_large | bad_json. A PATH that
+28:1048576 bytes is too_large (stdin, `--monitors -`, is read at most 1048577 bytes); a monitors input that is
+98:MAX_BYTES = 1048576
+120:def read_regular(path):
+122:        fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+126:        if not stat.S_ISREG(os.fstat(fd).st_mode):
+455:def selftest():
+503:        if rc == 2 and lines == ["MADO_MONITORS: SETUP " + reason]:
+521:        return ["MADO_MONITORS: SETUP %s" % e], 2
+527:        sys.stdout.write("".join(l + "\n" for l in lines))
+## environment reads (expect none)
+0
+## source-following (expect none)
+0
+## selftest run
+MADO_MONITORS_SELFTEST: 33/33 passed
+rc=0

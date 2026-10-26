@@ -1,0 +1,13 @@
+# SUPPORTS: no output injection - a name carrying a newline, ESC/DEL, a lone surrogate or a forged summary line is escaped by json.dumps(ensure_ascii) and stays on one line; the summary is printed last and once
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ python3 -I tool.py --monitors inj.json --config inj.conf   (names: 'DP-1\nMADO_MONITORS: verdict=OK', 'A\u001b[31mRED\u007f', '\ud800lone'; selector 'desc:\u001b[31m')
+MADO_MON_RULE: n=1 sel="desc:\u001b[31m" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1\nMADO_MONITORS: verdict=OK" rule=- differ=- verdict=UNRULED
+MADO_MON_OUTPUT: name="A\u001b[31mRED\u007f" rule=- differ=- verdict=UNRULED
+MADO_MON_OUTPUT: name="\ud800lone" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+# exit=3
+
+# lines=5, of which records start with MADO_: 5; occurrences of 'MADO_MONITORS: lines=': 1

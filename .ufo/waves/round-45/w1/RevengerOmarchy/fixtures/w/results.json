@@ -1,0 +1,284 @@
+[
+ {
+  "tag": "C00_shipped",
+  "expect": "shipped: env GDK_SCALE,2 + monitor=,preferred,auto,auto",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C01_shipped_scale2_live",
+  "expect": "catch-all line compares no mode/pos/scale - only transform",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C02_fractional_1.6",
+  "expect": "fractional preset uncommented (GDK_SCALE 1.75 + 1.6), live 1.6 on 3440x1440",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "c7acc3330b44d5c3a192b6fd5da2013c5ea7e57fc51c008a48b98178420d7250",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\nenv = GDK_SCALE,1.75\nmonitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C03_fractional_correction_1366",
+  "expect": "1.6 does not divide 1366x768 -> Hyprland 1/120 correction",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=scale verdict=DIFFER",
+   "MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "c7acc3330b44d5c3a192b6fd5da2013c5ea7e57fc51c008a48b98178420d7250",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\nenv = GDK_SCALE,1.75\nmonitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C04_1x_preset_live2",
+  "expect": "1x preset uncommented, display left at scale 2",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=1.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=scale verdict=DIFFER",
+   "MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "996dc335005c90e7bd1836c109a9d249fabdfc815a2bd43439223c937ca3355e",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\nenv = GDK_SCALE,1\nmonitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C05_1x_preset_live1",
+  "expect": "1x preset uncommented, live scale 1",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=1.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "996dc335005c90e7bd1836c109a9d249fabdfc815a2bd43439223c937ca3355e",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\nenv = GDK_SCALE,1\nmonitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C06_portrait_transform0",
+  "expect": "portrait preset wants transform 1, live 0",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-2\" mode=preferred pos=auto scale=1.0000 transform=1 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=2 differ=transform verdict=DIFFER",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "cf406f4d06f1d2e5994e6c1ea129bf6f3fad2db0314ba2464e652fd6d1603560",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\nmonitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C07_portrait_transform1",
+  "expect": "portrait preset transform 1, live 1",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-2\" mode=preferred pos=auto scale=1.0000 transform=1 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=2 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "cf406f4d06f1d2e5994e6c1ea129bf6f3fad2db0314ba2464e652fd6d1603560",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\nmonitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C08_apple_pair",
+  "expect": "both Apple rules uncommented, both outputs live",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-5\" mode=6016x3384@60.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=3 sel=\"eDP-1\" mode=2880x1920@120.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-5\" rule=2 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=3 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=3 rules=3 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "5fd99974c39c8aa892a91ee1df1b266d00ecbe267c10d73005b73af055fa2849",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\nmonitor = DP-5, 6016x3384@60, auto, 2\nmonitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C09_apple_pair_only_DP1",
+  "expect": "Apple rules only, host output DP-1 -> no selector matches",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-5\" mode=6016x3384@60.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=3 sel=\"eDP-1\" mode=2880x1920@120.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=3 rules=3 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "5fd99974c39c8aa892a91ee1df1b266d00ecbe267c10d73005b73af055fa2849",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\nmonitor = DP-5, 6016x3384@60, auto, 2\nmonitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C10_ghost_alone_live",
+  "expect": "only rule is DP-2,disable; DP-2 live enabled",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"DP-2\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=1 differ=disabled verdict=DIFFER",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "f3b9bef1d947e958860c0b978c1df7fe9d8fe2602df87ce638c97e19bcb1639a",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C11_ghost_plus_default",
+  "expect": "ghost rule appended to shipped default, DP-2 disabled live",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-2\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=2 differ=- verdict=DISABLED",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=0 disabled=1 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "fc4b814bf9bb8549902cdd93f15f0e86a5a65670d65d894d04892af8002156c3",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C12_ghost_plus_default_live",
+  "expect": "ghost rule but DP-2 still enabled",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-2\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=2 differ=disabled verdict=DIFFER",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "fc4b814bf9bb8549902cdd93f15f0e86a5a65670d65d894d04892af8002156c3",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C13_mirror_agree",
+  "expect": "omarchy mirror toggle line, DP-2 mirrors id 1",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"DP-2\" mode=preferred pos=auto scale=1.0000 transform=0 mirror=\"eDP-1\" disabled=false",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "3a1e76c6ecd5cce63595e5a32f16a5a1983ba2e7aefb6377f2a96f4f210a0b2a",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-2, preferred, auto, 1, mirror, eDP-1\n"
+ },
+ {
+  "tag": "C14_mirror_none",
+  "expect": "mirror rule, live mirrorOf none",
+  "exit": 1,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"DP-2\" mode=preferred pos=auto scale=1.0000 transform=0 mirror=\"eDP-1\" disabled=false",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=1 differ=mirror verdict=DIFFER",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": "",
+  "conf_sha256": "3a1e76c6ecd5cce63595e5a32f16a5a1983ba2e7aefb6377f2a96f4f210a0b2a",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-2, preferred, auto, 1, mirror, eDP-1\n"
+ },
+ {
+  "tag": "C15_vrr_leftover",
+  "expect": "pre-migration vrr,1 catch-all (omarchy#1776781957 target)",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "e443ce2cbebaaacf7ff1ad084ffb0bb938adf485c3bd88d2a23d7be7c20c8417",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=,preferred,auto,auto,vrr,1\n"
+ },
+ {
+  "tag": "C16_five_decimal_mode",
+  "expect": "mode pasted from hyprctl JSON (5 decimals)",
+  "exit": 5,
+  "stdout": [
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED"
+  ],
+  "stderr": "",
+  "conf_sha256": "eeb8806201452c4c57c0fabacc33afb0c9bef06e8809e463b6bffd44fe3de5d5",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor = DP-1, 3440x1440@99.99700, 0x0, 1\n"
+ },
+ {
+  "tag": "C17_scaling_cycle_keyword",
+  "expect": "exact hyprctl keyword string omarchy-hyprland-monitor-scaling-cycle emits",
+  "exit": 5,
+  "stdout": [
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED"
+  ],
+  "stderr": "",
+  "conf_sha256": "0c64531080b12eecd397c2704ce0c2765e3e2eae63f7f6914f4a2ed5f97d7749",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\n# Straight 1x setup for low-resolution displays like 1080p or 1440p\n# Or for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\nmonitor=DP-1,3440x1440@99.99700,auto,1.25\n"
+ },
+ {
+  "tag": "C18_two_catchalls",
+  "expect": "both catch-all presets active (auto on line 7 + 1.6 on line 14)",
+  "exit": 0,
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": "",
+  "conf_sha256": "cfc07cefd804a68650d0592f104f2e31ab7355396950b32776e5b5339bc32707",
+  "conf_text": "# See https://wiki.hypr.land/Configuring/Basics/Monitors/\n# List current monitors and resolutions possible: hyprctl monitors\n# Format: monitor = [port], resolution, position, scale\n\n# Optimized for retina-class 2x displays, like 13\" 2.8K, 27\" 5K, 32\" 6K.\nenv = GDK_SCALE,2\nmonitor=,preferred,auto,auto\n\n# Good compromise for 27\" or 32\" 4K monitors (but fractional!)\n# env = GDK_SCALE,1.75\n# monitor=,preferred,auto,1.6\n\nStraight 1x setup for low-resolution displays like 1080p or 1440p\nOr for ultrawide monitors like 34\" 3440x1440 or 49\" 5120x1440\n# env = GDK_SCALE,1\n# monitor=,preferred,auto,1\n\n# Portrait/rotated secondary monitor (transform: 1 = 90\u00b0, 3 = 270\u00b0)\n# monitor = DP-2, preferred, auto, 1, transform, 1\n\n# Example for Framework 13 w/ 6K XDR Apple display\n# monitor = DP-5, 6016x3384@60, auto, 2\n# monitor = eDP-1, 2880x1920@120, auto, 2\n\n# Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt\n# monitor=DP-2,disable\n"
+ },
+ {
+  "tag": "C19_env_only",
+  "expect": "env line only, no monitor line at all",
+  "exit": 4,
+  "stdout": [
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES"
+  ],
+  "stderr": "",
+  "conf_sha256": "059f206641274021bf988a999342216ed5b6eb751a4b3f73d82c2dbe80909f6f",
+  "conf_text": "env = GDK_SCALE,2\n"
+ },
+ {
+  "tag": "C20_commented_all",
+  "expect": "every monitor line commented",
+  "exit": 4,
+  "stdout": [
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES"
+  ],
+  "stderr": "",
+  "conf_sha256": "3d2a441718508d9088a8a9950bba85455772c5bbb95770cdaadd1267af57a6a2",
+  "conf_text": "# monitor=,preferred,auto,1\n"
+ }
+]

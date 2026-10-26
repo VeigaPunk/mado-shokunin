@@ -1,0 +1,114 @@
+# CritToolSemantics receipts — reference tool = l1-draft/mado-monitors.py (copied byte-identical to scratch as ref.py)
+# command: sha256sum l1-draft/mado-monitors.py
+c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py
+
+## R1 selftest
+MADO_MONITORS_SELFTEST: 33/33 passed
+exit=0
+
+## R2 scale 0.32, live scale 0.32 (Hyprland keeps 0.32: Monitor.cpp:996 float32 10750.0/4500.0 whole)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=0.3200 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R3 same rule, live scale 0.333333
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=0.3200 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## R4 scale 0.48 on 1920x1080, live 0.48
+MADO_MON_RULE: n=1 sel="OUT" mode=1920x1080@60.00 pos=0x0 scale=0.4800 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="OUT" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R5 scale 0.64 on 3440x1440, live 0.64
+MADO_MON_RULE: n=1 sel="OUT" mode=3440x1440@100.00 pos=0x0 scale=0.6400 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="OUT" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R6 transform modifier 07, live transform 7
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=transform verdict=DIFFER
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R7 control: transform modifier 7, live transform 7
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=7 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## R8 transform modifier -0, live transform 0
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=transform verdict=DIFFER
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R9 addreserved +5 (Hyprland stoi -> 5)
+MADO_MON_RULE: n=1 sel="" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=1 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=transform verdict=DIFFER
+MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode,position,transform verdict=DIFFER
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=2 matched=2 unruled=0 agree=0 differ=2 disabled=0 verdict=DIFFER
+exit=1
+
+## R10 control: addreserved 5
+MADO_MON_RULE: n=1 sel="" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=1 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=transform verdict=DIFFER
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+exit=1
+
+## R11 inline transform 07 (gated)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+exit=5
+
+## R12 mode @1000 (Hyprland stof -> 1000)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+exit=5
+
+## R13 mode @1e2 (Hyprland stof -> 100)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+exit=5
+
+## R14 CRLF config
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+exit=5
+
+## R15 scale 14.166667 on 1920x1200, live scale 1 (no clean divisor)
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1200@60.00 pos=0x0 scale=14.1667 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## R16 disable rule, dump without the disabled output (hyprctl monitors -j)
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_RULE: n=2 sel="DP-2" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## R17 same config, dump with the disabled output (hyprctl monitors all -j)
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_RULE: n=2 sel="DP-2" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=DISABLED
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=0 disabled=1 verdict=OK
+exit=0
+
+## R18 mirror desc:Acme, live mirrorOf=0
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror="desc:Acme" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=mirror verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+exit=1
+certain(hypr-keeps)= 38 conditional(tool-keeps)= 16 total= 54

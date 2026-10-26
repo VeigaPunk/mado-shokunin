@@ -1,0 +1,70 @@
+fetch/Hyprland-legacy-ConfigManager.cpp	const auto ARGS = CVarList2(std::string(args));
+fetch/Hyprland-legacy-ConfigManager.cpp	if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1] == "addreserved" || ARGS[1] == "transform") {
+fetch/Hyprland-legacy-ConfigManager.cpp	cpy.m_transform = TRANSFORM;
+fetch/Hyprland-legacy-ConfigManager.cpp	std::ranges::find_if(Config::monitorRuleMgr()->allMut(), [n = ARGS[0]](const auto& other) { return other.m_name == n; });
+fetch/Hyprland-legacy-ConfigManager.cpp	Log::logger->log(Log::ERR, "Config error: invalid monitor syntax at \"{}\"", ARGS[argno]);
+fetch/Hyprland-legacy-ConfigManager.cpp	return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+fetch/Hyprland-legacy-ConfigManager.cpp	Config::monitorRuleMgr()->add(std::move(parser.rule()));
+fetch/Hyprland-legacy-ConfigManager.cpp	VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_eotf", output.c_str());
+fetch/Hyprland-legacy-ConfigManager.cpp	const auto monitorError               = handleMonitorv2();
+fetch/Hyprland-legacy-ConfigManager.cpp	const auto ERR = m_config->parse();
+fetch/Hyprland-Parser.cpp	if (value.empty() || value.starts_with("pref"))
+fetch/Hyprland-Parser.cpp	else if (parseModeLine(value, m_rule.m_drmMode)) {
+fetch/Hyprland-Parser.cpp	if (keyword != "modeline")
+fetch/Hyprland-Parser.cpp	m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+fetch/Hyprland-Parser.cpp	m_rule.m_scale = -1;
+fetch/Hyprland-Parser.cpp	if (m_rule.m_scale < 0.25F) {
+fetch/Hyprland-Parser.cpp	m_rule.m_scale = 1;
+fetch/Hyprland-Parser.cpp	m_rule.m_offset.x = stoi(value.substr(0, value.find_first_of('x')));
+fetch/Hyprland-MonitorRule.hpp	m_refreshRate   = 60; // Hz
+fetch/Hyprland-MonitorRuleManager.cpp	std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+fetch/Hyprland-MonitorRuleManager.cpp	m_rules.emplace_back(std::move(x));
+fetch/Hyprland-MonitorRuleManager.cpp	if (PMONITOR->m_isUnsafeFallback) {
+fetch/Hyprland-MonitorRuleManager.cpp	for (auto const& r : m_rules | std::views::reverse) {
+fetch/Hyprland-MonitorRuleManager.cpp	if (r.m_name.empty())
+fetch/Hyprland-MonitorRuleManager.cpp	rule.m_offset = CONFIG->position;
+fetch/Hyprland-Monitor.cpp	m_description = m_output->description;
+fetch/Hyprland-Monitor.cpp	std::erase(m_description, ',');
+fetch/Hyprland-Monitor.cpp	trim(std::format("{} {} {}", m_output->make, m_output->model, m_output->serial))
+fetch/Hyprland-Monitor.cpp	if (m_enabled && !monitorRule.m_disabled) {
+fetch/Hyprland-Monitor.cpp	Event::bus()->m_events.monitor.added.emit(m_self.lock());
+fetch/Hyprland-Monitor.cpp	static auto PDISABLESCALECHECKS = CConfigValue<Config::INTEGER>("debug:disable_scale_checks");
+fetch/Hyprland-Monitor.cpp	if (!*PDISABLESCALECHECKS
+fetch/Hyprland-Monitor.cpp	float    searchScale = std::round(m_scale * 120.0);
+fetch/Hyprland-Monitor.cpp	m_scale = getDefaultScale();
+fetch/Hyprland-Monitor.cpp	static auto PDISABLENOTIFICATION = CConfigValue<Config::INTEGER>("misc:disable_scale_notification");
+fetch/Hyprland-Monitor.cpp	m_scale = searchScale;
+fetch/Hyprland-Monitor.cpp	for (auto const& mode : requestedModes | std::views::reverse) {
+fetch/Hyprland-Monitor.cpp	!DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1)
+fetch/Hyprland-Monitor.cpp	Log::logger->log(Log::ERR, "Monitor {}: REJECTED custom mode {}!", m_name, modeStr);
+fetch/Hyprland-Monitor.cpp	m_refreshRate = mode->refreshRate / 1000.f;
+fetch/Hyprland-Monitor.cpp	return m_description.starts_with(DESCRIPTIONSELECTOR) || m_shortDescription.starts_with(DESCRIPTIONSELECTOR);
+fetch/Hyprland-Monitor.cpp	const auto DESCRIPTIONSELECTOR = trim(selector.substr(5));
+fetch/Hyprland-Monitor.cpp	m_position = pos;
+fetch/Hyprland-HyprCtl.cpp	if (!m->m_output || m->m_id == -1)
+fetch/Hyprland-HyprCtl.cpp	"refreshRate": {:.5f},
+fetch/Hyprland-HyprCtl.cpp	escapeJSONStrings(m->m_shortDescription)
+fetch/Hyprland-HyprCtl.cpp	(m->m_enabled ? "false" : "true")
+fetch/Hyprland-HyprCtl.cpp	m->m_mirrorOf ? std::format("{}", m->m_mirrorOf->m_id) : "none"
+fetch/Hyprland-HyprCtl.cpp	if (vars.size() > 2)
+fetch/Hyprland-HyprCtl.cpp	if (vars.size() == 2 && vars[1] == "all")
+fetch/Hyprland-HyprCtl.cpp	allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()
+fetch/Hyprland-MonitorPositionController.cpp	m->moveTo(*POS);
+fetch/Hyprland-MonitorPositionController.cpp	if (const auto POS = m->explicitPosition(); POS.has_value()) {
+fetch/hyprutils-String.cpp	return isdigit(str.back()) != 0;
+fetch/wiki-Monitors.md	monitor = name, resolution, position, scale
+fetch/wiki-Monitors.md	The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`
+w1/CritEntryContent/pins/macros.hpp	#define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+w1/CritEntryContent/pins/aquamarine-DRM.cpp	output->description = std::format("{} {} {} ({})", make, model, serial, szName);
+w1/CritEntryContent/pins/aquamarine-DRM.cpp	new CDRMOutput(szName, backend, self.lock())
+w1/CritEntryContent/pins/MonitorState.cpp	return m_realMonitors;
+w1/CritEntryContent/pins/MonitorState.cpp	return m_monitors;
+w1/CritEntryContent/pins/MonitorState.cpp	m_realMonitors.emplace_back(mon);
+w1/CritEntryContent/pins/MonitorState.cpp	std::erase_if(m_monitors, [](const auto& m) { return m->isMirror(); });
+w1/CritEntryContent/pins/MonitorLayoutController.cpp	Log::logger->log(Log::ERR, "Monitor {}: detected overlap with layout", m->m_name);
+w1/CritEntryContent/pins/VarList2.hpp	const char delim = ','
+w1/CritEntryContent/pins/MonitorState.cpp	if (!mon->m_enabled)
+fetch/Hyprland-Monitor.cpp	ErrorOverlay::overlay()->queueError("Invalid scale passed to monitor " + m_name + ", failed to find a clean divisor");
+fetch/Hyprland-Monitor.cpp	if (!found) {
+fetch/Hyprland-Monitor.cpp	else if (RULE->m_resolution == Vector2D(-1, -3)) {
+fetch/Hyprland-Monitor.cpp	if (a->pixelSize == b->pixelSize && abs((a->refreshRate / 1000.f) - RULE->m_refreshRate) < abs((b->refreshRate / 1000.f) - RULE->m_refreshRate))

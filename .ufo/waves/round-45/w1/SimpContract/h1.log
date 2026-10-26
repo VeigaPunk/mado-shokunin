@@ -1,0 +1,124 @@
+cases=3624
+M1-zpos                    NO-WITNESS across 3624 cases
+M2-cand0                   NO-WITNESS across 3624 cases
+M3-range90                 NO-WITNESS across 3624 cases
+M4-order                   NO-WITNESS across 3624 cases
+M5-mirror-isinstance       NO-WITNESS across 3624 cases
+M6-mirror-len              LIVE case=mirror:4/'4'/pFalse
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror="NOPE" disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode,mirror verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    mut=('EXC:IndexError:list index out of range', -1)
+    texts=['monitor = DP-5, 1x1@60, 0x0, 1, mirror, NOPE\n'] dump=[{"id": 4, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=rnd:1
+M7-mirror-idfilter         NO-WITNESS across 3624 cases
+M8-v2tail                  LIVE case=v2:'monitorv2foo'
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=1 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['monitorv2foo\nmonitor = DP-5, 1x1@60, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=v2:'monitorv2x{'
+M9-v2eq                    LIVE case=v2:'monitorv2=1'
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=1 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    texts=['monitorv2=1\nmonitor = DP-5, 1x1@60, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+M10-v2dollar               LIVE case=v2:'monitorv2'
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=1 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    texts=['monitorv2\nmonitor = DP-5, 1x1@60, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+M11-modeline-anyprefix     LIVE case=mode:'modelines'
+    ref=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=modeline pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    texts=['monitor = DP-5, modelines, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=mode:'modelineX'
+M12-toks-guard             LIVE case=ws-mode:'\r'
+    ref=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('EXC:IndexError:list index out of range', -1)
+    texts=['monitor = DP-5, \r\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=ws-field1:'\r'
+M13-nolower                LIVE case=mode:'MODELINE'
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=modeline pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    mut=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['monitor = DP-5, MODELINE, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=mode:'Modeline'
+M14-descstrip              LIVE case=desc:'desc: Dell'/'Dell'
+    ref=('MADO_MON_RULE: n=1 sel="desc: Dell" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    mut=('MADO_MON_RULE: n=1 sel="desc: Dell" mode=1x1@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    texts=['monitor = desc: Dell, 1x1@60, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "Dell", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=desc:'desc: Dell'/'Dell Inc. U3415W'
+M15-emptyskip              LIVE case=rnd:7
+    ref=('MADO_MON_RULE: n=1 sel="desc:" mode=99999x99999@1000.00 pos=0x1 scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_RULE: n=2 sel="" mode=0x0@60.00 pos=0x0 scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=1 differ=mode,position,transform,mirror verdict=DIFFER\nMADO_MON_OUTPUT: name="" rule=1 differ=mode,position,scale,transform verdict=DIFFER\nMADO_MONITORS: lines=4 rules=2 v2=0 unsupported=2 badrules=0 outputs=2 matched=2 unruled=0 agree=0 differ=2 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="desc:" mode=99999x99999@1000.00 pos=0x1 scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_RULE: n=2 sel="" mode=0x0@60.00 pos=0x0 scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=2 differ=mode,position,transform,mirror verdict=DIFFER\nMADO_MON_OUTPUT: name="" rule=2 differ=mode,position,scale,transform verdict=DIFFER\nMADO_MONITORS: lines=4 rules=2 v2=0 unsupported=2 badrules=0 outputs=2 matched=2 unruled=0 agree=0 differ=2 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['monitor= desc:, \r, 0x1, 1.\nmonitor\t= desc:, 99999x99999@999.999, 0x1, 0.25, sdrbrightness, 9\nmonitor = , 0x0, 0x0, 0.25\nmonitor=desc:Dell, \r, 0x1, 12.345678, sdrsaturation, \n'] dump=[{"id": "0", "name": "", "description": "Dell", "width": 1440, "height": 2560, "refreshRate": 100.999, "x": -1920, "y": 0, "scale": 0.25, "transform": 3, "disabled": "true", "mirrorOf": 0}, {"id": null, "name": 5, "descr
+    also=rnd:215
+M16-norules-v2             LIVE case=rnd:44
+    ref=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=0 rules=0 v2=1 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=0 rules=0 v2=1 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES', 4)
+    texts=['monitorv2 {\n'] dump=[{"id": 0.0, "name": "DP-5", "description": "Dell Inc. U3415W", "width": null, "height": 100, "refreshRate": 60.0, "x": -1920, "y": 5, "scale": true, "transform": 8, "disabled": "true", "mirrorOf": ""}]
+    also=rnd:103
+M18-clamp-le               LIVE case=scale:0.25/3440x1440/1.0
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1000x1000@60.00 pos=0x0 scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode,scale verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=1000x1000@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=mode verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    texts=['monitor = DP-5, 1000x1000@60, 0x0, 0.25\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1.0, "transform": 0, "disabled": false, "mirrorOf": "none", "w": 3440, "h": 1440}]
+    also=scale:0.25/3440x1440/1.25
+M19-noclamp                LIVE case=fx:scale-tiny-is-1
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=3440x1440@100.00 pos=0x0 scale=0.2000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=scale verdict=DIFFER\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER', 1)
+    texts=['monitor = DP-5, 3440x1440@100, 0x0, 0.2\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=scale:0.2499/3440x1440/1.0
+M20-f32rate                NO-WITNESS across 3624 cases
+M21-f32scale               NO-WITNESS across 3624 cases
+M22-f32cand                NO-WITNESS across 3624 cases
+M23-f32z                   NO-WITNESS across 3624 cases
+M24-nosreg                 NO-WITNESS across 3624 cases
+M26-isfinite               NO-WITNESS across 3624 cases
+M27-isnum-bool             LIVE case=rnd:63
+    ref=('MADO_MON_RULE: n=1 sel="" mode=maxwidth pos=-1920x0 scale=1.0000 transform=7 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=position,scale,transform,mirror verdict=DIFFER\nMADO_MONITORS: lines=2 rules=1 v2=0 unsupported=1 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="" mode=maxwidth pos=-1920x0 scale=1.0000 transform=7 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=position,transform,mirror verdict=DIFFER\nMADO_MONITORS: lines=2 rules=1 v2=0 unsupported=1 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['monitor= , maxwidth, -1920x0, 0.2499, cm, 0, transform, 7, sdrsaturation, 10\nmonitor\t=$main, 1920x1080@60.000, 1000000x0, 1.0000001, transform, 8, bitdepth, 8, bitdepth, 8\nmonitorv2x = 1\n\n'] dump=[{"id": 0.0, "name": "DP-5", "description": "Dell", "width": 2560, "height": 100, "refreshRate": 59.99, "x": -1920, "y": 5, "scale": true, "transform": null, "disabled": null, "mirrorOf": "4"}]
+    also=rnd:108
+M28-isint-bool             NO-WITNESS across 3624 cases
+M29-transform-len          LIVE case=rnd:89
+    ref=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MON_OUTPUT: name="eDP-7" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=3 rules=0 v2=0 unsupported=3 badrules=0 outputs=2 matched=0 unruled=2 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=("EXC:ValueError:invalid literal for int() with base 10: ''", -1)
+    texts=['monitor\t= desc:Dell, 3440x1440@100Hz, axb, 0.2499, sdrsaturation, 7, icc, 2\ngeneral {\nmonitor  =desc:, , -1920x0, 1.6, cm, 1, transform, , sdrsaturation, eDP-7\nmonitor = , 3440x1440@100Hz, -1920x0, , vrr, , transform, 1.5'] dump=[{"id": true, "name": "DP-5", "description": "Dell Inc. U3415W", "width": 1080, "height": 0, "refreshRate": "100", "x": 0, "y": "0", "scale": 0.0, "transform": true, "disabled": "true", "mirrorOf": null}, {"id": 1, "name
+    also=rnd:171
+M30-addreserved-4          NO-WITNESS across 3624 cases
+M31a-drop-hash2            LIVE case=rnd:8
+    ref=('MADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="desc:Dell" mode=highres pos=auto scale=0.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    texts=['monitor  =desc:Dell, highres, auto-left, 0.25##double\n\n'] dump=[{"id": true, "name": "", "description": null, "width": 2880, "height": 0, "refreshRate": 144.0, "x": null, "y": 5, "scale": 0.0, "transform": 3, "disabled": null, "mirrorOf": 0}]
+    also=rnd:24
+M31b-drop-dollar           LIVE case=fx:variable
+    ref=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="$main" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    texts=['monitor = $main, 3440x1440@100, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=rnd:1
+M31c-drop-backslash        LIVE case=rnd:59
+    ref=('MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true\nMADO_MON_OUTPUT: name="" rule=1 differ=- verdict=DISABLED\nMADO_MON_OUTPUT: name="" rule=1 differ=disabled verdict=DIFFER\nMADO_MONITORS: lines=2 rules=1 v2=0 unsupported=1 badrules=0 outputs=2 matched=2 unruled=0 agree=0 differ=1 disabled=1 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true\nMADO_MON_OUTPUT: name="" rule=1 differ=- verdict=DISABLED\nMADO_MON_OUTPUT: name="" rule=1 differ=disabled verdict=DIFFER\nMADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=0 differ=1 disabled=1 verdict=DIFFER', 1)
+    texts=['monitor=, disable, 0x1, 12.345678, cm, eDP-7 \\esc\nmonitor =  , disabled, -1920x0, 99.999999, bitdepth, 9, mirror, 7, sdrbrightness, 1.5\n\n', '}\n'] dump=[{"id": 0, "name": 5, "description": "Dell Inc. U3415W", "width": 2880, "height": 1920, "refreshRate": 143.912, "x": null, "y": null, "scale": null, "transform": "1", "disabled": true, "mirrorOf": "4"}, {"id": true, "nam
+    also=rnd:81
+M32-nocommentcut           LIVE case=fx:comments
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    mut=('MADO_MON_OUTPUT: name="DP-5" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['# monitor = DP-5, 1x1, 0x0, 1\nmonitor = DP-5, 3440x1440@100, 0x0, 1 # main\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=rnd:90
+M33-scale-digits           LIVE case=rnd:27
+    ref=('MADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=highrr pos=auto scale=100.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    texts=['monitor  = DP-5, highrr, auto right, 100, sdrbrightness, 10\n'] dump=[{"id": true, "name": "", "description": "Dell Inc. U3415W", "width": null, "height": 2880, "refreshRate": 99.997, "x": -1920, "y": 5, "scale": 1.3, "transform": null, "disabled": "true", "mirrorOf": "4"}]
+    also=rnd:33
+M35-rule-numbering         LIVE case=fx:host
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    mut=('MADO_MON_RULE: n=0 sel="DP-5" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="DP-5" rule=1 differ=- verdict=AGREE\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK', 0)
+    texts=['monitor = DP-5, 3440x1440@100, 0x0, 1\n'] dump=[{"id": 0, "name": "DP-5", "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=fx:no-rate-requests-60
+M37-output-name            LIVE case=type:name=5
+    ref=('MADO_MON_RULE: n=1 sel="DP-5" mode=1000x1000@60.00 pos=0x0 scale=1.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    mut=('MADO_MON_RULE: n=1 sel="DP-5" mode=1000x1000@60.00 pos=0x0 scale=1.2500 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name=5 rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR', 3)
+    texts=['monitor = DP-5, 1000x1000@60, 0x0, 1.25\n'] dump=[{"id": 0, "name": 5, "description": "", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+    also=rnd:0
+M40-empty-mode             LIVE case=rnd:17
+    ref=('MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=100.0000 transform=0 mirror=- disabled=false\nMADO_MON_OUTPUT: name="" rule=1 differ=disabled verdict=DIFFER\nMADO_MONITORS: lines=7 rules=1 v2=0 unsupported=4 badrules=2 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED', 5)
+    mut=('MADO_MON_OUTPUT: name="" rule=- differ=- verdict=UNRULED\nMADO_MONITORS: lines=7 rules=0 v2=0 unsupported=5 badrules=2 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED', 5)
+    texts=['monitor\t= desc: Dell, 1x1, auto-left, 0.2, cm, 10, cm, eDP-7, sdrsaturation, eDP-7 $var\nmonitor=, 3440x1440@100, auto right, 0.25, Mirror, 1\nmonitor  = , 3440x1440@99.997, 0x1, 12.345678, Mirror, 8, bitdepth, DP-5, bitdepth, 9\nmonitor  = , modelines, auto right, auto', 'monitor = , 3440x1440@100Hz, 0x1, 0.2499, sdr_eotf, 3, sdrsaturation, eDP-7\nmonitor=  , , , 99.999999, cm, 8\nmonitor=desc:, 3440x1440@99.997, -1920x0, 99.999999, transform, 10\n\n'] dump=[{"id": true, "name": "", "description": "", "width": 0, "height": 1920, "refreshRate": 144.0, "x": 0, "y": 0, "scale": 0.25, "transform": 3, "disabled": true, "mirrorOf": ""}]
+    also=rnd:19
+M41-args-dupmon            NO-WITNESS across 3624 cases

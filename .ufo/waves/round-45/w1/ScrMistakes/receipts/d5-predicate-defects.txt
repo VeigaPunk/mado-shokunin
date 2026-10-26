@@ -1,0 +1,31 @@
+== D5 files ==
+.ufo/waves/round-44/w2/CritC1V2Cheat.md lines=192
+.ufo/waves/round-44/w2/MutC1V2.md lines=100
+.ufo/waves/round-44/w2/ExecDoNothingV2.md lines=236
+.ufo/waves/round-44/w2/CritC2V2Forgery.md lines=217
+.ufo/waves/round-44/w2/MutC2V2.md lines=167
+.ufo/waves/round-44/w2/ConnCalibration.md lines=108
+== CritC1V2Cheat met lines ==
+23:| `ref-verified.py` (sha256 `1da3ddaed0d6e3cc…`, `= ctl-ref-tool-v2.py.txt` and `= tools/mado-geometry.py` at the data commit) | baseline, no cheat | `ref0001` | `a:1 b:1 b4:1 b5:1 e:1 g:1 r:1` | **26/26 TARGET_MET** | `log-ref-verified.txt` |
+24:| `cheat-h-harness-gate.py` (+15/−0 lines) | state logic enabled only when the **invocation** is the counter's (`cwd` under `mado-c1r44-*`), round-43 logic in real use | `ffe81742541520ec`, `9d4c7e1a2b3f5860` | `a:1 b:1 b4:1 b5:1 e:1 g:1 r:1` (both) | **26/26 TARGET_MET** | `log-cheat-h-harness-gate.txt`, `log-cheat-h-second-nonce.txt` |
+26:| `cheat-i2-vacuous-detect.py` | i1 **plus** `json.loads` rebinding detection (identity + `object_hook` probe) that aborts the selftest | `6c08f02d53adc065` | `a:1 b:1 b4:1 b5:1 e:1 g:1 r:1` | **26/26 TARGET_MET** | `log-cheat-i2-vacuous-detect.txt` — `clause=b5 … rc=1 selftest=0/0 failed=1` |
+28:| `cheat-j2-jsondecoder-gate-detect.py` | j + harness gate + detector (full composition) | `156d1eface1b8134` | `a:1 b:1 b4:1 b5:1 e:1 g:1 r:1` | **26/26 TARGET_MET** | `log-cheat-j2-jsondecoder-gate-detect.txt` |
+32:before their runs (h MET, i1 MISSED, i2 MET, j MISSED, j2 MET).
+34:## F1 — HIGH, MET: the counter's own invocation is a fingerprint, and clause e holds it fixed
+75:## F2 — HIGH, MET: b5 is satisfied by *detecting* the rebinding, with a selftest that asserts no state verdict
+88:summary line (`rc=1 selftest=0/0 failed=1`) → **b5:1**, and the tool is **26/26 TARGET_MET** while its selftest
+149:data, so this is an **open predicate defect**, not an edit):
+185:C1's **fixture** clause f is still the strong part: every MET cheat above contains the full round-44 model, because
+188:(F1, MET, capability absent in real use), and b5 is simultaneously satisfiable by a detector (F2, MET) and
+191:predicate defect to carry into round 45: adopt E′ and M, and replace the two sentences at
+== MutC1V2 survivors ==
+3:**Verdict: 25 mutants, 548 detector runs — 1 survivor (M01 admits the X2 control), 13 gate-broken, 10 killed, 1 equivalent. The landed data is not invalidated: the survivor is a counter-robustness hole (key drift inside the b5 hook), reachable only by editing the counter itself, not by any tool-side cheat. The landed tool scores TARGET_MET under 24 of 25 mutants and under all 20 controls for every mutant that keeps the reference passing.**
+18:| M01-b5-rename-wrong-key | b5 hook key | hook renames `floating` instead of `fullscreen` | 26/26 MET | **X2-padded-selftest** | **SURVIVOR** (predicted KILLED — wrong, see §3) |
+46:## 3. Finding 1 (the survivor) — OPEN predicate-adjacent defect: b5's X2-tooth hangs on one string literal
+48:**Mutant M01** (counter:356): the b5 hook renames `floating` instead of `fullscreen`. **Outcome: the landed tool still passes (26/26 MET) but control X2-padded-selftest reaches TARGET_MET** (rc=0, clauses `a:1 b:1 b4:1 b5:1 e:1 g:1 r:1`, fixtures 26/26 — `evidence/results.tsv` row `M01-b5-rename-wrong-key X2-padded-selftest`).
+55:| REF + M01 hook | rc=1, 79/94 | b5 still holds for the reference |
+57:| X2 + M01 hook | rc=1, 98/103 | b5 holds -> **X2 admitted** |
+59:X2 is not "reference + extra checks": the frozen runner's PAD construction replaces the selftest's whole state-assertion block — `def fs(...)` through `chk("fsmode-absent", ...)` at ref:438-472, 21 state chks — with 30 trivially-passing pad checks (`text[:i] + PAD_LINES + text[j:]`, run-c1-controls-v2.py:60, name at :34). So X2's selftest asserts **no state verdict through the JSON path** (103/103 under the pristine hook), which is precisely what clause b5 must catch; its fixtures are 26/26 and clause r passes, so b5 is its only net. Under M01's mis-aimed hook, X2's *remaining* floating-dependent assertions (round-43 behavior through the JSON path) fail 98/103, so b5 holds and nothing holds X2 back.
+61:**Why it matters.** The b5 gate's protection of X2 rests entirely on the literal `'fullscreen'` in `B5_PREFIX` (counter:356). A one-word counter-side drift (wrong key, dropped hook, case change) either breaks the reference outright (M02, M03 — caught at scoring time) or — the M01 class — keeps the reference passing while silently admitting X2. No registered control or clause detects that drift class. Severity: LOW-MEDIUM — it requires mutating the counter, not the tool, so it cannot inflate the landed C1 claim; but the control corpus has no second net under X2.
+63:**Candidate guard (for the L1 to decide; not landed by me — no re-registration after data).** A hook-liveness unit assertion inside `state_blind`: run `B5_PREFIX` plus `assert list(json.loads('{"fullscreen": 2}')) == ['_b5_fullscreen']` in a throwaway interpreter before scoring the tool; it kills the M01/M02/M03 drift classes without touching the contract. A cheaper partial: also assert the hook renames *nothing else* (e.g. `{"floating": true}` keeps its key), which kills M01 specifically.
+91:- Prediction honesty: 22/25 pre-registered predictions correct; M01 (predicted KILLED, observed ADMITS-X2), M20/M22 (predicted ADMITS, observed KILLED via clause r — Finding 2).

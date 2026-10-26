@@ -1,0 +1,37 @@
+# Receipt: omarchy-hyprland-monitor-scaling-cycle persistence simulation (scratch copies only)
+# script sha256 6f7d3922b3cf2ae4afef74203aa19407d3645bb23e2fbeea1a7d35643bfa7004
+# script lines 39-45:
+ 39| MONITOR_CONF="$HOME/.config/hypr/monitors.conf"
+ 40| if [[ -f $MONITOR_CONF ]]; then
+ 41|   mapfile -t ACTIVE_LINES < <(grep -E '^[[:space:]]*monitor=' "$MONITOR_CONF" | grep -vE 'disable[[:space:]]*$')
+ 42|   if [[ ${#ACTIVE_LINES[@]} -eq 1 ]] && [[ "${ACTIVE_LINES[0]}" =~ ^monitor=,preferred,auto, ]]; then
+ 43|     sed -i -E "s|^(monitor=,preferred,auto,).*|\\1${NEW_SCALE}|" "$MONITOR_CONF"
+ 44|   fi
+ 45| fi
+
+## A: shipped line + NEW_SCALE=1.25 through the script's own sed
+   before: (see receipt run)
+   actual run:
+--- shipped BEFORE: 7:monitor=,preferred,auto,auto
+--- shipped AFTER : 7:monitor=,preferred,auto,1.25
+--- premigration BEFORE: 7:monitor=,preferred,auto,auto,vrr,1
+--- premigration AFTER : 7:monitor=,preferred,auto,1.25
+
+## B: persistence guard (script lines 41-42) against three line styles
+probe=[monitor=,preferred,auto,auto] active_lines=1 guard_regex=MATCH
+probe=[monitor=,preferred,auto,auto,vrr,1] active_lines=1 guard_regex=MATCH
+probe=[monitor = DP-1, 3440x1440@100, 0x0, 1] active_lines=0 guard_regex=NO_MATCH
+
+## C: guard on the real files
+shipped omarchy monitors.conf active monitor lines: 1
+host      ~/.config/hypr/monitors.conf active monitor lines: 0
+
+## D: the mode token the script would emit on this host (shape only: WxH@refreshRate)
+live jq mode token: [3440x1440@99.99700]  (hyprctl prints refreshRate with 5 decimals; jq 1.7 preserves the literal)
+script keyword string would be: [<name>,3440x1440@99.99700,auto,<NEW_SCALE>]
+-> fed to the entry tool as a config line, verdict:
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+exit=5
+
+-> Hyprland's parser on the same token (Parser.cpp:131-134): y = substr(x+1, first_of("@")), refreshRate = stof(substr("@"+1)) - no decimal cap

@@ -1,0 +1,97 @@
+[
+ {
+  "tag": "D01_disable_toggle_applied",
+  "exit": 0,
+  "note": "shipped monitors.conf + omarchy internal-monitor-disable toggle, eDP-1 off",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"eDP-1\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=2 differ=- verdict=DISABLED",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=0 disabled=1 verdict=OK"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D02_disable_toggle_not_applied",
+  "exit": 1,
+  "note": "toggle present but eDP-1 still lit",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"eDP-1\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=2 differ=disabled verdict=DIFFER",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D03_erase_on_add_selector",
+  "exit": 0,
+  "note": "explicit eDP-1 rule in monitors.conf, later same-selector disable toggle",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"eDP-1\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=2 differ=- verdict=DISABLED",
+   "MADO_MONITORS: lines=3 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=0 disabled=1 verdict=OK"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D04_monitors_conf_only_mirror",
+  "exit": 0,
+  "note": "mirror toggle applied over the catch-all",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_RULE: n=2 sel=\"DP-2\" mode=preferred pos=auto scale=1.0000 transform=0 mirror=\"eDP-1\" disabled=false",
+   "MADO_MON_OUTPUT: name=\"eDP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MON_OUTPUT: name=\"DP-2\" rule=2 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D05_host_conf",
+  "exit": 0,
+  "note": "host ~/.config/hypr/monitors.conf as shipped of this host",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"DP-1\" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=- verdict=AGREE",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D06_catchall_transform_rotated",
+  "exit": 1,
+  "note": "catch-all rule, output rotated at runtime",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=transform verdict=DIFFER",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D07_1.6_vs_auto_1.5",
+  "exit": 1,
+  "note": "fractional preset 1.6 while Hyprland auto-scale gave 1.5",
+  "stdout": [
+   "MADO_MON_RULE: n=1 sel=\"\" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false",
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=1 differ=scale verdict=DIFFER",
+   "MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER"
+  ],
+  "stderr": ""
+ },
+ {
+  "tag": "D08_five_decimals_59.95055",
+  "exit": 5,
+  "note": "mode token exactly as jq prints it for a 5-decimal rate",
+  "stdout": [
+   "MADO_MON_OUTPUT: name=\"DP-1\" rule=- differ=- verdict=UNRULED",
+   "MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED"
+  ],
+  "stderr": ""
+ }
+]

@@ -1,0 +1,23 @@
+# PYTHONHASHSEED battery, seed 45, counter invoked as: python3 -I quality/counters/c1-r45-monitors.py ...
+# -I sets ignore_environment, so PYTHONHASHSEED is NOT inherited (measured below); the variable was still set on every run.
+
+## named runs (register wording: 3 times at seed 45 with PYTHONHASHSEED=0/1/random)
+PYTHONHASHSEED=0      rc=0 PRED-C1-r45: fixtures=49/49 selftest=ok readonly=ok tool=present verdict=TARGET_MET seed=45
+PYTHONHASHSEED=1      rc=0 PRED-C1-r45: fixtures=49/49 selftest=ok readonly=ok tool=present verdict=TARGET_MET seed=45
+PYTHONHASHSEED=random rc=0 PRED-C1-r45: fixtures=49/49 selftest=ok readonly=ok tool=present verdict=TARGET_MET seed=45
+
+## repeats: 40 further runs per setting (120 total), each a full 49-fixture score
+runs_met=120
+distinct_full_log_md5 (all 123 logs incl. named): 706fcfd5b947c687f925666f197f7f56 
+identical_private_default_45_log_md5: 706fcfd5b947c687f925666f197f7f56 706fcfd5b947c687f925666f197f7f56 
+
+## the counter process itself under pinned hash seeds, -I dropped on the counter only
+rythm: PYTHONHASHSEED=0 python3 (no -I) ... ; PYTHONHASHSEED=1 python3 (no -I) ...
+706fcfd5b947c687f925666f197f7f56  logs/nohI/hs0.log
+706fcfd5b947c687f925666f197f7f56  logs/nohI/hs1.log
+
+## why the variable cannot pin hashing under -I (three invocations, same command)
+PYTHONHASHSEED=0 python3 -I -c ... -> ignore_environment 1 hash 2071948775076071683
+PYTHONHASHSEED=0 python3 -I -c ... -> ignore_environment 1 hash 6278822340334659941   # differs: hashing randomized
+PYTHONHASHSEED=0 python3 -c ...    -> ignore_environment 0 hash -1625185106724708864  # honoured without -I
+PYTHONHASHSEED=999 python3 -c ...  -> ignore_environment 0 hash 4306286126054983513  # changes with the variable

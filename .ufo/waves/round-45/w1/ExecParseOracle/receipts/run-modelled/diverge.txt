@@ -1,0 +1,633 @@
+# differential run: reference tool vs model
+profile=modelled seed=45 configs=3600
+
+configs=3600  tool+model agree=3087  diverge=513 (modelled lines=400, masked=113)
+tool lines=5456 unsupported=115  unsupported share=0.0211  configs with an unmodelled line=113
+model exceptions escaping the handler=90
+
+== CONTRACT BUG CANDIDATES (tool compared, result differs) ==
+-- 94 configs, fields assign[DP-1],rule_count
+   config="monitor = DP-1 , addreserved, 10abc, 0, 0, 0#all\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor= DP-1\t, addreserved, +5, 0, 0, 0 # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor= DP-1 , addreserved, 0x10, 0, 0, 0#all\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor= DP-1, preferred, -1920x0, 2, cm srgb\nmonitor = desc:Dell Inc. U3415W X1, addreserved, 1.5, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=2 rules=0 v2=0 unsupported=0 badrules=2 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+-- 81 configs, fields rule_count
+   config="monitor= desc: Samsung, addreserved, 1.5, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor=desc:Dell Inc. U3415W X1, transform, +3\nmonitor\t=\tdesc: Samsung, addreserved, 0x10, 0, 0, 0\nmonitor = , transform, +3\nmonitor =DP-1 , 1920x0, auto, 0.25, icc /tmp/x.icc\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=0 v2=0 unsupported=0 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor= dp-1, addreserved, +5, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor=desc: Samsung, addreserved, 0x10, 0, 0, 0#all\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+-- 78 configs, fields rule1.mode
+   config="monitor=desc:Dell Inc. U3415W X1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync\n"
+     rule1.mode: ["desc:Dell Inc. U3415W X1", false, "M", "O", null, -2147483647, -2147483647, -1.0, 0, ""] vs ["desc:Dell Inc. U3415W X1", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U3415W X1" mode=modeline pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=3 matched=1 unruled=2 agree=1 differ=0 disabled=0 verdict=OK
+   config="monitor=DP-3, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, 000001x000002, 1.5, bitdepth 10\nmonitor =desc:, transform, 9\nmonitor= desc:Dell Inc. U34, 3840x2160@120, auto-up, 0, icc /tmp/x.icc\nmonitor\t=\tDP-2, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481\nmonitor =desc:Dell Inc. U34, 3440x1440@100, auto-left, 2, TRANSFORM 1 # main\nmonitor = DP-1\t, transform, 3\n"
+     rule1.mode: ["DP-2", false, "M", "O", null, -2147483647, -2147483647, -1.0, 0, ""] vs ["DP-2", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="DP-2" mode=modeline pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=0 badrules=4 outputs=3 matched=1 unruled=2 agree=1 differ=0 disabled=0 verdict=OK
+   config="monitor\t=\tDP-3, modeline 419.00 3440, 0x0#all\nmonitor=DP-1\t, disabled\nmonitor\t=\tdesc: BOE, addreserved, 10\n"
+     rule1.mode: ["DP-3", false, "M", "O", null, 0, 0, -1.0, 0, ""] vs ["DP-3", false, 0, 0, 60.0, 0, 0, -1.0, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="DP-3" mode=modeline pos=0x0 scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=disabled verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=3 rules=2 v2=0 unsupported=0 badrules=1 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+   config="monitor\t=\tDP-1\t, modeline 419.00 3440, 0x0, 1.5, mirror#all\n"
+     rule1.mode: ["DP-1", false, "M", "O", null, 0, 0, 1.5, 0, ""] vs ["DP-1", false, 0, 0, 60.0, 0, 0, 1.5, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="DP-1" mode=modeline pos=0x0 scale=1.5000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+-- 47 configs, fields assign[DP-1],assign[DP-2],assign[eDP-1],rule_count
+   config="monitor =desc: Samsung, 0x0, -1920x0, 0.25, transform 03 # main\nmonitor\t=\tdesc:Dell Inc. U34, 1920x0\nmonitor=desc:, addreserved, +5, 0, 0, 0\nmonitor= DP-1 , transform, 3#all\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     assign[eDP-1]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U34" mode=1920x0@60.00 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=1 v2=0 unsupported=0 badrules=2 outputs=3 matched=2 unruled=1 agree=0 differ=2 disabled=0 verdict=DIFFER
+   config="monitor=desc: Dell Inc. U3415W X1 , preferred, auto-center-down, auto, TRANSFORM 1\nmonitor= , addreserved, 0x10, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=2 rules=0 v2=0 unsupported=0 badrules=2 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor = desc: BOE, , auto, 0.2, transform 03\nmonitor = , transform, 3.0 # main\nmonitor = DP-1, 1920x1080@60, auto-center-down, , mirror DP-1, transform 2\nmonitor\t=\teDP-1, addreserved, 0x10, 0, 0, 0#all\nmonitor = desc:Dell Inc. U34, , auto, 1.6, mirror , transform 2\nmonitor\t=\tDP-1, preferredx, auto, 1.3333, sdrbrightness 0.9\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U34" mode=preferred pos=auto scale=1.6000 transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=scale,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=0 badrules=5 outputs=3 matched=2 unruled=1 agree=0 differ=2 disabled=0 verdict=DIFFER
+   config="monitor= DP-3, 0x0, 0x0, 2, mirror dp-1 # main\r\nmonitor =DP-1 , addreserved, 0x10, 0, 0, 0 # main\nmonitor\t=\tDP-3, 2560x1440@59.94, 0x0, 10, transform 9#all\nmonitor= desc:, disable\nmonitor =, transform, 99999999999\nmonitor =desc:, 1920x1080@59.940#all\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="desc:" mode=1920x1080@59.94 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=0 badrules=4 outputs=3 matched=3 unruled=0 agree=1 differ=2 disabled=0 verdict=DIFFER
+
+-- 37 configs, fields assign[eDP-1],rule_count
+   config="monitor=desc: Dell Inc. U3415W X1 , 1920x1080, -1920x0, 00, mirror DP-1, transform 2, # main\nmonitor=DP-1, 00001x00001, auto-up, 1.6, sdrsaturation 1.2 # main\nmonitor\t=\tDP-2, 1920x0, 3440x0, 1.6, sdrsaturation 1.2\nmonitor = dp-1, , auto-center-right, 0.2, cm hdr\nmonitor = eDP-1, addreserved, 10abc, 0, 0, 0#all\nmonitor\t=\tdesc:Dell Inc. U34, 1920x1080, autofoo, 1.25, cm srgb\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=0 v2=0 unsupported=0 badrules=6 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor=eDP-1, addreserved, +5, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor = desc: Dell Inc. U3415W X1 , 1x1, auto, 1.25, vrr 0 # main\nmonitor = desc:Dell Inc. U34, 3440x1440@100, , 0.5, mirror DP-1\t#all\nmonitor = eDP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, auto-center-down, 0.2499, cm srgb, vrr 1, bitdepth 10#all\nmonitor= eDP-1, addreserved, 0x10, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=0 v2=0 unsupported=0 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor= desc: BOE, addreserved, +5, 0, 0, 0 # main\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+-- 22 configs, fields assign[DP-2],rule_count
+   config="monitor\t=\tDP-2, addreserved, 0x10, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor=DP-2, addreserved, 0x10, 0, 0, 0#all\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor\t=\tDP-2, addreserved, 1.5, 0, 0, 0\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor = DP-2, addreserved, 0x10, 0, 0, 0 # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+-- 19 configs, fields assign[DP-1],assign[DP-2],rule_count
+   config="monitor= dp-1, preferred, 000001x000002, 10, cm hdr, ,\nmonitor =desc: BOE, 2560x1440@59.94, 000001x000002, 00\nmonitor= dp-1, 2560x1440@59.94, , 99.99, transform 9\nmonitor= desc:Dell Inc. U34, addreserved, +5, 0, 0, 0\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=None model=2
+     assign[DP-2]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="desc: BOE" mode=2560x1440@59.94 pos=1x2 scale=1.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode,position,scale verdict=DIFFER
+     tool| MADO_MONITORS: lines=4 rules=1 v2=0 unsupported=0 badrules=3 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+   config="monitor=desc: Samsung, transform,\nmonitor = desc:Dell Inc. U34, 1920x1080@60, auto-up, 00, bitdepth 10\nmonitor= , modeline 419.00 3440, , 1.0000, bitdepth 10, ,\nmonitor\t=\tdesc:Dell Inc. U34, addreserved, 1.5, 0, 0, 0#all\nmonitor=desc:, pref, autofoo, 1.5, transform 9 # main\nmonitor = desc: BOE, 2560x1440@59.94, auto-up, 0.5, mirror dp-1\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=0 v2=0 unsupported=0 badrules=6 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor\t=\tHDMI-A-1, addreserved, 10abc, 0, 0, 0 # main\nmonitor =desc:Dell Inc. U34, modeline 419.00 3440, , 1, mirror\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U34" mode=modeline pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=1 outputs=3 matched=2 unruled=1 agree=2 differ=0 disabled=0 verdict=OK
+   config="monitor= eDP-1, highres, auto-center-down, 10, vrr 0\nmonitor = eDP-1, 12345x12345, auto-center-right, 00, sdrsaturation 1.2,#all\nmonitor =dp-1, 12345x12345, 3440x0, auto, vrr 0 # main\nmonitor=DP-2, addreserved, 1.5, 0, 0, 0\nmonitor\t=\teDP-1, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, auto-center-down, 1.3333, vrr -1 # main\nmonitor= DP-1\t, 0x1440, 3440x0, 2, mirror # main\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=1 model=2
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_RULE: n=1 sel="DP-1" mode=0x1440@60.00 pos=3440x0 scale=2.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode,position,scale verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=0 badrules=5 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+-- 8 configs, fields assign[DP-1],assign[eDP-1],rule_count
+   config="monitor = DP-3, addreserved, 0x10, 0, 0, 0\nmonitor = desc: BOE, pref, , 2, vrr\nmonitor\t=\tdesc:Dell Inc. U3415W X1, 0x0, auto-center-right, 1.6, vrr,\nmonitor =DP-1\t, addreserved, 10\nmonitor= DP-1\t, , -1920x0, auto, vrr -1\n"
+     rule_count: tool=2 model=3
+     assign[DP-1]: tool=2 model=3
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="desc: BOE" mode=preferred pos=auto scale=2.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="desc:Dell Inc. U3415W X1" mode=0x0@60.00 pos=auto scale=1.6000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=mode,scale verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=scale verdict=DIFFER
+     tool| MADO_MONITORS: lines=5 rules=2 v2=0 unsupported=0 badrules=3 outputs=3 matched=2 unruled=1 agree=0 differ=2 disabled=0 verdict=DIFFER
+   config="monitor= desc: Dell Inc. U3415W X1 , 0x1440, auto-center-right, , icc /tmp/x.icc\nmonitor= eDP-1, addreserved, 10abc, 0, 0, 0\nmonitor\t=\tdesc: Samsung, addreserved, +5, 0, 0, 0\nmonitor= desc:Dell Inc. U3415W X1, transform, 3\nmonitor = DP-1 , addreserved, 1.5, 0, 0, 0#all\n"
+     rule_count: tool=0 model=3
+     assign[DP-1]: tool=None model=3
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=5 rules=0 v2=0 unsupported=0 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+   config="monitor = DP-1 , addreserved, 1.5, 0, 0, 0 # main\nmonitor\t=\tDP-2, 1x1, 1920x-1000, auto, vrr -1#all\nmonitor = desc: BOE, disabled\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=None model=1
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="desc: BOE" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=disabled verdict=DIFFER
+     tool| MADO_MONITORS: lines=3 rules=1 v2=0 unsupported=0 badrules=2 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+   config="monitor=desc:Dell Inc. U3415W X1, addreserved, 1.5, 0, 0, 0 # main\nmonitor =DP-1, modeline 419.00 3440, -1920x0, 0.2499, TRANSFORM 1\nmonitor = eDP-1, addreserved, 1.5, 0, 0, 0\nmonitor =HDMI-A-1, transform, 99999999999#all\nmonitor=DP-1, transform, 03\nmonitor=, 1280x720@144, auto-center-right, 0, mirror DP-2#all\n"
+     rule_count: tool=0 model=2
+     assign[DP-1]: tool=None model=1
+     assign[eDP-1]: tool=None model=2
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=0 v2=0 unsupported=0 badrules=6 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+
+-- 7 configs, fields rule2.mode
+   config="monitor = DP-2, transform, 99999999999\nmonitor= desc:Dell Inc. U34, 2560x1440@59.94, auto\nmonitor =, addreserved, 99999999999, 0, 0, 0\nmonitor=, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, 3440x0, 99.99 # main\n"
+     rule2.mode: ["", false, "M", "O", null, 3440, 0, 99.99, 0, ""] vs ["", false, 3440, 1440, 76.87899780273438, 3440, 0, 99.98999786376953, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U34" mode=2560x1440@59.94 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="" mode=modeline pos=3440x0 scale=99.9900 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=2 differ=position verdict=DIFFER
+     tool| MADO_MONITORS: lines=4 rules=2 v2=0 unsupported=0 badrules=2 outputs=3 matched=3 unruled=0 agree=0 differ=3 disabled=0 verdict=DIFFER
+   config="monitor = desc:, 1280x720@144, auto-left, 0.2#all\nmonitor=, addreserved, 10\nmonitor =eDP-1, preferred, auto-up, 00, transform 03 # main\nmonitor= DP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, 1920x-1000, 1.5, mirror , transform 2\nmonitor= DP-3, 2560x1440@59.94, auto-center-down, 0.5, mirror DP-1\n"
+     rule2.mode: ["DP-1", false, "M", "O", null, 1920, -1000, 1.5, 0, "transform 2"] vs ["DP-1", false, 3440, 1440, 76.87899780273438, 1920, -1000, 1.5, 0, "transform 2"]
+     tool| MADO_MON_RULE: n=1 sel="desc:" mode=1280x720@144.00 pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-1" mode=modeline pos=1920x-1000 scale=1.5000 transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=position,scale,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode,scale verdict=DIFFER
+     tool| MADO_MONITORS: lines=5 rules=2 v2=0 unsupported=0 badrules=3 outputs=3 matched=3 unruled=0 agree=0 differ=3 disabled=0 verdict=DIFFER
+   config="monitor=DP-1\t, 1920x1080@59.940, auto-up, 0.2499, mirror dp-1#all\nmonitor =desc: Samsung, 00001x00001, auto-left, , vrr\nmonitor = DP-1 , MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, 0x0\nmonitor = HDMI-A-1, 1920x0, auto-center-right#all\nmonitor=desc:Dell Inc. U34, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, auto-center-right, 1.5, TRANSFORM 1, ,#all\nmonitor= desc:, addreserved, -0, 0, 0, 0 # main\n"
+     rule2.mode: ["DP-1", false, "M", "O", null, 0, 0, -1.0, 0, ""] vs ["DP-1", false, 3440, 1440, 76.87899780273438, 0, 0, -1.0, 0, ""]
+     tool| MADO_MON_RULE: n=1 sel="desc: Samsung" mode=1x1@60.00 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-1" mode=modeline pos=0x0 scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=3 sel="HDMI-A-1" mode=1920x0@60.00 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=4 sel="desc:" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=4 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=4 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=4 differ=- verdict=AGREE
+     tool| MADO_MONITORS: lines=6 rules=4 v2=0 unsupported=0 badrules=2 outputs=3 matched=3 unruled=0 agree=3 differ=0 disabled=0 verdict=OK
+   config="monitor =DP-1\t, 1920x1080@59.940, auto-up, 1, vrr -1\nmonitor=, 00001x00001, 1920x-1000\nmonitor= DP-2, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, auto-up, auto, mirror , transform 2\nmonitor =desc:Dell Inc. U34, 1920x0, auto-center-right, 0.2, wat 1\n"
+     rule2.mode: ["DP-2", false, "M", "O", null, -2147483647, -2147483647, -1.0, 0, "transform 2"] vs ["DP-2", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, "transform 2"]
+     tool| MADO_MON_RULE: n=1 sel="" mode=1x1@60.00 pos=1920x-1000 scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-2" mode=modeline pos=auto scale=auto transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode,position verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=2 differ=mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode,position verdict=DIFFER
+     tool| MADO_MONITORS: lines=4 rules=2 v2=0 unsupported=0 badrules=2 outputs=3 matched=3 unruled=0 agree=0 differ=3 disabled=0 verdict=DIFFER
+
+-- 3 configs, fields assign[DP-2],assign[eDP-1],rule_count
+   config="monitor=DP-2, maxwidth, auto-center-down, auto, sdrbrightness 0.9 # main\nmonitor = desc:Dell Inc. U3415W X1\nmonitor= dp-1, 1920x1080@59.940, 1920x-1000, 1.6, transform 1, ,\nmonitor= HDMI-A-1, disabled\nmonitor= , 1x1, auto, , sdrbrightness 0.9\nmonitor=, addreserved, +5, 0, 0, 0\n"
+     rule_count: tool=2 model=3
+     assign[DP-2]: tool=None model=3
+     assign[eDP-1]: tool=None model=3
+     tool| MADO_MON_RULE: n=1 sel="desc:Dell Inc. U3415W X1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="HDMI-A-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=2 v2=0 unsupported=0 badrules=4 outputs=3 matched=1 unruled=2 agree=1 differ=0 disabled=0 verdict=OK
+   config="monitor =desc:Dell Inc. U3415W X1, addreserved, 1.5, 0, 0, 0#all\nmonitor = , 1920x1080\nmonitor =desc:Dell Inc. U34, preferred, -1920x0, 10, mirror DP-1\t # main\nmonitor =desc: Dell Inc. U3415W X1 , maxwidth, 1920x-1000, 1.6, icc /tmp/x.icc#all\nmonitor =dp-1, 1920x0, auto-up, 1.0000, mirror DP-1\t\n"
+     rule_count: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="" mode=1920x1080@60.00 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MONITORS: lines=5 rules=1 v2=0 unsupported=0 badrules=4 outputs=3 matched=3 unruled=0 agree=1 differ=2 disabled=0 verdict=DIFFER
+   config="monitor =DP-1\t, \nmonitor =, addreserved, +5, 0, 0, 0 # main\nmonitor= DP-1\t, transform, 3.0\nmonitor= DP-2\n"
+     rule_count: tool=2 model=3
+     assign[DP-2]: tool=2 model=3
+     assign[eDP-1]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=2 v2=0 unsupported=0 badrules=2 outputs=3 matched=2 unruled=1 agree=2 differ=0 disabled=0 verdict=OK
+
+-- 1 configs, fields rule1.mirror
+   config="monitor= desc: BOE, 0x1440, 0x0, 1.0000, mirror , transform 2\r\n"
+     rule1.mirror: ["desc: BOE", false, 0, 1440, 60.0, 0, 0, 1.0, 0, "transform 2\r"] vs ["desc: BOE", false, 0, 1440, 60.0, 0, 0, 1.0, 0, "transform 2"]
+     tool| MADO_MON_RULE: n=1 sel="desc: BOE" mode=0x1440@60.00 pos=0x0 scale=1.0000 transform=0 mirror="transform 2\r" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode,scale,mirror verdict=DIFFER
+     tool| MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+-- 1 configs, fields rule1.mode,rule2.mode
+   config="monitor\t=\tdesc:, modeline 419.00 3440, 3440x0, 0#all\r\nmonitor\t=\tDP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, 1920x-1000, 2, mirror , transform 2 # main\nmonitor = DP-1 , transform, 007\nmonitor = desc: Samsung, , 1920x-1000, 1.25, mirror DP-1\t # main\nmonitor=DP-1 , transform,#all\n"
+     rule1.mode: ["desc:", false, "M", "O", null, 3440, 0, 1.0, 0, ""] vs ["desc:", false, 0, 0, 60.0, 3440, 0, 1.0, 0, ""]
+     rule2.mode: ["DP-1", false, "M", "O", null, 1920, -1000, 2.0, 0, "transform 2"] vs ["DP-1", false, 3440, 1440, 76.87899780273438, 1920, -1000, 2.0, 7, "transform 2"]
+     tool| MADO_MON_RULE: n=1 sel="desc:" mode=modeline pos=3440x0 scale=1.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-1" mode=modeline pos=1920x-1000 scale=2.0000 transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=position,scale,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=position,scale verdict=DIFFER
+     tool| MADO_MONITORS: lines=5 rules=2 v2=0 unsupported=0 badrules=3 outputs=3 matched=3 unruled=0 agree=1 differ=2 disabled=0 verdict=DIFFER
+
+-- 1 configs, fields rule2.transform
+   config="monitor= dp-1, 1920x1080@59.940, 000001x000002, 1.5, transform 1#all\nmonitor =DP-1, addreserved, 10, 0, 0, 0\nmonitor = # main\nmonitor=, transform, 03\nmonitor=HDMI-A-1, 1920x1080@60, auto-center-right, 1.6, vrr 0#all\nmonitor = desc: BOE, transform, 3.0#all\n"
+     rule2.transform: ["", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""] vs ["", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 3, ""]
+     tool| MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=2 differ=- verdict=AGREE
+     tool| MADO_MONITORS: lines=6 rules=2 v2=0 unsupported=0 badrules=4 outputs=3 matched=3 unruled=0 agree=3 differ=0 disabled=0 verdict=OK
+
+-- 1 configs, fields rule1.transform
+   config="monitor\t=\tDP-1\t, 1920x1080@59.940, 1920x-1000, 01.5, vrr 0\nmonitor\t=\tdesc:, 0x1440, auto, , mirror , transform 2,\nmonitor =desc:, transform, 03\nmonitor =desc: BOE, preferred, auto-up, 1.0000, mirror dp-1#all\nmonitor= eDP-1, 3840x2160@120, , 0.5, transform 03\nmonitor=desc:Dell Inc. U3415W X1, 1920x1080, 000001x000002, 0.5, sdrsaturation 1.2\n"
+     rule1.transform: ["desc:", false, 0, 1440, 60.0, -2147483647, -2147483647, -1.0, 0, "transform 2"] vs ["desc:", false, 0, 1440, 60.0, -2147483647, -2147483647, -1.0, 3, "transform 2"]
+     tool| MADO_MON_RULE: n=1 sel="desc:" mode=0x1440@60.00 pos=auto scale=auto transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode,mirror verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode,mirror verdict=DIFFER
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=0 badrules=5 outputs=3 matched=3 unruled=0 agree=0 differ=3 disabled=0 verdict=DIFFER
+
+== MASKED (tool said NOT_COMPARED; recorded for completeness) ==
+-- 43 configs, fields assign[DP-1],rule_count
+   config="monitor= DP-1, 3840x2160@120, 1920x-1000, 0, transform\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = desc: Dell Inc. U3415W X1 , modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, auto-left, 1.6, transform#all\nmonitor\t=\tDP-1 , 1280x720@144, autofoo, 0.2499, cm srgb#all\nmonitor= dp-1, transform, 03\r\nmonitor\t=\tdesc:, , 000001x000002, , mirror DP-1\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=0 v2=0 unsupported=1 badrules=3 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor=desc:Dell Inc. U3415W X1, 1920x0, , 10, transform # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor\t=\tdesc:Dell Inc. U3415W X1, highrr, -1920x0, 1.25, TRANSFORM 1\nmonitor= desc: Samsung, transform, +3\nmonitor=HDMI-A-1, modeline 419.00 3440, , 0.2499, sdrsaturation 1.2#all\nmonitor =desc:Dell Inc. U34, transform, 9\nmonitor= desc:Dell Inc. U3415W X1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, 3440x0, 0.5, transform\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=5 rules=0 v2=0 unsupported=1 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 19 configs, fields rule_count
+   config="monitor\t=\tdesc: Samsung, 1920x1080, auto-center-right, 2, transform\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor= dp-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, -1920x0, 99.99, transform\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor =desc: Samsung, 00001x00001, auto-left, 1.3333, transform\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = dp-1, 00001x00001, -1920x0, , transform#all\n"
+     rule_count: tool=0 model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 19 configs, fields assign[DP-1],assign[DP-2],assign[eDP-1],rule_count
+   config="monitor=, 1920x1080@59.940, auto-center-down, 1.5, transform\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = , MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, auto-center-down, 99.99, transform,\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor\t=\t, preferredx, 3440x0, , transform#all\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = , 3840x2160@120, auto-up, 10, transform # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 11 configs, fields assign[eDP-1],rule_count
+   config="monitor= desc: BOE, addreserved, , , ,\nmonitor = eDP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, autofoo, 01.5, transform\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=2 rules=0 v2=0 unsupported=1 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = DP-1\t, 3840x2160@120, 000001x000002, 1.5, mirror DP-1\t\nmonitor= desc: Dell Inc. U3415W X1 , preferred, -1920x0, 1.3333, vrr 0\nmonitor =eDP-1, 00001x00001, autofoo, 01.5, transform\nmonitor=HDMI-A-1, transform, 007\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=0 v2=0 unsupported=1 badrules=3 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor= desc:Dell Inc. U3415W X1, transform, +3\nmonitor = , addreserved, 99999999999, 0, 0, 0\nmonitor= desc: Dell Inc. U3415W X1 , modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, auto-up, 0.2, mirror dp-1#all\nmonitor\t=\teDP-1, 12345x12345, 3440x0, 0.25, transform\nmonitor\t=\tdp-1, 1920x1080@60, auto-center-down, 01.5, vrr 0\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=5 rules=0 v2=0 unsupported=1 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor= desc:Dell Inc. U34, preferred, -1920x0, 00, transform 03\nmonitor=dp-1, addreserved, , , ,\r\nmonitor\t=\teDP-1, , auto-center-down, 1.5, transform\n"
+     rule_count: tool=0 model=1
+     assign[eDP-1]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=3 rules=0 v2=0 unsupported=1 badrules=2 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 9 configs, fields assign[DP-1],assign[DP-2],rule_count
+   config="monitor= desc: Dell Inc. U3415W X1 , 3840x2160@120, 0x0, 01.5, cm srgb, vrr 1, bitdepth 10\nmonitor= desc:Dell Inc. U34, 00001x00001, auto-left, 0.25, transform # main\nmonitor\t=\tdp-1, modeline 419.00 3440, 0x0, , bitdepth 10\nmonitor= DP-1, preferredx, autofoo, 0.2499, mirror DP-1\t # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=0 v2=0 unsupported=1 badrules=3 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor =desc:Dell Inc. U34, 1920x1080@60, 0x0, 0.5, transform # main\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor\t=\tdesc:Dell Inc. U34, highres, 0x0, 1.25, transform\n"
+     rule_count: tool=0 model=1
+     assign[DP-1]: tool=None model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = DP-2, 0x1440, auto-center-right, 10, mirror\nmonitor = DP-1 , highrr, auto-center-down, 0.2499, transform 03\nmonitor=desc:Dell Inc. U3415W X1, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, auto-center-right\nmonitor = desc:Dell Inc. U34, 12345x12345, -1920x0, 0.25, transform\nmonitor =desc:Dell Inc. U34, 12345x12345, auto-center-down, 0, transform 9\n"
+     rule_count: tool=2 model=3
+     assign[DP-1]: tool=2 model=3
+     assign[DP-2]: tool=1 model=3
+     tool| MADO_MON_RULE: n=1 sel="DP-2" mode=0x1440@60.00 pos=auto scale=10.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="desc:Dell Inc. U3415W X1" mode=modeline pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mode,scale verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=5 rules=2 v2=0 unsupported=1 badrules=2 outputs=3 matched=2 unruled=1 agree=1 differ=1 disabled=0 verdict=NOT_COMPARED
+
+-- 7 configs, fields assign[DP-2],rule_count
+   config="monitor =desc: Samsung # main\nmonitor\t=\tdesc: Samsung, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, 3440x0, 10, mirror , transform 2\nmonitor=DP-1 , maxwidth, 3440x0, 0.2499, transform 9#all\nmonitor=DP-2, , autofoo, 2, transform\nmonitor\t=\tDP-2, 3440x1440@100, 0x0, auto, wat 1\nmonitor =desc: Samsung, 1920x0, auto-center-right, 1.3333, transform 03\n"
+     rule_count: tool=1 model=2
+     assign[DP-2]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="desc: Samsung" mode=modeline pos=3440x0 scale=10.0000 transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=1 badrules=3 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = DP-1 , 1920x1080, auto-center-right, 0.25, cm srgb#all\nmonitor=DP-2, modeline 419.00 3440, 1920x-1000, 1.5, transform\nmonitor= eDP-1, , auto-left, 1.25, vrr -1, ,\nmonitor\t=\tdesc: Dell Inc. U3415W X1 , transform, 3.0\nmonitor =DP-1\t, transform, +3\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=5 rules=0 v2=0 unsupported=1 badrules=4 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor = DP-2, maxwidth, 000001x000002, 0, transform\n"
+     rule_count: tool=0 model=1
+     assign[DP-2]: tool=None model=1
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+   config="monitor =HDMI-A-1, addreserved, -0, 0, 0, 0 # main\nmonitor=DP-2, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, auto-center-right, 10, transform\nmonitor = , 0x0, auto-left, 1.25, sdrsaturation 1.2,#all\n"
+     rule_count: tool=1 model=2
+     assign[DP-2]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="HDMI-A-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=3 rules=1 v2=0 unsupported=1 badrules=1 outputs=3 matched=0 unruled=3 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 3 configs, fields assign[DP-1],assign[eDP-1],rule_count
+   config="monitor\t=\tDP-2, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, 000001x000002, 0.5, mirror\nmonitor\t=\tDP-2, pref, auto-center-down, auto, transform\nmonitor= DP-1 , pref, -1920x0, 0.2499, bitdepth 10, cm srgb # main\nmonitor\t=\t, addreserved, 1.5, 0, 0, 0\n"
+     rule_count: tool=1 model=2
+     assign[DP-1]: tool=None model=2
+     assign[eDP-1]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="DP-2" mode=modeline pos=1x2 scale=0.5000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=position,scale verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=4 rules=1 v2=0 unsupported=1 badrules=2 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED
+   config="monitor= HDMI-A-1, transform, +3 # main\r\nmonitor= HDMI-A-1, addreserved, 0x10, 0, 0, 0\nmonitor =desc: BOE, preferred, 1920x-1000, 1.5, vrr # main\nmonitor=desc:Dell Inc. U3415W X1, transform, 3#all\nmonitor=DP-1 , 1920x1080@60, auto-center-down, 1.0000, transform\n"
+     rule_count: tool=1 model=3
+     assign[DP-1]: tool=None model=3
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="desc: BOE" mode=preferred pos=1920x-1000 scale=1.5000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=position,scale verdict=DIFFER
+     tool| MADO_MONITORS: lines=5 rules=1 v2=0 unsupported=1 badrules=2 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED
+   config="monitor = eDP-1, transform, 3\nmonitor = DP-3, 1920x1080@59.940, , 00, sdrbrightness 0.9\nmonitor=dp-1, 12345x12345, 1920x-1000, 1.6, mirror , transform 2\nmonitor= DP-1, 12345x12345, 000001x000002, auto, transform 3,\nmonitor = desc: BOE, 3840x2160@120, 000001x000002, 1.25, transform#all\nmonitor=desc:Dell Inc. U3415W X1, 0x1440, 1920x-1000, 1, vrr # main\n"
+     rule_count: tool=2 model=3
+     assign[DP-1]: tool=2 model=3
+     assign[eDP-1]: tool=None model=2
+     tool| MADO_MON_RULE: n=1 sel="dp-1" mode=12345x12345@60.00 pos=1920x-1000 scale=1.6000 transform=0 mirror="transform 2" disabled=false
+     tool| MADO_MON_RULE: n=2 sel="desc:Dell Inc. U3415W X1" mode=0x1440@60.00 pos=1920x-1000 scale=1.0000 transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=mode,position verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+     tool| MADO_MONITORS: lines=6 rules=2 v2=0 unsupported=1 badrules=2 outputs=3 matched=1 unruled=2 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED
+
+-- 1 configs, fields assign[DP-2],assign[eDP-1],rule_count
+   config="monitor=desc:Dell Inc. U3415W X1, pref, 0x0, 1.3333, transform\nmonitor\t=\tDP-1 , 0x0, 000001x000002, 0.5, icc /tmp/x.icc\nmonitor\t=\tdesc:Dell Inc. U3415W X1, transform,\nmonitor =DP-1, preferred, auto-center-right, , mirror DP-1 # main\nmonitor=, addreserved, -0, 0, 0, 0 # main\nmonitor=DP-2, highres, -1920x0, 1.25, transform 3#all\n"
+     rule_count: tool=1 model=2
+     assign[DP-2]: tool=1 model=2
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=- verdict=AGREE
+     tool| MADO_MONITORS: lines=6 rules=1 v2=0 unsupported=1 badrules=4 outputs=3 matched=3 unruled=0 agree=3 differ=0 disabled=0 verdict=NOT_COMPARED
+
+-- 1 configs, fields assign[DP-1],assign[eDP-1],rule1.selector,rule2.selector
+   config="monitor =DP-2, preferredx, auto-left, auto, mirror DP-1\nmonitor = eDP-1, 00001x00001, auto-up\nmonitor= DP-1\t, disable\nmonitor =eDP-1, 00001x00001, auto-up, 0.2, transform\nmonitor = desc: Dell Inc. U3415W X1 , transform, 007\nmonitor\t=\tHDMI-A-1, transform, 007\n"
+     rule1.selector: ["eDP-1", false, 1, 1, 60.0, -2147483647, -2147483647, -1.0, 0, ""] vs ["DP-1", true, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""]
+     rule2.selector: ["DP-1", true, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""] vs ["eDP-1", false, 1, 1, 60.0, -2147483647, -2147483647, 1.0, 0, ""]
+     assign[DP-1]: tool=2 model=1
+     assign[eDP-1]: tool=1 model=2
+     tool| MADO_MON_RULE: n=1 sel="eDP-1" mode=1x1@60.00 pos=auto scale=auto transform=0 mirror=- disabled=false
+     tool| MADO_MON_RULE: n=2 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+     tool| MADO_MON_OUTPUT: name="DP-1" rule=2 differ=disabled verdict=DIFFER
+     tool| MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+     tool| MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=mode verdict=DIFFER
+     tool| MADO_MONITORS: lines=6 rules=2 v2=0 unsupported=1 badrules=3 outputs=3 matched=2 unruled=1 agree=0 differ=2 disabled=0 verdict=NOT_COMPARED
+
+ESCAPE config="monitor= DP-1, transform, 99999999999 # main\nmonitor =desc:, highres, 0x0, 1.25, mirror DP-1\t\nmonitor\t=\tdesc: Dell Inc. U3415W X1 , disable\nmonitor\t=\teDP-1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, -1920x0, 0.25, transform 3#all\nmonitor = DP-1\t, addreserved, 10, 0, 0, 0\n" [('DP-1, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor\t=\tDP-2, 1920x0, auto, 1.6, transform 1 # main\nmonitor= desc: Samsung, transform, 3.0\nmonitor= DP-1\t, transform, 99999999999\nmonitor\t=\tdesc:, maxwidth, 3440x0, 0.25, sdrbrightness 0.9\nmonitor\t=\t, preferred, -1920x0, 1.0000, mirror DP-1\t\nmonitor= HDMI-A-1, 1920x0, auto-up, auto, cm srgb, vrr 1, bitdepth 10\n" [('DP-1\t, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor= HDMI-A-1\nmonitor=eDP-1, addreserved, , , ,\nmonitor =desc:, 1920x1080@59.940 # main\nmonitor= dp-1, pref, -1920x0, 01.5, mirror DP-1\nmonitor\t=\tdesc:, transform, 99999999999\n" [('desc:, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor\t=\tDP-1\t, transform, 99999999999\n" [('DP-1\t, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor= eDP-1, transform, 99999999999#all\n" [('eDP-1, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor =desc: BOE, transform, 99999999999#all\n" [('desc: BOE, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor =DP-1 , modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, auto-center-right, 01.5, sdrbrightness 0.9, ,\r\nmonitor= , transform, 99999999999#all\nmonitor= DP-3, 1920x0, -1920x0, 1.0000, wat 1\nmonitor= desc:Dell Inc. U34, 12345x12345, auto-center-right, 10, cm srgb, vrr 1, bitdepth 10#all\n" [(', transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor =desc: BOE, transform, 99999999999\n" [('desc: BOE, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor = DP-3, transform, 99999999999\r\n" [('DP-3, transform, 99999999999', 'out_of_range')]
+ESCAPE config="monitor= desc: BOE, transform, 99999999999#all\n" [('desc: BOE, transform, 99999999999', 'out_of_range')]

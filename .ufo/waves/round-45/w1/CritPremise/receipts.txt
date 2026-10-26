@@ -1,0 +1,140 @@
+# CritPremise receipts - commands and outputs behind w1/CritPremise/findings.md (round 45, w1)
+
+## held observation rows at base (the counterexample)
+$ git -C mado-shokunin grep -n -i "monitor mode" 0c89478a -- corpus/knowledge
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprctl-verification-layer.md:153:| monitor mode (L-MON:10) | `DP-1, 3440x1440@100, 0x0, 1` | `hyprctl -j monitors` → DP-1 `3440x1440` @ `99.99700`, at `0x0`, scale `1`, desc `LG Electronics LG ULTRAWIDE <serial redacted by the L1>` | agreement (fresh rate reported as EDID-actual; 99.997 vs nominal 100 `[INF]`) |
+
+$ git grep -n -E "99.997" 0c89478a -- corpus knowledge SKILL.md
+0c89478af821a6424c9ac922eafe02e39630cf4f:SKILL.md:75:| Monitor layout / scale / position | `~/.config/hypr/monitors.conf:10` (+ `GDK_SCALE` at `:9`) | `hyprctl monitors` — live DP-1 3440x1440@99.997; config declares @100 | MADO-1 §10 |
+0c89478af821a6424c9ac922eafe02e39630cf4f:SKILL.md:179:| S3 | informational | record-level, hygiene, nominal rounding; no action required — also `agreement*` ownership proofs, `live-default`, intentional drift vs stock | F4–F10 (grok-bot absent; monitor 99.997 vs 100; uninstalled-terminal configs; backup litter; `wl_socket` record correction; keyboard node count 8→9; mako `--version` misuse) — MADO-R3-2 §6; 6 ownership proofs + 4 `live-default` (MADO-R2-1 §5); drift inventory MADO-2 §6 | record only |
+0c89478af821a6424c9ac922eafe02e39630cf4f:SKILL.md:210:| `hyprctl monitors` / `workspaces` / `activeworkspace` | live display & workspace state | DP-1 3440x1440@99.997, workspace 1 |
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:73:| MADO-1 §9/§10 | version pins; runtime snapshot | 0.56.2; Omarchy 3.8.3; DP-1 3440x1440@99.997; ws 1 / 3 windows; grok-bot absent (F4) |
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:148:- monitors: DP-1 `3440x1440` refresh `99.997` at `0x0` scale `1`, desc
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:377:### F5 — monitor refresh 99.997 vs declared 100 (S3 nominal)
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:380:`refreshRate` `99.997`. Class carried: EDID nominal quantization `[INF]`.
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:725:hyprctl -j monitors | python3 -c "import json,sys;[print(m['name'],f\"{m['width']}x{m['height']}\",'refresh',m['refreshRate'],'at',f\"{m['x']}x{m['y']}\",'scale',m['scale'],'|',m['description']) for m in json.load(sys.stdin)]"   # DP-1 3440x1440 refresh 99.997 (F5)
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/config-health-report-r3.md:928:| F5 | S3 | `hyprctl -j monitors` refreshRate (R.3) | `99.997` (declared `@100`; nominal class) | equal → REPRODUCED |
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprctl-verification-layer.md:153:| monitor mode (L-MON:10) | `DP-1, 3440x1440@100, 0x0, 1` | `hyprctl -j monitors` → DP-1 `3440x1440` @ `99.99700`, at `0x0`, scale `1`, desc `LG Electronics LG ULTRAWIDE <serial redacted by the L1>` | agreement (fresh rate reported as EDID-actual; 99.997 vs nominal 100 `[INF]`) |
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprctl-verification-layer.md:257:3. Monitor `99.99700` vs declared `100`: treated as EDID nominal quantization
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprctl-verification-layer.md:280:5. `hyprctl -j monitors | jq '.[0].refreshRate'` → `99.997` vs declared `100`
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprland-config-plane.md:183:- `hyprctl monitors`: DP-1 (ID 0), `3440x1440@99.99700 at 0x0`, LG ULTRAWIDE
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/hyprland-config-plane.md:267:  `animations:enabled` 1, `general:layout` dwindle; DP-1 3440x1440@99.99700;
+0c89478af821a6424c9ac922eafe02e39630cf4f:corpus/knowledge/remaining-planes-census.md:218:- **Monitor.** DP-1 3,440×1,440, scale 1, refresh 99.997 Hz, `dpmsStatus`
+
+## ground receipt claim grep (frozen) reproduces
+$ git grep -n -E "parseMode|parsePosition|parseScale|searchScale|MonitorRuleManager|applyMonitorRule|handleMonitor" 0c89478a -- corpus SKILL.md
+exit=1
+
+## pins vs receipts/fetch-sha256.txt (sha256sum, both lists)
+$ sha256sum fetch/* | sed s|fetch/||
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  Hyprland-HyprCtl.cpp
+9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927  Hyprland-Monitor.cpp
+3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49  Hyprland-MonitorPositionController.cpp
+b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5  Hyprland-MonitorRule.hpp
+17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016  Hyprland-MonitorRuleManager.cpp
+616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589  Hyprland-Parser.cpp
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  Hyprland-legacy-ConfigManager.cpp
+a92c131a45f41918388eece78f225dbeab7791bb3cd2d3761d840aefa1527bac  hyprutils-String.cpp
+f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9  wiki-Monitors.md
+
+## registry tops at S301 (no S302-S310 collision)
+$ grep -n -E "^\| S30[0-9] " corpus/SOURCES.md
+244:| S295 | m
+245:| S296 | m
+246:| S297 | g
+247:| S298 | H
+248:| S299 | w
+249:| S300 | G
+250:| S301 | g
+
+## host: config bytes + effective-plane monitor lines
+$ sha256sum ~/.config/hypr/monitors.conf
+69c9d8996dfdcd6747775e984a479c53a520bd2ef193d337e171927fdf6795ee  /home/vgpnk/.config/hypr/monitors.conf
+$ grep -rn -E "^\s*monitor\s*=|^\s*monitorv2" ~/.config/hypr ~/.local/share/omarchy/default/hypr ~/.config/omarchy/current/theme/hyprland.conf ~/.local/state/omarchy/toggles/hypr
+/home/vgpnk/.config/hypr/hyprlock.conf:8:    monitor =
+/home/vgpnk/.config/hypr/hyprlock.conf:19:    monitor =
+/home/vgpnk/.config/hypr/monitors.conf:10:monitor = DP-1, 3440x1440@100, 0x0, 1
+
+## host: live projection (commit-safe fields only)
+$ hyprctl monitors all -j | python3 -c <projection>
+[{"name": "DP-1", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+$ hyprctl version | head -2
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+
+## host: scale-check switch
+$ hyprctl getoption debug:disable_scale_checks -j
+{"option": "debug:disable_scale_checks", "int": 0, "set": false }
+
+## host: re-run of the L1 reference (read-only)
+$ hyprctl monitors all -j | python3 -I l1-draft/mado-monitors.py --monitors - --config ~/.config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## pin locators (computed)
+$ grep -n -E 'disable_scale_checks' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:721:    static auto PDISABLESCALECHECKS = CConfigValue<Config::INTEGER>("debug:disable_scale_checks");
+$ grep -n -E 'searchScale = std::round' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:1001:        float    searchScale = std::round(m_scale * 120.0);
+$ grep -n -E 'i < 90' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:1010:            for (size_t i = 1; i < 90; ++i) {
+$ grep -n -E 'm_refreshRate = mode->refreshRate' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:903:        m_refreshRate = mode->refreshRate / 1000.f;
+$ grep -n -E 'DELTALESSTHAN(bestMode->refreshRate' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+$ grep -n -E 'm_isUnsafeFallback' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:331:            std::ranges::count_if(State::monitorState()->monitors(), [](const auto& mon) { return !mon->m_isUnsafeFallback; }) == 1; // temporarily recover orphaned workspaces
+fetch/Hyprland-MonitorRuleManager.cpp:86:    if (PMONITOR->m_isUnsafeFallback) {
+fetch/Hyprland-MonitorRuleManager.cpp:140:        if (!m || !m->m_output || m->m_isUnsafeFallback)
+$ grep -n -E 'm_refreshRate   = 60' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-MonitorRule.hpp:46:        float                        m_refreshRate   = 60; // Hz
+$ grep -n -E 'refreshRate": {:.5f}' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-HyprCtl.cpp:242:    "refreshRate": {:.5f},
+$ grep -n -E '"refreshRate"' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-HyprCtl.cpp:242:    "refreshRate": {:.5f},
+$ grep -n -E 'sdr_eotf' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-legacy-ConfigManager.cpp:576:    m_config->addSpecialConfigValue("monitorv2", "sdr_eotf", {"default"});
+fetch/Hyprland-legacy-ConfigManager.cpp:819:    VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_eotf", output.c_str());
+$ grep -n -E 'matchesStaticSelector' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-Monitor.cpp:1201:bool CMonitor::matchesStaticSelector(std::string_view selector) const {
+fetch/Hyprland-Monitor.cpp:1281:        if (const auto BOUND = Config::workspaceRuleMgr()->getBoundMonitorStringForWS(std::to_string(i)); !BOUND.empty() && !matchesStaticSelector(BOUND))
+fetch/Hyprland-MonitorRuleManager.cpp:97:        if (PMONITOR->matchesStaticSelector(r.m_name))
+fetch/Hyprland-MonitorRuleManager.cpp:153:            else if (std::ranges::any_of(State::monitorState()->monitors(), [&rule](const auto& m) { return m->matchesStaticSelector(rule.m_mirrorOf); }))
+$ grep -n -E 'vars\[1\] == "all"' fetch/Hyprland-*.cpp fetch/Hyprland-*.hpp
+fetch/Hyprland-HyprCtl.cpp:320:    if (vars.size() == 2 && vars[1] == "all")
+
+## entry anchors
+$ grep -n -E "closeness test|The lookup walks|written scale would leave|declares one rule" l1-draft/entry.md
+23:| When does a requested mode count as met? | Hyprland's own closeness test: within 1 px and 1 Hz of the request | OBS
+54:**OBS** The lookup walks the list in reverse and returns the first match, so the newest matching rule wins; with none
+62:**OBS** S306 - when the written scale would leave a fractional logical size the search starts from the nearest 1/120 
+82:**OBS** `~/.config/hypr/monitors.conf` declares one rule, DP-1 at 3440x1440@100, position 0x0, scale 1; `hyprctl moni
+
+## prior tool does not parse monitor lines
+$ grep -n "\"monitor\"" tools/mado-options.py
+179:    "monitor", "env", "layerrule", "layerrulev2", "execr", "execr-once",
+1416:                   "monitor", "env", "exec-once", "workspace",
+
+## gate threshold vs compositor bound
+$ sed -n 3526p tools/mado-verify.sh
+ok = (x.get('width') == 3440 and x.get('height') == 1440 and abs(float(x.get('refreshRate', 0)) - 100) < 0.5)
+
+## axis receipt
+MADO_AXIS_ROW: axis=navigation published=61/61 derived=61/61 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=71/71 derived=71/71 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=0c89478af821a6424c9ac922eafe02e39630cf4f
+exit=0
+
+## corrected bound locator (the earlier -E pattern swallowed a group)
+$ grep -n -F "DELTALESSTHAN(bestMode->refreshRate" fetch/Hyprland-Monitor.cpp
+837:                !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+$ grep -n -E "views::reverse|r.m_name.empty|m_resolution = Vector2D\{" fetch/Hyprland-MonitorRuleManager.cpp
+90:        fallbackRule.m_resolution = Vector2D{1920, 1080};
+96:    for (auto const& r : m_rules | std::views::reverse) {
+104:        if (r.m_name.empty())
+113:    fallbackRule.m_resolution = Vector2D{};
+$ grep -n -E "RULE->m_resolution == Vector2D\(\)|autoScale = RULE->m_scale" fetch/Hyprland-Monitor.cpp
+750:    const bool autoScale = RULE->m_scale <= 0.1;
+773:    if (RULE->m_resolution == Vector2D()) {

@@ -1,0 +1,9 @@
+# determinism / environment checks, scratch clone rev 979fcfc0
+1. replay: seeds 1..150 scored twice, 150/150 logs byte-identical (cmp over logs/seeds vs logs/seeds2)
+2. default seed == --seed 45: logs byte-identical (md5 706fcfd5b947c687f925666f197f7f56)
+3. ambient git poisoning: GIT_DIR=/nonexistent GIT_WORK_TREE=/nonexistent GIT_INDEX_FILE=/nonexistent -> verdict=TARGET_MET (counter strips GIT_*)
+4. cwd independence: run from / -> verdict=TARGET_MET
+5. tool hash-order: 49 fixtures x {PYTHONHASHSEED=0, PYTHONHASHSEED=1}, tool run WITHOUT -I so the variable is honoured: 0 differing (stdout+stderr+rc)
+6. tool source: occurrences of 'set('=0 'frozenset'=0 '.items()'=0 '.keys()'=0 'random'=0 -> no unordered iteration to reorder
+7. counter source: names() uses random.Random(seed).choice/randint/shuffle; subst() walks a 4-key dict in insertion order; FIXTURES is a list
+8. same-name-triple seeds 533 and 579 share A/B/C ('USB-C-6','DVI-D-3','eDP-7') with different {D}: both TARGET_MET

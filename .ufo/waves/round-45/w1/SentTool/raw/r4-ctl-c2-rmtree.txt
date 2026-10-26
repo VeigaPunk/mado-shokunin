@@ -1,0 +1,23 @@
+# F4: ctl/run-c2-controls.py clone() rmtree's a fixed child name under a caller-chosen --work (and creates --work
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ sed -n '41,44p' .ufo/waves/round-45/ctl/run-c2-controls.py
+$ python3 - <<'EOF'   # the rmtree line of clone(), with work=a fresh dir holding a pre-existing 'P'
+import os, shutil; work = '<scratch>/demo-work'; shutil.rmtree(os.path.join(work, 'P'), ignore_errors=True)
+EOF
+  39 
+  40 
+  41 def clone(repo, rev, work, name):
+  42     d = os.path.join(work, name)
+  43     shutil.rmtree(d, ignore_errors=True)
+  44     subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", repo, d], check=True, env=ENV)
+
+before: ['P']
+after executing the rmtree line with work='/fast/scratch/hyaku/mado-r45/SentTool/w/demo-work' and name="P": []
+
+# exit=0
+
+# the same shape exists for every fixed name in runs (P, R14-COPY, SHELL, WIDE-RANGE, HIDDEN-LINE, FORGED-PIN,
+# FALSE-URL, PROSE-CENSUS, ANCHOR-PAST-EOF); :84 os.makedirs(a.work, exist_ok=True) means --work need not exist,
+# so `--work /home/someone` deletes /home/someone/P if it is there. run-c1-controls.py:66 and the c1 counter:381
+# both use tempfile.mkdtemp(dir=...) and are not exposed. smallest remediation: mkdtemp(dir=work, prefix=name+"-").

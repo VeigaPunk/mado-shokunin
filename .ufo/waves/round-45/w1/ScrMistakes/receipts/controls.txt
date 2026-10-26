@@ -1,0 +1,39 @@
+# POSITIVE control first (must print CLEAN), then one single-defect mutant per check (must print FAIL)
+
+control base=60ba3d86f27264b44d6da399d422628efb6b284e tip=059d967c180e704e390c699eb58ec4d72b0dced5 outside-round diff files=0
+
+$ checks.py 86 --repo <control> --rev HEAD
+CHECK86: violations=0 verdict=CLEAN
+exit=0
+
+$ checks.py 87 --repo <control> --rev HEAD
+CHECK87: violations=0 verdict=CLEAN
+exit=0
+
+$ checks.py 88 --repo <control> --rev HEAD
+CHECK88: violations=0 verdict=CLEAN
+exit=0
+
+$ checks.py 89 --repo <control> --rev HEAD
+CHECK89: violations=0 verdict=CLEAN
+exit=0
+
+$ checks.py 86 (tip receipt names the predecessor, no equivalence statement)
+86 VIOLATION .ufo/waves/round-45/receipts/axis-tip.txt names=d5305392 tip=eec239c9
+CHECK86: violations=1 verdict=FAIL
+exit=1
+
+$ checks.py 87 (one title key in the projected dump)
+87 VIOLATION .ufo/waves/round-45/w1/fixtures/projected.json R1 identity_keys=title
+CHECK87: violations=1 verdict=FAIL
+exit=1
+
+$ checks.py 88 (after side is a pointer)
+88 VIOLATION SCORECARD.md:5 after='see `receipts/c1-after-data.txt`'
+CHECK88: violations=1 verdict=FAIL
+exit=1
+
+$ checks.py 89 (--nonce default=None)
+89 VIOLATION quality/counters/c1-seeded.py --nonce default=None (fresh random draw per run)
+CHECK89: violations=1 verdict=FAIL
+exit=1

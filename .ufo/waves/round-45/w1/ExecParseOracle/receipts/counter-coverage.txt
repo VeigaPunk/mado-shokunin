@@ -1,0 +1,17 @@
+# does PRED-C1-r45's fixture list contain the four divergence classes?
+# command: grep -n -e modeline -e 'transform, 0' -e '\r' quality/counters/c1-r45-monitors.py
+(no match)
+
+# command: grep -n -e addreserved -e 'transform, ' quality/counters/c1-r45-monitors.py
+33:same-selector rule; `addreserved` without a rule adds a default one; an unknown key drops the whole rule;
+59:            "x": x, "y": y, "scale": scale, "transform": transform, "disabled": disabled,
+71:        n, sel, mode, pos, scale, transform, mirror, disabled)
+125:    ("transform-key", ["monitor = {B}, 1920x1080@60, 0x0, 1, transform, 1\n"],
+133:    ("transform-modifier", ["monitor = {B}, 1920x1080@60, 0x0, 1\nmonitor = {B}, transform, 3\n"],
+137:    ("transform-modifier-alone", ["monitor = {B}, transform, 1\n"], [M("{B}")], False,
+139:    ("transform-modifier-bad", ["monitor = {B}, 1920x1080@60, 0x0, 1\nmonitor = {B}, transform, 9\n"],
+212:    ("addreserved-adds-default", ["monitor = {A}, addreserved, 10, 0, 0, 0\n"], [M("{A}", x=50, scale=1.5)], False,
+214:    ("addreserved-keeps-rule", ["monitor = {A}, 1920x1080@60, 0x0, 1\nmonitor = {A}, addreserved, 10, 0, 0, 0\n"],
+
+# command: grep -c '^    ("' quality/counters/c1-r45-monitors.py
+49

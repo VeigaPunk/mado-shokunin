@@ -1,0 +1,61 @@
+== SOURCES rows S290-S297 (title + teaches cells) ==
+239:| S290 | Hyprland v0.56.2 rule match engine - how a window-rule class expression becomes a boolean - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp | code | A | The test a host `match:class` regex is put through, and the `negative:` prefix | src/desktop/rule/matchEngine/RegexMatchEngine.cpp:6-13 const
+240:| S291 | Hyprland v0.56.2 default floating algorithm - who consumes a size rule - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/layout/algorithm/floating/default/DefaultFloatingAlgorithm.cpp | code | A | The first-map branch that evaluates the stored size expression and places the box | src/layout/algorithm/floating/default/DefaultFloatingAlgori
+241:| S292 | Hyprland v0.56.2 layout target - where the box is stored - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/layout/target/Target.cpp | code | A | The base target's box store and its remembered floating size | src/layout/target/Target.cpp:10-18 setPositionGlobal stores and rounds the box, :64-74 position and the floating-size memory @ tag v
+242:| S293 | Hyprland v0.56.2 window target - the client's request as input - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/layout/target/WindowTarget.cpp | code | A | How a window target derives its desired geometry from the client, and the fallbacks | src/layout/target/WindowTarget.cpp:36-40 setPositionGlobal writes the box then updates the positi
+243:| S294 | Hyprland v0.56.2 geometric movable animated - goal versus current - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/view/types/GeometricMovableAnimated.cpp | code | A | The animated box API that answers `GEOMETRIC_GOAL` and `GEOMETRIC_CURRENT` | src/desktop/view/types/GeometricMovableAnimated.cpp:8-15 position, :17-24 size, :26-33
+244:| S295 | mado host gkeep rule file - the three lines the compositor reads (measured on this host, read-only) - .ufo/waves/round-43/fetch/host-gkeep.conf | own-work | A | The exact host rule text for class `^(org.omarchy.gkeep)$` | whole file .ufo/waves/round-43/fetch/host-gkeep.conf, 5 lines (4 content plus an empty line 5, wc -l -c reports 5 264), 264 B sha256:3726e488c0bf93028f1bba11017cf02d
+245:| S296 | mado host clients census - the four clients open on 2026-10-26 (measured on this host, read-only) - .ufo/waves/round-43/fetch/host-clients-r43.json | own-work | A | Which windows the dump held when it was taken, and that gkeep was not among them | whole file .ufo/waves/round-43/fetch/host-clients-r43.json, 62 lines, 711 B sha256:21db902e1f1234b9f52411cf7885097a18d67b00b9dd0110f9bbd2b3
+246:| S297 | gkeep client window request - the app's own size (read-only excerpt, gkeep 133b867) - .ufo/waves/round-43/fetch/gkeep-ui-excerpt.py | own-work | A | The one place the client states its identity and its default size | excerpt of ~/Projects/gkeep/gkeep/ui.py:446-488 (end of file) at gkeep HEAD 133b86717a02548aeaff3f1411bf301d936c5308, 1625 B sha256:3695b788c6d766b8e87c01916a6594158a26c2
+
+== ScrSupersedeRows report ==
+# ScrSupersedeRows — round 44 w1 report
+
+Lane `/home/vgpnk/Projects/shokunin/mado-shokunin`, base/freeze `e2289516a9a857f55cda7be635933e89b931c3da`.
+Target: closure D2 (`corpus/lessons/round-43-verifier-spotcheck.md:100-101`) — draft the superseding registry rows
+for the cells round-43 `w2` found imprecise, decide per row whether supersession passes the census without an
+E04, and mirror-validate.
+
+## Behaviour
+
+Seven superseding rows drafted (provisional `S302`-`S308`, one per predecessor, `teaches` opening
+`supersedes S29N —` per `CORPUS.md:116-118`), grounded cell by cell in the round-43 pins and re-verified by
+script:
+
+| new | supersedes | corrected cells | scope cell |
+|---|---|---|---|
+| S302 | S290 | `teaches` (class→engine binding unpinned; host pattern text is S295), anchor cross-ref | verbatim |
+| S303 | S291 | title → floating path only; `teaches` (parse gate, center conditions, re-center, later clamp is S293, tiled consumer `Window.cpp:2402-2409`) | verbatim |
+| S304 | S292 | `teaches` (reported-geometry clause replaced by the file's own limit) | verbatim |
+| S305 | S293 | title (request premise removed); `teaches` (both sides `:339`, `>5` `:342`, 600x400/error `:350-364`, stored size `:323-326`); anchor extended | verbatim |
+| S306 | S294 | `teaches` tail (retained inference dropped) | verbatim |
+| S307 | S296 | scope + `teaches` (reduced dump has no `fullscreen`, absence ≠ "never mapped") | narrowed |
+| S308 | S297 | title, anchor (excerpt-rel. `:6`/`:33` = `ui.py:449`/`:476`; no `set_size_request`), `teaches` (default size, not a request) | narrowed |
+
+`used-by` is `corpus/lessons/round-44.md` for all seven, i.e. the rows land with the round lesson's
+registry-changes table — that block is at the foot of `rows-block.txt`.
+
+## Gates
+
+Census (`scripts/sources-census.sh validate --file …`, read-only mirrors of the lane's `corpus/` + the 265
+`used-by` paths the registry names):
+
+| variant | E | W | E04 | W04 | E11 | W03 | exit |
+|---|---|---|---|---|---|---|---|
+| lane (real file) | 0 | 8 | 0 | 7 | 0 | 0 | 0 |
+| m0 mirror, no rows (control, reproduces lane) | 0 | 8 | 0 | 7 | 0 | 0 | 0 |
+| m1 rows without the lesson → **`E11 S302…S308`** | 7 | 8 | 0 | 7 | 7 | 0 | 1 |
+| **m2 rows + lesson stub = recommended landing** | 0 | 8 | **0** | **7** | 0 | 0 | **0** |
+| m3 m2 with S302 scope narrowed | 0 | 9 | 0 | 8 | 0 | 0 | 0 |
+| m4 mutant: S304 opener deleted → `E04 S304 …` | 1 | 8 | 1 | 7 | 0 | 0 | 1 |
+| m5 `used-by = —` | 0 | 15 | 0 | 7 | 0 | 7 | 0 |
+| m6 `used-by =` round-43 entry | 0 | 8 | 0 | 7 | 0 | 0 | 0 |
+
+Answer to the census question: **supersession passes with no E04 and no new warning when the scope cell is
+kept verbatim** (m2); the exemption is the `supersedes S29N` opener, and m4 shows it is load-bearing.
+Changing a scope cell costs exactly one `W04` (m3). Own-work rows S307/S308 cannot trip E04/W04 at all
+(no URL in their source cell, `sources-census.sh:600-605`).
+
+Other gates: `check-locators.sh` → `LOCATORS: checked=99 failed=0` (all eight pins re-hashed, every
+`file:line` in the rows recomputed, excerpt byte-equal to `ui.py:446-488`). Row count in the m2 mirror
+234 → 241; no gate tool hard-codes 234.

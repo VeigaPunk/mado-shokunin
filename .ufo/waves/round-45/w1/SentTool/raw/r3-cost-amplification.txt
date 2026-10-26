@@ -1,0 +1,22 @@
+# F3: two inputs each under the 1 MiB cap cost superlinearly; measured 95.7 s from 290 kB + 300 kB
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f
+# tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ python3 -I tool.py --monitors <dump> --config <conf>  (sizes in the table)
+conf 2000 lines, 62000 B
+  rc=3 wall=0.06s  (add() rebuilds the rule list per line: c1-r45 reference tool:181)
+conf 4000 lines, 124000 B
+  rc=3 wall=0.20s  (add() rebuilds the rule list per line: c1-r45 reference tool:181)
+conf 8000 lines, 248000 B
+  rc=3 wall=0.75s  (add() rebuilds the rule list per line: c1-r45 reference tool:181)
+conf 16000 lines, 496000 B
+  rc=3 wall=3.14s  (add() rebuilds the rule list per line: c1-r45 reference tool:181)
+rules=1000 outputs=1000  rc=3 wall=0.09s  (effective() scans every rule per output: tool:347)
+rules=2000 outputs=2000  rc=3 wall=0.33s  (effective() scans every rule per output: tool:347)
+rules=4000 outputs=4000  rc=3 wall=1.29s  (effective() scans every rule per output: tool:347)
+
+recorded earlier in this seat, same tool, both inputs under the cap:
+  big.conf 290000 B (10000 rules) + big.json 300001 B (100000 outputs of {}) -> rc=3 wall=95.7s
+  cap-scale worst case [INFERENCE, not run]: ~33825 rules (1 MiB / 31 B per line) x ~349525 outputs (1 MiB / 3 B per '{}') = 1.18e10 pairings ~= 19 min at the measured 1e9 -> 95.7 s
+
+# exit=0

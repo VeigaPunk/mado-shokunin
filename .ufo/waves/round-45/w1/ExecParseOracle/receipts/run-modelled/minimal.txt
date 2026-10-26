@@ -1,0 +1,160 @@
+# minimal repros of unmasked divergences (profile=modelled configs=3600 seed=45)
+
+distinct minimal repros=351  shrinking configs=400
+
+-- fields rule_count,assign[DP-1]: 101 configs, 84 minimal forms
+   x4   "monitor =DP-1 , addreserved, 0x10, 0, 0, 0 # main\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+   x3   "monitor =DP-1\t, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+   x2   "monitor = desc:Dell Inc. U3415W X1, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+   x2   "monitor= DP-1 , addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+   x2   "monitor = desc: Dell Inc. U3415W X1 , addreserved, +5, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+   x2   "monitor=DP-1\t, addreserved, 0x10, 0, 0, 0 # main\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+
+-- fields rule_count: 88 configs, 78 minimal forms
+   x3   "monitor= HDMI-A-1, addreserved, 10abc, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+   x2   "monitor\t=\tdesc: Samsung, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+   x2   "monitor= HDMI-A-1, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+   x2   "monitor\t=\tdesc: Samsung, addreserved, 10abc, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+   x2   "monitor= HDMI-A-1, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+   x2   "monitor =HDMI-A-1, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+
+-- fields rule1.mode: 88 configs, 87 minimal forms
+   x2   "monitor =desc:Dell Inc. U34, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync, 0x0\n"
+        rule1.mode: ["desc:Dell Inc. U34", false, "M", "O", null, 0, 0, -1.0, 0, ""] vs ["desc:Dell Inc. U34", false, 3440, 1440, 76.87899780273438, 0, 0, -1.0, 0, ""]
+   x1   "monitor=desc:Dell Inc. U3415W X1, modeline 419.00 3440 3448 3520 3680 1440 1443 1448 1481 +hsync -vsync\n"
+        rule1.mode: ["desc:Dell Inc. U3415W X1", false, "M", "O", null, -2147483647, -2147483647, -1.0, 0, ""] vs ["desc:Dell Inc. U3415W X1", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, ""]
+   x1   "monitor\t=\tDP-2, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481\n"
+        rule1.mode: ["DP-2", false, "M", "O", null, -2147483647, -2147483647, -1.0, 0, ""] vs ["DP-2", false, 3440, 1440, 76.87899780273438, -2147483647, -2147483647, -1.0, 0, ""]
+   x1   "monitor\t=\tDP-3, modeline 419.00 3440, 0x0#all\n"
+        rule1.mode: ["DP-3", false, "M", "O", null, 0, 0, -1.0, 0, ""] vs ["DP-3", false, 0, 0, 60.0, 0, 0, -1.0, 0, ""]
+   x1   "monitor\t=\tDP-1\t, modeline 419.00 3440, 0x0, 1.5, mirror#all\n"
+        rule1.mode: ["DP-1", false, "M", "O", null, 0, 0, 1.5, 0, ""] vs ["DP-1", false, 0, 0, 60.0, 0, 0, 1.5, 0, ""]
+   x1   "monitor= desc:Dell Inc. U3415W X1, MODELINE 419.00 3440 3448 3520 3680 1440 1443 1448 1481, -1920x0, 0, mirror , transform 2#all\n"
+        rule1.mode: ["desc:Dell Inc. U3415W X1", false, "M", "O", null, -1920, 0, 1.0, 0, "transform 2"] vs ["desc:Dell Inc. U3415W X1", false, 3440, 1440, 76.87899780273438, -1920, 0, 1.0, 0, "transform 2"]
+
+-- fields rule_count,assign[DP-1],assign[DP-2],assign[eDP-1]: 42 configs, 37 minimal forms
+   x2   "monitor=desc:, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor=, addreserved, 10abc, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor =desc:, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor = desc:, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor = , addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+   x1   "monitor= , addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+        assign[eDP-1]: tool=None model=1
+
+-- fields rule_count,assign[eDP-1]: 41 configs, 35 minimal forms
+   x3   "monitor =desc: BOE, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor = eDP-1, addreserved, 10abc, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor= eDP-1, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor=eDP-1, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+   x2   "monitor=desc: BOE, addreserved, 10abc, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+   x1   "monitor=eDP-1, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[eDP-1]: tool=None model=1
+
+-- fields rule_count,assign[DP-2]: 25 configs, 18 minimal forms
+   x4   "monitor= DP-2, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+   x2   "monitor=DP-2, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+   x2   "monitor\t=\tDP-2, addreserved, 0x10, 0, 0, 0 # main\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+   x2   "monitor = DP-2, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+   x2   "monitor\t=\tDP-2, addreserved, 10abc, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor\t=\tDP-2, addreserved, 0x10, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-2]: tool=None model=1
+
+-- fields rule_count,assign[DP-1],assign[DP-2]: 12 configs, 9 minimal forms
+   x4   "monitor\t=\tdesc:Dell Inc. U34, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor= desc:Dell Inc. U34, addreserved, +5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor\t=\tdesc:Dell Inc. U34, addreserved, 1.5, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor\t=\tdesc:Dell Inc. U34, addreserved, 0x10, 0, 0, 0#all\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor = desc:Dell Inc. U34, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+   x1   "monitor =desc:Dell Inc. U34, addreserved, 1.5, 0, 0, 0\n"
+        rule_count: tool=0 model=1
+        assign[DP-1]: tool=None model=1
+        assign[DP-2]: tool=None model=1
+
+-- fields rule1.transform: 2 configs, 2 minimal forms
+   x1   "monitor = # main\nmonitor=, transform, 03\n"
+        rule1.transform: ["", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 0, ""] vs ["", false, 0, 0, 60.0, -2147483647, -2147483647, -1.0, 3, ""]
+   x1   "monitor\t=\tdesc:, 0x1440, auto, , mirror , transform 2,\nmonitor =desc:, transform, 03\n"
+        rule1.transform: ["desc:", false, 0, 1440, 60.0, -2147483647, -2147483647, -1.0, 0, "transform 2"] vs ["desc:", false, 0, 1440, 60.0, -2147483647, -2147483647, -1.0, 3, "transform 2"]
+
+-- fields rule1.mirror: 1 configs, 1 minimal forms
+   x1   "monitor= desc: BOE, 0x1440, 0x0, 1.0000, mirror , transform 2\r\n"
+        rule1.mirror: ["desc: BOE", false, 0, 1440, 60.0, 0, 0, 1.0, 0, "transform 2\r"] vs ["desc: BOE", false, 0, 1440, 60.0, 0, 0, 1.0, 0, "transform 2"]
+

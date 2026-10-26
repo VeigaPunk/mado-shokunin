@@ -1,0 +1,38 @@
+# grep -n locators used by w1/ScrReadme/readme.md - pins under .ufo/waves/round-45/fetch/ - 2026-10-26T15:57:13-03:00
+1345:    parser.parseMode(std::string(ARGS[1]));
+1347:    parser.parseScale(std::string(ARGS[3]));
+1352:        if (ARGS[argno] == "mirror") {
+1355:        } else if (ARGS[argno] == "bitdepth") {
+1358:        } else if (ARGS[argno] == "cm") {
+1361:        } else if (ARGS[argno] == "sdrsaturation") {
+1364:        } else if (ARGS[argno] == "sdrbrightness") {
+1367:        } else if (ARGS[argno] == "transform") {
+1370:        } else if (ARGS[argno] == "vrr") {
+1373:        } else if (ARGS[argno] == "icc") {
+1378:            return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+576:    m_config->addSpecialConfigValue("monitorv2", "sdr_eotf", {"default"});
+819:    VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_eotf", output.c_str());
+46:        float                        m_refreshRate   = 60; // Hz
+38:    std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+45:    auto applyWlrOutputConfig = [PMONITOR](CMonitorRule rule) -> CMonitorRule {
+98:            return applyWlrOutputConfig(r);
+105:            return applyWlrOutputConfig(r);
+116:    return applyWlrOutputConfig(fallbackRule);
+96:    for (auto const& r : m_rules | std::views::reverse) {
+96:    for (auto const& r : m_rules | std::views::reverse) {
+103:    for (auto const& r : m_rules) {
+836:            if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestMode->pixelSize.y, RULE->m_resolution.y, 1) ||
+837:                !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+1001:        float    searchScale = std::round(m_scale * 120.0);
+1201:bool CMonitor::matchesStaticSelector(std::string_view selector) const {
+1202:    if (selector.starts_with("desc:")) {
+255:    m_shortDescription = trim(std::format("{} {} {}", m_output->make, m_output->model, m_output->serial));
+27:            m->moveTo(*POS);
+242:    "refreshRate": {:.5f},
+277:            m->m_id, escapeJSONStrings(m->m_name), escapeJSONStrings(m->m_shortDescription), escapeJSONStrings(m->m_output->make), escapeJSONStrings(m->m_output->model),
+299:            m->m_name, m->m_id, sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->m_shortDescription,
+320:    if (vars.size() == 2 && vars[1] == "all")
+59:        if (i == 0 && str.at(i) == '-') {
+253:The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`. The default (`0`) is to follow `render:cm_sdr_eotf`. This can be changed to pie
+261:- having an ICC applied will automatically force sdr_eotf to `sRGB` for that monitor (for color accuracy)
+319:| sdr_eotf | Transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Gamma 2.2, srgb - sRGB piecewise | str |

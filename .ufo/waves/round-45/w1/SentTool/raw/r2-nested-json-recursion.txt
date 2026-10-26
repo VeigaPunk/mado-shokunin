@@ -1,0 +1,35 @@
+# F2: a 900000-byte file of nested '[' (under the 1048576 cap) is not caught as bad_json: uncaught RecursionError, traceback on stderr, exit 1 (the DIFFER code), no MADO_MONITORS summary line
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   reference /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ python3 -I .ufo/waves/round-45/l1-draft/mado-monitors.py --monitors deep.json --config c.conf   # deep.json = 900000 bytes of '['
+
+--- stderr (1423 bytes) ---
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py", line 532, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py", line 525, in main
+    lines, rc = run(sys.argv[1:])
+                ~~~^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py", line 519, in run
+    return report(mdata, texts)
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py", line 416, in report
+    mons = parse_monitors(monitors_data)
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py", line 307, in parse_monitors
+    doc = json.loads(data.decode("utf-8"))
+  File "/usr/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+RecursionError: Stack overflow (used 8140 kB) while decoding a JSON array from a unicode string
+
+# exit=1
+
+# tool:307 json.loads / :308 except (UnicodeDecodeError, ValueError) - RecursionError is neither.
+# contract: bad_json -> one 'MADO_MONITORS: SETUP bad_json' line, exit 2; 'stderr empty on exit 0/1/3/4/5'.
+# stderr bytes: 1423. exit 1 is the DIFFER code, so a caller reading only rc sees a difference it can trust.

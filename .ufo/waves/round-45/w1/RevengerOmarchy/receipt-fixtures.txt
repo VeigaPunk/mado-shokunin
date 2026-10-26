@@ -1,0 +1,145 @@
+# source omarchy monitors.conf: /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf sha256 6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55
+# tool: /fast/scratch/hyaku/mado-r45/RevengerOmarchy/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+# shipped file, numbered:
+
+#   1| # See https://wiki.hypr.land/Configuring/Basics/Monitors/
+#   2| # List current monitors and resolutions possible: hyprctl monitors
+#   3| # Format: monitor = [port], resolution, position, scale
+#   4| 
+#   5| # Optimized for retina-class 2x displays, like 13" 2.8K, 27" 5K, 32" 6K.
+#   6| env = GDK_SCALE,2
+#   7| monitor=,preferred,auto,auto
+#   8| 
+#   9| # Good compromise for 27" or 32" 4K monitors (but fractional!)
+#  10| # env = GDK_SCALE,1.75
+#  11| # monitor=,preferred,auto,1.6
+#  12| 
+#  13| # Straight 1x setup for low-resolution displays like 1080p or 1440p
+#  14| # Or for ultrawide monitors like 34" 3440x1440 or 49" 5120x1440
+#  15| # env = GDK_SCALE,1
+#  16| # monitor=,preferred,auto,1
+#  17| 
+#  18| # Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°)
+#  19| # monitor = DP-2, preferred, auto, 1, transform, 1
+#  20| 
+#  21| # Example for Framework 13 w/ 6K XDR Apple display
+#  22| # monitor = DP-5, 6016x3384@60, auto, 2
+#  23| # monitor = eDP-1, 2880x1920@120, auto, 2
+#  24| 
+#  25| # Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt
+#  26| # monitor=DP-2,disable
+
+### C00_shipped  exit=0  (shipped: env GDK_SCALE,2 + monitor=,preferred,auto,auto)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C01_shipped_scale2_live  exit=0  (catch-all line compares no mode/pos/scale - only transform)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C02_fractional_1.6  exit=0  (fractional preset uncommented (GDK_SCALE 1.75 + 1.6), live 1.6 on 3440x1440)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C03_fractional_correction_1366  exit=1  (1.6 does not divide 1366x768 -> Hyprland 1/120 correction)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### C04_1x_preset_live2  exit=1  (1x preset uncommented, display left at scale 2)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### C05_1x_preset_live1  exit=0  (1x preset uncommented, live scale 1)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C06_portrait_transform0  exit=1  (portrait preset wants transform 1, live 0)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=1.0000 transform=1 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=transform verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### C07_portrait_transform1  exit=0  (portrait preset transform 1, live 1)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=1.0000 transform=1 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C08_apple_pair  exit=0  (both Apple rules uncommented, both outputs live)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-5" mode=6016x3384@60.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=3 sel="eDP-1" mode=2880x1920@120.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-5" rule=2 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="eDP-1" rule=3 differ=- verdict=AGREE
+MADO_MONITORS: lines=3 rules=3 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK
+
+### C09_apple_pair_only_DP1  exit=0  (Apple rules only, host output DP-1 -> no selector matches)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-5" mode=6016x3384@60.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=3 sel="eDP-1" mode=2880x1920@120.00 pos=auto scale=2.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=3 rules=3 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C10_ghost_alone_live  exit=1  (only rule is DP-2,disable; DP-2 live enabled)
+MADO_MON_RULE: n=1 sel="DP-2" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_OUTPUT: name="DP-2" rule=1 differ=disabled verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### C11_ghost_plus_default  exit=0  (ghost rule appended to shipped default, DP-2 disabled live)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=DISABLED
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=0 disabled=1 verdict=OK
+
+### C12_ghost_plus_default_live  exit=1  (ghost rule but DP-2 still enabled)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=disabled verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+
+### C13_mirror_agree  exit=0  (omarchy mirror toggle line, DP-2 mirrors id 1)
+MADO_MON_RULE: n=1 sel="DP-2" mode=preferred pos=auto scale=1.0000 transform=0 mirror="eDP-1" disabled=false
+MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+MADO_MON_OUTPUT: name="DP-2" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=1 differ=0 disabled=0 verdict=OK
+
+### C14_mirror_none  exit=1  (mirror rule, live mirrorOf none)
+MADO_MON_RULE: n=1 sel="DP-2" mode=preferred pos=auto scale=1.0000 transform=0 mirror="eDP-1" disabled=false
+MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+MADO_MON_OUTPUT: name="DP-2" rule=1 differ=mirror verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### C15_vrr_leftover  exit=0  (pre-migration vrr,1 catch-all (omarchy#1776781957 target))
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C16_five_decimal_mode  exit=5  (mode pasted from hyprctl JSON (5 decimals))
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+### C17_scaling_cycle_keyword  exit=5  (exact hyprctl keyword string omarchy-hyprland-monitor-scaling-cycle emits)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=1 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+
+### C18_two_catchalls  exit=0  (both catch-all presets active (auto on line 7 + 1.6 on line 14))
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### C19_env_only  exit=4  (env line only, no monitor line at all)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+
+### C20_commented_all  exit=4  (every monitor line commented)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+

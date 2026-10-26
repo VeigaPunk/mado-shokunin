@@ -1,0 +1,56 @@
+# F9/F4: section 7 item 4 audit of the four committed drivers - every temp root is mkdtemp(dir=<explicit>) with no hardcoded /tmp and no TMPDIR reliance; the one rmtree on a fixed name is ctl-c2 clone()
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   reference sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ grep -nE 'tempfile|mkdtemp|rmtree|/tmp|TMPDIR|--work|isdir|makedirs' quality/counters/c1-r45-monitors.py quality/counters/c2-r45-monitor-entry.py .ufo/waves/round-45/ctl/run-c1-controls.py .ufo/waves/round-45/ctl/run-c2-controls.py
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:6:--work). BASE = 0c89478af821a6424c9ac922eafe02e39630cf4f (round-44 tip + closure). TOOL = tools/mado-monitors.py.
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:12:  f  every fixture of FIXTURES below passes: the tool is extracted to a fresh directory under --work, each fixture
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:47:import tempfile
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:273:    os.makedirs(d)
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:283:    d = tempfile.mkdtemp(dir=work, prefix="fx-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:285:    os.makedirs(home)
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:303:        os.makedirs(cdir)
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:336:        tdir = tempfile.mkdtemp(dir=work, prefix="tool-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:340:        sd = tempfile.mkdtemp(dir=work, prefix="st-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:355:        fakebin = os.path.join(tempfile.mkdtemp(dir=work, prefix="bin-"), "bin")
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:375:    ap.add_argument("--work", required=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:379:        if not os.path.isdir(a.work):
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:381:        work = tempfile.mkdtemp(dir=a.work, prefix="c1r45-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r45-monitors.py:385:            shutil.rmtree(work, ignore_errors=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:2:"""Controls for PRED-C1-r45 (registration.md). Builds one scratch clone per control under --work (git -C <dir>
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:8:    python3 -I .ufo/waves/round-45/ctl/run-c1-controls.py --lane <lane repo> --work <scratch dir>
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:15:import tempfile
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:66:    d = tempfile.mkdtemp(dir=work, prefix=name + "-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:72:        os.makedirs(os.path.join(d, "tools"), exist_ok=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:81:    w = tempfile.mkdtemp(dir=work, prefix="w-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:83:                        "--work", w], capture_output=True, text=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:90:    ap.add_argument("--work", required=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:93:    work = tempfile.mkdtemp(dir=a.work, prefix="ctl-c1-")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c1-controls.py:124:        shutil.rmtree(work, ignore_errors=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:6:then do-nothing / near-do-nothing / forged variants, each a throwaway clone under --work (git clone --shared; every
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:21:Usage: run-c2-controls.py --repo LANE --freeze FREEZE --base BASE --work SCRATCHDIR"""
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:43:    shutil.rmtree(d, ignore_errors=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:68:    os.makedirs(os.path.dirname(os.path.join(d, p)), exist_ok=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:81:    ap.add_argument("--work", required=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:84:    os.makedirs(a.work, exist_ok=True)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/ctl/run-c2-controls.py:155:            shutil.rmtree(repo, ignore_errors=True)
+
+# exit=0
+
+# c2 counter: 665 lines, imports
+67:import argparse
+68:import collections
+69:import datetime
+70:import hashlib
+71:import html
+72:import json
+73:import os
+74:import re
+75:import subprocess
+76:import sys
+# no tempfile, rmtree, makedirs or open() for writing - it reads only git objects
+# (git -C repo show/ls-tree) and prints. Nothing to clean up, nothing under /tmp.
+# c1 counter: --work must exist (:379 isdir) -> mkdtemp(dir=a.work) (:381) -> rmtree of that child only (:385).
+# ctl-c1: mkdtemp(dir=a.work) (:93) + rmtree in finally (:124); each clone is checked with rev-parse
+#   --show-toplevel against realpath (:68-69) before any commit (run-6 rule).
+# ctl-c2: makedirs(--work) (:84) and rmtree(join(work, fixed name)) (:43) - see r4.
+# Neither counter checks that --work sits under $HYAKU_SCRATCH; the operator directive is caller-enforced here.

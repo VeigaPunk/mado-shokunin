@@ -1,0 +1,29 @@
+== A. wiki at main vs the pin
+$ curl -sS -o r1 -w "http=%{http_code} bytes=%{size_download}" https://raw.githubusercontent.com/hyprwm/hyprland-wiki/ecc06f3b6605e453c0ad533d979fccbefff788ef/content/Configuring/Monitors.md
+http=200 bytes=10563
+$ sha256sum r1
+f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9
+$ local pin .ufo/waves/round-45/fetch/wiki-Monitors.md
+f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9
+$ curl -sS -o r2 -w "http=%{http_code} bytes=%{size_download}" https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/Configuring/Monitors.md
+http=404 bytes=14
+$ cat r2
+404: Not Found
+== B. the parser's number test is hyprutils, reached through isNumber
+$ grep -n "isNumber" fetch/Hyprland-Parser.cpp
+197:        if (!isNumber(value, true)) {
+214:    if (!isNumber(value)) {
+265:    if (!isNumber(value)) {
+$ sed -n 46,47p fetch/hyprutils-String.cpp
+bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+    return isNumber2(str, allowfloat);
+== C. host version pin for S309 (hyprctl version, read-only)
+$ hyprctl version | grep -E "^(Hyprland|Hyprutils|Hyprlang)"
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Hyprutils: built against 0.14.2, system has 0.14.2
+Hyprlang: built against 0.6.8, system has 0.6.8
+== D. held rows S158/S162 cannot carry the monitor lines
+$ (coverage from verify_gate.py, counter range semantics)
+  S158 anchor covers HyprCtl.cpp:242 -> 0
+  S158 anchor covers HyprCtl.cpp:313-321 -> 0
+  S162 anchor covers ConfigManager.cpp:1293-1387 -> 0

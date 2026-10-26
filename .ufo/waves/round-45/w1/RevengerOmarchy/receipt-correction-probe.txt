@@ -1,0 +1,23 @@
+# correction probe: 1366x768 -> gcd(1366*120, 768*120)=240, so only scales with K dividing 240 are reachable
+# K=240 (2.0) is 60 steps UP from K=180 (1.5); K=120 (1.0) is 60 steps DOWN: Hyprland tries UP first (Monitor.cpp:1010-1029)
+
+### G01_rule1.5_live2.0 exit=0 (rule 1.5, live 2.0 -> AGREE iff E=240/120)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.5000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### G02_rule1.5_live1.0 exit=1 (rule 1.5, live 1.0 -> DIFFER iff E=2.0)
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.5000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=scale verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+
+### G03_rule1.6_live2.0 exit=0 (rule 1.6, live 2.0 -> AGREE (omarchy's 1.6 preset on such a panel))
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=1.6000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+
+### G04_position_clean exit=1 (explicit 3440x0 vs live 0x0 (what an auto position after hyprctl keyword gives))
+MADO_MON_RULE: n=1 sel="DP-2" mode=2560x1440@144.00 pos=3440x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-2" rule=1 differ=position verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+

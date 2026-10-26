@@ -1,0 +1,145 @@
+# w1/ExecLiveHost - read-only live runs of the L1 reference (round 45, 2026-10-26T15:55:20-03:00)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+# reference: .ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+# host: Hyprland v0.56.2 commit efb50993780079460b0cbed1363e2166a2de1d9f dirty=false (`hyprctl version -j`); 1 output (DP-1)
+# read-only: only `hyprctl version -j`, `hyprctl monitors -j`, `hyprctl monitors all -j` were invoked; no dispatch/keyword/reload/
+# setprop/--batch/output/plugin/kill; no Wayland client of our own. The seat shell env lacked HYPRLAND_INSTANCE_SIGNATURE, so hyprctl
+# was given XDG_RUNTIME_DIR=/run/user/1000 and HYPRLAND_INSTANCE_SIGNATURE=<the single entry under /run/user/1000/hypr> (a read-only
+# name lookup of the live compositor's own socket dir).
+# commit-safe projection only: description / make / model / serial / physical* / workspace / reserved / modes are dropped; the projected
+# fields are name, width, height, refreshRate, x, y, scale, transform, disabled, mirrorOf.
+# configs: ~/.config/hypr/monitors.conf sha256 69c9d8996dfdcd6747775e984a479c53a520bd2ef193d337e171927fdf6795ee
+#          ~/.local/share/omarchy/config/hypr/monitors.conf sha256 6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55
+
+## live dump, projected (single output DP-1, from `hyprctl monitors all -j`)
+[{"name": "DP-1", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale": 1, "transform": 0, "disabled": false, "mirrorOf": "none"}]
+
+## sources reached from ~/.config/hypr/hyprland.conf (19 files, source order, glob expanded)
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/autostart.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/bindings/media.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/bindings/utilities.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/envs.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/looknfeel.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/input.conf
+source-file /home/vgpnk/.local/share/omarchy/default/hypr/windows.conf
+source-file /home/vgpnk/.config/omarchy/current/theme/hyprland.conf
+source-file /home/vgpnk/.config/hypr/monitors.conf
+source-file /home/vgpnk/.config/hypr/input.conf
+source-file /home/vgpnk/.config/hypr/bindings.conf
+source-file /home/vgpnk/.config/hypr/looknfeel.conf
+source-file /home/vgpnk/.config/hypr/autostart.conf
+source-file /home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf
+source-file /home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf
+source-file /home/vgpnk/.config/hypr/ai-usage.conf
+source-file /home/vgpnk/.config/hypr/gkeep.conf
+
+## grep: monitor / monitorv2 lines across those 19 files
+/home/vgpnk/.config/hypr/monitors.conf:10:monitor = DP-1, 3440x1440@100, 0x0, 1
+# counts: monitor=1 monitorv2=0. Only ~/.config/hypr/monitors.conf:10 carries a rule; every other reached file carries none, and the
+# commented `# monitor=...` alternatives inside both monitors.conf files do not match the monitor-line pattern.
+
+## runs
+### R1 user monitors.conf, all list form
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config ~/.config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R2 user monitors.conf, plain list form
+$ hyprctl monitors -j | python3 -I <ref> --monitors - --config ~/.config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R3 all 19 source-reached files in source order, all list form (only monitors.conf contributes a rule)
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config <each of the 19 source-file paths listed above, in that order>
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R3b the same 19 plus the root ~/.config/hypr/hyprland.conf itself, all list form
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config ~/.config/hypr/hyprland.conf --config <the same 19, in order>
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R4 omarchy shipped default monitors.conf (one rule, `monitor=,preferred,auto,auto`), all list form
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config ~/.local/share/omarchy/config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R5 omarchy default, plain list form
+$ hyprctl monitors -j | python3 -I <ref> --monitors - --config ~/.local/share/omarchy/config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R6 omarchy default, active monitor line commented out (seat fixture)
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecLiveHost/fx/omarchy-commented.conf
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+# exit=4 stderr=""
+
+### R7 user monitors.conf, active monitor line commented out (seat fixture)
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecLiveHost/fx/user-commented.conf
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+# exit=4 stderr=""
+
+### R8 monitorv2-only config (seat fixture) on the live dump
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/w1/ExecLiveHost/fx/v2-only.conf
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=1 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NOT_COMPARED
+# exit=5 stderr=""
+
+### R9 both config scopes together: omarchy default then user monitors.conf
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf --config /home/vgpnk/.config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R10 both config scopes together, reversed: user then omarchy default
+$ hyprctl monitors all -j | python3 -I <ref> --monitors - --config /home/vgpnk/.config/hypr/monitors.conf --config /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+### R11 omarchy default on the plain list form
+$ hyprctl monitors -j | python3 -I <ref> --monitors - --config /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+# exit=0 stderr=""
+
+## identifications
+R2 stdout == R1 stdout: True
+R3 stdout == R1 stdout: True ; R3b stdout == R1 stdout: True
+R5 stdout == R4 stdout: True ; R11 stdout == R4 stdout: True
+--selftest: `MADO_MONITORS_SELFTEST: 33/33 passed`, exit 0 (`python3 -I <ref> --selftest`)
+
+## `monitors -j` vs `monitors all -j` on this host
+# Byte-identical: 1339 bytes each, `cmp` exit 0; no key is present in only one form; the projected fields are equal. The host has one
+# output (DP-1) and no disabled output, so the `all` flag changes nothing. Every run above gives the same verdict for both list forms
+# (R1==R2, R4==R5, R4==R11). This host therefore cannot, on this evidence, distinguish a tool that reads either form.
+
+## seat fixtures (derived copies; used only by R6-R8)
+fx/omarchy-commented.conf sha256 86942f751d13e20455f0e445667d98eba21346e58af0f785aeed72eee9be9e9c  <- sed 's/^monitor=/# monitor=/' ~/.local/share/omarchy/config/hypr/monitors.conf
+fx/user-commented.conf   sha256 0424071a0c87551253b2dde4550cc8980d364bfb51fd1d88570fc4469c351d13  <- sed 's/^monitor = DP-1/# monitor = DP-1/' ~/.config/hypr/monitors.conf
+fx/v2-only.conf          sha256 b505cfa16f251c59eb633f79f52fa2a2827c5d3834c9a8fbf4b4d8c00f1bd823  <- printf 'monitorv2 {\n    output = DP-1\n}\n' (hand-written, no host material)
+
+## commented monitor alternatives (grep -cE '^[ \t]*#[ \t]*monitor')
+commented-monitor-lines ~/.config/hypr/monitors.conf=7
+commented-monitor-lines ~/.local/share/omarchy/config/hypr/monitors.conf=6

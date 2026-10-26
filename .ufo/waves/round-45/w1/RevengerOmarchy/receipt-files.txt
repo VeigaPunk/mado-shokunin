@@ -1,0 +1,95 @@
+# Receipt: omarchy shipped monitor config + sourcing order (read-only inputs)
+# date: 2026-10-26T15:58:38-03:00
+# omarchy checkout HEAD: 8fcc9d6048af4cb0e3af8512c78049857a3b53dd 2026-07-20 14:05:35 -0700 Merge branch 'master' into rc
+# omarchy version file: 3.8.3
+
+## /home/vgpnk/.local/share/omarchy/config/hypr/monitors.conf  sha256 6259c0eda4b0501389503133a03df100fd5ce49d1af1616cb0d898a8dd338f55
+  1| # See https://wiki.hypr.land/Configuring/Basics/Monitors/
+  2| # List current monitors and resolutions possible: hyprctl monitors
+  3| # Format: monitor = [port], resolution, position, scale
+  4| 
+  5| # Optimized for retina-class 2x displays, like 13" 2.8K, 27" 5K, 32" 6K.
+  6| env = GDK_SCALE,2
+  7| monitor=,preferred,auto,auto
+  8| 
+  9| # Good compromise for 27" or 32" 4K monitors (but fractional!)
+ 10| # env = GDK_SCALE,1.75
+ 11| # monitor=,preferred,auto,1.6
+ 12| 
+ 13| # Straight 1x setup for low-resolution displays like 1080p or 1440p
+ 14| # Or for ultrawide monitors like 34" 3440x1440 or 49" 5120x1440
+ 15| # env = GDK_SCALE,1
+ 16| # monitor=,preferred,auto,1
+ 17| 
+ 18| # Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°)
+ 19| # monitor = DP-2, preferred, auto, 1, transform, 1
+ 20| 
+ 21| # Example for Framework 13 w/ 6K XDR Apple display
+ 22| # monitor = DP-5, 6016x3384@60, auto, 2
+ 23| # monitor = eDP-1, 2880x1920@120, auto, 2
+ 24| 
+ 25| # Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt
+ 26| # monitor=DP-2,disable
+
+## active (non-comment) lines of the shipped default:
+6:env = GDK_SCALE,2
+7:monitor=,preferred,auto,auto
+
+## /home/vgpnk/.config/hypr/monitors.conf (this host)  sha256 69c9d8996dfdcd6747775e984a479c53a520bd2ef193d337e171927fdf6795ee
+  1| # See https://wiki.hypr.land/Configuring/Basics/Monitors/
+  2| # List current monitors and resolutions possible: hyprctl monitors
+  3| # Format: monitor = [port], resolution, position, scale
+  4| 
+  5| # Optimized for retina-class 2x displays, like 13" 2.8K, 27" 5K, 32" 6K.
+  6| # env = GDK_SCALE,2
+  7| # monitor=,preferred,auto,auto
+  8| 
+  9| env = GDK_SCALE,1
+ 10| monitor = DP-1, 3440x1440@100, 0x0, 1
+ 11| 
+ 12| # Good compromise for 27" or 32" 4K monitors (but fractional!)
+ 13| # env = GDK_SCALE,1.75
+ 14| # monitor=,preferred,auto,1.6
+ 15| 
+ 16| # Straight 1x setup for low-resolution displays like 1080p or 1440p
+ 17| # Or for ultrawide monitors like 34" 3440x1440 or 49" 5120x1440
+ 18| # env = GDK_SCALE,1
+ 19| # monitor=,preferred,auto,1
+ 20| 
+ 21| # Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°)
+ 22| # monitor = DP-2, preferred, auto, 1, transform, 1
+ 23| 
+ 24| # Example for Framework 13 w/ 6K XDR Apple display
+ 25| # monitor = DP-5, 6016x3384@60, auto, 2
+ 26| # monitor = eDP-1, 2880x1920@120, auto, 2
+ 27| 
+ 28| # Disable the second ghost monitor on an Apple 6K XDR over Thunderbolt
+ 29| # monitor=DP-2,disable
+
+## source order in config/hypr/hyprland.conf (lines 4-23):
+  4| source = ~/.local/share/omarchy/default/hypr/autostart.conf
+  5| source = ~/.local/share/omarchy/default/hypr/bindings/media.conf
+  6| source = ~/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+  7| source = ~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+  8| source = ~/.local/share/omarchy/default/hypr/bindings/utilities.conf
+  9| source = ~/.local/share/omarchy/default/hypr/envs.conf
+ 10| source = ~/.local/share/omarchy/default/hypr/looknfeel.conf
+ 11| source = ~/.local/share/omarchy/default/hypr/input.conf
+ 12| source = ~/.local/share/omarchy/default/hypr/windows.conf
+ 13| source = ~/.config/omarchy/current/theme/hyprland.conf
+ 14| 
+ 15| # Change your own setup in these files (and overwrite any settings from defaults!)
+ 16| source = ~/.config/hypr/monitors.conf
+ 17| source = ~/.config/hypr/input.conf
+ 18| source = ~/.config/hypr/bindings.conf
+ 19| source = ~/.config/hypr/looknfeel.conf
+ 20| source = ~/.config/hypr/autostart.conf
+ 21| 
+ 22| # Toggle config flags dynamically
+ 23| source = ~/.local/state/omarchy/toggles/hypr/*.conf
+
+## omarchy files that write a monitor= line (grep -rn over bin/ install/ migrations/ config/):
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal:25:    echo "monitor=$INTERNAL,disable" >"$TOGGLE_FLAG"
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-internal-mirror:31:    echo "monitor=$EXTERNAL, preferred, auto, 1, mirror, $INTERNAL" > "$TOGGLE_FLAG"
+/home/vgpnk/.local/share/omarchy/bin/omarchy-hyprland-monitor-scaling-cycle:43:    sed -i -E "s|^(monitor=,preferred,auto,).*|\\1${NEW_SCALE}|" "$MONITOR_CONF"
+/home/vgpnk/.local/share/omarchy/migrations/1776781957.sh:6:  sed -i 's/^monitor=,preferred,auto,auto,vrr,1$/monitor=,preferred,auto,auto/' "$MONITORS_CONF"

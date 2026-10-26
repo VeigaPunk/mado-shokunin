@@ -1,0 +1,23 @@
+# F6: clause r opens its marker window after the --selftest run, so a tool that spawns hyprctl only under --selftest is scored readonly=ok (and can be TARGET_MET)
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   reference sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ python3 c1-r45-monitors.py --repo <clone with tools/mado-monitors.py = reference + a spawn guarded by argv == ['--selftest']> --rev HEAD --work <scratch>
+inserted into run() before reading any input:
+    if argv == ["--selftest"]:
+        import subprocess as _sp
+        _sp.run(["hyprctl", "monitors", "all", "-j"], capture_output=True)
+
+counter output:
+PRED-C1-r45 clause=s rc=0 last='MADO_MONITORS_SELFTEST: 33/33 passed'
+PRED-C1-r45 clause=r marker=absent
+PRED-C1-r45: fixtures=49/49 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=0c8d88c243dd106aa702d55db93bc3b48c897c9f seed=45
+
+the same binary under the counter's clause-s environment (PATH=/usr/bin:/bin, no HYPRLAND_INSTANCE_SIGNATURE, no XDG_RUNTIME_DIR):
+$ /usr/bin/hyprctl version
+HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)
+
+(exit=1)
+
+# exit=0
+
+# code order: the selftest subprocess is :339-350 with env {'PATH': '/usr/bin:/bin', ...} (:343); the marker is created at :354 and checked at :362. Impact is bounded: the real /usr/bin/hyprctl refuses without the instance signature (above), so no live state is read - the defect is that the clause does not see the spawn.

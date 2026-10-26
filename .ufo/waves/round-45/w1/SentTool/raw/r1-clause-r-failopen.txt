@@ -1,0 +1,27 @@
+# F1: the read-only clause r is fail-open when --work contains one apostrophe: the same committed bytes score readonly=ok/TARGET_MET instead of readonly=fail/TARGET_MISSED
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ python3 mutant2.py   (clone lane@0c89478 --shared, commit the reference + the inserted line below, run quality/counters/c1-r45-monitors.py twice: --work plain, --work under q'w)
+inserted into run() of l1-draft/mado-monitors.py before committing:
+old = "def run(argv):\n    try:\n"
+new = ('def run(argv):\n    try:\n        import subprocess as _sp\n'
+       '        _sp.run(["hyprctl", "version"], capture_output=True)\n')
+mutant2 output:
+clone: /fast/scratch/hyaku/mado-r45/SentTool/w/clone2-ys2yvb1y
+plain-work   rc=1
+    PRED-C1-r45 clause=r marker=present
+    PRED-C1-r45: fixtures=49/49 selftest=ok readonly=fail tool=present verdict=TARGET_MISSED rev=f08b8b3e670cd4eb0301018f0532678ecabcf704 seed=45
+quoted-work  rc=0
+    PRED-C1-r45 clause=r marker=absent
+    PRED-C1-r45: fixtures=49/49 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=f08b8b3e670cd4eb0301018f0532678ecabcf704 seed=45
+
+# exit=0
+
+# cause: quality/counters/c1-r45-monitors.py:277
+#   f.write("#!/bin/sh\n: > '%s'\nexit 0\n" % marker)
+# writes the marker path into a shell script inside single quotes without shlex.quote; the marker is
+# os.path.join(work, "marker-%d" % seed) (:354) and work is the caller's --work (:381). A single quote in that
+# path yields: /bin/sh: line 2: unexpected EOF while looking for matching quote (rc=2), no marker file, and
+# clause r (:362, os.path.exists(marker)) reports readonly=ok for a tool that does spawn hyprctl.
+# smallest remediation: shlex.quote(marker), or keep the marker inside the fakebin directory and refer to it
+# with "$(dirname -- "$0")/marker" so no caller-controlled path is interpolated.

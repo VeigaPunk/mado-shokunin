@@ -1,0 +1,16 @@
+# SUPPORTS: --config path probes (O_RDONLY|O_NONBLOCK then fstat S_ISREG, tool:120-138) - no hang, no non-regular read
+# recorded 2026-10-26, seat SentTool, round 45 w1
+# lane HEAD ebdba13f   tool /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/l1-draft/mado-monitors.py sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+$ for p in fifo adir loop /dev/zero /proc/self/mem /proc/self/environ link.conf: python3 -I tool.py --monitors m.json --config $p
+FIFO                 rc=2 0.01s  MADO_MONITORS: SETUP unreadable
+directory            rc=2 0.01s  MADO_MONITORS: SETUP unreadable
+symlink loop         rc=2 0.01s  MADO_MONITORS: SETUP unreadable
+char device          rc=2 0.01s  MADO_MONITORS: SETUP unreadable
+/proc/self/mem       rc=2 0.01s  MADO_MONITORS: SETUP unreadable
+/proc/self/environ   rc=4 0.01s  MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree
+symlink -> regular   rc=0 0.01s  MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree
+
+# exit=0
+
+# /proc/self/environ is S_ISREG so the contract admits it; it holds no 'monitor =' line, the tool prints only
+# selectors and names, so nothing from it is echoed.

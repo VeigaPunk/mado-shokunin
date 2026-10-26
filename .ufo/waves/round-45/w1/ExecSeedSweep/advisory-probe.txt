@@ -1,0 +1,19 @@
+# probe for the advisory tightening: a fixture that pins exact-vs-substring selector matching
+## rule sel DP-1, live output name eDP-1
+reference: rc=3
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="eDP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+mutant:    rc=0
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="eDP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+## rule sel eDP-1, live output name DP-1 (reverse: substring mutant behaves like the reference)
+reference: rc=3
+MADO_MON_RULE: n=1 sel="eDP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+mutant:    rc=3
+MADO_MON_RULE: n=1 sel="eDP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
