@@ -1,0 +1,363 @@
+# every line cited by findings.md, computed from the pinned script
+script: /usr/bin/xdg-terminal-exec
+sha256: 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+lines: 1500
+cited: 357
+
+  23| set -euf
+  52| 	true | True | TRUE | yes | Yes | YES | 1) return 0 ;;
+ 148| 	for xte__dir in ${XDG_CONFIG_HOME:-"${HOME}/.config"}${IFS}${XDG_CONFIG_DIRS:-/etc/xdg}; do
+ 151| 			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/${xte__desktop}-xdg-terminals.list
+ 152| 		done
+ 153| 		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminals.list
+ 157| 	for xte__dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+ 158| 		# Normalise base path and append the data subdirectory with a trailing '/'
+ 159| 		for xte__desktop in ${XTE__LOWERCASE_XDG_CURRENT_DESKTOP}; do
+ 160| 			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/${xte__desktop}-xdg-terminals.list
+ 161| 		done
+ 162| 		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/xdg-terminals.list
+ 166| 	for xte__dir in ${XDG_DATA_HOME:-${HOME}/.local/share}${IFS}${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+ 168| 		XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/${XTE__APPLICATIONS_DIRS:+:${XTE__APPLICATIONS_DIRS}}
+ 365| 		[ -f "$xte__config_path" ] || continue
+ 367| 		while read -r xte__line; do
+ 368| 			#debug "read line '$xte__line'"
+ 369| 			case "$xte__line" in
+ 370| 
+ 371| 			# Catch directives first
+ 372| 
+ 373| 			# cache control
+ 374| 			/enable_cache)
+ 375| 				debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"
+ 376| 				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+ 377| 				XTE__CACHE_ENABLED=true
+ 378| 				XTE__CACHE_CONFIGURED=1
+ 379| 				;;
+ 380| 			/disable_cache)
+ 381| 				debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"
+ 382| 				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+ 383| 				XTE__CACHE_ENABLED=false
+ 384| 				XTE__CACHE_CONFIGURED=1
+ 385| 				;;
+ 386| 
+ 387| 			# compat mode
+ 388| 			/execarg_compat)
+ 389| 				debug "found '$xte__line' directive${XTE__EXECARG_COMPAT_CONFIGURED:+ (ignored)}"
+ 390| 				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+ 391| 				XTE__EXECARG_COMPAT=true
+ 392| 				XTE__EXECARG_COMPAT_CONFIGURED=1
+ 393| 				;;
+ 394| 			/execarg_strict)
+ 395| 				debug "found '$xte__line' directive${XTE__EXECARG_COMPAT_CONFIGURED:+ (ignored)}"
+ 396| 				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+ 397| 				XTE__EXECARG_COMPAT=false
+ 398| 				XTE__EXECARG_COMPAT_CONFIGURED=1
+ 399| 				;;
+ 400| 
+ 401| 			# default TerminalArgExec overrides
+ 402| 			/execarg_default:*:*)
+ 403| 				if ! check_bool "$XTE__EXECARG_COMPAT"; then
+ 404| 					debug "ignored directive '$xte__line' (strict mode)"
+ 405| 					continue
+ 406| 				fi
+ 407| 				IFS=':' read -r _directive xte__entry_id xte__execarg_default <<- EOF
+ 408| 					$xte__line
+ 409| 				EOF
+ 410| 				if validate_entry_id "${xte__entry_id}"; then
+ 411| 					debug "added TerminalArgExec default '${xte__execarg_default}' for '${xte__entry_id}'"
+ 412| 					# do not bother with deduplication, first entry ID will win
+ 413| 					XTE__EXECARG_DEFAULTS=${XTE__EXECARG_DEFAULTS}${XTE__EXECARG_DEFAULTS:+$XTE__LF}${xte__entry_id}:${xte__execarg_default}
+ 414| 				fi
+ 415| 				;;
+ 416| 
+ 417| 			# `[The extensionless entry filename] should be a valid D-Bus well-known name.`
+ 418| 			# `a sequence of non-empty elements separated by dots (U+002E FULL STOP),
+ 419| 			# none of which starts with a digit, and each of which contains only characters from the set [a-zA-Z0-9-_]`
+ 420| 			# Stricter parts seem to be related only to reversed DNS notation but not common naming
+ 421| 			# i.e. there is `2048-qt.desktop`.
+ 422| 			# I do not know of any terminal that starts with a number, but it's valid.
+ 423| 
+ 424| 			# Catch and validate potential entry ID with action ID (be graceful about an empty one)
+ 425| 			[a-zA-Z0-9_]* | [+-][a-zA-Z0-9_]*)
+ 426| 				case "$xte__line" in
+ 427| 				[+-]*)
+ 428| 					# save and cut exclusion marker
+ 429| 					_line=${xte__line#[+-]}
+ 430| 					xte__exclusion=${xte__line%"$_line"}
+ 431| 					xte__line=$_line
+ 432| 					;;
+ 433| 				*) xte__exclusion= ;;
+ 434| 				esac
+ 435| 				# consider only the first ':' as a delimiter
+ 436| 				IFS=':' read -r xte__entry_id xte__action_id <<- EOL
+ 437| 					$xte__line
+ 438| 				EOL
+ 439| 				if validate_entry_id "${xte__entry_id}" && validate_action_id "${xte__action_id}"; then
+ 440| 					case "$xte__exclusion" in
+ 441| 					'')
+ 442| 						XTE__ENTRY_IDS=${XTE__ENTRY_IDS:+${XTE__ENTRY_IDS}${XTE__LF}}$xte__line
+ 443| 						debug "added entry ID with action ID '$xte__line'"
+ 444| 						;;
+ 445| 					'+')
+ 446| 						if list_contains "${XTE__EXCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 447| 							debug "entry '${xte__entry_id}' was already excluded from fallback"
+ 448| 						elif list_contains "${XTE__INCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 449| 							debug "entry '${xte__entry_id}' fallback exclusion was already prevented"
+ 450| 						else
+ 451| 							debug "preventing fallback exclusion for entry '${xte__entry_id}'"
+ 452| 							XTE__INCLUDED_ENTRY_IDS=${XTE__INCLUDED_ENTRY_IDS:+${XTE__INCLUDED_ENTRY_IDS}${XTE__LF}}${xte__entry_id}
+ 453| 						fi
+ 454| 						;;
+ 455| 					'-')
+ 456| 						if list_contains "${XTE__INCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 457| 							debug "entry '${xte__entry_id}' fallback exclusion was already prevented"
+ 458| 						elif list_contains "${XTE__EXCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 459| 							debug "entry '${xte__entry_id}' was already excluded from fallback"
+ 460| 						else
+ 461| 							debug "excluding entry '${xte__entry_id}' from fallback"
+ 462| 							XTE__EXCLUDED_ENTRY_IDS=${XTE__EXCLUDED_ENTRY_IDS:+${XTE__EXCLUDED_ENTRY_IDS}${XTE__LF}}${xte__entry_id}
+ 463| 						fi
+ 464| 						;;
+ 465| 					esac
+ 466| 				else
+ 467| 					error "Discarded possibly misspelled entry '$xte__line'"
+ 468| 				fi
+ 469| 				;;
+ 470| 
+ 471| 			esac
+ 472| 			# By default empty lines and comments get ignored
+ 473| 		done < "$xte__config_path"
+ 571| 	while [ -n "$xte__tok_remainder" ]; do
+ 572| 		# left is substring of remainder before the first encountered special char
+ 573| 		xte__tok_left=${xte__tok_remainder%%[[:space:]\"\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)]*}
+ 574| 
+ 575| 		# left should be safe to append right away
+ 576| 		XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_left}
+ 577| 		debug "tokenizer appended: >$xte__tok_left<"
+ 578| 
+ 579| 		# end of the line
+ 580| 		case "$xte__tok_remainder" in
+ 581| 		"$xte__tok_left")
+ 582| 			debug "tokenizer is out of special chars"
+ 583| 			break
+ 584| 			;;
+ 585| 		esac
+ 586| 
+ 587| 		# isolate special char
+ 588| 		xte__tok_remainder=${xte__tok_remainder#"$xte__tok_left"}
+ 589| 		xte__cut=${xte__tok_remainder#?}
+ 590| 		xte__tok_char=${xte__tok_remainder%"$xte__cut"}
+ 591| 		unset cut
+ 592| 		# cut it from remainder
+ 593| 		xte__tok_remainder=${xte__tok_remainder#"$xte__tok_char"}
+ 594| 
+ 595| 		# check if still in space
+ 596| 		case "${xte__tok_in_space}${xte__tok_left}${xte__tok_char}" in
+ 597| 		1[[:space:]])
+ 598| 			debug "tokenizer still in space :) skipping space character"
+ 599| 			continue
+ 600| 			;;
+ 601| 		1*)
+ 602| 			debug "tokenizer no longer in space :("
+ 603| 			xte__tok_in_space=0
+ 604| 			;;
+ 605| 		esac
+ 606| 
+ 607| 		## decide what to do with the character
+ 608| 		# doublequote while quoted
+ 609| 		case "${xte__tok_quoted}${xte__tok_char}" in
+ 610| 		'1"')
+ 611| 			xte__tok_quoted=0
+ 612| 			debug "tokenizer closed double quotes"
+ 613| 			continue
+ 614| 			;;
+ 615| 		# doublequote while unquoted
+ 616| 		'0"')
+ 617| 			xte__tok_quoted=1
+ 618| 			debug "tokenizer opened double quotes"
+ 619| 			continue
+ 620| 			;;
+ 621| 		# error out on unquoted special chars
+ 622| 		0[\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)])
+ 623| 			debug "${xte__entry_id}: Encountered unquoted character: '$xte__tok_char'"
+ 624| 			return 1
+ 625| 			;;
+ 626| 		# error out on quoted but unescaped chars
+ 627| 		1[\`\$])
+ 628| 			debug "${xte__entry_id}: Encountered unescaped quoted character: '$xte__tok_char'"
+ 629| 			return 1
+ 630| 			;;
+ 631| 		# process quoted escapes
+ 632| 		1\\)
+ 633| 			case "$xte__tok_remainder" in
+ 634| 			# if there is no next char, fail
+ 635| 			'')
+ 636| 				debug "${xte__entry_id}: Dangling backslash encountered!"
+ 637| 				return 1
+ 638| 				;;
+ 639| 			# cut and append the next char right away
+ 640| 			# or a half of multibyte char, the other half should go into the next
+ 641| 			# 'xte__tok_left' hopefully...
+ 642| 			*)
+ 643| 				xte__cut=${xte__tok_remainder#?}
+ 644| 				xte__tok_char=${xte__tok_remainder%"$xte__cut"}
+ 645| 				xte__tok_remainder=${xte__cut}
+ 646| 				unset xte__cut
+ 647| 				XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_char}
+ 648| 				debug "tokenizer appended escaped: >$xte__tok_char<"
+ 649| 				;;
+ 650| 			esac
+ 651| 			;;
+ 652| 		# Consider Cosmos
+ 653| 		0[[:space:]])
+ 654| 			case "${xte__tok_remainder}" in
+ 655| 			# there is non-space to follow
+ 656| 			*[![:space:]]*)
+ 657| 				# append separator
+ 658| 				XTE__EXEC_USEP=${XTE__EXEC_USEP}${XTE__USEP}
+ 659| 				xte__tok_in_space=1
+ 660| 				debug "tokenizer entered spaaaaaace!!!! separator appended"
+ 661| 				;;
+ 662| 			# ignore unquoted space at the end of string
+ 663| 			*)
+ 664| 				debug "tokenizer entered outer spaaaaaace!!!! separator skipped, this is the end"
+ 665| 				break
+ 666| 				;;
+ 667| 			esac
+ 668| 			;;
+ 669| 		# append quoted chars
+ 670| 		1[[:space:]\'\>\<\~\|\&\;\*\?\#\(\)])
+ 671| 			XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_char}
+ 672| 			debug "tokenizer appended quoted char: >$xte__tok_char<"
+ 673| 			;;
+ 674| 		# this should not happen
+ 675| 		*)
+ 676| 			debug "${xte__entry_id}: parsing error at char '$xte__tok_char', (quoted: $xte__tok_quoted)"
+ 677| 			return 1
+ 678| 			;;
+ 679| 		esac
+ 680| 	done
+ 681| 	case "$xte__tok_quoted" in
+ 682| 	1)
+ 683| 		debug "${xte__entry_id}: Double quote was not closed!"
+ 684| 		return 1
+ 685| 		;;
+ 686| 	esac
+ 708| 				debug "${xte__entry_id}: Encountered more than one %[fFuU] field!"
+ 729| 			debug "${xte__entry_id}: unknown % field in argument '${xte__arg}'"
+ 762| 		set -- "$@" "$xte__directory".
+ 766| 	set -- "$@" -type f
+ 773| 		set -- "$@" ${xte__or_arg} '(' -path "$xte__directory"'./[a-zA-Z0-9_]*.desktop' ! -path "$xte__directory"'./*[^a-zA-Z0-9_./-]*' ')'
+ 782| 		alias "$xte__entry_id"="xte__entry_path='$xte__entry_path'"
+ 790| 		XTE__FALLBACK_ENTRY_IDS=${xte__entry_id}${XTE__FALLBACK_ENTRY_IDS:+${XTE__LF}${XTE__FALLBACK_ENTRY_IDS}}
+ 795| 			LC_ALL=C find -L "$@" 2> /dev/null |
+ 797| 				awk '{ print; sub(".*/[.]/", ""); gsub("/", "-"); print }'
+ 816| 	'Categories'*=*)
+ 817| 		debug "checking for 'TerminalEmulator' in Categories '$xte__value'"
+ 818| 		IFS=';'
+ 819| 		for xte__category in $xte__value; do
+ 820| 			IFS=$XTE__OIFS
+ 821| 			[ "$xte__category" = "TerminalEmulator" ] && {
+ 822| 				XTE__IS_TERMINAL=true
+ 823| 				return 0
+ 824| 			}
+ 825| 		done
+ 826| 		# Default in this case is to fail
+ 831| 		# Such an action group must be ignored by implementors.`
+ 839| 				xte__action_listed=true
+ 846| 	'OnlyShowIn'*=*)
+ 865| 	'NotShowIn'*=*)
+ 933| 	'TryExec'*=*)
+ 938| 	'Hidden'*=*)
+ 939| 		debug "checking boolean Hidden '$xte__value'"
+ 940| 		case "$xte__value" in
+ 941| 		true)
+ 942| 			debug "ignored Hidden entry"
+ 943| 			return 1
+ 944| 			;;
+ 945| 		esac
+ 946| 		;;
+ 947| 	'Exec'*=*)
+ 948| 		case "$xte__read_exec" in
+ 949| 		false)
+ 950| 			debug "ignored Exec from wrong section"
+ 951| 			return 0
+ 952| 			;;
+ 953| 		esac
+ 954| 		debug "read Exec '$xte__value'"
+ 955| 		# Escape sequences of DE string value (sets $XTE__EXPANDED_STR)
+ 956| 		de_expand_str "$xte__value"
+ 957| 		# Tokenize resulting string (sets $XTE__EXEC_USEP)
+ 958| 		de_tokenize_exec "$XTE__EXPANDED_STR"
+ 959| 		# Expand % fields
+ 960| 		de_strip_fields
+ 961| 		# Get first word from read Exec value
+ 962| 		XTE__EXEC0=${XTE__EXEC_USEP%%"$XTE__USEP"*}
+ 963| 		debug "checking Exec[0] executable '$XTE__EXEC0'"
+ 964| 		command -v "$XTE__EXEC0" > /dev/null || return 1
+ 985| 	while IFS=$XTE__OIFS read -r xte__line; do
+ 989| 		'[Desktop Entry]'*) [ -z "$xte__entry_action" ] && xte__read_exec=true ;;
+ 991| 		[a-zA-Z0-9-]*)
+ 993| 			xte__value=${xte__line#*=}
+ 995| 			xte__value=${xte__value#"${xte__value%%[! ]*}"}
+1005| 		"[Desktop Action ${xte__entry_action}]"*)
+1014| 		'['*) [ "$xte__read_exec" = "true" ] && break ;;
+1017| 	done < "$xte__entry_path"
+1025| 	*[!a-zA-Z0-9_.-]* | *[!a-zA-Z0-9_.-] | [!a-zA-Z0-9_.-]* | [!a-zA-Z0-9_.-] | '' | .desktop)
+1058| 	xte__de_checks=false
+1060| 	for xte__entry_id in ${XTE__ENTRY_IDS}${XTE__LF}//fallback_start//${XTE__LF}$XTE__FALLBACK_ENTRY_IDS; do
+1071| 		'//fallback_start//')
+1081| 		alias "$xte__entry_id" > /dev/null 2>&1 || continue
+1085| 		unalias "$xte__entry_id"
+1086| 		read_entry_path "$xte__entry_path" "$xte__entry_action" "$xte__de_checks" || continue
+1090| 		[ -z "${XTE__IS_TERMINAL}" ] && continue
+1092| 		if [ "$XTE__EXECARG_DEFINED" != "true" ]; then
+1093| 			# get (custom) default in compat mode
+1094| 			if check_bool "$XTE__EXECARG_COMPAT"; then
+1095| 				get_default_execarg "$xte__entry_id"
+1096| 				XTE__EXECARG=$XTE__DEFAULT_EXECARG
+1097| 			# discard entry in strict mode
+1098| 			else
+1099| 				continue
+1109| 	IFS=':' error "No valid terminal entry was found in:" ${XTE__APPLICATIONS_DIRS}
+1128| 	XTE__DEFAULT_EXECARG='-e'
+1144| XTE__LOWERCASE_XDG_CURRENT_DESKTOP=$(printf '%s' "${XDG_CURRENT_DESKTOP-}" | tr '[:upper:]' '[:lower:]')
+1147| XTE__EXECARG_COMPAT=${XTE_EXECARG_COMPAT-true}
+1198| 	read_config_paths
+1208| 	find_entry || exit 1
+1221| XTE__PRINT_DATA=
+1223| XTE__PRINT_CMD_DELIMITER='\n'
+1231| 	-e | "$XTE__EXECARG")
+1252| 	--dir=*)
+1313| 	[!-]*)
+1317| 	-*)
+1331| 	printf '%s' "${XTE__ENTRY_ID}${XTE__ENTRY_ACTION:+:}${XTE__ENTRY_ACTION}"
+1337| *' path '*)
+1342| 	*'/./'*) XTE__ENTRY_PATH=${XTE__ENTRY_PATH%%/./*}/${XTE__ENTRY_PATH##*/./} ;;
+1368| # early bail out in some print modes
+1369| case " $XTE__PRINT_DATA " in
+1370| '  ' | *' cmd '*)
+1371| 	# more stuff to do, continue
+1372| 	true
+1373| 	;;
+1374| *' content '*)
+1375| 	# content already has newline at the end, just exit
+1376| 	exit 0
+1377| 	;;
+1378| *)
+1379| 	# terminate with newline if delimiter is newline
+1380| 	case "$XTE__PRINT_DELIMITER" in
+1381| 	'\n') printf '%b' '\n' ;;
+1382| 	esac
+1383| 	exit 0
+1384| 	;;
+1385| esac
+1388| if [ "$#" -gt 0 ] && [ -n "$XTE__EXECARG" ]; then
+1389| 	set -- "$XTE__EXECARG" "$@"
+1393| if [ -n "$XTE__HOLDARG" ] && check_bool "$XTE__HOLD"; then
+1400| if [ -n "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+1415| if [ -n "$XTE__TITLEARG" ] && [ -n "$XTE__TITLEVAL" ]; then
+1450| set -- $XTE__EXEC_USEP "$@"
+1457| 	save_cache "$1" &
+1480| 		false) printf '%b' "${XTE__PRINT_CMD_DELIMITER:-\n}" ;;
+1486| 	if [ "${XTE__PRINT_CMD_DELIMITER}" = '\n' ] || { [ "$XTE__PRINT_FIRST" = "false" ] && [ "$XTE__PRINT_DELIMITER" = '\n' ]; }; then
+1499| exec "$@"

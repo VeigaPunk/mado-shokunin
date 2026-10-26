@@ -1,0 +1,12 @@
+# stale-cache.txt - a warm cache can make --print-cmd differ from a cold run
+# fixture: same tree, one desktop file edited with identical byte size and identical mtime
+fake-term
+rc=0
+size_before=94 size_after=94 mtime_identical=yes
+warm_cache_prints=fake-term
+ rc=0
+cold_cache_prints=fake-trmX
+ rc=0
+
+# cause: the cache key is md5 over 'ls -LRl' of config+data paths (size+mtime only),
+# so a content change preserving both keeps the hash and the cache is applied.

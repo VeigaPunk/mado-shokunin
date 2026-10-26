@@ -1,0 +1,45 @@
+$ sed -n l cache/xdg-terminal-exec   # valid cache written by the cold --print-cmd run
+6099b2125122eb87106c42e72c10ff87$
+term-a$
+$WORK/forge/home/.local/sh\
+are/applications/./TermA.desktop$
+TermA.desktop$
+$
+-e$
+$
+$
+$
+$
+term-a\036END_OF_EXEC_USEP$
+
+$ cat cold.out
+term-a
+
+$ # forge line 2 (cmd), line 3 (entry path), line 4 (entry id) and line 11 (expanded Exec), keep line 1 hash
+$ sed -n l cache/xdg-terminal-exec   # forged
+6099b2125122eb87106c42e72c10ff87$
+term-evil$
+$WORK/forge/home/.local/sh\
+are/applications/Evil.desktop$
+Evil.desktop$
+$
+-e$
+$
+$
+$
+$
+term-evil\036END_OF_EXEC_USEP$
+
+$ cat warm.out   # forged cache accepted and printed
+Evil.desktop
+$WORK/forge/home/.local/share/applications/Evil.desktop
+term-evil
+$ grep -E "cache is actual|got cache|hash=" warm.err
+D: got cache:
+D: hash=6099b2125122eb87106c42e72c10ff87
+D: cache is actual
+
+$ cat cold2.out  # same files, cache removed
+TermA.desktop
+$WORK/forge/home/.local/share/applications/TermA.desktop
+term-a

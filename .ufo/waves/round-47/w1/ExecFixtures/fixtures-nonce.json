@@ -1,0 +1,4126 @@
+[
+ {
+  "id": "nonce47-001",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "# comment\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-002",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "wezterm.desktop\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-003",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "home/.config/xdg-terminals.list": "# comment\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag"
+  }
+ },
+ {
+  "id": "nonce47-004",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "wezterm.desktop\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n"
+  }
+ },
+ {
+  "id": "nonce47-005",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "# comment\nfoot.desktop\n+wezterm.desktop\nst.desktop\n\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot,--flag"
+  }
+ },
+ {
+  "id": "nonce47-006",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d2/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n\n[Desktop Action act]\nName=act\nExec=kitty --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nalacritty.desktop\nkitty.desktop:act\n-st.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-007",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "cd/xdg-terminals.list": "-alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-cmd",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-008",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "myterm.desktop\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-009",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "wezterm.desktop\nalacritty.desktop\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/d2/applications/alacritty.desktop\nalacritty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-010",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag"
+  }
+ },
+ {
+  "id": "nonce47-011",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgExec=-e\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=st --act\n",
+   "home/.config/xdg-terminals.list": "# comment\nkitty.desktop\nst.desktop:act\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-012",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-013",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/hyprland-xdg-terminals.list": "st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-014",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "home/.config/gnome-xdg-terminals.list": "st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-015",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/gnome-xdg-terminals.list": "alacritty.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-016",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-017",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d2/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "cd/xdg-terminals.list": "# comment\nfoot.desktop\nst.desktop\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot.desktop\n$ROOT/d2/applications/foot.desktop\nfoot\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-018",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "home/.config/sway-xdg-terminals.list": "# comment\n-wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-019",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-020",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "$ROOT/home/.local/share/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-021",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-path",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-022",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/kde-xdg-terminals.list": "# comment\nalacritty.desktop\nkitty.desktop\n-myterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-023",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "d1/xdg-terminal-exec/gnome-xdg-terminals.list": "kitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n$ROOT/home/.local/share/applications/kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-024",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-025",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nTryExec=nosuch-wezterm\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "foot.desktop\nkitty.desktop\n-wezterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop"
+  }
+ },
+ {
+  "id": "nonce47-026",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "cd/xdg-terminals.list": "st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-path",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-027",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nalacritty.desktop\n-myterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/d1/applications/alacritty.desktop\nalacritty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-028",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;Utility;\nX-TerminalArgExec=-e\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "foot.desktop\nst.desktop\n\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-029",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "foot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot.desktop\n$ROOT/home/.local/share/applications/foot.desktop\nfoot\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-030",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd=\\n"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n$ROOT/home/.local/share/applications/wezterm.desktop\nwezterm\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-031",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-032",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=alacritty --act\n",
+   "cd/xdg-terminals.list": "alacritty.desktop:act\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-cmd=\\n"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-033",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "foot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot,--flag"
+  }
+ },
+ {
+  "id": "nonce47-034",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "alacritty.desktop\nkitty.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty\n--flag\n-e\nsh\n-c\necho hi\n"
+  }
+ },
+ {
+  "id": "nonce47-035",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "myterm.desktop\n-alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-036",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-037",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "home/.config/xdg-terminals.list": "# comment\nwezterm.desktop:act\n\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-038",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "cd/xdg-terminals.list": "# comment\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-039",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nalacritty.desktop\nwezterm.desktop:act\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-040",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "home/.config/hyprland-xdg-terminals.list": "wezterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-041",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "d1/xdg-terminal-exec/kde-xdg-terminals.list": "# comment\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop"
+  }
+ },
+ {
+  "id": "nonce47-042",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\n-alacritty.desktop\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-043",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nTryExec=nosuch-alacritty\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "# comment\nst.desktop\n+kitty.desktop\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n$ROOT/d1/applications/kitty.desktop\nkitty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-044",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/kde-xdg-terminals.list": "wezterm.desktop\nst.desktop\nkitty.desktop\n\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop\n$ROOT/home/.local/share/applications/st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-045",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "+myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd=\\n",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-046",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;Utility;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "+foot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-047",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-048",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/gnome-xdg-terminals.list": "# comment\nwezterm.desktop\nalacritty.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop"
+  }
+ },
+ {
+  "id": "nonce47-049",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/xdg-terminals.list": "alacritty.desktop\n-kitty.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/d1/applications/alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-050",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;Utility;\nX-TerminalArgDir=--dir=\n\n[Desktop Action act]\nName=act\nExec=st --act\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/kde-xdg-terminals.list": "# comment\nst.desktop:act\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty,--flag,-e,line with space"
+  }
+ },
+ {
+  "id": "nonce47-051",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/xdg-terminals.list": "+kitty.desktop\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm,--flag"
+  }
+ },
+ {
+  "id": "nonce47-052",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n\n[Desktop Action act]\nName=act\nExec=alacritty --act\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\nalacritty.desktop:act\nfoot.desktop\n-wezterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-053",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "kitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop"
+  }
+ },
+ {
+  "id": "nonce47-054",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;Utility;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n\n[Desktop Action act]\nName=act\nExec=foot --act\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/hyprland-xdg-terminals.list": "# comment\nst.desktop\nfoot.desktop:act\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st\n--flag\n-e\nsh\n-c\necho hi\n"
+  }
+ },
+ {
+  "id": "nonce47-055",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n\n[Desktop Action act]\nName=act\nExec=myterm --act\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "home/.config/hyprland-xdg-terminals.list": "myterm.desktop:act\nst.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop"
+  }
+ },
+ {
+  "id": "nonce47-056",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "home/.config/xdg-terminals.list": "wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm\n--flag\n-e\nsh\n"
+  }
+ },
+ {
+  "id": "nonce47-057",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\nX-TerminalArgExec=-e\n",
+   "home/.config/gnome-xdg-terminals.list": "-kitty.desktop\n\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-058",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "home/.config/gnome-xdg-terminals.list": "# comment\nalacritty.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-059",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n\n[Desktop Action act]\nName=act\nExec=st --act\n",
+   "home/.config/gnome-xdg-terminals.list": "st.desktop:act\nmyterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-060",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nTryExec=nosuch-foot\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n\n[Desktop Action act]\nName=act\nExec=foot --act\n",
+   "home/.config/xdg-terminals.list": "foot.desktop:act\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-061",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "kitty.desktop\nmyterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-path",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "$ROOT/home/.local/share/applications/kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-062",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nTryExec=nosuch-myterm\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\nmyterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-063",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n\n[Desktop Action act]\nName=act\nExec=foot --act\n",
+   "home/.config/xdg-terminals.list": "foot.desktop:act\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-path",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-064",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot.desktop"
+  }
+ },
+ {
+  "id": "nonce47-065",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n\n[Desktop Action act]\nName=act\nExec=alacritty --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nalacritty.desktop:act\n\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-066",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;Utility;\n",
+   "home/.config/gnome-xdg-terminals.list": "kitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-067",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "home/.config/gnome-xdg-terminals.list": "wezterm.desktop:act\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-068",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;Utility;\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-069",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d2/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/gnome-xdg-terminals.list": "+kitty.desktop\nwezterm.desktop\n+alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm,--flag"
+  }
+ },
+ {
+  "id": "nonce47-070",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "cd/xdg-terminals.list": "-wezterm.desktop\nfoot.desktop\n+myterm.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/myterm",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm,--flag"
+  }
+ },
+ {
+  "id": "nonce47-071",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "home/.config/hyprland-xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm.desktop\n$ROOT/home/.local/share/applications/myterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-072",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/sway-xdg-terminals.list": "# comment\nst.desktop\nwezterm.desktop\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop\n$ROOT/d2/applications/st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-073",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-074",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop"
+  }
+ },
+ {
+  "id": "nonce47-075",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\nX-TerminalArgExec=-e\n",
+   "home/.config/xdg-terminals.list": "alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty,--flag"
+  }
+ },
+ {
+  "id": "nonce47-076",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/xdg-terminal-exec/kde-xdg-terminals.list": "# comment\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-077",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "-alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-078",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-079",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "home/.config/xdg-terminals.list": "wezterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n$ROOT/home/.local/share/applications/wezterm.desktop\nwezterm\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-080",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "cd/xdg-terminals.list": "-myterm.desktop\nalacritty.desktop\n+st.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-081",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "home/.config/xdg-terminals.list": "alacritty.desktop\nwezterm.desktop\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd=\\n"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-082",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "home/.config/xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm.desktop"
+  }
+ },
+ {
+  "id": "nonce47-083",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;Utility;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "+st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-084",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nTryExec=nosuch-myterm\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-085",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "+st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-path",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "$ROOT/home/.local/share/applications/st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-086",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nTryExec=nosuch-alacritty\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "alacritty.desktop\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n$ROOT/d1/applications/kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-087",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-088",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "cd/xdg-terminals.list": "kitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty,--flag"
+  }
+ },
+ {
+  "id": "nonce47-089",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "wezterm.desktop\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "$ROOT/home/.local/share/applications/wezterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-090",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/xdg-terminals.list": "wezterm.desktop\n-myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-091",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "home/.config/xdg-terminals.list": "# comment\nst.desktop\n\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-092",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-093",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-094",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "foot.desktop\n-kitty.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-content",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n"
+  }
+ },
+ {
+  "id": "nonce47-095",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-096",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgExec=-e\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-097",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "st.desktop\n\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-098",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgExec=-e\n",
+   "home/.config/hyprland-xdg-terminals.list": "# comment\nalacritty.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-099",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "wezterm.desktop\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-100",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nTryExec=nosuch-wezterm\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "home/.config/hyprland-xdg-terminals.list": "wezterm.desktop:act\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-101",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-102",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag"
+  }
+ },
+ {
+  "id": "nonce47-103",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "home/.config/sway-xdg-terminals.list": "# comment\n+st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-104",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-105",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-106",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nTryExec=nosuch-alacritty\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/hyprland-xdg-terminals.list": "alacritty.desktop\n+st.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-107",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=kitty --act\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/gnome-xdg-terminals.list": "alacritty.desktop\n+kitty.desktop:act\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n$ROOT/d1/applications/alacritty.desktop\nalacritty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-108",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nwezterm.desktop\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-109",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "myterm.desktop\nalacritty.desktop\nst.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm,--flag"
+  }
+ },
+ {
+  "id": "nonce47-110",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;Utility;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=myterm --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "+st.desktop\n-myterm.desktop:act\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop"
+  }
+ },
+ {
+  "id": "nonce47-111",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "home/.config/hyprland-xdg-terminals.list": "+foot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-112",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "home/.config/xdg-terminals.list": "# comment\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-113",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "KDE",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d2/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/kde-xdg-terminals.list": "-kitty.desktop\nmyterm.desktop\nalacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  }
+ },
+ {
+  "id": "nonce47-114",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "# comment\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-115",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\n-st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=\\n",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-116",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "home/.config/xdg-terminals.list": "+st.desktop\nfoot.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n"
+  }
+ },
+ {
+  "id": "nonce47-117",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "home/.config/gnome-xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-118",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-119",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;Utility;\nX-TerminalArgExec=-e\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\n+st.desktop\n-myterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "myterm.desktop"
+  }
+ },
+ {
+  "id": "nonce47-120",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Link\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "# comment\nst.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "line with space"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st.desktop"
+  }
+ },
+ {
+  "id": "nonce47-121",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "home/.config/sway-xdg-terminals.list": "foot.desktop\nwezterm.desktop\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-122",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=\\n"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-123",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;Utility;\n",
+   "d1/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d2/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "home/.config/xdg-terminals.list": "myterm.desktop\n-foot.desktop\nalacritty.desktop\n\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-content",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-124",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "d1/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-cmd",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty\n--flag\n-e\nsh\n"
+  }
+ },
+ {
+  "id": "nonce47-125",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "foot.desktop\n\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "-e",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-126",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "kitty.desktop\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n$ROOT/home/.local/share/applications/kitty.desktop\nkitty\n--flag\n-e\nsh\n"
+  }
+ },
+ {
+  "id": "nonce47-127",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;Utility;\nX-TerminalArgDir=--dir=\n",
+   "home/.config/hyprland-xdg-terminals.list": "wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-128",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgDir=--dir=\n",
+   "home/.config/hyprland-xdg-terminals.list": "wezterm.desktop\nfoot.desktop\nmyterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/myterm",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "wezterm.desktop\n$ROOT/home/.local/share/applications/wezterm.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-129",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=foot --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "foot.desktop:act\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-130",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nTryExec=nosuch-alacritty\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=alacritty --act\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "st.desktop\n+alacritty.desktop:act\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/myterm",
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag"
+  }
+ },
+ {
+  "id": "nonce47-131",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag"
+  }
+ },
+ {
+  "id": "nonce47-132",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "alacritty.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-133",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n",
+   "d1/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\n",
+   "d2/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/hyprland-xdg-terminals.list": "foot.desktop\n+alacritty.desktop\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/foot",
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--title=T",
+   "--app-id=A"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot.desktop\n$ROOT/home/.local/share/applications/foot.desktop\n"
+  }
+ },
+ {
+  "id": "nonce47-134",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "sh"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "st,--flag,-e,sh"
+  }
+ },
+ {
+  "id": "nonce47-135",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "sway",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-136",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "kitty.desktop\nst.desktop\n\n"
+  },
+  "exec": [
+   "bin/kitty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nNoDisplay=true\n"
+  }
+ },
+ {
+  "id": "nonce47-137",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;Utility;\nX-TerminalArgDir=--dir=\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgDir=--dir=\n",
+   "home/.config/gnome-xdg-terminals.list": "alacritty.desktop\nst.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/st"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-138",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-content"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-139",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:KDE:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\nNotShowIn=Hyprland;\nX-TerminalArgExec=-e\n",
+   "home/.config/xdg-terminals.list": "# comment\nfoot.desktop\n"
+  },
+  "exec": [
+   "bin/foot"
+  ],
+  "args": [
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "foot\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-140",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "cd/xdg-terminals.list": "st.desktop\n-wezterm.desktop\n"
+  },
+  "exec": [
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-141",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n",
+   "d1/xdg-terminal-exec/gnome-xdg-terminals.list": "-alacritty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-delimiter=:"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-142",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "d1/xdg-terminal-exec/hyprland-xdg-terminals.list": "# comment\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd=\\n"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-143",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=ghostbinary\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+   "home/.config/gnome-xdg-terminals.list": "myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-cmd=,",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-144",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "# comment\nmyterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-145",
+  "class": "nonce",
+  "env": {
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/myterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=myterm --flag\nTryExec=nosuch-myterm\nCategories=System;TerminalEmulator;\n",
+   "cd/xdg-terminals.list": "# comment\n-myterm.desktop\n"
+  },
+  "exec": [
+   "bin/myterm"
+  ],
+  "args": [
+   "--print-id",
+   "--hold"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-146",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nTryExec=nosuch-kitty\nCategories=System;TerminalEmulator;\n",
+   "d1/applications/alacritty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=alacritty --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=alacritty --act\n",
+   "d2/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;TerminalEmulator;\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "d1/xdg-terminal-exec/xdg-terminals.list": "alacritty.desktop:act\nwezterm.desktop:act\nkitty.desktop\n"
+  },
+  "exec": [
+   "bin/alacritty",
+   "bin/kitty",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-content",
+   "--dir=/w",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-147",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/cd",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\nX-TerminalArgExec=-e\n",
+   "cd/xdg-terminals.list": "+st.desktop\n"
+  },
+  "exec": [
+   "bin/st"
+  ],
+  "args": [
+   "--print-path",
+   "--hold",
+   "sh"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-148",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nTryExec=nosuch-wezterm\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n\n[Desktop Action act]\nName=act\nExec=wezterm --act\n",
+   "d1/applications/st.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=st --flag\nCategories=System;TerminalEmulator;\nHidden=true\n",
+   "d2/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=foot --flag\nCategories=System;TerminalEmulator;\n",
+   "home/.config/gnome-xdg-terminals.list": "st.desktop\n-foot.desktop\nwezterm.desktop:act\n"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/st",
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path",
+   "sh",
+   "-c",
+   "echo hi"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ },
+ {
+  "id": "nonce47-149",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=kitty --flag\nCategories=System;TerminalEmulator;\nOnlyShowIn=GNOME;\n"
+  },
+  "exec": [
+   "bin/kitty"
+  ],
+  "args": [
+   "--print-id",
+   "--print-path",
+   "--print-cmd"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty.desktop\n$ROOT/home/.local/share/applications/kitty.desktop\nkitty\n--flag\n"
+  }
+ },
+ {
+  "id": "nonce47-150",
+  "class": "nonce",
+  "env": {
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CONFIG_DIRS": "$ROOT/nonexist",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share",
+   "XDG_DATA_DIRS": "$ROOT/d1:$ROOT/d2"
+  },
+  "files": {
+   "home/.local/share/applications/wezterm.desktop": "[Desktop Entry]\nType=Application\nName=Term\nExec=wezterm --flag\nCategories=System;Utility;\nX-TerminalArgDir=--dir=\n",
+   "home/.config/xdg-terminals.list": "wezterm.desktop\n\n"
+  },
+  "exec": [
+   "bin/wezterm"
+  ],
+  "args": [
+   "--print-path"
+  ],
+  "expect": {
+   "rc": 1,
+   "stdout": ""
+  }
+ }
+]

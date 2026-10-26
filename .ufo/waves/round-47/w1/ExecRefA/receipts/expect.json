@@ -1,0 +1,2263 @@
+[
+{
+"id": "01-host-shaped",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "Alacritty.desktop\n",
+"home/.local/share/applications/Alacritty.desktop": "[Desktop Entry]\nType=Application\nTryExec=alacritty\nExec=alacritty\nIcon=Alacritty\nTerminal=false\nCategories=System;TerminalEmulator;\nName=Alacritty\nActions=New;\nX-TerminalArgExec=-e\nX-TerminalArgAppId=--class=\nX-TerminalArgTitle=--title=\nX-TerminalArgDir=--working-directory=\n\n[Desktop Action New]\nName=New Terminal\nExec=alacritty\n"
+},
+"exec": [
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nalacritty\n"
+},
+{
+"id": "02-fallback",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/zzz.desktop": "[Desktop Entry]\nType=Application\nName=Z\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n"
+},
+{
+"id": "03-prefixed-beats-plain",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/hyprland-xdg-terminals.list": "bbb.desktop\n",
+"home/.config/xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "04-confighome-beats-dirs",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop\n",
+"etc/xdg/xdg-terminals.list": "bbb.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "05-datadir-list",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"usr/share/xdg-terminal-exec/xdg-terminals.list": "bbb.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "06-duplicate-user-wins",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/dup.desktop": "[Desktop Entry]\nType=Application\nName=U\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"usr/share/applications/dup.desktop": "[Desktop Entry]\nType=Application\nName=S\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "dup.desktop\n$ROOT/home/.local/share/applications/dup.desktop\nalacritty\n"
+},
+{
+"id": "07-hidden-true",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/hid.desktop": "[Desktop Entry]\nType=Application\nName=H\nExec=sh\nHidden=true\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n"
+},
+{
+"id": "08-hidden-capital",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/hid.desktop": "[Desktop Entry]\nType=Application\nName=H\nExec=sh\nHidden=True\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "hid.desktop\n$ROOT/home/.local/share/applications/hid.desktop\nsh\n"
+},
+{
+"id": "09-no-categories",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/nocat.desktop": "[Desktop Entry]\nType=Application\nExec=sh\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n"
+},
+{
+"id": "10-wrong-category",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/nocat.desktop": "[Desktop Entry]\nType=Application\nName=N\nExec=sh\nCategories=System;Utility;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n"
+},
+{
+"id": "11-tryexec-missing",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/te.desktop": "[Desktop Entry]\nType=Application\nName=T\nExec=alacritty\nTryExec=nothere\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "12-exec-not-on-path",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/x.desktop": "[Desktop Entry]\nType=Application\nName=X\nExec=ghost\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "13-exec-fields",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/f.desktop": "[Desktop Entry]\nType=Application\nExec=\"sh\" -c \"echo hi\" %i %c %%f\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "f.desktop\n$ROOT/home/.local/share/applications/f.desktop\nsh\n-c\necho hi\n%f\n"
+},
+{
+"id": "14-two-file-fields",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh %f %u\nCategories=TerminalEmulator;\n",
+"home/.local/share/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n"
+},
+{
+"id": "15-unknown-field",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh %z\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%z\n"
+},
+{
+"id": "16-action",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop:New\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nActions=New;\n\n[Desktop Action New]\nExec=sh\n-c\necho hi\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop:New\n$ROOT/home/.local/share/applications/aaa.desktop:New\nsh\n"
+},
+{
+"id": "17-action-unlisted",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop:Ghost\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nActions=New;\n\n[Desktop Action Ghost]\nExec=sh\n",
+"home/.local/share/applications/zzz.desktop": "[Desktop Entry]\nType=Application\nName=Z\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n"
+},
+{
+"id": "18-exclusion",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "-excluded.desktop\nAlacritty.desktop\n",
+"home/.local/share/applications/Alacritty.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"usr/share/applications/excluded.desktop": "[Desktop Entry]\nType=Application\nName=E\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nsh\n"
+},
+{
+"id": "19-exclusion-only",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "-aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "20-nodisplay-type",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Link\nNoDisplay=true\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "21-onlyshowin",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "listed.desktop\n",
+"home/.local/share/applications/listed.desktop": "[Desktop Entry]\nType=Application\nName=L\nExec=sh\nOnlyShowIn=GNOME;\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"usr/share/applications/gnome.desktop": "[Desktop Entry]\nType=Application\nName=G\nExec=alacritty\nOnlyShowIn=GNOME;\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "listed.desktop\n$ROOT/home/.local/share/applications/listed.desktop\nsh\n"
+},
+{
+"id": "22-notshowin",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nNotShowIn=Hyprland;\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/b.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n"
+},
+{
+"id": "23-no-desktop",
+"env": {
+"XDG_CURRENT_DESKTOP": "",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/hyprland-xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "24-multi-desktop",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland:GNOME",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/gnome-xdg-terminals.list": "bbb.desktop\n",
+"home/.config/hyprland-xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "25-no-confighome",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "26-trailing-slash",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share/"
+},
+"files": {
+"usr/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "27-empty-list",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": ""
+},
+"exec": [],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "28-list-noise",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "# comment\n\n   \nnot an id.x\nfoo\n/unknown/directive\naaa.desktop\n:bad\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "29-misspelled",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "bad name.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "30-subdir-id",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "sub-aaa.desktop\n",
+"home/.local/share/applications/sub/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "sub-aaa.desktop\n$ROOT/home/.local/share/applications/sub/aaa.desktop\nsh\n"
+},
+{
+"id": "31-invalid-chars",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/bad name.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/good.desktop": "[Desktop Entry]\nType=Application\nName=G\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "good.desktop\n$ROOT/home/.local/share/applications/good.desktop\nalacritty\n"
+},
+{
+"id": "32-print-id-only",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id"
+],
+"rc": 0,
+"stdout": "a.desktop\n"
+},
+{
+"id": "33-print-path-only",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-path"
+],
+"rc": 0,
+"stdout": "$ROOT/home/.local/share/applications/a.desktop\n"
+},
+{
+"id": "34-print-both",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-path",
+"--print-id"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\n"
+},
+{
+"id": "35-print-delim",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-delimiter=|"
+],
+"rc": 0,
+"stdout": "a.desktop|$ROOT/home/.local/share/applications/a.desktop"
+},
+{
+"id": "36-print-cmd-empty-delim",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd=",
+"--print-delimiter=|",
+"--print-id"
+],
+"rc": 0,
+"stdout": "a.desktop|sh"
+},
+{
+"id": "37-print-cmd-seq",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd=\\t",
+"--print-id"
+],
+"rc": 0,
+"stdout": "a.desktop\nsh\n"
+},
+{
+"id": "38-prepend-all",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nX-TerminalArgExec=-e\nX-TerminalArgAppId=--class=\nX-TerminalArgTitle=--title=\nX-TerminalArgDir=--cd=\nX-TerminalArgHold=--hold\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--app-id=com.x",
+"--title=T y",
+"--dir=/tmp",
+"--hold"
+],
+"rc": 0,
+"stdout": "sh\n--class=com.x\n--title=T y\n--cd=/tmp\n--hold\n"
+},
+{
+"id": "39-prepend-space",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nX-TerminalArgAppId=--class\nX-TerminalArgTitle=--title\nX-TerminalArgDir=--cd\nX-TerminalArgHold=--hold\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--app-id=x",
+"--title=t",
+"--dir=/d",
+"--hold"
+],
+"rc": 0,
+"stdout": "sh\n--class\nx\n--title\nt\n--cd\n/d\n--hold\n"
+},
+{
+"id": "40-execarg-escape",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nX-TerminalArgExec=--opt=\\s\\t\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"echo",
+"hi"
+],
+"rc": 0,
+"stdout": "sh\n--opt= \t\necho\nhi\n"
+},
+{
+"id": "41-print-content",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-content"
+],
+"rc": 0,
+"stdout": "a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+{
+"id": "42-test-mode",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--test"
+],
+"rc": 0,
+"stdout": "Command and arguments:\n  >sh<\n"
+},
+{
+"id": "43-help",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {},
+"exec": [],
+"args": [
+"--help"
+],
+"rc": 0,
+"stdout": "xdg-terminal-exec - Shell-based default terminal launcher.\n\nImplementation of the proposed Default Terminal Specification.\n\nUsage:\n  xdg-terminal-exec [options] [--] [command [arguments ...]]\n\nLaunches given command in default terminal, or launches default terminal.\n\nOptions for modifying terminal behavior (if supported by terminals's\nentry):\n\n  --app-id=app-id    set app-id (Wayland) or window class (X11)\n  --title=title      set tile of terminal.\n  --dir=workdir      set workdir of terminal.\n  --hold             instruct terminal to hold after command ends.\n\nOptions for printing data instead of executing terminal:\n\n  --print-id\n      print selected Desktop Entry ID. Action is appended delimited\n      by \":\".\n\n  --print-path\n      print path to selected Desktop Entry. Action is appended\n      delimited by \":\".\n\n  --print-content\n      print content of selected Desktop Entry. Conflicts with --print-cmd.\n\n  --print-cmd[=printf_sequence]\n      print resulting command line, delimited by given printf sequence,\n      \"\\n\" by default. If sequence is \"\\n\", output is also terminated with\n      a newline.\n\n  --print-delimiter=printf_sequence\n      printf sequence to be used as the delimiter between multiple requested\n      print statements, \"\\n\" by default. If sequence is \"\\n\", output is\n      also terminated with a newline.\n\nConfiguration:\n\nPreferred terminals are configured by listing their Desktop Entry IDs\nin config files named \"[${desktop}-]xdg-terminals.list\" placed in XDG Config\nhierarchy. Where \"${desktop}\" is a lowercased string that is matched\n(case-insensitively) against items of \"${XDG_CURRENT_DESKTOP}\".\n\nSee \"man xdg-terminal-exec\" for more details.\n"
+},
+{
+"id": "44-none",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "45-strict",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "46-execarg-default",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "/execarg_default:aaa.desktop:--\naaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"echo",
+"hi"
+],
+"rc": 0,
+"stdout": "sh\n--\necho\nhi\n"
+},
+{
+"id": "47-directives",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "/execarg_strict\n/disable_cache\n/execarg_compat\naaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"echo"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "48-residue",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nCategories=TerminalEmulator;\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nExec=alacritty\n"
+},
+"exec": [
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nalacritty\n"
+},
+{
+"id": "49-dir-entry",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"usr/share/applications/dir.desktop/keep": "",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n"
+},
+{
+"id": "50-empty-exec",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "51-crlf",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\r\nExec=sh\r\nCategories=TerminalEmulator;\r\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "52-exec-bad-quote",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh | cat\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "53-exec-escaped-space",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\\ -c \"echo a b\"\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho a b\n"
+},
+{
+"id": "54-action-trailing-colon",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop:New:\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nActions=New;\n\n[Desktop Action New]\nExec=sh\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "55-plus-marker",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "-zzz.desktop\n+zzz.desktop\nzzz.desktop\n",
+"home/.local/share/applications/zzz.desktop": "[Desktop Entry]\nType=Application\nName=Z\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n"
+},
+{
+"id": "56-no-datahome",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"usr/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "57-dir-no-arg",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--dir=/x",
+"echo"
+],
+"rc": 0,
+"stdout": "sh\n-e\necho\n"
+},
+{
+"id": "58-hold-no-arg",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--hold",
+"echo"
+],
+"rc": 0,
+"stdout": "sh\n-e\necho\n"
+},
+{
+"id": "59-unknown-opt",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--nonsense",
+"--print-id",
+"--print-cmd",
+"echo"
+],
+"rc": 0,
+"stdout": "a.desktop\nsh\n-e\necho\n"
+},
+{
+"id": "60-dashdash",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--",
+"--print-id"
+],
+"rc": 0,
+"stdout": "sh\n-e\n--print-id\n"
+},
+{
+"id": "d01-three-datadirs",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share:$ROOT/usr/local/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "ss.desktop\n",
+"home/.local/share/applications/hh.desktop": "[Desktop Entry]\nType=Application\nName=H\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"usr/share/applications/ss.desktop": "[Desktop Entry]\nType=Application\nName=S\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"usr/local/share/applications/ll.desktop": "[Desktop Entry]\nType=Application\nName=L\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ss.desktop\n$ROOT/usr/share/applications/ss.desktop\nalacritty\n"
+},
+{
+"id": "d02-nested-collision",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/sub-x.desktop": "[Desktop Entry]\nType=Application\nName=Flat\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/sub/x.desktop": "[Desktop Entry]\nType=Application\nName=Nested\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "sub-x.desktop\n$ROOT/home/.local/share/applications/sub/x.desktop\nalacritty\n"
+},
+{
+"id": "d03-prefix-shadow",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "a.desktop\n",
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/aa.desktop": "[Desktop Entry]\nType=Application\nName=AA\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d04-uppercase-listfile",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/Hyprland-xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "d05-desktop-trailing-colon",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland:",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/hyprland-xdg-terminals.list": "bbb.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "d06-delims",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd=\\t",
+"--print-delimiter=\\\\"
+],
+"rc": 0,
+"stdout": "a.desktop\\$ROOT/home/.local/share/applications/a.desktop\\sh"
+},
+{
+"id": "d07-two-exec-lines",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=ghost\nCategories=TerminalEmulator;\nExec=sh\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d08-exec-later-group",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nCategories=TerminalEmulator;\n\n[Other]\nExec=sh\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d09-two-main-groups",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=ghost\nCategories=TerminalEmulator;\n\n[Desktop Entry]\nExec=sh\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d10-digit-key",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\n1Key=value\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d11-no-trailing-newline",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nCategories=TerminalEmulator;\nExec=sh"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d12-list-no-newline",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "d13-dot-desktop-name",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/.desktop": "[Desktop Entry]\nType=Application\nName=D\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n"
+},
+{
+"id": "d14-double-desktop",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop.desktop\n$ROOT/home/.local/share/applications/a.desktop.desktop\nsh\n"
+},
+{
+"id": "d15-tryexec-escaped",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nTryExec=not\\shere\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d16-literal-percent-file",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh %%f\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%f\n"
+},
+{
+"id": "d17-cmd-delim-cut",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd=x\\cy",
+"--print-id"
+],
+"rc": 0,
+"stdout": "a.desktop\nsh\n"
+},
+{
+"id": "d18-content-and-id",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-content"
+],
+"rc": 0,
+"stdout": "a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+{
+"id": "d19-content-dir",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"usr/share/applications/dir.desktop/keep": "",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-content"
+],
+"rc": 0,
+"stdout": "[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+{
+"id": "d20-plus-only",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "+\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n"
+},
+{
+"id": "d21-system-exclusion-host-shape",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"usr/share/xdg-terminal-exec/xdg-terminals.list": "-foot.desktop\n-footclient.desktop\n/execarg_default:aaa.desktop:--\n",
+"home/.config/xdg-terminals.list": "aaa.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\n",
+"usr/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=F\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-cmd",
+"echo",
+"x"
+],
+"rc": 0,
+"stdout": "aaa.desktop\nsh\n--\necho\nx\n"
+},
+{
+"id": "d22-action-missing-group",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop:New\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nActions=New;\n",
+"home/.local/share/applications/zzz.desktop": "[Desktop Entry]\nType=Application\nName=Z\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n"
+},
+{
+"id": "d23-onlyshowin-multi",
+"env": {
+"XDG_CURRENT_DESKTOP": "GNOME:Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nOnlyShowIn=KDE;GNOME;\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d24-notshowin-empty",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nNotShowIn=\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d25-onlyshowin-empty",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nOnlyShowIn=\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 1,
+"stdout": ""
+},
+{
+"id": "d26-hidden-false",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nHidden=false\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d27-dir-spaces",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nX-TerminalArgDir=--cd=\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--dir=/a b",
+"echo"
+],
+"rc": 0,
+"stdout": "sh\n--cd=/a b\n-e\necho\n"
+},
+{
+"id": "d28-dirarg-split",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nX-TerminalArgDir=--cd\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--dir=/x",
+"echo"
+],
+"rc": 0,
+"stdout": "sh\n--cd\n/x\n-e\necho\n"
+},
+{
+"id": "d29-empty-execarg",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\nCategories=TerminalEmulator;\nX-TerminalArgExec=\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"echo",
+"hi"
+],
+"rc": 0,
+"stdout": "sh\necho\nhi\n"
+},
+{
+"id": "d30-dashdash-args",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-cmd",
+"--",
+"-x",
+"--print-id"
+],
+"rc": 0,
+"stdout": "sh\n-e\n-x\n--print-id\n"
+},
+{
+"id": "d31-exec-tab",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]\nExec=sh\t-c\t\"echo\thi\"\nCategories=TerminalEmulator;\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho\thi\n"
+},
+{
+"id": "d32-crlf-trailing-space",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/a.desktop": "[Desktop Entry]  \r\nExec=sh   \r\nCategories=TerminalEmulator;\r\n"
+},
+"exec": [
+"bin/sh"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n"
+},
+{
+"id": "d33-datadir-prefixed-list",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share:$ROOT/usr/local/share"
+},
+"files": {
+"usr/local/share/xdg-terminal-exec/hyprland-xdg-terminals.list": "bbb.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n"
+},
+{
+"id": "d34-two-config-dirs",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.config/xdg-terminals.list": "aaa.desktop\n",
+"etc/xdg/xdg-terminals.list": "aaa.desktop\nbbb.desktop\n",
+"home/.local/share/applications/aaa.desktop": "[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/bbb.desktop": "[Desktop Entry]\nType=Application\nName=B\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n"
+},
+{
+"id": "d35-no-dot-name",
+"env": {
+"XDG_CURRENT_DESKTOP": "Hyprland",
+"XDG_CONFIG_HOME": "$ROOT/home/.config",
+"XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+"XDG_DATA_HOME": "$ROOT/home/.local/share",
+"XDG_DATA_DIRS": "$ROOT/usr/share"
+},
+"files": {
+"home/.local/share/applications/termdesktop": "[Desktop Entry]\nType=Application\nName=T\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n",
+"home/.local/share/applications/ok.desktop": "[Desktop Entry]\nType=Application\nName=O\nExec=alacritty\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n"
+},
+"exec": [
+"bin/sh",
+"bin/alacritty"
+],
+"args": [
+"--print-id",
+"--print-path",
+"--print-cmd"
+],
+"rc": 0,
+"stdout": "ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n"
+}
+]

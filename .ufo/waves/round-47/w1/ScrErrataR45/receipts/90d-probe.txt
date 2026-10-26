@@ -1,0 +1,12 @@
+# probe: can the recheck line's '90d' be resolved as a Hyprland revision?
+# command: curl -sS -o /dev/null -w '%{http_code}' https://api.github.com/repos/hyprwm/Hyprland/commits/90d
+http_code=422
+# body:
+{
+  "message": "No commit found for SHA: 90d",
+  "documentation_url": "https://docs.github.com/rest/commits/commits#get-a-commit",
+  "status": "422"
+}
+
+# control: a full 40-hex sha resolves 200
+http_code_full=200

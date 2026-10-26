@@ -1,0 +1,21 @@
+$ ls -l l1-draft/__pycache__ (worktree)
+total 40
+-rw-r--r-- 1 vgpnk vgpnk 40149 Oct 26 18:45 mado-devices.cpython-314.pyc
+$ git check-ignore -v that path
+.gitignore:3:__pycache__/	.ufo/waves/round-46/l1-draft/__pycache__/mado-devices.cpython-314.pyc
+$ grep bytecode guards in v3 counter
+67:import importlib.util
+76:sys.dont_write_bytecode = True
+122:    spec = importlib.util.spec_from_file_location("mado_devices_model", MODEL_PATH)
+123:    mod = importlib.util.module_from_spec(spec)
+124:    spec.loader.exec_module(mod)
+348:            "HYPRLAND_INSTANCE_SIGNATURE": "mado-r46-fixture", "PYTHONDONTWRITEBYTECODE": "1"}
+355:            "XDG_RUNTIME_DIR": "/run/user/%d" % os.getuid(), "PYTHONDONTWRITEBYTECODE": "1"}
+$ same in v2 counter
+60:import importlib.util
+69:sys.dont_write_bytecode = True
+115:    spec = importlib.util.spec_from_file_location("mado_devices_model", MODEL_PATH)
+116:    mod = importlib.util.module_from_spec(spec)
+117:    spec.loader.exec_module(mod)
+302:            "HYPRLAND_INSTANCE_SIGNATURE": "mado-r46-fixture", "PYTHONDONTWRITEBYTECODE": "1"}
+309:            "XDG_RUNTIME_DIR": "/run/user/%d" % os.getuid(), "PYTHONDONTWRITEBYTECODE": "1"}

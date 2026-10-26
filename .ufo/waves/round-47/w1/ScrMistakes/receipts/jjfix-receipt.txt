@@ -1,0 +1,28 @@
+$ jj file track -- root:"sub"
+Warning: Refused to snapshot some files:
+  sub/big.bin: 2.0MiB (2097152 bytes); the maximum size allowed is 1.0MiB (1048576 bytes)
+Hint: This is to prevent large files from being added by accident. To fix this:
+  * Add the file(s) to `.gitignore`
+  * Run `jj config set --repo snapshot.max-new-file-size 2097152`
+    This will increase the maximum file size allowed for new files, in this repository only.
+  * Run `jj --config snapshot.max-new-file-size=2097152 file track sub/big.bin`
+    This will increase the maximum file size allowed for new files, for this command only.
+  * Run `jj file track --include-ignored sub/big.bin`
+    This will track the file(s) regardless of size.
+track_rc=0
+$ jj diff --summary -- root:"sub"
+A sub/small.txt
+diff_rc=0
+$ jj status
+Warning: Refused to snapshot some files:
+  sub/big.bin: 2.0MiB (2097152 bytes); the maximum size allowed is 1.0MiB (1048576 bytes)
+Hint: This is to prevent large files from being added by accident. To fix this:
+  * Add the file(s) to `.gitignore`
+  * Run `jj config set --repo snapshot.max-new-file-size 2097152`
+    This will increase the maximum file size allowed for new files, in this repository only.
+  * Run `jj --config snapshot.max-new-file-size=2097152 status`
+    This will increase the maximum file size allowed for new files, for this command only.
+Working copy changes:
+A sub/small.txt
+Untracked paths:
+? sub/big.bin

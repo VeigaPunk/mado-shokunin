@@ -1,0 +1,20 @@
+exec(open('/fast/scratch/hyaku/mado-r47/ScoutScriptMap/probe.py').read())
+show('base',{A+'t.desktop':desk('foo --x %f')},P,wait=0.5)
+show('idonly',{A+'t.desktop':desk('foo')},['--print-id'],wait=0.5)
+show('tokerr',{A+'t.desktop':desk('foo --a "$X" bar')},['--print-cmd'])
+show('tokerr2',{A+'t.desktop':desk("foo -c 'x y'")},['--print-cmd'])
+show('fielderr',{A+'t.desktop':desk('foo %f %f x')},['--print-cmd'])
+show('fielderr2',{A+'t.desktop':desk('foo %z x')},['--print-cmd'])
+show('nonl',{A+'t.desktop':desk('foo',end='')},['--print-id'])
+show('nonl_cat_last',{A+'t.desktop':'[Desktop Entry]\nExec=foo\nCategories=TerminalEmulator;'},['--print-id'])
+# leak: A has Exec but not terminal; B terminal but no Exec
+show('leak1',{A+'a.desktop':'[Desktop Entry]\nExec=foo --leak\nTerminalArgDir=--cwd=\n',A+'b.desktop':'[Desktop Entry]\nCategories=TerminalEmulator;\nTerminalArgExec=-x\n',
+  'home/.config/xdg-terminals.list':'a.desktop\nb.desktop\n'},['--dir=/d','--print-id','--print-cmd','--','prog'])
+show('leak2',{A+'a.desktop':'[Desktop Entry]\nCategories=TerminalEmulator;\nTerminalArgExec=--\nTerminalArgDir=--cwd=\nTerminalArgTitle=-T\n',A+'b.desktop':'[Desktop Entry]\nCategories=TerminalEmulator;\nExec=bar\n',
+  'home/.config/xdg-terminals.list':'a.desktop\nb.desktop\n'},['--dir=/d','--title=t','--print-id','--print-cmd','prog'])
+show('hang',{A+'t.desktop':desk('foo')},['--print-id',''],timeout=3)
+show('delim',{A+'t.desktop':desk('foo')},['--print-id','--print-path','--print-delimiter=\\t|\\x41\\cZ'])
+show('cmdempty',{A+'t.desktop':desk('foo')},['--print-cmd=','--','a','b'])
+show('cmdseq',{A+'t.desktop':desk('foo')},['--print-cmd=\\0','--print-id','--','a','b'])
+show('help',{},['-h'])
+show('noterm',{A+'t.desktop':desk('foo',cat='Foo;')},['--print-id'])

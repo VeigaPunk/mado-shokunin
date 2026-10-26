@@ -1,0 +1,15 @@
+$ decode pyc header vs source size/mtime
+pyc magic=2b0e0d0a flags=0 src_mtime_in_header=1793045578 src_size_in_header=27743
+actual src mtime=1793045578 size=27743
+match=True
+$ reproduction: unguarded in-process import writes __pycache__ beside the model
+imported ok
+/fast/scratch/hyaku/mado-r47/ScrMistakes/repro:
+__pycache__
+mado-devices.py
+
+/fast/scratch/hyaku/mado-r47/ScrMistakes/repro/__pycache__:
+mado-devices.cpython-314.pyc
+$ with the guard (the v3 line, sys.dont_write_bytecode = True)
+imported ok (guarded)
+mado-devices.py

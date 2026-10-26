@@ -1,0 +1,28 @@
+== pinned judge ==
+sha256      89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+size        44020 bytes
+
+== host, cold cache (XDG_CACHE_HOME=<scratch>) ==
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+rc=0
+
+== inside bwrap --unshare-all, same env, rw cache bind ==
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+rc=0
+
+== strace of the judge inside that sandbox: execve targets ==
+       1 /usr/bin/awk
+       1 /usr/bin/find
+       1 /usr/bin/ls
+       1 /usr/bin/md5sum
+       1 /usr/bin/tr
+       1 /usr/bin/xdg-terminal-exec
+execve_total 6
+socket_connect_lines 0
+
+NOTE: a shell-based implementation of the tool is caught by the execve rule:
+      pure python3 -I = 1 execve, this shell script = 5+ helpers.

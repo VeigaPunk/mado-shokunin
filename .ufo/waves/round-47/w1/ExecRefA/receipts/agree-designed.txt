@@ -1,0 +1,286 @@
+01-host-shaped               args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=ea8a6f41f3a927b8 MATCH
+    theirs=b'Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nalacritty\n'
+    ours  =b'Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nalacritty\n'
+02-fallback                  args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=39dc3614f582a2ce MATCH
+    theirs=b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n'
+    ours  =b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n'
+03-prefixed-beats-plain      args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=c6a8b104b3936b05 MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+04-confighome-beats-dirs     args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=399d7bb578596bc6 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+05-datadir-list              args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=bcb77880c0fb02c0 MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+06-duplicate-user-wins       args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=a91cbd1f49c974be MATCH
+    theirs=b'dup.desktop\n$ROOT/home/.local/share/applications/dup.desktop\nalacritty\n'
+    ours  =b'dup.desktop\n$ROOT/home/.local/share/applications/dup.desktop\nalacritty\n'
+07-hidden-true               args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=d4032da10deacc51 MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+08-hidden-capital            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=71eca6abc6f53314 MATCH
+    theirs=b'hid.desktop\n$ROOT/home/.local/share/applications/hid.desktop\nsh\n'
+    ours  =b'hid.desktop\n$ROOT/home/.local/share/applications/hid.desktop\nsh\n'
+09-no-categories             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=f5e3eecec1150cb6 MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+10-wrong-category            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=897075d87eab0666 MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+11-tryexec-missing           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+12-exec-not-on-path          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+13-exec-fields               args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=e0b8e1782631400f MATCH
+    theirs=b'f.desktop\n$ROOT/home/.local/share/applications/f.desktop\nsh\n-c\necho hi\n%f\n'
+    ours  =b'f.desktop\n$ROOT/home/.local/share/applications/f.desktop\nsh\n-c\necho hi\n%f\n'
+14-two-file-fields           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=5ba1715ed7e9cf3a MATCH
+    theirs=b'b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n'
+    ours  =b'b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n'
+15-unknown-field             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=81ff043e19610cdd MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%z\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%z\n'
+16-action                    args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=68b1f14f5fd2642c MATCH
+    theirs=b'aaa.desktop:New\n$ROOT/home/.local/share/applications/aaa.desktop:New\nsh\n'
+    ours  =b'aaa.desktop:New\n$ROOT/home/.local/share/applications/aaa.desktop:New\nsh\n'
+17-action-unlisted           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=f22893fa90c1666b MATCH
+    theirs=b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n'
+    ours  =b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n'
+18-exclusion                 args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=13e5832b457d878a MATCH
+    theirs=b'Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nsh\n'
+    ours  =b'Alacritty.desktop\n$ROOT/home/.local/share/applications/Alacritty.desktop\nsh\n'
+19-exclusion-only            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=a821bb9ccf90b3ca MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+20-nodisplay-type            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=86c18e3f1a3d02ad MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+21-onlyshowin                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=b951611a412d482f MATCH
+    theirs=b'listed.desktop\n$ROOT/home/.local/share/applications/listed.desktop\nsh\n'
+    ours  =b'listed.desktop\n$ROOT/home/.local/share/applications/listed.desktop\nsh\n'
+22-notshowin                 args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=0c2ac9e3c6885fdc MATCH
+    theirs=b'b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n'
+    ours  =b'b.desktop\n$ROOT/home/.local/share/applications/b.desktop\nalacritty\n'
+23-no-desktop                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=933170ccf138826f MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+24-multi-desktop             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=b42234c030bcf2b2 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+25-no-confighome             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=971cdc21abf86996 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+26-trailing-slash            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=ffd1fcd4194c772c MATCH
+    theirs=b'aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n'
+27-empty-list                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+28-list-noise                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=d31504d431c5116e MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+29-misspelled                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=474dc25669e1e632 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+30-subdir-id                 args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=439487615022e9ce MATCH
+    theirs=b'sub-aaa.desktop\n$ROOT/home/.local/share/applications/sub/aaa.desktop\nsh\n'
+    ours  =b'sub-aaa.desktop\n$ROOT/home/.local/share/applications/sub/aaa.desktop\nsh\n'
+31-invalid-chars             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=87ed54c6d1a7128b MATCH
+    theirs=b'good.desktop\n$ROOT/home/.local/share/applications/good.desktop\nalacritty\n'
+    ours  =b'good.desktop\n$ROOT/home/.local/share/applications/good.desktop\nalacritty\n'
+32-print-id-only             args=['--print-id']                                             rc theirs=0    ours=0    sha256=9d0e654dc2368cc8 MATCH
+    theirs=b'a.desktop\n'
+    ours  =b'a.desktop\n'
+33-print-path-only           args=['--print-path']                                           rc theirs=0    ours=0    sha256=84cd6bd9253205a3 MATCH
+    theirs=b'$ROOT/home/.local/share/applications/a.desktop\n'
+    ours  =b'$ROOT/home/.local/share/applications/a.desktop\n'
+34-print-both                args=['--print-path', '--print-id']                             rc theirs=0    ours=0    sha256=5149715abbebb87e MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\n'
+35-print-delim               args=['--print-id', '--print-path', '--print-delimiter=|']      rc theirs=0    ours=0    sha256=b09d2b0e280f8257 MATCH
+    theirs=b'a.desktop|$ROOT/home/.local/share/applications/a.desktop'
+    ours  =b'a.desktop|$ROOT/home/.local/share/applications/a.desktop'
+36-print-cmd-empty-delim     args=['--print-cmd=', '--print-delimiter=|', '--print-id']      rc theirs=0    ours=0    sha256=35da4926ec6cbd5f MATCH
+    theirs=b'a.desktop|sh'
+    ours  =b'a.desktop|sh'
+37-print-cmd-seq             args=['--print-cmd=\\t', '--print-id']                          rc theirs=0    ours=0    sha256=8822a86a6c67e0c0 MATCH
+    theirs=b'a.desktop\nsh\n'
+    ours  =b'a.desktop\nsh\n'
+38-prepend-all               args=['--print-cmd', '--app-id=com.x', '--title=T y', '--dir=/tmp', '--hold'] rc theirs=0    ours=0    sha256=4b436862e1386c4c MATCH
+    theirs=b'sh\n--class=com.x\n--title=T y\n--cd=/tmp\n--hold\n'
+    ours  =b'sh\n--class=com.x\n--title=T y\n--cd=/tmp\n--hold\n'
+39-prepend-space             args=['--print-cmd', '--app-id=x', '--title=t', '--dir=/d', '--hold'] rc theirs=0    ours=0    sha256=5f448844a80f6c24 MATCH
+    theirs=b'sh\n--class\nx\n--title\nt\n--cd\n/d\n--hold\n'
+    ours  =b'sh\n--class\nx\n--title\nt\n--cd\n/d\n--hold\n'
+40-execarg-escape            args=['--print-cmd', 'echo', 'hi']                              rc theirs=0    ours=0    sha256=63468308bfc6bb86 MATCH
+    theirs=b'sh\n--opt= \t\necho\nhi\n'
+    ours  =b'sh\n--opt= \t\necho\nhi\n'
+41-print-content             args=['--print-id', '--print-content']                          rc theirs=0    ours=0    sha256=2d005369264d3765 MATCH
+    theirs=b'a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+    ours  =b'a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+42-test-mode                 args=['--test']                                                 rc theirs=0    ours=0    sha256=26b916dab0a51779 MATCH
+    theirs=b'Command and arguments:\n  >sh<\n'
+    ours  =b'Command and arguments:\n  >sh<\n'
+43-help                      args=['--help']                                                 rc theirs=0    ours=0    sha256=f67276d27609f19c MATCH
+    theirs=b'xdg-terminal-exec - Shell-based default terminal launcher.\n\nImplementation of the proposed Default Terminal Specification.\n\nUsage:\n  xdg-terminal-exec [options] [--] [command [arguments ...]]\n\nLaunches given command in default terminal, or launches default terminal.\n\nOptions for modifying terminal b'
+    ours  =b'xdg-terminal-exec - Shell-based default terminal launcher.\n\nImplementation of the proposed Default Terminal Specification.\n\nUsage:\n  xdg-terminal-exec [options] [--] [command [arguments ...]]\n\nLaunches given command in default terminal, or launches default terminal.\n\nOptions for modifying terminal b'
+44-none                      args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+45-strict                    args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=53f4d9015533a136 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+46-execarg-default           args=['--print-cmd', 'echo', 'hi']                              rc theirs=0    ours=0    sha256=47ddae9b8b4d91f5 MATCH
+    theirs=b'sh\n--\necho\nhi\n'
+    ours  =b'sh\n--\necho\nhi\n'
+47-directives                args=['--print-cmd', 'echo']                                    rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+48-residue                   args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=174a3de5255ac2f0 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nalacritty\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nalacritty\n'
+49-dir-entry                 args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=120e06b54404132a MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n'
+50-empty-exec                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+51-crlf                      args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=7d24d1b9e999a81d MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+52-exec-bad-quote            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=d43a5ec9d12ee231 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+53-exec-escaped-space        args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=058713fde860fc24 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho a b\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho a b\n'
+54-action-trailing-colon     args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=faf4af0afa953b3d MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+55-plus-marker               args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=cf2f0753cf144a25 MATCH
+    theirs=b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n'
+    ours  =b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nsh\n'
+56-no-datahome               args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=33f07344e132f33d MATCH
+    theirs=b'aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/usr/share/applications/aaa.desktop\nsh\n'
+57-dir-no-arg                args=['--print-cmd', '--dir=/x', 'echo']                        rc theirs=0    ours=0    sha256=90677f7360becc47 MATCH
+    theirs=b'sh\n-e\necho\n'
+    ours  =b'sh\n-e\necho\n'
+58-hold-no-arg               args=['--print-cmd', '--hold', 'echo']                          rc theirs=0    ours=0    sha256=90677f7360becc47 MATCH
+    theirs=b'sh\n-e\necho\n'
+    ours  =b'sh\n-e\necho\n'
+59-unknown-opt               args=['--nonsense', '--print-id', '--print-cmd', 'echo']        rc theirs=0    ours=0    sha256=10b59d52a6dfcdb4 MATCH
+    theirs=b'a.desktop\nsh\n-e\necho\n'
+    ours  =b'a.desktop\nsh\n-e\necho\n'
+60-dashdash                  args=['--print-cmd', '--', '--print-id']                        rc theirs=0    ours=0    sha256=ed5ea81567f5daf8 MATCH
+    theirs=b'sh\n-e\n--print-id\n'
+    ours  =b'sh\n-e\n--print-id\n'
+d01-three-datadirs           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=51cff129b46758db MATCH
+    theirs=b'ss.desktop\n$ROOT/usr/share/applications/ss.desktop\nalacritty\n'
+    ours  =b'ss.desktop\n$ROOT/usr/share/applications/ss.desktop\nalacritty\n'
+d02-nested-collision         args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=0b4aefadb54221af MATCH
+    theirs=b'sub-x.desktop\n$ROOT/home/.local/share/applications/sub/x.desktop\nalacritty\n'
+    ours  =b'sub-x.desktop\n$ROOT/home/.local/share/applications/sub/x.desktop\nalacritty\n'
+d03-prefix-shadow            args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=62d86184619d4d17 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d04-uppercase-listfile       args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=ac6a1b094dd5eb95 MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+d05-desktop-trailing-colon   args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=17553c53c2bf5845 MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+d06-delims                   args=['--print-id', '--print-path', '--print-cmd=\\t', '--print-delimiter=\\\\'] rc theirs=0    ours=0    sha256=a3598800615ab218 MATCH
+    theirs=b'a.desktop\\$ROOT/home/.local/share/applications/a.desktop\\sh'
+    ours  =b'a.desktop\\$ROOT/home/.local/share/applications/a.desktop\\sh'
+d07-two-exec-lines           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d08-exec-later-group         args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d09-two-main-groups          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d10-digit-key                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=61a3895eee420ace MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d11-no-trailing-newline      args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d12-list-no-newline          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=0f076333caf04a46 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+d13-dot-desktop-name         args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=29c18039654494ad MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+d14-double-desktop           args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=2b47a999f2fd60e0 MATCH
+    theirs=b'a.desktop.desktop\n$ROOT/home/.local/share/applications/a.desktop.desktop\nsh\n'
+    ours  =b'a.desktop.desktop\n$ROOT/home/.local/share/applications/a.desktop.desktop\nsh\n'
+d15-tryexec-escaped          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d16-literal-percent-file     args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=9070da75906171eb MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%f\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n%f\n'
+d17-cmd-delim-cut            args=['--print-cmd=x\\cy', '--print-id']                        rc theirs=0    ours=0    sha256=8822a86a6c67e0c0 MATCH
+    theirs=b'a.desktop\nsh\n'
+    ours  =b'a.desktop\nsh\n'
+d18-content-and-id           args=['--print-id', '--print-content']                          rc theirs=0    ours=0    sha256=2d005369264d3765 MATCH
+    theirs=b'a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+    ours  =b'a.desktop\n[Desktop Entry]\nType=Application\nName=A\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+d19-content-dir              args=['--print-content']                                        rc theirs=0    ours=0    sha256=bd3d0c4b3c52b3c9 MATCH
+    theirs=b'[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+    ours  =b'[Desktop Entry]\nType=Application\nName=O\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+d20-plus-only                args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=3101a590247b4982 MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nsh\n'
+d21-system-exclusion-host-shape args=['--print-id', '--print-cmd', 'echo', 'x']                 rc theirs=0    ours=0    sha256=1af6df3f37458ab2 MATCH
+    theirs=b'aaa.desktop\nsh\n--\necho\nx\n'
+    ours  =b'aaa.desktop\nsh\n--\necho\nx\n'
+d22-action-missing-group     args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=4b3e4a44f415fba8 MATCH
+    theirs=b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n'
+    ours  =b'zzz.desktop\n$ROOT/home/.local/share/applications/zzz.desktop\nalacritty\n'
+d23-onlyshowin-multi         args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=67b610053f50aa72 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d24-notshowin-empty          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=859816c51e0aad66 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d25-onlyshowin-empty         args=['--print-id', '--print-path', '--print-cmd']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+d26-hidden-false             args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=cf23c6e23e91847e MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d27-dir-spaces               args=['--print-cmd', '--dir=/a b', 'echo']                      rc theirs=0    ours=0    sha256=a511ee8ec6971794 MATCH
+    theirs=b'sh\n--cd=/a b\n-e\necho\n'
+    ours  =b'sh\n--cd=/a b\n-e\necho\n'
+d28-dirarg-split             args=['--print-cmd', '--dir=/x', 'echo']                        rc theirs=0    ours=0    sha256=9ac514a3081c8ec8 MATCH
+    theirs=b'sh\n--cd\n/x\n-e\necho\n'
+    ours  =b'sh\n--cd\n/x\n-e\necho\n'
+d29-empty-execarg            args=['--print-cmd', 'echo', 'hi']                              rc theirs=0    ours=0    sha256=cdc63e7eea45e52a MATCH
+    theirs=b'sh\necho\nhi\n'
+    ours  =b'sh\necho\nhi\n'
+d30-dashdash-args            args=['--print-cmd', '--', '-x', '--print-id']                  rc theirs=0    ours=0    sha256=293badce6e00a3a5 MATCH
+    theirs=b'sh\n-e\n-x\n--print-id\n'
+    ours  =b'sh\n-e\n-x\n--print-id\n'
+d31-exec-tab                 args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=1aaf5851cadea590 MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho\thi\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n-c\necho\thi\n'
+d32-crlf-trailing-space      args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=2f8727230105c66f MATCH
+    theirs=b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+    ours  =b'a.desktop\n$ROOT/home/.local/share/applications/a.desktop\nsh\n'
+d33-datadir-prefixed-list    args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=0e429f32e54a4ef0 MATCH
+    theirs=b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+    ours  =b'bbb.desktop\n$ROOT/home/.local/share/applications/bbb.desktop\nalacritty\n'
+d34-two-config-dirs          args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=3a6cf58374805592 MATCH
+    theirs=b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+    ours  =b'aaa.desktop\n$ROOT/home/.local/share/applications/aaa.desktop\nsh\n'
+d35-no-dot-name              args=['--print-id', '--print-path', '--print-cmd']              rc theirs=0    ours=0    sha256=6a92596315157eaf MATCH
+    theirs=b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+    ours  =b'ok.desktop\n$ROOT/home/.local/share/applications/ok.desktop\nalacritty\n'
+# summary: agree 95/95, stderr differs 0, modelled hangs 0

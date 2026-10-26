@@ -1,0 +1,24 @@
+# cache-write.txt - which print mode writes the resolver cache, and where
+# fixture: scratch XDG tree, HOME=<scratch case>/home, PATH=<scratch>/bin:/usr/bin:/bin
+# date: 2026-10-26T19:08:18-03:00
+# xdg-terminal-exec sha256: 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+
+## 1. --print-id only, XDG_CACHE_HOME=<empty scratch dir>
+Term.desktop
+rc=0
+cache_files=0
+
+## 2. --print-id --print-path --print-cmd (the wave's capture shape), XDG_CACHE_HOME=<scratch>
+Term.desktop
+/fast/scratch/hyaku/mado-r47/SentHost/cw/home/.local/share/applications/Term.desktop
+fake-term
+rc=0
+cache_file=/fast/scratch/hyaku/mado-r47/SentHost/cw/cache/xdg-terminal-exec bytes=176
+
+## 3. --print-cmd with XDG_CACHE_HOME UNSET (HOME points into scratch)
+rc=0
+wrote_below_HOME=/fast/scratch/hyaku/mado-r47/SentHost/cw/home/.cache/xdg-terminal-exec bytes=178
+
+## 4. --print-cmd with XDG_CACHE_HOME='' (empty VALUE, not empty dir)
+rc=0
+wrote_below_HOME=/fast/scratch/hyaku/mado-r47/SentHost/cw/home/.cache/xdg-terminal-exec bytes=178

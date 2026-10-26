@@ -1,0 +1,10 @@
+# empty argv element: v0.14.3 option loop never shifts, so it spins
+# case root: a1-cfg-home-plain-list (a valid entry, control selects it)
+control:  args = --print-id
+  stdout: alacritty.desktop
+  rc=0
+with one empty element: args = --print-id ''
+  rc=124  (124 = GNU timeout killed it after 3s; it never returns)
+
+consequence: cannot appear in fixtures.json, because expect {rc,stdout} cannot
+express non-termination; a fixture set with it would hang the C1 counter.

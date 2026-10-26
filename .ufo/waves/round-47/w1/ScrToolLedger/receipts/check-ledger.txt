@@ -1,0 +1,25 @@
+## check-ledger.py over the final ledger.md, 2026-10-26T18:52:32-03:00, base c24adef2
+ledger.md sha256=91ec6bcb9119925bfa80b241b3fdeb4972c1b421a818be928f1579614d0376b6 lines=298
+
+## pristine
+LEDGER: ok=7 stale=3 none=4 missing=0 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=0
+
+## doctored A: binds row declared stale -> ok
+MISMATCH mado-binds.py declared=ok derived=stale recorded=9efa1136abd2 current=0cda0e6ff5e2
+LEDGER: ok=7 stale=2 none=4 missing=0 mismatch=1 unbound=0 missing_receipt=0 instruments=14
+rc=1
+
+## doctored B: globals row deleted
+MISSING mado-globals.py
+LEDGER: ok=7 stale=3 none=3 missing=1 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=1
+
+## doctored C: eventq row re-pointed at the round-25 binds receipt
+UNBOUND mado-eventq.py sha=436f550e9939 receipt=.ufo/waves/round-25/evidence/c1-after-v4-ef94763c.txt
+LEDGER: ok=6 stale=3 none=4 missing=0 mismatch=0 unbound=1 missing_receipt=0 instruments=14
+rc=1
+
+## at base rev c24adef (git show path)
+LEDGER: ok=7 stale=3 none=4 missing=0 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=0

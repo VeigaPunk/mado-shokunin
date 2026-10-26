@@ -1,0 +1,21 @@
+# guard proof transcript (re-run 2026-10-26, scratch under /fast/scratch/hyaku/mado-r47/ExecIdGuard)
+$ scratch-SOURCES.md
+| id | source |
+|---|--------|
+| S001 | a |
+  | S002 | b |
+$ scratch-staged.md
+| id | source |
+|---|--------|
+  | S002 | b |
+| S009 | c |
+$ grep -oE "^ {0,3}\|[[:space:]]*S[0-9]{3,}" registry | grep -oE S[0-9]+ | sort > reg-ids
+S001
+S002
+$ same for staged > staged-ids
+S002
+S009
+$ comm -12 reg-ids staged-ids
+S002
+$ negative control "    | S002 |" (4-space indent) -> captured ids:
+(empty = blind spot)

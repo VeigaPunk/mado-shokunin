@@ -1,0 +1,79 @@
+# hermetic probes of /usr/bin/xdg-terminal-exec 0.14.3 (seat ScrSkill, round 47 w1)
+# env: HOME=$ROOT/home XDG_CURRENT_DESKTOP=Hyprland XDG_CONFIG_HOME=$ROOT/home/.config
+#      XDG_CONFIG_DIRS=$ROOT/etc/xdg XDG_DATA_HOME=$ROOT/home/.local/share XDG_DATA_DIRS=$ROOT/usr/share
+#      XDG_CACHE_HOME=$ROOT/cache PATH=/usr/bin:/bin   ($ROOT substituted below)
+
+## A Type=Link -> selected?
+alpha.desktop
+$ROOT/home/.local/share/applications/alpha.desktop
+alacritty
+rc=0
+## B NoDisplay=true -> selected?
+alpha.desktop
+$ROOT/home/.local/share/applications/alpha.desktop
+alacritty
+rc=0
+## C Hidden=true
+No valid terminal entry was found in:
+$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+rc=1
+## D no TerminalEmulator
+No valid terminal entry was found in:
+$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+rc=1
+## E TryExec off PATH
+No valid terminal entry was found in:
+$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+rc=1
+## F Exec[0] off PATH
+No valid terminal entry was found in:
+$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+rc=1
+## G same ID in user and system data dirs (user Exec=alacritty, system Exec=sh)
+dup.desktop
+$ROOT/home/.local/share/applications/dup.desktop
+alacritty
+rc=0
+## H plain list order bbb,aaa
+bbb.desktop
+$ROOT/home/.local/share/applications/bbb.desktop
+alacritty
+rc=0
+## I per-desktop prefixed list read before plain list in the same dir
+bbb.desktop
+$ROOT/home/.local/share/applications/bbb.desktop
+alacritty
+rc=0
+## K fallback honours OnlyShowIn=GNOME under Hyprland
+bbb.desktop
+$ROOT/home/.local/share/applications/bbb.desktop
+alacritty
+rc=0
+## L listed entry: show-in checks skipped
+onlygnome.desktop
+$ROOT/home/.local/share/applications/onlygnome.desktop
+alacritty
+rc=0
+## M no lists: fallback order over aaa and zzz
+zzz.desktop
+sh
+rc=0
+## S action selected by the list line id:action
+aaa.desktop:New
+$ROOT/home/.local/share/applications/aaa.desktop:New
+sh
+-c
+echo hi
+rc=0
+## T action not in Actions -> candidate rejected, fallback next
+zzz.desktop
+rc=0
+## N argv cannot select an action (aaa:New as a command argument; fallback would pick zzz)
+zzz.desktop
+rc=0
+## P print delimiters: --print-cmd= (empty) --print-delimiter=|
+zzz.desktop|$ROOT/home/.local/share/applications/zzz.desktop|shrc=0
+## V no valid entry: print-id alone (stdout, then stderr)
+No valid terminal entry was found in:
+$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+rc=1

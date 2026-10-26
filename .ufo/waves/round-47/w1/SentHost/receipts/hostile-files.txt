@@ -1,0 +1,27 @@
+# hostile-files.txt - what the resolver does with a hostile applications directory
+# fixture: scratch XDG tree with a valid Term.desktop plus hostile siblings
+## entries present:
+  lrwxrwxrwx Dangling.desktop ->
+  prw-r--r-- Fifo.desktop 
+  -rw-r--r-- Huge.desktop 
+  lrwxrwxrwx Loop.desktop ->
+  lrwxrwxrwx Proc.desktop ->
+  -rw-r--r-- Term.desktop 
+
+## --print-id with the valid entry present (find order decides the last found):
+Huge.desktop
+rc=0
+
+## --print-id with only hostile entries (valid and huge entries moved away):
+/usr/bin/xdg-terminal-exec: line 970: /fast/scratch/hyaku/mado-r47/SentHost/hf/home/.local/share/applications/./Dangling.desktop: No such file or directory
+rc=124 wall_ms=60002
+
+## symlink escape: applications/Escape.desktop -> <outside>/Evil.desktop
+Escape.desktop
+/fast/scratch/hyaku/mado-r47/SentHost/hf/home/.local/share/applications/Escape.desktop
+[Desktop Entry]
+Type=Application
+Name=Evil
+Exec=fake-term
+Categories=System;TerminalEmulator;
+rc=0

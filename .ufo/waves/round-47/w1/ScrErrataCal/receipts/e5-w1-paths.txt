@@ -1,0 +1,74 @@
+# receipt e5-w1-paths.txt — lane /home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=c24adef2632672325a4eef3e3492f6716ccb6d14 (2026-10-26T18:46:52-03:00)
+
+$ bash -c git ls-tree -r --name-only e46789213830597348fe96a351ae004d10587385 -- .ufo/waves/round-44/w1/ | wc -l
+0
+[rc=0]
+
+$ bash -c git ls-tree --name-only e46789213830597348fe96a351ae004d10587385 -- .ufo/waves/round-44/w1-results.json | wc -l
+0
+[rc=0]
+
+$ bash -c git ls-tree -r --name-only 03fa5c618b089064a657b3d79d3d4272ae4b6894 -- .ufo/waves/round-44/w1/ | wc -l
+0
+[rc=0]
+
+$ bash -c git ls-tree --name-only 03fa5c618b089064a657b3d79d3d4272ae4b6894 -- .ufo/waves/round-44/w1-results.json | wc -l
+0
+[rc=0]
+
+$ bash -c git ls-tree -r --name-only 290cddea -- .ufo/waves/round-44/w1/ | wc -l
+848
+[rc=0]
+
+$ bash -c git ls-tree --name-only 290cddea -- .ufo/waves/round-44/w1-results.json | wc -l
+1
+[rc=0]
+
+$ bash -c git ls-tree -r --name-only 8ac15c41 -- .ufo/waves/round-44/w1/ | wc -l
+848
+[rc=0]
+
+$ bash -c git ls-tree --name-only 8ac15c41 -- .ufo/waves/round-44/w1-results.json | wc -l
+1
+[rc=0]
+
+$ bash -c git ls-tree -r --name-only HEAD -- .ufo/waves/round-44/w1/ | wc -l
+848
+[rc=0]
+
+$ bash -c git ls-tree --name-only HEAD -- .ufo/waves/round-44/w1-results.json | wc -l
+1
+[rc=0]
+
+$ grep -n w1-results.json corpus/lessons/round-44.md
+5:`.ufo/waves/round-44/w1-results.json`) broke both v1 predicates. Base `6a1a90528fe533cadee506a9fa3e9d13d15cc41f` (the round-43 tip after
+150:`HEAD:.ufo/waves/round-43/w1-results.json` has 38 results; `SCORECARD.md:2548` says "Mistakes M43-1..8" while
+207:  (`git show 5add5b4:.ufo/waves/round-43/w1-spec.json` → 38 items; `HEAD:.ufo/waves/round-43/w1-results.json` → 38 results), which
+[rc=0]
+
+$ grep -n w1/ScrLessonSkeleton corpus/lessons/round-44.md
+7:wayland-protocols 1.49-1. Drafted from `w1/ScrLessonSkeleton` (scribe seat) and integrated by the L1 (`MadoR44`); every L1 mark of
+246:  the citable copies are in `w1/ScrLessonSkeleton/c1-demo/`).
+[rc=0]
+
+$ grep -n w1/CritC1Cheat.md SCORECARD.md
+2535:| C1 **operability** (capability acquisition) - `tools/mado-geometry.py` | `fixtures=0/37 tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-before-base.txt`) -> `fixtures=37/37 tool=present verdict=TARGET_MET` exit 0 at the data commit (`receipts/c1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r42-geometry.py --repo . --rev <rev>` (`PRED-C1-r42`) | **TARGET_MET**; the tool is the round-42 reference installed byte-identically (sha256 `e3c2e471…`), falsified in round 43 by three independent implementations, mutation, cheat and security seats; open predicate defects: a source-pin selftest and a sandbox-detecting tool reach MET (`w1/CritC1Cheat.md` cheats 4, 6) |
+2566:Registration `.ufo/waves/round-44/registration.md` (freeze `e2289516a9a857f55cda7be635933e89b931c3da`, base `6a1a90528fe533cadee506a9fa3e9d13d15cc41f`), superseded before any data by `registration-v2.md` (freeze `03fa5c618b089064a657b3d79d3d4272ae4b6894`) after wave `w1` (38 seats) met both v1 predicates with cheats and forgeries (`w1/CritC1Cheat.md`, `w1/CritC2Cheat.md`, `w1/CritClaimSizing.md`, `w1/RevC2Counter.md`) and showed the v1 premise wording ("a false report") wrong (`w1/CritFsPremise.md`). Lowest-axis rule: every published axis ties at its maximum at base (`receipts/axis-base.txt`), so each is a lowest axis; the claims' after-states are their counters' lines.
+[rc=0]
+
+$ grep -n w1/ConnCrossClaim.md SCORECARD.md
+2573:Separable: C1's counter reads only the tool and the round-42 counter; C2's reads only entry, registry, lesson, README and pins (`w1/ConnCrossClaim.md`, `w1/CritClaimSizing.md` F10).
+2605:Separable: `w1/ConnCrossClaim.md` (tool-only tree: C1 MET, C2 0/1; data-only tree: C1 MISSED, C2 1/1).
+[rc=0]
+
+$ bash -c for f in w1/CritC1Cheat.md w1/CritC2Cheat.md w1/CritClaimSizing.md w1/RevC2Counter.md w1/CritFsPremise.md w1/ConnCrossClaim.md w1/ScrLessonSkeleton; do printf "%s " "$f"; git ls-tree --name-only HEAD -- ".ufo/waves/round-44/$f" | wc -l; done
+w1/CritC1Cheat.md 1
+w1/CritC2Cheat.md 1
+w1/CritClaimSizing.md 1
+w1/RevC2Counter.md 1
+w1/CritFsPremise.md 1
+w1/ConnCrossClaim.md 1
+w1/ScrLessonSkeleton 1
+[rc=0]
+

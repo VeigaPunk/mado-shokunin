@@ -1,0 +1,13 @@
+timeout policy, exercised through oracle.py run with a 1 ms budget (the sandbox cannot
+answer in 1 ms; the real blocking vector is the FIFO case in fifo-hang-proof.txt)
+
+--- default: a timeout fails the harness
+CASE t01-timeout-policy           class=timeout-policy     rc=124 out=match      det=ok   root=ok   tool=n/a TIMEOUT!
+ORACLE cases=1 valid=1 match=1 mismatch=0 no_expect=0 determinism=ok root-independence=ok tool=n/a stubs_ran=0 timed_out=1
+ORACLE_FAIL t01-timeout-policy: resolver did not answer within 0.001s (timeout rc 124)
+ORACLE_RESULT: FAIL
+
+--- with --allow-timeout and expect.rc=124 the timed-out observation is comparable
+CASE t01-timeout-policy           class=timeout-policy     rc=124 out=match      det=ok   root=ok   tool=n/a TIMEOUT!
+ORACLE cases=1 valid=1 match=1 mismatch=0 no_expect=0 determinism=ok root-independence=ok tool=n/a stubs_ran=0 timed_out=1
+ORACLE_RESULT: PASS

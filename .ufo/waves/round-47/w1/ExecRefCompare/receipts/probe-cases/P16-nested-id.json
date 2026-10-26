@@ -1,0 +1,28 @@
+{
+  "args": [
+    "--print-id",
+    "--print-path",
+    "--print-cmd"
+  ],
+  "class": "find/nested-id",
+  "env": {
+    "XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+    "XDG_CONFIG_HOME": "$ROOT/home/.config",
+    "XDG_CURRENT_DESKTOP": "Hyprland",
+    "XDG_DATA_DIRS": "$ROOT/usr/local/share:$ROOT/usr/share",
+    "XDG_DATA_HOME": "$ROOT/home/.local/share"
+  },
+  "exec": [
+    "bin/alacritty",
+    "bin/foot"
+  ],
+  "expect": {
+    "rc": 0,
+    "stdout": "sub-nested-Foo.desktop\n$ROOT/home/.local/share/applications/sub/nested/Foo.desktop\nalacritty\n"
+  },
+  "files": {
+    "home/.config/xdg-terminals.list": "sub-nested-Foo.desktop\n",
+    "home/.local/share/applications/sub/nested/Foo.desktop": "[Desktop Entry]\nCategories=TerminalEmulator;\nExec=alacritty\nTerminalArgExec=-e\n"
+  },
+  "id": "P16-nested-id"
+}

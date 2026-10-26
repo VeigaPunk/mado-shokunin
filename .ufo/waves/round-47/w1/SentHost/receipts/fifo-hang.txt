@@ -1,0 +1,25 @@
+# fifo-hang.txt - a FIFO named *.desktop in the LAST applications dir hangs the resolver
+# fixture: scratch XDG tree; AAA.desktop is a valid terminal entry
+# resolver: /usr/bin/xdg-terminal-exec sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+# date: 2026-10-26T18:52:49-03:00
+
+## 1. find argv the resolver builds (captured with a PATH shim) - note: no -o before the FIRST group
+  find -L <dir1>/. <dir2>/. -type f ( -path <dir1>/./[a-zA-Z0-9_]*.desktop ! -path <dir1>/./*[^a-zA-Z0-9_./-]* ) -o ( -path <dir2>/./[a-zA-Z0-9_]*.desktop ! -path <dir2>/./*[^a-zA-Z0-9_./-]* )
+  => (-type f AND group1) OR group2 : group2 has no type constraint
+
+## 2. the same expression, run verbatim, with a FIFO in the second dir
+<CASE>/home/.local/share/applications/./AAA.desktop
+<CASE>/home/.local/share/applications/./Fifo.desktop
+
+## 3. same expression with the dirs swapped (FIFO dir first): FIFO is excluded
+<CASE>/home/.local/share/applications/./AAA.desktop
+
+## 4. resolver runs (timeout 3s each)
+A) FIFO in XDG_DATA_HOME/applications, XDG_DATA_DIRS=<dir without applications subdir>: rc=124 wall_ms=3001
+B) FIFO in XDG_DATA_DIRS/applications, XDG_DATA_DIRS=/fast/scratch/hyaku/mado-r47/SentHost/fh/x:                                 rc=0 wall_ms=6
+C) FIFO in XDG_DATA_HOME/applications, XDG_DATA_DIRS=/fast/scratch/hyaku/mado-r47/SentHost/fh/x:                                rc=124 wall_ms=3001
+D) directory named Dir.desktop in XDG_DATA_HOME/applications:                             rc=0 wall_ms=6
+
+# rc=124 = /usr/bin/timeout killed an invocation that never finished.
+# ordering: XTE__APPLICATIONS_DIRS is filled by prefixing, so the XDG_DATA_HOME dir is LAST
+# and is therefore the one matched by the unconstrained OR group.

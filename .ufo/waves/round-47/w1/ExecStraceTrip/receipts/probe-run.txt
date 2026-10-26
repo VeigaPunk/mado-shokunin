@@ -1,0 +1,111 @@
+
+[L1-bwrap]
+  strace-under-bwrap                         PASS  rc=0 exec=1 socket=0 net=0 process=0 log=nop.pure.st
+  strace-partial-unshare                     PASS  rc=0 exec=1
+  strace-log-to-stderr                       PASS  rc=0 exec=1 (no writable bind needed)
+  sandbox-caps                               PASS  CapEff: 0000000000000000 NoNewPrivs: 1 Seccomp: 0 1
+
+[L2-syscall]
+  pure                                       PASS  rc=0 exec=1 socket=0 net=0 process=0 thread=0 => clean
+  execv                                      PASS  rc=0 exec=2 socket=0 net=0 process=0 thread=0 => FIRES
+  execv_missing                              PASS  rc=1 exec=2 socket=0 net=0 process=0 thread=0 => FIRES
+  execve                                     PASS  rc=0 exec=2 socket=0 net=0 process=0 thread=0 => FIRES
+  subprocess                                 PASS  rc=0 exec=2 socket=0 net=0 process=1 thread=0 => FIRES
+  subprocess_shell                           PASS  rc=0 exec=2 socket=0 net=0 process=1 thread=0 => FIRES
+  os_system                                  PASS  rc=0 exec=2 socket=0 net=0 process=1 thread=0 => FIRES
+  posix_spawn                                PASS  rc=0 exec=2 socket=0 net=0 process=1 thread=0 => FIRES
+  os_spawnv                                  PASS  rc=0 exec=2 socket=0 net=0 process=1 thread=0 => FIRES
+  fork_only                                  PASS  rc=0 exec=1 socket=0 net=0 process=1 thread=0 => FIRES
+  thread                                     PASS  rc=0 exec=1 socket=0 net=0 process=0 thread=1 => clean
+  ctypes_execve                              PASS  rc=0 exec=2 socket=0 net=0 process=0 thread=0 => FIRES
+  ctypes_execveat                            PASS  rc=0 exec=2 socket=0 net=0 process=0 thread=0 => FIRES
+  socket_unix                                PASS  rc=0 exec=1 socket=1 net=0 process=0 thread=0 => FIRES
+  socket_inet                                PASS  rc=0 exec=1 socket=1 net=0 process=0 thread=0 => FIRES
+  socket_connect_unix                        PASS  rc=0 exec=1 socket=1 net=1 process=0 thread=0 => FIRES
+  socket_ctypes                              PASS  rc=0 exec=1 socket=1 net=0 process=0 thread=0 => FIRES
+  netlink_getaddrinfo                        PASS  rc=0 exec=1 socket=4 net=7 process=0 thread=0 => FIRES
+
+[L2b-gaps]
+  execve-only/ctypes_execveat                PASS  execve-only filter: exec=1 process=0 => MISSED
+  execve-only/fork_only                      PASS  execve-only filter: exec=1 process=0 => MISSED
+
+[L3-audit]
+  pure                                       PASS  seen=- want=subset-of-seen
+  subprocess                                 PASS  seen=os.posix_spawn,subprocess.Popen want=subset-of-seen
+  os_system                                  PASS  seen=os.system want=subset-of-seen
+  posix_spawn                                PASS  seen=os.posix_spawn want=subset-of-seen
+  fork_only                                  PASS  seen=os.fork want=subset-of-seen
+  socket_inet                                PASS  seen=socket.__new__ want=subset-of-seen
+  socket_ctypes                              PASS  seen=ctypes.call_function,ctypes.dlopen,ctypes.dlsym want=subset-of-seen
+  ctypes_execve                              PASS  seen=ctypes.call_function,ctypes.dlopen,ctypes.dlsym want=subset-of-seen
+  ffi/ctypes_execve                          PASS  seen=ctypes.call_function,ctypes.dlopen,ctypes.dlsym (ctypes.call_function fires from _ctypes; a ctypes.* deny-list is a hard wall)
+  ffi/socket_ctypes                          PASS  seen=ctypes.call_function,ctypes.dlopen,ctypes.dlsym (ctypes.call_function fires from _ctypes; a ctypes.* deny-list is a hard wall)
+
+[L4-evasion]
+  plain_ctypes                               PASS  seen=ctypes.dlopen
+  _ctypes_direct                             PASS  seen=ctypes.dlopen,ctypes.dlsym/handle
+  cfptr_sub                                  PASS  seen=ctypes.call_function,ctypes.dlopen,ctypes.dlsym/handle
+  clearaudit                                 PASS  seen=ctypes.dlopen,ctypes.dlsym,os.exec symbol_reachable=False
+  monkeypatch                                PASS  seen=os.exec
+  fork_exec_direct                           PASS  seen=_posixsubprocess.fork_exec
+
+[L5-stubs]
+  stub-over-/usr/bin/xdg-terminal-exec       PASS  rc=42 err='STUB-XDG'
+  stub-/usr/bin/bash-does-not-cover-/bin/sh  PASS  rc=0 out='reached' (/bin and /usr/bin are separate mounts)
+  shell-stub-shebang-recurses                PASS  rc=1 err='bwrap: execvp /bin/sh: Too many levels of symbolic links' (a #!/bin/sh stub stubbed over the shells resolves to itself)
+  bind-onto-symlink-refused                  PASS  rc=1 err="bwrap: Can't mount on symlink destination /usr/bin/sh"
+
+[L6-exit]
+  exit-status-passthrough                    PASS  mismatches=none
+
+[L8-wrapper]
+  stdout+rc-transparent                      PASS  mismatches=none
+
+[L7-cost]
+  per-run                                    PASS  n=30 total=421ms avg=14ms
+
+tripwire cost: 14 ms/run (bwrap + strace + python3 -I)
+MADO_STRACE_PROBE: 47/47 expectations
+
+RECOMMENDED C1 TRIPWIRE (all three layers, cheapest first)
+--------------------------------------------
+1. syscall layer (the boundary)
+   bwrap --unshare-all --die-with-parent --new-session \
+         --ro-bind /usr /usr --ro-bind /bin /bin --ro-bind /sbin /sbin \
+         --ro-bind /lib /lib --ro-bind /lib64 /lib64 --ro-bind-try /etc /etc \
+         --proc /proc --dev /dev --tmpfs /tmp \
+         --ro-bind $CASE $CASE --bind $LOGDIR $LOGDIR \
+         strace -f -qq -e trace=%process,%network -o $LOGDIR/trace \
+           python3 -I $TOOL print ...
+   PASS iff, after filtering lines by syscall name:
+     execve+execveat == 1        (the single python3 execve; >=2 means the tool
+                                  started something, even a failed execve counts)
+     socket+socketpair == 0
+     connect/bind/sendmsg/recvmsg == 0
+     clone/clone3/fork/vfork == 0 after discarding lines whose flags contain
+                                  CLONE_THREAD (threads are not processes)
+   Use the syscall CLASSES (%process,%network), never a hand-written name list:
+   -e trace=execve alone misses execveat (ctypes) and misses a bare os.fork.
+   strace writes only $LOGDIR, so bind exactly one writable path; alternatively
+   -o /dev/stderr needs no writable bind at all.
+   Exit status survives strace unchanged (0..126 and 128+signal).
+
+2. audit layer (defence in depth, one line of signal)
+   python3 -I auditwrap.py $TOOL ...  where auditwrap installs sys.addaudithook and
+   then runpy.run_path(tool, run_name="__main__").  FAIL on any event whose name
+   starts with os.exec / os.system / os.spawn / os.fork / os.posix_spawn /
+   subprocess. / socket. / ctypes. / _posixsubprocess.
+   This layer catches _posixsubprocess.fork_exec (direct call) and all ctypes
+   gateways; the tool cannot remove hooks (no API) and PySys_ClearAuditHooks is
+   not reachable through ctypes on this host.
+
+3. stub binaries (belt only, optional)
+   Bind a NON-SHELL stub (compiled, or #!/bin/false) over /usr/bin/xdg-terminal-exec:
+   it takes effect and the tool sees exit 42.
+   Do NOT rely on stubbing the shells: /bin is a separate mount from /usr/bin, so
+   a bind at /usr/bin/bash leaves /bin/sh intact, and binding a #!/bin/sh stub over
+   both /bin/bash and /usr/bin/bash makes /bin/sh resolve to the stub itself
+   (ELOOP). The syscall layer already catches every execve; skip the shell stubs.
+
+work dir: /fast/scratch/hyaku/mado-r47/ExecStraceTrip/v3/probe
+work dir removed (pass --keep to retain)

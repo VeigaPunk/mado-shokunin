@@ -1,0 +1,23 @@
+# malformed-exec.txt - Exec that fails tokenizing or field stripping is NOT discarded
+# one case root per malformed Exec (isolated); explicit empty XDG_CACHE_HOME per run (F2b)
+# resolver sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+# call sites (grep -n): the two expansion calls carry no '|| return 1'; only Exec[0] is gated:
+958:		de_tokenize_exec "$XTE__EXPANDED_STR"
+960:		de_strip_fields
+964:		command -v "$XTE__EXEC0" > /dev/null || return 1
+
+## Exec='sh | cat' (pipe token breaks the tokenizer)
+X.desktop
+sh
+rc=0
+
+## Exec='sh %z' (unknown field code)
+X.desktop
+sh
+%z
+rc=0
+
+## control: Exec='nonexistent-prog' (Exec[0] not on PATH -> entry discarded)
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r47/SentHost/mx-ctl/x/applications/:/fast/scratch/hyaku/mado-r47/SentHost/mx-ctl/home/.local/share/applications/
+rc=1

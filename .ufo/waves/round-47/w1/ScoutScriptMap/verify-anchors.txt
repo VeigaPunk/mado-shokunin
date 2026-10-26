@@ -1,0 +1,104 @@
+OK   23 set -euf | set -euf
+OK   32 XTE__SELF_NAME | XTE__SELF_NAME=${0##*/}
+OK   61 XTE_DEBUG | if check_bool "${XTE_DEBUG-${DEBUG-0}}"; then
+OK   148 XDG_CONFIG_HOME | for xte__dir in ${XDG_CONFIG_HOME:-"${HOME}/.config"}${IFS}${XDG_CONFI
+OK   150 LOWERCASE | for xte__desktop in ${XTE__LOWERCASE_XDG_CURRENT_DESKTOP}; do
+OK   157 XDG_DATA_DIRS | for xte__dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+OK   166 XDG_DATA_HOME | for xte__dir in ${XDG_DATA_HOME:-${HOME}/.local/share}${IFS}${XDG_DATA
+OK   168 XTE__APPLICATIONS_DIRS | XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/${XTE__APPLICATIONS_
+OK   172 XDG_CACHE_HOME | XDG_CACHE_HOME=${XDG_CACHE_HOME:-"${HOME}/.cache"}
+OK   185 LC_ALL=C gen_hash | LC_ALL=C gen_hash "$@"
+OK   195 XDG_CURRENT_DESKTOP | echo "${XDG_CURRENT_DESKTOP-}"
+OK   200 ls -LRl | LANG=C ls -LRl ${xte__hash_paths} 2> /dev/null
+OK   201 md5sum | } | md5sum 2> /dev/null
+OK   221 -f "${XTE__CACHE_FILE}" | if [ -f "${XTE__CACHE_FILE}" ]; then
+OK   296 return 1 | return 1
+OK   303 mkdir | [ ! -d "${XDG_CACHE_HOME}" ] && mkdir -p "${XDG_CACHE_HOME}"
+OK   357 LC_ALL=C read_config_paths | LC_ALL=C read_config_paths "$@"
+OK   361 XTE__CONFIGS | for xte__config_path in ${XTE__CONFIGS}; do
+OK   365 -f "$xte__config_path" | [ -f "$xte__config_path" ] || continue
+OK   367 while read -r | while read -r xte__line; do
+OK   374 /enable_cache | /enable_cache)
+OK   388 /execarg_compat | /execarg_compat)
+OK   402 /execarg_default | /execarg_default:*:*)
+OK   425 a-zA-Z0-9_ | [a-zA-Z0-9_]* | [+-][a-zA-Z0-9_]*)
+OK   436 IFS=':' read | IFS=':' read -r xte__entry_id xte__action_id <<- EOL
+OK   442 XTE__ENTRY_IDS= | XTE__ENTRY_IDS=${XTE__ENTRY_IDS:+${XTE__ENTRY_IDS}${XTE__LF}}$xte__lin
+OK   446 list_contains | if list_contains "${XTE__EXCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+OK   467 Discarded | error "Discarded possibly misspelled entry '$xte__line'"
+OK   552 unsupported | # unsupported sequence, reappend backslash
+OK   782 alias | alias "$xte__entry_id"="xte__entry_path='$xte__entry_path'"
+OK   785 list_contains | if list_contains "$XTE__EXCLUDED_ENTRY_IDS" "$xte__entry_id"; then
+OK   790 XTE__FALLBACK_ENTRY_IDS= | XTE__FALLBACK_ENTRY_IDS=${xte__entry_id}${XTE__FALLBACK_ENTRY_IDS:+${X
+OK   795 find -L | LC_ALL=C find -L "$@" 2> /dev/null |
+OK   797 awk | awk '{ print; sub(".*/[.]/", ""); gsub("/", "-"); print }'
+OK   773 -path | set -- "$@" ${xte__or_arg} '(' -path "$xte__directory"'./[a-zA-Z0-9_]*
+OK   816 Categories | 'Categories'*=*)
+OK   829 Actions | 'Actions'*=*)
+OK   846 OnlyShowIn | 'OnlyShowIn'*=*)
+OK   865 NotShowIn | 'NotShowIn'*=*)
+OK   885 TerminalArgExec | 'X-TerminalArgExec'*=* | 'TerminalArgExec'*=*)
+OK   893 ExecArg | 'X-ExecArg'*=* | 'ExecArg'*=*)
+OK   895 XTE__EXECARG_COMPAT | case "${XTE__EXECARG_COMPAT}" in
+OK   933 TryExec | 'TryExec'*=*)
+OK   938 Hidden | 'Hidden'*=*)
+OK   947 'Exec' | 'Exec'*=*)
+OK   958 de_tokenize_exec | de_tokenize_exec "$XTE__EXPANDED_STR"
+OK   960 de_strip_fields | de_strip_fields
+OK   972 LC_ALL | if [ "${LC_ALL-}" != "C" ]; then
+OK   989 Desktop Entry | '[Desktop Entry]'*) [ -z "$xte__entry_action" ] && xte__read_exec=true
+OK   997 check_entry_key | check_entry_key "$xte__line" "$xte__value" "$xte__entry_action" "$xte_
+OK   999 reset_keys | reset_keys
+OK   1005 Desktop Action | "[Desktop Action ${xte__entry_action}]"*)
+OK   1014 '['* | '['*) [ "$xte__read_exec" = "true" ] && break ;;
+OK   1060 fallback_start | for xte__entry_id in ${XTE__ENTRY_IDS}${XTE__LF}//fallback_start//${XT
+OK   1081 alias | alias "$xte__entry_id" > /dev/null 2>&1 || continue
+OK   1083 eval | eval "$xte__entry_id"
+OK   1085 unalias | unalias "$xte__entry_id"
+OK   1086 read_entry_path | read_entry_path "$xte__entry_path" "$xte__entry_action" "$xte__de_chec
+OK   1088 EXEC_USEP | [ -z "${XTE__EXEC_USEP}" ] && continue
+OK   1090 IS_TERMINAL | [ -z "${XTE__IS_TERMINAL}" ] && continue
+OK   1094 check_bool | if check_bool "$XTE__EXECARG_COMPAT"; then
+OK   1099 continue | continue
+OK   1103 XTE__ENTRY_PATH | XTE__ENTRY_PATH=$xte__entry_path
+OK   1109 No valid | IFS=':' error "No valid terminal entry was found in:" ${XTE__APPLICATI
+OK   1138 exit 0 | exit 0
+OK   1144 tr  | XTE__LOWERCASE_XDG_CURRENT_DESKTOP=$(printf '%s' "${XDG_CURRENT_DESKTO
+OK   1147 XTE_EXECARG_COMPAT | XTE__EXECARG_COMPAT=${XTE_EXECARG_COMPAT-true}
+OK   1164 reset_keys | reset_keys
+OK   1172 XTE_CACHE_ENABLED | XTE__CACHE_ENABLED=${XTE_CACHE_ENABLED-true}
+OK   1179 read_cache | if check_bool "${XTE__CACHE_ENABLED}" && read_cache; then
+OK   1186 duplicates removed | # with duplicates removed
+OK   1198 read_config_paths | read_config_paths
+OK   1200 find_entry_paths | find_entry_paths
+OK   1208 exit 1 | find_entry || exit 1
+OK   1226 --) | --)
+OK   1231 -e | | -e | "$XTE__EXECARG")
+OK   1236 --app-id | --app-id=*)
+OK   1296 --print-cmd=* | --print-cmd=*)
+OK   1305 --print-delimiter | --print-delimiter=*)
+OK   1313 [!-]* | [!-]*)
+OK   1317 -*) | -*)
+OK   1331 printf | printf '%s' "${XTE__ENTRY_ID}${XTE__ENTRY_ACTION:+:}${XTE__ENTRY_ACTIO
+OK   1342 /./ | *'/./'*) XTE__ENTRY_PATH=${XTE__ENTRY_PATH%%/./*}/${XTE__ENTRY_PATH##*
+OK   1362 shcat | shcat < "${XTE__ENTRY_PATH}"
+OK   1376 exit 0 | exit 0
+OK   1380 XTE__PRINT_DELIMITER | case "$XTE__PRINT_DELIMITER" in
+OK   1383 exit 0 | exit 0
+OK   1388 XTE__EXECARG | if [ "$#" -gt 0 ] && [ -n "$XTE__EXECARG" ]; then
+OK   1393 XTE__HOLDARG | if [ -n "$XTE__HOLDARG" ] && check_bool "$XTE__HOLD"; then
+OK   1400 XTE__DIRARG | if [ -n "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+OK   1415 XTE__TITLEARG | if [ -n "$XTE__TITLEARG" ] && [ -n "$XTE__TITLEVAL" ]; then
+OK   1430 XTE__APPIDARG | if [ -n "$XTE__APPIDARG" ] && [ -n "$XTE__APPIDVAL" ]; then
+OK   1450 set -- | set -- $XTE__EXEC_USEP "$@"
+OK   1455 XTE__CACHE_USED | if [ "$XTE__CACHE_USED" = "false" ]; then
+OK   1457 save_cache | save_cache "$1" &
+OK   1460 TEST_MODE | case "$XTE__TEST_MODE" in
+OK   1464 exit 0 | exit 0
+OK   1480 XTE__PRINT_CMD_DELIMITER | false) printf '%b' "${XTE__PRINT_CMD_DELIMITER:-\n}" ;;
+OK   1486 XTE__PRINT_CMD_DELIMITER | if [ "${XTE__PRINT_CMD_DELIMITER}" = '\n' ] || { [ "$XTE__PRINT_FIRST"
+OK   1490 exit 0 | exit 0
+OK   1496 cd  | cd "$XTE__DIRVAL"
+OK   1499 exec | exec "$@"
+OK   738 XTE__EXEC_USEP= | XTE__EXEC_USEP=$xte__exec_usep
+SUMMARY 103 / 103

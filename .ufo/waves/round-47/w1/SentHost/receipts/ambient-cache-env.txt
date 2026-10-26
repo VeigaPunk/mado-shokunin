@@ -1,0 +1,15 @@
+# ambient-cache-env.txt - why HOME=<scratch> is not enough
+# date: 2026-10-26T19:00:54-03:00
+
+## ambient value seen by every seat (agent shell)
+XDG_CACHE_HOME=/home/vgpnk/.cache
+HOME=/home/vgpnk
+
+## with HOME=<scratch> and XDG_CACHE_HOME left inherited, --print-id (a NON-writing mode) READS the real cache:
+rc=0
+openat(AT_FDCWD, "/home/vgpnk/.cache/xdg-terminal-exec", O_RDONLY) = 3
+openat(AT_FDCWD, "/usr/bin/xdg-terminal-exec", O_RDONLY) = 3
+
+## the same run with XDG_CACHE_HOME explicitly redirected:
+rc=0
+openat(AT_FDCWD, "/usr/bin/xdg-terminal-exec", O_RDONLY) = 3

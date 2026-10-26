@@ -1,0 +1,57 @@
+# absence and boundary evidence, generated 2026-10-26T18:48:41-03:00 at c24adef2632672325a4eef3e3492f6716ccb6d14
+
+## receipts scanned
+find .ufo/waves -type f -path '*/receipts/*' | wc -l -> 1515
+find .ufo/waves -type d -name receipts | wc -l -> 89
+
+## globals: any real run? (MADO_GLOBALS: lines outside tools/counters/fixtures)
+.ufo/waves/round-41/receipts/c1-v1-after-data.txt:9:PRED-C1-r41-v1 fixture=gen0 ok=0 stdout line 16 got='MADO_GLOBALS: sessions=1 latest_pid=42782 interfaces=14 classes=capture:1,clipboard:1,input-capture:' want='MADO_GLOBALS: sessions=1 latest_pid=42782 interfaces=14 classes=capture:1,clipboard:1,input-capture:'
+.ufo/waves/round-41/receipts/c1-v1-after-data.txt:10:PRED-C1-r41-v1 fixture=gen1 ok=0 stdout line 21 got='MADO_GLOBALS: sessions=3 latest_pid=61781 interfaces=16 classes=capture:3,idle:1,input-synthesis:1,o' want='MADO_GLOBALS: sessions=3 latest_pid=61781 interfaces=16 classes=capture:3,idle:1,input-synthesis:1,o'
+.ufo/waves/round-41/receipts/c1-v1-after-data.txt:11:PRED-C1-r41-v1 fixture=gen2 ok=0 stdout line 15 got='MADO_GLOBALS: sessions=3 latest_pid=53157 interfaces=10 classes=capture:2,input-capture:2,other:4,ou' want='MADO_GLOBALS: sessions=3 latest_pid=53157 interfaces=10 classes=capture:2,input-capture:2,other:4,ou'
+.ufo/waves/round-41/receipts/c1-v1-after-data.txt:12:PRED-C1-r41-v1 fixture=gen3 ok=0 stdout line 18 got='MADO_GLOBALS: sessions=1 latest_pid=19364 interfaces=16 classes=capture:1,clipboard:1,idle:2,input-c' want='MADO_GLOBALS: sessions=1 latest_pid=19364 interfaces=16 classes=capture:1,clipboard:1,idle:2,input-c'
+.ufo/waves/round-41/receipts/c1-v1-after-data.txt:13:PRED-C1-r41-v1 fixture=gen4 ok=0 stdout line 15 got='MADO_GLOBALS: sessions=2 latest_pid=23264 interfaces=12 classes=capture:1,clipboard:1,focus-grab:1,i' want='MADO_GLOBALS: sessions=2 latest_pid=23264 interfaces=12 classes=capture:1,clipboard:1,focus-grab:1,i'
+  -> none from a receipted run; the only host input is a captured journal:
+-rw-r--r-- 1 vgpnk vgpnk 19130 Oct 25 19:50 .ufo/waves/round-41/fetch/xdph-journal.txt
+bf8fa91a321197277cf9c1260d17524e9ddf862f7f76ddf440fc057aa600aaf7  .ufo/waves/round-41/fetch/xdph-journal.txt
+
+## verify: live-plane verdicts anywhere in the lane
+.ufo/waves/round-13/frozen/gate.sh:3450:    printf 'MADO_VERIFY: CLEAN (%s pass, %s notes; file + live planes verified read-only)\n' "$PASS" "$NOTE"
+.ufo/waves/round-14/frozen/gate.sh:3703:    printf 'MADO_VERIFY: CLEAN (%s pass, %s notes; file + live planes verified read-only)\n' "$PASS" "$NOTE"
+.ufo/waves/round-16/w1/reports/OldGateBoundary.md:14:2. Every CLEAN verdict prints `file + live planes verified read-only` (`tools/mado-verify.sh:3703`). That phrase covers far less than it reads.
+.ufo/waves/round-19/evidence/gate-swap-d9a5a18.sh:3768:    printf 'MADO_VERIFY: CLEAN (%s pass, %s notes; file + live planes verified read-only)\n' "$PASS" "$NOTE"
+.ufo/waves/round-24/controls/C2NoReader.patch:8844:-    printf 'MADO_VERIFY: CLEAN (%s pass, %s notes; file + live planes verified read-only)\n' "$PASS" "$NOTE"
+.ufo/waves/round-25/a3w1/reports/CapVerdictGateLiveFilePlane309.md:18:     `counts: pass=52 fail=0 unknown=0 skip=0 note=8` / `MADO_VERIFY: CLEAN (52 pass, 8 notes; file + live planes
+
+## binds/anims/wsrules: live-compositor oracle lines
+.ufo/waves/round-25/evidence/c1-before-41cc04c8.txt:4:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-before-v2-41cc04c8.txt:4:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-before-v3-41cc04c8.txt:4:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-before-v4-41cc04c8.txt:4:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-after-v4-ef94763c.txt:5:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-after-v1-ef94763c.txt:5:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-after-v2-ef94763c.txt:5:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+.ufo/waves/round-25/evidence/c1-after-v3-ef94763c.txt:5:live=hyprctl binds -j sha256:9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779
+  -> only round-25 binds carries 'live=hyprctl binds -j'; anims/wsrules have ORACLE_VERSION (nested instance) and no live= line
+
+## tripwire: session-dir scans (--scan of live transcripts)
+     85 .ufo/waves/round-22/w2
+     18 .ufo/waves/round-23/w2/out/AttackPerf
+      1 .ufo/waves/round-47/w1/ScrToolLedger
+13
+  -> the last session-dir scan receipt is round 19 (evidence/final/tripwire-seat-scan.txt)
+
+## gates: --check runs read artifacts, never host state
+
+## artefacts of the last full selftest sweep (round 46, tracked)
+tools/mado-action-plan.py  rc=0 last=SELFTEST_SUMMARY: 52/52 passed
+tools/mado-anims.py        rc=2 last=
+tools/mado-assessment.py   rc=2 last=usage: mado-assessment.py [-h] (--check CHECK | --selftest SELFTEST)
+tools/mado-binds.py        rc=2 last=
+tools/mado-eventq.py       rc=2 last=
+tools/mado-evidence-audit.py rc=2 last=usage: mado-evidence-audit.py [-h] (--check CHECK | --selftest SELFTEST)
+tools/mado-geometry.py     rc=0 last=MADO_GEOMETRY_SELFTEST: 94/94 passed
+tools/mado-globals.py      rc=0 last=MADO_GLOBALS_SELFTEST: 63/63 passed
+tools/mado-monitors.py     rc=0 last=MADO_MONITORS_SELFTEST: 48/48 passed
+tools/mado-options.py      rc=0 last=MADO_OPTIONS_SELFTEST: 211/211 passed
+tools/mado-tripwire.py     rc=2 last=
+tools/mado-wsrules.py      rc=2 last=

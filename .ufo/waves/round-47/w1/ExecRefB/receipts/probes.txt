@@ -1,0 +1,75 @@
+# shell: /usr/bin/bash 5.3.20(1)-release
+# date: 2026-10-26T22:10:48Z
+
+== 1. unquoted split of a variable with IFS=':' (trailing delimiter only) ==
+v=[a::] -><a><>
+v=[a:::] -><a><><>
+v=[::] -><><>
+v=[] ->
+v=[a::b:] -><a><><b>
+v=[:a:] -><><a>
+v=[a] -><a>
+
+== 2. while read EXITS on the last line when it has no terminating newline ==
+no-final-newline: lines=1
+with-final-newline: lines=2
+
+== 3. read trims space/tab with the default IFS; IFS= read does not ==
+default IFS: [a b][]
+IFS= read  : [  a b  	][   ]
+
+== 4. function status = status of the last command the body ran ==
+ends on a skipped group header: rc=1
+same + trailing blank line   : rc=0
+
+== 5. command -v resolves keywords, builtins, aliases, functions; not dirs ==
+[]           rc=1
+[cd]         rc=0
+[printf]     rc=0
+[[]          rc=0
+[:]          rc=0
+[true]       rc=0
+[if]         rc=0
+[esac]       rc=0
+[coproc]     rc=0
+[%]          rc=1
+[a=b]        rc=1
+PATH entry that is a directory: rc=1
+PATH entry not executable    : rc=1
+alias name                   : rc=0
+own shell function           : rc=0
+
+== 6. printf %b ==
+   a  \t   b
+   q   \   z   q
+   A   A
+   e
+
+== 7. read var1 var2 with IFS='=' : the last variable ==
+in=[--dir=a] a=[--dir] b=[a]
+in=[--dir=a=] a=[--dir] b=[a]
+in=[--dir=a==] a=[--dir] b=[a==]
+in=[--dir=a=b=] a=[--dir] b=[a=b=]
+in=[--dir=a=b] a=[--dir] b=[a=b]
+in=[--dir==a] a=[--dir] b=[=a]
+raw newline value: a=[--dir] b=[a]
+
+== 8. find: only the first -o group keeps -type f (implicit -a binds tighter) ==
+-- group1 has -type f, group2 does not --
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d1/./A.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d1/./B.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d2/./Dir.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d2/./sub/C.desktop
+-- the starting point is printed only if it matches the expression --
+(nothing above = start filtered)
+-- paths are printed as <dir>/./<rel>, pre-order DFS in readdir order --
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d1/./A.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d1/./B.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d2/./sub/C.desktop
+
+== 9. a directory named *.desktop matches -path in a group without -type f ==
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d2/./Dir.desktop
+/fast/scratch/hyaku/mado-r47/ExecRefB/probe-semantics.1082928/d2/./sub/C.desktop
+
+== 10. tr '[:upper:]' '[:lower:]' leaves non-ASCII uppercase alone ==
+HYPÉrland ->    h   y   p 303 211   r   l   a   n   d

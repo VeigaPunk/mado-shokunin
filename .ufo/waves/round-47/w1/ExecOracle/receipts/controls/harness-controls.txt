@@ -1,0 +1,19 @@
+harness controls, round 47 ExecOracle
+
+scale run: 128 cases (8 copies of the 16 demo cases with distinct ids), --repeat 1
+  exit=0 wall_ms=1710 -> 128 * 2 bwrap runs (run + alt-root)
+  ORACLE cases=128 valid=128 match=128 mismatch=0 no_expect=0 determinism=ok root-independence=ok tool=n/a stubs_ran=0 timed_out=0
+
+negative control: first 4 demo cases, one expect.rc falsified to 7
+  exit=1
+  CASE c03-hidden-skipped           class=hidden             rc=0   out=mismatch   det=ok   root=ok   tool=n/a
+  ORACLE cases=4 valid=4 match=3 mismatch=1 no_expect=0 determinism=ok root-independence=ok tool=n/a stubs_ran=0 timed_out=0
+
+guard cases: g01 args=[] (would launch a terminal), g02 expect absent, g03 env HOME override
+  exit=1
+  CASE g01-launch-refused           INVALID refused: args ask the resolver to launch a terminal (no --print-* / --test)
+  CASE g02-no-expect                class=guard-no-expect    rc=0   out=no_expect  det=ok   root=ok   tool=n/a
+  CASE g03-env-home-override        INVALID env must not set harness-controlled HOME
+  ORACLE cases=3 valid=1 match=0 mismatch=0 no_expect=1 determinism=ok root-independence=ok tool=n/a stubs_ran=0 timed_out=0
+
+usage: no subcommand -> 2, run without required args -> 2 (argparse)

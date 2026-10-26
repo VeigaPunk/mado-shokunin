@@ -1,0 +1,26 @@
+comparator controls (seat self-test only; receipts/controls/*.sh)
+each control is a fake tool run through `oracle.py run --tool` on the 16 demo cases
+tool-exact.sh execs the pinned script (must match); tool-echo.sh answers a constant
+(must differ); tool-tripwire.sh runs a case terminal stub (must set the stub marker)
+a control's PASS/FAIL is the harness verdict, not a claim about the real tool
+
+--- tool-exact.sh  (oracle.py sha256 2b5c7f4167b2c3175d2b0413ba47502682b065b0782dd8f589c2cb1a52c2a5a6)
+tool_match=16 tool_differ=0 tool_stub_ran=0/16
+ORACLE_RESULT: PASS
+
+--- tool-echo.sh  (oracle.py sha256 2b5c7f4167b2c3175d2b0413ba47502682b065b0782dd8f589c2cb1a52c2a5a6)
+ORACLE_FAIL c01-config-select: tool differs (rc 0 vs 0, stdout 'bogus-tool\\n' vs 'Alacritty.desktop\\n$ROOT/home/.local/share/applications/A...')
+ORACLE_FAIL c02-fallback-scan: tool differs (rc 0 vs 0, stdout 'bogus-tool\\n' vs 'Foot.desktop\\n$ROOT/usr/share/applications/Foot.desktop\\n...')
+ORACLE_FAIL c03-hidden-skipped: tool differs (rc 0 vs 0, stdout 'bogus-tool\\n' vs 'Foot.desktop\\n$ROOT/home/.local/share/applications/Foot.d...')
+... 13 more ORACLE_FAIL lines (same shape)
+tool_match=0 tool_differ=16 tool_stub_ran=0/16
+ORACLE_RESULT: FAIL
+
+--- tool-tripwire.sh  (oracle.py sha256 2b5c7f4167b2c3175d2b0413ba47502682b065b0782dd8f589c2cb1a52c2a5a6)
+ORACLE_FAIL c01-config-select: tool differs (rc 0 vs 0, stdout 'no-terminal\\n' vs 'Alacritty.desktop\\n$ROOT/home/.local/share/applications/A...')
+ORACLE_FAIL c02-fallback-scan: tool differs (rc 0 vs 0, stdout 'no-terminal\\n' vs 'Foot.desktop\\n$ROOT/usr/share/applications/Foot.desktop\\n...')
+ORACLE_FAIL c03-hidden-skipped: tool differs (rc 0 vs 0, stdout 'no-terminal\\n' vs 'Foot.desktop\\n$ROOT/home/.local/share/applications/Foot.d...')
+... 13 more ORACLE_FAIL lines (same shape)
+tool_match=0 tool_differ=16 tool_stub_ran=13/16
+ORACLE_RESULT: FAIL
+

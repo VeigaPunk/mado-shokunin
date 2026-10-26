@@ -1,0 +1,34 @@
+# exact bwrap argv template produced by oracle.py run
+# substitutions: <WORK> = --work DIR (absolute), <ROOT> = DIR/<case-id>,
+#                <RW> = <ROOT>/.oracle-rw (writable), <CACHE> = <RW>/cache
+# the argv below is one real invocation with <WORK> and <ROOT> abstracted
+# (paths under the operator scratch tree are not citable evidence).
+
+/usr/bin/bwrap
+  --unshare-all
+  --die-with-parent
+  --new-session
+  --clearenv
+  --ro-bind /usr/lib /usr/lib
+  --symlink usr/lib /lib
+  --symlink usr/lib /lib64
+  --ro-bind /usr/bin/bash /bin/sh
+  --ro-bind /usr/bin/bash /bin/bash
+  --ro-bind <WORK>/bin /oracle/bin
+  --ro-bind <WORK>/pin/xdg-terminal-exec /oracle/xdg-terminal-exec
+  --dev /dev
+  --proc /proc
+  --tmpfs /tmp
+  --ro-bind <ROOT> <ROOT>
+  --bind <RW> <RW>
+  --chdir /
+  --setenv <CASE ENV KEYS> <values, $ROOT substituted>
+  --setenv HOME <ROOT>/home
+  --setenv PATH <ROOT>/bin:/oracle/bin
+  --setenv XDG_CACHE_HOME <CACHE>
+
+  /oracle/xdg-terminal-exec <case args>
+
+# external commands in /oracle/bin (only these are bound; established by `oracle.py trace`):
+#   tr find awk ls md5sum mkdir rm
+# shell: /bin/sh and /bin/bash = /usr/bin/bash (host has no dash)

@@ -1,0 +1,37 @@
+--- test: rc=0 cache=['xdg-terminal-exec']
+ stdout='Command and arguments:\n  >foo<\n  >-e<\n  >x<\n'
+ stderr=''
+--- testonly: rc=0 cache=['xdg-terminal-exec']
+ stdout='Command and arguments:\n  >foo<\n  >-e<\n  >x<\n'
+ stderr=''
+--- hafter: rc=0 cache=[]
+ stdout='xdg-terminal-exec - Shell-based default terminal launcher.\n\nImplementation of the proposed Default Terminal Specification.\n\nUsage:\n  xdg-terminal-exec [options] [--] [command [arguments ...]]\n\nLaunches given command in default terminal, or launches default terminal.\n\nOptions for modifying terminal behavior (if supported by terminals\'s\nentry):\n\n  --app-id=app-id    set app-id (Wayland) or window class (X11)\n  --title=title      set tile of terminal.\n  --dir=workdir      set workdir of terminal.\n  --hold             instruct terminal to hold after command ends.\n\nOptions for printing data instead of executing terminal:\n\n  --print-id\n      print selected Desktop Entry ID. Action is appended delimited\n      by ":".\n\n  --print-path\n      print path to selected Desktop Entry. Action is appended\n      delimited by ":".\n\n  --print-content\n      print content of selected Desktop Entry. Conflicts with --print-cmd.\n\n  --print-cmd[=printf_sequence]\n      print resulting command line, delimited by given printf sequence,\n      "\\n" by default. If sequence is "\\n", output is also terminated with\n      a newline.\n\n  --print-delimiter=printf_sequence\n      printf sequence to be used as the delimiter between multiple requested\n      print statements, "\\n" by default. If sequence is "\\n", output is\n      also terminated with a newline.\n\nConfiguration:\n\nPreferred terminals are configured by listing their Desktop Entry IDs\nin config files named "[${desktop}-]xdg-terminals.list" placed in XDG Config\nhierarchy. Where "${desktop}" is a lowercased string that is matched\n(case-insensitively) against items of "${XDG_CURRENT_DESKTOP}".\n\nSee "man xdg-terminal-exec" for more details.\n'
+ stderr=''
+--- hafterdd: rc=0 cache=[]
+ stdout='t.desktop\n'
+ stderr=''
+--- eflag: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n-e\nx\n--print-id\n'
+ stderr=''
+--- unk: rc=0 cache=['xdg-terminal-exec']
+ stdout='t.desktop\nfoo\n-e\nx\n'
+ stderr=''
+--- noargs_cmd: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n'
+ stderr=''
+--- multinl: rc=0 cache=['xdg-terminal-exec']
+ stdout='t.desktop\nfoo\n-e\nx\n'
+ stderr=''
+--- dup: rc=0 cache=[]
+ stdout='t.desktop;$ROOT/home/.local/share/applications/t.desktop'
+ stderr=''
+--- delim_only_path: rc=0 cache=[]
+ stdout='$ROOT/home/.local/share/applications/t.desktop'
+ stderr=''
+listdir ['a.desktop', 'm.desktop', 'b.desktop', 'q.desktop', 'c.desktop']
+scandir ['a.desktop', 'm.desktop', 'b.desktop', 'q.desktop', 'c.desktop']
+find ['/fast/scratch/hyaku/mado-r47/ScoutScriptMap/c_ord/home/.local/share/applications/a.desktop', '/fast/scratch/hyaku/mado-r47/ScoutScriptMap/c_ord/home/.local/share/applications/m.desktop', '/fast/scratch/hyaku/mado-r47/ScoutScriptMap/c_ord/home/.local/share/applications/b.desktop', '/fast/scratch/hyaku/mado-r47/ScoutScriptMap/c_ord/home/.local/share/applications/q.desktop', '/fast/scratch/hyaku/mado-r47/ScoutScriptMap/c_ord/home/.local/share/applications/c.desktop']
+xfs
+ btrfs
+
+(0, 'c.desktop\n', '')

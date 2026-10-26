@@ -1,0 +1,49 @@
+# receipt e2-renumber.txt — lane /home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=c24adef2632672325a4eef3e3492f6716ccb6d14 (2026-10-26T18:46:52-03:00)
+
+$ git cat-file -e e46789213830597348fe96a351ae004d10587385:assimilation/renumber-map.tsv
+fatal: path 'assimilation/renumber-map.tsv' does not exist in 'e46789213830597348fe96a351ae004d10587385'
+[rc=128]
+
+$ git cat-file -e HEAD:assimilation/renumber-map.tsv
+fatal: path 'assimilation/renumber-map.tsv' does not exist in 'HEAD'
+[rc=128]
+
+$ git ls-tree -r --name-only e46789213830597348fe96a351ae004d10587385 -- assimilation/
+[rc=0]
+
+$ git ls-tree e46789213830597348fe96a351ae004d10587385 -- .ufo/waves/round-44/assimilation/renumber-map.tsv
+100644 blob c9639ce84472eaccb9ea14007dbbc843e2e0e556	.ufo/waves/round-44/assimilation/renumber-map.tsv
+[rc=0]
+
+$ git ls-tree HEAD -- .ufo/waves/round-44/assimilation/renumber-map.tsv
+100644 blob c9639ce84472eaccb9ea14007dbbc843e2e0e556	.ufo/waves/round-44/assimilation/renumber-map.tsv
+[rc=0]
+
+$ git log --diff-filter=A --format=%h %s -- .ufo/waves/round-44/assimilation/renumber-map.tsv
+e2289516 round-44: freeze - registration, PRED-C1-r44 counter (fullscreen/maximized states) and PRED-C2-r44 counter (gkeep size request entry), C1 reference and controls (0 of 15 met), C2 do-nothing controls (0 of 3), pins, before receipts, assimilation id guard
+[rc=0]
+
+$ git ls-files */renumber-map*
+.ufo/waves/round-37/assimilation/renumber-map.md
+.ufo/waves/round-41/assimilation/renumber-map.tsv
+.ufo/waves/round-43/assimilation/renumber-map.tsv
+.ufo/waves/round-44/assimilation/renumber-map.tsv
+[rc=0]
+
+$ grep -n renumber-map.tsv corpus/lessons/round-44.md
+26:not; real `collisions` 42, S203..S297) maps the package by document (`assimilation/renumber-map.tsv`): staged S311 (Window.cpp at tag
+71:| the staged ids `S203`-`S349` | — | — | collide with the lane's own S203-S297 | id mapping is by document (`assimilation/renumber-map.tsv`), never arithmetic; no package id is carried |
+82:- **Old→new for the staged document** (`assimilation/renumber-map.tsv`): staged **S311** (`…/hyprwm/Hyprland/v0.56.2/src/desktop/view/Window.cpp`,
+[rc=0]
+
+$ grep -n renumber-map.tsv .ufo/waves/round-44/assimilation/id-guard.md
+8:Mapping is by document (renumber-map.tsv); no staged id is carried.
+[rc=0]
+
+$ git show HEAD:.ufo/waves/round-44/assimilation/renumber-map.tsv
+staged_id	document	lane_id	note
+S311	hyprwm/Hyprland Window.cpp at v0.56.2 (= commit efb50993780079460b0cbed1363e2166a2de1d9f)	S164	held row, same document at the commit URL; used-by extended only if the admitted entry cites it
+S312	VeigaPunk/gkeep gkeep/ui.py at 133b86717a02548aeaff3f1411bf301d936c5308 (raw URL, full file)	S301 (provisional)	new row; S297 holds only an excerpt (lines 446-488) as own-work
+[rc=0]
+

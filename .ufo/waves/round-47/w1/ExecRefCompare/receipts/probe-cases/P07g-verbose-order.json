@@ -1,0 +1,31 @@
+{
+  "args": [
+    "--print-cmd",
+    "--app-id=A",
+    "--title=T",
+    "--dir=D",
+    "--hold",
+    "--",
+    "cmd"
+  ],
+  "class": "args/prepend-order",
+  "env": {
+    "XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+    "XDG_CONFIG_HOME": "$ROOT/home/.config",
+    "XDG_CURRENT_DESKTOP": "Hyprland",
+    "XDG_DATA_DIRS": "$ROOT/usr/local/share:$ROOT/usr/share",
+    "XDG_DATA_HOME": "$ROOT/home/.local/share"
+  },
+  "exec": [
+    "bin/alacritty",
+    "bin/foot"
+  ],
+  "expect": {
+    "rc": 0,
+    "stdout": "alacritty\n--class=A\n--title=T\n--working-directory=D\n--hold\n-e\ncmd\n"
+  },
+  "files": {
+    "home/.local/share/applications/Alacritty.desktop": "[Desktop Entry]\nCategories=TerminalEmulator;\nExec=alacritty\nTerminalArgExec=-e\nX-TerminalArgAppId=--class=\nX-TerminalArgTitle=--title=\nX-TerminalArgDir=--working-directory=\nX-TerminalArgHold=--hold\n"
+  },
+  "id": "P07g-verbose-order"
+}

@@ -1,0 +1,331 @@
+w000                         args=['--print-cmd', '-e', '--', '-x']                          rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w001                         args=['--print-path']                                           rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w002                         args=['--print-delimiter=\\0', '--print-id', '--hold', 'a b', 'c'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w003                         args=['--print-cmd', '--app-id=a=b', '-e']                      rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w004                         args=['--print-path', 'a b', 'c']                               rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w005                         args=['--print-path', '--print-cmd']                            rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w006                         args=['--print-content', '--print-id', '--title=']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w007                         args=['--print-delimiter=|', '--print-path', '--title=a b', '--app-id=x', '--hold'] rc theirs=0    ours=0    sha256=a86d89c3b25a11ad MATCH
+    theirs=b'$ROOT/home/.local/share/applications/sub/nested.desktop'
+    ours  =b'$ROOT/home/.local/share/applications/sub/nested.desktop'
+w008                         args=['--print-id', '--dir=/a b', '']                           rc theirs='TIMEOUT' ours=4    sha256=e3b0c44298fc1c14 MATCH-hang-modelled
+    theirs=b''
+    ours  =b''
+w009                         args=['--print-cmd', '--print-id', '--hold', 'a b', 'c']        rc theirs=0    ours=0    sha256=43be5b09f3542f1a MATCH
+    theirs=b'dir.desktop\nsh\n-e\na b\nc\n'
+    ours  =b'dir.desktop\nsh\n-e\na b\nc\n'
+w010                         args=['--print-cmd=\\\\', '--print-path']                       rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w011                         args=['--print-content', '--print-content', '--print-id', '-notanopt'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w012                         args=['--print-delimiter=\\c', '--print-id', '--app-id=', '-notanopt'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w013                         args=['--print-path', '--app-id=a=b', 'a b', 'c']               rc theirs=0    ours=0    sha256=584cbfb2e2b8e515 MATCH
+    theirs=b'$ROOT/home/.local/share/applications/a_b.desktop\n'
+    ours  =b'$ROOT/home/.local/share/applications/a_b.desktop\n'
+w014                         args=['--print-id', '--print-delimiter=|', '--dir=/a b', '']    rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w015                         args=['--print-path', '--print-cmd', '--app-id=x', '--', '-x']  rc theirs=0    ours=0    sha256=54be184019139538 MATCH
+    theirs=b'$ROOT/home/.local/share/applications/_under.desktop\nsh\n%\n-x\n-x\n'
+    ours  =b'$ROOT/home/.local/share/applications/_under.desktop\nsh\n%\n-x\n-x\n'
+w016                         args=['--print-path', '--print-cmd=|', '--dir=/a b', '--title=a b', '--hold', 'echo', 'hi'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w017                         args=['--print-content', '--print-id', '--dir=', '--title=t', '--hold', '--', '-x'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w018                         args=['--print-cmd=|', '--dir=/w', '--title=a b', '--app-id=']  rc theirs=0    ours=0    sha256=0f9d304cbbe9f0cf MATCH
+    theirs=b'sh|ab'
+    ours  =b'sh|ab'
+w019                         args=['--print-path', '--print-delimiter=\\\\', '--app-id=', '--', '-x'] rc theirs=0    ours=0    sha256=f4540a5b49c76a24 MATCH
+    theirs=b'$ROOT/usr/share/applications/aaa.desktop'
+    ours  =b'$ROOT/usr/share/applications/aaa.desktop'
+w020                         args=['--print-path', '--print-path']                           rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w021                         args=['--print-cmd=\\\\', '--print-cmd', '--hold']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w022                         args=['--print-delimiter=\\t', '--print-id', '--dir=/a b', '--title=', '--app-id=x', '--hold'] rc theirs=0    ours=0    sha256=29889cd46e26dab9 MATCH
+    theirs=b'sub-nested.desktop'
+    ours  =b'sub-nested.desktop'
+w023                         args=['--print-cmd=%s', '--print-cmd=%s']                       rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w024                         args=['--print-path', '--print-content', '--title=', '--hold', '-e', '--', '-x'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w025                         args=['--print-delimiter=', '--print-id']                       rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w026                         args=['--print-content', '--print-path', '--title=a b', '--app-id=x'] rc theirs=0    ours=0    sha256=50e251e844d4e741 MATCH
+    theirs=b'$ROOT/home/.local/share/applications/_under.desktop\n[Desktop Entry]\nTerminalArgExec=-e\nExec=sh %f\nX-TerminalArgAppId=\nCategories=TerminalEmulator;\n\n[Desktop Action Other]\nExec=sh %f\n'
+    ours  =b'$ROOT/home/.local/share/applications/_under.desktop\n[Desktop Entry]\nTerminalArgExec=-e\nExec=sh %f\nX-TerminalArgAppId=\nCategories=TerminalEmulator;\n\n[Desktop Action Other]\nExec=sh %f\n'
+w027                         args=['--print-id', '--app-id=x']                               rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w028                         args=['--print-path', '--title=t', '-notanopt']                 rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w029                         args=['--print-delimiter=\\\\', '--print-id', '--title=t']      rc theirs=0    ours=0    sha256=2902b9e0070f3201 MATCH
+    theirs=b'dir.desktop'
+    ours  =b'dir.desktop'
+w030                         args=['--print-delimiter=\\0', '--print-cmd=\\0', '--dir=/a b', '--', '-x'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w031                         args=['--print-cmd', '--print-cmd=|', '--dir=/a b', 'a b', 'c'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w032                         args=['--print-id', '--print-path', 'a b', 'c']                 rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w033                         args=['--print-path']                                           rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w034                         args=['--print-delimiter=\\t', '--print-id']                    rc theirs=0    ours=0    sha256=20c6f585735cb8aa MATCH
+    theirs=b'_under.desktop'
+    ours  =b'_under.desktop'
+w035                         args=['--print-cmd', '--print-id', '-e']                        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w036                         args=['--print-cmd', '--title=']                                rc theirs=0    ours=0    sha256=16a4338597bbf869 MATCH
+    theirs=b'sh\nunterminated\n'
+    ours  =b'sh\nunterminated\n'
+w037                         args=['--print-content', '--print-id', '--hold']                rc theirs=0    ours=0    sha256=0a834552bfa51da8 MATCH
+    theirs=b'dir.desktop\n[Desktop Entry]\nType=Application\nName=J\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+    ours  =b'dir.desktop\n[Desktop Entry]\nType=Application\nName=J\nExec=sh\nCategories=System;TerminalEmulator;\nX-TerminalArgExec=-e\n'
+w038                         args=['--print-cmd', '--dir=/w', '--title=t']                   rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w039                         args=['--print-cmd']                                            rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w040                         args=['--print-cmd=x', '--print-cmd=%s']                        rc theirs=0    ours=0    sha256=8d873b6fe4ee9d2a MATCH
+    theirs=b'sh%sunterminated'
+    ours  =b'sh%sunterminated'
+w041                         args=['--print-cmd', 'echo', 'hi']                              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w042                         args=['--print-delimiter=<>', '--print-id', '--hold', '-e']     rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w043                         args=['--print-cmd=\\t']                                        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w044                         args=['--print-path', '--dir=-x', '--hold', 'a b', 'c']         rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w045                         args=['--print-path', '--app-id=']                              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w046                         args=['--print-delimiter=\\c', '--print-id']                    rc theirs=0    ours=0    sha256=29889cd46e26dab9 MATCH
+    theirs=b'sub-nested.desktop'
+    ours  =b'sub-nested.desktop'
+w047                         args=['--print-delimiter=\\t', '--print-content', '--print-id', '--dir=-x', '--app-id=x', '--hold', '--', '-x'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w048                         args=['--print-id', '--app-id=a=b']                             rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w049                         args=['--print-path', '--title=', '-e']                         rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w050                         args=['--print-id', '--print-cmd=|']                            rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w051                         args=['--print-cmd', '--print-cmd=a b', '--hold']               rc theirs=0    ours=0    sha256=89c4ec9f6b3f1086 MATCH
+    theirs=b'sh'
+    ours  =b'sh'
+w052                         args=['--print-path', '--dir=-x', '-e']                         rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w053                         args=['--print-content', '--print-id']                          rc theirs=0    ours=0    sha256=ac88af63f10eb5a4 MATCH
+    theirs=b'A.b.c.desktop\n[Desktop Entry]\nActions=New;\nExecArg=-x\nX-Foo=bar\nCategories=TerminalEmulator\nExec=sh %m\nX-TerminalArgTitle=--t\\t\n\n[Desktop Action Other]\nExec=sh\n'
+    ours  =b'A.b.c.desktop\n[Desktop Entry]\nActions=New;\nExecArg=-x\nX-Foo=bar\nCategories=TerminalEmulator\nExec=sh %m\nX-TerminalArgTitle=--t\\t\n\n[Desktop Action Other]\nExec=sh\n'
+w054                         args=['--print-path', 'a b', 'c']                               rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w055                         args=['--print-content', '--print-id', '--dir=-x']              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w056                         args=['--print-path']                                           rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w057                         args=['--print-cmd=\\0', '--app-id=a=b']                        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w058                         args=['--print-cmd=a b', '--print-id', '--title=a b']           rc theirs=0    ours=0    sha256=f6c9d12724ecba03 MATCH
+    theirs=b'sub-deep-x.desktop\nsha bunterminateda b--titlea ba b\n'
+    ours  =b'sub-deep-x.desktop\nsha bunterminateda b--titlea ba b\n'
+w059                         args=['--print-delimiter=\\c', '--print-id']                    rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w060                         args=['--print-delimiter=<>', '--print-id', '--dir=/w', '--app-id=a=b', '-e', ''] rc theirs=0    ours=0    sha256=29889cd46e26dab9 MATCH
+    theirs=b'sub-nested.desktop'
+    ours  =b'sub-nested.desktop'
+w061                         args=['--print-cmd=|', '--dir=/a b', '--title=a b']             rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w062                         args=['--print-path', '--title=a b', '--app-id=a=b', '--', '-x'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w063                         args=['--print-cmd=x', '--title=']                              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w064                         args=['--print-content', '--print-content', '--print-id']       rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w065                         args=['--print-path', '--print-cmd=\\0', '--dir=/a b']          rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w066                         args=['--print-cmd', '--hold', '-e']                            rc theirs=0    ours=0    sha256=7018c575f475e3e1 MATCH
+    theirs=b'sh\n'
+    ours  =b'sh\n'
+w067                         args=['--print-delimiter=\\\\', '--print-cmd', '-e']            rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w068                         args=['--print-id', '--print-id', '--dir=/a b']                 rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w069                         args=['--print-cmd=\\\\', '--print-cmd=\\\\', '']               rc theirs=0    ours=0    sha256=40cebab792c6e160 MATCH
+    theirs=b'sh\\%f'
+    ours  =b'sh\\%f'
+w070                         args=['--print-content', '--print-id', '--title=a b', '--hold', ''] rc theirs=0    ours=0    sha256=cb4d27e5a4140add MATCH
+    theirs=b'aaa.desktop\n[Desktop Entry]\nX-Foo=bar\nExec=sh %f %u\nActions=New;Other;\nNoDisplay=true\nTerminalArgExec=\nCategories=TerminalEmulator;\n'
+    ours  =b'aaa.desktop\n[Desktop Entry]\nX-Foo=bar\nExec=sh %f %u\nActions=New;Other;\nNoDisplay=true\nTerminalArgExec=\nCategories=TerminalEmulator;\n'
+w071                         args=['--print-path', '--title=t', '--app-id=', '--hold', 'a b', 'c'] rc theirs=0    ours=0    sha256=0e90bf20b1c0cfb3 MATCH
+    theirs=b'$ROOT/home/.local/share/applications/BBB.desktop\n'
+    ours  =b'$ROOT/home/.local/share/applications/BBB.desktop\n'
+w072                         args=['--print-cmd=\\\\', '--print-cmd', '--dir=-x', '--app-id=a=b', '--hold'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w073                         args=['--print-content', '--print-id', '--dir=/w', '--hold', '-notanopt'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w074                         args=['--print-content', '--print-id', '--title=', 'echo', 'hi'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w075                         args=['--print-cmd', '--print-cmd=x', '--title=', '--app-id=x', '-e', ''] rc theirs=0    ours=0    sha256=6f139e7dac0f0721 MATCH
+    theirs=b'shx-ex'
+    ours  =b'shx-ex'
+w076                         args=['--print-id']                                             rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w077                         args=['--print-delimiter=\\0', '--print-id', '--title=', '--app-id=x', '--hold'] rc theirs=0    ours=0    sha256=30d58d1a562c49a2 MATCH
+    theirs=b'A.b.c.desktop'
+    ours  =b'A.b.c.desktop'
+w078                         args=['--print-delimiter=\\\\', '--print-id', '--title=t']      rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w079                         args=['--print-cmd', '--dir=/w']                                rc theirs=0    ours=0    sha256=a597e58488a3ad0d MATCH
+    theirs=b'sh\nab\n--cd\n/w\n'
+    ours  =b'sh\nab\n--cd\n/w\n'
+w080                         args=['--print-cmd', '--print-cmd=|', '--dir=/a b', '--app-id=a=b'] rc theirs=0    ours=0    sha256=429d277b9b2290c9 MATCH
+    theirs=b'sh|--class=a=b'
+    ours  =b'sh|--class=a=b'
+w081                         args=['--print-delimiter=\\0', '--print-id', '--hold', '-e']    rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w082                         args=['--print-id', '--print-cmd']                              rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w083                         args=['--print-path', '--dir=', 'echo', 'hi']                   rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w084                         args=['--print-content', '--print-id', '--app-id=']             rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w085                         args=['--print-id', '--print-path', '--title=', '--hold']       rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w086                         args=['--print-delimiter=\\c', '--print-id', '--title=a b', '--hold'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w087                         args=['--print-delimiter=\\\\', '--print-id']                   rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w088                         args=['--print-content', '--print-path']                        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w089                         args=['--print-cmd=x']                                          rc theirs=0    ours=0    sha256=89c4ec9f6b3f1086 MATCH
+    theirs=b'sh'
+    ours  =b'sh'
+w090                         args=['--print-content', '--print-id', '']                      rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w091                         args=['--print-delimiter=|', '--print-id', '--dir=/a b', '--hold', '-notanopt'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w092                         args=['--print-cmd', '--print-delimiter=', '--dir=-x', '--app-id=', '-notanopt'] rc theirs=0    ours=0    sha256=7018c575f475e3e1 MATCH
+    theirs=b'sh\n'
+    ours  =b'sh\n'
+w093                         args=['--print-cmd=|', '--print-cmd=%s', '--dir=/a b', '--title=a b', '--hold'] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w094                         args=['--print-id']                                             rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w095                         args=['--print-cmd=\\t', '--print-path', '--hold']              rc theirs=0    ours=0    sha256=a7164e7793fe8d5d MATCH
+    theirs=b'$ROOT/usr/share/applications/BBB.desktop\nsh\n'
+    ours  =b'$ROOT/usr/share/applications/BBB.desktop\nsh\n'
+w096                         args=['--print-cmd', '--title=t', '--app-id=a=b', '-e']         rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w097                         args=['--print-delimiter=\\c', '--print-id', 'a b', 'c']        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w098                         args=['--print-path']                                           rc theirs=0    ours=0    sha256=9db258efc9bda42d MATCH
+    theirs=b'$ROOT/home/.local/share/applications/sub/nested.desktop\n'
+    ours  =b'$ROOT/home/.local/share/applications/sub/nested.desktop\n'
+w099                         args=['--print-content', '--print-id', '--hold']                rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w100                         args=['--print-cmd=%s', '-e', '']                               rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w101                         args=['--print-id', '--print-path', 'a b', 'c']                 rc theirs=0    ours=0    sha256=a453cdaf5d195ae7 MATCH
+    theirs=b'9lives.desktop\n$ROOT/usr/share/applications/9lives.desktop\n'
+    ours  =b'9lives.desktop\n$ROOT/usr/share/applications/9lives.desktop\n'
+w102                         args=['--print-cmd=%s', '--print-cmd']                          rc theirs=0    ours=0    sha256=89c4ec9f6b3f1086 MATCH
+    theirs=b'sh'
+    ours  =b'sh'
+w103                         args=['--print-content', '--print-content', '--print-id', '--dir='] rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w104                         args=['--print-delimiter=|', '--print-id', '--dir=', '--app-id=x', '-e'] rc theirs=0    ours=0    sha256=30d58d1a562c49a2 MATCH
+    theirs=b'A.b.c.desktop'
+    ours  =b'A.b.c.desktop'
+w105                         args=['--print-path', '--print-cmd=', '--title=a b', '--app-id=x', 'echo', 'hi'] rc theirs=0    ours=0    sha256=3d743cd61e41b59c MATCH
+    theirs=b'$ROOT/home/.local/share/applications/sub/deep/x.desktop\nsh\necho\nhi\n'
+    ours  =b'$ROOT/home/.local/share/applications/sub/deep/x.desktop\nsh\necho\nhi\n'
+w106                         args=['--print-cmd=\\t', '--print-id', '--hold', '-e']          rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w107                         args=['--print-cmd', '--print-cmd=\\\\', '--title=', '--hold']  rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w108                         args=['--print-delimiter=\\t', '--print-id', '--title=']        rc theirs=1    ours=1    sha256=e3b0c44298fc1c14 MATCH
+    theirs=b''
+    ours  =b''
+w109                         args=['--print-cmd=a b', '--', '-x']                            rc theirs=0    ours=0    sha256=c954e54181a0c0b2 MATCH
+    theirs=b'sha b-ea b-x'
+    ours  =b'sha b-ea b-x'
+# summary: agree 110/110, stderr differs 1, modelled hangs 1

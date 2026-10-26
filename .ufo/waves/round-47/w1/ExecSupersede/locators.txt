@@ -1,0 +1,155 @@
+# locators.txt -- computed by check-quotes.py (no values typed by hand)
+
+## 1. Gate quotes (row, line, hits, words, sha256)
+S346 :16   hits=1 words= 5 sha256=8ca655336cd111df..  RegexMatchEngine.cpp
+      return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+S347 :56   hits=1 words= 5 sha256=f05f256150c8dcf5..  DefaultFloatingAlgorithm.cpp
+      const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.size);
+S348 :68   hits=1 words= 5 sha256=49323833c6bc3276..  Target.cpp
+      void ITarget::rememberFloatingSize(const Vector2D& size) {
+S349 :339  hits=1 words= 9 sha256=8bcaf37000cf55e1..  WindowTarget.cpp
+      if (DESIRED_GEOM.width <= 2 || DESIRED_GEOM.height <= 2) {
+S350 :19   hits=1 words= 4 sha256=649f1a8d01d28e20..  GeometricMovableAnimated.cpp
+      case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();
+S351 :5    hits=1 words= 2 sha256=21db902e1f1234b9..  host-clients-r43.json
+      "class": "Alacritty",
+S352 :33   hits=1 words= 2 sha256=3695b788c6d766b8..  gkeep-ui-excerpt.py
+      window.set_default_size(420, 500)
+S353 :52   hits=1 words= 2 sha256=257687efd814cb71..  Rule.cpp
+      {RULE_PROP_CLASS, RULE_MATCH_ENGINE_REGEX},                  //
+
+## 2. Anchor ranges (first and last line of each, from the re-fetched bytes)
+S346 RegexMatchEngine.cpp:6-13
+      first    6 | CRegexMatchEngine::CRegexMatchEngine(const std::string& regex) {
+      last    13 | }
+S346 RegexMatchEngine.cpp:15-17
+      first   15 | bool CRegexMatchEngine::match(const std::string& other) {
+      last    17 | }
+S346 Rule.cpp:52-52
+      first   52 | {RULE_PROP_CLASS, RULE_MATCH_ENGINE_REGEX},                  //
+S346 Rule.cpp:98-98
+      first   98 | case RULE_MATCH_ENGINE_REGEX: m_matchEngines[p] = makeUnique<CRegexMatchEngine>(s); break;
+S346 WindowRule.cpp:395-396
+      first  395 | case RULE_PROP_CLASS:
+      last   396 | if (!engine->match(w->m_class))
+S347 DefaultFloatingAlgorithm.cpp:16-16
+      first   16 | constexpr const Vector2D DEFAULT_SIZE = {640, 400};
+S347 DefaultFloatingAlgorithm.cpp:19-45
+      first   19 | void CDefaultFloatingAlgorithm::newTarget(SP<ITarget> target) {
+      last    45 | }
+S347 DefaultFloatingAlgorithm.cpp:49-66
+      first   49 | if (target->window() && target->window()->m_firstMap) {
+      last    66 | }
+S347 DefaultFloatingAlgorithm.cpp:56-58
+      first   56 | const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.size);
+      last    58 | Log::logger->log(Log::ERR, "failed to parse {} as an expression", WINDOW->m_ruleApplicator->static_.size->toString());
+S347 DefaultFloatingAlgorithm.cpp:60-61
+      first   60 | windowGeometry.w = COMPUTED->x;
+      last    61 | windowGeometry.h = COMPUTED->y;
+S347 DefaultFloatingAlgorithm.cpp:68-77
+      first   68 | if (WINDOW->m_ruleApplicator->static_.position) {
+      last    77 | }
+S347 DefaultFloatingAlgorithm.cpp:79-84
+      first   79 | if (WINDOW->m_ruleApplicator->static_.center.value_or(false)) {
+      last    84 | }
+S347 DefaultFloatingAlgorithm.cpp:85-88
+      first   85 | } else if (target->lastFloatingSize().x > 5 && target->lastFloatingSize().y > 5) {
+      last    88 | }
+S347 DefaultFloatingAlgorithm.cpp:90-91
+      first   90 | if (!posOverridden && (!DESIRED_GEOM || !DESIRED_GEOM->pos))
+      last    91 | windowGeometry = CBox{WORK_AREA.middle() - windowGeometry.size() / 2.F, windowGeometry.size()};
+S347 DefaultFloatingAlgorithm.cpp:93-102
+      first   93 | if (posOverridden                                                                           // pos is overridden by a rule
+      last   102 | target->setPositionGlobal(windowGeometry);
+S347 DefaultFloatingAlgorithm.cpp:193-196
+      first  193 | void CDefaultFloatingAlgorithm::removeTarget(SP<ITarget> target) {
+      last   196 | }
+S347 Window.cpp:2402-2409
+      first 2402 | if (m_ruleApplicator->static_.size) {
+      last  2409 | setHidden(false);
+S347 Window.cpp:2413-2414
+      first 2413 | if (!setPseudo)
+      last  2414 | m_target->setPseudoSize(m_realSize->goal() - Vector2D(10, 10));
+S348 Target.cpp:10-14
+      first   10 | void ITarget::setPositionGlobal(const STargetBox& box, uint8_t) {
+      last    14 | }
+S348 Target.cpp:64-66
+      first   64 | CBox ITarget::position() const {
+      last    66 | }
+S348 Target.cpp:68-70
+      first   68 | void ITarget::rememberFloatingSize(const Vector2D& size) {
+      last    70 | }
+S348 Target.cpp:72-74
+      first   72 | Vector2D ITarget::lastFloatingSize() const {
+      last    74 | }
+S349 WindowTarget.cpp:297-304
+      first  297 | Vector2D CWindowTarget::clampSizeForDesired(const Vector2D& size) const {
+      last   304 | }
+S349 WindowTarget.cpp:313-313
+      first  313 | requested.size = clampSizeForDesired(DESIRED_GEOM.size());
+S349 WindowTarget.cpp:323-326
+      first  323 | const auto STOREDSIZE = m_window->m_ruleApplicator->persistentSize().valueOrDefault() ? Desktop::floatState()->get(m_window.lock()) : std::nullopt;
+      last   326 | requested.size = clampSizeForDesired(*STOREDSIZE);
+S349 WindowTarget.cpp:339-339
+      first  339 | if (DESIRED_GEOM.width <= 2 || DESIRED_GEOM.height <= 2) {
+S349 WindowTarget.cpp:342-347
+      first  342 | if (SURFACE->m_current.size.x > 5 && SURFACE->m_current.size.y > 5) {
+      last   347 | return requested;
+S349 WindowTarget.cpp:350-362
+      first  350 | if (m_window->m_isX11 && m_window->isX11OverrideRedirect()) {
+      last   362 | }
+S349 WindowTarget.cpp:364-364
+      first  364 | return std::unexpected(m_window->m_isX11 && m_window->isX11OverrideRedirect() ? GEOMETRY_INVALID_DESIRED : GEOMETRY_NO_DESIRED);
+S350 GeometricMovableAnimated.cpp:10-11
+      first   10 | case IGeometric::GEOMETRIC_GOAL: return m_realPosition->goal();
+      last    11 | case IGeometric::GEOMETRIC_CURRENT: return m_realPosition->value();
+S350 GeometricMovableAnimated.cpp:19-20
+      first   19 | case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();
+      last    20 | case IGeometric::GEOMETRIC_CURRENT: return m_realSize->value();
+S350 GeometricMovableAnimated.cpp:26-29
+      first   26 | CBox CGeometricMovableAnimated::geometricBox(eGeometricValueType t) const {
+      last    29 | case IGeometric::GEOMETRIC_CURRENT: return CBox{m_realPosition->value(), m_realSize->value()};
+S353 Rule.cpp:52-52
+      first   52 | {RULE_PROP_CLASS, RULE_MATCH_ENGINE_REGEX},                  //
+S353 Rule.cpp:98-98
+      first   98 | case RULE_MATCH_ENGINE_REGEX: m_matchEngines[p] = makeUnique<CRegexMatchEngine>(s); break;
+
+## 3. Anchor-cell locator bounds (every :N / :N-M token, primary source file)
+S346 RegexMatchEngine.cpp tokens=4 range=1..17 out-of-bounds=none
+S347 DefaultFloatingAlgorithm.cpp tokens=9 range=1..268 out-of-bounds=none
+S348 Target.cpp tokens=3 range=1..152 out-of-bounds=none
+S349 WindowTarget.cpp tokens=7 range=1..429 out-of-bounds=none
+S350 GeometricMovableAnimated.cpp tokens=6 range=1..60 out-of-bounds=none
+S351 (own-work anchor, checked in section 4)
+S352 (own-work anchor, checked in section 4)
+S353 Rule.cpp tokens=2 range=1..169 out-of-bounds=none
+
+## 4. Own-work anchors (line content at the cited numbers)
+S351 dump :2   | {
+S351 dump :17  | {
+S351 dump :32  | {
+S351 dump :47  | {
+S351 dump :5   | "class": "Alacritty",
+S351 dump :20  | "class": "zcode",
+S351 dump :35  | "class": "grok-bot",
+S351 dump :50  | "class": "chromium",
+S352 excerpt :6  | application_id="org.omarchy.gkeep",
+S352 excerpt :33 | window.set_default_size(420, 500)
+
+## 5. Negative sweeps (a count of 0 is the evidence)
+S351 host-clients-r43.json: grep -c fullscreen -> 0 (want 0)
+S351 host-clients-r43.json: grep -c title -> 0 (want 0)
+S351 host-clients-r43.json: grep -c org.omarchy.gkeep -> 0 (want 0)
+S352 gkeep-ui-excerpt.py: grep -c set_size_request -> 0 (want 0)
+
+## 6. Row shape
+S346 OK
+S347 OK
+S348 OK
+S349 OK
+S350 OK
+S351 OK
+S352 OK
+S353 OK
+ids=S346,S347,S348,S349,S350,S351,S352,S353 contiguous=True used-by=.ufo/waves/round-47/w1/ExecSupersede/rows.md
+defects=0

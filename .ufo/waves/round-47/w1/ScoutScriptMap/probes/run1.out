@@ -1,0 +1,48 @@
+--- base: rc=0 cache=['xdg-terminal-exec']
+ stdout='t.desktop\n$ROOT/home/.local/share/applications/t.desktop\nfoo\n--x\n'
+ stderr=''
+--- idonly: rc=0 cache=[]
+ stdout='t.desktop\n'
+ stderr=''
+--- tokerr: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n--a\n'
+ stderr=''
+--- tokerr2: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n-c\n'
+ stderr=''
+--- fielderr: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n%f\n%f\nx\n'
+ stderr=''
+--- fielderr2: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n%z\nx\n'
+ stderr=''
+--- nonl: rc=1 cache=[]
+ stdout=''
+ stderr='No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n'
+--- nonl_cat_last: rc=1 cache=[]
+ stdout=''
+ stderr='No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n'
+--- leak1: rc=0 cache=['xdg-terminal-exec']
+ stdout='b.desktop\nfoo\n--leak\n--cwd=/d\n-x\nprog\n'
+ stderr=''
+--- leak2: rc=0 cache=['xdg-terminal-exec']
+ stdout='b.desktop\nbar\n-T\nt\n--cwd=/d\n--\nprog\n'
+ stderr=''
+--- hang: rc=TIMEOUT cache=[]
+ stdout=''
+ stderr=''
+--- delim: rc=0 cache=[]
+ stdout='t.desktop\t|A$ROOT/home/.local/share/applications/t.desktop'
+ stderr=''
+--- cmdempty: rc=0 cache=['xdg-terminal-exec']
+ stdout='foo\n-e\na\nb'
+ stderr=''
+--- cmdseq: rc=0 cache=['xdg-terminal-exec']
+ stdout='t.desktop\nfoo\x00-e\x00a\x00b\n'
+ stderr=''
+--- help: rc=0 cache=[]
+ stdout='xdg-terminal-exec - Shell-based default terminal launcher.\n\nImplementation of the proposed Default Terminal Specification.\n\nUsage:\n  xdg-terminal-exec [options] [--] [command [arguments ...]]\n\nLaunches given command in default terminal, or launches default terminal.\n\nOptions for modifying terminal behavior (if supported by terminals\'s\nentry):\n\n  --app-id=app-id    set app-id (Wayland) or window class (X11)\n  --title=title      set tile of terminal.\n  --dir=workdir      set workdir of terminal.\n  --hold             instruct terminal to hold after command ends.\n\nOptions for printing data instead of executing terminal:\n\n  --print-id\n      print selected Desktop Entry ID. Action is appended delimited\n      by ":".\n\n  --print-path\n      print path to selected Desktop Entry. Action is appended\n      delimited by ":".\n\n  --print-content\n      print content of selected Desktop Entry. Conflicts with --print-cmd.\n\n  --print-cmd[=printf_sequence]\n      print resulting command line, delimited by given printf sequence,\n      "\\n" by default. If sequence is "\\n", output is also terminated with\n      a newline.\n\n  --print-delimiter=printf_sequence\n      printf sequence to be used as the delimiter between multiple requested\n      print statements, "\\n" by default. If sequence is "\\n", output is\n      also terminated with a newline.\n\nConfiguration:\n\nPreferred terminals are configured by listing their Desktop Entry IDs\nin config files named "[${desktop}-]xdg-terminals.list" placed in XDG Config\nhierarchy. Where "${desktop}" is a lowercased string that is matched\n(case-insensitively) against items of "${XDG_CURRENT_DESKTOP}".\n\nSee "man xdg-terminal-exec" for more details.\n'
+ stderr=''
+--- noterm: rc=1 cache=[]
+ stdout=''
+ stderr='No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n'

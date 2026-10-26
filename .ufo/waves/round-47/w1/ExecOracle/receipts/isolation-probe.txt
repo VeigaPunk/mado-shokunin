@@ -1,0 +1,42 @@
+isolation probe, round 47 ExecOracle, host Linux 7.2.11-arch1-1 x86_64
+bwrap: bubblewrap 0.13.1
+
+argv (paths under the operator scratch tree abstracted as <WORK>):
+  bwrap --unshare-all --die-with-parent --new-session --clearenv \
+    --ro-bind /usr/lib /usr/lib --symlink usr/lib /lib --symlink usr/lib /lib64 \
+    --ro-bind /usr/bin/bash /bin/sh --ro-bind /usr/bin/bash /bin/bash \
+    --ro-bind <WORK>/bin /oracle/bin --dev /dev --proc /proc --tmpfs /tmp \
+    --chdir / --setenv PATH /oracle/bin /bin/sh -c '...'
+
+observed:
+absent  /usr/bin
+absent  /home
+absent  /fast
+absent  /etc
+absent  /etc/xdg
+absent  /usr/share/applications
+absent  /usr/share
+absent  /var
+absent  /run
+--- sandbox root listing:
+bin
+dev
+lib
+lib64
+oracle
+proc
+tmp
+usr
+--- PATH-visible commands:
+on-PATH tr -> /oracle/bin/tr
+on-PATH find -> /oracle/bin/find
+on-PATH awk -> /oracle/bin/awk
+on-PATH ls -> /oracle/bin/ls
+on-PATH md5sum -> /oracle/bin/md5sum
+on-PATH mkdir -> /oracle/bin/mkdir
+on-PATH rm -> /oracle/bin/rm
+not-on-PATH sh
+not-on-PATH bash
+not-on-PATH python3
+not-on-PATH alacritty
+not-on-PATH xdg-terminal-exec

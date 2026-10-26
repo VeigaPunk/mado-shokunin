@@ -1,0 +1,40 @@
+== quality/counters/c1-r46-devices.py
+37:     .ufo/waves/round-46/l1-draft/mado-devices.py of this counter's own lane, pinned by MODEL_SHA256 (a different byte
+68:MODEL_SHA256 = "b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b"
+88:    if hashlib.sha256(blob).hexdigest() != sha:
+89:        raise Setup("sha256 mismatch %s" % os.path.basename(path))
+98:    pinned(MODEL_PATH, MODEL_SHA256)
+== quality/counters/c1-r46-devices-v3.py
+52:     .ufo/waves/round-46/v2/mado-devices.py of this counter's own lane, pinned by MODEL_SHA256 (a different byte
+76:sys.dont_write_bytecode = True
+88:MODEL_SHA256 = "3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f"
+108:    if hashlib.sha256(blob).hexdigest() != sha:
+109:        raise Setup("sha256 mismatch %s" % os.path.basename(path))
+121:    pinned(MODEL_PATH, MODEL_SHA256)
+== v3 model path + verification context
+    return blob
+
+
+def load_fixtures():
+    fx = json.loads(pinned(FIXTURES_PATH, FIXTURES_SHA256).decode())
+    if len(fx) < MIN_FIXTURES:
+        raise Setup("fewer than %d fixtures" % MIN_FIXTURES)
+    return fx
+
+
+def load_model():
+    pinned(MODEL_PATH, MODEL_SHA256)
+    spec = importlib.util.spec_from_file_location("mado_devices_model", MODEL_PATH)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def model_out(model, dump_bytes, texts):
+    try:
+        lines, rc = model.report(dump_bytes, texts)
+    except model.Setup as e:
+        lines, rc = ["MADO_DEVICES: SETUP %s" % e], 2
+    return "".join(l + "\n" for l in lines), rc
+
+

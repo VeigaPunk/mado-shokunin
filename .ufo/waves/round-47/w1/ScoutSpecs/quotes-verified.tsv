@@ -1,0 +1,77 @@
+id	pin	line	status	words	xcheck	rule	quote
+Q01	desktop-entry-1.5-d0589e0.xml	155-157	OK	25	html-ok	desktop file ID = path under <datadir>/applications/, '/' -> '-'	make its full path relative to the $XDG_DATA_DIRS component in which the desktop file is installed, remove the "applications/" prefix, and turn '/' into '-'.
+Q02	desktop-entry-1.5-d0589e0.xml	164-165	OK	19	html-ok	duplicate ID: first data dir in precedence order wins	If multiple files have the same desktop file ID, the first one in the $XDG_DATA_DIRS precedence order is used.
+Q03	desktop-entry-1.5-d0589e0.xml	175-176	OK	12	html-ok	ID collision between a dash name and a subdir: undefined by spec (script decides)	If both foo-bar.desktop and foo/bar.desktop exist, it is undefined which is selected.
+Q04	desktop-entry-1.5-d0589e0.xml	179-180	OK	23	html-ok	files outside <datadir>/applications have no ID	If the desktop file is not installed in an applications subdirectory of one of the $XDG_DATA_DIRS components, it does not have an ID.
+Q05	desktop-entry-1.5-d0589e0.xml	114-116	OK	18	html-ok	application ID shape (D-Bus well-known name elements); compare with the script's find filter	none of which starts with a digit, and each of which contains only characters from the set [A-Za-z0-9-_]
+Q06	desktop-entry-1.5-d0589e0.xml	251-252	OK	10	html-ok	key-name charset	Only the characters A-Za-z0-9- may be used in key names.
+Q07	desktop-entry-1.5-d0589e0.xml	247-248	OK	17	html-ok	Key = Value whitespace	Space before and after the equals sign should be ignored; the = sign is the actual delimiter.
+Q08	desktop-entry-1.5-d0589e0.xml	201-202	OK	15	html-ok	comment / blank lines	Lines beginning with a # and blank lines are considered comments and will be ignored
+Q09	desktop-entry-1.5-d0589e0.xml	188-189	OK	7	html-ok	keys/values/group names are case-sensitive	Case is significant everywhere in the file.
+Q10	desktop-entry-1.5-d0589e0.xml	235-236	OK	18	html-ok	[Desktop Entry] must come first	There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
+Q11	desktop-entry-1.5-d0589e0.xml	298-299	OK	12	html-ok	boolean = literal true|false (script tests only the string true for Hidden)	Values of type boolean must either be the string true or false.
+Q12	desktop-entry-1.5-d0589e0.xml	311-314	OK	16	html-ok	string escape set	The escape sequences \s, \n, \t, \r, and \\ are supported for values of type string
+Q13	desktop-entry-1.5-d0589e0.xml	572-574	OK	18	html-ok	Hidden=true == file absent	It's strictly equivalent to the .desktop file not existing at all, as far as that user is concerned.
+Q14	desktop-entry-1.5-d0589e0.xml	590-592	OK	19	html-ok	*ShowIn default	unless an OnlyShowIn key is present, in which case, the default is for the file not to be shown.
+Q15	desktop-entry-1.5-d0589e0.xml	597-598	OK	6	html-ok	XDG_CURRENT_DESKTOP items are consumed in order	In order, each string is considered.
+Q16	desktop-entry-1.5-d0589e0.xml	598-599	OK	14	html-ok	OnlyShowIn match -> shown	If a matching entry is found in OnlyShowIn then the desktop file is shown.
+Q17	desktop-entry-1.5-d0589e0.xml	600-601	OK	14	html-ok	NotShowIn match -> hidden	If an entry is found in NotShowIn then the desktop file is not shown.
+Q18	desktop-entry-1.5-d0589e0.xml	612-614	OK	15	html-ok	both-lists conflict is invalid (script behaviour is the judge)	The same desktop name may not appear in both OnlyShowIn and NotShowIn of a group.
+Q19	desktop-entry-1.5-d0589e0.xml	639-640	OK	18	html-ok	TryExec PATH lookup	If the path is not an absolute path, the file is looked up in the $PATH environment variable.
+Q20	desktop-entry-1.5-d0589e0.xml	640-641	OK	17	html-ok	TryExec failure -> entry may be ignored	If the file is not present or if it is not executable, the entry may be ignored
+Q21	desktop-entry-1.5-d0589e0.xml	493-494	OK	9	html-ok	Type: unknown type ignored (the script has no Type check at all, see sources.md findings)	implementations should ignore desktop entries with an unknown type.
+Q22	desktop-entry-1.5-d0589e0.xml	532	OK	12	html-ok	NoDisplay (script never reads it)	NoDisplay means "this application exists, but don't display it in the menus".
+Q23	desktop-entry-1.5-d0589e0.xml	1215-1216	OK	19	html-ok	action group must be listed in Actions	It is not valid to have an action group for an action identifier not mentioned in the Actions key.
+Q24	desktop-entry-1.5-d0589e0.xml	1211-1212	OK	16	html-ok	action group header form	The action group is a group named Desktop Action %s, where %s is the action identifier.
+Q25	desktop-entry-1.5-d0589e0.xml	1216-1217	OK	9	html-ok	unlisted action group ignored	Such an action group must be ignored by implementors.
+Q26	desktop-entry-1.5-d0589e0.xml	811-814	OK	12	html-ok	Exec tokenisation	Arguments are separated by a space. Arguments may be quoted in whole.
+Q27	desktop-entry-1.5-d0589e0.xml	820	OK	11	html-ok	Exec quoting = double quotes	Quoting must be done by enclosing the argument between double quotes
+Q27b	desktop-entry-1.5-d0589e0.xml	823-825	OK	17	html-ok	dequote first, then expand field codes	Implementations must undo quoting before expanding field codes and before passing the argument to the executable program.
+Q28	desktop-entry-1.5-d0589e0.xml	847-848	OK	8	html-ok	%% -> literal %	Literal percentage characters must be escaped as %%.
+Q29	desktop-entry-1.5-d0589e0.xml	855-856	OK	21	html-ok	unknown %-code invalidates Exec	Command lines that contain a field code that is not listed in this specification are invalid and must not be processed
+Q30	desktop-entry-1.5-d0589e0.xml	994	OK	15	html-ok	at most one file/url code	A command line may contain at most one %f, %u, %F or %U field code.
+Q31	desktop-entry-1.5-d0589e0.xml	995-997	OK	25	html-ok	strip %f %u %F %U	If the application should not open any file the %f, %u, %F and %U field codes must be removed from the command line and ignored.
+Q32	desktop-entry-1.5-d0589e0.xml	1001-1002	OK	16	html-ok	%F/%U standalone	The %F and %U field codes may only be used as an argument on their own.
+Q33	desktop-entry-1.5-d0589e0.xml	957-959	OK	14	html-ok	%i -> nothing when no Icon	Should not expand to any arguments if the Icon key is empty or missing.
+Q34	desktop-entry-1.5-d0589e0.xml	849-850	OK	12	html-ok	%d %D %n %N %v %m dropped	Deprecated field codes should be removed from the command line and ignored.
+Q35	desktop-entry-1.5-d0589e0.xml	1000-1001	OK	22	html-ok	field code inside quotes undefined (script decides)	Field codes must not be used inside a quoted argument, the result of field code expansion inside a quoted argument is undefined.
+Q36	menu-1.1-7860a23.xml	387-388	OK	17		Menu spec 1.1 base rule (AppDir)	The desktop-file id of a desktop entry is equal to its filename, with any path components removed.
+Q37	menu-1.1-7860a23.xml	396-397	OK	20		Menu spec subdir -> '-' prefix	The name of the subdirectory should be added as prefix to the desktop-file id together with a dash character ("-")
+Q38	menu-1.1-7860a23.xml	402-403	OK	12		nested subdirs: dash-joined	A desktop entry /foo/bar/bo/oz/Hello.desktop would result in a desktop-file id of bo-oz-Hello.desktop
+Q39	menu-1.1-7860a23.xml	2422-2423	OK	21		menu desktop-file id == DE desktop file ID for applications/	For desktop files installed in $XDG_DATA_DIRS/applications, this is the same as the desktop file ID defined in the Desktop Entry Specification.
+Q40	menu-1.1-7860a23.xml	2000-2002	OK	6		TerminalEmulator is a registered Additional Category, parent System (menu spec table; row cells rendered as consecutive tokens)	TerminalEmulator A terminal emulator application System
+Q41	basedir-0.8-373ecf4.xml	186-187	OK	16	html-ok	XDG_DATA_DIRS default	If $XDG_DATA_DIRS is either not set or empty, a value equal to /usr/local/share/:/usr/share/ should be used.
+Q42	basedir-0.8-373ecf4.xml	197-198	OK	16	html-ok	XDG_CONFIG_DIRS default	If $XDG_CONFIG_DIRS is either not set or empty, a value equal to /etc/xdg should be used.
+Q43	basedir-0.8-373ecf4.xml	144-145	OK	15	html-ok	XDG_CONFIG_HOME default	$XDG_CONFIG_HOME is either not set or empty, a default equal to $HOME/.config should be used.
+Q44	basedir-0.8-373ecf4.xml	138-139	OK	15	html-ok	XDG_DATA_HOME default	$XDG_DATA_HOME is either not set or empty, a default equal to $HOME/.local/share should be used.
+Q45	basedir-0.8-373ecf4.xml	214-215	OK	15	html-ok	XDG_CACHE_HOME default (resolver's cache path)	$XDG_CACHE_HOME is either not set or empty, a default equal to $HOME/.cache should be used.
+Q46	basedir-0.8-373ecf4.xml	127-129	OK	21	html-ok	relative base dirs ignored (script does not: see findings)	If an implementation encounters a relative path in any of these variables it should consider the path invalid and ignore it.
+Q47	basedir-0.8-373ecf4.xml	182-183	OK	11	html-ok	':' separator (spec typo 'seperated' is upstream's)	The directories in $XDG_DATA_DIRS should be seperated with a colon ':'.
+Q48	basedir-0.8-373ecf4.xml	204-206	OK	19	html-ok	data home outranks data dirs	The base directory defined by $XDG_DATA_HOME is considered more important than any of the base directories defined by $XDG_DATA_DIRS.
+Q49	mr3-proposal.md	92-93	OK	13	html-ok	list file names	Configuration files are named `${desktop}-xdg-terminals.list` or `xdg-terminals.list` and placed in XDG config hierarchy.
+Q50	mr3-proposal.md	95-96	OK	15	html-ok	desktop token is lowercased XDG_CURRENT_DESKTOP item	`${desktop}` here is a lowercased string that can be matched (case-insensitively) against items of `$XDG_CURRENT_DESKTOP`
+Q51	mr3-proposal.md	99-100	OK	20	html-ok	data-dir fallback lists	Lower priority fallback config files (for upstream/distribution usage) are paced in system part of XDG data hierarchy within `xdg-terminal-exec` subdirs.
+Q52	mr3-proposal.md	125-126	OK	13	html-ok	list-file line syntax	Empty lines and lines starting with `#` are ignored, dangling whitespaces are trimmed.
+Q53	mr3-proposal.md	133	OK	6	html-ok	'-' directive	`-terminal.desktop` excludes entry from fallback selection.
+Q54	mr3-proposal.md	135	OK	6	html-ok	'+' directive	`+terminal.desktop` protects entry from fallback exclusion.
+Q55	mr3-proposal.md	141	OK	8	html-ok	'/' directives (execarg_default, cache switches) are not entries	Directives should not contain `.desktop` substring in them.
+Q56	mr3-proposal.md	147-148	OK	17	html-ok	first mention of an ID wins	A list of explicitly preferred entry IDs and fallback exclusions is composed by taking previously unseen IDs:
+Q57	mr3-proposal.md	149	OK	13	html-ok	config dirs before data-dir fallbacks	from each dir of XDG config hierarchy in the order of decreasing priority:
+Q58	mr3-proposal.md	160-161	OK	13	html-ok	explicit list entries skip *ShowIn	validation by the same rules as in Desktop Entry Specification, except `*ShowIn` conditions
+Q59	mr3-proposal.md	168-169	OK	14	html-ok	fallback entries enforce *ShowIn	validation by the same rules as in Desktop Entry Specification, now including `*ShowIn` conditions
+Q60	mr3-proposal.md	171-172	OK	16	html-ok	fallback order inside one dir undefined by spec (script: find order)	the order in which found entries under the same base directory are checked in is undefined
+Q61	mr3-proposal.md	173	OK	10	html-ok	no terminal -> error	If no applicable entry is found, an error is returned.
+Q62	mr3-proposal.md	184-185	OK	11	html-ok	option scan end	Option processing should end on `--`, `-e`, or matching execution argument.
+Q63	mr3-proposal.md	198-200	OK	19	html-ok	--dir without ArgDir	If `--dir=` option is given, but terminal's entry lacks `X-TerminalArgDir=` key, implementation should instead change dir before executing terminal.
+Q64	mr3-proposal.md	204-205	OK	17	html-ok	ExecArg appended only with a command	If a command (with or witout its arguments) is given, and `TerminalArgExec=` key is not explicitly empty
+Q65	mr3-proposal.md	214-215	OK	12	html-ok	--print-id	`--print-id`: print selected Desktop Entry ID. Action is appended delimited by `:`.
+Q66	mr3-proposal.md	216-217	OK	14	html-ok	--print-path	`--print-path`: print absolute path to selected Desktop Entry. Action is appended delimited by `:`.
+Q67	mr3-proposal.md	222-223	OK	17	html-ok	--print-delimiter	`--print-delimiter=printf_sequence`: printf sequence to be used as the delimiter between multiple requested print statements, `\n` by default.
+Q68	mr3-proposal.md	223-225	OK	22	html-ok	trailing newline rule	If sequence is `\n`, overall output is terminated with a newline (without duplication in case command output already terminated on a newline).
+Q69	mr3-proposal.md	227-232	OK	20	html-ok	print output order	Depending on selected data options, data is returned in the following order: - id - path - content - cmd
+Q70	xdgte-README.md	284-285	OK	17		compat mode default (README only; not in the proposal text)	This implementation is currently set to compatibility mode by default: Previous style `[X-]ExecArg` execution argument is supported
+Q71	xdgte-README.md	307-308	OK	15		cache read (README only)	Unless `XTE_CACHE_ENABLED` is false, an attempt at reading the cache file is always performed though.
+Q72	xdgte-README.md	299-300	OK	23		cache key (README only)	feeding `md5sum` the value of `$XDG_CURRENT_DESKTOP` and output of `ls -LRl` for all possible config file and data dir paths in one go.
+Q73	xdgte-README.md	326-328	OK	17		Exec double expansion (README only)	escape sequences in `Exec` are expected to be expanded twice: in string value, then in argument "dequoting".
+Q74	xdgte-README.md	331	OK	8		entries failing tokenisation are invalid (README only)	It will invalidate entries that fail those rules.
+Q75	xdgte-xdg-terminal-exec.1.scd	48-49	OK	11		--print-content exists and conflicts with --print-cmd (man page only; the draft C1 contract lists only id/path/cmd)	- *--print-content*: print content of selected Desktop Entry. Conflicts with *--print-cmd*.

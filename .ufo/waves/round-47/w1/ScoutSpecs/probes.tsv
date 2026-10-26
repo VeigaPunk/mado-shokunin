@@ -1,0 +1,23 @@
+id	note	rc	stdout(root->$ROOT; \n escaped)
+P01-baseline-no-type	entry without Type= key selected?	0	foo.desktop\n
+P02-type-link	Type=Link (spec: unknown type ignored)	0	foo.desktop\n
+P03-type-bogus	Type=Bogus	0	foo.desktop\n
+P04-nodisplay-listed	NoDisplay=true, explicit list	0	foo.desktop\n
+P05-nodisplay-fallback	NoDisplay=true, fallback scan	0	foo.desktop\n
+P06-hidden-TRUE	Hidden=TRUE (spec boolean is lowercase only)	0	foo.desktop\n
+P07-hidden-1	Hidden=1	0	foo.desktop\n
+P08-hidden-true	Hidden=true control	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P09-subdir-id	fallback: applications/sub/foo.desktop ID	0	sub-foo.desktop\n
+P10-space-around-eq	spaces around = 	0	foo.desktop\n
+P11-relative-data-home	relative XDG_DATA_HOME (basedir: ignore)	0	foo.desktop\n
+P12-digit-first-id	ID starting with a digit	0	1foo.desktop\n
+P13-space-in-name	space in file name	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P14-dot-leading	leading dot file	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P15-onlyshowin-miss-fallback	OnlyShowIn=GNOME fallback	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P16-onlyshowin-miss-listed	OnlyShowIn=GNOME explicit list	0	foo.desktop\n
+P17-cat-lowercase	lowercase category	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P18-cat-list	category in list	0	foo.desktop\n
+P19-gap-before-group	keys before [Desktop Entry]	1	|ERR:No valid terminal entry was found in:\n$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/\n
+P20-data-home-outranks	data home beats data dirs	0	foo.desktop\n$ROOT/home/.local/share/applications/foo.desktop\nfooexe\n
+P21-trailing-slash-dirs	doubled slash in data dir	0	$ROOT/usr/share//applications/foo.desktop\n
+P22-fallback-tie-order	5 entries zeta,alpha,mid,beta,omega in one applications dir, no list, fallback; readdir (os.listdir) and find -L order both zeta,alpha,mid,beta,omega	0	omega.desktop\n  (last in readdir order wins; one run on /fast/scratch, not repeated)

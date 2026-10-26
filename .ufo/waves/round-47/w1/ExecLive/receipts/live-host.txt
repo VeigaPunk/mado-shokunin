@@ -1,0 +1,215 @@
+LIVE READ-ONLY HOST OBSERVATION — round 47 / w1 / ExecLive
+host date: 2026-10-26. Resolver: /usr/bin/xdg-terminal-exec (print modes only, never a launch).
+sha256(/usr/bin/xdg-terminal-exec) = 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+size = 44020 bytes. Every invocation carried XDG_CACHE_HOME=<scratch>/... so the resolver's cache write
+landed in scratch; no host file was written, no terminal was started, no compositor verb was used.
+
+Shape-only: single quoted paths, key names, hashes, counts. No titles, serials, process tables, home listings.
+
+[1] HOST XDG_* ENVIRONMENT (only XDG_* keys; values verbatim)
+XDG_BACKEND=wayland
+XDG_CACHE_HOME=/home/vgpnk/.cache
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_CONFIG_HOME=/home/vgpnk/.config
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_DATA_HOME=/home/vgpnk/.local/share
+XDG_MENU_PREFIX=hyprland-
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_SEAT=seat0
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+XDG_SESSION_CLASS=user
+XDG_SESSION_DESKTOP=Hyprland
+XDG_SESSION_ID=2
+XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0
+XDG_SESSION_TYPE=wayland
+XDG_STATE_HOME=/home/vgpnk/.local/state
+XDG_VTNR=1
+HOME=/home/vgpnk
+
+[2] PRINT-MODE OUTPUTS (stdout, then rc; stderr empty in all five)
+base  `--print-id --print-path --print-cmd`
+  Alacritty.desktop
+  /home/vgpnk/.local/share/applications/Alacritty.desktop
+  alacritty
+  rc=0
+`--dir=/tmp --print-id --print-path --print-cmd`
+  Alacritty.desktop
+  /home/vgpnk/.local/share/applications/Alacritty.desktop
+  alacritty
+  --working-directory=/tmp
+  rc=0
+`--print-id --print-path --print-cmd -- htop`
+  Alacritty.desktop
+  /home/vgpnk/.local/share/applications/Alacritty.desktop
+  alacritty
+  -e
+  htop
+  rc=0
+`--print-id`
+  Alacritty.desktop
+  rc=0
+`--print-id --print-path --print-cmd --print-delimiter=seq`  (spec's "seq" is a LITERAL delimiter string)
+  Alacritty.desktopseq/home/vgpnk/.local/share/applications/Alacritty.desktopseqalacritty   (no trailing newline) rc=0
+  and with a chosen delimiter `--print-delimiter='|'`:
+  Alacritty.desktop|alacritty   rc=0   (`--print-cmd=seq` selects the argv-joined form)
+Determinism: three repeats of the base triple, each with a fresh XDG_CACHE_HOME, all
+sha256 = 9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc (stdout incl. trailing newline).
+
+[3] FILES THE RESOLVER ACTUALLY OPENED (strace -f -e trace=openat, successful opens only)
+  /home/vgpnk/.config/xdg-terminals.list                                  O_RDONLY  = 3
+  /usr/share/xdg-terminal-exec/xdg-terminals.list                          O_RDONLY  = 3
+  /home/vgpnk/.local/share/applications/  (dir)                            O_DIRECTORY
+  /home/vgpnk/.local/share/applications/.  (dir entry from find -L)         O_DIRECTORY
+  /home/vgpnk/.local/share/applications/./Alacritty.desktop                O_RDONLY  = 3
+  /usr/share/applications/  (dir)                                          O_DIRECTORY
+  /usr/share/applications/.  (dir entry from find -L)                       O_DIRECTORY
+  /usr/bin/xdg-terminal-exec                                               O_RDONLY
+  <scratch>/xdg-terminal-exec                                             O_WRONLY|O_CREAT|O_TRUNC
+NOT opened: /usr/share/applications/Alacritty.desktop — the entry file itself was read only from the
+user data dir. No open of any kind was observed under /etc/xdg, /usr/local/share, or the top level of
+/home/vgpnk/.local/share; the list files searched there are absent per [4]. (Only openat was traced, so
+this is an open set, not a stat set.)
+Residual opens outside the resolution (libc/locale): /etc/{group,passwd,nsswitch.conf,localtime},
+/usr/share/locale/locale.alias — not config-plane.
+
+[4] LIST FILES PRESENT ON HOST (candidate search set from script lines 148-163)
+  d035da571a6bfc7d626d4a88846ea86a8adb6f6662f1f8b4abe2330e53ceb71b   127 B  /home/vgpnk/.config/xdg-terminals.list
+  a2b5bf691c44aa2557b54df513cc0a9f9f06633468b13e723b208e0b41fef034  1053 B  /usr/share/xdg-terminal-exec/xdg-terminals.list
+  ABSENT: /etc/xdg/xdg-terminals.list, /home/vgpnk/.local/share/xdg-terminals.list,
+          /usr/local/share/xdg-terminals.list, /usr/share/xdg-terminals.list
+  ABSENT: every per-desktop variant (hyprland-/Hyprland-/HYPRLAND-xdg-terminals.list) in all five dirs
+          and in <data-dir>/xdg-terminal-exec/.
+User list content (grep -n ''): line 1 and line 2 are "#" comments; line 3 = "Alacritty.desktop".
+System list (25 lines): no "Alacritty.desktop" token at all; its non-comment content is exclusions
+("-" entries, lines 6-12) and /execarg_default:* directives (lines 15-25). So the name that selects
+Alacritty is the user list, line 3, and nothing else.
+
+[5] THE TWO Alacritty.desktop FILES
+  user   /home/vgpnk/.local/share/applications/Alacritty.desktop
+         sha256 713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683  452 B
+  system /usr/share/applications/Alacritty.desktop
+         sha256 d420b0f418d9039f324bdb423181f874dee36c47ce2ab643435a4c04aac243d8  374 B
+  Identical key/value pairs in both: Type=Application, TryExec=alacritty, Exec=alacritty,
+    Icon=Alacritty, Terminal=false, Categories=System;TerminalEmulator;, Name=Alacritty,
+    Actions=New; and the identical [Desktop Action New] group (Name=New Terminal, Exec=alacritty).
+  Keys that differ (key names + values only):
+    X-TerminalArgExec  user: line 14 "-e"              system: ABSENT
+    X-TerminalArgAppId user: line 15 "--class="        system: ABSENT
+    X-TerminalArgTitle user: line 16 "--title="        system: ABSENT
+    X-TerminalArgDir   user: line 17 "--working-directory="  system: ABSENT
+    X-TerminalArgHold  absent in both
+    X-Desktop-File-Install-Version  user: ABSENT       system: line 15 "0.28"
+  (whitespace-only difference: system has a blank line 8 between Categories and Name.)
+  Discriminator: the `-- htop` run printed "-e" before "htop", and "-e" exists only in the user file
+  (line 14). The `--dir=/tmp` run printed "--working-directory=/tmp", which exists only in the user
+  file (line 17). So exec-arg composition provably came from the user entry, not the system one.
+
+[6] HOST RESOLVER CACHE (read only; never written, never edited)
+  PATH    /home/vgpnk/.cache/xdg-terminal-exec
+  EXISTS  yes, 190 bytes
+  sha256  f497ed057f8aaba24bea21ba652b810c6c2ab754b0b8fe9d9b1645e072a10cac
+  mtime   2026-10-26 17:42:25.200770484 -0300
+  Content names the same entry:
+    md5 header    d27b6b707781b8106c7b00390bdf2822
+    exec          alacritty
+    path          /home/vgpnk/.local/share/applications/./Alacritty.desktop
+    id            Alacritty.desktop
+    action        (empty)
+    arg fields    -e / --class= / --title= / --working-directory= (values empty) / hold empty
+    terminator    END_OF_EXEC_USEP
+  md5 header identical to a fresh scratch run => the cached listing hash matches the current config and
+  data trees: the cache is current, not stale.
+  The host cache is BYTE-IDENTICAL (cmp, exit 0) to a scratch cache produced this round by a run whose
+  print set excluded --print-path. The 190-vs-188-byte delta against a --print-path run is exactly the
+  two characters "/./" in the path field, because the normalisation at script line 1342
+  (`*'/./'*) XTE__ENTRY_PATH=${XTE__ENTRY_PATH%%/./*}/${XTE__ENTRY_PATH##*/./}`) runs only when "path"
+  is in XTE__PRINT_DATA. A launch (or a --print-cmd-only run) never normalises, so it stores the
+  find(1)-shaped ".../applications/./Alacritty.desktop". Host mtime 17:42:25 predates every invocation
+  this seat made (18:43-18:46), and this seat never wrote to it.
+  Which runs write the cache at all (script lines 1368-1386 "early bail out in some print modes" vs the
+  `save_cache "$1" &` at line 1457): measured with fresh XDG_CACHE_HOME dirs and a 1 s settle,
+    --print-id                      -> no cache file
+    --print-id --print-path         -> no cache file
+    --print-path                    -> no cache file
+    --print-id --print-cmd          -> 190 B (unnormalised path)
+    --print-id --print-path --print-cmd -> 188 B (normalised path)
+    --print-id --print-cmd=seq --print-delimiter='|' -> 190 B
+  i.e. a print set without "cmd" exits before save_cache, so "the cache" is only ever written by a run
+  that reached the exec/print-cmd stage. This matters for both claims: the C1 contract's "cold cache"
+  model is the right abstraction, and any frozen predicate that reads the cache after a --print-id-only
+  run would observe no file at all.
+
+[7] ATTRIBUTION A/B (print modes only; no host file touched; XDG_CACHE_HOME redirected each run)
+  a) XDG_DATA_HOME=<empty scratch dir>  -> path = /usr/share/applications/Alacritty.desktop  rc=0
+  b) XDG_CONFIG_HOME=<empty scratch dir> -> path = /home/vgpnk/.local/share/applications/Alacritty.desktop  rc=0
+  c) both empty                          -> path = /usr/share/applications/Alacritty.desktop  rc=0
+  d) XDG_CURRENT_DESKTOP= (empty)        -> path = /home/vgpnk/.local/share/applications/Alacritty.desktop  rc=0
+  (a) isolates the answer: removing only the user data dir flips the path to the system file while the
+  id and Exec stay identical. (b) shows the user *list* only supplies order, not the path: with the
+  list gone the fallback ID scan still lands on the user file. (d) shows the pick does not depend on
+  the desktop name, because the winning candidate is explicitly listed in the desktop-agnostic list.
+
+[8] ANSWER TO THE ROUND-17 [UNK]
+  "whether the resolver actually picks that entry over the system one at launch", with the launch
+  replaced by print-only invocation of the same code path:
+  YES. The resolver picks the user override.
+  id   Alacritty.desktop
+  path /home/vgpnk/.local/share/applications/Alacritty.desktop   (not /usr/share/applications/...)
+  Why, by rule (script lines of the pinned 44020-byte file):
+    1. Order of list files — make_paths() lines 148-163: config dirs first (XDG_CONFIG_HOME then
+       XDG_CONFIG_DIRS), per-desktop variant before the plain name (line 151 vs 153), then
+       <data-dir>/xdg-terminal-exec/[<desktop>-]xdg-terminals.list (lines 159-162). First list that
+       yields a usable id wins, so the user list (XDG_CONFIG_HOME/xdg-terminals.list, line 3) supplies
+       the id before the system list is consulted at all.
+    2. Order of application dirs — make_paths() line 168 prepends each dir, iterating
+       XDG_DATA_HOME then XDG_DATA_DIRS, so XTE__APPLICATIONS_DIRS ends up in ASCENDING preference:
+       /usr/share, /usr/local/share, then /home/vgpnk/.local/share last.
+    3. Duplicate id resolution — find_entry_paths() line 780-782: "Entries are checked in ascending
+       order of preference, so use last found if duplicate", then
+       `alias "$xte__entry_id"="xte__entry_path='$xte__entry_path'"`. The user dir is scanned last, so
+       its alias overwrites the system one; the id Alacritty.desktop therefore resolves to the user path.
+    4. Explicitly listed ids are not subject to DE show-in limits (comment at find_entry() line 1057),
+       and find_entry() line 1060 walks ${XTE__ENTRY_IDS} before //fallback_start//, so the config-list
+       hit is tried first.
+  Evidence chain for (1)-(4) is [3] (only the user file was opened), [4] (only the user list names it),
+  [5] (the user-only keys show up in the composed command) and [7a] (removing the user data dir flips
+  the path to the system file).
+
+[9] COMMANDS USED (all read-only; no pacman, no compositor mutation, no GUI, no terminal launch)
+  sha256sum /usr/bin/xdg-terminal-exec
+  env | grep -E '^XDG_' ; printf 'HOME=%s\n' "$HOME"
+  XDG_CACHE_HOME=<scratch>/cache /usr/bin/xdg-terminal-exec <print options> [-- args]
+  XDG_CACHE_HOME=<scratch>/cache2 strace -f -qq -e trace=openat -o <scratch>/openat.trace \
+      /usr/bin/xdg-terminal-exec --print-id --print-path --print-cmd
+  sha256sum / stat -c '%y %s' on the two list files, the two Alacritty.desktop files and the host cache
+  grep -n '' <file> / diff -u <system desktop> <user desktop>
+
+[10] QUOTE AND LOCATOR VERIFICATION (each locator computed with grep -n, never typed)
+  Q1  /usr/bin/xdg-terminal-exec:780
+      "Entries are checked in ascending order of preference, so use last found if duplicate"  (13 words)
+      grep -n 'Entries are checked in ascending order of preference' -> 780
+  Q2  /usr/bin/xdg-terminal-exec:782  alias "$xte__entry_id"="xte__entry_path='$xte__entry_path'"
+      grep -n 'alias "\$xte__entry_id"' -> 782
+  Q3  /usr/bin/xdg-terminal-exec:1342  *'/./'*) XTE__ENTRY_PATH=${XTE__ENTRY_PATH%%/./*}/${XTE__ENTRY_PATH##*/./}
+      grep -n "remove /./ delimiter" -> 1340 (comment), code at 1342
+  Q4  /usr/bin/xdg-terminal-exec:1457  save_cache "$1" &
+      grep -n 'save_cache "\$1" &' -> 1457
+  Q5  /usr/bin/xdg-terminal-exec:1368 "# early bail out in some print modes" (block 1369-1385)
+      grep -n 'early bail out in some print modes' -> 1368
+  Q6  /usr/bin/xdg-terminal-exec:168  XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/...
+      grep -n 'XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/' -> 168
+  Q7  /usr/bin/xdg-terminal-exec:153 and :162 (plain-name list, data-dir list)
+      grep -n 'xdg-terminals.list$' -> 151, 153, 160, 162
+  Q8  /usr/bin/xdg-terminal-exec:1057 "# for explicitly listed entries do not apply DE *ShowIn limits"
+      grep -n 'explicitly listed entries do not apply' -> 1057
+  Q9  corpus/knowledge/terminal-route-r17.md:144-145
+      "whether the resolver actually picks that entry over the system one at launch; no launcher ran."
+      (18 words) grep -n 'whether the resolver actually picks' -> 144
+  Q10 ~/.config/hypr/bindings.conf:2 (hotkey, read-only)
+      grep -n 'SUPER, RETURN' -> 2
+  Quote verification: every string above is present in this receipt, so
+  `grep -c '<string>' receipts/live-host.txt` >= 1 for all ten; the source-side locators were produced by
+  grep -n against /usr/bin/xdg-terminal-exec (sha256 89f2be9a...127ac) and the two cited files.
+  Measured run of that check (counts in this file): Q1 1, Q2 2, Q3 2, Q4 2, Q5 3, Q6 2, Q7 4 locators
+  (151, 153, 160, 162), Q8 1, Q9 1, Q10 1. All >= 1; none typed from memory.

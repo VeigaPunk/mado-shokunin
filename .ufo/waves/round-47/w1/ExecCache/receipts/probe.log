@@ -1,0 +1,219 @@
+
+===== pins =====
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+1499 /usr/bin/xdg-terminal-exec
+all resolver runs below use --print-* modes with XDG_CACHE_HOME inside WORKDIR
+
+===== E0 cold run writes cache; warm run is byte-identical =====
+cold rc=0 stdout:
+TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+--- cache file (sed -n l) ---
+deb7da7aa64f974cf3aa8f135b6544dd$
+term-a$
+$WORK/case/home/.local/share/applica\
+tions/TermA.desktop$
+TermA.desktop$
+$
+-e$
+$
+$
+$
+$
+term-a\036END_OF_EXEC_USEP$
+mode=600 size=175 mtime=1793051321
+cold computed hash (debug): got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+reproduced hash:        deb7da7aa64f974cf3aa8f135b6544dd
+cache line 1:           deb7da7aa64f974cf3aa8f135b6544dd
+PASS: reproduced hash equals cache hash
+PASS: warm stdout byte-identical to cold
+--- warm debug (cache lines) ---
+D: got cache:
+D: hash=deb7da7aa64f974cf3aa8f135b6544dd
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is actual
+PASS: warm run reports cache is actual
+PASS: cold run parsed the config list files
+PASS: warm run never parses config list files
+stdout: TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+
+===== E1 stale cache vs cold run after PATH-only change (no hashed input changes) =====
+cold #1 (term-a absent) rc=0:
+TermB.desktop
+$WORK/case/home/.local/share/applications/TermB.desktop
+term-b
+warm (term-a now present) stdout:
+TermB.desktop
+$WORK/case/home/.local/share/applications/TermB.desktop
+term-b
+D: got cache:
+D: hash=deb7da7aa64f974cf3aa8f135b6544dd
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is actual
+PASS: warm run reports cache is actual after PATH change
+stale --print-id only: TermB.desktop
+PASS: stale cache answers --print-id too
+cold #2 (same files, term-a present) stdout:
+TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+hash cold#1=deb7da7aa64f974cf3aa8f135b6544dd
+hash cold#2=deb7da7aa64f974cf3aa8f135b6544dd
+PASS: hash unchanged across PATH change
+PASS: warm output DIFFERS from cold #2
+
+===== E2 stale cache after content-only edit with size+mtime restored =====
+cold #1 stdout:
+TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+TermA before: size=93 mtime=1793051322
+TermA after:  size=93 mtime=1793051322
+PASS: ls -LRl listing byte-identical after content edit
+warm (cache from before edit) stdout:
+TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+D: got cache:
+D: hash=deb7da7aa64f974cf3aa8f135b6544dd
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is actual
+PASS: warm run reports cache is actual after content edit
+cold #2 (fresh cache) stdout:
+TermB.desktop
+$WORK/case/home/.local/share/applications/TermB.desktop
+term-b
+PASS: hash identical before/after content edit
+PASS: warm output DIFFERS from cold #2
+
+===== E3 corrupt cache variants (each starts from a valid cache selecting TermA/term-a) =====
+-- (a) truncated to 5 lines
+D: invalid cache data
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+stdout:
+TermA.desktop
+$WORK/case/home/.local/share/applications/TermA.desktop
+term-a
+PASS: (a) truncated cache yields same output as cold
+PASS: (a) cache rewritten valid after run
+-- (b) 55 lines, no terminator (line limit 50)
+D: reached cache line limit (50)
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+PASS: (b) over-long cache falls back to cold result
+PASS: (b) line-limit debug seen
+-- (c) wrong hash (32 hex chars)
+D: got cache:
+D: hash=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is out-of-date
+D: >     saved cache:
+D: ^     end of saved cache
+PASS: (c) hash mismatch falls back to cold result
+PASS: (c) out-of-date debug seen
+-- (d) missing RS terminator on last line
+D: invalid cache data
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+PASS: (d) unterminated cache falls back to cold result
+PASS: (d) invalid-cache debug seen
+-- (e) forged fields, hash kept (id/path/cmd replaced)
+D: got cache:
+D: hash=deb7da7aa64f974cf3aa8f135b6544dd
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is actual
+stdout:
+Evil.desktop
+$WORK/case/home/.local/share/applications/Evil.desktop
+term-a
+PASS: (e) forged cache accepted (cache is actual)
+PASS: (e) forged output DIFFERS from cold result
+-- (f) cached cmd no longer on PATH (hash still matches)
+D: got cache:
+D: hash=deb7da7aa64f974cf3aa8f135b6544dd
+D: >     hashing 'Hyprland' and listing of:
+D: ^     end of hash listing
+D: got fresh hash 'deb7da7aa64f974cf3aa8f135b6544dd'
+D: cache is out-of-date
+D: >     saved cache:
+D: ^     end of saved cache
+stdout:
+TermB.desktop
+$WORK/case/home/.local/share/applications/TermB.desktop
+term-b
+PASS: (f) missing cached cmd invalidates cache
+PASS: (f) warm output equals what a cold run now yields
+PASS: (f) selection moved TermA -> TermB after the PATH change
+
+===== E4 enable/disable and default cache location =====
+cold with XTE_CACHE_ENABLED=false rc=0 stdout:term-a
+PASS: cache file absent when disabled
+PASS: cache exists before disable
+PASS: valid cache + disabled: cache file removed
+PASS: config /disable_cache on cold path leaves no cache
+PASS: default cache path is $HOME/.cache/xdg-terminal-exec
+
+===== E5 metadata invalidations (mtime, desktop, TZ) =====
+PASS: sub-minute mtime change is invisible to ls -l
+PASS: sub-minute mtime change keeps cache actual
+PASS: displayed-minute mtime change invalidates cache
+PASS: XDG_CURRENT_DESKTOP change invalidates cache
+PASS: TZ change invalidates cache (ls -l timestamps are hashed)
+TZ=Asia/Tokyo warm stdout: term-a
+
+===== E6 cached terminal-side args are replayed; CLI args are recomposed =====
+cold --title=First:
+TermA.desktop
+term-a
+--title
+First
+--- cache file (sed -n l) ---
+e4f9602061a182b0637e2e177d8e4879$
+term-a$
+$WORK/case/home/.local/share/applica\
+tions/./TermA.desktop$
+TermA.desktop$
+$
+-e$
+$
+--title$
+$
+$
+term-a\036END_OF_EXEC_USEP$
+mode=600 size=184 mtime=1793051330
+warm --title=Second (cached titlearg, fresh value):
+TermA.desktop
+term-a
+--title
+Second
+PASS: warm titlearg replayed from cache with fresh CLI value
+titlearg line in cache: --title
+
+===== E7 which print modes write the cache =====
+PASS: --print-id alone writes no cache
+PASS: --print-path alone writes no cache
+PASS: --print-content alone writes no cache
+PASS: --print-cmd writes the cache
+
+===== E8 background save race + file mode =====
+cache present immediately after exit: 0/30 (incomplete: 0)
+cache present 50ms after exit:        30/30
+mode=600 size=177
+
+===== summary =====
+checks failed: 0
+PROBE_RESULT: all checks passed

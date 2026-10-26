@@ -1,0 +1,54 @@
+$ grep -n session-material SKILL.md
+568:The standing no-injection/session-material fence expressly excludes raw
+770:| mado-session-material | gate | `python3 -I quality/check-session-material.py --repo . --rev REV` | 0 clean (`findings=0`); 1 findings (`findings>0`); 2 usage or git error | `python3 -I quality/check-session-material.py --selftest`; prints `SELFTEST: passed=N/N failed=N`; 0 clean, 1 failed | summary line `SESSION_MATERIAL: files=<n> findings=<n> rev=<40 hex>`; rules `R1_CLIENT_DUMP` `R2_PROC_TABLE` `R3_MONITOR_IDENT` `R4_HOME_LISTING` (round-45 closure D3; triage of the 97 findings at `4d22eeb`: `.ufo/waves/round-46/w1/ExecSessionTriage/triage.tsv`, 15 real, 82 synthetic; no synthetic marker yet, so a red exit is expected until it lands) | reads committed bytes via `git show`; selftest writes nothing | mado |
+$ git show 1001bda:.ufo/waves/round-46/receipts/session-material-data.txt | head -6
+fatal: path '.ufo/waves/round-46/receipts/session-material-data.txt' exists on disk, but not in '1001bda'
+$ git ls-tree -r --name-only HEAD .ufo/waves/round-46/w1/ExecSessionTriage/ .ufo/waves/round-46/w1/ExecSerialRule/
+.ufo/waves/round-46/w1/ExecSerialRule/gate.py
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/base-scope-all-r5-r6.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/commands.sh
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/frozen-gate-tip.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/head-r46-r5-r6.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/projected-scope-all-all-rules.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/projected-scope-all-r5-r6.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/seat-scan.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/self-scan.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/selftest.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/serial-carriers.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/sweep.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/tip-scope-all-all-rules.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/tip-scope-all-r5-r6.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/tip-scope-ufo-r5-r6.txt
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/verify-quote.py
+.ufo/waves/round-46/w1/ExecSerialRule/receipts/verify-quote.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/check-session-material.py
+.ufo/waves/round-46/w1/ExecSessionTriage/demo/mark-synthetic.py
+.ufo/waves/round-46/w1/ExecSessionTriage/demo/run-demo.sh
+.ufo/waves/round-46/w1/ExecSessionTriage/demo/triage-table.py
+.ufo/waves/round-46/w1/ExecSessionTriage/demo/verify.py
+.ufo/waves/round-46/w1/ExecSessionTriage/demo/waivers-round45.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/00-selftest.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/01-baseline.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/01b-baseline-copy-nowaivers.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/02-triage.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/03-newgate-baseline.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/04-marked-49.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/04b-tracked-gate-on-marked.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/05-marked-all-synthetic.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/06-planted-real-dump.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/07-tampered-waived-fixture.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/08-no-waivers.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/receipts/09-verify.txt
+.ufo/waves/round-46/w1/ExecSessionTriage/skill-row.md
+.ufo/waves/round-46/w1/ExecSessionTriage/triage.tsv
+$ grep -nE "^ *\| *S29[0-7]" corpus/SOURCES.md | cut -c1-80
+239:| S290 | Hyprland v0.56.2 rule match engine - how a wind
+240:| S291 | Hyprland v0.56.2 default floating algorithm - w
+241:| S292 | Hyprland v0.56.2 layout target - where the box 
+242:| S293 | Hyprland v0.56.2 window target - the client's r
+243:| S294 | Hyprland v0.56.2 geometric movable animated - g
+244:| S295 | mado host gkeep rule file - the three lines the
+245:| S296 | mado host clients census - the four clients ope
+246:| S297 | gkeep client window request - the app's own siz
+$ grep -cE "^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|" corpus/SOURCES.md
+262

@@ -1,0 +1,29 @@
+# xdg-terminal selection - live read-only receipt (round 47, 2026-10-26)
+
+observed=.ufo/waves/round-47/receipts/xdg-terminal-observed.txt
+
+# environment the observation ran under (env -i, XDG_CACHE_HOME in scratch)
+
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_CONFIG_HOME=/home/vgpnk/.config
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_DATA_HOME=/home/vgpnk/.local/share
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_CACHE_HOME=<scratch, empty: the tool models a cold cache>
+
+tool: tools/mado-terminal.py sha256 443f863c86fabe4d26615b85b13207b1afa1258965fdc8b6c08230e35dd1bc4f
+oracle: /usr/bin/xdg-terminal-exec sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+
+## capture (xdg-terminal-exec --print-id --print-path --print-cmd, rc=0)
+
+```
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+```
+
+## tool reading
+
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop verdict=AGREE
+
+The resolver selects the user override entry and prints its path under ~/.local/share/applications/, so the round-17 question is answered for the selection stage: the user-local entry wins over the system one. No terminal process was started and no compositor verb was sent; the launch of a window is not observed and is not claimed.

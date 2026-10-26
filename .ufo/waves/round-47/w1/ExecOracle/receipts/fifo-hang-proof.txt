@@ -1,0 +1,14 @@
+FIFO hang proof (round 47 ExecOracle) — a named pipe named *.desktop in the LAST
+applications dir (XDG_DATA_HOME, unconstrained by the script's -type f) blocks the
+resolver on open; the harness must time out and leave nothing behind.
+
+case root:   <WORK>/fifo-hang
+fifo:        <ROOT>/home/.local/share/applications/ZzFifo.desktop
+argv shape:  find <DATA_DIRS apps>/. <DATA_HOME apps>/. -type f (...) -o (...)
+timeout:     3.0s
+rc=124 timed_out=True stub_ran=False duration_ms=3002
+stdout=''
+stderr_bytes=0
+fifo reader after the run: ENXIO (errno 6): no reader left (settled in 0 ms)
+processes whose argv names this case root: 0
+FIFO_HANG_PROOF: PASS
