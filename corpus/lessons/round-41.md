@@ -35,13 +35,15 @@ ADMIT merge/mado/knowledge/corpus/knowledge/focus-grab-protocol-live-on-host-r14
 REFUSE merge/mado/knowledge/corpus/knowledge/privileged-client-surface-r29.md reason=generic Wayland analysis, one truncated quote, no measurement and no host state
 REFUSE merge/mado/knowledge/corpus/knowledge/focus-control-surfaces-r28.md reason=section 3 rests on a localized (Japanese) documentation channel, outside PROVINCE.md
 
-Receipts above: the seven pre-wave receipts are committed at the freeze (`git ls-tree -r --name-only 60c3914 .ufo/waves/round-41/fetch/`); the S037 receipt (`xdph-installed-version.txt`, 1442 B, the installed package record read from `/var/lib/pacman/local/xdg-desktop-portal-hyprland-1.4.1-2/desc`) is a held-row receipt committed with the data (M41-6: held ids are not pinned). S290 (`input-capture-v1.xml`) is **not** cited by the entry and has no row. Each Gate quote is the quote on the entry line that names the id (clause g). The own-work row S289 is the saved journal (`journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`, 19130 B, 153 lines); the counter's own parser reads it as `journal sessions=2 adverts=78 interfaces=63 focus_grab=1`, which the entry carries once, verbatim, outside fences (clause h).
+Receipts above: the pre-wave receipts (nine files, `git ls-tree -r --name-only 60c3914 .ufo/waves/round-41/fetch/`; seven are cited by new ids) are committed at the freeze; the S037 receipt (`xdph-installed-version.txt`, 1442 B, the installed package record read from `/var/lib/pacman/local/xdg-desktop-portal-hyprland-1.4.1-2/desc`) is a held-row receipt committed with the data (M41-6: held ids are not pinned). S290 (`input-capture-v1.xml`) is **not** cited by the entry and has no row. Each Gate quote is the quote on the entry line that names the id (clause g). The own-work row S289 is the saved journal (`journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`, 19130 B, 153 lines); the counter's own parser reads it as `journal sessions=2 adverts=78 interfaces=63 focus_grab=1`, which the entry carries once, verbatim, outside fences (clause h).
+
+**Registry changes logged old→new (CORPUS.md rule 2).** S037 `used-by`: `corpus/knowledge/xdg-portal-routing-r12.md` → `corpus/knowledge/xdg-portal-routing-r12.md, corpus/knowledge/hyprland-focus-grab-r41.md` (re-opened byte-identical: the installed package record). In-round correction of two NEW rows before the round closed, found by `ExecReopenSources` F1, `RevEntryBar` D3 and `ConnClaimsVsBytes` 3/4: S283 `teaches` "four requests" → "six requests"; S286 `teaches`/`anchor` "which nine it binds" → "which ten branches it has (nine direct binds and foreign toplevel)" with `foreign_toplevel` added to the branch list (cells 5-7 of rows that no earlier round had closed; nothing in a row of a closed round was edited; M41-19).
 
 ## Assimilation ledger (theme: focus control surfaces; package `merge/mado/`, read-only)
 
 | candidate | scope (PROVINCE) | held | quality bar | verdict |
 |---|---|---|---|---|
-| `focus-grab-protocol-live-on-host-r14.md` | in (protocol bytes, host journal, client source) | the lane holds no focus-grab text at base (`git grep -lEi 'focus_grab\|focus-grab\|focus grab' ab2bfaa -- corpus PROVINCE.md SKILL.md tools` empty) | its S328–S332 rows are the package's ids with no lane receipt; re-grounded this round as C2 with lane ids S283–S290 | **admitted as the successor** (`ADMIT` above) |
+| `focus-grab-protocol-live-on-host-r14.md` | in (protocol bytes, host journal, client source) | the lane holds no focus-grab text at base (`git grep -lEi 'focus_grab\|focus-grab\|focus grab' ab2bfaa -- corpus PROVINCE.md SKILL.md tools` empty) | its S328–S332 rows are the package's ids with no lane receipt; re-grounded this round as C2 with lane ids S283–S289 | **admitted as the successor** (`ADMIT` above) |
 | `privileged-client-surface-r29.md` | in, narrowly | — | one source (a blog post), one truncated quote, no measurement, no host state | **refused** (`REFUSE` above) |
 | `focus-control-surfaces-r28.md` §3 | **out** — localized-documentation channel (`PROVINCE.md:75`: "documentation written in a localized channel — is outside the province") | its §1–§2 ground (issue #565, the protocol XML) is re-sourced by S287/S283 from the lane's own receipts | its third source is `amgsk.dev` (`/ja`-channel post); clause i refuses any cited row whose location carries `amgsk.dev` | **refused as written**; the unheld English-channel facts return in the successor |
 | the focus-grab r8–r15 series, `compositor-focus-manipulation-literature-r26.md`, `wayland-input-security-literature-r8.md` | in | partly held as literature (r26, r8) | none of their rows is re-grounded this round | not adopted; no row cites them (ScoutPackageFocus owns the residue) |
@@ -50,8 +52,7 @@ Id mapping is by document, never arithmetic (`assimilation/id-guard.md`, seat `E
 S282 (219 rows at base, `git show ab2bfaa:corpus/SOURCES.md | grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'`), and
 the new rows S283-S289 continue in the order `ScrRowsDraft` drafted them: focus-grab-v1.xml S283, Hyprland `FocusGrab.cpp` S284,
 quickshell `grab.cpp` S285, xdph `PortalManager.cpp` S286, issue #565 S287, hyprland-protocols README S288, the own-work
-journal S289, `input-capture-v1.xml` S290. `Hyprland-FocusGrab.hpp` is fetched but carries no id; it is corroboration, not a
-row.
+journal S289. `input-capture-v1.xml` and `Hyprland-FocusGrab.hpp` are fetched but carry no id (no row is written for a source no entry cites).
 
 ## Round-40 closure items (from `corpus/lessons/round-40-verifier-spotcheck.md` §6)
 
@@ -149,19 +150,131 @@ this seat's read. Captured-by: the wave context's trailer rule ("Every `Report:`
 `/home/vgpnk/Projects/shokunin/mado-shokunin`"). Fix: the trailer is resolved against the lane root and the file checked at
 closure. Not shown able to fail: no instrument asserts it; the round-40 defect was found by a human read of `w1-results.json`.
 
-### QUALITY.md criteria (owned by seat `ScrQualityCriteria`)
+**M41-9 - the v1 predicates were falsified by the w1 seats before any data commit; the claims
+re-registered to v2.** Class: a predicate falsified after seats have scored it (the M41-7
+disclosure pattern, realized). Evidence: the data-commit lesson's own re-registration paragraph —
+`corpus/lessons/round-41.md:21` ("the w1 seats falsified v1 (`CritC1Cheat` 8 of 12 cheats
+scored TARGET_MET; `ExecC1ExtraMutants` 13 of 42 mutants; `CritC2Cheat` 9 of 9 forgeries
+admitted; `ExecC2ExtraMutants` 29 of 45)"); the primary measurement
+`.ufo/waves/round-41/w1/CritC1Cheat.md:18` ("8 of 12 cheats scored TARGET_MET"); the ordering
+disclosure `.ufo/waves/round-41/registration-v2.md:3-11` ("the v1 predicates were scored by w1
+seats … so v2 was written after seats had seen v1 scores"). Captured-by: none — falsifying the
+predicates was the w1 seats' job, not a rule's; the M41-7 disclosure rule is what made the
+repair legal. Fix: landed — `registration-v2.md` re-registers the predicates before any data
+commit, binds the claims to v2, and the lesson reports both scores at the data tip
+(`registration-v2.md:5-11`). Shown able to fail: none — the failing runs are the cheat scores
+themselves (`.ufo/waves/round-41/w1/CritC1Cheat/score-ch1.txt`:
+`fixtures=24/24 … verdict=TARGET_MET`), not a control.
 
-No criterion is claimed here. The candidates 69+ drafted by that seat must each cite one M41 id above and name the control that
-shows the check can fail: M41-1 (redundant edit site / mutant equivalence, control `ctl-c1.txt` M09), M41-2 (kill margin, the
-ten 23/24 rows), M41-3 (untracked driver artifact, closure `git status`), M41-4 (tip receipt, `ExecPtrFixtures.md:45`), M41-5
-(registration versus dispatch, none yet), M41-6 (held-id receipt, `ctl-c2.txt` N03/N14), M41-7 (post-scoring predicate,
-disclosure only), M41-8 (seat path, none yet).
+**M41-10 - the live-stub payload was readable without running the program: the C1 live fixtures
+passed by reading the fixture, not executing it.** Class: counter-harness design — a "program"
+whose behaviour can be read instead of executed. Evidence: CH1
+`.ufo/waves/round-41/w1/CritC1Cheat.md:73-92` — `read_live` "reads the stub's own bytes,
+decodes the base64 journal out of the `printf '%s' … | base64 -d` line" (`:75-77`), and the
+probe measured `read_live_returned_payload=101 marker_created=0` (`:83`), i.e. the stub never
+ran; CH2 `.ufo/waves/round-41/w1/CritC1Cheat.md:105-121` — `prepare` writes the journal to
+`<fx>/journal.txt` even when the fixture is live (`:107`), and
+`P2 read_live_returned_cwd_file=1 from_program=0` (`:115`); reproduced independently by
+`.ufo/waves/round-41/w1/RevC1Counter.md:27` ("`live0` decode-cheat `rc=0 ok=1`"). Captured-by: none. Fix: landed in v2 — the live program is a compiled
+execute-only (0111) ELF built per fixture, no copy of the journal on disk, and it records `ran`;
+an unusable program must not have run (`registration-v2.md:20`). Shown able to fail:
+`.ufo/waves/round-41/receipts/ctl-c1-v2.txt:49` (K01-stub-bytes-read →
+`fixtures=33/39 … TARGET_MISSED`) and `:50` (K02-cwd-journal-replay →
+`fixtures=33/39 … TARGET_MISSED`).
 
-## considerthese
+**M41-11 - the b2 teeth clause was satisfiable without a test: path tests, self-fingerprints and
+renames killed all six sampled mutants.** Class: a teeth clause whose sample can be gamed.
+Evidence: CH6 `.ufo/waves/round-41/w1/CritC1Cheat.md:166-174` — `basename(dirname(argv[0])) != "tool"`
+prints `1/2 passed` and exits 1, scoring `killed=6/6`, while identical source minus those four
+lines scores `0/6 killed and MISSED` (`:173`); CH9 `.ufo/waves/round-41/w1/CritC1Cheat.md:182-196`
+— a rolling hash of the tool's own file fails any edit; CH10
+`.ufo/waves/round-41/w1/CritC1Cheat.md:212-230` — renaming `parse`/`report`/`classify` into
+`_run*`/`_check*` moves every sampled site out of the parser, yet all six are killed;
+`RevC1Counter` reproduced b2's vacuity with the counter's own `teeth()`
+(`.ufo/waves/round-41/w1/RevC1Counter.md:13-18`). Captured-by: none. Fix: landed in v2 — clause
+b3 (a tool with a trailing comment plus an `ast.unparse` and one assignment must still pass its
+selftest in full) and exact-name exclusion (`selftest`, `main`, `usage`, and functions inside
+`selftest`), with one of the six sites forced into the summary-emitting function and kill counts
+`k != n` (`registration-v2.md:21-22`). Shown able to fail:
+`.ufo/waves/round-41/receipts/ctl-c1-v2.txt:53` (K05-selftest-argv0-path →
+`fixtures=39/39` but `TARGET_MISSED`) and `:55` (K07-selftest-size-fingerprint →
+`fixtures=0/39 … TARGET_MISSED`).
 
-Seat `ScrConsiderthese` mines at most one still-unimplemented proposal of `considerthese/2026-10-25.md` (round 40 mined proposal
-2); the chosen proposal, its ground and the exact text to land go in `.ufo/waves/round-41/w1/ScrConsiderthese/proposal.md` and
-land here before the lesson is committed. No proposal is claimed by this skeleton.
+**M41-12 - five of six journal `-o` formats silently produce `NO_SESSIONS` on a non-empty
+journal.** Class: overloaded verdict — "empty journal" and "journal in an unparsed shape" are
+byte-identical observables. Evidence: `.ufo/waves/round-41/w1/ExecJournalFormat.md:23`
+(`short` → `3 / NO_SESSIONS`; only `short-iso` parses), `:40-44` (finding 1: "byte-for-byte
+the observable of a genuinely empty journal"), `:47` (the live leg has the same hole: a wrapper
+emitting `-o short` yields `NO_SESSIONS`/exit 3, not `SETUP journalctl_failed`); `journalctl
+--user -u … > f` without `-o` is byte-identical to `-o short` (`:44`) — the most natural capture
+is the failing one. Captured-by: none. Fix: landed in v2 — new `ignored=` field and verdict
+`UNRECOGNIZED_FORMAT` (exit 4), fixtures `unrec0`, `mixed0` (`registration-v2.md:29`). Shown
+able to fail: none — the new fixtures carry it; no control isolates the class yet.
+
+**M41-13 - `--journal-file` on a FIFO hangs forever, and `--live` output is buffered whole before
+the size cap.** Class: unbounded blocking input in the reference tool. Evidence:
+`.ufo/waves/round-41/w1/RevRefTool.md:18-19` (M1: "`open()` blocks, no timeout; verified
+`timeout 4` → 124", reference lines 194–196) and `.ufo/waves/round-41/w1/RevRefTool.md:20-21`
+(M2: "300 MB writer → 615 MB child peak RSS", reference lines 179–189). Captured-by: none (both
+sit in the declared residual space). Fix: landed in v2 — regular-file requirement
+(`O_NONBLOCK` open + `fstat`), incremental bounded read with a 30 s deadline; fixtures `fifo0`,
+`dir0`, `livehang0` (`registration-v2.md:30`). Shown able to fail: none — the new fixtures carry
+it.
+
+**M41-14 - the C2 gate admitted eight fabrications and 29 extra mutants: the v1 C2 predicate did
+not bind evidence to provenance.** Class: a coverage predicate that admits invented paperwork
+(fabricated receipts, an invented journal, absent package paths, unmapped locations). Evidence:
+`.ufo/waves/round-41/w1/CritC2Cheat.md:13` ("The frozen counter **admits all nine**"), `:27`
+(`FORGE_SUMMARY fixtures=9 admitted=9/9 genuine_proxy_clean=1`), and the F1–F7 table `:36-45`;
+`.ufo/waves/round-41/w1/RevC2Counter.md:18` (minimal forgery "passes at 9,220 committed bytes /
+9 files") and `:30-37` (H1–H4); `.ufo/waves/round-41/w1/ExecC2ExtraMutants.md:43`
+(`mutants=45 survivors=29/45`). Captured-by: none. Fix: landed in v2 — PINS (receipts of NEW
+ids are the pre-wave fetch bytes), mode 100644, window-wide header rules and ghost-id refusal,
+calendar-valid `recheck`, receipt-bound locations, held rows keep their used-by items, ≥3 new
+ids, quote exclusivity across cited receipts, one cited id per entry line, unfenced lesson,
+journal provenance floor (boot line, ascending distinct session starts), STAGED allowlist for
+ADMIT/REFUSE, REFUSE reason of ≥4 distinct words, localized markers over the whole row
+(`registration-v2.md:32`). Shown able to fail: `.ufo/waves/round-41/receipts/ctl-c2-v2.txt:14-19`
+— F1–F6 all `observed=admitted=0/1` (F1 `:14`, F2 `:15`, F3 `:16`, F4 `:17`, F5 `:18`, F6
+`:19`); control P admitted under both real and patched counters.
+
+**M41-15 - the C1 control suite itself is nonce-flaky: a correct counter fails its own suite
+~1-in-10 runs.** Class: a control suite whose verdicts depend on the nonce draw. Evidence:
+`.ufo/waves/round-41/w1/MutC1CounterGates.md:35` ("the control suite itself is nonce-flaky
+(~2/22 runs)") and `:37`, `:41-42` (M27/M39 each flipped to MET exactly once across 22 full-suite
+draws (`:37`); "a *correct* counter fails its own suite as `correct=46/47` roughly 1-in-10 runs
+overall, and the same lottery can" (`:41`) — `fake a "kill" in mutation testing.` (`:42`)). Captured-by: none. Fix: none —
+declared limit: treat a single full-suite draw as noisy; the round's response was two retries
+plus 40 targeted pristine draws (`.ufo/waves/round-41/w1/MutC1CounterGates/logs/`). Shown able
+to fail: the observed flips are recorded in `.ufo/waves/round-41/w1/MutC1CounterGates/matrix.md`
+and `logs/`; no control isolates the lottery.
+
+**M41-16 - a kernel restart during w1 dropped every seat result from `w1-results.json`; the seat
+reports survived on disk.** Class: driver/orchestrator persistence gap — the wave's result ledger
+existed only in a session that died. Evidence: `.ufo/waves/round-41/w1-results.json:7-12` —
+every one of the 34 records carries `"output": null` with the note "orchestrator kernel restarted
+mid-wave; seat output was delivered to the orchestrator session but not retained — read the seat
+report file in the wave dir" (first at `:11`); the dispatcher's own instruction to the report-
+draft seat admits it (`.ufo/waves/round-41/make-w2-spec.py:80`: "the orchestrator's w1-results.json
+carries no seat outputs because of a kernel restart, reports are on disk"); the 34 seat reports
+exist as files (`.ufo/waves/round-41/w1/*.md`). Captured-by: none. Fix: persist each seat's
+report path and exit into `w1-results.json` at seat completion (write-through), so the wave
+ledger does not depend on orchestrator-session memory. Shown able to fail: none — no instrument
+yet compares `w1-results.json` entries to the seat-report set.
+
+**M41-17 - M41-5's shape-line defect is resolved by `registration-v2.md`'s corrected Shape
+section.** Class: freeze-vs-dispatch mismatch repaired before data (closure of M41-5). Evidence:
+`.ufo/waves/round-41/registration-v2.md:13-14` ("**Shape (corrects `registration.md` line 4).**
+Two v1 waves: `w1` of 34 seats … and `w2` of 34 seats … round total 68"); the data-commit lesson
+names the correction alongside the falsification (`corpus/lessons/round-41.md:21`); the M41-5
+row itself stands at `corpus/lessons/round-41.md:117-122`. Captured-by: none (as M41-5). Fix:
+landed — the v2 registration's rewritten Shape line is the repair M41-5 asked for. Shown able to
+fail: none — no control compares a registration's seat count to the spec's item count (unchanged
+from M41-5).
+
+**M41-18 - the reflection's relayed entry count is wrong; first-hand re-derivation shows nine, not eight.** Class: number-drift (relayed). Evidence: `considerthese/2026-10-25.md:5` states eight knowledge entries for rounds 32-37; `git ls-tree -r --name-only 57a772b corpus/knowledge | wc -l` prints `43` and `52` at `f6e3247`, and `git diff -M --name-status 57a772b..f6e3247 -- corpus/knowledge | grep -c '^A'` prints `9` (zero deleted); receipt `.ufo/waves/round-41/w1/ScrConsiderthese/receipts.txt`, re-verified by `ScrConsiderFinal` (`w2/ScrConsiderFinal/final.md`). Captured-by: none before this round; the reflection is not a lane file and is not edited. Fix: QUALITY 76; the `## considerthese
+
+`considerthese/2026-10-25.md` proposal 5 ("Verify one fact first-hand per day, read-only", restating `2026-10-24.md` proposal 5, mined in round 33 as prose) is mined as QUALITY 76. The reflection's mined sentence re-derives: 68 commits `57a772b..f6e3247`; SOURCES `185` -> `207` rows (22 added); knowledge files `43` -> `52`; one tool added (`tools/mado-eventq.py`). One number fails - "eight entries" is nine (`git diff -M --name-status 57a772b..f6e3247 -- corpus/knowledge | grep -c '^A'` prints `9`, `'^D'` prints `0`) - so this note repeats the re-derived nine and marks the reflection's eight `relayed:` and corrected. The reflection is a pointer, not evidence. Receipt: `.ufo/waves/round-41/w1/ScrConsiderthese/receipts.txt`; re-verification: `.ufo/waves/round-41/w2/ScrConsiderFinal/final.md`.
 
 ## Census and measurements at the data commit
 
@@ -170,7 +283,7 @@ To be filled at the data commit (commands, in the order the round-40 lesson stat
 - Census before (`receipts/census-before.txt`, committed at the freeze): `mado ok`, W04 ×7 (S030, S042, S045, S097, S119, S120,
   S121) + W01 S277, exit 0. Census after: `receipts/census-after.txt`, exit 0 required, warning set unchanged or every new line
   named.
-- Registry rows 219 → 219 + n, n = the cited new ids (at most S283–S290); tier A additions counted from the registry.
+- Registry rows 219 → 226 (S283–S289).
 - Knowledge entries 58 at base (`git ls-tree -r --name-only ab2bfaa corpus/knowledge/ | grep -c '\.md$'`) → 59 with the C2 entry;
   every entry linked from `corpus/README.md` (clause f requires exactly one column-zero index row for the C2 entry).
 - `PRED-C1-r41-v1` at the data commit: `fixtures=24/24 verdict=TARGET_MET` with the nonce printed; `PRED-C2-r41-v1`:

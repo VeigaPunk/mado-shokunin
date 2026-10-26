@@ -22,6 +22,15 @@ Output (stdout)
     MADO_GLOBALS: sessions= latest_pid= interfaces= classes= expected_missing= ignored= verdict=
 Exit: 0 OK, 1 MISSING_EXPECTED, 3 NO_SESSIONS, 4 UNRECOGNIZED_FORMAT, 2 usage/input
 (`MADO_GLOBALS: SETUP <reason>` on stdout), 5 live journal failure.
+
+Usage
+    mado-globals.py --journal-file PATH [--expect NAME]... [--diff]
+    mado-globals.py --live [--journalctl PROGRAM] [--expect NAME]... [--diff]
+    mado-globals.py --selftest
+The verdict line describes the LATEST session only; a mixed file can print
+verdict=OK with ignored>0 - read `ignored=`. `--help` is not a flag: it prints
+`SETUP usage`. Capture a file with
+`journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`.
 """
 import argparse
 import os

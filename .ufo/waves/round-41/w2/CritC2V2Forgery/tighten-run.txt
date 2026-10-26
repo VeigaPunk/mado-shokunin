@@ -1,0 +1,33 @@
+== T1: source: line must name its receipt basename or location component
+T1 real-DATA-entry                        cited=8 failing=0 []
+T1 control-P-fixture                      cited=8 failing=8 [('S050', 'held parser', 's050.txt', 'config.cpp'), ('S283', 'protocol xml', 'focus-grab-v1.xml', 'hyprland-focus-grab-v1.xml'), ('S284', 'compositor', 'hyprland-focusgrab.cpp', 'focusgrab.cpp'), ('S285', 'client', 'quickshell-grab.cpp', 'grab.cpp')]
+T1 FC-swap-ids-naive                      cited=8 failing=8 [('S050', 'held parser', 's050.txt', 'config.cpp'), ('S283', 'protocol xml', 'hyprland-focusgrab.cpp', 'focusgrab.cpp'), ('S284', 'compositor', 'focus-grab-v1.xml', 'hyprland-focus-grab-v1.xml'), ('S285', 'client', 'quickshell-grab.cpp', 'grab.cpp')]
+T1 FC2-swap-ids-consistent                cited=8 failing=8 [('S050', 'held parser', 's050.txt', 'config.cpp'), ('S284', 'protocol xml', 'focus-grab-v1.xml', 'hyprland-focus-grab-v1.xml'), ('S283', 'compositor', 'hyprland-focusgrab.cpp', 'focusgrab.cpp'), ('S285', 'client', 'quickshell-grab.cpp', 'grab.cpp')]
+T1 verdict: catches naive swap=yes; harms real entry=no; harms control fixture=YES
+
+== T3: no cited receipt's bytes carry BAD_LOC markers or CJK text
+T3 real-DATA-receipts                     failing=1 [('S287', ['/ja'], 0)]
+T3 control-P-fixture                      failing=1 [('S287', ['/ja'], 0)]
+T3 FF-localized-rehost-held               failing=2 [('S050', ['日本'], 108), ('S287', ['/ja'], 0)]
+T3 verdict: harms real receipts=YES
+
+== T4: pin the HELD id's receipt too (one PINS entry, no clause change)
+T4 P-genuine                      rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+T4 FF-localized-rehost-held       rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+T4 FG-fabricated-held-receipt     rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+T4 real-DATA-entry(held-pinned) rc=0 admitted=1/1 verdict=TARGET_MET rev=07f2641696b5ac73de1404ea737a9f27e9819aa1
+
+== T5: every prose paragraph must cite an id (priced on the real entry)
+T5 real-DATA-entry paragraphs without an id: 7
+   harm: **UNK** How `CSeatGrab` routes an event that falls outside the set - t
+   harm: **INF** Only the second session is a whole advertisement: the first is
+   harm: **UNK** Which process on this host binds `hyprland_focus_grab_manager_
+   harm: **UNK** Whether one Qt transaction is one frame in practice, and wheth
+   harm: **UNK** Whether 0.56.2 still exhibits the momentary steal of #565. The
+   harm: **INF** The lane holds no focus-rule knowledge either. `grep -rli 'foc
+   harm: - No live grab was exercised: no client was run and no input was injec
+
+== T-ghost: widen the ghost token to [Ss]\d{3,}\w*
+T-ghost real-DATA-entry          extra-tokens=[]
+T-ghost control-P-fixture        extra-tokens=[]
+T-ghost FG2-ghost-token-S999a    extra-tokens=['S999a']

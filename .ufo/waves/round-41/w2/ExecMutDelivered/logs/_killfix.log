@@ -1,0 +1,54 @@
+M100-ver-zero-rejected                 ver0           ref_matches_model=1 mutant_diverges=1 rc=(0,0,0)
+M101-ts-minus-only                     plus-offset    ref_matches_model=1 mutant_diverges=1 rc=(0,0,4)
+M102-year-locked-2026                  year-2027      ref_matches_model=1 mutant_diverges=1 rc=(0,0,4)
+M103-host-spaces-allowed               host-space     ref_matches_model=1 mutant_diverges=1 rc=(4,4,0)
+M104-level-warning-accepted            warning-level  ref_matches_model=1 mutant_diverges=1 rc=(4,4,0)
+M105-boot-33hex                        boot-33hex     ref_matches_model=1 mutant_diverges=1 rc=(0,0,0)
+M106-diff-added-empty-X                added-empty    ref_matches_model=1 mutant_diverges=1 rc=(0,0,0)
+M116-ts-fractional-seconds             fractional-secs ref_matches_model=1 mutant_diverges=1 rc=(4,4,0)
+M117-name-dot-allowed                  dot-name       ref_matches_model=1 mutant_diverges=1 rc=(4,4,0)
+M135-month-validator                   month-13       ref_matches_model=1 mutant_diverges=1 rc=(0,0,4)
+M145-host-length-cap128                host-129       ref_matches_model=1 mutant_diverges=1 rc=(0,0,4)
+M146-pid-length-cap7                   pid-8digits    ref_matches_model=1 mutant_diverges=1 rc=(0,0,4)
+M111-live-too-large-ge                 live-exact-8MiB ref_rc=3 mutant_rc=5 (want ref=3 no-sessions, mutant=5 too_large)
+M112-read-chunk-2MiB                   corpus_equal=1 selftest_identical=1 (n=12)
+   proof: os.read(fd, n) returns min(n, available); loop/EOF/aggregation independent of n; identical bytes for every input.
+M114-selftest-return-flat              corpus_equal=1 selftest_identical=1 (n=12)
+   proof: return 0 when ok==n; the only difference is the return code when an internal selftest check fails — unreachable while the product code is what it is; all external inputs see identical behaviour. (The counter's clause b2 still kills flipped product comparisons: it observes k != n, not the final return code.)
+M125-usage-exit-3                      corpus_equal=1 selftest_identical=1 (n=12)
+   proof: edit lands in the `except SystemExit` branch, which is unreachable (ap.error overridden, add_help=False → argparse never calls sys.exit); all reachable code paths still raise Setup('usage', 2).
+M131-stderr-pipe                       corpus_equal=1 selftest_identical=1 (n=12)
+   proof: stderr=PIPE vs DEVNULL changes nothing observable: the journalctl stub writes nothing to stderr; the parent never reads the pipe; child exit status identical. Divergence would require a stub that fills stderr before EOF on stdout (not in any fixture).
+M132-expect-dups-not-deduped           corpus_equal=1 selftest_identical=1 (n=12)
+   proof: report() re-applies set() to `expects` (`missing = sorted(set(e for e in expects ...))`), so removal of the dedup in run() leaves every output byte unchanged.
+M137-selftest-timeout-reset-drop       corpus_equal=1 selftest_identical=1 (n=12)
+   proof: selftest sets LIVE_TIMEOUT=1 for the hang probe and (originally) resets it to 30; the reset happens after the last use of LIVE_TIMEOUT in the selftest, so dropping it changes no observable behaviour.
+M143-selftest-ts-literal-change        corpus_equal=1 selftest_identical=1 (n=12)
+   proof: the selftest literal ts is only consumed by the ADVERT regex, which accepts both + and − zone offsets; every parse() result is unchanged.
+M138-selftest-drop-ver10-probe         corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M139-selftest-drop-128-probe           corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M140-selftest-drop-names-probe         corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M141-selftest-drop-adverts-probe       corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M142-selftest-drop-bootsplit-probe     corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M155-selftest-drop-upperclass-probe    corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M156-selftest-drop-sandbox-probe       corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M157-selftest-drop-classof-probe       corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M158-selftest-drop-usage-probes        corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M159-selftest-drop-gw-probe            corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M161-selftest-drop-ignored-probe       corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M162-selftest-drop-verint-probe        corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+M163-selftest-drop-diffnone-probe      corpus_equal=1 selftest_identical=0 (n=12)
+   proof: probe deletion; product code untouched.
+KILLFIX fails=0

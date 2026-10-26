@@ -154,6 +154,7 @@ deliberately and name it in the report.
 | Change ritual / grammar / evaluation order | docs-inference | omarchy skill / wiki text, era cross-checked | `[INF-docs]`; never host state |
 | Who owns notifications / DND state | consumer-side probe | `busctl --user status org.freedesktop.Notifications`; `makoctl mode` | `[OBS]` |
 | Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; indicator scripts probe process/mako mode (`RUN`, e.g. `idle.sh:3`) | `[OBS]` (MADO-R3-1 §1/§2.3); module text without an IPC verb → `[UNK]` |
+| Which Wayland globals the compositor advertises to its portal; is a named global among them | portal journal, not a socket — the portal's own registry view (`xdph-PortalManager.cpp:85` `CPortalManager::onGlobal`, log at `:88`) | `tools/mado-globals.py --live` — one program only, `journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`, exact argv, stdin `/dev/null`, env limited to `PATH`/`XDG_RUNTIME_DIR`/`DBUS_SESSION_BUS_ADDRESS`/`LC_ALL`, 30 s timeout, 8 MiB cap — or `--journal-file P`; exit map 0/1/2/3/4/5 in § "Advertised Wayland globals" | `[OBS]` for the advertised set as the portal logged it; what a client got is outside this read |
 
 ### Divergence vocabulary and severity taxonomy
 
@@ -219,6 +220,26 @@ mado runs only the read leg (`configerrors`).
 | `busctl --user status org.freedesktop.Notifications` | who owns notifications | Mako PID 1706 (MADO-2 §4) |
 | reading `~/.local/share/omarchy/**` | defaults + command sources | reading is safe and encouraged (omarchy skill:41, :58-62) |
 | `grim -t ppm -` (screenshot read to stdout) | visual state without a file | read OK, 14,860,817 B this pass (stdout, nothing persisted); grim/slurp/hyprpicker all on PATH |
+| `python3 tools/mado-globals.py --journal-file <journal>` / `--live` | which Wayland globals the compositor advertised to its portal, as the portal's journal logged them: per-session `MADO_GLOBALS_SESSION:` lines, one sorted `MADO_GLOBAL: name= ver= count= class=` line per latest-session global, the `MADO_GLOBALS:` summary (interfaces, classes, `ignored=`, verdict); `--diff` drift between the last two sessions; `--expect NAME` presence | round-41, journal sha256 `bf8fa91a…`: 2 sessions (pid 1918 boot `-`, pid 1952 boot `7ab69ee4…`), 63 interfaces / 63 adverts in the latest; `MADO_GLOBAL: name=hyprland_focus_grab_manager_v1 ver=1 count=1 class=focus-grab`; final `MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=- ignored=0 verdict=OK` |
+
+### Advertised Wayland globals
+
+`python3 tools/mado-globals.py --journal-file <journal>` parses the portal unit's `short-iso` journal (`xdph-PortalManager.cpp:85-88` logs one line per advertised global) into sessions; `--live` runs
+exactly one program, `journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso` (stdin `/dev/null`, env `PATH`/`XDG_RUNTIME_DIR`/`DBUS_SESSION_BUS_ADDRESS`/`LC_ALL`, 30 s timeout,
+8 MiB stdout cap; capture the journal by redirecting that same command to a file). Output: `MADO_GLOBALS_SESSION:` per session; one `MADO_GLOBAL: name= ver= count= class=` per latest-session global
+(sorted by name); `MADO_GLOBALS_DIFF:` under `--diff`; a `MADO_GLOBALS:` summary with `ignored=` and verdict.
+
+Exit map: 0 `OK` · 1 `MISSING_EXPECTED` (`--expect NAME` absent) · 2 `SETUP` (usage/unreadable/too_large/bad_expect) · 3 `NO_SESSIONS` · 4 `UNRECOGNIZED_FORMAT` · 5 live-journal failure
+(journalctl_unusable/journalctl_failed/journalctl_too_large). UNRECOGNIZED_FORMAT = every `Got interface:`-bearing line failed the grammar (`sessions=0`, `ignored>0`) — another `journalctl -o` format, level
+or spacing — never a silent NO_SESSIONS; partially foreign journals pass with `ignored=N`.
+
+Class is a fixed table over names: focus-grab, input-synthesis, input-capture, session-lock, idle, clipboard, capture, toplevel-control, output-control, sandbox, else `other`. Advertising a global is not
+proving a capability: the census reports `class=` only — no socket, no client, nothing exercised. Real runs on the round-41 journal (second sample: same run with `--expect zwlr_screencopy_manager_v2`, rc 1):
+
+    $ python3 tools/mado-globals.py --journal-file .ufo/waves/round-41/fetch/xdph-journal.txt
+    MADO_GLOBAL: name=hyprland_focus_grab_manager_v1 ver=1 count=1 class=focus-grab
+    MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=- ignored=0 verdict=OK
+    MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=zwlr_screencopy_manager_v2 ignored=0 verdict=MISSING_EXPECTED
 
 ### Mutating commands — operator only, mado never runs
 

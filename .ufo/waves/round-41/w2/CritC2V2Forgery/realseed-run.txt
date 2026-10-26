@@ -1,0 +1,33 @@
+P-real-seed rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RA-real-xml-quote-as-compositor-behaviour  ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RB-real-true-quote-false-inference         ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RC-real-swap-ids-naive                     ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RC2-real-swap-ids-consistent               ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RD-real-admit-wrong-staged-file            ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RE-real-ninety-percent-prose               ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RF-real-localized-rehost-held-S037         ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RG-real-fabricated-held-receipt-S037       ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RH-real-pinned-journal-unsupported-claim   ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+FORGERY RG2-real-ghost-token-S999a                 ADMITTED  rc=0 observed=admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+NEGATIVE RN1-journal-census-off-by-one              rejected  rc=1 observed=admitted=0/1 verdict=TARGET_MISSED clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1
+NEGATIVE RN2-cited-id-without-row                   rejected  rc=1 observed=admitted=0/1 verdict=TARGET_MISSED clauses=a:1 b:0 c:0 d:0 e:1 f:1 g:0 h:0 i:1
+
+== T1 (source line names receipt/location component) on the real seed
+T1 P-real-seed                            cited=8 failing=0 []
+T1 RC-real-swap-ids-naive                 cited=8 failing=2 [('S283', 'hyprwm/hyprland-protocols focus-grab-v1.', 'hyprland-focusgrab.cpp', 'focusgrab.cpp'), ('S284', 'hyprwm/hyprland src/protocols/focusgrab.', 'focus-grab-v1.xml', 'hyprland-focus-grab-v1.xml')]
+T1 RC2-real-swap-ids-consistent           cited=8 failing=0 []
+
+== T3' (CJK-only receipt scan) on the real seed
+T3' P-real-seed                                cjk-failing=[]
+T3' RF-real-localized-rehost-held-S037         cjk-failing=[('S037', 134)]
+T3' RG-real-fabricated-held-receipt-S037       cjk-failing=[]
+
+== T2 (every ADMIT path must occur in the entry's assimilated-from line)
+T2 P-real-seed                                admits=1 bound=True
+T2 RD-real-admit-wrong-staged-file            admits=1 bound=False
+T2 control-P-fixture                          admits=1 bound=False
+
+== T4 (pin the held receipt too) on the real seed
+T4 P-real-seed                                rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+T4 RF-real-localized-rehost-held-S037         rc=1 admitted=0/1 verdict=TARGET_MISSED clauses=a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1
+T4 RG-real-fabricated-held-receipt-S037       rc=1 admitted=0/1 verdict=TARGET_MISSED clauses=a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1

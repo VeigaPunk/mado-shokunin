@@ -1,0 +1,25 @@
+== R1: b3 variant that rewrites comparisons into dunder calls
+reference  as-is rc=0 63/63 | after R1 transform rc=0 63/63 -> survives
+c13        as-is rc=0 60/60 | after R1 transform rc=1 0/60 -> CAUGHT
+c14        as-is rc=0 64/64 | after R1 transform rc=0 64/64 -> survives
+== R2: clause g flags Subscript/Attribute on __builtins__
+reference                    current g=1 with R2 g=1
+c13-ast-fingerprint.py       current g=1 with R2 g=0
+c14-exec-model.py            current g=1 with R2 g=0
+c15-home-backdoor.py         current g=1 with R2 g=1
+c16-nproc-detect.py          current g=1 with R2 g=1
+c17-fork-selftest.py         current g=1 with R2 g=1
+c18-filemode-spawn.py        current g=1 with R2 g=1
+c19-sandbox-scan.py          current g=1 with R2 g=1
+c20-mark-forge.py            current g=1 with R2 g=1
+c21-threads.py               current g=1 with R2 g=0
+c22-stub-read.py             current g=1 with R2 g=1
+c23-selftest-echo.py         current g=1 with R2 g=1
+== R3: same tool, same journal, judge env vs normal env
+reference                judge_rc=0 host_rc=0 identical=1
+c15-home-backdoor.py     judge_rc=0 host_rc=0 identical=0
+   judge_last='MADO_GLOBALS: sessions=1 latest_pid=4242 interfaces=2 classes=focus-grab:1,other:1 expected_missing=- ignored='
+   host_last ='MADO_GLOBALS: sessions=1 latest_pid=4242 interfaces=1 classes=focus-grab:1 expected_missing=- ignored=0 verdic'
+c16-nproc-detect.py      judge_rc=0 host_rc=0 identical=0
+   judge_last='MADO_GLOBALS: sessions=1 latest_pid=4242 interfaces=2 classes=focus-grab:1,other:1 expected_missing=- ignored='
+   host_last ='MADO_GLOBALS: sessions=1 latest_pid=4242 interfaces=1 classes=focus-grab:1 expected_missing=- ignored=0 verdic'

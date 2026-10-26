@@ -1,0 +1,11 @@
+# ScoutRefuted — round 41 w2 report
+
+Full findings: `.ufo/waves/round-41/w2/ScoutRefuted/scout.md` (read-only seat; no tracked file edited; no tool installed).
+
+- **r29 / S244 refusal: TRUE, and understated.** Post re-fetched (6288 B): quote 2 is truncated at "which" (line 96); the post mentions Hyprland 0 times; the staged row/entry invert its status quo (post: "any non-sandboxed processes can access" privileged interfaces; `WAYLAND_SOCKET` handoff is the author's unmerged labwc branch, children not covered, "mere security theater" undecided). Nothing admissible.
+- **r28 §3 / S230 refusal: TRUE by `PROVINCE.md:75`**; location and both quotes verify on the re-fetched page (22299 B). The fact (`no_focus`, `no_initial_focus`, `no_follow_mouse`, `stay_focused`) is in held English row S165 (lines 78/157/158/176, 16200 B) and in `keybind-rule-semantics.md:189,210,225,229-232`.
+- **DATA defects in the admitted entry (`hyprland-focus-grab-r41.md`@07f2641):** D1 §5 "fixed in b09f157" is the Aug-26 *fullscreen* follow-up, after the issue was closed Aug 25 (not the silent-focus fix); D2 §2 `refocusKeyboard` omits its early return (`Hyprland-FocusGrab.cpp:96-97`) and "first committed" iterates an unordered_map — the operative pick is `CSeatManager::refocusGrab` (`SeatManager.cpp`@efb5099:582-611) called from `setGrab` before `refocusKeyboard`; D3 §5 "lane holds no focus-rule knowledge" is false (keybind-rule-semantics.md).
+- **Private-receipt citers (focus theme): 4** — r8 S275, r9 S293, r14 S328, r15 S338 (`lanes/mado/roundN/fetch/...`, in shokuknow not the lane). S328 not reproducible today (1 advert, journal starts 2026-10-25); S338 reproduces today (only `/usr/bin/Hyprland`; 3 of 8 swept dirs absent).
+- **Admit-now check:** nothing refused/unadopted should have been admitted; r10 is superseded, r11 true at efb5099, r12 incomplete (`InputManager.cpp:596,935-939` end the grab on outside button press; motion pins pointer).
+- **Next-round candidates:** (1) SeatManager.cpp/.hpp + InputManager.cpp @efb5099 (r11 + corrected r12; closes entry §2 UNK); (2) r13 compositor half only; (3) r15 as own-work row; (4) r16 flags (quotes verified verbatim, separate claim); (5) literature r26/r8; (6) English rule-keyword entry on S165; ids must restart at S290+ (staged S218 collides).
+- No PREDICATE defect found by this seat. Commands: see scout.md §7.

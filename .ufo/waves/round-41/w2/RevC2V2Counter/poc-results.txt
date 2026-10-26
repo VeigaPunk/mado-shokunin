@@ -1,0 +1,22 @@
+=== PART 1: Control runner `patched_counter()` shadow bug & W16 HTML cross-block survivor ===
+control=W16-quote-across-html-blocks     broken_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:1 i:1) | fixed_patched=(0, admitted=1/1 verdict=TARGET_MET, a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1)
+control=J02-single-session               broken_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:0 i:1) | fixed_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1)
+control=J11-other-level-adverts          broken_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:0 i:1) | fixed_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1)
+control=J16-no-boot-line                 broken_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:0 i:1) | fixed_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1)
+control=J17-sessions-replayed            broken_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:0 e:1 f:1 g:0 h:0 i:1) | fixed_patched=(1, admitted=0/1 verdict=TARGET_MISSED, a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:0 i:1)
+
+=== PART 2: PoC bypasses on the FROZEN REAL counter (c2-r41-focus-entry-v2.py) ===
+poc=POC01-real-html-quote-across-blocks        scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC02-pins-reuse-unused-xml-hpp            scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC03-pins-full-id-permutation             scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC04-pins-swap-docs-and-ownwork           scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC05-held-id-overwrites-pinned-file       scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC06-loc-1char-dot-substring              scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC07-loc-query-dup-and-superstring        scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC08-staged-prefix-selfrefuse-punct       scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC09-badloc-false-positive-english-row    scorer=real          rc=1 admitted=0/1 verdict=TARGET_MISSED clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:0
+poc=POC10-badloc-bypass-tld-percent-encode     scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC11-header-indented-outside-and-trailer  scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC12-gate-outside-section-and-uncited     scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC13-second-ownwork-held-row              scorer=real          rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1
+poc=POC14-journal-provenance-floor-bypass      scorer=fixed-patched rc=0 admitted=1/1 verdict=TARGET_MET clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1

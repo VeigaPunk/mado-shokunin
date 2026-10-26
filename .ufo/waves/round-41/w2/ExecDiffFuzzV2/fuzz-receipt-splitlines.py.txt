@@ -1,0 +1,29 @@
+fuzz v2: tool=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-41/w2/ExecDiffFuzzV2/variants/splitlines.py nonce=difffuzzr41w2 data=07f2641696b5ac73de1404ea737a9f27e9819aa1
+fuzz: mutants=81 disagreements=2
+fuzz: classes={"rc:4->1": 1, "stdout-line:b'MADO_GLOBALS_SESSION: n=1 boot=- pid=55 '|b'MADO_GLOBALS_SESSION: n=1 boot=- pid=191'": 1}
+fuzz: minimised=2
+structural fifo ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural symlink-to-fifo ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural directory ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural symlink-to-dir ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural symlink-to-file ok want_rc=0 rc=0 want='' got='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adver'
+structural dangling-symlink ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural missing ok want_rc=2 rc=2 want='MADO_GLOBALS: SETUP unreadable\n' got='MADO_GLOBALS: SETUP unreadable\n'
+structural empty-file ok want_rc=3 rc=3 want='' got='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- ignored=0 verdict=NO_SESSIONS\n'
+structural size-exact-max-with-nl ok want_rc=3 rc=3 got='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- ignored=0 verdict=NO_SESSIONS\n'
+structural size-over-by-1 ok want_rc=2 rc=2 got='MADO_GLOBALS: SETUP too_large\n'
+structural growing-file-over-cap ok want_rc=2 rc=2 got='MADO_GLOBALS: SETUP too_large\n'
+structural stalling-file returned rc=3 got='MADO_GLOBALS: sessions=0 latest_pid=- interfaces=0 classes=- expected_missing=- ignored=0 verdict=NO_SESSIONS\n'
+structural file-mode-no-spawn ok rc=0 spawned=False
+cli both flags ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli neither flag ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli journalctl without live ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli abbrev flag ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli unknown flag ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli expect space ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP bad_expect\n' got='MADO_GLOBALS: SETUP bad_expect\n'
+cli expect empty ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP bad_expect\n' got='MADO_GLOBALS: SETUP bad_expect\n'
+cli expect 129 ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP bad_expect\n' got='MADO_GLOBALS: SETUP bad_expect\n'
+cli expect non-ascii ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP bad_expect\n' got='MADO_GLOBALS: SETUP bad_expect\n'
+cli expect dash ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP bad_expect\n' got='MADO_GLOBALS: SETUP bad_expect\n'
+cli diff with value ok want_rc=2 rc=2 want=b'MADO_GLOBALS: SETUP usage\n' got='MADO_GLOBALS: SETUP usage\n'
+cli expect 128 ok ok want_rc=1 rc=1 want=b'MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adverts=1\nMADO_GLOBAL: name=wl_seat ver=1 count=1 class=other\nMADO_GLOBALS: sessions=1 latest_pid=1 interfaces=1 classes=other:1 expected_missing=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ignored=0 verdict=MISSING_EXPECTED\n' got='MADO_GLOBALS_SESSION: n=1 boot=- pid=1 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=1 adver'
