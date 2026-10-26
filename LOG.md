@@ -2463,3 +2463,13 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Data: `tools/mado-options.py --live`, entries `hyprctl-getoption-native-forms-r40.md` and `host-bar-producer-census-r40.md`, rows S278-S282, lesson `corpus/lessons/round-40.md`, QUALITY 65-68.
 - Host finding: gradient angle inheritance (`ffe68e0d 45deg`); a fifth native form `vec2`; hostile config key `x/--batch` reaches the compositor's batch path unless allowlisted.
 - Errata: round-39 lesson's S224 "fabrication class" label is `unverifiable` (rotated volatile value).
+
+
+## Round 41 - mado-globals and the focus-grab entry (2026-10-25, attempt 1)
+
+- Freeze `60c3914` (v1 registration, counters, controls, source receipts) -> wave `w1` (34 seats) falsified the v1 predicates before any data (C1: 8 of 12 cheats TARGET_MET - live-stub bytes readable without running it, a plaintext journal copy on disk, b2 path/fingerprint escapes, clause-g `getattr`/kwargs, a child interpreter, `\w` names; 13 of 42 extra mutants survived; a FIFO journal hung; C2: 9 of 9 forgeries admitted, 29 of 45 mutants survived) -> v2 predicates, 98 + 67 controls, reference and receipts frozen at `294c667` before data.
+- Data `07f2641`: `tools/mado-globals.py`, entry `corpus/knowledge/hyprland-focus-grab-r41.md`, rows S283-S289 (+ S037 used-by), README row, lesson, fetch receipt `xdph-installed-version.txt`. Measured: C1 v2 39/39, C2 v2 1/1 (v1: C1 6/24, C2 1/1).
+- Wave `w2` (34 seats, falsify) attacked the data and the v2 predicates: data defects fixed in `6fd2234` (request count six not five/four, README row missing its Sources cell, S286 ten branches, a 63-global session reported as whole, the first session belongs to the previous boot, 20 overstated sentences, a quickshell `add_surface` deferral); predicate defects reported open (SCORECARD Round 41).
+- Assimilation (focus theme, `merge/mado/`): id guard reg 219 / staged 147 / collisions 27, proved on an indented row; one admit and two refusals, outside spot-check agreed on all three (`w2/RevAssimGate`); considerthese 2026-10-25 proposal 5 -> QUALITY 76 (the reflection's "eight entries" is nine).
+- Records: QUALITY 69-76, SKILL.md probe/decision rows and subsection 'Advertised Wayland globals', PROVINCE.md tool row, lesson M41-1..20.
+- Wave facts: the orchestrator's kernel restart dropped the w1 seat outputs from `w1-results.json` (reports are on disk); `ConnSiblingOverlap` left no report.

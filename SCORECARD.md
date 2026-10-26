@@ -2491,3 +2491,37 @@ Registration `.ufo/waves/round-40/registration.md` (freeze `5e7e885`) re-registe
 1. Take the remaining package themes under PROVINCE (`ScoutMergeRest`); 2. an independent non-author re-run of both v2 counters with fresh nonces.
 
 Axis table re-derived at `3c80537a54b4fd3b534f5cc3496a4bdc37c11371` plus the round-40 axis-line commit (two new indexed entries): navigation 58/58; calibration resolved-active 55/55; operability selftest 12/12.
+
+
+## Round 41 - mado-globals and the focus-grab entry (2026-10-25, attempt 1)
+
+Registration `.ufo/waves/round-41/registration.md` (v1 freeze `60c3914154333180450d5da27ba222d5763cc56a`, base `ab2bfaab661c846d1de9d58c01651cd156a13949`) re-registered as `registration-v2.md` (v2 freeze `294c667901a8c7b7165ba849d03cba9a24c14fa4`, before any data): the 34-seat wave `w1` falsified the v1 predicates (C1: 8 of 12 cheats scored TARGET_MET and 13 of 42 extra mutants survived; C2: 9 of 9 forgeries admitted and 29 of 45 extra mutants survived). Lowest-axis rule: every published axis ties at its maximum at base (`receipts/axis-base.txt`), so each is a lowest axis. Round shape: two v1 waves, `w1` (34 seats: executor 14, scribe 8, scout 3, connector 2, reviewer 3, critic 2, mutation-tester 2; one seat, `ConnSiblingOverlap`, left no report) and `w2` (34 seats, falsify, after the data commit), no residual call, total 68. The §3 planner seat is held by the L1.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-globals.py` | v2 `fixtures=0/39 tool=absent verdict=TARGET_MISSED` exit 1 at base (`receipts/c1-v2-before-base.txt`) -> `fixtures=39/39 tool=present verdict=TARGET_MET` exit 0 at the data commit `07f2641` (`receipts/c1-v2-after-data.txt`) and at the tip (`receipts/c1-v2-after-tip.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r41-globals-v2.py --repo . --rev <rev>` (`PRED-C1-r41-v2`) | **TARGET_MET under v2**; the superseded v1 predicate reads `fixtures=6/24 ... TARGET_MISSED` at the data commit (`receipts/c1-v1-after-data.txt`: the delivered tool speaks the v2 contract, the v1 counter judges the v1 one); w2 reports open predicate defects (below) |
+| C2 **coverage** (sourced) - `corpus/knowledge/hyprland-focus-grab-r41.md` | v2 `admitted=0/1` exit 1 at base (`receipts/c2-v2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at the data commit and at the tip (`receipts/c2-v2-after-data.txt`, `c2-v2-after-tip.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c2-r41-focus-entry-v2.py --repo . --rev <rev>` (`PRED-C2-r41-v2`) | **TARGET_MET under v2** (v1 also `1/1`); residual: a real pinned receipt can be cited for a claim it does not support - the w2 attackers found 20 overstated sentences in the data commit (`CritEntryOverreach`), fixed in `6fd2234` |
+
+Separable: C1 reads only `tools/mado-globals.py`; C2 reads only the entry, registry, lesson, README and the pinned receipts (`RevSeparabilityShape`: C2 scores 1/1 with the tool deleted, C1 scores 39/39 with the entry and corpus edits reverted).
+
+**Open predicate defects reported by w2 (no third registration):** C1 v2 - 5 of 11 new cheats reach TARGET_MET (`w2/CritC1V2Cheat.md`: an AST-fingerprint selftest, an `exec`'d model, ...), 4 PoC cheats at 39/39 (`w2/RevC1V2Counter.md`: a 4-line zero-test selftest, a selftest nesting decoy, an `LD_PRELOAD` read of the execute-only stub, a writable `../mk/ran`), 33 of 64 further mutants of the delivered tool survive (`w2/ExecMutDelivered.md`: 16 value-domain blind spots); C2 v2 - 10 of 10 real-seeded forgeries admitted (`w2/CritC2V2Forgery.md`), mid-word quote ends and swapped captions pass (`w2/ExecRerunC2.md`). The claims are judged on the counters as frozen; these are the predicates' declared limits made concrete.
+
+No harm: `receipts/harm-tip.txt` - verify suite, options selftest, index `59/59`, index rows `errors=0`, census exit 0 with the same W04/W01 set as at base; the data commit's `check-index-rows` error (README row with two cells) was found by `ExecHarmAfter` and fixed in `6fd2234`.
+
+### Capabilities (round 41)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| compositor global advertisement census | read the desktop portal's user journal (a saved `short-iso` file or one allowlisted `journalctl` run) and report per session which Wayland globals the compositor advertised - interfaces, highest version, counts, a fixed class table - with `--diff`, `--expect NAME`, an `ignored=` count and an UNRECOGNIZED_FORMAT verdict for other `-o` formats; reads only the journal, never connects to a socket | `tools/mado-globals.py` (selftest 63/63); `quality/counters/c1-r41-globals-v2.py` 39/39 at `07f2641` and the tip; live host census: two sessions, 63 interfaces in the latest, `hyprland_focus_grab_manager_v1 ver=1 class=focus-grab` (`w2/ExecRerunC1/report.md`, `w1/ExecLiveHost/live-census.txt`) | 41 |
+
+### Sources, saturation, planned
+
+Sources 219 -> 226 rows (S283-S289, tier A/B, `mined`, opened 2026-10-25); S037 `used-by` extended (old->new in `corpus/lessons/round-41.md`); knowledge entries 58 -> 59. Assimilation: the focus-control theme admitted as one successor entry; two staged candidates refused with reasons (`privileged-client-surface-r29.md`; `focus-control-surfaces-r28.md` section 3, localized channel). considerthese `2026-10-25.md` proposal 5 mined as QUALITY 76. Saturation 9.0 / N=3 unchanged; retired: none.
+
+Axis table re-derived at `6fd2234627558a052b2d96ff19b3234edf50e4d9` plus the round-41 records commit (one new indexed entry, criteria 69-76): navigation 59/59; calibration resolved-active 63/63; operability selftest 12/12.
+
+### Planned (round 42; intent only)
+
+1. The remaining package themes under PROVINCE (`w1/ScoutMergeRest.md`: gkeep rendered geometry is the ranked successor; socket-client-contract residue).
+2. An independent non-author re-run of both v2 counters with fresh nonces.
+3. Route the w2 open predicate defects (a tightened C1 predicate for selftest teeth; mid-word quote ends in C2).
