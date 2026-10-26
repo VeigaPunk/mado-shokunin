@@ -276,19 +276,10 @@ from M41-5).
 
 `considerthese/2026-10-25.md` proposal 5 ("Verify one fact first-hand per day, read-only", restating `2026-10-24.md` proposal 5, mined in round 33 as prose) is mined as QUALITY 76. The reflection's mined sentence re-derives: 68 commits `57a772b..f6e3247`; SOURCES `185` -> `207` rows (22 added); knowledge files `43` -> `52`; one tool added (`tools/mado-eventq.py`). One number fails - "eight entries" is nine (`git diff -M --name-status 57a772b..f6e3247 -- corpus/knowledge | grep -c '^A'` prints `9`, `'^D'` prints `0`) - so this note repeats the re-derived nine and marks the reflection's eight `relayed:` and corrected. The reflection is a pointer, not evidence. Receipt: `.ufo/waves/round-41/w1/ScrConsiderthese/receipts.txt`; re-verification: `.ufo/waves/round-41/w2/ScrConsiderFinal/final.md`.
 
-## Census and measurements at the data commit
+## Census and measurements
 
-To be filled at the data commit (commands, in the order the round-40 lesson states them):
-
-- Census before (`receipts/census-before.txt`, committed at the freeze): `mado ok`, W04 ×7 (S030, S042, S045, S097, S119, S120,
-  S121) + W01 S277, exit 0. Census after: `receipts/census-after.txt`, exit 0 required, warning set unchanged or every new line
-  named.
-- Registry rows 219 → 226 (S283–S289).
-- Knowledge entries 58 at base (`git ls-tree -r --name-only ab2bfaa corpus/knowledge/ | grep -c '\.md$'`) → 59 with the C2 entry;
-  every entry linked from `corpus/README.md` (clause f requires exactly one column-zero index row for the C2 entry).
-- `PRED-C1-r41-v1` at the data commit: `fixtures=24/24 verdict=TARGET_MET` with the nonce printed; `PRED-C2-r41-v1`:
-  `admitted=1/1 verdict=TARGET_MET`; both re-run at the tip.
-- Suite baselines: `receipts/selftest-base.txt` `MADO_SELFTEST: 460/460 assertions passed`; the tip suite run and the tip
-  `MADO_AXIS` transcript committed under `quality/receipts/axis-<40hex>.txt` (M41-4).
-- The host receipt (`tools/mado-globals.py --live` against the running desktop) is reported, not scored: it is one allowlisted
-  program, exact argv, bounded output; the C1 counter's sandbox is the scored boundary.
+- Census before (`receipts/census-before.txt`): `mado ok`, W04 x7 (S030, S042, S045, S097, S119, S120, S121) + W01 S277, exit 0. Census after (`receipts/census-after.txt`, at `2a65350`): the same lines, `mado ok`, **exit 0**. Scratch gate before the data commit: the staged data was committed in a scratch clone and `sources-census.sh validate --file <clone>/corpus/SOURCES.md` printed the same W04/W01 set and `ok` (exit 0) before `07f2641` landed (`assimilation/stage-data.py`; the `mirror-validate.sh` helper was written but not used).
+- Registry rows 219 -> 226 (`grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md`); tier A +5 (S283, S284, S286, S288, S289), tier B +2 (S285, S287); knowledge entries 58 -> 59 (`ls corpus/knowledge/*.md | wc -l`), all linked from `corpus/README.md` (`indexed=59/59`).
+- `PRED-C1-r41-v2` at the data commit `07f2641`: `fixtures=39/39 TARGET_MET` (nonce `be51c3bc188d6b05`, `receipts/c1-v2-after-data.txt`); at `2a65350`: `39/39 TARGET_MET` (nonce `352a9fb7d9791cdb`, `receipts/c1-v2-after-tip.txt`). `PRED-C2-r41-v2`: `admitted=1/1 TARGET_MET` at both. Superseded v1: C1 `6/24 TARGET_MISSED`, C2 `1/1` at `07f2641`.
+- Suite baselines at `2a65350` (`receipts/harm-tip.txt`): `MADO_SELFTEST 460/460`, `MADO_OPTIONS_SELFTEST 211/211`, `MADO_GLOBALS_SELFTEST 63/63`, index `59/59`, index rows `errors=0`; the tip axis transcript is committed as `quality/receipts/axis-2a65350a4df2a31985ed37e90df90325348a8820.txt` (M41-4).
+- The host receipt (`tools/mado-globals.py --live`) is reported, not scored (`w2/ExecRerunC1/report.md`, `w1/ExecLiveHost/live-census.txt`).
