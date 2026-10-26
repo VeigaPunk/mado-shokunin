@@ -1,0 +1,43 @@
+=== 1 three identical
+  plug [Foo] -> [foo]   live: foo
+  plug [Foo] -> [foo-1]   live: foo foo-1
+  plug [Foo] -> [foo-2]   live: foo foo-1 foo-2
+=== 2 plug, unplug all, plug again
+  plug [Foo] -> [foo]   live: foo
+  unplug [foo]   live:
+  plug [Foo] -> [foo]   live: foo
+=== 3 physical device already named -1 plugs first
+  plug [Foo 1] -> [foo-1]   live: foo-1
+  plug [Foo] -> [foo]   live: foo-1 foo
+  plug [Foo] -> [foo-2]   live: foo-1 foo foo-2
+=== 4 duplicate pair then a device whose name maps to foo-1
+  plug [Foo] -> [foo]   live: foo
+  plug [Foo] -> [foo-1]   live: foo foo-1
+  plug [Foo 1] -> [foo-1-1]   live: foo foo-1 foo-1-1
+=== 5 first of a duplicate pair unplugged, a new identical unit plugged
+  plug [Foo] -> [foo]   live: foo
+  plug [Foo] -> [foo-1]   live: foo foo-1
+  unplug [foo]   live: foo-1
+  plug [Foo] -> [foo]   live: foo-1 foo
+=== 6 case-only difference is a duplicate
+  plug [FOO] -> [foo]   live: foo
+  plug [foo] -> [foo-1]   live: foo foo-1
+=== 7 keyboard and mouse share the namespace
+  plug [Foo] -> [foo]   live: foo
+  plug [foo] -> [foo-1]   live: foo foo-1
+=== 8 empty name
+  plug [] -> [unknown-device]   live: unknown-device
+  plug [] -> [unknown-device-1]   live: unknown-device unknown-device-1
+=== 9 virtual keyboards from the same client
+  plug [hl-virtual-keyboard] -> [hl-virtual-keyboard]   live: hl-virtual-keyboard
+  plug [hl-virtual-keyboard] -> [hl-virtual-keyboard-1]   live: hl-virtual-keyboard hl-virtual-keyboard-1
+=== 10 comma and space normalise to the same dash form
+  plug [Foo,Bar] -> [foo-bar]   live: foo-bar
+  plug [Foo Bar] -> [foo-bar-1]   live: foo-bar foo-bar-1
+  plug [foo-bar] -> [foo-bar-2]   live: foo-bar foo-bar-1 foo-bar-2
+=== 11 highest live suffix removed, then replug
+  plug [Foo] -> [foo]   live: foo
+  plug [Foo] -> [foo-1]   live: foo foo-1
+  plug [Foo] -> [foo-2]   live: foo foo-1 foo-2
+  unplug [foo-1]   live: foo foo-2
+  plug [Foo] -> [foo-1]   live: foo foo-2 foo-1

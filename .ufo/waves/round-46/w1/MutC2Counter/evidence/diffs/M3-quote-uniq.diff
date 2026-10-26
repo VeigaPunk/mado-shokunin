@@ -1,0 +1,17 @@
+--- counter.py
++++ M3-quote-uniq.py
+@@ -540,3 +540,2 @@
+                     and path not in seen_paths and digest not in seen_sha
+-                    and nq not in seen_quote
+                     and quote_at(blob, nq) is not None
+@@ -554,10 +553,2 @@
+             d_ok = g_ok = False
+-    # a quote occurs in its own receipt and in no other cited receipt
+-    for i in receipts:
+-        q = re.sub(r"\s+", " ", gates[i][0][2])
+-        for j in receipts:
+-            if j != i and q in norm_receipt(receipts_raw[j]):
+-                d_ok = False
+-                print("%s %s clause=d quote of %s also in receipt of %s" % (
+-                    PRED, name, i, j))
+     cl["d"] = int(d_ok and not gates.get("<indented>") and outside == 0)

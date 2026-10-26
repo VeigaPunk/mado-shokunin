@@ -1,0 +1,121 @@
+L38a	hyprutils-VarList2.hpp	lines=[18, 30, 35]	cited=18	MATCH	const char delim = ','
+L38b	Hyprland-legacy-ConfigManager.cpp	lines=[1293]	cited=1293	MATCH	CConfigManager::handleMonitor(const std::string& command
+L40a	Hyprland-legacy-ConfigManager.cpp	lines=[1299]	cited=1299	MATCH	if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1]
+L40b	Hyprland-legacy-ConfigManager.cpp	lines=[1319]	cited=1319	MATCH	} else if (ARGS[1] == "addreserved") {
+L42a	Hyprland-legacy-ConfigManager.cpp	lines=[1351]	cited=1351	MATCH	while (!ARGS[argno].empty()) {
+L42b	Hyprland-legacy-ConfigManager.cpp	lines=[876, 1341, 1384]	cited=1384	MATCH	Config::monitorRuleMgr()->add(std::move(parser.rule()));
+L42c	Hyprland-legacy-ConfigManager.cpp	lines=[878, 1304, 1386]	cited=1386	MATCH	return parser.getError();
+L44a	Hyprland-Parser.cpp	lines=[110]	cited=110	MATCH	bool CMonitorRuleParser::parseMode(const std::string& value)
+L44b	Hyprland-Parser.cpp	lines=[14]	cited=14	MATCH	static bool parseModeLine(const std::string& modeline
+L44c	Hyprland-Parser.cpp	lines=[119]	cited=119	MATCH	else if (parseModeLine(value, m_rule.m_drmMode))
+L44d	Hyprland-Monitor.cpp	lines=[773]	cited=773	MATCH	if (RULE->m_resolution == Vector2D()) {
+L46	Hyprland-Parser.cpp	lines=[134]	cited=134	MATCH	m_rule.m_refreshRate = stof(value.substr(value.find_first_of
+L48	Hyprland-MonitorRule.hpp	lines=[46]	cited=46	MATCH	m_refreshRate   = 60;
+L50a	Hyprland-Parser.cpp	lines=[145]	cited=145	MATCH	bool CMonitorRuleParser::parsePosition(const std::string& va
+L50b	Hyprland-Parser.cpp	lines=[182]	cited=182	MATCH	m_rule.m_offset.y = stoi(
+L52	Hyprland-Parser.cpp	lines=[203]	cited=203	MATCH	if (m_rule.m_scale < 0.25F)
+L54a	hyprutils-String.cpp	lines=[59]	cited=59	MATCH	if (i == 0 && str.at(i) == '-') {
+L54b	hyprutils-String.cpp	lines=[50]	cited=50	MATCH	bool Hyprutils::String::isNumber2(const std::string_view& st
+L54c	hyprutils-String.cpp	lines=[83]	cited=83	MATCH	return isdigit(str.back()) != 0;
+L54d	Hyprland-Parser.cpp	lines=[219]	cited=219	MATCH	const auto TSF = std::stoi(value);
+L58a	Hyprland-MonitorRuleManager.cpp	lines=[38]	cited=38	MATCH	std::erase_if(m_rules, [&x](const auto& e) { return e.m_name
+L58b	Hyprland-MonitorRuleManager.cpp	lines=[37]	cited=37	MATCH	void CMonitorRuleManager::add(CMonitorRule&& x) {
+L60a	Hyprland-MonitorRuleManager.cpp	lines=[96]	cited=96	MATCH	for (auto const& r : m_rules | std::views::reverse) {
+L60b	Hyprland-MonitorRuleManager.cpp	lines=[104]	cited=104	MATCH	if (r.m_name.empty())
+L60c	Hyprland-MonitorRuleManager.cpp	lines=[87, 110]	cited=n/a		CMonitorRule fallbackRule;
+L60d	Hyprland-MonitorRuleManager.cpp	lines=[86]	cited=86	MATCH	if (PMONITOR->m_isUnsafeFallback) {
+L60e	Hyprland-MonitorRuleManager.cpp	lines=[45]	cited=45	MATCH	auto applyWlrOutputConfig = [PMONITOR](CMonitorRule rule) ->
+L62a	Hyprland-Monitor.cpp	lines=[1201]	cited=1201	MATCH	bool CMonitor::matchesStaticSelector(std::string_view select
+L62b	Hyprland-Monitor.cpp	lines=[250]	cited=250	MATCH	m_description = m_output->description;
+L62c	Hyprland-Monitor.cpp	lines=[252]	cited=252	MATCH	std::erase(m_description, ',');
+L62d	Hyprland-Monitor.cpp	lines=[255]	cited=255	MATCH	m_shortDescription = trim(std::format("{} {} {}", m_output->
+L62e	Hyprland-HyprCtl.cpp	lines=[234, 1072]	cited=234	MATCH	"description": "{}",
+L62f	Hyprland-HyprCtl.cpp	lines=[277]	cited=277	MATCH	escapeJSONStrings(m->m_shortDescription)
+L64a	aquamarine-DRM.cpp	lines=[2101]	cited=2101	MATCH	output->description = std::format("{} {} {} ({})", make, mod
+L68a	Hyprland-Monitor.cpp	lines=[818]	cited=818	MATCH	} else if (RULE->m_resolution != Vector2D()) {
+L68b	Hyprland-Monitor.cpp	lines=[771, 783, 838, 847]	cited=n/a		requestedModes.push_back(
+L68c	Hyprland-Monitor.cpp	lines=[872, 878]	cited=878	MATCH	for (auto const& mode : requestedModes | std::views::reverse
+L70a	Hyprland-macros.hpp	lines=[40]	cited=40	MATCH	#define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta)
+L70b	Hyprland-Monitor.cpp	lines=[836]	cited=836	MATCH	!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 
+L70c	Hyprland-Monitor.cpp	lines=[903]	cited=903	MATCH	m_refreshRate = mode->refreshRate / 1000.f;
+L72a	hyprutils-Vector2D.hpp	lines=[39]	cited=39	MATCH	constexpr Vector2D operator/(const double& a) const {
+L72b	Hyprland-Monitor.cpp	lines=[996]	cited=996	MATCH	Vector2D logicalSize = m_pixelSize / m_scale;
+L72c	Hyprland-Monitor.cpp	lines=[997]	cited=997	MATCH	if (!*PDISABLESCALECHECKS &&
+L72d	Hyprland-Monitor.cpp	lines=[721]	cited=721	MATCH	CConfigValue<Config::INTEGER>("debug:disable_scale_checks")
+L74a	Hyprland-Monitor.cpp	lines=[1001]	cited=1001	MATCH	float    searchScale = std::round(m_scale * 120.0);
+L74b	Hyprland-Monitor.cpp	lines=[1010]	cited=1010	MATCH	for (size_t i = 1; i < 90; ++i) {
+L74c	Hyprland-Monitor.cpp	lines=[1029]	cited=1029	MATCH	if (!found) {
+L74d	Hyprland-Monitor.cpp	lines=[1040]	cited=1040	MATCH	CConfigValue<Config::INTEGER>("misc:disable_scale_notificati
+L76a	Hyprland-MonitorPositionController.cpp	lines=[27]	cited=27	MATCH	m->moveTo(*POS);
+L76b	Hyprland-MonitorPositionController.cpp	lines=[29]	cited=29	MATCH	it = toArrange.erase(it);
+L76c	Hyprland-MonitorPositionController.cpp	lines=[61]	cited=61	MATCH	for (auto const& m : toArrange) {
+L80a	Hyprland-HyprCtl.cpp	lines=[241]	cited=241	MATCH	"physicalHeight": {},
+L80b	Hyprland-HyprCtl.cpp	lines=[242]	cited=242	MATCH	"refreshRate": {:.5f},
+L80c	Hyprland-HyprCtl.cpp	lines=[285]	cited=285	MATCH	(m->m_enabled ? "false" : "true")
+L80d	Hyprland-HyprCtl.cpp	lines=[286, 306]	cited=286	MATCH	m->m_mirrorOf ? std::format("{}", m->m_mirrorOf->m_id) : "no
+L82	Hyprland-HyprCtl.cpp	lines=[320]	cited=320	MATCH	if (vars.size() == 2 && vars[1] == "all")
+L82b	Hyprland-HyprCtl.cpp	lines=[327, 335]	cited=327	MATCH	allMonitors ? State::monitorState()->allMonitors()
+L84a	Hyprland-MonitorState.cpp	lines=[114]	cited=114	MATCH	m_realMonitors.emplace_back(mon);
+L84b	Hyprland-MonitorState.cpp	lines=[25]	cited=25	MATCH	m_listeners.monitorAdded   = Event::bus()->m_events.monitor.
+L84c	Hyprland-MonitorState.cpp	lines=[32]	cited=32	MATCH	m_listeners.layoutChanged = Event::bus()->m_events.monitor.l
+L84d	Hyprland-Monitor.cpp	lines=[264]	cited=264	MATCH	if (m_enabled && !monitorRule.m_disabled) {
+L84e	Hyprland-Monitor.cpp	lines=[389]	cited=389	MATCH	Event::bus()->m_events.monitor.added.emit(m_self.lock());
+L84f	Hyprland-Monitor.cpp	lines=[179, 220, 225, 229, 238, 271, 286, 299, 396, 407, 1089, 1100, 1105, 1118, 1127, 1130, 1154, 1338, 1342, 1347, 1441, 1448, 1452, 1554, 1599, 1721, 1728, 1778, 1784, 1787, 1933, 1936, 2159, 2313, 2333, 2356, 2362, 2370, 2384, 2610, 2618, 2641, 2646]	cited=n/a		        return;
+L84g	Hyprland-Monitor.cpp	lines=[275]	cited=275	MATCH	if (monitorRule.m_disabled) {
+L84h	Hyprland-Monitor.cpp	lines=[283]	cited=283	MATCH	m_enabled = false;
+L90	wiki-Monitors.md	lines=[11]	cited=11	MATCH	monitor = name, resolution, position, scale
+L92a	wiki-Monitors.md	lines=[253]	cited=253	MATCH	, sdr_eotf, X
+L92b	Hyprland-legacy-ConfigManager.cpp	lines=[576, 819]	cited=819	MATCH	"monitorv2", "sdr_eotf"
+L92c	wiki-Monitors.md	lines=[319]	cited=319	MATCH	| sdr_eotf |
+L105	Hyprland-legacy-ConfigManager.cpp	lines=[743]	cited=743	MATCH	const auto ERR = m_config->parse();
+L105b	Hyprland-legacy-ConfigManager.cpp	lines=[747]	cited=747	MATCH	const auto monitorError               = handleMonitorv2();
+
+-- census recompute (entry line 86) --
+default_refresh=60 -> [46]
+refresh_tolerance=1 -> [836]
+scale_step=1/120 -> [1001, 1004, 1011, 1012]
+scale_search=89 -> 'i < 90' at [1010]
+json_refresh_decimals=5 -> [242, 292, 769, 877]
+line_keys -> first=1 else_if=7 total=8
+    if (ARGS[argno] == "mirror") {
+    } else if (ARGS[argno] == "bitdepth") {
+    } else if (ARGS[argno] == "cm") {
+    } else if (ARGS[argno] == "sdrsaturation") {
+    } else if (ARGS[argno] == "sdrbrightness") {
+    } else if (ARGS[argno] == "transform") {
+    } else if (ARGS[argno] == "vrr") {
+    } else if (ARGS[argno] == "icc") {
+
+-- onConnect 262-290 (brace shape of the cited pair 264 & 389) --
+ 262:     auto monitorRule = Config::monitorRuleMgr()->get(m_self.lock());
+ 263: 
+ 264:     if (m_enabled && !monitorRule.m_disabled) {
+ 265:         auto cpy = monitorRule;
+ 266:         applyMonitorRule(std::move(cpy));
+ 267: 
+ 268:         m_output->state->resetExplicitFences();
+ 269:         m_output->state->setEnabled(true);
+ 270:         m_state.commit();
+ 271:         return;
+ 272:     }
+ 273: 
+ 274:     // if it's disabled, disable and ignore
+ 275:     if (monitorRule.m_disabled) {
+ 276: 
+ 277:         m_output->state->resetExplicitFences();
+ 278:         m_output->state->setEnabled(false);
+ 279: 
+ 280:         if (!m_state.commit())
+ 281:             Log::logger->log(Log::ERR, "Couldn't commit disabled state on output {}", m_name);
+ 282: 
+ 283:         m_enabled = false;
+ 284: 
+ 285:         m_listeners.frame.reset();
+ 286:         return;
+ 287:     }
+ 288: 
+ 289:     if (m_output->nonDesktop) {
+ 290:         Log::logger->log(Log::DEBUG, "Not configuring non-desktop output");
+ 291: 
+
+SUMMARY found=71 not_found=0 checks=71

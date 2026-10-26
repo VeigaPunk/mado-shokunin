@@ -1,0 +1,219 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+omacom
+omarchy
+Repository navigation
+Code
+Issues2.4k (2.4k)
+Pull requests3.4k (3.4k)
+Discussions
+Actions
+Security and quality
+Insights
+More items
+Default fcitx5 service breaks Hyprland multi-layout keyboard switching (bar label switches, typing doesn't) #9552
+New issue
+Copy link
+New issue
+Copy link
+Open
+#9565
+Open
+Default fcitx5 service breaks Hyprland multi-layout keyboard switching (bar label switches, typing doesn't)#9552
+#9565
+Copy link
+Labels
+bugSomething isn't workingSomething isn't working
+Description
+je2020je
+opened on Sep 1, 2026
+Issue body actions
+Describe the bug
+On a default Omarchy install (fcitx5 running via omarchy-fcitx5.service), switching the keyboard layout through Hyprland's xkb mechanism — the bar's keyboard-layout widget or a grp:* xkb option — appears to work but has no effect on typing in most apps.
+The bar widget label changes (e.g. EN → FA), and hyprctl devices -j confirms the physical keyboard's active_keymap switched, but typed characters still come out in the previous layout in GTK/Qt/Chromium apps.
+Root cause
+omarchy-fcitx5.service runs fcitx5 by default (installed for XCompose sequences), and Omarchy's environment (/usr/share/omarchy/default/environment.d/10-omarchy-fcitx.conf) points GTK/Qt/SDL at it (INPUT_METHOD=fcitx, QT_IM_MODULE=fcitx, XMODIFIERS=@im=fcitx).
+Apps using the input-method path get their keys grabbed by fcitx5, which processes them against its own virtual keyboard (hl-virtual-keyboard-fcitx5) whose keymap stays on us. The default fcitx5 profile only contains keyboard-us and provides no way for the compositor's xkb layout list (kb_layout = us,ir) to be followed. So compositor-side layout switches never reach what fcitx5 commits into the app. The virtual keyboard also holds the main flag, so seat-wide reads describe it rather than the typed-on keyboard.
+Steps to reproduce
+Fresh Omarchy 4.0.2 install (fcitx5 service active, default environment).
+Set a second layout in ~/.config/hypr/input.lua:
+hl.config({
+input = {
+kb_layout = "us,ir",
+kb_options = "grp:alt_shift_toggle",
+},
+})
+Bar label switches to FA; hyprctl devices -j shows the physical keyboard's active_keymap = "Persian".
+Type in any GTK/Qt/Chromium app → still English characters.
+Expected behavior
+Layout switching should reach all apps, or at minimum the bar widget should not report a switch that doesn't take effect.
+Workaround
+systemctl --user disable --now omarchy-fcitx5.service
+After that, xkb switching works everywhere immediately (verified: hyprctl switchxkblayout + typing produce the new layout in all apps). Cost: losing XCompose dead-key sequences, which fcitx5 was enabled for.
+Suggested fixes (any of)
+Don't enable fcitx5 by default; enable it only for users who opt into IM input — plain xkb covers Latin + non-CJK layouts (including ir) out of the box.
+Make fcitx5's keyboard engine follow the compositor's per-keyboard layout so the two stay in sync.
+Have the keyboard-layout widget/activelayout handling detect this state (fcitx5 virtual keyboard holding main with a single-IM profile) and surface a hint, instead of showing a successful switch.
+System
+Omarchy 4.0.2-1, Hyprland 0.56.2, Wayland
+Debug log (expires in 24h): https://logs.omarchy.org/4NWaUO
+Reactions are currently unavailable
+Activity
+omarchybot
+added bugSomething isn't workingSomething isn't working
+on Sep 27, 2026
+remusa commented on Sep 28, 2026
+remusa
+on Sep 28, 2026
+More actions
+This is not fcitx5-specific — the same shape reproduces with keyd, and keyd's virtual keyboard is not covered by the hl-virtual-keyboard filter this widget uses, so it is treated as a real typing keyboard rather than being left out of the read.
+keyd has the same shape
+keyd grabs the physical keyboard and re-emits through uinput:
+DEVICE: match 05ac:0351:c0152ca3 /etc/keyd/default.conf (Apple MTP keyboard)
+hyprctl -j devices then lists the forwarding device as an ordinary keyboard that survives UNTYPED_KEYBOARDS:
+{ "name": "keyd-virtual-keyboard", "layout": "latam,us",
+"active_layout_index": 0, "active_keymap": "Spanish (Latin American)" }
+{ "name": "apple-mtp-keyboard", "active_layout_index": 0, "active_keymap": "Spanish (Latin American)" }
+The difference from fcitx5 is the name. fcitx5's injector is hl-virtual-keyboard-fcitx5, which the ^hl-virtual-keyboard prefix already drops, so the read ignores it and the label at least describes a real keyboard. keyd's is keyd-virtual-keyboard, which does not match, so it competes in selectKeyboard() and can be picked as the keyboard — and a click on it changes only the injector, never the characters.
+What makes the difference here
+keyboardName is picked as keyboards[0] on a tie, which on this seat is apple-mtp-keyboard — the grabbed one. So the click switches the device whose layout is inert, and the label follows it. Switching both devices together fixes it (see #10883); nothing about the fix requires knowing that the injector is a remapper rather than a second real keyboard.
+Worth considering whether the filter should also drop keyd-virtual-keyboard, which would leave the read describing the physical keyboard honestly. That alone does not fix the toggle on a keyd seat — the physical keyboard is grabbed, so its layout is not what types — which is why the two need handling together.
+Environment
+Omarchy 4.0.3rc4-1, Hyprland 0.56.2, kb_layout = "latam,us", keyd 2.6.0, Asahi Mac14,2.
+gafgpt-cmd commented on Oct 4, 2026
+gafgpt-cmd
+on Oct 4, 2026
+More actions
+Same here on Omarchy 4.0.4-1, Hyprland 0.56.2, fcitx5 5.1.22 (kb_layout = "us,es", kb_variant = ",cat").
+The bar label switches to Catalan, but every app keeps typing US, because fcitx5's group only contains keyboard-us.
+Workaround that fixed it for me (until #9565 lands):
+Stop fcitx5 (it rewrites its profile on exit): fcitx5-remote -e
+Add the second layout to the fcitx5 group in ~/.config/fcitx5/profile:
+[Groups/0/Items/0]
+Name=keyboard-us
+[Groups/0/Items/1]
+Name=keyboard-es-cat
+Make it start on the second layout and share state across windows, in ~/.config/fcitx5/config:
+[Behavior]
+ActiveByDefault=True
+ShareInputState=All
+Optional, for a mouse switcher: drop-in ~/.config/systemd/user/omarchy-fcitx5.service.d/tray.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/fcitx5
+then pin Fcitx in the tray widget. systemctl --user daemon-reload && systemctl --user restart omarchy-fcitx5
+After that, Ctrl+Space (or the tray icon) switches the layout inside apps. The bar's layout switcher still has no effect, which is the actual bug.
+smahi commented on Oct 9, 2026
+smahi
+on Oct 9, 2026
+More actions
+Same issue here
+omarchybot commented on Oct 9, 2026
+omarchybot
+on Oct 9, 2026
+Collaborator
+More actions
+Thanks for the detailed report, and to everyone who added a reproduction. I checked it against current quattro (988f44e). This was a source review only: nothing was run, and I did not reproduce the typing failure on a VM.
+What I found. quattro has nothing that keeps fcitx5 in step with Hyprland's layout. omarchy-fcitx5.service starts fcitx5 with no layout configuration, Omarchy ships no fcitx5 profile, so fcitx5 builds its own (here, keyboard-us only), and the bar widget only runs hyprctl switchxkblayout on the Hyprland devices (shell/plugins/bar/widgets/KeyboardLayout.qml:91). That fits the symptom three of you describe: the label and active_keymap change, but text that goes through fcitx5 doesn't. One part of the explanation is not established. Codex (medium effort), the second reviewer, pointed out that fcitx5 5.1.22 only remaps keys with its own layout when the selected engine's layout differs from the group's default (src/lib/fcitx/instance.cpp:503–531 upstream), and that its Wayland frontend takes the compositor's keymap. So "fcitx5 always retypes in US" is probably too broad. Exactly where the layout gets lost between Hyprland, fcitx5's virtual keyboard and the app is still unproven.
+The open fix. #9565 already says it closes this issue. It adds a small service that listens for Hyprland's activelayout events and switches fcitx5's keyboard engine to match. It has not been tested on a VM yet. The maintainer's input-method rework, #14433, does not fix this: it seeds fcitx5 with the first configured layout only and doesn't follow layout switches. The two pull requests do overlap. Both change omarchy-fcitx5.service, and #9565 leaves alone any fcitx5 group it didn't create, which would include the profile #14433 writes for a non-US install. So whichever lands second needs adjusting for the other.
+Related: #4583 (layouts reverting with fcitx5 running, on 3.3.3) and #10883 (the widget switching only one of several keyboards, raised for keyd above).
+Next step. This is waiting on the maintainer to decide on #9565 and how it fits with #14433. Until then, the workarounds above (disable omarchy-fcitx5.service, or add your layouts to the fcitx5 group) are the way around it.
+Sign up for free to join this conversation on GitHub. Already have an account? Sign in to comment
+Metadata
+Metadata
+Assignees
+No one assigned
+Labels
+bugSomething isn't workingSomething isn't working
+Type
+No type
+Projects
+No projects
+Milestone
+No milestone
+Relationships
+None yet
+Development
+No branches or pull requests
+Issue actions
+Open in GitHub Copilot app
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

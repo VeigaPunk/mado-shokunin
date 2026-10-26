@@ -1,0 +1,18 @@
+### live receipt verification (read-only host reads: sha256 of the config, one hyprctl devices -j)
+$ sha256sum ~/.config/hypr/input.conf
+3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4  /home/vgpnk/.config/hypr/input.conf
+receipt line 3 pins: 3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4 -> match
+
+$ hyprctl devices -j > live.json; python3 -I mado-devices.py --devices live.json --config ~/.config/hypr/input.conf
+$ diff -q live.out <receipt lines 5-19>
+identical (15 lines)
+fresh summary: MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+receipt summary: MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+
+### shape-only check: no device address, no serial, no description, no window title in the receipt
+$ grep -nE 'address|0x[0-9a-f]{6,}|serial|description|title' receipt
+no match (rc=1) - clean
+receipt line count: 20
+live dump top-level keys: ['keyboards', 'mice', 'switches', 'tablets', 'touch']
+live dump entry counts: keyboards=10 mice=4 tablets=0 touch=0 switches=0
+residual: device names are HID vendor/model inventory (hardware fingerprint), required by the claim; no addresses/serials.

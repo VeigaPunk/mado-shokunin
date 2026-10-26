@@ -1,0 +1,287 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+Keyboard layout switching does not work after update and reboot
+#15083
+Closed
+Answered
+by
+Teagum
+Teagum
+asked this question in
+Bugs - Config
+Keyboard layout switching does not work after update and reboot
+#15083
+Teagum
+Jun 12, 2026
+·
+3 comments
+·
+1 reply
+Answered
+by
+Teagum
+Return to top
+Discussion options
+{{title}}
+Something went wrong.
+Quote reply
+Teagum
+Jun 12, 2026
+So, in my setup I run a laptop with German keyboard layout and an external keyboard with ANSI layout connected via HP docking station.
+The laptops' builtin keyboard should always use a German keymap, hence I set kb_layout = "de" in the global input config. Since the external keyboard has ANSI layout, I want its keymap the default to us. However, I frequently need to change that keymap (for writing mails .e.g.) to de. To enable this behaviour, set kb_layout = "us,de" in a device specific config and and added a key bind to toggle between layouts. This setup used to work perfectly fine until this morning when did a system update. After the reboot it is no longer possible to switch the keymaps with the defined bind. However, the keymaps are correctly configured, i.e., the buildin one is "de" the external is "us".
+Manual invocation of the switch command (see below) on the command line returns "ok" but does not actually switch anything. The bind neither works on the external nor on the buildin keyboard. I checked the loaded config with "hyprctl devices". The devices list has many entries for below "Keyboards", two of which match may external keyboard: "keychron-keychron-k1-pro", and "keychron-keychron-k1-pro-keyboard". The config for the latter is correctly set to "us,de". I also tried using the first, but it does not change anything.
+Setting kb_layout = "us,de" in the global input config does not help either, as well as setting the bind to another arbitray key. All other keybinds for as before. Any ideas?
+hl.config({
+input = {
+kb_layout = "de",
+kb_variant = "",
+kb_model = "",
+kb_options = "",
+kb_rules = "",
+follow_mouse = 1,
+sensitivity = 0,
+touchpad = {
+natural_scroll = false,
+},
+},
+})
+hl.device({
+name = "keychron-keychron-k1-pro",
+kb_layout = "us,de",
+sensitivity = 0
+})
+hl.bind(mainMod .. " + SHIFT + BACKSPACE", hl.dsp.exec_cmd("hyprctl switchxkblayout keychron-keychron-k1-pro-keyboard next"))
+1
+You must be logged in to vote
+All reactions
+Answered by
+Teagum
+Sep 4, 2026
+I finally found the root problem with this issue. On evey plug/unplug of the docking station the keyboard firmware seems to redecide through which devices it sends the real key strokes. I do not know if thats an issue with hyprland or rather keychron. However, here is workaround: you just have to bind the toggle key to both devices:
+hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd(
+"hyprctl switchxkblayout keychron-keychron-k1-pro next; " ..
+"hyprctl switchxkblayout keychron-keychron-k1-pro-keyboard next"
+))
+Is there something we can do in hyprland such that the kbd config survive USB-reenumeration?
+View full answer
+Replies:
+3 comments
+·
+1 reply
+Oldest
+Newest
+Top
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+Something went wrong.
+Teagum
+Sep 4, 2026
+Author
+I finally found the root problem with this issue. On evey plug/unplug of the docking station the keyboard firmware seems to redecide through which devices it sends the real key strokes. I do not know if thats an issue with hyprland or rather keychron. However, here is workaround: you just have to bind the toggle key to both devices:
+hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd(
+"hyprctl switchxkblayout keychron-keychron-k1-pro next; " ..
+"hyprctl switchxkblayout keychron-keychron-k1-pro-keyboard next"
+))
+Is there something we can do in hyprland such that the kbd config survive USB-reenumeration?
+Marked as answer
+1
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+wabarTM
+Sep 5, 2026
+try device tags
+All reactions
+Answer selected by
+Teagum
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+wabarTM
+Oct 24, 2026
+Abit of cleanup, closing discussions that were marked as answered, but not closed. If you have questions or want to reopen the discussion -- ping me.
+/close resolved
+1
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+github-actions[bot]
+Bot
+Oct 24, 2026
+Closed by @wabarTM.
+0
+You must be logged in to vote
+All reactions
+0 replies
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Config
+Labels
+None yet
+2 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

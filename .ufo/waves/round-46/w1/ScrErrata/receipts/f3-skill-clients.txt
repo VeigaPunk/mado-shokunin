@@ -1,0 +1,52 @@
+### f3 — SKILL.md host-run paragraph: which run's numbers?
+$ grep -n clients=4 SKILL.md
+225:| `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf` | whether a `windowrule = size W H, match:class RX` line's size matches the size the compositor reports for the client that line matches: a read-only join of config bytes and one `clients` dump, per matched client AGREE / DIFFER / TILED / BADSIZE; `--selftest` | host run 2026-10-26 (no gkeep window open): `MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT`, rc 3; the size line it parsed: `MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$`; per-verdict licence in § "Rule size versus reported size" |
+301:    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[rc=0]
+
+$ grep -n Host run 2026-10-26 SKILL.md
+295:Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
+2102:`hyprctl monitors all -j | python3 tools/mado-monitors.py --monitors - --config ~/.config/hypr/monitors.conf` joins the `monitor =` lines of the given config files with one dump: per output AGREE / DIFFER (fields mode, position, scale, transform, mirror, disabled) / DISABLED / UNRULED / NOT_COMPARED (scale with no clean divisor); top verdict NO_RULES 4 | NOT_COMPARED 5 (monitorv2 block, unmodelled line, unpredicted scale) | DIFFER 1 | NO_MATCHING_MONITOR 3 | OK 0; setup 2. Contract and limits in the tool docstring; ground in `corpus/knowledge/hyprland-monitor-rule-r45.md`. Use `monitors all -j`: plain `monitors -j` omits disabled outputs. A DIFFER is a join, not a blame: a runtime `keyword monitor`, an output-management client or a missing mode explains it as well as the config. A rule without `@RATE` asks for 60 Hz. Host run 2026-10-26: DP-1 AGREE, `verdict=OK`, exit 0 (`.ufo/waves/round-45/receipts/live-monitors-host-r45.txt`). The `monitor =` line form exists only on the 0.56.x line (upstream a9902ea removes it).
+[rc=0]
+
+--- round-43 receipt (source of the paragraph) ---
+$ grep -n clients= .ufo/waves/round-43/receipts/live-geometry-host.txt
+10:MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[rc=0]
+
+--- round-44 receipt (the run named by round 44) ---
+$ grep -n clients= .ufo/waves/round-44/receipts/live-geometry-host-r44.txt
+5:MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=3 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[rc=0]
+
+--- base->data diff of SKILL.md: lines carrying clients= (0 = paragraph untouched) ---
+$ bash -c git diff 6a1a905 e4678921 -- SKILL.md | grep -c '^[-+].*clients='
+0
+[rc=1]
+
+--- the paragraph at base 6a1a905 (locator) ---
+$ bash -c git show 6a1a905:SKILL.md | grep -n 'clients=4\|Host run 2026-10-26'
+225:| `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf` | whether a `windowrule = size W H, match:class RX` line's size matches the size the compositor reports for the client that line matches: a read-only join of config bytes and one `clients` dump, per matched client AGREE / DIFFER / TILED / BADSIZE; `--selftest` | host run 2026-10-26 (no gkeep window open): `MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT`, rc 3; the size line it parsed: `MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$`; per-verdict licence in § "Rule size versus reported size" |
+284:Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
+290:    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+[rc=0]
+
+--- four tiled? the dump the paragraph quotes ---
+$ bash -c grep -c 'tiled' .ufo/waves/round-43/receipts/live-geometry-host.txt
+1
+[rc=0]
+
+$ bash -c sed -n '1,12p' .ufo/waves/round-43/receipts/live-geometry-host.txt
+# L1 live read-only run of tools/mado-geometry.py on the host (2026-10-26T04:17:54-03:00)
+$ hyprctl version | head -1
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+$ sha256sum tools/mado-geometry.py ~/.config/hypr/gkeep.conf
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  tools/mado-geometry.py
+3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949  ~/.config/hypr/gkeep.conf
+$ hyprctl clients -j | python3 -I tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3
+[rc=0]
+

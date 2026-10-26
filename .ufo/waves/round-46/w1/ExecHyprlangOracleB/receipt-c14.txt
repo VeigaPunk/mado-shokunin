@@ -1,0 +1,47 @@
+# receipt: the one modelled-case divergence (C14), reproduced
+
+## config bytes (od -c work/C14-final-continuation.conf)
+0000000   d   e   v   i   c   e       {  \n                   n   a   m
+0000020   e       =       k   b   d   X  \n                   k   b   _
+0000040   l   a   y   o   u   t       =       d   e       \  \n
+0000056
+
+## oracle (host hyprlang 0.6.8) - the line is DROPPED
+ORACLE_PARSE: error=1 message="Config error in file /fast/scratch/hyaku/mado-r46/ExecHyprlangOracleB/work/C14-final-continuation.conf: Last line ends with backslash\nConfig error in file /fast/scratch/hyaku/mado-r46/ExecHyprlangOracleB/work/C14-final-continuation.conf: Unclosed category at EOF"
+ORACLE_CAT: idx=0 name="kbdX" exists=1 set=""
+ORACLE_FIELD: name="kbdX" field=kb_layout state=default raw="us" projected="us"
+
+## reference (sha256 b229efd0...) - the line is KEPT
+MADO_DEV_KEYBOARD: name="kbdX" block=yes layout="de" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEVICES: keyboards=3 agree=1 differ=1 fallback=0 virtual=1 mice=2 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER
+
+## cause: text.split("\n") yields a phantom final element that join_continuations treats as a line
+raw split elements : ["device {", "    name = kbdX", "    kb_layout = de \\", ""]
+join_continuations : ["device {", "    name = kbdX", "    kb_layout = de"]
+reference state    : {'kbdX': {'kb_layout': 'de'}}  unsupported= 0
+
+## same file without the trailing newline: both drop (control C23)
+MADO_DEV_KEYBOARD: name="kbdX" block=yes layout="us" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=DIFFER
+ORACLE_FIELD: name="kbdX" field=kb_layout state=default raw="us" projected="us"
+
+## hyprlang source of the drop (hyprlang 0.6.8 src/config.cpp:44-63 getNextLine, pinned copy)
+static std::expected<std::string, eGetNextLineFailure> getNextLine(std::istream& str, int& rawLineNum, int& lineNum) {
+    std::string line     = "";
+    std::string nextLine = "";
+
+    if (!std::getline(str, line))
+        return std::unexpected(GETNEXTLINEFAILURE_EOF);
+
+    lineNum = ++rawLineNum;
+
+    while (line.length() > 0 && line.at(line.length() - 1) == '\\') {
+        const auto lastNonSpace = line.length() < 2 ? -1 : line.find_last_not_of(MULTILINE_SPACE_CHARSET, line.length() - 2);
+        line                    = line.substr(0, lastNonSpace + 1);
+
+        if (!std::getline(str, nextLine))
+            return std::unexpected(GETNEXTLINEFAILURE_BACKSLASH);
+
+        ++rawLineNum;
+        line += nextLine;
+    }
+

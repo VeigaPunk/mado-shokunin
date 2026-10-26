@@ -1,0 +1,30 @@
+# generated 2026-10-26T20:46:45Z from mado-shokunin/.ufo/waves/round-46/fetch (read-only pins)
+$ sha256sum fetch/Hyprland-InputManager.cpp fetch/Hyprland-IKeyboard.cpp fetch/Hyprland-VirtualKeyboard.cpp fetch/Hyprland-protocols-VirtualKeyboard.cpp
+feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765  .ufo/waves/round-46/fetch/Hyprland-InputManager.cpp
+8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d  .ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp
+bc6d984a4c9e62313501c1cdb4ace3659c16d3b77e029a3c082a77f21500ed86  .ufo/waves/round-46/fetch/Hyprland-VirtualKeyboard.cpp
+43cbf7b39bf0910df6d933cef95f029fa336d5b432b0202280e6fc40d8db2f50  .ufo/waves/round-46/fetch/Hyprland-protocols-VirtualKeyboard.cpp
+
+$ grep -nE "m_currentRules\s*(\.\w+)?\s*=[^=]" fetch/*.cpp   # every write to the printed rules
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:66:    m_currentRules          = rules;
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:109:        m_currentRules.rules   = "";
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:110:        m_currentRules.model   = "";
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:111:        m_currentRules.variant = "";
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:112:        m_currentRules.options = "";
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:113:        m_currentRules.layout  = "us";
+
+$ grep -n "CVirtualKeyboard::create" fetch/*.cpp   # only construction site
+.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:1128:    const auto PNEWKEYBOARD = m_keyboards.emplace_back(CVirtualKeyboard::create(keyboard));
+.ufo/waves/round-46/fetch/Hyprland-VirtualKeyboard.cpp:7:SP<CVirtualKeyboard> CVirtualKeyboard::create(SP<CVirtualKeyboardV1Resource> keeb) {
+
+$ grep -n "applyConfigToKeyboard" fetch/*.cpp   # call sites
+.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:1195:    applyConfigToKeyboard(keeb);
+.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:1208:        applyConfigToKeyboard(k);
+.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:1213:void CInputManager::applyConfigToKeyboard(SP<IKeyboard> pKeyboard) {
+
+$ grep -n "m_keyboards.clear" fetch/*.cpp   # clear() only in the destructor
+.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:117:    m_keyboards.clear();
+
+$ grep -n "m_keymapOverridden" fetch/*.cpp   # one write-enable, one read
+.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:61:    if (m_keymapOverridden) {
+.ufo/waves/round-46/fetch/Hyprland-VirtualKeyboard.cpp:41:        m_keymapOverridden = true;

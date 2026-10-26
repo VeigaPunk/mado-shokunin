@@ -1,0 +1,1006 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+input: add per-device scroll-factor - #11241
+#11241
+Merged
+vaxerski merged 6 commits intohyprwm:mainhyprwm/Hyprland:mainfrom vaxerski:scroll-factorvaxerski/Hyprland:scroll-factorCopy head branch name to clipboard
+Sep 2, 2025
+ConversationCommits6 (6)ChecksFiles changed
+Merged
+input: add per-device scroll-factor#11241
+vaxerski merged 6 commits intohyprwm:mainhyprwm/Hyprland:mainfrom vaxerski:scroll-factorvaxerski/Hyprland:scroll-factorCopy head branch name to clipboard
+Conversation
+vaxerski
+commented
+Jul 27, 2025
+Copy link
+Copy Markdown
+Member
+Adds per-device scroll factor via device:scroll_factor. Clamped to 0.0 - 100.0
+Fixes #11240
+Needs a test @Kommynct
+-->
+Sorry, something went wrong.
+-->
+All reactions
+github-actions
+Bot
+added
+core
+config
+managers
+devices
+labels
+Jul 27, 2025
+Kommynct
+commented
+Jul 27, 2025
+Copy link
+Copy Markdown
+if someone teaches me how to test patches on nixos i will become a dedicated tester of hyprstuff but currently i am too stupid to even follow a guide, sorry
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Jul 27, 2025
+Copy link
+Copy Markdown
+Member
+Author
+@fufexan I summon you
+-->
+😄
+1
+MounTemed reacted with laugh emoji
+All reactions
+😄
+1 reaction
+-->
+Sorry, something went wrong.
+C0Florent
+commented
+Jul 28, 2025
+Copy link
+Copy Markdown
+Contributor
+if someone teaches me how to test patches on nixos i will become a dedicated tester of hyprstuff but currently i am too stupid to even follow a guide, sorry
+If you're using flakes, it's rather easy:
+Make sure you have the hyprland flake input set to the PR you want to use (add the input if you don't already have it, update it otherwise):
+{
+inputs = {
+# other inputs...
+hyprland = {
+# Set the URL the fork/branch you want to use to build
+url = "github:vaxerski/Hyprland/scroll-factor";
+# Use same input to avoid duplication of dependencies in nix store
+inputs.nixpkgs.follows = "nixpkgs";
+};
+};
+}
+And then you'll find the package in inputs.hyprland.packages."${pkgs.system}".hyprland
+If you want to install it on your nixos system, set the option programs.hyprland.package to the above:
+programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+This will make your system grab the hyprland package from your flake input (which you can set to any version of hyprland) instead of the one from whatever nixpkgs version you're currently using
+There may be better ways to do this, but at least I know this works, I've done this previously to build from a PR I submitted
+Minimal working example:
+{
+inputs = {
+nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+hyprland = {
+url = "github:vaxerski/Hyprland/scroll-factor";
+inputs.nixpkgs.follows = "nixpkgs";
+};
+};
+outputs = inputs: let
+system = "x86_64-linux"; # change if you're on some other system
+in {
+nixosConfigurations.nixos = inputs.nixpkgs.lib.nixosSystem {
+inherit system;
+specialArgs = { inherit inputs; }; # Pass flake inputs to modules
+modules = [
+# This or whatever you have your configuration in
+./configuration.nix
+# Then add the following to your configuration.nix (or leave it here, should work too)
+({ pkgs, inputs, ... }: {
+programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+})
+];
+};
+};
+}
+-->
+All reactions
+-->
+Sorry, something went wrong.
+fufexan
+commented
+Jul 28, 2025
+Copy link
+Copy Markdown
+Member
+@C0Florent explained it nicely, you can follow that for a "full" test.
+For other, quick & dirty tests, you can also just nix build a branch and launch result/bin/hyprland in a tty.
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 28, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+so, to clarify, i'd save
+{
+inputs = {
+nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+hyprland = {
+url = "github:vaxerski/Hyprland/scroll-factor";
+inputs.nixpkgs.follows = "nixpkgs";
+};
+};
+outputs = inputs: let
+system = "x86_64-linux"; # change if you're on some other system
+in {
+nixosConfigurations.nixos = inputs.nixpkgs.lib.nixosSystem {
+inherit system;
+specialArgs = { inherit inputs; }; # Pass flake inputs to modules
+modules = [
+# This or whatever you have your configuration in
+./configuration.nix
+# Then add the following to your configuration.nix (or leave it here, should work too)
+({ pkgs, inputs, ... }: {
+programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+})
+];
+};
+};
+}
+as
+hyprlandtest.nix
+source it in configuration.nix, then rebuild?
+Anything else? i'm not already using flakes so I dunno. Can't test this until tomorrow not at my PC until then, so, just making sure I understand.
+-->
+All reactions
+-->
+Sorry, something went wrong.
+fufexan
+commented
+Jul 28, 2025
+Copy link
+Copy Markdown
+Member
+If you're not already using flakes, then follow the Nix stable tab from https://wiki.hypr.land/Nix/Hyprland-on-NixOS/, but use https://github.com/vaxerski/Hyprland/archive/scroll-factor.tar.gz as the URL for fetchTarball.
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/hyprland-test.nix
+https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/sys.nix
+https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/anarchy-desktop.nix
+please help, what did i do wrong,
+hyprland --version (07-29 21:45)
+Hyprland 0.50.0 built from branch at commit dirty ().
+Date: 1970-01-01
+Tag: v0.50.0, commits:
+built against:
+aquamarine 0.9.2
+hyprlang 0.6.3
+hyprutils 0.8.1
+hyprcursor 0.1.12
+hyprgraphics 0.1.5
+no flags were set
+(my config is weirdly designed because it autoconfigures based on the hostname so i can have a bunch of different computers autosetup based on what their hostname is)
+-->
+All reactions
+-->
+Sorry, something went wrong.
+C0Florent
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Contributor
+please help, what did i do wrong
+Your greetd is still running hyprland from nixpkgs? I'm not using greetd personnally so I don't know for certain, but this seems wrong to me.
+greetd = {
+enable = true;
+settings = rec {
+default_session = {
+command = "${pkgs.wl-restart}/bin/wl-restart -n 20 ${pkgs.hyprland}/bin/Hyprland > /dev/null";
+user = config.services.getty.autologinUser;
+};
+};
+};
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+i'm pretty sure package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+changes that pkg to the compiled one, no? @fufexan
+edit: https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/hyprland-test.nix
+would this fix it?
+-->
+All reactions
+-->
+Sorry, something went wrong.
+C0Florent
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Contributor
+i'm pretty sure package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+changes that pkg to the compiled one, no? @fufexan
+To my understanding, it wouldn't. (perhaps you're thinking of overlays? I think overlays do that, not sure)
+Setting the NixOS option programs.hyprland.package does not change any entry in pkgs, so pkgs.hyprland still points to whatever the version of Hyprland is in your nixkpgs channel.
+Setting the option simply assigns to config.programs.hyprland.package (config contains the "result" of your defined options, with all your modules merged together), which, by default, is set to pkgs.hyprland
+Generally, setting programs.hyprland.enable = true should make it available to all display managers, passing them the proper package (config.programs.hyprland.package). In your case, you're defining your greetd entry by hand, which intuitively I would not think to be necessary, but idk. Anyway, I'm almost certain that if you configure greetd to run pkgs.hyprland, it will indeed run hyprland from nixpkgs, and not the one you configured in any other modules.
+So you could simply change your entry to use config.programs.hyprland.package instead of pkgs.hyprland
+By the way, this would explain why your hyprland --version outputs Hyprland 0.50.0 built from branch at commit dirty ().: your programs.hyprland.package is exposed to your system environment, so you can see it's available, but I would bet hyprctl version reports a different version (because it queries the running instance for its version, and I'm convinced your running instance is from nixpkgs)
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/hyprland-test.nix would this do it?
+-->
+All reactions
+-->
+Sorry, something went wrong.
+C0Florent
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Contributor
+https://gitlab.com/that1communist/dotfiles/-/blob/master/etc/nixos/hyprland-test.nix would this do it?
+I would guess no? You can try to see for yourself. I was rather thinking of
+command = "${pkgs.wl-restart}/bin/wl-restart -n 20 ${config.programs.hyprland.package}/bin/Hyprland > /dev/null";
+And also, I'm afraid your greetd.settings.default_session.command defined in hyprland-test.nix is not going to be taken into account because you defined it with lib.mkDefault (which creates low priority values) and then also define it in your sys.nix, this time without lib.mkDefault, so that would take precedence over the other one.
+-->
+👍
+1
+fufexan reacted with thumbs up emoji
+All reactions
+👍
+1 reaction
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+it crashes, also i've been using lib.mkdefault backwards this ENTIRE TIME for so many fucking things jfc thank you for that.
+--------------------------------------------
+Hyprland Crash Report
+--------------------------------------------
+Vaxry is going to be upset.
+Hyprland received signal 6(ABRT)
+Version:
+Tag: v0.50.0
+Date: 1970-01-01
+Flags:
+System info:
+System name: Linux
+Node name: anarchy-desktop
+Release: 6.15.7-zen1
+Version: #1-NixOS ZEN SMP PREEMPT_DYNAMIC Tue Jan 1 00:00:00 UTC 1980
+GPU:
+06:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 23 [Radeon RX 6650 XT / 6700S / 6800S] [1002:73ef] (rev c1) (prog-if 00 [VGA controller])
+os-release:
+ANSI_COLOR="0;38;2;126;186;228"
+BUG_REPORT_URL="https://github.com/NixOS/nixpkgs/issues"
+BUILD_ID="25.11pre836767.e44b8dc0882d"
+CPE_NAME="cpe:/o:nixos:nixos:25.11"
+DEFAULT_HOSTNAME=nixos
+DOCUMENTATION_URL="https://nixos.org/learn.html"
+HOME_URL="https://nixos.org/"
+ID=nixos
+ID_LIKE=""
+IMAGE_ID=""
+IMAGE_VERSION=""
+LOGO="nix-snowflake"
+NAME=NixOS
+PRETTY_NAME="NixOS 25.11 (Xantusia)"
+SUPPORT_URL="https://nixos.org/community.html"
+VARIANT=""
+VARIANT_ID=""
+VENDOR_NAME=NixOS
+VENDOR_URL="https://nixos.org/"
+VERSION="25.11 (Xantusia)"
+VERSION_CODENAME=xantusia
+VERSION_ID="25.11"
+Backtrace:
+# | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland(_Z12getBacktracev+0x5c) [0x84e41c]
+getBacktrace()
+??:?
+#1 | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland(_ZN14NCrashReporter18createAndSaveCrashEi+0xa74) [0x73ebe4]
+NCrashReporter::createAndSaveCrash(int)
+??:?
+#2 | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland() [0x676f4e]
+handleUnrecoverableSignal(int)
+??:?
+#3 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(+0x419c0) [0x7fb8cb6419c0]
+??
+??:0
+#4 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(+0x9cf3c) [0x7fb8cb69cf3c]
+??
+??:0
+#5 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(gsignal+0x1e) [0x7fb8cb64190e]
+??
+??:0
+#6 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(abort+0xdf) [0x7fb8cb628942]
+??
+??:0
+#7 | /nix/store/092a0wpl35iyz7qvdjkjanzv3rvpyr1i-aquamarine-0.9.2+date=2025-07-17_e31b575/lib/libaquamarine.so.8(+0x143cee) [0x7fb8cc7cdcee]
+??
+??:0
+#8 | /nix/store/092a0wpl35iyz7qvdjkjanzv3rvpyr1i-aquamarine-0.9.2+date=2025-07-17_e31b575/lib/libaquamarine.so.8(_ZN10Aquamarine12CDRMRenderer10loadEGLAPIEv+0x598) [0x7fb8cc7c4498]
+??
+??:0
+#9 | /nix/store/092a0wpl35iyz7qvdjkjanzv3rvpyr1i-aquamarine-0.9.2+date=2025-07-17_e31b575/lib/libaquamarine.so.8(_ZN10Aquamarine12CDRMRenderer7attemptEN9Hyprutils6Memory14CSharedPointerINS_8CBackendEEENS3_INS_13CGBMAllocatorEEE+0x16d) [0x7fb8cc7c682d]
+??
+??:0
+#1 | /nix/store/092a0wpl35iyz7qvdjkjanzv3rvpyr1i-aquamarine-0.9.2+date=2025-07-17_e31b575/lib/libaquamarine.so.8(_ZN10Aquamarine11CDRMBackend7onReadyEv+0x8eb) [0x7fb8cc78e7fb]
+??
+??:0
+#11 | /nix/store/092a0wpl35iyz7qvdjkjanzv3rvpyr1i-aquamarine-0.9.2+date=2025-07-17_e31b575/lib/libaquamarine.so.8(_ZN10Aquamarine8CBackend5startEv+0x42a) [0x7fb8cc74b79a]
+??
+??:0
+#12 | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland(_ZN11CCompositor10initServerENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi+0x725) [0x69ed35]
+CCompositor::initServer(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int)
+??:?
+#13 | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland(main+0xb48) [0x8d84b8]
+main
+??:?
+#14 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(+0x2a4d8) [0x7fb8cb62a4d8]
+??
+??:0
+#15 | /nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6(__libc_start_main+0x8b) [0x7fb8cb62a59b]
+??
+??:0
+#16 | /nix/store/hxf26zx95g5422biqvkb1bj538sq13cr-hyprland-0.50.0+date=1970-01-01_dirty/bin/Hyprland(_start+0x25) [0x625725]
+_start
+??:?
+Log tail:
+[LOG] [AQ] drm: Explicit sync supported
+[LOG] [AQ] drm: connector DP-2 crtc supports CTM
+[LOG] [AQ] drm: connector DP-2 crtc supports HDR (7)
+[LOG] [AQ] drm: connector DP-2 crtc supports Colorspace (116)
+[LOG] [AQ] drm: Connector HDMI-A-1 connected
+[LOG] [AQ] drm: Connecting connector HDMI-A-1, CRTC ID 93
+[LOG] [AQ] drm: Dumping detected modes:
+[LOG] [AQ] drm: Mode 0: 3840x2160@60.00Hz (preferred)
+[LOG] [AQ] drm: Mode 1: 4096x2160@60.00Hz
+[LOG] [AQ] drm: Mode 2: 4096x2160@59.94Hz
+[LOG] [AQ] drm: Mode 3: 4096x2160@50.00Hz
+[LOG] [AQ] drm: Mode 4: 4096x2160@30.00Hz
+[LOG] [AQ] drm: Mode 5: 4096x2160@29.97Hz
+[LOG] [AQ] drm: Mode 6: 4096x2160@24.00Hz
+[LOG] [AQ] drm: Mode 7: 4096x2160@23.98Hz
+[LOG] [AQ] drm: Mode 8: 3840x2160@60.00Hz
+[LOG] [AQ] drm: Mode 9: 3840x2160@59.94Hz
+[LOG] [AQ] drm: Mode 10: 3840x2160@50.00Hz
+[LOG] [AQ] drm: Mode 11: 3840x2160@30.00Hz
+[LOG] [AQ] drm: Mode 12: 3840x2160@29.97Hz
+[LOG] [AQ] drm: Mode 13: 3840x2160@25.00Hz
+[LOG] [AQ] drm: Mode 14: 3840x2160@24.00Hz
+[LOG] [AQ] drm: Mode 15: 3840x2160@23.98Hz
+[LOG] [AQ] drm: Mode 16: 2560x1440@120.00Hz
+[LOG] [AQ] drm: Mode 17: 2560x1440@59.95Hz
+[LOG] [AQ] drm: Mode 18: 1920x1200@60.00Hz
+[LOG] [AQ] drm: Mode 19: 1920x1080@120.00Hz
+[LOG] [AQ] drm: Mode 20: 1920x1080@119.88Hz
+[LOG] [AQ] drm: Mode 21: 1920x1080@100.00Hz
+[LOG] [AQ] drm: Mode 22: 1920x1080@60.00Hz
+[LOG] [AQ] drm: Mode 23: 1920x1080@60.00Hz
+[LOG] [AQ] drm: Mode 24: 1920x1080@59.94Hz
+[LOG] [AQ] drm: Mode 25: 1920x1080@50.00Hz
+[LOG] [AQ] drm: Mode 26: 1920x1080@30.00Hz
+[LOG] [AQ] drm: Mode 27: 1920x1080@29.97Hz
+[LOG] [AQ] drm: Mode 28: 1920x1080@25.00Hz
+[LOG] [AQ] drm: Mode 29: 1920x1080@24.00Hz
+[LOG] [AQ] drm: Mode 30: 1920x1080@23.98Hz
+[LOG] [AQ] drm: Mode 31: 1600x1200@60.00Hz
+[LOG] [AQ] drm: Mode 32: 1680x1050@59.88Hz
+[LOG] [AQ] drm: Mode 33: 1600x900@60.00Hz
+[LOG] [AQ] drm: Mode 34: 1280x1024@75.03Hz
+[LOG] [AQ] drm: Mode 35: 1280x1024@60.02Hz
+[LOG] [AQ] drm: Mode 36: 1440x900@59.90Hz
+[LOG] [AQ] drm: Mode 37: 1280x800@59.91Hz
+[LOG] [AQ] drm: Mode 38: 1152x864@75.00Hz
+[LOG] [AQ] drm: Mode 39: 1280x720@60.00Hz
+[LOG] [AQ] drm: Mode 40: 1280x720@60.00Hz
+[LOG] [AQ] drm: Mode 41: 1280x720@59.94Hz
+[LOG] [AQ] drm: Mode 42: 1280x720@50.00Hz
+[LOG] [AQ] drm: Mode 43: 1024x768@75.03Hz
+[LOG] [AQ] drm: Mode 44: 1024x768@70.07Hz
+[LOG] [AQ] drm: Mode 45: 1024x768@60.00Hz
+[LOG] [AQ] drm: Mode 46: 832x624@74.55Hz
+[LOG] [AQ] drm: Mode 47: 800x600@75.00Hz
+[LOG] [AQ] drm: Mode 48: 800x600@72.19Hz
+[LOG] [AQ] drm: Mode 49: 800x600@60.32Hz
+[LOG] [AQ] drm: Mode 50: 720x576@50.00Hz
+[LOG] [AQ] drm: Mode 51: 720x480@60.00Hz
+[LOG] [AQ] drm: Mode 52: 720x480@59.94Hz
+[LOG] [AQ] drm: Mode 53: 640x480@75.00Hz
+[LOG] [AQ] drm: Mode 54: 640x480@72.81Hz
+[LOG] [AQ] drm: Mode 55: 640x480@66.67Hz
+[LOG] [AQ] drm: Mode 56: 640x480@60.00Hz
+[LOG] [AQ] drm: Mode 57: 640x480@59.94Hz
+[LOG] [AQ] drm: Mode 58: 720x400@70.08Hz
+[LOG] [AQ] drm: Physical size [Vector2D: x: 1420, y: 800] (mm)
+[LOG] [AQ] drm: Description Samsung Electric Company SAMSUNG 0x01000E00 (HDMI-A-1)
+[LOG] [AQ] drm: connector HDMI-A-1 crtc is capable of vrr: props.vrr_capable -> 131, crtc->props.vrr_enabled -> 24
+[LOG] [AQ] drm: Explicit sync supported
+[LOG] [AQ] drm: connector HDMI-A-1 crtc supports CTM
+[LOG] [AQ] drm: connector HDMI-A-1 crtc supports HDR (7)
+[LOG] [AQ] drm: connector HDMI-A-1 crtc supports Colorspace (130)
+[LOG] [AQ] drm: gpu /dev/dri/card1 becomes primary drm
+[LOG] [AQ] DRM Dumb: created a dumb allocator
+[LOG] [AQ] Starting the Aquamarine backend!
+[LOG] [AQ] Starting the Wayland backend!
+[ERR] [AQ] Wayland backend cannot start: wl_display_connect failed (is a wayland compositor running?)
+[ERR] [AQ] Requested backend (wayland) could not start, enabling fallbacks
+[ERR] [AQ] Implementation wayland failed, erasing.
+[LOG] [AQ] Created a GBM allocator with drm fd 37
+[LOG] [AQ] drm: Connectors size2 4
+[LOG] [AQ] Created a GBM allocator with drm fd 40
+[LOG] [AQ] Supported EGL client extensions: (0)
+[ERR] [AQ] eglGetProcAddress(eglCreateImageKHR) failed, the display driver doesn't support it
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Member
+Author
+crash is due to a driver issue, in classic nix fashion, probably mismatched mesa versions
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+@fufexan what do pls help
+-->
+All reactions
+-->
+Sorry, something went wrong.
+fufexan
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Member
+Try to follow this https://wiki.hypr.land/Nix/Hyprland-on-NixOS/#:~:text=You%20can%20fix%20this%20issue%20by%20using%20mesa%20from%20Hyprland%E2%80%99s%20nixpkgs%20input
+-->
+All reactions
+-->
+Sorry, something went wrong.
+ryincler
+commented
+Jul 30, 2025
+Copy link
+Copy Markdown
+Contributor
+@fufexan what do pls help
+classic mesa mismatch #11280 (comment)
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 30, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+Try to follow this https://wiki.hypr.land/Nix/Hyprland-on-NixOS/#:~:text=You%20can%20fix%20this%20issue%20by%20using%20mesa%20from%20Hyprland%E2%80%99s%20nixpkgs%20input
+i feel like i'm going insane, there's no text for mesa there, i ctrl+f'd
+Edit: found it under the flakes section, I told you all i'm too stupid for this haha, should probably be added to the section for without flakes, since this is probably almost always broken? No clue how to make that work, pls update wiki with fixed non-flake version @fufexan
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 31, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+OKAY FINALLY GOT IT WORKING THANK YOU @ryincler
+per-device scroll_factor seems to do nothing at all with this patch, i tested it on both my device facing the issue and my regular mouse, at 0.1 it doesn't do anything, at 0.000000000000000001 it doesn't do anything, and at 1 and 0 it doesn't do anything.
+somethings broken @vaxerski
+device {
+name = logitech-usb-receiver
+sensitivity = -0.85
+accel_profile = flat
+repeat_delay = 225
+repeat_rate = 8
+scroll_factor = 0
+}
+device {
+name = charachorder-charachorder-two-s3-mouse
+sensitivity = 1
+accel_profile = flat
+scroll_factor = 0
+}
+and on both of these devices the sensitivity IS working.
+global scroll factor sets it perfectly at 0.1, but of course makes the mouse unusable.
+Also of note, the global scroll factor overrides the per-device scroll factor, so, i don't think they do anything at all.
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Jul 31, 2025
+Copy link
+Copy Markdown
+Member
+Author
+oops check now
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 31, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+same thing unfortunately, how do i make sure i'm using the most recent commit though?
+might be important to note that i don't have a global scroll factor set?
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Jul 31, 2025
+Copy link
+Copy Markdown
+Member
+Author
+how do i make sure i'm using the most recent commit though?
+hyprctl version? dk if nix strips the hash
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 31, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+i tried that, doesn't work, i can't imagine it's not the most recent one though, i did rebuild after the commit and i'm still using the same link fufuexan provided
+Hyprland 0.50.0 built from branch at commit dirty ().
+Date: 1970-01-01
+Tag: v0.50.0, commits:
+built against:
+aquamarine 0.9.2
+hyprlang 0.6.3
+hyprutils 0.8.1
+hyprcursor 0.1.12
+hyprgraphics 0.1.5
+no flags were set
+@fufexan is there some way to enforce it or a system that prevents you from getting the most recent one, anything for me to know about this so I can test a bunch of patches?
+also where did you get the link to that tar.gz?
+-->
+All reactions
+-->
+Sorry, something went wrong.
+fufexan
+commented
+Jul 31, 2025
+Copy link
+Copy Markdown
+Member
+@Kommynct since you're building without flake support, you're not getting the git info in hyprctl. Can you check the package path using realpath $(which hyprctl)?
+-->
+All reactions
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Jul 31, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+realpath $(which hyprctl)
+/nix/store/fb395va3cf0fs4qcz3rr117jwyakpb0q-hyprland-0.50.0+date=1970-01-01_dirty/bin/hyprctl
+I don't think that helps either?
+So sorry about all this, I'll help test like 10 patches once we get all the intricacies sorted out of whoevers choice, feel free to ping me on any to make up for it (in one week i'm going on a trip tomorrow but then i'll be very free).
+-->
+All reactions
+-->
+Sorry, something went wrong.
+fufexan
+commented
+Aug 6, 2025
+Copy link
+Copy Markdown
+Member
+I guess one way of making sure you're on the latest commit would be to manually copy its hash and set it in the URL of the fetchTarball, like so:
+flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
+hyprland = (import flake-compat {
+- src = builtins.fetchTarball "https://github.com/vaxerski/Hyprland/archive/scroll-factor.tar.gz";
++ src = builtins.fetchTarball "https://github.com/vaxerski/Hyprland/archive/e74f2de3a4c19d75d14e538c102641efd08acbee.tar.gz";
+}).defaultNix;
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+force-pushed
+the
+main
+branch
+from
+87b55fb to
+a4529be
+Compare
+August 6, 2025 21:47
+Kommynct
+commented
+Aug 9, 2025
+Copy link
+Copy Markdown
+I guess one way of making sure you're on the latest commit would be to manually copy its hash and set it in the URL of the fetchTarball, like so:
+flake-compat = builtins.fetchTarball "https://github.com/edolstra/flake-compat/archive/master.tar.gz";
+hyprland = (import flake-compat {
+- src = builtins.fetchTarball "https://github.com/vaxerski/Hyprland/archive/scroll-factor.tar.gz";
++ src = builtins.fetchTarball "https://github.com/vaxerski/Hyprland/archive/e74f2de3a4c19d75d14e538c102641efd08acbee.tar.gz";
+}).defaultNix;
+Confirmed, does nothing @vaxerski
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Aug 11, 2025
+Copy link
+Copy Markdown
+Member
+Author
+Ping me about this in 2 weeks please, on holiday rn
+-->
+❤️
+1
+Kommynct reacted with heart emoji
+All reactions
+❤️
+1 reaction
+-->
+Sorry, something went wrong.
+Kommynct
+commented
+Aug 25, 2025
+Copy link
+Copy Markdown
+@vaxerski pinged in two weeks for the man who clearly never takes actual holidays (you seemed to work through the entire holiday, dude take an actual break sometime you work way too hard)
+-->
+👍
+1
+Aqa-Ib reacted with thumbs up emoji
+All reactions
+👍
+1 reaction
+-->
+Sorry, something went wrong.
+vaxerski
+commented
+Aug 28, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+Member
+Author
+bro the entire linux desktop would collapse if I took an actual break for 2 weeks or sumn
+(jsyk I have this tab open to fix this once I have a moment and I am not high)
+-->
+All reactions
+-->
+Sorry, something went wrong.
+vaxerski
+added 4 commits
+September 1, 2025 13:31
+input: add per-device scroll-factor
+c286411
+oops
+a632bfc
+fix
+320798e
+tests
+e1a6414
+vaxerski
+force-pushed
+the
+scroll-factor
+branch
+from
+e74f2de to
+e1a6414
+Compare
+September 1, 2025 12:53
+github-actions
+Bot
+added
+debug
+desktop
+labels
+Sep 1, 2025
+vaxerski
+commented
+Sep 1, 2025
+Copy link
+Copy Markdown
+Member
+Author
+fixed and added tests, once tests pass this is gtg
+-->
+❤️
+1
+Kommynct reacted with heart emoji
+All reactions
+❤️
+1 reaction
+-->
+Sorry, something went wrong.
+cf
+12361c2
+vaxerski
+commented
+Sep 1, 2025
+•
+edited
+Loading
+Copy link
+Copy Markdown
+Member
+Author
+@fufexan fix tests I added a new client I summon you abracadabra pls
+-->
+All reactions
+-->
+Sorry, something went wrong.
+nix/hyprtester: install pointer-scroll test
+9855983
+github-actions
+Bot
+added
+the
+nix
+label
+Sep 1, 2025
+vaxerski
+merged commit 127aab8
+into
+hyprwm:main
+Sep 2, 2025
+flake-prow
+Bot
+mentioned this pull request
+Sep 10, 2025
+[New hyprland version] v0.51.0
+piyoki/nixos-config#495
+Closed
+Boom-Hacker
+pushed a commit
+to Boom-Hacker/Hyprland
+that referenced
+this pull request
+Sep 27, 2025
+input: add per-device scroll-factor (hyprwm#11241)
+ce4e95a
+Boom-Hacker
+pushed a commit
+to Boom-Hacker/Hyprland
+that referenced
+this pull request
+Sep 27, 2025
+input: add per-device scroll-factor (hyprwm#11241)
+5645e4b
+Boom-Hacker
+pushed a commit
+to Boom-Hacker/Hyprland
+that referenced
+this pull request
+Sep 28, 2025
+input: add per-device scroll-factor (hyprwm#11241)
+65aee35
+Mozzarella32
+pushed a commit
+to Mozzarella32/Hyprland
+that referenced
+this pull request
+Oct 8, 2025
+input: add per-device scroll-factor (hyprwm#11241)
+6c75436
+crthpl
+pushed a commit
+to crthpl/Hyprland
+that referenced
+this pull request
+Jun 3, 2026
+input: add per-device scroll-factor (hyprwm#11241)
+b0323a6
+-->
+This file contains hidden or bidirectional Unicode text that may be interpreted or compiled differently than what appears below. To review, open the file in an editor that reveals hidden Unicode characters.
+Learn more about bidirectional Unicode characters
+Show hidden characters
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+-->
+Reviewers
+No reviews
+-->
+Assignees
+No one assigned
+Labels
+config
+core
+debug
+desktop
+devices
+managers
+nix
+-->
+Projects
+None yet
+-->
+Milestone
+No milestone
+-->
+Development
+Successfully merging this pull request may close these issues.
+Add per-device scroll_factor
+5 participants
+Add this suggestion to a batch that can be applied as a single commit.This suggestion is invalid because no changes were made to the code.Suggestions cannot be applied while the pull request is closed.Suggestions cannot be applied while viewing a subset of changes.Only one suggestion per line can be applied in a batch.Add this suggestion to a batch that can be applied as a single commit.Applying suggestions on deleted lines is not supported.You must change the existing code in this line in order to create a valid suggestion.Outdated suggestions cannot be applied.This suggestion has been applied or marked resolved.Suggestions cannot be applied from pending reviews.Suggestions cannot be applied on multi-line comments.Suggestions cannot be applied while the pull request is queued to merge.Suggestion cannot be applied right now. Please check back later.
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

@@ -1,0 +1,26 @@
+diff --git a/corpus/knowledge/hyprland-input-devices-r46.md b/corpus/knowledge/hyprland-input-devices-r46.md
+index 7c9921ae..c51d6629 100644
+--- a/corpus/knowledge/hyprland-input-devices-r46.md
++++ b/corpus/knowledge/hyprland-input-devices-r46.md
+@@ -37,7 +37,7 @@ Lane: mado-shokunin. Round: 46.
+ 
+ ## Observations
+ 
+-**OBS** S316 (pin opened 2026-10-26): `const auto LAYOUT = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");` at Hyprland-InputManager.cpp:1229 - the device value first, the global option as fallback.
++**OBS** S316 (pin opened 2026-10-26): `Not applying config to keyboard, it did not change.` at Hyprland-InputManager.cpp:1274 - the device value first, the global option as fallback.
+ **OBS** S317 (pin opened 2026-10-26): `if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())` at Hyprland-ConfigManager.cpp:1119 - a block value the user did not set does not shadow the global one.
+ **OBS** S318 (pin opened 2026-10-26): `MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us",` at Hyprland-ConfigValues.cpp:272 - the built-in layout.
+ **OBS** S319 (pin opened 2026-10-26): `m_currentRules.layout = "us";` at Hyprland-IKeyboard.cpp:113 - the stored layout after a keymap that does not compile.
+diff --git a/corpus/lessons/round-46.md b/corpus/lessons/round-46.md
+index b72f7b98..5ad19048 100644
+--- a/corpus/lessons/round-46.md
++++ b/corpus/lessons/round-46.md
+@@ -2,7 +2,7 @@
+ 
+ ## Gate
+ 
+-GATE S316 receipt=.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp sha256=feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765 quote="const auto LAYOUT = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");"
++GATE S316 receipt=.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp sha256=feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765 quote="Not applying config to keyboard, it did not change."
+ GATE S317 receipt=.ufo/waves/round-46/fetch/Hyprland-ConfigManager.cpp sha256=9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b quote="if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())"
+ GATE S318 receipt=.ufo/waves/round-46/fetch/Hyprland-ConfigValues.cpp sha256=a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754 quote="MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us","
+ GATE S319 receipt=.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp sha256=8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d quote="m_currentRules.layout = "us";"

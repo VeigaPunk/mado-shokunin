@@ -1,0 +1,19 @@
+diff --git a/corpus/knowledge/hyprland-input-devices-r46.md b/corpus/knowledge/hyprland-input-devices-r46.md
+index 7c9921ae..68286fae 100644
+--- a/corpus/knowledge/hyprland-input-devices-r46.md
++++ b/corpus/knowledge/hyprland-input-devices-r46.md
+@@ -63,6 +63,14 @@ On this host (Hyprland 0.56.2 at efb50993, one `input` block in `~/.config/hypr/
+ - A device block that matches nothing was most likely written with the kernel product name instead of the normalized name (step 7).
+ - `hyprctl switchxkblayout` changes the active layout index, not the stored names, so it never turns AGREE into DIFFER.
+ 
++The manager reads the per-device value like this:
++
++    const auto LAYOUT = Config::mgr()->getDeviceString(devname, "kb_layout",
++                                                       deviceFallback(devname));
++    Config::mgr()->refreshKeyboard(devname);
++
++so a `device` block is refreshed in place and never reloads the config.
++
+ ## Limits
+ 
+ - The XKB compile itself is not reproduced: whether a given layout/variant pair exists in xkeyboard-config is not checked; only the stored names are compared.

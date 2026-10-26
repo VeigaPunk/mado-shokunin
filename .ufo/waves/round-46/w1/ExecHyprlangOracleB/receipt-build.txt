@@ -1,0 +1,41 @@
+# receipt: oracle build and inputs (mado round 46 / ExecHyprlangOracleB)
+# date: 2026-10-26T20:43:11Z
+
+## compiler
+g++ (GCC) 16.2.1 20260810
+
+## build command
+g++ -std=c++23 -O0 -o oracle oracle.cpp -lhyprlang
+
+## oracle binary sha256
+0b1b7a52ba8bc4985e02fe5faf97805f41109b8657f1bd92ed860dacf3f1b517  oracle
+
+## oracle.cpp sha256
+b89304eda9bd2d7ec8da1be028fd07bf1527c820cb7b1cc638deae0eea99d4b7  oracle.cpp
+
+## hyprlang on this host
+/usr/lib/libhyprlang.so.0.6.8
+/usr/lib/libhyprlang.so.0.6.8 is owned by hyprlang 0.6.8-5
+-rw-r--r-- 1 root root 16395 Jul 18 06:03 /usr/include/hyprlang.hpp
+
+## STRVAL_EMPTY sentinel, host header
+24:#define STRVAL_EMPTY "[[EMPTY]]"
+
+## reference under test (frozen)
+b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/l1-draft/mado-devices.py
+counter MODEL_SHA256: 68:MODEL_SHA256 = "b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b"
+
+## reference selftest (read-only run)
+MADO_DEVICES_SELFTEST: 48/48 passed
+exit=0
+
+## registrations the oracle copies (Hyprland 0.56.2 efb50993 pins)
+regular values   : fetch/Hyprland-ConfigValues.cpp:271-276 (input:kb_*), :296 input:scroll_factor, :324 input:touchpad:scroll_factor
+special category : fetch/Hyprland-ConfigManager.cpp:518 addSpecialCategory("device", {"name"})
+special values   : fetch/Hyprland-ConfigManager.cpp:519-565 (47 keys, counted: 47)
+query semantics  : fetch/Hyprland-ConfigManager.cpp:1115-1201 (getConfigValueSafeDevice, deviceConfigExplicitlySet, getDeviceFloat, getDeviceString)
+scroll clamp     : fetch/Hyprland-InputManager.cpp:1379-1382
+json field       : fetch/Hyprland-HyprCtl.cpp:770-773 ({:.2f} of m_scrollFactor.value_or(-1))
+
+## harness
+python3 -I cases.py   # writes results.json; 53 configs x 8 queried names

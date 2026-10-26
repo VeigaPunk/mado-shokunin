@@ -1,0 +1,60 @@
+== per-shape verdict (scan_blob, home_limit=10) ==
+MISS-expected-flagged  clients-b64.txt              -
+MISS-expected-flagged  clients-nested-title.json    -
+MISS-expected-flagged  clients-plain.txt            -
+MISS-expected-flagged  clients-quoted-keys.yaml     -
+MISS-expected-flagged  clients-renamed-keys.json    -
+MISS-expected-flagged  clients-title-renamed.json   -
+MISS-expected-flagged  clients.csv                  -
+MISS-expected-flagged  clients.yaml                 -
+MISS-expected-flagged  home-bullets.md              -
+MISS-expected-flagged  home-json-array.json         -
+MISS-expected-flagged  home-ls-l.txt                -
+MISS-expected-flagged  home-quoted.txt              -
+MISS-expected-flagged  monitors-plain.txt           -
+MISS-expected-flagged  monitors-prose.md            -
+MISS-expected-flagged  monitors.yaml                -
+MISS-expected-flagged  ps-aux.txt                   -
+MISS-expected-flagged  ps-escaped-ss.txt            -
+MISS-expected-flagged  ps-long-name.txt             -
+MISS-expected-flagged  ps.csv                       -
+MISS-expected-flagged  caught 0/19
+FP-expected-clean      disk-inventory.json          [('R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')]
+FP-expected-clean      docs-clients-shape.md        [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+FP-expected-clean      docs-home-paths.md           [('R4_HOME_LISTING', 12, 'distinct_paths=12 limit=10')]
+FP-expected-clean      docs-monitors-shape.md       [('R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')]
+FP-expected-clean      docs-ss-shape.md             [('R2_PROC_TABLE', 1, 'rows=1')]
+FP-expected-clean      selftest-quoted.md           -
+FP-expected-clean      caught 5/6
+MISS-expected-flagged  clients-nul.bin              -
+MISS-expected-flagged  clients-utf16.txt            -
+MISS-expected-flagged  clients-brace-bomb.json      -
+
+== scan caps ==
+stray-braces=0      [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+stray-braces=1      [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+stray-braces=19999  [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+stray-braces=20000  []
+stray-braces=20001  []
+dump-first+20000-braces  [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title truncated=True')]
+dump-after-16MiB         []
+dump-after-NUL-byte      []
+dump-as-UTF-16LE         []
+
+== redaction markers ==
+title=REDACTED               [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+title=<redacted>             [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+title=Example Window Title   [('R1_CLIENT_DUMP', 1, 'objects=1 keys=title')]
+title=null                   []
+title=""                     []
+serial=REDACTED              [('R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')]
+serial=""                    []
+serial+model=disk            [('R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')]
+
+== R4 threshold ==
+ten  -> []
+eleven -> [('R4_HOME_LISTING', 11, 'distinct_paths=11 limit=10')]
+
+== scope: files outside .ufo/ ==
+corpus/knowledge/leak-prose.md findings: []
+gate-emitted-lines-are-the-only-interface: files=17098 findings=102

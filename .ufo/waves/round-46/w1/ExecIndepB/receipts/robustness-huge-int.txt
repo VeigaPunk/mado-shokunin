@@ -1,0 +1,10 @@
+# Out-of-fixture robustness probe: JSON integer scrollFactor beyond double range.
+# command (scratch): python3 - <<'PY' (see below); both modules imported in-process.
+# payload: {"keyboards": [], "mice": [{"name": "m", "scrollFactor": 10**400}]}
+MODEL RAISED OverflowError int too large to convert to float
+MINE (['MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=? verdict=DIFFER', 'MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER'], 1)
+#
+# Reproduction (from scratch, before deletion):
+#   raw=json.dumps({"keyboards":[],"mice":[{"name":"m","scrollFactor":10**400}]}).encode()
+#   model.report(raw,["x\n"])  -> OverflowError (isfinite guard cannot convert)
+#   mine.report(raw,["x\n"])   -> the two lines above

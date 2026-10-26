@@ -1,0 +1,131 @@
+== census derivation ==
+kb_layout_line       : ConfigValues.cpp:272  desc='Appropriate XKB keymap parameter' default='us'
+fallback_sites       : ['us']  (unique m_currentRules.layout assignment: 1)
+other_us_fallbacks   : ['us']
+device_key_count     : total=47 unique=47
+scroll_clamp         : InputManager.cpp:1380 0..100.F
+json_decimals        : HyprCtl.cpp:770 {:.2f}
+virtual_prefix       : protocols/VirtualKeyboard.cpp:12 'hl-virtual-keyboard'
+CENSUS               : hyprland input-device default_layout=us fallback_layout=us device_keys=47 scroll_factor_max=100 json_scroll_decimals=2 virtual_prefix=hl-virtual-keyboard
+FROZEN_MATCH         : True
+entry_census_lines   : ['hyprland input-device default_layout=us fallback_layout=us device_keys=47 scroll_factor_max=100 json_scroll_decimals=2 virtual_prefix=hl-virtual-keyboard']
+
+== 28 surfaces ==
+OK apply-keyboard Hyprland-InputManager.cpp        anchor=[1213] cited=True entry_line=32 span=['1213', '1238']
+     pin[1211..1215]: } | void CInputManager::applyConfigToKeyboard(SP<IKeyboard> pKeyboard) { | auto       devname = pKeyboard->m_hlName;
+     entry[32]: 3. Per-keyboard lookup. For every keyboard, applyConfigToKeyboard reads six keymap names per device (Hyprland-InputManager.cpp:1213-1238, applyConfigToKeyboard): for example the kb_layout lookup asks the device first and the global option second (Hyprland-InputManager.cpp:1226-1231, kb_layout and its siblings). The device value counts only when the user set it; otherwise the global fallback applie
+OK kb-layout-lookup Hyprland-InputManager.cpp        anchor=[1229] cited=True entry_line=40 span=['1229', '']
+     pin[1227..1231]: const auto RULES    = Config::mgr()->getDeviceString(devname, "kb_rules", "input:kb_rules"); | const auto MODEL    = Config::mgr()->getDeviceString(devname, "kb_model", "input:kb_model"); | const auto LAYOUT   = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout"); | const auto VARIANT  = Config::mgr()->getDeviceString(devname, "kb_variant", "input:kb_variant"); | const auto OPTIONS  = Config::mgr()->getDeviceString(devname, "kb_options", "input:kb_options");
+     entry[40]: **OBS** S316 (pin opened 2026-10-26): `const auto LAYOUT = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");` at Hyprland-InputManager.cpp:1229 - the device value first, the global option as fallback.
+OK set-keymap     Hyprland-InputManager.cpp        anchor=[1286] cited=True entry_line=33 span=['1282', '1295']
+     pin[1284..1288]: pKeyboard->m_numlockOn   = NUMLOCKON; | pKeyboard->m_xkbFilePath = FILEPATH; | pKeyboard->setKeymap(IKeyboard::SStringRuleNames{LAYOUT, MODEL, VARIANT, OPTIONS, RULES}); | const auto LAYOUTSTR = pKeyboard->getActiveLayout();
+     entry[33]: 4. Compiling. The five names go to setKeymap as the keyboard's current rules (Hyprland-InputManager.cpp:1282-1295, setKeymap with the names). A non-empty kb_file is tried first (Hyprland-IKeyboard.cpp:87-96, kb_file read before the names). If no keymap compiles, the stored rules are reset and the keyboard falls back to layout `us` with every other name empty (Hyprland-IKeyboard.cpp:101-116, fallba
+OK unchanged-skip Hyprland-InputManager.cpp        anchor=[1274] cited=True entry_line=32 span=['1270', '1280']
+     pin[1272..1276]: MODEL == pKeyboard->m_currentRules.model && LAYOUT == pKeyboard->m_currentRules.layout && VARIANT == pKeyboard->m_currentRules.variant && | OPTIONS == pKeyboard->m_currentRules.options && FILEPATH == pKeyboard->m_xkbFilePath) { | Log::logger->log(Log::DEBUG, "Not applying config to keyboard, it did not change."); | return; | }
+     entry[32]: 3. Per-keyboard lookup. For every keyboard, applyConfigToKeyboard reads six keymap names per device (Hyprland-InputManager.cpp:1213-1238, applyConfigToKeyboard): for example the kb_layout lookup asks the device first and the global option second (Hyprland-InputManager.cpp:1226-1231, kb_layout and its siblings). The device value counts only when the user set it; otherwise the global fallback applie
+OK scroll-explicit Hyprland-InputManager.cpp        anchor=[1379] cited=True entry_line=34 span=['1379', '1383']
+     pin[1377..1381]: } | if (Config::mgr()->deviceConfigExplicitlySet(devname, "scroll_factor")) | m->m_scrollFactor = std::clamp(Config::mgr()->getDeviceFloat(devname, "scroll_factor", "input:scroll_factor"), 0.F, 100.F); | else
+     entry[34]: 5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer a `scrollFactor` with two decimals (Hyprland-HyprCtl.cpp:765-772, scrollFactor field; Hyprland-HyprCtl.cpp:785-802, layout and the other stored names). A pointer's factor is the device block's `scroll_factor` clamped to 0..100 only when that block ex
+OK scroll-nullopt Hyprland-InputManager.cpp        anchor=[1382] cited=True entry_line=34 span=['1379', '1383']
+     pin[1380..1384]: m->m_scrollFactor = std::clamp(Config::mgr()->getDeviceFloat(devname, "scroll_factor", "input:scroll_factor"), 0.F, 100.F); | else | m->m_scrollFactor = std::nullopt; | if (m->aq() && m->aq()->getLibinputHandle()) {
+     entry[34]: 5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer a `scrollFactor` with two decimals (Hyprland-HyprCtl.cpp:765-772, scrollFactor field; Hyprland-HyprCtl.cpp:785-802, layout and the other stored names). A pointer's factor is the device block's `scroll_factor` clamped to 0..100 only when that block ex
+OK dup-name       Hyprland-InputManager.cpp        anchor=[2119] cited=True entry_line=36 span=['2119', '2131']
+     pin[2117..2121]: } | std::string CInputManager::getNameForNewDevice(std::string internalName) { | auto proposedNewName = deviceNameToInternalString(internalName);
+     entry[36]: 7. Names. A device's name is lower-cased with space, newline and comma replaced by `-` (Hyprland-MiscFunctions.cpp:777-789, lower-case name normalizer), and a duplicate gets a `-1`, `-2` suffix (Hyprland-InputManager.cpp:2119-2131, duplicate suffix). A block written with the product name as the kernel reports it (`Razer DeathAdder V2`) never matches: the lookup compares the stored key exactly. The
+OK device-category Hyprland-ConfigManager.cpp       anchor=[518] cited=True entry_line=31 span=['518', '540']
+     pin[516..520]: registerConfigVar("autogenerated", Hyprlang::INT{0}); | // devices | m_config->addSpecialCategory("device", {"name"}); | m_config->addSpecialConfigValue("device", "sensitivity", {0.F}); | m_config->addSpecialConfigValue("device", "accel_profile", {STRVAL_EMPTY});
+     entry[31]: 2. The `device` block is a keyed special category: Hyprland registers it with `name` as its key and 47 values (hyprlang special category, Hyprland-ConfigManager.cpp:518-540 registers the device block). Three spellings reach the same per-device store: `device { name = X ... }`, `device[X] { ... }` and `device[X]:key = value` (the bracket name is cut out of the key, hyprlang-config.cpp:291-320). A `
+OK set-by-user    Hyprland-ConfigManager.cpp       anchor=[1119] cited=True entry_line=41 span=['1119', '']
+     pin[1117..1121]: const auto VAL = m_config->getSpecialConfigValuePtr("device", val.c_str(), dev.c_str()); | if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty()) | return m_config->getConfigValuePtr(fallback.c_str());
+     entry[41]: **OBS** S317 (pin opened 2026-10-26): `if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())` at Hyprland-ConfigManager.cpp:1119 - a block value the user did not set does not shadow the global one.
+OK config-exists  Hyprland-ConfigManager.cpp       anchor=[1196] cited=True entry_line=32 span=['1196', '1201']
+     pin[1194..1198]: } | bool CConfigManager::deviceConfigExists(const std::string& dev) { | auto copy = dev; | std::ranges::replace(copy, ' ', '-');
+     entry[32]: 3. Per-keyboard lookup. For every keyboard, applyConfigToKeyboard reads six keymap names per device (Hyprland-InputManager.cpp:1213-1238, applyConfigToKeyboard): for example the kb_layout lookup asks the device first and the global option second (Hyprland-InputManager.cpp:1226-1231, kb_layout and its siblings). The device value counts only when the user set it; otherwise the global fallback applie
+OK strval-empty   Hyprland-ConfigManager.cpp       anchor=[1163] cited=True entry_line=32 span=['1156', '1168']
+     pin[1161..1165]: auto VAL = std::string{std::any_cast<Hyprlang::STRING>(val->getValue())}; | if (VAL == STRVAL_EMPTY) | return "";
+     entry[32]: 3. Per-keyboard lookup. For every keyboard, applyConfigToKeyboard reads six keymap names per device (Hyprland-InputManager.cpp:1213-1238, applyConfigToKeyboard): for example the kb_layout lookup asks the device first and the global option second (Hyprland-InputManager.cpp:1226-1231, kb_layout and its siblings). The device value counts only when the user set it; otherwise the global fallback applie
+OK kb-layout-default Hyprland-ConfigValues.cpp        anchor=[272] cited=True entry_line=32 span=['271', '276']
+     pin[270..274]: MS<String>("input:kb_model", "Appropriate XKB keymap parameter.", STRVAL_EMPTY, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us", {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<String>("input:kb_variant", "Appropriate XKB keymap parameter", STRVAL_EMPTY, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<String>("input:kb_options", "Appropriate XKB keymap parameter", STRVAL_EMPTY, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+     entry[32]: 3. Per-keyboard lookup. For every keyboard, applyConfigToKeyboard reads six keymap names per device (Hyprland-InputManager.cpp:1213-1238, applyConfigToKeyboard): for example the kb_layout lookup asks the device first and the global option second (Hyprland-InputManager.cpp:1226-1231, kb_layout and its siblings). The device value counts only when the user set it; otherwise the global fallback applie
+OK global-scroll-factor Hyprland-ConfigValues.cpp        anchor=[296] cited=True entry_line=34 span=['290', '300']
+     pin[294..298]: MS<Bool>("input:scroll_button_lock", "If the scroll button lock is enabled, the button does not need to be held down.", false, | {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<Float>("input:scroll_factor", "Multiplier added to scroll movement for external mice.", 1, {.min = 0, .max = 2, .refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<Bool>("input:natural_scroll", "Inverts scrolling direction.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<Int>("input:follow_mouse", "Specify if and how cursor movement should affect window focus.", 1,
+     entry[34]: 5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer a `scrollFactor` with two decimals (Hyprland-HyprCtl.cpp:765-772, scrollFactor field; Hyprland-HyprCtl.cpp:785-802, layout and the other stored names). A pointer's factor is the device block's `scroll_factor` clamped to 0..100 only when that block ex
+OK fallback-us    Hyprland-IKeyboard.cpp           anchor=[113] cited=True entry_line=33 span=['101', '116']
+     pin[111..115]: m_currentRules.variant = ""; | m_currentRules.options = ""; | m_currentRules.layout  = "us"; | m_xkbKeymap = xkb_keymap_new_from_names2(CONTEXT, &XKBRULES, XKB_KEYMAP_FORMAT_TEXT_V2, XKB_KEYMAP_COMPILE_NO_FLAGS);
+     entry[33]: 4. Compiling. The five names go to setKeymap as the keyboard's current rules (Hyprland-InputManager.cpp:1282-1295, setKeymap with the names). A non-empty kb_file is tried first (Hyprland-IKeyboard.cpp:87-96, kb_file read before the names). If no keymap compiles, the stored rules are reset and the keyboard falls back to layout `us` with every other name empty (Hyprland-IKeyboard.cpp:101-116, fallba
+OK keymap-overridden Hyprland-IKeyboard.cpp           anchor=[61] cited=True entry_line=35 span=['60', '64']
+     pin[59..63]: void IKeyboard::setKeymap(const SStringRuleNames& rules) { | if (m_keymapOverridden) { | Log::logger->log(Log::DEBUG, "Ignoring setKeymap: keymap is overridden"); | return;
+     entry[35]: 6. Virtual keyboards. A virtual keyboard (an input method such as fcitx5) is named `hl-virtual-keyboard` plus its process name (Hyprland-protocols-VirtualKeyboard.cpp:11-30, hl-virtual-keyboard naming). When its client sends a keymap the keyboard marks the keymap overridden (Hyprland-VirtualKeyboard.cpp:36-44, virtual keyboard override flag), and setKeymap then returns early (Hyprland-IKeyboard.cp
+OK kb-file        Hyprland-IKeyboard.cpp           anchor=[87] cited=True entry_line=33 span=['87', '96']
+     pin[85..89]: rules.model, rules.options); | if (!m_xkbFilePath.empty()) { | auto path = absolutePath(m_xkbFilePath, Config::mgr()->currentConfigPath());
+     entry[33]: 4. Compiling. The five names go to setKeymap as the keyboard's current rules (Hyprland-InputManager.cpp:1282-1295, setKeymap with the names). A non-empty kb_file is tried first (Hyprland-IKeyboard.cpp:87-96, kb_file read before the names). If no keymap compiles, the stored rules are reset and the keyboard falls back to layout `us` with every other name empty (Hyprland-IKeyboard.cpp:101-116, fallba
+OK json-scroll    Hyprland-HyprCtl.cpp             anchor=[770] cited=True entry_line=34 span=['765', '772']
+     pin[768..772]: "name": "{}", | "defaultSpeed": {:.5f}, | "scrollFactor": {:.2f} | }},)#", | rc<uintptr_t>(m.get()), escapeJSONStrings(m->m_hlName),
+     entry[34]: 5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer a `scrollFactor` with two decimals (Hyprland-HyprCtl.cpp:765-772, scrollFactor field; Hyprland-HyprCtl.cpp:785-802, layout and the other stored names). A pointer's factor is the device block's `scroll_factor` clamped to 0..100 only when that block ex
+OK json-layout    Hyprland-HyprCtl.cpp             anchor=[800] cited=True entry_line=34 span=['785', '802']
+     pin[798..802]: }},)#", | rc<uintptr_t>(k.get()), escapeJSONStrings(k->m_hlName), escapeJSONStrings(k->m_currentRules.rules), escapeJSONStrings(k->m_currentRules.model), | escapeJSONStrings(k->m_currentRules.layout), escapeJSONStrings(k->m_currentRules.variant), escapeJSONStrings(k->m_currentRules.options), KI, escapeJSONStrings(KM), | (getModState(k, XKB_MOD_NAME_CAPS) ? "true" : "false"), (getModState(k, XKB_MOD_NAME_NUM) ? "true" : "false"), (k->m_active ? "true" : "false")); | }
+     entry[34]: 5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer a `scrollFactor` with two decimals (Hyprland-HyprCtl.cpp:765-772, scrollFactor field; Hyprland-HyprCtl.cpp:785-802, layout and the other stored names). A pointer's factor is the device block's `scroll_factor` clamped to 0..100 only when that block ex
+OK virtual-override Hyprland-VirtualKeyboard.cpp     anchor=[41] cited=True entry_line=46 span=['41', '']
+     pin[39..43]: xkb_keymap_unref(m_xkbKeymap); | m_xkbKeymap        = xkb_keymap_ref(event.keymap); | m_keymapOverridden = true; | updateXKBTranslationState(m_xkbKeymap); | updateKeymapFD();
+     entry[46]: **OBS** S322 (pin opened 2026-10-26): `m_keymapOverridden = true;` at Hyprland-VirtualKeyboard.cpp:41 - set when a virtual keyboard's client sends its keymap.
+OK virtual-name   Hyprland-protocols-VirtualKeyboard.cpp anchor=[12] cited=True entry_line=47 span=['12', '']
+     pin[10..14]: static std::string virtualKeyboardNameForWlClient(wl_client* client) { | std::string name = "hl-virtual-keyboard"; | static auto PVKNAMEPROC = CConfigValue<Config::INTEGER>("misc:name_vk_after_proc");
+     entry[47]: **OBS** S323 (pin opened 2026-10-26): `std::string name = "hl-virtual-keyboard";` at Hyprland-protocols-VirtualKeyboard.cpp:12 - the name every virtual keyboard starts with.
+OK name-normalizer Hyprland-MiscFunctions.cpp       anchor=[777] cited=True entry_line=36 span=['777', '789']
+     pin[775..779]: } | std::string deviceNameToInternalString(const std::string& in) { | auto result = in | std::views::transform([](unsigned char ch) -> char { | switch (ch) {
+     entry[36]: 7. Names. A device's name is lower-cased with space, newline and comma replaced by `-` (Hyprland-MiscFunctions.cpp:777-789, lower-case name normalizer), and a duplicate gets a `-1`, `-2` suffix (Hyprland-InputManager.cpp:2119-2131, duplicate suffix). A block written with the product name as the kernel reports it (`Razer DeathAdder V2`) never matches: the lookup compares the stored key exactly. The
+OK bracket-key    hyprlang-config.cpp              anchor=[291] cited=True entry_line=31 span=['291', '320']
+     pin[289..293]: SSpecialCategory* overrideSpecialCat = nullptr; | if (valueName.contains('[') && valueName.contains(']')) { | const auto L = valueName.find_first_of('['); | const auto R = valueName.find_last_of(']');
+     entry[31]: 2. The `device` block is a keyed special category: Hyprland registers it with `name` as its key and 47 values (hyprlang special category, Hyprland-ConfigManager.cpp:518-540 registers the device block). Three spellings reach the same per-device store: `device { name = X ... }`, `device[X] { ... }` and `device[X]:key = value` (the bracket name is cut out of the key, hyprlang-config.cpp:291-320). A `
+OK first-value-key hyprlang-config.cpp              anchor=[435] cited=True entry_line=48 span=['435', '']
+     pin[433..437]: } else { | if (VALUEIT == PCAT->values.end() || VALUEIT->first != sc->key) { | result.setError(std::format("special category's first value must be the key. Key for <{}> is <{}>", PCAT->name, PCAT->key)); | return {true, result}; | }
+     entry[48]: **OBS** S324 (pin opened 2026-10-26): `special category's first value must be the key.` at hyprlang-config.cpp:435 - the error a `device` block without a leading `name` gets.
+OK hash-escape    hyprlang-config.cpp              anchor=[691] cited=True entry_line=30 span=['674', '700']
+     pin[689..693]: bool escaped = false; | if (commentPos < line.length() - 1) { | if (line[commentPos + 1] == '#') { | lastHashPos = commentPos + 2; | escaped     = true;
+     entry[30]: 1. Parsing. The config language reads a file line by line; a line ending in a backslash is joined with the next one (continuation, hyprlang-config.cpp:44-66). A `#` starts a comment unless it is doubled: `##` is one literal `#` comment character (hyprlang-config.cpp:674-700). Inside a category, a key's full name is the category stack joined with `:`.
+OK continuation   hyprlang-config.cpp              anchor=[53] cited=True entry_line=30 span=['44', '66']
+     pin[51..55]: lineNum = ++rawLineNum; | while (line.length() > 0 && line.at(line.length() - 1) == '\\') { | const auto lastNonSpace = line.length() < 2 ? -1 : line.find_last_not_of(MULTILINE_SPACE_CHARSET, line.length() - 2); | line                    = line.substr(0, lastNonSpace + 1);
+     entry[30]: 1. Parsing. The config language reads a file line by line; a line ending in a backslash is joined with the next one (continuation, hyprlang-config.cpp:44-66). A `#` starts a comment unless it is doubled: `##` is one literal `#` comment character (hyprlang-config.cpp:674-700). Inside a category, a key's full name is the category stack joined with `:`.
+OK special-reset  hyprlang-config.cpp              anchor=[896] cited=True entry_line=31 span=['885', '899']
+     pin[894..898]: if (impl->categories.empty()) { | impl->currentSpecialKey      = ""; | impl->currentSpecialCategory = nullptr; | }
+     entry[31]: 2. The `device` block is a keyed special category: Hyprland registers it with `name` as its key and 47 values (hyprlang special category, Hyprland-ConfigManager.cpp:518-540 registers the device block). Three spellings reach the same per-device store: `device { name = X ... }`, `device[X] { ... }` and `device[X]:key = value` (the bracket name is cut out of the key, hyprlang-config.cpp:291-320). A `
+OK wiki-override  wiki-Keywords.md                 anchor=[66] cited=True entry_line=36 span=['64', '70']
+     pin[64..68]: ## Per-device input configs | Per-device config options will overwrite your options set in the `input` | section. It's worth noting that ONLY values explicitly changed will be | overwritten.
+     entry[36]: 7. Names. A device's name is lower-cased with space, newline and comma replaced by `-` (Hyprland-MiscFunctions.cpp:777-789, lower-case name normalizer), and a duplicate gets a `-1`, `-2` suffix (Hyprland-InputManager.cpp:2119-2131, duplicate suffix). A block written with the product name as the kernel reports it (`Razer DeathAdder V2`) never matches: the lookup compares the stored key exactly. The
+OK wiki-name      wiki-Keywords.md                 anchor=[79] cited=True entry_line=36 span=['79', '']
+     pin[77..81]: ``` | The `name` can be easily obtained by checking the output of `hyprctl devices`. | Inside of it, put your config options. All options from the `input` category
+     entry[36]: 7. Names. A device's name is lower-cased with space, newline and comma replaced by `-` (Hyprland-MiscFunctions.cpp:777-789, lower-case name normalizer), and a duplicate gets a `-1`, `-2` suffix (Hyprland-InputManager.cpp:2119-2131, duplicate suffix). A block written with the product name as the kernel reports it (`Razer DeathAdder V2`) never matches: the lookup compares the stored key exactly. The
+surfaces_not_ok      : 0
+
+== 10 gate quotes ==
+OK S316 Hyprland-InputManager.cpp            occ_raw=1 occ_nocomment=1 quote_line=1229 obs_line=[40] locator_ok=True
+     obs: **OBS** S316 (pin opened 2026-10-26): `const auto LAYOUT = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");` at Hyprland-InputManager.cpp:1229 - the device value first, the global option as fallback.
+     pin[1229..1232]: const auto LAYOUT   = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout"); | const auto VARIANT  = Config::mgr()->getDeviceString(devname, "kb_variant", "input:kb_variant"); | const auto OPTIONS  = Config::mgr()->getDeviceString(devname, "kb_options", "input:kb_options");
+OK S317 Hyprland-ConfigManager.cpp           occ_raw=1 occ_nocomment=1 quote_line=1119 obs_line=[41] locator_ok=True
+     obs: **OBS** S317 (pin opened 2026-10-26): `if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())` at Hyprland-ConfigManager.cpp:1119 - a block value the user did not set does not shadow the global one.
+     pin[1119..1121]: if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty()) | return m_config->getConfigValuePtr(fallback.c_str());
+OK S318 Hyprland-ConfigValues.cpp            occ_raw=1 occ_nocomment=1 quote_line=272 obs_line=[42] locator_ok=True
+     obs: **OBS** S318 (pin opened 2026-10-26): `MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us",` at Hyprland-ConfigValues.cpp:272 - the built-in layout.
+     pin[272..274]: MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us", {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<String>("input:kb_variant", "Appropriate XKB keymap parameter", STRVAL_EMPTY, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}), | MS<String>("input:kb_options", "Appropr
+OK S319 Hyprland-IKeyboard.cpp               occ_raw=1 occ_nocomment=1 quote_line=113 obs_line=[43] locator_ok=True
+     obs: **OBS** S319 (pin opened 2026-10-26): `m_currentRules.layout = "us";` at Hyprland-IKeyboard.cpp:113 - the stored layout after a keymap that does not compile.
+     pin[113..114]: m_currentRules.layout  = "us";
+OK S320 Hyprland-HyprCtl.cpp                 occ_raw=1 occ_nocomment=1 quote_line=769 obs_line=[44] locator_ok=True
+     obs: **OBS** S320 (pin opened 2026-10-26): `"defaultSpeed": {:.5f}, "scrollFactor": {:.2f}` at Hyprland-HyprCtl.cpp:769 - the pointer fields of the dump.
+     pin[769..771]: "defaultSpeed": {:.5f}, | "scrollFactor": {:.2f} | }},)#",
+OK S321 Hyprland-MiscFunctions.cpp           occ_raw=1 occ_nocomment=1 quote_line=782 obs_line=[45] locator_ok=True
+     obs: **OBS** S321 (pin opened 2026-10-26): `case ',': return '-';` at Hyprland-MiscFunctions.cpp:782 - commas in a device name become dashes too.
+     pin[782..784]: case ',': return '-'; | default: return sc<char>(std::tolower(ch));
+OK S322 Hyprland-VirtualKeyboard.cpp         occ_raw=1 occ_nocomment=1 quote_line=41 obs_line=[46] locator_ok=True
+     obs: **OBS** S322 (pin opened 2026-10-26): `m_keymapOverridden = true;` at Hyprland-VirtualKeyboard.cpp:41 - set when a virtual keyboard's client sends its keymap.
+     pin[41..42]: m_keymapOverridden = true; | updateXKBTranslationState(m_xkbKeymap);
+OK S323 Hyprland-protocols-VirtualKeyboard.cpp occ_raw=1 occ_nocomment=1 quote_line=12 obs_line=[47] locator_ok=True
+     obs: **OBS** S323 (pin opened 2026-10-26): `std::string name = "hl-virtual-keyboard";` at Hyprland-protocols-VirtualKeyboard.cpp:12 - the name every virtual keyboard starts with.
+     pin[12..14]: std::string name = "hl-virtual-keyboard"; | static auto PVKNAMEPROC = CConfigValue<Config::INTEGER>("misc:name_vk_after_proc");
+OK S324 hyprlang-config.cpp                  occ_raw=1 occ_nocomment=1 quote_line=435 obs_line=[48] locator_ok=True
+     obs: **OBS** S324 (pin opened 2026-10-26): `special category's first value must be the key.` at hyprlang-config.cpp:435 - the error a `device` block without a leading `name` gets.
+     pin[435..438]: result.setError(std::format("special category's first value must be the key. Key for <{}> is <{}>", PCAT->name, PCAT->key)); | return {true, result}; | } | impl->currentSpecialKey = value;
+OK S325 wiki-Keywords.md                     occ_raw=1 occ_nocomment=1 quote_line=67 obs_line=[49] locator_ok=True
+     obs: **OBS** S325 (pin opened 2026-10-26): `It's worth noting that ONLY values explicitly changed will be overwritten.` at wiki-Keywords.md:67 - the documented rule the set-by-user test implements.
+     pin[67..71]: section. It's worth noting that ONLY values explicitly changed will be | overwritten. | In order to apply per-device config options, add a new category like this:
+quotes_not_ok        : 0

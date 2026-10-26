@@ -1,0 +1,20 @@
+P1 strings=137257 counterexamples=0
+P1 implication: (lb != -1) => lb >= 0; (lb < rb) => rb > lb >= 0 => rb != -1
+
+P2 (exp, r) pairs=124416 counterexamples=0
+P2 case: every expected name is str (globals/dev values are str; defaults str); FALLBACK is all-str
+P2 case: for non-str r, e != r is True for every str e; tuple with a non-str != all-str FALLBACK
+
+P3 texts=200000 lines containing '\n'=0
+P3 code: parse_config(text) -> text.split("\n") (elements have no "\n") -> join_continuations concatenates elements, adds no separator
+
+P4 call sites of f32(:
+117:def f32(x):
+215:    v = f32(float(m.group(0)))
+P4 call sites of read_float(:
+208:def read_float(value):
+233:        kind, v = read_float(rhs)
+P4 the only consumer of v is `math.isinf(v)`; inf and -inf take the same branch
+
+P5 report() reads: ['name', 'scrollFactor']
+P5 kb() carries: address active_layout_index active_keymap capsLock numLock main (+ the five names)

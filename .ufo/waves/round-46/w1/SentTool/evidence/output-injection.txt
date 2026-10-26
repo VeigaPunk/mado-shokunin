@@ -1,0 +1,8 @@
+### output-injection probes against the reference (stdout must stay one line per device)
+INJ1 name carries a newline + a forged summary line: rc=1 stdout_lines=2 (expected 2)
+INJ1 line1: MADO_DEV_KEYBOARD: name="k\nMADO_DEVICES: keyboards=0 agree=9 verdict=OK" block=no layout="br" variant="" options="" mod
+INJ1 last: MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER
+INJ2 quotes/equals/format/ANSI/tab: MADO_DEV_KEYBOARD: name="a\"b=c%s\u001b[2J\ttab" block=no layout="br" variant="" options="" model="" rules="" kb_file=- 
+INJ3 config value with %s {%%} ESC: MADO_DEV_KEYBOARD: name="k" block=no layout="%s{}%%x\u001b[31m" variant="" options="" model="" rules="" kb_file=- differ
+INJ4 huge-int scrollFactor rc=1 mice_line_bytes=141: MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=9999999999999999493871352970740188669
+### conclusion: json.dumps(ensure_ascii) on every name/config value; no forged summary line appears.

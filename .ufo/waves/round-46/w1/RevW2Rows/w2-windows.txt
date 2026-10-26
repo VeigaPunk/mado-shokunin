@@ -1,0 +1,1696 @@
+### S302 quote match lines 134-134 (receipt Hyprland-Parser.cpp)
+132: 
+133:                 if (value.contains("@"))
+134:                     m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+135:             } catch (...) {
+136:                 m_error += "invalid resolution ";
+
+### S302 anchor Hyprland-Parser.cpp:110-143 idents={'parseMode': True}
+108: }
+109: 
+110: bool CMonitorRuleParser::parseMode(const std::string& value) {
+111:     if (value.empty() || value.starts_with("pref"))
+112:         m_rule.m_resolution = Vector2D();
+113:     else if (value.starts_with("highrr"))
+114:         m_rule.m_resolution = Vector2D(-1, -1);
+115:     else if (value.starts_with("highres"))
+116:         m_rule.m_resolution = Vector2D(-1, -2);
+117:     else if (value.starts_with("maxwidth"))
+118:         m_rule.m_resolution = Vector2D(-1, -3);
+119:     else if (parseModeLine(value, m_rule.m_drmMode)) {
+120:         m_rule.m_resolution  = Vector2D(m_rule.m_drmMode.hdisplay, m_rule.m_drmMode.vdisplay);
+121:         m_rule.m_refreshRate = sc<float>(m_rule.m_drmMode.vrefresh) / 1000;
+122:     } else {
+123: 
+124:         if (!value.contains("x")) {
+125:             m_error += "invalid resolution ";
+126:             m_rule.m_resolution = Vector2D();
+127:             return false;
+128:         } else {
+129:             try {
+130:                 m_rule.m_resolution.x = stoi(value.substr(0, value.find_first_of('x')));
+131:                 m_rule.m_resolution.y = stoi(value.substr(value.find_first_of('x') + 1, value.find_first_of('@')));
+132: 
+133:                 if (value.contains("@"))
+134:                     m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+135:             } catch (...) {
+136:                 m_error += "invalid resolution ";
+137:                 m_rule.m_resolution = Vector2D();
+138:                 return false;
+139:             }
+140:         }
+141:     }
+142:     return true;
+143: }
+144: 
+145: bool CMonitorRuleParser::parsePosition(const std::string& value, bool isFirst) {
+
+### S302 anchor Hyprland-Parser.cpp:145-191 idents={'parsePosition': True}
+143: }
+144: 
+145: bool CMonitorRuleParser::parsePosition(const std::string& value, bool isFirst) {
+146:     if (value.empty() || value.starts_with("auto")) {
+147:         m_rule.m_offset = Vector2D(-INT32_MAX, -INT32_MAX);
+148:         // If this is the first monitor rule needs to be on the right.
+149:         if (value.empty() || value == "auto-right" || value == "auto" || isFirst)
+150:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_RIGHT;
+151:         else if (value == "auto-left")
+152:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_LEFT;
+153:         else if (value == "auto-up")
+154:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_UP;
+155:         else if (value == "auto-down")
+156:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_DOWN;
+157:         else if (value == "auto-center-right")
+158:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_RIGHT;
+159:         else if (value == "auto-center-left")
+160:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_LEFT;
+161:         else if (value == "auto-center-up")
+162:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_UP;
+163:         else if (value == "auto-center-down")
+164:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_DOWN;
+165:         else {
+166:             Log::logger->log(Log::WARN,
+167:                              "Invalid auto direction. Valid options are 'auto',"
+168:                              "'auto-up', 'auto-down', 'auto-left', 'auto-right',"
+169:                              "'auto-center-up', 'auto-center-down',"
+170:                              "'auto-center-left', and 'auto-center-right'.");
+171:             m_error += "invalid auto direction ";
+172:             return false;
+173:         }
+174:     } else {
+175:         if (!value.contains("x")) {
+176:             m_error += "invalid offset ";
+177:             m_rule.m_offset = Vector2D(-INT32_MAX, -INT32_MAX);
+178:             return false;
+179:         } else {
+180:             try {
+181:                 m_rule.m_offset.x = stoi(value.substr(0, value.find_first_of('x')));
+182:                 m_rule.m_offset.y = stoi(value.substr(value.find_first_of('x') + 1));
+183:             } catch (...) {
+184:                 m_error += "invalid offset ";
+185:                 m_rule.m_offset = Vector2D(-INT32_MAX, -INT32_MAX);
+186:                 return false;
+187:             }
+188:         }
+189:     }
+190:     return true;
+191: }
+192: 
+193: bool CMonitorRuleParser::parseScale(const std::string& value) {
+
+### S302 anchor Hyprland-Parser.cpp:193-227 idents={'parseScale': True, 'parseTransform': True}
+191: }
+192: 
+193: bool CMonitorRuleParser::parseScale(const std::string& value) {
+194:     if (value.empty() || value.starts_with("auto"))
+195:         m_rule.m_scale = -1;
+196:     else {
+197:         if (!isNumber(value, true)) {
+198:             m_error += "invalid scale ";
+199:             return false;
+200:         } else {
+201:             m_rule.m_scale = stof(value);
+202: 
+203:             if (m_rule.m_scale < 0.25F) {
+204:                 m_error += "invalid scale ";
+205:                 m_rule.m_scale = 1;
+206:                 return false;
+207:             }
+208:         }
+209:     }
+210:     return true;
+211: }
+212: 
+213: bool CMonitorRuleParser::parseTransform(const std::string& value) {
+214:     if (!isNumber(value)) {
+215:         m_error += "invalid transform ";
+216:         return false;
+217:     }
+218: 
+219:     const auto TSF = std::stoi(value);
+220:     if (std::clamp(TSF, 0, 7) != TSF) {
+221:         Log::logger->log(Log::ERR, "Invalid transform {} in monitor", TSF);
+222:         m_error += "invalid transform ";
+223:         return false;
+224:     }
+225:     m_rule.m_transform = sc<wl_output_transform>(TSF);
+226:     return true;
+227: }
+228: 
+229: bool CMonitorRuleParser::parseBitdepth(const std::string& value) {
+
+### S302 teaches[rate-after-@] pat="find_first_of\\('@'\\)" range=100-150 hits=2
+131:                 m_rule.m_resolution.y = stoi(value.substr(value.find_first_of('x') + 1, value.find_first_of('@')));
+134:                     m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+
+### S302 teaches[rate-assign] pat='m_refreshRate\\s*=' range=100-150 hits=2
+121:         m_rule.m_refreshRate = sc<float>(m_rule.m_drmMode.vrefresh) / 1000;
+134:                     m_rule.m_refreshRate = stof(value.substr(value.find_first_of('@') + 1));
+
+### S302 teaches[pos-auto] pat='auto' range=140-200 hits=23
+146:     if (value.empty() || value.starts_with("auto")) {
+149:         if (value.empty() || value == "auto-right" || value == "auto" || isFirst)
+150:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_RIGHT;
+151:         else if (value == "auto-left")
+152:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_LEFT;
+153:         else if (value == "auto-up")
+154:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_UP;
+155:         else if (value == "auto-down")
+156:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_DOWN;
+157:         else if (value == "auto-center-right")
+158:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_RIGHT;
+159:         else if (value == "auto-center-left")
+160:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_LEFT;
+161:         else if (value == "auto-center-up")
+162:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_UP;
+163:         else if (value == "auto-center-down")
+164:             m_rule.m_autoDir = eAutoDirs::DIR_AUTO_CENTER_DOWN;
+167:                              "Invalid auto direction. Valid options are 'auto',"
+168:                              "'auto-up', 'auto-down', 'auto-left', 'auto-right',"
+169:                              "'auto-center-up', 'auto-center-down',"
+170:                              "'auto-center-left', and 'auto-center-right'.");
+171:             m_error += "invalid auto direction ";
+194:     if (value.empty() || value.starts_with("auto"))
+
+### S302 teaches[scale-auto-or-025] pat='auto|0\\.25' range=190-235 hits=4
+194:     if (value.empty() || value.starts_with("auto"))
+203:             if (m_rule.m_scale < 0.25F) {
+219:     const auto TSF = std::stoi(value);
+235:     auto parsedCM = NCMType::fromString(value);
+
+### S303 quote match lines 1299-1299 (receipt Hyprland-legacy-ConfigManager.cpp)
+1297:     auto       parser = Config::CMonitorRuleParser(std::string(ARGS[0]));
+1298: 
+1299:     if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1] == "addreserved" || ARGS[1] == "transform") {
+1300:         if (ARGS[1] == "disable" || ARGS[1] == "disabled")
+1301:             parser.setDisabled();
+
+### S303 anchor Hyprland-legacy-ConfigManager.cpp:1293-1387 idents={'handleMonitor': True}
+1291: }
+1292: 
+1293: std::optional<std::string> CConfigManager::handleMonitor(const std::string& command, const std::string& args) {
+1294:     // get the monitor config
+1295:     const auto ARGS = CVarList2(std::string(args));
+1296: 
+1297:     auto       parser = Config::CMonitorRuleParser(std::string(ARGS[0]));
+1298: 
+1299:     if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1] == "addreserved" || ARGS[1] == "transform") {
+1300:         if (ARGS[1] == "disable" || ARGS[1] == "disabled")
+1301:             parser.setDisabled();
+1302:         else if (ARGS[1] == "transform") {
+1303:             if (!parser.parseTransform(std::string(ARGS[2])))
+1304:                 return parser.getError();
+1305: 
+1306:             const auto TRANSFORM = parser.rule().m_transform;
+1307: 
+1308:             // overwrite if exists
+1309:             for (const auto& r : Config::monitorRuleMgr()->all()) {
+1310:                 if (r.m_name == parser.name()) {
+1311:                     auto cpy        = r;
+1312:                     cpy.m_transform = TRANSFORM;
+1313:                     Config::monitorRuleMgr()->add(std::move(cpy));
+1314:                     return {};
+1315:                 }
+1316:             }
+1317: 
+1318:             return {};
+1319:         } else if (ARGS[1] == "addreserved") {
+1320:             std::optional<Desktop::CReservedArea> area;
+1321:             try {
+1322:                 // top, right, bottom, left
+1323:                 area = {std::stoi(std::string{ARGS[2]}), std::stoi(std::string{ARGS[5]}), std::stoi(std::string{ARGS[3]}), std::stoi(std::string{ARGS[4]})};
+1324:             } catch (...) { return "parse error: invalid reserved area"; }
+1325: 
+1326:             if (!area.has_value())
+1327:                 return "parse error: bad addreserved";
+1328: 
+1329:             auto rule = std::ranges::find_if(Config::monitorRuleMgr()->allMut(), [n = ARGS[0]](const auto& other) { return other.m_name == n; });
+1330:             if (rule != Config::monitorRuleMgr()->allMut().end()) {
+1331:                 rule->m_reservedArea = area.value();
+1332:                 return {};
+1333:             }
+1334: 
+1335:             // fall
+1336:         } else {
+1337:             Log::logger->log(Log::ERR, "ConfigManager parseMonitor, curitem bogus???");
+1338:             return "parse error: curitem bogus";
+1339:         }
+1340: 
+1341:         Config::monitorRuleMgr()->add(std::move(parser.rule()));
+1342:         return {};
+1343:     }
+1344: 
+1345:     parser.parseMode(std::string(ARGS[1]));
+1346:     parser.parsePosition(std::string(ARGS[2]));
+1347:     parser.parseScale(std::string(ARGS[3]));
+1348: 
+1349:     int argno = 4;
+1350: 
+1351:     while (!ARGS[argno].empty()) {
+1352:         if (ARGS[argno] == "mirror") {
+1353:             parser.setMirror(std::string(ARGS[argno + 1]));
+1354:             argno++;
+1355:         } else if (ARGS[argno] == "bitdepth") {
+1356:             parser.parseBitdepth(std::string(ARGS[argno + 1]));
+1357:             argno++;
+1358:         } else if (ARGS[argno] == "cm") {
+1359:             parser.parseCM(std::string(ARGS[argno + 1]));
+1360:             argno++;
+1361:         } else if (ARGS[argno] == "sdrsaturation") {
+1362:             parser.parseSDRSaturation(std::string(ARGS[argno + 1]));
+1363:             argno++;
+1364:         } else if (ARGS[argno] == "sdrbrightness") {
+1365:             parser.parseSDRBrightness(std::string(ARGS[argno + 1]));
+1366:             argno++;
+1367:         } else if (ARGS[argno] == "transform") {
+1368:             parser.parseTransform(std::string(ARGS[argno + 1]));
+1369:             argno++;
+1370:         } else if (ARGS[argno] == "vrr") {
+1371:             parser.parseVRR(std::string(ARGS[argno + 1]));
+1372:             argno++;
+1373:         } else if (ARGS[argno] == "icc") {
+1374:             parser.parseICC(std::string(ARGS[argno + 1]));
+1375:             argno++;
+1376:         } else {
+1377:             Log::logger->log(Log::ERR, "Config error: invalid monitor syntax at \"{}\"", ARGS[argno]);
+1378:             return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+1379:         }
+1380: 
+1381:         argno++;
+1382:     }
+1383: 
+1384:     Config::monitorRuleMgr()->add(std::move(parser.rule()));
+1385: 
+1386:     return parser.getError();
+1387: }
+1388: 
+1389: std::optional<std::string> CConfigManager::handleBezier(const std::string& command, const std::string& args) {
+
+### S303 anchor Hyprland-legacy-ConfigManager.cpp:788-880 idents={'handleMonitorv2': True}
+786: }
+787: 
+788: std::optional<std::string> CConfigManager::handleMonitorv2(const std::string& output) {
+789:     auto parser = Config::CMonitorRuleParser(output);
+790:     auto VAL    = m_config->getSpecialConfigValuePtr("monitorv2", "disabled", output.c_str());
+791:     if (VAL && VAL->m_bSetByUser && std::any_cast<Hyprlang::INT>(VAL->getValue()))
+792:         parser.setDisabled();
+793:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "mode", output.c_str());
+794:     if (VAL && VAL->m_bSetByUser)
+795:         parser.parseMode(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+796:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "position", output.c_str());
+797:     if (VAL && VAL->m_bSetByUser)
+798:         parser.parsePosition(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+799:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "scale", output.c_str());
+800:     if (VAL && VAL->m_bSetByUser)
+801:         parser.parseScale(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+802:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "addreserved", output.c_str());
+803:     if (VAL && VAL->m_bSetByUser) {
+804:         const auto ARGS = CVarList(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+805:         try {
+806:             // top, right, bottom, left
+807:             parser.setReserved({std::stoi(ARGS[0]), std::stoi(ARGS[3]), std::stoi(ARGS[1]), std::stoi(ARGS[2])});
+808:         } catch (...) { return "parse error: invalid reserved area"; }
+809:     }
+810:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "mirror", output.c_str());
+811:     if (VAL && VAL->m_bSetByUser)
+812:         parser.setMirror(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+813:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "bitdepth", output.c_str());
+814:     if (VAL && VAL->m_bSetByUser)
+815:         parser.parseBitdepth(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+816:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "cm", output.c_str());
+817:     if (VAL && VAL->m_bSetByUser)
+818:         parser.parseCM(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+819:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_eotf", output.c_str());
+820:     if (VAL && VAL->m_bSetByUser) {
+821:         const std::string value = std::any_cast<Hyprlang::STRING>(VAL->getValue());
+822:         // remap legacy
+823:         if (value == "0")
+824:             parser.rule().m_sdrEotf = NTransferFunction::TF_AUTO;
+825:         else if (value == "1")
+826:             parser.rule().m_sdrEotf = NTransferFunction::TF_SRGB;
+827:         else if (value == "2")
+828:             parser.rule().m_sdrEotf = NTransferFunction::TF_GAMMA22;
+829:         else
+830:             parser.rule().m_sdrEotf = NTransferFunction::fromString(value);
+831:     }
+832:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdrbrightness", output.c_str());
+833:     if (VAL && VAL->m_bSetByUser)
+834:         parser.rule().m_sdrBrightness = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
+835:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdrsaturation", output.c_str());
+836:     if (VAL && VAL->m_bSetByUser)
+837:         parser.rule().m_sdrSaturation = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
+838:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "vrr", output.c_str());
+839:     if (VAL && VAL->m_bSetByUser) {
+840:         const auto VRR      = sc<int>(std::any_cast<Hyprlang::INT>(VAL->getValue()));
+841:         parser.rule().m_vrr = VRR < 0 ? std::nullopt : std::optional(VRR);
+842:     }
+843:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "transform", output.c_str());
+844:     if (VAL && VAL->m_bSetByUser)
+845:         parser.parseTransform(std::any_cast<Hyprlang::STRING>(VAL->getValue()));
+846: 
+847:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "supports_wide_color", output.c_str());
+848:     if (VAL && VAL->m_bSetByUser)
+849:         parser.rule().m_supportsWideColor = std::any_cast<Hyprlang::INT>(VAL->getValue());
+850:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "supports_hdr", output.c_str());
+851:     if (VAL && VAL->m_bSetByUser)
+852:         parser.rule().m_supportsHDR = std::any_cast<Hyprlang::INT>(VAL->getValue());
+853:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_min_luminance", output.c_str());
+854:     if (VAL && VAL->m_bSetByUser)
+855:         parser.rule().m_sdrMinLuminance = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
+856:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdr_max_luminance", output.c_str());
+857:     if (VAL && VAL->m_bSetByUser)
+858:         parser.rule().m_sdrMaxLuminance = std::any_cast<Hyprlang::INT>(VAL->getValue());
+859: 
+860:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "min_luminance", output.c_str());
+861:     if (VAL && VAL->m_bSetByUser)
+862:         parser.rule().m_minLuminance = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
+863:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "max_luminance", output.c_str());
+864:     if (VAL && VAL->m_bSetByUser)
+865:         parser.rule().m_maxLuminance = std::any_cast<Hyprlang::INT>(VAL->getValue());
+866:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "max_avg_luminance", output.c_str());
+867:     if (VAL && VAL->m_bSetByUser)
+868:         parser.rule().m_maxAvgLuminance = std::any_cast<Hyprlang::INT>(VAL->getValue());
+869: 
+870:     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "icc", output.c_str());
+871:     if (VAL && VAL->m_bSetByUser)
+872:         parser.rule().m_iccFile = std::any_cast<Hyprlang::STRING>(VAL->getValue());
+873: 
+874:     auto newrule = parser.rule();
+875: 
+876:     Config::monitorRuleMgr()->add(std::move(parser.rule()));
+877: 
+878:     return parser.getError();
+879: }
+880: 
+881: Hyprlang::CParseResult CConfigManager::handleMonitorv2() {
+882:     Hyprlang::CParseResult result;
+
+### S303 teaches[keys-after-scale] pat='key == "|case |ARGS\\[' range=1290-1390 hits=30
+1297:     auto       parser = Config::CMonitorRuleParser(std::string(ARGS[0]));
+1299:     if (ARGS[1] == "disable" || ARGS[1] == "disabled" || ARGS[1] == "addreserved" || ARGS[1] == "transform") {
+1300:         if (ARGS[1] == "disable" || ARGS[1] == "disabled")
+1302:         else if (ARGS[1] == "transform") {
+1303:             if (!parser.parseTransform(std::string(ARGS[2])))
+1319:         } else if (ARGS[1] == "addreserved") {
+1323:                 area = {std::stoi(std::string{ARGS[2]}), std::stoi(std::string{ARGS[5]}), std::stoi(std::string{ARGS[3]}), std::stoi(std::string{ARGS[4]})};
+1329:             auto rule = std::ranges::find_if(Config::monitorRuleMgr()->allMut(), [n = ARGS[0]](const auto& other) { return other.m_name == n; });
+1345:     parser.parseMode(std::string(ARGS[1]));
+1346:     parser.parsePosition(std::string(ARGS[2]));
+1347:     parser.parseScale(std::string(ARGS[3]));
+1351:     while (!ARGS[argno].empty()) {
+1352:         if (ARGS[argno] == "mirror") {
+1353:             parser.setMirror(std::string(ARGS[argno + 1]));
+1355:         } else if (ARGS[argno] == "bitdepth") {
+1356:             parser.parseBitdepth(std::string(ARGS[argno + 1]));
+1358:         } else if (ARGS[argno] == "cm") {
+1359:             parser.parseCM(std::string(ARGS[argno + 1]));
+1361:         } else if (ARGS[argno] == "sdrsaturation") {
+1362:             parser.parseSDRSaturation(std::string(ARGS[argno + 1]));
+1364:         } else if (ARGS[argno] == "sdrbrightness") {
+1365:             parser.parseSDRBrightness(std::string(ARGS[argno + 1]));
+1367:         } else if (ARGS[argno] == "transform") {
+1368:             parser.parseTransform(std::string(ARGS[argno + 1]));
+1370:         } else if (ARGS[argno] == "vrr") {
+1371:             parser.parseVRR(std::string(ARGS[argno + 1]));
+1373:         } else if (ARGS[argno] == "icc") {
+1374:             parser.parseICC(std::string(ARGS[argno + 1]));
+1377:             Log::logger->log(Log::ERR, "Config error: invalid monitor syntax at \"{}\"", ARGS[argno]);
+1378:             return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+
+### S303 teaches[reject] pat='return|success|error|fail' range=1290-1390 hits=13
+1290:     return {};
+1304:                 return parser.getError();
+1314:                     return {};
+1318:             return {};
+1324:             } catch (...) { return "parse error: invalid reserved area"; }
+1327:                 return "parse error: bad addreserved";
+1329:             auto rule = std::ranges::find_if(Config::monitorRuleMgr()->allMut(), [n = ARGS[0]](const auto& other) { return other.m_name == n; });
+1332:                 return {};
+1338:             return "parse error: curitem bogus";
+1342:         return {};
+1377:             Log::logger->log(Log::ERR, "Config error: invalid monitor syntax at \"{}\"", ARGS[argno]);
+1378:             return "invalid syntax at \"" + std::string(ARGS[argno]) + "\"";
+1386:     return parser.getError();
+
+### S304 quote match lines 38-38 (receipt Hyprland-MonitorRuleManager.cpp)
+36: 
+37: void CMonitorRuleManager::add(CMonitorRule&& x) {
+38:     std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+39:     m_rules.emplace_back(std::move(x));
+40: 
+
+### S304 anchor Hyprland-MonitorRuleManager.cpp:37-42 idents={}
+35: }
+36: 
+37: void CMonitorRuleManager::add(CMonitorRule&& x) {
+38:     std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+39:     m_rules.emplace_back(std::move(x));
+40: 
+41:     scheduleReload();
+42: }
+43: 
+44: CMonitorRule CMonitorRuleManager::get(const PHLMONITOR PMONITOR) {
+
+### S304 anchor Hyprland-MonitorRuleManager.cpp:44-117 idents={}
+42: }
+43: 
+44: CMonitorRule CMonitorRuleManager::get(const PHLMONITOR PMONITOR) {
+45:     auto applyWlrOutputConfig = [PMONITOR](CMonitorRule rule) -> CMonitorRule {
+46:         const auto CONFIG = PROTO::outputManagement->getOutputStateFor(PMONITOR);
+47: 
+48:         if (!CONFIG)
+49:             return rule;
+50: 
+51:         Log::logger->log(Log::DEBUG, "CConfigManager::getMonitorRuleFor: found a wlr_output_manager override for {}", PMONITOR->m_name);
+52: 
+53:         Log::logger->log(Log::DEBUG, " > overriding enabled: {} -> {}", !rule.m_disabled, !CONFIG->enabled);
+54:         rule.m_disabled = !CONFIG->enabled;
+55: 
+56:         if ((CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_MODE) || (CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_CUSTOM_MODE)) {
+57:             Log::logger->log(Log::DEBUG, " > overriding mode: {:.0f}x{:.0f}@{:.2f}Hz -> {:.0f}x{:.0f}@{:.2f}Hz", rule.m_resolution.x, rule.m_resolution.y, rule.m_refreshRate,
+58:                              CONFIG->resolution.x, CONFIG->resolution.y, CONFIG->refresh / 1000.F);
+59:             rule.m_resolution  = CONFIG->resolution;
+60:             rule.m_refreshRate = CONFIG->refresh / 1000.F;
+61:         }
+62: 
+63:         if (CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_POSITION) {
+64:             Log::logger->log(Log::DEBUG, " > overriding offset: {:.0f}, {:.0f} -> {:.0f}, {:.0f}", rule.m_offset.x, rule.m_offset.y, CONFIG->position.x, CONFIG->position.y);
+65:             rule.m_offset = CONFIG->position;
+66:         }
+67: 
+68:         if (CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_TRANSFORM) {
+69:             Log::logger->log(Log::DEBUG, " > overriding transform: {} -> {}", sc<uint8_t>(rule.m_transform), sc<uint8_t>(CONFIG->transform));
+70:             rule.m_transform = CONFIG->transform;
+71:         }
+72: 
+73:         if (CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_SCALE) {
+74:             Log::logger->log(Log::DEBUG, " > overriding scale: {} -> {}", sc<uint8_t>(rule.m_scale), sc<uint8_t>(CONFIG->scale));
+75:             rule.m_scale = CONFIG->scale;
+76:         }
+77: 
+78:         if (CONFIG->committedProperties & OUTPUT_HEAD_COMMITTED_ADAPTIVE_SYNC) {
+79:             Log::logger->log(Log::DEBUG, " > overriding vrr: {} -> {}", rule.m_vrr.value_or(0), CONFIG->adaptiveSync);
+80:             rule.m_vrr = sc<int>(CONFIG->adaptiveSync);
+81:         }
+82: 
+83:         return rule;
+84:     };
+85: 
+86:     if (PMONITOR->m_isUnsafeFallback) {
+87:         CMonitorRule fallbackRule;
+88:         fallbackRule.m_autoDir    = DIR_AUTO_RIGHT;
+89:         fallbackRule.m_name       = PMONITOR->m_name;
+90:         fallbackRule.m_resolution = Vector2D{1920, 1080};
+91:         fallbackRule.m_offset     = Vector2D{-INT32_MAX, -INT32_MAX};
+92:         fallbackRule.m_scale      = 1;
+93:         return fallbackRule;
+94:     }
+95: 
+96:     for (auto const& r : m_rules | std::views::reverse) {
+97:         if (PMONITOR->matchesStaticSelector(r.m_name))
+98:             return applyWlrOutputConfig(r);
+99:     }
+100: 
+101:     Log::logger->log(Log::WARN, "No rule found for {}, trying to use the first.", PMONITOR->m_name);
+102: 
+103:     for (auto const& r : m_rules) {
+104:         if (r.m_name.empty())
+105:             return applyWlrOutputConfig(r);
+106:     }
+107: 
+108:     Log::logger->log(Log::WARN, "No rules configured. Using the default hardcoded one.");
+109: 
+110:     CMonitorRule fallbackRule;
+111:     fallbackRule.m_autoDir    = eAutoDirs::DIR_AUTO_RIGHT;
+112:     fallbackRule.m_name       = "";
+113:     fallbackRule.m_resolution = Vector2D{};
+114:     fallbackRule.m_offset     = Vector2D{-INT32_MAX, -INT32_MAX};
+115:     fallbackRule.m_scale      = -1;
+116:     return applyWlrOutputConfig(fallbackRule);
+117: }
+118: 
+119: const std::vector<CMonitorRule>& CMonitorRuleManager::all() {
+
+### S304 teaches[add-erase] pat='erase_if|push_back|emplace_back' range=30-50 hits=2
+38:     std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });
+39:     m_rules.emplace_back(std::move(x));
+
+### S304 teaches[get-order] pat='for\\s*\\(|m_name|empty|default' range=40-120 hits=9
+51:         Log::logger->log(Log::DEBUG, "CConfigManager::getMonitorRuleFor: found a wlr_output_manager override for {}", PMONITOR->m_name);
+89:         fallbackRule.m_name       = PMONITOR->m_name;
+96:     for (auto const& r : m_rules | std::views::reverse) {
+97:         if (PMONITOR->matchesStaticSelector(r.m_name))
+101:     Log::logger->log(Log::WARN, "No rule found for {}, trying to use the first.", PMONITOR->m_name);
+103:     for (auto const& r : m_rules) {
+104:         if (r.m_name.empty())
+108:     Log::logger->log(Log::WARN, "No rules configured. Using the default hardcoded one.");
+112:     fallbackRule.m_name       = "";
+
+### S305 quote match lines 46-46 (receipt Hyprland-MonitorRule.hpp)
+44:         Vector2D                     m_offset        = Vector2D(-INT32_MAX, -INT32_MAX);
+45:         float                        m_scale         = -1;
+46:         float                        m_refreshRate   = 60; // Hz
+47:         bool                         m_disabled      = false;
+48:         wl_output_transform          m_transform     = WL_OUTPUT_TRANSFORM_NORMAL;
+
+### S305 anchor Hyprland-MonitorRule.hpp:41-69 idents={'class': False, 'CMonitorRule': True, 'fields': False}
+39:         eMonitorRuleComparisonResult compare(const CMonitorRule& other) const;
+40: 
+41:         eAutoDirs                    m_autoDir       = DIR_AUTO_NONE;
+42:         std::string                  m_name          = "";
+43:         Vector2D                     m_resolution    = Vector2D();
+44:         Vector2D                     m_offset        = Vector2D(-INT32_MAX, -INT32_MAX);
+45:         float                        m_scale         = -1;
+46:         float                        m_refreshRate   = 60; // Hz
+47:         bool                         m_disabled      = false;
+48:         wl_output_transform          m_transform     = WL_OUTPUT_TRANSFORM_NORMAL;
+49:         std::string                  m_mirrorOf      = "";
+50:         bool                         m_enable10bit   = false;
+51:         NCMType::eCMType             m_cmType        = NCMType::CM_SRGB;
+52:         NTransferFunction::eTF       m_sdrEotf       = NTransferFunction::TF_DEFAULT;
+53:         float                        m_sdrSaturation = 1.F; // SDR -> HDR
+54:         float                        m_sdrBrightness = 1.F; // SDR -> HDR
+55:         Desktop::CReservedArea       m_reservedArea;
+56:         std::string                  m_iccFile;
+57: 
+58:         int                          m_supportsWideColor = 0;    // 0 - auto, 1 - force enable, -1 - force disable
+59:         int                          m_supportsHDR       = 0;    // 0 - auto, 1 - force enable, -1 - force disable
+60:         float                        m_sdrMinLuminance   = 0.2F; // SDR -> HDR
+61:         int                          m_sdrMaxLuminance   = 80;   // SDR -> HDR
+62: 
+63:         // Incorrect values will result in reduced luminance range or incorrect tonemapping. Shouldn't damage the HW. Use with care in case of a faulty monitor firmware.
+64:         float              m_minLuminance    = -1.F; // >= 0 overrides EDID
+65:         int                m_maxLuminance    = -1;   // >= 0 overrides EDID
+66:         int                m_maxAvgLuminance = -1;   // >= 0 overrides EDID
+67: 
+68:         drmModeModeInfo    m_drmMode = {};
+69:         std::optional<int> m_vrr;
+70:     };
+71: };
+
+### S305 teaches[rate60] pat='m_refreshRate' range=35-71 hits=1
+46:         float                        m_refreshRate   = 60; // Hz
+
+### S305 teaches[scale-neg1] pat='m_scale' range=35-71 hits=1
+45:         float                        m_scale         = -1;
+
+### S305 teaches[offset-sentinel] pat='m_offset|INT_MAX|sentinel|FLT_MAX|100000' range=35-71 hits=1
+44:         Vector2D                     m_offset        = Vector2D(-INT32_MAX, -INT32_MAX);
+
+### S306 quote match lines 1001-1001 (receipt Hyprland-Monitor.cpp)
+999:         // find the nearest valid.
+1000: 
+1001:         float    searchScale = std::round(m_scale * 120.0);
+1002:         bool     found       = false;
+1003: 
+
+### S306 anchor Hyprland-Monitor.cpp:719-1082 idents={'applyMonitorRule': True}
+717: }
+718: 
+719: bool CMonitor::applyMonitorRule(Config::CMonitorRule&& pMonitorRule) {
+720: 
+721:     static auto PDISABLESCALECHECKS = CConfigValue<Config::INTEGER>("debug:disable_scale_checks");
+722: 
+723:     Log::logger->log(Log::DEBUG, "Applying monitor rule for {}", m_name);
+724: 
+725:     if (m_forceSize.has_value())
+726:         m_activeMonitorRule.m_resolution = m_forceSize.value();
+727: 
+728:     const auto RULE = &pMonitorRule;
+729: 
+730:     // if it's disabled, disable and ignore
+731:     if (RULE->m_disabled) {
+732:         m_output->state->resetExplicitFences();
+733:         m_output->state->setAdaptiveSync(false);
+734:         m_output->state->setEnabled(false);
+735: 
+736:         m_activeMonitorRule = std::move(pMonitorRule);
+737: 
+738:         if (!m_state.commit())
+739:             Log::logger->log(Log::WARN, "state.commit() failed in CMonitor::applyMonitorRule");
+740: 
+741:         m_events.modeChanged.emit();
+742: 
+743:         return true;
+744:     }
+745: 
+746:     // don't touch VR headsets
+747:     if (m_output->nonDesktop)
+748:         return true;
+749: 
+750:     const bool autoScale = RULE->m_scale <= 0.1;
+751: 
+752:     m_transform = RULE->m_transform;
+753: 
+754:     // accumulate requested modes in reverse order (cause inesrting at front is inefficient)
+755:     std::vector<SP<Aquamarine::SOutputMode>> requestedModes;
+756:     std::string                              requestedStr = "unknown";
+757: 
+758:     // use sortFunc, add best 3 to requestedModes in reverse, since we test in reverse
+759:     auto addBest3Modes = [&](auto const& sortFunc) {
+760:         auto sortedModes = m_output->modes;
+761:         std::ranges::sort(sortedModes, sortFunc);
+762:         if (sortedModes.size() > 3)
+763:             sortedModes.erase(sortedModes.begin() + 3, sortedModes.end());
+764:         requestedModes.insert_range(requestedModes.end(), sortedModes | std::views::reverse);
+765:     };
+766: 
+767:     // last fallback is always preferred mode
+768:     if (!m_output->preferredMode())
+769:         Log::logger->log(Log::ERR, "Monitor {} has NO PREFERRED MODE", m_name);
+770:     else
+771:         requestedModes.push_back(m_output->preferredMode());
+772: 
+773:     if (RULE->m_resolution == Vector2D()) {
+774:         requestedStr = "preferred";
+775: 
+776:         // fallback to first 3 modes if preferred fails/doesn't exist
+777:         requestedModes = m_output->modes;
+778:         if (requestedModes.size() > 3)
+779:             requestedModes.erase(requestedModes.begin() + 3, requestedModes.end());
+780:         std::ranges::reverse(requestedModes.begin(), requestedModes.end());
+781: 
+782:         if (m_output->preferredMode())
+783:             requestedModes.push_back(m_output->preferredMode());
+784:     } else if (RULE->m_resolution == Vector2D(-1, -1)) {
+785:         requestedStr = "highrr";
+786: 
+787:         // sort prioritizing refresh rate 1st and resolution 2nd, then add best 3
+788:         addBest3Modes([](auto const& a, auto const& b) {
+789:             if (std::round(a->refreshRate) > std::round(b->refreshRate))
+790:                 return true;
+791:             else if (DELTALESSTHAN(sc<float>(a->refreshRate), sc<float>(b->refreshRate), 1.F) && a->pixelSize.x > b->pixelSize.x && a->pixelSize.y > b->pixelSize.y)
+792:                 return true;
+793:             return false;
+794:         });
+795:     } else if (RULE->m_resolution == Vector2D(-1, -2)) {
+796:         requestedStr = "highres";
+797: 
+798:         // sort prioritizing resolution 1st and refresh rate 2nd, then add best 3
+799:         addBest3Modes([](auto const& a, auto const& b) {
+800:             if (a->pixelSize.x > b->pixelSize.x && a->pixelSize.y > b->pixelSize.y)
+801:                 return true;
+802:             else if (DELTALESSTHAN(a->pixelSize.x, b->pixelSize.x, 1) && DELTALESSTHAN(a->pixelSize.y, b->pixelSize.y, 1) &&
+803:                      std::round(a->refreshRate) > std::round(b->refreshRate))
+804:                 return true;
+805:             return false;
+806:         });
+807:     } else if (RULE->m_resolution == Vector2D(-1, -3)) {
+808:         requestedStr = "maxwidth";
+809: 
+810:         // sort prioritizing widest resolution 1st and refresh rate 2nd, then add best 3
+811:         addBest3Modes([](auto const& a, auto const& b) {
+812:             if (a->pixelSize.x > b->pixelSize.x)
+813:                 return true;
+814:             if (a->pixelSize.x == b->pixelSize.x && std::round(a->refreshRate) > std::round(b->refreshRate))
+815:                 return true;
+816:             return false;
+817:         });
+818:     } else if (RULE->m_resolution != Vector2D()) {
+819:         // user requested mode
+820:         requestedStr = std::format("{:X0}@{:.2f}Hz", RULE->m_resolution, RULE->m_refreshRate);
+821: 
+822:         // sort by closeness to requested, then add best 3
+823:         addBest3Modes([&](auto const& a, auto const& b) {
+824:             if (abs(a->pixelSize.x - RULE->m_resolution.x) < abs(b->pixelSize.x - RULE->m_resolution.x))
+825:                 return true;
+826:             if (a->pixelSize.x == b->pixelSize.x && abs(a->pixelSize.y - RULE->m_resolution.y) < abs(b->pixelSize.y - RULE->m_resolution.y))
+827:                 return true;
+828:             if (a->pixelSize == b->pixelSize && abs((a->refreshRate / 1000.f) - RULE->m_refreshRate) < abs((b->refreshRate / 1000.f) - RULE->m_refreshRate))
+829:                 return true;
+830:             return false;
+831:         });
+832: 
+833:         // if the best mode isn't close to requested, then try requested as custom mode first
+834:         if (!requestedModes.empty()) {
+835:             auto bestMode = requestedModes.back();
+836:             if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestMode->pixelSize.y, RULE->m_resolution.y, 1) ||
+837:                 !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+838:                 requestedModes.push_back(
+839:                     makeShared<Aquamarine::SOutputMode>(Aquamarine::SOutputMode{.pixelSize = RULE->m_resolution, .refreshRate = RULE->m_refreshRate * 1000.f}));
+840:         }
+841: 
+842:         // then if requested is custom, try custom mode first
+843:         if (RULE->m_drmMode.type == DRM_MODE_TYPE_USERDEF) {
+844:             if (m_output->getBackend()->type() != Aquamarine::eBackendType::AQ_BACKEND_DRM)
+845:                 Log::logger->log(Log::ERR, "Tried to set custom modeline on non-DRM output");
+846:             else
+847:                 requestedModes.push_back(makeShared<Aquamarine::SOutputMode>(Aquamarine::SOutputMode{
+848:                     .pixelSize = {RULE->m_drmMode.hdisplay, RULE->m_drmMode.vdisplay}, .refreshRate = RULE->m_drmMode.vrefresh, .modeInfo = RULE->m_drmMode}));
+849:         }
+850:     }
+851: 
+852:     const auto WAS10B             = m_enabled10bit;
+853:     const auto OLDPIXELSIZE       = m_pixelSize;
+854:     const auto OLDTRANSFORMEDSIZE = m_transformedSize;
+855:     bool       success            = false;
+856: 
+857:     // Needed in case we are switching from a custom modeline to a standard mode
+858:     m_customDrmMode = {};
+859:     m_currentMode   = nullptr;
+860: 
+861:     const auto initialFormat = m_drmFormat != DRM_FORMAT_INVALID ? m_drmFormat : DRM_FORMAT_XRGB8888;
+862:     m_output->state->setFormat(initialFormat);
+863:     m_prevDrmFormat = m_drmFormat;
+864:     m_drmFormat     = initialFormat;
+865:     m_output->state->resetExplicitFences();
+866: 
+867:     if (Env::isTrace()) {
+868:         Log::logger->log(Log::TRACE, "Monitor {} requested modes:", m_name);
+869:         if (requestedModes.empty())
+870:             Log::logger->log(Log::TRACE, "| None");
+871:         else {
+872:             for (auto const& mode : requestedModes | std::views::reverse) {
+873:                 Log::logger->log(Log::TRACE, "| {:X0}@{:.2f}Hz", mode->pixelSize, mode->refreshRate / 1000.f);
+874:             }
+875:         }
+876:     }
+877: 
+878:     for (auto const& mode : requestedModes | std::views::reverse) {
+879:         std::string modeStr = std::format("{:X0}@{:.2f}Hz", mode->pixelSize, mode->refreshRate / 1000.f);
+880: 
+881:         if (mode->modeInfo.has_value() && mode->modeInfo->type == DRM_MODE_TYPE_USERDEF) {
+882:             m_state.applyCustomModeWithSwapchain(mode);
+883: 
+884:             if (!m_state.test()) {
+885:                 Log::logger->log(Log::ERR, "Monitor {}: REJECTED custom mode {}!", m_name, modeStr);
+886:                 continue;
+887:             }
+888: 
+889:             m_customDrmMode = mode->modeInfo.value();
+890:         } else {
+891:             m_state.applyModeWithSwapchain(mode);
+892: 
+893:             if (!m_state.test()) {
+894:                 Log::logger->log(Log::ERR, "Monitor {}: REJECTED available mode {}!", m_name, modeStr);
+895:                 if (mode->preferred)
+896:                     Log::logger->log(Log::ERR, "Monitor {}: REJECTED preferred mode!!!", m_name);
+897:                 continue;
+898:             }
+899: 
+900:             m_customDrmMode = {};
+901:         }
+902: 
+903:         m_refreshRate = mode->refreshRate / 1000.f;
+904:         m_size        = mode->pixelSize;
+905:         m_currentMode = mode;
+906: 
+907:         success = true;
+908: 
+909:         if (mode->preferred)
+910:             Log::logger->log(Log::DEBUG, "Monitor {}: requested {}, using preferred mode {}", m_name, requestedStr, modeStr);
+911:         else if (mode->modeInfo.has_value() && mode->modeInfo->type == DRM_MODE_TYPE_USERDEF)
+912:             Log::logger->log(Log::DEBUG, "Monitor {}: requested {}, using custom mode {}", m_name, requestedStr, modeStr);
+913:         else
+914:             Log::logger->log(Log::DEBUG, "Monitor {}: requested {}, using available mode {}", m_name, requestedStr, modeStr);
+915: 
+916:         break;
+917:     }
+918: 
+919:     // try requested as custom mode jic it works
+920:     if (!success && RULE->m_resolution != Vector2D() && RULE->m_resolution != Vector2D(-1, -1) && RULE->m_resolution != Vector2D(-1, -2)) {
+921:         auto        refreshRate = m_output->getBackend()->type() == Aquamarine::eBackendType::AQ_BACKEND_DRM ? RULE->m_refreshRate * 1000 : 0;
+922:         auto        mode        = makeShared<Aquamarine::SOutputMode>(Aquamarine::SOutputMode{.pixelSize = RULE->m_resolution, .refreshRate = refreshRate});
+923:         std::string modeStr     = std::format("{:X0}@{:.2f}Hz", mode->pixelSize, mode->refreshRate / 1000.f);
+924: 
+925:         m_state.applyCustomModeWithSwapchain(mode);
+926: 
+927:         if (m_state.test()) {
+928:             Log::logger->log(Log::DEBUG, "Monitor {}: requested {}, using custom mode {}", m_name, requestedStr, modeStr);
+929: 
+930:             refreshRate     = mode->refreshRate / 1000.f;
+931:             m_size          = mode->pixelSize;
+932:             m_currentMode   = mode;
+933:             m_customDrmMode = {};
+934: 
+935:             success = true;
+936:         } else
+937:             Log::logger->log(Log::ERR, "Monitor {}: REJECTED custom mode {}!", m_name, modeStr);
+938:     }
+939: 
+940:     // try any of the modes if none of the above work
+941:     if (!success) {
+942:         for (auto const& mode : m_output->modes) {
+943:             m_state.applyModeWithSwapchain(mode);
+944: 
+945:             if (!m_state.test())
+946:                 continue;
+947: 
+948:             auto errorMessage = I18n::i18nEngine()->localize(I18n::TXT_KEY_NOTIF_MONITOR_MODE_FAIL,
+949:                                                              {{"name", m_name}, {"mode", std::format("{:X0}@{:.2f}Hz", mode->pixelSize, mode->refreshRate / 1000.f)}});
+950:             Log::logger->log(Log::WARN, errorMessage);
+951:             Notification::overlay()->addNotification(errorMessage, CHyprColor(0xff0000ff), 5000, ICON_WARNING);
+952: 
+953:             m_refreshRate   = mode->refreshRate / 1000.f;
+954:             m_size          = mode->pixelSize;
+955:             m_currentMode   = mode;
+956:             m_customDrmMode = {};
+957: 
+958:             success = true;
+959: 
+960:             break;
+961:         }
+962:     }
+963: 
+964:     if (!success) {
+965:         m_activeMonitorRule = std::move(pMonitorRule);
+966:         Log::logger->log(Log::ERR, "Monitor {} has NO FALLBACK MODES, and an INVALID one was requested: {:X0}@{:.2f}Hz", m_name, RULE->m_resolution, RULE->m_refreshRate);
+967:         scheduleModeRetry();
+968:         return true;
+969:     }
+970: 
+971:     clearModeRetry();
+972: 
+973:     const auto OLD_PIXEL_SIZE = m_pixelSize;
+974: 
+975:     m_vrrActive = m_output->state->state().adaptiveSync // disabled here, will be tested in CConfigManager::ensureVRR()
+976:         || m_createdByUser;                             // wayland backend doesn't allow for disabling adaptive_sync
+977: 
+978:     m_pixelSize = m_size;
+979: 
+980:     static constexpr auto formats10bit = std::to_array<uint32_t>({DRM_FORMAT_XRGB2101010, DRM_FORMAT_XBGR2101010});
+981:     static constexpr auto formats8bit  = std::to_array<uint32_t>({DRM_FORMAT_XRGB8888, DRM_FORMAT_XBGR8888});
+982: 
+983:     const bool            set10bit = RULE->m_enable10bit && trySetFormat(formats10bit);
+984:     if (!set10bit)
+985:         trySetFormat(formats8bit);
+986: 
+987:     m_enabled10bit = set10bit;
+988: 
+989:     if (autoScale)
+990:         m_scale = getDefaultScale();
+991:     else
+992:         m_scale = RULE->m_scale;
+993: 
+994:     m_setScale = m_scale;
+995: 
+996:     Vector2D logicalSize = m_pixelSize / m_scale;
+997:     if (!*PDISABLESCALECHECKS && (logicalSize.x != std::round(logicalSize.x) || logicalSize.y != std::round(logicalSize.y))) {
+998:         // invalid scale, will produce fractional pixels.
+999:         // find the nearest valid.
+1000: 
+1001:         float    searchScale = std::round(m_scale * 120.0);
+1002:         bool     found       = false;
+1003: 
+1004:         double   scaleZero = searchScale / 120.0;
+1005: 
+1006:         Vector2D logicalZero = m_pixelSize / scaleZero;
+1007:         if (logicalZero == logicalZero.round())
+1008:             m_scale = scaleZero;
+1009:         else {
+1010:             for (size_t i = 1; i < 90; ++i) {
+1011:                 double   scaleUp   = (searchScale + i) / 120.0;
+1012:                 double   scaleDown = (searchScale - i) / 120.0;
+1013: 
+1014:                 Vector2D logicalUp   = m_pixelSize / scaleUp;
+1015:                 Vector2D logicalDown = m_pixelSize / scaleDown;
+1016: 
+1017:                 if (logicalUp == logicalUp.round()) {
+1018:                     found       = true;
+1019:                     searchScale = scaleUp;
+1020:                     break;
+1021:                 }
+1022:                 if (logicalDown == logicalDown.round()) {
+1023:                     found       = true;
+1024:                     searchScale = scaleDown;
+1025:                     break;
+1026:                 }
+1027:             }
+1028: 
+1029:             if (!found) {
+1030:                 if (autoScale)
+1031:                     m_scale = std::round(scaleZero);
+1032:                 else {
+1033:                     Log::logger->log(Log::ERR, "Invalid scale passed to monitor, {} failed to find a clean divisor", m_scale);
+1034:                     ErrorOverlay::overlay()->queueError("Invalid scale passed to monitor " + m_name + ", failed to find a clean divisor");
+1035:                     m_scale = getDefaultScale();
+1036:                 }
+1037:             } else {
+1038:                 if (!autoScale) {
+1039:                     Log::logger->log(Log::ERR, "Invalid scale passed to monitor, {} found suggestion {}", m_scale, searchScale);
+1040:                     static auto PDISABLENOTIFICATION = CConfigValue<Config::INTEGER>("misc:disable_scale_notification");
+1041:                     if (!*PDISABLENOTIFICATION) {
+1042:                         Notification::overlay()->addNotification(
+1043:                             I18n::i18nEngine()->localize(I18n::TXT_KEY_NOTIF_MONITOR_AUTO_SCALE,
+1044:                                                          {{"name", m_name}, {"scale", std::format("{:.2f}", m_scale)}, {"fixed_scale", std::format("{:.2f}", searchScale)}}),
+1045:                             CHyprColor(1.0, 0.0, 0.0, 1.0), 5000, ICON_WARNING);
+1046:                     }
+1047:                 }
+1048:                 m_scale = searchScale;
+1049:             }
+1050:         }
+1051:     }
+1052: 
+1053:     m_output->scheduleFrame();
+1054: 
+1055:     if (!m_state.commit())
+1056:         Log::logger->log(Log::ERR, "Couldn't commit output named {}", m_name);
+1057: 
+1058:     Vector2D xfmd     = m_transform % 2 == 1 ? Vector2D{m_pixelSize.y, m_pixelSize.x} : m_pixelSize;
+1059:     m_size            = (xfmd / m_scale).round();
+1060:     m_transformedSize = xfmd;
+1061: 
+1062:     if ((WAS10B != m_enabled10bit || OLDPIXELSIZE != m_pixelSize)) {
+1063:         m_resources.reset(); // TODO skip for 10bit change and fp16?
+1064: 
+1065:         if (g_pHyprRenderer && g_pHyprRenderer->glBackend())
+1066:             g_pHyprRenderer->glBackend()->destroyMonitorResources(m_self);
+1067:     }
+1068: 
+1069:     applyMonitorRuleSoft(std::move(pMonitorRule));
+1070: 
+1071:     if (OLD_PIXEL_SIZE != m_pixelSize)
+1072:         m_background.reset();
+1073: 
+1074:     updateVCGTRamps();
+1075: 
+1076:     Log::logger->log(Log::DEBUG, "Monitor {} data dump: res {:X}@{:.2f}Hz, scale {:.2f}, transform {}, pos {:X}, 10b {}", m_name, m_pixelSize, m_refreshRate, m_scale,
+1077:                      sc<int>(m_transform), m_position, sc<int>(m_enabled10bit));
+1078: 
+1079:     m_events.modeChanged.emit();
+1080: 
+1081:     return true;
+1082: }
+1083: 
+1084: void CMonitor::scheduleModeRetry() {
+
+### S306 anchor Hyprland-Monitor.cpp:1201-1211 idents={'matchesStaticSelector': True}
+1199: }
+1200: 
+1201: bool CMonitor::matchesStaticSelector(std::string_view selector) const {
+1202:     if (selector.starts_with("desc:")) {
+1203:         // match by description
+1204:         const auto DESCRIPTIONSELECTOR = trim(selector.substr(5));
+1205: 
+1206:         return m_description.starts_with(DESCRIPTIONSELECTOR) || m_shortDescription.starts_with(DESCRIPTIONSELECTOR);
+1207:     } else {
+1208:         // match by selector
+1209:         return m_name == selector;
+1210:     }
+1211: }
+1212: 
+1213: Vector2D CMonitor::position() const {
+
+### S306 anchor Hyprland-Monitor.cpp:250-256 idents={'descriptions': False}
+248:     m_tearingState.canTear = m_output->getBackend()->type() == Aquamarine::AQ_BACKEND_DRM;
+249: 
+250:     m_description = m_output->description;
+251:     // remove comma character from description. This allow monitor specific rules to work on monitor with comma on their description
+252:     std::erase(m_description, ',');
+253: 
+254:     // field is backwards-compatible with intended usage of `szDescription` but excludes the parenthesized DRM node name suffix
+255:     m_shortDescription = trim(std::format("{} {} {}", m_output->make, m_output->model, m_output->serial));
+256:     std::erase(m_shortDescription, ',');
+257: 
+258:     if (m_output->getBackend()->type() != Aquamarine::AQ_BACKEND_DRM)
+
+### S306 teaches[deltallessthan-use] pat='DELTALESSTHAN' range=700-1090 hits=4
+791:             else if (DELTALESSTHAN(sc<float>(a->refreshRate), sc<float>(b->refreshRate), 1.F) && a->pixelSize.x > b->pixelSize.x && a->pixelSize.y > b->pixelSize.y)
+802:             else if (DELTALESSTHAN(a->pixelSize.x, b->pixelSize.x, 1) && DELTALESSTHAN(a->pixelSize.y, b->pixelSize.y, 1) &&
+836:             if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestMode->pixelSize.y, RULE->m_resolution.y, 1) ||
+837:                 !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+
+### S306 teaches[scale-120] pat='120' range=700-1090 hits=4
+1001:         float    searchScale = std::round(m_scale * 120.0);
+1004:         double   scaleZero = searchScale / 120.0;
+1011:                 double   scaleUp   = (searchScale + i) / 120.0;
+1012:                 double   scaleDown = (searchScale - i) / 120.0;
+
+### S306 teaches[desc] pat='description' range=245-260 hits=3
+250:     m_description = m_output->description;
+251:     // remove comma character from description. This allow monitor specific rules to work on monitor with comma on their description
+252:     std::erase(m_description, ',');
+
+### S306 teaches[selector] pat='matchesStaticSelector' range=1195-1215 hits=1
+1201: bool CMonitor::matchesStaticSelector(std::string_view selector) const {
+
+### S307 quote match lines 241-242 (receipt Hyprland-HyprCtl.cpp)
+239:     "height": {},
+240:     "physicalWidth": {},
+241:     "physicalHeight": {},
+242:     "refreshRate": {:.5f},
+243:     "x": {},
+244:     "y": {},
+
+### S307 anchor Hyprland-HyprCtl.cpp:224-288 idents={'getMonitorData': True, 'JSON': False}
+222: 
+223: std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format) {
+224:     std::string result;
+225:     if (!m->m_output || m->m_id == -1)
+226:         return "";
+227: 
+228:     if (format == eHyprCtlOutputFormat::FORMAT_JSON) {
+229: 
+230:         result += std::format(
+231:             R"#({{
+232:     "id": {},
+233:     "name": "{}",
+234:     "description": "{}",
+235:     "make": "{}",
+236:     "model": "{}",
+237:     "serial": "{}",
+238:     "width": {},
+239:     "height": {},
+240:     "physicalWidth": {},
+241:     "physicalHeight": {},
+242:     "refreshRate": {:.5f},
+243:     "x": {},
+244:     "y": {},
+245:     "activeWorkspace": {{
+246:         "id": {},
+247:         "name": "{}"
+248:     }},
+249:     "specialWorkspace": {{
+250:         "id": {},
+251:         "name": "{}"
+252:     }},
+253:     "reserved": [{}, {}, {}, {}],
+254:     "scale": {},
+255:     "transform": {},
+256:     "focused": {},
+257:     "dpmsStatus": {},
+258:     "vrr": {},
+259:     "solitary": "{:x}",
+260:     "solitaryBlockedBy": {},
+261:     "activelyTearing": {},
+262:     "tearingBlockedBy": {},
+263:     "directScanoutTo": "{:x}",
+264:     "directScanoutBlockedBy": {},
+265:     "disabled": {},
+266:     "currentFormat": "{}",
+267:     "mirrorOf": "{}",
+268:     "availableModes": [{}],
+269:     "colorManagementPreset": "{}",
+270:     "sdrBrightness": {},
+271:     "sdrSaturation": {},
+272:     "sdrMinLuminance": {},
+273:     "sdrMaxLuminance": {},
+274:     "hardwareCursorsInUse": {}
+275: }},)#",
+276: 
+277:             m->m_id, escapeJSONStrings(m->m_name), escapeJSONStrings(m->m_shortDescription), escapeJSONStrings(m->m_output->make), escapeJSONStrings(m->m_output->model),
+278:             escapeJSONStrings(m->m_output->serial), sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), sc<int>(m->m_output->physicalSize.x),
+279:             sc<int>(m->m_output->physicalSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->activeWorkspaceID(),
+280:             (!m->m_activeWorkspace ? "" : escapeJSONStrings(m->m_activeWorkspace->m_name)), m->activeSpecialWorkspaceID(),
+281:             escapeJSONStrings(m->m_activeSpecialWorkspace ? m->m_activeSpecialWorkspace->m_name : ""), sc<int>(m->m_reservedArea.left()), sc<int>(m->m_reservedArea.top()),
+282:             sc<int>(m->m_reservedArea.right()), sc<int>(m->m_reservedArea.bottom()), m->m_scale, sc<int>(m->m_transform),
+283:             (m == Desktop::focusState()->monitor() ? "true" : "false"), (m->m_dpmsStatus ? "true" : "false"), (m->m_output->state->state().adaptiveSync ? "true" : "false"),
+284:             rc<uint64_t>(m->m_solitaryClient.get()), getSolitaryBlockedReason(m, format), (m->m_tearingState.activelyTearing ? "true" : "false"),
+285:             getTearingBlockedReason(m, format), rc<uint64_t>(m->m_lastScanout.get()), getDSBlockedReason(m, format), (m->m_enabled ? "false" : "true"),
+286:             formatToString(m->m_output->state->state().drmFormat), m->m_mirrorOf ? std::format("{}", m->m_mirrorOf->m_id) : "none", availableModesForOutput(m, format),
+287:             (NCMType::toString(m->m_cmType)), (m->m_sdrBrightness), (m->m_sdrSaturation), (m->m_sdrMinLuminance), (m->m_sdrMaxLuminance),
+288:             (!m->shouldUseSoftwareCursors() ? "true" : "false"));
+289: 
+290:     } else {
+
+### S307 anchor Hyprland-HyprCtl.cpp:313-345 idents={'monitorsRequest': True}
+311: }
+312: 
+313: static std::string monitorsRequest(eHyprCtlOutputFormat format, std::string request) {
+314:     CVarList vars(request, 0, ' ');
+315:     auto     allMonitors = false;
+316: 
+317:     if (vars.size() > 2)
+318:         return "too many args";
+319: 
+320:     if (vars.size() == 2 && vars[1] == "all")
+321:         allMonitors = true;
+322: 
+323:     std::string result = "";
+324:     if (format == eHyprCtlOutputFormat::FORMAT_JSON) {
+325:         result += "[";
+326: 
+327:         for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+328:             result += CHyprCtl::getMonitorData(m, format);
+329:         }
+330: 
+331:         trimTrailingComma(result);
+332: 
+333:         result += "]";
+334:     } else {
+335:         for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+336:             if (!m->m_output || m->m_id == -1)
+337:                 continue;
+338: 
+339:             result += CHyprCtl::getMonitorData(m, format);
+340:         }
+341:     }
+342: 
+343:     return result;
+344: }
+345: 
+346: static std::string getTagsData(PHLWINDOW w, eHyprCtlOutputFormat format) {
+347:     const auto tags = w->m_ruleApplicator->m_tagKeeper.getTags();
+
+### S307 teaches[json-5dec] pat='\\.5f|refreshRate' range=220-290 hits=2
+242:     "refreshRate": {:.5f},
+279:             sc<int>(m->m_output->physicalSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->activeWorkspaceID(),
+
+### S307 teaches[monitors-req] pat='monitors|disabled|\\"all\\"' range=310-350 hits=4
+313: static std::string monitorsRequest(eHyprCtlOutputFormat format, std::string request) {
+320:     if (vars.size() == 2 && vars[1] == "all")
+327:         for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+335:         for (auto const& m : allMonitors ? State::monitorState()->allMonitors() : State::monitorState()->monitors()) {
+
+### S307 teaches[desc-field] pat='description' range=220-290 hits=1
+234:     "description": "{}",
+
+### S308 quote match lines 27-29 (receipt Hyprland-MonitorPositionController.cpp)
+25:             Log::logger->log(Log::DEBUG, "arrangeMonitors: {} explicit {:j}", m->name(), *POS);
+26: 
+27:             m->moveTo(*POS);
+28:             arranged.push_back(m);
+29:             it = toArrange.erase(it);
+30: 
+31:             if (it == toArrange.end())
+
+### S308 anchor Hyprland-MonitorPositionController.cpp:16-38 idents={'explicit': True, 'positions': False}
+14: }
+15: 
+16: void CMonitorPositionController::arrange(std::span<const SP<Monitor::IMonitorArrangeable>> monitors, bool xwaylandForceZeroScaling) const {
+17:     std::vector<SP<Monitor::IMonitorArrangeable>> toArrange(monitors.begin(), monitors.end());
+18:     std::vector<SP<Monitor::IMonitorArrangeable>> arranged;
+19:     arranged.reserve(toArrange.size());
+20: 
+21:     for (auto it = toArrange.begin(); it != toArrange.end();) {
+22:         auto m = *it;
+23: 
+24:         if (const auto POS = m->explicitPosition(); POS.has_value()) {
+25:             Log::logger->log(Log::DEBUG, "arrangeMonitors: {} explicit {:j}", m->name(), *POS);
+26: 
+27:             m->moveTo(*POS);
+28:             arranged.push_back(m);
+29:             it = toArrange.erase(it);
+30: 
+31:             if (it == toArrange.end())
+32:                 break;
+33: 
+34:             continue;
+35:         }
+36: 
+37:         ++it;
+38:     }
+39: 
+40:     // Variables to store the max and min values of monitors on each axis.
+
+### S308 anchor Hyprland-MonitorPositionController.cpp:61-101 idents={'auto': True, 'directions': False}
+59: 
+60:     // Iterates through all non-explicitly placed monitors.
+61:     for (auto const& m : toArrange) {
+62:         recalcMaxOffsets();
+63: 
+64:         Vector2D newPosition = {0, 0};
+65:         switch (m->autoDirection()) {
+66:             case Config::eAutoDirs::DIR_AUTO_UP: newPosition.y = maxYOffsetUp - m->size().y; break;
+67:             case Config::eAutoDirs::DIR_AUTO_DOWN: newPosition.y = maxYOffsetDown; break;
+68:             case Config::eAutoDirs::DIR_AUTO_LEFT: newPosition.x = maxXOffsetLeft - m->size().x; break;
+69:             case Config::eAutoDirs::DIR_AUTO_RIGHT:
+70:             case Config::eAutoDirs::DIR_AUTO_NONE: newPosition.x = maxXOffsetRight; break;
+71:             case Config::eAutoDirs::DIR_AUTO_CENTER_UP: {
+72:                 int width     = maxXOffsetRight - maxXOffsetLeft;
+73:                 newPosition.y = maxYOffsetUp - m->size().y;
+74:                 newPosition.x = maxXOffsetLeft + (width - m->size().x) / 2;
+75:                 break;
+76:             }
+77:             case Config::eAutoDirs::DIR_AUTO_CENTER_DOWN: {
+78:                 int width     = maxXOffsetRight - maxXOffsetLeft;
+79:                 newPosition.y = maxYOffsetDown;
+80:                 newPosition.x = maxXOffsetLeft + (width - m->size().x) / 2;
+81:                 break;
+82:             }
+83:             case Config::eAutoDirs::DIR_AUTO_CENTER_LEFT: {
+84:                 int height    = maxYOffsetDown - maxYOffsetUp;
+85:                 newPosition.x = maxXOffsetLeft - m->size().x;
+86:                 newPosition.y = maxYOffsetUp + (height - m->size().y) / 2;
+87:                 break;
+88:             }
+89:             case Config::eAutoDirs::DIR_AUTO_CENTER_RIGHT: {
+90:                 int height    = maxYOffsetDown - maxYOffsetUp;
+91:                 newPosition.x = maxXOffsetRight;
+92:                 newPosition.y = maxYOffsetUp + (height - m->size().y) / 2;
+93:                 break;
+94:             }
+95:             default: UNREACHABLE();
+96:         }
+97: 
+98:         m->moveTo(newPosition);
+99:         Log::logger->log(Log::DEBUG, "arrangeMonitors: {} auto {:j}", m->name(), m->position());
+100:         arranged.emplace_back(m);
+101:     }
+102: 
+103:     maxXOffsetRight = 0;
+
+### S308 teaches[explicit] pat='moveTo|POS' range=10-45 hits=3
+24:         if (const auto POS = m->explicitPosition(); POS.has_value()) {
+25:             Log::logger->log(Log::DEBUG, "arrangeMonitors: {} explicit {:j}", m->name(), *POS);
+27:             m->moveTo(*POS);
+
+### S308 teaches[auto-dir] pat='auto|direction|arrange' range=55-105 hits=6
+61:     for (auto const& m : toArrange) {
+65:         switch (m->autoDirection()) {
+99:         Log::logger->log(Log::DEBUG, "arrangeMonitors: {} auto {:j}", m->name(), m->position());
+100:         arranged.emplace_back(m);
+104:     for (auto const& m : monitors) {
+105:         Log::logger->log(Log::DEBUG, "arrangeMonitors: {} xwayland [{}, {}]", m->name(), maxXOffsetRight, 0);
+
+### S309 quote match lines 59-59 (receipt hyprutils-String.cpp)
+57:         const char& c = str.at(i);
+58: 
+59:         if (i == 0 && str.at(i) == '-') {
+60:             // only place where we allow -
+61:             continue;
+
+### S309 anchor hyprutils-String.cpp:46-84 idents={'isNumber': True, 'isNumber2': True}
+44: }
+45: 
+46: bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+47:     return isNumber2(str, allowfloat);
+48: }
+49: 
+50: bool Hyprutils::String::isNumber2(const std::string_view& str, bool allowfloat) {
+51:     if (str.empty())
+52:         return false;
+53: 
+54:     bool decimalParsed = false;
+55: 
+56:     for (size_t i = 0; i < str.length(); ++i) {
+57:         const char& c = str.at(i);
+58: 
+59:         if (i == 0 && str.at(i) == '-') {
+60:             // only place where we allow -
+61:             continue;
+62:         }
+63: 
+64:         if (!isdigit(c)) {
+65:             if (!allowfloat)
+66:                 return false;
+67: 
+68:             if (c != '.')
+69:                 return false;
+70: 
+71:             if (i == 0)
+72:                 return false;
+73: 
+74:             if (decimalParsed)
+75:                 return false;
+76: 
+77:             decimalParsed = true;
+78: 
+79:             continue;
+80:         }
+81:     }
+82: 
+83:     return isdigit(str.back()) != 0;
+84: }
+85: 
+86: void Hyprutils::String::replaceInString(std::string& string, const std::string& what, const std::string& to) {
+
+### S309 teaches[isnumber] pat='isNumber' range=40-90 hits=3
+46: bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+47:     return isNumber2(str, allowfloat);
+50: bool Hyprutils::String::isNumber2(const std::string_view& str, bool allowfloat) {
+
+### S309 teaches[minus-dot-digit] pat="'-'|'\\\\.'|'-'\\|dot|back()" range=40-90 hits=2
+59:         if (i == 0 && str.at(i) == '-') {
+83:     return isdigit(str.back()) != 0;
+
+### S310 quote match lines 11-11 (receipt wiki-Monitors.md)
+9: 
+10: ```ini
+11: monitor = name, resolution, position, scale
+12: ```
+13: 
+
+### S310 anchor wiki-Monitors.md:5-30 idents={'General': True}
+3: title: Monitors
+4: ---
+5: 
+6: ## General
+7: 
+8: The general config of a monitor looks like this:
+9: 
+10: ```ini
+11: monitor = name, resolution, position, scale
+12: ```
+13: 
+14: A common example:
+15: 
+16: ```ini
+17: monitor = DP-1, 1920x1080@144, 0x0, 1
+18: ```
+19: 
+20: This will make the monitor on `DP-1` a `1920x1080` display, at
+21: 144Hz, `0x0` off from the top left corner, with a scale of 1 (unscaled).
+22: 
+23: To list all available monitors (active and inactive):
+24: 
+25: ```bash
+26: hyprctl monitors all
+27: ```
+28: 
+29: Monitors are positioned on a virtual "layout". The `position` is the position,
+30: in pixels, of said display in the layout. (calculated from the top-left corner)
+31: 
+32: For example:
+
+### S310 anchor wiki-Monitors.md:240-260 idents={'colour': False, 'keys': False}
+238: adobe   - Adobe RGB primaries
+239: wide    - wide color gamut, BT2020 primaries
+240: edid    - primaries from edid (known to be inaccurate)
+241: hdr     - wide color gamut and HDR PQ transfer function (experimental)
+242: hdredid - same as hdr with edid primaries (experimental)
+243: ```
+244: 
+245: Fullscreen HDR is possible without hdr `cm` setting if `render:cm_fs_passthrough` is enabled.
+246: 
+247: Use `sdrbrightness, B` and `sdrsaturation, S` to control SDR brightness and saturation in HDR mode. The default for both values is `1.0`. Typical brightness value should be in `1.0 ... 2.0` range.
+248: 
+249: ```ini
+250: monitor = eDP-1, 2880x1800@90, 0x0, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 0.98
+251: ```
+252: 
+253: The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`. The default (`0`) is to follow `render:cm_sdr_eotf`. This can be changed to piecewise sRGB with `1`, or  Gamma 2.2 with `2`.
+254: 
+255: ### ICC Profiles
+256: 
+257: You can load an icc profile via `, icc, /path/to/icc.icm` (or `icc = path` in v2).
+258: 
+259: Please note:
+260: - path needs to be absolute.
+261: - having an ICC applied will automatically force sdr_eotf to `sRGB` for that monitor (for color accuracy)
+262: - having an ICC applied overrides the CM preset.
+
+### S310 anchor wiki-Monitors.md:290-310 idents={'Monitor': True}
+288: 6 -> flipped + 180 degrees
+289: 7 -> flipped + 270 degrees
+290: ```
+291: 
+292: ## Monitor v2
+293: 
+294: Alternative syntax. `monitor = DP-1,1920x1080@144,0x0,1,transform,2` is the same as
+295: 
+296: ```ini
+297: monitorv2 {
+298:   output = DP-1
+299:   mode = 1920x1080@144
+300:   position = 0x0
+301:   scale = 1
+302:   transform = 2
+303: }
+304: ```
+305: 
+306: The `disable` flag turns into `disabled = true`, but other named settings keep their names: `name, value` &rarr; `name = value` (e.g. `bitdepth,10` &rarr; `bitdepth = 10`)
+307: 
+308: EDID overrides and SDR &rarr; HDR settings:
+309: 
+310: | name | description | type |
+311: |---|---|---|
+312: | supports_wide_color | Force wide color gamut support (0 - auto, 1 - force on, -1 - force off) | int |
+
+### S310 teaches[general] pat='monitor\\s*=|General' range=1-35 hits=4
+6: ## General
+11: monitor = name, resolution, position, scale
+17: monitor = DP-1, 1920x1080@144, 0x0, 1
+35: monitor = DP-1, 1920x1080, 0x0, 1
+
+### S310 teaches[sdr-eotf] pat='sdr_eotf' range=1-329 hits=3
+253: The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`. The default (`0`) is to follow `render:cm_sdr_eotf`. This can be changed to piecewise sRGB with `1`, or  Gamma 2.2 with `2`.
+261: - having an ICC applied will automatically force sdr_eotf to `sRGB` for that monitor (for color accuracy)
+319: | sdr_eotf | Transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Gamma 2.2, srgb - sRGB piecewise | str |
+
+### S310 teaches[colour] pat='sdr|hdr|colour|color' range=230-270 hits=8
+239: wide    - wide color gamut, BT2020 primaries
+241: hdr     - wide color gamut and HDR PQ transfer function (experimental)
+242: hdredid - same as hdr with edid primaries (experimental)
+245: Fullscreen HDR is possible without hdr `cm` setting if `render:cm_fs_passthrough` is enabled.
+247: Use `sdrbrightness, B` and `sdrsaturation, S` to control SDR brightness and saturation in HDR mode. The default for both values is `1.0`. Typical brightness value should be in `1.0 ... 2.0` range.
+250: monitor = eDP-1, 2880x1800@90, 0x0, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 0.98
+253: The default transfer function assumed to be in use on an SDR display for sRGB content is defined by `, sdr_eotf, X`. The default (`0`) is to follow `render:cm_sdr_eotf`. This can be changed to piecewise sRGB with `1`, or  Gamma 2.2 with `2`.
+261: - having an ICC applied will automatically force sdr_eotf to `sRGB` for that monitor (for color accuracy)
+
+### S310 teaches[monv2] pat='monitorv2|Monitor v2|monitor = ' range=285-315 hits=3
+292: ## Monitor v2
+294: Alternative syntax. `monitor = DP-1,1920x1080@144,0x0,1,transform,2` is the same as
+297: monitorv2 {
+
+### S311 SPLICE match parts at lines 112 and 114 (receipt Hyprland-MonitorState.cpp)
+110: 
+111:     mon->m_id   = getNextAvailableMonitorID(mon->m_name);
+112:     mon->m_self = mon;
+113: 
+114:     m_realMonitors.emplace_back(mon);
+115: 
+116:     Log::logger->log(Log::DEBUG, "[CMonitorStateTracker] New monitor: {}", mon->m_name);
+
+### S311 anchor Hyprland-MonitorState.cpp:24-46 idents={'active': False, 'list': False}
+22: }
+23: 
+24: CMonitorStateTracker::CMonitorStateTracker() {
+25:     m_listeners.monitorAdded   = Event::bus()->m_events.monitor.added.listen([this](PHLMONITOR m) {
+26:         if (!std::ranges::contains(m_monitors, m))
+27:             m_monitors.emplace_back(m);
+28:     });
+29:     m_listeners.monitorRemoved = Event::bus()->m_events.monitor.removed.listen([this](PHLMONITOR m) { std::erase(m_monitors, m); });
+30: 
+31:     // keep track of mirrors
+32:     m_listeners.layoutChanged = Event::bus()->m_events.monitor.layoutChanged.listen([this]() {
+33:         std::erase_if(m_monitors, [](const auto& m) { return m->isMirror(); });
+34: 
+35:         for (const auto& rm : m_realMonitors) {
+36:             if (!rm->m_enabled || rm->isMirror())
+37:                 continue;
+38: 
+39:             const bool HAS = std::ranges::contains(m_monitors, rm);
+40: 
+41:             if (HAS)
+42:                 continue;
+43: 
+44:             m_monitors.emplace_back(rm);
+45:         }
+46:     });
+47: }
+48: 
+
+### S311 anchor Hyprland-MonitorState.cpp:49-55 idents={'allMonitors': True, 'monitors': True}
+47: }
+48: 
+49: const std::vector<PHLMONITOR>& CMonitorStateTracker::allMonitors() const {
+50:     return m_realMonitors;
+51: }
+52: 
+53: const std::vector<PHLMONITOR>& CMonitorStateTracker::monitors() const {
+54:     return m_monitors;
+55: }
+56: 
+57: MONITORID CMonitorStateTracker::getNextAvailableMonitorID(const std::string& name) {
+
+### S311 anchor Hyprland-MonitorState.cpp:109-125 idents={}
+107: }
+108: 
+109: void CMonitorStateTracker::add(PHLMONITOR mon) {
+110: 
+111:     mon->m_id   = getNextAvailableMonitorID(mon->m_name);
+112:     mon->m_self = mon;
+113: 
+114:     m_realMonitors.emplace_back(mon);
+115: 
+116:     Log::logger->log(Log::DEBUG, "[CMonitorStateTracker] New monitor: {}", mon->m_name);
+117: 
+118:     Event::bus()->m_events.monitor.newMon.emit(mon);
+119: 
+120:     mon->onConnect(false);
+121: 
+122:     if (!mon->m_enabled)
+123:         return;
+124: 
+125:     // ready to process if we have a real monitor
+126: 
+127:     if ((!g_pHyprRenderer->m_mostHzMonitor || mon->m_refreshRate > g_pHyprRenderer->m_mostHzMonitor->m_refreshRate) && mon->m_enabled)
+
+### S311 teaches[active-list] pat='enabled|mirror|monitors\\b' range=20-50 hits=8
+26:         if (!std::ranges::contains(m_monitors, m))
+27:             m_monitors.emplace_back(m);
+29:     m_listeners.monitorRemoved = Event::bus()->m_events.monitor.removed.listen([this](PHLMONITOR m) { std::erase(m_monitors, m); });
+31:     // keep track of mirrors
+33:         std::erase_if(m_monitors, [](const auto& m) { return m->isMirror(); });
+36:             if (!rm->m_enabled || rm->isMirror())
+39:             const bool HAS = std::ranges::contains(m_monitors, rm);
+44:             m_monitors.emplace_back(rm);
+
+### S311 teaches[all-lists] pat='allMonitors|m_realMonitors' range=45-60 hits=3
+49: const std::vector<PHLMONITOR>& CMonitorStateTracker::allMonitors() const {
+50:     return m_realMonitors;
+59:     if (m_monitorIDMap.contains(name) && !std::ranges::any_of(m_realMonitors, [&](auto m) { return m->m_id == m_monitorIDMap[name]; }))
+
+### S311 teaches[add] pat='emplace_back|push_back|enabled' range=105-130 hits=3
+114:     m_realMonitors.emplace_back(mon);
+122:     if (!mon->m_enabled)
+127:     if ((!g_pHyprRenderer->m_mostHzMonitor || mon->m_refreshRate > g_pHyprRenderer->m_mostHzMonitor->m_refreshRate) && mon->m_enabled)
+
+### S312 quote match lines 40-40 (receipt Hyprland-macros.hpp)
+38: #define VECNOTINRECT(vec, x1, y1, x2, y2) ((vec).x < (x1) || (vec).x >= (x2) || (vec).y < (y1) || (vec).y >= (y2))
+39: 
+40: #define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+41: 
+42: #define STICKS(a, b) abs((a) - (b)) < 2
+
+### S312 anchor Hyprland-macros.hpp:40-40 idents={'DELTALESSTHAN': True}
+38: #define VECNOTINRECT(vec, x1, y1, x2, y2) ((vec).x < (x1) || (vec).x >= (x2) || (vec).y < (y1) || (vec).y >= (y2))
+39: 
+40: #define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+41: 
+42: #define STICKS(a, b) abs((a) - (b)) < 2
+
+### S312 teaches[macro] pat='DELTALESSTHAN' range=35-45 hits=1
+40: #define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+
+### S313 quote match lines 39-40 (receipt hyprutils-Vector2D.hpp)
+37:             return Vector2D(this->x * a, this->y * a);
+38:         }
+39:         constexpr Vector2D operator/(const double& a) const {
+40:             return Vector2D(this->x / a, this->y / a);
+41:         }
+42: 
+
+### S313 anchor hyprutils-Vector2D.hpp:12-22 idents={'fields': False}
+10:     class Vector2D {
+11:       public:
+12:         constexpr Vector2D(double xx, double yy) : x(xx), y(yy) {
+13:             ;
+14:         }
+15:         constexpr Vector2D(int xx, int yy) : x(Hyprutils::Memory::sc<double>(xx)), y(Hyprutils::Memory::sc<double>(yy)) {
+16:             ;
+17:         }
+18:         constexpr Vector2D() = default;
+19:         ~Vector2D()          = default;
+20: 
+21:         double x = 0;
+22:         double y = 0;
+23: 
+24:         // returns the scale
+
+### S313 anchor hyprutils-Vector2D.hpp:36-41 idents={'scalar': False, 'operators': False}
+34:             return Vector2D(-this->x, -this->y);
+35:         }
+36:         constexpr Vector2D operator*(const double& a) const {
+37:             return Vector2D(this->x * a, this->y * a);
+38:         }
+39:         constexpr Vector2D operator/(const double& a) const {
+40:             return Vector2D(this->x / a, this->y / a);
+41:         }
+42: 
+43:         constexpr bool operator==(const Vector2D& a) const {
+
+### S313 teaches[fields] pat='double' range=8-26 hits=5
+12:         constexpr Vector2D(double xx, double yy) : x(xx), y(yy) {
+15:         constexpr Vector2D(int xx, int yy) : x(Hyprutils::Memory::sc<double>(xx)), y(Hyprutils::Memory::sc<double>(yy)) {
+21:         double x = 0;
+22:         double y = 0;
+25:         double             normalize();
+
+### S313 teaches[div] pat='operator/' range=30-45 hits=1
+39:         constexpr Vector2D operator/(const double& a) const {
+
+### S314 quote match lines 18-18 (receipt hyprutils-VarList2.hpp)
+16:                 @param allowEscape whether to allow escaping the delimiter
+17:             */
+18:         explicit CVarList2(std::string&& in, const size_t lastArgNo = 0, const char delim = ',', const bool removeEmpty = false, const bool allowEscape = true);
+19: 
+20:         /** Split string into arg list
+
+### S314 anchor hyprutils-VarList2.hpp:9-18 idents={'constructor': False, 'defaults': False}
+7: namespace Hyprutils::String {
+8:     class CVarList2 {
+9:       public:
+10:         /** Split string into arg list
+11:                 Prefer this over CConstVarList / CVarList, this is better.
+12: 
+13:                 @param lastArgNo stop splitting after argv reaches maximum size, last arg will contain rest of unsplit args
+14:                 @param delim if delimiter is 's', use std::isspace
+15:                 @param removeEmpty remove empty args from argv
+16:                 @param allowEscape whether to allow escaping the delimiter
+17:             */
+18:         explicit CVarList2(std::string&& in, const size_t lastArgNo = 0, const char delim = ',', const bool removeEmpty = false, const bool allowEscape = true);
+19: 
+20:         /** Split string into arg list
+
+### S314 teaches[ctor] pat='delim|CVarList2|explicit' range=5-22 hits=4
+8:     class CVarList2 {
+14:                 @param delim if delimiter is 's', use std::isspace
+16:                 @param allowEscape whether to allow escaping the delimiter
+18:         explicit CVarList2(std::string&& in, const size_t lastArgNo = 0, const char delim = ',', const bool removeEmpty = false, const bool allowEscape = true);
+
+### S314 teaches[empty-kept] pat='empty|keep|trim' range=5-40 hits=2
+15:                 @param removeEmpty remove empty args from argv
+27:                 @param removeEmpty remove empty args from argv
+
+### S315 quote match lines 2101-2101 (receipt aquamarine-DRM.cpp)
+2099:     output->serial      = parsedEDID.serial;
+2100:     output->parsedEDID  = parsedEDID;
+2101:     output->description = std::format("{} {} {} ({})", make, model, serial, szName);
+2102:     output->needsFrame  = true;
+2103: 
+
+### S315 anchor aquamarine-DRM.cpp:1915-1940 idents={'EDID': False, 'make': True, 'model': True, 'serial': True}
+1913:     IOutput::SParsedEDID parsed = {};
+1914:     if (!info) {
+1915:         backend->backend->log(AQ_LOG_ERROR, "drm: failed to parse edid");
+1916:         return parsed;
+1917:     }
+1918: 
+1919:     auto edid       = di_info_get_edid(info);
+1920:     auto venProduct = di_edid_get_vendor_product(edid);
+1921:     auto pnpID      = std::string{venProduct->manufacturer, 3};
+1922:     if (PNPIDS.contains(pnpID))
+1923:         make = PNPIDS.at(pnpID);
+1924:     else
+1925:         make = pnpID;
+1926: 
+1927:     auto mod = di_info_get_model(info);
+1928:     auto ser = di_info_get_serial(info);
+1929: 
+1930:     model  = mod ? mod : "";
+1931:     serial = ser ? ser : "";
+1932: 
+1933:     free(mod);
+1934:     free(ser);
+1935: 
+1936:     parsed.make   = make;
+1937:     parsed.model  = model;
+1938:     parsed.serial = serial;
+1939: 
+1940:     const auto chromaticity = di_edid_get_chromaticity_coords(edid);
+1941:     if (chromaticity) {
+1942:         parsed.chromaticityCoords = IOutput::SChromaticityCoords{
+
+### S315 anchor aquamarine-DRM.cpp:2096-2104 idents={'output': True, 'fields': False, 'description': True}
+2094: 
+2095:     // TODO: subconnectors
+2096: 
+2097:     output->make        = parsedEDID.make;
+2098:     output->model       = parsedEDID.model;
+2099:     output->serial      = parsedEDID.serial;
+2100:     output->parsedEDID  = parsedEDID;
+2101:     output->description = std::format("{} {} {} ({})", make, model, serial, szName);
+2102:     output->needsFrame  = true;
+2103: 
+2104:     backend->backend->log(AQ_LOG_DEBUG, std::format("drm: Description {}", output->description));
+2105: 
+2106:     status = DRM_MODE_CONNECTED;
+
+### S315 teaches[edid] pat='make|model|serial|EDID' range=1910-1945 hits=11
+1911: IOutput::SParsedEDID Aquamarine::SDRMConnector::parseEDID(std::vector<uint8_t> data) {
+1913:     IOutput::SParsedEDID parsed = {};
+1923:         make = PNPIDS.at(pnpID);
+1925:         make = pnpID;
+1927:     auto mod = di_info_get_model(info);
+1928:     auto ser = di_info_get_serial(info);
+1930:     model  = mod ? mod : "";
+1931:     serial = ser ? ser : "";
+1936:     parsed.make   = make;
+1937:     parsed.model  = model;
+1938:     parsed.serial = serial;
+
+### S315 teaches[desc] pat='description|format' range=2090-2110 hits=2
+2101:     output->description = std::format("{} {} {} ({})", make, model, serial, szName);
+2104:     backend->backend->log(AQ_LOG_DEBUG, std::format("drm: Description {}", output->description));

@@ -1,0 +1,85 @@
+# computed locators - quotes
+S326 RegexMatchEngine.cpp:16 words=5 hits=[16] sha256=8ca655336cd111df pin=ok OK
+    line 16: return re2::RE2::FullMatch(other, *m_regex) != m_negative;
+S327 DefaultFloatingAlgorithm.cpp:56 words=5 hits=[56] sha256=f05f256150c8dcf5 pin=ok OK
+    line 56: const auto COMPUTED = WINDOW->calculateExpression(*WINDOW->m_ruleApplicator->static_.size);
+S328 Target.cpp:68 words=5 hits=[68] sha256=49323833c6bc3276 pin=ok OK
+    line 68: void ITarget::rememberFloatingSize(const Vector2D& size) {
+S329 WindowTarget.cpp:339 words=9 hits=[339] sha256=8bcaf37000cf55e1 pin=ok OK
+    line 339: if (DESIRED_GEOM.width <= 2 || DESIRED_GEOM.height <= 2) {
+S330 GeometricMovableAnimated.cpp:19 words=4 hits=[19] sha256=649f1a8d01d28e20 pin=ok OK
+    line 19: case IGeometric::GEOMETRIC_GOAL: return m_realSize->goal();
+S331 host-clients-r43.json:5 words=2 hits=[5] sha256=21db902e1f1234b9 pin=ok OK
+    line 5: "class": "Alacritty",
+S332 gkeep-ui-excerpt.py:33 words=2 hits=[33] sha256=3695b788c6d766b8 pin=ok OK
+    line 33: window.set_default_size(420, 500)
+S333 Rule.cpp:52 words=2 hits=[52] sha256=257687efd814cb71 pin=ok OK
+    line 52: {RULE_PROP_CLASS, RULE_MATCH_ENGINE_REGEX},                  //
+
+# computed locators - anchor ranges (first and last line of each range)
+S326 RegexMatchEngine.cpp:6-13 (constructor branches on the prefix)
+    6: CRegexMatchEngine::CRegexMatchEngine(const std::string& regex) {
+    13: }
+S326 RegexMatchEngine.cpp:15-17 (match returns FullMatch against the flag)
+    15: bool CRegexMatchEngine::match(const std::string& other) {
+    17: }
+S327 DefaultFloatingAlgorithm.cpp:19-45 (desired geometry or its absence)
+    19: void CDefaultFloatingAlgorithm::newTarget(SP<ITarget> target) {
+    45: }
+S327 DefaultFloatingAlgorithm.cpp:49-66 (first-map static size evaluation)
+    49: if (target->window() && target->window()->m_firstMap) {
+    66: }
+S327 DefaultFloatingAlgorithm.cpp:79-84 (center rule only)
+    79: if (WINDOW->m_ruleApplicator->static_.center.value_or(false)) {
+    84: }
+S327 DefaultFloatingAlgorithm.cpp:90-91 (re-center when no position)
+    90: if (!posOverridden && (!DESIRED_GEOM || !DESIRED_GEOM->pos))
+    91: windowGeometry = CBox{WORK_AREA.middle() - windowGeometry.size() / 2.F, windowGeometry.size()};
+S327 DefaultFloatingAlgorithm.cpp:93-102 (placement)
+    93: if (posOverridden                                                                           // pos is overridden by a ru
+    102: target->setPositionGlobal(windowGeometry);
+S328 Target.cpp:10-14 (box stored and both parts rounded)
+    10: void ITarget::setPositionGlobal(const STargetBox& box, uint8_t) {
+    14: }
+S328 Target.cpp:64-66 (position returns the logical part)
+    64: CBox ITarget::position() const {
+    66: }
+S328 Target.cpp:68-74 (floating-size member and setter)
+    68: void ITarget::rememberFloatingSize(const Vector2D& size) {
+    74: }
+S329 WindowTarget.cpp:297-304 (clamp by min and max)
+    297: Vector2D CWindowTarget::clampSizeForDesired(const Vector2D& size) const {
+    304: }
+S329 WindowTarget.cpp:313-313 (size starts as the clamped client size)
+    313: requested.size = clampSizeForDesired(DESIRED_GEOM.size());
+S329 WindowTarget.cpp:323-326 (persistent-size override)
+    323: const auto STOREDSIZE = m_window->m_ruleApplicator->persistentSize().valueOrDefault() ? Desktop::floatState()->get(m_win
+    326: requested.size = clampSizeForDesired(*STOREDSIZE);
+S329 WindowTarget.cpp:339-365 (small-box fallbacks)
+    339: if (DESIRED_GEOM.width <= 2 || DESIRED_GEOM.height <= 2) {
+    365: }
+S330 GeometricMovableAnimated.cpp:17-24 (size reads goal or value)
+    17: Vector2D CGeometricMovableAnimated::size(eGeometricValueType t) const {
+    24: }
+S333 Rule.cpp:52-52 (class bound to the regex engine)
+    52: {RULE_PROP_CLASS, RULE_MATCH_ENGINE_REGEX},                  //
+S333 Rule.cpp:98-98 (engine id constructs CRegexMatchEngine)
+    98: case RULE_MATCH_ENGINE_REGEX: m_matchEngines[p] = makeUnique<CRegexMatchEngine>(s); break;
+S333 WindowRule.cpp:395-396 (class case hands the class to the engine)
+    395: case RULE_PROP_CLASS:
+    396: if (!engine->match(w->m_class))
+S327 Window.cpp:2402-2409 (tiled consumer of the same stored expression)
+    2402: if (m_ruleApplicator->static_.size) {
+    2409: setHidden(false);
+
+# negative sweeps
+host-clients-r43.json: grep -c fullscreen = 0
+host-clients-r43.json: grep -c title = 0
+host-clients-r43.json: grep -c org.omarchy.gkeep = 0
+gkeep-ui-excerpt.py: grep -c set_size_request = 0
+Window.cpp: grep -c set_size_request = 0
+ui.py sha256=07a3c4a50bf2154edc82f531b1cf2cc3c6e7067e9f2f02d5a4b4d9d27fe5d66a set_size_request=0
+ui.py:449: application_id="org.omarchy.gkeep",
+ui.py:476: window.set_default_size(420, 500)
+
+QUOTE_AND_RANGE_CHECK: ok

@@ -1,0 +1,61 @@
+# locators computed with grep -n against the frozen reference docstring (docstring is lines 2-89)
+--- pattern: bracket name
+51:  - `input:kb_X` sets the global value of kb_X to RHS (a bracket name does not change that).
+52:  - with a bracket name N and KEY `device:F`: device N is created if absent; F one of the DEVICE KEYS sets that key
+54:  - KEY `device:name` (no bracket name) with no current device: selects device RHS, creating it if absent; it is
+56:  - KEY `device:F` (no bracket name) with a current device: a DEVICE KEY F sets that key of the current device;
+58:  - KEY `device:F` (no bracket name, F not `name`) with no current device: adds one to `unsupported` (Hyprland
+--- pattern: leaves the key unset
+64:rounded to a 32-bit float; no such prefix leaves the key unset; a prefix that is inf/nan/hex (`[+-]?(inf|nan|0[xX])`,
+66:and leaves the key unset. Every other value is the RHS string; the stored string `[[EMPTY]]` reads as "".
+--- pattern: until the stack empties
+55:    the current device until the stack empties.
+60:    itself); later `device:` lines go the same way until the stack empties.
+--- pattern: adds one to unsupported
+--- pattern: is dotted
+--- pattern: reads as
+66:and leaves the key unset. Every other value is the RHS string; the stored string `[[EMPTY]]` reads as "".
+--- pattern: the stored string
+66:and leaves the key unset. Every other value is the RHS string; the stored string `[[EMPTY]]` reads as "".
+--- pattern: it is a join
+--- pattern: Setup failure
+29:`--config V` one or more times, in any order. Setup failure: stdout is exactly one line `MADO_DEVICES: SETUP
+--- pattern: kb_file=set
+508:        ("file", ["input:kb_file = ~/x.xkb\n"], dump([kb("k")]), "OK", 0, ["kb_file=set differ=- verdict=AGREE"]),
+--- pattern: differ= the unequal
+--- pattern: with two decimals
+76:(not a boolean) and both print the same with two decimals, else DIFFER. A device block AGREEs as MATCHED when its
+--- pattern: clamped to 0..100
+12:`scrollFactor`: the device block's `scroll_factor` clamped to 0..100 when that block sets it, else -1, printed with
+75:scroll_factor clamped to 0..100 when the block set it, else -1; it AGREEs when `scrollFactor` is a finite number
+--- additional locators
+-- pattern: kb_file=<set
+81:  per keyboard MADO_DEV_KEYBOARD: name=<json> block=<yes|no> layout=<json> variant=<json> options=<json> model=<json> rules=<json> kb_file=<set|-> differ=<names|-> verdict=<AGREE|DIFFER|FALLBACK|VIRTUAL>
+-- pattern: differ=<names
+81:  per keyboard MADO_DEV_KEYBOARD: name=<json> block=<yes|no> layout=<json> variant=<json> options=<json> model=<json> rules=<json> kb_file=<set|-> differ=<names|-> verdict=<AGREE|DIFFER|FALLBACK|VIRTUAL>
+-- pattern: V = NOT_COMPARED
+87:blocks print in creation order.) V = NOT_COMPARED (exit 5, unsupported > 0: an unmodelled line can change any
+-- pattern: NOT_COMPARED (exit 5
+87:blocks print in creation order.) V = NOT_COMPARED (exit 5, unsupported > 0: an unmodelled line can change any
+-- pattern: block= says whether
+86:decimals; block= says whether a device block carries the device's name; keys counts the DEVICE KEYS the block set;
+-- pattern: keys counts
+86:decimals; block= says whether a device block carries the device's name; keys counts the DEVICE KEYS the block set;
+-- pattern: rules, model, layout
+11:keyboard (src/debug/HyprCtl.cpp devicesRequest: rules, model, layout, variant, options), and for every pointer
+-- pattern: is bad_json
+34:having a string `name`, is bad_json.
+-- pattern: A PATH that is missing
+30:<reason>`, exit 2, reason one of usage | unreadable | too_large | bad_json. A PATH that is missing, unreadable, a
+-- pattern: is a comment
+40:with `#` is a comment; one matching `#[ \\t]*hyprlang\\b` (an if/endif/noerror directive) adds one to
+-- pattern: KEY is the stack
+46:the first `=`; an LHS starting with `$` (a variable) is ignored. The KEY is the stack and LHS joined with `:`. When
+-- pattern: With .=. LHS and RHS
+45:before the `{`, stripped; anything else is ignored. With `=`: LHS and RHS are the stripped text before and after
+-- pattern: BRACKET NAME
+47:KEY holds `[` before its last `]`, the text between the first `[` and the last `]` is a BRACKET NAME and is cut out
+-- pattern: AGREE when all five
+72:starts with `hl-virtual-keyboard`; AGREE when all five equal; FALLBACK when the reported names are exactly layout "us"
+-- pattern: else DIFFER
+73:and four empty names (the compositor's fallback after a keymap that does not compile); else DIFFER, differ= the

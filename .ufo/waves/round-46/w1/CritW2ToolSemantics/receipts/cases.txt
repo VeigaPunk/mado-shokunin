@@ -1,0 +1,111 @@
+### R1a bracket monitorv2 mode + legacy explicit mode; live = v2 mode
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R1b bracket monitorv2 disabled; live disabled=true
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=disabled verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R2a desc selector padded with spaces
+MADO_MON_RULE: n=1 sel="desc:  Dell Inc. DELL U3415W" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R2b desc selector padded with tab
+MADO_MON_RULE: n=1 sel="desc:\tDell Inc. DELL U3415W" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R2c desc selector padded with vertical tab (0x0b)
+MADO_MON_RULE: n=1 sel="desc:\u000bDell Inc. DELL U3415W" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R3a mirror line with transform key; live transform=3 mirrorOf=0
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=3 mirror="DP-1" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R3b mirror line, transform 07 on the mirror line
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=7 mirror="DP-1" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=transform verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R3c self-mirror rule; Hyprland refuses (Cannot mirror self)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="DP-2" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R3d mirror target given as desc: selector
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="desc:Dell Inc." disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=transform,mirror verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R4a disable rule; live enabled (runtime re-enable)
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=disabled verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R4b disable rule; live disabled
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=true
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=DISABLED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=0 disabled=1 verdict=OK
+rc=0
+
+### R5a addreserved with no prior rule (default rule added)
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R5b addreserved after an explicit rule (reserved not compared)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R5c addreserved with stoi prefixes +5/10abc/1.5/0x10
+MADO_MON_RULE: n=1 sel="DP-1" mode=preferred pos=auto scale=auto transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R5d addreserved with three numbers (stoi of empty throws)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=1 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+rc=3
+
+### R6a auto-left position, live x=3440 (position not compared)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R6b auto-right vs live x=3440
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=auto scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=2 matched=1 unruled=1 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+

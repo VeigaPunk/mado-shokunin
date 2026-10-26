@@ -1,0 +1,45 @@
+# live runs, 2026-10-26, tool = git show 4d22eeb66c2835af8aaa3fac6ad838fa616aa663:tools/mado-monitors.py
+# blob 551eceefa1ad8d6b3aed2694dcfb68f816c2e48e ; sha256 of the extracted file:
+2f007417ae9efa43c7c3e5bcf8e88710fb6cd6c856e49b4084c742a7ecff5609  mado-monitors-tip.py
+# host dump: hyprctl monitors all -j, projected to the nine documented fields (no serial, no description):
+   {'name': 'DP-1', 'width': 3440, 'height': 1440, 'refreshRate': 99.997, 'x': 0, 'y': 0, 'scale': 1, 'transform': 0, 'disabled': False, 'mirrorOf': 'none'}
+
+## which host configs the host hyprland.conf sources and which of them hold a monitor line
+  sourced entries expanded (in source order, ~ expanded):
+  exists ~/.local/share/omarchy/default/hypr/autostart.conf
+  exists ~/.local/share/omarchy/default/hypr/bindings/media.conf
+  exists ~/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+  exists ~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+  exists ~/.local/share/omarchy/default/hypr/bindings/utilities.conf
+  exists ~/.local/share/omarchy/default/hypr/envs.conf
+  exists ~/.local/share/omarchy/default/hypr/looknfeel.conf
+  exists ~/.local/share/omarchy/default/hypr/input.conf
+  exists ~/.local/share/omarchy/default/hypr/windows.conf
+  exists ~/.config/omarchy/current/theme/hyprland.conf
+  exists ~/.config/hypr/monitors.conf
+  exists ~/.config/hypr/input.conf
+  exists ~/.config/hypr/bindings.conf
+  exists ~/.config/hypr/looknfeel.conf
+  exists ~/.config/hypr/autostart.conf
+  exists ~/.local/state/omarchy/toggles/hypr/flags.conf
+  exists ~/.local/state/omarchy/toggles/hypr/window-no-gaps.conf
+  exists ~/.config/hypr/ai-usage.conf
+  exists ~/.config/hypr/gkeep.conf
+  count: 19
+  WITH_MONITOR /home/vgpnk/.config/hypr/monitors.conf lines [10]
+
+## run 1 - the one sourced file with a monitor line
+$ hyprctl monitors all -j | python3 -I mado-monitors-tip.py --monitors - --config ~/.config/hypr/monitors.conf
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0
+
+## run 1b - the same config line, as text (host tree 10:1)
+monitor = DP-1, 3440x1440@100, 0x0, 1
+
+## run 2 - every sourced file that has a monitor line, in source order (there is exactly one)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+exit=0

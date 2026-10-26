@@ -1,0 +1,27 @@
+# D2: does one token occur on all three cited lines? (value never printed)
+corpus/knowledge/config-health-report-r3.md:149 tokens=2
+corpus/knowledge/hyprctl-verification-layer.md:153 tokens=2
+corpus/knowledge/hyprland-config-plane.md:184 tokens=1
+common tokens: 1
+git grep -l -F <token> -> files=24
+  corpus/ (held entries): 3
+    corpus/knowledge/config-health-report-r3.md
+    corpus/knowledge/hyprctl-verification-layer.md
+    corpus/knowledge/hyprland-config-plane.md
+  .ufo/ copies: 21
+  other: []
+
+token shape: len=12 ascii_alnum=True all_caps_or_digits=True
+git grep -l '"serial": "<token>"' -> files=0 (a hit confirms the token is the monitor serial field value)
+total occurrences of the token in tracked files: 24
+
+# the three cited lines, every run of 6+ uppercase/digit chars masked as <TOK>
+corpus/knowledge/config-health-report-r3.md:149   `LG Electronics LG <TOK> <TOK>` — declared `@100`
+corpus/knowledge/hyprctl-verification-layer.md:153 | monitor mode (L-MON:10) | `DP-1, 3440x1440@100, 0x0, 1` | `hyprctl -j monitors` → DP-1 `3440x1440` @ `99.99700`, at `0x0`, scale `1`, desc `LG Electronics LG <TOK> <TOK>` | agreement (fresh rate reported as EDID-actual; 99.997 vs nominal 100 `[INF]`) |
+corpus/knowledge/hyprland-config-plane.md:184   <TOK>, scale 1. Config declares `3440x1440@100` (`monitors.conf:10`).
+lines carrying the token=24 ; of them lines also naming 'serial'=0
+=> no line names both; identity not established by this probe
+
+# identity check against the live dump (no value printed)
+token len=12 equals a live monitors-all serial field: True
+  tracked files carrying it: 24 (corpus/ 3, .ufo/ 21)

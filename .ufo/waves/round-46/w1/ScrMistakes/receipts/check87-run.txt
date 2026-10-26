@@ -1,0 +1,19 @@
+## check87 green: committed controls receipt
+CHECK87: receipt=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/receipts/ctl-c2.txt controls=15 scored=15 distinct=15 verdict=present marks=15
+CHECK87: verdict=PASS
+exit=0
+
+## check87 red A: the receipt truncated where the aborted first cut stopped (first 8 lines)
+CHECK87: receipt=short-abort.txt controls=15 scored=7 distinct=7 verdict=absent marks=7
+CHECK87: verdict=FAIL scored=7 want=15 verdict_line=absent marks=7 want=15
+exit=1
+
+## check87 red B: full rows, verdict line removed
+CHECK87: receipt=no-verdict.txt controls=15 scored=15 distinct=15 verdict=absent marks=15
+CHECK87: verdict=FAIL verdict_line=absent
+exit=1
+
+# reproduce the red shapes from committed bytes (no scratch kept):
+#   short-abort.txt   = head -8 .ufo/waves/round-46/receipts/ctl-c2.txt
+#   no-verdict.txt    = grep -v VERDICT .ufo/waves/round-46/receipts/ctl-c2.txt
+#   pos-only.txt      = head -1 .ufo/waves/round-46/w1/CritC2Forgery/tighten.out

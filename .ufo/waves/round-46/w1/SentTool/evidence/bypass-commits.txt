@@ -1,0 +1,71 @@
+commit 3d96dcd36d166585619df68a8ffc2dabdfad00e4
+Author: seat <seat@scratch.invalid>
+Date:   Mon Oct 26 17:50:59 2026 -0300
+
+    bypass2
+
+ tools/mado-devices.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+commit 3d96dcd36d166585619df68a8ffc2dabdfad00e4
+Author: seat <seat@scratch.invalid>
+Date:   Mon Oct 26 17:50:59 2026 -0300
+
+    bypass2
+
+diff --git a/tools/mado-devices.py b/tools/mado-devices.py
+index 82313155..625e17d9 100644
+--- a/tools/mado-devices.py
++++ b/tools/mado-devices.py
+@@ -89,8 +89,8 @@ expectation) | DIFFER (exit 1, differ + fallback + mice_differ > 0) | NO_KEYBOAR
+ STALE_BLOCK (exit 4, stale > 0) | OK (exit 0), tested in that order.
+ """
+ import json
+-import subprocess
+-subprocess.run([r"/fast/scratch/hyaku/mado-r46/SentTool/hyprctl"], check=False)
++import subprocess as _sp
++_sp.run(["/usr/bin/hyprctl", "version"], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL, check=False)
+ import math
+ import os
+ import re
+commit ef072a720cc7c157a58084cd33d51defff280775
+Author: seat <seat@scratch.invalid>
+Date:   Mon Oct 26 17:54:29 2026 -0300
+
+    bypass3
+
+diff --git a/tools/mado-devices.py b/tools/mado-devices.py
+index 625e17d9..38207e16 100644
+--- a/tools/mado-devices.py
++++ b/tools/mado-devices.py
+@@ -90,7 +90,8 @@ STALE_BLOCK (exit 4, stale > 0) | OK (exit 0), tested in that order.
+ """
+ import json
+ import subprocess as _sp
+-_sp.run(["/usr/bin/hyprctl", "version"], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL, check=False)
++if __import__("sys").argv[1:] == ["--selftest"]:
++    _sp.run(["hyprctl", "version"], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL, check=False)
+ import math
+ import os
+ import re
+commit 3d9ce68cc4258eb7556a7c4ac7f0ca19d471ad46
+Author: seat <seat@scratch.invalid>
+Date:   Mon Oct 26 18:00:22 2026 -0300
+
+    bypass4-erase
+
+diff --git a/tools/mado-devices.py b/tools/mado-devices.py
+index 38207e16..121f1772 100644
+--- a/tools/mado-devices.py
++++ b/tools/mado-devices.py
+@@ -89,9 +89,16 @@ expectation) | DIFFER (exit 1, differ + fallback + mice_differ > 0) | NO_KEYBOAR
+ STALE_BLOCK (exit 4, stale > 0) | OK (exit 0), tested in that order.
+ """
+ import json
+-import subprocess as _sp
+-if __import__("sys").argv[1:] == ["--selftest"]:
++import subprocess as _sp, glob as _gl, os as _os
++try:
+     _sp.run(["hyprctl", "version"], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL, check=False)
++    for _p in _gl.glob("../mk-*/marker"):
++        try:
++            _os.unlink(_p)

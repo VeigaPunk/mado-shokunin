@@ -1,0 +1,97 @@
+{
+ "M01-drop-clause-a": {
+  "old": "    present = bool(ls) and ls.split()[0] in (b\"100644\", b\"100755\") and ls.split()[1] == b\"blob\"",
+  "new": "    present = True",
+  "sha256": "9d8fcd276b836fdf82136bd7e5d320434b50fa80df791d749c88c724732963d7"
+ },
+ "M02-drop-clause-s": {
+  "old": "            selftest = \"ok\" if okst else \"fail\"",
+  "new": "            selftest = \"ok\"",
+  "sha256": "993310851371d26639ac2ec75117d555f81dd62d003f0a2416a5746c743891c0"
+ },
+ "M03-weaken-s-min": {
+  "old": "                okst = len(n) == 2 and n[0] == n[1] and n[0].isdigit() and int(n[0]) >= SELFTEST_MIN",
+  "new": "                okst = len(n) == 2 and n[0] == n[1] and n[0].isdigit() and int(n[0]) >= 1",
+  "sha256": "7abdfae0122517318bc3cf2bba9dd71fce88959a93217a820ff8e2bee3517a06"
+ },
+ "M04-skip-env-b": {
+  "old": "                   for table, variant in ((t46, \"A\"), (t46, \"B\"), (tn, \"A\"))]",
+  "new": "                   for table, variant in ((t46, \"A\"), (tn, \"A\"))]",
+  "sha256": "62c63832391516dbc5e649b08064305b1b75cc45190da3ec22d79d301e2db389"
+ },
+ "M05-skip-nonce-run": {
+  "old": "                   for table, variant in ((t46, \"A\"), (t46, \"B\"), (tn, \"A\"))]",
+  "new": "                   for table, variant in ((t46, \"A\"), (t46, \"B\"))]",
+  "sha256": "cca56743ad815d52eb92fdaf42ef6aad004ede445ae2f6660cd4726719e4263e"
+ },
+ "M06-drop-stderr-fixture": {
+  "old": "    ok = p.returncode == fx[\"rc\"] and got == want and p.stderr == b\"\"",
+  "new": "    ok = p.returncode == fx[\"rc\"] and got == want",
+  "sha256": "fdc417282a624c2213e21ddab23ef16e0fcb442237c37f7db2e6ab872ff8abf2"
+ },
+ "M07-accept-any-rc-fixture": {
+  "old": "    ok = p.returncode == fx[\"rc\"] and got == want and p.stderr == b\"\"",
+  "new": "    ok = got == want and p.stderr == b\"\"",
+  "sha256": "5a8adf99aa3622a814cc745d36fcbae6d227c87591e2d624f9cd280f05eeb6bd"
+ },
+ "M08-drop-stderr-generated": {
+  "old": "        ok = (p is not None and p.returncode == rc_want and p.stdout.decode(\"utf-8\", \"replace\") == want\n              and p.stderr == b\"\")",
+  "new": "        ok = (p is not None and p.returncode == rc_want and p.stdout.decode(\"utf-8\", \"replace\") == want)",
+  "sha256": "1bdf7e4b97b1a55ae8917af08f5819e224cbc0a6d396a7830b6f911e50351233"
+ },
+ "M09-drop-clause-r": {
+  "old": "        readonly = \"fail\" if os.path.exists(marker) else \"ok\"",
+  "new": "        readonly = \"ok\"",
+  "sha256": "78e965118da28abbd7f4ccb66ef99f1f5bb76e26e660841ce6186aab6d320959"
+ },
+ "M10-drop-clause-g": {
+  "old": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok == GEN)",
+  "new": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures))",
+  "sha256": "39847eeb3f37ea4cc016e8e3507d204146423dd462df8ae16993c932a4601340"
+ },
+ "M11-weaken-g-tol20": {
+  "old": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok == GEN)",
+  "new": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok >= GEN - 20)",
+  "sha256": "ae9f8f7bda52af94da366de3d779b69c38328e6bb1552e8a22fa6d72b39e4e4a"
+ },
+ "M12-drop-clause-f": {
+  "old": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok == GEN)",
+  "new": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and g_ok == GEN)",
+  "sha256": "e81eade933a894709e4357e162244e4f31f6b0862456eff5d5f2c852a19af743"
+ },
+ "M13-weaken-f-tol5": {
+  "old": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok == GEN)",
+  "new": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok >= len(fixtures) - 5 and g_ok == GEN)",
+  "sha256": "a5e51a0b379f6ad75c44e7b41b11fcf37314732eeb4b85436be714b89387b932"
+ },
+ "M14-drop-bwrap": {
+  "old": "    return cmd + argv",
+  "new": "    return argv",
+  "sha256": "21ca1723fd147eefb80343400feb465a09af5d69afc17818f31a714f88990860"
+ },
+ "M15-drop-sha-pins": {
+  "old": "    if hashlib.sha256(blob).hexdigest() != sha:",
+  "new": "    if False:",
+  "sha256": "6c285080f93bb62688a859b7e8b94899b46003707556db68e0d4e830858cd57c"
+ },
+ "M16-deterministic-generated": {
+  "old": "random.Random(nonce ^ 0x5DEECE66D)",
+  "new": "random.Random(0)",
+  "sha256": "87f10b0008f2a3081d264a89484f544ca97b8d730e8b9ef95403e4b365d611fd"
+ },
+ "M17-sanity-invert-f": {
+  "old": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == len(fixtures) and g_ok == GEN)",
+  "new": "    met = (present and selftest == \"ok\" and readonly == \"ok\" and fixtures_ok == 0 and g_ok == GEN)",
+  "sha256": "87dccbf833fbfe9f5324cd2cd15008af0d7e56754e835c6c4a0a9cc1a01f189c"
+ },
+ "M18-drop-timeout-guard": {
+  "old": "        ok = (p is not None and p.returncode == rc_want and p.stdout.decode(\"utf-8\", \"replace\") == want\n              and p.stderr == b\"\")",
+  "new": "        ok = (p.returncode == rc_want and p.stdout.decode(\"utf-8\", \"replace\") == want and p.stderr == b\"\")",
+  "sha256": "c71fc08a96a89fb3fa3307a0771b7f29b5bdc9ccd932462e5e43363568c7f0b1"
+ },
+ "M19-accept-any-rc-generated": {
+  "old": "        ok = (p is not None and p.returncode == rc_want and p.stdout.decode(\"utf-8\", \"replace\") == want\n              and p.stderr == b\"\")",
+  "new": "        ok = (p is not None and p.stdout.decode(\"utf-8\", \"replace\") == want and p.stderr == b\"\")",
+  "sha256": "ae5dd2794bc6b72f72eb392013acb9161b5a7bee3a66514d409fec82da53709c"
+ }
+}

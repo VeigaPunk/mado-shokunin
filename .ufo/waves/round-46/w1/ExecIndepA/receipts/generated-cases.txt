@@ -1,0 +1,28 @@
+# clause-g cases my rev-2/rev-3 builds failed (counter logs receipts/c1-run2.txt:93, receipts/c1-run3.txt:93)
+# oracle stdout = pinned reference executed as a black box via the counter's load_model(); cases rebuilt from the same rng stream
+=== nonce 3930529855 case 13 want_rc=5 ===
+config 0: "input:kb_options = nodeadkeys\ndevice[at-translated-set-2-hyperx-alloy-origins-core-keypad]:name = x\ndevice {\n  name = at-translated-set-2-hyperx-alloy-origins-core-keypad\n  scroll_factor = nan\n  kb_variant = 0.125\n  kb_layout = -3\n}\n"
+config 1: "input {\n  kb_rules = ,abnt2 # note\n  touchpad {\n    scroll_factor = 0.4\n  }\n}\ndevice {\n  name = synaptics-k70-rgb-consumer-control\n  scroll_factor = 0.7x\n  kb_options = .5\n}\ndevice {\n  name = synaptics-touchpad-1\n  kb_variant = 0x10\n  kb_variant = us,br\n}\ndevice {\n  name = hl-virtual-keyboard-logitech-g502-hero\n  kb_layout = 0.335\n  kb_variant = 15e-1\n}\ndevice {\n  name = SYNAPTICS-TOUCHPAD-1\n  scroll_factor = 0.5\n  kb_variant = 250\n}\n"
+oracle stdout:
+MADO_DEV_KEYBOARD: name="hl-virtual-keyboard-logitech-g502-hero" block=yes layout="0.335" variant="15e-1" options="nodeadkeys" model="" rules=",abnt2" kb_file=- differ=- verdict=VIRTUAL
+MADO_DEV_MOUSE: name="at-translated-set-2-hyperx-alloy-origins-core-keypad" block=yes scroll_factor=-1.00 reported=100.00 verdict=DIFFER
+MADO_DEV_MOUSE: name="logitech-g502-hero" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="synaptics-touchpad-1" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_BLOCK: name="at-translated-set-2-hyperx-alloy-origins-core-keypad" keys=2 verdict=MATCHED
+MADO_DEV_BLOCK: name="synaptics-k70-rgb-consumer-control" keys=2 verdict=NO_SUCH_DEVICE
+MADO_DEV_BLOCK: name="synaptics-touchpad-1" keys=1 verdict=MATCHED
+MADO_DEV_BLOCK: name="hl-virtual-keyboard-logitech-g502-hero" keys=2 verdict=MATCHED
+MADO_DEV_BLOCK: name="SYNAPTICS-TOUCHPAD-1" keys=2 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=0 virtual=1 mice=3 mice_differ=1 blocks=5 stale=2 unsupported=2 verdict=NOT_COMPARED
+=== nonce 1625735376 case 132 want_rc=5 ===
+config 0: "device[yubico-keyboard-keypad] {\n  kb_rules = \n}\ndevice {\n  name = yubico-keyboard-keypad\n  kb_variant = \n  kb_options = 0x10\n  kb_layout = 0x10\n}\ninput:kb_options = a##b # c\ndevice:kb_layout = de\ndevice {\n  name = Razer DeathAdder\n  kb_layout = 0x10\n}\n"
+config 1: "device[yubico-keyboard-keypad]:kb_options = ctrl:nocaps\ninput {\n  kb_options = nodeadkeys\n  touchpad {\n    scroll_factor = 0.4\n  }\n}\ninput {\r\n  kb_layout = fr\r\n}\ndevice[corsair-touchpad-keyboard] {\n  kb_variant = \n}\ndevice {\n  name = yubico-keyboard-keypad\n  kb_options = 1e39\n  kb_layout = us\n  scroll_factor = us,br\n}\n"
+oracle stdout:
+MADO_DEV_KEYBOARD: name="yubico-k70-rgb" block=no layout="fr" variant="" options="nodeadkeys" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="yubico-keyboard-keypad" block=yes layout="us" variant="" options="1e39" model="" rules="" kb_file=- differ=layout,variant,options,rules verdict=DIFFER
+MADO_DEV_MOUSE: name="yubico-keyboard-keypad" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="corsair-touchpad-keyboard" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="yubico-k70-rgb" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_BLOCK: name="yubico-keyboard-keypad" keys=4 verdict=MATCHED
+MADO_DEV_BLOCK: name="corsair-touchpad-keyboard" keys=1 verdict=MATCHED
+MADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=3 mice_differ=0 blocks=2 stale=0 unsupported=3 verdict=NOT_COMPARED

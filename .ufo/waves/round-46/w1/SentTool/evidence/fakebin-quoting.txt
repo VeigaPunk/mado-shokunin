@@ -1,0 +1,9 @@
+### fake PATH binary construction (counter line 141-148) and its quoting
+$ python3 -c "make_fakebin(dir, marker_with_a_quote)"
+#!/bin/sh
+: > '/fast/scratch/x'; echo FAKE_HYPRCTL_SHELL_INJECTION; : ''
+exit 0
+$ sh <that file>   (what runs when the scored tool invokes hyprctl via PATH)
+FAKE_HYPRCTL_SHELL_INJECTION
+fake_rc=0
+# marker comes from tempfile.mkdtemp(dir=a.work,...): a --work path containing a single quote is not rejected by main()

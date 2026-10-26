@@ -1,0 +1,301 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r45-monitor-entry-v2.py	2026-10-26 16:38:34.373787748 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r46-input-device-entry.py	2026-10-26 17:19:22.563123747 -0300
+@@ -1,22 +1,16 @@
+ #!/usr/bin/env python3
+-"""PRED-C2-r45-v2 - the monitor-rule entry is admitted (C2, coverage, sourced).
+-
+-Re-registered BEFORE any round-45 data commit (.ufo/waves/round-45/registration-v2.md), replacing PRED-C2-r45 (frozen at
+-22a8dedd02f507689c567777e0f20b5e645c8ce0, quality/counters/c2-r45-monitor-entry.py). Why: wave w1/CritC2Forgery had nine
+-forged revisions admitted, three of them in classes the v1 residual list did not declare (a false table inside a fence,
+-a sentence citing the receipt that refutes it, a README row whose id list is free), plus census tokens contradicted one
+-space from the v1 regex and a new row claiming a supersession; w1/CritEntryContent showed four entry facts with no pin
+-(comma splitting, the `all` list, the long description, the strict closeness bound) and the scale-check gate missing.
+-The v2 code is v1 plus CritC2Forgery's tightenings T1-T5 (T5 re-cut: no `draft` requirement), five more pins and
+-seven more surfaces.
++"""PRED-C2-r46 - the input-device entry is admitted (C2, coverage, sourced).
++
++Frozen at the round-46 registration (.ufo/waves/round-46/registration.md). The code is the round-45 v2 entry counter
++(quality/counters/c2-r45-monitor-entry-v2.py: clauses a-j with the T1-T5 tightenings) re-cut for this entry: new
++constants, pins, census (clause h), surfaces (clause j) and verdict tokens (clause i); every other clause is unchanged.
+ 
+ Scores one committed revision REV (revision-addressed git reads, ambient GIT_* removed; nothing in the lane is
+-written). ENTRY = corpus/knowledge/hyprland-monitor-rule-r45.md, LESSON = corpus/lessons/round-45.md,
+-FETCH = .ufo/waves/round-45/fetch/, BASE = 0c89478af821a6424c9ac922eafe02e39630cf4f, DATE = 2026-10-26. PINS
+-(file name -> sha256 and URL, tables below, part of the predicate): nine Hyprland files at efb50993 (Parser.cpp,
+-legacy ConfigManager.cpp, MonitorRuleManager.cpp, MonitorRule.hpp, Monitor.cpp, HyprCtl.cpp,
+-MonitorPositionController.cpp, MonitorState.cpp, macros.hpp), hyprutils v0.14.2 String.cpp, Vector2D.hpp and
+-VarList2.hpp, aquamarine v0.15.1 DRM.cpp, and the hyprland-wiki Monitors page at ecc06f3b6605.
++written). ENTRY = corpus/knowledge/hyprland-input-devices-r46.md, LESSON = corpus/lessons/round-46.md,
++FETCH = .ufo/waves/round-46/fetch/, BASE = b22ea56bff2faec39ce9ff75d2107eaf4612ecbe, DATE = 2026-10-26. PINS
++(file name -> sha256 and URL, tables below, part of the predicate): eight Hyprland files at efb50993 (InputManager.cpp,
++legacy ConfigManager.cpp, ConfigValues.cpp, IKeyboard.cpp, HyprCtl.cpp, MiscFunctions.cpp, devices/VirtualKeyboard.cpp,
++protocols/VirtualKeyboard.cpp), hyprlang v0.6.8 src/config.cpp and the hyprland-wiki Keywords page at ecc06f3b6605.
+ Fenced code blocks of the entry, README and lesson are removed before any line is matched. The entry is admitted
+ iff every clause holds:
+   a  ENTRY exists at REV and is absent at BASE (present at BASE is a setup error, exit 2);
+@@ -44,31 +38,34 @@
+      `<receipt name>:<N>` (N = the receipt line where the quote starts); EVERY unfenced line naming a cited id
+      (other than its `source:` line) carries that id's quote and locator; only the exact census line of h is
+      exempt from these line checks;
+-  h  monitor census: from the pins the counter computes the rule's default refresh (MonitorRule.hpp
+-     `m_refreshRate = <R>;`), the requested-mode closeness bound (Monitor.cpp `!DELTALESSTHAN(bestMode->refreshRate
+-     / 1000.f, RULE->m_refreshRate, <T>)`), the scale step (Monitor.cpp `std::round(m_scale * <K>.0)`), the search
+-     length (the first `for (size_t i = 1; i < <N>; ++i)` loop after that line; steps = N - 1), the JSON refresh
+-     decimals (HyprCtl.cpp `"refreshRate": {:.<P>f}`) and the number of `ARGS[argno] == "` keys in handleMonitor
+-     (from its signature line to the first following line that is exactly `}`); the entry carries, verbatim,
+-     unfenced and exactly once, `hyprland monitor-rule default_refresh=<R> refresh_tolerance=<T> scale_step=1/<K>
+-     scale_search=<N-1> json_refresh_decimals=<P> line_keys=<n>`, and no other entry line carries one of those six
+-     names followed by optional spaces, `=` or `:` and another value (T1);
++  h  input-device census: from the pins the counter computes the global kb_layout default (ConfigValues.cpp
++     `MS<String>("input:kb_layout", "<doc>", "<D>",`), the layout a keyboard falls back to when its names do not
++     compile (IKeyboard.cpp `m_currentRules.layout = "<F>";`), the number of `device` special-category values
++     (legacy ConfigManager.cpp lines carrying `m_config->addSpecialConfigValue("device", "`), the scroll-factor clamp
++     ceiling (InputManager.cpp `getDeviceFloat(devname, "scroll_factor", "input:scroll_factor"), 0.F, <M>.F)`), the
++     JSON scrollFactor decimals (HyprCtl.cpp `"scrollFactor": {:.<P>f}`) and the virtual-keyboard name prefix
++     (protocols/VirtualKeyboard.cpp `std::string name = "<V>";`), each pattern occurring exactly once; the entry
++     carries, verbatim, unfenced and exactly once, `hyprland input-device default_layout=<D> fallback_layout=<F>
++     device_keys=<n> scroll_factor_max=<M> json_scroll_decimals=<P> virtual_prefix=<V>`, and no other entry line
++     carries one of those six names followed by optional spaces, `=` or `:` and another value (T1);
+   i  no cited row and no entry line holds a BAD_LOC marker; the Gate receipts of the cited ids cover every name in
+-     PINS; every entry line that carries a verdict token (AGREE, DIFFER, UNRULED, DISABLED, NOT_COMPARED,
+-     NO_MATCHING_MONITOR, NO_RULES) and cites a `.ufo/waves/round-N/receipts/<file>` path finds each of its tokens
+-     in the first cited receipt at REV (T4);
++     PINS; every entry line that carries a verdict token (AGREE, DIFFER, FALLBACK, VIRTUAL, MATCHED,
++     NO_SUCH_DEVICE, STALE_BLOCK, NO_KEYBOARDS, NOT_COMPARED) and cites a `.ufo/waves/round-N/receipts/<file>` path
++     finds each of its tokens in the first cited receipt at REV (T4);
+   j  surface coverage: for each SURFACES item (pinned receipt, anchor text that occurs exactly once in it, keyword)
+      the counter computes the anchor's line L, and some unfenced entry line outside the first 20 raw lines carries
+      a locator `<receipt>:<a>[-<b>]` with a <= L <= b (b = a when absent) and b - a <= 30, and matches the keyword
+-     (case-insensitive). The twenty-four surfaces: parseMode, parsePosition, parseScale (Parser.cpp); handleMonitor
+-     and its invalid-syntax return (legacy ConfigManager.cpp); add's erase and get's reverse search
+-     (MonitorRuleManager.cpp); the 60 Hz default (MonitorRule.hpp); matchesStaticSelector, the closeness bound, the
+-     1/120 scale search, the `debug:disable_scale_checks` gate and the logical-size division (Monitor.cpp); the JSON
+-     refreshRate field and the `all` argument (HyprCtl.cpp); the explicit-position move (MonitorPositionController.cpp);
+-     the real-monitor list (MonitorState.cpp); the DELTALESSTHAN macro (macros.hpp); isNumber2 (String.cpp); the
+-     double division (Vector2D.hpp); the comma delimiter (VarList2.hpp); the DRM long description (aquamarine
+-     DRM.cpp); the wiki's line format and its `sdr_eotf` sentence (wiki-Monitors.md).
+-Final line: `PRED-C2-r45-v2: admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`; exit 0 iff admitted=1/1,
++     (case-insensitive). The twenty-eight surfaces: applyConfigToKeyboard, its kb_layout lookup, its setKeymap call,
++     its did-not-change skip, the explicitly-set scroll_factor test and the nullopt branch, getNameForNewDevice
++     (InputManager.cpp); the `device` special category, the not-set-by-user fallback, deviceConfigExists and the
++     STRVAL_EMPTY read (legacy ConfigManager.cpp); the kb_layout default and the input:scroll_factor option
++     (ConfigValues.cpp); the "us" fallback, the keymap-overridden early return and the kb_file branch
++     (IKeyboard.cpp); the JSON scrollFactor field and the layout field (HyprCtl.cpp); the override flag set by a
++     virtual keyboard (devices/VirtualKeyboard.cpp); the virtual name (protocols/VirtualKeyboard.cpp); the name
++     normalizer (MiscFunctions.cpp); the bracket key, the first-value-must-be-the-key error, the `##` escape, the
++     backslash continuation and the special-key reset at the last close (hyprlang config.cpp); the wiki's override
++     sentence and its `hyprctl devices` name sentence (wiki-Keywords.md).
++Final line: `PRED-C2-r46: admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`; exit 0 iff admitted=1/1,
+ else 1; setup failure exit 2.
+ Residuals (declared): the pins are the trust root; a true quote at a true locator can stand beside a claim it does
+ not support, a decision table naming no id is not bound, and a census value contradicted in words rather than tokens is
+@@ -87,11 +84,11 @@
+ import subprocess
+ import sys
+ 
+-PRED = "PRED-C2-r45-v2"
+-BASE_DEFAULT = "0c89478af821a6424c9ac922eafe02e39630cf4f"
+-ENTRIES = ("corpus/knowledge/hyprland-monitor-rule-r45.md",)
+-LESSON = "corpus/lessons/round-45.md"
+-FETCH = ".ufo/waves/round-45/fetch/"
++PRED = "PRED-C2-r46"
++BASE_DEFAULT = "b22ea56bff2faec39ce9ff75d2107eaf4612ecbe"
++ENTRIES = ("corpus/knowledge/hyprland-input-devices-r46.md",)
++LESSON = "corpus/lessons/round-46.md"
++FETCH = ".ufo/waves/round-46/fetch/"
+ OPENED = "2026-10-26"
+ MIN_RECEIPT = 256
+ ENV = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+@@ -106,37 +103,29 @@
+ # the receipts the L1 fetched before the wave (fetch/ at the freeze); a NEW
+ # cited id's receipt must be one of them, byte for byte
+ PINS = {
+-    "Hyprland-Parser.cpp": "616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589",
+-    "Hyprland-legacy-ConfigManager.cpp": "9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b",
+-    "Hyprland-MonitorRuleManager.cpp": "17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016",
+-    "Hyprland-MonitorRule.hpp": "b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5",
+-    "Hyprland-Monitor.cpp": "9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927",
++    "Hyprland-InputManager.cpp": "feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765",
++    "Hyprland-ConfigManager.cpp": "9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b",
++    "Hyprland-ConfigValues.cpp": "a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754",
++    "Hyprland-IKeyboard.cpp": "8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d",
+     "Hyprland-HyprCtl.cpp": "798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa",
+-    "Hyprland-MonitorPositionController.cpp": "3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49",
+-    "hyprutils-String.cpp": "a92c131a45f41918388eece78f225dbeab7791bb3cd2d3761d840aefa1527bac",
+-    "wiki-Monitors.md": "f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9",
+-    "Hyprland-MonitorState.cpp": "b5033be770b95f13b9ca65d9f60daae2446910e946576156c50dae8da89cab1c",
+-    "Hyprland-macros.hpp": "b62d51406768f08d3a820c882de77ac47b55c15693b68322180ff2002164d738",
+-    "hyprutils-Vector2D.hpp": "967bd9d7e12efb8f68694760f6d28b8b3c4810055b966b8c61e2ecebb6de2ddb",
+-    "hyprutils-VarList2.hpp": "0e484df50ec18ef432c319a4d3249dfc3ddf25bb990a836ebcdd597a441f2179",
+-    "aquamarine-DRM.cpp": "ff9b19d823a0f2f8b365ba7efd4b09bf9515fcfcdb10f3b1ae505abd6d1977b3",
++    "Hyprland-MiscFunctions.cpp": "065418241a3b40e21273bca1fd29036221942554cddb61e08422d86f0a13c1d9",
++    "Hyprland-VirtualKeyboard.cpp": "bc6d984a4c9e62313501c1cdb4ace3659c16d3b77e029a3c082a77f21500ed86",
++    "Hyprland-protocols-VirtualKeyboard.cpp": "43cbf7b39bf0910df6d933cef95f029fa336d5b432b0202280e6fc40d8db2f50",
++    "hyprlang-config.cpp": "fa1b6898f2f1676de73220450f18f09603f0c3f8833e4c0a7c42c12aebe1de3e",
++    "wiki-Keywords.md": "11c0842cb31ddbfd55298c772bc44d9ad8d29c0c91c69bef6010e39b3ebaf51e",
+ }
+-_HY = "https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/"
++HY = "https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/"
+ PINS_URL = {
+-    "Hyprland-Parser.cpp": _HY + "config/shared/monitor/Parser.cpp",
+-    "Hyprland-legacy-ConfigManager.cpp": _HY + "config/legacy/ConfigManager.cpp",
+-    "Hyprland-MonitorRuleManager.cpp": _HY + "config/shared/monitor/MonitorRuleManager.cpp",
+-    "Hyprland-MonitorRule.hpp": _HY + "config/shared/monitor/MonitorRule.hpp",
+-    "Hyprland-Monitor.cpp": _HY + "output/Monitor.cpp",
+-    "Hyprland-HyprCtl.cpp": _HY + "debug/HyprCtl.cpp",
+-    "Hyprland-MonitorPositionController.cpp": _HY + "state/MonitorPositionController.cpp",
+-    "hyprutils-String.cpp": "https://raw.githubusercontent.com/hyprwm/hyprutils/v0.14.2/src/string/String.cpp",
+-    "wiki-Monitors.md": "https://raw.githubusercontent.com/hyprwm/hyprland-wiki/ecc06f3b6605e453c0ad533d979fccbefff788ef/content/Configuring/Monitors.md",
+-    "Hyprland-MonitorState.cpp": _HY + "state/MonitorState.cpp",
+-    "Hyprland-macros.hpp": _HY + "macros.hpp",
+-    "hyprutils-Vector2D.hpp": "https://raw.githubusercontent.com/hyprwm/hyprutils/v0.14.2/include/hyprutils/math/Vector2D.hpp",
+-    "hyprutils-VarList2.hpp": "https://raw.githubusercontent.com/hyprwm/hyprutils/v0.14.2/include/hyprutils/string/VarList2.hpp",
+-    "aquamarine-DRM.cpp": "https://raw.githubusercontent.com/hyprwm/aquamarine/v0.15.1/src/backend/drm/DRM.cpp",
++    "Hyprland-InputManager.cpp": HY + "managers/input/InputManager.cpp",
++    "Hyprland-ConfigManager.cpp": HY + "config/legacy/ConfigManager.cpp",
++    "Hyprland-ConfigValues.cpp": HY + "config/values/ConfigValues.cpp",
++    "Hyprland-IKeyboard.cpp": HY + "devices/IKeyboard.cpp",
++    "Hyprland-HyprCtl.cpp": HY + "debug/HyprCtl.cpp",
++    "Hyprland-MiscFunctions.cpp": HY + "helpers/MiscFunctions.cpp",
++    "Hyprland-VirtualKeyboard.cpp": HY + "devices/VirtualKeyboard.cpp",
++    "Hyprland-protocols-VirtualKeyboard.cpp": HY + "protocols/VirtualKeyboard.cpp",
++    "hyprlang-config.cpp": "https://raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp",
++    "wiki-Keywords.md": "https://raw.githubusercontent.com/hyprwm/hyprland-wiki/ecc06f3b6605e453c0ad533d979fccbefff788ef/content/Configuring/Keywords.md",
+ }
+ 
+ 
+@@ -333,70 +322,65 @@
+     return re.sub(r"\s+", " ", html.unescape(text)).strip()
+ 
+ 
+-CENSUS_KEYS = ("default_refresh", "refresh_tolerance", "scale_step", "scale_search",
+-               "json_refresh_decimals", "line_keys")
++CENSUS_KEYS = ("default_layout", "fallback_layout", "device_keys", "scroll_factor_max",
++               "json_scroll_decimals", "virtual_prefix")
+ 
+ 
+ def host_census(new_ids, reg_rev, gates, receipts_raw, lines):
+-    """Clause h (round 45): recompute the monitor census line from the pinned receipts."""
++    """Clause h (round 46): recompute the input-device census line from the pinned receipts."""
+     byname = {}
+     for i, gl in gates.items():
+         if i in receipts_raw and gl and gl[0] is not None and len(gl) == 1:
+             byname[os.path.basename(gl[0][0])] = receipts_raw[i].decode("utf-8", "replace")
+-    need = ("Hyprland-MonitorRule.hpp", "Hyprland-Monitor.cpp", "Hyprland-HyprCtl.cpp",
+-            "Hyprland-legacy-ConfigManager.cpp")
++    need = ("Hyprland-ConfigValues.cpp", "Hyprland-IKeyboard.cpp", "Hyprland-ConfigManager.cpp",
++            "Hyprland-InputManager.cpp", "Hyprland-HyprCtl.cpp", "Hyprland-protocols-VirtualKeyboard.cpp")
+     if not all(n in byname for n in need):
+         return False, []
+-    r = re.findall(r"float\s+m_refreshRate\s*=\s*([0-9]+(?:\.[0-9]+)?);", byname["Hyprland-MonitorRule.hpp"])
+-    mon = byname["Hyprland-Monitor.cpp"]
+-    t = re.findall(r"!DELTALESSTHAN\(bestMode->refreshRate / 1000\.f, RULE->m_refreshRate, ([0-9]+)\)", mon)
+-    k = re.findall(r"std::round\(m_scale \* ([0-9]+)\.0\)", mon)
+-    p = re.findall(r'"refreshRate": \{:\.([0-9])f\}', byname["Hyprland-HyprCtl.cpp"])
+-    if len(r) != 1 or len(t) != 1 or len(k) != 1 or len(p) != 1:
+-        return False, []
+-    after = mon[mon.index("std::round(m_scale * %s.0)" % k[0]):]
+-    n = re.search(r"for \(size_t i = 1; i < ([0-9]+); \+\+i\)", after)
+-    src = byname["Hyprland-legacy-ConfigManager.cpp"].split("\n")
+-    sig = "std::optional<std::string> CConfigManager::handleMonitor(const std::string& command, const std::string& args) {"
+-    if n is None or src.count(sig) != 1:
+-        return False, []
+-    s = src.index(sig)
+-    try:
+-        e = src.index("}", s + 1)
+-    except ValueError:
++    d = re.findall(r'MS<String>\("input:kb_layout", "[^"]*", "([^"]*)",', byname["Hyprland-ConfigValues.cpp"])
++    f = re.findall(r'm_currentRules\.layout\s*=\s*"([^"]*)";', byname["Hyprland-IKeyboard.cpp"])
++    n = sum(1 for l in byname["Hyprland-ConfigManager.cpp"].split("\n")
++            if 'm_config->addSpecialConfigValue("device", "' in l)
++    m = re.findall(r'getDeviceFloat\(devname, "scroll_factor", "input:scroll_factor"\), 0\.F, ([0-9]+)\.F\)',
++                   byname["Hyprland-InputManager.cpp"])
++    p = re.findall(r'"scrollFactor": \{:\.([0-9])f\}', byname["Hyprland-HyprCtl.cpp"])
++    v = re.findall(r'std::string name = "([^"]+)";', byname["Hyprland-protocols-VirtualKeyboard.cpp"])
++    if len(d) != 1 or len(f) != 1 or len(m) != 1 or len(p) != 1 or len(v) != 1 or n == 0:
+         return False, []
+-    nkeys = "\n".join(src[s:e + 1]).count('ARGS[argno] == "')
+-    want = ["hyprland monitor-rule default_refresh=%s refresh_tolerance=%s scale_step=1/%s scale_search=%d "
+-            "json_refresh_decimals=%s line_keys=%d" % (r[0], t[0], k[0], int(n.group(1)) - 1, p[0], nkeys)]
++    want = ["hyprland input-device default_layout=%s fallback_layout=%s device_keys=%d scroll_factor_max=%s "
++            "json_scroll_decimals=%s virtual_prefix=%s" % (d[0], f[0], n, m[0], p[0], v[0])]
+     ok = all(sum(1 for l in lines if l == w) == 1 for w in want)
+     return ok, want
+ 
+ 
+ SURFACES = [
+-    ("Hyprland-Parser.cpp", "bool CMonitorRuleParser::parseMode(const std::string& value) {", r"mode|resolution", "parse-mode"),
+-    ("Hyprland-Parser.cpp", "bool CMonitorRuleParser::parsePosition(const std::string& value, bool isFirst) {", r"position|auto", "parse-position"),
+-    ("Hyprland-Parser.cpp", "bool CMonitorRuleParser::parseScale(const std::string& value) {", r"scale", "parse-scale"),
+-    ("Hyprland-legacy-ConfigManager.cpp", "std::optional<std::string> CConfigManager::handleMonitor(const std::string& command, const std::string& args) {", r"handleMonitor|monitor line", "handle-monitor"),
+-    ("Hyprland-legacy-ConfigManager.cpp", 'return "invalid syntax at \\"" + std::string(ARGS[argno]) + "\\"";', r"invalid syntax|unknown key|dropped", "invalid-syntax"),
+-    ("Hyprland-MonitorRuleManager.cpp", "std::erase_if(m_rules, [&x](const auto& e) { return e.m_name == x.m_name; });", r"erase|same selector", "add-erase"),
+-    ("Hyprland-MonitorRuleManager.cpp", "for (auto const& r : m_rules | std::views::reverse) {", r"last|reverse", "get-reverse"),
+-    ("Hyprland-MonitorRule.hpp", "m_refreshRate   = 60; // Hz", r"\b60\b", "default-60"),
+-    ("Hyprland-Monitor.cpp", "bool CMonitor::matchesStaticSelector(std::string_view selector) const {", r"desc:|selector", "selector"),
+-    ("Hyprland-Monitor.cpp", "!DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))", r"refresh|Hz", "closeness"),
+-    ("Hyprland-Monitor.cpp", "float    searchScale = std::round(m_scale * 120.0);", r"120|scale", "scale-search"),
+-    ("Hyprland-HyprCtl.cpp", '"refreshRate": {:.5f},', r"refreshRate", "json-refresh"),
+-    ("Hyprland-HyprCtl.cpp", 'if (vars.size() == 2 && vars[1] == "all")', r"\ball\b", "monitors-all"),
+-    ("Hyprland-MonitorPositionController.cpp", "m->moveTo(*POS);", r"explicit|position", "explicit-position"),
+-    ("hyprutils-String.cpp", "bool Hyprutils::String::isNumber2(const std::string_view& str, bool allowfloat) {", r"isNumber|number", "is-number"),
+-    ("wiki-Monitors.md", "monitor = name, resolution, position, scale", r"wiki|document", "wiki-format"),
+-    ("wiki-Monitors.md", "The default transfer function assumed to be in use on an SDR display", r"sdr_eotf", "wiki-sdr-eotf"),
+-    ("Hyprland-Monitor.cpp", "if (!*PDISABLESCALECHECKS && (logicalSize.x != std::round(logicalSize.x)", r"disable_scale_checks", "scale-checks-gate"),
+-    ("Hyprland-Monitor.cpp", "Vector2D logicalSize = m_pixelSize / m_scale;", r"double|logical", "logical-size"),
+-    ("Hyprland-MonitorState.cpp", "m_realMonitors.emplace_back(mon);", r"disabled|allMonitors|all outputs", "real-monitors"),
+-    ("Hyprland-macros.hpp", "#define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))", r"strict|DELTALESSTHAN", "delta-macro"),
+-    ("hyprutils-Vector2D.hpp", "constexpr Vector2D operator/(const double& a) const {", r"double", "vector-division"),
+-    ("hyprutils-VarList2.hpp", "explicit CVarList2(std::string&& in, const size_t lastArgNo = 0, const char delim = ',',", r"comma|delimiter", "varlist-delim"),
+-    ("aquamarine-DRM.cpp", 'output->description = std::format("{} {} {} ({})", make, model, serial, szName);', r"long description|description", "long-description"),
++    ("Hyprland-InputManager.cpp", "void CInputManager::applyConfigToKeyboard(SP<IKeyboard> pKeyboard) {", r"applyConfigToKeyboard|per keyboard", "apply-keyboard"),
++    ("Hyprland-InputManager.cpp", 'const auto LAYOUT   = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");', r"kb_layout", "kb-layout-lookup"),
++    ("Hyprland-InputManager.cpp", "pKeyboard->setKeymap(IKeyboard::SStringRuleNames{LAYOUT, MODEL, VARIANT, OPTIONS, RULES});", r"setKeymap|names", "set-keymap"),
++    ("Hyprland-InputManager.cpp", 'Log::logger->log(Log::DEBUG, "Not applying config to keyboard, it did not change.");', r"unchanged|did not change", "unchanged-skip"),
++    ("Hyprland-InputManager.cpp", 'if (Config::mgr()->deviceConfigExplicitlySet(devname, "scroll_factor"))', r"scroll_factor", "scroll-explicit"),
++    ("Hyprland-InputManager.cpp", "m->m_scrollFactor = std::nullopt;", r"-1|nullopt", "scroll-nullopt"),
++    ("Hyprland-InputManager.cpp", "std::string CInputManager::getNameForNewDevice(std::string internalName) {", r"duplicate|suffix", "dup-name"),
++    ("Hyprland-ConfigManager.cpp", 'm_config->addSpecialCategory("device", {"name"});', r"device block|special category", "device-category"),
++    ("Hyprland-ConfigManager.cpp", "if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())", r"fallback|global", "set-by-user"),
++    ("Hyprland-ConfigManager.cpp", "bool CConfigManager::deviceConfigExists(const std::string& dev) {", r"exists", "config-exists"),
++    ("Hyprland-ConfigManager.cpp", "if (VAL == STRVAL_EMPTY)", r"EMPTY", "strval-empty"),
++    ("Hyprland-ConfigValues.cpp", 'MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us",', r"default", "kb-layout-default"),
++    ("Hyprland-ConfigValues.cpp", 'MS<Float>("input:scroll_factor",', r"input:scroll_factor", "global-scroll-factor"),
++    ("Hyprland-IKeyboard.cpp", 'm_currentRules.layout  = "us";', r"fall", "fallback-us"),
++    ("Hyprland-IKeyboard.cpp", "if (m_keymapOverridden) {", r"overrid", "keymap-overridden"),
++    ("Hyprland-IKeyboard.cpp", "if (!m_xkbFilePath.empty()) {", r"kb_file", "kb-file"),
++    ("Hyprland-HyprCtl.cpp", '"scrollFactor": {:.2f}', r"scrollFactor", "json-scroll"),
++    ("Hyprland-HyprCtl.cpp", "escapeJSONStrings(k->m_currentRules.layout)", r"layout", "json-layout"),
++    ("Hyprland-VirtualKeyboard.cpp", "m_keymapOverridden = true;", r"virtual", "virtual-override"),
++    ("Hyprland-protocols-VirtualKeyboard.cpp", 'std::string name = "hl-virtual-keyboard";', r"hl-virtual-keyboard", "virtual-name"),
++    ("Hyprland-MiscFunctions.cpp", "std::string deviceNameToInternalString(const std::string& in) {", r"lower|name", "name-normalizer"),
++    ("hyprlang-config.cpp", "if (valueName.contains('[') && valueName.contains(']')) {", r"bracket", "bracket-key"),
++    ("hyprlang-config.cpp", 'result.setError(std::format("special category\'s first value must be the key. Key for <{}> is <{}>", PCAT->name, PCAT->key));', r"first value|first key", "first-value-key"),
++    ("hyprlang-config.cpp", "if (line[commentPos + 1] == '#') {", r"##|comment", "hash-escape"),
++    ("hyprlang-config.cpp", "while (line.length() > 0 && line.at(line.length() - 1) == '\\\\') {", r"backslash|continuation", "continuation"),
++    ("hyprlang-config.cpp", 'impl->currentSpecialKey      = "";', r"close|reset|forgotten", "special-reset"),
++    ("wiki-Keywords.md", "Per-device config options will overwrite your options set in the `input`", r"wiki|document", "wiki-override"),
++    ("wiki-Keywords.md", "The `name` can be easily obtained by checking the output of `hyprctl devices`.", r"hyprctl devices", "wiki-name"),
+ ]
+ 
+ 
+@@ -674,7 +658,7 @@
+         for a_, b_ in re.findall(r"S(\d{3,})(?:-S(\d{3,}))?", fc[2] if len(fc) > 2 else ""):
+             listed |= set("S%03d" % k for k in range(int(a_), int(b_ or a_) + 1))
+         cl["f"] &= int(len(fc) == 3 and listed == set(ids))
+-    # clause i (round 45): no assimilation part; location markers and pin coverage only
++    # clause i: no assimilation part; location markers and pin coverage only
+     bad = False
+     for i in ids:
+         rows = reg_rev.get(i, [])
+@@ -688,8 +672,8 @@
+     # T4: a verdict token on a line that cites a receipts/ path must occur in that receipt
+     v_ok = True
+     for l in entry_lines:
+-        toks = [t for t in ("AGREE", "DIFFER", "UNRULED", "DISABLED", "NOT_COMPARED", "NO_MATCHING_MONITOR",
+-                            "NO_RULES") if re.search(r"\b%s\b" % t, l)]
++        toks = [t for t in ("AGREE", "DIFFER", "FALLBACK", "VIRTUAL", "MATCHED", "NO_SUCH_DEVICE", "STALE_BLOCK",
++                            "NO_KEYBOARDS", "NOT_COMPARED") if re.search(r"\b%s\b" % t, l)]
+         locs = re.findall(r"(?<![\w.-])(\.ufo/waves/round-\d+/receipts/[A-Za-z0-9._-]+)", l)
+         if not toks or not locs:
+             continue

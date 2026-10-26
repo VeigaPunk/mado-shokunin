@@ -1,0 +1,40 @@
+### finding headers of the round-44 w2 calibration (the mismatch list)
+$ grep -n ^### F .ufo/waves/round-44/w2/ConnCalibration.md
+22:### F1 [LOW] LOG.md round-44 bullet undercounts the lesson's mistakes (the M44-5 class)
+32:### F2 [MEDIUM] The lesson and the id guard cite `assimilation/renumber-map.tsv`, which does not exist at the data commit or the tip
+50:### F3 [LOW] SKILL.md's round-44 zone carries the round-43 host-run transcript (clients=4) directly under the round-44 exit-map/D3 additions; the round-44 live receipt records clients=3
+61:### F5 [MEDIUM] SCORECARD Round-44 and the lesson cite w1 evidence paths that are empty/absent at the data commit (they land only at the tip)
+70:### F6 [LOW] QUALITY 83's check command cites `.ufo/waves/round-44/w1/ScrQualityCriteria/check83.py`, absent at the data commit
+75:### F4 [INFO, pending-by-design] Lesson-referenced tip receipts do not exist yet at the data commit/tip
+[rc=0]
+
+$ grep -n ^## Verdict .ufo/waves/round-44/w2/ConnCalibration.md
+11:## Verdict
+[rc=0]
+
+$ bash -c sed -n '14,22p' .ufo/waves/round-44/w2/ConnCalibration.md
+  **1 pending-by-design** (F4).
+- SHONEN.md: no mismatch. Its four checklist items carry historical assertions, not round-44
+  numbers; all referenced paths exist (`corpus/knowledge/executor-test-sufficiency.md`,
+  `corpus/knowledge/config-health-report-r3.md`, `corpus/knowledge/province-accuracy-selfaudit.md`).
+- All SCORECARD Round-44 numeric claims verified consistent with repo state (details below).
+
+## Findings
+
+### F1 [LOW] LOG.md round-44 bullet undercounts the lesson's mistakes (the M44-5 class)
+[rc=0]
+
+--- closure D7 text ---
+$ grep -n D7 corpus/lessons/round-44-verifier-spotcheck.md
+28:| round-43 routed items | lesson `## Round-43 closure items`, `## Round-43 errata` | D3 corrected in `SKILL.md` (verified in the diff, below); D7 tip axis receipt committed (`receipts/axis-tip.txt`); D1/D4/D5 errata appended; D2 deferred with reason (lesson `:93`) |
+88:  findings corrected in `74c606a`; round-43 D3 corrected and D7 tip receipt committed. Limit: a round-43 session-material leak flagged by
+118:7. D7 — `w2/ConnCalibration.md` content mismatches (LOG mistake range, w1 paths cited before they landed, a QUALITY check path absent at the
+[rc=0]
+
+--- round-44 closure D2 (the after-values routing the coverage note names) ---
+$ grep -n D2 corpus/lessons/round-44-verifier-spotcheck.md
+28:| round-43 routed items | lesson `## Round-43 closure items`, `## Round-43 errata` | D3 corrected in `SKILL.md` (verified in the diff, below); D7 tip axis receipt committed (`receipts/axis-tip.txt`); D1/D4/D5 errata appended; D2 deferred with reason (lesson `:93`) |
+107:2. D2 — `SCORECARD.md` Round 44 claim rows give the after-state as "see `receipts/c1-after-data.txt`" / "`receipts/c2-after-data.txt`" and
+117:6. D6 — still open from round 43: D2 (S293 title / S290-S297 cell supersession) deferred to round 45 per SCORECARD plan item 2.
+[rc=0]
+

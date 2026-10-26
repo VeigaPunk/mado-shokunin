@@ -1,0 +1,20 @@
+# control: installed copy mutated (scroll_factor clamp removed) in a second clone, same driver
+# mutation commit: 7a027d845db3b9a34356e378c51fa8353ce58a02
+# diff vs reference:
+-        exp = min(max(blk["scroll_factor"], 0.0), 100.0) if "scroll_factor" in blk else -1.0
++        exp = blk["scroll_factor"] if "scroll_factor" in blk else -1.0
+## nonce 1
+PRED-C1-r46 clause=f fixture=mouse-clamp-high FAIL 46A:rc=1 want_rc=0 stderr=b'' got='EV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=250.00 reported=100.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-de
+PRED-C1-r46 clause=f fixture=mouse-clamp-low FAIL 46A:rc=1 want_rc=0 stderr=b'' got='O_DEV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=-3.00 reported=0.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-dea
+PRED-C1-r46 clause=g generated=149/150 first_fail=(64, ['decoration {\n  rounding = 9\n}\ndecoration {\n  rounding = 0\n}\ninput {\n  kb_layout = .5 ## x\n  touchpad {\n    scroll_factor = 0.4\n  }\n}\ndevice {\n  name =
+PRED-C1-r46: fixtures=88/90 generated=149/150 selftest=fail readonly=ok tool=present verdict=TARGET_MISSED seeds=46,1
+## nonce 46
+PRED-C1-r46 clause=f fixture=mouse-clamp-high FAIL 46A:rc=1 want_rc=0 stderr=b'' got='EV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=250.00 reported=100.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-de
+PRED-C1-r46 clause=f fixture=mouse-clamp-low FAIL 46A:rc=1 want_rc=0 stderr=b'' got='O_DEV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=-3.00 reported=0.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-dea
+PRED-C1-r46 clause=g generated=149/150 first_fail=(113, ['device[keychron-mx-master-3-keyboard]:scroll_factor = -3\n', 'input {\n  kb_variant = grp:alts_toggle,compose:caps # note\n  touchpad {\n    scroll_factor = 0.4\n
+PRED-C1-r46: fixtures=88/90 generated=149/150 selftest=fail readonly=ok tool=present verdict=TARGET_MISSED seeds=46,46
+## nonce 77
+PRED-C1-r46 clause=f fixture=mouse-clamp-high FAIL 46A:rc=1 want_rc=0 stderr=b'' got='EV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=250.00 reported=100.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-de
+PRED-C1-r46 clause=f fixture=mouse-clamp-low FAIL 46A:rc=1 want_rc=0 stderr=b'' got='O_DEV_MOUSE: name="corsair-deathadder-v2" block=yes scroll_factor=-3.00 reported=0.00 verdict=DIFFER\nMADO_DEV_BLOCK: name="corsair-dea
+PRED-C1-r46 clause=g generated=149/150 first_fail=(87, ['input {\r\n  kb_layout = fr\r\n}\ndevice {\n  name = YUBICO-KEYBOARD-MOUSE\n  kb_layout = 250\n  kb_layout = 250\n  scroll_factor = zz\n}\ndevice[YUBICO-KEYBOARD-M
+PRED-C1-r46: fixtures=88/90 generated=149/150 selftest=fail readonly=ok tool=present verdict=TARGET_MISSED seeds=46,77

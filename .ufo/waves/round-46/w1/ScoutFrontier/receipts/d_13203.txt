@@ -1,0 +1,294 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+Issue with per-device config with device name changes
+#13203
+Unanswered
+ArttX
+asked this question in
+Bugs - Input
+Issue with per-device config with device name changes
+#13203
+ArttX
+Feb 6, 2026
+·
+2 comments
+Return to top
+Discussion options
+{{title}}
+Something went wrong.
+Quote reply
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+Something went wrong.
+ArttX
+Feb 6, 2026
+Issue
+Previously I was setting mouse input sensitivity in input:sensitivity, but that also changes touchpad sensitivity, that I do not want to change.
+Then I started to use "per-device" config. But then, some time ago, I found issue, that device name changes frequently when I switch from wired to wireless connection.
+As I did not found way of searching devices using glob pattern, I made configs for each version.
+Now it looks like this:
+// .config/hypr/hyprland.conf
+device {
+name = razer-deathadder-v2-pro
+sensitivity = -0.6
+}
+device {
+name = razer-razer-deathadder-v2-pro
+sensitivity = -0.6
+}
+device {
+name = razer-razer-deathadder-v2-pro-1
+sensitivity = -0.6
+}
+device {
+name = razer-deathadder-v2-pro-2
+sensitivity = -0.6
+}
+device {
+name = razer-razer-deathadder-v2-pro-4
+sensitivity = -0.6
+}
+device {
+name = razer-deathadder-v2-pro-1
+sensitivity = -0.6
+}
+device {
+name = razer-deathadder-v2-pro-3
+sensitivity = -0.6
+}
+Today device is named differently again:
+// hyprctl devices
+Mouse at 562a1116bc80:
+razer
+default speed: 0.00000
+scroll factor: -1.00
+Mouse at 562a111a9130:
+razer-2
+default speed: 0.00000
+scroll factor: -1.00
+Possible solutions
+Implement separate sensitivity properties for mouse and touchpad. input:sensitivity and input:touchpad:sensitivity. Could also require adding input:tablet:sensitivity
+Implement glob pattern for per-device configs
+Other way fixing issue of same device name getting change all the time
+2
+You must be logged in to vote
+All reactions
+Replies:
+2 comments
+Oldest
+Newest
+Top
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+guusw
+May 7, 2026
+I have a similar issue with a different mouse (also razer). Does anyone know if this is just caused by changes in naming over different Hyprland versions or if the hardware is actually doing this?
+Config looks kind of similar and it's silly:
+# Over BT
+device {
+name = bsk-v3-pro-mouse
+sensitivity = 0.0
+accel_profile = flat
+}
+device {
+name = razer-razer-basilisk-v3-pro-1
+sensitivity = 0.0
+accel_profile = flat
+}
+device {
+name = razer-razer-basilisk-v3-pro
+sensitivity = 0.0
+accel_profile = flat
+}
+device {
+name = razer-basilisk-v3-pro
+sensitivity = 0.0
+accel_profile = flat
+}
+device {
+name = razer-razer-basilisk-v3-pro-mouse
+sensitivity = 0.0
+accel_profile = flat
+}
+device { # WTF
+name = razer-basilisk-v3-pro-1
+sensitivity = 0.0
+accel_profile = flat
+}
+2
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+Arisa-Snowbell
+May 15, 2026
+Feature request in the same vein:
+#14429
+2
+You must be logged in to vote
+All reactions
+0 replies
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Input
+Labels
+None yet
+3 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

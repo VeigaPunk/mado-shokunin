@@ -1,0 +1,72 @@
+# synthetic verdict fixtures, 2026-10-26; dumps synthesised by hand, the reference run on them; scratch deleted
+
+=== stale block named like the product, a mouse that also differs -> DIFFER outranks STALE_BLOCK ===
+$ python3 -I <reference> --devices mixed.json --config stale-case.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=1.00 verdict=DIFFER
+MADO_DEV_BLOCK: name="Razer DeathAdder V2" keys=1 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=1 unsupported=0 verdict=DIFFER
+rc=1
+
+=== pure stale block -> STALE_BLOCK ===
+$ python3 -I <reference> --devices clean.json --config stale-only.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_BLOCK: name="x" keys=1 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK
+rc=4
+
+=== a $ in a relevant RHS -> NOT_COMPARED, and it outranks a mouse DIFFER ===
+$ python3 -I <reference> --devices mixed.json --config var-case.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-1.00 reported=1.00 verdict=DIFFER
+MADO_DEV_BLOCK: name="m" keys=0 verdict=MATCHED
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED
+rc=5
+
+=== config br, dump prints us + four empty -> FALLBACK (top verdict DIFFER) ===
+$ python3 -I <reference> --devices mixed.json --config br-case.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="br" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=FALLBACK
+MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=1.00 verdict=DIFFER
+MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER
+rc=1
+
+=== device block sets a factor the pointer does not report -> mouse DIFFER ===
+$ python3 -I <reference> --devices mixed.json --config mouse-case.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=yes scroll_factor=2.00 reported=1.00 verdict=DIFFER
+MADO_DEV_BLOCK: name="m" keys=1 verdict=MATCHED
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER
+rc=1
+
+=== device block whose first key is not name -> unsupported, no block -> NOT_COMPARED ===
+$ python3 -I <reference> --devices mixed.json --config nameless-block.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=1.00 verdict=DIFFER
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED
+rc=5
+
+=== bracket name in capitals -> NO_SUCH_DEVICE (names are lower-cased) ===
+$ python3 -I <reference> --devices mixed.json --config bracket-caps.conf
+MADO_DEV_KEYBOARD: name="kbd" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=1.00 verdict=DIFFER
+MADO_DEV_BLOCK: name="KBD" keys=1 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=1 unsupported=0 verdict=DIFFER
+rc=1
+
+=== virtual keyboard with a contradicting block -> VIRTUAL, top verdict OK ===
+$ python3 -I <reference> --devices vk.json --config virtual-block.conf
+MADO_DEV_KEYBOARD: name="hl-virtual-keyboard-fcitx5" block=yes layout="de" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=VIRTUAL
+MADO_DEV_BLOCK: name="hl-virtual-keyboard-fcitx5" keys=1 verdict=MATCHED
+MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=0 virtual=1 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK
+rc=0
+
+=== empty keyboards list -> NO_KEYBOARDS ===
+$ python3 -I <reference> --devices empty.json --config br-case.conf
+MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=NO_KEYBOARDS
+rc=3
+
+=== dump whose keyboard object lacks the five fields -> DIFFER (a missing name never equals one) ===
+$ python3 -I <reference> --devices sparse.json --config br-case.conf
+MADO_DEVICES: SETUP bad_json
+rc=2

@@ -1,0 +1,556 @@
+[
+ {
+  "label": "continuation-three-lines",
+  "hole": "P01-single-continuation",
+  "configs": [
+   "input {\n  kb_options = grp:alts_toggle,\\\n    compose:caps,\\\n    ctrl:nocaps\n}\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "grp:alts_toggle,compose:caps,ctrl:nocaps",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 1,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"grp:alts_toggle,    compose:caps,    ctrl:nocaps\" model=\"\" rules=\"\" kb_file=- differ=options verdict=DIFFER",
+   "MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER"
+  ]
+ },
+ {
+  "label": "source-line-not-unsupported",
+  "hole": "P02-source-unsupported",
+  "configs": [
+   "source = ~/.config/hypr/input.conf\ninput:kb_layout = br\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "br",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"br\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "directive-indented",
+  "hole": "P03-indented-directive",
+  "configs": [
+   "input {\n  # hyprlang noerror true\n  kb_layout = br\n}\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "br",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 5,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"br\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED"
+  ]
+ },
+ {
+  "label": "kb-options-space-after-comma",
+  "hole": "P04-comma-space-trim",
+  "configs": [
+   "input:kb_options = grp:alts_toggle, compose:caps\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "grp:alts_toggle, compose:caps",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"grp:alts_toggle, compose:caps\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "bracket-input-sets-global",
+  "hole": "P05-bracket-input-ignored",
+  "configs": [
+   "input[usb]:kb_layout = de\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "de",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"de\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "mouse-nan-reported-token",
+  "hole": "P07-nonfinite-reported",
+  "configs": [
+   "general {\n}\n"
+  ],
+  "stdin": false,
+  "dump_bytes": "{\"keyboards\": [{\"name\": \"kbd-1\", \"layout\": \"us\", \"variant\": \"\", \"options\": \"\", \"model\": \"\", \"rules\": \"\"}], \"mice\": [{\"name\": \"mouse-1\", \"scrollFactor\": NaN}]}",
+  "dump": null,
+  "rc": 1,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEV_MOUSE: name=\"mouse-1\" block=no scroll_factor=-1.00 reported=? verdict=DIFFER",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER"
+  ]
+ },
+ {
+  "label": "mouse-int-scrollfactor",
+  "hole": "P09-int-not-number",
+  "configs": [
+   "device[mouse-1]:scroll_factor = 2\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [
+    {
+     "address": "0x2",
+     "name": "mouse-1",
+     "defaultSpeed": 0.0,
+     "scrollFactor": 2
+    }
+   ],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEV_MOUSE: name=\"mouse-1\" block=yes scroll_factor=2.00 reported=2.00 verdict=AGREE",
+   "MADO_DEV_BLOCK: name=\"mouse-1\" keys=1 verdict=MATCHED",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "config-exactly-max-bytes",
+  "hole": "P11-size-boundary",
+  "configs": [
+   "@EXACT"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "stack-reset-per-file",
+  "hole": "P13-stack-shared",
+  "configs": [
+   "device {\n  name = mouse-1\n",
+   "scroll_factor = 2\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [
+    {
+     "address": "0x2",
+     "name": "mouse-1",
+     "defaultSpeed": 0.0,
+     "scrollFactor": -1.0
+    }
+   ],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEV_MOUSE: name=\"mouse-1\" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE",
+   "MADO_DEV_BLOCK: name=\"mouse-1\" keys=0 verdict=MATCHED",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "mouse-special-uppercase",
+  "hole": "P15-case-sensitive-special",
+  "configs": [
+   "device[mouse-1]:scroll_factor = NaN\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [
+    {
+     "address": "0x2",
+     "name": "mouse-1",
+     "defaultSpeed": 0.0,
+     "scrollFactor": -1.0
+    }
+   ],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 5,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEV_MOUSE: name=\"mouse-1\" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE",
+   "MADO_DEV_BLOCK: name=\"mouse-1\" keys=0 verdict=MATCHED",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED"
+  ]
+ },
+ {
+  "label": "virtual-prefix-not-substring",
+  "hole": "P16-virtual-contains",
+  "configs": [
+   "input:kb_layout = br\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "usb-hl-virtual-keyboard-uinput",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 1,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"usb-hl-virtual-keyboard-uinput\" block=no layout=\"br\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=layout verdict=FALLBACK",
+   "MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER"
+  ]
+ },
+ {
+  "label": "block-opener-no-space",
+  "hole": "P19-brace-needs-space",
+  "configs": [
+   "input{\n  kb_layout = br\n}\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "br",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"br\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK"
+  ]
+ },
+ {
+  "label": "leading-cr-directive",
+  "hole": "P21-no-cr-strip",
+  "configs": [
+   "\r# hyprlang if X\ninput:kb_layout = us\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 5,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED"
+  ]
+ },
+ {
+  "label": "config-bom-before-first-key",
+  "hole": "P22-bom-stripped",
+  "configs": [
+   "\ufeffinput:kb_layout = br\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "br",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": []
+  },
+  "rc": 1,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=layout verdict=DIFFER",
+   "MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER"
+  ]
+ },
+ {
+  "label": "matched-switch",
+  "hole": "P23-switch-name-ignored",
+  "configs": [
+   "device[switch-1]:kb_layout = de\n"
+  ],
+  "stdin": false,
+  "dump_bytes": null,
+  "dump": {
+   "mice": [],
+   "keyboards": [
+    {
+     "address": "0x1",
+     "name": "kbd-1",
+     "rules": "",
+     "model": "",
+     "layout": "us",
+     "variant": "",
+     "options": "",
+     "active_layout_index": 0,
+     "active_keymap": "x",
+     "capsLock": false,
+     "numLock": false,
+     "main": false
+    }
+   ],
+   "tablets": [],
+   "touch": [],
+   "switches": [
+    {
+     "address": "0x6",
+     "name": "switch-1"
+    }
+   ]
+  },
+  "rc": 0,
+  "expect": [
+   "MADO_DEV_KEYBOARD: name=\"kbd-1\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" rules=\"\" kb_file=- differ=- verdict=AGREE",
+   "MADO_DEV_BLOCK: name=\"switch-1\" keys=1 verdict=MATCHED",
+   "MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK"
+  ]
+ }
+]

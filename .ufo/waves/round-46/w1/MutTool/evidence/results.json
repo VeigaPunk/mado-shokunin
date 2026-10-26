@@ -1,0 +1,724 @@
+{
+ "K01": {
+  "desc": "MAX_BYTES 1048576->65536: too_large threshold no longer 1 MiB",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "setup-deep-json",
+  "why": "rc=2 want_rc=2 got='MADO_DEVICES: SETUP too_large\\n'"
+ },
+ "K03": {
+  "desc": "WS drops \\v \\f: ASCII-WS set narrowed",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "isspace-trim",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K04": {
+  "desc": "NAMES drops rules: kb_rules unpinned",
+  "verdict": "killed",
+  "selftest": "selftest exception: IndexError('list index out of range')",
+  "killer": "selftest",
+  "why": "selftest exception: IndexError('list index out of range')"
+ },
+ "K05": {
+  "desc": "INPUT_KEYS drops kb_file: global kb_file ignored",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL file rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "kb-file",
+  "why": "rc=0 want_rc=0 got='kb_file=- differ=- verdict=AGREE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "K06": {
+  "desc": "DEVICE_KEYS drops scroll_factor: device scroll_factor ignored",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-block rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" mode",
+  "killer": "mouse-block-factor",
+  "why": "rc=1 want_rc=0 got='r-v2\" keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K07": {
+  "desc": "DIRECTIVE_RE hyprlang->hyprlangx: directives never counted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL directive rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"\" model=",
+  "killer": "directive",
+  "why": "rc=0 want_rc=5 got='kb_file=- differ=- verdict=AGREE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "K08": {
+  "desc": "FLOAT_RE drops exponent: stof prefix loses e-notation",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-stof-exponent",
+  "why": "rc=1 want_rc=0 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K09": {
+  "desc": "SPECIAL_RE drops re.I: inf/nan/0x case-insensitivity lost",
+  "verdict": "survived",
+  "selftest": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "K10": {
+  "desc": "EMPTY sentinel changed: [[EMPTY]] no longer reads as empty",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-empty-kb rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=yes layout=\"us\" variant=\"[[EMPTY]]\" o",
+  "killer": "device-empty-marker",
+  "why": "rc=1 want_rc=0 got='hpad\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K11": {
+  "desc": "FALLBACK rules slot ''->'x': fallback tuple never matches",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL fallback rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"zz\" variant=\"q\" options=\"\" model=",
+  "killer": "fallback",
+  "why": "rc=1 want_rc=1 got='ayout,variant verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K12": {
+  "desc": "VIRTUAL_PREFIX case-swapped: virtual detection lost",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL virtual rc=1 MADO_DEV_KEYBOARD: name=\"hl-virtual-keyboard-fcitx5\" block=no layout=\"br\" varia",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=2 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "K13": {
+  "desc": "FLT_MIN 2**-126 -> 2**-125: denormal cutoff shifted one binade",
+  "verdict": "survived",
+  "selftest": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "K14": {
+  "desc": "f32 packs as <d>: float32 rounding of stof prefix lost",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-overflow",
+  "why": "rc=1 want_rc=5 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "K15": {
+  "desc": "f32 overflow branch returns 0.0 instead of +-inf",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-overflow",
+  "why": "rc=1 want_rc=5 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B37": {
+  "desc": "S_ISREG inverted: regular files unreadable, dirs readable",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP unreadable\\n'"
+ },
+ "B38": {
+  "desc": "read_stdin loop <= -> <: 1MiB+1 stdin no longer too_large",
+  "verdict": "survived",
+  "selftest": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "A01": {
+  "desc": "selftest argv match inverted",
+  "verdict": "killed",
+  "selftest": "selftest exception: RecursionError('maximum recursion depth exceeded')",
+  "killer": "selftest",
+  "why": "selftest exception: RecursionError('maximum recursion depth exceeded')"
+ },
+ "A02": {
+  "desc": "usage check `not configs`->`configs`",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL setup usage ['MADO_DEVICES: SETUP bad_json']\nMADO_DEVICES_SELFTEST: FAIL setup unreadable ['",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP usage\\n'"
+ },
+ "A03": {
+  "desc": "--devices guard devices is None -> is not None",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL setup unreadable ['MADO_DEVICES: SETUP usage']\nMADO_DEVICES_SELFTEST: 47/48 passed",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP usage\\n'"
+ },
+ "A05": {
+  "desc": "--config flag renamed: configs never collected",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL setup unreadable ['MADO_DEVICES: SETUP usage']\nMADO_DEVICES_SELFTEST: 47/48 passed",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP usage\\n'"
+ },
+ "A04": {
+  "desc": "arg step i += 2 -> i += 1",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL setup unreadable ['MADO_DEVICES: SETUP usage']\nMADO_DEVICES_SELFTEST: 47/48 passed",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP usage\\n'"
+ },
+ "A06": {
+  "desc": "stdin condition inverted: '-' read as path",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "host",
+  "why": "rc=2 want_rc=0 got='MADO_DEVICES: SETUP bad_json\\n'"
+ },
+ "B36": {
+  "desc": "config decode errors=replace -> ignore",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "J01": {
+  "desc": "continuation trigger backslash -> ';'",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL continuation rc=5 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" mod",
+  "killer": "continuation",
+  "why": "rc=5 want_rc=0 got='=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "J02": {
+  "desc": "dangling-backslash check >= -> >",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "continuation-last-line",
+  "why": "exception IndexError('list index out of range')"
+ },
+ "J03": {
+  "desc": "pre-backslash rstrip(\" \\t\") dropped",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "continuation-spaces",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "J04": {
+  "desc": "dropped-line filter inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "J05": {
+  "desc": "continuation while -> if (chains capped at one)",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "C01": {
+  "desc": "comment scan starts at '##' not '#'",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps ",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "C02": {
+  "desc": "pair-lookahead pos < len-1 -> pos < len (IndexError on trailing #)",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "C03": {
+  "desc": "escape resume pos+2 -> pos+1 (re-eats literal #)",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "comment-triple-hash",
+  "why": "rc=1 want_rc=0 got='iffer=options verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "C04": {
+  "desc": "## collapse keeps neither #",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL comment-escape rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"ab\"",
+  "killer": "comment-escape",
+  "why": "rc=1 want_rc=0 got='iffer=options verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "C05": {
+  "desc": "comment cut keeps the #",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps ",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "C06": {
+  "desc": "resume search restarts at 0",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL comment-escape rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"a\" ",
+  "killer": "comment-escape",
+  "why": "rc=1 want_rc=0 got='iffer=options verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "R01": {
+  "desc": "SPECIAL_RE match inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-block rc=5 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" mode",
+  "killer": "mouse-block-factor",
+  "why": "rc=5 want_rc=0 got='keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "R02": {
+  "desc": "no-prefix branch inverted (crashes on unset)",
+  "verdict": "killed",
+  "selftest": "selftest exception: AttributeError(\"'NoneType' object has no attribute 'group'\")",
+  "killer": "selftest",
+  "why": "selftest exception: AttributeError(\"'NoneType' object has no attribute 'group'\")"
+ },
+ "R03": {
+  "desc": "f32() dropped from stof prefix",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-overflow",
+  "why": "rc=1 want_rc=5 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "R04": {
+  "desc": "inf/denormal gate or -> and",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-overflow",
+  "why": "rc=1 want_rc=5 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "R05": {
+  "desc": "denormal compare < -> ==",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "R06": {
+  "desc": "special values unsupported -> unset",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-nan rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=",
+  "killer": "mouse-nan",
+  "why": "rc=0 want_rc=5 got='adder-v2\" keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "R07": {
+  "desc": "inf/denormal unsupported -> unset",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-overflow",
+  "why": "rc=0 want_rc=5 got='adder-v2\" keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "S01": {
+  "desc": "scroll_factor field check inverted",
+  "verdict": "killed",
+  "selftest": "selftest exception: TypeError(\"'>' not supported between instances of 'float' and 'str'\")",
+  "killer": "selftest",
+  "why": "selftest exception: TypeError(\"'>' not supported between instances of 'float' and 'str'\")"
+ },
+ "S02": {
+  "desc": "stof kind ok check inverted",
+  "verdict": "killed",
+  "selftest": "selftest exception: TypeError(\"'>' not supported between instances of 'float' and 'NoneType'\")",
+  "killer": "selftest",
+  "why": "selftest exception: TypeError(\"'>' not supported between instances of 'float' and 'NoneType'\")"
+ },
+ "P01": {
+  "desc": "full-comment gate ## (directives/comments fall through)",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL directive rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"\" model=",
+  "killer": "directive",
+  "why": "rc=0 want_rc=5 got='kb_file=- differ=- verdict=AGREE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "P02": {
+  "desc": "post-comment strip(WS) dropped",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "comment-after-brace",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P03": {
+  "desc": "close-brace '}' -> '}}' (stack never pops)",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block-partial rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" option",
+  "killer": "device-block-partial",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P04": {
+  "desc": "open-brace '{' -> '}' (no pushes)",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P05": {
+  "desc": "category text not stripped of WS before push",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P06": {
+  "desc": "pop guard if stack -> if not stack",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block-partial rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" option",
+  "killer": "device-block-partial",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P07": {
+  "desc": "cur reset None -> False on stack empty",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block-partial rc=5 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" option",
+  "killer": "device-block-partial",
+  "why": "rc=5 want_rc=0 got='=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=2 verdict=NOT_COMPARED\\n'"
+ },
+ "P08": {
+  "desc": "eq scan '=' -> '<'",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P09": {
+  "desc": "LHS slice eq -> eq+1 (keeps '=')",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P11": {
+  "desc": "unsupported-char scan drops RHS",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL variable rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"$lay\" variant=\"\" options=\"\" model",
+  "killer": "variable",
+  "why": "rc=1 want_rc=5 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P12": {
+  "desc": "global key keeps 'input:' prefix",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P13": {
+  "desc": "device: gate inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=1 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P14": {
+  "desc": "field slice misses ':'",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=5 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=5 want_rc=0 got='=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=2 verdict=NOT_COMPARED\\n'"
+ },
+ "P15": {
+  "desc": "bracket find/rfind swapped",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "P16": {
+  "desc": "bracket sanity lb < rb -> lb <= rb",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "P17": {
+  "desc": "bracket name slice keeps '['",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL bracket rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\"",
+  "killer": "bracket-flat",
+  "why": "rc=1 want_rc=0 got='eys=1 verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P18": {
+  "desc": "key slice keeps ']'",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL bracket rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\"",
+  "killer": "bracket-flat",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P19": {
+  "desc": "bracket-branch device keys ignored",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL bracket rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\"",
+  "killer": "bracket-flat",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "P20": {
+  "desc": "bracket rename unsupported counter dropped",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "bracket-name-key",
+  "why": "rc=4 want_rc=5 got=' verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "P21": {
+  "desc": "cur is None -> is not None",
+  "verdict": "killed",
+  "selftest": "selftest exception: KeyError(None)",
+  "killer": "selftest",
+  "why": "selftest exception: KeyError(None)"
+ },
+ "P22": {
+  "desc": "device selection cur = rhs -> None",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=5 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=5 want_rc=0 got='keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "P23": {
+  "desc": "unmodelled-block unsupported counter dropped",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "block-first-not-name",
+  "why": "rc=5 want_rc=5 got='differ=- verdict=AGREE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "P24": {
+  "desc": "rename resets cur to None not False",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "P25": {
+  "desc": "first-line-not-name leaves cur None",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "block-first-not-name",
+  "why": "rc=5 want_rc=5 got='keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "P26": {
+  "desc": "cur initialised False not None",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=5 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=5 want_rc=0 got='=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=2 verdict=NOT_COMPARED\\n'"
+ },
+ "P27": {
+  "desc": "named-block device keys ignored",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=1 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=1 want_rc=0 got='oard\" keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=2 agree=1 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B01": {
+  "desc": "virtual prefix startswith -> endswith",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL virtual rc=1 MADO_DEV_KEYBOARD: name=\"hl-virtual-keyboard-fcitx5\" block=no layout=\"br\" varia",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=2 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B02": {
+  "desc": "AGREE gate not differ -> differ",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps\"",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B03": {
+  "desc": "differ comprehension e != r -> e == r",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps\"",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B04": {
+  "desc": "rep tuple over NAMES[:4] (rules never compared)",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL fallback rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"zz\" variant=\"q\" options=\"\" model=",
+  "killer": "fallback",
+  "why": "rc=1 want_rc=1 got='ayout,variant verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B05": {
+  "desc": "printed names zipped against reversed NAMES",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL block-reset-after-close rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=yes rules=\"de\" model=\"\" optio",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B06": {
+  "desc": "scroll clamp floor 0.0 -> -100.0",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-clamp-neg rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" ",
+  "killer": "mouse-clamp-low",
+  "why": "rc=1 want_rc=0 got='r-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B07": {
+  "desc": "scroll_factor membership inverted",
+  "verdict": "killed",
+  "selftest": "selftest exception: KeyError('scroll_factor')",
+  "killer": "selftest",
+  "why": "selftest exception: KeyError('scroll_factor')"
+ },
+ "B08": {
+  "desc": "mouse equality at 1 decimal not 2",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "mouse-float32",
+  "why": "rc=0 want_rc=1 got='adder-v2\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B09": {
+  "desc": "is_num bool exclusion and -> or",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-bad-type rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" m",
+  "killer": "mouse-bool",
+  "why": "rc=1 want_rc=1 got='reported=1.00 verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B10": {
+  "desc": "is_num drops isfinite",
+  "verdict": "survived",
+  "selftest": "48/48",
+  "killer": "",
+  "why": "MADO_DEVICES_SELFTEST: 48/48 passed"
+ },
+ "B11": {
+  "desc": "stale counting 1 -> 2",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "bracket-name-with-space",
+  "why": "rc=4 want_rc=4 got=' verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=2 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "B12": {
+  "desc": "MATCHED/NO_SUCH_DEVICE swapped",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "device-block",
+  "why": "rc=0 want_rc=0 got='d\" keys=1 verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=2 agree=2 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B13": {
+  "desc": "unsupported gate inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=5 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps\"",
+  "killer": "host",
+  "why": "rc=5 want_rc=0 got='ed=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=NOT_COMPARED\\n'"
+ },
+ "B14": {
+  "desc": "NO_KEYBOARDS gate keyboards < 0",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL no-keyboards rc=0 MADO_DEV_MOUSE: name=\"m\" block=no scroll_factor=-1.00 reported=-1.00 verdi",
+  "killer": "no-keyboards",
+  "why": "rc=0 want_rc=3 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B15": {
+  "desc": "stale gate inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=4 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps\"",
+  "killer": "host",
+  "why": "rc=4 want_rc=0 got='ted=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "B16": {
+  "desc": "NOT_COMPARED rc 5 -> 4",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL mouse-nan rc=4 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=",
+  "killer": "mouse-nan",
+  "why": "rc=4 want_rc=5 got='keys=0 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\\n'"
+ },
+ "B17": {
+  "desc": "DIFFER rc 1 -> 7",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL global-differ rc=7 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"de\" variant=\"\" options=\"\" mo",
+  "killer": "default-not-us",
+  "why": "rc=7 want_rc=1 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B18": {
+  "desc": "NO_KEYBOARDS rc 3 -> 2",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL no-keyboards rc=2 MADO_DEV_MOUSE: name=\"m\" block=no scroll_factor=-1.00 reported=-1.00 verdi",
+  "killer": "no-keyboards",
+  "why": "rc=2 want_rc=3 got='ed=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=NO_KEYBOARDS\\n'"
+ },
+ "B19": {
+  "desc": "STALE_BLOCK rc 4 -> 6",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL stale rc=6 MADO_DEV_KEYBOARD: name=\"razer-deathadder\" block=no layout=\"us\" variant=\"\" option",
+  "killer": "bracket-name-with-space",
+  "why": "rc=6 want_rc=4 got=' verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "B20": {
+  "desc": "OK rc 0 -> 8",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=8 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"\" options=\"compose:caps\"",
+  "killer": "host",
+  "why": "rc=8 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B21": {
+  "desc": "summary drops virtual=%d field",
+  "verdict": "killed",
+  "selftest": "48/48",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='_factor=-1.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B22": {
+  "desc": "keyboard block= flag inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=0 MADO_DEV_KEYBOARD: name=\"k1\" block=yes layout=\"br\" variant=\"\" options=\"\" m",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B23": {
+  "desc": "kb_file set/- inverted",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL file rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" ru",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B24": {
+  "desc": "differ names printed reversed",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL global-differ rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"de\" variant=\"\" options=\"\" mo",
+  "killer": "global-differ-two",
+  "why": "rc=1 want_rc=1 got='ariant,layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B25": {
+  "desc": "top-level list accepted as dump",
+  "verdict": "killed",
+  "selftest": "selftest exception: AttributeError(\"'list' object has no attribute 'get'\")",
+  "killer": "selftest",
+  "why": "selftest exception: AttributeError(\"'list' object has no attribute 'get'\")"
+ },
+ "B26": {
+  "desc": "mice never validated",
+  "verdict": "killed",
+  "selftest": "selftest exception: TypeError(\"'int' object is not subscriptable\")",
+  "killer": "selftest",
+  "why": "selftest exception: TypeError(\"'int' object is not subscriptable\")"
+ },
+ "B27": {
+  "desc": "element name need not be str",
+  "verdict": "killed",
+  "selftest": "selftest exception: AttributeError(\"'int' object has no attribute 'startswith'\")",
+  "killer": "selftest",
+  "why": "selftest exception: AttributeError(\"'int' object has no attribute 'startswith'\")"
+ },
+ "B28": {
+  "desc": "dump_names ignores element names",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-block rc=4 MADO_DEV_KEYBOARD: name=\"k1\" block=no layout=\"br\" variant=\"\" options=\"\" mo",
+  "killer": "device-block",
+  "why": "rc=4 want_rc=0 got=' verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=2 agree=2 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "B29": {
+  "desc": "dump_names ignores belongsTo names",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL matched-tablet-pad rc=4 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=",
+  "killer": "matched-tablet-pad",
+  "why": "rc=4 want_rc=0 got=' verdict=NO_SUCH_DEVICE\\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK\\n'"
+ },
+ "B30": {
+  "desc": "expected_names get without default",
+  "verdict": "killed",
+  "selftest": "selftest exception: TypeError(\"argument of type 'NoneType' is not a container or iterable\")",
+  "killer": "selftest",
+  "why": "selftest exception: TypeError(\"argument of type 'NoneType' is not a container or iterable\")"
+ },
+ "B31": {
+  "desc": "block-vs-global precedence inverted",
+  "verdict": "killed",
+  "selftest": "selftest exception: KeyError('kb_variant')",
+  "killer": "selftest",
+  "why": "selftest exception: KeyError('kb_variant')"
+ },
+ "B32": {
+  "desc": "default layout/'' swapped",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL host rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"br\" variant=\"us\" options=\"compose:cap",
+  "killer": "host",
+  "why": "rc=1 want_rc=0 got='reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=0 differ=1 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B33": {
+  "desc": "[[EMPTY]] collapse dropped",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL device-empty-kb rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=yes layout=\"us\" variant=\"[[EMPTY]]\" o",
+  "killer": "device-empty-marker",
+  "why": "rc=1 want_rc=0 got='hpad\" keys=1 verdict=MATCHED\\nMADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ },
+ "B34": {
+  "desc": "expected slice [:5] -> [:4]",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL file rc=0 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"us\" variant=\"\" options=\"\" model=\"\" kb",
+  "killer": "host",
+  "why": "rc=0 want_rc=0 got='.00 reported=-1.00 verdict=AGREE\\nMADO_DEVICES: keyboards=2 agree=1 differ=0 fallback=0 virtual=1 mice=1 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\\n'"
+ },
+ "B35": {
+  "desc": "config files parsed in reverse order",
+  "verdict": "killed",
+  "selftest": "MADO_DEVICES_SELFTEST: FAIL later-wins rc=1 MADO_DEV_KEYBOARD: name=\"k\" block=no layout=\"de\" variant=\"\" options=\"\" model",
+  "killer": "later-file-wins",
+  "why": "rc=1 want_rc=0 got='differ=layout verdict=DIFFER\\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\\n'"
+ }
+}

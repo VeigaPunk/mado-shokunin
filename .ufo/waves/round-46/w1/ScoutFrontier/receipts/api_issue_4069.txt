@@ -1,0 +1,82 @@
+Second keyboard layout is removed on reboot
+created 2023-12-06T11:23:59Z closed 2025-04-05T20:15:53Z
+### Hyprland Version
+
+Hyprland, built from branch main at commit ab66fa430efd1e8b9b6a0220b896998215fff8c3 dirty (screencopy: fix glReadPixels offset). Tag: v0.33.0-4-gab66fa43  flags: (if any) debug
+
+### Bug or Regression?
+
+Bug
+
+### Description
+
+Following [this article ](https://wiki.hyprland.org/Configuring/Uncommon-tips--tricks/#switchable-keyboard-layouts) from the wiki. I'm trying to add a spanish keyboard layout as secondary (is just for switch and use a few special characters)
+
+_The easiest way to accomplish this is to set this using XKB settings, for example:_
+```
+input {
+    kb_layout = us,pl
+    kb_options = grp:alt_shift_toggle
+}
+```
+
+This works as expected, using the toggle bind, layout is switched. The issue emerges when I reboot the machine, secondary layout is removed from the file, so I need to edit it each time I turn on my machine. 
+
+This happens only with `kb_layout` var,  all the other edits I made in my conf file remains as expected.
+
+My code before reboot:
+```
+input {
+kb_layout = us,es
+kb_variant =
+kb_model =
+kb_options = grp:win_space_toggle
+kb_rules =
+numlock_by_default= true
+follow_mouse = 1
+touchpad {
+    natural_scroll = true
+    tap-to-click = true
+    disable_while_typing = true
+}
+
+
+    sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
+}
+```
+
+My code After reboot:
+
+```
+input {
+kb_layout = us
+# ....
+```
+
+
+### How to reproduce
+
+Edit: `~/.config/hypr/hyprland.conf` and add any secondary layout
+```
+input {
+kb_layout = us,es
+```
+then reboot.
+
+### Crash reports, logs, images, videos
+
+OS: Garuda Linux x86_64
+Host: A320M-HDV R4.0
+Kernel: 6.6.4-zen1-1-zen
+WM: Hyprland (Wayland)
+CPU: AMD Ryzen 5 4600G (12) @ 4,31 GHz
+GPU: AMD Renoir
+Memory: 3,29 GiB / 14,99 GiB
+-- vaxerski 2025-04-05T20:15:51Z
+Hello there!
+
+This issue has been closed, as we are moving from issues to discussions. More about this can be found [here](https://wiki.hyprland.org/Contributing-and-Debugging/Issue-Guidelines/) and in #9854.
+
+Firstly, please make sure this issue is still relevant in latest Hyprland. If so, we ask you to open a [discussion](https://github.com/hyprwm/Hyprland/discussions) (please read the discussion guidelines first, in the pinned post)
+
+Thank you for your understanding!

@@ -1,0 +1,55 @@
+$ diff -u l1-draft/mado-devices.py w1/SimpContract/mado-devices-simplified.py
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/l1-draft/mado-devices.py	2026-10-26 17:12:58.483575167 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/w1/SimpContract/mado-devices-simplified.py	2026-10-26 17:55:10.862117889 -0300
+@@ -97,7 +97,7 @@
+ import sys
+ 
+ MAX_BYTES = 1048576
+-WS = " \t\r\n\v\f"
++WS = " \t\r\v\f"
+ NAMES = ("layout", "variant", "options", "model", "rules")
+ INPUT_KEYS = {"input:kb_" + n for n in NAMES + ("file",)}
+ DEVICE_KEYS = tuple("kb_" + n for n in NAMES + ("file",)) + ("scroll_factor",)
+@@ -118,7 +118,7 @@
+     try:
+         return struct.unpack("<f", struct.pack("<f", x))[0]
+     except OverflowError:
+-        return math.inf if x > 0 else -math.inf
++        return math.inf
+ 
+ 
+ def read_regular(path):
+@@ -267,7 +267,7 @@
+         key = ":".join(stack + [lhs])
+         bracket = None
+         lb, rb = key.find("["), key.rfind("]")
+-        if lb != -1 and rb != -1 and lb < rb:
++        if lb != -1 and lb < rb:
+             bracket = key[lb + 1:rb]
+             key = key[:lb] + key[rb + 1:]
+         if not (key.startswith("device") or key in INPUT_KEYS):
+@@ -282,13 +282,11 @@
+             continue
+         field = key[len("device:"):]
+         if bracket is not None:
++            st.device(bracket)
+             if field in DEVICE_KEYS:
+-                set_device_key(st.device(bracket), field, rhs, st)
++                set_device_key(st.devices[bracket], field, rhs, st)
+             elif field == "name":
+-                st.device(bracket)
+                 st.unsupported += 1
+-            else:
+-                st.device(bracket)
+             continue
+         if cur is None:
+             if field == "name":
+@@ -368,7 +366,7 @@
+         c["keyboards"] += 1
+         name = kb["name"]
+         exp, kbfile = expected_names(st, name)
+-        rep = tuple(kb.get(n) if isinstance(kb.get(n), str) else None for n in NAMES)
++        rep = tuple(kb.get(n) for n in NAMES)
+         differ = [n for n, e, r in zip(NAMES, exp, rep) if e != r]
+         if name.startswith(VIRTUAL_PREFIX):
+             verdict = "VIRTUAL"

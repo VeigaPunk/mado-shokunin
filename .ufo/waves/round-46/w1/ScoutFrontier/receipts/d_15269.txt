@@ -1,0 +1,258 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+xkb layout unrecognized after update to 0.55.4
+#15269
+Closed
+Answered
+by
+Dregu
+KenJi544
+asked this question in
+Bugs - Input
+xkb layout unrecognized after update to 0.55.4
+#15269
+KenJi544
+Jun 28, 2026
+·
+1 comments
+·
+1 reply
+Answered
+by
+Dregu
+Return to top
+Discussion options
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+KenJi544
+Jun 28, 2026
+I was running
+input {
+kb_layout = us
+kb_variant = gallium
+kb_model =
+# kb_options = caps:swapescape
+kb_rules =
+}
+where I've previously updated the xkb file to include the custom layout as another us variant. All fine until the last update & now I get
+Runtime Error - Invalid keyboard layout passed. (rules: , model: , variant: gallium, options: , layout: us )
+Also... it switched to qwerty by default. I managed to get my layout working after adding the path to the file containing the new layout.
+New config:
+input {
+kb_layout = us
+kb_variant = gallium
+kb_model =
+# kb_options = caps:swapescape
+kb_rules =
+kb_file = /usr/share/xkeyboard-config-2/symbols/us
+}
+the custom layout works, but I can't get rid of the error msg. I don't want to just suppress errors, I don't understand why hyprland still thinks this layout/variant doesn't exists.
+Also all the keybindings follow the qwerty layout instead of the gallium one... but that's not a big deal.
+hyprland version info:
+Hyprland 0.55.4 built from branch v0.55.4 at commit a0136d8c04687bb36eb8a28eb9d1ff92aea99704 clean ([gha] Nix: update inputs).
+Date: Thu Jun 11 17:10:04 2026
+Tag: v0.55.4, commits: 7378
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.13.1, system has 0.13.1
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.12.0, system has 0.12.1
+Version ABI string: a0136d8c04687bb36eb8a28eb9d1ff92aea99704_aq_0.12_hu_0.13_hg_0.5_hc_0.1_hlg_0.6
+no flags were set
+$: localectl list-x11-keymap-variants us | grep gallium
+gallium
+1
+You must be logged in to vote
+All reactions
+Answered by
+Dregu
+Jun 28, 2026
+I'm guessing you had to re-add gallium to the symbols file after the update too cause xkeyboard-config also just updated, and that's exactly why you don't edit system files, your changes get overwritten all the time. To do it properly put only the variant in ~/.config/xkb/symbols/us, remove kb_file from config, restart, see if that works.
+View full answer
+Replies:
+1 comment
+·
+1 reply
+Oldest
+Newest
+Top
+Comment options
+Dregu
+Jun 28, 2026
+I'm guessing you had to re-add gallium to the symbols file after the update too cause xkeyboard-config also just updated, and that's exactly why you don't edit system files, your changes get overwritten all the time. To do it properly put only the variant in ~/.config/xkb/symbols/us, remove kb_file from config, restart, see if that works.
+Marked as answer
+1
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+KenJi544
+Jun 29, 2026
+Author
+you're right.
+cleaned the sys one and added in my home .config/
+all good now... I'll spend some time and try to add a custom /usr/share/kbd/keymap to make it visible for loadkeys. Not being able to type properly is such a mindfuck.
+Thanks for the tip.
+All reactions
+Answer selected by
+KenJi544
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Input
+Labels
+None yet
+2 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

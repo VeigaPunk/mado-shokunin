@@ -1,0 +1,14 @@
+### load_model() writes bytecode next to the pinned reference (lane mirror at the same relative layout)
+$ python3 -I -c "... spec_from_file_location(counter); load_model()"   (S = scratch mirror)
+load_model() ok
+$ find mirror2 -name "*.pyc"
+<lane>/quality/counters/__pycache__/c1-r46-devices.cpython-314.pyc
+<lane>/.ufo/waves/round-46/l1-draft/__pycache__/mado-devices.cpython-314.pyc
+
+### the same artefact already exists in the real lane (created by an earlier counter/import run, not by this seat)
+total 40
+-rw-r--r-- 1 vgpnk vgpnk 40172 2026-10-26T17:23:34 mado-devices.cpython-314.pyc
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin check-ignore -v .ufo/waves/round-46/l1-draft/__pycache__/
+.gitignore:3:__pycache__/	.ufo/waves/round-46/l1-draft/__pycache__/
+### no dont_write_bytecode guard in the counter or the reference
+no match (rc=1)

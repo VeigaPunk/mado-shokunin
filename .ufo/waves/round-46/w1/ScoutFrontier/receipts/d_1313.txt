@@ -1,0 +1,301 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+how to correctly override input transforms (for rotating touch screens) with hyprctl
+#1313
+Unanswered
+ppenguin
+asked this question in
+Q&A
+how to correctly override input transforms (for rotating touch screens) with hyprctl
+#1313
+ppenguin
+Jan 3, 2023
+·
+2 comments
+·
+3 replies
+Return to top
+Discussion options
+{{title}}
+Something went wrong.
+Quote reply
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+Something went wrong.
+ppenguin
+Jan 3, 2023
+I made a small HM (nixos) module with a user service to apply a display transform based on device attitude (via iio-sensor-proxy). However, I (obviously) need to also rotate the screen's digitizer (touch panel and stylus) via libinput.
+I couldn't make it work from the info on the wiki, plagued by the following issues:
+I can't seem to correctly match the device name:
+hyprctl devices
+...
+Tablets:
+Tablet at 14831b0:
+elan2514:00-04f3:29f5-stylus
+Touch:
+Touch Device at 14a32e0:
+elan2514:00-04f3:29f5
+...
+If I declare in the config
+device:elan2514:00-04f3:29f5 = {}
+# or, no idea how "less specific name matches actually work? Documentation???
+device:elan2514 = {}
+I get errors saying No such field for that device for options I have defined globally in the input section.
+Not a big issue, but I still want to apply some options to all mice-like devices, like e.g. natural scrolling and follow focus.
+Temporarily disabling all such "global input" options gets rid of the error.
+But I'm still not able to call this
+> hyprctl keyword device:elan2514 'transform,2'
+Error setting value <transform,2> for field <device:elan2514>: No such field.
+(or any variation of it, including variations with the device name all lowercase and : and <space> replaced by -).
+If I do something like
+> hyprctl keyword device:elan2514:transform '2'
+ok
+it gives ok, but doesn't have any effect.
+It also seems to matter where in the config I define input and device blocks: if I do this "too high" I get additional errors that general options are not available for the declared device.
+So the questions:
+How to declare my touch screen and stylus correctly in the config (ref. http://wiki.hyprland.org/Configuring/Keywords/#per-device-input-configs)?
+How does device name matching actually work? (So I can leverage the name matching to define the same attributes for a certain class of input devices (e.g. all touch/tablet, or all mice)
+how to call hyperctl correctly with the target device and a transform (as stated, my tests acc. to the things gleaned from the wiki were unsucessful)
+related to (2): since I needed to remove the generic input options follow_mouse, accel_profile, sensitivity (which I assume should apply to all pointer devices?) to avoid errors, where to re-add them "semi-generically" (i.e. for all pointer-devices or for all mice + touchpads) and similarly for natural_scroll.
+Note that the objectives for the config include using the same config on multiple machines, i.e. defining multiple devices/device-classes that may or may not be available, since non-existing devices will be safely ignored anyway. Apart from the above issues this seems to work as expected.
+1
+You must be logged in to vote
+All reactions
+Replies:
+2 comments
+·
+3 replies
+Oldest
+Newest
+Top
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+vaxerski
+Jan 3, 2023
+Maintainer
+device:your-dev-name {
+opt = var
+}
+name matching matches the name not a class. your name is wrong, you input elan2514 while the name given by hyprctl is clearly elan2514:00-04f3:29f5
+You can't match a class, for that, the global rules inside input can be used
+hyprctl keyword device:elan2514:00-04f3:29f5:your_opt value
+why would you need to remove them? they will be replaced wherever overriden and use the global otherwise.
+1
+You must be logged in to vote
+All reactions
+3 replies
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+Something went wrong.
+ppenguin
+Jan 3, 2023
+Author
+@vaxerski Thanks a lot for your quick reply!
+Ah, actually the "category declaration" (as I understood it from the wiki I had to include this in the config before I could refer to it from hyprctl) didn't appear to be necessary, i.e. I could directly run:
+hyprctl keyword device:elan2514:00-04f3:29f5:transform '2'
+My second mistake was that I implicitly understood from the tip here that I also had to replace : by -, since otherwise the keyword argument would seem ambiguous (splitting character for keywords in the name). But it indeed works with the verbatim device name.
+There's one remaining issue though:
+While the transform works for the touch-screen (hyprctl keyword device:elan2514:00-04f3:29f5:transform '2'), it doesn't work for the stylus (with also the exact device name: hyprctl keyword device:elan2514:00-04f3:29f5-stylus:transform '2'). The latter remains untransformed when I execute the command.
+Any ideas?
+All reactions
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+vaxerski
+Jan 3, 2023
+Maintainer
+https://wiki.hyprland.org/Configuring/Keywords/#per-device-input-configs
+styluses / pens / drawing tablets' transforms are not supported in hyprland, only touchscreens for now.
+All reactions
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+ppenguin
+Jan 3, 2023
+Author
+Thanks, ah, too bad, guess I'll try my luck with libinput cli or some such (maybe I can pass the transformation matrix dynamically?).
+When I find some time I might check out a bit more how hyprland uses libinput, hopefully to contribute, I guess it basically wraps it to translate configuration calls to the lib?
+I'll also consider making some PRs to the wiki, so you don't have to suffer too many "unnecessary" questions 😉
+All reactions
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+ppenguin
+Jan 8, 2023
+Author
+This is now being worked on in #1319
+1
+You must be logged in to vote
+All reactions
+0 replies
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+2 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

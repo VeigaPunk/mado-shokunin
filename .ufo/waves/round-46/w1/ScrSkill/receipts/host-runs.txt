@@ -1,0 +1,84 @@
+# host runs, 2026-10-26, read-only: hyprctl version / devices -j / getoption only; the raw dump stays in scratch and is not committed (its projected lines are the L1 receipt's)
+
+$ hyprctl version | head -1
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+
+$ hyprctl devices -j > <scratch>/devs.json   # scratch only, deleted
+
+$ python3 -I <reference> --devices <scratch>/devs.json --config ~/.local/share/omarchy/default/hypr/input.conf --config ~/.config/hypr/input.conf
+MADO_DEV_KEYBOARD: name="yubico-yubikey-otp+fido+ccid" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="razer-razer-deathadder-v2-keyboard" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="razer-razer-deathadder-v2-1" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="hp--inc-hyperx-alloy-origins-core" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="hp--inc-hyperx-alloy-origins-core-keypad" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="hp--inc-hyperx-alloy-origins-core-consumer-control" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="video-bus" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="power-button" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_KEYBOARD: name="power-button-1" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_MOUSE: name="razer-razer-deathadder-v2" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="razer-razer-deathadder-v2-keyboard-1" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="hp--inc-hyperx-alloy-origins-core-mouse" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEV_MOUSE: name="hp--inc-hyperx-alloy-origins-core-consumer-control-1" block=no scroll_factor=-1.00 reported=-1.00 verdict=AGREE
+MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+rc=0
+
+$ python3 -I <reference> --devices <scratch>/devs.json --config ~/.config/hypr/input.conf   # L1 single-file form, same run as receipts/live-devices-host-l1.txt
+MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+rc=0
+
+## the chain this host builds (source = lines and the input values they reach)
+11:source = ~/.local/share/omarchy/default/hypr/input.conf
+13:source = ~/.config/omarchy/current/theme/hyprland.conf
+17:source = ~/.config/hypr/input.conf
+23:source = ~/.local/state/omarchy/toggles/hypr/*.conf
+--- omarchy default input.conf (kb_ lines) ---
+3:    kb_layout = us
+4:    kb_variant =
+5:    kb_model =
+6:    kb_options = compose:caps
+7:    kb_rules =
+--- user input.conf (kb_, scroll_factor) ---
+5:  # kb_layout = us,dk,eu
+8:  # kb_variant = intl
+10:  kb_layout = br
+11:  kb_options = compose:caps # ,grp:alts_toggle
+34:    scroll_factor = 0.4
+--- files with no input/device line ---
+/home/vgpnk/.config/omarchy/current/theme/hyprland.conf: 0 input/device lines
+/home/vgpnk/.local/state/omarchy/toggles/hypr/flags.conf: 0 input/device lines
+/home/vgpnk/.local/state/omarchy/toggles/hypr/window-no-gaps.conf: 0 input/device lines
+
+## getoption, the read verb a DIFFER follow-up uses
+$ hyprctl getoption input:kb_layout -j
+{"option": "input:kb_layout", "str": "br", "set": true }
+$ hyprctl getoption input:kb_variant -j
+{"option": "input:kb_variant", "str": "", "set": true }
+$ hyprctl getoption input:kb_options -j
+{"option": "input:kb_options", "str": "compose:caps", "set": true }
+$ hyprctl getoption input:scroll_factor -j
+{"option": "input:scroll_factor", "float": 1.000000, "set": false }
+
+## xkbcli compile-keymap, the read-only step a FALLBACK follow-up uses (local process, no compositor, no config write)
+$ xkbcli compile-keymap --layout br --variant "" --options compose:caps   (the host's declared names)
+rc=0
+$ xkbcli compile-keymap --layout br --variant nosuchvariant --options compose:caps   (a name that cannot compile)
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nosuchvariant)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+rc=1
+## xkbcli / xkbcomp presence
+/usr/bin/xkbcli
+/usr/bin/xkbcomp
+
+## the virtual keyboard flaps across captures
+# the two tool runs recorded earlier in this file report keyboards=9 virtual=0: no hl-virtual-keyboard in that dump
+# a later capture in the same seat, same read verbs, moments afterwards:
+$ date -Is; hyprctl devices -j | python3 -c "<count names>"
+2026-10-26T17:51:46-03:00
+keyboards 10 mice 4
+['yubico-yubikey-otp+fido+ccid', 'razer-razer-deathadder-v2-keyboard', 'razer-razer-deathadder-v2-1', 'hp--inc-hyperx-alloy-origins-core', 'hp--inc-hyperx-alloy-origins-core-keypad', 'hp--inc-hyperx-alloy-origins-core-consumer-control', 'video-bus', 'power-button', 'power-button-1', 'hl-virtual-keyboard-fcitx5']
+$ python3 -I <reference> --devices <fresh dump> --config ~/.local/share/omarchy/default/hypr/input.conf --config ~/.config/hypr/input.conf
+MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+rc=0
+# so keyboards= and virtual= are not constants: the fcitx5 virtual keyboard is present only while its client holds one

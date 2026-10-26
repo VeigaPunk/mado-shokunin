@@ -1,0 +1,153 @@
+# in-flight C1 v2 (untracked) vs the clause-r/sandbox/lane-write defects of v1
+-- files:
+-rw-r--r-- 1 vgpnk vgpnk  23999 Oct 26 17:57 quality/counters/c1-r46-devices-v2.py
+-rw-r--r-- 1 vgpnk vgpnk 299141 Oct 26 17:57 quality/counters/c1-r46-fixtures-v2.json
+-- v2 function/env sites:
+27:     XDG_RUNTIME_DIR=/run/user/<uid>}, working directory `job-<hex>`. NONCE is --nonce (default: drawn from os.urandom
+154:def make_fakebin(d, trip_fd):
+259:def hidden_paths(repo):
+278:def sandbox(argv, cwd, ro_dirs):
+280:    cmd = ["bwrap", "--ro-bind", "/usr", "/usr", "--ro-bind", "/etc", "/etc"] + root_links() + [
+283:        cmd += ["--ro-bind", d, d]
+289:    return {"PATH": fakebin + ":/usr/bin:/bin", "LANG": "C.UTF-8", "HOME": home,
+294:    return {"PATH": fakebin + ":/usr/bin:/bin", "LANG": "en_US.UTF-8", "HOME": home,
+297:            "XDG_RUNTIME_DIR": "/run/user/%d" % os.getuid()}
+403:                               capture_output=True, env={"PATH": fakebin + ":/usr/bin:/bin", "LANG": "C.UTF-8",
+-- v2 hidden_paths body:
+def hidden_paths(repo):
+    lr = lane_root()
+    return sorted({os.path.realpath(repo), lr, os.path.dirname(lr)})
+
+
+def under(p, root):
+    p, root = os.path.realpath(p), os.path.realpath(root)
+-- v2 sandbox body:
+def sandbox(argv, cwd, ro_dirs):
+    """Allowlist root: /usr and /etc read-only, the given dirs read-only, the run dir cwd writable."""
+    cmd = ["bwrap", "--ro-bind", "/usr", "/usr", "--ro-bind", "/etc", "/etc"] + root_links() + [
+        "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--unshare-pid", "--unshare-net", "--die-with-parent"]
+    for d in ro_dirs:
+        cmd += ["--ro-bind", d, d]
+    cmd += ["--bind", cwd, cwd, "--chdir", cwd, "--"]
+    return cmd + argv
+
+-- v2 selftest env:
+17:  s  `python3 -I TOOL --selftest`, run in the sandbox below, exits 0 within 60 s and its last stdout line is exactly
+30:  i  isolation (allowlist): every tool run (selftest, fixtures, generated cases) is executed by bubblewrap with a root
+46:Final line: `PRED-C1-r46-v2: fixtures=K/F generated=G/150 selftest=<ok|fail> readonly=<ok|fail> tool=<present|absent>
+48:Clause lines `PRED-C1-r46-v2 clause=<x> ...` precede it. A selftest count is read only from ASCII digits.
+388:    fixtures_ok, selftest, readonly, g_ok = 0, "fail", "fail", 0
+402:            p = subprocess.run(sandbox([sys.executable, "-I", tool, "--selftest"], sd, ro_dirs),
+-- v2 make_fakebin:
+def make_fakebin(d, trip_fd):
+    os.makedirs(d)
+    for n in ("hyprctl", "libinput", "journalctl", "udevadm"):
+        p = os.path.join(d, n)
+        with open(p, "w") as f:
+            f.write("#!/bin/sh\nprintf x >&%d\nexit 0\n" % trip_fd)
+        os.chmod(p, 0o755)
+
+
+LAYOUTS = ["us", "br", "de", "fr", "us,br", "zz", ""]
+VARIANTS = ["", "", "intl", "nodeadkeys", ",abnt2"]
+OPTIONS = ["", "compose:caps", "grp:alts_toggle,compose:caps", "ctrl:nocaps"]
+FACTORS = ["0.5", "1", "1.5", "250", "-3", "0.7x", "15e-1", "2e", "fast", "0.125", "0.335", "nan", "inf", "0x10",
+           "1e39", "1e-40", "", ".5", "-inf", "Infinity", "0x1p-2", "0X.8", "1e-46", "1.17549435e-38",
+           "2.6750000715255737304687499", "3.4028235e38", "0x", "+.5e1"]
+
+
+def gen_case(rng, table, model):
+    """One random (config texts, dump dict) pair; the expected output is the model's. About half the keyboards
+    report the names the model expects for them, so AGREE and OK verdicts occur."""
+    nm = [table["{A}"], table["{B}"], table["{C}"], table["{D}"]]
+    kbs = []
+    for i in range(rng.randint(0, 4)):
+-- v2 root_links:
+def root_links():
+    out = []
+    for n in ("bin", "sbin", "lib", "lib64"):
+        p = "/" + n
+        if os.path.islink(p):
+            out += ["--symlink", os.readlink(p), p]
+    return out
+
+
+def sandbox(argv, cwd, ro_dirs):
+    """Allowlist root: /usr and /etc read-only, the given dirs read-only, the run dir cwd writable."""
+    cmd = ["bwrap", "--ro-bind", "/usr", "/usr", "--ro-bind", "/etc", "/etc"] + root_links() + [
+        "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--unshare-pid", "--unshare-net", "--die-with-parent"]
+    for d in ro_dirs:
+        cmd += ["--ro-bind", d, d]
+-- v2 ro_dirs construction:
+278:def sandbox(argv, cwd, ro_dirs):
+282:    for d in ro_dirs:
+300:def run_tool(tool, args, d, env, data, ro_dirs, trip_fd):
+302:        p = subprocess.run(sandbox([sys.executable, "-I", tool] + args, d, ro_dirs), input=data,
+309:def run_fixture(tool, work, fx, table, fakebin, ro_dirs, trip_fd, variant, rng):
+341:    p = run_tool(tool, args, d, env, data, ro_dirs, trip_fd)
+351:def run_generated(tool, work, model, rng, table, fakebin, ro_dirs, trip_fd):
+369:        p = run_tool(tool, args, d, env_a(home, fakebin), None, ro_dirs, trip_fd)
+399:        ro_dirs = [tdir, os.path.dirname(fakebin)]
+402:            p = subprocess.run(sandbox([sys.executable, "-I", tool, "--selftest"], sd, ro_dirs),
+419:            res = [run_fixture(tool, work, fx, table, fakebin, ro_dirs, trip_w, variant, rng)
+426:                                         ro_dirs, trip_w)
+-- v2 readonly / trip:
+10:w1/CritToolSemantics F1/F2: the directive trigger and `source =` inside a block; the VT/FF strip). The contract is now
+46:Final line: `PRED-C1-r46-v2: fixtures=K/F generated=G/150 selftest=<ok|fail> readonly=<ok|fail> tool=<present|absent>
+154:def make_fakebin(d, trip_fd):
+159:            f.write("#!/bin/sh\nprintf x >&%d\nexit 0\n" % trip_fd)
+266:    return p == root or p.startswith(root.rstrip("/") + "/")
+300:def run_tool(tool, args, d, env, data, ro_dirs, trip_fd):
+303:                           capture_output=True, env=env, timeout=20, pass_fds=(trip_fd,))
+309:def run_fixture(tool, work, fx, table, fakebin, ro_dirs, trip_fd, variant, rng):
+341:    p = run_tool(tool, args, d, env, data, ro_dirs, trip_fd)
+351:def run_generated(tool, work, model, rng, table, fakebin, ro_dirs, trip_fd):
+369:        p = run_tool(tool, args, d, env_a(home, fakebin), None, ro_dirs, trip_fd)
+382:    full = full.decode().strip()
+388:    fixtures_ok, selftest, readonly, g_ok = 0, "fail", "fail", 0
+395:        trip_r, trip_w = os.pipe()
+396:        os.set_blocking(trip_r, False)
+398:        make_fakebin(fakebin, trip_w)
+404:                                                         "HOME": sd}, timeout=60, pass_fds=(trip_w,))
+405:            last = p.stdout.decode("utf-8", "replace").strip().split("\n")[-1]
+419:            res = [run_fixture(tool, work, fx, table, fakebin, ro_dirs, trip_w, variant, rng)
+426:                                         ro_dirs, trip_w)
+-- v2 clause r docstring:
+     working directory `fx-*`; environment B = {PATH=<fake bin>:/usr/bin:/bin, LANG=en_US.UTF-8, HOME=<another fresh
+     dir named like a real home>, HYPRLAND_INSTANCE_SIGNATURE=<40 hex>_<10 digits>_<5 digits>,
+     XDG_RUNTIME_DIR=/run/user/<uid>}, working directory `job-<hex>`. NONCE is --nonce (default: drawn from os.urandom
+     and printed), so the seed-46 part reproduces exactly and the nonce part cannot be precomputed. Placeholders
+     {A} {B} {C} {D} become four distinct device names drawn from the seed.
+  i  isolation (allowlist): every tool run (selftest, fixtures, generated cases) is executed by bubblewrap with a root
+     built from `/usr` and `/etc` only (read-only; `/bin`, `/sbin`, `/lib`, `/lib64` as the host's symlinks into /usr),
+     `--dev /dev --proc /proc --tmpfs /tmp --unshare-pid --unshare-net --die-with-parent`, plus read-only binds of the
+     tool's directory and the fake-bin directory and a writable bind of that run's directory only - no /home, /fast,
+     /run, /var, /srv, /opt or /mnt path of the host is visible; bwrap missing is a setup error.
+  r  read-only: PATH starts with a directory holding executables `hyprctl`, `libinput`, `journalctl` and `udevadm` that
+     write one byte to an inherited pipe (fd TRIP) when run; the counter holds the read end outside the sandbox, so a
+     tool can add bytes but cannot remove them; after all runs the pipe holds no byte.
+  g  generated cases: GEN = 150 configs and dumps drawn from NONCE by gen_case() below (global flat and block kb_*
+     lines, device blocks by name and by bracket, merged and stale blocks, empty markers, comments and `##` escapes,
+     continuations, variables, expressions, directives, scroll_factor values with prefixes, exponents, clamps and
+     specials; 0-4 keyboards incl. virtual ones, 0-3 mice, tablets and touch devices; each keyboard and mouse reports
+     random names/factors or, with probability 0.55, the ones MODEL expects for it, so every verdict occurs); each
+     runs in environment A in the sandbox and its stdout and exit code must equal those of MODEL - the v2 reference
+     .ufo/waves/round-46/v2/mado-devices.py of this counter's own lane, pinned by MODEL_SHA256 (a different byte
+     is a setup error) - evaluated in-process. The model is invisible to the tool (clause i).
+-- v2 readonly computation:
+154:def make_fakebin(d, trip_fd):
+159:            f.write("#!/bin/sh\nprintf x >&%d\nexit 0\n" % trip_fd)
+300:def run_tool(tool, args, d, env, data, ro_dirs, trip_fd):
+303:                           capture_output=True, env=env, timeout=20, pass_fds=(trip_fd,))
+309:def run_fixture(tool, work, fx, table, fakebin, ro_dirs, trip_fd, variant, rng):
+341:    p = run_tool(tool, args, d, env, data, ro_dirs, trip_fd)
+351:def run_generated(tool, work, model, rng, table, fakebin, ro_dirs, trip_fd):
+369:        p = run_tool(tool, args, d, env_a(home, fakebin), None, ro_dirs, trip_fd)
+395:        trip_r, trip_w = os.pipe()
+435:        readonly = "fail" if tripped else "ok"
+437:    met = (present and selftest == "ok" and readonly == "ok" and fixtures_ok == len(fixtures) and g_ok == GEN)
+-- v2 trip read:
+        readonly = "fail" if tripped else "ok"
+        print("%s clause=r trip_bytes=%d" % (PRED, len(tripped)))
+    met = (present and selftest == "ok" and readonly == "ok" and fixtures_ok == len(fixtures) and g_ok == GEN)
+    print("%s: fixtures=%d/%d generated=%d/%d selftest=%s readonly=%s tool=%s verdict=%s rev=%s seeds=%d,%d" % (

@@ -1,0 +1,70 @@
+== environment ==
+g++ (GCC) 16.2.1 20260810
+clang version 23.1.3
+Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+libstdc++: /usr/lib/libstdc++.so.6.0.36
+== the symbol HyprCtl's {:.2f} resolves to, in the host binary and in libstdc++ ==
+0000000000000000      DF *UND*	0000000000000000 (GLIBCXX_3.4.29) std::to_chars(char*, char*, float, std::chars_format, int)
+00000000001a3950 T std::to_chars(char*, char*, float, std::chars_format, int)@@GLIBCXX_3.4.29
+== builds ==
+built fmt-gcc
+built fmt-clang
+built fmt-O0
+built fmt-O1
+built fmt-O3
+built fmt-Os
+== sweeps ==
+three-decimals=100001
+three-decimals=100001
+ties=400
+boundaries=70003
+boundaries=70003
+random-bits=100000 skipped=399 seed=46
+random-bits=100000 skipped=399 seed=46
+random-range=100000 seed=46
+random-bits=1000000 skipped=3917 seed=7
+random-range=1000000 seed=2026
+three-decimals=100001
+three-decimals=100001
+three-decimals=100001
+three-decimals=100001
+== compiler/optimisation stability of the 3-decimal grid ==
+IDENTICAL three-gcc.tsv three-clang.tsv
+IDENTICAL three-gcc.tsv three-O0.tsv
+IDENTICAL three-gcc.tsv three-O1.tsv
+IDENTICAL three-gcc.tsv three-O3.tsv
+IDENTICAL three-gcc.tsv three-Os.tsv
+IDENTICAL bound-gcc.tsv bound-clang.tsv
+IDENTICAL randbits-gcc.tsv randbits-clang.tsv
+== python %.2f vs std::format (float column) vs std::format (double column) ==
+three-gcc.tsv	values=100001	python_vs_float=0	python_vs_double=0	float_vs_double=0
+ties.tsv	values=400	python_vs_float=0	python_vs_double=0	float_vs_double=0
+bound-gcc.tsv	values=70003	python_vs_float=0	python_vs_double=0	float_vs_double=0
+randbits-gcc.tsv	values=100000	python_vs_float=0	python_vs_double=0	float_vs_double=0
+randrange-gcc.tsv	values=100000	python_vs_float=0	python_vs_double=0	float_vs_double=0
+TOTAL values=370404 python_vs_float_mismatch=0 python_vs_double_mismatch=0
+three-clang.tsv	values=100001	python_vs_float=0	python_vs_double=0	float_vs_double=0
+bound-clang.tsv	values=70003	python_vs_float=0	python_vs_double=0	float_vs_double=0
+randbits-clang.tsv	values=100000	python_vs_float=0	python_vs_double=0	float_vs_double=0
+TOTAL values=270004 python_vs_float_mismatch=0 python_vs_double_mismatch=0
+randbits1m.tsv	values=1000000	python_vs_float=0	python_vs_double=0	float_vs_double=0
+randrange1m.tsv	values=1000000	python_vs_float=0	python_vs_double=0	float_vs_double=0
+TOTAL values=2000000 python_vs_float_mismatch=0 python_vs_double_mismatch=0
+== independent exact-decimal oracle (Decimal of the binary value, ROUND_HALF_EVEN) ==
+ORACLE values=570649 python_vs_exact=0 float_vs_exact=0 double_vs_exact=0
+== end-to-end join through the frozen reference (dumps carry the std::format text) ==
+REFERENCE-JOIN rows=359061 no_block_rows=1 skipped=91908 batches=90 mice=267153 differ=0 bad_run=0
+REFERENCE-JOIN rows=1978229 no_block_rows=0 skipped=919406 batches=353 mice=1058823 differ=0 bad_run=0
+== hashes ==
+c53a1d4e8f273abf4d5c7ba87b33999b5646da5ea50c0139d2854911b5a103c4  fmt.cpp
+f4fc43d590b4187ec11abf8aae045e90bf65cd1ef481beb9205e000a5115ee8e  compare.py
+a0167a80c0625463c5d3d4fd67f5fc25a7094fed89b3cebdb91d406818625bbb  join.py
+84795a92e58d941fcafb1b0f853993d2b3626be3ef9352865268fe7fce6e57c9  oracle.py
+0312885a3655f9e07f526d471873ed4f2132d6d7aa9729f2a12e741e93e5e8b7  three-gcc.tsv
+92f886ffa8678b431bc103605678265f80534eba2dfaea3a52e4d020182802a0  ties.tsv
+557df4a912a586c2a63dafb05a5e399fae7b86b29a1e9b3c14f8d2087e5d4df7  bound-gcc.tsv
+557670abc0560cdd1d5fe8d47be1299ebf61a1f396a6ab66455604c7fd80e65a  randbits-gcc.tsv
+01474c31ce4de0990023fa0cfb4e11ac85d75bbc2de251108be4ca5e0658f3ab  randrange-gcc.tsv
+54ce983850bc668e928d91d151af673219164a4161f8986f07e73fcf355ce229  randbits1m.tsv
+1c67ffaf9453296f5749f0329275b5e283968e1512a8354ef5c9b10c4a76cafb  randrange1m.tsv
+== done ==

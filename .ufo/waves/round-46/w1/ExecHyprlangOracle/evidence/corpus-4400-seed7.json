@@ -1,0 +1,359 @@
+{
+ "cases": 4400,
+ "compared": 4004,
+ "declined_by_reference": 396,
+ "config_lines": 65823,
+ "unsupported_increments": 570,
+ "unsupported_share": 0.008659587074426872,
+ "clean_lines": 58735,
+ "clean_unsupported_increments": 0,
+ "divergence_cases": {
+  "names": 3,
+  "scroll": 3,
+  "kb_file": 2
+ },
+ "divergence_detail": {
+  "names": [
+   {
+    "id": "c01176",
+    "tag": null,
+    "diff": [
+     [
+      "names",
+      "",
+      [
+       "dvorak",
+       "",
+       "",
+       "",
+       "evdev"
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "evdev"
+      ]
+     ],
+     [
+      "names",
+      "touchpad-1",
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "ca",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    ],
+    "files": [
+     "device[touchpad-1] {\r\n  kb_layout = ca\r\n}\r\n\r\ndevice[] {   # tail\r\n  kb_rules = evdev\r\n  kb_variant = [[EMPTY]]\r\n}\r\ndevice {\r\n  name = touchpad-1\r\n  unknown_key = 2 # x # y\r\n  kb_layout = \r\n  nested {\r\n    kb_layout = de\r\n  }\r\n}\r\ninput { # a##b\r\n  kb_layout = dvorak\r\n}\r\ndevice {   # tail\r\n  name = \r\n  kb_variant = [[EMPTY]]\r\n}\r\n"
+    ],
+    "triggers": [
+     "empty-name-line",
+     "unregistered-key"
+    ]
+   },
+   {
+    "id": "c02000",
+    "tag": null,
+    "diff": [
+     [
+      "names",
+      "k.b",
+      [
+       "dvorak",
+       "",
+       "",
+       "microsoft",
+       ""
+      ],
+      [
+       "dvorak",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     [
+      "names",
+      "x,y",
+      [
+       "dvorak",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "dvorak",
+       "",
+       "",
+       "microsoft",
+       ""
+      ]
+     ]
+    ],
+    "files": [
+     "device {\n  name = k.b\n  sensitivity = adaptive\n  unknown_key = [[EMPTY]]\n  kb_variant =  #\n} #\ndevice[x,y]:kb_model = [[EMPTY]]\ndevice[x,y]:natural_scroll = [[EMPTY]] # a##b\ndevice {\n  name = k.b\n  unknown_key = 2\n  kb_file =  #\n  kb_model = microsoft #\n} # note\ninput:kb_layout = dvorak\ndevice {\n  name = kbd2 # x # y\n  kb_variant = azerty\n} # x # y\ninput {\n} #\n"
+    ],
+    "triggers": [
+     "bracket-line",
+     "unregistered-key"
+    ]
+   },
+   {
+    "id": "c03329",
+    "tag": null,
+    "diff": [
+     [
+      "names",
+      "",
+      [
+       "us",
+       "intl",
+       "",
+       "pc104",
+       ""
+      ],
+      [
+       "us",
+       "azerty",
+       "",
+       "pc104",
+       ""
+      ]
+     ],
+     [
+      "names",
+      "k b",
+      [
+       "us,de",
+       "azerty",
+       "",
+       "",
+       ""
+      ],
+      [
+       "us,de",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    ],
+    "files": [
+     "device[]:kb_variant = intl\ndevice[]:rotation = \ndevice { # x # y\n  name = x,y\n  kb_fi\\\nle = [[EMPTY]]\n  kb_model = pc105\n}\ndevice[k b] { # x # y\n  kb_file = ~/x.xkb\n  kb_layout = us,de\n} # note\n",
+     "device {\n  name = \n  kb_file = \n  kb_model = pc104 # x # y\n  scroll_factor = 100.0049999\n  unknown_key =  #\n}\ndevice {\n  name = k b\n  unknown_key = [[EMPTY]]\n  tap-to-click = 0\n  kb_variant = azerty\n  sensitivity = 2 # x # y\n}\n"
+    ],
+    "triggers": [
+     "empty-name-line",
+     "bracket-line",
+     "unregistered-key"
+    ]
+   }
+  ],
+  "scroll": [
+   {
+    "id": "c01438",
+    "tag": null,
+    "diff": [
+     [
+      "scroll",
+      "",
+      "100.00",
+      "-1.00"
+     ]
+    ],
+    "files": [
+     "\ndevice {\n  name = \n  natural_scroll = 0\n  kb_model = pc105 #\n}\ndevice[hl-virtual-keyboard-fcitx5]:scroll_factor = 100.005   # tail\ndevice[hl-virtual-keyboard-fcitx5]:kb_file = /tmp/none.xkb\ndevice[hl-virtual-keybo\\\nard-fcitx5]:kb_variant = [[EMPTY]]\ndevice {\n  name = \n  e\\\nnabled = 0\n  kb_model = [[EMPTY]]\n  unknown_key = 1\n  scroll_factor = 1e2 #\n}\ndevice {\n  name = hl-virtual-keyboard-fcitx5\n  tap-to-click\\\n = [[EMPTY]]\n}\n"
+    ],
+    "triggers": [
+     "empty-name-line",
+     "bracket-line",
+     "unregistered-key"
+    ]
+   },
+   {
+    "id": "r00033",
+    "tag": "float-special",
+    "diff": [
+     [
+      "scroll",
+      "razer-deathadder",
+      "0.00",
+      "-1.00"
+     ]
+    ],
+    "files": [
+     "device[Kbd]:kb_model = pc105   # tail\ndevice[Kbd]:kb_rules =  # a##b\n",
+     "input:kb_options = a##b\n",
+     "device[Kbd]:kb_variant = azerty # note\n",
+     "device[razer-deathadder]:scroll_factor = 1e-999 #\n"
+    ],
+    "triggers": [
+     "bracket-line",
+     "tiny-float"
+    ]
+   },
+   {
+    "id": "r00072",
+    "tag": "float-special",
+    "diff": [
+     [
+      "scroll",
+      "Kbd",
+      "0.00",
+      "-1.00"
+     ]
+    ],
+    "files": [
+     "input:kb_rules = [[EMPTY]]\r\ndevice {\r\n  name = k.b\r\n  kb_file = /tmp/none.xkb\r\n}\r\ndevice {\r\n  name = kbd2\r\n  scroll_factor = 0.1e1\r\n  enabled = 0\r\n  kb_options = [[EMPTY]]\r\n  rotation = \r\n} # x # y\r\n",
+     "    # note\r\ndevice {\r\n  name = Kbd #\r\n  kb_file = relative.xkb\r\n  kb_variant = intl,azerty\r\n  kb_rules = base\r\n  nested { # x # y\r\n    kb_layout = de\r\n  } # x # y\r\n} # note\r\ndevice { # a##b\r\n  name = Kbd # a##b\r\n  natural_scroll = [[EMPTY]]\r\n} # a##b\r\n",
+     "device[Kbd]:kb_options = grp:alts_toggle\r\n",
+     "device[Kbd]:scroll_factor = 1e-999\r\n"
+    ],
+    "triggers": [
+     "empty-name-line",
+     "bracket-line",
+     "tiny-float"
+    ]
+   }
+  ],
+  "kb_file": [
+   {
+    "id": "c03362",
+    "tag": null,
+    "diff": [
+     [
+      "kb_file",
+      "kbd",
+      "~/x.xkb",
+      ""
+     ],
+     [
+      "kb_file",
+      "",
+      "relative.xkb",
+      "~/x.xkb"
+     ]
+    ],
+    "files": [
+     "device[kbd2]:kb_model = pc104\ndevice {\n  name = k b\n  \\\nkb_variant = intl # a##b\n} #\ndevice[] { # x # y\n  kb_file = relative.xkb # a##b\n}   # tail\ndevice {\n  name = kbd\n  kb_rules =  # note\n}\ndevice { # note\n  name = k b\n  kb_options = grp:alts_toggle\n}\ndevice {\n  name = kbd\n  kb_rules = [[EMPTY]] # note\n  kb_options = x # y\n  unknown_key = [[EMPTY]] # note\n  kb_file = ~/x.xkb\n}\n",
+     "device {\n  name = hl-virtual-keyboard\n  kb_layout = de\n"
+    ],
+    "triggers": [
+     "bracket-line",
+     "unregistered-key"
+    ]
+   },
+   {
+    "id": "c03883",
+    "tag": null,
+    "diff": [
+     [
+      "kb_file",
+      "kbd2",
+      "",
+      "~/x.xkb"
+     ]
+    ],
+    "files": [
+     "input {\r\n  kb_variant = [[EMPTY]] #\r\n}\r\n",
+     "device {\r\n  name = kbd2\r\n  kb_layout = us,de\r\n  kb_file = ~/x.xkb\r\n  kb_variant = [[EMPTY]] #\r\n} #\r\n}\t\r\n",
+     "device {\r\n  name = x,y\r\n  sensitivity = [[EMPTY]]\r\n  rotation = 2 # note\r\n}   # tail\r\ndevice[kbd2]:kb_options = compose:caps,grp:alts_toggle\r\ndevice[x,y]:sensitivity = 0\r\ndevice {\r\n  name = kbd2\r\n  sensitivity = 2\r\n  scroll_factor = -0.0\r\n  unknown_key = 1\r\n  kb_file =  #\r\n  nested {\r\n    kb_layout = de\r\n  }\r\n} # x # y\r\n"
+    ],
+    "triggers": [
+     "bracket-line",
+     "unregistered-key"
+    ]
+   }
+  ]
+ },
+ "minimal": {},
+ "per_tag": {
+  "backslash": {
+   "cases": 30,
+   "lines": 502,
+   "unsupported": 30,
+   "declined": 30
+  },
+  "block-first-not-name": {
+   "cases": 31,
+   "lines": 568,
+   "unsupported": 62,
+   "declined": 31
+  },
+  "float-special": {
+   "cases": 28,
+   "lines": 411,
+   "unsupported": 24,
+   "declined": 24
+  },
+  "crossfile-unclosed": {
+   "cases": 33,
+   "lines": 600,
+   "unsupported": 33,
+   "declined": 33
+  },
+  "selector-then-block": {
+   "cases": 43,
+   "lines": 915,
+   "unsupported": 86,
+   "declined": 43
+  },
+  "flat-no-selector": {
+   "cases": 36,
+   "lines": 587,
+   "unsupported": 72,
+   "declined": 36
+  },
+  "bracket-then-flat": {
+   "cases": 32,
+   "lines": 545,
+   "unsupported": 32,
+   "declined": 32
+  },
+  "crlf-continuation": {
+   "cases": 46,
+   "lines": 749,
+   "unsupported": 46,
+   "declined": 46
+  },
+  "directive": {
+   "cases": 23,
+   "lines": 431,
+   "unsupported": 46,
+   "declined": 23
+  },
+  "variable": {
+   "cases": 36,
+   "lines": 594,
+   "unsupported": 36,
+   "declined": 36
+  },
+  "rename": {
+   "cases": 41,
+   "lines": 844,
+   "unsupported": 82,
+   "declined": 41
+  },
+  "expression": {
+   "cases": 21,
+   "lines": 342,
+   "unsupported": 21,
+   "declined": 21
+  }
+ }
+}

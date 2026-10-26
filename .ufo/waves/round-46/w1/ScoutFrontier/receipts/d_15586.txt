@@ -1,0 +1,219 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+Setting kb_variant inside a device { } block (targeting a specific keyboard by name) causes that variant to be applied to *all* keyboard devices
+#15586
+Unanswered
+chrishowejones
+asked this question in
+Bugs - Config
+Setting `kb_variant` inside a `device { }` block (targeting a specific keyboard by name) causes that variant to be applied to *all* keyboard devices
+#15586
+chrishowejones
+Jul 24, 2026
+·
+0 comments
+Return to top
+Discussion options
+chrishowejones
+Jul 24, 2026
+Hyprland Version
+0.56.0-1ppa1 (also reproduced on 0.55.2)
+Description
+Setting kb_variant inside a device { } block (targeting a specific
+keyboard by name) causes that variant to be applied to all keyboard
+devices, including unrelated virtual devices (video-bus,
+power-button), not just the named device.
+hyprctl getoption input:kb_variant correctly reports the empty/default
+value from the general input { } block, confirming the general config
+is parsed correctly. But hyprctl devices shows every keyboard's
+active_keymap reflecting the device-scoped variant instead.
+Config
+input {
+kb_layout = gb
+kb_variant =
+kb_options = ctrl:nocaps
+}
+device {
+name = apple-inc.-magic-keyboard-with-touch-id-and-numeric-keypad-keyboard
+kb_layout = gb
+kb_variant = mac_fixed # custom variant in ~/.config/xkb/symbols/gb
+kb_options = lv3:ralt_switch, ctrl:nocaps
+}
+Steps to reproduce
+Set the config above (custom kb_variant valid and confirmed via
+xkbcli compile-keymap --layout gb --variant mac_fixed)
+hyprctl reload, then full logout/login, then full reboot — no change
+hyprctl devices -j | jq '.keyboards[] | {name, active_keymap}'
+Expected
+Only the named device shows the custom variant; other keyboards use the
+general input { } default (gb, no variant).
+Actual
+All keyboards, including virtual ones, show the device-scoped variant.
+Additional testing done
+hyprctl getoption input:kb_layout / input:kb_variant confirm the
+general config is correct
+hyprctl switchxkblayout <device> 0 has no effect
+Reproduces from a raw TTY launch of Hyprland directly, bypassing any
+session wrapper/display manager
+Reproduces across a full reboot
+1
+You must be logged in to vote
+All reactions
+Replies:
+0 comments
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Config
+Labels
+None yet
+1 participant
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

@@ -1,0 +1,128 @@
+== A: divergence classes (reference models the config, host parser disagrees)
+- A1-realistic-block-unknown-key unsupported=0
+  cfg   ["device[kbd] {\n  kb_layout = de\n}\n", "device[mouse] {\n  scroll_factor = 0.5\n}\n", "device[kbd]:kb_variant = intl\n", "device {\n  name = mouse\n  tap-to-click = 0\n  nope = 1\n  kb_options = compose:caps\n}\n"]
+   DIVERGES name='kbd' ref={'names': ['de', 'intl', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['de', 'intl', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+   DIVERGES name='mouse' ref={'names': ['us', '', 'compose:caps', '', ''], 'kb_file': '', 'sf': '0.50', 'block': True} oracle={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '0.50', 'sf_set': True, 'block': True}
+  categories ['kbd', 'mouse'] errors 1
+- A2-flat-selector-unknown-key unsupported=0
+  cfg   ["device[kbd] {\n  kb_layout = de\n}\n", "device[mouse] {\n  kb_layout = fr\n}\n", "device[kbd]:kb_variant = intl\n", "device:name = mouse\ndevice:nope = 1\ndevice:kb_options = compose:caps\n"]
+   DIVERGES name='kbd' ref={'names': ['de', 'intl', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['de', 'intl', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+   DIVERGES name='mouse' ref={'names': ['fr', '', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['fr', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['kbd', 'mouse'] errors 1
+- A3-empty-name-then-selector unsupported=0
+  cfg   ["device {\n  name = \n}\ndevice {\n  name = b\n}\ndevice:name = b\ndevice:nope = 1\ndevice:kb_options = compose:caps\n"]
+   DIVERGES name='b' ref={'names': ['us', '', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+   DIVERGES name='' ref={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['us', '', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['', 'b'] errors 1
+- A4-scroll-retargeted unsupported=0
+  cfg   ["device[kbd] {\n  kb_layout = de\n}\n", "device[mouse] {\n  kb_layout = fr\n}\n", "device[kbd]:kb_variant = intl\n", "device {\n  name = mouse\n  nope = 1\n  scroll_factor = 0.5\n}\n"]
+   DIVERGES name='kbd' ref={'names': ['de', 'intl', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['de', 'intl', '', '', ''], 'kb_file': '', 'sf': '0.50', 'sf_set': True, 'block': True}
+   DIVERGES name='mouse' ref={'names': ['fr', '', '', '', ''], 'kb_file': '', 'sf': '0.50', 'block': True} oracle={'names': ['fr', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['kbd', 'mouse'] errors 1
+- A9-typo-key-retargets unsupported=0
+  cfg   ["device[kbd] {\n  kb_layout = de\n}\n", "device[mouse] {\n  kb_layout = fr\n}\n", "device[kbd]:kb_variant = intl\n", "device {\n  name = mouse\n  tap_to_click = 1\n  kb_options = compose:caps\n}\n"]
+   DIVERGES name='kbd' ref={'names': ['de', 'intl', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['de', 'intl', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+   DIVERGES name='mouse' ref={'names': ['fr', '', 'compose:caps', '', ''], 'kb_file': '', 'sf': '-1.00', 'block': True} oracle={'names': ['fr', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['kbd', 'mouse'] errors 1
+- A5-float-underflow-zero unsupported=0
+  cfg   ["device[mouse]:scroll_factor = 1e-999\n"]
+   DIVERGES name='mouse' ref={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '0.00', 'block': True} oracle={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['mouse'] errors 1
+- A6-float-underflow-50 unsupported=0
+  cfg   ["device[mouse]:scroll_factor = 1e-50\n"]
+   DIVERGES name='mouse' ref={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '0.00', 'block': True} oracle={'names': ['us', '', '', '', ''], 'kb_file': '', 'sf': '-1.00', 'sf_set': False, 'block': True}
+  categories ['mouse'] errors 1
+- A7-float-denormal-40 unsupported=1
+  cfg   ["device[mouse]:scroll_factor = 1e-40\n"]
+  categories ['mouse'] errors 1
+- A8-float-min-normal unsupported=0
+  cfg   ["device[mouse]:scroll_factor = 1.1754943508222875e-38\n"]
+  categories ['mouse'] errors 0
+== B: declined classes (reference NOT_COMPARED) and what the host decides
+- B1-directive reference_unsupported=2 categories ['kbd']
+   name='kbd' oracle block=True names=['de', '', '', '', ''] kb_file='' sf=-1.00
+- B2-variable reference_unsupported=1 categories []
+   name='kbd' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+   name='kbd2' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+   name='a' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+   name='b' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+   name='' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+   name='mouse' oracle block=False names=['de', '', '', '', ''] kb_file='' sf=-1.00
+- B3-expression reference_unsupported=1 categories []
+   name='kbd' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+   name='kbd2' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+   name='a' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+   name='b' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+   name='' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+   name='mouse' oracle block=False names=['3', '', '', '', ''] kb_file='' sf=-1.00
+- B4-interior-backslash reference_unsupported=1 categories []
+   name='kbd' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+   name='kbd2' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+   name='a' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+   name='b' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+   name='' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+   name='mouse' oracle block=False names=['us', '', 'a{b', '', ''] kb_file='' sf=-1.00
+- B5-flat-no-selector reference_unsupported=2 categories ['0']
+- B6-block-first-not-name reference_unsupported=2 categories ['kbd']
+   name='kbd' oracle block=True names=['us', '', '', '', ''] kb_file='' sf=-1.00
+- B7-rename reference_unsupported=2 categories ['kbd']
+   name='kbd' oracle block=True names=['de', '', '', '', ''] kb_file='' sf=-1.00
+- B8-float-inf reference_unsupported=1 categories ['mouse']
+   name='mouse' oracle block=True names=['us', '', '', '', ''] kb_file='' sf=100.00
+- B9-float-hex reference_unsupported=1 categories ['mouse']
+   name='mouse' oracle block=True names=['us', '', '', '', ''] kb_file='' sf=16.00
+- B10-float-nan reference_unsupported=1 categories ['mouse']
+   name='mouse' oracle block=True names=['us', '', '', '', ''] kb_file='' sf=nan
+- B11-bracket-then-flat reference_unsupported=1 categories ['kbd']
+   name='kbd' oracle block=True names=['fr', '', '', '', ''] kb_file='/x' sf=-1.00
+- B12-crossfile-unclosed reference_unsupported=1 categories ['kbd']
+   name='kbd' oracle block=True names=['de', '', '', '', ''] kb_file='/x' sf=-1.00
+- B13-selector-then-block reference_unsupported=2 categories ['kbd2']
+   name='kbd2' oracle block=True names=['de', '', '', '', ''] kb_file='' sf=-1.00
+- B14-crlf-continuation reference_unsupported=1 categories []
+   name='kbd' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+   name='kbd2' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+   name='a' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+   name='b' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+   name='' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+   name='mouse' oracle block=False names=['us', '', '', 'pc1\\', ''] kb_file='' sf=-1.00
+== C: scroll_factor float matrix (reference read_float vs host std::stof)
+  '1e-999'                 ref=ok           0.0      host_set=False host=-1.00  <-- DIVERGES (reference sets 0/value, host leaves unset)
+  '1e-50'                  ref=ok           0.0      host_set=False host=-1.00  <-- DIVERGES (reference sets 0/value, host leaves unset)
+  '1e-46'                  ref=ok           0.0      host_set=False host=-1.00  <-- DIVERGES (reference sets 0/value, host leaves unset)
+  '1e-45'                  ref=unsupported  None     host_set=False host=-1.00
+  '1e-40'                  ref=unsupported  None     host_set=False host=-1.00
+  '1.4e-45'                ref=unsupported  None     host_set=False host=-1.00
+  '2e-45'                  ref=unsupported  None     host_set=False host=-1.00
+  '1e-39'                  ref=unsupported  None     host_set=False host=-1.00
+  '1e-38'                  ref=unsupported  None     host_set=False host=-1.00
+  '1.1754943508222875e-38' ref=ok           1.1754943508222875e-38 host_set=True  host=0.00
+  '1.1754943e-38'          ref=unsupported  None     host_set=False host=-1.00
+  '1e-7'                   ref=ok           1.0000000116860974e-07 host_set=True  host=0.00
+  '0'                      ref=ok           0.0      host_set=True  host=0.00
+  '-0'                     ref=ok           -0.0     host_set=True  host=-0.00
+  '-0.0'                   ref=ok           -0.0     host_set=True  host=-0.00
+  '0e0'                    ref=ok           0.0      host_set=True  host=0.00
+  '0.0000'                 ref=ok           0.0      host_set=True  host=0.00
+  '1e38'                   ref=ok           9.999999680285692e+37 host_set=True  host=100.00
+  '3.4e38'                 ref=ok           3.3999999521443642e+38 host_set=True  host=100.00
+  '1e39'                   ref=unsupported  None     host_set=False host=-1.00
+  '1e999'                  ref=unsupported  None     host_set=False host=-1.00
+  '-1e999'                 ref=unsupported  None     host_set=False host=-1.00
+  'inf'                    ref=unsupported  None     host_set=True  host=100.00
+  '-inf'                   ref=unsupported  None     host_set=True  host=0.00
+  'nan'                    ref=unsupported  None     host_set=True  host=nan
+  '0x10'                   ref=unsupported  None     host_set=True  host=16.00
+  '0X1p3'                  ref=unsupported  None     host_set=True  host=8.00
+  '5e-39'                  ref=unsupported  None     host_set=False host=-1.00
+  '0.005'                  ref=ok           0.004999999888241291 host_set=True  host=0.00
+  '100.005'                ref=ok           100.00499725341797 host_set=True  host=100.00
+  '2.675'                  ref=ok           2.674999952316284 host_set=True  host=2.67
+  '50.555'                 ref=ok           50.55500030517578 host_set=True  host=50.56
+  '99.999'                 ref=ok           99.9990005493164 host_set=True  host=100.00
+  '250'                    ref=ok           250.0    host_set=True  host=100.00
+  '-3'                     ref=ok           -3.0     host_set=True  host=0.00
+  '0.7x'                   ref=ok           0.699999988079071 host_set=True  host=0.70
+  'fast'                   ref=unset        None     host_set=False host=-1.00
+  '.5'                     ref=ok           0.5      host_set=True  host=0.50
+  '5.'                     ref=ok           5.0      host_set=True  host=5.00

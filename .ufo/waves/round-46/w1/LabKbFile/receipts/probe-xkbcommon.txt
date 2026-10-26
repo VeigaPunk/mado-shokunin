@@ -1,0 +1,35 @@
+# libxkbcommon probe (local computation only; no compositor, no socket, no host session)
+# libxkbcommon 1.13.2; gcc 16; host Hyprland 0.56.2 pins in ../fetch
+$ ./probe
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+xkbcommon: ERROR: [XKB-769] (unknown file):1:1: syntax error, unexpected identifier
+xkbcommon: ERROR: [XKB-822] Failed to parse input xkb file
+names zz: NULL keymap
+names us: layouts=1 name[0]=English (US)
+file good.xkb: layouts=1 name[0]=English (US)
+file junk.xkb: NULL keymap
+$ ./de
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'us(q)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+de: layout name = German
+us(q): NULL
+file de.xkb: layout name = German
+$ sha256sum
+942a5520bb6adde6a146dae4d7e817a031d507b466d025ce7fc8431775ab0ad0  good.xkb
+d139f8821333264a4d73d26c121159267d12e469eec7bc4b947e0bbff3c6641c  de.xkb
+06090cd8ebed79357c201de90c201d36eb87b54386f0a0fedb922581d8b6240a  junk.xkb
+-rw-r--r-- 1 vgpnk vgpnk 37531 Oct 26 17:45 de.xkb
+-rw-r--r-- 1 vgpnk vgpnk 35571 Oct 26 17:45 good.xkb
+-rw-r--r-- 1 vgpnk vgpnk    20 Oct 26 17:45 junk.xkb

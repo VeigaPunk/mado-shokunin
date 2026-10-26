@@ -1,0 +1,91 @@
+# receipt: routed-defect state checks, all commands read-only, run 2026-10-26T20:47:39Z at HEAD e0be61e4
+$ git show HEAD:.ufo/waves/round-43/w1/ExecLiveHost/host-clients-live.json | grep -c "title"
+0
+$ git show HEAD:.ufo/waves/round-43/w2/SentLiveRun/dump-now.json | grep -c "title"
+0
+$ git grep -c "eventq-live-ss" HEAD -- LOG.md
+rc=1
+$ stat -c %s .ufo/waves/round-38/receipts/eventq-live-ss.txt
+190816
+$ grep -n "S293" corpus/SOURCES.md | cut -c1-90
+242:| S293 | Hyprland v0.56.2 window target - the client's request as input - https://raw.
+$ grep -c "check-session-material" SKILL.md
+0
+$ git status --porcelain -- .ufo/waves/round-45/w1/MutC1Counter/
+?? .ufo/waves/round-45/w1/MutC1Counter/results.digest.txt
+$ grep -n "PROVINCE.md:75" corpus/lessons/round-41.md | cut -c1-60
+48:| `focus-control-surfaces-r28.md` §3 | **out** — local
+$ grep -c "w1.ready" <(git status --porcelain)
+2
+$ cat .ufo/waves/round-45/receipts/axis-tip.txt | head -3
+# measured at ac3f9dee1af417652fcd3705a729e1dcd93fcf20 (round-45 records commit; the final commit after it adds only control receipts and wave files under .ufo/waves/round-45/)
+MADO_AXIS_ROW: axis=navigation published=62/62 derived=62/62 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=73/73 derived=73/73 verdict=MATCH
+$ ls .ufo/waves/round-40/receipts | grep -c axis
+1
+$ git grep -l 35a126304f681969 HEAD | wc -l
+1
+$ git grep -l "RevC1v3" HEAD -- corpus/lessons | tr "\n" " "
+HEAD:corpus/lessons/round-38-verifier-spotcheck.md 
+$ git grep -l "LabratClockSkew" HEAD -- corpus/lessons | tr "\n" " "
+HEAD:corpus/lessons/round-38-verifier-spotcheck.md 
+$ ls .ufo/waves/round-45 | grep -ci readme
+0
+$ grep -n "Round-45 closure" .ufo/waves/round-46/registration.md
+67:- Round-45 closure (`corpus/lessons/round-45-verifier-spotcheck.md` §6): D1 run the w2 falsification of the round-45
+$ grep -c "ROUTED" quality/*.py corpus/QUALITY.md
+quality/check-axis-scores.py:0
+quality/check-control-receipts.py:0
+quality/check-counter-discrimination.py:0
+quality/check-evidence-pointers.py:0
+quality/check-index-rows.py:0
+quality/check-index.py:0
+quality/check-locators.py:0
+quality/check-population.py:0
+quality/check-r38-discrimination.py:0
+quality/check-session-material.py:0
+$ ls quality/check-*.py
+quality/check-axis-scores.py
+quality/check-control-receipts.py
+quality/check-counter-discrimination.py
+quality/check-evidence-pointers.py
+quality/check-index-rows.py
+quality/check-index.py
+quality/check-locators.py
+quality/check-population.py
+quality/check-r38-discrimination.py
+quality/check-session-material.py
+$ grep -n "^87\.\|^86\." corpus/QUALITY.md | cut -c1-40
+420:86. A counter that scores a tool run
+$ git log -1 --format="%h %cI %s" d9b4e4a
+d9b4e4a6 2026-10-25T17:03:37-03:00 round-39: attempt-2 freeze — C2 counter v2 + C3 counter v1 + controls (before data)
+$ ls .ufo/waves/round-39/receipts | head
+axis-base.txt
+c1-after-freeze-L1.txt
+c1-after-tip.txt
+c1-redbefore-out.txt
+c1-redbefore.txt
+c2-after-data.txt
+c2-after-tip.txt
+c2-before-base.txt
+c3-after-tip.txt
+c3-before-base.txt
+census-before.txt
+manifest-frozen-r38.json
+$ grep -rn "19/19" corpus/lessons/round-39.md | head -3 | cut -c1-120
+$ grep -rn "19/19\|19 of 19\|19 " corpus/lessons/round-39.md corpus/lessons/round-39-verifier-spotcheck.md | head -6 | cut -c1-150
+corpus/lessons/round-39-verifier-spotcheck.md:20:| report vs later errata | PASS (one erratum issued) — the report corrects the fleet round-38 repor
+corpus/lessons/round-39-verifier-spotcheck.md:33:- After (evidence): `receipts/c1-after-tip.txt` ends `controls=19 correct=19/19 verdict=TARGET_MET`, 
+corpus/lessons/round-39-verifier-spotcheck.md:78:| calibration | improved | C1 — r38 pair re-registered and re-frozen before data; 18/19 → 19/19 e
+$ head -3 .ufo/waves/round-39/receipts/c1-after-freeze-L1.txt
+control=c1-live instrument=c1 expected=TARGET_MET observed=TARGET_MET ok=1
+control=c1-donothing instrument=c1 expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+control=c1-selfreceipt instrument=c1 expected=TARGET_MISSED observed=TARGET_MISSED ok=1
+$ grep -n closure-statement anchors
+error: command not found: round-40.md
+$ grep -c "read TILED as \"not floating\" only" SKILL.md
+1
+$ wc -l corpus/lessons/round-45-verifier-spotcheck.md corpus/lessons/round-38-verifier-spotcheck.md
+  122 corpus/lessons/round-45-verifier-spotcheck.md
+   88 corpus/lessons/round-38-verifier-spotcheck.md
+  210 total

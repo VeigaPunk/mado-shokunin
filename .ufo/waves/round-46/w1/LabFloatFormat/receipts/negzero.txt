@@ -1,0 +1,9 @@
+# negative-zero probe against the frozen reference (config text vs dump text -> verdict)
+# reference: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/l1-draft/mado-devices.py
+# std::format("{:.2f}", -0.0f) = "-0.00" (receipt bound-gcc.tsv row 80000000); %.2f of -0.0 = "-0.00"
+python max(-0.0,0.0) = -0.0
+config=-0   dump=-0.00  rc=0 MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-0.00 reported=-0.00 verdict=AGREE
+config=-0   dump=0.00   rc=1 MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-0.00 reported=0.00 verdict=DIFFER
+config=0    dump=-0.00  rc=1 MADO_DEV_MOUSE: name="m" block=yes scroll_factor=0.00 reported=-0.00 verdict=DIFFER
+config=-0.0 dump=-0.00  rc=0 MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-0.00 reported=-0.00 verdict=AGREE
+config=0    dump=0.00   rc=0 MADO_DEV_MOUSE: name="m" block=yes scroll_factor=0.00 reported=0.00 verdict=AGREE

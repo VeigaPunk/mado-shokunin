@@ -1,0 +1,23 @@
+diff --git a/corpus/knowledge/hyprland-input-devices-r46.md b/corpus/knowledge/hyprland-input-devices-r46.md
+index 7c9921ae..eb265cec 100644
+--- a/corpus/knowledge/hyprland-input-devices-r46.md
++++ b/corpus/knowledge/hyprland-input-devices-r46.md
+@@ -63,6 +63,18 @@ On this host (Hyprland 0.56.2 at efb50993, one `input` block in `~/.config/hypr/
+ - A device block that matches nothing was most likely written with the kernel product name instead of the normalized name (step 7).
+ - `hyprctl switchxkblayout` changes the active layout index, not the stored names, so it never turns AGREE into DIFFER.
+ 
++## Operator decisions
++
++| situation | action | why |
++|---|---|---|
++| a keyboard prints `us` and empty names | delete the `kb_layout` line and reload; the default will compile | the fallback is what the dump prints after a bad name |
++| a pointer prints `-1.00` | put `scroll_factor` in the `input` block; the global option is clamped the same way | per-device blocks are optional sugar |
++| a `device` block matches nothing | rename it to the product name the kernel reports | the lookup compares loosely |
++
++Hyprland also recompiles every keyboard keymap on a hotplug and writes the compiled keymap back into the config
++store, so a hotplug repairs a bad `kb_layout` without a reload (Hyprland-InputManager.cpp:1180-1212, hotplug
++recompile).
++
+ ## Limits
+ 
+ - The XKB compile itself is not reproduced: whether a given layout/variant pair exists in xkeyboard-config is not checked; only the stored names are compared.

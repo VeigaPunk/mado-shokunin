@@ -1,0 +1,397 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+"config option does not exist" for device:enabled despite being defined in config
+#12191
+Closed
+Unanswered
+ElJaviLuki
+asked this question in
+Bugs - Input
+"config option does not exist" for device:enabled despite being defined in config
+#12191
+ElJaviLuki
+Nov 1, 2025
+·
+2 comments
+Return to top
+Discussion options
+{{title}}
+Something went wrong.
+Quote reply
+ElJaviLuki
+Nov 1, 2025
+Hello,
+I am unable to dynamically toggle my touchpad using hyprctl keyword. The command fails with the error config option ... does not exist, even though the device is explicitly defined with an enabled state in my hyprland.conf.
+This issue is reproducible with a minimal configuration and persists after full system reboots.
+The Bug
+A device block for elan1203:00-04f3:307a-touchpad is present in hyprland.conf.
+Upon starting Hyprland, attempting to modify its enabled state via hyprctl fails.
+Command executed:
+$ hyprctl keyword "device:elan1203:00-04f3:307a-touchpad:enabled" false
+Error received:
+config option <device:elan1203:00-04f3:307a-touchpad:enabled> does not exist.
+Key Observation
+During troubleshooting, I noticed that hyprctl devices lists my touchpad under the mice: category. The Touch: category is empty. I am including this data point as it may be relevant to how Hyprland is processing the device's configuration.
+mice:
+Mouse at 555b7c7b4b10:
+elan1203:00-04f3:307a-touchpad
+Touch:
+(empty)
+Expected Behavior
+The hyprctl keyword command should successfully modify the enabled state of the device as defined in the configuration.
+System Information
+Hyprland Version:
+Hyprland, built from branch HEAD at commit 71a1216abcc7031776630a6d88f105605c4dc1c9 (props: -DHYPRLAND_HEADERS_DIR=/usr/include/hyprland).
+Date: Mon Sep 22 20:54:03 2025
+Tag: v0.40.0, commits: 6436
+built against:
+wlroots 0.17.0-71b56a43
+tomlplusplus 3.4.0
+aquamarine 0.5.1
+Operating System:
+NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+Kernel Version:
+6.17.5-zen1-1-zen
+GPU Information:
+00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-H GT2 [UHD Graphics 630] (rev 02)
+01:00.0 VGA compatible controller: NVIDIA Corporation TU106M [GeForce RTX 2060 Mobile] (rev a1)
+Full hyprctl devices output:
+mice:
+Mouse at 555b7c7b4760:
+hid-1241:1177
+default speed: 0.00000
+scroll factor: -1.00
+Mouse at 555b7c7b5270:
+asus-keyboard-3
+default speed: 0.00000
+scroll factor: -1.00
+Mouse at 555b7c7b4ec0:
+elan1203:00-04f3:307a-mouse
+default speed: 0.00000
+scroll factor: -1.00
+Mouse at 555b7c7b4b10:
+elan1203:00-04f3:307a-touchpad
+default speed: 0.00000
+scroll factor: -1.00
+Keyboards:
+Keyboard at 555b7c4ab860:
+power-button
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7c4bb470:
+asus-wireless-radio-control
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d0c68e0:
+video-bus
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d0f85c0:
+video-bus-1
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d12ba40:
+power-button-1
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d17b830:
+sleep-button
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d19afc0:
+asus-keyboard
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: yes
+numLock: no
+main: yes
+Keyboard at 555b7d1cec40:
+asus-keyboard-1
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d204080:
+asus-keyboard-2
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d250820:
+asus-wmi-hotkeys
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Keyboard at 555b7d270a50:
+at-translated-set-2-keyboard
+rules: r "", m "", l "es", v "", o ""
+active layout index: 0
+active keymap: Spanish
+capsLock: no
+numLock: no
+main: no
+Tablets:
+Touch:
+Switches:
+Switch Device at 555b7d0aaf00:
+Lid Switch
+Minimal hyprland.conf Used for Testing
+# Minimal config to reproduce the bug
+monitor=,preferred,auto,1
+# Keybind to open a terminal
+bind = SUPER, Q, exec, foot
+# Device definition
+device {
+name = elan1203:00-04f3:307a-touchpad
+enabled = true
+}
+Logs
+The standard log file is not created. A TTY startup log was captured, which shows Hyprland terminating during the config parsing stage. The full log is available if needed, but the primary bug occurs in a stable graphical session where Hyprland is otherwise running correctly.
+Thank you for your time.
+1
+You must be logged in to vote
+All reactions
+Replies:
+2 comments
+Oldest
+Newest
+Top
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+aphelei
+Nov 2, 2025
+see https://wiki.hypr.land/Configuring/Keywords/#per-device-input-configs
+hyprctl -r -- keyword "device[elan06fa:00-04f3:3140-touchpad]:sensitivity" 0
+works for me.
+During troubleshooting, I noticed that hyprctl devices lists my touchpad under the mice: category. The Touch: category is empty. I am including this data point as it may be relevant to how Hyprland is processing the device's configuration.
+touch is for touchscreen computer. a trackpad is a mouse
+1
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+{{title}}
+Something went wrong.
+Quote reply
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+Something went wrong.
+ElJaviLuki
+Nov 2, 2025
+Author
+Hello,
+Thank you, @aphelei. Your suggestion was correct and solved the problem.
+The issue was a syntax error on my end. I was incorrectly using colons to separate the device name from the parameter (device:name:parameter), instead of the correct device[name]:parameter format.
+For anyone else facing this issue, the correct command to toggle the touchpad is:
+# To disable
+hyprctl keyword "device[elan1203:00-04f3:307a-touchpad]:enabled" false
+# To enable
+hyprctl keyword "device[elan1203:00-04f3:307a-touchpad]:enabled" true
+I am closing this issue now. Thanks again for the help
+1
+You must be logged in to vote
+All reactions
+0 replies
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Input
+Labels
+None yet
+2 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

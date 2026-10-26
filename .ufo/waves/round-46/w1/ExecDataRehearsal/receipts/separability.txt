@@ -1,0 +1,23 @@
+Seat ExecDataRehearsal — separability of the two round-46 counters (scratch trees on tip e0be61e4f6e34896f8b1c329f9c6d129e5af81f7)
+
+Measured 2026-10-26. Built with: git clone -q --shared --no-checkout <lane> <dir>; rev-parse --show-toplevel asserted == <dir>;
+git -C <dir> checkout -q --detach e0be61e4; then the patch; then git -C <dir> add -A; git -C <dir> -c user.name=… commit.
+
+== tree "sep-tool-only" (tools/mado-devices.py only, no entry/rows/lesson/README row) rev 4727d4b4f406b02b5ac4084aedde609d9df7c04e
+$ python3 -I quality/counters/c1-r46-devices.py --repo <dir> --rev HEAD --work <dir-work> --nonce 46
+PRED-C1-r46: fixtures=90/90 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=4727d4b4f406b02b5ac4084aedde609d9df7c04e seeds=46,46
+exit=0
+$ python3 -I quality/counters/c2-r46-input-device-entry.py --repo <dir> --rev HEAD --base b22ea56bff2faec39ce9ff75d2107eaf4612ecbe
+PRED-C2-r46: admitted=0/1 verdict=TARGET_MISSED rev=4727d4b4f406b02b5ac4084aedde609d9df7c04e
+exit=1
+
+== tree "sep-data-only" (build-pos.py applied, tools/mado-devices.py absent) rev bcaf74f967c951424e3d1dab6bf0b673c8e15b1a
+$ python3 -I quality/counters/c1-r46-devices.py --repo <dir> --rev HEAD --work <dir-work> --nonce 46
+PRED-C1-r46: fixtures=0/90 generated=0/150 selftest=fail readonly=fail tool=absent verdict=TARGET_MISSED rev=bcaf74f967c951424e3d1dab6bf0b673c8e15b1a seeds=46,46
+exit=1
+$ python3 -I quality/counters/c2-r46-input-device-entry.py --repo <dir> --rev HEAD --base b22ea56bff2faec39ce9ff75d2107eaf4612ecbe
+PRED-C2-r46: admitted=1/1 verdict=TARGET_MET rev=bcaf74f967c951424e3d1dab6bf0b673c8e15b1a
+exit=0
+
+Verdict: the registration's Separability paragraph holds in both directions — a tool-only tree meets C1 and misses C2; a
+data-only tree misses C1 (tool=absent, the same line as receipts/c1-before-base.txt) and meets C2.

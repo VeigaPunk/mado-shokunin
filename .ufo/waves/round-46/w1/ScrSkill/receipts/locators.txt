@@ -1,0 +1,60 @@
+# receipts for seat ScrSkill, 2026-10-26; every command read-only; lane files read, nothing written
+
+## A. locators (computed with grep -n over the pins /usr/bin/grep and the reference docstring)
+1195:    applyConfigToKeyboard(keeb); 1208:        applyConfigToKeyboard(k); 1213:void CInputManager::applyConfigToKeyboard(SP<IKeyboard> pKeyboard) {   <- Hyprland-InputManager.cpp
+1229:    const auto LAYOUT   = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");   <- Hyprland-InputManager.cpp
+1274:            Log::logger->log(Log::DEBUG, "Not applying config to keyboard, it did not change.");   <- Hyprland-InputManager.cpp
+1286:    pKeyboard->setKeymap(IKeyboard::SStringRuleNames{LAYOUT, MODEL, VARIANT, OPTIONS, RULES});   <- Hyprland-InputManager.cpp
+1379:        if (Config::mgr()->deviceConfigExplicitlySet(devname, "scroll_factor"))   <- Hyprland-InputManager.cpp
+1382:            m->m_scrollFactor = std::nullopt;   <- Hyprland-InputManager.cpp
+1141:        keeb->m_hlName = getNameForNewDevice(keeb->m_deviceName); 1325:        mauz->m_hlName = getNameForNewDevice(mauz->m_deviceName); 1949:        PNEWDEV->m_hlName = getNameForNewDevice(PNEWDEV->m_deviceName); 2119:std::string CInputManager::getNameForNewDevice(std::string internalName) {   <- Hyprland-InputManager.cpp
+61:    if (m_keymapOverridden) {   <- Hyprland-IKeyboard.cpp
+113:        m_currentRules.layout  = "us";   <- Hyprland-IKeyboard.cpp
+770:        "scrollFactor": {:.2f} 773:                m->aq() && m->aq()->getLibinputHandle() ? libinput_device_config_accel_get_default_speed(m->aq()->getLibinputHandle()) : 0.f, m->m_scrollFactor.value_or(-1)); 879:                                  m->m_scrollFactor.value_or(-1));   <- Hyprland-HyprCtl.cpp
+790:        "layout": "{}",   <- Hyprland-HyprCtl.cpp
+518:    m_config->addSpecialCategory("device", {"name"});   <- Hyprland-ConfigManager.cpp
+1115:Hyprlang::CConfigValue* CConfigManager::getConfigValueSafeDevice(const std::string& dev, const std::string& val, const std::string& fallback) { 1132:    auto val = getConfigValueSafeDevice(dev, v, fallback); 1140:    auto val = getConfigValueSafeDevice(dev, v, fallback); 1148:    auto val = getConfigValueSafeDevice(dev, v, fallback);   <- Hyprland-ConfigManager.cpp
+1196:bool CConfigManager::deviceConfigExists(const std::string& dev) {   <- Hyprland-ConfigManager.cpp
+777:std::string deviceNameToInternalString(const std::string& in) {   <- Hyprland-MiscFunctions.cpp
+272:        MS<String>("input:kb_layout", "Appropriate XKB keymap parameter", "us", {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),   <- Hyprland-ConfigValues.cpp
+296:        MS<Float>("input:scroll_factor", "Multiplier added to scroll movement for external mice.", 1, {.min = 0, .max = 2, .refresh = Supplementary::REFRESH_INPUT_DEVICES}),   <- Hyprland-ConfigValues.cpp
+12:    std::string name = "hl-virtual-keyboard";   <- Hyprland-protocols-VirtualKeyboard.cpp
+41:        m_keymapOverridden = true;   <- Hyprland-VirtualKeyboard.cpp
+
+## B. reference docstring / code lines (contract)
+19:of one or more config files and one `hyprctl devices -j` dump. It is a join, not a blame: a DIFFER may come from a
+26:It reads files and standard input only; it starts no process and opens no socket.
+62:DEVICE KEYS: kb_layout, kb_variant, kb_options, kb_model, kb_rules, kb_file, scroll_factor. A `scroll_factor`
+72:starts with `hl-virtual-keyboard`; AGREE when all five equal; FALLBACK when the reported names are exactly layout "us"
+76:(not a boolean) and both print the same with two decimals, else DIFFER. A device block AGREEs as MATCHED when its
+87:blocks print in creation order.) V = NOT_COMPARED (exit 5, unsupported > 0: an unmodelled line can change any
+99:MAX_BYTES = 1048576
+130:        if not stat.S_ISREG(os.fstat(fd).st_mode):
+526:            print("MADO_DEVICES_SELFTEST: FAIL %s rc=%d %s" % (label, rc, " | ".join(lines)))
+533:            print("MADO_DEVICES_SELFTEST: FAIL setup %s %r" % (reason, lines))
+538:            print("MADO_DEVICES_SELFTEST: FAIL bad_json %r" % data[:12])
+542:    print("MADO_DEVICES_SELFTEST: %d/%d passed" % (passed, total))
+
+## C. counters (frozen; read only)
+quality/counters/c1-r46-devices.py:9:Scores one committed revision REV (revision-addressed git reads with ambient GIT_* removed; nothing in the lane is
+quality/counters/c1-r46-devices.py:29:  r  read-only: PATH starts with a directory holding executables `hyprctl`, `libinput`, `journalctl` and `udevadm` that
+quality/counters/c1-r46-devices.py:42:Residuals (declared): a tool holding a model of the contract is an implementation of it - the fixtures are the contract's
+quality/counters/c2-r46-input-device-entry.py:8:Scores one committed revision REV (revision-addressed git reads, ambient GIT_* removed; nothing in the lane is
+quality/counters/c2-r46-input-device-entry.py:58:     (case-insensitive). The twenty-eight surfaces: applyConfigToKeyboard, its kb_layout lookup, its setKeymap call,
+
+## D. reference selftest, run here (in-memory cases; setup cases on /nonexistent paths only)
+MADO_DEVICES_SELFTEST: 48/48 passed
+## E. PROVINCE.md table and tail anchors
+24:| `tools/mado-action-plan.py` | the J
+25:| `tools/mado-tripwire.py` | the `.js
+26:| `tools/mado-assessment.py` | the JS
+27:| `tools/mado-evidence-audit.py` | th
+28:| `tools/mado-verify.sh` | the file b
+29:| `tools/mado-binds.py` | the bytes o
+30:| `tools/mado-anims.py` | the bytes o
+31:| `tools/mado-globals.py` | the bytes
+32:| `tools/mado-geometry.py` | the byte
+PROVINCE lines: 100; SKILL lines: 2102
+2062:## Round 21 — bounded binding evidence and separate artifact assessment
+2074:## Round 22 — scoped lifetime and evidence-grain recovery
+2100:## Monitor rule versus running output (round 45)

@@ -1,0 +1,81 @@
+### d4 — round-45 MutC1Counter/results.json: retention state
+--- worktree ---
+$ ls -l .ufo/waves/round-45/w1/MutC1Counter/
+total 60
+-rwxr-xr-x 1 vgpnk vgpnk 23171 Oct 26 16:08 c1-r45-monitors.py
+-rw-r--r-- 1 vgpnk vgpnk 12594 Oct 26 16:09 matrix.md
+-rwxr-xr-x 1 vgpnk vgpnk 11692 Oct 26 16:08 mutdrive.py
+-rw-r--r-- 1 vgpnk vgpnk   282 Oct 26 17:33 results.digest.txt
+-rw-r--r-- 1 vgpnk vgpnk  3242 Oct 26 16:08 summary.txt
+[rc=0]
+
+--- in git history at all? ---
+$ git log --all --oneline -- .ufo/waves/round-45/w1/MutC1Counter/results.json
+[rc=0]
+
+--- tracked now? ---
+$ git ls-files .ufo/waves/round-45/w1/MutC1Counter/results.json
+[rc=0]
+
+--- the digest line (written by the D4 owner this round) ---
+$ cat .ufo/waves/round-45/w1/MutC1Counter/results.digest.txt
+results.json (untracked, never committed; removed in round 46 per round-45 closure D4): sha256 7325f816a1561a252dc562f8b9bb038f1ea213d653c95499ea067dc62ed58a55, 4020571 bytes, dict 39 top-level entries; its per-mutant verdicts are summarized in summary.txt and matrix.md beside it.
+[rc=0]
+
+--- what summary.txt holds ---
+$ wc -l .ufo/waves/round-45/w1/MutC1Counter/summary.txt
+39 .ufo/waves/round-45/w1/MutC1Counter/summary.txt
+[rc=0]
+
+$ head -3 .ufo/waves/round-45/w1/MutC1Counter/summary.txt
+X0-identity|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+S1-selftest-min-const|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+S2-selftest-min-cmp|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+[rc=0]
+
+$ tail -3 .ufo/waves/round-45/w1/MutC1Counter/summary.txt
+G2-env-drop-HOME|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+G3-env-path-nofakebin|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+G4-env-drop-HIS|SURVIVOR|fixtures=49/49 verdict=TARGET_MET|-|missed=16/16
+[rc=0]
+
+--- field count per summary line (should be 6) ---
+$ bash -c awk -F'|' '{print NF}' .ufo/waves/round-45/w1/MutC1Counter/summary.txt | sort -u
+5
+[rc=0]
+
+--- verdict classes present ---
+$ bash -c cut -d'|' -f2 .ufo/waves/round-45/w1/MutC1Counter/summary.txt | sort | uniq -c
+      1 GATE-BROKEN:K02-STUB,K08-LIVE-HYPRCTL,K14-MIRROR-IGNORED
+      2 GATE-BROKEN:K02-STUB,K14-MIRROR-IGNORED
+      7 OVER-STRICT
+     29 SURVIVOR
+[rc=0]
+
+--- matrix.md extent ---
+$ wc -l .ufo/waves/round-45/w1/MutC1Counter/matrix.md
+153 .ufo/waves/round-45/w1/MutC1Counter/matrix.md
+[rc=0]
+
+$ grep -n 551 counter runs\|38 single-edit mutants .ufo/waves/round-45/w1/MutC1Counter/matrix.md
+8:- 38 single-edit mutants + 1 identity baseline (X0). Each mutant = one contiguous `old`→`new` replacement,
+15:  (551 counter runs; each = selftest + 49 fixtures + readonly probe). All runs recorded in Receipts `results.json`.
+[rc=0]
+
+--- matrix totals line (the class tally in prose) ---
+$ grep -n Totals: .ufo/waves/round-45/w1/MutC1Counter/matrix.md
+79:Totals: 39 = 1 baseline + 3 GATE-BROKEN (killed) + 7 OVER-STRICT (killed) + 3 equivalent survivors + 25 missing-control survivors.
+[rc=0]
+
+--- tracked/untracked state of the directory ---
+$ git status --porcelain -- .ufo/waves/round-45/w1/MutC1Counter/
+?? .ufo/waves/round-45/w1/MutC1Counter/results.digest.txt
+[rc=0]
+
+--- closure D4 text ---
+$ grep -n D4 corpus/lessons/round-45-verifier-spotcheck.md
+28:| leftovers | `git status --porcelain` | `?? .ufo/waves/round-45/w1/MutC1Counter/results.json` (4,020,571 B; disclosed in the report; its `summary.txt`/`matrix.md` are committed) → D4 |
+31:| round-44 routed items | lesson `## Round-44 closure items` | D1 fixed (re-checked: both round-43 dumps now 7-key, `grep -c '"title"'` → 0 each); D2 values appended in SCORECARD Round 45; D3 tip receipt names `ac3f9de` and states the last commit adds only receipts; D4 → M45-6; D6 deferred again; D7 recorded, not corrected → D6 below |
+114:4. D4 — untracked `.ufo/waves/round-45/w1/MutC1Counter/results.json` (4 MB) sits in the lane worktree: commit a digest line next to
+[rc=0]
+

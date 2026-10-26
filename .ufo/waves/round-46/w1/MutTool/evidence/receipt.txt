@@ -1,0 +1,154 @@
+== MutTool-4 receipt: 2026-10-26T21:01:28Z
+
+== baseline (pristine reference)
+{"ref_sha": "b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b", "selftest_ok": true, "selftest_out": "MADO_DEVICES_SELFTEST: 48/48 passed", "fixtures": 90, "fail": []}
+
+== full mutant run
+K01  killed by setup-deep-json
+K03  killed by isspace-trim
+K04  killed by selftest
+K05  killed by kb-file
+K06  killed by mouse-block-factor
+K07  killed by directive
+K08  killed by mouse-stof-exponent
+K09  survived
+K10  killed by device-empty-marker
+K11  killed by fallback
+K12  killed by host
+K13  survived
+K14  killed by mouse-overflow
+K15  killed by mouse-overflow
+B37  killed by host
+B38  survived
+A01  killed by selftest
+A02  killed by host
+A03  killed by host
+A05  killed by host
+A04  killed by host
+A06  killed by host
+B36  survived
+J01  killed by continuation
+J02  killed by continuation-last-line
+J03  killed by continuation-spaces
+J04  killed by host
+J05  survived
+C01  killed by host
+C02  survived
+C03  killed by comment-triple-hash
+C04  killed by comment-escape
+C05  killed by host
+C06  killed by comment-escape
+R01  killed by mouse-block-factor
+R02  killed by selftest
+R03  killed by mouse-overflow
+R04  killed by mouse-overflow
+R05  survived
+R06  killed by mouse-nan
+R07  killed by mouse-overflow
+S01  killed by selftest
+S02  killed by selftest
+P01  killed by directive
+P02  killed by comment-after-brace
+P03  killed by device-block-partial
+P04  killed by host
+P05  killed by host
+P06  killed by device-block-partial
+P07  killed by device-block-partial
+P08  killed by host
+P09  killed by host
+P11  killed by variable
+P12  killed by host
+P13  killed by device-block
+P14  killed by device-block
+P15  survived
+P16  survived
+P17  killed by bracket-flat
+P18  killed by bracket-flat
+P19  killed by bracket-flat
+P20  killed by bracket-name-key
+P21  killed by selftest
+P22  killed by device-block
+P23  killed by block-first-not-name
+P24  survived
+P25  killed by block-first-not-name
+P26  killed by device-block
+P27  killed by device-block
+B01  killed by host
+B02  killed by host
+B03  killed by host
+B04  killed by fallback
+B05  killed by host
+B06  killed by mouse-clamp-low
+B07  killed by selftest
+B08  killed by mouse-float32
+B09  killed by mouse-bool
+B10  survived
+B11  killed by bracket-name-with-space
+B12  killed by device-block
+B13  killed by host
+B14  killed by no-keyboards
+B15  killed by host
+B16  killed by mouse-nan
+B17  killed by default-not-us
+B18  killed by no-keyboards
+B19  killed by bracket-name-with-space
+B20  killed by host
+B21  killed by host
+B22  killed by host
+B23  killed by host
+B24  killed by global-differ-two
+B25  killed by selftest
+B26  killed by selftest
+B27  killed by selftest
+B28  killed by device-block
+B29  killed by matched-tablet-pad
+B30  killed by selftest
+B31  killed by selftest
+B32  killed by host
+B33  killed by device-empty-marker
+B34  killed by host
+B35  killed by later-file-wins
+TOTAL 104 mutants: 93 killed, 11 survived
+SURVIVORS: K09, K13, B38, B36, J05, C02, R05, P15, P16, P24, B10
+
+== survivor killing-input demonstrations
+=== B10 (reported scrollFactor=+inf (is_num without isfinite)) KILLED
+-- pristine: rc=1 | MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=? verdict=DIFFER | MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+-- mutant  : rc=1 | MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=inf verdict=DIFFER | MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+=== B10n (reported scrollFactor=NaN (is_num without isfinite)) KILLED
+-- pristine: rc=1 | MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=? verdict=DIFFER | MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+-- mutant  : rc=1 | MADO_DEV_MOUSE: name="m" block=no scroll_factor=-1.00 reported=nan verdict=DIFFER | MADO_DEVICES: keyboards=0 agree=0 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+=== C02 (config line ending in '#') KILLED
+-- pristine: rc=0 | MADO_DEV_KEYBOARD: name="k" block=no layout="br" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK | 
+-- mutant  : EXCEPTION IndexError('string index out of range')
+=== J05 (two chained backslash continuations) KILLED
+-- pristine: rc=0 | MADO_DEV_KEYBOARD: name="k" block=no layout="br,us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK | 
+-- mutant  : rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=DIFFER | MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED | 
+=== K09 (uppercase NaN in scroll_factor (SPECIAL_RE without re.I)) KILLED
+-- pristine: rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE | MADO_DEV_BLOCK: name="m" keys=0 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED | 
+-- mutant  : rc=0 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE | MADO_DEV_BLOCK: name="m" keys=0 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK | 
+=== K13 (2e-38, decimal in (2**-126, 2**-125)) KILLED
+-- pristine: rc=1 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=0.00 reported=-1.00 verdict=DIFFER | MADO_DEV_BLOCK: name="m" keys=1 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER | 
+-- mutant  : rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE | MADO_DEV_BLOCK: name="m" keys=0 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED | 
+=== P15 (key with two bracket groups (find/rfind swap)) KILLED
+-- pristine: rc=4 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_BLOCK: name="a][b" keys=1 verdict=NO_SUCH_DEVICE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK | 
+-- mutant  : rc=0 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK | 
+=== P24 (rename followed by another name line) KILLED
+-- pristine: rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=DIFFER | MADO_DEV_BLOCK: name="a" keys=0 verdict=NO_SUCH_DEVICE | MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=3 verdict=NOT_COMPARED | 
+-- mutant  : rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=DIFFER | MADO_DEV_BLOCK: name="a" keys=0 verdict=NO_SUCH_DEVICE | MADO_DEV_BLOCK: name="b" keys=1 verdict=NO_SUCH_DEVICE | MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=2 stale=2 unsupported=1 verdict=NOT_COMPARED | 
+=== R05 (scroll_factor exactly 2**-126 (< -> ==)) KILLED
+-- pristine: rc=1 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=0.00 reported=-1.00 verdict=DIFFER | MADO_DEV_BLOCK: name="m" keys=1 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=1 blocks=1 stale=0 unsupported=0 verdict=DIFFER | 
+-- mutant  : rc=5 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_MOUSE: name="m" block=yes scroll_factor=-1.00 reported=-1.00 verdict=AGREE | MADO_DEV_BLOCK: name="m" keys=0 verdict=MATCHED | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=1 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED | 
+=== B36 (invalid UTF-8 byte in config (errors=replace -> ignore)) KILLED
+-- pristine: rc=1 | MADO_DEV_KEYBOARD: name="k" block=no layout="br\ufffdx" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=FALLBACK | MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+-- mutant  : rc=1 | MADO_DEV_KEYBOARD: name="k" block=no layout="brx" variant="" options="" model="" rules="" kb_file=- differ=layout verdict=FALLBACK | MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER | 
+=== B38 (stdin payload MAX+1 bytes (equivalence probe)) EQUIVALENT-ON-THIS-INPUT
+-- pristine: rc=2 | MADO_DEVICES: SETUP too_large | 
+-- mutant  : rc=2 | MADO_DEVICES: SETUP too_large | 
+=== P16 (empty bracket device[] (equivalence probe)) EQUIVALENT-ON-THIS-INPUT
+-- pristine: rc=4 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_BLOCK: name="" keys=1 verdict=NO_SUCH_DEVICE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK | 
+-- mutant  : rc=4 | MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE | MADO_DEV_BLOCK: name="" keys=1 verdict=NO_SUCH_DEVICE | MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=STALE_BLOCK | 
+
+== restoration evidence
+b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/l1-draft/mado-devices.py
+027ed50877b345e34b27e38b4a865be4b23f94c0cc0067ac42265ca1778e3fc1  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r46-fixtures.json

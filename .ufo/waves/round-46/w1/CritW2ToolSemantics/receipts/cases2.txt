@@ -1,0 +1,53 @@
+### R3e self-mirror rule; live mirrorOf=none (Hyprland refuses self)
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="DP-2" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=mirror verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R3f chained mirror: DP-1 rule mirrors DP-2, DP-2 rule mirrors DP-1
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="DP-2" disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="DP-1" disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=2 differ=0 disabled=0 verdict=OK
+rc=0
+
+### R3g mirror target desc:Dell Inc.; live mirrorOf=0
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_RULE: n=2 sel="DP-2" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror="desc:Dell Inc." disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MON_OUTPUT: name="DP-2" rule=2 differ=mirror verdict=DIFFER
+MADO_MONITORS: lines=2 rules=2 v2=0 unsupported=0 badrules=0 outputs=2 matched=2 unruled=0 agree=1 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R7a config holds only source = monitors.conf (no monitor lines)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=0 rules=0 v2=0 unsupported=0 badrules=0 outputs=1 matched=0 unruled=1 agree=0 differ=0 disabled=0 verdict=NO_RULES
+rc=4
+
+### R7b monitorv2[ DP-1 ] with inner spaces
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=DIFFER
+rc=1
+
+### R7c monitorv2{ (no space before brace)
+MADO_MON_RULE: n=1 sel="DP-1" mode=1920x1080@60.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=mode verdict=DIFFER
+MADO_MONITORS: lines=1 rules=1 v2=1 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=0 differ=1 disabled=0 verdict=NOT_COMPARED
+rc=5
+
+### R8a transform modifier with no prior rule (both: nothing happens)
+MADO_MON_OUTPUT: name="DP-1" rule=- differ=- verdict=UNRULED
+MADO_MON_OUTPUT: name="DP-2" rule=- differ=- verdict=UNRULED
+MADO_MONITORS: lines=1 rules=0 v2=0 unsupported=0 badrules=0 outputs=2 matched=0 unruled=2 agree=0 differ=0 disabled=0 verdict=NO_MATCHING_MONITOR
+rc=3
+
+### R8b addreserved with extra trailing fields
+MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- disabled=false
+MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MADO_MONITORS: lines=2 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+rc=0
+

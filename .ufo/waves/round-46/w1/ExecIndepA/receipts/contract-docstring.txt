@@ -1,0 +1,89 @@
+draft:2: """mado-devices - does each keyboard run the XKB names its config declares, and does each mouse report the scroll factor its device block sets?
+draft:3: 
+draft:4: Hyprland 0.56.2 (efb50993) applies keyboard config per device (src/managers/input/InputManager.cpp
+draft:5: applyConfigToKeyboard): for each of kb_layout, kb_variant, kb_options, kb_model, kb_rules and kb_file it reads the
+draft:6: value of the `device` block whose name equals the keyboard's name when that block SETS the key, else the global
+draft:7: `input:` option (src/config/legacy/ConfigManager.cpp getConfigValueSafeDevice; defaults "us" for kb_layout and empty
+draft:8: for the others, src/config/values/ConfigValues.cpp). The keyboard stores those five names as its current rules and
+draft:9: compiles a keymap from them (src/devices/IKeyboard.cpp setKeymap); when the names do not compile, it resets the
+draft:10: stored rules to layout "us" with every other name empty. `hyprctl devices -j` prints the stored rules of every
+draft:11: keyboard (src/debug/HyprCtl.cpp devicesRequest: rules, model, layout, variant, options), and for every pointer
+draft:12: `scrollFactor`: the device block's `scroll_factor` clamped to 0..100 when that block sets it, else -1, printed with
+draft:13: two decimals (InputManager.cpp setPointerConfigs) - the global `input:scroll_factor` never reaches that field. A
+draft:14: virtual keyboard (name `hl-virtual-keyboard...`, src/protocols/VirtualKeyboard.cpp) takes the keymap its client
+draft:15: sends and ignores later rule changes, so its printed rules do not witness its keymap. Device names are the
+draft:16: compositor's: lower-cased, with space, newline and comma turned into `-` and a `-N` suffix for duplicates
+draft:17: (src/helpers/MiscFunctions.cpp deviceNameToInternalString, InputManager.cpp getNameForNewDevice); a `device` block
+draft:18: whose name matches no device applies to nothing. This tool joins the two read-only inputs: the input/device lines
+draft:19: of one or more config files and one `hyprctl devices -j` dump. It is a join, not a blame: a DIFFER may come from a
+draft:20: runtime `hyprctl keyword`, a config file not passed, or a `source =` line it does not follow.
+draft:21: 
+draft:22:     hyprctl devices -j | mado-devices.py --devices - --config ~/.config/hypr/input.conf
+draft:23:     mado-devices.py --devices devs.json --config a.conf --config b.conf
+draft:24:     mado-devices.py --selftest
+draft:25: 
+draft:26: It reads files and standard input only; it starts no process and opens no socket.
+draft:27: 
+draft:28: Arguments (two-token form only; anything else is usage): `--selftest` alone, or `--devices V` exactly once and
+draft:29: `--config V` one or more times, in any order. Setup failure: stdout is exactly one line `MADO_DEVICES: SETUP
+draft:30: <reason>`, exit 2, reason one of usage | unreadable | too_large | bad_json. A PATH that is missing, unreadable, a
+draft:31: directory, a FIFO or any non-regular file is unreadable; an input larger than 1048576 bytes is too_large (stdin,
+draft:32: `--devices -`, is read at most 1048577 bytes); a devices input that is not UTF-8 JSON (nesting deep enough to
+draft:33: exhaust the parser included) holding an object whose `keyboards` and `mice` are lists of objects, each element
+draft:34: having a string `name`, is bad_json.
+draft:35: 
+draft:36: Lines (hyprlang 0.6.8 src/config.cpp, as Hyprland reads its config). Config files are read in argument order, each
+draft:37: decoded as UTF-8 with errors replaced and split on "\\n"; the category stack starts empty in each file. A raw line
+draft:38: ending in a backslash is joined with the next raw line after the backslash and the spaces and tabs before it are
+draft:39: removed (a final such line is dropped). A line is stripped of spaces, tabs and carriage returns. A line starting
+draft:40: with `#` is a comment; one matching `#[ \\t]*hyprlang\\b` (an if/endif/noerror directive) adds one to
+draft:41: `unsupported`. Else the comment is cut: at each `#`, a following `#` makes the pair one literal `#` and the search
+draft:42: resumes two characters after the first `#` of the pair in the shortened line; any other `#` ends the line there.
+draft:43: The rest is stripped of ASCII whitespace (space, tab, CR, LF, VT, FF); empty lines are skipped. Without `=`: `}`
+draft:44: pops the category stack (when it empties, the current device is forgotten); a line ending in `{` pushes its text
+draft:45: before the `{`, stripped; anything else is ignored. With `=`: LHS and RHS are the stripped text before and after
+draft:46: the first `=`; an LHS starting with `$` (a variable) is ignored. The KEY is the stack and LHS joined with `:`. When
+draft:47: KEY holds `[` before its last `]`, the text between the first `[` and the last `]` is a BRACKET NAME and is cut out
+draft:48: of KEY with the brackets. A key line is RELEVANT when KEY starts with `device` or is one of `input:kb_layout`,
+draft:49: `input:kb_variant`, `input:kb_options`, `input:kb_model`, `input:kb_rules`, `input:kb_file`. A relevant line whose
+draft:50: LHS or RHS holds `$`, `{{` or a backslash adds one to `unsupported` and is not modelled. Relevant lines:
+draft:51:   - `input:kb_X` sets the global value of kb_X to RHS (a bracket name does not change that).
+draft:52:   - with a bracket name N and KEY `device:F`: device N is created if absent; F one of the DEVICE KEYS sets that key
+draft:53:     of N to RHS; F `name` adds one to `unsupported`; any other F is ignored.
+draft:54:   - KEY `device:name` (no bracket name) with no current device: selects device RHS, creating it if absent; it is
+draft:55:     the current device until the stack empties.
+draft:56:   - KEY `device:F` (no bracket name) with a current device: a DEVICE KEY F sets that key of the current device;
+draft:57:     `name` (a rename) adds one to `unsupported`; other F are ignored.
+draft:58:   - KEY `device:F` (no bracket name, F not `name`) with no current device: adds one to `unsupported` (Hyprland
+draft:59:     reports "special category's first value must be the key" and keeps reading the block into a device it names
+draft:60:     itself); later `device:` lines go the same way until the stack empties.
+draft:61:   - any other KEY starting with `device` is ignored.
+draft:62: DEVICE KEYS: kb_layout, kb_variant, kb_options, kb_model, kb_rules, kb_file, scroll_factor. A `scroll_factor`
+draft:63: value is read as std::stof does: the longest prefix matching `[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?`
+draft:64: rounded to a 32-bit float; no such prefix leaves the key unset; a prefix that is inf/nan/hex (`[+-]?(inf|nan|0[xX])`,
+draft:65: any case), a value whose float is infinite, or a nonzero value below 2**-126 in magnitude adds one to `unsupported`
+draft:66: and leaves the key unset. Every other value is the RHS string; the stored string `[[EMPTY]]` reads as "".
+draft:67: 
+draft:68: Devices. Every element of `keyboards` and `mice` is one device, in dump order. A keyboard's EXPECTED names: per name
+draft:69: kb_X, the device block named exactly like the keyboard when it set kb_X, else the global kb_X when set, else the
+draft:70: default ("us" for kb_layout, "" otherwise). Its REPORTED names are `layout`, `variant`, `options`, `model`, `rules`
+draft:71: (a missing or non-string value never equals an expected name). Verdict, tested in this order: VIRTUAL when the name
+draft:72: starts with `hl-virtual-keyboard`; AGREE when all five equal; FALLBACK when the reported names are exactly layout "us"
+draft:73: and four empty names (the compositor's fallback after a keymap that does not compile); else DIFFER, differ= the
+draft:74: unequal names in the order layout, variant, options, model, rules. A mouse's EXPECTED scroll factor is its block's
+draft:75: scroll_factor clamped to 0..100 when the block set it, else -1; it AGREEs when `scrollFactor` is a finite number
+draft:76: (not a boolean) and both print the same with two decimals, else DIFFER. A device block AGREEs as MATCHED when its
+draft:77: name equals the `name` of some element of any top-level list of the dump (or of an element's `belongsTo`
+draft:78: object), else it is NO_SUCH_DEVICE.
+draft:79: 
+draft:80: Output (stdout; nothing else; stderr empty on exit 0/1/3/4/5), in order:
+draft:81:   per keyboard MADO_DEV_KEYBOARD: name=<json> block=<yes|no> layout=<json> variant=<json> options=<json> model=<json> rules=<json> kb_file=<set|-> differ=<names|-> verdict=<AGREE|DIFFER|FALLBACK|VIRTUAL>
+draft:82:   per mouse    MADO_DEV_MOUSE: name=<json> block=<yes|no> scroll_factor=<F> reported=<F|?> verdict=<AGREE|DIFFER>
+draft:83:   per block    MADO_DEV_BLOCK: name=<json> keys=<n> verdict=<MATCHED|NO_SUCH_DEVICE>
+draft:84:   last         MADO_DEVICES: keyboards=<n> agree=<n> differ=<n> fallback=<n> virtual=<n> mice=<n> mice_differ=<n> blocks=<n> stale=<n> unsupported=<n> verdict=<V>
+draft:85: (<json> is json.dumps with ensure_ascii; the keyboard's printed names are the EXPECTED ones; F is printed with two
+draft:86: decimals; block= says whether a device block carries the device's name; keys counts the DEVICE KEYS the block set;
+draft:87: blocks print in creation order.) V = NOT_COMPARED (exit 5, unsupported > 0: an unmodelled line can change any
+draft:88: expectation) | DIFFER (exit 1, differ + fallback + mice_differ > 0) | NO_KEYBOARDS (exit 3, keyboards = 0) |
+draft:89: STALE_BLOCK (exit 4, stale > 0) | OK (exit 0), tested in that order.
+draft:90: """

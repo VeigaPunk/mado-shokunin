@@ -1,0 +1,291 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+omacom
+omarchy
+Repository navigation
+Code
+Issues2.4k (2.4k)
+Pull requests3.4k (3.4k)
+Discussions
+Actions
+Security and quality
+Insights
+More items
+Keyboard layout reverts to en after waking from sleep instead of the default layout (e.g. fr) #8060
+New issue
+Copy link
+New issue
+Copy link
+Open
+Open
+Keyboard layout reverts to en after waking from sleep instead of the default layout (e.g. fr)#8060
+Copy link
+Labels
+bugSomething isn't workingSomething isn't working
+Description
+ziouf
+opened on Aug 24, 2026
+Issue body actions
+Summary
+On a non-US install (here fr, from /etc/vconsole.conf: XKBLAYOUT=fr), two
+different text fields silently fall back to an en_US keymap, while the
+Hyprland session itself is correct (hyprctl -j devices reports every keyboard
+as French/fr):
+The lock screen password field after waking from sleep.
+The SDDM login field shown after explicit logout.
+Both look like "the keymap resets to en_US" but they have independent root
+causes, detailed below.
+Environment
+Omarchy 4.0.0-1, Hyprland 0.56.2, SDDM (Wayland), fcitx5
+/etc/vconsole.conf → KEYMAP=fr, XKBLAYOUT=fr
+Session layout seeded by Omarchy from vconsole works correctly at runtime
+Bug A — Lock screen types en_US after wake from sleep
+Root cause
+Omarchy ships a session-wide fcitx5 integration:
+/usr/lib/environment.d/10-omarchy-fcitx.conf exports
+QT_IM_MODULE=fcitx / XMODIFIERS=@im=fcitx / SDL_IM_MODULE=fcitx, fcitx5 is
+autostarted, and /usr/lib/systemd/user/omarchy-fcitx5.service keeps it alive
+with the graphical session.
+fcitx5 registers a virtual keyboard with the compositor
+(hl-virtual-keyboard-fcitx5, reported as main: true by hyprctl devices),
+so any focused text field receives its effective keymap from the active fcitx5
+engine.
+The lock screen password field is a Qt TextInput (Quickshell), therefore its
+keystrokes are routed through fcitx5. With a user profile whose only configured
+input method is keyboard-us:
+# ~/.config/fcitx5/profile (before fix)
+[Groups/0]
+Default Layout=us
+DefaultIM=keyboard-us
+[Groups/0/Items/0]
+Name=keyboard-us
+…typing at the lock prompt happens on an en_US keymap. Wake from sleep merely
+makes it visible: the password field is the first text input focused after
+resume (journal timeline: 16:26:51 PM: suspend entry → 16:33:34 exit →
+16:33:37 unlock prompt + PAM session).
+Workaround
+Point the fcitx5 default group at the console layout
+(~/.config/fcitx5/profile):
+Default Layout=fr
+DefaultIM=keyboard-fr
+[Groups/0/Items/0]
+Name=keyboard-fr
+Layout=
+then restart fcitx5. Verified: hyprctl -j devices now reports the fcitx5
+virtual keyboard as French/fr.
+Suggested upstream fix
+Seed or validate the fcitx5 default input method against /etc/vconsole.conf
+— the same source Omarchy already uses to set Hyprland's kb_layout — during
+install/first setup, so a non-US system never ends up with
+DefaultIM=keyboard-us.
+Bug B — Login greeter types en_US after logout
+Root cause
+The Wayland greeter runs its own Hyprland instance:
+# /etc/sddm.conf.d/10-wayland.conf
+[Wayland]
+CompositorCommand=start-hyprland -- --config /usr/share/sddm/hyprland.lua
+/usr/share/sddm/hyprland.lua (package omarchy-settings) is minimal — misc +
+animations only, no input.kb_layout — so the greeter compositor falls back
+to Hyprland's built-in us. The sddm daemon environment carries no
+QT_IM_MODULE (systemctl show sddm.service -p Environment → empty), so the
+greeter does direct input with the compositor keymap.
+This is masked at boot by autologin (/etc/sddm.conf.d/autologin.conf): SDDM
+skips the greeter entirely, so after a restart the user never sees it and every
+field they meet is inside the correctly-configured session. It only surfaces on
+explicit logout, where the greeter is actually displayed (logind session
+class greeter) and the login field types QWERTY-US.
+Workaround
+Drop-in pointing SDDM at an enriched copy of the greeter config (survives
+package updates):
+sudo cp /usr/share/sddm/hyprland.lua /etc/sddm/greeter-hyprland.lua
+sudo tee -a /etc/sddm/greeter-hyprland.lua > /dev/null <<'EOF'
+-- Keymap from the system console config (same source as the main session).
+local layout = "us"
+local f = io.open("/etc/vconsole.conf", "r")
+if f then
+for line in f:lines() do
+local k, v = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
+if k == "XKBLAYOUT" then layout = v:gsub("%s+#.*$", "") end
+end
+f:close()
+end
+hl.config({ input = { kb_layout = layout } })
+EOF
+sudo tee /etc/sddm.conf.d/50-keymap.conf > /dev/null <<'EOF'
+[Wayland]
+CompositorCommand=start-hyprland -- --config /etc/sddm/greeter-hyprland.lua
+EOF
+Suggested upstream fix
+Seed input.kb_layout in /usr/share/sddm/hyprland.lua from
+/etc/vconsole.conf, exactly like default/hypr/input.lua already does for
+the user session, instead of relying on the compositor's built-in default.
+These investigations were largely conducted with the help of an AI agent.
+Reactions are currently unavailable
+Activity
+ziouf
+added bugSomething isn't workingSomething isn't working
+on Aug 24, 2026
+ziouf
+changed the title [-]Keyboard layout reverts to en_US after waking from sleep instead of the default layout (e.g. fr)[/-] [+]Keyboard layout reverts to en after waking from sleep instead of the default layout (e.g. fr)[/+] on Aug 24, 2026
+Division-x commented on Aug 25, 2026
+Division-x
+on Aug 25, 2026
+More actions
+Can confirm both bugs on es (Spain) as well, so it's not fr-specific. Omarchy 4.0.1, hit this right after updating to Quattro today.
+For bug A, same root cause, ~/.config/fcitx5/profile had DefaultIM=keyboard-us out of the box even though /etc/vconsole.conf says XKBLAYOUT=es. One thing worth adding to the workaround though: if fcitx5 is already running when you edit the profile, killing it afterwards clobbers your edit, because it flushes its own in-memory state (still us) back to the file on exit. Took me a few tries to notice the file kept reverting. Order that actually sticks:
+systemctl --user stop omarchy-fcitx5.service
+# now edit ~/.config/fcitx5/profile
+systemctl --user start omarchy-fcitx5.service
+restart instead of stop-then-start doesn't work for the same reason.
+For bug B, confirmed too, /usr/share/sddm/hyprland.lua still has no input block on my machine (just misc/animations). What's odd is /usr/share/sddm/hyprland.conf (the old format, still the one actually loaded here since /etc/sddm.conf.d/10-wayland.conf hasn't picked up the .pacnew yet) does have input { kb_layout = es } hardcoded. So it looks like someone already patched the old greeter config but the new .lua one didn't get the same fix, which means this comes back the moment that pacnew gets applied.
+👍React with 👍1Reacted by Oliver Sorg
+dirlligafu commented on Aug 27, 2026
+dirlligafu
+on Aug 27, 2026
+Last edited by dirlligafu
+More actions
+Confirming both bugs on fr (France), Omarchy 4.0.1-1, and adding a third affected surface for Bug A that I don't see mentioned yet: the polkit authentication dialog (/usr/share/omarchy/shell/plugins/polkit/), not just the lock screen. Same root cause, same fix.
+What makes this one nasty is the diagnostic signature. The polkit dialog and a terminal disagree about the same password, seconds apart:
+$ sudo -k && sudo -v && echo "password correct"
+[sudo] password for mdf:
+password correct
+Then, immediately after, typing that same password into the polkit prompt raised by omarchy-windows-vm launch:
+polkit-agent-helper-1[28182]: pam_unix(polkit-1:auth): authentication failure; logname= uid=0 euid=0 tty= ruser=mdf rhost= user=mdf
+polkit-agent-helper-1[28182]: polkit-agent-helper-1: pam_authenticate failed: Authentication failure
+Both go through the identical PAM stack — /usr/lib/pam.d/polkit-1 and /etc/pam.d/sudo both include system-auth, so both end at the same pam_unix and the same /etc/shadow. There is no configuration difference to find between them.
+The asymmetry is the input path, exactly as described in Bug A:
+Surface
+Toolkit
+Goes through fcitx5
+Effective layout
+Terminal (sudo)
+not Qt, GTK_IM_MODULE unset
+no
+fr (compositor)
+polkit dialog / lock screen
+Quickshell = Qt, QT_IM_MODULE=fcitx
+yes
+us
+Meanwhile everything you would normally check says the system is fine, which sends you looking in the wrong place:
+$ hyprctl devices
+logitech-g915-...: rules: r "", m "", l "fr", ... active keymap: French, capsLock: no, numLock: yes
+$ localectl status
+VC Keymap: fr
+X11 Layout: fr
+I spent a while suspecting a corrupted password hash, a pam_faillock lockout, and a missing /etc/pam.d/polkit-1 before thinking of the input method. Anyone hitting this on a non-US layout will most likely read it as "my password is wrong" rather than "my keyboard is wrong" — the dialog gives no hint, and the layout is genuinely correct everywhere they think to look.
+Fixed here by the profile change from Bug A (keyboard-fr), with the stop-edit-start ordering @Division-x described — restart alone does silently revert the file, I hit that too.
+Two smaller data points:
+Worth noting that the polkit dialog and the lock screen are the same two Quickshell surfaces called out in [Quattro] Numlock ignored by Quickshell lock screen and polkit dialog despite correct compositor state #7162 for ignoring numlock. Different mechanism there (seat modifier state, not the input method), but it may be worth checking whether these surfaces need a general "seed keyboard state on creation" pass rather than two separate fixes.
+Re: the .conf vs .lua question in the comment above — on this machine, installed 2026-08-24 and updated to 4.0.1, /etc/sddm.conf.d/10-wayland.conf already points at hyprland.lua, and there is no /usr/share/sddm/hyprland.conf at all. So on a fresh Quattro install Bug B is live right away, not only after a pacnew is applied.
+Investigation done with the help of an AI agent, I woud never have been able to explain all this in English by myself :-)
+👍React with 👍1Reacted by Oliver Sorg
+omarchybot commented on Oct 9, 2026
+omarchybot
+on Oct 9, 2026
+Collaborator
+More actions
+Thanks for the detailed report, and to @Division-x and @dirlligafu for confirming it on es and adding the polkit dialog.
+Bug B (SDDM greeter) is fixed on quattro by #6896 (commit 75b327b): default/sddm/hyprland.lua now reads XKBLAYOUT/XKBVARIANT from /etc/vconsole.conf the same way the session's default/hypr/input.lua does. It is not in a release yet; v4.0.4 predates it, so it arrives with the next one.
+Bug A (lock screen and polkit dialog) has an open fix in #12920, which already links this issue, and the same seeding is part of the maintainer's consolidated input-method change in #14433. The mechanism checks out in source: Omarchy ships no fcitx5 profile (config/fcitx5/conf holds only clipboard.conf and xcb.conf), default/environment.d/10-omarchy-fcitx.conf sets QT_IM_MODULE=fcitx, and the lock screen and polkit password fields are Qt TextInputs, so they type through whatever group fcitx5 guessed on first start. fcitx5 guesses from the X11 side, and XWayland reports us even when Hyprland is fr (#11447 has the fcitx5 log showing this). Both PRs seed ~/.config/fcitx5/profile from vconsole.conf on fresh installs and rewrite the untouched single-group keyboard-us profile on existing ones, which is the profile you posted.
+One gap in both PRs: when fcitx5's first start produces two groups (keyboard-us and keyboard-<your layout>, which is what the log in #11447 shows), neither PR rewrites it. #12920 treats any [Groups/1] as user-managed, and #14433's stock_profile only matches a lone Groups/0. If your profile has a second group, the workaround in the report is still needed after either PR lands. That is noted for the maintainer to weigh.
+I read the code on quattro and both PRs' diffs. Nothing was run, so neither PR is verified here; each gets its own review. Codex Medium reviewed this independently, agreed on both mechanisms, and found the two-group gap. Its independence is not guaranteed. This now waits on the maintainer to choose between #12920 and #14433. #14433 does not link this issue yet, so if it lands instead of #12920, this issue will need closing by hand.
+👍React with 👍1Reacted by Divisix
+Sign up for free to join this conversation on GitHub. Already have an account? Sign in to comment
+Metadata
+Metadata
+Assignees
+No one assigned
+Labels
+bugSomething isn't workingSomething isn't working
+Type
+No type
+Projects
+No projects
+Milestone
+No milestone
+Relationships
+None yet
+Development
+No branches or pull requests
+Issue actions
+Open in GitHub Copilot app
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

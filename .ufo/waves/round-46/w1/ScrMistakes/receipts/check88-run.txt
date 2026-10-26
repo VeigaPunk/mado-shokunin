@@ -1,0 +1,17 @@
+## check88 green (declared F1,F2,F3,F9)
+CHECK88: admitted=10 declared=4 undeclared=6 tightened=13 positive=PASS
+CHECK88: verdict=PASS
+exit=0
+
+## check88 red A (only the positive line)
+CHECK88: admitted=10 declared=4 undeclared=6 tightened=1 positive=PASS
+CHECK88: verdict=FAIL admitted_uncovered=F10,F4,F5d,F6,F7,F8
+exit=1
+
+## check88 red B (no residual declared)
+CHECK88: admitted=10 declared=0 undeclared=10 tightened=13 positive=PASS
+CHECK88: verdict=FAIL admitted_passing=F1,F2,F3,F9
+exit=1
+
+# reproduce the red shape from committed bytes (no scratch kept):
+#   pos-only.txt = head -1 .ufo/waves/round-46/w1/CritC2Forgery/tighten.out

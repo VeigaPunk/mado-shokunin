@@ -1,0 +1,223 @@
+# SentHost evidence transcript (2026-10-26, mado round-46 w1). Real command output only; no serial value and no device name is written here.
+
+## A. every 'hyprctl ...' substring a seat is told to run or reason about (per item, from w1-spec.json)
+item=ExecLiveHost
+   frag: hyprctl devices -j
+   frag: hyprctl devices -j | python3 -I <ref> --devices - --con
+item=ExecW2Monitors
+   frag: hyprctl monitors all -j |
+item=ExecSerialRule
+   frag: hyprctl monitors all -j
+item=ExecXkbCompile
+   frag: hyprctl devices -j
+item=CritPremise
+   frag: hyprctl devices
+   frag: hyprctl devices -j
+   frag: hyprctl getoption input:kb_layout
+   frag: hyprctl-verification-layer.md, hyprland-config-plane.md
+item=CritW2Gate
+   frag: hyprctl clients
+item=RevPrivacyRound
+   frag: hyprctl devices -j
+item=ConnSiblings
+   frag: hyprctl devices. Report any overlap with mado's C2 entr
+item=ScrSerialCorrection
+   frag: hyprctl monitors all -j
+   frag: hyprctl-verification-layer.md:153, hyprland-config-plan
+item=SentHost
+   frag: hyprctl verbs, libinput debug tools, udevadm trigger) a
+verb_in_command_position=dispatch       items=0
+verb_in_command_position=keyword        items=0
+verb_in_command_position=reload         items=0
+verb_in_command_position=setprop        items=0
+verb_in_command_position=switchxkblayout items=0
+verb_in_command_position=output         items=0
+verb_in_command_position=plugin         items=0
+verb_in_command_position=--batch        items=0
+verb_in_command_position=clients        items=1
+verb_in_command_position=binds          items=0
+verb_in_command_position=layers         items=0
+verb_in_command_position=instances      items=0
+verb_in_command_position=configerrors   items=0
+verb_in_command_position=getoption      items=1
+verb_in_command_position=devices        items=5
+verb_in_command_position=monitors       items=3
+verb_in_command_position=version        items=0
+mutating verb in command position (dispatch|keyword|reload|setprop|switchxkblayout|output|plugin|--batch): 0
+
+## B. scratch-directive coverage and artifact-producing items
+items total=66 naming /fast/scratch=6
+named: ExecIndepA ExecIndepB ExecDoNothingC1 ExecW2Monitors CritC1Cheat CritC1Narrow
+compile/materialize items: ExecHyprlangOracle ExecHyprlangOracleB ExecW2Monitors
+
+## C. mado-verify.sh --selftest with HOME and cwd redirected (the hermetic claim under test)
+rc=0
+MADO_SELFTEST: 460/460 assertions passed
+files under redirected HOME: 0
+files under cwd: 0
+
+## D. mado-verify.sh live path verbs and default root (grep -n, lane tools/mado-verify.sh)
+6:# against live bytes and, where available, live hyprctl reads, then emits one
+22:#   * READ-ONLY on every substrate: hyprctl read verbs only (version,
+778:    "OM1 (no hyprctl in the stub PATH — the live layer stops at the guard)"
+779:  st_row_detail "$om_out" live.plane UNKNOWN "hyprctl not on PATH" \
+3183:  # plane: hypr-live — hyprctl read verbs only (MADO-R2-1 §3/§5/§8)
+3396:  if ! have hyprctl; then reason="hyprctl not on PATH"; fi
+3402:    v=$(tmo hyprctl version 2>&1); rc=$?
+3403:    [ "$rc" != 0 ] && reason="hyprctl cannot reach the compositor (rc=$rc)"
+3412:  v=$(tmo hyprctl version 2>/dev/null | head -1)
+3421:  inst=$(tmo hyprctl -j instances 2>/dev/null)
+3427:      '') row hypr-live live.hypr.instances UNKNOWN "cannot parse hyprctl -j instances" ;;
+3428:      *[!0-9]*) row hypr-live live.hypr.instances UNKNOWN "cannot parse hyprctl -j instances (got '$n')" ;;
+109:ROOT="${MADO_VERIFY_ROOT:-$HOME}"
+
+## E. lane SKILL.md safety fence (grep -n)
+39:- **Host-wide package pause until an explicit operator recovery decision:**
+40:  no package transactions or service/compositor mutations. This source-only
+44:  All old live/RUN examples are suspended here, including pure-read producers.
+326:1. **Read-verb whitelist.** hyprctl: only `getoption`, `monitors`, `workspaces`,
+339:   source-only scope supersedes the historical conditional license above.
+350:6. **Scratch outside the substrate.** Probe artifacts under `/tmp/<lane>-*` only; nothing
+365:1. **Scratch outside the substrate:**
+613:round is source-only; no screenshot, refresh signal or service launch.
+
+## F. round-46 context safety lines (numbered as delivered in w1-spec.json:context)
+context_line=50| - Host safety: pacman is PAUSED host-wide - never run pacman or any package transaction. No host-service or compositor mutation, no input injection, no
+context_line=51| Wayland-client connection of your own on the host session. Allowed compositor reads: `hyprctl version`, `hyprctl devices -j`, `hyprctl monitors -j`,
+context_line=53| `plugin`, `kill`. Host config trees and binaries are READ-ONLY. Session material stays shape-only: never commit window titles, monitor
+context_line=54| serials/descriptions, process tables or home-directory listings - project live dumps to the fields you need. Never write the host monitor's serial
+
+## G. git grep pattern handling (scratch repo, dummy token)
+toplevel_ok
+$ git -C D grep -l -F ""   (empty shell variable)
+f.txt
+rc=0
+$ printf "SERIAL-ABC\n" | git -C D grep -l -F -f -   (pattern from stdin)
+f.txt
+rc=0
+
+## H. argv exposure with a dummy token (no host value)
+argv_seen_by_another_process: python3 -c import time; time.sleep(3) DUMMY-SERIAL-0000
+cmdline_mode: 0o444
+
+## I. toolchain present for the instructed builds (no package action needed)
+g++=/usr/bin/g++
+bwrap=/usr/bin/bwrap
+python3=/usr/bin/python3
+hyprctl=/usr/bin/hyprctl
+git=/usr/bin/git
+hyprlang.hpp=present libhyprlang=present
+
+## J. C1 counter scratch/sandbox guards (grep -n)
+25:  i  isolation: every tool run (selftest, fixtures, generated cases) is executed by bubblewrap with `--ro-bind / /
+26:     --dev /dev --proc /proc --unshare-pid --unshare-net --die-with-parent`, a tmpfs over the repository, the counter's
+241:def hidden_paths(repo):
+252:    cmd = ["bwrap", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--unshare-pid", "--unshare-net",
+256:    cmd += ["--bind", marker_dir, marker_dir, "--chdir", cwd, "--"]
+424:                raise Setup("work dir inside a hidden path %s" % h)
+425:        work = tempfile.mkdtemp(dir=a.work, prefix="c1r46-")
+429:            shutil.rmtree(work, ignore_errors=True)
+
+## K. devices read handler is a formatting routine (pin)
+748:static std::string devicesRequest(eHyprCtlOutputFormat format, std::string request) {
+
+## L. host paths named by the live-run items exist (existence and counts only)
+/home/vgpnk/.config/hypr/input.conf FILE
+/home/vgpnk/.config/hypr/monitors.conf FILE
+/home/vgpnk/.config/hypr/hyprland.conf FILE
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf FILE
+device blocks in input.conf: 0
+
+## M. serial shape only (length/class; the value is never read out)
+serial_len=12 digits_only=False
+
+## N. live path verb list, complete (grep -n 'tmo hyprctl' tools/mado-verify.sh)
+3402:    v=$(tmo hyprctl version 2>&1); rc=$?
+3412:  v=$(tmo hyprctl version 2>/dev/null | head -1)
+3421:  inst=$(tmo hyprctl -j instances 2>/dev/null)
+3443:  ce=$(tmo hyprctl configerrors 2>&1); crc=$?
+3455:  j=$(tmo hyprctl -j getoption general:gaps_out 2>/dev/null)
+3464:  j=$(tmo hyprctl -j getoption input:kb_layout 2>/dev/null)
+3477:    j=$(tmo hyprctl -j getoption general:border_size 2>/dev/null)
+3479:    j=$(tmo hyprctl -j getoption decoration:rounding 2>/dev/null)
+3489:  j=$(tmo hyprctl -j getoption animations:enabled 2>/dev/null)
+3499:  binds=$(tmo hyprctl -j binds 2>/dev/null)
+3515:  mon=$(tmo hyprctl -j monitors 2>/dev/null)
+3534:  j=$(tmo hyprctl -j getoption input:touchpad:scroll_factor 2>/dev/null)
+3595:  layers=$(tmo hyprctl -j layers 2>/dev/null)
+
+## O. tools named by the wave that run on live input: process/socket search (grep -c)
+.ufo/waves/round-46/l1-draft/mado-devices.py subprocess=0 socket=1 popen=0
+tools/mado-monitors.py subprocess=0 socket=1 popen=0
+tools/mado-geometry.py subprocess=0 socket=1 popen=0
+
+## P. PROVINCE.md declared read surface for mado-verify.sh (grep -n)
+28:| `tools/mado-verify.sh` | the file bytes of the declared config planes (hypr, waybar, walker, terminal and omarchy-theme trees) and `hyprctl` read verbs only (version, instances, configerrors, getoption, binds, monitors, layers); `--reg
+
+## O2. corrected: real import/use counts (section O matched the docstring phrase 'opens no socket')
+.ufo/waves/round-46/l1-draft/mado-devices.py import_socket=0 socket_use=0 import_subprocess=0 run_use=0
+tools/mado-monitors.py import_socket=0 socket_use=0 import_subprocess=0 run_use=0
+tools/mado-geometry.py import_socket=0 socket_use=0 import_subprocess=0 run_use=0
+docstring phrase 'opens no socket' occurrences:
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/l1-draft/mado-devices.py:26:It reads files and standard input only; it starts no process and opens no socket.
+/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-monitors.py:26:It reads files and standard input only; it starts no process and opens no socket.
+/home/vgpnk/Projects/shokunin/mado-shokunin/tools/mado-geometry.py:23:It reads files and standard input only; it starts no process and opens no socket.
+
+## Q. line numbers only (values never printed)
+live receipt line holding a FIDO/CCID product name: 5 
+live receipt line holding a launcher/audio device name: 11
+source = lines in ~/.config/hypr/hyprland.conf: 18
+fleet root has quality/: no
+items naming a live compositor read: 9 ExecLiveHost ExecW2Monitors ExecSerialRule ExecXkbCompile CritPremise CritW2Gate RevPrivacyRound ConnSiblings ScrSerialCorrection
+
+## R. host-tool words and whether an item tells a seat to RUN one (python over w1-spec.json)
+tool=pacman      items_containing=0 [] | in_command_position=0 []
+tool=systemctl   items_containing=0 [] | in_command_position=0 []
+tool=journalctl  items_containing=0 [] | in_command_position=0 []
+tool=udevadm     items_containing=1 ['SentHost'] | in_command_position=0 []
+tool=libinput    items_containing=3 ['ExecIdGuard', 'ScrReadme', 'SentHost'] | in_command_position=0 []
+tool=ss -        items_containing=0 [] | in_command_position=0 []
+
+## S. clause-r / sandbox read-permeability in the frozen C1 counter (grep -n; code read, not re-executed)
+25:  i  isolation: every tool run (selftest, fixtures, generated cases) is executed by bubblewrap with `--ro-bind / /
+241:def hidden_paths(repo):
+243:    return sorted({os.path.realpath(repo), lr, os.path.dirname(lr)})
+251:def sandbox(argv, cwd, hide, marker_dir):
+252:    cmd = ["bwrap", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--unshare-pid", "--unshare-net",
+260:def env_a(home, fakebin):
+265:def env_b(home, fakebin, rng):
+269:            "XDG_RUNTIME_DIR": "/run/user/%d" % os.getuid()}
+375:                               capture_output=True, env={"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8", "HOME": sd},
+400:        readonly = "fail" if os.path.exists(marker) else "ok"
+note: SentTool-3 reported executed bypasses (bare-name hyprctl in --selftest, absolute /usr/bin/hyprctl, live AF_UNIX connect) at .ufo/waves/round-46/w1/SentTool/findings.md F1/F2 with receipts; this section verifies only the code shape.
+
+## T. v2 re-registration in flight at audit time (17:55-18:01), untracked; freeze document absent
+registration-v2.md exists: NO
+untracked_or_modified: ?? .ufo/waves/round-46/ctl/run-c1-controls-v2.py
+untracked_or_modified: ?? .ufo/waves/round-46/ctl/run-c2-controls-v2.py
+untracked_or_modified: ?? .ufo/waves/round-46/v2/
+untracked_or_modified: ?? quality/counters/c1-r46-devices-v2.py
+untracked_or_modified: ?? quality/counters/c1-r46-fixtures-v2.json
+untracked_or_modified: ?? quality/counters/c2-r46-input-device-entry-v2.py
+v2_sha256: 19d00e664a1706cb03668efd8104548327419bc71cd9d2e2c68656d48b5d1e2a  quality/counters/c1-r46-devices-v2.py
+v2_sha256: d31849db99476db82974476c31ff7f7bca30db1a0ffebae86b99c8d40d55bbe0  quality/counters/c1-r46-fixtures-v2.json
+v2_sha256: eb6db5c9df9e543d4db9bca4aad79ff41c592a1b06a87beed3ab67fb275a5ee2  quality/counters/c2-r46-input-device-entry-v2.py
+v2 guard lines (grep -n):
+27:     XDG_RUNTIME_DIR=/run/user/<uid>}, working directory `job-<hex>`. NONCE is --nonce (default: drawn from os.urandom
+76:FIXTURES_SHA256 = "d31849db99476db82974476c31ff7f7bca30db1a0ffebae86b99c8d40d55bbe0"
+78:MODEL_SHA256 = "3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f"
+154:def make_fakebin(d, trip_fd):
+159:            f.write("#!/bin/sh\nprintf x >&%d\nexit 0\n" % trip_fd)
+259:def hidden_paths(repo):
+278:def sandbox(argv, cwd, ro_dirs):
+280:    cmd = ["bwrap", "--ro-bind", "/usr", "/usr", "--ro-bind", "/etc", "/etc"] + root_links() + [
+281:        "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--unshare-pid", "--unshare-net", "--die-with-parent"]
+297:            "XDG_RUNTIME_DIR": "/run/user/%d" % os.getuid()}
+303:                           capture_output=True, env=env, timeout=20, pass_fds=(trip_fd,))
+403:                               capture_output=True, env={"PATH": fakebin + ":/usr/bin:/bin", "LANG": "C.UTF-8",
+404:                                                         "HOME": sd}, timeout=60, pass_fds=(trip_w,))
+v2 docstring claim (line 4):
+Re-registered BEFORE any round-46 data commit (.ufo/waves/round-46/registration-v2.md), replacing PRED-C1-r46 (frozen at
+wave items still naming the v1 counter:
+items naming v1 counters: 11
+items naming v2 artefacts: 0 []

@@ -1,0 +1,21 @@
+# pin greps for the CritC2Forgery report (read-only, over the round-46 freeze pins)
+## the symbols F1 and F8 invent occur in no pinned .cpp
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-ConfigManager.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-ConfigValues.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-HyprCtl.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-InputManager.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-MiscFunctions.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-VirtualKeyboard.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-protocols-VirtualKeyboard.cpp:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/hyprlang-config.cpp:0
+## the printed scroll factor is set only in the device branch (InputManager.cpp)
+1379:        if (Config::mgr()->deviceConfigExplicitlySet(devname, "scroll_factor"))
+1380:            m->m_scrollFactor = std::clamp(Config::mgr()->getDeviceFloat(devname, "scroll_factor", "input:scroll_factor"), 0.F, 100.F);
+## the global input:scroll_factor is a separate value, never clamped into m_scrollFactor
+971:    static auto PINPUTSCROLLFACTOR    = CConfigValue<Config::FLOAT>("input:scroll_factor");
+## F2's quote: one occurrence, at InputManager.cpp:1274
+1
+1274:            Log::logger->log(Log::DEBUG, "Not applying config to keyboard, it did not change.");
+## S319 quote line (the compile-failure fallback F9 mislabels)
+113:        m_currentRules.layout  = "us";

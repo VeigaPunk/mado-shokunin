@@ -1,0 +1,25 @@
+# contract runs: l1-draft/mado-devices.py sha256 b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b
+## A (readable kb_file, keymap supplied by the file; declared names zz never attempted)
+input {
+ kb_layout = zz
+ kb_file = ~/x.xkb
+}
+MADO_DEV_KEYBOARD: name="k" block=no layout="zz" variant="" options="" model="" rules="" kb_file=set differ=- verdict=AGREE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+exit=0
+## B (missing kb_file, declared names us compile)
+input {
+ kb_layout = us
+ kb_file = ~/missing.xkb
+}
+MADO_DEV_KEYBOARD: name="k" block=no layout="us" variant="" options="" model="" rules="" kb_file=set differ=- verdict=AGREE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+exit=0
+## C (missing kb_file, declared names zz do not compile -> us/empty rewrite)
+input {
+ kb_layout = zz
+ kb_file = ~/missing.xkb
+}
+MADO_DEV_KEYBOARD: name="k" block=no layout="zz" variant="" options="" model="" rules="" kb_file=set differ=layout verdict=FALLBACK
+MADO_DEVICES: keyboards=1 agree=0 differ=0 fallback=1 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER
+exit=1

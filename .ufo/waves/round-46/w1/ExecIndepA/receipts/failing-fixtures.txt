@@ -1,0 +1,40 @@
+# failing fixtures of run 1 (rev e294cec, nonce 2), verbatim; seed-46 names substituted
+# fixture source: quality/counters/c1-r46-fixtures.json (sha256 pin in the counter)
+=== fixture matched-touch want_rc=0 ===
+config 0: "device[logitech-keyboard]:output = DP-1\n"
+expect:
+MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_BLOCK: name="logitech-keyboard" keys=0 verdict=MATCHED
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=OK
+run-1 counter line:
+PRED-C1-r46 clause=f fixture=matched-touch FAIL 46A:rc=0 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\n'; 46B:rc=0 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\n'; nA:rc=0 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="at-translated-set-2-deathadder-v2-2" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK\n'
+=== fixture comment-triple-hash want_rc=0 ===
+config 0: "input:kb_options = a###b\n"
+expect:
+MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="a##b" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+run-1 counter line:
+PRED-C1-r46 clause=f fixture=comment-triple-hash FAIL 46A:rc=1 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="a#" model="" rules="" kb_file=- differ=options verdict=DIFFER\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\n'; 46B:rc=1 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="a#" model="" rules="" kb_file=- differ=options verdict=DIFFER\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\n'; nA:rc=1 want_rc=0 stderr=b'' got='MADO_DEV_KEYBOARD: name="at-translated-set-2-deathadder-v2-2" block=no layout="us" variant="" options="a#" model="" rules="" kb_file=- differ=options verdict=DIFFER\nMADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER\n'
+=== fixture block-first-not-name want_rc=5 ===
+config 0: "device {\nkb_layout = de\nname = logitech-touchpad\n}\n"
+expect:
+MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=2 verdict=NOT_COMPARED
+run-1 counter line:
+PRED-C1-r46 clause=f fixture=block-first-not-name FAIL 46A:rc=5 want_rc=5 stderr=b'' got='ad" block=yes layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="logitech-touchpad" keys=0 verdict=MATCHED\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\n'; 46B:rc=5 want_rc=5 stderr=b'' got='ad" block=yes layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="logitech-touchpad" keys=0 verdict=MATCHED\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\n'; nA:rc=5 want_rc=5 stderr=b'' got='ut="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="at-translated-set-2-deathadder-v2-2" keys=0 verdict=MATCHED\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=1 verdict=NOT_COMPARED\n'
+=== fixture rename want_rc=5 ===
+config 0: "device {\nname = keychron-mx-master-3-keyboard\nname = logitech-touchpad\nkb_layout = de\n}\n"
+expect:
+MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_BLOCK: name="keychron-mx-master-3-keyboard" keys=0 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=2 verdict=NOT_COMPARED
+run-1 counter line:
+PRED-C1-r46 clause=f fixture=rename FAIL 46A:rc=5 want_rc=5 stderr=b'' got='t="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="keychron-mx-master-3-keyboard" keys=1 verdict=NO_SUCH_DEVICE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=1 verdict=NOT_COMPARED\n'; 46B:rc=5 want_rc=5 stderr=b'' got='t="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="keychron-mx-master-3-keyboard" keys=1 verdict=NO_SUCH_DEVICE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=1 verdict=NOT_COMPARED\n'; nA:rc=5 want_rc=5 stderr=b'' got='"us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEV_BLOCK: name="hp--inc-yubikey-otp+fido+ccid-2" keys=1 verdict=NO_SUCH_DEVICE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=1 verdict=NOT_COMPARED\n'
+=== fixture bracket-name-key want_rc=5 ===
+config 0: "device[keychron-mx-master-3-keyboard]:name = logitech-touchpad\n"
+expect:
+MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE
+MADO_DEV_BLOCK: name="keychron-mx-master-3-keyboard" keys=0 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=1 verdict=NOT_COMPARED
+run-1 counter line:
+PRED-C1-r46 clause=f fixture=bracket-name-key FAIL 46A:rc=5 want_rc=5 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED\n'; 46B:rc=5 want_rc=5 stderr=b'' got='MADO_DEV_KEYBOARD: name="logitech-touchpad" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED\n'; nA:rc=5 want_rc=5 stderr=b'' got='MADO_DEV_KEYBOARD: name="at-translated-set-2-deathadder-v2-2" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=- verdict=AGREE\nMADO_DEVICES: keyboards=1 agree=1 differ=0 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=0 stale=0 unsupported=1 verdict=NOT_COMPARED\n'

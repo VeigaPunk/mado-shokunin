@@ -1,0 +1,32 @@
+# oracle probe: isNumber as the installed hyprutils 0.14.2 actually behaves
+# source: isnumber-probe.cpp (compiled with g++ -std=c++23 isnum.cpp -lhyprutils; host headers /usr/include/hyprutils/string/String.hpp:9)
+# NOT a pinned source: hyprutils 0.14.2 is the installed library paired with hyprlang 0.6.8-5; no Numeric.hpp/String.cpp pin of that version exists under .ufo/waves/*/fetch/
+# question: is the tool's INTEGER grammar -?[0-9]{1,9} (docstring: 'hyprutils isNumber without a float part') right about digit width?
+
+src| #include <hyprutils/string/String.hpp>
+src| #include <cstdio>
+src| #include <string>
+src| int main() {
+src|     const char* cases[] = {"3","07","+3","-0","123456789","1234567890","3.5","", " 3","0x10","1e3","-","7abc","-7"};
+src|     for (auto c : cases) {
+src|         printf("isNumber(\"%s\")=%d isNumber(float)=%d\n", c,
+src|                (int)Hyprutils::String::isNumber(std::string{c}), (int)Hyprutils::String::isNumber(std::string{c}, true));
+src|     }
+src|     return 0;
+src| }
+
+## output
+isNumber("3")=1 isNumber(float)=1
+isNumber("07")=1 isNumber(float)=1
+isNumber("+3")=0 isNumber(float)=0
+isNumber("-0")=1 isNumber(float)=1
+isNumber("123456789")=1 isNumber(float)=1
+isNumber("1234567890")=1 isNumber(float)=1
+isNumber("3.5")=0 isNumber(float)=1
+isNumber("")=0 isNumber(float)=0
+isNumber(" 3")=0 isNumber(float)=0
+isNumber("0x10")=0 isNumber(float)=0
+isNumber("1e3")=0 isNumber(float)=0
+isNumber("-")=0 isNumber(float)=0
+isNumber("7abc")=0 isNumber(float)=0
+isNumber("-7")=1 isNumber(float)=1

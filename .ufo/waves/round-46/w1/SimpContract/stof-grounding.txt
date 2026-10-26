@@ -1,0 +1,37 @@
+--- stof.cpp
+#include <cstdio>
+#include <string>
+#include <exception>
+int main() {
+    const char* v[] = {"1e-46", "-1e-46", "1e-45", "1e-40", "1.17549428e-38", "1.17549430e-38",
+                       "1.1754942e-38", "1e39", "-1e39", "0x10", "0x1p3", "0.7x", "nan", "inf", "fast", "0.335", "5.", ".5", ""};
+    for (auto s : v) {
+        try {
+            float f = std::stof(std::string{s});
+            printf("%-14s ok float=%.9g bits_ok\n", s, (double)f);
+        } catch (const std::exception& e) {
+            printf("%-14s THROW %s\n", s, e.what());
+        }
+    }
+    return 0;
+}
+--- g++ -O0 -std=c++20 -o stof stof.cpp && ./stof
+1e-46          THROW stof
+-1e-46         THROW stof
+1e-45          THROW stof
+1e-40          THROW stof
+1.17549428e-38 THROW stof
+1.17549430e-38 THROW stof
+1.1754942e-38  THROW stof
+1e39           THROW stof
+-1e39          THROW stof
+0x10           ok float=16 bits_ok
+0x1p3          ok float=8 bits_ok
+0.7x           ok float=0.699999988 bits_ok
+nan            ok float=nan bits_ok
+inf            ok float=inf bits_ok
+fast           THROW stof
+0.335          ok float=0.335000008 bits_ok
+5.             ok float=5 bits_ok
+.5             ok float=0.5 bits_ok
+               THROW stof

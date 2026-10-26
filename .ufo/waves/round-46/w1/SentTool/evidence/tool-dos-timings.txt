@@ -1,0 +1,13 @@
+### size cap and quadratic comment-cut timings (reference, through the CLI)
+exact 1048576 bytes       0.02s rc=1 (accepted)
+over 1048577 bytes        0.01s rc=2 SETUP too_large
+1MiB one line of ## pairs 8.86s rc=1   <- cut_comment line 196-203, O(n^2) string copies
+1MiB of 349525 continuations 1.08s rc=1  <- join_continuations
+### scaling measurement of cut_comment (direct call)
+pairs=  1000 len=  2001 0.000s
+pairs=  5000 len= 10001 0.001s
+pairs= 20000 len= 40001 0.012s
+pairs= 50000 len=100001 0.072s
+pairs=200000 len=400001 1.201s
+### FLOAT_RE backtracking probe (no super-linear behaviour)
+digits len=1000000 0.001s / digits+e 0.001s / digits+x 0.001s / many-digits-dots 0.000s

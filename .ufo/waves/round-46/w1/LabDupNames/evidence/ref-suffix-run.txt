@@ -1,0 +1,11 @@
+$ mado-devices.py --devices d1.json --config t1.conf   # block "foo", dump device "foo-1"
+MADO_DEV_KEYBOARD: name="foo-1" block=no layout="us" variant="" options="" model="" rules="" kb_file=- differ=model verdict=DIFFER
+MADO_DEV_BLOCK: name="foo" keys=1 verdict=NO_SUCH_DEVICE
+MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=1 unsupported=0 verdict=DIFFER
+rc=1
+
+$ mado-devices.py --devices d1.json --config t2.conf   # block "foo-1", dump device "foo-1"
+MADO_DEV_KEYBOARD: name="foo-1" block=yes layout="de" variant="" options="" model="" rules="" kb_file=- differ=layout,model verdict=DIFFER
+MADO_DEV_BLOCK: name="foo-1" keys=1 verdict=MATCHED
+MADO_DEVICES: keyboards=1 agree=0 differ=1 fallback=0 virtual=0 mice=0 mice_differ=0 blocks=1 stale=0 unsupported=0 verdict=DIFFER
+rc=1

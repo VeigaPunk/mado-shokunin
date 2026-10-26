@@ -1,0 +1,7 @@
+### does a read-only mount stop AF_UNIX connect()?  listener outside, client inside bwrap
+--- socket path bound --ro-bind (mirrors /run/user/1000 being ro in the counter sandbox) ---
+CONNECT_OK b'hello\n'
+--- socket path bound --bind (rw) ---
+CONNECT_OK b'hello\n'
+# conclusion: --ro-bind / / (the counter's blanket read-only bind) does NOT block unix-socket connect();
+# the live compositor socket at $XDG_RUNTIME_DIR/hypr/<signature>/.hyprland.sock stays connectable.

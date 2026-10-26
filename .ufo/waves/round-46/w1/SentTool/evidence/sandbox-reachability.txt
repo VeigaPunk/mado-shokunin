@@ -1,0 +1,16 @@
+### one run inside the exact sandbox() argv of quality/counters/c1-r46-devices.py:251-257
+$ bwrap --ro-bind / / --dev /dev --proc /proc --unshare-pid --unshare-net --die-with-parent --tmpfs <lane> --bind <probe> <probe> --chdir <probe> -- env PATH=/usr/bin:/bin HOME=<probe> HYPRLAND_INSTANCE_SIGNATURE=mado-r46-fixture XDG_RUNTIME_DIR=/run/user/<uid> /bin/bash probe.sh
+hyprctl_path=/usr/bin/hyprctl executable=yes
+xdg_runtime_dir=/run/user/1000
+hypr_sig_dirs=1
+hypr_sockets=2
+wayland_sockets=1
+absolute_home_conf_readable=yes
+absolute_home_ssh_dir_listable=yes
+scratch_root_entries=5
+lane_file_readable=no
+absolute_hyprctl_rc=4
+absolute_hyprctl_stderr_bytes=0
+bwrap_rc=0
+# lane_file_readable=no is the tmpfs shadow doing its job (the lane path exists but is empty inside).
+# the sandbox hides exactly {repo, lane, lane parent}; $HOME, /run/user/<uid> and the wave scratch root are untouched.

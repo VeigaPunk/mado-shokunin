@@ -1,0 +1,119 @@
+# round-46 w1 ScrLessonGate - source screening receipt (read-only, 2026-10-26)
+
+## A. path census and symbol screen on the Hyprland tree at the host revision
+$ git clone -q --filter=blob:none --no-checkout --depth 1 --branch v0.56.2 https://github.com/hyprwm/Hyprland <scratch>/hl
+$ git -C hl rev-parse HEAD
+efb50993780079460b0cbed1363e2166a2de1d9f
+$ git -C hl ls-tree -r --name-only HEAD -- src | wc -l
+799
+$ git -C hl ls-tree -r --name-only HEAD -- src | grep -Ei "input|keyboard|device|hyprctl|config|virtual" | wc -l
+217
+$ git -C hl grep -l -E "getDeviceString|getConfigValueSafeDevice|scrollFactor|scroll_factor|m_keymapOverridden|deviceConfigExists|deviceNameToInternalString|addSpecialConfigValue\(\"device\"|virtualKeyboardNameForWlClient|\"input:kb_|hl-virtual-keyboard" HEAD -- src
+HEAD:src/config/ConfigManager.hpp
+HEAD:src/config/legacy/ConfigManager.cpp
+HEAD:src/config/legacy/ConfigManager.hpp
+HEAD:src/config/lua/ConfigManager.cpp
+HEAD:src/config/lua/ConfigManager.hpp
+HEAD:src/config/lua/bindings/LuaBindingsConfigRules.cpp
+HEAD:src/config/values/ConfigValues.cpp
+HEAD:src/config/values/ConfigValues.hpp
+HEAD:src/debug/HyprCtl.cpp
+HEAD:src/desktop/rule/windowRule/WindowRuleApplicator.hpp
+HEAD:src/desktop/view/Window.cpp
+HEAD:src/devices/IKeyboard.cpp
+HEAD:src/devices/IKeyboard.hpp
+HEAD:src/devices/IPointer.hpp
+HEAD:src/devices/VirtualKeyboard.cpp
+HEAD:src/helpers/MiscFunctions.cpp
+HEAD:src/helpers/MiscFunctions.hpp
+HEAD:src/managers/KeybindManager.cpp
+HEAD:src/managers/input/InputManager.cpp
+HEAD:src/protocols/VirtualKeyboard.cpp
+
+## B. out-of-tree candidate probes (HTTP status)
+HTTP 404  https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/Configuring/Keywords.md
+HTTP 200  https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/configuring/core/devices.md
+HTTP 200  https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/configuring/core/config-options.md
+HTTP 200  https://raw.githubusercontent.com/hyprwm/hyprland-wiki/ecc06f3b6605e453c0ad533d979fccbefff788ef/content/Configuring/Variables.md
+HTTP 200  https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/Keyboard.cpp
+HTTP 200  https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/Keyboard.hpp
+HTTP 200  https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/ConfigManager.cpp
+
+## C. host config-manager selector inputs (existence only)
+exists  /home/vgpnk/.config/hypr/hyprland.conf
+absent  /home/vgpnk/.config/hypr/hyprland.lua
+
+## D. decisive bytes of the out-of-tree candidates (fetched 2026-10-26, line numbers as fetched)
+$ sed -n "12,22p" <wiki main content/configuring/core/devices.md>
+hl.device({
+    name = "my-epic-keyboard",
+    sensitivity = -0.5
+})
+```
+
+The `name` can be easily obtained by checking the output of `hyprctl devices`.
+
+Inside of this table, specify your desired config options.
+Any of the [`input` options](../../core/config-options#input) can be set, **EXCEPT**:
+- `force_no_accel`
+$ grep -n "kb_layout\|scroll_factor\|hyprlang\|lua\|toml" <wiki main content/configuring/core/config-options.md>
+16:hl.config({
+30:hl.config({ ["category.option"] = value })
+33:Multiple `hl.config()` invocations can be used to set options, since each call will only update what was passed into it.
+37:This also means you can update options at runtime, without adding them to your configuration file, using [`hyprctl eval 'hl.config(...)'`](../advanced-configuration/using-hyprctl#eval).
+140:hl.window_rule({
+377:| kb_layout | Appropriate XKB keymap parameter | string | `"us"` | |
+395:| scroll_factor | Multiplier added to scroll movement for external mice. Note that there is a separate setting for [touchpad scroll_factor](#touchpad)  | float | `1.0` | [0 - 100] |
+444:| scroll_factor | Multiplier applied to the amount of scroll movement | float | `1.0` | [0.0 - 100] |
+$ grep -n "kb_layout\|scroll_factor\|Per-device input config\|Described" <wiki pin content/Configuring/Variables.md>
+186:| kb_layout | Appropriate XKB keymap parameter | str | us |
+204:| scroll_factor | Multiplier added to scroll movement for external mice. Note that there is a separate setting for [touchpad scroll_factor](#touchpad).  | float | 1.0 |
+265:| scroll_factor | Multiplier applied to the amount of scroll movement. | float | 1.0 |
+311:### Per-device input config
+313:Described [here](../Keywords#per-device-input-configs).
+$ grep -c "getDeviceString\|setKeymap\|kb_layout\|keymap" <src/devices/Keyboard.cpp> <src/devices/Keyboard.hpp>
+rej-Keyboard.cpp:0
+$ sed -n "19,38p" <src/config/ConfigManager.cpp>
+    // run this bitch
+    const auto CFG_PATH = Supplementary::Jeremy::getMainConfigPath();
+
+    if (!CFG_PATH) {
+        Log::logger->log(Log::CRIT, "[cfg] Couldn't load config: {}", CFG_PATH.error());
+        return false;
+    }
+
+    std::filesystem::path filePath = CFG_PATH->path;
+
+    if (CFG_PATH->type == Supplementary::Jeremy::CONFIG_TYPE_REGULAR) {
+        Log::logger->log(Log::DEBUG, "[cfg] Regular config at {}", filePath.string());
+
+        std::error_code ec;
+        if (filePath.extension() == ".lua") {
+            // we have lua!
+            Log::logger->log(Log::DEBUG, "[cfg] Using lua config found at {}", filePath.string());
+            g_mgr = makeUnique<Lua::CConfigManager>();
+        } else {
+            filePath.replace_extension(".conf");
+$ grep -o "\"name\":\"[A-Za-z0-9._-]*\"" <tree main content/configuring/core> | grep -E "config.toml|config-options.md|devices.md" | sort -u
+"name":"config-options.md"
+"name":"config.toml"
+"name":"devices.md"
+
+## D2. symbol counts in the device-class candidates (grep -c, fetched/held bytes)
+$ grep -c "getDeviceString\|setKeymap\|kb_layout\|keymap" <Keyboard.cpp> <Keyboard.hpp> <IKeyboard.hpp> <pinned IKeyboard.cpp>
+rej-Keyboard.cpp:0
+cand-fa4d4e-Keyboard.hpp:0
+rej-IKeyboard.hpp:9
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-46/fetch/Hyprland-IKeyboard.cpp:43
+$ wc -l <Keyboard.cpp> <Keyboard.hpp> <IKeyboard.hpp>
+  56 rej-Keyboard.cpp
+  21 cand-fa4d4e-Keyboard.hpp
+ 137 rej-IKeyboard.hpp
+ 214 total
+
+## E. entry-draft scope sentence read by this seat (not edited; L1 surface)
+$ grep -n "later Hyprland releases" .ufo/waves/round-46/l1-draft/entry.md
+71:- The Lua config of later Hyprland releases is out of scope.
+$ grep -n "mgr = makeUnique<Lua::CConfigManager>" <Hyprland efb50993 src/config/ConfigManager.cpp>
+HEAD:src/config/ConfigManager.cpp:36:            g_mgr = makeUnique<Lua::CConfigManager>();
+HEAD:src/config/ConfigManager.cpp:47:            g_mgr = makeUnique<Lua::CConfigManager>();

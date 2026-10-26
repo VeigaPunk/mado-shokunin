@@ -1,0 +1,371 @@
+Skip to content
+Navigation Menu
+Sign inAppearance settings
+PlatformAI CODE CREATIONGitHub CopilotWrite better code with AI
+GitHub Copilot appDirect agents from issue to merge
+MCP RegistryIntegrate external tools
+DEVELOPER WORKFLOWSActionsAutomate any workflow
+CodespacesInstant dev environments
+IssuesPlan and track work
+Code ReviewManage code changes
+Code QualityEnforce quality at merge
+APPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilities
+Code securitySecure your code as you build
+Secret protectionStop leaks before they start
+EXPLOREWhy GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+View all features
+SolutionsBY COMPANY SIZEEnterprises
+Small and medium teams
+Startups
+Nonprofits
+BY USE CASEApp Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+BY INDUSTRYHealthcare
+Financial services
+Manufacturing
+Government
+See all industries
+View all solutions
+ResourcesEXPLORE BY TOPICAI
+Software Development
+DevOps
+Security
+View all topics
+EXPLORE BY TYPECustomer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+SUPPORT & SERVICESDocumentation
+Customer support
+Community forum
+Trust center
+Partners
+View all resources
+Open SourceCOMMUNITYGitHub SponsorsFund open source developers
+PROGRAMSSecurity Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+REPOSITORIESTopics
+Trending
+Collections
+EnterpriseENTERPRISE SOLUTIONSEnterprise platformAI-powered developer platform
+AVAILABLE ADD-ONSGitHub Advanced SecurityEnterprise-grade security features
+Copilot for BusinessEnterprise-grade AI features
+Premium SupportEnterprise-grade 24/7 support
+Pricing
+Search/
+Sign in
+Sign upAppearance settings
+Dismiss alert
+{{ message }}
+hyprwm
+Hyprland
+Repository navigation
+Code
+Issues50 (50)
+Pull requests140 (140)
+Discussions
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+More items
+Keyboard layout resets itself to the default, Hyprland doesn't know
+#10159
+Unanswered
+spikespaz
+asked this question in
+Bugs - Input
+Keyboard layout resets itself to the default, Hyprland doesn't know
+#10159
+spikespaz
+Apr 24, 2025
+·
+4 comments
+·
+7 replies
+Return to top
+Discussion options
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+spikespaz
+Apr 24, 2025
+I have been facing some strangeness with my keyboard layout configuration.
+Apparently randomly, I haven't observed any coincidences or correlations, my laptop's internal keyboard (at-translated-set-2-keyboard) switches back to the default English (US) layout. Or at least, it randomly starts outputting QWERTY.
+This happens:
+in the middle of typing a sentence
+after switching between another window and VS Code
+normal key presses still follow the Colemak-DH layout
+shortcuts (Ctrl+C/V/Z, etc) use QWERTY
+restarting VS Code fixes this problem
+after launching Factorio
+same behavior as VS Code, game respects Colemak-DH
+except for shortcuts (Ctrl+C, etc)
+does not happen if using XWayland
+I can mitigate these problems by:
+starting from English (Colemak-DH) while the "shortcut paradox" is happening
+Close the game/code editor
+switching back to English (US)
+switching back to English (Colemak-DH)
+Open the game/code editor
+For VS Code, all windows need to be closed before switching to/from Colemak-DH.
+This might be two separate issues:
+the keyboard switches its layout and starts using QWERTY in the middle of typing
+the custom layout continues to apply for normal key-presses, but shortcuts use QWERTY
+In both circumstances, checking hyprctl devices always shows me the layout I expect to be in (Colemak-DH).
+Keyboard at 28a1c470:
+at-translated-set-2-keyboard
+rules: r "", m "", l "us,us", v ",colemak_dh", o ",caps:ctrl_modifier"
+active keymap: English (Colemak-DH)
+capsLock: no
+numLock: no
+main: no
+It is probably worthwhile to note that I am using Waybar with the "hyprland/language" widget to display the keymap at the top of the screen at all times. So far as I have noticed, it always agrees with hyprctl devices.
+"hyprland/language" = {
+keyboard-name = "at-translated-set-2-keyboard";
+format = "󰌌 {}";
+on-click = commands.keyboardLayoutNext;
+on-click-right = commands.keyboardLayoutPrev;
+};
+The commands commands.keyboardLayoutNext and keyboardLayoutPrev call out to a custom script: https://github.com/spikespaz/dotfiles/blob/976c89f93fdfd6b75eb32f0f8403dc6d9a251d35/users/jacob/hyprland/scripts/switch-keyboard-layout.nu
+My configuration for Hyprland looks like this:
+wayland.windowManager.hyprland.config = {
+input.resolve_binds_by_sym = true;
+};
+wayland.windowManager.hyprland.deviceConfig = {
+"at-translated-set-2-keyboard" = {
+kb_layout = "us,us";
+kb_variant = ",colemak_dh";
+kb_options = ",caps:ctrl_modifier";
+};
+};
+4
+You must be logged in to vote
+All reactions
+Replies:
+4 comments
+·
+7 replies
+Oldest
+Newest
+Top
+Comment options
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+spikespaz
+May 2, 2025
+Author
+Found a problem with Noita, which is supported by a narrow range of Proton versions.
+Steam launch options:
+env --unset=SDL_VIDEODRIVER %command%
+If the default variant is colemak_dh, eg.
+kb_layout = us,us
+kb_variant = colemak_dh,
+Whether the game is started with the English (Colemak-DH) variant active or English (US), it will receive inputs according to (Colemak-DH).
+1
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+spikespaz
+May 7, 2025
+Author
+I can reliably cause this to happen when every time I send input with a bluetooth keyboard, it switches the layout of the internal keyboard. Querying hyprctl reflects that Hyprland has no idea that the layout for at-translated-set-2-keyboard has changed.
+@vaxerski I think there's enough information here now to ping you.
+1
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+spikespaz
+May 8, 2025
+Author
+Does this happen because:
+The bluetooth keyboard goes to sleep.
+When pressing a key, it wakes up.
+Hyprland reloads the relevant configuration -- except more than relevant for the "newly connected" device.
+Hyprland selects the default keymap.
+But that doesn't track with the issue happening whether
+kb_variant = colemak_dh,
+or
+kb_variant = ,colemak_dh
+1
+You must be logged in to vote
+All reactions
+7 replies
+-->
+Show 2 previous replies
+Comment options
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+spikespaz
+May 8, 2025
+Author
+Since VS code receives normal key presses according to the colemak_dh variant but shortcuts according to the default (whatever the name is) I don't think this is a firmware problem, but this could be a separate issue.
+All reactions
+Comment options
+spikespaz
+May 8, 2025
+Author
+What do you mean "use a hyprland keybind instead"?
+All reactions
+Comment options
+vaxerski
+May 10, 2025
+Maintainer
+Since VS code receives normal key presses according to the colemak_dh variant but shortcuts according to the default (whatever the name is) I don't think this is a firmware problem, but this could be a separate issue.
+That's documented in the wiki. The layout used for the shortcuts is the first layout in input:kb_layout.
+What do you mean "use a hyprland keybind instead"?
+hyprctl switchxkblayout
+All reactions
+Comment options
+edited
+{{editor}}'s edit
+{{actor}} deleted this content
+.
+{{editor}}'s edit
+spikespaz
+May 10, 2025
+Author
+I'm not sure what you're telling me to do that's different from what I have. I run hyprctl switchxkblayout at-translated-set-2-keyboard 0 every time this happens. The default layout is using variant colemak_dh currently. I have showed you two different configurations for the default keymap, and the VS Code shortcuts and games have the same problems no matter the order of the layouts.
+Edit: I have not touched input:kb_variant, and I don't want to because that would affect external keyboards as well. The default layout must remain deferred to the system (I assume VT configuration). I also have resolve_binds_by_sym (or whatever it's called) set to true, I'm not sure if it affects this.
+All reactions
+Comment options
+vaxerski
+May 13, 2025
+Maintainer
+can you check if anything of note is emitted in socket2 when the reset happens?
+All reactions
+Comment options
+rober-m
+Oct 24, 2025
+I faced a similar issue, and it turned out to be because I was using Kanata. I checked hyprctl devices and saw this:
+Keyboard at 404e3560:
+at-translated-set-2-keyboard
+rules: r "", m "", l "us, latam", v "", o "grp:alt_space_toggle"
+active layout index: 1
+active keymap: Spanish (Latin American)
+capsLock: no
+numLock: no
+main: no
+Keyboard at 404e2950:
+kanata
+rules: r "", m "", l "us, latam", v "", o "grp:alt_space_toggle"
+active layout index: 0
+active keymap: English (US)
+capsLock: no
+numLock: no
+main: yes
+I noticed that kanata was available as a separate "device" and that it showed the actual active layout.
+So I changed this Waybar config:
+"hyprland/language" = {
+format = " ({shortDescription})";
+"keyboard-name" = "at-translated-set-2-keyboard";
+"on-click" = "hyprctl switchxkblayout at-translated-set-2-keyboard next";
+};
+To this one:
+"hyprland/language" = {
+format = " ({shortDescription})";
+"keyboard-name" = "kanata";
+"on-click" = "hyprctl switchxkblayout kanata next";
+};
+And now it works as expected. I hope it helps!
+1
+You must be logged in to vote
+All reactions
+0 replies
+-->
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Category
+🐛
+Bugs - Input
+Labels
+None yet
+3 participants
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Menu
+Heading
+Bold
+Italic
+Quote
+Code
+Link
+Numbered list
+Unordered list
+Task list
+Attach files
+Mention
+Reference
+Select a reply
+Loading
+Create a new saved reply
+👍
+1
+reacted with thumbs up emoji
+👎
+1
+reacted with thumbs down emoji
+😄
+1
+reacted with laugh emoji
+🎉
+1
+reacted with hooray emoji
+😕
+1
+reacted with confused emoji
+❤️
+1
+reacted with heart emoji
+🚀
+1
+reacted with rocket emoji
+👀
+1
+reacted with eyes emoji
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+You can’t perform that action at this time.

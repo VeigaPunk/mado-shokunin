@@ -1,0 +1,113 @@
+Can't both change keyboard layout and swap Esc with capsLk
+created 2025-02-02T00:31:26Z closed 2025-02-02T14:40:42Z
+### Already reported ? *
+
+- [x] I have searched the existing open and closed issues.
+
+### Regression?
+
+Not a regression - it's bug regarding new feature
+
+### System Info and Hyprland Version
+
+<details> <summary>System/Version info</summary>
+
+```
+Hyprland 0.47.0 built from branch main at commit 64fefa3749868e6170b6275963c6528456a7d9f2  (desktop: move popups to UPs and fix missing subsurface resource).
+Date: Sat Feb 1 21:10:19 2025
+Tag: v0.47.0-35-g64fefa37, commits: 5777
+built against:
+ aquamarine 0.7.2
+ hyprlang 0.6.0
+ hyprutils 0.5.0
+ hyprcursor 0.1.11
+ hyprgraphics 0.1.1
+
+
+no flags were set
+
+
+System Information:
+System name: Linux
+Node name: archbox
+Release: 6.12.10-arch1-1
+Version: #1 SMP PREEMPT_DYNAMIC Sat, 18 Jan 2025 02:26:57 +0000
+
+
+GPU information: 
+01:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU117BM [GeForce GTX 1650 Mobile Refresh] [10de:1fdd] (rev a1) (prog-if 00 [VGA controller])
+NVRM version: NVIDIA UNIX x86_64 Kernel Module  565.77  Wed Nov 27 23:33:08 UTC 2024
+
+
+os-release: NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+
+
+plugins:
+
+
+```
+
+</details>
+
+### Description
+
+When commenting one of the 2 lines the other works fine but both don't.
+
+### How to reproduce
+
+Just use this in `~/.config/hypr/hyprland.conf`. and try changing the layout and using CapsLk as Esc.
+```
+input{
+  kb_layout = us,ara
+  kb_variant = ,
+  kb_options = grp:alt_shift_toggle
+  kb_options = caps:swapescape
+
+  follow_mouse = 1
+  accel_profile = flat
+  scroll_factor = 0.8
+  
+  touchpad {
+    natural_scroll = yes
+  }
+}
+```
+
+### Attach not paste
+
+- [x] I understand that all text files must be *attached*, and not pasted directly. If not respected, this issue will likely get closed as spam
+
+### Checklist of files to include below
+
+- [ ] Hyprland config - `hyprctl systeminfo -c` (always include)
+- [ ] Crash report (always include in case of crash)
+- [ ] Video (always include in case of a visual bug)
+- [ ] Logs (might contain useful info such as errors)
+
+### Additional info & File uploads
+
+_No response_
+-- davc0n 2025-02-02T11:18:28Z
+Probably not related to layout.
+Use a comma to separate multiple kb_options, likely the second one is being ignored (or the contrary, overrides the first).
+
+```
+kb_options = grp:alt_shift_toggle,caps:swapescape
+```
+-- abdalrahmanshaban0 2025-02-02T14:40:42Z
+> Probably not related to layout. Use a comma to separate multiple kb_options, likely the second one is being ignored (or the contrary, overrides the first).
+> 
+> ```
+> kb_options = grp:alt_shift_toggle,caps:swapescape
+> ```
+Thanks, this works fine.

@@ -1,0 +1,802 @@
+[
+ {
+  "id": "M01",
+  "site": "MAX_BYTES boundary -1",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M01.py",
+  "old": "MAX_BYTES = 1048576",
+  "new": "MAX_BYTES = 1048575",
+  "sha256": "16f5269ad0735d6f585f6263d34e03c6a04a1e7c56db3ed27caf2ec900fe8071"
+ },
+ {
+  "id": "M02",
+  "site": "read_regular loop <= -> <",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M02.py",
+  "old": "        while len(data) <= MAX_BYTES:",
+  "new": "        while len(data) < MAX_BYTES:",
+  "sha256": "958ea567e91e047abf37b850f078391536ed0fb820cbb09f7754e8ced278b9f0"
+ },
+ {
+  "id": "M03",
+  "site": "read_stdin loop <= -> <",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M03.py",
+  "old": "def read_stdin():\n    data = b\"\"\n    while len(data) <= MAX_BYTES:",
+  "new": "def read_stdin():\n    data = b\"\"\n    while len(data) < MAX_BYTES:",
+  "sha256": "5b09262a664dcb82b7e76bbfaa347190a914cfe2e0cd8e57e5c0d85bfd1092d0"
+ },
+ {
+  "id": "M04",
+  "site": "read_regular too_large > -> >=",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M04.py",
+  "old": "        os.close(fd)\n    if len(data) > MAX_BYTES:",
+  "new": "        os.close(fd)\n    if len(data) >= MAX_BYTES:",
+  "sha256": "89e54718ccf23a752b21908eb74a482681459e6bbb17d66bf513d01a758b80b4"
+ },
+ {
+  "id": "M05",
+  "site": "SCALE_RE decimals {1,6}->{1,5}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M05.py",
+  "old": "SCALE_RE = re.compile(r\"[0-9]{1,2}(\\.[0-9]{1,6})?\")",
+  "new": "SCALE_RE = re.compile(r\"[0-9]{1,2}(\\.[0-9]{1,5})?\")",
+  "sha256": "c6bab201975d355666cd71b14d4bef18479a45193e9b503c545d355828f16c33"
+ },
+ {
+  "id": "M06",
+  "site": "SCALE_RE int part {1,2}->{1,1}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M06.py",
+  "old": "SCALE_RE = re.compile(r\"[0-9]{1,2}(\\.[0-9]{1,6})?\")",
+  "new": "SCALE_RE = re.compile(r\"[0-9]{1,1}(\\.[0-9]{1,6})?\")",
+  "sha256": "9f05946f3974598862cc494158b71a2efc8511f89a7ac4014dddf12ed302d769"
+ },
+ {
+  "id": "M07",
+  "site": "MODE_RE width {1,5}->{1,4}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M07.py",
+  "old": "MODE_RE = re.compile(r\"([0-9]{1,5})x([0-9]{1,5})(@([0-9]{1,3}(\\.[0-9]{1,3})?))?\")",
+  "new": "MODE_RE = re.compile(r\"([0-9]{1,4})x([0-9]{1,5})(@([0-9]{1,3}(\\.[0-9]{1,3})?))?\")",
+  "sha256": "2e47842128fd4e955500fa4a85cc3be21a74db2649a4b766f592b8731dec72d2"
+ },
+ {
+  "id": "M08",
+  "site": "POS_RE x {1,6}->{1,5}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M08.py",
+  "old": "POS_RE = re.compile(r\"(-?[0-9]{1,6})x(-?[0-9]{1,6})\")",
+  "new": "POS_RE = re.compile(r\"(-?[0-9]{1,5})x(-?[0-9]{1,6})\")",
+  "sha256": "6a23b6b3cd421916d5e860aa139252dfb95c1b9550f16ea7919e53bc2e33b8cd"
+ },
+ {
+  "id": "M09",
+  "site": "INT_RE {1,9}->{1,8}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M09.py",
+  "old": "INT_RE = re.compile(r\"-?[0-9]{1,9}\")",
+  "new": "INT_RE = re.compile(r\"-?[0-9]{1,8}\")",
+  "sha256": "16780741ad51d5e06083067130627ac33282b8ce42bdb058c5137bd6e67841e2"
+ },
+ {
+  "id": "M10",
+  "site": "STOI_RE drop (?![0-9]) lookahead",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M10.py",
+  "old": "STOI_RE = re.compile(r\"[+-]?[0-9]{1,9}(?![0-9])\")",
+  "new": "STOI_RE = re.compile(r\"[+-]?[0-9]{1,9}\")",
+  "sha256": "72159c4b913d7f511e778312ea34c1b9cb70bb1d627694401f683eb00df635ad"
+ },
+ {
+  "id": "M11",
+  "site": "LONGINT_RE {10,}->{11,}",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M11.py",
+  "old": "LONGINT_RE = re.compile(r\"-?[0-9]{10,}\")",
+  "new": "LONGINT_RE = re.compile(r\"-?[0-9]{11,}\")",
+  "sha256": "d23fdfcb6d8b74994741b6153cfc4f88b3d9444eaba7b1754c5b15f3624e6184"
+ },
+ {
+  "id": "M12",
+  "site": "V2_RE drop = { from char class",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M12.py",
+  "old": "V2_RE = re.compile(r\"monitorv2(?:[ \\t={]|$)\")",
+  "new": "V2_RE = re.compile(r\"monitorv2(?:[ \\t]|$)\")",
+  "sha256": "73f5efdf86617f244faf3ab26c7a5f1bb1b79c3dc9be019a237fb5db5bd8623e"
+ },
+ {
+  "id": "M13",
+  "site": "V2_RE match -> fullmatch",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M13.py",
+  "old": "        if V2_RE.match(line):",
+  "new": "        if V2_RE.fullmatch(line):",
+  "sha256": "7fa1fc7795ff3fa42b0d53d2a27ee0dad4dc6e30e990bd62163414b4c0695f72"
+ },
+ {
+  "id": "M14",
+  "site": "LINE_RE [ \\t]* -> [ \\t]+",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M14.py",
+  "old": "LINE_RE = re.compile(r\"monitor[ \\t]*=(.*)\")",
+  "new": "LINE_RE = re.compile(r\"monitor[ \\t]+=(.*)\")",
+  "sha256": "c362838d2ae56aee7e355ca39668d74ae1c679b8b9834630375bebf0a989b734"
+ },
+ {
+  "id": "M15",
+  "site": "LINE_RE fullmatch -> match",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M15.py",
+  "old": "        m = LINE_RE.fullmatch(line)",
+  "new": "        m = LINE_RE.match(line)",
+  "sha256": "03fda1309988393d757cdca6320c7564b29d6668aaed46f599440f9e7325244f"
+ },
+ {
+  "id": "M16",
+  "site": "config line strip adds \\v\\f",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M16.py",
+  "old": "        line = raw.strip(\" \\t\\r\")",
+  "new": "        line = raw.strip(\" \\t\\r\\v\\f\")",
+  "sha256": "f20befb3a685a73466c1015bd0e1a36abff8b504dba9e967005ad32a9e4a5917"
+ },
+ {
+  "id": "M17",
+  "site": "config split \\n -> splitlines",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M17.py",
+  "old": "    for raw in text.split(\"\\n\"):",
+  "new": "    for raw in text.splitlines():",
+  "sha256": "4419fed2028c249eb5909fc19a12310fd8a13982edd17f279c0b17eee15fa183"
+ },
+ {
+  "id": "M18",
+  "site": "unsupported gate drops $",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M18.py",
+  "old": "    if \"##\" in body or \"$\" in body or \"\\\\\" in body:",
+  "new": "    if \"##\" in body or \"\\\\\" in body:",
+  "sha256": "532d61039d27c665eb0722eb6e4b4bbc654f87e30403cf27d7377a31ba8e0e8e"
+ },
+ {
+  "id": "M19",
+  "site": "unsupported gate drops ##",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M19.py",
+  "old": "    if \"##\" in body or \"$\" in body or \"\\\\\" in body:",
+  "new": "    if \"$\" in body or \"\\\\\" in body:",
+  "sha256": "3973790a9865151d39fdc16df4d9c14f0c17b87b949a31121a01b17aff88ab67"
+ },
+ {
+  "id": "M20",
+  "site": "unsupported gate drops backslash",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M20.py",
+  "old": "    if \"##\" in body or \"$\" in body or \"\\\\\" in body:",
+  "new": "    if \"##\" in body or \"$\" in body:",
+  "sha256": "26f9e6867137146bfb01c864375bd41f916cdef188afc5ff0df1e1f2fb61e3cc"
+ },
+ {
+  "id": "M21",
+  "site": "no comment cut in body",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M21.py",
+  "old": "    body = body.split(\"#\", 1)[0]",
+  "new": "    body = body",
+  "sha256": "e90e66b26b92a977c9028b1e391fb01fdf9932c9b48c90f25a90f4077dba526f"
+ },
+ {
+  "id": "M22",
+  "site": "fields not stripped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M22.py",
+  "old": "    fields = [f.strip(WS) for f in body.split(\",\")]",
+  "new": "    fields = body.split(\",\")",
+  "sha256": "9346e53747b8abfaec210ddde3f6bf8607601be33996530f86915007bf43129a"
+ },
+ {
+  "id": "M23",
+  "site": "disable key drops 'disabled'",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M23.py",
+  "old": "    if kind in (\"disable\", \"disabled\"):",
+  "new": "    if kind == \"disable\":",
+  "sha256": "403bf093cde6bd34f12649493cb49023658c69c50e0ac274d464d15f00723449"
+ },
+ {
+  "id": "M24",
+  "site": "transform modifier reads fld(3)",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M24.py",
+  "old": "        t = transform_value(fld(2))",
+  "new": "        t = transform_value(fld(3))",
+  "sha256": "fe3e5ae6c339c46c2f1f83b424fbc18a73d2638363ffe73fb6e2ca3ea9467701"
+ },
+ {
+  "id": "M25",
+  "site": "transform modifier bad value accepted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M25.py",
+  "old": "        if t is None:",
+  "new": "        if False:",
+  "sha256": "2a56be2a7d847c9cf7f4a14d7969fbc31832c0cc6a20fef876ac08b88c52eae6"
+ },
+ {
+  "id": "M26",
+  "site": "transform modifier matches other sel",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M26.py",
+  "old": "            if r[\"sel\"] == sel:",
+  "new": "            if r[\"sel\"] != sel:",
+  "sha256": "cc41e08da3b5623208d3808865a2d50348bd54af60d6f23a56bd3a153a0ad096"
+ },
+ {
+  "id": "M27",
+  "site": "addreserved checks fields 2-4 only",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M27.py",
+  "old": "        if not all(STOI_RE.match(fld(i)) for i in range(2, 6)):",
+  "new": "        if not all(STOI_RE.match(fld(i)) for i in range(2, 5)):",
+  "sha256": "d61fe8b40a1da0fb9882843cc1a0e90487e3453c245baec74c1c4adecadf7ce8"
+ },
+ {
+  "id": "M28",
+  "site": "addreserved keeps existing rule ignored",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M28.py",
+  "old": "        if any(r[\"sel\"] == sel for r in rules):\n            return",
+  "new": "        if any(r[\"sel\"] == sel for r in rules):\n            pass",
+  "sha256": "82e45a4981ed30f6b3d73d2a6d9407dc3183e3dd5fd0a790673691dc318b4dbd"
+ },
+ {
+  "id": "M29",
+  "site": "addreserved default rule sel empty",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M29.py",
+  "old": "        add(rules, new_rule(sel))",
+  "new": "        add(rules, new_rule(\"\"))",
+  "sha256": "3b2dcc09b5afc93b7874f992add3ec2603deb7d6e53fb3af52654943dac01072"
+ },
+ {
+  "id": "M30",
+  "site": "mode pref prefix -> prefx",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M30.py",
+  "old": "    if value == \"\" or value.startswith(\"pref\"):",
+  "new": "    if value == \"\" or value.startswith(\"prefx\"):",
+  "sha256": "35aba7c4120c1d970a64e460f74990ac5aaec250bedbb063e3f8d31eff28b03c"
+ },
+ {
+  "id": "M31",
+  "site": "mode keywords drop highres",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M31.py",
+  "old": "    for kw in (\"highrr\", \"highres\", \"maxwidth\"):",
+  "new": "    for kw in (\"highrr\", \"maxwidth\"):",
+  "sha256": "b9056390e5031e1fed4bf236539968820eab308aafd536b6187f453982e829ab"
+ },
+ {
+  "id": "M32",
+  "site": "modeline case-sensitivity via lower() drop",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M32.py",
+  "old": "    toks = value.lower().split()",
+  "new": "    toks = value.split()",
+  "sha256": "0c892b3ea100af94d4f6d4444e4a9f5f6807aa0785d9a51d1611567f16314425"
+ },
+ {
+  "id": "M33",
+  "site": "default rate 60 -> 61",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M33.py",
+  "old": "    rule[\"rate\"] = f32(float(m.group(4))) if m.group(4) is not None else 60.0",
+  "new": "    rule[\"rate\"] = f32(float(m.group(4))) if m.group(4) is not None else 61.0",
+  "sha256": "9bf494b1e968537e66386cdd5d60047881b2ec05ed15c9a81217a738aab08e72"
+ },
+ {
+  "id": "M34",
+  "site": "0x0 sentinel and -> or",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M34.py",
+  "old": "    if w == 0 and h == 0:",
+  "new": "    if w == 0 or h == 0:",
+  "sha256": "f1937bdce8e6f89c180d273229d703784d234d8fa45d66d6441450a076d42bab"
+ },
+ {
+  "id": "M35",
+  "site": "pos auto prefix -> Auto",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M35.py",
+  "old": "    if value == \"\" or value.startswith(\"auto\"):\n        return\n    m = POS_RE.fullmatch(value)",
+  "new": "    if value == \"\" or value.startswith(\"Auto\"):\n        return\n    m = POS_RE.fullmatch(value)",
+  "sha256": "042e17bfe7d9239aadea15d17bdf53baf4183a4399d1c9e601834fa8769037c3"
+ },
+ {
+  "id": "M36",
+  "site": "scale auto prefix -> Auto",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M36.py",
+  "old": "    if value == \"\" or value.startswith(\"auto\"):\n        return\n    if not SCALE_RE.fullmatch(value):",
+  "new": "    if value == \"\" or value.startswith(\"Auto\"):\n        return\n    if not SCALE_RE.fullmatch(value):",
+  "sha256": "4147c0e8d17a87cae8652437dcbb7a59c87a306a99bf377f638b6a904f00ace5"
+ },
+ {
+  "id": "M37",
+  "site": "scale regex gate inverted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M37.py",
+  "old": "    if not SCALE_RE.fullmatch(value):",
+  "new": "    if SCALE_RE.fullmatch(value):",
+  "sha256": "f7d08ee82eb1dd65f482804f03fe89d930c584a43076fdfe7c79229e03198d78"
+ },
+ {
+  "id": "M38",
+  "site": "tiny scale threshold 0.25 -> 0.2",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M38.py",
+  "old": "    rule[\"scale\"] = 1.0 if s < 0.25 else s",
+  "new": "    rule[\"scale\"] = 1.0 if s < 0.2 else s",
+  "sha256": "1760b87effefb16d476485f98809a23c790a9641adf9cecb9a370343ad64c318"
+ },
+ {
+  "id": "M39",
+  "site": "rate tolerance < -> <=",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M39.py",
+  "old": "                and abs(rr - rule[\"rate\"]) < 1.0):",
+  "new": "                and abs(rr - rule[\"rate\"]) <= 1.0):",
+  "sha256": "ff4991bd66b746159151a8974fd5e7f548a286f9ad0090332ae41776e9bcbbbb"
+ },
+ {
+  "id": "M40",
+  "site": "rate type check is_num -> is_int",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M40.py",
+  "old": "is_num(rr) and w == rule[\"w\"]",
+  "new": "is_int(rr) and w == rule[\"w\"]",
+  "sha256": "f0477fe45ff9a94d569977a61691a5691853fdb780e946d15082335ec9b01ce2"
+ },
+ {
+  "id": "M41",
+  "site": "mode w/h type check is_int -> is_num",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M41.py",
+  "old": "not (is_int(w) and is_int(h) and is_num(rr)",
+  "new": "not (is_num(w) and is_num(h) and is_num(rr)",
+  "sha256": "1744da76b7ff6d50dba6231b380571b5b84a849d24fecb1023df658d3a0c3f1b"
+ },
+ {
+  "id": "M42",
+  "site": "position y unchecked",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M42.py",
+  "old": "        if not (is_int(x) and is_int(y) and (x, y) == rule[\"pos\"]):",
+  "new": "        if not (is_int(x) and is_int(y) and x == rule[\"pos\"][0]):",
+  "sha256": "bea9ecd3702ec21d2ac1f1887667ae7bbb32c56e7dfaf54f4f885a0d0e79250f"
+ },
+ {
+  "id": "M43",
+  "site": "scale tolerance >= -> >",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M43.py",
+  "old": "            elif abs(sc - e) >= 0.0001:",
+  "new": "            elif abs(sc - e) > 0.0001:",
+  "sha256": "8fb820e4989acd46389c5d3438ce196839b09e5c1de39e1594d1f769ce9c5c4e"
+ },
+ {
+  "id": "M44",
+  "site": "expected_scale whole and -> or",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M44.py",
+  "old": "    if whole(w / s) and whole(h / s):",
+  "new": "    if whole(w / s) or whole(h / s):",
+  "sha256": "70ec525baf02d61dcb760cd3b4e3bbeaaf464b2ca4d87a280cfd031b679f10f2"
+ },
+ {
+  "id": "M45",
+  "site": "scale k half-up +0.5 dropped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M45.py",
+  "old": "    k = math.floor(s * 120.0 + 0.5)",
+  "new": "    k = math.floor(s * 120.0)",
+  "sha256": "1a4b4a5332dcc80f512d1c2c5a2e48fc41a91b0132b88c8917421710ef061f18"
+ },
+ {
+  "id": "M46",
+  "site": "scale search 89 -> 87 steps",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M46.py",
+  "old": "    for i in range(1, 90):",
+  "new": "    for i in range(1, 89):",
+  "sha256": "920e13acd0a16cdcc14eec0e88121582206cb6cc83c17f5425f8fb123b40d998"
+ },
+ {
+  "id": "M47",
+  "site": "scale search drops down-direction",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M47.py",
+  "old": "        for cand in ((k + i) / 120.0, (k - i) / 120.0):",
+  "new": "        for cand in ((k + i) / 120.0,):",
+  "sha256": "8270780abb5c372bf0e79d7c9b44854811e30ca0987fbcaf3eae08fa1c138caa"
+ },
+ {
+  "id": "M48",
+  "site": "mirror ids guard dropped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M48.py",
+  "old": "        if not (isinstance(mo, str) and ids and mo == str(ids[0])):",
+  "new": "        if not (isinstance(mo, str) and mo == str(ids[0])):",
+  "sha256": "c4c90b3754fa532f7b170d6f527fa24f6bafdb735b87411c241bef0150e83146"
+ },
+ {
+  "id": "M49",
+  "site": "mirrorOf none sentinel -> empty",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M49.py",
+  "old": "    elif mo != \"none\":",
+  "new": "    elif mo != \"\":",
+  "sha256": "7d273e3bd7b3e0c47f8dd91f9946058c81d2a4a5e9c5762ff2db213151a6f0a8"
+ },
+ {
+  "id": "M50",
+  "site": "effective last-rule scan reversed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M50.py",
+  "old": "    for n in range(len(rules), 0, -1):",
+  "new": "    for n in range(1, len(rules) + 1):",
+  "sha256": "765caa04df3b15bcfc2e33e8bbf4e8ecd114f0d75aeac76a7c8b7019beded316"
+ },
+ {
+  "id": "M51",
+  "site": "desc: prefix match loses colon",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M51.py",
+  "old": "        if sel.startswith(\"desc:\"):",
+  "new": "        if sel.startswith(\"desc\"):",
+  "sha256": "a97444e6ed78b5f7f7f6235532933d836b670c1484a5dd738bf3ed7e64a9725a"
+ },
+ {
+  "id": "M52",
+  "site": "desc text not whitespace-stripped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M52.py",
+  "old": "            text = sel[5:].strip(WS)",
+  "new": "            text = sel[5:]",
+  "sha256": "2cadbc50c5a348228c30f232f370c9d59601f905649cd354e905abd69972e960"
+ },
+ {
+  "id": "M53",
+  "site": "desc short/long or -> and",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M53.py",
+  "old": "            if desc.startswith(text) or longd.startswith(text):",
+  "new": "            if desc.startswith(text) and longd.startswith(text):",
+  "sha256": "40ab333a682f7b7bff45a80d7808733521dc35d5d8623cfa3b02bde712dee045"
+ },
+ {
+  "id": "M54",
+  "site": "empty fallback returns first rule",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M54.py",
+  "old": "        if r[\"sel\"] == \"\":",
+  "new": "        if True:",
+  "sha256": "97dbac7c852b1d6bef1f002775e9ca6269ec0307f858150a3f291e04f45c7614"
+ },
+ {
+  "id": "M55",
+  "site": "DISABLED/DIFFER branches swapped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M55.py",
+  "old": "        return ([], \"DISABLED\") if live_disabled else ([\"disabled\"], \"DIFFER\")",
+  "new": "        return ([\"disabled\"], \"DIFFER\") if live_disabled else ([], \"DISABLED\")",
+  "sha256": "d791c3c80af5930cfd14957ae6e4d9193243328453aa6674e5add441eab606d3"
+ },
+ {
+  "id": "M56",
+  "site": "live_disabled check removed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M56.py",
+  "old": "    if live_disabled:\n        return [\"disabled\"], \"DIFFER\"",
+  "new": "    if False:\n        return [\"disabled\"], \"DIFFER\"",
+  "sha256": "f9bdede72cdc2917e8142368f05d2a63308ffe130a724b2d40681dbc340ee206"
+ },
+ {
+  "id": "M57",
+  "site": "explicit-mode gate inverted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M57.py",
+  "old": "    if rule[\"mode\"] == \"explicit\":",
+  "new": "    if rule[\"mode\"] != \"explicit\":",
+  "sha256": "bd43eb475f9d5b460f1737a24bc0b08588cbcd3c1803632c65fed47b2de813bf"
+ },
+ {
+  "id": "M58",
+  "site": "position gate inverted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M58.py",
+  "old": "    if rule[\"pos\"] is not None:",
+  "new": "    if rule[\"pos\"] is None:",
+  "sha256": "952f70c9b42b9683c8e1ca230dae5b3d77e713d846d2324fe8761e6bdebc37a5"
+ },
+ {
+  "id": "M59",
+  "site": "scale gate inverted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M59.py",
+  "old": "    if rule[\"scale\"] is not None:",
+  "new": "    if rule[\"scale\"] is None:",
+  "sha256": "95e6441e1003f4fc61319c25575249032d88eb0a6cbe8eee0b3ae9f9491bb1a3"
+ },
+ {
+  "id": "M60",
+  "site": "scale w/h positivity and -> or",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M60.py",
+  "old": "is_num(sc) and w > 0 and h > 0",
+  "new": "is_num(sc) and (w > 0 or h > 0)",
+  "sha256": "407d8cb139880a70e8327ae9f8ac853d1f9b9c43208d8b661aca76a6e016a8fb"
+ },
+ {
+  "id": "M61",
+  "site": "transform type check dropped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M61.py",
+  "old": "    if not (is_int(t) and t == rule[\"transform\"]):",
+  "new": "    if not (t == rule[\"transform\"]):",
+  "sha256": "7fa1fb7a4acd752661ad120912cfefdc7f6973b4b25b2ea3f823aedfa6c5bd7f"
+ },
+ {
+  "id": "M62",
+  "site": "single-field DIFFER suppressed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M62.py",
+  "old": "    if bad:",
+  "new": "    if len(bad) > 1:",
+  "sha256": "e0ebbf1dc4372bf2f970aa5cbea646f5db03aed0a38e3546b159a09c16457f86"
+ },
+ {
+  "id": "M63",
+  "site": "unpredicted/AGREE verdicts swapped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M63.py",
+  "old": "    return [], (\"NOT_COMPARED\" if unpredicted else \"AGREE\")",
+  "new": "    return [], (\"AGREE\" if unpredicted else \"NOT_COMPARED\")",
+  "sha256": "89a9fca256d1be6361f4c92e7222aa796a38da1ba8c8cf37a4f168e106d79f40"
+ },
+ {
+  "id": "M64",
+  "site": "rule mode print %.2f -> %.3f",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M64.py",
+  "old": "        mode = \"%dx%d@%.2f\" % (r[\"w\"], r[\"h\"], r[\"rate\"])",
+  "new": "        mode = \"%dx%d@%.3f\" % (r[\"w\"], r[\"h\"], r[\"rate\"])",
+  "sha256": "c33077c34dca5f0388deb62ebd19d3540f4c4e36215dc31ed9bf5db212e70503"
+ },
+ {
+  "id": "M65",
+  "site": "rule scale print %.4f -> %.3f",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M65.py",
+  "old": "    scale = \"auto\" if r[\"scale\"] is None else \"%.4f\" % r[\"scale\"]",
+  "new": "    scale = \"auto\" if r[\"scale\"] is None else \"%.3f\" % r[\"scale\"]",
+  "sha256": "1223a99525bece35ee906094dad64930195959674685779053748b56db1e6f72"
+ },
+ {
+  "id": "M66",
+  "site": "rule sel printed unquoted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M66.py",
+  "old": "        n, json.dumps(r[\"sel\"]), mode, pos, scale, r[\"transform\"],",
+  "new": "        n, r[\"sel\"], mode, pos, scale, r[\"transform\"],",
+  "sha256": "76ff5b5c235dbd4cc76cd1b875aaab3336da930ca84db3cd73b33243e3673cd2"
+ },
+ {
+  "id": "M67",
+  "site": "rule mirror always json",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M67.py",
+  "old": "        json.dumps(r[\"mirror\"]) if r[\"mirror\"] else \"-\", \"true\" if r[\"disabled\"] else \"false\")",
+  "new": "        json.dumps(r[\"mirror\"]), \"true\" if r[\"disabled\"] else \"false\")",
+  "sha256": "f2f8067adccee0c3ff01e67929e06f052ac7f7ce57eb140abc85651ab1a6418d"
+ },
+ {
+  "id": "M68",
+  "site": "rule disabled literals swapped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M68.py",
+  "old": "\"true\" if r[\"disabled\"] else \"false\")",
+  "new": "\"false\" if r[\"disabled\"] else \"true\")",
+  "sha256": "a9b3d565c1d21ca13a8fdfa8bcedaefed4319ee81260ee5e0e67a537d712fd47"
+ },
+ {
+  "id": "M69",
+  "site": "NO_RULES and -> or",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M69.py",
+  "old": "    if counts[\"lines\"] == 0 and counts[\"v2\"] == 0:",
+  "new": "    if counts[\"lines\"] == 0 or counts[\"v2\"] == 0:",
+  "sha256": "eba11bafdd9c5aa18eb765d68e4e3d3dfa42a6d1224046b1eacc173551259ab9"
+ },
+ {
+  "id": "M70",
+  "site": "NOT_COMPARED drops notcompared count",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M70.py",
+  "old": "    elif counts[\"v2\"] > 0 or counts[\"unsupported\"] > 0 or t[\"not_compared\"] > 0:",
+  "new": "    elif counts[\"v2\"] > 0 or counts[\"unsupported\"] > 0:",
+  "sha256": "6557b4fd23a40cd380ee0c53eb2f94c199a69e31cb9ca91380fed1a0be519813"
+ },
+ {
+  "id": "M71",
+  "site": "NOT_COMPARED drops unsupported count",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M71.py",
+  "old": "    elif counts[\"v2\"] > 0 or counts[\"unsupported\"] > 0 or t[\"not_compared\"] > 0:",
+  "new": "    elif counts[\"v2\"] > 0 or t[\"not_compared\"] > 0:",
+  "sha256": "ebc2308344b29cf8246cee4389519252e427793e5054f9457c228e4912e60af7"
+ },
+ {
+  "id": "M72",
+  "site": "DIFFER gate > -> >=",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M72.py",
+  "old": "    elif t[\"differ\"] > 0:",
+  "new": "    elif t[\"differ\"] >= 0:",
+  "sha256": "e90a81f167d6ce0f6fe9d29d49535aae0b422216bf5c15a231c4474b3a4618c0"
+ },
+ {
+  "id": "M73",
+  "site": "NO_MATCHING_MONITOR gate inverted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M73.py",
+  "old": "    elif t[\"matched\"] == 0:",
+  "new": "    elif t[\"matched\"] > 0:",
+  "sha256": "44e7b78ea022e7ce7cda8603fcea52c73791aa3a44d01564cd3d23564f42c287"
+ },
+ {
+  "id": "M74",
+  "site": "notcompared suffix always printed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M74.py",
+  "old": "                   \" notcompared=%d\" % t[\"not_compared\"] if t[\"not_compared\"] else \"\", v))",
+  "new": "                   \" notcompared=%d\" % t[\"not_compared\"], v))",
+  "sha256": "bee0ec840c33d1a562c326e22265dabf661e4102f392303958b93ac277714e83"
+ },
+ {
+  "id": "M75",
+  "site": "outputs counter double-counts",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M75.py",
+  "old": "        t[\"outputs\"] += 1",
+  "new": "        t[\"outputs\"] += 2",
+  "sha256": "de6bd47bde3c5ba8fcff127a12e64230ad96b7667860a16df9046e004979226f"
+ },
+ {
+  "id": "M76",
+  "site": "compare uses first rule always",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M76.py",
+  "old": "            bad, verdict = compare(rules[n - 1], mon, mons)",
+  "new": "            bad, verdict = compare(rules[0], mon, mons)",
+  "sha256": "5a64b3b9df901e2526f0942d12ab294f6b6f87b4715cf39c8633a701e1d5b6e4"
+ },
+ {
+  "id": "M77",
+  "site": "empty differ list not dashed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M77.py",
+  "old": "            \",\".join(bad) if bad else \"-\", verdict))",
+  "new": "            \",\".join(bad), verdict))",
+  "sha256": "5bccbf103fe73f5469af9eb6ade47130f44902302af915ddbb49a1dcafdbeaee"
+ },
+ {
+  "id": "M78",
+  "site": "argparse pair boundary > -> >=",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M78.py",
+  "old": "        if i + 1 >= len(argv):",
+  "new": "        if i + 1 > len(argv):",
+  "sha256": "37f1c9bebb7b015f91de101613d3b1b2d8870df4738295f68117e19586434431"
+ },
+ {
+  "id": "M79",
+  "site": "double --monitors allowed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M79.py",
+  "old": "        if flag == \"--monitors\" and monitors is None:",
+  "new": "        if flag == \"--monitors\":",
+  "sha256": "d4e77b29610a40cd06cfc44deb3823f2221b887ec0bc31d39f64a2e1e6dd5c8a"
+ },
+ {
+  "id": "M80",
+  "site": "empty --config list accepted",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M80.py",
+  "old": "    if monitors is None or not configs:",
+  "new": "    if monitors is None:",
+  "sha256": "c486874030953d24b382ffc612e2202ad0c17a8a9c2358252d7c2cb2c195ff70"
+ },
+ {
+  "id": "M81",
+  "site": "stdin path removed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M81.py",
+  "old": "        mdata = read_stdin() if monitors == \"-\" else read_regular(monitors)",
+  "new": "        mdata = read_regular(monitors)",
+  "sha256": "ae522ad9e600d2383dd116e211fc6ba092e0b0720d019cdcdb2f90c361f259c7"
+ },
+ {
+  "id": "M82",
+  "site": "config decode strict utf-8",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M82.py",
+  "old": "        texts = [read_regular(c).decode(\"utf-8\", errors=\"replace\") for c in configs]",
+  "new": "        texts = [read_regular(c).decode(\"utf-8\") for c in configs]",
+  "sha256": "0caf4e4a7624384476c8b555dbc007261b4352faebee8648d0717d858bcabde4"
+ },
+ {
+  "id": "M83",
+  "site": "bad_json drops RecursionError",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M83.py",
+  "old": "    except (UnicodeDecodeError, ValueError, RecursionError):",
+  "new": "    except (UnicodeDecodeError, ValueError):",
+  "sha256": "2fbb2d06e7909ca4632dceefbb3394872a3b7b960287c0fcba3ca45d2e9bdc4a"
+ },
+ {
+  "id": "M84",
+  "site": "dump element type check dropped",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M84.py",
+  "old": "    if not isinstance(doc, list) or not all(isinstance(m, dict) for m in doc):",
+  "new": "    if not isinstance(doc, list):",
+  "sha256": "be1af3294b1e803185c026a7bb518e21e31348400e803f67a354d9cfb94504ba"
+ },
+ {
+  "id": "M85",
+  "site": "is_num drops isfinite",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M85.py",
+  "old": "    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)",
+  "new": "    return isinstance(v, (int, float)) and not isinstance(v, bool)",
+  "sha256": "2b4cd44a51c47d48eecd00507a95c328c318b95c0a25439d3f9a542a555661cc"
+ },
+ {
+  "id": "M86",
+  "site": "lines counter increments v2",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M86.py",
+  "old": "        counts[\"lines\"] += 1",
+  "new": "        counts[\"v2\"] += 1",
+  "sha256": "7fdb152b9efee347c1188f0b989aaf64c9c4bbebb844bf37047b84d240826cf3"
+ },
+ {
+  "id": "M87",
+  "site": "v2 counter double-counts",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M87.py",
+  "old": "            counts[\"v2\"] += 1",
+  "new": "            counts[\"v2\"] += 2",
+  "sha256": "29d934f64284500670d3035995491a5f8c01e9e7ca6c928ab0d8b9a4fc9bd752"
+ },
+ {
+  "id": "M88",
+  "site": "add() keeps same-selector rules",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M88.py",
+  "old": "    rules[:] = [r for r in rules if r[\"sel\"] != rule[\"sel\"]]",
+  "new": "    rules[:] = list(rules)",
+  "sha256": "5c994fc829a8b918099dd2b1123e3b93823b094d5d22340b9789d1ba01b56eab"
+ },
+ {
+  "id": "M89",
+  "site": "add() prepends instead of appends",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M89.py",
+  "old": "    rules.append(rule)",
+  "new": "    rules.insert(0, rule)",
+  "sha256": "030bb48c178cd6d49aab74547cf12ac92dcdb36ddcc4e261908538f0c726bb6d"
+ },
+ {
+  "id": "M90",
+  "site": "default rate 60 -> 59",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M90.py",
+  "old": "    return {\"sel\": sel, \"disabled\": False, \"mode\": \"preferred\", \"w\": 0, \"h\": 0, \"rate\": 60.0,",
+  "new": "    return {\"sel\": sel, \"disabled\": False, \"mode\": \"preferred\", \"w\": 0, \"h\": 0, \"rate\": 59.0,",
+  "sha256": "e78df869893a1ea1aa66e83e0d30e4f6d02421fb490061bdc1fb3fc7ed7bb3cd"
+ },
+ {
+  "id": "M91",
+  "site": "default transform 0 -> 1",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M91.py",
+  "old": "            \"pos\": None, \"scale\": None, \"transform\": 0, \"mirror\": \"\"}",
+  "new": "            \"pos\": None, \"scale\": None, \"transform\": 1, \"mirror\": \"\"}",
+  "sha256": "577b226b5fd9dcf30a9c35aad1a76b9c947efc1e705dff25290eb860c350e2b3"
+ },
+ {
+  "id": "M92",
+  "site": "default position None -> (0,0)",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M92.py",
+  "old": "            \"pos\": None, \"scale\": None, \"transform\": 0, \"mirror\": \"\"}",
+  "new": "            \"pos\": (0, 0), \"scale\": None, \"transform\": 0, \"mirror\": \"\"}",
+  "sha256": "230bc855c4baebd2e3a648f47e6ee1b7a9ca3a7f3b9ef538b67546cedc2359ed"
+ },
+ {
+  "id": "M93",
+  "site": "default scale None -> 1.0",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M93.py",
+  "old": "            \"pos\": None, \"scale\": None, \"transform\": 0, \"mirror\": \"\"}",
+  "new": "            \"pos\": None, \"scale\": 1.0, \"transform\": 0, \"mirror\": \"\"}",
+  "sha256": "1697792c60e5f94856cb21b54bd425de6613e08f018dea7ff22833551ae19856"
+ },
+ {
+  "id": "M94",
+  "site": "WS loses \\v\\f",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M94.py",
+  "old": "WS = \" \\t\\r\\n\\v\\f\"",
+  "new": "WS = \" \\t\\r\\n\"",
+  "sha256": "f6e567640f90aac1fe3318babf851614c6771999cdd9df2c5a650e22e7aaa7e4"
+ },
+ {
+  "id": "M95",
+  "site": "kind reads field 2",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M95.py",
+  "old": "    kind = fld(1)",
+  "new": "    kind = fld(2)",
+  "sha256": "55ea59e4d6a512346b52a1c7b1234426fdf5b27bd619bfff570de9d61b43c46a"
+ },
+ {
+  "id": "M96",
+  "site": "key loop uses index bound",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M96.py",
+  "old": "        while fld(i) != \"\":",
+  "new": "        while i < len(fields):",
+  "sha256": "bd6046520b2b324c1b3fe29d394b1723fb20f4891a42cd81b7f647c72afdbf6d"
+ },
+ {
+  "id": "M97",
+  "site": "transform key renamed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M97.py",
+  "old": "            if key == \"transform\":",
+  "new": "            if key == \"transforms\":",
+  "sha256": "5851708fdf822e352c6d85ef3820977ae304cd246b8f414174498b97aaf279cf"
+ },
+ {
+  "id": "M98",
+  "site": "mirror key renamed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M98.py",
+  "old": "            elif key == \"mirror\":",
+  "new": "            elif key == \"mirrorr\":",
+  "sha256": "caaf220d31ee7b2032998b3d5fada5e312509d733d0b2d1b9369d96117f855bc"
+ },
+ {
+  "id": "M99",
+  "site": "transform overflow gate removed",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M99.py",
+  "old": "                if LONGINT_RE.fullmatch(val):\n                    raise Unsupported()",
+  "new": "                if False:\n                    raise Unsupported()",
+  "sha256": "c90f15edc5fb5d1c98f8516d9b13ea4c58110e1e6e43b863c61d8d73d104e2cc"
+ },
+ {
+  "id": "M100",
+  "site": "position parsed from field 3",
+  "path": "/fast/scratch/hyaku/mado-r46/MutW2Tool/mutants/M100.py",
+  "old": "        parse_pos(r, fld(2))",
+  "new": "        parse_pos(r, fld(3))",
+  "sha256": "8d924f8573066c3af005bcc4feac6e0fb332d10b20a147e5b5781cc88a5cee85"
+ }
+]
