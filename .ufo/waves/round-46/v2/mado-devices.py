@@ -1,0 +1,641 @@
+#!/usr/bin/env python3
+"""mado-devices - does each keyboard run the XKB names its config declares, and does each mouse report the scroll factor its device block sets?
+
+Hyprland 0.56.2 (efb50993) applies keyboard config per device (src/managers/input/InputManager.cpp
+applyConfigToKeyboard): for each of kb_layout, kb_variant, kb_options, kb_model, kb_rules and kb_file it reads the
+value of the `device` block whose name equals the keyboard's name when that block SETS the key, else the global
+`input:` option (src/config/legacy/ConfigManager.cpp getConfigValueSafeDevice; defaults "us" for kb_layout and empty
+for the others, src/config/values/ConfigValues.cpp). The keyboard stores those five names as its current rules before
+any compile (src/devices/IKeyboard.cpp setKeymap); a readable kb_file is compiled instead of the names, and only when
+no keymap results from the file or the names are the stored rules reset to layout "us" with every other name empty. `hyprctl devices -j` prints the stored rules of every
+keyboard (src/debug/HyprCtl.cpp devicesRequest: rules, model, layout, variant, options), and for every pointer
+`scrollFactor`: the device block's `scroll_factor` clamped to 0..100 when that block sets it, else -1, printed with
+two decimals (InputManager.cpp setPointerConfigs) - the global `input:scroll_factor` never reaches that field. A
+virtual keyboard (name `hl-virtual-keyboard...`, src/protocols/VirtualKeyboard.cpp) gets the config's names applied
+once at creation and then runs the keymap its client sends, after which setKeymap ignores rule changes; its printed
+rules are the creation-time names, not a witness of the keymap it runs. Device names are the
+compositor's: lower-cased, with space, newline and comma turned into `-` and a `-N` suffix for duplicates
+(src/helpers/MiscFunctions.cpp deviceNameToInternalString, InputManager.cpp getNameForNewDevice); a `device` block
+whose name matches no device applies to nothing. This tool joins the two read-only inputs: the input/device lines
+of one or more config files and one `hyprctl devices -j` dump. It is a join, not a blame: a DIFFER may come from a
+runtime `hyprctl keyword`, a config file not passed, or a `source =` line it does not follow. A FALLBACK is the
+printed signature of the compositor's reset (us + four empty names), not proof of a compile failure: an expectation
+the join gets wrong can print the same way. With kb_file set, AGREE says only that the stored names match; the keymap
+in use is the file's.
+
+    hyprctl devices -j | mado-devices.py --devices - --config ~/.config/hypr/input.conf
+    mado-devices.py --devices devs.json --config a.conf --config b.conf
+    mado-devices.py --selftest
+
+It reads files and standard input only; it starts no process and opens no socket.
+
+Arguments (two-token form only; anything else is usage): `--selftest` alone, or `--devices V` exactly once and
+`--config V` one or more times, in any order. Setup failure: stdout is exactly one line `MADO_DEVICES: SETUP
+<reason>`, exit 2, reason one of usage | unreadable | too_large | bad_json. A PATH that is missing, unreadable, a
+directory, a FIFO or any non-regular file is unreadable; an input larger than 1048576 bytes is too_large (stdin,
+`--devices -`, is read at most 1048577 bytes); a devices input that is not UTF-8 JSON (nesting deep enough to
+exhaust the parser included) holding an object whose `keyboards` and `mice` are lists of objects, each element
+having a string `name`, is bad_json.
+
+Lines (hyprlang 0.6.8 src/config.cpp, as Hyprland reads its config). Config files are read in argument order, each
+decoded as UTF-8 with errors replaced and split on "\\n" (a final "\\n" ends the last line; it does not start an
+empty one); the category stack starts empty in each file. A raw line ending in a backslash is joined with the next
+raw line after the backslash and the spaces and tabs before it are removed (a last line that still ends in a
+backslash is dropped). A line is stripped of ASCII whitespace (space, tab, CR, LF, VT, FF). A line starting with `#`
+is a comment; when the text after that `#`, split on ASCII whitespace, has a first word starting with `hyprlang` and
+a later word `if`, `endif` or `noerror` (a hyprlang directive), it adds one to `unsupported`. Else the comment is cut: at each `#`, a following `#` makes the pair one literal `#` and the search
+resumes two characters after the first `#` of the pair in the shortened line; any other `#` ends the line there.
+The rest is stripped of ASCII whitespace (space, tab, CR, LF, VT, FF); empty lines are skipped. Without `=`: `}`
+pops the category stack (when it empties, the current device is forgotten); a line ending in `{` pushes its text
+before the `{`, stripped; anything else is ignored. With `=`: LHS and RHS are the stripped text before and after
+the first `=`; an LHS starting with `$` (a variable) is ignored; an LHS `source` while the stack is not empty adds one
+to `unsupported` (a sourced file is parsed with the open categories and empties the stack at its end, so the rest of
+the block changes meaning); a top-level `source` is ignored (the file is not followed). The KEY is the stack and LHS joined with `:`. When
+KEY holds `[` before its last `]`, the text between the first `[` and the last `]` is a BRACKET NAME and is cut out
+of KEY with the brackets. A key line is RELEVANT when KEY starts with `device` or is one of `input:kb_layout`,
+`input:kb_variant`, `input:kb_options`, `input:kb_model`, `input:kb_rules`, `input:kb_file`. A relevant line whose
+LHS or RHS holds `$`, `{{` or a backslash adds one to `unsupported` and is not modelled. Relevant lines:
+  - `input:kb_X` sets the global value of kb_X to RHS (a bracket name does not change that).
+  - with a bracket name N and KEY `device:F`: device N is created if absent; F one of the DEVICE KEYS sets that key
+    of N to RHS; F `name` adds one to `unsupported`; any other F is ignored.
+  - KEY `device:name` (no bracket name) with no current device: selects device RHS, creating it if absent; it is
+    the current device until the stack empties.
+  - KEY `device:F` (no bracket name) with a current device: a DEVICE KEY F sets that key of the current device;
+    `name` (a rename) adds one to `unsupported` and so does every later `device:` line until the stack empties; other F
+    are ignored.
+  - KEY `device:F` (no bracket name, F not `name`) with no current device: adds one to `unsupported` (Hyprland
+    reports "special category's first value must be the key" and keeps reading the block into a device it names
+    itself); later `device:` lines go the same way until the stack empties.
+  - any other KEY starting with `device` is ignored.
+DEVICE KEYS: kb_layout, kb_variant, kb_options, kb_model, kb_rules, kb_file, scroll_factor. A `scroll_factor`
+value is read as std::stof (strtof) reads it: the longest prefix that is `[+-]?(infinity|inf)` (any case: +-infinity),
+`[+-]?nan...` (adds one to `unsupported`, key unset: the dump would print nan, which is not JSON), a C99 hex float
+`[+-]?0[xX](H+(\\.H*)?|\\.H+)([pP][+-]?[0-9]+)?` (H a hex digit) or a decimal
+`[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?`, its exact value rounded once to the nearest 32-bit float
+(ties to even); no such prefix leaves the key unset; a finite value that rounds to infinity, or a nonzero value that
+rounds below 2**-126 in magnitude (zero or subnormal), leaves the key unset (std::stof throws out_of_range and the
+line is not applied). Every other value is the RHS string; the stored string `[[EMPTY]]` reads as "".
+
+Devices. Every element of `keyboards` and `mice` is one device, in dump order. A keyboard's EXPECTED names: per name
+kb_X, the device block named exactly like the keyboard when it set kb_X, else the global kb_X when set, else the
+default ("us" for kb_layout, "" otherwise). Its REPORTED names are `layout`, `variant`, `options`, `model`, `rules`
+(a missing or non-string value never equals an expected name). Verdict, tested in this order: VIRTUAL when the name
+starts with `hl-virtual-keyboard`; AGREE when all five equal; FALLBACK when the reported names are exactly layout "us"
+and four empty names (the compositor's fallback after a keymap that does not compile); else DIFFER, differ= the
+unequal names in the order layout, variant, options, model, rules. A mouse's EXPECTED scroll factor is its block's
+scroll_factor clamped to 0..100 when the block set it, else -1; it AGREEs when `scrollFactor` is a finite number
+(not a boolean) and both print the same with two decimals, else DIFFER. A device block AGREEs as MATCHED when its
+name equals the `name` of some element of any top-level list of the dump (or of an element's `belongsTo`
+object), else it is NO_SUCH_DEVICE.
+
+Output (stdout; nothing else; stderr empty on exit 0/1/3/4/5), in order:
+  per keyboard MADO_DEV_KEYBOARD: name=<json> block=<yes|no> layout=<json> variant=<json> options=<json> model=<json> rules=<json> kb_file=<set|-> differ=<names|-> verdict=<AGREE|DIFFER|FALLBACK|VIRTUAL>
+  per mouse    MADO_DEV_MOUSE: name=<json> block=<yes|no> scroll_factor=<F> reported=<F|?> verdict=<AGREE|DIFFER>
+  per block    MADO_DEV_BLOCK: name=<json> keys=<n> verdict=<MATCHED|NO_SUCH_DEVICE>
+  last         MADO_DEVICES: keyboards=<n> agree=<n> differ=<n> fallback=<n> virtual=<n> mice=<n> mice_differ=<n> blocks=<n> stale=<n> unsupported=<n> verdict=<V>
+(<json> is json.dumps with ensure_ascii; the keyboard's printed names are the EXPECTED ones; F is printed with two
+decimals; block= says whether a device block carries the device's name; keys counts the DEVICE KEYS the block set;
+blocks print in creation order.) V = NOT_COMPARED (exit 5, unsupported > 0: an unmodelled line can change any
+expectation) | DIFFER (exit 1, differ + fallback + mice_differ > 0) | NO_KEYBOARDS (exit 3, keyboards = 0) |
+STALE_BLOCK (exit 4, stale > 0) | OK (exit 0), tested in that order.
+"""
+import json
+import math
+from fractions import Fraction
+import os
+import re
+import stat
+import struct
+import sys
+
+MAX_BYTES = 1048576
+WS = " \t\r\n\v\f"
+NAMES = ("layout", "variant", "options", "model", "rules")
+INPUT_KEYS = {"input:kb_" + n for n in NAMES + ("file",)}
+DEVICE_KEYS = tuple("kb_" + n for n in NAMES + ("file",)) + ("scroll_factor",)
+DIRECTIVE_WORDS = ("if", "endif", "noerror")
+FLOAT_RE = re.compile(r"[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+-]?[0-9]+)?")
+INFNAN_RE = re.compile(r"([+-]?)(infinity|inf|nan(\([0-9A-Za-z_]*\))?)", re.I)
+HEX_RE = re.compile(r"([+-]?)0[xX](?:([0-9a-fA-F]+)(?:\.([0-9a-fA-F]*))?|\.([0-9a-fA-F]+))(?:[pP]([+-]?[0-9]+))?")
+EMPTY = "[[EMPTY]]"
+FALLBACK = ("us", "", "", "", "")
+VIRTUAL_PREFIX = "hl-virtual-keyboard"
+FLT_MIN = 2.0 ** -126
+
+
+class Setup(Exception):
+    pass
+
+
+def f32(x):
+    try:
+        return struct.unpack("<f", struct.pack("<f", x))[0]
+    except OverflowError:
+        return math.inf if x > 0 else -math.inf
+
+
+def read_regular(path):
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+    except OSError:
+        raise Setup("unreadable")
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Setup("unreadable")
+        data = b""
+        while len(data) <= MAX_BYTES:
+            chunk = os.read(fd, MAX_BYTES + 1 - len(data))
+            if not chunk:
+                break
+            data += chunk
+    except OSError:
+        raise Setup("unreadable")
+    finally:
+        os.close(fd)
+    if len(data) > MAX_BYTES:
+        raise Setup("too_large")
+    return data
+
+
+def read_stdin():
+    data = b""
+    while len(data) <= MAX_BYTES:
+        chunk = sys.stdin.buffer.read(MAX_BYTES + 1 - len(data))
+        if not chunk:
+            break
+        data += chunk
+    if len(data) > MAX_BYTES:
+        raise Setup("too_large")
+    return data
+
+
+def parse_args(argv):
+    if argv == ["--selftest"]:
+        return "selftest", None, None
+    devices, configs, i = None, [], 0
+    while i < len(argv):
+        if i + 1 >= len(argv):
+            raise Setup("usage")
+        flag, value = argv[i], argv[i + 1]
+        if flag == "--devices" and devices is None:
+            devices = value
+        elif flag == "--config":
+            configs.append(value)
+        else:
+            raise Setup("usage")
+        i += 2
+    if devices is None or not configs:
+        raise Setup("usage")
+    return "run", devices, configs
+
+
+def join_continuations(raw_lines):
+    out, i = [], 0
+    while i < len(raw_lines):
+        line = raw_lines[i]
+        i += 1
+        dropped = False
+        while line.endswith("\\"):
+            if i >= len(raw_lines):
+                dropped = True
+                break
+            line = line[:-1].rstrip(" \t") + raw_lines[i]
+            i += 1
+        if not dropped:
+            out.append(line)
+    return out
+
+
+def cut_comment(line):
+    pos = line.find("#")
+    while pos != -1:
+        if pos < len(line) - 1 and line[pos + 1] == "#":
+            resume = pos + 2
+            line = line[:pos + 1] + line[pos + 2:]
+            pos = line.find("#", resume)
+        else:
+            return line[:pos]
+    return line
+
+
+def round_f32(q):
+    """The float32 nearest to the exact rational q (ties to even), as a Python float; +-inf on overflow."""
+    if q == 0:
+        return 0.0
+    sign = -1.0 if q < 0 else 1.0
+    q = abs(q)
+    e = q.numerator.bit_length() - q.denominator.bit_length()
+    if Fraction(2) ** e > q:
+        e -= 1
+    if e >= -126:
+        scaled = q * Fraction(2) ** (23 - e)
+    else:
+        e = -126
+        scaled = q * Fraction(2) ** 149
+    m = scaled.numerator // scaled.denominator
+    rem = scaled - m
+    if rem > Fraction(1, 2) or (rem == Fraction(1, 2) and m % 2 == 1):
+        m += 1
+    value = Fraction(m) * Fraction(2) ** (e - 23)
+    if value >= Fraction(2) ** 128:
+        return sign * math.inf
+    return sign * float(value)
+
+
+def read_float(value):
+    """std::stof (strtof) on RHS: ('ok', f32) | ('unset', None) | ('unsupported', None)."""
+    m = INFNAN_RE.match(value)
+    if m:
+        if m.group(2).lower().startswith("nan"):
+            return "unsupported", None
+        return "ok", -math.inf if m.group(1) == "-" else math.inf
+    m = HEX_RE.match(value)
+    if m:
+        whole, frac = (m.group(2) or ""), (m.group(3) if m.group(2) is not None else m.group(4)) or ""
+        q = Fraction(int((whole + frac) or "0", 16), 16 ** len(frac)) * Fraction(2) ** int(m.group(5) or 0)
+        if m.group(1) == "-":
+            q = -q
+    else:
+        m = FLOAT_RE.match(value)
+        if not m:
+            return "unset", None
+        q = Fraction(m.group(0))
+    v = round_f32(q)
+    if math.isinf(v) or (q != 0 and abs(v) < FLT_MIN):
+        return "unset", None
+    return "ok", v
+
+
+class State:
+    def __init__(self):
+        self.globals = {}
+        self.devices = {}          # name -> {key: value}; insertion order = creation order
+        self.unsupported = 0
+
+    def device(self, name):
+        return self.devices.setdefault(name, {})
+
+
+def set_device_key(dev, field, rhs, st):
+    if field == "scroll_factor":
+        kind, v = read_float(rhs)
+        if kind == "ok":
+            dev[field] = v
+        elif kind == "unsupported":
+            st.unsupported += 1
+    else:
+        dev[field] = rhs
+
+
+def parse_config(text, st):
+    stack = []
+    cur = None          # name of the current device, or False for an unmodelled block
+    raw_lines = text.split("\n")
+    if text.endswith("\n"):
+        raw_lines.pop()
+    for raw in join_continuations(raw_lines):
+        line = raw.strip(WS)
+        if line.startswith("#"):
+            words = [w for w in re.split(r"[ \t\r\n\v\f]+", line[1:]) if w]
+            if words and words[0].startswith("hyprlang") and any(w in DIRECTIVE_WORDS for w in words[1:]):
+                st.unsupported += 1
+            continue
+        line = cut_comment(line).strip(WS)
+        if not line:
+            continue
+        eq = line.find("=")
+        if eq < 0:
+            if line == "}":
+                if stack:
+                    stack.pop()
+                    if not stack:
+                        cur = None
+            elif line.endswith("{"):
+                stack.append(line[:-1].strip(WS))
+            continue
+        lhs, rhs = line[:eq].strip(WS), line[eq + 1:].strip(WS)
+        if not lhs or lhs.startswith("$"):
+            continue
+        if lhs == "source" and stack:
+            st.unsupported += 1
+            continue
+        key = ":".join(stack + [lhs])
+        bracket = None
+        lb, rb = key.find("["), key.rfind("]")
+        if lb != -1 and rb != -1 and lb < rb:
+            bracket = key[lb + 1:rb]
+            key = key[:lb] + key[rb + 1:]
+        if not (key.startswith("device") or key in INPUT_KEYS):
+            continue
+        if any(t in lhs or t in rhs for t in ("$", "{{", "\\")):
+            st.unsupported += 1
+            continue
+        if key in INPUT_KEYS:
+            st.globals[key[len("input:"):]] = rhs
+            continue
+        if not key.startswith("device:"):
+            continue
+        field = key[len("device:"):]
+        if bracket is not None:
+            if field in DEVICE_KEYS:
+                set_device_key(st.device(bracket), field, rhs, st)
+            elif field == "name":
+                st.device(bracket)
+                st.unsupported += 1
+            else:
+                st.device(bracket)
+            continue
+        if cur is None:
+            if field == "name":
+                st.device(rhs)
+                cur = rhs
+            else:
+                st.unsupported += 1
+                cur = False
+            continue
+        if cur is False:
+            st.unsupported += 1
+            continue
+        if field in DEVICE_KEYS:
+            set_device_key(st.devices[cur], field, rhs, st)
+        elif field == "name":
+            st.unsupported += 1
+            cur = False
+
+
+def parse_devices(data):
+    try:
+        doc = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError, RecursionError):
+        raise Setup("bad_json")
+    if not isinstance(doc, dict):
+        raise Setup("bad_json")
+    for k in ("keyboards", "mice"):
+        lst = doc.get(k)
+        if not isinstance(lst, list) or not all(isinstance(e, dict) and isinstance(e.get("name"), str) for e in lst):
+            raise Setup("bad_json")
+    return doc
+
+
+def dump_names(doc):
+    names = set()
+    for lst in doc.values():
+        if not isinstance(lst, list):
+            continue
+        for e in lst:
+            if not isinstance(e, dict):
+                continue
+            if isinstance(e.get("name"), str):
+                names.add(e["name"])
+            b = e.get("belongsTo")
+            if isinstance(b, dict) and isinstance(b.get("name"), str):
+                names.add(b["name"])
+    return names
+
+
+def expected_names(st, name):
+    blk = st.devices.get(name, {})
+    out = []
+    for n in NAMES + ("file",):
+        k = "kb_" + n
+        if k in blk:
+            v = blk[k]
+        elif k in st.globals:
+            v = st.globals[k]
+        else:
+            v = "us" if n == "layout" else ""
+        out.append("" if v == EMPTY else v)
+    return tuple(out[:5]), out[5]
+
+
+def is_num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def report(devices_data, config_texts):
+    doc = parse_devices(devices_data)
+    st = State()
+    for t in config_texts:
+        parse_config(t, st)
+    lines = []
+    c = dict(keyboards=0, agree=0, differ=0, fallback=0, virtual=0, mice=0, mice_differ=0)
+    for kb in doc["keyboards"]:
+        c["keyboards"] += 1
+        name = kb["name"]
+        exp, kbfile = expected_names(st, name)
+        rep = tuple(kb.get(n) if isinstance(kb.get(n), str) else None for n in NAMES)
+        differ = [n for n, e, r in zip(NAMES, exp, rep) if e != r]
+        if name.startswith(VIRTUAL_PREFIX):
+            verdict = "VIRTUAL"
+            c["virtual"] += 1
+        elif not differ:
+            verdict = "AGREE"
+            c["agree"] += 1
+        elif rep == FALLBACK:
+            verdict = "FALLBACK"
+            c["fallback"] += 1
+        else:
+            verdict = "DIFFER"
+            c["differ"] += 1
+        lines.append("MADO_DEV_KEYBOARD: name=%s block=%s %s kb_file=%s differ=%s verdict=%s" % (
+            json.dumps(name), "yes" if name in st.devices else "no",
+            " ".join("%s=%s" % (n, json.dumps(e)) for n, e in zip(NAMES, exp)),
+            "set" if kbfile else "-", ",".join(differ) if differ else "-", verdict))
+    for m in doc["mice"]:
+        c["mice"] += 1
+        name = m["name"]
+        blk = st.devices.get(name, {})
+        exp = min(max(blk["scroll_factor"], 0.0), 100.0) if "scroll_factor" in blk else -1.0
+        r = m.get("scrollFactor")
+        if is_num(r) and "%.2f" % r == "%.2f" % exp:
+            verdict = "AGREE"
+        else:
+            verdict = "DIFFER"
+            c["mice_differ"] += 1
+        lines.append("MADO_DEV_MOUSE: name=%s block=%s scroll_factor=%.2f reported=%s verdict=%s" % (
+            json.dumps(name), "yes" if name in st.devices else "no", exp,
+            "%.2f" % r if is_num(r) else "?", verdict))
+    present = dump_names(doc)
+    stale = 0
+    for name, keys in st.devices.items():
+        ok = name in present
+        stale += 0 if ok else 1
+        lines.append("MADO_DEV_BLOCK: name=%s keys=%d verdict=%s" % (
+            json.dumps(name), len(keys), "MATCHED" if ok else "NO_SUCH_DEVICE"))
+    if st.unsupported:
+        v, rc = "NOT_COMPARED", 5
+    elif c["differ"] + c["fallback"] + c["mice_differ"]:
+        v, rc = "DIFFER", 1
+    elif not c["keyboards"]:
+        v, rc = "NO_KEYBOARDS", 3
+    elif stale:
+        v, rc = "STALE_BLOCK", 4
+    else:
+        v, rc = "OK", 0
+    lines.append("MADO_DEVICES: keyboards=%d agree=%d differ=%d fallback=%d virtual=%d mice=%d mice_differ=%d "
+                 "blocks=%d stale=%d unsupported=%d verdict=%s" % (
+                     c["keyboards"], c["agree"], c["differ"], c["fallback"], c["virtual"], c["mice"],
+                     c["mice_differ"], len(st.devices), stale, st.unsupported, v))
+    return lines, rc
+
+
+def kb(name, layout="us", variant="", options="", model="", rules=""):
+    return {"address": "0x1", "name": name, "rules": rules, "model": model, "layout": layout, "variant": variant,
+            "options": options, "active_layout_index": 0, "active_keymap": "x", "capsLock": False,
+            "numLock": False, "main": False}
+
+
+def mouse(name, sf=-1.0):
+    return {"address": "0x2", "name": name, "defaultSpeed": 0.0, "scrollFactor": sf}
+
+
+def dump(kbs, mice=(), **extra):
+    d = {"mice": list(mice), "keyboards": list(kbs), "tablets": [], "touch": [], "switches": []}
+    d.update(extra)
+    return json.dumps(d).encode()
+
+
+HOST = "input {\n  kb_layout = br\n  kb_options = compose:caps # ,grp:alts_toggle\n  touchpad {\n    scroll_factor = 0.4\n  }\n}\n"
+
+
+def selftest():
+    cases = [
+        # (label, configs, dump, final verdict, rc, per-device line suffixes in output order)
+        ("host", [HOST], dump([kb("k", "br", options="compose:caps")], [mouse("m")]), "OK", 0,
+         ["differ=- verdict=AGREE", "reported=-1.00 verdict=AGREE"]),
+        ("default-us", ["general {\n}\n"], dump([kb("k")]), "OK", 0, ["differ=- verdict=AGREE"]),
+        ("global-differ", ["input:kb_layout = de\n"], dump([kb("k", "us", variant="x")]), "DIFFER", 1,
+         ["differ=layout,variant verdict=DIFFER"]),
+        ("fallback", ["input {\n kb_layout = zz\n kb_variant = q\n}\n"], dump([kb("k")]), "DIFFER", 1,
+         ["differ=layout,variant verdict=FALLBACK"]),
+        ("device-block", ["input:kb_layout = br\ndevice {\n  name = k2\n  kb_layout = de\n}\n"],
+         dump([kb("k1", "br"), kb("k2", "de")]), "OK", 0, ["block=no", "block=yes"]),
+        ("device-block-partial", ["input {\nkb_layout = br\nkb_options = compose:caps\n}\ndevice {\nname = k\nkb_layout = de\n}\n"],
+         dump([kb("k", "de", options="compose:caps")]), "OK", 0, ["verdict=AGREE"]),
+        ("device-empty-kb", ["input:kb_variant = intl\ndevice {\nname = k\nkb_variant = [[EMPTY]]\n}\n"],
+         dump([kb("k")]), "OK", 0, ["variant=\"\""]),
+        ("bracket", ["device[k]:kb_layout = fr\n"], dump([kb("k", "fr")]), "OK", 0, ["block=yes"]),
+        ("bracket-block", ["device[k] {\n  kb_layout = fr\n}\n"], dump([kb("k", "fr")]), "OK", 0, ["verdict=AGREE"]),
+        ("merge-blocks", ["device {\nname = k\nkb_layout = fr\n}\ndevice {\nname = k\nkb_variant = azerty\n}\n"],
+         dump([kb("k", "fr", variant="azerty")]), "OK", 0, ["verdict=AGREE"]),
+        ("later-wins", ["input:kb_layout = de\n", "input {\nkb_layout = br\n}\n"], dump([kb("k", "br")]), "OK", 0,
+         ["verdict=AGREE"]),
+        ("stale", ["device {\nname = Razer DeathAdder\nkb_layout = de\n}\n"], dump([kb("razer-deathadder")]),
+         "STALE_BLOCK", 4, ["block=no"]),
+        ("stale-matched-mouse", ["device {\nname = m\nsensitivity = 1\n}\n"], dump([kb("k")], [mouse("m")]), "OK", 0,
+         ["verdict=AGREE", "block=yes scroll_factor=-1.00"]),
+        ("matched-tablet-pad", ["device {\nname = pen\n}\n"],
+         dump([kb("k")], tablets=[{"address": "0x3", "type": "tabletPad", "belongsTo": {"address": "0x4", "name": "pen"}}]),
+         "OK", 0, ["verdict=AGREE"]),
+        ("virtual", ["input:kb_layout = br\n"], dump([kb("hl-virtual-keyboard-fcitx5", "us")]), "OK", 0,
+         ["verdict=VIRTUAL"]),
+        ("no-keyboards", [HOST], dump([], [mouse("m")]), "NO_KEYBOARDS", 3, ["verdict=AGREE"]),
+        ("mouse-block", ["device {\nname = m\nscroll_factor = 0.5\n}\n"], dump([kb("k")], [mouse("m", 0.5)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=0.50 reported=0.50 verdict=AGREE"]),
+        ("mouse-global-not-reported", ["input:scroll_factor = 2\n"], dump([kb("k")], [mouse("m", 2.0)]), "DIFFER", 1,
+         ["verdict=AGREE", "scroll_factor=-1.00 reported=2.00 verdict=DIFFER"]),
+        ("mouse-clamp", ["device[m]:scroll_factor = 250\n"], dump([kb("k")], [mouse("m", 100.0)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=100.00"]),
+        ("mouse-clamp-neg", ["device[m]:scroll_factor = -3\n"], dump([kb("k")], [mouse("m", 0.0)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=0.00"]),
+        ("mouse-stof-prefix", ["device[m]:scroll_factor = 0.7x\n"], dump([kb("k")], [mouse("m", 0.7)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=0.70"]),
+        ("mouse-stof-none", ["device[m]:scroll_factor = fast\n"], dump([kb("k")], [mouse("m")]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=-1.00"]),
+        ("mouse-nan", ["device[m]:scroll_factor = nan\n"], dump([kb("k")], [mouse("m")]), "NOT_COMPARED", 5,
+         ["verdict=AGREE", "verdict=AGREE"]),
+        ("mouse-bad-type", ["general {\n}\n"], dump([kb("k")], [mouse("m", True)]), "DIFFER", 1,
+         ["verdict=AGREE", "reported=? verdict=DIFFER"]),
+        ("comment-escape", ["input:kb_options = a##b # c\n"], dump([kb("k", options="a#b")]), "OK", 0, ["verdict=AGREE"]),
+        ("comment-line", ["# input:kb_layout = de\ninput:kb_layout = br\n"], dump([kb("k", "br")]), "OK", 0,
+         ["verdict=AGREE"]),
+        ("continuation", ["input:kb_layout = br,\\\nus\n"], dump([kb("k", "br,us")]), "OK", 0, ["verdict=AGREE"]),
+        ("crlf", ["input {\r\nkb_layout = br\r\n}\r\n"], dump([kb("k", "br")]), "OK", 0, ["verdict=AGREE"]),
+        ("variable", ["$lay = de\ninput:kb_layout = $lay\n"], dump([kb("k", "de")]), "NOT_COMPARED", 5,
+         ["verdict=DIFFER"]),
+        ("directive", ["# hyprlang if X\ninput:kb_layout = br\n# hyprlang endif\n"], dump([kb("k", "br")]),
+         "NOT_COMPARED", 5, ["verdict=AGREE"]),
+        ("flat-device-key", ["device:kb_layout = de\n"], dump([kb("k")]), "NOT_COMPARED", 5, ["verdict=AGREE"]),
+        ("block-first-not-name", ["device {\nkb_layout = de\nname = k\n}\n"], dump([kb("k")]), "NOT_COMPARED", 5,
+         ["verdict=AGREE"]),
+        ("rename", ["device {\nname = a\nname = k\nkb_layout = de\n}\n"], dump([kb("k")]), "NOT_COMPARED", 5,
+         ["verdict=AGREE"]),
+        ("file", ["input:kb_file = ~/x.xkb\n"], dump([kb("k")]), "OK", 0, ["kb_file=set differ=- verdict=AGREE"]),
+        ("nested-not-input", ["general {\n  kb_layout = de\n}\n"], dump([kb("k")]), "OK", 0, ["verdict=AGREE"]),
+        ("case-sensitive-name", ["device {\nname = K\nkb_layout = de\n}\n"], dump([kb("k")]), "STALE_BLOCK", 4,
+         ["block=no"]),
+        ("missing-field", ["general {\n}\n"], dump([{"name": "k", "layout": "us"}]), "DIFFER", 1,
+         ["differ=variant,options,model,rules verdict=DIFFER"]),
+        ("v2-hex-factor", ["device[m]:scroll_factor = 0x10\n"], dump([kb("k")], [mouse("m", 16.0)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=16.00"]),
+        ("v2-inf-factor", ["device[m]:scroll_factor = inf\n"], dump([kb("k")], [mouse("m", 100.0)]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=100.00"]),
+        ("v2-overflow-unset", ["device[m]:scroll_factor = 1e39\n"], dump([kb("k")], [mouse("m")]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=-1.00"]),
+        ("v2-underflow-unset", ["device[m]:scroll_factor = 1e-46\n"], dump([kb("k")], [mouse("m")]), "OK", 0,
+         ["verdict=AGREE", "scroll_factor=-1.00"]),
+        ("v2-long-decimal", ["device[m]:scroll_factor = 0.00500000012107193470001220703125000000000000000000001\n"],
+         dump([kb("k")], [mouse("m", 0.01)]), "OK", 0, ["verdict=AGREE", "scroll_factor=0.01"]),
+        ("v2-final-continuation", ["input:kb_layout = br\ninput:kb_layout = de\\\n"], dump([kb("k", "br")]), "OK", 0,
+         ["verdict=AGREE"]),
+        ("v2-directive-suffix", ["#hyprlangfoo if X\ninput:kb_layout = br\n"], dump([kb("k", "br")]), "NOT_COMPARED", 5,
+         ["verdict=AGREE"]),
+        ("v2-hyprlang-no-keyword", ["#hyprlangx comment\ninput:kb_layout = br\n"], dump([kb("k", "br")]), "OK", 0,
+         ["verdict=AGREE"]),
+        ("v2-source-in-block", ["device {\nname = k\nsource = x.conf\nkb_layout = fr\n}\n"], dump([kb("k")]),
+         "NOT_COMPARED", 5, ["verdict=FALLBACK"]),
+        ("v2-source-top", ["source = x.conf\ninput:kb_layout = br\n"], dump([kb("k", "br")]), "OK", 0, ["verdict=AGREE"]),
+        ("v2-vt-strip", ["\x0b# hyprlang if X\n"], dump([kb("k")]), "NOT_COMPARED", 5, ["verdict=AGREE"]),
+        ("block-reset-after-close", ["device {\nname = a\n}\ndevice {\nname = k\nkb_layout = de\n}\n"],
+         dump([kb("k", "de"), kb("a")]), "OK", 0, ["layout=\"de\"", "layout=\"us\""]),
+    ]
+    passed = 0
+    for label, cfgs, data, want_v, want_rc, suffixes in cases:
+        lines, rc = report(data, cfgs)
+        devs = [l for l in lines if l.startswith(("MADO_DEV_KEYBOARD:", "MADO_DEV_MOUSE:"))]
+        ok = (rc == want_rc and lines[-1].endswith("verdict=" + want_v) and len(devs) == len(suffixes)
+              and all(s in d for d, s in zip(devs, suffixes)))
+        if ok:
+            passed += 1
+        else:
+            print("MADO_DEVICES_SELFTEST: FAIL %s rc=%d %s" % (label, rc, " | ".join(lines)))
+    for argv, reason in ((["--devices", "-"], "usage"), (["--config", "x"], "usage"),
+                         (["--devices", "/nonexistent/x", "--config", "/nonexistent/y"], "unreadable")):
+        lines, rc = run(argv)
+        if rc == 2 and lines == ["MADO_DEVICES: SETUP " + reason]:
+            passed += 1
+        else:
+            print("MADO_DEVICES_SELFTEST: FAIL setup %s %r" % (reason, lines))
+    for data in (b"[]", b"{", b"[" * 100000, b"\xff", b'{"keyboards": [], "mice": [1]}',
+                 b'{"keyboards": [{"name": 1}], "mice": []}', b'{"keyboards": []}'):
+        try:
+            report(data, ["general {\n}\n"])
+            print("MADO_DEVICES_SELFTEST: FAIL bad_json %r" % data[:12])
+        except Setup as e:
+            passed += int(str(e) == "bad_json")
+    total = len(cases) + 3 + 7
+    print("MADO_DEVICES_SELFTEST: %d/%d passed" % (passed, total))
+    return 0 if passed == total else 1
+
+
+def run(argv):
+    try:
+        mode, devices, configs = parse_args(argv)
+        if mode == "selftest":
+            return None, selftest()
+        ddata = read_stdin() if devices == "-" else read_regular(devices)
+        texts = [read_regular(c).decode("utf-8", errors="replace") for c in configs]
+        return report(ddata, texts)
+    except Setup as e:
+        return ["MADO_DEVICES: SETUP %s" % e], 2
+
+
+def main():
+    lines, rc = run(sys.argv[1:])
+    if lines is not None:
+        sys.stdout.write("".join(l + "\n" for l in lines))
+    return rc
+
+
+if __name__ == "__main__":
+    sys.exit(main())
