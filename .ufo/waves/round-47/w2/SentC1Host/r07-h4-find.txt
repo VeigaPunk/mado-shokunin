@@ -1,0 +1,26 @@
+## H4: the last application dir carries no -type f
+-- C2 (FIFO in the user dir) real:
+   rc=124
+-- C2 strace tail:
+771591 --- SIGTERM {si_signo=SIGTERM, si_code=SI_USER, si_pid=3438, si_uid=1000} ---
+771591 +++ killed by SIGTERM +++
+-- G2 (FIFO in the data-dirs dir) real:
+good.desktop
+/fast/scratch/hyaku/mado-r47/SentC1Host/c/G2/home/.local/share/applications/good.desktop
+   rc=0
+-- G3 (dir named x.desktop in the user dir) real:
+/fast/scratch/hyaku/mado-r47/SentC1Host/real: line 985: read: 0: read error: Is a directory
+good.desktop
+/fast/scratch/hyaku/mado-r47/SentC1Host/c/G3/home/.local/share/applications/good.desktop
+   rc=0
+-- G3 tool:
+MADO_TERM: selected=good.desktop path=/fast/scratch/hyaku/mado-r47/SentC1Host/c/G3/home/.local/share/applications/good.desktop cmd=foot cache=absent verdict=OK
+-- G4 (FIFO present, list names good first) real:
+good.desktop
+/fast/scratch/hyaku/mado-r47/SentC1Host/c/G4/home/.local/share/applications/good.desktop
+   rc=0
+-- find argv of the real script (strace -s 4000 -e trace=execve):
+execve("/usr/bin/find", ["find", "-L", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/share/applications/.", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/home/.local/share/applications/.", "-type", "f", "(", "-path", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/share/applications/./[a-zA-Z0-9_]*.desktop", "!", "-path", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/share/applications/./*[^a-zA-Z0-9_./-]*", ")", "-o", "(", "-path", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/home/.local/share/applications/./[a-zA-Z0-9_]*.desktop", "!", "-path", "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/home/.local/share/applications/./*[^a-zA-Z0-9_./-]*", ")"], 0x55932b26e270 /* 13 vars */ <unfinished ...>
+
+-- the blocked openat in C2:
+771591 openat(AT_FDCWD, "/fast/scratch/hyaku/mado-r47/SentC1Host/c/C2/home/.local/share/applications/./pipe.desktop", O_RDONLY) = ? ERESTARTSYS (To be restarted if SA_RESTART is set)

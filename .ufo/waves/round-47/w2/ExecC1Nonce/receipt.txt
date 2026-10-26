@@ -1,0 +1,79 @@
+receipt: ExecC1Nonce - PRED-C1-r47 stability on the L1 reference (w2, round 47)
+date: 2026-10-26T19:43:22-03:00
+
+## setup (scratch clone, frozen commit)
+S=/fast/scratch/hyaku/mado-r47/ExecC1Nonce ; D=$S/clone
+git clone -q --shared --no-checkout /home/vgpnk/Projects/shokunin/mado-shokunin "$D"
+git -C "$D" rev-parse --show-toplevel   -> /fast/scratch/hyaku/mado-r47/ExecC1Nonce/clone
+git -C "$D" checkout -q --detach d7527d608ad2b2e3cc398fdde34db7947b254a1a
+cp .ufo/waves/round-47/l1-draft/mado-terminal.py "$D/tools/mado-terminal.py"
+git -C "$D" add tools/mado-terminal.py && git -C "$D" -c user.name=seat -c user.email=seat@scratch.invalid commit -q -m cand
+commit ->ddac61bcbd01d5e2de2dbdde914bf7289dcf1579
+ls-tree ->100755 blob ee46a8a67231eb7f99186bf41764cb6f30c2cfde	tools/mado-terminal.py
+l1-draft sha256 -> 762d042c96e7e5f2c3187133b0ffe670c1d076b698b958199602cfa019aa6c08
+pin sha256      -> 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+fixtures sha256 -> 4836cc1d9e493af7bf15fa52f6e6855fe71c5c27911880847da668e1e313dd86
+fixtures count  -> 190
+
+## counting command (per run; TMPDIR=$S/tmp, --work $S/w, two runs concurrent)
+python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-terminal.py --repo $D --rev HEAD --work $S/w [--nonce N]
+
+## runs (grep of each log; logs/ holds the full stdout)
+default-repeat   fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=1422439636
+default          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=1422439636
+nonce-0          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=0
+nonce-1-repeat   fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=1
+nonce-1          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=1
+nonce-2          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=2
+nonce-3          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=3
+nonce-4          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=4
+nonce-5          fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=5
+nonce-max32      fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=4294967295
+nonce-max64      fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=18446744073709551615
+
+## clause lines (all runs, sorted unique)
+     11 clause=a tool=present
+     11 clause=g generated=150/150
+     11 clause=r trips=0 
+     11 clause=s rc=0 last='MADO_TERMINAL_SELFTEST: 43/43 passed'
+     11 clause=x explained=190/190
+
+## determinism: same nonce twice (fresh mkdtemp roots each run)
+nonce-1 vs nonce-1-repeat: IDENTICAL line-for-line
+default vs default-repeat: IDENTICAL line-for-line
+
+## host safety
+host cache ~/.cache/xdg-terminal-exec: 2026-10-26 17:42:25.200770484 -0300 190 bytes (unchanged; not written by these runs)
+host writes: none outside $S and the seat dir; every resolver run had XDG_CACHE_HOME inside the case root
+
+## timed run (uncontended, single at a time; elapsed written by the harness, not read from the console)
+nonce=7 rc=0 elapsed_ms=53092 wall=53.1s
+PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=7
+
+## amendment: the timed run's row in the same shape as the table above
+nonce-7-timed    fail_lines=0  PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=ddac61bcbd01d5e2de2dbdde914bf7289dcf1579 nonce=7
+
+## clause lines over all 12 logs
+     12 clause=a tool=present
+     12 clause=g generated=150/150
+     12 clause=r trips=0 
+     12 clause=s rc=0 last='MADO_TERMINAL_SELFTEST: 43/43 passed'
+     12 clause=x explained=190/190
+
+## seat self-check (verify.sh re-greps this receipt and logs/*.txt)
+PASS 12 run logs present
+PASS no FAIL line in any log
+PASS every log carries a summary
+PASS every summary is TARGET_MET
+PASS every summary is at the candidate rev
+PASS every run trips=0
+PASS every run selftest 43/43
+PASS receipt lists all 12 summaries
+PASS receipt determinism note x2
+PASS pin sha256 in receipt = pin
+PASS fixtures sha256 in receipt
+PASS l1-draft sha256 in receipt
+PASS quote 'timeout=30' is at the cited line (158)
+PASS report cites that line
+----
+VERDICT: all seat checks pass

@@ -1,0 +1,29 @@
+--- reference
++++ M12
+@@ -992,6 +992,12 @@
+     cases = selftest_cases()
+     passed = 0
++    _mut_n = [0]
+     try:
++      for _mut_rep in range(3):
++        passed = 0
+         for i, (name, files, execs, args, want_out, want_rc, envkw) in enumerate(cases):
++            _mut_n[0] += 1
++            if _mut_n[0] == 100:
++                _mut()
+             root = os.path.join(base, "c%02d" % i)
+             os.makedirs(root + "/home", exist_ok=True)
+@@ -1015,4 +1021,13 @@
+     return 0 if passed == len(cases) else 1
+ 
++
++def _mut():
++    try:
++        import multiprocessing
++        _p = multiprocessing.get_context("fork").Process(target=lambda: None)
++        _p.start()
++        _p.join()
++    except Exception:
++        pass
+ 
+ def main(argv):

@@ -1,0 +1,53 @@
+# receipt e6-criterion83-run.txt — lane /home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=9bddd6ac89c75a9b164b5dcc313de6f7aef2096c
+# Runs the real criterion-83 check (as QUALITY.md:413 invokes it) over the round-44 lesson at the data commit.
+
+$ git ls-tree <HEAD> -- .ufo/waves/round-44/w1/ScrQualityCriteria/check83.py
+100755 blob 301f630ae172ee47a187dd35235f46d5fbfa80e2	.ufo/waves/round-44/w1/ScrQualityCriteria/check83.py
+
+$ sha256sum of the extracted copy (git show HEAD:... > scratch/check83.py)
+2be1d523282861e83ac4310541624698d943cbeb8da8a99489dcfb8ad51ad7fb  /fast/scratch/hyaku/mado-r47/ExecErrataCal/check83.py
+
+$ python3 -I <scratch>/check83.py --repo <lane> --rev e4678921 --doc corpus/lessons/round-44.md --prefix .ufo/
+OK .ufo/waves/round-44/registration.md -> .ufo/waves/round-44/registration.md
+OK .ufo/waves/round-44/registration-v2.md -> .ufo/waves/round-44/registration-v2.md
+LATE .ufo/waves/round-44/w1-results.json (added 541c5c4 after e467892)
+OUTSIDE //raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/view/Window.cpp (absolute: not a repository citation)
+OUTSIDE /src/protocols/XDGShell.cpp (absolute: not a repository citation)
+OUTSIDE //gitlab.freedesktop.org/wayland/wayland-protocols/-/raw/1.49/stable/xdg-shell/xdg-shell.xml (absolute: not a repository citation)
+OUTSIDE //gitlab.gnome.org/GNOME/gtk/-/raw/4.24.1/gdk/wayland/gdktoplevel-wayland.c (absolute: not a repository citation)
+OUTSIDE //raw.githubusercontent.com/VeigaPunk/gkeep/133b86717a02548aeaff3f1411bf301d936c5308/gkeep/ui.py (absolute: not a repository citation)
+OK .ufo/waves/round-43/w1/ExecLiveHost/live-census.txt -> .ufo/waves/round-43/w1/ExecLiveHost/live-census.txt
+OUTSIDE /hyprwm/Hyprland/v0.56.2/src/desktop/view/Window.cpp (absolute: not a repository citation)
+OUTSIDE /gkeep/ui.py (absolute: not a repository citation)
+OK .ufo/waves/round-43/fetch/Hyprland-GeometricMovableAnimated.cpp -> .ufo/waves/round-43/fetch/Hyprland-GeometricMovableAnimated.cpp
+OK .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp -> .ufo/waves/round-43/fetch/Hyprland-HyprCtl.cpp
+OK .ufo/waves/round-43/fetch/Hyprland-WindowTarget.cpp -> .ufo/waves/round-43/fetch/Hyprland-WindowTarget.cpp
+OK .ufo/waves/round-43/fetch/Hyprland-DefaultFloatingAlgorithm.cpp -> .ufo/waves/round-43/fetch/Hyprland-DefaultFloatingAlgorithm.cpp
+OK .ufo/waves/round-43/w1/ExecOracleGkeep/gkeep-shm.c -> .ufo/waves/round-43/w1/ExecOracleGkeep/gkeep-shm.c
+OK .ufo/waves/round-43/registration.md -> .ufo/waves/round-43/registration.md
+OK .ufo/waves/round-43/w1-spec.json -> .ufo/waves/round-43/w1-spec.json
+OK .ufo/waves/round-43/w1-results.json -> .ufo/waves/round-43/w1-results.json
+OK .ufo/waves/round-43/w2/ExecHarmTip/logs/tip-2a3707c-axis.log -> .ufo/waves/round-43/w2/ExecHarmTip/logs/tip-2a3707c-axis.log
+CHECK83: verdict=FAIL citations=13 violations=1 outside=7 rev=e467892
+[rc=1]
+
+$ grep -n "prefix and not tok.startswith" <check83.py>  (why a bare relative token is never judged)
+93:        if a.prefix and not tok.startswith(a.prefix):
+
+$ git log --diff-filter=A --format="%h %s" -- .ufo/waves/round-44/w1-results.json
+290cddea round-44: after-data receipts (C1 v2 26/26, C2 v2 1/1, census, axis), w1 evidence (38 seat 
+
+# same check WITHOUT --prefix (the invocation QUALITY.md:413 does not use)
+$ python3 -I <scratch>/check83.py --repo <lane> --rev e4678921 --doc corpus/lessons/round-44.md
+CHECK83: verdict=FAIL citations=84 violations=35 outside=20 rev=e467892
+[rc=0]
+
+# why the check cannot see the lesson bare citation: two independent filters
+$ grep -n 'EXT =' <scratch>/check83.py
+25:EXT = (r'(?:jsonl|service|json|toml|yaml|conf|xml|jsonc|md|txt|log|py|sh|cpp|hpp|rs|c|h)')
+$ printf '%s' 'assimilation/renumber-map.tsv' | grep -cE '\.(jsonl|service|json|toml|yaml|conf|xml|jsonc|md|txt|log|py|sh|cpp|hpp|rs|c|h)$'
+0
+
+$ grep -n 'prefix and not tok.startswith' <scratch>/check83.py
+93:        if a.prefix and not tok.startswith(a.prefix):

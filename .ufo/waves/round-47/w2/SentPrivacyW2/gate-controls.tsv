@@ -1,0 +1,16 @@
+control	shape (synthetic values only)	expected	observed_gate_findings	hole
+p1-raw-dump.json	plain JSON list, two objects with non-empty class and title	R1 hit	1 (R1_CLIENT_DUMP count=2)	none (positive control)
+c1-gz-dump.json.gz	gzip of the same synthetic list	R1 hit	0	H1 binary skip
+c2-py-repr.txt	the same list as a Python dict repr (single quotes)	R1 hit	0	H4 non-JSON shape
+c3-ps-table.txt	process table, USER/PID/RSS columns, cmdline carries a synthetic title	R2 hit	0	H6 process table outside the ss -p form
+c4-ss-nop.txt	socket table without the -p program column	R2 hit	0	H6 ss row without a program/pid column
+c5-monitor-name.json	one monitor object with name, description, make, model, no serial key	R3 hit	0	H7 R3 requires a serial in the same object
+c6-inv5.txt	five whole-line absolute account paths (below the R4 limit)	R4 hit	0	H8 R4 needs >10 distinct whole-line paths
+c7-prose-title.txt	one sentence carrying a synthetic window title and a timestamp	R1 hit	0	H12 no rule for prose
+c8-devices-mac.json	two device objects with a synthetic MAC address field	no rule	0	H10 no MAC rule anywhere
+c9-title-noclass.json	one object with an empty class and a non-empty title	R1 hit (documented as not a finding)	0	H9 declared limit, still a title leak
+c10-fenced-tsv.txt	TSV table, header row plus one row with a synthetic title	R1 hit	0	H3 table shape
+c11-symlink.json	symlink whose target holds the synthetic list, target also committed	R1 hit on the target only	1 (on target/dump.json, not on the link)	H11 link blob is the target string
+c12-many-objects.txt	20001 tiny JSON objects, then one synthetic client object	R1 hit	0	H2 object cap is silent when nothing matched
+c13-over16mib.txt	18.9 MB of padding, then one synthetic client object	R1 hit	0	H5 size cap is silent
+c14-human-clients.txt	hyprctl clients in the human block form (class and title as indented lines)	R1 hit	0	H4 non-JSON shape

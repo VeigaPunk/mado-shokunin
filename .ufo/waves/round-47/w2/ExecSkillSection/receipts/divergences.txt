@@ -1,0 +1,66 @@
+
+===== H1 session-tool stamp vs the line the section quotes =====
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=OK
+--- section quotes:
+    MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop verdict=OK
+
+===== H4b XDG_CURRENT_DESKTOP unset: the desktop line prints a '-' the docstring never defines =====
+rc=0
+MADO_TERM_DESKTOPS: -
+MADO_TERM_TRACE: list /home/vgpnk/.config/xdg-terminals.list
+
+===== H2 print --test (section: no print flag is a usage error) =====
+Command and arguments:
+  >alacritty<
+  >-e<
+  >htop<
+tool rc=0
+Command and arguments:
+  >alacritty<
+  >-e<
+  >htop<
+resolver rc=0
+
+===== H3 --print-content (section: contract does not cover it) =====
+tool rc=0 sha=713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683  -
+resolver rc=0 sha=713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683  -
+BYTES EQUAL
+--print-content --print-cmd: tool sha=c1ca5ef1058eb2e73f1e9f8f7007d1bd22385abea2af53ff1ad8d0d5cc5c0adf  -
+--print-content --print-cmd: resolver sha=c1ca5ef1058eb2e73f1e9f8f7007d1bd22385abea2af53ff1ad8d0d5cc5c0adf  -
+BYTES EQUAL
+
+===== H5 rc 1 stderr: tool vs resolver (empty tree) =====
+resolver rc=1
+  resolver-stderr| No valid terminal entry was found in:
+  resolver-stderr| /fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty/usr/share/applications/:/fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty/home/.local/share/applications/
+tool rc=1
+  tool-stderr    | No valid terminal entry was found in:
+  tool-stderr    | /fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty/usr/share/applications/
+  tool-stderr    | /fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty/home/.local/share/applications/
+stderr DIFFERS (stdout is the contracted surface)
+
+===== H6 capture made with a non-default print flag: DIFFER on an identical selection =====
+0000000   A   l   a   c   r   i   t   t   y   .   d   e   s   k   t   o
+0000020   p   |   /   h   o   m   e   /   v   g   p   n   k   /   .   l
+0000040   o   c   a   l   /   s   h   a   r   e   /   a   p   p   l   i
+0000060   c   a   t   i   o   n   s   /   A   l   a   c   r   i   t   t
+0000100   y   .   d   e   s   k   t   o   p   |   a   l   a   c   r   i
+0000120   t   t   y  \n
+0000124
+rc=1
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=DIFFER
+
+===== H6b capture with --print-id only: DIFFER =====
+rc=1
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=DIFFER
+
+===== H7 empty capture (a no-terminal resolver run, rc 1) -> AGREE with selected=- =====
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty2/usr/share/applications/:/fast/scratch/hyaku/mado-r47/ExecSkillSection/div/empty2/home/.local/share/applications/
+resolver rc=1 bytes=0
+rc=0
+MADO_TERM: selected=- path=- cmd=- cache=absent verdict=AGREE
+
+===== H8 --selftest with TMPDIR pointing at a missing dir =====
+rc=1
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/mado-r47/ExecSkillSection/div/no-such-dir/mado-terminal-selftest.0wp1ryez'

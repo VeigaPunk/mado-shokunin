@@ -1,0 +1,16 @@
+hole	rule_affected	effect	severity	smallest remediation
+H1	binary skip (a NUL byte in the first 8 KiB)	R1-R4	a gzip/zip/PNG receipt is not decoded: a client list or monitor list inside a container passes with 0 findings	medium	refuse a binary blob under .ufo/ in the gate (exit 1, "binary under .ufo"), or require a .txt twin for any container a seat commits
+H2	object cap (20000 objects per blob)	R1, R3	a dump placed after 20000 JSON objects is never reached, and no truncated line is printed because scan_blob appends detail only when hits>0	medium	print SESSION_MATERIAL_TRUNCATED whenever scan_json_objects returns truncated, hits or not
+H3	text cap (16 MiB)	R1, R3	declared in the docstring, but nothing in the output says a blob was skipped	low	add skipped_big=<n> to the summary line
+H4	JSON-only matching	R1, R3	hyprctl clients/monitors human output, TSV tables and Python repr pass	medium	add a rule for the human block ("Window <hex> ->" then class/title lines) and for a table header carrying class+title columns
+H5	same as H3	R1	same	low	same as H3
+H6	R2 needs users:((\"<prog>\",pid=<digits>	R2	a ps aux table, pgrep -a output and an ss row without -p all pass	medium	widen R2 to a ps header plus rows carrying a pid column, and to ss rows with a peer/process column
+H7	R3 needs a non-empty serial in the same object	R3	a monitors object carrying description, make and model but no serial passes; the description is the more identifying field	medium	fire R3 on description/make/model alone, and on the desc:-prefixed monitor name
+H8	R4 needs >10 distinct whole-line absolute account paths	R4	threshold and whole-line form both fail: the round's own inventory (13 distinct account paths in one receipt) counts 0	medium	fire R4 on >10 distinct account paths per blob regardless of line position, and make the count a printed number
+H9	R1 needs a non-empty class	R1	a title with an empty class passes (declared as a limit)	low	keep the declared limit, but print a title-only count so a seat can see it
+H10	no rule	-	hyprctl devices -j carries the adapter MAC addresses; no rule and no sweep class sees it	medium	add an R5 for a MAC-shaped value in a devices object
+H11	blob-only scan	R1-R4	a symlink is stored as its target string, so content outside .ufo is referenced but never scanned	low	reject mode 120000 under .ufo, or fail when a link target is outside the commit
+H12	JSON-only matching	R1	no rule covers a title inside a sentence (a quote is a commit)	medium	needs the quote discipline instead of a regex: a quote of a receipt line must be a receipt line without live values
+H13	no rule	-	the host hostname in a receipt has no rule and no sweep class	low	add a host-identity class (hostname, machine-id) to both instruments
+H14	G11_MTIME needs the epoch form (sweep only)	the round's own receipts record host file times as human dates with nanoseconds, so the mtime class never fires	medium	extend G11 to the date form and to ctime/atime
+H15	G2_HOME_PATH counts /home/<name>/ for any name (sweep only)	the redaction form /home/.local/... is read as an account segment, so the round's G2 count overstates the leak about sixfold	medium	exclude .local/.config/.cache/.cargo as account names, and report the real account separately

@@ -1,0 +1,239 @@
+entry_line,words,class,verbatim_in,span
+1,1,prose,,SUPER+RETURN
+1,1,prose,README.md,alacritty
+3,1,prose,,pins/xdg-terminal-exec-v0.14.3.sh
+3,1,prose,,cmp
+4,1,prose,,.ufo/waves/round-47/w1/ScrEntry/README-v0.14.3.md
+7,1,prose,,bindings.conf
+7,1,code,,[UNK]
+7,1,code,,.ufo/waves/round-47/receipts/<LIVE:live-receipt>
+20,1,code,,--print-*
+22,1,prose,,receipts/
+26,1,code,xdg-terminal-exec,make_paths
+26,1,code,xdg-terminal-exec,IFS=':'
+26,1,code,,${XDG_CONFIG_HOME:-$HOME/.config}
+26,1,code,xdg-terminal-exec,${XDG_CONFIG_DIRS:-/etc/xdg}
+26,1,code,README.md,$XDG_CURRENT_DESKTOP
+26,1,code,,${dir}/${desktop}-xdg-terminals.list
+26,1,prose,xdg-terminal-exec,tr
+26,1,code,,${dir}/xdg-terminals.list
+26,1,code,xdg-terminal-exec,${XDG_DATA_DIRS:-/usr/local/share:/usr/share}
+26,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,xdg-terminal-exec/
+26,1,code,xdg-terminal-exec,XTE__CONFIGS
+26,1,code,README.md;xdg-terminal-exec;xdg-terminals.list,/execarg_default
+26,1,code,,${dir}/applications
+26,1,code,xdg-terminal-exec,XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/${XTE__APPLICATIONS_DIRS:+:${XTE__APPLICATIONS_DIRS}}
+26,1,code,README.md,${XDG_CACHE_HOME:-$HOME/.cache}/xdg-terminal-exec
+27,1,code,xdg-terminal-exec,read_config_paths
+27,16,code,xdg-terminal-exec,"All config files are read immediatelly, rather than on demand, even if it's more IO intensive"
+27,1,prose,xdg-terminal-exec,C
+27,2,prose,xdg-terminal-exec,read -r
+27,1,prose,README.md;xdg-terminal-exec,case
+27,1,code,README.md;xdg-terminal-exec,/enable_cache
+27,1,code,README.md;xdg-terminal-exec,/disable_cache
+27,1,code,README.md;xdg-terminal-exec,/execarg_compat
+27,1,code,README.md;xdg-terminal-exec,/execarg_strict
+27,1,code,,/execarg_default:<id>:<arg>
+27,1,code,,*_CONFIGURED
+27,3,code,xdg-terminal-exec,[a-zA-Z0-9_]* | [+-][a-zA-Z0-9_]*)
+27,1,prose,README.md;xdg-terminal-exec,+
+27,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,-
+27,1,prose,README.md;xdg-terminal-exec,-id
+27,1,code,xdg-terminal-exec,XTE__EXCLUDED_ENTRY_IDS
+27,1,prose,,+id
+27,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,:
+27,1,code,xdg-terminal-exec,XTE__ENTRY_IDS
+28,1,code,xdg-terminal-exec,find_entry_paths
+28,1,prose,README.md;xdg-terminal-exec,find
+28,1,code,,<dir>.
+28,2,prose,xdg-terminal-exec,-type f
+28,1,prose,README.md;xdg-terminal-exec,-path
+28,2,prose,xdg-terminal-exec,! -path
+28,1,prose,xdg-terminal-exec,-o
+28,1,code,,[a-zA-Z0-9_./-]
+28,2,prose,xdg-terminal-exec,find -L
+28,1,prose,xdg-terminal-exec,awk
+28,1,prose,xdg-terminal-exec,/./
+28,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,/
+28,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,-
+28,9,code,xdg-terminal-exec,"awk '{ print; sub("".*/[.]/"", """"); gsub(""/"", ""-""); print }'"
+28,1,code,xdg-terminal-exec,XTE__FALLBACK_ENTRY_IDS
+28,1,prose,README.md;xdg-terminal-exec,-id
+29,1,code,xdg-terminal-exec,read_entry_path
+29,2,code,xdg-terminal-exec,[Desktop Entry]
+29,1,prose,README.md;xdg-terminal-exec,Exec
+29,1,code,xdg-terminal-exec,Key=Value
+29,1,code,xdg-terminal-exec,[a-zA-Z0-9-]*
+29,1,code,README.md;xdg-terminal-exec,=
+29,1,code,xdg-terminal-exec,check_entry_key
+29,1,code,xdg-terminal-exec,check_entry_key
+29,1,prose,README.md;xdg-terminal-exec,TerminalEmulator
+29,1,prose,xdg-terminal-exec,Categories
+29,1,prose,xdg-terminal-exec,Actions
+29,1,prose,xdg-terminal-exec,OnlyShowIn
+29,1,prose,xdg-terminal-exec,NotShowIn
+29,1,code,,"[X-]TerminalArg{Exec,AppId,Title,Dir,Hold}"
+29,2,prose,xdg-terminal-exec,command -v
+29,1,prose,xdg-terminal-exec,TryExec
+29,1,code,,Hidden=true
+29,1,prose,README.md;xdg-terminal-exec,Exec
+29,15,code,, ` $ \ ' > < ~ | & ; * ? # ( ) 
+29,1,prose,xdg-terminal-exec,%
+29,4,prose,,%f %F %u %U
+29,2,prose,,%i %c
+29,1,prose,xdg-terminal-exec,%%
+29,1,prose,xdg-terminal-exec,%
+29,1,prose,,PATH
+29,8,code,xdg-terminal-exec,"command -v ""$XTE__EXEC0"" > /dev/null || return 1"
+29,3,code,,[Desktop Action <id>]
+29,1,code,,<id>
+29,1,prose,xdg-terminal-exec,Actions
+29,1,prose,README.md;xdg-terminal-exec,Exec
+30,1,code,xdg-terminal-exec,find_entry
+30,1,code,xdg-terminal-exec,//fallback_start//
+30,1,code,xdg-terminal-exec,xte__de_checks
+30,1,prose,,id:action
+30,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,:
+30,1,code,xdg-terminal-exec,read_entry_path
+30,1,code,,de_checks
+30,1,prose,README.md;xdg-terminal-exec,Exec
+30,1,prose,README.md;xdg-terminal-exec,TerminalEmulator
+30,6,code,xdg-terminal-exec,"[ -z ""${XTE__IS_TERMINAL}"" ] && continue"
+30,1,prose,README.md;xdg-terminal-exec,TerminalArgExec
+30,1,prose,README.md;xdg-terminal-exec,-e
+30,1,code,README.md;xdg-terminal-exec;xdg-terminals.list,/execarg_default
+30,1,code,xdg-terminal-exec,XTE__ENTRY_PATH
+30,1,code,xdg-terminal-exec,XTE__ENTRY_ID
+30,1,code,xdg-terminal-exec,XTE__ENTRY_ACTION
+31,1,code,README.md;xdg-terminal-exec;xdg-terminals.list,--
+31,1,prose,README.md;xdg-terminal-exec,-e
+31,1,code,README.md;xdg-terminal-exec,--app-id=
+31,1,code,README.md;xdg-terminal-exec,--title=
+31,1,code,README.md;xdg-terminal-exec,--dir=
+31,1,code,README.md;xdg-terminal-exec,=
+31,1,code,README.md;xdg-terminal-exec,--hold
+31,1,code,xdg-terminal-exec,--test
+31,1,code,xdg-terminal-exec,XTE__PRINT_DATA
+31,1,code,xdg-terminal-exec,-*
+31,4,code,xdg-terminal-exec,"set -- ""$XTE__EXECARG"" ""$@"""
+31,1,prose,README.md;xdg-terminal-exec,Exec
+31,1,code,README.md;xdg-terminal-exec,=
+31,1,code,README.md;xdg-terminal-exec,=
+31,1,code,README.md;xdg-terminal-exec,--title=
+31,1,code,README.md;xdg-terminal-exec,--app-id=
+31,1,code,README.md;xdg-terminal-exec,--hold
+31,1,code,README.md;xdg-terminal-exec,--dir=
+31,1,prose,README.md;xdg-terminal-exec,X-TerminalArgDir
+31,1,prose,xdg-terminal-exec,cd
+31,1,prose,README.md;xdg-terminal-exec,TerminalArgExec
+32,1,code,xdg-terminal-exec,XTE__PRINT_DATA
+32,1,prose,README.md;xdg-terminal-exec,id
+32,1,prose,README.md;xdg-terminal-exec,path
+32,1,prose,README.md;xdg-terminal-exec,content
+32,1,prose,README.md;xdg-terminal-exec,cmd
+32,1,code,README.md;xdg-terminal-exec,--print-id
+32,1,prose,README.md,:action
+32,3,code,xdg-terminal-exec,"printf '%s' ""${XTE__ENTRY_ID}${XTE__ENTRY_ACTION:+:}${XTE__ENTRY_ACTION}"""
+32,1,code,README.md;xdg-terminal-exec,--print-path
+32,1,prose,xdg-terminal-exec,/./
+32,1,prose,README.md,:action
+32,1,code,README.md;xdg-terminal-exec,--print-content
+32,1,code,README.md;xdg-terminal-exec,\n
+32,1,code,README.md;xdg-terminal-exec,--print-delimiter=
+32,1,code,,--print-cmd=<seq>
+32,1,prose,README.md;xdg-terminal-exec,printf
+32,1,prose,xdg-terminal-exec,%b
+32,1,code,README.md;xdg-terminal-exec,\n
+32,1,code,xdg-terminal-exec,\t
+32,1,prose,README.md;xdg-terminal-exec,cmd
+32,1,code,README.md;xdg-terminal-exec,\n
+32,1,code,README.md;xdg-terminal-exec,--print-cmd
+32,1,code,README.md;xdg-terminal-exec,\n
+36,1,code,xdg-terminal-exec,XTE__CACHE_ENABLED=${XTE_CACHE_ENABLED-true}
+36,8,prose,README.md,Valid cache bypasses reading of any other file.
+36,1,prose,xdg-terminal-exec,4
+36,1,code,README.md,$XDG_CURRENT_DESKTOP
+36,2,prose,README.md;xdg-terminal-exec,ls -LRl
+36,1,code,xdg-terminal-exec,END_OF_EXEC_USEP
+36,1,prose,,PATH
+36,3,code,xdg-terminal-exec,"save_cache ""$1"" &"
+36,1,code,,$XDG_CACHE_HOME
+36,2,prose,xdg-terminal-exec,umask 0077
+41,14,prose,xdg-terminal-exec,"Entries are checked in ascending order of preference, so use last found if duplicate"
+42,16,code,xdg-terminal-exec,"All config files are read immediatelly, rather than on demand, even if it's more IO intensive"
+43,1,code,xdg-terminal-exec,"XTE__EXEC0=${XTE__EXEC_USEP%%""$XTE__USEP""*}"
+43,1,prose,README.md;xdg-terminal-exec,Exec
+43,1,prose,,PATH
+44,7,code,xdg-terminal-exec,"if [ ""$XTE__EXECARG_DEFINED"" != ""true"" ]; then"
+45,13,prose,README.md,the order in which found entries under the same base directory are checked
+45,3,prose,README.md,in is undefined
+45,1,prose,README.md;xdg-terminal-exec,find
+53,10,code,,"bindd = SUPER, RETURN, Terminal, exec, uwsm-app -- xdg-terminal-exec --dir=""$(omarchy-cmd-terminal-cwd)"""
+53,1,code,README.md;xdg-terminal-exec,--dir=
+53,1,code,,$XDG_CURRENT_DESKTOP=Hyprland
+53,1,code,README.md;xdg-terminal-exec,XDG_CONFIG_HOME
+53,1,code,README.md;xdg-terminal-exec,XDG_DATA_HOME
+53,1,code,,XDG_CONFIG_DIRS=/etc/xdg
+53,1,code,,XDG_DATA_DIRS=/usr/local/share:/usr/share
+53,1,code,README.md;xdg-terminal-exec,${desktop}-
+53,1,prose,README.md,/usr/share/xdg-terminal-exec/xdg-terminals.list
+53,1,code,README.md;xdg-terminal-exec;xdg-terminals.list,/execarg_default
+53,1,prose,,~/.config/xdg-terminals.list
+53,1,prose,,~/.config/hyprland-xdg-terminals.list
+55,2,code,,explain --observed
+59,1,code,README.md;xdg-terminal-exec,--print-id
+59,1,code,,<LIVE:print-id>
+60,1,code,README.md;xdg-terminal-exec,--print-path
+60,1,code,,<LIVE:print-path>
+61,1,code,README.md;xdg-terminal-exec,--print-path
+61,1,code,,<LIVE:print-path-class>
+62,1,code,README.md;xdg-terminal-exec,--print-cmd
+62,1,code,,<LIVE:print-cmd>
+63,1,prose,,explain
+63,1,code,,--observed
+63,1,code,,<LIVE:verdict>
+64,1,code,,<LIVE:selected-list-locator>
+65,1,code,,<LIVE:cache-file>
+66,1,code,,XDG_*
+66,1,code,,MADO_TERM:
+66,1,code,,<LIVE:live-receipt>
+68,1,prose,README.md,/usr/share/applications
+68,1,prose,,~/.local/share/applications
+68,1,code,README.md;xdg-terminal-exec,--print-path
+68,1,code,README.md;xdg-terminal-exec,--print-id
+68,1,code,,[UNK]
+68,1,code,,<LIVE:verdict>
+68,1,code,,.ufo/waves/round-47/receipts/<LIVE:live-receipt>
+68,1,code,,observed=<capture>
+68,1,code,,XDG_*
+68,4,code,,MADO_TERM: selected=… path=… verdict=…
+68,3,code,,tools/mado-terminal.py explain --observed
+72,1,prose,README.md;xdg-terminal-exec,TerminalEmulator
+72,1,prose,xdg-terminal-exec,Categories
+72,1,code,,Hidden=true
+72,1,prose,xdg-terminal-exec,TryExec
+72,1,prose,,PATH
+72,1,prose,README.md;xdg-terminal-exec,Exec
+72,1,prose,,PATH
+72,1,prose,,PATH
+73,1,code,README.md,[X-]TerminalArgExec
+73,1,prose,README.md;xdg-terminal-exec,-e
+74,1,code,README.md;xdg-terminal-exec,--print-path
+75,1,code,README.md;xdg-terminal-exec,XDG_CACHE_HOME
+76,1,code,README.md;xdg-terminal-exec,--print-cmd
+76,1,code,README.md;xdg-terminal-exec,--dir=
+76,1,prose,README.md;xdg-terminal-exec,X-TerminalArgDir
+76,1,prose,xdg-terminal-exec,cd
+80,1,prose,xdg-terminal-exec,%
+81,2,prose,xdg-terminal-exec,command -v
+82,1,prose,README.md;xdg-terminal-exec,Exec
+83,1,prose,README.md;xdg-terminal-exec,find
+83,1,prose,README.md;xdg-terminal-exec,find
+84,1,prose,README.md;xdg-terminal-exec,-e
+84,1,code,,--working-directory=
+84,1,code,,--class=
+85,1,code,README.md;xdg-terminal-exec,--dir=
+85,1,prose,,omarchy-cmd-terminal-cwd
+85,1,code,,[UNK]
+86,1,prose,README.md;xdg-terminal-exec;xdg-terminals.list,exec
+86,2,code,,uwsm-app --

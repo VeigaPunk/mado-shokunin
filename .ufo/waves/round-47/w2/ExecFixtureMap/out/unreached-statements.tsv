@@ -1,0 +1,129 @@
+line	class	cases	text	condition
+55	check-bool-invalid	0	error "Assuming '$1' means no"	check_bool fallback: no fixture passes an unrecognised boolean
+56	check-bool-invalid	0	return 1	check_bool fallback: no fixture passes an unrecognised boolean
+63	debug-enabled	0	XTE__DEBUG=true	debug() printing body; no fixture sets XTE_DEBUG or DEBUG (env census)
+66	debug-enabled	0	while IFS= read -r xte__debug_line; do	debug() printing body; no fixture sets XTE_DEBUG or DEBUG (env census)
+67	debug-enabled	0	printf 'D: %s\n' "$xte__debug_line"	debug() printing body; no fixture sets XTE_DEBUG or DEBUG (env census)
+85	help-usage	0	shcat <<- EOF	DECLARED-RESIDUAL: only reachable from -h/--help; no fixture argv carries it
+92	help-usage	0	shcat <<- EOF	DECLARED-RESIDUAL: only reachable from -h/--help; no fixture argv carries it
+211	gen-hash-fail	0	debug "failed to get fresh hash, got '$xte__hash'"	gen_hash hash-regex failure arm: the hash always matched
+212	gen-hash-fail	0	return 1	gen_hash hash-regex failure arm: the hash always matched
+222	cache-read	0	xte__line_num=0	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+223	cache-read	0	xte__line_limit=50	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+224	cache-read	0	xte__cached_exec_usep=	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+225	cache-read	0	xte__finished=0	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+226	cache-read	0	while IFS= read -r xte__line; do	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+228	cache-read	0	case "${xte__line_num}" in	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+229	cache-read	0	1) xte__cached_hash=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+230	cache-read	0	2) xte__cached_cmd=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+231	cache-read	0	3) xte__cached_entry_path=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+232	cache-read	0	4) xte__cached_entry_id=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+233	cache-read	0	5) xte__cached_entry_action=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+234	cache-read	0	6) xte__cached_execarg=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+235	cache-read	0	7) xte__cached_appidarg=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+236	cache-read	0	8) xte__cached_titlearg=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+237	cache-read	0	9) xte__cached_dirarg=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+238	cache-read	0	10) xte__cached_holdarg=$xte__line ;;	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+240	cache-read	0	debug "reached cache line limit ($xte__line_limit)"	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+241	cache-read	0	return 1	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+248	cache-read	0	xte__cached_exec_usep=${xte__cached_exec_usep}${xte__cached_exec_usep:+$XTE__LF}${xte__line}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+249	cache-read	0	case "${xte__line}" in	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+251	cache-read	0	xte__cached_exec_usep=${xte__cached_exec_usep%"${XTE__RSEP}END_OF_EXEC_USEP"}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+252	cache-read	0	xte__finished=1	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+253	cache-read	0	break	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+259	cache-read	0	if [ "$xte__finished" = "1" ]; then	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+260	cache-read	0	debug "got cache:" \	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+272	cache-read	0	gen_hash || return 1	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+273	cache-read	0	XTE__HASH=$XTE__NEW_HASH	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+274	cache-read	0	if [ "$XTE__HASH" = "$xte__cached_hash" ] && command -v "$xte__cached_cmd" > /dev/null; then	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+275	cache-read	0	debug "cache is actual"	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+276	cache-read	0	XTE__EXEC_USEP=${xte__cached_exec_usep}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+277	cache-read	0	XTE__ENTRY_PATH=${xte__cached_entry_path}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+278	cache-read	0	XTE__ENTRY_ID=${xte__cached_entry_id}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+279	cache-read	0	XTE__ENTRY_ACTION=${xte__cached_entry_action}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+280	cache-read	0	XTE__EXECARG=${xte__cached_execarg}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+281	cache-read	0	XTE__APPIDARG=${xte__cached_appidarg}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+282	cache-read	0	XTE__TITLEARG=${xte__cached_titlearg}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+283	cache-read	0	XTE__DIRARG=${xte__cached_dirarg}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+284	cache-read	0	XTE__HOLDARG=${xte__cached_holdarg}	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+285	cache-read	0	return 0	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+287	cache-read	0	debug "cache is out-of-date"	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+288	cache-read	0	return 1	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+291	cache-read	0	debug "invalid cache data"	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+292	cache-read	0	return 1	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+306	cache-write-arms	0	error "could not hash listing of files, removing '${XTE__CACHE_FILE}'"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+307	cache-write-arms	0	rm -f "${XTE__CACHE_FILE}"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+308	cache-write-arms	0	return 0	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+314	cache-write-arms	0	error "One or more of terminal's arguments contains a newline, removing '${XTE__CACHE_FILE}'"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+315	cache-write-arms	0	rm -f "${XTE__CACHE_FILE}"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+316	cache-write-arms	0	return 0	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+336	cache-write-arms	0	debug "cache is disabled, removing '${XTE__CACHE_FILE}'"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+337	cache-write-arms	0	rm -f "${XTE__CACHE_FILE}"	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+338	cache-write-arms	0	return 0	save_cache failure/disable arms: hash never fails, no terminal arg holds a newline, XTE_CACHE_ENABLED never set
+381	env-knob	0	debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+382	env-knob	0	[ -z "$XTE__CACHE_CONFIGURED" ] || continue	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+383	env-knob	0	XTE__CACHE_ENABLED=false	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+384	env-knob	0	XTE__CACHE_CONFIGURED=1	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+389	env-knob	0	debug "found '$xte__line' directive${XTE__EXECARG_COMPAT_CONFIGURED:+ (ignored)}"	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+390	env-knob	0	[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+391	env-knob	0	XTE__EXECARG_COMPAT=true	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+392	env-knob	0	XTE__EXECARG_COMPAT_CONFIGURED=1	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+404	env-knob	0	debug "ignored directive '$xte__line' (strict mode)"	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+405	env-knob	0	continue	XTE_* / list directives no fixture uses: /enable_cache, /execarg_compat, strict-mode directive ignore
+449	exclusion-dedup	0	debug "entry '${xte__entry_id}' fallback exclusion was already prevented"	duplicate exclusion markers (already excluded / already prevented): no fixture repeats one
+459	exclusion-dedup	0	debug "entry '${xte__entry_id}' was already excluded from fallback"	duplicate exclusion markers (already excluded / already prevented): no fixture repeats one
+492	replace-break	0	break	replace() only reached with a matching separator; the 'nothing left' arm never taken
+533	expand-escapes	0	XTE__EXPANDED_STR=${XTE__EXPANDED_STR}$XTE__LF	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+534	expand-escapes	0	xte__exp_remainder=${xte__exp_remainder#?}	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+535	expand-escapes	0	debug "expander substituted newline"	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+538	expand-escapes	0	XTE__EXPANDED_STR=${XTE__EXPANDED_STR}'	'	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+539	expand-escapes	0	xte__exp_remainder=${xte__exp_remainder#?}	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+540	expand-escapes	0	debug "expander substituted tab"	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+543	expand-escapes	0	XTE__EXPANDED_STR=${XTE__EXPANDED_STR}$XTE__CR	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+544	expand-escapes	0	xte__exp_remainder=${xte__exp_remainder#?}	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+545	expand-escapes	0	debug "expander substituted caret return"	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+548	expand-escapes	0	XTE__EXPANDED_STR=${XTE__EXPANDED_STR}\\	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+549	expand-escapes	0	xte__exp_remainder=${xte__exp_remainder#?}	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+550	expand-escapes	0	debug "expander substituted backslash"	de_expand_str arms for \n \t \r and \\; only \s appears in any fixture entry value
+598	tokenizer-space-run	0	debug "tokenizer still in space :) skipping space character"	no fixture Exec holds two consecutive interior spaces
+599	tokenizer-space-run	0	continue	no fixture Exec holds two consecutive interior spaces
+628	tokenizer-error	0	debug "${xte__entry_id}: Encountered unescaped quoted character: '$xte__tok_char'"	tokenizer rejects an unescaped quoted $/` or an impossible char; no fixture entry carries one
+629	tokenizer-error	0	return 1	tokenizer rejects an unescaped quoted $/` or an impossible char; no fixture entry carries one
+633	tokenizer-escape	0	case "$xte__tok_remainder" in	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+636	tokenizer-escape	0	debug "${xte__entry_id}: Dangling backslash encountered!"	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+637	tokenizer-escape	0	return 1	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+643	tokenizer-escape	0	xte__cut=${xte__tok_remainder#?}	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+644	tokenizer-escape	0	xte__tok_char=${xte__tok_remainder%"$xte__cut"}	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+645	tokenizer-escape	0	xte__tok_remainder=${xte__cut}	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+646	tokenizer-escape	0	unset xte__cut	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+647	tokenizer-escape	0	XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_char}	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+648	tokenizer-escape	0	debug "tokenizer appended escaped: >$xte__tok_char<"	de_expand_str strips an unknown escape before tokenizing, so the quoted-backslash arms are only reachable via \\ in an Exec
+676	tokenizer-error	0	debug "${xte__entry_id}: parsing error at char '$xte__tok_char', (quoted: $xte__tok_quoted)"	tokenizer rejects an unescaped quoted $/` or an impossible char; no fixture entry carries one
+677	tokenizer-error	0	return 1	tokenizer rejects an unescaped quoted $/` or an impossible char; no fixture entry carries one
+689	debug-enabled	0	IFS=$XTE__USEP	debug() printing body; no fixture sets XTE_DEBUG or DEBUG (env census)
+690	debug-enabled	0	printf '  >%s<\n' $XTE__EXEC_USEP	debug() printing body; no fixture sets XTE_DEBUG or DEBUG (env census)
+704	field-deprecation	0	*[!%]'%'[dDnNvm]* | '%'[dDnNvm]*) debug "injector removed deprecated '$xte__arg'" ;;	no fixture Exec carries a deprecated %d %D %n %N %v %m field
+869	entry-checks	0	debug "skipping NotShowIn check"	NotShowIn check skipped for fallback ids (de_checks=false): no fallback entry in any fixture carries NotShowIn
+870	entry-checks	0	return 0	NotShowIn check skipped for fallback ids (de_checks=false): no fallback entry in any fixture carries NotShowIn
+1069	find-entry-empty-id	0	'') continue ;;	empty entry id line: no fixture produces one
+1137	help-usage	0	help	DECLARED-RESIDUAL: only reachable from -h/--help; no fixture argv carries it
+1138	help-usage	0	exit 0	DECLARED-RESIDUAL: only reachable from -h/--help; no fixture argv carries it
+1180	cache-read	0	XTE__CACHE_USED=true	DECLARED-RESIDUAL (warm cache): read_cache hit path; no cache file exists when read_cache runs (fresh root per case, read_cache precedes save_cache)
+1359	print-order-content	0	false) printf '%b' "$XTE__PRINT_DELIMITER" ;;	print-content never follows id/path, so the delimiter print on the not-first path never runs
+1418	arg-form-title	0	set -- "${XTE__TITLEARG}${XTE__TITLEVAL}" "$@"	no entry TerminalArgTitle ends in '='; no fixture passes --title/--app-id to an entry whose entry lacks the key (the dir and hold counterparts are covered: 1412 and 1397 are traced)
+1419	arg-form-title	0	debug "prepended $1"	no entry TerminalArgTitle ends in '='; no fixture passes --title/--app-id to an entry whose entry lacks the key (the dir and hold counterparts are covered: 1412 and 1397 are traced)
+1427	arg-form-title	0	debug "terminal entry has no TerminalArgTitle="	no entry TerminalArgTitle ends in '='; no fixture passes --title/--app-id to an entry whose entry lacks the key (the dir and hold counterparts are covered: 1412 and 1397 are traced)
+1442	arg-form-title	0	debug "terminal entry has no TerminalArgAppId="	no entry TerminalArgTitle ends in '='; no fixture passes --title/--app-id to an entry whose entry lacks the key (the dir and hold counterparts are covered: 1412 and 1397 are traced)
+1494	launch-path	0	if [ -z "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then	OUT-OF-SCOPE (print-only claim): real exec (cd + exec "$@"): every fixture carries a print/test option, so the script never leaves print mode (outside the print-only claim)
+1495	launch-path	0	debug "no X-TerminalArgDir in entry, changing dir to '$XTE__DIRVAL'"	OUT-OF-SCOPE (print-only claim): real exec (cd + exec "$@"): every fixture carries a print/test option, so the script never leaves print mode (outside the print-only claim)
+1496	launch-path	0	cd "$XTE__DIRVAL"	OUT-OF-SCOPE (print-only claim): real exec (cd + exec "$@"): every fixture carries a print/test option, so the script never leaves print mode (outside the print-only claim)
+1499	launch-path	0	exec "$@"	OUT-OF-SCOPE (print-only claim): real exec (cd + exec "$@"): every fixture carries a print/test option, so the script never leaves print mode (outside the print-only claim)
+28	not-a-statement	0	XTE__LF='	second line of a multi-line XTE__LF assignment (bash reports the last line)
+41	not-a-statement	0	} <<- EOF	'}' closing the group with a heredoc
+68	not-a-statement	0	done <<- EOF >&2	'done' with a heredoc
+258	not-a-statement	0	done < "${XTE__CACHE_FILE}"	'done' with a redirect
+473	not-a-statement	0	done < "$xte__config_path"	'done' with a redirect
+691	not-a-statement	0	)"	')' closing a $() that is itself unreachable
+792	not-a-statement	0	done <<- EOE	'done' with a heredoc
+1017	not-a-statement	0	done < "$xte__entry_path"	'done' with a redirect
+1125	not-a-statement	0	done <<- EOF	'done' with a heredoc

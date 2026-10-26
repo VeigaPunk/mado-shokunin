@@ -1,0 +1,122 @@
+ExecEntryQuotes - computed receipts for every finding in ExecEntryQuotes.md
+lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+pin dir: .ufo/waves/round-47/fetch/   target: .ufo/waves/round-47/w1/ScrEntry/entry.md
+target bytes: sha256 5e7db5aea701b6ab190b2cbcd644d74ccac71ba27dbe3d84b06eb2e00b0c53ec
+  (entry.md == git show HEAD:.ufo/waves/round-47/w1/ScrEntry/entry.md, so the committed bytes are what was checked)
+
+--- R0 pin identity -----------------------------------------------------------
+$ git -C <lane> ls-tree --name-only d7527d6 .ufo/waves/round-47/fetch/
+.ufo/waves/round-47/fetch/README.md
+.ufo/waves/round-47/fetch/xdg-terminal-exec
+.ufo/waves/round-47/fetch/xdg-terminals.list
+
+$ sha256sum .ufo/waves/round-47/fetch/xdg-terminal-exec \
+            .ufo/waves/round-47/w1/ScrEntry/pins/xdg-terminal-exec-v0.14.3.sh
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  .ufo/waves/round-47/fetch/xdg-terminal-exec
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  .ufo/waves/round-47/w1/ScrEntry/pins/xdg-terminal-exec-v0.14.3.sh
+(+ README.md sha256 c7a1a8bb711e44e4a19ca0a3c943f13a8e53d5fbb6c752e08cb186d5995a9d40,
+   xdg-terminals.list a2b5bf691c44aa2557b54df513cc0a9f9f06633468b13e723b208e0b41fef034 - all three
+   equal the digests the entry states)
+
+--- D1 the S326 pin path is not resolvable from where the entry will live -----
+$ for p in corpus/knowledge/pins/xdg-terminal-exec-v0.14.3.sh \
+           pins/xdg-terminal-exec-v0.14.3.sh \
+           .ufo/waves/round-47/w1/ScrEntry/pins/xdg-terminal-exec-v0.14.3.sh; do
+    [ -e "$p" ] && echo "PRESENT $p" || echo "ABSENT  $p"; done
+ABSENT  corpus/knowledge/pins/xdg-terminal-exec-v0.14.3.sh
+ABSENT  pins/xdg-terminal-exec-v0.14.3.sh
+PRESENT .ufo/waves/round-47/w1/ScrEntry/pins/xdg-terminal-exec-v0.14.3.sh
+entry.md:3 names the pin as `pins/xdg-terminal-exec-v0.14.3.sh` (relative). From the entry's own
+directory that is corpus/knowledge/pins/... (absent); from the lane root it is pins/... (absent).
+The committed pin the frozen counter trusts is .ufo/waves/round-47/fetch/xdg-terminal-exec.
+
+--- D2 `README:6-8` starts on a blank line ----------------------------------
+$ read .ufo/waves/round-47/fetch/README.md:raw:6      ->  (empty line, 6 of 337)
+$ grep -n 'compatibility is maintained' .ufo/waves/round-47/fetch/README.md
+8:compatibility is maintained as best effort and is not guaranteed.
+  7: "(!) Please be advised that while this spec is in proposed state, backwards"
+  8: "compatibility is maintained as best effort and is not guaranteed."
+entry.md:6 cites "(README:6-8 warns compatibility is best effort until then)"; the warning is 7-8.
+
+--- D3 step 5 range 1113-1140 overruns get_default_execarg (1113-1130) ------
+$ grep -n "^get_default_execarg()" .ufo/waves/round-47/fetch/xdg-terminal-exec
+1113:get_default_execarg() {
+$ grep -n '# print help and exit' .ufo/waves/round-47/fetch/xdg-terminal-exec
+1132:# print help and exit if there's -h|--help before --
+$ read .ufo/waves/round-47/fetch/xdg-terminal-exec:raw:1136
+	-h | --help)
+the function body is 1113-1130 (closing '}' at 1130, computed by the body scanner: 23 functions,
+gen_hash 179-215, read_cache 217-298, save_cache 300-340, ..., get_default_execarg 1113-1130,
+and the help loop 1132-1141 follows). entry.md:30 cites "(xdg-terminal-exec:1092-1100, 1113-1140)":
+10 of those lines are the unrelated -h/--help block.
+
+--- D4 step 4 range 938-947 covers the Exec arm ----------------------------
+$ grep -n "^\t'Hidden'\|^\t'Exec'" .ufo/waves/round-47/fetch/xdg-terminal-exec
+938:	'Hidden'*=*)
+947:	'Exec'*=*)
+the Hidden arm is 938-946 (946 = ';;'). entry.md:29 writes "rejects `Hidden=true`
+(xdg-terminal-exec:938-947)" - one line past the arm.
+
+--- D5 step 2 cites one guard for four first-wins guards -------------------
+$ grep -n '_CONFIGURED" ] || continue' .ufo/waves/round-47/fetch/xdg-terminal-exec
+376:				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+382:				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+390:				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+396:				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+entry.md:27 cites "(xdg-terminal-exec:376-379)" for "the first two and the first two of the
+second pair honour only the first encountered occurrence"; 376-379 witnesses only the first.
+
+--- D6 step 7 cites 1362 for "cats the entry and exits at once" -------------
+$ grep -n 'shcat <' .ufo/waves/round-47/fetch/xdg-terminal-exec
+1362:	shcat < "${XTE__ENTRY_PATH}"
+$ read .ufo/waves/round-47/fetch/xdg-terminal-exec:raw:1374-1376
+	*' content '*)
+		# content already has newline at the end, just exit
+		exit 0
+the exit for content-only print runs is 1374-1376 (the entry does cite 1368-1385 separately for
+the general bail-out), so 1362 only carries the "cats" half of the sentence.
+
+--- D7 the cited 885-931 span also holds an arm the sentence does not name -
+$ grep -n "'X-TerminalArgExec'\|'X-ExecArg'\|'X-TerminalArgHold'" .ufo/waves/round-47/fetch/xdg-terminal-exec
+885:	'X-TerminalArgExec'*=* | 'TerminalArgExec'*=*)
+893:	'X-ExecArg'*=* | 'ExecArg'*=*)
+926:	'X-TerminalArgHold'*=* | 'TerminalArgHold'*=*)
+entry.md:29 says the range "expands and stores the `[X-]TerminalArg{Exec,AppId,Title,Dir,Hold}`
+values"; 893-904 is the legacy ExecArg arm (strict-mode ignored), unnamed in the sentence.
+
+--- D8 the OBS S327 quote is split through the middle of the sentence ------
+$ grep -n 'order in which found entries\|in is undefined' .ufo/waves/round-47/fetch/README.md
+179:    - the order in which found entries under the same base directory are checked
+180:      in is undefined
+entry.md:45 quotes "`...are checked` / `in is undefined`": both fragments are verbatim, but the pin
+sentence is "checked in is undefined", and only the second fragment carries the locator. A reader
+concatenating the two fragments loses the space and the "in".
+
+--- L6 w1 receipt coverage (their files, re-run) ---------------------------
+$ python3 -I .../w2/ExecEntryQuotes/check_entry.py    (L6 section)
+their locator probes=119, failing now=0 (receipt claims 119 checked / 0 mismatched)
+distinct locators=111, with NO w1 probe line inside their range=8
+  R 6-8 (README), S 1144, S 376-379, S 427-437, S 435-438, S 501-559, S 561-692,
+  .config/hypr/bindings.conf 2
+their quote probes=10 ; clause-d quotes in the entry=14
+clause-d quote sites with NO w1 quote probe: 5
+  (27, xdg-terminal-exec 425), (28, xdg-terminal-exec 766), (41, xdg-terminal-exec 780),
+  (44, xdg-terminal-exec 1092), (45, README.md 179-180)
+both of their receipts are TRUE as far as they go; neither covers the whole entry.
+
+--- L9 host inventory (read-only; the resolver was never run) --------------
+XDG_CONFIG_HOME=/home/vgpnk/.config  XDG_DATA_HOME=/home/vgpnk/.local/share
+XDG_CONFIG_DIRS=/etc/xdg             XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_CURRENT_DESKTOP=Hyprland
+8 list slots in the script's order, 2 present:
+  PRESENT ~/.config/xdg-terminals.list              (1 plain line: Alacritty.desktop)
+  PRESENT /usr/share/xdg-terminal-exec/xdg-terminals.list (exclusions + /execarg_default rows only)
+  absent: ~/.config/hyprland-, /etc/xdg/{hyprland-,}xdg-terminals.list,
+          /usr/local/share/xdg-terminal-exec/{hyprland-,}xdg-terminals.list,
+          /usr/share/xdg-terminal-exec/hyprland-xdg-terminals.list
+3 application dirs in the script's order, 2 present:
+  PRESENT ~/.local/share/applications   PRESENT /usr/share/applications
+  absent  /usr/local/share/applications
+entry.md:53 names exactly the two present list slots and the absent
+~/.config/hyprland-xdg-terminals.list, and says the distro list has "no plain entry line".
+All three statements hold.

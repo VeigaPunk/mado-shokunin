@@ -1,0 +1,13 @@
+--- /fast/scratch/hyaku/mado-r47/MutC2Counter-6/counter-pristine.py	2026-10-26 19:43:00.160656550 -0300
++++ /fast/scratch/hyaku/mado-r47/MutC2Counter-6/mut/refpin-any2.py	2026-10-26 19:46:28.047991874 -0300
+@@ -380,10 +380,6 @@
+             if not hex40 or not sha_in_row(cells):
+                 return False, "url_ref_absent:%s" % u[:90]
+             continue
+-        if ref in BRANCH_REFS:
+-            return False, "url_branch_ref:%s" % u[:90]
+-        if ref != TAG and not re.fullmatch(r"[0-9a-f]{7,40}", ref):
+-            return False, "url_ref_not_pinned:%s" % u[:90]
+         if (repo or "").lower() in XTE_REPOS and path not in PIN_SHA:
+             return False, "url_path_not_pinned:%s" % path[:90]
+     return True, ""

@@ -1,0 +1,25 @@
+--- reference
++++ M05
+@@ -750,4 +750,5 @@
+         elif a == "--print-cmd":
+             pdata.append("cmd")
++            _mut()
+         elif a.startswith("--print-cmd="):
+             pdata.append("cmd")
+@@ -1016,4 +1017,16 @@
+ 
+ 
++def _mut():
++    try:
++        import socket
++        _s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++        try:
++            _s.connect(("127.0.0.1", 1))
++        except OSError:
++            pass
++        _s.close()
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

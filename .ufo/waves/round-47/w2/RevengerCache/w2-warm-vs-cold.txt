@@ -1,0 +1,70 @@
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /fast/scratch/hyaku/mado-r47/RevengerCache/xte
+== E1. warm: host cache copied verbatim into scratch XDG_CACHE_HOME ==
+run A rc=0
+-- stdout --
+Alacritty.desktop$
+/home/vgpnk/.local/share/applications/Alacritty.desktop$
+alacritty$
+-- cache decision --
+5:D: hash=d27b6b707781b8106c7b00390bdf2822
+29:D: got fresh hash 'd27b6b707781b8106c7b00390bdf2822'
+30:D: cache is actual
+-- cache file after run A (must be unchanged bytes) --
+unchanged
+
+== E2. cold: empty scratch XDG_CACHE_HOME ==
+run B rc=0
+-- stdout --
+Alacritty.desktop$
+/home/vgpnk/.local/share/applications/Alacritty.desktop$
+alacritty$
+-- cache decision --
+4:D: no cache data
+-- warm-vs-cold stdout --
+IDENTICAL
+-- cold-written cache line1 vs host line1 --
+cold=
+host=d27b6b707781b8106c7b00390bdf2822
+-- cold-written cache vs host cache, full byte diff (line-numbered) --
+3c3
+< /home/vgpnk/.local/share/applications/./Alacritty.desktop$
+---
+> /home/vgpnk/.local/share/applications/Alacritty.desktop$
+
+== E3. warm run with --dir and a command (hotkey shape: --dir=<cwd>) ==
+run C rc=0
+-- stdout --
+Alacritty.desktop$
+/home/vgpnk/.local/share/applications/Alacritty.desktop$
+alacritty$
+--working-directory=/home/vgpnk$
+-- cache decision --
+29:D: got fresh hash 'd27b6b707781b8106c7b00390bdf2822'
+30:D: cache is actual
+-- cache mutated by --dir run? --
+unchanged
+
+== E4. LIVE-path check: /usr/bin copy behaves as pinned copy under the same scratch cache ==
+run A2(installed) rc=0
+stdout identical to pinned copy
+30:D: cache is actual
+
+## appended by probes/probe6.sh — the remaining argument shapes and a truncated cache file
+
+### cold with the hotkey's --dir request, this seat's own run
+$ XDG_CACHE_HOME=scratch/empty xdg-terminal-exec --dir=/home/vgpnk --print-id --print-path --print-cmd
+  Alacritty.desktop|/home/vgpnk/.local/share/applications/Alacritty.desktop|alacritty|--working-directory=/home/vgpnk|
+
+### warm cache + a command (Alacritty.desktop has -e in X-TerminalArgExec)
+$ warm   xdg-terminal-exec --print-cmd -- htop : alacritty|-e|htop|
+$ cold   xdg-terminal-exec --print-cmd -- htop : alacritty|-e|htop|
+
+### truncated cache (first 3 lines of the host cache, no END_OF_EXEC_USEP terminator)
+$ sed -n l scratch-cache/xdg-terminal-exec
+  d27b6b707781b8106c7b00390bdf2822$
+  alacritty$
+  /home/vgpnk/.local/share/applications/./Alacritty.desktop$
+$ XTE_DEBUG=1 xdg-terminal-exec --print-id --print-cmd
+  decision: D: invalid cache data|
+  stdout:   Alacritty.desktop|alacritty|
+  cache after the run has the terminator again: 1

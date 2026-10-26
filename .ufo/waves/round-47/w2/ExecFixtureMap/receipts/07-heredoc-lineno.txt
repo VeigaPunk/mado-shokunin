@@ -1,0 +1,12 @@
++10 f
++2 read -r h _d
+++3 echo AAA
+++4 echo BBB
++8 printf '[%s]\n' AAA
+[AAA]
+
+-- expected: the two echo commands sit on lines 4 and 5 of the probe, and their trace
+-- lines above are the ones bash reports for them.
+echo AAA (line 4) reported as 3: OK
+echo BBB (line 5) reported as 4: OK
+body value correct (AAA): OK

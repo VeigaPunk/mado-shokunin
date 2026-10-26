@@ -1,0 +1,22 @@
+--- reference
++++ M04
+@@ -852,4 +852,5 @@
+         verdict = "AGREE" if mine == observed else "DIFFER"
+         rc = 0 if verdict == "AGREE" else 1
++        _mut()
+     print("MADO_TERM: selected=%s path=%s cmd=%s cache=%s verdict=%s" % (sel, path, argv0, cache, verdict))
+     return rc
+@@ -1016,4 +1017,13 @@
+ 
+ 
++def _mut():
++    try:
++        import subprocess
++        _p = subprocess.Popen(["/bin/sh", "-c", "exit 0"],
++                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
++        _p.wait()
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

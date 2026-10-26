@@ -1,0 +1,54 @@
+== e1a-digit-listed ==  AGREE
+  REAL rc=0 out=b'2048qt.desktop\n' err=b''
+  DRAFT rc=0 out=b'2048qt.desktop\n' err=b''
+== e1b-digit-fallback ==  AGREE
+  REAL rc=0 out=b'2048qt.desktop\n' err=b''
+  DRAFT rc=0 out=b'2048qt.desktop\n' err=b''
+== e1c-letter-control ==  AGREE
+  REAL rc=0 out=b'foot.desktop\n' err=b''
+  DRAFT rc=0 out=b'foot.desktop\n' err=b''
+== e2-home-unset ==  *** DIVERGE ***
+  REAL rc=0 out=b'foot.desktop\n' err=b''
+  DRAFT rc=2 out=b'' err=b'MADO_TERM_OUT_OF_CONTRACT: HOME unset\n'
+== e3-path-unset ==  *** DIVERGE ***
+  REAL rc=1 out=b'' err=b'No valid terminal entry was found in:\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e3-path-unset-r1/usr/share/applications/:/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e3-path-unset-r1/home/.lo'
+  DRAFT rc=2 out=b'' err=b'MADO_TERM_OUT_OF_CONTRACT: PATH unset\n'
+== e8-content-plus-cmd ==  AGREE
+  REAL rc=0 out=b'[Desktop Entry]\nType=Application\nName=foot\nExec=foot\nCategories=System;TerminalEmulator;\n\nfoot\n' err=b''
+  DRAFT rc=0 out=b'[Desktop Entry]\nType=Application\nName=foot\nExec=foot\nCategories=System;TerminalEmulator;\n\nfoot\n' err=b''
+== e9-actions-empty ==  AGREE
+  REAL rc=1 out=b'' err=b'No valid terminal entry was found in:\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e9-actions-empty-r1/usr/share/applications/:/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e9-actions-empty-r1/ho'
+  DRAFT rc=1 out=b'' err=b'No valid terminal entry was found in:\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e9-actions-empty-r2/usr/share/applications/\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e9-actions-empty-r2/ho'
+== e12-content-no-final-nl ==  AGREE
+  REAL rc=1 out=b'' err=b'No valid terminal entry was found in:\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e12-content-no-final-nl-r1/usr/share/applications/:/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e12-content-no-'
+  DRAFT rc=1 out=b'' err=b'No valid terminal entry was found in:\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e12-content-no-final-nl-r2/usr/share/applications/\n/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e12-content-no-'
+== e14-action-id-path ==  AGREE
+  REAL rc=0 out=b'foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n' err=b''
+  DRAFT rc=0 out=b'foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n' err=b''
+== e15-execarg-consumes ==  AGREE
+  REAL rc=0 out=b'foot\n' err=b''
+  DRAFT rc=0 out=b'foot\n' err=b''
+== s1-test-beats-cmd ==  AGREE
+  REAL rc=0 out=b'Command and arguments:\n  >foot<\n' err=b''
+  DRAFT rc=0 out=b'Command and arguments:\n  >foot<\n' err=b''
+== s2-unknown-option-discard ==  AGREE
+  REAL rc=0 out=b'foot\n-e\na\n' err=b''
+  DRAFT rc=0 out=b'foot\n-e\na\n' err=b''
+== s3-last-cmd-delim-wins ==  AGREE
+  REAL rc=0 out=b'foot\t-e\ta' err=b''
+  DRAFT rc=0 out=b'foot\t-e\ta' err=b''
+== s6-upper-desktop ==  AGREE
+  REAL rc=0 out=b'foot.desktop\n' err=b''
+  DRAFT rc=0 out=b'foot.desktop\n' err=b''
+== e17-empty-delimiter ==  AGREE
+  REAL rc=0 out=b'foot.desktop$ROOT/usr/share/applications/foot.desktop' err=b''
+  DRAFT rc=0 out=b'foot.desktop$ROOT/usr/share/applications/foot.desktop' err=b''
+== e3b-path-unset-exec-sh ==  *** DIVERGE ***
+  REAL rc=0 out=b'foot.desktop\n' err=b''
+  DRAFT rc=2 out=b'' err=b'MADO_TERM_OUT_OF_CONTRACT: PATH unset\n'
+== e2b-home-unset-default-paths ==  *** DIVERGE ***
+  REAL rc=1 out=b'' err=b'/usr/bin/xdg-terminal-exec: line 148: HOME: unbound variable\n'
+  DRAFT rc=2 out=b'' err=b'MADO_TERM_OUT_OF_CONTRACT: HOME unset\n'
+== e18-unreadable-list ==  AGREE
+  REAL rc=1 out=b'' err=b'/usr/bin/xdg-terminal-exec: line 361: /fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e18-unreadable-list-r1/home/.config/xdg-terminals.list: Permission denied\n'
+  DRAFT rc=1 out=b'' err=b'/fast/scratch/hyaku/mado-r47/RevC1Reference/e2e/e18-unreadable-list-r2/home/.config/xdg-terminals.list: Permission denied\n'

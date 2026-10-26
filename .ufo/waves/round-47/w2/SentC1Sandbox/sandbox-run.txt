@@ -1,0 +1,18 @@
+oracle: rc=0 outs='alacritty.desktop\n/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/tree/o/r/home/.local/share/applications/alacritty.desktop\nalacritty\n' trips=[]
+tool_report: rc=0 outs='PROBE-REPORT-------- id=--print-id\n{"tag": "print", "argv": ["print", "--print-id"], "uid": 1000, "euid": 1000, "gid": 1000, "cwd": "/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/tree/t/r", "derived_root": "/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/tree/t/r", "env": {' trips=[]
+selftest_shape: rc=0 outs="PROBE selftest uid=1000 cwd=/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/st-root top=['bin', 'dev', 'fast', 'lib', 'lib64', 'oracle', 'proc', 'tmp', 'usr']\nPROBE-SELFTEST-INSIDE pid1=/usr/bin/bwrap --unshare-all --die-with-parent --new-session --c uid=1000 mounts=19\n" trips=[]
+selftest_shape_report: rc=0 outs='PROBE-REPORT-------- id=print\n{"tag": "print", "argv": ["print"], "uid": 1000, "euid": 1000, "gid": 1000, "cwd": "/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/st-root", "derived_root": "/tmp", "env": {"HOME": "/tmp", "LANG": "C.UTF-8", "PATH": "/oracle/bin", "TMPDIR": "/tmp", "PWD": "' trips=[]
+tool_write: rc=0 outs='PROBE-WRITE WROTE\nPROBE-WRITE-RO ERR:EROFS\n' trips=[]
+tool_read_same_tree: rc=0 outs="PROBE-READ present=True content='tool-wrote'\n" trips=[]
+tool_read_fresh_tree: rc=0 outs="PROBE-READ present=False content='ERR:ENOENT'\n" trips=[]
+tool_read_oracle_tree: rc=0 outs="PROBE-READ present=False content='ERR:ENOENT'\n" trips=[]
+tool_report2: rc=0 outs='PROBE-REPORT-------- id=--print-id\n{"tag": "print", "argv": ["print", "--print-id"], "uid": 1000, "euid": 1000, "gid": 1000, "cwd": "/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/tree/t/r", "derived_root": "/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/tree/t/r", "env": {' trips=[]
+persist: tmpfs-run1-vs-run2 top=['bin', 'dev', 'fast', 'lib', 'lib64', 'oracle', 'proc', 'tmp', 'usr']/['bin', 'dev', 'fast', 'lib', 'lib64', 'oracle', 'proc', 'tmp', 'usr'] usr_bin=['python3']/['python3'] tmp=[]/[] rw=['.rw', 'bin', 'home']/['.rw', 'bin', 'home']
+dos_expect: ['alacritty.desktop', '$ROOT/home/.local/share/applications/alacritty.desktop']
+explain_dos: RAISED FileExistsError: [Errno 17] File exists: '/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/fx-1e_jfbbj/t/r/.rw/obs'
+
+oracle_tree_after={'rw': ['cache'], 'cache': [], 'cache_sizes': {}}
+
+explain_dos={'raised': True, 'type': 'FileExistsError', 'errno': 17, 'str': "[Errno 17] File exists: '/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/fx-1e_jfbbj/t/r/.rw/obs'", 'where': ['    ~~~~~~~~~~~^^^^^^^^^', '  File "<frozen os>", line 236, in makedirs', "FileExistsError: [Errno 17] File exists: '/fast/scratch/hyaku/mado-r47/SentC1Sandbox/w/probe-lf5td4vv/fx-1e_jfbbj/t/r/.rw/obs'"]}
+
+host_tmp_probe_names=[] host_shm_probe_names=[]

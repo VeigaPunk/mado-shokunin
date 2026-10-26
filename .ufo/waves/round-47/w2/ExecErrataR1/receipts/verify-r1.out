@@ -1,0 +1,117 @@
+== A. producing tools of the two receipts, worktree vs committed bytes ==
+PASS landed tool worktree = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS l1 draft worktree = b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b
+PASS r46 receipt worktree = 0c749e1d255538a6767992f116d44c48022b7dd8140df50f773fc355dabd956f
+PASS l1 receipt worktree = d635baec7e64d0405b48edd28edfb57dc1f35e38dfa3a375ea40b70361708265
+PASS git show 1001bda0:tools/mado-devices.py = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS git show 60edb66e:tools/mado-devices.py = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS git show d7527d60:tools/mado-devices.py = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS git show 9bddd6ac:tools/mado-devices.py = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS git show c24adef2:tools/mado-devices.py = 3a80368997120503d5715596a17e762bbcb67a41db23d9241425bf19349d594f
+PASS git show 1001bda0:l1-draft/mado-devices.py = b229efd08d2d329dd60ced114598943d0419dac2f3cf05b1f6c1eb506c49a33b
+PASS git show 1001bda0:r46 receipt = 0c749e1d255538a6767992f116d44c48022b7dd8140df50f773fc355dabd956f
+PASS git show 1001bda0:l1 receipt = d635baec7e64d0405b48edd28edfb57dc1f35e38dfa3a375ea40b70361708265
+PASS receipt head names landed tool = 1
+PASS l1 head names the draft = 1
+== B. config count recorded by each receipt ==
+PASS r46 --config occurrences on its command line = 2
+PASS l1  --config occurrences on its command line = 1
+PASS r46 config header lines = 2
+PASS l1  config header lines = 1
+PASS omarchy config hash = bee5aa68cbec0c428fae7a5faf7da49a30e6f78ed96e78a063f08b66942448b8
+PASS user config hash = 3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4
+== C. the effective chain: transitive source closure (depth 4) ==
+closure files: 40 (depth 4)
+.config/hypr/input.conf blocks=1
+.local/share/omarchy/default/hypr/input.conf blocks=1
+PASS files with an input block in the closure = 2
+PASS files with a device block in the closure = 0
+PASS kb_layout sites in the closure = 2
+.config/hypr/input.conf:10:  kb_layout = br
+.local/share/omarchy/default/hypr/input.conf:3:    kb_layout = us
+PASS hyprland.conf sources omarchy input.conf at = 11
+PASS hyprland.conf sources user input.conf at = 17
+PASS omarchy input block line = 2
+PASS omarchy kb_layout line = 3
+PASS user input block line = 3
+PASS user kb_layout line = 10
+== D. compositor, read-only: does the omarchy file reach it? which value wins? ==
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+getoption input:kb_layout = {"option": "input:kb_layout", "str": "br", "set": true }
+getoption input:kb_options = {"option": "input:kb_options", "str": "compose:caps", "set": true }
+getoption misc:key_press_enables_dpms = {"option": "misc:key_press_enables_dpms", "int": 1, "set": true }
+PASS compositor global kb_layout is br (the later file wins)
+PASS compositor carries a key only the omarchy input.conf sets (file is parsed)
+== E. the join, re-run today (read-only dump to $WORK) ==
+rc useronly=0 two=0 reversed=1 omarchyonly=1 draft=0
+useronly layout="br" | MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+two      layout="br" | MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+rev      layout="us" | MADO_DEVICES: keyboards=9 agree=0 differ=9 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER
+om       layout="us" | MADO_DEVICES: keyboards=9 agree=0 differ=9 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=DIFFER
+draft    layout="br" | MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+PASS reversed order resolves to the omarchy value = layout="us"
+PASS omarchy only resolves to us = layout="us"
+PASS landed tool == draft on the same argv = 0
+== F. today's run against both receipts ("the observation itself") ==
+PASS r46 receipt device lines = 14
+PASS l1  receipt device lines = 14
+PASS r46 keyboards = 10
+PASS r46 agree=9 = 9
+PASS r46 virtual=1 = 1
+PASS r46 mice=4 = 4
+PASS l1 selftest line absent = 0
+PASS r46 selftest 59/59 = 1
+--- today useronly vs l1 receipt body ---
+10d9
+< MADO_DEV_KEYBOARD: name="hl-virtual-keyboard-fcitx5" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=VIRTUAL
+15c14
+< MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+---
+> MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+--- today two-config vs r46 receipt body ---
+10d9
+< MADO_DEV_KEYBOARD: name="hl-virtual-keyboard-fcitx5" block=no layout="br" variant="" options="compose:caps" model="" rules="" kb_file=- differ=- verdict=VIRTUAL
+15c14
+< MADO_DEVICES: keyboards=10 agree=9 differ=0 fallback=0 virtual=1 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+---
+> MADO_DEVICES: keyboards=9 agree=9 differ=0 fallback=0 virtual=0 mice=4 mice_differ=0 blocks=0 stale=0 unsupported=0 verdict=OK
+PASS the two runs still agree with each other today = 0
+PASS dated observation: compositor virtual keyboards on 2026-10-26 = 0
+PASS dated observation: compositor keyboards on 2026-10-26 = 9
+DIVERGENCE: today keyboards=9 virtual=0; both receipts record keyboards=10 virtual=1
+== G. draft->landed delta (30 removed / 105 added / 9 hunks) ==
+PASS removed lines = 30
+PASS added lines = 105
+PASS hunks = 9
+PASS merge loop line = 418
+PASS parse_config call line = 419
+PASS global assignment line = 334
+== H. quotes and locators used by this seat's report ==
+PASS Q1 locator in entry = 57
+PASS Q1 words=8 <= 25
+PASS Q2 locator in r46 receipt = 5
+PASS Q2 words=12 <= 25
+PASS Q3 locator in erratum = 18
+PASS Q3 words=3 <= 25
+PASS entry cites l1 receipt on :57 = 1
+PASS entry cites l1 receipt nowhere else = 1
+PASS Q4 locator in the round-46 lesson = 52
+PASS Q4 words=12 <= 25
+PASS entry tracked and unmodified = 0
+PASS erratum ends its diff parenthetical = 1
+== I. the seat deliverable carries the quoted text and the hashes it asserts ==
+PASS verdicts.md carries Q1
+PASS verdicts.md carries Q2
+PASS verdicts.md carries Q3
+PASS ExecErrataR1.md carries Q1
+PASS ExecErrataR1.md carries Q2
+PASS ExecErrataR1.md carries Q3
+PASS verdicts.md has 3a803689
+PASS verdicts.md has b229efd0
+PASS verdicts.md has 0c749e1d
+PASS verdicts.md has d635baec
+PASS verdicts.md has bee5aa68
+PASS verdicts.md has 3769c92a
+PASS Q4 locator re-checked for the deliverable = 52
+PASS verdicts.md carries Q4
+VERIFY-R1: 77/77 passed

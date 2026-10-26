@@ -1,0 +1,24 @@
+== T0. seed a cache with a cold run; confirm hash reproducibility ==
+  [seed1] rc=0 out=TermA.desktop|/fast/scratch/hyaku/mado-r47/RevengerCache/fx/home/.local/share/applications/TermA.desktop|term-a|
+  recomputed_hash=8f12fedd55b3c3a86538f1f3ed0af8d8
+  cache_line1    =8f12fedd55b3c3a86538f1f3ed0af8d8
+
+== T1. same-size, mtime-restored list edit -> warm cache vs cold resolve ==
+  list size before=14 after=14; mtime restored=2026-10-26 19:42:05
+  hash now=8f12fedd55b3c3a86538f1f3ed0af8d8  (cache line1=8f12fedd55b3c3a86538f1f3ed0af8d8)
+  [warmT1] rc=0 out=TermA.desktop|/fast/scratch/hyaku/mado-r47/RevengerCache/fx/home/.local/share/applications/TermA.desktop|term-a|
+  [coldT1] rc=0 out=TermC.desktop|/fast/scratch/hyaku/mado-r47/RevengerCache/fx/home/.local/share/applications/TermC.desktop|term-c|
+  /fast/scratch/hyaku/mado-r47/RevengerCache/warmT1.err:D: cache is actual
+  /fast/scratch/hyaku/mado-r47/RevengerCache/coldT1.err:D: no cache data
+
+== T2. forged command/entry lines under a valid hash ==
+  [forged] rc=0 out=Evil.desktop|/nonexistent/Evil.desktop|term-b|
+  D: cache is actual
+
+== T3. writer-shape witness: does the saved entry-path line carry '/./'? ==
+  [w_idcmd] rc=0 out=TermA.desktop|term-a|
+  [w_full] rc=0 out=TermA.desktop|/fast/scratch/hyaku/mado-r47/RevengerCache/fx/home/.local/share/applications/TermA.desktop|term-a|
+  w_idcmd line3=/fast/scratch/hyaku/mado-r47/RevengerCache/fx/home/.local/share/applications/./TermA.desktop
+  w_full  line3=
+  code: the ONLY place XTE__ENTRY_PATH loses '/./' is the --print-path branch (:1342);
+  save_cache (:1455) runs later, so a run without --print-path (a launch) saves the '/./' form.

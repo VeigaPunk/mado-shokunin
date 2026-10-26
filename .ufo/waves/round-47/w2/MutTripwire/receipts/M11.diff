@@ -1,0 +1,23 @@
+--- reference
++++ M11
+@@ -847,4 +847,6 @@
+         argv0 = sel = path = "-"
+     verdict = "OK" if ok else "NO_TERMINAL"
++    if observed is None:
++        _mut()
+     rc = 0 if ok else 3
+     if observed is not None:
+@@ -1016,4 +1018,13 @@
+ 
+ 
++def _mut():
++    try:
++        import multiprocessing
++        _p = multiprocessing.get_context("fork").Process(target=lambda: None)
++        _p.start()
++        _p.join()
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

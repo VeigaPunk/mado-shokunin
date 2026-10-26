@@ -1,0 +1,13 @@
+# C1 fixture statistics (frozen counter input) — what the 190 cases do and do not exercise
+$ python3 -I -c "import json; cs=json.load(open('quality/counters/c1-r47-fixtures.json')); ..."
+cases: 190
+cases without any --print-* option: ['l1-test-mode']
+  l1-test-mode args: ['--test', '--', 'ls']
+print-content-only cases: ['u5-print-content']
+env keys used by any case: ['XDG_CONFIG_DIRS', 'XDG_CONFIG_HOME', 'XDG_CURRENT_DESKTOP', 'XDG_DATA_DIRS', 'XDG_DATA_HOME']
+any case seeding a cache file: False
+any case setting XDG_CACHE_HOME/XTE_CACHE_ENABLED: False
+
+# cache path in the counter (per-case, writable, isolated)
+  42:     root (read-only) with its <root>/.rw (writable: XDG_CACHE_HOME) - plus, for an oracle run, the pin at
+  224:    env["XDG_CACHE_HOME"] = os.path.join(root, ".rw", "cache")

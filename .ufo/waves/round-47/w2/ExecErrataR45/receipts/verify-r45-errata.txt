@@ -1,0 +1,102 @@
+== pins: the fourteen round-45 pins on disk vs receipts/fetch-sha256.txt ==
+MATCH    14/14 pins byte-identical :: ok=14/14
+
+== pins fetched by w1 (ScrErrataR45/pins) vs its receipts/PINS.md ==
+MATCH    16/16 w1 pins match PINS.md :: ok=16/16
+
+== pins fetched by this seat (pins/PINS.md) ==
+MATCH    4/4 seat pins match pins/PINS.md :: ok=4/4
+
+== E1 (entry:84): the monitor-added emit is reached only by the enabled fall-through ==
+MATCH    E1 onConnect entry :: Hyprland-Monitor.cpp:108 = void CMonitor::onConnect(bool noRule) {
+MATCH    E1 :264 already-enabled branch :: Hyprland-Monitor.cpp:264 = if (m_enabled && !monitorRule.m_disabled) {
+MATCH    E1 :266 applies the rule :: Hyprland-Monitor.cpp:266 = applyMonitorRule(std::move(cpy));
+MATCH    E1 :271 returns before the emit :: Hyprland-Monitor.cpp:271 = return;
+MATCH    E1 :275 disabled veto :: Hyprland-Monitor.cpp:275 = if (monitorRule.m_disabled) {
+MATCH    E1 :283 :: Hyprland-Monitor.cpp:283 = m_enabled = false;
+MATCH    E1 :286 disabled path returns :: Hyprland-Monitor.cpp:286 = return;
+MATCH    E1 :302 enabled fall-through :: Hyprland-Monitor.cpp:302 = m_enabled = true;
+MATCH    E1 :389 emit :: Hyprland-Monitor.cpp:389 = Event::bus()->m_events.monitor.added.emit(m_self.lock());
+MATCH    single monitor.added emit across the code pins :: ['Hyprland-Monitor.cpp:389']
+MATCH    E1 listener :: Hyprland-MonitorState.cpp:25 = m_listeners.monitorAdded   = Event::bus()->m_events.monitor.added.listen([this](PHLMONITOR m) {
+MATCH    E1 fresh monitor disabled by default :: Hyprland-Monitor-efb5099.hpp:357 = bool                                m_enabled             = false;
+
+== E2 (entry:96): the cited receipt is the L1 draft's, not the landed tool's ==
+MATCH    E2 l1 receipt runs the draft :: live-monitors-host-l1.txt:1 = # live read-only host run of the L1 reference (l1-draft/mado-monitors.py) - round 45, 2026-10-26
+MATCH    E2 l1 receipt tool sha :: live-monitors-host-l1.txt:4 = # tool sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+MATCH    E2 draft file hashes to the receipt's sha
+MATCH    E2 landed tool sha at 4d22eeb6
+MATCH    E2 landed tool sha at 60edb66e
+MATCH    E2 landed tool sha on disk
+MATCH    E2 r45 receipt tool sha :: live-monitors-host-r45.txt:4 = # tool sha256 2f007417ae9efa43c7c3e5bcf8e88710fb6cd6c856e49b4084c742a7ecff5609
+MATCH    E2 r45 receipt line 7 :: live-monitors-host-r45.txt:7 = MADO_MON_OUTPUT: name="DP-1" rule=1 differ=- verdict=AGREE
+MATCH    E2 r45 receipt line 8 :: live-monitors-host-r45.txt:8 = MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree
+MATCH    E2 r45 receipt line 9 :: live-monitors-host-r45.txt:9 = exit=0
+MATCH    E2 same config hash line in both receipts :: # config: ~/.config/hypr/monitors.conf sha256 69c9d8996dfdcd
+MATCH    E2 replacement receipt is committed at the freeze commit
+
+== E3 (entry:98): the closeness branch is determined ==
+MATCH    E3 :836 bound 1 :: Hyprland-Monitor.cpp:836 = if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestMode->p
+MATCH    E3 :837 bound 2 :: Hyprland-Monitor.cpp:837 = !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+MATCH    E3 :838 push :: Hyprland-Monitor.cpp:838 = requestedModes.push_back(
+MATCH    E3 strict bound macro :: Hyprland-macros.hpp:40 = #define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+MATCH    E3 :878 reverse iteration :: Hyprland-Monitor.cpp:878 = for (auto const& mode : requestedModes | std::views::reverse) {
+MATCH    E3 :903 applied rate recorded :: Hyprland-Monitor.cpp:903 = m_refreshRate = mode->refreshRate / 1000.f;
+MATCH    E3 declared rule :: live-monitors-host-l1.txt:6 = MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00 pos=0x0 scale=1.0000 transform=0 mirror=- di
+MATCH    E3 applied rate in the dump :: live-monitors-host-l1.txt:11 = [{"name": "DP-1", "width": 3440, "height": 1440, "refreshRate": 99.997, "x": 0, "y": 0, "scale":
+MATCH    E3 rate delta inside the strict 1 Hz bound :: |99.997-100.000|=0.003 < 1
+MATCH    E3 back() is the closest mode (addBest3Modes reverses the best-first sort)
+
+== E4 (entry:18): upstream main drops the legacy manager ==
+MATCH    E4 commit sha :: a9902ea65f461af868497c4e74fed798ade0b1b0
+MATCH    E4 commit date :: 2026-07-22T16:35:10Z
+MATCH    E4 commit message
+MATCH    E4 legacy manager removed with 2184 deletions :: removed deletions=2184
+MATCH    E4 legacy file 404s at that commit (14 bytes)
+MATCH    E4 no Legacy occurrence in the main ConfigManager.cpp
+MATCH    E4 only Lua::CConfigManager (lines 30, 33)
+MATCH    E4 .cpp drops the CONFIG_LEGACY case
+MATCH    E4 .hpp drops the CONFIG_LEGACY enumerator (the enum lives in the header, not the .cpp)
+MATCH    E4 ConfigManager.hpp at a9902ea keeps CONFIG_LUA only :: enum at :27
+
+== E5 (entry:106): non-DRM backends build no description at all ==
+MATCH    E5 across the whole v0.15.1 tag only DRM.cpp assigns a description :: ['include/aquamarine/output/Output.hpp:258', 'src/backend/drm/DRM.cpp:2101', 'src/backend/drm/DRM.cpp:2104']
+MATCH    E5 aquamarine-Null-v0.15.1.cpp sets no description
+MATCH    E5 aquamarine-Backend-v0.15.1.cpp sets no description
+MATCH    E5 fields are default-empty strings :: aqua-Output.hpp:258 = std::string                                                       name, description, make, model
+MATCH    E5 Wayland createOutput :: aqua-Wayland-v0.15.1.cpp:168 = bool Aquamarine::CWaylandBackend::createOutput(const std::string& szName) {
+MATCH    E5 Headless createOutput :: aqua-Headless-v0.15.1.cpp:187 = bool Aquamarine::CHeadlessBackend::createOutput(const std::string& name) {
+MATCH    E5 Hyprland copies the field :: Hyprland-Monitor.cpp:250 = m_description = m_output->description;
+MATCH    E5 short description from make/model/serial :: Hyprland-Monitor.cpp:255 = m_shortDescription = trim(std::format("{} {} {}", m_output->make, m_output->model, m_output->ser
+
+== E6 (entry:107): the line form is removed; monitor rules are not ==
+MATCH    E6 shared parser still included :: hyprland-LuaBindingsConfigRules-a9902ea.cpp:20 = #include "../../shared/monitor/Parser.hpp"
+MATCH    E6 MONITOR_FIELDS :: hyprland-LuaBindingsConfigRules-a9902ea.cpp:80 = inline constexpr SMonitorFieldDesc MONITOR_FIELDS[] = {
+MATCH    E6 MONITOR_FIELDS feed CMonitorRuleParser
+MATCH    E6 lua manager drives the rule manager :: hyprland-lua-cfg-a9902ea.cpp:809 = Config::monitorRuleMgr()->scheduleReload();
+MATCH    E6 second call :: hyprland-lua-cfg-a9902ea.cpp:810 = Config::monitorRuleMgr()->ensureMonitorStatus();
+MATCH    E6 removed file carries the monitor keyword handler :: Hyprland-legacy-ConfigManager.cpp:606 = m_config->registerHandler(&::handleMonitor, "monitor", {false});
+MATCH    E6 S303 cites that file :: hyprland-monitor-rule-r45.md:4 = source: S303 - hyprwm/Hyprland src/config/legacy/ConfigManager.cpp @ efb5099 - the `monitor` key
+
+== entry identity and append-only shape ==
+MATCH    entry sha256 on disk :: 128df1bd1055fcbb09f611c48286cd013e9d8bade992f4c17e81ba0615bb9c7b
+MATCH    entry identical at the cited commit 4d22eeb
+MATCH    entry landed in ee6659b (4d22eeb is the later tip-receipt commit) :: landing=['ee6659b90f7bf69aa03283dba804dd90081b7ff5']
+MATCH    entry ends with a newline :: last byte 0x0a
+MATCH    entry ends inside the `## Limits` list :: - Upstream main has removed the hyprlang line form (Hyprland
+MATCH    entry carries no errata section yet
+MATCH    last section is `## Limits` :: ## Limits
+MATCH    entry has 8 column-0 H2 sections :: n=8
+MATCH    corpus precedent: every `## Errata` heading is preceded by a blank line :: 21/21
+MATCH    as-drafted block carries an S### token (clause g risk) :: ['S303']
+MATCH    fixed block carries no S### token
+MATCH    H1 quote locator (block-as-drafted.md:34) :: block-as-drafted.md:34 = (S303), so the `monitor =` line form is gone on main. Monitor rules are not: the Lua binding sti
+MATCH    H3 quote locator (errata body:93) :: errata.md:93 = `CONFIG_LEGACY` enum from `src/config/ConfigManager.cpp`, and the raw file at that commit return
+MATCH    H3: the appended block's own E4 wording :: block-fixed.md:24 = it removes src/config/legacy/ConfigManager.cpp (2184 deletions) and the `Legacy`/`CONFIG_LEGACY`
+MATCH    as-drafted block starts with the heading (no leading blank line)
+MATCH    fixed block starts with the blank line the corpus convention wants
+MATCH    cmark renders the errata heading (as-drafted, no blank line) :: h2=9 li=10 e_bullets=6
+MATCH    cmark renders the errata heading (as-drafted, blank line) :: h2=9 li=10 e_bullets=6
+MATCH    cmark renders the errata heading (fixed) :: h2=9 li=10 e_bullets=6
+
+RESULT: mismatches=0

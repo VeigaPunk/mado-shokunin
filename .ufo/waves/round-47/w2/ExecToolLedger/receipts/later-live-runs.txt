@@ -1,0 +1,41 @@
+# live runs newer than the row the ledger names (all committed at c24adef2)
+
+## mado-monitors.py — ledger says r45; a round-46 w1 run exists at the current bytes
+2:# blob 551eceefa1ad8d6b3aed2694dcfb68f816c2e48e ; sha256 of the extracted file:
+3-2f007417ae9efa43c7c3e5bcf8e88710fb6cd6c856e49b4084c742a7ecff5609  mado-monitors-tip.py
+32:$ hyprctl monitors all -j | python3 -I mado-monitors-tip.py --monitors - --config ~/.config/hypr/monitors.conf
+35:MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+44:MADO_MONITORS: lines=1 rules=1 v2=0 unsupported=0 badrules=0 outputs=1 matched=1 unruled=0 agree=1 differ=0 disabled=0 verdict=OK
+committed 7f793280 2026-10-26 18:16:50 -0300
+ledger cites r45 receipt timestamp: # live read-only host run of the landed tools/mado-monitors.py - round 45, 2026-10-26T16:4
+
+## mado-eventq.py — ledger says r38; a round-39 live census exists at the current bytes
+# eventq-live-census.txt — census-only live snapshot, 2026-10-25
+# tool_sha256=436f550e9939a783b7b95d154d099b788ad9daaed2282e19de89413e39371f24
+9:- Command: `python3 -I tools/mado-eventq.py --snapshot-out /tmp/eventq-live-census.txt` (lane cwd), exit 0. Live output: 2 clients (`socat` pid 2377 fd 5; `waybar` pid 1683 fd 19), overflow=0, write_fail=0, lagging=0, markers_observable=no, verdict=CLEAN.
+committed b6078c3e 2026-10-25 17:13:05 -0300
+
+## mado-globals.py — ledger says 'no live receipt at all'; a round-41 live run exists
+MADO_GLOBALS live census — host receipt for C1 (round 41, wave w1, seat ExecLiveHost)
+==============================================================================
+
+tool:            w1/ExecLiveHost/mado-globals.py (byte copy of .ufo/waves/round-41/c1/ctl-ref-tool.py.txt)
+tool sha256:     61f101aed8897e43a3c4b1ce792d82a0acd29d73fbdb929f4279a57fdf3130f0
+reference sha256:61f101aed8897e43a3c4b1ce792d82a0acd29d73fbdb929f4279a57fdf3130f0  (identical: True)
+python3:         Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+host:            2026-10-25T20:02:07-03:00
+compositor:      Hyprland 0.56.2, commit efb50993780079460b0cbed1363e2166a2de1d9f (hyprctl version)
+journalctl:      /usr/bin/journalctl (root-owned, mode 0755, not group/other writable -> resolve_program accepts)
+command form:    journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso
+                 (the only journal verb used; read-only, no vacuum/rotate/flush)
+B. RUN 1 OF `python3 -I mado-globals.py --live --diff`  (exit 0) — verbatim
+MADO_GLOBALS_SESSION: n=1 boot=- pid=1918 first=2026-10-25T13:16:45-03:00 last=2026-10-25T13:16:45-03:00 interfaces=8 adverts=15
+MADO_GLOBALS_SESSION: n=2 boot=7ab69ee4149c4811a3faf6c08c9d119b pid=1952 first=2026-10-25T13:36:24-03:00 last=2026-10-25T13:36:24-03:00 interfaces=63 adverts=63
+MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=- verdict=OK
+61f101aed8897e43a3c4b1ce792d82a0acd29d73fbdb929f4279a57fdf3130f0  .ufo/waves/round-41/w1/ExecLiveHost/mado-globals.py
+61f101aed8897e43a3c4b1ce792d82a0acd29d73fbdb929f4279a57fdf3130f0  .ufo/waves/round-41/c1/ctl-ref-tool.py.txt
+current tools/mado-globals.py:
+8db1334035962bf8623244570b7e58e3af8a9e2520dd8f83cd0434a8a9a49795  tools/mado-globals.py
+globals tool byte history:
+6fd22346 2026-10-25 round-41: w2 repairs - entry, README row, rows S283/S286, tool usage docstring; QUALITY 69-76, SKILL, PROVINCE, lesson; w2 seat evidence
+07f26416 2026-10-25 round-41: data - tools/mado-globals.py, focus-grab entry, rows S283-S289, lesson

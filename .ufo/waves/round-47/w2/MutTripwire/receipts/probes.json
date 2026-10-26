@@ -1,0 +1,322 @@
+[
+ {
+  "id": "M01",
+  "behaviour": "os.system",
+  "trigger": "selftest-start",
+  "argv": [
+   "--selftest"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "8c4d58ca001b4e68",
+  "ref_stdout_sha256": "8c4d58ca001b4e68",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1487507 execve(\"/bin/sh\", [\"sh\", \"-c\", \"--\", \":\"], 0x7ffcf6188d10 /* 8 vars */ <unfinished ...>"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1487325 clone3({flags=CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND, exit_signal=SIGCHLD, stack=0x7f5924011000, stack_size=0x9000}, 88 <unfinished ...>"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M02",
+  "behaviour": "os.system",
+  "trigger": "explain-plain",
+  "argv": [
+   "explain"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "31da48a055ac3397",
+  "ref_stdout_sha256": "31da48a055ac3397",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1488602 execve(\"/bin/sh\", [\"sh\", \"-c\", \"--\", \":\"], 0x7ffff7ad6500 /* 8 vars */ <unfinished ...>"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1488445 clone3({flags=CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND, exit_signal=SIGCHLD, stack=0x7f7d21ccf000, stack_size=0x9000}, 88 <unfinished ...>"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M03",
+  "behaviour": "subprocess",
+  "trigger": "print-cmd",
+  "argv": [
+   "print",
+   "--print-cmd"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "4d77d1087fbdc82e",
+  "ref_stdout_sha256": "4d77d1087fbdc82e",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1489031 execve(\"/bin/sh\", [\"/bin/sh\", \"-c\", \"exit 0\"], 0x7ffecd546388 /* 8 vars */ <unfinished ...>"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1488833 clone3({flags=CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND, exit_signal=SIGCHLD, stack=0x7f5b2c6b7000, stack_size=0x9000}, 88 <unfinished ...>"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M04",
+  "behaviour": "subprocess.Popen",
+  "trigger": "explain-observed",
+  "argv": [
+   "explain",
+   "--observed",
+   "/fast/scratch/hyaku/mado-r47/MutTripwire/probe/capture.txt"
+  ],
+  "mut_rc": 1,
+  "ref_rc": 1,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "3178a6de2e33c054",
+  "ref_stdout_sha256": "3178a6de2e33c054",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1489403 execve(\"/bin/sh\", [\"/bin/sh\", \"-c\", \"exit 0\"], 0x7fffc5d0f2a0 /* 8 vars */ <unfinished ...>"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1489219 clone3({flags=CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND, exit_signal=SIGCHLD, stack=0x7f796e569000, stack_size=0x9000}, 88 <unfinished ...>"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M05",
+  "behaviour": "socket",
+  "trigger": "print-cmd",
+  "argv": [
+   "print",
+   "--print-cmd"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "4d77d1087fbdc82e",
+  "ref_stdout_sha256": "4d77d1087fbdc82e",
+  "events": {
+   "socket": {
+    "count": 1,
+    "sample": "1489640 socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) = 3"
+   },
+   "connect": {
+    "count": 1,
+    "sample": "1489640 connect(3, {sa_family=AF_INET, sin_port=htons(1), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = -1 ECONNREFUSED (Connection refused)"
+   }
+  },
+  "counter_visible_events": [
+   "connect",
+   "socket"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M06",
+  "behaviour": "socket",
+  "trigger": "action-accepted",
+  "argv": [
+   "print",
+   "--print-id"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "244887775d7b23ac",
+  "ref_stdout_sha256": "244887775d7b23ac",
+  "events": {
+   "socket": {
+    "count": 1,
+    "sample": "1490053 socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) = 3"
+   },
+   "connect": {
+    "count": 1,
+    "sample": "1490053 connect(3, {sa_family=AF_INET, sin_port=htons(1), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = -1 ECONNREFUSED (Connection refused)"
+   }
+  },
+  "counter_visible_events": [
+   "connect",
+   "socket"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M07",
+  "behaviour": "fork-exec",
+  "trigger": "selftest-start",
+  "argv": [
+   "--selftest"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "8c4d58ca001b4e68",
+  "ref_stdout_sha256": "8c4d58ca001b4e68",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1490590 execve(\"/bin/sh\", [\"sh\", \"-c\", \"exit 0\"], 0x7fff4dbaa630 /* 8 vars */) = 0"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1490408 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efcfcd1ee90) = 1490590"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M08",
+  "behaviour": "fork-exec",
+  "trigger": "explain-plain",
+  "argv": [
+   "explain"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "b8f3c9f70fe62cf1",
+  "ref_stdout_sha256": "b8f3c9f70fe62cf1",
+  "events": {
+   "execve_bin_sh": {
+    "count": 1,
+    "sample": "1491626 execve(\"/bin/sh\", [\"sh\", \"-c\", \"exit 0\"], 0x7ffd19820bd0 /* 8 vars */) = 0"
+   },
+   "clone": {
+    "count": 1,
+    "sample": "1491446 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fdd3e2aee90) = 1491626"
+   }
+  },
+  "counter_visible_events": [
+   "execve"
+  ],
+  "fired": true,
+  "counter_would_see": true
+ },
+ {
+  "id": "M09",
+  "behaviour": "fork-only",
+  "trigger": "selftest-start",
+  "argv": [
+   "--selftest"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "8c4d58ca001b4e68",
+  "ref_stdout_sha256": "8c4d58ca001b4e68",
+  "events": {
+   "clone": {
+    "count": 1,
+    "sample": "1491900 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fde39d61e90) = 1492064"
+   }
+  },
+  "counter_visible_events": [],
+  "fired": true,
+  "counter_would_see": false
+ },
+ {
+  "id": "M10",
+  "behaviour": "fork-only",
+  "trigger": "print-cmd",
+  "argv": [
+   "print",
+   "--print-cmd"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "4d77d1087fbdc82e",
+  "ref_stdout_sha256": "4d77d1087fbdc82e",
+  "events": {
+   "clone": {
+    "count": 1,
+    "sample": "1492991 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efe1cb46e90) = 1493164"
+   }
+  },
+  "counter_visible_events": [],
+  "fired": true,
+  "counter_would_see": false
+ },
+ {
+  "id": "M11",
+  "behaviour": "multiprocessing",
+  "trigger": "explain-plain",
+  "argv": [
+   "explain"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "311f766b53d57be3",
+  "ref_stdout_sha256": "311f766b53d57be3",
+  "events": {
+   "clone": {
+    "count": 1,
+    "sample": "1493424 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f2fa8da4e90) = 1493691"
+   }
+  },
+  "counter_visible_events": [],
+  "fired": true,
+  "counter_would_see": false
+ },
+ {
+  "id": "M12",
+  "behaviour": "multiprocessing",
+  "trigger": "selftest-100th",
+  "argv": [
+   "--selftest"
+  ],
+  "mut_rc": 0,
+  "ref_rc": 0,
+  "stdout_equal_to_reference": true,
+  "mut_stdout_sha256": "8c4d58ca001b4e68",
+  "ref_stdout_sha256": "8c4d58ca001b4e68",
+  "events": {
+   "clone": {
+    "count": 1,
+    "sample": "1493987 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f4628b02e90) = 1494734"
+   }
+  },
+  "counter_visible_events": [],
+  "fired": true,
+  "counter_would_see": false
+ }
+]

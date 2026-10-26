@@ -1,0 +1,59 @@
+{
+  "seat": "ExecToolLedger",
+  "round": 47,
+  "wave": "w2",
+  "target": "considerthese proposal 2: is the live-state tool ledger true?",
+  "object": {
+    "path": ".ufo/waves/round-47/w1/ScrToolLedger/ledger.md",
+    "sha256": "91ec6bcb9119925bfa80b241b3fdeb4972c1b421a818be928f1579614d0376b6",
+    "checker": ".ufo/waves/round-47/w1/ScrToolLedger/check-ledger.py",
+    "checker_sha256": "1290de7eedb4514eba0aebb5b8a552849acdea4bd043d3e7302551242439dccd",
+    "base": "c24adef2632672325a4eef3e3492f6716ccb6d14",
+    "reviewed_at": "9bddd6ac89c75a9b164b5dcc313de6f7aef2096c"
+  },
+  "counts": {
+    "rows": 14,
+    "rows_clean": 4,
+    "rows_wrong": 10,
+    "rows_wrong_substantive": 4,
+    "rows_wrong_quote_only": 6,
+    "receipt_paths_checked": 10,
+    "receipt_paths_missing": 0,
+    "rounds_wrong": 0,
+    "byte_bindings_wrong": 0,
+    "displayed_fragments_checked": 21,
+    "displayed_fragments_not_verbatim": 8,
+    "last_live_run_wrong": 2,
+    "none_rows_wrong": 1,
+    "selftests_run": 14,
+    "selftests_pass": 10,
+    "selftests_red": 1,
+    "selftests_absent": 3
+  },
+  "rows": {
+    "mado-eventq.py": "WRONG substantive: journal unit named hyprland (tool queries wayland-wm@hyprland.desktop.service); last live run stated r38, a r39 live census at the same bytes exists; verdict fragment not verbatim",
+    "mado-options.py": "CLEAN",
+    "mado-globals.py": "WRONG substantive: none / 'no live receipt at all' contradicted by a committed r41 live run of the instrument (reference copy, sha 61f101ae); stale is the class the ledger's own rule yields",
+    "mado-geometry.py": "WRONG quote-only: verdict fragment compressed across intervening fields",
+    "mado-monitors.py": "WRONG substantive: last live run stated r45, a r46 w1 live run at the current bytes exists (verdict OK)",
+    "mado-devices.py": "WRONG quote-only",
+    "mado-verify.sh": "CLEAN",
+    "mado-tripwire.py": "WRONG quote-only: counts quoted at :6, they are at :7 and not in the displayed form",
+    "mado-binds.py": "WRONG quote-only: cases_pass=41/41 verdict=TARGET_MET is not contiguous at :50",
+    "mado-anims.py": "WRONG: 'CASES 41/41' appears nowhere in the lane; receipt says cases_pass=41/41",
+    "mado-wsrules.py": "WRONG quote-only: cases_pass=41/41 TARGET_MET vs actual cases_pass=41/41 verdict=TARGET_MET",
+    "mado-action-plan.py": "CLEAN",
+    "mado-assessment.py": "CLEAN",
+    "mado-evidence-audit.py": "WRONG substantive: EXIT=2 called 'by design'; it is FileNotFoundError (r46 F4) and checkout-dependent (clone red, lane green)"
+  },
+  "holes": [
+    {"id": "H1", "kind": "row content", "rows": ["mado-eventq.py", "mado-monitors.py"], "what": "last-live-run column misses later committed live runs in .ufo/waves/round-NN/w1/ seat dirs", "evidence": [".ufo/waves/round-39/w1/ExecEventqSnapshot/eventq-live-census.txt:2", ".ufo/waves/round-39/w1/ExecEventqSnapshot.md:9", ".ufo/waves/round-46/w1/ExecW2Monitors/live-runs.txt:32-36"]},
+    {"id": "H2", "kind": "row content", "rows": ["mado-globals.py"], "what": "none row is wrong: a committed live run of the instrument exists (r41 w1 ExecLiveHost); correct class is stale (bytes drift)", "evidence": [".ufo/waves/round-41/w1/ExecLiveHost/live-census.txt:5,21,89"]},
+    {"id": "H3", "kind": "quote text", "rows": ["mado-anims.py", "mado-eventq.py", "mado-geometry.py", "mado-monitors.py", "mado-devices.py", "mado-tripwire.py", "mado-binds.py", "mado-wsrules.py"], "what": "8 of 21 displayed verdict fragments are not in the receipt the row names; one ('CASES 41/41') exists nowhere in the lane; verify-quotes.txt certifies different strings", "evidence": ["w2/ExecToolLedger/receipts/quote-fidelity.txt"]},
+    {"id": "H4", "kind": "row content", "rows": ["mado-evidence-audit.py"], "what": "EXIT=2 recorded as a design outcome; it is a missing-fixture crash whose result depends on untracked empty dirs", "evidence": ["w2/ExecToolLedger/receipts/selftests.txt", ".ufo/waves/round-46/w1/ExecHarmBase/baseline.md:161-170", ".ufo/waves/round-46/w1/ExecHarmBase/receipts/base-registered-gates.txt:9"]},
+    {"id": "H5", "kind": "claimed raw output", "rows": ["§9 control B"], "what": "ledger prints missing=0 where the seat's own receipt and a rerun print missing=1", "evidence": [".ufo/waves/round-47/w1/ScrToolLedger/receipts/check-ledger.txt", "w2/ExecToolLedger/receipts/checker-probes.txt"]},
+    {"id": "H6", "kind": "criterion mechanism", "rows": ["criterion 91 / check-ledger.py"], "what": "a false none row passes (none is never re-derived); --rev mode reads receipts from the worktree, not from REV", "evidence": ["w2/ExecToolLedger/receipts/checker-probes.txt", ".ufo/waves/round-47/w1/ScrToolLedger/check-ledger.py:122,125"]},
+    {"id": "H7", "kind": "reads column", "rows": ["mado-eventq.py"], "what": "journal unit misnamed (`hyprland` vs wayland-wm@hyprland.desktop.service)", "evidence": ["tools/mado-eventq.py:91", "tools/mado-eventq.py:68", "w2/ExecToolLedger/receipts/f5-counts.txt"]},
+    {"id": "H8", "kind": "count", "rows": ["F5"], "what": "subprocess counts do not reproduce for eventq (8 vs 5) or tripwire (20 vs 15) and the receipt names no command", "evidence": ["w2/ExecToolLedger/receipts/f5-counts.txt"]}
+  ]
+}

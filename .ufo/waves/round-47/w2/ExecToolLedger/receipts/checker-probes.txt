@@ -1,0 +1,47 @@
+# check-ledger.py probes (seat ScrToolLedger's own checker), 2026-10-26T22:48:52Z
+# checker sha256 1290de7eedb4514eba0aebb5b8a552849acdea4bd043d3e7302551242439dccd
+# ledger copy sha256 91ec6bcb9119925bfa80b241b3fdeb4972c1b421a818be928f1579614d0376b6 (equal to the committed ledger.md)
+
+## 1. pristine ledger against the lane
+LEDGER: ok=7 stale=3 none=4 missing=0 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=0
+
+## 2. §9 control B reproduced: the globals row deleted   (ledger.md §9 prints none=3 missing=0)
+MISSING mado-globals.py
+LEDGER: ok=7 stale=3 none=3 missing=1 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=1
+
+## 3. a FALSE none row: mado-eventq.py declared none although its receipt is committed and bound
+LEDGER: ok=6 stale=3 none=5 missing=0 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=0
+
+## 4a. --rev mode, clone at c24adef2, receipt present in the worktree
+LEDGER: ok=7 stale=3 none=4 missing=0 mismatch=0 unbound=0 missing_receipt=0 instruments=14
+rc=0
+
+## 4b. same rev, the receipt deleted from the worktree ONLY (present at c24adef2: yes)
+MISSING-RECEIPT mado-binds.py .ufo/waves/round-25/evidence/c1-after-v4-ef94763c.txt
+LEDGER: ok=7 stale=2 none=4 missing=0 mismatch=0 unbound=0 missing_receipt=1 instruments=14
+rc=1
+
+## 5. the checker lines that decide 3 and 4
+     1	            counts["missing"] += 1
+     2	            print("MISSING %s" % tool)
+     3	            continue
+     4	        declared, receipt, sha = table[tool]
+     5	        if declared == "none":
+     6	            counts["none"] += 1
+     7	            continue
+     8	        rpath = os.path.join(repo, receipt)
+     9	        if not os.path.isfile(rpath):
+    10	            counts["missing_receipt"] += 1
+
+## 6. §9 controls A and C reproduced by this seat (both match ledger.md §9 exactly)
+### A: binds row declared stale -> ok
+MISMATCH mado-binds.py declared=ok derived=stale recorded=9efa1136abd2 current=0cda0e6ff5e2
+LEDGER: ok=7 stale=2 none=4 missing=0 mismatch=1 unbound=0 missing_receipt=0 instruments=14
+rc=1
+### C: eventq row re-pointed at the round-25 binds receipt
+UNBOUND mado-eventq.py sha=436f550e9939 receipt=.ufo/waves/round-25/evidence/c1-after-v4-ef94763c.txt
+LEDGER: ok=6 stale=3 none=4 missing=0 mismatch=0 unbound=1 missing_receipt=0 instruments=14
+rc=1

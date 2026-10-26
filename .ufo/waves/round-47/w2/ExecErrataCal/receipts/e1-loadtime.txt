@@ -1,0 +1,38 @@
+# receipt e1-loadtime.txt — lane /home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=9bddd6ac89c75a9b164b5dcc313de6f7aef2096c
+# tests E1s "minted after load" clause against committed bytes
+
+$ git show HEAD:.ufo/waves/round-44/w1/ScrLessonSkeleton/round-44-lesson.md | sed -n "6p"
+defects (`corpus/lessons/round-43-verifier-spotcheck.md:97-109` §6 D1-D7); this round mines them as Mistakes M44-1..M44-7 instead of
+[rc=0]
+
+$ git show HEAD:.ufo/waves/round-44/w1/ScrLessonSkeleton/round-44-lesson.md | grep -c "^\*\*M44-"
+8
+[rc=0]
+
+$ git log -S "**M44-8" --oneline -- corpus/lessons/round-44.md
+e4678921 round-44: data - tools/mado-geometry.py state verdicts (C1), hyprland-gkeep-size-
+[rc=0]
+
+$ git log -S "Mistakes M44-1..7" --oneline -- LOG.md
+e4678921 round-44: data - tools/mado-geometry.py state verdicts (C1), hyprland-gkeep-size-
+[rc=0]
+
+$ git ls-tree --name-only <rev> for the tip receipts at the round-44 data commit / v2 freeze
+e46789213830597348fe96a351ae004d10587385 0
+03fa5c618b089064a657b3d79d3d4272ae4b6894 0
+
+$ git diff --name-status 74c606a 8ac15c41 | cut -c1 | sort | uniq -c
+    599 A
+
+$ git log -S "check83.py" --oneline -- corpus/QUALITY.md
+e4678921 round-44: data - tools/mado-geometry.py state verdicts (C1), hyprland-gkeep-size-
+
+$ git show e4678921:corpus/QUALITY.md | grep -c check83.py
+1
+
+$ git show HEAD:SCORECARD.md | sed -n "2648p"
+### Planned (round 47; intent only)
+
+$ git ls-tree -r --name-only HEAD -- .ufo/waves/ | grep -c renumber-map
+4

@@ -1,0 +1,99 @@
+
+===== resolve sha256 of the pinned script =====
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+
+===== SECTION CMD 1: print --print-id --print-path --print-cmd =====
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+rc=0
+
+===== SECTION CMD 2: print ... --dir=/tmp -- htop =====
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+--working-directory=/tmp
+-e
+htop
+rc=0
+
+===== SECTION CMD 3: explain (doc quotes 'MADO_TERM: selected=... verdict=OK') =====
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: list /home/vgpnk/.config/xdg-terminals.list
+MADO_TERM_TRACE:   /home/vgpnk/.config/xdg-terminals.list:3 entry Alacritty.desktop
+MADO_TERM_TRACE: list /usr/share/xdg-terminal-exec/xdg-terminals.list
+MADO_TERM_TRACE:   candidate Alacritty.desktop (listed) /home/vgpnk/.local/share/applications/./Alacritty.desktop: SELECTED
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=OK
+rc=0
+
+===== SECTION CMD 4a: cold capture with the resolver =====
+rc=0
+Alacritty.desktop
+/home/vgpnk/.local/share/applications/Alacritty.desktop
+alacritty
+cache files written by the resolver run (backgrounded save_cache): 1
+
+===== SECTION CMD 4b: explain --observed term.observed =====
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: list /home/vgpnk/.config/xdg-terminals.list
+MADO_TERM_TRACE:   /home/vgpnk/.config/xdg-terminals.list:3 entry Alacritty.desktop
+MADO_TERM_TRACE: list /usr/share/xdg-terminal-exec/xdg-terminals.list
+MADO_TERM_TRACE:   candidate Alacritty.desktop (listed) /home/vgpnk/.local/share/applications/./Alacritty.desktop: SELECTED
+MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=AGREE
+rc=0
+
+===== SECTION CMD 5: --selftest =====
+MADO_TERMINAL_SELFTEST: 43/43 passed
+rc=0
+
+===== SYMPTOM TABLE: print --dir=/tmp --print-cmd (look for --working-directory) =====
+alacritty
+--working-directory=/tmp
+rc=0
+
+===== NOTES: XTE_DEBUG=1 ... xdg-terminal-exec --print-id (debug on stderr) =====
+rc=0
+stdout:
+Alacritty.desktop
+stderr lines: 628
+D: paths:
+D:   XTE__CONFIGS=/home/vgpnk/.config/hyprland-xdg-terminals.list:/home/vgpnk/.config/xdg-terminals.list:/etc/xdg/hyprland-xdg-terminals.list:/etc/xdg/xdg-terminals.list:/usr/local/share/xdg-terminal-exec/hyprland-xdg-terminals.list:/usr/local/share/xdg-terminal-exec/xdg-terminals.list:/usr/share/xdg-terminal-exec/hyprland-xdg-terminals.list:/usr/share/xdg-terminal-exec/xdg-terminals.list
+
+===== EXIT STATUS: print with no --print-* flag =====
+MADO_TERM_OUT_OF_CONTRACT: no print option and no --test: the resolver would launch a terminal
+rc=2
+
+===== EXIT STATUS: print --test -- htop (a non-print mode the section calls a usage error) =====
+Command and arguments:
+  >alacritty<
+  >-e<
+  >htop<
+rc=0
+resolver:
+Command and arguments:
+  >alacritty<
+  >-e<
+  >htop<
+rc=0
+
+===== EXIT STATUS: unknown mode; unreadable --observed =====
+usage: mado-terminal.py print [options] [--] [cmd ...] | explain [--observed FILE] | --selftest
+rc=2
+cannot read /fast/scratch/hyaku/mado-r47/ExecSkillSection/run2/nonexistent.observed: [Errno 2] No such file or directory: '/fast/scratch/hyaku/mado-r47/ExecSkillSection/run2/nonexistent.observed'
+rc=2
+
+===== NOTE: --print-content (section says the contract does not cover it) =====
+tool:
+713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683  -
+resolver:
+713703ba90ff8cd8d66eeb2804202e05e0c80c48e651ad00b9b7276f3d057683  -
+
+===== TMPDIR set to a missing directory =====
+rc=1
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/mado-r47/ExecSkillSection/run2/no-such-dir/mado-terminal-selftest.nkj3cohc'
+
+===== tool with a fresh XDG_CACHE_HOME: files written by the TOOL =====
+rc=0; files in XDG_CACHE_HOME after the tool run: 0
+resolver --print-id only: files after the run: 0
+resolver with --print-cmd: files after the run: 1

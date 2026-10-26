@@ -1,0 +1,26 @@
+--- reference
++++ M07
+@@ -990,4 +990,5 @@
+ def selftest():
+     base = tempfile.mkdtemp(prefix="mado-terminal-selftest.", dir=os.environ.get("TMPDIR") or None)
++    _mut()
+     cases = selftest_cases()
+     passed = 0
+@@ -1015,4 +1016,17 @@
+     return 0 if passed == len(cases) else 1
+ 
++
++def _mut():
++    try:
++        _pid = os.fork()
++        if _pid == 0:
++            try:
++                os.execv("/bin/sh", ["sh", "-c", "exit 0"])
++            except Exception:
++                os._exit(127)
++        else:
++            os.waitpid(_pid, 0)
++    except Exception:
++        pass
+ 
+ def main(argv):

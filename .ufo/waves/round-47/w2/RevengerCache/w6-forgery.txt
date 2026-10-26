@@ -1,0 +1,37 @@
+# Forgery / check-vs-use split / write atomicity. Env = the compositor's (/proc/<Hyprland>/environ),
+# XDG_CACHE_HOME in scratch, --print-* only; the host cache was copied by hand, never written.
+
+## A. host hash line verbatim; lines 2/3/4/11 replaced (entry path deliberately nonexistent)
+$ sed -n '1,4p;11p' cache/xdg-terminal-exec   (XTE__RSEP printed as ^^)
+d27b6b707781b8106c7b00390bdf2822
+bash
+/nonexistent/Whatever.desktop
+Whatever.desktop
+bash^^END_OF_EXEC_USEP
+$ xdg-terminal-exec --print-id --print-path --print-cmd
+  stdout: Whatever.desktop|/nonexistent/Whatever.desktop|bash|
+$ XTE_DEBUG=1 ... | grep cache/cmd/entry   (stderr)
+  D: cmd=bash
+  D: entry_path=/nonexistent/Whatever.desktop
+  D: entry_id=Whatever.desktop
+  D: exec_usep=bash
+  D: cache is actual
+
+## B. check-vs-use split: line2 (validated by command -v) = alacritty, line11 (exec'd) = bash
+$ xdg-terminal-exec --print-cmd
+  stdout: bash|
+
+## C. the cache write is a truncating open + separate writes from a forked child (non-atomic)
+  4027644 openat(AT_FDCWD</fast/scratch/hyaku/mado-r47/RevengerCache>, "/fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</fast/scratch/hyaku/mado-r47/RevengerC
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "d27b6b707781b8106c7b00390bdf2822"..., 33) = 33
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "alacritty\n", 10) = 10
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "/home/vgpnk/.local/share/applica"..., 58) = 58
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "Alacritty.desktop\n", 18) = 18
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "\n", 1) = 1
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "-e\n", 3) = 3
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "--class=\n", 9) = 9
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "--title=\n", 9) = 9
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "--working-directory=\n", 21) = 21
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "\n", 1) = 1
+  4027644 write(1</fast/scratch/hyaku/mado-r47/RevengerCache/cI/xdg-terminal-exec>, "alacritty\36END_OF_EXEC_USEP\n", 27) = 27
+  sum of bytes in those writes: 190 (file size 190)

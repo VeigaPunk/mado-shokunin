@@ -1,0 +1,35 @@
+# F5 process-count check (ledger §4 F5: eventq 8, globals 6, options 7, tripwire 20, geometry/monitors/devices 0)
+# 2026-10-26T22:50:19Z  rev 9bddd6ac
+$ for t in eventq globals options tripwire geometry monitors devices; do printf "%s %s\n" $t "$(grep -c subprocess tools/mado-$t.py)"; done
+eventq 5
+globals 6
+options 7
+tripwire 15
+geometry 0
+monitors 0
+devices 0
+
+$ grep -n "subprocess|Popen" tools/mado-tripwire.py   (all sites; the only executable one is :3320)
+6:lines, `%%bash` cells and literal subprocess/os/tool.bash spawns parsed with
+67:  subprocess.run, args=(argv,))`). Builtins and callables of standard
+167:import subprocess
+297:SHELL_STRING_FUNCS = {"os.system", "os.popen", "subprocess.getoutput",
+298:                      "subprocess.getstatusoutput",
+299:                      "asyncio.create_subprocess_shell"}
+1566:    "subprocess.list2cmdline",  # argv -> string formatter (S115); never spawns
+1576:    os posix nt subprocess pty asyncio multiprocessing concurrent ctypes
+1601:    return ((path.startswith("subprocess.") and tail in SPAWN_FUNCS)
+1603:            or path in ("asyncio.create_subprocess_exec", "os.execvp", "os.execv",
+1814:        raw = "subprocess." + rest
+2325:    that receives it (`Thread(target=subprocess.run, args=(argv,))`); for a
+2627:        is_sub = name.startswith("subprocess.") and tail in SPAWN_FUNCS
+2629:        is_exec = name in ("asyncio.create_subprocess_exec", "os.execvp", "os.execv",
+3320:        proc = subprocess.run(argv, capture_output=True, text=True, timeout=120)
+
+$ awk "NR<=3320 && /^def /{l=NR\": \"\$0} END{print l}" tools/mado-tripwire.py   (enclosing def of :3320)
+3281: def run_selftest(directory):
+
+$ grep -n 'wayland-wm@hyprland.desktop.service' tools/mado-eventq.py   (H7)
+68:    --journal-file   `journalctl --user -u wayland-wm@hyprland.desktop.service
+91:UNIT = "wayland-wm@hyprland.desktop.service"
+$ grep -c "unit named hyprland" ... ; no -u hyprland unit is queried by the tool (UNIT at :91)

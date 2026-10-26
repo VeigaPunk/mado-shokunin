@@ -1,0 +1,1536 @@
+fixtures_sha256=4836cc1d9e493af7bf15fa52f6e6855fe71c5c27911880847da668e1e313dd86
+pin_sha256=89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+variants=AB cases=190 runs=380
+source_lines=1499 traced_lines=549 (36.6%) never_traced=950
+drift_against_recorded_expect=[]
+per-run distinct lines: min=98 median=270 mean=254.5 max=307
+union A=549 union B=537 A_only=[186, 204, 206, 207, 208, 310, 312, 319, 320, 321, 333, 334] B_only=[]
+lines traced in every one of the 380 runs: 89
+lines traced in exactly one run: [186, 204, 206, 207, 208, 310, 312, 319, 320, 321, 333, 334]
+
+function                 range      stmt  seen  missed
+error                    45-49       2     1       1
+check_bool               50-76      22     6      16
+shcat                    77-83       4     2       2
+usage                    84-90       5     0       5  NEVER-ENTERED
+help                     91-142     36     0      36  NEVER-ENTERED
+make_paths              143-178     21    15       6
+gen_hash                179-216     28    12      16
+read_cache              217-299     74     3      71
+save_cache              300-341     39    11      28
+list_contains           342-350      6     4       2
+read_config_paths       351-476     95    44      51
+replace                 477-500     12     8       4
+de_expand_str           501-560     41    15      26
+de_tokenize_exec        561-693     99    41      58
+de_strip_fields         694-741     38    23      15
+reset_keys              742-753      9     8       1
+find_entry_paths        754-801     28    18      10
+check_entry_key         802-969    134    83      51
+read_entry_path         970-1019    33    23      10
+validate_entry_id      1020-1038    12     6       6
+validate_action_id     1039-1054     9     5       4
+find_entry             1055-1112    39    28      11
+get_default_execarg    1113-1130    15     8       7
+<toplevel>             1133-1499   300   181     119
+
+per-line table: line hits cases | text
+   1     0     0 | #!/bin/sh
+   2     0     0 | 
+   3     0     0 | # Default Terminal Execution Utility
+   4     0     0 | # Reference implementation of proposed Default Terminal Execution Specification
+   5     0     0 | # https://gitlab.freedesktop.org/terminal-wg/specifications/-/merge_requests/3
+   6     0     0 | #
+   7     0     0 | # by Vladimir Kudrya
+   8     0     0 | # https://github.com/Vladimir-csp/
+   9     0     0 | # https://gitlab.freedesktop.org/Vladimir-csp/
+  10     0     0 | #
+  11     0     0 | # This script is free software: you can redistribute it and/or modify
+  12     0     0 | # it under the terms of the GNU General Public License as published by
+  13     0     0 | # the Free Software Foundation, either version 3 of the License, or
+  14     0     0 | # (at your option) any later version. See <http://www.gnu.org/licenses/>.
+  15     0     0 | #
+  16     0     0 | # Contributors:
+  17     0     0 | # Roman Chistokhodov    https://github.com/FreeSlave/
+  18     0     0 | # fluvf                 https://github.com/fluvf
+  19     0     0 | 
+  20     0     0 | # Treat non-zero exit status from simple commands as an error
+  21     0     0 | # Treat unset variables as errors when performing parameter expansion
+  22     0     0 | # Disable pathname expansion
+  23   380   380 | set -euf
+  24     0     0 | 
+  25     0     0 | # Store original IFS value, assumed to contain the default: <space><tab><newline>
+  26   380   380 | XTE__OIFS=$IFS
+  27     0     0 | # Newline, utility variable used throughout the script
+  28     0     0 | XTE__LF='
+  29   380   380 | '
+  30     0     0 | 
+  31     0     0 | # name of executable
+  32   380   380 | XTE__SELF_NAME=${0##*/}
+  33     0     0 | 
+  34     0     0 | # ASCII Record Separator for cache saving
+  35     0     0 | # ASCII Unit Separator for Exec parsing
+  36     0     0 | # Carriage return for string expander
+  37     0     0 | {
+  38   380   380 | 	read -r XTE__RSEP
+  39   380   380 | 	read -r XTE__USEP
+  40   380   380 | 	read -r XTE__CR
+  41     0     0 | } <<- EOF
+  42     0     0 | 	$(printf '%b\n' '\036' '\037' '\r')
+  43   380   380 | EOF
+  44     0     0 | 
+  45     0     0 | error() {
+  46     0     0 | 	# Print messages to stderr
+  47    62    62 | 	printf '%s\n' "$@" >&2
+  48     0     0 | }
+  49     0     0 | 
+  50     0     0 | check_bool() {
+  51   380   380 | 	case "$1" in
+  52   380   380 | 	true | True | TRUE | yes | Yes | YES | 1) return 0 ;;
+  53   380   380 | 	false | False | FALSE | no | No | NO | 0) return 1 ;;
+  54     0     0 | 	*)
+  55     0     0 | 		error "Assuming '$1' means no"
+  56     0     0 | 		return 1
+  57     0     0 | 		;;
+  58     0     0 | 	esac
+  59     0     0 | }
+  60     0     0 | 
+  61   380   380 | if check_bool "${XTE_DEBUG-${DEBUG-0}}"; then
+  62     0     0 | 	# Utility function to print debug messages to stderr (or not)
+  63     0     0 | 	XTE__DEBUG=true
+  64     0     0 | 	debug() {
+  65     0     0 | 		# print each arg at new line, prefix each printed line with 'D: '
+  66     0     0 | 		while IFS= read -r xte__debug_line; do
+  67     0     0 | 			printf 'D: %s\n' "$xte__debug_line"
+  68     0     0 | 		done <<- EOF >&2
+  69     0     0 | 			$(printf '%s\n' "$@")
+  70     0     0 | 		EOF
+  71     0     0 | 	}
+  72     0     0 | else
+  73   380   380 | 	XTE__DEBUG=
+  74   380   380 | 	debug() { :; }
+  75     0     0 | fi
+  76     0     0 | 
+  77     0     0 | shcat() {
+  78     0     0 | 	# builtin stdin cat
+  79     4     4 | 	while IFS= read -r xte__line; do
+  80     4     4 | 		printf '%s\n' "$xte__line"
+  81     0     0 | 	done
+  82     0     0 | }
+  83     0     0 | 
+  84     0     0 | usage() {
+  85     0     0 | 	shcat <<- EOF
+  86     0     0 | 		Usage:
+  87     0     0 | 		  $XTE__SELF_NAME [options] [--] [command [arguments ...]]
+  88     0     0 | 	EOF
+  89     0     0 | }
+  90     0     0 | 
+  91     0     0 | help() {
+  92     0     0 | 	shcat <<- EOF
+  93     0     0 | 		$XTE__SELF_NAME - Shell-based default terminal launcher.
+  94     0     0 | 
+  95     0     0 | 		Implementation of the proposed Default Terminal Specification.
+  96     0     0 | 
+  97     0     0 | 		$(usage)
+  98     0     0 | 
+  99     0     0 | 		Launches given command in default terminal, or launches default terminal.
+ 100     0     0 | 
+ 101     0     0 | 		Options for modifying terminal behavior (if supported by terminals's
+ 102     0     0 | 		entry):
+ 103     0     0 | 
+ 104     0     0 | 		  --app-id=app-id    set app-id (Wayland) or window class (X11)
+ 105     0     0 | 		  --title=title      set tile of terminal.
+ 106     0     0 | 		  --dir=workdir      set workdir of terminal.
+ 107     0     0 | 		  --hold             instruct terminal to hold after command ends.
+ 108     0     0 | 
+ 109     0     0 | 		Options for printing data instead of executing terminal:
+ 110     0     0 | 
+ 111     0     0 | 		  --print-id
+ 112     0     0 | 		      print selected Desktop Entry ID. Action is appended delimited
+ 113     0     0 | 		      by ":".
+ 114     0     0 | 
+ 115     0     0 | 		  --print-path
+ 116     0     0 | 		      print path to selected Desktop Entry. Action is appended
+ 117     0     0 | 		      delimited by ":".
+ 118     0     0 | 
+ 119     0     0 | 		  --print-content
+ 120     0     0 | 		      print content of selected Desktop Entry. Conflicts with --print-cmd.
+ 121     0     0 | 
+ 122     0     0 | 		  --print-cmd[=printf_sequence]
+ 123     0     0 | 		      print resulting command line, delimited by given printf sequence,
+ 124     0     0 | 		      "\\n" by default. If sequence is "\\n", output is also terminated with
+ 125     0     0 | 		      a newline.
+ 126     0     0 | 
+ 127     0     0 | 		  --print-delimiter=printf_sequence
+ 128     0     0 | 		      printf sequence to be used as the delimiter between multiple requested
+ 129     0     0 | 		      print statements, "\\n" by default. If sequence is "\\n", output is
+ 130     0     0 | 		      also terminated with a newline.
+ 131     0     0 | 
+ 132     0     0 | 		Configuration:
+ 133     0     0 | 
+ 134     0     0 | 		Preferred terminals are configured by listing their Desktop Entry IDs
+ 135     0     0 | 		in config files named "[\${desktop}-]xdg-terminals.list" placed in XDG Config
+ 136     0     0 | 		hierarchy. Where "\${desktop}" is a lowercased string that is matched
+ 137     0     0 | 		(case-insensitively) against items of "\${XDG_CURRENT_DESKTOP}".
+ 138     0     0 | 
+ 139     0     0 | 		See "man $XTE__SELF_NAME" for more details.
+ 140     0     0 | 	EOF
+ 141     0     0 | }
+ 142     0     0 | 
+ 143     0     0 | make_paths() {
+ 144     0     0 | 	# Populates global constants and lists for later use and iteration
+ 145   380   380 | 	IFS=':'
+ 146     0     0 | 
+ 147     0     0 | 	# Populate list of config files to read, in descending order of preference
+ 148   380   380 | 	for xte__dir in ${XDG_CONFIG_HOME:-"${HOME}/.config"}${IFS}${XDG_CONFIG_DIRS:-/etc/xdg}; do
+ 149     0     0 | 		# Normalise base path and append the data subdirectory with a trailing '/'
+ 150   374   374 | 		for xte__desktop in ${XTE__LOWERCASE_XDG_CURRENT_DESKTOP}; do
+ 151   374   374 | 			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/${xte__desktop}-xdg-terminals.list
+ 152     0     0 | 		done
+ 153   380   380 | 		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminals.list
+ 154     0     0 | 	done
+ 155     0     0 | 
+ 156     0     0 | 	# append xdg-terminal-exec dirs in XDG_DATA_DIRS to config hierarchy for distro/upstream level defaults
+ 157   380   380 | 	for xte__dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+ 158     0     0 | 		# Normalise base path and append the data subdirectory with a trailing '/'
+ 159   374   374 | 		for xte__desktop in ${XTE__LOWERCASE_XDG_CURRENT_DESKTOP}; do
+ 160   374   374 | 			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/${xte__desktop}-xdg-terminals
+ 161     0     0 | 		done
+ 162   380   380 | 		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/xdg-terminals.list
+ 163     0     0 | 	done
+ 164     0     0 | 
+ 165     0     0 | 	# Populate list of directories to search for entries in, in ascending order of preference
+ 166   380   380 | 	for xte__dir in ${XDG_DATA_HOME:-${HOME}/.local/share}${IFS}${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+ 167     0     0 | 		# Normalise base path and append the data subdirectory with a trailing '/'
+ 168   380   380 | 		XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/${XTE__APPLICATIONS_DIRS:+:${XTE__APPLICATIONS_DIRS}}
+ 169     0     0 | 	done
+ 170     0     0 | 
+ 171     0     0 | 	# cache
+ 172   380   380 | 	XDG_CACHE_HOME=${XDG_CACHE_HOME:-"${HOME}/.cache"}
+ 173   380   380 | 	XTE__CACHE_FILE=${XDG_CACHE_HOME}/xdg-terminal-exec
+ 174     0     0 | 
+ 175   380   380 | 	IFS=$XTE__OIFS
+ 176   380   380 | 	debug "paths:" "  XTE__CONFIGS=${XTE__CONFIGS}" "  XTE__APPLICATIONS_DIRS=${XTE__APPLICATIONS_DIRS}"
+ 177     0     0 | }
+ 178     0     0 | 
+ 179     0     0 | gen_hash() {
+ 180     0     0 | 	# return md5 of custom string, XDG_CURRENT_DESKTOP and ls -LRl output for config and data paths
+ 181     0     0 | 	# md5 is 4x faster than sha*, and there is no need for cryptography here
+ 182     0     0 | 	# writes to XTE__NEW_HASH var
+ 183   283   283 | 	if [ "${LC_ALL-}" != "C" ]; then
+ 184     0     0 | 		# re-call self with C locale
+ 185   283   283 | 		LC_ALL=C gen_hash "$@"
+ 186     1     1 | 		return "$?"
+ 187     0     0 | 	fi
+ 188     0     0 | 	# shellcheck disable=SC2034
+ 189   283   283 | 	read -r xte__hash _drop <<- EOH
+ 190   229   229 | 		$(
+ 191     0     0 | 			xte__hash_paths=${XTE__CONFIGS}:${XTE__APPLICATIONS_DIRS}
+ 192     0     0 | 			{
+ 193    23    23 | 				# cache 'version', change to invalidate when format changes
+ 194    22    22 | 				echo 4
+ 195    21    21 | 				echo "${XDG_CURRENT_DESKTOP-}"
+ 196     0     0 | 				IFS=':'
+ 197    19    19 | 				# shellcheck disable=SC2086
+ 198     0     0 | 				debug ">     hashing '${XDG_CURRENT_DESKTOP-}' and listing of:" $xte__hash_paths "^     end of hash listin
+ 199    14    14 | 				# shellcheck disable=SC2012,SC2086
+ 200    15    15 | 				LANG=C ls -LRl ${xte__hash_paths} 2> /dev/null
+ 201     0     0 | 			} | md5sum 2> /dev/null
+ 202     0     0 | 		)
+ 203     0     0 | 	EOH
+ 204     1     1 | 	case "$xte__hash" in
+ 205     0     0 | 	[0-9a-f]??????????????????????????????[0-9a-f])
+ 206     1     1 | 		debug "got fresh hash '$xte__hash'"
+ 207     1     1 | 		XTE__NEW_HASH=$xte__hash
+ 208     1     1 | 		return 0
+ 209     0     0 | 		;;
+ 210     0     0 | 	*)
+ 211     0     0 | 		debug "failed to get fresh hash, got '$xte__hash'"
+ 212     0     0 | 		return 1
+ 213     0     0 | 		;;
+ 214     0     0 | 	esac
+ 215     0     0 | }
+ 216     0     0 | 
+ 217     0     0 | read_cache() {
+ 218     0     0 | 	# reads $xte__cached_hash, $xte__cached_cmd, $xte__cached_exec_usep, $xte__cached_execarg, and others from ca
+ 219     0     0 | 	# checks if cache is actual and applies it, otherwise returns 1
+ 220     0     0 | 	# tries to bail out as soon as possible if something does not fit
+ 221   380   380 | 	if [ -f "${XTE__CACHE_FILE}" ]; then
+ 222     0     0 | 		xte__line_num=0
+ 223     0     0 | 		xte__line_limit=50
+ 224     0     0 | 		xte__cached_exec_usep=
+ 225     0     0 | 		xte__finished=0
+ 226     0     0 | 		while IFS= read -r xte__line; do
+ 227     0     0 | 			xte__line_num=$((xte__line_num + 1))
+ 228     0     0 | 			case "${xte__line_num}" in
+ 229     0     0 | 			1) xte__cached_hash=$xte__line ;;
+ 230     0     0 | 			2) xte__cached_cmd=$xte__line ;;
+ 231     0     0 | 			3) xte__cached_entry_path=$xte__line ;;
+ 232     0     0 | 			4) xte__cached_entry_id=$xte__line ;;
+ 233     0     0 | 			5) xte__cached_entry_action=$xte__line ;;
+ 234     0     0 | 			6) xte__cached_execarg=$xte__line ;;
+ 235     0     0 | 			7) xte__cached_appidarg=$xte__line ;;
+ 236     0     0 | 			8) xte__cached_titlearg=$xte__line ;;
+ 237     0     0 | 			9) xte__cached_dirarg=$xte__line ;;
+ 238     0     0 | 			10) xte__cached_holdarg=$xte__line ;;
+ 239     0     0 | 			"$xte__line_limit")
+ 240     0     0 | 				debug "reached cache line limit ($xte__line_limit)"
+ 241     0     0 | 				return 1
+ 242     0     0 | 				;;
+ 243     0     0 | 			# Line 11 starts command
+ 244     0     0 | 			*)
+ 245     0     0 | 				# Command is stored as raw expanded and tokenized $XTE__USEP-separated command,
+ 246     0     0 | 				# technically it can contain newline characters.
+ 247     0     0 | 				# Reconstruct newlines, use ${XTE__RSEP}END_OF_EXEC_USEP string as terminator.
+ 248     0     0 | 				xte__cached_exec_usep=${xte__cached_exec_usep}${xte__cached_exec_usep:+$XTE__LF}${xte__line}
+ 249     0     0 | 				case "${xte__line}" in
+ 250     0     0 | 				*"${XTE__RSEP}END_OF_EXEC_USEP")
+ 251     0     0 | 					xte__cached_exec_usep=${xte__cached_exec_usep%"${XTE__RSEP}END_OF_EXEC_USEP"}
+ 252     0     0 | 					xte__finished=1
+ 253     0     0 | 					break
+ 254     0     0 | 					;;
+ 255     0     0 | 				esac
+ 256     0     0 | 				;;
+ 257     0     0 | 			esac
+ 258     0     0 | 		done < "${XTE__CACHE_FILE}"
+ 259     0     0 | 		if [ "$xte__finished" = "1" ]; then
+ 260     0     0 | 			debug "got cache:" \
+ 261     0     0 | 				"hash=${xte__cached_hash}" \
+ 262     0     0 | 				"cmd=${xte__cached_cmd}" \
+ 263     0     0 | 				"entry_path=${xte__cached_entry_path}" \
+ 264     0     0 | 				"entry_id=${xte__cached_entry_id}" \
+ 265     0     0 | 				"entry_action=${xte__cached_entry_action}" \
+ 266     0     0 | 				"execarg=${xte__cached_execarg}" \
+ 267     0     0 | 				"appidarg=${xte__cached_appidarg}" \
+ 268     0     0 | 				"titlearg=${xte__cached_titlearg}" \
+ 269     0     0 | 				"dirarg=${xte__cached_dirarg}" \
+ 270     0     0 | 				"holdarg=${xte__cached_holdarg}" \
+ 271     0     0 | 				"exec_usep=${xte__cached_exec_usep}"
+ 272     0     0 | 			gen_hash || return 1
+ 273     0     0 | 			XTE__HASH=$XTE__NEW_HASH
+ 274     0     0 | 			if [ "$XTE__HASH" = "$xte__cached_hash" ] && command -v "$xte__cached_cmd" > /dev/null; then
+ 275     0     0 | 				debug "cache is actual"
+ 276     0     0 | 				XTE__EXEC_USEP=${xte__cached_exec_usep}
+ 277     0     0 | 				XTE__ENTRY_PATH=${xte__cached_entry_path}
+ 278     0     0 | 				XTE__ENTRY_ID=${xte__cached_entry_id}
+ 279     0     0 | 				XTE__ENTRY_ACTION=${xte__cached_entry_action}
+ 280     0     0 | 				XTE__EXECARG=${xte__cached_execarg}
+ 281     0     0 | 				XTE__APPIDARG=${xte__cached_appidarg}
+ 282     0     0 | 				XTE__TITLEARG=${xte__cached_titlearg}
+ 283     0     0 | 				XTE__DIRARG=${xte__cached_dirarg}
+ 284     0     0 | 				XTE__HOLDARG=${xte__cached_holdarg}
+ 285     0     0 | 				return 0
+ 286     0     0 | 			else
+ 287     0     0 | 				debug "cache is out-of-date"
+ 288     0     0 | 				return 1
+ 289     0     0 | 			fi
+ 290     0     0 | 		else
+ 291     0     0 | 			debug "invalid cache data"
+ 292     0     0 | 			return 1
+ 293     0     0 | 		fi
+ 294     0     0 | 	else
+ 295   380   380 | 		debug "no cache data"
+ 296   380   380 | 		return 1
+ 297     0     0 | 	fi
+ 298     0     0 | }
+ 299     0     0 | 
+ 300     0     0 | save_cache() {
+ 301     0     0 | 	# saves $XTE__HASH, $1 (executable), $XTE__EXEC_USEP, $XTE__EXECARG, other supported args to cache file or re
+ 302   283   283 | 	if check_bool "$XTE__CACHE_ENABLED"; then
+ 303   283   283 | 		[ ! -d "${XDG_CACHE_HOME}" ] && mkdir -p "${XDG_CACHE_HOME}"
+ 304   283   283 | 		if [ -z "${XTE__HASH-}" ]; then
+ 305   283   283 | 			gen_hash || {
+ 306     0     0 | 				error "could not hash listing of files, removing '${XTE__CACHE_FILE}'"
+ 307     0     0 | 				rm -f "${XTE__CACHE_FILE}"
+ 308     0     0 | 				return 0
+ 309     0     0 | 			}
+ 310     1     1 | 			XTE__HASH=$XTE__NEW_HASH
+ 311     0     0 | 		fi
+ 312     1     1 | 		case "${XTE__HASH}${1}${XTE__EXECARG}${XTE__APPIDARG}${XTE__TITLEARG}${XTE__DIRARG}${XTE__HOLDARG}" in
+ 313     0     0 | 		"$XTE__LF")
+ 314     0     0 | 			error "One or more of terminal's arguments contains a newline, removing '${XTE__CACHE_FILE}'"
+ 315     0     0 | 			rm -f "${XTE__CACHE_FILE}"
+ 316     0     0 | 			return 0
+ 317     0     0 | 			;;
+ 318     0     0 | 		esac
+ 319     1     1 | 		XTE__UM=$(umask)
+ 320     1     1 | 		umask 0077
+ 321     1     1 | 		printf '%s\n' \
+ 322     0     0 | 			"${XTE__HASH}" \
+ 323     0     0 | 			"${1}" \
+ 324     0     0 | 			"${XTE__ENTRY_PATH}" \
+ 325     0     0 | 			"${XTE__ENTRY_ID}" \
+ 326     0     0 | 			"${XTE__ENTRY_ACTION}" \
+ 327     0     0 | 			"${XTE__EXECARG}" \
+ 328     0     0 | 			"${XTE__APPIDARG}" \
+ 329     0     0 | 			"${XTE__TITLEARG}" \
+ 330     0     0 | 			"${XTE__DIRARG}" \
+ 331     0     0 | 			"${XTE__HOLDARG}" \
+ 332     0     0 | 			"${XTE__EXEC_USEP}${XTE__RSEP}END_OF_EXEC_USEP" > "${XTE__CACHE_FILE}"
+ 333     1     1 | 		umask "$XTE__UM"
+ 334     1     1 | 		debug ">     saved cache:" "${XTE__HASH}" "${XTE__EXEC_USEP}" "${XTE__EXECARG}" "${1}" "^     end of saved c
+ 335     0     0 | 	else
+ 336     0     0 | 		debug "cache is disabled, removing '${XTE__CACHE_FILE}'"
+ 337     0     0 | 		rm -f "${XTE__CACHE_FILE}"
+ 338     0     0 | 		return 0
+ 339     0     0 | 	fi
+ 340     0     0 | }
+ 341     0     0 | 
+ 342     0     0 | list_contains() {
+ 343     0     0 | 	# checks if list $1 contains item $2 delimited by $3 (default $XTE__LF)
+ 344   374   374 | 	xte__delimiter=${3:-$XTE__LF}
+ 345   374   374 | 	case "${xte__delimiter}${1}${xte__delimiter}" in
+ 346    18    18 | 	*"${xte__delimiter}${2}${xte__delimiter}"*) return 0 ;;
+ 347   374   374 | 	*) return 1 ;;
+ 348     0     0 | 	esac
+ 349     0     0 | }
+ 350     0     0 | 
+ 351     0     0 | read_config_paths() {
+ 352     0     0 | 	# Parse all config files and populate $XTE__ENTRY_IDS with read desktop entry IDs
+ 353     0     0 | 	# All config files are read immediatelly, rather than on demand, even if it's more IO intensive
+ 354     0     0 | 	# This way all IDs are already known, and in order of preference, before iterating over them
+ 355   380   380 | 	if [ "${LC_ALL-}" != "C" ]; then
+ 356     0     0 | 		# re-call self with C locale
+ 357   380   380 | 		LC_ALL=C read_config_paths "$@"
+ 358   380   380 | 		return "$?"
+ 359     0     0 | 	fi
+ 360   380   380 | 	IFS=':'
+ 361   380   380 | 	for xte__config_path in ${XTE__CONFIGS}; do
+ 362   380   380 | 		IFS=$XTE__OIFS
+ 363   380   380 | 		debug "reading config '$xte__config_path'"
+ 364     0     0 | 		# Nonexistant file is not an error
+ 365   380   380 | 		[ -f "$xte__config_path" ] || continue
+ 366     0     0 | 		# Let `read` trim leading/trailing whitespace from the line
+ 367   154   154 | 		while read -r xte__line; do
+ 368     0     0 | 			#debug "read line '$xte__line'"
+ 369   152   152 | 			case "$xte__line" in
+ 370     0     0 | 
+ 371     0     0 | 			# Catch directives first
+ 372     0     0 | 
+ 373     0     0 | 			# cache control
+ 374     0     0 | 			/enable_cache)
+ 375     2     2 | 				debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"
+ 376     2     2 | 				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+ 377     2     2 | 				XTE__CACHE_ENABLED=true
+ 378     2     2 | 				XTE__CACHE_CONFIGURED=1
+ 379     0     0 | 				;;
+ 380     0     0 | 			/disable_cache)
+ 381     0     0 | 				debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"
+ 382     0     0 | 				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+ 383     0     0 | 				XTE__CACHE_ENABLED=false
+ 384     0     0 | 				XTE__CACHE_CONFIGURED=1
+ 385     0     0 | 				;;
+ 386     0     0 | 
+ 387     0     0 | 			# compat mode
+ 388     0     0 | 			/execarg_compat)
+ 389     0     0 | 				debug "found '$xte__line' directive${XTE__EXECARG_COMPAT_CONFIGURED:+ (ignored)}"
+ 390     0     0 | 				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+ 391     0     0 | 				XTE__EXECARG_COMPAT=true
+ 392     0     0 | 				XTE__EXECARG_COMPAT_CONFIGURED=1
+ 393     0     0 | 				;;
+ 394     0     0 | 			/execarg_strict)
+ 395     6     6 | 				debug "found '$xte__line' directive${XTE__EXECARG_COMPAT_CONFIGURED:+ (ignored)}"
+ 396     6     6 | 				[ -z "$XTE__EXECARG_COMPAT_CONFIGURED" ] || continue
+ 397     6     6 | 				XTE__EXECARG_COMPAT=false
+ 398     6     6 | 				XTE__EXECARG_COMPAT_CONFIGURED=1
+ 399     0     0 | 				;;
+ 400     0     0 | 
+ 401     0     0 | 			# default TerminalArgExec overrides
+ 402     0     0 | 			/execarg_default:*:*)
+ 403     6     6 | 				if ! check_bool "$XTE__EXECARG_COMPAT"; then
+ 404     0     0 | 					debug "ignored directive '$xte__line' (strict mode)"
+ 405     0     0 | 					continue
+ 406     0     0 | 				fi
+ 407     6     6 | 				IFS=':' read -r _directive xte__entry_id xte__execarg_default <<- EOF
+ 408     0     0 | 					$xte__line
+ 409     0     0 | 				EOF
+ 410     6     6 | 				if validate_entry_id "${xte__entry_id}"; then
+ 411     6     6 | 					debug "added TerminalArgExec default '${xte__execarg_default}' for '${xte__entry_id}'"
+ 412     0     0 | 					# do not bother with deduplication, first entry ID will win
+ 413     6     6 | 					XTE__EXECARG_DEFAULTS=${XTE__EXECARG_DEFAULTS}${XTE__EXECARG_DEFAULTS:+$XTE__LF}${xte__entry_id}:${xte__e
+ 414     0     0 | 				fi
+ 415     0     0 | 				;;
+ 416     0     0 | 
+ 417     0     0 | 			# `[The extensionless entry filename] should be a valid D-Bus well-known name.`
+ 418     0     0 | 			# `a sequence of non-empty elements separated by dots (U+002E FULL STOP),
+ 419     0     0 | 			# none of which starts with a digit, and each of which contains only characters from the set [a-zA-Z0-9-_]`
+ 420     0     0 | 			# Stricter parts seem to be related only to reversed DNS notation but not common naming
+ 421     0     0 | 			# i.e. there is `2048-qt.desktop`.
+ 422     0     0 | 			# I do not know of any terminal that starts with a number, but it's valid.
+ 423     0     0 | 
+ 424     0     0 | 			# Catch and validate potential entry ID with action ID (be graceful about an empty one)
+ 425     0     0 | 			[a-zA-Z0-9_]* | [+-][a-zA-Z0-9_]*)
+ 426   140   140 | 				case "$xte__line" in
+ 427     0     0 | 				[+-]*)
+ 428     0     0 | 					# save and cut exclusion marker
+ 429    20    20 | 					_line=${xte__line#[+-]}
+ 430    20    20 | 					xte__exclusion=${xte__line%"$_line"}
+ 431    20    20 | 					xte__line=$_line
+ 432     0     0 | 					;;
+ 433   124   124 | 				*) xte__exclusion= ;;
+ 434     0     0 | 				esac
+ 435     0     0 | 				# consider only the first ':' as a delimiter
+ 436   140   140 | 				IFS=':' read -r xte__entry_id xte__action_id <<- EOL
+ 437     0     0 | 					$xte__line
+ 438     0     0 | 				EOL
+ 439   140   140 | 				if validate_entry_id "${xte__entry_id}" && validate_action_id "${xte__action_id}"; then
+ 440   134   134 | 					case "$xte__exclusion" in
+ 441     0     0 | 					'')
+ 442   118   118 | 						XTE__ENTRY_IDS=${XTE__ENTRY_IDS:+${XTE__ENTRY_IDS}${XTE__LF}}$xte__line
+ 443   118   118 | 						debug "added entry ID with action ID '$xte__line'"
+ 444     0     0 | 						;;
+ 445     0     0 | 					'+')
+ 446     8     8 | 						if list_contains "${XTE__EXCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 447     4     4 | 							debug "entry '${xte__entry_id}' was already excluded from fallback"
+ 448     4     4 | 						elif list_contains "${XTE__INCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 449     0     0 | 							debug "entry '${xte__entry_id}' fallback exclusion was already prevented"
+ 450     0     0 | 						else
+ 451     4     4 | 							debug "preventing fallback exclusion for entry '${xte__entry_id}'"
+ 452     4     4 | 							XTE__INCLUDED_ENTRY_IDS=${XTE__INCLUDED_ENTRY_IDS:+${XTE__INCLUDED_ENTRY_IDS}${XTE__LF}}${xte__entry_id
+ 453     0     0 | 						fi
+ 454     0     0 | 						;;
+ 455     0     0 | 					'-')
+ 456    20    20 | 						if list_contains "${XTE__INCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 457     4     4 | 							debug "entry '${xte__entry_id}' fallback exclusion was already prevented"
+ 458    16    16 | 						elif list_contains "${XTE__EXCLUDED_ENTRY_IDS}" "${xte__entry_id}"; then
+ 459     0     0 | 							debug "entry '${xte__entry_id}' was already excluded from fallback"
+ 460     0     0 | 						else
+ 461    16    16 | 							debug "excluding entry '${xte__entry_id}' from fallback"
+ 462    16    16 | 							XTE__EXCLUDED_ENTRY_IDS=${XTE__EXCLUDED_ENTRY_IDS:+${XTE__EXCLUDED_ENTRY_IDS}${XTE__LF}}${xte__entry_id
+ 463     0     0 | 						fi
+ 464     0     0 | 						;;
+ 465     0     0 | 					esac
+ 466     0     0 | 				else
+ 467    12    12 | 					error "Discarded possibly misspelled entry '$xte__line'"
+ 468     0     0 | 				fi
+ 469     0     0 | 				;;
+ 470     0     0 | 
+ 471     0     0 | 			esac
+ 472     0     0 | 			# By default empty lines and comments get ignored
+ 473     0     0 | 		done < "$xte__config_path"
+ 474     0     0 | 	done
+ 475     0     0 | }
+ 476     0     0 | 
+ 477     0     0 | replace() {
+ 478     0     0 | 	# takes $1, replaces $2 with $3
+ 479     0     0 | 	# does it in large chunks
+ 480     0     0 | 	# writes result to global XTE__REPLACED_STR to avoid $() newline issues
+ 481     0     0 | 
+ 482     0     0 | 	# right part of string
+ 483     4     4 | 	xte__r_remainder=${1}
+ 484     4     4 | 	XTE__REPLACED_STR=
+ 485     4     4 | 	while [ -n "$xte__r_remainder" ]; do
+ 486     0     0 | 		# left part before first encounter of $2
+ 487     4     4 | 		xte__r_left=${xte__r_remainder%%"$2"*}
+ 488     0     0 | 		# append
+ 489     4     4 | 		XTE__REPLACED_STR=${XTE__REPLACED_STR}$xte__r_left
+ 490     4     4 | 		if [ "$xte__r_left" = "$xte__r_remainder" ]; then
+ 491     0     0 | 			# nothing left to cut
+ 492     0     0 | 			break
+ 493     0     0 | 		fi
+ 494     0     0 | 		# append replace substring
+ 495     4     4 | 		XTE__REPLACED_STR=${XTE__REPLACED_STR}$3
+ 496     0     0 | 		# cut remainder
+ 497     4     4 | 		xte__r_remainder=${xte__r_remainder#*"$2"}
+ 498     0     0 | 	done
+ 499     0     0 | }
+ 500     0     0 | 
+ 501     0     0 | de_expand_str() {
+ 502     0     0 | 	# expands \s, \n, \t, \r, \\
+ 503     0     0 | 	# https://specifications.freedesktop.org/desktop-entry-spec/latest/value-types.html
+ 504     0     0 | 	# writes result to global $XTE__EXPANDED_STR in place to avoid $() expansion newline issues
+ 505   362   362 | 	debug "expander received: $1"
+ 506   362   362 | 	XTE__EXPANDED_STR=
+ 507   362   362 | 	xte__exp_remainder=$1
+ 508   362   362 | 	while [ -n "$xte__exp_remainder" ]; do
+ 509     0     0 | 		# left is substring of remainder before the first encountered backslash
+ 510   362   362 | 		xte__exp_left=${xte__exp_remainder%%\\*}
+ 511     0     0 | 
+ 512     0     0 | 		# append left to XTE__EXPANDED_STR
+ 513   362   362 | 		XTE__EXPANDED_STR=${XTE__EXPANDED_STR}${xte__exp_left}
+ 514   362   362 | 		debug "expander appended: $xte__exp_left"
+ 515     0     0 | 
+ 516   362   362 | 		if [ "$xte__exp_left" = "$xte__exp_remainder" ]; then
+ 517   362   362 | 			debug "expander ended: $XTE__EXPANDED_STR"
+ 518     0     0 | 			# no more backslashes left
+ 519   362   362 | 			break
+ 520     0     0 | 		fi
+ 521     0     0 | 
+ 522     0     0 | 		# remove left substring and backslash from remainder
+ 523     4     4 | 		xte__exp_remainder=${xte__exp_remainder#"$xte__exp_left"\\}
+ 524     0     0 | 
+ 525     4     4 | 		case "$xte__exp_remainder" in
+ 526     0     0 | 		# expand and append to XTE__EXPANDED_STR
+ 527     0     0 | 		s*)
+ 528     2     2 | 			XTE__EXPANDED_STR=${XTE__EXPANDED_STR}' '
+ 529     2     2 | 			xte__exp_remainder=${xte__exp_remainder#?}
+ 530     2     2 | 			debug "expander substituted space"
+ 531     0     0 | 			;;
+ 532     0     0 | 		n*)
+ 533     0     0 | 			XTE__EXPANDED_STR=${XTE__EXPANDED_STR}$XTE__LF
+ 534     0     0 | 			xte__exp_remainder=${xte__exp_remainder#?}
+ 535     0     0 | 			debug "expander substituted newline"
+ 536     0     0 | 			;;
+ 537     0     0 | 		t*)
+ 538     0     0 | 			XTE__EXPANDED_STR=${XTE__EXPANDED_STR}'	'
+ 539     0     0 | 			xte__exp_remainder=${xte__exp_remainder#?}
+ 540     0     0 | 			debug "expander substituted tab"
+ 541     0     0 | 			;;
+ 542     0     0 | 		r*)
+ 543     0     0 | 			XTE__EXPANDED_STR=${XTE__EXPANDED_STR}$XTE__CR
+ 544     0     0 | 			xte__exp_remainder=${xte__exp_remainder#?}
+ 545     0     0 | 			debug "expander substituted caret return"
+ 546     0     0 | 			;;
+ 547     0     0 | 		\\*)
+ 548     0     0 | 			XTE__EXPANDED_STR=${XTE__EXPANDED_STR}\\
+ 549     0     0 | 			xte__exp_remainder=${xte__exp_remainder#?}
+ 550     0     0 | 			debug "expander substituted backslash"
+ 551     0     0 | 			;;
+ 552     0     0 | 		# unsupported sequence, reappend backslash
+ 553     0     0 | 		#*)
+ 554     0     0 | 		#	XTE__EXPANDED_STR=${XTE__EXPANDED_STR}\\
+ 555     0     0 | 		#	debug 'expander reappended backslash'
+ 556     0     0 | 		#	;;
+ 557     0     0 | 		esac
+ 558     0     0 | 	done
+ 559     0     0 | }
+ 560     0     0 | 
+ 561     0     0 | de_tokenize_exec() {
+ 562     0     0 | 	# Shell-based DE Exec string tokenizer.
+ 563     0     0 | 	# https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+ 564     0     0 | 	# How hard can it be?
+ 565     0     0 | 	# Fills global XTE__EXEC_USEP var with $XTE__USEP-separated command array in place to avoid $() expansion new
+ 566   362   362 | 	debug "tokenizer received: $1"
+ 567   362   362 | 	XTE__EXEC_USEP=
+ 568   362   362 | 	xte__tok_remainder=$1
+ 569   362   362 | 	xte__tok_quoted=0
+ 570   362   362 | 	xte__tok_in_space=0
+ 571   362   362 | 	while [ -n "$xte__tok_remainder" ]; do
+ 572     0     0 | 		# left is substring of remainder before the first encountered special char
+ 573   362   362 | 		xte__tok_left=${xte__tok_remainder%%[[:space:]\"\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)]*}
+ 574     0     0 | 
+ 575     0     0 | 		# left should be safe to append right away
+ 576   362   362 | 		XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_left}
+ 577   362   362 | 		debug "tokenizer appended: >$xte__tok_left<"
+ 578     0     0 | 
+ 579     0     0 | 		# end of the line
+ 580   362   362 | 		case "$xte__tok_remainder" in
+ 581     0     0 | 		"$xte__tok_left")
+ 582   346   346 | 			debug "tokenizer is out of special chars"
+ 583   346   346 | 			break
+ 584     0     0 | 			;;
+ 585     0     0 | 		esac
+ 586     0     0 | 
+ 587     0     0 | 		# isolate special char
+ 588    54    54 | 		xte__tok_remainder=${xte__tok_remainder#"$xte__tok_left"}
+ 589    54    54 | 		xte__cut=${xte__tok_remainder#?}
+ 590    54    54 | 		xte__tok_char=${xte__tok_remainder%"$xte__cut"}
+ 591    54    54 | 		unset cut
+ 592     0     0 | 		# cut it from remainder
+ 593    54    54 | 		xte__tok_remainder=${xte__tok_remainder#"$xte__tok_char"}
+ 594     0     0 | 
+ 595     0     0 | 		# check if still in space
+ 596    54    54 | 		case "${xte__tok_in_space}${xte__tok_left}${xte__tok_char}" in
+ 597     0     0 | 		1[[:space:]])
+ 598     0     0 | 			debug "tokenizer still in space :) skipping space character"
+ 599     0     0 | 			continue
+ 600     0     0 | 			;;
+ 601     0     0 | 		1*)
+ 602    20    20 | 			debug "tokenizer no longer in space :("
+ 603    20    20 | 			xte__tok_in_space=0
+ 604     0     0 | 			;;
+ 605     0     0 | 		esac
+ 606     0     0 | 
+ 607     0     0 | 		## decide what to do with the character
+ 608     0     0 | 		# doublequote while quoted
+ 609    54    54 | 		case "${xte__tok_quoted}${xte__tok_char}" in
+ 610     0     0 | 		'1"')
+ 611     8     8 | 			xte__tok_quoted=0
+ 612     8     8 | 			debug "tokenizer closed double quotes"
+ 613     8     8 | 			continue
+ 614     0     0 | 			;;
+ 615     0     0 | 		# doublequote while unquoted
+ 616     0     0 | 		'0"')
+ 617    10    10 | 			xte__tok_quoted=1
+ 618    10    10 | 			debug "tokenizer opened double quotes"
+ 619    10    10 | 			continue
+ 620     0     0 | 			;;
+ 621     0     0 | 		# error out on unquoted special chars
+ 622     0     0 | 		0[\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)])
+ 623     4     4 | 			debug "${xte__entry_id}: Encountered unquoted character: '$xte__tok_char'"
+ 624     4     4 | 			return 1
+ 625     0     0 | 			;;
+ 626     0     0 | 		# error out on quoted but unescaped chars
+ 627     0     0 | 		1[\`\$])
+ 628     0     0 | 			debug "${xte__entry_id}: Encountered unescaped quoted character: '$xte__tok_char'"
+ 629     0     0 | 			return 1
+ 630     0     0 | 			;;
+ 631     0     0 | 		# process quoted escapes
+ 632     0     0 | 		1\\)
+ 633     0     0 | 			case "$xte__tok_remainder" in
+ 634     0     0 | 			# if there is no next char, fail
+ 635     0     0 | 			'')
+ 636     0     0 | 				debug "${xte__entry_id}: Dangling backslash encountered!"
+ 637     0     0 | 				return 1
+ 638     0     0 | 				;;
+ 639     0     0 | 			# cut and append the next char right away
+ 640     0     0 | 			# or a half of multibyte char, the other half should go into the next
+ 641     0     0 | 			# 'xte__tok_left' hopefully...
+ 642     0     0 | 			*)
+ 643     0     0 | 				xte__cut=${xte__tok_remainder#?}
+ 644     0     0 | 				xte__tok_char=${xte__tok_remainder%"$xte__cut"}
+ 645     0     0 | 				xte__tok_remainder=${xte__cut}
+ 646     0     0 | 				unset xte__cut
+ 647     0     0 | 				XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_char}
+ 648     0     0 | 				debug "tokenizer appended escaped: >$xte__tok_char<"
+ 649     0     0 | 				;;
+ 650     0     0 | 			esac
+ 651     0     0 | 			;;
+ 652     0     0 | 		# Consider Cosmos
+ 653     0     0 | 		0[[:space:]])
+ 654    54    54 | 			case "${xte__tok_remainder}" in
+ 655     0     0 | 			# there is non-space to follow
+ 656     0     0 | 			*[![:space:]]*)
+ 657     0     0 | 				# append separator
+ 658    46    46 | 				XTE__EXEC_USEP=${XTE__EXEC_USEP}${XTE__USEP}
+ 659    46    46 | 				xte__tok_in_space=1
+ 660    46    46 | 				debug "tokenizer entered spaaaaaace!!!! separator appended"
+ 661     0     0 | 				;;
+ 662     0     0 | 			# ignore unquoted space at the end of string
+ 663     0     0 | 			*)
+ 664     8     8 | 				debug "tokenizer entered outer spaaaaaace!!!! separator skipped, this is the end"
+ 665     8     8 | 				break
+ 666     0     0 | 				;;
+ 667     0     0 | 			esac
+ 668     0     0 | 			;;
+ 669     0     0 | 		# append quoted chars
+ 670     0     0 | 		1[[:space:]\'\>\<\~\|\&\;\*\?\#\(\)])
+ 671     6     6 | 			XTE__EXEC_USEP=${XTE__EXEC_USEP}${xte__tok_char}
+ 672     6     6 | 			debug "tokenizer appended quoted char: >$xte__tok_char<"
+ 673     0     0 | 			;;
+ 674     0     0 | 		# this should not happen
+ 675     0     0 | 		*)
+ 676     0     0 | 			debug "${xte__entry_id}: parsing error at char '$xte__tok_char', (quoted: $xte__tok_quoted)"
+ 677     0     0 | 			return 1
+ 678     0     0 | 			;;
+ 679     0     0 | 		esac
+ 680     0     0 | 	done
+ 681   358   358 | 	case "$xte__tok_quoted" in
+ 682     0     0 | 	1)
+ 683     4     4 | 		debug "${xte__entry_id}: Double quote was not closed!"
+ 684     4     4 | 		return 1
+ 685     0     0 | 		;;
+ 686     0     0 | 	esac
+ 687     0     0 | 	# shellcheck disable=SC2086
+ 688   354   354 | 	[ -z "$XTE__DEBUG" ] || debug "tokenizer ended:" "$(
+ 689     0     0 | 		IFS=$XTE__USEP
+ 690     0     0 | 		printf '  >%s<\n' $XTE__EXEC_USEP
+ 691     0     0 | 	)"
+ 692     0     0 | }
+ 693     0     0 | 
+ 694     0     0 | de_strip_fields() {
+ 695     0     0 | 	# Operates on $XTE__EXEC_USEP
+ 696     0     0 | 	# modifies according to args/fields
+ 697     0     0 | 	# no arguments, erase fields from $XTE__EXEC_USEP
+ 698   362   362 | 	xte__exec_usep=
+ 699   362   362 | 	xte__fu_found=false
+ 700   362   362 | 	IFS=$XTE__USEP
+ 701   362   362 | 	for xte__arg in $XTE__EXEC_USEP; do
+ 702   362   362 | 		case "$xte__arg" in
+ 703     0     0 | 		# remove deprecated fields
+ 704     0     0 | 		*[!%]'%'[dDnNvm]* | '%'[dDnNvm]*) debug "injector removed deprecated '$xte__arg'" ;;
+ 705     0     0 | 		# treat file fields
+ 706     0     0 | 		*[!%]'%'[fFuU]* | '%'[fFuU]*)
+ 707    10    10 | 			if [ "$xte__fu_found" = "true" ]; then
+ 708     4     4 | 				debug "${xte__entry_id}: Encountered more than one %[fFuU] field!"
+ 709     4     4 | 				return 1
+ 710     0     0 | 			fi
+ 711    10    10 | 			xte__fu_found=true
+ 712    10    10 | 			debug "injector removed '$xte__arg'"
+ 713    10    10 | 			continue
+ 714     0     0 | 			;;
+ 715     0     0 | 		# other fields
+ 716     0     0 | 		*[!%]'%i'* | '%i'* | *[!%]'%c'* | '%c'*)
+ 717     4     4 | 			debug "injector removed '$xte__arg'"
+ 718     4     4 | 			continue
+ 719     0     0 | 			;;
+ 720     0     0 | 		# literal %
+ 721     0     0 | 		*[!%]%%* | %%*)
+ 722     4     4 | 			replace "$xte__arg" "%%" "%"
+ 723     4     4 | 			xte__rarg=$XTE__REPLACED_STR
+ 724     4     4 | 			debug "injector replacing '%%': '$xte__arg' -> '$xte__rarg'"
+ 725     4     4 | 			xte__exec_usep=${xte__exec_usep}${xte__exec_usep:+$XTE__USEP}${xte__rarg}
+ 726     0     0 | 			;;
+ 727     0     0 | 		# invalid field
+ 728     0     0 | 		*%?* | *[!%]%)
+ 729     2     2 | 			debug "${xte__entry_id}: unknown % field in argument '${xte__arg}'"
+ 730     2     2 | 			return 1
+ 731     0     0 | 			;;
+ 732     0     0 | 		*)
+ 733   362   362 | 			debug "injector keeped: '$xte__arg'"
+ 734   362   362 | 			xte__exec_usep=${xte__exec_usep}${xte__exec_usep:+$XTE__USEP}${xte__arg}
+ 735     0     0 | 			;;
+ 736     0     0 | 		esac
+ 737     0     0 | 	done
+ 738   356   356 | 	XTE__EXEC_USEP=$xte__exec_usep
+ 739   356   356 | 	IFS=$XTE__OIFS
+ 740     0     0 | }
+ 741     0     0 | 
+ 742     0     0 | reset_keys() {
+ 743     0     0 | 	# init vars used in entry checks
+ 744   380   380 | 	XTE__IS_TERMINAL=
+ 745   380   380 | 	XTE__EXEC_USEP=
+ 746   380   380 | 	XTE__EXECARG='-e'
+ 747   380   380 | 	XTE__EXECARG_DEFINED=false
+ 748   380   380 | 	XTE__APPIDARG=
+ 749   380   380 | 	XTE__TITLEARG=
+ 750   380   380 | 	XTE__DIRARG=
+ 751   380   380 | 	XTE__HOLDARG=
+ 752     0     0 | }
+ 753     0     0 | 
+ 754     0     0 | find_entry_paths() {
+ 755     0     0 | 	# Find and map all desktop entry files from standardised paths into aliases
+ 756   380   380 | 	debug "registering entries"
+ 757     0     0 | 
+ 758   380   380 | 	# Append application directory paths to be searched
+ 759   380   380 | 	IFS=':'
+ 760   380   380 | 	for xte__directory in $XTE__APPLICATIONS_DIRS; do
+ 761     0     0 | 		# Append '.' to delimit start of entry ID
+ 762   380   380 | 		set -- "$@" "$xte__directory".
+ 763     0     0 | 	done
+ 764     0     0 | 
+ 765     0     0 | 	# Find all files
+ 766   380   380 | 	set -- "$@" -type f
+ 767     0     0 | 
+ 768     0     0 | 	# Append path conditions per directory
+ 769   380   380 | 	xte__or_arg=
+ 770   380   380 | 	for xte__directory in $XTE__APPLICATIONS_DIRS; do
+ 771     0     0 | 		# Match full path with proper first character of entry ID and .desktop extension
+ 772     0     0 | 		# Reject paths with invalid characters in entry ID
+ 773   380   380 | 		set -- "$@" ${xte__or_arg} '(' -path "$xte__directory"'./[a-zA-Z0-9_]*.desktop' ! -path "$xte__directory"'./
+ 774   380   380 | 		xte__or_arg='-o'
+ 775     0     0 | 	done
+ 776   380   380 | 	IFS=$XTE__OIFS
+ 777     0     0 | 
+ 778     0     0 | 	# Loop through found entry paths and IDs
+ 779   380   380 | 	while IFS= read -r xte__entry_path && IFS= read -r xte__entry_id; do
+ 780     0     0 | 		# Entries are checked in ascending order of preference, so use last found if duplicate
+ 781     0     0 | 		# shellcheck disable=SC2139
+ 782   374   374 | 		alias "$xte__entry_id"="xte__entry_path='$xte__entry_path'"
+ 783   374   374 | 		debug "registered '$xte__entry_path' as entry '$xte__entry_id'"
+ 784     0     0 | 		# exclude entries based on XTE__EXCLUDED_ENTRY_IDS
+ 785   374   374 | 		if list_contains "$XTE__EXCLUDED_ENTRY_IDS" "$xte__entry_id"; then
+ 786    14    14 | 			debug "entry '${xte__entry_id}' was excluded from fallback"
+ 787    14    14 | 			continue
+ 788     0     0 | 		fi
+ 789     0     0 | 		# Add as a fallback ID regardles if it's a duplicate
+ 790   370   370 | 		XTE__FALLBACK_ENTRY_IDS=${xte__entry_id}${XTE__FALLBACK_ENTRY_IDS:+${XTE__LF}${XTE__FALLBACK_ENTRY_IDS}}
+ 791   370   370 | 		debug "added fallback ID '$xte__entry_id'"
+ 792     0     0 | 	done <<- EOE
+ 793     0     0 | 		$(
+ 794     0     0 | 			# Don't complain about nonexistent directories
+ 795     0     0 | 			LC_ALL=C find -L "$@" 2> /dev/null |
+ 796     0     0 | 				# Print entry path and convert it into an ID and print that too
+ 797     0     0 | 				awk '{ print; sub(".*/[.]/", ""); gsub("/", "-"); print }'
+ 798     0     0 | 		)
+ 799     0     0 | 	EOE
+ 800     0     0 | }
+ 801     0     0 | 
+ 802     0     0 | check_entry_key() {
+ 803     0     0 | 	# Check validity of a given entry key - value pair
+ 804     0     0 | 	# Modifies following global variables:
+ 805     0     0 | 	# XTE__EXEC_USEP : Program to execute, possibly with arguments, delimited by ASCII Unit Separator.
+ 806     0     0 | 	# XTE__EXECARG : Execution argument for the terminal emulator.
+ 807     0     0 | 	# XTE__IS_TERMINAL : Set if application has been categorized as a terminal emulator
+ 808   372   372 | 	xte__key=$1
+ 809   372   372 | 	xte__value=$2
+ 810   372   372 | 	xte__action=$3
+ 811   372   372 | 	xte__read_exec=$4
+ 812   372   372 | 	xte__de_checks=$5
+ 813     0     0 | 
+ 814     0     0 | 	# Order of checks is important
+ 815   372   372 | 	case $xte__key in
+ 816     0     0 | 	'Categories'*=*)
+ 817   364   364 | 		debug "checking for 'TerminalEmulator' in Categories '$xte__value'"
+ 818   364   364 | 		IFS=';'
+ 819   364   364 | 		for xte__category in $xte__value; do
+ 820   364   364 | 			IFS=$XTE__OIFS
+ 821   364   364 | 			[ "$xte__category" = "TerminalEmulator" ] && {
+ 822   358   358 | 				XTE__IS_TERMINAL=true
+ 823   358   358 | 				return 0
+ 824     0     0 | 			}
+ 825     0     0 | 		done
+ 826     0     0 | 		# Default in this case is to fail
+ 827     8     8 | 		return 1
+ 828     0     0 | 		;;
+ 829     0     0 | 	'Actions'*=*)
+ 830     0     0 | 		# `It is not valid to have an action group for an action identifier not mentioned in the Actions key.
+ 831     0     0 | 		# Such an action group must be ignored by implementors.`
+ 832     0     0 | 		# ignore if no action requested
+ 833    14    14 | 		[ -z "$xte__action" ] && return 0
+ 834    12    12 | 		debug "checking for '$xte__action' in Actions '$xte__value'"
+ 835    12    12 | 		IFS=';'
+ 836    12    12 | 		for xte__check_action in $xte__value; do
+ 837    12    12 | 			IFS=$XTE__OIFS
+ 838    12    12 | 			if [ "$xte__check_action" = "$xte__action" ]; then
+ 839     8     8 | 				xte__action_listed=true
+ 840     8     8 | 				return 0
+ 841     0     0 | 			fi
+ 842     0     0 | 		done
+ 843     0     0 | 		# Default in this case is to fail
+ 844     4     4 | 		return 1
+ 845     0     0 | 		;;
+ 846     0     0 | 	'OnlyShowIn'*=*)
+ 847     8     8 | 		case "$xte__de_checks" in
+ 848     4     4 | 		true) debug "checking for intersecion between '${XDG_CURRENT_DESKTOP-}' and OnlyShowIn '$xte__value'" ;;
+ 849     0     0 | 		false)
+ 850     4     4 | 			debug "skipping OnlyShowIn check"
+ 851     4     4 | 			return 0
+ 852     0     0 | 			;;
+ 853     0     0 | 		esac
+ 854     4     4 | 		IFS=';'
+ 855     4     4 | 		for xte__target in $xte__value; do
+ 856     4     4 | 			IFS=':'
+ 857     4     4 | 			for xte__desktop in ${XDG_CURRENT_DESKTOP-}; do
+ 858     4     4 | 				IFS=$XTE__OIFS
+ 859     4     4 | 				[ "$xte__desktop" = "$xte__target" ] && return 0
+ 860     0     0 | 			done
+ 861     0     0 | 		done
+ 862     0     0 | 		# Default in this case is to fail
+ 863     2     2 | 		return 1
+ 864     0     0 | 		;;
+ 865     0     0 | 	'NotShowIn'*=*)
+ 866     2     2 | 		case "$xte__de_checks" in
+ 867     2     2 | 		true) debug "checking for intersecion between '${XDG_CURRENT_DESKTOP-}' and NotShowIn '$xte__value'" ;;
+ 868     0     0 | 		false)
+ 869     0     0 | 			debug "skipping NotShowIn check"
+ 870     0     0 | 			return 0
+ 871     0     0 | 			;;
+ 872     0     0 | 		esac
+ 873     2     2 | 		IFS=';'
+ 874     2     2 | 		for xte__target in $xte__value; do
+ 875     2     2 | 			IFS=':'
+ 876     2     2 | 			for xte__desktop in ${XDG_CURRENT_DESKTOP-}; do
+ 877     2     2 | 				IFS=$XTE__OIFS
+ 878     2     2 | 				debug "checking NotShowIn match '$xte__desktop'='$xte__target'"
+ 879     2     2 | 				[ "$xte__desktop" = "$xte__target" ] && return 1
+ 880     0     0 | 			done
+ 881     0     0 | 		done
+ 882     0     0 | 		# Default in this case is to succeed
+ 883     2     2 | 		return 0
+ 884     0     0 | 		;;
+ 885     0     0 | 	'X-TerminalArgExec'*=* | 'TerminalArgExec'*=*)
+ 886     0     0 | 		# Set global variable
+ 887     0     0 | 		# values of type string should support escape sequences
+ 888    12    12 | 		de_expand_str "$xte__value"
+ 889    12    12 | 		XTE__EXECARG=$XTE__EXPANDED_STR
+ 890    12    12 | 		XTE__EXECARG_DEFINED=true
+ 891    12    12 | 		debug "read TerminalArgExec '$XTE__EXECARG'"
+ 892     0     0 | 		;;
+ 893     0     0 | 	'X-ExecArg'*=* | 'ExecArg'*=*)
+ 894     0     0 | 		# ignore old ExecArg in strict mode
+ 895     4     4 | 		case "${XTE__EXECARG_COMPAT}" in
+ 896     2     2 | 		false) return 0 ;;
+ 897     0     0 | 		esac
+ 898     0     0 | 		# Set global variable
+ 899     0     0 | 		# values of type string should support escape sequences
+ 900     2     2 | 		de_expand_str "$xte__value"
+ 901     2     2 | 		XTE__EXECARG=$XTE__EXPANDED_STR
+ 902     2     2 | 		XTE__EXECARG_DEFINED=true
+ 903     2     2 | 		debug "read TerminalArgExec '$XTE__EXECARG'"
+ 904     0     0 | 		;;
+ 905     0     0 | 	'X-TerminalArgAppId'*=* | 'TerminalArgAppId'*=*)
+ 906     0     0 | 		# Set global variable
+ 907     0     0 | 		# values of type string should support escape sequences
+ 908     6     6 | 		de_expand_str "$xte__value"
+ 909     6     6 | 		XTE__APPIDARG=$XTE__EXPANDED_STR
+ 910     6     6 | 		debug "read TerminalArgAppId '$XTE__APPIDARG'"
+ 911     0     0 | 		;;
+ 912     0     0 | 	'X-TerminalArgTitle'*=* | 'TerminalArgTitle'*=*)
+ 913     0     0 | 		# Set global variable
+ 914     0     0 | 		# values of type string should support escape sequences
+ 915    12    12 | 		de_expand_str "$xte__value"
+ 916    12    12 | 		XTE__TITLEARG=$XTE__EXPANDED_STR
+ 917    12    12 | 		debug "read TerminalArgTitle '$XTE__TITLEARG'"
+ 918     0     0 | 		;;
+ 919     0     0 | 	'X-TerminalArgDir'*=* | 'TerminalArgDir'*=*)
+ 920     0     0 | 		# Set global variable
+ 921     0     0 | 		# values of type string should support escape sequences
+ 922     8     8 | 		de_expand_str "$xte__value"
+ 923     8     8 | 		XTE__DIRARG=$XTE__EXPANDED_STR
+ 924     8     8 | 		debug "read TerminalArgDir '$XTE__DIRARG'"
+ 925     0     0 | 		;;
+ 926     0     0 | 	'X-TerminalArgHold'*=* | 'TerminalArgHold'*=*)
+ 927     0     0 | 		# Set global variable
+ 928     0     0 | 		# values of type string should support escape sequences
+ 929     8     8 | 		de_expand_str "$xte__value"
+ 930     8     8 | 		XTE__HOLDARG=$XTE__EXPANDED_STR
+ 931     8     8 | 		debug "read TerminalArgHold '$XTE__HOLDARG'"
+ 932     0     0 | 		;;
+ 933     0     0 | 	'TryExec'*=*)
+ 934    14    14 | 		de_expand_str "$xte__value"
+ 935    14    14 | 		debug "checking TryExec executable '$XTE__EXPANDED_STR'"
+ 936    14    14 | 		command -v "$XTE__EXPANDED_STR" > /dev/null || return 1
+ 937     0     0 | 		;;
+ 938     0     0 | 	'Hidden'*=*)
+ 939    10    10 | 		debug "checking boolean Hidden '$xte__value'"
+ 940    10    10 | 		case "$xte__value" in
+ 941     0     0 | 		true)
+ 942     2     2 | 			debug "ignored Hidden entry"
+ 943     2     2 | 			return 1
+ 944     0     0 | 			;;
+ 945     0     0 | 		esac
+ 946     0     0 | 		;;
+ 947     0     0 | 	'Exec'*=*)
+ 948   372   372 | 		case "$xte__read_exec" in
+ 949     0     0 | 		false)
+ 950    16    16 | 			debug "ignored Exec from wrong section"
+ 951    16    16 | 			return 0
+ 952     0     0 | 			;;
+ 953     0     0 | 		esac
+ 954   362   362 | 		debug "read Exec '$xte__value'"
+ 955     0     0 | 		# Escape sequences of DE string value (sets $XTE__EXPANDED_STR)
+ 956   362   362 | 		de_expand_str "$xte__value"
+ 957     0     0 | 		# Tokenize resulting string (sets $XTE__EXEC_USEP)
+ 958   362   362 | 		de_tokenize_exec "$XTE__EXPANDED_STR"
+ 959     0     0 | 		# Expand % fields
+ 960   362   362 | 		de_strip_fields
+ 961     0     0 | 		# Get first word from read Exec value
+ 962   362   362 | 		XTE__EXEC0=${XTE__EXEC_USEP%%"$XTE__USEP"*}
+ 963   362   362 | 		debug "checking Exec[0] executable '$XTE__EXEC0'"
+ 964   362   362 | 		command -v "$XTE__EXEC0" > /dev/null || return 1
+ 965     0     0 | 		;;
+ 966     0     0 | 	esac
+ 967     0     0 | 	# By default unrecognised keys, empty lines and comments get ignored
+ 968     0     0 | }
+ 969     0     0 | 
+ 970     0     0 | read_entry_path() {
+ 971     0     0 | 	# Read entry from given path
+ 972   372   372 | 	if [ "${LC_ALL-}" != "C" ]; then
+ 973     0     0 | 		# re-call self with C locale
+ 974   372   372 | 		LC_ALL=C read_entry_path "$@"
+ 975   372   372 | 		return "$?"
+ 976     0     0 | 	fi
+ 977   372   372 | 	xte__entry_path=$1
+ 978   372   372 | 	xte__entry_action=$2
+ 979   372   372 | 	xte__de_checks=$3
+ 980   372   372 | 	xte__read_exec=false
+ 981   372   372 | 	xte__action_listed=false
+ 982     0     0 | 	# shellcheck disable=SC2016
+ 983   372   372 | 	debug "reading desktop entry '$xte__entry_path'${xte__entry_action:+ action '}$xte__entry_action${xte__entry_
+ 984     0     0 | 	# Let `read` trim leading/trailing whitespace from the line
+ 985   372   372 | 	while IFS=$XTE__OIFS read -r xte__line; do
+ 986   372   372 | 		case $xte__line in
+ 987     0     0 | 		# `There should be nothing preceding [the Desktop Entry group] in the desktop entry file but [comments]`
+ 988     0     0 | 		# if xte__entry_action is not requested, allow reading Exec right away from the main group
+ 989   370   370 | 		'[Desktop Entry]'*) [ -z "$xte__entry_action" ] && xte__read_exec=true ;;
+ 990     0     0 | 		# A `Key=Value` pair
+ 991     0     0 | 		[a-zA-Z0-9-]*)
+ 992     0     0 | 			# Split value from pair
+ 993   372   372 | 			xte__value=${xte__line#*=}
+ 994     0     0 | 			# Remove all but leading spaces, and trim that from the value
+ 995   372   372 | 			xte__value=${xte__value#"${xte__value%%[! ]*}"}
+ 996     0     0 | 			# Check the key, continue to next line on success
+ 997   372   372 | 			check_entry_key "$xte__line" "$xte__value" "$xte__entry_action" "$xte__read_exec" "$xte__de_checks" && cont
+ 998     0     0 | 			# Reset values that might have been set
+ 999    28    28 | 			reset_keys
+1000     0     0 | 			# shellcheck disable=SC2016
+1001    28    28 | 			debug "entry discarded"
+1002    28    28 | 			return 1
+1003     0     0 | 			;;
+1004     0     0 | 		# found requested action, allow reading Exec
+1005     0     0 | 		"[Desktop Action ${xte__entry_action}]"*)
+1006    12    12 | 			if [ "$xte__action_listed" = "true" ]; then
+1007     8     8 | 				xte__read_exec=true
+1008     0     0 | 			else
+1009     4     4 | 				debug "action '$xte__entry_action' was not listed in Actions"
+1010     4     4 | 				return 1
+1011     0     0 | 			fi
+1012     0     0 | 			;;
+1013     0     0 | 		# Start of the next group header, stop if already read exec
+1014     4     4 | 		'['*) [ "$xte__read_exec" = "true" ] && break ;;
+1015     0     0 | 		esac
+1016     0     0 | 		# By default empty lines and comments get ignored
+1017     0     0 | 	done < "$xte__entry_path"
+1018     0     0 | }
+1019     0     0 | 
+1020     0     0 | validate_entry_id() {
+1021     0     0 | 	# validates entry ID ($1)
+1022     0     0 | 
+1023   144   144 | 	case "$1" in
+1024     0     0 | 	# invalid characters or degrees of emptiness
+1025     0     0 | 	*[!a-zA-Z0-9_.-]* | *[!a-zA-Z0-9_.-] | [!a-zA-Z0-9_.-]* | [!a-zA-Z0-9_.-] | '' | .desktop)
+1026     6     6 | 		debug "string not valid as Entry ID: '$1'"
+1027     6     6 | 		return 1
+1028     0     0 | 		;;
+1029     0     0 | 	# all that left with .desktop
+1030   140   140 | 	*.desktop) return 0 ;;
+1031     0     0 | 	# and without
+1032     0     0 | 	*)
+1033     4     4 | 		debug "string not valid as Entry ID '$1'"
+1034     4     4 | 		return 1
+1035     0     0 | 		;;
+1036     0     0 | 	esac
+1037     0     0 | }
+1038     0     0 | 
+1039     0     0 | validate_action_id() {
+1040     0     0 | 	# validates action ID ($1)
+1041     0     0 | 
+1042   136   136 | 	case "$1" in
+1043     0     0 | 	# empty is ok
+1044   118   118 | 	'') return 0 ;;
+1045     0     0 | 	# invalid characters
+1046     0     0 | 	*[!a-zA-Z0-9-]* | *[!a-zA-Z0-9-] | [!a-zA-Z0-9-]* | [!a-zA-Z0-9-])
+1047     2     2 | 		debug "string not valid as Action ID: '$1'"
+1048     2     2 | 		return 1
+1049     0     0 | 		;;
+1050     0     0 | 	# all that left
+1051    20    20 | 	*) return 0 ;;
+1052     0     0 | 	esac
+1053     0     0 | }
+1054     0     0 | 
+1055     0     0 | find_entry() {
+1056     0     0 | 	# Loop through IDs and try to find a valid entry
+1057     0     0 | 	# for explicitly listed entries do not apply DE *ShowIn limits
+1058   380   380 | 	xte__de_checks=false
+1059   380   380 | 	IFS=$XTE__LF
+1060   380   380 | 	for xte__entry_id in ${XTE__ENTRY_IDS}${XTE__LF}//fallback_start//${XTE__LF}$XTE__FALLBACK_ENTRY_IDS; do
+1061   380   380 | 		IFS=$XTE__OIFS
+1062   380   380 | 		case "$xte__entry_id" in
+1063     0     0 | 		# entry has an action appended
+1064     0     0 | 		*:*)
+1065    16    16 | 			xte__entry_action=${xte__entry_id#*:}
+1066    16    16 | 			xte__entry_id=${xte__entry_id%:*}
+1067     0     0 | 			;;
+1068     0     0 | 		# skip empty line
+1069     0     0 | 		'') continue ;;
+1070     0     0 | 		# fallback entries ahead, enable *ShowIn checks
+1071     0     0 | 		'//fallback_start//')
+1072   284   284 | 			xte__de_checks=true
+1073   284   284 | 			continue
+1074     0     0 | 			;;
+1075     0     0 | 		# nullify action
+1076   370   370 | 		*) xte__entry_action= ;;
+1077     0     0 | 		esac
+1078     0     0 | 
+1079   374   374 | 		debug "matching path for entry ID '$xte__entry_id'"
+1080     0     0 | 		# Check if a matching path was found for ID
+1081   374   374 | 		alias "$xte__entry_id" > /dev/null 2>&1 || continue
+1082     0     0 | 		# Evaluates the alias, it sets $xte__entry_path
+1083   372   372 | 		eval "$xte__entry_id"
+1084     0     0 | 		# Unset the alias, so duplicate entries are skipped
+1085   372   372 | 		unalias "$xte__entry_id"
+1086   372   372 | 		read_entry_path "$xte__entry_path" "$xte__entry_action" "$xte__de_checks" || continue
+1087     0     0 | 		# Check that the entry is actually executable
+1088   344   344 | 		[ -z "${XTE__EXEC_USEP}" ] && continue
+1089     0     0 | 		# ensure entry is a Terminal Emulator
+1090   340   340 | 		[ -z "${XTE__IS_TERMINAL}" ] && continue
+1091     0     0 | 		# if entry lacks TerminalArgExec
+1092   334   334 | 		if [ "$XTE__EXECARG_DEFINED" != "true" ]; then
+1093     0     0 | 			# get (custom) default in compat mode
+1094   320   320 | 			if check_bool "$XTE__EXECARG_COMPAT"; then
+1095   316   316 | 				get_default_execarg "$xte__entry_id"
+1096   316   316 | 				XTE__EXECARG=$XTE__DEFAULT_EXECARG
+1097     0     0 | 			# discard entry in strict mode
+1098     0     0 | 			else
+1099     4     4 | 				continue
+1100     0     0 | 			fi
+1101     0     0 | 		fi
+1102     0     0 | 		# Entry is valid, set XTE__ENTRY_PATH, XTE__ENTRY_ID, XTE__ENTRY_ACTION and stop
+1103   330   330 | 		XTE__ENTRY_PATH=$xte__entry_path
+1104   330   330 | 		XTE__ENTRY_ID=$xte__entry_id
+1105   330   330 | 		XTE__ENTRY_ACTION=$xte__entry_action
+1106   330   330 | 		return 0
+1107     0     0 | 	done
+1108     0     0 | 	# shellcheck disable=SC2086
+1109    50    50 | 	IFS=':' error "No valid terminal entry was found in:" ${XTE__APPLICATIONS_DIRS}
+1110    50    50 | 	return 1
+1111     0     0 | }
+1112     0     0 | 
+1113     0     0 | get_default_execarg() {
+1114     0     0 | 	# based on xte__entry_id ($1) get TerminalArgExec from XTE__EXECARG_DEFAULTS
+1115     0     0 | 	# write to XTE__DEFAULT_EXECARG var
+1116   316   316 | 	xte__gde_check_entry=$1
+1117   316   316 | 	while IFS=':' read -r xte__gde_entry_id xte__execarg_default; do
+1118   316   316 | 		case "$xte__gde_entry_id" in
+1119     0     0 | 		"$xte__gde_check_entry")
+1120     6     6 | 			XTE__DEFAULT_EXECARG=$xte__execarg_default
+1121     6     6 | 			debug "custom default TerminalArgExec '$xte__execarg_default' for '$xte__gde_check_entry'"
+1122     6     6 | 			return 0
+1123     0     0 | 			;;
+1124     0     0 | 		esac
+1125     0     0 | 	done <<- EOF
+1126     0     0 | 		$XTE__EXECARG_DEFAULTS
+1127     0     0 | 	EOF
+1128   310   310 | 	XTE__DEFAULT_EXECARG='-e'
+1129   310   310 | 	debug "using default TerminalArgExec '-e' for '$xte__gde_check_entry'"
+1130     0     0 | }
+1131     0     0 | 
+1132     0     0 | # print help and exit if there's -h|--help before --
+1133   380   380 | for xte__arg in "$@"; do
+1134   380   380 | 	case "$xte__arg" in
+1135    12    12 | 	--) break ;;
+1136     0     0 | 	-h | --help)
+1137     0     0 | 		help
+1138     0     0 | 		exit 0
+1139     0     0 | 		;;
+1140     0     0 | 	esac
+1141     0     0 | done
+1142     0     0 | 
+1143     0     0 | ## globals
+1144   380   380 | XTE__LOWERCASE_XDG_CURRENT_DESKTOP=$(printf '%s' "${XDG_CURRENT_DESKTOP-}" | tr '[:upper:]' '[:lower:]')
+1145     0     0 | 
+1146     0     0 | # compat mode
+1147   380   380 | XTE__EXECARG_COMPAT=${XTE_EXECARG_COMPAT-true}
+1148     0     0 | # flag reused in directive encounter
+1149   380   380 | XTE__EXECARG_COMPAT_CONFIGURED=${XTE_EXECARG_COMPAT-}
+1150     0     0 | 
+1151   380   380 | XTE__EXEC_USEP=
+1152   380   380 | XTE__EXPANDED_STR=
+1153   380   380 | XTE__ENTRY_PATH=
+1154   380   380 | XTE__ENTRY_ID=
+1155   380   380 | XTE__ENTRY_ACTION=
+1156     0     0 | 
+1157     0     0 | # this will receive proper value later
+1158   380   380 | XTE__APPLICATIONS_DIRS=
+1159     0     0 | 
+1160     0     0 | # this will be filled with values from /execarg_default:*:* directives
+1161   380   380 | XTE__EXECARG_DEFAULTS=
+1162     0     0 | 
+1163     0     0 | # this (re)sets vars to be filled from desktop entry
+1164   380   380 | reset_keys
+1165     0     0 | 
+1166     0     0 | # path iterators
+1167   380   380 | make_paths
+1168     0     0 | 
+1169     0     0 | # At this point we have no way of telling if cache is enabled or not, unless
+1170     0     0 | # XTE_CACHE_ENABLED is set, so just try reading it by default, otherwise do the
+1171     0     0 | # usual thing. Editing config to disable cache should invalidate the cache.
+1172   380   380 | XTE__CACHE_ENABLED=${XTE_CACHE_ENABLED-true}
+1173     0     0 | # flag reused for directive encounter
+1174   380   380 | XTE__CACHE_CONFIGURED=${XTE_CACHE_ENABLED-}
+1175     0     0 | 
+1176     0     0 | # HASH can be reused
+1177   380   380 | XTE__HASH=
+1178     0     0 | 
+1179   380   380 | if check_bool "${XTE__CACHE_ENABLED}" && read_cache; then
+1180     0     0 | 	XTE__CACHE_USED=true
+1181     0     0 | else
+1182     0     0 | 	# continue with globals
+1183   380   380 | 	XTE__CACHE_USED=false
+1184     0     0 | 
+1185     0     0 | 	# All desktop entry ids in descending order of preference from *xdg-terminals.list configs,
+1186     0     0 | 	# with duplicates removed
+1187   380   380 | 	XTE__ENTRY_IDS=
+1188     0     0 | 	# All desktop entry ids found in data dirs in descending order of preference,
+1189     0     0 | 	# with duplicates (including those in $XTE__ENTRY_IDS) removed
+1190   380   380 | 	XTE__FALLBACK_ENTRY_IDS=
+1191     0     0 | 
+1192     0     0 | 	# Entry IDs excluded from fallback by '-entry.desktop' directives
+1193   380   380 | 	XTE__EXCLUDED_ENTRY_IDS=
+1194     0     0 | 	# Entry IDS included (exclusion prevented) by '+entry.desktop' directives
+1195   380   380 | 	XTE__INCLUDED_ENTRY_IDS=
+1196     0     0 | 
+1197     0     0 | 	# Modifies $XTE__ENTRY_IDS
+1198   380   380 | 	read_config_paths
+1199     0     0 | 	# Modifies $XTE__ENTRY_IDS and sets global aliases
+1200   380   380 | 	find_entry_paths
+1201     0     0 | 
+1202     0     0 | 	# shellcheck disable=SC2086
+1203   380   380 | 	[ -z "$XTE__DEBUG" ] || IFS=$XTE__LF debug ">     final entry ID list:" ${XTE__ENTRY_IDS} "^     end of final
+1204     0     0 | 	# shellcheck disable=SC2086
+1205   380   380 | 	[ -z "$XTE__DEBUG" ] || IFS=$XTE__LF debug ">     final fallback entry ID list:" ${XTE__FALLBACK_ENTRY_IDS} "
+1206     0     0 | 
+1207     0     0 | 	# walk ID lists and find first applicable
+1208   380   380 | 	find_entry || exit 1
+1209     0     0 | fi
+1210     0     0 | 
+1211     0     0 | # Store original argument list, before it's modified
+1212   330   330 | debug ">     original args:" "$@" "^     end of original args" "XTE__EXEC_USEP=$XTE__EXEC_USEP" "XTE__EXECARG=
+1213     0     0 | 
+1214     0     0 | # process/discard options
+1215   330   330 | debug "option processing"
+1216   330   330 | XTE__APPIDVAL=
+1217   330   330 | XTE__TITLEVAL=
+1218   330   330 | XTE__DIRVAL=
+1219   330   330 | XTE__HOLD=false
+1220   330   330 | XTE__TEST_MODE=false
+1221   330   330 | XTE__PRINT_DATA=
+1222   330   330 | XTE__PRINT_DELIMITER='\n'
+1223   330   330 | XTE__PRINT_CMD_DELIMITER='\n'
+1224   330   330 | while [ "$#" -gt "0" ]; do
+1225   330   330 | 	case "$1" in
+1226     0     0 | 	--)
+1227    12    12 | 		debug "found explicit end of options $1"
+1228    12    12 | 		shift
+1229    12    12 | 		break
+1230     0     0 | 		;;
+1231     0     0 | 	-e | "$XTE__EXECARG")
+1232     2     2 | 		debug "found exec arg $1"
+1233     2     2 | 		shift
+1234     2     2 | 		break
+1235     0     0 | 		;;
+1236     0     0 | 	--app-id=*)
+1237     6     6 | 		debug "found option $1"
+1238     6     6 | 		IFS='=' read -r _opt XTE__APPIDVAL <<- EOF
+1239     0     0 | 			$1
+1240     0     0 | 		EOF
+1241     6     6 | 		debug "set app-id option to $XTE__APPIDVAL"
+1242     6     6 | 		shift
+1243     0     0 | 		;;
+1244     0     0 | 	--title=*)
+1245    12    12 | 		debug "found option $1"
+1246    12    12 | 		IFS='=' read -r _opt XTE__TITLEVAL <<- EOF
+1247     0     0 | 			$1
+1248     0     0 | 		EOF
+1249    12    12 | 		debug "set title option to $XTE__TITLEVAL"
+1250    12    12 | 		shift
+1251     0     0 | 		;;
+1252     0     0 | 	--dir=*)
+1253    10    10 | 		debug "found option $1"
+1254    10    10 | 		IFS='=' read -r _opt XTE__DIRVAL <<- EOF
+1255     0     0 | 			$1
+1256     0     0 | 		EOF
+1257    10    10 | 		debug "set dir option to $XTE__DIRVAL"
+1258    10    10 | 		shift
+1259     0     0 | 		;;
+1260     0     0 | 	--hold)
+1261    10    10 | 		debug "found option $1"
+1262    10    10 | 		XTE__HOLD=true
+1263    10    10 | 		debug "set XTE__HOLD=true"
+1264    10    10 | 		shift
+1265     0     0 | 		;;
+1266     0     0 | 	--test)
+1267     2     2 | 		debug "found option $1"
+1268     2     2 | 		XTE__TEST_MODE=true
+1269     2     2 | 		debug "set XTE__TEST_MODE=true"
+1270     2     2 | 		shift
+1271     0     0 | 		;;
+1272     0     0 | 	--print-path)
+1273   176   176 | 		debug "found option $1"
+1274   176   176 | 		XTE__PRINT_DATA="$XTE__PRINT_DATA path"
+1275   176   176 | 		debug "set XTE__PRINT_DATA='$XTE__PRINT_DATA'"
+1276   176   176 | 		shift
+1277     0     0 | 		;;
+1278     0     0 | 	--print-id)
+1279   214   214 | 		debug "found option $1"
+1280   214   214 | 		XTE__PRINT_DATA="$XTE__PRINT_DATA id"
+1281   214   214 | 		debug "set XTE__PRINT_DATA=$XTE__PRINT_DATA"
+1282   214   214 | 		shift
+1283     0     0 | 		;;
+1284     0     0 | 	--print-content)
+1285     4     4 | 		debug "found option $1"
+1286     4     4 | 		XTE__PRINT_DATA="$XTE__PRINT_DATA content"
+1287     4     4 | 		debug "set XTE__PRINT_DATA=$XTE__PRINT_DATA"
+1288     4     4 | 		shift
+1289     0     0 | 		;;
+1290     0     0 | 	--print-cmd)
+1291   278   278 | 		debug "found option $1"
+1292   278   278 | 		XTE__PRINT_DATA="$XTE__PRINT_DATA cmd"
+1293   278   278 | 		debug "set XTE__PRINT_DATA=$XTE__PRINT_DATA"
+1294   278   278 | 		shift
+1295     0     0 | 		;;
+1296     0     0 | 	--print-cmd=*)
+1297     4     4 | 		debug "found option $1"
+1298     4     4 | 		XTE__PRINT_DATA="$XTE__PRINT_DATA cmd"
+1299     4     4 | 		IFS='=' read -r _arg XTE__PRINT_CMD_DELIMITER <<- EOF
+1300     0     0 | 			$1
+1301     0     0 | 		EOF
+1302     4     4 | 		debug "set XTE__PRINT_DATA=$XTE__PRINT_DATA" "set XTE__PRINT_CMD_DELIMITER=$XTE__PRINT_CMD_DELIMITER"
+1303     4     4 | 		shift
+1304     0     0 | 		;;
+1305     0     0 | 	--print-delimiter=*)
+1306     4     4 | 		debug "found option $1"
+1307     4     4 | 		IFS='=' read -r _arg XTE__PRINT_DELIMITER <<- EOF
+1308     0     0 | 			$1
+1309     0     0 | 		EOF
+1310     4     4 | 		debug "set XTE__PRINT_DELIMITER=$XTE__PRINT_DELIMITER"
+1311     4     4 | 		shift
+1312     0     0 | 		;;
+1313     0     0 | 	[!-]*)
+1314    28    28 | 		debug "found non-option $1"
+1315    28    28 | 		break
+1316     0     0 | 		;;
+1317     0     0 | 	-*)
+1318     2     2 | 		debug "discarding unknown option $1"
+1319     2     2 | 		shift
+1320     0     0 | 		;;
+1321     0     0 | 	esac
+1322     0     0 | done
+1323   330   330 | debug "end of option processing, prependig options"
+1324     0     0 | 
+1325     0     0 | # print some data
+1326   330   330 | XTE__PRINT_FIRST=true
+1327   330   330 | case " $XTE__PRINT_DATA " in
+1328     0     0 | *' id '*)
+1329   214   214 | 	debug "acting on --print-id"
+1330     0     0 | 
+1331   214   214 | 	printf '%s' "${XTE__ENTRY_ID}${XTE__ENTRY_ACTION:+:}${XTE__ENTRY_ACTION}"
+1332     0     0 | 
+1333   214   214 | 	XTE__PRINT_FIRST=false
+1334     0     0 | 	;;
+1335     0     0 | esac
+1336   330   330 | case " $XTE__PRINT_DATA " in
+1337     0     0 | *' path '*)
+1338   176   176 | 	debug "acting on --print-path"
+1339     0     0 | 
+1340     0     0 | 	# remove /./ delimiter
+1341   176   176 | 	case "${XTE__ENTRY_PATH}" in
+1342   176   176 | 	*'/./'*) XTE__ENTRY_PATH=${XTE__ENTRY_PATH%%/./*}/${XTE__ENTRY_PATH##*/./} ;;
+1343     0     0 | 	esac
+1344     0     0 | 
+1345   176   176 | 	case "$XTE__PRINT_FIRST" in
+1346   172   172 | 	false) printf '%b' "$XTE__PRINT_DELIMITER" ;;
+1347     0     0 | 	esac
+1348     0     0 | 
+1349   176   176 | 	printf '%s' "${XTE__ENTRY_PATH}${XTE__ENTRY_ACTION:+:}${XTE__ENTRY_ACTION}"
+1350     0     0 | 
+1351   176   176 | 	XTE__PRINT_FIRST=false
+1352     0     0 | 	;;
+1353     0     0 | esac
+1354   330   330 | case " $XTE__PRINT_DATA " in
+1355     0     0 | *' content '*)
+1356     4     4 | 	debug "acting on --print-content"
+1357     0     0 | 
+1358     4     4 | 	case "$XTE__PRINT_FIRST" in
+1359     0     0 | 	false) printf '%b' "$XTE__PRINT_DELIMITER" ;;
+1360     0     0 | 	esac
+1361     0     0 | 
+1362     4     4 | 	shcat < "${XTE__ENTRY_PATH}"
+1363     0     0 | 
+1364     4     4 | 	XTE__PRINT_FIRST=false
+1365     0     0 | 	;;
+1366     0     0 | esac
+1367     0     0 | 
+1368     0     0 | # early bail out in some print modes
+1369   330   330 | case " $XTE__PRINT_DATA " in
+1370     0     0 | '  ' | *' cmd '*)
+1371     0     0 | 	# more stuff to do, continue
+1372   284   284 | 	true
+1373     0     0 | 	;;
+1374     0     0 | *' content '*)
+1375     0     0 | 	# content already has newline at the end, just exit
+1376     2     2 | 	exit 0
+1377     0     0 | 	;;
+1378     0     0 | *)
+1379     0     0 | 	# terminate with newline if delimiter is newline
+1380    44    44 | 	case "$XTE__PRINT_DELIMITER" in
+1381    40    40 | 	'\n') printf '%b' '\n' ;;
+1382     0     0 | 	esac
+1383    44    44 | 	exit 0
+1384     0     0 | 	;;
+1385     0     0 | esac
+1386     0     0 | 
+1387     0     0 | # option prepend
+1388   284   284 | if [ "$#" -gt 0 ] && [ -n "$XTE__EXECARG" ]; then
+1389    42    42 | 	set -- "$XTE__EXECARG" "$@"
+1390    42    42 | 	debug "prepended $1"
+1391     0     0 | fi
+1392     0     0 | 
+1393   284   284 | if [ -n "$XTE__HOLDARG" ] && check_bool "$XTE__HOLD"; then
+1394     8     8 | 	set -- "${XTE__HOLDARG}" "$@"
+1395     8     8 | 	debug "prepended $1"
+1396   276   276 | elif [ -z "$XTE__HOLDARG" ] && check_bool "$XTE__HOLD"; then
+1397     2     2 | 	debug "terminal entry has no TerminalArgHold="
+1398     0     0 | fi
+1399     0     0 | 
+1400   284   284 | if [ -n "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+1401     8     8 | 	case "$XTE__DIRARG" in
+1402     0     0 | 	*=)
+1403     6     6 | 		set -- "${XTE__DIRARG}${XTE__DIRVAL}" "$@"
+1404     6     6 | 		debug "prepended $1"
+1405     0     0 | 		;;
+1406     0     0 | 	*)
+1407     2     2 | 		set -- "${XTE__DIRARG}" "${XTE__DIRVAL}" "$@"
+1408     2     2 | 		debug "prepended $1 $2"
+1409     0     0 | 		;;
+1410     0     0 | 	esac
+1411   276   276 | elif [ -z "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+1412     2     2 | 	debug "terminal entry has no TerminalArgDir="
+1413     0     0 | fi
+1414     0     0 | 
+1415   284   284 | if [ -n "$XTE__TITLEARG" ] && [ -n "$XTE__TITLEVAL" ]; then
+1416    12    12 | 	case "$XTE__TITLEARG" in
+1417     0     0 | 	*=)
+1418     0     0 | 		set -- "${XTE__TITLEARG}${XTE__TITLEVAL}" "$@"
+1419     0     0 | 		debug "prepended $1"
+1420     0     0 | 		;;
+1421     0     0 | 	*)
+1422    12    12 | 		set -- "${XTE__TITLEARG}" "${XTE__TITLEVAL}" "$@"
+1423    12    12 | 		debug "prepended $1 $2"
+1424     0     0 | 		;;
+1425     0     0 | 	esac
+1426   272   272 | elif [ -z "$XTE__TITLEARG" ] && [ -n "$XTE__TITLEVAL" ]; then
+1427     0     0 | 	debug "terminal entry has no TerminalArgTitle="
+1428     0     0 | fi
+1429     0     0 | 
+1430   284   284 | if [ -n "$XTE__APPIDARG" ] && [ -n "$XTE__APPIDVAL" ]; then
+1431     6     6 | 	case "$XTE__APPIDARG" in
+1432     0     0 | 	*=)
+1433     4     4 | 		set -- "${XTE__APPIDARG}${XTE__APPIDVAL}" "$@"
+1434     4     4 | 		debug "prepended $1"
+1435     0     0 | 		;;
+1436     0     0 | 	*)
+1437     2     2 | 		set -- "${XTE__APPIDARG}" "${XTE__APPIDVAL}" "$@"
+1438     2     2 | 		debug "prepended $1 $2"
+1439     0     0 | 		;;
+1440     0     0 | 	esac
+1441   278   278 | elif [ -z "$XTE__APPIDARG" ] && [ -n "$XTE__APPIDVAL" ]; then
+1442     0     0 | 	debug "terminal entry has no TerminalArgAppId="
+1443     0     0 | fi
+1444     0     0 | 
+1445   284   284 | debug "end of option prepending"
+1446     0     0 | 
+1447     0     0 | # prepend Exec
+1448   284   284 | IFS=$XTE__USEP
+1449     0     0 | # shellcheck disable=SC2086
+1450   284   284 | set -- $XTE__EXEC_USEP "$@"
+1451   284   284 | IFS=$XTE__OIFS
+1452     0     0 | 
+1453   284   284 | debug ">     final args:" "$@" "^     end of final args"
+1454     0     0 | 
+1455   284   284 | if [ "$XTE__CACHE_USED" = "false" ]; then
+1456     0     0 | 	# saves or removes cache, forked out of the way
+1457   284   284 | 	save_cache "$1" &
+1458     0     0 | fi
+1459     0     0 | 
+1460   284   284 | case "$XTE__TEST_MODE" in
+1461     0     0 | true)
+1462     2     2 | 	printf '%s\n' 'Command and arguments:'
+1463     2     2 | 	printf '  >%s<\n' "$@"
+1464     2     2 | 	exit 0
+1465     0     0 | 	;;
+1466     0     0 | esac
+1467     0     0 | 
+1468   282   282 | case " $XTE__PRINT_DATA " in
+1469     0     0 | *' cmd '*)
+1470   282   282 | 	debug "acting on --print-cmd"
+1471     0     0 | 
+1472   282   282 | 	case "$XTE__PRINT_FIRST" in
+1473   176   176 | 	false) printf '%b' "$XTE__PRINT_DELIMITER" ;;
+1474     0     0 | 	esac
+1475     0     0 | 
+1476   282   282 | 	xte__first=true
+1477   282   282 | 	for xte__arg in "$@"; do
+1478   282   282 | 		case "$xte__first" in
+1479   282   282 | 		true) xte__first=false ;;
+1480   100   100 | 		false) printf '%b' "${XTE__PRINT_CMD_DELIMITER:-\n}" ;;
+1481     0     0 | 		esac
+1482   282   282 | 		printf '%s' "$xte__arg"
+1483     0     0 | 	done
+1484     0     0 | 
+1485     0     0 | 	# if either delimiter is a newline, terminate with another one
+1486   282   282 | 	if [ "${XTE__PRINT_CMD_DELIMITER}" = '\n' ] || { [ "$XTE__PRINT_FIRST" = "false" ] && [ "$XTE__PRINT_DELIMITE
+1487   278   278 | 		printf '%b' '\n'
+1488     0     0 | 	fi
+1489     0     0 | 
+1490   282   282 | 	exit 0
+1491     0     0 | 	;;
+1492     0     0 | esac
+1493     0     0 | 
+1494     0     0 | if [ -z "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+1495     0     0 | 	debug "no X-TerminalArgDir in entry, changing dir to '$XTE__DIRVAL'"
+1496     0     0 | 	cd "$XTE__DIRVAL"
+1497     0     0 | fi
+1498     0     0 | 
+1499     0     0 | exec "$@"

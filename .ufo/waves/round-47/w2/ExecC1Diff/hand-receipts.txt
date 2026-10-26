@@ -1,0 +1,67 @@
+== ExecC1Diff hand probes (2026-10-26T22:59:34Z)
+pin sha256=89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+ref sha256=762d042c96e7e5f2c3187133b0ffe670c1d076b698b958199602cfa019aa6c08
+
+--- H1 directory foot.desktop in home/.local/share/applications
+pin  rc=1 stdout=
+tool rc=0 stdout= / t m p / t m p . j Y a A M B i  I Q I / h 1 / u s r / s h a r e  / a p p l i c a t i o n s / f o  o t . d e s k t o p \n 
+pin  stderr=/tmp/tmp.jYaAMBiIQI/xte: line 985: read: 0: read error: Is a directory|No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h1/usr/share/applications/:/tmp/tmp.jYaAMBiIQI/h1/home/.local/share/app
+tool stderr=
+pin find line: 766
+
+--- H1b symlink to /dev/null named foot.desktop
+pin  rc=1 stdout=
+tool rc=0 stdout= / t m p / t m p . j Y a A M B i  I Q I / h 1 b / u s r / s h a r  e / a p p l i c a t i o n s / f  o o t . d e s k t o p \n 
+pin  stderr=No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h1b/usr/share/applications/:/tmp/tmp.jYaAMBiIQI/h1b/home/.local/share/applications/|
+tool stderr=
+
+--- H1c FIFO named foot.desktop (pin blocks: rc 124 = timeout)
+pin  rc=124 stdout=
+tool rc=0 stdout= / t m p / t m p . j Y a A M B i  I Q I / h 1 c / u s r / s h a r  e / a p p l i c a t i o n s / f  o o t . d e s k t o p \n 
+pin  stderr=
+tool stderr=
+
+--- H2 Exec=-p
+pin  rc=0 stdout= p . d e s k t o p \n 
+tool rc=1 stdout=
+pin  stderr=
+tool stderr=No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h2-Execabp/usr/share/applications/|/tmp/tmp.jYaAMBiIQI/h2-Execabp/home/.local/share/applications/|
+--- H2 Exec=--
+pin  rc=0 stdout= p . d e s k t o p \n 
+tool rc=1 stdout=
+pin  stderr=
+tool stderr=No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h2-Execabb/usr/share/applications/|/tmp/tmp.jYaAMBiIQI/h2-Execabb/home/.local/share/applications/|
+--- H2 TryExec=-p
+pin  rc=0 stdout= p . d e s k t o p \n 
+tool rc=1 stdout=
+pin  stderr=
+tool stderr=No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h2-TryExecabp/usr/share/applications/|/tmp/tmp.jYaAMBiIQI/h2-TryExecabp/home/.local/share/applications/|
+--- H2 TryExec=--
+pin  rc=0 stdout= p . d e s k t o p \n 
+tool rc=1 stdout=
+pin  stderr=
+tool stderr=No valid terminal entry was found in:|/tmp/tmp.jYaAMBiIQI/h2-TryExecabb/usr/share/applications/|/tmp/tmp.jYaAMBiIQI/h2-TryExecabb/home/.local/share/applications/|
+
+--- H3 HOME unset (XDG_CONFIG_HOME and XDG_DATA_HOME unset too)
+pin  rc=1 stdout=
+tool rc=2 stdout=
+pin  stderr=/tmp/tmp.jYaAMBiIQI/xte: line 148: HOME: unbound variable|
+tool stderr=MADO_TERM_OUT_OF_CONTRACT: HOME unset|
+
+--- command -v table (the check at x:936 / x:964)
+-p -> rc=0
+-v -> rc=0
+-V -> rc=0
+-- -> rc=0
+-pv -> rc=0
+-pV -> rc=0
+-vp -> rc=0
+-x -> rc=2
+-q -> rc=2
+--foo -> rc=2
+- -> rc=1
+-e -> rc=2
+-c -> rc=2
+-a -> rc=2
+
+END

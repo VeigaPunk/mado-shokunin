@@ -1,0 +1,64 @@
+== A. identity of the resolver actually on the hotkey path ==
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+
+== B. compositor (Hyprland) environment, only HOME/PATH/XDG_* ==
+compositor pid present: yes
+HOME=~
+XDG_BACKEND=wayland
+XDG_CACHE_HOME=~/.cache
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_CONFIG_HOME=~/.config
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_DATA_HOME=~/.local/share
+XDG_MENU_PREFIX=hyprland-
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+XDG_SEAT=seat0
+XDG_SESSION_CLASS=user
+XDG_SESSION_DESKTOP=Hyprland
+XDG_SESSION_ID=2
+XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0
+XDG_SESSION_TYPE=wayland
+XDG_STATE_HOME=~/.local/state
+XDG_VTNR=1
+
+== C. path lists exactly as make_paths() builds them (fetch/xdg-terminal-exec:141-171) ==
+CONFIGS=/home/vgpnk/.config/hyprland-xdg-terminals.list:/home/vgpnk/.config/xdg-terminals.list:/etc/xdg/hyprland-xdg-terminals.list:/etc/xdg/xdg-terminals.list:/usr/local/share/xdg-terminal-exec/hyprland-xdg-terminals.list:/usr/local/share/xdg-terminal-exec/xdg-terminals.list:/usr/share/xdg-terminal-exec/hyprland-xdg-terminals.list:/usr/share/xdg-terminal-exec/xdg-terminals.list
+APPS=/usr/share/applications/:/usr/local/share/applications/:/home/vgpnk/.local/share/applications/
+
+== D. independent md5 recomputation of gen_hash() input (fetch/xdg-terminal-exec:186-219) ==
+recomputed_md5=d27b6b707781b8106c7b00390bdf2822
+cache_line1=d27b6b707781b8106c7b00390bdf2822
+VERDICT_HASH: MATCH
+hash-input size=13938 lines=224
+first 8 lines of hash input:
+4
+Hyprland
+-rw-r--r-- 1 vgpnk vgpnk  127 Oct  3 17:44 /home/vgpnk/.config/xdg-terminals.list
+-rw-r--r-- 1 root  root  1053 Sep 18 05:14 /usr/share/xdg-terminal-exec/xdg-terminals.list
+
+/home/vgpnk/.local/share/applications/:
+total 284
+-rw-r--r-- 1 vgpnk vgpnk  452 Oct  3 17:44 Alacritty.desktop
+
+== E. resolver itself, warm cache copy vs cold (both XDG_CACHE_HOME in scratch) ==
+run A rc=126
+run B rc=126
+-- outA (warm) --
+-- outB (cold) --
+-- cache-use verdict lines --
+-- warm-vs-cold stdout diff --
+IDENTICAL
+-- cold-written cache line1 vs host cache line1 --
+host: d27b6b707781b8106c7b00390bdf2822
+
+== F. what the cache path would desynchronise on: PATH-only candidate check ==
+alacritty: /usr/bin/alacritty
+cache line2 cmd resolves: /usr/bin/alacritty
+
+== G. metadata-only coverage proof: is the LIST CONTENT inside the hash input? ==
+2
+3:-rw-r--r-- 1 vgpnk vgpnk  127 Oct  3 17:44 /home/vgpnk/.config/xdg-terminals.list
+4:-rw-r--r-- 1 root  root  1053 Sep 18 05:14 /usr/share/xdg-terminal-exec/xdg-terminals.list

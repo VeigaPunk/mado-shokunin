@@ -1,0 +1,56 @@
+# computed locators: grep -n against /usr/bin/xdg-terminal-exec
+# sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+## pattern: ls -LRl
+180:	# return md5 of custom string, XDG_CURRENT_DESKTOP and ls -LRl output for config and data paths
+200:				LANG=C ls -LRl ${xte__hash_paths} 2> /dev/null
+## pattern: md5sum
+201:			} | md5sum 2> /dev/null
+## pattern: save_cache "\$1"
+1457:	save_cache "$1" &
+## pattern: cd "\$XTE__DIRVAL"
+1496:	cd "$XTE__DIRVAL"
+## pattern: IFS=':' error
+1109:	IFS=':' error "No valid terminal entry was found in:" ${XTE__APPLICATIONS_DIRS}
+## pattern: 'Categories'\*=*
+816:	'Categories'*=*)
+## pattern: 'Actions'\*=*
+829:	'Actions'*=*)
+## pattern: 'OnlyShowIn'\*=*
+846:	'OnlyShowIn'*=*)
+## pattern: 'NotShowIn'\*=*
+865:	'NotShowIn'*=*)
+## pattern: 'Hidden'\*=*
+938:	'Hidden'*=*)
+## pattern: 'Exec'\*=*
+947:	'Exec'*=*)
+## pattern: XTE__EXECARG_DEFINED
+747:	XTE__EXECARG_DEFINED=false
+890:		XTE__EXECARG_DEFINED=true
+902:		XTE__EXECARG_DEFINED=true
+1092:		if [ "$XTE__EXECARG_DEFINED" != "true" ]; then
+## pattern: XTE__TITLEARG
+282:				XTE__TITLEARG=${xte__cached_titlearg}
+312:		case "${XTE__HASH}${1}${XTE__EXECARG}${XTE__APPIDARG}${XTE__TITLEARG}${XTE__DIRARG}${XTE__HOLDARG}" in
+329:			"${XTE__TITLEARG}" \
+749:	XTE__TITLEARG=
+## pattern: XTE__DIRARG
+283:				XTE__DIRARG=${xte__cached_dirarg}
+312:		case "${XTE__HASH}${1}${XTE__EXECARG}${XTE__APPIDARG}${XTE__TITLEARG}${XTE__DIRARG}${XTE__HOLDARG}" in
+330:			"${XTE__DIRARG}" \
+750:	XTE__DIRARG=
+## pattern: command -v "\$XTE__EXEC0"
+964:		command -v "$XTE__EXEC0" > /dev/null || return 1
+## pattern: tr 
+888:		de_expand_str "$xte__value"
+900:		de_expand_str "$xte__value"
+908:		de_expand_str "$xte__value"
+915:		de_expand_str "$xte__value"
+## Type= / NoDisplay literals (expect none)
+(none)
+## list path construction
+6:	for xte__dir in ${XDG_CONFIG_HOME:-"${HOME}/.config"}${IFS}${XDG_CONFIG_DIRS:-/etc/xdg}; do
+9:			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/${xte__desktop}-xdg-terminals.list
+11:		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminals.list
+15:	for xte__dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+18:			XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/${xte__desktop}-xdg-terminals.list
+20:		XTE__CONFIGS=${XTE__CONFIGS:+${XTE__CONFIGS}:}${xte__dir%/}/xdg-terminal-exec/xdg-terminals.list

@@ -1,0 +1,19 @@
+# S1 re-probe: can "90d" be resolved as a Hyprland revision? (ExecErrataR45, round-47 w2, 2026-10-26)
+# first attempt this seat returned 403 "API rate limit exceeded"; the retry returned the 422 body below,
+# so the w1 finding is re-confirmed directly, not merely corroborated.
+
+# command: curl -sS -w "http_code=%{http_code}" https://api.github.com/repos/hyprwm/Hyprland/commits/90d
+{
+  "message": "No commit found for SHA: 90d",
+  "documentation_url": "https://docs.github.com/rest/commits/commits#get-a-commit",
+  "status": "422"
+}
+
+http_code=422
+
+# control: a full 40-hex sha
+http_code_full=200
+
+# substitute probe (HTML, no API quota) + control with a valid 7-hex prefix
+github.com/hyprwm/Hyprland/commit/90d -> 404
+github.com/hyprwm/Hyprland/commit/efb5099 -> 200

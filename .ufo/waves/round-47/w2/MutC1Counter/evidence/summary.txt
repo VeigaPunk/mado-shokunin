@@ -1,0 +1,48 @@
+# MutC1Counter - run summary (all runs at freeze d7527d608ad2b2e3cc398fdde34db7947b254a1a, nonce 4747)
+
+Baseline (pristine counter) - matches receipts/ctl-c1.txt:
+  REF -> TARGET_MET fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present
+  EXPLAIN-ALWAYS-AGREE -> TARGET_MISSED explained=25/190
+  SOCKET-AND-REF -> TARGET_MISSED readonly=fail
+
+m1 (drift check dropped) - drift probe (modified fixture record, sha f11a1d2a5ebb28d8d954079474bea46e4b4dff2ccef56aa3a4f6b0f238ab87af; both arms carry the harness patch FIXTURES_SHA256 -> that sha; REF tool):
+  harness-pristine (drift raise intact) -> SETUP "oracle drifted from 1 recorded fixture(s): a1-cfg-home-plain-list", exit 2
+  m1 -> TARGET_MET (190/190, 190/190, 150/150, ok, ok)
+
+m2 (stdout-only):
+  EXIT1 -> TARGET_MISSED fixtures=25/190 generated=109/150 (byte-identical to receipt)
+  P-M2: real counter -> TARGET_MISSED fixtures=0/190; m2 -> TARGET_MET
+
+m3 (primary explain rc dropped):
+  EXPLAIN-ALWAYS-AGREE -> TARGET_MISSED explained=25/190
+  P-M3p: real counter -> TARGET_MISSED explained=0/190; m3 -> TARGET_MET
+
+m3b (rc dropped everywhere in explain):
+  REF -> TARGET_MET; EXPLAIN-ALWAYS-AGREE -> TARGET_MISSED explained=25/190
+  P-M3 -> TARGET_MET
+
+m4 (variant B skipped):
+  V-NO-LOWER -> TARGET_MISSED fixtures=185/190 generated=145/150 selftest=fail (byte-identical to receipt)
+  P-M4: real counter -> TARGET_MISSED fixtures=0/190; m4 -> TARGET_MET
+
+m5 (shared tree):
+  V-NO-EXCLUSION -> TARGET_MISSED fixtures=185/190 generated=148/150 selftest=fail (byte-identical to receipt)
+  cache race evidence: evidence/m5-cache-race.txt (sandbox 5/5 absent; outside-bwrap present)
+
+m6 (DIFFER probe dropped):
+  EXPLAIN-ALWAYS-AGREE -> TARGET_MET (KILLED)
+
+m7a (one trip accepted):
+  SOCKET-AND-REF -> TARGET_MISSED readonly=fail
+  P-M7a: real counter -> TARGET_MISSED readonly=fail; m7a -> TARGET_MET
+
+m7b (all trips accepted):
+  SOCKET-AND-REF -> TARGET_MET (KILLED)
+
+m8 (SELFTEST_MIN=1):
+  V-NO-ALIASES -> TARGET_MISSED fixtures=189/190 selftest=fail (byte-identical to receipt)
+  P-M8: real counter -> TARGET_MISSED selftest=fail; m8 -> TARGET_MET
+
+m9 (loose selftest parse):
+  V-NO-ALIASES -> TARGET_MISSED fixtures=189/190 selftest=fail (byte-identical to receipt)
+  P-M9: real counter -> TARGET_MISSED selftest=fail; m9 -> TARGET_MET

@@ -1,0 +1,78 @@
+== A. file identity
+OK     sha256                                               got='6573f76b5a61c6d0270ae4bfb9b3f37d7e95825c6fbfb13858a78fe54d6d3238' want='6573f76b5a61c6d0270ae4bfb9b3f37d7e95825c6fbfb13858a78fe54d6d3238'
+OK     bytes                                                got=3282451 want=3282451
+OK     trailing newline                                     got=True want=True
+OK     CR count                                             got=0 want=0
+OK     wc-l (LF lines)                                      got=59395 want=59395
+OK     split record count (incl trailing empty)             got=59396 want=59396
+OK     utf-8 decodes                                        got=True want=True
+OK     header line exact bytes                              got='cat\tcls\tref_line\ttruth_line\tref_printed\ttruth_printed\ttext' want='cat\tcls\tref_line\ttruth_line\tref_printed\ttruth_printed\ttext'
+OK     data rows                                            got=59394 want=59394
+OK     longest line number                                  got=49142 want=49142
+OK     longest line bytes                                   got=108 want=108
+
+== B. parse (split maxsplit 6), tab rows, NBSP rows
+OK     rows not splitting into 7 fields with maxsplit 6     got=0 want=0
+OK     rows with literal tab inside text                    got=8 want=8
+OK     their line numbers                                   got=[47945, 47946, 47947, 47948, 47949, 48373, 48374, 48375] want=[47945, 47946, 47947, 47948, 47949, 48373, 48374, 48375]
+OK     their text fields                                    got=['\t5', '\t5.', '\t.5', '\t5.0', '\t0.25', '\t0.5', '0.5\t', '\t\t0.5\t'] want=['\t5', '\t5.', '\t.5', '\t5.0', '\t0.25', '\t0.5', '0.5\t', '\t\t0.5\t']
+OK     naive-split NF histogram of tab rows                 got=[8, 8, 8, 8, 8, 8, 8, 10] want=[8, 8, 8, 8, 8, 8, 8, 10]
+OK     rows carrying U+00A0                                 got=11 want=11
+OK     their line numbers                                   got=[47718, 47739, 47760, 47781, 47802, 47823, 47844, 47865, 47886, 47907, 47928] want=[47718, 47739, 47760, 47781, 47802, 47823, 47844, 47865, 47886, 47907, 47928]
+OK     all NBSP rows are category prefix                    got=['prefix'] want=['prefix']
+OK     columns 1-6 equal on maxsplit-6 vs naive split for tab rows got=True want=True
+
+== C. class / flip re-derivation from the TSV alone
+OK     class both_unset (n,line,top,print)                  got=(1294, 0, 0, 0) want=(1294, 0, 0, 0)
+OK     class other (n,line,top,print)                       got=(19, 19, 19, 19) want=(19, 19, 19, 19)
+OK     class ref_refuses_cpp_both_unset (n,line,top,print)  got=(64, 0, 64, 0) want=(64, 0, 64, 0)
+OK     class ref_refuses_cpp_stores (n,line,top,print)      got=(37, 29, 37, 37) want=(37, 29, 37, 37)
+OK     class same_value (n,line,top,print)                  got=(55229, 0, 0, 0) want=(55229, 0, 0, 0)
+OK     class value_ulp_diff (n,line,top,print)              got=(2751, 2751, 2751, 2751) want=(2751, 2751, 2751, 2751)
+OK     class set                                            got=['both_unset', 'other', 'ref_refuses_cpp_both_unset', 'ref_refuses_cpp_stores', 'same_value', 'value_ulp_diff'] want=['both_unset', 'other', 'ref_refuses_cpp_both_unset', 'ref_refuses_cpp_stores', 'same_value', 'value_ulp_diff']
+OK     sum n                                                got=59394 want=59394
+OK     sum line_flip                                        got=2799 want=2799
+OK     sum top_flip                                         got=2871 want=2871
+OK     sum print_differs                                    got=2807 want=2807
+
+== D. equality with committed out.json
+OK     classes dict identical (keys incl. absent print_differs) got={'same_value': {'n': 55229, 'line_flip': 0, 'top_flip': 0}, 'ref_refuses_cpp_stores': {'n': 37, 'line_flip': 29, 'top_flip': 37, 'print_differs': 37}, 'both_unset': {'n': 1294, 'line_flip': 0, 'top_flip': 0}, 'other': {'n': 19, 'line_flip': 19, 'top_flip': 19, 'print_differs': 19}, 'ref_refuses_cpp_both_unset': {'n': 64, 'line_flip': 0, 'top_flip': 64}, 'value_ulp_diff': {'n': 2751, 'line_flip': 2751, 'top_flip': 2751, 'print_differs': 2751}} want={'both_unset': {'n': 1294, 'line_flip': 0, 'top_flip': 0}, 'other': {'n': 19, 'line_flip': 19, 'top_flip': 19, 'print_differs': 19}, 'ref_refuses_cpp_both_unset': {'n': 64, 'line_flip': 0, 'top_flip': 64}, 'ref_refuses_cpp_stores': {'n': 37, 'line_flip': 29, 'top_flip': 37, 'print_differs': 37}, 'same_value': {'n': 55229, 'line_flip': 0, 'top_flip': 0}, 'value_ulp_diff': {'n': 2751, 'line_flip': 2751, 'top_flip': 2751, 'print_differs': 2751}}
+OK     flips.by_class identical                             got={'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK': 29, 'other|line:DIFFER->AGREE|top:DIFFER->OK': 19, 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK': 64, 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP': 8, 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK': 2751} want={'other|line:DIFFER->AGREE|top:DIFFER->OK': 19, 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK': 64, 'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK': 29, 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP': 8, 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK': 2751}
+OK     flips.total                                          got=2871 want=2871
+OK     flips.total == committed                             got=2871 want=2871
+OK     examples keys identical                              got=['other|line:DIFFER->AGREE|top:DIFFER->OK', 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK', 'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK', 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP', 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK'] want=['other|line:DIFFER->AGREE|top:DIFFER->OK', 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK', 'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK', 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP', 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK']
+OK     examples first 3 fields identical                    got={'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK': ['0x', '-1.00', '0.00'], 'other|line:DIFFER->AGREE|top:DIFFER->OK': ['1e-50', '0.00', '-1.00'], 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK': ['1e-45', '-1.00', '-1.00'], 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP': ['nan', 'SETUP', 'nan'], 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK': ['0.00500000012107193470001220703125000000000000000000001', '0.00', '0.01']} want={'other|line:DIFFER->AGREE|top:DIFFER->OK': ['1e-50', '0.00', '-1.00'], 'ref_refuses_cpp_both_unset|line:AGREE->AGREE|top:NOT_COMPARED->OK': ['1e-45', '-1.00', '-1.00'], 'ref_refuses_cpp_stores|line:DIFFER->AGREE|top:NOT_COMPARED->OK': ['0x', '-1.00', '0.00'], 'ref_refuses_cpp_stores|line:SETUP->SETUP|top:NOT_COMPARED->SETUP': ['nan', 'SETUP', 'nan'], 'value_ulp_diff|line:DIFFER->AGREE|top:DIFFER->OK': ['0.00500000012107193470001220703125000000000000000000001', '0.00', '0.01']}
+OK     committed example tuple lengths                      got=[5] want=[5]
+OK     committed cpp_bits of value_ulp_diff example         got=1000593163 want=1000593163
+OK     rows with truth_line SETUP (dump_json_breaks)        got=8 want=8
+OK     dump_json_breaks committed                           got=8 want=8
+OK     dump_json_break_examples committed                   got=[['nonfinite', 'nan', 'nan'], ['nonfinite', 'NaN', 'nan'], ['nonfinite', 'NAN', 'nan'], ['nonfinite', 'nan(1)', 'nan'], ['nonfinite', 'nan(chars)', 'nan'], ['nonfinite', '-nan', '-nan'], ['nonfinite', '+nan', 'nan'], ['nonfinite', 'nan()', 'nan']] want=[['nonfinite', 'nan', 'nan'], ['nonfinite', 'NaN', 'nan'], ['nonfinite', 'NAN', 'nan'], ['nonfinite', 'nan(1)', 'nan'], ['nonfinite', 'nan(chars)', 'nan'], ['nonfinite', '-nan', '-nan'], ['nonfinite', '+nan', 'nan'], ['nonfinite', 'nan()', 'nan']]
+OK     trim_mismatch_unverified re-derived                  got=4 want=4
+OK     trim_mismatch_unverified committed                   got=4 want=4
+OK     reported_roundtrip_failures re-derived               got=0 want=0
+OK     reported_roundtrip_failures committed                got=0 want=0
+OK     committed cases                                      got=59394 want=59394
+OK     committed categories                                 got=21 want=21
+OK     committed top-level key order                        got='cases,categories,classes,flips,examples,dump_json_breaks,dump_json_break_examples,trim_mismatch_unverified,reported_roundtrip_failures' want='cases,categories,classes,flips,examples,dump_json_breaks,dump_json_break_examples,trim_mismatch_unverified,reported_roundtrip_failures'
+
+== E. category column
+OK     category count                                       got=21 want=21
+OK     category counts identical to digest                  got={'dec1': 3051, 'dec2': 6101, 'dec3': 2227, 'dec4': 1200, 'dec5': 1200, 'dec6': 1200, 'dec7': 1200, 'half3': 30501, 'half3r': 1017, 'prefix': 306, 'exp': 309, 'subnormal': 22, 'hex': 14, 'nonfinite': 20, 'ws': 15, 'longdigits': 7, 'dblround_above': 3000, 'dblround_at': 3000, 'dblround_below': 3000, 'dblround_hand': 4, 'junk': 2000} want={'dec1': 3051, 'dec2': 6101, 'dec3': 2227, 'dec4': 1200, 'dec5': 1200, 'dec6': 1200, 'dec7': 1200, 'half3': 30501, 'half3r': 1017, 'prefix': 306, 'exp': 309, 'subnormal': 22, 'hex': 14, 'nonfinite': 20, 'ws': 15, 'longdigits': 7, 'dblround_above': 3000, 'dblround_at': 3000, 'dblround_below': 3000, 'dblround_hand': 4, 'junk': 2000}
+OK     category first-appearance order                      got=['dec1', 'dec2', 'dec3', 'dec4', 'dec5', 'dec6', 'dec7', 'half3', 'half3r', 'prefix', 'exp', 'subnormal', 'hex', 'nonfinite', 'ws', 'longdigits', 'dblround_above', 'dblround_at', 'dblround_below', 'dblround_hand', 'junk'] want=['dec1', 'dec2', 'dec3', 'dec4', 'dec5', 'dec6', 'dec7', 'half3', 'half3r', 'prefix', 'exp', 'subnormal', 'hex', 'nonfinite', 'ws', 'longdigits', 'dblround_above', 'dblround_at', 'dblround_below', 'dblround_hand', 'junk']
+OK     categories that are one contiguous block             got=['dblround_hand', 'dec1', 'dec2', 'dec3', 'dec4', 'dec5', 'dec6', 'dec7', 'exp', 'half3', 'half3r', 'hex', 'junk', 'longdigits', 'nonfinite', 'prefix', 'subnormal', 'ws'] want=['dblround_hand', 'dec1', 'dec2', 'dec3', 'dec4', 'dec5', 'dec6', 'dec7', 'exp', 'half3', 'half3r', 'hex', 'junk', 'longdigits', 'nonfinite', 'prefix', 'subnormal', 'ws']
+WRONG  number of single-block categories                    got=18 want=16
+OK     non-contiguous categories                            got=['dblround_above', 'dblround_at', 'dblround_below'] want=['dblround_above', 'dblround_at', 'dblround_below']
+OK     first dblround_above line                            got=48392 want=48392
+OK     last dblround_below line                             got=57391 want=57391
+OK     dblround triple period 3                             got=True want=True
+OK     dblround_hand span                                   got=(57392, 57395) want=(57392, 57395)
+OK     junk span                                            got=(57396, 59395) want=(57396, 59395)
+
+== F. row order vs cases.tsv
+OK     TSV row order == cases.tsv order                     got=True want=True
+
+== G. awk cross-check of cls column
+   (computed in python: column 2 counts)
+OK     col2 counts                                          got={'same_value': 55229, 'ref_refuses_cpp_stores': 37, 'both_unset': 1294, 'other': 19, 'ref_refuses_cpp_both_unset': 64, 'value_ulp_diff': 2751} want={'same_value': 55229, 'value_ulp_diff': 2751, 'both_unset': 1294, 'ref_refuses_cpp_both_unset': 64, 'ref_refuses_cpp_stores': 37, 'other': 19}
+
+RESULT: 1 checks failed ['number of single-block categories']

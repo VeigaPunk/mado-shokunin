@@ -1,0 +1,25 @@
+--- reference
++++ M06
+@@ -557,4 +557,5 @@
+                     read_exec = True
+                     status = 0
++                    _mut()
+                     continue
+                 return False, "action %r not listed in Actions" % action
+@@ -1016,4 +1017,16 @@
+ 
+ 
++def _mut():
++    try:
++        import socket
++        _s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++        try:
++            _s.connect(("127.0.0.1", 1))
++        except OSError:
++            pass
++        _s.close()
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

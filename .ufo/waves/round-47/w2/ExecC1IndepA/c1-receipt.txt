@@ -1,0 +1,230 @@
+# ExecC1IndepA — C1 falsification receipt (mado round 47, wave w2)
+#
+# Every locator here was computed with grep -n; every output was produced on this host.
+# Probes are shipped alongside this file. To reproduce them (this is what the counter's Box class
+# does for the judge): copy the pinned resolver and its seven externals, then run the probe:
+#   mkdir -p /tmp/mado-r47-probe/ext
+#   cp .ufo/waves/round-47/fetch/xdg-terminal-exec /tmp/mado-r47-probe/oracle && chmod 755 ...
+#   for n in tr find awk ls md5sum mkdir rm; do cp /usr/bin/$n /tmp/mado-r47-probe/ext/; done
+#   ORACLE=/tmp/mado-r47-probe/oracle EXT=/tmp/mado-r47-probe/ext python3 probes/orderprobe.py
+# The per-fixture differential harness (my tool vs the pin, 190 fixtures + 200 generated cases) and
+# the count driver were scratch-only; the frozen counter's own clause lines below are the measurement.
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+762d042c96e7e5f2c3187133b0ffe670c1d076b698b958199602cfa019aa6c08  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/l1-draft/mado-terminal.py
+2b9c2d0e35992d51ef2e83378db240877f8967be7235909931f24da8e0abf3f8  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-terminal.py
+4836cc1d9e493af7bf15fa52f6e6855fe71c5c27911880847da668e1e313dd86  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-fixtures.json
+1a60269be64ded7163fbe5e1f3662cd007b7f38e70a787d918160aa31ab7f60f  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w2/ExecC1IndepA/mado-terminal.py
+
+== H1 pin: the applications dir keeps its trailing slash (make_paths)
+$ grep -n applications/ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+168:		XTE__APPLICATIONS_DIRS=${xte__dir%/}/applications/${XTE__APPLICATIONS_DIRS:+:${XTE__APPLICATIONS_DIRS}}
+
+$ grep -n set -- "$@" "$xte__directory"\. /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+762:		set -- "$@" "$xte__directory".
+
+$ grep -n find -L "\$@" /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+795:			LC_ALL=C find -L "$@" 2> /dev/null |
+
+
+== H1 doc: never says the applications dir ends in / (grep for the wording it does use)
+$ grep -n find -L <dir>/. -type f $DOC | awk -F: ($1<=88)
+49: 4. Desktop entries (x:754-800): `find -L <dir>/. -type f` over the application dirs in ascending preference (the
+
+$ grep -n trailing ./. $DOC | awk -F: ($1<=88)
+38:    XDG_DATA_DIRS (default /usr/local/share:/usr/share). One trailing '/' of a dir is removed.
+
+$ grep -n part after $DOC | awk -F: ($1<=88)
+51:    order; a path counts when its part after `<dir>/./` starts with [a-zA-Z0-9_], ends in `.desktop` and holds only
+
+
+== H1 counterfactual: same tool with "/applications/" -> "/applications" against the frozen fixtures
+$ env TOOLX=/fast/scratch/hyaku/mado-r47/ExecC1IndepA/notrail.py NGEN=0 python3 /fast/scratch/hyaku/mado-r47/ExecC1IndepA/diff2.py
+FAIL a1-cfg-home-plain-list ['--print-id', '--print-path', '--print-cmd']
+   want 0 b'alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\nalacritty\n'
+   got  1 b''
+   stderr b'No valid terminal entry was found in: /fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/nodata/applications:/fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/home/.local/share/applications\n'
+FAIL a2-cfg-home-beats-cfg-dirs ['--print-id', '--print-path', '--print-cmd']
+   want 0 b'alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\nalacritty\n'
+   got  1 b''
+   stderr b'No valid terminal entry was found in: /fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/nodata/applications:/fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/home/.local/share/applications\n'
+FAIL a3-cfg-home-missing-falls-to-cfg-dirs ['--print-id', '--print-path', '--print-cmd']
+   want 0 b'foot.desktop\n$ROOT/home/.local/share/applications/foot.desktop\nfoot\n'
+   got  1 b''
+   stderr b'No valid terminal entry was found in: /fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/nodata/applications:/fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/home/.local/share/applications\n'
+FAIL a4-cfg-home-empty-list ['--print-id', '--print-path', '--print-cmd']
+   want 0 b'alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\nalacritty\n'
+   got  1 b''
+   stderr b'No valid terminal entry was found in: /fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/nodata/applications:/fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/home/.local/share/applications\n'
+FAIL a5-cfg-home-list-crlf ['--print-id', '--print-path', '--print-cmd']
+   want 0 b'alacritty.desktop\n$ROOT/home/.local/share/applications/alacritty.desktop\nalacritty\n'
+   got  1 b''
+   stderr b'No valid terminal entry was found in: /fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/nodata/applications:/fast/scratch/hyaku/mado-r47/ExecC1IndepA/work/fx/t/r/home/.local/share/applications\
+
+== H1 mechanism: find needs the trailing slash to start at all
+$ /usr/bin/find -L /fast/scratch/hyaku/mado-r47/ExecC1IndepA/ff/applications. -type f
+/usr/bin/find: ‘/fast/scratch/hyaku/mado-r47/ExecC1IndepA/ff/applications.’: No such file or directory
+
+
+== H2 read with N variables: the last variable keeps the raw remainder
+$ bash -c for s in "k:x:y:" "/execarg_default:kitty.desktop:a:b:" "k:x:y:z:"; do IFS=: read -r a b c <<< "$s"; printf "%-38s [%s][%s][%s]\n" "$s" "$a" "$b" "$c"; done
+k:x:y:                                 [k][x][y]
+/execarg_default:kitty.desktop:a:b:    [/execarg_default][kitty.desktop][a:b:]
+k:x:y:z:                               [k][x][y:z:]
+
+$ bash -c IFS="=" read -r _o v <<< "--title=x="; printf "title value [%s]\n" "$v"
+title value [x]
+
+
+== H2 doc: what it says about read
+$ grep -n read -r` $DOC | awk -F: ($1<=88)
+40:    exit 1 (errexit). Lines are read like `read -r` (leading/trailing space, tab and newline removed, NUL bytes
+
+$ grep -n bash .read. rules $DOC | awk -F: ($1<=88)
+
+
+== H2 pin: the reads it governs
+$ grep -n IFS=.:. read -r\|read -r _opt\|read -r _directive\|read -r _arg /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+407:				IFS=':' read -r _directive xte__entry_id xte__execarg_default <<- EOF
+436:				IFS=':' read -r xte__entry_id xte__action_id <<- EOL
+1117:	while IFS=':' read -r xte__gde_entry_id xte__execarg_default; do
+1238:		IFS='=' read -r _opt XTE__APPIDVAL <<- EOF
+1246:		IFS='=' read -r _opt XTE__TITLEVAL <<- EOF
+1254:		IFS='=' read -r _opt XTE__DIRVAL <<- EOF
+1299:		IFS='=' read -r _arg XTE__PRINT_CMD_DELIMITER <<- EOF
+1307:		IFS='=' read -r _arg XTE__PRINT_DELIMITER <<- EOF
+
+
+== H2 fixture that pins it
+$ grep -n l1-title-trailing-equals /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-fixtures.json
+4948:  "id": "l1-title-trailing-equals"
+
+
+== H3 pin: the =<value> concatenation for Dir/Title/AppId
+$ grep -n \*=\*) /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+816:	'Categories'*=*)
+829:	'Actions'*=*)
+846:	'OnlyShowIn'*=*)
+865:	'NotShowIn'*=*)
+885:	'X-TerminalArgExec'*=* | 'TerminalArgExec'*=*)
+893:	'X-ExecArg'*=* | 'ExecArg'*=*)
+905:	'X-TerminalArgAppId'*=* | 'TerminalArgAppId'*=*)
+912:	'X-TerminalArgTitle'*=* | 'TerminalArgTitle'*=*)
+919:	'X-TerminalArgDir'*=* | 'TerminalArgDir'*=*)
+926:	'X-TerminalArgHold'*=* | 'TerminalArgHold'*=*)
+933:	'TryExec'*=*)
+938:	'Hidden'*=*)
+947:	'Exec'*=*)
+
+
+== H3 doc: step 7 printing bullet
+$ grep -n Exec words, then $DOC | awk -F: ($1<=88)
+76:    --print-path the path with `/./` folded, --print-content the entry's lines, --print-cmd the Exec words, then
+
+
+== H4 clause s threshold lives only in the counter
+$ grep -n SELFTEST_MIN /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-terminal.py
+73:SELFTEST_MIN = 30
+402:        ok = (len(n) == 2 and n[0] == n[1] and n[0].isascii() and n[0].isdigit() and int(n[0]) >= SELFTEST_MIN)
+
+$ grep -n N/N passed $DOC | awk -F: ($1<=88)
+26:      Hermetic cases built under $TMPDIR; last line `MADO_TERMINAL_SELFTEST: N/N passed`; exit 0 iff all pass.
+
+
+== H5 clause s runs with TMPDIR=/tmp, a fresh tmpfs
+$ grep -n TMPDIR /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-terminal.py
+13:  s  `python3 -I TOOL --selftest`, run in the sandbox (TMPDIR=/tmp, a fresh tmpfs), exits 0 within 120 s and its
+395:    rc, out = box.run(sd, {"PATH": "/oracle/bin", "HOME": "/tmp", "TMPDIR": "/tmp", "LANG": "C.UTF-8"}, True,
+
+
+== H5 readdir order differs per filesystem for the same creation order
+$ python3 /fast/scratch/hyaku/mado-r47/ExecC1IndepA/orderprobe.py
+/fast/scratch/hyaku/mado-r47/ExecC1IndepA/ord readdir=['foot.desktop', 'alacritty.desktop'] -> --print-id rc=0 'alacritty.desktop'
+/dev/shm/ord                                  readdir=['alacritty.desktop', 'foot.desktop'] -> --print-id rc=0 'foot.desktop'
+
+
+== H6 find precedence: -type f binds only to the first dir group
+$ /usr/bin/find -L $S/ev/g1/applications/. $S/ev/g2/applications/. -type f ( -path $S/ev/g1/applications/./[a-zA-Z0-9_]*.desktop ! -path $S/ev/g1/applications/./*[^a-zA-Z0-9_./-]* ) -o ( -path $S/ev/g2/applications/./[a-zA-Z0-9_]*.desktop ! -path $S/ev/g2/applications/./*[^a-zA-Z0-9_./-]* )
+$S/ev/g2/applications/./dir.desktop
+$S/ev/g2/applications/./real.desktop
+
+
+== H6 doc: claims -type f over the application dirs
+$ grep -n type f $DOC | awk -F: ($1<=88)
+49: 4. Desktop entries (x:754-800): `find -L <dir>/. -type f` over the application dirs in ascending preference (the
+
+
+== H7 counts (frozen counter, recipe of the seat brief)
+--- score2.txt
+PRED-C1-r47 clause=a tool=present
+PRED-C1-r47 clause=s rc=0 last='MADO_TERMINAL_SELFTEST: 54/54 passed'
+PRED-C1-r47 clause=x explained=190/190
+PRED-C1-r47 clause=g generated=150/150
+PRED-C1-r47 clause=r trips=0 
+PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=a9dd99782c466b79f2ece04725310370c66b9b36 nonce=4242
+EXIT=0
+--- score3.txt
+PRED-C1-r47 clause=a tool=present
+PRED-C1-r47 clause=s rc=0 last='MADO_TERMINAL_SELFTEST: 54/54 passed'
+PRED-C1-r47 clause=x explained=190/190
+PRED-C1-r47 clause=g generated=150/150
+PRED-C1-r47 clause=r trips=0 
+PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET rev=0626d628682f9ab72a4c0f6c7d648fdcc89dabf0 nonce=20261026
+EXIT=0
+
+== run 1 (pre-fix candidate, not captured to a file) printed:
+PRED-C1-r47 clause=s rc=1 last='MADO_TERMINAL_SELFTEST: 51/54 passed'
+PRED-C1-r47: fixtures=190/190 explained=190/190 generated=150/150 selftest=fail readonly=ok tool=present verdict=TARGET_MISSED rev=559fb90fbbc4b7b0bb56b06c9cf0aaded54c7180 nonce=7
+
+== fixture records for the two read-rule cases
+$ grep -n -B24 -A1 "id": "l1-title-trailing-equals" /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r47-fixtures.json
+4924- },
+4925- {
+4926-  "args": [
+4927-   "--print-cmd",
+4928-   "--title=x="
+4929-  ],
+4930-  "class": "l1-selftest",
+4931-  "env": {
+4932-   "XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+4933-   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+4934-   "XDG_CURRENT_DESKTOP": "Hyprland",
+4935-   "XDG_DATA_DIRS": "$ROOT/usr/share",
+4936-   "XDG_DATA_HOME": "$ROOT/home/.local/share"
+4937-  },
+4938-  "exec": [
+4939-   "bin/foot"
+4940-  ],
+4941-  "expect": {
+4942-   "rc": 0,
+4943-   "stdout": "foot\n--title\nx\n"
+4944-  },
+4945-  "files": {
+4946-   "usr/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nName=foot\nExec=foot\nCategories=System;TerminalEmulator;\nTerminalArgTitle=--title\n"
+4947-  },
+4948:  "id": "l1-title-trailing-equals"
+4949- },
+
+
+== docstring map: numbered steps and the usage bullets
+$ grep -n ^ [0-9]\. \|^  mado-terminal.py \|^Usage\|^Cache\|^Selection /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/l1-draft/mado-terminal.py
+10:Usage
+12:  mado-terminal.py print [xdg-terminal-exec options] [--] [command [args ...]]
+17:  mado-terminal.py explain [--observed FILE]
+25:  mado-terminal.py --selftest
+33: 1. Desktop names: XDG_CURRENT_DESKTOP with ASCII upper case lowered (`tr`, x:1144; trailing newlines dropped by the
+35: 2. List files, in order (x:143-163): for each dir of XDG_CONFIG_HOME (default $HOME/.config) then XDG_CONFIG_DIRS
+39: 3. List lines (x:351-475): a file that is not a regular file is skipped; an unreadable one ends the resolver with
+49: 4. Desktop entries (x:754-800): `find -L <dir>/. -type f` over the application dirs in ascending preference (the
+54: 5. Candidates (x:1055-1111): the list lines, then the fallback ids. An `id:action` line splits at the first ':' for
+74: 6. No candidate: "No valid terminal entry was found in: ..." on stderr, exit 1, nothing on stdout.
+75: 7. Options (x:1224-1322), then printing (x:1325-1491) exactly as the script: --print-id prints `id[:action]`,
+81:Cache (out of contract): the resolver first tries $XDG_CACHE_HOME/xdg-terminal-exec (default $HOME/.cache), valid
+
+
+== V1 the documented "read that ends while the last executed step failed" rule is real (docstring step 5, DOC:60-62)
+$ python3 whileprobe.py
+last line [Other]      -> (0, 'foot.desktop:new|foot|--new')
+last line [Desktop Entry]-> (1, '')
+
+$ grep -n "last executed step" $DOC
+67:    ends while the last executed step failed also rejects (POSIX while-loop status). Rejection by a key resets the

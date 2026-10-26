@@ -1,0 +1,21 @@
+--- reference
++++ M03
+@@ -750,4 +750,5 @@
+         elif a == "--print-cmd":
+             pdata.append("cmd")
++            _mut()
+         elif a.startswith("--print-cmd="):
+             pdata.append("cmd")
+@@ -1016,4 +1017,12 @@
+ 
+ 
++def _mut():
++    try:
++        import subprocess
++        subprocess.run(["/bin/sh", "-c", "exit 0"],
++                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

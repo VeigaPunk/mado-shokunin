@@ -1,0 +1,97 @@
+== round-45 fetch pins (quotes in the erratum) ==
+MATCH pin Hyprland-Monitor.cpp:line=264 :: if (m_enabled && !monitorRule.m_disabled) {
+MATCH pin Hyprland-Monitor.cpp:line=271 :: return;
+MATCH pin Hyprland-Monitor.cpp:line=275 :: if (monitorRule.m_disabled) {
+MATCH pin Hyprland-Monitor.cpp:line=283 :: m_enabled = false;
+MATCH pin Hyprland-Monitor.cpp:line=286 :: return;
+MATCH pin Hyprland-Monitor.cpp:line=302 :: m_enabled = true;
+MATCH pin Hyprland-Monitor.cpp:line=389 :: Event::bus()->m_events.monitor.added.emit(m_self.lock());
+MATCH pin Hyprland-Monitor.cpp:line=836 :: if (!DELTALESSTHAN(bestMode->pixelSize.x, RULE->m_resolution.x, 1) || !DELTALESSTHAN(bestM
+MATCH pin Hyprland-Monitor.cpp:line=837 :: !DELTALESSTHAN(bestMode->refreshRate / 1000.f, RULE->m_refreshRate, 1))
+MATCH pin Hyprland-Monitor.cpp:line=838 :: requestedModes.push_back(
+MATCH pin Hyprland-Monitor.cpp:line=878 :: for (auto const& mode : requestedModes | std::views::reverse) {
+MATCH pin Hyprland-Monitor.cpp:line=903 :: m_refreshRate = mode->refreshRate / 1000.f;
+MATCH pin Hyprland-macros.hpp:line=40 :: #define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))
+MATCH pin Hyprland-MonitorState.cpp:line=25 :: m_listeners.monitorAdded   = Event::bus()->m_events.monitor.added.listen([this](PHLMONITOR
+== round-45 receipts (provenance findings) ==
+MATCH receipt live-monitors-host-l1.txt:line=1 :: l1-draft/mado-monitors.py
+MATCH receipt live-monitors-host-l1.txt:line=4 :: # tool sha256 c6ac5fc2d35e40b34dcf031940222fbe5ec5f0ce4b07d6a41866b196843726be
+MATCH receipt live-monitors-host-l1.txt:line=8 :: verdict=OK
+MATCH receipt live-monitors-host-l1.txt:line=9 :: # exit=0
+MATCH receipt live-monitors-host-l1.txt:line=6 :: MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00
+MATCH receipt live-monitors-host-l1.txt:line=11 :: "refreshRate": 99.997
+MATCH receipt live-monitors-host-r45.txt:line=1 :: landed tools/mado-monitors.py
+MATCH receipt live-monitors-host-r45.txt:line=4 :: # tool sha256 2f007417ae9efa43c7c3e5bcf8e88710fb6cd6c856e49b4084c742a7ecff5609
+MATCH receipt live-monitors-host-r45.txt:line=7 :: verdict=AGREE
+MATCH receipt live-monitors-host-r45.txt:line=8 :: verdict=OK
+MATCH receipt live-monitors-host-r45.txt:line=9 :: exit=0
+MATCH receipt live-monitors-host-r45.txt:line=6 :: MADO_MON_RULE: n=1 sel="DP-1" mode=3440x1440@100.00
+== round-47 pins fetched by this seat ==
+MATCH pin47 hyprland-commit-a9902ea.json:lines=[15] :: "config: remove legacy config support (#15539)"
+MATCH pin47 hyprland-commit-a9902ea.json:lines=[8, 13] :: "date": "2026-07-22T16:35:10Z"
+MATCH pin47 hyprland-commit-a9902ea.json:lines=[126] :: "filename": "src/config/legacy/ConfigManager.cpp"
+MATCH pin47 hyprland-commit-a9902ea.json:lines=[102] :: "filename": "src/config/ConfigManager.cpp"
+MATCH pin47 aqua-Output.hpp:line=258 :: name, description, make, model, serial;
+MATCH pin47 aqua-Wayland-v0.15.1.cpp:line=168 :: bool Aquamarine::CWaylandBackend::createOutput(const std::string& szName) {
+MATCH pin47 aqua-Wayland-v0.15.1.cpp:line=181 :: auto o  = outputs.emplace_back(SP<CWaylandOutput>(new CWaylandOutput(name, self)));
+MATCH pin47 aqua-Headless-v0.15.1.cpp:line=187 :: bool Aquamarine::CHeadlessBackend::createOutput(const std::string& name) {
+MATCH pin47 aqua-Headless-v0.15.1.cpp:line=200 :: auto output = SP<CHeadlessOutput>(new CHeadlessOutput(outputName, self.lock()));
+MATCH pin47 hyprland-lua-cfg-a9902ea.cpp:line=809 :: Config::monitorRuleMgr()->scheduleReload();
+MATCH pin47 hyprland-lua-cfg-a9902ea.cpp:line=810 :: Config::monitorRuleMgr()->ensureMonitorStatus();
+MATCH pin47 legacy-cfg-a9902ea.txt:line=1 :: 404: Not Found
+MATCH pin47 hyprland-main-cfg-a9902ea.cpp:line=30 :: g_mgr = makeUnique<Lua::CConfigManager>();
+MATCH pin47 hyprland-main-cfg-a9902ea.cpp:line=33 :: g_mgr = makeUnique<Lua::CConfigManager>();
+MATCH pin47 hyprland-LuaBindingsConfigRules-a9902ea.cpp:line=80 :: inline constexpr SMonitorFieldDesc MONITOR_FIELDS[] = {
+MATCH pin47 Hyprland-Monitor-efb5099.hpp:line=357 :: m_enabled             = false;
+== entry sentence units (hyprland-monitor-rule-r45.md, unchanged since 4d22eeb) ==
+entry sha256 128df1bd1055fcbb09f611c48286cd013e9d8bade992f4c17e81ba0615bb9c7b  /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/knowledge/hyprland-monitor-rule-r45.md
+MATCH entry hyprland-monitor-rule-r45.md:line=18 :: upstream main already drops the legacy hyprlang manager (Hyprland a9902ea, 2026-07-22)
+MATCH entry hyprland-monitor-rule-r45.md:line=84 :: that event fires only for an output whose rule enables it (Hyprland-Monitor.cpp:264 and Hy
+MATCH entry hyprland-monitor-rule-r45.md:line=96 :: tools/mado-monitors.py reports AGREE and verdict OK, exit 0
+MATCH entry hyprland-monitor-rule-r45.md:line=98 :: not proof of which branch ran
+MATCH entry hyprland-monitor-rule-r45.md:line=106 :: a Wayland or headless backend builds its description differently and is not covered
+MATCH entry hyprland-monitor-rule-r45.md:line=107 :: Upstream main has removed the hyprlang line form (Hyprland a9902ea)
+== negative assertions (text that must be absent) ==
+MATCH absent hyprland-main-cfg-a9902ea.cpp :: Legacy occurrences=0
+MATCH absent aqua-Wayland-v0.15.1.cpp :: description occurrences=0
+MATCH absent aqua-Headless-v0.15.1.cpp :: description occurrences=0
+== description occurrences in non-DRM backend sources (v0.15.1) ==
+aqua-Wayland-v0.15.1.cpp: description_occurrences=0
+aqua-Headless-v0.15.1.cpp: description_occurrences=0
+aqua-Output-v0.15.1.cpp: description_occurrences=0
+aqua-DRM-v0.15.1.cpp:2101 :: output->description = std::format("{} {} {} ({})", make, model, serial, szName);
+== sha256 of every pin ==
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-HyprCtl.cpp
+9cf88e154eb5dae676c79d37b5b055ca6134838857cecdbb89a3b747a6821927  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-Monitor.cpp
+3b705388fa53aef77c5e8c6f6307c94dab08b5dae9460bab427d648359b5ae49  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorPositionController.cpp
+b01d31a16d5fb413ead28f46825381f36a70c29b86eceb58cd633dcbf031a2f5  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorRule.hpp
+17d46685c2623657f52e71b22a033c0a798cf3903f7bbeb64ceebce87527f016  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorRuleManager.cpp
+b5033be770b95f13b9ca65d9f60daae2446910e946576156c50dae8da89cab1c  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-MonitorState.cpp
+616468fd0576d8b201ef00cd69289234f0ffb1c3137ae2a0ac954fabe37dd589  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-Parser.cpp
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-legacy-ConfigManager.cpp
+b62d51406768f08d3a820c882de77ac47b55c15693b68322180ff2002164d738  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/Hyprland-macros.hpp
+ff9b19d823a0f2f8b365ba7efd4b09bf9515fcfcdb10f3b1ae505abd6d1977b3  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/aquamarine-DRM.cpp
+a92c131a45f41918388eece78f225dbeab7791bb3cd2d3761d840aefa1527bac  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/hyprutils-String.cpp
+0e484df50ec18ef432c319a4d3249dfc3ddf25bb990a836ebcdd597a441f2179  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/hyprutils-VarList2.hpp
+967bd9d7e12efb8f68694760f6d28b8b3c4810055b966b8c61e2ecebb6de2ddb  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/hyprutils-Vector2D.hpp
+f2ac7025b7d7dd13b467ad52a5ca7b4da39e198f3ae4c6a675f92a38cd0304b9  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/fetch/wiki-Monitors.md
+e4490e652506646c059a658e999add9d62697a90429ff293887b13cde88b8c30  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/receipts/live-monitors-host-l1.txt
+9652a39ddba9b00e142024a8622e559858d885606d16f8827429b1fe4c8a44e3  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-45/receipts/live-monitors-host-r45.txt
+4e9d88475f614f83015ed799d31425e35b47eb796dd91a4d8ec8f8ae88442621  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/Hyprland-Monitor-efb5099.hpp
+ff9b19d823a0f2f8b365ba7efd4b09bf9515fcfcdb10f3b1ae505abd6d1977b3  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-DRM-v0.15.1.cpp
+2ecc7f54d033a85f6a7c5fa0e4eb14fc9e5e563be2146488e47b82a6358cbf02  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-Headless-v0.15.1.cpp
+bb9351ba01ae04e2389763c8261ea5ba9ecc5de7f42ab9dff6566323cdc098ea  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-Output-v0.15.1.cpp
+1568dcf54e01fc42079b5d68d7189d135f3a2c57aceed9cd0d3f58c964a5a37d  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-Output.hpp
+1dd79e1cf212f5d13447c848fb83845d5d0491dfc897dce838165fe9449608fe  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-Wayland-v0.15.1.cpp
+993c6284254cf6bc65d2430c15147107d286134040b012f67e3f77f0530e7cb5  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/aqua-tree-v0.15.1.json
+87476570743302f8709f0168c50a22c5d035cb890490876f3ce575f5b60d0c7b  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-LuaBindingsConfigRules-a9902ea.cpp
+c33ba383407febf3133a3b86b018e180d98e22d354fb442384a20456bca00639  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-commit-a9902ea.json
+c664e891bb59444fba66c482303aeb63a2651482ecbc0122e77d01e147362d11  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-config-contents.json
+cca2ee34528ef98a13c91501acd575a0f10f3b1f3938af057abe13f24edba00c  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-config-lua-contents.json
+030874aee3d1073641a8d0af6052fdc390c57dd39f170ec17fe82c05cb86d3a5  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-config-tree.json
+d492c4b402e82d9bc569b623b68b290ddc298b1fad105c728151e6ae2b9fdc13  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-lua-bindings-contents.json
+0dae53f27c5b5a1318be6fc5d5d679039d0738c5c5e4f5309b6ce1e2b2fb3435  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-lua-cfg-a9902ea.cpp
+41cecfacc1f988c58e787a489fcd54ad8e25279e39dfa6a491f06c4bb2648927  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/hyprland-main-cfg-a9902ea.cpp
+d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/w1/ScrErrataR45/pins/legacy-cfg-a9902ea.txt
+
+RESULT: mismatches=0

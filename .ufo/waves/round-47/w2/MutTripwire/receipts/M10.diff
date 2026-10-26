@@ -1,0 +1,22 @@
+--- reference
++++ M10
+@@ -750,4 +750,5 @@
+         elif a == "--print-cmd":
+             pdata.append("cmd")
++            _mut()
+         elif a.startswith("--print-cmd="):
+             pdata.append("cmd")
+@@ -1016,4 +1017,13 @@
+ 
+ 
++def _mut():
++    try:
++        _pid = os.fork()
++        if _pid == 0:
++            os._exit(0)
++        os.waitpid(_pid, 0)
++    except Exception:
++        pass
++
+ def main(argv):
+     if len(argv) >= 1 and argv[0] == "--selftest":

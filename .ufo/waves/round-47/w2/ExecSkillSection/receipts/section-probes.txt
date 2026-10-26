@@ -1,0 +1,133 @@
+
+===== P1 Type=Link + category + Exec is selected (section Notes: probes A/B) =====
+
+---- P1 ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| link.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/link.desktop
+  stdout| sh
+
+===== P2 NoDisplay=true is never read =====
+
+---- P2a fallback over the whole tree (no lists) ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| dup.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop
+  stdout| sh
+
+---- P2b NoDisplay=true, listed ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| nodisp.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/nodisp.desktop
+  stdout| sh
+
+===== P3 list names Hidden=true first: skipped, trace names the reason =====
+
+---- P3 ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| good.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/good.desktop
+  stdout| sh
+-- trace:
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: list /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.config/xdg-terminals.list
+MADO_TERM_TRACE:   /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.config/xdg-terminals.list:1 entry bad.desktop
+MADO_TERM_TRACE:   /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.config/xdg-terminals.list:2 entry good.desktop
+MADO_TERM_TRACE:   candidate bad.desktop (listed) /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/./bad.desktop: rejected: Hidden=true
+MADO_TERM_TRACE:   candidate good.desktop (listed) /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/./good.desktop: SELECTED
+MADO_TERM: selected=good.desktop path=/fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/good.desktop cmd=sh cache=absent verdict=OK
+explain rc=0
+
+===== P4 OnlyShowIn=GNOME, fallback vs listed (section: fallback only) =====
+
+---- P4a fallback ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| dup.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop
+  stdout| sh
+
+---- P4b listed ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| onlygnome.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/onlygnome.desktop
+  stdout| sh
+
+===== P5 action not in Actions rejects; action in Actions selects id:action =====
+
+---- P5a bad action (falls back) ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| dup.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop
+  stdout| sh
+-- trace:
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: list /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.config/xdg-terminals.list
+MADO_TERM_TRACE:   /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.config/xdg-terminals.list:1 entry good.desktop:BadAction
+MADO_TERM_TRACE:   candidate good.desktop (listed) /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/./good.desktop: rejected: Actions lacks 'BadAction'
+MADO_TERM_TRACE:   candidate dup.desktop (fallback) /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/./dup.desktop: SELECTED
+MADO_TERM: selected=dup.desktop path=/fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop cmd=sh cache=absent verdict=OK
+explain rc=0
+
+---- P5b good action ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| good.desktop:New
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/good.desktop:New
+  stdout| sh
+
+===== P6 empty --title= value composes nothing =====
+
+---- P6a --title= ----
+argv: --print-id --print-cmd --title=
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| good.desktop
+  stdout| sh
+
+---- P6b --title=T ----
+argv: --print-id --print-cmd --title=T
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| good.desktop
+  stdout| sh
+  stdout| --title=T
+
+===== P7 duplicate id: user data copy wins and supplies X-TerminalArgDir =====
+
+---- P7 ----
+argv: --print-id --print-path --print-cmd --dir=/tmp -- htop
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| dup.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop
+  stdout| sh
+  stdout| --working-directory=/tmp
+  stdout| -e
+  stdout| htop
+
+===== P8 warm cache: explain reports cache=present, selection unchanged =====
+
+---- P8 ----
+argv: --print-id --print-path --print-cmd
+resolver rc=0 | tool rc=0
+stdout: BYTES EQUAL
+  stdout| dup.desktop
+  stdout| /fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop
+  stdout| sh
+-- trace (cache= field):
+MADO_TERM: selected=dup.desktop path=/fast/scratch/hyaku/mado-r47/ExecSkillSection/probes/probe/home/.local/share/applications/dup.desktop cmd=sh cache=present verdict=OK
