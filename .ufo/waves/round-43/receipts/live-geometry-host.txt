@@ -1,0 +1,11 @@
+# L1 live read-only run of tools/mado-geometry.py on the host (2026-10-26T04:17:54-03:00)
+$ hyprctl version | head -1
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+$ sha256sum tools/mado-geometry.py ~/.config/hypr/gkeep.conf
+e3c2e471505932f797a98ee2aa9ab1b04fc919f2140509282ef8472498135a99  tools/mado-geometry.py
+3726e488c0bf93028f1bba11017cf02d26da6dc3604362815bc4f3738b8e9949  ~/.config/hypr/gkeep.conf
+$ hyprctl clients -j | python3 -I tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+exit=3

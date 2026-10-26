@@ -155,6 +155,7 @@ deliberately and name it in the report.
 | Who owns notifications / DND state | consumer-side probe | `busctl --user status org.freedesktop.Notifications`; `makoctl mode` | `[OBS]` |
 | Bar runtime facts (running? mapped? tray? module text) | hyprctl live + consumer-side probe | `hyprctl -j layers` (namespace `waybar`, pid, geometry); `pgrep -x waybar`; tray via `busctl --user get-property fr.arouillard.waybar /StatusNotifierWatcher …`; indicator scripts probe process/mako mode (`RUN`, e.g. `idle.sh:3`) | `[OBS]` (MADO-R3-1 §1/§2.3); module text without an IPC verb → `[UNK]` |
 | Which Wayland globals the compositor advertises to its portal; is a named global among them | portal journal, not a socket — the portal's own registry view (`xdph-PortalManager.cpp:85` `CPortalManager::onGlobal`, log at `:88`) | `tools/mado-globals.py --live` — one program only, `journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`, exact argv, stdin `/dev/null`, env limited to `PATH`/`XDG_RUNTIME_DIR`/`DBUS_SESSION_BUS_ADDRESS`/`LC_ALL`, 30 s timeout, 8 MiB cap — or `--journal-file P`; exit map 0/1/2/3/4/5 in § "Advertised Wayland globals" | `[OBS]` for the advertised set as the portal logged it; what a client got is outside this read |
+| Does the size a window rule asks for match the size the compositor reports for that client? | two read-only inputs, no new verb: file bytes (the `size` rule line) + hyprctl live (`clients`, which prints the animation goal box) | `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules <file>`; per-verdict licence and exit map in § "Rule size versus reported size" | `[OBS]` for both printed sides (the rule text and the goal box); rendered size, the client's own request and rule attribution stay `[UNK]` |
 
 ### Divergence vocabulary and severity taxonomy
 
@@ -221,6 +222,7 @@ mado runs only the read leg (`configerrors`).
 | reading `~/.local/share/omarchy/**` | defaults + command sources | reading is safe and encouraged (omarchy skill:41, :58-62) |
 | `grim -t ppm -` (screenshot read to stdout) | visual state without a file | read OK, 14,860,817 B this pass (stdout, nothing persisted); grim/slurp/hyprpicker all on PATH |
 | `python3 tools/mado-globals.py --journal-file <journal>` / `--live` | which Wayland globals the compositor advertised to its portal, as the portal's journal logged them: per-session `MADO_GLOBALS_SESSION:` lines, one sorted `MADO_GLOBAL: name= ver= count= class=` line per latest-session global, the `MADO_GLOBALS:` summary (interfaces, classes, `ignored=`, verdict); `--diff` drift between the last two sessions; `--expect NAME` presence | round-41, journal sha256 `bf8fa91a…`: 2 sessions (pid 1918 boot `-`, pid 1952 boot `7ab69ee4…`), 63 interfaces / 63 adverts in the latest; `MADO_GLOBAL: name=hyprland_focus_grab_manager_v1 ver=1 count=1 class=focus-grab`; final `MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=- ignored=0 verdict=OK` |
+| `hyprctl clients -j \| python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf` | whether a `windowrule = size W H, match:class RX` line's size matches the size the compositor reports for the client that line matches: a read-only join of config bytes and one `clients` dump, per matched client AGREE / DIFFER / TILED / BADSIZE; `--selftest` | host run 2026-10-26 (no gkeep window open): `MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT`, rc 3; the size line it parsed: `MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$`; per-verdict licence in § "Rule size versus reported size" |
 
 ### Advertised Wayland globals
 
@@ -240,6 +242,50 @@ proving a capability: the census reports `class=` only — no socket, no client,
     MADO_GLOBAL: name=hyprland_focus_grab_manager_v1 ver=1 count=1 class=focus-grab
     MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=- ignored=0 verdict=OK
     MADO_GLOBALS: sessions=2 latest_pid=1952 interfaces=63 classes=capture:2,clipboard:3,focus-grab:1,idle:2,input-capture:3,input-synthesis:3,other:38,output-control:4,sandbox:1,session-lock:2,toplevel-control:4 expected_missing=zwlr_screencopy_manager_v2 ignored=0 verdict=MISSING_EXPECTED
+
+### Rule size versus reported size
+
+`python3 tools/mado-geometry.py --clients <dump|-> --rules <file>…` joins two caller-supplied read-only inputs: the
+`windowrule = size W H, match:class RX` and `windowrule = float on|off, match:class RX` lines of Hyprland config files,
+and one `hyprctl clients -j` dump. It starts no process, opens no socket and reads no config tree of its own — the caller
+runs `hyprctl clients -j | python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf`. Output: one
+`MADO_GEOM_RULE:` line per supported rule, one `MADO_GEOM_CLIENT:` line per matched client, then a `MADO_GEOMETRY:` summary.
+
+What the reported size is. The `clients` reply prints `"size": [{}, {}]` (`Hyprland-HyprCtl.cpp:395`, command
+registered at `:2007`) from `w->size(Desktop::View::IGeometric::GEOMETRIC_GOAL)` (`:427-428` in the JSON format, `:448`
+in the plain one), and `GEOMETRIC_GOAL` is `m_realSize->goal()` while `GEOMETRIC_CURRENT` is `m_realSize->value()`
+(`Hyprland-GeometricMovableAnimated.cpp:19-20`): the dump is the animation's target box, not the value on screen. A rule's
+`size` reaches that box only on the floating path: the default floating algorithm reads `m_ruleApplicator->static_.size`
+for a window on its first map and takes the box from `calculateExpression` (`Hyprland-DefaultFloatingAlgorithm.cpp:49,55-56`);
+the applicator stores the parsed `Math::SExpressionVec2` (`Hyprland-WindowRuleApplicator.cpp:422,426`). The class match is
+anchored upstream — `re2::RE2::FullMatch` (`Hyprland-RegexMatchEngine.cpp:16`, `negative:` prefix at `:7-8`) — which is
+why the tool uses `re.fullmatch`.
+
+Per-verdict licence — a verdict reads two printed values, it never calls a fault:
+
+| Verdict | Licenses | Does not license |
+|---|---|---|
+| AGREE | the reported goal box equals the rule's `size` for that client: the rule's size reached this client's goal | that the window renders at that size (the dump prints the goal, not the current value); that the rule is the only writer (a resize, a center or a later effect can set the same value); that the client asked for it |
+| DIFFER | the goal box differs from the rule's `size` | a defect or a cause: a user resize, a compositor clamp or a later effect all produce it — a report, not a fault |
+| TILED | the matched client is not floating, so the first-map floating branch that reads `static_.size` never ran for it: the rule's size is inert for this client | that the rule is inert for the class — a later floating instance of the same class reads it |
+| BADSIZE | only that there was no size to compare (no `size` value, or not two integers) | any agreement claim |
+| NO_MATCHING_CLIENT (rc 3) | no mapped client matched any supported `size` rule — a null observation | that the rule works, or that the file declares none |
+| NO_SIZE_RULES (rc 4) | the rules files carry no supported `size` line | anything about a `float`-only or unsupported-grammar file |
+
+Exit map: 0 `OK` · 1 `DIFFER` (at least one matched client differs) · 2 `SETUP` (usage | unreadable | too_large |
+bad_json) · 3 `NO_MATCHING_CLIENT` · 4 `NO_SIZE_RULES`.
+
+Host run 2026-10-26, no gkeep window open: the gkeep rule file declares `size 420 500` and the dump holds four tiled
+clients, so nothing matches.
+
+    $ hyprctl clients -j | python3 tools/mado-geometry.py --clients - --rules ~/.config/hypr/gkeep.conf
+    MADO_GEOM_RULE: n=1 file=1 effect=float arg=on class=^(org.omarchy.gkeep)$
+    MADO_GEOM_RULE: n=2 file=1 effect=size arg=420x500 class=^(org.omarchy.gkeep)$
+    MADO_GEOMETRY: rules=1 float_rules=1 other=1 unsupported=0 clients=4 matched=0 unmapped=0 agree=0 differ=0 tiled=0 badsize=0 verdict=NO_MATCHING_CLIENT
+
+NO_MATCHING_CLIENT is not "the rule works": it says only that no mapped window carried the class. What a live gkeep
+window would report needs that window open — an operator act, not a mado probe, and the rendered size after the
+animation stays `[UNK]` either way.
 
 ### Mutating commands — operator only, mado never runs
 
