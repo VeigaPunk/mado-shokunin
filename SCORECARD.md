@@ -2717,7 +2717,7 @@ Separable: the C1 tool alone (`cf3deeec`, entry absent) meets C1 (`receipts/a4/c
 
 ### Sources, saturation, planned
 
-Sources 276 -> 288 rows (S340-S351, tier A, `mined`, opened 2026-10-26, used-by the XKB entry; S351 added before data after w2 `CritDataCompleteness` C2-A); census `W04` 17 -> 17, `W01` 1 -> 1, exit 0 both ends (`receipts/census-before.txt`, `receipts/census-after.txt`). Knowledge entries 64 -> 65. Assimilation: none (no `merge/mado/` theme on either plane; id guard 84 collisions; 13 quarantined rows untouched). considerthese `2026-10-26.md` proposal 6 landed as QUALITY 99. Mistakes M48-1..12; QUALITY 96-99. Round-47 closure items D1-D4, R3, R4b, M47-10, CritC1Explain, SentC1Sandbox F1-F4 worked (lesson `## Round-47 closure items`).
+Sources 276 -> 288 rows (S340-S351, tier A, `mined`, opened 2026-10-26, used-by the XKB entry; S351 added before data after w2 `CritDataCompleteness` C2-A); census `W04` 17 -> 17, `W01` 1 -> 1, exit 0 both ends (`receipts/census-before.txt`, `receipts/census-after.txt`). Knowledge entries 64 -> 65. Assimilation: none (no `merge/mado/` theme on either plane; id guard 84 collisions; 13 quarantined rows untouched). considerthese `2026-10-26.md` proposal 6 landed as QUALITY 99. Mistakes M48-1..13; QUALITY 96-99. Round-47 closure items D1-D4, R3, R4b, M47-10, CritC1Explain, SentC1Sandbox F1-F4 worked (lesson `## Round-47 closure items`).
 
 Axis table re-derived at `e5d0130d` (`receipts/axis-data.txt`, derived column): navigation 65/65; calibration resolved-active 86/86; operability selftest 12/12.
 

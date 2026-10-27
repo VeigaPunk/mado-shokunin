@@ -146,7 +146,7 @@ Command (both ends): `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh va
 |---|---|---|
 | `corpus/SOURCES.md` | 276 rows, top `S339` | `288` rows, top `S351`; rows `S340`-`S351` appended after the last `S` row, 11 cells each, tier `A`, `mined`, opened `2026-10-26`, used-by `corpus/knowledge/xkb-keymap-compile-r48.md` |
 | `corpus/knowledge/` | 64 files | 65 (`xkb-keymap-compile-r48.md`) |
-| `corpus/README.md` | 64 index rows (last the round-47 row at `:75`) | 65 (one three-cell row after `:75`), plus the `## Frontier` bullet at `:110` |
+| `corpus/README.md` | 64 index rows (last the round-47 row at `:75`) | 65 (one three-cell row after `:75`), plus the `## Frontier` bullet at `:112` (a4r1 `MadoA4RevLesson`: the salvaged `:110` is a blank line at the tip) |
 | `corpus/lessons/` | 70 files | 71 (this lesson) |
 | `tools/` | 15 files, `mado-terminal.py` the newest | 15 — C1 extended the file in place |
 | held rows `S318`/`S319`, `corpus/knowledge/hyprland-input-devices-r46.md` | as at base | byte-identical (C2 clause h; command in the acceptance table) |
@@ -266,6 +266,8 @@ xkeyboard-config moves past 1.13.2 / 2.48, when the host's `kb_*` names change, 
 
 **M48-12** · class `flaky-instrument` (attempt 4, harm watch) · evidence: the round-47 frozen C1 counter re-run at the round-48 tip `d8e3d600` read `readonly=fail ... TARGET_MISSED` once, with its only trip `clause=r trips=1 ???( <detached ...>` (`.ufo/waves/round-48/receipts/a4/c1-r47-at-tip.txt:196`), and `trips=0 ... TARGET_MET` on three immediate re-runs of the same bytes (`receipts/a4/c1-r47-at-tip-run2.txt`..`run4.txt`). The trip is bwrap's attach noise, the class M48-7 fixed in the round-48 counters before their freeze; `PRED-C1-r47` is frozen and keeps the old reader. · captured-by: none for frozen counters (M48-7's fix reached only the counters not yet frozen). · fix: a harm watch that re-runs a frozen counter commits every run and reads a `readonly=fail` whose only trip lines are `???(`/`<detached` as instrument noise, never as harm, and re-runs it at least three times; routed to round 49 as a criterion with this receipt set as its shown-to-fail case (one red, three green, same bytes).
 
+**M48-13** · class `provider` (attempt 4, residual dispatch) · evidence: the `a4r1` context required `ulimit -f 2048` (1 MiB per file) before every writer and named `git clone -q --shared` as the clone recipe; the lane tracks evidence files over 1 MiB (rounds 20-22), so a checkout under that cap fails. Two seats aborted with no report (`MadoA4RevC1Write`, `MadoA4RevGate`: "checkout could not complete because RLIMIT_FSIZE=1 MiB rejects numerous committed large files", `.ufo/waves/round-48/a4r1-results.json`), two more stalled on the same wall (`MadoA4RevC2v2Diff`: "Index lock >1MiB"; `MadoA4RevLesson` ended without a report file), and three worked around it with `--no-checkout` clones (`MadoA4CritEntry.md:34`, `MadoA4CritSalvage.md:17`, `MadoA4RevC1v2Diff.md:115-117`). · captured-by: none - QUALITY 98 requires the cap to be enforced (`receipts/a4/check100-a4r1.txt` reads `verdict=OK`) but nothing checks the cap against the recipe the same dispatch prescribes. · fix: routed to round 49 - a dispatch that sets a file-size cap prescribes a recipe that writes under it (`git clone --shared --no-checkout` plus `git show`/`git archive` of the needed paths, or the counter's own `--rev` reading), and QUALITY 98 gains a recipe-compatibility clause with this wave as its shown-to-fail case (4 of 8 seats lost).
+
 ### Applications of existing criteria
 
 - M48-1 → **96** (`quality/check-landed-contract.py`): any unregistered delta between the frozen and the landed out-of-contract list fails (`NARROWED` or `UNDECLARED`).
@@ -280,6 +282,7 @@ xkeyboard-config moves past 1.13.2 / 2.48, when the host's `kb_*` names change, 
 - M48-10 → routed (round 49).
 - M48-11 → **10**/**94** (applied at attempt-4 integration; no new criterion).
 - M48-12 → routed (round 49; harm-watch reading of frozen counters).
+- M48-13 → routed (round 49; extends 98: the cap and the recipe are checked together).
 - considerthese proposal 6 → **99** (`check-round-outcome-first.py`): the closure section leads with the round-level outcome.
 
 ### Conflicts recorded for the judge
@@ -435,7 +438,7 @@ The frontier step runs inside the 1-3 claim cap and is not a fourth claim. Its i
    append is insert-only after `| S339 |`, `git diff corpus/SOURCES.md` shows only `+` lines).
 2. **Census** — before: 17 `W04` + 1 `W01` + `mado ok`, exit 0 (`.ufo/waves/round-48/receipts/census-before.txt`);
    after: identical 17 `W04` + 1 `W01` + `mado ok`, exit 0 (`receipts/census-after.txt`, same command).
-3. **Mined mistake** — M48-1..M48-12 above.
+3. **Mined mistake** — M48-1..M48-13 above.
 4. **Sourced claim** — C2 rests on rows `S340`-`S351` opened this round; C1's oracle is the row-47 pin those rows already
    hold, so C1 adds no registry row.
 5. **README frontier** — the landed bullet (`corpus/README.md:112`) names the XKB compile (rows S340-S351) and, in the
@@ -449,3 +452,19 @@ Provenance: C1's contract is `.ufo/waves/round-48/claims.md` (cache read at
 `--rules nope`) are the L1's 2026-10-26 observations, re-derived by the committed receipt and by both C2 counters' clause-r replay
 (`receipts/v2/c2-mirror-*.txt`). The `us` fallback and `kb_file` stay open as stated; the warm-cache `ls -LRl` same-size/same-minute question
 stays open too — the counter's fixtures bound it, they do not close it.
+
+## a4r1 routing (attempt 4 residual call, criterion 52 applied)
+
+Eight reviewer/critic seats attacked the committed data (`e5d0130d`, `d8e3d600`); results `.ufo/waves/round-48/a4r1-results.json`, reports `.ufo/waves/round-48/a4r1/<Seat>.md`.
+
+| seat | finding | disposition |
+|---|---|---|
+| MadoA4RevC1v2Diff | no blocker; 21/26 counter hunks registered, 3 partly (docstring-only mechanics), 2 unregistered (work-dir prefix, symlink `utime` `follow_symlinks`); 204 v1 fixtures unchanged, 24 new ids match their classes; `TARGET_MET` re-derived at `d8e3d600` | held; Low 1-4 are residual registration-prose gaps (the counter docstring states them), recorded, no predicate change after data |
+| MadoA4CritEntry | no false or overclaiming sentence in the sample; registration-v2 entry repairs all present; six `xkbcli` probes agree with the receipt on rc and diagnostic class | held |
+| MadoA4CritSalvage | errata append-only (187+/0-); frozen `PRED-C2-r45-v2` still `admitted=1/1` at the tip (R4b); D4 locator correct; SKILL and README rows traced, none unsupported | held |
+| MadoA4CritAdmission | withheld admission for missing evidence: the round-47 C1 harm-watch receipt (read mid-write, header only), the axis check at the tip, and cheapest do-nothing controls | fixed after the seat ran: `receipts/a4/c1-r47-at-tip*.txt` (M48-12), `receipts/a4/axis-at-scorecard.txt` and `receipts/axis-tip.txt` (`mismatched=0`), `receipts/a4/ctl-do-nothing.txt` (C2 stub and held-body controls `admitted=0/1`; C1 base and always-cold `TARGET_MISSED`); it ruled v2 a pre-data repair and C2 a frontier-to-core move |
+| MadoA4RevLesson | (no report file; output in results) the lesson's README Frontier locator `:110` is a blank line at the tip | fixed (`:112`) |
+| MadoA4RevC1Write | aborted, no report (file-size cap vs checkout) | dead; M48-13; the new-mutant attack on clause r is not run this round |
+| MadoA4RevGate | aborted, no report (same) | dead; M48-13; the gate's both-ways demonstration rests on its selftest 69/69 (`receipts/a4/session-material-tip.txt`) |
+| MadoA4RevC2v2Diff | no report (index over the 1 MiB cap) | dead; M48-13; v2 C2 attacks rest on the w2 harness and `receipts/v2/c2-shim-*.txt` |
+
