@@ -1,0 +1,21 @@
+# re-claim analysis: candidate entry vs held r46 entry (2026-10-26)
+entry: .ufo/waves/round-48/l1-draft/xkb-keymap-compile-r48.md (sha256 885a2e41..)
+held : corpus/knowledge/hyprland-input-devices-r46.md @ 579f694b (blob eccd79a0..)
+sentences(new)=114 sentences(old)=86
+exact identical sentences=1
+  = | question | where the answer lives | state |
+8-word shingle overlap>=2 pairs=1
+  3 | question | where the answer lives | state |
+
+# every sentence naming Hyprland/compositor/kb_file, with entry line number:
+  1 # From `input:kb_*` names to a compiled keymap on this host: which XKB names libxkbcommon 1.13.2 accepts, which it drops, and which one fails the compile Hyprland 0.56.2 falls back on
+ 16 ground: the XKB compile under the input plane, held open at base - `corpus/knowledge/hyprland-input-devices-r46.md:69` ("The XKB compile itself is not reproduced") and `corpus/README.md:112` ("Still open: the XKB compile itself"); held neighbours: rows S318/S319 give the compositor's `us` default an
+ 31 | whether the compositor's own context honours `XKB_DEFAULT_*` | step 1 | sourced (held row S319, its context line); not run against the live compositor |
+ 35 Hyprland builds every keyboard keymap in a context made with `XKB_CONTEXT_NO_FLAGS` (Hyprland-IKeyboard.cpp:75, held row S319), so the compositor's context does read the environment, and it passes the five names as C strings, never as NULL (Hyprland-IKeyboard.cpp:67-73): an empty `kb_layout` would t
+ 42 **What the compositor does with a failed compile.** A resolve or parse failure makes the RMLVO call return NULL (xkbcommon-xkbcomp.c:157-166 for the resolve, xkbcommon-xkbcomp.c:60-64 for the parse), which is the only thing Hyprland sees.
+ 42 Hyprland starts from `us` when no layout is configured (S318, `input:kb_layout` default) and resets a keyboard whose names did not compile to layout `us` with every other name empty (S319, the `m_currentRules` reset after a failed keymap).
+ 98 | keyboard prints `us`, config says another layout | compile failed and the compositor reset it (step 8) | `xkbcli compile-keymap --test --layout <name> --variant <v> --options <o>`; rc 1 names the class |
+109 - The compositor half is held, not measured: no Hyprland restart, reload or keymap dump was taken this round; steps 8 cite S318/S319.
+109 Hyprland's context reads the environment (step 1), but the compositor's own environment was not read this round, so whether any `XKB_DEFAULT_*` is set for it is [UNK]; whether its libxkbcommon build enables extension directories is [UNK].
+110 - `kb_file` bypasses this whole chain - a keymap file is parsed directly, so a readable `kb_file` makes every table here about names moot (round-46 step 4, held).
+115 The compositor links its own libxkbcommon build; the package is the same 1.13.2-1, but build options (extra include paths, extension directories) are [UNK] for that binary.

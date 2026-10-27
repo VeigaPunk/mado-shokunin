@@ -1,0 +1,91 @@
+== A. destructive scratch prefix in L1 helpers
+5:L=/home/vgpnk/Projects/shokunin/mado-shokunin
+8:S=${2:-/fast/scratch/hyaku/mado-r48/L1c2}
+9:rm -rf "$S"; mkdir -p "$S/m"
+8:S=/fast/scratch/hyaku/mado-r48/L1c1-$TAG
+9:rm -rf "$S"; mkdir -p "$S/c" "$S/work"
+21:rm -rf "$S/c" "$S/work"
+-- containment checks (should be none) in c2-mirror.sh for $S:
+0
+-- EXIT traps in the two helpers:
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c2-mirror.sh:0
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-score.sh:0
+
+== B. /tmp fallbacks
+39:            S = tempfile.mkdtemp(dir=os.environ.get("TMPDIR") or "/tmp", prefix="c2r-")
+13:  s  `python3 -I TOOL --selftest`, run in the sandbox (TMPDIR=/tmp, a fresh tmpfs), exits 0 within 120 s and its
+80:     `/` (bwrap tmpfs); `/usr/lib` (the host tree, read-only) and `/lib`, `/lib64` as symlinks to `usr/lib`;
+82:     resolver's seven external commands (tr find awk ls md5sum mkdir rm); `/dev` (bwrap tmpfs carrying host
+83:     devtmpfs device nodes, plus a fresh devpts at /dev/pts); `/proc` (fresh pid namespace); `/tmp` (tmpfs); the
+278:             "--ro-bind", self.bin, "/oracle/bin", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+899:    rc, out, _err = box.run(sd, {"PATH": "/oracle/bin", "HOME": "/tmp", "TMPDIR": "/tmp", "LANG": "C.UTF-8"}, True,
+26:      Hermetic cases built under $TMPDIR; last line `MADO_TERMINAL_SELFTEST: N/N passed`; exit 0 iff all pass.
+1397:    base = tempfile.mkdtemp(prefix="mado-terminal-selftest.", dir=os.environ.get("TMPDIR") or None)
+
+== C. counter print-only guard for every pin argv (frozen)
+220:            raise Setup("%s: case %s: prime args would launch a terminal" % (name, case["id"]))
+222:        raise Setup("%s: case %s: args would launch a terminal" % (name, case["id"]))
+        raise Setup("%s: case %s: unknown state %r" % (name, case["id"], case["state"]))
+    if "prime" in case:
+        pargs = (case["prime"] or {}).get("args") or ["--print-cmd"]
+        if not any(a == "--test" or a.startswith("--print-") for a in pargs):
+            raise Setup("%s: case %s: prime args would launch a terminal" % (name, case["id"]))
+    if not any(a == "--test" or a.startswith("--print-") for a in case["args"]):
+        raise Setup("%s: case %s: args would launch a terminal" % (name, case["id"]))
+    if case.get("default_cache"):
+        if "XDG_CACHE_HOME" in (case.get("env") or {}) or "HOME" in (case.get("unset") or []):
+            raise Setup("%s: case %s: default_cache needs HOME and no XDG_CACHE_HOME" % (name, case["id"]))
+    else:
+        home = (case.get("env") or {}).get("XDG_CACHE_HOME")
+        if home is not None and not str(home).startswith("$ROOT/.rw"):
+            raise Setup("%s: case %s: XDG_CACHE_HOME must be under $ROOT/.rw" % (name, case["id"]))
+    after = case.get("after") or {}
+
+== D. tool has no subprocess/socket (static)
+0
+
+== E. pin invocations recorded in committed wave receipts
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/census-before.txt:16:mado	W04	S326 duplicate url raw.githubusercontent.com/Vl
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/census-before.txt:17:mado	W04	S327 duplicate url raw.githubusercontent.com/Vl
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/m48-revived-r47-seat-edit-2.diff:13:+the pin leaves the cache ABSENT, because
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/m48-revived-r47-seat-edit-2.diff:20:+`D: cache is actual` from an `XTE_DEBUG=
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/m48-revived-r47-seat-edit-2.diff:28:+starts at `xdg-terminal-exec:1368`; its 
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/m48-revived-r47-seat-edit-2.diff:56:+inode / sha256 of `~/.cache/xdg-terminal
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/census-after.txt:16:mado	W04	S326 duplicate url raw.githubusercontent.com/Vla
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/census-after.txt:17:mado	W04	S327 duplicate url raw.githubusercontent.com/Vla
+(none above = no recorded pin argv in receipts/)
+
+== F. host-absolute paths in committed receipts (counts only)
+receipts/census-before.txt
+receipts/xkbcli-compile-keymap-r48.txt
+receipts/m48-revived-r47-seat-edit-2.diff
+receipts/census-after.txt
+files with /home/... : 4
+files with /fast/scratch : 9
+
+== G. bwrap isolation of the frozen C1 counter
+             "--ro-bind", "/usr/lib", "/usr/lib", "--symlink", "usr/lib", "/lib", "--symlink", "usr/lib", "/lib64",
+             "--ro-bind", self.bash, "/bin/sh", "--ro-bind", self.bash, "/bin/bash",
+             "--ro-bind", self.bin, "/oracle/bin", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+        mode = "--ro-bind" if tool else "--bind"
+        if root:
+            a += ["--ro-bind", root, root, mode, os.path.join(root, ".rw"), os.path.join(root, ".rw")]
+            if default_cache:
+                a += [mode, os.path.join(root, ".rw", "cache"), os.path.join(root, "home", ".cache")]
+        if tool:
+            a += ["--ro-bind", self.python, "/usr/bin/python3", "--ro-bind", self.tool, "/oracle/tool.py"]
+        else:
+            a += ["--ro-bind", self.pin, "/oracle/xdg-terminal-exec"]
+        a += ["--chdir", root or "/tmp"]
+        return a
+
+    def argv(self, root, env, tool, args, default_cache=False):
+        a = self.prefix(root, tool, default_cache)
+        for k in sorted(env):
+            a += ["--setenv", k, env[k]]
+        if tool:
+            a += ["/usr/bin/python3", "-I", "/oracle/tool.py"] + args
+        else:
+            a += ["/oracle/xdg-terminal-exec"] + args
+        return a
+

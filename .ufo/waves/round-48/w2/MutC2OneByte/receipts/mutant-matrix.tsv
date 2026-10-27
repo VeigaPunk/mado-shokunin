@@ -1,0 +1,20 @@
+# MutC2OneByte mutation matrix - PRED-C2-r48 at freeze 3e6c848a, base 579f694b
+# counter: quality/counters/c2-r48-xkb-entry.py sha256 4a0e6924eada0d12c70b4ce6e681a118896b93532e280ea3c15cc148b794a9f1
+# replay: lane clone at base + l1-draft C2 overlay (git plumbing, no worktree); one commit per mutant
+# cols: mutant  target  byte_delta  verdict  clause evidence
+M0_base_overlay	overlay	-	ADMITTED	all a-r = 1, admitted=1/1
+M1a_quote_wrong_line	entry	0	DETECTED	clause=d quote_out_of_range line=48 at=[1297] range=1298
+M1b_quote_true_unsupported	entry	-22	ADMITTED	clause=d quotes=1; quote verbatim at 353-358, claim unsupported
+M1c_quote_other_pin	entry	-46	DETECTED	clause=d quote_not_in_pin line=55 pin=xkbcommon-context.c
+M2a_locator_unbound_shift	entry	0	ADMITTED	clause=d/e silent; locator 500-507 in range, wrong lines
+M2b_locator_dup_shift	entry	0	ADMITTED	clause=d silent; quote occurs at 457 and 530, locator moved to 457
+M2c_locator_no_occurrence	entry	0	DETECTED	clause=d quote_out_of_range line=54 at=[501] range=505
+M2d_registry_locator_shift	SOURCES.md	0	ADMITTED	clause=c range check only (1..nlines); anchor not quote-bound
+M3a_receipt_diag_id_swap	receipt	0	ADMITTED	clause=f/r silent; XKB-338<->XKB-661 class inversion, rc kept
+M3b_receipt_rc_change	receipt	0	DETECTED	clause=f receipt_probe_bad=unknown layout(rc_values=[0])
+M3c_receipt_probe_name_swap	receipt	0	ADMITTED	clause=f/r silent; --variant nope block reports 'br(caps)', rc kept
+M3d_receipt_diag_text_swap	receipt	-11	ADMITTED	clause=f/r silent; '(unnamed map)' -> 'pc', rc kept
+M4a_remove_obs_statement	entry	-137	ADMITTED	clause=b silent; row S344 kept, its only statement removed
+M4b_remove_receipt_statement	entry	-95	DETECTED	clause=f entry_disagrees neg=[True,True,False]
+M4c_remove_step9	entry	-419	ADMITTED	clause=e steps=8 >= 6; step content unbound
+M4d_remove_registry_row	SOURCES.md	-895	DETECTED	clause=b ghosts; c:0 d:0 cascade

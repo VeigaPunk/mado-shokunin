@@ -1,0 +1,12 @@
+primed cache line 11 = b'foot\x1eEND_OF_EXEC_USEP'
+after  cache line 11 = b'f\not\x1eEND_OF_EXEC_USEP'
+one byte? True
+oracle warm=(0, 'f\not\n') state='hit' | cold=(0, 'foot\n') cstate='absent'
+check_case: ok
+clause w run_case: ok=True oracle=(0, 'f\not\n') state='hit' why=''
+clause w variant B: ok=True
+check_premise: ok
+clause x explain_case: ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/usr/share/applications/foot.desktop cmd=f'"
+explain rc=0 record='MADO_TERM: selected=foot.desktop path=/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/final/o/r/usr/share/applications/foot.desktop cmd=f\not cache=hit verdict=OK\n'
+term_line -> None
+tool print: (0, 'f\not\n', '')

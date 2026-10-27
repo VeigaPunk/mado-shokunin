@@ -1,0 +1,20 @@
+# host cache mutation during w2 (SentScope capture)
+2026-10-27T01:29:36Z
+size=7 mode=600 mtime=1793064395 mtime_h=2026-10-26 22:26:35.045220964 -0300 ctime=1793064395 inode=143468605 /home/vgpnk/.cache/xdg-terminal-exec
+c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144  /home/vgpnk/.cache/xdg-terminal-exec
+payload_od:   r   4   8   -   w   2  \n
+# twin writes with the same payload in the same second
+size=7 mtime_h=2026-10-26 22:26:35.045294334 -0300 /tmp/r48-w2-probe
+size=7 mtime_h=2026-10-26 22:26:35.045335484 -0300 /fast/scratch/hyaku/mado-r48/MutC1ReadOnly/work/t/r48-w2-probe
+# prior state measured by SentHost (w1) and by this seat at 01:20Z
+w1_receipt: size=190 mode=600 mtime=1793047345 inode=143468605 sha256=f497ed057f8aaba24bea21ba652b810c6c2ab754b0b8fe9d9b1645e072a10cac
+this_seat_pre: (01:20Z) size=190 mtime=1793047345 sha256=f497ed057f8aaba24bea21ba652b810c6c2ab754b0b8fe9d9b1645e072a10cac
+# writer code (seat MutC1ReadOnly), tag M-WRITE hook
+31:        _tgt.append(("homecache", os.path.join(os.environ["HOME"], ".cache", "xdg-terminal-exec")))
+32:    _tgt.append(("tmp", "/tmp/r48-w2-probe"))
+33:    _tgt.append(("treeroot", "r48-w2-probe"))
+40:                _fh.write("r48-w2\\n")
+45:        _d = _tf.mkdtemp(prefix="r48-w2-")
+56:            os.write(_wr, _hl.md5(b"r48-w2-probe").hexdigest().encode())
+# seat's receipted run was sandboxed (EROFS):
+3:TOOL_STDERR R48PROBE cache=EROFS homecache=EROFS tmp=ok treeroot=EROFS mkdtemp=ok:r48-w2-j16_agwg

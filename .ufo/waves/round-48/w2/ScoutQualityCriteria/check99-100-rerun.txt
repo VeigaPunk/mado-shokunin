@@ -1,0 +1,43 @@
+$ check99 RED (entry as landed)
+AMBIGUOUS README.md:218-218 -> README.md,.ufo/waves/round-47/fetch/README.md,corpus/README.md (line 38)
+AMBIGUOUS README.md:300-301 -> README.md,.ufo/waves/round-47/fetch/README.md,corpus/README.md (line 43)
+OK .ufo/waves/round-47/fetch/xdg-terminal-exec-proposal.md:160-168 first='  - validation by the same rules as in Desktop Entry Specification, except'
+AMBIGUOUS README.md:179-180 -> README.md,.ufo/waves/round-47/fetch/README.md,corpus/README.md (line 66)
+OK corpus/knowledge/terminal-route-r17.md:144-145 first='  (xdg-terminal-exec:919, 402-413). [UNK] whether the resolver actually picks'
+OK corpus/knowledge/terminal-route-r17.md:144-145 first='  (xdg-terminal-exec:919, 402-413). [UNK] whether the resolver actually picks'
+UNK-HEAD-CUT corpus/knowledge/terminal-route-r17.md:150-151 bullet_at=149 first='  launch time. The helper is not run.' (citing line 95)
+CHECK99: locators=7 checked=4 violations=4 verdict=CUT
+rc=1
+
+$ check99 GREEN (fixed entry)
+OK .ufo/waves/round-47/fetch/README.md:218-218 first='The resulting command is executed without forking.'
+OK .ufo/waves/round-47/fetch/README.md:300-301 first='all possible config file and data dir paths in one go. Valid cache bypasses'
+OK .ufo/waves/round-47/fetch/xdg-terminal-exec-proposal.md:160-168 first='  - validation by the same rules as in Desktop Entry Specification, except'
+OK .ufo/waves/round-47/fetch/README.md:179-180 first='    - the order in which found entries under the same base directory are checked'
+OK corpus/knowledge/terminal-route-r17.md:144-145 first='  (xdg-terminal-exec:919, 402-413). [UNK] whether the resolver actually picks'
+OK corpus/knowledge/terminal-route-r17.md:144-145 first='  (xdg-terminal-exec:919, 402-413). [UNK] whether the resolver actually picks'
+OK corpus/knowledge/terminal-route-r17.md:149-150 first='- [UNK] Whether the `--dir=` value from `omarchy-cmd-terminal-cwd` is valid at'
+CHECK99: locators=7 checked=7 violations=0 verdict=OK
+rc=0
+
+$ check100 RED1 r47 spec
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=50 MB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=2 GB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=3.3 MB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=1 MiB
+CHECK100: sources=1 enforced=0 prose=4 verdict=PROSE-ONLY
+rc=1
+
+$ check100 RED2 r48 w1 spec
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=50 MB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=2 GB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=590 GB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=1 MB
+CHECK100: sources=1 enforced=0 prose=4 verdict=PROSE-ONLY
+rc=1
+
+$ check100 GREEN capped spec
+ENFORCED .ufo/waves/round-48/w1/ScrMistakes/controls/spec-100-capped.json ulimit -f 1024
+PROSE .ufo/waves/round-48/w1/ScrMistakes/controls/spec-100-capped.json ceiling=1 MiB
+CHECK100: sources=1 enforced=1 prose=1 verdict=OK
+rc=0

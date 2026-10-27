@@ -1,0 +1,21 @@
+== M2. dynamic proof: the frozen fixture schema (check_case) rejects print-less pin argvs and outside cache paths
+object: check_case args: (case, name)
+print-less args                -> Setup: probe: case probe-1: args would launch a terminal
+print-less prime               -> Setup: probe: case probe-1: prime args would launch a terminal
+cache outside $ROOT/.rw        -> Setup: probe: case probe-1: XDG_CACHE_HOME must be under $ROOT/.rw
+cache under $ROOT/.rw          -> ACCEPTED
+conforming --print-cmd         -> ACCEPTED
+
+== P. every committed receipt/fixture path stays inside the lane (no host-absolute write targets)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/__pycache__/c1-r48-terminal-cache.cpython-314.pyc:90:     mounted at `<root>/home/.cach
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py:87:     mounted at `<root>/home/.cache` (same mode as `.rw`); 
+(none above = no absolute-path redirect in the wave writers)
+== Q. generator writes: OUT and scratch root
+7:HERE=$(cd "$(dirname "$0")" && pwd)
+8:OUT="$HERE/xkbcli-compile-keymap-r48.txt"
+10:S=${XKB_R48_SCRATCH:-/fast/scratch/hyaku/mado-r48/L1receipt}
+11:mkdir -p "$S"
+12:T=$(mktemp -d -p "$S" probe.XXXXXX) || exit 1
+13:trap 'rm -rf -- "$T"' EXIT INT TERM
+108:say "# recipe: mkdir -p \$T/xdg/xkb/symbols and \$T/home/.xkb/symbols; write the 5-line symbols/mado48 below;"
+122:mkdir -p "$T/xdg/xkb/symbols" "$T/home/.xkb/symbols"

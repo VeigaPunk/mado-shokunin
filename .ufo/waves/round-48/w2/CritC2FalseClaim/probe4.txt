@@ -1,0 +1,58 @@
+== T1: 3 variants for 2 layouts (truncation class)
+rc=0
+xkb_symbols { include "pc+br(nodeadkeys)+us(intl):2+inet(evdev)" }
+xkbcommon: ERROR: Less layouts than variants: "br,us" vs. "nodeadkeys,intl,dvorak".
+
+== T2: 5 layouts (beyond XKB_MAX_GROUPS=4)
+rc=0
+xkb_symbols { include "pc+br+us:2+de:3+fr:4+inet(evdev)" }
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO layout "gb" was ignored
+
+== T3: 4 layouts, 1 variant
+rc=0
+xkb_symbols { include "pc+br(nodeadkeys)+us:2+de:3+fr:4+inet(evdev)" }
+
+== T4: --options '' with XKB_DEFAULT_OPTIONS set (+--enable-environment-names)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)" }
+
+== T5: same but --options omitted (default should be used)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)" }
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+
+== T6: layouts with an empty entry in the middle
+rc=0
+xkb_symbols { include "pc+br(nodeadkeys)+us:3+inet(evdev)" }
+
+== T7: .pre/.post read from EVERY include path (XDG post + extra post)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)+compose(caps)+compose(rwin)" }
+
+== T8: same, but post files at BOTH paths with the SAME option name (order/path check)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)+compose(caps)+compose(rwin)" }
+
+== T9: rules alias identity - base vs xorg byte compare
+identical=yes
+symbolic link /usr/share/xkeyboard-config-2/rules/xorg
+regular file /usr/share/xkeyboard-config-2/rules/base
+
+== T10: --rules xfree98 report (file exists, maps nothing) and README size
+//
+//  Rules for resolving XKB components for use with XFree86
+//  Copyright 1996 by Joseph Moss
+//
+
+! model 	=	keycodes	geometry
+  pc98		=	xfree98(pc98)	nec(pc98)
+  jp106		=	xfree98(jp106)	pc(jp106)
+
+! model		layout		=	symbols
+  pc98		jp		=	nec_vndr/jp(pc98)+nec_vndr/jp(jp):2
+  jp106		jp		=	jp
+
+== largest
+73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/r1.keymap
+73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/positive.keymap
+68181 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/ib.out

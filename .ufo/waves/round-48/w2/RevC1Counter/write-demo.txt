@@ -1,0 +1,23 @@
+== writes-cache mutant, writable cache dir (the write is real; the contract says the tool writes nothing)
+alpha.desktop
+  mut rc=0
+  after: total 4
+  after: -rw-r--r-- 1 vgpnk vgpnk 56 Oct 26 22:41 xdg-terminal-exec
+  content:
+    00000000000000000000000000000000
+    foot
+    ^^END_OF_EXEC_USEP
+
+== frozen reference, same tree (writes nothing)
+alpha.desktop
+  ref rc=0
+  cache entries after: 0
+
+== writes-cache mutant, cache dir mode 555 (the EROFS the sandbox's read-only .rw produces)
+alpha.desktop
+  mut rc=0
+  after: total 0
+
+== reference, cache dir mode 555
+alpha.desktop
+  ref rc=0

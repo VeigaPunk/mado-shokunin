@@ -1,0 +1,24 @@
+== R. self-cleanup after the in-place import probe
+-- pycache after removing this seat's artifact:
+total 112
+drwxr-xr-x 1 vgpnk vgpnk   100 Oct 26 22:27 .
+drwxr-xr-x 1 vgpnk vgpnk   596 Oct 26 22:27 ..
+-rw-r--r-- 1 vgpnk vgpnk 10852 Oct 26 20:45 lsemu.cpython-314.pyc
+-rw-r--r-- 1 vgpnk vgpnk 99797 Oct 26 22:25 mado-terminal.cpython-314.pyc
+-- frozen counter untouched (sha256, mtime, size):
+2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py mtime=2026-10-26 22:08:27.455717684 -0300 size=52654
+-- lane .gitignore coverage for the pycache dir:
+.ufo/interactive-sessions/
+.ufo/state/
+__pycache__/
+-- git sees the pycache as ignored (not a freeze blob):
+.gitignore:3:__pycache__/	.ufo/waves/round-48/l1-draft/__pycache__
+
+== R2. same guard proof re-run from a scratch copy, bytecode writing disabled
+print-less args                -> Setup: probe: case probe-1: args would launch a terminal
+print-less prime               -> Setup: probe: case probe-1: prime args would launch a terminal
+cache outside $ROOT/.rw        -> Setup: probe: case probe-1: XDG_CACHE_HOME must be under $ROOT/.rw
+cache under $ROOT/.rw          -> ACCEPTED
+conforming --print-cmd         -> ACCEPTED
+-- pycache under scratch (not the lane):

@@ -1,0 +1,27 @@
+counter sha256 source: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py
+draft   sha256 source: /fast/scratch/hyaku/mado-r48/RevC1Explain/snap/tool.py
+draft                    probe-empty-word   clause-w ok=True state=hit oracle=(0,'foot\n\n--a\n') why=''
+draft                    probe-empty-word   clause-x ok=True why=''
+draft                    probe-newline-word clause-w ok=True state=hit oracle=(0,'fo\not\n--a\n') why=''
+draft                    probe-newline-word clause-x ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/usr/share/applications/foot.desktop cmd=fo'"
+cmd-empty-word-dropped   probe-empty-word   clause-w ok=False state=hit oracle=(0,'foot\n\n--a\n') why="oracle=(0, 'foot\\n\\n--a\\n') tool=(0, 'foot\\n--a\\n')"
+cmd-empty-word-dropped   probe-empty-word   clause-x ok=False why='observed AGREE: got DIFFER/1'
+cmd-empty-word-dropped   probe-newline-word clause-w ok=True state=hit oracle=(0,'fo\not\n--a\n') why=''
+cmd-empty-word-dropped   probe-newline-word clause-x ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/usr/share/applications/foot.desktop cmd=fo'"
+cmd-multiline-flattened  probe-empty-word   clause-w ok=True state=hit oracle=(0,'foot\n\n--a\n') why=''
+cmd-multiline-flattened  probe-empty-word   clause-x ok=True why=''
+cmd-multiline-flattened  probe-newline-word clause-w ok=False state=hit oracle=(0,'fo\not\n--a\n') why="oracle=(0, 'fo\\not\\n--a\\n') tool=(0, 'fo ot\\n--a\\n')"
+cmd-multiline-flattened  probe-newline-word clause-x ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/usr/share/applications/foot.desktop cmd=fo'"
+observed-basename        probe-empty-word   clause-w ok=True state=hit oracle=(0,'foot\n\n--a\n') why=''
+observed-basename        probe-empty-word   clause-x ok=True why=''
+observed-basename        probe-newline-word clause-w ok=True state=hit oracle=(0,'fo\not\n--a\n') why=''
+observed-basename        probe-newline-word clause-x ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/usr/share/applications/foot.desktop cmd=fo'"
+draft                    observed=foreign-root   verdict=DIFFER  rc=1
+cmd-empty-word-dropped   observed=foreign-root   verdict=DIFFER  rc=1
+cmd-multiline-flattened  observed=foreign-root   verdict=DIFFER  rc=1
+observed-basename        observed=foreign-root   verdict=AGREE   rc=0
+draft                    observed=root-relative  verdict=DIFFER  rc=1
+cmd-empty-word-dropped   observed=root-relative  verdict=DIFFER  rc=1
+cmd-multiline-flattened  observed=root-relative  verdict=DIFFER  rc=1
+observed-basename        observed=root-relative  verdict=AGREE   rc=0
+near-root oracle capture: 'foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n\n--a\n'

@@ -1,0 +1,19 @@
+$ python3 -I quality/counters/c2-r48-xkb-entry.py --help
+usage: c2-r48-xkb-entry.py [-h] [--repo REPO] --rev REV [--base BASE]
+
+options:
+  -h, --help   show this help message and exit
+  --repo REPO
+  --rev REV
+  --base BASE
+rc=0
+$ python3 -I ... --repo . --rev HEAD --work /fast/scratch/x
+usage: c2-r48-xkb-entry.py [-h] [--repo REPO] --rev REV [--base BASE]
+c2-r48-xkb-entry.py: error: unrecognized arguments: --work /fast/scratch/x
+rc=2
+$ grep -n TMPDIR quality/counters/c2-r48-xkb-entry.py
+92: r  replay: with TMPDIR set to an explicit round scratch root, re-run the positive
+97:    Missing xkbcli or TMPDIR is a setup error; changed package outputs are a miss.
+813:            if not os.environ.get("TMPDIR"):
+814:                raise Setup("TMPDIR required for replay scratch")
+815:            S = tempfile.mkdtemp(dir=os.environ["TMPDIR"], prefix="c2r-")

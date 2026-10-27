@@ -1,0 +1,35 @@
+== probe-f-percent [clause f] probe: the %% freecode collapse is gone (cold-only: no warm fixture file carries '%')
+--- mado-terminal.py
++++ probe-f-percent.py
+@@ -514,10 +514,6 @@
+             fu = True
+             continue
+         if m(arg, "*[!%]%i*") or m(arg, "%i*") or m(arg, "*[!%]%c*") or m(arg, "%c*"):
+-            continue
+-        if m(arg, "*[!%]%%*") or m(arg, "%%*"):
+-            arg = arg.replace("%%", "%")
+-            out = out + (USEP if out else "") + arg
+             continue
+         if m(arg, "*%?*") or m(arg, "*[!%]%"):
+             return usep, False
+
+== probe-writes [clause i/r (no-write)] probe: after a cold selection the tool writes <cache>.probe-write and swallows EROFS (contract: writes nothing)
+--- mado-terminal.py
++++ probe-writes.py
+@@ -995,7 +995,14 @@
+                 return True
+         self.read_config_paths()
+         self.find_entry_paths()
+-        return self.find_entry()
++        ok = self.find_entry()
++        if ok and self.cache != "hit":
++            try:
++                with open(self.cache_file + ".probe-write", "w", encoding="latin-1") as fh:
++                    fh.write("probe\n")
++            except OSError:
++                pass
++        return ok
+ 
+ 
+ def run_print(env, args, cwd=None):
+

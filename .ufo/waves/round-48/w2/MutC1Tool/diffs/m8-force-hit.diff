@@ -1,0 +1,13 @@
+diff --git a/tools/mado-terminal.py b/tools/mado-terminal.py
+index 32e48dd..d7c0593 100755
+--- a/tools/mado-terminal.py
++++ b/tools/mado-terminal.py
+@@ -993,6 +993,8 @@ class Resolver:
+             self.cache = self.read_cache()
+             if self.cache == "hit":
+                 return True
++            if self.cache != "absent":
++                self.cache = "hit"
+         self.read_config_paths()
+         self.find_entry_paths()
+         return self.find_entry()

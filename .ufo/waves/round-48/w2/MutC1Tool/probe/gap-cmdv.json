@@ -1,0 +1,83 @@
+{
+ "fixture": {
+  "after": {
+   "files": {
+    "home/.config/hyprland-xdg-terminals.list": "kitty.desktop\nfoot.desktop\n"
+   },
+   "modes": {
+    "bin/foot": "420"
+   },
+   "mtime": 1600000000
+  },
+  "args": [
+   "--print-cmd"
+  ],
+  "class": "WARM-SAME",
+  "cold": {
+   "rc": 0,
+   "stdout": "kitty\n"
+  },
+  "env": {
+   "XDG_CONFIG_DIRS": "$ROOT/etc/xdg",
+   "XDG_CONFIG_HOME": "$ROOT/home/.config",
+   "XDG_CURRENT_DESKTOP": "Hyprland",
+   "XDG_DATA_DIRS": "$ROOT/usr/share",
+   "XDG_DATA_HOME": "$ROOT/home/.local/share"
+  },
+  "exec": [
+   "bin/foot",
+   "bin/kitty"
+  ],
+  "expect": {
+   "rc": 0,
+   "stdout": "kitty\n"
+  },
+  "files": {
+   "home/.config/hyprland-xdg-terminals.list": "foot.desktop\nkitty.desktop\n",
+   "usr/share/applications/foot.desktop": "[Desktop Entry]\nType=Application\nCategories=TerminalEmulator;\nExec=foot\n",
+   "usr/share/applications/kitty.desktop": "[Desktop Entry]\nType=Application\nCategories=TerminalEmulator;\nExec=kitty\n"
+  },
+  "id": "W-GAP-CMDV-NONEXEC",
+  "mtime": 1600000000,
+  "prime": {
+   "args": [
+    "--print-cmd"
+   ]
+  },
+  "state": "stale"
+ },
+ "measured": {
+  "draft": {
+   "clause_w_ok": true,
+   "clause_x_ok": true,
+   "clause_x_why": "",
+   "cold": [
+    0,
+    "kitty\n"
+   ],
+   "oracle": [
+    0,
+    "kitty\n"
+   ],
+   "state": "stale",
+   "trips": 0,
+   "why": ""
+  },
+  "mutant": {
+   "clause_w_ok": false,
+   "clause_x_ok": false,
+   "clause_x_why": "explain got=('foot.desktop', '$ROOT/usr/share/applications/foot.desktop', 'foot', 'hit', 'OK', 0) want=('kitty.desktop', '$ROOT/usr/share/applications/kitty.desktop', 'kitty', 'stale', 'OK', 0)",
+   "cold": [
+    0,
+    "kitty\n"
+   ],
+   "oracle": [
+    0,
+    "kitty\n"
+   ],
+   "state": "stale",
+   "trips": 0,
+   "why": "oracle=(0, 'kitty\\n') tool=(0, 'foot\\n')"
+  }
+ }
+}

@@ -1,0 +1,75 @@
+== W. 'input:' hits (check they are prose, not an input-device command)
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/xkb-keymap-compile-r48.md:1:# From `input:kb_*` names to a compiled
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/xkb-keymap-compile-r48.md:42:8. **What the compositor does with a f
+
+== X. exact line evidence for the cleanup and containment findings
+-- warmcheck.py: pin wrapper + timeout
+def env(root, desk="Hyprland", **kw):
+    e = {"HOME": root + "/home", "PATH": root + "/bin:/usr/bin", "XDG_CONFIG_HOME": root + "/home/.config",
+         "XDG_CONFIG_DIRS": root + "/etc/xdg", "XDG_DATA_HOME": root + "/home/.local/share",
+         "XDG_DATA_DIRS": root + "/usr/share", "XDG_CACHE_HOME": root + "/cache", "LC_ALL": "C"}
+    if desk is not None:
+        e["XDG_CURRENT_DESKTOP"] = desk
+-- mado-terminal.py: selftest scratch root and its finally
+def selftest():
+    base = tempfile.mkdtemp(prefix="mado-terminal-selftest.", dir=os.environ.get("TMPDIR") or None)
+    cases = selftest_cases()
+            else:
+                print("MADO_TERMINAL_SELFTEST_FAIL: %s got=%r rc=%d want=%r rc=%d" % (name, got, rc, want, want_rc))
+    finally:
+        import shutil
+        shutil.rmtree(base, ignore_errors=True)
+    total = len(cases) + len(extra)
+-- mado-terminal.py: documented AGREE recipe
+      V is OK (a terminal is selected), NO_TERMINAL (none is), and with --observed FILE - the captured stdout of
+      `XDG_CACHE_HOME=$(mktemp -d) xdg-terminal-exec --print-id --print-path --print-cmd` - AGREE when the three
+      printed items equal this tool's (id, path, and command line), DIFFER otherwise.
+      Exit: 0 OK/AGREE, 1 DIFFER, 3 NO_TERMINAL, 2 usage error.
+-- c2 counter: replay scratch + inherited env (no containment check)
+            if not os.environ.get("TMPDIR"):
+                raise Setup("TMPDIR required for replay scratch")
+            S = tempfile.mkdtemp(dir=os.environ["TMPDIR"], prefix="c2r-")
+            try:
+                env = dict(os.environ)
+                env["HOME"] = os.path.join(S, "home")
+                env["XDG_CONFIG_HOME"] = os.path.join(S, "xdg")
+                env["XDG_CACHE_HOME"] = os.path.join(S, "cache")
+-- c1 counter: --work containment (contrast)
+        if not os.path.isdir(a.work):
+            raise Setup("work dir missing")
+        for h in sorted({os.path.realpath(a.repo), lane_root(), os.path.dirname(lane_root())}):
+            if under(a.work, h):
+                raise Setup("work dir inside a hidden path %s" % h)
+        if under(a.work, "/run") or under(a.work, "/proc"):
+            raise Setup("work dir under /run or /proc")
+        work = tempfile.mkdtemp(dir=a.work, prefix="c1r48-")
+        try:
+            return score(a.repo, a.rev, work, nonce)
+
+== Y. generator: the three write/cleanup lines and the stale locator
+#!/usr/bin/env bash
+# mado round 48 (C2; drafted by w1 seat ScrEntry, run by the L1) - read-only receipt generator for the XKB-compile knowledge entry.
+# Writes receipts/xkbcli-compile-keymap-r48.txt next to this script.
+# Every xkbcli call is a compile/test/kccgst verb: no compositor, no input device, no host
+# write. Probe fixtures live in a mktemp dir under the seat scratch root and are removed.
+set -u
+HERE=$(cd "$(dirname "$0")" && pwd)
+OUT="$HERE/xkbcli-compile-keymap-r48.txt"
+K=/usr/bin/xkbcli
+S=${XKB_R48_SCRATCH:-/fast/scratch/hyaku/mado-r48/L1receipt}
+mkdir -p "$S"
+T=$(mktemp -d -p "$S" probe.XXXXXX) || exit 1
+trap 'rm -rf -- "$T"' EXIT INT TERM
+-- receipts dir listing (no generator, receipt only):
+14270 xkbcli-compile-keymap-r48.txt
+-- tools dir listing:
+ 
+38 .
+528 ..
+8168 make-xkb-receipt.sh
+
+== Z. this seat's scratch footprint and largest file
+75344
+52654 /fast/scratch/hyaku/mado-r48/SentHost/counter.py
+14270 /fast/scratch/hyaku/mado-r48/SentHost/gen/tools/xkbcli-compile-keymap-r48.txt
+8168 /fast/scratch/hyaku/mado-r48/SentHost/gen/tools/make-xkb-receipt.sh

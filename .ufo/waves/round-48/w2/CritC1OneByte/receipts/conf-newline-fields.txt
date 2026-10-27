@@ -1,0 +1,15 @@
+=== cold first word with newline
+  pin  : rc=1 out='' state='absent'
+  tool : rc=1 out=''
+  explain rc=3 term_line={'selected': '-', 'path': '-', 'cmd': '-', 'cache': 'absent', 'verdict': 'NO_TERMINAL'}
+  tail  : "k/conf/coldnl/r/usr/share/applications/./foot.desktop: rejected: Exec word 'a\\nb' not found\nMADO_TERM: selected=- path=- cmd=- cache=absent verdict=NO_TERMINAL\n"
+=== cached path with newline (line 3, one byte)
+  pin  : rc=0 out='foot\n--a\n' state='hit'
+  tool : rc=0 out='foot\n--a\n'
+  explain rc=0 term_line={'selected': 'ot.desktop:foot.desktop', 'path': '/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/conf/pathnl/r/home/.local/share/applications/fo:foot.desktop', 'cmd': 'foot', 'cache': 'hit', 'verdict': 'OK'}
+  tail  : 'op:foot.desktop path=/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/conf/pathnl/r/home/.local/share/applications/fo:foot.desktop cmd=foot cache=hit verdict=OK\n'
+=== cached id with CR (line 4, one byte)
+  pin  : rc=0 out='foot\n--a\n' state='hit'
+  tool : rc=0 out='foot\n--a\n'
+  explain rc=0 term_line={'selected': 'foot.deskt:p.desktop', 'path': '/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/conf/idcr/r/home/.local/share/applications/foot.desktop:p.desktop', 'cmd': 'foot', 'cache': 'hit', 'verdict': 'OK'}
+  tail  : ':p.desktop path=/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/conf/idcr/r/home/.local/share/applications/foot.desktop:p.desktop cmd=foot cache=hit verdict=OK\n'

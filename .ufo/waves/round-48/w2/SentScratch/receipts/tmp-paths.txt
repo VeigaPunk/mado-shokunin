@@ -1,0 +1,14 @@
+== hardcoded /tmp fallbacks in round-48 writers (source lines) ==
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecXkbSource/verify.sh:155:TMPD=$(mktemp -d "${TMPDIR:-/tmp}/xkbverify.XXXXXX") || exit 2
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecLsEmu/fuzz.py:557:        base = os.environ.get("TMPDIR") or "/tmp"
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecLsEmu/fuzz.py:607:        "--tmpfs", "/tmp",
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/add-replay-clause.py:39:            S = tempfile.mkdtemp(dir=os.environ.get("TMPDIR") or "/tmp", prefix="c2r-")
+
+== installed c2 counter: TMPDIR handling (no fallback, no containment) ==
+            if not os.environ.get("TMPDIR"):
+                raise Setup("TMPDIR required for replay scratch")
+            S = tempfile.mkdtemp(dir=os.environ["TMPDIR"], prefix="c2r-")
+
+== in-sandbox /tmp only (not a host write) ==
+278:             "--ro-bind", self.bin, "/oracle/bin", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+288:        a += ["--chdir", root or "/tmp"]

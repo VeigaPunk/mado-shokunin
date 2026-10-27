@@ -1,0 +1,13 @@
+diff --git a/tools/mado-terminal.py b/tools/mado-terminal.py
+index 32e48dd..3584c37 100755
+--- a/tools/mado-terminal.py
++++ b/tools/mado-terminal.py
+@@ -915,7 +915,7 @@ class Resolver:
+     # ---------------------------------------------------------------- cache (x:179-298)
+     def gen_hash(self):
+         """md5 of `echo 4; echo "$XDG_CURRENT_DESKTOP"; LANG=C ls -LRl $CONFIGS:$APPLICATIONS_DIRS` (x:179-215)."""
+-        dsk = self.env.get("XDG_CURRENT_DESKTOP", "")
++        dsk = self.env.get("XDG_CURRENT_DESKTOP", "").lower()
+         if len(dsk) > 1 and dsk[0] == "-" and all(c in "neE" for c in dsk[1:]):
+             echo = b"" if "n" in dsk else b"\n"     # bash `echo` takes the value as its own options
+         else:

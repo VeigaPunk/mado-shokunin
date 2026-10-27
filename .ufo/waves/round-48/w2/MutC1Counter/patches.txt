@@ -1,0 +1,190 @@
+== a-revision-addressing-dropped [clause a] clause a: the tool is looked up in the worktree instead of the scored revision
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ a-revision-addressing-dropped.py
+@@ -918,8 +918,7 @@
+     if not shutil.which("strace"):
+         raise Setup("strace missing")
+     lane = lane_root()
+-    ls = git(repo, "ls-tree", full, "--", TOOL)
+-    present = bool(ls) and ls.split()[0] in (b"100644", b"100755") and ls.split()[1] == b"blob"
++    present = os.path.isfile(os.path.join(lane, TOOL))
+     print("%s clause=a tool=%s" % (PRED, "present" if present else "absent"))
+     print("%s clause=meta rev=%s nonce=%d lane=%s" % (PRED, full, nonce, lane))
+     f_ok = w_ok = x_ok = g_ok = 0
+@@ -928,7 +927,7 @@
+         tdir = tempfile.mkdtemp(dir=work, prefix="tool-")
+         tool = os.path.join(tdir, "tool.py")
+         with open(tool, "wb") as fh:
+-            fh.write(git(repo, "show", "%s:%s" % (full, TOOL)))
++            fh.write(open(os.path.join(lane, TOOL), "rb").read())
+         box = Box(work, tool)
+         selftest = selftest_clause(box)
+         rng = random.Random(nonce)
+
+== s-selftest-accepted [clause s] clause s: selftest accepted unconditionally (rc, N and the last line no longer checked)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ s-selftest-accepted.py
+@@ -905,7 +905,7 @@
+         n = parts[1].split("/")
+         ok = (len(n) == 2 and n[0] == n[1] and n[0].isascii() and n[0].isdigit() and int(n[0]) >= SELFTEST_MIN)
+     print("%s clause=s rc=%d last=%r" % (PRED, rc, last[:120]))
+-    return "ok" if ok else "fail"
++    return "ok"
+ 
+ 
+ def score(repo, rev, work, nonce):
+
+== f-cold-accepted [clause f] clause f: every cold fixture accepted (the r47 harm-watch clause stops comparing)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ f-cold-accepted.py
+@@ -938,7 +938,7 @@
+             ok_b, _o_b, why_b, _st_b, _c_b = run_case(box, fx, "B", rng)
+             if [o_a[0], o_a[1]] != [fx["expect"]["rc"], fx["expect"]["stdout"]]:
+                 drift.append(fx["id"])
+-            ok = ok_a and ok_b
++            ok = True
+             f_ok += ok
+             print("%s clause=f fixture=%s %s%s" % (PRED, fx["id"], "pass" if ok else "FAIL",
+                                                   "" if ok else " " + "; ".join(w for w in (why_a, why_b) if w)))
+
+== w-always-accept-warm [clause w] clause w: always-accept warm (comparison and class premise both dropped)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ w-always-accept-warm.py
+@@ -948,8 +948,7 @@
+             ok_b, _o_b, why_b, _st_b, _c_b = run_case(box, fx, "B", rng)
+             if [o_a[0], o_a[1]] != [fx["expect"]["rc"], fx["expect"]["stdout"]]:
+                 drift.append(fx["id"])
+-            check_premise(fx, st_a, cold_a)
+-            ok = ok_a and ok_b
++            ok = True
+             w_ok += ok
+             print("%s clause=w fixture=%s class=%s state=%s %s%s" % (
+                 PRED, fx["id"], fx["class"], st_a, "pass" if ok else "FAIL",
+
+== x-observed-command-ignored [clause x] clause x: the two-item --observed capture dropped (a tool that ignores the command line is not caught)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ x-observed-command-ignored.py
+@@ -707,8 +707,7 @@
+     parts = o_norm.split("\n", 2)
+     two = (parts[0] + "\n" + (parts[1] if len(parts) > 1 else "") + "\n")
+     caps = ((0, o_norm, "AGREE", 0),
+-            (1, o_norm.replace(".desktop", ".desktoq", 1), "DIFFER", 1),
+-            (2, two, "DIFFER", 1))
++            (1, o_norm.replace(".desktop", ".desktoq", 1), "DIFFER", 1))
+     for idx, text, want_v, want_rc in caps:
+         p = os.path.join(d, "cap%d" % idx)
+         try:
+
+== g-generated-accepted [clause g] clause g: every generated case accepted (both draws)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ g-generated-accepted.py
+@@ -968,14 +968,14 @@
+         for k in range(GEN):
+             case = gen_case(grng, k)
+             ok, _o, why, _st, _c = run_case(box, case, "A", grng)
+-            g_ok += ok
++            g_ok += 1
+             if not ok and first_fail is None:
+                 first_fail = (case["id"], why)
+         for k in range(GEN_W):
+             case = gen_warm_case(grng, k)
+             ok, _o, why, st, cold = run_case(box, case, "A", grng)
+             check_premise(case, st, cold)
+-            g_ok += ok
++            g_ok += 1
+             if not ok and first_fail is None:
+                 first_fail = (case["id"], why)
+         print("%s clause=g generated=%d/%d%s" % (PRED, g_ok, GEN + GEN_W, "" if first_fail is None else
+
+== i-no-write-tripwire [clause i] clause i / the no-write guard: the tool tree's .rw is writable for tool runs
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ i-no-write-tripwire.py
+@@ -276,7 +276,7 @@
+              "--ro-bind", "/usr/lib", "/usr/lib", "--symlink", "usr/lib", "/lib", "--symlink", "usr/lib", "/lib64",
+              "--ro-bind", self.bash, "/bin/sh", "--ro-bind", self.bash, "/bin/bash",
+              "--ro-bind", self.bin, "/oracle/bin", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+-        mode = "--ro-bind" if tool else "--bind"
++        mode = "--bind"
+         if root:
+             a += ["--ro-bind", root, root, mode, os.path.join(root, ".rw"), os.path.join(root, ".rw")]
+             if default_cache:
+
+== i-host-etc-bound [clause i] clause i: host /etc bound into the TOOL sandbox only (mount set no longer the enumerated one)
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ i-host-etc-bound.py
+@@ -282,7 +282,8 @@
+             if default_cache:
+                 a += [mode, os.path.join(root, ".rw", "cache"), os.path.join(root, "home", ".cache")]
+         if tool:
+-            a += ["--ro-bind", self.python, "/usr/bin/python3", "--ro-bind", self.tool, "/oracle/tool.py"]
++            a += ["--ro-bind", self.python, "/usr/bin/python3", "--ro-bind", self.tool, "/oracle/tool.py",
++                  "--ro-bind", "/etc", "/etc"]
+         else:
+             a += ["--ro-bind", self.pin, "/oracle/xdg-terminal-exec"]
+         a += ["--chdir", root or "/tmp"]
+
+== r-no-tripwire [clause r] clause r: readonly is ok whatever the trace saw
+base c1-r48-terminal-cache.py sha256 2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4
+--- c1-r48-terminal-cache.py
++++ r-no-tripwire.py
+@@ -980,7 +980,7 @@
+                 first_fail = (case["id"], why)
+         print("%s clause=g generated=%d/%d%s" % (PRED, g_ok, GEN + GEN_W, "" if first_fail is None else
+                                                  " first_fail=%r" % (first_fail,)))
+-        readonly = "fail" if box.trips else "ok"
++        readonly = "ok"
+         print("%s clause=r trips=%d %s" % (PRED, len(box.trips), ";".join(sorted(set(box.trips)))[:200]))
+     total_fx = len(cold_fx) + len(warm_fx)
+     met = (present and selftest == "ok" and readonly == "ok" and f_ok == len(cold_fx) and w_ok == len(warm_fx)
+
+== probe-selftest-rc [clause s] probe: the selftest prints N/N passed but exits 1 (clause s rc arm)
+base mado-terminal.py sha256 1dfde36cfa68beffb6b2bc2ae9cf04875bd48702669812ce3ecd10b986753a92
+--- mado-terminal.py
++++ probe-selftest-rc.py
+@@ -1425,7 +1425,7 @@
+         shutil.rmtree(base, ignore_errors=True)
+     total = len(cases) + len(extra)
+     print("MADO_TERMINAL_SELFTEST: %d/%d passed" % (passed, total))
+-    return 0 if passed == total else 1
++    return 1
+ 
+ 
+ def main(argv):
+
+== probe-x-observed-prefix [clause x] probe: explain --observed accepts a prefix of its own capture (ignores the command line)
+base mado-terminal.py sha256 1dfde36cfa68beffb6b2bc2ae9cf04875bd48702669812ce3ecd10b986753a92
+--- mado-terminal.py
++++ probe-x-observed-prefix.py
+@@ -1143,7 +1143,7 @@
+     rc = 0 if ok else 3
+     if observed is not None:
+         mine = run_print(env, ["--print-id", "--print-path", "--print-cmd"])[0] if ok else ""
+-        verdict = "AGREE" if mine == observed else "DIFFER"
++        verdict = "AGREE" if mine == observed or mine.startswith(observed) else "DIFFER"
+         rc = 0 if verdict == "AGREE" else 1
+     print("MADO_TERM: selected=%s path=%s cmd=%s cache=%s verdict=%s" % (sel, path, argv0, cache, verdict))
+     return rc
+
+== probe-w-hit-content [clause w] probe: --print-content on a cache HIT reads a wrong path (warm answer only)
+base mado-terminal.py sha256 1dfde36cfa68beffb6b2bc2ae9cf04875bd48702669812ce3ecd10b986753a92
+--- mado-terminal.py
++++ probe-w-hit-content.py
+@@ -1079,7 +1079,8 @@
+         if not first:
+             call_b(pdelim)
+         try:
+-            text = read_file(r.entry_path)
++            text = read_file(r.entry_path + ".probe-hit" if getattr(r, "cache", "") == "hit"
++                             else r.entry_path)
+         except OSError:
+             # `shcat < "$XTE__ENTRY_PATH"` (x:1362): the redirection fails, `set -e` ends the script with status 1;
+             # reachable only from a cache whose entry path is gone (the cold path has just read the entry)
+

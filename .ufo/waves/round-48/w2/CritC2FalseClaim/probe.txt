@@ -1,0 +1,315 @@
+== versions
+1.13.2
+rc=0
+
+== package db (read-only)
+/var/lib/pacman/local/libxkbcommon-1.13.2-1
+/var/lib/pacman/local/xkeyboard-config-2.48-1
+
+== root symlink
+/usr/share/xkeyboard-config-2
+
+== user include paths present on host (boolean only)
+dir-absent
+dir-absent
+dir-absent
+dir-absent
+dir-absent
+
+== positive replay (clause r shape)
+rc=0
+efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/positive.keymap
+ 2090 73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/positive.keymap
+0
+
+== unknown layout
+rc=1
+-- stdout:
+-- stderr:
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg/xkb
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/home/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== unknown variant nope
+rc=1
+-- stderr:
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== variant caps (not a br map)
+rc=1
+-- stderr:
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(caps)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== unknown rules nope
+rc=1
+-- stderr:
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg/xkb
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/home/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "nope"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'nope', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+
+== rules xfree98
+rc=1
+-- stderr:
+xkbcommon: ERROR: [XKB-595] No components returned from XKB rules "xfree98"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'xfree98', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+
+== rules base kccgst
+xkb_keymap {
+  xkb_keycodes { include "xfree86+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(pc105)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+== rules xorg kccgst
+xkb_keymap {
+  xkb_keycodes { include "xfree86+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(pc105)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+== unknown option, default log level (no XKB_LOG_LEVEL)
+rc=0
+-- stderr:
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+
+== unknown model, default level
+rc=0
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+};
+-- stderr bytes=0
+
+== unknown model, XKB_LOG_LEVEL=warn
+rc=0
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+};
+-- stderr:
+
+== unknown model, XKB_LOG_LEVEL=debug (entry says 'silent at every level')
+rc=0
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+};
+-- stderr:
+xkbcommon: INFO: Include path failed: "/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg/xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/home/.xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/etc/xkb" (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config-2.d (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config.d (No such file or directory)
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+
+== no names (defaults)
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+== empty layout + variant intl, default level
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr bytes=0
+
+== empty layout + variant intl, warn level
+xkbcommon: WARNING: Layout not provided, but variant set to "intl": ignoring variant and using defaults for both: layout="us", variant="".
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+
+== two layouts one variant, kccgst
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+us:2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr bytes=0
+
+== two layouts one variant, warn
+xkbcommon: WARNING: More layouts than variants: "br,us" vs. "nodeadkeys".
+xkbcommon: WARNING: Multiple definitions of group 0 name in map 'nodeadkeys'; Using 'Portuguese (Brazil, no dead keys)', ignoring 'Portuguese (Brazil)'
+rc=0
+
+== one layout two variants, default level
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr:
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".
+
+== one layout two variants, warn
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".
+xkbcommon: WARNING: Multiple definitions of group 0 name in map 'nodeadkeys'; Using 'Portuguese (Brazil, no dead keys)', ignoring 'Portuguese (Brazil)'
+
+== two layouts two variants (empty first), kccgst
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+us(dvorak):2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr:
+
+== multi-layout misalignment: 3 layouts 2 variants
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+us(dvorak):2+de:3+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr:
+
+== variant on second layout only, first layout known
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+us(nope):2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+-- stderr:
+
+== include probe A: XDG_CONFIG_HOME/xkb
+rc=0
+MADO48-XDG
+
+== include probe B: XDG unset, HOME/.config/xkb fallback
+rc=0
+MADO48-HOMECONFIG
+
+== include probe B2: XDG set to a nonexistent dir, HOME/.config/xkb present (fallback must NOT apply)
+rc=1
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/mado48" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg-does-not-exist/xkb
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/h2/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'mado48'
+
+== include probe C: HOME/.xkb
+rc=0
+MADO48-DOTXKB
+
+== include probe D: precedence XDG vs HOME/.xkb
+rc=0
+MADO48-XDG
+
+== include probe E: XKB_CONFIG_EXTRA_PATH
+rc=0
+MADO48-EXTRA
+
+== include probe F: HOME=/nonexistent-home, XDG unset
+rc=1
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/mado48" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/nonexistent-home/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/nonexistent-home/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'mado48'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== include probe G: XKB_CONFIG_ROOT overridden to an empty dir
+rc=1
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/evdev" in include paths
+xkbcommon: ERROR: [XKB-338] 2 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg/xkb
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/emptyroot
+xkbcommon: ERROR: [XKB-338] 2 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/home/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "evdev"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'evdev', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+
+== include probe H: verbose include path order under the isolated env
+xkbcommon: INFO: Include path added: /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/xdg/xkb
+xkbcommon: INFO: Include path failed: "/fast/scratch/hyaku/mado-r48/CritC2FalseClaim/home/.xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/etc/xkb" (No such file or directory)
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+
+== host config file digests (read-only)
+3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4  /home/vgpnk/.config/hypr/input.conf
+bee5aa68cbec0c428fae7a5faf7da49a30e6f78ed96e78a063f08b66942448b8  /home/vgpnk/.local/share/omarchy/default/hypr/input.conf
+
+== largest files written
+73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/positive.keymap
+68181 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/ib.out
+68177 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/ic.out
+68176 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/ie.out
+68174 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/id.out

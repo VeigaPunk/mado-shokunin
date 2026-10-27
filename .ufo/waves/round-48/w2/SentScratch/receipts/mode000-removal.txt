@@ -1,0 +1,15 @@
+== does rm -rf remove a mode-000 directory? (own scratch fixture) ==
+error: failed to redirect to /fast/scratch/hyaku/mado-r48/SentScratch/rmtest/inner/f: Permission denied (os error 13)
+mode: d---------
+$ rm -rf -- "$S/rmtest"
+rm: cannot remove '/fast/scratch/hyaku/mado-r48/SentScratch/rmtest/inner': Permission denied
+rc=1
+left behind
+$ chmod -R u+rwX -- "$S/rmtest" && rm -rf -- "$S/rmtest"
+rc=0
+removed
+== real leftover observed ==
+d--------- /fast/scratch/hyaku/mado-r48/RevC1Ls/probe/u/app/unread
+$ du -sh /fast/scratch/hyaku/mado-r48
+du: cannot read directory '/fast/scratch/hyaku/mado-r48/RevC1Ls/probe/u/app/unread': Permission denied
+4.5G	/fast/scratch/hyaku/mado-r48

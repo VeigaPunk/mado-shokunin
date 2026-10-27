@@ -1,0 +1,81 @@
+# RevC1Explain — environment and bounds record
+
+Seat: `RevC1Explain`, round 48 wave `w2` (FALSIFY), lane `/home/vgpnk/Projects/shokunin/mado-shokunin`,
+base `579f694b45c797a9c39761fdb4f9e0a1b71b3585`. Scratch root `/fast/scratch/hyaku/mado-r48/RevC1Explain`
+(deleted at the end). No lane file, registry, counter, entry or fixture was edited; no Git mutation in the lane.
+
+## Instrument bytes scored (read-only, from the lane)
+
+| file | sha256 |
+|---|---|
+| `.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py` | `2a7d03d96d6ea5489fecc110de8d29b83d6c3d2d6abd4e5d4138096d01ccddd4` |
+| `.ufo/waves/round-48/l1-draft/c1-r48-fixtures.json` (204 warm) | `4d946bd7934d4afc40d16676a300a7a10ee077404a2d51e289d9db871cb311aa` |
+| `quality/counters/c1-r47-fixtures.json` (190 cold) | `4836cc1d9e493af7bf15fa52f6e6855fe71c5c27911880847da668e1e313dd86` |
+| `.ufo/waves/round-48/l1-draft/mado-terminal.py` (= tracked `tools/mado-terminal.py`) | `1dfde36cfa68beffb6b2bc2ae9cf04875bd48702669812ce3ecd10b986753a92` |
+| `.ufo/waves/round-47/fetch/xdg-terminal-exec` (pin) | `89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac` |
+
+The two fixture SHA-256 values are exactly the counter's `SHA256_COLD` / `SHA256_WARM`, and the pin matches
+`PIN_SHA256`, so the counter's own `pinned()` gate accepts the bytes scored here.
+
+## Replay tree (the counter's own recipe, with one forced deviation)
+
+`c1-score.sh` recipe: `git clone --shared` the lane, `checkout 579f694`, copy the draft tool to `tools/`,
+copy the draft counter + warm fixture file to `quality/counters/`, commit, score `--rev HEAD`.
+
+Deviation 1 — **sparse checkout**. A full clone checkout cannot be written under the seat's 1 MiB file cap: the lane
+carries corpus files larger than 1 MiB. Observed:
+
+```
+error: unable to write file .ufo/waves/round-22/audit/fixtures/cases/AuditRawOversizedBundle/bundle.json
+fatal: unable to checkout working tree
+```
+
+and the lane's own `.git/index` is 2,771,712 B, so even the index write fails:
+
+```
+fatal: sha1 file '/fast/scratch/hyaku/mado-r48/RevC1Explain/clone-reference/.git/index.lock' write error: File too large
+```
+
+Fixed with `git clone --shared --no-checkout`, `git config index.sparse true`, `git sparse-checkout init --cone`,
+`git sparse-checkout set tools quality .ufo/waves/round-47/fetch`, then `checkout 579f694`. Sparse index: 16,990 B.
+`git -C "$D" rev-parse --show-toplevel` was asserted equal to `$D` before every commit, as the seat requires.
+
+Deviation 2 — **RLIMIT_FSIZE for the instrument process only**. Under the seat's `ulimit -Sf 2048` (1,048,576 B,
+measured with `resource.getrlimit`), the counter itself aborts while assembling its sandbox: it copies the externals
+out of `/usr/bin`, and the largest is `gawk` (1,274,872 B).
+
+```
+OSError: [Errno 27] File too large: '/usr/bin/gawk' -> '.../probe-work/bin-wqm7uvxi/awk'
+```
+
+So the counter call runs in a subshell with `ulimit -Sf 4096` (2 MiB); every file my own commands write stays under
+1 MiB. Largest file produced by any run, instrument or seat: `out-cachepath.txt`, 66,794 B. Peak scratch 363 MB
+(< 2 GB); deleted at the end.
+
+Note: `ulimit -f 2048` also lowers the *hard* limit (bash sets both), which then forbids `ulimit -Sf 4096` in a child
+(`cannot modify limit: Operation not permitted`). The seat's guard is therefore applied as `ulimit -Sf 2048`.
+
+## Runs
+
+Eleven bad controls plus the draft, each committed into its own sparse clone at BASE and scored by the frozen counter:
+
+```
+cd <clone> && python3 -I quality/counters/c1-r48-terminal-cache.py --repo <clone> --rev HEAD --work <work> --nonce 4848
+```
+
+Wall times: 3 counters in parallel ~6–7 min; 2 in parallel ~3 min; 4 in parallel ~5 min. No counter run was repeated to
+"confirm" a result. Two earlier harness attempts produced no evidence (the 1 MiB cap and, once, a script edited while bash
+was reading it); they are not cited anywhere.
+
+## Draft drift
+
+| when | `mado-terminal.py` sha256 | scored as |
+|---|---|---|
+| freeze commit `3e6c848`, `.ufo/waves/round-48/l1-draft/` | `1dfde36cfa68beffb6b2bc2ae9cf04875bd48702669812ce3ecd10b986753a92` | the twelve runs `ref2 … argv0nl` |
+| lane worktree, 2026-10-26 22:53 (uncommitted, 436 insertions) | `d60831ac144a1533f69a244007c76f54c91b8e37817d3ef64eae4e0851e3921f` | drift check `ref3/basen3/emptyword3/argv0nl3` |
+
+The counter (`2a7d03d9…`) and the warm fixture file (`4d946bd7…`) did not change during the wave. `run-one.sh` clones
+committed objects only and copies the named tool file over `tools/`, so no worktree edit can leak into a run; both tool
+snapshots are in `mutant-sha256.txt`. The probe and the patcher now take their tool/module paths as arguments
+(`probe.py TOOL [MUTDIR]`, `patch.py SRC [OUTDIR]`); `receipts/regen-frozen.txt` shows the recorded mutant hashes
+regenerate byte for byte from the freeze draft.

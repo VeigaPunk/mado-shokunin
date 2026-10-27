@@ -1,0 +1,63 @@
+== probe-hash-off [clause w (hash comparison)] the cache hash is not compared: any well-formed cache whose line 2 resolves is trusted
+--- mado-terminal.py
++++ probe-hash-off.py
+@@ -957,7 +957,7 @@
+         if not finished:
+             self.t("cache: %s invalid (no terminator)" % p)
+             return "invalid"
+-        if self.gen_hash() != fields[0] or not self.command_v(fields[1]):
++        if not self.command_v(fields[1]):
+             self.t("cache: %s out of date" % p)
+             return "stale"
+         self.exec_usep = usep
+
+== probe-enable-off [clause w (XTE_CACHE_ENABLED branch)] the cache is read whatever XTE_CACHE_ENABLED says
+--- mado-terminal.py
++++ probe-enable-off.py
+@@ -989,7 +989,7 @@
+         self.reset_keys()
+         self.make_paths()
+         self.cache = "disabled"
+-        if check_bool(self.cache_enabled, self.err):
++        if True:
+             self.cache = self.read_cache()
+             if self.cache == "hit":
+                 return True
+
+== probe-linelimit-off [clause w (50-line limit)] the 50th line no longer ends the cache read
+--- mado-terminal.py
++++ probe-linelimit-off.py
+@@ -946,9 +946,6 @@
+             if n <= 10:
+                 fields[n - 1] = line
+                 continue
+-            if n == 50:
+-                self.t("cache: %s invalid (line limit 50)" % p)
+-                return "invalid"
+             usep = usep + ("\n" if usep else "") + line
+             if line.endswith(CACHE_END):
+                 usep = usep[:-len(CACHE_END)]
+
+== probe-r-spawn [clause r] gen_hash runs `ls -LRl` as a process (byte-identical output; only the trace can see it)
+--- mado-terminal.py
++++ probe-r-spawn.py
+@@ -115,6 +115,7 @@
+ import os
+ import pwd
+ import stat
++import subprocess
+ import sys
+ import tempfile
+ import time
+@@ -924,7 +925,9 @@
+             if k in self.env:
+                 raise OutOfContract("%s set (changes the ls listing the cache hash covers)" % k)
+         operands = split_ifs(":".join(self.configs) + ":" + ":".join(self.app_dirs), ":")
+-        listing = ls_lRL(operands)
++        _p = subprocess.run(["ls", "-LRl"] + operands, capture_output=True,
++                            env={"LC_ALL": "C", "LANG": "C", "PATH": self.env.get("PATH", "/oracle/bin")})
++        listing = _p.stdout
+         self.t("cache: hashing XDG_CURRENT_DESKTOP and ls -LRl of %d operands (%d bytes)" % (len(operands), len(listing)))
+         return hashlib.md5(b"4\n" + echo + listing).hexdigest()
+ 
+

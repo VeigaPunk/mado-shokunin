@@ -1,0 +1,31 @@
+# MutC2Entry scratch recipe (mado round 48, w2, base 579f694b45c797a9c39761fdb4f9e0a1b71b3585)
+# freeze under attack: lane rev 3e6c848a0e1bbc9c7058226b86d0faefc5351c9d (freeze v1)
+scratch: /fast/scratch/hyaku/mado-r48/MutC2Entry (1.4 MB total, removed on exit)
+largest scratch file: clone/.git/objects/73/7fcb54ec8a966b61d80418a705b253da46030c = 115645 B
+largest evidence file: logs/ (2209..3245 B each); diffs/ < 6 KB each
+ulimit -f 2048 applied in every writer shell. Note the unit: bash reports -f in 1024-byte
+blocks, so the effective cap here is 2 MiB, not the 1 MiB the seat spec's parenthetical
+assumes; observed largest file 115645 B, far under either reading.
+no package transaction, no installation, no GUI, no compositor change, no lane Git mutation
+
+1. git clone -q --shared --no-checkout <lane> /fast/scratch/hyaku/mado-r48/MutC2Entry/clone
+   (a checked-out clone is impossible under the cap: the lane's round-20..23 fixtures
+   exceed it; the counter reads only revision objects, so no worktree is needed)
+2. build.py reads the draft bytes from <lane>/.ufo/waves/round-48/l1-draft plus fetch/,
+   receipts/, tools/, inserts rows-c2.md after S339 and readme-row.md after the r47 row,
+   then writes each changed blob with `git hash-object -w` and assembles every tree with
+   `git mktree -z` from `git ls-tree -r 579f694` (no index, no worktree), committing with
+   parent = 579f694. Baseline commit = 2f346d756ee9e15a80fd139d7a0341c8ae382118.
+3. Each spec-*.json names a variant and unique-string byte edits; build.py refuses a
+   non-unique `replace` anchor. Semantic diffs land in variants/<name>/diff.txt (copied to
+   diffs/ here).
+4. Score: TMPDIR=<scratch>/replay python3 -I <lane>/quality/counters/c2-r48-xkb-entry.py \
+      --repo <scratch>/clone --rev <variant>
+   logs/<variant>.txt is the exact stdout+stderr; exit 0 = admitted, 1 = missed, 2 = setup.
+
+frozen instrument digest: c2-r48-xkb-entry.py sha256 4a0e6924eada0d12c70b4ce6e681a118896b93532e280ea3c15cc148b794a9f1
+draft digests: entry 885a2e4187eeba2919c894e53b11d9a5975f2470e904572d58285e364806ec5a
+               rows  951b9f9371a85e456edd82d0edae905c109be758bd55c797c156c7a28de53891
+               readme-row cd57260ef9215371742fd487a6334e7b7125ce4f8eb9af329419bcbe75037c45
+               receipt ab5fa97169306877aeb7218290d99cd4a410639c2833063ca357cb173dfa53cc
+host xkbcli 1.13.2; python 3.14.8; git 2.56.0

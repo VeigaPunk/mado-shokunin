@@ -1,0 +1,23 @@
+# quality/check-landed-contract.py sha256=40f6320c873b3e92e8deedd9db1f130245ab74000f33dbe22cca379a3f8da8fa
+## red: r47 frozen (d7527d60) vs r47 landed (d40189c9:tools/mado-terminal.py)
+ADDED-UNREGISTERED HOME unset
+ADDED-UNREGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-UNREGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 removed=0 unregistered=3 verdict=NARROWED
+rc=1
+## green: same, --registered w1/ScrMistakes/controls/registered-96.txt
+ADDED-REGISTERED HOME unset
+ADDED-REGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-REGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 removed=0 unregistered=0 verdict=OK
+rc=0
+## round 48: freeze 3e6c848a l1-draft vs landed tools/mado-terminal.py (sha256 d60831ac144a1533f69a244007c76f54c91b8e37817d3ef64eae4e0851e3921f)
+CHECK96: frozen=9 landed=9 added=0 removed=0 unregistered=0 verdict=OK
+rc=0
+## w2 D2 control: landed with '-h/--help; ' deleted
+REMOVED-UNREGISTERED -h/--help
+CHECK96: frozen=9 landed=8 added=0 removed=1 unregistered=1 verdict=UNDECLARED
+rc=1
+## w2 D1: the w1 draft on the round-48 pair
+FROZEN-NO-LIST .ufo/waves/round-48/l1-draft/mado-terminal.py carries no 'Also out of contract' list
+rc=2

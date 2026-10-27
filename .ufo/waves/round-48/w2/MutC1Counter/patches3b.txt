@@ -1,0 +1,25 @@
+== probe-r-spawn2 [clause r] delegate ls with a model fallback (selftest keeps its 69/69)
+--- mado-terminal.py
++++ probe-r-spawn2.py
+@@ -115,6 +115,7 @@
+ import os
+ import pwd
+ import stat
++import subprocess
+ import sys
+ import tempfile
+ import time
+@@ -924,7 +925,12 @@
+             if k in self.env:
+                 raise OutOfContract("%s set (changes the ls listing the cache hash covers)" % k)
+         operands = split_ifs(":".join(self.configs) + ":" + ":".join(self.app_dirs), ":")
+-        listing = ls_lRL(operands)
++        try:
++            _p = subprocess.run(["ls", "-LRl"] + operands, capture_output=True,
++                                env={"LC_ALL": "C", "LANG": "C", "PATH": self.env.get("PATH", "/oracle/bin")})
++            listing = _p.stdout
++        except OSError:
++            listing = ls_lRL(operands)
+         self.t("cache: hashing XDG_CURRENT_DESKTOP and ls -LRl of %d operands (%d bytes)" % (len(operands), len(listing)))
+         return hashlib.md5(b"4\n" + echo + listing).hexdigest()
+ 

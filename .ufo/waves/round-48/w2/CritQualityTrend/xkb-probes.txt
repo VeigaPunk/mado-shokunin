@@ -1,0 +1,12 @@
+# CritQualityTrend independent xkbcli probes, 2026-10-27T01:46:11Z UTC
+$ xkbcli compile-keymap --layout br --variant nodeadkeys,intl   (one layout, longer variant list; default log level)
+rc=0
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".
+$ xkbcli compile-keymap --layout br,us --variant nodeadkeys   (two layouts, one variant; default log level)
+rc=0
+$ xkbcli compile-keymap --layout br --variant olpc   (map exists, absent from xkbcli list)
+rc=0
+$ xkbcli list | grep -c "layout: .br."
+9
+$ grep -c xkb_symbols /usr/share/xkeyboard-config-2/symbols/br
+11

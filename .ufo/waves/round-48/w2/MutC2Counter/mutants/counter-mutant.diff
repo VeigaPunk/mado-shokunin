@@ -1,0 +1,91 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-c-digest.py	2026-10-26 22:25:07.414542305 -0300
+@@ -453,7 +453,7 @@
+                 ok = False
+                 continue
+             digest = hashlib.sha256(blob).hexdigest()
+-            if digest not in digests:
++            if False and digest not in digests:  # MUTANT c: pin digest not compared
+                 print("%s %s clause=c id=%s pin_sha_mismatch=%s" % (PRED, name, i, fname))
+                 ok = False
+                 continue
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-c-branch.py	2026-10-26 22:25:07.418879172 -0300
+@@ -410,10 +410,7 @@
+             if not hex40 or not sha_in_row(cells):
+                 return False, "url_ref_absent:%s" % u[:90]
+             continue
+-        if ref in BRANCH_REFS:
+-            return False, "url_branch_ref:%s" % u[:90]
+-        if ref not in TAGS and not re.fullmatch(r"[0-9a-f]{7,40}", ref):
+-            return False, "url_ref_not_pinned:%s" % u[:90]
++        # MUTANT c: any URL ref accepted, branch names included
+     return True, ""
+ 
+ 
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-d-quote.py	2026-10-26 22:25:07.422879172 -0300
+@@ -527,7 +527,7 @@
+                 continue
+             rng = re.match(r".+:(\d+)(?:-(\d+))?$", token)
+             a, b = int(rng.group(1)), int(rng.group(2) or rng.group(1))
+-            at = occurrences(pins[pint], q)
++            at = [a]  # MUTANT d: any quoted span accepted at the stated start line
+             if not at:
+                 print("%s %s clause=d quote_not_in_pin line=%d pin=%s q=%r" % (
+                     PRED, name, ln, pint, q[:70]))
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-e-locator.py	2026-10-26 22:25:07.426456253 -0300
+@@ -563,9 +563,7 @@
+         if hit:
+             cited += 1
+         else:
+-            print("%s %s clause=e step_without_pin_range line=%d uncited=%s" % (
+-                PRED, name, ln, uncited[:3]))
+-            ok = False
++            cited += 1  # MUTANT e: a numbered step with no resolvable pin locator is accepted
+     print("%s %s clause=e steps=%d pin_cited=%d" % (PRED, name, len(steps), cited))
+     return ok
+ 
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-r-digest.py	2026-10-26 22:25:11.382879186 -0300
+@@ -829,7 +829,7 @@
+                     return p.returncode, p.stdout, p.stderr
+ 
+                 rc, out, _ = run(["compile-keymap", "--layout", "br", "--options", "compose:caps"])
+-                if rc != 0 or hashlib.sha256(out).hexdigest() != dig.group(1):
++                if rc != 0:  # MUTANT r: replay digest not compared
+                     print("%s %s clause=r positive_replay_failed rc=%d sha=%s" % (
+                         PRED, name, rc, hashlib.sha256(out).hexdigest()[:12]))
+                     return False
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-h-heldrow.py	2026-10-26 22:25:11.389311613 -0300
+@@ -747,7 +747,7 @@
+     cited = {}
+     for i in HELD:
+         a, b = reg_base.get(i), reg_rev.get(i)
+-        if not a or a != b:
++        if not a:  # MUTANT h: held row content change ignored
+             print("%s %s clause=h held_row_moved=%s" % (PRED, name, i))
+             ok = False
+             continue
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-g-readme.py	2026-10-26 22:25:11.441879187 -0300
+@@ -714,6 +714,7 @@
+ 
+ 
+ def clause_g(readme, ids, name):
++    return True  # MUTANT g: README index row check always true
+     pat = re.compile(r"^\| `knowledge/%s`" % re.escape(os.path.basename(ENTRY)))
+     frows = [l for l in unfenced(readme) if pat.match(l)]
+     if len(frows) != 1:
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r48-xkb-entry.py	2026-10-26 22:19:17.138768034 -0300
++++ /fast/scratch/hyaku/mado-r48/MutC2Counter/counters/m-i-ground.py	2026-10-26 22:25:11.451879187 -0300
+@@ -854,6 +854,7 @@
+ 
+ 
+ def clause_i(repo, rev, base, text, name):
++    return True  # MUTANT i: ground-absent check disabled
+     ok = True
+     present = 0
+     for term in GROUND:

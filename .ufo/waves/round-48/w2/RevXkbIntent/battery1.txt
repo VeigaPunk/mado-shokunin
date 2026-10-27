@@ -1,0 +1,43 @@
+== A host names
+rc=0
+efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  host.keymap
+ 2090 73079 host.keymap
+stderr_bytes=0
+  xkb_symbols { include "pc+br+inet(evdev)+compose(caps)" };
+== B defaults
+  xkb_symbols { include "pc+us+inet(evdev)" };
+== C failure classes
+-- --test --layout zz -> rc=1
+[XKB-338] Couldn't find file "symbols/zz" in include paths
+[XKB-338] 1 include paths searched:
+[XKB-338] 	/usr/share/xkeyboard-config-2
+-- --test --layout br --variant nope -> rc=1
+[XKB-661] Couldn't process include statement for 'br(nope)'
+[XKB-769] Abandoning symbols file "(unnamed map)"
+[XKB-822] Failed to compile keymap
+-- --test --layout br --variant caps -> rc=1
+[XKB-661] Couldn't process include statement for 'br(caps)'
+[XKB-769] Abandoning symbols file "(unnamed map)"
+[XKB-822] Failed to compile keymap
+-- --test --rules xfree98 --layout br -> rc=1
+[XKB-595] No components returned from XKB rules "xfree98"
+[XKB-822] Couldn't look up rules 'xfree98'
+-- --test --rules nope --layout br -> rc=1
+[XKB-338] Couldn't find file "rules/nope" in include paths
+[XKB-338] 1 include paths searched:
+[XKB-338] 	/usr/share/xkeyboard-config-2
+-- --test --layout br --options nope:nope -> rc=0
+[XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+== D model nope
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+== E multi-layout
+  xkb_symbols { include "pc+br(nodeadkeys)+us:2+inet(evdev)" };
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".
+xkb_keymap {
+  xkb_symbols { include "pc+br+us(dvorak):2+inet(evdev)" };
+== F env names
+  xkb_symbols { include "pc+us+inet(evdev)" };
+rc_no_flag=0
+rc_flag=0
+0

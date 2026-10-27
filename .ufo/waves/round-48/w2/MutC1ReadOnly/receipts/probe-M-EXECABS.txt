@@ -1,0 +1,21 @@
+PROBE tag=M-EXECABS tool_sha256=46b4a2d4b7932d8f6c56e855c1af06bec048701961d7942e09854d162a9451b1 counter=c1-r48-terminal-cache.py trace_set=trace=execve,execveat,socket,socketpair,connect
+HOOKRUN rc=0 last='MADO_TERMINAL_SELFTEST: 69/69 passed'
+TOOL_STDERR R48PROBE execabs=ok:rc=0:out=b'/oracle\n'
+TREEFP pre=8ccb39d909966ae3 post=8ccb39d909966ae3 same=True
+TRIPS_AFTER_HOOK 1 execve("/oracle/bin/ls", ["/oracle/bin/ls", "-d", "/oracle"]
+SAMPLE cold=a1-cfg-home-plain-list pass
+SAMPLE cold=a2-cfg-home-beats-cfg-dirs pass
+SAMPLE cold=a3-cfg-home-missing-falls-to-cfg-dirs pass
+SAMPLE cold=a4-cfg-home-empty-list pass
+SAMPLE cold=4/4
+SAMPLE warm=M-07 class=MALFORMED-TERM state=invalid pass
+SAMPLE warm=M-08 class=MALFORMED-EARLY state=invalid pass
+SAMPLE warm=M-09 class=MALFORMED-LIMIT state=invalid pass
+SAMPLE warm=M-10 class=MALFORMED-EMPTY state=invalid pass
+SAMPLE warm=4/4
+SAMPLE explain=a1-cfg-home-plain-list pass
+SAMPLE explain=M-07 pass
+SAMPLE explain=2/2
+TRIPS_TOTAL 17 execve("/oracle/bin/ls", ["/oracle/bin/ls", "-d", "/oracle"]
+PROBE_RESULT tag=M-EXECABS functional=10/10 trips=17 trips_after_hook=1
+rc=0

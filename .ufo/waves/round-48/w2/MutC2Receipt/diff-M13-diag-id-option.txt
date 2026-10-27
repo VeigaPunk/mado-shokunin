@@ -1,0 +1,35 @@
+diff --git a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+index c54264f6..fdaec3a3 100644
+--- a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
++++ b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+@@ -159,7 +159,7 @@ rc=0
+ 
+ --- unknown option
+ $ /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+-xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
++xkbcommon: ERROR: [XKB-596] Unrecognized RMLVO option "nope:nope" was ignored
+ rc=0
+ 
+ --- unknown model, KcCGST
+@@ -283,7 +283,7 @@ rc=0
+ == log level: the default prints ERROR-level lines only
+ --- unknown option at XKB_LOG_LEVEL=warn
+ $ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+-xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
++xkbcommon: ERROR: [XKB-596] Unrecognized RMLVO option "nope:nope" was ignored
+ rc=0
+ 
+ 
+diff --git a/corpus/knowledge/xkb-keymap-compile-r48.md b/corpus/knowledge/xkb-keymap-compile-r48.md
+index 5d3ec3fd..3310862f 100644
+--- a/corpus/knowledge/xkb-keymap-compile-r48.md
++++ b/corpus/knowledge/xkb-keymap-compile-r48.md
+@@ -87,7 +87,7 @@ The five name classes, each run on this host against libxkbcommon 1.13.2-1 and x
+ | `--variant nodeadkeys` (on `br`) | compiles | rc 0 |
+ | `--variant nope`, `--variant caps` (on `br`) | XKB-661 `br(nope)` / `br(caps)`, XKB-769, XKB-822 | rc 1 |
+ | `--options compose:caps` | compiles, `+compose(caps)` | rc 0 |
+-| `--options nope:nope` | XKB-595 `Unrecognized RMLVO option "nope:nope" was ignored` | rc 0 |
++| `--options nope:nope` | XKB-596 `Unrecognized RMLVO option "nope:nope" was ignored` | rc 0 |
+ 
+ Multi-layout: `--layout br,us --variant nodeadkeys` gives symbols `pc+br(nodeadkeys)+us:2+inet(evdev)` and only a WARNING about the missing second variant (visible at `XKB_LOG_LEVEL=warn`); `--layout br --variant nodeadkeys,intl` drops the second variant with an ERROR-level line and still exits 0; `--layout br,us --variant ,dvorak` pairs `dvorak` with `us`. `--layout '' --variant intl` discards the variant and compiles `us`.
+ 

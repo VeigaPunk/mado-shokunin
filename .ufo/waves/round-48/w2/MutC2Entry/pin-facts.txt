@@ -1,0 +1,41 @@
+# True facts in the pinned evidence, with the counter mutation that contradicts them
+
+## v06: rules/evdev layout -> aliases mapping
+64:  *		=	+aliases(qwerty)
+69:  *		=	+aliases(qwerty)
+
+## v07: default include-path order in context.c (append order)
+257:        user_path = asprintf_safe("%s/xkb", xdg);
+259:            ret |= context_include_path_append(ctx, user_path);
+264:        user_path = asprintf_safe("%s/.config/xkb", home);
+266:            ret |= context_include_path_append(ctx, user_path);
+272:        user_path = asprintf_safe("%s/.xkb", home);
+274:            ret |= context_include_path_append(ctx, user_path);
+280:    ret |= context_include_path_append(ctx, extra);
+318:    const bool has_root = context_include_path_append(ctx, root);
+335:                 DFLT_XKB_LEGACY_ROOT, root);
+336:        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+
+## v08/v14: the held S319 fallback resets to layout us
+109:        m_currentRules.rules   = "";
+113:        m_currentRules.layout  = "us";
+232:            CVarList       keyboardLayouts(m_currentRules.layout, 0, ',');
+276:        .rules   = m_currentRules.rules.c_str(),
+278:        .layout  = m_currentRules.layout.c_str(),
+
+## v10: receipt - unknown model compiles (rc 0, geometry pc(pc104))
+1:165:--- unknown model, KcCGST
+8:172-  xkb_geometry { include "pc(pc104)" };
+10:174-rc=0
+
+## v12: receipt - --rules xfree98 exits 1
+235: --- rules xfree98 (file exists, returns no components)
+236: $ /usr/bin/xkbcli compile-keymap --test --rules xfree98 --layout br
+237: xkbcommon: ERROR: [XKB-595] No components returned from XKB rules "xfree98"
+238: xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'xfree98', model 'pc105', layout 'br', variant '(null)', options '(null)'
+239: ERROR: Couldn't create xkb keymap
+240: rc=1
+
+## v13: receipt - wc -lc is 2090 lines / 73079 bytes
+61:2090 lines
+62:73079 bytes

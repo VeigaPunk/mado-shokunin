@@ -1,0 +1,44 @@
+== H. which() class: isolation binaries vs externals
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py:254:        self.bwrap = shutil.which("bwrap")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py:255:        self.strace = shutil.which("strace")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py:260:            src = shutil.which(n, path="/usr/bin")
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c1-r48-terminal-cache.py:918:    if not shutil.which("strace"):
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/l1-draft/c2-r48-xkb-entry.py:810:            k = shutil.which("xkbcli")
+
+== I. under()/lane_root() containment implementation
+175:def lane_root():
+176-    """The directory holding tools/mado-terminal.py, found above this counter's directory."""
+177-    p = os.path.realpath(HERE)
+178-    while p != "/":
+179-        if os.path.isfile(os.path.join(p, "tools", "mado-terminal.py")):
+180-            return p
+181-        p = os.path.dirname(p)
+--
+891:def under(p, root):
+892-    p, root = os.path.realpath(p), os.path.realpath(root)
+893-    return p == root or p.startswith(root.rstrip("/") + "/")
+894-
+895-
+896-def selftest_clause(box):
+897-    sd = tempfile.mkdtemp(dir=box.work, prefix="st-")
+
+== J. independent audit of the frozen warm fixture argvs and cache paths
+fixtures=204 warm=109
+non-print argvs=0 []
+XDG_CACHE_HOME outside $ROOT/.rw=0 []
+warm states={'hit': 74, 'absent': 1, 'stale': 30, 'disabled': 3, 'invalid': 1}
+
+== K. C2 replay env: inherited environment and TMPDIR containment
+815:            S = tempfile.mkdtemp(dir=os.environ["TMPDIR"], prefix="c2r-")
+817:                env = dict(os.environ)
+0
+
+== L. probe args in the w1 seat that runs the pin outside the counter
+70:def run(e, args, wrapper=True):
+79:    rc, out, err = run(env(root), list(args))
+114:        rc, out, err = run(env(root, HOME=None, XDG_CONFIG_HOME=None, XDG_DATA_HOME=None,
+122:        rc, out, err = run(e, ["--print-id"])
+129:        rc, out, err = run(e, ["--print-id"])
+136:        rc, out, err = run(e, ["--print-id"])
+143:        rc, out, err = run(env(root), ["--print-id", "--print-path"])
+150:        rc, out, err = run(env(root), ["--print-id"])

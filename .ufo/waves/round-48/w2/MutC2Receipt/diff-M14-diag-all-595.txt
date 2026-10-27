@@ -1,0 +1,81 @@
+diff --git a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+index c54264f6..4ba55eab 100644
+--- a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
++++ b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+@@ -159,7 +159,7 @@ rc=0
+ 
+ --- unknown option
+ $ /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+-xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
++xkbcommon: ERROR: [XKB-596] Unrecognized RMLVO option "nope:nope" was ignored
+ rc=0
+ 
+ --- unknown model, KcCGST
+@@ -204,7 +204,7 @@ xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+ xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+ xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+ xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+-xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "nope"
++xkbcommon: ERROR: [XKB-596] Cannot load XKB rules "nope"
+ xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'nope', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ ERROR: Couldn't create xkb keymap
+ rc=1
+@@ -234,7 +234,7 @@ rc=0
+ 
+ --- rules xfree98 (file exists, returns no components)
+ $ /usr/bin/xkbcli compile-keymap --test --rules xfree98 --layout br
+-xkbcommon: ERROR: [XKB-595] No components returned from XKB rules "xfree98"
++xkbcommon: ERROR: [XKB-596] No components returned from XKB rules "xfree98"
+ xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'xfree98', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ ERROR: Couldn't create xkb keymap
+ rc=1
+@@ -283,7 +283,7 @@ rc=0
+ == log level: the default prints ERROR-level lines only
+ --- unknown option at XKB_LOG_LEVEL=warn
+ $ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+-xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
++xkbcommon: ERROR: [XKB-596] Unrecognized RMLVO option "nope:nope" was ignored
+ rc=0
+ 
+ 
+diff --git a/corpus/knowledge/xkb-keymap-compile-r48.md b/corpus/knowledge/xkb-keymap-compile-r48.md
+index 5d3ec3fd..16051776 100644
+--- a/corpus/knowledge/xkb-keymap-compile-r48.md
++++ b/corpus/knowledge/xkb-keymap-compile-r48.md
+@@ -38,7 +38,7 @@ Lane: mado-shokunin. Round: 48.
+ 4. **Names to components.** `rules/evdev` maps the names with wildcard sections: any model to keycodes `evdev` (`xkeyboard-config-rules-evdev:55-59`), any layout to `+aliases(qwerty)` (:61-64), any model+layout+variant to symbols `pc+%l%(v)` (:109-175), and each option name explicitly to its symbols include (:529-586). So the host's `br` + `compose:caps` becomes keycodes `evdev+aliases(qwerty)`, types and compat `complete`, symbols `pc+br+inet(evdev)+compose(caps)`, geometry `pc(pc105)` (receipt).
+ 5. **`%l`/`%v` expansion and pairing.** A `%l` or `%v` with no index expands only when a single layout (variant) was given; with several, the index must be written or the `%i` group index used (xkbcommon-rules.c:1257-1279). Expansion marks the name matched (xkbcommon-rules.c:1297) - which is why an unknown layout produces no "ignored" line, but a symbols file name that does not exist. A variant is always expanded next to its layout, and the symbols value carries the group index for every layout after the first (`us:2`, receipt).
+ 6. **File and map lookup.** The generated component names are resolved as `symbols/<file>` over the include paths, first hit wins over the ordered list (xkbcommon-include.c:333); the order is `$XDG_CONFIG_HOME/xkb` (else `$HOME/.config/xkb`), `$HOME/.xkb`, `$XKB_CONFIG_EXTRA_PATH` (`/etc/xkb`), the versioned then unversioned extension directories, and `$XKB_CONFIG_ROOT` (`/usr/share/xkeyboard-config-2`) last (xkbcommon-context.c:243-338). A required file that no path has logs XKB-338 with a census of the paths searched and the paths that could not be added (xkbcommon-include.c:353-358); a file that exists but carries no map of that name logs XKB-661 with the include statement (xkbcommon-include.c:498-506). If the configured root cannot be appended, the legacy root `/usr/share/X11/xkb` is tried instead, silently at the default log level (xkbcommon-context.c:327-337). Precedence is live: a five-line `symbols/zz` placed at `$XDG_CONFIG_HOME/xkb` or `$HOME/.xkb` makes the otherwise fatal `zz` compile (rc 0, byte-identical keymaps), and without either path the same run fails XKB-338 (receipt).
+-7. **What each name class does when it is wrong.** Rules: a missing name fails; an existing name with no components fails. Model: every string matches the model wildcards, so an unknown model compiles - `--model nope` returns keycodes `evdev` and geometry `pc(pc104)` instead of `pc(pc105)`, and prints nothing even at `XKB_LOG_LEVEL=warn`, because a wildcard matched and there is nothing to report (the only trace is the geometry). Layout: the wildcard matches, `%l` substitutes the name into the symbols file, and a name with no `symbols/<name>` file fails the compile: `--layout zz` gives XKB-338 `symbols/zz`, XKB-661 `zz`, XKB-769, XKB-822, rc 1. Variant: the name is expanded into `symbols/<layout>(<variant>)`, so a variant the layout file does not define fails the same way: `br(nope)` and `br(caps)` each give XKB-661 and rc 1, while `br(nodeadkeys)` - a map the file has - compiles. Options: the option sections carry no wildcard (`xkeyboard-config-rules-evdev:529-586`), so an unmatched option is reported and dropped: `nope:nope` gives XKB-595 `Unrecognized RMLVO option "nope:nope" was ignored` and rc 0. The report itself is emitted after a successful resolve for any unmatched model, layout, variant or option (xkbcommon-rules.c:2045-2064).
++7. **What each name class does when it is wrong.** Rules: a missing name fails; an existing name with no components fails. Model: every string matches the model wildcards, so an unknown model compiles - `--model nope` returns keycodes `evdev` and geometry `pc(pc104)` instead of `pc(pc105)`, and prints nothing even at `XKB_LOG_LEVEL=warn`, because a wildcard matched and there is nothing to report (the only trace is the geometry). Layout: the wildcard matches, `%l` substitutes the name into the symbols file, and a name with no `symbols/<name>` file fails the compile: `--layout zz` gives XKB-338 `symbols/zz`, XKB-661 `zz`, XKB-769, XKB-822, rc 1. Variant: the name is expanded into `symbols/<layout>(<variant>)`, so a variant the layout file does not define fails the same way: `br(nope)` and `br(caps)` each give XKB-661 and rc 1, while `br(nodeadkeys)` - a map the file has - compiles. Options: the option sections carry no wildcard (`xkeyboard-config-rules-evdev:529-586`), so an unmatched option is reported and dropped: `nope:nope` gives XKB-596 `Unrecognized RMLVO option "nope:nope" was ignored` and rc 0. The report itself is emitted after a successful resolve for any unmatched model, layout, variant or option (xkbcommon-rules.c:2045-2064).
+ 8. **What the compositor does with a failed compile.** A resolve or parse failure makes the RMLVO call return NULL (xkbcommon-xkbcomp.c:157-166 for the resolve, xkbcommon-xkbcomp.c:60-64 for the parse), which is the only thing Hyprland sees. Hyprland starts from `us` when no layout is configured (S318, `input:kb_layout` default) and resets a keyboard whose names did not compile to layout `us` with every other name empty (S319, the `m_currentRules` reset after a failed keymap). Both are held from round 46 (`hyprland-input-devices-r46.md:33`, its step 4) and are not re-measured here; this entry supplies only the libxkbcommon half of that chain.
+ 9. **Which diagnostics are visible.** The default log level is ERROR (xkbcommon-context.c:503), so WARNING lines are dropped unless `XKB_LOG_LEVEL=warn` (or `--verbose`). A layout/variant count mismatch is a warning and therefore invisible by default; the "was ignored" line for an unmatched option is ERROR-level and therefore visible even though the compile succeeds. The receipt carries the same run at both levels.
+ 
+@@ -46,7 +46,7 @@ Lane: mado-shokunin. Round: 48.
+ 
+ **OBS** S340 (pin opened 2026-10-26): `No index provided: match only if single layout` at xkbcommon-rules.c:1259 - `%l` expands only for a one-element layout list.
+ **OBS** S340: `expanded_value->matched = true;` at xkbcommon-rules.c:1297 - a name consumed by an expansion counts as matched, so step 7's layout case prints no "ignored" line.
+-**OBS** S340: `Unrecognized RMLVO option \"%.*s\" was ignored` at xkbcommon-rules.c:2063 - reported with code XKB-595, after a resolve that succeeded.
++**OBS** S340: `Unrecognized RMLVO option \"%.*s\" was ignored` at xkbcommon-rules.c:2063 - reported with code XKB-596, after a resolve that succeeded.
+ **OBS** S340: `Less layouts than variants: \"%s\" vs. \"%s\".` at xkbcommon-rules.c:530 - the truncation branch's message.
+ **OBS** S341: `ok = xkb_components_from_rules_names(keymap->ctx, rmlvo, &kccgst,` at xkbcommon-xkbcomp.c:157 - the resolve that decides between a compile and an error.
+ **OBS** S341: `Couldn't look up rules '%s', model '%s', layout '%s', ` at xkbcommon-xkbcomp.c:161 - the message that carries the rejected names.
+@@ -79,15 +79,15 @@ The five name classes, each run on this host against libxkbcommon 1.13.2-1 and x
+ | probe | stdout / stderr | exit |
+ |---|---|---|
+ | `--rules base`, `--rules xorg` | compiles, symbols `pc+br+inet(pc105)` | rc 0 |
+-| `--rules xfree98` | XKB-595 `No components returned from XKB rules "xfree98"` | rc 1 |
+-| `--rules nope` | XKB-338 `rules/nope`, XKB-595 `Cannot load XKB rules "nope"`, XKB-822 | rc 1 |
++| `--rules xfree98` | XKB-596 `No components returned from XKB rules "xfree98"` | rc 1 |
++| `--rules nope` | XKB-338 `rules/nope`, XKB-596 `Cannot load XKB rules "nope"`, XKB-822 | rc 1 |
+ | `--model nope` | silent at every level; geometry `pc(pc104)` instead of `pc(pc105)` | rc 0 |
+ | `--layout br` | compiles | rc 0 |
+ | `--layout zz` | XKB-338 `symbols/zz`, XKB-661 `zz`, XKB-769, XKB-822 | rc 1 |
+ | `--variant nodeadkeys` (on `br`) | compiles | rc 0 |
+ | `--variant nope`, `--variant caps` (on `br`) | XKB-661 `br(nope)` / `br(caps)`, XKB-769, XKB-822 | rc 1 |
+ | `--options compose:caps` | compiles, `+compose(caps)` | rc 0 |
+-| `--options nope:nope` | XKB-595 `Unrecognized RMLVO option "nope:nope" was ignored` | rc 0 |
++| `--options nope:nope` | XKB-596 `Unrecognized RMLVO option "nope:nope" was ignored` | rc 0 |
+ 
+ Multi-layout: `--layout br,us --variant nodeadkeys` gives symbols `pc+br(nodeadkeys)+us:2+inet(evdev)` and only a WARNING about the missing second variant (visible at `XKB_LOG_LEVEL=warn`); `--layout br --variant nodeadkeys,intl` drops the second variant with an ERROR-level line and still exits 0; `--layout br,us --variant ,dvorak` pairs `dvorak` with `us`. `--layout '' --variant intl` discards the variant and compiles `us`.
+ 

@@ -1,0 +1,25 @@
+# warm HIT whose cached entry (alpha) differs from the cold selection (bravo); list alpha.desktop -> bravo.desktop is a same-size edit, mtimes pinned at 1600000000
+# tree: /fast/scratch/hyaku/mado-r48/RevC1Counter/diff/R
+list file now: bravo.desktop
+cache line 2/3: alpha
+/fast/scratch/hyaku/mado-r48/RevC1Counter/diff/R/usr/share/applications/./alpha.desktop
+
+## pin --print-content (warm):
+D: cache is actual
+Exec=alpha
+
+## pin --print-content, XTE_CACHE_ENABLED=false (the cold answer):
+Exec=bravo
+
+## pin --print-id warm / cold:
+alpha.desktop
+bravo.desktop
+
+## frozen reference tool --print-content:
+Exec=alpha
+
+## content-cold2 mutant --print-content (WRONG vs the pin):
+Exec=bravo
+
+## content-cold2 explain (cache= the hit it is):
+MADO_TERM: selected=alpha.desktop path=/fast/scratch/hyaku/mado-r48/RevC1Counter/diff/R/usr/share/applications/alpha.desktop cmd=alpha cache=hit verdict=OK

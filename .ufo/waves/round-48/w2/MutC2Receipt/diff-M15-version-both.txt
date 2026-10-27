@@ -1,0 +1,33 @@
+diff --git a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+index c54264f6..62f98e43 100644
+--- a/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
++++ b/.ufo/waves/round-48/receipts/xkbcli-compile-keymap-r48.txt
+@@ -10,7 +10,7 @@ $ /usr/bin/xkbcli --version
+ rc=0
+ 
+ $ ls -d /var/lib/pacman/local/libxkbcommon-[0-9]* /var/lib/pacman/local/xkeyboard-config-[0-9]*   (package database read, no pacman run)
+-/var/lib/pacman/local/libxkbcommon-1.13.2-1
++/var/lib/pacman/local/libxkbcommon-1.13.3-1
+ /var/lib/pacman/local/xkeyboard-config-2.48-1
+ rc=0
+ 
+diff --git a/corpus/knowledge/xkb-keymap-compile-r48.md b/corpus/knowledge/xkb-keymap-compile-r48.md
+index 5d3ec3fd..d2e86610 100644
+--- a/corpus/knowledge/xkb-keymap-compile-r48.md
++++ b/corpus/knowledge/xkb-keymap-compile-r48.md
+@@ -74,7 +74,7 @@ The host's names are `kb_layout = br` and `kb_options = compose:caps` in `~/.con
+ 
+ The verbose log shows the search order step 6 predicts: `~/.config/xkb`, `~/.xkb` and `/etc/xkb` could not be added, the two extension directories `/usr/share/xkeyboard-config-2.d` and `/usr/share/xkeyboard-config.d` do not exist, and `/usr/share/xkeyboard-config-2` is the one include path added (receipt).
+ 
+-The five name classes, each run on this host against libxkbcommon 1.13.2-1 and xkeyboard-config 2.48-1 (receipt):
++The five name classes, each run on this host against libxkbcommon 1.13.3-1 and xkeyboard-config 2.48-1 (receipt):
+ 
+ | probe | stdout / stderr | exit |
+ |---|---|---|
+@@ -112,5 +112,5 @@ Multi-layout: `--layout br,us --variant nodeadkeys` gives symbols `pc+br(nodeadk
+ - Per-layout variant lists are not enumerated: `br` has eleven maps, and the same check on another layout needs its own `symbols/<layout>` read. No layout other than `br`, `us` and the synthetic `zz` was compiled.
+ - The keymap body itself is not archived (about 73 KB); only its digest, byte count and line count are held, so a byte-level comparison of two builds is possible but a semantic diff was not run.
+ - The ruleset the host reads is generated at package build time; the tag's `rules/rules.in` and the generator inputs were not re-run here, so the mapping from `rules.in` to the installed `rules/evdev` is [UNK] beyond the meson target's name.
+-- Only `xkbcli` was executed. The compositor links its own libxkbcommon build; the package is the same 1.13.2-1, but build options (extra include paths, extension directories) are [UNK] for that binary.
++- Only `xkbcli` was executed. The compositor links its own libxkbcommon build; the package is the same 1.13.3-1, but build options (extra include paths, extension directories) are [UNK] for that binary.
+ - The two user include paths were probed in a scratch `XDG_CONFIG_HOME`/`HOME`, not in the real ones; the host's own `~/.config/xkb` and `~/.xkb` do not exist (receipt, XKB-338 census), so their absence is a host fact but their behaviour is inferred from the scratch probe.

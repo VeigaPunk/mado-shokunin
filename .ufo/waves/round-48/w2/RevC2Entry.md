@@ -1,0 +1,39 @@
+# W2 RevC2Entry — falsification report: C2 XKB-compile entry (`l1-draft/xkb-keymap-compile-r48.md`, rows S340-S350, receipt)
+
+Base `579f694b45c797a9c39761fdb4f9e0a1b71b3585`. Attacks run: upstream pin re-fetch (tag and commit), locator/quote check of every cited line, held-row attribution check (S318/S319 pin), generated-evdev wildcard census, receipt replay on the live host, base-absence/ground checks. Full command/output record: `round-48/w2/RevC2Entry/evidence.md`. No lane file touched; no installs (pacman paused, none needed); scratch `/fast/scratch/hyaku/mado-r48/RevC2Entry` bounded (`ulimit -f 2048` on every writer shell; largest file 74,868 B) and removed.
+
+## Findings
+
+### M1 (medium) — step 9 misstates error severity; contradicted by the entry's own step 2 and by the receipt
+- Claim (step 9): "A layout/variant count mismatch is a warning and therefore invisible by default."
+- Evidence: pinned `xkbcommon-rules.c` (tag xkbcommon-1.13.2, sha 04dfd934…): the fewer-layouts-than-variants branch is `log_err` at :529-532 (`"Less layouts than variants: \"%s\" vs. \"%s\".\n"`); only the more-layouts branch is `log_warn` (:523-526, and only when a variant string was supplied, :521-522). The frozen receipt itself carries the counter-example at the **default** log level: `xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".` (rc 0); my independent replay reproduced it (`--kccgst --layout br --variant nodeadkeys,intl`, no `XKB_LOG_LEVEL`). The entry's step 2 ("truncated with an ERROR-level line", rules.c:528-535) and its Live section are correct — step 9's blanket sentence is the false one. The "Reading a failure" row ("a WARNING hidden by the default log level (step 9)") inherits the error.
+- Claim effect: observable behavior is misdescribed inside the frozen-candidate entry; a reader diagnosing a silent keymap re-runs with `XKB_LOG_LEVEL=warn` for a line that already prints at default. Repair before data commit: split the sentence — more layouts than variants → WARNING (hidden by default, and only when a variant string is non-empty); fewer layouts than variants → ERROR, visible by default, compile still succeeds (rc 0).
+- Note: this sentence carries no pin locator, so counter clause d (quotes at pin ranges) cannot catch it — a pre-data hole fixable by L1 now; after data it would be prose-erratum-only.
+
+### L1 (low) — step 6 "precedence observed" overstates what the probes measured
+- Claim (step 6 / licenses table): "Precedence is live: … (rc 0, byte-identical keymaps)" and "which path wins … precedence observed".
+- Evidence: the receipted probes place the *same* `symbols/mado48` bytes at `$XDG_CONFIG_HOME/xkb` and at `$HOME/.xkb` in separate single-path runs (I replayed the XDG leg: rc 0). That observes availability at either user path, not which path wins when both exist. The path *order* is nonetheless evidenced two other ways: the receipt's verbose log prints the failed include paths in order (`~/.config/xkb`, `~/.xkb`, `/etc/xkb`, both extension dirs, then root added), and the order is code-sourced (context.c:243-338; xkbcli expands its placeholder via `xkb_context_include_path_append_default` at tools-compile-keymap.c:601).
+- Claim effect: minor wording overreach; conclusion (order, user paths precede the root) stands on cited evidence. Suggest "order observed in the attempt log; between-user-path precedence code-sourced".
+
+### N1 (nit) — step 4 gloss "any model to keycodes `evdev`" skips three non-wildcard rows
+rules-evdev:55-59 also maps `$jollamodels` → `evdev+jolla(jolla)` and `olpc`/`olpcm` → `evdev+olpc(olpc[m])`; the `*` row (:59) is what unknown models hit. Harmless for the unknown-model claim; "any model" is not literally the section's content.
+
+### N2 (nit) — "only a WARNING about the missing second variant"
+The same warn-level receipt run also prints `Multiple definitions of group 0 name in map 'nodeadkeys'` (a br+nodeadkeys group-name warning, not an alignment diagnostic). Cosmetic.
+
+## Verified held (attacked, did not break)
+- **Pin binding**: all 9 libxkbcommon pins byte-equal to upstream at tag xkbcommon-1.13.2 **and** commit d1442aaa6b63…; rules.in, symbols/br and rules/meson.build byte-equal at tag xkeyboard-config-2.48 **and** commit cf8d1151bb4c…; S319's Hyprland-IKeyboard.cpp byte-equal at efb509937800…. Host `/usr/share/xkeyboard-config-2/rules/evdev` and `symbols/br` byte-equal to their pins.
+- **Empty options vs NULL**: context-priv.c:218-219 — options replaced only when `rmlvo->options == NULL`; `""` respected. Hyprland passes `.c_str()` for all five names, never NULL (IKeyboard.cpp:67-73), so empty `kb_options` stays empty and empty `kb_layout` routes to `XKB_DEFAULT_LAYOUT` (sanitize :202-217, variant discarded with a default-hidden warning :207-208). Entry step 1 correct.
+- **Hyprland `NO_FLAGS`**: `xkb_context_new(XKB_CONTEXT_NO_FLAGS)` at IKeyboard.cpp:75 (and :226); context.c:505 → env names read. Step 1's compositor-context claim is supported by the held pin it cites.
+- **xkbcli env flags**: tools-compile-keymap.c:585-587; receipt shows `XKB_DEFAULT_LAYOUT=zz` ignored without the flag (`pc+us`) and honored with `--enable-environment-names` (`pc+zz`). Step 1 correct.
+- **Generated evdev mapping**: wildcards at :55-59/:61-64/:109-175 (`pc+%l%(v)` at :175), `compose:caps` → `+compose(caps)` at :570; no `*` row in any `! option` section (starts 529/729/738); geometry `* = pc(pc104)` (:107) explains the receipted `--model nope` → `pc(pc104)`.
+- **Include order & legacy fallback**: context.c:243-338 order as claimed (user XDG/home, extra `/etc/xkb`, versioned-then-unversioned extension subdirs — `add_direct_subdirectories` appends them at :212 — root last :317-318); legacy-root fallback :330-336 is a WARNING at default level (receipt: `Root include path failed; fallback to "/usr/share/X11/xkb"`, rc 0; `/usr/share/X11/xkb` → xkeyboard-config-2 symlink). First-hit-wins at include.c:333 (`*offset = i` + out). XKB-338 census :353-358, XKB-661 :498-506 — quotes verbatim.
+- **Error severities** (except M1): default level ERROR (context.c:503); option-ignored is ERROR-level with rc 0 (rules.c:2060-2063); ids 338/595/661/769/822 all registered (messages-codes.h :116/:150/:162/:178/:190).
+- **Receipt replay**: positive digest efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81 (73079 B / 2090 lines, empty stderr), KcCGST `pc+br+inet(evdev)+compose(caps)`, all three negative probes (zz rc 1, br(nope) rc 1, nope:nope rc 0) reproduced byte-for-message on the live host; 11 maps in symbols/br; four rulesets in the package `ls`.
+- **Ground/no-harm prerequisites**: r46:69 and base README:112 carry the cited held-open quotes; r46:33 is step 4; entry and S340-S350 absent at base; README anchor row present; readme-row.md is one 3-cell row naming S340-S350; census line fields all reproduce (incl. MAX_INCLUDE_DEPTH 5, include_paths 4+2).
+
+## Residual risk / verification gaps
+- Between-user-path precedence (XDG vs `$HOME/.xkb` with differing content) was never measured — only single-path availability (basis of L1).
+- `rules.in` → installed `rules/evdev` generation was not re-run (entry's own [UNK], correctly disclosed); a package rebuild can change wildcards without a tag change.
+- Whether Hyprland's process environment carries any `XKB_DEFAULT_*` remains [UNK] (entry says so); adjacent env couplings not covered by the entry: `XKB_DEFAULT_VARIANT` is ignored unless `XKB_DEFAULT_LAYOUT` is also set (context-priv.c:165-172), and `XKB_DEFAULT_OPTIONS` only reaches a caller that passes NULL options — Hyprland's `""` never does. Omissions, not errors.
+- I did not re-score the counter itself (L1's clause r replays); M1 sits in locator-free prose the frozen clauses cannot see, so the predicate would admit the entry as-is — repair belongs to L1 before the data commit.

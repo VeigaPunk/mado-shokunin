@@ -1,0 +1,51 @@
+$ A1 check96 RED on HEAD-committed tool bytes
+ADDED-UNREGISTERED HOME unset
+ADDED-UNREGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-UNREGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 unregistered=3 removed=0 verdict=NARROWED
+rc=1
+
+$ A2 check96 on candidate bytes (working tree == r48 l1-draft)
+LANDED-NO-LIST tools/mado-terminal.py carries no 'Also out of contract' list
+rc=2
+
+$ A3 check96 deletion-only narrowing (landed = frozen minus two items)
+REMOVED -h/--help
+REMOVED and file names with bytes the shell would see differently in another locale
+CHECK96: frozen=6 landed=4 added=0 unregistered=0 removed=2 verdict=OK
+rc=0
+
+$ A4 check96 three-word-head erratum registers the full delta
+ADDED-REGISTERED HOME unset
+ADDED-REGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-REGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 unregistered=0 removed=0 verdict=OK
+rc=0
+
+$ B check98 roster mention routes seats without disposition
+SEAT RevSessionMarker       hits=1   token=coverage gap       report=0 lesson=1 verdict=ROUTED
+SEAT RevengerCache          hits=1   token=coverage gap       report=1 lesson=0 verdict=ROUTED
+CHECK98: seats=44 finding_seats=7 unrouted=2 verdict=UNROUTED
+
+$ B2 check98 semantic blind spot without trigger phrase -> not a finding seat
+CHECK98: seats=1 finding_seats=0 unrouted=0 verdict=OK
+
+$ C check97 uppercase-key count evades (Findings=128 unreceipted)
+CHECK97: tokens=1 missing=0 receipts=34 verdict=OK
+rc=0
+
+$ F1 check100 negated ulimit mention counts ENFORCED
+ENFORCED /fast/scratch/hyaku/mado-r48/ScoutQualityCriteria/final.tLKLKO/neg.json ulimit -f 2048
+PROSE /fast/scratch/hyaku/mado-r48/ScoutQualityCriteria/final.tLKLKO/neg.json ceiling=2 GB
+CHECK100: sources=1 enforced=1 prose=1 verdict=OK
+rc=0
+
+$ D check100 on round-48 w2 spec (summary line only)
+CHECK100: sources=1 enforced=49 prose=102 verdict=OK
+rc=0
+
+$ B-complete: all 7 finding seats named in a bare roster -> unrouted=0 with zero disposition lines
+$   python3 -I check98.py --repo . --rev d40189c9... --seats .ufo/waves/round-47/w2 --lesson corpus/lessons/round-47.md --report <roster naming all 7> --report-text
+SEAT RevengerCache          hits=1   token=coverage gap       report=1 lesson=0 verdict=ROUTED
+CHECK98: seats=44 finding_seats=7 unrouted=0 verdict=OK
+rc=0

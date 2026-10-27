@@ -1,0 +1,17 @@
+pristine line11 = b'foot\x1f--a\x1eEND_OF_EXEC_USEP'
+mutated  line11 = b'f\not\x1f--a\x1eEND_OF_EXEC_USEP'
+oracle warm=(0, 'f\not\n--a\n') state='hit' cold=(0, 'feot\n--a\n') cstate='absent'
+tool explain output on the hit tree:
+  explain rc=0
+  ---
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM_TRACE: cache: hashing XDG_CURRENT_DESKTOP and ls -LRl of 8 operands (289 bytes)
+MADO_TERM_TRACE: cache: /fast/scratch/hyaku/mado-r48/CritC1OneByte/work/hole/o/r/.rw/cache/xdg-terminal-exec actual: foot.desktop /fast/scratch/hyaku/mado-r48/CritC1OneByte/work/hole/o/r/home/.local/share/applications/./foot.desktop
+MADO_TERM: selected=foot.desktop path=/fast/scratch/hyaku/mado-r48/CritC1OneByte/work/hole/o/r/home/.local/share/applications/foot.desktop cmd=f
+ot cache=hit verdict=OK
+  ---
+counter term_line(out) -> None
+clause w run_case ok=True state='hit' why=''
+check_premise: ok
+clause x explain_case ok=False why="unparseable MADO_TERM line: 'MADO_TERM: selected=foot.desktop path=$ROOT/home/.local/share/applications/foot.desktop cmd=f'"
+fixture written

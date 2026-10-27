@@ -1,0 +1,64 @@
+== K1: HOME/.xkb vs XKB_CONFIG_EXTRA_PATH (claimed order: HOME/.xkb first)
+MADO48-DOTXKB-H6
+rc=0
+
+== K2: extra path vs versioned extensions dir (claimed order: extra first)
+MADO48-DOTXKB-H6
+rc=0
+
+== K3: versioned vs unversioned extensions dir (claimed order: versioned first)
+rc=127
+env: ‘-u’: No such file or directory
+
+== K4: verbose path order with extensions set
+xkbcommon: INFO: Include path added: /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/h6/.xkb
+xkbcommon: INFO: Include path added: /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/extra
+xkbcommon: INFO: Include path added: /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/extv/subv
+xkbcommon: INFO: Include path added: /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/extu/subu
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+
+== N-fixed: user rules file at the real include path wins (empty rules/evdev shadow)
+rc=1
+xkbcommon: ERROR: Couldn't read rules file "/usr/share/xkeyboard-config-2/rules/evdev.pre": Invalid argument
+xkbcommon: ERROR: [XKB-595] Error while parsing XKB rules "/usr/share/xkeyboard-config-2/rules/evdev.pre"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'evdev', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+
+== N2-fixed: user rules/custom used when --rules custom
+rc=0
+include "evdev+aliases(qwerty)"
+include "complete"
+include "complete"
+include "pc+br+inet(evdev)"
+include "pc(pc105)"
+
+== N3: rules/custom.post is read (option section added by post file)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)+mado48" }
+
+== N4: same with custom.pre instead of custom.post (pre is read before the main file)
+rc=0
+xkb_symbols { include "pc+br+inet(evdev)+mado48+inet(evdev)" }
+
+== R1: real host env (no scratch HOME) - positive digest and stderr
+rc=0
+efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/r1.keymap
+0
+
+== R2: real host env, unknown layout stderr census (host paths)
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+
+== R3: real host env, unknown model at drill level, with --test (RMLVO debug line)
+xkbcommon: DEBUG: Compiling from RMLVO: rules 'evdev', model 'nope', layout 'br', variant '(null)', options '(null)'
+
+== largest files
+73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/r1.keymap
+73079 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/positive.keymap
+68181 /fast/scratch/hyaku/mado-r48/CritC2FalseClaim/tmp/ib.out

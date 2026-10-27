@@ -1,0 +1,16 @@
+diff --git a/tools/mado-terminal.py b/tools/mado-terminal.py
+index 32e48dd..052984c 100755
+--- a/tools/mado-terminal.py
++++ b/tools/mado-terminal.py
+@@ -990,9 +990,8 @@ class Resolver:
+         self.make_paths()
+         self.cache = "disabled"
+         if check_bool(self.cache_enabled, self.err):
+-            self.cache = self.read_cache()
+-            if self.cache == "hit":
+-                return True
++            self.cache = "absent"
++            self.t("cache: %s ignored (cold-only)" % self.cache_file)
+         self.read_config_paths()
+         self.find_entry_paths()
+         return self.find_entry()

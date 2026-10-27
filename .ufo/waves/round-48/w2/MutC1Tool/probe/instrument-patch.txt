@@ -1,0 +1,20 @@
+MutC1Tool — the one-line probe instrument used for the repair measurement (NOT the frozen instrument).
+
+Frozen instrument (unchanged, scored in out/*.txt): quality/counters/c1-r48-terminal-cache.py,
+sha256 3a3f0b1c… see clause-summary/mutant runs; SHA256_WARM = 4d946bd7934d4afc40d16676a300a7a10ee077404a2d51e289d9db871cb311aa
+over the 204-item c1-r48-fixtures.json.
+
+Probe instrument (scratch only, two scratch repos under /fast/scratch/hyaku/mado-r48/MutC1Tool/gap/):
+  * quality/counters/c1-r48-fixtures.json  = the frozen 204 items + probe/proposed-fixture-W-GAP-CMDV-NONEXEC.json
+                                             appended (205 items; 4096-byte-for-byte else identical),
+                                             sha256 a0893b5b6a40268ec11fc8740a9ad82b22e7d7da1e2a2b39452add0cc91b0b10
+  * quality/counters/c1-r48-terminal-cache.py = frozen bytes with exactly one line replaced:
+        - SHA256_WARM = "4d946bd7934d4afc40d16676a300a7a10ee077404a2d51e289d9db871cb311aa"
+        + SHA256_WARM = "a0893b5b6a40268ec11fc8740a9ad82b22e7d7da1e2a2b39452add0cc91b0b10"
+Nothing else in the counter changed; NO other clause, fixture, pin, nonce or threshold was touched.
+
+Observed (out/gap-draft.txt, out/gap-m4.txt):
+  draft  (l1-draft tool) : warm=205/205 explained=395/395 verdict=TARGET_MET
+  m4     (existence-only command -v): warm=204/205 explained=394/395
+          clause=w fixture=W-GAP-CMDV-NONEXEC FAIL oracle=(0,'kitty\n') tool=(0,'foot\n')
+          clause=x fixture=W-GAP-CMDV-NONEXEC FAIL got cache=hit want cache=stale
