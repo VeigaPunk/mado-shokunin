@@ -2839,8 +2839,8 @@ Claims were frozen in `.ufo/waves/round-54/claims-frozen.md`; the source pins an
 
 | Claim / axis | Before → after measurement | Counting command | Verdict |
 |---|---|---|---|
-| C1 **operability** — errata source-truth verifier capability | Counter absent at base `e25149fec8152a3aabd2b18a0ee8663b23cf65aa` and absent at final content revision; no production `MADO_ERRATA_TRUTH` result. W1 prototypes disagree on whether the frozen quote clause permits whitespace normalization; literal matching scores 1/4 on the source pins, while whitespace collapse reaches 4/4. W1 also found P19's English proposition contradicted by the adjacent source branch. | `git ls-tree -r --name-only <rev> quality/counters | grep -c 'c1-r54-errata-truth.py'` → `0` at base and final content revision. | **unprovable / honest stop**; target not met, no score or capability delta. |
-| C2 **coverage** — sourced `uwsm-app` environment entry | The frozen target entry was absent at base and withdrawn before landing; no final `admitted=1/1` result exists. W1 found S375's registered span too short, S376's literal quote omits source emphasis, source-row quote cells are not the registered frozen quotes, and the autostart host-set summary conflicts with the opened file. | `git ls-tree -r --name-only <rev> corpus/knowledge | grep -c 'uwsm-app-environment-r54.md'` → `0` at base and final content revision. | **unprovable / honest stop**; no coverage score delta or admitted entry. |
+| C1 **operability** — errata source-truth verifier capability | Counter count 0 at base `e25149fec8152a3aabd2b18a0ee8663b23cf65aa` and 0 at content revision `9ea87392857d26ae023512979ea1bea8b66bbb61`; no production `MADO_ERRATA_TRUTH` result. W1's literal quote reading gives 1/4; whitespace-normalized prototypes give 4/4, and the registered clause authorizes neither interpretation consistently. W1 also found P19's English proposition contradicted by the adjacent source branch. | `git -C . ls-tree -r --name-only <rev> quality/counters | awk 'index($0,\"c1-r54-errata-truth.py\"){n++} END{print n+0}'` → `0` at base and `9ea8739`. | **unprovable / honest stop**; target not met, no score or capability delta. |
+| C2 **coverage** — sourced `uwsm-app` environment entry | Entry count 0 at base `e25149fec8152a3aabd2b18a0ee8663b23cf65aa` and 0 at content revision `9ea87392857d26ae023512979ea1bea8b66bbb61`; the draft entry was withdrawn; no final `admitted=1/1` result exists. W1 found S375's registered span too short, S376's literal quote omits source emphasis, source-row quote cells are not the registered frozen quotes, and the autostart host-set summary conflicts with the opened file. | `git -C . ls-tree -r --name-only <rev> corpus/knowledge | awk 'index($0,\"uwsm-app-environment-r54.md\"){n++} END{print n+0}'` → `0` at base and `9ea8739`. | **unprovable / honest stop**; no coverage score delta or admitted entry. |
 
 ### Sources, capabilities, and learning
 
@@ -2850,11 +2850,11 @@ Claims were frozen in `.ufo/waves/round-54/claims-frozen.md`; the source pins an
 - **quality: harmed** — w1 source review found the extant P19 proposition in `hyprland-synthetic-dispatch-r52-errata-r53.md` overstates its quoted branch: the pin's `else` path at `ConfigActions.cpp:1566-1569` also sends a PRESSED key. The issue is recorded in M54-5 but the r53 entry was not rewritten or corrected in this frozen round.
 - **discernment: unchanged** — no non-author closure review was available at report time; dispatched seats are lane authors. S376's narrow source-row decision and the S375/S377 rejections await outside spot-check.
 
-Mistakes M54-1–M54-5 are in `corpus/lessons/round-54.md`. No axis score changed; no capability entered. Tool installs/updates: none.
+Mistakes M54-1–M54-7 are in `corpus/lessons/round-54.md`. No axis score changed; no capability entered. Tool installs/updates: none.
 
 ### Wave record and next-round plan
 
-Shape: two v1 waves, w1 37 seats + w2 32 seats = 69 total. L1 held planner. W1 role mix: executor 10, scribe 7, scout 4, reviewer 7, critic 3, mutation-tester 2, connector 2, sentinel 1, simplifier 1; attack roles reviewer+critic+mutation-tester 12/37. W2 role mix: reviewer 11, critic 10, mutation-tester 6, scout 3, connector 2; attack roles 27/32. Both results files are committed under `.ufo/waves/round-54/`; dead seats: 0 in either wave; residual call: none.
+Shape: two v1 waves, w1 37 seats + w2 32 seats = 69 total. L1 held planner. W1 role mix: executor 10, scribe 7, scout 4, reviewer 7, critic 3, mutation-tester 2, connector 2, sentinel 1, simplifier 1; attack roles reviewer+critic+mutation-tester 12/37. W2 role mix: reviewer 11, critic 10, mutation-tester 6, scout 3, connector 2; attack roles 27/32. Results and specs are under `.ufo/waves/round-54/`; dead seats: 0 in either wave; three terminal seat outputs lack assigned markdown sidecars (R54Seat06, R54Seat19, R54W2Seat06); residual call: none.
 
 ### Planned (round 55; intent only)
 

@@ -1,0 +1,24 @@
+Committed revision count comparisons. Commands executed from /home/vgpnk/Projects/shokunin/mado-shokunin.
+
+Command for C1 counter count:
+`git -C . ls-tree -r --name-only REV quality/counters | awk 'index($0,"c1-r54-errata-truth.py"){n++} END{print n+0}'`
+Command for C2 entry count:
+`git -C . ls-tree -r --name-only REV corpus/knowledge | awk 'index($0,"uwsm-app-environment-r54.md"){n++} END{print n+0}'`
+README index count:
+`git show REV:corpus/README.md | awk -F'|' '$2 ~ /knowledge\\/[^`]+\\.md/ {n++} END{print n+0}'`
+SOURCES row count:
+`git show REV:corpus/SOURCES.md | awk -F'|' '$2 ~ /^[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*$/ {n++} END{print n+0}'`
+
+measure_before=e25149fec8152a3aabd2b18a0ee8663b23cf65aa
+c1_counter=0
+c2_entry=0
+README_index=69
+SOURCES_rows=311
+
+measure_after=9ea87392857d26ae023512979ea1bea8b66bbb61
+c1_counter=0
+c2_entry=0
+README_index=69
+SOURCES_rows=314
+
+`bash tools/mado-verify.sh --selftest` → `MADO_SELFTEST: 460/460 assertions passed`, exit 0, working tree at content revision 9ea87392857d26ae023512979ea1bea8b66bbb61.
