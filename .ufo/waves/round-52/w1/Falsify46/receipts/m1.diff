@@ -1,0 +1,13 @@
+diff --git a/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md b/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
+index ce5ae2fa..9cef8b30 100644
+--- a/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
++++ b/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
+@@ -29,6 +29,8 @@ recheck: on-release - re-read the four pinned files when Hyprland leaves 0.56.2.
+ 16. **P16 (S371).** Proposition P16 reads: A written selector that resolves nothing and an empty selector end in different delivery paths: empty passes nullptr and the focus switch is skipped. The pinned bytes say: `if (!window) return {};` (Hyprland-ConfigActions.cpp:1578-1579).
+ 17. **P17 (S370).** Proposition P17 reads: A keysym the scan cannot find fails with `key not found` inside the scan, distinct from the later generic `invalid key` guard. The pinned bytes say: `return {.success = false, .error = "sendshortcut: key not found"};` (Hyprland-legacy-DispatcherTranslator.cpp:574).
+ 
++17. **The repeat branch reuses the string.** A repeat dispatch passes the identical rebuilt `modifiedArgs` buffer to the second delegate call rather than re-reading the argument (Hyprland-legacy-DispatcherTranslator.cpp:620).
++
+ ## Proposition map
+ 
+ | id | claim | row | pin | quote | support |

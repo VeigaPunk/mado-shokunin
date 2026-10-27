@@ -1,0 +1,60 @@
+# variant: /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py
+# sha256: 6e581c246e9a5d646edd586bcff2c9a387a7f29b03a2766bd8bf640fd0b6febe
+## PROBE G-green (claim: production pass at frozen rev)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack21/runs/g
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+## PROBE R-red (claim: control fail at frozen rev)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack21/runs/r --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+C1_R52: population=82 ledger_rows=0 uncovered=82 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+## PROBE B1-worktmp (W1 control: --work /tmp refused before creation)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /tmp/c1r52-attack21-refused
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+residue: /tmp/c1r52-attack21-refused absent inside sandbox
+exit=1
+## PROBE B2-notmp (W1 control: --work or TMPDIR required)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+## PROBE B3-tmpdirtmp (W1 control: TMPDIR=/tmp/... refused)
+$ (bwrap, TMPDIR=/tmp/c1r52-attack21-tmp) counter --repo LANE --rev REV --ledger CTRL
+C1_R52: population=82 ledger_rows=0 uncovered=82 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+## PROBE B4-scratchtmp (valid TMPDIR; measure mode writes nothing)
+$ (bwrap, TMPDIR=/fast/scratch/hyaku/mado-r52/Attack21/tmp) counter --repo LANE --rev REV
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+residue in TMPDIR after run: 0 entries
+## PROBE S1-selftest (registration: selftest red/green receipts)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --selftest --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack21/runs/s1
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+## PROBE S2-selftest-standalone (selftest standalone invocation shape)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --selftest --work /fast/scratch/hyaku/mado-r52/Attack21/runs/s2
+usage: mut_worktree.py [-h] --repo REPO --rev REV [--ledger LEDGER]
+                       [--selftest] [--work WORK]
+mut_worktree.py: error: the following arguments are required: --repo, --rev
+exit=2
+## PROBE P-pin (predicate: runs at requested pinned revision (dirty worktree ignored))
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /fast/scratch/hyaku/mado-r52/Attack21/fixture/repo --rev 2c4c99f7ca43894d18061fdeb3051e2df0831b0b --work /fast/scratch/hyaku/mado-r52/Attack21/runs/p
+C1_R52: population=2 ledger_rows=3 uncovered=1 dup=1 dangling=0 bad_pointer=1 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=2c4c99f7ca43894d18061fdeb3051e2df0831b0b
+exit=1
+## PROBE F3-counterfeit (W1 signal: F3 forged-context control vs candidate)
+$ (bwrap) python3 -I /fast/scratch/hyaku/mado-r52/Attack21/bytes/mut_worktree.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack21/runs/f3 --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-F3-forged.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+## HOST LEAK CHECK
+host /tmp/c1r52-attack21-refused absent (no leak)
+host /tmp/c1r52-attack21-tmp absent (no leak)
+# summary:
+G-green rc=1
+R-red rc=1
+B1-worktmp rc=1
+B2-notmp rc=1
+B3 rc=1
+B4 rc=1
+S1-selftest rc=1
+S2-selftest-standalone rc=2
+P-pin rc=1
+F3-counterfeit rc=0

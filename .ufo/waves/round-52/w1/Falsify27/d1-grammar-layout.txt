@@ -1,0 +1,30 @@
+control: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+ledger path the counter checks: quality/tool-ledger.md
+
+== Grammar A: c1-r51-ledger.py parse_rows/pointer_tokens ==
+rows yielded: 2
+row 1: ncells=4 path='tools/mado-verify.sh'
+  desc cell    = 'quality/tool-ledger.md (commentary only)'   <- where the self-referential path sits
+  pointer cell = 'nothing | generic accountability pointer to this ledger itself'
+  pointer tokens resolvable as repo paths: []
+  desc is placeholder-only (counter empty_desc rule): False
+row 2: ncells=4 path='tools/mado-verify.sh'
+  desc cell    = 'quality/tool-ledger.md (commentary only)'   <- where the self-referential path sits
+  pointer cell = 'nothing | generic accountability pointer to this ledger itself'
+  pointer tokens resolvable as repo paths: []
+  desc is placeholder-only (counter empty_desc rule): False
+duplicate row paths: 1
+
+== Grammar B: check-tool-ledger.py parse_rows/pointer_tokens ==
+rows yielded: 0 ; malformed rows: 2
+  malformed line 3: 4 cells (grammar requires exactly 3)
+  malformed line 4: 4 cells (grammar requires exactly 3)
+
+== where does the self-referential path appear? ==
+line 3: self-path appears in pipe-column(s) [2] (1-based data cells): ['quality/tool-ledger.md (commentary only)']
+line 4: self-path appears in pipe-column(s) [2] (1-based data cells): ['quality/tool-ledger.md (commentary only)']
+
+conclusion surface: in neither grammar does a pointer CELL contain a resolvable
+path token equal to (or any path at all pointing at) the ledger; the self-
+referential path lives in the description/read cell, so a non-self clause has
+no pointer token to compare against the ledger path on these bytes.

@@ -1,0 +1,10 @@
+== ISOLATION BREAK 1: same --rev e5b3e82b874d5472892a8856cd0df14013924432, evidence removed from working tree only (no commit) ==
+-- git ground truth: pinned-revision blob intact:
+  git cat-file -e e5b3e82b874d5472892a8856cd0df14013924432:tools/demo-tool.sh -> present
+-- git status:
+ D tools/demo-tool.sh
+?? tools/demo-tool.sh.hold
+-- naive counter verdict (population still from pinned rev via ls-tree):
+detail: bad_pointer path=tools/demo-tool.sh
+NAIVE_C1: population=1 ledger_rows=1 dup=0 bad_pointer=1 self_pointer=0 context=0 verdict=TARGET_MISSED rev=e5b3e82b874d5472892a8856cd0df14013924432
+exit=1

@@ -1,0 +1,178 @@
+C1Fixture — re-verification of the peer counter after its --work change
+=======================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (seat C1CounterDesign, seat dir, not yet integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  OLD sha256 c0291662a72ad7be22af41f9ce233e46b2aa049236e45daf1f0d0a63e1d63fe6  (685 lines)
+  NEW sha256 39e3d1f47b8e7993826f5f727314b7510f61eb855823c41121cd26fe8a0f87ee  (685 lines)
+
+The peer changed resolve_work(): a caller-named --work that does not exist yet is now
+created (mkdir -p) instead of being a setup error, so a driver that passes a fresh
+scratch path is not punished for it. The /tmp,/var/tmp,/dev/shm refusal is unchanged and
+an existing non-directory --work is still a setup error. The peer reports the change is
+confined to resolve_work() and its two call sites, with no measurement logic touched.
+
+This seat re-ran the full verification against the new bytes rather than taking the
+peer's re-verification on report.
+
+----------------------------------------------------------------------
+A. IS THE CHANGE CONFINED AS CLAIMED?
+----------------------------------------------------------------------
+The counter's resolve_work() now reads:
+
+    cand = explicit or os.environ.get("TMPDIR")
+    if not cand: raise SetupError(...)
+    real = os.path.realpath(cand)
+    for bad in REFUSED_WORK_PREFIXES:
+        if real == bad or real.startswith(bad + os.sep):
+            raise SetupError("refusing work dir under %s (got %s)" % (bad, real))
+    if os.path.exists(real) and not os.path.isdir(real):
+        raise SetupError("--work %s exists and is not a directory" % real)
+    os.makedirs(real, exist_ok=True)
+    return real
+
+This matches the described change: create-if-missing, keep the temp-root refusal, keep
+the non-directory refusal. The old bytes were not retained on disk, so a byte-level diff
+against the old file was not possible here; the change was verified behaviourally in
+section C and by inspection of the function above.
+
+----------------------------------------------------------------------
+B. FULL FIVE-CASE HARNESS RE-RUN AGAINST THE NEW BYTES
+----------------------------------------------------------------------
+Command:
+  python3 -I .ufo/waves/round-52/w1/C1Fixture/harness/c1-fixture-harness.py \
+    --counter .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py \
+    --profile .ufo/waves/round-52/w1/C1Fixture/harness/profiles/default.json \
+    --work /fast/scratch/hyaku/mado-r52/C1Fixture/run-r52b \
+    --out /fast/scratch/hyaku/mado-r52/C1Fixture/out-r52b \
+    --cases green,red,mut-selfptr,mut-generic,mut-duprow
+
+Result (verbatim):
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=155a28e5a6b61569972c4eac8e6453bc5ac7ab36'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=3cc5498a392a4e9d78f349107a282700a5f01edd'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=765c86ba6c6a7b1e55ad1701f673f414eaec8411'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=1f0f2f61778e50752bc2786e962bebf1ac4c556f'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+Unchanged from the old bytes: all five cases ok=True, red carries self_pointer=1 and
+generic_desc=1.
+
+----------------------------------------------------------------------
+C. --work BEHAVIOUR, RE-VERIFIED
+----------------------------------------------------------------------
+fresh --work (not yet created), against the lane at the base rev:
+  C1_R52: population=82 ... generic_desc=0 verdict=TARGET_MET rev=85d57a81...
+  exit=0 ; the directory exists afterwards (created)
+
+--work under /tmp:
+  exit=2   (refused)
+
+--work naming an existing regular file:
+  C1_R52: setup=error detail=--work /fast/scratch/hyaku/mado-r52/C1Fixture/afile exists and is not a directory
+  exit=2   (refused)
+
+All three of the peer's claims confirmed.
+
+----------------------------------------------------------------------
+D. GENERALISATION PROBES P1-P4, RE-RUN AGAINST THE NEW BYTES
+----------------------------------------------------------------------
+Same four probes as before, each mutating row 83 (quality/counters/c1-r49-keysym.py),
+which no fixture of this harness touches:
+
+  P1  self-pointer AND generic description
+      row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `quality/tool-ledger.md` |
+      detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+      detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=too-short:2-words
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED, exit=1
+
+  P2  generic description, legitimate cell-3 pointer
+      row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `SCORECARD.md:2736` |
+      detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=too-short:2-words
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED, exit=1
+
+  P3  rich instrument-specific description, self-pointer in the pointer cell
+      row: | `quality/counters/c1-r49-keysym.py` | Scores the keysym counter byte-equal to
+           the pinned libxkbcommon how-to-type judge on 633 fixtures. | `quality/tool-ledger.md` |
+      detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED, exit=1
+
+  P4  self-pointer hidden in the DESCRIPTION cell, legitimate cell-3 pointer
+      row: | `quality/counters/c1-r49-keysym.py` | Reads quality/tool-ledger.md only for
+           commentary and verifies the keysym counter against 633 fixtures. | `SCORECARD.md:2736` |
+      detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED, exit=1
+
+Identical to the old bytes. The two signals remain separated (P2, P3 each fire exactly
+one) and the wider self-pointer scan is confirmed (P4).
+
+----------------------------------------------------------------------
+E. THE F3 CEILING — INDEPENDENTLY CONFIRMED, AND IT IS WIDER THAN FLAGGED
+----------------------------------------------------------------------
+The peer flagged that "a description that copies a genuine two-word phrase out of the
+instrument's own bytes still passes". This seat reproduced that independently, and found
+a second, adjacent gap the peer did not flag.
+
+The generic_desc clause (counter source, the `else` branch after the length test) is:
+  - the description must have >= 5 words (MIN_DESC_WORDS = 5);
+  - it must share a two-word phrase ("bigram") with the instrument's own bytes;
+  - and at least one such bound phrase must carry a word the instrument's PATH does not
+    contribute ("only-path-name-phrase" otherwise).
+
+E1 — a semantically EMPTY description carrying a real two-word phrase from the
+instrument's own bytes PASSES:
+
+  row: | `quality/counters/c1-r49-keysym.py` | usr bin and nothing else at all here okay. |
+        `SCORECARD.md:2736` |
+  -> C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0
+             self_pointer=0 generic_desc=0 verdict=TARGET_MET
+     exit=0
+
+  "usr bin" is a genuine two-word phrase occurring in the instrument's own bytes at the
+  base revision. The description says nothing about the instrument's function, yet the
+  counter accepts it. The clause measures phrase OVERLAP, not functional content.
+
+E2 — a description made ONLY of the instrument's own path words also PASSES, i.e. the
+"only-path-name-phrase" guard did not fire:
+
+  row: | `quality/counters/c1-r49-keysym.py` | c1 r49 tools mado keysym and nothing more
+        here okay. | `SCORECARD.md:2736` |
+  -> C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0
+             self_pointer=0 generic_desc=0 verdict=TARGET_MET
+     exit=0
+
+  The path is quality/counters/c1-r49-keysym.py, whose path words are {c1, r49, keysym,
+  counters, quality}. The bound bigram "c1 r49" is made only of path words and should
+  have triggered "only-path-name-phrase" -- but the description ALSO contains the bigram
+  "tools mado" (from the word pair "tools mado" occurring in the body), whose words are
+  not path words, so the clause's "any(...)" is satisfied by that OTHER bigram. The
+  guard is per-phrase-ANY, not per-description, so a single unrelated bound bigram
+  anywhere in a long description launders the whole row.
+
+Both gaps are properties of the measurement, not of the harness: they are in the
+counter's clause, which this seat does not own. Recorded here so the wave-2 critic
+attacks them against the item they belong to, and so the L1 knows the C1 claim's
+"instrument-specific functional context" check is a phrase-overlap check, not an
+entailment check. The frozen claim already limits itself to "bounded accountability
+checks, not prose entailment", so this does not contradict the claim as frozen -- but
+the ceiling is wider than one phrase-copy.
+
+Counter-check that the clause is not simply broken: the genuine production description
+for that same row still passes, and the green case shows all 82 production rows carry
+generic_desc=0:
+  | `quality/counters/c1-r49-keysym.py` | PRED-C1-r49: scores `tools/mado-keysym.py`
+    byte-equal to the pinned libxkbcommon 1.13.2 `how-to-type` judge on 633 fixtures plus
+    150 generated cases; never attacked by a wave 2. | `SCORECARD.md:2736` |
+
+----------------------------------------------------------------------
+F. HYGIENE FOR THIS RE-VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on
+exit. The peer counter was read and executed, never written; its sha256 after this
+re-verification is unchanged at 39e3d1f47b8e7993826f5f727314b7510f61eb855823c41121cd26fe8a0f87ee.
+lane_unchanged=True on the full harness re-run. The lane's tracked working tree is
+unchanged and its object store is unchanged.

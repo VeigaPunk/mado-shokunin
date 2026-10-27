@@ -1,0 +1,57 @@
+# receipt 03 — false positive on a legitimate ledger-reader row (verdict-level flip)
+
+## mechanism: the generic_desc clause evaluated with the counter's own functions
+== 04-honest-paraphrase-A
+  words=['checks', 'that', 'every', 'tracked', 'instrument', 'in', 'the', 'tool', 'ledger', 'has', 'an', 'accountable', 'evidence', 'pointer']
+  bound=['in the', 'tool ledger']
+    'in the'                 dropped: function-words
+    'tool ledger'            dropped: own-path-words,population-path-words,path-fragment
+  own_path_words=['check', 'ledger', 'py', 'quality', 'tool']
+== 05-honest-paraphrase-B
+  words=['derives', 'the', 'tracked', 'instrument', 'population', 'at', 'a', 'revision', 'and', 'checks', 'every', 'ledger', 'row', 's', 'accountability', 'pointer']
+  bound=['the tracked', 'revision and', 'ledger row', 'accountability pointer']
+    'the tracked'            dropped: SURVIVES
+    'revision and'           dropped: SURVIVES
+    'ledger row'             dropped: SURVIVES
+    'accountability pointer' dropped: SURVIVES
+  own_path_words=['check', 'ledger', 'py', 'quality', 'tool']
+== 09-terse-4-words
+  words=['checks', 'the', 'tool', 'ledger']
+  bound=['tool ledger']
+    'tool ledger'            dropped: own-path-words,population-path-words,path-fragment
+  own_path_words=['check', 'ledger', 'py', 'quality', 'tool']
+
+## the same row substituted into the base production ledger (matched pair: production desc vs honest desc)
+== 00-production                              rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 01-G-shaped-backtick-ledger-in-desc        rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+   detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md
+== 02-bare-ledger-in-desc                     rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+   detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md
+== 03-bare-ledger-in-desc-province-ptr        rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+   detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md
+== 04-honest-paraphrase-A                     rc=1
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+   detail: generic_desc path=quality/check-tool-ledger.py reason=bound-only-by-name-path-or-function-words
+== 05-honest-paraphrase-B                     rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 06-honest-paraphrase-C                     rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 07-own-header-sentence                     rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 08-honest-d4                               rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 09-terse-4-words                           rc=1
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+   detail: generic_desc path=quality/check-tool-ledger.py reason=too-short:4-words
+== 10-terse-5-words                           rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+== 11-line-anchored-ledger-in-desc            rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+   detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md
+== 12-hash-anchored-ledger-in-desc            rc=0
+   C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET
+   detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md

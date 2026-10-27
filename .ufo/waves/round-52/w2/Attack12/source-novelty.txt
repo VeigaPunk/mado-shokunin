@@ -1,0 +1,46 @@
+# Source-novelty receipt (Attack12, round 52) - all commands read-only, run 2026-10-27
+lane=/home/vgpnk/Projects/shokunin/mado-shokunin base=85d57a818c3707397e21c840b6498b105ba798aa
+
+## 1. Byte identity of the four proposed pins vs the round-51 pins
+command: sha256sum .ufo/waves/round-51/fetch/<pin> .ufo/waves/round-52/fetch/<pin> .ufo/waves/round-52/w1/C2EntryDraft/fetch/<pin>
+EQUAL r51=r52=draft Hyprland-legacy-DispatcherTranslator.cpp 7248cbb89f898c783c50c89d068df9821a6b38aeb6abeb6064e92c1610fbe771
+EQUAL r51=r52=draft Hyprland-ConfigActions.cpp a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637
+EQUAL r51=r52=draft Hyprland-ConfigActions.hpp 746c6f517620eb039afbfbb9a4a0e2d5ba1c5eb117bcc8f396173f63091b7073
+EQUAL r51=r52=draft Hyprland-KeybindManager.cpp 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40
+
+## 2. Base registry rows per proposed URL (git show 85d57a8:corpus/SOURCES.md)
+observed: 306 registry rows at base, last row id S369
+Hyprland KeybindManager.cpp   -> S352 (r50), S364 (r51)  [proposed S373 would be the 3rd row]
+Hyprland DispatcherTranslator.cpp -> S365 (r51)           [proposed S370]
+Hyprland ConfigActions.cpp    -> S367 (r51)                [proposed S371]
+Hyprland ConfigActions.hpp    -> no row                    [proposed S372]
+Hyprland KeybindManager.hpp   -> no row (r51 pin manifest row S364, cited for cache member only)
+
+## 3. Round-51 pin manifest declares all four files (git show 85d57a8:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md | sed -n '/Pin manifest/,/Digests/p')
+| Hyprland-KeybindManager.cpp | src/managers/KeybindManager.cpp | S364 |
+| Hyprland-KeybindManager.hpp | src/managers/KeybindManager.hpp | S364 |
+| Hyprland-legacy-DispatcherTranslator.cpp | src/config/legacy/DispatcherTranslator.cpp | S365 |
+| Hyprland-legacy-DispatcherTranslator.hpp | src/config/legacy/DispatcherTranslator.hpp | S365 |
+| Hyprland-ConfigActions.cpp | src/config/shared/actions/ConfigActions.cpp | S367 |
+| Hyprland-ConfigActions.hpp | src/config/shared/actions/ConfigActions.hpp | S367 |
+Digests for the checksum manifest: `Hyprland-KeybindManager.cpp` 39334 B 975 lines sha256 `8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40`; `Hyprland-KeybindManager.hpp` 191 lines `cee22c13d413ab389803e0eb87a6fcefadedea885cee4457b56ae351228dd1e0`; `Hyprland-legacy-DispatcherTranslator.cpp` 35997 B 868 lines `7248cbb89f898c783c50c89d068df9821a6b38aeb6abeb6064e92c1610fbe771`; `Hyprland-legacy-DispatcherTranslator.hpp` 22 lines `438c1e662f5c9fa4d5821fbab251113c66562dd452d1844f965c294bb3444e87`; `Hyprland-HyprCtl.cpp` 97582 B 2346 lines `798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa`; `Hyprland-ConfigActions.cpp` 71407 B 1772 lines `a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637`; `Hyprland-ConfigActions.hpp` 122 lines `746c6f517620eb039afbfbb9a4a0e2d5ba1c5eb117bcc8f396173f63091b7073`; `Hyprland-legacy-ConfigManager.cpp` 90963 B 2184 lines `9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b`; `Hyprland-SharedDefs.hpp` 1915 B 60 lines `0b40cc83f827587f3a94260ca89d4464150dc2b45de2b9331e3d1876cafe0087`; `Hyprland-ConfigManager.cpp` 2597 B 82 lines `c10dc1ce6602a854121a79fb0192c9f43aa836a35f9acb98ff1789541b01f366`; `Hyprutils-VarList.cpp` 38 lines `b02df8d688519366e7f20de5c3c44d21c3832316e8262ced0d295e129b166a36`; `Hyprutils-VarList.hpp` 65 lines `9ad2fcbd5de691166b7db95de09b6bd054c9b4313deb3187e84c914dab74fc43`; `Hyprutils-VarList2.cpp` 126 lines `b8cacea741b2d6260ad6618be00e37bc01c4d092e655a7557f7cfbadb76cf26d`; `wiki-Using-hyprctl.md` 315 lines `3489a75da5f0865d56deda13412c67af905d8507a4bc51367d96952e55ab3545`; `wiki-Dispatchers.md` 313 lines `39d0747a34bf013d62f8d70d4e1259cf084510e38c17bb4dc1e3245095c1f494`.
+
+## 4. The draft's 'new URL' claim vs the held entry
+draft .ufo/waves/round-52/w1/C2EntryDraft/pins.txt: 'Hyprland-ConfigActions.hpp ... none (new URL)'
+round-51 entry line 144 quotes the same file (git show ... | sed -n '144p'):
+   (Hyprland-ConfigActions.hpp:114). The argument arrives exactly as stored
+
+## 5. Candidate rows appended by the data seat (working tree, untracked change to corpus/SOURCES.md)
+observed row anchors:
++| S370 | Hyprland 0.56.2 legacy dispatcher synthetic key routes - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTran
++| S371 | Hyprland 0.56.2 config actions seat keyboard delivery - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigA
++| S372 | Hyprland 0.56.2 config action state fields - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.hpp 
++| S373 | Hyprland 0.56.2 modifier parser - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp | code | A | `stringToM
+
+## 6. The lane's own search log sentence for the same rows (git diff corpus/SOURCES.md, 11:2x)
++Round 52 — synthetic shortcut path. Query: how do `sendshortcut` and `sendkeystate` parse, resolve and delegate key/modifier input in Hyprland 0.56.2? Opened 2026-10-27 from immutable commit `efb50993780079460b0cbed1363e2166a2de1d9f`, four local source files. Identified 4, screened 4, included 4 (S370-S373), excluded 0. S370, S371 and S373 reuse canonical URLs with new scopes; distinct-scope review remains outstanding. Stop rationale: source-only task; no runtime probes permitted.
++Round 52 — synthetic shortcut path. Query: how do `sendshortcut` and `sendkeystate` parse, resolve and delegate key/modifier input in Hyprland 0.56.2? Opened 2026-10-27 from immutable commit `efb50993780079460b0cbed1363e2166a2de1d9f`, four local source files. Identified 4, screened 4, included 4 (S370-S373), excluded 0. S370, S371 and S373 reuse canonical URLs with new scopes; distinct-scope review remains outstanding. Stop rationale: source-only task; no runtime probes permitted.
+
+## 7. Staged fetch manifest names absolute host paths (SHA256SUMS)
+a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-ConfigActions.cpp
+746c6f517620eb039afbfbb9a4a0e2d5ba1c5eb117bcc8f396173f63091b7073  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-ConfigActions.hpp

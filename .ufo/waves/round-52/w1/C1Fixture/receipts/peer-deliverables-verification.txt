@@ -1,0 +1,102 @@
+C1Fixture — independent exercise of the peer's own hole-probe driver and control set
+=========================================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (byte state unchanged since the previous verification):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31   847 lines
+
+The peer re-sent the same completed byte state. Nothing changed to re-verify, so this
+pass exercised the peer's OTHER deliverables that this seat had not yet run itself: their
+fixtures/hole-probes.py driver and their fixtures/receipts.sh, and the full C1Simplify
+control set through the --ledger entry point.
+
+----------------------------------------------------------------------
+A. THEIR HOLE-PROBE DRIVER — RUN INDEPENDENTLY, AND PROVEN TO DISCRIMINATE
+----------------------------------------------------------------------
+Command:
+  python3 -I .ufo/waves/round-52/w1/C1CounterDesign/fixtures/hole-probes.py \
+      --repo /home/vgpnk/Projects/shokunin/mado-shokunin \
+      --rev 85d57a818c3707397e21c840b6498b105ba798aa \
+      --counter .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --work <scratch>
+
+  probe=ledger-self-pointer        expect=self_pointer exit=1 self_pointer=82 verdict=TARGET_MISSED -> REJECTED
+  probe=row-self-pointer           expect=self_pointer exit=1 self_pointer=82 verdict=TARGET_MISSED -> REJECTED
+  probe=peer-instrument-pointer    expect=bad_pointer  exit=1 bad_pointer=1  verdict=TARGET_MISSED -> REJECTED
+  probe=cross-description          expect=generic_desc exit=1 generic_desc=22 verdict=TARGET_MISSED -> REJECTED
+  probe=omnibus-pointer            expect=bad_pointer  exit=1 bad_pointer=22  verdict=TARGET_MISSED -> REJECTED
+  probe=laundered-self-pointer     expect=self_pointer exit=1 self_pointer=1  verdict=TARGET_MISSED -> REJECTED
+  HOLE_PROBES: 6/6 rejected
+  exit=0
+
+The peer's "HOLE_PROBES: 6/6 rejected" is confirmed.
+
+The driver's scoring is a genuine check, not an exit-code check. Read from the source:
+
+    value = fields.get(expect)
+    ok = proc.returncode == 1 and value is not None and value not in ("0", "absent")
+    print(... "REJECTED" if ok else "FALSE-GREEN")
+
+A probe passes only when the counter exits 1 AND the expected field is present and
+non-zero. An always-accept counter cannot satisfy it.
+
+PROVEN BY SUBSTITUTION: the same driver was run against a counter that accepts every
+ledger (a scratch stub that implements --ledger and always prints
+`verdict=TARGET_MET`, exit 0):
+  probe=ledger-self-pointer        exit=0 self_pointer=0  verdict=TARGET_MET -> FALSE-GREEN
+  probe=row-self-pointer           exit=0 self_pointer=0  verdict=TARGET_MET -> FALSE-GREEN
+  probe=peer-instrument-pointer    exit=0 bad_pointer=0   verdict=TARGET_MET -> FALSE-GREEN
+  probe=cross-description          exit=0 generic_desc=0  verdict=TARGET_MET -> FALSE-GREEN
+  probe=omnibus-pointer            exit=0 bad_pointer=0   verdict=TARGET_MET -> FALSE-GREEN
+  probe=laundered-self-pointer     exit=0 self_pointer=0  verdict=TARGET_MET -> FALSE-GREEN
+  HOLE_PROBES: 0/6 rejected
+  exit=1
+
+So the driver reports 6/6 against a correct counter and 0/6 against an always-accept
+one: it discriminates in both directions.
+
+Note the stub's own --ledger support matters. A counter that does not accept --ledger
+exits 2 on every probe, which the driver scores as FALSE-GREEN (0/6, exit 1) - the right
+verdict for the wrong reason, since the counters under comparison here all implement the
+flag.
+
+----------------------------------------------------------------------
+B. THE C1SIMPLIFY CONTROL SET — EVERY FIGURE INDEPENDENTLY REPRODUCED
+----------------------------------------------------------------------
+Run through the counter's --ledger entry point, one control at a time:
+
+  control                          population ledger_rows uncovered dup dangling bad_pointer self_pointer generic_desc verdict
+  B-row-selfpointer                82        82         0    0    0        0              82            82  TARGET_MISSED
+  C-ledger-selfpointer             82        82         0    0    0        0              82             0  TARGET_MISSED
+  D-generic-desc                   82        82         0    0    0        0               0            82  TARGET_MISSED
+  E-one-selfpointer                82        82         0    0    0        0               1             0  TARGET_MISSED
+  F3-forged                        82        82         0    0    0        0               0            10  TARGET_MISSED
+  G-legit-ledger-reader            82        82         0    0    0        0               0             0  TARGET_MET
+  H-minimal-forgery                82        82         0    0    0        0               0             0  TARGET_MET
+
+Every figure the peer reported is confirmed, including F3-forged generic_desc=10. The two
+TARGET_MET controls are correct and load-bearing: G (an honest row whose description
+names the ledger, the very tool whose job is to read it) passes with the mention recorded
+as an unscored note; H (the disclosed ceiling) passes and the peer states that openly in
+their report rather than hiding it. E shows the counter counts precisely - one
+self-pointer, not 82.
+
+The F3-forged ceiling's mechanism was measured with the counter's own
+normalize/bigrams/path_words/path_fragments/FUNCTION_WORDS: the 10 rejected rows are
+exactly those whose filler is built only from that instrument's own path words, while
+the other 72 carry a functional phrase lifted from the instrument's own header (e.g.
+"static resolver" in tools/mado-anims.py), which the lexical clause cannot distinguish
+from an honest description. Same mechanism as this seat's independent measurement
+(caught 59 / accepted 23 with a different copied phrase).
+
+----------------------------------------------------------------------
+C. HYGIENE
+----------------------------------------------------------------------
+All runs were read-only invocations of the peer's counter and the peer's probe driver
+against read-only control files, with scratch under /fast/scratch/hyaku/mado-r52/C1Fixture/,
+removed on exit. No file in the C1CounterDesign or C1Simplify seat dirs was written. The
+always-accept stub used for the substitution test was written in scratch only. The peer
+counter's sha256 is unchanged at
+0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31.
+The lane's tracked working tree and object store are unchanged (10493 objects).

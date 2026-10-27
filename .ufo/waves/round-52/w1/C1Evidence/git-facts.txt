@@ -1,0 +1,29 @@
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse 85d57a818c3707397e21c840b6498b105ba798aa^{commit}
+85d57a818c3707397e21c840b6498b105ba798aa
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin cat-file -e 85d57a818c3707397e21c840b6498b105ba798aa:.ufo/waves/round-52/controls/c1-do-nothing.md; echo exit=$?
+fatal: path '.ufo/waves/round-52/controls/c1-do-nothing.md' exists on disk, but not in '85d57a818c3707397e21c840b6498b105ba798aa'
+exit=128
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree -r --name-only 85d57a818c3707397e21c840b6498b105ba798aa | grep -c "^\.ufo/waves/round-52/"
+0
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree -r --name-only 85d57a818c3707397e21c840b6498b105ba798aa | grep -c "c1-r52"
+0
+
+$ sha256sum /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/receipts/c1-base.txt
+ad72f72f64708d1b877d0f2233f32a065bd11689d644af669176d1844ba2eba6  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+f3fdbbafdffbb71b61ed76a934e4cf3a3dccd1fd2f858d364c1b5b11a7c19673  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/receipts/c1-base.txt
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/tool-ledger.md | sha256sum
+df5b3705d0291f967c35f0d69d6a908fe37a30d35e84599c4c0f897ca6469e0b  -
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/tool-ledger.md | wc -l
+119
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/counters/c1-r51-ledger.py | sha256sum
+d5c2447d098681251fd41c04414d4e8823b41b78f150a5fc6bedd526a4a35b56  -
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/counters/c1-r51-ledger.py | wc -l
+445
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/check-tool-ledger.py | sha256sum
+6dd4061c1d8a82d5a9efa8ae954ff1c4559e43abefbb69210fa831bd758a98d4  -
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 85d57a818c3707397e21c840b6498b105ba798aa:quality/check-tool-ledger.py | wc -l
+832

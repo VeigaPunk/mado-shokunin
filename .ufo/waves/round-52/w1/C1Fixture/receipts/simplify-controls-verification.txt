@@ -1,0 +1,119 @@
+C1Fixture — independent verification of the peer counter against the C1Simplify controls
+===========================================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (unchanged since the last verification — bytes identical):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31   847 lines
+
+The peer reported results for the C1Simplify control set. This seat re-ran every one of
+them rather than taking the report on trust.
+
+Command form used (the counter's --ledger entry point, which takes a ledger file
+directly instead of a committed fixture):
+  python3 -I c1-r52-ledger.py \
+      --repo /home/vgpnk/Projects/shokunin/mado-shokunin \
+      --rev 85d57a818c3707397e21c840b6498b105ba798aa \
+      --ledger .ufo/waves/round-52/w1/C1Simplify/control-<NAME>.md \
+      --work <scratch>
+
+----------------------------------------------------------------------
+A. THE CONTROL SET — EVERY RESULT INDEPENDENTLY REPRODUCED
+----------------------------------------------------------------------
+  control                          population ledger_rows uncovered dup dangling bad_pointer self_pointer generic_desc verdict
+  B-row-selfpointer                82        82         0    0    0        0              82            82  TARGET_MISSED
+  C-ledger-selfpointer             82        82         0    0    0        0              82             0  TARGET_MISSED
+  D-generic-desc                   82        82         0    0    0        0               0            82  TARGET_MISSED
+  E-one-selfpointer                82        82         0    0    0        0               1             0  TARGET_MISSED
+  F3-forged                        82        82         0    0    0        0               0            10  TARGET_MISSED
+  G-legit-ledger-reader            82        82         0    0    0        0               0             0  TARGET_MET
+  H-minimal-forgery                82        82         0    0    0        0               0             0  TARGET_MET
+
+Every figure the peer reported is confirmed, including F3-forged generic_desc=10.
+
+The two TARGET_MET controls are the important ones, and they are correct:
+  G-legit-ledger-reader — an honest row whose description names the ledger (the very tool
+    whose job is to read it). It must pass, and it does: the mention is recorded as
+    `note path=quality/check-tool-ledger.py names-the-ledger-in-prose` and not scored.
+  H-minimal-forgery — the disclosed ceiling. It passes, and the peer says so in their
+    own report rather than hiding it.
+
+Every TARGET_MISSED control names its defect class rather than failing on coverage:
+  B — every row self-pointing AND every description generic.
+  C — every row self-pointing, descriptions intact.
+  D — every description generic, no self-pointers.
+  E — exactly one self-pointer (self_pointer=1, not 82): the counter counts the defect
+       precisely rather than flagging the whole ledger.
+
+----------------------------------------------------------------------
+B. WHY F3-FORGED IS CAUGHT ON ONLY 10 OF 82 ROWS — THE MECHANISM
+----------------------------------------------------------------------
+This is the peer's disclosed ceiling, and this seat measured exactly why.
+
+F3-forged replaces every production description with a generic filler of the shape
+`Generic accountability note <N> <a few words>.`. The counter rejects a row when the
+description shares NO two-word phrase with the instrument's own bytes that survives the
+four filters (the instrument's own path words, the population's naming vocabulary, a
+filesystem-path fragment, English function words).
+
+The filler's trailing words are lifted from the instrument's own header, so the filler
+often still shares a REAL phrase with the instrument's bytes. Worked examples, using the
+counter's own normalize/bigrams/path_words/path_fragments/FUNCTION_WORDS:
+
+  tools/mado-action-plan.py
+    desc: "Generic accountability note 0 mado action plan py."
+    bound bigrams in body: ['mado action', 'action plan', 'plan py']
+    surviving after the four filters: []
+    -> REJECTED (generic_desc=1, reason=bound-only-by-name-path-or-function-words)
+    Every bound bigram is made of the instrument's own path words.
+
+  tools/mado-anims.py
+    desc: "Generic accountability note 1 static resolver for the."
+    bound bigrams in body: ['static resolver', 'resolver for', 'for the']
+    surviving after the four filters: ['static resolver', 'resolver for']
+    -> ACCEPTED (generic_desc=0)
+    "static resolver" is a genuine phrase in that instrument's own bytes, and it is not
+    made of path words, not a path fragment, and not function words. So it survives.
+
+So the count of 10 is not arbitrary: it is the number of rows whose generic filler
+happens to be built ONLY from that instrument's own path words. The other 72 rows carry a
+functional phrase lifted from the instrument's header — the very thing the description is
+for — so the phrase test cannot tell them from an honest description.
+
+This is the same lexical-binding ceiling this seat measured independently by replacing
+each production row's description with `pred c1 does things for the widget registry`
+(caught 59, accepted 23): a phrase copied out of the instrument's own bytes satisfies the
+context clause. The two measurements differ in which phrase is copied, and therefore in
+the split, but they are the SAME defect: the clause binds a description to the
+instrument's bytes lexically, and the instrument's bytes contain the very functional
+phrases an honest description would use.
+
+The 10 rejected rows in F3-forged, read from the counter's own detail lines:
+  tools/mado-action-plan.py, quality/check-counter-discrimination.py,
+  quality/check-r38-discrimination.py, quality/check-round-outcome-first.py,
+  quality/check-session-material.py, quality/check-wave-done.py,
+  quality/counter-selftest.py, quality/counters/c2-r50-session-gate.py,
+  quality/check-tool-ledger.py, quality/counters/c1-r51-ledger.py
+  all with reason=bound-only-by-name-path-or-function-words.
+
+----------------------------------------------------------------------
+C. WHAT THIS MEANS FOR THE FROZEN CLAIM
+----------------------------------------------------------------------
+The frozen claim limits C1 to "bounded accountability checks, not prose entailment", so
+this ceiling does not contradict the claim as frozen. It is the boundary of a lexical
+clause, and the peer records it with its construction rather than claiming it closed.
+For the wave-2 critic's benefit: the attack is to copy a real functional phrase out of
+the instrument's own bytes into a description that says nothing about the function. The
+counter cannot see that, and no purely lexical rule can, because the phrase IS the
+instrument's own functional vocabulary.
+
+----------------------------------------------------------------------
+D. HYGIENE
+----------------------------------------------------------------------
+All runs were read-only invocations of the peer counter against read-only control files,
+with scratch under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on exit. No file in
+the C1Simplify seat dir was edited or written. The peer counter was read and executed,
+never written; its sha256 is unchanged at
+0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31.
+The lane's tracked working tree and object store are unchanged (10493 objects).

@@ -1,0 +1,30 @@
+# Held-overlap receipt (Attack12, round 52)
+base=85d57a818c3707397e21c840b6498b105ba798aa; held corpus = corpus/knowledge/*.md at base (67 entries)
+metric: (a) the proposition's cited line span intersects a file:line citation present in a held entry;
+        (b) longest common identifier/number token run between the proposition's quote and any held entry;
+        (c) longest such run for the claim text.  (a) is decisive; (b)/(c) show paraphrase escapes exact metrics.
+
+## Landed entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md (18 propositions)
+P06 lineHeld=True  r51@Hyprland-legacy-DispatcherTranslator.cpp:532-535  quote_run=8  claim_run=2
+P07 lineHeld=True  r50@Hyprland-KeybindManager.cpp:224                   quote_run=4  claim_run=2
+P15 lineHeld=False (fact held: r51 line 199 = sendkeystate save/restore, ConfigActions.cpp:1603-1615) quote_run=4
+all other propositions: lineHeld=False, quote_run<=3 (no held line citation, no long shared run)
+
+## New row scopes vs held citations (declared anchors from the data-seat rows; source: fixture commit 008c57d)
+S370 DispatcherTranslator.cpp:531-627   intersects r51 Hyprland-legacy-DispatcherTranslator.cpp:532-535
+S371 ConfigActions.cpp:1530-1616         intersects r51 Hyprland-ConfigActions.cpp:1603-1615
+S372 ConfigActions.hpp:114-117           intersects r51 Hyprland-ConfigActions.hpp:114
+S373 KeybindManager.cpp:221-242          intersects r50 Hyprland-KeybindManager.cpp:224, :236
+
+## Note on scope repairs (fairness)
+The held citations above sit OUTSIDE the held rows' own anchor cells:
+  S365 anchor = Hyprland-legacy-DispatcherTranslator.cpp:30-35,797-867
+  S367 anchor = Hyprland-ConfigActions.cpp:1664-1682
+  S352 anchor = Hyprland-KeybindManager.cpp:369,652,691-724,419,488,537-545,773-793,855-899,289-334
+So the new rows scope bytes that no held row anchors; that is a distinct-scope case for QUALITY.md rule 17,
+not automatic duplication.  The lane's own search log still records the review as outstanding.
+
+## Landed proposition duplicate pair
+P04 quote contains P17 quote as a substring (repeat -> second delegate call, :619-622).
+P17 wording attributes the branch to 'sendshortcut'; the code at :619-622 is inside sendkeystate
+(sendshortcut closes at :589, sendkeystate opens at :591).  One fact, two propositions, one mislabel.

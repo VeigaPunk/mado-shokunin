@@ -1,0 +1,111 @@
+C1Fixture — independent verification of the peer counter against this harness
+============================================================================
+
+Round 52, wave w1, seat C1Fixture.
+Subject under test (seat C1CounterDesign, seat dir, not yet integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 c0291662a72ad7be22af41f9ce233e46b2aa049236e45daf1f0d0a63e1d63fe6
+  size 29529 bytes, mtime 2026-10-27 10:27
+
+The peer reported that this harness returns PASS on all five cases against their
+counter. That claim was re-run here independently rather than taken on report.
+
+----------------------------------------------------------------------
+A. FULL HARNESS RUN AGAINST THE PEER COUNTER
+----------------------------------------------------------------------
+Command:
+  python3 -I .ufo/waves/round-52/w1/C1Fixture/harness/c1-fixture-harness.py \
+    --counter .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py \
+    --profile .ufo/waves/round-52/w1/C1Fixture/harness/profiles/default.json \
+    --work /fast/scratch/hyaku/mado-r52/C1Fixture/run-r52 \
+    --out /fast/scratch/hyaku/mado-r52/C1Fixture/out-r52 \
+    --cases green,red,mut-selfptr,mut-generic,mut-duprow
+
+Result (verbatim):
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=8b5d0c327db7a61e1da55f1fdb442dc99c477f07'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=f03ca4b525d2d691de122659d276f31dc452e25e'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=279377bd2cd6cb106f8fe5d927a3712254bae939'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=e3f47dae04a8069ff5662007db9564e69ef7964c'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+The peer's report is confirmed on all five cases. Both required red signals
+(self_pointer=1, generic_desc=1) are non-zero on the red case; no profile edit was
+needed -- the counter's field names `self_pointer` and `generic_desc` are already
+covered by the profile's alias sets.
+
+----------------------------------------------------------------------
+B. IS THE COUNTER GENERALISING, OR MATCHING THE CONTROL'S TEXT?
+----------------------------------------------------------------------
+A counter that recognised the frozen control by its literal bytes would pass the
+harness without measuring anything. Four probes were built against the peer counter
+that the peer had not seen, each mutating a DIFFERENT ledger row (row 83,
+`quality/counters/c1-r49-keysym.py` -- not row 1, which is what this harness's
+mut-* fixtures mutate) with DIFFERENT wording. Each probe is a git commit in a scratch
+clone; the counter is run with --repo/--rev/--work against it.
+
+PROBE 1 — self-pointer AND generic description, different row, different wording:
+  row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `quality/tool-ledger.md` |
+  detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+  detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=too-short:2-words
+  C1_R52: ... self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  exit=1
+
+PROBE 2 — generic description, LEGITIMATE cell-3 pointer:
+  row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `SCORECARD.md:2736` |
+  detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=too-short:2-words
+  C1_R52: ... self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+  exit=1
+
+PROBE 3 — RICH, instrument-specific description, self-pointer in the pointer cell:
+  row: | `quality/counters/c1-r49-keysym.py` | Scores the keysym counter byte-equal to
+       the pinned libxkbcommon how-to-type judge on 633 fixtures. | `quality/tool-ledger.md` |
+  detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+  C1_R52: ... self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  exit=1
+
+PROBE 4 — self-pointer hidden in the DESCRIPTION cell, legitimate cell-3 pointer:
+  row: | `quality/counters/c1-r49-keysym.py` | Reads quality/tool-ledger.md only for
+       commentary and verifies the keysym counter against 633 fixtures. | `SCORECARD.md:2736` |
+  detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+  C1_R52: ... self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  exit=1
+
+Reading: the two signals are separated, not conflated (probes 2 and 3 each fire exactly
+one), the counter does not depend on the mutated row being row 1 (all four probes moved
+row 83), and it does not depend on the control's wording (none of the four probe rows
+resembles the control's text). Probe 4 confirms the peer's stated design: the
+self-pointer scan covers every cell after the path cell, not only the ledger's cell 3.
+
+A negative check on the same bytes: the control-shaped literal in the counter
+(`| Tool | Reads | Writes | Owner and adjacent lanes |` and a `tools/alpha.py` row with
+the control's text) appears ONLY inside the counter's own --selftest fixture builder
+(LEDGER_CONTROL_SHAPE), not in the scoring path. `grep` for the control's marker text
+and for `controls/c1-do-nothing.md` returns hits only in the docstring and that selftest
+constant. The counter does not read the control file.
+
+----------------------------------------------------------------------
+C. THE PEER'S OWN FLAGGED INTEGRATION GAP (recorded, not resolved here)
+----------------------------------------------------------------------
+The peer reports that their counter does NOT cross-check `quality/check-tool-ledger.py`
+the way `c1-r51-ledger.py` did, because that gate's `LEDGER:` line has no
+`self_pointer`/`generic_desc` field to agree on. The peer asks that this be flagged to
+the L1.
+
+This seat's scope is the harness; the gate-cross-check clause is the counter author's
+and the L1's to decide. Recorded here so the L1 sees it: the C1 predicate's gate
+cross-check cannot survive unchanged, because the gate at
+`quality/check-tool-ledger.py` reports only population/ledger_rows/uncovered/dangling/
+bad_pointer/empty_desc. Either the gate gains the two new fields, or the cross-check
+clause is dropped. The harness does not depend on the cross-check clause: it asserts
+the counter's own summary line and exit status, and it passes with or without one.
+
+----------------------------------------------------------------------
+D. HYGIENE FOR THIS VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed
+on exit. No sibling seat file was edited; the peer counter was read and executed, never
+written. lane_unchanged=True on the full harness run. The lane's tracked working tree
+is unchanged and its object store is unchanged.

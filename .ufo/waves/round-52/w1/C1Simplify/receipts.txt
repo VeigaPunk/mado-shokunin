@@ -1,0 +1,155 @@
+# C1Simplify receipts — 2026-10-27T13:04:08Z
+# lane=/home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=85d57a818c3707397e21c840b6498b105ba798aa (git rev-parse HEAD -> 85d57a818c3707397e21c840b6498b105ba798aa)
+# counter=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/c1-r52-ledger.py (194 lines)
+
+## GREEN — production ledger at base
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa 
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## RED — committed frozen control
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+LEDGER52: population=82 ledger_rows=2 uncovered=82 dup=0 dangling=2 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## RED — B self-pointers + repeated generic descriptions
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-B-row-selfpointer.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## RED — C every pointer = the ledger itself
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-C-ledger-selfpointer.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## RED — D production pointers + repeated generic descriptions
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-D-generic-desc.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## RED — E exactly one self-pointer
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-E-one-selfpointer.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## FAILED CONTROL — F3 forged distinct generic descriptions (passes; documented ceiling)
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-F3-forged.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## MUTATION — duplicated row
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/mut-dup.md
+LEDGER52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## MUTATION — empty description
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/mut-emptydesc.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## MUTATION — unresolvable pointer
+$ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/mut-badpointer.md
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## ANCESTOR — r51 counter at base
+$ python3 -I quality/counters/c1-r51-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch>
+C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0 elapsed_ms=1884
+
+## PEER DRAFT — C1CounterDesign/c1-r52-ledger.py (authored by seat C1CounterDesign; run read-only by this seat)
+# sha256 e170d47960b5d1827d96b57fe95f90bc4f08f06757ac5446d1dce1d2b31f2818  lines 684
+### peer GREEN production
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> 
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### peer RED committed frozen control
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer RED B
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-B-row-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer RED C
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-C-ledger-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer RED D
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-D-generic-desc.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer RED E
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-E-one-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer on F3 (forged)
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-F3-forged.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=7 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer on G (legitimate row naming the ledger in its description)
+$ python3 -I <peer>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-G-legit-ledger-reader.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### my reference on G
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## PEER DRAFT FINAL — sha256 382a0606408d714089b1f8906972eba551ea560e332d5c30755fee894ff32d6e (787 lines)
+### peer FINAL green
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> 
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### peer FINAL frozen control
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL B
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-B-row-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL C
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-C-ledger-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL D
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-D-generic-desc.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL E
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-E-one-selfpointer.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL F3
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-F3-forged.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=10 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### peer FINAL G (fixed)
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-G-legit-ledger-reader.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### peer FINAL H (minimal forged description)
+$ python3 -I <peer-final>/c1-r52-ledger.py --repo <lane> --rev 85d57a818c3707397e21c840b6498b105ba798aa --work <scratch> --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1Simplify/control-H-minimal-forgery.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### my reference on H
+LEDGER52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+

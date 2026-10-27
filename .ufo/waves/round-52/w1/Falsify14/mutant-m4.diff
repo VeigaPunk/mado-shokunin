@@ -1,0 +1,22 @@
+diff --git a/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md b/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
+index 6d8112e7..e4aa7e6e 100644
+--- a/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
++++ b/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
+@@ -12,7 +12,7 @@ source: S372 - legacy movewindow dispatcher argument preparation - the silent su
+ | id | claim | row | pin | quote | support |
+ |---|---|---|---|---|---|
+ | P1 | A dispatcher that names a window resolves it through the shared window-argument helper, not through its own code. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:45-48 | `return Desktop::viewState()->query().selector(arg).runWindow();` | The helper is the only place a dispatcher argument becomes a window, and its selector call is the line the pin shows. |
+-| P2 | An empty argument or the literal `active` selects the focused window instead of running the selector. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:46-47 | `if (arg.empty() \|\| arg == "active")` | The early return with its comment names the focused-window path, so the empty and `active` forms never reach the selector. |
++| P2 | An unknown dispatcher name is refused before any argument resolution runs. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:31-32 | `return {.success = false, .error = "Bad dispatcher"};` | The refusal return is the first statement of the entry point, so no resolver runs for an unknown name. |
+ | P3 | A dispatcher that names a workspace resolves it through the shared workspace-argument helper. | S371 | Hyprland-legacy-DispatcherTranslator.cpp:52-53 | `const auto& [id, name, isAutoID] = getWorkspaceIDNameFromString(args);` | The helper parses the argument into an id and a name before any workspace is looked up, and the pin shows that parse as the first statement. |
+ | P4 | The workspace helper creates a workspace that does not exist yet when the compositor holds no workspace with that id. | S371 | Hyprland-legacy-DispatcherTranslator.cpp:60 | `ws = State::workspaceState()->create(id, PMONITOR->m_id, name, false);` | The create call is the helper's own creation step and the pin shows the monitor the new workspace is attached to. |
+ | P5 | The `movewindow` dispatcher strips a trailing ` silent` before it reads its argument, so the suffix is not part of the direction character. | S372 | Hyprland-legacy-DispatcherTranslator.cpp:251-252 | `bool silent    = args.ends_with(" silent");` | The suffix test and the substr that removes it are consecutive statements, so the argument the direction parser sees no longer carries the suffix. |
+@@ -26,7 +26,7 @@ source: S372 - legacy movewindow dispatcher argument preparation - the silent su
+ ## The chain
+ 
+ P1: A dispatcher that names a window resolves it through the shared window-argument helper, not through its own code. - `return Desktop::viewState()->query().selector(arg).runWindow();` (Hyprland-legacy-DispatcherTranslator.cpp:45-48) S370
+-P2: An empty argument or the literal `active` selects the focused window instead of running the selector. - `if (arg.empty() || arg == "active")` (Hyprland-legacy-DispatcherTranslator.cpp:46-47) S370
++P2: An unknown dispatcher name is refused before any argument resolution runs. - `return {.success = false, .error = "Bad dispatcher"};` (Hyprland-legacy-DispatcherTranslator.cpp:31-32) S370
+ P3: A dispatcher that names a workspace resolves it through the shared workspace-argument helper. - `const auto& [id, name, isAutoID] = getWorkspaceIDNameFromString(args);` (Hyprland-legacy-DispatcherTranslator.cpp:52-53) S371
+ P4: The workspace helper creates a workspace that does not exist yet when the compositor holds no workspace with that id. - `ws = State::workspaceState()->create(id, PMONITOR->m_id, name, false);` (Hyprland-legacy-DispatcherTranslator.cpp:60) S371
+ P5: The `movewindow` dispatcher strips a trailing ` silent` before it reads its argument, so the suffix is not part of the direction character. - `bool silent    = args.ends_with(" silent");` (Hyprland-legacy-DispatcherTranslator.cpp:251-252) S372

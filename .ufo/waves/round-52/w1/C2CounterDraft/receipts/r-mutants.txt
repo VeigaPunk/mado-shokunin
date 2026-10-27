@@ -1,0 +1,45 @@
+MUTANTS: green rc=0 verdict_met=True
+MUTANTS: index_row_removed        want=a rc=1 CAUGHT
+    C2_R52: a ok=0 index_row=absent
+MUTANTS: only_three_propositions  want=b rc=1 CAUGHT
+    C2_R52: b ok=0 propositions=3<4
+    C2_R52: e ok=0 prose_rows=3 prop_rows=2 manifest_rows=3 miss=row_unmapped:S372
+MUTANTS: row_not_mined            want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=2/5 distinct_rows=2 miss=P1:status(queued),P2:status(queued)
+MUTANTS: row_opened_earlier       want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=2/5 distinct_rows=2 miss=P3:opened(2026-10-26),P4:opened(2026-10-26)
+MUTANTS: row_reused_from_base     want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=3/5 distinct_rows=3 miss=P1:row_not_new(S364)
+    C2_R52: d ok=0 quotes_bound=5/5 quotes_raw=5/5 pins=1 policy=whitespace-collapsed pins_prior_equal=1/5 miss=P1:manifest_row_mismatch(S364!=S370,S371,S372)
+    C2_R52: e ok=0 prose_rows=3 prop_rows=4 manifest_rows=3 miss=row_uncited:S364
+MUTANTS: quote_not_at_pin         want=d rc=1 CAUGHT
+    C2_R52: d ok=0 quotes_bound=4/5 quotes_raw=4/4 pins=1 policy=whitespace-collapsed pins_prior_equal=1/4 miss=P1:quote_not_at_pin(Hyprland-legacy-DispatcherTranslator.cpp:45)
+MUTANTS: quote_too_long           want=d rc=1 CAUGHT
+    C2_R52: d ok=0 quotes_bound=4/5 quotes_raw=4/4 pins=1 policy=whitespace-collapsed pins_prior_equal=1/4 miss=P3:quote_too_long(28)
+MUTANTS: pin_not_manifested       want=d rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=3/5 distinct_rows=3 miss=P3:anchor_no_pin(Hyprland-Other-File.cpp)
+    C2_R52: d ok=0 quotes_bound=4/5 quotes_raw=4/4 pins=1 policy=whitespace-collapsed pins_prior_equal=1/4 miss=P3:pin_not_manifested(Hyprland-Other-File.cpp)
+MUTANTS: pin_file_absent          want=d rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=3/5 distinct_rows=3 miss=P3:anchor_no_pin(Hyprland-Absent.cpp)
+    C2_R52: d ok=0 quotes_bound=4/5 quotes_raw=4/4 pins=1 policy=whitespace-collapsed pins_prior_equal=1/4 miss=P3:pin_not_manifested(Hyprland-Absent.cpp)
+MUTANTS: pin_line_out_of_range    want=d rc=1 CAUGHT
+    C2_R52: d ok=0 quotes_bound=4/5 quotes_raw=4/4 pins=1 policy=whitespace-collapsed pins_prior_equal=1/4 miss=P4:pin_line_out_of_range(Hyprland-legacy-DispatcherTranslator.cpp:99999)
+MUTANTS: manifest_row_mismatch    want=d rc=1 CAUGHT
+    C2_R52: d ok=0 quotes_bound=5/5 quotes_raw=5/5 pins=1 policy=whitespace-collapsed pins_prior_equal=1/5 miss=P1:manifest_row_mismatch(S370!=S372),P2:manifest_row_mismatch(S370!=S372),P3:manifest_row_mismatch(S371!=S372),P4:manifest_row_mismatch(S371!=S372)
+MUTANTS: used_by_other_entry      want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=2/5 distinct_rows=2 miss=P1:used_by(corpus/knowledge/hyprland-dispatcher-dispatch-r51.md ),P2:used_by(corpus/knowledge/hyprland-dispatcher-dispatch-r51.md )
+MUTANTS: anchor_no_fetch_root     want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=2/5 distinct_rows=2 miss=P3:anchor_no_fetch_root,P4:anchor_no_fetch_root
+MUTANTS: anchor_no_revision       want=c rc=1 CAUGHT
+    C2_R52: c ok=0 rows_bound=2/5 distinct_rows=2 miss=P5:anchor_no_revision
+MUTANTS: unmapped_body_row        want=e rc=1 CAUGHT
+    C2_R52: e ok=0 prose_rows=4 prop_rows=3 manifest_rows=3 miss=row_unmapped:S373
+MUTANTS: orphan_proposition       want=e rc=1 CAUGHT
+    C2_R52: d ok=0 quotes_bound=5/5 quotes_raw=5/5 pins=1 policy=whitespace-collapsed pins_prior_equal=1/5 miss=P5:manifest_row_mismatch(S373!=S370,S371,S372)
+    C2_R52: e ok=0 prose_rows=3 prop_rows=3 manifest_rows=3 miss=row_unmapped:S372,row_uncited:S373
+MUTANTS: duplicate_quote          want=e rc=1 CAUGHT
+    C2_R52: e ok=0 prose_rows=3 prop_rows=3 manifest_rows=3 miss=duplicate_quote:if arg empty arg active
+MUTANTS: support_empty            want=b rc=1 CAUGHT
+    C2_R52: b ok=0 propositions=5 ids=5 forms=table miss=P2:empty(support),P2:support_thin
+MUTANTS: mutants=18 escaped=0 green_ok=True
+exit=0

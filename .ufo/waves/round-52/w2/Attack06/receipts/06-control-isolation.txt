@@ -1,0 +1,58 @@
+# receipt 06 — control isolation: which branch produces the frozen control's self_pointer, and what a mutant reveals
+
+## which branch fires on the frozen control
+frozen-control row=tools/mado-verify.sh cells=4
+  desc='quality/tool-ledger.md (commentary only)'
+  region=['nothing', 'generic accountability pointer to this ledger itself']
+  pointer_region_self=[]  any_cell_self=['quality/tool-ledger.md']
+  => branch taken: wide_self (no accountable target)
+frozen-control row=tools/mado-verify.sh cells=4
+  desc='quality/tool-ledger.md (commentary only)'
+  region=['nothing', 'generic accountability pointer to this ledger itself']
+  pointer_region_self=[]  any_cell_self=['quality/tool-ledger.md']
+  => branch taken: wide_self (no accountable target)
+  counts={'uncovered': 81, 'dup': 1, 'dangling': 0, 'bad_pointer': 0, 'self_pointer': 1, 'generic_desc': 1, 'population': 82, 'ledger_rows': 2}
+  detail: self_pointer path=tools/mado-verify.sh target=quality/tool-ledger.md
+  detail: note path=tools/mado-verify.sh cells=4
+  detail: generic_desc path=tools/mado-verify.sh reason=no-instrument-specific-phrase
+  detail: dup path=tools/mado-verify.sh already-seen
+  detail: uncovered path=quality/check-axis-scores.py
+  detail: uncovered path=quality/check-control-receipts.py
+  detail: uncovered path=quality/check-counter-discrimination.py
+  detail: uncovered path=quality/check-deliverables.py
+  detail: uncovered path=quality/check-evidence-pointers.py
+  detail: uncovered path=quality/check-index-rows.py
+  detail: uncovered path=quality/check-index.py
+  detail: uncovered path=quality/check-landed-contract.py
+  detail: uncovered ... 73 more paths not listed
+
+## mutant: pointer-region guard disabled (if False and pointer_self:)
+green              original=TARGET_MET     mutant=TARGET_MET     SAME
+frozen-control     original=TARGET_MISSED  mutant=TARGET_MISSED  SAME
+G-pointer-prose    original=TARGET_MISSED  mutant=TARGET_MET     DIFFERS
+
+## control sensitivity matrix
+control                      original       mutant         detects?
+frozen c1-do-nothing         TARGET_MISSED  TARGET_MISSED  no
+mut-selfptr-equivalent       TARGET_MISSED  TARGET_MISSED  no
+B row-selfpointer            TARGET_MISSED  TARGET_MISSED  no
+C ledger-selfpointer         TARGET_MISSED  TARGET_MISSED  no
+D generic-desc               TARGET_MISSED  TARGET_MISSED  no
+E one-selfpointer            TARGET_MISSED  TARGET_MISSED  no
+F3 forged                    TARGET_MISSED  TARGET_MISSED  no
+G legit reader               TARGET_MET     TARGET_MET     no
+H minimal forgery            TARGET_MET     TARGET_MET     no
+G-pointer-prose (this seat)  TARGET_MISSED  TARGET_MET     YES
+
+## mutant selftest (the counter's OWN selftest detects it; no frozen control does)
+FAILED: self-own-row-verdict C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=904d083bd42e21ea9bbda282bdc871f3c646cfc2
+FAILED: self-own-row-count 0
+C1_R52_SELFTEST: 46/53 passed
+
+## selftest exit codes (measured with subprocess, not a shell pipeline)
+original counter --selftest : rc=0  C1_R52_SELFTEST: 53/53 passed
+mutant (pointer-region guard disabled) --selftest : rc=1  C1_R52_SELFTEST: 46/53 passed
+  -> the counter's own selftest DOES guard the clause; the frozen control does not.
+
+## MIN_DESC_WORDS location
+88:MIN_DESC_WORDS = 5

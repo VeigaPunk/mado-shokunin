@@ -1,0 +1,168 @@
+### DT 38-42
+38: static SDispatchResult wrap(ActionResult res) {
+39:     if (!res)
+40:         return {.success = false, .error = res.error().message};
+41:     return {.passEvent = res->passEvent};
+42: }
+### DT 529-536
+529: }
+530: 
+531: static SDispatchResult sendshortcut(const std::string& args) {
+532:     CVarList2 ARGS(args, 3);
+533:     if (ARGS.size() != 3)
+534:         return {.success = false, .error = "sendshortcut: invalid args"};
+535: 
+536:     const auto MOD     = g_pKeybindManager->stringToModMask(std::string(ARGS[0]));
+### DT 538-558
+538:     uint32_t   keycode = 0;
+539: 
+540:     if (isNumber(KEY) && std::stoi(KEY) > 9)
+541:         keycode = std::stoi(KEY);
+542:     else if (KEY.starts_with("code:") && isNumber(KEY.substr(5)))
+543:         keycode = std::stoi(KEY.substr(5));
+544:     else if (KEY.starts_with("mouse:") && isNumber(KEY.substr(6))) {
+545:         keycode = std::stoi(KEY.substr(6));
+546:         if (keycode < 272)
+547:             return {.success = false, .error = "sendshortcut: invalid mouse button"};
+548:     } else {
+549:         // resolve keycode from key name via xkb
+550:         const auto KEYSYM = xkb_keysym_from_name(KEY.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+551:         keycode           = 0;
+552: 
+553:         const auto KB = g_pSeatManager->m_keyboard;
+554:         if (!KB)
+555:             return {.success = false, .error = "sendshortcut: no kb"};
+556: 
+557:         const auto KEYPAIRSTRING = std::format("{}{}", rc<uintptr_t>(KB.get()), KEY);
+558: 
+### DT 561-575
+561:             xkb_state*    ks          = KB->m_xkbState;
+562:             xkb_keycode_t keycode_min = xkb_keymap_min_keycode(km);
+563:             xkb_keycode_t keycode_max = xkb_keymap_max_keycode(km);
+564: 
+565:             for (xkb_keycode_t kc = keycode_min; kc <= keycode_max; ++kc) {
+566:                 xkb_keysym_t sym = xkb_state_key_get_one_sym(ks, kc);
+567:                 if (sym == KEYSYM) {
+568:                     keycode                                            = kc;
+569:                     g_pKeybindManager->m_keyToCodeCache[KEYPAIRSTRING] = keycode;
+570:                 }
+571:             }
+572: 
+573:             if (!keycode)
+574:                 return {.success = false, .error = "sendshortcut: key not found"};
+575:         } else
+### DT 578-588
+578: 
+579:     if (!keycode)
+580:         return {.success = false, .error = "sendshortcut: invalid key"};
+581: 
+582:     const std::string regexp  = std::string(ARGS[2]);
+583:     PHLWINDOW         PWINDOW = regexp.empty() ? nullptr : Desktop::viewState()->query().selector(regexp).runWindow();
+584: 
+585:     if (!regexp.empty() && !PWINDOW)
+586:         return {.success = false, .error = "sendshortcut: window not found"};
+587: 
+588:     return wrap(Actions::pass(MOD, keycode, PWINDOW));
+### DT 589-598
+589: }
+590: 
+591: static SDispatchResult sendkeystate(const std::string& args) {
+592:     CVarList2 ARGS(args, 4);
+593:     if (ARGS.size() != 4)
+594:         return {.success = false, .error = "sendkeystate: invalid args"};
+595: 
+596:     const auto STATE = ARGS[2];
+597:     if (STATE != "down" && STATE != "repeat" && STATE != "up")
+598:         return {.success = false, .error = "sendkeystate: invalid state, must be 'down', 'repeat', or 'up'"};
+### DT 599-607
+599: 
+600:     uint32_t keyState = 0;
+601:     if (STATE == "down")
+602:         keyState = 1;
+603:     else if (STATE == "repeat")
+604:         keyState = 2;
+605: 
+606:     // Reuse sendshortcut for keycode resolution, but wrap with state
+607:     std::string modifiedArgs = std::string(ARGS[0]) + "," + std::string(ARGS[1]) + "," + std::string(ARGS[3]);
+### DT 612-624
+612:     const int oldPassPressed = Config::Actions::state()->m_passPressed;
+613: 
+614:     if (keyState == 1 || keyState == 2)
+615:         Config::Actions::state()->m_passPressed = 1;
+616:     else
+617:         Config::Actions::state()->m_passPressed = 0;
+618: 
+619:     auto result = sendshortcut(modifiedArgs);
+620: 
+621:     if (keyState == 2 && result.success)
+622:         result = sendshortcut(modifiedArgs);
+623: 
+624:     Config::Actions::state()->m_passPressed = oldPassPressed;
+### CA 1530-1562
+1530: ActionResult Actions::pass(uint32_t modMask, uint32_t key, std::optional<PHLWINDOW> w) {
+1531:     auto        window = xtract(w);
+1532: 
+1533:     const auto& S           = *Config::Actions::state();
+1534:     const bool  isMouse     = key >= 272 && key < 0x160; // mouse button range
+1535:     const auto  LASTSURFACE = Desktop::focusState()->surface();
+1536: 
+1537:     if (window) {
+1538:         if (!g_pSeatManager->m_keyboard)
+1539:             return actionError("No keyboard connected", eActionErrorLevel::INFO, eActionErrorCode::NO_TARGET);
+1540: 
+1541:         if (!isMouse)
+1542:             g_pSeatManager->setKeyboardFocus(window->wlSurface()->resource());
+1543:         else
+1544:             g_pSeatManager->setPointerFocus(window->wlSurface()->resource(), {1, 1});
+1545: 
+1546:         // if wl -> xwl, activate destination
+1547:         if (window->m_isX11 && Desktop::focusState()->window() && !Desktop::focusState()->window()->m_isX11)
+1548:             g_pXWaylandManager->activateSurface(window->wlSurface()->resource(), true);
+1549:         // if xwl -> xwl, send to current
+1550:         if (window->m_isX11 && Desktop::focusState()->window() && Desktop::focusState()->window()->m_isX11)
+1551:             window = nullptr;
+1552:     }
+1553: 
+1554:     g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0);
+1555: 
+1556:     if (S.m_passPressed == 1) {
+1557:         if (!isMouse)
+1558:             g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);
+1559:         else
+1560:             g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);
+1561:     } else if (S.m_passPressed == 0) {
+1562:         if (!isMouse)
+### CA 1570-1580
+1570:         } else {
+1571:             g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);
+1572:             g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_RELEASED);
+1573:         }
+1574:     }
+1575: 
+1576:     g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);
+1577: 
+1578:     if (!window)
+1579:         return {};
+1580: 
+### CA 1596-1616
+1596:         g_pSeatManager->setPointerFocus(LASTSURFACE, SL);
+1597: 
+1598:     return {};
+1599: }
+1600: 
+1601: ActionResult Actions::sendKeyState(uint32_t modMask, uint32_t key, uint32_t keyState, std::optional<PHLWINDOW> w) {
+1602:     // keyState: 0 = up, 1 = down, 2 = repeat (down+down)
+1603:     const int oldPassPressed = Config::Actions::state()->m_passPressed;
+1604: 
+1605:     if (keyState == 1 || keyState == 2)
+1606:         Config::Actions::state()->m_passPressed = 1;
+1607:     else
+1608:         Config::Actions::state()->m_passPressed = 0;
+1609: 
+1610:     auto result = Actions::pass(modMask, key, w);
+1611: 
+1612:     if (keyState == 2 && result.has_value())
+1613:         result = Actions::pass(modMask, key, w);
+1614: 
+1615:     Config::Actions::state()->m_passPressed = oldPassPressed;
+1616: 

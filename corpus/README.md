@@ -77,6 +77,8 @@ before reusing a live value. A new index row does not close a behavioral gap.
 | `knowledge/hyprland-bind-key-match-r50.md` (MADO-R50-1, round 50; Hyprland bind-key matching) | How Hyprland 0.56.2 turns the bind KEY field into a match against a pressed key: parser forms, keysym resolution and case handling, the selected XKB state and layout, modifier-mask comparison, keycode and non-keyboard paths, branch order and shadowing; grounded in pinned Hyprland/libxkbcommon/wiki rows and this host's shape-only bind capture. Held S318/S319 are cited, not re-registered. | rows S352-S363 plus held S318/S319 |
 | `knowledge/hyprland-dispatcher-dispatch-r51.md` (MADO-R51-1, round 51; Hyprland dispatcher execution) | How Hyprland 0.56.2 validates and stores the dispatcher field, resolves it through the dispatcher map at key-press time, applies submap/pass special cases, and routes `hyprctl dispatch` through the request handler; dispatcher execution continues from the round-50 key-match account without re-claiming matching | rows S364-S369; held bind/parser ground cited |
 
+| `knowledge/hyprland-synthetic-dispatch-r52.md` (round 52; source-pinned synthetic shortcut path) | Source-level `sendshortcut`/`sendkeystate` argument parsing, key resolution and seat keyboard-call ordering on Hyprland 0.56.2. These are implementation paths only; no dispatcher was run and no client receipt is claimed. | `source:` S370–S373 in [SOURCES](SOURCES.md); pinned bytes `.ufo/waves/round-52/fetch/`; follow the per-proposition table and retain the non-author source-truth boundary. |
+
 ## Quality bar
 
 See `QUALITY.md` (admits only falsifiable, source-cited claims;

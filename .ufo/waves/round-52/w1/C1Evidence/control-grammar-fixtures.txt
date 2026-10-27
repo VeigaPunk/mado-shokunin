@@ -1,0 +1,38 @@
+== fixture A: committed control bytes at the production ledger path, vs committed checker
+$ git -C /fast/scratch/hyaku/mado-r52/C1Evidence/fix-a rev-parse --show-toplevel
+/fast/scratch/hyaku/mado-r52/C1Evidence/fix-a
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-tool-ledger.py --repo /fast/scratch/hyaku/mado-r52/C1Evidence/fix-a --rev HEAD
+LEDGER-ROW reason=dangling path=- detail=row-malformed-cells-4-line-3
+LEDGER-ROW reason=dangling path=- detail=row-malformed-cells-4-line-4
+LEDGER-ROW reason=uncovered path=tools/mado-verify.sh detail=no-row
+LEDGER: population=1 ledger_rows=0 uncovered=1 dangling=2 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=e2aa15d4d4209a607c12bc12c2c29150475adc46
+exit=1
+
+== fixture B: committed control bytes vs round-51 counter (unchanged)
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r51-ledger.py --repo /fast/scratch/hyaku/mado-r52/C1Evidence/fix-a --rev HEAD --work /fast/scratch/hyaku/mado-r52/C1Evidence/work-b
+detail: bad_pointer path=tools/mado-verify.sh pointer='nothing | generic accountability pointer to this ledger itself'
+detail: dup path=tools/mado-verify.sh
+detail: checker quality/check-tool-ledger.py absent at e2aa15d4d420
+C1_R51: population=1 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=1 empty_desc=0 selftest=absent dup=1 checker=absent verdict=TARGET_MISSED rev=e2aa15d4d4209a607c12bc12c2c29150475adc46
+exit=1
+
+== fixture C: grammar-compatible no-work ledger (3 cells, self-pointer, generic description)
+$ git -C /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c rev-parse --show-toplevel
+/fast/scratch/hyaku/mado-r52/C1Evidence/fix-c
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-tool-ledger.py --repo /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c --rev HEAD
+LEDGER: population=2 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=6d0ca290cb9023a473c06571940a4a91aa7e4382
+exit=0
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r51-ledger.py --repo /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c --rev HEAD --work /fast/scratch/hyaku/mado-r52/C1Evidence/work-c
+detail: checker selftest ok (ratio=50/50 form=with-work)
+detail: checker ledger ok (rev=6d0ca290cb9023a473c06571940a4a91aa7e4382)
+C1_R51: population=2 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=6d0ca290cb9023a473c06571940a4a91aa7e4382
+exit=0
+
+== fixture C content (verifiable bytes)
+$ cat /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c/quality/tool-ledger.md
+| instrument | description | accountability pointer |
+|---|---|---|
+| `tools/mado-verify.sh` | Generic accountability pointer to this ledger itself. | `quality/tool-ledger.md` |
+| `quality/check-tool-ledger.py` | Generic accountability pointer to this ledger itself. | `quality/tool-ledger.md` |
+$ sha256sum /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c/quality/tool-ledger.md
+34f41ff199e3197d954d87ca5d0817358835363e029d94d408deb7a7fe9337b8  /fast/scratch/hyaku/mado-r52/C1Evidence/fix-c/quality/tool-ledger.md

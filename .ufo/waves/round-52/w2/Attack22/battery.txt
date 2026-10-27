@@ -1,0 +1,39 @@
+### A. committed draft vs untouched base production ledger (green arm)
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger ledger-base.md
+C1_R52: population=82 ledger_rows=83 uncovered=0 dup=0 dangling=1 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### B. isolating control: base ledger minus the fenced grammar-example line
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger ledger-clean.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### C. FP attack: truthful disjoint-vocabulary description on c1-r51-ledger.py row
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger ledger-fp-c1r51.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### D. FP attack: truthful disjoint-vocabulary description on check-tool-ledger.py row
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger ledger-fp-checker.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### E. calibration: G legitimate ledger-reader control (w1/C1Simplify)
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### F. calibration: F3-forged distinct generic descriptions
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### G. calibration: H minimal forgery
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+### H. specified control: frozen c1-do-nothing.md
+C1_R52: population=82 ledger_rows=0 uncovered=82 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+### I. chronology: in-flight modified ledger (2 added rows) scored at base rev
+C1_R52: population=82 ledger_rows=85 uncovered=0 dup=0 dangling=3 bad_pointer=3 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1

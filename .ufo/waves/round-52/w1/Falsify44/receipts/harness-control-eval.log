@@ -1,0 +1,39 @@
+=== A. frozen control bytes vs committed r51 counter functions ===
+fixture rev=849931acf4ec files=['quality/tool-ledger.md', 'tools/mado-verify.sh']
+row0 path=tools/mado-verify.sh
+  desc cell  = 'quality/tool-ledger.md (commentary only)'
+  pointer cell = 'nothing | generic accountability pointer to this ledger itself'
+  pointer_tokens(pointer cell) = []
+  committed pointer_resolves -> False
+  tokens(desc+pointer) = ['quality/tool-ledger.md']
+  token quality/tool-ledger.md -> basename mado-verify.sh in bytes: True
+row1 path=tools/mado-verify.sh
+  desc cell  = 'quality/tool-ledger.md (commentary only)'
+  pointer cell = 'nothing | generic accountability pointer to this ledger itself'
+  pointer_tokens(pointer cell) = []
+  committed pointer_resolves -> False
+  tokens(desc+pointer) = ['quality/tool-ledger.md']
+  token quality/tool-ledger.md -> basename mado-verify.sh in bytes: True
+
+=== B. pathological variant: pointer cell names the ledger itself ===
+(same row grammar, self-pointer moved into the pointer cell;
+ instrument basename is present in the ledger bytes because the row names it)
+path=tools/mado-verify.sh pointer=`quality/tool-ledger.md`
+  committed pointer_resolves -> True
+  non-self clause PASS under naive def  (pointer != row-path)   -> True
+  non-self clause PASS under ledger def (pointer != LEDGER_REL) -> False
+path=tools/mado-verify.sh pointer=`quality/tool-ledger.md`
+  committed pointer_resolves -> True
+  non-self clause PASS under naive def  (pointer != row-path)   -> True
+  non-self clause PASS under ledger def (pointer != LEDGER_REL) -> False
+
+=== C. clause definitions that make the frozen control fail for the
+    named defects (self-pointer / context), evaluated on real control bytes ===
+row0: path-like tokens in row -> ['quality/tool-ledger.md']
+  self-pointer defect present (row references ledger itself): True
+  context defect present (desc lacks instrument-specific function): True
+  desc='quality/tool-ledger.md (commentary only)'
+row1: path-like tokens in row -> ['quality/tool-ledger.md']
+  self-pointer defect present (row references ledger itself): True
+  context defect present (desc lacks instrument-specific function): True
+  desc='quality/tool-ledger.md (commentary only)'

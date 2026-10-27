@@ -1,0 +1,63 @@
+# C2Novelty anchor/provenance spot-check transcript — round 52
+
+Seat: C2Novelty. All reads against locally pinned bytes (`.ufo/waves/round-51/fetch/`,
+byte-identical to the round-52 draft's own fetches per its `fetch/verify.txt` 4/4 EQUAL).
+No network, no compositor, no package queries. Commands run 2026-10-27 from
+/home/vgpnk/Projects/shokunin/mado-shokunin.
+
+## 1. Stale-row date collision (predicate: "opened this round")
+
+$ git show 85d57a818c3707397e21c840b6498b105ba798aa:corpus/SOURCES.md | grep -n "^| S36[4-9]"
+313:| S364 | ... KeybindManager.cpp ...
+314:| S365 | ... legacy/DispatcherTranslator.cpp ...
+315:| S366 | ... debug/HyprCtl.cpp ...
+316:| S367 | ... ConfigActions.cpp ...
+317:| S368 | ... legacy/ConfigManager.cpp ...
+318:| S369 | ... SharedDefs.hpp ...
+(registry rows carry opened=2026-10-27, status=mined — same calendar date as round 52)
+
+## 2. Old-counter-at-base (registration's distrusted receipt, reconfirmed)
+
+$ cat .ufo/waves/round-52/receipts/c2-base.txt | tail -2
+C2_R51: clauses=abcd clauses_met=4 admitted=1/1 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## 3. Draft anchor spot-checks (17 propositions; sample + every contested one)
+
+ConfigActions.cpp (pass(modMask,key,w) overload):
+- :1530 signature; :1531 xtract call; :1537 `if (window) {`; :1542 setKeyboardFocus;
+  :1551 `window = nullptr;` (xwl->xwl); :1554 sendKeyboardMods(modMask); :1556-1560 press branch;
+  :1561-1565 release; :1566-1574 both-edges; :1576 sendKeyboardMods(0); :1578 `if (!window)`; :1579 `return {};`
+  -> draft anchors P13 :1558, P16 :1578-1579, step-6 cites :1537-1552 — ALL EXACT.
+- xtract :47-49: `return window.value_or(Desktop::focusState()->window());`
+  -> NOT quoted/anchored anywhere in the draft; required by P16's "delivers to the current focus".
+
+DispatcherTranslator.cpp:
+- :529 sendshortcut start; :531-532 CVarList2(args,3)+size test (P06 anchor :531-535 EXACT);
+  :536 stringToModMask call; :540-543 numeric/code: branches (P08 EXACT); :544-547 mouse: >=272 (P09 EXACT);
+  :555 "no kb"; :557 KEYPAIRSTRING (P11 EXACT); :561-573 keysym scan loop, no break, cache write :569-576;
+  :574 "key not found" (P17 EXACT); :580 "invalid key"; :582-584 selector ternary (P12 EXACT);
+  :586-587 delegate `Actions::pass(MOD, keycode, PWINDOW)`; :591 sendkeystate start;
+  :592-594 4-field test (P01 EXACT); :596-598 state literals (P02 EXACT); :600-604 keyState map (P03 EXACT);
+  :607 modifiedArgs (P05 EXACT); :612 oldPassPressed save (P15 EXACT); :614-617 press-field write;
+  :619-622 delegate + repeat double-send (P04 EXACT); :624 restore (P15 EXACT).
+
+KeybindManager.cpp / hpp:
+- :221-242 stringToModMask: toupper :223, contains-tests :224-239, `return modMask;` :241, NO error/warning path
+  -> P07's "silent zero" TRUE for this function (the 0-rejection lives in the bind parser, held S162/bind-table-r25:42).
+- KeybindManager.hpp:149 m_keyToCodeCache declaration (draft's OBS cite EXACT).
+- ConfigActions.hpp:36 ActionResult alias EXACT; :114 m_passPressed EXACT; :117 m_timeLastMs actual bytes:
+  `uint32_t    m_timeLastMs    = 0;  // timestamp of last key/mouse event`
+  -> P14 quote `uint32_t m_timeLastMs = 0; // timestamp of last key/mouse event`:
+     raw substring at :117 = False; whitespace-collapsed = True (policy-dependent, see report item N4).
+
+## 4. Held-ground defects found during verification (draft must not inherit)
+
+- r51 entry step 7: "exec does not split at all and hands the tail to the process executor
+  (Hyprland-legacy-DispatcherTranslator.cpp:48-51)". Actual :48-51 = windowFromArg tail +
+  resolveWorkspace head. Actual exec = :65-70 (`spawn(args)` at :66, spawnRaw at :73 for execr).
+  Claim true; anchor wrong; post-errata text still carries it; w2 audit repeated ":48-51".
+- r26 entry cites "S018:1131-1132" for the Lua eval wrapper
+  (`std::string evalStr = std::format("return hl.dispatch({})", in);`).
+  S018's declared locator = `dispatchGetProp`, lines 1463-1645 of HyprCtl.cpp — 1131-1132 is OUT OF RANGE.
+  The wrapper region (HyprCtl.cpp:1130-1141) IS inside S366's locator (1126-1158). Hold-cite S366, not S018.

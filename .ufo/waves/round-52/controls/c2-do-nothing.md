@@ -1,0 +1,1 @@
+No-work control: at the frozen base revision, the claimed new corpus entry is absent, so the target predicate must report TARGET_MISSED. No source payloads are admitted and no source registry rows are appended by this control.

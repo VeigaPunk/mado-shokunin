@@ -1,0 +1,130 @@
+# C1CounterDesign receipts — 2026-10-27
+# lane=/home/vgpnk/Projects/shokunin/mado-shokunin
+# rev=85d57a818c3707397e21c840b6498b105ba798aa (git rev-parse HEAD)
+# counter=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+# scratch=/fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw
+## SELFTEST
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --selftest --work /fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw
+C1_R52_SELFTEST: 53/53 passed
+exit=0
+
+## GREEN — production ledger at the frozen base
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## RED — frozen do-nothing control (committed in place of the ledger)
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+detail: self_pointer path=tools/mado-verify.sh target=quality/tool-ledger.md
+detail: note path=tools/mado-verify.sh cells=4
+detail: generic_desc path=tools/mado-verify.sh reason=no-instrument-specific-phrase
+detail: dup path=tools/mado-verify.sh already-seen
+detail: uncovered path=quality/check-axis-scores.py
+detail: uncovered path=quality/check-control-receipts.py
+detail: uncovered path=quality/check-counter-discrimination.py
+detail: uncovered path=quality/check-deliverables.py
+detail: uncovered path=quality/check-evidence-pointers.py
+detail: uncovered path=quality/check-index-rows.py
+detail: uncovered path=quality/check-index.py
+detail: uncovered path=quality/check-landed-contract.py
+detail: uncovered ... 73 more paths not listed
+C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## CONTROLS — population-complete (C1Simplify controls, read-only)
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-B-row-selfpointer.md
+detail: self_pointer path=tools/mado-action-plan.py target=tools/mado-action-plan.py
+detail: generic_desc path=tools/mado-action-plan.py reason=no-instrument-specific-phrase
+detail: self_pointer path=tools/mado-anims.py target=tools/mado-anims.py
+detail: generic_desc path=tools/mado-anims.py reason=repeated-verbatim-of:tools/mado-action-plan.py
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-C-ledger-selfpointer.md
+detail: self_pointer path=tools/mado-action-plan.py target=quality/tool-ledger.md
+detail: self_pointer path=tools/mado-anims.py target=quality/tool-ledger.md
+detail: self_pointer path=tools/mado-assessment.py target=quality/tool-ledger.md
+detail: self_pointer path=tools/mado-binds.py target=quality/tool-ledger.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=82 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-D-generic-desc.md
+detail: generic_desc path=tools/mado-action-plan.py reason=no-instrument-specific-phrase
+detail: generic_desc path=tools/mado-anims.py reason=repeated-verbatim-of:tools/mado-action-plan.py
+detail: generic_desc path=tools/mado-assessment.py reason=repeated-verbatim-of:tools/mado-action-plan.py
+detail: generic_desc path=tools/mado-binds.py reason=repeated-verbatim-of:tools/mado-action-plan.py
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=82 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-E-one-selfpointer.md
+detail: self_pointer path=tools/mado-anims.py target=tools/mado-anims.py
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-F3-forged.md
+detail: generic_desc path=tools/mado-action-plan.py reason=bound-only-by-name-path-or-function-words
+detail: generic_desc path=quality/check-counter-discrimination.py reason=bound-only-by-name-path-or-function-words
+detail: generic_desc path=quality/check-r38-discrimination.py reason=bound-only-by-name-path-or-function-words
+detail: generic_desc path=quality/check-round-outcome-first.py reason=bound-only-by-name-path-or-function-words
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=10 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-G-legit-ledger-reader.md
+detail: note path=quality/check-tool-ledger.py names-the-ledger-in-prose target=quality/tool-ledger.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/control-H-minimal-forgery.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/mut-dup.md
+C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/mut-emptydesc.md
+detail: generic_desc path=tools/mado-binds.py reason=empty-or-placeholder
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+$ python3 -I c1-r52-ledger.py --repo $LANE --rev $REV --work $W --ledger $SIMPLE/mut-badpointer.md
+detail: bad_pointer path=tools/mado-geometry.py pointer='`corpus/nonexistent.md`' reason=no-target-names-the-instrument
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## SETUP ERRORS
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /nonexistent --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw
+C1_R52: setup=error detail=--repo /nonexistent is not a directory
+exit=2
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev deadbeefdeadbeefdeadbeefdeadbeefdeadbeef --work /fast/scratch/hyaku/mado-r52/C1CounterDesign/v/rw
+C1_R52: setup=error detail=--rev 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef' does not resolve to a commit in /home/vgpnk/Projects/shokunin/mado-shokunin
+exit=2
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /tmp/refused
+C1_R52: setup=error detail=refusing work dir under /tmp (got /tmp/refused)
+exit=2
+
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: setup=error detail=--work <dir> or a TMPDIR outside /tmp, /var/tmp, /dev/shm is required
+exit=2
+
+## LANE UNCHANGED
+?? .ufo/waves/round-52/
+(the round-52 wave directory is the only untracked path; the seat dir is inside it)
+## GATE OWNERSHIP
+quality/check-tool-ledger.py (the round-51 gate) owns: population, ledger_rows,
+  uncovered, dangling, bad_pointer, empty_desc -- it prints a LEDGER: line and says
+  nothing about self_pointer or generic_desc, so it cannot corroborate this counter.
+This counter (c1-r52-ledger.py) owns: population, ledger_rows, uncovered, dup,
+  dangling, bad_pointer, self_pointer, generic_desc -- it does not consult the
+  round-51 gate at all, so the two gates are independent and neither's verdict
+  constrains the other's. The integrator decides whether the round-51 gate gains
+  self_pointer/generic_desc fields (to allow a cross-check clause) or whether this
+  counter stands alone without one.

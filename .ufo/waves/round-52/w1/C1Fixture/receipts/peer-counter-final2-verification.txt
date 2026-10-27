@@ -1,0 +1,203 @@
+C1Fixture — final verification against sha256 382a0606…, and a NEW laundering hole found
+========================================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (seat C1CounterDesign, seat dir, not yet integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 382a0606408d714089b1f8906972eba551ea560e332d5c30755fee894ff32d6e   787 lines
+  (supersedes the three earlier byte states verified: c0291662…, 39e3d1f4…, eb508569…)
+
+The peer reports all three of this seat's findings fixed. Re-verified here rather than
+assumed.
+
+----------------------------------------------------------------------
+A. THE THREE CLAIMED FIXES — ALL CONFIRMED
+----------------------------------------------------------------------
+A1. SELFTEST COUNT
+  $ python3 -I c1-r52-ledger.py --selftest --work <scratch>
+  C1_R52_SELFTEST: 42/42 passed
+  exit=0
+  SELFTEST_CHECKS = 42 at line 75, matching the 42 cases. The stale-count defect is
+  gone. The peer also confirmed in writing that their earlier "34/34 passed" receipt
+  referred to the bytes as they stood at that time and was not true of the later bytes,
+  and that they have added a byte-history paragraph so no receipt is ambiguous.
+
+A2. E1 — semantically empty description carrying a genuine two-word phrase from the
+    instrument's own bytes:
+  row: | `quality/counters/c1-r49-keysym.py` | usr bin and nothing else at all here okay. | `SCORECARD.md:2736` |
+  detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=bound-only-by-name-path-or-function-words
+  C1_R52: ... self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+  exit=1        CLOSED (was: generic_desc=0 verdict=TARGET_MET, exit 0)
+
+A3. E2 — description built from the instrument's own path words:
+  row: | `quality/counters/c1-r49-keysym.py` | c1 r49 tools mado keysym and nothing more here okay. | `SCORECARD.md:2736` |
+  detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=bound-only-by-name-path-or-function-words
+  C1_R52: ... self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+  exit=1        CLOSED (was: generic_desc=0 verdict=TARGET_MET, exit 0)
+
+A4. FIVE-CASE HARNESS on the final bytes:
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=894999bf64595ade4311505c347c79482259969c'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=d58b1615e13ec696ab37aa1c66df366ababac8fe'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=b989331add602b68aacfc48d7390f2f4b5f4a311'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=eddcf7a258b2485be4dd490868b18bd1ed5f6089'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+----------------------------------------------------------------------
+B. P1-P4 RE-RUN ON THE FINAL BYTES — ALL AS THE PEER PREDICTED
+----------------------------------------------------------------------
+P1  self-pointer AND generic description:
+    row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `quality/tool-ledger.md` |
+    detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+    detail: generic_desc path=quality/counters/c1-r49-keysym.py reason=too-short:2-words
+    -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED, exit=1
+
+P2  generic description, legitimate cell-3 pointer:
+    row: | `quality/counters/c1-r49-keysym.py` | handles keys. | `SCORECARD.md:2736` |
+    -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED, exit=1
+
+P3  rich instrument-specific description, self-pointer in the pointer cell:
+    row: | `quality/counters/c1-r49-keysym.py` | Scores the keysym counter byte-equal to
+         the pinned libxkbcommon how-to-type judge on 633 fixtures. | `quality/tool-ledger.md` |
+    detail: self_pointer path=quality/counters/c1-r49-keysym.py target=quality/tool-ledger.md
+    -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED, exit=1
+
+P4  self-pointer in the DESCRIPTION cell, legitimate cell-3 pointer:
+    row: | `quality/counters/c1-r49-keysym.py` | Reads quality/tool-ledger.md only for
+         commentary and verifies the keysym counter against 633 fixtures. | `SCORECARD.md:2736` |
+    detail: note path=quality/counters/c1-r49-keysym.py names-the-ledger-in-prose target=quality/tool-ledger.md
+    -> self_pointer=0 generic_desc=0 verdict=TARGET_MET, exit=0
+
+P4 now reads TARGET_MET with a note, exactly as the peer predicted. The narrowing is
+real: the self-pointer clause fires only when the row has NO accountable target.
+
+----------------------------------------------------------------------
+C. NEW FINDING — THE NARROWING LETS A SELF-POINTER BE LAUNDERED
+----------------------------------------------------------------------
+The narrowing is sound for the peer's control-G case (a row whose description names the
+ledger in prose while its pointer designates an accountable document IS accounted for),
+but it can be turned around. The frozen claim's target defect is a self-pointer: a row
+whose accountability pointer names the ledger itself. Under the narrowing, a row escapes
+self_pointer as soon as ANY accountable target appears ANYWHERE in the row — including
+in a cell that is not the pointer region.
+
+N4 — the pointer cell names BOTH the ledger and an accountable document:
+  row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal resolver
+       on 190 fixtures and 150 generated cases. | `quality/tool-ledger.md` and
+       `SCORECARD.md:2660` |
+  detail: note path=quality/counters/c1-r47-terminal.py names-the-ledger-in-prose target=quality/tool-ledger.md
+  C1_R52: ... self_pointer=0 generic_desc=0 verdict=TARGET_MET
+  exit=0        ACCEPTED
+
+N5 — 4-cell row: cell 3 (the pointer cell) names the LEDGER, cell 4 names an accountable
+     document:
+  row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal resolver
+       on 190 fixtures and 150 generated cases. | `quality/tool-ledger.md` |
+       `SCORECARD.md:2660` |
+  detail: note path=quality/counters/c1-r47-terminal.py names-the-ledger-in-prose target=quality/tool-ledger.md
+  detail: note path=quality/counters/c1-r47-terminal.py cells=4
+  C1_R52: ... self_pointer=0 generic_desc=0 verdict=TARGET_MET
+  exit=0        ACCEPTED
+
+N7 — the minimal form: the ledger alone in the pointer cell, an accountable document in
+     the next cell:
+  row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal resolver
+       on 190 fixtures and 150 generated cases. | `quality/tool-ledger.md` |
+       `SCORECARD.md:2660` |
+  -> self_pointer=0 generic_desc=0 verdict=TARGET_MET, exit=0    ACCEPTED
+
+N8 — the same row, but the second cell names a document that does NOT name the
+     instrument, so no accountable target exists:
+  row: ... | `quality/tool-ledger.md` | `README.md` |
+  detail: self_pointer path=quality/counters/c1-r47-terminal.py target=quality/tool-ledger.md
+  -> self_pointer=1 verdict=TARGET_MISSED, exit=1    REJECTED
+
+Reading. N7 versus N8 isolates the mechanism exactly: the self-pointer charge depends
+only on whether SOME accountable target exists anywhere in the row, not on whether the
+accountability pointer itself is the ledger. A row can therefore name the ledger as its
+accountability pointer and be accepted, by appending an accountable document name to the
+row. That is precisely the defect class the frozen C1 claim names — "a self-pointer" —
+and the counter accepts it.
+
+This is NOT the peer's fault in the sense of a bug in what they were asked to fix; it is
+a direct consequence of the narrowing they chose for control-G, which they explicitly
+flagged as a judgement call with the alternative named ("the fail-closed form (any
+mention of the ledger disqualifies the row), which is a one-line change back"). The
+fail-closed form would reject N7/N5/N4 but would also reject control-G, the peer's
+point.
+
+The narrower fix that keeps control-G: apply the non-self scan to the POINTER REGION
+only (the ledger's own cell 3 and after) and charge self_pointer when the ledger appears
+there, regardless of whether another cell names an accountable target. Control-G's
+accountability pointer is its cell 3, which does not name the ledger, so control-G still
+passes; N4/N5/N7, whose pointer region does name the ledger, would be charged. This is
+an observation for the peer and the L1, not an edit by this seat.
+
+Note the harness does not see this: the harness's mut-selfptr fixture puts the ledger in
+the pointer cell with NO other accountable target, which is N1 (rejected correctly). The
+laundering needs a second cell.
+
+----------------------------------------------------------------------
+D. THE PEER'S OWN CEILING AND MARGIN CLAIMS — INDEPENDENTLY MEASURED
+----------------------------------------------------------------------
+D1. CEILING: "a description that quotes ANY real phrase from the instrument's bytes
+    still passes". CONFIRMED, and quantified.
+    The peer's exact example reproduces:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 does things. | `SCORECARD.md:2660` |
+      -> generic_desc=0 verdict=TARGET_MET, exit=0    ACCEPTED
+
+    A sweep replacing EACH of the 82 production descriptions in turn with a
+    phrase-copying description `pred c1 does things for the widget registry`:
+      caught (generic_desc=1): 59
+      missed (accepted): 23
+      the 23 missed rows are the counters whose own bytes contain "pred c1"
+      (c1-idle-lock, c1-r37/r38-event-ground, c1-r40-live-v2, c1-r40-live,
+       c1-r41-globals-v2, c1-r41-globals, c1-r42-geometry, c1-r44-geometry-states-v2,
+       c1-r44-geometry-states, c1-r45-monitors-v2, c1-r45-monitors, c1-r46-devices-v2,
+       c1-r46-devices-v3, c1-r46-devices, c1-r47-terminal, c1-r48-terminal-cache-v2,
+       c1-r48-terminal-cache, c1-r49-keysym, c1-r50-bind-entry, population-suite,
+       check-tool-ledger, c1-r51-ledger)
+
+    A sweep with a NON-phrase-copying generic description
+    `does something useful for the widget registry checks`:
+      caught: 82 of 82     (every row)
+    So the ceiling is exactly the phrase-copy one, and it is wide: a prediction-id phrase
+    in the instrument's own bytes launders a generic description on 23 of 82 rows.
+
+D2. MARGIN: "two rows survive on exactly one qualifying phrase, and that phrase is their
+    prediction id; every production row has >=1 and none has 0". CONFIRMED exactly.
+    Measured with the counter's OWN four filters (normalize/bigrams/path_words/
+    path_fragments/FUNCTION_WORDS imported from the counter module, so the margin is
+    measured with its filters, not an approximation):
+      rows with <= 1 surviving qualifying phrase: 2
+        quality/counters/c1-r47-terminal.py     surviving=1  ['pred c1']
+        quality/counters/c2-r51-dispatch-entry.py surviving=1 ['pred c2']
+      rows with 0 surviving: none
+
+    The tip direction is visible and named, not silent:
+      reworded honestly, keeping "pred c1"  -> generic_desc=0 verdict=TARGET_MET
+      reworded honestly, dropping "pred c1" -> generic_desc=0 verdict=TARGET_MET
+      description with no qualifying phrase -> generic_desc=1 verdict=TARGET_MISSED
+        reason=bound-only-by-name-path-or-function-words
+    So a bad rewrite fails loudly with the reason attached.
+
+D3. COMPOUND ATTACKS ON THE CEILING — the other clauses still hold.
+    ceiling + self-pointer in the pointer cell:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 does things. | `quality/tool-ledger.md` |
+      -> self_pointer=1 verdict=TARGET_MISSED, exit=1     REJECTED
+    ceiling + no accountable pointer:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 does things. | nothing here |
+      -> bad_pointer=1 verdict=TARGET_MISSED, exit=1      REJECTED
+    So the ceiling on generic_desc does not open the self_pointer or bad_pointer clauses.
+
+----------------------------------------------------------------------
+E. HYGIENE FOR THIS RE-VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on
+exit. The peer counter was read and executed, never written; its sha256 after this
+re-verification is unchanged at 382a0606408d714089b1f8906972eba551ea560e332d5c30755fee894ff32d6e.
+lane_unchanged=True on the full harness re-run. The lane's tracked working tree and
+object store are unchanged (10493 objects).

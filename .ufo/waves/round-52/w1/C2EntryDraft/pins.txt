@@ -1,0 +1,31 @@
+# Pins for the round-52 C2 entry draft (seat C2EntryDraft)
+
+Fetched by this seat on 2026-10-27 into `.ufo/waves/round-52/w1/C2EntryDraft/fetch/` with
+`curl -fsSL --max-time 25` from `raw.githubusercontent.com` only; every response was HTTP 200 and every
+sha256 is byte-equal to the round-51 copy of the same path (receipt `fetch/verify.txt`). Upstream revision
+for all four: `efb50993780079460b0cbed1363e2166a2de1d9f` (Hyprland 0.56.2; the package version line is the
+round-51 entry's read-only query, not re-queried this round - package queries are paused).
+
+| pin (this round) | repo path | url | bytes | lines | sha256 | prior registry row |
+|---|---|---|---|---|---|---|
+| fetch/Hyprland-legacy-DispatcherTranslator.cpp | src/config/legacy/DispatcherTranslator.cpp | https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp | 35997 | 868 | 7248cbb89f898c783c50c89d068df9821a6b38aeb6abeb6064e92c1610fbe771 | S365 (other scope) |
+| fetch/Hyprland-ConfigActions.cpp | src/config/shared/actions/ConfigActions.cpp | https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp | 71407 | 1772 | a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637 | S367 (other scope) |
+| fetch/Hyprland-ConfigActions.hpp | src/config/shared/actions/ConfigActions.hpp | https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.hpp | 6960 | 122 | 746c6f517620eb039afbfbb9a4a0e2d5ba1c5eb117bcc8f396173f63091b7073 | none (new URL) |
+| fetch/Hyprland-KeybindManager.cpp | src/managers/KeybindManager.cpp | https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp | 39334 | 975 | 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40 | S364, S352/S353 (other scopes) |
+
+Also read, not proposed as a row: `Hyprland-KeybindManager.hpp` (191 lines, 7936 B; `m_keyToCodeCache`
+declared at :149; sha256 `cee22c13d413ab389803e0eb87a6fcefadedea885cee4457b56ae351228dd1e0`, hashed from
+the round-51 copy this round and equal to its manifest) - cited for the cache member's owning class only.
+
+`S373`'s scope covers `stringToModMask` in this file (:221-240) and the cache member it fills, declared in
+`Hyprland-KeybindManager.hpp:149` and written from `DispatcherTranslator.cpp:559-576`. If the registry
+wants one row per file, the header deserves its own row instead; either way no mechanism claim rests on
+the header alone.
+
+Negative facts checked this round: the three documentation pins in the round-51 fetch directory
+(`wiki-Dispatchers.md`, `wiki-Binds.md`, `Hyprland-docs-hyprctl.1.rst`) contain zero occurrences of
+`sendkeystate` or `sendshortcut` (`grep -c` 0 each); recorded as a documentation gap in Limits, not used
+as a proposition. Those three files were not re-fetched this round.
+
+Access date for every URL above: 2026-10-27. Re-verify the digests before reusing any quote under a moved
+revision.

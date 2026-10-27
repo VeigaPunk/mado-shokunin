@@ -1,0 +1,13 @@
+diff --git a/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md b/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
+index 6d8112e7..f4434114 100644
+--- a/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
++++ b/corpus/knowledge/hyprland-dispatcher-action-effects-r52.md
+@@ -31,6 +31,8 @@ P3: A dispatcher that names a workspace resolves it through the shared workspace
+ P4: The workspace helper creates a workspace that does not exist yet when the compositor holds no workspace with that id. - `ws = State::workspaceState()->create(id, PMONITOR->m_id, name, false);` (Hyprland-legacy-DispatcherTranslator.cpp:60) S371
+ P5: The `movewindow` dispatcher strips a trailing ` silent` before it reads its argument, so the suffix is not part of the direction character. - `bool silent    = args.ends_with(" silent");` (Hyprland-legacy-DispatcherTranslator.cpp:251-252) S372
+ 
++P6 (context): the translator's entry point refuses an unknown dispatcher name before any argument resolution runs `return {.success = false, .error = "Bad dispatcher"};` (Hyprland-legacy-DispatcherTranslator.cpp:31-32).
++
+ ## Limits
+ 
+ - Nothing was dispatched and nothing was pressed; the mechanism is read from the pin.

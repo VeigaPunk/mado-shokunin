@@ -1,0 +1,12 @@
+diff --git a/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md b/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
+index ce5ae2fa..5ab7c489 100644
+--- a/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
++++ b/corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md
+@@ -48,7 +48,6 @@ recheck: on-release - re-read the four pinned files when Hyprland leaves 0.56.2.
+ | P13 | The synthetic event carries the timestamp of the last real input event and the keyboard keycode minus 8; the modifier mask is asserted before delivery and cleared to 0 after. | S371 | Hyprland-ConfigActions.cpp:1558-1558 | `g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);` | Delivery reads the shared state's m_timeLastMs rather than a clock, subtracts 8 for the keyboard path, and the surrounding sendKeyboardMods calls set the mask then clear it. |
+ | P14 | The shared state field is the last key/mouse event's timestamp, defaulting to 0. | S372 | Hyprland-ConfigActions.hpp:117-117 | `uint32_t m_timeLastMs = 0; // timestamp of last key/mouse event` | The declaration and its comment name the field P13 reads; the 0 initial value is the pre-input value a synthetic event would carry. |
+ | P15 | `sendkeystate` restores the previous press field after it delegates, so a dispatch does not leave its state behind. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:612-612 | `const int oldPassPressed = Config::Actions::state()->m_passPressed;` | The value is saved at L612 before the writes at L614-617 and written back at L624 after the delegate returns, on every path out of the function. |
+-| P16 | A written selector that resolves nothing and an empty selector end in different delivery paths: empty passes nullptr and the focus switch is skipped. | S371 | Hyprland-ConfigActions.cpp:1578-1579 | `if (!window) return {};` | The early return fires for the null window the empty selector produces, after the focus-switch block that is guarded by `if (window)` at L1537, so neither focus move nor focus restore runs. |
+ | P17 | A keysym the scan cannot find fails with `key not found` inside the scan, distinct from the later generic `invalid key` guard. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:574 | `return {.success = false, .error = "sendshortcut: key not found"};` | This return sits inside the keysym branch before the cache is filled; the `invalid key` return at L580 is outside every branch, so the message identifies where resolution stopped. |
+ 
+ ## Pin manifest

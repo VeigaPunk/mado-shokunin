@@ -1,0 +1,28 @@
+{
+ "profile": "default",
+ "note": "Alias sets for the round-52 C1 counter's summary line. The harness matches on aliases so it does not hard-code one counter author's spelling; a counter that satisfies the frozen predicate must expose at least one alias per group, or name the defect in a detail line.",
+ "fields": {
+  "verdict": ["verdict"],
+  "population": ["population", "pop"],
+  "ledger_rows": ["ledger_rows", "rows"],
+  "self_pointer": [
+   "self_pointer", "self_pointers", "selfptr", "self_ptr", "self_ref",
+   "self_refs", "self_reference", "self_referential", "non_resolving_self",
+   "self_evidence", "self_target"
+  ],
+  "context": [
+   "context", "context_defect", "context_missing", "contextless",
+   "generic_context", "generic_desc", "generic_description",
+   "non_specific", "unspecific", "contextual"
+  ]
+ },
+ "detail_self_regex": "self[-_ ]?(pointer|ptr|ref|referenc|evidence|target)|ledger[-_ ]?self",
+ "detail_context_regex": "generic[-_ ]?(desc|context|description)|context[-_ ]?(less|missing|defect|ual)|non[-_ ]?specific|unspecific|instrument[-_ ]?specific[-_ ]?context",
+ "required_red_signals": {
+  "red": ["self_pointer", "context"],
+  "mut-selfptr": ["self_pointer"],
+  "mut-generic": ["context"],
+  "mut-duprow": [],
+  "default": []
+ }
+}

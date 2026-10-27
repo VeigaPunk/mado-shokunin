@@ -1,0 +1,109 @@
+### 0. pinned inputs
+ad72f72f64708d1b877d0f2233f32a065bd11689d644af669176d1844ba2eba6  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+85d57a818c3707397e21c840b6498b105ba798aa
+fatal: path '.ufo/waves/round-52/controls/c1-do-nothing.md' exists on disk, but not in '85d57a818c3707397e21c840b6498b105ba798aa'
+fatal: path '.ufo/waves/round-52/controls/c1-do-nothing.md' exists on disk, but not in 'HEAD'
+0
+
+### 1. base-revision snapshot (read-only source bytes)
+df5b3705d0291f967c35f0d69d6a908fe37a30d35e84599c4c0f897ca6469e0b  /fast/scratch/hyaku/mado-r52/Falsify35/repo-prod/quality/tool-ledger.md
+6dd4061c1d8a82d5a9efa8ae954ff1c4559e43abefbb69210fa831bd758a98d4  /fast/scratch/hyaku/mado-r52/Falsify35/repo-prod/quality/check-tool-ledger.py
+d5c2447d098681251fd41c04414d4e8823b41b78f150a5fc6bedd526a4a35b56  /fast/scratch/hyaku/mado-r52/Falsify35/repo-prod/quality/counters/c1-r51-ledger.py
+
+### 2. table shape: production ledger vs frozen control (column counts)
+production data-row cells:      83 3 
+control rows:       4 4 
+production header:
+30:| instrument | description | accountability pointer |
+control header:
+| Tool | Reads | Writes | Owner and adjacent lanes |
+
+### 3. control materialised at the tracked ledger path (no-work ledger semantics)
+| Tool | Reads | Writes | Owner and adjacent lanes |$
+|---|---|---|---|$
+| tools/mado-verify.sh | quality/tool-ledger.md (commentary only) | nothing | generic accountability pointer to this ledger itself |$
+| tools/mado-verify.sh | quality/tool-ledger.md (commentary only) | nothing | generic accountability pointer to this ledger itself |$
+
+### 4. control left at its delivered path (path-parameterised self check)
+
+### 5. fixture C: 2 committed-grammar rows, self-pointers, generic description
+# fixture C: 2-row generic self-pointer ledger (committed grammar)
+| instrument | description | accountability pointer |
+|---|---|---|
+| `tools/mado-verify.sh` | generic accountability pointer to this ledger itself. | `quality/tool-ledger.md` |
+| `tools/mado-binds.py` | generic accountability pointer to this ledger itself. | `quality/tool-ledger.md` |
+
+### 6. fixture D: population-shaped (82 rows) generic self-pointer ledger
+fixture_d_rows=82 population=82
+
+### 7. seat-local instrument matrix (count implements none of the three clauses;
+###    unique implements only uniqueness; semantic implements uniqueness+resolution+
+###    non-self with the instrument-specific context check STUBBED to True)
+--- prod/count
+F35: mode=count ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 verdict=PASS
+rc=0
+--- prod/unique
+F35: mode=unique ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 dup=0 verdict=PASS
+rc=0
+--- prod/semantic
+F35: mode=semantic ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 dup=0 uncovered=0 bad_pointer=0 nonself=0 context=stub-ok verdict=PASS
+rc=0
+--- ctl-tracked/count
+F35: mode=count ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=0 malformed=2 verdict=FAIL
+rc=1
+--- ctl-tracked/unique
+F35: mode=unique ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=0 malformed=2 dup=0 verdict=FAIL
+rc=1
+--- ctl-tracked/semantic
+F35: mode=semantic ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=0 malformed=2 dup=0 uncovered=82 bad_pointer=0 nonself=0 context=stub-ok verdict=FAIL
+rc=1
+--- ctl-path/semantic (self = ledger argument)
+F35: mode=semantic ledger=.ufo/waves/round-52/controls/c1-do-nothing.md self=.ufo/waves/round-52/controls/c1-do-nothing.md population=82 rows=0 malformed=2 dup=0 uncovered=82 bad_pointer=0 nonself=0 context=stub-ok verdict=FAIL
+rc=1
+--- ctl-path/semantic (self = tracked ledger path)
+F35: mode=semantic ledger=.ufo/waves/round-52/controls/c1-do-nothing.md self=quality/tool-ledger.md population=82 rows=0 malformed=2 dup=0 uncovered=82 bad_pointer=0 nonself=0 context=stub-ok verdict=FAIL
+rc=1
+--- fix-c/count
+F35: mode=count ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=2 malformed=0 verdict=FAIL
+rc=1
+--- fix-c/unique
+F35: mode=unique ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=2 malformed=0 dup=0 verdict=FAIL
+rc=1
+--- fix-c/semantic
+F35: mode=semantic ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=2 malformed=0 dup=0 uncovered=80 bad_pointer=0 nonself=2 context=stub-ok verdict=FAIL
+rc=1
+--- fix-d/count
+F35: mode=count ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 verdict=PASS
+rc=0
+--- fix-d/unique
+F35: mode=unique ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 dup=0 verdict=PASS
+rc=0
+--- fix-d/semantic
+F35: mode=semantic ledger=quality/tool-ledger.md self=quality/tool-ledger.md population=82 rows=82 malformed=0 dup=0 uncovered=0 bad_pointer=0 nonself=82 context=stub-ok verdict=FAIL
+rc=1
+
+### 8. committed base checker on production and on the frozen control at the tracked path
+fixture toplevel: /fast/scratch/hyaku/mado-r52/Falsify35/fixture-git
+REV_BASE=a21dce968e324e30e14f8bb9e840748e0598200e REV_CTL=e6075599b02ea7ecb041394d347b2dfae069295c
+--- base checker on production
+LEDGER: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=a21dce968e324e30e14f8bb9e840748e0598200e
+rc=0
+--- base checker on frozen control bytes
+LEDGER-ROW reason=uncovered path=tools/mado-wsrules.py detail=no-row
+LEDGER: population=82 ledger_rows=0 uncovered=82 dangling=2 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=e6075599b02ea7ecb041394d347b2dfae069295c
+rc=1
+--- base checker on fixture D (population-shaped no-work ledger)
+LEDGER: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=09d5e99df4dfb2f1f5bf5b2ce56dbecc827660fc
+rc=0
+
+### 9. round-51 counter (declared by C1 as NOT measuring context) on both
+--- r51 counter on production
+detail: checker ledger ok (rev=a21dce968e324e30e14f8bb9e840748e0598200e)
+C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=a21dce968e324e30e14f8bb9e840748e0598200e
+rc=0
+--- r51 counter on frozen control at tracked path
+detail: checker: LEDGER: population=82 ledger_rows=0 uncovered=82 dangling=2 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=e6075599b02ea7ecb041394d347b2dfae069295c
+C1_R51: population=82 ledger_rows=2 uncovered=81 dangling=0 bad_pointer=1 empty_desc=0 selftest=ok dup=1 checker=failed verdict=TARGET_MISSED rev=e6075599b02ea7ecb041394d347b2dfae069295c
+rc=1
+
+### done

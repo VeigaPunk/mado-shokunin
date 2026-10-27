@@ -1,0 +1,188 @@
+C1Fixture — final verification against sha256 701b497d… (the laundering fix)
+=========================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (seat C1CounterDesign, seat dir, not yet integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 701b497db2016e6b205cb9843a89e0f6a221842267349f9e39144af78d9c166b   824 lines
+  (supersedes the four earlier byte states verified: c0291662…, 39e3d1f4…, eb508569…, 382a0606…)
+
+The peer reports the laundering finding fixed with a two-clause rule, and asks for
+re-verification. Re-verified here rather than assumed.
+
+THE PEER'S RULE, as stated
+  (1) If the ledger (quality/tool-ledger.md) or the row's own path is named in the
+      POINTER REGION (cells 3 and after), the accountability claim is circular —
+      charged UNCONDITIONALLY, whatever else the row names.
+  (2) If the ledger is named only in some OTHER cell, the charge fires only when the
+      row designates no accountable target at all.
+  A row that designates an accountable document and merely mentions the ledger in prose
+  is recorded as `note path=… names-the-ledger-in-prose` and not scored.
+
+----------------------------------------------------------------------
+A. HARNESS AND SELFTEST
+----------------------------------------------------------------------
+Five-case harness:
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=0e1559ed6112fb69f5eb1ff1fc9971934ae81e0d'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=f2e8f49445ab6b1595fc3661139cc4fc279b2216'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=6e24881c43dac325970a1fdaf978e6dd3c2af2b0'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=e52be6919cd9dfcbc3d3e06e4f999799495dda8b'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+Selftest:
+  C1_R52_SELFTEST: 47/47 passed
+  exit=0
+  SELFTEST_CHECKS = 47 at line 75, matching the 47 cases.
+
+----------------------------------------------------------------------
+B. THE LAUNDERING PROBES — ALL NOW REJECTED
+----------------------------------------------------------------------
+All four probes this seat constructed are now charged. The counter's own summary line is
+given; every one is TARGET_MISSED, exit 1.
+
+  N4  pointer cell names the ledger AND an accountable document:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal
+           resolver on 190 fixtures and 150 generated cases. |
+           `quality/tool-ledger.md` and `SCORECARD.md:2660` |
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED (was accepted)
+
+  N5  four-cell row: cell 3 (the pointer cell) = the ledger, cell 4 = accountable doc:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal
+           resolver on 190 fixtures and 150 generated cases. | `quality/tool-ledger.md` |
+           `SCORECARD.md:2660` |
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED (was accepted)
+
+  N7  the minimal form:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED (was accepted)
+
+  N8  ledger plus a document that does NOT name the instrument:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED (unchanged)
+
+----------------------------------------------------------------------
+C. CONTROL-G AND THE FROZEN CONTROL ARE BOTH PRESERVED
+----------------------------------------------------------------------
+G1 — an honest row whose DESCRIPTION names the ledger (the peer's control-G shape),
+    with a legitimate accountable pointer:
+  row: | `quality/counters/c1-r47-terminal.py` | Reads quality/tool-ledger.md and prints
+       the terminal registry rows for each instrument. | `SCORECARD.md:2660` |
+  -> self_pointer=0     (no self_pointer charge; the mention is prose)
+     generic_desc=1 reason=no-instrument-specific-phrase
+     verdict=TARGET_MISSED
+  The self_pointer charge is correctly absent — control-G's shape survives the fix. (In
+  this seat's probe the generic_desc clause fires because the crafted description has no
+  qualifying phrase; the peer's own control-G fixture uses a richer description and
+  passes fully. The point under test is the ABSENCE of the self_pointer charge.)
+
+G2 — the ledger named in cell 2 AND again in cell 4 (after the pointer):
+  row: | `quality/counters/c1-r47-terminal.py` | Reads quality/tool-ledger.md for
+       commentary. | `SCORECARD.md:2660` | `quality/tool-ledger.md` |
+  -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  Confirms clause (1) applies to a ledger mention ANYWHERE in the pointer region, not
+  only in its first cell.
+
+G3 — the ledger named in cell 2 only, with no accountable pointer (the frozen control's
+    shape):
+  -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  Confirms clause (2) still charges the frozen control's shape.
+
+The frozen control itself is unchanged: the harness red case reports self_pointer=1 AND
+generic_desc=1, exit 1.
+
+----------------------------------------------------------------------
+D. PRIOR FINDINGS STILL HOLD ON THE FINAL BYTES
+----------------------------------------------------------------------
+  E1  semantically empty description carrying a real phrase from the instrument's bytes:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED      still closed
+  E2  description built from the instrument's own path words:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED      still closed
+  P1  self-pointer AND generic description:
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  P2  generic description, legitimate cell-3 pointer:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+  P3  rich instrument-specific description, self-pointer in the pointer cell:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  P4  self-pointer in the DESCRIPTION cell, legitimate cell-3 pointer:
+      -> self_pointer=0 generic_desc=0 verdict=TARGET_MET
+      (control-G's shape; the mention is recorded, not scored)
+
+----------------------------------------------------------------------
+E. NEW LAUNDERING SHAPES PROBED — NONE FOUND
+----------------------------------------------------------------------
+Beyond the four known probes, four further shapes were built against the two-clause rule
+to look for a residual escape. All are charged.
+
+  L1  two-cell row (no pointer region at all) whose description names the ledger:
+      row: | `quality/counters/c1-r47-terminal.py` | Reads quality/tool-ledger.md and
+           prints rows for each instrument. |
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED     REJECTED
+
+  L2  pointer region names the row's OWN path plus an accountable document:
+      row: | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 scores the terminal
+           resolver on 190 fixtures. | `quality/counters/c1-r47-terminal.py` and
+           `SCORECARD.md:2660` |
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED
+
+  L3  pointer region names the ledger via a RELATIVE path form:
+      row: … | `quality/tool-ledger.md` and `SCORECARD.md:2660` |   (as `./quality/tool-ledger.md`)
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED
+
+  L4  pointer region names the ledger with a LINE ANCHOR:
+      row: … | `quality/tool-ledger.md:1` and `SCORECARD.md:2660` |
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED     REJECTED
+
+The relative-path and line-anchor forms are worth recording: a tokeniser that only
+recognised the exact string `quality/tool-ledger.md` would have missed L3 and L4, because
+the ledger's line-anchor form `quality/tool-ledger.md:1` is a different string. The
+counter's token handling covers both.
+
+----------------------------------------------------------------------
+F. THE CEILING IS UNCHANGED — AND THE PEER SAYS SO
+----------------------------------------------------------------------
+Re-ran the 82-row sweep on the final bytes. A phrase-copying replacement description
+`pred c1 does things for the widget registry`:
+  caught (generic_desc=1): 59
+  accepted (generic_desc=0): 23
+  the 23 accepted rows are exactly the instruments whose own bytes contain "pred c1"
+  (c1-idle-lock, c1-r37/r38-event-ground, c1-r40-live-v2, c1-r40-live, c1-r41-globals-v2,
+   c1-r41-globals, c1-r42-geometry, c1-r44-geometry-states-v2, c1-r44-geometry-states,
+   c1-r45-monitors-v2, c1-r45-monitors, c1-r46-devices-v2, c1-r46-devices-v3,
+   c1-r46-devices, c1-r47-terminal, c1-r48-terminal-cache-v2, c1-r48-terminal-cache,
+   c1-r49-keysym, c1-r50-bind-entry, population-suite, check-tool-ledger, c1-r51-ledger)
+
+This is unchanged from the previous byte state, exactly as the peer states. The context
+clause remains lexical binding, not entailment. The peer explicitly does not claim
+otherwise, and records the ceiling with its construction in their own report.
+
+----------------------------------------------------------------------
+G. ASSESSMENT
+----------------------------------------------------------------------
+Every finding this seat has raised against the counter is now closed on the final bytes:
+  - the stale SELFTEST_CHECKS (defect) — closed, selftest 42/42 then 47/47
+  - E1 (empty description with a phrase copy) — closed
+  - E2 (path-words-only description) — closed
+  - the laundering hole (a second accountable document excusing a circular pointer) —
+    closed, including four further shapes probed here
+
+Two things remain open and are NOT claimed closed by the peer:
+  1. the lexical-binding ceiling on the context clause (23 of 82 rows);
+  2. the gate cross-check clause, which cannot survive unchanged because
+     quality/check-tool-ledger.py's LEDGER: line carries no self_pointer/generic_desc
+     field to agree on. The peer records this as gate ownership and leaves the choice to
+     the integrator.
+
+Neither is within this seat's scope (the harness), and neither is a defect in the
+harness.
+
+----------------------------------------------------------------------
+H. HYGIENE FOR THIS RE-VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on
+exit. The peer counter was read and executed, never written; its sha256 after this
+re-verification is unchanged at
+701b497db2016e6b205cb9843a89e0f6a221842267349f9e39144af78d9c166b.
+lane_unchanged=True on the full harness re-run. The lane's tracked working tree and
+object store are unchanged (10493 objects).

@@ -1,0 +1,131 @@
+
+===== 0. hygiene =====
+0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+85d57a818c3707397e21c840b6498b105ba798aa
+/dev/nvme1n1p2  804G  222G  582G  28% /fast
+fixture toplevel ok: /fast/scratch/hyaku/mado-r52/Attack02/fix
+
+===== P00 fixture green baseline =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=f67eaa93258d1bf4d514cb6ce92ad564d6112edd
+exit=0
+P00_REV=f67eaa93258d1bf4d514cb6ce92ad564d6112edd
+
+===== P03 pointer = `tool-ledger.md` and `docs/alpha.md:1` (bare ledger basename + doc) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=8d2be54e52309c358165c7b35ac7692a9f8cec32
+exit=0
+P03_REV=8d2be54e52309c358165c7b35ac7692a9f8cec32
+
+===== P04 pointer = `alpha.py` and `docs/alpha.md:1` (row own basename + doc) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=65eece83aca743d48a0fd331143c9f9cf8609d2a
+exit=0
+P04_REV=65eece83aca743d48a0fd331143c9f9cf8609d2a
+
+===== P05 pointer = `./tool-ledger.md` and `docs/alpha.md:1` =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=9cd2331ba7b46dabf7bdd03f17fc7500cb2c7071
+exit=0
+P05_REV=9cd2331ba7b46dabf7bdd03f17fc7500cb2c7071
+
+===== P06 pointer = `quality/tool-ledger.md)` and `docs/alpha.md:1` =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=f9487578c1197aad0cf949796e4ee2ef363c7e1a
+exit=0
+P06_REV=f9487578c1197aad0cf949796e4ee2ef363c7e1a
+
+===== P07 pointer = `quality/tool-ledger.md:x` and `docs/alpha.md:1` =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=0ed45a2e1a27e13b13c44127957bd41124e1ade1
+exit=0
+P07_REV=0ed45a2e1a27e13b13c44127957bd41124e1ade1
+
+===== P08 pointer = `tool-ledger.md` alone =====
+detail: bad_pointer path=tools/alpha.py pointer='`tool-ledger.md`' reason=no-target-names-the-instrument
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=73c1923d5665d3b898f348a58741b7c1f4303e11
+exit=1
+P08_REV=73c1923d5665d3b898f348a58741b7c1f4303e11
+
+===== P09 pointer = `docs/alpha-evidence.md` (symlink -> ../tools/alpha.py) =====
+120000 blob a6e9927423e27a1dd03010cb3c368f7eca18b31e	docs/alpha-evidence.md
+../tools/alpha.pyC1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=4ebf0f17a82f67e08e1a882d12585aee4a30e30f
+exit=0
+P09_REV=4ebf0f17a82f67e08e1a882d12585aee4a30e30f
+
+===== P10 pointer = `docs/ledger-copy.md` (symlink -> ../quality/tool-ledger.md) =====
+../quality/tool-ledger.mddetail: bad_pointer path=tools/alpha.py pointer='`docs/ledger-copy.md`' reason=no-target-names-the-instrument
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=068be29998b29d250e77a989c5bf8d501c750d9a
+exit=1
+P10_REV=068be29998b29d250e77a989c5bf8d501c750d9a
+
+===== P11 4-cell control shape, bare basename `tool-ledger.md` in Reads cell =====
+detail: bad_pointer path=tools/beta.sh pointer='nothing | generic accountability pointer to this ledger itself' reason=no-target-names-the-instrument
+detail: note path=tools/beta.sh cells=4
+detail: generic_desc path=tools/beta.sh reason=no-instrument-specific-phrase
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=1 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=ed7b45cfa34013e4173cf5c0a6bdad047ab537d5
+exit=1
+P11_REV=ed7b45cfa34013e4173cf5c0a6bdad047ab537d5
+
+===== P12 4-cell control shape, full path `quality/tool-ledger.md` in Reads cell =====
+detail: self_pointer path=tools/beta.sh target=quality/tool-ledger.md
+detail: note path=tools/beta.sh cells=4
+detail: generic_desc path=tools/beta.sh reason=no-instrument-specific-phrase
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=2c258f09f7986b3fcc87781e4201e835475fecd8
+exit=1
+P12_REV=2c258f09f7986b3fcc87781e4201e835475fecd8
+
+===== P13 evidence cycle: alpha -> doc naming alpha (about beta), beta -> doc naming beta (about alpha) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=f449fb177ee15b34acadcf197c76781ad7c3cd65
+exit=0
+P13_REV=f449fb177ee15b34acadcf197c76781ad7c3cd65
+
+===== P14 all rows point at one shared registry doc naming all basenames =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=dad43f78eb0502883e1668115664c134aef17d90
+exit=0
+P14_REV=dad43f78eb0502883e1668115664c134aef17d90
+
+===== P15 pointer = `quality/tool-ledger.md` and `docs/alpha.md:1` (closed-hole regression) =====
+detail: self_pointer path=tools/alpha.py target=quality/tool-ledger.md
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=ed7052f69f47460d5ed8c8540dc5d6ad6fe2e82c
+exit=1
+P15_REV=ed7052f69f47460d5ed8c8540dc5d6ad6fe2e82c
+
+===== P16 counter --selftest =====
+C1_R52_SELFTEST: 53/53 passed
+exit=0
+
+===== DONE fixture probes =====
+===== P01 real-lane green at base =====
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+===== P02 real-lane frozen control via --ledger =====
+detail: self_pointer path=tools/mado-verify.sh target=quality/tool-ledger.md
+detail: note path=tools/mado-verify.sh cells=4
+detail: generic_desc path=tools/mado-verify.sh reason=no-instrument-specific-phrase
+detail: dup path=tools/mado-verify.sh already-seen
+detail: uncovered path=quality/check-axis-scores.py
+detail: uncovered path=quality/check-control-receipts.py
+detail: uncovered path=quality/check-counter-discrimination.py
+detail: uncovered path=quality/check-deliverables.py
+detail: uncovered path=quality/check-evidence-pointers.py
+detail: uncovered path=quality/check-index-rows.py
+detail: uncovered path=quality/check-index.py
+detail: uncovered path=quality/check-landed-contract.py
+detail: uncovered ... 73 more paths not listed
+C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+===== P17 population-joining check (counter inside its own population rule) =====
+82
+0
+0 c1-r52 paths at base
+
+===== P18 control basename uniqueness at base =====
+2
+.ufo/waves/round-51/w1/ExecLedgerPopulation/tool-ledger.md
+quality/tool-ledger.md
+===== P19 (rev 2facb2bce514aea6a2b1f4dd0a2b886bcb14f1e6) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=2facb2bce514aea6a2b1f4dd0a2b886bcb14f1e6
+exit=0
+===== P20 (rev 5de2b412947f2d49fe49851412785a5d67ff5315) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=5de2b412947f2d49fe49851412785a5d67ff5315
+exit=0
+===== P21 (rev 8db039d640c9674b8f2fb388f66eb8b774b00aed) =====
+C1_R52: population=3 ledger_rows=3 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=8db039d640c9674b8f2fb388f66eb8b774b00aed
+exit=0

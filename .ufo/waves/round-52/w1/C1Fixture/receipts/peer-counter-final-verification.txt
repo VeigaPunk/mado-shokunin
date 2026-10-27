@@ -1,0 +1,116 @@
+C1Fixture — final verification against the peer's latest bytes, and a live defect found
+=========================================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (seat C1CounterDesign, seat dir, not yet integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 eb5085697eaa8a9b3059a468581f34b918bb273ad1922c6e4c4a1115339f73ef   715 lines
+  (this supersedes the two earlier shas verified: c0291662..., then 39e3d1f4...)
+
+The counter changed a second time after the F3/E1/E2 findings were sent: 685 -> 715 lines.
+This seat re-verified rather than assuming.
+
+----------------------------------------------------------------------
+A. FIVE-CASE HARNESS ON THE FINAL BYTES
+----------------------------------------------------------------------
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=49a1e73d4c29dcbd09a4f64fcd9433082af4427b'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=e28e6d0c3a03d725158d604a09f45181680091e6'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=ff8856184ba953851c27db80a0bac983e49afa42'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=070fa32afa2aed3c127fe138b85edf4f7915dd9b'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+Still PASS on all five cases.
+
+----------------------------------------------------------------------
+B. E1 AND E2 ARE STILL OPEN ON THE FINAL BYTES
+----------------------------------------------------------------------
+The +30 lines did NOT touch the generic_desc clause. Reading the final source, the
+clause is still exactly:
+
+    elif len(words) < MIN_DESC_WORDS:
+        reason = "too-short:%d-words" % len(words)
+    else:
+        body = normalize(reader.text(path))
+        bound = [phrase for phrase in bigrams(words) if " %s " % phrase in body]
+        if not bound:
+            reason = "no-instrument-specific-phrase"
+        else:
+            path_words_ = path_words(path)
+            if not any(not set(phrase.split()) <= path_words_ for phrase in bound):
+                reason = "only-path-name-phrase"
+
+Re-running both escapes against the final bytes:
+
+E1 — semantically empty description carrying a genuine two-word phrase from the
+instrument's own bytes:
+  row: | `quality/counters/c1-r49-keysym.py` | usr bin and nothing else at all here okay. | `SCORECARD.md:2736` |
+  -> C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0
+             self_pointer=0 generic_desc=0 verdict=TARGET_MET
+     exit=0    STILL ACCEPTED
+
+E2 — description built from the instrument's own path words:
+  row: | `quality/counters/c1-r49-keysym.py` | c1 r49 tools mado keysym and nothing more here okay. | `SCORECARD.md:2736` |
+  -> C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0
+             self_pointer=0 generic_desc=0 verdict=TARGET_MET
+     exit=0    STILL ACCEPTED
+
+The clause is unchanged, so both escapes remain. What the +30 lines DID add:
+  * a `peer-instrument:` reason in the bad_pointer clause (a pointer naming a DIFFERENT
+    instrument than the row's own is now charged), and
+  * new --selftest cases (control-shape-self-pointer, control-shape-generic-desc,
+    row-self-verdict, row-self-pointer-count, row-self-pointer-detail, name-only-verdict,
+    name-only-reason, peer-verdict, peer-bad-pointer-count, peer-reason,
+    ledger-reader-verdict, ledger-reader-self-pointer-zero, ...).
+Both are genuine improvements; neither addresses E1/E2.
+
+----------------------------------------------------------------------
+C. LIVE DEFECT FOUND: THE COUNTER'S OWN SELFTEST FAILS ON THE FINAL BYTES
+----------------------------------------------------------------------
+  $ python3 -I c1-r52-ledger.py --selftest --work <scratch>
+  FAILED: selftest-count expected=34 got=38
+  C1_R52_SELFTEST: 38/39 passed
+  rc=1
+
+Cause, read from the source: the new --selftest cases raised the number of checks from
+34 to 39, but the module constant was not updated.
+
+  line  75:  SELFTEST_CHECKS = 34
+  line 421:  if total != SELFTEST_CHECKS:
+  line 422:      self.failed.append(("selftest-count", "expected=%d got=%d" % (SELFTEST_CHECKS, total)))
+
+The check is a hardcoded total, which is the lane's own idiom (see
+quality/check-tool-ledger.py's SELFTEST_CHECKS = 50): a case that silently disappears
+must fail the run rather than shrink it. The constant is simply stale relative to the
+cases that were just added. Reproduced twice, deterministically.
+
+This is reported as an observation about the peer's in-flight bytes, not as a judgement
+of the final counter: the file is at 715 lines and was being written at 10:33 while
+this seat read it. The fix is a one-token change (34 -> 39) in the same file.
+
+Note this also means the peer's earlier claim "selftest -> C1_R52_SELFTEST: 34/34 passed,
+exit=0" was true of the PREVIOUS bytes (39e3d1f4..., where the count was still 34) and
+is no longer true of the current bytes. This seat did not re-run the selftest on
+39e3d1f4..., so the peer should confirm which byte state their "34/34" refers to.
+
+----------------------------------------------------------------------
+D. WHAT THIS SEAT'S HARNESS DOES AND DOES NOT COVER
+----------------------------------------------------------------------
+The harness PASSes the counter on all five cases, and that PASS is honest about its own
+scope: it checks the counter's DISCRIMINATION between the production ledger and the
+frozen control plus the two in-situ mutations. It does not check the counter's own
+--selftest, so it could not see the C finding above; and because it reads the counter's
+generic_desc COUNT, it structurally cannot see E1/E2 (a counter that accepts a
+semantically empty description still reports generic_desc=0). Both gaps are stated in the
+seat report's Limitations section.
+
+----------------------------------------------------------------------
+E. HYGIENE FOR THIS RE-VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on
+exit. The peer counter was read and executed, never written. lane_unchanged=True on the
+full harness re-run. The lane's tracked working tree and object store are unchanged
+(10493 objects).

@@ -1,0 +1,26 @@
+== frozen C2 counter checks (replicated) ==
+[1] proposition count: 4 declared -> PASS (need >=4)
+    P1: row=S364 opened=PASS pin_present=PASS quote_words=13 <=25=PASS quote_verifies=PASS
+    P2: row=S368 opened=PASS pin_present=PASS quote_words=5 <=25=PASS quote_verifies=PASS
+    P3: row=S366 opened=PASS pin_present=PASS quote_words=5 <=25=PASS quote_verifies=PASS
+    P4: row=S367 opened=PASS pin_present=PASS quote_words=3 <=25=PASS quote_verifies=PASS
+[5] index row names entry: PASS
+counter verdict: TARGET_MET
+
+== completeness scan (the attacked clause) ==
+unmapped material factual proposition present in body: True
+represented in declared proposition map:              False
+pinned bytes HyprCtl.cpp:1143-1150 (socket path):
+    const auto DISPATCHSTR = in.substr(0, in.find_first_of(' '));
+
+    auto       DISPATCHARG = std::string();
+    if (sc<int>(in.find_first_of(' ')) != -1)
+        DISPATCHARG = in.substr(in.find_first_of(' ') + 1);
+
+    const auto DISPATCHER = g_pKeybindManager->m_dispatchers.find(DISPATCHSTR);
+    if (DISPATCHER == g_pKeybindManager->m_dispatchers.end())
+socket path folds case: False  | bind parse path folds case: True
+smuggled claim is FALSE per pinned bytes: True
+counter detected the unmapped false claim: False
+
+RESULT: counter_pass=True unmapped_false_claim_undetected=True

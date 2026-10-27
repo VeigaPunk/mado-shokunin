@@ -1,0 +1,148 @@
+C1Fixture — final verification against sha256 0fe862f1… (peer task complete)
+=============================================================================
+
+Round 52, wave w1, seat C1Fixture.
+
+Subject (seat C1CounterDesign, seat dir, drafts only, not integrated):
+  .ufo/waves/round-52/w1/C1CounterDesign/c1-r52-ledger.py
+  sha256 0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31   847 lines
+  (supersedes the five earlier byte states verified: c0291662…, 39e3d1f4…, eb508569…,
+   382a0606…, 701b497d…)
+
+The peer reported the counter complete at this byte state and asked for a final
+re-verification. Re-verified here rather than assumed.
+
+----------------------------------------------------------------------
+A. HARNESS AND SELFTEST
+----------------------------------------------------------------------
+Five-case harness:
+  case=green exit=0 verdict=TARGET_MET ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa'
+  case=red exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=1 verdict=TARGET_MISSED rev=cc8223eae9a2717742d3a69ea16401630f6e41c2'
+  case=mut-selfptr exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=1 generic_desc=0 verdict=TARGET_MISSED rev=fd707c8be24599a0ca91ad28d399d2a0914560bf'
+  case=mut-generic exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=4869dd13a4eedc129aa7c77a1d9e2ee1ff004f46'
+  case=mut-duprow exit=1 verdict=TARGET_MISSED ok=True final='C1_R52: population=82 ledger_rows=83 uncovered=0 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=62f696a08c7854606ba528d132ae8c38d5565055'
+  lane_unchanged=True
+  HARNESS: verdict=PASS cases=5
+  HARNESS_RC=0
+
+Selftest:
+  C1_R52_SELFTEST: 53/53 passed
+  exit=0
+  SELFTEST_CHECKS = 53 at line 75, matching the 53 cases. The fixed-count guard the
+  peer added is intact.
+
+----------------------------------------------------------------------
+B. THE PEER'S NEW --ledger PATH — VERIFIED
+----------------------------------------------------------------------
+The counter now also accepts an explicit --ledger path, so the frozen control can be
+scored without committing it into a fixture:
+
+  $ python3 -I c1-r52-ledger.py --repo <lane> --rev 85d57a81... \
+      --ledger .ufo/waves/round-52/controls/c1-do-nothing.md --work <scratch>
+  detail: uncovered path=quality/check-landed-contract.py
+  detail: uncovered ... 73 more paths not listed
+  C1_R52: population=82 ledger_rows=2 uncovered=81 dup=1 dangling=0 bad_pointer=0
+          self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  exit=1
+
+Both named signals non-zero, not coverage-only — the same verdict the harness's committed
+red fixture produces. This seat's harness uses the committed-fixture form, so it exercises
+the counter's other entry path; the --ledger form was checked separately and agrees.
+
+----------------------------------------------------------------------
+C. EVERY LAUNDERING AND ESCAPE PROBE — STILL REJECTED
+----------------------------------------------------------------------
+All laundering shapes (must be charged) on the final bytes:
+
+  N4  pointer cell names the ledger AND an accountable document:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  N5  four-cell row: cell 3 (pointer cell) = the ledger, cell 4 = accountable doc:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  N7  minimal form (ledger in the pointer cell, accountable doc beside it):
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  N8  ledger plus a document that does NOT name the instrument:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  L1  two-cell row, no pointer region, description names the ledger:
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  L2  pointer region names the row's OWN path plus an accountable document:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  L3  pointer region names the ledger by a RELATIVE path form (./quality/tool-ledger.md):
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  L4  pointer region names the ledger with a LINE ANCHOR (quality/tool-ledger.md:1):
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+
+Escape probes (the two clause gaps this seat found earlier):
+
+  E1  semantically empty description carrying a genuine two-word phrase from the
+      instrument's own bytes:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED      still closed
+  E2  description built from the instrument's own path words:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED      still closed
+
+----------------------------------------------------------------------
+D. THE PRESERVATION CASES — STILL PRESERVED
+----------------------------------------------------------------------
+  G1  control-G's shape — an honest row whose DESCRIPTION names the ledger with a
+      legitimate accountable pointer:
+      -> self_pointer=0        (no self_pointer charge; the mention is prose)
+         generic_desc=1 reason=no-instrument-specific-phrase
+  G3  the frozen control's shape — the ledger named in cell 2 with no accountable
+      pointer:
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  The frozen control itself, via the harness red fixture:
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+
+  P1  self-pointer AND generic description:
+      -> self_pointer=1 generic_desc=1 verdict=TARGET_MISSED
+  P2  generic description, legitimate cell-3 pointer:
+      -> self_pointer=0 generic_desc=1 verdict=TARGET_MISSED
+  P3  rich instrument-specific description, self-pointer in the pointer cell:
+      -> self_pointer=1 generic_desc=0 verdict=TARGET_MISSED
+  P4  self-pointer in the DESCRIPTION cell, legitimate cell-3 pointer:
+      -> self_pointer=0 generic_desc=0 verdict=TARGET_MET   (control-G's shape)
+
+----------------------------------------------------------------------
+E. THE CEILING — UNCHANGED, AND THE PEER DISCLOSES IT
+----------------------------------------------------------------------
+82-row sweep on the final bytes, replacing each production row's description in turn
+with `pred c1 does things for the widget registry`:
+  caught (generic_desc=1): 59
+  accepted (generic_desc=0): 23
+Unchanged from the two previous byte states. The peer's own ceiling row reproduces:
+  | `quality/counters/c1-r47-terminal.py` | PRED-C1-r47 does things. | `SCORECARD.md:2660` |
+  -> self_pointer=0 generic_desc=0 verdict=TARGET_MET, exit 0
+
+The peer reports the same number ("this counter rejects 10 of its 82 rows, 72 still
+pass" for the C1Simplify F3 reference; 59 caught / 23 accepted for the phrase-copy
+sweep) and records it as a disclosed ceiling rather than a closed defect. This seat
+agrees: the context clause is lexical binding, not entailment, and the frozen claim
+already limits C1 to "bounded accountability checks, not prose entailment". The ceiling
+is a boundary of the method, not a defect to fix, and it is honestly receipted.
+
+----------------------------------------------------------------------
+F. STATE OF THE TWO OPEN ITEMS
+----------------------------------------------------------------------
+Both are unchanged and both are the L1's/integrator's calls, not this seat's:
+
+  1. The lexical-binding ceiling on the context clause (23 of 82 rows accept a
+     phrase-copying description). Disclosed by the peer with its construction.
+  2. The gate cross-check clause. The peer records it as gate ownership:
+     quality/check-tool-ledger.py owns population/ledger_rows/uncovered/dangling/
+     bad_pointer/empty_desc and says nothing about self_pointer or generic_desc, so it
+     cannot corroborate this counter; this counter owns its own fields and does not
+     consult the gate. The two gates are independent and neither verdict constrains the
+     other. The integrator decides whether the round-51 gate gains the two new fields or
+     whether this counter stands alone.
+
+This seat's harness does not depend on either: it asserts the counter's own summary line
+and exit status against its fixtures, and passes with or without a gate cross-check.
+
+----------------------------------------------------------------------
+G. HYGIENE FOR THIS RE-VERIFICATION
+----------------------------------------------------------------------
+All probes were scratch clones under /fast/scratch/hyaku/mado-r52/C1Fixture/, removed on
+exit. The peer counter was read and executed, never written; its sha256 after this
+re-verification is unchanged at
+0fe862f116a789e8f6bebf38dea74b1f5ee20b3c810190ecf295621a3c34dc31.
+lane_unchanged=True on the full harness re-run. The lane's tracked working tree and
+object store are unchanged (10493 objects).

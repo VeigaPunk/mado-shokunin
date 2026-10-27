@@ -1,0 +1,17 @@
+ROW  S380
+CLAIM Q1: a dispatcher invokes its action immediately when it is called
+LINE  source: S380 - dispatcher table page - `invoke any action immediately`(wiki-Dispatchers.md:15)
+BIND  ACCEPT pin=wiki-Dispatchers.md:15-15 quote='invoke any action immediately' quote_words=4
+
+ROW  S381
+CLAIM Q2: a bind's reset submap is applied when the reset field is empty
+LINE  source: S381 - submap reset gate - `k->submap.reset.empty()`(Hyprland-KeybindManager.cpp:820)
+BIND  ACCEPT pin=Hyprland-KeybindManager.cpp:820-820 quote='k->submap.reset.empty()' quote_words=1
+
+LEFT-CONTEXT OF EACH ACCEPTED SPAN (source bytes, not scored by bind_row):
+  wiki-Dispatchers.md:15
+    full : Dispatchers return tables that describe an action you want to make. They do not invoke any action immediately, and their
+    before span: 'cribe an action you want to make. They do not '
+  Hyprland-KeybindManager.cpp:820
+    full : if (k->handler != "submap" && !k->submap.reset.empty()) {
+    before span: '            if (k->handler != "submap" && !'

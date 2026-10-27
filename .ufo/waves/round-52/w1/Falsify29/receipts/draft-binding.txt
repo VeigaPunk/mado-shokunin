@@ -1,0 +1,66 @@
+map: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify29/fixture/draft-proposition-map.snapshot.tsv
+prop row    qwords  verbatim anchor lines
+P01  S370   16      yes      591-594
+P02  S370   12      yes      597-598
+P03  S370   15      yes      601-604
+P04  S370   13      yes      619-622
+P05  S370   12      yes      607-607
+P06  S370   16      yes      531-535
+P07  S373   8       yes      223-225
+P08  S370   17      yes      540-543
+P09  S370   22      yes      544-547
+P10  S370   15      yes      565-566
+P11  S370   7       yes      557-557
+P12  S370   13      yes      582-586
+P13  S371   5       yes      1558-1558
+P14  S372   10      yes      117-117
+P15  S370   5       yes      612-612
+P16  S371   10      yes      1601-1601
+
+binding: all rows <=25 words and verbatim at their stated anchor
+
+support check on the rows whose proposition carries an operative predicate
+(quote lines marked `*`, uncovered source lines marked `-`):
+
+P03  proposition: `down` and `repeat` are both a press (keyState 1 and 2); `up` is the default keyState 0.
+     quote      : if (STATE == "down") keyState = 1; else if (STATE == "repeat") keyState = 2;
+     anchor     : .ufo/waves/round-51/fetch/Hyprland-legacy-DispatcherTranslator.cpp:601-604
+     - 596: const auto STATE = ARGS[2];
+     - 597: if (STATE != "down" && STATE != "repeat" && STATE != "up")
+     - 598: return {.success = false, .error = "sendkeystate: invalid state, must be 'down', 'repeat', or 'up'"};
+     - 600: uint32_t keyState = 0;
+     * 601: if (STATE == "down")
+     * 602: keyState = 1;
+     * 603: else if (STATE == "repeat")
+     * 604: keyState = 2;
+     - 606: // Reuse sendshortcut for keycode resolution, but wrap with state
+
+P15  proposition: `sendkeystate` restores the previous press field after it delegates, so a dispatch does not leave its state behind.
+     quote      : const int oldPassPressed = Config::Actions::state()->m_passPressed;
+     anchor     : .ufo/waves/round-51/fetch/Hyprland-legacy-DispatcherTranslator.cpp:612-612
+     * 612: const int oldPassPressed = Config::Actions::state()->m_passPressed;
+     - 614: if (keyState == 1 || keyState == 2)
+     - 615: Config::Actions::state()->m_passPressed = 1;
+     - 616: else
+     - 617: Config::Actions::state()->m_passPressed = 0;
+     - 619: auto result = sendshortcut(modifiedArgs);
+     - 621: if (keyState == 2 && result.success)
+     - 622: result = sendshortcut(modifiedArgs);
+     - 624: Config::Actions::state()->m_passPressed = oldPassPressed;
+
+P16  proposition: A second implementation of the same shape exists as the action `Actions::sendKeyState`, and it also repeats on success.
+     quote      : ActionResult Actions::sendKeyState(uint32_t modMask, uint32_t key, uint32_t keyState, std::optional<PHLWINDOW> w) {
+     anchor     : .ufo/waves/round-51/fetch/Hyprland-ConfigActions.cpp:1601-1601
+     * 1601: ActionResult Actions::sendKeyState(uint32_t modMask, uint32_t key, uint32_t keyState, std::optional<PHLWINDOW> w) {
+     - 1602: // keyState: 0 = up, 1 = down, 2 = repeat (down+down)
+     - 1603: const int oldPassPressed = Config::Actions::state()->m_passPressed;
+     - 1605: if (keyState == 1 || keyState == 2)
+     - 1606: Config::Actions::state()->m_passPressed = 1;
+     - 1607: else
+     - 1608: Config::Actions::state()->m_passPressed = 0;
+     - 1610: auto result = Actions::pass(modMask, key, w);
+     - 1612: if (keyState == 2 && result.has_value())
+     - 1613: result = Actions::pass(modMask, key, w);
+     - 1615: Config::Actions::state()->m_passPressed = oldPassPressed;
+     - 1617: return result;
+exit=0

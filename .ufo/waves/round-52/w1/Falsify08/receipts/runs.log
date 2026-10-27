@@ -1,0 +1,60 @@
+Falsify08 — C2 quote/pin binding falsification runs (fixture driver transcript)
+Fixture: git clone of lane repo @ 85d57a818c3707397e21c840b6498b105ba798aa at
+/fast/scratch/hyaku/mado-r52/Falsify08/fixture (toplevel asserted before any fixture git mutation).
+Scored counter (production, committed): quality/counters/c2-r51-dispatch-entry.py
+
+BASELINE (pristine)
+  sha256sum -c .ufo/waves/round-51/fetch/SHA256SUMS  (run from repo root)
+    -> 20/21 rows OK; the single FAILED row is the manifest's self-row
+       (.ufo/waves/round-51/fetch/SHA256SUMS, self-referential digest).
+  upstream authenticity (web fetch, same transport as fetch-manifest.json):
+  curl -fsSL https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp
+    -> sha256 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40
+       == pristine fetch bytes == manifest digest  (authentic at base, 2026-10-27)
+  python3 quality/counters/c2-r51-dispatch-entry.py --repo fixture --rev 85d57a8… --work work-pristine
+    -> a ok=1, b ok=1 rows=6/2 pins=6, c ok=1, d ok=1, admitted=1/1 TARGET_MET, exit=0
+       (matches .ufo/waves/round-52/receipts/c2-base.txt)
+
+T1 — provenance drift outside cited spans (BYPASS 1)
+  append to .ufo/waves/round-51/fetch/Hyprland-KeybindManager.cpp (977 lines, cited span :785 intact):
+    "\n// FALSIFY08-SEEDED: dispatcher table silently registers \"fabricatedemo\" at startup (never upstream)\n"
+  after fixture commit: sha256 a4bfeb6ccfdcdad04f2f9efe0b8f264e8d9ef58fd202c11f0fb840ad9addee29
+    (manifest 8d8f35fc… MISMATCH) ; git hash-object aaa64c1d12ba9982d88b4884eeaac599910a48ec
+    (manifest git_blob_sha1 4ab407ec… MISMATCH)
+  counter @ c4f65092… -> b ok=1 rows=6/2 pins=6, admitted=1/1 TARGET_MET, exit=0
+  REPRODUCED: yes — counter admits bytes that fail their own committed provenance manifest.
+
+T2 — in-span token prefix-extension (BYPASS 2)
+  line 785: m_dispatchers.find( -> m_dispatchers.findex(
+  counter @ 3671fdd4… -> b ok=1, admitted=1/1 TARGET_MET, exit=0
+  REPRODUCED: yes — containment check `collapse(q) in collapse(span)` accepts any
+  superset-line mutation; quoted "exact" span semantically changed (call target renamed).
+
+T2b — in-span non-prefix corruption + degenerate fallback quote (BYPASS 3)
+  line 785: "mouse" : k->handler -> "m0use" : k->handler
+  counter @ 02cc564c… -> b ok=1, admitted=1/1 TARGET_MET, exit=0
+  bind_row bound S364 with quote='mouse' (DQUOTE_RE extracted the inner "mouse" from the
+  intended backtick quote on the entry line); 'mouse' still contained in k->mouse.
+  REPRODUCED: yes — a 1-word token satisfies the row binding after the real quote is broken.
+
+T3 — replace entire cited line (sanity probe, unexpected)
+  line 785 -> const auto DISPATCHER = m_dispatchers.locate(k->device ? "device" : k->handler);
+  counter @ 73a01f09… -> b ok=1 rows=5/2, admitted=1/1 TARGET_MET, exit=0
+  (S364 missed with misleading reason pin_unmapped:keybind-rule-semantics.md — the last
+   unverifiable locator on a held-ground line; clause floor MIN_ROWS=2 still met.)
+
+T3b — corrupt 5 of 6 primary source-line spans, non-prefix (BYPASS 4: disjunctive paths)
+  :785 locate/device, DispatcherTranslator:32 dispatchex, HyprCtl:1149 locate,
+  ConfigActions:1681 submep, legacy-ConfigManager:1594 locate
+  counter @ 9b1e8151… -> b ok=1 rows=4/2, admitted=1/1 TARGET_MET, exit=0
+  Cause: every row id anchors ALL entry prose lines mentioning it; bind_row returns the
+  FIRST verifying line. S366 re-verified via callout quote `return res.success ? "ok" :
+  res.error;` @ HyprCtl.cpp:1157; S367 via degenerate token `setSubmap` @ :1664.
+  REPRODUCED: yes — row binding is a disjunction over secondary callout spans, not the
+  cited source-line span.
+
+T4 — red control: remove 5 of 6 pin files
+  counter @ 608ab496… -> b ok=0 rows=1/2 (miss=…pin_file_absent…), clauses_met=3,
+  admitted=0/1 TARGET_MISSED, exit=1
+  REPRODUCED: yes — counter does reject absent pins (not a rubber stamp; the four bypasses
+  above are specific defects, not absence of checks).

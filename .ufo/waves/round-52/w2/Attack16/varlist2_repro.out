@@ -1,0 +1,11 @@
+=== pinned-construct simulation (lastArgNo ignored, per Hyprutils-VarList2.cpp:21-102) ===
+sendkeystate 4-field valid tail      CVarList2(args, 4) -> size=4 -> size test == 4 -> ACCEPT  (pieces=['mods', 'key', 'down', 'window'])
+sendkeystate 3-field tail            CVarList2(args, 4) -> size=3 -> size test != 4 -> REJECT  (pieces=['mods', 'key', 'down'])
+sendkeystate 5-piece tail            CVarList2(args, 4) -> size=5 -> size test != 4 -> REJECT  (pieces=['mods', 'key', 'down', 'win', 'x'])
+sendshortcut 3-field valid tail      CVarList2(args, 3) -> size=3 -> size test == 3 -> ACCEPT  (pieces=['mods', 'key', 'window'])
+sendshortcut 4-piece tail            CVarList2(args, 3) -> size=4 -> size test != 3 -> REJECT  (pieces=['mods', 'key', 'win', 'x'])
+
+=== entry claims under test ===
+P01/step1: 'splits its tail into at most four comma fields' -> mechanism claim FALSE (split is unbounded)
+P01 rationale: 'The constructor caps the split at four fields' -> FALSE (lastArgNo inert in pinned bytes)
+step1 example: 'a five-field sendkeystate tail fails on the first test' -> TRUE, but via size==5, not a cap

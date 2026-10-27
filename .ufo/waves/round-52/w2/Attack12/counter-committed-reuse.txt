@@ -1,0 +1,21 @@
+# Committed counter on held-row reuse with fabricated pins/anchors/quotes
+counter sha256=5c7fb820e43c7f6782b6ebfc90d018c25d74976d9e8ab2a90df5e4c82fb50c0a
+fixture commit 30f937cc75af195c442f57cbab9a4ab81ec0065a (branch reuse, parent = base 85d57a8)
+entry cites base rows S364 and S365 only; their used-by cells were amended to name the entry;
+four pin names do not exist (No-Such-Pin-A..D.cpp), anchors are junk, quotes appear in no pinned file.
+--- default base
+C2_R52: props=4 rows=2 indexed=1 failures=0 verdict=TARGET_MET rev=30f937cc75af195c442f57cbab9a4ab81ec0065a
+entailment=not-checked (outside non-author review)
+--- with --base 1111...(40 x 1): identical output proves --base is never read
+C2_R52: props=4 rows=2 indexed=1 failures=0 verdict=TARGET_MET rev=30f937cc75af195c442f57cbab9a4ab81ec0065a
+entailment=not-checked (outside non-author review)
+--- same commit, draft counter (contrast): freshness and pin binding both bite
+C2_R52: meta rev=30f937cc75af195c442f57cbab9a4ab81ec0065a base=85d57a818c37 entry=corpus/knowledge/held-rows-reuse-r52.md work=/fast/scratch/hyaku/mado-r52/Attack12/work/reuse2 quote_policy=whitespace-collapsed
+C2_R52: a ok=1 index_row=`knowledge/held-rows-reuse-r52.md` (round 52 attack fixtu...
+C2_R52: b ok=1 propositions=4 ids=4 forms=table
+C2_R52: c ok=0 rows_bound=0/4 distinct_rows=0 miss=P01:row_not_new(S364),P02:row_not_new(S364),P03:row_not_new(S365),P04:row_not_new(S365)
+C2_R52: d ok=0 quotes_bound=0/4 quotes_raw=0/0 pins=0 policy=whitespace-collapsed miss=P01:pin_file_absent(No-Such-Pin-A.cpp),P02:pin_file_absent(No-Such-Pin-B.cpp),P03:pin_file_absent(No-Such-Pin-C.cpp),P04:pin_file_absent(No-Such-Pin-D.cpp)
+C2_R52: e ok=0 prose_rows=2 prop_rows=2 manifest_rows=0 miss=P01:id_not_referenced,P02:id_not_referenced,P03:id_not_referenced,P04:id_not_referenced
+C2_R52: work=/fast/scratch/hyaku/mado-r52/Attack12/work/reuse2 probe=written
+C2_R52: entailment=not-checked (outside non-author review)
+C2_R52: clauses=abcde clauses_met=2 admitted=0/1 verdict=TARGET_MISSED rev=30f937cc75af195c442f57cbab9a4ab81ec0065a

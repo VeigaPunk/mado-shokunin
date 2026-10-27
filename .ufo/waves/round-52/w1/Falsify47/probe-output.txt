@@ -1,0 +1,23 @@
+== constants: NGRAM=8 MAX_OVERLAP=0.30 MIN_BODY_SHINGLES=300
+== base=85d57a818c3707397e21c840b6498b105ba798aa corpus_files=67
+== r51 entry: bytes=31514 body_lines=265 body_shingles=3364
+== r51 table rows: lines=40 shingles_visible_to_body_text=0
+== r51 chain steps 1-9: body_shingles=1757 (52.2% of entry body shingles)
+== chain shingles also in entry body: 1757/1757
+
+FIXTURE f1_verbatim.md       body= 3364 worst=99.05% hits=3332 top=corpus/knowledge/hyprland-dispatcher-dispatch-r51.md verdict=FAIL
+FIXTURE f2_diluted.md        body=12365 worst=26.95% hits=3332 top=corpus/knowledge/hyprland-dispatcher-dispatch-r51.md verdict=PASS
+FIXTURE f3_tabled.md         body=  399 worst=0.00% hits=0 top=corpus/knowledge/xkb-keymap-compile-r48.md verdict=PASS
+FIXTURE f4_props_in_table.md body=  420 worst=0.00% hits=0 top=corpus/knowledge/xkb-keymap-compile-r48.md verdict=PASS
+FIXTURE f5_paraphrase.md     body= 1849 worst=9.95% hits=184 top=corpus/knowledge/hyprland-dispatcher-dispatch-r51.md verdict=PASS
+
+== direct clause_c(repo, BASE, BASE, <fixture>) from c2-r51-dispatch-entry.py
+CLAUSE_C f1_verbatim.md       ok=0 body_shingles=3364 files=67+cand3 max=99.0% top=[99.0%:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md, 0.1%:corpus/knowledge/bind-table-r25.md, 0.1%:corpus/knowledge/hyprland-bind-key-match-r50.md]
+CLAUSE_C f2_diluted.md        ok=1 body_shingles=12365 files=67+cand3 max=26.9% top=[26.9%:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md, 0.0%:corpus/knowledge/bind-table-r25.md, 0.0%:corpus/knowledge/hyprland-bind-key-match-r50.md]
+CLAUSE_C f3_tabled.md         ok=1 body_shingles=399 files=67+cand3 max=0.0% top=[0.0%:corpus/knowledge/xkb-keymap-compile-r48.md, 0.0%:corpus/knowledge/xdg-terminal-selection-r47.md, 0.0%:corpus/knowledge/xdg-portal-routing-r12.md]
+CLAUSE_C f4_props_in_table.md ok=1 body_shingles=420 files=67+cand3 max=0.0% top=[0.0%:corpus/knowledge/xkb-keymap-compile-r48.md, 0.0%:corpus/knowledge/xdg-terminal-selection-r47.md, 0.0%:corpus/knowledge/xdg-portal-routing-r12.md]
+CLAUSE_C f5_paraphrase.md     ok=1 body_shingles=1849 files=67+cand3 max=10.0% top=[10.0%:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md, 0.2%:corpus/knowledge/bind-table-r25.md, 0.0%:corpus/knowledge/xkb-keymap-compile-r48.md]
+
+== dilution arithmetic: clone body_shingles=3364; to score <=0.30 need body>=11214 (+7850 filler shingles)
+== f2 measured filler body_shingles=8993
+exit=0

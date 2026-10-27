@@ -1,0 +1,132 @@
+
+===== build fixture (shared clone, checked out to base) =====
+fixture toplevel: /fast/scratch/hyaku/mado-r52/Attack05/fix/repo
+85d57a818c3707397e21c840b6498b105ba798aa
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo
+
+===== P1a: measurement mode, --work INSIDE the fixture repo (nonexistent dir) =====
+before: absent
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+after: DIR-CREATED
+ls-files --others (empty dirs are invisible to git):
+0
+git status --porcelain matching sideeffect:
+0
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo/sideeffect-dir
+
+===== P1b: empty-dir invisibility is git-inherent (status --porcelain=v2 -uall) =====
+0
+(0 = the created dir leaves no trace in any git status view)
+
+===== P2a: --work dir created even though --repo is bogus (create-before-validate) =====
+C1_R52: setup=error detail=--repo /nonexistent is not a directory
+exit=2
+CREATED despite exit 2
+
+===== P2b: --work dir created even though --rev is bogus =====
+C1_R52: setup=error detail=--rev 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef' does not resolve to a commit in /fast/scratch/hyaku/mado-r52/Attack05/fix/repo
+exit=2
+CREATED despite exit 2
+
+===== P2c: --work dir created even though --ledger file is missing =====
+C1_R52: setup=error detail=[Errno 2] No such file or directory: '/nonexistent-ledger.md'
+exit=2
+CREATED despite exit 2
+
+===== P3a: measurement with NEITHER --work NOR TMPDIR -> exit 2 (documented usage line omits --work) =====
+C1_R52: setup=error detail=--work <dir> or a TMPDIR outside /tmp, /var/tmp, /dev/shm is required
+exit=2
+
+===== P3b: ambient TMPDIR (nonexistent path) steers the work root AND is created =====
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+TMPDIR-CREATED (env var caused a host write)
+
+===== P3c: TMPDIR=/tmp, no --work -> hard refusal =====
+C1_R52: setup=error detail=refusing work dir under /tmp (got /tmp)
+exit=2
+
+===== P4a: relative --work floats with process cwd =====
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+created under cwd: /fast/scratch/hyaku/mado-r52/Attack05/p4/relwork
+
+===== P4b: relative TMPDIR also floats with cwd =====
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+created under cwd: /fast/scratch/hyaku/mado-r52/Attack05/p4/rel-tmp
+
+===== P5a: --selftest --work INSIDE the fixture repo -> nested repo created inside its worktree =====
+C1_R52_SELFTEST: 53/53 passed
+exit=0
+residue under fixture worktree after normal exit:
+st-nest/ REMAINS (empty dir, git-invisible)
+0
+0
+
+===== P5b: nested selftest residue after SIGKILL (crash path, ignore_errors=rmtree) =====
+find: ‘/fast/scratch/hyaku/mado-r52/Attack05/p5/kill1’: No such file or directory
+attempt 1: clean (kill landed before/after fixture window)
+find: ‘/fast/scratch/hyaku/mado-r52/Attack05/p5/kill2’: No such file or directory
+attempt 2: clean (kill landed before/after fixture window)
+attempt 3: RESIDUE:
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/applypatch-msg.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/commit-msg.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/fsmonitor-watchman.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/post-update.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-applypatch.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-commit.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-merge-commit.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-push.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-rebase.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/pre-receive.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/prepare-commit-msg.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/push-to-checkout.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/sendemail-validate.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/hooks/update.sample
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/info
+/fast/scratch/hyaku/mado-r52/Attack05/p5/kill3/c1-r52-selftest.4ro4kves/fixture/.git/info/exclude
+
+===== P5c: nested-newdir chain inside repo left behind by selftest =====
+C1_R52_SELFTEST: 53/53 passed
+a/b/c REMAINS (3-level litter)
+0
+
+===== P6a: TMPDIR env leak test — counter --work given, TMPDIR set elsewhere; selftest child git procs =====
+C1_R52_SELFTEST: 53/53 passed
+TMPDIR contents after run: 0 entries
+
+===== P6b: GIT_* env poisoning is stripped (GIT_DIR=/nonexistent must not break it) =====
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+===== P7: refusal surface — /tmp, symlink to /tmp, and harness-accepted /tmp/foo =====
+C1_R52: setup=error detail=refusing work dir under /tmp (got /tmp)
+exit=0
+C1_R52: setup=error detail=refusing work dir under /tmp (got /tmp)
+exit=0
+C1_R52: setup=error detail=refusing work dir under /tmp (got /tmp/undertmp)
+exit=0
+note: harness line 511 refuses only exact /tmp|/var/tmp|/dev/shm, so it would PASS /tmp/undertmp through; counter then exits 2
+
+===== P8: --work naming an existing FILE -> refused (no mutation) =====
+C1_R52: setup=error detail=--work /fast/scratch/hyaku/mado-r52/Attack05/fix/repo/SCORECARD.md exists and is not a directory
+exit=0
+
+===== P9: r51 parity — r51 counter with TMPDIR set and NO --work auto-creates+auto-removes =====
+detail: checker selftest ok (ratio=50/50 form=with-work)
+detail: checker ledger ok (rev=85d57a818c3707397e21c840b6498b105ba798aa)
+C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+TMPDIR contents after r51 run: 0 entries
+
+===== fixture integrity: HEAD + toplevel + lane object count sanity =====
+85d57a818c3707397e21c840b6498b105ba798aa
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo
+untracked visible paths (files only):
+dirs I created inside the fixture worktree (git-invisible litter):
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo/sideeffect-dir
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo/st-nest
+/fast/scratch/hyaku/mado-r52/Attack05/fix/repo/a/b/c

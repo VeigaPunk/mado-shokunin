@@ -1,0 +1,83 @@
+# Attack19 receipts — c1-r52-ledger.py sha256
+923faf02cd0c2db374f7757d38ef24fc8381c2882cb3d853882f0fadce1c17d7  /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py
+
+## T1 production ledger at frozen base
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa
+C1_R52: population=82 ledger_rows=83 uncovered=0 dup=0 dangling=1 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## T2 frozen control c1-do-nothing.md
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-do-nothing.md
+C1_R52: population=82 ledger_rows=0 uncovered=82 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## T2b control c1-row-context-control.md
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r52-ledger.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --ledger /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/controls/c1-row-context-control.md
+C1_R52: population=82 ledger_rows=2 uncovered=82 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=2 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## green baseline defenced ledger
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## F3 unbackticked duplicate row appended
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## F4 4-cell duplicate row appended
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## self-pointer ./quality/tool-ledger.md
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## self-pointer ./tools/mado-verify.sh (own path)
+C1_R52: population=82 ledger_rows=82 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=0
+
+## fix1 nested counters/deep/x.py
+/fast/scratch/hyaku/mado-r52/Attack19/fix1
+PROVINCE.md
+quality/counters/deep/x.py
+quality/tool-ledger.md
+tools/one.py
+tools/two.py
+C1_R52: population=3 ledger_rows=2 uncovered=1 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=HEAD
+exit=1
+LEDGER: population=2 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=0c0d6e7c085396a3dca8a8c24a17c37c491cb529
+
+## fix2 gitlink tools/submod
+/fast/scratch/hyaku/mado-r52/Attack19/fix2
+100644 blob 780b07f498dd5e60164d6a1b3ecda607404ff10b	PROVINCE.md
+100644 blob 8ef5c25e3f2ef77bdb499ee0d3c8f771123ab52e	quality/tool-ledger.md
+100644 blob 95d41f74f0b11f49633c87208d381f7c44fb38d9	tools/one.py
+160000 commit 85d57a818c3707397e21c840b6498b105ba798aa	tools/submod
+C1_R52: population=2 ledger_rows=1 uncovered=1 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=HEAD
+exit=1
+LEDGER: population=1 ledger_rows=1 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=44866888e9b31fe09318e041f6d5434b20418fc8
+
+## fix3 unbackticked duplicate (candidate vs checker)
+/fast/scratch/hyaku/mado-r52/Attack19/fix3
+C1_R52: population=2 ledger_rows=2 uncovered=0 dup=0 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=0 verdict=TARGET_MET rev=HEAD
+exit=0
+LEDGER-ROW reason=dangling path=tools/one.py detail=row-duplicate-line-5
+LEDGER: population=2 ledger_rows=3 uncovered=0 dangling=1 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=5f948720aa73f50c8bd7d61e48a08fede3b6c9e6
+
+## fix4 well-formed duplicate double-charge
+/fast/scratch/hyaku/mado-r52/Attack19/fix4
+C1_R52: population=2 ledger_rows=3 uncovered=1 dup=1 dangling=0 bad_pointer=0 self_pointer=0 generic_desc=1 verdict=TARGET_MISSED rev=HEAD
+exit=1
+LEDGER-ROW reason=dangling path=tools/one.py detail=row-duplicate-line-5
+LEDGER: population=2 ledger_rows=3 uncovered=0 dangling=1 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=aac1e56136e0f8e9fd85d96a954ed2d97b5f7fb8
+
+## selftest flag inert
+usage: c1-r52-ledger.py [-h] --repo REPO --rev REV [--ledger LEDGER]
+                        [--selftest] [--work WORK]
+c1-r52-ledger.py: error: the following arguments are required: --repo, --rev
+exit=2
+C1_R52: population=82 ledger_rows=83 uncovered=0 dup=0 dangling=1 bad_pointer=1 self_pointer=0 generic_desc=0 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+## artifact tracked?
+?? quality/counters/c1-r52-ledger.py

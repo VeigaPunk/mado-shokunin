@@ -1,0 +1,142 @@
+# Attack30 receipts — C2 counter no-work control at base
+utc=2026-10-27T14:25:39Z
+root=/home/vgpnk/Projects/shokunin/mado-shokunin
+base=85d57a818c3707397e21c840b6498b105ba798aa
+clone_toplevel=/fast/scratch/hyaku/mado-r52/Attack30/clone
+clone_head=85d57a818c3707397e21c840b6498b105ba798aa
+draft_sha256=55452a3d6eab7cca2b20095f8678fbe936c8c65f241a561611a675defd8379fb
+integrated_sha256=5c7fb820e43c7f6782b6ebfc90d018c25d74976d9e8ab2a90df5e4c82fb50c0a
+draft_lines=965
+integrated_lines=47
+
+== P0 base absence proof ==
+base:corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md=ABSENT
+base:corpus/knowledge/hyprland-synthetic-dispatch-r52.md=ABSENT
+base_S370_S373_rows=0
+base_registry_rows_total=306
+base_index_rows=0
+
+== P1 W1 draft counter at base ==
+-- draft-base-key
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C2CounterDraft/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack30/w-draft-key
+C2_R52: meta rev=85d57a818c3707397e21c840b6498b105ba798aa base=85d57a818c37 entry=corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md work=/fast/scratch/hyaku/mado-r52/Attack30/w-draft-key quote_policy=whitespace-collapsed
+C2_R52: a ok=0 entry=absent
+C2_R52: b ok=0 skipped=entry-absent
+C2_R52: c ok=0 skipped=entry-absent
+C2_R52: d ok=0 skipped=entry-absent
+C2_R52: e ok=0 skipped=entry-absent
+C2_R52: work=/fast/scratch/hyaku/mado-r52/Attack30/w-draft-key probe=written
+C2_R52: entailment=not-checked (outside non-author review)
+C2_R52: clauses=abcde clauses_met=0 admitted=0/1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+-- draft-base-real
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C2CounterDraft/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-draft-real
+C2_R52: meta rev=85d57a818c3707397e21c840b6498b105ba798aa base=85d57a818c37 entry=corpus/knowledge/hyprland-synthetic-dispatch-r52.md work=/fast/scratch/hyaku/mado-r52/Attack30/w-draft-real quote_policy=whitespace-collapsed
+C2_R52: a ok=0 entry=absent
+C2_R52: b ok=0 skipped=entry-absent
+C2_R52: c ok=0 skipped=entry-absent
+C2_R52: d ok=0 skipped=entry-absent
+C2_R52: e ok=0 skipped=entry-absent
+C2_R52: work=/fast/scratch/hyaku/mado-r52/Attack30/w-draft-real probe=written
+C2_R52: entailment=not-checked (outside non-author review)
+C2_R52: clauses=abcde clauses_met=0 admitted=0/1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+== P2 integrated counter at base ==
+-- int-base-key
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack30/w-int-key
+C2_R52: entry=absent verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+-- int-base-real
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-int-real
+C2_R52: entry=absent verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+== P3 base with the claimed entry present in the working tree (lane in place, untracked) ==
+-- int-lane-base-real
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 85d57a818c3707397e21c840b6498b105ba798aa --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-lane
+C2_R52: entry=absent verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+== P4 work-present revision, staged in scratch clone (no lane writes) ==
+assert_toplevel=/fast/scratch/hyaku/mado-r52/Attack30/clone
+assert_toplevel=/fast/scratch/hyaku/mado-r52/Attack30/clone
+staged_work_rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 (entry+README+SOURCES=597a9129bfeb8a95ef6282ac8157c1ac58ebb9c0)
+staged_toplevel=/fast/scratch/hyaku/mado-r52/Attack30/clone
+staged_entry_present=yes
+-- int-work-real
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-work-int-real
+C2_R52: props=0 rows=0 indexed=1 failures=1 verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+miss=props
+entailment=not-checked (outside non-author review)
+exit=1
+
+-- int-work-default
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --work /fast/scratch/hyaku/mado-r52/Attack30/w-work-int-default
+C2_R52: entry=absent verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+exit=1
+
+-- draft-work-real
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C2CounterDraft/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md --fetch-root .ufo/waves/round-52 --work /fast/scratch/hyaku/mado-r52/Attack30/w-work-draft
+C2_R52: meta rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 base=85d57a818c37 entry=corpus/knowledge/hyprland-synthetic-dispatch-r52.md work=/fast/scratch/hyaku/mado-r52/Attack30/w-work-draft quote_policy=whitespace-collapsed
+C2_R52: a ok=1 index_row=`knowledge/hyprland-synthetic-dispatch-r52.md` (round 52;...
+C2_R52: b ok=1 propositions=18 ids=18 forms=table
+C2_R52: c ok=0 rows_bound=0/18 distinct_rows=0 miss=P01:anchor_no_fetch_root,P02:anchor_no_fetch_root,P03:anchor_no_fetch_root,P04:anchor_no_fetch_root
+C2_R52: d ok=0 quotes_bound=17/18 quotes_raw=6/17 pins=4 policy=whitespace-collapsed pins_prior_equal=4/17 miss=P16:quote_not_at_pin(Hyprland-ConfigActions.cpp:1554)
+C2_R52: e ok=0 prose_rows=4 prop_rows=4 manifest_rows=0 miss=P01:id_not_referenced,P02:id_not_referenced,P03:id_not_referenced,P04:id_not_referenced
+C2_R52: work=/fast/scratch/hyaku/mado-r52/Attack30/w-work-draft probe=written
+C2_R52: entailment=not-checked (outside non-author review)
+C2_R52: clauses=abcde clauses_met=2 admitted=0/1 verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+exit=1
+
+== P5 absence-detection specificity: present base file, path variants ==
+-- int-work-present-path[corpus/knowledge/hyprland-synthetic-dispatch-r52.md/]
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --entry corpus/knowledge/hyprland-synthetic-dispatch-r52.md/ --work /fast/scratch/hyaku/mado-r52/Attack30/w-path
+C2_R52: entry=absent verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+exit=1
+
+-- int-work-present-path[:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md]
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --entry :corpus/knowledge/hyprland-dispatcher-dispatch-r51.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-path
+C2_R52: entry=absent verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+exit=1
+
+-- int-work-present-path[corpus/knowledge/../knowledge/hyprland-dispatcher-dispatch-r51.md]
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3 --entry corpus/knowledge/../knowledge/hyprland-dispatcher-dispatch-r51.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-path
+C2_R52: entry=absent verdict=TARGET_MISSED rev=fd44ad4a4f57ed1f2cdc3444dad2a5538663b5d3
+exit=1
+
+-- int-base-present-canonical
+$ python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --entry corpus/knowledge/hyprland-dispatcher-dispatch-r51.md --work /fast/scratch/hyaku/mado-r52/Attack30/w-path2
+C2_R52: props=0 rows=0 indexed=1 failures=1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+miss=props
+entailment=not-checked (outside non-author review)
+exit=1
+
+== P6 environment hermeticity ==
+-- int-gitdir
+$ env GIT_DIR=/nonexistent python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack30/w-gitdir
+C2_R52: setup=error detail=fatal: not a git repository: '/nonexistent'
+
+exit=2
+
+-- draft-gitdir
+$ env GIT_DIR=/nonexistent TMPDIR=/fast/scratch/hyaku/mado-r52/Attack30/w-gitdir-draft python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/C2CounterDraft/c2-r52-proposition-entry.py --repo . --rev 85d57a818c3707397e21c840b6498b105ba798aa --work /fast/scratch/hyaku/mado-r52/Attack30/w-gitdir-draft
+C2_R52: meta rev=85d57a818c3707397e21c840b6498b105ba798aa base=85d57a818c37 entry=corpus/knowledge/hyprland-synthetic-key-dispatch-r52.md work=/fast/scratch/hyaku/mado-r52/Attack30/w-gitdir-draft quote_policy=whitespace-collapsed
+C2_R52: a ok=0 entry=absent
+C2_R52: b ok=0 skipped=entry-absent
+C2_R52: c ok=0 skipped=entry-absent
+C2_R52: d ok=0 skipped=entry-absent
+C2_R52: e ok=0 skipped=entry-absent
+C2_R52: work=/fast/scratch/hyaku/mado-r52/Attack30/w-gitdir-draft probe=written
+C2_R52: entailment=not-checked (outside non-author review)
+C2_R52: clauses=abcde clauses_met=0 admitted=0/1 verdict=TARGET_MISSED rev=85d57a818c3707397e21c840b6498b105ba798aa
+exit=1
+
+== P7 --work side effects of the integrated counter ==
+absent=/fast/scratch/hyaku/mado-r52/Attack30/w-int-key
+absent=/fast/scratch/hyaku/mado-r52/Attack30/w-int-real
+absent=/fast/scratch/hyaku/mado-r52/Attack30/w-work-int-real
+absent=/fast/scratch/hyaku/mado-r52/Attack30/w-gitdir
+

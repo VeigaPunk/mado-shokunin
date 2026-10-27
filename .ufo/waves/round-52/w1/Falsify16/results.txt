@@ -1,0 +1,55 @@
+Falsify16 C2 quote/pin binding attack -- committed r51 machinery vs forged entries
+lane repo: /home/vgpnk/Projects/shokunin/mado-shokunin
+scored rev: HEAD (frozen base 85d57a818c3707397e21c840b6498b105ba798aa)
+counter: quality/counters/c2-r51-dispatch-entry.py (clause_b/bind_row = row/pin/quote binding)
+pin bytes: .ufo/waves/round-51/fetch/Hyprland-KeybindManager.cpp (975 lines, real pinned source)
+quote26 words=26 quote24 words=24 fabricated34 words=34
+
+== V0-honest-green
+forged line: S364 press path `const auto DISPATCHER = m_dispatchers.find(k->mouse ? "mouse" : k->handler);`(Hyprland-KeybindManager.cpp:785) which we cite honestly.
+clause_b -> ok=1 detail=rows=1/1 pins=1
+matched quote: 'const auto DISPATCHER = m_dispatchers.find(k->mouse ? "mouse" : k->handler);'
+bound=True expected=BOUND   ==> as-expected
+note: sanity: real house-style paired quote at the exact line; must bind
+
+== V1-overlength-fallback-token
+forged line: S364 The table `m_dispatchers` decides; claim text `the dispatcher table is consulted only when the moon is full and the config parser has retired for the night while every key press takes the long way around the event queue twice today`(Hyprland-KeybindManager.cpp:785) ends here.
+clause_b -> ok=1 detail=rows=1/1 pins=1
+matched quote: 'm_dispatchers'
+bound=True expected=BOUND   ==> as-expected
+note: paired quote is 34 words (>25) and fabricated, yet binds via the unrelated 1-word backtick `m_dispatchers`; the <=25-word limit is filter-only, not a failure
+
+== V2a-overlength-fragments-itself
+forged line: S364 Claim text `keybind! (handler {} does not exist)", k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG, "Keybind triggered, calling dispatcher ({}, {}, {}, {})", modmask, key.keyName, key.keysym,`(Hyprland-KeybindManager.cpp:1-975) ends here.
+clause_b -> ok=1 detail=rows=1/1 pins=1
+matched quote: ', k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG,'
+bound=True expected=BOUND   ==> as-expected
+note: 26-word paired quote at whole-file range binds through an incidental 10-word fragment between the internal double quotes of its own text (DQUOTE_RE path); paired-quote length never enforced
+
+== V2b-wholefile-range-binds
+forged line: S364 Claim text `keybind! (handler {} does not exist)", k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG, "Keybind triggered, calling dispatcher ({}, {}, {}, {})", modmask,`(Hyprland-KeybindManager.cpp:1-975) ends here.
+clause_b -> ok=1 detail=rows=1/1 pins=1
+matched quote: 'keybind! (handler {} does not exist)", k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG, "Keybind triggered, calling dispatcher ({}, {}, {}, {})", modmask,'
+bound=True expected=BOUND   ==> as-expected
+note: 24-word quote from lines ~798-810 'verifies' against locator :1-975 (whole file): exact located quote is vacuous when the cited range spans the file
+
+== V2c-same-quote-narrow-range-fails
+forged line: S364 Claim text `keybind! (handler {} does not exist)", k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG, "Keybind triggered, calling dispatcher ({}, {}, {}, {})", modmask,`(Hyprland-KeybindManager.cpp:785) ends here.
+clause_b -> ok=0 detail=rows=0/1 pins=0 miss=S364=quote_not_at_pin
+matched quote: None
+bound=False expected=unbound  ==> as-expected
+note: same 24-word quote at an honest narrow locator fails quote_not_at_pin: the contrast proving only the unbounded range 'located' it
+
+== V2d-overlength-plus-fallback-wholefile
+forged line: S364 The token `m_dispatchers` matters; claim text `keybind! (handler {} does not exist)", k->handler); } else { // call the dispatcher Log::logger->log(Log::DEBUG, "Keybind triggered, calling dispatcher ({}, {}, {}, {})", modmask, key.keyName, key.keysym,`(Hyprland-KeybindManager.cpp:1-975) ends here.
+clause_b -> ok=1 detail=rows=1/1 pins=1
+matched quote: 'm_dispatchers'
+bound=True expected=BOUND   ==> as-expected
+note: 26-word quote plus fallback at whole-file range binds: predicate's quote<=25 words defeated on both axes at once
+
+== V3-fabricated-narrow-fails
+forged line: S364 Claim text `the parser retires before every press`(Hyprland-KeybindManager.cpp:785) ends here.
+clause_b -> ok=0 detail=rows=0/1 pins=0 miss=S364=quote_not_at_pin
+matched quote: None
+bound=False expected=unbound  ==> as-expected
+note: harness control: fabricated <=25-word quote at :785 must fail

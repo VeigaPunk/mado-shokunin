@@ -1,0 +1,1 @@
+Round 52 source opens: opened by lane L1 on 2026-10-27 via read URL, at immutable Hyprland commit efb50993780079460b0cbed1363e2166a2de1d9f. Source paths are listed in round52 source-reopen manifest once copied; do not treat this note itself as fetched bytes.

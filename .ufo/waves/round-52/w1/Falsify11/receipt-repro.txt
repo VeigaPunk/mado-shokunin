@@ -1,0 +1,55 @@
+
+== clone lane at base into scratch
+$ git clone --quiet --no-hardlinks /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone
+$ git checkout --quiet --detach 85d57a818c3707397e21c840b6498b105ba798aa
+$ git rev-parse HEAD
+85d57a818c3707397e21c840b6498b105ba798aa
+
+== base gate on the production ledger at base (must match receipts/c1-base.txt)
+LEDGER: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+
+== commit the frozen control verbatim as quality/tool-ledger.md
+control rev bafe812ca3541e54de29e67fbec8a5fb0a1d70ae
+      2 reason=dangling
+     82 reason=uncovered
+LEDGER: population=82 ledger_rows=0 uncovered=82 dangling=2 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=bafe812ca3541e54de29e67fbec8a5fb0a1d70ae
+
+== minimal counter (completeness + uniqueness only) on production and control
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify11/min-counter.py --repo /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone --rev 85d57a818c3707397e21c840b6498b105ba798aa
+MIN: population=82 ledger_rows=82 dup=0 uncovered=0 verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify11/min-counter.py --repo /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone --rev bafe812ca3541e54de29e67fbec8a5fb0a1d70ae
+MIN: population=82 ledger_rows=2 dup=0 uncovered=82 verdict=TARGET_MISSED rev=bafe812ca3541e54de29e67fbec8a5fb0a1d70ae
+
+== schema-repaired control: Tool|Reads|Writes|Owner -> ledger grammar, pointer backticked
+--- norm rev f1cb29c02116844eb725758b5648d1974f7de6f6
+| `tools/mado-verify.sh` | generic accountability pointer to this ledger itself | `quality/tool-ledger.md` |
+| `tools/mado-verify.sh` | generic accountability pointer to this ledger itself | `quality/tool-ledger.md` |
+      1 reason=dangling
+     81 reason=uncovered
+LEDGER: population=82 ledger_rows=2 uncovered=81 dangling=1 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=f1cb29c02116844eb725758b5648d1974f7de6f6
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify11/min-counter.py --repo /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone --rev f1cb29c02116844eb725758b5648d1974f7de6f6
+MIN: population=82 ledger_rows=2 dup=1 uncovered=81 verdict=TARGET_MISSED rev=f1cb29c02116844eb725758b5648d1974f7de6f6
+--- norm-one rev 73838dcff41db5f17aa497be0a356e6c17258b01
+| `tools/mado-verify.sh` | generic accountability pointer to this ledger itself | `quality/tool-ledger.md` |
+     81 reason=uncovered
+LEDGER: population=82 ledger_rows=1 uncovered=81 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=73838dcff41db5f17aa497be0a356e6c17258b01
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify11/min-counter.py --repo /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone --rev 73838dcff41db5f17aa497be0a356e6c17258b01
+MIN: population=82 ledger_rows=1 dup=0 uncovered=81 verdict=TARGET_MISSED rev=73838dcff41db5f17aa497be0a356e6c17258b01
+
+== shape-matched no-work ledger: 82 unique rows, generic repeated description, self pointer
+padded rev 38577cf3ced84d6ec1ab6b966a86ad0bdf247106
+LEDGER: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=38577cf3ced84d6ec1ab6b966a86ad0bdf247106
+$ python3 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/w1/Falsify11/min-counter.py --repo /fast/scratch/hyaku/mado-r52/Falsify11/repro/clone --rev 38577cf3ced84d6ec1ab6b966a86ad0bdf247106
+MIN: population=82 ledger_rows=82 dup=0 uncovered=0 verdict=TARGET_MET rev=38577cf3ced84d6ec1ab6b966a86ad0bdf247106
+
+== shared-document census: how many population basenames one non-self doc already names
+population=82
+SCORECARD.md         names=60/82
+PROVINCE.md          names=22/82
+SCORECARD|PROVINCE   names=65/82
+
+== description-distinctness probe on both ledgers
+production     rows=82 distinct_descriptions=82 min_len=92
+padded-no-work rows=82 distinct_descriptions=1 min_len=91
+
+== done

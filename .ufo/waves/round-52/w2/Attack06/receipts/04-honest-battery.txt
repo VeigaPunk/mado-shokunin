@@ -1,0 +1,36 @@
+# receipt 04 — honest-description samples for the two real ledger readers (base rev)
+
+## sample 1
+### quality/check-tool-ledger.py
+FAIL bound-only-by-name-path-or-function-words Checks that every tracked instrument in the tool ledger has an accountable evidence pointer.
+PASS -   Checks that every tracked instrument has exactly one row and a resolving pointer.
+PASS -   Verifies each tracked instrument has one ledger row and a pointer that names it.
+PASS -   Answers whether the tool ledger covers the population of instruments at a revision.
+PASS -   Derives the population from the tree and validates each instrument's accountability row.
+PASS -   Reports incomplete coverage, duplicate rows and pointers that do not name their instrument.
+PASS -   Reads the ledger and the committed tree and checks row coverage, pointer resolution and nonempty descriptions.
+PASS -   Checks each instrument has one row in the ledger and that its pointer resolves and names it.
+PASS -   Validates the lane-level tool ledger against the tracked instrument population.
+PASS -   Checks the ledger is complete and every pointer resolves to a file naming its instrument.
+PASS -   Validates the tool ledger rows against the tracked population.
+FAIL too-short:4-words Checks the tool ledger.
+FAIL too-short:4-words Validates the tool ledger.
+### quality/counters/c1-r51-ledger.py
+PASS -   Scores whether the lane tool ledger is complete and accountable at a pinned revision.
+PASS -   Scores whether every tracked instrument in the lane ledger is complete and accountable.
+PASS -   Checks that the ledger names every instrument and every pointer resolves at one revision.
+PASS -   Verifies the ledger is complete and accountable for a pinned revision.
+PASS -   Reports coverage and pointer defects in the lane-level tool ledger.
+
+## sample 2 (written from behaviour/contract)
+PASS -                                             Fails when an instrument has no row, two rows, an empty description or a pointer that does not resolve.
+PASS -                                             Fails an instrument whose pointer file does not mention its name.
+PASS -                                             Answers whether the ledger can account for every instrument in the tree.
+PASS -                                             Validates that each instrument appears once and that its pointer names it.
+PASS -                                             Cross-checks the ledger against the file tree and reports every gap.
+PASS -                                             Checks one row per instrument, a real description, and a pointer that names the instrument.
+PASS -                                             Scores completeness and accountability of the lane-level ledger.
+PASS -                                             Fails when an instrument lacks a row or its pointer does not resolve.
+PASS -                                             Reports whether the ledger can account for every tracked instrument at the pinned commit.
+FAIL no-instrument-specific-phrase                 Checks that each instrument is covered once and that its pointer mentions its name.
+batch2: 1/10 rejected

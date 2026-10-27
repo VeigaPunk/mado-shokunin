@@ -2793,3 +2793,19 @@ Sources: 300 → 306 registry rows (S364-S369, tier A, `mined`, opened 2026-10-2
 1. Replace C1's lexical self-pointer/accountability predicate with a non-self, context-bearing check before using the ledger as a quality measure.
 2. Bind C2 held tokens to propositions and add outside source-truth review; candidate-bearing seat reports remain outside the frozen lexical baseline.
 3. Revisit the 13-row mado quarantine slice only when cited source payloads can be re-opened; proposal 2 last-live-run freshness remains distinct from C1's inventory.
+
+## Round 52 — honest stop (2026-10-27, hyaku run 10)
+
+C1 operability: **unprovable / honest stop**. W1 draft green/red receipts do not establish a robust instrument-context check: W2 Attack01 reproduced a forged phrase bypass across 82 rows; Attack02 reproduced self-pointer laundering forms. No C1 instrument was integrated or measured at final lane tip. Prior base r51 counter output: 82/82 TARGET_MET; it is context-blind.
+
+C2 coverage: **unprovable / honest stop**. Source work S370-S373 and an indexed candidate entry are present, but W2 Attack07 reproduced that the landed C2 counter cannot parse the entry and accepts fabricated quote content in a fixture. The W1 draft counter also misses the landing table shape and proposition mapping. No valid final-tip count exists; do not claim coverage admission.
+
+Sources: 306 → 310 rows (`grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' corpus/SOURCES.md`); four new rows S370-S373, tier A, mined, opened 2026-10-27. Final census exit 0; W04 duplicate-URL warnings for S370/S371/S373 remain and require QUALITY 17 review. Knowledge files 67 → 68 (indexed row exists), but C2 not admitted. C1/C2 do not yield score deltas. No capability row entered. Mistake M52-1; detailed evidence in LOG round 52 and `corpus/lessons/round-52.md`.
+
+### Capabilities
+
+No capability admitted this round; proposed counter drafts did not pass W2 falsification.
+
+### Planned (round 53; intent only)
+
+Re-register corrected C1/C2 contracts and controls before data; do not carry forward claims that a merely structural source map or lexical overlap constitutes semantic accountability.

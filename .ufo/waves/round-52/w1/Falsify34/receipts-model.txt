@@ -1,0 +1,53 @@
+loaded counter: /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r51-ledger.py
+loaded gate   : /home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-tool-ledger.py
+==============================================================================
+VARIANT A-normal  rev=fa47e28b8f7f
+  population=5  r51_rows=5  gate_rows=5
+  r51 counter : dup=0 dangling=0 uncovered=0 bad_pointer=0 empty_desc=0
+  gate        : dangling=0 uncovered=[] bad_pointer=0 empty_desc=0
+  frozen-C1 model (4 named checks, exact-string uniqueness): {'dup': 0, 'bad_pointer': 0, 'self_pointer': 0, 'no_context': 0, 'out_of_pop_skipped': 0, 'verdict': 'TARGET_MET'}
+------------------------------------------------------------------------------
+VARIANT B-dup-exact  rev=f68575caa4df
+  population=5  r51_rows=6  gate_rows=6
+  r51 counter : dup=1 dangling=0 uncovered=0 bad_pointer=0 empty_desc=0
+    detail: dup path=tools/alpha-tool.py
+  gate        : dangling=1 uncovered=[] bad_pointer=0 empty_desc=0
+    gate finding: ('dangling', 'tools/alpha-tool.py', 'row-duplicate-line-6')
+  frozen-C1 model (4 named checks, exact-string uniqueness): {'dup': 1, 'bad_pointer': 0, 'self_pointer': 0, 'no_context': 0, 'out_of_pop_skipped': 0, 'verdict': 'TARGET_MISSED'}
+------------------------------------------------------------------------------
+VARIANT C-dup-anchored  rev=e66feef3798f
+  population=5  r51_rows=7  gate_rows=7
+  r51 counter : dup=0 dangling=2 uncovered=0 bad_pointer=0 empty_desc=0
+    detail: dangling path=tools/alpha-tool.py:1
+    detail: dangling path=tools/alpha-tool.py:2
+  gate        : dangling=2 uncovered=[] bad_pointer=0 empty_desc=0
+    gate finding: ('dangling', 'tools/alpha-tool.py', 'row-duplicate-line-6')
+    gate finding: ('dangling', 'tools/alpha-tool.py', 'row-duplicate-line-7')
+  frozen-C1 model (4 named checks, exact-string uniqueness): {'dup': 0, 'bad_pointer': 0, 'self_pointer': 0, 'no_context': 0, 'out_of_pop_skipped': 2, 'verdict': 'TARGET_MET'}
+------------------------------------------------------------------------------
+VARIANT D-full-bypass  rev=478e5537c0f1
+  population=5  r51_rows=15  gate_rows=15
+  r51 counter : dup=0 dangling=10 uncovered=0 bad_pointer=0 empty_desc=0
+    detail: dangling path=tools/alpha-tool.py:1
+    detail: dangling path=tools/alpha-tool.py:2
+    detail: dangling path=tools/beta.py:1
+    detail: dangling path=tools/beta.py:2
+    detail: dangling path=quality/check-a.py:1
+    detail: dangling path=quality/check-a.py:2
+    detail: dangling path=quality/counters/c1-x.py:1
+    detail: dangling path=quality/counters/c1-x.py:2
+    detail: dangling path=quality/check-tool-ledger.py:1
+    detail: dangling path=quality/check-tool-ledger.py:2
+  gate        : dangling=10 uncovered=[] bad_pointer=0 empty_desc=0
+    gate finding: ('dangling', 'quality/check-a.py', 'row-duplicate-line-12')
+    gate finding: ('dangling', 'quality/check-a.py', 'row-duplicate-line-13')
+    gate finding: ('dangling', 'quality/check-tool-ledger.py', 'row-duplicate-line-18')
+    gate finding: ('dangling', 'quality/check-tool-ledger.py', 'row-duplicate-line-19')
+    gate finding: ('dangling', 'quality/counters/c1-x.py', 'row-duplicate-line-15')
+    gate finding: ('dangling', 'quality/counters/c1-x.py', 'row-duplicate-line-16')
+    gate finding: ('dangling', 'tools/alpha-tool.py', 'row-duplicate-line-6')
+    gate finding: ('dangling', 'tools/alpha-tool.py', 'row-duplicate-line-7')
+    gate finding: ('dangling', 'tools/beta.py', 'row-duplicate-line-10')
+    gate finding: ('dangling', 'tools/beta.py', 'row-duplicate-line-9')
+  frozen-C1 model (4 named checks, exact-string uniqueness): {'dup': 0, 'bad_pointer': 0, 'self_pointer': 0, 'no_context': 0, 'out_of_pop_skipped': 10, 'verdict': 'TARGET_MET'}
+------------------------------------------------------------------------------

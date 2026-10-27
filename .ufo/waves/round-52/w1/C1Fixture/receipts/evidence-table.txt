@@ -1,0 +1,178 @@
+C1Fixture — harness self-test and base-counter discrimination receipts
+===================================================================
+
+Round 52, wave w1, seat C1Fixture.
+Harness: .ufo/waves/round-52/w1/C1Fixture/harness/c1-fixture-harness.py
+Profile: .ufo/waves/round-52/w1/C1Fixture/harness/profiles/default.json
+Base revision under test: 85d57a818c3707397e21c840b6498b105ba798aa
+Control under test: .ufo/waves/round-52/controls/c1-do-nothing.md
+  sha256 ad72f72f64708d1b877d0f2233f32a065bd11689d644af669176d1844ba2eba6
+Scratch: /fast/scratch/hyaku/mado-r52/C1Fixture/ (removed on exit)
+
+----------------------------------------------------------------------
+A. HARNESS SELF-TEST — does the harness itself discriminate?
+----------------------------------------------------------------------
+Driver: harness/selftest/run-selftest.sh
+Command:
+  WORK=/fast/scratch/hyaku/mado-r52/C1Fixture/selftest \
+    sh .ufo/waves/round-52/w1/C1Fixture/harness/selftest/run-selftest.sh
+
+Result (verbatim):
+  correct: harness_rc=0 verdict=PASS (want PASS) lane_unchanged=True (want True)
+  always_accept: harness_rc=1 verdict=FAIL (want FAIL) lane_unchanged=True (want True)
+  writes_source_tree: harness_rc=1 verdict=FAIL (want FAIL) lane_unchanged=False (want False)
+  writes_in_work: probe_file_observed=yes (want yes)
+  selftest: ok
+
+  correct            = harness/selftest/stub-correct.py
+  always_accept      = harness/selftest/stub-always-accept.py
+  writes_source_tree = harness/selftest/stub-writes-source-tree.py  (throwaway repo only)
+  writes_in_work     = harness/selftest/stub-writes-in-work.py
+
+What each case proves:
+  correct            — a counter that passes green and fails red naming both defects is
+                       accepted (PASS). The harness is not a fixed FAIL.
+  always_accept      — a counter that always exits 0 with TARGET_MET is rejected (FAIL).
+                       The red case cannot be satisfied by an always-accept counter.
+  writes_source_tree — a counter that writes into the repository it reads is caught:
+                       lane_unchanged=False. The write target is a throwaway repository
+                       under scratch, never the lane.
+  writes_in_work     — the --work argument reaches the counter: the probe file it
+                       wrote there is listed under scratch_files_after.
+
+----------------------------------------------------------------------
+B. BASE COUNTER UNDER THE HARNESS — the discrimination gap C1 names
+----------------------------------------------------------------------
+Subject: quality/counters/c1-r51-ledger.py (the counter present at the base revision)
+Command:
+  python3 -I harness/c1-fixture-harness.py \
+    --counter quality/counters/c1-r51-ledger.py \
+    --profile harness/profiles/default.json \
+    --expect-final harness/profiles/expect-r51-green.txt \
+    --work /fast/scratch/hyaku/mado-r52/C1Fixture/run-evidence \
+    --out .ufo/waves/round-52/w1/C1Fixture/receipts/r51-base \
+    --cases green,red,mut-selfptr,mut-generic,mut-duprow
+
+  case        exit verdict        ok    final line
+  green         0  TARGET_MET     True  C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+  red           1  TARGET_MISSED  False C1_R51: population=82 ledger_rows=2 uncovered=81 dangling=0 bad_pointer=1 empty_desc=0 selftest=ok dup=1 checker=failed verdict=TARGET_MISSED rev=4542e17c08ad9132893bf45d6f67544ebcde0994
+  mut-selfptr   0  TARGET_MET     False C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=cb911b09795457259065ebb1d8ef1ea9ef7aa9ae
+  mut-generic   0  TARGET_MET     False C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=791cfff7b6fa031203f6a5b88b81bd8660a2cbab
+  mut-duprow    1  TARGET_MISSED  True  C1_R51: population=82 ledger_rows=83 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok dup=1 checker=failed verdict=TARGET_MISSED rev=955ff7c8fa4f7324416cc7170b4822ffac9eab26
+
+  lane_unchanged=True
+  HARNESS: verdict=FAIL cases=5
+
+Findings emitted by the harness on this subject:
+  red         "failure does not name the required defect signal(s): self_pointer, context
+                (a coverage-only failure -- the counter notices rows are missing but never
+                says why the control's rows are unaccountable)"
+  mut-selfptr "exit 0, expected 1" / "verdict TARGET_MET, expected TARGET_MISSED" /
+                "failure does not name the required defect signal(s): self_pointer"
+  mut-generic "exit 0, expected 1" / "verdict TARGET_MET, expected TARGET_MISSED" /
+                "failure does not name the required defect signal(s): context"
+
+Reading of the three failing cases:
+  * red (frozen control): the base counter rejects the control, but only because the
+    control's two rows cannot cover the 82-file population (uncovered=81) and one row
+    is a duplicate (dup=1) and one pointer does not resolve (bad_pointer=1). It never
+    says "this pointer points at the ledger itself" or "this description is generic".
+    The frozen claim requires the failure to be for the self-pointer/context reason.
+  * mut-selfptr: one production row's accountability pointer is redirected at
+    quality/tool-ledger.md itself. The ledger's own bytes contain every instrument
+    basename, so the pointer RESOLVES (bad_pointer=0) and the base counter answers
+    TARGET_MET. The base counter accepts a ledger-wide self-pointer.
+  * mut-generic: one production row's description is replaced with "does things." -- not
+    empty, so empty_desc stays 0, and the base counter answers TARGET_MET. The base
+    counter accepts a generic description.
+  * mut-duprow: the only defect class the base counter does catch.
+
+----------------------------------------------------------------------
+C. EXACT-OUTPUT CHECK
+----------------------------------------------------------------------
+The green final line produced by the harness is byte-identical to the frozen base
+receipt .ufo/waves/round-52/receipts/c1-base.txt.
+
+  cmp of the C1_R51 line from receipts/c1-base.txt against
+  receipts/r51-base/green.stdout.txt  ->  IDENTICAL
+
+Both read:
+  C1_R51: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=85d57a818c3707397e21c840b6498b105ba798aa
+
+The harness also asserts this with --expect-final harness/profiles/expect-r51-green.txt;
+the green case reported final_line_matches_expected=True and no finding.
+
+----------------------------------------------------------------------
+D. NO SOURCE-TREE WRITES
+----------------------------------------------------------------------
+Measured, not assumed.
+
+  * The lane is only ever read. The harness clones it with
+    `git clone -q --shared --no-checkout <lane> <scratch>/fixture-*`; the fixture's
+    alternates file points at the lane's object store for reading.
+  * The lane's object store is unchanged: 10493 files before and after the run.
+    The fixture's own `hash-object -w` / `commit-tree` writes land in the fixture's
+    object store, not the lane's.
+  * Before and after the cases the harness takes a git-native integrity snapshot of
+    the lane working tree: the index's blob ids for every tracked path, the unstaged
+    diff path set, the staged diff path set, and the untracked path set outside the
+    round's wave directory. All four hashes are identical before and after:
+    lane_unchanged=True.
+  * The fixture working tree is empty by construction (a --no-checkout clone), so any
+    file left there is a write. fixture_worktree_residue was empty for all five cases.
+  * The counter runs with HOME, TMPDIR and the XDG_* homes redirected under the case's
+    own --work directory.
+  * --work is refused when it resolves to /tmp, /var/tmp or /dev/shm
+    (setup error, exit 2). Verified: `--work /tmp` -> exit 2,
+    "C1_FIXTURE_HARNESS: setup=error detail=--work must not be a system temp root: /tmp".
+  * A missing --counter is also a setup error, exit 2.
+
+----------------------------------------------------------------------
+E. FIXTURE CONSTRUCTION — what each fixture is
+----------------------------------------------------------------------
+green        clone of the lane at the base revision; quality/tool-ledger.md untouched.
+red          clone of the lane at the base revision with the frozen control
+             .ufo/waves/round-52/controls/c1-do-nothing.md committed in place of
+             quality/tool-ledger.md, byte for byte (sha256 above).
+mut-selfptr  clone of the lane at the base revision with ONE production row's
+             accountability pointer cell replaced by `quality/tool-ledger.md`.
+mut-generic  clone of the lane at the base revision with ONE production row's
+             description cell replaced by "does things.".
+mut-duprow   clone of the lane at the base revision with ONE production row duplicated.
+
+Mutation application was verified by reading the committed bytes back
+(`git show HEAD:quality/tool-ledger.md` inside each fixture), e.g.:
+
+  fixture-mut-selfptr  row 32: | `tools/mado-action-plan.py` | Fail-closed static
+                        classifier ... never executes supplied argv. | `quality/tool-ledger.md` |
+  fixture-mut-generic  row 32: | `tools/mado-action-plan.py` | does things. | `PROVINCE.md:20` |
+  fixture-mut-duprow   rows 32 and 33 identical; row count 86 vs 85
+  fixture-red          the control's own rows; row count 4
+
+Population is 82 at the base revision (tools 17 + quality/*.py 19 +
+quality/counters/*.py 46), unchanged by every fixture: the mutations touch the ledger
+only, never the population.
+
+----------------------------------------------------------------------
+F. FIXTURE REVISIONS
+----------------------------------------------------------------------
+Fixture revision hashes are run-local (the fixture commits carry the harness's own
+commit time). The reproducible parts are the case verdicts, the field values and the
+lane's revision, and those are what the table in section B records.
+
+----------------------------------------------------------------------
+G. OVERLAY AND ARGUMENT REFUSALS
+----------------------------------------------------------------------
+--overlay copies a lane working-tree file into the fixtures and commits it there, for a
+counter that needs a companion file absent at the frozen base revision. Exercised:
+
+  --overlay quality/check-tool-ledger.py --cases green
+    -> case=green exit=0 verdict=TARGET_MET ok=True
+       lane_unchanged=True ; HARNESS: verdict=PASS cases=1
+
+  --overlay quality/tool-ledger.md
+    -> C1_FIXTURE_HARNESS: setup=error detail=--overlay may not replace the ledger
+
+Refusals, all setup errors with exit 2:
+  --work /tmp            -> "--work must not be a system temp root: /tmp"
+  --counter /nonexistent.py -> "--counter ... is not a file"

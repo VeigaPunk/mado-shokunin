@@ -1,0 +1,32 @@
+# Hyprland 0.56.2 synthetic shortcut dispatch: key resolution and seat injection
+
+This note follows a narrow source-pinned path: `sendshortcut` and `sendkeystate` parse a dispatcher argument, resolve a key and call the seat keyboard delivery API. It describes implementation, not a configured bind or observed host behavior; this round performed no dispatcher or live probe.
+
+source: S370, S371, S372, S373 — pinned Hyprland v0.56.2 source; see the proposition map and `corpus/SOURCES.md` rows.
+verified-at: 2026-10-27
+recheck: on-release
+
+## Proposition map
+
+| ID | Proposition | Source row | Pin:anchor | Quote (<=25 words) | Support class | Why it supports |
+|---|---|---|---|---|---|---|
+| P01 | `sendkeystate` parses four fields and rejects a different count before use. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:591-594 | `CVarList2 ARGS(args, 4); if (ARGS.size() != 4)` | direct | Four-field cap and equality test are the parse gate. |
+| P02 | The accepted state strings are `down`, `repeat`, `up`; others are rejected. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:597-598 | `if (STATE != "down" && STATE != "repeat" && STATE != "up")` | direct | The guard enumerates allowed strings in its negative test. |
+| P03 | `down` and `repeat` select key states 1 and 2; the field begins at 0. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:600-604 | `uint32_t keyState = 0; if (STATE == "down") keyState = 1; else if (STATE == "repeat") keyState = 2;` | direct | Initialization and assignments define each state. |
+| P04 | `repeat` calls its delegate again only after a successful first call. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:619-622 | `auto result = sendshortcut(modifiedArgs); if (keyState == 2 && result.success) result = sendshortcut(modifiedArgs);` | direct | The second call is guarded by repeat and success. |
+| P05 | `sendkeystate` rebuilds its delegate input from fields 0, 1 and 3, omitting its state field. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:607 | `std::string modifiedArgs = std::string(ARGS[0]) + "," + std::string(ARGS[1]) + "," + std::string(ARGS[3]);` | direct | This joins precisely those three fields. |
+| P06 | `sendshortcut` requires exactly three fields. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:531-535 | `CVarList2 ARGS(args, 3); if (ARGS.size() != 3)` | direct | The field cap and size check define its parser gate. |
+| P07 | `stringToModMask` uppercases input and checks known modifier names using substring membership. | S373 | Hyprland-KeybindManager.cpp:221-225 | `std::ranges::transform(mods, mods.begin(), ::toupper); if (mods.contains("SHIFT"))` | direct | The implementation normalizes then performs a `contains` check. |
+| P08 | A numeric key above 9 and a `code:` key use the parsed number as keycode. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:540-543 | `if (isNumber(KEY) && std::stoi(KEY) > 9) keycode = std::stoi(KEY); else if (KEY.starts_with("code:") && isNumber(KEY.substr(5))) keycode = std::stoi(KEY.substr(5));` | direct | Both branches assign the parsed numeric value. |
+| P09 | The `mouse:` path rejects numeric button values below 272. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:544-547 | `if (keycode < 272) return {.success = false, .error = "sendshortcut: invalid mouse button"};` | direct | The threshold branch returns the named error. |
+| P10 | The remaining key-name path scans the keyboard keycode range and reads each symbol. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:565-566 | `for (xkb_keycode_t kc = keycode_min; kc <= keycode_max; ++kc) { xkb_keysym_t sym = xkb_state_key_get_one_sym(ks, kc);` | direct | The loop range and per-key symbol read establish the scan. |
+| P11 | The resolution cache key combines the keyboard object's address and raw key text. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:557 | `const auto KEYPAIRSTRING = std::format("{}{}", rc<uintptr_t>(KB.get()), KEY);` | direct | Both components are formatted into the cache key. |
+| P12 | Empty selector input produces a null optional window; a written selector without a result is rejected. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:582-586 | `PHLWINDOW PWINDOW = regexp.empty() ? nullptr : Desktop::viewState()->query().selector(regexp).runWindow();` | direct | Empty maps to null; the following guard rejects an unresolved nonempty selector. |
+| P13 | The key-delivery call uses `m_timeLastMs` and subtracts 8 from its key value. | S371 | Hyprland-ConfigActions.cpp:1558 | `g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);` | direct | The call uses the state field and adjusted key argument. |
+| P14 | Shared action state initializes `m_timeLastMs` to zero and calls it the last key/mouse timestamp. | S372 | Hyprland-ConfigActions.hpp:117 | `uint32_t m_timeLastMs = 0; // timestamp of last key/mouse event` | direct | Declaration gives the default and field description. |
+| P15 | `sendkeystate` saves the prior `m_passPressed` value before changing it. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:612 | `const int oldPassPressed = Config::Actions::state()->m_passPressed;` | direct | The prior value is copied locally before later writes. |
+| P16 | The action sends modifier state before the key event, then clears the modifier state. | S371 | Hyprland-ConfigActions.cpp:1554-1558,1576 | `g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0); g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);` | direct | The calls show ordering; the clear call at 1576 is included in this locator. |
+| P17 | `sendshortcut`'s repeat branch can invoke its delegate twice for a successful repeat state. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:619-622 | `if (keyState == 2 && result.success) result = sendshortcut(modifiedArgs);` | direct | The second delegate is conditional on repeat and success. |
+| P18 | An unresolved keysym returns the `key not found` error inside the scan. | S370 | Hyprland-legacy-DispatcherTranslator.cpp:574 | `return {.success = false, .error = "sendshortcut: key not found"};` | direct | The return is within the keysym resolution branch. |
+
+All pins are under `.ufo/waves/round-52/fetch/`, revision `efb50993780079460b0cbed1363e2166a2de1d9f`, opened 2026-10-27; checksums are in `.ufo/waves/round-52/fetch/SHA256SUMS`. This table is a structural source map; an independent non-author review must judge entailment. It makes no assertion about host configuration, a delivered client event, or UI response.
