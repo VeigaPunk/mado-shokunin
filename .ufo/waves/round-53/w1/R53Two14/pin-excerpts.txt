@@ -1,0 +1,75 @@
+# pin excerpts (committed round-52 fetch bytes, sha256-verified above) — seat R53Two14
+# numbering is the pin file's own 1-based line numbers
+
+## Hyprland-legacy-DispatcherTranslator.cpp :525-535 (sendshortcut opens)
+525	    const auto PWINDOW = Desktop::viewState()->query().selector(regexp).runWindow();
+526	    if (!PWINDOW)
+527	        return {.success = false, .error = "pass: window not found"};
+528	    return wrap(Actions::pass(PWINDOW));
+529	}
+530	
+531	static SDispatchResult sendshortcut(const std::string& args) {
+532	    CVarList2 ARGS(args, 3);
+533	    if (ARGS.size() != 3)
+534	        return {.success = false, .error = "sendshortcut: invalid args"};
+535	
+
+## same file :565-576 (key-name scan loop 565-571; 'key not found' return 574; cache hit 576)
+565	            for (xkb_keycode_t kc = keycode_min; kc <= keycode_max; ++kc) {
+566	                xkb_keysym_t sym = xkb_state_key_get_one_sym(ks, kc);
+567	                if (sym == KEYSYM) {
+568	                    keycode                                            = kc;
+569	                    g_pKeybindManager->m_keyToCodeCache[KEYPAIRSTRING] = keycode;
+570	                }
+571	            }
+572	
+573	            if (!keycode)
+574	                return {.success = false, .error = "sendshortcut: key not found"};
+575	        } else
+576	            keycode = g_pKeybindManager->m_keyToCodeCache[KEYPAIRSTRING];
+
+## same file :585-600 (sendshortcut closes 589; sendkeystate opens 591; state parse 597-604)
+585	    if (!regexp.empty() && !PWINDOW)
+586	        return {.success = false, .error = "sendshortcut: window not found"};
+587	
+588	    return wrap(Actions::pass(MOD, keycode, PWINDOW));
+589	}
+590	
+591	static SDispatchResult sendkeystate(const std::string& args) {
+592	    CVarList2 ARGS(args, 4);
+593	    if (ARGS.size() != 4)
+594	        return {.success = false, .error = "sendkeystate: invalid args"};
+595	
+596	    const auto STATE = ARGS[2];
+597	    if (STATE != "down" && STATE != "repeat" && STATE != "up")
+598	        return {.success = false, .error = "sendkeystate: invalid state, must be 'down', 'repeat', or 'up'"};
+599	
+600	    uint32_t keyState = 0;
+
+## same file :617-627 (repeat branch 619-622 and 'sendkeystate' close 627)
+617	        Config::Actions::state()->m_passPressed = 0;
+618	
+619	    auto result = sendshortcut(modifiedArgs);
+620	
+621	    if (keyState == 2 && result.success)
+622	        result = sendshortcut(modifiedArgs);
+623	
+624	    Config::Actions::state()->m_passPressed = oldPassPressed;
+625	
+626	    return result;
+627	}
+
+## Hyprland-ConfigActions.cpp :1554-1558 and :1576 (P16's two quoted calls, elided guard)
+1554	    g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0);
+1555	
+1556	    if (S.m_passPressed == 1) {
+1557	        if (!isMouse)
+1558	            g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);
+1576	    g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);
+
+## contiguity test for the entry's P16 quote (expected: 0 occurrences)
+collapsed occurrence count: 0
+fragment line numbers: g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0); [1554]
+fragment line numbers: g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED); [1558, 1568]
+fragment line numbers: if (S.m_passPressed == 1) { [1487, 1556]
+fragment line numbers: if (!isMouse) [1541, 1557, 1562, 1567, 1582, 1593]

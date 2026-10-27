@@ -1,0 +1,37 @@
+# ledger + population census — seat R53Two14, base ad4bf2059bcfafe63671d262222908ee1fe8001c
+# all commands run from /home/vgpnk/Projects/shokunin/mado-shokunin; read-only
+
+$ git ls-tree -r --name-only <base> | <population filter tools/ + quality/*.py + quality/counters/*.py>
+population=82  tools/=17  quality/=65
+
+$ ls-tree quality/counters | grep -i 'r5[23]'
+(no r52/r53 counter committed)
+
+$ awk -F'|' 'NF>=4 && $2 ~ /\//{n++} END{print "ledger rows:", n}' quality/tool-ledger.md
+ledger rows: 82
+$ awk ... | sort | uniq -d | wc -l   # duplicate paths
+0
+
+$ awk -F'|' 'NF>=4 && $2 ~ /\//{gsub(/[` ]/,"",$4); sub(/:[0-9-]+$/,"",$4); print $4}' quality/tool-ledger.md | sort | uniq -c | sort -rn
+     42 SCORECARD.md
+     20 PROVINCE.md
+      4 corpus/lessons/round-48.md
+      3 corpus/QUALITY.md
+      3 .ufo/waves/round-51/registration.md
+      2 corpus/lessons/round-44.md
+      2 .ufo/waves/round-45/registration.md
+      2 .ufo/waves/round-40/registration.md
+      1 corpus/lessons/round-43.md
+      1 corpus/lessons/round-41.md
+      1 corpus/lessons/round-25-verifier-spotcheck.md
+      1 .ufo/waves/round-44/registration.md
+
+$ grep -c 'quality/tool-ledger.md' as pointer cell (self-pointer rows)
+0
+
+$ sha256sum fetch payloads (r52 pins) + verify
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-ConfigActions.cpp: OK
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-ConfigActions.hpp: OK
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-KeybindManager.cpp: OK
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/Hyprland-legacy-DispatcherTranslator.cpp: OK
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-52/fetch/README.txt: OK
