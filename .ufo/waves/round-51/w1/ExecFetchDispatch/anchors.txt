@@ -1,0 +1,78 @@
+# mado round 51 w1 ExecFetchDispatch — verified dispatcher-surface anchors
+# format: <pin file>:<line>\t<quote>   (quote is a verbatim substring of that pin line, <=25 words)
+# all files under .ufo/waves/round-51/fetch/ (draft fetch/ of seat ExecFetchDispatch)
+Hyprland-KeybindManager.cpp:41	// populate m_dispatchers from the legacy translator
+Hyprland-KeybindManager.cpp:84	"submap",
+Hyprland-KeybindManager.cpp:113	m_dispatchers[name] = [n = std::string(name)](std::string args) -> SDispatchResult { return Config::Legacy::translator()->run(n, args); };
+Hyprland-KeybindManager.cpp:652	((k->submap.name != key.submapAtPress.name) && !k->submapUniversal)
+Hyprland-KeybindManager.cpp:700	if (found || key.submapAtPress.name != Config::Actions::state()->m_currentSubmap)
+Hyprland-KeybindManager.cpp:785	const auto DISPATCHER = m_dispatchers.find(k->mouse ? "mouse" : k->handler);
+Hyprland-KeybindManager.cpp:799	Invalid handler in a keybind!
+Hyprland-KeybindManager.cpp:804	Config::Actions::state()->m_passPressed = sc<int>(pressed);
+Hyprland-KeybindManager.cpp:810	res = DISPATCHER->second((pressed ? "1" : "0") + k->arg);
+Hyprland-KeybindManager.cpp:812	res = DISPATCHER->second(k->arg);
+Hyprland-KeybindManager.cpp:820	if (k->handler != "submap" && !k->submap.reset.empty()) {
+Hyprland-KeybindManager.cpp:822	if (submapBefore == submapAfter)
+Hyprland-KeybindManager.cpp:823	Config::Actions::setSubmap(k->submap.reset);
+Hyprland-KeybindManager.cpp:842	res.passEvent |= !found;
+Hyprland-KeybindManager.hpp:41	handler           = "";
+Hyprland-KeybindManager.hpp:114	class CKeybindManager {
+Hyprland-KeybindManager.hpp:137	std::unordered_map<std::string, std::function<SDispatchResult(std::string)>> m_dispatchers;
+Hyprland-HyprCtl.cpp:1126	static std::string dispatchRequest
+Hyprland-HyprCtl.cpp:1128	in = in.substr(in.find_first_of(' ') + 1);
+Hyprland-HyprCtl.cpp:1130	if (Config::mgr()->type() == Config::CONFIG_LUA) {
+Hyprland-HyprCtl.cpp:1132	std::format("return hl.dispatch({})", in)
+Hyprland-HyprCtl.cpp:1143	const auto DISPATCHSTR = in.substr(0, in.find_first_of(' '));
+Hyprland-HyprCtl.cpp:1147	DISPATCHARG = in.substr(in.find_first_of(' ') + 1);
+Hyprland-HyprCtl.cpp:1150	if (DISPATCHER == g_pKeybindManager->m_dispatchers.end())
+Hyprland-HyprCtl.cpp:1151	"Invalid dispatcher";
+Hyprland-HyprCtl.cpp:1153	SDispatchResult res = DISPATCHER->second(DISPATCHARG);
+Hyprland-HyprCtl.cpp:1157	return res.success ? "ok" : res.error;
+Hyprland-legacy-ConfigManager.cpp:607	m_config->registerHandler(&::handleBind, "bind", {true});
+Hyprland-legacy-ConfigManager.cpp:615	m_config->registerHandler(&::handleSubmap, "submap", {false});
+Hyprland-legacy-ConfigManager.cpp:1492	CConfigManager::handleBind(const std::string& command, const std::string& value)
+Hyprland-legacy-ConfigManager.cpp:1554	const int  numbArgs = (hasDescription ? 5 : 4) + sc<int>(isPerDevice);
+Hyprland-legacy-ConfigManager.cpp:1555	const auto ARGS     = CVarList(value, numbArgs);
+Hyprland-legacy-ConfigManager.cpp:1584	auto       HANDLER = ARGS[2 + DESCR_OFFSET + DEVICE_OFFSET];
+Hyprland-legacy-ConfigManager.cpp:1586	const auto COMMAND = mouse ? HANDLER : ARGS[3 + DESCR_OFFSET + DEVICE_OFFSET];
+Hyprland-legacy-ConfigManager.cpp:1592	std::ranges::transform(HANDLER, HANDLER.begin(), ::tolower);
+Hyprland-legacy-ConfigManager.cpp:1594	const auto DISPATCHER = g_pKeybindManager->m_dispatchers.find(HANDLER);
+Hyprland-legacy-ConfigManager.cpp:1598	Invalid dispatcher, requested
+Hyprland-legacy-ConfigManager.cpp:1620	Catchall not allowed outside of submap!
+Hyprland-legacy-ConfigManager.cpp:1795	CConfigManager::handleSubmap(const std::string&, const std::string& submap)
+Hyprland-legacy-DispatcherTranslator.cpp:30	CDispatcherTranslator::run(const std::string& d, const std::string& w)
+Hyprland-legacy-DispatcherTranslator.cpp:32	"Bad dispatcher"
+Hyprland-legacy-DispatcherTranslator.cpp:34	return m_dispMap.at(d)(w);
+Hyprland-legacy-DispatcherTranslator.cpp:521	return wrap(Actions::setSubmap(submap));
+Hyprland-legacy-DispatcherTranslator.cpp:839	m_dispMap["submap"]                         = ::setsubmap;
+Hyprland-legacy-DispatcherTranslator.hpp:16	SDispatchResult run(const std::string& dispatcher, const std::string& data);
+Hyprland-ConfigActions.hpp:90	ActionResult setSubmap(const std::string& submap);
+Hyprland-ConfigActions.hpp:118	std::string m_currentSubmap = ""; // current keybind submap name
+Hyprland-ConfigActions.cpp:1665	if (submap == "reset" || submap.empty()) {
+Hyprland-ConfigActions.cpp:1666	Config::Actions::state()->m_currentSubmap = "";
+Hyprland-ConfigActions.cpp:1673	if (k->submap.name == submap) {
+Hyprland-ConfigActions.cpp:1674	Config::Actions::state()->m_currentSubmap = submap;
+Hyprland-ConfigManager.cpp:36	g_mgr = makeUnique<Lua::CConfigManager>();
+Hyprland-ConfigManager.cpp:40	g_mgr = makeUnique<Legacy::CConfigManager>();
+Hyprland-ConfigManager.hpp:28	CONFIG_LEGACY = 0,
+Hyprland-ConfigManager.hpp:29	CONFIG_LUA
+wiki-Dispatchers.md:16	Their purpose is to be fed into `hl.bind()` or `hl.dispatch()`.
+wiki-Dispatchers.md:83	| `submap(name)` | move to a submap |
+wiki-Binds.md:13	hl.bind(keys, dispatcher)
+wiki-Binds.md:24	The dispatcher list can be found in
+wiki-Binds.md:328	hl.bind("ALT + R", hl.dsp.submap("resize"))
+wiki-Using-hyprctl.md:55	Dispatch is a shorthand for `eval 'hl.dispatch(...)'`:
+wiki-Using-hyprctl.md:58	hyprctl dispatch 'hl.dsp.focus({ workspace = "3" })'
+Hyprland-docs-hyprctl.1.rst:22	**dispatch**
+Hyprland-docs-hyprctl.1.rst:24	Call a dispatcher with an argument.
+Hyprland-docs-hyprctl.1.rst:26	An argument must be present.
+Hyprland-SharedDefs.hpp:52	struct SDispatchResult {
+Hyprland-SharedDefs.hpp:53	bool        passEvent = false;
+Hyprland-SharedDefs.hpp:54	bool        success   = true;
+Hyprland-SharedDefs.hpp:55	std::string error;
+Hyprutils-VarList.hpp:10	@param lastArgNo stop splitting after argv reaches maximum size, last arg will contain rest of unsplit args
+Hyprutils-VarList.cpp:20	if (++idx == lastArgNo) {
+Hyprutils-VarList.cpp:21	m_vArgs.emplace_back(trim(in.substr(pos)));
+Hyprutils-VarList2.hpp:13	@param lastArgNo stop splitting after argv reaches maximum size, last arg will contain rest of unsplit args
+Hyprutils-VarList2.cpp:21	void CVarList2::construct(std::string_view in, const size_t lastArgNo
+Hyprutils-VarList2.cpp:28	std::vector<size_t> escapedIndices; // local to the current arg

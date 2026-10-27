@@ -1,0 +1,1 @@
+| `knowledge/hyprland-dispatcher-dispatch-r51.md` (CONTROL FIXTURE, round 51) | control fixture only — synthetic pins, no admitted evidence; exists to exercise `PRED-C2-r51` clauses (b)-(d) | [Fixture](knowledge/hyprland-dispatcher-dispatch-r51.md): synthetic bytes only |

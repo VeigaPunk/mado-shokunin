@@ -1,0 +1,15 @@
+$ python3 -I check-tool-ledger.py --repo fixture --rev r51-control --work /tmp/ctl-r51
+setup error: --work under /tmp refused (/tmp/ctl-r51)
+exit=2
+
+$ TMPDIR=/fast/scratch/hyaku/mado-r51/ExecControlsC1/work python3 -I check-tool-ledger.py --repo fixture --rev r51-control
+C1_R51: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=r51-control
+exit=0
+
+$ python3 -I check-tool-ledger.py --repo fixture --rev green --work /fast/scratch/hyaku/mado-r51/ExecControlsC1/work
+setup error: cannot list tree at 'green' in /fast/scratch/hyaku/mado-r51/ExecControlsC1/fixture
+exit=2
+
+$ python3 -I check-tool-ledger.py --repo fixture --rev r51-control --work $HOME/ctl-r51
+setup error: --work must not be / or inside HOME: /home/vgpnk/ctl-r51
+exit=2

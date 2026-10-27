@@ -1,0 +1,10 @@
+# revision scoping: worktree ledger is the green one; requested rev is mut-a
+$ git -C fixture rev-parse --abbrev-ref HEAD
+HEAD
+$ git -C fixture hash-object quality/tool-ledger.md
+85410244d2b54f6adfbf1f4370b19a25e8504ffc
+$ git -C fixture rev-parse mut-a:quality/tool-ledger.md
+7cb03d7eb2527de668f9f2f47ddc97aa3c4453fb
+$ python3 -I check-tool-ledger.py --repo fixture --rev mut-a --work /fast/scratch/hyaku/mado-r51/ExecControlsC1/work
+C1_R51: population=79 ledger_rows=78 uncovered=1 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MISSED rev=mut-a
+exit=1

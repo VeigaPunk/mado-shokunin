@@ -1,0 +1,121 @@
+# ScrSearchLog - opens, anchors and counts, round 51 (2026-10-27)
+# cwd: <lane> (every path below is repo-relative)   scratch: /fast/scratch/hyaku/mado-r51/ScrSearchLog (deleted after copy)
+# generated once, after the rows seat's corrected id set (S364-S369) landed
+
+## path resolution at the pins (tree listings, read-only API)
+$ curl -sS "https://api.github.com/repos/hyprwm/Hyprland/git/trees/efb50993...?recursive=1"
+blobs 1028 truncated False
+   docs/hyprctl.1.rst
+   src/SharedDefs.hpp
+   src/config/ConfigManager.cpp
+   src/config/legacy/DispatcherTranslator.cpp
+   src/config/legacy/DispatcherTranslator.hpp
+   src/config/shared/actions/ConfigActions.cpp
+   src/config/shared/actions/ConfigActions.hpp
+   src/managers/KeybindManager.hpp
+$ curl -sS "https://api.github.com/repos/hyprwm/hyprland-wiki/git/trees/d5f07c60...?recursive=1"
+blobs 126 truncated False
+   content/Configuring/Advanced and Cool/Using-hyprctl.md
+   content/Configuring/Basics/Binds.md
+   content/Configuring/Basics/Dispatchers.md
+
+## every source opened, fresh at its pinned commit (sha256)
+cee22c13d413ab389803e0eb87a6fcefadedea885cee4457b56ae351228dd1e0  src_managers_KeybindManager.hpp
+438c1e662f5c9fa4d5821fbab251113c66562dd452d1844f965c294bb3444e87  src_config_legacy_DispatcherTranslator.hpp
+7248cbb89f898c783c50c89d068df9821a6b38aeb6abeb6064e92c1610fbe771  src_config_legacy_DispatcherTranslator.cpp
+798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa  src_debug_HyprCtl.cpp
+a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637  src_config_shared_actions_ConfigActions.cpp
+746c6f517620eb039afbfbb9a4a0e2d5ba1c5eb117bcc8f396173f63091b7073  src_config_shared_actions_ConfigActions.hpp
+0b40cc83f827587f3a94260ca89d4464150dc2b45de2b9331e3d1876cafe0087  src_SharedDefs.hpp
+c10dc1ce6602a854121a79fb0192c9f43aa836a35f9acb98ff1789541b01f366  src_config_ConfigManager.cpp
+07cd73872e32ec59dcd1d51cc53e40a6318f25e577a63b6ce25f748f0e0ac166  docs_hyprctl.1.rst
+39d0747a34bf013d62f8d70d4e1259cf084510e38c17bb4dc1e3245095c1f494  wiki-Dispatchers.md
+3489a75da5f0865d56deda13412c67af905d8507a4bc51367d96952e55ab3545  wiki-Using-hyprctl.md
+3d8a2a6832da59304697aff1a3c72a35e02ea43737035c99b841d0854b17d628  wiki-Binds.md
+-- held pins read in place (lane, unmodified):
+8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40  .ufo/waves/round-50/fetch/Hyprland-KeybindManager.cpp
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  .ufo/waves/round-50/fetch/Hyprland-legacy-ConfigManager.cpp
+3d8a2a6832da59304697aff1a3c72a35e02ea43737035c99b841d0854b17d628  .ufo/waves/round-50/fetch/wiki-Binds.md
+-- the fresh Binds.md open equals the held S359 pin:
+IDENTICAL sha256 wiki-Binds.md == .ufo/waves/round-50/fetch/wiki-Binds.md
+
+## anchors per admitted row (grep at the pin)
+-- S364 KeybindManager.cpp (+ .hpp):
+41:    // populate m_dispatchers from the legacy translator
+113:        m_dispatchers[name] = [n = std::string(name)](std::string args) -> SDispatchResult { return Config::Legacy::translator()->run(n, args); };
+785:        const auto DISPATCHER = m_dispatchers.find(k->mouse ? "mouse" : k->handler);
+842:    res.passEvent |= !found;
+137:    std::unordered_map<std::string, std::function<SDispatchResult(std::string)>> m_dispatchers;
+-- S365 DispatcherTranslator.cpp (+ .hpp):
+16:        SDispatchResult run(const std::string& dispatcher, const std::string& data);
+30:SDispatchResult CDispatcherTranslator::run(const std::string& d, const std::string& w) {
+796:CDispatcherTranslator::CDispatcherTranslator() {
+162:    CVarList2                         ARGS(args, 2, ' ');
+189:    CVarList2  ARGS(args, 3, ' ');
+476:    CVarList2           args(arg, 0, 's', true);
+503:    CVarList2 vars(args, 0, 's', true);
+-- S366 HyprCtl.cpp:
+1126:static std::string dispatchRequest(eHyprCtlOutputFormat format, std::string in) {
+1143:    const auto DISPATCHSTR = in.substr(0, in.find_first_of(' '));
+1151:        return "Invalid dispatcher";
+-- S367 ConfigActions.cpp (+ .hpp):
+1664:ActionResult Actions::setSubmap(const std::string& submap) {
+1681:    return std::unexpected(std::format("Cannot set submap {}, submap doesn't exist (wasn't registered!)", submap));
+114:        int         m_passPressed   = -1; // -1 = dynamic (press+release), 0 = released, 1 = pressed
+118:        std::string m_currentSubmap = ""; // current keybind submap name
+-- S368 legacy ConfigManager.cpp:
+1555:    const auto ARGS     = CVarList(value, numbArgs);
+1584:    auto       HANDLER = ARGS[2 + DESCR_OFFSET + DEVICE_OFFSET];
+1586:    const auto COMMAND = mouse ? HANDLER : ARGS[3 + DESCR_OFFSET + DEVICE_OFFSET];
+1591:    // to lower
+1598:        return "Invalid dispatcher, requested \"" + HANDLER + "\" does not exist";
+-- S369 SharedDefs.hpp:
+52:struct SDispatchResult {
+53-    bool        passEvent = false;
+54-    bool        success   = true;
+55-    std::string error;
+56-};
+57-
+
+## held ground (no new row)
+13:hl.bind(keys, dispatcher)
+24:_The dispatcher list can be found in
+25:[Dispatchers](../Dispatchers/#dispatchers-1)._
+wiki-Binds.md hl.dsp occurrences: 65
+
+## exclusions (4 sources)
+7:> Looking for the old hyprlang syntax? Check the [0.54 wiki pages](https://wiki.hypr.land/0.54.0/).
+8:> Since Hyprland 0.55, hyprlang is deprecated in favor of lua.
+23:hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = "3" }))'
+55:Dispatch is a shorthand for `eval 'hl.dispatch(...)'`:
+24:    Call a dispatcher with an argument.
+32:        **hyprctl** *dispatch "hl.dsp.exec_cmd('kitty')"*
+40:    This will not work if your config provider is lua (refer to **eval**)
+56:        **hyprctl** *eval 'hl.bind("SUPER + SHIFT + Q", hl.dsp.exec_cmd("firefox"))'*
+33:        if (filePath.extension() == ".lua") {
+39:            Log::logger->log(Log::DEBUG, "[cfg] Lua config not found, using legacy config at {}", filePath.string());
+45:        if (filePath.extension() == ".lua") {
+
+## the refuted candidate claim ("the argument is split on commas at dispatch time")
+1555:    const auto ARGS     = CVarList(value, numbArgs);
+1586:    const auto COMMAND = mouse ? HANDLER : ARGS[3 + DESCR_OFFSET + DEVICE_OFFSET];
+1143:    const auto DISPATCHSTR = in.substr(0, in.find_first_of(' '));
+   -> the bind path keeps the whole remaining field verbatim (CVarList cuts at most numbArgs fields); hyprctl splits at the first space only; any comma splitting belongs to one dispatcher, never to the dispatch path
+
+## the four paper-counts, by the exact commands the note carries
+$ printf "%s\n" IDENTIFIED... | wc -l
+15
+$ printf "%s\n" SCREENED... | wc -l
+11
+$ printf "%s\n" S364 S365 S366 S367 S368 S369 | wc -l
+6
+$ printf "%s\n" EXCLUDED... | wc -l
+4
+
+## arithmetic
+identified 15 = screened (passed) 11 + excluded (failed screening) 4
+screened 11 = 9 row-bearing file locations (6 rows; three .hpp anchors fold into their row) + 2 held ground (wiki Basics/Binds.md, corpus/knowledge/hyprland-bind-key-match-r50.md)
+
+## dispatcher-name counts (re-derived, not copied)
+m_dispatchers initializer lines 42 - 112 names 71 unique 71
+m_dispMap entries: 71

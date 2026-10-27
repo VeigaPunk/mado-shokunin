@@ -1,0 +1,18 @@
+{
+  "tool": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecCounterC2/c2-r51-dispatch-entry.py",
+  "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "base_rev": "6ca8c559a4a3d6d361101592116eea2bc7452437",
+  "cases": [
+    {"name": "base_missed", "argv": ["--repo", "{lane}", "--rev", "{base_rev}", "--work", "{scratch}/w-c2"],
+     "env": {"TMPDIR": "{scratch}/tmp"}, "expect_exit": 1, "isolate_tmp": true, "expect_no_tmp_writes": true,
+     "mkdir": ["{scratch}/w-c2"],
+     "note": "frozen base case: admitted=0/1 TARGET_MISSED exit 1"},
+    {"name": "tmp_work_refusal_existing_dir", "argv": ["--repo", "{lane}", "--rev", "{base_rev}", "--work", "/tmp/dh-probe-c2"],
+     "env": {"TMPDIR": "{scratch}/tmp"}, "expect_exit": 2, "isolate_tmp": true,
+     "ns_pre": "mkdir -p /tmp/dh-probe-c2",
+     "note": "scratch rule 4: an EXISTING --work under /tmp must be refused with exit 2"},
+    {"name": "tmpdir_slash_tmp", "argv": ["--repo", "{lane}", "--rev", "{base_rev}"],
+     "env": {"TMPDIR": "/tmp"}, "expect_exit": 2, "isolate_tmp": true,
+     "note": "scratch rule 4: TMPDIR=/tmp must be refused"}
+  ]
+}

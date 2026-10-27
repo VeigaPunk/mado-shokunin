@@ -1,0 +1,107 @@
+# ExecFetchDispatch round-51 w1 — fetch verification receipt
+# measured 2026-10-27T07:04:18-03:00 on plazir27
+# pins: 19 files from 3 repos (Hyprland @ efb50993, hyprutils @ a21e87b8 = tag v0.14.2, hyprland-wiki @ d5f07c60)
+
+## tool versions
+curl 8.23.0 (x86_64-pc-linux-gnu) libcurl/8.23.0 OpenSSL/3.6.5 zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 nghttp2/1.70.0 ngtcp2/1.25.0 nghttp3/1.18.0 mit-krb5/1.22.2
+Python 3.14.8
+sha256sum 0.8.0
+
+## 1. anchor verifier selftest (hermetic fixture under --scratch)
+selftest positive     ok
+selftest wrong-quote  ok (Pin.cpp:2 quote not verbatim on that line)
+selftest wrong-line   ok (Pin.cpp:1 quote not verbatim on that line)
+selftest out-of-range ok (Pin.cpp:9 out of range (file has 4 lines))
+selftest missing-pin  ok (pin file absent: Nope.cpp)
+selftest too-long     ok (Pin.cpp:3 quote has 30 words > 25)
+selftest: cases=6 wrong=0
+exit=0
+
+## 2. anchor table verified against the pins
+anchors=73 pin_files=19 failed=0
+exit=0
+
+## 3. SHA256SUMS check (pins only, no self row)
+self_row_lines=0
+Hyprland-ConfigActions.cpp: OK
+Hyprland-ConfigActions.hpp: OK
+Hyprland-ConfigManager.cpp: OK
+Hyprland-ConfigManager.hpp: OK
+Hyprland-HyprCtl.cpp: OK
+Hyprland-KeybindManager.cpp: OK
+Hyprland-KeybindManager.hpp: OK
+Hyprland-SharedDefs.hpp: OK
+Hyprland-docs-hyprctl.1.rst: OK
+Hyprland-legacy-ConfigManager.cpp: OK
+Hyprland-legacy-DispatcherTranslator.cpp: OK
+Hyprland-legacy-DispatcherTranslator.hpp: OK
+Hyprutils-VarList.cpp: OK
+Hyprutils-VarList.hpp: OK
+Hyprutils-VarList2.cpp: OK
+Hyprutils-VarList2.hpp: OK
+wiki-Binds.md: OK
+wiki-Dispatchers.md: OK
+wiki-Using-hyprctl.md: OK
+exit=0
+sums_lines=19
+
+## 4. manifest vs disk (bytes, sha256, git blob sha1)
+manifest_files=19 hyprland_rev=efb50993780079460b0cbed1363e2166a2de1d9f hyprutils_rev=a21e87b878e72ee5dfd375899e8b2ad0d0c4c0e1 wiki_rev=d5f07c60e16fe03744aabb76e492117b7f7c4679
+OK  Hyprland-KeybindManager.cpp                    39334 B sha256_match=True blob_match=True
+OK  Hyprland-KeybindManager.hpp                     7936 B sha256_match=True blob_match=True
+OK  Hyprland-legacy-DispatcherTranslator.cpp       35997 B sha256_match=True blob_match=True
+OK  Hyprland-legacy-DispatcherTranslator.hpp         567 B sha256_match=True blob_match=True
+OK  Hyprland-legacy-ConfigManager.cpp              90963 B sha256_match=True blob_match=True
+OK  Hyprland-ConfigManager.cpp                      2597 B sha256_match=True blob_match=True
+OK  Hyprland-ConfigManager.hpp                      2972 B sha256_match=True blob_match=True
+OK  Hyprland-ConfigActions.cpp                     71407 B sha256_match=True blob_match=True
+OK  Hyprland-ConfigActions.hpp                      6960 B sha256_match=True blob_match=True
+OK  Hyprland-HyprCtl.cpp                           97582 B sha256_match=True blob_match=True
+OK  Hyprland-docs-hyprctl.1.rst                     2623 B sha256_match=True blob_match=True
+OK  Hyprland-SharedDefs.hpp                         1915 B sha256_match=True blob_match=True
+OK  Hyprutils-VarList.hpp                           1883 B sha256_match=True blob_match=True
+OK  Hyprutils-VarList.cpp                           1189 B sha256_match=True blob_match=True
+OK  Hyprutils-VarList2.hpp                          2905 B sha256_match=True blob_match=True
+OK  Hyprutils-VarList2.cpp                          5033 B sha256_match=True blob_match=True
+OK  wiki-Dispatchers.md                            13337 B sha256_match=True blob_match=True
+OK  wiki-Binds.md                                  19526 B sha256_match=True blob_match=True
+OK  wiki-Using-hyprctl.md                           7859 B sha256_match=True blob_match=True
+mismatched=0 unmanifested_pins=[] (manifest artifacts excluded: ['SHA256SUMS', 'fetch-manifest.json'])
+exit=0
+
+## 5. cross-check: shared pins vs round-50 fetch dir (byte identity)
+cmp_equal  Hyprland-KeybindManager.cpp
+cmp_equal  Hyprland-legacy-ConfigManager.cpp
+cmp_equal  wiki-Binds.md
+  r50 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40  Hyprland-KeybindManager.cpp
+  r50 9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  Hyprland-legacy-ConfigManager.cpp
+  r50 3d8a2a6832da59304697aff1a3c72a35e02ea43737035c99b841d0854b17d628  wiki-Binds.md
+  r51 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40  Hyprland-KeybindManager.cpp
+  r51 9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  Hyprland-legacy-ConfigManager.cpp
+  r51 3d8a2a6832da59304697aff1a3c72a35e02ea43737035c99b841d0854b17d628  wiki-Binds.md
+
+## 6. cross-check: scribe-independently-fetched SharedDefs.hpp digest
+  scribe claim : 0b40cc83f827587f3a94260ca89d4464150dc2b45de2b9331e3d1876cafe0087
+  this seat    : 0b40cc83f827587f3a94260ca89d4464150dc2b45de2b9331e3d1876cafe0087
+
+## 7. routed D4/M50-9: round-50 checksum manifest self-row (receipt only, bytes untouched)
+  r50 7:bb21f728cd1c6f1c59af9ecee0f0bf8360b42bb581985d12ab66611210054d07  SHA256SUMS
+r51 self_row_lines=0
+r50 path untouched by this seat:
+  (empty above = no modification)
+
+## 8. reproducibility: re-run fetch-all.sh into scratch and cmp every pin
+rerun_exit=0
+  cmp_equal=19 differ=0
+  SHA256SUMS identical
+
+## 9. ScoutDispatchMap fetch requests (read at run time)
+  105 /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ScoutDispatchMap.md
+  eea887369ba624c02e018a11a57ea994c93b62f8604bef124ea575ba588a8a44  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ScoutDispatchMap.md
+  --- scout report body ---
+  # ScoutDispatchMap — source recon
+  
+  Status: investigating pinned Hyprland dispatcher execution sources.
+  --- end ---
+  no fetch request lines present => pin set derived from own read of the pinned tree
+  Scribe request (ScrDispatchEntry, IRC 2026-10-27) for Hyprland-SharedDefs.hpp is covered: pin #12, sha256 matches its independent fetch (section 6)

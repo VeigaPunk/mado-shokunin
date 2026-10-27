@@ -1,0 +1,33 @@
+C2 BASE RED-BEFORE RECEIPT
+
+Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Base rev: 6ca8c559a4a3d6d361101592116eea2bc7452437
+Predicate: PRED-C2-r51, as frozen in .ufo/waves/round-51/claims.md.
+Method: read-only git inspection. No repository mutation.
+
+1) Entry at base
+Command:
+  git -C /home/vgpnk/Projects/shokunin/mado-shokunin cat-file -e 6ca8c559a4a3d6d361101592116eea2bc7452437:corpus/knowledge/hyprland-dispatcher-dispatch-r51.md
+Observed:
+  fatal: path 'corpus/knowledge/hyprland-dispatcher-dispatch-r51.md' does not exist in '6ca8c559a4a3d6d361101592116eea2bc7452437'
+  exit 128 (expected absence)
+
+2) Counter draft reproduction
+Requested draft: .ufo/waves/round-51/w1/ExecCounterC2/.
+Read-only check:
+  git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-tree -r --name-only 6ca8c559a4a3d6d361101592116eea2bc7452437 .ufo/waves/round-51/w1/ExecCounterC2
+  [no output; draft is not in base]
+Filesystem inspection:
+  read of /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecCounterC2 → empty directory
+Result: counter could not be run; the required draft file is absent. Therefore the requested observed `admitted=0/1 verdict=TARGET_MISSED` and exit 1 are NOT independently reproduced here. Entry absence is independently established above, but it is not substituted for counter execution.
+
+3) Registry at base
+Command:
+  git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 6ca8c559a4a3d6d361101592116eea2bc7452437:corpus/SOURCES.md | grep -E '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' | wc -l
+Observed: 300 registry rows.
+Command:
+  git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 6ca8c559a4a3d6d361101592116eea2bc7452437:corpus/SOURCES.md | grep -E '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' | grep -oE 'S[0-9]+' | sort -V | tail -n 1
+Observed: S363.
+Displayed final three rows: S361, S362, S363. Conclusion: no S364+ rows; registry ends at S363.
+
+Host/disk guard: `bash /home/vgpnk/Projects/shokunin/scripts/hyaku/disk-guard.sh status` completed; /fast/scratch/hyaku free 291.6G. No scratch work was needed.

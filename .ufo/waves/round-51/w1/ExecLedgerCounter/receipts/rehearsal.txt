@@ -1,0 +1,38 @@
+rehearsal repo=/fast/scratch/hyaku/mado-r51/ExecLedgerCounter/ri/repo toplevel=/fast/scratch/hyaku/mado-r51/ExecLedgerCounter/ri/repo
+copied quality/check-tool-ledger.py <- ExecLedgerGate/check-tool-ledger.py
+copied quality/tool-ledger.md <- ExecLedgerPopulation/tool-ledger.md
+copied quality/counters/c1-r51-ledger.py <- ExecLedgerCounter/c1-r51-ledger.py
+
+== stage-a: drafts only rev=13b3dac18c69aa354beeb9ad93461c31626b06ff
+gate:   LEDGER-ROW reason=uncovered path=quality/check-tool-ledger.py detail=no-row
+gate:   LEDGER-ROW reason=uncovered path=quality/counters/c1-r51-ledger.py detail=no-row
+gate:   LEDGER: population=81 ledger_rows=79 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=13b3dac18c69aa354beeb9ad93461c31626b06ff
+gate:   exit=1
+counter: detail: uncovered path=quality/check-tool-ledger.py
+counter: detail: uncovered path=quality/counters/c1-r51-ledger.py
+counter: detail: checker selftest ok (ratio=50/50 form=with-work)
+counter: detail: checker ledger failed (verdict=TARGET_MISSED exit=1)
+counter: detail: checker: LEDGER-ROW reason=uncovered path=quality/check-tool-ledger.py detail=no-row
+counter: detail: checker: LEDGER-ROW reason=uncovered path=quality/counters/c1-r51-ledger.py detail=no-row
+counter: detail: checker: LEDGER: population=81 ledger_rows=79 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=13b3dac18c69aa354beeb9ad93461c31626b06ff
+counter: C1_R51: population=81 ledger_rows=79 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok checker=failed verdict=TARGET_MISSED rev=13b3dac18c69aa354beeb9ad93461c31626b06ff
+counter: exit=1
+
+== stage-b: owed rows added, seat reports committed rev=589fa9f13bdc116720975ab6f525df46d5b074cc
+gate:   LEDGER: population=81 ledger_rows=81 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=589fa9f13bdc116720975ab6f525df46d5b074cc
+gate:   exit=0
+counter: detail: checker selftest ok (ratio=50/50 form=with-work)
+counter: detail: checker ledger ok (rev=589fa9f13bdc116720975ab6f525df46d5b074cc)
+counter: C1_R51: population=81 ledger_rows=81 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=589fa9f13bdc116720975ab6f525df46d5b074cc
+counter: exit=0
+
+== stage-c: owed rows point at claims.md, no round-51 seat report rev=24a9ea7d387762030935b24b35ac6945cb6e352e
+gate:   LEDGER: population=81 ledger_rows=81 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=24a9ea7d387762030935b24b35ac6945cb6e352e
+gate:   exit=0
+counter: detail: checker selftest ok (ratio=50/50 form=with-work)
+counter: detail: checker ledger ok (rev=24a9ea7d387762030935b24b35ac6945cb6e352e)
+counter: C1_R51: population=81 ledger_rows=81 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok verdict=TARGET_MET rev=24a9ea7d387762030935b24b35ac6945cb6e352e
+counter: exit=0
+
+summary: stage-a exit=1 (expect 1) stage-b exit=0 (expect 0) stage-c exit=0 (expect 0)
+revs: stage-a=13b3dac18c69aa354beeb9ad93461c31626b06ff stage-b=589fa9f13bdc116720975ab6f525df46d5b074cc stage-c=24a9ea7d387762030935b24b35ac6945cb6e352e

@@ -1,0 +1,17 @@
+frozen predicate line (claims.md C1), non-base case:
+> PRED-C1-r51: `python3 -I quality/counters/c1-r51-ledger.py --repo <lane> --rev <rev> --work <scratch>`
+> exits 0 with final line `C1_R51: population=<P> ledger_rows=<P> uncovered=0 dangling=0
+
+gate draft summary actually observed (green):
+LEDGER: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=aef0acf4ea4be1598771a210b8d41771517ff4be
+
+gate draft base form actually observed:
+LEDGER: population=79 verdict=TARGET_MISSED ledger=absent rev=6ca8c559a4a3d6d361101592116eea2bc7452437
+
+claims.md frozen base form: 'prints `verdict=TARGET_MISSED ledger=absent` and exits 1'
+
+deltas:
+ 1. prefix: frozen 'C1_R51:' vs gate 'LEDGER:' (the counter wrapper must emit the frozen prefix)
+ 2. field: frozen line carries selftest=ok; gate normal line has no selftest field (suite graded separately, 42/42)
+ 3. --work: frozen command passes --work <scratch>; gate rejects --work outside --selftest (exit 2) -> wrapper must own --work and not forward it
+ 4. absent line field order in gate matches claims ('verdict=TARGET_MISSED ledger=absent'); the faithful seat build ordered it 'ledger=absent verdict=TARGET_MISSED'

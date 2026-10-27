@@ -1,0 +1,32 @@
+# D4 / M50-9 — fetch checksum manifest self-row: receipt-only cleanup assessment
+# seat ExecFetchDispatch, round 51 w1, 2026-10-27T07:04:37-03:00
+# rule: never edit round-50 bytes; the fix lands as this receipt + the round-51 convention.
+
+## 1. the offending self row in .ufo/waves/round-50/fetch/SHA256SUMS
+  7:bb21f728cd1c6f1c59af9ecee0f0bf8360b42bb581985d12ab66611210054d07  SHA256SUMS
+
+## 2. the row cannot verify (self-reference: digest predates its own row)
+  claimed : bb21f728cd1c6f1c59af9ecee0f0bf8360b42bb581985d12ab66611210054d07
+  actual  : e2b9110664074ab4d4089c2cd046236a1b2537e766b7b30c464a904ff791ff0d  (1416 bytes)
+  SHA256SUMS: FAILED
+  sha256sum: WARNING: 1 computed checksum(s) did NOT match
+  sha256sum -c exit=1 (non-zero = manifest cannot be verified as-is)
+
+## 3. why editing round-50 is not the fix
+  - the file is committed metadata of a closed round; the verifier spot-check treats round-50 bytes as frozen
+  - any in-place re-digest rewrites the row again: a file cannot contain its own post-write sha256
+  - so the defect is retired by convention: pins only, meta artefacts never digested
+
+## 4. round-51 convention (draft manifest under the seat dir)
+  sums_rows=19 self_row_lines=0
+  sha256sum -c --quiet: all OK (exit 0)
+  manifest field sums_self_row: none — SHA256SUMS digests pins only (M50-9/D4 rule)
+  generator guard: fetch-all.sh exits 6 if a SHA256SUMS line ever names SHA256SUMS
+  116:    echo "SHA256SUMS contains a self row (M50-9 violation)" >&2; exit 6
+
+## 5. round-50 path untouched by this seat
+  git status --porcelain .ufo/waves/round-50/fetch: (clean)
+  last commit touching it: 1b37a59e 2026-10-27 hyaku run9 wrap-up: round-49/50 wave state for inheritance
+
+## 6. round-51 seat drafts are untracked at w1 (L1 integrates)
+  ?? .ufo/waves/round-51/w1/ExecFetchDispatch/

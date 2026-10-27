@@ -1,0 +1,94 @@
+{
+ "tool": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerGate/check-tool-ledger.py",
+ "scratch": "/fast/scratch/hyaku/mado-r51/ExecDiskHygiene/run",
+ "cases": [
+  {
+   "name": "selftest_tmpdir",
+   "note": "hermetic selftest, TMPDIR inside seat scratch, isolated /tmp",
+   "argv": [
+    "/usr/bin/python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerGate/check-tool-ledger.py",
+    "--selftest"
+   ],
+   "env": {
+    "TMPDIR": "/fast/scratch/hyaku/mado-r51/ExecDiskHygiene/run/tmp"
+   },
+   "isolate_tmp": true,
+   "exit": 1,
+   "expect_exit": 0,
+   "ok": false,
+   "seconds": 0.83,
+   "tmp_residue": [],
+   "stdout_tail": "LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=\nFAILED: control-e-absent LEDGER: population=4 verdict=TARGET_MISSED ledger=absent rev=455b3d25c54cf42d1f9a5f372ec58353e1a0396c\nFAILED: pointer-missing-bad LEDGER-ROW reason=bad_pointer path=quality_check-a.py detail=pointer-missing:quality_nope.py\nLEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_point\nFAILED: duplicate-dangling LEDGER-ROW reason=dangling path=tools_alpha-tool.py detail=row-duplicate-line-9\nLEDGER: population=4 ledger_rows=5 uncovered=0 dangling=1 bad_pointer=0 empty_de\nFAILED: fenced-uncovered LEDGER-ROW reason=uncovered path=quality_counters_c1-x.py detail=no-row\nLEDGER: population=4 ledger_rows=3 uncovered=1 dangling=0 bad_pointer=0 empty_desc=0 ver\nFAILED: worktree-not-read LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=362904ddf683c39742503b1a91788f97886df978\nFAILED: rev-pins-bytes LEDGER: population=4 verdict=TARGET_MISSED ledger=absent rev=73fd4b09c69251b3faef0da464f7f0027c4cbc8b | LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=98d065e864e5599453430e32737be559cd04ae16\nFAILED: population-globs LEDGER: population=2 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=8fb5ee6bfcf8373b0539449f4ece3719aba5e203\nFAILED: selftest-count expected=36 got=45\nLEDGER_SELFTEST: 34/46 passed\n__PROBE_EXIT__=1",
+   "stderr_tail": ""
+  },
+  {
+   "name": "selftest_work",
+   "note": "explicit --work inside seat scratch",
+   "argv": [
+    "/usr/bin/python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerGate/check-tool-ledger.py",
+    "--selftest",
+    "--work",
+    "/fast/scratch/hyaku/mado-r51/ExecDiskHygiene/run/w-selftest"
+   ],
+   "env": {
+    "TMPDIR": "/fast/scratch/hyaku/mado-r51/ExecDiskHygiene/run/tmp-b"
+   },
+   "isolate_tmp": true,
+   "exit": 1,
+   "expect_exit": 0,
+   "ok": false,
+   "seconds": 0.83,
+   "tmp_residue": [],
+   "stdout_tail": "LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=\nFAILED: control-e-absent LEDGER: population=4 verdict=TARGET_MISSED ledger=absent rev=ed3826cfdd2a7ead3cc4000bbab7af02a406defb\nFAILED: pointer-missing-bad LEDGER-ROW reason=bad_pointer path=quality_check-a.py detail=pointer-missing:quality_nope.py\nLEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_point\nFAILED: duplicate-dangling LEDGER-ROW reason=dangling path=tools_alpha-tool.py detail=row-duplicate-line-9\nLEDGER: population=4 ledger_rows=5 uncovered=0 dangling=1 bad_pointer=0 empty_de\nFAILED: fenced-uncovered LEDGER-ROW reason=uncovered path=quality_counters_c1-x.py detail=no-row\nLEDGER: population=4 ledger_rows=3 uncovered=1 dangling=0 bad_pointer=0 empty_desc=0 ver\nFAILED: worktree-not-read LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=362904ddf683c39742503b1a91788f97886df978\nFAILED: rev-pins-bytes LEDGER: population=4 verdict=TARGET_MISSED ledger=absent rev=73fd4b09c69251b3faef0da464f7f0027c4cbc8b | LEDGER: population=4 ledger_rows=4 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=74322496bc22da5822e190bdda355706c8b1627f\nFAILED: population-globs LEDGER: population=2 ledger_rows=2 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=98d3b796bf472037448942f95d58761c03f6436c\nFAILED: selftest-count expected=36 got=45\nLEDGER_SELFTEST: 34/46 passed\n__PROBE_EXIT__=1",
+   "stderr_tail": ""
+  },
+  {
+   "name": "selftest_work_tmp_refused",
+   "note": "scratch rule 4: --work under /tmp refused",
+   "argv": [
+    "/usr/bin/python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerGate/check-tool-ledger.py",
+    "--selftest",
+    "--work",
+    "/tmp/dh-checker-selftest"
+   ],
+   "env": {
+    "TMPDIR": "/fast/scratch/hyaku/mado-r51/ExecDiskHygiene/run/tmp-c"
+   },
+   "isolate_tmp": true,
+   "exit": 2,
+   "expect_exit": 2,
+   "ok": true,
+   "seconds": 0.03,
+   "tmp_residue": [],
+   "stdout_tail": "__PROBE_EXIT__=2",
+   "stderr_tail": "check-tool-ledger.py: refusing work dir under /tmp (got /tmp/dh-checker-selftest): use a scratch filesystem"
+  },
+  {
+   "name": "selftest_tmpdir_slash_tmp",
+   "note": "scratch rule 4: TMPDIR=/tmp refused",
+   "argv": [
+    "/usr/bin/python3",
+    "-I",
+    "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerGate/check-tool-ledger.py",
+    "--selftest"
+   ],
+   "env": {
+    "TMPDIR": "/tmp"
+   },
+   "isolate_tmp": true,
+   "exit": 2,
+   "expect_exit": 2,
+   "ok": true,
+   "seconds": 0.03,
+   "tmp_residue": [],
+   "stdout_tail": "__PROBE_EXIT__=2",
+   "stderr_tail": "check-tool-ledger.py: refusing work dir under /tmp (got /tmp): use a scratch filesystem"
+  }
+ ]
+}

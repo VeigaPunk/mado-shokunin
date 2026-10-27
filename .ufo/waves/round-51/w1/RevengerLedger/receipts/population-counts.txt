@@ -1,0 +1,31 @@
+# Population counts and ledger coverage (read-only git, lane repo)
+# revs: 9bddd6ac (r47 ledger commit) dd2e827e (r49 ledger commit) 8ae47b95 (r50 base) 906178b6 (r50 data) 6ca8c559 (r51 base)
+
+== 9bddd6ac ==
+$ git ls-tree --name-only 9bddd6ac -- tools/ | wc -l  => 14
+$ git ls-tree -r --name-only 9bddd6ac -- quality/ | grep -E '^quality/[^/]+\.py$' | wc -l => 13
+$ git ls-tree -r --name-only 9bddd6ac -- quality/counters/ | grep -E '\.py$' | wc -l => 36
+
+== dd2e827e ==
+$ git ls-tree --name-only dd2e827e -- tools/ | wc -l  => 15
+$ git ls-tree -r --name-only dd2e827e -- quality/ | grep -E '^quality/[^/]+\.py$' | wc -l => 15
+$ git ls-tree -r --name-only dd2e827e -- quality/counters/ | grep -E '\.py$' | wc -l => 42
+
+== 8ae47b95 ==
+$ git ls-tree --name-only 8ae47b95 -- tools/ | wc -l  => 16
+$ git ls-tree -r --name-only 8ae47b95 -- quality/ | grep -E '^quality/[^/]+\.py$' | wc -l => 15
+$ git ls-tree -r --name-only 8ae47b95 -- quality/counters/ | grep -E '\.py$' | wc -l => 42
+
+== 906178b6 ==
+$ git ls-tree --name-only 906178b6 -- tools/ | wc -l  => 17
+$ git ls-tree -r --name-only 906178b6 -- quality/ | grep -E '^quality/[^/]+\.py$' | wc -l => 18
+$ git ls-tree -r --name-only 906178b6 -- quality/counters/ | grep -E '\.py$' | wc -l => 44
+
+== 6ca8c559 ==
+$ git ls-tree --name-only 6ca8c559 -- tools/ | wc -l  => 17
+$ git ls-tree -r --name-only 6ca8c559 -- quality/ | grep -E '^quality/[^/]+\.py$' | wc -l => 18
+$ git ls-tree -r --name-only 6ca8c559 -- quality/counters/ | grep -E '\.py$' | wc -l => 44
+
+== r51 base union vs r49 ledger coverage ==
+population tools=17 quality_py=18 counters_py=44 union=79
+union_named_in_r49_ledger=15 uncovered=64 quality_plane_named=0

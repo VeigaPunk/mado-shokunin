@@ -1,0 +1,53 @@
+# ExecLedgerGate cross-check — real base tree 6ca8c559 + ExecLedgerPopulation's 79-row draft
+# checker: check-tool-ledger.py (seat copy). Fixture toplevel asserted before every commit.
+
+## M0  pristine 79-row draft against the real base population
+LEDGER: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=e3c96e2379fab1010c0d8d2311e1bbdc7d0ee971
+exit=0
+
+## mutant m1
+LEDGER-ROW reason=uncovered path=tools/mado-hostguard.py detail=no-row
+LEDGER: population=79 ledger_rows=78 uncovered=1 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=185331e0dceb6965f06156e18d1acde0861e3d52
+exit=1
+
+## mutant m2
+LEDGER-ROW reason=bad_pointer path=tools/mado-keysym.py detail=pointer-lacks-basename:corpus/SOURCES.md
+LEDGER: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=1 empty_desc=0 verdict=TARGET_MISSED rev=32d543d1c00bb58e99167fcba9b747aa1d55d750
+exit=1
+
+## mutant m3
+LEDGER-ROW reason=empty_desc path=tools/mado-tripwire.py detail=blank-or-placeholder
+LEDGER: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=0 empty_desc=1 verdict=TARGET_MISSED rev=230de30b546d02e1c80d9c051515ff95d7e4f8ec
+exit=1
+
+## mutant m4
+LEDGER-ROW reason=dangling path=tools/mado-ghost.py detail=line-113
+LEDGER: population=79 ledger_rows=80 uncovered=0 dangling=1 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=23b5818e3accc4f0a1063c5d3827da40fd8692a1
+exit=1
+
+## mutant m5
+LEDGER-ROW reason=dangling path=tools/mado-hostguard.py detail=row-duplicate-line-113
+LEDGER: population=79 ledger_rows=80 uncovered=0 dangling=1 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=fb95b3ad2b9d7da47a4cc1fbfe98b43914c92840
+exit=1
+
+## base rev 6ca8c559, lane repo (C1 do-nothing control e)
+LEDGER: population=79 verdict=TARGET_MISSED ledger=absent rev=6ca8c559a4a3d6d361101592116eea2bc7452437
+exit=1
+
+## clone shape (ExecLedgerCounter invocation: --repo = clone, --rev = base)
+LEDGER: population=79 verdict=TARGET_MISSED ledger=absent rev=6ca8c559a4a3d6d361101592116eea2bc7452437
+exit=1
+
+## data-rev shape A — checker + counter land, ledger still 79 rows
+LEDGER-ROW reason=uncovered path=quality/check-tool-ledger.py detail=no-row
+LEDGER-ROW reason=uncovered path=quality/counters/c1-r51-ledger.py detail=no-row
+LEDGER: population=81 ledger_rows=79 uncovered=2 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MISSED rev=e3a955938fed101188d3b6069badbaa57e4ab8da
+exit=1
+
+## data-rev shape B — the two owed rows added
+LEDGER: population=81 ledger_rows=81 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=0f9ed486fa88829c30f66098de9df6926d54d00a
+exit=0
+
+## self-pointer residual (MutLedgerGate's remaining concern) — every row points at the ledger itself
+LEDGER: population=79 ledger_rows=79 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=82715cfb98021e8e42a4077b88b0664b7d383ff8
+exit=0

@@ -1,0 +1,24 @@
+C1 base receipt — RevC1Base
+
+Assignment predicate (claims.md, PRED-C1-r51): at round base 6ca8c559a4a3d6d361101592116eea2bc7452437 the same command prints verdict=TARGET_MISSED ledger=absent and exits 1.
+
+Independent checkout:
+$ git clone --quiet --no-hardlinks --shared /home/vgpnk/Projects/shokunin/mado-shokunin /fast/scratch/hyaku/mado-r51/RevC1Base/clone
+$ git -C /fast/scratch/hyaku/mado-r51/RevC1Base/clone checkout --quiet 6ca8c559a4a3d6d361101592116eea2bc7452437
+$ git -C /fast/scratch/hyaku/mado-r51/RevC1Base/clone rev-parse HEAD
+6ca8c559a4a3d6d361101592116eea2bc7452437
+
+Counter search: no c1-r51-ledger.py was present in .ufo/waves/round-51/w1/ExecLedgerCounter/ or any visible round-51/w1 seat at inspection time. Therefore the executable counter invocation could not be run independently; this is a base-clause inspection receipt, not a claimed counter execution.
+
+Read-only git presence check:
+$ git -C /fast/scratch/hyaku/mado-r51/RevC1Base/clone cat-file -e 6ca8c559a4a3d6d361101592116eea2bc7452437:quality/tool-ledger.md
+fatal: path 'quality/tool-ledger.md' does not exist in '6ca8c559a4a3d6d361101592116eea2bc7452437'
+exit=128
+$ git -C /fast/scratch/hyaku/mado-r51/RevC1Base/clone cat-file -e 6ca8c559a4a3d6d361101592116eea2bc7452437:quality/check-tool-ledger.py
+fatal: path 'quality/check-tool-ledger.py' does not exist in '6ca8c559a4a3d6d361101592116eea2bc7452437'
+exit=128
+$ git -C /fast/scratch/hyaku/mado-r51/RevC1Base/clone cat-file -e 6ca8c559a4a3d6d361101592116eea2bc7452437:quality/counters/c1-r51-ledger.py
+fatal: path 'quality/counters/c1-r51-ledger.py' does not exist in '6ca8c559a4a3d6d361101592116eea2bc7452437'
+exit=128
+
+Conclusion: both requested ledger paths are absent at the exact base revision. The claim's required TARGET_MISSED ledger=absent exit-1 is consistent with the absence; it was not observed from running the counter because the draft was unavailable.

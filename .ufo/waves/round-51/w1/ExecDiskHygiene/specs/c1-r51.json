@@ -1,0 +1,20 @@
+{
+  "tool": "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-51/w1/ExecLedgerCounter/c1-r51-ledger.py",
+  "lane": "/home/vgpnk/Projects/shokunin/mado-shokunin",
+  "base_rev": "6ca8c559a4a3d6d361101592116eea2bc7452437",
+  "cases": [
+    {"name": "base_missed", "argv": ["--repo", "{lane}", "--rev", "{base_rev}", "--work", "{scratch}/w-base"],
+     "env": {"TMPDIR": "{scratch}/tmp"}, "expect_exit": 1, "isolate_tmp": true, "expect_no_tmp_writes": true,
+     "note": "frozen base case: TARGET_MISSED ledger=absent exit 1"},
+    {"name": "tmp_work_refusal", "argv": ["--repo", "{lane}", "--rev", "{base_rev}", "--work", "/tmp/dh-probe-r51"],
+     "env": {"TMPDIR": "{scratch}/tmp"}, "expect_exit": 2, "isolate_tmp": true,
+     "ns_pre": "mkdir -p /tmp/dh-probe-r51",
+     "note": "scratch rule 4: --work under /tmp must be refused (exit 2)"},
+    {"name": "tmpdir_slash_tmp", "argv": ["--repo", "{lane}", "--rev", "{base_rev}"],
+     "env": {"TMPDIR": "/tmp"}, "expect_exit": 2, "isolate_tmp": true,
+     "note": "scratch rule 4: TMPDIR=/tmp must be refused"},
+    {"name": "implicit_tmpdir_work", "argv": ["--repo", "{lane}", "--rev", "{base_rev}"],
+     "env": {"TMPDIR": "{scratch}/tmp"}, "expect_exit": 1, "isolate_tmp": true, "expect_no_tmp_writes": true,
+     "note": "no --work: mkdtemp lands in TMPDIR, nothing in /tmp"}
+  ]
+}

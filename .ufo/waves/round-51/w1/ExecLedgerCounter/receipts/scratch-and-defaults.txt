@@ -1,0 +1,14 @@
+# default --work honours TMPDIR (no --work flag); the directory it creates is removed again
+$ TMPDIR=<scratch>/tmpdir-default python3 -I c1-r51-ledger.py --repo <lane> --rev <base>
+detail: quality/tool-ledger.md absent at 6ca8c559a4a3
+C1_R51: verdict=TARGET_MISSED ledger=absent population=79 rev=6ca8c559a4a3d6d361101592116eea2bc7452437
+exit=1
+tmpdir-default entries left: 0
+
+# checker absent at the revision (fixture repo, complete ledger)
+detail: checker quality/no-such-checker.py absent at 745b9f3dfd32
+C1_R51: population=5 ledger_rows=5 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=absent checker=absent verdict=TARGET_MISSED rev=745b9f3dfd32b0083bf14e630809bb3f3143a759
+exit=1
+
+# fenced example rows are documentation, not ledger rows (gate parity)
+residue in --work: 

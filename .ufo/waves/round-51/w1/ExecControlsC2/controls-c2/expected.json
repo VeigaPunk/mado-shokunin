@@ -1,0 +1,92 @@
+{
+  "predicate": "PRED-C2-r51",
+  "base": "6ca8c559a4a3d6d361101592116eea2bc7452437",
+  "entry": "corpus/knowledge/hyprland-dispatcher-dispatch-r51.md",
+  "measured_with": "w1/ExecCounterC2/c2-r51-dispatch-entry.py (draft, 2026-10-27) and controls-c2/probe-clauses.py",
+  "controls": {
+    "ctl-a": {
+      "claim": "round-50 entry bytes at the C2 path plus two new rows -> must MISS via clause (c)",
+      "clauses": {"a": true, "b": false, "c": false, "d": false},
+      "counter_clauses": {"a": 1, "b": 0, "c": 0, "d": 0},
+      "miss_via": ["c"],
+      "also_fails": ["b", "d"],
+      "max_overlap": 0.993,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-a2": {
+      "claim": "round-50 entry bytes with the source/held block replaced by the scaffold rows and three valid held citations -> (a)(b)(d) pass and only clause (c) misses",
+      "clauses": {"a": true, "b": true, "c": false, "d": true},
+      "counter_clauses": {"a": 1, "b": 1, "c": 0, "d": 1},
+      "miss_via": ["c"],
+      "max_overlap": 0.993,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-b": {
+      "claim": "round-49 candidate at the C2 path -> must MISS via clause (c)",
+      "clauses": {"a": true, "b": false, "c": false, "d": false},
+      "counter_clauses": {"a": 1, "b": 0, "c": 0, "d": 0},
+      "miss_via": ["c"],
+      "also_fails": ["b", "d"],
+      "max_overlap": 0.992,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-b2": {
+      "claim": "round-49 candidate with the source/held block replaced by the scaffold rows and three valid held citations -> (a)(b)(d) pass and only clause (c) misses",
+      "clauses": {"a": true, "b": true, "c": false, "d": true},
+      "counter_clauses": {"a": 1, "b": 1, "c": 0, "d": 1},
+      "miss_via": ["c"],
+      "max_overlap": 0.992,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-c": {
+      "claim": "new entry with held citations whose pinned tokens are absent from the cited lines -> must MISS via clause (d)",
+      "clauses": {"a": true, "b": true, "c": true, "d": false},
+      "counter_clauses": {"a": 1, "b": 1, "c": 1, "d": 0},
+      "miss_via": ["d"],
+      "max_overlap": 0.0,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-d": {
+      "claim": "new entry citing rows S364/S365 whose pin files are absent -> must MISS via clause (b)",
+      "clauses": {"a": true, "b": false, "c": true, "d": true},
+      "counter_clauses": {"a": 1, "b": 0, "c": 1, "d": 1},
+      "miss_via": ["b"],
+      "max_overlap": 0.0,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    },
+    "ctl-e": {
+      "claim": "bare round base - entry absent -> must MISS (admitted=0/1, exit 1)",
+      "clauses": {"a": false, "b": false, "c": true, "d": false},
+      "counter_clauses": {"a": 0, "b": 0, "c": 0, "d": 0},
+      "miss_via": ["a"],
+      "max_overlap": 0.0,
+      "verdict": "TARGET_MISSED",
+      "probe_rc": 1,
+      "counter_verdict": "TARGET_MISSED",
+      "counter_rc": 1
+    }
+  },
+  "notes": [
+    "clauses are the probe's frozen-sentence reading; counter_clauses are the draft counter's own a/b/c/d lines",
+    "ctl-e's probe clause (c) is vacuously true on an absent entry (zero shingles); the counter skips b-d when the entry is absent, so its vector is all zeros",
+    "ctl-a/ctl-b are byte-reuse controls, not clause-isolating: the copied bytes also fail (b) and (d). ctl-a2/ctl-b2 add the isolation by rewriting only the source/held block, leaving the copied body intact"
+  ]
+}

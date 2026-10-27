@@ -1,0 +1,21 @@
+# counter draft drift observed while this seat ran (2026-10-27)
+
+The PRED-C2-r51 counter draft was being edited by `w1/ExecCounterC2` while this seat scored its
+controls. Every entry below is a driver run against one file state; the recorded receipts in this
+directory belong to the FINAL row. Re-run `drive-controls-c2.py` at freeze and pin the hash then.
+
+| when | bytes | sha256 | result |
+|---|---|---|---|
+| seat start (~07:00) | — | — | counter ABSENT (`quality/counters/c2-r51-dispatch-entry.py` did not exist); probe-only passes |
+| first appearance (~07:03) | 22858 | (not recorded) | all 7 controls MISS with the intended vectors; clause lines verified per control |
+| ~07:05 | 22502 | 932f9923b9dbb25dafd4b0ae7ef386d1b8ae74f90c67592af048bec0569a40a8 | **crash on ctl-a2/ctl-b2 at clause (b)**: `C2_R51: a ok=1 …` then `TypeError: 'dict' object is not callable`, rc=1, no final line. Mid-edit state, rc still 1 |
+| ~07:06 | 22493 | b2515d65a5cc48ec8a52ec2689d85d572320e95ba9cfaf0aeacf34f2588270b8 | clean: 7/7 controls miss with intended vectors (first recorded receipts) |
+| ~07:07 | 23020 | 9f7c4c6331e34a4833f5c425d2fad5ad9532563e37b73e4ebce3cf7b5cefe422 | clean: 7/7 controls miss with intended vectors (second recorded receipts) |
+| FINAL (recorded) | 25258 | ebe39e1183375e0fb102124057eafecc9a21bdfc330c04ceb03759093d10e6dd | stable across a 90 s poll, then clean: 7/7 controls miss with intended vectors |
+
+Constants at the FINAL state (read from the counter header): `BASE=6ca8c559…`, `ROW_MIN,ROW_MAX=364,379`,
+`OPENED=2026-10-27`, `MIN_ROWS=2`, `MIN_HELD=3`, `MAX_QUOTE_WORDS=25`, `NGRAM=8`, `MAX_OVERLAP=0.30`,
+plus the unstated `MIN_BODY_SHINGLES=300` body floor noted in `../spec.md`.
+
+Consequence for the freeze: a receipt is only meaningful together with the counter hash it was taken
+against. `build.txt` and `summary.txt` carry `counter_sha256=` for exactly that reason.
