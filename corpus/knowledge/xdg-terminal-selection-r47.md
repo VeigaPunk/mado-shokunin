@@ -94,3 +94,30 @@ The selection half of the round-17 `[UNK]` (corpus/knowledge/terminal-route-r17.
 - What the selected terminal does with the composed arguments (its own `-e`, `--working-directory=`, `--class=` handling) is out of scope; the terminal is never launched in this lane.
 - Whether the `--dir=` value from `omarchy-cmd-terminal-cwd` resolves at launch time stays `[UNK]` (terminal-route-r17.md:150-151, helper not run).
 - Hyprland's own `exec` path (`uwsm-app --`) is not examined here; only the resolver's side of the hotkey is.
+
+## Erratum (2026-10-26, round 48)
+
+E1 - one locator in Limits points at the wrong lines of `corpus/knowledge/terminal-route-r17.md`
+(sha256 `8ae41c4c889d93531e8cff2593923165ef3e227ff17f536aae68ec8fb8d632af`, 152 lines). This is a
+citation correction only: no claim, number, table row or verdict in this entry changes.
+
+- `xdg-terminal-selection-r47.md:95` - cites `:150-151` of `terminal-route-r17.md`; corrected to
+  **`terminal-route-r17.md:149-150`**. The bullet says the `--dir=` helper value "resolves at launch time stays `[UNK]`";
+  in the source the sentence opens on :149 -
+  "[UNK] Whether the `--dir=` value from `omarchy-cmd-terminal-cwd` is valid at launch time." - and
+  closes on :150 - "The helper is not run." The cited :151 is a single byte, the newline of a blank
+  line, so `:150-151` keeps the sentence's tail and drops its subject.
+
+*What stands unchanged:* the answer chain, the cache section and the entry's other two locators into
+that file - `:144-145` at :76 (the selection half) and `:144-145` at :88 (the launch half) - each
+recomputed against the pinned bytes and landing on the sentence its line claims. The round-47 lesson's
+three citations of `:144-145` (`corpus/lessons/round-47-verifier-spotcheck.md:56,84,110`) are correct
+for the same reason, and its D4 line (`:139-140`) already states this correction; appending here leaves
+all four line numbers where they were read. The body above is not edited, so the bullet at :95 keeps the
+stale range inline: this block is the correction of record, and a sweep of the entry will keep
+reporting :95 until a re-landing rewrites it.
+
+*Limit of this erratum:* nothing was run against a shell, a resolver or a host file. The check is a
+byte re-read of the two pinned markdown files (sweep `.ufo/waves/round-48/w1/ScrErrataD4/receipts/d4-sweep.txt`,
+three identical runs, sha256 `41baf414bb008ce1b44108f7382e1a06c0079d6855d2885eedcb9cdd1a95351e`;
+independent verifier `.ufo/waves/round-48/w1/ScrErrataD4/receipts/d4-verify.txt`, 112/112).

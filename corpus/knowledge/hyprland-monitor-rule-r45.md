@@ -105,3 +105,54 @@ hyprland monitor-rule default_refresh=60 refresh_tolerance=1 scale_step=1/120 sc
 - `monitorv2` blocks are handled after the whole config parse and replace same-selector rules (Hyprland-legacy-ConfigManager.cpp:743-747); this entry does not trace their field parsing beyond `sdr_eotf`.
 - The long description is rebuilt only for DRM outputs; a Wayland or headless backend builds its description differently and is not covered.
 - Upstream main has removed the hyprlang line form (Hyprland a9902ea); everything about the `monitor =` grammar is true of the 0.56.x line only.
+
+## Errata (2026-10-26, rounds 47-48; append-only — the text above stands as landed at 4d22eeb)
+
+Pin copies behind the file names below: `.ufo/waves/round-45/fetch/` for the fourteen round-45 pins,
+`.ufo/waves/round-47/w1/ScrErrataR45/pins/` and `.ufo/waves/round-47/w2/ExecErrataR45/pins/` for the
+round-47 ones.
+
+- E1 — entry line 84, locator. The monitor-added emit is reached only by the fall-through that sets
+  `m_enabled = true;` (Hyprland-Monitor.cpp:302) and fires at Hyprland-Monitor.cpp:389; the veto is the
+  disabled branch, `if (monitorRule.m_disabled) {` (Hyprland-Monitor.cpp:275) through `m_enabled = false;`
+  (:283) and `return;` (:286). The landed citation Hyprland-Monitor.cpp:264 is the already-enabled path of
+  `CMonitor::onConnect` (Hyprland-Monitor.cpp:108), which applies the rule and returns at :271 before the
+  emit. Corrected citation: Hyprland-Monitor.cpp:275-287 and :389; a fresh monitor starts with
+  `m_enabled = false;` (Hyprland-Monitor-efb5099.hpp:357), so an enabled rule falls through
+  Hyprland-Monitor.cpp:302 to the single `monitor.added.emit` site at Hyprland-Monitor.cpp:389. The claim
+  is unchanged.
+- E2 — entry line 96, provenance. The cited receipt `.ufo/waves/round-45/receipts/live-monitors-host-l1.txt`
+  is a run of `l1-draft/mado-monitors.py` (`# tool sha256 c6ac5fc2…`, receipt line 4), not of
+  `tools/mado-monitors.py`. The landed tool at 4d22eeb is sha256
+  2f007417ae9efa43c7c3e5bcf8e88710fb6cd6c856e49b4084c742a7ecff5609, and its receipt
+  `.ufo/waves/round-45/receipts/live-monitors-host-r45.txt` prints the same lines (`# tool sha256
+  2f007417…` receipt line 4, `verdict=AGREE` receipt line 7, `verdict=OK` receipt line 8, `exit=0` receipt
+  line 9). Corrected citation: that receipt.
+- E3 — entry line 98, claim. The custom-mode push is guarded by three negated strict bounds of 1 px / 1 px /
+  1 Hz (Hyprland-Monitor.cpp:836-837; `#define DELTALESSTHAN(a, b, delta) (abs((a) - (b)) < (delta))` at
+  Hyprland-macros.hpp:40). With the rule at 3440x1440@100 and the applied mode at 99.997 Hz,
+  |99.997 - 100.000| = 0.003 < 1 and both pixel dimensions match exactly, so the push at
+  Hyprland-Monitor.cpp:838-839 cannot execute: the requested 100 Hz counted as close and no custom mode was
+  tried (an accepted custom mode would have set Hyprland-Monitor.cpp:903 to 100.000). The branch is
+  determined by source plus dump, not open; only the UNK paragraph (entry line 100, the 59.99 Hz and
+  fractional-scale questions) remains.
+- E4 — entry line 18, pin. "Upstream main already drops the legacy hyprlang manager" is pinned at
+  a9902ea65f461af868497c4e74fed798ade0b1b0, 2026-07-22T16:35:10Z, "config: remove legacy config support
+  (#15539)": it removes src/config/legacy/ConfigManager.cpp (2184 deletions), leaves
+  src/config/ConfigManager.cpp instantiating only `Lua::CConfigManager` (src/config/ConfigManager.cpp:30 and
+  :33, no `Legacy` token left in that file), and removes the `CONFIG_LEGACY` enumerator from
+  src/config/ConfigManager.hpp, whose `enum eConfigManagerType : uint8_t {`
+  (hyprland-ConfigManager-hpp-a9902ea.hpp:27-28) keeps only `CONFIG_LUA`. The raw legacy file 404s at that
+  commit. Claim stands.
+- E5 — entry line 106, claim. At aquamarine v0.15.1 no backend but DRM builds a description:
+  src/backend/Wayland.cpp, src/backend/Headless.cpp and src/output/Output.cpp contain no occurrence of the
+  field (their `createOutput` passes only a name), `name, description, make, model, serial;` are default-empty
+  strings (include/aquamarine/output/Output.hpp:258), and only src/backend/drm/DRM.cpp:2101 assigns one. So a
+  non-DRM output reaches Hyprland-Monitor.cpp:250 with an empty description and an empty short description
+  (Hyprland-Monitor.cpp:255-256): the backends build none, rather than building one differently. Not observed
+  on this host, whose only output is DRM. Original wording replaced by this sentence.
+- E6 — entry line 107, pin and scope. Same commit as E4 removes the file that carries the `monitor` keyword
+  handler (the legacy handler file the entry's source list names), so the `monitor =` line form is gone on
+  main. Monitor rules are not: the Lua binding still parses them (`MONITOR_FIELDS[]` at
+  src/config/lua/bindings/LuaBindingsConfigRules.cpp:80, feeding `CMonitorRuleParser`) and the Lua manager
+  still drives the rule manager (src/config/lua/ConfigManager.cpp:809-810). Claim stands with that scope.

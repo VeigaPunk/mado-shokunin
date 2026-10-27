@@ -16,7 +16,7 @@ in the same process. Nothing in the lane was written; the replay tree lives in t
 | `patches.txt` | full diffs of the 9 counter mutants (one per clause `a s f w x g i i r`) |
 | `patches2.txt`, `patches3.txt`, `patches3b.txt` | full diffs of the candidate-derived probes (`probe-f-percent`, `probe-writes`, `probe-hash-off`, `probe-enable-off`, `probe-linelimit-off`, `probe-r-spawn`, `probe-r-spawn2`) |
 | `counters/` | the 9 mutant counter files, byte-exact |
-| `probes/` | the 13 candidate-derived probe tools, byte-exact |
+| `probes/` | the 10 candidate-derived probe tools, byte-exact |
 | `logs/` | the raw counter log of every cell (each < 130 KiB) + `index.txt` (runner index) |
 | `build/` | the builders (`build.py`, `build2.py`, `build3.py`), the receipt builder (`mkreceipts.py`), the aggregator (`agg.py`), the runner (`run1.sh`, `mkrev2.sh`, `batch.sh`), the direct probe (`probe-write.py`) and the four plan files |
 | `sha256s.txt` | sha256 of every file in this directory (excluding itself) |

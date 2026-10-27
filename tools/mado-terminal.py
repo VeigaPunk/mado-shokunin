@@ -11,13 +11,14 @@ Usage
 -----
   mado-terminal.py print [xdg-terminal-exec options] [--] [command [args ...]]
       Prints exactly what `xdg-terminal-exec` prints on stdout for the same options and arguments in the same
-      environment, and exits with its exit status, for a cold cache (see "Cache" below). At least one of
+      environment, and exits with its exit status, honouring the resolver's cache file (see "Cache" below). At least one of
       --print-id, --print-path, --print-content, --print-cmd[=SEQ] or --test is required (without one the resolver
       would launch a terminal; this tool refuses with exit 2).
   mado-terminal.py explain [--observed FILE]
       A trace of the selection (every list file read, every candidate and why it was skipped), then one line
-          MADO_TERM: selected=<id|-> path=<path|-> cmd=<exec[0]|-> cache=<absent|present|disabled> verdict=<V>
-      selected= and path= are what --print-id and --print-path print (an action rides on both as `:<action>`).
+          MADO_TERM: selected=<id|-> path=<path|-> cmd=<exec[0]|-> cache=<absent|hit|stale|invalid|disabled|-> verdict=<V>
+      selected= and path= are what --print-id and --print-path print (an action rides on both as `:<action>`); cmd= is
+      the first command word, a newline inside it written as the two characters `\n` so the line stays one line.
       V is OK (a terminal is selected), NO_TERMINAL (none is), and with --observed FILE - the captured stdout of
       `XDG_CACHE_HOME=$(mktemp -d) xdg-terminal-exec --print-id --print-path --print-cmd` - AGREE when the three
       printed items equal this tool's (id, path, and command line), DIFFER otherwise.
@@ -26,7 +27,7 @@ Usage
       Hermetic cases built under $TMPDIR; last line `MADO_TERMINAL_SELFTEST: N/N passed`; exit 0 iff all pass.
 
 Environment read (as the resolver reads it): HOME, PATH, XDG_CURRENT_DESKTOP, XDG_CONFIG_HOME, XDG_CONFIG_DIRS,
-XDG_DATA_HOME, XDG_DATA_DIRS, XDG_CACHE_HOME, XTE_EXECARG_COMPAT, XTE_CACHE_ENABLED.
+XDG_DATA_HOME, XDG_DATA_DIRS, XDG_CACHE_HOME, XTE_EXECARG_COMPAT, XTE_CACHE_ENABLED, TZ (through the C library).
 
 The selection (contract)
 ------------------------
@@ -46,11 +47,13 @@ The selection (contract)
     else "Discarded possibly misspelled entry" (stderr). '+id' protects id from a later '-id', '-id' removes it from
     the fallback list; first word wins. Plain lines are kept verbatim (after the +/- strip) in list order,
     duplicates included. Anything else is ignored.
- 4. Desktop entries (x:754-800): `find -L <dir>/. -type f` over the application dirs in ascending preference (the
-    last of XDG_DATA_DIRS first, XDG_DATA_HOME (default $HOME/.local/share) last), directory entries in readdir
-    order; a path counts when its part after `<dir>/./` starts with [a-zA-Z0-9_], ends in `.desktop` and holds only
-    [a-zA-Z0-9_./-]; its id is that part with '/' -> '-'. The last path seen for an id wins (so XDG_DATA_HOME beats
-    XDG_DATA_DIRS); every path seen whose id is not '-'-excluded is put at the FRONT of the fallback list.
+ 4. Desktop entries (x:754-800): `find -L <dir>/. -type f` is grouped by application directory with `-o` (x:760-774).
+    Because implicit `-a` binds tighter than `-o`, `-type f` restricts only the FIRST directory group; later groups
+    register any path type whose relative name passes the id filter (round-47 H1, measured at `ExecC1Diff.md`). The
+    directories are walked in preference order: the last of XDG_DATA_DIRS first, XDG_DATA_HOME (default
+    $HOME/.local/share) last. The name part after `<dir>/./` must start with [a-zA-Z0-9_], end in `.desktop`, and hold
+    only [a-zA-Z0-9_./-]; '/' becomes '-' in the id. Readdir order is observed, not sorted; later paths for one id win,
+    and each non-excluded found path is prepended to the fallback list.
  5. Candidates (x:1055-1111): the list lines, then the fallback ids. An `id:action` line splits at the first ':' for
     the action and the last ':' for the id. An id with no path, or already tried, is skipped. The entry file is read
     line by line (x:970-1018) with the same `read` rules: `[Desktop Entry]...` allows Exec when no action is asked;
@@ -79,19 +82,43 @@ The selection (contract)
     when one is given; --print-delimiter / --print-cmd= values pass through bash `printf %b`; --test prints
     "Command and arguments:" and one `  >arg<` line per word.
 
-Cache (out of contract): the resolver first tries $XDG_CACHE_HOME/xdg-terminal-exec (default $HOME/.cache), valid
-only while an md5 of XDG_CURRENT_DESKTOP and `ls -LRl` of every list and application path is unchanged (x:179-298);
-`--print-cmd` (not --print-id/--print-path alone) rewrites it in the background (x:1455-1458). This tool always
-models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, HOME unset, a FIFO named like a desktop file in a
-later application dir (the script blocks reading it), symlink loops, an empty-string argument (the script loops forever), XDG dirs or HOME containing ':' inside a default, glob characters or a quote,
-\\u/\\U escapes beyond ASCII in a delimiter, and file names with bytes the shell would see differently in another
-locale. On these the tool prints `MADO_TERM_OUT_OF_CONTRACT: <reason>` on stderr and exits 2.
+Cache (round 48, in contract): before reading any list or entry (x:1179) the resolver tries the one cache file
+$XDG_CACHE_HOME/xdg-terminal-exec (default $HOME/.cache; x:171-173) unless XTE_CACHE_ENABLED in the environment is not
+true (check_bool, x:50-59; the /enable_cache and /disable_cache directives are read only on the cold path, x:371-386).
+Not a regular file -> absent. The file is read like `while IFS= read -r` (x:221-262): lines 1-10 are the hash, the
+command name, the entry path, id, action, and the exec, app-id, title, dir and hold argument names; from line 11 the
+lines are joined with a newline (none before the first non-empty part) until one ends in 0x1e "END_OF_EXEC_USEP"; no
+such line before line 50, or an unterminated last line, -> invalid (cold path). A complete cache is used (hit) iff
+gen_hash (x:179-215) - md5 of "4", XDG_CURRENT_DESKTOP (through bash `echo`) and `LC_ALL=C LANG=C ls -LRl` of the
+':'-split list paths and application dirs, stderr dropped - equals line 1 and `command -v <line 2>` succeeds (x:274,
+no aliases defined yet); else stale (cold path). This tool emulates that `ls -LRl` listing byte for byte (GNU
+coreutils: operands sorted, files before directories, per-block column widths, `total` in the floor of summed 512-byte
+blocks / 2, C-locale dates with the six-month boundary, hidden names skipped, -L following links, `l?????????` rows for
+dangling links, ancestor loops skipped (with no header for a looped directory), user and group names from the passwd/group
+databases or numeric). On a hit every print mode uses the cached id, path (still holding `/./`), action, Exec words
+and argument names, exactly as x:274-284 load them, so a stale-but-valid cache (a same-size edit within the same
+minute, a TryExec binary removed while the
+command name still resolves) is reproduced, not corrected. A cold resolver's
+`--print-cmd` and `--test` save the cache in the background (x:1455-1458); this tool never writes it. `explain` reports
+`cache=absent|hit|stale|invalid|disabled`; HOME unset is modelled as the script (`set -u`, x:23): when any HOME-based
+default is needed (XDG_CONFIG_HOME, XDG_DATA_HOME or XDG_CACHE_HOME unset or empty; x:148, x:166, x:172) it exits 1
+with empty stdout, and with all three set it runs normally.
+Out of contract: -h/--help; a FIFO named like a desktop file in a later application dir when it is the candidate the
+resolver reads (the script blocks); an empty-string argument (the script loops forever); XDG dirs or HOME containing
+`:` inside a default, glob characters or a quote; non-ASCII `\\u`/`\\U` delimiter escapes; names containing newline
+bytes (GNU ls changes them to `?`); ACL/security xattrs under a hashed path; an mtime within one second of the six-month
+date boundary; and ls environment variables (BLOCK_SIZE, LS_BLOCK_SIZE, POSIXLY_CORRECT, TIME_STYLE, QUOTING_STYLE,
+LS_COLORS) set. Where detected, these print `MADO_TERM_OUT_OF_CONTRACT: <reason>` and exit 2.
 """
 import fnmatch
+import grp
+import hashlib
 import os
+import pwd
 import stat
 import sys
 import tempfile
+import time
 
 USEP = "\x1f"
 SPACE = " \t\n\v\f\r"          # [[:space:]] in the C locale
@@ -108,6 +135,177 @@ SCRIPT_FUNCTIONS = set("error check_bool debug shcat usage help make_paths gen_h
                        "read_config_paths replace de_expand_str de_tokenize_exec de_strip_fields reset_keys "
                        "find_entry_paths check_entry_key read_entry_path validate_entry_id validate_action_id find_entry "
                        "get_default_execarg".split())
+
+CACHE_END = "\x1eEND_OF_EXEC_USEP"
+LS_ENV = ("BLOCK_SIZE", "LS_BLOCK_SIZE", "POSIXLY_CORRECT", "TIME_STYLE", "QUOTING_STYLE", "LS_COLORS")
+
+# ---------------------------------------------------------------- `LC_ALL=C LANG=C ls -LRl` (GNU coreutils), no process
+SIX_MONTHS = 31556952 // 2
+MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
+
+
+def _mode(st):
+    m = st.st_mode
+    if stat.S_ISDIR(m):
+        t = "d"
+    elif stat.S_ISREG(m):
+        t = "-"
+    elif stat.S_ISLNK(m):
+        t = "l"
+    elif stat.S_ISCHR(m):
+        t = "c"
+    elif stat.S_ISBLK(m):
+        t = "b"
+    elif stat.S_ISFIFO(m):
+        t = "p"
+    elif stat.S_ISSOCK(m):
+        t = "s"
+    else:
+        t = "?"
+    s = [t]
+    for r, w, x, sp, spc in ((stat.S_IRUSR, stat.S_IWUSR, stat.S_IXUSR, stat.S_ISUID, "s"),
+                             (stat.S_IRGRP, stat.S_IWGRP, stat.S_IXGRP, stat.S_ISGID, "s"),
+                             (stat.S_IROTH, stat.S_IWOTH, stat.S_IXOTH, stat.S_ISVTX, "t")):
+        s.append("r" if m & r else "-")
+        s.append("w" if m & w else "-")
+        if m & sp:
+            s.append(spc if m & x else spc.upper())
+        else:
+            s.append("x" if m & x else "-")
+    return "".join(s)
+
+
+def _user(uid):
+    try:
+        return pwd.getpwuid(uid).pw_name
+    except (KeyError, OverflowError):
+        return str(uid)
+
+
+def _group(gid):
+    try:
+        return grp.getgrgid(gid).gr_name
+    except (KeyError, OverflowError):
+        return str(gid)
+
+
+def _date(st, now):
+    sec = st.st_mtime_ns
+    tm = time.localtime(st.st_mtime_ns // 1000000000)
+    recent = now - SIX_MONTHS * 1000000000 < sec < now
+    if abs((now - sec) - SIX_MONTHS * 1000000000) <= 1000000000:
+        raise OutOfContract("mtime within one second of GNU ls six-month date boundary")
+    mon = MONTHS[tm.tm_mon - 1]
+    if recent:
+        return "%s %2d %02d:%02d" % (mon, tm.tm_mday, tm.tm_hour, tm.tm_min)
+    return "%s %2d  %d" % (mon, tm.tm_mday, tm.tm_year)
+
+
+def _fmt_owner(value, width):
+    """GNU ls left-justifies a resolved name, but right-justifies a numeric uid/gid."""
+    return value.rjust(width) if value.isascii() and value.isdigit() else value.ljust(width)
+
+
+def _block(entries, now, width_extra=()):
+    """entries: list of (name, stat or None). Returns lines (without the total line) and total 1K blocks.
+    width_extra: further (name, stat) whose columns count for the widths but are not printed (GNU ls sizes the
+    command-line file block over every command-line operand, directories included)."""
+    rows = []
+    total = 0
+    for name, st in entries:
+        if st is None:
+            rows.append(("l?????????", "?", "?", "?", "?", "?", name))
+            continue
+        total += st.st_blocks
+        if stat.S_ISCHR(st.st_mode) or stat.S_ISBLK(st.st_mode):
+            size = "%d, %d" % (os.major(st.st_rdev), os.minor(st.st_rdev))
+        else:
+            size = str(st.st_size)
+        rows.append((_mode(st), str(st.st_nlink), _user(st.st_uid), _group(st.st_gid), size, _date(st, now), name))
+    if not rows:
+        return [], total // 2
+    wrows = rows + [(None, str(st.st_nlink), _user(st.st_uid), _group(st.st_gid), str(st.st_size)) for _n, st in width_extra]
+    wl = max(len(r[1]) for r in wrows)
+    wu = max(len(r[2]) for r in wrows)
+    wg = max(len(r[3]) for r in wrows)
+    ws = max(len(r[4]) for r in wrows)
+    out = []
+    for mode, nl, us, gr, size, date, name in rows:
+        out.append("%s %s %s %s %s %s %s" % (mode, nl.rjust(wl), _fmt_owner(us, wu), _fmt_owner(gr, wg), size.rjust(ws),
+                                             date.rjust(12), name))
+    return out, total // 2
+
+
+def _stat(p):
+    try:
+        st = os.stat(p)
+    except OSError:
+        return None
+    for attr in ("system.posix_acl_access", "system.posix_acl_default", "security.selinux"):
+        try:
+            os.getxattr(p, attr)
+        except OSError as ex:
+            if ex.errno in (1, 13):
+                raise OutOfContract("cannot inspect ls ACL/security xattrs")
+        else:
+            raise OutOfContract("ls ACL/security xattr present under a hashed path")
+    return st
+
+
+def _key(n):
+    if "\n" in n:
+        raise OutOfContract("newline in an ls path/name changes the cache hash")
+    return n.encode("utf-8", "surrogateescape")
+
+def ls_lRL(operands, now_ns=None):
+    now = time.time_ns() if now_ns is None else now_ns
+    files, dirs = [], []
+    for op in operands:
+        st = _stat(op)
+        if st is None:
+            continue
+        (dirs if stat.S_ISDIR(st.st_mode) else files).append((op, st))
+    files.sort(key=lambda t: _key(t[0]))
+    dirs.sort(key=lambda t: _key(t[0]))
+    out = []
+    if files:
+        lines, _t = _block(files, now, dirs)
+        out.extend(lines)
+    state = {"first": not files}
+    active = set()
+
+    def visit(path, st):
+        key = (st.st_dev, st.st_ino)
+        try:
+            names = os.listdir(path)
+        except OSError:
+            return
+        if key in active:
+            return
+        active.add(key)
+        names = sorted((n for n in names if not n.startswith(".")), key=_key)
+        ents = []
+        subs = []
+        for n in names:
+            child = path + n if path.endswith("/") else path + "/" + n
+            cst = _stat(child)
+            ents.append((n, cst))
+            if cst is not None and stat.S_ISDIR(cst.st_mode):
+                subs.append((child, cst))
+        if not state["first"]:
+            out.append("")
+        state["first"] = False
+        out.append(path + ":")
+        lines, total = _block(ents, now)
+        out.append("total %d" % total)
+        out.extend(lines)
+        for child, cst in subs:
+            visit(child, cst)
+        active.discard(key)
+
+    for path, st in dirs:
+        visit(path, st)
+    return ("\n".join(out) + "\n").encode("utf-8", "surrogateescape") if out else b""
 
 
 class OutOfContract(Exception):
@@ -406,16 +604,26 @@ class Resolver:
 
     def make_paths(self):
         e = self.env
-        if "HOME" not in e:
-            raise OutOfContract("HOME unset")
         for k in ("XDG_CONFIG_HOME", "XDG_CONFIG_DIRS", "XDG_DATA_HOME", "XDG_DATA_DIRS"):
             v = e.get(k, "")
             if any(c in v for c in "[]*?\\'\""):
                 raise OutOfContract("%s holds a glob character or a quote" % k)
-        home = e["HOME"]
-        if any(c in home for c in ":[]*?\\'\""):
+        home = e.get("HOME")
+        if home is not None and any(c in home for c in ":[]*?\\'\""):
             raise OutOfContract("HOME holds ':' a glob character or a quote")
-        cfg = (e.get("XDG_CONFIG_HOME") or home + "/.config") + ":" + (e.get("XDG_CONFIG_DIRS") or "/etc/xdg")
+        # Declared out of contract on EVERY path, not only where the cache hash is computed: with POSIXLY_CORRECT set
+        # the resolver fails a cold run before any hash (exit 1, w2/CritC1LsEnv) while a hash-only guard answered.
+        for k in LS_ENV:
+            if k in e:
+                raise OutOfContract("%s set (changes the ls listing the cache hash covers)" % k)
+
+        def need_home(line):
+            # `set -u` (x:23): the first default that expands an unset HOME ends the script, exit 1, stdout empty
+            if home is None:
+                self.err("/usr/bin/xdg-terminal-exec: line %d: HOME: unbound variable" % line)
+                raise Exit(1)
+            return home
+        cfg = (e.get("XDG_CONFIG_HOME") or need_home(148) + "/.config") + ":" + (e.get("XDG_CONFIG_DIRS") or "/etc/xdg")
         data = e.get("XDG_DATA_DIRS") or "/usr/local/share:/usr/share"
         self.configs = []
         for d in split_ifs(cfg, ":"):
@@ -429,10 +637,11 @@ class Resolver:
                 self.configs.append(d + "/xdg-terminal-exec/" + dk + "-xdg-terminals.list")
             self.configs.append(d + "/xdg-terminal-exec/xdg-terminals.list")
         apps = []
-        for d in split_ifs((e.get("XDG_DATA_HOME") or home + "/.local/share") + ":" + data, ":"):
+        for d in split_ifs((e.get("XDG_DATA_HOME") or need_home(166) + "/.local/share") + ":" + data, ":"):
             d = d[:-1] if d.endswith("/") else d
             apps.insert(0, d + "/applications/")
         self.app_dirs = apps
+        self.cache_file = (e.get("XDG_CACHE_HOME") or need_home(172) + "/.cache") + "/xdg-terminal-exec"
 
     def read_config_paths(self):
         for p in self.configs:
@@ -523,10 +732,6 @@ class Resolver:
                 cst = os.stat(p)
             except OSError:
                 cst = None          # dangling symlink: `find -L` still visits it as a link
-            if cst is not None and stat.S_ISFIFO(cst.st_mode):
-                rel = p[len(start) + 1:]
-                if not regular_only and self._id_ok(rel):
-                    raise OutOfContract("a FIFO named like a desktop file (the resolver blocks reading it)")
             isdir = cst is not None and stat.S_ISDIR(cst.st_mode)
             rel = p[len(start) + 1:]
             if regular_only:
@@ -550,6 +755,13 @@ class Resolver:
         self.action_listed = False
         if os.path.isdir(path):
             return True, ""         # `read` fails on the first call: no line, loop status 0 (x:985-1017)
+        try:
+            if stat.S_ISFIFO(os.stat(path).st_mode):
+                raise OutOfContract("a FIFO candidate blocks the resolver's entry read")
+        except OutOfContract:
+            raise
+        except OSError:
+            pass
         try:
             text = read_file(path)
         except OSError:
@@ -706,6 +918,69 @@ class Resolver:
         self.stderr.extend(split_ifs(":".join(self.app_dirs), ":"))
         return False
 
+    # ---------------------------------------------------------------- cache (x:179-298)
+    def gen_hash(self):
+        """md5 of `echo 4; echo "$XDG_CURRENT_DESKTOP"; LANG=C ls -LRl $CONFIGS:$APPLICATIONS_DIRS` (x:179-215)."""
+        dsk = self.env.get("XDG_CURRENT_DESKTOP", "")
+        if len(dsk) > 1 and dsk[0] == "-" and all(c in "neE" for c in dsk[1:]):
+            echo = b"" if "n" in dsk else b"\n"     # bash `echo` takes the value as its own options
+        else:
+            echo = dsk.encode("utf-8", "surrogateescape") + b"\n"
+        for k in LS_ENV:
+            if k in self.env:
+                raise OutOfContract("%s set (changes the ls listing the cache hash covers)" % k)
+        operands = split_ifs(":".join(self.configs) + ":" + ":".join(self.app_dirs), ":")
+        listing = ls_lRL(operands)
+        self.t("cache: hashing XDG_CURRENT_DESKTOP and ls -LRl of %d operands (%d bytes)" % (len(operands), len(listing)))
+        return hashlib.md5(b"4\n" + echo + listing).hexdigest()
+
+    def read_cache(self):
+        """Returns absent | invalid | stale | hit and, on hit, loads the cached selection (x:217-298)."""
+        p = self.cache_file
+        if not os.path.isfile(p):
+            self.t("cache: %s absent" % p)
+            return "absent"
+        try:
+            lines = read_lines(read_file(p), False)
+        except OSError:
+            self.t("cache: %s unreadable" % p)
+            return "invalid"
+        fields = [""] * 10
+        usep = ""
+        finished = False
+        for n, line in enumerate(lines, 1):
+            if n <= 10:
+                fields[n - 1] = line
+                continue
+            if n == 50:
+                self.t("cache: %s invalid (line limit 50)" % p)
+                return "invalid"
+            usep = usep + ("\n" if usep else "") + line
+            if line.endswith(CACHE_END):
+                usep = usep[:-len(CACHE_END)]
+                finished = True
+                break
+        if not finished:
+            self.t("cache: %s invalid (no terminator)" % p)
+            return "invalid"
+        if self.gen_hash() != fields[0] or not self.command_v(fields[1]):
+            self.t("cache: %s out of date" % p)
+            return "stale"
+        self.exec_usep = usep
+        (self.entry_path, self.entry_id, self.entry_action, self.execarg, self.appidarg, self.titlearg, self.dirarg,
+         self.holdarg) = fields[2:10]
+        self.t("cache: %s actual: %s %s" % (p, self.entry_id, self.entry_path))
+        return "hit"
+
+    def select_paths(self):
+        """Desktop names and paths only (what gen_hash needs); used by the selftest."""
+        e = self.env
+        dsk = e.get("XDG_CURRENT_DESKTOP", "")
+        low = "".join(chr(ord(c) + 32) if "A" <= c <= "Z" else c for c in dsk).rstrip("\n")
+        self.desktops_lower = split_ifs(low, ":")
+        self.aliases = {}
+        self.make_paths()
+
     def select(self):
         e = self.env
         dsk = e.get("XDG_CURRENT_DESKTOP", "")
@@ -719,8 +994,11 @@ class Resolver:
         self.aliases = {}
         self.reset_keys()
         self.make_paths()
-        cache_home = e.get("XDG_CACHE_HOME") or e["HOME"] + "/.cache"
-        self.cache_file = cache_home + "/xdg-terminal-exec"
+        self.cache = "disabled"
+        if check_bool(self.cache_enabled, self.err):
+            self.cache = self.read_cache()
+            if self.cache == "hit":
+                return True
         self.read_config_paths()
         self.find_entry_paths()
         return self.find_entry()
@@ -809,7 +1087,9 @@ def run_print(env, args, cwd=None):
         try:
             text = read_file(r.entry_path)
         except OSError:
-            text = ""
+            # `shcat < "$XTE__ENTRY_PATH"` (x:1362): the redirection fails, `set -e` ends the script with status 1;
+            # reachable only from a cache whose entry path is gone (the cold path has just read the entry)
+            return "".join(out), 1, r.stderr
         for line in read_lines(text, False):
             out.append(line + "\n")
         first = False
@@ -849,7 +1129,6 @@ def run_print(env, args, cwd=None):
 
 def explain(env, observed):
     r = Resolver(env)
-    cache = "disabled"
     try:
         ok = r.select()
     except Exit:
@@ -857,8 +1136,7 @@ def explain(env, observed):
     print("MADO_TERM_DESKTOPS: %s" % (":".join(r.desktops_lower) or "-"))
     for line in r.trace:
         print("MADO_TERM_TRACE: %s" % line)
-    if check_bool(r.cache_enabled, lambda _m: None):
-        cache = "present" if os.path.isfile(r.cache_file) else "absent"
+    cache = getattr(r, "cache", "-")
     if ok:
         argv0 = r.exec_usep.split(USEP, 1)[0]
         sel, path = r.entry_id + (":" + r.entry_action if r.entry_action else ""), r.entry_path
@@ -873,7 +1151,9 @@ def explain(env, observed):
         mine = run_print(env, ["--print-id", "--print-path", "--print-cmd"])[0] if ok else ""
         verdict = "AGREE" if mine == observed else "DIFFER"
         rc = 0 if verdict == "AGREE" else 1
-    print("MADO_TERM: selected=%s path=%s cmd=%s cache=%s verdict=%s" % (sel, path, argv0, cache, verdict))
+    # One physical line: a newline inside the first command word is written as the two characters `\n`.
+    print("MADO_TERM: selected=%s path=%s cmd=%s cache=%s verdict=%s" % (sel, path, argv0.replace("\n", "\\n"), cache,
+                                                                         verdict))
     return rc
 
 
@@ -1009,11 +1289,136 @@ def selftest_cases():
     return cases
 
 
+def _fake_stat(mode, nlink=1, uid=0, gid=0, size=0, mtime=0, blocks=0):
+    return os.stat_result((mode, 1, 1, nlink, uid, gid, size, mtime, mtime, mtime),
+                          {"st_mtime_ns": mtime * 1000000000, "st_blocks": blocks, "st_rdev": 0})
+
+
+def ls_selftest():
+    """(name, ok) of the `ls -l` row format on synthetic stat records (no filesystem, no clock)."""
+    out = []
+    now = 1761500000 * 1000000000
+    S = stat
+    F = _fake_stat
+    rows = [("a.desktop", F(S.S_IFREG | 0o644, 1, 4242, 4243, 7, 1761400000, 8)),
+            ("big", F(S.S_IFREG | 0o4755, 12, 4242, 4243, 123456, 1500000000, 243)),
+            ("sub", F(S.S_IFDIR | 0o1777, 3, 4242, 4243, 40, 1761499999, 0)),
+            ("gone", None)]
+    lines, total = _block(rows, now)
+    tm = time.localtime(1761400000)
+    want0 = "-rw-r--r--  1 %s %s      7 %s %2d %02d:%02d a.desktop" % (
+        _user(4242), _group(4243), MONTHS[tm.tm_mon - 1], tm.tm_mday, tm.tm_hour, tm.tm_min)
+    out.append(("ls-row-recent", lines[0].split(" ")[0] == "-rw-r--r--" and lines[0].endswith(" a.desktop")
+                and lines[0].count(" ") >= 7 and "%02d:%02d" % (tm.tm_hour, tm.tm_min) in lines[0] and
+                (_user(4242) != "4242" or lines[0] == want0)))
+    tb = time.localtime(1500000000)
+    out.append(("ls-row-old-year", (" %d big" % tb.tm_year) in lines[1] and lines[1].startswith("-rwsr-xr-x 12 ")))
+    out.append(("ls-row-sticky-dir", lines[2].startswith("drwxrwxrwt  3 ")))
+    out.append(("ls-row-dangling", lines[3].startswith("l?????????  ? ") and lines[3].endswith("           ? gone")))
+    out.append(("ls-widths-aligned", len({len(l) - len(l.rsplit(" ", 1)[1]) for l in lines[:3]}) == 1))
+    out.append(("ls-total-floor", total == 125))
+    _l, t2 = _block([("x", F(S.S_IFREG | 0o600, 1, 0, 0, 1, 0, 0))], now)
+    out.append(("ls-total-zero", t2 == 0))
+    return out
+
+
+def warm_selftest(base):
+    """(name, ok) of the cache path on hermetic trees whose cache bytes this tool writes itself."""
+    out = []
+    A = "usr/share/applications/"
+    END = CACHE_END
+
+    def tree(i, extra_files=None):
+        root = os.path.join(base, "w%02d" % i)
+        os.makedirs(root + "/home", exist_ok=True)
+        os.makedirs(root + "/cache", exist_ok=True)
+        files = {A + "foot.desktop": _term("foot"), A + "kitty.desktop": "[Desktop Entry]\nName=k\n"}
+        files.update(extra_files or {})
+        _mk(root, files, ["bin/foot", "bin/kitty"])
+        return root
+
+    def hash_of(root, env):
+        r = Resolver(env, root)
+        r.select_paths()
+        return r.gen_hash()
+
+    def cache(root, lines):
+        with open(root + "/cache/xdg-terminal-exec", "w", encoding="latin-1") as fh:
+            fh.write("".join(l + "\n" for l in lines))
+
+    def body(h, cmd="foot", path=None, eid="kitty.desktop", action="", args=("", "", "", "", ""), exe="kitty"):
+        return [h, cmd, path or "$R/" + A.rstrip("/") + "/./kitty.desktop", eid, action] + list(args) + [exe + END]
+
+    def check(name, i, mk_lines, argv, want, want_rc=0, envkw=None, files=None):
+        root = tree(i, files)
+        env = _env(root, **(envkw or {}))
+        h = hash_of(root, env)
+        lines = [l.replace("$R", root) for l in mk_lines(h)]
+        if lines:
+            cache(root, lines)
+        try:
+            got, rc, _e = run_print(env, argv, cwd=root)
+        except OutOfContract as ex:
+            got, rc = "OOC:%s" % ex, 2
+        ok = (got, rc) == (want.replace("$R", root), want_rc)
+        if not ok:
+            print("MADO_TERMINAL_SELFTEST_FAIL: %s got=%r rc=%d" % (name, got, rc))
+        out.append((name, ok))
+
+    check("warm-hit-cmd", 1, lambda h: body(h), ["--print-cmd"], "kitty\n")
+    check("warm-hit-id-path-folded", 2, lambda h: body(h), ["--print-id", "--print-path"],
+          "kitty.desktop\n$R/usr/share/applications/kitty.desktop\n")
+    check("warm-stale-hash", 3, lambda h: body("0" * 32), ["--print-cmd"], "foot\n")
+    check("warm-stale-cmd", 4, lambda h: body(h, cmd="nosuch"), ["--print-cmd"], "foot\n")
+    check("warm-cmd-builtin-ok", 5, lambda h: body(h, cmd="printf"), ["--print-cmd"], "kitty\n")
+    check("warm-invalid-no-terminator", 6, lambda h: body(h)[:-1] + ["kitty"], ["--print-cmd"], "foot\n")
+    check("warm-line-49-ok", 7, lambda h: body(h)[:10] + [""] * 38 + ["kitty" + END], ["--print-cmd"], "kitty\n")
+    check("warm-line-50-invalid", 8, lambda h: body(h)[:10] + [""] * 39 + ["kitty" + END], ["--print-cmd"], "foot\n")
+    check("warm-disabled-env", 9, lambda h: body(h), ["--print-cmd"], "foot\n", envkw={"XTE_CACHE_ENABLED": "no"})
+    check("warm-directive-does-not-disable-read", 10, lambda h: body(h), ["--print-cmd"], "kitty\n",
+          files={"home/.config/xdg-terminals.list": "/disable_cache\n"})
+    check("warm-cached-dir-arg", 11, lambda h: body(h, args=("-e", "", "", "--wd=", "")), ["--print-cmd", "--dir=/srv"],
+          "kitty\n--wd=/srv\n")
+    check("warm-cached-execarg", 12, lambda h: body(h, args=("-x", "", "", "", "")), ["--print-cmd", "--", "top"],
+          "kitty\n-x\ntop\n")
+    check("warm-multiline-exec", 13, lambda h: body(h)[:10] + ["", "kitty" + END], ["--print-cmd"], "kitty\n")
+    check("warm-desktop-changes-hash", 14, lambda h: body(hash_of(os.path.join(base, "w14"), _env(
+        os.path.join(base, "w14"), "GNOME"))), ["--print-cmd"], "foot\n")
+    check("warm-action-from-cache", 15, lambda h: body(h, action="new"), ["--print-id"], "kitty.desktop:new\n")
+    check("warm-unterminated-last-line", 16, lambda h: body(h), ["--print-cmd"], "kitty\n")
+    root = tree(17)
+    env = _env(root)
+    h = hash_of(root, env)
+    with open(root + "/cache/xdg-terminal-exec", "w") as fh:
+        fh.write("\n".join(l.replace("$R", root) for l in body(h)))       # last line unterminated
+    out.append(("warm-unterminated-terminator-line", run_print(env, ["--print-cmd"], cwd=root)[0] == "foot\n"))
+    root = tree(18)
+    env = _env(root)
+    del env["HOME"]
+    out.append(("home-unset-all-xdg-set", run_print(env, ["--print-id"], cwd=root)[:2] == ("foot.desktop\n", 0)))
+    del env["XDG_DATA_HOME"]
+    out.append(("home-unset-needed", run_print(env, ["--print-id"], cwd=root)[:2] == ("", 1)))
+    root = tree(19)
+    env = _env(root, XTE_CACHE_ENABLED="no", POSIXLY_CORRECT="1")
+    try:
+        got = run_print(env, ["--print-id"], cwd=root)[:2]
+    except OutOfContract:
+        got = ("OOC", 2)
+    out.append(("ls-env-out-of-contract-without-hash", got == ("OOC", 2)))
+    return out
+
+
 def selftest():
     base = tempfile.mkdtemp(prefix="mado-terminal-selftest.", dir=os.environ.get("TMPDIR") or None)
     cases = selftest_cases()
     passed = 0
+    extra = []
     try:
+        extra = ls_selftest() + warm_selftest(base)
+        for name, ok in extra:
+            passed += ok
+            if not ok:
+                print("MADO_TERMINAL_SELFTEST_FAIL: %s" % name)
         for i, (name, files, execs, args, want_out, want_rc, envkw) in enumerate(cases):
             root = os.path.join(base, "c%02d" % i)
             os.makedirs(root + "/home", exist_ok=True)
@@ -1033,8 +1438,9 @@ def selftest():
     finally:
         import shutil
         shutil.rmtree(base, ignore_errors=True)
-    print("MADO_TERMINAL_SELFTEST: %d/%d passed" % (passed, len(cases)))
-    return 0 if passed == len(cases) else 1
+    total = len(cases) + len(extra)
+    print("MADO_TERMINAL_SELFTEST: %d/%d passed" % (passed, total))
+    return 0 if passed == total else 1
 
 
 def main(argv):

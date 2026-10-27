@@ -502,3 +502,55 @@ fail: the unguarded import writes `__pycache__/mado-devices.cpython-314.pyc` bes
 no directory (`.ufo/waves/round-47/w1/ScrMistakes/receipts/pyc-header.txt`), and the frozen tree carries such a pyc with
 today's mtime (40 149 B, `2026-10-26T18:45:35`) under `.gitignore:3`.
 (lesson: lessons/round-47.md#mistakes M47-6)
+
+
+96. **A landed contract is not narrower than, nor silently different from, the frozen reference it was registered against** — A round that freezes a tool's contract (docstring, registration paragraph) and delivers the tool later commits the
+delta between the frozen out-of-contract list and the delivered one; every delta item - an added refused class (the
+contract narrowed) or a class the list no longer names (the scored contract no longer describes the artifact) - is
+either modelled as the reference behaves or registered in an appended erratum or re-registration naming it, and the
+delta is read against that file before the data commit. Check: `python3 -I quality/check-landed-contract.py --repo .
+--frozen-rev REV --frozen <path> --landed <path> [--registered <file>]` prints one `ADDED-*`/`REMOVED-*` line per delta
+item and `CHECK96: … verdict=OK|NARROWED|UNDECLARED` (it reads `Also out of contract:` or `Out of contract:` up to
+`On these the tool` or `Where detected`, split at `;` or commas). Shown able to fail
+(`.ufo/waves/round-48/receipts/v2/check96-l1.txt`): round 47's freeze against its landed tool reads `added=3
+unregistered=3 verdict=NARROWED`, rc 1, and `verdict=OK`, rc 0, with the erratum; a deleted `-h/--help` reads
+`verdict=UNDECLARED`, rc 1; round 48's freeze against its landed tool reads `added=0 removed=0 verdict=OK`, rc 0 (the
+w1 draft `w1/ScrMistakes/check96.py` errored rc 2 on that pair - w2 `ScoutQualityCriteria` D1). (lesson:
+lessons/round-48.md#mistakes M48-1; outside `lessons/round-47-verifier-spotcheck.md` D1)
+
+97. **A corpus-to-corpus locator resolves to one file and anchors the item it restates (extends 77)** — Criterion 77's instrument reads only names that exist in the `--fetch` directory, so a reference from one corpus
+file to another has no detector. Such a locator resolves to exactly one file — an unqualified basename that two
+files match is a violation — lies inside that file, and, when the citing sentence restates an `[UNK]` item of a
+file that uses `- [UNK]` bullets, starts on the bullet or on a line that carries `[UNK]`. Check: `python3 -I
+.ufo/waves/round-48/w1/ScrMistakes/check99.py --repo . --rev REV --citing <path> [--fetch <dir>]` prints one line
+per locator (`OK`, `UNK-HEAD-CUT`, `AMBIGUOUS`, `OUT-OF-RANGE`, `UNRESOLVED`) and `CHECK99: locators= checked=
+violations=`. Shown able to fail: round 47's entry reads `checked=4 violations=4`, rc 1 (one `UNK-HEAD-CUT` at
+`terminal-route-r17.md:150-151` with the bullet at 149, three `AMBIGUOUS README.md`), and `checked=7 violations=0`,
+rc 0, on the corrected copy (`receipts/check99-run.txt`). (lesson: lessons/round-48.md#mistakes M48-4; extends 77;
+M46-6's residual) Declared limit (w2 `CritMistakes`): the head-cut test fires only when the citing line spells `[UNK]`, and an
+unrelated locator on such a line can be rejected - read a violation, then the line.
+
+98. **A wave's scratch bound is enforced by the dispatch, not stated in prose** — Every seat command is a writer, so the wave dispatch carries the command that caps it (`ulimit -f <KB>`, an
+`RLIMIT_FSIZE` setter, or a named `max_file_bytes=`/`--size-cap` value) and each seat receipt records the largest
+file it produced; a dispatch whose only ceiling is a sentence in GB/MB is a violation, whatever the host survived.
+Check: `python3 -I .ufo/waves/round-48/w1/ScrMistakes/check100.py --spec <wave spec> [--context <file>]` prints
+`ENFORCED`/`PROSE` lines and `CHECK100: enforced= prose= verdict=OK|PROSE-ONLY|ABSENT`. Shown able to fail: the
+round-47 and round-48 `w1-spec.json` both read `enforced=0 prose=4 verdict=PROSE-ONLY`, rc 1, while a dispatch
+carrying `ulimit -f 1024` reads `enforced=1 verdict=OK`, rc 0 (`receipts/check100-run.txt`). (lesson:
+lessons/round-48.md#mistakes M48-5 = lessons/round-47.md#mistakes M47-7) Declared limit (w2 `CritMistakes`, `ScoutQualityCriteria`): the check reads the dispatch text, so a spec that
+names `ulimit -f` in a sentence reads `OK`; the bound is executed only where each seat task carries it as a command.
+
+99. A round's closure section in `SCORECARD.md` leads with the round-level outcome before its own bookkeeping: the
+section's first sentence names the desktop surface the round moved — `tools/mado-<name>.py`, `tools/mado-<name>.sh`,
+`corpus/knowledge/<name>.md`, `SKILL.md` or `PROVINCE.md` (the criterion-60 definition of domain-facing), and that path
+exists in the revision being scored — and carries no process token: `registration`, `frozen`/`freeze`, `Claims
+declared`, `PRED-`, `TARGET_MET`/`TARGET_MISSED`, `fixtures=`, `seat`/`seats`, `wave`, `attempt=`, `receipts/`,
+`counter`. The freeze hash, seat counts, counter ids and receipts follow in the same section, unfettered. A round that
+never landed a section is out of scope. Check: `python3 -I quality/check-round-outcome-first.py --repo . --rev
+<closure tip> --rounds <a>-<b>` prints one `OUTCOME_FIRST: round=<N> verdict=PASS|FAIL|SKIP line=<n> surface=<path|none>
+process_tokens=<k> reasons=<no-surface|surface-absent|process-first|no-paragraph>` line per round and the summary
+`OUTCOME_FIRST_SUMMARY: rounds=<n> pass=<p> fail=<f> skip=<s>`; a `fail=0` is the requirement. Shown able to fail: at
+base `579f694b` the same tool prints `OUTCOME_FIRST_SUMMARY: rounds=47 pass=0 fail=34 skip=13`, and round 47's opening
+is the freeze-hash sentence quoted above; it passes once the opening paragraph leads with the capability (positive
+control: `.ufo/waves/round-48/w1/ScrConsider` §6). (proposal: `considerthese/2026-10-26.md` proposal 6, 2026-10-26 — "Lead with round-level outcomes, not
+counter internals"; lesson: `lessons/round-48.md` `### considerthese`)

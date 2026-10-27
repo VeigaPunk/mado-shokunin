@@ -1,0 +1,36 @@
+# round-48 live read-only warm-cache capture, 2026-10-26T23:20:44-03:00; no terminal launched; XDG_CACHE_HOME=<scratch dir>
+resolver=/usr/bin/xdg-terminal-exec resolver_sha256=89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+tool=tools/mado-terminal.py tool_sha256=143820476403085d2ee71c1f12529efd8206ed24914703698e3584611d189f34
+host_cache_untouched_sha256=c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+## cold (no cache file)
+resolver rc=0 state=absent stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc
+tool     rc=0 stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc print_agree=yes
+explain  MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=absent verdict=AGREE
+resolver_stdout: Alacritty.desktop
+resolver_stdout: /home/vgpnk/.local/share/applications/Alacritty.desktop
+resolver_stdout: alacritty
+# primed by the resolver: 11 lines
+## warm (the resolver's own cache)
+resolver rc=0 state=hit stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc
+tool     rc=0 stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc print_agree=yes
+explain  MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=hit verdict=AGREE
+resolver_stdout: Alacritty.desktop
+resolver_stdout: /home/vgpnk/.local/share/applications/Alacritty.desktop
+resolver_stdout: alacritty
+# scratch cache line 1 edited (hash no longer matches)
+## stale (hash mismatch)
+resolver rc=0 state=stale stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc
+tool     rc=0 stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc print_agree=yes
+explain  MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=stale verdict=AGREE
+resolver_stdout: Alacritty.desktop
+resolver_stdout: /home/vgpnk/.local/share/applications/Alacritty.desktop
+resolver_stdout: alacritty
+# scratch cache terminator removed
+## invalid (no terminator)
+resolver rc=0 state=invalid stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc
+tool     rc=0 stdout_sha256=9eb0a761e78db8b69a386536e2332cb4cb86275ca83c2eeb43a8721edae45cbc print_agree=yes
+explain  MADO_TERM: selected=Alacritty.desktop path=/home/vgpnk/.local/share/applications/Alacritty.desktop cmd=alacritty cache=invalid verdict=AGREE
+resolver_stdout: Alacritty.desktop
+resolver_stdout: /home/vgpnk/.local/share/applications/Alacritty.desktop
+resolver_stdout: alacritty
+host_cache_after_sha256=c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
