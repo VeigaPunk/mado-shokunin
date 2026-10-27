@@ -2744,8 +2744,29 @@ Axis table re-derived at `e5d0130d` (`receipts/axis-data.txt`, derived column): 
 
 Sources 288 -> 288 rows (S352-S363 drafted and opened, not appended: no admitted entry cites them); census identical before/after, exit 0. Mistakes M49-1..4. Axis table not re-derived this round (unchanged: no indexed entry, no QUALITY criterion added).
 
-### Planned (round 50; intent only)
+## Round 50 - bind-key-match entry and session-material gate v3 (2026-10-27, attempt 2)
 
-1. Run w2 against the round-49 freeze (`.ufo/waves/round-49/w2-items.json`, 38 items) and land C2 (bind key match) under `PRED-C2-r49` after fixing row-pin binding and quote attachment.
-2. Install gate v3 (`w1/ExecSessionShapes`) with a delta predicate and the host guard (`w1/ExecMutantSandbox`).
-3. QUALITY criteria for M49-1 and M49-3.
+`corpus/knowledge/hyprland-bind-key-match-r50.md` adds an indexed sourced description; `quality/check-session-material.py`
+v3 expands the privacy scan repo-wide. Claims and counters froze at `470bfd77`; no predicate was re-frozen after w2.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 coverage — bind-key-match entry | entry absent/TARGET_MISSED at base -> TARGET_MET at `906178b6`; w2 shows recycled round-49 content plus one receipt citation also passes, and held ground facts were under-enumerated | `python3 -I quality/counters/c1-r50-bind-entry.py --repo . --rev <rev>` | honest stop; frozen predicate met, novelty claim falsified |
+| C2 operability — session-material gate v3 | v2 TARGET_MISSED -> v3 TARGET_MET at registered nonces; w2's 7,046-byte canned-transcript/all-rule-spray gate also TARGET_MET | `python3 -I quality/counters/c2-r50-session-gate.py --repo . --rev <rev> --work <scratch> --nonce <n>` | honest stop; frozen predicate met, independent gate honesty not established |
+
+### Capabilities (round 50)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| repo-wide session-material scan | detect structural home paths, account columns and exec-cache records outside `.ufo/` | gate selftest 94/94; PRED-C2-r50 at `906178b6` | 50 |
+| host-state guard | sandbox a command and fail if declared paths move | `tools/mado-hostguard.py` selftest 45/45 | 50 |
+| wave-done check | verify dispatched seats are settled from committed wave artifacts | `quality/check-wave-done.py` selftest 58/58 | 50 |
+
+Sources 288 -> 300 rows (S352-S363); knowledge entries 65 -> 66. C1 novelty is not claimed; C2 gate behavior is not
+independently certified. Mistakes M50-1..9; QUALITY 100-102. Round size: w1 54 + w2 32 = 86 seats.
+
+### Planned (round 51; intent only)
+
+1. Include prior candidate artifacts and explicitly bind held facts in C1 novelty predicates.
+2. Execute C2 behavioral fixtures independently and require exact expected-rule attribution.
+3. Establish a tracked lane-level tool ledger/checker; w2/RevLedgerR50 found the prior wave-seat ledger missed `mado-hostguard.py` and `mado-keysym.py`.

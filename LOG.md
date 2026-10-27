@@ -2548,3 +2548,14 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - C2: candidate entry does not meet `PRED-C2-r49`; no data commit; rows S352-S363 drafted, not appended (honest stop).
 - Re-verification (freshness): operator cache `~/.cache/xdg-terminal-exec` digest unchanged across the round (`receipts/operator-state-after.txt`); census after identical, exit 0.
 - Wave w2 not dispatched: the L1's request budget ended the round (M49-4). Lesson `corpus/lessons/round-49.md`.
+## Round 50 (2026-10-27, hyaku run 10, attempt 2)
+
+- Attempt 1: claims `13631f24`, w1 54-seat build wave dispatched; run-9 wrap-up interrupted L1 after all 54 seat reports
+  landed, with null outputs in `w1-results.json`. Attempt 2 integrated from committed seat reports; no claim/counter changes.
+- Freeze `470bfd77`; data `906178b6`; w2 falsify wave 32 seats; final integration `c12b588e`. Round total 86 seats.
+- C1/C2 frozen predicates return TARGET_MET on their claimed data, with controls MISS; w2 found C1's recycled candidate
+  bypass and omitted held ground facts, and C2's canned selftest/all-rule-tag gate bypass. Both claims are honest stops;
+  predicates were not re-frozen.
+- Lane lesson M50-1..9. Full w2 results `.ufo/waves/round-50/w2-results.json`; w2 seat evidence in `.ufo/waves/round-50/w2/`.
+- `quality/check-wave-done.py --repo . --rev <tip> --round 50` → waves=2 settled=2 verdict=OK; index 66/66, exit 0.
+- Operator resolver cache digest changed between before/after reads; hypr config files unchanged (`receipts/operator-state-*.txt`).

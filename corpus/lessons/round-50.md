@@ -94,13 +94,12 @@ MutC2Entry, CritQuality), and the delivered `w1-results.json` carries null outpu
 exotic keymaps, mutation of the landed entry, the M49 criteria drafts) so no pending line is cited as evidence; this lesson's
 Gate cites only completed seat artifacts.
 
-**M50-5** · class `evidence capture` (a claimed instrument failure was reported from an incomplete capture) · evidence: the
-initial `check101-w1.txt` receipt was piped through `tail` (so its recorded `exit=0` was the pipe's status) and omitted the
-four `status=ABSENT` lines. The full rerun reports `declared=19 exists=15 absent=4 verdict=FAIL`, but the report itself is
-not an auditable complete receipt; independent `ExecFreezeReplay` finds the four paths committed at `b4a79843` under the
-seat's directory and questions whether the criterion was run against an earlier/mid-write state. · captured-by: none
-(the first receipt was incomplete; do not count it as an established defect). · fix: retain complete unpiped output and
-status; this claim is withdrawn pending a reproducible run at a named revision.
+**M50-5** · class `deliverable declaration` (a seat prefixes paths that are already relative to its seat dir) · evidence:
+`w1/MutC1Tool.md` declares `MutC1Tool/make_mutants.py`, `MutC1Tool/run_one.sh`, `MutC1Tool/hash-ledger.md`, and
+`MutC1Tool/receipts/BASE.txt`; the checker resolves these as `w1/MutC1Tool/MutC1Tool/...`, while the files are under
+`w1/MutC1Tool/...`. A complete unpiped run against the committed reports returns `declared=19 exists=15 absent=4 verdict=FAIL`
+(receipt `.ufo/waves/round-50/receipts/check101-w1-final.txt`, exit 1). · captured-by: criterion 101. · fix: seat reports must
+name deliverables relative to the seat directory without repeating the seat-name prefix.
 
 **M50-6** · class `predicate scope` (the C1 counter admits recycled content as novel) · evidence: `w2/CritC1FrozenStub.md`
 shows the round-49 candidate copied to the round-50 entry path plus one live-receipt citation line passes every clause,
