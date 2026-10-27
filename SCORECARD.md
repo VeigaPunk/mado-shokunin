@@ -2809,3 +2809,26 @@ No capability admitted this round; proposed counter drafts did not pass W2 falsi
 ### Planned (round 53; intent only)
 
 Re-register corrected C1/C2 contracts and controls before data; do not carry forward claims that a merely structural source map or lexical overlap constitutes semantic accountability.
+
+## Round 53 — honest stop (2026-10-27, hyaku run 10, attempt 1)
+
+Claims frozen in `.ufo/waves/round-53/claims-frozen.md` at base `ad4bf2059bcfafe63671d262222908ee1fe8001c`: C1 operability (bounded structural ledger accountability counter) and C2 coverage (append-only correction of r52 P16–P18 with a frozen discriminator and independent source-truth review). Coverage was the prior plan's lowest evidenced owned axis. W1 launched as one v2 build+attack wave with 64 seats, all settled, 0 dead: executor 8; connector, critic, mutation-tester, revenger, reviewer, scout, scribe, simplifier 7 each. L1 held the planner seat. Controls and registration were not frozen before this wave; claims were not altered after scoring.
+
+| Claim / axis | Before → after | Counting command / measurement | Verdict |
+|---|---|---|---|
+| C1 **operability** — new bounded ledger counter | Base comparator `quality/counters/c1-r51-ledger.py`: production `82/82`, `TARGET_MET`, exit 0, but r53 W1 reproduced generic-description/self-pointer bypasses (`.ufo/waves/round-53/w1/R53One1.md:61-79`). At content commit `8d5c36adda17d27a866fd04484375015116297f`, no r53 counter, registration, or frozen controls exist. | `git ls-tree -r --name-only ad4bf2059bcfafe63671d262222908ee1fe8001c quality/counters | grep -c 'c1-r53-'` → 0; same command at `8d5c36adda17d27a866fd04484375015116297f` → 0. No valid new-counter production/control measurement. | **unprovable / honest stop**; no capability or axis score delta. |
+| C2 **coverage** — proposition-grounding correction | Base: correction note absent, knowledge/index 68/68. At content commit `8d5c36adda17d27a866fd04484375015116297f`: one append-only correction note exists and is indexed, knowledge/index 69/69; no r53 counter, independent source-truth review, or newly opened domain row on uncovered ground. | `git ls-tree -r --name-only ad4bf2059bcfafe63671d262222908ee1fe8001c corpus/knowledge | wc -l` → 68; at `8d5c36adda17d27a866fd04484375015116297f` → 69. README index count `grep -cE '^\| \`knowledge/[^`]+\.md\`'` → 68→69. C2 counter count: same `git ls-tree -r --name-only <rev> quality/counters | grep -c 'c2-r53-'` → 0 at base and content commit. | **unprovable / honest stop**; the corrected note does not earn expansion credit or a coverage score delta. |
+
+SOURCES 310→311 rows; one tier-A own-work row S374 added, opened this round; S370, S371 and S374 `used-by` changed old→new in `corpus/lessons/round-53.md`. Census start and end both exit 0; end `mado ok`, 311 rows (see round report). Quality 17 distinct-scope review records S370≠S365, S371≠S367, S373≠S364; existing W04 duplicate-URL warnings remain warnings. No frontier ground advanced; assimilation none. The correction entry supersedes only P16–P18 and remains unadmitted pending non-author review. Mistakes M53-1–M53-4; no capability admitted; no axis score changed.
+
+### Trend verdicts
+
+- **expansion: unchanged** — no new uncovered domain ground; the 68→69 index change is a correction note, not a new coverage-map surface.
+- **quality: improved** — an append-only correction note reopens the pinned bytes, replaces the three defective propositions with bounded statements, and the README marks the old propositions superseded; independent admission review remains open.
+- **discernment: unchanged** — no round-53 non-author admit/reject sample; dispatched seats are lane authors.
+
+### Planned (round 54; intent only)
+
+1. Freeze a complete registration, finite fixture inventory, controls and counter predicates before any seat scores data.
+2. Do not claim coverage from r52 correction ground; select a newly opened source row on uncovered ground or stop the coverage claim.
+3. Obtain a non-author source-truth review of the r53 correction note before admission.
