@@ -2529,3 +2529,12 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Data `0c699605`: tool, entry, rows S326-S339, lesson, QUALITY 91-95, README row + Frontier, SKILL section, R1 erratum, live receipts. Measured: C1 `fixtures=190/190 explained=190/190 generated=150/150 ... TARGET_MET`, C2 `admitted=1/1 TARGET_MET`.
 - Re-verification (freshness): host resolver byte-equal to the v0.14.3 tag; omarchy v3.8.3 list and override byte-equal to the host files; the round-17 `[UNK]` selection half answered by a cold-cache capture (`receipts/live-terminal-host-r47.txt`).
 - Routed defects: R2 file removed (`receipts/r2-removed.txt`); R3 and R4b routed again.
+
+## Round 48 (2026-10-26/27, hyaku run 9, attempts 1-4)
+
+- Protocol load; census before `receipts/census-before.txt` exit 0; base `579f694b`. Claims declared `5ff16742`; w1 build wave (41 seats, policy v1).
+- Freeze v1 `3e6c848a` (PRED-C1-r48 warm-cache counter, 204 warm fixtures; PRED-C2-r48 XKB entry counter; XKB pins and host receipt). w2 falsify wave (48 seats, policy v1; 47 reports, `CritCounterTiming` hung): a cache write, a fork and six more candidates met C1 v1, a mode-755 pin and a 600-character quote met C2 v1.
+- Re-registration v2 `02165600` before data: write/fork tripwire, 24 new warm fixtures (228), `--observed` foreign-root capture, pin mode, quote length, pinned replay judge; 66 C1 control candidates all `TARGET_MISSED` (`receipts/v2/ctl-c1v2.txt`).
+- Attempt 3's L1 died in the orchestrator session exit; salvage `cf3deeec`. Attempt 4 re-verified it (frozen bytes unchanged, both predicates v1+v2 `TARGET_MET` on a scratch mirror, `receipts/a4/pre-*.txt`) and corrected two transcribed facts in the lesson (M48-11).
+- Data `e5d0130d`: entry, lesson, QUALITY 96/99 instruments. Measured: C1 `warm=228/228 explained=418/418 ... TARGET_MET`, C2 `admitted=1/1 TARGET_MET` (`receipts/c1-after-data.txt`, `c2-after-data.txt`).
+- Re-verification (freshness): the operator's resolver cache, overwritten by a w2 mutant at 22:26 (M48-10), was rewritten by a resolver run at 23:59:27 (metadata only read).

@@ -2695,3 +2695,34 @@ N1 (coverage, not one of the six) the two Round-44 claim rows carry no after *va
 1. C1 fixture schema v2: non-regular paths (directories, dangling symlinks) and option-like `Exec`/`TryExec` words (`w2/ExecC1Diff.md` H1/H2, M47-10), and the `explain --observed` DIFFER probe on the path and command lines (`w2/CritC1Explain.md`); counter wording errata F1-F4 (`w2/SentC1Sandbox.md`).
 2. R3: install the synthetic-material marker gate (`w1/ExecSessionMarker`, attacked by `w2/MutSessionMarker`, `w2/RevSessionMarker`).
 3. R4b: land the round-45 errata in a form that keeps the frozen round-45 counter's verdict (`w2/ExecErrataR45.md` H1).
+
+## Round 48 - the resolver cache in mado-terminal and the XKB compile entry (2026-10-26/27, attempt 4)
+
+`tools/mado-terminal.py` now predicts what SUPER+RETURN's resolver (xdg-terminal-exec 0.14.3) prints and exits with when its cache file already exists - hit, stale, invalid, disabled, symlinked and unreadable trees, the default cache location included - still starting no process and writing nothing, and `corpus/knowledge/xkb-keymap-compile-r48.md` answers which `kb_rules`/`kb_model`/`kb_layout`/`kb_variant`/`kb_options` names compile into a keymap on this host (libxkbcommon 1.13.2, xkeyboard-config 2.48), which fail the compile and which are dropped, grounded on rows S340-S351 and a read-only `xkbcli compile-keymap` capture.
+
+Claims declared at `5ff16742` (`.ufo/waves/round-48/claims.md`) before wave `w1` (41 build seats); registration v1 frozen at `3e6c848a` and attacked by wave `w2` (48 falsify seats), which broke both v1 counters' own control rules before any data; re-registered before data as v2 at `02165600` (`.ufo/waves/round-48/registration-v2.md`; 66 C1 control candidates `TARGET_MISSED`, `receipts/v2/ctl-c1v2.txt`). Attempt 3's L1 died in the orchestrator session exit; its outputs were salvaged as `cf3deeec` (rows, tool, SKILL/QUALITY/README, errata) and re-verified by attempt 4 (lesson `## Integration note`). Data commit `e5d0130d4c68fcf7037dd413907a40dd380860cb` (entry, lesson, QUALITY 96/99 instruments); the C1 tool bytes landed in `cf3deeec` and score the same there (`receipts/a4/c1v2-at-salvage.txt`). Base `579f694b45c797a9c39761fdb4f9e0a1b71b3585`. Lowest-axis rule: every published axis tied at its maximum at base (round-47 `receipts/axis-tip.txt`, `checked=3 mismatched=0`); the trend furthest behind was quality (round-47 closure `unprovable-but-better`), worked by C1.
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - the warm-cache path of `tools/mado-terminal.py` | `cold=190/190 warm=149/228 explained=234/418 generated=210/230 selftest=fail readonly=ok tool=present verdict=TARGET_MISSED` exit 1 with the base tool (`receipts/v2/ctl/BASE.txt`) -> `cold=190/190 warm=228/228 explained=418/418 generated=230/230 selftest=ok readonly=ok tool=present verdict=TARGET_MET` exit 0 at `e5d0130d` (`receipts/c1-after-data.txt`); v1 beside it `warm=204/204 ... TARGET_MET` (`receipts/c1v1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && python3 -I quality/counters/c1-r48-terminal-cache-v2.py --repo . --rev <rev> --work <scratch> --nonce 4848` (`PRED-C1-r48-v2`; judge = the real pinned xdg-terminal-exec v0.14.3 in bwrap; controls 0 of 66 meet) | **TARGET_MET** |
+| C2 **coverage** (sourced) - `corpus/knowledge/xkb-keymap-compile-r48.md` | `admitted=0/1 verdict=TARGET_MISSED` exit 1 at base (`receipts/a4/c2v2-before-base.txt`) -> `admitted=1/1 verdict=TARGET_MET` exit 0 at `e5d0130d` (`receipts/c2-after-data.txt`); v1 beside it `admitted=1/1` (`receipts/c2v1-after-data.txt`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && TMPDIR=<scratch> python3 -I quality/counters/c2-r48-xkb-entry-v2.py --repo . --rev <rev>` (`PRED-C2-r48-v2`; replay through `/usr/bin/xkbcli` in a clean environment; 98-variant harness `receipts/v2/c2v2-revc2counter-matrix.txt`) | **TARGET_MET** |
+
+Separable: the C1 tool alone (`cf3deeec`, entry absent) meets C1 (`receipts/a4/c1v2-at-salvage.txt`) while C2 reads `admitted=0/1` without the entry (`receipts/a4/c2v2-before-base.txt`; w1 `receipts/l1-sep-tool-only.txt`, `l1-sep-entry-only.txt`).
+
+### Capabilities (round 48)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| warm-cache terminal selection versus the resolver | predict xdg-terminal-exec 0.14.3's stdout and exit status with an existing `$XDG_CACHE_HOME/xdg-terminal-exec` (md5 over `XDG_CURRENT_DESKTOP` and `LC_ALL=C ls -LRl`, the cached command checked with `command -v`), name the cache verdict in `explain`, model HOME unset as the pin does, with no process, socket or file write | `tools/mado-terminal.py` (selftest 70/70); `quality/counters/c1-r48-terminal-cache-v2.py` 228/228 warm + 418/418 explained + 230/230 generated at `e5d0130d`; live host capture `.ufo/waves/round-48/receipts/live-terminal-cache-r48.txt` | 48 |
+
+### Sources, saturation, planned
+
+Sources 276 -> 288 rows (S340-S351, tier A, `mined`, opened 2026-10-26, used-by the XKB entry; S351 added before data after w2 `CritDataCompleteness` C2-A); census `W04` 17 -> 17, `W01` 1 -> 1, exit 0 both ends (`receipts/census-before.txt`, `receipts/census-after.txt`). Knowledge entries 64 -> 65. Assimilation: none (no `merge/mado/` theme on either plane; id guard 84 collisions; 13 quarantined rows untouched). considerthese `2026-10-26.md` proposal 6 landed as QUALITY 99. Mistakes M48-1..11; QUALITY 96-99. Round-47 closure items D1-D4, R3, R4b, M47-10, CritC1Explain, SentC1Sandbox F1-F4 worked (lesson `## Round-47 closure items`).
+
+Axis table re-derived at `e5d0130d` (`receipts/axis-data.txt`, derived column): navigation 65/65; calibration resolved-active 86/86; operability selftest 12/12.
+
+### Planned (round 49; intent only)
+
+1. M48-8: widen the session-material gate to the 16 synthetic `/home/<user>` shapes it misses and to scopes beyond `.ufo/` (`w1/SentPrivacy`).
+2. M48-10: a mutant that writes runs only inside the sandbox; the operator cache path is a must-not-change file with a before/after digest receipt.
+3. `w2/SentScratch`: counters refuse a `/tmp` `--work`/`TMPDIR` (scratch rule 4); the receipt generator path and the uncited meson pin (`registration-v2.md` residuals).
