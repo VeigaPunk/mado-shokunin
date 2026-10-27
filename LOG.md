@@ -2571,3 +2571,12 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Final integration check at `485bdfd`: C1 and C2 both TARGET_MET; index 67/67, exit 0; `quality/check-wave-done.py --round 51` → waves=2 settled=2 verdict=OK, exit 0 (`receipts/wave-done-final.txt`). End census `receipts/census-after-final.txt`: 306 rows, exit 0; six tier-A rows opened 2026-10-27; no held-row status/recheck/used-by changes. Frontier advances one row: dispatcher execution. Assimilation none; `considerthese/2026-10-26.md` proposal 2 partially informs C1, but last-live-run freshness remains open; 13 absent-defect rows remain unverifiable and unadopted.
 - M51-1 mines round-50 D1 (stale one-wave receipt vs later two-wave report claim); QUALITY 103 requires a final integration receipt. M51-2 mines C2 source-truth overreach; QUALITY 104 requires sentence-to-pin scope auditing. Both fixes are recorded; C2 errata passed the frozen counter, but no outside reviewer verified the corrected prose. W2 residuals and exact receipts are under `.ufo/waves/round-51/`.
 - `PROVINCE.md` adds the lane-level ledger/checker boundary; `SCORECARD.md` records both bounded moves, commands, deltas, capability and next-round carry. SHONEN remains four historical `[~]` assertions; no outside-lane verifier was performed. Tool installs/upgrades: none.
+
+### Round 51 commit map
+
+- `d2740281` claims freeze + census-before receipt; `.ufo/wakes` removed.
+- `3ac31642` w1 spec/dispatch evidence; `56026fcb` w1 results, counter freeze, checker, tool ledger and pin directory.
+- `a0e34387` C2 entry, S364-S369 registry rows, README coverage row/frontier, initial lesson and QUALITY 103.
+- `6366c314` w2 spec/dispatch; `caf52271` w2 launch marker; `485bdfd4` w2 reports/results, QUALITY 104 and source-truth record.
+- `b742d54c` append-only C2 entry errata; `2b1e337a` final C1/C2, index, census and WAVE-DONE receipts.
+- `22ab80bc`, `f2a612ae`, `ad578633`, `58f4d4fc`, `ed84051d` carry the staged SCORECARD, claim receipts, lesson measurement, PROVINCE inventory, and final LOG/SCORECARD/lesson/QUALITY records respectively. Final scorecard and lesson cite their measured revisions and all known w2 residuals.
