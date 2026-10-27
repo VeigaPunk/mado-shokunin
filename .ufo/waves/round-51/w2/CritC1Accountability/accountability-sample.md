@@ -1,0 +1,31 @@
+# C1 accountability-pointer sample
+
+Scope: 12 ledger rows sampled across the declared province, scorecard, lesson, and registration pointer classes. Exact quoted lines below are from `quality/tool-ledger.md` at the round-51 data revision. Semantic judgment is distinct from the frozen lexical requirement.
+
+| Class | Exact ledger line | Judgment |
+|---|---|---|
+| Province | `32:| \`tools/mado-action-plan.py\` | Fail-closed static classifier of a declared JSON action plan against a JSON safety policy; reads only \`kind\` labels and the lexical \`argv[0]\` basename, never executes supplied argv. | \`PROVINCE.md:20\` |` | Ownership/description: the instrument is precisely described; pointer line 20 is within PROVINCE scope material. The basename test itself only proves textual mention. |
+| Province | `34:| \`tools/mado-assessment.py\` | Read-only assertion gate over an assessment bundle (\`--check BUNDLE --root ROOT\`) that replays the frozen round-21 fixtures under \`--selftest\`; exit 0 clean, 1 failed, 2 cannot evaluate. | \`PROVINCE.md:20\` |` | Ownership/description: detailed behavior, and PROVINCE is an ownership/write-scope document. |
+| Province | `35:| \`tools/mado-binds.py\` | Static resolver of a Hyprland config tree's bind table: \`source\`/\`$name\`/\`{{ expr }}\` expansion, the legacy bind grammar, \`unbind\` and \`submap\` in processing order; prints the 18 \`hyprctl binds -j\` fields. | \`PROVINCE.md:29\` |` | Ownership/description: behavior is specific; pointer is to the province tool-scope listing. |
+| Province | `46:| \`tools/mado-tripwire.py\` | Post-hoc classifier over OMP session transcripts (JSONL) of the commands a seat issued: host_mutation, package_query, live_probe, tool_install, vcs_write; parses, never executes. | \`PROVINCE.md:20\` |` | Ownership/description: concrete behavior and province scope pointer. |
+| Scorecard | `37:| \`tools/mado-eventq.py\` | Read-only census of Hyprland's event-socket subscribers from the kernel socket table (\`ss -xpa\`): subscriber rows, unread bytes, the two drop markers, and whether \`debug:disable_logs\` could have suppressed them. | \`SCORECARD.md:2370\` |` | Scorecard citation indicates a capability/claim adjudication, not merely a filename list; semantic accountability is plausible. |
+| Scorecard | `42:| \`tools/mado-keysym.py\` | Answers which key, level and modifier masks type a keysym under an \`xkbcli compile-keymap\` serialization, byte-equal on stdout and exit status to \`xkbcli how-to-type --disable-compose --keysym\`. | \`SCORECARD.md:2730\` |` | Capability attribution: scorecard context associates this instrument with measured capability. |
+| Scorecard | `49:| \`quality/check-axis-scores.py\` | Calibration gate: re-derives the lane's last published axis table with each axis's own committed instrument and fails when the publication no longer matches the repo it describes. | \`SCORECARD.md:2081\` |` | Capability attribution: pointer identifies the scorecard criterion/claim using the checker. |
+| Scorecard | `63:| \`quality/check-wave-done.py\` | Mechanical WAVE-DONE gate: every committed <wave>.ready for the round must have a <wave>-results.json in which every seat carries a terminal status; reads committed bytes only. | \`SCORECARD.md:2763\` |` | Capability attribution: scorecard location is associated with the gate's operational outcome. |
+| Lesson | `56:| \`quality/check-landed-contract.py\` | QUALITY 96: a landed out-of-contract list must be neither narrower than nor silently different from the frozen reference; every ADDED or REMOVED class must be registered or the verdict is NARROWED/UNDECLARED. | \`corpus/lessons/round-48.md:245\` |` | Lesson pointer records the tool in a round-specific lesson/spotcheck context; stronger provenance than basename alone, although lesson mention need not establish current ownership. |
+| Lesson | `82:| \`quality/counters/c1-r48-terminal-cache.py\` | PRED-C1-r48, superseded by v2: adds the warm-cache path of the terminal-selection prediction to the round-47 scoring. | \`corpus/lessons/round-48.md:153\` |` | Historical lesson attribution; establishes historical description, not present maintenance owner. |
+| Registration | `117:| \`quality/check-tool-ledger.py\` | Derives the tracked-instrument population at a revision and checks its accountability ledger. | \`.ufo/waves/round-51/registration.md\` |` | Predicate registration, not necessarily ownership. Its basename is named in the registration's frozen implementation section; semantic link is to the claim being scored. |
+| Registration | `118:| \`quality/counters/c1-r51-ledger.py\` | PRED-C1-r51: scores completeness of the tracked lane-level tool ledger at a pinned revision. | \`.ufo/waves/round-51/registration.md\` |` | Predicate registration provides clear historical/procedural attribution, but does not independently assign an ongoing maintainer. |
+
+## Verdict under frozen sentence
+
+**PASS** under the exact frozen lexical predicate: the sampled pointers are repo-relative existing paths and the ledger identifies occurrence lines; the sentence requires that the pointer file contain the row basename, not that the occurrence express ownership or a semantic accountability relation. The sample does not falsify the measured lexical condition.
+
+## Semantic limit / smallest safe correction for a future amendment
+
+A basename in a comment, generic list, or registration can satisfy lexical presence without establishing who owns the instrument, why the file is accountable, or even a meaningful relationship. Province and capability scorecard contexts in this sample generally provide substantive scope/usage; lesson and registration contexts are principally historical/procedural provenance. This is the explicitly frozen limitation, not a defect under the scored sentence. For any future amended claim, require a structured, basename-bound accountability record (e.g. owner/scope or capability/criterion field) in an allowed pointer class and test that record rather than substring occurrence; preserve historical-only citations as provenance, not ownership.
+
+## Deliverables
+- `accountability-sample.md` — 12-row semantic/lexical pointer sample.
+
+Report: `.ufo/waves/round-51/w2/CritC1Accountability.md`

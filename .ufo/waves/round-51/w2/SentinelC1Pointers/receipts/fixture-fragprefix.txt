@@ -1,0 +1,27 @@
+# fixture fragprefix (clone of lane at 56026fcb, one ledger pointer rewrite committed)
+# toplevel: /fast/scratch/hyaku/mado-r51/SentinelC1Pointers/fx/fragprefix
+# HEAD: 2d17165e491f1e0038c6513b6a4e74e750190fc0
+# diff vs freeze:
+diff --git a/quality/decoy.md b/quality/decoy.md
+new file mode 100644
+index 00000000..155a6b41
+--- /dev/null
++++ b/quality/decoy.md
+@@ -0,0 +1 @@
++see xcheck-tool-ledger.py for the old copy
+diff --git a/quality/tool-ledger.md b/quality/tool-ledger.md
+index ebe38043..5e414e41 100644
+--- a/quality/tool-ledger.md
++++ b/quality/tool-ledger.md
+@@ -114,6 +114,6 @@ The round-51 integration adds three population files absent at the base: the che
+ the C2 counter `quality/counters/c2-r51-dispatch-entry.py`. Their ledger rows point to
+ the round-51 registration, where each basename is named.
+ 
+-| `quality/check-tool-ledger.py` | Derives the tracked-instrument population at a revision and checks its accountability ledger. | `.ufo/waves/round-51/registration.md` |
++| `quality/check-tool-ledger.py` | Derives the tracked-instrument population at a revision and checks its accountability ledger. | `quality/decoy.md` |
+ | `quality/counters/c1-r51-ledger.py` | PRED-C1-r51: scores completeness of the tracked lane-level tool ledger at a pinned revision. | `.ufo/waves/round-51/registration.md` |
+ | `quality/counters/c2-r51-dispatch-entry.py` | PRED-C2-r51: scores sourced dispatcher-entry admission and candidate-inclusive lexical overlap. | `.ufo/waves/round-51/registration.md` |
+# checker:
+LEDGER-ROW reason=bad_pointer path=quality/check-tool-ledger.py detail=pointer-lacks-basename:quality/decoy.md
+LEDGER: population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=1 empty_desc=0 verdict=TARGET_MISSED rev=2d17165e491f1e0038c6513b6a4e74e750190fc0
+exit=1

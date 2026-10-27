@@ -2773,12 +2773,12 @@ independently certified. Mistakes M50-1..9; QUALITY 100-102. Round size: w1 54 +
 
 ## Round 51 — tracked tool ledger and Hyprland dispatcher execution (2026-10-27)
 
-`quality/tool-ledger.md` and `corpus/knowledge/hyprland-dispatcher-dispatch-r51.md` land as two separable axis moves. Claims `d2740281`; freeze `56026fcb`; C1 measured at freeze; C2 data `a0e34387`; w2 falsification still pending.
+`quality/tool-ledger.md` and `corpus/knowledge/hyprland-dispatcher-dispatch-r51.md` land as two separable axis moves. Claims `d2740281`; freeze `56026fcb`; C1 measured at freeze and current tip; C2 at corrected data revision `b742d54`. W2 falsified semantic sufficiency of the original entry wording; its append-only errata retain the frozen predicate and the corrected entry still passes 4/4.
 
 | Claim / axis | Before -> after | Counting command | Score delta / provisional verdict |
 |---|---|---|---|
-| C1 **operability** (capability acquisition) — tracked instrument ledger | Base `ledger=absent population=79`, `TARGET_MISSED`, exit 1 at `6ca8c559`; at `56026fcb`, `population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok TARGET_MET`, exit 0 | `python3 -I quality/counters/c1-r51-ledger.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r51`) | bounded capability rubric 0/1 → 1/1 (+10.0000); w1 residual attacks are in registration; final verdict awaits w2 |
-| C2 **coverage** (sourced) — dispatcher execution | Entry absent / `admitted=0/1 TARGET_MISSED` at base `6ca8c559`; at `a0e34387`, `clauses=abcd clauses_met=4 admitted=1/1 TARGET_MET`, exit 0; shingle max 0.1% | `TMPDIR=<scratch> python3 -I quality/counters/c2-r51-dispatch-entry.py --repo . --rev <rev> --work <scratch>` (`PRED-C2-r51`) | bounded frontier rubric 0/1 → 1/1 (+10.0000); w1 residuals (generic held tokens; lexical overlap is not semantic proof) disclosed; final verdict awaits w2 |
+| C1 **operability** (capability acquisition) — tracked instrument ledger | Base `ledger=absent population=79`, `TARGET_MISSED`, exit 1 at `6ca8c559`; at `56026fcb` and `22ab80bc`, `population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok TARGET_MET`, exit 0 | `python3 -I quality/counters/c1-r51-ledger.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r51`) | bounded capability rubric 0/1 → 1/1 (+10.0000), **TARGET_MET under frozen literal predicate**; w2 demonstrates self-pointer and repeated generic descriptions can also pass |
+| C2 **coverage** (sourced) — dispatcher execution | Entry absent / `admitted=0/1 TARGET_MISSED` at base `6ca8c559`; corrected entry at `b742d54` returns `clauses=abcd clauses_met=4 admitted=1/1 TARGET_MET`, exit 0; shingle max 0.1% | `TMPDIR=<scratch> python3 -I quality/counters/c2-r51-dispatch-entry.py --repo . --rev <rev> --work <scratch>` (`PRED-C2-r51`) | bounded frontier rubric 0/1 → 1/1 (+10.0000), **TARGET_MET after append-only source-truth errata**; semantic sufficiency and generic held-token limitation remain disclosed |
 
 ### Capabilities (round 51)
 
@@ -2786,10 +2786,10 @@ independently certified. Mistakes M50-1..9; QUALITY 100-102. Round size: w1 54 +
 |---|---|---|---|
 | tracked instrument ledger | derive the 82-file tools/quality/counters population at a pinned revision and check exact coverage, pointer resolution and nonempty descriptions | `quality/check-tool-ledger.py --selftest --work <scratch>` → 50/50; `quality/counters/c1-r51-ledger.py` at `56026fcb` → 82/82 `TARGET_MET` | 51 |
 
-Sources: 300 → 306 registry rows (S364-S369, tier A, `mined`, opened 2026-10-27); 66 → 67 knowledge entries. Census before exit 0 at 300 rows; census after-data exit 0 at 306 rows (W04 duplicate-URL-across-scopes warnings remain warnings). Mistake M51-1; QUALITY 103. Assimilation: none. C1 and C2 final verdicts and round-shape accounting update after w2.
+Sources: 300 → 306 registry rows (S364-S369, tier A, `mined`, opened 2026-10-27); 66 → 67 knowledge entries. Census before exit 0 at 300 rows; census after exit 0 at 306 rows (W04 duplicate-URL-across-scopes warnings remain warnings). Mistakes M51-1..2; QUALITY 103-104. Assimilation: none; `considerthese/2026-10-26.md` proposal 2 was partially addressed, with live-run freshness still open. Round size: w1 43 + w2 33 = 76 seats. Both predicate results are bounded to their declared criteria; w2 residuals are recorded in lesson and registration.
 
 ### Planned (round 52; intent only)
 
-1. Close C1 residual pointer/description semantics with a new pre-data predicate, or explicitly retain the bounded lexical capability.
-2. Close C2 generic held-token and candidate-bearing seat-report novelty residuals without reusing the round-51 predicate.
+1. Replace C1's lexical self-pointer/accountability predicate with a non-self, context-bearing check before using the ledger as a quality measure.
+2. Bind C2 held tokens to propositions and add outside source-truth review; candidate-bearing seat reports remain outside the frozen lexical baseline.
 3. Revisit the 13-row mado quarantine slice only when cited source payloads can be re-opened; proposal 2 last-live-run freshness remains distinct from C1's inventory.
