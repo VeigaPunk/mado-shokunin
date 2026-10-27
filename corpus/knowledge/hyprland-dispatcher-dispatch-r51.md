@@ -314,3 +314,44 @@ socket_verbs_touching_the_table=1.
 - A socket-issued submap switch and a `submap` bind are described as equivalent writes because both
   reach `Actions::setSubmap`; no receipt shows the socket path switching a submap on this host,
   whose bind plane carries none (held, `keybind-rule-semantics.md:55`).
+
+## Errata (round 51 w2; append-only source-truth correction)
+
+The w2 locator review (`.ufo/waves/round-51/w2/RevC2EntryTruth/entry-truth.md`, especially
+§§2–9) found several statements broader than their cited code lines. These corrections supersede
+the earlier wording; no runtime dispatch or host manager state was measured.
+
+- **Bind argument preservation and splitter behavior.** The direct Hyprland pin at
+  `ConfigManager.cpp:1584-1598` supports selecting `HANDLER`, assigning the `COMMAND` expression,
+  lowercasing the handler and checking the map. The assignment alone does not prove comma or byte
+  preservation. Any preservation claim is held knowledge from `bind-table-r25.md:38` and
+  `keybind-rule-semantics.md:73`, not a new S364/S368 source result. The inspected
+  `CVarList2(args, 3)` call and `ARGS.size() != 3` return establish a dispatcher-time result for
+  `sendshortcut`; they do not establish its delimiter semantics or a config-time error. The
+  previous “fourth comma” and “config-time error” descriptions are withdrawn.
+- **Mouse serialization.** `KeybindManager.cpp:785` selects the dispatch-map key for a mouse bind;
+  it does not establish what `hyprctl binds` serializes. The previous serialization explanation is
+  withdrawn.
+- **Special path count.** The expression at `KeybindManager.cpp:782` names four special dispatcher
+  strings (`global`, `pass`, `sendshortcut`, `mouse`) and also tests the boolean `releasePending`;
+  it is not five special dispatcher names.
+- **Submap scope.** `ConfigActions.cpp:1664-1682` shows reset/empty writes and a scan before a
+  nonempty named target is accepted. Thus only a nonempty named target requires a registered bind
+  carrying that submap; reset and empty bypass the scan. The previous universal “submap exists
+  because a bind named it” sentence is withdrawn. The cited path demonstrates `setSubmap` writes,
+  not an exhaustive census of every possible state writer.
+- **Socket argument and pass state.** `HyprCtl.cpp:1143-1157` proves the socket path splits at its
+  first space and invokes the same dispatcher map; bind and socket ingress can supply different
+  strings. `dispatchRequest` itself does not assign `m_passPressed`, but that does not prove the
+  process-wide field is always `-1` at every invocation. The both-edge `pass` consequence is
+  limited to an ordinary idle/default state; no universal socket-state claim is made. Likewise,
+  the named-submap scan applies to nonempty names, not reset/empty forms.
+- **Host branch.** The `~/.config/hypr` directory listing is an on-disk observation only; it does
+  not establish which manager a running instance selected (explicit startup path and process-start
+  timing remain open). The previous running-host branch conclusion and unregistered wiki-branch
+  contrast are withdrawn. This entry claims the source-level Lua guard and legacy path, not the
+  current instance's selected branch.
+- **Evidence table.** The earlier “sourced: no bind split,” “sourced: why socket pass differs,”
+  and “sourced plus host observation” labels are narrowed by the corrections above. The remaining
+  claim is the pinned source-level parse/lookup/call path and the explicitly held context; no key
+  event, socket request, runtime dispatcher result, or UI effect is claimed.
