@@ -1,0 +1,28 @@
+# static properties of lsemu.py (no process, no socket, no writes)
+$ grep -nE '^(import|from) ' lsemu.py
+41:import errno
+42:import os
+43:import stat as _stat
+44:import time
+
+$ grep -nE 'subprocess|socket|os\.(system|fork|exec|popen|open|write|remove|rename|mkdir|mknod)' lsemu.py
+32:No process is started, no socket is opened, nothing is written: the model only
+
+$ grep -nE 'os\.(stat|lstat|listdir|getxattr|major|minor|fsencode|join)' lsemu.py | wc -l
+12
+
+$ python3 -m py_compile lsemu.py fuzz.py && echo compiled
+compiled
+
+$ wc -l lsemu.py fuzz.py
+  589 lsemu.py
+  624 fuzz.py
+ 1213 total
+
+$ sha256sum lsemu.py fuzz.py
+8aaab3dc1fc32e118bb7e7030d9fda4dc40be1389ba3245b575d595347a937d4  lsemu.py
+18eb8a4203f1e39cc30ce27241471e13c4e31cbbd579cb10829b03432b75e953  fuzz.py
+
+$ python3 -c "import lsemu; print(type(lsemu.ls_lRL(['/usr/lib/xkbcommon'])), len(lsemu.ls_lRL(['/usr/lib/xkbcommon','x'])))"
+bytes 785
+bytes 785

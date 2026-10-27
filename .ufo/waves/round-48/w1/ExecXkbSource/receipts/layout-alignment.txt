@@ -1,0 +1,61 @@
+# live multi-layout / variant alignment + log-level receipts — host, 2026-10-26, read-only
+# backs rules.c:520-533 (pad / truncate), rules.c:2062 (log_err option warning) and the include-path census
+
+== XKB_LOG_LEVEL=<default> ARGS: --layout br,us
+rc=0
+keymap_bytes=76222
+stderr:
+symbols set: xkb_symbols "pc_br_us_2_inet(evdev)" {
+
+== XKB_LOG_LEVEL=<default> ARGS: --layout us,br --variant nodeadkeys
+rc=1
+keymap_bytes=0
+stderr:
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'us(nodeadkeys)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+symbols set: 
+
+== XKB_LOG_LEVEL=warning ARGS: --layout us,br --variant nodeadkeys
+rc=1
+keymap_bytes=0
+stderr:
+xkbcommon: WARNING: More layouts than variants: "us,br" vs. "nodeadkeys".
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'us(nodeadkeys)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+symbols set: 
+
+== XKB_LOG_LEVEL=<default> ARGS: --layout br --variant nodeadkeys,nodeadkeys
+rc=0
+keymap_bytes=73068
+stderr:
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,nodeadkeys".
+symbols set: xkb_symbols "pc_br(nodeadkeys)_inet(evdev)" {
+
+== XKB_LOG_LEVEL=info ARGS: --layout br --variant nodeadkeys,nodeadkeys
+rc=0
+keymap_bytes=73068
+stderr:
+xkbcommon: INFO: Include path failed: "/home/vgpnk/.config/xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/home/vgpnk/.xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/etc/xkb" (No such file or directory)
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,nodeadkeys".
+xkbcommon: WARNING: Multiple definitions of group 0 name in map 'nodeadkeys'; Using 'Portuguese (Brazil, no dead keys)', ignoring 'Portuguese (Brazil)'
+symbols set: xkb_symbols "pc_br(nodeadkeys)_inet(evdev)" {
+
+== XKB_LOG_LEVEL=<default> ARGS: --layout us,br --variant abnt2,nodeadkeys
+rc=1
+keymap_bytes=0
+stderr:
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'us(abnt2)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+symbols set: 

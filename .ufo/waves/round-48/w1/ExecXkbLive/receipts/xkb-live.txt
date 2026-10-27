@@ -1,0 +1,208 @@
+
+===== 0. host guard / tool identity (read-only) =====
+date        : 2026-10-26T23:56:47Z
+shell       : bash 5.3.20(1)-release
+xkbcli      : /usr/bin/xkbcli
+sha256 xkbcli                  : af42b0e68101722adab709a521ecaf4f52f27a4a1d355de8cc58a61c58a1bd1f
+sha256 xkbcli-compile-keymap   : 43b924f68651500e022c74371515154f8c50a2e087defa6b834cc5d41fd77250
+xkbcli --version               : 1.13.2
+libxkbcommon.pc Version        : Version: 1.13.2
+xkeyboard-config.pc Version    : Version: 2.48
+xkeyboard-config.pc xkb_root   : xkb_root=/usr/share/xkeyboard-config-2
+hyprctl version (line 1)       : Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+ambient XKB_* vars             : 0 (0 = this host sets none); every xkbcli call below runs under env -i (PATH, LC_ALL=C, scratch HOME/XDG_CONFIG_HOME)
+host cache untouched           : XDG_CACHE_HOME=$S/cache, created? no
+
+===== 1. host names from ~/.config/hypr/input.conf (kb_* values only) =====
+source: ~/.config/hypr/input.conf
+active kb_* assignments (verbatim lines):
+10:  kb_layout = br
+11:  kb_options = compose:caps # ,grp:alts_toggle
+commented kb_* lines (the us,dk,eu + intl case):
+5:  # kb_layout = us,dk,eu
+8:  # kb_variant = intl
+derived RMLVO: kb_layout='br' kb_variant='' kb_options='compose:caps' (absent lines -> empty)
+commented grp option on the kb_options line: # ,grp:alts_toggle
+
+===== 2. positive: host RMLVO compiles (layout=br options=compose:caps) =====
+cmd         : xkbcli compile-keymap --layout br --options compose:caps
+rc          : 0
+stdout lines: 2090
+stdout bytes: 73079
+sha256 out  : efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+stderr (no --verbose)   : 0 lines, XKB codes: 
+stderr with --verbose   : 127 lines (warnings surface only at --verbose, and only while XKB_LOG_LEVEL is unset or symbolic — section 8)
+verbose XKB census (code, count, first message):
+  XKB-302  n=6   xkbcommon: WARNING: [XKB-302] br:28:54: deprecated keysym name "masculine"; please use "ordmasculine" instead.
+  XKB-461  n=49  xkbcommon: WARNING: [XKB-461] Multiple symbols for level 1/group 1 on key <TLDE>; Using from, ignoring to
+  XKB-965  n=3   xkbcommon: WARNING: [XKB-965] Key "Caps_Lock" not found in symbol map; Modifier map entry for Lock not updated
+--kccgst (rules -> KcCGST):
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)+compose(caps)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+--rmlvo (defaults filled in):
+rules: "evdev"
+model: "pc105"
+layout: "br"
+variant: ""
+options: "compose:caps"
+
+===== 3. negative matrix (rc, stdout sha, first XKB-### of stderr; pinned environment) =====
+unknown-layout                 rc=1 lines=0     sha=e3b0c44298fc1c14 code=XKB-338 | xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+    args: --layout zz
+unknown-variant                rc=1 lines=0     sha=e3b0c44298fc1c14 code=XKB-661 | xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+    args: --layout br --variant nope
+unknown-option                 rc=0 lines=2088  sha=6ef2127653b0ca1a code=XKB-595 | xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+    args: --layout br --options nope:nope
+unknown-model                  rc=0 lines=2088  sha=6ef2127653b0ca1a code=- | 
+    args: --layout br --model nope
+unknown-rules                  rc=1 lines=0     sha=e3b0c44298fc1c14 code=XKB-338 | xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+    args: --rules nope --layout br
+two-layouts-one-variant        rc=0 lines=2238  sha=2103e6ab8166df69 code=- | 
+    args: --layout us,br --variant ,abnt2
+variant-on-first-layout-fails  rc=1 lines=0     sha=e3b0c44298fc1c14 code=XKB-661 | xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'us(abnt2)'
+    args: --layout us,br --variant abnt2
+variant-on-first-valid         rc=0 lines=2230  sha=8c723ed9c279ec28 code=- | 
+    args: --layout br,us --variant abnt2
+more-variants-than-layouts     rc=0 lines=2088  sha=784523f269114e81 code=- | xkbcommon: ERROR: Less layouts than variants: "br" vs. "abnt2,intl".
+    args: --layout br --variant abnt2,intl
+variant-valid-elsewhere        rc=1 lines=0     sha=e3b0c44298fc1c14 code=XKB-661 | xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(intl)'
+    args: --layout br --variant intl
+option-group-exists            rc=0 lines=2091  sha=a9412ef7b90e80b0 code=- | 
+    args: --layout br --options grp:alts_toggle
+host-options-plus-grp          rc=0 lines=2093  sha=072704e292071e55 code=- | 
+    args: --layout br --options compose:caps,grp:alts_toggle
+commented-us-dk-eu-intl        rc=0 lines=2283  sha=5e35ba58e56eaf91 code=- | 
+    args: --layout us,dk,eu --variant intl
+component mapping for the accepted cases:
+  two-layouts-one-variant: symbols { include "pc+us+br(abnt2):2+inet(evdev)"
+  commented-us-dk-eu-intl: symbols { include "pc+us(intl)+dk:2+eu:3+inet(evdev)"
+  option-group-exists    : symbols { include "pc+br+inet(evdev)+group(alts_toggle)"
+equivalence checks (sha256 of stdout; identical stdout = the name was silently dropped):
+  baseline --layout br               : 6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca
+  unknown option dropped (nope:nope) : 6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  identical_to_baseline=yes
+  --variant abnt2 (single)           : 784523f269114e810fe46a15c19bfd68983e848d05b280b50e8fe46927ec949c
+  --variant abnt2,intl (overflow)    : 784523f269114e810fe46a15c19bfd68983e848d05b280b50e8fe46927ec949c  identical_to_abnt2=yes (extra variants dropped, first still applied)
+  overflow kccgst                    : symbols { include "pc+br(abnt2)+inet(evdev)"
+3b. drop shapes (unknown name kept in RMLVO, no effect on the keymap):
+  --model nope --rmlvo : rules: "evdev" model: "nope" layout: "br" variant: "" options: "" 
+  --model nope stderr  : 0 lines at default verbosity
+  option nope:caps              rc=0 sha16=6ef2127653b0ca1a code=XKB-595 msg=xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:caps" was ignored
+  option grp:nope               rc=0 sha16=6ef2127653b0ca1a code=XKB-595 msg=xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "grp:nope" was ignored
+  option grp:alts_toggle:nope   rc=0 sha16=6ef2127653b0ca1a code=XKB-595 msg=xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "grp:alts_toggle:nope" was ignored
+
+===== 4. include-path search order and user paths =====
+verbose include-path lines (stderr, --verbose; pinned HOME/XDG under $S, $HOME hidden):
+xkbcommon: INFO: Include path failed: "$S/pinhome/.config/xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "$S/pinhome/.xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/etc/xkb" (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config-2.d (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config.d (No such file or directory)
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+host user paths (the ambient $HOME/XDG_CONFIG_HOME of this workstation):
+  $HOME/.config/xkb : absent
+  $HOME/.xkb : absent
+  /etc/xkb : absent
+  /usr/share/xkeyboard-config-2 : present
+fixture symbols/mado48 body (shared, KEYSYM varied):
+    default partial alphanumeric_keys
+    xkb_symbols "basic" {
+        include "us(basic)"
+        key <AD11> { [ KEYSYM ] };
+    };
+XDG_CONFIG_HOME dir only               rc=0 lines=2081  AD11=dead_acute           code=- | 
+HOME/.xkb dir only                     rc=0 lines=2081  AD11=dead_greek           code=- | 
+no user path (host default)            rc=1 lines=0     AD11=                     code=XKB-338 | xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/mado48" in include paths
+--include dir, defaults dropped        rc=1 lines=0     AD11=                     code=XKB-338 | xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/evdev" in include paths
+--include dir + --include-defaults     rc=0 lines=2081  AD11=dead_acute           code=- | 
+order: oa first (dead_acute wins)      rc=0 lines=2081  AD11=dead_acute           code=- | 
+order: ob first (dead_greek wins)      rc=0 lines=2081  AD11=dead_greek           code=- | 
+
+===== 5. compositor state read (hyprctl devices -j; keyboard names replaced kbd1..n) =====
+hyprctl devices -j rc=0 err= (hyprctl runs in the ambient session env by design: it needs the compositor socket)
+keyboards: 10 (names replaced)
+  kbd1 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd2 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd3 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd4 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd5 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd6 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd7 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd8 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd9 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+  kbd10 layout='br' variant='' options='compose:caps' active_layout_index=0 active_keymap='Portuguese (Brazil)'
+distinct (layout,variant,options,active_keymap) tuples: 1
+
+===== 6. name inventories on this host (xkeyboard-config 2.48 data under /usr/share/xkeyboard-config-2) =====
+registry (xkbcli list): rc=0 lines=5101 stderr=0 | models=184 layout-entries=598 variant-entries=499
+registry layout set includes br/us/dk/eu: br:Y us:Y dk:Y eu:N 
+registry br variants   :  nodeadkeys dvorak nativo nativo-us thinkpad thinkpad_nodeadkeys nativo-epo rus 
+symbols/br declarations: abnt2 nodeadkeys thinkpad thinkpad_nodeadkeys olpc rus dvorak nativo nativo-us nativo-epo sun_type6 
+  -> divergence: br(abnt2) compiles (section 3) although the registry does not list it as a br variant
+  declared-variant compile check (every name above), rc:
+    br(abnt2               ) rc=0
+    br(nodeadkeys          ) rc=0
+    br(thinkpad            ) rc=0
+    br(thinkpad_nodeadkeys ) rc=0
+    br(olpc                ) rc=0
+    br(rus                 ) rc=0
+    br(dvorak              ) rc=0
+    br(nativo              ) rc=0
+    br(nativo-us           ) rc=0
+    br(nativo-epo          ) rc=0
+    br(sun_type6           ) rc=0
+  layout names resolve against symbols/ files, not the registry XML:
+    symbols/eu file present=yes; registry layout 'eu'=no; --layout eu rc=0 lines=2084
+registry model count   : 184, pc105 present=yes, nope present=no
+options inventory (rules/evdev.lst): option names total=217
+  grp:* options=45 compose:* options=19
+  alts_toggle   :   grp:alts_toggle      Both Alts together
+  compose:caps  :   compose:caps         Caps Lock
+data pins (sha256):
+  8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e  symbols/br
+  d962772859c00eb77223056cf3ec22e12c11b31ae8204760ca94e1c31f220000  symbols/group
+  e2e1c1501d8eedf2ba41ca153e244edf29ff8d7d83f9fa1a20d07d4729421794  symbols/pc
+  d70b84ee6b8bc7aa796690d5e93d6a7382d919ddca03f3b05338efc3a4aa2739  symbols/us
+  0cc48ee1279d91045fe2cf092ee5a0744cbee1c02bd164f02871d13140d12132  rules/evdev
+  d075cd216137780495984b9570d20434dc16ccd404a42065e3397a61939a23e1  rules/evdev.xml
+  1a3406eb5243178870d3c27c1a70899eaeebf2270800eac27fa486ac25ed9022  rules/evdev.lst
+
+===== 7. environment sensitivity of the compile (one variable at a time; pinned base in sections 2-4) =====
+ambient-env run vs pinned-env run of the host RMLVO: ambient sha=efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81 pinned sha=efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81 equal=yes (they differ only if the caller's user xkb dirs or XKB_* env supply something)
+7a. XKB_LOG_LEVEL controls the message, not the drop (unknown option nope:nope, rc stays 0):
+  XKB_LOG_LEVEL=UNSET    rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=0        rc=0 stderr_lines=0  XKB=- sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=3        rc=0 stderr_lines=0  XKB=- sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=5        rc=0 stderr_lines=0  XKB=- sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=10       rc=0 stderr_lines=0  XKB=- sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=20       rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=30       rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=critical rc=0 stderr_lines=0  XKB=- sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=error    rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=warning  rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=none     rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=bogus    rc=0 stderr_lines=1  XKB=XKB-595 sha16=6ef2127653b0ca1a
+  XKB_LOG_LEVEL=debug    rc=0 stderr_lines=25 XKB=XKB-595 sha16=6ef2127653b0ca1a
+7b. XKB_CONFIG_ROOT changes the root string the compiler starts from:
+  unset          -> Include path added: /usr/share/xkeyboard-config-2
+  /nonexistent   -> xkbcommon: ERROR: [XKB-338] 	/usr/share/X11/xkb
+  empty dir      -> xkbcommon: ERROR: [XKB-338] 	$S/root-empty
+  empty dir, valid br: rc=1 code=XKB-338 msg=xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/evdev" in include paths
+7c. user and extra xkb dirs are searched before the root; a poisoned symbols/zz proves precedence:
+  $XDG_CONFIG_HOME/xkb only: rc=0 AD11=dead_acute (baseline for zz in the pinned tree: rc 1 XKB-338, section 3)
+  XDG_CONFIG_HOME/xkb + $HOME/.xkb: rc=0 AD11=dead_acute (first user path wins)
+  $HOME/.xkb only (XDG empty): rc=0 AD11=dead_greek
+  XKB_CONFIG_EXTRA_PATH only: rc=0 AD11=dead_circumflex
+  $HOME/.xkb + XKB_CONFIG_EXTRA_PATH: AD11=dead_greek (orders HOME against extra)
+  XDG + HOME + extra together: AD11=dead_acute (which vector reaches first)
+7d. XKB_DEFAULT_* are inert for xkbcli (unlike the compositor, which is not exercised here):
+  XKB_DEFAULT_{LAYOUT=zz,RULES=nope,OPTIONS=nope:nope} with --layout br: rc=0 sha16=6ef2127653b0ca1a identical_to_baseline=yes stderr_lines=0
+
+===== 8. probe hygiene =====
+commands used: xkbcli compile-keymap/list (read: stdout), xkbcli --version, hyprctl version, hyprctl devices -j, coreutils
+writes inside scratch only: 36 files under $S (removed by trap on exit)
+host cache written: no

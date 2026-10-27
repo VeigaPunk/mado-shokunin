@@ -1,0 +1,58 @@
+# live xkbcli compile-keymap receipts — host, 2026-10-26, read-only (stdout discarded, stderr kept)
+# /usr/bin/xkbcli 1.13.2; rules root /usr/share/xkeyboard-config-2 (xkeyboard-config 2.48)
+
+== ARGS: --layout br --options compose:caps
+rc=0
+stderr lines=0
+
+== ARGS: --layout br
+rc=0
+stderr lines=0
+
+== ARGS: --layout zz
+rc=1
+stderr lines=12
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== ARGS: --layout br --variant nope
+rc=1
+stderr lines=5
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+
+== ARGS: --rules nope --layout br
+rc=1
+stderr lines=10
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "nope"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'nope', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+
+== ARGS: --layout br --options nope:nope
+rc=0
+stderr lines=1
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+
+== ARGS: --layout br --model nope
+rc=0
+stderr lines=0

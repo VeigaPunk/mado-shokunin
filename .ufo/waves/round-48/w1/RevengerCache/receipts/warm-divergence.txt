@@ -1,0 +1,47 @@
+== prime (cold, --print-cmd)
+termA
+--flag
+-- cache header, lines 1-5:
+ad5bbcab3c6dc15a906b19edfb6760da
+termA
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-warm/data/applications/./termA.desktop
+termA.desktop
+
+
+== class 1: entry edited, size and mtime minute unchanged
+   sizes: 129 -> 129
+   warm: termA --flag 
+   cold: termC --flag 
+
+== class 2: TryExec stub removed; entries and PATH (not hashed) diverge
+   warm (stub gone): termA --flag 
+   cold (stub gone): termB --flag 
+
+== class 3: a warm hit never rewrites the cache
+   mtime 1793059063 -> 1793059063  identical=yes
+
+== class 4: XTE_CACHE_ENABLED=false deletes the cache file
+   before: present
+termB --flag 
+   after : absent
+
+== class 5: issue #47 - /disable_cache in the list is ignored while a valid cache exists
+   primed with XTE_CACHE_ENABLED=1: present
+   run with the env unset, config still /disable_cache: termB --flag 
+   cache after: present
+   verdict: D: cache is actual
+
+== class 6: HOME unset
+   HOME+XDG unset: rc=1 stdout=0B stderr=/usr/bin/xdg-terminal-exec: line 148: HOME: unbound variable
+   HOME unset, XDG set: rc=0 stdout=13B
+
+== class 7: PATH identity is not in the key (same name, different binary)
+   prime under bin1: termP --flag 
+   warm under bin2 : termP --flag 
+   verdict         : D: cache is actual
+
+== class 8: the cached command name disappears from PATH
+   warm (name gone): No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-warm/data2/applications/:/fast/scratch/hyaku/mado-r48/RevengerCache/probe-warm/data/applications/
+
+   verdict         : D: cache is out-of-date

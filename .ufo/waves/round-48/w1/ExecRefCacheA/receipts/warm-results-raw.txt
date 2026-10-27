@@ -1,0 +1,432 @@
+W-01-hit-basic class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-02-hit-list-swapped-same-size class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-03-hit-list-swapped-same-size-id class=hit-differs args=['--print-id']
+  oracle rc=0 out='foot.desktop\n'
+  tool   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='kity.desktop\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-04-hit-list-swapped-alac class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-05-hit-two-lines-swapped class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-06-hit-list-emptied-same-size class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  tool   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-07-hit-tryexec-stub-removed class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=1 out=''
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-08-hit-tryexec-stub-kept class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-09-hit-directive-added-after-prime class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-10-hit-exec-changed-same-size class=hit-differs args=['--print-cmd']
+  oracle rc=0 out='foot\n'
+  tool   rc=0 out='foot\n'
+  cold   rc=0 out='fooo\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-11-hit-execarg-name-changed class=hit-differs args=['--print-cmd', '--title=x']
+  oracle rc=0 out='foot\n--title\nx\n'
+  tool   rc=0 out='foot\n--title\nx\n'
+  cold   rc=0 out='foot\n--titel\nx\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-12-hit-dir-arg-changed-same-size class=hit-differs args=['--print-cmd', '--dir=/srv']
+  oracle rc=0 out='foot\n--working-directory=/srv\n'
+  tool   rc=0 out='foot\n--working-directory=/srv\n'
+  cold   rc=0 out='foot\n--working-directorx=/srv\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-13-hit-multiline-exec class=hit args=['--test']
+  oracle rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  tool   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  cold   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-14-hit-multiline-exec-cmd class=hit args=['--print-cmd']
+  oracle rc=0 out='foot\n--a\nb\n'
+  tool   rc=0 out='foot\n--a\nb\n'
+  cold   rc=0 out='foot\n--a\nb\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-15-hit-action class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  tool   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  cold   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-16-hit-action-swapped class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  tool   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-17-hit-hold-and-appid class=hit args=['--print-cmd', '--hold', '--app-id=org.x']
+  oracle rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  tool   rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  cold   rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-18-hit-command-after-cached-execarg class=hit args=['--print-cmd', '--', 'htop', '-d', '5']
+  oracle rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  tool   rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  cold   rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-19-hit-cache-default-enable-directive class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-20-hit-xdg-cache-home-unset class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-21-hit-print-delimiter class=hit args=['--print-id', '--print-path', '--print-delimiter=\\t']
+  oracle rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  tool   rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  cold   rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-22-hit-print-cmd-delimiter class=hit args=['--print-cmd=\\s', '--', 'a']
+  oracle rc=0 out='foot\\s-e\\sa'
+  tool   rc=0 out='foot\\s-e\\sa'
+  cold   rc=0 out='foot\\s-e\\sa'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-23-hit-subdir-id class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  tool   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cold   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-24-hit-mtime-same-day class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-25-hit-dangling-link-in-apps class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-26-absent-cold class=absent args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=absent want=absent verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-27-hit-desktop-two-app-dirs class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-31-stale-list-size class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-32-stale-list-mtime-day class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-33-stale-desktop-added class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-34-stale-desktop-removed class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-35-stale-desktop-size class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-36-stale-desktop-mtime-day class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-37-stale-current-desktop class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-38-stale-current-desktop-unset class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-39-stale-current-desktop-empty class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-40-stale-exec-gone class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  tool   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-41-stale-exec-not-executable class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  tool   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-42-stale-list-removed class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  tool   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-43-stale-desktop-colon-suffix class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-44-stale-subdir-file class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  tool   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cold   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-45-stale-config-dir-list-added class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-46-stale-hash-wrong class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-47-stale-hash-uppercase class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-48-stale-cmd-empty class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-51-invalid-empty class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-52-invalid-no-terminator class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-53-invalid-terminator-line-5 class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-54-invalid-terminator-line-50 class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-55-valid-terminator-line-49 class=stale args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=stale want=stale verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-56-invalid-ten-lines class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-57-invalid-unterminated-last-line class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=invalid want=invalid verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-58-invalid-cache-is-dir class=absent args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=absent want=absent verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-61-disabled-env-false class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=disabled want=disabled verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-62-disabled-env-zero class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=disabled want=disabled verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-63-disabled-env-garbage class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=disabled want=disabled verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-64-disabled-env-empty-string class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=disabled want=disabled verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-65-disabled-directive-prime class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-71-nohome-print class=nohome args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=absent want=None verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-72-nohome-print-id class=nohome args=['--print-id']
+  oracle rc=0 out='foot.desktop\n'
+  tool   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  state=absent want=None verdict=OK differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-73-nohome-cache-default class=nohome args=['--print-id']
+  oracle rc=1 out=''
+  tool   rc=1 out=''
+  cold   rc=1 out=''
+  state=absent want=None verdict=NO_TERMINAL differs_from_cold=False twin_cache_same=None
+  VERDICT agree
+W-74-nohome-cache-home-set class=nohome args=['--print-id']
+  oracle rc=0 out='foot.desktop\n'
+  tool   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  state=hit want=None verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-81-valid-cache-other-entry class=hit-differs args=['--print-id']
+  oracle rc=0 out='kitty.desktop\n'
+  tool   rc=0 out='kitty.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-82-valid-cache-empty-execarg class=hit-differs args=['--print-cmd', '--', 'top']
+  oracle rc=0 out='foot\ntop\n'
+  tool   rc=0 out='foot\ntop\n'
+  cold   rc=0 out='foot\n-e\ntop\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-83-valid-cache-args class=hit-differs args=['--print-cmd', '--app-id=a', '--title=t', '--dir=/x', '--hold']
+  oracle rc=0 out='foot\n--app-id=a\n--title\nt\n--chdir=/x\n--hold\n'
+  tool   rc=0 out='foot\n--app-id=a\n--title\nt\n--chdir=/x\n--hold\n'
+  cold   rc=0 out='foot\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-84-valid-cache-action class=hit-differs args=['--print-id', '--print-path']
+  oracle rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n'
+  tool   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-85-valid-cache-multiline-exec class=hit-differs args=['--test']
+  oracle rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n  >c\nd<\n'
+  tool   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n  >c\nd<\n'
+  cold   rc=0 out='Command and arguments:\n  >foot<\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-86-valid-cache-cmd-builtin class=hit args=['--print-id', '--print-path', '--print-cmd']
+  oracle rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  tool   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-87-valid-cache-path-gone-content class=hit-differs args=['--print-content']
+  oracle rc=1 out=''
+  tool   rc=1 out=''
+  cold   rc=0 out='[Desktop Entry]\nType=Application\nName=foot\nExec=foot\nCategories=System;TerminalEmulator;\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-88-valid-cache-path-dot-fold class=hit args=['--print-path']
+  oracle rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  tool   rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  cold   rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  state=hit want=hit verdict=OK differs_from_cold=False twin_cache_same=False
+  VERDICT agree
+W-89-valid-cache-id-only-path-empty class=hit-differs args=['--print-id', '--print-path']
+  oracle rc=0 out='foot.desktop\n\n'
+  tool   rc=0 out='foot.desktop\n\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree
+W-90-valid-cache-holdarg class=hit-differs args=['--print-cmd', '--hold', '--', 'x']
+  oracle rc=0 out='foot\n--hold\n-e\nx\n'
+  tool   rc=0 out='foot\n--hold\n-e\nx\n'
+  cold   rc=0 out='foot\n-e\nx\n'
+  state=hit want=hit verdict=OK differs_from_cold=True twin_cache_same=False
+  VERDICT agree

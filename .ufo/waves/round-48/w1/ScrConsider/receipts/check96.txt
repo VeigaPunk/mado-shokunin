@@ -1,0 +1,67 @@
+# check96 — selftest, red at base 579f694b45c797a9c39761fdb4f9e0a1b71b3585, green control
+# tool: .ufo/waves/round-48/w1/ScrConsider/check96.py  sha256 21d6be5c7afae9231d6de8ec2db25deed0e32ade8263ebb4a71a63e56254c488
+# check96.py at this revision is a seat draft (proposed criterion 96), not a landed quality/ gate
+
+## selftest (fixture repo under $TMPDIR=/fast/scratch/hyaku/mado-r48/ScrConsider)
+$ TMPDIR=/fast/scratch/hyaku/mado-r48/ScrConsider python3 -I .ufo/waves/round-48/w1/ScrConsider/check96.py --selftest --verbose
+selftest round=1 want=PASS got=PASS line=5 surface=tools/mado-terminal.py reasons=none
+selftest round=2 want=FAIL got=FAIL line=14 surface=none reasons=no-surface,process-first
+selftest round=3 want=FAIL got=FAIL line=23 surface=none reasons=no-surface,process-first
+selftest round=4 want=FAIL got=FAIL line=0 surface=none reasons=no-paragraph
+selftest round=5 want=FAIL got=FAIL line=37 surface=tools/mado-ghost.py reasons=surface-absent
+SELFTEST: ok cases=5
+rc=0
+
+## red at base (4 most recent landed rounds)
+$ python3 -I .ufo/waves/round-48/w1/ScrConsider/check96.py --repo . --rev 579f694b45c797a9c39761fdb4f9e0a1b71b3585 --rounds 44-47
+OUTCOME_FIRST: round=44 verdict=FAIL line=2566 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=45 verdict=FAIL line=2596 surface=none process_tokens=10 reasons=no-surface,process-first
+OUTCOME_FIRST: round=46 verdict=FAIL line=2627 surface=none process_tokens=14 reasons=no-surface,process-first
+OUTCOME_FIRST: round=47 verdict=FAIL line=2656 surface=none process_tokens=11 reasons=no-surface,process-first
+OUTCOME_FIRST_SUMMARY: rounds=4 pass=0 fail=4 skip=0
+rc=1
+
+## red at base (20-round window)
+$ python3 -I .ufo/waves/round-48/w1/ScrConsider/check96.py --repo . --rev 579f694b45c797a9c39761fdb4f9e0a1b71b3585 --rounds 28-47
+OUTCOME_FIRST: round=28 verdict=FAIL line=1801 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=29 verdict=FAIL line=1872 surface=none process_tokens=6 reasons=no-surface,process-first
+OUTCOME_FIRST: round=30 verdict=FAIL line=1914 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=31 verdict=FAIL line=2021 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=32 verdict=FAIL line=2071 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=33 verdict=FAIL line=2101 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=34 verdict=FAIL line=2124 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=35 verdict=FAIL line=2173 surface=none process_tokens=3 reasons=no-surface,process-first
+OUTCOME_FIRST: round=36 verdict=FAIL line=2244 surface=none process_tokens=4 reasons=no-surface,process-first
+OUTCOME_FIRST: round=37 verdict=FAIL line=2360 surface=none process_tokens=5 reasons=no-surface,process-first
+OUTCOME_FIRST: round=38 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=39 verdict=FAIL line=2425 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=40 verdict=FAIL line=2476 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=41 verdict=FAIL line=2498 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=42 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=43 verdict=FAIL line=2531 surface=none process_tokens=6 reasons=no-surface,process-first
+OUTCOME_FIRST: round=44 verdict=FAIL line=2566 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=45 verdict=FAIL line=2596 surface=none process_tokens=10 reasons=no-surface,process-first
+OUTCOME_FIRST: round=46 verdict=FAIL line=2627 surface=none process_tokens=14 reasons=no-surface,process-first
+OUTCOME_FIRST: round=47 verdict=FAIL line=2656 surface=none process_tokens=11 reasons=no-surface,process-first
+OUTCOME_FIRST_SUMMARY: rounds=20 pass=0 fail=18 skip=2
+rc=1
+
+## green control (scratch clone, round-47 opening rewritten outcome-first); clone rev f73436ed5408f3745d86cecc29d989fbb6f50afc
+$ python3 -I .ufo/waves/round-48/w1/ScrConsider/check96.py --repo /fast/scratch/hyaku/mado-r48/ScrConsider/green --rev f73436ed5408f3745d86cecc29d989fbb6f50afc --rounds 44-47
+OUTCOME_FIRST: round=44 verdict=FAIL line=2566 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=45 verdict=FAIL line=2596 surface=none process_tokens=10 reasons=no-surface,process-first
+OUTCOME_FIRST: round=46 verdict=FAIL line=2627 surface=none process_tokens=14 reasons=no-surface,process-first
+OUTCOME_FIRST: round=47 verdict=PASS line=2656 surface=tools/mado-terminal.py process_tokens=0 reasons=none
+OUTCOME_FIRST_SUMMARY: rounds=4 pass=1 fail=3 skip=0
+rc=1
+
+## 9. the same tool under the landed name it would carry in quality/ (scratch copy, byte-identical)
+$ cmp -s check96.py $TMPDIR/check-round-outcome-first.py && echo identical
+identical
+$ python3 -I $TMPDIR/check-round-outcome-first.py --repo . --rev 579f694b45c797a9c39761fdb4f9e0a1b71b3585 --round 47
+OUTCOME_FIRST: round=47 verdict=FAIL line=2656 surface=none process_tokens=11 reasons=no-surface,process-first
+OUTCOME_FIRST_SUMMARY: rounds=1 pass=0 fail=1 skip=0
+rc=1
+$ python3 -I $TMPDIR/check-round-outcome-first.py --selftest
+SELFTEST: ok cases=5
+rc=0

@@ -1,0 +1,58 @@
+diff --git i/.ufo/waves/round-47/w1/ExecCounterC1.md w/.ufo/waves/round-47/w1/ExecCounterC1.md
+index 995a4e7f..da058fc7 100644
+--- i/.ufo/waves/round-47/w1/ExecCounterC1.md
++++ w/.ufo/waves/round-47/w1/ExecCounterC1.md
+@@ -179,3 +179,53 @@ already covers one thing this draft does not; three things this draft carries ar
+ --print-delimiter=seq`; this draft's generator stayed inside those. If the frozen `g` clause keeps `--test` and
+ `--print-content`, the tool contract must be widened to cover them explicitly, or a compliant tool fails `g` on a mode
+ the contract never asked for.
++
++## Priming a warm cache (SentHost-4 F1/G1, measured here first)
++
++The same measurement exists in this seat and it is why the forged-cache run uses a wrapper: a plain sandboxed run of
++the pin leaves the cache ABSENT, because `save_cache "$1" &` (`xdg-terminal-exec:1457`) is killed when the pid-namespace
++init exits with the pin. This draft primes with `/bin/sh -c '<pin> "$@"; rc=$?; sleep 0.15; exit $rc'`, which relays the
++pin's stdout and exit status unchanged and lets the write finish: `clause=f forged_cache_runs=75/128` (the 75 placeholder
++fixtures that reach `save_cache`; the other 53 use id/path-only print modes and exit before it) and
++`forge_live=ok warm='forged-term\n'`, i.e. after forging, the pin itself answered from the cache. Hardening this seat did
++not add, and which the next round should: require the primed file to end with `END_OF_EXEC_USEP\n` and treat its absence
++as a setup error (exit 2, never a scored miss), and assert on the scored run that the pin took the warm path by reading
++`D: cache is actual` from an `XTE_DEBUG=1` run (`xdg-terminal-exec:275`; cold control `D: no cache data`) without
++comparing stderr. Note the case root here is writable and `XDG_CACHE_HOME` is forced into it, so priming never needs
++`$HOME/.cache`; in the frozen counter's read-only root with `XDG_CACHE_HOME=<root>/.rw/cache`, a case that leaves
++`XDG_CACHE_HOME` unset cannot be primed at all (the pin's `mkdir` fails on stderr while it still exits 0).
++
++## Why only 75 of 128 fixtures can be primed (locator verified here)
++
++The split is a property of the resolver, not of the primer. The early-bail block `# early bail out in some print modes`
++starts at `xdg-terminal-exec:1368`; its `*' content '*` branch exits at `:1376` and the catch-all branch (anything that is
++not `cmd`, not `content` and not empty) exits at `:1383`. `save_cache` is only reached at `:1457`, so a run with
++`--print-id`, `--print-path` or `--print-content` never writes, overwrites or deletes a cache; only `--print-cmd`,
++`--test` and a real launch do. (SentHost-4 measured the same per mode, including `XTE_CACHE_ENABLED=false` deleting an
++existing 168 B cache on the `--print-cmd` path only: `.ufo/waves/round-48/w1/SentHost/receipts/03-cache-mutation.txt` §6.)
++
++Consequence for a frozen counter: a `prime`/forged-cache step on a fixture whose argument vector has no `--print-cmd`
++should be a schema error (or the fixture should be marked unprimeable), not a scored cold-vs-cold case — otherwise the
++clause silently compares cold with cold and passes. This draft currently compares cold when no cache appeared and says
++so (`forged_cache_runs=75/128`); making it an error is the stricter reading.
++
++## Correction: the `openat`-under-`$HOME` clause of this draft is vacuous
++
++SentHost-4 is right, and it is measured on this draft's own sandbox builder (`/bin/sh` probe inside the same `sandbox()`
++the counter uses, irrelevant dirs only): `/home` ENOENT, `/home/vgpnk` ENOENT, `/etc` and `/usr` present, `/fast` present
++(the case root's parent skeleton). Nothing under the operator's home can be opened inside the sandbox, so
++`resolver_opens_home` is structurally always 0 — it can never fire, and `resolver_opens_home=0` in the run logs is
++coverage theatre, not evidence. A literal `$HOME` predicate would be worse: inside a run `HOME` is `<case root>/home`,
++the case home the resolver is supposed to read, so it would trip on every correct run.
++
++What this draft keeps as having teeth, and what a freeze should hold on to:
++- the resolver is always given `XDG_CACHE_HOME=<case root>/.cache`, materialized empty per run, and a fixture whose
++  `env` names `HOME`, `PATH` or `XDG_CACHE_HOME` (or points into the operator's home) is a setup error — this is the
++  part that stops a fixture from steering the cache out of the writable area;
++- the `openat` clause should be dropped, or re-worded as a *regression tripwire* against a future bind that exposes the
++  operator's home, and labelled as such: it is not a live guard today.
++
++The guard that does fire, at O(1) cost instead of tracing the bash pin, is the host-cache tripwire (size / `mtime_ns` /
++inode / sha256 of `~/.cache/xdg-terminal-exec` before and after, setup error on change) in SentHost-4's guards.md G2.
++No edit is made to the counter for this: it is a draft superseded by the L1's frozen counter at `d7527d60`, and every
++sha in this report and in `receipts/` stays valid as measured.

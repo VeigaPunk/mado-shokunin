@@ -1,0 +1,45 @@
+CASE hit-baseline                 ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-print-id                 ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-print-path               ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-print-id-path            ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-print-content            ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-enable-env               ok   stable=ok cache=hit oracle_rc=0 
+CASE hit-fallback-entry           ok   stable=ok cache=hit oracle_rc=0 
+CASE wd-exec-same-size            FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n') scored=(0, 'kitty\n')
+CASE wd-list-same-size            FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n') scored=(0, 'fooz\n')
+CASE wd-tryexec-stub-gone         FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n') scored=(0, 'kitty\n')
+CASE wd-dir-arg-name              FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n--working-directory=$ROOT/w\n') scored=(0, 'foot\n--working-directorx=$ROOT/w\n')
+CASE wd-title-arg-name            FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n--title=T\n') scored=(0, 'foot\n--titlx=T\n')
+CASE wd-appid-arg-name            FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n--app-id=A\n') scored=(0, 'foot\n--app-ix=A\n')
+CASE wd-execarg-name              FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n-x\necho\nhi\n') scored=(0, 'foot\n-y\necho\nhi\n')
+CASE wd-hold-arg-name             FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n--hold\n-e\necho\n') scored=(0, 'foot\n--holx\n-e\necho\n')
+CASE wd-mtime-blind-old-date      FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n') scored=(0, 'kitty\n')
+CASE wd-action-cmd                FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\nnew\n') scored=(0, 'foot\nneq\n')
+CASE wd-two-lists                 FAIL stable=ok cache=hit oracle_rc=0 mismatch oracle=(0, 'foot\n') scored=(0, 'fooz\n')
+CASE inv-size-change              ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-mtime-year               ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-entry-removed            ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-entry-added              ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-desktop-change           ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-exec0-gone               ok   stable=ok cache=stale oracle_rc=0 
+CASE inv-prime-print-id           ok   stable=ok cache=absent oracle_rc=0 
+CASE inv-cache-removed            ok   stable=ok cache=absent oracle_rc=0 
+CASE mf-empty                     ok   stable=ok cache=invalid oracle_rc=0 
+CASE mf-no-terminator             ok   stable=ok cache=invalid oracle_rc=0 
+CASE mf-terminator-no-newline     ok   stable=ok cache=invalid oracle_rc=0 
+CASE mf-line-limit                ok   stable=ok cache=invalid oracle_rc=0 
+CASE mf-terminator-at-11          ok   stable=ok cache=stale oracle_rc=0 
+CASE mf-crlf                      ok   stable=ok cache=invalid oracle_rc=0 
+CASE mf-short-hash                ok   stable=ok cache=stale oracle_rc=0 
+CASE mf-cmd-missing               ok   stable=ok cache=stale oracle_rc=0 
+CASE dis-env-false                ok   stable=ok cache=disabled oracle_rc=0 
+CASE dis-env-no                   ok   stable=ok cache=disabled oracle_rc=0 
+CASE dis-directive-inert          ok   stable=ok cache=hit oracle_rc=0 
+CASE dis-directive-cold           ok   stable=ok cache=absent oracle_rc=0 
+CASE ex-hit                       FAIL stable=ok cache=hit oracle_rc=0 explain want={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applications/foot.desktop', 'verdict': 'OK', 'cache': 'hit'} got={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applications/f
+CASE ex-stale                     FAIL stable=ok cache=stale oracle_rc=0 explain want={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applications/foot.desktop', 'verdict': 'OK', 'cache': 'stale'} got={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applications
+CASE ex-absent                    ok   stable=ok cache=absent oracle_rc=0 
+CASE ex-disabled                  ok   stable=ok cache=disabled oracle_rc=0 
+CASE ex-invalid                   FAIL stable=ok cache=invalid oracle_rc=0 explain want={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applications/foot.desktop', 'verdict': 'OK', 'cache': 'invalid'} got={'selected': 'foot.desktop', 'path': '$ROOT/usr/share/applicatio
+CASE ct-home-unset                FAIL stable=ok cache=None oracle_rc=1 mismatch oracle=(1, '') scored=(2, '')
+ORACLE2-r48: cases=44 pass=29 fail=15 reps=2 control=tool classes=contract:0/1,disabled:4/4,explain:2/5,hit:7/7,invalidated-desktop:1/1,invalidated-exec0:1/1,invalidated-mtime:1/1,invalidated-name:3/3,invalidated-noprime:1/1,invalidated-size:1/1,malformed:8/8,warm-diff:0/11

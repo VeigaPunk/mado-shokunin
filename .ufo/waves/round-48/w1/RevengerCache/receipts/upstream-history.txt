@@ -1,0 +1,109 @@
+## full commit log for cache-related commits (git log --format='%H %ad %s' --date=iso)
+080c5ec896d5d20755fd23c8332ba37e40569d00
+  date: 2023-11-30 19:01:58 +0300
+  subject: working cache
+  body: 
+520535c4bb2cb9e993f41ee8ce2daa3ee422c4c1
+  date: 2023-11-30 20:11:22 +0300
+  subject: save cmd late, invalidate cache by missing cmd early
+  body: 
+64ca1e8a47e10e1f5ac26492dc479dcbf39cbafe
+  date: 2023-11-30 19:25:09 +0300
+  subject: drop cache on missing command
+  body: 
+a2ef630fa623ab041b2940e3dc3660d37d4675c5
+  date: 2023-12-01 18:12:22 +0300
+  subject: Cache tweaks, stricter entry IDs from configs
+  body: optimized cache checks: earlier invalidation, less branching, stricter matches
+fork save_cache
+
+aae04a3705aa4663a6d0ddafbe5b39328098fdde
+  date: 2023-12-05 16:11:33 +0300
+  subject: Add XDG_CURRENT_DESKTOP to cache
+  body: ...also fix unused var.
+d8b7a31590717200e7213c2ead021b5cca1162a2
+  date: 2023-12-08 21:10:10 +0300
+  subject: improve debug, comments
+  body: 
+05c46a912a8d8a1da87b79724bef52484f604829
+  date: 2023-12-12 00:07:45 +0300
+  subject: set umask when saving cache
+  body: 
+a09da6999c269bc7145232ed299f14dbace34a4b
+  date: 2023-12-18 23:10:43 +0300
+  subject: Document cache behavior caveat
+  body: fixes #47
+
+0913e283d2d396bc87718438969a70ff6528b0ae
+  date: 2024-06-11 23:58:06 +0300
+  subject: Enable cache by default, closes #36
+  body: 
+ce0a03b765a7c51529c3d33376c3d6fa96f183e6
+  date: 2024-10-06 18:35:00 +0300
+  subject: String escape expander and Exec tokenizer
+  body: No more eval or xargs workarounds with shell command lexic substituting for Exec parsing.
+Do things the hard way, and in accordance with:
+https://specifications.freedesktop.org/desktop-entry-spec/latest/value-types.html
+https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+
+At least to my best current understanding and deduction, also see:
+https://gitlab.freedesktop.org/xdg/xdg-specs/-/issues/39
+
+This may slow things down a bit for fallback parsing. Will consider postpoing Exec
+parsing until after more easy keys are checked.
+
+6d64ac1479ed2fce0060a90ce88538490362eae4
+  date: 2025-06-07 23:32:58 +0300
+  subject: Implement scripting options
+  body: 
+e0577b639d9bbf8d9c03f6024b0a463789827694
+  date: 2026-07-29 21:45:16 +0200
+  subject: fix: Avoid locale-dependent pattern matching (#76)
+  body: * Avoid locale-dependent pattern matching
+
+In LC_COLLATE=tr_TR.UTF-8 the ASCII 'i' character does not sort between a-z,
+making desktop ids containing 'i' undiscoverable.
+
+Run code dealing with character ranges in `LC_ALL=C` context.
+
+---------
+
+Co-authored-by: Vladimir-csp <4061903+Vladimir-csp@users.noreply.github.com>
+
+## tag containment (git describe --tags --contains)
+0913e28 -> v0.10.0
+ce0a03b -> v0.12.0~3
+6d64ac1 -> v0.13.0
+e0577b6 -> v0.14.3~1
+
+## per-tag cache version literal
+v0.9.0 none 2024-01-20
+v0.9.1 none 2024-03-23
+v0.9.2 none 2024-03-31
+v0.9.3 none 2024-04-13
+v0.10.0 none 2024-06-11
+v0.10.1 none 2024-07-16
+v0.11.0 none 2024-09-06
+v0.11.1 none 2024-09-06
+v0.12.0 echo 3 2024-10-16
+v0.12.1 echo 3 2024-12-29
+v0.12.2 echo 3 2025-03-03
+v0.12.3 echo 3 2025-03-15
+v0.12.4 echo 3 2025-05-31
+v0.13.0 echo 4 2025-06-07
+v0.13.1 echo 4 2025-06-17
+v0.13.2 echo 4 2025-06-27
+v0.13.3 echo 4 2025-09-17
+v0.14.0 echo 4 2025-11-16
+v0.14.1 echo 4 2025-12-16
+v0.14.2 echo 4 2026-03-25
+v0.14.3 echo 4 2026-07-29
+
+## re-verification pass (2026-10-26T23:59:08Z)
+commits in history: 237
+.git size: 396K
+tag v0.14.3 -> commit 065925df9f419008159258ae169018bfd23df71b
+HEAD -> 065925df9f419008159258ae169018bfd23df71b
+commits after v0.14.3: 0
+tags: 21
+HEAD date: 2026-07-29 22:51:12 +0300

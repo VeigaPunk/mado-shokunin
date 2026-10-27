@@ -1,0 +1,13 @@
+Host probe: same-minute, same-size content edit is invisible to `ls -l` (C-locale minute resolution).
+Method: file initialized with 4 bytes AAAA; `touch -d now`; `ls -l` line captured;
+content rewritten in place with same-size BBBB; `ls -l` line re-captured; loop until the two
+lines are identical while content differs (attempt 1 succeeded on the first try in run 1,
+attempt 90 in run 2; the minute boundary makes it probabilistic but quickly hit).
+
+line1=-rw-r--r-- 1 vgpnk vgpnk 4 Oct 26 20:48 /fast/scratch/hyaku/mado-r48/CritPremiseC1/mp/f
+line2=-rw-r--r-- 1 vgpnk vgpnk 4 Oct 26 20:48 /fast/scratch/hyaku/mado-r48/CritPremiseC1/mp/f
+content-after=BBBB
+
+Because gen_hash (xdg-terminal-exec:200) takes only `ls -LRl` output, this edit leaves the hash
+unchanged: stale-but-valid is reachable with an ordinary in-place editor (sed -i / vim with
+same-length replacement) within one wall-clock minute, without any mtime-pinning.

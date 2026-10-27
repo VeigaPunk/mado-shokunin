@@ -1,0 +1,24 @@
+# xkbcli compile-keymap live receipt (read-only, 2026-10-26)
+xkbcli --version: 1.13.2
+libxkbcommon 1.13.2-1
+
+case: host names (kb_layout = br, kb_options = compose:caps)
+args=--layout br --options compose:caps
+rc=0
+keymap_sha256=efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+keymap_lines=2090
+
+case: unknown layout
+args=--layout zz
+rc=1
+first_error=XKB-338 Couldn't find file "symbols/zz"
+
+case: unknown variant
+args=--layout br --variant nope
+rc=1
+first_error=XKB-661 Couldn't process include statement for 'br(nope)'
+
+case: unknown option
+args=--layout br --options nope:nope
+rc=0
+first_error=XKB-595 Unrecognized RMLVO option "nope:nope" was ignored

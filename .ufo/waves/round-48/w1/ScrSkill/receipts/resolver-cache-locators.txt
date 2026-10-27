@@ -1,0 +1,79 @@
+# round-48 w1 ScrSkill — xdg-terminal-exec v0.14.3 cache path: locators (read-only, 2026-10-26)
+# pin: .ufo/waves/round-47/fetch/xdg-terminal-exec
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  .ufo/waves/round-47/fetch/xdg-terminal-exec
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+
+## cache file and defaults
+173:	XTE__CACHE_FILE=${XDG_CACHE_HOME}/xdg-terminal-exec
+194:				echo 4
+200:				LANG=C ls -LRl ${xte__hash_paths} 2> /dev/null
+201:			} | md5sum 2> /dev/null
+223:		xte__line_limit=50
+378:				XTE__CACHE_CONFIGURED=1
+384:				XTE__CACHE_CONFIGURED=1
+1174:XTE__CACHE_CONFIGURED=${XTE_CACHE_ENABLED-}
+
+## read path gated before any list, and the else branch that builds the lists
+1179:if check_bool "${XTE__CACHE_ENABLED}" && read_cache; then
+1180:	XTE__CACHE_USED=true
+1183:	XTE__CACHE_USED=false
+1198:	read_config_paths
+1208:	find_entry || exit 1
+
+## trust test: hash line and command -v
+274:			if [ "$XTE__HASH" = "$xte__cached_hash" ] && command -v "$xte__cached_cmd" > /dev/null; then
+
+## parse: line 1..10 assignment, terminator, line limit
+247:				# Reconstruct newlines, use ${XTE__RSEP}END_OF_EXEC_USEP string as terminator.
+250:				*"${XTE__RSEP}END_OF_EXEC_USEP")
+251:					xte__cached_exec_usep=${xte__cached_exec_usep%"${XTE__RSEP}END_OF_EXEC_USEP"}
+332:			"${XTE__EXEC_USEP}${XTE__RSEP}END_OF_EXEC_USEP" > "${XTE__CACHE_FILE}"
+
+## write: background save, terminator written, removal when disabled
+307:				rm -f "${XTE__CACHE_FILE}"
+315:			rm -f "${XTE__CACHE_FILE}"
+332:			"${XTE__EXEC_USEP}${XTE__RSEP}END_OF_EXEC_USEP" > "${XTE__CACHE_FILE}"
+337:		rm -f "${XTE__CACHE_FILE}"
+1457:	save_cache "$1" &
+
+## directives
+374:			/enable_cache)
+380:			/disable_cache)
+
+## dir arg composition (cached option name + current value)
+1400+1:if [ -n "$XTE__DIRARG" ] && [ -n "$XTE__DIRVAL" ]; then
+1400+2:	case "$XTE__DIRARG" in
+1400+3:	*=)
+1400+4:		set -- "${XTE__DIRARG}${XTE__DIRVAL}" "$@"
+1400+5:		debug "prepended $1"
+1400+6:		;;
+1400+7:	*)
+1400+8:		set -- "${XTE__DIRARG}" "${XTE__DIRVAL}" "$@"
+1400+9:		debug "prepended $1 $2"
+1400+10:		;;
+
+## structure: find_entry is called only inside the cold branch
+1178+1:if check_bool "${XTE__CACHE_ENABLED}" && read_cache; then
+1178+2:	XTE__CACHE_USED=true
+1178+3:else
+1178+5:	XTE__CACHE_USED=false
+1178+20:	read_config_paths
+1178+30:	find_entry || exit 1
+1178+31:fi
+
+## env-var default and the value that composes with the cached option name
+1172:XTE__CACHE_ENABLED=${XTE_CACHE_ENABLED-true}
+1218:XTE__DIRVAL=
+
+## first directive wins (XTE__CACHE_CONFIGURED)
+				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+				XTE__CACHE_ENABLED=true
+				XTE__CACHE_CONFIGURED=1
+				;;
+			/disable_cache)
+				debug "found '$xte__line' directive${XTE__CACHE_CONFIGURED:+ (ignored)}"
+				[ -z "$XTE__CACHE_CONFIGURED" ] || continue
+				XTE__CACHE_ENABLED=false
+				XTE__CACHE_CONFIGURED=1
+				;;
+

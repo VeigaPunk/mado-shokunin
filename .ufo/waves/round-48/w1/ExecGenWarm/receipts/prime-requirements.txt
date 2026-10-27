@@ -1,0 +1,16 @@
+list file: home/.config/xdg-terminals.list = '/execarg_strict\nfoot.desktop\n'
+pin: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec sha256=89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+3 prime runs per variant, wrapper prime, round-47 sandbox argv.
+
+strict list, entry WITHOUT TerminalArgExec: stdout=''/rc=1/cache=absent; stdout=''/rc=1/cache=absent; stdout=''/rc=1/cache=absent
+strict list, entry WITH TerminalArgExec=-e: stdout='foot\n'/rc=0/cache=complete; stdout='foot\n'/rc=0/cache=complete; stdout='foot\n'/rc=0/cache=complete
+compat list WITH /disable_cache, entry WITH TerminalArgExec=-e: stdout='foot\n'/rc=0/cache=absent; stdout='foot\n'/rc=0/cache=absent; stdout='foot\n'/rc=0/cache=absent
+
+mechanism 1: /execarg_strict x:394 -> strict mode; an entry without TerminalArgExec is skipped
+x:1091 (get_default_execarg x:1113 supplies '-e' only in compat mode), so nothing is selected and
+the resolver exits 1 before save_cache x:1457. gen_warm.ENTRY therefore carries TerminalArgExec=-e.
+mechanism 2: /disable_cache x:380 sets XTE__CACHE_ENABLED=false, so save_cache x:300 takes its
+disable branch and removes the cache file: a tree carrying that line cannot be primed.
+gen_warm strips both cache directives from the base list files (the directive families are
+generated explicitly: a same-size content swap while the cache is valid, and XTE_CACHE_ENABLED
+in the environment).

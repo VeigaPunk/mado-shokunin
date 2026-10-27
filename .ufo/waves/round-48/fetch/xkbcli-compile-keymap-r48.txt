@@ -1,0 +1,353 @@
+# mado round 48 - read-only xkbcli compile-keymap receipt (C2), generator .ufo/waves/round-48/receipts/make-xkb-receipt.sh
+# taken: 2026-10-27T00:08:08Z (UTC)
+# host: Linux 7.2.11-arch1-1 x86_64
+# xkbcli: /usr/bin/xkbcli (no wrapper); compile/test/kccgst verbs only, stdout+stderr captured
+
+== versions, paths, defaults
+--- xkbcli version
+$ /usr/bin/xkbcli --version
+1.13.2
+rc=0
+
+$ ls -d /var/lib/pacman/local/libxkbcommon-[0-9]* /var/lib/pacman/local/xkeyboard-config-[0-9]*   (package database read, no pacman run)
+/var/lib/pacman/local/libxkbcommon-1.13.2-1
+/var/lib/pacman/local/xkeyboard-config-2.48-1
+rc=0
+
+--- canonical root
+$ readlink -f /usr/share/X11/xkb
+/usr/share/xkeyboard-config-2
+rc=0
+
+$ ls -ld /usr/share/X11/xkb
+lrwxrwxrwx 1 root root 29 Jun 21 04:24 /usr/share/X11/xkb -> /usr/share/xkeyboard-config-2
+$ ls /usr/share/xkeyboard-config-2/rules/
+base
+base.extras.xml
+base.lst
+base.xml
+evdev
+evdev.extras.xml
+evdev.lst
+evdev.xml
+README
+xfree98
+xkb.dtd
+xorg
+xorg.lst
+xorg.xml
+
+== the host's names (read-only reads of the two input files the compositor loads)
+$ grep -n "kb_" ~/.config/hypr/input.conf ~/.local/share/omarchy/default/hypr/input.conf
+/home/vgpnk/.config/hypr/input.conf:5:  # kb_layout = us,dk,eu
+/home/vgpnk/.config/hypr/input.conf:8:  # kb_variant = intl
+/home/vgpnk/.config/hypr/input.conf:10:  kb_layout = br
+/home/vgpnk/.config/hypr/input.conf:11:  kb_options = compose:caps # ,grp:alts_toggle
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf:3:    kb_layout = us
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf:4:    kb_variant =
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf:5:    kb_model =
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf:6:    kb_options = compose:caps
+/home/vgpnk/.local/share/omarchy/default/hypr/input.conf:7:    kb_rules =
+$ sha256sum the two files
+3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4  /home/vgpnk/.config/hypr/input.conf
+bee5aa68cbec0c428fae7a5faf7da49a30e6f78ed96e78a063f08b66942448b8  /home/vgpnk/.local/share/omarchy/default/hypr/input.conf
+
+== the names compile: full keymap digest (the keymap itself is ~73 KB and not kept)
+$ /usr/bin/xkbcli compile-keymap --layout br --options compose:caps > host.keymap
+rc=0
+$ sha256sum host.keymap
+efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  host.keymap
+$ wc -lc host.keymap
+2090 lines
+73079 bytes
+$ head -3 host.keymap
+xkb_keymap {
+xkb_keycodes "evdev_aliases(qwerty)" {
+	minimum = 8;
+$ cat host.keymap.stderr (empty means no diagnostic at the default log level)
+
+--- KcCGST for the host's names
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br --options compose:caps
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)+compose(caps)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- host names, test mode (compiles, prints nothing)
+$ /usr/bin/xkbcli compile-keymap --test --layout br --options compose:caps
+
+rc=0
+
+--- the include path list in order (verbose log, filtered to the path and KcCGST lines)
+$ /usr/bin/xkbcli compile-keymap --test --verbose --layout br 2>&1 | grep -E "Include path|Include extensions|Compiling from"
+xkbcommon: INFO: Include path failed: "/home/vgpnk/.config/xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/home/vgpnk/.xkb" (No such file or directory)
+xkbcommon: INFO: Include path failed: "/etc/xkb" (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config-2.d (No such file or directory)
+xkbcommon: DEBUG: Include extensions path failed: /usr/share/xkeyboard-config.d (No such file or directory)
+xkbcommon: INFO: Include path added: /usr/share/xkeyboard-config-2
+xkbcommon: DEBUG: Compiling from RMLVO: rules 'evdev', model 'pc105', layout 'br', variant '(null)', options '(null)'
+xkbcommon: DEBUG: Compiling from KcCGST: keycodes 'evdev+aliases(qwerty)', types 'complete', compat 'complete', symbols 'pc+br+inet(evdev)'
+rc=0
+
+--- no names at all: the built-in defaults
+$ /usr/bin/xkbcli compile-keymap --kccgst
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- empty layout with a variant set
+$ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --kccgst --layout  --variant intl
+xkbcommon: WARNING: Layout not provided, but variant set to "intl": ignoring variant and using defaults for both: layout="us", variant="".
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+== unknown names: which hard-fail and which do not
+--- unknown layout
+$ /usr/bin/xkbcli compile-keymap --test --layout zz
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+
+--- unknown variant on a known layout
+$ /usr/bin/xkbcli compile-keymap --test --layout br --variant nope
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+
+--- variant the br map does not define
+$ /usr/bin/xkbcli compile-keymap --test --layout br --variant caps
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(caps)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+
+--- variant the br map defines
+$ /usr/bin/xkbcli compile-keymap --test --layout br --variant nodeadkeys
+
+rc=0
+
+--- unknown option
+$ /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+rc=0
+
+--- unknown model, KcCGST
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br --model nope
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+};
+rc=0
+
+--- unknown model at XKB_LOG_LEVEL=warn (still silent: the model wildcard matched)
+$ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --kccgst --layout br --model nope
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc104)" };
+};
+rc=0
+
+--- model pc105, KcCGST
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br --model pc105
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- unknown rules
+$ /usr/bin/xkbcli compile-keymap --test --rules nope --layout br
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "nope"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'nope', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+rc=1
+
+== rulesets that exist in the package
+--- rules base
+$ /usr/bin/xkbcli compile-keymap --kccgst --rules base --layout br
+xkb_keymap {
+  xkb_keycodes { include "xfree86+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(pc105)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- rules xorg
+$ /usr/bin/xkbcli compile-keymap --kccgst --rules xorg --layout br
+xkb_keymap {
+  xkb_keycodes { include "xfree86+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(pc105)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- rules xfree98 (file exists, returns no components)
+$ /usr/bin/xkbcli compile-keymap --test --rules xfree98 --layout br
+xkbcommon: ERROR: [XKB-595] No components returned from XKB rules "xfree98"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'xfree98', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+rc=1
+
+== multi-layout / variant alignment
+--- two layouts, one variant (warning is below the default log level)
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br,us --variant nodeadkeys
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+us:2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- the same run at XKB_LOG_LEVEL=warn
+$ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --test --layout br,us --variant nodeadkeys
+xkbcommon: WARNING: More layouts than variants: "br,us" vs. "nodeadkeys".
+xkbcommon: WARNING: Multiple definitions of group 0 name in map 'nodeadkeys'; Using 'Portuguese (Brazil, no dead keys)', ignoring 'Portuguese (Brazil)'
+rc=0
+
+--- one layout, two variants
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br --variant nodeadkeys,intl
+xkbcommon: ERROR: Less layouts than variants: "br" vs. "nodeadkeys,intl".
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- two layouts, two variants (empty first)
+$ /usr/bin/xkbcli compile-keymap --kccgst --layout br,us --variant ,dvorak
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+us(dvorak):2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+== log level: the default prints ERROR-level lines only
+--- unknown option at XKB_LOG_LEVEL=warn
+$ env XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --test --layout br --options nope:nope
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+rc=0
+
+
+== include-path precedence (ephemeral probes; recreate with the recipe below)
+# recipe: mkdir -p $T/xdg/xkb/symbols and $T/home/.xkb/symbols; write the 5-line symbols/mado48 below;
+#   XDG_CONFIG_HOME=$T/xdg xkbcli compile-keymap --layout mado48                 -> rc 0
+#   XDG_CONFIG_HOME unset, HOME=$T/home (file at $HOME/.xkb/symbols/mado48)     -> rc 0
+#   HOME=/nonexistent-home, XDG_CONFIG_HOME unset                            -> rc 1 (XKB-338)
+# The adjudicating values are the exit status and the XKB-338 stderr block.
+$ cat symbols/mado48
+default partial alphanumeric_keys
+xkb_symbols "basic" {
+    name[Group1]= "Precedence probe";
+    key <AE01> { [ 1 ] };
+};
+XDG_CONFIG_HOME/xkb/symbols/mado48 present: rc=0
+$ sha256sum XDG-mado48.keymap
+49d957933ce19e9e00004ab6caf978c3701f174e251ba310ed8a66f911772676  xdg-mado48.keymap
+HOME/.xkb/symbols/mado48 present, XDG_CONFIG_HOME unset: rc=0
+$ cmp the two keymaps
+byte-identical
+neither user path present: rc=1
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/mado48" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/nonexistent-home/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	/nonexistent-home/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'mado48'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+
+--- root override falls back to the legacy root
+$ env XKB_CONFIG_ROOT=/nonexistent-root XKB_LOG_LEVEL=warn /usr/bin/xkbcli compile-keymap --test --layout br
+xkbcommon: WARNING: Root include path failed; fallback to "/usr/share/X11/xkb". The setup is probably misconfigured. Please ensure that "/nonexistent-root" is available in the environment.
+rc=0
+
+--- extra-path override is only a failed include
+$ env XKB_CONFIG_EXTRA_PATH=/nonexistent-extra /usr/bin/xkbcli compile-keymap --test --layout br
+
+rc=0
+
+
+== xkbcli ignores the environment names unless the flag is given (compile-keymap.c:585-595)
+--- XKB_DEFAULT_LAYOUT=zz, no flag
+$ env XKB_DEFAULT_LAYOUT=zz /usr/bin/xkbcli compile-keymap --kccgst
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+us+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+--- XKB_DEFAULT_LAYOUT=zz with --enable-environment-names
+$ env XKB_DEFAULT_LAYOUT=zz /usr/bin/xkbcli compile-keymap --kccgst --enable-environment-names
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+zz+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+
+END OF RECEIPT

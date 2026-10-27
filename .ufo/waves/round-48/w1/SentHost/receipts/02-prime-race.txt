@@ -1,0 +1,21 @@
+# priming a cache: four shapers, and the three-repeat poll
+# sandbox = the round-47 counter's shaper (--unshare-all --die-with-parent --new-session --clearenv,
+#   ro-bind /usr, loader symlinks, --proc --dev --tmpfs /tmp, case root ro, <root>/rw rw)
+A: sandbox exits when the pin returns, no wait at all
+sh -c 'pin --print-cmd'                                     cache: ABSENT
+B: --as-pid-1 (sh is pid 1) + wait
+--as-pid-1 sh -c 'pin; wait'                                cache: ABSENT
+C: default init, busy poll without a sleep (300 shell iterations, ~1 ms)
+sh -c 'pin; while [ ! -s cache ]; do :; done' x300          cache: ABSENT
+D: default init, keep the sandbox alive with a bounded sleep poll (the guard)
+  poll+sleep run 1: wrapper_rc=0 latency=21 ms size=168 B
+  poll+sleep run 2: wrapper_rc=0 latency=21 ms size=168 B
+  poll+sleep run 3: wrapper_rc=0 latency=20 ms size=168 B
+E: outside bwrap, the same race: 5 cold runs, time until the cache file settles
+  run 1: 20 ms size=168
+  run 2: 20 ms size=168
+  run 3: 20 ms size=168
+  run 4: 20 ms size=168
+  run 5: 18 ms size=168
+# the pin writes the cache in a background child (pin :1457 'save_cache "$1" &'); when the
+# sandbox exits with the pin, the pid-namespace init takes the child with it (variants A-C).

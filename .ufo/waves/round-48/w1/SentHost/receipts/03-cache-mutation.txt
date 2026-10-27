@@ -1,0 +1,22 @@
+# what an unredirected run of the resolver does to the cache file
+1) cold run (XDG_CACHE_HOME redirected):
+  cache: present 168 B mode 600
+2) XTE_CACHE_ENABLED=false --print-cmd  (pin :1172-1180 skips read_cache, :336-337 runs rm -f):
+  cache: ABSENT
+3) recreate, then a '/disable_cache' line in the list file (read first at :1180, directive seen
+   during the cold pass, save_cache -> rm -f):
+  cache: present 168 B mode 600
+  cache: ABSENT
+4) recreate, then a warm run (XTE__CACHE_USED=true, :1456 gates the save):
+  cache: present 168 B mode 600
+  cache: present 168 B mode 600
+5) the oracle's own verdict (XTE_DEBUG=1, stderr only; stdout unchanged):
+  warm run: lines matching "D: cache is actual" = 1
+  cold run: lines matching "D: no cache data" = 1
+# XTE_DEBUG (or DEBUG) is read at pin :61; debug goes to stderr, so a scored stdout is unchanged.
+6) which modes reach the save site at all (pin :1368-1385 bails out early for id/path/content):
+  --print-id   cold run leaves cache=0 B; with XTE_CACHE_ENABLED=false: before=168 B after=168 B
+  --print-path cold run leaves cache=0 B; with XTE_CACHE_ENABLED=false: before=168 B after=168 B
+  --print-cmd  cold run leaves cache=168 B; with XTE_CACHE_ENABLED=false: before=168 B after=0 B
+# only the modes that continue past :1370 ('cmd' and the empty/launch case) write, overwrite or
+# delete; id/path/content print, newline, exit 0 and never touch the cache file.

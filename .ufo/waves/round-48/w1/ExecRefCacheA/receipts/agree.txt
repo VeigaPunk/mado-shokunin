@@ -1,0 +1,441 @@
+# ExecRefCacheA - warm-cache differential: case, ours (draft tool), theirs (pinned xdg-terminal-exec v0.14.3)
+# tool sha256 c4ed769eea9c1c88da8fe9c222cca79035faac0224639e45c98a7d0f44a93bdd
+# pin  sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+# judge: the pin is primed cold (--print-cmd, wait for the background save) in each twin tree, the trees are
+# mutated identically, then the pin runs again (warm) on tree o and the tool runs `print` on tree t.
+# $ROOT = the tree root; `cold` is the same tree with the cache removed (proof the warm answer differs).
+
+W-01-hit-basic class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-02-hit-list-swapped-same-size class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-03-hit-list-swapped-same-size-id class=hit-differs args=['--print-id']
+  theirs rc=0 out='foot.desktop\n'
+  ours   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='kity.desktop\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-04-hit-list-swapped-alac class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-05-hit-two-lines-swapped class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-06-hit-list-emptied-same-size class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  ours   rc=0 out='kity.desktop\n$ROOT/usr/share/applications/kity.desktop\nkity\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-07-hit-tryexec-stub-removed class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=1 out=''
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-08-hit-tryexec-stub-kept class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-09-hit-directive-added-after-prime class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-10-hit-exec-changed-same-size class=hit-differs args=['--print-cmd']
+  theirs rc=0 out='foot\n'
+  ours   rc=0 out='foot\n'
+  cold   rc=0 out='fooo\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-11-hit-execarg-name-changed class=hit-differs args=['--print-cmd', '--title=x']
+  theirs rc=0 out='foot\n--title\nx\n'
+  ours   rc=0 out='foot\n--title\nx\n'
+  cold   rc=0 out='foot\n--titel\nx\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-12-hit-dir-arg-changed-same-size class=hit-differs args=['--print-cmd', '--dir=/srv']
+  theirs rc=0 out='foot\n--working-directory=/srv\n'
+  ours   rc=0 out='foot\n--working-directory=/srv\n'
+  cold   rc=0 out='foot\n--working-directorx=/srv\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-13-hit-multiline-exec class=hit args=['--test']
+  theirs rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  ours   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  cold   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-14-hit-multiline-exec-cmd class=hit args=['--print-cmd']
+  theirs rc=0 out='foot\n--a\nb\n'
+  ours   rc=0 out='foot\n--a\nb\n'
+  cold   rc=0 out='foot\n--a\nb\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-15-hit-action class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  ours   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  cold   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-16-hit-action-swapped class=hit-differs args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  ours   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\nfootclient\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-17-hit-hold-and-appid class=hit args=['--print-cmd', '--hold', '--app-id=org.x']
+  theirs rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  ours   rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  cold   rc=0 out='foot\n--app-id=org.x\n--hold\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-18-hit-command-after-cached-execarg class=hit args=['--print-cmd', '--', 'htop', '-d', '5']
+  theirs rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  ours   rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  cold   rc=0 out='foot\n--exec\nhtop\n-d\n5\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-19-hit-cache-default-enable-directive class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-20-hit-xdg-cache-home-unset class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-21-hit-print-delimiter class=hit args=['--print-id', '--print-path', '--print-delimiter=\\t']
+  theirs rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  ours   rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  cold   rc=0 out='foot.desktop\t$ROOT/usr/share/applications/foot.desktop'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-22-hit-print-cmd-delimiter class=hit args=['--print-cmd=\\s', '--', 'a']
+  theirs rc=0 out='foot\\s-e\\sa'
+  ours   rc=0 out='foot\\s-e\\sa'
+  cold   rc=0 out='foot\\s-e\\sa'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-23-hit-subdir-id class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  ours   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cold   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-24-hit-mtime-same-day class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-25-hit-dangling-link-in-apps class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-26-absent-cold class=absent args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=absent (want absent) differs_from_cold=False
+  agree
+W-27-hit-desktop-two-app-dirs class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-31-stale-list-size class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-32-stale-list-mtime-day class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-33-stale-desktop-added class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-34-stale-desktop-removed class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-35-stale-desktop-size class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-36-stale-desktop-mtime-day class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-37-stale-current-desktop class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-38-stale-current-desktop-unset class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-39-stale-current-desktop-empty class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-40-stale-exec-gone class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  ours   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-41-stale-exec-not-executable class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  ours   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-42-stale-list-removed class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  ours   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cold   rc=0 out='alac.desktop\n$ROOT/usr/share/applications/alac.desktop\nalac\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-43-stale-desktop-colon-suffix class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-44-stale-subdir-file class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  ours   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cold   rc=0 out='vendor-foot.desktop\n$ROOT/usr/share/applications/vendor/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-45-stale-config-dir-list-added class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-46-stale-hash-wrong class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-47-stale-hash-uppercase class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-48-stale-cmd-empty class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-51-invalid-empty class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-52-invalid-no-terminator class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-53-invalid-terminator-line-5 class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-54-invalid-terminator-line-50 class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-55-valid-terminator-line-49 class=stale args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=stale (want stale) differs_from_cold=False
+  agree
+W-56-invalid-ten-lines class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-57-invalid-unterminated-last-line class=invalid args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=invalid (want invalid) differs_from_cold=False
+  agree
+W-58-invalid-cache-is-dir class=absent args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=absent (want absent) differs_from_cold=False
+  agree
+W-61-disabled-env-false class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=disabled (want disabled) differs_from_cold=False
+  agree
+W-62-disabled-env-zero class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=disabled (want disabled) differs_from_cold=False
+  agree
+W-63-disabled-env-garbage class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=disabled (want disabled) differs_from_cold=False
+  agree
+W-64-disabled-env-empty-string class=disabled args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=disabled (want disabled) differs_from_cold=False
+  agree
+W-65-disabled-directive-prime class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-71-nohome-print class=nohome args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=absent (want None) differs_from_cold=False
+  agree
+W-72-nohome-print-id class=nohome args=['--print-id']
+  theirs rc=0 out='foot.desktop\n'
+  ours   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  cache=absent (want None) differs_from_cold=False
+  agree
+W-73-nohome-cache-default class=nohome args=['--print-id']
+  theirs rc=1 out=''
+  ours   rc=1 out=''
+  cold   rc=1 out=''
+  cache=absent (want None) differs_from_cold=False
+  agree
+W-74-nohome-cache-home-set class=nohome args=['--print-id']
+  theirs rc=0 out='foot.desktop\n'
+  ours   rc=0 out='foot.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  cache=hit (want None) differs_from_cold=False
+  agree
+W-81-valid-cache-other-entry class=hit-differs args=['--print-id']
+  theirs rc=0 out='kitty.desktop\n'
+  ours   rc=0 out='kitty.desktop\n'
+  cold   rc=0 out='foot.desktop\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-82-valid-cache-empty-execarg class=hit-differs args=['--print-cmd', '--', 'top']
+  theirs rc=0 out='foot\ntop\n'
+  ours   rc=0 out='foot\ntop\n'
+  cold   rc=0 out='foot\n-e\ntop\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-83-valid-cache-args class=hit-differs args=['--print-cmd', '--app-id=a', '--title=t', '--dir=/x', '--hold']
+  theirs rc=0 out='foot\n--app-id=a\n--title\nt\n--chdir=/x\n--hold\n'
+  ours   rc=0 out='foot\n--app-id=a\n--title\nt\n--chdir=/x\n--hold\n'
+  cold   rc=0 out='foot\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-84-valid-cache-action class=hit-differs args=['--print-id', '--print-path']
+  theirs rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n'
+  ours   rc=0 out='foot.desktop:srv\n$ROOT/usr/share/applications/foot.desktop:srv\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-85-valid-cache-multiline-exec class=hit-differs args=['--test']
+  theirs rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n  >c\nd<\n'
+  ours   rc=0 out='Command and arguments:\n  >foot<\n  >--a\nb<\n  >c\nd<\n'
+  cold   rc=0 out='Command and arguments:\n  >foot<\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-86-valid-cache-cmd-builtin class=hit args=['--print-id', '--print-path', '--print-cmd']
+  theirs rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  ours   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-87-valid-cache-path-gone-content class=hit-differs args=['--print-content']
+  theirs rc=1 out=''
+  ours   rc=1 out=''
+  cold   rc=0 out='[Desktop Entry]\nType=Application\nName=foot\nExec=foot\nCategories=System;TerminalEmulator;\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-88-valid-cache-path-dot-fold class=hit args=['--print-path']
+  theirs rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  ours   rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  cold   rc=0 out='$ROOT/usr/share/applications/foot.desktop\n'
+  cache=hit (want hit) differs_from_cold=False
+  agree
+W-89-valid-cache-id-only-path-empty class=hit-differs args=['--print-id', '--print-path']
+  theirs rc=0 out='foot.desktop\n\n'
+  ours   rc=0 out='foot.desktop\n\n'
+  cold   rc=0 out='foot.desktop\n$ROOT/usr/share/applications/foot.desktop\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+W-90-valid-cache-holdarg class=hit-differs args=['--print-cmd', '--hold', '--', 'x']
+  theirs rc=0 out='foot\n--hold\n-e\nx\n'
+  ours   rc=0 out='foot\n--hold\n-e\nx\n'
+  cold   rc=0 out='foot\n-e\nx\n'
+  cache=hit (want hit) differs_from_cold=True
+  agree
+
+TOTAL 72 cases, 72 agree, 0 differ; 18 cases where the warm answer differs from the cold one

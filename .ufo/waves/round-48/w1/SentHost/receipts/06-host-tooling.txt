@@ -1,0 +1,29 @@
+# tooling this round depends on
+bwrap:  bubblewrap 0.13.1 (84464 B 2026-10-14 19:06:09.000000000 -0300)
+strace: strace -- version 7.2
+  kernel.unprivileged_userns_clone = 1
+  user.max_user_namespaces = 122865
+apparmor_restrict_unprivileged_userns: absent
+# bwrap minimal shape that works here (loader symlinks are required):
+  rc=0
+# without the symlinks: execvp fails ("No such file or directory" = missing ld-linux)
+  bwrap: execvp /usr/bin/true: No such file or directory
+# no /etc inside: ls prints numeric ids (root-owned file -> 65534, unmapped)
+  -rwxr-xr-x 1 65534 65534 44020 Sep 18 08:14 /usr/bin/xdg-terminal-exec
+# inside the r47-shaped sandbox neither /home nor /etc exists, so an 'openat under /home' check
+# there can never fire (it is vacuous, not a guard):
+  absent:  /home
+  absent:  /home/vgpnk
+  absent:  /etc/xkb
+# bwrap creates the missing parents of a bind target as EMPTY stub dirs, one level each;
+# a '/fast'-prefix path check therefore matches the legitimate case root:
+  /fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/stub: has [/fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/stub/case]
+  /fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/stub/case: has [/fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/stub/case/home]
+  sibling seat dir readable: no
+# ambient environment of a seat shell (matters to both probes):
+  HOME=/home/vgpnk
+  LANG=en_US.UTF-8
+  XDG_CACHE_HOME=/home/vgpnk/.cache
+  XDG_CONFIG_HOME=/home/vgpnk/.config
+  XDG_CURRENT_DESKTOP=Hyprland
+  XDG_DATA_HOME=/home/vgpnk/.local/share

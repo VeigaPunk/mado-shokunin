@@ -1,0 +1,36 @@
+== ls -LRl in the C locale, non-tty: the bytes that go into the md5
+.:$
+total 8$
+l????????? ? ?     ?     ?            ? broken.link$
+drwxr-xr-x 2 vgpnk vgpnk 6 Oct 26 20:51 dirlink$
+-rw-r--r-- 1 vgpnk vgpnk 3 Oct 26 20:51 good.link$
+-rw-r--r-- 1 vgpnk vgpnk 3 Oct 26 20:51 real.txt$
+drwxr-xr-x 2 vgpnk vgpnk 6 Oct 26 20:51 sub$
+$
+./dirlink:$
+total 0$
+$
+./sub:$
+total 0$
+--- stderr:
+ls: cannot access 'broken.link': No such file or directory$
+
+== symlink loop
+.:$
+total 0$
+l????????? ? ? ? ?            ? loop$
+ls: cannot access 'loop': Too many levels of symbolic links$
+
+== date form: any future mtime takes the year form; six-month boundary bracketed
+total 0$
+-rw-r--r-- 1 vgpnk vgpnk 0 Oct 26  2026 fut1$
+-rw-r--r-- 1 vgpnk vgpnk 0 Oct 26  2026 fut3600$
+-rw-r--r-- 1 vgpnk vgpnk 0 Oct 26 20:51 p1$
+-rw-r--r-- 1 vgpnk vgpnk 0 Apr 27 07:56 p15771276$
+-rw-r--r-- 1 vgpnk vgpnk 0 Apr 27  2026 p15785676$
+-rw-r--r-- 1 vgpnk vgpnk 0 Oct 26 19:51 p3599$
+-rw-r--r-- 1 vgpnk vgpnk 0 Oct 26 19:51 p3600$
+
+== numeric uid/gid when no passwd entry resolves (bwrap, /etc hidden)
+total 4$
+-rw-r--r-- 1 1000 1000 87 Oct 26 22:51 foo.desktop$

@@ -1,0 +1,23 @@
+probe-prime: xdg-terminal-exec 0.14.3 `save_cache "$1" &` under the C1 sandbox
+pin sha256 = 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+direct  = the pin is PID 1 of the bwrap namespace (exactly what a scored counter run does)
+wrapped = /bin/bash -c '<pin> "$@"; wait for the cache to end with RS+END_OF_EXEC_USEP; exit rc' (prime-wrap.sh)
+
+direct  trial=0 cache=ABSENT bytes=-1
+wrapped trial=0 cache=present bytes=199
+direct  trial=1 cache=ABSENT bytes=-1
+wrapped trial=1 cache=present bytes=199
+direct  trial=2 cache=ABSENT bytes=-1
+wrapped trial=2 cache=present bytes=199
+direct  trial=3 cache=ABSENT bytes=-1
+wrapped trial=3 cache=present bytes=199
+direct  trial=4 cache=ABSENT bytes=-1
+wrapped trial=4 cache=present bytes=199
+direct  trial=5 cache=ABSENT bytes=-1
+wrapped trial=5 cache=present bytes=199
+
+direct cache present: 0/6
+wrapped cache present: 6/6
+
+wrapped cache body (trial 0), 199 bytes:
+'288bf9f0b5ad2f124cc3de1273c6a08b\nfoot\n/fast/scratch/hyaku/mado-r48/ExecFixturesV2/probe-prime/wrapped-0/r/home/.local/share/applications/./foot.desktop\nfoot.desktop\n\n-e\n\n\n\n\nfoot\x1f--a\x1eEND_OF_EXEC_USEP\n'

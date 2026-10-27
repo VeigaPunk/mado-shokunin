@@ -1,0 +1,32 @@
+$ echo "## RED: every w2 seat that states a blind spot, a coverage hole or a surviving mutant"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check98.py --repo . --rev d40189c924e01dc1cbe290474eb4256d343590d4 --seats .ufo/waves/round-47/w2 --lesson corpus/lessons/round-47.md --report /home/vgpnk/Projects/shokunin/.ufo/reports/round-47/mado.md --report-text; echo "rc=$?"; echo; echo "## the same scan over the w1 seats"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check98.py --repo . --rev d40189c924e01dc1cbe290474eb4256d343590d4 --seats .ufo/waves/round-47/w1 --lesson corpus/lessons/round-47.md --report /home/vgpnk/Projects/shokunin/.ufo/reports/round-47/mado.md --report-text; echo "rc=$?"; echo; echo "## GREEN: the report with the four finding seats routed by name"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check98.py --repo . --rev d40189c924e01dc1cbe290474eb4256d343590d4 --seats .ufo/waves/round-47/w2 --lesson corpus/lessons/round-47.md --report .ufo/waves/round-48/w1/ScrMistakes/controls/report-98-routed.md --report-text; echo "rc=$?"
+
+## RED: every w2 seat that states a blind spot, a coverage hole or a surviving mutant
+SEAT ExecC1Determinism      hits=2   token=blind to           report=0 lesson=0 verdict=UNROUTED
+SEAT MutC1Counter           hits=9   token=survived-mutant    report=0 lesson=0 verdict=UNROUTED
+SEAT MutC1Fixtures          hits=9   token=blind spot         report=2 lesson=0 verdict=ROUTED
+SEAT MutC2Counter           hits=1   token=coverage hole      report=0 lesson=0 verdict=UNROUTED
+SEAT MutTripwire            hits=1   token=coverage gap       report=1 lesson=0 verdict=ROUTED
+SEAT RevSessionMarker       hits=1   token=coverage gap       report=0 lesson=1 verdict=ROUTED
+SEAT RevengerCache          hits=1   token=coverage gap       report=0 lesson=0 verdict=UNROUTED
+CHECK98: seats=44 finding_seats=7 unrouted=4 verdict=UNROUTED
+rc=1
+
+## the same scan over the w1 seats
+SEAT ExecAxisBase           hits=1   token=blind to           report=0 lesson=0 verdict=UNROUTED
+SEAT ExecIdGuard            hits=1   token=blind spot         report=0 lesson=1 verdict=ROUTED
+SEAT ExecSessionMarker      hits=1   token=blind spot         report=0 lesson=1 verdict=ROUTED
+SEAT ScrErrataCal           hits=1   token=coverage gap       report=0 lesson=1 verdict=ROUTED
+CHECK98: seats=41 finding_seats=4 unrouted=1 verdict=UNROUTED
+rc=1
+
+## GREEN: the report with the four finding seats routed by name
+SEAT ExecC1Determinism      hits=2   token=blind to           report=1 lesson=0 verdict=ROUTED
+SEAT MutC1Counter           hits=9   token=survived-mutant    report=1 lesson=0 verdict=ROUTED
+SEAT MutC1Fixtures          hits=9   token=blind spot         report=2 lesson=0 verdict=ROUTED
+SEAT MutC2Counter           hits=1   token=coverage hole      report=1 lesson=0 verdict=ROUTED
+SEAT MutTripwire            hits=1   token=coverage gap       report=1 lesson=0 verdict=ROUTED
+SEAT RevSessionMarker       hits=1   token=coverage gap       report=0 lesson=1 verdict=ROUTED
+SEAT RevengerCache          hits=1   token=coverage gap       report=1 lesson=0 verdict=ROUTED
+CHECK98: seats=44 finding_seats=7 unrouted=0 verdict=OK
+rc=0
+rc=0

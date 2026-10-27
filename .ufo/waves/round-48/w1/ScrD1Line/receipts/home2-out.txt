@@ -1,0 +1,10 @@
+A) bash -c under env -u HOME:
+   HOME=[<unset>] exported=0
+B) /bin/sh -c under env -u HOME (sh = bash):
+   HOME=[<unset>] exported=0
+C) the pin expansion with XDG_CONFIG_HOME and HOME both absent, set -u:
+/bin/sh: line 1: HOME: unbound variable
+D) the real pin, HOME absent, everything else absent (host defaults):
+/usr/bin/xdg-terminal-exec: line 148: HOME: unbound variable
+   pin rc=1
+E) same, with only PID-dependent noise removed: which sh -> /usr/bin/bash

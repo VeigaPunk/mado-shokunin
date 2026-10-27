@@ -1,0 +1,67 @@
+# Evidence for the classes declared OUT OF CONTRACT by lsemu.py
+# host: /usr/bin/ls 9.12 (coreutils 9.12-2), TZ=UTC, LC_ALL=C LANG=C
+
+## 1. baseline block (the bytes the resolver hashes)
+d:
+total 16
+lrwxrwxrwx 1 vgpnk vgpnk   12 Jan  2  2020 dangle -> /nonexistent
+-rw-r--r-- 1 vgpnk vgpnk    1 Jan  2  2020 f
+-rw-r--r-- 1 vgpnk vgpnk 5000 Jan  2  2020 g
+-rw-r--r-- 1 vgpnk vgpnk    1 Oct 27 00:06 sp ace
+drwxr-xr-x 2 vgpnk vgpnk   15 Jan  2  2020 sub
+
+d/sub:
+total 4
+-rw-r--r-- 1 vgpnk vgpnk 1 Jan  2  2020 h
+
+## 2. POSIXLY_CORRECT=1 changes 'total' (512-byte units)
+d:
+total 32
+lrwxrwxrwx 1 vgpnk vgpnk   12 Jan  2  2020 dangle -> /nonexistent
+
+## 3. BLOCK_SIZE=512 changes 'total'
+d:
+total 32
+lrwxrwxrwx 1 vgpnk vgpnk  1 Jan  2  2020 dangle -> /nonexistent
+
+## 4. LS_BLOCK_SIZE=1M changes 'total'
+d:
+total 1
+lrwxrwxrwx 1 vgpnk vgpnk 1 Jan  2  2020 dangle -> /nonexistent
+
+## 5. TIME_STYLE=+%s changes the date column
+d:
+total 16
+lrwxrwxrwx 1 vgpnk vgpnk   12 1577934245 dangle -> /nonexistent
+
+## 6. QUOTING_STYLE=shell changes STDOUT name bytes (hash input)
+-rw-r--r-- 1 vgpnk vgpnk    1 Oct 27 00:06 'sp ace'
+   default (literal):
+-rw-r--r-- 1 vgpnk vgpnk    1 Oct 27 00:06 sp ace
+
+## 7. COLUMNS has no effect on -l
+   identical
+
+## 8. TZ changes the rendered time
+total 16
+lrwxrwxrwx 1 vgpnk vgpnk   12 Jan  2  2020 dangle -> /nonexistent
+-rw-r--r-- 1 vgpnk vgpnk    1 Jan  2  2020 f
+total 16
+lrwxrwxrwx 1 vgpnk vgpnk   12 Jan  2  2020 dangle -> /nonexistent
+-rw-r--r-- 1 vgpnk vgpnk    1 Jan  2  2020 f
+
+## 9. st_blocks granularity on this filesystem (xfs, 4 KiB): total never rounds
+d/f blocks=8 size=1
+d/g blocks=16 size=5000
+d/sub/h blocks=8 size=1
+d blocks=0 size=63
+d/sub blocks=0 size=15
+
+## 10. an operand beginning with '-' is parsed as OPTIONS, not a path
+ls: cannot access '/nonexistent-zz': No such file or directory
+0 drwxr-xr-x 4 vgpnk vgpnk 27 Oct 27 00:06 .
+
+## 11. invalid UTF-8 name bytes are emitted raw (LC_ALL=C)
+   -   r   w   -   r   -   -   r   -   -       1       v   g   p
+   n   k       v   g   p   n   k                   0       O   c
+   t       2   7       0   0   :   0   6       b   a   d 377 376

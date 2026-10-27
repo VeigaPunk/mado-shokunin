@@ -1,0 +1,40 @@
+pin sha256: 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+tool sha256: b84d5c4f723049c0fd14189ffc7b6db1f71eb70fb97e0c476d20ddeca6de2222
+
+== A: HOME unset ==
+--- pin ---
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/ScrD1Line/a/data1/applications/:/fast/scratch/hyaku/mado-r48/ScrD1Line/a/data2/applications/
+pin rc=1
+--- tool ---
+MADO_TERM_OUT_OF_CONTRACT: HOME unset
+tool rc=2
+
+== B: FIFO named like a desktop file in a LATER application dir (XDG_DATA_HOME) ==
+--- tool ---
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/ScrD1Line/b/data1/applications/
+/fast/scratch/hyaku/mado-r48/ScrD1Line/b/data2/applications/
+tool rc=1
+--- pin (timeout 5; a block is expected) ---
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/ScrD1Line/b/data1/applications/:/fast/scratch/hyaku/mado-r48/ScrD1Line/b/data2/applications/
+pin rc=1
+
+== C: symlink loop inside an application dir ==
+--- tool ---
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/ScrD1Line/c/data1/applications/
+/fast/scratch/hyaku/mado-r48/ScrD1Line/c/data2/applications/
+tool rc=1
+--- pin ---
+No valid terminal entry was found in:
+/fast/scratch/hyaku/mado-r48/ScrD1Line/c/data1/applications/:/fast/scratch/hyaku/mado-r48/ScrD1Line/c/data2/applications/
+pin rc=1
+== C2: same loop, explain MADO_TERM line ==
+MADO_TERM_DESKTOPS: hyprland
+MADO_TERM: selected=- path=- cmd=- cache=absent verdict=NO_TERMINAL
+explain rc=3
+
+== host cache untouched ==
+2026-10-26 17:42:25.200770484 -0300 /home/vgpnk/.cache/xdg-terminal-exec

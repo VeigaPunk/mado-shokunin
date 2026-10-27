@@ -1,0 +1,7 @@
+control mut-eof-terminator
+verdict MISS (clauses: f+x)
+fixture-miss  i4-no-terminator                   oracle=(0, 'bravo\n') tool=(0, '\n')
+fixture-miss  i10-term-midline                   oracle=(0, 'bravo\n') tool=(0, 'alpha\x1eEND_OF_EXEC_USEPTRAILING\n')
+explain-miss  i4-no-terminator                   explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '', 'hit', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'invalid', 'OK', 0)
+explain-miss  i10-term-midline                   explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'invalid', 'OK', 0)
+explain-miss  i11-empty-cache                    explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'invalid', 'OK', 0)

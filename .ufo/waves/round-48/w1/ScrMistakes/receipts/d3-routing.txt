@@ -1,0 +1,27 @@
+$ the seat finding the closure routed as D3, and the report/lesson that never name the seat
+**Verdict of this seat: no determinism drift found in the count or in the reference tool; one *coverage* hole found in
+the frozen fixture set — clause f/x are blind to the readdir axis, so a tool that sorts directory entries instead of
+reading the filesystem order passes all 190 fixtures and all 190 explain checks.** Details and repros below.
+$ grep -c ExecC1Determinism <report> <lesson>
+report=0 lesson=0
+
+$ the closure routing it (round-47-verifier-spotcheck.md section 6, item 3)
+28:readdir-order blind spot; D4 locator off by one.
+136:3. D3: the readdir-order blind spot (`w2/ExecC1Determinism.md:10`) is not routed in the report or lesson. A `sorted()` walk scores
+
+$ a second unrouted finding of the same class: MutC2Counter coverage holes
+### Coverage holes (mutants no control kills — the counter can be weakened without any control noticing)
+
+report=0 lesson=0
+
+$ a third: MutC1Counter surviving mutants
+| m6 | drop explain DIFFER probe (line 285) | **KILLED** | EXPLAIN-ALWAYS-AGREE flips to TARGET_MET (explained 25/190→190/190) |
+| m7b | `readonly = "ok"` (line 456) | **KILLED** | SOCKET-AND-REF flips to TARGET_MET (readonly=ok) |
+| m1 | drop the oracle-drift raise (lines 444-445) | survived | controls cannot reach the drift path (oracle and record both sha-pinned); drift probe below |
+| m2 | `ok = o_norm[1] == t_norm[1]` (line 248) | survived | EXIT1 unchanged (25/190, 109/150); probe P-M2 → MET |
+report=0 lesson=0
+
+$ the w1 axis finding, also unnamed (the population is not w2-only)
+**C1 — the operability axis is blind to `tools/`.** Since row `operability` counts `check-index.py`'s 12 internal
+assertions (§B), adding `tools/mado-terminal.py` (this round's C1) moves **no** axis row, and a broken new tool cannot
+report=0 lesson=0

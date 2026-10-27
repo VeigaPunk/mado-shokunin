@@ -1,0 +1,121 @@
+/usr/bin/ls: ls (GNU coreutils) 9.12
+namespaces: no /etc -> numeric uid/gid; no TZ -> UTC dates
+--- operand block: sizes, numeric ids, year form, then the dir with total/header
+    argv: ls -LRl $T/cfg.list $T
+    rc=0
+    | -rw-r--r-- 1 1000 1000  2 Oct 27 00:10 $T/cfg.list
+    | 
+    | $T:
+    | total 1216
+    | -rw-r--r-- 1 1000 1000 1234567 Oct 27 00:10 big
+    | -rw-r--r-- 1 1000 1000       2 Oct 27 00:10 cfg.list
+    | -rw-r--r-- 1 1000 1000       1 Nov 14  2023 one
+    | drwxr-xr-x 2 1000 1000      15 Oct 27 00:10 sub
+    | 
+    | $T/sub:
+    | total 4
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 z
+--- the file block's columns are sized over the DIRECTORY operands too (sub's 15 widens '1')
+    argv: ls -LRl $T/one $T/sub
+    rc=0
+    | -rw-r--r-- 1 1000 1000  1 Nov 14  2023 $T/one
+    | 
+    | $T/sub:
+    | total 4
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 z
+--- dates: now-10 and now-15778476+3600 are HH:MM; the exact boundary and the future are YYYY
+    argv: ls -l $T
+    rc=0
+    | total 16
+    | -rw-r--r-- 1 1000 1000 1 Apr 27  2026 at_six_months
+    | -rw-r--r-- 1 1000 1000 1 Oct 27  2026 future_one_second
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 recent
+    | -rw-r--r-- 1 1000 1000 1 Apr 27 10:15 under_six_months
+--- -L: a dir symlink is listed and recursed as a dir; a dangling entry prints the `?` row
+    argv: ls -LRl $T
+    rc=1
+    | $T:
+    | total 0
+    | l????????? ? ?    ?     ?            ? dang
+    | drwxr-xr-x 2 1000 1000 15 Oct 27 00:10 dlink
+    | prw-r--r-- 1 1000 1000  0 Oct 27 00:10 fifo
+    | srwxr-xr-x 1 1000 1000  0 Oct 27 00:10 sock
+    | drwxr-xr-x 2 1000 1000 15 Oct 27 00:10 sub
+    | 
+    | $T/dlink:
+    | total 4
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 n
+    | 
+    | $T/sub:
+    | total 4
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 n
+    E ls: cannot access '$T/dang': No such file or directory
+--- -L: a valid symlink operand is dereferenced
+    argv: ls -LRl $T/dlink
+    rc=0
+    | $T/dlink:
+    | total 4
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 n
+--- -L: a dangling COMMAND-LINE operand prints NO row at all (stderr only)
+    argv: ls -LRl $T/dang
+    rc=2
+    E ls: cannot access '$T/dang': No such file or directory
+--- an unreadable directory OPERAND prints no header and no total at all
+    argv: ls -LRl $T/no
+    rc=2
+    E ls: cannot open directory '$T/no': Permission denied
+--- an unreadable directory inside a listing: the entry row prints, recursion prints nothing
+    argv: ls -LRl $T
+    rc=1
+    | $T:
+    | total 0
+    | d--------- 2 1000 1000 15 Oct 27 00:10 no
+    E ls: cannot open directory '$T/no': Permission denied
+--- C-locale byte order; only a newline in a name is replaced (with `?`)
+    argv: ls -l $T/r
+    rc=0
+    | total 48
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 B
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 _x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a-b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a.b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a1
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a10
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a2
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 nl?x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 tab\there
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 ~t
+--- total is st_blocks summed and rounded up to 1024-byte units; LS_BLOCK_SIZE=512 halves the unit
+    argv: ls -l $T/r env={'LS_BLOCK_SIZE': '512'}
+    rc=0
+    | total 96
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 B
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 _x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a-b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a.b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a1
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a10
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a2
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 nl?x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 tab\there
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 ~t
+--- POSIXLY_CORRECT=1 also switches total to 512-byte units
+    argv: ls -l $T/r env={'POSIXLY_CORRECT': '1'}
+    rc=0
+    | total 96
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 B
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 _x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a-b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a.b
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a1
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a10
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 a2
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 nl?x
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 tab\there
+    | -rw-r--r-- 1 1000 1000 1 Oct 27 00:10 ~t

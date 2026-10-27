@@ -1,0 +1,18 @@
+# D2 receipt-gap evidence: the report line and the absence of any receipt at the tip
+# claim site (fleet report, read-only):
+104:  - Note: the session-material gate reads `findings=128` at the tip (115 at base). It is red, R3 is not installed, and the new findings are not triaged.
+# routed site (lane, read-only):
+132:2. D2: the report's "session-material gate reads `findings=128` at the tip (115 at base)" has no committed receipt.
+133:   `git grep -c 'findings=128' d40189c9` finds nothing, and the only tip-era receipts are `w1/ExecSessionMarker/receipts/*` (findings
+# git grep at the three revisions for the literal claimed string:
+d40189c9 matching_files=0
+60edb66e matching_files=0
+579f694b matching_files=1
+# gate identity:
+blob@all_three=9d60e4c1ad251816e93184100bf1be05c649cd63
+blob@base=9d60e4c1ad251816e93184100bf1be05c649cd63 blob@tip=9d60e4c1ad251816e93184100bf1be05c649cd63 blob@r48base=9d60e4c1ad251816e93184100bf1be05c649cd63
+worktree_sha256=889f8f057bf04fc76ed93dd7ee86e3b0bd9fc1dca3a6bfb712c672da4646e3fb
+# ancestor check (git merge-base --is-ancestor):
+d40189c924e01dc1cbe290474eb4256d343590d4 ancestor_of_r48_base=yes
+60edb66e2f1cb90acc6e9442fc93ded0ca42d750 ancestor_of_r48_base=yes
+579f694b45c797a9c39761fdb4f9e0a1b71b3585 ancestor_of_r48_base=yes

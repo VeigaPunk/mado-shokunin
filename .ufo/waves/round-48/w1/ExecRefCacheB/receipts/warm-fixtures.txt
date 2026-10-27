@@ -1,0 +1,43 @@
+# receipts/warm-fixtures.txt - the patched tool vs the REAL pinned resolver on warm-cache fixtures
+# date: 2026-10-27T00:22:56Z
+# tool: mado-terminal.py sha256=1fd09ac284986b5964b07ae41da5837cbb6413ec1e51496db08c029f4d3bf255; module: warmcache.py sha256=b36b8e8ed02b75526e5766269ed9974e0a5ef7b70ebfabe122cca6942aaae943
+# per fixture the case is materialized TWICE (o/r oracle, t/r tool; same bytes, same write order), every
+# mtime is pinned to one minute-aligned epoch 30 min before the run (so the date column cannot move), and
+# BOTH trees are primed by the real pin with a cold --print-cmd (the wrapper holds the sandbox open 0.4 s
+# for the background save_cache). The fixture's after-mutations are then applied to both trees and:
+#   oracle: /oracle/xdg-terminal-exec <args>      tool: /usr/bin/python3 -I /oracle/tool.py print <args>
+# must agree on exit status and on stdout with the root rewritten to $ROOT. quiet = sha256 of a stat+content
+# snapshot of the tool tree identical before and after its run, i.e. the tool wrote nothing. The expected
+# value is never typed here: it is the oracle's own answer at run time.
+ok   cold-control                       oracle=(0, 'foot\n')
+ok   warm-absent                        oracle=(0, 'foot\n')
+ok   warm-hit-plain                     oracle=(0, 'foot.desktop\n$ROOT/usr/share/applications/foot.desktop\nfoot\n')
+ok   warm-hit-entry-edit-same-meta      oracle=(0, 'foot\n')
+ok   warm-hit-entry-edit-other-second   oracle=(0, 'foot\n')
+ok   warm-hit-list-edit-same-meta       oracle=(0, 'foot\n')
+ok   warm-hit-tryexec-stub-gone         oracle=(0, 'foot.desktop\nfoot\n')
+ok   warm-hit-args-over-cached-names    oracle=(0, 'foot\n--app-id=A\n--title\nT\n--working-directory=/d\n--hold\n')
+ok   warm-stale-desktop                 oracle=(0, 'foot\n')
+ok   warm-stale-size                    oracle=(0, 'foot\n')
+ok   warm-stale-name                    oracle=(0, 'foot\n')
+ok   warm-stale-exec-gone               oracle=(1, '')
+ok   warm-invalid-no-terminator         oracle=(0, 'foot\n')
+ok   warm-invalid-line50                oracle=(0, 'foot\n')
+ok   warm-env-disabled                  oracle=(0, 'foot\n')
+ok   warm-env-disabled-empty            oracle=(0, 'foot\n')
+ok   warm-literal-hit-values            oracle=(0, 'cached.desktop:act\n$ROOT/usr/share/applications/foot.desktop:act\nkitty\n--warm\n')
+ok   warm-literal-content               oracle=(0, '[Desktop Entry]\nType=Application\nName=Foot\nExec=foot\nCategories=System;TerminalEmulator;\n')
+ok   warm-literal-content-missing-path  oracle=(1, 'foot.desktop\n')
+ok   warm-literal-content-dir-path      oracle=(0, '')
+ok   warm-literal-line50                oracle=(0, 'foot\n')
+ok   warm-literal-line49                oracle=(0, 'kitty\n--warm\n')
+ok   warm-literal-cmd-function          oracle=(0, 'kitty\n--warm\n')
+ok   warm-literal-cmd-empty             oracle=(0, 'foot\n')
+ok   warm-literal-exec-usep-empty       oracle=(0, '\n')
+ok   warm-literal-newline-exec          oracle=(0, 'kitty\na\nb\n')
+ok   warm-literal-disable-directive     oracle=(0, 'kitty\n--warm\n')
+ok   warm-literal-symlink-cache         oracle=(0, 'cached.desktop\n')
+ok   home-unset-default                 oracle=(1, '')
+ok   home-unset-all-set                 oracle=(0, 'foot.desktop\n')
+ok   warm-hit-list-unreadable           oracle=(0, 'kitty\n--warm\n')
+WARM: fixtures=31/31

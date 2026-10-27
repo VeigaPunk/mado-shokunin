@@ -1,0 +1,110 @@
+# receipts/ls-diff.txt - warmcache.ls_lRL() vs the host's GNU ls, byte for byte, in the counter-shaped sandbox
+# (bwrap: no /etc, /usr/bin, /usr/share, /home, /var -> ids print as numbers, /etc/localtime absent -> UTC);
+# stderr dropped on both sides exactly as the resolver does at x:204. date 2026-10-27T00:22:39Z
+# oracle: ls (GNU coreutils) 9.12 (a copy of the host binary), LANG=C LC_ALL=C, stdout piped
+# harness_ls.py random trees: names with space/tab/newline/quote/backslash/unicode/255 bytes/dotfile/dash,
+# sizes 0..65536, nested dirs to depth 3, symlinks to files/dirs/ancestors/dangling/loops, empty dirs,
+# unsearchable dirs (listable, stat EACCES), unreadable dirs, hardlinks, setuid/setgid/sticky, mtimes
+# recent/old/future/epoch/pre-epoch; 1-4 random operand sets per tree incl. trailing slashes, missing paths,
+# '.', duplicates and the empty operand.
+ok tree=0 files=2 dirs=0
+ok tree=1 files=12 dirs=3
+ok tree=2 files=10 dirs=2
+ok tree=3 files=9 dirs=2
+ok tree=4 files=10 dirs=2
+ok tree=5 files=7 dirs=1
+ok tree=6 files=1 dirs=0
+ok tree=7 files=1 dirs=0
+ok tree=8 files=3 dirs=0
+ok tree=9 files=2 dirs=0
+LS-DIFF: seed=1 trees=10 cases=40 mismatches=0
+ok tree=0 files=1 dirs=0
+ok tree=1 files=2 dirs=0
+ok tree=2 files=10 dirs=3
+ok tree=3 files=8 dirs=4
+ok tree=4 files=5 dirs=2
+ok tree=5 files=2 dirs=0
+ok tree=6 files=5 dirs=0
+ok tree=7 files=2 dirs=0
+ok tree=8 files=3 dirs=0
+ok tree=9 files=10 dirs=4
+LS-DIFF: seed=2 trees=10 cases=40 mismatches=0
+ok tree=0 files=2 dirs=0
+ok tree=1 files=8 dirs=1
+ok tree=2 files=2 dirs=0
+ok tree=3 files=9 dirs=1
+ok tree=4 files=3 dirs=0
+ok tree=5 files=11 dirs=3
+ok tree=6 files=5 dirs=1
+ok tree=7 files=16 dirs=5
+ok tree=8 files=2 dirs=0
+ok tree=9 files=12 dirs=2
+LS-DIFF: seed=3 trees=10 cases=40 mismatches=0
+ok tree=0 files=3 dirs=1
+ok tree=1 files=1 dirs=0
+ok tree=2 files=20 dirs=5
+ok tree=3 files=4 dirs=2
+ok tree=4 files=3 dirs=0
+ok tree=5 files=3 dirs=0
+ok tree=6 files=9 dirs=1
+ok tree=7 files=22 dirs=6
+ok tree=8 files=5 dirs=0
+ok tree=9 files=3 dirs=0
+LS-DIFF: seed=4 trees=10 cases=40 mismatches=0
+ok tree=0 files=13 dirs=4
+ok tree=1 files=11 dirs=2
+ok tree=2 files=3 dirs=0
+ok tree=3 files=9 dirs=1
+ok tree=4 files=7 dirs=2
+ok tree=5 files=2 dirs=0
+ok tree=6 files=1 dirs=0
+ok tree=7 files=8 dirs=1
+ok tree=8 files=1 dirs=0
+ok tree=9 files=8 dirs=2
+LS-DIFF: seed=5 trees=10 cases=40 mismatches=0
+ok tree=0 files=10 dirs=3
+ok tree=1 files=6 dirs=1
+ok tree=2 files=2 dirs=0
+ok tree=3 files=1 dirs=0
+ok tree=4 files=2 dirs=0
+ok tree=5 files=8 dirs=2
+ok tree=6 files=5 dirs=0
+ok tree=7 files=3 dirs=0
+ok tree=8 files=1 dirs=0
+ok tree=9 files=1 dirs=0
+LS-DIFF: seed=6 trees=10 cases=40 mismatches=0
+
+# harness_shapes.py: 31 targeted shapes (unreadable/unsearchable dirs, cycles, symlink operands, hardlinks,
+# newline names, date boundaries, modes, no-operand and empty-operand spellings)
+ok   plain-files-only (200 bytes)
+ok   plain-dir (270 bytes)
+ok   plain-dir-slash (271 bytes)
+ok   file-then-dir (338 bytes)
+ok   dir-then-file (338 bytes)
+ok   two-dirs (298 bytes)
+ok   hardlinks (5474 bytes)
+ok   deep-relative (479 bytes)
+ok   deep-dot (535 bytes)
+ok   deep-empty-child (33 bytes)
+ok   symlinks (459 bytes)
+ok   symlink-dir-operand (549 bytes)
+ok   symlink-dir-operand-slash (550 bytes)
+ok   dangling-operand (0 bytes)
+ok   dangling-and-file (61 bytes)
+ok   unsearchable (101 bytes)
+ok   unreadable-alone (0 bytes)
+ok   unreadable-and-file (63 bytes)
+ok   unreadable-then-dir (27 bytes)
+ok   unreadable-middle (298 bytes)
+ok   file-slash-operand (0 bytes)
+ok   missing-operand (61 bytes)
+ok   dotdot (278 bytes)
+ok   names (712 bytes)
+ok   names-dir-operand-newline (78 bytes)
+ok   dates (340 bytes)
+ok   modes (404 bytes)
+ok   duplicate-operand (541 bytes)
+ok   no-operands (126381 bytes)
+ok   one-and-dot (126381 bytes)
+ok   empty-string-operand (270 bytes)
+SHAPES: cases=31 mismatches=0

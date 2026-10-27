@@ -1,0 +1,89 @@
+start 2026-10-27T00:46:55Z
+== oracle: 23 fixtures, prime + 3 identical pin runs + cold twin
+   c1-cold-select                     state=absent   warm=(0, 'alpha.desktop\n$ROOT/usr/share/applications/alpha.desktop\nalpha\n')
+   e1-home-unset                      state=absent   warm=(1, '')
+   c2-cold-none                       state=absent   warm=(1, '')
+   w1-list-edit                       state=hit      warm=(0, 'alpha\n')
+   w2-entry-exec-edit                 state=hit      warm=(0, 'alpha\n')
+   w3-args-over-cache                 state=hit      warm=(0, 'alpha\n--title\nt2\n--working-directory=/srv\n')
+   w4-id-path                         state=hit      warm=(0, 'alpha.desktop\n$ROOT/usr/share/applications/alpha.desktop\n')
+   w5-content                         state=hit      warm=(0, '[Desktop Entry]\nType=Application\nName=alpha\nExec=alpha\nCategories=System;TerminalEmulator;\n')
+   w6-execarg-edit                    state=hit      warm=(0, 'alpha\n-e\nhtop\n')
+   w7-function-cmd                    state=hit      warm=(0, 'alpha\n')
+   i1-size-change                     state=stale    warm=(0, 'bravo\n')
+   i2-desktop-change                  state=stale    warm=(0, 'bravo\n')
+   i3-exec-gone                       state=stale    warm=(0, 'bravo\n')
+   i4-no-terminator                   state=invalid  warm=(0, 'bravo\n')
+   i5-line-limit-50                   state=invalid  warm=(0, 'bravo\n')
+   i6-line-limit-49                   state=hit      warm=(0, 'pad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\npad\nalpha\n')
+   i7-bad-hash                        state=stale    warm=(0, 'bravo\n')
+   i8-disabled-env                    state=disabled warm=(0, 'bravo\n')
+   i9-disable-directive               state=stale    warm=(0, 'bravo\n')
+   i10-term-midline                   state=invalid  warm=(0, 'bravo\n')
+   i11-empty-cache                    state=invalid  warm=(0, 'alpha\n')
+   i12-cache-dir                      state=absent   warm=(0, 'alpha\n')
+   i13-literal-stale                  state=stale    warm=(0, 'bravo\n')
+== draft counter: /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py
+always-cold-but-home   MISS  f+x      f=8 x=19 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      f w1-list-edit                     oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w2-entry-exec-edit               oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w3-args-over-cache               oracle=(0, 'alpha\n--title\nt2\n--working-directory=/srv\n') tool=(0, 'alpha\n--titlx\nt2\n--working-directorx=/srv\n')
+      x e1-home-unset                    no MADO_TERM line (rc=1 Traceback (most recent call last):
+  File "/oracle/tool.py", line 1080, in <modu)
+      x w1-list-edit                     explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'present', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w2-entry-exec-edit               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'bravo', 'present', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+base                   MISS  f+x      f=9 x=19 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      f e1-home-unset                    oracle=(1, '') tool=(2, '')
+      f w1-list-edit                     oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w2-entry-exec-edit               oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      x e1-home-unset                    no MADO_TERM line (rc=2 MADO_TERM_OUT_OF_CONTRACT: HOME unset)
+      x w1-list-edit                     explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'present', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w2-entry-exec-edit               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'bravo', 'present', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+cache-ignores-enable   MISS  f+x      f=1 x=1 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      f i8-disabled-env                  oracle=(0, 'bravo\n') tool=(0, 'alpha\n')
+      x i8-disabled-env                  explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'disabled', 'OK', 0)
+delegate-ls            MISS  r        f=0 x=0 r=14 w=0 r47-clauses=MISS  draft_rc=1
+      r w1-list-edit                     ['execve("/fast/scratch/hyaku/mado-r48/ExecControlsC1/w-draft/run/delega', 'execve("/oracle/bin/ls", ["ls", "-LRl", "/fast/scratch/hyaku/mado-r48/']
+      r w2-entry-exec-edit               ['execve("/fast/scratch/hyaku/mado-r48/ExecControlsC1/w-draft/run/delega', 'execve("/oracle/bin/ls", ["ls", "-LRl", "/fast/scratch/hyaku/mado-r48/']
+explain-cache-const    MISS  x        f=0 x=14 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      x c1-cold-select                   explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'absent', 'OK', 0)
+      x e1-home-unset                    explain got=('-', '-', '-', 'hit', 'NO_TERMINAL', 3) want=('-', '-', '-', 'absent', 'NO_TERMINAL', 3)
+      x c2-cold-none                     explain got=('-', '-', '-', 'hit', 'NO_TERMINAL', 3) want=('-', '-', '-', 'absent', 'NO_TERMINAL', 3)
+explain-cmd-const      MISS  x        f=0 x=21 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      x c1-cold-select                   explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'absent', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'absent', 'OK', 0)
+      x w1-list-edit                     explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w2-entry-exec-edit               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+hash-names             MISS  f+x      f=8 x=8 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      f w1-list-edit                     oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w2-entry-exec-edit               oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w3-args-over-cache               oracle=(0, 'alpha\n--title\nt2\n--working-directory=/srv\n') tool=(0, 'alpha\n--titlx\nt2\n--working-directorx=/srv\n')
+      x w1-list-edit                     explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w2-entry-exec-edit               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'bravo', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w3-args-over-cache               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+hash-no-date           MISS  f+x      f=8 x=8 r=0 w=0 r47-clauses=MISS  draft_rc=1
+      f w1-list-edit                     oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w2-entry-exec-edit               oracle=(0, 'alpha\n') tool=(0, 'bravo\n')
+      f w3-args-over-cache               oracle=(0, 'alpha\n--title\nt2\n--working-directory=/srv\n') tool=(0, 'alpha\n--titlx\nt2\n--working-directorx=/srv\n')
+      x w1-list-edit                     explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w2-entry-exec-edit               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'bravo', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+      x w3-args-over-cache               explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'stale', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 533, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 482, in main
+    r = score_case(box, base, case, tool)
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 370, in score_case
+    exp_ok, exp_why = explain_case(box, base, case, tool, warm)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 376, in explain_case
+    root = tool_tree(box, base, case, tool)
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 356, in tool_tree
+    mutate(root, case.get("after"))
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecControlsC1/run-controls.py", line 209, in mutate
+    lines[1] = op.split(":", 1)[1]
+    ~~~~~^^^
+IndexError: list assignment index out of range
+exit=1
+end 2026-10-27T00:59:55Z

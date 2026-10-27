@@ -1,0 +1,57 @@
+# xkbcli compile-keymap empirical receipts (2026-10-26, seat CritPremiseC2)
+## command: pacman -Q libxkbcommon xkeyboard-config hyprland
+error: openai-chatgpt: missing required signature
+libxkbcommon 1.13.2-1
+xkeyboard-config 2.48-1
+hyprland 0.56.2-4
+## command: ls -ld /usr/share/X11/xkb /usr/share/xkeyboard-config-2; readlink -f /usr/share/X11/xkb
+lrwxrwxrwx 1 root root 29 Jun 21 04:24 /usr/share/X11/xkb -> /usr/share/xkeyboard-config-2
+drwxr-xr-x 1 root root 78 Oct  3 17:44 /usr/share/xkeyboard-config-2
+/usr/share/xkeyboard-config-2
+## R1: xkbcli compile-keymap --rmlvo (clean env, no XKB_DEFAULT_*)
+rules: "evdev"
+model: "pc105"
+layout: "us"
+variant: ""
+options: ""
+rc=0
+## R2: XKB_DEFAULT_LAYOUT=br without --enable-environment-names (must be ignored)
+rules: "evdev"
+model: "pc105"
+layout: "us"
+variant: ""
+options: ""
+rc=0
+## R3: XKB_DEFAULT_LAYOUT=br + XKB_DEFAULT_OPTIONS=compose:caps with --enable-environment-names
+rules: "evdev"
+model: "pc105"
+layout: "br"
+variant: ""
+options: "compose:caps"
+rc=0
+## R4: HOME/.xkb/symbols/zz (custom) compiles via user include path
+rc=0
+## R5: XDG_CONFIG_HOME/xkb/symbols/zz (custom) compiles via user include path
+rc=0
+## R6: no user paths -> only root searched (error listing)
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritPremiseC2/exp1/emptyxdg/xkb
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/CritPremiseC2/exp1/emptyhome/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+## R7: broken user symbols/xyzzy consulted before system root (junk wins, compile error cites user file)
+xkbcommon: ERROR: [XKB-769] xyzzy:1:1: syntax error, unexpected identifier
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'xyzzy'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1

@@ -1,0 +1,55 @@
+$ sha256sum of the frozen reference at the freeze commit and of the landed tool
+frozen  762d042c96e7e5f2c3187133b0ffe670c1d076b698b958199602cfa019aa6c08  -
+landed  b84d5c4f723049c0fd14189ffc7b6db1f71eb70fb97e0c476d20ddeca6de2222  tools/mado-terminal.py
+
+$ diff -u <frozen lines 78-90> <landed lines 79-91>   (the out-of-contract paragraph)
+--- /dev/fd/63	2026-10-26 20:52:53.972651926 -0300
++++ /dev/fd/62	2026-10-26 20:52:53.972651926 -0300
+@@ -4,8 +4,8 @@
+ Cache (out of contract): the resolver first tries $XDG_CACHE_HOME/xdg-terminal-exec (default $HOME/.cache), valid
+ only while an md5 of XDG_CURRENT_DESKTOP and `ls -LRl` of every list and application path is unchanged (x:179-298);
+ `--print-cmd` (not --print-id/--print-path alone) rewrites it in the background (x:1455-1458). This tool always
+-models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, an empty-string
+-argument (the script loops forever), XDG dirs or HOME containing ':' inside a default, glob characters or a quote,
++models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, HOME unset, a FIFO named like a desktop file in a
++later application dir (the script blocks reading it), symlink loops, an empty-string argument (the script loops forever), XDG dirs or HOME containing ':' inside a default, glob characters or a quote,
+ \\u/\\U escapes beyond ASCII in a delimiter, and file names with bytes the shell would see differently in another
+ locale. On these the tool prints `MADO_TERM_OUT_OF_CONTRACT: <reason>` on stderr and exits 2.
+ """
+
+$ grep -n "Also out of contract" (frozen bytes at the freeze commit, landed bytes at the tip)
+84:models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, an empty-string
+85:models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, HOME unset, a FIFO named like a desktop file in a
+
+$ the frozen contract sentence in the registration (C1 Residuals, declared)
+52:- **Residuals (declared):** a tool carrying a model of the resolver (an emulator, or a Python interpreter for an embedded
+76:- **Residuals (declared):** a capture can be typed rather than produced by the resolver (the counter checks its form
+- **Residuals (declared):** a tool carrying a model of the resolver (an emulator, or a Python interpreter for an embedded
+  copy of the script) is an implementation of it; the judge is this host's bash, find, awk and tr at count time (a
+  different host may drift; the drift check stops the count); the warm-cache path, `-h/--help`, an empty argv element
+  (the script loops forever), XDG dirs holding glob characters or quotes, and non-ASCII `\u` delimiters are outside the
+  contract; the explain trace text is not judged, only its MADO_TERM line; clause s is a printed line.
+
+$ the landed behaviour the frozen text does not name (FIFO refusal is new after the freeze)
+19:+models the cold path; `explain` says whether a cache file exists. Also out of contract: -h/--help, HOME unset, a FIFO named like a desktop file in a
+20:+later application dir (the script blocks reading it), symlink loops, an empty-string argument (the script loops forever), XDG dirs or HOME containing ':' inside a default, glob characters or a quote,
+86:+            if cst is not None and stat.S_ISFIFO(cst.st_mode):
+
+$ the HOME-unset raise: present in the frozen bytes, absent from the frozen list
+227:                    raise OutOfContract("non-ASCII \\u/\\U escape in a delimiter")
+374:            raise OutOfContract("PATH unset")
+407:            raise OutOfContract("HOME unset")
+411:                raise OutOfContract("%s holds a glob character or a quote" % k)
+414:            raise OutOfContract("HOME holds ':' a glob character or a quote")
+713:            raise OutOfContract("-h/--help")
+758:            raise OutOfContract("empty-string argument (the script loops forever)")
+763:        raise OutOfContract("no print option and no --test: the resolver would launch a terminal")
+228:                    raise OutOfContract("non-ASCII \\u/\\U escape in a delimiter")
+377:            raise OutOfContract("PATH unset")
+410:            raise OutOfContract("HOME unset")
+414:                raise OutOfContract("%s holds a glob character or a quote" % k)
+417:            raise OutOfContract("HOME holds ':' a glob character or a quote")
+529:                    raise OutOfContract("a FIFO named like a desktop file (the resolver blocks reading it)")
+735:            raise OutOfContract("-h/--help")
+780:            raise OutOfContract("empty-string argument (the script loops forever)")
+785:        raise OutOfContract("no print option and no --test: the resolver would launch a terminal")

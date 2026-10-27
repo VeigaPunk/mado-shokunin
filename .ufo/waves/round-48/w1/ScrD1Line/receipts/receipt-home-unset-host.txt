@@ -1,0 +1,30 @@
+receipt-home-unset-host — computed 2026-10-26T23:52:45Z on 7.2.11-arch1-1, pin /usr/bin/xdg-terminal-exec sha256 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+
+R1) pin with an EMPTY environment, HOME absent and every XDG default therefore unexpanded:
+$ env -i PATH=/usr/bin:/bin /usr/bin/xdg-terminal-exec --print-id
+/usr/bin/xdg-terminal-exec: line 148: HOME: unbound variable
+rc=1
+
+R2) pin with HOME removed but all three HOME-bearing defaults SET (a scratch tree, so no host path or host entry appears):
+$ env -u HOME XDG_CONFIG_HOME=... XDG_DATA_HOME=... XDG_CACHE_HOME=... XDG_CONFIG_DIRS=... XDG_DATA_DIRS=... /usr/bin/xdg-terminal-exec --print-id
+term.desktop
+rc=0
+
+R3) the same with the LANDED tool in the identical environment:
+MADO_TERM_OUT_OF_CONTRACT: HOME unset
+rc=2
+
+R4) the trap that makes host probes lie: this session exports all three HOME-bearing defaults, so 'env -u HOME'
+    removes nothing the pin needs and the pin answers from the HOST tree (an id from /usr/share, redacted here).
+   XDG_CONFIG_HOME: set, len=19, value=<host-home>/.config
+   XDG_DATA_HOME: set, len=24, value=<host-home>/.local/share
+   XDG_CACHE_HOME: set, len=18, value=<host-home>/.cache
+   XDG_CONFIG_DIRS: set, len=8, value=/etc/xdg
+   XDG_DATA_DIRS: set, len=27, value=/usr/local/share:/usr/share
+
+R5) the pin's three HOME-bearing defaults (computed locators):
+148:	for xte__dir in ${XDG_CONFIG_HOME:-"${HOME}/.config"}${IFS}${XDG_CONFIG_DIRS:-/etc/xdg}; do
+166:	for xte__dir in ${XDG_DATA_HOME:-${HOME}/.local/share}${IFS}${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+172:	XDG_CACHE_HOME=${XDG_CACHE_HOME:-"${HOME}/.cache"}
+173:	XTE__CACHE_FILE=${XDG_CACHE_HOME}/xdg-terminal-exec
+303:		[ ! -d "${XDG_CACHE_HOME}" ] && mkdir -p "${XDG_CACHE_HOME}"

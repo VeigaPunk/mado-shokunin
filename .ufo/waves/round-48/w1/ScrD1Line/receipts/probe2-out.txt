@@ -1,0 +1,44 @@
+== A: HOME unset (valid entry present) ==
+--- pin ---
+term.desktop
+pin rc=0
+--- tool ---
+MADO_TERM_OUT_OF_CONTRACT: HOME unset
+tool rc=2
+--- tool explain ---
+tool explain rc=2
+MADO_TERM_OUT_OF_CONTRACT: HOME unset
+
+== B: FIFO named pipe.desktop in XDG_DATA_HOME (the later-walked dir) ==
+--- tool ---
+MADO_TERM_OUT_OF_CONTRACT: a FIFO named like a desktop file (the resolver blocks reading it)
+tool rc=2
+--- pin (timeout 5; a block is expected) ---
+pin rc=124
+
+== B2: same FIFO, control: no FIFO, both dirs have the valid entry ==
+--- tool ---
+term.desktop
+tool rc=0
+--- pin ---
+term.desktop
+pin rc=0
+
+== C: symlink loop in the first-walked application dir ==
+--- tool ---
+term.desktop
+tool rc=0
+--- tool explain ---
+MADO_TERM: selected=term.desktop path=/fast/scratch/hyaku/mado-r48/ScrD1Line/c2/data1/applications/term.desktop cmd=ls cache=absent verdict=OK
+explain rc=0
+--- pin ---
+term.desktop
+pin rc=0
+
+== C3: symlink loop but the entry lives in a deeper real subdir ==
+--- tool ---
+sub-deep.desktop
+tool rc=0
+--- pin ---
+sub-deep.desktop
+pin rc=0

@@ -1,0 +1,50 @@
+# xkbcli compile-keymap (1.13.2): read-only? env-sensitive?
+1) file writes and sockets, traced (openat/creat/unlink/mkdir + socket/connect):
+  write-ish ops: 0   socket/connect: 0   execve: 2
+  859597 execve("/usr/bin/xkbcli", ["/usr/bin/xkbcli", "compile-keymap", "--layout", "br"], 0x7ffc1321ed88 /* 268 vars */) = 0
+  859597 execve("/usr/lib/xkbcommon/xkbcli-compile-keymap", ["/usr/lib/xkbcommon/xkbcli-compil"..., "--layout", "br"], 0x7ffdbde00ea0 /* 268 vars */) = 0
+2) XKB_DEFAULT_* are inert here (a full keymap hash per run):
+  no args                           7f40cb5f5ff8e300
+  XKB_DEFAULT_LAYOUT=br             7f40cb5f5ff8e300
+  XKB_DEFAULT_RULES=nope (rc)       7f40cb5f5ff8e300 rc=0
+  XKB_DEFAULT_OPTIONS=compose:caps  7f40cb5f5ff8e300
+  --layout br                       6ef2127653b0ca1a
+  --layout br --options compose:caps efd487a399201523
+3) include path is env-controlled (each tree poisoned with symbols/zz):
+  XDG_CONFIG_HOME/xkb hit: 1
+  HOME/.xkb hit:           1
+  XKB_CONFIG_EXTRA_PATH:   1
+  XKB_CONFIG_ROOT=<empty dir> searched-root line: xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/emptyroot
+  XKB_CONFIG_ROOT=/nonexistent searched-root line: xkbcommon: ERROR: [XKB-338] 	/usr/share/X11/xkb
+  unset searched-root line: xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+4) XKB_LOG_LEVEL decides whether the XKB-595 warning exists at all (rc stays 0 in every row):
+  XKB_LOG_LEVEL=UNSET    XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=0        XKB-595 lines=0 first=[]
+  XKB_LOG_LEVEL=5        XKB-595 lines=0 first=[]
+  XKB_LOG_LEVEL=10       XKB-595 lines=0 first=[]
+  XKB_LOG_LEVEL=20       XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=30       XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=critical XKB-595 lines=0 first=[]
+  XKB_LOG_LEVEL=error    XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=warning  XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=none     XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+  XKB_LOG_LEVEL=bogus    XKB-595 lines=1 first=[xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO optio]
+5) failing lookups name the root and the defaults actually used:
+  xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+  xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+  xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+  xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+  xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb
+  xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb
+  xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+  xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+  xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+  xkbcommon: ERROR: Failed to compile xkb_symbols
+  xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+  ERROR: Couldn't create xkb keymap
+  -- and the defaults the host build carries (empty root forces the lookup to state them):
+  xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "evdev"
+  xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'evdev', model 'pc105', layout 'zz', variant '(null)', options '(null)'
+  xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+  xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+  xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"

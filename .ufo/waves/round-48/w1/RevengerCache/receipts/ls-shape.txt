@@ -1,0 +1,50 @@
+== ls -LRl (as gen_hash calls it, stderr dropped)
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d:
+total 8
+-rw-r--r-- 1 vgpnk vgpnk  3 Oct 26 20:52 b.desktop
+l????????? ? ?     ?      ?            ? broken.desktop
+-rw-r--r-- 1 vgpnk vgpnk  2 Oct 26 20:52 link.desktop
+drwxr-xr-x 2 vgpnk vgpnk 23 Oct 26 20:52 sub
+
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/sub:
+total 4
+-rw-r--r-- 1 vgpnk vgpnk 2 Oct 26 20:52 z.desktop
+
+== same tree without -L, for contrast
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d:
+total 4
+-rw-r--r-- 1 vgpnk vgpnk  3 Oct 26 20:52 b.desktop
+lrwxrwxrwx 1 vgpnk vgpnk 17 Oct 26 20:52 broken.desktop -> /nonexistent/nope
+lrwxrwxrwx 1 vgpnk vgpnk 66 Oct 26 20:52 link.desktop -> /fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/real/t.desktop
+drwxr-xr-x 2 vgpnk vgpnk 23 Oct 26 20:52 sub
+
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/sub:
+total 4
+-rw-r--r-- 1 vgpnk vgpnk 2 Oct 26 20:52 z.desktop
+
+== st_blocks (512-byte units) of the same names
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/b.desktop blocks=8 size=3 mode=-rw-r--r-- nlink=1
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/broken.desktop blocks=0 size=17 mode=lrwxrwxrwx nlink=1
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/link.desktop blocks=0 size=66 mode=lrwxrwxrwx nlink=1
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/sub blocks=0 size=23 mode=drwxr-xr-x nlink=2
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/d/sub/z.desktop blocks=8 size=2 mode=-rw-r--r-- nlink=1
+
+== POSIXLY_CORRECT changes the block unit of the 'total' line
+  default        : total 4
+  POSIXLY_CORRECT: total 8
+
+== operand order: files first, then directories, each alphabetically (what gen_hash relies on)
+-rw-r--r-- 1 vgpnk vgpnk 2 Oct 26 20:52 /fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/a.list
+-rw-r--r-- 1 vgpnk vgpnk 2 Oct 26 20:52 /fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/m.list
+
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/aa:
+total 0
+
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/zz:
+total 0
+
+== nonexistent operands vanish into 2>/dev/null; their absence is the only signal
+-rw-r--r-- 1 vgpnk vgpnk 2 Oct 26 20:52 /fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/m.list
+
+== a directory header line contains the operand spelling verbatim (no realpath)
+/fast/scratch/hyaku/mado-r48/RevengerCache/probe-ls/o/../d:

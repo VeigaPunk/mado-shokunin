@@ -1,0 +1,136 @@
+== 1. pins ==
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/context-priv.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/keymap.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/messages-codes.h
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/xkbcomp.c
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/meson.build
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/doc/rules-format.md
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/doc/custom-configuration.md
+PASS pin fetch/libxkbcommon/xkbcommon-1.13.2/tools/compile-keymap.c
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/rules.in
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/meson.build
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/base.xml
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/base.extras.xml
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/symbols/br
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/__init__.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/__main__.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/compatibility.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/options.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/parser.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/registry.py
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/template.py
+PASS pin fetch/host/rules-evdev
+PASS pin fetch/host/symbols-br
+PASS pin fetch/host/rules-base.xml
+PASS pin fetch/host/rules-evdev.xml
+PASS pin fetch/host/rules-base.extras.xml
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/symbols/legacy-links.txt
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/compat/layoutsMapping.lst
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/compat/variantsMapping.lst
+PASS pin fetch/xkeyboard-config/xkeyboard-config-2.48/rules/compat/variantsMapping-vendors.lst
+
+== 2. host snapshots vs pins ==
+PASS host symbols/br == pin
+PASS host rules/base.xml == pin
+PASS host rules/evdev.xml == host base.xml
+PASS host rules/base.extras.xml == pin
+PASS symbols/br digest matches
+
+== 3. locators (located.md) ==
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/keymap.c:183 unique  <<xkb_keymap_new_from_names(struct xkb_context *ctx,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/keymap.c:187 unique  <<return xkb_keymap_new_from_names2(ctx, rmlvo_in,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context-priv.c:187 unique  <<xkb_context_sanitize_rule_names(struct xkb_context *ctx,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context-priv.c:193 unique  <<rmlvo->rules = xkb_context_get_default_rules(ctx);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/xkbcomp.c:157 unique  <<ok = xkb_components_from_rules_names(keymap->ctx, rmlvo, &kccgst,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/meson.build:194  <<configh_data.set_quoted('DEFAULT_XKB_RULES', get_option('default-rules'))>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:1481 unique  <<if (m->rule.num_mlvo_values != m->mapping.num_mlvo ||>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:1504 unique  <<NOTE: Wild card * matches empty values only for model and options, as>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:1140 unique  <<return wildcard_type == WILDCARD_MATCH_ALL || !!to.len;>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:1103 unique  <<match_group(struct matcher *m, struct sval group_name, struct sval to)>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:1163 unique  <<to->matched = true;>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:2001 unique  <<! include <rules>>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:2063 unique  <<Unrecognized RMLVO option>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/messages-codes.h:150 unique  <<XKB_ERROR_CANNOT_RESOLVE_RMLVO = 595,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:2048 unique  <<Unrecognized RMLVO model>>
+PASS fetch/host/rules-evdev:59  <<*		=	evdev>>
+PASS fetch/host/rules-evdev:175  <<*		 *			=	pc+%l%(v)>>
+PASS fetch/host/rules-evdev:138  <<! model		 layout			=	symbols>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c:355 unique  <<Couldn't find file>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/messages-codes.h:116 unique  <<XKB_ERROR_INCLUDED_FILE_NOT_FOUND = 338,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c:501 unique  <<Couldn't process include statement for '%s(%s)'>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/messages-codes.h:162 unique  <<XKB_ERROR_INVALID_INCLUDED_FILE = 661,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/xkbcomp.c:62 unique  <<Failed to compile keymap>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/xkbcomp.c:105  <<log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c:169  <<log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/messages-codes.h:190 unique  <<XKB_ERROR_KEYMAP_COMPILATION_FAILED = 822,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/tools/compile-keymap.c:521  <<ERROR: Couldn't create xkb keymap>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/tools/compile-keymap.c:503 unique  <<return xkb_keymap_new_from_names2(ctx, rmlvo, keymap_input_format,>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/xkbcomp.c:106  <<Couldn't look up rules>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:243 unique  <<xkb_context_include_path_append_default(struct xkb_context *ctx)>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:257 unique  <<asprintf_safe("%s/xkb", xdg);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:264 unique  <<asprintf_safe("%s/.config/xkb", home);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:272 unique  <<asprintf_safe("%s/.xkb", home);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:279 unique  <<xkb_context_include_path_get_extra_path(ctx);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:317 unique  <<xkb_context_include_path_get_system_path(ctx);>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:97 unique  <<return extra ? extra : DFLT_XKB_CONFIG_EXTRA_PATH;>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/context.c:236 unique  <<return root ? root : DFLT_XKB_CONFIG_ROOT;>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/meson.build:116 unique  <<XKB_CONFIG_ROOT = XKEYBOARD_CONFIG_ROOT>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/meson.build:179 unique  <<configh_data.set_quoted('DFLT_XKB_CONFIG_ROOT', XKB_CONFIG_ROOT)>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/meson.build:192 unique  <<configh_data.set_quoted('DFLT_XKB_CONFIG_EXTRA_PATH', XKB_CONFIG_EXTRA_PATH)>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c:170 unique  <<%u include paths searched:>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/include.c:184 unique  <<%u include paths could not be added:>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/doc/custom-configuration.md:199 unique  <<`$XKB_CONFIG_EXTRA_PATH` if set, otherwise `<sysconfdir>/xkb`>>
+PASS doc order $XDG_CONFIG_HOME/xkb at line 125
+PASS doc order $HOME/.xkb at line 190
+PASS doc order $XKB_CONFIG_EXTRA_PATH at line 199
+PASS doc order $XKB_CONFIG_ROOT at line 215
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:520  <<if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:527  <<darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:530  <<Less layouts than variants>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:447  <<if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {>>
+PASS fetch/libxkbcommon/xkbcommon-1.13.2/src/xkbcomp/rules.c:2111 unique  <<xkb_components_from_rules_names(struct xkb_context *ctx,>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/rules/meson.build:26 unique  <<'rules.generator',>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/rules/meson.build:36 unique  <<cmd += ['--compat']>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/rules/meson.build:49 unique  <<ruleset_xml = configure_file(output: f'@ruleset@.xml',>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/rules/generator/__main__.py:53 unique  <<add_argument("--compat", action="store_true", help="Compatibility rules")>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/rules/rules.in:2 unique  <<This file use the following template format:>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/symbols/br:4 unique  <<xkb_symbols "abnt2" {>>
+PASS fetch/xkeyboard-config/xkeyboard-config-2.48/symbols/br:68 unique  <<xkb_symbols "thinkpad" {>>
+PASS symbols/br has no 'nope' section
+PASS fetch/host/rules-evdev:529  <<! option				=	symbols>>
+PASS fetch/host/rules-evdev:570  <<compose:caps				=	+compose(caps)>>
+PASS fetch/host/rules-evdev:378  <<*		=	+inet(evdev)>>
+
+== 4. generation: pinned generator + rules.in -> rules/evdev ==
+PASS regenerated rules/evdev (--compat) == host byte-for-byte
+PASS without --compat the output differs (host rules were built with --compat)
+PASS receipts/rules-evdev-regenerated has the host digest
+PASS receipts/rules-evdev-regenerated-nocompat differs from host (as recorded)
+
+== 5. live receipts ==
+PASS receipt digest (br + compose:caps keymap, 73079 bytes)
+PASS receipt size 73079
+PASS receipt symbols set name pc_br_inet(evdev)_compose(caps)
+PASS receipt stderr empty (rc 0 path)
+PASS live re-run xkbcli compile-keymap --layout br --options compose:caps reproduces the receipt
+PASS live --layout zz exits nonzero with XKB-338
+PASS live [--layout br --options compose:caps] rc=0, empty stderr
+PASS live [--layout br] rc=0, empty stderr
+PASS live [--layout zz] rc=1 with XKB-338
+PASS live [--layout br --variant nope] rc=1 with XKB-661
+PASS live [--rules nope --layout br] rc=1 with XKB-338
+PASS live [--layout br --options nope:nope] rc=0 with XKB-595
+PASS live [--layout br --model nope] rc=0, empty stderr
+PASS live [--layout br,us] rc=0, empty stderr
+PASS live [--layout us,br --variant nodeadkeys log=warning] rc=1 with XKB-661
+PASS live [--layout br --variant nodeadkeys,nodeadkeys] rc=0 with Less layouts than variants
+PASS live [--layout us,br --variant abnt2,nodeadkeys] rc=1 with XKB-661
+PASS live padding warning appears at XKB_LOG_LEVEL=warning
+PASS padding warning hidden at default level
+PASS live info: Include path failed: "/etc/xkb"
+PASS live info: Include path added: /usr/share/xkeyboard-config-2
+
+passed=125 failed=0

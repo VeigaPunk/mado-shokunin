@@ -1,0 +1,107 @@
+# read-only xkbcli compile-keymap receipts, host libxkbcommon 1.13.2-1 xkeyboard-config 2.48-1, 2026-10-26, HOME-sandboxed output not used (host user paths absent)
+1.13.2
+$ xkbcli compile-keymap --kccgst --layout br --options compose:caps
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)+compose(caps)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --test --layout br --options compose:caps
+rc=0
+$ xkbcli compile-keymap --kccgst --layout zz
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+zz+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --test --layout zz
+xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	$HOME/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	$HOME/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'zz'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+$ xkbcli compile-keymap --kccgst --layout br --variant nope
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nope)+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --test --layout br --variant nope
+xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'
+xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"
+xkbcommon: ERROR: Failed to compile xkb_symbols
+xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+ERROR: Couldn't create xkb keymap
+rc=1
+$ xkbcli compile-keymap --test --layout br --options nope:nope
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored
+rc=0
+$ xkbcli compile-keymap --test --layout br --model nope
+rc=0
+$ xkbcli compile-keymap --test --rules nope --layout br
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2
+xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	$HOME/.config/xkb
+xkbcommon: ERROR: [XKB-338] 	$HOME/.xkb
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "nope"
+xkbcommon: ERROR: [XKB-822] Couldn't look up rules 'nope', model 'pc105', layout 'br', variant '(null)', options '(null)'
+ERROR: Couldn't create xkb keymap
+rc=1
+$ xkbcli compile-keymap --kccgst --layout br,us --variant ,intl
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+us(intl):2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --kccgst --layout br,us --variant nodeadkeys
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br(nodeadkeys)+us:2+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --kccgst --layout br --variant ,intl
+xkbcommon: ERROR: Less layouts than variants: "br" vs. ",intl".
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0
+$ xkbcli compile-keymap --kccgst --layout br,us,de,fr,es --variant ,,,,
+xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO layout "es" was ignored
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compat { include "complete" };
+  xkb_symbols { include "pc+br+us:2+de:3+fr:4+inet(evdev)" };
+  xkb_geometry { include "pc(pc105)" };
+};
+rc=0

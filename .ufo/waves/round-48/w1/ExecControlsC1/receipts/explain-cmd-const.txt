@@ -1,0 +1,155 @@
+control explain-cmd-const
+verdict MISS (clauses: x)
+explain-miss  c1-cold-select                     explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'absent', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'absent', 'OK', 0)
+explain-miss  w1-list-edit                       explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w2-entry-exec-edit                 explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w3-args-over-cache                 explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w4-id-path                         explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w5-content                         explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w6-execarg-edit                    explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  w7-function-cmd                    explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'hit', 'OK', 0)
+explain-miss  i1-size-change                     explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+explain-miss  i2-desktop-change                  explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+explain-miss  i3-exec-gone                       explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+explain-miss  i4-no-terminator                   explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'invalid', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'invalid', 'OK', 0)
+explain-miss  i5-line-limit-50                   explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'invalid', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'invalid', 'OK', 0)
+explain-miss  i6-line-limit-49                   explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'hit', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'pad', 'hit', 'OK', 0)
+explain-miss  i7-bad-hash                        explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+explain-miss  i8-disabled-env                    explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'disabled', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'disabled', 'OK', 0)
+explain-miss  i9-disable-directive               explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+explain-miss  i10-term-midline                   explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'invalid', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'invalid', 'OK', 0)
+explain-miss  i11-empty-cache                    explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'invalid', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'invalid', 'OK', 0)
+explain-miss  i12-cache-dir                      explain got=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', '-', 'absent', 'OK', 0) want=('alpha.desktop', '$ROOT/usr/share/applications/alpha.desktop', 'alpha', 'absent', 'OK', 0)
+explain-miss  i13-literal-stale                  explain got=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', '-', 'stale', 'OK', 0) want=('bravo.desktop', '$ROOT/usr/share/applications/bravo.desktop', 'bravo', 'stale', 'OK', 0)
+
+draft counter (rc=1):
+PRED-C1-r48 clause=a tool=present
+PRED-C1-r48 clause=meta rev=3c4e0caf743c2672e20bc0dfeb3b92af7d057c3d nonce=48 lane=/home/vgpnk/Projects/shokunin/mado-shokunin
+PRED-C1-r48 clause=s rc=0 last='MADO_TERMINAL_SELFTEST: 43/43 passed'
+PRED-C1-r48 clause=f fixture=a1-cfg-home-plain-list pass
+PRED-C1-r48 clause=f fixture=a2-cfg-home-beats-cfg-dirs pass
+PRED-C1-r48 clause=f fixture=a3-cfg-home-missing-falls-to-cfg-dirs pass
+PRED-C1-r48 clause=f fixture=a4-cfg-home-empty-list pass
+PRED-C1-r48 clause=f fixture=a5-cfg-home-list-crlf pass
+PRED-C1-r48 clause=f fixture=b1-data-dir-plain-list pass
+PRED-C1-r48 clause=f fixture=b2-data-dir-desktop-list pass
+PRED-C1-r48 clause=f fixture=b3-data-dir-list-loses-to-cfg-home pass
+PRED-C1-r48 clause=f fixture=b4-second-data-dir-list pass
+PRED-C1-r48 clause=f fixture=c1-multi-component-first-wins pass
+PRED-C1-r48 clause=f fixture=c2-multi-component-order-reversed pass
+PRED-C1-r48 clause=f fixture=c3-desktop-name-case-insensitive pass
+PRED-C1-r48 clause=f fixture=c4-desktop-list-absent-uses-plain pass
+PRED-C1-r48 clause=f fixture=c5-desktop-prefixed-beats-plain pass
+PRED-C1-r48 clause=f fixture=d1-comments-blank-whitespace pass
+PRED-C1-r48 clause=f fixture=d2-whitespace-only-list pass
+PRED-C1-r48 clause=f fixture=d3-trailing-spaces-on-id pass
+PRED-C1-r48 clause=f fixture=d4-malformed-id-discarded pass
+PRED-C1-r48 clause=f fixture=d5-tab-indented-id pass
+PRED-C1-r48 clause=f fixture=d6-directive-looking-id pass
+PRED-C1-r48 clause=f fixture=e1-action-valid pass
+PRED-C1-r48 clause=f fixture=e2-action-not-in-actions-key pass
+PRED-C1-r48 clause=f fixture=e3-action-without-actions-key pass
+PRED-C1-r48 clause=f fixture=e4-action-id-invalid pass
+PRED-C1-r48 clause=f fixture=e5-action-group-unlisted pass
+PRED-C1-r48 clause=f fixture=e6-no-retry-after-failed-attempt pass
+PRED-C1-r48 clause=f fixture=f1-exclude-fallback pass
+PRED-C1-r48 clause=f fixture=f2-include-then-exclude-keeps pass
+PRED-C1-r48 clause=f fixture=f3-exclude-then-include-still-excluded pass
+PRED-C1-r48 clause=f fixture=f4-exclusion-does-not-touch-explicit-list pass
+PRED-C1-r48 clause=f fixture=f6-exclude-id-with-action-suffix pass
+PRED-C1-r48 clause=f fixture=f7-include-id-with-action-suffix pass
+PRED-C1-r48 clause=f fixture=f5-exclude-nonexistent-id pass
+PRED-C1-r48 clause=f fixture=g1-duplicate-data-home-wins pass
+PRED-C1-r48 clause=f fixture=g2-duplicate-two-data-dirs pass
+PRED-C1-r48 clause=f fixture=g3-duplicate-three-dirs pass
+PRED-C1-r48 clause=f fixture=h1-subdir-id-explicit pass
+PRED-C1-r48 clause=f fixture=h2-subdir-two-levels pass
+PRED-C1-r48 clause=f fixture=h3-subdir-fallback-scan pass
+PRED-C1-r48 clause=f fixture=i1-hidden-true-rejected pass
+PRED-C1-r48 clause=f fixture=i2-hidden-false-accepted pass
+PRED-C1-r48 clause=f fixture=i3-hidden-uppercase-true-accepted pass
+PRED-C1-r48 clause=f fixture=j1-nodisplay-true-single pass
+PRED-C1-r48 clause=f fixture=j2-nodisplay-true-with-list pass
+PRED-C1-r48 clause=f fixture=j3-nodisplay-false-accepted pass
+PRED-C1-r48 clause=f fixture=k1-type-link pass
+PRED-C1-r48 clause=f fixture=k2-type-application pass
+PRED-C1-r48 clause=f fixture=k3-type-absent pass
+PRED-C1-r48 clause=f fixture=l1-no-terminalemulator-rejected pass
+PRED-C1-r48 clause=f fixture=l2-terminalemulator-among-many pass
+PRED-C1-r48 clause=f fixture=l3-categories-absent-rejected pass
+PRED-C1-r48 clause=f fixture=l4-lowercase-category-rejected pass
+PRED-C1-r48 clause=f fixture=l5-no-trailing-semicolon pass
+PRED-C1-r48 clause=f fixture=m1-tryexec-missing pass
+PRED-C1-r48 clause=f fixture=m2-tryexec-present pass
+PRED-C1-r48 clause=f fixture=m3-tryexec-not-executable pass
+PRED-C1-r48 clause=f fixture=m4-tryexec-absolute-exists pass
+PRED-C1-r48 clause=f fixture=m5-tryexec-absolute-missing pass
+PRED-C1-r48 clause=f fixture=n1-exec-key-absent pass
+PRED-C1-r48 clause=f fixture=n2-exec-empty pass
+PRED-C1-r48 clause=f fixture=n3-exec-spaces-only pass
+PRED-C1-r48 clause=f fixture=o1-onlyshowin-mismatch-fallback pass
+PRED-C1-r48 clause=f fixture=o2-onlyshowin-match pass
+PRED-C1-r48 clause=f fixture=o3-notshowin-match-fallback pass
+PRED-C1-r48 clause=f fixture=o4-notshowin-mismatch pass
+PRED-C1-r48 clause=f fixture=o5-showin-ignored-for-explicit-list pass
+PRED-C1-r48 clause=f fixture=p1-config-home-unset pass
+PRED-C1-r48 clause=f fixture=p2-config-home-empty pass
+PRED-C1-r48 clause=f fixture=p3-data-home-unset pass
+PRED-C1-r48 clause=f fixture=p4-data-dirs-unset pass
+PRED-C1-r48 clause=f fixture=p5-data-dirs-empty pass
+PRED-C1-r48 clause=f fixture=p6-config-dirs-unset pass
+PRED-C1-r48 clause=f fixture=p7-desktop-unset pass
+PRED-C1-r48 clause=f fixture=p8-desktop-empty pass
+PRED-C1-r48 clause=f fixture=q1-empty-root pass
+PRED-C1-r48 clause=f fixture=q2-list-names-missing-id pass
+PRED-C1-r48 clause=f fixture=q3-all-entries-invalid pass
+PRED-C1-r48 clause=f fixture=q4-print-cmd-empty-root pass
+PRED-C1-r48 clause=f fixture=r1-fallback-prefers-data-home pass
+PRED-C1-r48 clause=f fixture=r2-fallback-prefers-first-data-dir pass
+PRED-C1-r48 clause=f fixture=r3-list-first-invalid-second-valid pass
+PRED-C1-r48 clause=f fixture=r4-nonexistent-id-then-fallback pass
+PRED-C1-r48 clause=f fixture=s1-terminalarg-exec-e pass
+PRED-C1-r48 clause=f fixture=s2-terminalarg-exec-dashes pass
+PRED-C1-r48 clause=f fixture=s3-execarg-compat-default pass
+PRED-C1-r48 clause=f fixture=s4-execarg-strict-discards-entry pass
+PRED-C1-r48 clause=f fixture=s5-execarg-default-directive pass
+PRED-C1-r48 clause=f fixture=s6-terminalarg-hold pass
+PRED-C1-r48 clause=f fixture=s7-terminalarg-dir-concat pass
+PRED-C1-r48 clause=f fixture=s8-terminalarg-title-two-args pass
+PRED-C1-r48 clause=f fixture=s9-terminalarg-appid-concat pass
+PRED-C1-r48 clause=f fixture=s10-terminalarg-escape-expansion pass
+PRED-C1-r48 clause=f fixture=s11-no-terminalarg-strict-list pass
+PRED-C1-r48 clause=f fixture=t1-field-f pass
+PRED-C1-r48 clause=f fixture=t2-field-U pass
+PRED-C1-r48 clause=f fixture=t3-field-percent-literal pass
+PRED-C1-r48 clause=f fixture=t4-field-i pass
+PRED-C1-r48 clause=f fixture=t5-field-unknown pass
+PRED-C1-r48 clause=f fixture=t6-exec-quoted-binary-with-space pass
+PRED-C1-r48 clause=f fixture=t7-exec-quoted-argument pass
+PRED-C1-r48 clause=f fixture=t8-exec-unquoted-dollar pass
+PRED-C1-r48 clause=f fixture=t9-exec-trailing-spaces pass
+PRED-C1-r48 clause=f fixture=t10-exec-tab-separator pass
+PRED-C1-r48 clause=f fixture=t11-exec-escaped-quote pass
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py", line 984, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py", line 975, in main
+    return score(a.repo, a.rev, work, nonce)
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py", line 900, in score
+    ok_a, o_a, why_a, st_a, _c_a = run_case(box, fx, "A", rng)
+                                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py", line 554, in run_case
+    t_rc, t_out, _t_err = box.run(rt, et, True, ["print"] + [a.replace("$ROOT", rt) for a in case["args"]],
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  default_cache=dc)
+                                  ^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/w1/ExecCounterC1/c1-r48-terminal-cache.py", line 302, in run
+    fd, trace = tempfile.mkstemp(dir=self.work, prefix="trace-")
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 354, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+  File "/usr/lib/python3.14/tempfile.py", line 255, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/mado-r48/ExecControlsC1/w-draft/draft-work/explain-cmd-const/c1r48-4397ni1d/trace-28osxt1g'
+

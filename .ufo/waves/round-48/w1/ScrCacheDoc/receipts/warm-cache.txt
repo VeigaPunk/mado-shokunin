@@ -1,0 +1,56 @@
+== pin and host binary
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/xdg-terminal-exec
+89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+
+== prime (cold, --print-cmd) writes the cache in the background
+stdout: foo
+cache line count: 11
+cache line 1: 0432a1f9ff9a6a458d9c895f718014b7
+cache bytes:
+0000000   0   4   3   2   a   1   f   9   f   f   9   a   6   a   4   5
+0000020   8   d   9   c   8   9   5   f   7   1   8   0   1   4   b   7
+0000040  \n   f   o   o  \n   /   f   a   s   t   /   s   c   r   a   t
+0000060   c   h   /   h   y   a   k   u   /   m   a   d   o   -   r   4
+0000100   8   /   S   c   r   C   a   c   h   e   D   o   c   /   t   /
+0000120   d   a   t   a   /   a   p   p   l   i   c   a   t   i   o   n
+0000140   s   /   .   /   f   o   o   .   d   e   s   k   t   o   p  \n
+0000160   f   o   o   .   d   e   s   k   t   o   p  \n  \n   -   e  \n
+0000200  \n  \n  \n  \n   f   o   o 036   E   N   D   _   O   F   _   E
+0000220   X   E   C   _   U   S   E   P  \n
+0000231
+
+== gen_hash reproduced byte-exactly from the tree (x:191-201)
+recomputed: 0432a1f9ff9a6a458d9c895f718014b7
+ls stdout that is hashed:
+-rw-r--r-- 1 vgpnk vgpnk 12 Oct 26 19:51 /fast/scratch/hyaku/mado-r48/ScrCacheDoc/t/home/.config/xdg-terminals.list$
+$
+/fast/scratch/hyaku/mado-r48/ScrCacheDoc/t/data/applications/:$
+total 4$
+-rw-r--r-- 1 vgpnk vgpnk 87 Oct 26 19:51 foo.desktop$
+
+== same-size, same-minute Exec edit: warm answer differs from cold
+warm stdout: foo
+D: cache is actual
+cold stdout: bar
+
+== /disable_cache reaches the cold path only (it changes the list, hence the hash)
+stdout: bar
+D: cache is out-of-date
+D: found '/disable_cache' directive
+D: cache is disabled, removing '/fast/scratch/hyaku/mado-r48/ScrCacheDoc/t/cache/xdg-terminal-exec'
+cache file after the run: 
+
+== XTE_CACHE_ENABLED=false ignores a valid cache and removes it
+primed: 0432a1f9ff9a6a458d9c895f718014b7
+stdout with XTE_CACHE_ENABLED=false: bar
+cache file after: 
+
+== an unreadable cache file is a failed read, not a fatal error
+rc/stdout: rc=0 foo
+permission-denied-lines: 1
+
+== HOME unset: fatal only where a default must expand (set -u x:23; x:148, x:166, x:172)
+(a) all three XDG base vars set: rc=0 stdout=[foo] stderr=[]
+(b) XDG_CONFIG_HOME unset: rc=1 stdout=[] stderr=[/usr/bin/xdg-terminal-exec: line 148: HOME: unbound variable]
+(c) XDG_DATA_HOME unset: rc=1 stdout=[] stderr=[/usr/bin/xdg-terminal-exec: line 166: HOME: unbound variable]
+(d) XDG_CACHE_HOME unset: rc=1 stdout=[] stderr=[/usr/bin/xdg-terminal-exec: line 172: HOME: unbound variable]

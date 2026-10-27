@@ -1,0 +1,14 @@
+probe-mtime: xdg-terminal-exec 0.14.3 cache-hash sensitivity to an mtime bump
+seed mtime = 1577836800 (2020-01-01T00:00:00Z, the old-date form)
+pin sha256 = 89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac
+each row: prime at seed mtime, re-pin every file+dir to seed+delta, scored --print-cmd with XTE_DEBUG=1
+state is the resolver's own cache verdict (D: cache is actual / out-of-date)
+
+delta=     0 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2019-12-31 21:00 foot.desktop'
+delta=    59 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2019-12-31 21:00 foot.desktop'
+delta=    60 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2019-12-31 21:01 foot.desktop'
+delta=    61 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2019-12-31 21:01 foot.desktop'
+delta=  3600 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2019-12-31 22:00 foot.desktop'
+delta= 43200 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2020-01-01 09:00 foot.desktop'
+delta= 86340 state=hit      rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2020-01-01 20:59 foot.desktop'
+delta= 86400 state=stale    rc=0 stdout_equal_to_prime=True ls='-rw-r--r-- 1 vgpnk vgpnk 116 2020-01-01 21:00 foot.desktop'

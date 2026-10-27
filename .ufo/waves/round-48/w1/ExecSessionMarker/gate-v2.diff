@@ -1,0 +1,86 @@
+--- a/.ufo/waves/round-47/w1/ExecSessionMarker/check-session-material.py
++++ b/quality/check-session-material.py
+@@ -107,7 +107,10 @@
+    ``kind=fixture`` requires every value the rule matched to sit in a reserved
+    synthetic namespace (``SYNTH_TITLE_RE``, ``SYNTH_SERIAL_RE``,
+    ``SYNTH_VENDOR_RE``, ``SYNTH_PROG_RE``, ``SYNTH_HOME_USER_RE``): a title
+-   ``redacted``/``a live window title``/``synthetic-…``, a serial ``SN0…``
++   exactly ``redacted``/``a live window title`` or one of the fixture prefixes
++   ``synthetic-``/``fixture-``/``selftest-`` followed by anything (case and
++   delimiter both matter, so a real title that merely starts with a reserved
++   word is refused), a serial ``SN0…``
+    beside a ``Fake``/``Example`` make, process rows whose program is named
+    ``synthetic-…`` with pid <= 1024, home paths under ``/home/example`` or
+    ``/home/someone``. A real title, a real serial, a live pid or a real home
+@@ -130,8 +133,11 @@
+ counts only — never a title, a program name, a serial, a description or a home
+ path, so the gate's own output is safe to paste into a receipt. Binary blobs
+ (a NUL byte in the first 8 KiB) are skipped for text rules. Files larger than
+-16 MiB are scanned for R2/R4 only, and their object scan reports
+-``truncated=True``. A client dump split across several files is still caught
++16 MiB are scanned for *every* rule, but only over their first 16 MiB: the
++tail is not read and no line reports that size cut (the ``truncated=True``
++detail belongs to the 20000-object scan limit, not to size). A blob of that
++size carrying material in its tail therefore reads clean. A client dump split
++across several files is still caught
+ per file; a dump whose ``class`` value is empty is not a clients dump. R5 is a
+ shape rule: a serial with lowercase letters, separators, a capital run of two
+ or fewer, or a trailing digit run of fewer than three is not matched by it and
+@@ -194,10 +200,15 @@
+ 
+ # Reserved synthetic namespaces. A value outside them cannot be waived: a real
+ # title, serial, process row or home user fails W4 and the finding stands.
++# A title is free text, so its namespace is exact and case-sensitive: a real
++# world title that merely starts with a reserved word ("Example Domain",
++# "Demo") must not be waivable. Only a reserved word standing alone, or one of
++# the three fixture prefixes followed by a *mandatory* delimiter, is synthetic.
++# (The round-47 draft matched the bare words -- and case-insensitively -- which
++# waived real titles; see round-48 w1/ExecSessionMarker.md F1.)
+ SYNTH_TITLE_RE = re.compile(
+     r"^(?:a live window title|another live window title|redacted)$"
+-    r"|^(?:synthetic|fixture|selftest|probe|example|demo)(?:[ -][A-Za-z0-9 ._-]{0,60})?$",
+-    re.IGNORECASE,
++    r"|^(?:synthetic|fixture|selftest)[ -][A-Za-z0-9 ._-]{0,60}$"
+ )
+ SYNTH_SERIAL_RE = re.compile(
+     r"^(?:sn0+|serial0+|synthetic[-a-z0-9]*|fake[-a-z0-9]*|example[-a-z0-9]*"
+@@ -1357,6 +1368,39 @@
+                 and rejected == [(path, R3, "value-not-synthetic:serial-not-synthetic")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+ 
++    # F1 (round-47 w2 RevSessionMarker): a title is free text, so its reserved
++    # namespace is exact. The round-47 draft waived any title that merely
++    # started with example/demo/probe (case-insensitively); these cases pin the
++    # boundary from both sides.
++    for case, title, waivable in (
++        ("example-domain", "Example Domain", False),
++        ("bare-demo", "Demo", False),
++        ("probe-prefix", "probe-session-note", False),
++        ("case-only", "Synthetic-window", False),
++        ("reserved-prefix", "synthetic-window-1", True),
++        ("reserved-exact", "redacted", True),
++    ):
++        body = CLIENT_SENTINEL.replace('"redacted"', json.dumps(title))
++        body_digest = _digest(body)
++        case_path = ".ufo/waves/round-46/w1/Seat/fixtures/title-%s.json" % case
++        case_files = {
++            case_path: body,
++            case_path + MARKER_SUFFIX: _marker("fixture", [R1], body_digest),
++            DEFAULT_WAIVERS: _registry([(case_path, body_digest, [R1], "fixture")]),
++        }
++        case_root = _waiver_repo(scratch, "title-" + case, case_files)
++        _sha, _files, findings, waived, rejected = run(case_root, "HEAD")
++        if waivable:
++            suite.check("waiver-title-%s-waived" % case,
++                        not findings and len(waived) == 1 and not rejected,
++                        "findings=%r waived=%r rejected=%r" % (findings, waived, rejected))
++        else:
++            suite.check(
++                "waiver-title-%s-rejected" % case,
++                len(findings) == 1 and not waived
++                and rejected == [(case_path, R1, "value-not-synthetic:title-not-synthetic")],
++                "findings=%r rejected=%r" % (findings, rejected))
++
+     bad_sha_files = dict(waived_files)
+     bad_sha_files[path + MARKER_SUFFIX] = _marker("fixture", [R3], "0" * 64)
+     bad_sha_root = _waiver_repo(scratch, "bad-sha", bad_sha_files)

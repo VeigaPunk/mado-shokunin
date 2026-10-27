@@ -1,0 +1,36 @@
+tool=tools/mado-terminal.py at 579f694b45c797a9c39761fdb4f9e0a1b71b3585 sha256=b84d5c4f723049c0fd14189ffc7b6db1f71eb70fb97e0c476d20ddeca6de2222
+missed=82/300 (tool stdout+rc != warm pin stdout+rc, roots normalized)
+tool equals the cold answer: 300/300
+
+misses by family:
+  keep-cache-tamper               18  w009(hit) w028(hit) w030(hit) w041(hit) w061(hit) w100(hit) w126(hit) w152(hit) w158(hit) w180(hit) w203(hit) w213(hit) w217(hit) w252(hit) w263(hit) w275(hit) w277(hit) w299(hit)
+  keep-categories-corrupt          8  w001(hit) w031(hit) w045(hit) w052(hit) w145(hit) w206(hit) w256(hit) w271(hit)
+  keep-exec-swap                  28  w000(hit) w005(hit) w008(hit) w012(hit) w016(hit) w037(hit) w054(hit) w068(hit) w076(hit) w079(hit) w083(hit) w143(hit) w151(hit) w156(hit) w163(hit) w166(hit) w168(hit) w175(hit) w188(hit) w232(hit) w236(hit) w245(hit) w246(hit) w253(hit) w254(hit) w260(hit) w262(hit) w293(hit)
+  keep-titlearg-swap              17  w017(hit) w040(hit) w043(hit) w053(hit) w072(hit) w101(hit) w130(hit) w134(hit) w153(hit) w164(hit) w174(hit) w182(hit) w202(hit) w226(hit) w270(hit) w281(hit) w292(hit)
+  keep-tryexec-stub-gone          11  w042(hit) w049(hit) w136(hit) w172(hit) w190(hit) w200(hit) w205(hit) w241(hit) w278(hit) w285(hit) w291(hit)
+
+examples:
+w000 keep-exec-swap verdict=hit
+  pin   rc=0 out='$ROOT/usr/share/applications/xterm.desktop\n[Desktop Entry]\nType=Application\nCategories=TerminalEmulator;\nTerminalArgExec=-e\nTerminalArgTitle=-T=\nExec=kitty\nTryExec=ghostty\n\nxterm\n'
+  tool  rc=0 out='$ROOT/usr/share/applications/xterm.desktop\n[Desktop Entry]\nType=Application\nCategories=TerminalEmulator;\nTerminalArgExec=-e\nTerminalArgTitle=-T=\nExec=kitty\nTryExec=ghostty\n\nkitty\n'
+w001 keep-categories-corrupt verdict=hit
+  pin   rc=0 out='xterm\n-e\ny\n'
+  tool  rc=1 out=''
+w005 keep-exec-swap verdict=hit
+  pin   rc=0 out='Command and arguments:\n  >kitty<\n  >-e<\n  >ls<\n'
+  tool  rc=0 out='Command and arguments:\n  >xterm<\n  >-e<\n  >ls<\n'
+w008 keep-exec-swap verdict=hit
+  pin   rc=0 out='xterm.desktop|xterm\n'
+  tool  rc=0 out='xterm.desktop|kitty\n'
+w009 keep-cache-tamper verdict=hit
+  pin   rc=0 out='kitty.desktop:new\n$ROOT/usr/share/applications/kitty.desktop:new\nkitty\n'
+  tool  rc=0 out='kitty.desktop\n$ROOT/usr/share/applications/kitty.desktop\nkitty\n'
+w012 keep-exec-swap verdict=hit
+  pin   rc=0 out='kitty\n-T=t x\n-e\ntop\n'
+  tool  rc=0 out='xterm\n-T=t x\n-e\ntop\n'
+w016 keep-exec-swap verdict=hit
+  pin   rc=0 out='kitty\n-e\ny\n'
+  tool  rc=0 out='xterm\n-e\ny\n'
+w017 keep-titlearg-swap verdict=hit
+  pin   rc=0 out='kitty\n-T=t x\n-e\na\n'
+  tool  rc=0 out='kitty\n-X=t x\n-e\na\n'

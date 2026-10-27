@@ -1,0 +1,65 @@
+# ExecAxisBase — axis table base receipts (mado round 48, w1)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+# REV under test: 579f694b45c797a9c39761fdb4f9e0a1b71b3585 (round-47 closure commit = round-48 base)
+# lane HEAD at receipt time: 5ff167423ee410251da0ef0c82f8e6fa25875665 (round-48: claims, w1 spec + dispatch, census before)
+# host: Linux 7.2.11-arch1-1; python3: Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+# TMPDIR=/fast/scratch/hyaku/mado-r48/ExecAxisBase
+
+## published axis table (SCORECARD.md at REV)
+# grep -n "Axis table re-derived" of the committed blob:
+2120:Axis table re-derived at the round-34 data tree (criterion 22): navigation 47/47 = 1.0; calibration resolved-active 41/41 = 1.0; operability selftest 12/12 = 1.0. Not an axis-score claim. The publication is updated so the existing gate does not go red when the new note is indexed.
+2189:**Axis table re-derived at `02088b4dff0da153df30ff174611d1257c92d0cd` plus the round-35 errata:** navigation 50/50; calibration 43/43; operability 12/12.
+2240:**Axis table re-derived at `7b745a1d943e5db5e8b9f8a7f4bee7af65b13990` (the first commit whose publication the gate parses; at `4f35c80` it read `mismatched=2`, calibration and operability NOT-PUBLISHED):** navigation 50/50; calibration resolved-active 43/43; operability selftest 12/12.
+2317:Axis table re-derived at `520c631d2925807aadadb041eeda13f8b829b0c5` (this round's records
+2399:Axis table re-derived at `3f424257a1ea69cd2655770259ba00b423293f4f` (the data commit; the records
+2421:unchanged; retired: none this round. Axis table re-derived at `bb1adce40fdbe9de9b2040f70bc64cee7a0ab0c5` (the round-38 tip; data commits `245065c`/`efb0ec2` add three indexed entries and no criterion, the records commits add neither): navigation 55/55; calibration resolved-active 50/50; operability selftest 12/12.
+2466:Axis table re-derived at `362847279eccb77b22789a37cbbe3b83b205d49c` plus the round-39 records commit (one new indexed entry, criterion 64): navigation 56/56; calibration resolved-active 51/51; operability selftest 12/12.
+2493:Axis table re-derived at `3c80537a54b4fd3b534f5cc3496a4bdc37c11371` plus the round-40 axis-line commit (two new indexed entries): navigation 58/58; calibration resolved-active 55/55; operability selftest 12/12.
+2521:Axis table re-derived at `6fd2234627558a052b2d96ff19b3234edf50e4d9` plus the round-41 records commit (one new indexed entry, criteria 69-76): navigation 59/59; calibration resolved-active 63/63; operability selftest 12/12.
+2550:Axis table re-derived at `1959770657f1f8665097c1aed4be6c1cbb07139f` plus the round-43 records commit (one new indexed entry, criteria 77-81): navigation 60/60; calibration resolved-active 68/68; operability selftest 12/12.
+2585:Axis table re-derived at the round-44 data tree (one new indexed entry, criteria 82-84): navigation 61/61; calibration resolved-active 71/71; operability selftest 12/12.
+2617:Axis table re-derived at `ee6659b` (`receipts/axis-data.txt`): navigation 62/62; calibration resolved-active 73/73; operability selftest 12/12.
+2646:Axis table re-derived at `1001bda` (`receipts/axis-data.txt`): navigation 63/63; calibration resolved-active 77/77; operability selftest 12/12.
+2675:Axis table re-derived at `0c699605` (`receipts/axis-data.txt`): navigation 64/64; calibration resolved-active 82/82; operability selftest 12/12.
+
+## gate: python3 -I quality/check-axis-scores.py --rev 579f... --repo .
+MADO_AXIS_ROW: axis=navigation published=64/64 derived=64/64 verdict=MATCH
+MADO_AXIS_ROW: axis=calibration published=82/82 derived=82/82 verdict=MATCH
+MADO_AXIS_ROW: axis=operability published=12/12 derived=12/12 verdict=MATCH
+MADO_AXIS: checked=3 mismatched=0 rev=579f694b45c797a9c39761fdb4f9e0a1b71b3585
+RC=0
+
+## instrument 1 (navigation): python3 -I quality/check-index.py --rev 579f... --repo .
+MADO_INDEX: rev=579f694b45c797a9c39761fdb4f9e0a1b71b3585 indexed=64/64 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+RC=0
+
+## instrument 2 (calibration): python3 -I .ufo/waves/round-31/c2/count.py 579f...
+counter=c2-grounding-r31-v2 rev=579f694b45c797a9c39761fdb4f9e0a1b71b3585
+METRIC literal lines=74/95 fraction=0.7789
+METRIC superseded=[1, 2, 3, 4, 5, 18, 19, 20, 32, 38, 39, 40, 48]
+METRIC active=82 resolved_active=82 fraction=1.0000
+WARN criterion 19: outside 'R13-V1' unverifiable (no lane path)
+WARN criterion 22: outside 'R16-V1' unverifiable (no lane path)
+WARN criterion 23: outside 'R17-V1/V2/V5' unverifiable (no lane path)
+WARN criterion 26: outside '/home/vgpnk/Projects/shokunin/.ufo/waves/hyaku/jj-w1/reports' unverifiable (non-lane path)
+WARN criterion 26: outside 'R18-V1/V3/V4' unverifiable (no lane path)
+WARN criterion 28: outside 'R19-V3' unverifiable (no lane path)
+LINE 1 superseded excluded
+LINE 2 superseded excluded
+LINE 3 superseded excluded
+LINE 4 superseded excluded
+LINE 5 superseded excluded
+LINE 18 superseded excluded
+LINE 19 superseded excluded
+LINE 20 superseded excluded
+LINE 32 superseded excluded
+LINE 38 superseded excluded
+LINE 39 superseded excluded
+LINE 40 superseded excluded
+LINE 48 superseded excluded
+PRED-C2-r31-v2 verdict=TARGET_MET
+RC=0
+
+## instrument 3 (operability): python3 -I quality/check-index.py --selftest
+MADO_INDEX_SELFTEST: 12/12 assertions passed
+RC=0

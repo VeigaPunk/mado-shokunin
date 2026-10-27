@@ -1,0 +1,103 @@
+# unimplemented-at-base evidence for considerthese/2026-10-26.md proposal 6
+# base 579f694b45c797a9c39761fdb4f9e0a1b71b3585; every command run 2026-10-26 in /home/vgpnk/Projects/shokunin/mado-shokunin
+
+## 1. how many QUALITY criteria exist at base, and which considerthese proposals they cite
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/QUALITY.md | grep -cE '^[0-9]+\. '
+95
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/QUALITY.md | grep -n 'considerthese/'
+367:60. Every round report states the lane's last-30-commit domain-versus-meta ratio with its command, and a lane that goes two or more roun
+399:76. A round that mines a proposal from `considerthese/<date>.md` re-derives, from the lane's own bytes, every number its mining note rep
+409:81. A round's closure row counts three things separately, each from a named channel: **attempts** from the driver digest's `launch`/`com
+411:82. A round's balance between desktop ground and the lane's own self-measurement is a re-runnable count, not prose: `python3 -I quality/
+459:considerthese/2026-10-26.md proposal 3)
+
+## 2. any lane bytes naming proposal 6 (or an outcome-first rule) at base?
+$ git grep -niE 'proposal 6|outcome-first|round-level outcome|leads with the outcome|opens with the outcome' 579f694b45c797a9c39761fdb4f9e0a1b71b3585 -- .
+579f694b45c797a9c39761fdb4f9e0a1b71b3585:considerthese/2026-10-26.md:52:6. **Lead with round-level outcomes, not counter internals.** At 75 commits a day, the useful signal for João is what his desktop tooling can now do. I should keep counter mechanics to one paragraph.
+rc=0
+
+## 3. the same sweep on the four governance files at base, counted
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/QUALITY.md | grep -ciE 'outcome-first|round-level outcome|leads with the outcome'  ->  0
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:SKILL.md | grep -ciE 'outcome-first|round-level outcome|leads with the outcome'  ->  0
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:AGENTS.md | grep -ciE 'outcome-first|round-level outcome|leads with the outcome'  ->  0
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:PROVINCE.md | grep -ciE 'outcome-first|round-level outcome|leads with the outcome'  ->  0
+
+## 4. no gate of that name under quality/ at base
+$ git ls-tree -r --name-only 579f694b45c797a9c39761fdb4f9e0a1b71b3585 quality/ | grep -ciE 'outcome'  ->  0
+
+## 5. proposals 1/2/3/5 are already disposed; proposal 6 is not mentioned
+$ git grep -n 'proposal 6' 579f694b45c797a9c39761fdb4f9e0a1b71b3585 -- corpus/ | head
+rc=0
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/lessons/round-45.md | grep -n 'privacy check on new receipts'
+81:`considerthese/2026-10-26.md` proposal 1 (privacy check on new receipts) → `quality/check-session-material.py` + QUALITY 85.
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/lessons/round-44.md | grep -n 'domain-versus-meta ratio as a running number'
+248:## considerthese (`considerthese/2026-10-25.md` proposal 1, "track the domain-versus-meta ratio as a running number")
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/lessons/round-47.md | grep -n 'running ledger of live-state tools'
+227:`considerthese/2026-10-26.md` proposal 2 (a running ledger of live-state tools) was drafted as a README ledger (`w1/ScrToolLedger/ledger
+$ git show 579f694b45c797a9c39761fdb4f9e0a1b71b3585:corpus/QUALITY.md | sed -n '454,460p' | cut -c1-160
+90. Every routed defect keeps one identity and an age from the round that first routed it: each round's lesson
+carries the open routed items with their first locator (`round-N-verifier-spotcheck.md:<line>`) and their age in
+rounds, and an item routed a third time without landing is mined as a `landing` mistake. First instance:
+`.ufo/waves/round-46/w1/ScrRoutedAges/ages.md` (42 rows, 15 open, oldest 8 rounds at R38-3). Shown able to fail:
+the S290-S297 supersession is open since round 43 and became M46-16. (lesson: lessons/round-46.md#mistakes M46-16;
+considerthese/2026-10-26.md proposal 3)
+
+## 6. lane bytes only (considerthese/ excluded): any proposal-6 or outcome-first rule at base?
+$ git grep -niE "proposal 6|outcome-first|round-level outcome" 579f694b45c797a9c39761fdb4f9e0a1b71b3585 -- . ':!considerthese/'  ; echo rc=$?
+rc=1
+
+## 7. plain 'proposal 6' across corpus/ at base
+$ git grep -n 'proposal 6' 579f694b45c797a9c39761fdb4f9e0a1b71b3585 -- corpus/ ; echo rc=$?
+rc=1
+
+## 8. full-history census: every round section 1-47 at base
+$ python3 -I .ufo/waves/round-48/w1/ScrConsider/check96.py --repo . --rev 579f694b45c797a9c39761fdb4f9e0a1b71b3585 --rounds 1-47
+OUTCOME_FIRST: round=1 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=2 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=3 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=4 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=5 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=6 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=7 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=8 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=9 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=10 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=11 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=12 verdict=FAIL line=233 surface=none process_tokens=1 reasons=no-surface,process-first
+OUTCOME_FIRST: round=13 verdict=FAIL line=341 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=14 verdict=FAIL line=474 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=15 verdict=FAIL line=615 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=16 verdict=FAIL line=707 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=17 verdict=FAIL line=838 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=18 verdict=FAIL line=948 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=19 verdict=FAIL line=1076 surface=none process_tokens=1 reasons=no-surface,process-first
+OUTCOME_FIRST: round=20 verdict=FAIL line=1245 surface=none process_tokens=1 reasons=no-surface,process-first
+OUTCOME_FIRST: round=21 verdict=FAIL line=1456 surface=none process_tokens=2 reasons=no-surface,process-first
+OUTCOME_FIRST: round=22 verdict=FAIL line=1497 surface=none process_tokens=2 reasons=no-surface,process-first
+OUTCOME_FIRST: round=23 verdict=FAIL line=1532 surface=none process_tokens=3 reasons=no-surface,process-first
+OUTCOME_FIRST: round=24 verdict=FAIL line=1580 surface=none process_tokens=5 reasons=no-surface,process-first
+OUTCOME_FIRST: round=25 verdict=FAIL line=1684 surface=none process_tokens=3 reasons=no-surface,process-first
+OUTCOME_FIRST: round=26 verdict=FAIL line=1726 surface=none process_tokens=4 reasons=no-surface,process-first
+OUTCOME_FIRST: round=27 verdict=FAIL line=1762 surface=none process_tokens=6 reasons=no-surface,process-first
+OUTCOME_FIRST: round=28 verdict=FAIL line=1801 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=29 verdict=FAIL line=1872 surface=none process_tokens=6 reasons=no-surface,process-first
+OUTCOME_FIRST: round=30 verdict=FAIL line=1914 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=31 verdict=FAIL line=2021 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=32 verdict=FAIL line=2071 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=33 verdict=FAIL line=2101 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=34 verdict=FAIL line=2124 surface=none process_tokens=0 reasons=no-surface
+OUTCOME_FIRST: round=35 verdict=FAIL line=2173 surface=none process_tokens=3 reasons=no-surface,process-first
+OUTCOME_FIRST: round=36 verdict=FAIL line=2244 surface=none process_tokens=4 reasons=no-surface,process-first
+OUTCOME_FIRST: round=37 verdict=FAIL line=2360 surface=none process_tokens=5 reasons=no-surface,process-first
+OUTCOME_FIRST: round=38 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=39 verdict=FAIL line=2425 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=40 verdict=FAIL line=2476 surface=none process_tokens=8 reasons=no-surface,process-first
+OUTCOME_FIRST: round=41 verdict=FAIL line=2498 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=42 verdict=SKIP line=0 surface=none process_tokens=0 reasons=no-section
+OUTCOME_FIRST: round=43 verdict=FAIL line=2531 surface=none process_tokens=6 reasons=no-surface,process-first
+OUTCOME_FIRST: round=44 verdict=FAIL line=2566 surface=none process_tokens=9 reasons=no-surface,process-first
+OUTCOME_FIRST: round=45 verdict=FAIL line=2596 surface=none process_tokens=10 reasons=no-surface,process-first
+OUTCOME_FIRST: round=46 verdict=FAIL line=2627 surface=none process_tokens=14 reasons=no-surface,process-first
+OUTCOME_FIRST: round=47 verdict=FAIL line=2656 surface=none process_tokens=11 reasons=no-surface,process-first
+OUTCOME_FIRST_SUMMARY: rounds=47 pass=0 fail=34 skip=13
+rc=1

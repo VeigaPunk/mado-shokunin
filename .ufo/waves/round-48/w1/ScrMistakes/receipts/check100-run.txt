@@ -1,0 +1,24 @@
+$ echo "## RED 1: the round-47 w1 spec"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check100.py --spec .ufo/waves/round-47/w1-spec.json; echo "rc=$?"; echo; echo "## RED 2: this round-48 w1 spec (the class recurs in the round that mines it)"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check100.py --spec .ufo/waves/round-48/w1-spec.json; echo "rc=$?"; echo; echo "## GREEN: a dispatch that carries the command the seat runs"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check100.py --spec .ufo/waves/round-48/w1/ScrMistakes/controls/spec-100-capped.json; echo "rc=$?"
+
+## RED 1: the round-47 w1 spec
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=50 MB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=2 GB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=3.3 MB
+PROSE .ufo/waves/round-47/w1-spec.json ceiling=1 MiB
+CHECK100: sources=1 enforced=0 prose=4 verdict=PROSE-ONLY
+rc=1
+
+## RED 2: this round-48 w1 spec (the class recurs in the round that mines it)
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=50 MB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=2 GB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=590 GB
+PROSE .ufo/waves/round-48/w1-spec.json ceiling=1 MB
+CHECK100: sources=1 enforced=0 prose=4 verdict=PROSE-ONLY
+rc=1
+
+## GREEN: a dispatch that carries the command the seat runs
+ENFORCED .ufo/waves/round-48/w1/ScrMistakes/controls/spec-100-capped.json ulimit -f 1024
+PROSE .ufo/waves/round-48/w1/ScrMistakes/controls/spec-100-capped.json ceiling=1 MiB
+CHECK100: sources=1 enforced=1 prose=1 verdict=OK
+rc=0
+rc=0

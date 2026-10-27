@@ -1,0 +1,7 @@
+# the pin resolves its cache target as XDG_CACHE_HOME:-$HOME/.cache + /xdg-terminal-exec (pin :172-173)
+# resolved with the environment of THIS seat shell (nothing is run, nothing is opened):
+  ambient env                     -> /home/vgpnk/.cache/xdg-terminal-exec
+  ambient, XDG_CACHE_HOME unset   -> /home/vgpnk/.cache/xdg-terminal-exec
+  guard env (XDG_CACHE_HOME=<work>)-> /fast/scratch/hyaku/mado-r48/SentHost/tmp.2ACoepI066/cache/xdg-terminal-exec
+  HOME unset and XDG_CACHE_HOME unset -> [/.cache/xdg-terminal-exec]
+# the first two land on the host cache; only the third (and the counter sandbox) is outside it.

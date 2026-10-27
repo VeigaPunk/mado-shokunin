@@ -1,0 +1,162 @@
+== C12-loop-desktop-symlink
+-- pin rc=1
+   D: paths:
+   D:   XTE__CONFIGS=$ROOT/home/.config/xdg-terminals.list:$ROOT/etc/xdg/xdg-terminals.list:$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list
+   D:   XTE__APPLICATIONS_DIRS=$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+   D: no cache data
+   D: reading config '$ROOT/home/.config/xdg-terminals.list'
+   D: added entry ID with action ID 'loop.desktop'
+   D: reading config '$ROOT/etc/xdg/xdg-terminals.list'
+   D: reading config '$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list'
+   D: registering entries
+   D: >     final entry ID list:
+   D: loop.desktop
+   D: ^     end of final entry ID list
+   D: >     final fallback entry ID list:
+   D: ^     end of final fallback entry ID list
+   D: matching path for entry ID 'loop.desktop'
+-- tool rc=3
+   MADO_TERM_TRACE: list $ROOT/home/.config/xdg-terminals.list
+   MADO_TERM: selected=- path=- cmd=- cache=absent verdict=NO_TERMINAL
+== C13-subdir-cycle
+-- pin rc=0
+   D: paths:
+   D:   XTE__CONFIGS=$ROOT/home/.config/xdg-terminals.list:$ROOT/etc/xdg/xdg-terminals.list:$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list
+   D:   XTE__APPLICATIONS_DIRS=$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+   D: no cache data
+   D: reading config '$ROOT/home/.config/xdg-terminals.list'
+   D: added entry ID with action ID 'sub-term.desktop'
+   D: reading config '$ROOT/etc/xdg/xdg-terminals.list'
+   D: reading config '$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list'
+   D: registering entries
+   D: registered '$ROOT/home/.local/share/applications/./sub/term.desktop' as entry 'sub-term.desktop'
+   D: added fallback ID 'sub-term.desktop'
+   D: >     final entry ID list:
+   D: sub-term.desktop
+   D: ^     end of final entry ID list
+   D: >     final fallback entry ID list:
+   D: sub-term.desktop
+   D: ^     end of final fallback entry ID list
+   D: matching path for entry ID 'sub-term.desktop'
+   D: reading desktop entry '$ROOT/home/.local/share/applications/./sub/term.desktop'
+   D: checking for 'TerminalEmulator' in Categories 'TerminalEmulator;'
+   D: read Exec '$ROOT/bin/term'
+   D: expander received: $ROOT/bin/term
+   D: expander appended: $ROOT/bin/term
+   D: expander ended: $ROOT/bin/term
+   D: tokenizer received: $ROOT/bin/term
+   D: tokenizer appended: >$ROOT/bin/term<
+   D: tokenizer is out of special chars
+   D: tokenizer ended:
+   D:   >$ROOT/bin/term<
+   D: injector keeped: '$ROOT/bin/term'
+   D: checking Exec[0] executable '$ROOT/bin/term'
+   D: using default TerminalArgExec '-e' for 'sub-term.desktop'
+   D: >     original args:
+   D: --print-id
+   D: ^     end of original args
+   D: XTE__EXEC_USEP=$ROOT/bin/term
+   D: XTE__EXECARG=-e
+   D: option processing
+   D: found option --print-id
+   D: set XTE__PRINT_DATA= id
+   D: end of option processing, prependig options
+   D: acting on --print-id
+-- tool rc=0
+   MADO_TERM_TRACE: list $ROOT/home/.config/xdg-terminals.list
+   MADO_TERM: selected=sub-term.desktop path=$ROOT/home/.local/share/applications/sub/term.desktop cmd=$ROOT/bin/term cache=absent verdict=OK
+== C5-fifo-later-dir-unused
+-- pin rc=0
+   D: paths:
+   D:   XTE__CONFIGS=$ROOT/home/.config/xdg-terminals.list:$ROOT/etc/xdg/xdg-terminals.list:$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list
+   D:   XTE__APPLICATIONS_DIRS=$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+   D: no cache data
+   D: reading config '$ROOT/home/.config/xdg-terminals.list'
+   D: added entry ID with action ID 'term.desktop'
+   D: reading config '$ROOT/etc/xdg/xdg-terminals.list'
+   D: reading config '$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list'
+   D: registering entries
+   D: registered '$ROOT/usr/share/applications/./term.desktop' as entry 'term.desktop'
+   D: added fallback ID 'term.desktop'
+   D: registered '$ROOT/home/.local/share/applications/./foot.desktop' as entry 'foot.desktop'
+   D: added fallback ID 'foot.desktop'
+   D: >     final entry ID list:
+   D: term.desktop
+   D: ^     end of final entry ID list
+   D: >     final fallback entry ID list:
+   D: foot.desktop
+   D: term.desktop
+   D: ^     end of final fallback entry ID list
+   D: matching path for entry ID 'term.desktop'
+   D: reading desktop entry '$ROOT/usr/share/applications/./term.desktop'
+   D: checking for 'TerminalEmulator' in Categories 'TerminalEmulator;'
+   D: read Exec '$ROOT/bin/term'
+   D: expander received: $ROOT/bin/term
+   D: expander appended: $ROOT/bin/term
+   D: expander ended: $ROOT/bin/term
+   D: tokenizer received: $ROOT/bin/term
+   D: tokenizer appended: >$ROOT/bin/term<
+   D: tokenizer is out of special chars
+   D: tokenizer ended:
+   D:   >$ROOT/bin/term<
+   D: injector keeped: '$ROOT/bin/term'
+   D: checking Exec[0] executable '$ROOT/bin/term'
+   D: using default TerminalArgExec '-e' for 'term.desktop'
+   D: >     original args:
+   D: --print-id
+   D: ^     end of original args
+   D: XTE__EXEC_USEP=$ROOT/bin/term
+   D: XTE__EXECARG=-e
+   D: option processing
+   D: found option --print-id
+   D: set XTE__PRINT_DATA= id
+   D: end of option processing, prependig options
+   D: acting on --print-id
+-- tool rc=2
+== C8-symlink-loop
+-- pin rc=0
+   D: paths:
+   D:   XTE__CONFIGS=$ROOT/home/.config/xdg-terminals.list:$ROOT/etc/xdg/xdg-terminals.list:$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list
+   D:   XTE__APPLICATIONS_DIRS=$ROOT/usr/share/applications/:$ROOT/home/.local/share/applications/
+   D: no cache data
+   D: reading config '$ROOT/home/.config/xdg-terminals.list'
+   D: added entry ID with action ID 'term.desktop'
+   D: reading config '$ROOT/etc/xdg/xdg-terminals.list'
+   D: reading config '$ROOT/usr/share/xdg-terminal-exec/xdg-terminals.list'
+   D: registering entries
+   D: registered '$ROOT/usr/share/applications/./term.desktop' as entry 'term.desktop'
+   D: added fallback ID 'term.desktop'
+   D: >     final entry ID list:
+   D: term.desktop
+   D: ^     end of final entry ID list
+   D: >     final fallback entry ID list:
+   D: term.desktop
+   D: ^     end of final fallback entry ID list
+   D: matching path for entry ID 'term.desktop'
+   D: reading desktop entry '$ROOT/usr/share/applications/./term.desktop'
+   D: checking for 'TerminalEmulator' in Categories 'TerminalEmulator;'
+   D: read Exec '$ROOT/bin/term'
+   D: expander received: $ROOT/bin/term
+   D: expander appended: $ROOT/bin/term
+   D: expander ended: $ROOT/bin/term
+   D: tokenizer received: $ROOT/bin/term
+   D: tokenizer appended: >$ROOT/bin/term<
+   D: tokenizer is out of special chars
+   D: tokenizer ended:
+   D:   >$ROOT/bin/term<
+   D: injector keeped: '$ROOT/bin/term'
+   D: checking Exec[0] executable '$ROOT/bin/term'
+   D: using default TerminalArgExec '-e' for 'term.desktop'
+   D: >     original args:
+   D: --print-id
+   D: ^     end of original args
+   D: XTE__EXEC_USEP=$ROOT/bin/term
+   D: XTE__EXECARG=-e
+   D: option processing
+   D: found option --print-id
+   D: set XTE__PRINT_DATA= id
+   D: end of option processing, prependig options
+   D: acting on --print-id
+-- tool rc=0
+   MADO_TERM_TRACE: list $ROOT/home/.config/xdg-terminals.list
+   MADO_TERM: selected=term.desktop path=$ROOT/usr/share/applications/term.desktop cmd=$ROOT/bin/term cache=absent verdict=OK

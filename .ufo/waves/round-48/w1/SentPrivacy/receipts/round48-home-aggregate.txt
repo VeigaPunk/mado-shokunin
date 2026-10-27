@@ -1,0 +1,52 @@
+# round-48 receipts carrying /home/ paths (excluding this seat); counts only, values masked
+files=33 home_lines=75 distinct_paths=37 gate_findings=0
+  distinct=3  lines=3  .ufo/waves/round-48/w1/SentHost/receipts/09-home-fallback.txt 
+  distinct=2  lines=16 .ufo/waves/round-48/w1/ScrEntry/receipts/xkbcli-compile-keymap-r48.txt 
+  distinct=2  lines=2  .ufo/waves/round-48/w1/ScrCacheDoc/receipts/warm-cache.txt 
+  distinct=1  lines=4  .ufo/waves/round-48/w1/SentHost/receipts/06-host-tooling.txt 
+  distinct=1  lines=4  .ufo/waves/round-48/w1/ScrSkill/receipts/section-verify.txt 
+  distinct=1  lines=3  .ufo/waves/round-48/w1/ScrSkill/receipts/xkbcli-matrix.txt 
+
+# owner/group name occurrences (ls -l rows, no /home prefix) — NOT a gate rule
+files_with_username=35 total_occurrences=116
+  count=22  .ufo/waves/round-48/w1/ScrCacheDoc/receipts/ls-listing.txt
+  count=15  .ufo/waves/round-48/w1/ScrEntry/receipts/xkbcli-compile-keymap-r48.txt
+  count=6   .ufo/waves/round-48/w1/ScrSkill/receipts/xkbcli-matrix.txt
+  count=6   .ufo/waves/round-48/w1/CritPremiseC1/receipts/ls-before.txt
+  count=6   .ufo/waves/round-48/w1/CritPremiseC1/receipts/ls-after.txt
+  count=5   .ufo/waves/round-48/w1/ScrCacheDoc/receipts/warm-cache.txt
+
+# the warm-cache receipt, masked (shape only)
+bytes=2190 lines=50 gate=[]
+    89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /home/U/Projects/shokunin/mado-shokunin/.ufo/waves/round-47/fetch/
+    89f2be9a65deb8df93633a9a09b4953a921c83d591ab987f7569280ecd3127ac  /usr/bin/xdg-terminal-exec
+    0000040  \n   f   o   o  \n   /   f   a   s   t   /   s   c   r   a   t
+    0000060   c   h   /   h   y   a   k   u   /   m   a   d   o   -   r   4
+    0000100   8   /   S   c   r   C   a   c   h   e   D   o   c   /   t   /
+    0000120   d   a   t   a   /   a   p   p   l   i   c   a   t   i   o   n
+    0000140   s   /   .   /   f   o   o   .   d   e   s   k   t   o   p  \n
+    ls stdout that is hashed:
+    -rw-r--r-- 1 USER USER 12 Oct 26 19:50 SCRATCH/ScrCacheDoc/t/home/U/xdg-terminals.list$
+    SCRATCH/ScrCacheDoc/t/data/applications/:$
+    -rw-r--r-- 1 USER USER 87 Oct 26 19:50 foo.desktop$
+    == /disable_cache reaches the cold path only (it changes the list, hence the hash)
+    D: found '/disable_cache' directive
+    D: cache is disabled, removing 'SCRATCH/ScrCacheDoc/t/cache/xdg-terminal-exec'
+    rc/stdout: rc=0 foo
+
+# ls-form receipt shapes (masked)
+== .ufo/waves/round-48/w1/ScrCacheDoc/receipts/ls-listing.txt bytes=1130 lines=36
+    == ls -LRl in the C locale, non-tty: the bytes that go into the md5
+    .:$
+    total 8$
+    l????????? ? ?     ?     ?            ? broken.link$
+== .ufo/waves/round-48/w1/CritPremiseC1/receipts/ls-before.txt bytes=304 lines=6
+    -rw-r--r-- 1 USER USER 28 Nov 14  2023 SCRATCH/CritPremiseC1/root2/conf/xdg-terminals.list
+    
+    SCRATCH/CritPremiseC1/root2/data/applications/:
+    total 8
+== .ufo/waves/round-48/w1/CritPremiseC1/receipts/ls-after.txt bytes=304 lines=6
+    -rw-r--r-- 1 USER USER 28 Nov 14  2023 SCRATCH/CritPremiseC1/root2/conf/xdg-terminals.list
+    
+    SCRATCH/CritPremiseC1/root2/data/applications/:
+    total 8

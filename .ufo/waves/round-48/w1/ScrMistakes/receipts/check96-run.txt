@@ -1,0 +1,20 @@
+$ echo "## RED: the landed tool against the frozen reference"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check96.py --repo . --frozen-rev d7527d608ad2b2e3cc398fdde34db7947b254a1a --frozen .ufo/waves/round-47/l1-draft/mado-terminal.py --landed tools/mado-terminal.py; echo "rc=$?"; echo; echo "## GREEN 1: the same delta registered by an appended erratum"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check96.py --repo . --frozen-rev d7527d608ad2b2e3cc398fdde34db7947b254a1a --frozen .ufo/waves/round-47/l1-draft/mado-terminal.py --landed tools/mado-terminal.py --registered .ufo/waves/round-48/w1/ScrMistakes/controls/registered-96.txt; echo "rc=$?"; echo; echo "## GREEN 2: the frozen reference scored as its own landed file (no delta)"; python3 -I .ufo/waves/round-48/w1/ScrMistakes/check96.py --repo . --frozen-rev d7527d608ad2b2e3cc398fdde34db7947b254a1a --frozen .ufo/waves/round-47/l1-draft/mado-terminal.py --landed .ufo/waves/round-47/l1-draft/mado-terminal.py; echo "rc=$?"
+
+## RED: the landed tool against the frozen reference
+ADDED-UNREGISTERED HOME unset
+ADDED-UNREGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-UNREGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 unregistered=3 removed=0 verdict=NARROWED
+rc=1
+
+## GREEN 1: the same delta registered by an appended erratum
+ADDED-REGISTERED HOME unset
+ADDED-REGISTERED a FIFO named like a desktop file in a later application dir (the script blocks reading it)
+ADDED-REGISTERED symlink loops
+CHECK96: frozen=6 landed=9 added=3 unregistered=0 removed=0 verdict=OK
+rc=0
+
+## GREEN 2: the frozen reference scored as its own landed file (no delta)
+CHECK96: frozen=6 landed=6 added=0 unregistered=0 removed=0 verdict=OK
+rc=0
+rc=0

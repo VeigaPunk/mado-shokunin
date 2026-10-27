@@ -1,0 +1,93 @@
+# round-48 w1 ScrSkill — xkbcli compile matrix (read-only, 2026-10-26)
+# host: Linux 7.2.11-arch1-1
+# read verbs only: compile-keymap writes the keymap to stdout; list prints the catalogue; no compositor, no socket, nothing written by the probes
+# probe driver: probe.sh / probe2.sh ran with TMPDIR=/fast/scratch/hyaku/mado-r48/ScrSkill (deleted after the run); the seat receipt is this file
+
+xkbcli 1.13.2
+libxkbcommon 1.13.2-1
+xkeyboard-config 2.48-1
+=== host : xkbcli compile-keymap --layout br --options compose:caps
+rc=0 stdout_bytes=73079
+stderr: 
+=== layout-unknown : xkbcli compile-keymap --layout zz
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths|xkbcommon: ERROR: [XKB-338] 1 include paths searched:|xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2|xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb|xkbcommon: ERROR: [XKB-338] 	/etc/xkb|xkbcommon
+=== variant-unknown : xkbcli compile-keymap --layout br --variant nope
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(nope)'|xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"|xkbcommon: ERROR: Failed to compile xkb_symbols|xkbcommon: ERROR: [XKB-822] Failed to compile keymap|ERROR: Couldn't create xkb keymap|
+=== option-unknown : xkbcli compile-keymap --layout br --options nope:nope
+rc=0 stdout_bytes=73043
+stderr: xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope:nope" was ignored|
+=== model-unknown : xkbcli compile-keymap --layout br --model nope
+rc=0 stdout_bytes=73043
+stderr: 
+=== rules-unknown : xkbcli compile-keymap --rules nope --layout br
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/nope" in include paths|xkbcommon: ERROR: [XKB-338] 1 include paths searched:|xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2|xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb|xkbcommon: ERROR: [XKB-338] 	/etc/xkb|xkbcommon
+=== multi-two-layouts : xkbcli compile-keymap --layout br,dk
+rc=0 stdout_bytes=78029
+stderr: 
+=== multi-one-variant-for-two : xkbcli compile-keymap --layout br,dk --variant intl
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(intl)'|xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"|xkbcommon: ERROR: Failed to compile xkb_symbols|xkbcommon: ERROR: [XKB-822] Failed to compile keymap|ERROR: Couldn't create xkb keymap|
+=== multi-empty-first-variant : xkbcli compile-keymap --layout br,dk --variant ,intl
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'dk(intl)'|xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"|xkbcommon: ERROR: Failed to compile xkb_symbols|xkbcommon: ERROR: [XKB-822] Failed to compile keymap|ERROR: Couldn't create xkb keymap|
+=== multi-one-layout-two-variants : xkbcli compile-keymap --layout br --variant intl,nope
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: Less layouts than variants: "br" vs. "intl,nope".|xkbcommon: ERROR: [XKB-661] Couldn't process include statement for 'br(intl)'|xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed map)"|xkbcommon: ERROR: Failed to compile xkb_symbols|xkbcommon: ERROR: [XKB-822] Failed to compile keymap|ERROR: Couldn't create xkb keymap|
+=== layout-unknown-second : xkbcli compile-keymap --layout br,zz
+rc=1 stdout_bytes=0
+stderr: xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/zz" in include paths|xkbcommon: ERROR: [XKB-338] 1 include paths searched:|xkbcommon: ERROR: [XKB-338] 	/usr/share/xkeyboard-config-2|xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.config/xkb|xkbcommon: ERROR: [XKB-338] 	/home/vgpnk/.xkb|xkbcommon: ERROR: [XKB-338] 	/etc/xkb|xkbcommon
+
+=== baseline-plain : xkbcli compile-keymap --layout br
+rc=0 stdout_bytes=73043 stdout_md5=f73b560f90bbfbe2169e1c946a967dbf
+stderr: 
+=== model-unknown-compare : xkbcli compile-keymap --layout br --model nope
+rc=0 stdout_bytes=73043 stdout_md5=f73b560f90bbfbe2169e1c946a967dbf
+stderr: 
+=== option-mixed : xkbcli compile-keymap --layout br --options compose:caps,nope
+rc=0 stdout_bytes=73079 stdout_md5=cdac52bc17bd9405eb37999477c2f3f9
+stderr: xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope" was ignored|
+=== option-single-unknown : xkbcli compile-keymap --layout br --options nope
+rc=0 stdout_bytes=73043 stdout_md5=f73b560f90bbfbe2169e1c946a967dbf
+stderr: xkbcommon: ERROR: [XKB-595] Unrecognized RMLVO option "nope" was ignored|
+=== two-layouts-one-valid-variant : xkbcli compile-keymap --layout us,dk --variant intl
+rc=0 stdout_bytes=77943 stdout_md5=a16a4a6914f1065fde3867ea45e603ff
+stderr: 
+=== two-layouts-variant-second : xkbcli compile-keymap --layout us,dk --variant ,winkeys
+rc=0 stdout_bytes=76323 stdout_md5=b3353907d822bfdd9162ea9e601e2e23
+stderr: 
+=== three-layouts-two-variants : xkbcli compile-keymap --layout us,dk,br --variant intl,winkeys
+rc=0 stdout_bytes=82427 stdout_md5=3943c24fbdaee058a26c0337bb7a4933
+stderr: 
+=== three-layouts-one-variant : xkbcli compile-keymap --layout us,dk,br --variant intl
+rc=0 stdout_bytes=82408 stdout_md5=27b178ab278dfbd3096124c30023f4ed
+stderr: 
+=== dk-variants-listing : xkbcli compile-keymap --layout dk --variant winkeys
+rc=0 stdout_bytes=72948 stdout_md5=1dd07c5da510f66ef28846348d6daf51
+stderr: 
+
+=== off-compositor: env -u DISPLAY -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE xkbcli compile-keymap --layout br --options compose:caps
+rc=0 (measured: compile needs no display)
+
+# xkbcli list: name catalogue (read-only)
+sections:
+1:models:
+555:layouts:
+br_rows=9
+zz_rows=0
+model_nope_rows=0
+br_variant_names:
+  variant: ''
+  variant: 'nodeadkeys'
+  variant: 'dvorak'
+  variant: 'nativo'
+  variant: 'nativo-us'
+  variant: 'thinkpad'
+  variant: 'thinkpad_nodeadkeys'
+  variant: 'nativo-epo'
+  variant: 'rus'
+
+=== xkbcli list | wc -l
+5101

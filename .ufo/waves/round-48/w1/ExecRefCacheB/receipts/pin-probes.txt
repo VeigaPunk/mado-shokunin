@@ -1,0 +1,40 @@
+# receipts/pin-probes.txt - what the pinned resolver really does at its cache edges (synthetic trees, shape only)
+# date: 2026-10-27T00:22:42Z; run by run_probe.sh (bwrap: no /etc, /usr/bin, /usr/share, /home, /var)
+# probe_pin.py: caches that do NOT carry this tree's hash (the pin answers from its cold path);
+# probe_pin2.py: caches written by this seat with warmcache.gen_hash() - the hash the resolver accepts.
+cache_args_from_options      prime='foot\n' rc=0 stdout='foot\n--app-id=A\n--title\nT\n--working-directory=/d\n--hold\n'
+cache_cmd_gone               rc=1 stdout='' stderr='/work/s_cache_cmd_gone/nonexist/applications/:/work/s_cache_cmd_gone/home/.local/share/applications/'
+cache_cmd_still_resolves_other_exec rc=0 stdout='foot\n'
+cache_dir                    rc=0 stdout='foot.desktop\n' stderr=''
+cache_invalid_line49_ok      lines=49 rc=0 stdout='foot.desktop\nfoot\n' stderr=''
+cache_invalid_line50         lines=50 rc=0 stdout='foot.desktop\nfoot\n' stderr=''
+cache_invalid_no_terminator  rc=0 stdout='foot.desktop\nfoot\n' stderr=''
+cache_newline_in_exec        cache_lines=11 prime_out='foot\na\n' rc=0 stdout='foot\na\n'
+cache_no_final_newline       rc=0 stdout='foot.desktop\nfoot\n' stderr=''
+cache_removed_entry_path_print_content entry_size=89 rc=1 stdout='' stderr='/work/s_cache_removed_entry_path_print_content/nonexist/applications/:/work/s_cache_removed_entry_path_print_content/home/.local/share/applications/'
+cache_removed_entry_path_print_path rc=1 stdout=''
+cache_unreadable             prime_rc=0 cold='foot\n' warm rc=0 stdout='foot.desktop\n/work/s_cache_unreadable/home/.local/share/applications/foot.desktop\n' stderr='/oracle/xdg-terminal-exec: line 217: /work/s_cache_unreadable/.rw/cache/xdg-terminal-exec: Permission denied'
+disable_cache_directive_with_valid_cache rc=0 out='foot\n' cache_after=False
+env_cache_disabled           rc=0 out='foot\n' cache_after=False
+env_cache_disabled_empty     rc=0 out='foot\n' cache_after=False stderr="Assuming '' means no"
+home_unset                   rc=1 stdout='' stderr='/oracle/xdg-terminal-exec: line 148: HOME: unbound variable'
+home_unset_cache_default     rc=1 stdout='' stderr='/oracle/xdg-terminal-exec: line 172: HOME: unbound variable'
+home_unset_datahome_default  rc=1 stdout='' stderr='/oracle/xdg-terminal-exec: line 166: HOME: unbound variable'
+home_unset_xdg_set           rc=0 stdout='foot.desktop\n' stderr=''
+warm_differs_from_cold       cold rc=0 out='foot\n' ; warm rc=0 out='foot\n'
+hash_desktop_change        rc=0 out='foot\n'
+hit_cmd_empty              rc=0 out='foot\n' err=''
+hit_cmd_function           rc=0 out='kitty\n--warm\n'
+hit_entry_path_missing_content rc=1 out='foot.desktop\n' err='/oracle/xdg-terminal-exec: line 1362: /nonexistent/entry.desktop: No such file or directory'
+hit_entry_path_missing_path_mode rc=0 out='/nonexistent/entry.desktop\nkitty\n--warm\n'
+hit_exec_usep_empty        rc=0 out='\n'
+hit_id_path_action         rc=0 out='cached.desktop:act\n/work/p_hit_id_path_action/home/.local/share/applications/foot.desktop:act\n'
+hit_newline_in_exec_usep   rc=0 out='kitty\na\nb\n--x\n'
+hit_same_size_same_minute  rc=0 out='kitty\n--warm\n' (warm = kitty --warm)
+hit_stale_by_mtime         rc=0 out='foot\n' (cold answer expected)
+hit_terminator_line49      rc=0 out='kitty\n--warm\n' (warm would be kitty --warm)
+hit_terminator_line50      rc=0 out='foot\n' err=''
+hit_uses_cache             cold='foot\n' warm rc=0 out='kitty\n--warm\n' err=''
+hit_while_list_unreadable  rc=0 out='kitty\n--warm\n' err=''
+hit_with_disable_cache_directive rc=0 out='kitty\n--warm\n' cache_after=True
+hit_with_disable_cache_directive_id rc=0 out='cached.desktop\n'

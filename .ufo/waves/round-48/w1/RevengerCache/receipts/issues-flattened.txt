@@ -1,0 +1,280 @@
+===== ISSUE #36: Cache  state=closed created=2023-11-30 closed=2024-06-11 =====
+[OP Vladimir-csp 2023-11-30]
+Speed up things by caching selected `Exec`, `ExecArg`.
+
+Invalidate the cache when something changes.
+
+@fluvf, please take a look at [this](https://github.com/Vladimir-csp/xdg-terminal-exec/tree/cache).  What results do you get on subsequent runs with clean configs and `XTE_CACHE_ENABLED=true`?
+
+[COMMENT fluvf 2023-12-02]
+The cache seems to half execution time on all my machines, but there's a bug on main with the entry ID validator where many valid(?) entries are being skipped loudly
+That seems to be the reason for most of the time save since my last measurement
+
+I've been trying to write comprehensive tests for the functions, and adding another complex code path gives me pause
+The idea is great, don't get me wrong, but maybe it could be implemented in a different way?
+Maybe somehow reusing the logic that already exists around the `xdg-terminals` folder...
+I'll keep thinking about it and open an issue if I come up with something clever
+
+[COMMENT Vladimir-csp 2023-12-02]
+> there's a bug on main with the entry ID validator where many valid(?) entries are being skipped loudly
+
+Did some tweaks on validators, did it help? What kind of entries are getting rejected?
+
+[COMMENT Vladimir-csp 2023-12-04]
+Off topic: There's movement: https://gitlab.freedesktop.org/terminal-wg/specifications/-/merge_requests/3
+@fluvf @mkhl  @FreeSlave If you have some input, please share.
+
+[COMMENT fluvf 2023-12-04]
+> Did some tweaks on validators, did it help? What kind of entries are getting rejected?
+
+All entries that have a `-` in the ID, can't remember off the top of my head if that's an illegal character
+
+[COMMENT fluvf 2023-12-05]
+> Off topic: There's movement: https://gitlab.freedesktop.org/terminal-wg/specifications/-/merge_requests/3 @fluvf @mkhl @FreeSlave If you have some input, please share.
+
+Some quick thoughts, unfortunately I don't have a gitlab account, so I'll leave them here:
+
+I agree that `xdg-terminals` dir support could be dropped, or if necessary replaced with an env variable that controls the subdir searched
+I don't think backwards compatibility should be a concern when moving to 1.0
+I also don't think keeping it for slow machines should be a priority. Even if it was, my old laptop now execs the script in ~0.6 secs (faster with the cache), which is plenty fast
+I agree that _first run slow, subsequent runs fast_ is what the script should aim for, which will be solved by caching
+
+About caching
+Based on some simple tests on my laptop the bottleneck is opening files, rather than reading them once opened
+That in mind, I don't think it's worth it to create a custom file format to store all the used information to exec a terminal outright
+Maybe a simple
+```
+if sha1sum -cs $CACHE_FILEPATH; then
+    get_path_from $CACHE_FILEPATH
+    contains $ENTRY_IDS $extracted_path # ID list before found fallback entries
+    read_entry_path $extracted_path || fallback
+else
+    find_entry
+    sha1sum $entry_path > $CACHE_FILEPATH
+fi 
+```
+where $CACHE_FILEPATH contains
+```
+somehash  /path/to/entry/file.desktop
+```
+
+Maybe there's an even simpler way, but this shouldn't require big code changes
+
+[COMMENT Vladimir-csp 2023-12-05]
+> `if sha1sum -cs $CACHE_FILEPATH; then`
+
+Getting checksum of a single entry content leaves out other entries and configs. Configs can change, terminals be installed, removed. That is why I sum listing of everything potentially relevant.
+
+Which is faster, reading a single file or listing a dir where file resides?
+How slow is this line of the script on your machine? `LANG=C ls -LRl ${hash_paths} 2> /dev/null | md5sum 2> /dev/null`.  If cached run is faster, then fast enough it seems.
+
+> All entries that have a - in the ID, can't remember off the top of my head if that's an illegal character
+
+`-` is legal, should work and it works on my system, tested with `dash` and `bash` as `sh`.
+
+> fortunately I don't have a gitlab account
+
+It supports delegating a github account.
+
+[COMMENT fluvf 2023-12-05]
+> > `if sha1sum -cs $CACHE_FILEPATH; then`
+> 
+> Getting checksum of a single entry content leaves out other entries and configs. Configs can change, terminals be installed, removed. That is why I sum listing of everything potentially relevant.
+
+Good point!
+The used config(s) could be checked and hashed aswell
+Adding and checking them using `sha1sum -c` is simple enough
+Realistic worst case would mean hashing one, maybe two additional files
+I don't think the script should care about the status of other entries
+
+>Which is faster, reading a single file or listing a dir where file resides?
+How slow is this line of the script on your machine? LANG=C ls -LRl ${hash_paths} 2> /dev/null | md5sum 2> /dev/null. If cached run is faster, then fast enough it seems.
+
+I'm less concerned with speed and more with the complexity
+Writing tests that would catch all cornercases with the implementation seems, hard, as `ls` of directories can produce all sorts of output
+File ownership changes, or timestamps, or simply (un)installing additional irrelevant applications would all invalidate the cache
+
+The only cornercase I can foresee with my proposal is (un)installing terminals with an empty config, where the chosen terminal would've changed based on their alphabetical sorting order
+This would have to be documented, but a fix seems unnecessary
+
+[COMMENT mcepl 2023-12-05]
+> Off topic: There's movement: https://gitlab.freedesktop.org/terminal-wg/specifications/-/merge_requests/3 @fluvf @mkhl @FreeSlave If you have some input, please share.
+
+I shared there https://gitlab.freedesktop.org/terminal-wg/specifications/-/merge_requests/3#note_2193993
+
+[COMMENT Vladimir-csp 2023-12-05]
+> Adding and checking them using `sha1sum -c` is simple enough
+
+This would actually read files. Both when creating and checking the cache.
+
+> Writing tests that would catch all cornercases with the implementation seems, hard, as `ls` of directories can produce all sorts of output
+File ownership changes, or timestamps, or simply (un)installing additional irrelevant applications would all invalidate the cache
+
+Yes, this method of invalidation is quite sensitive and may be prone to false positives, but this way it's content-agnostic and does not read any files. In order to differentiate entries of terminals, one has to read them. Suppose a new terminal is installed, how would you invalidate the cache relying on `*sum -c` if previous cache knows nothing about new file.
+
+`ls -LRl` is a POSIX-compliant command, expected to be alphabetical, and is done in a single call for everything. Specific output quirks do not matter, as long as the output is repeatable. The only two plausible false positive cases I can think of are:
+
+- installation/removal/upgrade of unrelated apps
+- generation of new entries, i.e. by a browser when its "make me a default" feature is used
+
+How often that happens compared to launching terminals?
+
+[COMMENT fluvf 2023-12-06]
+> ... and does not read any files.
+
+It still accesses the disk, but again, I don't think that should be the deciding factor
+I'm concerned about the implementations complexity and maintainability
+
+> Suppose a new terminal is installed, how would you invalidate the cache relying on *sum -c if previous cache knows nothing about new file.
+
+I still don't understand why the script should care about this, if the configs haven't changed?
+
+I think following the suggestion made by meven would be an improvement regardless
+You can even check the modification times of app folders to see if any entries have been added / removed
+
+[COMMENT Vladimir-csp 2023-12-06]
+> I still don't understand why the script should care about this, if the configs haven't changed?
+> You can even check the modification times of app folders to see if any entries have been added / removed
+
+- Empty configs
+- Configs with preferences that aren't installed yet
+- Entries residing in subdirs of `applications`, so their change would not affect mtime of `applications`.
+- Direct writing to existing entries which would not affect  mtime of `applications`.
+
+[COMMENT fluvf 2023-12-09]
+I've thought about this and have a, hopefully more well informed, idea
+
+It doesn't matter if the config files have changed, only the resulting ID list is important
+Removal of random entries doesn't matter, only the removal of the cached entry and newly added / modified entries are important
+The cache file, at the very least, has to store information about which entry and list of IDs were used during the previous run
+EDIT: And the value of `$XDG_CURRENT_DESKTOP` also has to be stored and checked
+
+So the logic could be:
+1. Find and read any config files as normal
+2. Check / read the cache file, bail out if missing
+3. Compare the ID lists, bail out if not matching
+These checks should be in their own function, so the script could do `find_cached_entry || find_entry || exit`
+Maybe one that still calls `find_entry` internally
+4. Find entries, filter ones older than cache file, include cached path
+This can all be done using `find -newer ... -o -path ...`
+Maybe move the `find` call to a function, or prepend the values to it using `alias find='...'`
+5. Check found entries as normal, bail out if none valid
+(meaning the file at the cached path was modified)
+Best case, this only checks the cached entry path
+No need to check any other (older) entries, as the cached entry was already chosen over them previously
+6. Write found entry path and ID list (or its hash) to cache file
+
+With this most of the existing code / functions could be reused
+I doubt this would result in egregious amounts of disk access
+Best case it's 3 file reads, whatever `find` does, and writing of the cache
+
+Thoughts?
+I could write a working mock-up later, if you don't have time to make one yourself
+
+[COMMENT fluvf 2023-12-10]
+About reading the cache file, the script could use `source` to make it simpler
+There should also be something to check permissions, so random users can't inject shell code through it
+`umask 0022` should be enough
+
+[COMMENT Vladimir-csp 2023-12-10]
+> And the value of $XDG_CURRENT_DESKTOP also has to be stored and checked 
+
+Yeah, I've added it
+
+> I could write a working mock-up later, if you don't have time to make one yourself
+
+Yes, thank you, I do not fully get it, so a mock-up would be very helpful.
+
+> About reading the cache file, the script could use source to make it simpler
+There should also be something to check permissions, so random users can't inject shell code through it
+umask 0022 should be enough
+
+If user has wider umask than 0022 during application launching, something is probably wrong.
+OK, I will even pinch it down to 0077 during cache write for good measure.
+
+Source is to be considered, but currently cache read is a rather strict and fail-early type of algorithm.
+
+===== ISSUE #43: cache mock-up  state=open created=2023-12-12 closed=open =====
+[OP fluvf 2023-12-12]
+Accidentally based on #42 
+One monolithic commit as this is a mock-up
+Notable changes needed to make this work:
+- Fallback IDs are now searched for in reverse
+Simplifies logic and allows subsequent non cached `find_entry_paths` to overwrite any set aliases ~(Not actually strictly needed?)~
+~It is, if cached `find` finds a duplicate entry that's of lower priority than one found during a full search, the higher priority entry is skipped~ No it's not, that entry alias would be unset
+Nevertheless, I will create a separate pull request with only this change later
+- `find_entry_paths` call and `$FALLBACK_ENTRY_IDS` was moved inside `find_entry`
+The function needs to see the masked `find` function set inside `find_cached_entry`, and the variable needs to be reset between calls
+There's actually no need for it to be a global any more
+
+I don't know if I like `source`ing the cache file, might change that to `read` loop when cleaning up, if you're happy with the implementation
+
+[COMMENT fluvf 2023-12-15]
+Thoughts? Would you be happy with this implementation? I'd have time to clean this up today if you are
+
+[COMMENT Vladimir-csp 2023-12-15]
+Thank you. I will dig deeper in it a bit later. What I can see right away is that entry read is still needed. 
+
+With current cache implementation, exec line is read directly from the cache.
+
+[COMMENT fluvf 2023-12-15]
+Yes, this isn't trying to be faster than the current implementation. Some quick tests prove that it's not.
+But it is less code to maintain, and the cache should be much harder to invalidate
+
+===== ISSUE #47: Cache can end up being used even when disabled in `*xdg-terminals.list`  state=closed created=2023-12-18 closed=2023-12-18 =====
+[OP fluvf 2023-12-18]
+xdg-terminals.list:
+```
+/disable_cache
+```
+Steps to reproduce:
+```
+$ env XTE_CACHE_ENABLED=1 ./xdg-terminal-exec
+# cache used as requested
+$ ./xdg-terminal-exec
+# cache used while still being explicitly disabled
+```
+I can't see any easy solutions
+As for hard ones:
+1. Always read `*xdg-terminals.list` files
+2. Remove directives
+3. Don't support `$XTE_CACHE_ENABLED`
+4. Something else?
+
+I'm not a fan of 3.
+
+[COMMENT Vladimir-csp 2023-12-18]
+4. document this behavior
+5. something like this forked in parallel with normal cache read:
+```
+{
+	check_bool "${XTE_CACHE_ENABLED-}" && exit 0
+	read_config_paths
+	check_bool "$CACHE_ENABLED" && exit 0
+	save_cache
+} &
+```
+It will see `/disable_cache` in config and remove the cache, at a cost of one wrongfully cached run.
+
+[COMMENT fluvf 2023-12-18]
+If you're happy with 4. then that seems like the way to go
+5. feels like a hack and could result in some (unlikely) bugs with directories / files changing at a wrong time
+
+===== ISSUE #64: is cache a good idea to be enabled by default?  state=closed created=2025-02-12 closed=2025-02-12 =====
+[OP jbicha 2025-02-12]
+Both GNOME Terminal and Ptyxis (as of 48.alpha) have buttons in their Preferences dialog to set as default terminal. I think it's expected that when a user clicks that button for the change to take effect. If I understand the cache correctly, that won't work unless the apps explicitly clear the cache.  And I guess to clear the cache, the app needs to remove the user's cache file themselves.
+
+I suggest that the cache feature be disabled by default.
+
+[COMMENT jbicha 2025-02-12]
+Alternatively, I am skeptical whether the performance savings is worth having a cache implementation.
+
+[COMMENT jbicha 2025-02-12]
+I guess the cache works. It took me a while to figure out what wasn't working. Some kind of verbose execution for xdg-terminal-exec or logging would help solve the actual problem that prompted me to file this issue.
+
+[COMMENT Vladimir-csp 2025-02-12]
+Changing default terminal should invalidate the cache, since one of the config files is changed. Can you reproduce the problem with `DEBUG=1`?
+
+[COMMENT jbicha 2025-02-12]
+Let's close this
+

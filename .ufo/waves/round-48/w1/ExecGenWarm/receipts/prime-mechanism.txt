@@ -1,0 +1,13 @@
+sandbox: the round-47 Box.argv (quality/counters/c1-r47-terminal.py:Box.argv) verbatim; the wrapper
+prime only adds `--ro-bind <work>/prime.sh /oracle/prime.sh` and runs `/bin/bash /oracle/prime.sh
+<prime args>`, with `sleep` copied into /oracle/bin. 3 repetitions each, fresh tree per run.
+
+direct (round-47 argv, resolver runs unwrapped): stdout='foot\n'/rc=0/cache=absent(+0.5s=absent); stdout='foot\n'/rc=0/cache=absent(+0.5s=absent); stdout='foot\n'/rc=0/cache=absent(+0.5s=absent)
+wrapper prime (/oracle/prime.sh holds the namespace): stdout='foot\n'/rc=0/cache=complete(+0.5s=present); stdout='foot\n'/rc=0/cache=complete(+0.5s=present); stdout='foot\n'/rc=0/cache=complete(+0.5s=present)
+
+The round-47 argv uses --unshare-all, so the resolver is PID 1 of a new PID namespace; the kernel
+kills the rest of the namespace when PID 1 exits, so its background `save_cache "$1" &` never
+writes a cache. The wrapper keeps PID 1 (`/bin/bash`) alive until the cache file is complete.
+A v2 counter must prime this way (or equivalently hold the namespace open); otherwise the warm
+path of the pin is unreachable inside the frozen sandbox and every warm fixture would be judged
+against a cold oracle.
