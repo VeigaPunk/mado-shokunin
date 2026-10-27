@@ -2580,3 +2580,7 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - `6366c314` w2 spec/dispatch; `caf52271` w2 launch marker; `485bdfd4` w2 reports/results, QUALITY 104 and source-truth record.
 - `b742d54c` append-only C2 entry errata; `2b1e337a` final C1/C2, index, census and WAVE-DONE receipts.
 - `22ab80bc`, `f2a612ae`, `ad578633`, `58f4d4fc`, `ed84051d` carry the staged SCORECARD, claim receipts, lesson measurement, PROVINCE inventory, and final LOG/SCORECARD/lesson/QUALITY records respectively. Final scorecard and lesson cite their measured revisions and all known w2 residuals.
+
+### Round 51 evidence correction (M51-3)
+
+W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the exact syntax and got `no_tokens`; `keys=the` also missed because one cited base line lacks that token (`w2/CritC2HeldTokens/held-token-attack.md:9-15`). The earlier W1 wording in the round summary that called this a counterexample is superseded by this correction. No generic-held-token bypass is demonstrated; QUALITY 105 records the exact-fixture requirement. The broad token-specificity question remains an untested design concern, not a measured defect.
