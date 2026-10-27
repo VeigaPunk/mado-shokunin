@@ -1,0 +1,5277 @@
+"""
+# Universal Wayland Desktop Session Manager
+https://github.com/Vladimir-csp/uwsm
+https://gitlab.freedesktop.org/Vladimir-csp/uwsm
+
+Runs selected compositor with plugin-extendable tweaks
+Manages systemd environment and targets along the way, providing a session
+with XDG autostart support, application unit management, clean shutdown
+
+Inspired by and uses some techniques from:
+ https://github.com/xdbob/sway-services
+ https://github.com/alebastr/sway-systemd
+ https://github.com/swaywm/sway
+ https://people.debian.org/~mpitt/systemd.conf-2016-graphical-session.pdf
+
+Special thanks to @skewballfox for help with python and pointing me to useful tools.
+"""
+
+import os
+import sys
+import shlex
+import argparse
+import re
+import subprocess
+import textwrap
+import time
+import signal
+import stat
+import errno
+from typing import List, Callable
+from urllib import parse as urlparse
+from select import select
+
+from xdg import BaseDirectory
+from xdg.util import which
+from xdg.DesktopEntry import DesktopEntry
+from xdg.Exceptions import ValidationError
+
+from uwsm.params import (
+    BIN_NAME,
+    BIN_PATH,
+    PROJECT_VERSION,
+    SH_BIN,
+    WHIPTAIL_BIN,
+    PKG_LIBEXEC_DIR,
+)
+from uwsm.misc import (
+    DebugFlag,
+    LogFlag,
+    NoStdOutFlag,
+    Styles,
+    Val,
+    dedent,
+    print_debug,
+    print_error,
+    print_normal,
+    print_ok,
+    print_warning,
+    random_hex,
+    sane_split,
+    str2bool_plus,
+)
+from uwsm.dbus import DbusInteractions
+
+
+class CompGlobals:
+    "Compositor global vars"
+
+    # Full final compositor cmdline
+    cmdline: List[str] = []
+    # Compositor arguments that were given on CLI (without arg 0)
+    cli_args: List[str] = []
+    # Internal compositor ID (basename of the arg 0)
+    id: str = None
+    # escaped id string for unit specifier
+    id_unit_string: str = None
+    # basename of cmdline[0]
+    bin_name: str = None
+    # processed function-friendly cmdline[0]
+    bin_id: str = None
+    # XDG_CURRENT_DESKTOP list
+    desktop_names: List[str] = []
+    # list of -D value
+    cli_desktop_names: List[str] = []
+    # -e flag bool
+    cli_desktop_names_exclusive: bool = None
+    # Final compositor Name
+    name: str = None
+    # value of -N
+    cli_name: str = None
+    # Final compositor Description
+    description: str = None
+    # value of -C
+    cli_description: str = None
+
+
+class Terminal:
+    "XDG Terminal selector"
+
+    entry: any = None
+    entry_id: str = ""
+    entry_action_id: str = ""
+    neg_cache: dict = {}
+    opts: List[str] = []
+    print_opts: List[str] = []
+    default_execargs: dict = {}
+
+
+class UnitsState:
+    "Holds flag to mark changes in systemd units"
+
+    changed: bool = False
+
+
+class HelpFormatterNewlines(argparse.HelpFormatter):
+    "Treats double newlines as line breaks, preserves indents after them"
+
+    def _fill_text(self, text, width, indent):
+        "For parser descriptions and epilogs"
+        lines = []
+        for line in text.split("\n\n"):
+            p_indent = line[0 : len(line) - len(line.lstrip())]
+            lines.append(
+                argparse.HelpFormatter._fill_text(self, line, width, indent + p_indent)
+            )
+        return "\n".join(lines)
+
+    def _split_lines(self, text, width):
+        "For argument descriptions"
+        lines = []
+        for line in text.split("\n\n"):
+            p_indent = line[0 : len(line) - len(line.lstrip())]
+            p_indent_width = len(p_indent)
+            lines.extend(
+                p_indent + l
+                for l in argparse.HelpFormatter._split_lines(
+                    self, line, width - p_indent_width
+                )
+            )
+        return lines
+
+
+class Varnames:
+    "Sets of varnames"
+
+    session_specific = {
+        "XDG_SEAT",
+        "XDG_SEAT_PATH",
+        "XDG_SESSION_ID",
+        "XDG_SESSION_PATH",
+        "XDG_VTNR",
+    }
+    always_unset = {"DISPLAY", "WAYLAND_DISPLAY"} | session_specific
+
+    always_export = {
+        "PATH",
+        "XDG_CURRENT_DESKTOP",
+        "XDG_MENU_PREFIX",
+        "XDG_SESSION_DESKTOP",
+        "XDG_SESSION_CLASS",
+        "XDG_SESSION_TYPE",
+    }
+    never_export = {
+        "PWD",
+        "LS_COLORS",
+        "INVOCATION_ID",
+        "SHLVL",
+        "SHELL",
+        "TERM",
+        "COLORTERM",
+        "TERM_SESSION_TYPE",
+        "NOTIFY_SOCKET",
+    } | session_specific
+    always_cleanup = {
+        "DISPLAY",
+        "LANG",
+        "PATH",
+        "WAYLAND_DISPLAY",
+        "XCURSOR_SIZE",
+        "XCURSOR_THEME",
+        "XDG_CURRENT_DESKTOP",
+        "XDG_MENU_PREFIX",
+        "XDG_SESSION_DESKTOP",
+        "XDG_SESSION_CLASS",
+        "XDG_SESSION_TYPE",
+        "NOTIFY_SOCKET",
+    } | session_specific
+    never_cleanup = {"SSH_AGENT_LAUNCHER", "SSH_AUTH_SOCK", "SSH_AGENT_PID"}
+
+
+class MainArg:
+    """
+    Evaluates main argument string.
+    Checks if it is entry_id or entry_id:action_id (and validate strings), or nothing like (executable), and if given as a path.
+    Fills attributes: entry_id, entry_action, executable, path
+    """
+
+    def __init__(self, arg: str):
+        "Takes argument string"
+
+        self.entry_id, self.entry_action, self.path, self.executable = (
+            None,
+            None,
+            None,
+            None,
+        )
+
+        if arg is None:
+            pass
+
+        elif not isinstance(arg, str):
+            raise ValueError(f"Expected str or None, got {type(arg)}: {arg}")
+
+        # Desktop entry
+        elif arg.endswith(".desktop") or ".desktop:" in arg:
+            # separate action
+            if ".desktop:" in arg:
+                self.entry_id, entry_action = arg.split(".desktop:", maxsplit=1)
+                self.entry_id = self.entry_id + ".desktop"
+                if entry_action:
+                    if not Val.action_id.search(entry_action):
+                        raise ValueError(
+                            f'Invalid Desktop Entry Action "{entry_action}"'
+                        )
+                    self.entry_action = entry_action
+            else:
+                self.entry_id = arg
+
+            # path to entry
+            if "/" in self.entry_id:
+                self.path = os.path.normpath(os.path.expanduser(self.entry_id))
+
+                # start with an assumption that entry ID is basename
+                self.entry_id = os.path.basename(self.entry_id)
+
+                # only makes sense for applications
+                # check if path is in 'applications' and extract proper entry ID
+                for data_dir in BaseDirectory.load_data_paths("applications"):
+                    relpath = os.path.relpath(self.path, data_dir)
+                    if not relpath.startswith("../"):
+                        self.entry_id = relpath.replace("/", "-")
+                        break
+
+            # validate id if not given as path
+            if not Val.entry_id.search(self.entry_id):
+                if self.path is None and os.path.isfile(self.entry_id):
+                    # entry id is ivnalid, but points to existing file in PWD, make a path
+                    self.path = f"./{self.entry_id}"
+                elif self.path is None:
+                    raise ValueError(f'Invalid Desktop Entry ID "{self.entry_id}"')
+                print_warning(f'Invalid Desktop Entry ID "{self.entry_id}"', notify=1)
+
+        # Executable
+        else:
+            # executable is stored as is, with or without path
+            self.executable = arg
+            # mark path
+            if "/" in arg:
+                self.path = os.path.normpath(os.path.expanduser(arg))
+
+    def __str__(self):
+        "String representation for debug purposes"
+        return (
+            f"{self.__class__.__name__}("
+            + ", ".join(
+                f"{attr}={getattr(self, attr, None)}"
+                for attr in ("entry_id", "entry_action", "executable", "path")
+                if getattr(self, attr, None) is not None
+            )
+            + ")"
+        )
+
+    def check_exec(self):
+        "Checks if executable is reachable and executable"
+        if self.executable is None:
+            raise ValueError(f"Argument is not an executable: {self}")
+        if not which(self.executable):
+            raise FileNotFoundError(
+                f'"{self.executable}" not found or is not executable!'
+            )
+
+    def check_path(self):
+        "Checks if path exists and has appropriate permissions."
+        if self.path is None:
+            raise ValueError(f"Argument is not a path: {self}")
+        if not os.path.isfile(self.path):
+            raise FileNotFoundError(f'Path "{self.path}" does not exist!')
+        if not os.access(self.path, os.R_OK):
+            raise PermissionError(f'Path "{self.path}" is not readable!')
+        if self.executable and not os.access(self.path, os.X_OK):
+            raise PermissionError(f'Path "{self.path}" is not executable!')
+        print_debug(f"Path {self.path} OK")
+
+
+def update_varnames_sets(env: dict = None):
+    """
+    Modifies Varnames.{always,never}_{export,cleanup} sets according to UWSM_*_VARNAMES vars:
+    Space-separated lists, plain or '+'-prefixed names are added, '-'-prefixed are removed.
+    """
+
+    if env is None:
+        env = os.environ
+
+    for mod_set_name in (
+        "always_export",
+        "never_export",
+        "always_cleanup",
+        "never_cleanup",
+    ):
+
+        v_raw = env.get(f"UWSM_{mod_set_name.upper()}_VARNAMES", "").split()
+        v_add = filter_varnames(
+            {v.removeprefix("+") for v in v_raw if not v.startswith("-")}
+        )
+        v_rem = filter_varnames(
+            {v.removeprefix("-") for v in v_raw if v.startswith("-")}
+        )
+
+        mod_set = getattr(Varnames, mod_set_name)
+
+        delta = ", ".join(sorted(v_add.difference(mod_set)))
+        if delta:
+            print_normal(f"Adding to {mod_set_name} set: {delta}")
+            mod_set.update(v_add)
+
+        delta = ", ".join(sorted(v_rem.intersection(mod_set)))
+        if delta:
+            print_normal(f"Removing from {mod_set_name} set: {delta}")
+            mod_set.difference_update(v_rem)
+
+
+def entry_expand_str(value: str):
+    """
+    Expands escape sequences \\s, \\n, \\t, \\r, and \\\\ for a string from desktop entry according to
+    https://specifications.freedesktop.org/desktop-entry-spec/latest/value-types.html
+    """
+    if "\\" not in value:
+        return value
+    new_value = ""
+    escaped = False
+
+    print_debug("expander received", value)
+
+    for char in value:
+        if escaped:
+            # expand escape sequence
+            new_value += {
+                "s": " ",
+                "n": "\n",
+                "t": "\t",
+                "r": "\r",
+                "\\": "\\",
+            }.get(char, char)
+            escaped = False
+            continue
+        if char == "\\":
+            # mark next character for expansion
+            escaped = True
+            continue
+        # append char as is
+        new_value += char
+
+    print_debug("expander produced", new_value)
+
+    return new_value
+
+
+def entry_tokenize_exec(value: str):
+    """
+    Unquotes and splits Exec string (should be already expanded) according to
+    https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html
+    """
+    value = value.strip()
+    cmd = []
+    arg = ""
+    quoted = False
+    in_space = False
+    escaped = False
+
+    print_debug("tokenizer received", value)
+
+    for char in list(value) + [None]:
+        # string is terminated by None
+        if char is None:
+            cmd.append(arg)
+            break
+        # continuation of space, drop
+        if in_space and char.isspace():
+            continue
+        # mark as no longer in space
+        if in_space:
+            in_space = False
+        # process characters inside quotes
+        if quoted:
+            # append escaped character as is
+            if escaped:
+                arg += char
+                escaped = False
+                continue
+            # close quotes
+            if char == '"':
+                quoted = False
+                continue
+            # mark next as escaped
+            if char == "\\":
+                escaped = True
+                continue
+            # error out on unescaped characters
+            if char in ("`", "$"):
+                raise ValueError(f"Encountered unescaped {char!r} in Exec")
+            # add character as is
+            arg += char
+            continue
+        # open quotes
+        if char == '"':
+            quoted = True
+            continue
+        # append and reset argument, mark space
+        if char.isspace():
+            in_space = True
+            cmd.append(arg)
+            arg = ""
+            continue
+        # these should be quoted
+        if char in "\t\n'\\><~|&;$*?#()`":
+            raise ValueError(f"Encountered unquoted {char!r} in Exec")
+        arg += char
+
+    print_debug("tokenizer produced", cmd)
+
+    return cmd
+
+
+def entry_action_keys(entry, entry_action=None):
+    """
+    Extracts Name, Exec, Icon from entry with or without entry_action, returns as dict.
+    String values are expanded, Exec is also tokenized.
+    """
+    out = {
+        "Name": entry_expand_str(entry.getName()),
+        "Exec": entry_tokenize_exec(entry_expand_str(entry.getExec())),
+        "Icon": entry.getIcon(),
+    }
+    if not entry_action:
+        return out
+
+    if entry_action not in entry.getActions():
+        raise ValueError(
+            f'entry "{entry.getFileName()}" does not have action "{entry_action}"'
+        )
+
+    # switch to action group
+    entry.defaultGroup = f"Desktop Action {entry_action}"
+    out.update(
+        {
+            "Name": entry_expand_str(entry.getName()),
+            "Exec": entry_tokenize_exec(entry_expand_str(entry.getExec())),
+        }
+    )
+    if entry.getIcon():
+        out.update({"Icon": entry.getIcon()})
+
+    # restore default group
+    entry.defaultGroup = "Desktop Entry"
+    return out
+
+
+def check_entry_basic(entry, entry_action=None):
+    "Takes entry, performs basic checks, raises RuntimeError on failure"
+    try:
+        entry.validate()
+    except ValidationError:
+        pass
+    errors = set()
+    print_debug(
+        f'entry "{entry.getFileName()}"',
+        *(f"  err: {error}" for error in entry.errors),
+        *(f"  wrn: {warning}" for warning in entry.warnings),
+        *(["  all clear"] if not entry.errors and not entry.warnings else []),
+        sep="\n",
+    )
+    # Be chill with some [stupid] errors
+    for error in entry.errors:
+        if " is not a registered " in error:
+            continue
+        if error in [
+            # For proposed xdg-terminal-exec
+            "Invalid key: ExecArg",
+            # Accompanies unregistered categories
+            "Missing main category",
+            # Used in wayland-sessions
+            "Invalid key: DesktopNames",
+            # New keys in spec not yet known by pyxdg
+            "Invalid key: DBusActivatable",
+            "Invalid key: SingleMainWindow",
+            "Invalid key: PrefersNonDefaultGPU",
+            # Used in X-tended sections, but triggers errors anyway
+            "Invalid key: TargetEnvironment",
+        ]:
+            continue
+        if Val.invalid_locale_key_error.match(error):
+            continue
+        errors.add(error)
+    if errors:
+        raise RuntimeError(
+            "\n".join(
+                [f"Entry {entry.getFileName()} failed validation:"]
+                + [f"  err: {error}" for error in errors]
+            )
+        )
+    if entry.getHidden():
+        raise RuntimeError(f"Entry {entry.getFileName()} is hidden")
+    if entry.hasKey("TryExec") and not entry.findTryExec():
+        raise RuntimeError(f"Entry {entry.getFileName()} is discarded by TryExec")
+    if entry_action:
+        if entry_action not in entry.getActions():
+            raise RuntimeError(
+                f"Entry {entry.getFileName()} has no action {entry_action}"
+            )
+        entry_action_group = f"Desktop Action {entry_action}"
+        if entry_action_group not in entry.groups():
+            raise RuntimeError(
+                f"Entry {entry.getFileName()} has no action group {entry_action_group}"
+            )
+        entry_dict = entry_action_keys(entry, entry_action)
+        if "Name" not in entry_dict or not entry_dict["Name"]:
+            raise RuntimeError(
+                f"Entry {entry.getFileName()} action {entry_action} does not have Name"
+            )
+        if "Exec" not in entry_dict or not entry_dict["Exec"]:
+            raise RuntimeError(
+                f"Entry {entry.getFileName()} action {entry_action} does not have Exec"
+            )
+        entry_exec = entry_dict["Exec"]
+    else:
+        if not entry.hasKey("Exec") or not entry.getExec():
+            raise RuntimeError(f"Entry {entry.getFileName()} does not have Exec")
+        entry_exec = entry_tokenize_exec(entry_expand_str(entry.getExec()))
+    if not which(entry_exec[0]):
+        raise RuntimeError(
+            f"Entry {entry.getFileName()} points to missing executable {entry_exec[0]}"
+        )
+
+
+def check_entry_showin(entry):
+    "Takes entry, checks OnlyShowIn/NotShowIn against XDG_CURRENT_DESKTOP, raises RuntimeError on failure"
+    xcd = set(sane_split(os.getenv("XDG_CURRENT_DESKTOP", ""), ":"))
+    osi = set(entry.getOnlyShowIn())
+    nsi = set(entry.getNotShowIn())
+    if osi and osi.isdisjoint(xcd):
+        raise RuntimeError(f"Entry {entry.getFileName()} discarded by OnlyShowIn")
+    if nsi and not nsi.isdisjoint(xcd):
+        raise RuntimeError(f"Entry {entry.getFileName()} discarded by NotShowIn")
+    return True
+
+
+def entry_parser_session(entry_id, entry_path):
+    "parser for wayland-sessions entries, returns ('append', (entry_id, entry))"
+    try:
+        entry = DesktopEntry(entry_path)
+    except Exception:
+        print_debug(f"failed parsing {entry_path}, skipping")
+        return ("drop", None)
+    try:
+        check_entry_basic(entry)
+        return ("append", (entry_id, entry))
+    except RuntimeError:
+        return ("drop", None)
+
+
+def entry_parser_by_ids(entry_id, entry_path, match_entry_id, match_entry_action):
+    """
+    Takes entry_id, entry_path, match_entry_id, match_entry_action
+    matches, performs basic checks if matched
+    returns ('return', entry) on success, ('drop', None) if not matched,
+    or raises RuntimeError on validation failure
+    """
+    # drop if not matched ID
+    if entry_id != match_entry_id:
+        print_debug("not an entry we are looking for")
+        return ("drop", None)
+    try:
+        entry = DesktopEntry(entry_path)
+    except Exception as caught_exception:
+        raise RuntimeError(
+            f'Failed to parse entry "{match_entry_id}" from "{entry_path}"'
+        ) from caught_exception
+
+    check_entry_basic(entry, match_entry_action)
+
+    print_debug("matched and checked")
+    return ("return", entry)
+
+
+def entry_parser_terminal(
+    entry_id: str, entry_path: str, explicit_terminals: List = None
+):
+    """
+    Takes entry_id, entry_path,
+    optionally takes entry_action and explicit_terminals list of tuples [(entry_id, entry_action)]
+    checks if is applicable terminal.
+    if explicit_terminals are given checks without DE checks, returns with action 'extend'
+    (for multiple actions, further sorting)
+      ('extend', [(entry, entry_id, entry_action)]) or ('drop', (None, None, None))
+    if no explicit_terminals, returns with action 'return'
+    (for first applicable entry)
+      ('return', (entry, entry_id, None)) or ('drop', (None, None, None))
+    """
+    if explicit_terminals is None:
+        explicit_terminals = []
+
+    # drop if not among explicitly listed IDs
+    if explicit_terminals and entry_id not in (i[0] for i in explicit_terminals):
+        print_debug("not an entry we are looking for")
+        return ("drop", (None, None, None))
+    try:
+        entry = DesktopEntry(entry_path)
+    except Exception:
+        print_debug("failed to parse entry")
+        Terminal.neg_cache.update({entry_path: os.path.getmtime(entry_path)})
+        return ("drop", (None, None, None))
+
+    # quick fail
+    try:
+        if "TerminalEmulator" not in entry.getCategories():
+            print_debug("not a TerminalEmulator")
+            Terminal.neg_cache.update({entry_path: os.path.getmtime(entry_path)})
+            return ("drop", (None, None, None))
+    except Exception:
+        print_debug("failed to get Categories")
+        Terminal.neg_cache.update({entry_path: os.path.getmtime(entry_path)})
+        return ("drop", (None, None, None))
+
+    # get requested actions for this entry ID
+    if explicit_terminals:
+        results = []
+        for entry_action in {i[1] for i in explicit_terminals if i[0] == entry_id}:
+            try:
+                check_entry_basic(entry, entry_action)
+                # if this is the top choice, return right away
+                if (entry_id, entry_action) == explicit_terminals[0]:
+                    print_debug("bingo")
+                    return ("return", (entry, entry_id, entry_action))
+                # otherwise, add to cart
+                results.append((entry, entry_id, entry_action))
+            except RuntimeError:
+                print_debug(f"action {entry_action} failed basic checks")
+        if results:
+            return ("extend", results)
+        return ("drop", (None, None, None))
+
+    # not explicit_terminals
+    try:
+        check_entry_basic(entry, None)
+    except RuntimeError:
+        print_debug("failed basic checks")
+        Terminal.neg_cache.update({entry_path: os.path.getmtime(entry_path)})
+        return ("drop", (None, None, None))
+    try:
+        check_entry_showin(entry)
+    except RuntimeError:
+        print_debug("failed ShowIn checks")
+        # not adding to neg cache here
+        return ("drop", (None, None, None))
+
+    return ("return", (entry, entry_id, None))
+
+
+def find_entries(
+    subpath: str,
+    parser: Callable = None,
+    parser_args: dict = None,
+    reject_pmt: dict = None,
+    reject_ids: List[str] = None,
+):
+    """
+    Takes data hierarchy subpath and optional arg parser
+    If parser is callable, it is called for each found entry with (entry_id, entry_path)
+    Return is expected to be (action, data)
+    action: what to do with the data: append|extend|return|drop(or anything else)
+    By default returns list of tuples [(entry_id, entry_path)],
+    otherwise returns whatever parser tells in a list.
+    reject_pmt is a mapping of path to mtime for quick rejection
+    reject_id is a list of entry ids for quick rejection
+    """
+    seen_ids = set()
+    results = []
+    if parser_args is None:
+        parser_args = {}
+
+    print_debug(f"searching entries in {subpath}")
+    # iterate over data paths
+    for data_dir in BaseDirectory.load_data_paths(subpath):
+        # walk tree relative to data_dir
+        for dirpath, _, filenames in os.walk(data_dir, followlinks=True):
+            for filename in filenames:
+                # fast crude rejection
+                if not filename.endswith(".desktop"):
+                    continue
+
+                entry_path = os.path.join(dirpath, filename)
+
+                # reject by path-mtime mapping
+                if (
+                    reject_pmt
+                    and entry_path in reject_pmt
+                    and os.path.getmtime(entry_path) == reject_pmt[entry_path]
+                ):
+                    print_debug(f"rejected {entry_path} by path to mtime mapping")
+                    continue
+
+                # get proper entry id relative to data_dir with path delimiters replaced by '-'
+                entry_id = os.path.relpath(entry_path, data_dir).replace("/", "-")
+
+                # quick reject on reject_ids list
+                if reject_ids and entry_id in reject_ids:
+                    print_debug(f"rejected {entry_path} by id list")
+                    continue
+
+                # get only valid IDs
+                if not Val.entry_id.search(entry_id):
+                    continue
+
+                # id-based deduplication
+                if entry_id in seen_ids:
+                    print_debug(f"already seen {entry_id}")
+                    continue
+                seen_ids.add(entry_id)
+
+                print_debug(f"considering {entry_id} {entry_path}")
+                if callable(parser):
+                    action, data = parser(entry_id, entry_path, **parser_args)
+                else:
+                    action, data = "append", (entry_id, entry_path)
+
+                if action == "return":
+                    return [data]
+                if action == "append":
+                    results.append(data)
+                if action == "extend":
+                    results.extend(data)
+
+    print_debug(results)
+    return results
+
+
+def get_default_comp_entry():
+    "Gets compositor Desktop Entry ID from {BIN_NAME}/default-id file in config hierarchy and fallback system data hierarchy"
+    config_file = ""
+    for check_config_file in BaseDirectory.load_config_paths(f"{BIN_NAME}/default-id"):
+        if os.path.isfile(check_config_file):
+            config_file = check_config_file
+            break
+    if not config_file:
+        for check_config_file in BaseDirectory.load_data_paths(
+            f"{BIN_NAME}/default-id"
+        ):
+            if os.path.isfile(check_config_file):
+                config_file = check_config_file
+                break
+
+    if config_file:
+        try:
+            with open(config_file, "r", encoding="UTF-8") as config_file:
+                for line in config_file.readlines():
+                    if line.strip():
+                        return line.strip()
+        except Exception as caught_exception:
+            print_error(caught_exception)
+
+    return ""
+
+
+def save_default_comp_entry(default):
+    "Saves compositor Desktop Entry ID to {BIN_NAME}/default-id file in config hierarchy"
+    if "dry_run" not in Args.parsed or not Args.parsed.dry_run:
+        config_file = os.path.join(
+            BaseDirectory.xdg_config_home, BIN_NAME, "default-id"
+        )
+        os.makedirs(os.path.dirname(config_file), exist_ok=True)
+        with open(config_file, "w", encoding="UTF-8") as config:
+            config.write(default + "\n")
+            print_ok(f"Saved default compositor ID: {default}.")
+    else:
+        print_ok(f"Would save default compositor ID: {default}.")
+
+
+def select_comp_entry(default="", just_confirm=False):
+    """
+    Uses whiptail to select among "wayland-sessions" Desktop Entries.
+    Takes a "default" to preselect, "just_confirm" flag to return a found default right away
+    """
+
+    choices_raw: List[tuple[str]] = []
+    choices: List[str] = []
+
+    # Fill choces list with (entry_id, description, comment) tuples.
+    # Sort found entries by entry IDs without .desktop extension, to avoid
+    # '[_-]' vs '.' sorting issues.
+    for _, entry_id, entry in sorted(
+        [
+            (entry_id.removesuffix(".desktop"), entry_id, entry)
+            for entry_id, entry in find_entries(
+                "wayland-sessions", parser=entry_parser_session
+            )
+        ]
+    ):
+        name: str = entry_expand_str(entry.getName())
+        generic_name: str = entry_expand_str(entry.getGenericName())
+        description: str = " ".join((n for n in (name, generic_name) if n))
+        comment: str = entry_expand_str(entry.getComment())
+        # add a choice
+        choices_raw.append((entry_id, description, comment))
+
+        # also enumerate actions
+        for action in entry.getActions():
+            print_debug("parsing action", action)
+            action_group: str = f"Desktop Action {action}"
+            if not entry.hasGroup(action_group):
+                continue
+
+            # switch to action group
+            entry.defaultGroup = action_group
+            if (
+                not entry.getExec()
+                or not entry.getName()
+                or not which(entry_tokenize_exec(entry_expand_str(entry.getExec()))[0])
+            ):
+                continue
+            action_name = entry_expand_str(entry.getName())
+
+            # action_description: str = f" ╰─▶ {action_name}"
+            # action_description: str = f" ╰▶ {action_name}"
+            action_description: str = f" └▶ {action_name}"
+
+            # add a choice
+            choices_raw.append((f"{entry_id}:{action}", action_description, ""))
+
+    # find longest description
+    description_length: int = 0
+    for choice in choices_raw:
+        description_length = max(description_length, len(choice[1]))
+
+    # pretty format choices
+    col_overhead = 10
+    try:
+        col = os.get_terminal_size().columns
+    except OSError:
+        print_warning("Could not get terminal width, assuming 128")
+        col = 128
+    except Exception as caught_exception:
+        print_error(caught_exception)
+        print_warning("Could not get terminal width, assuming 128")
+        col = 128
+
+    for choice in choices_raw:
+        choices.append(choice[0])
+        if choice[2]:
+            choices.append(
+                f"{choice[1].ljust(description_length)}  {textwrap.shorten(choice[2], col - description_length - col_overhead)}"
+            )
+        else:
+            choices.append(choice[1])
+
+    if not choices:
+        raise RuntimeError("No choices found")
+
+    if len(choices) % 2:
+        raise ValueError(
+            f"Choices for whiptail are not even ({len(choices)}): {choices}"
+        )
+
+    # drop default if not among choices
+    if default and default not in choices[::2]:
+        print_warning(f'Default "{default}" was not found in wayland-sessions.')
+        default = ""
+
+    # just spit out default if requested and found
+    if default and just_confirm:
+        for choice in choices[::2]:
+            if choice == default:
+                return choice
+
+    # no default default here
+
+    # fail on missing whiptail
+    whiptail_path = which(WHIPTAIL_BIN)
+    if not whiptail_path:
+        raise FileNotFoundError(
+            f'"{WHIPTAIL_BIN}" is not {"found" if "/" in WHIPTAIL_BIN else "in PATH"}, "select" feature is not supported!'
+        )
+
+    # fail on noninteractive terminal
+    if not sys.stdin.isatty() or not sys.stdout.isatty():
+        io = []
+        if not sys.stdin.isatty():
+            io.append("stdin")
+        if not sys.stdout.isatty():
+            io.append("stdout")
+        raise IOError(
+            f"{', '.join(io)} {'is' if len(io) == 1 else 'are'} not attached to interactive terminal! Cannot launch menu!"
+        )
+
+    # generate arguments for whiptail exec
+    argv = [
+        whiptail_path,
+        "--clear",
+        "--backtitle",
+        "Universal Wayland Session Manager",
+        "--title",
+        "Choose compositor",
+        # "--nocancel",
+        *(("--default-item", default) if default else ""),
+        "--menu",
+        "",
+        "0",
+        "0",
+        "0",
+        "--notags",
+        *(choices),
+    ]
+
+    # replace whiptail theme with simple default colors
+    whiptail_env = dict(os.environ) | {"NEWT_MONO": "true"}
+    # run whiptail, capture stderr
+    sprc = subprocess.run(
+        argv, env=whiptail_env, stderr=subprocess.PIPE, text=True, check=False
+    )
+    print_debug(sprc)
+
+    return sprc.stderr.strip() if sprc.returncode == 0 and sprc.stderr else ""
+
+
+def reload_systemd():
+    "Reloads systemd user manager"
+
+    if Args.parsed.dry_run:
+        print_normal("Will reload systemd user manager.")
+        UnitsState.changed = False
+        return True
+
+    print_normal("Reloading systemd user manager.")
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    job = bus_session.reload_systemd()
+    # wait for job to be done
+    while True:
+        jobs = bus_session.list_systemd_jobs()
+        print_debug("current systemd jobs", jobs)
+        if job not in [check_job[4] for check_job in jobs]:
+            break
+        time.sleep(0.1)
+
+    print_debug(f"reload systemd job {job} finished")
+
+    UnitsState.changed = False
+    return True
+
+
+def set_systemd_vars(vars_dict: dict, dbus_only=False, verbose=True, bus_session=None):
+    "Exports vars from given dict to systemd user manager"
+
+    if bus_session is None:
+        bus_session = DbusInteractions("session")
+        print_debug("bus_session initial", bus_session)
+
+    # get existing environment (for info only)
+    existing_vars_dict = bus_session.get_systemd_vars()
+
+    # compose vars list for message
+    vars_msg = []
+    for v in sorted(vars_dict.keys()):
+        if v in existing_vars_dict and vars_dict[v] == existing_vars_dict[v]:
+            if verbose:
+                vars_msg.append(f"{v} (already set)")
+        elif v in existing_vars_dict:
+            vars_msg.append(f"{v} (updating)")
+        else:
+            vars_msg.append(v)
+
+    if not verbose and not vars_msg:
+        vars_msg = ["(All already set)"]
+
+    # print message about env export
+    print_normal(
+        "Exporting variables to systemd user manager:\n  " + "\n  ".join(vars_msg)
+    )
+
+    if not dbus_only:
+        bus_session.set_systemd_vars(vars_dict)
+    else:
+        print_debug("skipped managing systemd activation environment")
+
+    # check what dbus service is running
+    # if it is not dbus-broker, also set dbus environment vars
+    dbus_unit = bus_session.get_unit_property("dbus.service", "Id")
+    print_debug("dbus.service Id", dbus_unit)
+    if dbus_unit != "dbus-broker.service":
+        print_debug(
+            "dbus unit",
+            dbus_unit,
+            "managing separate dbus activation environment",
+            vars_dict,
+        )
+        if dbus_only:
+            print_normal(
+                "Exporting vars to dbus environment (consider switching to dbus-broker)"
+            )
+        else:
+            print_normal(
+                "Also exporting vars to dbus environment (consider switching to dbus-broker)"
+            )
+        bus_session.set_dbus_vars(vars_dict)
+    else:
+        print_debug(
+            "dbus unit", dbus_unit, "skipped managing dbus activation environment"
+        )
+
+
+def unset_systemd_vars(vars_list, bus_session=None):
+    "Unsets vars from given list from systemd user manager"
+
+    if bus_session is None:
+        bus_session = DbusInteractions("session")
+        print_debug("bus_session initial", bus_session)
+
+    # print message about env unset
+    print_normal(
+        "Removing variables from systemd user manager:\n  "
+        + "\n  ".join(sorted(vars_list))
+    )
+
+    dbus_unit = bus_session.get_unit_property("dbus.service", "Id")
+    print_debug("dbus.service Id", dbus_unit)
+    if dbus_unit != "dbus-broker.service":
+        print_debug(
+            "dbus unit", dbus_unit, "managing separate dbus activation environment"
+        )
+
+        vars_dict = {}
+        for var in vars_list:
+            vars_dict.update({var: ""})
+
+        print_normal(
+            "Also writing empty values to dbus environment (consider switching to dbus-broker)"
+        )
+        print_debug("sending to .UpdateActivationEnvironment", vars_dict)
+        bus_session.set_dbus_vars(vars_dict)
+
+    bus_session.unset_systemd_vars(vars_list)
+
+
+def char2cesc(string: str) -> str:
+    "Takes a string, returns c-style '\\xXX' sequence"
+    return "".join(f"\\x{b:02x}" for b in bytes(string, "utf-8"))
+
+
+def simple_systemd_escape(string: str, start: bool = True) -> str:
+    """
+    Escapes simple strings by systemd rules.
+    Set 'start=False' if string is not intended for start of resulting string
+    """
+    out = []
+    # escape '.' if starts with it
+    if start and string.startswith("."):
+        out.append(char2cesc("."))
+        string = string[1:]
+    for ch, ucp in ((c, ord(c)) for c in string):
+        # replace '/' with '-'
+        if ch == "/":
+            out.append("-")
+        # append as is if ._0-9:A-Z
+        elif ucp in [46, 95] or 48 <= ucp <= 58 or 65 <= ucp <= 90 or 97 <= ucp <= 122:
+            out.append(ch)
+        # append c-style escape
+        else:
+            out.append(char2cesc(ch))
+    return "".join(out)
+
+
+def wait_for_unit(
+    unit: str, bus, timeout: int, states: list = None, quiet: bool = False
+):
+    "Waits for 'unit' via 'bus' for time 'timeout' to be in 'states', returns bool."
+
+    if states is None:
+        states = ["active"]
+
+    if set(states) not in (
+        {"active", "activating"},
+        {"active"},
+        {"activating"},
+        {"inactive", "deactivating"},
+        {"inactive"},
+        {"deactivating"},
+    ):
+        raise ValueError(
+            "Can only query for states: active, activating or inactive, deactivating"
+        )
+
+    # initial check
+    units = bus.list_units_by_patterns(states, [unit])
+    print_debug(f"'{unit}' query units", units)
+
+    # unit is already in desired state
+    if len(units) > 0:
+        return True
+
+    # no timeout - no wait
+    if timeout == 0:
+        return False
+
+    # check if unit is queued,
+    # wait if it is, recheck when it leaves queue.
+    job_state = None
+    if "active" in states or "activating" in states:
+        job_state = "start"
+    elif "inactive" in states or "deactivating" in states:
+        job_state = "stop"
+
+    unit_seen_in_queue = False
+    spacer = ""
+    for attempt in range(timeout, -1, -1):
+        jobs = (
+            (str(check_unit), str(check_state))
+            for _, check_unit, check_state, _, _, _ in bus.list_systemd_jobs()
+        )
+        print_debug("queried jobs", jobs)
+        if (unit, job_state) in jobs:
+            unit_seen_in_queue = True
+            # report at first check
+            if not quiet and attempt == timeout:
+                print_normal(
+                    f"{unit} is queued for start, waiting for {timeout}s...",
+                )
+            # report at each 10th attempt or -15 or every of last 10
+            elif not quiet and (attempt % 10 == 0 or attempt == 15 or attempt < 10):
+                print_normal(f"{spacer}{attempt}", end="")
+                spacer = " "
+            if attempt != 0:
+                time.sleep(1)
+        else:
+            # unit not in queue, no use waiting
+            break
+
+    if not quiet and unit_seen_in_queue:
+        # effectively newline
+        print_normal("")
+
+    # recheck unit state
+    units = bus.list_units_by_patterns(states, [unit])
+    print_debug(f"{unit} query units", units)
+    if len(units) < 1:
+        if not quiet and unit_seen_in_queue:
+            print_warning("Timed out.")
+        return False
+    return True
+
+
+def get_unit_path(unit: str, rung: str = "run", level: str = "user"):
+    """Takes unit file subpath, rung (run|home), level (user).
+    Returns tuple: 0) path in rung, level dir, 1) unit subpath"""
+
+    if os.path.isabs(unit):
+        raise RuntimeError("Passed absolute path to get_unit_path")
+
+    unit = os.path.normpath(unit)
+
+    unit_path: str = ""
+    if rung == "run":
+        try:
+            unit_path = BaseDirectory.get_runtime_dir(strict=True)
+        except Exception:
+            pass
+        if not unit_path:
+            raise OSError("Fatal: empty or undefined XDG_RUNTIME_DIR!")
+    elif rung == "home":
+        try:
+            unit_path = BaseDirectory.xdg_config_home
+        except Exception:
+            pass
+        if not unit_path:
+            raise OSError("Fatal: could not determine XDG_CONFIG_HOME!")
+    else:
+        raise RuntimeError(f"rung {rung} is not supported")
+
+    if level not in ["user"]:
+        raise RuntimeError(f"level {level} is not supported")
+
+    unit_dir = os.path.normpath(os.path.join(unit_path, "systemd", level))
+    return (unit_dir, unit)
+
+
+def get_active_wm_unit(active=True, activating=True, bus_session=None):
+    """
+    Finds activating or active wayland-wm@*.service, returns unit ID.
+    Bool strict_active to match only active state.
+    """
+
+    if bus_session is None:
+        bus_session = DbusInteractions("session")
+        print_debug("bus_session initial", bus_session)
+
+    # query systemd dbus for matching units
+    units = bus_session.list_units_by_patterns(
+        (["active"] if active else []) + (["activating"] if activating else []),
+        ["wayland-wm@*.service"],
+    )
+
+    if len(units) == 0:
+        return ""
+    if len(units) == 1:
+        return str(units[0][0])
+    if len(units) > 1:
+        print_warning(
+            f"Got more than 1 active wayland-wm@*.service: {', '.join(units)}"
+        )
+        return str(units[0][0])
+
+
+def extract_wm_id(unit_id: str):
+    "Extracts and unescapes specifier from unit name"
+
+    if unit_id:
+        wm_id = unit_id.split("@")[1].removesuffix(".service")
+        wm_id = bytes(unit_id, "UTF-8").decode("unicode_escape")
+        return wm_id
+
+    return ""
+
+
+def is_active(check_wm_id="", verbose=False, verbose_active=False, bus_session=None):
+    """
+    Checks if units are active or activating, returns bool.
+    If check_wm_id is empty, checks graphical*.target and wayland-wm@*.service
+    If check_wm_id is "compositor-only", checks wayland-wm@*.service
+    If check_wm_id has other value, checks unit of specific wm_id
+    verbose=True prints matched or relevant units
+    verbose_active=True prints matched active units
+    """
+    if bus_session is None:
+        bus_session = DbusInteractions("session")
+        print_debug("bus_session initial", bus_session)
+
+    check_units_generic = [
+        "graphical-session-pre.target",
+        "wayland-session-pre@*.target",
+        "graphical-session.target",
+        "wayland-session@*.target",
+        "wayland-wm@*.service",
+    ]
+    if check_wm_id and check_wm_id == "compositor-only":
+        check_units = ["wayland-wm@*.service"]
+    elif check_wm_id:
+        # escape wm_id for systemd
+        check_wm_id_unit_string = simple_systemd_escape(check_wm_id, start=False)
+        check_units = [f"wayland-wm@{check_wm_id_unit_string}.service"]
+    else:
+        check_units = check_units_generic
+
+    # query systemd dbus for matching units
+    units = bus_session.list_units_by_patterns([], check_units)
+    # extract strings
+    active_units = []
+    inactive_units = []
+    for unit in units:
+        if str(unit[3]) in ["active", "activating"]:
+            active_units.append(
+                (str(unit[0]), str(unit[1]), str(unit[3]), str(unit[4]))
+            )
+        else:
+            inactive_units.append(
+                (str(unit[0]), str(unit[1]), str(unit[3]), str(unit[4]))
+            )
+
+    if active_units:
+        if verbose or verbose_active:
+            print_normal(f"Matched {len(units)} units, {len(active_units)} active:")
+            for name, descr, _, _ in active_units:
+                print_normal(f"  {name} ({descr})")
+            if verbose:
+                if inactive_units:
+                    print_normal(f"{len(inactive_units)} inactive:")
+                for name, descr, _, _ in inactive_units:
+                    print_normal(f"  {name} ({descr})")
+        return True
+
+    if not verbose:
+        return False
+
+    # just show generic check if above came empty and in verbose mode
+    # query systemd dbus for matching units
+    units = bus_session.list_units_by_patterns([], check_units_generic)
+    # extract strings
+    active_units = []
+    inactive_units = []
+    for unit in units:
+        if str(unit[3]) in ["active", "activating"]:
+            active_units.append(
+                (str(unit[0]), str(unit[1]), str(unit[3]), str(unit[4]))
+            )
+        else:
+            inactive_units.append(
+                (str(unit[0]), str(unit[1]), str(unit[3]), str(unit[4]))
+            )
+    print_normal("No units matched. Listing other relevant units:")
+    if active_units:
+        print_normal(f"  {len(active_units)} active:")
+        for name, descr, _, _ in active_units:
+            print_normal(f"    {name} ({descr})")
+    if inactive_units:
+        print_normal(f"  {len(inactive_units)} inactive:")
+        for name, descr, _, _ in inactive_units:
+            print_normal(f"    {name} ({descr})")
+    return False
+
+
+def update_unit(unit, data, rung: str = "run"):
+    """
+    Updates unit with data if differs
+    Returns change in boolean
+    """
+
+    if not Val.unit_ext.search(unit):
+        raise ValueError(
+            f"Trying to update unit with unsupported extension {unit.split('.')[-1]}: {unit}"
+        )
+
+    if os.path.isabs(unit):
+        unit_dir, unit = ("/", os.path.normpath(unit))
+    else:
+        if unit.count("/") > 1:
+            raise ValueError(
+                f"Only single subdir supported for relative unit, got {unit.count('/')} ({unit})"
+            )
+        unit_dir, unit = get_unit_path(unit, rung=rung)
+    unit_path = os.path.join(unit_dir, unit)
+
+    # create subdirs if missing
+    check_dir = unit_dir
+    if not os.path.isdir(check_dir):
+        if not Args.parsed.dry_run:
+            os.mkdir(check_dir)
+            print_ok(f'Created dir "{check_dir}/"')
+        elif not UnitsState.changed:
+            print_ok(f'Will create dir "{check_dir}/"')
+    for path_element in [d for d in os.path.dirname(unit).split(os.path.sep) if d]:
+        check_dir = os.path.join(check_dir, path_element)
+        if not os.path.isdir(check_dir):
+            if not Args.parsed.dry_run:
+                os.mkdir(check_dir)
+                print_ok(f'Created unit subdir "{path_element}/" ({rung}).')
+            else:
+                print_ok(f'Will create unit subdir "{path_element}/" ({rung}).')
+
+    old_data = ""
+    if os.path.isfile(unit_path):
+        with open(unit_path, "r", encoding="UTF-8") as unit_file:
+            old_data = unit_file.read()
+
+    if data == old_data:
+        return False
+
+    print_debug(f"for update: {unit_path}", data)
+
+    if not Args.parsed.dry_run:
+        with open(unit_path, "w", encoding="UTF-8") as unit_file:
+            unit_file.write(data)
+        if old_data:
+            print_ok(f'Updated "{unit}" ({rung}).')
+        else:
+            print_ok(f'Created "{unit}" ({rung}).')
+    else:
+        if old_data:
+            print_ok(f'Will update "{unit}" ({rung}).')
+        else:
+            print_ok(f'Will create "{unit}" ({rung}).')
+
+    UnitsState.changed = True
+    return True
+
+
+def remove_unit(unit, rung: str = "run"):
+    "Removes unit and subdir if empty"
+
+    if not Val.unit_ext.search(unit):
+        raise ValueError(
+            f"Trying to remove unit with unsupported extension {unit.split('.')[-1]}"
+        )
+
+    if os.path.isabs(unit):
+        unit_dir, unit = ("/", os.path.normpath(unit))
+    else:
+        if unit.count("/") > 1:
+            raise ValueError(
+                f"Only single subdir supported for relative unit, got {unit.count('/')} ({unit})"
+            )
+        unit_dir, unit = get_unit_path(unit, rung=rung)
+    unit_path = os.path.join(unit_dir, unit)
+
+    change = False
+    # remove unit file
+    if os.path.isfile(unit_path):
+        print_debug(f"for removing: {unit_path}")
+        if not Args.parsed.dry_run:
+            os.remove(unit_path)
+            print_ok(f'Removed "{unit}" ({rung}).')
+        else:
+            print_ok(f'Will remove "{unit}" ({rung}).')
+        UnitsState.changed = True
+        change = True
+
+    # deal with subdir
+    if not os.path.isabs(unit) and "/" in unit:
+        unit_subdir_path = os.path.dirname(unit_path)
+        unit_subdir = os.path.dirname(unit)
+        unit_filename = os.path.basename(unit_path)
+        if os.path.isdir(unit_subdir_path):
+            print_debug(f"for removing: {unit_subdir_path}")
+            if set(os.listdir(unit_subdir_path)) - {unit_filename}:
+                print_warning(f'Unit subdir "{unit_subdir}" is not empty ({rung}).')
+            else:
+                if not Args.parsed.dry_run:
+                    os.rmdir(unit_subdir_path)
+                    print_ok(f'Removed unit subdir "{unit_subdir}" ({rung}).')
+                else:
+                    print_ok(f'Will remove unit subdir "{unit_subdir}" ({rung}).')
+
+    return change
+
+
+def generate_dropins(rung: str = "runtime"):
+    "Generates drop-ins for units"
+
+    # custom start timeout
+    waitenv_timeout = get_waitenv_timeout()
+    if waitenv_timeout != 30:
+        update_unit(
+            "wayland-wm@.service.d/50_timeout.conf",
+            dedent(f"""
+                # injected by {BIN_NAME}, do not edit
+                [Unit]
+                X-UWSMMark=generic
+                [Service]
+                TimeoutStartSec={waitenv_timeout}
+                """),
+            rung=rung,
+        )
+        update_unit(
+            "wayland-session-waitenv.service.d/50_timeout.conf",
+            dedent(f"""
+                # injected by {BIN_NAME}, do not edit
+                [Unit]
+                X-UWSMMark=generic
+                [Service]
+                TimeoutStartSec={waitenv_timeout}
+                """),
+            rung=rung,
+        )
+    else:
+        remove_unit("wayland-wm@.service.d/50_timeout.conf", rung=rung)
+        remove_unit("wayland-session-waitenv.service.d/50_timeout.conf", rung=rung)
+
+    # compositor-specific additions from cli or desktop entry via drop-ins
+    # paths
+    wm_specific_preloader = (
+        f"wayland-wm-env@{CompGlobals.id_unit_string}.service.d/50_custom.conf"
+    )
+    wm_specific_service = (
+        f"wayland-wm@{CompGlobals.id_unit_string}.service.d/50_custom.conf"
+    )
+    # initial data as lists for later joining
+    wm_specific_preloader_data = [dedent(f"""
+            # injected by {BIN_NAME}, do not edit
+            [Unit]
+            X-UWSMMark={CompGlobals.id}
+            """)]
+    wm_specific_service_data = [dedent(f"""
+            # injected by {BIN_NAME}, do not edit
+            [Unit]
+            X-UWSMMark={CompGlobals.id}
+            """)]
+
+    # name or description is given
+    if CompGlobals.name or CompGlobals.description:
+        description_substring: str = ", ".join(
+            (
+                s
+                for s in (
+                    CompGlobals.name or CompGlobals.bin_name,
+                    CompGlobals.description,
+                )
+                if s
+            )
+        )
+        wm_specific_preloader_data.append(
+            f"Description=Environment preloader for {description_substring}\n"
+        )
+
+        wm_specific_service_data.append(
+            f"Description=Main service for {description_substring}\n"
+        )
+
+    # preloader exec needs desktop names, ID and the first argument
+    preloader_exec_base = [BIN_PATH, "aux", "prepare-env"]
+    preloader_exec = []
+    # exclusive desktop names were given on command line
+    if CompGlobals.cli_desktop_names_exclusive:
+        preloader_exec.extend(["-eD", ":".join(CompGlobals.cli_desktop_names)])
+    # desktop names differ from just executable name
+    elif CompGlobals.desktop_names != [CompGlobals.bin_name]:
+        preloader_exec.extend(["-D", ":".join(CompGlobals.desktop_names)])
+    # finish preloader exec with ID...
+    if preloader_exec or os.path.isabs(CompGlobals.cmdline[0]):
+        preloader_exec.extend(["--", "%I"])
+        # and absolute first argument
+        if os.path.isabs(CompGlobals.cmdline[0]):
+            preloader_exec.append(CompGlobals.cmdline[0])
+
+        # append to string list
+        wm_specific_preloader_data.append(dedent(f"""
+                [Service]
+                ExecStart=
+                ExecStart={shlex.join(preloader_exec_base + preloader_exec)}\n
+                """))
+
+    # service exec needs ID and command line
+    service_exec_base = [BIN_PATH, "aux", "exec", "--", "%I"]
+    service_exec = []
+
+    # hardcode is requested or executable is given by path, hardcode the whole cmdline
+    if os.path.isabs(CompGlobals.cmdline[0]):
+        service_exec.extend(CompGlobals.cmdline)
+    # append cli args with empty first argument
+    elif CompGlobals.cli_args:
+        service_exec.extend([""] + CompGlobals.cli_args)
+
+    # append to string list
+    if service_exec:
+        wm_specific_service_data.append(dedent(f"""
+                [Service]
+                ExecStart=
+                ExecStart={shlex.join(service_exec_base + service_exec)}\n
+                """))
+
+    if len(wm_specific_preloader_data) > 1:
+        # add preloader customization drop-in
+        update_unit(
+            wm_specific_preloader,
+            # those strings already have newlines
+            "".join(wm_specific_preloader_data),
+            rung=rung,
+        )
+    else:
+        # remove customization drop-in
+        remove_unit(wm_specific_preloader, rung=rung)
+
+    if len(wm_specific_service_data) > 1:
+        # add main service customization drop-in
+        update_unit(
+            wm_specific_service,
+            # those strings already have newlines
+            "".join(wm_specific_service_data),
+            rung=rung,
+        )
+    else:
+        # remove customization drop-in
+        remove_unit(wm_specific_service, rung=rung)
+
+
+def generate_tweaks(rung: str = "run"):
+    "Generates drop-ins for units"
+
+    ## tweaks
+    # ordering and slicing autostart apps
+    update_unit(
+        "app-@autostart.service.d/slice-tweak.conf",
+        dedent(f"""
+            # injected by {BIN_NAME}, do not edit
+            [Unit]
+            X-UWSMMark=tweaks
+            # make autostart apps stoppable/restartable by target
+            PartOf=xdg-desktop-autostart.target
+            After=xdg-desktop-autostart.target
+            [Service]
+            # also put them in special graphical app slice
+            Slice=app-graphical.slice
+            EnvironmentFile=-%t/{BIN_NAME}/env_session.conf
+            """),
+        rung=rung,
+    )
+    # ordering and slicing flatpaks
+    update_unit(
+        "app-flatpak-.scope.d/order-tweak.conf",
+        dedent(f"""
+            # injected by {BIN_NAME}, do not edit
+            [Unit]
+            X-UWSMMark=tweaks
+            # terminate with session properly
+            PartOf=graphical-session.target
+            After=graphical-session.target
+            [Scope]
+            # also put them in special graphical app slice
+            Slice=app-graphical.slice
+            """),
+        rung=rung,
+    )
+    ## hotfix some portals
+    # with kde portal it's complicated
+    # upstream is ordered after plasma-core.target which may be not installed
+    update_unit(
+        "plasma-xdg-desktop-portal-kde.service.d/order-tweak.conf",
+        dedent(f"""
+            # injected by {BIN_NAME}, do not edit
+            [Unit]
+            X-UWSMMark=tweaks
+            After=graphical-session.target
+            """),
+        rung=rung,
+    )
+
+
+def remove_units(only: List[str] | None = None, rung: str = "run") -> None:
+    """
+    Removes units by X-UWSMMark= attribute.
+    if only list is given as argument, only remove files with matching X-UWSMMark={item}, else remove all.
+    """
+    if not only:
+        only = []
+        match_lines = ["X-UWSMMark="]
+    else:
+        match_lines = [f"X-UWSMMark={mark.strip()}" for mark in only if mark.strip()]
+    check_dir, _ = get_unit_path("", rung=rung)
+    unit_files = []
+    print_debug(
+        f"will check for removal, {'match' if only else 'startswith'}", match_lines
+    )
+
+    for directory, _, files in sorted(os.walk(check_dir)):
+        for file_name in sorted(files):
+            file_path = os.path.join(directory, file_name)
+            if not os.path.isfile(file_path):
+                print_debug("skipping, not a file:", file_path)
+                continue
+            print_debug("checking for removal:", file_path)
+            try:
+                with open(file_path, "r", encoding="utf-8") as unit_file:
+                    for line in unit_file.readlines():
+                        if (
+                            not only
+                            and any(
+                                line.strip().startswith(item) for item in match_lines
+                            )
+                        ) or (only and line.strip() in match_lines):
+                            unit_files.append(
+                                file_path.removeprefix(check_dir.rstrip("/") + "/")
+                            )
+                            print_debug("matched")
+                            break
+            except Exception:
+                pass
+
+    for file_path in unit_files:
+        remove_unit(file_path, rung=rung)
+
+
+class Args:
+    """
+    Parses args. Stores attributes 'parsers' and 'parsed'. Globally for main args, instanced for custom args.
+    """
+
+    parsers = argparse.Namespace()
+    parsed = argparse.Namespace()
+
+    def __init__(self, custom_args=None, exit_on_error=True, store_parsers=False):
+        "Parses sys.argv[1:] or custom_args"
+
+        precheck_args = sys.argv[1:] if custom_args is None else custom_args
+
+        print_debug(
+            f"parsing {'argv' if custom_args is None else 'custom args'}",
+            precheck_args,
+            f"exit_on_error: {exit_on_error}",
+        )
+
+        # keep parsers in a dict
+        parsers = {}
+
+        # main parser with subcommands
+        parsers["main"] = argparse.ArgumentParser(
+            formatter_class=HelpFormatterNewlines,
+            description=dedent("""
+                Universal Wayland Session Manager.\n
+                \n
+                Launches arbitrary wayland compositor via a set of systemd user units
+                to provide graphical user session with environment management,
+                XDG autostart support, scoped application launch helpers,
+                clean shutdown.
+                """),
+            # usage='%(prog)s [-h] action ...',
+            epilog=dedent(f"""
+                See "{BIN_NAME} {{subcommand}} -h" for further help on each subcommand.\n
+                \n
+                See "man {BIN_NAME}" for more detailed info on integration and operation.\n
+                """),
+            exit_on_error=exit_on_error,
+        )
+        parsers["main_subparsers"] = parsers["main"].add_subparsers(
+            title="Action subcommands",
+            description=None,
+            dest="mode",
+            metavar="{subcommand}",
+            required=True,
+        )
+
+        # compositor arguments for reuse via parents
+        parsers["wm_args"] = argparse.ArgumentParser(
+            add_help=False,
+            formatter_class=HelpFormatterNewlines,
+            exit_on_error=exit_on_error,
+        )
+        parsers["wm_args"].add_argument(
+            "wm_cmdline",
+            metavar="args",
+            nargs="+",
+            help=dedent("""
+                Compositor command line. The first argument acts as an ID and should be either one of:\n
+                  - Executable name\n
+                  - Desktop Entry ID (optionally with ":"-delimited action ID)\n
+                  - Special value "select" or "default"\n
+                If given as path, hardcode mode is implied.\n
+                """),
+        )
+
+        parsers["wm_args_raw"] = argparse.ArgumentParser(
+            add_help=False,
+            formatter_class=HelpFormatterNewlines,
+            exit_on_error=exit_on_error,
+        )
+        parsers["wm_args_raw"].add_argument(
+            "wm_cmdline",
+            metavar="args",
+            nargs="*",
+            help="Full Compositor command line.",
+        )
+
+        parsers["wm_id"] = argparse.ArgumentParser(
+            add_help=False,
+            formatter_class=HelpFormatterNewlines,
+            exit_on_error=exit_on_error,
+        )
+        parsers["wm_id"].add_argument("wm_id", metavar="ID", help="Compositor ID.")
+
+        parsers["wm_meta"] = argparse.ArgumentParser(
+            add_help=False,
+            formatter_class=HelpFormatterNewlines,
+            exit_on_error=exit_on_error,
+        )
+        parsers["wm_meta"].add_argument(
+            "-D",
+            metavar="name[:name...]",
+            dest="desktop_names",
+            default="",
+            help="Names to fill XDG_CURRENT_DESKTOP with (:-separated).\n\nExisting var content is a starting point if no active session is running.",
+        )
+        parsers["wm_meta_dn_exclusive"] = parsers[
+            "wm_meta"
+        ].add_mutually_exclusive_group()
+        parsers["wm_meta_dn_exclusive"].add_argument(
+            "-a",
+            dest="desktop_names_exclusive",
+            action="store_false",
+            default=False,
+            help="Append desktop names set by -D to other sources (default).",
+        )
+        parsers["wm_meta_dn_exclusive"].add_argument(
+            "-e",
+            dest="desktop_names_exclusive",
+            action="store_true",
+            default=False,
+            help="Use desktop names set by -D exclusively, discard other sources.",
+        )
+        parsers["wm_meta"].add_argument(
+            "-N",
+            metavar="Name",
+            dest="wm_name",
+            default="",
+            help="Fancy name for compositor (filled from Desktop Entry by default).",
+        )
+        parsers["wm_meta"].add_argument(
+            "-C",
+            metavar="Comment",
+            dest="wm_comment",
+            default="",
+            help="Fancy description for compositor (filled from Desktop Entry by default).",
+        )
+
+        # select subcommand
+        parsers["select"] = parsers["main_subparsers"].add_parser(
+            "select",
+            formatter_class=HelpFormatterNewlines,
+            help="Select default compositor entry",
+            description="Invokes whiptail menu for selecting wayland-sessions Desktop Entries.",
+            epilog=dedent(f"""
+                Entries are selected from "wayland-sessions" XDG data hierarchy.
+                Default selection is read from first encountered "{BIN_NAME}/default-id" file in
+                XDG Config hierarchy and system part of XDG Data hierarchy. When selected, choice is
+                saved to user part of XDG Config hierarchy ("${{XDG_CONFIG_HOME}}/{BIN_NAME}/default-id").
+                Nothing else is done.
+                """),
+        )
+
+        # start subcommand
+        parsers["start"] = parsers["main_subparsers"].add_parser(
+            "start",
+            formatter_class=HelpFormatterNewlines,
+            help="Start compositor",
+            description="Generates units for given compositor command line or Desktop Entry and starts compositor.",
+            parents=[parsers["wm_args"], parsers["wm_meta"]],
+            epilog=dedent(f"""
+                Compositor should either put WAYLAND_DISPLAY var into systemd user service environment
+                itself, or finalize its startup by running this:\n
+                \n
+                  {BIN_NAME} finalize [VAR ...]\n
+                \n
+                Otherwise, the compositor's unit will terminate due to startup timeout.
+                """),
+        )
+        unit_rung_preset = False
+        unit_rung_default = os.getenv("UWSM_UNIT_RUNG", None)
+        if unit_rung_default in ("run", "home"):
+            unit_rung_preset = True
+        elif unit_rung_default is not None:
+            print_warning(
+                f'invalid UWSM_UNIT_RUNG value "{unit_rung_default}" ignored and set to "run".'
+            )
+            unit_rung_default = "run"
+        else:
+            unit_rung_default = "run"
+        parsers["start"].add_argument(
+            "-U",
+            dest="unit_rung",
+            type=str,
+            default=unit_rung_default,
+            required=False,
+            choices=("run", "home"),
+            help=f"Generated unit/drop-in files destination (default: %(default)s, {'was' if unit_rung_preset else 'can be'} preset by UWSM_UNIT_RUNG env var).",
+        )
+        tweaks_preset = False
+        t_raw = os.getenv("UWSM_TWEAKS", None)
+        if t_raw is not None:
+            try:
+                tweaks_default = str2bool_plus(t_raw)
+                tweaks_preset = True
+            except ValueError:
+                print_warning(
+                    f'Expected boolean value from UWSM_TWEAKS, got "{t_raw}", ignored and set to True.'
+                )
+                tweaks_default = True
+        else:
+            tweaks_default = True
+        del t_raw
+        parsers["start_tw"] = parsers["start"].add_mutually_exclusive_group()
+        parsers["start_tw"].add_argument(
+            "-t",
+            dest="tweaks",
+            action="store_false",
+            default=tweaks_default,
+            help="".join(
+                [
+                    "Do not generate tweak drop-ins",
+                    (
+                        " (can be preset by UWSM_TWEAKS=false env var)"
+                        if not tweaks_preset
+                        else (
+                            " (preset by UWSM_TWEAKS=false env var)"
+                            if not tweaks_default
+                            else ""
+                        )
+                    ),
+                    ".",
+                ]
+            ),
+        )
+        parsers["start_tw"].add_argument(
+            "-T",
+            dest="tweaks",
+            action="store_true",
+            default=tweaks_default,
+            help="".join(
+                [
+                    "Generate tweak drop-ins",
+                    (
+                        " (default)"
+                        if not tweaks_preset
+                        else (
+                            " (preset by UWSM_TWEAKS=true env var)"
+                            if tweaks_default
+                            else ""
+                        )
+                    ),
+                    ".",
+                ]
+            ),
+        )
+        parsers["start"].add_argument(
+            "-F",
+            action="store_true",
+            dest="hardcode",
+            default=False,
+            help="Hardcode resulting command line (with path) to unit drop-ins.",
+        )
+        parsers["start_gt"] = parsers["start"].add_mutually_exclusive_group()
+        parsers["start_gt"].add_argument(
+            "-g",
+            type=int,
+            dest="gst_warn_seconds",
+            metavar="S",
+            default=60,
+            help="Seconds to wait for graphical.target in queue and warn if timed out (default: 60; negative to disable).",
+        )
+        parsers["start_gt"].add_argument(
+            "-G",
+            type=int,
+            dest="gst_abort_seconds",
+            metavar="S",
+            default=-1,
+            help="Seconds to wait for graphical.target in queue and abort if timed out (takes precedence over -g, default: -1 (disabled)).",
+        )
+        parsers["start"].add_argument(
+            "-o",
+            action="store_true",
+            dest="only_generate",
+            help="Only generate units, but do not start.",
+        )
+        parsers["start"].add_argument(
+            "-n",
+            action="store_true",
+            dest="dry_run",
+            help="Dry run, do not write or start anything.",
+        )
+
+        # stop subcommand
+        parsers["stop"] = parsers["main_subparsers"].add_parser(
+            "stop",
+            formatter_class=HelpFormatterNewlines,
+            help="Stop compositor",
+            description="Stops compositor and optionally removes generated units.",
+        )
+        parsers["stop"].add_argument(
+            "-r",
+            nargs="?",
+            metavar="compositor",
+            default=False,
+            dest="remove_units",
+            help='Also remove unit files, all or only with specific mark(s) (compositor ID, "tweaks", "generic" as comma-separated list).',
+        )
+        parsers["stop"].add_argument(
+            "-U",
+            dest="unit_rung",
+            default=unit_rung_default,
+            required=False,
+            type=str,
+            choices=("run", "home"),
+            help=f"Generated unit/drop-in files destination (default: %(default)s, {'was' if unit_rung_preset else 'can be'} preset by UWSM_UNIT_RUNG env var).",
+        )
+        parsers["stop"].add_argument(
+            "-n",
+            action="store_true",
+            dest="dry_run",
+            help="Dry run, do not stop or remove anything.",
+        )
+
+        # finalize subcommand
+        parsers["finalize"] = parsers["main_subparsers"].add_parser(
+            "finalize",
+            formatter_class=HelpFormatterNewlines,
+            help="Export variables from compositor, notify systemd of unit startup.",
+            description="For use inside compositor to export essential variables and complete compositor unit startup.",
+            epilog=dedent("""
+                Exports variables to systemd user manager: WAYLAND_DISPLAY, DISPLAY,
+                and any optional variables mentioned by name as arguments, or listed
+                whitespace-separated in UWSM_FINALIZE_VARNAMES environment var.\n
+                \n
+                Variables are also added to cleanup list to be unset during deactivation.\n
+                \n
+                If all is well, sends startup notification to systemd user manager,
+                so compositor unit is considered started and graphical-session.target
+                can be declared reached.
+                """),
+        )
+        parsers["finalize"].add_argument(
+            "env_names",
+            metavar="VAR_NAME",
+            nargs="*",
+            help=(
+                'Additional vars to export by name. Direct assignment "VAR_NAME=value" is also possible, '
+                + 'but recommended only for creating flags for "UWSM_WAIT_VARNAMES" mechanism.'
+            ),
+        )
+
+        # determine if -T is in the arguments after app, before --
+        terminal_requested = precheck_args[0:1] == ["app"] and [
+            arg for arg in precheck_args[1:] if arg in ("-T", "--")
+        ][0:1] == ["-T"]
+
+        # reset terminal opts
+        Terminal.opts = []
+        Terminal.print_opts = []
+        # pre-filter and collect unknown options as terminal options between "-T" and "--"
+        # fill Terminal.opts
+        if terminal_requested:
+            pop_idx = []
+            capture = False
+            for idx, arg in enumerate(sys.argv if custom_args is None else custom_args):
+                if not capture and arg == "-T":
+                    capture = True
+                    continue
+                if arg == "--":
+                    break
+                if (
+                    capture
+                    and arg.startswith("-")
+                    and arg not in ["-s", "-t", "-a", "-u", "-d", "-S", "-T"]
+                ):
+                    pop_idx.append(idx)
+            idx_shift = 0
+            for idx in pop_idx:
+                if custom_args is None:
+                    arg = sys.argv.pop(idx - idx_shift)
+                else:
+                    arg = custom_args.pop(idx - idx_shift)
+                idx_shift += 1
+                if arg.startswith("--print-"):
+                    Terminal.print_opts.append(arg)
+                else:
+                    Terminal.opts.append(arg)
+            print_debug(
+                "extracted terminal opts from args:", Terminal.print_opts, Terminal.opts
+            )
+
+        # app subcommand
+        parsers["app"] = parsers["main_subparsers"].add_parser(
+            "app",
+            formatter_class=HelpFormatterNewlines,
+            help="Application unit launcher",
+            description="Launches application as a scope or service in specific slice.",
+            epilog=dedent("""
+                It is highly recommended to configure your compositor to launch apps
+                via this command to fully utilize user-level systemd unit management.\n
+                It would not be prudent to accumulate app processes in compositor's unit.
+                """),
+        )
+        parsers["app"].add_argument(
+            "cmdline",
+            metavar="args",
+            # allow empty cmdline if '-T' is given
+            nargs=("*" if terminal_requested else "+"),
+            help=dedent("""
+                Application command line. The first argument can be either one of:\n
+                  - Executable name or path\n
+                  - Desktop Entry ID (with optional ":"-delimited action ID)\n
+                  - Path to Desktop Entry file (with optional ":"-delimited action ID)\n
+                """),
+        )
+        parsers["app"].add_argument(
+            "-s",
+            dest="slice_name",
+            metavar="{a,b,s,custom.slice}",
+            help=dedent(f"""
+                Slice selector:\n
+                  - {Styles.under}a{Styles.reset}pp-graphical.slice\n
+                  - {Styles.under}b{Styles.reset}ackground-graphical.slice\n
+                  - {Styles.under}s{Styles.reset}ession-graphical.slice\n
+                  - custom by full name\n
+                (default: %(default)s)
+                """),
+            default="a",
+        )
+        app_unit_type_preset = False
+        app_unit_type_default = os.getenv("UWSM_APP_UNIT_TYPE", None)
+        if app_unit_type_default in ("scope", "service"):
+            app_unit_type_preset = True
+        elif app_unit_type_default is not None:
+            print_warning(
+                f'invalid UWSM_APP_UNIT_TYPE value "{app_unit_type_default}" ignored and set to "scope".'
+            )
+            app_unit_type_default = "scope"
+        else:
+            app_unit_type_default = "scope"
+        parsers["app"].add_argument(
+            "-t",
+            dest="app_unit_type",
+            choices=("scope", "service"),
+            default=app_unit_type_default,
+            help=f"Type of unit to launch (default: %(default)s, {'was' if app_unit_type_preset else 'can be'} preset by UWSM_APP_UNIT_TYPE env var).",
+        )
+        parsers["app"].add_argument(
+            "-a",
+            dest="app_name",
+            metavar="app_name",
+            help="Override app name (a substring in unit name).",
+            default="",
+        )
+        parsers["app"].add_argument(
+            "-u",
+            dest="unit_name",
+            metavar="unit_name",
+            help="Override the whole autogenerated unit name.",
+            default="",
+        )
+        parsers["app"].add_argument(
+            "-d",
+            dest="unit_description",
+            metavar="unit_description",
+            help="Unit Description.",
+            default="",
+        )
+        parsers["app"].add_argument(
+            "-p",
+            type=str,
+            action="append",
+            dest="unit_properties",
+            metavar="Property=value",
+            help="Pass Unit property assignment.",
+        )
+        parsers["app"].add_argument(
+            "-S",
+            dest="silent",
+            choices=["out", "err", "both"],
+            required=False,
+            help="Silence stdout, stderr, or both.",
+        )
+        parsers["app"].add_argument(
+            "-T",
+            dest="terminal",
+            action="store_true",
+            help="Launch app in a terminal, or just a terminal if command is empty.",
+        )
+
+        # check subcommand
+        parsers["check"] = parsers["main_subparsers"].add_parser(
+            "check",
+            formatter_class=HelpFormatterNewlines,
+            help="Performs state checks",
+            description="Performs a check, returns 0 if true, 1 if false.",
+            epilog=dedent(f"""
+                Use may-start checker to integrate startup into shell profile
+                See "{BIN_NAME} check may-start -h"
+                """),
+        )
+        parsers["check_subparsers"] = parsers["check"].add_subparsers(
+            title="Subcommands",
+            description=None,
+            dest="checker",
+            metavar="{checker}",
+            required=True,
+        )
+        parsers["is_active"] = parsers["check_subparsers"].add_parser(
+            "is-active",
+            formatter_class=HelpFormatterNewlines,
+            help="Checks for active compositor",
+            description="Checks for specific compositor or graphical-session*.target in general in active or activating state",
+        )
+        parsers["is_active"].add_argument(
+            "wm",
+            nargs="?",
+            help="Specify compositor by executable or Desktop Entry (without arguments).",
+        )
+        parsers["is_active"].add_argument(
+            "-v", action="store_true", dest="verbose", help="Show additional info."
+        )
+
+        parsers["may_start"] = parsers["check_subparsers"].add_parser(
+            "may-start",
+            formatter_class=HelpFormatterNewlines,
+            help="Checks for start conditions",
+            description="Checks whether it is OK to launch a wayland session.",
+            epilog=dedent("""
+                Conditions:\n
+                  - User's dbus is available
+                  - Running from login shell\n
+                  - System is at graphical.target\n
+                  - User graphical-session*.target are not yet active\n
+                  - Foreground and session's VT is among allowed (default: 1)\n
+                \n
+                This command is essential for integrating startup into shell profile.
+                """),
+        )
+        parsers["may_start"].add_argument(
+            "vtnr",
+            metavar="N",
+            type=int,
+            # default may not work in some python versions
+            default=[1],
+            nargs="*",
+            help="VT numbers allowed for startup (default: 1; disable check: 0).",
+        )
+        parsers["may_start_verbosity"] = parsers[
+            "may_start"
+        ].add_mutually_exclusive_group()
+        parsers["may_start_verbosity"].add_argument(
+            "-v", action="store_true", dest="verbose", help="Show all failed tests."
+        )
+        parsers["may_start_verbosity"].add_argument(
+            "-q", action="store_true", dest="quiet", help="Do not show anything."
+        )
+        parsers["may_start"].add_argument(
+            "-i",
+            action="store_true",
+            dest="nologin",
+            help="Do not check for login shell.",
+        )
+        parsers["may_start"].add_argument(
+            "-r",
+            action="store_true",
+            dest="allow_remote",
+            help="Do not check for local session (allow remote).",
+        )
+        parsers["may_start"].add_argument(
+            "-g",
+            type=int,
+            dest="gst_seconds",
+            metavar="S",
+            default=60,
+            help="Seconds to wait for graphical.target in queue (default: 60; 0 or less disables check).",
+        )
+
+        # aux subcommand
+        parsers["aux"] = parsers["main_subparsers"].add_parser(
+            "aux",
+            formatter_class=HelpFormatterNewlines,
+            help="Auxiliary functions",
+            description="Can only be called by systemd user manager, used in units Exec*= keys",
+        )
+        parsers["aux_subparsers"] = parsers["aux"].add_subparsers(
+            title="Action subcommands",
+            description=None,
+            dest="aux_action",
+            metavar="{subcommand}",
+            required=True,
+        )
+        parsers["prepare_env"] = parsers["aux_subparsers"].add_parser(
+            "prepare-env",
+            formatter_class=HelpFormatterNewlines,
+            help="Prepares environment (for wayland-wm-env@.service, wayland-session-pre@.target).",
+            description="Prepares environment variables, loads into systemd user activation environment.",
+            epilog="Used in ExecStart in wayland-wm-env@.service for wayland-session-pre@.target, graphical-session-pre.target.",
+            parents=[parsers["wm_id"], parsers["wm_args_raw"], parsers["wm_meta"]],
+        )
+        parsers["cleanup_env"] = parsers["aux_subparsers"].add_parser(
+            "cleanup-env",
+            formatter_class=HelpFormatterNewlines,
+            help="Cleans up environment (for wayland-wm-env@.service, wayland-session-pre@.target).",
+            description="Cleans up systemd user activation environment from previously loaded session-related variables.",
+            epilog="Used in ExecStop in wayland-wm-env@.service for wayland-session-pre@.target, graphical-session-pre.target.",
+        )
+        parsers["exec"] = parsers["aux_subparsers"].add_parser(
+            "exec",
+            formatter_class=HelpFormatterNewlines,
+            help="Executes binary with arguments or Desktop Entry (for wayland-wm@.service, wayland-session@.target).",
+            description="Executes compositor command line or Desktop Entry.",
+            epilog="Used in ExecStart of wayland-wm@.service for wayland-session@.target, graphical-session.target.",
+            parents=[parsers["wm_id"], parsers["wm_args_raw"]],
+        )
+        parsers["waitpid"] = parsers["aux_subparsers"].add_parser(
+            "waitpid",
+            formatter_class=HelpFormatterNewlines,
+            help="Waits for a PID to exit (for wayland-session-bindpid@.service).",
+            description="Exits successfully when a process by given PID ends, or if it does not exist.",
+            epilog="Used in wayland-session-bindpid@.service as a shim for waitpid if it is unavailable.",
+        )
+        parsers["waitpid"].add_argument(
+            "pid",
+            type=int,
+            metavar="PID",
+            help="PID to wait for",
+        )
+        parsers["waitenv"] = parsers["aux_subparsers"].add_parser(
+            "waitenv",
+            formatter_class=HelpFormatterNewlines,
+            help="Waits for WAYLAND_DISPLAY and optionally other vars (for wayland-session-waitenv.service, wayland-session@.target).",
+            description=(
+                "Exits successfully when WAYLAND_DISPLAY (and optionally other vars) appear in systemd user manager activation environment. "
+                "Optional vars are read from command line and whitespace-separated UWSM_WAIT_VARNAMES var."
+            ),
+            epilog="Used in wayland-session-waitenv.service to delay activation of wayland-session@.target, graphical-session.target.",
+        )
+        parsers["waitenv"].add_argument(
+            "env_names",
+            type=list,
+            nargs="*",
+            metavar="VAR_NAME",
+            help="Names of additional variables to wait for",
+        )
+        parsers["app_daemon"] = parsers["aux_subparsers"].add_parser(
+            "app-daemon",
+            formatter_class=HelpFormatterNewlines,
+            help="Daemon for fast app argument generation.",
+            description="Receives app arguments from a named pipe, returns shell code",
+            epilog=dedent(f"""
+                Receives app arguments via "${{XDG_RUNTIME_DIR}}/uwsm-app-daemon-in" pipe.\n
+                Returns shell code to "${{XDG_RUNTIME_DIR}}/uwsm-app-daemon-out" pipe.
+                \n
+                Arguments are expected to be "\\0"-delimited, leading "\\0" are stripped.
+                One command is received per write+close.\n
+                \n
+                The first argument determines the behavior:\n
+                \n
+                  app	the rest is processed the same as in "{BIN_NAME} app"\n
+                  ping	just "pong" is returned\n
+                  stop	daemon is stopped\n
+                """),
+        )
+
+        parsers["version"] = parsers["main"].add_argument(
+            "-v",
+            "--version",
+            help="print version and exit",
+            action="version",
+            version=f"{BIN_NAME} {PROJECT_VERSION}",
+        )
+
+        if custom_args is None:
+            # store args globally
+            parsers["main"].parse_args(namespace=self.parsed)
+            if store_parsers:
+                self.parsers.__dict__.update(parsers)
+        else:
+            # store args in instance
+            self.parsed = parsers["main"].parse_args(custom_args)
+            if store_parsers:
+                self.parsers = argparse.Namespace(**parsers)
+
+    def __str__(self):
+        return str({"parsed": self.parsed})
+
+
+def append_to_cleanup_file(varnames, skip_always_cleanup=False, create=True):
+    "Append varnames to cleanup file, expects varnames, skip_always_cleanup (bool), create (bool)"
+    cleanup_file = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True),
+        BIN_NAME,
+        "env_cleanup.list",
+    )
+
+    update_varnames_sets()
+
+    varnames = set(filter_varnames(varnames)) - Varnames.never_cleanup
+
+    # do not bother with useless cleanups
+    if skip_always_cleanup:
+        varnames = varnames - Varnames.always_cleanup
+
+    if not varnames:
+        print_debug("no varnames to write to cleanup file")
+        return
+
+    if not os.path.exists(cleanup_file):
+        if not create:
+            raise FileNotFoundError(f'"{cleanup_file}" does not exist!')
+        print_debug(f'cleanup file "{cleanup_file}" does not exist')
+        os.makedirs(os.path.dirname(cleanup_file), exist_ok=True)
+
+        # write new file
+        with open(cleanup_file, "w", encoding="UTF-8") as open_cleanup_file:
+            open_cleanup_file.write("\n".join(sorted(varnames)) + "\n")
+
+    elif not os.path.isfile(cleanup_file):
+        raise OSError(f'"{cleanup_file}" is not a file!')
+
+    else:
+        # first read existing varnames
+        with open(cleanup_file, "r", encoding="UTF-8") as open_cleanup_file:
+            # read varnames in a set
+            current_cleanup_varnames = filter_varnames(
+                {l.strip() for l in open_cleanup_file.readlines() if l.strip()}
+            )
+        print_debug(
+            f'cleanup file "{cleanup_file}", varnames', current_cleanup_varnames
+        )
+
+        # subtract existing
+        varnames = sorted(varnames - current_cleanup_varnames)
+
+        # append new
+        if varnames:
+            print_debug("appending to cleanup file", varnames)
+            with open(cleanup_file, "a", encoding="UTF-8") as open_cleanup_file:
+                open_cleanup_file.write("\n".join(sorted(varnames)) + "\n")
+
+        else:
+            print_debug("no new varnames to append to cleanup file")
+            return
+
+    # print message about future env cleanup
+    cleanup_varnames_msg = (
+        "Marking variables for later cleanup from systemd user manager on stop:\n  "
+        + "\n  ".join(sorted(varnames))
+    )
+    print_normal(cleanup_varnames_msg)
+
+
+def finalize(additional_vars=None):
+    """
+    Exports variables to systemd and dbus activation environments,
+    Sends service startup notification to systemd user manager to mark compositor service as active
+    (if not already active).
+    Optionally takes a list of additional vars to export.
+    """
+
+    print_debug("additional_vars", additional_vars)
+
+    if additional_vars is None:
+        additional_vars = []
+
+    if not os.getenv("WAYLAND_DISPLAY", ""):
+        raise ValueError(
+            "WAYLAND_DISPLAY is not defined or empty. Are we being run by a wayland compositor or not?"
+        )
+
+    export_vars = {}
+    export_vars_names = []
+    for var in ["WAYLAND_DISPLAY", "DISPLAY"] + sorted(set(additional_vars)):
+        if "=" in var:
+            var, value = var.split("=", maxsplit=1)
+            if not filter_varnames(var):
+                continue
+            if var in ["WAYLAND_DISPLAY", "DISPLAY"]:
+                print_warning(f"Refusing to override {var}, will take from environment")
+                continue
+        else:
+            if not filter_varnames(var):
+                continue
+            value = os.getenv(var, None)
+        if value is not None and var not in export_vars_names:
+            export_vars.update({var: value})
+            export_vars_names.append(var)
+
+    # reuse dbus connection
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    # get id of active or activating compositor
+    wm_unit = get_active_wm_unit(bus_session=bus_session)
+    wm_id = extract_wm_id(wm_unit)
+    # get id of activating compositor for later decisions
+    activating_wm_unit = get_active_wm_unit(
+        active=False, activating=True, bus_session=bus_session
+    )
+    activating_wm_id = extract_wm_id(activating_wm_unit)
+
+    if not isinstance(wm_id, str) or not wm_id:
+        print_error(
+            "Finalization: Could not get ID of active or activating Wayland session. If it is in activating state, it will time out in 30 seconds (by default)."
+        )
+        sys.exit(1)
+    if activating_wm_id and wm_id != activating_wm_id:
+        print_error(
+            f'Finalization: Unit conflict, active: "{wm_id}", but another is activating: "{activating_wm_id}"!'
+        )
+        sys.exit(1)
+
+    # append vars to cleanup file
+    try:
+        append_to_cleanup_file(export_vars_names, create=False)
+    except FileNotFoundError as caught_exception:
+        print_error(caught_exception, "Assuming env preloader failed.")
+        sys.exit(1)
+
+    set_systemd_vars(export_vars, bus_session=bus_session)
+
+    # if no prior failures and unit is in activating state, exec systemd-notify
+    if activating_wm_id:
+        print_normal(
+            f"Declaring unit for {wm_id} ready and restricting notification access."
+        )
+        os.execlp("systemd-notify", "systemd-notify", "READY=1", "NOTIFYACCESS=exec")
+    else:
+        if (
+            bus_session.get_unit_property(wm_unit, "NotifyAccess", skip_generic=True)
+            == "all"
+        ):
+            print_normal(
+                f"Unit for {wm_id} is already active, restricting notification access."
+            )
+            os.execlp("systemd-notify", "systemd-notify", "NOTIFYACCESS=exec")
+        else:
+            print_normal(
+                f"Unit for {wm_id} is already active, notification access is restricted."
+            )
+            sys.exit(0)
+
+    # we should not be here
+    print_error("Something went wrong!")
+    sys.exit(1)
+
+
+def save_env(filename: str, env: dict = None, separator: str = "\0"):
+    "Saves environment to a null-separated (or value of 'separator') runtime file"
+    if env is None:
+        env = dict(os.environ)
+    env = filter_varnames(env)
+    if not env:
+        print_debug("nothing to write")
+        return
+    env_file = os.path.join(BaseDirectory.get_runtime_dir(), BIN_NAME, filename)
+    os.makedirs(os.path.dirname(env_file), exist_ok=True)
+    with open(env_file, "w", encoding="UTF-8") as env_file_data:
+        # No processing or escaping is done here.
+        # The intended use of alternative separator is for writing systemd
+        # EnvironmentFile= with session XDG_ vars which should not
+        # contain anything requiring escaping
+        env_file_data.write(
+            separator.join((f"{key}={value}" for key, value in env.items()))
+            + ("\n" if separator == "\n" else "")
+        )
+    print_debug(f"written {env_file}", env)
+
+
+def load_env(filename: str, delete: bool = False) -> dict:
+    "Reads environment from a null-separated runtime file"
+    env_file = os.path.join(BaseDirectory.get_runtime_dir(), BIN_NAME, filename)
+    env = {}
+    if not os.path.isfile(env_file):
+        return env
+    try:
+        with open(env_file, "r", encoding="UTF-8") as env_file_data:
+            env_raw = env_file_data.read()
+        env_raw = sane_split(env_raw, "\0")
+        for string in env_raw:
+            var, value = string.split("=", maxsplit=1)
+            env.update({var: value})
+        env = filter_varnames(env)
+        print_debug("loaded env", env)
+    except Exception as caught_exception:
+        print_warning(
+            f'Could not read or parse "{env_file}":',
+            caught_exception,
+        )
+    if delete:
+        os.remove(env_file)
+        print_debug(f"removed {env_file}")
+    return env
+
+
+def get_fg_vt() -> int:
+    "Returns number of foreground VT or None"
+    try:
+        with open(
+            "/sys/class/tty/tty0/active", "r", encoding="UTF-8"
+        ) as active_tty_attr:
+            fgvt = active_tty_attr.read()
+        fgvt = fgvt.strip()
+        if not fgvt.startswith("tty"):
+            print_error(
+                f'Reading "/sys/class/tty/tty0/active" returned "{fgvt}", expected "tty[0-9]"!'
+            )
+            return None
+        fgvt_num = fgvt.removeprefix("tty")
+        if not fgvt_num.isnumeric():
+            print_error(
+                f'Reading "/sys/class/tty/tty0/active" returned "{fgvt}", could not extract number!'
+            )
+            return None
+        return int(fgvt_num)
+    except Exception as caught_exception:
+        print_error(caught_exception)
+        return None
+
+
+def get_session_by_vt(vtnr: int, bus_system=None):
+    "Takes VT number, returns tuple of (session_id, seat_id) or None"
+
+    try:
+        login = os.getlogin()
+    except Exception as caught_exception:
+        print_error(caught_exception)
+        print_error("Could not determine login name")
+        return None
+
+    if bus_system is None:
+        bus_system = DbusInteractions("system")
+
+    # get session list
+    for (
+        session_id,
+        _user_id,
+        user_name,
+        seat_id,
+        _leader_pid,
+        session_class,
+        tty_name,
+        _idle_hint,
+        _idle_hint_mts,
+        _session_object_path,
+    ) in bus_system.list_login_sessions_ex():
+        print_debug(
+            "iterating over session",
+            (session_id, user_name, seat_id, session_class, tty_name),
+        )
+        if (
+            str(session_class) == "user"
+            and str(user_name) == login
+            and int(bus_system.get_session_property(session_id, "VTNr")) == vtnr
+        ):
+            print_debug("found session")
+            return (str(session_id), str(seat_id))
+
+    return None
+
+
+def filter_varnames(data):
+    """
+    Filters variable names (some environments can introduce garbage).
+    Also silently removes some shell-specific vars.
+    Accepts dicts of env assignments, or lists, tuples, sets of env names.
+    Returns same data structure, but only with valid names.
+    """
+    if not isinstance(data, (dict, set, list, tuple, str)):
+        raise TypeError(f"Expected dict|set|list|tuple, received {type(data)}")
+    drop_sh_vars = ["_", "SHELL", "PWD", "OLDWD"]
+
+    if isinstance(data, str):
+        if data in drop_sh_vars:
+            print_debug(f"Dropped {data} var")
+            return None
+        if not Val.sh_varname.search(data):
+            print_warning(f'Encountered illegal var "{data}".')
+            return None
+        return data
+
+    if isinstance(data, dict):
+        for var in list(data.keys()):
+            if var in drop_sh_vars:
+                print_debug(f"Dropped {var} var")
+                data.pop(var)
+            elif not Val.sh_varname.search(var):
+                print_warning(f'Encountered illegal var "{var}".')
+                data.pop(var)
+        return data
+
+    if isinstance(data, (set, list, tuple)):
+        new_data = []
+        for var in data:
+            if var in drop_sh_vars:
+                print_debug(f"Dropped {var} var")
+            elif not Val.sh_varname.search(var):
+                print_warning(f'Encountered illegal var "{var}".')
+            else:
+                new_data.append(var)
+        if isinstance(data, set):
+            return set(new_data)
+        if isinstance(data, tuple):
+            return tuple(new_data)
+        if isinstance(data, list):
+            return new_data
+
+    raise RuntimeError(f'Should not get here with data "{data}" ({type(data)})')
+
+
+def prepare_env():
+    """
+    Runs shell code to source native shell env fragments,
+    Captures difference in env before and after,
+    Filters it and exports to systemd user manager,
+    Saves list for later cleanup.
+    """
+
+    print_normal(
+        f"Preparing environment for {CompGlobals.name or CompGlobals.bin_name}..."
+    )
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    # get login session environment saved by uwsm start
+    env_login = load_env("env_login", delete=True)
+    if env_login:
+        print_normal("Got saved login session variables.")
+        have_env_login = True
+    else:
+        have_env_login = False
+
+    # if XDG_SEAT or XDG_SESSION_ID from login context are not known, deduce them.
+    if (
+        "XDG_SEAT" not in env_login
+        or not env_login["XDG_SEAT"]
+        or "XDG_SESSION_ID" not in env_login
+        or not env_login["XDG_SESSION_ID"]
+    ):
+
+        # get foreground VT if not known from login context
+        if (
+            "XDG_VTNR" not in env_login
+            or not env_login["XDG_VTNR"]
+            or not env_login["XDG_VTNR"].isnumeric()
+        ):
+            v_term = get_fg_vt()
+            if v_term is None:
+                raise RuntimeError("Could not determine foreground VT")
+            # update session environment
+            print_ok(f"Deduced XDG_VTNR={v_term} from foreground VT")
+            env_login.update({"XDG_VTNR": str(v_term)})
+        else:
+            v_term = int(env_login["XDG_VTNR"])
+
+        # this returns session and seat tuple
+        bus_system = DbusInteractions("system")
+        session_vars = get_session_by_vt(v_term, bus_system=bus_system)
+        if session_vars is None:
+            raise RuntimeError("Could not determine session on foreground VT {v_term}")
+        print_ok(
+            f"Deduced XDG_SESSION_ID={session_vars[0]}, XDG_SEAT={session_vars[1]}"
+        )
+        env_login.update(
+            {"XDG_SESSION_ID": session_vars[0], "XDG_SEAT": session_vars[1]}
+        )
+
+        # most likely there is no login session bind at this point,
+        # check and start bindpid on session leader if so.
+        # this won't get proper ordering, but any bind is better than nothing.
+        if not bus_session.list_units_by_patterns(
+            ["active", "activating"], ["wayland-session-bindpid@*.service"]
+        ):
+            print_warning(
+                f"No running wayland-session-bindpid@*.service unit found, starting one on session {session_vars[0]} leader PID..."
+            )
+            session_leader_pid = int(
+                bus_system.get_session_property(session_vars[0], "Leader")
+            )
+            sprc = subprocess.run(
+                [
+                    "systemctl",
+                    "--user",
+                    "start",
+                    f"wayland-session-bindpid@{session_leader_pid}.service",
+                ],
+                check=True,
+            )
+            print_debug(sprc)
+
+        # (re-)save session vars for unit EnvironmentFile= from amended env_login
+        save_env(
+            "env_session.conf",
+            env={
+                var: env_login.get(var, "")
+                for var in sorted(Varnames.session_specific)
+                if env_login.get(var, "")
+            },
+            separator="\n",
+        )
+
+    # get current ENV from systemd user manager
+    env_pre = filter_varnames(bus_session.get_systemd_vars())
+    systemd_varnames = set(env_pre.keys())
+
+    # save initial systemd state for later restoration on cleanup
+    save_env("env_pre", env_pre)
+
+    # merge systemd environment with login environment,
+    # with login environment overriding systemd
+    env_merged = env_pre | env_login
+
+    # string to mark environment dump from shell env loader
+    random_mark = random_hex(16)
+
+    # aux vars for env loader
+    aux_vars = dedent(f"""
+        # vars for plugins
+        __SELF_NAME__={shlex.quote(BIN_NAME)}
+        __WM_ID__={shlex.quote(CompGlobals.id)}
+        __WM_ID_UNIT_STRING__={shlex.quote(CompGlobals.id_unit_string)}
+        __WM_BIN_ID__={shlex.quote(CompGlobals.bin_id)}
+        __WM_DESKTOP_NAMES__={shlex.quote(':'.join(CompGlobals.desktop_names))}
+        __WM_FIRST_DESKTOP_NAME__={shlex.quote(CompGlobals.desktop_names[0])}
+        __WM_DESKTOP_NAMES_EXCLUSIVE__={'true' if CompGlobals.cli_desktop_names_exclusive else 'false'}
+        __LOAD_PROFILE__={'true' if have_env_login else 'false'}
+        __OIFS__=" \t\n"
+        # random mark for environment dump at the end
+        __RANDOM_MARK__={random_mark}
+        # context marker for profile scripting
+        IN_UWSM_ENV_PRELOADER=true
+        """)
+    aux_vars_file = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True),
+        BIN_NAME,
+        f"vars_{random_mark}",
+    )
+    print_debug("aux_vars_file", aux_vars_file, aux_vars)
+
+    with open(aux_vars_file, "w", encoding="UTF-8") as avf:
+        avf.write(aux_vars)
+
+    # find plugins for shell env loader beforehand
+    shell_plugins = BaseDirectory.load_data_paths(
+        f"uwsm/plugins/{CompGlobals.bin_id}.sh"
+    )
+
+    sh_path = which(SH_BIN)
+    if not sh_path:
+        raise OSError(f'"{SH_BIN}" is not {"found" if "/" in SH_BIN else "in PATH"}!')
+
+    sprc = subprocess.run(
+        [
+            sh_path,
+            *(["-x"] if DebugFlag.debug else []),
+            os.path.join(PKG_LIBEXEC_DIR, "prepare-env.sh"),
+            aux_vars_file,
+            *shell_plugins,
+        ],
+        text=True,
+        capture_output=True,
+        env=env_merged,
+        check=False,
+    )
+    print_debug(sprc)
+
+    # cut everything before and including random mark, also the last \0
+    # treat stdout before the mark as messages
+    mark_position = sprc.stdout.find(random_mark)
+    if mark_position < 0:
+        # print whole stdout
+        if sprc.stdout.strip():
+            print_normal(sprc.stdout.strip())
+        # print any stderr as errors
+        if sprc.stderr.strip():
+            print_error(sprc.stderr.strip())
+        raise RuntimeError(
+            f'Env output mark "{random_mark}" not found in shell output!'
+        )
+
+    stdout_msg = sprc.stdout[0:mark_position]
+    stdout = sprc.stdout[mark_position + len(random_mark) :].rstrip("\0")
+
+    # print stdout if any
+    if stdout_msg.strip():
+        print_normal(stdout_msg.strip())
+    # print any stderr as errors
+    if sprc.stderr.strip():
+        print_error(sprc.stderr.strip())
+
+    if sprc.returncode != 0:
+        raise RuntimeError(f"Shell returned {sprc.returncode}!")
+
+    # parse env
+    env_post = {}
+    for env in stdout.split("\0"):
+        env = env.split("=", maxsplit=1)
+        if len(env) == 2 and env[0] != "_":
+            env_post.update({env[0]: env[1]})
+        else:
+            print_error(f"No value: {env}!")
+    env_post = filter_varnames(env_post)
+
+    ## Dict of vars to put into systemd user manager
+    # raw difference dict between env_post and env_pre
+    set_env = dict(set(env_post.items()) - set(env_pre.items()))
+
+    print_debug("env_pre", env_pre)
+    print_debug("env_post", env_post)
+    print_debug("set_env", set_env)
+
+    # update Varnames sets according to vars in env_post
+    update_varnames_sets(env_post)
+
+    # add "always_export" vars from env_post to set_env
+    for var in sorted(
+        Varnames.always_export - Varnames.never_export - Varnames.always_unset
+    ):
+        if var in env_post:
+            print_debug(f'Forcing export of {var}="{env_post[var]}"')
+            set_env.update({var: env_post[var]})
+
+    # remove "never_export" and "always_unset" vars from set_env
+    for var in Varnames.never_export | Varnames.always_unset:
+        if var in set_env:
+            print_debug(f"Excluding export of {var}")
+            set_env.pop(var)
+
+    # Set of varnames to remove from systemd user manager
+    # raw reverse difference
+    unset_varnames = set(env_pre.keys()) - set(env_post.keys())
+    # add "always_unset" vars
+    unset_varnames = unset_varnames | set(Varnames.always_unset)
+    # leave only those that are defined in systemd user manager
+    unset_varnames = unset_varnames & systemd_varnames
+
+    # Set of vars to remove from systemd user manager on shutdown
+    cleanup_varnames = set(set_env.keys()) - Varnames.never_cleanup
+
+    # write cleanup file
+    # first get existing vars if cleanup file already exists
+    append_to_cleanup_file(cleanup_varnames, create=True)
+
+    # export env to systemd user manager
+    set_systemd_vars(set_env, bus_session=bus_session)
+
+    if unset_varnames:
+        # unset env
+        unset_systemd_vars(unset_varnames, bus_session=bus_session)
+
+
+def cleanup_env():
+    """
+    Takes var names from "${XDG_RUNTIME_DIR}/uwsm/env_cleanup[_*].list", applies
+    union with Varnames.always_cleanup,
+    difference with Varnames.never_cleanup,
+    intersect with actual systemd user manager varnames.
+    Unsets vars them from systemd user manager.
+    Takes saved environment from "${XDG_RUNTIME_DIR}/uwsm/env_pre" and restores it
+    Removes found cleanup files
+    """
+
+    update_varnames_sets()
+
+    print_normal("Cleaning up...")
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    cleanup_file = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True), BIN_NAME, "env_cleanup.list"
+    )
+
+    if os.path.isfile(cleanup_file):
+        print_normal('Found environment cleanup file "env_cleanup.list".')
+    else:
+        print_warning(f'Environment cleanup file "{cleanup_file}" not found.')
+
+    current_cleanup_varnames = set()
+    if os.path.isfile(cleanup_file):
+        with open(cleanup_file, "r", encoding="UTF-8") as open_cleanup_file:
+            current_cleanup_varnames = current_cleanup_varnames | {
+                l.strip() for l in open_cleanup_file.readlines() if l.strip()
+            }
+
+    systemd_vars = bus_session.get_systemd_vars()
+    systemd_varnames = set(systemd_vars.keys())
+
+    # load initial state, delete file later
+    env_pre_file = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True), BIN_NAME, "env_pre"
+    )
+    if os.path.isfile(env_pre_file):
+        print_normal('Found initial systemd state file "env_pre".')
+        env_pre = load_env("env_pre", delete=False)
+    else:
+        env_pre = {}
+
+    cleanup_varnames = (
+        ((current_cleanup_varnames | Varnames.always_cleanup) - Varnames.never_cleanup)
+        & systemd_varnames
+    ) - set(env_pre.keys())
+
+    if cleanup_varnames:
+        # unset vars
+        unset_systemd_vars(cleanup_varnames, bus_session=bus_session)
+
+    # restore initial systemd vars
+    if env_pre:
+        print_normal("Restoring initial systemd vars.")
+        set_systemd_vars(env_pre, verbose=False, bus_session=bus_session)
+
+    # also remove session-specific env file
+    session_env_file = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True), BIN_NAME, "env_session.conf"
+    )
+
+    for drop_file in [cleanup_file, env_pre_file, session_env_file]:
+        if not os.path.exists(drop_file):
+            continue
+        os.remove(drop_file)
+        print_ok(f'Removed "{os.path.basename(drop_file)}".')
+
+
+def path2url(arg):
+    "If argument is not an url, convert to url"
+    if urlparse.urlparse(arg).scheme:
+        return arg
+    return f"file://{urlparse.quote(arg)}"
+
+
+def gen_entry_args(entry, args, entry_action=None):
+    """
+    Takes DesktopEntry object and additional args, returns rendered argv as (cmd, args).
+    outgoing "args" can be a list of args or a list of lists of args if multiple instances of cmd
+    are required.
+    """
+
+    # Parsing of fields:
+    # %f single path, run multiple instances per path
+    # %F multiple paths as args
+    # %u single url, convert non-url to 'file:' url, run multiple instances per url
+    # %U multiple urls as args, convert non-url to 'file:' url
+    # %c translated Name=
+    # %k entry path
+    # %i --icon getIcon() if getIcon()
+
+    entry_dict = entry_action_keys(entry, entry_action=entry_action)
+
+    entry_cmd, entry_args_pre = entry_dict["Exec"][0], entry_dict["Exec"][1:]
+    print_debug("entry_cmd, entry_args pre:", entry_cmd, entry_args_pre)
+
+    entry_args = []
+
+    ## search for fields to reappend, expand, or pop
+
+    # %[fFuU] recorder
+    encountered_fu = ""
+    # %[fu] index
+    encountered_fu_idx = None
+
+    for idx, entry_arg in enumerate(entry_args_pre):
+        print_debug(f'parsing argument {idx + 1}: "{entry_arg}"')
+        if len(re.findall(r"(?!^|[^%])%[a-zA-Z]", entry_arg)) > 1:
+            raise RuntimeError(f'More than one % field in argument: "{entry_arg}"')
+
+        if "%%" in entry_arg:
+            new_arg = entry_arg.replace("%%", "%")
+            entry_args.append(new_arg)
+            print_debug(f'replaced with "{new_arg}", appended: {entry_args}')
+
+        elif re.search(r"%[DdNnvm]", entry_arg):
+            print_debug("dropped as deprecated")
+
+        elif "%f" in entry_arg:
+            if encountered_fu:
+                raise RuntimeError(
+                    f'Desktop entry has conflicting args: "{encountered_fu}", "{entry_arg}"'
+                )
+            encountered_fu = entry_arg
+            encountered_fu_idx = len(entry_args)
+            print_debug(
+                f"marked encountered_fu_idx by refilled entry_args {len(entry_args)}"
+            )
+
+            if len(args) == 0:
+                print_debug(f"popped, {entry_args}")
+            elif len(args) == 1:
+                new_arg = entry_arg.replace("%f", args[0])
+                entry_args.append(new_arg)
+                print_debug(f'replaced with "{new_arg}", appended: {entry_args}')
+            else:
+                # leave field arg for later iterative replacement
+                print_debug(f"ignored, {entry_args}")
+                entry_args.append(entry_arg)
+
+        elif entry_arg == "%F":
+            if encountered_fu:
+                raise RuntimeError(
+                    f'Desktop entry has conflicting args: "{encountered_fu}", "{entry_arg}"'
+                )
+            encountered_fu = entry_arg
+
+            # replace with arguments
+            for arg in args:
+                entry_args.append(arg)
+                print_debug(f'appended "{arg}", {entry_args}')
+
+        elif "%F" in entry_arg:
+            raise RuntimeError(f'Encountered "%F" inside argument: "{entry_arg}"')
+
+        elif "%u" in entry_arg:
+            if encountered_fu:
+                raise RuntimeError(
+                    f'Desktop entry has conflicting args: "{encountered_fu}", "{entry_arg}"'
+                )
+            encountered_fu = entry_arg
+            encountered_fu_idx = len(entry_args)
+            print_debug(
+                f"marked encountered_fu_idx by refilled entry_args {len(entry_args)}"
+            )
+
+            if len(args) == 0:
+                print_debug(f'popped "{entry_arg}", {entry_args}')
+            elif len(args) == 1:
+                new_arg = entry_arg.replace("%u", path2url(args[0]))
+                entry_args.append(new_arg)
+                print_debug(
+                    f'replaced "{entry_arg}" => "{new_arg}", appended: {entry_args}'
+                )
+            else:
+                # leave field arg for later iterative replacement
+                print_debug(f'ignored "{entry_arg}", {entry_args}')
+                entry_args.append(entry_arg)
+
+        elif entry_arg == "%U":
+            if encountered_fu:
+                raise RuntimeError(
+                    f'Desktop entry has conflicting args: "{encountered_fu}", "{entry_arg}"'
+                )
+            encountered_fu = entry_arg
+
+            # replace with arguments
+            for arg in args:
+                # urify if not an url, assume file
+                arg = path2url(arg)
+                entry_args.append(arg)
+                print_debug(f'appended "{arg}", {entry_args}')
+
+        elif "%U" in entry_arg:
+            raise RuntimeError(f'Encountered "%U" inside argument: "{entry_arg}"')
+
+        elif entry_arg == "%c":
+            arg = entry_expand_str(entry.getName())
+            entry_args.append(arg)
+            print_debug(f'replaced with "{arg}", {entry_args}')
+        elif entry_arg == "%k":
+            arg = entry.getFileName()
+            entry_args.append(arg)
+            print_debug(f'replaced, with "{arg}", {entry_args}')
+        elif entry_arg == "%i":
+            if entry_dict["Icon"]:
+                arg = entry_dict["Icon"]
+                entry_args.extend(["--icon", arg])
+                print_debug(f'replaced with "--icon", "{arg}", {entry_args}')
+            else:
+                print_debug("popped")
+        else:
+            print_debug("unchanged")
+            entry_args.append(entry_arg)
+
+    print_debug("entry_cmd, entry_args post:", entry_cmd, entry_args)
+
+    # fail if arguments not supported, but requested
+    if args and not encountered_fu and entry_action:
+        raise RuntimeError(
+            f'Entry "{os.path.basename(entry.filename)}" action "{entry_action}" does not support arguments'
+        )
+
+    if args and not encountered_fu and not entry_action:
+        raise RuntimeError(
+            f'Entry "{os.path.basename(entry.filename)}" does not support arguments'
+        )
+
+    # iterative arguments required
+    if len(args) > 1 and encountered_fu in ["%f", "%u"]:
+        iterated_entry_args = []
+        for arg in args:
+            cur_entry_args = entry_args.copy()
+            if encountered_fu == "%u":
+                arg = path2url(arg)
+            cur_entry_args[encountered_fu_idx] = cur_entry_args[
+                encountered_fu_idx
+            ].replace(encountered_fu, arg)
+            iterated_entry_args.append(cur_entry_args)
+            print_debug("added iter args", cur_entry_args)
+
+        return (entry_cmd, iterated_entry_args)
+
+    return (entry_cmd, entry_args)
+
+
+def find_terminal_entry():
+    "Finds default terminal entry, returns tuple of (entry object, entry_id, entry_action) or (None, None, None)"
+
+    terminal_entries = []
+    excluded_terminal_entries = []
+    unexcluded_terminal_entries = []
+    valid_id_start = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
+
+    ## read configs, compose preferred terminal entry list
+    # iterate config dirs and xdg-terminal-exec dirs in system part of data dirs
+    term_config_dirs = BaseDirectory.xdg_config_dirs.copy()
+    for path in BaseDirectory.xdg_data_dirs:
+        path = os.path.normpath(path)
+        if path == os.path.normpath(BaseDirectory.xdg_data_home) or path.startswith(
+            os.path.normpath(os.path.expanduser("~"))
+        ):
+            continue
+        term_config_dirs.append(os.path.join(path, "xdg-terminal-exec"))
+    for config_dir in term_config_dirs:
+        # iterate configs
+        for config_file in [
+            f"{desktop}-xdg-terminals.list"
+            for desktop in sane_split(os.getenv("XDG_CURRENT_DESKTOP", ""), ":")
+            if desktop
+        ] + ["xdg-terminals.list"]:
+            config_file = os.path.join(config_dir, config_file)
+            try:
+                with open(config_file, "r", encoding="UTF-8") as terminal_list:
+                    print_debug(f"reading {config_file}")
+                    for line in [line.strip() for line in terminal_list.readlines()]:
+                        if not line or line.startswith("#"):
+                            continue
+                        if line.startswith("-") and ".desktop" in line:
+                            fbcontrol = -1
+                            line = line[1:]
+                        elif line.startswith("+") and ".desktop" in line:
+                            fbcontrol = 1
+                            line = line[1:]
+                        elif line[0] in valid_id_start and ".desktop" in line:
+                            fbcontrol = 0
+                        elif (
+                            line.startswith("/execarg_default:") and ".desktop:" in line
+                        ):
+                            # get non-standard /execarg_default directive
+                            # no fancy validation here, just split and set
+                            line = line.removeprefix("/execarg_default:")
+                            entry, arg = line.split(".desktop:", maxsplit=1)
+                            entry = entry + ".desktop"
+                            if entry not in Terminal.default_execargs:
+                                print_debug(
+                                    f"adding default exec arg for {entry}: {arg}"
+                                )
+                                Terminal.default_execargs[entry] = arg
+                            continue
+                        else:
+                            # drop unknown directives
+                            print_debug("discarded config line", line)
+                            continue
+                        # be relaxed about line parsing
+                        # only valid entry.desktop[:action] lines are of interest
+                        try:
+                            arg = MainArg(line)
+                        except Exception:
+                            continue
+                        if not arg.entry_id or arg.path:
+                            continue
+                        if (
+                            fbcontrol == 0
+                            and (arg.entry_id, arg.entry_action) not in terminal_entries
+                        ):
+                            print_debug(f"got terminal entry {line}")
+                            terminal_entries.append((arg.entry_id, arg.entry_action))
+                        elif (
+                            fbcontrol == -1
+                            and not arg.entry_action
+                            and arg.entry_id
+                            not in excluded_terminal_entries
+                            + unexcluded_terminal_entries
+                        ):
+                            print_debug(f"got fallback exclusion for {line}")
+                            excluded_terminal_entries.append(arg.entry_id)
+                        elif (
+                            fbcontrol == 1
+                            and not arg.entry_action
+                            and arg.entry_id
+                            not in excluded_terminal_entries
+                            + unexcluded_terminal_entries
+                        ):
+                            print_debug(f"got fallback exclusion protection for {line}")
+                            unexcluded_terminal_entries.append(arg.entry_id)
+                        else:
+                            print_debug(
+                                f"ignored line { {-1: '-', 0: '', 1: '+'}[fbcontrol] }{line}"
+                            )
+            except FileNotFoundError:
+                pass
+            except Exception as caught_exception:
+                print_warning(caught_exception, notify=1)
+
+    print_debug("explicit terminal_entries", terminal_entries)
+
+    ## process explicitly listed terminals
+    if terminal_entries:
+        found_terminal_entries = find_entries(
+            "applications",
+            parser=entry_parser_terminal,
+            parser_args={"explicit_terminals": terminal_entries},
+        )
+        print_debug(f"found {len(found_terminal_entries)} entries")
+        # find first match in found terminals
+        for entry_id, entry_action in terminal_entries:
+            for (
+                terminal_entry,
+                terminal_entry_id,
+                terminal_entry_action,
+            ) in found_terminal_entries:
+                if (entry_id, entry_action) == (
+                    terminal_entry_id,
+                    terminal_entry_action,
+                ):
+                    print_debug(f"found terminal {entry_id}:{entry_action}")
+                    return (terminal_entry, terminal_entry_id, terminal_entry_action)
+
+    print_debug("no explicit terminals matched, starting terminal entry search")
+
+    Terminal.neg_cache = read_neg_cache("not-terminals")
+    terminal_neg_cache_initial = Terminal.neg_cache.copy()
+
+    # process all apps, find applicable terminal
+    found_terminal_entries = find_entries(
+        "applications",
+        parser=entry_parser_terminal,
+        reject_pmt=Terminal.neg_cache,
+        reject_ids=excluded_terminal_entries,
+    )
+    if found_terminal_entries:
+        terminal_entry, terminal_entry_id, _ = found_terminal_entries[0]
+        print_debug(f"found terminal {terminal_entry_id}")
+        if Terminal.neg_cache != terminal_neg_cache_initial:
+            write_neg_cache("not-terminals", Terminal.neg_cache)
+        return (terminal_entry, terminal_entry_id, None)
+
+    raise RuntimeError("Could not find a Terminal Emulator application")
+
+
+def read_neg_cache(name: str) -> dict:
+    "Reads path;mtime from cache file {BIN_NAME}-{name}"
+    neg_cache_path = os.path.join(BaseDirectory.xdg_cache_home, f"{BIN_NAME}-{name}")
+    out = {}
+    if os.path.isfile(neg_cache_path):
+        print_debug(f"reading cache {neg_cache_path}")
+        try:
+            with open(neg_cache_path, "r", encoding="UTF-8") as neg_cache_file:
+                for line in neg_cache_file.readlines():
+                    path, mtime = line.strip().split(";")
+                    out.update({path: float(mtime)})
+        except Exception as caught_exception:
+            # just remove it if something is wrong
+            print_debug(
+                f"Removing cache file {neg_cache_path} due to: {caught_exception}"
+            )
+            os.remove(neg_cache_path)
+    else:
+        print_debug(f"no cache {neg_cache_path}")
+    print_debug(f"got {len(out)} items")
+    return out
+
+
+def write_neg_cache(name: str, data: dict):
+    "Writes path;mtime to cache file {BIN_NAME}-{name}"
+    neg_cache_path = os.path.join(BaseDirectory.xdg_cache_home, f"{BIN_NAME}-{name}")
+    print_debug(f"writing cache {neg_cache_path} ({len(data)} items)")
+    try:
+        os.makedirs(BaseDirectory.xdg_cache_home, exist_ok=True)
+        with open(neg_cache_path, "w", encoding="UTF-8") as neg_cache_file:
+            for path, mtime in data.items():
+                neg_cache_file.write(f"{path};{mtime}\n")
+    except Exception as caught_exception:
+        # just remove it if something is wrong
+        print_debug(f"Removing cache file {neg_cache_path} due to: {caught_exception}")
+        if os.path.isfile(neg_cache_path):
+            os.remove(neg_cache_path)
+
+
+def app(
+    cmdline,
+    terminal,
+    slice_name,
+    app_unit_type,
+    app_name,
+    unit_name,
+    unit_description,
+    unit_properties=None,
+    fork=False,
+    return_cmdline=False,
+    silent=None,
+    workdir=None,
+):
+    """
+    Exec given command or Desktop Entry via systemd-run in specific slice.
+    If return_cmdline: return cmdline as list
+    If fork: return subprocess object.
+    """
+
+    if unit_properties is None:
+        unit_properties = []
+    for prop in unit_properties:
+        if "=" not in prop:
+            raise ValueError(
+                f'Expected systemd unit property assignment, got: "{prop}"'
+            )
+
+    # detect desktop entry, update cmdline, app_name
+    # cmdline can be empty if terminal is requested with -T
+    main_arg = MainArg(cmdline[0] if cmdline else None)
+
+    print_debug("main_arg", main_arg)
+
+    if main_arg.path is not None:
+        main_arg.check_path()
+
+    if main_arg.entry_id is not None:
+        print_debug("main_arg:", main_arg)
+
+        # if given as a path, try parsing and checking entry directly
+        if main_arg.path is not None:
+            try:
+                entry = DesktopEntry(main_arg.path)
+            except Exception as caught_exception:
+                raise RuntimeError(
+                    f'Failed to parse entry "{main_arg.entry_id}" from "{main_arg.path}"!'
+                ) from caught_exception
+            check_entry_basic(entry, main_arg.entry_action)
+
+        # find entry by id
+        else:
+            entries = find_entries(
+                "applications",
+                parser=entry_parser_by_ids,
+                parser_args={
+                    "match_entry_id": main_arg.entry_id,
+                    "match_entry_action": main_arg.entry_action,
+                },
+            )
+
+            print_debug("got entries", entries)
+            if not entries:
+                raise FileNotFoundError(f'Desktop entry not found: "{cmdline[0]}"')
+
+            entry = entries[0]
+
+        unit_properties.append(f"SourcePath={os.path.abspath(entry.filename)}")
+
+        # request terminal
+        if entry.getTerminal():
+            print_debug("entry requested a terminal")
+            terminal = True
+
+        # get workdir from Path
+        workdir = entry.getPath() or None
+        if workdir and not os.path.isdir(workdir):
+            raise OSError(
+                f'"Path" requested by entry "{main_arg.entry_id}" is not a directory: "{workdir}"'
+            )
+
+        # set app name to entry id without extension if no override
+        if not app_name:
+            app_name = os.path.splitext(main_arg.entry_id)[0]
+
+        # get localized entry name for description if no override
+        if not unit_description:
+            unit_description = entry_expand_str(entry.getName())
+            unit_description_append = entry_expand_str(entry.getGenericName())
+            if unit_description_append and unit_description_append != unit_description:
+                unit_description = unit_description + " - " + unit_description_append
+
+        # generate command and args according to entry
+        cmd, cmd_args = gen_entry_args(
+            entry, cmdline[1:], entry_action=main_arg.entry_action
+        )
+
+        # if cmd_args is a list of lists, iterative execution is required
+        if cmd_args and isinstance(cmd_args[0], (list, tuple)):
+            # drop unit_name if multiple instances required
+            if unit_name:
+                print_warning(
+                    f'Dropping unit name "{unit_name}" because entry "{os.path.basename(entry.filename)}" requires multiple instances for given arguments.'
+                )
+                unit_name = ""
+
+            # background processes container
+            sub_apps = []
+            # poll registry container
+            sub_apps_rc = []
+            # call forking self for each instance
+            for args_instance in cmd_args:
+                cmdline_instance = [cmd] + args_instance
+                # launch app in background
+                sub_apps.append(
+                    app(
+                        cmdline_instance,
+                        terminal,
+                        slice_name,
+                        app_unit_type,
+                        app_name,
+                        unit_name,
+                        unit_description,
+                        unit_properties=unit_properties,
+                        fork=True,
+                        return_cmdline=return_cmdline,
+                        silent=silent,
+                        workdir=workdir,
+                    )
+                )
+                # add placeholder for rc
+                sub_apps_rc.append(None)
+
+            if return_cmdline:
+                return sub_apps
+
+            # function for map()
+            def is_int(checkvar):
+                "checks if given var is int"
+                return isinstance(checkvar, int)
+
+            # poll subprocesses until they are all finished
+            while not all(map(is_int, sub_apps_rc)):
+                for idx, sub_app in enumerate(sub_apps):
+                    if not is_int(sub_apps_rc[idx]):
+                        sub_apps_rc[idx] = sub_app.poll()
+                        if is_int(sub_apps_rc[idx]):
+                            proc_exit_msg = f'systemd-run for "{shlex.join(sub_app.args[sub_app.args.index("--") + 1:])}" returned {sub_apps_rc[idx]}.'
+                            if sub_apps_rc[idx] == 0:
+                                print_normal(proc_exit_msg)
+                            else:
+                                print_error(proc_exit_msg, notify=1)
+                time.sleep(0.1)
+
+            # if there is any non-zero rc
+            if any(sub_apps_rc):
+                sys.exit(1)
+            sys.exit(0)
+
+        # for single exec just reassemble cmdline
+        else:
+            cmdline = [cmd] + cmd_args
+
+    # end of Desktop entry parsing
+
+    else:
+        # parse DESKTOP_ENTRY_* vars
+
+        if not app_name and os.environ.get("DESKTOP_ENTRY_ID", default=""):
+            app_name = os.environ.get("DESKTOP_ENTRY_ID").removesuffix(".desktop")
+            print_debug("set app_name from DESKTOP_ENTRY_ID", app_name)
+
+        if os.environ.get("DESKTOP_ENTRY_PATH", default=""):
+            source_path = os.path.abspath(os.environ.get("DESKTOP_ENTRY_PATH"))
+            unit_properties.append(f"SourcePath={source_path}")
+            print_debug(
+                "set SourcePath property from DESKTOP_ENTRY_PATH",
+                source_path,
+            )
+
+        # get localized entry name for description if no override
+        if not unit_description:
+            unit_description = " - ".join(
+                n
+                for n in (
+                    os.environ.get("DESKTOP_ENTRY_NAME_L", default="")
+                    or os.environ.get("DESKTOP_ENTRY_NAME", default=""),
+                    os.environ.get("DESKTOP_ENTRY_GENERICNAME_L", default="")
+                    or os.environ.get("DESKTOP_ENTRY_GENERICNAME", default=""),
+                )
+                if n
+            )
+            if unit_description:
+                print_debug(
+                    "set unit_description from DESKTOP_ENTRY_*NAME*", unit_description
+                )
+
+    print_debug("cmdline", cmdline)
+
+    if terminal:
+        # Terminal.entry, Terminal.entry_action_id are global, so generate only once
+        # no matter how many times app() is called for forks
+        if not Terminal.entry:
+            (
+                Terminal.entry,
+                Terminal.entry_id,
+                Terminal.entry_action_id,
+            ) = find_terminal_entry()
+
+        terminal_cmdline = entry_action_keys(Terminal.entry, Terminal.entry_action_id)[
+            "Exec"
+        ]
+        if Terminal.entry.hasKey("TerminalArgExec"):
+            terminal_execarg = Terminal.entry.get("TerminalArgExec")
+        elif Terminal.entry.hasKey("X-TerminalArgExec"):
+            terminal_execarg = Terminal.entry.get("X-TerminalArgExec")
+        elif Terminal.entry.hasKey("ExecArg"):
+            terminal_execarg = Terminal.entry.get("ExecArg")
+        elif Terminal.entry.hasKey("X-ExecArg"):
+            terminal_execarg = Terminal.entry.get("X-ExecArg")
+        elif Terminal.entry_id in Terminal.default_execargs:
+            terminal_execarg = Terminal.default_execargs[Terminal.entry_id]
+        else:
+            terminal_execarg = "-e"
+        terminal_execarg = (
+            [entry_expand_str(terminal_execarg)] if terminal_execarg else []
+        )
+
+        # convert and append terminal options
+        for opt in Terminal.opts:
+            if opt.startswith("--app-id="):
+                app_id_arg = ""
+                if Terminal.entry.hasKey("TerminalArgAppId"):
+                    app_id_arg = Terminal.entry.get("TerminalArgAppId")
+                elif Terminal.entry.hasKey("X-TerminalArgAppId"):
+                    app_id_arg = Terminal.entry.get("X-TerminalArgAppId")
+                if app_id_arg.endswith("="):
+                    terminal_cmdline.append(
+                        f"{app_id_arg}{opt.split('=', maxsplit=1)[1]}"
+                    )
+                elif app_id_arg:
+                    terminal_cmdline.extend([app_id_arg, opt.split("=", maxsplit=1)[1]])
+
+            elif opt.startswith("--title="):
+                app_id_arg = ""
+                title_arg = ""
+                if Terminal.entry.hasKey("TerminalArgTitle"):
+                    title_arg = Terminal.entry.get("TerminalArgTitle")
+                elif Terminal.entry.hasKey("X-TerminalArgTitle"):
+                    title_arg = Terminal.entry.get("X-TerminalArgTitle")
+                if title_arg.endswith("="):
+                    terminal_cmdline.append(
+                        f"{title_arg}{opt.split('=', maxsplit=1)[1]}"
+                    )
+                elif title_arg:
+                    terminal_cmdline.extend([title_arg, opt.split("=", maxsplit=1)[1]])
+
+            elif opt.startswith("--dir="):
+                dir_arg = ""
+                if Terminal.entry.hasKey("TerminalArgDir"):
+                    dir_arg = Terminal.entry.get("TerminalArgDir")
+                elif Terminal.entry.hasKey("X-TerminalArgDir"):
+                    dir_arg = Terminal.entry.get("X-TerminalArgDir")
+                if dir_arg.endswith("="):
+                    terminal_cmdline.append(f"{dir_arg}{opt.split('=', maxsplit=1)[1]}")
+                elif dir_arg:
+                    terminal_cmdline.extend([dir_arg, opt.split("=", maxsplit=1)[1]])
+
+            elif opt == "--hold":
+                if Terminal.entry.hasKey("TerminalArgHold"):
+                    terminal_cmdline.append(Terminal.entry.get("TerminalArgHold"))
+                elif Terminal.entry.hasKey("X-TerminalArgHold"):
+                    terminal_cmdline.append(Terminal.entry.get("X-TerminalArgHold"))
+
+        # discard explicit -e or execarg for terminal
+        # only if followed by something, otherwise it will error out on Command not found below
+        if len(cmdline) > 1 and [cmdline[0]] in (terminal_execarg, ["-e"]):
+            print_debug(f"discarded explicit terminal exec arg {cmdline[0]}")
+            cmdline = cmdline[1:]
+
+        # if -T is given and cmdline is empty or double terminated
+        if cmdline in ([], ["--"]):
+            if not app_name:
+                app_name = os.path.splitext(Terminal.entry_id)[0]
+            if not unit_description:
+                unit_description = " - ".join(
+                    n
+                    for n in (
+                        entry_expand_str(Terminal.entry.getName()),
+                        entry_expand_str(Terminal.entry.getGenericName()),
+                    )
+                    if n
+                )
+            # cmdline contents should not be referenced until the end of this function,
+            # where it will be starred into nothingness
+            cmdline = []
+            # remove exec arg
+            terminal_execarg = []
+    else:
+        terminal_cmdline, terminal_execarg, Terminal.entry_id = ([], [], "")
+
+    if not unit_description:
+        unit_description = (
+            app_name or os.path.basename(cmdline[0])
+            if cmdline
+            else f"App launched by {BIN_NAME}"
+        )
+
+    if cmdline and not which(cmdline[0]):
+        raise RuntimeError(f'Command not found: "{cmdline[0]}"')
+
+    if slice_name == "a":
+        slice_name = "app-graphical.slice"
+    elif slice_name == "b":
+        slice_name = "background-graphical.slice"
+    elif slice_name == "s":
+        slice_name = "session-graphical.slice"
+    elif slice_name.endswith(".slice"):
+        # slice_name = slice_name
+        pass
+    else:
+        raise ValueError(f"Invalid slice name: {slice_name}!")
+
+    if not unit_name:
+        # use first XDG_CURRENT_DESKTOP as part of scope name
+        # use app command as part of scope name
+        desktop_unit_substring = simple_systemd_escape(
+            sane_split(os.getenv("XDG_CURRENT_DESKTOP", "uwsm"), ":")[0], start=False
+        )
+        cmd_unit_substring = simple_systemd_escape(
+            app_name or os.path.basename(cmdline[0]), start=False
+        )
+
+        ## cut unit name to fit unit name in 255 chars
+        # length of parts except cmd_unit_substring
+        l_static = len("app---DEADBEEF.") + len(app_unit_type)
+        l_all = l_static + len(desktop_unit_substring)
+        # if other parts already halfway too long, this means desktop_unit_substring needs some trimming
+        if l_all > 127:
+            # reduce to 127
+            l_check = l_static
+            fragments = re.split(r"(\\x..)", desktop_unit_substring)
+            desktop_unit_substring = ""
+            for fragment in fragments:
+                if len(fragment) + l_check < 127:
+                    desktop_unit_substring = desktop_unit_substring + fragment
+                    l_check += len(fragment)
+                else:
+                    if fragment.startswith(r"\x"):
+                        break
+                    desktop_unit_substring = (
+                        desktop_unit_substring + fragment[0 : 127 - l_check]
+                    )
+                    break
+
+        l_all = l_static + len(desktop_unit_substring) + len(cmd_unit_substring)
+
+        # now cut cmd_unit_substring if too long
+        if l_all > 255:
+            # reduce to 255
+            l_check = l_static + len(desktop_unit_substring)
+            fragments = re.split(r"(\\x..)", cmd_unit_substring)
+            cmd_unit_substring = ""
+            for fragment in fragments:
+                if len(fragment) + l_check < 255:
+                    cmd_unit_substring = cmd_unit_substring + fragment
+                    l_check += len(fragment)
+                else:
+                    if fragment.startswith(r"\x"):
+                        break
+                    cmd_unit_substring = (
+                        cmd_unit_substring + fragment[0 : 255 - l_check]
+                    )
+                    break
+
+        if app_unit_type == "scope":
+            unit_name = f"app-{desktop_unit_substring}-{cmd_unit_substring}-{random_hex(8)}.{app_unit_type}"
+        elif app_unit_type == "service":
+            unit_name = f"app-{desktop_unit_substring}-{cmd_unit_substring}@{random_hex(8)}.{app_unit_type}"
+        else:
+            raise ValueError(f'Invalid app_unit_type "{app_unit_type}"')
+
+    else:
+        if not unit_name.endswith(f".{app_unit_type}"):
+            raise ValueError(
+                f'Only ".{app_unit_type}" is supported as unit suffix for {app_unit_type} unit type'
+            )
+        if len(unit_name) > 255:
+            raise ValueError(
+                f"Unit name is too long ({len(unit_name)} > 255): {unit_name}"
+            )
+
+    # compose arguments
+    final_args = ["systemd-run", "--user"]
+    if app_unit_type == "scope":
+        final_args.append("--scope")
+    else:
+        final_args.extend(
+            ["--property=Type=exec", "--property=ExitType=cgroup"]
+            + [
+                f"--setenv={var}={os.environ.get(var, '')}"
+                for var in sorted(Varnames.session_specific)
+                if os.environ.get(var, "")
+            ]
+        )
+        # silence service via unit properties
+        if silent:
+            if silent == "out":
+                print_debug("silencing service stdout")
+                final_args.append("--property=StandardOutput=null")
+                # uninherit stderr if inherited
+                bus_session = DbusInteractions("session")
+                sdprops = bus_session.get_systemd_properties(
+                    ["DefaultStandardOutput", "DefaultStandardError"]
+                )
+                if str(sdprops["DefaultStandardError"]) == "inherit":
+                    final_args.append(
+                        f"--property=StandardError={str(sdprops['DefaultStandardOutput'])}"
+                    )
+            elif silent == "err":
+                print_debug("silencing service stderr")
+                final_args.append("--property=StandardError=null")
+            elif silent == "both":
+                print_debug("silencing service stdout and stderr")
+                final_args.extend(
+                    ["--property=StandardOutput=null", "--property=StandardError=null"]
+                )
+    for prop in unit_properties:
+        final_args.append(f"--property={prop}")
+    final_args.extend(
+        [
+            f"--slice={slice_name}",
+            f"--unit={unit_name}",
+            f"--description={unit_description}",
+            "--quiet",
+            "--collect",
+            f"--working-directory={workdir}" if workdir else "--same-dir",
+            "--",
+            *(terminal_cmdline + terminal_execarg),
+            *cmdline,
+        ]
+    )
+
+    print_debug("final_args", *(final_args))
+
+    if return_cmdline:
+        return final_args
+
+    # drop DESKTOP_ENTRY_* vars from environment
+    os.environ.pop("DESKTOP_ENTRY_ID", default="")
+    os.environ.pop("DESKTOP_ENTRY_PATH", default="")
+    os.environ.pop("DESKTOP_ENTRY_NAME", default="")
+    os.environ.pop("DESKTOP_ENTRY_NAME_L", default="")
+    os.environ.pop("DESKTOP_ENTRY_COMMENT", default="")
+    os.environ.pop("DESKTOP_ENTRY_COMMENT_L", default="")
+    os.environ.pop("DESKTOP_ENTRY_GENERICNAME", default="")
+    os.environ.pop("DESKTOP_ENTRY_GENERICNAME_L", default="")
+    os.environ.pop("DESKTOP_ENTRY_ICON", default="")
+    os.environ.pop("DESKTOP_ENTRY_ACTION", default="")
+    os.environ.pop("DESKTOP_ENTRY_ACTION_NAME", default="")
+    os.environ.pop("DESKTOP_ENTRY_ACTION_NAME_L", default="")
+    os.environ.pop("DESKTOP_ENTRY_ACTION_ICON", default="")
+
+    if fork:
+        return subprocess.Popen(final_args)
+
+    # silence scope directly
+    if app_unit_type == "scope" and silent:
+        n = os.open(os.devnull, os.O_WRONLY)
+        if silent in ["out", "both"]:
+            print_debug("silencing scope stdout")
+            os.dup2(n, 1)
+        if silent in ["err", "both"]:
+            print_debug("silencing scope stderr")
+            os.dup2(n, 2)
+
+    os.execlp(final_args[0], *(final_args))
+
+
+def app_daemon():
+    """
+    Listens for app arguments on uwsm-app-daemon-in fifo in runtime dir.
+    Writes shell code to uwsm-app-daemon-out fifo.
+    Expects receiving script to have functions "message", "error".
+    """
+
+    def trap_stopper(sig=0, stack_frame=None):
+        """
+        For use in signal trap to stop app daemon
+        """
+        print_normal(f"Received signal {sig}, stopping app daemon...")
+        print_debug(stack_frame)
+        # shutdown successfully
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, trap_stopper)
+    signal.signal(signal.SIGTERM, trap_stopper)
+    signal.signal(signal.SIGHUP, trap_stopper)
+
+    # argparse exit_on_error was faulty https://github.com/python/cpython/issues/103498
+    # crudely work around it. TODO: remove this in 2027-ish
+    error_flag_path = os.path.join(
+        BaseDirectory.get_runtime_dir(strict=True), "uwsm", "app_daemon_error"
+    )
+
+    def send_cmdline(args_in: List, args_out: str):
+        "Takes original args_in (list), and final args_out (str), writes to output fifo"
+        print_normal(f"received: {shlex.join(args_in)}\nsent: {args_out}")
+        fifo_out_path = create_fifo("uwsm-app-daemon-out")
+        try:
+            fd = open_fifo_write(fifo_out_path)
+        except TimeoutError:
+            print_warning(
+                f"Timed out waiting for client to read {fifo_out_path}, dropping reply"
+            )
+            return
+        with os.fdopen(fd, "w", encoding="UTF-8") as fifo_out:
+            try:
+                fifo_out.write(f"{args_out}\n")
+            except BrokenPipeError:
+                print_warning(f"Client closed {fifo_out_path} before reply was written")
+
+    while True:
+        # create both pipes right away and make sure they always exist
+        fifo_in_path = create_fifo("uwsm-app-daemon-in")
+        _ = create_fifo("uwsm-app-daemon-out")
+
+        # argparse exit workaround: read previous wrong args and send error message
+        if os.path.isfile(error_flag_path):
+            print_normal(f"error flag {error_flag_path} exists")
+            with open(error_flag_path, "r", encoding="UTF-8") as error_file:
+                old_args = error_file.read().lstrip("\0")
+            os.remove(error_flag_path)
+            old_args = sane_split(old_args, "\0")
+            send_cmdline(
+                old_args,
+                f"error {shlex.quote('Invalid arguments: ' + shlex.join(old_args))} 2",
+            )
+            continue
+
+        print_debug("reading command...")
+        with open(fifo_in_path, "r", encoding="UTF-8") as fifo_in:
+            line = fifo_in.read().lstrip("\0")
+
+        args_in = sane_split(line, "\0")
+
+        print_debug("args_in", args_in)
+
+        # this will be written to fifo_out with trailing newline
+        args_out = ""
+
+        if len(args_in) == 0:
+            send_cmdline(args_in, "error 'No args given!' 2")
+            continue
+        if args_in[0] == "stop":
+            send_cmdline(args_in, "message 'Stopping app daemon.'")
+            print_normal("Exiting.")
+            sys.exit(0)
+        if args_in[0] == "ping":
+            send_cmdline(args_in, "pong")
+            continue
+        if args_in[0] != "app":
+            send_cmdline(
+                args_in,
+                f"error {shlex.quote('Invalid arguments: ' + shlex.join(args_in))} 2",
+            )
+            continue
+
+        # argparse exit workaround: write command as error flag file
+        os.makedirs(os.path.dirname(error_flag_path), exist_ok=True)
+        with open(error_flag_path, "w", encoding="UTF-8") as error_file:
+            print_debug(f"writing {error_flag_path} in case of argparse exit")
+            error_file.write(line.strip())
+
+        # parse args via standard parser
+        try:
+            args = Args(args_in, exit_on_error=False)
+        except Exception as caught_exception:
+            send_cmdline(
+                args_in,
+                f"error {shlex.quote('Invalid arguments: ' + str(caught_exception))} 2",
+            )
+            # remove error flag file since we are still alive
+            print_debug(f"removing {error_flag_path}")
+            os.remove(error_flag_path)
+            continue
+
+        # remove error flag file since args are parsed successfully
+        print_debug(f"removing {error_flag_path}")
+        os.remove(error_flag_path)
+
+        # reset terminal entry
+        Terminal.entry = None
+        Terminal.entry_action_id = ""
+        Terminal.entry_id = ""
+
+        # call app with return_cmdline=True
+        try:
+            app_args = app(
+                cmdline=args.parsed.cmdline,
+                terminal=args.parsed.terminal,
+                slice_name=args.parsed.slice_name,
+                app_unit_type=args.parsed.app_unit_type,
+                app_name=args.parsed.app_name,
+                unit_name=args.parsed.unit_name,
+                unit_description=args.parsed.unit_description,
+                unit_properties=args.parsed.unit_properties,
+                return_cmdline=True,
+            )
+            if isinstance(app_args[0], str):
+                print_debug("got single command")
+                args_out = f"exec {shlex.join(app_args)}"
+            elif isinstance(app_args[0], (list, tuple)):
+                print_debug("got iterated command")
+                args_out = []
+                for iter_app_args in app_args:
+                    args_out.append(f"{shlex.join(iter_app_args)} &")
+                args_out.append("wait")
+                args_out = " ".join(args_out)
+            send_cmdline(args_in, args_out)
+        except Exception as caught_exception:
+            send_cmdline(
+                args_in, f"error {shlex.quote('Error: ' + str(caught_exception))} 1"
+            )
+            continue
+
+
+def open_fifo_write(path, timeout=10):
+    """Open FIFO for writing, waiting up to timeout seconds for a reader.
+
+    Blocking open() waits forever. A client that dies after writing IN
+    would leave the daemon stuck here and block all later launches.
+    """
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            fd = os.open(path, os.O_WRONLY | os.O_NONBLOCK)
+            os.set_blocking(fd, True)
+            return fd
+        except OSError as err:
+            if err.errno != errno.ENXIO:
+                raise
+            if time.monotonic() >= deadline:
+                raise TimeoutError(path) from err
+            time.sleep(0.05)
+
+
+def create_fifo(path):
+    "Ensures path in runtime dir is fifo, returns full path"
+    fifo_path = os.path.join(BaseDirectory.get_runtime_dir(strict=True), path)
+
+    if os.path.exists(fifo_path):
+        if stat.S_ISFIFO(os.stat(fifo_path).st_mode):
+            print_debug(f"fifo {fifo_path} already exists.")
+            return fifo_path
+        print_debug(f"not a fifo: {fifo_path}, removing.")
+        os.remove(fifo_path)
+    print_debug(f"creating fifo {fifo_path}.")
+    os.mkfifo(fifo_path)
+    return fifo_path
+
+
+def fill_comp_globals():
+    """
+    Fills vars in CompGlobals:
+      cmdline
+      cli_args
+      id
+      id_unit_string
+      bin_name
+      bin_id
+      desktop_names
+      cli_desktop_names
+      cli_desktop_names_exclusive
+      name
+      cli_name
+      description
+      cli_description
+    based on args or desktop entry
+    """
+
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    # Deal with ID and main argument
+    if Args.parsed.mode == "start":
+        # The first argument contains ID and is the main compositor argument
+        CompGlobals.id = os.path.basename(Args.parsed.wm_cmdline[0])
+        main_arg = MainArg(Args.parsed.wm_cmdline[0])
+        if main_arg.path is not None:
+            # force hardcode mode
+            print_debug("hardcode mode due to main argument being a path")
+            Args.parsed.hardcode = True
+    elif Args.parsed.mode == "aux":
+        # ID is explicit
+        CompGlobals.id = Args.parsed.wm_id
+        # Assume (for now) this is also a main_arg
+        main_arg = MainArg(Args.parsed.wm_id)
+        # Should not be a path
+        if main_arg.path is not None:
+            raise ValueError("Aux Compositor ID argument cannot be a path")
+        # If raw command line is given with non-empty first arg, parse it, replacing main_arg
+        if Args.parsed.wm_cmdline and Args.parsed.wm_cmdline[0]:
+            main_arg = MainArg(Args.parsed.wm_cmdline[0])
+            CompGlobals.cmdline = Args.parsed.wm_cmdline
+
+    if not Val.wm_id.search(CompGlobals.id):
+        raise ValueError(
+            f'"{CompGlobals.id}" does not conform to "{Val.wm_id.pattern}" pattern!'
+        )
+
+    # escape CompGlobals.id for systemd
+    CompGlobals.id_unit_string = simple_systemd_escape(CompGlobals.id, start=False)
+
+    # if in aux exec and have cmdline already, this is all we need
+    if (
+        Args.parsed.mode == "aux"
+        and Args.parsed.aux_action == "exec"
+        and CompGlobals.cmdline
+    ):
+        return
+
+    if main_arg.path is not None:
+        main_arg.check_path()
+
+    # parse entry
+    if main_arg.entry_id is not None:
+        print_debug(f"Main arg is a Desktop Entry: {main_arg.entry_id}")
+
+        if main_arg.path is not None:
+
+            # directly parse and check entry
+            try:
+                entry = DesktopEntry(main_arg.path)
+            except Exception as caught_exception:
+                raise RuntimeError(
+                    f'Failed to parse entry "{main_arg.entry_id}" from "{main_arg.path}"!'
+                ) from caught_exception
+            check_entry_basic(entry, main_arg.entry_action)
+
+        else:
+
+            # find and parse entry
+            entries = find_entries(
+                "wayland-sessions",
+                parser=entry_parser_by_ids,
+                parser_args={
+                    "match_entry_id": main_arg.entry_id,
+                    "match_entry_action": main_arg.entry_action,
+                },
+            )
+            if not entries:
+                raise FileNotFoundError(f'Could not find entry "{main_arg.entry_id}"')
+
+            entry = entries[0]
+
+        print_debug("entry", entry)
+
+        entry_dict = entry_action_keys(entry, entry_action=main_arg.entry_action)
+
+        # get Exec from entry as CompGlobals.cmdline if not already filled
+        if not CompGlobals.cmdline:
+            CompGlobals.cmdline = entry_dict["Exec"]
+        CompGlobals.bin_name = os.path.basename(CompGlobals.cmdline[0])
+
+        print_debug(f"self_name: {BIN_NAME}", f"bin_name: {CompGlobals.bin_name}")
+
+        # if desktop entry uses us, deal with the other self.
+        entry_uwsm_args = None
+        if CompGlobals.bin_name == BIN_NAME:
+            try:
+                if (
+                    "start" not in CompGlobals.cmdline
+                    or CompGlobals.cmdline[1] != "start"
+                ):
+                    raise ValueError(
+                        f'Entry "{CompGlobals.id}" uses {BIN_NAME}, but the second argument "{CompGlobals.cmdline[1]}" is not "start"!'
+                    )
+                # cut ourselves from cmdline to reparse the rest
+                CompGlobals.cmdline = CompGlobals.cmdline[1:]
+
+                print_normal(
+                    f'Entry "{CompGlobals.id}" uses {BIN_NAME}, reparsing args...'
+                )
+                # reparse args from entry into separate namespace
+                entry_uwsm_args = Args(CompGlobals.cmdline)
+                print_debug("entry_uwsm_args.parsed", entry_uwsm_args.parsed)
+
+                # check for various incompatibilities
+                entry_main_arg = MainArg(entry_uwsm_args.parsed.wm_cmdline[0])
+                if entry_main_arg.entry_id is not None and (
+                    main_arg.entry_id,
+                    main_arg.entry_action,
+                ) == (entry_main_arg.entry_id, entry_main_arg.entry_action):
+                    raise ValueError(
+                        f'Entry "{CompGlobals.id}" uses {BIN_NAME} that points to itself!'
+                    )
+                if entry_uwsm_args.parsed.dry_run:
+                    raise ValueError(
+                        f'Entry "{CompGlobals.id}" uses {BIN_NAME} in "dry run" mode!'
+                    )
+                if entry_uwsm_args.parsed.only_generate:
+                    raise ValueError(
+                        f'Entry "{CompGlobals.id}" uses {BIN_NAME} in "only generate" mode!'
+                    )
+                if entry_uwsm_args.parsed.desktop_names and not Val.dn_colon.search(
+                    entry_uwsm_args.parsed.desktop_names
+                ):
+                    raise ValueError(
+                        f'Entry "{CompGlobals.id}" uses {BIN_NAME} with malformed desktop names: "{entry_uwsm_args.parsed.desktop_names}"!'
+                    )
+
+                # parse secondary entry
+                if entry_main_arg.entry_id is not None:
+
+                    if entry_main_arg.path is not None:
+
+                        # directly parse and check entry
+                        try:
+                            entry = DesktopEntry(entry_main_arg.path)
+                        except Exception as caught_exception:
+                            raise RuntimeError(
+                                f'Failed to parse entry "{entry_main_arg.entry_id}" from "{entry_main_arg.path}"!'
+                            ) from caught_exception
+                        check_entry_basic(entry, entry_main_arg.entry_action)
+
+                    else:
+
+                        # find and parse entry
+                        entries = find_entries(
+                            "wayland-sessions",
+                            parser=entry_parser_by_ids,
+                            parser_args={
+                                "match_entry_id": entry_main_arg.entry_id,
+                                "match_entry_action": entry_main_arg.entry_action,
+                            },
+                        )
+                        if not entries:
+                            raise FileNotFoundError(
+                                f'Could not find entry "{entry_main_arg.entry_id}"'
+                            )
+
+                        entry = entries[0]
+
+                    print_debug("entry", entry)
+
+                    entry_dict = entry_action_keys(
+                        entry, entry_action=entry_main_arg.entry_action
+                    )
+
+                    # get Exec from entry as CompGlobals.cmdline
+                    entry_cmdline = entry_dict["Exec"]
+
+                    if os.path.basename(entry_cmdline[0]) == BIN_NAME:
+                        raise ValueError(
+                            f'Entry "{CompGlobals.id}" uses {BIN_NAME} that points to another Entry that also uses {BIN_NAME}!'
+                        )
+
+                    # combine Exec from secondary entry with arguments from primary entry
+                    # TODO: either drop this behavior, or add support for % fields
+                    # not that wayland session entries will ever use them
+                    entry_uwsm_args.parsed.wm_cmdline = (
+                        entry_cmdline + entry_uwsm_args.parsed.wm_cmdline[1:]
+                    )
+
+                # replace CompGlobals.cmdline with Args.parsed.wm_cmdline from entry
+                CompGlobals.cmdline = entry_uwsm_args.parsed.wm_cmdline
+                CompGlobals.bin_name = os.path.basename(CompGlobals.cmdline[0])
+
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
+
+        # combine Exec from entry and arguments
+        # TODO: either drop this behavior, or add support for % fields
+        # not that wayland session entries will ever use them
+        CompGlobals.cmdline = CompGlobals.cmdline + Args.parsed.wm_cmdline[1:]
+
+        print_debug("CompGlobals.cmdline", CompGlobals.cmdline)
+
+        # this excludes aux exec mode
+        if Args.parsed.mode == "start" or (
+            Args.parsed.mode == "aux" and Args.parsed.aux_action == "prepare-env"
+        ):
+            # check desktop names
+            if Args.parsed.desktop_names and not Val.dn_colon.search(
+                Args.parsed.desktop_names
+            ):
+                print_error(
+                    f'Got malformed desktop names: "{Args.parsed.desktop_names}"!'
+                )
+                sys.exit(1)
+
+            # exclusive CLI desktop names
+            if Args.parsed.desktop_names_exclusive:
+                # error out on conflicting args
+                if not Args.parsed.desktop_names:
+                    print_error(
+                        'Requested exclusive desktop names ("-e") but no desktop names were given via "-D"!'
+                    )
+                    sys.exit(1)
+                else:
+                    # set exclusive desktop names
+                    CompGlobals.desktop_names = sane_split(
+                        Args.parsed.desktop_names, ":"
+                    )
+
+            # exclusive nested CLI desktop names from entry
+            elif (
+                entry_uwsm_args is not None
+                and entry_uwsm_args.parsed.desktop_names_exclusive
+            ):
+                if not entry_uwsm_args.parsed.desktop_names:
+                    raise ValueError(
+                        f'{BIN_NAME} in entry "{CompGlobals.id}" requests exclusive desktop names ("-e") but has no desktop names listed via "-D"!'
+                    )
+                # set exclusive desktop names
+                CompGlobals.desktop_names = sane_split(
+                    entry_uwsm_args.parsed.desktop_names, ":"
+                )
+            # prepend desktop names from entry (and existing or login environment)
+            # treating us processing an entry the same as us being launched by DM with XDG_CURRENT_DESKTOP
+            # set by it from DesktopNames
+            # basically just throw stuff into CompGlobals.desktop_names, deduplication comes later
+            else:
+                if Args.parsed.mode == "start":
+                    CompGlobals.desktop_names.extend(
+                        sane_split(os.environ.get("XDG_CURRENT_DESKTOP", ""), ":")
+                    )
+                elif Args.parsed.mode == "aux":
+                    CompGlobals.desktop_names.extend(
+                        sane_split(
+                            load_env("env_login").get("XDG_CURRENT_DESKTOP", ""),
+                            ":",
+                        )
+                    )
+                CompGlobals.desktop_names.extend(entry.get("DesktopNames", list=True))
+                if entry_uwsm_args is not None:
+                    CompGlobals.desktop_names.extend(
+                        sane_split(entry_uwsm_args.parsed.desktop_names, ":")
+                    )
+                # append from args
+                CompGlobals.desktop_names.extend(
+                    sane_split(Args.parsed.desktop_names, ":")
+                )
+                # Fallback to basename of the binary if nothing came up so far
+                if not CompGlobals.desktop_names:
+                    CompGlobals.desktop_names.append(CompGlobals.bin_name)
+
+            print_debug("CompGlobals.desktop_names", CompGlobals.desktop_names)
+
+            # fill name and description with fallbacks from: CLI, nested CLI, Entry (without action)
+            if Args.parsed.wm_name:
+                CompGlobals.name = Args.parsed.wm_name
+            elif entry_uwsm_args is not None and entry_uwsm_args.parsed.wm_name:
+                CompGlobals.name = entry_uwsm_args.parsed.wm_name
+            else:
+                CompGlobals.name = " - ".join(
+                    n
+                    for n in (
+                        entry_expand_str(entry.getName()),
+                        entry_expand_str(entry.getGenericName()),
+                    )
+                    if n
+                )
+
+            if Args.parsed.wm_comment:
+                CompGlobals.description = Args.parsed.wm_comment
+            elif entry_uwsm_args is not None and entry_uwsm_args.parsed.wm_comment:
+                CompGlobals.description = entry_uwsm_args.parsed.wm_comment
+            elif entry.getComment():
+                CompGlobals.description = entry_expand_str(entry.getComment())
+
+            # inherit hardcode argument
+            if (
+                Args.parsed.mode == "start"
+                and entry_uwsm_args is not None
+                and entry_uwsm_args.parsed.hardcode
+            ):
+                print_debug("inherited hardcode", entry_uwsm_args.parsed.hardcode)
+                Args.parsed.hardcode = True
+
+        # reparse and check resulting main arg
+        main_arg = MainArg(CompGlobals.cmdline[0])
+        if main_arg.path is None:
+            main_arg.check_exec()
+        else:
+            main_arg.check_path()
+
+    elif main_arg.executable is not None:
+        print_debug(f"Main arg is an executable: {main_arg.executable}")
+
+        if main_arg.path is None:
+            main_arg.check_exec()
+        else:
+            main_arg.check_path()
+
+        # fill cmdline from parsed cmdline if not already filled
+        if not CompGlobals.cmdline:
+            CompGlobals.cmdline = Args.parsed.wm_cmdline
+        # in aux cmdline or its first item might be empty, which means ID is the executable
+        if not CompGlobals.cmdline:
+            CompGlobals.cmdline = [main_arg.executable]
+        elif not CompGlobals.cmdline[0]:
+            CompGlobals.cmdline[0] = main_arg.executable
+        CompGlobals.bin_name = os.path.basename(CompGlobals.cmdline[0])
+
+        # this excludes aux exec mode
+        if Args.parsed.mode == "start" or (
+            Args.parsed.mode == "aux" and Args.parsed.aux_action == "prepare-env"
+        ):
+            if Args.parsed.desktop_names_exclusive:
+                # fill exclusive desktop names
+                CompGlobals.desktop_names = sane_split(Args.parsed.desktop_names, ":")
+            else:
+                # fill names from environment (most likely DM)
+                if Args.parsed.mode == "start":
+                    CompGlobals.desktop_names.extend(
+                        sane_split(os.environ.get("XDG_CURRENT_DESKTOP", ""), ":")
+                    )
+                elif Args.parsed.mode == "aux":
+                    CompGlobals.desktop_names.extend(
+                        sane_split(
+                            load_env("env_login").get("XDG_CURRENT_DESKTOP", ""),
+                            ":",
+                        )
+                    )
+                # append from args
+                CompGlobals.desktop_names.extend(
+                    sane_split(Args.parsed.desktop_names, ":")
+                )
+                # Fallback to basename of the binary if nothing came up so far
+                if not CompGlobals.desktop_names:
+                    CompGlobals.desktop_names.append(CompGlobals.bin_name)
+
+            CompGlobals.name = Args.parsed.wm_name
+            CompGlobals.description = Args.parsed.wm_comment
+            print_debug("CompGlobals.desktop_names", CompGlobals.desktop_names)
+
+    else:
+        raise ValueError("Could not determine or parse main argument")
+
+    # main_arg should not be an entry after all this parsing
+    if main_arg.entry_id is not None:
+        raise RuntimeError(f"Could not parse {main_arg} down to executable!")
+
+    # Canonicalize to absolute path if in hardcode mode
+    # or in case path for some reason is relative
+    # Path in main_arg object is already normalized
+    if Args.parsed.mode == "start" and (
+        Args.parsed.hardcode or main_arg.path is not None
+    ):
+        canon_arg = os.path.abspath(main_arg.path or which(main_arg.executable))
+        print_debug("normalized", CompGlobals.cmdline[0], canon_arg)
+        CompGlobals.cmdline[0] = os.path.abspath(canon_arg)
+
+    # fill cli-exclusive compositor arguments for reproduction in unit drop-ins
+    CompGlobals.cli_args = Args.parsed.wm_cmdline[1:]
+
+    # this excludes aux exec mode
+    if Args.parsed.mode == "start" or (
+        Args.parsed.mode == "aux" and Args.parsed.aux_action == "prepare-env"
+    ):
+        CompGlobals.cli_desktop_names = sane_split(Args.parsed.desktop_names, ":")
+        CompGlobals.cli_desktop_names_exclusive = Args.parsed.desktop_names_exclusive
+        CompGlobals.cli_name = Args.parsed.wm_name
+        CompGlobals.cli_description = Args.parsed.wm_comment
+
+        # deduplicate desktop names, preserving order
+        ddn = []
+        for desktop_name in CompGlobals.cli_desktop_names:
+            if desktop_name not in ddn:
+                ddn.append(desktop_name)
+        CompGlobals.cli_desktop_names = ddn
+        ddn = []
+        for desktop_name in CompGlobals.desktop_names:
+            if desktop_name not in ddn:
+                ddn.append(desktop_name)
+        CompGlobals.desktop_names = ddn
+
+    # id for functions and env loading
+    CompGlobals.bin_id = re.sub(
+        "(^[^a-zA-Z]|[^a-zA-Z0-9_])+", "_", CompGlobals.bin_name
+    ).lower()
+
+    return
+
+
+def stop_wm():
+    "Stops compositor if active, returns True if stopped, False if was already inactive"
+
+    print_normal("Stopping compositor...")
+
+    bus_session = DbusInteractions("session")
+    print_debug("bus_session initial", bus_session)
+
+    # query systemd dbus for matching compositor units
+    units = bus_session.list_units_by_patterns(
+        ["active", "activating"], ["wayland-wm@*.service"]
+    )
+    # get only IDs
+    units = [str(unit[0]) for unit in units]
+
+    if not units:
+        print_ok("Compositor is not running.")
+        return False
+
+    # this really should not happen
+    if len(units) > 1:
+        print_warning(f"Multiple compositor units found: {', '.join(units)}!")
+
+    if Args.parsed.dry_run:
+        print_normal(f"Will stop compositor {units[0]}.")
+        return True
+
+    print_normal(f"Found running compositor {units[0]}.")
+
+    stop_job_mode = os.environ.get("UWSM_STOP_JOB_MODE", "replace")
+    if stop_job_mode not in ["fail", "replace", "replace-irreversibly"]:
+        print_warning(
+            f'Expected fail|replace|replace-irreversibly from UWSM_STOP_JOB_MODE, got "{stop_job_mode}", ignored and set to "replace".'
+        )
+        stop_job_mode = "replace"
+    job = bus_session.stop_unit(units[0], stop_job_mode)
+
+    # wait for job to be done
+    while True:
+        jobs = bus_session.list_systemd_jobs()
+        if job not in [check_job[4] for check_job in jobs]:
+            break
+        time.sleep(0.1)
+    print_ok("Sent stop job.")
+
+    return True
+
+
+def waitpid(pid: int):
+    "Waits for given PID to exit"
+    try:
+        pid_fd = os.pidfd_open(pid)
+    except ProcessLookupError:
+        print_normal(f"Process with PID {pid} not found.")
+        return
+    select([pid_fd], [], [])
+    print_normal(f"Process with PID {pid} has ended.")
+    return
+
+
+def get_waitenv_timeout(default=30):
+    "Gets waitenv timeout from UWSM_WAIT_VARNAMES_TIMEOUT env var or use default"
+    timeout = os.getenv("UWSM_WAIT_VARNAMES_TIMEOUT", str(default))
+    if timeout.isnumeric():
+        timeout = int(timeout)
+        if timeout < 1:
+            print_warning(
+                f"Expected positive value from UWSM_WAIT_VARNAMES_TIMEOUT var, got: {timeout}"
+            )
+            timeout = default
+    else:
+        print_warning(
+            f"Expected integer value from UWSM_WAIT_VARNAMES_TIMEOUT var, got: {timeout}"
+        )
+        timeout = default
+
+    return timeout
+
+
+def waitenv(
+    varnames: List[str] = None, timeout: int | None = None, step=0.5, end_buffer=3
+):
+    """Wait for variables to appear in activation environment"""
+    if timeout is None:
+        timeout = get_waitenv_timeout()
+    if varnames is None:
+        varnames = ["WAYLAND_DISPLAY"]
+    else:
+        varnames = filter_varnames(varnames)
+    varnames_set = set(varnames)
+    varnames_exist_set = set()
+
+    bus_session = DbusInteractions("session")
+
+    start_ts = time.monotonic()
+    warned = False
+    for attempt in range(1, int(timeout // step + 1)):
+        aenv_varnames_set = set(bus_session.get_systemd_vars().keys())
+
+        # all is done
+        if varnames_set.issubset(aenv_varnames_set):
+            # list vars on first attempt
+            if attempt == 1:
+                print_ok(
+                    f"All expected variables appeared in activation environment:\n  {', '.join(varnames)}"
+                )
+            # simpler message if later
+            else:
+                print_ok("All expected variables appeared in activation environment.")
+            return
+
+        # report partial progress
+        varnames_appeared_set = varnames_set.intersection(aenv_varnames_set).difference(
+            varnames_exist_set
+        )
+        if varnames_appeared_set:
+            varnames_exist_set.update(varnames_appeared_set)
+            print_normal(
+                "Expected variables appeared in activation environment:\n"
+                + f"  {', '.join(varnames_appeared_set)}\nStill expecting:\n"
+                + f"  {', '.join(varnames_set.difference(varnames_exist_set))}"
+            )
+
+        # nothing is present at the start
+        elif attempt == 1:
+            print_normal(
+                "Expecting variables to appear in activation environment:\n"
+                + f"  {', '.join(varnames_set)}"
+            )
+
+        # still not done in 80% of timeout
+        elif (attempt * step) / timeout >= 0.8 and not warned:
+            warned = True
+            print_warning(
+                "Still waiting for variables in activation environment, nearing timeout:\n"
+                + f"  {', '.join(varnames_set)}"
+            )
+
+        # timeout
+        if time.monotonic() - start_ts > timeout:
+            break
+        time.sleep(step)
+
+    # let systemd start timeout happen.
+    time.sleep(end_buffer)
+    raise TimeoutError(
+        f"Timed out waiting for variables in activation environment:\n  {', '.join(varnames_set.difference(varnames_exist_set))}"
+    )
+
+
+def check_may_start():
+    "Checks conditions for compositor startup, returns three sets: errors, v_dealbreakers, dealbreakers"
+    errors = set()
+    # visible dealbreakers
+    v_dealbreakers = set()
+    # silent dealbreakers
+    dealbreakers = set()
+
+    # just bail out if root
+    if os.geteuid() == 0:
+        dealbreakers.add("Running as root")
+        return errors, v_dealbreakers, dealbreakers
+
+    # start with checking DBus availability. Python module will try to
+    # start it unconditionally if not found, and make a fuss.
+    # silently fail if verbosity not requested. For ssh sessions and like.
+    if not os.environ.get("DBUS_SESSION_BUS_ADDRESS", ""):
+        dealbreakers.add("DBUS_SESSION_BUS_ADDRESS is not available")
+        return errors, v_dealbreakers, dealbreakers
+
+    # check if parent process is a login shell
+    if not Args.parsed.nologin:
+        try:
+            with open(
+                f"/proc/{os.getppid()}/cmdline", "r", encoding="UTF-8"
+            ) as ppcmdline:
+                parent_cmdline = ppcmdline.read()
+                parent_cmdline = parent_cmdline.strip()
+            print_debug(f"parent_pid: {os.getppid()}")
+            print_debug(f"parent_cmdline: {parent_cmdline}")
+            if not parent_cmdline.startswith("-"):
+                dealbreakers.add("Not in login shell")
+                if not Args.parsed.verbose:
+                    return errors, v_dealbreakers, dealbreakers
+        except Exception as caught_exception:
+            errors.update(
+                "Could not determine parent process command!", caught_exception
+            )
+            return errors, v_dealbreakers, dealbreakers
+
+    try:
+        if is_active():
+            v_dealbreakers.add(
+                "A compositor and/or graphical-session* targets are already active"
+            )
+            if not Args.parsed.verbose:
+                return errors, v_dealbreakers, dealbreakers
+    except Exception as caught_exception:
+        errors.update("Could not check for active compositor!", caught_exception)
+        return errors, v_dealbreakers, dealbreakers
+
+    # check foreground VT
+    fgvt = None
+
+    # argparse does not pass default for this in some python versions
+    allowed_vtnr = Args.parsed.vtnr or [1]
+    print_debug("allowed_vtnr", allowed_vtnr)
+    if allowed_vtnr != [0]:
+        fgvt = get_fg_vt()
+        if fgvt is None:
+            dealbreakers.add("Could not determine foreground VT")
+            if not Args.parsed.verbose:
+                return errors, v_dealbreakers, dealbreakers
+        else:
+            if fgvt not in allowed_vtnr:
+                dealbreakers.add(
+                    f"Foreground VT ({fgvt}) is not among allowed VTs ({'|'.join([str(v) for v in allowed_vtnr])})"
+                )
+                if not Args.parsed.verbose:
+                    return errors, v_dealbreakers, dealbreakers
+
+    bus_system = None
+    session_id_str = os.environ.get("XDG_SESSION_ID", "")
+    # check session VTNr
+    if allowed_vtnr != [0]:
+        if session_id_str:
+            try:
+                bus_system = DbusInteractions("system")
+                session_vtnr = int(
+                    bus_system.get_session_property(session_id_str, "VTNr")
+                )
+                print_debug("session_vtnr", session_vtnr)
+                if session_vtnr == 0:
+                    dealbreakers.add(
+                        f"Session {session_id_str} is not associated with a VT"
+                    )
+                    if not Args.parsed.verbose:
+                        return errors, v_dealbreakers, dealbreakers
+                elif session_vtnr not in allowed_vtnr:
+                    dealbreakers.add(
+                        f"Session VT ({session_vtnr}) is not among allowed VTs ({'|'.join([str(v) for v in allowed_vtnr])})"
+                    )
+                    if not Args.parsed.verbose:
+                        return errors, v_dealbreakers, dealbreakers
+            except Exception as caught_exception:
+                errors.update("Could not get session VTNr!", caught_exception)
+                return errors, v_dealbreakers, dealbreakers
+        else:
+            dealbreakers.add("XDG_SESSION_ID is not available")
+            if not Args.parsed.verbose:
+                return errors, v_dealbreakers, dealbreakers
+
+    # check local session
+    if not Args.parsed.allow_remote:
+        if session_id_str:
+            try:
+                if bus_system is None:
+                    bus_system = DbusInteractions("system")
+                    print_debug("bus_system initial", bus_system)
+
+                session_remote = int(
+                    bus_system.get_session_property(session_id_str, "Remote")
+                )
+                print_debug("session_remote", session_remote)
+                if session_remote:
+                    dealbreakers.add(f"Session {session_id_str} is not local")
+                    if not Args.parsed.verbose:
+                        return errors, v_dealbreakers, dealbreakers
+            except Exception as caught_exception:
+                errors.update("Could not get session Remote attr!", caught_exception)
+                return errors, v_dealbreakers, dealbreakers
+        else:
+            dealbreakers.add("XDG_SESSION_ID is not available")
+            if not Args.parsed.verbose:
+                return errors, v_dealbreakers, dealbreakers
+
+    # check for graphical target
+    if Args.parsed.gst_seconds > 0:
+        try:
+            if bus_system is None:
+                bus_system = DbusInteractions("system")
+                print_debug("bus_system initial", bus_system)
+
+            if not wait_for_unit(
+                "graphical.target",
+                bus=bus_system,
+                states=["active", "activating"],
+                timeout=Args.parsed.gst_seconds,
+                quiet=Args.parsed.quiet,
+            ):
+                dealbreakers.add("System has not reached graphical.target")
+                if not Args.parsed.verbose:
+                    return errors, v_dealbreakers, dealbreakers
+
+        except Exception as caught_exception:
+            errors.update(
+                "Could not check if graphical.target is reached!", caught_exception
+            )
+            return errors, v_dealbreakers, dealbreakers
+
+    return errors, v_dealbreakers, dealbreakers
+
+
+def main():
+    "UWSM main entrypoint"
+
+    # print warning about invalid DEBUG value
+    if DebugFlag.warning:
+        print_warning(DebugFlag.warning)
+        DebugFlag.warning = None
+
+    # parse args globally
+    Args(store_parsers=True)
+    print_debug("Args.parsed", Args.parsed)
+
+    #### SELECT
+    if Args.parsed.mode == "select":
+        try:
+            default_id = get_default_comp_entry()
+            select_wm_id = select_comp_entry(default_id)
+            if select_wm_id:
+                if select_wm_id == default_id:
+                    print_normal(f"Default compositor ID unchanged: {select_wm_id}.")
+                else:
+                    save_default_comp_entry(select_wm_id)
+                sys.exit(0)
+            else:
+                print_warning("No compositor was selected.")
+                sys.exit(1)
+        except Exception as caught_exception:
+            print_error(caught_exception)
+            sys.exit(1)
+
+    #### START
+    elif Args.parsed.mode == "start":
+
+        # also send output to log if starting for real
+        LogFlag.log = not Args.parsed.dry_run and not Args.parsed.only_generate
+
+        # silent start mode
+        silent_start_raw = os.getenv("UWSM_SILENT_START", "0")
+        try:
+            silent_start = str2bool_plus(silent_start_raw, numeric=True)
+        except ValueError:
+            print_warning(
+                f'Expected boolean or numeric or empty value for UWSM_SILENT_START, got "{silent_start_raw}", assuming False'
+            )
+            silent_start = 0
+
+        NoStdOutFlag.nostdout = silent_start > 0
+        NoStdOutFlag.nowarn = silent_start > 1
+        del silent_start
+
+        # check for graphical target if starting for real
+        if (
+            (Args.parsed.gst_warn_seconds >= 0 or Args.parsed.gst_abort_seconds >= 0)
+            and not Args.parsed.dry_run
+            and not Args.parsed.only_generate
+        ):
+            # gst_abort_seconds takes precedence
+            timeout = (
+                Args.parsed.gst_abort_seconds
+                if Args.parsed.gst_abort_seconds >= 0
+                else Args.parsed.gst_warn_seconds
+            )
+            try:
+                bus_system = DbusInteractions("system")
+                print_debug("bus_system initial", bus_system)
+
+                if not wait_for_unit(
+                    "graphical.target",
+                    bus=bus_system,
+                    states=["active", "activating"],
+                    timeout=timeout,
+                    quiet=False,
+                ):
+                    if Args.parsed.gst_abort_seconds >= 0:
+                        print_error(
+                            "System has not reached graphical.target. Aborting."
+                        )
+                        sys.exit(1)
+                    elif Args.parsed.gst_warn_seconds >= 0 and not NoStdOutFlag.nowarn:
+                        print_warning(dedent("""
+                                System has not reached graphical.target.
+                                It might be a good idea to check default system target or screen for this
+                                with a condition, i.e. via "uwsm check may-start".
+                                Will continue in 5 seconds...
+                                """))
+                        time.sleep(5)
+
+            except Exception as caught_exception:
+                print_error("Could not check if graphical.target is reached!")
+                print_error(caught_exception)
+                sys.exit(1)
+
+        # Get ID from whiptail menu
+        if Args.parsed.wm_cmdline[0] in ["select", "default"]:
+            try:
+                default_id = get_default_comp_entry()
+                select_wm_id = select_comp_entry(
+                    default_id, Args.parsed.wm_cmdline[0] == "default"
+                )
+                if select_wm_id:
+                    if select_wm_id == default_id:
+                        print_normal(
+                            f"Default compositor ID unchanged: {select_wm_id}."
+                        )
+                    else:
+                        save_default_comp_entry(select_wm_id)
+                    # update Args.parsed.wm_cmdline in place
+                    Args.parsed.wm_cmdline = [select_wm_id]
+                else:
+                    print_error("No compositor was selected!")
+                    sys.exit(1)
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
+
+        try:
+            fill_comp_globals()
+
+            print_normal(dedent(f"""
+                    Selected compositor ID: {CompGlobals.id}
+                              Command Line: {shlex.join(CompGlobals.cmdline)}
+                          Plugin/binary ID: {CompGlobals.bin_id}
+                     Initial Desktop Names: {':'.join(CompGlobals.desktop_names)}
+                                      Name: {CompGlobals.name}
+                               Description: {CompGlobals.description}
+                    """))
+
+            if is_active(verbose_active=True):
+                print_error(
+                    "A compositor or graphical-session* target is already active!"
+                )
+                if not Args.parsed.dry_run:
+                    sys.exit(1)
+                else:
+                    print_ok("...but this is dry run, so the dream continues.")
+
+            generate_dropins(rung=Args.parsed.unit_rung)
+
+            if Args.parsed.tweaks:
+                generate_tweaks(rung=Args.parsed.unit_rung)
+            else:
+                remove_units(["tweaks"], rung=Args.parsed.unit_rung)
+
+            # remove unit files from other rung
+            remove_units(rung="run" if Args.parsed.unit_rung == "home" else "home")
+
+            if UnitsState.changed:
+                reload_systemd()
+            else:
+                print_normal("Units unchanged.")
+
+            if Args.parsed.only_generate:
+                print_warning("Only unit creation was requested. Will not go further.")
+                sys.exit(0)
+
+            if Args.parsed.dry_run:
+                print_normal(f"Will start {CompGlobals.id}...")
+                print_warning("Dry Run Mode. Will not go further.")
+                sys.exit(0)
+
+            print_normal(
+                f"Starting {CompGlobals.id} and waiting while it is running..."
+            )
+
+            # start bindpid service on our PID
+            sprc = subprocess.run(
+                [
+                    "systemctl",
+                    "--user",
+                    "start",
+                    f"wayland-session-bindpid@{os.getpid()}.service",
+                ],
+                check=True,
+            )
+            print_debug(sprc)
+
+            # save login environment
+            save_env("env_login")
+
+            # save session vars for unit EnvironmentFile=
+            save_env(
+                "env_session.conf",
+                env={
+                    var: os.environ.get(var, "")
+                    for var in sorted(Varnames.session_specific)
+                    if os.environ.get(var, "")
+                },
+                separator="\n",
+            )
+
+            # Replace ourselves with a simple shell starter/signal handler.
+            # This will fork a waiting systemctl to start the main compositor
+            # unit and wait until it deactivates.
+            # Upon receiving SIGTERM, SIGHUP, SIGINT a stopping systemctl will be
+            # forked to stop compositor will be cleanly.
+            # Both systemctl invocations are started with protection from
+            # SIGTERM/SIGHUP barrage occurring on login session termination.
+
+            sh_path = which(SH_BIN)
+            if not sh_path:
+                raise OSError(
+                    f'"{SH_BIN}" is not {"found" if "/" in SH_BIN else "in PATH"}!'
+                )
+
+            # duplicate stdout and stderr to retain ability to print past systemd-cat
+            os.dup2(1, 3)
+            os.dup2(2, 4)
+
+            # add silence indicators
+            os.environ.update(
+                {
+                    "UWSM_SH_NO_STDOUT": "1" if NoStdOutFlag.nostdout else "",
+                    "UWSM_SH_NO_WARN": "1" if NoStdOutFlag.nowarn else "",
+                }
+            )
+
+            os.execlp(
+                "systemd-cat",
+                "systemd-cat",
+                "--identifier=uwsm",
+                "--stderr-priority=err",
+                "--",
+                sh_path,
+                os.path.join(PKG_LIBEXEC_DIR, "signal-handler.sh"),
+                f"wayland-session-envelope@{CompGlobals.id_unit_string}.target",
+            )
+
+        except Exception as caught_exception:
+            print_error(caught_exception)
+            sys.exit(1)
+
+    #### STOP
+    elif Args.parsed.mode == "stop":
+
+        # also send output to log if not dry run
+        LogFlag.log = not Args.parsed.dry_run
+
+        try:
+            stop_wm()
+            stop_rc = 0
+        except Exception as caught_exception:
+            print_error(caught_exception)
+            stop_rc = 1
+
+        # Args.parsed.remove_units is False when not given, None if given without argument
+        if Args.parsed.remove_units is not False:
+            if Args.parsed.remove_units is None:
+                remove_units(rung=Args.parsed.unit_rung)
+            else:
+                remove_units(
+                    Args.parsed.remove_units.split(","), rung=Args.parsed.unit_rung
+                )
+            if UnitsState.changed:
+                try:
+                    reload_systemd()
+                except Exception as caught_exception:
+                    print_warning(caught_exception)
+            else:
+                print_normal("Units unchanged.")
+
+        sys.exit(stop_rc)
+
+    #### FINALIZE
+    elif Args.parsed.mode == "finalize":
+
+        # enable loglevel prefix
+        LogFlag.prefix = True
+
+        try:
+            finalize(
+                Args.parsed.env_names + os.getenv("UWSM_FINALIZE_VARNAMES", "").split()
+            )
+        except Exception as caught_exception:
+            print_error(caught_exception, notify=1)
+
+    #### APP
+    elif Args.parsed.mode == "app":
+
+        # enable loglevel prefix
+        LogFlag.prefix = True
+
+        try:
+            app(
+                cmdline=Args.parsed.cmdline,
+                terminal=Args.parsed.terminal,
+                slice_name=Args.parsed.slice_name,
+                app_unit_type=Args.parsed.app_unit_type,
+                app_name=Args.parsed.app_name,
+                unit_name=Args.parsed.unit_name,
+                unit_description=Args.parsed.unit_description,
+                unit_properties=Args.parsed.unit_properties,
+                silent=Args.parsed.silent,
+            )
+        except Exception as caught_exception:
+            print_error(caught_exception, notify=1)
+            sys.exit(1)
+
+    #### CHECK
+    elif Args.parsed.mode == "check" and Args.parsed.checker == "is-active":
+        if not os.environ.get("DBUS_SESSION_BUS_ADDRESS", ""):
+            print_error("DBUS_SESSION_BUS_ADDRESS is not available")
+            sys.exit(1)
+        try:
+            if is_active(Args.parsed.wm, Args.parsed.verbose):
+                sys.exit(0)
+            else:
+                sys.exit(1)
+        except Exception as caught_exception:
+            print_error(caught_exception)
+            sys.exit(1)
+
+    elif Args.parsed.mode == "check" and Args.parsed.checker == "may-start":
+        errors, v_dealbreakers, dealbreakers = check_may_start()
+
+        # sum up, print, and exit with verdict
+        if errors or v_dealbreakers or dealbreakers:
+            if errors:
+                errors = list(errors)
+                errors.insert(0, "Got errors while checking if may start compositor:")
+                print_error(*errors, sep="\n")
+            if v_dealbreakers or dealbreakers:
+                v_dealbreakers = list(v_dealbreakers)
+                dealbreakers = list(dealbreakers)
+                if Args.parsed.verbose:
+                    v_dealbreakers.insert(0, "May not start compositor:")
+                    print_warning(*(v_dealbreakers + dealbreakers), sep="\n  ")
+                elif not Args.parsed.quiet and v_dealbreakers:
+                    print_warning(*v_dealbreakers, sep="\n")
+            sys.exit(1)
+        else:
+            if Args.parsed.verbose:
+                print_ok("May start compositor.")
+            sys.exit(0)
+
+    #### AUX
+    elif Args.parsed.mode == "aux":
+
+        # enable loglevel prefix
+        LogFlag.prefix = True
+
+        manager_pid = int(os.getenv("MANAGERPID", "0"))
+        ppid = int(os.getppid())
+        print_debug(f"manager_pid: {manager_pid}, ppid: {ppid}")
+        if not manager_pid or manager_pid != ppid:
+            print_error("Aux actions can only be run by systemd user manager!")
+            sys.exit(1)
+
+        if Args.parsed.aux_action == "prepare-env":
+            fill_comp_globals()
+            try:
+                prepare_env()
+                sys.exit(0)
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                try:
+                    cleanup_env()
+                except Exception as caught_exception2:
+                    print_error(caught_exception2)
+                sys.exit(1)
+        elif Args.parsed.aux_action == "cleanup-env":
+            if is_active("compositor-only", verbose_active=True):
+                print_error("A compositor is running, will not cleanup environment!")
+                sys.exit(1)
+            else:
+                try:
+                    cleanup_env()
+                    sys.exit(0)
+                except Exception as caught_exception:
+                    print_error(caught_exception)
+                    sys.exit(1)
+        elif Args.parsed.aux_action == "exec":
+            try:
+                fill_comp_globals()
+                print_debug(CompGlobals.cmdline)
+                print_normal(f"Starting: {shlex.join(CompGlobals.cmdline)}...")
+
+                # get current systemd environment
+                bus_session = DbusInteractions("session")
+                env_pre = filter_varnames(bus_session.get_systemd_vars())
+
+                # fork out a process that will watch for expected variables
+                # in activation environment and signal unit readiness automatically
+                mainpid = os.getpid()
+                childpid = os.fork()
+                if childpid == 0:
+                    # we are the child
+                    # double-fork pattern: we now fork again, immediately exiting from the parent (intermediary);
+                    # this causes the final child process to get reparented to the system init process
+                    # (or possibly a sub-reaper) and hence prevents it from becoming a zombie.
+                    if os.fork() != 0:
+                        # we are intermediary fork, exit
+                        sys.exit(0)
+                    # we are the leaf fork
+                    try:
+                        # try getting start timeout from the unit property
+                        try:
+                            start_timeout = bus_session.get_unit_property(
+                                f"wayland-wm@{CompGlobals.id_unit_string}.service",
+                                "TimeoutStartUSec",
+                                skip_generic=True,
+                            )
+                            print_debug(
+                                f"wayland-wm@{CompGlobals.id_unit_string}.service TimeoutStartUSec",
+                                start_timeout,
+                            )
+                            start_timeout = int(start_timeout) // 1000000
+                        except Exception as caught_exception:
+                            print_debug(caught_exception)
+                            start_timeout = None
+                        # wait for variables
+                        waitenv(
+                            varnames=["WAYLAND_DISPLAY"]
+                            + os.getenv("UWSM_WAIT_VARNAMES", "").split(),
+                            timeout=start_timeout,
+                        )
+                        # just to be on the safe side if things are settling down
+                        settle_time = os.getenv("UWSM_WAIT_VARNAMES_SETTLETIME", "0.2")
+                        try:
+                            settle_time = float(settle_time)
+                        except Exception:
+                            print_warning(
+                                f'Autoready: "UWSM_WAIT_VARNAMES_SETTLETIME" contains invalid value "{settle_time}", using "0.2"'
+                            )
+                            settle_time = 0.2
+                        time.sleep(settle_time)
+
+                        # calculate environment delta and update cleanup list
+                        env_post = filter_varnames(bus_session.get_systemd_vars())
+                        env_delta = dict(set(env_post.items()) - set(env_pre.items()))
+
+                        if env_delta:
+                            # sync delta to dbus
+                            set_systemd_vars(
+                                env_delta, dbus_only=True, bus_session=bus_session
+                            )
+                            try:
+                                append_to_cleanup_file(
+                                    env_delta,
+                                    skip_always_cleanup=True,
+                                    create=True,
+                                )
+                            except FileNotFoundError as caught_exception:
+                                print_error(
+                                    "Autoready: Assuming env preloader failed:",
+                                    caught_exception,
+                                )
+                                os.kill(mainpid, signal.SIGTERM)
+                                sys.exit(1)
+
+                        if get_active_wm_unit(
+                            active=False, activating=True, bus_session=bus_session
+                        ):
+                            print_normal(
+                                f"Autoready: Declaring unit for {CompGlobals.id} ready and restricting notification access."
+                            )
+                            os.execlp(
+                                "systemd-notify",
+                                "systemd-notify",
+                                "READY=1",
+                                "NOTIFYACCESS=exec",
+                            )
+                        else:
+                            if (
+                                bus_session.get_unit_property(
+                                    f"wayland-wm@{CompGlobals.id_unit_string}.service",
+                                    "NotifyAccess",
+                                    skip_generic=True,
+                                )
+                                == "all"
+                            ):
+                                print_normal(
+                                    f"Autoready: Unit for {CompGlobals.id} is already active, restricting notification access."
+                                )
+                                os.execlp(
+                                    "systemd-notify",
+                                    "systemd-notify",
+                                    "NOTIFYACCESS=exec",
+                                )
+                            else:
+                                print_normal(
+                                    f"Autoready: Unit for {CompGlobals.id} is already active, notification access is restricted."
+                                )
+                                sys.exit(0)
+                    except Exception as caught_exception:
+                        print_warning("Autoready failed:", caught_exception)
+                        sys.exit(1)
+                else:
+                    # we are the parent, wait until intermediate fork exits
+                    os.waitpid(childpid, 0)
+                # execute compositor cmdline
+                os.execlp(CompGlobals.cmdline[0], *(CompGlobals.cmdline))
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
+
+        elif Args.parsed.aux_action == "waitpid":
+            try:
+                waitpid(Args.parsed.pid)
+                sys.exit(0)
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
+
+        elif Args.parsed.aux_action == "waitenv":
+            try:
+                # try getting start timeout from the unit property
+                try:
+                    start_timeout = bus_session.get_unit_property(
+                        "wayland-session-waitenv.service",
+                        "TimeoutStartUSec",
+                        skip_generic=True,
+                    )
+                    print_debug(
+                        "wayland-session-waitenv.service TimeoutStartUSec",
+                        start_timeout,
+                    )
+                    start_timeout = int(start_timeout) // 1000000
+                except Exception as caught_exception:
+                    print_debug(caught_exception)
+                    start_timeout = None
+                # wait for vars
+                waitenv(
+                    varnames=["WAYLAND_DISPLAY"]
+                    + Args.parsed.env_names
+                    + os.getenv("UWSM_WAIT_VARNAMES", "").split(),
+                    timeout=start_timeout,
+                )
+                # just to be on the safe side if things are settling down
+                settle_time = os.getenv("UWSM_WAIT_VARNAMES_SETTLETIME", "0.2")
+                try:
+                    settle_time = float(settle_time)
+                except Exception:
+                    print_warning(
+                        f'"UWSM_WAIT_VARNAMES_SETTLETIME" contains invalid value "{settle_time}", using "0.2"'
+                    )
+                    settle_time = 0.2
+                time.sleep(settle_time)
+                sys.exit(0)
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
+
+        elif Args.parsed.aux_action == "app-daemon":
+            print_normal("Launching app daemon", file=sys.stderr)
+            try:
+                app_daemon()
+            except Exception as caught_exception:
+                print_error(caught_exception)
+                sys.exit(1)
