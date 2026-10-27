@@ -1,0 +1,24 @@
+# D8 proposal-vs-landed sentence identity + erratum append-only + data/attack rev equality
+# paths: <lane> = the mado-shokunin lane (absolute home path sanitized); HOME/XDG_*/TMPDIR for every run = /fast/scratch/hyaku/mado-r50/ScrCorrections50
+# date: 2026-10-27T05:48:18-03:00
+
+$ git show 906178b6 --numstat -- corpus/lessons/round-49.md
+5	0	corpus/lessons/round-49.md
+$ git diff --stat 906178b6 $REV -- corpus/lessons/round-49.md corpus/lessons/round-50.md   # empty = frozen bytes unchanged
+
+$ python3 -I (normalized compare): proposed sentence from w1/CritGateLesson.md:9 vs the landed erratum sentence
+proposed: the non-author closure sampled 2 drafted-admit examples and 5 rejected decisions represented above (counts computed from this section; the full source gate has 12 admits and 5 rejects; round-48 N3)
+landed  : the non-author closure sampled 2 drafted-admit examples and 5 rejected decisions represented above (counts computed from this section; the full source gate has 12 admits and 5 rejects; round-48 N3)
+identical_core_sentence: True
+
+# erratum block location at b4a79843cc2545bbe800db9322e58f6e00436629 (gate section ends at line 27; erratum sits in "## Round-48 closure items"):
+6:## Gate
+19:### Rejected after opening
+29:## Mistakes
+49:## Round-48 closure items
+65:- Erratum (2026-10-27, round 50, D8): the "Spot-check shape" sentence above says "2 drafted admits and 4 rejects"; the corrected
+
+# counting command literal invocation, HOME/XDG_*/TMPDIR under scratch:
+$ L=...; grep -cE "^- \*\*S[0-9]+ \(drafted admit\)" $L/corpus/lessons/round-49.md; grep -cE "^- \*\*REJECT" $L/.ufo/waves/round-49/w1/ScrRows/gate.md
+2
+5

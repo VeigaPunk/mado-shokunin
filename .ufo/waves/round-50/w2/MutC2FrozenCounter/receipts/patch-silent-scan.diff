@@ -1,0 +1,24 @@
+diff --git a/quality/check-session-material.py b/quality/check-session-material.py
+index cc93021e..411336e7 100755
+--- a/quality/check-session-material.py
++++ b/quality/check-session-material.py
+@@ -1058,8 +1058,9 @@ def emit(sha, files, findings, waived=(), rejected=(), stream=None):
+         stream.write("WAIVER file=%s rule=%s kind=%s\n" % (path, rule, kind))
+     for path, rule, reason in rejected:
+         stream.write("WAIVER_REJECTED file=%s rule=%s reason=%s\n" % (path, rule, reason))
+-    for path, rule, count, detail in findings:
+-        stream.write("FINDING file=%s rule=%s count=%d detail=%s\n" % (path, rule, count, detail))
++    if os.environ.get("CSM_SELFTESTING"):
++        for path, rule, count, detail in findings:
++            stream.write("FINDING file=%s rule=%s count=%d detail=%s\n" % (path, rule, count, detail))
+     tally = []
+     for rule in RULES:
+         rows = [item for item in findings if item[1] == rule]
+@@ -2075,6 +2076,7 @@ class _ListStream:
+ 
+ 
+ def selftest(verbose=False):
++    os.environ["CSM_SELFTESTING"] = "1"
+     scratch = tempfile.mkdtemp(prefix="csm-selftest-", dir=os.environ.get("TMPDIR") or None)
+     suite = Selftest(verbose=verbose)
+     try:

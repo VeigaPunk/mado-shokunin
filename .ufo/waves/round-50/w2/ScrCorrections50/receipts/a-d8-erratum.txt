@@ -1,0 +1,46 @@
+# D8 erratum block re-derivation at b4a79843cc2545bbe800db9322e58f6e00436629 (seat ScrCorrections50, w2)
+# paths: <lane> = the mado-shokunin lane (absolute home path sanitized); HOME/XDG_*/TMPDIR for every run = /fast/scratch/hyaku/mado-r50/ScrCorrections50
+# date: 2026-10-27T05:47:19-03:00; cwd: <lane>; HOME/XDG_*/TMPDIR under scratch
+
+$ git -C $L show $REV:corpus/lessons/round-49.md | sed -n "63,70p"
+- M48-13: the w1 context set `ulimit -f 65536` (64 MiB); the owed clause-r attack ran (`w1/ExecCloneRecipe.md`).
+- SentScratch: the round-49 counters refuse `/tmp` work dirs and TMPDIR under `/tmp`, `/var/tmp`, `/dev/shm`.
+- Erratum (2026-10-27, round 50, D8): the "Spot-check shape" sentence above says "2 drafted admits and 4 rejects"; the corrected
+  sentence is "the non-author closure sampled 2 drafted-admit examples and 5 rejected decisions represented above (counts computed
+  from this section; the full source gate has 12 admits and 5 rejects; round-48 N3)". Counting command:
+  `L=<lane>; grep -cE '^- \*\*S[0-9]+ \(drafted admit\)' $L/corpus/lessons/round-49.md; grep -cE '^- \*\*REJECT' $L/.ufo/waves/round-49/w1/ScrRows/gate.md`
+  → `2` and `5` (seat CritGateLesson, w1, `.ufo/waves/round-50/w1/CritGateLesson.md`).
+
+# proposed corrected sentence present verbatim (grep -cF):
+$ git show $REV:corpus/lessons/round-49.md | grep -cF "the non-author closure sampled 2 drafted-admit examples and 5 rejected decisions represented above (counts computed"
+1
+
+# counting command present (lines containing grep -cE inside the erratum):
+4:  `L=<lane>; grep -cE '^- \*\*S[0-9]+ \(drafted admit\)' $L/corpus/lessons/round-49.md; grep -cE '^- \*\*REJECT' $L/.ufo/waves/round-49/w1/ScrRows/gate.md`
+
+# the erratum erratum-carrier commit:
+906178b6 2026-10-27 05:12:44 -0300 round-50: C1 data (bind key match entry, rows S352-S363, pins, live receipt) + C2 data (session-material gate v3) + wave-done/state-cite/deliverables instruments + hostguard + QUALITY 100-102 + lesson
+
+# counting command run literally against the lane worktree (round-49.md and gate.md are clean at HEAD):
+$ grep -cE "^- \*\*S[0-9]+ \(drafted admit\)" $L/corpus/lessons/round-49.md
+2
+$ grep -cE "^- \*\*REJECT" $L/.ufo/waves/round-49/w1/ScrRows/gate.md
+5
+
+# same two patterns against committed bytes at $REV:
+$ git show $REV:corpus/lessons/round-49.md | grep -cE ...
+2
+$ git show $REV:.ufo/waves/round-49/w1/ScrRows/gate.md | grep -cE ...
+5
+
+# sentence internal claim "the full source gate has 12 admits and 5 rejects" re-derived:
+$ git show $REV:.ufo/waves/round-49/w1/ScrRows/gate.md | grep -cE "^- \*\*S3[0-9][0-9] admit\*\*"
+12
+
+# "counts computed from this section" (round-49 lesson Gate) — the reject half by pattern and by source:
+$ git show $REV:corpus/lessons/round-49.md | grep -cE "^- \*\*REJECT"
+0
+$ sed -n "/^### Rejected after opening/,/^Spot-check/p" round-49.md | grep -c "^- "
+3
+$ ... | grep -oE "https://[^`]+|ArchWiki|IKeyboard\.cpp|ConfigValues\.cpp" | wc -l
+5

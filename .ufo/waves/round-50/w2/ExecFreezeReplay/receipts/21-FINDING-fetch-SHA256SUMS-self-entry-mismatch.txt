@@ -1,0 +1,16 @@
+# FINDING (receipt shape): .ufo/waves/round-50/fetch/SHA256SUMS lists ITSELF with a stale digest.
+# cmd: cd <clone>/.ufo/waves/round-50/fetch && sha256sum -c SHA256SUMS
+SHA256SUMS: FAILED
+sha256sum: WARNING: 1 computed checksum(s) did NOT match
+15 of 16 lines OK; the failing line is the self-entry:
+  recorded in file : bb21f728cd1c6f1c59af9ecee0f0bf8360b42bb581985d12ab66611210054d07  SHA256SUMS
+  actual file digest: e2b9110664074ab4d4089c2cd046236a1b2537e766b7b30c464a904ff791ff0d  SHA256SUMS
+# The recorded value was never correct: the blob was committed once (1b37a59e) and never changed;
+#   git show 1b37a59e:.../SHA256SUMS | sha256sum gives the same e2b91106... value.
+# The standard verification command (sha256sum -c) therefore exits non-zero in the pin dir.
+# Every OTHER pin digest in the file matches its file exactly (15/15 OK).
+# Scope: the registration's frozen-artifact row 'pins .ufo/waves/round-50/fetch/ (16 files) | SHA256SUMS in dir'
+#   names this manifest as the pin-verification artifact; the file count (16) and the '14 upstream pins byte-equal
+#   to round-49' claim both HOLD (14/14 cmp -s equal; binds-live-r50.txt is the one round-50-only file).
+# A self-listing checksum line can never satisfy sha256sum -c; the hostguard receipt manifest in
+#   .ufo/waves/round-50/w1/ExecHostGuardR50/receipts/SHA256SUMS does NOT self-list and verifies clean.

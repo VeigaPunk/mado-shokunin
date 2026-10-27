@@ -1,0 +1,13 @@
+diff --git a/quality/check-session-material.py b/quality/check-session-material.py
+index cc93021e..303031f8 100755
+--- a/quality/check-session-material.py
++++ b/quality/check-session-material.py
+@@ -1048,7 +1048,7 @@ def run(repo, rev, home_limit=DEFAULT_HOME_LIMIT, waivers=DEFAULT_WAIVERS,
+         )
+         dropped = set((path, rule) for path, rule, _kind in waived)
+         findings = [item for item in findings if (item[0], item[1]) not in dropped]
+-    return sha, len(entries), findings, waived, rejected
++    return sha, 0, [], [], rejected  # MUTANT: scans nothing
+ 
+ 
+ def emit(sha, files, findings, waived=(), rejected=(), stream=None):

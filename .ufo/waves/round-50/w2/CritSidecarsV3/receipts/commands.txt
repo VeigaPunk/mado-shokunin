@@ -1,0 +1,15 @@
+# CritSidecarsV3 — v3 gate sidecar re-run at attack rev b4a79843cc2545bbe800db9322e58f6e00436629
+# date: 2026-10-27; all outputs shape-only (gate emits file/rule/count/detail shapes only; probe emits classes/counts)
+# clone: git clone -q --shared <lane> $SCRATCH/lane ; toplevel asserted:
+#   /fast/scratch/hyaku/mado-r50/CritSidecarsV3/lane
+# gate sha256 at rev (frozen v3 = ffdc9d62...):
+ffdc9d62c387050e016cf9d0eaacbf87f37d6647021cbd2c492eb6328dddbb61  -
+# env for every run: HOME/XDG_* under scratch, TMPDIR=/fast/scratch/hyaku/mado-r50/CritSidecarsV3/tmp
+
+## run 1 — waivers honoured (default registry quality/session-material-waivers.txt)
+python3 -I $SCRATCH/lane/quality/check-session-material.py --repo $SCRATCH/lane --rev b4a79843cc2545bbe800db9322e58f6e00436629 --scope all
+rc=1
+
+## run 2 — --no-waivers
+python3 -I $SCRATCH/lane/quality/check-session-material.py --repo $SCRATCH/lane --rev b4a79843cc2545bbe800db9322e58f6e00436629 --scope all --no-waivers
+rc=1

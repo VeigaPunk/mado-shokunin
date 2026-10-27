@@ -1,0 +1,35 @@
+# cmd (committed receipts/check101-w1.txt): python3 -I quality/check-deliverables.py --file .ufo/waves/round-50/w1/*.md
+# run in the clone at b4a79843 (cwd = clone root), unpiped, no tee
+# SUMMARY LINE (reproduced exactly):
+CHECK101: reports=54 declared=19 exists=15 absent=4 undeclared=49 verdict=FAIL
+# actual exit code of the unpiped command: 1
+# (quality/check-deliverables.py:149  'return 0 if fail == 0 else 1' ; fail = absent + (undeclared if --require-declaration else 0) = 4)
+#
+# FINDING (exit-code mismatch): the committed receipt records 'exit=0'; the instrument exits 1.
+#   The exit=0 line is reproducible as a PIPELINE-CAPTURE artefact:
+#     python3 -I quality/check-deliverables.py --file .ufo/waves/round-50/w1/*.md | tee /dev/null >/dev/null ; echo $?  -> 0
+#     python3 -I quality/check-deliverables.py --file .ufo/waves/round-50/w1/*.md >/dev/null 2>&1 ; echo $?               -> 1
+#   So a receipt written from a piped capture records the pipe's status, not the instrument's.
+#   The receipt is therefore NOT evidence that the instrument passed; its own verdict=FAIL line says the opposite.
+#
+# FINDING (abridgement): the receipt shows 5 DECLARATION rows and 0 of the 4 status=ABSENT rows its
+#   summary counts in absent=4. A full run emits 68 DECLARATION rows, 4 of them ABSENT:
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Tool.md named=.ufo/waves/round-50/w1/MutC1Tool/MutC1Tool/make_mutants.py grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Tool.md named=.ufo/waves/round-50/w1/MutC1Tool/MutC1Tool/run_one.sh grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Tool.md named=.ufo/waves/round-50/w1/MutC1Tool/MutC1Tool/hash-ledger.md grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Tool.md named=.ufo/waves/round-50/w1/MutC1Tool/MutC1Tool/receipts/BASE.txt grammar=section status=ABSENT
+#   All 5 DECLARATION rows the receipt does show are byte-identical to rows of a full run (grep -Fxq).
+#
+# CORRECTED READING of the 4 ABSENT rows: they are CORRECT findings, not instrument false positives.
+#   Instrument rule (quality/check-deliverables.py:13-16 and candidates() at :56-64): a declared path
+#   containing '/' is resolved seat-dir-relative first, then as written.
+#   The seat declared 'MutC1Tool/make_mutants.py' etc. -- already prefixed with the seat name -- so the
+#   candidates are '.ufo/waves/round-50/w1/MutC1Tool/MutC1Tool/<file>' (absent) and '<file>' relative
+#   to CWD (absent at the repo root).
+#   The real files sit at '.ufo/waves/round-50/w1/MutC1Tool/<file>' (test -f verified): the DECLARATION
+#   is malformed (seat-name prefix where a seat-dir-relative path is expected), which is the seat's
+#   defect. Declaring 'make_mutants.py' instead resolves to the real file:
+#     candidates('make_mutants.py', '.ufo/waves/round-50/w1/MutC1Tool')
+#       -> ['.ufo/waves/round-50/w1/MutC1Tool/make_mutants.py', 'make_mutants.py']   (first exists)
+#   This AGREES with the L1's own record as M50-5 in corpus/lessons/round-50.md:97.
+#   The only defect this seat adds is the exit-code line and the abridgement above.

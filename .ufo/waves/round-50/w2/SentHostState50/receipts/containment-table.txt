@@ -1,0 +1,42 @@
+# containment table (static locators computed with grep -n at the attack rev b4a79843; bytes pinned in instrument-pins.txt)
+# scope: every write, exec and socket surface of the seven landed round-50 instruments.
+instrument                              sink / exec surface                         locator                     refusal set (admission)
+quality/counters/c1-r50-bind-entry.py   mkdtemp(prefix="c2r-", dir=tmp_root())      :1075                       TMPDIR REQUIRED; refused if under /tmp,/var/tmp,/dev/shm or inside the scored repo (:1054-1073); NO home rule
+                                        makedirs HOME/XDG_* under that scratch      :1077-1080                  (cannot escape the mkdtemp root: os.path.join(S, key))
+                                        rmtree(scratch) in finally                  :1120                       (no rmtree after SIGKILL)
+                                        exec: /usr/bin/hyprctl binds -j (abs path)  :1081 / k=:1126-1128       child env built from scratch, HOME/XDG_* inside S; XDG_RUNTIME_DIR+HYPRLAND_INSTANCE_SIGNATURE inherited (:1069-1074)
+                                        exec: /usr/bin/hyprctl getoption ... -j     :1107
+                                        exec: git show|rev-parse|ls-tree|grep        :214-236,384,950,1017-1030  read-only verbs only; env = ambient minus GIT_* (:185)
+                                        sockets: none opened by the counter          (grep: no socket./connect())  the hyprctl read verb is the only socket consumer
+                                        writes into the scored repo: none            (all paths are git-show blobs)
+quality/counters/c2-r50-session-gate.py child env: HOME/XDG_*/TMPDIR under --work   :197-212                    --work refused under /tmp,/var/tmp,/dev/shm (:190-194) and under the invoking home (:421-427); inherited TMPDIR under those roots refused (:428-433)
+                                        prepare_work(): mkdir tmp,gates,home/*      :215-221,435
+                                        open(gates/gate-<sha>.py,'wb')              :444
+                                        fixture repo: mkdir, open(target,'w')        :310-318
+                                        fixture git init/add/commit under --work     :312-327 (toplevel asserted :312,:324)
+                                        rmtree(fixtures)                            :479,561
+                                        exec: python -I <gate>, git                  :253,223                     env = child_env(work) for every child
+                                        sockets: none                                (grep: no socket./connect())
+quality/check-session-material.py (v3)  NamedTemporaryFile("wb", delete=False)      :975 (no dir=)              NONE: honours ambient TMPDIR, silently falls back to /tmp (or cwd) per tempfile.gettempdir(); no --work, no /tmp refusal
+                                        os.unlink(request.name)                     :1008
+                                        selftest scratch mkdtemp(TMPDIR or None)    :2078                       None
+                                        selftest fixture repos: makedirs+open('w')  :1517-1518, 1521-1528, 1765-1774 (toplevel asserted :1528)
+                                        exec: git cat-file --batch (read-only)      :980-982
+                                        exec: git show/ls-tree/rev-parse            :924-929 (via _git)
+                                        exec: hyprctl monitors all -j (ONLY under --serial-from-host)  :631-633 (:2106-2109)  inherited ambient env, no redirection
+                                        sockets: none opened; hyprctl is the socket consumer
+quality/check-wave-done.py              mkdtemp(prefix="wave-done-selftest.", dir=real) :542                    --work/TMPDIR REQUIRED (:525-528); refused under /tmp,/var/tmp,/dev/shm (:153,:529-532) and inside $HOME or the passwd home (:504-523,:533-539); absent/empty HOME is an error
+                                        fixture tree: makedirs + open(...,'wb')      :551-560,580-582
+                                        exec: git rev-parse/show/ls-tree             :185-187,207,212,226        GIT_CONFIG_GLOBAL/SYSTEM=/dev/null, GIT_OPTIONAL_LOCKS=0 (:174-181)
+                                        exec: self re-invocation python -I __file__  :923-933                    child HOME=<work>/child-home (:615-616)
+                                        sockets: none                                (grep)
+tools/mado-hostguard.py                 makedirs --work and home/XDG dirs (0700)     :303-309                    --work refused under /tmp,/var/tmp,/dev/shm, inside the operator home (passwd) and inside its own repo (:151-168); --cwd refused inside the operator home (:170-177)
+                                        selftest root <work>/mado-hostguard-selftest :1111-1129 (rmtree :1124)
+                                        exec: Popen(prefix+cmd, env=child_env, start_new_session)  :386  env: HOME/XDG_*/TMPDIR always guard-owned (:271-296); --env-keep/--env-set on a managed name refused (:286-295)
+                                        timeout: killpg(SIGKILL) of the child's group :396-403
+                                        exec: bwrap only when --sandbox bwrap         :315-378                    prerequisite error 4 when absent
+                                        reads: --declare digest (lstat+sha256)        :183-238                     refuses FIFO/device/socket (:196-206)
+                                        sockets: none                                (grep)
+quality/check-state-cite.py             none: open(...,"r") only                     :72,:94,:121                n/a (no tempfile, no subprocess, glob only)
+quality/check-deliverables.py           none: open(...,"r") only                     :125                         n/a
+                                        exec: git show / git cat-file -e (read-only) :94,:113

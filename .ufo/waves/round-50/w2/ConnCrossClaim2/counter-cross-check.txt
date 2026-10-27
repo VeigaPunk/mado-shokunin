@@ -1,0 +1,37 @@
+# Cross-Claim Counter Independence & Validity Audit
+# Scored revision: b4a79843cc2545bbe800db9322e58f6e00436629
+
+## 1. PRED-C1-r50 -> C2 Dependency Check
+- Counter source: quality/counters/c1-r50-bind-entry.py
+- Inspecting code for any reference to quality/check-session-material.py or C2 instruments:
+  - Direct import: None
+  - git show calls: Only ENTRY, REGISTRY, README, LESSON, FETCH, HELD_FETCH, RECEIPTS
+  - base_grams: Only corpus/knowledge/*.md and corpus/lessons/*.md at base
+  - Subprocesses: Only git and hyprctl
+- Execution test at b4a79843cc2545bbe800db9322e58f6e00436629:
+  PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET
+- Conclusion: PRED-C1-r50 is completely independent of C2 gate bytes.
+
+## 2. PRED-C2-r50 -> C1 Dependency Check
+- Counter source: quality/counters/c2-r50-session-gate.py
+- Inspecting code for any reference to C1 entry, corpus, registry, or receipts:
+  - git show calls: ONLY quality/check-session-material.py
+  - Fixture execution: Uses synthetic repos (red-*, green-*, scope-outside-ufo) generated under --work
+  - Lane repository execution: Gate is never run against the lane repository itself
+- Execution test at b4a79843cc2545bbe800db9322e58f6e00436629 (nonce 50117):
+  PRED-C2-r50: selftest=94/94 names=69/69 red=42/42 green=44/44 scope=seen verdict=TARGET_MET
+- Conclusion: PRED-C2-r50 is completely independent of C1 corpus/entry bytes.
+
+## 3. Round-49 Counter Attacks Validity Question
+- Context: Round 49 closure asserted C2 stopped honestly because the candidate entry
+  hyprland-bind-key-match-r49.md failed its frozen counter (c2-r49-bind-entry.py), stating
+  clauses b/c/d/e/j failed on row-pin binding and quote attachment.
+- Re-derivation & Evidence:
+  - ExecDoNothing and ExecControlsC1R50 demonstrated in w1 that the round-49 candidate entry
+    actually scores TARGET_MET on the frozen round-49 counter when evaluated on a complete tree
+    with README index row, 12 registry rows (S352-S363), and Gate admit lines committed.
+  - The apparent failure in round 49 was an artifact of test staging: the draft scoring tree lacked
+    the registry rows in corpus/SOURCES.md, causing head ids to evaluate to rows=0.
+  - The ported entry and rows committed in round 50 at corpus/knowledge/hyprland-bind-key-match-r50.md
+    and corpus/SOURCES.md pass PRED-C1-r50 cleanly (TARGET_MET, 11/11 clauses).
+  - Therefore, the round-49 failure was an uncommitted-fixture artifact, not an inherent semantic flaw.

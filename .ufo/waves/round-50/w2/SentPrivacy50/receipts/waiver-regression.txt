@@ -1,0 +1,47 @@
+# v3 gate: a kind=gate-copy waiver is honoured at base and rejected at the tip — same gate bytes, same blob
+# measured on one --shared clone at b4a79843; the gate binary was the same file in both runs
+# (quality/check-session-material.py from the clone working tree, sha256 ffdc9d62c387050e016cf9d0eaacbf87f37d6647021cbd2c492eb6328dddbb61)
+
+## the three facts, each a command + its output
+
+1. installed gate at base 8ae47b95 (v2):
+   git show 8ae47b95:quality/check-session-material.py | sha256sum
+   -> 82c9053ae2e8b7db2fb8c0e195c32b8b151a593cf9412dcae3589427ac2dfa6f
+2. installed gate at tip b4a79843 (v3):
+   sha256sum quality/check-session-material.py
+   -> ffdc9d62c387050e016cf9d0eaacbf87f37d6647021cbd2c492eb6328dddbb61
+3. the waived blob is byte-identical at both revs:
+   git show 8ae47b95:.ufo/waves/round-48/w1/ExecSessionMarker/check-session-material.py | sha256sum
+   git show b4a79843:.ufo/waves/round-48/w1/ExecSessionMarker/check-session-material.py | sha256sum
+   -> 82c9053ae2e8b7db2fb8c0e195c32b8b151a593cf9412dcae3589427ac2dfa6f   (both)
+4. the registry row that covers it (quality/session-material-waivers.txt:49):
+   .ufo/waves/round-48/w1/ExecSessionMarker/check-session-material.py 82c9053a… R1_CLIENT_DUMP,R2_PROC_TABLE,R3_MONITOR_IDENT kind=gate-copy
+
+## observed difference
+--rev 8ae47b95 : findings=R1 40 R2 40 R3 13 ... ; SESSION_MATERIAL_WAIVED: findings=52 files=48
+                 (the round-48 copy is printed as WAIVER, not as a FINDING)
+--rev b4a79843 : findings=R1 42 R2 42 R3 15 ... ; SESSION_MATERIAL_WAIVED: findings=49 files=47
+                 WAIVER_REJECTED file=.ufo/waves/round-48/w1/ExecSessionMarker/check-session-material.py rule=R1_CLIENT_DUMP reason=gate-source-mismatch
+                 WAIVER_REJECTED … rule=R2_PROC_TABLE reason=gate-source-mismatch
+                 WAIVER_REJECTED … rule=R3_MONITOR_IDENT reason=gate-source-mismatch
+                 and the three findings are now emitted as FINDING lines.
+
+## cause (locators in the installed gate)
+quality/check-session-material.py:137   W4 ``kind=gate-copy`` requires the target blob to be byte-identical to the
+quality/check-session-material.py:265   DEFAULT_GATE_SOURCE = "quality/check-session-material.py"
+quality/check-session-material.py:902-909
+    if kind == "gate-copy":
+        if gate_sha is _MISS:
+            gate_sha = sha256_hex(_git(repo, "show", "%s:%s" % (sha, gate_source_rel)))
+        if gate_sha != marked_sha:
+            rejected.append((path, rule, "gate-source-mismatch"))
+i.e. the copy is compared with the gate *at the scored revision*, so every historical gate copy loses its waiver the
+moment a new gate version lands — and the copy that is byte-identical to the NEW gate (round-50 w1/ExecGateV3) has no
+registry row at all, so it is a finding too.
+
+## net effect at the tip
+new FINDING lines vs base (set difference of the two runs): 7
+  3 x .ufo/waves/round-48/w1/ExecSessionMarker/check-session-material.py  (waiver invalidated by the gate bump)
+  3 x .ufo/waves/round-50/w1/ExecGateV3/check-session-material.py         (byte-identical to the installed gate, unregistered)
+  1 x .ufo/waves/round-50/w1/ScrCorrectionsR50/receipts/d2-seat-state.txt (R8_ACCOUNT_COLUMN rows=2 — a real red)
+gone at the tip: none.

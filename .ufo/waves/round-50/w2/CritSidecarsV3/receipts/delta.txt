@@ -1,0 +1,28 @@
+# delta between --no-waivers and default (with-waivers) runs at b4a79843
+# method: FINDING lines from both outputs, LC_ALL=C sorted; removed/added via comm; set equality via diff
+
+findings_with_waivers=235
+findings_no_waivers=284
+removed=49
+added=0
+waived_pairs=49
+
+# rule-count lines (only R2 and R3 change):
+with:    SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=42 R2_PROC_TABLE=42 R3_MONITOR_IDENT=15 R4_HOME_LISTING=3 R7_HOME_PATH_PREFIX=49 R8_ACCOUNT_COLUMN=55 R9_EXEC_CACHE=4 R5_SERIAL_PROSE=25
+nowaive: SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=42 R2_PROC_TABLE=44 R3_MONITOR_IDENT=62 R4_HOME_LISTING=3 R7_HOME_PATH_PREFIX=49 R8_ACCOUNT_COLUMN=55 R9_EXEC_CACHE=4 R5_SERIAL_PROSE=25
+
+# removed set == WAIVER-line set (both LC_ALL=C sorted): IDENTICAL (49 pairs, 47 files)
+
+# per-rule composition of the removed set:
+      2 R2_PROC_TABLE
+     47 R3_MONITOR_IDENT
+
+# file multiplicity in removed set:
+2 .ufo/waves/round-46/w1/CritW2Gate/report.md
+2 .ufo/waves/round-46/w1/CritW2Gate.md
+1 .ufo/waves/round-45/w1/RevengerOmarchy/fixtures/w4/H01.json
+1 .ufo/waves/round-45/w1/RevengerOmarchy/fixtures/w4/G04_position_clean.json
+(45 mons.json x R3_MONITOR_IDENT + 2 round-46 markdown x {R2_PROC_TABLE,R3_MONITOR_IDENT})
+
+# added set (findings present only with waivers enabled): EMPTY
+# => sidecars only ever reduced findings; no rule fired differently on any target file

@@ -1,0 +1,14 @@
+# fail-closed negative fixtures (scratch repo, throwaway identity; gate run at lane rev b4a79843)
+# case A: R7-firing real-shaped home user + marker + registry row -> refused, finding kept
+WAIVER_REJECTED file=.ufo/waves/x/evil.txt rule=R7_HOME_PATH_PREFIX reason=value-not-synthetic:home-user-not-synthetic
+FINDING file=.ufo/waves/x/evil.txt rule=R7_HOME_PATH_PREFIX count=1 detail=forms=prefix:1,header:0,diag:0,row:0 paths=1
+SESSION_MATERIAL: files=3 findings=1
+
+# case B pre-tamper: synthetic home user, marker+registry present -> waived
+WAIVER file=.ufo/waves/x/evil.txt rule=R7_HOME_PATH_PREFIX kind=fixture
+SESSION_MATERIAL: files=3 findings=0
+
+# case B post-tamper: appended non-matching line -> sha-mismatch, finding returns
+WAIVER_REJECTED file=.ufo/waves/x/evil.txt rule=R7_HOME_PATH_PREFIX reason=sha-mismatch
+FINDING file=.ufo/waves/x/evil.txt rule=R7_HOME_PATH_PREFIX count=1 detail=forms=prefix:1,header:0,diag:0,row:0 paths=1
+SESSION_MATERIAL: files=3 findings=1

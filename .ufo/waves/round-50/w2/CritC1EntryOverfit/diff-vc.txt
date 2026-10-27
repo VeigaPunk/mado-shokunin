@@ -1,0 +1,40 @@
+--- entry-orig.md	2026-10-27 05:28:39.486941852 -0300
++++ entry-vc.md	2026-10-27 05:32:37.005539648 -0300
+@@ -92,37 +92,6 @@
+ 
+ pins=11 rows_cited=12 (S352-S363) held_rows_cited=2 (S318, S319) hl_modifier_bits=8 keysym_name_paths=4 (table, U-hex, 0x-hex, XF86_) parseKey_outcomes=4 match_branches=5 (multi-key, keyName, keycode, catchall, keysym)
+ 
+-## Live host run (read-only)
+-
+-Receipt `.ufo/waves/round-50/receipts/binds-live-r50.txt`: a read-only capture of `hyprctl version`, `hyprctl binds -j` (digest and form counts only, never the JSON) and `hyprctl getoption input:resolve_binds_by_sym -j`. Its stated values:
+-
+-hyprctl version: Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+-
+-[INF] The commit is the pinned one, so the sources above are the running build's sources and not a nearby tag (inference from the reported version string, not a second observation).
+-
+-binds=192 named=142 code=42 mouse=6 switch=2 catch_all=0
+-input:resolve_binds_by_sym int=0 set=false
+-sha256: 9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779 (raw `hyprctl binds -j` bytes, not embedded in the receipt)
+-
+-The receipt's form rule is: key starting mouse -> mouse; key starting code:/switch: -> that form; key == "" AND keycode != 0 -> code; otherwise named. The `42` code binds are the same fact step 2 and step 3 describe: Hyprland stores a `code:N` bind with an **empty key field plus a keycode**, so no `key` field ever carries the literal `code:` prefix and the form must be recovered from the keycode. Those `42` sit on 14 distinct keycodes (`10-21`, `61`, `201`). A second read-only capture of the same JSON taken by this entry's seat (receipt `.ufo/waves/round-50/w1/ScrEntryR50/binds-shape-r50.txt`, shape only) gives the per-field counts and the modifier-mask histogram:
+-
+-| field | value |
+-|---|---|
+-| keycode_nonzero | 42 |
+-| key_empty | 42 |
+-| keycode_distinct | 14 |
+-| mouse_flag_true | 2 |
+-| key_mouse_prefix | 6 |
+-| key_switch_prefix | 2 |
+-| key_single_upper_letter | 60 |
+-| key_named_other | 82 |
+-| catch_all_true | 0 |
+-| ignore_mods_true | 0 |
+-| case_varied_pairs | 1 |
+-| modmask_histogram | 0:23, 1:2, 8:7, 9:2, 12:2, 13:1, 64:42, 65:37, 68:26, 69:3, 72:19, 73:22, 76:6 |
+-
+-Three host facts follow from the chain and are what a bind argument must respect here: the digit row is written as keycodes `code:10`..`code:19` in XKB numbering (step 14), never as `1`..`0` names; the one case-varied key on the plane is carried in both spellings, `Delete` and `DELETE`, and both bind only because of step 5's case-insensitive resolution; and no host bind sets the Caps bit in the captured dump; this observation does not establish whether Caps binds can fire under other event states. Because the translation state is never given modifiers (steps 6-8), a Shift in a bind's mask changes only the mask comparison, never the keysym: `SUPER SHIFT, TAB` matches Tab's level-1 key with Shift held, and `SUPER, SLASH` is predicted to match the key whose selected no-modifier state yields `slash`; the host-specific key and level behavior is grounded in the cited keymap judge receipt, not a universal property. Shift binds on this plane are therefore not dead: Shift is a mask bit, and every bind keeps matching the level-1 keysym it was written for.
+-
+ ## Limits
+ 
+ - Nothing here was fired: no key injected, no `hyprctl dispatch`, no layout switch, no reload. Steps 6-17 are read from the pinned sources; the host consequences in the paragraph above are predictions from that chain plus the pinned `how-to-type` table of `tools/mado-keysym.py`'s judge, not keystroke tests. No static model supplies the compared keysym here: only the states read at steps 6-8 do, and they never carry modifiers.

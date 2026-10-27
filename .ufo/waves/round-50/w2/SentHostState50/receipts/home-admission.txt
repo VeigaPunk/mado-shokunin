@@ -1,0 +1,24 @@
+# home-admission probes (captured). The probe path is <home>/should-not-exist-r50; nothing was created.
+$ c2-r50-session-gate.py --work <home>/should-not-exist-r50 --nonce 7
+c2-r50-session-gate.py: error: --work is under the invoking home (~); point it at a scratch dir outside home state
+created=NO
+$ check-wave-done.py --selftest --work <home>/should-not-exist-r50
+check-wave-done.py: refusing work dir inside the home directory (got ~/should-not-exist-r50): use a scratch filesystem
+created=NO
+$ mado-hostguard.py --selftest --work <home>/should-not-exist-r50
+mado-hostguard: refused: --selftest work ~/should-not-exist-r50 resolves inside the operator home; refusing to create or run there
+MADO_HOSTGUARD_SELFTEST: 0/45 passed
+created=NO
+
+# c1-r50 has no home rule: TMPDIR=<fakehome> is accepted and used
+$ TMPDIR=<scratch>/fakehome-c1 python3 -I quality/counters/c1-r50-bind-entry.py --repo <clone> --rev b4a79843...
+PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET rev=b4a79843cc2545bbe800db9322e58f6e00436629
+fake-home entries after the clean run: 0
+
+# documented refusals of c1 hold (SETUP, rc 2):
+$ TMPDIR=/tmp ...
+PRED-C1-r50 SETUP TMPDIR under /tmp refused: /tmp
+$ TMPDIR=<clone>/.tmp-probe ...
+PRED-C1-r50 SETUP TMPDIR inside the scored repository refused: <scratch>/clone/.tmp-probe
+$ env -u TMPDIR ...
+PRED-C1-r50 SETUP TMPDIR required for replay scratch

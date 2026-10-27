@@ -1,0 +1,15 @@
+# gate v3 writes its cat-file request list to the AMBIENT temp dir, with no refusal set (R-SHS-4 open in the frozen C2 instrument)
+# a scan with an unwritable TMPDIR still completes -> the request file went to the fallback (/tmp), not to TMPDIR:
+$ chmod 500 <scratch>/gatetmp-ro; TMPDIR=<scratch>/gatetmp-ro python3 -I quality/check-session-material.py --repo <clone> --rev b4a79843...
+rc=1
+SESSION_MATERIAL: files=23920 findings=235 rev=b4a79843cc2545bbe800db9322e58f6e00436629
+$ python3 -I -c "import tempfile; print(tempfile.gettempdir())"   (TMPDIR=set to an unwritable dir)
+/tmp
+$ env -u TMPDIR python3 -I -c "import tempfile; print(tempfile.gettempdir())"
+/tmp
+
+# with a writable scratch TMPDIR the same scan runs and leaves no residue:
+SESSION_MATERIAL: files=23920 findings=235 rev=b4a79843cc2545bbe800db9322e58f6e00436629
+gatetmp entries after: 0
+
+# locators: :975 NamedTemporaryFile("wb", delete=False) (no dir=), unlinked at :1008; selftest mkdtemp at :2078 with dir=TMPDIR or None.

@@ -1,0 +1,23 @@
+# PRED-C2-r50 file read audit
+# Counter: quality/counters/c2-r50-session-gate.py (sha256: 1d52a62cd969aba59c2cd1f944212b6f9619212b5fb313c470c4c14ebd62b298)
+# Revision: b4a79843cc2545bbe800db9322e58f6e00436629
+
+1. Explicit file path constants (lines 67-70):
+   GATE_REL = "quality/check-session-material.py"
+   BASE_REV = "8ae47b957034ae21012bbf09173cca2c48be345e"
+   BASE_GATE_SHA256 = "82c9053ae2e8b7db2fb8c0e195c32b8b151a593cf9412dcae3589427ac2dfa6f"
+   V2_CASE_NAMES_SHA256 = "38a8b2c647665b68ae4d3b7692e7ffaf9ca959fc1cdfe03b21deb5bd8097e725"
+
+2. Tracked git blobs fetched from scored repository (--repo):
+   - rev:quality/check-session-material.py (lines 240-248, read_gate())
+   - Zero other files are read from the target repository.
+   - Does NOT read any C1 file (no knowledge docs, no lessons, no fetch pins, no receipts).
+
+3. Local filesystem and fixture operations:
+   - Extracts gate script to work/gates/gate-<sha>.py (lines 443-445)
+   - Generates synthetic fixture repositories under work/fixtures-<nonce>/ (lines 477-560):
+     - red-%03d-%s (42 repositories for nonce 50117, synthetic red shapes)
+     - green-%03d-%s (44 repositories for nonce 50117, synthetic green shapes)
+     - scope-outside-ufo (synthetic repo with docs/receipt.txt)
+   - Executes gate subprocesses on these temporary scratch repositories only.
+   - Does NOT run the gate on the lane repository itself.

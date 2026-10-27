@@ -1,0 +1,19 @@
+# shape check of the round-50 receipts that carry host reads (counts only; no file content printed)
+# rev b4a79843; needles: /home/ literal, the invoking account, the R5 serial shape
+file                                    lines   home   acct serial_shape tracked
+receipts/binds-live-r50.txt                34      0      0        0 yes
+receipts/axis-base.txt                      5      0      0        0 yes
+receipts/operator-state-before.txt          7      0      0        0 yes
+receipts/operator-state-after.txt           -      -      -        - NO (untracked)
+receipts/census-before.txt                 20      1      1        0 yes
+receipts/census-after.txt                  21      1      1        0 yes
+receipts/selftests.txt                      -      -      -        - NO (untracked)
+receipts/check100-r50.txt                   -      -      -        - NO (untracked)
+receipts/check101-w1.txt                    -      -      -        - NO (untracked)
+
+# counts/digests-only verdicts
+binds-live-r50.txt    counts (binds/named/code/mouse/switch/catchall, modmask histogram) + one sha256 over the raw JSON bytes, which are not embedded -> PASS
+axis-base.txt         three MADO_AXIS_ROW counts + verdict + rev                                     -> PASS
+operator-state-before '-' masked paths + sha256/size/mtime + one entry count                        -> PASS
+operator-state-after  not committed at b4a79843 (untracked in the working tree)                      -> cannot be scored at the rev
+census-before/after   one record row 'mado ok <absolute home path>' each                            -> FAILS (raw home path, not a count or digest)

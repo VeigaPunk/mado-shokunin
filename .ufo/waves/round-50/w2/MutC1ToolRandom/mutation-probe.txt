@@ -1,0 +1,21 @@
+MutC1ToolRandom — bounded mutation probe (scratch-only copy)
+
+Mutant: changed the active output header in render_keymap from LEVEL# to LEVEL (one behavior-bearing string literal in tools/mado-keysym.py, original line 1515). Expected detector: exact tool-vs-pinned-judge stdout+rc comparison for `--keymap us.xkb --disable-compose --keysym a`; expected pristine/restored match and mutant stdout mismatch.
+
+Same detector command for all three states (run from the scratch probe directory, env HOME/XDG/TMPDIR and PATH/LC_ALL sandboxed):
+  /usr/lib/xkbcommon/xkbcli-how-to-type --keymap="$PWD/us.xkb" --disable-compose --keysym a > judge.out
+  python3 -I <copy> how-to-type --keymap "$PWD/us.xkb" --disable-compose --keysym a > <state>.out
+  compare exit status and `cmp -s judge.out <state>.out`
+
+Observed:
+  pristine=match; judge_rc=0 pristine_rc=0
+  mutant=diverge; judge_rc=0 mutant_rc=0
+  restored=match; judge_rc=0 restored_rc=0
+
+Hashes:
+  pristine and restored bytes: dcc13cce3b7134946208116cd98599fb8f56a2b81fc6f26b9598ac5429b40265
+  mutated bytes before restoration: 073821d510ca9c1d9900c9d41d5e88c98142e4da624517a8bb5240fc6bb886fe
+
+Verdict: KILLED. Restoration evidence: restored copy hash equals pristine hash; the restored detector output matched the judge.
+
+An earlier exploratory change to the duplicate `_page` header literal (line 1823) survived because it did not affect this CLI path; hash dcc13cce... restored and the check returned match. This is a coverage finding about that specific detector/input path, not evidence that the intended active renderer defect survived.

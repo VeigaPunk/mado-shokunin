@@ -93,3 +93,40 @@ MutC2Entry, CritQuality), and the delivered `w1-results.json` carries null outpu
 · fix: wave w2 of round 50 re-runs those four attacks against the landed freeze (random-pair parity for `tools/mado-keysym.py`,
 exotic keymaps, mutation of the landed entry, the M49 criteria drafts) so no pending line is cited as evidence; this lesson's
 Gate cites only completed seat artifacts.
+
+**M50-5** · class `evidence capture` (a claimed instrument failure was reported from an incomplete capture) · evidence: the
+initial `check101-w1.txt` receipt was piped through `tail` (so its recorded `exit=0` was the pipe's status) and omitted the
+four `status=ABSENT` lines. The full rerun reports `declared=19 exists=15 absent=4 verdict=FAIL`, but the report itself is
+not an auditable complete receipt; independent `ExecFreezeReplay` finds the four paths committed at `b4a79843` under the
+seat's directory and questions whether the criterion was run against an earlier/mid-write state. · captured-by: none
+(the first receipt was incomplete; do not count it as an established defect). · fix: retain complete unpiped output and
+status; this claim is withdrawn pending a reproducible run at a named revision.
+
+**M50-6** · class `predicate scope` (the C1 counter admits recycled content as novel) · evidence: `w2/CritC1FrozenStub.md`
+shows the round-49 candidate copied to the round-50 entry path plus one live-receipt citation line passes every clause,
+including `TARGET_MET`; the frozen counter's base novelty scan reads `corpus/` only and does not inspect the prior
+candidate under `.ufo/`. At the attack revision, the frozen C1 predicate still reads TARGET_MET; no counter amendment
+is authorized mid-round. · captured-by: w2/CritC1FrozenStub, independently quantified by ExecFreezeReplay (candidate
+covers 81.7% of entry shingles). · fix: mark C1 **predicate-met but claim falsified / honest stop**; next round's
+counter must include candidate history in its novelty baseline before claiming fresh sourced expansion.
+
+**M50-7** · class `predicate scope` (the C2 counter admits a gate that only simulates its contract) · evidence:
+`w2/CritC2FrozenStub.md`'s 7,046-byte replacement prints a canned 94/94 selftest transcript, detects shape families,
+and sprays all three rule tags; frozen C2 counter returns `TARGET_MET`. Partial rule removal and single-tag parrot are
+caught, but transcript honesty and rule attribution are not. · captured-by: w2/CritC2FrozenStub (M3/M4); scope of the
+frozen counter is therefore weaker than "the installed gate honestly implements/tests the named rules." · fix: mark C2
+**predicate-met but claim falsified / honest stop**; do not re-freeze this round. Future predicate needs independent
+behavioral fixture execution and exact expected-rule attribution.
+
+**M50-8** · class `novelty accounting` (held source mechanisms were presented as new) · evidence:
+`w2/CritFrozenNovelty.md` verifies source facts about `stringToModMask`, prior `m_xkbSymState` and the ternary/update-mask
+chain already occur in corpus at base; the entry's ground paragraph omits them and clause i's four-term tuple does not
+represent the full held ground. · captured-by: w2/CritFrozenNovelty; C1 target remains predicate-met, but novelty claim
+is narrowed. · fix: future entry explicitly enumerates held facts and separates genuinely new source-chain/live evidence.
+
+**M50-9** · class `registration accuracy` (counter documentation described another counter's behavior) · evidence:
+`w2/CritRegistration50.md` finds registration.md falsely attributes 150 nonce-generated cases to C1 clause g, which
+actually checks held row S319 and uses no nonce; clause g/150 language was carried over from the round-49 keysym counter.
+The fetch checksum manifest also includes an unverifiable self-digest (15 actual pins pass). · captured-by:
+w2/CritRegistration50. · fix: correct the registration prose and remove the self-referential manifest row in a later
+cleanup; neither changes frozen predicates.

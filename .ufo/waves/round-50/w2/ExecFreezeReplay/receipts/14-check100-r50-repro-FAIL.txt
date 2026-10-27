@@ -1,0 +1,17 @@
+# cmd (committed receipts/check100-r50.txt): python3 -I quality/check-state-cite.py --claims claims-r50.txt --source .ufo/waves/round-50/fetch
+# run in the clone at b4a79843 (cwd = clone root)
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/mado-r50/ExecFreezeReplay/clone/quality/check-state-cite.py", line 160, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/mado-r50/ExecFreezeReplay/clone/quality/check-state-cite.py", line 94, in main
+    with open(a.claims, "r", errors="replace") as fh:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'claims-r50.txt'
+exit=1
+# FINDING: the receipted command does NOT reproduce. 'claims-r50.txt' is not present anywhere in the lane
+#   (git ls-tree -r b4a79843 | grep claims-r50 -> no match; find in the lane worktree -> no match).
+#   The claim ids in the receipt (r50-sym-state-zero-mods / r50-regular-state-mods / r50-translation-state-identity)
+#   appear ONLY in the receipt itself: grep -rn r50-sym-state-zero-mods . -> 1 hit (the receipt).
+#   The w1 seat's own fixture set is claims-red.txt / claims-green.txt / claims-contradicted.txt (round-49 pins).
+#   Committed receipt claims exit=0; actual exit=1 (FileNotFoundError).

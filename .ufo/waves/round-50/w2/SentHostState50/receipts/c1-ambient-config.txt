@@ -1,0 +1,8 @@
+# c1-r50's git calls inherit the ambient HOME, so they read the operator's ~/.gitconfig (locator :185)
+# measured: a syntactically invalid ~/.gitconfig makes resolve_rev fail -> SETUP (rc 2), never a verdict
+$ HOME=<fakehome with invalid .gitconfig> TMPDIR=<scratch> python3 -I quality/counters/c1-r50-bind-entry.py --repo <clone> --rev b4a79843...
+PRED-C1-r50 SETUP unresolved revision b4a79843cc2545bbe800db9322e58f6e00436629
+
+# contrast (both neutralize git config):
+  quality/counters/c2-r50-session-gate.py:197-212  HOME=<work>/home, GIT_CONFIG_NOSYSTEM=1
+  quality/check-wave-done.py:172-181              GIT_CONFIG_GLOBAL=GIT_CONFIG_SYSTEM=/dev/null, GIT_OPTIONAL_LOCKS=0

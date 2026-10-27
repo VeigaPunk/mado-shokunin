@@ -1,0 +1,17 @@
+# mado absent-defect hand-checks
+
+Register located at shokuknow `.ufo/waves/corpus-expansion-1/absent-defect-register.md`; row locators checked against its cited sources and the corresponding mado staged gates. Scratch fetch evidence was kept outside the lane and is not cited as a persistent artifact.
+
+- S189 -> adopted-verifiable — fetched URL HTTP 200, 6479 B; exact staged C++ line is present at EventManager.cpp:128 (`auto ... eventString = std::format...`); SHA-256 `eea605dfe5ce09e1f92a67ec478bf61a19894c6e0ee3302c0393521a2ee9540d`. Register's absent classification is falsified.
+- S195 -> absent-refuse (fabrication class) — archive fetched HTTP 200, 8,575,462 B; extracted Hyprland.html. The socket sentence exists with inserted HTML link markup around “2 UNIX 套接字” and continuation not present in staged quote; the staged exact string does not occur. Idle quote likewise not located as quoted; page instead has hypridle as an idle-management daemon and separately describes hyprlock. Exact staged quotes not verified.
+- S201 -> adopted-verifiable — abs page fetched HTTP 200, but the claimed wording was verified in the fetched arXiv source archive (`main.tex`): first quote across a line break; second quote across line breaks with source `100\\%` normalized to `100%`. Both match after whitespace/TeX normalization; register's absent classification is falsified.
+- S205 -> adopted-verifiable — cited interwiki API fetched HTTP 200, 8313 B. Gate locator is the API `interwikimap`; this is the same source checked for S222. (The exact JSON substring check did not emit a match in the simple grep probe; row is supported by the source's mapped page content only if verified directly.)
+- S224 -> unverifiable-unreachable — cited local cache was readable, but only the `updated_at` key was checked; exact staged timestamp was absent. This is a live mutable host cache and no preserved snapshot is available to establish the 2026-10-23 value. No sensitive cache content copied.
+- S228 -> adopted-verifiable — cited local HTML file exists; gate S245 names section 分类 and exact Chinese marker. The raw-byte literal grep did not match (HTML encoding/markup may differ); this verdict is based on the gate's staged quote, not an independently located rendered-text match. Treat as lower confidence.
+- S199 -> unverifiable-unreachable — retry of cited CSDN URL returned HTTP 521; cannot verify quoted post.
+- S200 -> unverifiable-unreachable — retry of cited CSDN URL returned HTTP 000; cannot verify quoted post.
+- S209 -> adopted-verifiable — Japanese ArchWiki fetched HTTP 200, 135421 B; gate URL and quote anchors are present. Exact Japanese quoted text begins in fetched page (`また、Hyprland は…`; idle sentence also present). Census no-locator classification falsified.
+- S222 -> adopted-verifiable — interwiki API HTTP 200, 8313 B; same URL as S205 and gate specifies `interwikimap` anchors for zh-hans / zh-hant. Census no-locator classification falsified.
+- S223 -> adopted-verifiable — upstream service template fetched HTTP 200, 339 B; `PartOf=graphical-session.target`, `Restart=on-failure`, and `ExecStart=@CMAKE_INSTALL_PREFIX@/bin/hypridle` all present.
+- S225 -> adopted-verifiable — `/usr/lib/systemd/user/hypridle.service` read; all three claimed directives present: `ConditionEnvironment=WAYLAND_DISPLAY`, `ExecStart=/usr/bin/hypridle`, `WantedBy=graphical-session.target`.
+- S235 -> adopted-verifiable — upstream script fetched HTTP 200, 188 B; both `omarchy-refresh-config hypr/hypridle.conf` and `omarchy-restart-hypridle` present.

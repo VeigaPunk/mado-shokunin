@@ -1,0 +1,32 @@
+=== quality/counters/c1-r50-bind-entry.py e162d6717915f558
+123:     any clause) and a TMPDIR under /tmp, /var/tmp or /dev/shm, or inside the scored repository,
+1052:    """A scratch root from TMPDIR; an absent TMPDIR and one under /tmp, /var/tmp, /dev/shm or
+1058:    for bad in ("/tmp", "/var/tmp", "/dev/shm"):
+=== quality/counters/c2-r50-session-gate.py 1d52a62cd969aba5
+48:``--work`` (and an inherited ``TMPDIR``) under ``/tmp``, ``/var/tmp`` or
+74:FORBIDDEN_WORK = ("/tmp", "/var/tmp", "/dev/shm")
+=== quality/check-wave-done.py 10f4359ac0af755a
+15:under ``/tmp``, ``/var/tmp`` or ``/dev/shm``, and inside a home directory: a
+156:REFUSED_WORK_PREFIXES = ("/tmp", "/var/tmp", "/dev/shm")
+528:        raise GateError("--selftest needs --work <dir> or a TMPDIR outside /tmp, /var/tmp, "
+939:    for bad_dir in ("/tmp/wave-done-selftest", "/var/tmp/wave-done-selftest",
+991:    parser.add_argument("--work", help="scratch dir for --selftest (or TMPDIR); /tmp is refused")
+=== quality/check-session-material.py ffdc9d62c387050e
+=== tools/mado-hostguard.py fdaa5c2ec297ebfd
+17:  <work>/tmp) - all under --work unless --home is given explicitly, in which case the XDG roots default
+23:  child cwd, and --home/--work/env dirs may not be /tmp, /var/tmp or /dev/shm (round-48 w2/SentScratch),
+40:  2  usage error or a refused path (--work under /tmp, --home inside the real home, a directory declared,
+94:TMP_ROOTS = ("/tmp", "/var/tmp", "/dev/shm")
+156:        raise Refused(f"{name} {redact(path)} resolves under {hit}: scratch must not be /tmp "
+335:        argv += ["--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+494:    rn.add_argument("--tmpdir", metavar="DIR", help="child TMPDIR (default <work>/tmp)")
+785:    work = os.path.join("/tmp", f"mado-hg-selftest-{os.getpid()}")
+787:    return (rc == 2 and "/tmp" in err and not os.path.exists(work), f"rc={rc} created={os.path.exists(work)}")
+791:    work = os.path.join("/var/tmp", f"mado-hg-selftest-{os.getpid()}")
+793:    return (rc == 2 and "/var/tmp" in err and not os.path.exists(work), f"rc={rc}")
+829:    """A --work that only *resolves* under /tmp must be refused (realpath, not string prefix)."""
+833:    os.symlink("/tmp", link)
+835:    return (rc == 2 and "/tmp" in err, f"rc={rc}")
+1008:    rc, out, err = call(c.run_argv("--env-set", "TMPDIR=/tmp", "--", "true"))
+1050:    ok = (under("/tmp/a", "/tmp") and under("/tmp", "/tmp") and not under("/tmpfoo", "/tmp")
+1120:                      "dir, and a work dir under /tmp is refused")

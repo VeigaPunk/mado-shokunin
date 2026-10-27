@@ -1,0 +1,16 @@
+MutC1ToolRandom — round-50 w2 exotic keymap parity receipt
+
+Attack revision: b4a79843cc2545bbe800db9322e58f6e00436629
+Target tool SHA-256: dcc13cce3b7134946208116cd98599fb8f56a2b81fc6f26b9598ac5429b40265
+Pinned judge SHA-256: f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+
+Exact command:
+  cd /fast/scratch/hyaku/mado-r50/MutC1ToolRandom && ulimit -f 65536 && python3 -I /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w2/MutC1ToolRandom/run_exotic.py work/campaign.json work/lane "$PWD/work" "$PWD/work/results"
+
+Targeted RMLVO list: 31 entries, covering multi-group layouts (including us,ru and us,de,fr), jp/kr/in/ara/il/th/cn/tw, dead-key variants (us intl, altgr-intl, br nativo-us, fr oss, de neo, es deadtilde), Compose options, LevelThree and LevelFive options, group switching, and keypad options. The runner extracted known keysym names from each successful compiled serialized keymap and compared up to 200 sorted unique names per map, also adding known dead-key, currency/Latin, Kana/Hangul/Cyrillic/Arabic/Greek, keypad, function, and XF86 candidates. Both commands used --keymap FILE --disable-compose --keysym ARG and compared stdout bytes and exit status; clean child env and scratch HOME/XDG/TMPDIR, stdin /dev/null.
+
+Observed output:
+  exotic_specs=31 compiled=30 compile_errors=1 pairs_compared=6000 mismatch_count=0
+  The one compile error was spec index 9, model=pc105 layout=kp: xkbcommon could not find symbols/kp in /usr/share/xkeyboard-config-2. This probe yields no verdict for that unavailable layout; the 30 compiled specs all matched.
+
+No divergence observed in the 6,000 compared pairs. Compose keymap options were present, but Compose behavior itself was disabled by the required tool/judge invocation; this is not evidence about active Compose-sequence output.

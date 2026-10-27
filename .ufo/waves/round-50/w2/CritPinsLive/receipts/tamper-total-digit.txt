@@ -1,0 +1,14 @@
+# tamper test 2 — one digit in the receipt bind total (binds=192 -> binds=193), run against scratch clone of the lane
+$ TMPDIR=/fast/scratch/hyaku/mado-r50/CritPinsLive python3 -I quality/counters/c1-r50-bind-entry.py --repo <clone> --rev 277a756674f4ea93d48c4a62e30323362f72a56d
+PRED-C1-r50 hyprland-bind-key-match-r50.md clause=f receipt_forms_sum=.ufo/waves/round-50/receipts/binds-live-r50.txt:{'named': 142, 'code': 42, 'mouse': 6, 'switch': 2}!=193
+PRED-C1-r50 hyprland-bind-key-match-r50.md clause=f no_receipt_answers cited=['.ufo/waves/round-50/receipts/binds-live-r50.txt']
+PRED-C1-r50 hyprland-bind-key-match-r50.md clause=r replay_mismatch sha=9a47199e2297/9a47199e2297 total=192/193 forms={'named': 142, 'code': 42, 'mouse': 6, 'switch': 2}/{'named': 142, 'code': 42, 'mouse': 6, 'switch': 2} resolve=0
+PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:0 g:1 h:1 i:1 j:1 r:0 admitted=0/1 verdict=TARGET_MISSED rev=277a756674f4ea93d48c4a62e30323362f72a56d
+rc=1
+
+# baseline at the attack rev (untampered), same clone, for contrast:
+$ TMPDIR=/fast/scratch/hyaku/mado-r50/CritPinsLive python3 -I quality/counters/c1-r50-bind-entry.py --repo <clone> --rev b4a79843cc2545bbe800db9322e58f6e00436629
+... clause=f receipt=.ufo/waves/round-50/receipts/binds-live-r50.txt binds=192 forms=named:142,code:42,mouse:6,switch:2 sha=9a47199e2297 resolve=0
+... clause=r replay=ok sha=9a47199e2297 binds=192 forms=named:142,code:42,mouse:6,switch:2 resolve=0
+PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET rev=b4a79843cc2545bbe800db9322e58f6e00436629
+rc=0

@@ -1,0 +1,422 @@
+diff --git a/quality/check-session-material.py b/quality/check-session-material.py
+index cc93021e..060b4f4d 100755
+--- a/quality/check-session-material.py
++++ b/quality/check-session-material.py
+@@ -1303,49 +1303,49 @@ def _unit_cases(suite, home_limit=DEFAULT_HOME_LIMIT):
+                         text.encode(), home_limit, serials, account))
+ 
+     got = findings(CLIENT_DUMP)
+-    suite.check("r1-whole-file-two-clients", got.get(R1) == 2, "got=%r" % (got,))
++    suite.check("zz-r1-whole-file-two-clients", got.get(R1) == 2, "got=%r" % (got,))
+ 
+     got = findings(EMBEDDED_CLIENTS)
+-    suite.check("r1-embedded-fenced-one-client", got.get(R1) == 1, "got=%r" % (got,))
++    suite.check("zz-r1-embedded-fenced-one-client", got.get(R1) == 1, "got=%r" % (got,))
+ 
+     got = findings(EMPTY_TITLE)
+-    suite.check("r1-empty-title-not-a-finding", R1 not in got, "got=%r" % (got,))
++    suite.check("zz-r1-empty-title-not-a-finding", R1 not in got, "got=%r" % (got,))
+ 
+     got = findings(NO_CLIENT)
+-    suite.check("r1-class-only-not-a-finding", R1 not in got, "got=%r" % (got,))
++    suite.check("zz-r1-class-only-not-a-finding", R1 not in got, "got=%r" % (got,))
+ 
+     got = findings(PROSE_KEYS)
+-    suite.check("r1-prose-keys-not-a-finding", R1 not in got, "got=%r" % (got,))
++    suite.check("zz-r1-prose-keys-not-a-finding", R1 not in got, "got=%r" % (got,))
+ 
+     got = findings(PROJECTION)
+-    suite.check("r1-seven-key-projection-clean", not got, "got=%r" % (got,))
++    suite.check("zz-r1-seven-key-projection-clean", not got, "got=%r" % (got,))
+ 
+     got = findings(CONFIG_LINE)
+-    suite.check("r1-monitor-rule-line-clean", not got, "got=%r" % (got,))
++    suite.check("zz-r1-monitor-rule-line-clean", not got, "got=%r" % (got,))
+ 
+     got = findings(SS_TABLE)
+-    suite.check("r2-two-process-rows", got.get(R2) == 2, "got=%r" % (got,))
++    suite.check("zz-r2-two-process-rows", got.get(R2) == 2, "got=%r" % (got,))
+ 
+     got = findings(SS_PROSE)
+-    suite.check("r2-prose-without-pid-clean", R2 not in got, "got=%r" % (got,))
++    suite.check("zz-r2-prose-without-pid-clean", R2 not in got, "got=%r" % (got,))
+ 
+     got = findings(MONITORS_DUMP)
+-    suite.check("r3-monitor-identity", got.get(R3) == 1, "got=%r" % (got,))
++    suite.check("zz-r3-monitor-identity", got.get(R3) == 1, "got=%r" % (got,))
+ 
+     got = findings(MONITORS_REDACTED)
+-    suite.check("r3-empty-serial-clean", R3 not in got, "got=%r" % (got,))
++    suite.check("zz-r3-empty-serial-clean", R3 not in got, "got=%r" % (got,))
+ 
+     got = findings(HOME_LISTING)
+-    suite.check("r4-twelve-entry-listing", got.get(R4) == 12, "got=%r" % (got,))
++    suite.check("zz-r4-twelve-entry-listing", got.get(R4) == 12, "got=%r" % (got,))
+ 
+     got = findings(HOME_SHORT)
+-    suite.check("r4-three-entry-listing-under-limit", R4 not in got, "got=%r" % (got,))
++    suite.check("zz-r4-three-entry-listing-under-limit", R4 not in got, "got=%r" % (got,))
+ 
+     got = findings(HOME_PROSE)
+-    suite.check("r4-inline-paths-clean", R4 not in got, "got=%r" % (got,))
++    suite.check("zz-r4-inline-paths-clean", R4 not in got, "got=%r" % (got,))
+ 
+     got = findings(HOME_LISTING, home_limit=12)
+-    suite.check("r4-limit-threshold-inclusive-at-12", R4 not in got, "got=%r" % (got,))
++    suite.check("zz-r4-limit-threshold-inclusive-at-12", R4 not in got, "got=%r" % (got,))
+ 
+     # --- R7: an absolute home path used structurally, not quoted in prose ---
+ 
+@@ -1424,73 +1424,73 @@ def _unit_cases(suite, home_limit=DEFAULT_HOME_LIMIT):
+                 "got=%r" % (got,))
+ 
+     got = findings(SERIAL_PROSE)
+-    suite.check("r5-prose-serial", got.get(R5) == 1, "got=%r" % (got,))
++    suite.check("zz-r5-prose-serial", got.get(R5) == 1, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_TABLE)
+-    suite.check("r5-table-cell-serial", got.get(R5) == 1, "got=%r" % (got,))
++    suite.check("zz-r5-table-cell-serial", got.get(R5) == 1, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_JSON)
+-    suite.check("r5-json-serial-without-ident", got.get(R5) == 1 and R3 not in got,
++    suite.check("zz-r5-json-serial-without-ident", got.get(R5) == 1 and R3 not in got,
+                 "got=%r" % (got,))
+ 
+     got = findings(SERIAL_STAMP)
+-    suite.check("r5-iso-timestamp-clean", R5 not in got, "got=%r" % (got,))
++    suite.check("zz-r5-iso-timestamp-clean", R5 not in got, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_LOWER)
+-    suite.check("r5-lowercase-run-clean", R5 not in got, "got=%r" % (got,))
++    suite.check("zz-r5-lowercase-run-clean", R5 not in got, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_GLUED)
+-    suite.check("r5-glued-to-prefix-clean", R5 not in got, "got=%r" % (got,))
++    suite.check("zz-r5-glued-to-prefix-clean", R5 not in got, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_TWO_CAPS)
+-    suite.check("r5-two-letter-capital-run-clean", R5 not in got, "got=%r" % (got,))
++    suite.check("zz-r5-two-letter-capital-run-clean", R5 not in got, "got=%r" % (got,))
+ 
+     got = details(SERIAL_PROSE)
+-    suite.check("r5-detail-masks-token",
++    suite.check("zz-r5-detail-masks-token",
+                 got.get(R5) is not None and SYNTH_SERIAL not in got[R5][1]
+                 and got[R5][1] == "tokens=1 shapes=9x3+Ax5+9x4",
+                 "detail=%r" % (got.get(R5)[1] if got.get(R5) else None,))
+ 
+     got = findings(SERIAL_PROSE, serials=(SYNTH_SERIAL,))
+-    suite.check("r6-exact-in-prose", got.get(R6) == 1, "got=%r" % (got,))
++    suite.check("zz-r6-exact-in-prose", got.get(R6) == 1, "got=%r" % (got,))
+ 
+     got = findings(SERIAL_LOWER, serials=(SYNTH_LOWER,))
+-    suite.check("r6-exact-shape-independent", got.get(R6) == 1 and R5 not in got,
++    suite.check("zz-r6-exact-shape-independent", got.get(R6) == 1 and R5 not in got,
+                 "got=%r" % (got,))
+ 
+     got = findings(SERIAL_PROSE, serials=("not-in-this-blob-0000",))
+-    suite.check("r6-absent-clean", R6 not in got, "got=%r" % (got,))
++    suite.check("zz-r6-absent-clean", R6 not in got, "got=%r" % (got,))
+ 
+     got = details(SERIAL_PROSE, serials=(SYNTH_SERIAL,))
+-    suite.check("r6-detail-counts-only",
++    suite.check("zz-r6-detail-counts-only",
+                 got.get(R6) is not None and got[R6][1] == "count=1 sources=1",
+                 "detail=%r" % (got.get(R6)[1] if got.get(R6) else None,))
+ 
+     got = findings(PROSE_KEYS)
+-    suite.check("r5-prose-without-serial-clean", R5 not in got, "got=%r" % (got,))
++    suite.check("zz-r5-prose-without-serial-clean", R5 not in got, "got=%r" % (got,))
+ 
+     dump = serials_from_json(SERIAL_DUMP)
+-    suite.check("serials-from-json-one-value",
++    suite.check("zz-serials-from-json-one-value",
+                 dump == {SYNTH_SERIAL}, "n=%d" % len(dump))
+ 
+     dump = serials_from_json('[{"serial": ""}, {"serial": "  "}]')
+-    suite.check("serials-from-json-empty-ignored", dump == set(), "n=%d" % len(dump))
++    suite.check("zz-serials-from-json-empty-ignored", dump == set(), "n=%d" % len(dump))
+ 
+     dump = serials_from_json('[{"serial": "ab"}]')
+-    suite.check("serials-from-json-short-ignored", dump == set(), "n=%d" % len(dump))
++    suite.check("zz-serials-from-json-short-ignored", dump == set(), "n=%d" % len(dump))
+ 
+     try:
+         serials_from_json("not json at all")
+     except GateError:
+-        suite.check("serials-from-json-rejects-garbage", True)
++        suite.check("zz-serials-from-json-rejects-garbage", True)
+     else:
+-        suite.check("serials-from-json-rejects-garbage", False, "no GateError")
++        suite.check("zz-serials-from-json-rejects-garbage", False, "no GateError")
+ 
+     # This file's own bytes must never trip the rules it documents.
+     with open(os.path.abspath(__file__), "rb") as handle:
+         own = scan_blob(handle.read(), home_limit, (SYNTH_SERIAL, SYNTH_LOWER))
+     own_rules = set(rule for rule, _count, _detail in own)
+-    suite.check("self-source-serial-rules-clean",
++    suite.check("zz-self-source-serial-rules-clean",
+                 R5 not in own_rules and R6 not in own_rules, "rules=%r" % (sorted(own_rules),))
+ 
+     # The gate is its own fixture corpus for R1-R3, so its source needs a
+@@ -1505,7 +1505,7 @@ def _unit_cases(suite, home_limit=DEFAULT_HOME_LIMIT):
+                 and not ({R7, R8, R9} & own_rules),
+                 "rules=%r" % (sorted(own_rules),))
+ 
+-    suite.check("rules-partition-is-waivable-plus-serial",
++    suite.check("zz-rules-partition-is-waivable-plus-serial",
+                 tuple(WAIVABLE_RULES) + tuple(SERIAL_RULES) == RULES,
+                 "rules=%r" % (RULES,))
+ 
+@@ -1561,7 +1561,7 @@ def _e2e_cases(suite, scratch):
+     _commit_fixture(mixed, dict(positives, **negatives))
+ 
+     sha, files, findings, waived, rejected = run(mixed, "HEAD")
+-    suite.check("e2e-fixture-files-count", files == len(positives) + len(negatives),
++    suite.check("zz-e2e-fixture-files-count", files == len(positives) + len(negatives),
+                 "files=%d" % files)
+ 
+     by_path = {}
+@@ -1577,15 +1577,15 @@ def _e2e_cases(suite, scratch):
+         ".ufo/w1/serial-table.md": {R5},
+         ".ufo/w1/serial-only.json": {R5},
+     }
+-    suite.check("e2e-positive-files-rules", by_path == expected, "got=%r" % (by_path,))
++    suite.check("zz-e2e-positive-files-rules", by_path == expected, "got=%r" % (by_path,))
+ 
+     lines = []
+     buf = _ListStream(lines)
+     code = emit(sha, files, findings, stream=buf)
+     summary = lines[-1] if lines else ""
+-    suite.check("e2e-exit-1-on-findings", code == 1, "code=%d" % code)
++    suite.check("zz-e2e-exit-1-on-findings", code == 1, "code=%d" % code)
+     suite.check(
+-        "e2e-summary-format",
++        "zz-e2e-summary-format",
+         re.fullmatch(r"SESSION_MATERIAL: files=%d findings=%d rev=[0-9a-f]{40}" % (files, len(findings)),
+                     summary) is not None,
+         "summary=%r" % (summary,),
+@@ -1597,7 +1597,7 @@ def _e2e_cases(suite, scratch):
+     _sha, files, findings, _waived, _rejected = run(negatives_only, "HEAD")
+     lines = []
+     code = emit(_sha, files, findings, stream=_ListStream(lines))
+-    suite.check("e2e-negative-repo-exit-0", code == 0 and not findings,
++    suite.check("zz-e2e-negative-repo-exit-0", code == 0 and not findings,
+                 "code=%d findings=%d" % (code, len(findings)))
+ 
+     # A non-.ufo file with the same dump is invisible to --scope ufo.
+@@ -1605,7 +1605,7 @@ def _e2e_cases(suite, scratch):
+     os.makedirs(outside)
+     _commit_fixture(outside, {"corpus/leak.json": CLIENT_DUMP, ".ufo/keep.txt": "ok\n"})
+     _sha, files, findings, _waived, _rejected = run(outside, "HEAD", scope="ufo")
+-    suite.check("e2e-outside-ufo-not-scanned", not findings and files == 1,
++    suite.check("zz-e2e-outside-ufo-not-scanned", not findings and files == 1,
+                 "files=%d findings=%r" % (files, findings))
+ 
+     # v3: the default scope is the whole tracked tree, and the same file is a
+@@ -1622,12 +1622,12 @@ def _e2e_cases(suite, scratch):
+     _sha, files, findings, _waived, _rejected = run(empty, "HEAD", scope="ufo")
+     lines = []
+     code = emit(_sha, files, findings, stream=_ListStream(lines))
+-    suite.check("e2e-empty-ufo-clean", code == 0 and files == 0 and not findings,
++    suite.check("zz-e2e-empty-ufo-clean", code == 0 and files == 0 and not findings,
+                 "code=%d files=%d findings=%r" % (code, files, findings))
+ 
+     # --scope all sees the same file the default scope hides.
+     _sha, files, findings, _waived, _rejected = run(outside, "HEAD", scope="all")
+-    suite.check("e2e-scope-all-sees-outside-ufo",
++    suite.check("zz-e2e-scope-all-sees-outside-ufo",
+                 [item[1] for item in findings] == [R1] and files == 2,
+                 "files=%d findings=%r" % (files, [(item[0], item[1]) for item in findings]))
+ 
+@@ -1637,11 +1637,11 @@ def _e2e_cases(suite, scratch):
+     code = emit(_sha, _files, findings, stream=_ListStream(lines))
+     r6_paths = sorted(path for path, rule, _c, _d in findings if rule == R6)
+     joined = "\n".join(lines)
+-    suite.check("e2e-r6-hits-every-carrier",
++    suite.check("zz-e2e-r6-hits-every-carrier",
+                 code == 1 and r6_paths == [".ufo/w1/serial-only.json", ".ufo/w1/serial-prose.md",
+                                            ".ufo/w1/serial-table.md", ".ufo/w2/serial-glued.md"],
+                 "paths=%r" % (r6_paths,))
+-    suite.check("e2e-r6-output-never-holds-value", SYNTH_SERIAL not in joined,
++    suite.check("zz-e2e-r6-output-never-holds-value", SYNTH_SERIAL not in joined,
+                 "lines=%d" % len(lines))
+ 
+     # A projection of the leak: same tree, token replaced, R5/R6 clean.
+@@ -1658,7 +1658,7 @@ def _e2e_cases(suite, scratch):
+                                                      serials=(SYNTH_SERIAL, SYNTH_LOWER))
+     lines = []
+     code = emit(_sha, _files, findings, stream=_ListStream(lines))
+-    suite.check("e2e-projected-tree-passes", code == 0 and not findings,
++    suite.check("zz-e2e-projected-tree-passes", code == 0 and not findings,
+                 "code=%d findings=%r" % (code, findings))
+ 
+     # No flag may drop a rule: --rules is refused, not honoured.
+@@ -1684,7 +1684,7 @@ def _e2e_cases(suite, scratch):
+             code = "returned"
+     finally:
+         sys.stderr = saved
+-    suite.check("e2e-no-rule-can-be-dropped",
++    suite.check("zz-e2e-no-rule-can-be-dropped",
+                 code == 2 and "--rules" in sink.text,
+                 "code=%r stderr=%r" % (code, sink.text.strip().splitlines()[-1:]))
+ 
+@@ -1788,12 +1788,12 @@ def _waiver_cases(suite, scratch):
+     }
+     root = _waiver_repo(scratch, "waived", waived_files)
+     sha, files, findings, waived, rejected = run(root, "HEAD")
+-    suite.check("waiver-fixture-waived",
++    suite.check("zz-waiver-fixture-waived",
+                 not findings and len(waived) == 1 and not rejected,
+                 "findings=%r waived=%r rejected=%r" % (findings, waived, rejected))
+     lines = []
+     code = emit(sha, files, findings, waived, rejected, stream=_ListStream(lines))
+-    suite.check("waiver-exit-0-and-count-line",
++    suite.check("zz-waiver-exit-0-and-count-line",
+                 code == 0 and lines[-2].startswith("SESSION_MATERIAL_WAIVED: findings=1 files=1"),
+                 "code=%d lines=%r" % (code, lines[-2:]))
+ 
+@@ -1805,7 +1805,7 @@ def _waiver_cases(suite, scratch):
+     }
+     real_root = _waiver_repo(scratch, "real-values", real_files)
+     _sha, _files, findings, waived, rejected = run(real_root, "HEAD")
+-    suite.check("waiver-real-values-rejected",
++    suite.check("zz-waiver-real-values-rejected",
+                 len(findings) == 1 and not waived
+                 and rejected == [(path, R3, "value-not-synthetic:serial-not-synthetic")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1833,12 +1833,12 @@ def _waiver_cases(suite, scratch):
+         case_root = _waiver_repo(scratch, "title-" + case, case_files)
+         _sha, _files, findings, waived, rejected = run(case_root, "HEAD")
+         if waivable:
+-            suite.check("waiver-title-%s-waived" % case,
++            suite.check("zz-waiver-title-%s-waived" % case,
+                         not findings and len(waived) == 1 and not rejected,
+                         "findings=%r waived=%r rejected=%r" % (findings, waived, rejected))
+         else:
+             suite.check(
+-                "waiver-title-%s-rejected" % case,
++                "zz-waiver-title-%s-rejected" % case,
+                 len(findings) == 1 and not waived
+                 and rejected == [(case_path, R1, "value-not-synthetic:title-not-synthetic")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1847,7 +1847,7 @@ def _waiver_cases(suite, scratch):
+     bad_sha_files[path + MARKER_SUFFIX] = _marker("fixture", [R3], "0" * 64)
+     bad_sha_root = _waiver_repo(scratch, "bad-sha", bad_sha_files)
+     _sha, _files, findings, waived, rejected = run(bad_sha_root, "HEAD")
+-    suite.check("waiver-sha-mismatch-rejected",
++    suite.check("zz-waiver-sha-mismatch-rejected",
+                 len(findings) == 1 and not waived
+                 and rejected == [(path, R3, "sha-mismatch")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1859,14 +1859,14 @@ def _waiver_cases(suite, scratch):
+     }
+     unregistered_root = _waiver_repo(scratch, "unregistered", unregistered_files)
+     _sha, _files, findings, waived, rejected = run(unregistered_root, "HEAD")
+-    suite.check("waiver-unregistered-rejected",
++    suite.check("zz-waiver-unregistered-rejected",
+                 len(findings) == 1 and not waived
+                 and rejected == [(path, R3, "unregistered")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+ 
+     _sha, _files, findings, waived, rejected = run(
+         root, "HEAD", waivers=".ufo/waivers.txt")
+-    suite.check("waiver-registry-in-ufo-refused",
++    suite.check("zz-waiver-registry-in-ufo-refused",
+                 len(findings) == 1 and not waived
+                 and rejected == [(path, R3, "registry-in-ufo")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1879,7 +1879,7 @@ def _waiver_cases(suite, scratch):
+     }
+     outside_root = _waiver_repo(scratch, "outside-waves", outside_files)
+     _sha, _files, findings, waived, rejected = run(outside_root, "HEAD")
+-    suite.check("waiver-path-outside-waves-rejected",
++    suite.check("zz-waiver-path-outside-waves-rejected",
+                 len(findings) == 1 and not waived
+                 and rejected == [(outside_path, R3, "path-outside-waves")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1895,7 +1895,7 @@ def _waiver_cases(suite, scratch):
+     copy_root = _waiver_repo(scratch, "gate-copy", copy_files)
+     _sha, _files, findings, waived, rejected = run(
+         copy_root, "HEAD", gate_source="quality/gate.py", scope="ufo")
+-    suite.check("waiver-gate-copy-waived",
++    suite.check("zz-waiver-gate-copy-waived",
+                 not findings and len(waived) == 1 and not rejected,
+                 "findings=%r waived=%r rejected=%r" % (findings, waived, rejected))
+ 
+@@ -1910,19 +1910,19 @@ def _waiver_cases(suite, scratch):
+     altered_root = _waiver_repo(scratch, "gate-copy-altered", altered_files)
+     _sha, _files, findings, waived, rejected = run(
+         altered_root, "HEAD", gate_source="quality/gate.py", scope="ufo")
+-    suite.check("waiver-gate-copy-mismatch-rejected",
++    suite.check("zz-waiver-gate-copy-mismatch-rejected",
+                 len(findings) == 1 and not waived
+                 and rejected == [(copy_path, R1, "gate-source-mismatch")],
+                 "findings=%r rejected=%r" % (findings, rejected))
+ 
+     _sha, _files, findings, waived, rejected = run(root, "HEAD", use_waivers=False)
+-    suite.check("waiver-no-waivers-flag-keeps-finding",
++    suite.check("zz-waiver-no-waivers-flag-keeps-finding",
+                 len(findings) == 1 and not waived and not rejected,
+                 "findings=%r waived=%r" % (findings, waived))
+ 
+     _append_and_commit(root, path, CLIENT_DUMP)
+     _sha, _files, findings, waived, rejected = run(root, "HEAD")
+-    suite.check("waiver-tamper-after-waiver-keeps-finding",
++    suite.check("zz-waiver-tamper-after-waiver-keeps-finding",
+                 [item[1] for item in findings] == [R1, R3] and not waived
+                 and (path, R3, "sha-mismatch") in rejected,
+                 "findings=%r rejected=%r" % (findings, rejected))
+@@ -1937,7 +1937,7 @@ def _waiver_cases(suite, scratch):
+     }
+     per_rule_root = _waiver_repo(scratch, "per-rule", per_rule_files)
+     _sha, _files, findings, waived, rejected = run(per_rule_root, "HEAD")
+-    suite.check("waiver-per-rule-only-listed-rule",
++    suite.check("zz-waiver-per-rule-only-listed-rule",
+                 [item[1] for item in findings] == [R2] and len(waived) == 1
+                 and waived[0][1] == R1
+                 and rejected == [(per_rule_path, R2, "rule-not-listed")],
+@@ -2010,13 +2010,13 @@ def _waiver_cases(suite, scratch):
+     sha, files, findings, waived, rejected = run(serial_root, "HEAD")
+     lines = []
+     code = emit(sha, files, findings, waived, rejected, stream=_ListStream(lines))
+-    suite.check("waiver-serial-rule-not-waivable",
++    suite.check("zz-waiver-serial-rule-not-waivable",
+                 [item[1] for item in findings] == [R5] and len(waived) == 1
+                 and waived[0][1] == R3
+                 and rejected == [(serial_path, R5, "serial-rule-not-waivable")]
+                 and code == 1,
+                 "findings=%r waived=%r rejected=%r" % (findings, waived, rejected))
+-    suite.check("waiver-serial-rejection-is-printed",
++    suite.check("zz-waiver-serial-rejection-is-printed",
+                 any(line.startswith("WAIVER_REJECTED file=%s rule=%s reason=serial-rule-not-waivable"
+                                     % (serial_path, R5)) for line in lines),
+                 "lines=%r" % (lines,))
+@@ -2029,7 +2029,7 @@ def _waiver_cases(suite, scratch):
+     }
+     bad_band_root = _waiver_repo(scratch, "serial-band", bad_band_files)
+     _sha, _files, findings, waived, rejected = run(bad_band_root, "HEAD")
+-    suite.check("waiver-marker-cannot-name-serial-rule",
++    suite.check("zz-waiver-marker-cannot-name-serial-rule",
+                 [item[1] for item in findings] == [R3, R5] and not waived
+                 and (serial_path, R3, "marker-malformed") in rejected
+                 and (serial_path, R5, "serial-rule-not-waivable") in rejected,
+@@ -2050,7 +2050,7 @@ def _waiver_cases(suite, scratch):
+     }
+     real_serial_root = _waiver_repo(scratch, "serial-real", real_serial_files)
+     _sha, _files, findings, waived, rejected = run(real_serial_root, "HEAD")
+-    suite.check("waiver-real-serial-marked-file-kept",
++    suite.check("zz-waiver-real-serial-marked-file-kept",
+                 [item[1] for item in findings] == [R3, R5] and not waived
+                 and (serial_path, R3, "value-not-synthetic:serial-not-synthetic") in rejected
+                 and (serial_path, R5, "serial-rule-not-waivable") in rejected,
+@@ -2061,7 +2061,7 @@ def _waiver_cases(suite, scratch):
+     prose_path = ".ufo/waves/round-32/w1/Entry.md"
+     prose_root = _waiver_repo(scratch, "serial-unmarked", {prose_path: SERIAL_PROSE})
+     _sha, _files, findings, waived, rejected = run(prose_root, "HEAD")
+-    suite.check("prose-serial-unmarked-kept",
++    suite.check("zz-prose-serial-unmarked-kept",
+                 [item[1] for item in findings] == [R5] and not waived and not rejected,
+                 "findings=%r" % (findings,))
+ 

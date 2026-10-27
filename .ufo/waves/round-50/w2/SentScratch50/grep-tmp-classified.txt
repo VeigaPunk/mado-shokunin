@@ -1,0 +1,25 @@
+# '/tmp' literal hits in the five instruments, each classified (grep -n, HEAD b4a79843).
+# Verdict: no committed instrument hardcodes /tmp as a >50MB write target.
+== quality/counters/c1-r50-bind-entry.py e162d6717915f558
+123: docstring (refusal statement)                                  -> enforcement doc
+1052: docstring (tmp_root)                                          -> enforcement doc
+1058: REFUSAL constant ("/tmp","/var/tmp","/dev/shm")               -> refusal, not a write
+== quality/counters/c2-r50-session-gate.py 1d52a62cd969aba5
+48: docstring refusal statement                                    -> enforcement doc
+74: FORBIDDEN_WORK = ("/tmp","/var/tmp","/dev/shm")                -> refusal, not a write
+== quality/check-wave-done.py 10f4359ac0af755a
+15,528,991: docstring / error text / argparse help                 -> enforcement doc
+156: REFUSED_WORK_PREFIXES                                          -> refusal, not a write
+939: selftest fixture names that MUST be refused                     -> negative test input
+== quality/check-session-material.py ffdc9d62c387050e
+(no '/tmp' literal at all) — scratch comes from a bare `os.environ.get("TMPDIR") or None` (line 2078),
+which silently means /tmp when TMPDIR is unset; `tempfile.NamedTemporaryFile("wb", delete=False)` (line 975)
+lands in the default temp dir but is unlinked in `finally` (lines 1005-1009) and holds only SHA text.
+Measured peak scratch size of --selftest: 4476 KB (probe csm-peak 4.4 MB), well under 50 MB.
+== tools/mado-hostguard.py fdaa5c2ec297ebfd
+17,23,40,156,494,1120: docstring/help/error text                      -> enforcement doc
+94: TMP_ROOTS                                                       -> refusal, not a write
+335: bwrap argv "--tmpfs /tmp"                                        -> deliberate sandbox mount (child sees empty /tmp)
+785,787,791,793,829,833,835: own selftest fixtures that require refusal -> negative test inputs
+1008: selftest asserts --env-set TMPDIR=/tmp is refused              -> negative test input
+1050: selftest unit of under()                                       -> pure unit test

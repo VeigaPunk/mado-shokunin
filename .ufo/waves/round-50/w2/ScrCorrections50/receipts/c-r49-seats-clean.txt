@@ -1,0 +1,128 @@
+# ExecControlsC1 / ExecCounterC1: w1 dirty snapshot vs clean at b4a79843cc2545bbe800db9322e58f6e00436629 (seat ScrCorrections50, w2)
+# paths: <lane> = the mado-shokunin lane (absolute home path sanitized); HOME/XDG_*/TMPDIR for every run = /fast/scratch/hyaku/mado-r50/ScrCorrections50
+# date: 2026-10-27T05:47:29-03:00
+
+## the w1 record of dirtiness (round-50 w1 seats, read-only):
+$ grep -n ExecCounterC1 .ufo/waves/round-50/w1/ExecWaveDone/receipts/deliverables.txt
+27: M .ufo/waves/round-49/w1/ExecCounterC1.md
+$ sed -n 76,82p .ufo/waves/round-50/w1/ScrQualityR50.md  # (point 6, 03:03)
+   `SentPrivacy.md` are absent** (`git cat-file -e` → absent for both). So 5 of 7 left bytes, 2 did not.
+6. **Write-scope observation for the L1 (not this seat's finding).** At 03:03 the lane worktree carried
+   4 modified tracked files, all under `.ufo/waves/round-49/w1/`
+   (`ExecControlsC1.md`, `ExecControlsC1/check-c07-isolation.py`, `ExecControlsC1/make-controls-receipt.py`,
+   `ExecCounterC1.md`), plus the untracked round-49 results file above. This seat authored none of them
+   (its paths are untracked drafts under `.ufo/waves/round-50/w1/ScrQualityR50/` and this report);
+   recorded because a wave in flight should not mutate tracked files and because the round-49 bytes are
+$ sed -n 116,121p .ufo/waves/round-50/w1/ScrRowsR50.md  # (point 6)
+   the variable preserved it is rc 0 and 90401 B of JSON. A clean-env probe must keep the signature, and a harness that
+   only checks "output exists" would read the warning as data.
+6. **Unrelated working-tree state, not mine:** `git status --porcelain` at my close shows ` M` on
+   `.ufo/waves/round-49/w1/ExecControlsC1.md`, `.ufo/waves/round-49/w1/ExecControlsC1/check-c07-isolation.py`,
+   `.ufo/waves/round-49/w1/ExecControlsC1/make-controls-receipt.py` and `.ufo/waves/round-49/w1/ExecCounterC1.md` — a
+   sibling seat's live writes (ExecControlsC1 is running this wave). I neither wrote nor reverted them.
+$ sed -n 12,47p .ufo/waves/round-50/w1/ScrCorrectionsR50/receipts/d2-postreport.txt  # ExecControlsC1 mid-write
+ M .ufo/waves/round-49/w1/ExecControlsC1/check-c07-isolation.py
+ M .ufo/waves/round-49/w1/ExecControlsC1/make-controls-receipt.py
+?? .ufo/waves/round-49/w1/ExecControlsC1/receipts/
+== ExecControlsC1 worktree mtimes
+2026-10-27 02:57:34.845103210 -0300 .ufo/waves/round-49/w1/ExecControlsC1.md
+2026-10-27 02:42:48.363411991 -0300 .ufo/waves/round-49/w1/ExecControlsC1/check-quotes.py
+2026-10-27 02:55:42.509590885 -0300 .ufo/waves/round-49/w1/ExecControlsC1/make-controls-receipt.py
+2026-10-27 02:56:53.279010892 -0300 .ufo/waves/round-49/w1/ExecControlsC1/check-c07-isolation.py
+2026-10-27 02:55:48.050914325 -0300 .ufo/waves/round-49/w1/ExecControlsC1/receipts/clause-lines.txt
+2026-10-27 02:57:04.491647556 -0300 .ufo/waves/round-49/w1/ExecControlsC1/receipts/controls.txt
+2026-10-27 02:55:42.691947132 -0300 .ufo/waves/round-49/w1/ExecControlsC1/receipts/quotes.txt
+== ExecControlsC1.md committed vs worktree
+ .ufo/waves/round-49/w1/ExecControlsC1.md | 173 ++++++++++++++++++++++++++++++-
+ 1 file changed, 170 insertions(+), 3 deletions(-)
+committed_head_line: status: running 2026-10-27T01:56-03:00 — 19 controls built in `.ufo/waves/round-49/w1/ExecControlsC1/controls/`,
+worktree_line3: status: complete 2026-10-27T02:57-03:00. 20 controls built, scored with ExecCounterC1's draft at the sha its author
+worktree_lines=173
+== other six seats: any commit after the report (per path)
+ExecSessionTriage post_report_commits=0
+ScoutHyprBinds post_report_commits=0
+CritPremiseC1 post_report_commits=0
+CritPremiseC2 post_report_commits=0
+CritRoutedItems post_report_commits=0
+SentPrivacy post_report_commits=0
+
+== second snapshot 2026-10-27T03:00:02-03:00 (ExecControlsC1 was mid-write at the first)
+$ stat -c "%y %n" .ufo/waves/round-49/w1/ExecControlsC1.md
+2026-10-27 02:57:34.845103210 -0300 .ufo/waves/round-49/w1/ExecControlsC1.md
+$ sed -n 3p .ufo/waves/round-49/w1/ExecControlsC1.md
+status: complete 2026-10-27T02:57-03:00. 20 controls built, scored with ExecCounterC1's draft at the sha its author
+$ git status --porcelain -- .ufo/waves/round-49/w1/ExecControlsC1*
+ M .ufo/waves/round-49/w1/ExecControlsC1.md
+ M .ufo/waves/round-49/w1/ExecControlsC1/check-c07-isolation.py
+ M .ufo/waves/round-49/w1/ExecControlsC1/make-controls-receipt.py
+?? .ufo/waves/round-49/w1/ExecControlsC1/receipts/
+$ git log --since="2026-10-27T02:36:02-03:00" --format="%h %ci" -- .ufo/waves/round-49/w1/ExecControlsC1
+
+## state at the attack revision:
+$ git -C $L rev-parse HEAD
+b4a79843cc2545bbe800db9322e58f6e00436629
+$ git status --porcelain -- .ufo/waves/round-49/w1/ExecControlsC1* .ufo/waves/round-49/w1/ExecCounterC1*   # empty = clean
+(exit=0; no lines above = clean)
+$ git -C $L diff --stat $REV -- <those paths>   # empty = worktree == rev bytes
+
+## ExecControlsC1 — recorded worktree snapshot vs committed:
+# recorded w1 worktree line 3 (d2-postreport.txt:41):
+  status: complete 2026-10-27T02:57-03:00. 20 controls built, scored with ExecCounterC1's draft at the sha its author
+# committed line 3 at b4a79843cc2545bbe800db9322e58f6e00436629:
+  status: complete 2026-10-27T02:57-03:00. 20 controls built, scored with ExecCounterC1's draft at the sha its author
+# line counts:
+  committed: 173
+  worktree : 173
+# recorded w1 diff stat (d2-postreport.txt:24) was "| 173 ++++"; landing commit diff:
+  1b37a59e 2026-10-27 04:44:32 -0300 hyaku run9 wrap-up: round-49/50 wave state for inheritance
+
+ .ufo/waves/round-49/w1/ExecControlsC1.md           | 173 +++++++++++++++++-
+ .../w1/ExecControlsC1/check-c07-isolation.py       |  29 +++-
+ .../w1/ExecControlsC1/make-controls-receipt.py     |  76 ++++++--
+ .../w1/ExecControlsC1/receipts/clause-lines.txt    | 193 +++++++++++++++++++++
+ .../w1/ExecControlsC1/receipts/controls.txt        | 113 ++++++++++++
+ .../round-49/w1/ExecControlsC1/receipts/quotes.txt |   5 +
+# committed receipts:
+.ufo/waves/round-49/w1/ExecControlsC1/receipts/clause-lines.txt
+.ufo/waves/round-49/w1/ExecControlsC1/receipts/controls.txt
+.ufo/waves/round-49/w1/ExecControlsC1/receipts/quotes.txt
+# sha256 committed vs worktree:
+  committed: c1fae2adbac9c5f1cb19e51284d35783f23da4e44600f20860588d3c74a13d8e  -
+  worktree : c1fae2adbac9c5f1cb19e51284d35783f23da4e44600f20860588d3c74a13d8e  <lane>/.ufo/waves/round-49/w1/ExecControlsC1.md
+
+## ExecCounterC1 — recorded dirty snapshot vs committed:
+# w1 record said only " M" (no content recorded); the landing commit added a 5-line control-margin note:
+  1b37a59e 2026-10-27 04:44:32 -0300 hyaku run9 wrap-up: round-49/50 wave state for inheritance
+
+diff --git a/.ufo/waves/round-49/w1/ExecCounterC1.md b/.ufo/waves/round-49/w1/ExecCounterC1.md
+index 8f0e4a25..67e9243e 100644
+--- a/.ufo/waves/round-49/w1/ExecCounterC1.md
++++ b/.ufo/waves/round-49/w1/ExecCounterC1.md
+@@ -232,7 +232,11 @@ this file.
+    `SHA256_FIXTURES` is already set to that digest. To use a different frozen set, replace both the file and the
+    constant (the embedded 57-case fallback is only used if the constant is emptied).
+ 2. Frozen numbers: `SELFTEST_MIN=25`, `GEN=60`, the 633 fixture cases, the 61-pair/15-option/95-name generator
+-   pools. Changing any of them is a freeze edit.
++   pools. Changing any of them is a freeze edit. Control-margin note from ScExecControlsC1 (20 controls, 0
++   `TARGET_MET` at counter sha `1a7fcc21…`): the rc-blind, layout-1-only, mask-blanking and first-row-only
++   controls still pass 624-626 of the 633 fixtures and are stopped by 7-9 cases each (multi-row keysyms,
++   LevelThree/Lock masks, the rc-2 cases, multi-layout keymaps). If the fixture file is ever regenerated, those
++   four controls and those case classes are the ones to re-check.
+ 3. Requisites: `bwrap`, `strace`, `ldd`, `git`; the three pinned binaries/headers and the host python3 (3.14.8)
+    whose `ldd` closure — interpreter plus every `lib-dynload/*.so` — is derived at run time (42 libraries here).
+    A host python upgrade re-derives; a python without shared `libpython` is a setup error, and so is a closure
+# deliverables table hashes in the committed report vs the blobs at b4a79843cc2545bbe800db9322e58f6e00436629:
+| `c1-r49-keysym.py` | `1a7fcc21b7508db46f6a22325de84f6ed115fd81b63607a364c1c4addd27b4fe` (732 lines) | the counter (PRED-C1-r49) |
+| `c1-r49-fixtures.json` | `81836bfba624a0a4344c4787f7058219b45554fbcfc2da9d797846d96610e393` | the pinned fixture file, adopted from w1/ExecFixtures 
+| `counter-selftest.py` | `5e4c247226ed305d2042d3436834f995ce77cdd5289691a893759166d8d14c80` | scratch-only positive-path harness (judge-as-tool) prov
+| `scratch-refB-tool.py` | `81cd3b19e2d1bcce826a43b56b025af4b84c34eee1d9cb7f2fb357a775f62fff` | the exact tool blob scored in §4.5: ExecRefKeysymB's 
+  c1-r49-keysym.py           1a7fcc21b7508db46f6a22325de84f6ed115fd81b63607a364c1c4addd27b4fe  -
+  c1-r49-fixtures.json       81836bfba624a0a4344c4787f7058219b45554fbcfc2da9d797846d96610e393  -
+  counter-selftest.py        5e4c247226ed305d2042d3436834f995ce77cdd5289691a893759166d8d14c80  -
+  scratch-refB-tool.py       81cd3b19e2d1bcce826a43b56b025af4b84c34eee1d9cb7f2fb357a775f62fff  -
+# line count of committed counter:
+732
+# committed report line 3:
+  Status: **complete** (draft delivered at the seat dir; the L1 installs it; nothing tracked was edited).
+# report line count:
+272

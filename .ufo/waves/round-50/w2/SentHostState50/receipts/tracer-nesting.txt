@@ -1,0 +1,7 @@
+# R-SHS-3 (outer-tracer false miss) cannot recur in the round-50 counters: the nested tracer is gone
+$ grep -nE 'strace|bwrap|TracerPid|ptrace' quality/counters/c1-r50-bind-entry.py quality/counters/c2-r50-session-gate.py
+(no match in either counter: rc 1)
+$ grep -nE 'strace|bwrap|TracerPid|ptrace' quality/check-session-material.py quality/check-wave-done.py
+/home/vgpnk/Projects/shokunin/mado-shokunin/quality/check-session-material.py:63:                 bwrap/``--clearenv`` capture are the compliant forms.
+# hostguard mentions bwrap as an optional sandbox (:315-378) and starts no tracer of its own; w1/ExecHostGuardR50 measured an outer strace leaving exit=0 and digest-before=digest-after.
+# mechanism of R-SHS-3 was nested ptrace: the round-49 keysym counter ran 'strace ... bwrap ...' itself (w1/SentHostState.md:183). c1-r50 runs hyprctl directly with no bwrap and no strace, so an outer tracer is not nested.

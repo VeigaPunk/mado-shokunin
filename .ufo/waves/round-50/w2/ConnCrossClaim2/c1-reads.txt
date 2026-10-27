@@ -1,0 +1,42 @@
+# PRED-C1-r50 file read audit
+# Counter: quality/counters/c1-r50-bind-entry.py (sha256: e162d6717915f5585c40853afa8223d0398e50f0de37da4fd02004d2b08a84c0)
+# Revision: b4a79843cc2545bbe800db9322e58f6e00436629
+
+1. Explicit file path constants (lines 161-168):
+   ENTRY = "corpus/knowledge/hyprland-bind-key-match-r50.md"
+   REGISTRY = "corpus/SOURCES.md"
+   README = "corpus/README.md"
+   LESSON = "corpus/lessons/round-50.md"
+   FETCH = ".ufo/waves/round-50/fetch/"
+   HELD_FETCH = ".ufo/waves/round-46/fetch/"
+   RECEIPTS = ".ufo/waves/round-50/receipts/"
+   BASE_DEFAULT = "8ae47b957034ae21012bbf09173cca2c48be345e"
+
+2. Tracked git blobs fetched via git show:
+   - rev:corpus/knowledge/hyprland-bind-key-match-r50.md (line 1172)
+   - rev:corpus/SOURCES.md (line 1176)
+   - base:corpus/SOURCES.md (line 1178)
+   - rev:corpus/README.md (line 1182)
+   - base:corpus/README.md (line 1184)
+   - rev:corpus/lessons/round-50.md (line 1188)
+   - rev:.ufo/waves/round-50/fetch/* (line 1192 via fetch_pins(), 16 pins)
+   - rev:.ufo/waves/round-46/fetch/* and base:.ufo/waves/round-46/fetch/* (lines 1196, 1200 via fetch_pins(), S319)
+   - rev:.ufo/waves/round-50/receipts/binds-live-r50.txt (line 734)
+   - base:.ufo/waves/round-50/receipts/binds-live-r50.txt (line 737, verified absent at base)
+
+3. Dynamic tree enumeration via base_grams() (lines 947-967):
+   - Enumerates git ls-tree -r base
+   - Reads every blob matching:
+     path.startswith("corpus/knowledge/") and path.endswith(".md")
+     path.startswith("corpus/lessons/") and path.endswith(".md")
+   - Does NOT read quality/, tools/, or .ufo/ files
+
+4. Runtime / Host interactions (clause r, lines 1068-1120):
+   - Communicates with running Hyprland compositor socket via hyprctl:
+     hyprctl binds -j
+     hyprctl getoption input:resolve_binds_by_sym -j
+   - Does not touch or inspect any C2 instrument or gate
+
+5. Local filesystem access:
+   - Reads/writes strictly inside tmp_root() ($TMPDIR)
+   - Forbids /tmp, /var/tmp, /dev/shm and target repository tree

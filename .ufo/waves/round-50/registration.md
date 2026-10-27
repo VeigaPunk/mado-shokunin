@@ -20,7 +20,7 @@ fixtures and do-nothing controls; each control below was scored with the frozen 
   live receipt answers the entry's host claims and replays byte-equal (f/r), the step/ground/topic structure holds (e/h/i/j),
   and the README index row names the entry (b).
 - TARGET_MET iff `clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET`.
-- At data `906178b607f2071af7c2efec5aad976a8bfa5757`: `PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET` rc 0 (`receipts/c1-at-data.txt`; the same receipt covers the w1/RevC1Counter two-nonce gap in that clause g's 150 cases are generated and judged at count time inside the single run, and the replay in clause r is byte-compared against the pinned digest `9a47199e2297…`).
+- At data `906178b607f2071af7c2efec5aad976a8bfa5757`: `PRED-C1-r50: clauses=a:1 b:1 c:1 d:1 e:1 f:1 g:1 h:1 i:1 j:1 r:1 admitted=1/1 verdict=TARGET_MET` rc 0 (`receipts/c1-at-data.txt`; this counter is deterministic and nonce-free; clause g verifies held row S319 is cited and unchanged. Clause r replays the live receipt byte-equal to pinned digest `9a47199e2297…`).
 - Do-nothing controls, frozen counter (receipts `controls-c1.txt`, fixture clones under `/fast/scratch/hyaku/mado-r50/L1Freeze`, toplevel asserted):
   - `c00-absent` (base `8ae47b95…`): `clauses=a:0 admitted=0/1 verdict=TARGET_MISSED` rc 1.
   - `c13-r49-paste` (the round-49 candidate entry pasted at the round-50 path, rev `6a8693fe…`): `f:0 r:0 admitted=0/1 verdict=TARGET_MISSED` rc 1 — the do-nothing control that skips writing the new entry cannot reach the target.
@@ -78,10 +78,18 @@ fixtures and do-nothing controls; each control below was scored with the frozen 
 
 ## Residuals (declared)
 
-- C1 clause g samples 150 generated cases per run; it is a bounded adversarial sample, not exhaustive proof (w1/CritC1Args).
+- **Post-freeze falsification:** w2/CritC1FrozenStub and CritFrozenNovelty show the frozen predicate can admit a recycled
+  round-49 candidate with a one-line receipt citation, and that the entry's ground paragraph omits previously held
+  mechanism facts. The predicate's `TARGET_MET` is not evidence of novelty; the round-50 C1 claim is recorded as an
+  honest stop, not a successful sourced expansion. No predicate re-freeze was made.
+- C1 clause g checks held row S319 is cited and unchanged; it does not sample generated cases.
 - C1 clause f/g/r replay reads the live compositor socket read-only; a host without the socket fails closed (SETUP), which
   is the honest direction.
+- **Post-freeze falsification:** w2/CritC2FrozenStub found a 7,046-byte replacement gate with a canned 94/94 selftest
+  transcript and all-rule-tag spray that the frozen counter admits. Partial rule-removal and single-tag parrot probes
+  are caught, but transcript honesty and exact attribution are outside this predicate. The claim is an honest stop,
+  not evidence that the gate is independently proven correct. No predicate re-freeze was made.
 - C2 fixtures are nonce-generated shape carriers; the gate at the lane is red by design (228 findings at base scope-all,
   all true positives the lane committed) — no claim demands exit 0 on the lane repo (w1/ExecGateV3 §3-4).
 - The staged shokuknow package and the absent-defect register stay unadopted (lesson Gate; quarantine hand-check is w2 work).
-- w2 (falsify) attacks this freeze; nothing here is attacked yet at freeze time.
+- w2 has completed (32 seats); these findings are post-freeze attacks. Claims, counters, and controls remain frozen.

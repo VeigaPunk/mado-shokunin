@@ -1,0 +1,10 @@
+# SentScratch50 refusal matrix — probed 2026-10-27 on HEAD b4a79843 (all instruments byte-checked against the freeze)
+# instrument                                    absent  /tmp  /var/tmp  /dev/shm  home  inside-repo  symlink-realpath
+# c1-r50-bind-entry.py (TMPDIR)                  rc2    rc2    rc2       rc2      NO    rc2          rc2
+# c2-r50-session-gate.py (--work)                n/a    rc2    rc2       rc2      $HOME-only  NO     rc2
+# c2-r50-session-gate.py (inherited TMPDIR)      n/a    rc2    n/a       n/a      NO    NO           n/a
+# check-wave-done.py (--selftest --work/TMPDIR)  rc2    rc2    rc2       rc2      rc2   NO           rc2
+# check-session-material.py (--selftest TMPDIR)  NO-ARG NO     NO        NO       NO    NO           NO
+# tools/mado-hostguard.py (--selftest --work)    rc2    rc2    rc2       rc2      rc2   rc2*         rc2
+# *hostguard repo rule is location-derived: repo_root(__file__); a copy outside any repo loses it (probe hg-copy-inrepo)
+# "NO" = accepted, rc 0 and the instrument wrote there. "n/a" = no such input path for that instrument.
