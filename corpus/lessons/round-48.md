@@ -72,7 +72,7 @@ number — and pasted here by the L1:
 - **REJECT** `https://wiki.archlinux.org/title/Xorg/Keyboard_configuration`, opened 2026-10-26. The English page restates broad XKB setup, but the scoped claim is the behavior of this host's libxkbcommon 1.13.2/xkeyboard-config 2.48 combination; the direct tagged implementation, installed generated ruleset and read-only host receipt are more authoritative and version-bound. Flip: the page supplies a version-pinned behavior or implementation detail not present in those primary bytes.
 - **REJECT** `https://xkbcommon.org/doc/current/index.html`, opened 2026-10-26. The current documentation index is not version-pinned and does not itself state the RMLVO/include/error behavior this entry claims; the 1.13.2 source pins already provide the primary evidence. Flip: a pinned 1.13.2 documentation page provides a distinct behavior that the source pins and host receipt do not.
 
-No existing row's `status`, `recheck`, or `used-by` changed; all changes here are new rows. The rejected entries stay outside the registry, with reason and flip above. The entry claims C2 on S340-S350, opened this round.
+No existing row's `status`, `recheck`, or `used-by` changed; all changes here are new rows. The rejected entries stay outside the registry, with reason and flip above. The entry claims C2 on S340-S351, opened this round.
 
 Quote discipline for this round: each quote is ≤25 words, word-bounded, and unique in its receipt; no landed quote spans or de-spaces a
 source line (`l1-draft/gate-rows.md` locators, one line per row; `w1/ScrRows/quote-check.txt` `checked=8 failed=0`
@@ -157,7 +157,7 @@ Command (both ends): `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh va
 None this round, and the reason is measured: the registry's top id is `S339` (276 ids, `S001`-`S339`), the C2 block opens at
 `S340`, and no supersession or staged adoption is drafted, so no row changes its id. The staged band still runs `S203`-`S349`
 (147 ids) — the upper end `S340`-`S349` lies inside the new C2 block — so **any later adoption of a staged row is renumbered
-by document first**, exactly as round 47's S346-S353 → S332-S339 map did. re-checked against the landed rows: S340-S350 are the entry's own ids, no staged row was adopted, so no row
+by document first**, exactly as round 47's S346-S353 → S332-S339 map did. re-checked against the landed rows: S340-S351 are the entry's own ids, no staged row was adopted, so no row
 moved.
 
 ### Id guard and quarantine
@@ -264,6 +264,8 @@ xkeyboard-config moves past 1.13.2 / 2.48, when the host's `kb_*` names change, 
 
 **M48-11** · class `unreceipted-number` (attempt 4) · evidence: the salvaged lesson stated "222 warm fixtures" for the v2 fixture set at `:8` and `:145` of `cf3deeec`'s working copy, while the registered file holds 228 (`registration-v2.md:50` "the 204 v1 fixtures unchanged + 24"; the counter prints `warm=228/228`, `receipts/v2/ctl/FINAL.txt`), and it claimed an L0 question that was never filed (M48-10). Both are numbers or facts transcribed by the author, not emitted by the instrument that owns them. · captured-by: criterion 10 (`corpus/QUALITY.md:16`, "rederive it from the named revision") and 94 (a carried number is emitted by the ledger that owns it) - the rules existed; the attempt-3 draft was never re-derived before the session ended. · fix: both corrected from the instruments (`228` from the counter's own line; the L0 claim replaced by the `grep -c` and `stat` re-reads above); shown able to fail: `grep -cE '[,(] 222 warm|[(]222 warm' corpus/lessons/round-48.md` read 2 on the salvaged copy and reads 0 at the data commit.
 
+**M48-12** · class `flaky-instrument` (attempt 4, harm watch) · evidence: the round-47 frozen C1 counter re-run at the round-48 tip `d8e3d600` read `readonly=fail ... TARGET_MISSED` once, with its only trip `clause=r trips=1 ???( <detached ...>` (`.ufo/waves/round-48/receipts/a4/c1-r47-at-tip.txt:196`), and `trips=0 ... TARGET_MET` on three immediate re-runs of the same bytes (`receipts/a4/c1-r47-at-tip-run2.txt`..`run4.txt`). The trip is bwrap's attach noise, the class M48-7 fixed in the round-48 counters before their freeze; `PRED-C1-r47` is frozen and keeps the old reader. · captured-by: none for frozen counters (M48-7's fix reached only the counters not yet frozen). · fix: a harm watch that re-runs a frozen counter commits every run and reads a `readonly=fail` whose only trip lines are `???(`/`<detached` as instrument noise, never as harm, and re-runs it at least three times; routed to round 49 as a criterion with this receipt set as its shown-to-fail case (one red, three green, same bytes).
+
 ### Applications of existing criteria
 
 - M48-1 → **96** (`quality/check-landed-contract.py`): any unregistered delta between the frozen and the landed out-of-contract list fails (`NARROWED` or `UNDECLARED`).
@@ -277,6 +279,7 @@ xkeyboard-config moves past 1.13.2 / 2.48, when the host's `kb_*` names change, 
 - M48-9 → **61/64** extended in practice by registration v2's rule "the complete control set is scored before data"; no new number (a counter that reads control receipts at the freeze is round-49 work).
 - M48-10 → routed (round 49).
 - M48-11 → **10**/**94** (applied at attempt-4 integration; no new criterion).
+- M48-12 → routed (round 49; harm-watch reading of frozen counters).
 - considerthese proposal 6 → **99** (`check-round-outcome-first.py`): the closure section leads with the round-level outcome.
 
 ### Conflicts recorded for the judge
@@ -432,7 +435,7 @@ The frontier step runs inside the 1-3 claim cap and is not a fourth claim. Its i
    append is insert-only after `| S339 |`, `git diff corpus/SOURCES.md` shows only `+` lines).
 2. **Census** — before: 17 `W04` + 1 `W01` + `mado ok`, exit 0 (`.ufo/waves/round-48/receipts/census-before.txt`);
    after: identical 17 `W04` + 1 `W01` + `mado ok`, exit 0 (`receipts/census-after.txt`, same command).
-3. **Mined mistake** — M48-1..M48-11 above.
+3. **Mined mistake** — M48-1..M48-12 above.
 4. **Sourced claim** — C2 rests on rows `S340`-`S351` opened this round; C1's oracle is the row-47 pin those rows already
    hold, so C1 adds no registry row.
 5. **README frontier** — the landed bullet (`corpus/README.md:112`) names the XKB compile (rows S340-S351) and, in the

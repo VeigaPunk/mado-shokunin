@@ -2234,7 +2234,7 @@ compositor's own call: that a failed compile leaves Hyprland with layout `us` an
 from round 46 (step 4, `corpus/knowledge/hyprland-input-devices-r46.md`; rows S318/S319 in `corpus/SOURCES.md`), cited
 here, never re-claimed. The compile itself was the open half of that entry (its Limits,
 `hyprland-input-devices-r46.md:69`) and of `corpus/README.md:112` at base; ground now
-`corpus/knowledge/xkb-keymap-compile-r48.md` (rows S340-S350).
+`corpus/knowledge/xkb-keymap-compile-r48.md` (rows S340-S351).
 
 Host matrix (libxkbcommon 1.13.2-1, xkeyboard-config 2.48-1; receipt
 `.ufo/waves/round-48/w1/ScrSkill/receipts/xkbcli-matrix.txt` — `compile-keymap` and `list` are read verbs, stdout
