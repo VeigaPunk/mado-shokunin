@@ -2770,3 +2770,26 @@ independently certified. Mistakes M50-1..9; QUALITY 100-102. Round size: w1 54 +
 1. Include prior candidate artifacts and explicitly bind held facts in C1 novelty predicates.
 2. Execute C2 behavioral fixtures independently and require exact expected-rule attribution.
 3. Establish a tracked lane-level tool ledger/checker; w2/RevLedgerR50 found the prior wave-seat ledger missed `mado-hostguard.py` and `mado-keysym.py`.
+
+## Round 51 — tracked tool ledger and Hyprland dispatcher execution (2026-10-27)
+
+`quality/tool-ledger.md` and `corpus/knowledge/hyprland-dispatcher-dispatch-r51.md` land as two separable axis moves. Claims `d2740281`; freeze `56026fcb`; C1 measured at freeze; C2 data `a0e34387`; w2 falsification still pending.
+
+| Claim / axis | Before -> after | Counting command | Score delta / provisional verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) — tracked instrument ledger | Base `ledger=absent population=79`, `TARGET_MISSED`, exit 1 at `6ca8c559`; at `56026fcb`, `population=82 ledger_rows=82 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 selftest=ok TARGET_MET`, exit 0 | `python3 -I quality/counters/c1-r51-ledger.py --repo . --rev <rev> --work <scratch>` (`PRED-C1-r51`) | bounded capability rubric 0/1 → 1/1 (+10.0000); w1 residual attacks are in registration; final verdict awaits w2 |
+| C2 **coverage** (sourced) — dispatcher execution | Entry absent / `admitted=0/1 TARGET_MISSED` at base `6ca8c559`; at `a0e34387`, `clauses=abcd clauses_met=4 admitted=1/1 TARGET_MET`, exit 0; shingle max 0.1% | `TMPDIR=<scratch> python3 -I quality/counters/c2-r51-dispatch-entry.py --repo . --rev <rev> --work <scratch>` (`PRED-C2-r51`) | bounded frontier rubric 0/1 → 1/1 (+10.0000); w1 residuals (generic held tokens; lexical overlap is not semantic proof) disclosed; final verdict awaits w2 |
+
+### Capabilities (round 51)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| tracked instrument ledger | derive the 82-file tools/quality/counters population at a pinned revision and check exact coverage, pointer resolution and nonempty descriptions | `quality/check-tool-ledger.py --selftest --work <scratch>` → 50/50; `quality/counters/c1-r51-ledger.py` at `56026fcb` → 82/82 `TARGET_MET` | 51 |
+
+Sources: 300 → 306 registry rows (S364-S369, tier A, `mined`, opened 2026-10-27); 66 → 67 knowledge entries. Census before exit 0 at 300 rows; census after-data exit 0 at 306 rows (W04 duplicate-URL-across-scopes warnings remain warnings). Mistake M51-1; QUALITY 103. Assimilation: none. C1 and C2 final verdicts and round-shape accounting update after w2.
+
+### Planned (round 52; intent only)
+
+1. Close C1 residual pointer/description semantics with a new pre-data predicate, or explicitly retain the bounded lexical capability.
+2. Close C2 generic held-token and candidate-bearing seat-report novelty residuals without reusing the round-51 predicate.
+3. Revisit the 13-row mado quarantine slice only when cited source payloads can be re-opened; proposal 2 last-live-run freshness remains distinct from C1's inventory.
