@@ -113,3 +113,10 @@ registry, lesson, README and the ten pins under `.ufo/waves/round-46/fetch/`; wr
 plane, the compositor or a host service. Global `input:scroll_factor` and the libinput settings stay readable only
 through `hyprctl getoption`; the keybind keymap (`resolve_binds_by_sym`) is not part of this join.
 
+**Round-51 refinement (append-only; lane-level instrument ledger, no desktop write surface):** `quality/tool-ledger.md` names each
+tracked instrument under `tools/`, top-level `quality/*.py` and `quality/counters/*.py`, with a description and an accountability
+pointer. `quality/check-tool-ledger.py` derives that population from a pinned revision and checks row coverage, dangling paths,
+pointer presence and empty descriptions; it reads Git objects only, writes no repo state, and its `--selftest` uses caller scratch.
+`quality/counters/c1-r51-ledger.py` scores the ledger against the frozen round-51 population predicate. These record instruments
+do not touch config planes, a compositor socket or a host service.
+
