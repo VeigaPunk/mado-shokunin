@@ -34,7 +34,7 @@ def main():
     ap.add_argument("--draft", required=True)
     ap.add_argument("--work", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--side", default="", choices=["", "write", "socket"],
+    ap.add_argument("--side", default="", choices=["", "write", "socket", "refuse"],
                     help="add a side effect to the control: a write attempt, or a socket connect")
     a = ap.parse_args()
     work = os.path.abspath(a.work)
@@ -70,6 +70,8 @@ def main():
     except OSError:
         pass
 """
+    elif a.side == "refuse":
+        side_code = ""   # the refusal check itself is what this variant drops (see refusal_check below)
     elif a.side == "socket":
         side_code = """    try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -86,22 +88,25 @@ def main():
         print("MADO_KEYSYM_SELFTEST: 25/25 passed")
         return 0
     o = parse(argv)
-    if "keymap" not in o or "keysym" not in o or not o.get("disable_compose"):
-        print("mado-keysym: --disable-compose and --keysym are required", file=sys.stderr)
+__REFUSE__    if "keymap" not in o or "keysym" not in o:
         return 2
 __SIDE__    hit = lookup(o["keymap"], o["keysym"])
     if hit is None:
         return emit(0, "")
     return emit(hit[0], hit[1])
 '''
-    imports = {"": "", "write": "import os", "socket": "import socket"}[a.side]
-    body = body.replace("__SIDE__", side_code)
+    imports = {"": "", "write": "import os", "socket": "import socket", "refuse": ""}[a.side]
+    refusal_check = "" if a.side == "refuse" else (
+        '    if not o.get("disable_compose") or "keysym" not in o:\n'
+        '        print("mado-keysym: --disable-compose and --keysym are required", file=sys.stderr)\n'
+        '        return 2\n')
+    body = body.replace("__SIDE__", side_code).replace("__REFUSE__", refusal_check)
     text = builder.COMMON
-    name = {("", "c17-draft-fixture-table"), ("write", "c18-draft-fixture-table-write"),
-            ("socket", "c19-draft-fixture-table-socket")}
+
     text = text.replace("__NAME__", {"": "c17-draft-fixture-table",
                                      "write": "c18-draft-fixture-table-write",
-                                     "socket": "c19-draft-fixture-table-socket"}[a.side])
+                                     "socket": "c19-draft-fixture-table-socket",
+                                     "refuse": "c20-fixture-table-refusal-blind"}[a.side])
     meta = {
         "": ("answer only the keysyms the counter's own fixtures name, keyed by (keymap sha256, ARG)",
              "clause g: the nonce cases are keymaps and ARGs the fixture list does not contain; with clause g "
@@ -109,6 +114,9 @@ __SIDE__    hit = lookup(o["keymap"], o["keysym"])
         "write": ("answer every fixture, and write (attempt) a cache file",
                   "clause r (write attempt after the python3 execve) AND clause g (no nonce coverage): with both "
                   "switched off it scores TARGET_MET, with either one live it does not"),
+        "refuse": ("answer every fixture, and answer even when --disable-compose or --keysym is missing",
+                   "clause s (the two documented refusals must exit 2 without printing a table) AND clause g (no "
+                   "nonce coverage)"),
         "socket": ("answer every fixture, and open and connect a socket",
                    "clause r (socket/connect after the python3 execve) AND clause g (no nonce coverage): with both "
                    "switched off it scores TARGET_MET, with either one live it does not"),

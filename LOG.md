@@ -2539,3 +2539,12 @@ pointer → the lesson's `### Assimilation` and M37-2. The C1 counter is re-run 
 - Data `e5d0130d`: entry, lesson, QUALITY 96/99 instruments. Measured: C1 `warm=228/228 explained=418/418 ... TARGET_MET`, C2 `admitted=1/1 TARGET_MET` (`receipts/c1-after-data.txt`, `c2-after-data.txt`).
 - Re-verification (freshness): the operator's resolver cache, overwritten by a w2 mutant at 22:26 (M48-10), was rewritten by a resolver run at 23:59:27 (metadata only read).
 - Residual `a4r1` (8 reviewer/critic seats, attempt 4) against the committed data: 4 reports, no blocker (`a4r1/MadoA4RevC1v2Diff.md`, `MadoA4CritEntry.md`, `MadoA4CritSalvage.md`, `MadoA4CritAdmission.md`); one lesson locator fixed; 4 seats lost to the 1 MiB file cap colliding with the clone recipe (M48-13). Harm watch: round-47 counters at `d8e3d600` (C2 MET; C1 MET 3 of 4, one bwrap-noise flake, M48-12); do-nothing controls all miss (`receipts/a4/ctl-do-nothing.txt`).
+
+## Round 49 (2026-10-27, hyaku run 9, attempt 1)
+
+- Protocol load; census before `.ufo/waves/round-49/receipts/census-before.txt` exit 0; base `03e4ae76`; operator-owned digest before `receipts/operator-state-before.txt`. Claims `5f37c1b8`; w1 build wave (45 seats, policy v1).
+- Freeze `dd2e827e`: registration, C1/C2 counters (w1 drafts + L1 isolation, generator and clause-j edits), 633 fixtures, w1 evidence, pins, candidates; the 47 round-48 sidecars committed (N1, M48-8).
+- C1 data `430d2569`: `tools/mado-keysym.py`. Measured `fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET` at nonces 4949 and 31337 (`receipts/c1-after-data*.txt`); base `fixtures=0/633 ... TARGET_MISSED` (`receipts/c1-base.txt`).
+- C2: candidate entry does not meet `PRED-C2-r49`; no data commit; rows S352-S363 drafted, not appended (honest stop).
+- Re-verification (freshness): operator cache `~/.cache/xdg-terminal-exec` digest unchanged across the round (`receipts/operator-state-after.txt`); census after identical, exit 0.
+- Wave w2 not dispatched: the L1's request budget ended the round (M49-4). Lesson `corpus/lessons/round-49.md`.

@@ -2726,3 +2726,26 @@ Axis table re-derived at `e5d0130d` (`receipts/axis-data.txt`, derived column): 
 1. M48-8: widen the session-material gate to the 16 synthetic `/home/<user>` shapes it misses and to scopes beyond `.ufo/` (`w1/SentPrivacy`).
 2. M48-10: a mutant that writes runs only inside the sandbox; the operator cache path is a must-not-change file with a before/after digest receipt.
 3. `w2/SentScratch`: counters refuse a `/tmp` `--work`/`TMPDIR` (scratch rule 4); the receipt generator path and the uncited meson pin (`registration-v2.md` residuals).
+
+## Round 49 - keysym-to-key parity (`tools/mado-keysym.py`) and the bind key match (2026-10-27, attempt 1)
+
+`tools/mado-keysym.py` now answers which physical key, layout, level and modifier masks type a keysym under a compiled keymap, printing exactly what libxkbcommon 1.13.2's `xkbcli how-to-type --disable-compose --keysym` prints. Claims `5f37c1b8`; freeze `dd2e827e`; C1 data `430d2569`. Wave w1 only (w2 not run: L1 request budget).
+
+| Claim / axis | Before -> after | Counting command | Self-verdict |
+|---|---|---|---|
+| C1 **operability** (capability acquisition) - `tools/mado-keysym.py` | `fixtures=0/633 generated=0/150 selftest=fail readonly=fail tool=absent verdict=TARGET_MISSED` exit 1 at base (`.ufo/waves/round-49/receipts/c1-base.txt`) -> `fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET` exit 0 at `430d2569` (`receipts/c1-after-data.txt`, nonce 4949; `c1-after-data-nonce2.txt`, nonce 31337) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && TMPDIR=<scratch> python3 -I quality/counters/c1-r49-keysym.py --repo . --rev <rev> --work <scratch> --nonce <n>` (`PRED-C1-r49`) | **TARGET_MET** (unattacked: no w2) |
+| C2 **coverage** (sourced) - `corpus/knowledge/hyprland-bind-key-match-r49.md` | `admitted=0/1` at base -> not landed (`receipts/c2-at-data.txt`, `clause=a entry_absent`) | `cd /home/vgpnk/Projects/shokunin/mado-shokunin && TMPDIR=<scratch> python3 -I quality/counters/c2-r49-bind-entry.py --repo . --rev <rev>` (`PRED-C2-r49`) | **honest stop** |
+
+### Capabilities (round 49)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| keysym-to-key parity with how-to-type | given a keymap serialized by `xkbcli compile-keymap` and a keysym (name, `U` name, hex or decimal), print the keycode, key name, layout, level and every modifier mask that types it, byte-equal to the pinned `xkbcli how-to-type --disable-compose --keysym`; no process, socket or write | `tools/mado-keysym.py` (selftest 38/38); `quality/counters/c1-r49-keysym.py` 633/633 + 150/150 at `430d2569` | 49 |
+
+Sources 288 -> 288 rows (S352-S363 drafted and opened, not appended: no admitted entry cites them); census identical before/after, exit 0. Mistakes M49-1..4. Axis table not re-derived this round (unchanged: no indexed entry, no QUALITY criterion added).
+
+### Planned (round 50; intent only)
+
+1. Run w2 against the round-49 freeze (`.ufo/waves/round-49/w2-items.json`, 38 items) and land C2 (bind key match) under `PRED-C2-r49` after fixing row-pin binding and quote attachment.
+2. Install gate v3 (`w1/ExecSessionShapes`) with a delta predicate and the host guard (`w1/ExecMutantSandbox`).
+3. QUALITY criteria for M49-1 and M49-3.
