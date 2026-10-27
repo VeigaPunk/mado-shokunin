@@ -15,10 +15,10 @@ report: `.ufo/reports/round-54/mado.md` (fleet commit `79a18c6145699395a32fa4526
 | Cited commits exist / branch ancestry | `git cat-file -e <hash>^{commit}` + `git merge-base --is-ancestor <hash> refs/heads/master` for `350d30e…`, `9ea8739…`, `fe03bb3…` | all three exist and are ancestors of `master` | pass |
 | Lane clean and pushed | `scripts/hyaku/jj-lane.sh state mado-shokunin`; `git -C mado-shokunin status --porcelain`; `git -C mado-shokunin ls-remote origin refs/heads/master` | `ahead=0 behind=0 tracked=0 untracked=0`; porcelain empty; remote `master=fe03bb3…` | pass |
 | Prompt contract | dispatched `.ufo/prompts/mado-round-54.md` | mission/axes and 1–3 claims, frontier, L2, report path/SHONEN/hash, commit/push and write scope all present | pass; prompt follows required contract |
-| Work order / WAVE-DONE evidence | freeze commit time 13:42:45-03; w1 results report launch/ready 14:05:25/14:05:28; W2 settled outputs exist | freeze landed before w1 dispatch; both results JSONs committed, 37+32 results. Three required sidecars are absent (R54Seat06, R54Seat19, R54W2Seat06), despite terminal outputs. No explicit WAVE-DONE message artifact in repo. | status-neutral defects |
+| Work order / WAVE-DONE evidence | freeze `350d30e…` committer time `14:11:10-03`; w1 results report launch/ready 14:05:25/14:05:28; W2 settled outputs exist | freeze commit postdates the wave dispatch timestamp; both results JSONs committed, 37+32 results. Three required sidecars are absent (R54Seat06, R54Seat19, R54W2Seat06), despite terminal outputs. No explicit WAVE-DONE message artifact in repo. | status-neutral defects |
 | Driver digest | `.ufo/watchdog.log` copied verbatim | `2026-10-27T13:47:04-03:00 launch mado round=54 pgid=2351747 driver=hyaku-inline attempt=1`; `2026-10-27T14:01:16-03:00 lane-dead-no-report mado round=54; retry same round (hyaku-inline attempt=1: MadoR54 died: provider fallback luna invalid_prompt (infra))`; `2026-10-27T14:01:18-03:00 launch mado round=54 pgid=2485229 driver=hyaku-inline attempt=2`; `2026-10-27T15:10:29-03:00 complete mado round=54; hyaku-inline attempt=2` | recorded |
 
-Dispatch discrepancy: report/LOG/w1 receipt state seats launched 14:05:25 and ready 14:05:28, but watchdog's only successful dispatch line is 13:47:04. The mutable digest establishes the attempt retry and completion, not that later w1 timestamp; record this as an attribution/timestamp conformance defect. Round-54 round artifacts confirm 69 terminal seats, but three assigned report sidecars are missing. Prompt has run-10 64–128 directive while actual shape is 69; wave shape complies. No claims upgraded on this basis.
+The lane report/LOG says w1 launched/ready 14:05:25/14:05:28; the committed registry `createdAt=2026-10-27T17:05:25.338Z` independently records that dispatch. Attempt 1 at 13:47:04 was terminated/retried; attempt 2 launched at 14:01:18. The dispatch time is therefore present in lane evidence, not absent; no separate missing-watchdog-dispatch defect is inferred. The true M54-2/M54-4 defect is that freeze commit committer time 14:11:10 followed that wave launch. Three seat sidecars remain absent. Prompt has run-10 64–128 directive while actual shape is 69; wave shape complies. No claims upgraded on this basis.
 
 ## 2. Per-claim re-check
 
@@ -28,8 +28,7 @@ Both counts below were re-measured against committed Git trees, not accepted fro
 
 - `git -C mado-shokunin ls-tree -r --name-only e25149fe… quality/counters | awk 'index($0,"c1-r54-errata-truth.py"){n++} END{print n+0}'` → `0`.
 - Same command at `fe03bb3…` → `0`.
-- The lane's receipt `receipts/after-content.txt` reports the same 0→0 at content revision `9ea8739…`; its claimed `MADO_SELFTEST: 460/460` was independently reproduced by running the committed script bytes extracted to `/tmp/mado-r54-verify.sh`: `bash /tmp/mado-r54-verify.sh --selftest` → `MADO_SELFTEST: 460/460 assertions passed`, exit 0. This is only a no-harm selftest; no counter claim passes.
-- The seat evidence describes literal/normalized quote disagreement, a self-attestable control tally, and P19's proposition/branch mismatch. Since no counter landed and the frozen target is not met, verdict remains honest stop.
+- The lane receipt `receipts/after-content.txt` reports the same 0→0 at content revision `9ea8739…`. **Gate-boundary correction:** an earlier version of this spot-check ran the committed `tools/mado-verify.sh --selftest`, which violates PROTOCOL §Gate standard's explicit instruction not to execute a sibling lane's gate. Withdraw that run as closure evidence; the lane's committed receipt remains evidence-verified only. It did not affect claim/axis grades.
 
 **C2 — coverage / sourced uwsm-app environment entry: unprovable (honest stop).**
 
@@ -46,7 +45,7 @@ Both counts below were re-measured against committed Git trees, not accepted fro
 | operability (C1) | unprovable | r54 counter count re-measured 0→0; no passing production result |
 | coverage (C2) | unprovable | candidate entry re-measured 0→0; 69 knowledge notes/index remain 69 |
 | depth | unchanged | no depth claim or new admitted knowledge |
-| freshness | unchanged | no freshness claim; selftest reproduced green but is not a new domain refresh |
+| freshness | unchanged | no freshness claim; closure did not execute the lane gate (see §6 correction) |
 | calibration | unchanged | SCORECARD records both claims as honest stops and no score delta; no self-attestation elevated |
 | adjacency | unchanged | S375/S377 rejected as adjacent systemd ground; no contested scope absorbed |
 
@@ -73,8 +72,26 @@ The round lesson had no non-author sample at filing; this review now supplies on
 
 1. **M54-5 / P19 false proposition:** append a correction/superseding entry, preserving the old bytes and index history; verify the complete branch set, not only the quoted arm. Owner: mado.
 2. **M54-1 / C2 host-set mismatch and M54-3 / quote mismatch:** rebuild any future coverage claim from byte-verified source locators and actual host lines; do not revise a frozen predicate after scoring. Owner: mado.
-3. **M54-2/M54-4 pre-data freeze ordering:** current committed freeze `350d30e…` is at 13:42:45, before the watchdog attempt-2 launch at 14:01:18; however report states w1 launched 14:05:25 and claims the freeze commit at 14:11:10. The recorded date conflicts with Git commit author time; preserve the underlying ambiguity and require a pre-wave revision/timestamp receipt. Owner: mado.
-4. **Seat sidecars and dispatch digest:** three terminal seat outputs lack assigned report files; report's 14:05:25 w1 dispatch does not match the only watchdog launch at 13:47:04. Preserve result JSON, do not fabricate sidecars; record durable dispatch evidence next round. Owner: mado.
+3. **M54-2/M54-4 pre-data freeze ordering:** committer time `14:11:10-03` postdates the committed w1 dispatch registry `createdAt=14:05:25.338-03`; freeze before writing `.ready`. Owner: mado.
+4. **Seat sidecars:** three terminal seat outputs lack assigned report files; retain results JSON, do not fabricate reports. Owner: mado.
 5. **W04 duplicates and W01 S277 warning:** census is clean (`mado ok`, exit 0); warnings persist and remain warnings, continue the existing QUALITY-17 distinct-scope review. Owner: mado.
 
 SHONEN checklist appears fully checkable by a non-author from existing evidence; operator owns promotion. No `[x]` changes made.
+## 6. Closure correction — chronology and gate boundary
+
+The first version of this spot-check misread commit author time as commit time and incorrectly said the freeze preceded the wave. Corrected against Git committer metadata and the committed wave registry:
+
+| Evidence | Command | Observed |
+|---|---|---|
+| Freeze commit chronology | `git -C mado-shokunin show -s --format='author=%aI committer=%cI' 350d30e…` | author `13:42:45-03`; committer `14:11:10-03` |
+| W1 dispatch chronology | `git show fe03bb3…:.ufo/waves/round-54/w1/swarm-registry.json` | `createdAt=2026-10-27T17:05:25.338Z` = `14:05:25.338-03`; ready evidence says 14:05:28 |
+| Attempt-2 watchdog launch | copied watchdog digest above | `14:01:18-03` |
+
+The freeze timestamp defect is affirmed: M54-2/M54-4 are genuine; prevent recurrence by committing the freeze before writing `.ready`.
+
+Three missing report sidecars remain a conformance defect; do not claim WAVE-DONE handoffs without committed handoff evidence.
+
+The 460/460 run mentioned in §2 was performed by closure in error: PROTOCOL §Gate standard says the integrator must not execute a sibling gate. It is withdrawn from evidence; no claim or axis grade relied on it. Future closure only verifies lane receipts.
+The reviewed disposition remains: lane status `ok`; C1/C2 unprovable honest stops; no owned axis harmed; expansion unchanged, quality harmed, discernment improved; not admitted.
+
+The source re-review additionally found static environment-import declarations at host `autostart.conf:12-13`. The S375 reject remains correct for the frozen system-manager target, but this in-province residue may support a distinct future claim; route for consideration, not automatic adoption.
