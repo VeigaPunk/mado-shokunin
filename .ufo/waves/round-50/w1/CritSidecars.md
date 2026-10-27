@@ -1,0 +1,15 @@
+# CritSidecars — attack on committed 47-sidecar disposition
+
+**Verdict: disposition supported on the tested gate semantics; important limitation: the round-49 evidence does not establish the round-50 v3 gate's behavior for the sidecars.** Axes: operability/privacy gate integrity supported for v2; coverage of v3 sidecar interactions not evidenced here.
+
+At the round-50 claim commit, round-49's disposition says all 47 sidecars were committed (round-49 `.ufo/waves/round-49/w1/CritSidecars.md:3,13-25`), and its digest receipt records 47/47 archive/target/registry matches at the then-current round-49 tip (`.../CritSidecars/receipts/sidecar-digest-verification.txt:4-52`). That receipt is historical, not proof re-measured at round-50 commit 13631f2.
+
+Shape-only review: the 45 round-45 targets are monitor-fixture JSON paths; the two round-46 targets are CritW2Gate markdown/report. Their gate receipt shows only waivers for R3 monitor identity on the former and R2 process-table plus R3 monitor-identification on the latter; its two R1 client-dump findings are expressly rejected as `rule-not-listed` (`.../CritSidecars/receipts/gate-with.txt:1-54`). The round-49 analysis claims reserved namespace checks and forged real-shaped values rejected (`.../findings.md:57-79`), but I did not open all 47 target blobs at the round-50 revision and therefore cannot independently certify that none contains real material. No positive evidence in the listed results shows a real value waived.
+
+Gate agreement is only demonstrated for v2: the installed gate at base 8ae47b9 is v2 (the round-50 claims identify it as such, `claims.md:24-30`); round-49 receipts report 159 findings before and 110 after sidecars, with 52 waived findings across 48 files and 162 findings with waivers disabled (`.../findings.md:38-55`). The v3 draft is round-49 `ExecSessionShapes/check-session-material.py`; it adds R7/R8/R9 structural home-path, account-column, and exec-cache findings, while retaining the waiver mechanism (`.../check-session-material.py:228-266,836-917`). Its sidecar interaction was not established by those v2 receipts: the v3 shape samples characterize newly introduced rules, not a fresh sidecar-by-sidecar waiver run. Since its waivable rule set includes R7/R8/R9 as well as R1-R4 (`.../check-session-material.py:246-261`), a proper agreement check must ensure those new matches in the 47 targets either are correctly reserved/synthetic and waived or remain findings; the v2 receipt cannot answer that.
+
+**Smallest safe correction:** before freezing/accepting this disposition for v3, run a bounded, no-host-state v3 scan at the round-50 revision with sidecars enabled and `--no-waivers`, recording per-target shape-only classifications for all 47 and the exact delta; confirm every waived match's identity is reserved and no newly covered real-shaped value is suppressed. Until then retain the committed sidecars as the supported v2 disposition, but mark v3 agreement unverified rather than infer it from v2.
+
+Evidence paths are lane-relative above. No gate or fixture was executed by this review.
+
+Report: .ufo/waves/round-50/w1/CritSidecars.md

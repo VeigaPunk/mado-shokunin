@@ -1,0 +1,50 @@
+# RevN4Matrix round-50 w1 receipt (independent re-check)
+# lane: mado-shokunin; base 03e4ae76aff7a4be59cb69970dd553baa319695a tip 8ae47b957034ae21012bbf09173cca2c48be345e
+
+## 0. input identity (seat copies vs round-48 committed originals)
+sha256(c2v2-matrix-full.txt)          = bf496e777c187c6a7c4db8665227321c14072a8d3993071d3c20dc7c6fddff2f
+sha256(frozen-c2v2-matrix.txt [seat]) = ae4ce14c8878bfb9b832cad26d6323fc6372859ad385d7b22522c957ca90e474
+sha256(source-summary.json [seat])    = f2b6af9bbbc1eee804306941e31af174d7071f4aed8a33f09722e61c9df4106e
+sha256(c2v2-revc2counter-summary.json [r48]) = f2b6af9bbbc1eee804306941e31af174d7071f4aed8a33f09722e61c9df4106e
+sha256(c2v2-revc2counter-matrix.txt [r48]) = ae4ce14c8878bfb9b832cad26d6323fc6372859ad385d7b22522c957ca90e474
+PASS matrix-sha-matches-header
+PASS frozen-sha-matches-header
+PASS summary-sha-matches-header
+PASS seat-summary-equals-r48-original
+PASS seat-frozen-equals-r48-original
+blob .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json: base=5e5f15e78006 tip=5e5f15e78006 SAME
+PASS blob-unchanged .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json
+blob .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-matrix.txt: base=a765dc37cf84 tip=a765dc37cf84 SAME
+PASS blob-unchanged .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-matrix.txt
+blob .ufo/waves/round-48/l1-draft/v2/c2v2-harness-revc2counter.py: base=3f0b92f04141 tip=3f0b92f04141 SAME
+PASS blob-unchanged .ufo/waves/round-48/l1-draft/v2/c2v2-harness-revc2counter.py
+
+## 1. git diff of round-48 paths between base and tip (item requirement: empty)
+git diff --stat output: ''
+git diff --name-only line count: 0
+PASS diff-stat-round48-empty
+round-48 path count at base=2043 tip=2043
+PASS round48-path-set-equal
+
+## 2. full matrix vs round-48 summary.json
+matrix rows parsed: 98; summary records: 98; footer: 'rows 98'
+PASS row-count-98
+PASS count-equals-summary
+PASS set-equality
+PASS no-duplicate-names
+PASS order-equals-summary
+PASS footer-rows-98
+PASS row-values-match-summary(all 98)
+
+## 3. frozen 96-row round-48 matrix
+frozen data rows: 95 (+1 pos clauses line); frozen names: 96; missing vs summary: ['a-rev-base-direct', 'a-entry-at-base']
+PASS frozen-row-count-96
+PASS frozen-missing-exactly-two
+PASS frozen-pos-line-present
+PASS frozen-row-values-consistent
+
+## 4. recovered rows vs the receipt's recovery comments
+PASS recovered-rows-consistent
+
+
+RESULT PASS failures=0

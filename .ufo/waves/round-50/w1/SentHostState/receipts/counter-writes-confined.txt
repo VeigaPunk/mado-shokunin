@@ -1,0 +1,18 @@
+$ python3 - (classify every write-flag open and every create/unlink/rename in the leader-only strace of the frozen counter run)
+traced write-ish syscalls: 3872 {'mkdir': 180, 'openat': 2727, 'unlink': 786, 'unlinkat': 179}
+resolved inside scratch (/dev,/proc,/sys included): 3872   fd-relative (dirfd under scratch): 179
+resolved OUTSIDE scratch: 0
+
+$ grep -c for the real and the fake home in the same trace
+fake-home mentions: 0
+real-home mentions: 4 (all four are O_RDONLY opens of the lane repo + fixtures:)
+openat(AT_FDCWD, "~/Projects/shokunin/mado-shokunin/quality/counters/c1-r49-keysym.py", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "~/Projects/shokunin/mado-shokunin/quality/counters/c1-r49-keysym.py", O_RDONLY) = 3
+openat(AT_FDCWD, "~/Projects/shokunin/mado-shokunin/quality/counters/c1-r49-fixtures.json", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "~/Projects/shokunin/mado-shokunin/quality/counters/c1-r49-fixtures.json", O_RDONLY|O_CLOEXEC) = 3
+
+$ find fake home trees after each run (the canary: only the five dirs the seat pre-created)
+fakehome  5 entries: .config .cache .local .local/share .local/state 
+fakehome2 5 entries: .config .cache .local .local/share .local/state 
+fakehome3 5 entries: .config .cache .local .local/share .local/state 
+fakehome4 5 entries: .config .cache .local .local/share .local/state 

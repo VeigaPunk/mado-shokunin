@@ -1,0 +1,40 @@
+# gate invocations and results (values never printed; HOME/XDG_*/TMPDIR all under scratch)
+# gate v2 = quality/check-session-material.py at 82c9053ae2e8b7db2fb8c0e195c32b8b151a593cf9412dcae3589427ac2dfa6f
+# gate v3 = .ufo/waves/round-49/w1/ExecSessionShapes/check-session-material.py at ffdc9d62c387050e016cf9d0eaacbf87f37d6647021cbd2c492eb6328dddbb61
+#           (= .ufo/waves/round-50/w1/ExecGateV3/check-session-material.py, byte-identical)
+
+## A. round-49 committed tree at 13631f24 (scratch clone, --scope all)
+$ python3 -I <gate> --repo <clone> --rev 13631f24050f22db92bf5bd33e0f4d014192992e --scope all
+v2: SESSION_MATERIAL: files=23274 findings=121 rev=13631f24050f22db92bf5bd33e0f4d014192992e
+    SESSION_MATERIAL_WAIVED: findings=52 files=48   rc=1
+    R1=40 R2=40 R3=13 R4=3 R5=25
+v3: SESSION_MATERIAL: files=23274 findings=228 rev=13631f24050f22db92bf5bd33e0f4d014192992e
+    SESSION_MATERIAL_WAIVED: findings=52 files=48   rc=1
+    R1=40 R2=40 R3=13 R4=3 R7=49 R8=54 R9=4 R5=25
+round-49 subset: v2 3 findings (w1/ExecSessionShapes/check-session-material.py R1/R2/R3);
+                 v3 4 (the same 3 + w1/ExecSessionShapes/receipts/base-new-rule-samples.txt R7).
+
+## B. round-50 pre-commit snapshot (scratch fixture repo: .ufo/waves/round-50 + quality/waivers
+##    + SKILL.md, 285 files committed, 267 scanned, --scope all)
+v2: 3 findings - all on .ufo/waves/round-50/w1/ExecGateV3/check-session-material.py (R1/R2/R3)
+v3: 4 findings - the same 3 + .ufo/waves/round-50/w1/ScrCorrectionsR50/receipts/d2-seat-state.txt
+    rule=R8_ACCOUNT_COLUMN count=2 detail=rows=2
+
+## C. blindness control: a synthetic repository whose only file is a binds-shaped JSON dump
+##    (6 records, reserved synthetic values, no host value)
+v2: SESSION_MATERIAL: files=1 findings=0 rc=0
+v3: SESSION_MATERIAL: files=1 findings=0 rc=0
+
+## D. waiver mechanics for the wave copy of the gate (fixture: v3 draft installed at
+##    quality/check-session-material.py + wave copy + sidecar + registry line)
+kind=gate-copy: 3 WAIVER lines, findings fall to the installed gate source only (3 self-findings).
+kind=fixture:   refused - the wave copy's constants do not all sit in the reserved namespace
+                (findings return: wave copy 3 + gate source 3).
+The installed gate source itself is always 3 findings under --scope all and cannot be waived
+(W1 restricts registry paths to .ufo/waves/).
+
+## E. round-50 live-tree scan (uncommitted bytes, own scanner, counts only)
+scan-round50-tree.json: files=414 acct_path_lines=192 form_prose=60 form_codeticks=117
+  form_command=15 structural_*=0 account_column_rows=1 file binds_records=0 hostname=0
+scan-round49-at-13631f24.json: files=939 acct_path_lines=236 structural_*=0 binds_records=192
+  (one file) binds_with_arg=184 binds_with_description=190 binds_switch_keys=2 hostname=1

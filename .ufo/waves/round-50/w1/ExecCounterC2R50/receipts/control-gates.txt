@@ -1,0 +1,22 @@
+# PRED-C2-r50 receipt: control gates (source, sha256 at HEAD, patch locators)
+# date: 2026-10-27T06:08:04Z
+# Each control is a git repo whose HEAD quality/check-session-material.py is the gate under test.
+## ctrl-stub (flag every non-empty line; 94/94 selftest naming the 69 v2 cases)
+sha256: 3c0a46b9980638ba28a30f24f3a259ef4dd37b0979c4c987979e77f0af5c9848
+7:NAMES = ('e2e-empty-ufo-clean', 'e2e-exit-1-on-findings', 'e2e-fixture-files-count', 'e2e-negative-repo-exit-0', 'e2e-
+8:PAD = ["control-pad-%02d" % i for i in range(25)]
+45:                print("FINDING file=%s rule=STUB_LINE count=1 detail=line=%d" % (path, number))
+## ctrl-scope-all (v2 gate, default scope all)
+sha256: 8e2b8e435ecdb5c35d3a75d781f7cf66ec0db8fb01dca1ff4ef2905eeff3214a
+787:        gate_source=DEFAULT_GATE_SOURCE, use_waivers=True, scope="all", serials=()):
+1606:    parser.add_argument("--scope", choices=("ufo", "all"), default="all",
+## ctrl-ufo-default (v3 rules, DEFAULT_SCOPE ufo)
+sha256: 3758808c10938cb1ab9b969c3f342196836f7782c23984e8abc4f53e1c7638a7
+217:DEFAULT_SCOPE = "ufo"
+## patched v2 selftest failures under the scope flip (ctrl-scope-all)
+SELFTEST FAIL case=e2e-outside-ufo-not-scanned files=2 findings=[('corpus/leak.json', 'R1_CLIENT_DUM
+SELFTEST FAIL case=e2e-empty-ufo-clean code=0 files=1 findings=[]
+SELFTEST FAIL case=waiver-gate-copy-waived findings=[('quality/gate.py', 'R1_CLIENT_DUMP', 1, 'objec
+SELFTEST FAIL case=waiver-gate-copy-mismatch-rejected findings=[('.ufo/waves/round-46/w1/Seat/gate-c
+## patched v3 selftest failures under the ufo default (ctrl-ufo-default)
+SELFTEST FAIL case=v3-default-scope-all-sees-outside-ufo files=1 findings=[]

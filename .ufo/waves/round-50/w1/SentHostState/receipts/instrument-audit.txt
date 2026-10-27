@@ -1,0 +1,38 @@
+# where every round-50 instrument could write host state: computed locators (grep -n / sed -n)
+
+## quality/counters/c1-r49-keysym.py (frozen PRED-C1-r49)
+quality/counters/c1-r49-keysym.py:406: self.kmdir = os.path.join(work, "keymaps")
+quality/counters/c1-r49-keysym.py:416: return {"PATH": "/usr/bin", "HOME": home, "XDG_CONFIG_HOME": os.path.join(home, ".config"),
+quality/counters/c1-r49-keysym.py:455: path = os.path.join(self.kmdir, hashlib.sha256(guarded).hexdigest()[:24] + ".xkb")
+quality/counters/c1-r49-keysym.py:543: "--setenv", "HOME", "/nonexistent", "--setenv", "TMPDIR", "/tmp"]
+quality/counters/c1-r49-keysym.py:778: tmp = os.environ.get("TMPDIR")
+quality/counters/c1-r49-keysym.py:786: work = tempfile.mkdtemp(dir=work_root, prefix="c1r49-")
+quality/counters/c1-r49-keysym.py:790: shutil.rmtree(work, ignore_errors=True)
+
+## quality/counters/c2-r49-bind-entry.py (frozen PRED-C2-r49)
+quality/counters/c2-r49-bind-entry.py:1029: """A scratch root from TMPDIR; /tmp and an absent TMPDIR are refused (SentScratch)."""
+quality/counters/c2-r49-bind-entry.py:1043: env = {"PATH": "/usr/bin", "LANG": "C.UTF-8"}
+quality/counters/c2-r49-bind-entry.py:1044: for keep in ("XDG_RUNTIME_DIR", "HYPRLAND_INSTANCE_SIGNATURE"):
+quality/counters/c2-r49-bind-entry.py:1048: S = tempfile.mkdtemp(dir=tmp_root(), prefix="c2r-")
+quality/counters/c2-r49-bind-entry.py:1050: for key in ("HOME", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME",
+quality/counters/c2-r49-bind-entry.py:1053: os.makedirs(env[key])
+  (trailing): lines 1052-1054 assign env[HOME|XDG_*] under the scratch S and makedirs them
+env[key] = os.path.join(S, key.lower())
+os.makedirs(env[key])
+p = subprocess.run([k, "binds", "-j"], capture_output=True, env=env, timeout=60)
+
+## tools/mado-keysym.py (candidate tool)
+  import base64
+  import json
+  import re
+  import struct
+  import sys
+  import zlib
+tools/mado-keysym.py:1665: with open(keymap_path, "rb") as handle:
+  imports: base64,json,re,struct,sys,zlib,bisect -> no os/tempfile; the tool cannot create a file
+
+## quality/check-session-material.py (installed v2) and the v3 draft
+quality/check-session-material.py:1583: scratch = tempfile.mkdtemp(prefix="csm-selftest-", dir=os.environ.get("TMPDIR") or None)
+.ufo/waves/round-49/w1/ExecSessionShapes/check-session-material.py:2078: scratch = tempfile.mkdtemp(prefix="csm-selftest-", dir=os.environ.get("TMPDIR") or None)
+.ufo/waves/round-49/w1/ExecSessionShapes/check-session-material.py:1516: target = os.path.join(root, relpath)
+  fixture repos are written under that mkdtemp root; root falls back to /tmp when TMPDIR is unset

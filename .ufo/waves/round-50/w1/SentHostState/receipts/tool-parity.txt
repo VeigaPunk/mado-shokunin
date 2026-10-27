@@ -1,0 +1,14 @@
+# the candidate tool at the round-50 base, run from committed bytes, compared with the host judge
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 8ae47b95:tools/mado-keysym.py | sha256sum
+dcc13cce3b7134946208116cd98599fb8f56a2b81fc6f26b9598ac5429b40265  -
+$ python3 -I mado-keysym.py --selftest  (from that blob, HOME/XDG_* = seat fake home, TMPDIR = seat scratch)
+MADO_KEYSYM_SELFTEST: 38/38 passed
+rc=0
+
+# parity on a compile-keymap-serialized keymap (us), three arguments incl. the name clause g flags:
+fivesixths       judge rc=0 bytes=119 | tool rc=0 bytes=119 | stdout_equal=yes
+XF86AudioMute    judge rc=0 bytes=187 | tool rc=0 bytes=187 | stdout_equal=yes
+A                judge rc=0 bytes=243 | tool rc=0 bytes=243 | stdout_equal=yes
+
+# the tool imports no os/tempfile module, so it cannot create a file (grep -n on the blob):
+5:from memory, so it writes nothing either). Python 3 standard library only. 98:import base64 99:import json 100:import re 101:import struct 102:import sys 103:import zlib 104:from bisect import bisect_right 

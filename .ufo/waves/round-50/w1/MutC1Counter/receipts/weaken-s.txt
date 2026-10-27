@@ -1,0 +1,83 @@
+PRED-C1-r49-replica: cases=44 fixtures=14 generated=30 header=bound work=work weakened=s
+CTL c01-absent                 t=absent   s=-                      f=0/0 g=0/0 trips=0   verdict=TARGET_MISSED stop=t (tool absent)
+CTL c02-header-only.py         t=present  s=ok(weakened)           f=0/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=f (0/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-03 br keysym=Return rc=0/0 out differs
+CTL c03-first-match-only.py    t=present  s=ok(weakened)           f=12/14 g=27/30 trips=0   verdict=TARGET_MISSED stop=f (12/14); g (27/30)
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-13 us keysym=Escape rc=0/0 out differs
+    gen-04 no keysym=EuroSign rc=0/0 out differs
+    gen-28 no keysym=dead_acute rc=0/0 out differs
+CTL c04-no-modifiers.py        t=present  s=ok(weakened)           f=13/14 g=23/30 trips=0   verdict=TARGET_MISSED stop=f (13/14); g (23/30)
+    fx-02 br keysym=slash rc=0/0 out differs
+    gen-02 no keysym=bracketleft rc=0/0 out differs
+    gen-04 no keysym=EuroSign rc=0/0 out differs
+    gen-15 se keysym=bracketleft rc=0/0 out differs
+CTL c05-exec-xkbcli.py         t=present  s=ok(weakened)           f=14/14 g=30/30 trips=88  verdict=TARGET_MISSED stop=r (fx-00: clone3: clone3({flags=CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND, exit_signal=SI)
+CTL c06-cache-table.py         t=present  s=ok(weakened)           f=14/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=g (0/30)
+    gen-00 br keysym=0x0 rc=0/2 out equal
+    gen-01 it keysym=s rc=0/0 out differs
+    gen-02 no keysym=bracketleft rc=0/0 out differs
+    gen-03 gb keysym=0x0 rc=0/2 out equal
+CTL c07-read-fixture-repo.py   t=present  s=ok(weakened)           f=0/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=f (0/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-03 br keysym=Return rc=0/0 out differs
+CTL c08-writes-file.py         t=present  s=ok(weakened)           f=14/14 g=30/30 trips=44  verdict=TARGET_MISSED stop=r (fx-00: write: openat(AT_FDCWD, "/tmp/mado-keysym-answers.cache", O_WRONLY|O_CREAT|O_)
+CTL c09-opens-socket.py        t=present  s=ok(weakened)           f=14/14 g=30/30 trips=88  verdict=TARGET_MISSED stop=r (fx-00: socket: socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) = 3)
+CTL c10-overfit.py             t=present  s=ok(weakened)           f=14/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=g (0/30)
+    gen-00 br keysym=0x0 rc=0/2 out differs
+    gen-01 it keysym=s rc=0/0 out differs
+    gen-02 no keysym=bracketleft rc=0/0 out differs
+    gen-03 gb keysym=0x0 rc=0/2 out differs
+CTL c11-selftest-only.py       t=present  s=ok(weakened)           f=0/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=f (0/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-03 br keysym=Return rc=0/0 out differs
+CTL c12-rc-blind.py            t=present  s=ok(weakened)           f=13/14 g=25/30 trips=0   verdict=TARGET_MISSED stop=f (13/14); g (25/30)
+    fx-04 br keysym=nosuchsym rc=0/2 out equal
+    gen-00 br keysym=0x0 rc=0/2 out equal
+    gen-03 gb keysym=0x0 rc=0/2 out equal
+    gen-05 it keysym=0x0 rc=0/2 out equal
+CTL c13-hardcoded-br.py        t=present  s=ok(weakened)           f=4/14 g=1/30 trips=0   verdict=TARGET_MISSED stop=f (4/14); g (1/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-06 us keysym=0x0061 rc=0/0 out differs
+    fx-07 us,ru keysym=Cyrillic_a rc=0/0 out differs
+CTL c14-stderr.py              t=present  s=ok(weakened)           f=1/14 g=5/30 trips=0   verdict=TARGET_MISSED stop=f (1/14); g (5/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-03 br keysym=Return rc=0/0 out differs
+CTL c15-layout1-only.py        t=present  s=ok(weakened)           f=13/14 g=30/30 trips=0   verdict=TARGET_MISSED stop=f (13/14)
+    fx-07 us,ru keysym=Cyrillic_a rc=0/0 out differs
+CTL c16-always-unreachable.py  t=present  s=ok(weakened)           f=1/14 g=5/30 trips=0   verdict=TARGET_MISSED stop=f (1/14); g (5/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-02 br keysym=slash rc=0/0 out differs
+    fx-03 br keysym=Return rc=0/0 out differs
+CTL c17-draft-fixture-table.py t=present  s=ok(weakened)           f=8/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=f (8/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-06 us keysym=0x0061 rc=0/0 out differs
+    fx-09 de keysym=ssharp rc=0/0 out differs
+CTL c18-draft-fixture-table-write.py t=present  s=ok(weakened)           f=8/14 g=0/30 trips=44  verdict=TARGET_MISSED stop=r (fx-00: write: openat(AT_FDCWD, "/tmp/mado-keysym-answers.cache", O_WRONLY|O_CREAT|O_); f (8/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-06 us keysym=0x0061 rc=0/0 out differs
+    fx-09 de keysym=ssharp rc=0/0 out differs
+CTL c19-draft-fixture-table-socket.py t=present  s=ok(weakened)           f=8/14 g=0/30 trips=88  verdict=TARGET_MISSED stop=r (fx-00: socket: socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) = 3); f (8/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-06 us keysym=0x0061 rc=0/0 out differs
+    fx-09 de keysym=ssharp rc=0/0 out differs
+CTL c20-fixture-table-refusal-blind.py t=present  s=ok(weakened)           f=8/14 g=0/30 trips=0   verdict=TARGET_MISSED stop=f (8/14); g (0/30)
+    fx-00 us keysym=s rc=0/0 out differs
+    fx-01 us keysym=slash rc=0/0 out differs
+    fx-06 us keysym=0x0061 rc=0/0 out differs
+    fx-09 de keysym=ssharp rc=0/0 out differs
+PRED-C1-r49-replica: controls=20 met=0 -

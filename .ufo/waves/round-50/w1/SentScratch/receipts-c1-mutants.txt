@@ -1,0 +1,8 @@
+== mutant A: writes /tmp/ss-mutA during --selftest (inside the sandbox tmpfs)
+mutant-A(/tmp) rc=0 | PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET
+  clause-r line: PRED-C1-r49 clause=r trips=0 
+  scratch residue: 0 entries
+== mutant B: writes /var/tmp/ss-mutB during --selftest (an attempt: the path does not exist in the sandbox)
+mutant-B(/var/tmp) rc=1 | PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=fail readonly=fail tool=present verdict=TARGET_MISSED
+  clause-r line: PRED-C1-r49 clause=r trips=1 write:openat(AT_FDCWD, "/var/tmp/ss-mutB", O_WRONLY|O_CREAT|O_TRUN
+  scratch residue: 0 entries

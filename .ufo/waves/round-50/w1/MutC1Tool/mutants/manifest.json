@@ -1,0 +1,176 @@
+[
+ {
+  "id": "M01",
+  "desc": "automatic-type ALPHABETIC test inverted (2-level branch)",
+  "old": "    if width == 2:\n        if keysym_is_lower(sym0) and keysym_is_upper_or_title(sym1):",
+  "new": "    if width == 2:\n        if not (keysym_is_lower(sym0) and keysym_is_upper_or_title(sym1)):"
+ },
+ {
+  "id": "M02",
+  "desc": "keypad keysym range widened to 0xFFFF (F-keys become keypad for automatic type)",
+  "old": "    return 0xFF80 <= keysym <= 0xFFBD  # XKB_KEY_KP_Space .. XKB_KEY_KP_Equal",
+  "new": "    return 0xFF80 <= keysym <= 0xFFFF  # XKB_KEY_KP_Space .. XKB_KEY_KP_Equal"
+ },
+ {
+  "id": "M03",
+  "desc": "explicit per-group type ignored (default type only)",
+  "old": "            type_name = group.type_name or key.default_type",
+  "new": "            type_name = key.default_type"
+ },
+ {
+  "id": "M04",
+  "desc": "group0 levels copied into later groups even when they carry an explicit type",
+  "old": "                if not group.levels and group.type_name is None:",
+  "new": "                if not group.levels:"
+ },
+ {
+  "id": "M05",
+  "desc": "AnyOfOrNone interp no longer matches mod-less keys",
+  "old": "        return (not mods) or bool(interp.mods & mods)",
+  "new": "        return bool(interp.mods & mods)"
+ },
+ {
+  "id": "M06",
+  "desc": "top-level interpret.useModMapMods default inverted (LevelOne vs AnyLevel)",
+  "old": "        level_one_only_default = value in (\"level1\", \"levelone\")",
+  "new": "        level_one_only_default = value not in (\"level1\", \"levelone\")"
+ },
+ {
+  "id": "M07",
+  "desc": "canonical fallback mapping for unbound virtual modifiers zeroed",
+  "old": "            mod.mapping = 1 << index",
+  "new": "            mod.mapping = 0"
+ },
+ {
+  "id": "M08",
+  "desc": "explicit per-key virtualMods= ignored (vmodmap always recomputed)",
+  "old": "        if key.vmodmap_explicit:\n            continue",
+  "new": "        if False:\n            continue"
+ },
+ {
+  "id": "M09",
+  "desc": "modifier_map decls allowed to set virtual-modifier bits into key modmap",
+  "old": "        if index is None or index >= 8:\n            continue",
+  "new": "        if index is None:\n            continue"
+ },
+ {
+  "id": "M10",
+  "desc": "keycode iteration order: insertion order instead of sorted",
+  "old": "    for keycode in sorted(km.keys):",
+  "new": "    for keycode in km.keys:"
+ },
+ {
+  "id": "M11",
+  "desc": "modifier names printed in reversed real+virtual order",
+  "old": "                        mod.name for mod in km.mods",
+  "new": "                        mod.name for mod in reversed(km.mods)"
+ },
+ {
+  "id": "M12",
+  "desc": "layout name fallback '?' removed (empty string)",
+  "old": "                layout_name = \"?\"",
+  "new": "                layout_name = \"\""
+ },
+ {
+  "id": "M13",
+  "desc": "xkb_symbols name[...] group index off-by-one (layout names shifted)",
+  "old": "            index = cur.number() - 1",
+  "new": "            index = cur.number()"
+ },
+ {
+  "id": "M14",
+  "desc": "LEVEL# column off-by-one (level+1 -> level)",
+  "old": "                                  _ljust(layout_name, 20), _ljust(\"%d\" % (level + 1), 7),",
+  "new": "                                  _ljust(layout_name, 20), _ljust(\"%d\" % level, 7),"
+ },
+ {
+  "id": "M15",
+  "desc": "LAYOUT column off-by-one (group_index+1 -> group_index)",
+  "old": "                                  _ljust(\"%d\" % (group_index + 1), 8),",
+  "new": "                                  _ljust(\"%d\" % group_index, 8),"
+ },
+ {
+  "id": "M16",
+  "desc": "trailing newline dropped from output page",
+  "old": "    return \"\\n\".join(lines) + \"\\n\"",
+  "new": "    return \"\\n\".join(lines)"
+ },
+ {
+  "id": "M17",
+  "desc": "hex keysym header field printed with 6 hex digits (0x%04x -> 0x%06x)",
+  "old": "        return \"0x%04x\" % keysym",
+  "new": "        return \"0x%06x\" % keysym"
+ },
+ {
+  "id": "M18",
+  "desc": "U-name upper threshold lowered to 0x0100FFFF (astral keysyms print hex)",
+  "old": "    if KEYSYM_UNICODE_MIN <= keysym <= KEYSYM_UNICODE_MAX:",
+  "new": "    if KEYSYM_UNICODE_MIN <= keysym <= 0x0100FFFF:"
+ },
+ {
+  "id": "M19",
+  "desc": "U-name lower threshold dropped to 0x01000000 (0x010000xx print U form)",
+  "old": "    if KEYSYM_UNICODE_MIN <= keysym <= KEYSYM_UNICODE_MAX:",
+  "new": "    if 0x01000000 <= keysym <= KEYSYM_UNICODE_MAX:"
+ },
+ {
+  "id": "M20",
+  "desc": "U-form argument threshold raised to 0xFFFD (U00xx-UFFFC take the utf32 path)",
+  "old": "        if 0xFF < value <= 0x10FFFF:",
+  "new": "        if 0xFFFD < value <= 0x10FFFF:"
+ },
+ {
+  "id": "M21",
+  "desc": "XF86_ name fallback removed (XF86Audio* unresolvable)",
+  "old": "        return keysym_from_name(name[:4] + name[5:])",
+  "new": "        return 0"
+ },
+ {
+  "id": "M22",
+  "desc": "decimal ARG <= 0 accepted by resolve_argument (negative/zero numerics)",
+  "old": "    if value is None or value <= 0 or value > KEYSYM_MAX:",
+  "new": "    if value is None or value > KEYSYM_MAX:"
+ },
+ {
+  "id": "M23",
+  "desc": "0x-form ARG above KEYSYM_MAX accepted",
+  "old": "        if value is None or value > KEYSYM_MAX:\n            return 0\n        return value",
+  "new": "        if value is None:\n            return 0\n        return value"
+ },
+ {
+  "id": "M24",
+  "desc": "levels with 2+ keysyms no longer skipped when the first keysym matches",
+  "old": "                if len(syms) != 1 or syms[0] != keysym:",
+  "new": "                if not syms or syms[0] != keysym:"
+ },
+ {
+  "id": "M25",
+  "desc": "level-0 zero-mask appended for every level, not only level 0",
+  "old": "    masks = []\n    if level == 0:",
+  "new": "    masks = []\n    if level >= 0:"
+ },
+ {
+  "id": "M26",
+  "desc": "keycode alias registered as self-alias (aliased keys lose their target)",
+  "old": "            km.aliases[text2[1:-1]] = text3[1:-1]",
+  "new": "            km.aliases[text2[1:-1]] = text2[1:-1]"
+ },
+ {
+  "id": "M27",
+  "desc": "--disable-compose/--keysym refusal only when BOTH are missing",
+  "old": "    if not disable_compose or not keysym_mode:",
+  "new": "    if not disable_compose and not keysym_mode:"
+ },
+ {
+  "id": "M28",
+  "desc": "extra positional ARG accepted (exactly-one check weakened)",
+  "old": "    if len(positional) != 1:",
+  "new": "    if len(positional) < 1:"
+ },
+ {
+  "id": "M29",
+  "desc": "vmod phase order: canonical fallback before key-derived real mappings",
+  "old": "    # 3. Virtual -> real modifier mappings (keymap.c:447).\n    for index in range(8, len(km.mods)):\n        bit = 1 << index\n        for key in km.keys.values():\n            if key.vmodmap & bit:\n                km.mods[index].mapping |= key.modmap\n\n    # 4. Format 2 canonical mapping for still-unbound virtual modifiers (keymap.c:458).\n    for index in range(8, len(km.mods)):\n        mod = km.mods[index]\n        if mod.mapping == 0 and not mod.explicit:\n            mod.mapping = 1 << index\n            mod.explicit = True",
+  "new": "    # 3. Format 2 canonical mapping for still-unbound virtual modifiers (keymap.c:458).\n    for index in range(8, len(km.mods)):\n        mod = km.mods[index]\n        if mod.mapping == 0 and not mod.explicit:\n            mod.mapping = 1 << index\n            mod.explicit = True\n\n    # 4. Virtual -> real modifier mappings (keymap.c:447).\n    for index in range(8, len(km.mods)):\n        bit = 1 << index\n        for key in km.keys.values():\n            if key.vmodmap & bit:\n                km.mods[index].mapping |= key.modmap"
+ }
+]

@@ -1,0 +1,49 @@
+# mado-hostguard r50 selftest  python=3.14.8 bwrap=/usr/bin/bwrap root=/fast/scratch/hyaku/mado-r50/ExecHostGuardR50/selftest/mado-hostguard-selftest
+SELFTEST pass digest_absent: rc=0
+SELFTEST pass digest_file_sha: rc=0 want_sha=d3523f5a0a34
+SELFTEST pass digest_symlink: rc=0
+SELFTEST pass digest_unreadable_refused: rc=2
+SELFTEST pass digest_dir_refused: rc=2
+SELFTEST pass digest_fifo_refused: rc=2
+SELFTEST pass digest_json_ok: rc=0
+SELFTEST pass digest_no_declare: rc=2
+SELFTEST pass digest_too_many: rc=2
+SELFTEST pass declare_file_comments: rc=0 records=2
+SELFTEST pass declare_file_missing: rc=2
+SELFTEST pass declare_dedupe: rc=0 records=1
+SELFTEST pass work_tmp_refused: rc=2 created=False
+SELFTEST pass work_vartmp_refused: rc=2
+SELFTEST pass work_devshm_refused: rc=2
+SELFTEST pass home_real_refused: rc=2
+SELFTEST pass cwd_real_home_refused: rc=2
+SELFTEST pass work_in_repo_refused: rc=2 created=False
+SELFTEST pass work_symlink_to_tmp_refused: rc=2
+SELFTEST pass work_prefix_mismatch: rc=2
+SELFTEST pass control_true_exit0: rc=0
+SELFTEST pass mutant_unsandboxed_caught: rc=3 CHANGED path=/fast/scratch/hyaku/mado-r50/ExecHostGuardR50/selftest/mado-hostguard-selftest/fixt
+SELFTEST pass same_size_same_mtime_sha_only: rc=3 CHANGED path=/fast/scratch/hyaku/mado-r50/ExecHostGuardR50/selftest/mado-hostguard-selftest/fixt
+SELFTEST pass absent_then_created: rc=3
+SELFTEST pass file_then_absent: rc=3 CHANGED path=/fast/scratch/hyaku/mado-r50/ExecHostGuardR50/selftest/mado
+SELFTEST pass sandbox_bwrap_contained: rc=0 contained_sha_equal=True
+SELFTEST pass ro_root_write_blocked: rc=0 probe=['WRITE_BLOCKED errno=30', 'TMPDIR_WRITE_OK size=1']
+SELFTEST pass child_exit3_not_propagated: rc=5
+SELFTEST pass missing_binary_exit5: rc=5
+SELFTEST pass timeout_kill_exit5: rc=5
+SELFTEST pass env_clean: rc=0 leaked=False
+SELFTEST pass env_keep: rc=0
+SELFTEST pass env_keep_home_refused: rc=2
+SELFTEST pass env_set_tmpdir_refused: rc=2
+SELFTEST pass ambient_home_is_not_operator_home: rc=0
+SELFTEST pass env_set_bad: rc=2
+SELFTEST pass mask_requires_bwrap: rc=2
+SELFTEST pass ro_root_requires_bwrap: rc=2
+SELFTEST pass mask_not_a_dir_exit4: rc=4
+SELFTEST pass mask_covers_work_refused: rc=2
+SELFTEST pass json_run_violation: rc=3 parse=ok
+SELFTEST pass timeout_nonpositive_refused: rc=2
+SELFTEST pass unit_redact_home: a=~/a/b b=~ cc=/opt/x raw_kept=True
+SELFTEST pass unit_under_prefix: prefix-vs-path separation
+SELFTEST pass unit_changed_fields: got=['sha256']
+SELFTEST failed=0 -
+MADO_HOSTGUARD_SELFTEST: 45/45 passed
+selftest_exit=0 (expect 0) last_line_before_this_meta=MADO_HOSTGUARD_SELFTEST: 45/45 passed

@@ -1,0 +1,61 @@
+# census-check.sh — round 50 seat ScrRowsR50: census of the registry with S352-S363 appended
+# run 2026-10-27T06:06:42Z from the lane root /home/vgpnk/Projects/shokunin/mado-shokunin
+
+## mirror construction (scratch only; no lane file written)
+$ WORK=/fast/scratch/hyaku/mado-r50/ScrRowsR50/census   # copy corpus, append the 12 rows after S351, stub the two used-by targets, symlink the rest
+
+## diff proof: the mirror registry differs from committed corpus/SOURCES.md by exactly the appended rows
+$ diff <(git -C /home/vgpnk/Projects/shokunin/mado-shokunin show HEAD:corpus/SOURCES.md) "$M/corpus/SOURCES.md" | grep -c '^>'
+12
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin show HEAD:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+288
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' "$M/corpus/SOURCES.md"
+300
+
+## validate (the required command; exit 0 required)
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file "$M/corpus/SOURCES.md"
+file	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+file	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+file	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+file	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+file	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+file	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+file	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+file	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md
+file	W04	S303 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S307 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S317 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S318 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+file	W04	S320 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+file	W04	S321 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+file	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+file	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+file	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+file	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+file	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+file	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+file	ok	/fast/scratch/hyaku/mado-r50/ScrRowsR50/census/mirror/corpus/SOURCES.md
+exit=0
+
+## delta against the round's own baseline receipts/census-before.txt (ok and exit lines stripped)
+$ diff <(strip receipts/census-before.txt) <(strip validate output)
+18a19,20
+> W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+> W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+
+## frozen manual census checks from CORPUS.md, run on the mirror
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+300
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+0
+$ duplicate ids — must print nothing
+$ enum violations and tier inflation — must print nothing
+$ tier histogram
+A=289 B=4 C=7 
+$ status histogram
+mined=281 queued=10 rejected=9 
+
+## reading
+rc=0. No E03 (duplicate id) and no E04 (duplicate URL+scope without supersedes). The only new findings against
+the baseline are W04 S353 and W04 S354, the duplicate-URL decisions stated in rows.md §Notes. W01 S277 and the
+16 baseline W04 lines are pre-existing. Warnings do not affect status; validate exits 0.

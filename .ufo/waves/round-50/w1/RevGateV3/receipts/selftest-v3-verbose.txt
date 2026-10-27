@@ -1,0 +1,95 @@
+SELFTEST ok case=r1-whole-file-two-clients got={'R1_CLIENT_DUMP': 2}
+SELFTEST ok case=r1-embedded-fenced-one-client got={'R1_CLIENT_DUMP': 1}
+SELFTEST ok case=r1-empty-title-not-a-finding got={}
+SELFTEST ok case=r1-class-only-not-a-finding got={}
+SELFTEST ok case=r1-prose-keys-not-a-finding got={}
+SELFTEST ok case=r1-seven-key-projection-clean got={}
+SELFTEST ok case=r1-monitor-rule-line-clean got={}
+SELFTEST ok case=r2-two-process-rows got={'R2_PROC_TABLE': 2}
+SELFTEST ok case=r2-prose-without-pid-clean got={}
+SELFTEST ok case=r3-monitor-identity got={'R3_MONITOR_IDENT': 1}
+SELFTEST ok case=r3-empty-serial-clean got={}
+SELFTEST ok case=r4-twelve-entry-listing got={'R4_HOME_LISTING': 12}
+SELFTEST ok case=r4-three-entry-listing-under-limit got={}
+SELFTEST ok case=r4-inline-paths-clean got={}
+SELFTEST ok case=r4-limit-threshold-inclusive-at-12 got={}
+SELFTEST ok case=r7-grep-prefix-located-lines got={'R7_HOME_PATH_PREFIX': 3}
+SELFTEST ok case=r7-detail-names-forms-only detail='forms=prefix:3,header:0,diag:0,row:0 paths=1'
+SELFTEST ok case=r7-flat-listing-header got={'R7_HOME_PATH_PREFIX': 1}
+SELFTEST ok case=r7-quoted-path-in-diagnostic got={'R7_HOME_PATH_PREFIX': 2}
+SELFTEST ok case=r7-home-path-in-ls-row got={'R7_HOME_PATH_PREFIX': 1}
+SELFTEST ok case=r7-tilde-and-dollar-home-forms-clean got={}
+SELFTEST ok case=r7-path-quoted-in-prose-clean got={}
+SELFTEST ok case=r7-diagnostic-shape-in-prose-clean got={}
+SELFTEST ok case=r8-owner-and-group-column got={'R8_ACCOUNT_COLUMN': 2}
+SELFTEST ok case=r8-detail-counts-only detail='rows=2'
+SELFTEST ok case=r8-numeric-ids-clean got={'R7_HOME_PATH_PREFIX': 1}
+SELFTEST ok case=r8-other-owner-clean got={}
+SELFTEST ok case=r8-unresolved-account-inert got={}
+SELFTEST ok case=r9-cache-record-fields got={'R9_EXEC_CACHE': 4}
+SELFTEST ok case=r9-detail-counts-only detail='fields=4 keys=app-id+dir+title+working-directory'
+SELFTEST ok case=r9-flag-prose-and-indented-usage-clean got={}
+SELFTEST ok case=r9-one-field-under-threshold-clean got={}
+SELFTEST ok case=r9-record-is-not-a-home-listing got={'R9_EXEC_CACHE': 4}
+SELFTEST ok case=r5-prose-serial got={'R5_SERIAL_PROSE': 1}
+SELFTEST ok case=r5-table-cell-serial got={'R5_SERIAL_PROSE': 1}
+SELFTEST ok case=r5-json-serial-without-ident got={'R5_SERIAL_PROSE': 1}
+SELFTEST ok case=r5-iso-timestamp-clean got={}
+SELFTEST ok case=r5-lowercase-run-clean got={}
+SELFTEST ok case=r5-glued-to-prefix-clean got={}
+SELFTEST ok case=r5-two-letter-capital-run-clean got={}
+SELFTEST ok case=r5-detail-masks-token detail='tokens=1 shapes=9x3+Ax5+9x4'
+SELFTEST ok case=r6-exact-in-prose got={'R5_SERIAL_PROSE': 1, 'R6_SERIAL_EXACT': 1}
+SELFTEST ok case=r6-exact-shape-independent got={'R6_SERIAL_EXACT': 1}
+SELFTEST ok case=r6-absent-clean got={'R5_SERIAL_PROSE': 1}
+SELFTEST ok case=r6-detail-counts-only detail='count=1 sources=1'
+SELFTEST ok case=r5-prose-without-serial-clean got={}
+SELFTEST ok case=serials-from-json-one-value n=1
+SELFTEST ok case=serials-from-json-empty-ignored n=0
+SELFTEST ok case=serials-from-json-short-ignored n=0
+SELFTEST ok case=serials-from-json-rejects-garbage
+SELFTEST ok case=self-source-serial-rules-clean rules=['R1_CLIENT_DUMP', 'R2_PROC_TABLE', 'R3_MONITOR_IDENT']
+SELFTEST ok case=self-source-new-rules-clean rules=['R1_CLIENT_DUMP', 'R2_PROC_TABLE', 'R3_MONITOR_IDENT']
+SELFTEST ok case=rules-partition-is-waivable-plus-serial rules=('R1_CLIENT_DUMP', 'R2_PROC_TABLE', 'R3_MONITOR_IDENT', 'R4_HOME_LISTING', 'R7_HOME_PATH_PREFIX', 'R8_ACCOUNT_COLUMN', 'R9_EXEC_CACHE', 'R5_SERIAL_PROSE', 'R6_SERIAL_EXACT')
+SELFTEST ok case=e2e-fixture-files-count files=18
+SELFTEST ok case=e2e-positive-files-rules got={'.ufo/w1/clients-live.json': {'R1_CLIENT_DUMP'}, '.ufo/w1/embedded.md': {'R1_CLIENT_DUMP'}, '.ufo/w1/home-listing.txt': {'R4_HOME_LISTING'}, '.ufo/w1/monitors-live.json': {'R3_MONITOR_IDENT'}, '.ufo/w1/serial-only.json': {'R5_SERIAL_PROSE'}, '.ufo/w1/serial-prose.md': {'R5_SERIAL_PROSE'}, '.ufo/w1/serial-table.md': {'R5_SERIAL_PROSE'}, '.ufo/w1/ss-live.txt': {'R2_PROC_TABLE'}}
+SELFTEST ok case=e2e-exit-1-on-findings code=1
+SELFTEST ok case=e2e-summary-format summary='SESSION_MATERIAL: files=18 findings=8 rev=a5457ac04f7c1db0ef198850be9ff3a0f211ff22'
+SELFTEST ok case=e2e-negative-repo-exit-0 code=0 findings=0
+SELFTEST ok case=e2e-outside-ufo-not-scanned files=1 findings=[]
+SELFTEST ok case=v3-default-scope-all-sees-outside-ufo files=2 findings=[('corpus/leak.json', 'R1_CLIENT_DUMP', 2, 'objects=2 keys=title+initialTitle')]
+SELFTEST ok case=e2e-empty-ufo-clean code=0 files=0 findings=[]
+SELFTEST ok case=e2e-scope-all-sees-outside-ufo files=2 findings=[('corpus/leak.json', 'R1_CLIENT_DUMP')]
+SELFTEST ok case=e2e-r6-hits-every-carrier paths=['.ufo/w1/serial-only.json', '.ufo/w1/serial-prose.md', '.ufo/w1/serial-table.md', '.ufo/w2/serial-glued.md']
+SELFTEST ok case=e2e-r6-output-never-holds-value lines=14
+SELFTEST ok case=e2e-projected-tree-passes code=0 findings=[]
+SELFTEST ok case=e2e-no-rule-can-be-dropped code=2 stderr=['check-session-material.py: error: unrecognized arguments: --rules R3_MONITOR_IDENT']
+SELFTEST ok case=v3-cli-default-scope-and-account-silent code=1 out='FINDING file=.ufo/w1/ls.txt rule=R8_ACCOUNT_COLUMN count=2 detail=rows=2\nSESSION_MATERIAL_RULES: R8_ACCOUNT_COLUMN=1\nSESSION_MATERIAL: files=1 findings=1 rev=1144b7dd046584309d2a0e242b91b745e2bab061\n'
+SELFTEST ok case=v3-empty-account-refused code=2 stderr=['check-session-material.py: error: --account must not be empty']
+SELFTEST ok case=waiver-fixture-waived findings=[] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'fixture')] rejected=[]
+SELFTEST ok case=waiver-exit-0-and-count-line code=0 lines=['SESSION_MATERIAL_WAIVED: findings=1 files=1', 'SESSION_MATERIAL: files=3 findings=0 rev=47e28bebb488e6d2b71e2abb1ed31747472b4a5c']
+SELFTEST ok case=waiver-real-values-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'value-not-synthetic:serial-not-synthetic')]
+SELFTEST ok case=waiver-title-example-domain-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/title-example-domain.json', 'R1_CLIENT_DUMP', 1, 'objects=1 keys=title')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/title-example-domain.json', 'R1_CLIENT_DUMP', 'value-not-synthetic:title-not-synthetic')]
+SELFTEST ok case=waiver-title-bare-demo-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/title-bare-demo.json', 'R1_CLIENT_DUMP', 1, 'objects=1 keys=title')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/title-bare-demo.json', 'R1_CLIENT_DUMP', 'value-not-synthetic:title-not-synthetic')]
+SELFTEST ok case=waiver-title-probe-prefix-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/title-probe-prefix.json', 'R1_CLIENT_DUMP', 1, 'objects=1 keys=title')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/title-probe-prefix.json', 'R1_CLIENT_DUMP', 'value-not-synthetic:title-not-synthetic')]
+SELFTEST ok case=waiver-title-case-only-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/title-case-only.json', 'R1_CLIENT_DUMP', 1, 'objects=1 keys=title')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/title-case-only.json', 'R1_CLIENT_DUMP', 'value-not-synthetic:title-not-synthetic')]
+SELFTEST ok case=waiver-title-reserved-prefix-waived findings=[] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/title-reserved-prefix.json', 'R1_CLIENT_DUMP', 'fixture')] rejected=[]
+SELFTEST ok case=waiver-title-reserved-exact-waived findings=[] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/title-reserved-exact.json', 'R1_CLIENT_DUMP', 'fixture')] rejected=[]
+SELFTEST ok case=waiver-sha-mismatch-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'sha-mismatch')]
+SELFTEST ok case=waiver-unregistered-rejected findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'unregistered')]
+SELFTEST ok case=waiver-registry-in-ufo-refused findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'registry-in-ufo')]
+SELFTEST ok case=waiver-path-outside-waves-rejected findings=[('.ufo/reports/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/reports/mons.json', 'R3_MONITOR_IDENT', 'path-outside-waves')]
+SELFTEST ok case=waiver-gate-copy-waived findings=[] waived=[('.ufo/waves/round-46/w1/Seat/gate-copy.py', 'R1_CLIENT_DUMP', 'gate-copy')] rejected=[]
+SELFTEST ok case=waiver-gate-copy-mismatch-rejected findings=[('.ufo/waves/round-46/w1/Seat/gate-copy.py', 'R1_CLIENT_DUMP', 1, 'objects=1 keys=title')] rejected=[('.ufo/waves/round-46/w1/Seat/gate-copy.py', 'R1_CLIENT_DUMP', 'gate-source-mismatch')]
+SELFTEST ok case=waiver-no-waivers-flag-keeps-finding findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] waived=[]
+SELFTEST ok case=waiver-tamper-after-waiver-keeps-finding findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R1_CLIENT_DUMP', 2, 'objects=2 keys=title+initialTitle'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R1_CLIENT_DUMP', 'rule-not-listed'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons.json', 'R3_MONITOR_IDENT', 'sha-mismatch')]
+SELFTEST ok case=waiver-per-rule-only-listed-rule findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mixed.txt', 'R2_PROC_TABLE', 1, 'rows=1')] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/mixed.txt', 'R1_CLIENT_DUMP', 'fixture')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mixed.txt', 'R2_PROC_TABLE', 'rule-not-listed')]
+SELFTEST ok case=waiver-new-band-fixture-waived findings=[] waived=[('.ufo/waves/round-49/w1/Seat/fixtures/shapes.txt', 'R7_HOME_PATH_PREFIX', 'fixture'), ('.ufo/waves/round-49/w1/Seat/fixtures/shapes.txt', 'R8_ACCOUNT_COLUMN', 'fixture'), ('.ufo/waves/round-49/w1/Seat/fixtures/shapes.txt', 'R9_EXEC_CACHE', 'fixture')] rejected=[]
+SELFTEST ok case=waiver-r7-real-user-rejected findings=[('.ufo/waves/round-49/w1/Seat/fixtures/real-user.txt', 'R7_HOME_PATH_PREFIX', 1, 'forms=prefix:1,header:0,diag:0,row:0 paths=1')] rejected=[('.ufo/waves/round-49/w1/Seat/fixtures/real-user.txt', 'R7_HOME_PATH_PREFIX', 'value-not-synthetic:home-user-not-synthetic')]
+SELFTEST ok case=waiver-r9-real-title-rejected findings=[('.ufo/waves/round-49/w1/Seat/fixtures/real-title.txt', 'R9_EXEC_CACHE', 2, 'fields=2 keys=dir+title')] rejected=[('.ufo/waves/round-49/w1/Seat/fixtures/real-title.txt', 'R9_EXEC_CACHE', 'value-not-synthetic:title-not-synthetic')]
+SELFTEST ok case=waiver-serial-rule-not-waivable findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 1, 'tokens=1 shapes=9x3+Ax5+9x4')] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 'fixture')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 'serial-rule-not-waivable')]
+SELFTEST ok case=waiver-serial-rejection-is-printed lines=['WAIVER file=.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json rule=R3_MONITOR_IDENT kind=fixture', 'WAIVER_REJECTED file=.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json rule=R5_SERIAL_PROSE reason=serial-rule-not-waivable', 'FINDING file=.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json rule=R5_SERIAL_PROSE count=1 detail=tokens=1 shapes=9x3+Ax5+9x4', 'SESSION_MATERIAL_RULES: R5_SERIAL_PROSE=1', 'SESSION_MATERIAL_WAIVED: findings=1 files=1', 'SESSION_MATERIAL: files=3 findings=1 rev=90d463d8e931419abb271181a7c5dff80e42a36b']
+SELFTEST ok case=waiver-marker-cannot-name-serial-rule findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 1, 'tokens=1 shapes=9x3+Ax5+9x4')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 'marker-malformed'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 'serial-rule-not-waivable')]
+SELFTEST ok case=waiver-real-serial-marked-file-kept findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 1, 'objects=1 keys=serial+ident'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 1, 'tokens=1 shapes=9x3+Ax5+9x4')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 'value-not-synthetic:serial-not-synthetic'), ('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 'serial-rule-not-waivable')]
+SELFTEST ok case=prose-serial-unmarked-kept findings=[('.ufo/waves/round-32/w1/Entry.md', 'R5_SERIAL_PROSE', 1, 'tokens=1 shapes=9x3+Ax5+9x4')]
+SELFTEST: passed=94/94 failed=0

@@ -1,0 +1,15 @@
+# the only live-host dependency of the round instruments: hyprctl read verbs (C1-r50 live receipt, C2 clause r)
+$ hyprctl getoption input:resolve_binds_by_sym -j   (read verb; HOME/XDG_* pointed at a seat fake home)
+{"option": "input:resolve_binds_by_sym", "int": 0, "set": false }
+
+$ write-ish syscalls in strace of that run (open with a write flag, creat, mkdirat, unlinkat):
+count=0
+$ every non-read syscall it made (the only host interaction is a read-only socket connect):
+343609 connect(3, {sa_family=AF_UNIX, sun_path="/run/user/N/hypr/INSTANCE/.socket.sock"}, 96) = 0
+
+$ fake home after that run (canary):
+.cache
+.config
+.local
+.local/share
+.local/state

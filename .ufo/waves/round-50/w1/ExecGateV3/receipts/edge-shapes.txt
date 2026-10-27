@@ -1,0 +1,19 @@
+# edge shapes measured against the v3 rules (scan_blob, account=someone, unit level)
+# rule map: R7 structural home path, R8 owner/group column, R9 cache record
+# EXPECT: red -> finding, clean -> none; MISS/FP lines are attack findings for the freeze
+
+red  ls row, SELinux '.' marker      R8_ACCOUNT_COLUMN
+red  ls row, ACL '+' marker          R8_ACCOUNT_COLUMN
+red  ls row, darwin '@' marker       R8_ACCOUNT_COLUMN
+red  prefix inside a code fence      R7(forms=prefix:1,header:0,diag:0,row:0 paths=1)
+MISS diff '+' prefix                 clean
+MISS diff glued '+' prefix           clean
+MISS markdown bullet prefix          clean
+FP   prose that looks diagnostic     R7(forms=prefix:0,header:0,diag:1,row:0 paths=1)
+clean prose backticked path          clean
+clean prose bare path                clean
+clean table cell                     clean
+clean command line                   clean
+clean single cache field             clean
+clean .desktop Exec line             clean
+red  cache record two fields         R9_EXEC_CACHE

@@ -1,0 +1,25 @@
+# CLI exit codes (v3 gate)
+-- no --repo
+   cmd: check-session-material.py 
+   rc=2
+   last: check-session-material.py: error: --repo is required (or use --selftest)
+-- empty --account
+   cmd: check-session-material.py --repo <scratch>/clone --account  
+   rc=2
+   last: check-session-material.py: error: --account must not be empty
+-- bad --rev
+   cmd: check-session-material.py --repo <scratch>/clone --rev deadbeef
+   rc=2
+   last: check-session-material.py: error: git rev-parse --verify deadbeef^{commit} failed: fatal: Needed a single revision
+-- path is not a repo
+   cmd: check-session-material.py --repo <scratch>/tmp
+   rc=2
+   last: Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+-- clean fixture (probe green repo) --no-waivers
+   cmd: check-session-material.py --repo <scratch>/probe/nonce-green --no-waivers
+   rc=0
+   last: SESSION_MATERIAL: files=3 findings=0 rev=a5eb69de330199f0c869072a7a0a15fcb5b8ea2d
+-- red fixture (probe red repo) --no-waivers
+   cmd: check-session-material.py --repo <scratch>/probe/nonce-red --no-waivers --account <nonce>
+   rc=1
+   last: SESSION_MATERIAL: files=6 findings=5 rev=0bc50926001dbf1553462a64c643656ddce2b054

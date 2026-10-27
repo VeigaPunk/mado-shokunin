@@ -1,0 +1,26 @@
+# v2 vs v3 at the round-50 base 8ae47b957034ae21012bbf09173cca2c48be345e
+# cmd: python3 -I <gate> --repo <scratch clone> --rev 8ae47b95... --scope {all,ufo}
+# SESSION_MATERIAL_RULES counts FILES per rule; findings= is the sum of those file counts
+== v2 all
+SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=40 R2_PROC_TABLE=40 R3_MONITOR_IDENT=13 R4_HOME_LISTING=3 R5_SERIAL_PROSE=25
+SESSION_MATERIAL_WAIVED: findings=52 files=48
+SESSION_MATERIAL: files=23270 findings=121 rev=8ae47b957034ae21012bbf09173cca2c48be345e
+== v2 ufo
+SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=39 R2_PROC_TABLE=37 R3_MONITOR_IDENT=12 R4_HOME_LISTING=3 R5_SERIAL_PROSE=22
+SESSION_MATERIAL_WAIVED: findings=52 files=48
+SESSION_MATERIAL: files=22998 findings=113 rev=8ae47b957034ae21012bbf09173cca2c48be345e
+== v3 all
+SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=40 R2_PROC_TABLE=40 R3_MONITOR_IDENT=13 R4_HOME_LISTING=3 R7_HOME_PATH_PREFIX=49 R8_ACCOUNT_COLUMN=54 R9_EXEC_CACHE=4 R5_SERIAL_PROSE=25
+SESSION_MATERIAL_WAIVED: findings=52 files=48
+SESSION_MATERIAL: files=23270 findings=228 rev=8ae47b957034ae21012bbf09173cca2c48be345e
+== v3 ufo
+SESSION_MATERIAL_RULES: R1_CLIENT_DUMP=39 R2_PROC_TABLE=37 R3_MONITOR_IDENT=12 R4_HOME_LISTING=3 R7_HOME_PATH_PREFIX=49 R8_ACCOUNT_COLUMN=54 R9_EXEC_CACHE=4 R5_SERIAL_PROSE=22
+SESSION_MATERIAL_WAIVED: findings=52 files=48
+SESSION_MATERIAL: files=22998 findings=220 rev=8ae47b957034ae21012bbf09173cca2c48be345e
+
+# delta (v3 minus v2), files per rule
+all : R1 0  R2 0  R3 0  R4 0  R5 0  R7 49  R8 54  R9 4  -> findings 228-121 = 107 = 49+54+4
+ufo : R1 0  R2 0  R3 0  R4 0  R5 0  R7 49  R8 54  R9 4  -> findings 220-113 = 107 = 49+54+4
+# the four v2 rules and R5 are identical in both gates at both scopes: no v2 regression
+# every R7/R8/R9 finding is under .ufo/waves/ (see base-new-rule-samples.txt, out-of-ufo-files=0)
+# waiver state at this revision: 52 findings waived in 48 files (the round-45/46/48 synthetic sidecars)

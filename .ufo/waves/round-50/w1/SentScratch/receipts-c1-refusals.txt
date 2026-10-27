@@ -1,0 +1,20 @@
+== c1 work-dir gate (TMPDIR unset)
+--work /tmp                                          rc=2 | PRED-C1-r49: SETUP work dir under /tmp (SentScratch: use a scratch filesystem)
+--work /tmp/ss-nonexistent                           rc=2 | PRED-C1-r49: SETUP work dir missing
+--work /var/tmp                                      rc=2 | PRED-C1-r49: SETUP work dir under /var/tmp (SentScratch: use a scratch filesystem)
+--work /dev/shm                                      rc=2 | PRED-C1-r49: SETUP work dir under /run, /proc or /dev
+--work /run                                          rc=2 | PRED-C1-r49: SETUP work dir under /run, /proc or /dev
+--work <symlink -> /tmp>                             rc=2 | PRED-C1-r49: SETUP work dir under /tmp (SentScratch: use a scratch filesystem)
+--work <lane root>                                   rc=2 | PRED-C1-r49: SETUP work dir inside a hidden path ~/Projects/shokunin
+--work <lane>/corpus                                 rc=2 | PRED-C1-r49: SETUP work dir inside a hidden path ~/Projects/shokunin
+--work <fleet root>                                  rc=2 | PRED-C1-r49: SETUP work dir inside a hidden path ~/Projects/shokunin
+== c1 TMPDIR gate (work dir = a compliant scratch dir)
+TMPDIR=/tmp                                          rc=2 | PRED-C1-r49: SETUP TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)
+TMPDIR=/var/tmp                                      rc=2 | PRED-C1-r49: SETUP TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)
+TMPDIR=/dev/shm                                      rc=2 | PRED-C1-r49: SETUP TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)
+TMPDIR=<symlink -> /var/tmp>                         rc=2 | PRED-C1-r49: SETUP TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)
+TMPDIR=\$S/probe/home (compliant) rc=0 | PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET
+== cleanup on a Setup exit that happens AFTER mkdtemp (bad rev)
+bad-rev rc=2 | PRED-C1-r49: SETUP bad rev 'deadbeef' | work entries before=0 after=0
+== counter copy outside any lane (lane_root dependency)
+copy-outside-lane rc=2 | PRED-C1-r49: SETUP lane root (SKILL.md/tools/quality) not found above \$S/probe/inst | work entries=0

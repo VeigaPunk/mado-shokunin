@@ -1,0 +1,188 @@
+--- quality/counters/c2-r49-bind-entry.py	2026-10-27 02:31:36.521335737 -0300
++++ .ufo/waves/round-50/w1/ExecCounterC1R50/c1-r50-bind-entry.py	2026-10-27 03:15:38.151878194 -0300
+@@ -1,12 +1,13 @@
+ #!/usr/bin/env python3
+-"""PRED-C2-r49 - the Hyprland bind-key-match entry is admitted (C2, coverage, sourced).
+-
+-Draft for the round-49 freeze (w1/ExecCounterC2), adapted from PRED-C2-r48-v2. Scores one
+-committed revision REV of the lane against BASE 03e4ae76aff7a4be59cb69970dd553baa319695a
+-(the lane tip at round start). ENTRY = corpus/knowledge/hyprland-bind-key-match-r49.md.
++"""PRED-C1-r50 - the Hyprland bind-key-match entry is admitted (C1, coverage, sourced).
++
++Draft for the round-50 freeze (w1/ExecCounterC1R50), a re-point of PRED-C2-r49 (the round-49
++counter, never attacked: round-49 w2 did not run). Scores one committed revision REV of the
++lane against BASE 8ae47b957034ae21012bbf09173cca2c48be345e (the lane tip at round start).
++ENTRY = corpus/knowledge/hyprland-bind-key-match-r50.md.
+ Nothing in the lane is written: every read is revision-addressed (`git show REV:path`) and
+ ambient GIT_* is removed. The counter FETCHES NOTHING: the pinned bytes it trusts are the
+-committed copies under .ufo/waves/round-49/fetch/ at REV (recursively, subdirectories
++committed copies under .ufo/waves/round-50/fetch/ at REV (recursively, subdirectories
+ allowed), plus the round-46 pin the held row S319 carries
+ (.ufo/waves/round-46/fetch/). A fetch copy is trusted only when its sha256 equals a digest
+ the citing row records.
+@@ -34,8 +35,8 @@
+      (`supersed*|replac*|obsolet*|instead|deprecat*`), naming no other `knowledge/` file, and
+      its `S###`/`S###-S###` tokens cover every head id.
+   c  every head row is pin-bound and every URL is ref-pinned:
+-     - the row records `sha256:<64hex>` and names at least one round-49 fetch pin by its
+-       `.ufo/waves/round-49/fetch/<path>` receipt path; every named pin exists at REV,
++     - the row records `sha256:<64hex>` and names at least one round-50 fetch pin by its
++       `.ufo/waves/round-50/fetch/<path>` receipt path; every named pin exists at REV,
+        mode 100644, and its sha256 equals a digest the row records;
+      - for every URL in the row: refs `xkbcommon-1.13.2`, `v0.56.2`, `0.56.2` or a commit
+        hash (7-40 hex) only; `main`, `master`, `HEAD`, `latest`, `dev`, `trunk`, `develop`
+@@ -53,7 +54,7 @@
+   d  every quote is pinned at its stated range. A quote is an inline span the author cites:
+      a backticked or double-quoted span of 2-25 words immediately followed by `, <locator>`,
+      ` at <locator>` or `<locator>` in parentheses, where the locator resolves to a committed
+-     fetch pin (round-49, or the round-46 pin cited by the held row). The span must occur
++     fetch pin (round-50, or the round-46 pin cited by the held row). The span must occur
+      verbatim (whitespace-collapsed, word-bounded) inside that pin, at least one occurrence
+      line inside the stated [a,b]; a span longer than 25 words fails; every pin locator of
+      the entry must stay inside its pin's line count and its pin must be cited by a row by
+@@ -63,13 +64,13 @@
+   e  the chain: >= 6 numbered steps (`^N. ` on an unfenced body line) and EVERY numbered
+      step carries at least one quote that clause d would verify: a backticked or
+      double-quoted span of >= 2 words (and <= 25) immediately followed by a locator that
+-     resolves to a pin cited by a row (round-49 head row or the held round-46 row) and that
++     resolves to a pin cited by a row (round-50 head row or the held round-46 row) and that
+      occurs inside the pin at least once within the stated [a,b]. An in-range locator alone
+      is not enough (a step locator pointed at the wrong line inside the pin was admitted in
+      w1/ExecControlsC2 bundle 14): a step is grounded on bytes, not on a number.
+   f  the live capture answers it: an unfenced entry line cites
+-     `.ufo/waves/round-49/receipts/<file>`. That receipt exists at REV (100644, >= 512 B,
+-     absent at BASE), is a shape file (it carries no raw binds JSON), names
++     `.ufo/waves/round-50/receipts/binds-live-r50.txt`. That receipt exists at REV (100644,
++     >= 512 B, absent at BASE), is a shape file (it carries no raw binds JSON), names
+      `hyprctl binds -j`, records the raw-JSON digest on a `sha256` line, states the bind
+      total and the four key-form counts (the form rule is fixed and re-derived by clause r: a
+      `key` starting `code:`/`mouse`/`switch:` is that form, a bind with an empty `key` and a
+@@ -91,14 +92,18 @@
+   h  the entry has a `## Limits` section with >= 3 bullet lines, at least two of which name
+      a scoped limitation (`not`, `no `, `never`, `outside`, `held`, `inferred`, `[UNK]`):
+      the compositor half that was not measured is stated, not implied.
+-  i  the lesson carries the gate and the ground is new: corpus/lessons/round-49.md exists
++  i  the lesson carries the gate and the ground is new: corpus/lessons/round-50.md exists
+      at REV with a non-empty `## Gate` section holding a `**S### admit**` line for EVERY
+      registry row new at REV (id >= S352, absent at BASE; C1 and C2 rows alike), and every
+      such row is used (its used-by cell names ENTRY, or a path that exists at REV) so a row
+      nobody cites cannot be minted to pad the Gate; and the terms GROUND =
+-     ("xkb_state_key_get_one_sym", "m_xkbSymState", "keysym_to_name", "xkb_keysym_get_name")
++     ("xkb_state_key_get_layout", "m_modifiersState", "keysym_to_name", "xkb_keysym_get_name")
+      each return no match from `git grep` at BASE under corpus/ (exit 1) while >= 2 occur at
+-     REV under corpus/; and the entry body is not a paste or a light paraphrase of held
++     REV under corpus/ (round-50 port: the round-49 terms `xkb_state_key_get_one_sym` and
++     `m_xkbSymState` now occur at BASE in corpus/lessons/round-49-verifier-spotcheck.md and
++     round-49.md, so they were replaced by two terms of the same mechanism, absent at BASE,
++     that the entry can quote from the pinned bytes); and the entry body is not a paste or
++     a light paraphrase of held
+      text: of its unfenced lines >= 60 characters, at most 5 occur verbatim anywhere under
+      corpus/ at BASE (at least 8 such lines exist), and of the hashed 6-word shingles of its
+      unfenced prose fewer than 15% already occur in the base tree's corpus/knowledge and
+@@ -123,7 +128,7 @@
+      and HYPRLAND_INSTANCE_SIGNATURE are inherited (the read-only socket route); the
+      compositor's JSON is never printed. A missing hyprctl, a missing socket variable or an
+      unreachable compositor is a setup error.
+-Final line: `PRED-C2-r49: clauses=... admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`;
++Final line: `PRED-C1-r50: clauses=... admitted=N/1 verdict=TARGET_MET|TARGET_MISSED rev=<full hash>`;
+ exit 0 iff admitted=1/1, 1 otherwise, 2 on a setup failure (unresolved revision, the entry
+ already present at BASE, a /tmp or absent TMPDIR, a missing hyprctl/socket).
+ 
+@@ -151,15 +156,15 @@
+ import sys
+ import tempfile
+ 
+-PRED = "PRED-C2-r49"
+-ENTRY = "corpus/knowledge/hyprland-bind-key-match-r49.md"
++PRED = "PRED-C1-r50"
++ENTRY = "corpus/knowledge/hyprland-bind-key-match-r50.md"
+ REGISTRY = "corpus/SOURCES.md"
+ README = "corpus/README.md"
+-LESSON = "corpus/lessons/round-49.md"
+-FETCH = ".ufo/waves/round-49/fetch/"
++LESSON = "corpus/lessons/round-50.md"
++FETCH = ".ufo/waves/round-50/fetch/"
+ HELD_FETCH = ".ufo/waves/round-46/fetch/"
+-RECEIPTS = ".ufo/waves/round-49/receipts/"
+-BASE_DEFAULT = "03e4ae76aff7a4be59cb69970dd553baa319695a"
++RECEIPTS = ".ufo/waves/round-50/receipts/"
++BASE_DEFAULT = "8ae47b957034ae21012bbf09173cca2c48be345e"
+ OPENED = "2026-10-27"
+ MIN_ID = 352
+ MIN_SOURCES = 3
+@@ -169,7 +174,7 @@
+ HYPRLAND_COMMIT = "efb50993780079460b0cbed1363e2166a2de1d9f"
+ HYPRLAND_VERSION = re.compile(r"Hyprland\s+0\.56\.2")
+ FORMS = ("named", "code", "mouse", "switch")
+-GROUND = ("xkb_state_key_get_one_sym", "m_xkbSymState", "keysym_to_name",
++GROUND = ("xkb_state_key_get_layout", "m_modifiersState", "keysym_to_name",
+           "xkb_keysym_get_name")
+ TAGS = ("xkbcommon-1.13.2", "v0.56.2", "0.56.2")
+ BRANCH_REFS = ("main", "master", "HEAD", "head", "latest", "dev", "trunk", "develop",
+@@ -192,6 +197,9 @@
+ GH_RE = re.compile(r"^https://github\.com/([^/]+)/([^/]+)/(?:blob|tree|raw)/([^/]+)(/.*)$")
+ GL_RE = re.compile(r"^https://gitlab\.freedesktop\.org/(.+?)/-/(?:blob|raw)/([^/]+)(/.*)$")
+ RECEIPT_RE = re.compile(re.escape(RECEIPTS) + r"([A-Za-z0-9._-]+)")
++# Round-50 naming: the one live capture clause f and clause r may score. Clause f used to accept
++# any file under the receipts dir; the round-50 port pins the capture's name.
++RECEIPT_NAME = re.compile(r"^binds-live-r50\.txt$")
+ PROBE_CMD = re.compile(r"hyprctl\s+binds\s+-j")
+ SCOPE_WORD = re.compile(r"\b(not|no|never|outside|held|inferred|unknown|\[UNK\])\b", re.I)
+ RESOLVE_OPTION = "resolve_binds_by_sym"
+@@ -324,12 +332,18 @@
+ 
+ 
+ def locators(line):
+-    """(token, a, b) locator ranges on a line; digest prefixes are not locators."""
++    """(token, a, b) locator ranges on a line; digest prefixes and numbers are not locators."""
+     out = []
+     for token, a, b in LOC_RE.findall(line):
+         name = token.rsplit("/", 1)[-1].lower()
+         if name in LOC_SKIP or re.fullmatch(r"[0-9a-f]{6,}", name):
+             continue
++        if not re.search(r"[a-z_]", name):
++            # a bare number names no file. `modmask_histogram | 0:23, 1:2, ...` is a count
++            # band, but PRED-C2-r49 read `0:23` as a locator, resolved it to the pin whose
++            # stem contains "0" (binds-live-r49 -> 17 lines) and failed clause d on it
++            # (round-50 repair F1, fixture receipts/fixture-c2-prefix.txt).
++            continue
+         out.append((token, int(a), int(b) if b else int(a)))
+     return out
+ 
+@@ -719,8 +733,13 @@
+     if not cand:
+         print("%s %s clause=f no_receipt_line" % (PRED, name))
+         return False
++    named = [p for p in cand if RECEIPT_NAME.match(p.rsplit("/", 1)[-1])]
++    if not named:
++        print("%s %s clause=f receipt_name=%s want=%s" % (
++            PRED, name, [p.rsplit("/", 1)[-1] for p in cand], RECEIPT_NAME.pattern))
++        return False
+     full_ok = 0
+-    for path in cand:
++    for path in named:
+         blob = show(repo, rev, path)
+         if blob is None or ls_mode(repo, rev, path) != "100644":
+             print("%s %s clause=f receipt_missing=%s" % (PRED, name, path))
+@@ -1104,6 +1123,7 @@
+             full = RECEIPTS + path
+             if full not in cand:
+                 cand.append(full)
++    cand = [p for p in cand if RECEIPT_NAME.match(p.rsplit("/", 1)[-1])]
+     for full in cand:
+         blob = show(repo, rev, full)
+         if blob is None or len(blob) < MIN_RECEIPT:
+@@ -1225,7 +1245,12 @@
+     pins = fetch_pins(repo, rev, FETCH)
+     if not pins:
+         print("%s %s clause=c fetch_pins=0 under %s" % (PRED, name, FETCH))
+-        CLAUSES = "a:1 c:0"
++        # a/b were evaluated; c is the one that failed; d..r were never reached. The vector
++        # names only those three, so a control run before the pins are committed cannot read
++        # as "b failed" or as "c failed for a pin reason" (w1/ExecControlsC1R50, control-vector
++        # report; round-49 printed `a:1 c:0` and dropped the computed b).
++        CLAUSES = " ".join("%s:%d" % kv for kv in sorted(
++            {"a": 1, "b": cl["b"], "c": 0}.items()))
+         return 0
+     held_pins = fetch_pins(repo, rev, HELD_FETCH)
+     all_pins = dict(held_pins)

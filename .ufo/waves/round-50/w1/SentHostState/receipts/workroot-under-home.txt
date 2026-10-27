@@ -1,0 +1,26 @@
+# does the frozen counter accept a scratch root under a HOME? (fake home, never the real one)
+$ env HOME=/fast/scratch/hyaku/mado-r50/SentHostState/fakehome7 TMPDIR=/fast/scratch/hyaku/mado-r50/SentHostState/fakehome7 python3 -I quality/counters/c1-r49-keysym.py --repo mado-shokunin --rev 8ae47b95… --work /fast/scratch/hyaku/mado-r50/SentHostState/fakehome7 --nonce 505050
+rc=0
+PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET
+fake-home entries before=1 after=1  (the counter rmtree'd its own tree)
+
+# the same root, killed mid-run (timeout -s KILL): the finally-rmtree never runs
+rc=137  (137 = SIGKILL)
+residue (relative to the fake home):
+  .cache
+  c1r49-kcv1wikl
+  c1r49-kcv1wikl/tool-dj70oefl
+  c1r49-kcv1wikl/judge-home
+  c1r49-kcv1wikl/judge-cfg
+  c1r49-kcv1wikl/keymaps
+  c1r49-kcv1wikl/trace-k1ei5z7p
+entries left=9
+entries after this seat's cleanup=1
+
+# the admission rule that is missing: the counter checks /tmp,/var/tmp,/dev,/run,/proc and repo/lane/parent
+434:        # else the host's xkb data or the work dir changed: a SETUP error, never a scoring event.
+773:            raise Setup("work dir missing")
+777:                raise Setup("work dir under %s (SentScratch: use a scratch filesystem)" % bad)
+780:            raise Setup("TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)")
+783:                raise Setup("work dir inside a hidden path %s" % h)
+785:            raise Setup("work dir under /run, /proc or /dev")

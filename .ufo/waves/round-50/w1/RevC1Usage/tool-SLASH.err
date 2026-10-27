@@ -1,0 +1,17 @@
+ERROR: Failed to convert argument to keysym
+Usage: mado-keysym.py how-to-type --keymap FILE --disable-compose --keysym ARG
+
+Prints what the pinned judge prints on stdout for
+
+  /usr/lib/xkbcommon/xkbcli-how-to-type --keymap=FILE --disable-compose --keysym ARG
+
+and exits with its exit status. FILE is a keymap serialized by
+/usr/lib/xkbcommon/xkbcli-compile-keymap. Compose sequences and the
+character/code-point interpretation of ARG are out of contract: both
+--disable-compose and --keysym are required.
+
+  mado-keysym.py --selftest    hermetic self-test (exit 0 iff all cases pass)
+  mado-keysym.py --help        this text
+
+Exit: 0 ok, 1 keymap could not be read or parsed, 2 usage error or
+ARG is not a keysym.

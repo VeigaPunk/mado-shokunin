@@ -1,0 +1,260 @@
+=== 100 RED (M49-1 reproduction: the model gave the shared translation state the bind mask) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check100-state-cite.py --claims ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/fixtures/claims-red.txt --source ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ScrSkill/pins
+STATE_CLAIM claim=m49-1-translation-mods state=m_xkbTranslationState attr=modmask value=nonzero cite=KeybindManager.cpp:369 line=READ_ONLY_CITE setters=0 nonzero_setters=0 verdict=FAIL
+CHECK100: claims=1 set=0 readonly=1 unresolved=0 contradicted=0 verdict=FAIL
+rc=1
+
+=== 100 GREEN (three claims, each citing the line that sets the state) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check100-state-cite.py --claims ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/fixtures/claims-green.txt --source ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ScrSkill/pins
+STATE_CLAIM claim=sym-state-has-zero-mods state=m_xkbSymState attr=modmask value=zero cite=IKeyboard.cpp:382 line=SITE_SET setters=2 nonzero_setters=0 verdict=OK
+STATE_CLAIM claim=regular-state-gets-depressed-mask state=m_xkbState attr=modmask value=nonzero cite=IKeyboard.cpp:379 line=SITE_SET setters=1 nonzero_setters=1 verdict=OK
+STATE_CLAIM claim=translation-state-is-constructed state=m_xkbTranslationState attr=identity value=any cite=KeybindManager.cpp:332 line=SITE_SET setters=0 nonzero_setters=0 verdict=OK
+CHECK100: claims=3 set=3 readonly=0 unresolved=0 contradicted=0 verdict=OK
+
+=== 100 CONTRADICTED (read-only cite repaired, claimed value still contradicts the setter) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check100-state-cite.py --claims ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/fixtures/claims-contradicted.txt --source ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ScrSkill/pins
+STATE_CLAIM claim=sym-state-carries-depressed state=m_xkbSymState attr=modmask value=nonzero cite=IKeyboard.cpp:382 line=SITE_SET setters=2 nonzero_setters=0 verdict=FAIL
+CHECK100: claims=1 set=0 readonly=0 unresolved=0 contradicted=1 verdict=FAIL
+rc=1
+
+=== 101 RED (fixture: report names its two deliverables, both absent at the report's commit) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check101-deliverables.py --repo $WORK/fx101.zUjuro --rev 78f6d3e1deb332fce4f5e56c9ffbbc69d65f276e --report .ufo/waves/round-49/w1/ExecRefKeysymA.md --require-declaration
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA/receipts/parity.txt grammar=section status=ABSENT
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA/receipts/run.txt grammar=section status=ABSENT
+CHECK101: reports=1 declared=3 exists=1 absent=2 undeclared=0 verdict=FAIL
+rc=1
+
+=== 101 GREEN (same report, deliverables present at the later commit) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check101-deliverables.py --repo $WORK/fx101.zUjuro --rev cc8fa406657697db782be4337ca967afc13be7f5 --report .ufo/waves/round-49/w1/ExecRefKeysymA.md --require-declaration
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA/receipts/parity.txt grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-49/w1/ExecRefKeysymA.md named=.ufo/waves/round-49/w1/ExecRefKeysymA/receipts/run.txt grammar=section status=EXISTS
+CHECK101: reports=1 declared=3 exists=3 absent=0 undeclared=0 verdict=OK
+
+=== 101 REAL POPULATION, prose tokens (why the population is declarations: these would be false positives) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/measure-prose-population.py --repo ~/Projects/shokunin/mado-shokunin --rev 8a370cd4 --wave-glob .ufo/waves/round-48/w1/\*.md
+PROSE_POPULATION: rev=8a370cd4 glob=.ufo/waves/round-48/w1/*.md reports=41 tokens=1354 absent=478
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/measure-prose-population.py --repo ~/Projects/shokunin/mado-shokunin --rev 8a370cd4 --wave-glob .ufo/waves/round-49/w1/\*.md
+PROSE_POPULATION: rev=8a370cd4 glob=.ufo/waves/round-49/w1/*.md reports=43 tokens=1232 absent=504
+
+=== 101 REAL POPULATION, round-50 w1 reports (worktree, --file) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check101-deliverables.py --file .ufo/waves/round-50/w1/ConnCrossClaim.md .ufo/waves/round-50/w1/ConnLedger.md .ufo/waves/round-50/w1/ConnSiblingsR50.md .ufo/waves/round-50/w1/CritC1Args.md .ufo/waves/round-50/w1/CritC1Exotic.md .ufo/waves/round-50/w1/CritC1Fixtures.md .ufo/waves/round-50/w1/CritC1Judge.md .ufo/waves/round-50/w1/CritC1Random.md .ufo/waves/round-50/w1/CritC2FalseClaim.md .ufo/waves/round-50/w1/CritC2Live.md .ufo/waves/round-50/w1/CritC2Pins.md .ufo/waves/round-50/w1/CritC2Scope.md .ufo/waves/round-50/w1/CritCorrections.md .ufo/waves/round-50/w1/CritGateLesson.md .ufo/waves/round-50/w1/CritQuality.md .ufo/waves/round-50/w1/CritSidecars.md .ufo/waves/round-50/w1/ExecC1Cheats.md .ufo/waves/round-50/w1/ExecC1Overfit.md .ufo/waves/round-50/w1/ExecControlsC1R50.md .ufo/waves/round-50/w1/ExecCounterC1R50.md .ufo/waves/round-50/w1/ExecCounterC2R50.md .ufo/waves/round-50/w1/ExecDoNothing.md .ufo/waves/round-50/w1/ExecFetchR50.md .ufo/waves/round-50/w1/ExecGateV3.md .ufo/waves/round-50/w1/ExecHostGuardR50.md .ufo/waves/round-50/w1/ExecLiveR50.md .ufo/waves/round-50/w1/ExecSkillRows.md .ufo/waves/round-50/w1/ExecWaveDone.md .ufo/waves/round-50/w1/MutC1Counter.md .ufo/waves/round-50/w1/MutC1Tool.md .ufo/waves/round-50/w1/MutC2Counter.md .ufo/waves/round-50/w1/MutC2Entry.md .ufo/waves/round-50/w1/MutGateV3.md .ufo/waves/round-50/w1/RevAxisR50.md .ufo/waves/round-50/w1/RevC1Counter.md .ufo/waves/round-50/w1/RevC1Tool.md .ufo/waves/round-50/w1/RevC1Usage.md .ufo/waves/round-50/w1/RevC2Counter.md .ufo/waves/round-50/w1/RevC2Entry.md .ufo/waves/round-50/w1/RevGateV3.md .ufo/waves/round-50/w1/RevHostGuard.md .ufo/waves/round-50/w1/RevN4Matrix.md .ufo/waves/round-50/w1/RevRegistration.md .ufo/waves/round-50/w1/ScoutAssimR50.md .ufo/waves/round-50/w1/ScoutC2Wiki.md .ufo/waves/round-50/w1/ScoutCensus.md .ufo/waves/round-50/w1/ScoutHeldR50.md .ufo/waves/round-50/w1/ScrCorrectionsR50.md .ufo/waves/round-50/w1/ScrEntryR50.md .ufo/waves/round-50/w1/ScrQualityR50.md .ufo/waves/round-50/w1/SentHostState.md .ufo/waves/round-50/w1/SentPrivacy.md .ufo/waves/round-50/w1/SentScratch.md
+DECLARATION report=.ufo/waves/round-50/w1/ConnCrossClaim.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ConnLedger.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ConnSiblingsR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC1Args.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC1Exotic.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC1Fixtures.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC1Judge.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC1Random.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC2FalseClaim.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC2Live.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC2Pins.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritC2Scope.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritCorrections.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritGateLesson.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritQuality.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/CritSidecars.md named=.ufo/waves/round-50/w1/CritSidecars.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ExecC1Cheats.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecC1Overfit.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecControlsC1R50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecCounterC1R50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecCounterC2R50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecDoNothing.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecFetchR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecGateV3.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecHostGuardR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecLiveR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecSkillRows.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ExecWaveDone.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Counter.md named=.ufo/waves/round-50/w1/MutC1Counter.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/MutC1Tool.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/MutC2Counter.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/MutC2Entry.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/MutGateV3.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevAxisR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevC1Counter.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevC1Tool.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevC1Usage.md named=.ufo/waves/round-50/w1/RevC1Usage.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/RevC2Counter.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevC2Entry.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevGateV3.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevHostGuard.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevN4Matrix.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/RevRegistration.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScoutAssimR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScoutC2Wiki.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScoutCensus.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScoutHeldR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScrCorrectionsR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScrEntryR50.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50.md grammar=trailer status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50.md grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/criteria.md grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/round-50.md grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/check100-state-cite.py grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/check101-deliverables.py grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/measure-prose-population.py grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/run-instruments.sh grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/verify-locators.py grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/fixtures/claims-red.txt grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/ScrQualityR50.md named=.ufo/waves/round-50/w1/ScrQualityR50/receipts/criteria-red-green.txt grammar=section status=EXISTS
+DECLARATION report=.ufo/waves/round-50/w1/SentHostState.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/SentPrivacy.md grammar=none status=UNDECLARED
+DECLARATION report=.ufo/waves/round-50/w1/SentScratch.md grammar=none status=UNDECLARED
+CHECK101: reports=53 declared=15 exists=15 absent=0 undeclared=49 verdict=OK
+
+=== 102 RED A (fixture worktree: report present, dispatched wave has no results file) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo $WORK/fx102.dyc8l1 --round-dir $WORK/fx102-none --report .ufo/reports/round-X/mado.md
+WAVE wave=w1 dispatched=2 results=missing settled=0 unsettled=2
+REPORT_BEFORE_WAVE_DONE rev=worktree path=.ufo/reports/round-X/mado.md results_missing=1 unsettled=2
+CHECK102: waves=1 dispatched=2 settled=0 results_missing=1 unsettled=2 report=.ufo/reports/round-X/mado.md verdict=FAIL
+rc=1
+
+=== 102 RED B (real round-49 closure: report committed at b0184c43, no results file at 8a370cd4) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo ~/Projects/shokunin --round-dir ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-49 --results-rev 8a370cd4 --rev b0184c43 --report .ufo/reports/round-49/mado.md
+RESULTS_NOT_AT_REV wave=w1 results_rev=8a370cd4 path=.ufo/waves/round-49/w1-results.json
+REPORT_BEFORE_WAVE_DONE rev=b0184c43 path=.ufo/reports/round-49/mado.md results_missing=1 unsettled=45
+CHECK102: waves=1 dispatched=45 settled=0 results_missing=1 unsettled=45 report=.ufo/reports/round-49/mado.md verdict=FAIL
+rc=1
+
+=== 102 NOTE ARM (results present but one seat has no output and no seat report) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo $WORK/fx102.dyc8l1 --round-dir $WORK/fx102-note --report .ufo/reports/round-X/mado.md
+SEAT wave=w1 name=ExecA status=settled
+SEAT wave=w1 name=ExecB status=note_no_report
+WAVE wave=w1 dispatched=2 results=present settled=1 unsettled=1
+REPORT_BEFORE_WAVE_DONE rev=worktree path=.ufo/reports/round-X/mado.md results_missing=0 unsettled=1
+CHECK102: waves=1 dispatched=2 settled=1 results_missing=0 unsettled=1 report=.ufo/reports/round-X/mado.md verdict=FAIL
+rc=1
+--- NOTE ARM with .ufo/waves/round-X/w1/ExecB.md present ---
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo $WORK/fx102.dyc8l1 --round-dir $WORK/fx102-note --report .ufo/reports/round-X/mado.md
+SEAT wave=w1 name=ExecA status=settled
+SEAT wave=w1 name=ExecB status=settled_with_note
+WAVE wave=w1 dispatched=2 results=present settled=2 unsettled=0
+REPORT_COMMITTED rev=worktree path=.ufo/reports/round-X/mado.md waves_done=1/1
+CHECK102: waves=1 dispatched=2 settled=2 results_missing=0 unsettled=0 report=.ufo/reports/round-X/mado.md verdict=OK
+
+=== 102 GREEN A (fixture audit at the commit that carries the results) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo $WORK/fx102.dyc8l1 --round-dir $WORK/fx102.dyc8l1/rounds/round-X --results-rev bd258be2a5d910b3631bfd4209282c18ec18e55e --rev bd258be2a5d910b3631bfd4209282c18ec18e55e --report .ufo/reports/round-X/mado.md
+SEAT wave=w1 name=ExecA status=settled
+SEAT wave=w1 name=ExecB status=settled
+WAVE wave=w1 dispatched=2 results=present settled=2 unsettled=0
+REPORT_COMMITTED rev=bd258be2a5d910b3631bfd4209282c18ec18e55e path=.ufo/reports/round-X/mado.md waves_done=1/1
+CHECK102: waves=1 dispatched=2 settled=2 results_missing=0 unsettled=0 report=.ufo/reports/round-X/mado.md verdict=OK
+
+=== 102 GREEN B (real round-48 closure: three waves, results tracked at 8a370cd4) ===
+$ python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ScrQualityR50/check102-wave-done.py --repo ~/Projects/shokunin/mado-shokunin --round-dir ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-48 --results-rev 8a370cd4
+SEAT wave=a4r1 name=MadoA4RevC1v2Diff status=settled
+SEAT wave=a4r1 name=MadoA4RevC1Write status=settled
+SEAT wave=a4r1 name=MadoA4RevC2v2Diff status=settled
+SEAT wave=a4r1 name=MadoA4CritEntry status=settled
+SEAT wave=a4r1 name=MadoA4CritSalvage status=settled
+SEAT wave=a4r1 name=MadoA4RevGate status=settled
+SEAT wave=a4r1 name=MadoA4RevLesson status=settled
+SEAT wave=a4r1 name=MadoA4CritAdmission status=settled
+WAVE wave=a4r1 dispatched=8 results=present settled=8 unsettled=0
+SEAT wave=w1 name=ExecRefCacheA status=settled
+SEAT wave=w1 name=ExecRefCacheB status=settled
+SEAT wave=w1 name=ExecLsEmu status=settled
+SEAT wave=w1 name=ExecOracleV2 status=settled
+SEAT wave=w1 name=ExecFixturesV2 status=settled
+SEAT wave=w1 name=ExecGenWarm status=settled
+SEAT wave=w1 name=ExecCounterC1 status=settled
+SEAT wave=w1 name=ExecCounterC2 status=settled
+SEAT wave=w1 name=ExecControlsC1 status=settled
+SEAT wave=w1 name=ExecXkbLive status=settled
+SEAT wave=w1 name=ExecXkbSource status=settled
+SEAT wave=w1 name=ExecHomeUnset status=settled
+SEAT wave=w1 name=ExecSessionMarker status=settled
+SEAT wave=w1 name=ExecD2Receipt status=settled
+SEAT wave=w1 name=ExecErrataR45 status=settled
+SEAT wave=w1 name=ExecIdGuard status=settled
+SEAT wave=w1 name=ExecAxisBase status=settled
+SEAT wave=w1 name=ScoutHyprKeymap status=settled
+SEAT wave=w1 name=ScoutXkbSpecs status=settled
+SEAT wave=w1 name=ScoutShokuknow status=settled
+SEAT wave=w1 name=ScoutHeld status=settled
+SEAT wave=w1 name=ScrEntry status=settled
+SEAT wave=w1 name=ScrRows status=settled
+SEAT wave=w1 name=ScrLesson status=settled
+SEAT wave=w1 name=ScrMistakes status=settled
+SEAT wave=w1 name=ScrErrataD4 status=settled
+SEAT wave=w1 name=ScrSkill status=settled
+SEAT wave=w1 name=ScrScorecard status=settled
+SEAT wave=w1 name=ScrConsider status=settled
+SEAT wave=w1 name=ScrCacheDoc status=settled
+SEAT wave=w1 name=ScrD1Line status=settled
+SEAT wave=w1 name=CritPremiseC1 status=settled
+SEAT wave=w1 name=CritPremiseC2 status=settled
+SEAT wave=w1 name=CritClaimSizing status=settled
+SEAT wave=w1 name=CritRoutedItems status=settled
+SEAT wave=w1 name=ConnSiblings status=settled
+SEAT wave=w1 name=ConnClaims status=settled
+SEAT wave=w1 name=SentHost status=settled
+SEAT wave=w1 name=SentPrivacy status=settled
+SEAT wave=w1 name=RevR47 status=settled
+SEAT wave=w1 name=RevengerCache status=settled
+WAVE wave=w1 dispatched=41 results=present settled=41 unsettled=0
+SEAT wave=w2 name=RevC1Counter status=settled
+SEAT wave=w2 name=RevC1Cache status=settled
+SEAT wave=w2 name=RevC1Ls status=settled
+SEAT wave=w2 name=RevC1Fixtures status=settled
+SEAT wave=w2 name=RevC1Explain status=settled
+SEAT wave=w2 name=RevC2Counter status=settled
+SEAT wave=w2 name=RevC2Entry status=settled
+SEAT wave=w2 name=RevRoutes status=settled
+SEAT wave=w2 name=CritC1OneByte status=settled
+SEAT wave=w2 name=CritC1Time status=settled
+SEAT wave=w2 name=CritC2Scope status=settled
+SEAT wave=w2 name=CritC2FalseClaim status=settled
+SEAT wave=w2 name=CritC2Pin status=settled
+SEAT wave=w2 name=CritRouted status=settled
+SEAT wave=w2 name=CritMistakes status=settled
+SEAT wave=w2 name=CritQualityTrend status=settled
+SEAT wave=w2 name=MutC1Counter status=settled
+SEAT wave=w2 name=MutC1Tool status=settled
+SEAT wave=w2 name=MutC2Counter status=settled
+SEAT wave=w2 name=MutC2Entry status=settled
+SEAT wave=w2 name=MutC1ReadOnly status=settled
+SEAT wave=w2 name=MutC2Receipt status=settled
+SEAT wave=w2 name=ScoutFreezeBlobs status=settled
+SEAT wave=w2 name=ScoutCensus status=settled
+SEAT wave=w2 name=ScoutConsiderthese status=settled
+SEAT wave=w2 name=ScoutMisroot status=settled
+SEAT wave=w2 name=ConnClaimOverlap status=settled
+SEAT wave=w2 name=ConnSourceLinks status=settled
+SEAT wave=w2 name=ConnMistakes status=settled
+SEAT wave=w2 name=SentHost status=settled
+SEAT wave=w2 name=SentScratch status=settled
+SEAT wave=w2 name=SentScope status=settled
+SEAT wave=w2 name=RevXkbIntent status=settled
+SEAT wave=w2 name=RevQualityAdmission status=settled
+SEAT wave=w2 name=CritContextDrift status=settled
+SEAT wave=w2 name=CritCounterTiming status=settled
+SEAT wave=w2 name=CritFrontier status=settled
+SEAT wave=w2 name=RevErrataR45 status=settled
+SEAT wave=w2 name=MutC2OneByte status=settled
+SEAT wave=w2 name=MutRoutedR3 status=settled
+SEAT wave=w2 name=ScoutQualityCriteria status=settled
+SEAT wave=w2 name=ScoutEntryLocators status=settled
+SEAT wave=w2 name=CritSessionMarker status=settled
+SEAT wave=w2 name=CritC1LsEnv status=settled
+SEAT wave=w2 name=RevMisroot status=settled
+SEAT wave=w2 name=MutC2Replay status=settled
+SEAT wave=w2 name=ScoutControls status=settled
+SEAT wave=w2 name=CritDataCompleteness status=settled
+WAVE wave=w2 dispatched=48 results=present settled=48 unsettled=0
+CHECK102: waves=3 dispatched=97 settled=97 results_missing=0 unsettled=0 report=none verdict=OK
+
+=== 102 LANE INSTRUMENT (ExecWaveDone's draft quality/check-wave-done.py at the same two revisions) ===
+$ env -i PATH=/usr/bin:/bin HOME=$WORK/home XDG_CACHE_HOME=$WORK/home/.cache XDG_CONFIG_HOME=$WORK/home/.config XDG_DATA_HOME=$WORK/home/.local/share XDG_STATE_HOME=$WORK/home/.local/state TMPDIR=$WORK python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ExecWaveDone/check-wave-done.py --repo ~/Projects/shokunin/mado-shokunin --rev 8a370cd4 --round 49
+WAVE wave=w1 ready=1 results=absent seats=0 dispatched=45 settled=0 verdict=MISSING reason=results-missing
+MADO_WAVE_DONE: round=49 waves=1 settled=0 verdict=MISSING
+rc=1
+$ env -i PATH=/usr/bin:/bin HOME=$WORK/home XDG_CACHE_HOME=$WORK/home/.cache XDG_CONFIG_HOME=$WORK/home/.config XDG_DATA_HOME=$WORK/home/.local/share XDG_STATE_HOME=$WORK/home/.local/state TMPDIR=$WORK python3 -I ~/Projects/shokunin/mado-shokunin/.ufo/waves/round-50/w1/ExecWaveDone/check-wave-done.py --repo ~/Projects/shokunin/mado-shokunin --rev 8a370cd4 --round 48
+WAVE wave=a4r1 ready=1 results=present seats=8 dispatched=8 settled=8 verdict=OK reason=none
+WAVE wave=w1 ready=1 results=present seats=41 dispatched=41 settled=41 verdict=OK reason=none
+WAVE wave=w2 ready=1 results=present seats=48 dispatched=48 settled=48 verdict=OK reason=none
+MADO_WAVE_DONE: round=48 waves=3 settled=3 verdict=OK

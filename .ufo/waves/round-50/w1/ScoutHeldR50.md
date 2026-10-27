@@ -1,0 +1,1 @@
+Status: complete. Placement findings are in `.ufo/waves/round-50/w1/ScoutHeldR50/placement.md` (held-ground restatement pairs, proposed README coverage/frontier rows, and one SKILL.md pointer). Evidence includes the round-50 claims and round-49 spotcheck read first, source-note/README/SKILL locations, and S318/S319 registry rows. No tests run; no tracked files edited.

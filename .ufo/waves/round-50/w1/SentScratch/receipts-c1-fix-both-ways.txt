@@ -1,0 +1,11 @@
+patch diff vs committed bytes:
+658c658
+<     rc, out, _err = box.run(None, ["--selftest"], timeout=120, writes_ok=True)
+---
+>     rc, out, _err = box.run(None, ["--selftest"], timeout=120)
+== patched counter (no writes_ok for the selftest run)
+real tool @13631f24                rc=0 | PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=ok readonly=ok tool=present verdict=TARGET_MET
+                                   clause-r: PRED-C1-r49 clause=r trips=0 
+mutant-A (/tmp writer)             rc=1 | PRED-C1-r49: fixtures=633/633 generated=150/150 selftest=ok readonly=fail tool=present verdict=TARGET_MISSED
+                                   clause-r: PRED-C1-r49 clause=r trips=1 write:openat(AT_FDCWD, "/tmp/ss-mutA", O_WRONLY|O_CREAT|O_TRUNC|O_
+scratch residue: 0 entries

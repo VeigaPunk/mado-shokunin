@@ -1,0 +1,31 @@
+# PRED-C2-r50 receipt: rule-removal mutants (the red clause is rule-specific)
+# date: 2026-10-27T06:07:46Z
+# Each mutant is a git repo whose HEAD gate is the v3 draft with exactly one finding
+# emission disabled ('if <cond>:' -> 'if False:', a one-token change, anchor asserted unique).
+mutant patched: '    if total:' -> '    if False:'
+## mutant r7 sha256=1ec97f9dc51441158ae357d6327ffd148cb2289aac18bc1734d87a06402dfc26
+mutant patched: '    if rows:' -> '    if False:'
+## mutant r8 sha256=ae769d301cc4cd92b4d95541654171c8e0b03c11d10b0aa567ab03b75c77b278
+mutant patched: '    if count:' -> '    if False:'
+## mutant r9 sha256=244475208efc6ca72d912e6acfd906fa898c2c5e39035388ecd28237498f8b7b
+## counter run on mutant r7
+PRED-C2-r50-SELFTEST: passed=87/94 failed=7 cases=94 rc=1
+PRED-C2-r50-RED: ok=14/42 families=r7-prefix=0/7 r7-header=0/7 r7-diag=0/7 r7-row=0/7 r8-account=7/7 r9-cache=7/7
+PRED-C2-r50-GREEN: ok=44/44 families=g-tilde=7/7 g-dollar-home=7/7 g-prose=6/6 g-numeric-ids=6/6 g-one-field=6/6 g-indented-usage=6/6 g-masked-prefix=6/6
+PRED-C2-r50-SCOPE: default_files=1 default_findings=0 default_rc=0 ufo=0 files findings=0 rc=0
+PRED-C2-r50: selftest=87/94 names=69/69 red=14/42 green=44/44 scope=blind verdict=TARGET_MISSED rev=f297b902421c14cf7735cd39d1e96b7eea517ddd
+exit=1
+## counter run on mutant r8
+PRED-C2-r50-SELFTEST: passed=90/94 failed=4 cases=94 rc=1
+PRED-C2-r50-RED: ok=35/42 families=r7-prefix=7/7 r7-header=7/7 r7-diag=7/7 r7-row=7/7 r8-account=0/7 r9-cache=7/7
+PRED-C2-r50-GREEN: ok=44/44 families=g-tilde=7/7 g-dollar-home=7/7 g-prose=6/6 g-numeric-ids=6/6 g-one-field=6/6 g-indented-usage=6/6 g-masked-prefix=6/6
+PRED-C2-r50-SCOPE: default_files=1 default_findings=1 default_rc=1 ufo=0 files findings=0 rc=0
+PRED-C2-r50: selftest=90/94 names=69/69 red=35/42 green=44/44 scope=seen verdict=TARGET_MISSED rev=5313ff3d545e121a50da7d19816fc240ae4aaa21
+exit=1
+## counter run on mutant r9
+PRED-C2-r50-SELFTEST: passed=90/94 failed=4 cases=94 rc=1
+PRED-C2-r50-RED: ok=35/42 families=r7-prefix=7/7 r7-header=7/7 r7-diag=7/7 r7-row=7/7 r8-account=7/7 r9-cache=0/7
+PRED-C2-r50-GREEN: ok=44/44 families=g-tilde=7/7 g-dollar-home=7/7 g-prose=6/6 g-numeric-ids=6/6 g-one-field=6/6 g-indented-usage=6/6 g-masked-prefix=6/6
+PRED-C2-r50-SCOPE: default_files=1 default_findings=1 default_rc=1 ufo=0 files findings=0 rc=0
+PRED-C2-r50: selftest=90/94 names=69/69 red=35/42 green=44/44 scope=seen verdict=TARGET_MISSED rev=69080957f567993eb57b9841ee1cbbf8188d3044
+exit=1

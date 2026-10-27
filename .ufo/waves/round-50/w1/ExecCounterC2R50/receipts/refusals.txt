@@ -1,0 +1,26 @@
+# PRED-C2-r50 receipt: work-dir and setup refusals (exit 2)
+# date: 2026-10-27T06:07:10Z
+# command shape: python3 -I .ufo/waves/round-50/w1/ExecCounterC2R50/c2-r50-session-gate.py --repo <lane> --rev <rev> --work <dir> --nonce 1
+## --work /tmp/mado-r50-c2
+c2-r50-session-gate.py: error: --work '/tmp/mado-r50-c2' is under /tmp; use a scratch dir
+exit=2
+## --work /var/tmp/mado-r50-c2
+c2-r50-session-gate.py: error: --work '/var/tmp/mado-r50-c2' is under /var/tmp; use a scratch dir
+exit=2
+## --work /dev/shm/mado-r50-c2
+c2-r50-session-gate.py: error: --work '/dev/shm/mado-r50-c2' is under /dev/shm; use a scratch dir
+exit=2
+## inherited TMPDIR=/dev/shm, --work under the scratch dir
+c2-r50-session-gate.py: error: TMPDIR '/dev/shm' is inherited under /dev/shm; unset it
+exit=2
+## gate absent at the revision (rev-parse of an out-of-range rev)
+c2-r50-session-gate.py: error: rev-parse failed (rev-parse --verify): fatal: Needed a single revision
+exit=2
+## --work under the invoking HOME (fake home in the scratch dir)
+c2-r50-session-gate.py: error: --work is under the invoking home (~); point it at a scratch dir outside home state
+exit=2
+## no --work
+usage: c2-r50-session-gate.py [-h] --repo REPO --rev REV --work WORK
+                              --nonce NONCE
+c2-r50-session-gate.py: error: the following arguments are required: --work
+exit=2

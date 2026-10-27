@@ -1,0 +1,43 @@
+# gate: mado-shokunin/.ufo/waves/round-50/w1/ExecWaveDone/check-wave-done.py (final bytes)
+# fixture: git clone -q --shared <lane> $C ; git -C $C rev-parse --show-toplevel == $C ; HEAD=8ae47b957034ae21012bbf09173cca2c48be345e
+# every mutant is one commit in that clone; each run is python3 -I <gate> --repo $C --rev <mutant> --round 48
+
+== control (no change): round 48, unchanged bytes
+WAVE wave=a4r1 ready=1 results=present seats=8 dispatched=8 settled=8 verdict=OK reason=none
+WAVE wave=w1 ready=1 results=present seats=41 dispatched=41 settled=41 verdict=OK reason=none
+WAVE wave=w2 ready=1 results=present seats=48 dispatched=48 settled=48 verdict=OK reason=none
+MADO_WAVE_DONE: round=48 waves=3 settled=3 verdict=OK
+rc=0
+
+== M3: .ufo/waves/round-48/w1-results.json deleted, one commit
+M3=85b9fd1f7571e41e76a30b59a6060e66f93344d6
+WAVE wave=a4r1 ready=1 results=present seats=8 dispatched=8 settled=8 verdict=OK reason=none
+WAVE wave=w1 ready=1 results=absent seats=0 dispatched=41 settled=0 verdict=MISSING reason=results-missing
+WAVE wave=w2 ready=1 results=present seats=48 dispatched=48 settled=48 verdict=OK reason=none
+MADO_WAVE_DONE: round=48 waves=3 settled=2 verdict=MISSING
+rc=1
+
+== M2: one seat's output nulled and its note cleared (round-48/w2); counts unchanged
+victim=RevC1Counter seats=48
+M2=43ff16a706e6be9c2ebdc960bc70614d5d3529d2
+WAVE wave=a4r1 ready=1 results=present seats=8 dispatched=8 settled=8 verdict=OK reason=none
+WAVE wave=w1 ready=1 results=present seats=41 dispatched=41 settled=41 verdict=OK reason=none
+WAVE wave=w2 ready=1 results=present seats=48 dispatched=48 settled=47 verdict=MISSING reason=seats-not-terminal+dispatch-mismatch
+SEAT wave=w2 name=RevC1Counter state=output-empty:null-no-note
+SEAT wave=w2 state=dispatch-mismatch missing=1 extra=0
+MADO_WAVE_DONE: round=48 waves=3 settled=2 verdict=MISSING
+rc=1
+
+== M1: one reported seat record dropped AND the seats field lowered to match (dispatch still lists it)
+dropped=ExecRefCacheA seats_now=40
+M1=a64dba99a0749d649d1acb5a4fceb3a709e5edb9
+WAVE wave=a4r1 ready=1 results=present seats=8 dispatched=8 settled=8 verdict=OK reason=none
+WAVE wave=w1 ready=1 results=present seats=40 dispatched=41 settled=40 verdict=MISSING reason=dispatch-mismatch
+WAVE wave=w2 ready=1 results=present seats=48 dispatched=48 settled=48 verdict=OK reason=none
+SEAT wave=w1 state=dispatch-mismatch missing=1 extra=0
+MADO_WAVE_DONE: round=48 waves=3 settled=2 verdict=MISSING
+rc=1
+
+== working tree of the clone after every gate run (0 = the gate wrote nothing):
+0
+== clone HEAD restored to 8ae47b957034ae21012bbf09173cca2c48be345e: 8ae47b957034ae21012bbf09173cca2c48be345e

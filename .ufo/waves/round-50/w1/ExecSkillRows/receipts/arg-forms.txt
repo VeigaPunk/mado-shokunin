@@ -1,0 +1,31 @@
+# ExecSkillRows r50 — judge ARG forms and the keymap-argument form (host-br.xkb, libxkbcommon 1.13.2)
+# judge = /usr/lib/xkbcommon/xkbcli-how-to-type; tool = tools/mado-keysym.py
+judge --keysym slash -> rc=0 out=keysym: slash (0x002f) | err=
+judge --keysym 0x2f -> rc=0 out=keysym: slash (0x002f) | err=
+judge --keysym U002F -> rc=0 out=keysym: slash (0x002f) | err=
+judge --keysym 47 -> rc=0 out=keysym: slash (0x002f) | err=
+judge --keysym XKB_KEY_a -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym U+002F -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym 0X2F -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym Return -> rc=0 out=keysym: Return (0xff0d) | err=
+judge --keysym nosuchsym -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym SLASH -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym TAB -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym tab -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+judge --keysym RETURN -> rc=2 out= | err=ERROR: Failed to convert argument to keysym
+
+## without --keysym / without --disable-compose (judge)
+judge --disable-compose 0x100 -> rc=0 out=keysym: Amacron (0x03c0)
+judge --keysym dead_acute (compose on) -> rc=0 compose_header=1
+
+## keymap argument form: the judge takes ONLY --keymap=FILE; the tool takes both
+judge [--keymap=host-br.xkb] rc=0 bytes=505 err=
+tool  [--keymap=host-br.xkb] rc=0 bytes=505 err=
+wrapper [--keymap=host-br.xkb] rc=0 bytes=505 err=
+judge [--keymap host-br.xkb] rc=2 bytes=0 err=ERROR: missing positional parameter
+tool  [--keymap host-br.xkb] rc=0 bytes=505 err=
+wrapper [--keymap host-br.xkb] rc=2 bytes=0 err=ERROR: missing positional parameter
+
+## tool contract refusals
+tool without --disable-compose rc=2 err=ERROR: --disable-compose and --keysym are required
+tool without --keysym rc=2 err=ERROR: --disable-compose and --keysym are required

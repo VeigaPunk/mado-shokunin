@@ -232,7 +232,11 @@ this file.
    `SHA256_FIXTURES` is already set to that digest. To use a different frozen set, replace both the file and the
    constant (the embedded 57-case fallback is only used if the constant is emptied).
 2. Frozen numbers: `SELFTEST_MIN=25`, `GEN=60`, the 633 fixture cases, the 61-pair/15-option/95-name generator
-   pools. Changing any of them is a freeze edit.
+   pools. Changing any of them is a freeze edit. Control-margin note from ScExecControlsC1 (20 controls, 0
+   `TARGET_MET` at counter sha `1a7fcc21…`): the rc-blind, layout-1-only, mask-blanking and first-row-only
+   controls still pass 624-626 of the 633 fixtures and are stopped by 7-9 cases each (multi-row keysyms,
+   LevelThree/Lock masks, the rc-2 cases, multi-layout keymaps). If the fixture file is ever regenerated, those
+   four controls and those case classes are the ones to re-check.
 3. Requisites: `bwrap`, `strace`, `ldd`, `git`; the three pinned binaries/headers and the host python3 (3.14.8)
    whose `ldd` closure — interpreter plus every `lib-dynload/*.so` — is derived at run time (42 libraries here).
    A host python upgrade re-derives; a python without shared `libpython` is a setup error, and so is a closure

@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--tool", default=os.path.join(here, "controls", "c07-read-fixture-repo.py"))
     ap.add_argument("--counter", default=os.path.join(here, "score-controls.py"))
     ap.add_argument("--work", required=True)
+    ap.add_argument("--draft", help="ExecCounterC1's draft: use ITS Judge and ITS sandbox Box for the second run")
     a = ap.parse_args()
     work = os.path.abspath(a.work)
     if work.startswith("/tmp"):
@@ -45,23 +46,41 @@ def main():
 
     host_ok = 0
     sandbox_ok = 0
-    box = R.Box(work, False, traces=False)
+    if a.draft:
+        D = load_counter(a.draft)
+        djudge = D.Judge(work)
+        os.makedirs(os.path.join(work, "toolcopy"), exist_ok=True)
+        dbox = D.Box(work, a.tool)
+    else:
+        D = None
+        box = R.Box(work, False, traces=False)
     for c in cases:
         km = os.path.join(work, "km", "c07-" + c["id"] + ".keymap")
         if not os.path.exists(km):
             open(km, "wb").write(R.compile_keymap(c, work, env))
-        want_rc, want_out, _ = R.judge(km, c["keysym"], env)
+        if D is not None:
+            drc, dout = djudge.run(djudge.keymap({"layout": c["layout"], "variant": c.get("variant", ""),
+                                                  "options": c.get("options", "")}), c["keysym"])
+            want_rc, want_out = drc, dout.decode("utf-8", "surrogateescape")
+        else:
+            want_rc, want_out, _ = R.judge(km, c["keysym"], env)
         argv = [sys.executable, "-I", a.tool, "how-to-type", "--keymap", km, "--disable-compose",
                 "--keysym", c["keysym"]]
         p = subprocess.run(argv, capture_output=True, cwd=os.path.dirname(here),
                            env=dict(os.environ, MADO_CTL_FIXTURES=a.cases, PATH="/usr/bin"))
         host_ok += 1 if (p.returncode == want_rc and
                          p.stdout.decode("utf-8", "surrogateescape") == want_out) else 0
-        rc, so, se = box.run(a.tool, km, ["how-to-type", "--keymap", "/case/keymap", "--disable-compose",
-                                         "--keysym", c["keysym"]])
+        if D is not None:
+            rc, so, se = dbox.run(km, ["how-to-type", "--keymap", "/fixture/keymap.xkb", "--disable-compose",
+                                       "--keysym", c["keysym"]])
+            # the draft's Box reads the keymap from /fixture/keymap.xkb, so the path argument must name that
+        else:
+            rc, so, se = box.run(a.tool, km, ["how-to-type", "--keymap", "/case/keymap", "--disable-compose",
+                                             "--keysym", c["keysym"]])
         sandbox_ok += 1 if (rc == want_rc and so == want_out) else 0
     n = len(cases)
-    print("c07-isolation: host=%d/%d sandbox=%d/%d cases=%d" % (host_ok, n, sandbox_ok, n, n))
+    print("c07-isolation: host=%d/%d sandbox=%d/%d cases=%d sandbox=%s" % (
+        host_ok, n, sandbox_ok, n, n, "draft(1a7fcc21)" if D is not None else "replica"))
     print("c07-isolation: fixture_file=%s (read on host, absent in the sandbox mount set)" % a.cases)
     return 0
 

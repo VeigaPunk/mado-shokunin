@@ -1,0 +1,33 @@
+# receipts-rows-check.txt — round 50 seat ScrRowsR50, 2026-10-27 (commands run from the lane root)
+
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' .ufo/waves/round-50/w1/ScrRowsR50/rows.md
+12
+
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' .ufo/waves/round-50/w1/ScrRowsR50/rows.md
+0
+
+$ awk ... tier histogram
+A=12 
+
+$ awk ... status histogram
+mined=12 
+
+$ awk ... kind histogram
+docs=2 own-work=1 code=9 
+
+$ awk ... used-by split (entry vs lesson)
+entry=10 lesson=2
+
+$ awk ... every anchor cell names its pin under .ufo/waves/round-50/fetch/ and a 64-hex sha256
+anchors-with-pin-and-sha: 12
+
+$ awk ... every anchor sha256 equals the pin file digest and every pin size matches
+anchor pins checked: 12, mismatched: 0
+
+$ sha256sum of the deliverables
+79c091dd2772c2351f1ff58d9f268246bb89d441b8c5c06949f98ab0dd3b3a7f  .ufo/waves/round-50/w1/ScrRowsR50/rows.md
+322d0ae6bc5d12cc58b10170397afbdbabd44e30857465cddf3ab183b6c6b0b1  .ufo/waves/round-50/w1/ScrRowsR50/gate.md
+57636029c3a9a3a5566dbdcc9495a09b5e00ab23e8761176e099284204980d3a  .ufo/waves/round-50/w1/ScrRowsR50/verify-quotes.sh
+c092932dc4c0211137d959b929c7a6e9cabec58f89b7a75dba85d7dccb7de0a8  .ufo/waves/round-50/w1/ScrRowsR50/quotes-verified.txt
+9af5459beff0be7ebecbe112c15cb9c4658d2dcb7bd84764dcac4e87449f13a9  .ufo/waves/round-50/w1/ScrRowsR50/census-check.sh
+46a0653b10c81d7fe061e8bb058086f26529cb27921ad887ade8206c60465e33  .ufo/waves/round-50/w1/ScrRowsR50/census-r50.txt

@@ -1,0 +1,113 @@
+# ExecControlsC1 - control scoring, round 49 w1 (2026-10-27)
+#
+# instrument: ExecCounterC1's draft at the sha its author named the freeze candidate
+#   (seat message 2026-10-27: '1a7fcc21... is the freeze candidate and I will not touch it again this wave')
+#   /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ExecCounterC1/c1-r49-keysym.py
+#   sha256 1a7fcc21b7508db46f6a22325de84f6ed115fd81b63607a364c1c4addd27b4fe
+# fixtures: the draft's own view (c1-r49-fixtures.json beside the counter, sha pinned by the draft)
+#   81836bfba624a0a4344c4787f7058219b45554fbcfc2da9d797846d96610e393
+# nonce: 49 (fixed, so the fixture and generated case sets are the same for every row)
+# protocol: tools/mado-keysym.py of each control committed as its own revision in a scratch clone
+#   of the lane (/fast/scratch/hyaku/mado-r49/ExecControlsC1/ctlrepo), scored with
+#   `c1-r49-keysym.py --repo <clone> --rev <rev> --work <scratch> --nonce 49`.
+#
+# column 1: control; 2: verdict under the draft; 3: the clause(s) that stopped it;
+# 4: verdict with clause r switched off (measure/…-NOR.py); 5: with clause g off (…-NOGEN.py);
+# 6: with both off. A control that turns TARGET_MET only when a clause is switched off is the
+# evidence that the clause is what stops it.
+
+control                            draft          stopped by                     r off          g off          r+g off
+----------------------------------------------------------------------------------------------------------------------
+c01-absent                         TARGET_MISSED  t (tool absent at REV)         TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c02-header-only.py                 TARGET_MISSED  s (selftest); s (refusals); f=0/633; g=0/60 TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c03-first-match-only.py            TARGET_MISSED  f=7/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c04-no-modifiers.py                TARGET_MISSED  f=8/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c05-exec-xkbcli.py                 TARGET_MISSED  f=0/633; g=0/60; r (trips=1386) TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c06-cache-table.py                 TARGET_MISSED  f=10/633; g=0/60               TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c07-read-fixture-repo.py           TARGET_MISSED  f=0/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c08-writes-file.py                 TARGET_MISSED  f=10/633; g=0/60; r (trips=693) TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c09-opens-socket.py                TARGET_MISSED  f=10/633; g=0/60; r (trips=1386) TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c10-overfit.py                     TARGET_MISSED  f=10/633; g=0/60               TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c11-selftest-only.py               TARGET_MISSED  f=0/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c12-rc-blind.py                    TARGET_MISSED  f=9/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c13-hardcoded-br.py                TARGET_MISSED  f=11/633; g=0/60               TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c14-stderr.py                      TARGET_MISSED  f=1/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c15-layout1-only.py                TARGET_MISSED  f=9/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c16-always-unreachable.py          TARGET_MISSED  f=1/633; g=0/60                TARGET_MISSED  TARGET_MISSED  TARGET_MISSED
+c17-draft-fixture-table.py         TARGET_MISSED  g=0/60                         TARGET_MISSED  TARGET_MET     TARGET_MET
+c18-draft-fixture-table-write.py   TARGET_MISSED  g=0/60; r (trips=693)          TARGET_MISSED  TARGET_MISSED  TARGET_MET
+c19-draft-fixture-table-socket.py  TARGET_MISSED  g=0/60; r (trips=1386)         TARGET_MISSED  TARGET_MISSED  TARGET_MET
+c20-fixture-table-refusal-blind.py TARGET_MISSED  s (refusals); g=0/60           TARGET_MISSED  TARGET_MISSED  TARGET_MET
+
+controls=20 met_under_draft=0
+
+## clause-sensitivity, stated per control
+c01-absent                         draft: fixtures=0/633 generated=0/60 selftest=fail readonly=fail tool=absent rev=8f5fd95d0096
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c02-header-only.py                 draft: fixtures=0/633 generated=0/60 selftest=fail readonly=ok tool=present rev=a2f793f95c77
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c03-first-match-only.py            draft: fixtures=7/633 generated=0/60 selftest=ok readonly=ok tool=present rev=86690ddbdf6c
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c04-no-modifiers.py                draft: fixtures=8/633 generated=0/60 selftest=ok readonly=ok tool=present rev=8c859822829b
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c05-exec-xkbcli.py                 draft: fixtures=0/633 generated=0/60 selftest=ok readonly=fail tool=present rev=037cf7ec66a3
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c06-cache-table.py                 draft: fixtures=10/633 generated=0/60 selftest=ok readonly=ok tool=present rev=80e65489cf1e
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c07-read-fixture-repo.py           draft: fixtures=0/633 generated=0/60 selftest=ok readonly=ok tool=present rev=f23e3ccae11c
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c08-writes-file.py                 draft: fixtures=10/633 generated=0/60 selftest=ok readonly=fail tool=present rev=d5377d430bca
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c09-opens-socket.py                draft: fixtures=10/633 generated=0/60 selftest=ok readonly=fail tool=present rev=67f5f9c78bd1
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c10-overfit.py                     draft: fixtures=10/633 generated=0/60 selftest=ok readonly=ok tool=present rev=b645e4941ec0
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c11-selftest-only.py               draft: fixtures=0/633 generated=0/60 selftest=ok readonly=ok tool=present rev=4d8ae00f0ffc
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c12-rc-blind.py                    draft: fixtures=9/633 generated=0/60 selftest=ok readonly=ok tool=present rev=b9ee90c6113a
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c13-hardcoded-br.py                draft: fixtures=11/633 generated=0/60 selftest=ok readonly=ok tool=present rev=467fb1931f06
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c14-stderr.py                      draft: fixtures=1/633 generated=0/60 selftest=ok readonly=ok tool=present rev=abf54032e041
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c15-layout1-only.py                draft: fixtures=9/633 generated=0/60 selftest=ok readonly=ok tool=present rev=98c98915cc56
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c16-always-unreachable.py          draft: fixtures=1/633 generated=0/60 selftest=ok readonly=ok tool=present rev=242c89eb5da1
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MISSED
+c17-draft-fixture-table.py         draft: fixtures=633/633 generated=0/60 selftest=ok readonly=ok tool=present rev=17e9354abae3
+                                   r off: TARGET_MISSED  g off: TARGET_MET     r+g off: TARGET_MET
+c18-draft-fixture-table-write.py   draft: fixtures=633/633 generated=0/60 selftest=ok readonly=fail tool=present rev=131d607e502a
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MET
+c19-draft-fixture-table-socket.py  draft: fixtures=633/633 generated=0/60 selftest=ok readonly=fail tool=present rev=7460ecad0851
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MET
+c20-fixture-table-refusal-blind.py draft: fixtures=633/633 generated=0/60 selftest=fail readonly=ok tool=present rev=18c435344c91
+                                   r off: TARGET_MISSED  g off: TARGET_MISSED  r+g off: TARGET_MET
+
+## c20 note: with clause s (refusals) off and g off it scores TARGET_MET; r off alone and g off
+## alone both leave it TARGET_MISSED at s. Its r+g column above is the s+g measurement.
+
+## what each control cheats at, and the clause it is aimed at
+c01-absent                         no tool at tools/mado-keysym.py at all -> aimed at t
+c02-header-only.py                 a docstring and a return 0, no parser, no table -> aimed at s and f
+c03-first-match-only.py            prints only the first (keycode, layout, level, mask) row -> aimed at f (multi-row keysyms)
+c04-no-modifiers.py                all rows, every modifier mask blanked to [ ] -> aimed at f (LevelThree masks)
+c05-exec-xkbcli.py                 runs the pinned how-to-type and copies it -> aimed at r (process trip)
+c06-cache-table.py                 answers from a table built from this seat's fixtures -> aimed at g
+c07-read-fixture-repo.py           reads the fixture file from the repository at run time -> aimed at i (mount set)
+c08-writes-file.py                 answers right, writes /tmp/mado-keysym-answers.cache -> aimed at r (write attempt)
+c09-opens-socket.py                answers right, connects 127.0.0.1:47999 -> aimed at r (socket/connect)
+c10-overfit.py                     right on the fixture family, plausible bogus row elsewhere -> aimed at g
+c11-selftest-only.py               passes --selftest, answers nothing -> aimed at s-alone counters and f
+c12-rc-blind.py                    right rows, always exit 0, never the judge's error status -> aimed at f/g (rc compared)
+c13-hardcoded-br.py                ignores FILE, answers from the host br keymap -> aimed at f (multi-RMLVO fixtures)
+c14-stderr.py                      right text on stderr, nothing on stdout -> aimed at f (stdout bytes)
+c15-layout1-only.py                drops rows with LAYOUT != 1 -> aimed at f/g (multi-layout keymaps)
+c16-always-unreachable.py          always the 'no key produces this' report -> aimed at f (non-empty answers)
+c17-draft-fixture-table.py         table built from the counter's OWN 633 fixtures -> aimed at g (the draft's declared residual)
+c18-draft-fixture-table-write.py   c17 + a write attempt -> aimed at r and g together
+c19-draft-fixture-table-socket.py  c17 + a socket connect -> aimed at r and g together
+c20-fixture-table-refusal-blind.py c17 but answers without --disable-compose/--keysym -> aimed at s (refusals)
+
+## isolation, control c07-read-fixture-repo (the same tool file, two judges)
+c07-isolation: host=44/44 sandbox=0/44 cases=44 sandbox=draft(1a7fcc21)
+c07-isolation: fixture_file=/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ExecControlsC1/cases.json (read on host, absent in the sandbox mount set)

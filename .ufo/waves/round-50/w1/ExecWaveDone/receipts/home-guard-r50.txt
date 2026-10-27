@@ -1,0 +1,19 @@
+# home-guard admission rule in this gate (locators computed by grep -n, never typed)
+156:REFUSED_WORK_PREFIXES = ("/tmp", "/var/tmp", "/dev/shm")
+160:SELFTEST_CHECKS = 58
+491:def passwd_home():
+503:def home_roots():
+533:            raise GateError("refusing work dir under %s (got %s): use a scratch filesystem"
+539:            raise GateError("refusing work dir inside the home directory (got ~%s): use a "
+512:        raise GateError("HOME is unset or empty: the home rule cannot be checked, and an absent "
+# argument cases, run from the fleet root
+check-wave-done.py: refusing work dir inside the home directory (got ~): use a scratch filesystem
+rc(work-is-home)=2
+check-wave-done.py: refusing work dir inside the home directory (got ~/wave-done): use a scratch filesystem
+rc(work-under-home)=2
+# the residual SentHostState measured: with HOME unset the rule must still hold (an absent HOME is an error)
+check-wave-done.py: HOME is unset or empty: the home rule cannot be checked, and an absent HOME must not switch it off (set HOME and point --work at a scratch filesystem)
+rc(home-unset)=2
+# and it does not silently shrink the suite: the expected count is pinned at SELFTEST_CHECKS (58) and asserted
+# attribution: correction from SentHostState 2026-10-27 — a scratch root accepted under a home is R-SHS-2;
+# R-SHS-3 is the outer-tracer false-TARGET_MISSED mode, which cannot reach this gate (it wraps no counter, starts no tracer).

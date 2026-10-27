@@ -1,0 +1,33 @@
+# ancestry and presence of the raw binds dump (read-only git at the clone)
+# clone: mado lane, checked out at 13631f24050f22db92bf5bd33e0f4d014192992e
+
+$ git log --oneline --first-parent -8 13631f24
+13631f24 round-50: claims declared (C1 bind key match entry, C2 session-material gate v3) + round-start receipts
+8ae47b95 round-49 w1: late seat output after closure (ExecControlsC1 check-quotes.py)
+c0d847ce round-49 verifier spot-check (integrator, hyaku): non-author admit/reject
+8a370cd4 round-49: axis at tip receipt (checked=3 mismatched=0)
+602e39e3 round-49: records - lesson, SCORECARD/LOG round 49, C1/C2 receipts at data, census after, operator state after
+430d2569 round-49: C1 data - tools/mado-keysym.py (how-to-type parity, w1 reference A)
+dd2e827e round-49: freeze (registration, C1/C2 counters + fixtures, w1 evidence, pins, candidates) + commit the 47 round-48 ExecSessionMarker sidecars
+5f37c1b8 round-49: claims, w1 spec + dispatch, census before, operator-owned state digest before
+
+$ git log --format="%h %ci %s" --diff-filter=A 13631f24 -- .ufo/waves/round-49/w1/ScrSkill/receipts/binds-raw.json
+dd2e827e 2026-10-27 02:31:37 -0300 round-49: freeze (registration, C1/C2 counters + fixtures, w1 evidence, pins, candidates) + commit the 47 round-48 ExecSessionMarker sidecars
+
+$ git cat-file -s 13631f24:.ufo/waves/round-49/w1/ScrSkill/receipts/binds-raw.json
+90401
+$ git rev-parse 13631f24:<path>
+40b9285abfab4d355060c3cb780d0d0de3ed347c
+$ git show 13631f24:<path> | sha256sum
+9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779  -
+
+# presence at the data commit and at the round-49 closure tip:
+430d2569 present
+602e39e3 present
+8ae47b95 present
+
+# the seat report that names it landed in the same commit as the dump:
+dd2e827e 2026-10-27 02:31:37 -0300 round-49: freeze (registration, C1/C2 counters + fixtures, w1 evidence, pins, candidates) + commit the 47 round-48 ExecSessionMarker sidecars
+
+# identifiability: the blob is a JSON array of hyprctl bind records
+records=192 keys=18

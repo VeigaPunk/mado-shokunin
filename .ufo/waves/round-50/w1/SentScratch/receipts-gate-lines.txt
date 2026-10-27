@@ -1,0 +1,48 @@
+# computed locators (grep -n) at 13631f24, lane-relative paths
+## c1-r49-keysym.py
+143:def tmp_write(rest):
+147:    return bool(absolute) and all(p == "/tmp" or p.startswith("/tmp/") for p in absolute)
+333:def under(p, root):
+541:              "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--chdir", "/",
+551:        fd, trace = tempfile.mkstemp(dir=self.work, prefix="trace-")
+565:            lines = open(path, encoding="latin-1").read().splitlines()
+658:    rc, out, _err = box.run(None, ["--selftest"], timeout=120, writes_ok=True)
+777:                raise Setup("work dir under %s (SentScratch: use a scratch filesystem)" % bad)
+780:            raise Setup("TMPDIR is under /tmp, /var/tmp or /dev/shm (SentScratch: set TMPDIR to a scratch filesystem)")
+783:                raise Setup("work dir inside a hidden path %s" % h)
+785:            raise Setup("work dir under /run, /proc or /dev")
+786:        work = tempfile.mkdtemp(dir=work_root, prefix="c1r49-")
+790:            shutil.rmtree(work, ignore_errors=True)
+## c2-r49-bind-entry.py
+1028:def tmp_root():
+1032:        raise Setup("TMPDIR required for replay scratch")
+1035:        raise Setup("TMPDIR under /tmp refused: %s" % rp)
+1037:        raise Setup("TMPDIR is not a directory: %s" % rp)
+1048:    S = tempfile.mkdtemp(dir=tmp_root(), prefix="c2r-")
+1093:        shutil.rmtree(S, ignore_errors=True)
+## tools/mado-keysym.py
+4:Read-only. Starts no process, opens no socket, writes no file (`--selftest` serves its keymaps
+23:      Hermetic cases under $TMPDIR; last line `MADO_KEYSYM_SELFTEST: N/N passed`; exit 0 iff all pass.
+1665:            with open(keymap_path, "rb") as handle:
+1957:    files = {"/fixture/selftest-%d.kmap" % index: case[1]
+## other committed writers named in the report
+209:    d = tempfile.mkdtemp(prefix="check96-")
+1583:    scratch = tempfile.mkdtemp(prefix="csm-selftest-", dir=os.environ.get("TMPDIR") or None)
+132:    mutant_root = Path(args.mutants) if args.mutants else Path(f"/tmp/mado-r36-mutants-{args.profile}")
+283:    for base in (os.environ.get("TMPDIR"), "/fast/scratch/hyaku/mado-r27", None):
+426:        parent = args.work or os.environ.get("C1R44_TMP") or None
+1412:    base = tempfile.mkdtemp(prefix="mado-terminal-selftest.", dir=os.environ.get("TMPDIR") or None)
+418:  T=$(mktemp -d /tmp/w5-mado-m52-selftest.XXXXXX) || { echo "cannot mktemp" >&2; exit 2; }
+2078:    scratch = tempfile.mkdtemp(prefix="csm-selftest-", dir=os.environ.get("TMPDIR") or None)
+## c2 short-circuit before clause r, and c1 env(); c1 trace unlink
+1144:    if not cl["a"]:
+1145:        print("%s %s clause=a entry_absent" % (PRED, name))
+1143+1:    if not cl["a"]:
+1143+2:        print("%s %s clause=a entry_absent" % (PRED, name))
+1143+3:        global CLAUSES
+1143+4:        CLAUSES = "a:0"
+1143+5:        return 0
+1143+6:    head, fenced, outside = [], False, 0
+414:    def env(self, home=None):
+596:        os.unlink(path)
+412:        self.cache = {}
