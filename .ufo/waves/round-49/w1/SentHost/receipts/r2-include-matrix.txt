@@ -1,0 +1,16 @@
+# R2 compile isolation matrix (all: --layout br)
+clean        6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  evil=0
+hostile      4f07b6d5b70afb586d591474985827010805b076c24cc066d94ca2a5e50e7b95  evil=1
+inc-clean    6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  evil=0
+inc-hostile  6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  evil=0
+root         e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  evil=0
+extra        6637586fc663f523b16f0acdee74a092b4b89b7d180b509c64767828c6645202  evil=1
+extra-inc    6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  evil=0
+# rows: clean/inc-clean are the reference (the same keymap). hostile, extra are shadowed by a user/extra
+# symbols/br that names name[Group1]="EVIL". root is a compile that FAILS (see r2-root-err.txt).
+xkbcommon: ERROR: [XKB-338] Couldn't find file "rules/evdev" in include paths
+xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+xkbcommon: ERROR: [XKB-338] 	/fast/scratch/hyaku/mado-r49/SentHost/run/probe/fake-xkb
+xkbcommon: ERROR: [XKB-338] 1 include paths could not be added:
+xkbcommon: ERROR: [XKB-338] 	/etc/xkb
+xkbcommon: ERROR: [XKB-595] Cannot load XKB rules "evdev"

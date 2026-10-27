@@ -1,0 +1,23 @@
+# N2 — the host_cache_untouched digest is the w2 mutant's bytes (round-49 w1, ScrCorrections)
+
+$ grep -n host_cache_untouched /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/live-terminal-cache-r48.txt
+4:host_cache_untouched_sha256=c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+
+$ sed -n 4p /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-48/receipts/live-terminal-cache-r48.txt | cut -d= -f2
+c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+
+$ printf "r48-w2\n" | sha256sum
+c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144  -
+
+$ printf "r48-w2\n" | wc -c
+7
+
+# equal?
+EQUAL: receipt field == printf 'r48-w2\n' digest = c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+
+# the mutant writer, as the round-48 lesson records it:
+$ grep -n "M48-10" /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-48.md | head -1 | cut -d: -f1
+263
+
+# NOTE: this seat did NOT read or write the operator cache. The claim is a digest identity
+# between the receipt field and the mutant bytes, not a fresh observation of ~/.cache.

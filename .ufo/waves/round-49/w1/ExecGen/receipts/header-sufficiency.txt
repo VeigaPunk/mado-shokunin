@@ -1,0 +1,30 @@
+# Is xkbcommon-keysyms.h sufficient for the C1 tool? Measured, not assumed.
+# header: /usr/include/xkbcommon/xkbcommon-keysyms.h sha256 13023369f65a17411606084e3e09557b4886aeb15f89affba4aaa86490a463f3
+# judge:  /usr/lib/xkbcommon/xkbcli-how-to-type sha256 f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+# keymap: br --options compose:caps sha256 efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+# every call: env -i PATH=/usr/bin HOME/XDG_* in scratch
+
+## A. canonical name for values with several header names
+alias_values: 120
+canonical_name_matches: {'header_first': 120}
+VERDICT: header order DETERMINES the canonical name for every aliased value.
+
+## B. is every header name a legal --keysym argument?
+header_names: 2638
+rejected_as_argument: 1 ['NoSymbol']
+VERDICT: the header name set is sufficient as an argument source.
+
+## C. names the header cannot supply
+  0x2032 -> rc=0 name=0x00002032 (in header: False)
+  0x1002032 -> rc=0 name=U2032 (in header: False)
+  0x100002b -> rc=0 name=0x0100002b (in header: False)
+  0x110000 -> rc=0 name=0x00110000 (in header: False)
+VERDICT: Unicode keysym names are synthesised (U%04X / 0x%08x); the header
+holds no U+ define, so the tool must implement that naming rule itself.
+
+## D. case sensitivity
+  slash        -> rc=0 name=slash
+  SLASH        -> rc=2 name=None
+  Slash        -> rc=2 name=None
+  dead_acute   -> rc=0 name=dead_acute
+  DEAD_ACUTE   -> rc=2 name=None

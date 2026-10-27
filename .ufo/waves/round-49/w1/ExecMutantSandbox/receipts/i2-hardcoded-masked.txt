@@ -1,0 +1,15 @@
+MUTANT2 home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home target=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec out_size=17 out_sha256=e1fd68c24bb63f8dcb0d555684dfe02d7d4c0701cf930702b6b2cc48a65d22a5
+# hostguard run  work=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home sandbox=bwrap label=operator-owned declared=1 mask=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome
+ENV HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home
+ENV XDG_CACHE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home/.cache
+ENV XDG_CONFIG_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home/.config
+ENV XDG_DATA_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home/.local/share
+ENV XDG_STATE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/home/.local/state
+ENV TMPDIR=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i/tmp
+ARGV /usr/bin/bwrap --die-with-parent --unshare-pid --unshare-ipc --unshare-uts --dev-bind / / --tmpfs /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome --chdir /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work-i python3 /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/mutant2.py
+# before
+BEFORE operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+# after
+AFTER  operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+child_rc=0 elapsed_s=0.016 changed=0 status=ok exit=0
+caseI2_exit=0 (expect 0) cache_sha=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b

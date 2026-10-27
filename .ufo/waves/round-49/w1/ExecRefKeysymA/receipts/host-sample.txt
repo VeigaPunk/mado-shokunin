@@ -1,0 +1,42 @@
+# host sample: compile-keymap --layout br --options compose:caps, judge vs draft, cmp
+# judge sha256 f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+# compiler sha256 43b924f68651500e022c74371515154f8c50a2e087defa6b834cc5d41fd77250
+# keymap sha256 efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81 bytes 73079
+--keysym slash: judge_rc=0 ours_rc=0 stdout=IDENTICAL judge_stdout_lines=10
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+  judge_stderr_first: 
+--keysym Return: judge_rc=0 ours_rc=0 stdout=IDENTICAL judge_stdout_lines=6
+  | keysym: Return (0xff0d)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 36       RTRN      1        Portuguese (Brazil)  1       [ ]
+  judge_stderr_first: 
+--keysym nosuchsym: judge_rc=2 ours_rc=2 stdout=IDENTICAL judge_stdout_lines=0
+  judge_stderr_first: ERROR: Failed to convert argument to keysym
+--keysym 0x2f: judge_rc=0 ours_rc=0 stdout=IDENTICAL judge_stdout_lines=10
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+  judge_stderr_first: 
+--keysym NoSymbol: judge_rc=2 ours_rc=2 stdout=IDENTICAL judge_stdout_lines=0
+  judge_stderr_first: ERROR: Failed to convert argument to keysym
+--keysym U+0041: judge_rc=2 ours_rc=2 stdout=IDENTICAL judge_stdout_lines=0
+  judge_stderr_first: ERROR: Failed to convert argument to keysym

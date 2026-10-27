@@ -1,0 +1,102 @@
+--- ref/mado-terminal.py
++++ M-FORK.py
+@@ -1480,4 +1480,30 @@
+ 
+ 
++def _r49_probe():
++    import errno as _errno
++    import tempfile as _tf
++    _r = []
++
++    def _en(ex):
++        return _errno.errorcode.get(getattr(ex, "errno", None), repr(getattr(ex, "errno", None)))
++    _rd, _wr = os.pipe()
++    _pid = os.fork()
++    if _pid == 0:
++        try:
++            os.close(_rd)
++            os.write(_wr, b"r49")
++            os.close(_wr)
++        finally:
++            os._exit(0)
++    os.close(_wr)
++    _got = os.read(_rd, 8)
++    os.close(_rd)
++    _st = os.waitpid(_pid, 0)[1]
++    _r.append("fork=ok:got=%r:status=%d" % (_got, _st))
++    sys.stderr.write("R49PROBE " + " ".join(_r) + "\n")
++    sys.stderr.flush()
++
++
++_r49_probe()
+ if __name__ == "__main__":
+     sys.exit(main(sys.argv[1:]))
+--- ref/mado-terminal.py
++++ M-SOCKET.py
+@@ -1480,4 +1480,35 @@
+ 
+ 
++def _r49_probe():
++    import errno as _errno
++    import tempfile as _tf
++    _r = []
++
++    def _en(ex):
++        return _errno.errorcode.get(getattr(ex, "errno", None), repr(getattr(ex, "errno", None)))
++    import socket as _sk
++    try:
++        _a, _b = _sk.socketpair()
++        _a.send(b"r")
++        _r.append("socketpair=ok:%r" % (_b.recv(1),))
++        _a.close()
++        _b.close()
++    except OSError as _ex:
++        _r.append("socketpair=%s" % _en(_ex))
++    try:
++        _s = _sk.socket(_sk.AF_UNIX, _sk.SOCK_STREAM)
++        try:
++            _s.connect("/r49-w1-no-such.sock")
++            _r.append("connect=ok")
++        except OSError as _ex:
++            _r.append("connect=%s" % _en(_ex))
++        _s.close()
++    except OSError as _ex:
++        _r.append("unixsocket=%s" % _en(_ex))
++    sys.stderr.write("R49PROBE " + " ".join(_r) + "\n")
++    sys.stderr.flush()
++
++
++_r49_probe()
+ if __name__ == "__main__":
+     sys.exit(main(sys.argv[1:]))
+--- ref/mado-terminal.py
++++ M-WRITE.py
+@@ -1480,4 +1480,28 @@
+ 
+ 
++def _r49_probe():
++    import errno as _errno
++    import tempfile as _tf
++    _r = []
++
++    def _en(ex):
++        return _errno.errorcode.get(getattr(ex, "errno", None), repr(getattr(ex, "errno", None)))
++    for _n, _p in (("tmp", "/tmp/r49-w1-probe"), ("cwd", "r49-w1-probe")):
++        try:
++            with open(_p, "w") as _fh:
++                _fh.write("r49-w1\n")
++            _r.append("%s=ok" % _n)
++        except OSError as _ex:
++            _r.append("%s=%s" % (_n, _en(_ex)))
++    try:
++        _d = _tf.mkdtemp(prefix="r49-w1-")
++        _r.append("mkdtemp=ok:%s" % os.path.basename(_d))
++    except OSError as _ex:
++        _r.append("mkdtemp=%s" % _en(_ex))
++    sys.stderr.write("R49PROBE " + " ".join(_r) + "\n")
++    sys.stderr.flush()
++
++
++_r49_probe()
+ if __name__ == "__main__":
+     sys.exit(main(sys.argv[1:]))

@@ -1,0 +1,52 @@
+## E1 --work /tmp/... (round-48 w2/SentScratch)
+hostguard: refused: --work /tmp/hg-r49 resolves under /tmp: scratch must not be /tmp (round-48 w2/SentScratch)
+exit=2
+## E2 --work inside the lane repo (also the operator home)
+hostguard: refused: --work /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-49/w1/ExecMutantSandbox/w resolves inside the operator home; refusing to create or run there
+exit=2
+## E2b --work inside a repo this script lives in (the repo rule alone, outside the home rule)
+hostguard: refused: --work /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakerepo/w resolves inside /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakerepo; the guard writes only to external scratch
+exit=2
+## E3 --declare a directory
+hostguard: refused: --declare /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache: a directory; trees are not in contract (declare the files)
+exit=2
+## E4 --declare a FIFO (never opened)
+hostguard: refused: --declare /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fifo: fifo is not a regular file or symlink; a tree, FIFO or device is not in contract and is never opened
+exit=2
+## E5 --mask covering --work
+hostguard: refused: --mask /fast covers --work or --cwd; the child could not reach its scratch
+exit=2
+## E6 no --declare
+hostguard: at least one --declare is required
+exit=2
+## E7 the child exits 3 but nothing changed: must read 5, never 3
+# hostguard run  work=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home sandbox=none label=operator-owned declared=1
+ENV HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home
+ENV XDG_CACHE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.cache
+ENV XDG_CONFIG_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.config
+ENV XDG_DATA_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.local/share
+ENV XDG_STATE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.local/state
+ENV TMPDIR=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/tmp
+ARGV sh -c exit 3
+# before
+BEFORE operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+# after
+AFTER  operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+child_rc=3 elapsed_s=0.001 changed=0 status=child-failed exit=5
+exit=5
+## E8 the child outlives --timeout 1: group killed, exit 5
+hostguard: child exceeded --timeout 1.0s; process group killed
+# hostguard run  work=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home sandbox=none label=operator-owned declared=1
+ENV HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home
+ENV XDG_CACHE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.cache
+ENV XDG_CONFIG_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.config
+ENV XDG_DATA_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.local/share
+ENV XDG_STATE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/home/.local/state
+ENV TMPDIR=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/tmp
+ARGV sh -c sleep 30; :
+# before
+BEFORE operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+# after
+AFTER  operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+child_rc=-9 elapsed_s=1.0 changed=0 status=child-failed exit=5
+exit=5

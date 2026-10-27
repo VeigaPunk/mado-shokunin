@@ -1,0 +1,10 @@
+# ScoutHowToType findings
+
+- Source: pinned `tools/how-to-type.c` from libxkbcommon tag `xkbcommon-1.13.2`, SHA-256 `f774882e88f012cb18225db4232c8a8074f7c7a7371c789fca8c27f41c8515bc` (836 lines). The host judge binary matches declared SHA-256 `f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54`; host package is libxkbcommon 1.13.2-1.
+- Detailed contract, source citations, output/iteration/format behavior, parser acceptance, error strings/codes, and Compose exclusions: `contract.md` in this seat directory.
+- Key implementation facts: direct rows traverse keycode → layout → level ascending; a single-symbol level must equal target; masks print in libxkbcommon accessor-return order. Exact output formats are in `how-to-type.c:522-537,625-628`; disabled-Compose guard is at 599-623 and 709-724. `--keymap` is optional-argument syntax, requiring `--keymap=FILE`, not separated `--keymap FILE` (`164-177`).
+- Confirmed against the host binary using a keymap compiled via the allowed `xkbcli-compile-keymap` command in clean env: slash yielded AD01 keycode 24 level 3/4 and AB11 keycode 97 level 1; Return yielded RTRN keycode 36 level 1. Invalid keysym `nosuchsym` printed `ERROR: Failed to convert argument to keysym` plus usage and returned 2.
+- Keysym name header by itself is insufficient: library handles `U...`, `0x...`, decimal fallback, XF86 underscore fallback, exact-case lookup, and canonical output naming. See detailed citations in contract. The `XKB_KEY_` header hash is `13023369f65a17411606084e3e09557b4886aeb15f89affba4aaa86490a463f3` (2659 definitions).
+- Unresolved: this scout did not implement a replacement or run a Python equivalence test. General keymap text parsing/type inference is outside `how-to-type.c` itself; exact behavior must be derived from libxkbcommon's keymap API/compiler, not just key symbol arrays. Stderr usage paths embed `argv[0]`, so stderr byte equality depends on invocation path; requested judge criterion here is stdout + exit status.
+
+No tracked files modified; no package/tool installation. No build/test run.

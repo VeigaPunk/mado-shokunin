@@ -1,0 +1,64 @@
+# seed=4901 n=400 weighting=difficulty
+# first 3 cases the naive reader gets wrong
+
+## contrast 1
+case {"index": 0, "keysym_arg": "parenleft", "keysym_draw": "present-weighted", "keysym_form": "name", "keysym_name": "parenleft", "keysym_value": 40, "layout": "kr", "model": "pc105", "multi_layout": false, "options": ["lv5:ralt_switch_lock"], "present_pool_size": 534, "present_weighted": true, "rules": "evdev", "variant": "", "weighting": "difficulty"}
+--- judge stdout (rc=0, 246 bytes) ---
+keysym: parenleft (0x0028)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+18       AE09      1        Korean               2       [ Shift ]
+187      I187      1        Korean               1       [ ]
+--- naive stdout (rc=0, 179 bytes) ---
+keysym: parenleft (0x0028)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+18       AE09      1        Korean               2       [ ]
+--- first differing line 6 ---
+judge: 18       AE09      1        Korean               2       [ Shift ]
+naive: 18       AE09      1        Korean               2       [ ]
+
+## contrast 2
+case {"index": 1, "keysym_arg": "0xfe53", "keysym_draw": "numeric-present", "keysym_form": "numeric", "keysym_name": "dead_tilde", "keysym_value": 65107, "layout": "fr", "model": "pc105", "multi_layout": false, "options": ["altwin:swap_ralt_rwin", "ctrl:rctrl_ralt"], "present_pool_size": 655, "present_weighted": true, "rules": "evdev", "variant": "oss", "weighting": "difficulty"}
+--- judge stdout (rc=0, 196 bytes) ---
+keysym: dead_tilde (0xfe53)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+34       AD11      1        French (alt.)        3       [ Mod5 LevelThree ]
+--- naive stdout (rc=0, 180 bytes) ---
+keysym: dead_tilde (0xfe53)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+34       AD11      1        French (alt.)        3       [ ]
+--- first differing line 6 ---
+judge: 34       AD11      1        French (alt.)        3       [ Mod5 LevelThree ]
+naive: 34       AD11      1        French (alt.)        3       [ ]
+
+## contrast 3
+case {"index": 3, "keysym_arg": "0x5d", "keysym_draw": "numeric-present", "keysym_form": "numeric", "keysym_name": "bracketright", "keysym_value": 93, "layout": "hu", "model": "pc105", "multi_layout": false, "options": [], "present_pool_size": 610, "present_weighted": true, "rules": "evdev", "variant": "", "weighting": "difficulty"}
+--- judge stdout (rc=0, 280 bytes) ---
+keysym: bracketright (0x005d)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+42       AC05      1        Hungarian            3       [ Mod5 LevelThree ]
+42       AC05      1        Hungarian            3       [ Lock Mod5 LevelThree ]
+--- naive stdout (rc=0, 182 bytes) ---
+keysym: bracketright (0x005d)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+42       AC05      1        Hungarian            3       [ ]
+--- first differing line 6 ---
+judge: 42       AC05      1        Hungarian            3       [ Mod5 LevelThree ]
+naive: 42       AC05      1        Hungarian            3       [ ]

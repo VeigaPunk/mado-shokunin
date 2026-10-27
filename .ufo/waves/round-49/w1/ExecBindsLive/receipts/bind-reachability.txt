@@ -1,0 +1,273 @@
+# ExecBindsLive — does every live bind fire on the host keymap? (round 49 w1)
+#
+# keymap: xkbcli-compile-keymap --layout br --options compose:caps, sha256 efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+# method: libxkbcommon 1.13.2 via ctypes — xkb_state_update_mask(state, depressed=bind modmask, 0, locked=0,
+#         0, 0, group 0) then xkb_state_key_get_one_sym(state, keycode) for keycode 9..709.
+#         A press fires the bind iff its translated keysym equals xkb_keysym_from_name(key, NO_FLAGS) or
+#         xkb_keysym_from_name(key, CASE_INSENSITIVE) AND depressed mods == bind modmask.
+#         (Hyprland: KeybindManager.cpp:652 exact modmask; :710-724 either keysym; InputManager.cpp:1711
+#         depressed-only modmask; KeybindManager.cpp:369 which state.)
+# level/modifier rows per keysym are in bind-keys.txt (pinned how-to-type).
+
+bind[  0] XF86AudioRaiseVolume   modmask=  0 []                         -> FIRES from 123 VOL+ (XF86AudioRaiseVolume)
+bind[  1] XF86AudioLowerVolume   modmask=  0 []                         -> FIRES from 122 VOL- (XF86AudioLowerVolume)
+bind[  2] XF86AudioMute          modmask=  0 []                         -> FIRES from 121 MUTE (XF86AudioMute)
+bind[  3] XF86AudioMicMute       modmask=  0 []                         -> FIRES from 198 FK20 (XF86AudioMicMute), 256 I256 (XF86AudioMicMute)
+bind[  4] XF86MonBrightnessUp    modmask=  0 []                         -> FIRES from 233 I233 (XF86MonBrightnessUp)
+bind[  5] XF86MonBrightnessDown  modmask=  0 []                         -> FIRES from 232 I232 (XF86MonBrightnessDown)
+bind[  6] XF86MonBrightnessUp    modmask=  1 [Shift]                    -> FIRES from 233 I233 (XF86MonBrightnessUp)
+bind[  7] XF86MonBrightnessDown  modmask=  1 [Shift]                    -> FIRES from 232 I232 (XF86MonBrightnessDown)
+bind[  8] XF86KbdBrightnessUp    modmask=  0 []                         -> FIRES from 238 I238 (XF86KbdBrightnessUp)
+bind[  9] XF86KbdBrightnessDown  modmask=  0 []                         -> FIRES from 237 I237 (XF86KbdBrightnessDown)
+bind[ 10] XF86KbdLightOnOff      modmask=  0 []                         -> FIRES from 236 I236 (XF86KbdLightOnOff)
+bind[ 11] XF86TouchpadToggle     modmask=  0 []                         -> FIRES from 199 FK21 (XF86TouchpadToggle), 538 I538 (XF86TouchpadToggle)
+bind[ 12] XF86TouchpadOn         modmask=  0 []                         -> FIRES from 200 FK22 (XF86TouchpadOn), 539 I539 (XF86TouchpadOn)
+bind[ 13] XF86TouchpadOff        modmask=  0 []                         -> FIRES from 540 I540 (XF86TouchpadOff)
+bind[ 14] XF86AudioRaiseVolume   modmask=  8 [Mod1]                     -> FIRES from 123 VOL+ (XF86AudioRaiseVolume)
+bind[ 15] XF86AudioLowerVolume   modmask=  8 [Mod1]                     -> FIRES from 122 VOL- (XF86AudioLowerVolume)
+bind[ 16] XF86MonBrightnessUp    modmask=  8 [Mod1]                     -> FIRES from 233 I233 (XF86MonBrightnessUp)
+bind[ 17] XF86MonBrightnessDown  modmask=  8 [Mod1]                     -> FIRES from 232 I232 (XF86MonBrightnessDown)
+bind[ 18] XF86AudioNext          modmask=  0 []                         -> FIRES from 171 I171 (XF86AudioNext)
+bind[ 19] XF86AudioPause         modmask=  0 []                         -> FIRES from 209 I209 (XF86AudioPause)
+bind[ 20] XF86AudioPlay          modmask=  0 []                         -> FIRES from 172 I172 (XF86AudioPlay), 208 I208 (XF86AudioPlay), 215 I215 (XF86AudioPlay)
+bind[ 21] XF86AudioPrev          modmask=  0 []                         -> FIRES from 173 I173 (XF86AudioPrev)
+bind[ 22] XF86AudioMute          modmask= 64 [Mod4]                     -> FIRES from 121 MUTE (XF86AudioMute)
+bind[ 23] C                      modmask= 64 [Mod4]                     -> FIRES from 54 AB03 (c)
+bind[ 24] V                      modmask= 64 [Mod4]                     -> FIRES from 55 AB04 (v)
+bind[ 25] X                      modmask= 64 [Mod4]                     -> FIRES from 53 AB02 (x)
+bind[ 26] V                      modmask= 68 [Control Mod4]             -> FIRES from 55 AB04 (v)
+bind[ 27] W                      modmask= 64 [Mod4]                     -> FIRES from 25 AD02 (w)
+bind[ 28] DELETE                 modmask= 12 [Control Mod1]             -> FIRES from 119 DELE (Delete)
+bind[ 29] J                      modmask= 64 [Mod4]                     -> FIRES from 44 AC07 (j)
+bind[ 30] P                      modmask= 64 [Mod4]                     -> FIRES from 33 AD10 (p)
+bind[ 31] T                      modmask= 64 [Mod4]                     -> FIRES from 28 AD05 (t)
+bind[ 32] F                      modmask= 64 [Mod4]                     -> FIRES from 41 AC04 (f)
+bind[ 33] F                      modmask= 68 [Control Mod4]             -> FIRES from 41 AC04 (f)
+bind[ 34] F                      modmask= 72 [Mod1 Mod4]                -> FIRES from 41 AC04 (f)
+bind[ 35] O                      modmask= 64 [Mod4]                     -> FIRES from 32 AD09 (o)
+bind[ 36] L                      modmask= 64 [Mod4]                     -> FIRES from 46 AC09 (l)
+bind[ 37] LEFT                   modmask= 64 [Mod4]                     -> FIRES from 113 LEFT (Left)
+bind[ 38] RIGHT                  modmask= 64 [Mod4]                     -> FIRES from 114 RGHT (Right)
+bind[ 39] UP                     modmask= 64 [Mod4]                     -> FIRES from 111 UP (Up)
+bind[ 40] DOWN                   modmask= 64 [Mod4]                     -> FIRES from 116 DOWN (Down)
+bind[ 41] code:10 (AE01) modmask= 64 [Mod4]                     -> FIRES on keycode 10 AE01
+bind[ 42] code:11 (AE02) modmask= 64 [Mod4]                     -> FIRES on keycode 11 AE02
+bind[ 43] code:12 (AE03) modmask= 64 [Mod4]                     -> FIRES on keycode 12 AE03
+bind[ 44] code:13 (AE04) modmask= 64 [Mod4]                     -> FIRES on keycode 13 AE04
+bind[ 45] code:14 (AE05) modmask= 64 [Mod4]                     -> FIRES on keycode 14 AE05
+bind[ 46] code:15 (AE06) modmask= 64 [Mod4]                     -> FIRES on keycode 15 AE06
+bind[ 47] code:16 (AE07) modmask= 64 [Mod4]                     -> FIRES on keycode 16 AE07
+bind[ 48] code:17 (AE08) modmask= 64 [Mod4]                     -> FIRES on keycode 17 AE08
+bind[ 49] code:18 (AE09) modmask= 64 [Mod4]                     -> FIRES on keycode 18 AE09
+bind[ 50] code:19 (AE10) modmask= 64 [Mod4]                     -> FIRES on keycode 19 AE10
+bind[ 51] code:10 (AE01) modmask= 65 [Shift Mod4]               -> FIRES on keycode 10 AE01
+bind[ 52] code:11 (AE02) modmask= 65 [Shift Mod4]               -> FIRES on keycode 11 AE02
+bind[ 53] code:12 (AE03) modmask= 65 [Shift Mod4]               -> FIRES on keycode 12 AE03
+bind[ 54] code:13 (AE04) modmask= 65 [Shift Mod4]               -> FIRES on keycode 13 AE04
+bind[ 55] code:14 (AE05) modmask= 65 [Shift Mod4]               -> FIRES on keycode 14 AE05
+bind[ 56] code:15 (AE06) modmask= 65 [Shift Mod4]               -> FIRES on keycode 15 AE06
+bind[ 57] code:16 (AE07) modmask= 65 [Shift Mod4]               -> FIRES on keycode 16 AE07
+bind[ 58] code:17 (AE08) modmask= 65 [Shift Mod4]               -> FIRES on keycode 17 AE08
+bind[ 59] code:18 (AE09) modmask= 65 [Shift Mod4]               -> FIRES on keycode 18 AE09
+bind[ 60] code:19 (AE10) modmask= 65 [Shift Mod4]               -> FIRES on keycode 19 AE10
+bind[ 61] code:10 (AE01) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 10 AE01
+bind[ 62] code:11 (AE02) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 11 AE02
+bind[ 63] code:12 (AE03) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 12 AE03
+bind[ 64] code:13 (AE04) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 13 AE04
+bind[ 65] code:14 (AE05) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 14 AE05
+bind[ 66] code:15 (AE06) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 15 AE06
+bind[ 67] code:16 (AE07) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 16 AE07
+bind[ 68] code:17 (AE08) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 17 AE08
+bind[ 69] code:18 (AE09) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 18 AE09
+bind[ 70] code:19 (AE10) modmask= 73 [Shift Mod1 Mod4]          -> FIRES on keycode 19 AE10
+bind[ 71] S                      modmask= 64 [Mod4]                     -> FIRES from 39 AC02 (s)
+bind[ 72] S                      modmask= 72 [Mod1 Mod4]                -> FIRES from 39 AC02 (s)
+bind[ 73] TAB                    modmask= 64 [Mod4]                     -> FIRES from 23 TAB (Tab)
+bind[ 74] TAB                    modmask= 65 [Shift Mod4]               -> DEAD: no keycode yields 0xff09 Tab with depressed mods == this mask
+        produced under modmask   0 []: 23 TAB
+        produced under modmask   4 [Control]: 23 TAB
+        produced under modmask   8 [Mod1]: 23 TAB
+        produced under modmask  64 [Mod4]: 23 TAB
+        produced under modmask  68 [Control Mod4]: 23 TAB
+        produced under modmask  72 [Mod1 Mod4]: 23 TAB
+        produced under modmask  76 [Control Mod1 Mod4]: 23 TAB
+bind[ 75] TAB                    modmask= 68 [Control Mod4]             -> FIRES from 23 TAB (Tab)
+bind[ 76] LEFT                   modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 113 LEFT (Left)
+bind[ 77] RIGHT                  modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 114 RGHT (Right)
+bind[ 78] UP                     modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 111 UP (Up)
+bind[ 79] DOWN                   modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 116 DOWN (Down)
+bind[ 80] LEFT                   modmask= 65 [Shift Mod4]               -> FIRES from 113 LEFT (Left)
+bind[ 81] RIGHT                  modmask= 65 [Shift Mod4]               -> FIRES from 114 RGHT (Right)
+bind[ 82] UP                     modmask= 65 [Shift Mod4]               -> FIRES from 111 UP (Up)
+bind[ 83] DOWN                   modmask= 65 [Shift Mod4]               -> FIRES from 116 DOWN (Down)
+bind[ 84] TAB                    modmask=  8 [Mod1]                     -> FIRES from 23 TAB (Tab)
+bind[ 85] TAB                    modmask=  9 [Shift Mod1]               -> DEAD: no keycode yields 0xff09 Tab with depressed mods == this mask
+        produced under modmask   0 []: 23 TAB
+        produced under modmask   4 [Control]: 23 TAB
+        produced under modmask   8 [Mod1]: 23 TAB
+        produced under modmask  64 [Mod4]: 23 TAB
+        produced under modmask  68 [Control Mod4]: 23 TAB
+        produced under modmask  72 [Mod1 Mod4]: 23 TAB
+        produced under modmask  76 [Control Mod1 Mod4]: 23 TAB
+bind[ 86] TAB                    modmask=  8 [Mod1]                     -> FIRES from 23 TAB (Tab) — DUPLICATE of bind[84]; both fire (bindsHit collects every match)
+bind[ 87] TAB                    modmask=  9 [Shift Mod1]               -> DEAD: no keycode yields 0xff09 Tab with depressed mods == this mask
+        produced under modmask   0 []: 23 TAB
+        produced under modmask   4 [Control]: 23 TAB
+        produced under modmask   8 [Mod1]: 23 TAB
+        produced under modmask  64 [Mod4]: 23 TAB
+        produced under modmask  68 [Control Mod4]: 23 TAB
+        produced under modmask  72 [Mod1 Mod4]: 23 TAB
+        produced under modmask  76 [Control Mod1 Mod4]: 23 TAB
+bind[ 88] TAB                    modmask= 12 [Control Mod1]             -> FIRES from 23 TAB (Tab)
+bind[ 89] TAB                    modmask= 13 [Shift Control Mod1]       -> DEAD: no keycode yields 0xff09 Tab with depressed mods == this mask
+        produced under modmask   0 []: 23 TAB
+        produced under modmask   4 [Control]: 23 TAB
+        produced under modmask   8 [Mod1]: 23 TAB
+        produced under modmask  64 [Mod4]: 23 TAB
+        produced under modmask  68 [Control Mod4]: 23 TAB
+        produced under modmask  72 [Mod1 Mod4]: 23 TAB
+        produced under modmask  76 [Control Mod1 Mod4]: 23 TAB
+bind[ 90] code:20 (AE11) modmask= 64 [Mod4]                     -> FIRES on keycode 20 AE11
+bind[ 91] code:21 (AE12) modmask= 64 [Mod4]                     -> FIRES on keycode 21 AE12
+bind[ 92] code:20 (AE11) modmask= 65 [Shift Mod4]               -> FIRES on keycode 20 AE11
+bind[ 93] code:21 (AE12) modmask= 65 [Shift Mod4]               -> FIRES on keycode 21 AE12
+bind[ 98] G                      modmask= 64 [Mod4]                     -> FIRES from 42 AC05 (g)
+bind[ 99] G                      modmask= 72 [Mod1 Mod4]                -> FIRES from 42 AC05 (g)
+bind[100] LEFT                   modmask= 72 [Mod1 Mod4]                -> FIRES from 113 LEFT (Left)
+bind[101] RIGHT                  modmask= 72 [Mod1 Mod4]                -> FIRES from 114 RGHT (Right)
+bind[102] UP                     modmask= 72 [Mod1 Mod4]                -> FIRES from 111 UP (Up)
+bind[103] DOWN                   modmask= 72 [Mod1 Mod4]                -> FIRES from 116 DOWN (Down)
+bind[104] TAB                    modmask= 72 [Mod1 Mod4]                -> FIRES from 23 TAB (Tab)
+bind[105] TAB                    modmask= 73 [Shift Mod1 Mod4]          -> DEAD: no keycode yields 0xff09 Tab with depressed mods == this mask
+        produced under modmask   0 []: 23 TAB
+        produced under modmask   4 [Control]: 23 TAB
+        produced under modmask   8 [Mod1]: 23 TAB
+        produced under modmask  64 [Mod4]: 23 TAB
+        produced under modmask  68 [Control Mod4]: 23 TAB
+        produced under modmask  72 [Mod1 Mod4]: 23 TAB
+        produced under modmask  76 [Control Mod1 Mod4]: 23 TAB
+bind[106] LEFT                   modmask= 68 [Control Mod4]             -> FIRES from 113 LEFT (Left)
+bind[107] RIGHT                  modmask= 68 [Control Mod4]             -> FIRES from 114 RGHT (Right)
+bind[110] code:10 (AE01) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 10 AE01
+bind[111] code:11 (AE02) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 11 AE02
+bind[112] code:12 (AE03) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 12 AE03
+bind[113] code:13 (AE04) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 13 AE04
+bind[114] code:14 (AE05) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 14 AE05
+bind[115] code:61 (AB10) modmask= 64 [Mod4]                     -> FIRES on keycode 61 AB10
+bind[116] code:61 (AB10) modmask= 72 [Mod1 Mod4]                -> FIRES on keycode 61 AB10
+bind[117] SPACE                  modmask= 64 [Mod4]                     -> FIRES from 65 SPCE (space)
+bind[118] E                      modmask= 68 [Control Mod4]             -> FIRES from 26 AD03 (e)
+bind[119] C                      modmask= 68 [Control Mod4]             -> FIRES from 54 AB03 (c)
+bind[120] O                      modmask= 68 [Control Mod4]             -> FIRES from 32 AD09 (o)
+bind[121] H                      modmask= 68 [Control Mod4]             -> FIRES from 43 AC06 (h)
+bind[122] SPACE                  modmask= 72 [Mod1 Mod4]                -> FIRES from 65 SPCE (space)
+bind[123] code:201 (FK23) modmask= 65 [Shift Mod4]               -> FIRES on keycode 201 FK23
+bind[124] ESCAPE                 modmask= 64 [Mod4]                     -> FIRES from 9 ESC (Escape)
+bind[125] XF86PowerOff           modmask=  0 []                         -> FIRES from 124 POWR (XF86PowerOff)
+bind[126] K                      modmask= 64 [Mod4]                     -> FIRES from 45 AC08 (k)
+bind[127] XF86Calculator         modmask=  0 []                         -> FIRES from 148 I148 (XF86Calculator)
+bind[128] SPACE                  modmask= 65 [Shift Mod4]               -> FIRES from 65 SPCE (space)
+bind[129] SPACE                  modmask= 68 [Control Mod4]             -> FIRES from 65 SPCE (space)
+bind[130] SPACE                  modmask= 69 [Shift Control Mod4]       -> FIRES from 65 SPCE (space)
+bind[131] BACKSPACE              modmask= 64 [Mod4]                     -> FIRES from 22 BKSP (BackSpace)
+bind[132] BACKSPACE              modmask= 65 [Shift Mod4]               -> FIRES from 22 BKSP (BackSpace)
+bind[133] BACKSPACE              modmask= 68 [Control Mod4]             -> FIRES from 22 BKSP (BackSpace)
+bind[134] COMMA                  modmask= 64 [Mod4]                     -> FIRES from 59 AB08 (comma)
+bind[135] COMMA                  modmask= 65 [Shift Mod4]               -> DEAD: no keycode yields 0x002c comma with depressed mods == this mask
+        produced under modmask   0 []: 59 AB08
+        produced under modmask   4 [Control]: 59 AB08
+        produced under modmask   8 [Mod1]: 59 AB08
+        produced under modmask  64 [Mod4]: 59 AB08
+        produced under modmask  68 [Control Mod4]: 59 AB08
+        produced under modmask  72 [Mod1 Mod4]: 59 AB08
+        produced under modmask  76 [Control Mod1 Mod4]: 59 AB08
+bind[136] COMMA                  modmask= 68 [Control Mod4]             -> FIRES from 59 AB08 (comma)
+bind[137] COMMA                  modmask= 72 [Mod1 Mod4]                -> FIRES from 59 AB08 (comma)
+bind[138] COMMA                  modmask= 73 [Shift Mod1 Mod4]          -> DEAD: no keycode yields 0x002c comma with depressed mods == this mask
+        produced under modmask   0 []: 59 AB08
+        produced under modmask   4 [Control]: 59 AB08
+        produced under modmask   8 [Mod1]: 59 AB08
+        produced under modmask  64 [Mod4]: 59 AB08
+        produced under modmask  68 [Control Mod4]: 59 AB08
+        produced under modmask  72 [Mod1 Mod4]: 59 AB08
+        produced under modmask  76 [Control Mod1 Mod4]: 59 AB08
+bind[139] I                      modmask= 68 [Control Mod4]             -> FIRES from 31 AD08 (i)
+bind[140] N                      modmask= 68 [Control Mod4]             -> FIRES from 57 AB06 (n)
+bind[141] Delete                 modmask= 68 [Control Mod4]             -> FIRES from 119 DELE (Delete)
+bind[142] Delete                 modmask= 76 [Control Mod1 Mod4]        -> FIRES from 119 DELE (Delete)
+bind[145] PRINT                  modmask=  0 []                         -> FIRES from 107 PRSC (Print), 218 I218 (Print)
+bind[146] PRINT                  modmask=  8 [Mod1]                     -> FIRES from 218 I218 (Print)
+bind[147] PRINT                  modmask= 64 [Mod4]                     -> FIRES from 107 PRSC (Print), 218 I218 (Print)
+bind[148] PRINT                  modmask= 68 [Control Mod4]             -> FIRES from 107 PRSC (Print), 218 I218 (Print)
+bind[149] S                      modmask= 68 [Control Mod4]             -> FIRES from 39 AC02 (s)
+bind[150] PERIOD                 modmask= 68 [Control Mod4]             -> FIRES from 60 AB09 (period)
+bind[151] R                      modmask= 68 [Control Mod4]             -> FIRES from 27 AD04 (r)
+bind[152] R                      modmask= 76 [Control Mod1 Mod4]        -> FIRES from 27 AD04 (r)
+bind[153] R                      modmask= 69 [Shift Control Mod4]       -> FIRES from 27 AD04 (R)
+bind[154] T                      modmask= 76 [Control Mod1 Mod4]        -> FIRES from 28 AD05 (t)
+bind[155] B                      modmask= 76 [Control Mod1 Mod4]        -> FIRES from 56 AB05 (b)
+bind[156] W                      modmask= 76 [Control Mod1 Mod4]        -> FIRES from 25 AD02 (w)
+bind[157] A                      modmask= 68 [Control Mod4]             -> FIRES from 38 AC01 (a)
+bind[158] B                      modmask= 68 [Control Mod4]             -> FIRES from 56 AB05 (b)
+bind[159] W                      modmask= 68 [Control Mod4]             -> FIRES from 25 AD02 (w)
+bind[160] T                      modmask= 68 [Control Mod4]             -> FIRES from 28 AD05 (t)
+bind[161] X                      modmask= 68 [Control Mod4]             -> FIRES from 53 AB02 (x)
+bind[162] F9                     modmask=  0 []                         -> FIRES from 75 FK09 (F9)
+bind[163] F9                     modmask=  0 []                         -> FIRES from 75 FK09 (F9) — DUPLICATE of bind[162]; both fire (bindsHit collects every match)
+bind[164] Z                      modmask= 68 [Control Mod4]             -> FIRES from 52 AB01 (z)
+bind[165] Z                      modmask= 76 [Control Mod1 Mod4]        -> FIRES from 52 AB01 (z)
+bind[166] L                      modmask= 68 [Control Mod4]             -> FIRES from 46 AC09 (l)
+bind[167] RETURN                 modmask= 64 [Mod4]                     -> FIRES from 36 RTRN (Return)
+bind[168] RETURN                 modmask= 72 [Mod1 Mod4]                -> FIRES from 36 RTRN (Return)
+bind[169] RETURN                 modmask= 65 [Shift Mod4]               -> FIRES from 36 RTRN (Return)
+bind[170] F                      modmask= 65 [Shift Mod4]               -> FIRES from 41 AC04 (F)
+bind[171] F                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 41 AC04 (F)
+bind[172] B                      modmask= 65 [Shift Mod4]               -> FIRES from 56 AB05 (B)
+bind[173] B                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 56 AB05 (B)
+bind[174] M                      modmask= 65 [Shift Mod4]               -> FIRES from 58 AB07 (M)
+bind[175] M                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 58 AB07 (M)
+bind[176] N                      modmask= 65 [Shift Mod4]               -> FIRES from 57 AB06 (N)
+bind[177] D                      modmask= 65 [Shift Mod4]               -> FIRES from 40 AC03 (D)
+bind[178] G                      modmask= 65 [Shift Mod4]               -> FIRES from 42 AC05 (G)
+bind[179] O                      modmask= 65 [Shift Mod4]               -> FIRES from 32 AD09 (O)
+bind[180] W                      modmask= 65 [Shift Mod4]               -> FIRES from 25 AD02 (W)
+bind[181] SLASH                  modmask= 65 [Shift Mod4]               -> DEAD: no keycode yields 0x002f slash with depressed mods == this mask
+        produced under modmask   0 []: 97 AB11
+        produced under modmask   4 [Control]: 97 AB11
+        produced under modmask   8 [Mod1]: 97 AB11
+        produced under modmask  64 [Mod4]: 97 AB11
+        produced under modmask  68 [Control Mod4]: 97 AB11
+        produced under modmask  72 [Mod1 Mod4]: 97 AB11
+        produced under modmask  76 [Control Mod1 Mod4]: 97 AB11
+bind[182] A                      modmask= 65 [Shift Mod4]               -> FIRES from 38 AC01 (A)
+bind[183] A                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 38 AC01 (A)
+bind[184] C                      modmask= 65 [Shift Mod4]               -> FIRES from 54 AB03 (C)
+bind[185] E                      modmask= 65 [Shift Mod4]               -> FIRES from 26 AD03 (E)
+bind[186] Y                      modmask= 65 [Shift Mod4]               -> FIRES from 29 AD06 (Y)
+bind[187] G                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 42 AC05 (G)
+bind[188] G                      modmask= 69 [Shift Control Mod4]       -> FIRES from 42 AC05 (G)
+bind[189] P                      modmask= 65 [Shift Mod4]               -> FIRES from 33 AD10 (P)
+bind[190] X                      modmask= 65 [Shift Mod4]               -> FIRES from 53 AB02 (X)
+bind[191] X                      modmask= 73 [Shift Mod1 Mod4]          -> FIRES from 53 AB02 (X)
+
+# mouse and switch binds: no keysym comparison (hyprctl `mouse` is true only for the mouse:N forms;
+# mouse_up/mouse_down are reported with mouse=false)
+bind[ 94] mouse_down           modmask= 64 [Mod4]                     mouse=False
+bind[ 95] mouse_up             modmask= 64 [Mod4]                     mouse=False
+bind[ 96] mouse:272            modmask= 64 [Mod4]                     mouse=True
+bind[ 97] mouse:273            modmask= 64 [Mod4]                     mouse=True
+bind[108] mouse_down           modmask= 72 [Mod1 Mod4]                mouse=False
+bind[109] mouse_up             modmask= 72 [Mod1 Mod4]                mouse=False
+bind[143] switch:on:<name>     modmask=  0 []                         mouse=False
+bind[144] switch:off:<name>    modmask=  0 []                         mouse=False
+
+# summary: key/code binds = 184; fire = 176 (of which 2 are duplicates of an earlier bind and fire in addition to it); cannot fire = 8
+# dead binds:
+#   bind[74] TAB modmask=65 [Shift Mod4] — no keycode yields it under this mask
+#   bind[85] TAB modmask=9 [Shift Mod1] — no keycode yields it under this mask
+#   bind[87] TAB modmask=9 [Shift Mod1] — no keycode yields it under this mask (also a duplicate of bind[85])
+#   bind[89] TAB modmask=13 [Shift Control Mod1] — no keycode yields it under this mask
+#   bind[105] TAB modmask=73 [Shift Mod1 Mod4] — no keycode yields it under this mask
+#   bind[135] COMMA modmask=65 [Shift Mod4] — no keycode yields it under this mask
+#   bind[138] COMMA modmask=73 [Shift Mod1 Mod4] — no keycode yields it under this mask
+#   bind[181] SLASH modmask=65 [Shift Mod4] — no keycode yields it under this mask

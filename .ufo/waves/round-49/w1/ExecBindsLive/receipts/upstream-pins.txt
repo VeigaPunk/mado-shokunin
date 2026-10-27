@@ -1,0 +1,92 @@
+# ExecBindsLive — pins for the upstream sources behind the live join (round 49 w1)
+#
+# Hyprland 0.56.2, `hyprctl version` on the host: "built from branch v0.56.2 at commit
+# efb50993780079460b0cbed1363e2166a2de1d9f". Sources fetched from the pinned commit URL, never a branch.
+# libxkbcommon 1.13.2 tag URL. Each pin: URL, bytes, sha256. Copies live only in seat scratch; the
+# locators below are grep-computed against those bytes and are reproducible from the URL + sha256.
+
+https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp
+  bytes 39334  sha256 8d8f35fc84c4a2f8de63ac2bf6f6531c651c6fa6d37b1aac7c8fc5d9342d4e40
+https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp
+  bytes 98845  sha256 feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765
+https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.cpp
+  bytes 15941  sha256 8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d
+https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp
+  bytes 90963  sha256 9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b
+https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/src/keysym.c
+  bytes 14948  sha256 123e3390d443b85c9cc9d1833c168ecda955d1c642fda03881052bb99c3369c5
+
+## Located evidence (locator = grep -n on the pinned bytes; quote <= 25 words)
+
+## src/src_managers_KeybindManager.cpp   /modmask != k->modmask/
+src/src_managers_KeybindManager.cpp:652: if (!IGNORECONDITIONS && ((modmask != k->modmask && !k->ignoreMods) || ((k->submap.name != key.submapAtPress.name) && !k->submapUniversal) || k->shadowed))
+
+## src/src_managers_KeybindManager.cpp   /e\.keycode \+ 8/
+src/src_managers_KeybindManager.cpp:367: const auto KEYCODE = e.keycode + 8; // Because to xkbcommon it's +8 from libinput
+
+## src/src_managers_KeybindManager.cpp   /m_resolveBindsBySym \?/
+src/src_managers_KeybindManager.cpp:369: const xkb_keysym_t keysym = xkb_state_key_get_one_sym(pKeyboard->m_resolveBindsBySym ? pKeyboard->m_xkbSymState : m_xkbTranslationState, KEYCODE);
+
+## src/src_managers_KeybindManager.cpp   /xkb_keysym_from_name\(k->key\.c_str\(\), XKB_KEYSYM_NO_FLAGS\)/
+src/src_managers_KeybindManager.cpp:710: const auto KBKEY = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_NO_FLAGS);
+
+## src/src_managers_KeybindManager.cpp   /xkb_keysym_from_name\(k->key\.c_str\(\), XKB_KEYSYM_CASE_INSENSITIVE\)/
+src/src_managers_KeybindManager.cpp:277: bindSym = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+src/src_managers_KeybindManager.cpp:711: const auto KBKEYLOWER = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+src/src_managers_KeybindManager.cpp:873: const auto KBKEY = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+
+## src/src_managers_KeybindManager.cpp   /key\.keysym != KBKEY && key\.keysym != KBKEYLOWER/
+src/src_managers_KeybindManager.cpp:724: if (key.keysym != KBKEY && key.keysym != KBKEYLOWER)
+
+## src/src_managers_KeybindManager.cpp   /key\.keycode != k->keycode/
+src/src_managers_KeybindManager.cpp:697: if (key.keycode != k->keycode)
+
+## src/src_managers_KeybindManager.cpp   /findConflictingKeybind/
+src/src_managers_KeybindManager.cpp:263: SP<SKeybind> CKeybindManager::findConflictingKeybind(xkb_keysym_t keysym, uint32_t modmask) {
+
+## src/src_managers_KeybindManager.cpp   /xkb_state_key_get_one_sym\(m_xkbTranslationState, k->keycode\)/
+src/src_managers_KeybindManager.cpp:280: bindSym = xkb_state_key_get_one_sym(m_xkbTranslationState, k->keycode);
+
+## src/src_managers_input_InputManager.cpp   /m_lastMods\s+= MODS\.depressed/
+src/src_managers_input_InputManager.cpp:1711: m_lastMods = MODS.depressed; // for hyprland keybinds use; not for sending to seat
+
+## src/src_managers_input_InputManager.cpp   /resolve_binds_by_sym/
+src/src_managers_input_InputManager.cpp:1224: const auto RESOLVEBINDSBYSYM = Config::mgr()->getDeviceInt(devname, "resolve_binds_by_sym", "input:resolve_binds_by_sym");
+
+## src/src_managers_input_InputManager.cpp   /m_resolveBindsBySym = RESOLVEBINDSBYSYM/
+src/src_managers_input_InputManager.cpp:1241: pKeyboard->m_resolveBindsBySym = RESOLVEBINDSBYSYM;
+
+## src/src_devices_IKeyboard.cpp   /xkb_state_update_mask\(m_xkbSymState/
+src/src_devices_IKeyboard.cpp:382: xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, group);
+src/src_devices_IKeyboard.cpp:422: xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, m_modifiersState.group);
+
+## src/src_config_legacy_ConfigManager.cpp   /SParsedKey parseKey/
+src/src_config_legacy_ConfigManager.cpp:1481: SParsedKey parseKey(const std::string& key) {
+
+## src/src_config_legacy_ConfigManager.cpp   /key\.starts_with\("code:"\)/
+src/src_config_legacy_ConfigManager.cpp:1484: else if (key.starts_with("code:") && isNumber(key.substr(5)))
+
+## src/src_config_legacy_ConfigManager.cpp   /case 'm': mouse = true/
+src/src_config_legacy_ConfigManager.cpp:1521: case 'm': mouse = true; break;
+
+## src/src_config_legacy_ConfigManager.cpp   /addSpecialConfigValue\("device", "resolve_binds_by_sym"/
+src/src_config_legacy_ConfigManager.cpp:533: m_config->addSpecialConfigValue("device", "resolve_binds_by_sym", Hyprlang::INT{0});
+
+## src/src_config_legacy_ConfigManager.cpp   /HANDLER = "mouse"/
+src/src_config_legacy_ConfigManager.cpp:1589: HANDLER = "mouse";
+
+## src_libxkb_keysym.c   /bool icase/
+src_libxkb_keysym.c:242: bool icase = (flags & XKB_KEYSYM_CASE_INSENSITIVE);
+
+## src_libxkb_keysym.c   /The "best" case-insensitive match is the lower-case keysym name/
+src_libxkb_keysym.c:268: * The "best" case-insensitive match is the lower-case keysym name. Most
+
+## src_libxkb_keysym.c   /name\[0\] == '0' && \(name\[1\] == 'x'/
+src_libxkb_keysym.c:325: else if (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
+
+## src_libxkb_keysym.c   /strncmp\(name, "XF86_", 5\)/
+src_libxkb_keysym.c:338: if (strncmp(name, "XF86_", 5) == 0 ||
+src_libxkb_keysym.c:339: (icase && istrncmp(name, "XF86_", 5) == 0)) {
+
+## verification
+quotes re-grepped against the pins: 22 patterns, missing after emit = 0

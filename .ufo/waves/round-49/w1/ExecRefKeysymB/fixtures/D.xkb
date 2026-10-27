@@ -1,0 +1,19 @@
+xkb_keymap {
+xkb_keycodes { minimum = 8; maximum = 255; <A> = 10; <B> = 11; <C> = 12; <D> = 13; };
+xkb_types {
+    virtual_modifiers LevelThree;
+    type "ONE_LEVEL" { modifiers = none; level_name[1] = "Any"; };
+    type "TWO_LEVEL" { modifiers = Shift; map[Shift] = 2; level_name[1] = "Base"; level_name[2] = "Shift"; };
+    type "FOUR_LEVEL" { modifiers = Shift+LevelThree; map[Shift] = 2; map[LevelThree] = 3; map[Shift+LevelThree] = 4; };
+};
+xkb_compatibility {
+    interpret ISO_Level3_Shift+AnyOf(all) { virtualModifier = LevelThree; action = SetMods(modifiers = LevelThree); };
+};
+xkb_symbols {
+    key <A> { [ { a, b }, c ] };
+    key <B> { [ q, NoSymbol, r ] };
+    key <C> { [ x, y, z, w ] };
+    key <LVL3> { [ ISO_Level3_Shift ] };
+    modifier_map Mod5 { <LVL3> };
+};
+};

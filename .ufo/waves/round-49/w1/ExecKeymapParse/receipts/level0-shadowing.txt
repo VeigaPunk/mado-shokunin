@@ -1,0 +1,29 @@
+# level-0 cell shadowing: one keysym, zero modifier masks => no row
+# keymap: xkbcli-compile-keymap --layout us --options numpad:mac (clean env, scratch HOME)
+# keymap sha256: 4ab5a63613e38172737e9e8f69c3df3fcfd79a9e2665426372ea93d7d05d3d6c
+# stderr: 0 bytes
+
+## serialized KEYPAD type
+	type "KEYPAD" {
+		modifiers= none;
+		map[none]= 2;
+		level_name[2]= "Number";
+	};
+
+## serialized KP7 key
+1623:	key <KP7>                {	[         KP_Home,            KP_7 ] };
+
+## judge --keysym KP_Home (1 cell, no mask -> no row)
+keysym: KP_Home (0xff95)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+
+## judge --keysym KP_7 (same key, level 2)
+keysym: KP_7 (0xffb7)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+79       KP7       1        English (US)         2       [ ]

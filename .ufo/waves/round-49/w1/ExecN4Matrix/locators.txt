@@ -1,0 +1,35 @@
+# computed locators (grep -n, never typed) - round-49 w1 ExecN4Matrix / N4
+# generator under test: .ufo/waves/round-48/l1-draft/v2/c2v2-harness-revc2counter.py sha256=de57c772c24f8c7f17625058c59768a448ab68f09fa95a1073b4e14b9186b12f
+## every record() call site in the generator
+399:    def record(name, clause, note, rev, rc, out):
+411:    record("pos", "all", "intended data candidate", cand, rc0, out0)
+415:    record("a-rev-base-direct", "a", "score BASE itself", BASE, rb, ob)
+417:    record("a-entry-at-base", "a/setup", "--base cand", cand, rs, os_)
+428:        record(name, clause, note, rev, rc, out)
+## every print() call site in main() (line range 396-436)
+412:    print("pos rc", rc0, [l for l in out0.splitlines() if "clauses=" in l][-1])
+429:        print("%-28s %s rc=%d %s" % (name, clause, rc, results[-1]["last"][:96]))
+433:    print("variants", len(results))
+## the 96-char truncation on the row print
+429:        print("%-28s %s rc=%d %s" % (name, clause, rc, results[-1]["last"][:96]))
+## row builder
+93:def score(rev, base=BASE):
+399:    def record(name, clause, note, rev, rc, out):
+405:        results.append({"name": name, "declared": clause, "note": note, "rev": rev, "rc": rc,
+## counts against the frozen round-48 receipts
+generator_lines=436
+summary_rows=98
+text_lines_total=100
+text_pos_lines=1
+text_harness_rows=95
+text_variants_line=99:variants 98
+text_tail=variants 98|HARNESS_EXIT=0|
+## names recorded in summary.json but never printed in the text (pos counted as printed via its own line-412 shape)
+printed_rows=96 summary_rows=98
+missing_count=2 missing_names=['a-rev-base-direct', 'a-entry-at-base']
+missing_rows=[{"name": "a-rev-base-direct", "declared": "a", "rc": 1, "last_len": 95}, {"name": "a-entry-at-base", "declared": "a/setup", "rc": 2, "last_len": 105}]
+rc_histogram={0: 12, 1: 85, 2: 1}
+target_met_rows=12
+## longest last field in summary.json
+max_last_len=105 name=a-entry-at-base
+rows_over_96=[('a-entry-at-base', 105)]

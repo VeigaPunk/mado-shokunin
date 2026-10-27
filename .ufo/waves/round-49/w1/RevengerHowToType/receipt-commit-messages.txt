@@ -1,0 +1,237 @@
+# commit messages quoted in report.md (full bodies, as authored; sha = commit)
+=== d92a248 d92a248c48227d09f6fdcfafaf339a5ff586e042
+API to query modifier set required to type a keysym
+
+The new API is useful to implement features like auto-type and
+desktop automation. Since the inputs for these features is usually
+specified in terms of the symbols that need to be typed, the
+implementation needs to be able to invert the keycode->keysym
+transformation and produce a sequence of keycodes that can be used
+to type the requested character(s).
+
+
+=== 188a1c7 188a1c79f10dd9129a720ae52394604d63cb2376
+test: add "how to type" demo program
+
+The program takes a unicode codepoint and an RMLVO and prints out all
+key + modifier combinations that would result in that codepoint.
+
+The program was written to exercise the new
+xkb_keymap_key_get_mods_for_level() function. It's handy and can be
+extended in several ways, but enough for now.
+
+Example:
+
+    $ ./build/how-to-type -l us,il,ru 0x41 | column -ts $'\t'
+    keysym: A (0x41)
+    KEYCODE  KEY NAME  LAYOUT#  LAYOUT NAME   LEVEL#  MODIFIERS
+    38       AC01      1        English (US)  2       [ Shift ]
+    38       AC01      1        English (US)  2       [ Lock ]
+    38       AC01      2        Hebrew        2       [ Shift ]
+    38       AC01      2        Hebrew        2       [ Lock ]
+
+    $ ./build/how-to-type -l de -v neo 0x3b6 | column -ts $'\t'
+    keysym: Greek_zeta (0x7e6)
+    KEYCODE  KEY NAME  LAYOUT#  LAYOUT NAME     LEVEL#  MODIFIERS
+    56       AB05      1        German (Neo 2)  4       [ Shift Mod5 ]
+    56       AB05      1        German (Neo 2)  4       [ Shift Mod2 Mod3 Mod5 ]
+    56       AB05      1        German (Neo 2)  4       [ Shift Lock Mod5 ]
+    56       AB05      1        German (Neo 2)  4       [ Lock Mod2 Mod3 Mod5 ]
+
+Signed-off-by: Ran Benita <ran@unusedvar.com>
+
+
+=== 860cfc0 860cfc039fef7e6067170e4dee224a8c1cec56af
+keymap: don't forget about fallback mappings in xkb_keymap_key_get_mods_for_level()
+
+If the active set of modifiers doesn't match any explicit entry of the
+key type, the resulting level is 0 (i.e. Level 1). Some key types don't
+explicitly map Level 1, taking advantage of this fallback.
+
+Previously, xkb_keymap_key_get_mods_for_level didn't consider this, and
+only reported masks for explicit mappings. But this causes some glaring
+omissions, like matching "a" in the "us" keymap returning not results.
+
+Since every mask which isn't explicitly mapped falls back to 0, we can't
+return the all. Almost always the best choice for this is the empty
+mask, so return that, when applicable.
+
+Fixes https://github.com/xkbcommon/libxkbcommon/issues/140.
+Reported-by: https://github.com/AliKet
+Signed-off-by: Ran Benita <ran@unusedvar.com>
+
+
+=== 7141820 714182066d086baf848c22258136c8dd94a4edca
+tools: consistently return 2 on invalid usage
+
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+
+=== c5565bd c5565bd05f729e490573ccc6f34f5a8d52570a27
+tools: align `xkbcli how-to-type` output ourselves
+
+Can possibly add a machine-parsable format if desired, but for now just
+have it work nicely.
+
+Signed-off-by: Ran Benita <ran@unusedvar.com>
+
+
+=== f8c430c f8c430cf7157bb45aeeb3dacce69730bad3052a4
+tools/how-to-type: add --keysym for how to type a keysym
+
+Previously, could only check how to type a Unicode codepoint, but
+searching for a keysym directly is also occasionally useful.
+
+Signed-off-by: Ran Benita <ran@unusedvar.com>
+
+
+=== 0cd1087 0cd1087ac188e13270a7eddece34549d08d82546
+xkbcli how-to-type: Enhance arguments parsing & doc
+
+Currently the positional parameter of the CLI is either a Unicode code
+point or a keysym. However their respective format is not documented.
+
+It turns out that there are multiple issues due to the use of `strtol`:
+- Code points can be parsed as octal, decimal and hexadecimal, while
+  keysyms can only be parsed as hexadecimal. Some programs outputs
+  keysyms in their decimal form (e.g. `wev`) so it is worth to bring
+  symmetry with code points.
+- Octal format is unusual for both and is triggered by leading zeros,
+  which is unintuitive in this context.
+- `U+NNNN` format is the standard format for Unicode code points but is
+  not supported.
+- Plain characters are not supported, e.g.: a, é, ß, Æ, γ, 🦆, etc.
+  Although this is probably the easiest format for most users.
+
+Fixed the issues above:
+- Allow the code point to be passed exactly in the following formats:
+  - Literal character (requires UTF-8 character encoding of the terminal);
+  - Decimal number;
+  - Hexadecimal number: either `0xNNNN` or `U+NNNN` (any digit count)
+- Allow the keysym to be passed exactly in the following formats:
+  - Decimal number;
+  - Hexadecimal number: `0xNNNN` (any digit count);
+  - Name.
+- Improve both `--help` message and manual page.
+
+
+=== 44c8deb 44c8deb229ea63c8dc115d3060166fc702ca4a6c
+Introduce keymap format v2 and make it the default for parsing
+
+- Added `XKB_KEYMAP_FORMAT_TEXT_V2`.
+- Made `xkb_keymap_new_from_names()` use the new keymap format.
+- Made the tools default to the new keymap format for input.
+
+This is in preparation for changes in the parsing & state handling.
+For now it changes nothing.
+
+
+=== 82ea291 82ea29157f1b07cb48bbf366db201e1d9ad44194
+tools: Add options to use explicit keymap format
+
+The default output keymap format is `XKB_KEYMAP_USE_ORIGINAL_FORMAT`.
+
+
+=== 61d8ec6 61d8ec6763b1f381acaf457beb795fe74336eefe
+misc: Fix string format specifiers
+
+Ensure better portability.
+
+
+=== 9d4885d 9d4885dfb920c79fa157e0c990c63aa6896fc006
+tools: Improve how-to-type keysym parsing
+
+- Fixed incorrect numeric keysym parsing due to `errno` not being
+  reset.
+- Added parsing keysym as fallback when `--keysym` is omitted.
+- Added arguments tests.
+- Fixed tools test Python types.
+- Updated documentation.
+
+
+=== 6df4512 6df451246c61ae5f8935958f80b8aa5e6b84c110
+tools: Add --keymap to xkbcli-how-to-type
+
+It enables to load the keymap from a file or stdin instead of resolving
+RMLVO names. Piping is also interesting for using with `dump-keymap-*`
+tools.
+
+
+=== 7394a3c 7394a3c709a4f09a40bc7ca272aed395f00acc57
+tools: Fix how-to-type modifier mask test
+
+
+=== 13ae4a2 13ae4a2698c22072027680b27ecddad933adff4e
+tools: Add Compose support to how-to-type
+
+- Enable Compose support by default; disable it with `--disable-compose`
+- Some filters are used to avoid combinatorial explosion
+
+
+=== 52fe698 52fe6980b6bcdc756b0b80f44aa3f54cf7a0d9ed
+how-to-type: Fixed Compose lookup with non-canonical keysym
+
+This fixes the lookup of the following entry from the standard `en_US`
+Compose file:
+
+    <Multi_key> <minus> <minus> <minus>	: "—"	U2014 # EM DASH
+
+Before this commit the sequence was found with `U2014` but not with
+“—” nor `emdash`.
+
+Fixed by looking at the entry’s UTF-8 string as well.
+
+
+=== 60d0e5f8 60d0e5f85acf28f43edd9dee2979c15591e17220
+keysyms: Update using latest xorgproto
+
+xorgproto commit: fcb7e9a1a0b593a44740d83b0babddd331fea830
+Relevant MR:
+- https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/109
+- https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/110
+- https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/112
+
+`ISO_Group_Shift` is now the canonical name of the corresponding keysym.
+Previously it was `Mode_switch`, which refers to a core X group
+mechanism obsoleted by XKB. Updated the tests accordingly.
+
+
+=== 584e0690 584e0690c26a02fc3b2251968bd8f2a295658bfc
+keysyms: Update using latest xorgproto
+
+xorgproto commit: 81931cc0fd4761b42603f7da7d4f50fc282cecc6
+Relevant MR: https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/103
+
+
+=== 244f3a81 244f3a81c7c62b5b48c53aeb3d3f0de6926708c0
+keysyms: Update using latest xorgproto
+
+xorgproto commit: f973f7db89571f61e96cb0a55f416d3e67a75663
+Relevant MR: https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/102
+
+
+=== dc5625f6 dc5625f6e02631fbbce00ac0aa2cc8107c86b39c
+keysyms: Add missing UTF conversions for numeric phone keys
+
+xorgproto commit: 2e582f23e85e3ebf793d62fb2e5862ff9d9a2917
+Relevant MR: https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/109
+
+
+=== 12359667 12359667d06ac673c4c4c2f63c89e2447e4bf443
+keysym: slightly optimize `keysym_name_perfect_hash`
+
+Doing a single loop is a bit faster.
+
+This speeds up bench/compose.c by ~4% for me (compose is a heavy user of
+`xkb_keysym_from_name`, the benchmark spends about ~40% in its fast
+path).
+
+Signed-off-by: Ran Benita <ran@unusedvar.com>
+
+
+=== 0e033b6f 0e033b6f5913fd72c843d1c0838f58ed487f4dd3
+xkbcomp: Fix key type parsing
+
+`ok` should be set only on failure, not at each iteration.
+
+

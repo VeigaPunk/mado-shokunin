@@ -1,0 +1,15 @@
+# First both-ways attempt (superseded fixture, kept as gate-behaviour evidence)
+
+The first GREEN fixture used bare rule names in the sidecar (`rules=R3`,
+`rules=R4`) instead of the full grammar names. The gate refused both markers
+with reason=marker-malformed and kept both findings (rc=1) — correct behaviour
+per MARKER_RE (`rules=((?:R[1-4]_[A-Z_]+)...)` requires e.g. R3_MONITOR_IDENT).
+The committed demo-green.out/demo-red.out receipts are the corrected rerun.
+
+--- first GREEN run (rc=1) ---
+WAIVER_REJECTED file=.ufo/waves/round-49/w1/MutGate/fixtures/home-listing.txt rule=R4_HOME_LISTING reason=marker-malformed
+WAIVER_REJECTED file=.ufo/waves/round-49/w1/MutGate/fixtures/mons.json rule=R3_MONITOR_IDENT reason=marker-malformed
+FINDING file=.ufo/waves/round-49/w1/MutGate/fixtures/home-listing.txt rule=R4_HOME_LISTING count=12 detail=distinct_paths=12 limit=10
+FINDING file=.ufo/waves/round-49/w1/MutGate/fixtures/mons.json rule=R3_MONITOR_IDENT count=1 detail=objects=1 keys=serial+ident
+SESSION_MATERIAL_RULES: R3_MONITOR_IDENT=1 R4_HOME_LISTING=1
+SESSION_MATERIAL: files=4 findings=2 rev=6a255be697f5d3ccea364ca10931999f6a9cf646

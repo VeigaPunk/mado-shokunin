@@ -1,0 +1,43 @@
+# ExecBindsLive — session-material check on this seat's receipts (round 49 w1)
+#
+# method: every non-empty `arg` and `description` value in the raw hyprctl binds JSON (298 distinct
+# strings) and the switch device name (1) are searched in every receipt with token boundaries
+# (?<![\w.-]) value (?![\w.-]), so a keysym name such as XF86AudioMute does not match the arg "Mute"
+# by substring. Raw JSON itself is never written outside scratch.
+
+receipts scanned: 8
+arg/description strings checked: 298; switch device names checked: 1
+token hits: 14
+  judge-behaviour.txt:27  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:66  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:114  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:153  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:171  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:210  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:228  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:267  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:332  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:371  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:402  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:441  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+  judge-behaviour.txt:459  judge usage text: "previous"
+    |   | - a keysym if either the previous interpretations failed or if --k
+  judge-behaviour.txt:498  judge usage text: "previous"
+    |   |     Note that this option may affect the default values of the pre
+classification: a hit is judge usage text when the matched value is a word of the pinned judge's own
+--help output and the line belongs to that dump; every such hit is an English word of the usage message,
+not dispatcher content. Any other hit would print REDACT and must be treated as a leak.
+substring-only coincidences (not token hits, for auditability): XF86 keysym names contain
+"Mute"/"Pause"/"Play"/"Calculator".

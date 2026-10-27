@@ -1,0 +1,20 @@
+SCRATCH_WRITE /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/legit-probe.txt size=8
+# hostguard run  work=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome sandbox=none label=operator-owned declared=1
+ENV HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome
+ENV XDG_CACHE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache
+ENV XDG_CONFIG_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.config
+ENV XDG_DATA_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.local/share
+ENV XDG_STATE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.local/state
+ENV TMPDIR=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/tmp
+ARGV python3 -c 
+import os
+p = os.path.join(os.environ['XDG_CACHE_HOME'], 'legit-probe.txt')
+open(p, 'w').write('scratch\n')
+print('SCRATCH_WRITE %s size=%d' % (p, os.path.getsize(p)))
+
+# before
+BEFORE operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+# after
+AFTER  operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+child_rc=0 elapsed_s=0.015 changed=0 status=ok exit=0
+caseC2_exit=0 (expect 0) probe_exists=yes

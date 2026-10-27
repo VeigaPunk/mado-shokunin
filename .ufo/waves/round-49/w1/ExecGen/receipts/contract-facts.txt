@@ -1,0 +1,60 @@
+# Judge behaviour facts measured on the pinned tools (libxkbcommon 1.13.2-1,
+# xkeyboard-config 2.48-1). Author: ExecGen, 2026-10-27.
+# judge   /usr/lib/xkbcommon/xkbcli-how-to-type sha256 f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+# compile /usr/lib/xkbcommon/xkbcli-compile-keymap sha256 43b924f68651500e022c74371515154f8c50a2e087defa6b834cc5d41fd77250
+
+## keymap fixture
+$ xkbcli-compile-keymap --layout br --options compose:caps > br.xkb   # clean env, stdout
+rc=0 bytes=73079 sha256=efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+
+## F1 --keymap=FILE is the only working file form
+$ how-to-type --keymap=br.xkb --disable-compose --keysym slash
+rc=0 stdout_bytes=505 rows=5
+
+## F2 --keymap=- reads the keymap from stdin (rc 0, same bytes as F1)
+$ how-to-type --keymap=- --disable-compose --keysym slash < br.xkb
+rc=0 stdout_bytes=505 rows=5
+### correction: an earlier truncated `sed -n 1,5p` view of this command looked
+### like zero rows; the full stdout carries all five rows (byte-compared above).
+cmp with F1 below.
+
+## F3 omitting --keymap reads the keymap from stdin (same rows as F1)
+$ how-to-type --disable-compose --keysym slash < br.xkb
+rc=0 stdout_bytes=505 rows=5
+F1 stdout == F3 stdout: yes
+
+## F4 argument forms
+$ --keysym slash        -> rc=0 stdout_bytes=505 stderr_bytes=0 first_line="keysym: slash (0x002f)"
+$ --keysym 0x2f         -> rc=0 stdout_bytes=505 stderr_bytes=0 first_line="keysym: slash (0x002f)"
+$ --keysym 47           -> rc=0 stdout_bytes=505 stderr_bytes=0 first_line="keysym: slash (0x002f)"
+$ --keysym SLASH        -> rc=2 stdout_bytes=0 stderr_bytes=2123 first_line="ERROR: Failed to convert argument to keysym"
+$ --keysym NoSymbol     -> rc=2 stdout_bytes=0 stderr_bytes=2123 first_line="ERROR: Failed to convert argument to keysym"
+$ --keysym nosuchsym    -> rc=2 stdout_bytes=0 stderr_bytes=2123 first_line="ERROR: Failed to convert argument to keysym"
+$ --keysym 0x0          -> rc=2 stdout_bytes=0 stderr_bytes=2123 first_line="ERROR: Failed to convert argument to keysym"
+
+## F5 numeric forms of Unicode keysyms: 0x2032 != 0x1002032
+$ --keysym 0x2032      -> rc=0 name_line="keysym: 0x00002032 (0x2032)"
+$ --keysym U2032       -> rc=0 name_line="keysym: U2032 (0x1002032)"
+$ --keysym 0x1002032   -> rc=0 name_line="keysym: U2032 (0x1002032)"
+$ --keysym 0x100002b   -> rc=0 name_line="keysym: 0x0100002b (0x100002b)"
+
+## F6 a layout name longer than 20 chars keeps one separator space and
+##    pushes LEVEL#/MODIFIERS right (fixed-offset column parsing breaks)
+$ how-to-type --keymap=ua.xkb --disable-compose --keysym XF86RightDown
+row_len=68 "623      I623      1        Ukrainian (Windows Enhanced) 1       [ ]"
+
+## F7 layout group rows for a two-layout keymap
+$ how-to-type --keymap=usbr.xkb --disable-compose --keysym slash
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+24       AD01      2        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+24       AD01      2        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+24       AD01      2        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+24       AD01      2        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+61       AB10      1        English (US)         1       [ ]
+97       AB11      2        Portuguese (Brazil)  1       [ ]
+
+## F2 verification
+--keymap=- stdout == --keymap=FILE stdout: yes (rc both 0)
+$ sha256sum of both stdouts
+3d895204319dae0c18a405e8a2b232b67279f91c35b05c8440f64415c5bb0be2  f1.out
+3d895204319dae0c18a405e8a2b232b67279f91c35b05c8440f64415c5bb0be2  f2b.out

@@ -1,0 +1,16 @@
+--- hostguard exit=3 (expect 3)
+MUTANT home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome target=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec in_size=331 out_size=19 out_sha256=4f5813d3968c5536f03c42ba271572a6b957c0077bad18fc3485914cf5ee4ac1
+# hostguard run  work=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work home=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome sandbox=none label=operator-owned declared=1
+ENV HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome
+ENV XDG_CACHE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache
+ENV XDG_CONFIG_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.config
+ENV XDG_DATA_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.local/share
+ENV XDG_STATE_HOME=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.local/state
+ENV TMPDIR=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/work/tmp
+ARGV python3 /fast/scratch/hyaku/mado-r49/ExecMutantSandbox/mutant.py
+# before
+BEFORE operator-owned kind=file size=331 mtime_ns=1793047345000000000 ino=1753031168 dev=66309 sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+# after
+AFTER  operator-owned kind=file size=19 mtime_ns=1793076094342279233 ino=1753031168 dev=66309 sha256=4f5813d3968c5536f03c42ba271572a6b957c0077bad18fc3485914cf5ee4ac1 path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec
+CHANGED path=/fast/scratch/hyaku/mado-r49/ExecMutantSandbox/fakehome/.cache/xdg-terminal-exec fields=sha256,size,mtime_ns sha256=0de3d0c67dd8296ddd0325e50f5b7aaa57e47d7fab58b3c83e8146128ed2101b->4f5813d3968c5536f03c42ba271572a6b957c0077bad18fc3485914cf5ee4ac1 size=331->19 mtime_ns=1793047345000000000->1793076094342279233
+child_rc=0 elapsed_s=0.015 changed=1 status=violation exit=3

@@ -1,0 +1,121 @@
+xkb_keymap {
+xkb_keycodes {
+	minimum = 8;
+	maximum = 255;
+	<A>                  = 10;
+	<B>                  = 11;
+	<C>                  = 12;
+	<D>                  = 13;
+	<NMLK>               = 77;
+	<LVL3>               = 92;
+};
+
+xkb_types {
+	virtual_modifiers LevelThree,NumLock;
+
+	type "ONE_LEVEL" {
+		modifiers= none;
+		level_name[1]= "Any";
+	};
+	type "TWO_LEVEL" {
+		modifiers= Shift;
+		map[Shift]= 2;
+		level_name[1]= "Base";
+		level_name[2]= "Shift";
+	};
+	type "ALPHABETIC" {
+		modifiers= Shift+Lock;
+		map[Shift]= 2;
+		map[Lock]= 2;
+		level_name[1]= "Base";
+		level_name[2]= "Caps";
+	};
+	type "FOUR_LEVEL" {
+		modifiers= Shift+LevelThree;
+		map[Shift]= 2;
+		map[LevelThree]= 3;
+		map[Shift+LevelThree]= 4;
+		level_name[1]= "Base";
+		level_name[2]= "Shift";
+		level_name[3]= "AltGr";
+		level_name[4]= "Shift AltGr";
+	};
+	type "FOUR_LEVEL_ALPHABETIC" {
+		modifiers= Shift+Lock+LevelThree;
+		map[Shift]= 2;
+		map[Lock]= 2;
+		map[LevelThree]= 3;
+		map[Shift+LevelThree]= 4;
+		map[Lock+LevelThree]= 4;
+		level_name[1]= "Base";
+		level_name[2]= "Shift";
+		level_name[3]= "AltGr";
+		level_name[4]= "Shift AltGr";
+	};
+	type "FOUR_LEVEL_SEMIALPHABETIC" {
+		modifiers= Shift+Lock+LevelThree;
+		map[Shift]= 2;
+		map[Lock]= 2;
+		map[LevelThree]= 3;
+		map[Shift+LevelThree]= 4;
+		map[Lock+LevelThree]= 3;
+		preserve[Lock+LevelThree]= Lock;
+		map[Shift+Lock+LevelThree]= 4;
+		preserve[Shift+Lock+LevelThree]= Lock;
+		level_name[1]= "Base";
+		level_name[2]= "Shift";
+		level_name[3]= "AltGr";
+		level_name[4]= "Shift AltGr";
+	};
+	type "KEYPAD" {
+		modifiers= Shift+NumLock;
+		map[NumLock]= 2;
+		map[Shift]= 1;
+		preserve[Shift]= Shift;
+		level_name[1]= "Base";
+		level_name[2]= "Number";
+	};
+	type "FOUR_LEVEL_KEYPAD" {
+		modifiers= Shift+LevelThree+NumLock;
+		map[NumLock]= 2;
+		map[Shift]= 1;
+		preserve[Shift]= Shift;
+		map[LevelThree]= 3;
+		map[LevelThree+NumLock]= 4;
+		level_name[1]= "Base";
+		level_name[2]= "Number";
+		level_name[3]= "AltGr";
+		level_name[4]= "Number AltGr";
+	};
+};
+
+xkb_compatibility {
+	virtual_modifiers LevelThree,NumLock;
+
+	interpret.useModMapMods= AnyLevel;
+	interpret.repeat= False;
+	interpret ISO_Level3_Shift+AnyOf(all) {
+		virtualModifier= LevelThree;
+		action= SetMods(modifiers=LevelThree);
+	};
+	interpret Num_Lock+AnyOf(all) {
+		virtualModifier= NumLock;
+		action= LockMods(modifiers=NumLock);
+	};
+};
+
+xkb_symbols {
+	key <A>                  {	[               a,               A,               b,        NoSymbol ] };
+	key <B>                  {
+		type= "ONE_LEVEL",
+		symbols[1]= [               x ]
+	};
+	key <C>                  {	[               1,          exclam ] };
+	key <D>                  {	[            KP_1,          KP_End ] };
+	key <NMLK>               {	[        Num_Lock ] };
+	key <LVL3>               {	[ ISO_Level3_Shift ] };
+	modifier_map Mod2 { <NMLK> };
+	modifier_map Mod5 { <LVL3> };
+};
+
+};

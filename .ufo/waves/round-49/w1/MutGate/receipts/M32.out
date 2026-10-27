@@ -1,0 +1,77 @@
+mutant=M32 group=summary point=emit(): exit code always 0
+old='    return 1 if findings else 0'
+new='    return 0'
+sha256=5b85163e26ea0b403709659a3a233110c64f419970332e397e65632d1f69ae3e
+rc=1
+verdict=killed
+--- selftest output ---
+SELFTEST ok case=r1-whole-file-two-clients
+SELFTEST ok case=r1-embedded-fenced-one-client
+SELFTEST ok case=r1-empty-title-not-a-finding
+SELFTEST ok case=r1-class-only-not-a-finding
+SELFTEST ok case=r1-prose-keys-not-a-finding
+SELFTEST ok case=r1-seven-key-projection-clean
+SELFTEST ok case=r1-monitor-rule-line-clean
+SELFTEST ok case=r2-two-process-rows
+SELFTEST ok case=r2-prose-without-pid-clean
+SELFTEST ok case=r3-monitor-identity
+SELFTEST ok case=r3-empty-serial-clean
+SELFTEST ok case=r4-twelve-entry-listing
+SELFTEST ok case=r4-three-entry-listing-under-limit
+SELFTEST ok case=r4-inline-paths-clean
+SELFTEST ok case=r4-limit-threshold-inclusive-at-12
+SELFTEST ok case=r5-prose-serial
+SELFTEST ok case=r5-table-cell-serial
+SELFTEST ok case=r5-json-serial-without-ident
+SELFTEST ok case=r5-iso-timestamp-clean
+SELFTEST ok case=r5-lowercase-run-clean
+SELFTEST ok case=r5-glued-to-prefix-clean
+SELFTEST ok case=r5-two-letter-capital-run-clean
+SELFTEST ok case=r5-detail-masks-token
+SELFTEST ok case=r6-exact-in-prose
+SELFTEST ok case=r6-exact-shape-independent
+SELFTEST ok case=r6-absent-clean
+SELFTEST ok case=r6-detail-counts-only
+SELFTEST ok case=r5-prose-without-serial-clean
+SELFTEST ok case=serials-from-json-one-value
+SELFTEST ok case=serials-from-json-empty-ignored
+SELFTEST ok case=serials-from-json-short-ignored
+SELFTEST ok case=serials-from-json-rejects-garbage
+SELFTEST ok case=self-source-serial-rules-clean
+SELFTEST ok case=rules-partition-is-waivable-plus-serial
+SELFTEST ok case=e2e-fixture-files-count
+SELFTEST ok case=e2e-positive-files-rules
+SELFTEST FAIL case=e2e-exit-1-on-findings code=0
+SELFTEST ok case=e2e-summary-format
+SELFTEST ok case=e2e-negative-repo-exit-0
+SELFTEST ok case=e2e-outside-ufo-not-scanned
+SELFTEST ok case=e2e-empty-ufo-clean
+SELFTEST ok case=e2e-scope-all-sees-outside-ufo
+SELFTEST FAIL case=e2e-r6-hits-every-carrier paths=['.ufo/w1/serial-only.json', '.ufo/w1/serial-prose.md', '.ufo/w1/serial-table.md', '.ufo/w2/serial-glued.md']
+SELFTEST ok case=e2e-r6-output-never-holds-value
+SELFTEST ok case=e2e-projected-tree-passes
+SELFTEST ok case=e2e-no-rule-can-be-dropped
+SELFTEST ok case=waiver-fixture-waived
+SELFTEST ok case=waiver-exit-0-and-count-line
+SELFTEST ok case=waiver-real-values-rejected
+SELFTEST ok case=waiver-title-example-domain-rejected
+SELFTEST ok case=waiver-title-bare-demo-rejected
+SELFTEST ok case=waiver-title-probe-prefix-rejected
+SELFTEST ok case=waiver-title-case-only-rejected
+SELFTEST ok case=waiver-title-reserved-prefix-waived
+SELFTEST ok case=waiver-title-reserved-exact-waived
+SELFTEST ok case=waiver-sha-mismatch-rejected
+SELFTEST ok case=waiver-unregistered-rejected
+SELFTEST ok case=waiver-registry-in-ufo-refused
+SELFTEST ok case=waiver-path-outside-waves-rejected
+SELFTEST ok case=waiver-gate-copy-waived
+SELFTEST ok case=waiver-gate-copy-mismatch-rejected
+SELFTEST ok case=waiver-no-waivers-flag-keeps-finding
+SELFTEST ok case=waiver-tamper-after-waiver-keeps-finding
+SELFTEST ok case=waiver-per-rule-only-listed-rule
+SELFTEST FAIL case=waiver-serial-rule-not-waivable findings=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 1, 'tokens=1 shapes=9x3+Ax5+9x4')] waived=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R3_MONITOR_IDENT', 'fixture')] rejected=[('.ufo/waves/round-46/w1/Seat/fixtures/mons-prose.json', 'R5_SERIAL_PROSE', 'serial-rule-not-waivable')]
+SELFTEST ok case=waiver-serial-rejection-is-printed
+SELFTEST ok case=waiver-marker-cannot-name-serial-rule
+SELFTEST ok case=waiver-real-serial-marked-file-kept
+SELFTEST ok case=prose-serial-unmarked-kept
+SELFTEST: passed=66/69 failed=3

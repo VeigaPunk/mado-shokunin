@@ -1,0 +1,53 @@
+== pinned file digests (src/SHA256SUMS)
+   (11 pinned files verified)
+
+== output anatomy (tools/how-to-type.c @1.13.2 = d1442aaa)
+ok    src/tools_how-to-type.c@d1442aaa:625  printf("keysym: %s (%#06"PRIx32")\n\n", name, keysym);
+ok    src/tools_how-to-type.c@d1442aaa:626  printf("=== Direct access ===\n\n");
+ok    src/tools_how-to-type.c@d1442aaa:627  printf("%-8s %-9s %-8s %-20s %-7s %-s\n",
+ok    src/tools_how-to-type.c@d1442aaa:527  printf("%-8u %-9s %-8u %-20s %-7u [ ",
+ok    src/tools_how-to-type.c@d1442aaa:531  xkb_keymap_mod_get_mask2(keymap, mod);
+ok    src/tools_how-to-type.c@d1442aaa:534  printf("%s ", xkb_keymap_mod_get_name(keymap, mod));
+ok    src/tools_how-to-type.c@d1442aaa:460  #define SHIFT_LOCK_MASK (SHIFT_MASK | LOCK_MASK)
+ok    src/tools_how-to-type.c@d1442aaa:489  /* skip “shift cancel lock” */
+ok    src/tools_how-to-type.c@d1442aaa:697  xkb_keymap_key_get_mods_for_level(
+
+== name resolution (src/keysym.c @1.13.2)
+ok    src/src_keysym.c@d1442aaa:54  #define get_name_by_index(index) (keysym_names + (index))
+ok    src/src_keysym.c@d1442aaa:66  return snprintf(buffer, size, "U%04"PRIX32, ks & UINT32_C(0xffffff));
+ok    src/src_keysym.c@d1442aaa:93  return snprintf(buffer, size, "0x%08x", ks);
+
+== mask source (src/keymap.c @1.13.2)
+ok    src/src_keymap.c@d1442aaa:494  xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+ok    src/src_keymap.c@d1442aaa:527  This is almost always what we want. If applicable, given it priority
+ok    src/src_keymap.c@d1442aaa:539  masks_out[count++] = 0;
+
+== defaults and exit code
+ok    src/src_keymap-formats.h@d1442aaa:13  #define DEFAULT_INPUT_KEYMAP_FORMAT  XKB_KEYMAP_FORMAT_TEXT_V2
+ok    src/src_keymap-formats.h@d1442aaa:14  #define DEFAULT_OUTPUT_KEYMAP_FORMAT XKB_KEYMAP_USE_ORIGINAL_FORMAT
+ok    src/meson.build@d1442aaa:166  configh_data.set('EXIT_INVALID_USAGE', '2')
+
+== canonical-name rules (header + generator)
+ok    src/xkbcommon-keysyms.h@host-1.13.2:105  the first one listed is considered the "canonical" name
+ok    src/xkbcommon-keysyms.h@host-1.13.2:286  #define XKB_KEY_Mode_switch                   0xff7e
+ok    src/scripts_update-keysyms-derived-headers.py@d1442aaa:48  canonical_names[value] = name
+
+== origin file (test/how-to-type.c @188a1c7)
+ok    src/test_how-to-type.c@188a1c79:128  printf("keysym: %s (%#x)\n", name, keysym);
+ok    src/test_how-to-type.c@188a1c79:38  Pipe into `column -ts $'\\t'` for nice aligned output.
+
+== prose quotes (whitespace-normalized)
+ok    receipt-commit-messages.txt:5  The new API is useful to implement features like auto-type and
+ok    receipt-commit-messages.txt:8  implementation needs to be able to invert the keycode->keysym
+ok    receipt-commit-messages.txt:19  The program was written to exercise the new
+ok    receipt-commit-messages.txt:82  Previously, could only check how to type a Unicode codepoint, but
+ok    receipt-commit-messages.txt:194  `ISO_Group_Shift` is now the canonical name of the corresponding keysym.
+ok    src/doc_keymap-text-format-v1-v2.md@d1442aaa:2767  @note @anchor auto-modifier-encoding If using
+
+== header statistics quoted in the report (2638 / 2505 / 120 / 9)
+ok    defines=2638 values=2505 multi=120 names_0xff7e=9
+
+== decoded canonical name for keysym 0xff7e (receipt-canonical-name-decode.txt)
+ok    1.13.1 Mode_switch / 1.13.2 ISO_Group_Shift
+
+tally: 29 checks, 0 failures

@@ -1,0 +1,16 @@
+command: hyprctl binds -j
+sha256: 9a47199e2297617f1025d524fc1909a091a950d69261735f39aad1ec3100c779   (raw JSON bytes, 90401; not embedded in this file)
+hyprctl version: Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+key_form_rule: key starting code:/mouse/switch: -> that form; key == "" AND keycode != 0 -> code; otherwise named
+binds=192 named=142 code=42 mouse=6 switch=2 catch_all=0
+command: hyprctl getoption input:resolve_binds_by_sym -j
+input:resolve_binds_by_sym int=0 set=false
+
+hyprctl never prints "code:" in the key field: all 42 code binds carry key "" plus a non-zero keycode,
+over 14 distinct keycodes 10-21, 61, 201 = AE01-AE12, AB10, FK23 on the br keymap (names from the compiled keymap).
+mouse = mouse:button 2 + mouse_up/mouse_down 4. The semantic split keysym-name 142 / code 42 is the same fact.
+
+reads used: hyprctl version, hyprctl getoption input:resolve_binds_by_sym -j, hyprctl binds -j (read-only).
+three captures over the wave, minutes apart, produced the same sha256 above.
+no device names, window titles, dispatcher args or descriptions appear in this file or in any receipt of this seat.
+captured 2026-10-27 (UTC) by seat ExecBindsLive, round 49 w1; shape detail: receipts/binds-shape.txt.

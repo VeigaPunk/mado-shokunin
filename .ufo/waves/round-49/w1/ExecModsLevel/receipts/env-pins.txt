@@ -1,0 +1,27 @@
+# environment pins for ExecModsLevel (mado round 49 w1), 2026-10-27
+python: Python 3.14.8
+judge:  /usr/lib/xkbcommon/xkbcli-how-to-type sha256=f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+compile:/usr/lib/xkbcommon/xkbcli-compile-keymap sha256=43b924f68651500e022c74371515154f8c50a2e087defa6b834cc5d41fd77250
+lib:    /usr/lib/libxkbcommon.so.0.13.2 sha256=e475adbf5abd181b1bdfdeba70ad4d501cb296bbf05b13e8649fd71b3989ee07
+ldd judge (harness loads the same shared object):
+  	linux-vdso.so.1 (0x00007fd1daf97000)
+  	libxkbcommon.so.0 => /usr/lib/libxkbcommon.so.0 (0x00007fd1daef4000)
+  	libc.so.6 => /usr/lib/libc.so.6 (0x00007fd1dac00000)
+  	/lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2 (0x00007fd1daf99000)
+deliverable mods.py:   sha256=5fa7a18944510e681eccef2eeec2f2bc67cc09d22d5a827627b7c4230a3fe1d6 lines=332
+harness diff_mods.py:  sha256=f586182d0da0edd3cbd1ad4d5d2db5e6e67d1b5e9999bdd17b65377c29e11dfb
+harness edge_cases.py: sha256=ffdee95aa8b01748d7616a74049296895924fd054275c4db1e9e710cc04533d3
+unit_checks.py:        sha256=ca414c87616247fcef80041c671d13c730507cc19c5241a59684fa3ee67ff4b0
+keysym header: /usr/include/xkbcommon/xkbcommon-keysyms.h sha256=13023369f65a17411606084e3e09557b4886aeb15f89affba4aaa86490a463f3 defines=2638
+source pins: src/PINS.txt (sha256 per file, tag URLs)
+
+# judge's own options text for --format / --keysym / --disable-compose (why load format is 2):
+   --keysym
+      Treat the argument only as a keysym
+   --disable-compose
+      Disable Compose support to query combinations involving e.g. dead keys
+  
+  --
+   --format <format>
+      The keymap format to use (default: 2)
+   --keymap=<file>

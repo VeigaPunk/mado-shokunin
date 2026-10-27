@@ -1,0 +1,119 @@
+# round-49 w1 ScrSkill — pinned libxkbcommon how-to-type sample (2026-10-27; every run: env -i PATH=/usr/bin)
+# host kernel 7.2.11-arch1-1; libxkbcommon 1.13.2-1, xkeyboard-config 2.48-1 (round-48 pins)
+
+## binaries (sha256)
+43b924f68651500e022c74371515154f8c50a2e087defa6b834cc5d41fd77250  /usr/lib/xkbcommon/xkbcli-compile-keymap
+f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54  /usr/lib/xkbcommon/xkbcli-how-to-type
+af42b0e68101722adab709a521ecaf4f52f27a4a1d355de8cc58a61c58a1bd1f  /usr/bin/xkbcli
+
+## keymap (compile in a clean env with HOME/XDG_CONFIG_HOME in scratch)
+compile rc=0  bytes=73079
+efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  host-br.xkb
+# the round-48 receipt's digest for the same RMLVO is efd487a39920… (spotcheck §2 C2)
+
+## --keysym slash
+$ /usr/lib/xkbcommon/xkbcli-how-to-type --keymap=host-br.xkb --disable-compose --keysym slash
+rc=0
+--- stdout
+keysym: slash (0x002f)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+97       AB11      1        Portuguese (Brazil)  1       [ ]
+--- stderr (first 2 lines)
+
+## --keysym 0x2f
+$ /usr/lib/xkbcommon/xkbcli-how-to-type --keymap=host-br.xkb --disable-compose --keysym 0x2f
+rc=0
+--- stdout
+keysym: slash (0x002f)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+97       AB11      1        Portuguese (Brazil)  1       [ ]
+--- stderr (first 2 lines)
+
+## --keysym Return
+$ /usr/lib/xkbcommon/xkbcli-how-to-type --keymap=host-br.xkb --disable-compose --keysym Return
+rc=0
+--- stdout
+keysym: Return (0xff0d)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+36       RTRN      1        Portuguese (Brazil)  1       [ ]
+--- stderr (first 2 lines)
+
+## --keysym nosuchsym
+$ /usr/lib/xkbcommon/xkbcli-how-to-type --keymap=host-br.xkb --disable-compose --keysym nosuchsym
+rc=2
+--- stdout
+--- stderr (first 2 lines)
+ERROR: Failed to convert argument to keysym
+Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+
+## argument interpretation without --keysym (why the contract refuses)
+$ ... --disable-compose 0x100  -> rc=0
+keysym: Amacron (0x03c0)
+$ ... --disable-compose --keysym 0x100  -> rc=0
+keysym: 0x00000100 (0x0100)
+
+## compose section appears unless --disable-compose (why the contract refuses)
+$ ... --keysym dead_acute  -> rc=0
+compose_header_lines: 1
+$ ... --disable-compose --keysym dead_acute  -> rc=0
+compose_header_lines: 0
+--- without --disable-compose, tail:
+=== Access via Compose sequences ===
+
+#  KEYSYM                         KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+--- with --disable-compose, tail:
+34       AD11      1        Portuguese (Brazil)  1       [ ]
+47       AC10      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+47       AC10      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+
+## ARG forms (how-to-type --keysym), added after the first pass
+$ --keysym 'XKB_KEY_a' -> rc=2
+ERROR: Failed to convert argument to keysym
+$ --keysym 'U002F' -> rc=0
+keysym: slash (0x002f)
+$ --keysym 'U+002F' -> rc=2
+ERROR: Failed to convert argument to keysym
+$ --keysym '47' -> rc=0
+keysym: slash (0x002f)
+$ --keysym '0X2F' -> rc=2
+ERROR: Failed to convert argument to keysym
+
+## level-1 keysyms of the lock keys (why a CAPS-mod bind is not the way)
+$ --keysym Caps_Lock -> rc=0
+keysym: Caps_Lock (0xffe5)
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+$ --keysym Num_Lock -> rc=0
+keysym: Num_Lock (0xff7f)
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+77       NMLK      1        Portuguese (Brazil)  1       [ ]
+
+## why Caps_Lock has no row on this host: compose:caps rebinds the key (host-br.xkb:1581-1583)
+1581:	key <CAPS>               {
+1582-		type= "TWO_LEVEL",
+1583-		symbols[1]= [       Multi_key,       Multi_key ]
+1584-	};
+$ --keysym Multi_key -> rc=0
+keysym: Multi_key (0xff20)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+66       CAPS      1        Portuguese (Brazil)  1       [ ]
+66       CAPS      1        Portuguese (Brazil)  2       [ Shift ]

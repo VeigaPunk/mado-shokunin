@@ -1,0 +1,25 @@
+# R4 how-to-type --keymap: compose ON vs --disable-compose
+## non-loader paths read WITH compose:
+execve("/usr/lib/xkbcommon/xkbcli-how-to-type", ["/usr/lib/xkbcommon/xkbcli-how-to"..., "--keymap=br.xkb", "--keysym", "slash"], 0x7ffd6dc86528 /* 3 vars */) = 0
+openat(AT_FDCWD, "br.xkb", O_RDONLY) = 3
+openat(AT_FDCWD, "/usr/share/X11/locale/locale.alias", O_RDONLY) = 4
+openat(AT_FDCWD, "/fast/scratch/hyaku/mado-r49/SentHost/run/probe/home/.config/XCompose", O_RDONLY) = 4
+openat(AT_FDCWD, "/usr/share/X11/locale/compose.dir", O_RDONLY) = 5
+openat(AT_FDCWD, "/usr/share/X11/locale/en_US.UTF-8/Compose", O_RDONLY) = 5
+## non-loader paths read WITH --disable-compose:
+execve("/usr/lib/xkbcommon/xkbcli-how-to-type", ["/usr/lib/xkbcommon/xkbcli-how-to"..., "--keymap=br.xkb", "--disable-compose", "--keysym", "slash"], 0x7ffdbf187270 /* 3 vars */) = 0
+openat(AT_FDCWD, "br.xkb", O_RDONLY) = 3
+## write-ish opens, both runs:
+t-ht-compose.txt:0
+t-ht-nocompose.txt:0
+## stdout diff (compose-on minus compose-off):
+10a11,14
+> 
+> === Access via Compose sequences ===
+> 
+> #  KEYSYM                         KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+## $XCOMPOSEFILE is honoured ahead of the XDG/default compose files:
+openat(AT_FDCWD, "<scratch>/xcf.txt", O_RDONLY) = 4
+## $HOME/.XCompose is probed when the XDG compose file is absent:
+openat(AT_FDCWD, "<scratch>/home5/.config/XCompose", O_RDONLY) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "<scratch>/home5/.XCompose", O_RDONLY) = 4

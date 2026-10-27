@@ -1,0 +1,67 @@
+mutant=M06 group=R3 point=scan_blob: R3 scan disabled
+old='        lambda obj: _monitor_reason(obj) is not None,'
+new='        lambda obj: False,'
+sha256=c6767a6a8b076923e116464d83c62bb26f3d29d28cf105d0f8bbd7a13958325d
+rc=1
+verdict=killed
+--- selftest output ---
+SELFTEST ok case=r1-whole-file-two-clients
+SELFTEST ok case=r1-embedded-fenced-one-client
+SELFTEST ok case=r1-empty-title-not-a-finding
+SELFTEST ok case=r1-class-only-not-a-finding
+SELFTEST ok case=r1-prose-keys-not-a-finding
+SELFTEST ok case=r1-seven-key-projection-clean
+SELFTEST ok case=r1-monitor-rule-line-clean
+SELFTEST ok case=r2-two-process-rows
+SELFTEST ok case=r2-prose-without-pid-clean
+SELFTEST FAIL case=r3-monitor-identity got={}
+SELFTEST ok case=r3-empty-serial-clean
+SELFTEST ok case=r4-twelve-entry-listing
+SELFTEST ok case=r4-three-entry-listing-under-limit
+SELFTEST ok case=r4-inline-paths-clean
+SELFTEST ok case=r4-limit-threshold-inclusive-at-12
+SELFTEST ok case=r5-prose-serial
+SELFTEST ok case=r5-table-cell-serial
+SELFTEST ok case=r5-json-serial-without-ident
+SELFTEST ok case=r5-iso-timestamp-clean
+SELFTEST ok case=r5-lowercase-run-clean
+SELFTEST ok case=r5-glued-to-prefix-clean
+SELFTEST ok case=r5-two-letter-capital-run-clean
+SELFTEST ok case=r5-detail-masks-token
+SELFTEST ok case=r6-exact-in-prose
+SELFTEST ok case=r6-exact-shape-independent
+SELFTEST ok case=r6-absent-clean
+SELFTEST ok case=r6-detail-counts-only
+SELFTEST ok case=r5-prose-without-serial-clean
+SELFTEST ok case=serials-from-json-one-value
+SELFTEST ok case=serials-from-json-empty-ignored
+SELFTEST ok case=serials-from-json-short-ignored
+SELFTEST ok case=serials-from-json-rejects-garbage
+SELFTEST ok case=self-source-serial-rules-clean
+SELFTEST ok case=rules-partition-is-waivable-plus-serial
+SELFTEST ok case=e2e-fixture-files-count
+SELFTEST FAIL case=e2e-positive-files-rules got={'.ufo/w1/clients-live.json': {'R1_CLIENT_DUMP'}, '.ufo/w1/embedded.md': {'R1_CLIENT_DUMP'}, '.ufo/w1/home-listing.txt': {'R4_HOME_LISTING'}, '.ufo/w1/serial-only.json': {'R5_SERIAL_PROSE'}, '.ufo/w1/serial-prose.md': {'R5_SERIAL_PROSE'}, '.ufo/w1/serial-table.md': {'R5_SERIAL_PROSE'}, '.ufo/w1/ss-live.txt': {'R2_PROC_TABLE'}}
+SELFTEST ok case=e2e-exit-1-on-findings
+SELFTEST ok case=e2e-summary-format
+SELFTEST ok case=e2e-negative-repo-exit-0
+SELFTEST ok case=e2e-outside-ufo-not-scanned
+SELFTEST ok case=e2e-empty-ufo-clean
+SELFTEST ok case=e2e-scope-all-sees-outside-ufo
+SELFTEST ok case=e2e-r6-hits-every-carrier
+SELFTEST ok case=e2e-r6-output-never-holds-value
+SELFTEST ok case=e2e-projected-tree-passes
+SELFTEST ok case=e2e-no-rule-can-be-dropped
+SELFTEST FAIL case=waiver-fixture-waived findings=[] waived=[] rejected=[]
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/mado-r49/MutGate/mutants/M06.py", line 1643, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/mado-r49/MutGate/mutants/M06.py", line 1623, in main
+    return selftest(verbose=args.verbose)
+  File "/fast/scratch/hyaku/mado-r49/MutGate/mutants/M06.py", line 1588, in selftest
+    _waiver_cases(suite, scratch)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/mado-r49/MutGate/mutants/M06.py", line 1355, in _waiver_cases
+    code == 0 and lines[-2].startswith("SESSION_MATERIAL_WAIVED: findings=1 files=1"),
+                  ~~~~~^^^^
+IndexError: list index out of range

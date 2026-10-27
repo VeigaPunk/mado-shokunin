@@ -1,0 +1,36 @@
+# R6 bwrap recipe that runs the judge with no host home in view
+keysym: slash (0x002f)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+97       AB11      1        Portuguese (Brazil)  1       [ ]
+# rc=0
+## why the loader bind path matters: /lib -> usr/lib, /lib64 is real
+lrwxrwxrwx 1 root root 7 Oct 12 2025 /lib -> usr/lib
+-rwxr-xr-x 1 root root 263152 Sep 27 13:35 /lib64/ld-linux-x86-64.so.2
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+## the loader must be bound at its interpreter path (/lib64/...), not /usr/lib/ld-linux-x86-64.so.2:
+bwrap: execvp /judge: No such file or directory
+## visibility inside (no /home, no /run/user, no /etc/xkb, no net):
+dev
+etc
+k.xkb
+lib64
+proc
+tmp
+usr
+ls: cannot access '/home': No such file or directory
+ls: cannot access '/root': No such file or directory
+ls: cannot access '/run/user': No such file or directory
+ls: cannot access '/etc/xkb': No such file or directory
+ls: cannot access '/sys/class/net': No such file or directory
+## canary unchanged after a judge run:
+a5c4718a11955dbd03a4742f7ea0f7105ec1ef5982920d3fe2579b5614daaf4e  rwdir/canary.txt
+## --clearenv matters: variable NAMES visible inside the sandbox (values are not printed)
+without --clearenv: 269 vars; sample: HYPRLAND_CMD HYPRLAND_INSTANCE_SIGNATURE WINDOWID XDG_CONFIG_DIRS 
+with    --clearenv: 1 vars

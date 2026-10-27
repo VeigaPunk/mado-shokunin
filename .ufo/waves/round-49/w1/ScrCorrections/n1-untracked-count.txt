@@ -1,0 +1,37 @@
+# N1 — untracked count, computed 2026-10-27 (seat ScrCorrections, round-49 w1)
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin  HEAD: 5f37c1b87b3ce5e438d19284e32b2e46fd548a92  base: 03e4ae76aff7a4be59cb69970dd553baa319695a
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin rev-parse --short HEAD
+5f37c1b8
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | grep -c "\.synthetic$"
+47
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | grep "\.synthetic$" | awk "{print \$2}" | grep -c "^\.ufo/waves/round-45/w1/"
+45
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | grep "\.synthetic$" | awk "{print \$2}" | grep -c "^\.ufo/waves/round-46/w1/"
+2
+
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | grep "\.synthetic$" | awk "{print \$2}" | grep "^\.ufo/waves/round-46/"
+.ufo/waves/round-46/w1/CritW2Gate.md.synthetic
+.ufo/waves/round-46/w1/CritW2Gate/report.md.synthetic
+
+# boundary check: no sidecar path outside round-45/w1 and round-46/w1
+$ ... | grep -vE "^\.ufo/waves/round-4[56]/w1/" | wc -l
+0
+
+# live-wave caveat: the unscoped total moves while round-49 w1 seats are writing
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | wc -l
+122
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin status --porcelain -uall | grep -v "\.synthetic$" | awk "{print \$2}" | grep -vc "^\.ufo/waves/round-49/w1"
+0
+
+# base commit time vs. current untracked genesis
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin log -1 --format="%h %ci" 03e4ae76aff7a4be59cb69970dd553baa319695a
+03e4ae76 2026-10-27 01:21:55 -0300
+
+# the 47 paths are untracked, not committed copies:
+$ git -C /home/vgpnk/Projects/shokunin/mado-shokunin ls-files -- "*.synthetic" | grep -c . 
+100
+# (100 *.synthetic paths ARE tracked from earlier rounds; the 47 above are the untracked surplus)

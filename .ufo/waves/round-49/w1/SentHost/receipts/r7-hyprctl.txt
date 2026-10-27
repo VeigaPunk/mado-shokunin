@@ -1,0 +1,24 @@
+# R7 hyprctl read verbs, %file trace, write scan
+hyprctl version -> rc=0 bytes=571 writes=0
+  distinct path roots touched: /etc/ld.so.cache /etc/ld.so.preload /usr/bin /usr/lib 
+  home-path hits: 0
+hyprctl binds -j -> rc=0 bytes=90401 writes=0
+  distinct path roots touched: /etc/ld.so.cache /etc/ld.so.preload /usr/bin /usr/lib 
+  home-path hits: 0
+hyprctl getoption input:resolve_binds_by_sym -j -> rc=0 bytes=66 writes=0
+  distinct path roots touched: /etc/ld.so.cache /etc/ld.so.preload /usr/bin /usr/lib 
+  home-path hits: 0
+hyprctl devices -j -> rc=0 bytes=4527 writes=0
+  distinct path roots touched: /etc/ld.so.cache /etc/ld.so.preload /usr/bin /usr/lib 
+  home-path hits: 0
+## binds shape (no names committed):
+binds=192 fields=allow_input_capture,arg,auto_consuming,catch_all,description,dispatcher,has_description,key,keycode,locked,longPress,modmask,mouse,non_consuming,release,repeat,submap,submap_universal
+## getoption:
+{"option": "input:resolve_binds_by_sym", "int": 0, "set": false }
+## the only network syscall is a connect to the compositor socket:
+socket(AF_UNIX, SOCK_STREAM, 0) = 3
+setsockopt(3, SOL_SOCKET, SO_RCVTIMEO_OLD, "\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 16) = 0
+connect(3, {sa_family=AF_UNIX, sun_path="/run/user/<uid>/hypr/<sig>/.socket.sock"}, 96) = 0
+## (the instance signature, a live per-session value, is redacted to <sig>; never commit it)
+## without the signature var it refuses (so the counter must not rely on ambient env):
+HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)

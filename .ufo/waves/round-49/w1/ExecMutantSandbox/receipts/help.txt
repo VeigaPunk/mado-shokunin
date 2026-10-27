@@ -1,0 +1,54 @@
+usage: hostguard.py [-h] {digest,run} ...
+
+run a command with a scratch HOME and digest operator-owned paths before/after
+
+positional arguments:
+  {digest,run}
+    digest      print the declared-path table and exit 0 (read-only)
+    run         digest, run a command in the redirected env, digest, exit 3 on
+                change
+
+options:
+  -h, --help    show this help message and exit
+usage: hostguard.py run [-h] [--declare PATH] [--declare-file FILE]
+                        [--label LABEL] [--json] --work DIR
+                        [--work-prefix DIR] [--home DIR] [--xdg-cache DIR]
+                        [--xdg-config DIR] [--xdg-data DIR] [--xdg-state DIR]
+                        [--tmpdir DIR] [--no-tmpdir] [--sandbox {none,bwrap}]
+                        [--mask PATH] [--ro-root] [--path PATH]
+                        [--env-keep NAME] [--env-set NAME=VALUE] [--cwd DIR]
+                        [--timeout SECONDS]
+                        ...
+
+positional arguments:
+  command               -- COMMAND [ARG ...]
+
+options:
+  -h, --help            show this help message and exit
+  --declare PATH        operator-owned path to digest before and after
+                        (repeatable, <= 64)
+  --declare-file FILE   file of --declare paths, one per line
+  --label LABEL         label printed with every record (default operator-
+                        owned)
+  --json                emit one JSON object instead of the table
+  --work DIR            scratch root; everything this guard creates lives
+                        under it
+  --work-prefix DIR     extra rule: --work must resolve under DIR
+  --home DIR            HOME root (default <work>/home); XDG dirs default
+                        under it
+  --xdg-cache DIR
+  --xdg-config DIR
+  --xdg-data DIR
+  --xdg-state DIR
+  --tmpdir DIR          child TMPDIR (default <work>/tmp)
+  --no-tmpdir           do not set TMPDIR at all
+  --sandbox {none,bwrap}
+  --mask PATH           bwrap only: mount an empty tmpfs over PATH
+                        (repeatable)
+  --ro-root             bwrap only: host read-only except --work
+  --path PATH           child PATH (default /usr/bin:/bin)
+  --env-keep NAME       copy NAME from the ambient env into the child (e.g.
+                        LANG)
+  --env-set NAME=VALUE
+  --cwd DIR             child cwd (default --work)
+  --timeout SECONDS

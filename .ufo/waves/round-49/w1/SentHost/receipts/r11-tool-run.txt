@@ -1,0 +1,14 @@
+# R11 tool-run mechanics for a python3 tool inside the sandbox
+python: Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+## -I drops the script's directory from sys.path (Python 3.14): a two-file tool cannot import its sibling
+ModuleNotFoundError: No module named 'helper'
+## without -I the same import writes bytecode next to the module (a write inside the sandbox):
+ok 1
+  ./__pycache__/helper.cpython-314.pyc
+## -I implies -E, so PYTHONDONTWRITEBYTECODE is ignored; -B must be a command-line flag:
+  pyc files after -I (with the env var set) + -B: 0
+## /usr/bin/xkbcli is a dispatcher: it execve's the pinned /usr/lib/xkbcommon binary
+  execve("/usr/bin/xkbcli"
+  execve("/usr/lib/xkbcommon/xkbcli-how-to-type"
+## xkbcli list write-opens: 0
+## sandbox tooling present: bwrap 0.13.1, strace 7.2

@@ -1,0 +1,32 @@
+# N3 — the Gate holds 12 admits and 3 rejects, not 'five gate decisions (three admits, two rejects)'
+# target: /home/vgpnk/Projects/shokunin/mado-shokunin/corpus/lessons/round-48.md:425
+
+$ sed -n 425p corpus/lessons/round-48.md
+4. **Discernment spot-check** of the five gate decisions above (three admits, two rejects) on outside re-reading, agree or
+
+$ grep -cE "^- \*\*S3[0-9]{2} admit\*\*" corpus/lessons/round-48.md
+12
+
+$ grep -nE "^- \*\*S3[0-9]{2} admit\*\*" corpus/lessons/round-48.md | cut -d: -f1
+55 56 57 58 59 60 61 62 63 64 65 66 
+
+$ grep -oE "^- \*\*S3[0-9]{2} admit\*\*" corpus/lessons/round-48.md | grep -oE "S3[0-9]{2}" | sort | tr "\n" " "
+S340 S341 S342 S343 S344 S345 S346 S347 S348 S349 S350 S351 
+
+$ grep -cE "^- \*\*REJECT\*\*" corpus/lessons/round-48.md
+3
+
+$ grep -nE "^- \*\*REJECT\*\*" corpus/lessons/round-48.md | cut -c1-120
+71:- **REJECT** `https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/
+72:- **REJECT** `https://wiki.archlinux.org/title/Xorg/Keyboard_configuration`, opened 2026-10-26. The English page rest
+73:- **REJECT** `https://xkbcommon.org/doc/current/index.html`, opened 2026-10-26. The current documentation index is no
+
+# independent cross-check: the Gate prose total must equal the admit blocks
+$ grep -nE "^Admitted: rows .S340.-.S351" corpus/lessons/round-48.md | cut -c1-90
+49:Admitted: rows `S340`-`S351` (S351 added by the L1 in attempt 3 after w2 `CritDataCompl
+
+# and the non-author spot-check actually sampled 6 (3 admits + 3 rejects):
+$ grep -cE "^\| .S3[0-9]{2} admit." 
+3
+$ grep -cE "^\| REJECT " 
+3

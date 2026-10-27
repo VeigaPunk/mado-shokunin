@@ -1,0 +1,30 @@
+# host sample from the round-49 C1 claim, judge vs reference B
+# keymap: xkbcli compile-keymap --layout br --options compose:caps (clean env)
+# sha256 efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81  km-br-compose-caps.txt
+
+## --keysym slash
+judge rc=0  reference rc=0  stdout_identical=yes
+keysym: slash (0x002f)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+97       AB11      1        Portuguese (Brazil)  1       [ ]
+
+## --keysym Return
+judge rc=0  reference rc=0  stdout_identical=yes
+keysym: Return (0xff0d)
+
+=== Direct access ===
+
+KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+36       RTRN      1        Portuguese (Brazil)  1       [ ]
+
+## --keysym nosuchsym
+judge rc=2  reference rc=2  stdout_identical=yes
+[judge stderr first line] ERROR: Failed to convert argument to keysym
+

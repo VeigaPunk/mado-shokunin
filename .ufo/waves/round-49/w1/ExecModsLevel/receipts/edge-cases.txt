@@ -1,0 +1,77 @@
+# mods.py edge cases vs the pinned judge (xkbcli-how-to-type, load format 2)
+
+## A. format-1 keymap (`--format 1`)
+virtual_modifiers line: virtual_modifiers NumLock,Alt,LevelThree,Super,LevelFive,Meta,Hyper,ScrollLock;
+  library load format 1: [('NumLock', 16), ('Alt', 8), ('LevelThree', 128), ('Super', 64), ('LevelFive', 32), ('Meta', 8), ('Hyper', 0), ('ScrollLock', 0)]
+  library load format 2: [('NumLock', 16), ('Alt', 8), ('LevelThree', 128), ('Super', 64), ('LevelFive', 32), ('Meta', 8), ('Hyper', 16384), ('ScrollLock', 32768)]
+  model fmt_v2=True : [('NumLock', 16), ('Alt', 8), ('LevelThree', 128), ('Super', 64), ('LevelFive', 32), ('Meta', 8), ('Hyper', 16384), ('ScrollLock', 32768)]
+  model fmt_v2=False: [('NumLock', 16), ('Alt', 8), ('LevelThree', 128), ('Super', 64), ('LevelFive', 32), ('Meta', 8), ('Hyper', 0), ('ScrollLock', 0)]
+  judge differential (model fmt_v2=True): rows=725 keys=488 judge_runs=612 judge_rows=984
+  mask_mismatch    0
+  nlevels_mismatch 0
+  table_mismatch   0
+  judge_mismatch   0
+  judge_rc         0
+  missing_key      0
+  cell_mismatch    0
+
+## B. `virtual_modifiers TestVmod=none` with a type naming it
+rows=623 keys=487 judge_runs=536 judge_rows=816
+  mask_mismatch    0
+  nlevels_mismatch 0
+  table_mismatch   0
+  judge_mismatch   0
+  judge_rc         0
+  missing_key      0
+  cell_mismatch    0
+  trace FK01   type=EDGE_none_vmod levels={0: ['[ TestVmod ]'], 1: ['[ Shift TestVmod ]']}
+  judge U1F700 rc=0 rows=[(67, 'FK01', 1, 1, '[ TestVmod ]')]
+  model: entries=[{'mods': 1, 'level': 1, 'active': True}, {'mods': 0, 'level': 1, 'active': False}, {'mods': 0, 'level': 1, 'active': False}]
+  model: level1 masks=[0] level2 masks=[1]
+
+## C. synthetic types: duplicate map[none], map[none]= 3, 102-entry cap
+rows=611 keys=487 judge_runs=539 judge_rows=858
+  mask_mismatch    0
+  nlevels_mismatch 0
+  table_mismatch   0
+  judge_mismatch   0
+  judge_rc         0
+  missing_key      0
+  cell_mismatch    0
+  trace FK01   type=EDGE_dup     levels={0: ['[ ]']}
+  trace FK02   type=EDGE_none3   levels={0: [], 1: ['[ Shift ]'], 2: ['[ ]']}
+  trace FK03   type=EDGE_cap     levels={0: ['[ ]'], 1: ['[ Shift ]', '[ Lock ]', '[ Shift Lock ]', '[ Control ]', '[ Shift Control ]', '[ Lock Control ]', '[ Shift Lock Control ]', '[ Mod1 Alt Meta ]', '[ Shift Mod1 Alt Meta ]', '[ Lock Mod1 Alt Meta ]', '[ Shift Lock Mod1 Alt Meta ]', '[ Control Mod1 Alt Meta ]', '[ Shift Control Mod1 Alt Meta ]', '[ Lock Control Mod1 Alt Meta ]', '[ Mod2 NumLock ]', '[ Shift Mod2 NumLock ]', '[ Lock Mod2 NumLock ]', '[ Shift Lock Mod2 NumLock ]', '[ Control Mod2 NumLock ]', '[ Shift Control Mod2 NumLock ]', '[ Lock Control Mod2 NumLock ]', '[ Mod1 Mod2 NumLock Alt Meta ]', '[ Shift Mod1 Mod2 NumLock Alt Meta ]', '[ Lock Mod1 Mod2 NumLock Alt Meta ]', '[ Control Mod1 Mod2 NumLock Alt Meta ]', '[ Mod3 LevelFive ]', '[ Shift Mod3 LevelFive ]', '[ Lock Mod3 LevelFive ]', '[ Shift Lock Mod3 LevelFive ]', '[ Control Mod3 LevelFive ]', '[ Shift Control Mod3 LevelFive ]', '[ Lock Control Mod3 LevelFive ]', '[ Mod1 Mod3 Alt LevelFive Meta ]', '[ Shift Mod1 Mod3 Alt LevelFive Meta ]', '[ Lock Mod1 Mod3 Alt LevelFive Meta ]', '[ Control Mod1 Mod3 Alt LevelFive Meta ]', '[ Mod2 Mod3 NumLock LevelFive ]', '[ Shift Mod2 Mod3 NumLock LevelFive ]', '[ Lock Mod2 Mod3 NumLock LevelFive ]', '[ Control Mod2 Mod3 NumLock LevelFive ]', '[ Mod1 Mod2 Mod3 NumLock Alt LevelFive Meta ]', '[ Mod4 Super ]', '[ Shift Mod4 Super ]', '[ Lock Mod4 Super ]', '[ Shift Lock Mod4 Super ]', '[ Control Mod4 Super ]', '[ Shift Control Mod4 Super ]', '[ Lock Control Mod4 Super ]', '[ Mod1 Mod4 Alt Super Meta ]', '[ Shift Mod1 Mod4 Alt Super Meta ]', '[ Lock Mod1 Mod4 Alt Super Meta ]', '[ Control Mod1 Mod4 Alt Super Meta ]', '[ Mod2 Mod4 NumLock Super ]', '[ Shift Mod2 Mod4 NumLock Super ]', '[ Lock Mod2 Mod4 NumLock Super ]', '[ Control Mod2 Mod4 NumLock Super ]', '[ Mod1 Mod2 Mod4 NumLock Alt Super Meta ]', '[ Mod3 Mod4 Super LevelFive ]', '[ Shift Mod3 Mod4 Super LevelFive ]', '[ Lock Mod3 Mod4 Super LevelFive ]', '[ Control Mod3 Mod4 Super LevelFive ]', '[ Mod1 Mod3 Mod4 Alt Super LevelFive Meta ]', '[ Mod2 Mod3 Mod4 NumLock Super LevelFive ]', '[ Mod5 LevelThree ]', '[ Shift Mod5 LevelThree ]', '[ Lock Mod5 LevelThree ]', '[ Shift Lock Mod5 LevelThree ]', '[ Control Mod5 LevelThree ]', '[ Shift Control Mod5 LevelThree ]', '[ Lock Control Mod5 LevelThree ]', '[ Mod1 Mod5 Alt LevelThree Meta ]', '[ Shift Mod1 Mod5 Alt LevelThree Meta ]', '[ Lock Mod1 Mod5 Alt LevelThree Meta ]', '[ Control Mod1 Mod5 Alt LevelThree Meta ]', '[ Mod2 Mod5 NumLock LevelThree ]', '[ Shift Mod2 Mod5 NumLock LevelThree ]', '[ Lock Mod2 Mod5 NumLock LevelThree ]', '[ Control Mod2 Mod5 NumLock LevelThree ]', '[ Mod1 Mod2 Mod5 NumLock Alt LevelThree Meta ]', '[ Mod3 Mod5 LevelThree LevelFive ]', '[ Shift Mod3 Mod5 LevelThree LevelFive ]', '[ Lock Mod3 Mod5 LevelThree LevelFive ]', '[ Control Mod3 Mod5 LevelThree LevelFive ]', '[ Mod1 Mod3 Mod5 Alt LevelThree LevelFive Meta ]', '[ Mod2 Mod3 Mod5 NumLock LevelThree LevelFive ]', '[ Mod4 Mod5 LevelThree Super ]', '[ Shift Mod4 Mod5 LevelThree Super ]', '[ Lock Mod4 Mod5 LevelThree Super ]', '[ Control Mod4 Mod5 LevelThree Super ]', '[ Mod1 Mod4 Mod5 Alt LevelThree Super Meta ]', '[ Mod2 Mod4 Mod5 NumLock LevelThree Super ]', '[ Mod3 Mod4 Mod5 LevelThree Super LevelFive ]', '[ Mod2 NumLock ]', '[ Shift Mod2 NumLock ]', '[ Lock Mod2 NumLock ]', '[ Shift Lock Mod2 NumLock ]', '[ Control Mod2 NumLock ]', '[ Shift Control Mod2 NumLock ]', '[ Lock Control Mod2 NumLock ]', '[ Mod1 Mod2 NumLock Alt Meta ]']}
+  trace FK04   type=EDGE_names   levels={0: ['[ ]'], 1: ['[ Shift ]']}
+  trace FK05   type=EDGE_clamp   levels={0: ['[ ]'], 1: ['[ Shift ]']}
+  EDGE_dup    num_levels=1 entries=1 cells={0: (['[ ]'], 1)}
+  EDGE_none3  num_levels=3 entries=2 cells={0: ([], 0), 1: (['[ Shift ]'], 1), 2: (['[ ]'], 1)}
+  EDGE_cap    num_levels=2 entries=102 cells={0: (['[ ]'], 1), 1: (['[ Shift ]', '[ Lock ]', '[ Shift Lock ]', '...'], 100)}
+  EDGE_names  num_levels=2 entries=1 cells={0: (['[ ]'], 1), 1: (['[ Shift ]'], 1)}
+  EDGE_clamp  num_levels=2 entries=1 cells={0: (['[ ]'], 1), 1: (['[ Shift ]'], 1)}
+  judge U1F700  rc=0 rows=1 first=[(67, 'FK01', 1, 1, '[ ]')]
+  judge U1F702  rc=0 rows=0 first=[]
+  judge U1F704  rc=0 rows=1 first=[(68, 'FK02', 1, 3, '[ ]')]
+  judge U1F705  rc=0 rows=1 first=[(69, 'FK03', 1, 1, '[ ]')]
+  judge U1F706  rc=0 rows=100 first=[(69, 'FK03', 1, 2, '[ Shift ]'), (69, 'FK03', 1, 2, '[ Lock ]')]
+  judge U1F708  rc=0 rows=1 first=[(70, 'FK04', 1, 1, '[ ]')]
+  judge U1F70B  rc=0 rows=0 first=[]
+  judge U1F70C  rc=0 rows=1 first=[(71, 'FK05', 1, 1, '[ ]')]
+  judge U1F70D  rc=0 rows=1 first=[(71, 'FK05', 1, 2, '[ Shift ]')]
+
+## D. host sample keymap (br, compose:caps) -- the C1 contract sample
+  judge --keysym slash      rc=0 rows=[('AD01', 3, '[ Mod5 LevelThree ]'), ('AD01', 3, '[ Lock Mod5 LevelThree ]'), ('AD01', 4, '[ Shift Mod5 LevelThree ]'), ('AD01', 4, '[ Shift Lock Mod5 LevelThree ]'), ('AB11', 1, '[ ]')]
+  judge --keysym Return     rc=0 rows=[('RTRN', 1, '[ ]')]
+  judge --keysym nosuchsym  rc=2 rows=[]
+    stderr: ERROR: Failed to convert argument to keysym
+  model modifier cells per level, AD01 (FOUR_LEVEL_SEMIALPHABETIC):
+    level 1: ['[ ]']
+    level 2: ['[ Shift ]', '[ Lock ]']
+    level 3: ['[ Mod5 LevelThree ]', '[ Lock Mod5 LevelThree ]']
+    level 4: ['[ Shift Mod5 LevelThree ]', '[ Shift Lock Mod5 LevelThree ]']
+  model modifier cells per level, AB11:
+    level 1: ['[ ]']
+    level 2: ['[ Shift ]']
+    level 3: ['[ Mod5 LevelThree ]']
+    level 4: ['[ Shift Mod5 LevelThree ]']
+
+TOTAL_MISMATCHES 0

@@ -1,0 +1,16 @@
+# R1 compile-keymap filesystem access (env -i, HOME/XDG in scratch)
+# cmd: env -i PATH=/usr/bin HOME=$S/home XDG_CONFIG_HOME=$S/home/.config strace -f -e trace=%file /usr/lib/xkbcommon/xkbcli-compile-keymap --layout br
+# rc=0
+## include-path probes in the order libxkbcommon asks for them:
+newfstatat(AT_FDCWD, "/fast/scratch/hyaku/mado-r49/SentHost/run/probe/home/.config/xkb", 0x7fff684be5c0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/fast/scratch/hyaku/mado-r49/SentHost/run/probe/home/.xkb", 0x7fff684be5c0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/etc/xkb", 0x7fff684be5c0, 0) = -1 ENOENT (No such file or directory)
+## total %file lines: 52
+## write-ish opens (O_WRONLY|O_RDWR|O_CREAT|O_TRUNC|O_APPEND|mkdir|rename|unlink|symlink):
+0
+## keymap written by that run:
+6ef2127653b0ca1a6dd8e617d9c4852888ad9310e0c195f6fc847453173d05ca  -
+## every other allowed compile mode is write-free too:
+  compile-keymap --test --layout br -> rc=0 write-opens=0
+  compile-keymap --layout us -> rc=0 write-opens=0
+  compile-keymap --layout br --options compose:caps -> rc=0 write-opens=0

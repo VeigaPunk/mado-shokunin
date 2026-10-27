@@ -1,0 +1,66 @@
+# check-matrix-full.py both-ways demonstration (round-49 w1 ExecN4Matrix, N4)
+# positive: the delivered receipt must PASS; every neg-* must FAIL for a named reason
+# negative fixtures are scratch copies under /fast/scratch; no lane file is mutated
+## pos: delivered receipt (--frozen also re-asserts the 96-of-98 claim)
+matrix_sha256=bf496e777c187c6a7c4db8665227321c14072a8d3993071d3c20dc7c6fddff2f
+row_count_98                       PASS rows=98 summary=98
+set_equality_summary               PASS matrix=98 summary=98
+no_duplicate_names                 PASS none
+order_equals_summary               PASS
+footer_rows_98                     PASS 'rows 98'
+recovered_present                  PASS a-rev-base-direct,a-entry-at-base
+row_values_match_summary           PASS
+frozen_96_rows                     PASS rows=96
+frozen_missing_two                 PASS a-entry-at-base,a-rev-base-direct
+frozen_pos_is_clauses              PASS frozen pos line = print site 412, the clauses projection
+frozen_sha256                    ae4ce14c8878bfb9b832cad26d6323fc6372859ad385d7b22522c957ca90e474
+RESULT PASS failures=0
+rc=0
+## neg-1: frozen 96-line text as --matrix
+matrix_sha256=ae4ce14c8878bfb9b832cad26d6323fc6372859ad385d7b22522c957ca90e474
+row_count_98                       FAIL rows=95 summary=98
+set_equality_summary               FAIL matrix=95 summary=98
+no_duplicate_names                 PASS none
+order_equals_summary               FAIL
+footer_rows_98                     FAIL None
+recovered_present                  FAIL
+row_values_match_summary           PASS
+frozen_96_rows                     PASS rows=96
+frozen_missing_two                 PASS a-entry-at-base,a-rev-base-direct
+frozen_pos_is_clauses              PASS frozen pos line = print site 412, the clauses projection
+frozen_sha256                    ae4ce14c8878bfb9b832cad26d6323fc6372859ad385d7b22522c957ca90e474
+RESULT FAIL failures=5
+rc=1
+## neg-2: a-entry-at-base row deleted
+matrix_sha256=63dab676abda0327f59a3c3e2b3d7245a57c1d275592003df6d8335536177384
+row_count_98                       FAIL rows=97 summary=98
+set_equality_summary               FAIL matrix=97 summary=98
+no_duplicate_names                 PASS none
+order_equals_summary               FAIL
+footer_rows_98                     PASS 'rows 98'
+recovered_present                  FAIL a-rev-base-direct
+row_values_match_summary           PASS
+RESULT FAIL failures=4
+rc=1
+## neg-3: pos rc flipped 0->1
+matrix_sha256=4444a279849ae08ce24d6ad469e090ed2ee56ce7bd118e71d5e00ff2fa268161
+row_count_98                       PASS rows=98 summary=98
+set_equality_summary               PASS matrix=98 summary=98
+no_duplicate_names                 PASS none
+order_equals_summary               PASS
+footer_rows_98                     PASS 'rows 98'
+recovered_present                  PASS a-rev-base-direct,a-entry-at-base
+row_values_match_summary           FAIL pos:rc 1!=0
+RESULT FAIL failures=1
+rc=1
+## neg-4: b-recheck-S340 duplicated, b-recheck-S341 dropped
+matrix_sha256=82eef3e9b525255ceaf5c1fd2fce1173940f257227b55a0de2b93794c719d3d9
+row_count_98                       PASS rows=98 summary=98
+set_equality_summary               FAIL matrix=97 summary=98
+no_duplicate_names                 FAIL b-recheck-S340
+order_equals_summary               FAIL
+footer_rows_98                     PASS 'rows 98'
+recovered_present                  PASS a-rev-base-direct,a-entry-at-base
+row_values_match_summary           FAIL b-recheck-S340:last differs
+RESULT FAIL failures=4
+rc=1

@@ -1,0 +1,516 @@
+# ExecBindsLive — pinned how-to-type behaviour on a host keymap (round 49 w1)
+#
+# judge: /usr/lib/xkbcommon/xkbcli-how-to-type sha256 f6c0b122ad90c9e30086653517c51f4b2203b6c7c07bcbc89c71e55ab2927e54
+# keymap: rebuilt deterministically (two runs, identical sha256) by
+#   env -i PATH=/usr/bin HOME=<scratch>/home XDG_CONFIG_HOME=<scratch>/xdg \
+#     /usr/lib/xkbcommon/xkbcli-compile-keymap --layout br --options compose:caps > keymap.xkb
+# keymap sha256: efd487a399201523540f4e5bbf81818be3183f6d9957c2f2b12469a2cf6fce81
+# host packages (pacman -Q, read-only): libxkbcommon 1.13.2-1, xkeyboard-config 2.48-1
+# every case runs with env -i PATH=/usr/bin and HOME/XDG_CONFIG_HOME in scratch; no user xkb include path.
+
+### missing positional
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: missing positional parameter
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### without --disable-compose
+command: xkbcli-how-to-type --keymap=keymap.xkb --keysym slash
+exit: 0
+stdout:
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+  | 
+  | === Access via Compose sequences ===
+  | 
+  | #  KEYSYM                         KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+stderr:
+  | <empty>
+
+### missing keymap file
+command: xkbcli-how-to-type --keymap=<scratch>/nosuch.xkb --disable-compose --keysym slash
+exit: 1
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to open keymap file "<scratch>/nosuch.xkb": No such file or directory
+  | ERROR: Failed to create XKB keymap
+
+### unknown keysym name
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym nosuchsym
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to convert argument to keysym
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### upper-case bind name SLASH
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym SLASH
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to convert argument to keysym
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### upper-case bind name RETURN
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym RETURN
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to convert argument to keysym
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### canonical name Return
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym Return
+exit: 0
+stdout:
+  | keysym: Return (0xff0d)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 36       RTRN      1        Portuguese (Brazil)  1       [ ]
+stderr:
+  | <empty>
+
+### numeric 0x002f
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym 0x002f
+exit: 0
+stdout:
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+stderr:
+  | <empty>
+
+### decimal 47
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym 47
+exit: 0
+stdout:
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+stderr:
+  | <empty>
+
+### hex without 0x (2f)
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym 2f
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to convert argument to keysym
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### digits: 0 is a name
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym 0
+exit: 0
+stdout:
+  | keysym: 0 (0x0030)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 19       AE10      1        Portuguese (Brazil)  1       [ ]
+stderr:
+  | <empty>
+
+### 0x0 is NoSymbol
+command: xkbcli-how-to-type --keymap=keymap.xkb --disable-compose --keysym 0x0
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Failed to convert argument to keysym
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### --keymap with RMLVO option
+command: xkbcli-how-to-type --keymap=keymap.xkb --layout us --disable-compose --keysym slash
+exit: 2
+stdout:
+  | <empty>
+stderr:
+  | ERROR: Cannot use RMLVO options with keymap input
+  | Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+  | 
+  | Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+  | would produce the given Unicode code point or keysym.
+  | 
+  | <character/codepoint/keysym> is either:
+  | - a single character (requires a terminal which uses UTF-8 character encoding);
+  | - a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  |   else as decimal;
+  | - a keysym if either the previous interpretations failed or if --keysym is used. 
+  |   The parameter is then either a keysym name or a numeric value (hexadecimal 
+  |   if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  |   they are both names and numeric values. The default interpretation is names; 
+  |   use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+  | 
+  | Options:
+  |  --help
+  |     Print this help and exit
+  |  --verbose
+  |     Enable verbose debugging output
+  |  --keysym
+  |     Treat the argument only as a keysym
+  |  --disable-compose
+  |     Disable Compose support to query combinations involving e.g. dead keys
+  | 
+  | XKB-specific options:
+  |  --format <format>
+  |     The keymap format to use (default: 2)
+  |  --keymap=<file>
+  |     Load the corresponding XKB file, ignore RMLVO options. If <file>
+  |     is "-" or missing, then load from stdin.
+  |  --rules <rules>
+  |     The XKB ruleset (default: 'evdev')
+  |  --model <model>
+  |     The XKB model (default: 'pc105')
+  |  --layout <layout>
+  |     The XKB layout (default: 'us')
+  |  --variant <variant>
+  |     The XKB layout variant (default: '<none>')
+  |  --options <options>
+  |     The XKB options (default: '<none>')
+  |  --enable-environment-names
+  |     Allow to set the default RMLVO values via the following environment variables:
+  |     - XKB_DEFAULT_RULES
+  |     - XKB_DEFAULT_MODEL
+  |     - XKB_DEFAULT_LAYOUT
+  |     - XKB_DEFAULT_VARIANT
+  |     - XKB_DEFAULT_OPTIONS
+  |     Note that this option may affect the default values of the previous options.
+
+### bare --keymap reads stdin
+command: xkbcli-how-to-type --keymap --disable-compose --keysym slash
+exit: 0
+stdout:
+  | keysym: slash (0x002f)
+  | 
+  | === Direct access ===
+  | 
+  | KEYCODE  KEY NAME  LAYOUT   LAYOUT NAME          LEVEL#  MODIFIERS
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  3       [ Lock Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Mod5 LevelThree ]
+  | 24       AD01      1        Portuguese (Brazil)  4       [ Shift Lock Mod5 LevelThree ]
+  | 97       AB11      1        Portuguese (Brazil)  1       [ ]
+stderr:
+  | <empty>
+

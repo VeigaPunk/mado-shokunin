@@ -1,0 +1,51 @@
+ERROR: Failed to convert argument to keysym
+Usage: /usr/lib/xkbcommon/xkbcli-how-to-type [--help] [--verbose] [--keysym] [--disable-compose] [--rules <rules>] [--model <model>] [--layout <layout>] [--variant <variant>] [--options <options>] [--enable-environment-names] <character/codepoint/keysym>
+
+Prints the key combinations (keycode + modifiers) in the keymap's layouts which
+would produce the given Unicode code point or keysym.
+
+<character/codepoint/keysym> is either:
+- a single character (requires a terminal which uses UTF-8 character encoding);
+- a Unicode code point, interpreted as hexadecimal if prefixed with '0x' or 'U+'
+  else as decimal;
+- a keysym if either the previous interpretations failed or if --keysym is used. 
+  The parameter is then either a keysym name or a numeric value (hexadecimal 
+  if prefixed with '0x' else decimal). Note that values '0' .. '9' are special: 
+  they are both names and numeric values. The default interpretation is names; 
+  use the hexadecimal form '0x0' .. '0x9' in order to interpret as numeric values.
+
+Options:
+ --help
+    Print this help and exit
+ --verbose
+    Enable verbose debugging output
+ --keysym
+    Treat the argument only as a keysym
+ --disable-compose
+    Disable Compose support to query combinations involving e.g. dead keys
+
+XKB-specific options:
+ --format <format>
+    The keymap format to use (default: 2)
+ --keymap=<file>
+    Load the corresponding XKB file, ignore RMLVO options. If <file>
+    is "-" or missing, then load from stdin.
+ --rules <rules>
+    The XKB ruleset (default: 'evdev')
+ --model <model>
+    The XKB model (default: 'pc105')
+ --layout <layout>
+    The XKB layout (default: 'us')
+ --variant <variant>
+    The XKB layout variant (default: '<none>')
+ --options <options>
+    The XKB options (default: '<none>')
+ --enable-environment-names
+    Allow to set the default RMLVO values via the following environment variables:
+    - XKB_DEFAULT_RULES
+    - XKB_DEFAULT_MODEL
+    - XKB_DEFAULT_LAYOUT
+    - XKB_DEFAULT_VARIANT
+    - XKB_DEFAULT_OPTIONS
+    Note that this option may affect the default values of the previous options.
+

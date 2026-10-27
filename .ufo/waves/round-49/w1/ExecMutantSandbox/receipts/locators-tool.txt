@@ -1,0 +1,12 @@
+43:  0  no declared path changed
+44:  2  usage error or a refused path (--work under /tmp, --home inside the real home, a directory declared, ...)
+45:  3  a declared path changed (sha256 / size / mtime_ns / ino / dev / kind / link target)
+47:  5  the child failed (non-zero, signalled, or past --timeout); its status is printed and in --json
+103:def check_write_dir(name, path):
+108:        raise Refused(f"{name} {path} resolves under {hit}: scratch must not be /tmp "
+114:        raise Refused(f"{name} {path} resolves inside {rr}; the guard writes only to external scratch")
+118:def check_read_dir(name, path):
+152:                      f"is not in contract and is never opened")
+217:    os.makedirs(args.work, mode=0o700, exist_ok=True)
+223:        os.makedirs(d, mode=0o700, exist_ok=True)
+366:                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)

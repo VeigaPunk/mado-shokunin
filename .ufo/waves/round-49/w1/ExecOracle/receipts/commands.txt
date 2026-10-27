@@ -1,0 +1,38 @@
+# mado round 49 w1 ExecOracle -- exact invocations behind receipts/
+# lane: /home/vgpnk/Projects/shokunin/mado-shokunin  (all paths absolute; cwd was scratch)
+# scratch: /fast/scratch/hyaku/mado-r49/ExecOracle  (deleted before the seat closed)
+# every writer shell began with: ulimit -f 65536
+
+# --- selfcheck, run 1 and run 2 (two independent processes, two work dirs) ---
+cd /fast/scratch/hyaku/mado-r49/ExecOracle
+env -i PATH=/usr/bin:/bin HOME=$PWD/selfcheck-home XDG_CONFIG_HOME=$PWD/selfcheck-cfg LC_ALL=C \
+  python3 -I <seat>/oracle.py selfcheck --work $PWD/sc1 --reps 3 --cost-n 50 \
+  > <seat>/receipts/oracle-selfcheck-run1.txt
+env -i PATH=/usr/bin:/bin HOME=$PWD/selfcheck-home XDG_CONFIG_HOME=$PWD/selfcheck-cfg LC_ALL=C \
+  python3 -I <seat>/oracle.py selfcheck --work $PWD/sc2 --reps 3 --cost-n 50 \
+  > <seat>/receipts/oracle-selfcheck-run2.txt
+
+# --- cross-process diff (timestamp line and the timing block excluded) ---
+cmd() { grep -v '^# generated:' "$1" | sed '/^== 4\. cost/,/^== 5\./d'; }
+diff <(cmd .../oracle-selfcheck-run1.txt) <(cmd .../oracle-selfcheck-run2.txt) \
+  > <seat>/receipts/oracle-selfcheck-cross-process.diff      # empty, rc 0
+
+# --- CLI smoke (each verb once) ---
+python3 -I oracle.py pins
+python3 -I oracle.py compile --work $PWD/cli/a --layout br --options compose:caps --out $PWD/cli/br.xkb
+python3 -I oracle.py run     --work $PWD/cli/b --layout br --keysym slash
+python3 -I oracle.py judge   --work $PWD/cli/c --keymap $PWD/cli/br.xkb --keysym Return
+python3 -I oracle.py run     --work /tmp/nope --layout us --keysym a      # rc 2, WorkDirRefused
+
+# --- pins (fetched 2026-10-27, tag-pinned) ---
+curl -fsSL https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/tools/how-to-type.c
+curl -fsSL https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/src/keysym.c
+curl -fsSL https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/include/xkbcommon/xkbcommon-keysyms.h
+curl -fsSL https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/src/compose/table.c
+curl -fsSL https://raw.githubusercontent.com/xkbcommon/libxkbcommon/xkbcommon-1.13.2/src/compose/paths.c
+
+# --- host reads used (read-only, no mutation) ---
+sha256sum /usr/lib/xkbcommon/xkbcli-how-to-type /usr/lib/xkbcommon/xkbcli-compile-keymap
+ls /var/lib/pacman/local/libxkbcommon-[0-9]* /var/lib/pacman/local/xkeyboard-config-[0-9]*
+ls -d /usr/share/X11/locale/*/Compose | wc -l      # 62
+wc -c /usr/share/X11/locale/C/Compose /usr/share/X11/locale/en_US.UTF-8/Compose   # 0 and 456061

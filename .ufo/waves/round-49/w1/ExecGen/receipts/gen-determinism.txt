@@ -1,0 +1,14 @@
+# gen.py case-list determinism (cross-process), no judge involved
+# gen.py sha256 e5de5f1b6cebca99c421a33bf6b550df81fe4321175d6dea4df0d6b22e210b5b
+$ python3 gen.py cases --seed 4901 --n 400 --compile | sha256sum   # pass A
+3c55eba0f4cc96d996a38ea10df246b9f5d1a816f39ee0159a37ed6ef88c9867  -
+$ python3 gen.py cases --seed 4901 --n 400 --compile | sha256sum   # pass B
+3c55eba0f4cc96d996a38ea10df246b9f5d1a816f39ee0159a37ed6ef88c9867  -
+$ python3 gen.py cases --seed 4901 --n 400 --compile | sha256sum   # pass C
+3c55eba0f4cc96d996a38ea10df246b9f5d1a816f39ee0159a37ed6ef88c9867  -
+$ python3 gen.py cases --seed 4901 --n 400 --compile --weighting plain | sha256sum
+07e4529c096217e671beeb1ecd82b29bde50da7af8aaebdd4676180a3adf2dac  -
+$ python3 gen.py cases --seed 4901 --n 400 | sha256sum   # no --compile (header pool only)
+fc6f1df9f8ebaae70e77b27d43846760dd3f40b1a90251ed128050c9fa5a04fd  -
+$ python3 gen.py cases --seed 4917 --n 400 --compile | sha256sum   # different seed
+7da7c95bbe22391fd1d4cc5874e77956c08f63f7420a4a09e5aff133f1340e6a  -

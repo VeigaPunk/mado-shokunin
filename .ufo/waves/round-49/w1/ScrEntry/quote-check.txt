@@ -1,0 +1,81 @@
+PASS Hyprland-legacy-ConfigManager.cpp:607 hits=[607] w=3 m_config->registerHandler(&::handleBind, "bind", {tr
+PASS Hyprland-legacy-ConfigManager.cpp:1541 hits=[1541] w=5 default: return "bind: invalid flag";
+PASS Hyprland-legacy-ConfigManager.cpp:1555 hits=[1555] w=6 const auto ARGS     = CVarList(value, numbArgs);
+PASS Hyprland-legacy-ConfigManager.cpp:1567 hits=[1567] w=3 if (multiKey) {
+PASS Hyprland-legacy-ConfigManager.cpp:1483 hits=[1483] w=4 return {.keycode = std::stoi(key)};
+PASS Hyprland-legacy-ConfigManager.cpp:1484 hits=[1484] w=5 else if (key.starts_with("code:") && isNumber(key.su
+PASS Hyprland-legacy-ConfigManager.cpp:1489 hits=[1489] w=4 return {.key = key};
+PASS Hyprland-legacy-ConfigManager.cpp:1617 hits=[1617] w=4 SParsedKey parsedKey = parseKey(KEY);
+PASS Hyprland-legacy-ConfigManager.cpp:1616 hits=[1616] w=5 if ((!KEY.empty()) || multiKey) {
+PASS Hyprland-legacy-ConfigManager.cpp:1620 hits=[1620] w=6 Catchall not allowed outside of submap!
+PASS Hyprland-legacy-ConfigManager.cpp:1603 hits=[1603] w=4 Invalid mod, requested mod
+PASS Hyprland-legacy-ConfigManager.cpp:1624 hits=[1624] w=1 g_pKeybindManager->addKeybind(SKeybind{parsedKey.key
+PASS Hyprland-KeybindManager.cpp:710 hits=[710] w=6 const auto KBKEY      = xkb_keysym_from_name(k->key.
+PASS Hyprland-KeybindManager.cpp:711 hits=[711] w=6 const auto KBKEYLOWER = xkb_keysym_from_name(k->key.
+PASS Hyprland-KeybindManager.cpp:724 hits=[724] w=8 if (key.keysym != KBKEY && key.keysym != KBKEYLOWER)
+PASS Hyprland-KeybindManager.cpp:713 hits=[713] w=9 if (KBKEY == XKB_KEY_NoSymbol && KBKEYLOWER == XKB_K
+PASS Hyprland-KeybindManager.cpp:367 hits=[367] w=7 const auto         KEYCODE = e.keycode + 8;
+PASS Hyprland-KeybindManager.cpp:369 hits=[369] w=5 pKeyboard->m_resolveBindsBySym ? pKeyboard->m_xkbSym
+PASS Hyprland-KeybindManager.cpp:370 hits=[370] w=6 const xkb_keysym_t internalKeysym = xkb_state_key_ge
+PASS Hyprland-KeybindManager.cpp:377 hits=[377] w=1 handleInternalKeybinds(internalKeysym)
+PASS Hyprland-KeybindManager.cpp:928-942 hits=[928] w=4 bool CKeybindManager::handleInternalKeybinds(xkb_key
+PASS Hyprland-KeybindManager.cpp:293 hits=[293] w=3 m_xkbTranslationState = nullptr;
+PASS Hyprland-KeybindManager.cpp:332 hits=[332] w=3 m_xkbTranslationState = xkb_state_new(PKEYMAP);
+PASS Hyprland-KeybindManager.cpp:311 hits=[311] w=5 const auto        PCONTEXT   = xkb_context_new(XKB_C
+PASS Hyprland-KeybindManager.cpp:224 hits=[224] w=2 if (mods.contains("SHIFT"))
+PASS Hyprland-KeybindManager.cpp:236 hits=[236] w=10 if (mods.contains("SUPER") || mods.contains("WIN") |
+PASS Hyprland-KeybindManager.cpp:652 hits=[652] w=5 modmask != k->modmask && !k->ignoreMods
+PASS Hyprland-KeybindManager.cpp:671 hits=[671] w=7 } else if (!k->sMkKeys.empty() && key.keyName.empty(
+PASS Hyprland-KeybindManager.cpp:694 hits=[694] w=4 if (key.keyName != k->key)
+PASS Hyprland-KeybindManager.cpp:697 hits=[697] w=4 if (key.keycode != k->keycode)
+PASS Hyprland-KeybindManager.cpp:699 hits=[699] w=5 } else if (k->catchAll) {
+PASS Hyprland-KeybindManager.cpp:189 hits=[189] w=1 m_keybinds.emplace_back(KEYBIND);
+PASS Hyprland-KeybindManager.cpp:634 hits=[634, 858] w=6 for (auto& k : m_keybinds) {
+PASS Hyprland-KeybindManager.cpp:855 hits=[855] w=8 void CKeybindManager::shadowKeybinds(const xkb_keysy
+PASS Hyprland-KeybindManager.cpp:874 hits=[874] w=5 const auto KBKEYUPPER = xkb_keysym_to_upper(KBKEY);
+PASS Hyprland-KeybindManager.cpp:867 hits=[867] w=6 if (k->handler == "global" || k->transparent)
+PASS Hyprland-KeybindManager.cpp:773 hits=[773] w=1 bindsHit.emplace_back(k);
+PASS Hyprland-KeybindManager.cpp:728 hits=[728] w=7 if (pressed && k->release && !SPECIALDISPATCHER) {
+PASS Hyprland-KeybindManager.cpp:747 hits=[747] w=7 } else if (!k->release && !SPECIALDISPATCHER) {
+PASS Hyprland-KeybindManager.cpp:738 hits=[738] w=7 if (key.modmaskAtPressTime != modmask && !k->ignoreM
+PASS Hyprland-KeybindManager.cpp:488 hits=[488] w=7 const auto KEY_NAME = "mouse:" + std::to_string(e.bu
+PASS Hyprland-KeybindManager.cpp:461 hits=[461] w=3 {.keyName = "mouse_down"
+PASS Hyprland-KeybindManager.cpp:537 hits=[537] w=5 {.keyName = "switch:" + switchName
+PASS xkbcommon-keysym.c:252 hits=[252] w=4 size_t pos = keysym_name_perfect_hash(name);
+PASS xkbcommon-keysym.c:268 hits=[268] w=9 The "best" case-insensitive match is the lower-case 
+PASS xkbcommon-keysym.c:305 hits=[305] w=11 if (*name == 'U' || (icase && *name == 'u')) {
+PASS xkbcommon-keysym.c:325 hits=[325] w=16 else if (name[0] == '0' && (name[1] == 'x' || (icase
+PASS xkbcommon-keysym.c:338 hits=[338] w=7 if (strncmp(name, "XF86_", 5) == 0 ||
+PASS xkbcommon-ks_tables.h:3 hits=[3] w=10 This file comes from libxkbcommon and was generated 
+PASS xkbcommon-state.c:1345 hits=[1345, 1461] w=6 const xkb_layout_index_t layout = xkb_state_key_get_
+PASS xkbcommon-state.c:112 hits=[112] w=13 /* If we don't find an explicit match the default is
+PASS xkbcommon-state.c:116 hits=[116] w=6 return (entry) ? entry->level : 0;
+PASS xkbcommon-state.c:91 hits=[91] w=3 type->entries[i].mods.mask == mods
+PASS Hyprland-InputManager.cpp:1224 hits=[1224] w=3 getDeviceInt(devname, "resolve_binds_by_sym", "input
+PASS Hyprland-InputManager.cpp:1241 hits=[1241] w=3 pKeyboard->m_resolveBindsBySym = RESOLVEBINDSBYSYM;
+PASS Hyprland-InputManager.cpp:1711 hits=[1711] w=3 m_lastMods         = MODS.depressed;
+PASS Hyprland-InputManager.cpp:1887-1889 hits=[1887] w=3 uint32_t CInputManager::getModsFromAllKBs() {
+PASS Hyprland-ConfigValues.cpp:278 hits=[278] w=11 MS<Bool>("input:resolve_binds_by_sym", "Determines h
+PASS Hyprland-IKeyboard.cpp:118 hits=[118] w=1 updateXKBTranslationState(m_xkbKeymap);
+PASS Hyprland-IKeyboard.cpp:214 hits=[214] w=3 if (keymap) {
+PASS Hyprland-IKeyboard.cpp:382 hits=[382] w=7 xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, 
+PASS Hyprland-IKeyboard.cpp:422 hits=[422] w=7 xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, 
+PASS Hyprland-IKeyboard.cpp:18 hits=[18] w=8 constexpr static std::array<const char*, 8> MODNAMES
+PASS Hyprland-IKeyboard.cpp:139 hits=[139] w=4 m_modIndexes[i] = xkb_map_mod_get_index(m_xkbKeymap,
+PASS Hyprland-IKeyboard.cpp:360 hits=[360] w=6 uint32_t modMask = m_modifiersState.depressed | m_mo
+PASS Hyprland-IKeyboard.hpp:13-22 hits=[14] w=5 HL_MODIFIER_SHIFT = (1 << 0),
+PASS Hyprland-IKeyboard.hpp:21 hits=[21] w=5 HL_MODIFIER_MOD5  = (1 << 7),
+PASS Hyprland-IKeyboard.hpp:100-101 hits=[101] w=6 same as static but gets layouts
+PASS wiki-Binds.md:40 hits=[40] w=13 for all the keysyms. The name you should use is the 
+PASS wiki-Binds.md:42 hits=[42] w=17 If you want to bind by a keycode, you can put it in 
+PASS wiki-Binds.md:49 hits=[49] w=11 This will bind <key>SUPER</key> + <key>t</key> since
+PASS wiki-Binds.md:81 hits=[81] w=6 Cannot be shadowed by other binds.
+PASS wiki-Binds.md:82 hits=[82] w=3 Will ignore modifiers.
+PASS wiki-Binds.md:111 hits=[111] w=4 hl.bind("SUPER + mouse:272", hl.dsp.exec_cmd("amongu
+PASS wiki-Binds.md:144 hits=[144] w=2 hl.bind("switch:on:[switch name]"
+PASS wiki-Binds.md:155 hits=[155] w=6 ### Multiple binds to one key
+PASS wiki-Binds.md:462 hits=[462] w=16 The first layout defined in the input section will b
+PASS wiki-Binds.md:469 hits=[469] w=9 In that case, binds will activate when the symbol
+PASS wiki-Variables.md:219 hits=[219] w=14 If false, keybinds will always act as if the first s
+
+79 quotes checked, 0 failed

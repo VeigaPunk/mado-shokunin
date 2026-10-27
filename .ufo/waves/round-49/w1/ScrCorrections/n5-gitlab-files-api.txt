@@ -1,0 +1,39 @@
+# N5 — GitLab files-API fallback for S346/S347, fetched 2026-10-27 by seat ScrCorrections
+
+# row digests (computed from corpus/SOURCES.md, not typed):
+$ grep -E "^\| S34[67] " corpus/SOURCES.md | grep -oE "sha256:[0-9a-f]{64}"
+sha256:0cc48ee1279d91045fe2cf092ee5a0744cbee1c02bd164f02871d13140d12132
+sha256:163897760093007e1f97808e9319ef2f30bed224c7ea19f0645cca5358b4ffa3
+sha256:1b4ab1d4f4fa79ef34f8e44e369fc7816ff2c02c0fd2cbe98dd9d9386dddb3a8
+sha256:8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e
+
+# API URL form:  https://gitlab.freedesktop.org/api/v4/projects/xkeyboard-config%2Fxkeyboard-config/repository/files/<url-encoded-path>/raw?ref=<tag>
+
+$ curl -sS -L -o api-rules.in "https://gitlab.freedesktop.org/api/v4/projects/xkeyboard-config%2Fxkeyboard-config/repository/files/rules%2Frules.in/raw?ref=xkeyboard-config-2.48" -w "http=%{http_code} bytes=%{size_download} ctype=%{content_type}\n"
+http=200 bytes=15768 ctype=text/plain; charset=utf-8
+$ curl -sS -L -o api-symbols-br "https://gitlab.freedesktop.org/api/v4/projects/xkeyboard-config%2Fxkeyboard-config/repository/files/symbols%2Fbr/raw?ref=xkeyboard-config-2.48" -w "http=%{http_code} bytes=%{size_download} ctype=%{content_type}\n"
+http=200 bytes=19592 ctype=text/plain; charset=utf-8
+
+$ sha256sum api-rules.in api-symbols-br && wc -l -c api-rules.in api-symbols-br
+163897760093007e1f97808e9319ef2f30bed224c7ea19f0645cca5358b4ffa3  api-rules.in
+8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e  api-symbols-br
+  425 15768 api-rules.in
+  368 19592 api-symbols-br
+  793 35360 total
+
+# byte-equal to the round-48 committed pins:
+$ cmp api-rules.in .ufo/waves/round-48/fetch/xkeyboard-config-rules-rules.in && echo equal
+rules.in API == pin
+$ cmp api-symbols-br .ufo/waves/round-48/fetch/xkeyboard-config-symbols-br && echo equal
+symbols/br API == pin
+
+# COUNTER-EVIDENCE: the '-/raw/' premise does not reproduce on 2026-10-27.
+# Four independent requests returned the pinned bytes, not an anti-bot page:
+raw rules/rules.in run1 http=200 bytes=15768 ctype=text/plain; charset=utf-8 163897760093007e1f97808e9319ef2f30bed224c7ea19f0645cca5358b4ffa3
+raw rules/rules.in run2 http=200 bytes=15768 ctype=text/plain; charset=utf-8 163897760093007e1f97808e9319ef2f30bed224c7ea19f0645cca5358b4ffa3
+raw symbols/br run1 http=200 bytes=19592 ctype=text/plain; charset=utf-8 8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e
+raw symbols/br run2 http=200 bytes=19592 ctype=text/plain; charset=utf-8 8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e
+
+# UA-independence checked once more with an empty User-Agent:
+empty-ua http=200 bytes=19592 ctype=text/plain; charset=utf-8
+8cf65550e08b598407d5f7317f297e186561a94c866ab95d0c9a8737ef3bf35e  rawcheck-no-ua

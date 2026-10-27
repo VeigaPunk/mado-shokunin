@@ -1,0 +1,172 @@
+# ScrQuality candidate-criterion instruments (QUALITY 100-104 draft)
+# repo=mado-shokunin toplevel_asserted=yes base=03e4ae76aff7a4be59cb69970dd553baa319695a date=2026-10-27T01:42:31-03:00
+# fixtures are shape-only; <OPHOME> resolves to /home/U, <SCRATCH> to $TMPDIR
+# python: Python 3.14.8; host user paths are never written
+
+## 100 red: reconstructed M48-10 trace (write under an operator home)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check100-hostwrite.py --trace .ufo/waves/round-49/w1/ScrQuality/fixtures/trace-incident.txt --allow /fast/scratch/hyaku/mado-r49/ScrQuality --op-home /home/U --scratch /fast/scratch/hyaku/mado-r49/ScrQuality
+WRITE_OUTSIDE_SANDBOX trace=.ufo/waves/round-49/w1/ScrQuality/fixtures/trace-incident.txt:4 path=/home/U/.cache/xdg-terminal-exec
+TRACE: file=.ufo/waves/round-49/w1/ScrQuality/fixtures/trace-incident.txt write_opens=2 outside=1
+CHECK100: modes=1 violations=1 verdict=FAIL
+exit=1
+
+## 100 green: a real strace of a scratch-only writer (same host, HOME in scratch)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check100-hostwrite.py --trace .ufo/waves/round-49/w1/ScrQuality/fixtures/trace-scratch-writer.txt --allow /fast/scratch/hyaku/mado-r49/ScrQuality --op-home /home/U --scratch /fast/scratch/hyaku/mado-r49/ScrQuality
+TRACE: file=.ufo/waves/round-49/w1/ScrQuality/fixtures/trace-scratch-writer.txt write_opens=1 outside=0
+CHECK100: modes=1 violations=0 verdict=OK
+exit=0
+
+## 100 red: operator state changed (N2's digest pair)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check100-hostwrite.py --before .ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-before.txt --after .ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-after.txt --op-home /home/U
+OPERATOR_STATE_DELTA key=/home/U/.cache/xdg-terminal-exec before=sha256=ddd94f6bca4bcd42c426da9bbeb9955ca5d77b8778b4e290fcfffcc984a1b3d5 after=sha256=c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+RECEIPTS: before=.ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-before.txt after=.ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-after.txt keys=1
+CHECK100: modes=1 violations=1 verdict=FAIL
+exit=1
+
+## 100 green: operator state unchanged
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check100-hostwrite.py --before .ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-before.txt --after .ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-same.txt --op-home /home/U
+RECEIPTS: before=.ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-before.txt after=.ufo/waves/round-49/w1/ScrQuality/fixtures/opstate-same.txt keys=1
+CHECK100: modes=1 violations=0 verdict=OK
+exit=0
+
+## 100 red: source screen over the round-48 w2 mutant builder
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check100-hostwrite.py --scan .ufo/waves/round-48/w2/MutC1ReadOnly
+AMBIENT_HOME_WRITE_SITE file=.ufo/waves/round-48/w2/MutC1ReadOnly/mkmutants.py home_read=27 write=38
+SCAN: root=.ufo/waves/round-48/w2/MutC1ReadOnly sites=1
+CHECK100: modes=1 violations=1 verdict=FAIL
+exit=1
+
+## 101 red: round-48 live receipt, automated (N2)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check101-fieldname.py --payload r48-w2
+ .ufo/waves/round-48/receipts/live-terminal-cache-r48.txt
+STATE_FIELD .ufo/waves/round-48/receipts/live-terminal-cache-r48.txt:4 name=host_cache_untouched_sha256 token=untouched comparator=none
+FIELD_NAME_UNBACKED .ufo/waves/round-48/receipts/live-terminal-cache-r48.txt:4 name=host_cache_untouched_sha256
+FIELD_VALUE_IS_PAYLOAD .ufo/waves/round-48/receipts/live-terminal-cache-r48.txt:4 name=host_cache_untouched_sha256 sha256=c8b104e695a9cfccd3dee34017aabee119c9edbb185bfe3325cdfc4c55940144
+RECEIPT: file=.ufo/waves/round-48/receipts/live-terminal-cache-r48.txt state_fields=1
+CHECK101: receipts=1 unbacked=1 payload_matches=1 verdict=FAIL
+exit=1
+
+## 101 green: the same measurement with a name that states it and a before pair
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check101-fieldname.py .ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-fixed-field.txt
+RECEIPT: file=.ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-fixed-field.txt state_fields=0
+CHECK101: receipts=1 unbacked=0 payload_matches=0 verdict=OK
+exit=0
+
+## 101 green: a state-asserting field that carries its comparator
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check101-fieldname.py .ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-backed-state.txt
+STATE_FIELD .ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-backed-state.txt:2 name=host_cache_untouched_before_sha256 token=untouched comparator=present
+STATE_FIELD .ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-backed-state.txt:3 name=host_cache_untouched_sha256 token=untouched comparator=present
+RECEIPT: file=.ufo/waves/round-49/w1/ScrQuality/fixtures/receipt-backed-state.txt state_fields=2
+CHECK101: receipts=1 unbacked=0 payload_matches=0 verdict=OK
+exit=0
+
+## 102 red: round-48 v2 matrix drops two rows its summary holds (N4)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check102-textprojection.py --json .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json --text .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-matrix.txt
+TEXT_DROPPED id=a-rev-base-direct json=.ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json text=.ufo/waves/round-48/receipts/v2/c2v2-revc2counter-matrix.txt
+TEXT_DROPPED id=a-entry-at-base json=.ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json text=.ufo/waves/round-48/receipts/v2/c2v2-revc2counter-matrix.txt
+TRAILER_COUNT text=98 json=98
+CHECK102: json_ids=98 text_rows=96 missing=2 extra=0 dupes=0 verdict=FAIL
+exit=1
+
+## 102 green: a total projection generated from the same summary
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check102-textprojection.py --json .ufo/waves/round-48/receipts/v2/c2v2-revc2counter-summary.json --text .ufo/waves/round-49/w1/ScrQuality/fixtures/matrix-total.txt
+TRAILER_COUNT text=98 json=98
+CHECK102: json_ids=98 text_rows=98 missing=0 extra=0 dupes=0 verdict=OK
+exit=0
+
+## 103 red: SKILL.md:770 against the gate's own envelope (M48-8)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check103-envelope.py --repo . --rev 03e4ae76aff7a4be59cb69970dd553baa319695a --registry SKILL.md --gate-id mado-session-material --gate quality/check-session-material.py --shape-verdicts .ufo/waves/round-48/w1/SentPrivacy/receipts/class-verdicts.txt
+SCOPE_UNSTATED registry=SKILL.md flag=absent gate_default=ufo wording=repo
+SHAPES_NON_ROW line=GATE rc=1 missed=16 caught=3 files_scanned=['files=19']
+RULE R1_CLIENT_DUMP shapes=1
+RULE R2_PROC_TABLE shapes=0 positive=none
+RULE R3_MONITOR_IDENT shapes=0 positive=none
+RULE R4_HOME_LISTING shapes=2
+RULE R5_SERIAL_PROSE shapes=0 positive=none
+RULE R6_SERIAL_EXACT shapes=0 positive=none
+BLIND class=device names + addresses (hyprctl devices -j projection) file=.ufo/s/devices.json
+BLIND class=instance signature + /run/user socket (hyprctl instances -j) file=.ufo/s/instances.json
+BLIND class=small ls -LRl of a home tree (3 dir headers) file=.ufo/s/ls-lRl-small.txt
+BLIND class=ls -LRl rooted outside /home (C1 sandbox shape) file=.ufo/s/ls-lRl-scratch.txt
+BLIND class=literal warm cache text (entry path, --dir, --title) file=.ufo/s/cache-warm.txt
+BLIND class=home listing base64-encoded file=.ufo/s/b64.txt
+BLIND class=home listing as a JSON array file=.ufo/s/home-json.txt
+BLIND class=home listing as markdown table rows file=.ufo/s/home-table.md
+BLIND class=secret-shaped env (token / cloud key) file=.ufo/s/secret-env.txt
+BLIND class=xkb include paths in prose (compile-keymap --verbose) file=.ufo/s/xkb-verbose.txt
+BLIND class=relative listing of user .desktop names (ls -1) file=.ufo/s/relative-names.txt
+BLIND class=home listing in $HOME spelling file=.ufo/s/home-dollar.txt
+BLIND class=home listing with only 2 distinct paths file=.ufo/s/home-dupes.txt
+BLIND class=home paths with a space in a directory file=.ufo/s/home-space.txt
+BLIND class=client dump in a >16 MiB receipt (past the text cap) file=.ufo/s/big.txt
+BLIND class=client dump as UTF-16 (NUL in first 8 KiB) file=.ufo/s/utf16.md
+BLIND class=client dump under corpus/knowledge (round C2) file=corpus/knowledge/synthetic-note.md
+BLIND class=cache text under quality/counters (round C1 fixtures) file=quality/counters/synthetic-fixtures.json
+ENVELOPE: registry=mado-session-material rules=6 shapes=21 caught=3 missed=18 unparsed=1 blind=18 verdict=NARROWER
+exit=1
+
+## 103 green: the same gate with a row that states its scope and declares its blind spots
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check103-envelope.py --repo /fast/scratch/hyaku/mado-r49/ScrQuality/fixture-repo --rev HEAD --registry SKILL.md --gate-id mado-session-material --gate quality/check-session-material.py --shape-verdicts .ufo/waves/round-48/w1/SentPrivacy/receipts/class-verdicts.txt
+SCOPE registry=SKILL.md flag=present gate_default=ufo
+SHAPES_NON_ROW line=GATE rc=1 missed=16 caught=3 files_scanned=['files=19']
+RULE R1_CLIENT_DUMP shapes=1
+RULE R2_PROC_TABLE shapes=0 positive=none
+BLIND_DECLARED class=device names + addresses (hyprctl devices -j projection)
+BLIND_DECLARED class=instance signature + /run/user socket (hyprctl instances -j)
+BLIND_DECLARED class=small ls -LRl of a home tree (3 dir headers)
+BLIND_DECLARED class=ls -LRl rooted outside /home (C1 sandbox shape)
+BLIND_DECLARED class=literal warm cache text (entry path, --dir, --title)
+BLIND_DECLARED class=home listing base64-encoded
+BLIND_DECLARED class=home listing as a JSON array
+BLIND_DECLARED class=home listing as markdown table rows
+BLIND_DECLARED class=secret-shaped env (token / cloud key)
+BLIND_DECLARED class=xkb include paths in prose (compile-keymap --verbose)
+BLIND_DECLARED class=relative listing of user .desktop names (ls -1)
+BLIND_DECLARED class=home listing in $HOME spelling
+BLIND_DECLARED class=home listing with only 2 distinct paths
+BLIND_DECLARED class=home paths with a space in a directory
+BLIND_DECLARED class=client dump in a >16 MiB receipt (past the text cap)
+BLIND_DECLARED class=client dump as UTF-16 (NUL in first 8 KiB)
+BLIND_DECLARED class=client dump under corpus/knowledge (round C2)
+BLIND_DECLARED class=cache text under quality/counters (round C1 fixtures)
+ENVELOPE: registry=mado-session-material rules=2 shapes=21 caught=3 missed=18 unparsed=1 blind=0 verdict=OK
+exit=0
+
+## 104 red: the a4r1 cap (1 MiB) against this tree and a clone recipe (M48-13)
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check104-caprecipe.py --repo . --rev 03e4ae76aff7a4be59cb69970dd553baa319695a --cap-bytes 1048576 --recipe clone --probe .ufo/waves/round-49/w1/ScrQuality/fixtures/probe-fail.txt
+BLOB_OVER_CAP size=4207542 cap=1048576 path=.ufo/waves/round-21/corpus/snapshot/files/.ufo/waves/round-20/w2/CorpusRuntime/full-sweep.jsonl
+BLOB_OVER_CAP size=4207542 cap=1048576 path=.ufo/waves/round-20/w2/CorpusRuntime/full-sweep.jsonl
+BLOB_OVER_CAP size=2753317 cap=1048576 path=.ufo/waves/round-22/evidence/resume/corpus-delivered-r21.json
+BLOB_OVER_CAP size=2548514 cap=1048576 path=.ufo/waves/round-22/evidence/resume/corpus.json
+BLOB_OVER_CAP size=2429146 cap=1048576 path=.ufo/waves/round-23/w1/out/ExecGuardRunner/logs/corpus-comparator.stdout.txt
+BLOB_OVER_CAP size=2429080 cap=1048576 path=.ufo/waves/round-23/w1/out/BaseCorpus/04-replay-lane-run2.json
+BLOB_OVER_CAP size=2429080 cap=1048576 path=.ufo/waves/round-23/w1/out/BaseCorpus/02-replay-lane-run1.json
+BLOB_OVER_CAP size=2267563 cap=1048576 path=.ufo/waves/round-23/w1/out/BaseCorpus/03-compare-direct-scratch.json
+BLOB_OVER_CAP size=2247178 cap=1048576 path=.ufo/waves/round-21/evidence/final/corpus-final-a6cef89.json
+BLOB_OVER_CAP size=2229151 cap=1048576 path=.ufo/waves/round-21/evidence/corpus-comparison.json
+BLOB_OVER_CAP size=2167818 cap=1048576 path=.ufo/waves/round-20/w2/CorpusDiffIndependent/corpus-diff-results.json
+BLOB_OVER_CAP size=2139347 cap=1048576 path=.ufo/waves/round-23/w1/out/BaseCorpus/05-positive-control-mutant-direct.json
+BLOB_OVER_CAP size=2097153 cap=1048576 path=.ufo/waves/round-22/audit/fixtures/cases/AuditRawOversizedSnapshot/root/snapshot.json
+BLOB_OVER_CAP size=2097153 cap=1048576 path=.ufo/waves/round-22/audit/fixtures/cases/AuditRawOversizedBundle/bundle.json
+BLOB_OVER_CAP size=2097152 cap=1048576 path=.ufo/waves/round-22/audit/fixtures/cases/AuditRawSnapshotAtLimit/root/snapshot.json
+BLOB_OVER_CAP size=2000218 cap=1048576 path=.ufo/waves/round-21/corpus/snapshot/files/.ufo/waves/round-20/w2/AdvCrash/fixtures/huge_eval_comment.jsonl
+BLOB_OVER_CAP size=2000218 cap=1048576 path=.ufo/waves/round-20/w2/AdvCrash/fixtures/huge_eval_comment.jsonl
+BLOB_OVER_CAP size=2000199 cap=1048576 path=.ufo/waves/round-21/corpus/snapshot/files/.ufo/waves/round-20/w2/AdvCrash/fixtures/huge_bash_cmd.jsonl
+BLOB_OVER_CAP size=2000199 cap=1048576 path=.ufo/waves/round-20/w2/AdvCrash/fixtures/huge_bash_cmd.jsonl
+BLOB_OVER_CAP size=1633693 cap=1048576 path=.ufo/waves/round-21/corpus/snapshot/files/.ufo/waves/round-20/w2/AdvCrash/fixtures2/deep_stmt_nested_in_helper.jsonl
+BLOB_OVER_CAP size=1633693 cap=1048576 path=.ufo/waves/round-20/w2/AdvCrash/fixtures2/deep_stmt_nested_in_helper.jsonl
+BLOB_OVER_CAP size=1287393 cap=1048576 path=.ufo/waves/round-21/corpus/snapshot/files/.ufo/waves/round-20/w2/AdvCrash/fixtures2/deep_if_in_helper.jsonl
+BLOB_OVER_CAP size=1287393 cap=1048576 path=.ufo/waves/round-20/w2/AdvCrash/fixtures2/deep_if_in_helper.jsonl
+BLOB_OVER_CAP size=1224747 cap=1048576 path=.ufo/waves/round-23/w2/out/AttackPerf/fixtures/nest-depth95-siblings20.jsonl
+CAP_RECIPE_INCOMPATIBLE recipe=clone cap=1048576 blobs_over=24
+PROBE receipt=.ufo/waves/round-49/w1/ScrQuality/fixtures/probe-fail.txt rc=128
+CAP_RECIPE: cap=1048576 recipe=clone blobs=22278 blobs_over=24 max_blob=4207542 max_path=.ufo/waves/round-20/w2/CorpusRuntime/full-sweep.jsonl verdict=INCOMPATIBLE
+exit=1
+
+## 104 green: a cap above every tracked blob, with a probe receipt
+$ python3 -I .ufo/waves/round-49/w1/ScrQuality/check104-caprecipe.py --repo . --rev 03e4ae76aff7a4be59cb69970dd553baa319695a --cap-bytes 8388608 --recipe clone --probe .ufo/waves/round-49/w1/ScrQuality/fixtures/probe-ok.txt
+PROBE receipt=.ufo/waves/round-49/w1/ScrQuality/fixtures/probe-ok.txt rc=0
+CAP_RECIPE: cap=8388608 recipe=clone blobs=22278 blobs_over=0 max_blob=4207542 max_path=.ufo/waves/round-20/w2/CorpusRuntime/full-sweep.jsonl verdict=PROBED
+exit=0
+
+# end: 2026-10-27T01:42:32-03:00

@@ -1,0 +1,208 @@
+# locators computed by grep -nF against pins/ (round-49 w1 ScrSkill, 2026-10-27T01:40:41-03:00)
+KeybindManager.cpp:221: uint32_t CKeybindManager::stringToModMask(std::string mods) {
+   pattern: uint32_t CKeybindManager::stringToModMask
+KeybindManager.cpp:224:     if (mods.contains("SHIFT"))
+   pattern: if (mods.contains("SHIFT"))
+KeybindManager.cpp:236:     if (mods.contains("SUPER") || mods.contains("WIN") || mods.contains("LOGO") || mods.contains("MOD4") || mods.contains("META"))
+   pattern: if (mods.contains("SUPER") || mods.contains("WIN")
+KeybindManager.cpp:197: void CKeybindManager::removeKeybind(uint32_t mod, const SParsedKey& key) {
+   pattern: void CKeybindManager::removeKeybind(uint32_t mod
+KeybindManager.cpp:289: void CKeybindManager::updateXKBTranslationState() {
+   pattern: void CKeybindManager::updateXKBTranslationState()
+KeybindManager.cpp:296:     static auto       PFILEPATH = CConfigValue<std::string>("input:kb_file");
+   pattern: static auto       PFILEPATH = CConfigValue<std::string>("input:kb_file");
+KeybindManager.cpp:332:     m_xkbTranslationState = xkb_state_new(PKEYMAP);
+   pattern: m_xkbTranslationState = xkb_state_new(PKEYMAP);
+KeybindManager.cpp:367:     const auto         KEYCODE = e.keycode + 8; // Because to xkbcommon it's +8 from libinput
+   pattern: const auto         KEYCODE = e.keycode + 8;
+KeybindManager.cpp:369:     const xkb_keysym_t keysym         = xkb_state_key_get_one_sym(pKeyboard->m_resolveBindsBySym ? pKeyboard->m_xkbSymState : m_xkbTranslationState, KEYCODE);
+   pattern: const xkb_keysym_t keysym         = xkb_state_key_get_one_sym(pKeyboard->m_resolveBindsBySym
+KeybindManager.cpp:710:             const auto KBKEY      = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_NO_FLAGS);
+   pattern: const auto KBKEY      = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_NO_FLAGS);
+KeybindManager.cpp:711:             const auto KBKEYLOWER = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+   pattern: const auto KBKEYLOWER = xkb_keysym_from_name(k->key.c_str(), XKB_KEYSYM_CASE_INSENSITIVE);
+KeybindManager.cpp:724:             if (key.keysym != KBKEY && key.keysym != KBKEYLOWER)
+   pattern: if (key.keysym != KBKEY && key.keysym != KBKEYLOWER)
+KeybindManager.cpp:696:         } else if (k->keycode != 0) {
+   pattern: } else if (k->keycode != 0) {
+KeybindManager.cpp:693:         } else if (!key.keyName.empty()) {
+   pattern: } else if (!key.keyName.empty()) {
+KeybindManager.cpp:738:             if (key.modmaskAtPressTime != modmask && !k->ignoreMods) {
+   pattern: if (key.modmaskAtPressTime != modmask && !k->ignoreMods) {
+KeybindManager.cpp:773:         bindsHit.emplace_back(k);
+   pattern: bindsHit.emplace_back(k);
+KeybindManager.cpp:781:     for (const auto& k : bindsHit) {
+   pattern: for (const auto& k : bindsHit) {
+KeybindManager.cpp:MISS: #include "../config/ConfigValue.hpp"
+   pattern: if (modmask != k->modmask && !k->ignoreMods)
+KeybindManager.cpp:MISS: #include "../config/ConfigValue.hpp"
+   pattern: if (keycodeToModifier(keycode) == key.modmaskAtPressTime)
+KeybindManager.cpp:537:     handleKeybinds(0, SPressedKeyWithMods{.keyName = "switch:" + switchName, .submapAtPress = getCurrentSubmap()}, true, nullptr, nullptr);
+   pattern: .keyName = "switch:" + switchName
+KeybindManager.cpp:488:     const auto KEY_NAME = "mouse:" + std::to_string(e.button);
+   pattern: const auto KEY_NAME = "mouse:" + std::to_string(e.button);
+KeybindManager.cpp:412:             shadowKeybinds(keysym, KEYCODE);
+   pattern: shadowKeybinds(keysym, KEYCODE);
+legacy-ConfigManager.cpp:1481: SParsedKey parseKey(const std::string& key) {
+   pattern: SParsedKey parseKey(const std::string& key) {
+legacy-ConfigManager.cpp:1482:     if (isNumber(key) && std::stoi(key) > 9)
+   pattern: if (isNumber(key) && std::stoi(key) > 9)
+legacy-ConfigManager.cpp:1484:     else if (key.starts_with("code:") && isNumber(key.substr(5)))
+   pattern: else if (key.starts_with("code:") && isNumber(key.substr(5)))
+legacy-ConfigManager.cpp:1486:     else if (key == "catchall")
+   pattern: else if (key == "catchall")
+legacy-ConfigManager.cpp:533:     m_config->addSpecialConfigValue("device", "resolve_binds_by_sym", Hyprlang::INT{0});
+   pattern: addSpecialConfigValue("device", "resolve_binds_by_sym"
+legacy-ConfigManager.cpp:1525:             case 'i': ignoreMods = true; break;
+   pattern: case 'i': ignoreMods = true; break;
+legacy-ConfigManager.cpp:1620:             Log::logger->log(Log::ERR, "Catchall not allowed outside of submap!");
+   pattern: Catchall not allowed outside of submap!
+legacy-ConfigManager.cpp:1601:     if (MOD == 0 && !MODSTR.empty()) {
+   pattern: if (MOD == 0 && !MODSTR.empty()) {
+ConfigValues.cpp:278:         MS<Bool>("input:resolve_binds_by_sym", "Determines how keybinds act when multiple layouts are used.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+   pattern: "input:resolve_binds_by_sym"
+InputManager.cpp:1206: void CInputManager::setKeyboardLayout() {
+   pattern: void CInputManager::setKeyboardLayout() {
+InputManager.cpp:1210:     g_pKeybindManager->updateXKBTranslationState();
+   pattern: g_pKeybindManager->updateXKBTranslationState();
+InputManager.cpp:1224:     const auto RESOLVEBINDSBYSYM = Config::mgr()->getDeviceInt(devname, "resolve_binds_by_sym", "input:resolve_binds_by_sym");
+   pattern: getDeviceInt(devname, "resolve_binds_by_sym", "input:resolve_binds_by_sym");
+InputManager.cpp:1241:     pKeyboard->m_resolveBindsBySym = RESOLVEBINDSBYSYM;
+   pattern: pKeyboard->m_resolveBindsBySym = RESOLVEBINDSBYSYM;
+InputManager.cpp:1711:         m_lastMods         = MODS.depressed; // for hyprland keybinds use; not for sending to seat
+   pattern: m_lastMods         = MODS.depressed;
+IKeyboard.cpp:359: uint32_t IKeyboard::getModifiers() {
+   pattern: uint32_t IKeyboard::getModifiers() {
+IKeyboard.cpp:360:     uint32_t modMask = m_modifiersState.depressed | m_modifiersState.latched;
+   pattern: uint32_t modMask = m_modifiersState.depressed | m_modifiersState.latched;
+IKeyboard.cpp:218:         m_xkbSymState    = xkb_state_new(keymap);
+   pattern: m_xkbSymState    = xkb_state_new(keymap);
+IKeyboard.cpp:382:         xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, group);
+   pattern: xkb_state_update_mask(m_xkbSymState, 0, 0, 0, 0, 0, group);
+IKeyboard.hpp:14:     HL_MODIFIER_SHIFT = (1 << 0),
+   pattern: HL_MODIFIER_SHIFT = (1 << 0),
+IKeyboard.hpp:20:     HL_MODIFIER_META  = (1 << 6),
+   pattern: HL_MODIFIER_META  = (1 << 6),
+IKeyboard.hpp:21:     HL_MODIFIER_MOD5  = (1 << 7),
+   pattern: HL_MODIFIER_MOD5  = (1 << 7),
+keysym.c:242:     bool icase = (flags & XKB_KEYSYM_CASE_INSENSITIVE);
+   pattern: bool icase = (flags & XKB_KEYSYM_CASE_INSENSITIVE);
+keysym.c:268:     * The "best" case-insensitive match is the lower-case keysym name. Most
+   pattern: The "best" case-insensitive match is the lower-case keysym name.
+keysym.c:305:     if (*name == 'U' || (icase && *name == 'u')) {
+   pattern: if (*name == 'U' || (icase && *name == 'u')) {
+keysym.c:325:     else if (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
+   pattern: else if (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
+keysym.c:237: xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
+   pattern: xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
+how-to-type.c:74:     fprintf(fp, "Usage: %s [--help] [--verbose] [--keysym] [--disable-compose] "
+   pattern: Usage: %s [--help] [--verbose] [--keysym] [--disable-compose]
+how-to-type.c:101:         "    Treat the argument only as a keysym\n"
+   pattern: Treat the argument only as a keysym
+how-to-type.c:199:             if (*keymap_source == KEYMAP_SOURCE_FILE)
+   pattern: if (*keymap_source == KEYMAP_SOURCE_FILE)
+how-to-type.c:286:         *keysym = xkb_keysym_from_name(argv[optind], XKB_KEYSYM_NO_FLAGS);
+   pattern: *keysym = xkb_keysym_from_name(argv[optind], XKB_KEYSYM_NO_FLAGS);
+how-to-type.c:291:             const long int val = strtol(argv[optind], &endp, 10);
+   pattern: const long int val = strtol(argv[optind], &endp, 10);
+how-to-type.c:293:                 fprintf(stderr, "ERROR: Failed to convert argument to keysym\n");
+   pattern: ERROR: Failed to convert argument to keysym
+how-to-type.c:625:     printf("keysym: %s (%#06"PRIx32")\n\n", name, keysym);
+   pattern: printf("keysym: %s (%#06"PRIx32")\n\n", name, keysym);
+how-to-type.c:626:     printf("=== Direct access ===\n\n");
+   pattern: printf("=== Direct access ===\n\n");
+how-to-type.c:527:     printf("%-8u %-9s %-8u %-20s %-7u [ ",
+   pattern: printf("%-8u %-9s %-8u %-20s %-7u [ ",
+how-to-type.c:484:     const size_t num_masks = xkb_keymap_key_get_mods_for_level(
+   pattern: const size_t num_masks = xkb_keymap_key_get_mods_for_level(
+how-to-type.c:654:                 const int num_syms = xkb_keymap_key_get_syms_by_level(
+   pattern: xkb_keymap_key_get_syms_by_level(
+wiki-Binds-legacy.md:80: Keys used for keybinds need to be accessible without any modifiers in your layout.  
+   pattern: Keys used for keybinds need to be accessible without any modifiers in your layout.
+wiki-Binds-legacy.md:91: bind = $mainMod, ampersand, workspace,  1
+   pattern: bind = $mainMod, ampersand, workspace,  1
+wiki-Binds-legacy.md:62: for all the keysyms. The name you should use is the segment after `XKB_KEY_`.
+   pattern: The name you should use is the segment after `XKB_KEY_`.
+wiki-Binds-legacy.md:68: bind = SUPER, code:28, exec, amongus
+   pattern: bind = SUPER, code:28, exec, amongus
+wiki-Binds-legacy.md:178: bind = SUPER, mouse:272, exec, amongus  # bind `exec amogus` to SUPER + LMB.
+   pattern: bind = SUPER, mouse:272, exec, amongus
+wiki-Binds-legacy.md:228: bindl = , switch:[switch name], exec, swaylock
+   pattern: bindl = , switch:[switch name], exec, swaylock
+wiki-Binds-legacy.md:512: You can also define a keybind via the special `catchall` keyword, which
+   pattern: catchall
+wiki-Binds-legacy.md:111: > In `unbind`, key is case-sensitive It must exactly match the case of the `bind` you are unbinding.
+   pattern: In `unbind`, key is case-sensitive It must exactly match the case of the `bind` you are unbinding.
+wiki-Variables-legacy.md:181: | resolve_binds_by_sym | Determines how keybinds act when multiple layouts are used. If false, keybinds will always act as if the first specified layout is active. If true, keybinds specified by symbols are activated when you type the respective symbol with the current layout. | bool | false |
+   pattern: | resolve_binds_by_sym |
+# locators, second pass
+KeybindManager.cpp:652:        if (!IGNORECONDITIONS && ((modmask != k->modmask && !k->ignoreMods) || ((k->submap.name != key.submapAtPress.name) && !k->submapUniversal) || k->shadowed))
+KeybindManager.cpp:744:                if (keycodeToModifier(key.keycode) == key.modmaskAtPressTime)
+KeybindManager.cpp:699:        } else if (k->catchAll) {
+KeybindManager.cpp:705:            if (key.keysym == XKB_KEY_NoSymbol)
+KeybindManager.cpp:714:                // Keysym failed to resolve from the key name of the currently iterated bind.
+KeybindManager.cpp:280:            bindSym = xkb_state_key_get_one_sym(m_xkbTranslationState, k->keycode);
+legacy-ConfigManager.cpp:1575:    const auto MOD    = g_pKeybindManager->stringToModMask(ARGS[0]);
+legacy-ConfigManager.cpp:1617:        SParsedKey parsedKey = parseKey(KEY);
+legacy-ConfigManager.cpp:1619:        if (parsedKey.catchAll && m_currentSubmap.name.empty()) {
+wiki-Binds-legacy.md:190:### Keysym combos
+how-to-type.c:627:    printf("%-8s %-9s %-8s %-20s %-7s %-s\n",
+# locators, third pass
+KeybindManager.cpp:312:    FILE* const       KEYMAPFILE = FILEPATH.empty() ? nullptr : fopen(absolutePath(FILEPATH, Config::mgr()->currentConfigPath()).c_str(), "r");
+KeybindManager.cpp:314:    auto              PKEYMAP = KEYMAPFILE ? xkb_keymap_new_from_file(PCONTEXT, KEYMAPFILE, XKB_KEYMAP_FORMAT_TEXT_V2, XKB_KEYMAP_COMPILE_NO_FLAGS) :
+KeybindManager.cpp:326:        memset(&rules, 0, sizeof(rules));
+KeybindManager.cpp:328:        PKEYMAP = xkb_keymap_new_from_names2(PCONTEXT, &rules, XKB_KEYMAP_FORMAT_TEXT_V2, XKB_KEYMAP_COMPILE_NO_FLAGS);
+KeybindManager.cpp:785:        const auto DISPATCHER = m_dispatchers.find(k->mouse ? "mouse" : k->handler);
+KeybindManager.cpp:198:    std::erase_if(m_keybinds, [&mod, &key](const auto& el) { return el->modmask == mod && el->key == key.key && el->keycode == key.keycode && el->catchAll == key.catchAll; });
+legacy-ConfigManager.cpp:607:    m_config->registerHandler(&::handleBind, "bind", {true});
+legacy-ConfigManager.cpp:1578:    const auto KEY = multiKey ? "" : ARGS[1];
+legacy-ConfigManager.cpp:1594:    const auto DISPATCHER = g_pKeybindManager->m_dispatchers.find(HANDLER);
+# locators, fourth pass
+KeybindManager.cpp:299:    static auto       PLAYOUT   = CConfigValue<std::string>("input:kb_layout");
+InputManager.cpp:1229:    const auto LAYOUT   = Config::mgr()->getDeviceString(devname, "kb_layout", "input:kb_layout");
+InputManager.cpp:1231:    const auto OPTIONS  = Config::mgr()->getDeviceString(devname, "kb_options", "input:kb_options");
+KeybindManager.cpp:694:            if (key.keyName != k->key)
+KeybindManager.cpp:697:            if (key.keycode != k->keycode)
+KeybindManager.cpp:700:            if (found || key.submapAtPress.name != Config::Actions::state()->m_currentSubmap)
+# locators, fifth pass
+wiki-Binds-legacy.md:9:bind = MODS, key, dispatcher, params
+wiki-Binds-legacy.md:38:bind = MODS, key, dispatcher, params
+legacy-ConfigManager.cpp:1589:        HANDLER = "mouse";
+wiki-Binds-legacy.md:144:| `m` | mouse | See the dedicated [Mouse Binds](#mouse-binds) section. |
+wiki-Binds-legacy.md:146:| `i` | ignore mods | Will ignore modifiers. |
+KeybindManager.cpp:634:    for (auto& k : m_keybinds) {
+KeybindManager.cpp:858:    for (auto& k : m_keybinds) {
+# locators, sixth pass
+how-to-type.c:112:        "    The XKB ruleset (default: '%s')\n"
+wiki-Binds-legacy.md:150:| `u` | submap universal | Will be active no matter the submap. |
+legacy-ConfigManager.cpp:1538:            case 'u': submapUniversal = true; break;
+legacy-ConfigManager.cpp:1526:            case 's': multiKey = true; break;
+# all m_xkbTranslationState sites in KeybindManager.cpp (proof no modifier mask is ever applied to the bind-side state)
+KeybindManager.cpp:175:    if (m_xkbTranslationState)
+KeybindManager.cpp:176:        xkb_state_unref(m_xkbTranslationState);
+KeybindManager.cpp:278:        else if (k->keycode != 0 && m_xkbTranslationState)
+KeybindManager.cpp:280:            bindSym = xkb_state_key_get_one_sym(m_xkbTranslationState, k->keycode);
+KeybindManager.cpp:290:    if (m_xkbTranslationState) {
+KeybindManager.cpp:291:        xkb_state_unref(m_xkbTranslationState);
+KeybindManager.cpp:293:        m_xkbTranslationState = nullptr;
+KeybindManager.cpp:332:    m_xkbTranslationState = xkb_state_new(PKEYMAP);
+KeybindManager.cpp:357:    if (!m_xkbTranslationState) {
+KeybindManager.cpp:361:        if (!m_xkbTranslationState)
+KeybindManager.cpp:369:    const xkb_keysym_t keysym         = xkb_state_key_get_one_sym(pKeyboard->m_resolveBindsBySym ? pKeyboard->m_xkbSymState : m_xkbTranslationState, KEYCODE);
+# locators, seventh pass
+how-to-type.c:112:        "    The XKB ruleset (default: '%s')\n"
+wiki-Binds-legacy.md:150:| `u` | submap universal | Will be active no matter the submap. |
+wiki-Binds-legacy.md:450:You can set a keybind that will be active no matter the current submap with the submap universal bind flag.
+wiki-Binds-legacy.md:146:| `i` | ignore mods | Will ignore modifiers. |
+# locators, eighth pass
+KeybindManager.cpp:812:                res = DISPATCHER->second(k->arg);
+KeybindManager.cpp:461:            found = !handleKeybinds(MODS, SPressedKeyWithMods{.keyName = "mouse_down", .submapAtPress = getCurrentSubmap()}, true, nullptr, pointer).passEvent;
+KeybindManager.cpp:468:            found = !handleKeybinds(MODS, SPressedKeyWithMods{.keyName = "mouse_right", .submapAtPress = getCurrentSubmap()}, true, nullptr, pointer).passEvent;
+InputManager.cpp:1915:uint32_t CInputManager::shareModsFromAllKBs(uint32_t depressed) {
+legacy-ConfigManager.cpp:1569:            KEYSYMS.emplace_back(xkb_keysym_from_name(splitKey.c_str(), XKB_KEYSYM_CASE_INSENSITIVE), 0);
+legacy-ConfigManager.cpp:1572:            MODS.emplace_back(xkb_keysym_from_name(splitMod.c_str(), XKB_KEYSYM_CASE_INSENSITIVE), 0);
+legacy-ConfigManager.cpp:1588:    if (mouse)
+InputManager.cpp:1931:    return finalMask;
+# locators, ninth pass
+how-to-type.c:697:                const size_t num_masks = xkb_keymap_key_get_mods_for_level(
+how-to-type.c:711:        printf("\n=== Access via Compose sequences ===\n\n");
