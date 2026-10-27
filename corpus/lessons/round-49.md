@@ -62,3 +62,8 @@ next round carries w2's items.
   scratch; not installed.
 - M48-13: the w1 context set `ulimit -f 65536` (64 MiB); the owed clause-r attack ran (`w1/ExecCloneRecipe.md`).
 - SentScratch: the round-49 counters refuse `/tmp` work dirs and TMPDIR under `/tmp`, `/var/tmp`, `/dev/shm`.
+- Erratum (2026-10-27, round 50, D8): the "Spot-check shape" sentence above says "2 drafted admits and 4 rejects"; the corrected
+  sentence is "the non-author closure sampled 2 drafted-admit examples and 5 rejected decisions represented above (counts computed
+  from this section; the full source gate has 12 admits and 5 rejects; round-48 N3)". Counting command:
+  `L=/home/vgpnk/Projects/shokunin/mado-shokunin; grep -cE '^- \*\*S[0-9]+ \(drafted admit\)' $L/corpus/lessons/round-49.md; grep -cE '^- \*\*REJECT' $L/.ufo/waves/round-49/w1/ScrRows/gate.md`
+  → `2` and `5` (seat CritGateLesson, w1, `.ufo/waves/round-50/w1/CritGateLesson.md`).

@@ -2236,6 +2236,11 @@ here, never re-claimed. The compile itself was the open half of that entry (its 
 `hyprland-input-devices-r46.md:69`) and of `corpus/README.md:112` at base; ground now
 `corpus/knowledge/xkb-keymap-compile-r48.md` (rows S340-S351).
 
+For what a Hyprland bind's KEY field matches at runtime (keysym resolution and case handling, the XKB
+state and layout that supply the compared keysym, the modifier-mask comparison, and the
+keycode/non-keyboard branches), see `corpus/knowledge/hyprland-bind-key-match-r50.md` (rows S352-S363;
+held defaults/fallback S318/S319 cited, not re-claimed).
+
 Host matrix (libxkbcommon 1.13.2-1, xkeyboard-config 2.48-1; receipt
 `.ufo/waves/round-48/w1/ScrSkill/receipts/xkbcli-matrix.txt` — `compile-keymap` and `list` are read verbs, stdout
 only):
