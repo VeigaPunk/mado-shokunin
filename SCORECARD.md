@@ -2832,3 +2832,32 @@ SOURCES 310→311 rows; one tier-A own-work row S374 added, opened this round; S
 1. Freeze a complete registration, finite fixture inventory, controls and counter predicates before any seat scores data.
 2. Do not claim coverage from r52 correction ground; select a newly opened source row on uncovered ground or stop the coverage claim.
 3. Obtain a non-author source-truth review of the r53 correction note before admission.
+
+## Round 54 — honest stop (2026-10-27, hyaku run 10, attempt 2)
+
+Claims were frozen in `.ufo/waves/round-54/claims-frozen.md`; the source pins and registration landed as freeze commit `350d30e4ec5531f65ce99a57efeb8216f38e678a`. The non-author seats later established that this commit followed the w1 launch/ready times, so the freeze was not revision-stable before dispatch. No claim predicate was changed after scoring.
+
+| Claim / axis | Before → after measurement | Counting command | Verdict |
+|---|---|---|---|
+| C1 **operability** — errata source-truth verifier capability | Counter absent at base `e25149fec8152a3aabd2b18a0ee8663b23cf65aa` and absent at final content revision; no production `MADO_ERRATA_TRUTH` result. W1 prototypes disagree on whether the frozen quote clause permits whitespace normalization; literal matching scores 1/4 on the source pins, while whitespace collapse reaches 4/4. W1 also found P19's English proposition contradicted by the adjacent source branch. | `git ls-tree -r --name-only <rev> quality/counters | grep -c 'c1-r54-errata-truth.py'` → `0` at base and final content revision. | **unprovable / honest stop**; target not met, no score or capability delta. |
+| C2 **coverage** — sourced `uwsm-app` environment entry | The frozen target entry was absent at base and withdrawn before landing; no final `admitted=1/1` result exists. W1 found S375's registered span too short, S376's literal quote omits source emphasis, source-row quote cells are not the registered frozen quotes, and the autostart host-set summary conflicts with the opened file. | `git ls-tree -r --name-only <rev> corpus/knowledge | grep -c 'uwsm-app-environment-r54.md'` → `0` at base and final content revision. | **unprovable / honest stop**; no coverage score delta or admitted entry. |
+
+### Sources, capabilities, and learning
+
+`corpus/knowledge/` and the README index remain 69/69; no capability row entered. `corpus/SOURCES.md` moved 311→314 rows: three tier-A sources opened on 2026-10-27 (S375 rejected, S376 mined only by the round lesson as a narrow transport fact, S377 rejected); statuses and `used-by` changes are logged in `corpus/lessons/round-54.md`. End census exit 0; full before/after outputs are `.ufo/waves/round-54/receipts/census-{before,after}.txt`. The `uwsm-app` environment frontier remains open; no uncovered ground moved into core. Assimilation: none; no shokuknow package entry or consideration proposal was adopted.
+
+- **expansion: unchanged** — no knowledge entry was admitted on the open `uwsm-app` frontier.
+- **quality: harmed** — w1 source review found the extant P19 proposition in `hyprland-synthetic-dispatch-r52-errata-r53.md` overstates its quoted branch: the pin's `else` path at `ConfigActions.cpp:1566-1569` also sends a PRESSED key. The issue is recorded in M54-5 but the r53 entry was not rewritten or corrected in this frozen round.
+- **discernment: unchanged** — no non-author closure review was available at report time; dispatched seats are lane authors. S376's narrow source-row decision and the S375/S377 rejections await outside spot-check.
+
+Mistakes M54-1–M54-5 are in `corpus/lessons/round-54.md`. No axis score changed; no capability entered. Tool installs/updates: none.
+
+### Wave record and next-round plan
+
+Shape: two v1 waves, w1 37 seats + w2 32 seats = 69 total. L1 held planner. W1 role mix: executor 10, scribe 7, scout 4, reviewer 7, critic 3, mutation-tester 2, connector 2, sentinel 1, simplifier 1; attack roles reviewer+critic+mutation-tester 12/37. W2 role mix: reviewer 11, critic 10, mutation-tester 6, scout 3, connector 2; attack roles 27/32. Both results files are committed under `.ufo/waves/round-54/`; dead seats: 0 in either wave; residual call: none.
+
+### Planned (round 55; intent only)
+
+1. Commit claims, registrations, finite controls, and baselines before writing any wave `.ready`; bind the freeze to the committed revision.
+2. Register a source-truth predicate with an explicit, satisfiable pin-text normalization and an in-process control design that cannot self-attest; do not claim quotation checks prove proposition entailment.
+3. Correct or explicitly supersede the false P19 statement through a new append-only knowledge correction; select a coverage target whose source and host evidence are inside mado's province and obtain the required non-author admit/reject review.

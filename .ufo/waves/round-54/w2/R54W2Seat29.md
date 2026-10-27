@@ -1,0 +1,23 @@
+# R54W2Seat29 — C2 S375 province-scope attack
+
+## Scope and method
+Axes: (1) province-boundary correctness (the record instrument remains within mado's declared surface), (2) source-ground fidelity (what the pin actually establishes), and (3) claim separability (no inference from manager state to an unobserved app process). Read frozen contract, registration, fetched S375 pin, PROVINCE boundary, and my w1 report only; no host/config/service/compositor reads, commands, or fixture execution. No counter run: `quality/counters/c2-r54-uwsm-entry.py` was absent at base per frozen baseline and w1 §1.3; no pinned run is available from the evidence read here. Result: NOT RUN / absent, not a predicate score.
+
+## Frozen contract and pin
+`claims-frozen.md:46-53` scopes C2 to the P1/P6 launcher half and calls it coverage of “`uwsm-app`'s environment”; `:55-65` freezes the entry/rows/pin/host-join predicate. Registration `registration.md:61-69` identifies S375 as README lines 117–118 quote, a `mined` docs row for the `uwsm-app environment/launch contract`. The actual frozen pin `.ufo/waves/round-54/fetch/uwsm-0.27.1-README.md:117-120` says the *difference between environment state before and after preparation* is exported into the systemd user manager (and conditionally the D-Bus activation environment), and that on shutdown previously exported variables are unset from the manager. The first sentence physically continues through line 119, not just line 118 (w1 report §4.3, lines 201-203).
+
+## Province attack: S375 names manager environment, not service-health or child-process environment
+`PROVINCE.md:52-67` explicitly categorizes the lane's `quality/` instruments as record instruments over paperwork and says they do not touch config planes, compositor sockets, or host services. `PROVINCE.md:34` (quoted and applied in w1 report §5.4, lines 262-266) routes unit-state rows adjacent to tsukuroi's unit-health ground, which stays tsukuroi's. Thus S375 is admissible as a pinned *source statement* in mado's documentation/record instrument; interpreting it as measured live systemd manager state, service health, host environment, or the actual environment inherited by a launched process would cross the stated province boundary and is not established by this pin. The pin's grammatical subject/object is export *into the systemd user manager*; it makes no direct assertion here about what variables an individual `uwsm-app` child receives. Treating “manager environment export” as “app process environment observed/inherited” would conflate distinct grounds and produce an unsupported claim.
+
+This is not a falsification of the literal frozen predicate solely from the allowed static evidence: the frozen clause asks for a located quote and source/entry/host joins, not a runtime manager or child environment measurement. It is a scope/interpretation attack: acceptance can support the sourced manager-export proposition, not a live host or per-process environment claim. S375 is relevant to the declared launcher coverage theme, but must remain explicitly attributed and narrowly worded. Runtime delivery remains unknown here.
+
+## Related w1 evidence / unresolved pin defects
+My w1 report §4.3 (`w1/R54Seat29.md:192-213`) observed S375's frozen quote exceeds its stated anchor: the exact content requires pin lines 117–119, whereas registration gives `README.md:117-118`; it also noted S376's omitted Markdown emphasis. This is a separate frozen locator/quote defect, not evidence of runtime behavior. My w1 §5.1 (`:222-236`) observed the then-landed S375 teaches cell was a paraphrase absent from its pin under the tested normalizations; §5.4 (`:254-266`) reported that the draft entry itself made host-file assertions that this seat fence forbids and the counter cannot read. These findings remain report-only; no claim, registration, lane, or source file was changed. No source/host assertion beyond the cited frozen pin was independently verified in this w2 scope.
+
+## Evidence commands and outcomes
+- Read `claims-frozen.md:46-65`, `registration.md:55-75`, `fetch/uwsm-0.27.1-README.md:117-120`, `PROVINCE.md:52-67`, and `w1/R54Seat29.md:192-213,238-266`; outputs are the cited source text above.
+- Counter execution: NOT RUN / absent at frozen base as documented in `claims-frozen.md:67` and `w1/R54Seat29.md:55-64`; no counter invocation output or exit code is claimed.
+- No host reads, service queries, producer execution, or fixture commands performed.
+- Scratch: `/fast/scratch/hyaku/mado-r54/R54W2Seat29` explicitly created and cleaned before yield; no remaining scratch files observed.
+
+Report trailer: `.ufo/waves/round-54/w2/R54W2Seat29.md`
