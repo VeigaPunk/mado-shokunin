@@ -178,7 +178,7 @@ def m_dropped(tree, ctx):
 def m_host(tree, ctx):
     def fn(lines):
         i = _row_index(lines, "H02")
-        old, new = "repeat_delay = 250", "repeat_delay = 300"
+        old, new = "`repeat_delay = 250`", "`repeat_delay = 300`"  # the backticked quote cell only (the proposition cell may repeat the text)
         if lines[i].count(old) != 1:
             raise MutationError("H02 row lacks exactly one %r" % old)
         lines[i] = lines[i].replace(old, new)
