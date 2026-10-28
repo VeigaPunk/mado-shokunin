@@ -40,3 +40,12 @@ Pending the round's non-author closure. Ready for it: admit S378 (the `updateAct
 ## Census / source changes
 
 Start census command `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado` → exit 0, `mado ok` (output `.ufo/waves/round-55/receipts/census-before.txt`, 314 rows). End census: see the round report and `.ufo/waves/round-55/receipts/census-after.txt` (317 rows).
+
+## Wave-2 findings routed (M55-9..M55-12)
+
+- **M55-9 — content-blind predicates** (class `vacuous`) · R55W2CritC1Forge, R55W2CritC3Stale, R55W2CritAdmission: junk/false C1 entries and a false P23 reach `TARGET_MET` and harness 7/7, 6/6 · captured-by: declared limits only (registration-v2 E9, QUALITY 104/105) · fix: none landed; routed: registry-membership/scope check on provenance and K rows, ordered P23 pattern. Claims are reported as quote-identity verified, content audited by seats (R55W2Audit*, R55W2RevP23: 0 UNSUPPORTED, overreach wording fixed).
+- **M55-10 — harness evadable** · R55W2CritC1Env, R55W2MutC1Harness M05/M11, R55W2CritToolIsolation · fix landed: `/7` denominator, C2 run dir outside export ancestry; sniffing and consistent forgery stay declared (E9).
+- **M55-11 — weak mutation kill power** · R55W2MutC1CounterB (11/24 survive), R55W2MutC3 (8/38), R55W2MutTool1-4, R55W2MutFreeze (4/17) · fix landed for C2: 24 survivor-derived fixtures `fixtures/c2-extra` (informational stderr line), shipped tool matches all 24; counters' survivors routed.
+- **M55-12 — tool overclaim** · R55W2RevToolSource: "models source-level semantics" false for out-of-range, `-0`, `{ # c`, `source =`, continuation · fix landed: docstring "approximation" + divergence list; behaviour unchanged (frozen contract). Also R55W2RevC1Code D1 (subdirectory repo) fixed in the C1 counter; other D2-D9 routed.
+- Frozen-text honesty: the w2 audits found entry overreach (clamp vs floor, E03, E07, a single seat-push route, join-section P5/P9) — all corrected in the entry before this commit; S379/S380 scope wording corrected by supersession rows S381/S382.
+- Census end: `mado ok`, exit 0, 319 rows (`receipts/at-final.txt`). Considerthese 2026-10-26 proposal 4 mined above.

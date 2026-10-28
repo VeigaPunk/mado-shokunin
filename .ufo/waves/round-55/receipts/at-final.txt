@@ -1,0 +1,285 @@
+== measured at d3fc9ac14a673a7d56f11b6d4956d754179067bf 2026-10-28T20:45:47-03:00 ==
+$ python3 -I quality/counters/c1-r55-kbd-entry.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+MADO_KBD_ENTRY: rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+exit=0
+
+$ python3 -I quality/check-r55-controls.py --claim c1 --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+good: ok
+C1-CTL-1 absent: ok - counter missed=entry_absent
+C1-CTL-2 spliced-quote: ok - counter missed=quote:K04
+C1-CTL-3 shifted-anchor: ok - counter missed=anchor:K01
+C1-CTL-4 wrong-source: ok - counter missed=source_cell:K10
+C1-CTL-5 dropped-row: ok - counter missed=row:K17
+C1-CTL-6 host-forged: ok - counter missed=quote:H02,host:H02
+C1-CTL-7 pin-tamper: ok - counter missed=pin_hash,tables_sha
+MADO_R55_CONTROLS: claim=c1 good=ok controls=7/7 verdict=OK
+exit=0
+
+$ python3 -I quality/check-r55-controls.py --claim c2 --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+r55_ctl_c2: extra fixtures (informational) 24/24
+r55_ctl_c2: controls const-host.py:1+0:ok empty.py:0+0:ok lookup-committed.py:18+0:ok
+MADO_R55_C2: rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 verdict=TARGET_MET
+exit=0
+
+$ python3 -I quality/counters/c3-r55-p19.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+MADO_P19_FIX: rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+exit=0
+
+$ python3 -I quality/check-r55-controls.py --claim c3 --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+good: MADO_P19_FIX: rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09
+C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12
+C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale
+C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme
+MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK
+exit=0
+
+$ python3 -I quality/check-freeze-order.py --repo . --rev fe03bb3b2ec05fbf906b83096c637fd6a05b3dc8 --round 54 --wave w1 --work /fast/scratch/hyaku/mado-r55/L1/m
+MADO_FREEZE_ORDER: round=54 wave=w1 freeze=350d30e4ec55 freeze_time=2026-10-27T14:11:10-03:00 launch=2026-10-27T17:05:25.338Z verdict=FAIL reason=freeze_after_launch
+exit=1
+
+$ python3 -I quality/check-freeze-order.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --round 55 --wave w1 --work /fast/scratch/hyaku/mado-r55/L1/m
+MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok
+exit=0
+
+$ python3 -I quality/check-freeze-order.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --round 55 --wave w2 --work /fast/scratch/hyaku/mado-r55/L1/m
+MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T23:19:14.796Z verdict=OK reason=ok
+exit=0
+
+$ python3 -I quality/check-wave-done.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --round 55
+WAVE wave=w1 ready=1 results=present seats=40 dispatched=40 settled=40 verdict=OK reason=none
+WAVE wave=w2 ready=1 results=present seats=37 dispatched=37 settled=37 verdict=OK reason=none
+MADO_WAVE_DONE: round=55 waves=2 settled=2 verdict=OK
+exit=0
+
+$ python3 -I quality/check-index.py --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --repo .
+MADO_INDEX: rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf indexed=70/70 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+exit=0
+
+$ python3 -I quality/check-tool-ledger.py --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf
+LEDGER: population=90 ledger_rows=90 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf
+exit=0
+
+$ python3 -I tools/mado-kbdopts.py --selftest
+MADO_KBDOPT_SELFTEST: 83/83 assertions passed
+exit=0
+
+$ python3 -I quality/check-freeze-order.py --selftest --work /fast/scratch/hyaku/mado-r55/L1/m
+PASS OK (freeze 13:00Z < launch 14:00Z, committer offset -03:00) rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS freeze_after_launch (freeze 14:11:10Z > launch 14:05:25Z) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=db0f7a001673 freeze_time=2026-10-27T11:11:10-03:00 launch=2026-10-27T14:05:25.338Z verdict=FAIL reason=freeze_after_launch
+PASS equal time -> FAIL freeze_after_launch rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=84bf6bde8299 freeze_time=2026-10-27T11:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS freeze_edited:registration.md (freeze= the edit commit: earliest commit whose blobs all equal REV's) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=bbfeef18a2dc freeze_time=2026-10-27T10:30:00-03:00 launch=2026-10-27T16:00:00.000Z verdict=FAIL reason=freeze_edited:registration.md
+PASS edit-then-revert (documented: blob-equality, freeze=aed7b39aba0e) rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T16:00:00.000Z verdict=OK reason=ok
+PASS no_freeze (registration.md absent) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=none freeze_time=none launch=none verdict=FAIL reason=no_freeze
+PASS no_registry (swarm-registry.json absent) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=none verdict=FAIL reason=no_registry
+PASS no_registry (createdAt unparsable) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=none verdict=FAIL reason=no_registry
+PASS TRAP author 11:00Z < launch 14:00Z but committer 15:00Z > launch -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=321552294c40 freeze_time=2026-10-27T12:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS TRAP author 23:00Z > launch but committer 12:00Z < launch -> OK rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=7b487a9a1df4 freeze_time=2026-10-27T09:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS split freeze: registration.md lands 16:00Z after launch -> FAIL (freeze=f634d5c5f427) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=f634d5c5f427 freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS frozen-tables.json absent is allowed rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=984eceb35f9d freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS freeze_edited:frozen-tables.json rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=0d2d17d36470 freeze_time=2026-10-27T10:30:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_edited:frozen-tables.json
+PASS merged-in freeze: first-parent freeze = merge commit 46b51cb630cf (16:00Z) -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=46b51cb630cf freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS setup: missing repo rc=2
+    SETUP repo_not_found
+PASS setup: bad rev -> SETUP rev_not_found rc=2
+MADO_FREEZE_ORDER_SELFTEST: OK
+exit=0
+
+$ python3 -I quality/counters/c1-r55-kbd-entry.py --selftest --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+selftest: c1-r55-kbd-entry.py rev=d3fc9ac14a673a7d56f11b6d4956d754179067bf
+PASS good-tree                                      expected=none
+PASS good-alt-source-S215-for-K15                   expected=none
+PASS CTL1-absent                                    expected=entry_absent
+PASS CTL2-spliced-quote-K04                         expected=quote:K04
+PASS CTL3-shifted-anchor-K01                        expected=anchor:K01
+PASS CTL4-wrong-source-K10                          expected=source_cell:K10
+PASS CTL5-dropped-row-K17                           expected=row:K17
+PASS CTL6-host-forged-H02                           expected=quote:H02,host:H02
+PASS CTL7-pin-tamper-tables-and-pin                 expected=pin_hash,tables_sha
+PASS pin-bytes-only-appended-space                  expected=pin_hash
+PASS tables-trailing-newline                        expected=tables_sha
+PASS tables-absent                                  expected=tables_sha
+PASS provenance-no-recheck                          expected=provenance
+PASS provenance-no-S-id-in-source                   expected=provenance
+PASS provenance-wrong-date                          expected=provenance
+PASS index-row-missing                              expected=index
+PASS index-row-duplicated                           expected=index
+PASS new-rows-usedby-missing-entry-S379             expected=new_rows
+PASS source-candidate-status-S380                   expected=source_cell:K18,new_rows
+PASS source-cell-not-an-S-id-K02                    expected=source_cell:K02
+PASS host-row-src-cell-not-host-H03                 expected=row:H03
+PASS short-proposition-K02                          expected=row:K02
+PASS short-host-proposition-H04                     expected=row:H04
+PASS extra-cell-pipe-in-proposition-K06             expected=row:K06
+PASS CRLF-whole-entry                               expected=provenance,row:K01,row:K02,row:K03,row:K04,row:K05,row:K06,row:K07,row:K08,row:K09,row:K10,row:K11,row:K12,row:K13,row:K14,row:K15,row:K16,row:K17,row:K18,row:H01,row:H02,row:H03,row:H04,row:H05,row:H06
+PASS CRLF-single-row-K05                            expected=row:K05
+PASS trailing-spaces-after-row-K09                  expected=row:K09
+PASS trailing-tab-after-row-H01                     expected=row:H01
+PASS duplicated-row-id-K03-identical                expected=row:K03
+PASS duplicated-row-id-H05-different-text           expected=row:H05
+PASS backtick-style-double-K05                      expected=quote:K05
+PASS backtick-style-none-H06                        expected=quote:H06
+PASS row-only-inside-code-fence-K12                 expected=row:K12
+PASS row-only-inside-html-comment-K13               expected=row:K13
+PASS row-leading-id-spacing-K07                     expected=row:K07
+PASS anchor-wrong-pin-file-K08                      expected=anchor:K08
+PASS quote-extra-space-K18                          expected=quote:K18
+PASS symlink-pin-file-SeatManager                   expected=quote:K10,pin_hash
+PASS symlink-pin-directory                          expected=quote:K01,quote:K02,quote:K03,quote:K04,quote:K05,quote:K06,quote:K07,quote:K08,quote:K09,quote:K10,quote:K11,quote:K12,quote:K13,quote:K14,quote:K15,quote:K16,quote:K17,quote:K18,quote:H01,quote:H02,quote:H03,quote:H04,quote:H05,quote:H06,pin_hash,host:H01,host:H02,host:H03,host:H04,host:H05,host:H06
+PASS symlink-entry-file                             expected=entry_absent
+PASS symlink-sources-file                           expected=source_cell:K01,source_cell:K02,source_cell:K03,source_cell:K04,source_cell:K05,source_cell:K06,source_cell:K07,source_cell:K08,source_cell:K09,source_cell:K10,source_cell:K11,source_cell:K12,source_cell:K13,source_cell:K14,source_cell:K15,source_cell:K16,source_cell:K17,source_cell:K18,new_rows
+PASS repo-path-is-a-symlink                         expected=TARGET_MET rc=0
+PASS dirty-working-tree-ignored                     expected=TARGET_MET rc=0
+PASS rev-as-full-sha                                expected=rev echoed as given
+PASS deterministic-two-runs                         expected=identical output
+PASS setup-bad-rev-rc2-empty-stdout                 expected=rc=2 stdout empty
+PASS setup-bad-repo-rc2                             expected=rc=2 stdout empty
+PASS setup-missing-work-rc2                         expected=rc=2 stdout empty
+PASS tree-without-any-r55-file                      expected=entry_absent,index,tables_sha rc=1
+PASS tables-bad-shape-sha-mismatch                  expected=tables_sha
+MADO_KBD_ENTRY_SELFTEST: 50/50 passed
+exit=0
+
+$ python3 -I quality/counters/c3-r55-p19.py --selftest --repo . --rev d3fc9ac14a673a7d56f11b6d4956d754179067bf --work /fast/scratch/hyaku/mado-r55/L1/m
+PASS good
+    -> MADO_P19_FIX: rev=781f05e12cc6 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS C3-CTL-1 absent (block removed = base)
+    -> MADO_P19_FIX: rev=bb72ecbe328c prefix=identical rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS C3-CTL-2 rewritten prefix (one byte of P19 row)
+    -> MADO_P19_FIX: rev=2a80fed04788 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS C3-CTL-3 altered Q09 quote
+    -> MADO_P19_FIX: rev=93d021095eae prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS C3-CTL-4 old-arm-only (Q08-Q12 deleted)
+    -> MADO_P19_FIX: rev=21b30503157f prefix=identical rows=8/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12
+PASS C3-CTL-5 old wording in P23
+    -> MADO_P19_FIX: rev=f5639018c4ce prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23,stale
+PASS C3-CTL-5 v2 old wording keyword-stuffed (p23 satisfied, stale rejects)
+    -> MADO_P19_FIX: rev=1eaaae548ee7 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=stale
+PASS C3-CTL-6 README line without P23
+    -> MADO_P19_FIX: rev=865d04dd3374 prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS prefix with CRLF (first line LF -> CRLF)
+    -> MADO_P19_FIX: rev=4b92b92efcc9 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS prefix with CRLF everywhere
+    -> MADO_P19_FIX: rev=db27d4f170f6 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS duplicated Q03 row
+    -> MADO_P19_FIX: rev=bee2ca3e7d44 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS duplicated Q03 row elsewhere inside block
+    -> MADO_P19_FIX: rev=e126162a4a74 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS Q03 row moved inside a fenced code block
+    -> MADO_P19_FIX: rev=2fd52a0c1dda prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS extra fenced copy of Q03 beside the real row does not count as duplicate
+    -> MADO_P19_FIX: rev=f203849d3fce prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS tilde fence hides Q03 row
+    -> MADO_P19_FIX: rev=0d7a19143688 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS P23 row only inside a fence
+    -> MADO_P19_FIX: rev=23ee0402cd9a prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS heading missing
+    -> MADO_P19_FIX: rev=7229cac38b07 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:heading
+PASS heading only inside a fence
+    -> MADO_P19_FIX: rev=a6c7e069ce78 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:heading
+PASS duplicated P23 row
+    -> MADO_P19_FIX: rev=cc5044711509 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 supersedes P20
+    -> MADO_P19_FIX: rev=13ae5e6bfdd0 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 wrong source row
+    -> MADO_P19_FIX: rev=e89f913956f3 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 lacks the else-arm word
+    -> MADO_P19_FIX: rev=b3328315ba14 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 lacks == 0
+    -> MADO_P19_FIX: rev=3ca5a04553a9 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS Q row quote with trailing space inside backticks
+    -> MADO_P19_FIX: rev=0a481660010d prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS Q row anchor line shifted
+    -> MADO_P19_FIX: rev=277191877f8f prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS Q row with a fourth cell
+    -> MADO_P19_FIX: rev=1926e7eb465e prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS CRLF after the prefix is tolerated
+    -> MADO_P19_FIX: rev=d92822c41cf1 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS pin tampered (one trailing space at EOF)
+    -> MADO_P19_FIX: rev=71b15c6e8820 prefix=identical rows=13/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=pin
+PASS pin absent
+    -> MADO_P19_FIX: rev=44072f14f7e9 prefix=identical rows=13/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=pin
+PASS frozen-tables.json differs (whitespace appended)
+    -> MADO_P19_FIX: rev=24dc2e5f262d prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=tables_sha
+PASS frozen-tables.json absent
+    -> MADO_P19_FIX: rev=ac78373a2f3f prefix=identical rows=0/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,pin,tables_sha
+PASS entry absent
+    -> MADO_P19_FIX: rev=411c8bdb6215 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS entry truncated below the base
+    -> MADO_P19_FIX: rev=f7ed1748852d prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS README absent
+    -> MADO_P19_FIX: rev=6132c60ddb30 prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS README names P23 on a different line than the entry
+    -> MADO_P19_FIX: rev=0c520aa4130a prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS block appended without a blank line before the heading
+    -> MADO_P19_FIX: rev=85f18972b47f prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS CLI usage error
+    -> rc=2 MADO_P19_FIX: SETUP usage
+PASS CLI unresolvable rev
+    -> rc=2 MADO_P19_FIX: SETUP unresolvable_rev
+PASS CLI rev starting with a dash
+    -> rc=2 MADO_P19_FIX: SETUP bad_rev
+PASS CLI base commit absent in a scratch repo (setup, not a verdict)
+    -> rc=2 MADO_P19_FIX: SETUP base_commit_absent
+PASS CLI not a repo
+    -> rc=2 MADO_P19_FIX: SETUP not_a_repo
+MADO_P19_FIX_SELFTEST: 41/41 passed
+exit=0
+
+$ TMPDIR=/fast/scratch/hyaku/mado-r55/L1/m bash tools/mado-verify.sh --selftest
+MADO_SELFTEST: 460/460 assertions passed
+exit=0
+
+$ sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+mado	W04	S030 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S042 duplicate url wayland.freedesktop.org/extras.html across scopes
+mado	W04	S045 duplicate url wiki.hypr.land/Configuring/Basics/Window-Rules across scopes
+mado	W04	S097 duplicate url raw.githubusercontent.com/basecamp/omarchy/v3.8.4/themes/matte-black/colors.toml across scopes
+mado	W04	S119 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Lib/imaplib.py across scopes
+mado	W04	S120 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W04	S121 duplicate url raw.githubusercontent.com/python/cpython/v3.14.8/Doc/reference/executionmodel.rst across scopes
+mado	W01	S277 tierC mined used-by=corpus/knowledge/request-socket-live-bound-r8.md
+mado	W04	S303 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S307 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S317 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S318 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/values/ConfigValues.cpp across scopes
+mado	W04	S320 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S321 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S324 duplicate url raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp across scopes
+mado	W04	S326 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/xdg-terminal-exec across scopes
+mado	W04	S327 duplicate url raw.githubusercontent.com/Vladimir-csp/xdg-terminal-exec/v0.14.3/README.md across scopes
+mado	W04	S332 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/desktop/rule/matchEngine/RegexMatchEngine.cpp across scopes
+mado	W04	S353 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S354 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/input/InputManager.cpp across scopes
+mado	W04	S364 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S366 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S368 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	W04	S370 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp across scopes
+mado	W04	S371 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp across scopes
+mado	W04	S373 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/managers/KeybindManager.cpp across scopes
+mado	W04	S380 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	W04	S381 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/protocols/core/Seat.cpp across scopes
+mado	W04	S382 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/devices/IKeyboard.hpp across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+exit=0
+$ registry rows
+319
+$ knowledge files / README index rows
+70
+70

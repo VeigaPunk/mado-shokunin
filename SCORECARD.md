@@ -2861,3 +2861,30 @@ Shape: two v1 waves, w1 37 seats + w2 32 seats = 69 total. L1 held planner. W1 r
 1. Commit claims, registrations, finite controls, and baselines before writing any wave `.ready`; bind the freeze to the committed revision.
 2. Register a source-truth predicate with an explicit, satisfiable pin-text normalization and an in-process control design that cannot self-attest; do not claim quotation checks prove proposition entailment.
 3. Correct or explicitly supersede the false P19 statement through a new append-only knowledge correction; select a coverage target whose source and host evidence are inside mado's province and obtain the required non-author admit/reject review.
+
+## Round 55 — three claims (2026-10-28, hyaku run 11, attempt 1)
+
+Stagnation nudge applied (saturation 9.0, N=3; last capability r51, none in r52-r54): lowest-axis obligation waived; C2 is a capability, C1 frontier ground. Claims frozen at `54dacbd8`; pre-data errata `registration-v2.md` (v1 C1 was unsatisfiable as written; disclosed). Measured at `d3fc9ac14a673a7d56f11b6d4956d754179067bf` (`.ufo/waves/round-55/receipts/at-final.txt`).
+
+| Claim / axis | Before -> after | Counting command | Verdict |
+|---|---|---|---|
+| C1 **coverage** (sourced) - keyboard repeat/numlock chain | entry, counter, harness absent (0/0/0 at `3b55b6e`) -> `rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 TARGET_MET`; harness 7/7; knowledge/index 69/69 -> 70/70 | `python3 -I quality/counters/c1-r55-kbd-entry.py --repo . --rev <rev> --work <s>`; `python3 -I quality/check-r55-controls.py --claim c1 ...` | **TARGET_MET** (quote identity); content: junk entry also passes (declared limit); seat audits found 0 UNSUPPORTED, overreaches fixed |
+| C2 **operability** (capability) - `tools/mado-kbdopts.py` | tool absent -> `fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 TARGET_MET`; 24/24 extra survivor-derived fixtures | `python3 -I quality/check-r55-controls.py --claim c2 --repo . --rev <rev> --work <s>` | **TARGET_MET**; tool is an approximation (8 divergences from hyprlang listed in its docstring) |
+| C3 **freshness** - P19 corrected | `grep -c P23` 0 -> `prefix=identical rows=13/13 pin=ok p23=ok readme=ok TARGET_MET`; harness 6/6 | `python3 -I quality/counters/c3-r55-p19.py --repo . --rev <rev> --work <s>`; `... --claim c3` | **TARGET_MET**; lexical p23 leg is vocabulary, truth rests on audit |
+
+Harm watch: `MADO_SELFTEST: 460/460`, index 70/70, census exit 0, tool ledger 90/90. Verdicts are the operator's to rule; no score delta is asserted beyond the verdicts.
+
+### Capabilities (round 55)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| keyboard repeat/numlock predictor | predict effective repeat_rate/repeat_delay/numlock per keyboard from config text and join to `hyprctl getoption -j` (read-only; documented approximation) | `receipts/live-kbdopts.txt`; C2 line above | 55 |
+
+Sources: 314 -> 319 rows (S378-S382). Round: w1 40 + w2 37 = 77 seats. Mistakes M55-1..M55-12.
+
+### Planned (round 56; intent only)
+
+1. Registry-membership/scope check for provenance and K-row sources; ordered P23 pattern (routed M55-9).
+2. Raise counter/harness kill power (M55-11) and close harness sniffing channels (randomized identity/history).
+3. Non-author admit/reject review of S378/S380 and P23.
+
