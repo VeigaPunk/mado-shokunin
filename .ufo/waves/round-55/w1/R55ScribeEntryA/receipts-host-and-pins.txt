@@ -1,0 +1,39 @@
+# host reads (read-only; hyprctl getoption -j, devices -j, version)
+$ hyprctl getoption input:repeat_rate -j
+{"option": "input:repeat_rate", "int": 40, "set": true }
+
+$ hyprctl getoption input:repeat_delay -j
+{"option": "input:repeat_delay", "int": 250, "set": true }
+
+$ hyprctl getoption input:numlock_by_default -j
+{"option": "input:numlock_by_default", "int": 1, "set": true }
+
+$ hyprctl version | head -2
+Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).
+Date: Wed Aug 5 14:13:21 2026
+$ hyprctl devices -j | keyboards (name, active_keymap, main)
+razer-razer-deathadder-v2-keyboard | Portuguese (Brazil) | main= False
+razer-razer-deathadder-v2-1 | Portuguese (Brazil) | main= False
+hp--inc-hyperx-alloy-origins-core | Portuguese (Brazil) | main= False
+hp--inc-hyperx-alloy-origins-core-keypad | Portuguese (Brazil) | main= False
+hp--inc-hyperx-alloy-origins-core-consumer-control | Portuguese (Brazil) | main= False
+video-bus | Portuguese (Brazil) | main= False
+power-button | Portuguese (Brazil) | main= False
+power-button-1 | Portuguese (Brazil) | main= False
+yubico-yubikey-otp+fido+ccid | Portuguese (Brazil) | main= True
+
+# committed pins vs working tree (sha256 first 16)
+Hyprland-ConfigValues.cpp committed=a76f05079454e1f6 tree=a76f05079454e1f6
+Hyprland-IKeyboard.cpp committed=8a800efe9baa7f37 tree=8a800efe9baa7f37
+Hyprland-IKeyboard.hpp committed=82e0bc9e1f31f634 tree=82e0bc9e1f31f634
+Hyprland-InputManager.cpp committed=feedf32e2e3d23ae tree=feedf32e2e3d23ae
+Hyprland-SeatManager.cpp committed=bd7485535c7e9f71 tree=bd7485535c7e9f71
+Hyprland-legacy-ConfigManager.cpp committed=9db68cf44048d865 tree=9db68cf44048d865
+Hyprland-protocols-core-Seat.cpp committed=cc23bb8b4f1e44cd tree=cc23bb8b4f1e44cd
+host-input.conf committed=3769c92ab7660f17 tree=3769c92ab7660f17
+host-getoption.json committed=5557e28f101946af tree=5557e28f101946af
+wayland-1.26.0-wayland.xml committed=cc860987e54f8d85 tree=cc860987e54f8d85
+
+# freeze-verify.py (committed verifier, run read-only from lane root)
+fixtures 18 dirs checked
+FREEZE_VERIFY: bad=0 frozen-tables.sha256=bf46c8896a1861fec746f8900aabe54faf7aaaa3ff5691ed0a05e8e9d4179490 OK

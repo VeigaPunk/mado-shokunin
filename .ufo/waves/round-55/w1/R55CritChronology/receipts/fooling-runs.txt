@@ -1,0 +1,24 @@
+Constructed repos in /fast/scratch/hyaku/mado-r55/R55CritChronology/ (git init, GIT_COMMITTER_DATE/GIT_AUTHOR_DATE set per commit, or commit-tree for rewrites). Checker = copy of .ufo/waves/round-55/w1/R55ExecFreezeOrder/check-freeze-order.py, run as: python3 -I check.py --repo <fixture> --rev HEAD --round 55 --wave w1 --work <scratch>/run
+Each fixture: freeze files claims-frozen.md, registration.md, frozen-tables.json under .ufo/waves/round-55/; registry .ufo/waves/round-55/w1/swarm-registry.json committed in a second commit.
+
+S1 control: freeze committer 10:00Z, registry createdAt 11:00Z
+  rc=0 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=28b5186dddd2 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok
+S2 rebase: same trees re-committed (commit-tree) with committer 12:00Z; true freeze 10:00Z
+  rc=1 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=10b21bc70e19 freeze_time=2026-10-28T12:00:00Z launch=2026-10-28T11:00:00.000Z verdict=FAIL reason=freeze_after_launch
+S3 forgery: freeze made after launch, GIT_COMMITTER_DATE=09:00Z
+  rc=0 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=91cdeb3037ad freeze_time=2026-10-28T09:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok
+S4 createdAt forgery: freeze 12:00Z, registry commit at 12:05Z with createdAt 13:00Z
+  rc=0 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=70d0d478c11d freeze_time=2026-10-28T12:00:00Z launch=2026-10-28T13:00:00.000Z verdict=OK reason=ok
+S5 createdAt absent
+  rc=1 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=28b5186dddd2 freeze_time=2026-10-28T10:00:00Z launch=none verdict=FAIL reason=no_registry
+S5b createdAt "2026-10-28 11:00:00" (no offset, no Z)
+  rc=1 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=28b5186dddd2 freeze_time=2026-10-28T10:00:00Z launch=none verdict=FAIL reason=no_registry
+S7 post-launch edit of registration.md at 12:00Z, reverted at 12:30Z
+  rc=0 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=28b5186dddd2 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok
+S8 freeze tree unchanged, message reworded via commit-tree at 11:30Z; true freeze 10:00Z
+  rc=1 MADO_FREEZE_ORDER: round=55 wave=w1 freeze=ce95ec6972a6 freeze_time=2026-10-28T11:30:00Z launch=2026-10-28T11:00:00.000Z verdict=FAIL reason=freeze_after_launch
+
+Lane real-object runs (same checker, REV = lane commit):
+  round-55 REV=HEAD(dbc2eefe): MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok rc=0
+  round-55 REV=54dacbd8 (freeze itself): MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=none verdict=FAIL reason=no_registry rc=1
+  round-54 REV=fe03bb3b: MADO_FREEZE_ORDER: round=54 wave=w1 freeze=350d30e4ec55 freeze_time=2026-10-27T14:11:10-03:00 launch=2026-10-27T17:05:25.338Z verdict=FAIL reason=freeze_after_launch rc=1

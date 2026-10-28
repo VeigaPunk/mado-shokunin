@@ -1,0 +1,93 @@
+synthetic good tree rev=40ed5105052bab66d1743d1b4841e6a72331b223
+
+=== (a+b) synthetic good tree + minimal correct counter
+good: ok
+C1-CTL-1 absent: ok - counter missed=entry_absent
+C1-CTL-2 spliced-quote: ok - counter missed=quote:K04
+C1-CTL-3 shifted-anchor: ok - counter missed=anchor:K01
+C1-CTL-4 wrong-source: ok - counter missed=source_cell:K10
+C1-CTL-5 dropped-row: ok - counter missed=row:K17
+C1-CTL-6 host-forged: ok - counter missed=quote:H02,host:H02
+C1-CTL-7 pin-tamper: ok - counter missed=tables_sha,pin_hash
+MADO_R55_CONTROLS: claim=c1 good=ok controls=7/7 verdict=OK
+rc=0
+
+=== (c) always-green stub (must FAIL)
+good: ok
+C1-CTL-1 absent: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-2 spliced-quote: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-3 shifted-anchor: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-4 wrong-source: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-5 dropped-row: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-6 host-forged: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-7 pin-tamper: FAIL - verdict=TARGET_MET (mutant admitted)
+MADO_R55_CONTROLS: claim=c1 good=ok controls=0/7 verdict=FAIL
+rc=1
+
+=== (d) always-red stub (must FAIL on good)
+good: bad - verdict=TARGET_MISSED missed=entry_absent,quote:K04,anchor:K01,source_cell:K10,row:K17,host:H02,pin_hash
+C1-CTL-1 absent: ok - counter missed=entry_absent,quote:K04,anchor:K01,source_cell:K10,row:K17,host:H02,pin_hash
+C1-CTL-2 spliced-quote: FAIL - entry_absent named for a tree whose entry exists
+C1-CTL-3 shifted-anchor: FAIL - entry_absent named for a tree whose entry exists
+C1-CTL-4 wrong-source: FAIL - entry_absent named for a tree whose entry exists
+C1-CTL-5 dropped-row: FAIL - entry_absent named for a tree whose entry exists
+C1-CTL-6 host-forged: FAIL - entry_absent named for a tree whose entry exists
+C1-CTL-7 pin-tamper: FAIL - entry_absent named for a tree whose entry exists
+MADO_R55_CONTROLS: claim=c1 good=bad controls=1/7 verdict=FAIL
+rc=1
+
+=== (e) noisy stub: correct counter plus one extra stdout line (must FAIL)
+good: bad - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-1 absent: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-2 spliced-quote: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-3 shifted-anchor: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-4 wrong-source: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-5 dropped-row: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-6 host-forged: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+C1-CTL-7 pin-tamper: FAIL - counter stdout has 2 non-empty lines, need exactly 1
+MADO_R55_CONTROLS: claim=c1 good=bad controls=0/7 verdict=FAIL
+rc=1
+
+=== (f) silent stub (must FAIL)
+good: bad - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-1 absent: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-2 spliced-quote: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-3 shifted-anchor: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-4 wrong-source: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-5 dropped-row: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-6 host-forged: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+C1-CTL-7 pin-tamper: FAIL - counter stdout has 0 non-empty lines, need exactly 1
+MADO_R55_CONTROLS: claim=c1 good=bad controls=0/7 verdict=FAIL
+rc=1
+
+=== (g) anchor-blind counter (must score 6/7 FAIL)
+good: ok
+C1-CTL-1 absent: ok - counter missed=entry_absent
+C1-CTL-2 spliced-quote: ok - counter missed=quote:K04
+C1-CTL-3 shifted-anchor: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-4 wrong-source: ok - counter missed=source_cell:K10
+C1-CTL-5 dropped-row: ok - counter missed=row:K17
+C1-CTL-6 host-forged: ok - counter missed=quote:H02,host:H02
+C1-CTL-7 pin-tamper: ok - counter missed=tables_sha,pin_hash
+MADO_R55_CONTROLS: claim=c1 good=ok controls=6/7 verdict=FAIL
+rc=1
+
+=== (h) default counter export at --rev (no --counter)
+good: ok
+C1-CTL-1 absent: ok - counter missed=entry_absent
+C1-CTL-2 spliced-quote: ok - counter missed=quote:K04
+C1-CTL-3 shifted-anchor: ok - counter missed=anchor:K01
+C1-CTL-4 wrong-source: ok - counter missed=source_cell:K10
+C1-CTL-5 dropped-row: ok - counter missed=row:K17
+C1-CTL-6 host-forged: ok - counter missed=quote:H02,host:H02
+C1-CTL-7 pin-tamper: ok - counter missed=tables_sha,pin_hash
+MADO_R55_CONTROLS: claim=c1 good=ok controls=7/7 verdict=OK
+rc=0
+
+=== (i) setup errors
+MADO_R55_CONTROLS setup error: git -C /fast/scratch/hyaku/mado-r55/R55ExecC1Harness/run/synth rev-parse --verify failed: fatal: Needed a single revision
+rc=2
+MADO_R55_CONTROLS setup error: --counter unreadable: [Errno 2] No such file or directory: '/nonexistent'
+rc=2
+
+work leftovers: 0

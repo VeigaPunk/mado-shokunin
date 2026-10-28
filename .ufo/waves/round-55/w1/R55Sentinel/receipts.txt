@@ -1,0 +1,40 @@
+R55Sentinel receipts (shape only; no secret values exist in the inputs reviewed)
+
+[pins] sha256 at lane HEAD dbc2eefe, equal to frozen-tables.json:
+3769c92ab7660f1795cb6d0af1bcc5a5614a299b29ae8358d1b85936bdd47bf4  fetch/host-input.conf          1584 B, 54 lines
+5557e28f101946af19fe56fe6ec7b75e60df540c078daddec2d0512938e6eab6  fetch/host-getoption.json       179 B, 3 records
+[pins] long (>=32 char) tokens: host-input.conf has 2, both wiki.hypr.land URL paths. No key/token/password markers.
+[pins+fixtures+ctl] PRIVATE KEY / BEGIN CERT / password / /home/vgpnk markers: none.
+[pins+fixtures+ctl] non-printable or non-ASCII bytes: none.
+[fixtures/c2] long-token lines are repository-relative paths in args.json and one expected.out line; no key material.
+[fixtures/c2] git status of fetch/fixtures/ctl at HEAD: 0 dirty lines.
+
+[host read-only] live ~/.config/hypr/input.conf sha256 = 3769c92a... (identical to the committed pin); cmp: identical; 54 lines.
+[host read-only] hyprctl version -> "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean"
+[host read-only] hyprctl getoption input:repeat_rate -j -> keys [int, option, set], int=40, rc=0
+[host read-only] hyprctl getoption input:repeat_delay -j -> keys [int, option, set], int=250, rc=0
+[host read-only] hyprctl getoption input:numlock_by_default -j -> keys [int, option, set], int=1, rc=0
+[host read-only] hyprctl devices -j -> rc=0; top keys [keyboards, mice, switches, tablets, touch]; 10 keyboards; 14 "address" fields (values not copied); no serial/mac/uuid/token keys.
+[host] no hyprctl keyword/dispatch/source/reload/bind/call was run by this seat.
+
+[hold-out] committed (HEAD dbc2eefe) literal `fixtures/c2-holdout` hits:
+  .ufo/waves/round-55/frozen-tables.json:301      "holdout_dir": ".ufo/waves/round-55/fixtures/c2-holdout"   (committed at 54dacbd)
+  .ufo/waves/round-55/registration.md:108         revealed into `fixtures/c2-holdout/`                         (committed at 54dacbd)
+  .ufo/waves/round-55/make-w1-spec.py:52          builder prompt (R55ExecC2Harness)                            (committed at dbc2eefe)
+  .ufo/waves/round-55/w1-spec.json:94             builder prompt (R55ExecC2Harness)                            (committed at dbc2eefe)
+  .ufo/waves/round-55/w1-dispatch.json:367        builder prompt (R55ExecC2Harness)                            (committed at dbc2eefe)
+[hold-out] lane fixtures/ contains only c2/ (find fixtures -maxdepth 2). This seat did not open or search for any hold-out path.
+
+[C2 draft probe] tool: .ufo/waves/round-55/w1/R55ExecTool1/mado-kbdopts.py (untracked sibling draft; run read-only, cwd scratch, python3 -I, timeout 5)
+  --config /dev/zero                         -> MADO_KBDOPT: SETUP unreadable, rc=2
+  --config <symlink -> regular file>         -> accepted, rc=0 (symlinks followed)
+  --config <symlink -> FIFO>                 -> MADO_KBDOPT: SETUP unreadable, rc=2 (no hang)
+  --config <exactly 1048576 bytes>           -> accepted, rc=0
+  --config <1048577 bytes>                   -> MADO_KBDOPT: SETUP too_large, rc=2
+  /proc/self/status: os.stat st_size=0, read length=1528 (stat size untrustworthy; draft reads at most MAX+1 bytes)
+  20 x 1 MiB --config: wall 0.027 s; 200 x small --config: wall 0.017 s (no aggregate cap exists; not a measured DoS)
+  --keyboard $'x\nMADO_KBDOPT: DONE keyboards=9 unsupported=0 live=AGREE' -> stdout contains the forged line as its own line, rc=0
+  --getoption line: 100000-deep nested arrays inside an object -> MADO_KBDOPT: SETUP bad_json, rc=2 (no traceback)
+  --getoption line: "int" with 5000 digits -> MADO_KBDOPT: SETUP bad_json, rc=2 (contract silent on this class)
+  --getoption line: "int": true -> ignored; live=? UNKNOWN
+  --getoption line: "int": 40 -> live=40 DIFFER against config=30 for repeat_rate (probe config: repeat_rate = 30; demo input only)

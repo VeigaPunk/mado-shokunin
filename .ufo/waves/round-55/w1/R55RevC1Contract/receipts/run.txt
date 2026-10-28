@@ -1,0 +1,22 @@
+BEFORE(base+freeze, no entry): MADO_KBD_ENTRY: rev=b50d44a3bab45b73b89e9ed15590ebb80094d0b7 rows=0/18 hosts=0/6 sources=0/18 new_rows=0/3 verdict=TARGET_MISSED missed=new_rows,entry_absent rc= 1
+A junk-filler (K17->S381 fabricated): 2dd0742651baf1664a5b9b67ff415372bc0e11dc rc= 0
+C1X: bad failing=H01,H02,H03,H04,H05,H06,K01,K02,K03,K04,K05,K06,K07,K08,K09,K10,K11,K12,K13,K14,K15,K16,K17,K18 (NOT frozen; attack.md section 5)
+MADO_KBD_ENTRY: rev=2dd0742651baf1664a5b9b67ff415372bc0e11dc rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+A under LITERAL grammar (no escaped pipes): 1
+MADO_KBD_ENTRY: rev=2dd0742651baf1664a5b9b67ff415372bc0e11dc rows=17/18 hosts=6/6 sources=17/18 new_rows=3/3 verdict=TARGET_MISSED missed=row:K16
+# K16: row missing, duplicated or cell count != 5 (cells=[7])
+B junk-filler with honest K17->S052: 30126e4b1cb2962a50346e4e585a512893d2235f rc= 1
+MADO_KBD_ENTRY: rev=30126e4b1cb2962a50346e4e585a512893d2235f rows=18/18 hosts=6/6 sources=17/18 new_rows=3/3 verdict=TARGET_MISSED missed=source_cell:K17
+# K17: source cell 'S052' is not a mined registry row whose URL ends '1.26.0/protocol/wayland.xml' and contains efb50993
+C junk-stuffed (quote identifiers + word salad): e246463502763114631f2c9d0a54459c0708e36c rc= 0
+C1X: bad failing=H04,H05,H06,K01,K02,K03,K04,K05,K06,K07,K08,K10,K11,K12,K13,K14,K15,K16,K18 (NOT frozen; attack.md section 5)
+MADO_KBD_ENTRY: rev=e246463502763114631f2c9d0a54459c0708e36c rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+CTL C1-CTL-1 absent: expected=entry_absent rc=1 pass=True | MADO_KBD_ENTRY: rev=033dc755fd27f1652f4f3da6260b4677a53158df rows=0/18 hosts=0/6 sources=0/18 new_rows=3/3 verdict=TARGET_MISSED missed=entry_absent
+CTL C1-CTL-2 spliced-quote: expected=quote:K04 rc=1 pass=True | MADO_KBD_ENTRY: rev=fc08e7b6fa5e46371aae08c5fccadefbeb02fba8 rows=17/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MISSED missed=quote:K04
+CTL C1-CTL-3 shifted-anchor: expected=anchor:K01 rc=1 pass=True | MADO_KBD_ENTRY: rev=f5d1c53a1c5b192cd89fcb0564421007ce150d07 rows=17/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MISSED missed=anchor:K01
+CTL C1-CTL-4 wrong-source: expected=source_cell:K10 rc=1 pass=True | MADO_KBD_ENTRY: rev=2d87425268d52dc922a80fcdac72cf5c04b73854 rows=18/18 hosts=6/6 sources=17/18 new_rows=3/3 verdict=TARGET_MISSED missed=source_cell:K10
+CTL C1-CTL-5 dropped-row: expected=row:K17 rc=1 pass=True | MADO_KBD_ENTRY: rev=89d2bbcb6cccc51dc94059a1742deebef486b0d5 rows=17/18 hosts=6/6 sources=17/18 new_rows=3/3 verdict=TARGET_MISSED missed=row:K17
+CTL C1-CTL-6 host-forged: expected=host:H02 rc=1 pass=True | MADO_KBD_ENTRY: rev=02fe6e7af367b6be3f167ebc75f99712b178ecd8 rows=18/18 hosts=5/6 sources=18/18 new_rows=3/3 verdict=TARGET_MISSED missed=host:H02
+CTL C1-CTL-7 pin-tamper: expected=pin_hash rc=1 pass=True | MADO_KBD_ENTRY: rev=b7bc7d1faa21bd9d3b01600ae55ee17a90219078 rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MISSED missed=tables_sha,pin_hash
+ATTACK_C1_CONTROLS: good=ok controls=7/7
+REPOS /fast/scratch/hyaku/mado-r55/R55RevC1Contract/work2/junkA-65jv9zxr /fast/scratch/hyaku/mado-r55/R55RevC1Contract/work2/junkB-y23l4cuj /fast/scratch/hyaku/mado-r55/R55RevC1Contract/work2/junkC-pooqsg7p

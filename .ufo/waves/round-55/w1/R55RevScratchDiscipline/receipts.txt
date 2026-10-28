@@ -1,0 +1,52 @@
+R55RevScratchDiscipline receipts (read-only audit, round 55 w1). Trimmed to decisive lines.
+
+== disk-guard.sh status (complete run, 60.65 s; first run was backgrounded and truncated before /fast section) ==
+root                             use%     free
+/tmp                              21%   101.7G
+/var/tmp                          38%   555.5G
+/fast/scratch/hyaku               44%   450.3G
+top consumers /tmp (15 lines): largest /tmp/verif-kasegi-r42 25.4G idle=384; no mado/r55-named entry
+top consumers /var/tmp (15 lines): largest /var/tmp/souji-r21-replay-eq45dano 201.8M idle=3225; no mado/r55 entry
+top consumers /fast/scratch/hyaku: /fast/scratch/hyaku/tameshi-r56 19.5G idle=4; ...
+   110.9M   idle=0  /fast/scratch/hyaku/mado-r55
+(raw: artifact://82151)
+
+== /tmp hardcode grep (round-55 tree, code files) ==
+grep -n "/tmp|mktemp|TMPDIR|gettempdir|tempfile" ctl/*.py freeze-verify.py   -> no matches (rc=1)
+round-55 *.py/*.sh under w1 with gettempdir|mkdtemp(|TemporaryDirectory|mkstemp|/tmp -> every mkdtemp call carries dir=; no bare mkdtemp()/gettempdir()
+text-only /tmp hits: registration.md:13 (rule text); make-w1-spec.py:12,81 and w1-spec.json/w1-dispatch.json (prompt text);
+  R55ExecFreezeOrder.md:38 (report text); R55ScribeSources receipts line 526: "For S094 a /tmp clone at the tag gave tree ids"
+
+== freeze-verify.py (committed; cwd = lane) ==
+fixtures 18 dirs checked
+FREEZE_VERIFY: bad=0 frozen-tables.sha256=bf46c8896a1861fec746f8900aabe54faf7aaaa3ff5691ed0a05e8e9d4179490 OK   rc=0
+
+== frozen-artifact drift 54dacbd8..HEAD (claims-frozen, registration, frozen-tables, fixtures, ctl, fetch) ==
+(empty diff stat: no drift)
+
+== P1 C1 counter B normal mode, no --work, TMPDIR=<probe dir> ==
+MADO_KBD_ENTRY: rev=HEAD rows=0/18 hosts=0/6 sources=0/18 new_rows=0/3 verdict=TARGET_MISSED missed=entry_absent,index,new_rows
+rc=1 ; probe dir entries after: 0
+
+== P2 freeze-order checker normal mode, no --work, TMPDIR=<probe dir> ==
+MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=none verdict=FAIL reason=no_registry
+rc=1 ; probe dir entries after: 0
+
+== P3 freeze-order selftest without --work ==
+MADO_FREEZE_ORDER: SETUP usage   rc=2
+
+== P6 /tmp and /var/tmp top-level entries newer than 18:30 (unattributed to this wave unless noted) ==
+/tmp/cl40 (dir, 191544 KB, 18:37); /tmp/r51cl (200 KB, 18:33); /tmp/r51-closure.json; /tmp/idx_full.json; /tmp/map_hash_before; /tmp/map_hash_after; /tmp/wr_smoke.log; /tmp/x (148 KB, 19:55); /tmp/r41c1-6cd24i5s
+/var/tmp/disk-guard.ZIUrbq (19:37, disk-guard temp)  -- no entry named mado or r55
+
+== P7 fleet index (intent-to-add check) ==
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	o.bin
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	oldrep1.out
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.scratch/source-routing-queue.md
+git -C fleet diff --cached --name-only | wc -l -> 0  (no staged changes; ' A' = intent-to-add)
+
+== P8 disk-guard.log tail (status run did not visibly append; tail lines are check-type ok entries, 22:54Z, not attributable) ==
+2026-10-28T22:54:09Z ok /tmp ? idle=? use=21%
+
+== P9 lane quality/ and modules ==
+ls quality | grep -i "r55_ctl|freeze-order"  -> (empty)  => r55_ctl_c1.py / r55_ctl_c2.py / r55_ctl_c3.py and check-freeze-order.py are not in the lane

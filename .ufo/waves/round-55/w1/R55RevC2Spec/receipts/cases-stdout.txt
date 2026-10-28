@@ -1,0 +1,450 @@
+## C01: `} # end` closes a block?
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C01/c.conf"]
+-- literal: `}` must equal exactly  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=300 numlock=0 from=G/G/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: startswith `}` pops  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C02: `input { # main` pushes `input`?
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C02/c.conf"]
+-- literal: line must end in `{`  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: cut `#` first  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C03: indented `  # section {` skipped as comment?
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C03/c.conf"]
+-- literal: strip, then `#`-first skip  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: test `#` on raw line  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C04: `repeat_rate = 30 = 4` (RHS `30 = 4`)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C04/c.conf"]
+-- literal: fullmatch [0-9]+  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: re.match prefix  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C05: `repeat_rate = 3 3`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C05/c.conf"]
+-- literal: fullmatch  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: prefix  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=3 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C06: `repeat_rate = 1.5` (spec: float -> unsupported)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C06/c.conf"]
+-- literal: fullmatch  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: prefix  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=1 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C07: `repeat_rate = 0x1F` (spec: hex -> unsupported)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C07/c.conf"]
+-- literal: fullmatch  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: prefix  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=0 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C08: `numlock_by_default = 1abc`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C08/c.conf"]
+-- literal: fullmatch  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: prefix  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=1 from=-/-/G unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C09: `device {` inside `input {` with name and rate
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C09/c.conf", "--keyboard", "kbd-a"]
+-- literal: stack must be exactly ['device']  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: innermost block is device  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C10: `repeat_rate` inside `touchpad {` nested in plain `device {`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C10/c.conf", "--keyboard", "kbd-a"]
+-- literal (only reading)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C11: `repeat_rate` inside `touchpad {` nested in `device[kbd-a] {`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C11/c.conf", "--keyboard", "kbd-a"]
+-- literal (only reading)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C12: `--keyboard ""` (empty NAME)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C12/c.conf", "--keyboard", ""]
+-- literal: empty NAME accepted  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard= repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: empty NAME is usage  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP usage
+[rc=2]
+
+## C13: `--keyboard --getoption` (value starts with --)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C13/c.conf", "--keyboard", "--getoption"]
+-- literal: next token is the NAME  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=--getoption repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: value may not start with --  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP usage
+[rc=2]
+
+## C14: `--getoption` twice
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C14/c.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C14/g1.json", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C14/g2.json"]
+-- literal: at most once -> usage  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP usage
+[rc=2]
+-- alt: last wins (argparse default)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=41 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+[rc=0]
+
+## C15: device named `*`, no --keyboard (default line)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C15/c.conf"]
+-- literal: `*` is an ordinary NAME  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: `*` reserved for default  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C16: device named `*`, `--keyboard *`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C16/c.conf", "--keyboard", "*"]
+-- literal  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: reserved  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C17: device sets rate in file 1, global sets it in file 2
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C17/f1.conf", "--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C17/f2.conf", "--keyboard", "kbd-a", "--keyboard", "kbd-b"]
+-- literal (only reading in the text)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: keyboard=kbd-b repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=2 unsupported=0 live=NONE
+[rc=0]
+
+## C18: `name = # none` (empty device NAME) and `--keyboard ""`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C18/c.conf", "--keyboard", ""]
+-- literal: empty name is a device  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard= repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: empty name = no device  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard= repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C19: `name = $kbd` with `$kbd = kbd-a` defined (keyboard kbd-a)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C19/c.conf", "--keyboard", "kbd-a"]
+-- literal: name verbatim  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: $ in name unsupported  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=2
+MADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE
+[rc=0]
+
+## C19b: `name = $kbd` with `$kbd = kbd-a`, keyboard `$kbd`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C19b/c.conf", "--keyboard", "$kbd"]
+-- literal: name verbatim  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=$kbd repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: $ in name unsupported  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=$kbd repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=2
+MADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE
+[rc=0]
+
+## C20: `repeat_rate = 30 # 50$` (dollar only in comment)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C20/c.conf"]
+-- literal: checks on whole line  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: checks on value after cut  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C21: `repeat_rate = 40 # C:\dir` (backslash only in comment)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C21/c.conf"]
+-- literal: checks on whole line  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: checks on value after cut  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C22: `repeat_delay = 4##0` (F12 shape)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C22/c.conf"]
+-- literal: ## checked before cut  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: ## checked after cut  | committed fixtures failed by this reading: 1 F12
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=4 numlock=0 from=-/G/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C23: UTF-8 BOM before `input {`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C23/c.conf"]
+-- literal: decoded as utf-8 (BOM kept)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: utf-8-sig  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C24: CR-only line endings
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C24/c.conf"]
+-- literal: split on \n only  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: str.splitlines()  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C25: `repeat_rate = 30\x1c` (FS control char)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C25/c.conf"]
+-- literal: strip only the listed set  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: str.strip()  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C26: `repeat_rate = 30` followed by U+00A0
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C26/c.conf"]
+-- literal: strip only the listed set  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+-- alt: str.strip()  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C27: `numlock_by_default = True`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C27/c.conf"]
+-- literal (pinned by round-46 pin line 259: starts_with is case-sensitive)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C28: `repeat_rate = yes`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C28/c.conf"]
+-- literal: VALUE parse is generic  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=1 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C29: top-level `input:repeat_rate = 30` (no block)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C29/c.conf"]
+-- literal text: KEY = ':' + LHS (leading colon)  | committed fixtures failed by this reading: 1 F10
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- join: KEY = LHS when stack empty  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C30: `source = ~/.config/hypr/extra.conf` (extra file not read)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C30/c.conf"]
+-- literal: ignored, not counted  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: counted unsupported  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C31: stray `{` line inside `input {`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C31/c.conf"]
+-- literal: empty-name push  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: empty push rejected  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C32: getoption `"int": 40.0`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C32/c.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C32/g.json"]
+-- literal: only JSON ints  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+[rc=0]
+-- alt: integral floats  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+[rc=0]
+
+## C33: getoption with a spaces-only line
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C33/c.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C33/g.json"]
+-- literal: non-empty = non-zero length  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP bad_json
+[rc=2]
+-- alt: non-empty after strip  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+[rc=0]
+
+## C34: missing --config and bad getoption JSON together
+argv: ["--config", "/nonexistent/none.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C34/g.json"]
+-- literal: configs first  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP unreadable
+[rc=2]
+-- alt: getoption first  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP bad_json
+[rc=2]
+
+## C35: `--config link.conf` where link.conf -> real regular file
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C35/link.conf"]
+-- literal: stat follows symlinks  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+-- alt: lstat  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP unreadable
+[rc=2]
+
+## C36: getoption line of 200000 nested `[` (not an object)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C36/c.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C36/g.json"]
+-- literal model: ValueError caught -> bad_json; RecursionError uncaught  | committed fixtures failed by this reading: 0 
+UNHANDLED RecursionError (uncaught; rc=1, traceback on stderr)
+
+## C37: `--selftest` alone
+argv: ["--selftest"]
+-- literal: output unspecified  | committed fixtures failed by this reading: 0 
+<--selftest: output unspecified by contract>
+[rc=None]
+
+## C38: two `name` lines in one block
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C38/c.conf", "--keyboard", "kbd-a", "--keyboard", "kbd-b"]
+-- literal (only reading in the text)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: keyboard=kbd-b repeat_rate=25 repeat_delay=100 numlock=0 from=-/D/- unsupported=0
+MADO_KBDOPT: DONE keyboards=2 unsupported=0 live=NONE
+[rc=0]
+
+## C39: device key before its name line
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C39/c.conf", "--keyboard", "kbd-a"]
+-- literal (only reading in the text)  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C40: keyboard NAME with spaces and `=` (output parsing)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C40/c.conf", "--keyboard", "a=b c"]
+-- literal: printed verbatim, no quoting  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=a=b c repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+
+## C41: `--config c --config c` where c has one unsupported line
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C41/c.conf", "--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C41/c.conf"]
+-- literal: unsupported summed per read  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=2
+MADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE
+[rc=0]
+-- alt: distinct paths only  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+[rc=0]
+
+## C42: `--getoption` file of 1048577 bytes (only newlines)
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C42/c.conf", "--getoption", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C42/g.json"]
+-- literal: too_large applies to every file  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: SETUP too_large
+[rc=2]
+-- alt: size check on --config only  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+[rc=0]
+
+## C43: `numlock_by_default = -0` and `repeat_rate = -0`
+argv: ["--config", "/fast/scratch/hyaku/mado-r55/R55RevC2Spec/cases/C43/c.conf"]
+-- literal (spec): sign -> unsupported  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=2
+MADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE
+[rc=0]
+-- alt: hyprutils isNumber2 accepts -digits  | committed fixtures failed by this reading: 0 
+MADO_KBDOPT: keyboard=* repeat_rate=0 repeat_delay=600 numlock=0 from=G/-/G unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+[rc=0]
+

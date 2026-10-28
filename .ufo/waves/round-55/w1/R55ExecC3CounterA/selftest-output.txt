@@ -1,0 +1,81 @@
+PASS good
+    -> MADO_P19_FIX: rev=aad7fb7b9910 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS C3-CTL-1 absent (block removed = base)
+    -> MADO_P19_FIX: rev=1d145bd78bdf prefix=identical rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS C3-CTL-2 rewritten prefix (one byte of P19 row)
+    -> MADO_P19_FIX: rev=b26bae93d079 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS C3-CTL-3 altered Q09 quote
+    -> MADO_P19_FIX: rev=580da667cf32 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS C3-CTL-4 old-arm-only (Q08-Q12 deleted)
+    -> MADO_P19_FIX: rev=769ee5c47773 prefix=identical rows=8/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12
+PASS C3-CTL-5 old wording in P23
+    -> MADO_P19_FIX: rev=14daba82f9a4 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS C3-CTL-6 README line without P23
+    -> MADO_P19_FIX: rev=e217cb087847 prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS prefix with CRLF (first line LF -> CRLF)
+    -> MADO_P19_FIX: rev=8834c81d2ba9 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS prefix with CRLF everywhere
+    -> MADO_P19_FIX: rev=3dff38613339 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS duplicated Q03 row
+    -> MADO_P19_FIX: rev=77816e88e32b prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS duplicated Q03 row elsewhere inside block
+    -> MADO_P19_FIX: rev=a3d53a599293 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS Q03 row moved inside a fenced code block
+    -> MADO_P19_FIX: rev=6688c0c9b713 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS extra fenced copy of Q03 beside the real row does not count as duplicate
+    -> MADO_P19_FIX: rev=817a480caaff prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS tilde fence hides Q03 row
+    -> MADO_P19_FIX: rev=51976be2c2b1 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q03
+PASS P23 row only inside a fence
+    -> MADO_P19_FIX: rev=adb75c2fc4bc prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS heading missing
+    -> MADO_P19_FIX: rev=4b0139cc02c6 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:heading
+PASS heading only inside a fence
+    -> MADO_P19_FIX: rev=66c83f0c13f9 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:heading
+PASS duplicated P23 row
+    -> MADO_P19_FIX: rev=33db7311b0c9 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 supersedes P20
+    -> MADO_P19_FIX: rev=7971c3aee59f prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 wrong source row
+    -> MADO_P19_FIX: rev=c27bd3018e72 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 lacks the else-arm word
+    -> MADO_P19_FIX: rev=7ad1a5d8d1d3 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS P23 lacks == 0
+    -> MADO_P19_FIX: rev=a375ea43a4ba prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23
+PASS Q row quote with trailing space inside backticks
+    -> MADO_P19_FIX: rev=b0c3b213c9dc prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS Q row anchor line shifted
+    -> MADO_P19_FIX: rev=417f2ae593f8 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS Q row with a fourth cell
+    -> MADO_P19_FIX: rev=8bb3cc368251 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q09
+PASS CRLF after the prefix is tolerated
+    -> MADO_P19_FIX: rev=e9c6dee42e58 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS pin tampered (one trailing space at EOF)
+    -> MADO_P19_FIX: rev=b2ffe0cdc097 prefix=identical rows=13/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=pin
+PASS pin absent
+    -> MADO_P19_FIX: rev=f11a59c6fa5e prefix=identical rows=13/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=pin
+PASS frozen-tables.json differs (whitespace appended)
+    -> MADO_P19_FIX: rev=abac2a811513 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=tables_sha
+PASS frozen-tables.json absent
+    -> MADO_P19_FIX: rev=83b684b70ea7 prefix=identical rows=0/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,pin,tables_sha
+PASS entry absent
+    -> MADO_P19_FIX: rev=ac03201ba612 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS entry truncated below the base
+    -> MADO_P19_FIX: rev=c6e2c2624215 prefix=changed rows=0/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+PASS README absent
+    -> MADO_P19_FIX: rev=33eb19ae9272 prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS README names P23 on a different line than the entry
+    -> MADO_P19_FIX: rev=e9d11d8cc9e1 prefix=identical rows=13/13 pin=ok p23=ok readme=bad verdict=TARGET_MISSED missed=readme
+PASS block appended without a blank line before the heading
+    -> MADO_P19_FIX: rev=1e05774865f9 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+PASS CLI usage error
+    -> rc=2 MADO_P19_FIX: SETUP usage
+PASS CLI unresolvable rev
+    -> rc=2 MADO_P19_FIX: SETUP unresolvable_rev
+PASS CLI rev starting with a dash
+    -> rc=2 MADO_P19_FIX: SETUP bad_rev
+PASS CLI base commit absent in a scratch repo (setup, not a verdict)
+    -> rc=2 MADO_P19_FIX: SETUP base_commit_absent
+PASS CLI not a repo
+    -> rc=2 MADO_P19_FIX: SETUP not_a_repo
+MADO_P19_FIX_SELFTEST: 40/40 passed

@@ -1,0 +1,24 @@
+# C1 pin locator receipts (read-only; awk line ranges over .ufo/waves/round-55/fetch and round-46 pin)
+ConfigValues.cpp:277|        MS<Bool>("input:numlock_by_default", "Engage numlock by default.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+ConfigValues.cpp:278|        MS<Bool>("input:resolve_binds_by_sym", "Determines how keybinds act when multiple layouts are used.", false, {.refresh = Supplement
+ConfigValues.cpp:279|        MS<Int>("input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max = 200, .refresh = Su
+ConfigValues.cpp:280|        MS<Int>("input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max = 2000}),
+legacy-ConfigManager.cpp:1115|Hyprlang::CConfigValue* CConfigManager::getConfigValueSafeDevice(const std::string& dev, const std::string& val, const std::string
+legacy-ConfigManager.cpp:1119|    if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())
+legacy-ConfigManager.cpp:1120|        return m_config->getConfigValuePtr(fallback.c_str());
+legacy-ConfigManager.cpp:1122|    return VAL;
+legacy-ConfigManager.cpp:1123|}
+legacy-ConfigManager.cpp:1131|int CConfigManager::getDeviceInt(const std::string& dev, const std::string& v, const std::string& fallback) {
+legacy-ConfigManager.cpp:1132|    auto val = getConfigValueSafeDevice(dev, v, fallback);
+legacy-ConfigManager.cpp:1136|    return std::any_cast<Hyprlang::INT>(val->getValue());
+InputManager.cpp:1282|    pKeyboard->m_repeatRate  = std::max(0, REPEATRATE);
+InputManager.cpp:1283|    pKeyboard->m_repeatDelay = std::max(0, REPEATDELAY);
+InputManager.cpp:1284|    pKeyboard->m_numlockOn   = NUMLOCKON;
+wayland.xml:2573|  <interface name="wl_keyboard" version="11">
+wayland.xml:2741|        will disable any repeating (regardless of the value of delay).
+wayland.xml:2754|  <interface name="wl_touch" version="11">   (wl_keyboard interface ends before this line; S052 row cites :2573-2699)
+round46 hyprlang-config.cpp:259|    } else if (VALUE.starts_with("true") || VALUE.starts_with("on") || VALUE.starts_with("yes")) {
+round46 hyprlang-config.cpp:260|        return 1;
+round46 hyprlang-config.cpp:261|    } else if (VALUE.starts_with("false") || VALUE.starts_with("off") || VALUE.starts_with("no")) {
+round46 hyprlang-config.cpp:262|        return 0;
+round46 hyprlang-config.cpp:435|                        result.setError(std::format("special category's first value must be the key. Key for <{}> is <{}>", PCAT->name, PCAT->key));

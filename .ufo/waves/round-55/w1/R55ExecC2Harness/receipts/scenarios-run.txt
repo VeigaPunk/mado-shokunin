@@ -1,0 +1,35 @@
+### A standin, no hold-out at rev
+MADO_R55_C2: rev=085784fe59be3087ef384aceb2b3b08306aad405 fixtures=18/18 holdout=0/8 holdout_commit=absent controls=3/3 verdict=TARGET_MISSED
+rc=1
+### B standin, no hold-out at rev, --holdout external (own 8)
+MADO_R55_C2: rev=085784fe59be3087ef384aceb2b3b08306aad405 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 verdict=TARGET_MET
+rc=0
+### C standin, hold-out at rev, commit matches
+MADO_R55_C2: rev=dba80a22eda0d0304c0ef67585e15ecca7f24c93 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 verdict=TARGET_MET
+rc=0
+### D standin, hold-out at rev, frozen sha wrong
+MADO_R55_C2: rev=26aded2b05c6752fbf6f463fb01dc28ae3d67daa fixtures=18/18 holdout=8/8 holdout_commit=bad controls=3/3 verdict=TARGET_MISSED
+rc=1
+### E wrong tool (default delay 500)
+MADO_R55_C2: rev=ca0fe34cddb754e2912aee3f9c5beb00252d1555 fixtures=7/18 holdout=2/8 holdout_commit=ok controls=3/3 verdict=TARGET_MISSED
+rc=1
+### F lookup-table tool
+MADO_R55_C2: rev=5569c957c33e2a3aa72dd1c798e3b30eede99d72 fixtures=18/18 holdout=0/8 holdout_commit=ok controls=3/3 verdict=TARGET_MISSED
+rc=1
+### G control empty.py prints x
+MADO_R55_C2: rev=b107eed71146cbea8d932f523eb2ffc9b668cf47 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 verdict=TARGET_MET
+rc=0
+### H tool absent at rev
+MADO_R55_C2: rev=87394e51e9a0a7f0be45a9160ecfa271031e98ff fixtures=0/18 holdout=0/8 holdout_commit=ok controls=3/3 verdict=TARGET_MISSED
+rc=1
+### I symbolic rev (branch tip = H) via HEAD
+MADO_R55_C2: rev=HEAD fixtures=0/18 holdout=0/8 holdout_commit=ok controls=3/3 verdict=TARGET_MISSED
+rc=1
+### J bad rev
+r55_ctl_c2: setup error: rev does not resolve to a commit: nonesuch
+rc=2
+### K tampered external holdout (one byte)
+MADO_R55_C2: rev=085784fe59be3087ef384aceb2b3b08306aad405 fixtures=18/18 holdout=8/8 holdout_commit=bad controls=3/3 verdict=TARGET_MISSED
+rc=1
+### L missing --work
+rc=2

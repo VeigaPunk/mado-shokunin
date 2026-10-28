@@ -1,0 +1,20 @@
+## harness tolerant (forged)
+good: MADO_KBD_ENTRY: rev=4ed47cd4951750b81496284bcb945cbbe135fc8c rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none rc=0
+C1-CTL-1 absent: TARGET_MISSED missed=entry_absent,provenance,row:K01,row:K02,row:K03,row:K04,row:K05,row:K06,row:K07,row:K08,row:K09,row:K10,row:K11,row:K12,row:K13,row:K14,row:K15,row:K16,row:K17,row:K18,row:H01,row:H02,row:H03,row:H04,row:H05,row:H06 -> named-leg-hit
+C1-CTL-2 spliced-quote: TARGET_MISSED missed=quote:K04 -> named-leg-hit
+C1-CTL-3 shifted-anchor: TARGET_MISSED missed=anchor:K01 -> named-leg-hit
+C1-CTL-4 wrong-source: TARGET_MISSED missed=source_cell:K10 -> named-leg-hit
+C1-CTL-5 dropped-row: TARGET_MISSED missed=row:K17 -> named-leg-hit
+C1-CTL-6 host-forged: TARGET_MISSED missed=quote:H02,host:H02 -> named-leg-hit
+C1-CTL-7 pin-tamper: TARGET_MISSED missed=tables_sha,pin_hash -> named-leg-hit
+MADO_R55_CONTROLS: claim=c1 good=ok controls=7/7 verdict=OK
+## harness strict (forged)
+good: MADO_KBD_ENTRY: rev=4ed47cd4951750b81496284bcb945cbbe135fc8c rows=17/18 hosts=6/6 sources=17/18 new_rows=3/3 verdict=TARGET_MISSED missed=row:K16 rc=1
+C1-CTL-1 absent: TARGET_MISSED missed=entry_absent,provenance,row:K01,row:K02,row:K03,row:K04,row:K05,row:K06,row:K07,row:K08,row:K09,row:K10,row:K11,row:K12,row:K13,row:K14,row:K15,row:K16,row:K17,row:K18,row:H01,row:H02,row:H03,row:H04,row:H05,row:H06 -> named-leg-hit
+C1-CTL-2 spliced-quote: TARGET_MISSED missed=quote:K04,row:K16 -> named-leg-hit
+C1-CTL-3 shifted-anchor: TARGET_MISSED missed=anchor:K01,row:K16 -> named-leg-hit
+C1-CTL-4 wrong-source: TARGET_MISSED missed=source_cell:K10,row:K16 -> named-leg-hit
+C1-CTL-5 dropped-row: TARGET_MISSED missed=row:K16,row:K17 -> named-leg-hit
+C1-CTL-6 host-forged: TARGET_MISSED missed=row:K16,quote:H02,host:H02 -> named-leg-hit
+C1-CTL-7 pin-tamper: TARGET_MISSED missed=tables_sha,pin_hash,row:K16 -> named-leg-hit
+MADO_R55_CONTROLS: claim=c1 good=bad controls=7/7 verdict=FAIL
