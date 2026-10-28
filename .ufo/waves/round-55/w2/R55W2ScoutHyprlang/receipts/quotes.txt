@@ -1,0 +1,51 @@
+SRC hyprlang/src/config.cpp (v0.6.8)
+static std::expected<int64_t, std::string> configStringToInt(const std::string& VALUE) {
+    if (VALUE.starts_with("0x")) {
+    } else if (VALUE.starts_with("true") || VALUE.starts_with("on") || VALUE.starts_with("yes")) {
+    } else if (VALUE.starts_with("false") || VALUE.starts_with("off") || VALUE.starts_with("no")) {
+    if (VALUE.empty() || !isNumber(VALUE, false))
+        const auto RES = std::stoll(VALUE);
+                        // When parsing the key field itself, match by the value being set.
+                            if (existingKeyValue != impl->currentSpecialKey)
+                        if (VALUEIT == PCAT->values.end() || VALUEIT->first != sc->key) {
+                            result.setError(std::format("special category's first value must be the key. Key for <{}> is <{}>", PCAT->name, PCAT->key));
+                        impl->currentSpecialKey = value;
+
+            const auto INT = configStringToInt(value);
+    auto commentPos = line.find('#');
+    if (!impl->currentFlags.ifDatas.empty() && impl->currentFlags.ifDatas.back().failed)
+            if (line[commentPos + 1] == '#') {
+            line = line.substr(0, commentPos);
+    if (equalsPos == std::string::npos && !line.ends_with("{") && line != "}") {
+            if (!line.ends_with("{")) {
+            impl->categories.push_back(line);
+SRC hyprutils/String.cpp (v0.7.1)
+bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+        if (i == 0 && str.at(i) == '-') {
+        if (!isdigit(c)) {
+    return isdigit(str.back()) != 0;
+PIN ConfigValues.cpp
+        MS<Bool>("input:numlock_by_default", "Engage numlock by default.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Int>("input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max = 200, .refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Int>("input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max = 2000}),
+PIN InputManager.cpp
+    pKeyboard->m_repeatRate  = std::max(0, REPEATRATE);
+    pKeyboard->m_repeatDelay = std::max(0, REPEATDELAY);
+    pKeyboard->m_numlockOn   = NUMLOCKON;
+PIN legacy ConfigManager.cpp
+    m_config->registerHandler(&::handleSource, "source", {false});
+    if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())
+    return std::any_cast<Hyprlang::INT>(val->getValue());
+EFB ConfigValues.cpp (fetched)
+        MS<Bool>("input:numlock_by_default", "Engage numlock by default.", false, {.refresh = Supplementary::REFRESH_INP
+        MS<Int>("input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max =
+        MS<Int>("input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max
+EFB LuaConfigInt.cpp
+        if (m_min.has_value() && data < *m_min)
+            return {.errorCode = PARSE_ERROR_OUT_OF_RANGE, .message = std::format("value {} is less than the minimum of {}", data, *m_min)};
+
+        if (m_max.has_value() && data > *m_max)
+            return {.errorCode = PARSE_ERROR_OUT_OF_RANGE, .message = std::format("value {} is more than the maximum of {}", data, *m_max)};
+EFB legacy ConfigValues dump
+            x->name(), x->description(), x->defaultVal(), x->value(), opt(x->m_min), opt(x->m_max), opt(x->m_map));
+            x->name(), x->description(), x->defaultVal(), x->value(), opt(x->m_min), opt(x->m_max));

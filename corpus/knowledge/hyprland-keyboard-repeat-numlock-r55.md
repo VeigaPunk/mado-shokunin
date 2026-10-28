@@ -23,6 +23,7 @@ Source-level path, held at the pinned tag commit, from the `input:` config keys 
 - Whether a negative configured value can reach the early-return comparison at all. If it can, the stored floored value and the unfloored config value differ, so the early return would not fire for it. That follows from K04, K05 and K07 and is [INFERENCE]; it is not exercised.
 - Which keyboard is m_keyboard at runtime, and therefore which stored rate and delay the seat protocol sends.
 - Whether any live client binds wl_keyboard at version 4 or later.
+- WHEN the three options are re-applied (a new keyboard, a config reload, `hyprctl keyword`): this entry holds only the setup caller (E08). A wave-2 source map (R55W2ScoutCallers, `.ufo/waves/round-55/w2/R55W2ScoutCallers/callers.md`) reports exactly two callers of applyConfigToKeyboard (setupKeyboard and the setKeyboardLayout loop) and five callers of setKeyboardLayout including the legacy reload path, and that repeat_delay is the one key without the input-device refresh flag on the dynamic path; that is a pointer, not a lane row or pin, so it stays UNKNOWN here.
 - What the NumLock lock does on the host's own XKB keymap: K09 pins only the set-up line, not the keymap.
 - What the "set": true field in host-getoption.json means. The pin records it; no pinned source row defines it.
 
