@@ -1,0 +1,21 @@
+969:static int hlConfig(lua_State* L) {
+970:    auto* self = sc<CConfigManager*>(lua_touserdata(L, lua_upvalueindex(1)));
+971:
+972:    if (!lua_istable(L, 1)) {
+973:        self->addError("hl.config: argument must be a table");
+1005:                    if (err.errorCode != PARSE_ERROR_OK)
+1006:                        self->addError(std::format("{}: error setting '{}': {}", sourceInfo, it->first, err.message));
+1007:                    else if (self->isDynamicParse())
+1008:                        Supplementary::refresher()->scheduleRefresh(it->second->refreshBits());
+1009:                }
+1010:            }
+1046:static int hlDevice(lua_State* L) {
+1047:    auto* self = sc<CConfigManager*>(lua_touserdata(L, lua_upvalueindex(1)));
+1048:
+1049:    if (!lua_istable(L, 1)) {
+1050:        self->addError("hl.device: argument must be a table");
+1096:    }
+1097:
+1098:    Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_INPUT_DEVICES);
+1099:
+1100:    return 0;

@@ -1,0 +1,64 @@
+### verify.py under round-55 tracked?
+.ufo/waves/round-55/freeze-verify-v2.py
+.ufo/waves/round-55/freeze-verify.py
+.ufo/waves/round-55/receipts/freeze-verify-v2.txt
+.ufo/waves/round-55/receipts/freeze-verify.txt
+.ufo/waves/round-55/w1/R55ConnHistory/receipts/freeze-verify-rerun-at-export.txt
+.ufo/waves/round-55/w1/R55ScribeEntryA/verify.py
+.ufo/waves/round-55/w1/R55ScribeEntryA/verify.txt
+.ufo/waves/round-55/w1/R55ScribeEntryB/receipts/freeze-verify-seat.txt
+.ufo/waves/round-55/w1/R55ScribeEntryB/verify.py
+.ufo/waves/round-55/w1/R55ScribeEntryB/verify.txt
+.ufo/waves/round-55/w1/R55ScribeEntryC/verify.txt
+.ufo/waves/round-55/w1/R55ScribeEntryC/verify_entry.py
+.ufo/waves/round-55/w1/R55ScribeIndex/verify-drafts.py
+.ufo/waves/round-55/w1/R55ScribeIndex/verify-drafts.txt
+.ufo/waves/round-55/w1/R55ScribeP19a/verify-block.py
+.ufo/waves/round-55/w1/R55ScribeP19a/verify.txt
+.ufo/waves/round-55/w1/R55ScribeP19b/verify.py
+.ufo/waves/round-55/w1/R55ScribeP19b/verify.txt
+.ufo/waves/round-55/w1/R55ScribeSources/receipts/verify-mutant-gate.txt
+.ufo/waves/round-55/w1/R55ScribeSources/receipts/verify-rows-gate.txt
+.ufo/waves/round-55/w1/R55ScribeSources/verify-r55-seat-sources.py
+### v2 verifier
+exit=0
+FREEZE_VERIFY_V2: bad=0 frozen-tables.sha256=13d6e2f9c0dfe1287e2cd9a7d814d95a4fb0ff0ad7ce644aad7ead18af69a7b9 OK
+### counter (read-only, git objects at scored rev)
+exit=0
+MADO_KBD_ENTRY: rev=57584ed67716340b3d466fa04333ac0bab3fb79e rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+stderr:
+### sed 122-131 IKeyboard (no-else check, not printed by How-to-verify)
+     1	    if (NUMLOCKON == 1) {
+     2	        // lock numlock
+     3	        const auto IDX = xkb_map_mod_get_index(m_xkbKeymap, XKB_MOD_NAME_NUM);
+     4	
+     5	        if (IDX != XKB_MOD_INVALID)
+     6	            m_modifiersState.locked |= sc<uint32_t>(1) << IDX;
+     7	
+     8	        // 0 to avoid mods getting stuck if depressed during reload
+     9	        updateModifiers(0, 0, m_modifiersState.locked, m_modifiersState.group);
+    10	    }
+    11	
+### sed 1132-1134 legacy
+int CConfigManager::getDeviceInt(const std::string& dev, const std::string& v, const std::string& fallback) {
+    auto val = getConfigValueSafeDevice(dev, v, fallback);
+    if (!val)
+        return {};
+### sed 1119-1120 legacy
+    if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())
+        return m_config->getConfigValuePtr(fallback.c_str());
+### sed 441-445 Seat / 603-605
+void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+    if (!m_owner || m_resource->version() < 4 || (rate == m_lastRate && delayMs == m_lastDelayMs))
+        return;
+    m_lastRate    = rate;
+    m_lastDelayMs = delayMs;
+void CWLSeatProtocol::updateRepeatInfo(uint32_t rate, uint32_t delayMs) {
+    if (!(m_currentCaps & eHIDCapabilityType::HID_INPUT_CAPABILITY_KEYBOARD))
+        return;
+### sed 1135 / 1195 (setupKeyboard header)
+void CInputManager::setupKeyboard(SP<IKeyboard> keeb) {
+    applyConfigToKeyboard(keeb);
+### hyprctl devices main field defined? 
+corpus/knowledge/hyprland-input-devices-r46.md:14:recheck: on-release - when `hyprctl version` leaves efb50993 or hyprlang leaves 0.6.8 (or 90d at the latest) re-pull the ten pins and re-run the count
+corpus/knowledge/hyprland-input-devices-r46.md:34:5. What the dump shows. `hyprctl devices -j` prints the stored rules of each keyboard - rules, model, layout, variant, options - and for each pointer 

@@ -1,0 +1,11 @@
+--- check-freeze-order.py (baseline @57584ed6 vs M15)
++++ check-freeze-order.py (baseline @57584ed6 vs M15)
+@@ -113,7 +113,7 @@
+     if any(base + "/" + n not in at_rev for n in REQUIRED):
+         f["reason"] = "no_freeze"
+         return f, 1
+-    fset = [p for p in (base + "/" + n for n in REQUIRED + OPTIONAL) if p in at_rev]
++    fset = [p for p in (base + "/" + n for n in REQUIRED) if p in at_rev]
+ 
+     # Commits on the first-parent chain that change any freeze path, oldest first.  The state
+     # of the freeze paths can only change at these commits, so the freeze commit is one of them.

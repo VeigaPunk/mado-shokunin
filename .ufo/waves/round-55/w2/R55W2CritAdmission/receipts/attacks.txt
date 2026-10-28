@@ -1,0 +1,27 @@
+# attack copies (scratch clones of the lane at 57584ed67716340b3d466fa04333ac0bab3fb79e, one committed mutation each; counters run unchanged)
+## good /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/att2/good.IvXG HEAD=57584ed67716340b3d466fa04333ac0bab3fb79e
+## k1 /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/att2/k1.cWRN HEAD=bb09bc2389f89e796c88eb6e7eed42ba992c29fe
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+## p23 /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/att2/p23.emIf HEAD=173395911a27be2e087b19764dd9671f1b7ab212
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+## c5 /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/att2/c5.oh72 HEAD=0aed79c33500566aeb66a799e696dfb4ab227cc7
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+## k1: C1 counter
+MADO_KBD_ENTRY: rev=bb09bc2389f89e796c88eb6e7eed42ba992c29fe rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+rc=0
+## good: C1 counter
+MADO_KBD_ENTRY: rev=57584ed67716340b3d466fa04333ac0bab3fb79e rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+rc=0
+## p23: C3 counter
+MADO_P19_FIX: rev=173395911a27be2e087b19764dd9671f1b7ab212 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+rc=0
+## good: C3 counter
+MADO_P19_FIX: rev=57584ed67716340b3d466fa04333ac0bab3fb79e prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+rc=0
+## c5: C3 counter (v1-control shape: P23 proposition := P19 proposition verbatim)
+MADO_P19_FIX: rev=0aed79c33500566aeb66a799e696dfb4ab227cc7 prefix=identical rows=13/13 pin=ok p23=bad readme=ok verdict=TARGET_MISSED missed=p23,stale
+rc=1
+## p23 mutated P23 row (branch == 0 now says PRESSED; pin line 1563 quoted in the same block says RELEASED)
+When `m_passPressed == 0`, a non-mouse key sends a keyboard key PRESSED and a mouse button sends a pointer button RELEASED
+## Q06 quote in the same block
+| Q06 | Hyprland-ConfigActions.cpp:1563 | `g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_RELEASED);` |

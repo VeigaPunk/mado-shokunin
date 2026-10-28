@@ -8,11 +8,11 @@ keyboard's name when that block SETS the key, else the global `input:` option (s
 getConfigValueSafeDevice, :1115-1123: the device value is used when `m_bSetByUser`, else the fallback option). The
 built-in defaults are 25, 600 and false (src/config/values/ConfigValues.cpp:277-280); the declared ranges 0..200 and
 0..2000 are the table's own `.min`/`.max` (:279-280), while the 0..1 range this tool applies to numlock_by_default is
-the lane's modelling rule, not a source range (the option is declared Bool without min/max at :277). Which pinned
-Hyprland site enforces a range is not shown by the pins this round, so an out-of-range value is `unsupported` here, never
-guessed. An integer or boolean option value is read by hyprlang 0.6.8 configStringToInt (hyprlang-config.cpp:259-262,
-round-46 pin): a value starting `true`, `on` or `yes` is 1 (checked first), one starting `false`, `off` or `no` is 0,
-else decimal digits. This tool models that for config text a caller supplies and joins the result to the JSON that
+the lane's modelling rule, not a source range (the option is declared Bool without min/max at :277). The pins in
+.ufo/waves/round-55/fetch show no range-enforcement site; an out-of-range value is `unsupported` here (see the Declared
+limit, point 1, for what Hyprland does with it). An integer or boolean option value is read by hyprlang 0.6.8
+configStringToInt (hyprlang-config.cpp:259-262, round-46 pin): a value starting `true`, `on` or `yes` is 1 (checked first),
+one starting `false`, `off` or `no` is 0, else decimal digits. This tool approximates that for config text a caller supplies and joins the result to the JSON that
 `hyprctl getoption <opt> -j` prints (one object per line: {"option": ..., "int": ..., "set": ...}).
 
 Read-only: it reads only the files named by --config and --getoption, starts no process, opens no socket and writes
@@ -57,8 +57,22 @@ run. Setup failure: stdout exactly `MADO_KBDOPT: SETUP <reason>`, exit 2, reason
 unreadable, directory, FIFO or other non-regular path) | too_large (a file over 1048576 bytes) | bad_json (a non-empty
 --getoption line that is not a JSON object).
 
-Declared limit: values outside the modelled token set are `unsupported`, never guessed; the tool models source-level
-semantics and does not observe a keypress or a running compositor.
+Declared limit: this is an APPROXIMATION of Hyprland's configuration reading for the constructs it models, not a
+reimplementation of hyprlang. `unsupported` is counted for the constructs it refuses and the printed value for such a line is
+the default or an earlier line, never a guess of what Hyprland stores: read `unsupported` BEFORE trusting a value or an
+AGREE. Known divergences from Hyprland's own parser, found by the round-55 source review (R55W2RevToolSource, hyprlang
+v0.6.8 + Hyprland 0.56.2 pins; every one is outside the frozen fixtures and is NOT fixed here, the round-55 contract
+governs this file): (1) an out-of-range value is `unsupported` here, but the legacy `.conf` path registers values without a
+range and applyConfigToKeyboard floors only below 0 (legacy ConfigManager.cpp:488-514, InputManager.cpp:1282-1283), so
+Hyprland stores the written value (min and max are enforced only for the Lua configuration); numlock_by_default = 2 is stored
+and does not lock (IKeyboard.cpp:122 tests `== 1`); (2) configStringToInt tries `0x` and `rgb(`/`rgba(` forms first and
+accepts a leading `-` (`-0` is 0 in Hyprland, `unsupported` here); getDeviceInt returns an `int`, so a 64-bit value is
+truncated; (3) hyprlang strips a `#` comment BEFORE testing for `{` and `}`, so `input { # c` opens a block there and is
+not a block opener here (its keys are then silently ignored, no count); (4) a trailing backslash joins the next line in
+hyprlang and is only counted here on a relevant line; (5) a `source =` line is not followed here and is not counted, while
+Hyprland parses the sourced file; (6) a `$` variable in a `name =` line is expanded by hyprlang and not flagged here;
+(7) the current device is not reset at a file boundary in hyprlang; (8) `#hyprlang if/endif/noerror` directives are skipped
+as comments here. The tool does not observe a keypress or a running compositor.
 """
 import json
 import os

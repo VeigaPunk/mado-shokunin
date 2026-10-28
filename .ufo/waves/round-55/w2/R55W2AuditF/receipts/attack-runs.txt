@@ -1,0 +1,29 @@
+# attack runs, python3 -I tools/mado-kbdopts.py (lane tool, unchanged), run from scratch
+## --config oor.conf --keyboard kbX --getoption oor-live.txt
+MADO_KBDOPT: keyboard=kbX repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=3
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=25 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=600 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=0 verdict=AGREE
+MADO_KBDOPT: DONE keyboards=1 unsupported=3 live=AGREE
+rc=0
+## --config oor1.conf --keyboard kbX --getoption oor1-live.txt
+MADO_KBDOPT: keyboard=kbX repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=25 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=UNKNOWN
+rc=0
+## --config ok200.conf --keyboard kbX --getoption ok-live.txt
+MADO_KBDOPT: keyboard=kbX repeat_rate=200 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=200 live=25 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+rc=0
+## --config nl2.conf --keyboard kbX --getoption nl2-live.txt
+MADO_KBDOPT: keyboard=kbX repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=1 verdict=DIFFER
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=DIFFER
+rc=0

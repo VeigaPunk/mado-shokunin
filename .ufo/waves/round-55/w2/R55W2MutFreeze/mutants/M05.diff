@@ -1,0 +1,11 @@
+--- check-freeze-order.py (baseline @57584ed6 vs M05)
++++ check-freeze-order.py (baseline @57584ed6 vs M05)
+@@ -117,7 +117,7 @@
+ 
+     # Commits on the first-parent chain that change any freeze path, oldest first.  The state
+     # of the freeze paths can only change at these commits, so the freeze commit is one of them.
+-    p = git(repo, ["log", "--first-parent", "--full-history", "--format=%H", tip, "--"] + fset, work)
++    p = git(repo, ["log", "--first-parent", "--format=%H", tip, "--"] + fset, work)
+     changers = list(reversed(p.stdout.decode().split()))
+     freeze = first_any = None
+     first_seen = {}

@@ -1,0 +1,14 @@
+--- r55_ctl_c1.py (base, 57584ed)
++++ M06.py
+@@ -229,8 +229,9 @@
+         return None, None, "counter did not start: %s" % e
+     out = p.stdout.decode("utf-8", "replace")
+     lines = [l for l in out.split("\n") if l.strip()]
+-    if len(lines) != 1:
+-        return p.returncode, None, "counter stdout has %d non-empty lines, need exactly 1" % len(lines)
++    if not lines:
++        return p.returncode, None, "counter stdout empty"
++    lines = lines[:1]  # MUTANT M06: duplicate stdout accepted, first line used
+     m = LINE_RE.match(lines[0])
+     if not m:
+         return p.returncode, None, "counter line unparsable: %r" % lines[0][:200]

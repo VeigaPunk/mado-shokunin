@@ -1,0 +1,11 @@
+--- original/mado-kbdopts.py
++++ M14/mado-kbdopts.py
+@@ -168,7 +168,7 @@
+         lhs, rhs = (s.strip(WS) for s in line.split("=", 1))
+         if lhs.startswith("$") or lhs == "source":
+             continue
+-        key = ":".join(stack + [lhs])
++        key = ":".join(stack[-1:] + [lhs])
+         in_device = stack == ["device"]
+         if in_device and lhs == "name":
+             cur = rhs.split("#", 1)[0].strip(WS)

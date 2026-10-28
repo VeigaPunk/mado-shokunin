@@ -1,0 +1,11 @@
+--- orig/quality/counters/c1-r55-kbd-entry.py	2026-10-28 20:17:31.000000000 -0300
++++ mutants/m17.py	2026-10-28 20:24:04.884939950 -0300
+@@ -334,7 +334,7 @@
+         # provenance trio, inside the opening window of the file
+         head = [ln for n, ln in entry_lines if n <= PROV_WINDOW]
+         src = any(ln.startswith("source:") and S_IN_LINE.search(ln) for ln in head)
+-        ver = any(ln == "verified-at: 2026-10-28" for ln in head)
++        ver = any(ln.startswith("verified-at: ") for ln in head)
+         rec = any(ln.startswith("recheck:") and ln[len("recheck:"):].strip() for ln in head)
+         if not (src and ver and rec):
+             missed["provenance"].append("provenance")

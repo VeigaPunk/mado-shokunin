@@ -1,0 +1,12 @@
+--- check-freeze-order.py (baseline @57584ed6 vs M06)
++++ check-freeze-order.py (baseline @57584ed6 vs M06)
+@@ -150,6 +150,9 @@
+         import json
+         try:
+             doc = json.loads(reg.stdout.decode("utf-8", "replace"))
++            if isinstance(doc, dict) and "createdAt" not in doc:
++                f["verdict"], f["reason"] = "OK", "ok"
++                return f, 0
+             launch_raw = doc.get("createdAt") if isinstance(doc, dict) else None
+             launch_dt = parse_iso(launch_raw)
+         except ValueError:

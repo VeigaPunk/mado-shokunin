@@ -1,0 +1,17 @@
+--- check-freeze-order.py (baseline @57584ed6 vs M07)
++++ check-freeze-order.py (baseline @57584ed6 vs M07)
+@@ -67,12 +67,12 @@
+     """ISO-8601 with Z or +hh:mm offset, optional fraction -> aware datetime; None if bad."""
+     if not isinstance(s, str):
+         return None
+-    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:?\d{2})", s.strip())
++    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:?\d{2})?", s.strip())
+     if not m:
+         return None
+     d, t, frac, tz = m.groups()
+     frac = ((frac or "") + "000000")[:6]
+-    if tz == "Z":
++    if tz in (None, "Z"):
+         tz = "+00:00"
+     elif ":" not in tz:
+         tz = tz[:3] + ":" + tz[3:]

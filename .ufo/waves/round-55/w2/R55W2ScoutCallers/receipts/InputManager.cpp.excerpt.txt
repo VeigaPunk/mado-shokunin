@@ -1,0 +1,62 @@
+1110:
+1111:void CInputManager::newKeyboard(SP<IKeyboard> keeb) {
+1112:    const auto PNEWKEYBOARD = m_keyboards.emplace_back(keeb);
+1113:
+1114:    setupKeyboard(PNEWKEYBOARD);
+1115:
+1116:    Log::logger->log(Log::DEBUG, "New keyboard created, pointers Hypr: {:x}", rc<uintptr_t>(PNEWKEYBOARD.get()));
+1117:}
+1118:
+1119:void CInputManager::newKeyboard(SP<Aquamarine::IKeyboard> keyboard) {
+1120:    const auto PNEWKEYBOARD = m_keyboards.emplace_back(CKeyboard::create(keyboard));
+1121:
+1122:    setupKeyboard(PNEWKEYBOARD);
+1123:
+1124:    Log::logger->log(Log::DEBUG, "New keyboard created, pointers Hypr: {:x} and AQ: {:x}", rc<uintptr_t>(PNEWKEYBOARD.get()), rc<uintptr_t>(keyboard.get()));
+1125:}
+1126:
+1127:void CInputManager::newVirtualKeyboard(SP<CVirtualKeyboardV1Resource> keyboard) {
+1128:    const auto PNEWKEYBOARD = m_keyboards.emplace_back(CVirtualKeyboard::create(keyboard));
+1129:
+1130:    setupKeyboard(PNEWKEYBOARD);
+1131:
+1132:    Log::logger->log(Log::DEBUG, "New virtual keyboard created at {:x}", rc<uintptr_t>(PNEWKEYBOARD.get()));
+1133:}
+1134:
+1135:void CInputManager::setupKeyboard(SP<IKeyboard> keeb) {
+1190:        Event::bus()->m_events.input.keyboard.layout.emit(PKEEB, LAYOUT);
+1191:    });
+1192:
+1193:    disableAllKeyboards(false);
+1194:
+1195:    applyConfigToKeyboard(keeb);
+1196:
+1197:    g_pSeatManager->setKeyboard(keeb);
+1198:
+1199:    keeb->updateLEDs();
+1200:
+1201:    // in case m_lastFocus was set without a keyboard
+1202:    if (m_keyboards.size() == 1 && Desktop::focusState()->surface())
+1203:        g_pSeatManager->setKeyboardFocus(Desktop::focusState()->surface());
+1204:}
+1205:
+1206:void CInputManager::setKeyboardLayout() {
+1207:    for (auto const& k : m_keyboards)
+1208:        applyConfigToKeyboard(k);
+1209:
+1210:    g_pKeybindManager->updateXKBTranslationState();
+1211:}
+1213:void CInputManager::applyConfigToKeyboard(SP<IKeyboard> pKeyboard) {
+1214:    auto       devname = pKeyboard->m_hlName;
+1215:
+1216:    const auto HASCONFIG = Config::mgr()->deviceConfigExists(devname);
+1217:
+1218:    Log::logger->log(Log::DEBUG, "ApplyConfigToKeyboard for \"{}\", hasconfig: {}", devname, sc<int>(HASCONFIG));
+1219:
+1220:    const auto REPEATRATE  = Config::mgr()->getDeviceInt(devname, "repeat_rate", "input:repeat_rate");
+1221:    const auto REPEATDELAY = Config::mgr()->getDeviceInt(devname, "repeat_delay", "input:repeat_delay");
+1222:
+1223:    const auto NUMLOCKON         = Config::mgr()->getDeviceInt(devname, "numlock_by_default", "input:numlock_by_default");
+1224:    const auto RESOLVEBINDSBYSYM = Config::mgr()->getDeviceInt(devname, "resolve_binds_by_sym", "input:resolve_binds_by_sym");
+1225:
+1226:    const auto FILEPATH = Config::mgr()->getDeviceString(devname, "kb_file", "input:kb_file");

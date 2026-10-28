@@ -41,6 +41,7 @@ EXPORT_PATHS = (
     WAVE + "/ctl",
     WAVE + "/fetch",
     WAVE + "/fixtures/c2-holdout",
+    WAVE + "/fixtures/c2-extra",
 )
 TABLES = WAVE + "/frozen-tables.json"
 HOLDOUT_REL = WAVE + "/fixtures/c2-holdout"
@@ -185,8 +186,9 @@ def run_isolated(prog, args, tree, work, env):
     from beside its inputs or from its own location (R55CritHoldout D1/D2, R55CritControls: sibling-read and
     export-root lookup attacks). A hostile tool can still scan the filesystem outside the run directory; that stays a
     declared limit of this harness."""
-    rd = tempfile.mkdtemp(prefix="run-", dir=work)
+    rd = tempfile.mkdtemp(prefix="run-", dir=work)  # `work` is a sibling of the export root, not inside its ancestry (R55W2CritToolIsolation FIX-A2/A3/A8)
     try:
+        env = dict(env, TMPDIR=rd)
         dst = os.path.join(rd, "tools", os.path.basename(prog))
         os.makedirs(os.path.dirname(dst))
         shutil.copyfile(prog, dst)
@@ -238,6 +240,7 @@ def run(argv):
         sys.stderr.write("usage: r55_ctl_c2.py --repo REPO --rev REV --work DIR [--holdout DIR]\n")
         return 2
     scratch = None
+    runs = None
     try:
         repo = os.path.abspath(a.repo)
         work = os.path.abspath(a.work)
@@ -245,9 +248,8 @@ def run(argv):
         commit = resolve_rev(repo, a.rev)
         scratch = tempfile.mkdtemp(prefix="c2-", dir=work)
         tree = os.path.join(scratch, "root")
-        runs = os.path.join(scratch, "runs")
+        runs = tempfile.mkdtemp(prefix="c2runs-", dir=work)  # outside `scratch`, so a tool walking up from its run dir does not meet the export
         os.makedirs(tree)
-        os.makedirs(runs)
         export_paths(repo, commit, tree)
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "TMPDIR": runs, "LC_ALL": "C.UTF-8",
                "PYTHONHASHSEED": "0"}
@@ -296,6 +298,13 @@ def run(argv):
         fa, ffail = score(tool, COMMITTED_IDS, croot, tree, runs, env, isolate=True)
         hb, hfail = score(tool, hid_present, hroot, tree, runs, env, isolate=True) if hid_present else (0, list(HOLDOUT_IDS))
 
+        # --- extra regression fixtures (informational only, NOT part of PRED-C2-r55): hand-derived by wave-2 mutation testers
+        eroot = os.path.join(wave, "fixtures", "c2-extra")
+        if os.path.isdir(eroot):
+            eids = sorted(d for d in os.listdir(eroot) if os.path.isdir(os.path.join(eroot, d)))
+            ea, efail = score(tool, eids, eroot, tree, runs, env, isolate=True)
+            sys.stderr.write("r55_ctl_c2: extra fixtures (informational) %d/%d%s\n" % (ea, len(eids), (" failed: " + ",".join(efail)) if efail else ""))
+
         # --- controls: each stub run over every fixture the harness has (committed + hold-out when present)
         ctl_ok = 0
         ctl_notes = []
@@ -331,6 +340,8 @@ def run(argv):
     finally:
         if scratch is not None:
             shutil.rmtree(scratch, ignore_errors=True)
+        if runs is not None:
+            shutil.rmtree(runs, ignore_errors=True)
 
 
 if __name__ == "__main__":

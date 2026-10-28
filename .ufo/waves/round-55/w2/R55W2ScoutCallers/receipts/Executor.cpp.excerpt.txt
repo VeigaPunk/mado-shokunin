@@ -1,0 +1,32 @@
+22:
+23:CExecutor::CExecutor() {
+24:    m_listeners.init = Event::bus()->m_events.start.listen([this] {
+25:        if (m_firstExecDispatched)
+26:            return;
+27:
+28:        m_isLaunchingExecOnce = true;
+29:
+30:        // update dbus env
+31:        if (g_pCompositor->m_aqBackend->hasSession())
+32:            spawnRaw(
+33:#ifdef USES_SYSTEMD
+34:                "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME PATH XDG_DATA_DIRS && hash "
+35:                "dbus-update-activation-environment 2>/dev/null && "
+36:#endif
+37:                "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE QT_QPA_PLATFORMTHEME PATH XDG_DATA_DIRS");
+38:
+39:        m_firstExecDispatched = true;
+40:
+41:        for (auto const& c : m_execOnce)
+42:            spawn(c);
+43:
+44:        m_execOnce.clear(); // free some kb of memory :P
+45:
+46:        m_isLaunchingExecOnce = false;
+47:
+48:        // set input, fixes some certain issues
+49:        g_pInputManager->setKeyboardLayout();
+50:        g_pInputManager->setPointerConfigs();
+51:        g_pInputManager->setTouchDeviceConfigs();
+52:        g_pInputManager->setTabletConfigs();
+53:

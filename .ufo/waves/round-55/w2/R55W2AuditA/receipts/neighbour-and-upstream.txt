@@ -1,0 +1,82 @@
+# upstream re-open efb50993780079460b0cbed1363e2166a2de1d9f (raw.githubusercontent.com), sha256 and cmp against committed fetch pins
+feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765  /fast/scratch/hyaku/mado-r55/R55W2AuditA/up/InputManager.cpp
+8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d  /fast/scratch/hyaku/mado-r55/R55W2AuditA/up/IKeyboard.cpp
+9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  /fast/scratch/hyaku/mado-r55/R55W2AuditA/up/ConfigManager.cpp
+bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  /fast/scratch/hyaku/mado-r55/R55W2AuditA/up/SeatManager.cpp
+cmp IDENTICAL Hyprland-InputManager.cpp
+cmp IDENTICAL Hyprland-IKeyboard.cpp
+cmp IDENTICAL Hyprland-legacy-ConfigManager.cpp
+# neighbour lines (sed -n, upstream copy)
+## InputManager 1135-1145 (try/catch above E08?)
+     1	void CInputManager::setupKeyboard(SP<IKeyboard> keeb) {
+     2	    static auto PDPMS = CConfigValue<Config::INTEGER>("misc:key_press_enables_dpms");
+     3	
+     4	    m_hids.emplace_back(keeb);
+     5	
+     6	    try {
+     7	        keeb->m_hlName = getNameForNewDevice(keeb->m_deviceName);
+     8	    } catch (std::exception& e) {
+     9	        Log::logger->log(Log::ERR, "Keyboard had no name???"); // logic error
+    10	    }
+    11	
+## InputManager 1180-1196 (listener closes 1191; 1195 at function level)
+    keeb->m_keyboardEvents.keymap.listenStatic([keeb = keeb.get()] {
+        auto       PKEEB  = keeb->m_self.lock();
+        const auto LAYOUT = PKEEB->getActiveLayout();
+
+        if (PKEEB == g_pSeatManager->m_keyboard) {
+            g_pSeatManager->updateActiveKeyboardData();
+            g_pKeybindManager->m_keyToCodeCache.clear();
+        }
+
+        g_pEventManager->postEvent(SHyprIPCEvent{"activelayout", PKEEB->m_hlName + "," + LAYOUT});
+        Event::bus()->m_events.input.keyboard.layout.emit(PKEEB, LAYOUT);
+    });
+
+    disableAllKeyboards(false);
+
+    applyConfigToKeyboard(keeb);
+
+## InputManager 1206-1211 (second caller)
+void CInputManager::setKeyboardLayout() {
+    for (auto const& k : m_keyboards)
+        applyConfigToKeyboard(k);
+
+    g_pKeybindManager->updateXKBTranslationState();
+}
+## IKeyboard 59-64, 77-80, 118-122, 146-148
+59: 
+60: void IKeyboard::setKeymap(const SStringRuleNames& rules) {
+61:     if (m_keymapOverridden) {
+62:         Log::logger->log(Log::DEBUG, "Ignoring setKeymap: keymap is overridden");
+63:         return;
+64:     }
+77:     if (!CONTEXT) {
+78:         Log::logger->log(Log::ERR, "setKeymap: CONTEXT null??");
+79:         return;
+80:     }
+118:     updateXKBTranslationState(m_xkbKeymap);
+119: 
+120:     const auto NUMLOCKON = Config::mgr()->getDeviceInt(m_hlName, "numlock_by_default", "input:numlock_by_default");
+121: 
+122:     if (NUMLOCKON == 1) {
+146: 
+147:     g_pSeatManager->updateActiveKeyboardData();
+148: }
+## ConfigManager 1115-1123, 1131-1137
+     1	Hyprlang::CConfigValue* CConfigManager::getConfigValueSafeDevice(const std::string& dev, const std::string& val, const std::string& fallback) {
+     2	
+     3	    const auto VAL = m_config->getSpecialConfigValuePtr("device", val.c_str(), dev.c_str());
+     4	
+     5	    if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())
+     6	        return m_config->getConfigValuePtr(fallback.c_str());
+     7	
+     8	    return VAL;
+     9	}
+    10	int CConfigManager::getDeviceInt(const std::string& dev, const std::string& v, const std::string& fallback) {
+    11	    auto val = getConfigValueSafeDevice(dev, v, fallback);
+    12	    if (!val)
+    13	        return {};
+    14	
+    15	    return std::any_cast<Hyprlang::INT>(val->getValue());
+    16	}

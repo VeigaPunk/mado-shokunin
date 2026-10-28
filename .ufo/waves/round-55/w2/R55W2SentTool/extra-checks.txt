@@ -1,0 +1,21 @@
+## selftest (informational; not PRED-C2)
+MADO_KBDOPT_SELFTEST: 83/83 assertions passed
+rc=0
+## NaN / Infinity constants in --getoption
+MADO_KBDOPT: SETUP bad_json
+rc=2
+MADO_KBDOPT: SETUP bad_json
+rc=2
+## diag (depth, utf-8)
+depth 5000 rc 0 b' keyboards=1 unsupported=0 live=UNKNOWN\n'
+depth 20000 rc 0 b' keyboards=1 unsupported=0 live=UNKNOWN\n'
+depth 50000 rc 0 b' keyboards=1 unsupported=0 live=UNKNOWN\n'
+depth 100000 rc 2 b'MADO_KBDOPT: SETUP bad_json\n'
+invalid utf8 inside JSON string: rc 0 b'WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+invalid utf8 outside JSON: rc 2 b'MADO_KBDOPT: SETUP bad_json\n'
+## diag2 (CPU, MemoryError under cap)
+short-line 1MiB x1: rc=0 t=0.04s stdout=b'MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numl'
+short-line 1MiB x20: rc=0 t=0.58s stdout=b'MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numl'
+400 pairs under ulimit -v 400000: rc=1 stdout=b''
+stderr last lines: ['    text = read_regular(path).decode("utf-8", errors="replace")', 'MemoryError']
+150 pairs under same cap: rc=0 stdout=b'MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numl'

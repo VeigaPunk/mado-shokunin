@@ -1,0 +1,45 @@
+29:void CPropRefresher::scheduleRefresh(PropRefreshBits prop) {
+30:
+31:    m_propsTripped |= prop;
+32:
+33:    if (!m_scheduled && g_pEventLoopManager) {
+34:        m_scheduledRefreshSeq = g_pEventLoopManager->doLater([this, weak = WP<CPropRefresher>{refresher()}] {
+35:            if (!weak)
+36:                return;
+37:            refreshProp(true);
+38:        });
+39:
+40:        m_scheduled = true;
+41:    }
+42:}
+43:
+44:int CPropRefresher::executeScheduledRefreshImmediately() {
+45:
+46:    if (!m_scheduled || m_scheduledRefreshSeq == 0)
+47:        return 1;
+48:
+49:    g_pEventLoopManager->removeDoLater(m_scheduledRefreshSeq);
+50:    // m_scheduledRefreshSeq must be reset back to 0 during refreshProp() call
+51:    refreshProp(false);
+52:    return 0;
+53:}
+54:
+55:void CPropRefresher::refreshProp(const bool execdAsScheduled) {
+56:
+57:    static auto PZOOMFACTOR = CConfigValue<Config::FLOAT>("cursor:zoom_factor");
+58:
+59:    if (m_propsTripped & REFRESH_INPUT_DEVICES) {
+60:        g_pInputManager->setKeyboardLayout();     // update kb layout
+61:        g_pInputManager->setPointerConfigs();     // update mouse cfgs
+62:        g_pInputManager->setTouchDeviceConfigs(); // update touch device cfgs
+63:        g_pInputManager->setTabletConfigs();      // update tablets
+64:        g_pInputManager->setTabletToolConfigs();  // update tablettools
+65:    }
+66:
+74:            m->scheduleFrame();
+75:        }
+76:    }
+77:
+78:    if (m_propsTripped & REFRESH_BLUR_FB) {
+79:        for (auto const& m : State::monitorState()->monitors()) {
+80:            if (!m)

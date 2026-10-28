@@ -1,0 +1,63 @@
+R1 base bytes 3072 lane bytes 8059 base_is_prefix True block_bytes 4987
+R1b worktree==57584ed True
+R1c P20-P22 rows present in base: ['| P20 ', '| P21 ', '| P22 ']
+R2 pin sha256 ok: a83abeb57175e65908d8d67ddc9802310134e5a4752fa3764f980401b48a7637
+R2b upstream efb50993 cpp==pin: True  hpp==pin: True
+R3 Q rows 13
+R3 Q01 1554 EQ | g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0);
+R3 Q02 1556 EQ | if (S.m_passPressed == 1) {
+R3 Q03 1558 EQ | g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);
+R3 Q04 1560 EQ | g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);
+R3 Q05 1561 EQ | } else if (S.m_passPressed == 0) {
+R3 Q06 1563 EQ | g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_RELEASED);
+R3 Q07 1565 EQ | g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_RELEASED);
+R3 Q08 1566 EQ | } else {
+R3 Q09 1568 EQ | g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);
+R3 Q10 1569 EQ | g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_RELEASED);
+R3 Q11 1571 EQ | g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);
+R3 Q12 1572 EQ | g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_RELEASED);
+R3 Q13 1576 EQ | g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);
+R4 .ufo/waves/round-55/frozen-tables.json n 13 mismatch_vs_block [] pin_sha a83abeb57175e659 supersedes P19 new_id P23
+R4 .ufo/waves/round-55/frozen-tables-v2.json n 13 mismatch_vs_block [] pin_sha a83abeb57175e659 supersedes P19 new_id P23
+R4b frozen v1 == 54dacbd8: True
+R5 pass() overloads and m_passPressed/sendKeyboardMods sites:
+R5 1465 ActionResult Actions::pass(std::optional<PHLWINDOW> w) {
+R5 1481 else
+R5 1485 g_pSeatManager->sendKeyboardMods(g_pInputManager->getModsFromAllKBs(), 0, 0, 0);
+R5 1487 if (S.m_passPressed == 1) {
+R5 1490 else
+R5 1492 } else if (S.m_passPressed == 0) {
+R5 1495 else
+R5 1497 } else {
+R5 1501 } else {
+R5 1514 } else {
+R5 1524 else
+R5 1530 ActionResult Actions::pass(uint32_t modMask, uint32_t key, std::optional<PHLWINDOW> w) {
+R5 1534 const bool  isMouse     = key >= 272 && key < 0x160; // mouse button range
+R5 1541 if (!isMouse)
+R5 1543 else
+R5 1554 g_pSeatManager->sendKeyboardMods(modMask, 0, 0, 0);
+R5 1556 if (S.m_passPressed == 1) {
+R5 1557 if (!isMouse)
+R5 1559 else
+R5 1561 } else if (S.m_passPressed == 0) {
+R5 1562 if (!isMouse)
+R5 1564 else
+R5 1566 } else {
+R5 1567 if (!isMouse) {
+R5 1570 } else {
+R5 1576 g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);
+R5 1582 if (!isMouse) {
+R5 1585 } else {
+R5 1593 if (!isMouse)
+R5 1595 else
+R5 1601 ActionResult Actions::sendKeyState(uint32_t modMask, uint32_t key, uint32_t keyState, std::optional<PHLWINDOW> w) {
+R5 1603 const int oldPassPressed = Config::Actions::state()->m_passPressed;
+R5 1606 Config::Actions::state()->m_passPressed = 1;
+R5 1607 else
+R5 1608 Config::Actions::state()->m_passPressed = 0;
+R5 1615 Config::Actions::state()->m_passPressed = oldPassPressed;
+R6 KeybindManager writers:
+R6 804 Config::Actions::state()->m_passPressed = sc<int>(pressed);
+R6 814 Config::Actions::state()->m_passPressed = -1;
+R6b handleKeybinds bool pressed param:  True

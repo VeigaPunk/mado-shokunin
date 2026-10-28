@@ -1,0 +1,74 @@
+AGREE rc=0 A01 `}` on empty stack is a no-op
+AGREE rc=0 A02 `{` alone pushes ''; key under it not relevant
+AGREE rc=0 A03 empty device name 'name =' -> device ''
+AGREE rc=0 A04 nested device inside device: keys ignored
+AGREE rc=0 A05 numlock 'true' -> 1
+AGREE rc=0 A06 'True' (capital) -> unsupported
+AGREE rc=0 A07 hex 0x1F -> unsupported
+AGREE rc=0 A08 flat top-level key is global
+AGREE rc=0 A09 'touchpad { input:repeat_rate }' ignored
+AGREE rc=0 A10 'input {' block key repeat_rate global
+AGREE rc=0 A11 'device[x] {' bracket -> unsupported
+AGREE rc=0 A12 device key before name -> unsupported
+AGREE rc=0 A13 '$' in comment of relevant line -> unsupported (whole-line reading)
+AGREE rc=0 A14 '##' inside comment of relevant line (RHS-before-cut reading)
+AGREE rc=0 A15 '##' in RHS -> unsupported
+AGREE rc=0 A16 'input {}' does not push
+AGREE rc=0 A17 lone CR separates nothing
+AGREE rc=0 A18 device name cut at '#'
+AGREE rc=0 A19 'device[' key inside input block ignored
+AGREE rc=0 A20 device value overrides global; from=D
+AGREE rc=0 A22 same-name device blocks merge
+AGREE rc=0 A23 'input:repeat_rate' inside device block ignored
+AGREE rc=0 A24 'input:input:repeat_rate' inside input block ignored
+AGREE rc=0 A25 '$VAR = 5' and 'source = x' cause no unsupported
+AGREE rc=0 A26 '$' in RHS of relevant line
+AGREE rc=0 A27 '{{' in relevant line
+AGREE rc=0 A28 backslash in relevant line
+AGREE rc=0 A29 '+5' and '-0' unsupported
+AGREE rc=0 A30 '5.0' unsupported
+AGREE rc=0 A31 'onion' -> 1; 'nope' -> 0
+AGREE rc=0 A32 numlock = 2 out of 0..1
+AGREE rc=0 A33 rate 200 ok, 201 unsupported
+AGREE rc=0 A34 leading zeros 0000200 -> 200
+AGREE rc=0 A35 device key under stack ['device[kb]'] -> unsupported
+AGREE rc=0 A36 keyboard '*' with device named '*'
+AGREE rc=0 A37 no --keyboard with device named '*'
+AGREE rc=0 A38 'Device {' capital ignored
+AGREE rc=0 A39 'name' outside device block ignored
+AGREE rc=0 A40 device pop: name must be re-set
+AGREE rc=0 A41 'repeat_rate =' empty -> unsupported
+AGREE rc=0 A42 'repeat_rate = #5' -> empty value unsupported
+AGREE rc=0 A43 'off#x' -> 0; 'offset' -> 0
+AGREE rc=0 A44 '3 0' unsupported
+AGREE rc=0 A45 device name with '$' kept
+AGREE rc=0 A46 device name with backslash kept
+AGREE rc=0 A47 '=' in RHS unsupported
+AGREE rc=0 A48 duplicate keyboard args print twice
+AGREE rc=0 A49 9*5000 digit run unsupported
+AGREE rc=0 A50 '1_000' and '1e3' unsupported
+AGREE rc=0 A51 tabs around key and value
+AGREE rc=0 A52 BOM-prefixed flat key not relevant
+AGREE rc=0 A53 NBSP-prefixed flat key not relevant
+AGREE rc=0 A54 0x1c-prefixed flat key not relevant
+AGREE rc=2 J01 NaN in ignored field
+AGREE rc=2 J02 Infinity in ignored field
+AGREE rc=0 J03 float overflow int 1e400
+AGREE rc=0 J04 duplicate int key: last wins
+AGREE rc=0 J05 duplicate option key: last wins
+AGREE rc=2 J06 int with suffix
+AGREE rc=0 J07 negative int
+AGREE rc=0 J08 4301-digit int
+AGREE rc=2 J09 leading zero 01
+AGREE rc=0 J10 bool int then int
+AGREE rc=0 J11 later line without int keeps earlier
+AGREE rc=0 J12 escaped option name
+AGREE rc=0 J13 deep nesting 3000 in ignored field
+AGREE rc=2 J14 deep nesting 200000 in ignored field
+AGREE rc=2 J15 top-level array of object
+AGREE rc=0 J16 empty object
+DIVERGE rc=0 J17 trailing VT inside JSON line
+   ORACLE 'MADO_KBDOPT: SETUP bad_json\n'
+   TOOL   'MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 live=12 verdict=DIFFER\nMADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default confi'
+AGREE rc=2 J18 trailing 0x1c inside JSON line
+DIRECTED agree=70 diverge=1

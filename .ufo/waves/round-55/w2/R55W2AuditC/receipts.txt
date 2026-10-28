@@ -1,0 +1,90 @@
+# R55W2AuditC receipts (read-only; pins at efb50993780079460b0cbed1363e2166a2de1d9f)
+## upstream vs committed sha256 (full file)
+upstream  8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d  IKeyboard.cpp
+upstream  82e0bc9e1f31f6342f193b0981000245b932719cf406988d98aba64f0f716f05  IKeyboard.hpp
+upstream  bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  SeatManager.cpp
+upstream  cc23bb8b4f1e44cd46ab278e5353275dbb03adfe3955393af64c7b828ed0818d  Seat.cpp
+upstream  9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  legacyCM.cpp
+upstream  d1ac1c45e8ba329827f46b371b96df42fad3f6dccd92917f98f0046d6fa3bb44  SeatManager.hpp
+committed 8a800efe9baa7f375a3781744372eecd98a88be2c4bedaae96c90a1102a1aa3d  Hyprland-IKeyboard.cpp
+committed 82e0bc9e1f31f6342f193b0981000245b932719cf406988d98aba64f0f716f05  Hyprland-IKeyboard.hpp
+committed bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  Hyprland-SeatManager.cpp
+committed cc23bb8b4f1e44cd46ab278e5353275dbb03adfe3955393af64c7b828ed0818d  Hyprland-protocols-core-Seat.cpp
+committed 9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b  Hyprland-legacy-ConfigManager.cpp
+## committed SHA256SUMS.txt check
+Hyprland-IKeyboard.cpp: OK
+Hyprland-IKeyboard.hpp: OK
+Hyprland-SeatManager.cpp: OK
+Hyprland-legacy-ConfigManager.cpp: OK
+Hyprland-protocols-core-Seat.cpp: OK
+## neighbour lines (committed pins)
+-- IKeyboard.cpp 119-134
+L1+118	
+L2+118	    const auto NUMLOCKON = Config::mgr()->getDeviceInt(m_hlName, "numlock_by_default", "input:numlock_by_default");
+L3+118	
+L4+118	    if (NUMLOCKON == 1) {
+L5+118	        // lock numlock
+L6+118	        const auto IDX = xkb_map_mod_get_index(m_xkbKeymap, XKB_MOD_NAME_NUM);
+L7+118	
+L8+118	        if (IDX != XKB_MOD_INVALID)
+L9+118	            m_modifiersState.locked |= sc<uint32_t>(1) << IDX;
+L10+118	
+L11+118	        // 0 to avoid mods getting stuck if depressed during reload
+L12+118	        updateModifiers(0, 0, m_modifiersState.locked, m_modifiersState.group);
+L13+118	    }
+L14+118	
+L15+118	    for (size_t i = 0; i < std::min(LEDNAMES.size(), m_ledIndexes.size()); ++i) {
+L16+118	        m_ledIndexes[i] = xkb_map_led_get_index(m_xkbKeymap, LEDNAMES[i]);
+-- SeatManager.cpp 175-179
+     1	void CSeatManager::updateActiveKeyboardData() {
+     2	    if (m_keyboard)
+     3	        PROTO::seat->updateRepeatInfo(m_keyboard->m_repeatRate, m_keyboard->m_repeatDelay);
+     4	    PROTO::seat->updateKeymap();
+     5	    PROTO::inputCapture->updateKeymap();
+-- IKeyboard.hpp 120-124
+    SStringRuleNames               m_currentRules;
+    int                            m_repeatRate        = 0;
+    int                            m_repeatDelay       = 0;
+    int                            m_numlockOn         = -1;
+    bool                           m_resolveBindsBySym = false;
+-- Seat.cpp 441-448
+void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+    if (!m_owner || m_resource->version() < 4 || (rate == m_lastRate && delayMs == m_lastDelayMs))
+        return;
+    m_lastRate    = rate;
+    m_lastDelayMs = delayMs;
+
+    m_resource->sendRepeatInfo(rate, delayMs);
+}
+-- legacy 1115-1123
+Hyprlang::CConfigValue* CConfigManager::getConfigValueSafeDevice(const std::string& dev, const std::string& val, const std::string& fallback) {
+
+    const auto VAL = m_config->getSpecialConfigValuePtr("device", val.c_str(), dev.c_str());
+
+    if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())
+        return m_config->getConfigValuePtr(fallback.c_str());
+
+    return VAL;
+}
+## hyprutils WeakPtr (v0.14.0 min, v0.14.3, main) operator bool
+            /* this returns valid() */
+            explicit operator bool() const {
+                return valid();
+                assignable to a SP. */
+            bool valid() const {
+                return impl_ && impl_->dataNonNull();
+## Seat.cpp:350 second repeatInfo caller (bind path)
+    repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate, g_pSeatManager->m_keyboard->m_repeatDelay);
+## SeatManager.hpp:128
+    WP<IKeyboard> m_keyboard;
+## upstream grep: other updateRepeatInfo/repeatInfo callers
+/fast/scratch/hyaku/mado-r55/R55W2AuditC/up/Seat.cpp:350:    repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate, g_pSeatManager->m_keyboard->m_repeatDelay);
+/fast/scratch/hyaku/mado-r55/R55W2AuditC/up/Seat.cpp:441:void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+/fast/scratch/hyaku/mado-r55/R55W2AuditC/up/Seat.cpp:603:void CWLSeatProtocol::updateRepeatInfo(uint32_t rate, uint32_t delayMs) {
+/fast/scratch/hyaku/mado-r55/R55W2AuditC/up/Seat.cpp:608:        k->repeatInfo(rate, delayMs);
+/fast/scratch/hyaku/mado-r55/R55W2AuditC/up/SeatManager.cpp:177:        PROTO::seat->updateRepeatInfo(m_keyboard->m_repeatRate, m_keyboard->m_repeatDelay);
+SeatManager.cpp:177:        PROTO::seat->updateRepeatInfo(m_keyboard->m_repeatRate, m_keyboard->m_repeatDelay);
+Seat.cpp:350:    repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate, g_pSeatManager->m_keyboard->m_repeatDelay);
+Seat.cpp:441:void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+Seat.cpp:603:void CWLSeatProtocol::updateRepeatInfo(uint32_t rate, uint32_t delayMs) {
+Seat.cpp:608:        k->repeatInfo(rate, delayMs);

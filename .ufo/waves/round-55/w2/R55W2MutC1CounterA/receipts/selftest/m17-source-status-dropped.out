@@ -1,0 +1,53 @@
+selftest: c1-r55-kbd-entry.py rev=HEAD
+PASS good-tree                                      expected=none
+PASS good-alt-source-S215-for-K15                   expected=none
+PASS CTL1-absent                                    expected=entry_absent
+PASS CTL2-spliced-quote-K04                         expected=quote:K04
+PASS CTL3-shifted-anchor-K01                        expected=anchor:K01
+PASS CTL4-wrong-source-K10                          expected=source_cell:K10
+PASS CTL5-dropped-row-K17                           expected=row:K17
+PASS CTL6-host-forged-H02                           expected=quote:H02,host:H02
+PASS CTL7-pin-tamper-tables-and-pin                 expected=pin_hash,tables_sha
+PASS pin-bytes-only-appended-space                  expected=pin_hash
+PASS tables-trailing-newline                        expected=tables_sha
+PASS tables-absent                                  expected=tables_sha
+PASS provenance-no-recheck                          expected=provenance
+PASS provenance-no-S-id-in-source                   expected=provenance
+PASS provenance-wrong-date                          expected=provenance
+PASS index-row-missing                              expected=index
+PASS index-row-duplicated                           expected=index
+PASS new-rows-usedby-missing-entry-S379             expected=new_rows
+FAIL source-candidate-status-S380                   expected=source_cell:K18,new_rows  got=new_rows
+PASS source-cell-not-an-S-id-K02                    expected=source_cell:K02
+PASS host-row-src-cell-not-host-H03                 expected=row:H03
+PASS short-proposition-K02                          expected=row:K02
+PASS short-host-proposition-H04                     expected=row:H04
+PASS extra-cell-pipe-in-proposition-K06             expected=row:K06
+PASS CRLF-whole-entry                               expected=provenance,row:K01,row:K02,row:K03,row:K04,row:K05,row:K06,row:K07,row:K08,row:K09,row:K10,row:K11,row:K12,row:K13,row:K14,row:K15,row:K16,row:K17,row:K18,row:H01,row:H02,row:H03,row:H04,row:H05,row:H06
+PASS CRLF-single-row-K05                            expected=row:K05
+PASS trailing-spaces-after-row-K09                  expected=row:K09
+PASS trailing-tab-after-row-H01                     expected=row:H01
+PASS duplicated-row-id-K03-identical                expected=row:K03
+PASS duplicated-row-id-H05-different-text           expected=row:H05
+PASS backtick-style-double-K05                      expected=quote:K05
+PASS backtick-style-none-H06                        expected=quote:H06
+PASS row-only-inside-code-fence-K12                 expected=row:K12
+PASS row-only-inside-html-comment-K13               expected=row:K13
+PASS row-leading-id-spacing-K07                     expected=row:K07
+PASS anchor-wrong-pin-file-K08                      expected=anchor:K08
+PASS quote-extra-space-K18                          expected=quote:K18
+PASS symlink-pin-file-SeatManager                   expected=quote:K10,pin_hash
+PASS symlink-pin-directory                          expected=quote:K01,quote:K02,quote:K03,quote:K04,quote:K05,quote:K06,quote:K07,quote:K08,quote:K09,quote:K10,quote:K11,quote:K12,quote:K13,quote:K14,quote:K15,quote:K16,quote:K17,quote:K18,quote:H01,quote:H02,quote:H03,quote:H04,quote:H05,quote:H06,pin_hash,host:H01,host:H02,host:H03,host:H04,host:H05,host:H06
+PASS symlink-entry-file                             expected=entry_absent
+PASS symlink-sources-file                           expected=source_cell:K01,source_cell:K02,source_cell:K03,source_cell:K04,source_cell:K05,source_cell:K06,source_cell:K07,source_cell:K08,source_cell:K09,source_cell:K10,source_cell:K11,source_cell:K12,source_cell:K13,source_cell:K14,source_cell:K15,source_cell:K16,source_cell:K17,source_cell:K18,new_rows
+PASS repo-path-is-a-symlink                         expected=TARGET_MET rc=0
+PASS dirty-working-tree-ignored                     expected=TARGET_MET rc=0
+PASS rev-as-full-sha                                expected=rev echoed as given
+PASS deterministic-two-runs                         expected=identical output
+PASS setup-bad-rev-rc2-empty-stdout                 expected=rc=2 stdout empty
+PASS setup-bad-repo-rc2                             expected=rc=2 stdout empty
+PASS setup-missing-work-rc2                         expected=rc=2 stdout empty
+PASS tree-without-any-r55-file                      expected=entry_absent,index,tables_sha rc=1
+PASS tables-bad-shape-sha-mismatch                  expected=tables_sha
+MADO_KBD_ENTRY_SELFTEST: 49/50 passed
+st_rc=1

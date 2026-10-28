@@ -1,0 +1,11 @@
+--- orig/quality/counters/c1-r55-kbd-entry.py	2026-10-28 20:17:31.000000000 -0300
++++ mutants/m02.py	2026-10-28 20:24:04.761782975 -0300
+@@ -200,7 +200,7 @@
+         for key in ("commit", "entry", "opened", "pin_dir"):
+             if not isinstance(c[key], str) or not c[key]:
+                 return None
+-        if not re.fullmatch(r"[0-9a-f]{40}", c["commit"]):
++        if not re.fullmatch(r"[0-9a-f]{7,40}", c["commit"]):
+             return None
+         pd = c["pin_dir"]
+         if pd.startswith("/") or "\0" in pd or any(p in ("", ".", "..") for p in pd.split("/")):

@@ -1,0 +1,11 @@
+--- original/mado-kbdopts.py
++++ M12/mado-kbdopts.py
+@@ -165,7 +165,7 @@
+             elif line.endswith("{"):
+                 stack.append(line[:-1].strip(WS))
+             continue
+-        lhs, rhs = (s.strip(WS) for s in line.split("=", 1))
++        lhs, rhs = (s.strip(WS) for s in line.rsplit("=", 1))
+         if lhs.startswith("$") or lhs == "source":
+             continue
+         key = ":".join(stack + [lhs])

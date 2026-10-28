@@ -1,0 +1,12 @@
+--- r55_ctl_c1.py (base, 57584ed)
++++ M09.py
+@@ -362,6 +362,9 @@
+ 
+     passed = 0
+     for cid, name, mut, required, owned in CONTROLS:
++        if cid == "C1-CTL-4":  # MUTANT M09: hard-wired ok
++            passed += 1
++            continue
+         if counter_missing:
+             sys.stderr.write("%s %s: FAIL - no counter\n" % (cid, name))
+             continue

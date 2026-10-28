@@ -1,0 +1,19 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-55/w2/R55W2MutTool1/mutants/orig/mado-kbdopts.py	2026-10-28 20:24:31.499299191 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-55/w2/R55W2MutTool1/mutants/M20.py	2026-10-28 20:24:31.501405168 -0300
+@@ -151,7 +151,7 @@
+ 
+ 
+ def parse_config(text, st):
+-    stack, cur = [], None
++    stack, cur = [], st.__dict__.get("cur")
+     for raw in text.split("\n"):
+         line = raw.strip(WS)
+         if not line or line[0] == "#":
+@@ -196,6 +196,7 @@
+             st.unsupported += 1
+         else:
+             st.devices[cur][name] = value
++    st.cur = cur
+ 
+ 
+ def effective(st, keyboard):

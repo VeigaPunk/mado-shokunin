@@ -1,0 +1,12 @@
+Harness build (scratch only; nothing in the lane touched)
+Sources: hyprlang v0.6.8 src/config.cpp, src/common.cpp, include/hyprlang.hpp (raw.githubusercontent.com, tag v0.6.8;
+config.cpp sha256 fa1b6898... = round-46 pin); hyprutils v0.14.0 include/hyprutils/string/{String,VarList,ConstVarList}.hpp
+and src/string/{String,VarList,ConstVarList}.cpp (raw, tag v0.14.0).
+Build-only change: config.cpp gets `#ifndef HYPRLANG_END_MAGIC / #define HYPRLANG_END_MAGIC 0x1337BEEF / #endif` before
+seekABIStructSize, because hyprlang.hpp #undefs that macro (line 548) before config.cpp uses it.
+  g++ -std=c++23 -O1 -I hl/include -I hl/src -I hu/include -c hl/src/config.cpp -o obj_config.o
+  g++ -std=c++23 -O1 -I hl/include -I hl/src -I hu/include -c hl/src/common.cpp -o obj_common.o
+  for f in hu/src/string/*.cpp; do g++ -std=c++23 -O1 -I hu/include -c $f -o u_$(basename $f .cpp).o; done
+  g++ -std=c++23 -O1 -I hl/include -I hl/src -I hu/include driver.cpp obj_config.o obj_common.o u_*.o -o harness14
+Run: python3 mkcases.py (writes cases/), then python3 run.py (harness14 vs tools/mado-kbdopts.py at 57584ed, python3 -I).
+Output of run.py is run14.txt. The 0.7.1 build (earlier) matched on every row.

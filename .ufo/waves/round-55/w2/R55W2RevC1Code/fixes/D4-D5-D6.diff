@@ -1,0 +1,29 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/counters/c1-r55-kbd-entry.py	2026-10-28 20:11:38.012904654 -0300
++++ /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-55/w2/R55W2RevC1Code/fixes/c1-fix-D4-D5-D6.py	2026-10-28 20:27:45.374536167 -0300
+@@ -117,7 +117,7 @@
+         try:
+             return subprocess.run(["git", "-C", self.repo] + args, input=inp, capture_output=True,
+                                   env=self.env, timeout=300)
+-        except (OSError, subprocess.SubprocessError) as exc:
++        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+             raise SetupError("git failed to run: %s" % type(exc).__name__)
+ 
+     def ls(self, paths):
+@@ -285,7 +285,7 @@
+             url = last_url(cells[1])
+             if cells[8] != c["opened"] or cells[3] != "A" or cells[7] != "mined" or c["commit"] not in url:
+                 continue
+-            if c["entry"] not in cells[10]:
++            if c["entry"] not in [x.strip() for x in cells[10].split(",")]:
+                 continue
+             for pin in c["new_row_pins"]:
+                 if url.endswith("/" + c["source_suffix"][pin]):
+@@ -314,7 +314,7 @@
+     if tb is not None:
+         try:
+             c = valid_shape(json.loads(text_of(tb)))
+-        except ValueError:
++        except (ValueError, RecursionError):
+             c = None
+     if sha_ok and c is None:
+         raise SetupError("frozen-tables.json matches the embedded sha256 but its c1 shape is invalid")

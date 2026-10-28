@@ -1,0 +1,11 @@
+--- r55_ctl_c1.py (base, 57584ed)
++++ M07.py
+@@ -229,6 +229,8 @@
+         return None, None, "counter did not start: %s" % e
+     out = p.stdout.decode("utf-8", "replace")
+     lines = [l for l in out.split("\n") if l.strip()]
++    if not lines:  # MUTANT M07: empty stdout accepted as a miss with no legs
++        return p.returncode, {"rev": sha, "rows": "0", "hosts": "0", "sa": "0", "sb": "0", "new": "0", "verdict": "TARGET_MISSED", "missed": "none", "legs": []}, None
+     if len(lines) != 1:
+         return p.returncode, None, "counter stdout has %d non-empty lines, need exactly 1" % len(lines)
+     m = LINE_RE.match(lines[0])

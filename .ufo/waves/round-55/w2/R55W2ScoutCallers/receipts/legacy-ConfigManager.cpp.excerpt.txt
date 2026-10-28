@@ -1,0 +1,64 @@
+726:void CConfigManager::reload() {
+727:    Event::bus()->m_events.config.preReload.emit();
+728:    Config::animationTree()->reset();
+729:    Config::workspaceRuleMgr()->clear();
+730:    Config::monitorRuleMgr()->clear();
+731:    resetHLConfig();
+732:
+733:    auto oldConfigPath = m_mainConfigPath;
+734:
+735:    m_mainConfigPath    = Supplementary::Jeremy::getMainConfigPath()->path;
+736:    m_configCurrentPath = m_mainConfigPath;
+737:
+738:    if (m_mainConfigPath != oldConfigPath)
+739:        m_config->changeRootPath(m_mainConfigPath.c_str());
+740:
+741:    exportHlVersionVars();
+742:
+743:    const auto ERR = m_config->parse();
+744:
+745:    clearHlVersionVars();
+746:
+747:    const auto monitorError               = handleMonitorv2();
+748:    const auto ruleError                  = reloadRules();
+749:    m_lastConfigVerificationWasSuccessful = !ERR.error && !monitorError.error;
+750:    postConfigReload(ERR.error || !monitorError.error ? ERR : monitorError);
+751:}
+968:}
+969:
+970:void CConfigManager::postConfigReload(const Hyprlang::CParseResult& result) {
+971:    for (auto const& w : Desktop::windowState()->windows()) {
+972:        w->uncacheWindowDecos();
+973:    }
+974:
+975:    // Update the keyboard layout to the cfg'd one if this is not the first launch
+976:    if (!m_isFirstLaunch) {
+977:        g_pInputManager->setKeyboardLayout();
+978:        g_pInputManager->setPointerConfigs();
+979:        g_pInputManager->setTouchDeviceConfigs();
+980:        g_pInputManager->setTabletConfigs();
+981:
+982:        g_pHyprRenderer->m_reloadScreenShader = true;
+1064:            mirror->m_forceFullFrames = 3;
+1065:    }
+1066:
+1067:    // update plugins
+1068:    handlePluginLoads();
+1069:
+1070:    Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);
+1071:
+1072:    Event::bus()->m_events.config.reloaded.emit();
+1073:    if (g_pEventManager)
+1074:        g_pEventManager->postEvent(SHyprIPCEvent{"configreloaded", ""});
+1075:}
+1076:
+1077:void CConfigManager::init() {
+1078:
+1079:    Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {
+1080:        Log::logger->log(Log::DEBUG, "CConfigManager: file {} modified, reloading", e.file);
+1081:        reload();
+1082:    });
+1083:
+1084:    reload();
+1085:
+1086:    m_isFirstLaunch = false;

@@ -1,4 +1,4 @@
-source: S316, S317, S318, S319, S052 (existing registry rows), S378, S379, S380 (new rows, opened 2026-10-28, written by the L1 at integration); pins under .ufo/waves/round-55/fetch/ at efb50993780079460b0cbed1363e2166a2de1d9f; host pins fetch/host-input.conf and fetch/host-getoption.json
+source: S316, S317, S318, S319, S052 (existing registry rows), S378, S379, S380 (new rows, opened 2026-10-28) and S381, S382 (rows that correct the scope and teaches wording of S379 and S380; append-only registry, CORPUS rule 2); pins under .ufo/waves/round-55/fetch/ at efb50993780079460b0cbed1363e2166a2de1d9f; host pins fetch/host-input.conf and fetch/host-getoption.json
 verified-at: 2026-10-28
 recheck: on-release
 
@@ -11,16 +11,16 @@ Source-level path, held at the pinned tag commit, from the `input:` config keys 
 ## What this entry settles (source-level)
 
 - Declared table entries for the three keys: repeat_rate default 25 with min 0 and max 200 (K13); repeat_delay default 600 with min 0 and max 2000 (K14); numlock_by_default default false (K15). These are declarations; how the config layer enforces the range fields is UNKNOWN (below).
-- Per-keyboard lookup: getConfigValueSafeDevice returns the global value when the device value is absent or not set by the user (K16, E12). applyConfigToKeyboard reads repeat rate, delay and numlock through getDeviceInt with that fallback (K01, K02, K03). IKeyboard::setKeymap reads numlock the same way (K08).
+- Per-keyboard lookup: getConfigValueSafeDevice returns the global value when the device value is absent or not set by the user and the fallback name is non-empty (K16, E12). applyConfigToKeyboard reads repeat rate, delay and numlock through getDeviceInt with that fallback (K01, K02, K03). IKeyboard::setKeymap reads numlock the same way (K08).
 - applyConfigToKeyboard stores the rate and the delay as std::max(0, value) (K04, K05) and stores numlock unfloored (K06). The unchanged-config early return at line 1271 (K07) compares the config names with the stored fields.
 - IKeyboard::setKeymap enters its NumLock lock block only when NUMLOCKON equals 1; the if has no else (K09).
-- updateActiveKeyboardData sends the active keyboard's stored rate and delay to the seat protocol, and only inside its if (m_keyboard) guard (K10, E09). CWLSeatProtocol::updateRepeatInfo calls repeatInfo per keyboard resource when the seat has keyboard capability (E06, E07). CWLKeyboardResource::repeatInfo sends repeat_info only when the owner is present, the resource version is 4 or later, and the rate and delay are not both equal to the last sent values (K11, E10, K12).
+- updateActiveKeyboardData sends the active keyboard's stored rate and delay to the seat protocol, and only inside its if (m_keyboard) guard (K10, E09). CWLSeatProtocol::updateRepeatInfo calls repeatInfo per keyboard resource when the seat has keyboard capability (E06, E07). CWLKeyboardResource::repeatInfo sends repeat_info only when the owner is present, the resource version is 4 or later, and the rate and delay are not both equal to the last pair the resource recorded (K11, E10, K12); the initial recorded values are not shown by the lane's pins. A second push, from the CWLKeyboardResource constructor when a client binds wl_keyboard, calls repeatInfo directly with the same stored fields and does not pass through the capability test of updateRepeatInfo (E14).
 
 ## What stays UNKNOWN
 
 - Whether any value reaches a client. No keypress, wl_keyboard event or client bind was observed; the host rows are not delivery receipts.
-- How the hyprlang config layer enforces the min and max fields for the three keys (clamp, reject or ignore). The pins show the table declaration (K13, K14) and not the enforcement code.
-- Whether a negative configured value can reach the early-return comparison at all. If it can, the stored clamped value and the unclamped config value differ, so the early return would not fire for it. That follows from K04, K05 and K07 and is [INFERENCE]; it is not exercised.
+- How the config layer treats a value outside the declared min and max of the three keys. The pins show the table declaration (K13, K14) and no enforcement site. A wave-2 source review (R55W2RevToolSource, `.ufo/waves/round-55/w2/R55W2RevToolSource.md`) reports that the legacy `.conf` path registers values without a range and that min and max are enforced only for the Lua configuration; that is a pointer, not a lane row or pin, so it stays UNKNOWN here.
+- Whether a negative configured value can reach the early-return comparison at all. If it can, the stored floored value and the unfloored config value differ, so the early return would not fire for it. That follows from K04, K05 and K07 and is [INFERENCE]; it is not exercised.
 - Which keyboard is m_keyboard at runtime, and therefore which stored rate and delay the seat protocol sends.
 - Whether any live client binds wl_keyboard at version 4 or later.
 - What the NumLock lock does on the host's own XKB keymap: K09 pins only the set-up line, not the keymap.
@@ -30,13 +30,13 @@ Source-level path, held at the pinned tag commit, from the `input:` config keys 
 
 1. Declared keys and defaults: K13, K14, K15 (declarations).
 2. Per-device override with global fallback: K16; getDeviceInt call sites K01, K02, K03, K08; E01 is the empty-value branch of getDeviceInt.
-3. Apply path: applyConfigToKeyboard is called from setupKeyboard (E08); it clamps rate and delay (K04, K05), stores numlock (K06), and gates on the unchanged test (K07). Stored fields are declared in IKeyboard (K18, E03).
+3. Apply path: applyConfigToKeyboard is called from setupKeyboard (E08); it floors rate and delay at zero with std::max (K04, K05), stores numlock (K06), and gates on the unchanged test (K07). Stored fields are declared in IKeyboard (K18, E03).
 4. Numlock lock in the keymap set-up: IKeyboard::setKeymap (E02) with K08 and K09.
-5. Seat push: K10 with E09 (guard), E06 and E07 (seat protocol), K11, E13, E10 and K12 (per resource), E04, E05 and K17 (the 1.26.0 wl_keyboard repeat_info event and its rate-zero and negative-value rules).
+5. Seat push: K10 with E09 (guard), E06 and E07 (seat protocol), K11, E13, E10 and K12 (per resource), E14 (the bind-time push), E04, E05 and K17 (the 1.26.0 wl_keyboard repeat_info event and its rate-zero and negative-value rules).
 
 ## Source rows K01-K18
 
-Cells are generated from `frozen-tables.json` `c1.k` and `c1.h`; propositions bind to their own quote only.
+Cells are generated from `frozen-tables-v2.json` `c1.k` and `c1.h` (v1's `frozen-tables.json` differs only in K16's quote); propositions bind to their own quote only.
 
 | ID | Proposition | Source | Pin:line | Quote |
 |---|---|---|---|---|
@@ -80,14 +80,15 @@ These support prose in Scope, Chain and Limits. Each quote is an exact substring
 |---|---|---|---|---|
 | E01 | getDeviceInt returns the empty brace value (0 for an int) when its lookup yields no value pointer (the if at line 1133); whether any of the three keys reaches it is not shown by these pins. | S317 | Hyprland-legacy-ConfigManager.cpp:1134 | `return {};` |
 | E02 | IKeyboard::setKeymap begins on this line, so the numlock read in K08 and the lock block in K09 sit inside that function. | S319 | Hyprland-IKeyboard.cpp:60 | `void IKeyboard::setKeymap(const SStringRuleNames& rules) {` |
-| E03 | IKeyboard declares m_numlockOn with initializer -1 on this line, so the declared numlock default is -1 and not 0 or 1. | S380 | Hyprland-IKeyboard.hpp:123 | `= -1;` |
+| E03 | IKeyboard declares the member m_numlockOn with initializer -1 on this line, so a keyboard's stored numlock value starts at -1, not 0 or 1, until applyConfigToKeyboard assigns it (K06); this is the member initializer, not the config default (K15). | S380 | Hyprland-IKeyboard.hpp:123 | `= -1;` |
 | E04 | The wl_keyboard repeat_info event is declared with since 4 on this line of the 1.26.0 protocol. | S052 | wayland-1.26.0-wayland.xml:2732 | `<event name="repeat_info" since="4">` |
 | E11 | The repeat_info description opens the sentence that K17 finishes with the words `A rate of zero` at the end of this line. | S052 | wayland-1.26.0-wayland.xml:2740 | `A rate of zero` |
 | E12 | When the K16 condition holds, getConfigValueSafeDevice returns the global option looked up by the fallback name. | S317 | Hyprland-legacy-ConfigManager.cpp:1120 | `return m_config->getConfigValuePtr(fallback.c_str());` |
 | E13 | The guard line of repeatInfo is followed by a return on this line, so a true guard ends the call before the send. | S379 | Hyprland-protocols-core-Seat.cpp:443 | `return;` |
+| E14 | The CWLKeyboardResource constructor path pushes the active keyboard's stored rate and delay to the new wl_keyboard resource on this line, through repeatInfo directly. | S379 | Hyprland-protocols-core-Seat.cpp:350 | `repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate` |
 | E05 | The repeat_info description states, on this line, that negative values for rate or delay are illegal. | S052 | wayland-1.26.0-wayland.xml:2740 | `Negative values for either rate or delay are illegal.` |
 | E06 | CWLSeatProtocol::updateRepeatInfo tests whether m_currentCaps includes HID_INPUT_CAPABILITY_KEYBOARD on this line before its loop. | S379 | Hyprland-protocols-core-Seat.cpp:604 | `if (!(m_currentCaps & eHIDCapabilityType::HID_INPUT_CAPABILITY_KEYBOARD))` |
-| E07 | CWLSeatProtocol::updateRepeatInfo calls repeatInfo with rate and delayMs for each keyboard resource in the m_keyboards loop on this line. | S379 | Hyprland-protocols-core-Seat.cpp:608 | `k->repeatInfo(rate, delayMs);` |
+| E07 | Line 608 calls k->repeatInfo(rate, delayMs) once per element k of the m_keyboards loop that line 607 opens. | S379 | Hyprland-protocols-core-Seat.cpp:608 | `k->repeatInfo(rate, delayMs);` |
 | E08 | setupKeyboard passes its keeb argument to applyConfigToKeyboard on this line, one of the callers of the function in K01 to K07. | S316 | Hyprland-InputManager.cpp:1195 | `applyConfigToKeyboard(keeb);` |
 | E09 | updateActiveKeyboardData tests m_keyboard for a non-null value on this line before the repeat update that K10 cites. | S378 | Hyprland-SeatManager.cpp:176 | `if (m_keyboard)` |
 | E10 | repeatInfo records the delay argument in m_lastDelayMs on this line, before the sendRepeatInfo call that K12 cites. | S379 | Hyprland-protocols-core-Seat.cpp:445 | `m_lastDelayMs = delayMs;` |
@@ -104,18 +105,26 @@ for both and `AGREE` three times against the live read (the committed H04-H06 li
 How to read that output without overclaiming:
 
 - The host config holds no `device` block (`grep -rnE 'device\[|device \{|device\{' ~/.config/hypr` → no match, receipt
-  `.ufo/waves/round-55/w1/R55ScoutHost/receipts-cmp-grep.txt`), so by K16 every keyboard resolves to the global value; the two
-  per-keyboard lines are what the source implies for those names, not an observed per-keyboard value.
+  `.ufo/waves/round-55/w1/R55ScoutHost/receipts-cmp-grep.txt`), so the K16 rule (read at source level) predicts the global
+  value for every keyboard; the two per-keyboard lines are that prediction from the file bytes, [INFERENCE] about the running
+  compositor, not an observed per-keyboard value. The tool is only given `input.conf`: a `source =` line is skipped without a
+  count, so a value set in a file the caller did not pass is invisible to it.
 - `getoption` returns an option by name. [INFERENCE] It takes no device argument, so `AGREE` says the running compositor's
   global option equals the declared one; it cannot show a device override (the reply forms are held in
   `hyprctl-getoption-native-forms-r40.md`, not re-claimed here).
 - The `numLock` field of `hyprctl devices -j` is lock state, not this option (`hyprland-input-devices-r46.md` step 5); the
   tool never compares them.
-- `hyprland-input-devices-r46.md:70` lists these three options as applied per device and printed by no dump; K01-K03 and K08
-  now show the per-device read at source level and that sentence stays as history. Nothing here makes the dump print them.
-- The tool's `unsupported` count is its honesty valve: a value outside the modelled token set (`$` variables, `device[...]`
-  bracket forms, hex or signed numbers, out-of-range values, `##`) is counted, not guessed. The numlock 0..1 range is the
-  lane's modelling rule, not a source range (K15 declares a Bool without min or max).
+- `hyprland-input-devices-r46.md:70` lists these three options as applied per device and not printed by the `hyprctl devices`
+  dump (which prints lock state and libinput's default speed instead); K01-K03 and K08 now show the per-device read at source
+  level and that sentence stays as history. The global `getoption -j` read does return all three (H04-H06); neither read
+  prints a per-device value.
+- The tool's `unsupported` count is its honesty valve, and it must be read FIRST: a value outside the modelled token set
+  (`$` variables, `device[...]` bracket forms, hex or signed numbers, `##`) or outside the ranges it applies is counted and
+  ignored, so the value it then prints is the default or an earlier line, NOT what Hyprland stores, and an `AGREE` against the
+  live read is then unreliable (R55W2AuditF: `repeat_rate = 201` prints 25 and `AGREE` against a live 25). The ranges are the
+  lane's modelling rule: K15 declares a Bool without min or max, and a wave-2 source review reports that the legacy `.conf`
+  path does not enforce the table's min and max at all (R55W2RevToolSource), so for such a line Hyprland stores the written
+  value and the tool does not. Known divergences from Hyprland's own parser are listed in the tool's docstring.
 
 ## Adjacent ground (reported, not absorbed)
 
@@ -135,7 +144,7 @@ How to read that output without overclaiming:
 - getDeviceInt's empty-value branch (E01) is shown by the source; whether the three keys ever reach it is UNKNOWN.
 - A quote proves that the cited text is at the cited line; it does not prove that a proposition sentence is entailed by it. Entailment is the independent sentence-to-pin audit, not this entry's counter.
 - The wl_keyboard protocol text (K17, E04, E05) is the 1.26.0 specification; it is cited for the event contract and not for Hyprland's implementation of it, which is K11 and K12.
-- Registry anchor gaps (registry rows are append-only, CORPUS rule 2, so they are recorded here rather than widened): S318 records ConfigValues.cpp:271-279, which does not reach K14 at line 280; S052 records wl_keyboard :2573-2699, which does not reach K17 at line 2741 or E04 and E05 at lines 2732 and 2740 (the wl_keyboard interface runs 2573-2752 in the pin); S316 records applyConfigToKeyboard at 1213-1295, which does not reach E08 at line 1195. The counter checks only the S-id URL suffix and status, so it would not catch these.
+- Registry anchor gaps (registry rows are append-only, CORPUS rule 2, so they are recorded here rather than widened): S318 records ConfigValues.cpp:271-279, which does not reach K14 at line 280; S052 records wl_keyboard :2573-2699, which does not reach K17 at line 2741 or E04 and E05 at lines 2732 and 2740 (the wl_keyboard interface runs 2573-2752 in the pin); S316 records applyConfigToKeyboard at 1213-1295, which does not reach E08 at line 1195. The counter checks that a cited S-id is one unique registry row with eleven cells, status `mined`, a URL ending in the pin's repository path and (for Hyprland pins) containing the pinned commit; it does not read line-range anchors, so it would not catch these.
 
 ## How to verify
 
@@ -143,7 +152,7 @@ Run from the repository root. Each command reads committed files or a read-only 
 
 ```
 sha256sum .ufo/waves/round-55/fetch/*
-python3 -I .ufo/waves/round-55/freeze-verify.py
+python3 -I .ufo/waves/round-55/freeze-verify-v2.py
 sed -n '1220,1223p;1271p;1282,1284p' .ufo/waves/round-55/fetch/Hyprland-InputManager.cpp
 sed -n '120,122p' .ufo/waves/round-55/fetch/Hyprland-IKeyboard.cpp
 sed -n '176,177p' .ufo/waves/round-55/fetch/Hyprland-SeatManager.cpp
@@ -154,4 +163,4 @@ hyprctl getoption input:repeat_delay -j
 hyprctl getoption input:numlock_by_default -j
 ```
 
-The first command must match `c1.pin_sha256` in `frozen-tables.json`. The `freeze-verify.py` line must end `OK`. The three `hyprctl getoption` commands are read-only; compare them with H04 to H06 by eye. A mismatch is a host fact, not an entry defect.
+The first command must match `c1.pin_sha256` in `frozen-tables-v2.json` (it prints the eleven lines of `SHA256SUMS.txt`: ten pins and the host captures). The `freeze-verify-v2.py` line must end `OK`; `freeze-verify.py` verifies the superseded v1 table and also ends `OK`. The three `hyprctl getoption` commands are read-only; compare them with H04 to H06 by eye. A mismatch is a host fact, not an entry defect.

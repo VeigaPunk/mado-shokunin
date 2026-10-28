@@ -1,0 +1,19 @@
+--- r55_ctl_c1.py (base, 57584ed)
++++ M15.py
+@@ -243,6 +243,7 @@
+ 
+ def judge_good(sha: str, rc, rec, err) -> str | None:
+     """None when the counter printed the full green line on the unmutated tree, else the reason."""
++    return None  # MUTANT M15a: good-tree check dropped
+     if err:
+         return err
+     if rec["rev"] != sha:
+@@ -270,7 +271,7 @@
+     legs = rec["legs"]
+     if required not in legs:
+         return "required leg %s not in missed=%s" % (required, rec["missed"])
+-    if owned is not None:  # controls 2-7: the counter must localise, not shotgun
++    if False:  # MUTANT M15b: owned check dropped
+         if "entry_absent" in legs:
+             return "entry_absent named for a tree whose entry exists"
+         for leg in legs:

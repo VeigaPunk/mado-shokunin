@@ -1,0 +1,11 @@
+--- tools/mado-kbdopts.py	2026-10-28 20:17:31.000000000 -0300
++++ mut/M22.py	2026-10-28 20:23:37.713844483 -0300
+@@ -241,7 +241,7 @@
+     for text in configs:
+         parse_config(text, st)
+     live = parse_getoption(getoption_text) if getoption_text is not None else None
+-    names = keyboards or ["*"]
++    names = list(dict.fromkeys(keyboards)) or ["*"]
+     out = []
+     for kb in names:
+         vals, frm = effective(st, kb)

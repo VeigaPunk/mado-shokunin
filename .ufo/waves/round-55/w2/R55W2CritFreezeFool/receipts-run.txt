@@ -1,0 +1,117 @@
+checker sha256: 83d9eb2a2228d7dbf6eff628ea188d087046607bf98111ecec60efbec6038474
+lane master before: 721ba9c1660e11f4392203b2f65a927e03561fb2
+
+### PART A synthetic fooling cases (verdict/reason/time fields; SHAs differ from R55CritChronology because commit metadata differs)
+== S1 control (honest)
+   expect: OK rc0
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+== S2 rebase of freeze after launch (same tree, committer 12:00Z)
+   expect: FAIL freeze_after_launch rc1 (declared: rebased freeze can read FAIL)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=7892df8c8eb3 freeze_time=2026-10-28T12:00:00Z launch=2026-10-28T11:00:00.000Z verdict=FAIL reason=freeze_after_launch  | rc=1 | stderr=''
+== S3 backdated committer (freeze after launch, committer 09:00Z)
+   expect: OK rc0 (FOOLED; declared: committer writer-settable)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=1e85e8f40fc4 freeze_time=2026-10-28T09:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+== S4 forged createdAt (freeze 12:00Z, registry commit 12:05Z, createdAt 13:00Z)
+   expect: OK rc0 (FOOLED; declared as plan-time limit)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=bc4912835f19 freeze_time=2026-10-28T12:00:00Z launch=2026-10-28T13:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+== S5 createdAt absent
+   expect: FAIL no_registry rc1 (fail closed)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=none verdict=FAIL reason=no_registry  | rc=1 | stderr=''
+== S5b createdAt without offset
+   expect: FAIL no_registry rc1 (fail closed)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=none verdict=FAIL reason=no_registry  | rc=1 | stderr=''
+== S7 post-launch edit of registration.md at 12:00Z, reverted 12:30Z
+   expect: OK rc0 (FOOLED; declared explicitly)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+== S8 freeze reworded via commit-tree at 11:30Z (tree unchanged, freeze true 10:00Z)
+   expect: FAIL freeze_after_launch rc1 (declared under rebase/new committer time)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=5952cf523239 freeze_time=2026-10-28T11:30:00Z launch=2026-10-28T11:00:00.000Z verdict=FAIL reason=freeze_after_launch  | rc=1 | stderr=''
+
+### PART B gaps not exercised by R55CritChronology (synthetic, same frozen grammar)
+== N1 frozen-tables.json DELETED after launch (claims/registration untouched)
+   expect: expected FAIL freeze_edited:frozen-tables.json; by QUALITY 106 text a deleted freeze file differs from its first appearance
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T11:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+== N1c control: frozen-tables.json EDITED after launch
+   expect: FAIL freeze_edited:frozen-tables.json rc1
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=1d76e2e1c409 freeze_time=2026-10-28T12:00:00Z launch=2026-10-28T11:00:00.000Z verdict=FAIL reason=freeze_edited:frozen-tables.json  | rc=1 | stderr=''
+== N1d control: claims-frozen.md DELETED after launch
+   expect: FAIL no_freeze rc1
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=none freeze_time=none launch=none verdict=FAIL reason=no_freeze  | rc=1 | stderr=''
+== N2 registry createdAt rewritten after launch (first commit 11:00Z, tip 13:00Z)
+   expect: OK rc0 expected (checker reads tip only)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=e61f2b48cbc0 freeze_time=2026-10-28T10:00:00Z launch=2026-10-28T13:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+
+### PART C lane clone (fixture of tip; lane itself not written)
+clone toplevel ok; tip = 721ba9c1660e11f4392203b2f65a927e03561fb2
+== LANE tip w1 (clone)
+   expect: OK rc0 expected = lane run
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok  | rc=0 | stderr=''
+== LANE tip w2 (clone)
+   expect: OK rc0 expected
+   got:    MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T23:19:14.796Z verdict=OK reason=ok  | rc=0 | stderr=''
+== N3 registration-v2.md edited after w2 launch (clone branch atk_v2)
+   expect: OK rc0 expected (v2 not in FREEZE set)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T23:19:14.796Z verdict=OK reason=ok  | rc=0 | stderr=''
+== N3 control: registration.md edited after w2 launch
+   expect: FAIL freeze_edited:registration.md rc1
+   got:    MADO_FREEZE_ORDER: round=55 wave=w2 freeze=67f7f0aa5ca1 freeze_time=2026-10-29T00:30:00Z launch=2026-10-28T23:19:14.796Z verdict=FAIL reason=freeze_edited:registration.md  | rc=1 | stderr=''
+== N3 frozen-tables-v2.json edited after w2 launch
+   expect: OK rc0 expected (not in FREEZE set)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T23:19:14.796Z verdict=OK reason=ok  | rc=0 | stderr=''
+== N1 on lane: frozen-tables.json DELETED after w1 launch
+   expect: expected FAIL freeze_edited:frozen-tables.json; OK means gap
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok  | rc=0 | stderr=''
+== N1 control on lane: frozen-tables.json EDITED after w1 launch
+   expect: FAIL freeze_edited:frozen-tables.json rc1
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=293ede2dde40 freeze_time=2026-10-29T00:30:00Z launch=2026-10-28T21:50:15.231Z verdict=FAIL reason=freeze_edited:frozen-tables.json  | rc=1 | stderr=''
+== N1 control on lane: claims-frozen.md DELETED
+   expect: FAIL no_freeze rc1
+   got:    MADO_FREEZE_ORDER: round=55 wave=w1 freeze=none freeze_time=none launch=none verdict=FAIL reason=no_freeze  | rc=1 | stderr=''
+== N4 w2 registry createdAt rewritten to 01:00Z after launch (clone branch)
+   expect: OK rc0 expected (checker reads tip createdAt only)
+   got:    MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-29T01:00:00.000Z verdict=OK reason=ok  | rc=0 | stderr=''
+createdAt history of w2 registry in lane:
+721ba9c1660e11f4392203b2f65a927e03561fb2 2026-10-28T20:19:19-03:00 round-55: w2 spec generator, spec and validated dispatch payload (37 seats)
+  first w2 registry createdAt: ['"createdAt": "2026-10-28T23:19:14.796Z",']
+
+### PART D lane runs, read-only, checker as integrated (REV = tip of master)
+round=52 wave=w1 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=52 wave=w1 freeze=56d6e705bf91 freeze_time=2026-10-27T11:44:49-03:00 launch=2026-10-27T12:20:49.855Z verdict=FAIL reason=freeze_after_launch  | rc=1 | stderr=''
+round=52 wave=w2 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=52 wave=w2 freeze=56d6e705bf91 freeze_time=2026-10-27T11:44:49-03:00 launch=2026-10-27T14:16:19.455Z verdict=FAIL reason=freeze_after_launch  | rc=1 | stderr=''
+round=53 wave=w1 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=53 wave=w1 freeze=none freeze_time=none launch=none verdict=FAIL reason=no_freeze  | rc=1 | stderr=''
+round=54 wave=w1 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=54 wave=w1 freeze=350d30e4ec55 freeze_time=2026-10-27T14:11:10-03:00 launch=2026-10-27T17:05:25.338Z verdict=FAIL reason=freeze_after_launch  | rc=1 | stderr=''
+round=54 wave=w2 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=54 wave=w2 freeze=350d30e4ec55 freeze_time=2026-10-27T14:11:10-03:00 launch=2026-10-27T17:46:51.625Z verdict=OK reason=ok  | rc=0 | stderr=''
+round=55 wave=w1 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok  | rc=0 | stderr=''
+round=55 wave=w2 rev=721ba9c1660e:
+   MADO_FREEZE_ORDER: round=55 wave=w2 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T23:19:14.796Z verdict=OK reason=ok  | rc=0 | stderr=''
+round=55 wave=w1 rev=57584ed67716:
+   MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=2026-10-28T21:50:15.231Z verdict=OK reason=ok  | rc=0 | stderr=''
+round=55 wave=w1 rev=54dacbd843d6:
+   MADO_FREEZE_ORDER: round=55 wave=w1 freeze=54dacbd843d6 freeze_time=2026-10-28T18:46:52-03:00 launch=none verdict=FAIL reason=no_registry  | rc=1 | stderr=''
+round=55 wave=w1 rev=59e3763f639c:
+   MADO_FREEZE_ORDER: round=55 wave=w1 freeze=59e3763f639c freeze_time=2026-10-28T18:46:50-03:00 launch=none verdict=FAIL reason=no_registry  | rc=1 | stderr=''
+
+### PART E selftest of integrated checker
+0Z > launch -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=321552294c40 freeze_time=2026-10-27T12:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS TRAP author 23:00Z > launch but committer 12:00Z < launch -> OK rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=7b487a9a1df4 freeze_time=2026-10-27T09:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS split freeze: registration.md lands 16:00Z after launch -> FAIL (freeze=f634d5c5f427) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=f634d5c5f427 freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS frozen-tables.json absent is allowed rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=984eceb35f9d freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS freeze_edited:frozen-tables.json rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=0d2d17d36470 freeze_time=2026-10-27T10:30:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_edited:frozen-tables.json
+PASS merged-in freeze: first-parent freeze = merge commit 46b51cb630cf (16:00Z) -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=46b51cb630cf freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS setup: missing repo rc=2
+    SETUP repo_not_found
+PASS setup: bad rev -> SETUP rev_not_found rc=2
+MADO_FREEZE_ORDER_SELFTEST: OK
+rc=0
+lane master after: 721ba9c1660e11f4392203b2f65a927e03561fb2

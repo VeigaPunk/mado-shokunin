@@ -1,0 +1,91 @@
+1110:static std::string evalRequest(eHyprCtlOutputFormat format, std::string request) {
+1111:    if (Config::mgr()->type() != Config::CONFIG_LUA)
+1112:        return "eval is only supported with the lua config manager";
+1113:
+1114:    auto luaMgr = dynamicPointerCast<Config::Lua::CConfigManager>(WP<Config::IConfigManager>(Config::mgr()));
+1115:
+1116:    // strip the command name ("eval ") from the request
+1160:static std::string dispatchKeyword(eHyprCtlOutputFormat format, std::string in) {
+1161:
+1162:    if (Config::mgr()->type() != Config::CONFIG_LEGACY)
+1163:        return "keyword can't work with non-legacy parsers. Use eval.";
+1189:
+1190:    std::string retval = mgr->parseKeyword(COMMAND, VALUE);
+1191:
+1192:    g_pHyprCtl->m_currentRequestParams.isDynamicKeyword = false;
+1193:
+1194:    if (COMMAND == "source") {
+1195:        Config::monitorRuleMgr()->scheduleReload();
+1196:        g_pEventLoopManager->doLater([mgr] { mgr->reloadRules(); });
+1197:    }
+1198:
+1199:    // if we are executing a dynamic source we have to reload everything, so every if will have a check for source.
+1200:    if (COMMAND.contains("monitor"))
+1201:        g_pEventLoopManager->doLater([] { Config::monitorRuleMgr()->scheduleReload(); });
+1202:
+1203:    if (COMMAND.contains("input") || COMMAND.contains("device") || COMMAND == "source") {
+1204:        g_pInputManager->setKeyboardLayout();     // update kb layout
+1205:        g_pInputManager->setPointerConfigs();     // update mouse cfgs
+1206:        g_pInputManager->setTouchDeviceConfigs(); // update touch device cfgs
+1207:        g_pInputManager->setTabletConfigs();      // update tablets
+1208:    }
+1209:
+1210:    if (COMMAND.contains("general:layout") || (COMMAND.contains("workspace") && VALUE.contains("layout:")))
+1260:static std::string reloadRequest(eHyprCtlOutputFormat format, std::string request) {
+1261:
+1262:    if (request.ends_with("full-reset")) {
+1263:        // perform a full config reset. First, reset config manager and load it anew. Then,
+1264:        // flush all config value caches. This will momentarily degrade performance
+1265:        // but a config load will be slow enough for this not to matter probably
+1266:        Config::mgr().reset();
+1267:        Config::Supplementary::Jeremy::flushCachedCfgPath();
+1268:        Config::initConfigManager();
+1269:        CConfigValueBase::flushCaches();
+1270:        Config::mgr()->init();
+1271:        CConfigValueBase::flushCaches();
+1272:
+1273:        return "ok";
+1274:    }
+1275:
+2026:    registerCommand(SHyprCtlCommand{.name = "reloadshaders", .exact = false, .fn = reloadShaders});
+2027:    registerCommand(SHyprCtlCommand{"monitors", false, monitorsRequest});
+2028:    registerCommand(SHyprCtlCommand{"reload", false, reloadRequest});
+2029:    registerCommand(SHyprCtlCommand{"plugin", false, dispatchPlugin});
+2030:    registerCommand(SHyprCtlCommand{"notify", false, dispatchNotify});
+2031:    registerCommand(SHyprCtlCommand{"dismissnotify", false, dispatchDismissNotify});
+2032:    registerCommand(SHyprCtlCommand{"getprop", false, dispatchGetProp});
+2033:    registerCommand(SHyprCtlCommand{"seterror", false, dispatchSeterror});
+2034:    registerCommand(SHyprCtlCommand{"switchxkblayout", false, switchXKBLayoutRequest});
+2035:    registerCommand(SHyprCtlCommand{"output", false, dispatchOutput});
+2036:    registerCommand(SHyprCtlCommand{"dispatch", false, dispatchRequest});
+2037:    registerCommand(SHyprCtlCommand{"keyword", false, dispatchKeyword});
+2038:    registerCommand(SHyprCtlCommand{"setcursor", false, dispatchSetCursor});
+2039:    registerCommand(SHyprCtlCommand{"getoption", false, dispatchGetOption});
+2040:    registerCommand(SHyprCtlCommand{"decorations", false, decorationRequest});
+2041:    registerCommand(SHyprCtlCommand{"[[BATCH]]", false, dispatchBatch});
+2042:    registerCommand(SHyprCtlCommand{"eval", false, evalRequest});
+2043:    registerCommand(SHyprCtlCommand{"repl", false, evalRequest});
+2044:    startHyprCtlSocket();
+2062:std::string CHyprCtl::getReply(std::string request) {
+2063:    auto format                          = eHyprCtlOutputFormat::FORMAT_NORMAL;
+2064:    bool reloadAll                       = false;
+2093:        }
+2094:
+2095:        if (sepIndex < request.size())
+2096:            request = request.substr(sepIndex + 1); // remove flags and separator so we can compare the rest of the string
+2097:    }
+2098:
+2099:    std::string result = "";
+2100:
+2101:    // parse exact cmds first, then non-exact.
+2102:    for (auto const& cmd : m_commands) {
+2103:        if (!cmd->exact)
+2126:    if (reloadAll) {
+2127:        Config::monitorRuleMgr()->scheduleReload();
+2128:        Layout::Supplementary::algoMatcher()->updateWorkspaceLayouts();
+2129:
+2130:        g_pInputManager->setKeyboardLayout();     // update kb layout
+2131:        g_pInputManager->setPointerConfigs();     // update mouse cfgs
+2132:        g_pInputManager->setTouchDeviceConfigs(); // update touch device cfgs
+2133:        g_pInputManager->setTabletConfigs();      // update tablets
+2134:

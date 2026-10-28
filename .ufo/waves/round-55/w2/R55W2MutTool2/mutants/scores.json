@@ -1,0 +1,432 @@
+{
+ "M00": {
+  "desc": "ORIGINAL (control)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "9c69dd62c1737d4842a4a0e73db3f8317eda71ee103e71ad3cda11a19c837c2e"
+ },
+ "M01": {
+  "desc": "drop `yes` from true/on/yes prefix list",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: yes prefix (word start)"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "9e6f594d3d4f32906e2a62a4147e592d6c6c609d2ea7955ce3194c9584862e6c"
+ },
+ "M02": {
+  "desc": "case-fold the true/on/yes prefix test",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "c6a1b2931466d4e6842d0e8819f303b3ea3aaf717f87d44112f21cac63625b36"
+ },
+ "M03": {
+  "desc": "digit class [0-9] -> \\d (Unicode Nd digits)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "1cb6a1b10103b3b7f05338d89c1a98330fdecdea29c8b91f691f435cabfe048f"
+ },
+ "M04": {
+  "desc": "digit class + -> * (empty value accepted as 0)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: empty value unsupported"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "362bbfb3c3e08d48f5ef5a8d7ce32d39e52a228d82e8628b4d6e4458f2c09b02"
+ },
+ "M05": {
+  "desc": "fullmatch -> match (prefix digits accepted)",
+  "details": {
+   "H07": {
+    "rc": 1,
+    "stderr_tail": "tTool2/mutants/M05.py\", line 142, in parse_value\n    return int(digits or \"0\") if len(digits) <= 6 else 10 ** 6\n           ~~~^^^^^^^^^^^^^^^\nValueError: invalid literal for int() with base 10: 'x10'\n",
+    "stdout": ""
+   }
+  },
+  "fixtures_killed": [
+   "H07"
+  ],
+  "selftest": {
+   "fails": [],
+   "line": "",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "dc32191cc322861bd95722cb913634b3542581ba4d2b49e4d4949738339fb7ec"
+ },
+ "M06": {
+  "desc": "leading zeros not stripped before the 6-digit cap",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "f7920870ac2c050cce3f458e0b8aa40f2770652a6dc57edf6bb774ef0ca997da"
+ },
+ "M07": {
+  "desc": "drop the `or \"0\"` zero fallback (\"0\" crashes)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "9489f04ca4eda3d6a82ac0b8d8a40b27ec13a58ffb3b8db6081605d369813512"
+ },
+ "M08": {
+  "desc": "over-cap digit run maps to 0 instead of out-of-range",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: huge digit run is out of range, not a crash"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "0fdff1e1272b18ffd2e67a9346d1a35da0f04fb2ab9581a4ebed89c14def7505"
+ },
+ "M09": {
+  "desc": "cap 6 -> 4 digits (EQUIVALENT: every >4-digit value exceeds all maxima)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "d6e26bae2f3ec783029e4f5b869ca6a610afb3c24ca7d7f87660a3d2142f7dab"
+ },
+ "M10": {
+  "desc": "repeat_rate maximum 200 -> 201",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: rate 201 out of range"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "66db7bca932ee854aeae0b6e02f37e79166a134fbea980f4b8e627ad79afe88c"
+ },
+ "M11": {
+  "desc": "repeat_delay maximum 2000 -> 2001",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: delay 2001 out of range"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "932d579ca621d1e622344f5780b408be62e5bbde1579aec515311ff8beb7cc9a"
+ },
+ "M12": {
+  "desc": "numlock_by_default maximum 1 -> 2",
+  "details": {
+   "F18": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=200 repeat_delay=2000 numlock=2 from=G/G/G unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n"
+   }
+  },
+  "fixtures_killed": [
+   "F18"
+  ],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: numlock 2 out of range"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "f186980f830063353be683fe9a67f93b95f29e6345b3477c515611770f6fe479"
+ },
+ "M13": {
+  "desc": "range test > -> >= (boundary rejected)",
+  "details": {
+   "F02": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=at-translated-set-2-keyboard repeat_rate=40 repeat_delay=250 numlock=0 from=G/G/- unsupported=1\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE\nMADO_KBDOPT_LIVE: option=input:repeat_delay config=250 live=250 verdict=AGREE\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=1 verdict=DIFFER\nMADO_KBDOPT: DONE keyboards=1 unsupported=1 live=DIFFER\n"
+   },
+   "F05": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/G unsupported=1\nMADO_KBDOPT: keyboard=kbd-b repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/G unsupported=1\nMADO_KBDOPT: DONE keyboards=2 unsupported=1 live=NONE\n"
+   },
+   "F08": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1\nMADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE\n"
+   },
+   "F11": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=45 repeat_delay=600 numlock=0 from=G/-/- unsupported=1\nMADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE\n"
+   },
+   "F18": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=3\nMADO_KBDOPT: DONE keyboards=1 unsupported=3 live=NONE\n"
+   },
+   "H03": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/D unsupported=1\nMADO_KBDOPT: keyboard=kbd-z repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1\nMADO_KBDOPT: DONE keyboards=2 unsupported=1 live=NONE\n"
+   }
+  },
+  "fixtures_killed": [
+   "F02",
+   "F05",
+   "F08",
+   "F11",
+   "F18",
+   "H03"
+  ],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: true prefix",
+    "selftest FAIL: yes prefix (word start)",
+    "selftest FAIL: on prefix",
+    "selftest FAIL: digits one",
+    "selftest FAIL: rate bounds 0 and 200"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 78/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "5e29b2190fa69144232785a2d2bda0330df4bd5e59169063fdd254439cee82e1"
+ },
+ "M14": {
+  "desc": "drop the `##` rule",
+  "details": {
+   "F12": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=33 repeat_delay=4 numlock=0 from=G/G/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n"
+   }
+  },
+  "fixtures_killed": [
+   "F12"
+  ],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: ## unsupported"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "c893b64106c9c3d748e5b79f8c5b9ed7589c4454801302a4bba78f7c3ee53581"
+ },
+ "M15": {
+  "desc": "value comment cut at LAST # (rsplit)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "4648290b1fa46547bb457ff050aae93ac8800267e85601632a341f1562491fe8"
+ },
+ "M16": {
+  "desc": "`$` detection narrowed to `${`",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: $ in a trailing comment still unsupported"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "84b9dccfe6342689c8e11193a4181e8316dda853b0e2efca965b026231576d03"
+ },
+ "M17": {
+  "desc": "drop the backslash check",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "a903d6425f1016ddffdba0ed79caf7602383ba23f966dfafee71d2b6567851da"
+ },
+ "M18": {
+  "desc": "drop the `{{` check",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "f18c5821a2b047f88b2d929a934bf004ef742f02d52c4900dcf6d29c72e78895"
+ },
+ "M19": {
+  "desc": "drop full-line `#` comment skip",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "29c280e29db660d6ab876a3b50e907d2b7c82f776be2c99e0f5417416daeee88"
+ },
+ "M20": {
+  "desc": "device name not comment-cut",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: device name cut at comment"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "d1a0fbfa3a40578ddc5343b75c0867ba8ec4544d522c776f0f547855e6dd2f21"
+ },
+ "M21": {
+  "desc": "form feed no longer stripped from raw lines",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "aeb6e40cf4f90eb2fbaed479f53d0c2e9e529d1c14453b576d2b3fdbe58c4509"
+ },
+ "M22": {
+  "desc": "value strip narrowed to spaces only (tab before # survives)",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "08acf7df8cfca073bca0d90c5848ae76adadaf4e38c2bf838e6e5891a691e179"
+ },
+ "M23": {
+  "desc": "JSON boolean accepted as integer live value",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: live boolean int ignored"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "3ce472ac56e9876e8ddb57ca66f0e4480f7e2855f86c588371e0abd84e2487ab"
+ },
+ "M24": {
+  "desc": "remove sys.set_int_max_str_digits(0) guard",
+  "details": {},
+  "fixtures_killed": [],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT: SETUP bad_json",
+   "rc": 2
+  },
+  "selftest_killed": true,
+  "sha256": "6481550692cf632abcef0052df8c13090ab95133352977d2dfe00400fd589310"
+ },
+ "M25": {
+  "desc": "repeat_rate maximum 200 -> 199",
+  "details": {
+   "F18": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=2000 numlock=0 from=-/G/- unsupported=2\nMADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE\n"
+   }
+  },
+  "fixtures_killed": [
+   "F18"
+  ],
+  "selftest": {
+   "fails": [
+    "selftest FAIL: rate bounds 0 and 200"
+   ],
+   "line": "MADO_KBDOPT_SELFTEST: 82/83 assertions passed",
+   "rc": 1
+  },
+  "selftest_killed": true,
+  "sha256": "5f0a7a388c37b3080f6978a532126fe22d6ae1742a1025f405465ceac5a6e648"
+ },
+ "M26": {
+  "desc": "repeat_delay maximum 2000 -> 1999",
+  "details": {
+   "F18": {
+    "rc": 0,
+    "stderr_tail": "",
+    "stdout": "MADO_KBDOPT: keyboard=* repeat_rate=200 repeat_delay=600 numlock=0 from=G/-/- unsupported=2\nMADO_KBDOPT: DONE keyboards=1 unsupported=2 live=NONE\n"
+   }
+  },
+  "fixtures_killed": [
+   "F18"
+  ],
+  "selftest": {
+   "fails": [],
+   "line": "MADO_KBDOPT_SELFTEST: 83/83 assertions passed",
+   "rc": 0
+  },
+  "selftest_killed": false,
+  "sha256": "03cbcf76c8c995e31861f120774eef992c2a473a22ca7272b44bcf9685a74c48"
+ }
+}

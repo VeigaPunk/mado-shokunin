@@ -1,0 +1,13 @@
+diff --git a/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md b/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
+index 303ced16..05b35678 100644
+--- a/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
++++ b/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
+@@ -43,7 +43,7 @@ Cells are generated from `frozen-tables.json` `c1.k` and `c1.h`; propositions bi
+ | K01 | applyConfigToKeyboard reads the repeat rate through getDeviceInt with device key repeat_rate and global fallback input:repeat_rate. | S316 | Hyprland-InputManager.cpp:1220 | `getDeviceInt(devname, "repeat_rate", "input:repeat_rate");` |
+ | K02 | applyConfigToKeyboard reads the repeat delay through getDeviceInt with device key repeat_delay and global fallback input:repeat_delay. | S316 | Hyprland-InputManager.cpp:1221 | `getDeviceInt(devname, "repeat_delay", "input:repeat_delay");` |
+ | K03 | applyConfigToKeyboard reads numlock into NUMLOCKON through getDeviceInt with device key numlock_by_default and global fallback input:numlock_by_default. | S316 | Hyprland-InputManager.cpp:1223 | `getDeviceInt(devname, "numlock_by_default", "input:numlock_by_default");` |
+-| K04 | The stored repeat rate m_repeatRate is assigned std::max(0, REPEATRATE): floored at zero, with no upper bound applied on this line. | S316 | Hyprland-InputManager.cpp:1282 | `std::max(0, REPEATRATE);` |
++| K04 | The stored repeat rate m_repeatRate is capped at 200 by std::max(0, REPEATRATE) on this line. | S316 | Hyprland-InputManager.cpp:1282 | `std::max(0, REPEATRATE);` |
+ | K05 | The stored repeat delay m_repeatDelay is assigned std::max(0, REPEATDELAY): floored at zero, with no upper bound applied on this line. | S316 | Hyprland-InputManager.cpp:1283 | `std::max(0, REPEATDELAY);` |
+ | K06 | The stored numlock state m_numlockOn is assigned NUMLOCKON directly on this line, with no max(0) floor and no range test. | S316 | Hyprland-InputManager.cpp:1284 | `= NUMLOCKON;` |
+ | K07 | The unchanged-config early return compares config names REPEATDELAY and REPEATRATE, unclamped in this expression, with stored m_repeatDelay and m_repeatRate. | S316 | Hyprland-InputManager.cpp:1271 | `REPEATDELAY == pKeyboard->m_repeatDelay && REPEATRATE == pKeyboard->m_repeatRate` |

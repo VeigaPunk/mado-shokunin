@@ -1,0 +1,40 @@
+# git diff R..V1 (scratch commit, lane untouched)
+diff --git a/corpus/knowledge/hyprland-synthetic-dispatch-r52-errata-r53.md b/corpus/knowledge/hyprland-synthetic-dispatch-r52-errata-r53.md
+index d95e67a1..b5ebf124 100644
+--- a/corpus/knowledge/hyprland-synthetic-dispatch-r52-errata-r53.md
++++ b/corpus/knowledge/hyprland-synthetic-dispatch-r52-errata-r53.md
+@@ -33,7 +33,7 @@ Not claimed here: (a) where `m_passPressed` is set. The pin also writes it outsi
+ 
+ | ID | Supersedes | Proposition | Source row | Pin:anchor | Quote | Support |
+ |---|---|---|---|---|---|---|
+-| P23 | P19 | `Actions::pass` sends modifier state (`sendKeyboardMods`) before its delivery branch and clears it after that branch. The branch tests `m_passPressed`. When `m_passPressed == 1`, a non-mouse key sends a keyboard key PRESSED and a mouse button sends a pointer button PRESSED. When `m_passPressed == 0`, a non-mouse key sends a keyboard key RELEASED and a mouse button sends a pointer button RELEASED. When `m_passPressed` is any other value (the `else` arm), a non-mouse key sends a keyboard key PRESSED and then a keyboard key RELEASED, and a mouse button sends a pointer button PRESSED and then a pointer button RELEASED. | S371 | Hyprland-ConfigActions.cpp:1554-1576 | Q01 to Q13 below | direct: Q01 to Q13 quote every call and branch test at the cited lines; runtime delivery not claimed. |
++| P23 | P19 | `Actions::pass` sends modifier state (`sendKeyboardMods`) before its delivery branch and clears it after that branch. The branch tests `m_passPressed`. When `m_passPressed == 1`, a non-mouse key sends a keyboard key PRESSED and a mouse button sends a pointer button PRESSED. When `m_passPressed == 0`, a non-mouse key sends a keyboard key RELEASED and a mouse button sends a pointer button RELEASED. When `m_passPressed` is any other value (the `else` arm), the branch sends only a keyboard key RELEASED and never a keyboard key PRESSED. | S371 | Hyprland-ConfigActions.cpp:1554-1576 | Q01 to Q13 below | direct: Q01 to Q13 quote every call and branch test at the cited lines; runtime delivery not claimed. |
+ 
+ Branch table for P23 (keyboard and pointer split inside each branch):
+ 
+# P23 row V1 (full)
+| P23 | P19 | `Actions::pass` sends modifier state (`sendKeyboardMods`) before its delivery branch and clears it after that branch. The branch tests `m_passPressed`. When `m_passPressed == 1`, a non-mouse key sends a keyboard key PRESSED and a mouse button sends a pointer button PRESSED. When `m_passPressed == 0`, a non-mouse key sends a keyboard key RELEASED and a mouse button sends a pointer button RELEASED. When `m_passPressed` is any other value (the `else` arm), the branch sends only a keyboard key RELEASED and never a keyboard key PRESSED. | S371 | Hyprland-ConfigActions.cpp:1554-1576 | Q01 to Q13 below | direct: Q01 to Q13 quote every call and branch test at the cited lines; runtime delivery not claimed. |
+# P23 row V3 (Cyrillic o)
+When `m_passPressed` is any other value (the `else` arm), the branch sends only a keyboard key RELEASED and never a keyboard key PRESSED. A keyboard key PRESSED is sent оnly when `m_passPressed == 1`.
+bytes-check: b"only when" in lower = False ; contains U+043E: True
+# V4 ZWSP check
+ZWSP present: True ; b"only when" in lower: True ; base P19 sentence in block: True
+# V18 prose
+| Q11 | Hyprland-ConfigActions.cpp:1571 | `g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);` |
+| Q12 | Hyprland-ConfigActions.cpp:1572 | `g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_RELEASED);` |
+| Q13 | Hyprland-ConfigActions.cpp:1576 | `g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);` |
+
+A keyboard key PRESSED is sent only
+when `m_passPressed == 1`, and the else arm sends only a keyboard key RELEASED.
+# pin lines 1566-1576 (keyboard arm)
+    } else {
+        if (!isMouse) {
+            g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_PRESSED);
+            g_pSeatManager->sendKeyboardKey(S.m_timeLastMs, key - 8, WL_KEYBOARD_KEY_STATE_RELEASED);
+        } else {
+            g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_PRESSED);
+            g_pSeatManager->sendPointerButton(S.m_timeLastMs, key, WL_POINTER_BUTTON_STATE_RELEASED);
+        }
+    }
+
+    g_pSeatManager->sendKeyboardMods(0, 0, 0, 0);

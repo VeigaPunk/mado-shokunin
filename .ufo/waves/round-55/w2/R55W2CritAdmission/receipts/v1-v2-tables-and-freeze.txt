@@ -1,0 +1,39 @@
+# admission diff: frozen v1 tables vs v2 tables (the only table change must be the listed K16 quote + rev_rule)
+$ diff <(json, sorted keys) ft1 ft2
+139c139
+<     "quote": "if ((!VAL || !VAL->m_bSetByUser) && !fallback.empty())"
+---
+>     "quote": "!VAL->m_bSetByUser) && !fallback.empty())"
+173a174,177
+>   "rev_rule": {
+>    "Hyprland-*": "efb50993780079460b0cbed1363e2166a2de1d9f",
+>    "wayland-1.26.0-wayland.xml": "1.26.0/protocol/wayland.xml"
+>   },
+392c396,404
+<  "schema": "mado-r55-frozen-tables-v1"
+---
+>  "schema": "mado-r55-frozen-tables-v2",
+>  "supersedes": {
+>   "changes": [
+>    "c1.k K16 quote: pipe-free substring of the same pin line 1119",
+>    "c1.rev_rule added (source_cell revision token per pin family)"
+>   ],
+>   "file": "frozen-tables.json",
+>   "sha256": "bf46c8896a1861fec746f8900aabe54faf7aaaa3ff5691ed0a05e8e9d4179490"
+>  }
+diff_rc=1
+bf46c8896a1861fec746f8900aabe54faf7aaaa3ff5691ed0a05e8e9d4179490  /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/rc/ft1.json
+13d6e2f9c0dfe1287e2cd9a7d814d95a4fb0ff0ad7ce644aad7ead18af69a7b9  /fast/scratch/hyaku/mado-r55/R55W2CritAdmission/rc/ft2.json
+# holdout commitment in v1 and v2
+1275d7f804c887c1109e3c9e0c4cc590c162399660301da5fa4196c05a92c549
+1275d7f804c887c1109e3c9e0c4cc590c162399660301da5fa4196c05a92c549
+# freeze files: blob ids at freeze commit 54dacbd8 vs rev
+.ufo/waves/round-55/claims-frozen.md 54dacbd8=9c1990eaac9dac46712834c5f88a67fde942b045 rev=9c1990eaac9dac46712834c5f88a67fde942b045
+.ufo/waves/round-55/registration.md 54dacbd8=160248d054ff89e241c2f089aec0407d6f7f5660 rev=160248d054ff89e241c2f089aec0407d6f7f5660
+.ufo/waves/round-55/frozen-tables.json 54dacbd8=d5a8aa798163ddc8579be92cbe3581dffafc5269 rev=d5a8aa798163ddc8579be92cbe3581dffafc5269
+.ufo/waves/round-55/fixtures/c2 54dacbd8=0047f64c95497388e46d0f9b10469ef7b0da8396 rev=0047f64c95497388e46d0f9b10469ef7b0da8396
+.ufo/waves/round-55/ctl 54dacbd8=5d7a470b89b571fb8f8a857af37458a50c95867e rev=5d7a470b89b571fb8f8a857af37458a50c95867e
+.ufo/waves/round-55/fetch 54dacbd8=e689d4cd1ebdf9e67a4abb605aa34db6d5e53542 rev=e689d4cd1ebdf9e67a4abb605aa34db6d5e53542
+.ufo/waves/round-55/freeze-verify.py 54dacbd8=1403ceccf26d8a1ed4981f8d5434557cb28d5007 rev=1403ceccf26d8a1ed4981f8d5434557cb28d5007
+# host version pin
+| S316 | Hyprland v0.56.2 input manager - per-device config application - https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de

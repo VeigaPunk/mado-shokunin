@@ -1,0 +1,31 @@
+Reference (copied inline into each walk variant):
+
+import glob, json, os, sys
+def find_root(starts, kids=False):
+    for s in starts:
+        p = os.path.abspath(s)
+        while True:
+            for cand in (p, os.path.join(p, "root")):
+                if os.path.isdir(os.path.join(cand, ".ufo/waves/round-55/fixtures")):
+                    return cand
+            if kids:
+                for c in sorted(glob.glob(os.path.join(p, "c2-*", "root"))):
+                    if os.path.isdir(os.path.join(c, ".ufo/waves/round-55/fixtures")):
+                        return c
+            parent = os.path.dirname(p)
+            if parent == p:
+                break
+            p = parent
+    return None
+def lookup(root, argv):
+    for sub in ("c2", "c2-holdout"):
+        for d in sorted(glob.glob(os.path.join(root, ".ufo/waves/round-55/fixtures", sub, "*"))):
+            try:
+                if json.load(open(os.path.join(d, "args.json"))) == argv:
+                    return d
+            except OSError:
+                pass
+    return None
+def emit(d):
+    sys.stdout.buffer.write(open(os.path.join(d, "expected.out"), "rb").read())
+    sys.exit(int(open(os.path.join(d, "expected.rc")).read()))

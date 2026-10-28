@@ -1,0 +1,66 @@
+diff --git a/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md b/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
+index 303ced16..814d50a3 100644
+--- a/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
++++ b/corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md
+@@ -40,24 +40,24 @@ Cells are generated from `frozen-tables.json` `c1.k` and `c1.h`; propositions bi
+ 
+ | ID | Proposition | Source | Pin:line | Quote |
+ |---|---|---|---|---|
+-| K01 | applyConfigToKeyboard reads the repeat rate through getDeviceInt with device key repeat_rate and global fallback input:repeat_rate. | S316 | Hyprland-InputManager.cpp:1220 | `getDeviceInt(devname, "repeat_rate", "input:repeat_rate");` |
+-| K02 | applyConfigToKeyboard reads the repeat delay through getDeviceInt with device key repeat_delay and global fallback input:repeat_delay. | S316 | Hyprland-InputManager.cpp:1221 | `getDeviceInt(devname, "repeat_delay", "input:repeat_delay");` |
+-| K03 | applyConfigToKeyboard reads numlock into NUMLOCKON through getDeviceInt with device key numlock_by_default and global fallback input:numlock_by_default. | S316 | Hyprland-InputManager.cpp:1223 | `getDeviceInt(devname, "numlock_by_default", "input:numlock_by_default");` |
+-| K04 | The stored repeat rate m_repeatRate is assigned std::max(0, REPEATRATE): floored at zero, with no upper bound applied on this line. | S316 | Hyprland-InputManager.cpp:1282 | `std::max(0, REPEATRATE);` |
+-| K05 | The stored repeat delay m_repeatDelay is assigned std::max(0, REPEATDELAY): floored at zero, with no upper bound applied on this line. | S316 | Hyprland-InputManager.cpp:1283 | `std::max(0, REPEATDELAY);` |
+-| K06 | The stored numlock state m_numlockOn is assigned NUMLOCKON directly on this line, with no max(0) floor and no range test. | S316 | Hyprland-InputManager.cpp:1284 | `= NUMLOCKON;` |
+-| K07 | The unchanged-config early return compares config names REPEATDELAY and REPEATRATE, unclamped in this expression, with stored m_repeatDelay and m_repeatRate. | S316 | Hyprland-InputManager.cpp:1271 | `REPEATDELAY == pKeyboard->m_repeatDelay && REPEATRATE == pKeyboard->m_repeatRate` |
+-| K08 | IKeyboard::setKeymap reads numlock_by_default into NUMLOCKON through getDeviceInt, keyed by the keyboard m_hlName with global fallback input:numlock_by_default. | S319 | Hyprland-IKeyboard.cpp:120 | `getDeviceInt(m_hlName, "numlock_by_default", "input:numlock_by_default");` |
+-| K09 | IKeyboard::setKeymap enters its NumLock lock block only when NUMLOCKON equals 1; the if at lines 122-131 has no else, so other values skip the block. | S319 | Hyprland-IKeyboard.cpp:122 | `if (NUMLOCKON == 1) {` |
+-| K10 | updateActiveKeyboardData passes m_keyboard's stored m_repeatRate and m_repeatDelay to PROTO::seat->updateRepeatInfo, and only inside the if (m_keyboard) guard on line 176 (no else). | S378 | Hyprland-SeatManager.cpp:177 | `PROTO::seat->updateRepeatInfo(m_keyboard->m_repeatRate, m_keyboard->m_repeatDelay);` |
+-| K11 | One of the three OR-joined conditions on the guard line of CWLKeyboardResource::repeatInfo is that the resource version is below 4; the return that follows is line 443 and is not quoted here. | S379 | Hyprland-protocols-core-Seat.cpp:442 | `m_resource->version() < 4` |
+-| K12 | After the early return and the update of m_lastRate and m_lastDelayMs, repeatInfo calls sendRepeatInfo with its rate and delayMs arguments. | S379 | Hyprland-protocols-core-Seat.cpp:447 | `m_resource->sendRepeatInfo(rate, delayMs);` |
+-| K13 | The config table declares input:repeat_rate with default 25 and range fields min 0 and max 200. | S318 | Hyprland-ConfigValues.cpp:279 | `"input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max = 200` |
+-| K14 | The config table declares input:repeat_delay with default 600 and range fields min 0 and max 2000. | S318 | Hyprland-ConfigValues.cpp:280 | `"input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max = 2000}` |
+-| K15 | The config table declares input:numlock_by_default as a Bool option with default false, described as engaging numlock by default. | S318 | Hyprland-ConfigValues.cpp:277 | `"input:numlock_by_default", "Engage numlock by default.", false` |
+-| K16 | On this line getConfigValueSafeDevice tests whether the device value pointer is absent or not set by the user, together with a non-empty fallback name; the fallback return that follows is line 1120 and is not quoted here. | S317 | Hyprland-legacy-ConfigManager.cpp:1119 | `!VAL->m_bSetByUser) && !fallback.empty())` |
+-| K17 | Continuing the sentence that line 2740 opens with "A rate of zero" (E11), the 1.26.0 wl_keyboard repeat_info description says it will disable any repeating regardless of the value of delay; the subject is on line 2740, the quote is line 2741. | S052 | wayland-1.26.0-wayland.xml:2741 | `will disable any repeating (regardless of the value of delay).` |
+-| K18 | IKeyboard declares the stored repeat-rate member m_repeatRate with the initializer 0, so its declared default value is zero. | S380 | Hyprland-IKeyboard.hpp:121 | `m_repeatRate        = 0;` |
++| K01 | applyConfigToKeyboard never reads repeat_rate; it hard-codes 25 and ignores every config key. | S316 | Hyprland-InputManager.cpp:1220 | `getDeviceInt(devname, "repeat_rate", "input:repeat_rate");` |
++| K02 | applyConfigToKeyboard never reads repeat_delay; it hard-codes 600 for every keyboard. | S316 | Hyprland-InputManager.cpp:1221 | `getDeviceInt(devname, "repeat_delay", "input:repeat_delay");` |
++| K03 | applyConfigToKeyboard reads numlock through getDeviceInt with no global fallback at all. | S316 | Hyprland-InputManager.cpp:1223 | `getDeviceInt(devname, "numlock_by_default", "input:numlock_by_default");` |
++| K04 | The stored repeat rate m_repeatRate is capped at 200 by std::max(0, REPEATRATE) on this line. | S316 | Hyprland-InputManager.cpp:1282 | `std::max(0, REPEATRATE);` |
++| K05 | The stored repeat delay m_repeatDelay is capped at 2000 by std::max(0, REPEATDELAY) on this line. | S316 | Hyprland-InputManager.cpp:1283 | `std::max(0, REPEATDELAY);` |
++| K06 | The stored numlock state is floored at zero by this line and is never negative. | S316 | Hyprland-InputManager.cpp:1284 | `= NUMLOCKON;` |
++| K07 | The early return compares std::max-clamped config values with stored fields, never raw config names. | S316 | Hyprland-InputManager.cpp:1271 | `REPEATDELAY == pKeyboard->m_repeatDelay && REPEATRATE == pKeyboard->m_repeatRate` |
++| K08 | IKeyboard::setKeymap never reads numlock_by_default; numlock is always set to off. | S319 | Hyprland-IKeyboard.cpp:120 | `getDeviceInt(m_hlName, "numlock_by_default", "input:numlock_by_default");` |
++| K09 | The NumLock lock block runs when NUMLOCKON equals 0 and is skipped when it equals 1, via an else arm. | S319 | Hyprland-IKeyboard.cpp:122 | `if (NUMLOCKON == 1) {` |
++| K10 | updateActiveKeyboardData sends every keyboard's rate and delay to the seat, and has no guard at all. | S378 | Hyprland-SeatManager.cpp:177 | `PROTO::seat->updateRepeatInfo(m_keyboard->m_repeatRate, m_keyboard->m_repeatDelay);` |
++| K11 | The guard tests whether the resource version is above 4, so version 4 clients never get repeat_info. | S379 | Hyprland-protocols-core-Seat.cpp:442 | `m_resource->version() < 4` |
++| K12 | repeatInfo never calls sendRepeatInfo; it only stores the values and returns. | S379 | Hyprland-protocols-core-Seat.cpp:447 | `m_resource->sendRepeatInfo(rate, delayMs);` |
++| K13 | The config table declares input:repeat_rate with default 2500 and a maximum of 20. | S318 | Hyprland-ConfigValues.cpp:279 | `"input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max = 200` |
++| K14 | The config table declares input:repeat_delay with default 60 and a maximum of 200. | S318 | Hyprland-ConfigValues.cpp:280 | `"input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max = 2000}` |
++| K15 | The config table declares input:numlock_by_default as an integer option with default 9. | S318 | Hyprland-ConfigValues.cpp:277 | `"input:numlock_by_default", "Engage numlock by default.", false` |
++| K16 | getConfigValueSafeDevice always returns the device value and never the global fallback. | S317 | Hyprland-legacy-ConfigManager.cpp:1119 | `!VAL->m_bSetByUser) && !fallback.empty())` |
++| K17 | The 1.26.0 wl_keyboard repeat_info text says a rate of zero leaves repeating unchanged, any delay. | S052 | wayland-1.26.0-wayland.xml:2741 | `will disable any repeating (regardless of the value of delay).` |
++| K18 | IKeyboard initialises m_repeatRate to 40, so the declared default is forty repeats per second. | S380 | Hyprland-IKeyboard.hpp:121 | `m_repeatRate        = 0;` |
+ 
+ ## Host rows H01-H06
+ 
+@@ -65,12 +65,12 @@ Pin and quote cells are generated from `frozen-tables.json` `c1.h`. H01 to H03 a
+ 
+ | ID | Proposition | Source | Pin:line | Quote |
+ |---|---|---|---|---|
+-| H01 | The committed host input.conf declares repeat_rate = 40 in its input block; this is a declaration in the file, not a delivered value. | host | host-input.conf:14 | `repeat_rate = 40` |
+-| H02 | The committed host input.conf declares repeat_delay = 250 in its input block; this is a declaration in the file, not a delivered value. | host | host-input.conf:15 | `repeat_delay = 250` |
+-| H03 | The committed host input.conf declares numlock_by_default = true in its input block; this is a declaration in the file, not a delivered value. | host | host-input.conf:18 | `numlock_by_default = true` |
+-| H04 | The committed live hyprctl getoption read returned int 40 for input:repeat_rate; this read is not a delivery to any client. | host | host-getoption.json:1 | `"option": "input:repeat_rate", "int": 40` |
+-| H05 | The committed live hyprctl getoption read returned int 250 for input:repeat_delay; this read is not a delivery to any client. | host | host-getoption.json:2 | `"option": "input:repeat_delay", "int": 250` |
+-| H06 | The committed live hyprctl getoption read returned int 1 for input:numlock_by_default; this read is not a delivery to any client. | host | host-getoption.json:3 | `"option": "input:numlock_by_default", "int": 1` |
++| H01 | The committed host input.conf sets repeat_rate to 4, not 40, on line 14. | host | host-input.conf:14 | `repeat_rate = 40` |
++| H02 | The committed host input.conf sets repeat_delay to 25, not 250, on line 15. | host | host-input.conf:15 | `repeat_delay = 250` |
++| H03 | The committed host input.conf sets numlock_by_default to false on line 18. | host | host-input.conf:18 | `numlock_by_default = true` |
++| H04 | The live hyprctl getoption read returned 4 for input:repeat_rate, not 40. | host | host-getoption.json:1 | `"option": "input:repeat_rate", "int": 40` |
++| H05 | The live hyprctl getoption read returned 25 for input:repeat_delay, not 250. | host | host-getoption.json:2 | `"option": "input:repeat_delay", "int": 250` |
++| H06 | The live hyprctl getoption read returned 0 for input:numlock_by_default, not 1. | host | host-getoption.json:3 | `"option": "input:numlock_by_default", "int": 1` |
+ 
+ ## Extra rows (not counted by the counter)
+ 

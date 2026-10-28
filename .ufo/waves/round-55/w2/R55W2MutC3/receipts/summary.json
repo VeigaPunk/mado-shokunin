@@ -1,0 +1,1497 @@
+{
+ "baseline": {
+  "selftest": {
+   "rc": 0,
+   "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+   "fails": []
+  },
+  "harness": {
+   "rc": 0,
+   "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+   "killed": [],
+   "lines": [
+    "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+    "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+    "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+    "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+    "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+    "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+    "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+   ]
+  },
+  "stub_vs_real_harness": {
+   "rc": 1,
+   "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+   "killed": [
+    "C3-CTL-1 absent",
+    "C3-CTL-2 rewritten-prefix",
+    "C3-CTL-3 altered-quote",
+    "C3-CTL-4 old-arm-only",
+    "C3-CTL-5 old-wording-stuffed",
+    "C3-CTL-6 readme-missing"
+   ],
+   "lines": [
+    "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+    "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=9696ed20638db93d162eebc81a2d0d4b71c9e2e4 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+    "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=0a2009777e9268536b902896ccb3d7c782806da3 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+    "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=1b7db458948085b6c72142bcc3e546c1cd258a68 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+    "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=c9e1e5e2e3009c87ea5d96150e11a521dc50cc85 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+    "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=bd688a2bccb0d763c863a67fa49f1590a1134ee4 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+    "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=3a2f2c3a788edd625b967ba87407c8bb887f3c84 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+   ]
+  }
+ },
+ "counters": {
+  "C01": {
+   "name": "drop prefix leg",
+   "file": "C01-drop-prefix-leg.py",
+   "old": "missed.append(\"prefix\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 36/41 passed",
+    "fails": [
+     "FAIL C3-CTL-2 rewritten prefix (one byte of P19 row)",
+     "FAIL prefix with CRLF (first line LF -> CRLF)",
+     "FAIL prefix with CRLF everywhere",
+     "FAIL entry absent",
+     "FAIL entry truncated below the base"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-2 rewritten-prefix"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: FAIL (leg prefix in missed=rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23 disagrees with field prefix=changed) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C02": {
+   "name": "drop rows:Qnn legs (keep heading)",
+   "file": "C02-drop-rows-qnn-legs-keep-heading.py",
+   "old": "missed += row_missed",
+   "new": "missed += [m for m in row_missed if m == \"rows:heading\"]",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 31/41 passed",
+    "fails": [
+     "FAIL C3-CTL-1 absent (block removed = base)",
+     "FAIL C3-CTL-3 altered Q09 quote",
+     "FAIL C3-CTL-4 old-arm-only (Q08-Q12 deleted)",
+     "FAIL duplicated Q03 row",
+     "FAIL duplicated Q03 row elsewhere inside block",
+     "FAIL Q03 row moved inside a fenced code block",
+     "FAIL tilde fence hides Q03 row",
+     "FAIL Q row quote with trailing space inside backticks",
+     "FAIL Q row anchor line shifted",
+     "FAIL Q row with a fourth cell"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=4/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,p23",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=6914d1c595bcde5257deef0f4a09f9564c6e68e3 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=e5be8f45c88506aae75e036a3c0c06bbe7d0a00b prefix=identical rows=8/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C03": {
+   "name": "drop rows:heading leg",
+   "file": "C03-drop-rows-heading-leg.py",
+   "old": "row_missed.insert(0, \"rows:heading\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL heading missing",
+     "FAIL heading only inside a fence"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C04": {
+   "name": "drop pin leg",
+   "file": "C04-drop-pin-leg.py",
+   "old": "missed.append(\"pin\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 38/41 passed",
+    "fails": [
+     "FAIL pin tampered (one trailing space at EOF)",
+     "FAIL pin absent",
+     "FAIL frozen-tables.json absent"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C05": {
+   "name": "drop p23 leg",
+   "file": "C05-drop-p23-leg.py",
+   "old": "missed.append(\"p23\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 32/41 passed",
+    "fails": [
+     "FAIL C3-CTL-1 absent (block removed = base)",
+     "FAIL C3-CTL-5 old wording in P23",
+     "FAIL P23 row only inside a fence",
+     "FAIL duplicated P23 row",
+     "FAIL P23 supersedes P20",
+     "FAIL P23 wrong source row",
+     "FAIL P23 lacks the else-arm word",
+     "FAIL P23 lacks == 0",
+     "FAIL entry absent"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=4/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (leg p23 in missed=rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13 disagrees with field p23=bad) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (leg p23 in missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13 disagrees with field p23=bad) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C06": {
+   "name": "drop stale leg",
+   "file": "C06-drop-stale-leg.py",
+   "old": "missed.append(\"stale\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL C3-CTL-5 old wording in P23",
+     "FAIL C3-CTL-5 v2 old wording keyword-stuffed (p23 satisfied, stale rejects)"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-5 old-wording-stuffed"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=01605a7beaea287ae19509385f4164095076565e prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C07": {
+   "name": "drop readme leg",
+   "file": "C07-drop-readme-leg.py",
+   "old": "missed.append(\"readme\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 38/41 passed",
+    "fails": [
+     "FAIL C3-CTL-6 README line without P23",
+     "FAIL README absent",
+     "FAIL README names P23 on a different line than the entry"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: FAIL (leg readme in missed=none disagrees with field readme=bad) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C08": {
+   "name": "drop tables_sha leg",
+   "file": "C08-drop-tables-sha-leg.py",
+   "old": "missed.append(\"tables_sha\")",
+   "new": "pass",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL frozen-tables.json differs (whitespace appended)",
+     "FAIL frozen-tables.json absent"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C09": {
+   "name": "weaken stale: case-sensitive only-when",
+   "file": "C09-weaken-stale-case-sensitive-only-when.py",
+   "old": "stale = b\"only when\" in block.lower()",
+   "new": "stale = b\"only when\" in block",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C10": {
+   "name": "stale exact-sentence leg disabled (redundant given C09 lower())",
+   "file": "C10-stale-exact-sentence-leg-disabled-redundant-given-c09-lower.py",
+   "old": "cl[2] and cl[2] in block:",
+   "new": "cl[2] and False:",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C11": {
+   "name": "P23 token list: drop RELEASED",
+   "file": "C11-p23-token-list-drop-released.py",
+   "old": "b\"PRESSED\", b\"RELEASED\"]",
+   "new": "b\"PRESSED\"]",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C12": {
+   "name": "P23 token list: drop '== 0'",
+   "file": "C12-p23-token-list-drop-0.py",
+   "old": "b\"== 0\", ",
+   "new": "",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL P23 lacks == 0"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C13": {
+   "name": "P23 token list: drop '== 1'",
+   "file": "C13-p23-token-list-drop-1.py",
+   "old": "b\"== 1\", ",
+   "new": "",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C14": {
+   "name": "P23 token list: drop m_passPressed",
+   "file": "C14-p23-token-list-drop-m-passpressed.py",
+   "old": "b\"m_passPressed\", ",
+   "new": "",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C15": {
+   "name": "P23 alt list: drop else",
+   "file": "C15-p23-alt-list-drop-else.py",
+   "old": "b\"any other\", b\"else\"]",
+   "new": "b\"any other\"]",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C16": {
+   "name": "P23 alt list: drop otherwise",
+   "file": "C16-p23-alt-list-drop-otherwise.py",
+   "old": "P23_ALT = [b\"otherwise\", ",
+   "new": "P23_ALT = [",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL C3-CTL-5 v2 old wording keyword-stuffed (p23 satisfied, stale rejects)"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-5 old-wording-stuffed"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: FAIL (p23=bad expected ok) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C17": {
+   "name": "P23 pin:anchor check dropped",
+   "file": "C17-p23-pin-anchor-check-dropped.py",
+   "old": "and c[4] == P23_ANCHOR:",
+   "new": ":",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C18": {
+   "name": "P23 Supersedes check dropped",
+   "file": "C18-p23-supersedes-check-dropped.py",
+   "old": "c[1] == b\"P19\" and ",
+   "new": "",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL P23 supersedes P20"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C19": {
+   "name": "P23 Source row check dropped",
+   "file": "C19-p23-source-row-check-dropped.py",
+   "old": "c[3] == b\"S371\" and ",
+   "new": "",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL P23 wrong source row"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C20": {
+   "name": "P23 exactly-one row relaxed to >=1",
+   "file": "C20-p23-exactly-one-row-relaxed-to-1.py",
+   "old": "if len(p23_rows) == 1:",
+   "new": "if len(p23_rows) >= 1:",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL duplicated P23 row"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C21": {
+   "name": "BASE constant: last hex digit changed",
+   "file": "C21-base-constant-last-hex-digit-changed.py",
+   "old": "BASE = \"3b55b6e91e40f455dd56b2985e4ffc087ada92d5\"",
+   "new": "BASE = \"3b55b6e91e40f455dd56b2985e4ffc087ada92d4\"",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent'",
+     "C3-CTL-1 absent: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (unparsable counter line: 'MADO_P19_FIX: SETUP base_commit_absent') [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C22": {
+   "name": "Q id range: Q13 dropped",
+   "file": "C22-q-id-range-q13-dropped.py",
+   "old": "range(1, NQ + 1)",
+   "new": "range(1, NQ)",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL C3-CTL-1 absent (block removed = base)"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=2/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: good tree fields not identical/13/ok/ok/ok: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,p23",
+     "C3-CTL-3 altered-quote: FAIL (rows=11/13 expected 12/13) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (rows=7/13 expected 8/13) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (rows=12/13 expected 13/13) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (rows=12/13 expected 13/13) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C23": {
+   "name": "Q id range: Q01 dropped",
+   "file": "C23-q-id-range-q01-dropped.py",
+   "old": "range(1, NQ + 1)",
+   "new": "range(2, NQ + 1)",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL C3-CTL-1 absent (block removed = base)"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=2/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: good tree fields not identical/13/ok/ok/ok: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=12/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: FAIL (rows=11/13 expected 12/13) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (rows=7/13 expected 8/13) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (rows=12/13 expected 13/13) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (rows=12/13 expected 13/13) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C24": {
+   "name": "CRLF accepted in prefix comparison",
+   "file": "C24-crlf-accepted-in-prefix-comparison.py",
+   "old": "prefix_ok = entry is not None and entry.startswith(base_entry)",
+   "new": "prefix_ok = entry is not None and entry.replace(b\"\\r\\n\", b\"\\n\").startswith(base_entry)",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL prefix with CRLF (first line LF -> CRLF)",
+     "FAIL prefix with CRLF everywhere"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C25": {
+   "name": "duplicate Q rows accepted",
+   "file": "C25-duplicate-q-rows-accepted.py",
+   "old": "if len(rs) == 1 and i in frozen_q:",
+   "new": "if len(rs) >= 1 and i in frozen_q:",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL duplicated Q03 row",
+     "FAIL duplicated Q03 row elsewhere inside block"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C26": {
+   "name": "Q pin:line anchor check dropped",
+   "file": "C26-q-pin-line-anchor-check-dropped.py",
+   "old": "c[1] == want_anchor and ",
+   "new": "",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL Q row anchor line shifted"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C27": {
+   "name": "Q quote check dropped",
+   "file": "C27-q-quote-check-dropped.py",
+   "old": "and c[2] == want_quote",
+   "new": "",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL C3-CTL-3 altered Q09 quote",
+     "FAIL Q row quote with trailing space inside backticks"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-3 altered-quote"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=9ffe392f2c0ac8e24fc6109138e26068e4d3250c prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C28": {
+   "name": "pin sha256 check dropped",
+   "file": "C28-pin-sha256-check-dropped.py",
+   "old": "if pb is not None and sha256(pb) == pin_sha:",
+   "new": "if pb is not None:",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL pin tampered (one trailing space at EOF)"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C29": {
+   "name": "pin quote-at-line check dropped (equivalent under constants)",
+   "file": "C29-pin-quote-at-line-check-dropped-equivalent-under-constants.py",
+   "old": " or lines[ln - 1].strip(WS) != f[\"quote\"].encode(\"utf-8\"):",
+   "new": ":",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C30": {
+   "name": "readme: P23 requirement dropped",
+   "file": "C30-readme-p23-requirement-dropped.py",
+   "old": "if ENTRY_NAME in ln and b\"P23\" in ln:",
+   "new": "if ENTRY_NAME in ln:",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 39/41 passed",
+    "fails": [
+     "FAIL C3-CTL-6 README line without P23",
+     "FAIL README names P23 on a different line than the entry"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=6a6ff67eca8b9feb2be715e1bb2472a762b8cd2a prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C31": {
+   "name": "heading: ATX '#' requirement dropped",
+   "file": "C31-heading-atx-requirement-dropped.py",
+   "old": "if s.startswith(b\"#\") and HEADING in s:",
+   "new": "if HEADING in s:",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C32": {
+   "name": "fenced code blocks not skipped",
+   "file": "C32-fenced-code-blocks-not-skipped.py",
+   "old": "        if m:\n",
+   "new": "        if False:\n",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 36/41 passed",
+    "fails": [
+     "FAIL Q03 row moved inside a fenced code block",
+     "FAIL extra fenced copy of Q03 beside the real row does not count as duplicate",
+     "FAIL tilde fence hides Q03 row",
+     "FAIL P23 row only inside a fence",
+     "FAIL heading only inside a fence"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C33": {
+   "name": "stale tested on whole entry (not appended block)",
+   "file": "C33-stale-tested-on-whole-entry-not-appended-block.py",
+   "old": "stale = b\"only when\" in block.lower()",
+   "new": "stale = b\"only when\" in entry.lower()",
+   "selftest": {
+    "rc": 1,
+    "summary": "NO SUMMARY (rc=1) e/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-55/w2/R55W2MutC3/mutants/C33-stale-tested-on-whole-entry-not-appended-block.py\", line 244, in evaluate\n    stale = b\"only when\" in entry.lower()\n                            ^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'lower'",
+    "fails": []
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=3/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: good tree not TARGET_MET: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=stale (rc=1)",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23,stale",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23,stale",
+     "C3-CTL-3 altered-quote: FAIL (unexpected leg(s) ['stale'] in missed=rows:Q09,stale) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (unexpected leg(s) ['stale'] in missed=rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,stale) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: FAIL (unexpected leg(s) ['stale'] in missed=stale,readme) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C34": {
+   "name": "TABLES_SHA256 constant changed",
+   "file": "C34-tables-sha256-constant-changed.py",
+   "old": "TABLES_SHA256 = \"13d6e2f9c0",
+   "new": "TABLES_SHA256 = \"13d6e2f9c1",
+   "selftest": {
+    "rc": 2,
+    "summary": "NO SUMMARY (rc=2) ",
+    "fails": []
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: good tree not TARGET_MET: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MISSED missed=tables_sha (rc=1)",
+     "C3-CTL-1 absent: FAIL (unexpected leg(s) ['tables_sha'] in missed=rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23,tables_sha) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (unexpected leg(s) ['tables_sha'] in missed=prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23,tables_sha) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (unexpected leg(s) ['tables_sha'] in missed=rows:Q09,tables_sha) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (unexpected leg(s) ['tables_sha'] in missed=rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,tables_sha) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (unexpected leg(s) ['tables_sha'] in missed=stale,tables_sha) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (unexpected leg(s) ['tables_sha'] in missed=readme,tables_sha) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "C35": {
+   "name": "P23 tokens: any() instead of all()",
+   "file": "C35-p23-tokens-any-instead-of-all.py",
+   "old": "p23_ok = all(t in prop for t in P23_TOKENS)",
+   "new": "p23_ok = any(t in prop for t in P23_TOKENS)",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL P23 lacks == 0"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C36": {
+   "name": "tables_sha: blob presence only",
+   "file": "C36-tables-sha-blob-presence-only.py",
+   "old": "tables_ok = tables_blob is not None and sha256(tables_blob) == TABLES_SHA256",
+   "new": "tables_ok = tables_blob is not None",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 40/41 passed",
+    "fails": [
+     "FAIL frozen-tables.json differs (whitespace appended)"
+    ]
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C37": {
+   "name": "stale: only-when test dropped entirely",
+   "file": "C37-stale-only-when-test-dropped-entirely.py",
+   "old": "stale = b\"only when\" in block.lower()",
+   "new": "stale = False",
+   "selftest": {
+    "rc": 0,
+    "summary": "MADO_P19_FIX_SELFTEST: 41/41 passed",
+    "fails": []
+   },
+   "harness": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+    "killed": [],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "C38": {
+   "name": "pin quote read one line late (off-by-one lines[ln])",
+   "file": "C38-pin-quote-read-one-line-late-off-by-one-lines-ln.py",
+   "old": "lines[ln - 1].strip(WS)",
+   "new": "lines[ln].strip(WS)",
+   "selftest": {
+    "rc": 1,
+    "summary": "MADO_P19_FIX_SELFTEST: 14/41 passed",
+    "fails": [
+     "FAIL good",
+     "FAIL C3-CTL-3 altered Q09 quote",
+     "FAIL C3-CTL-4 old-arm-only (Q08-Q12 deleted)",
+     "FAIL C3-CTL-5 old wording in P23",
+     "FAIL C3-CTL-5 v2 old wording keyword-stuffed (p23 satisfied, stale rejects)",
+     "FAIL C3-CTL-6 README line without P23",
+     "FAIL duplicated Q03 row",
+     "FAIL duplicated Q03 row elsewhere inside block",
+     "FAIL Q03 row moved inside a fenced code block",
+     "FAIL extra fenced copy of Q03 beside the real row does not count as duplicate",
+     "FAIL tilde fence hides Q03 row",
+     "FAIL P23 row only inside a fence",
+     "FAIL heading missing",
+     "FAIL heading only inside a fence",
+     "FAIL duplicated P23 row",
+     "FAIL P23 supersedes P20",
+     "FAIL P23 wrong source row",
+     "FAIL P23 lacks the else-arm word",
+     "FAIL P23 lacks == 0",
+     "FAIL Q row quote with trailing space inside backticks",
+     "FAIL Q row anchor line shifted",
+     "FAIL Q row with a fourth cell",
+     "FAIL CRLF after the prefix is tolerated",
+     "FAIL frozen-tables.json differs (whitespace appended)",
+     "FAIL README absent",
+     "FAIL README names P23 on a different line than the entry",
+     "FAIL block appended without a blank line before the heading"
+    ]
+   },
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=bad controls=2/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: good tree not TARGET_MET: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=bad p23=ok readme=ok verdict=TARGET_MISSED missed=pin (rc=1)",
+     "C3-CTL-1 absent: FAIL (pin=bad expected ok) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,pin,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09,pin",
+     "C3-CTL-4 old-arm-only: FAIL (pin=bad expected ok) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (pin=bad expected ok) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (pin=bad expected ok) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  }
+ },
+ "harness": {
+  "H01": {
+   "name": "skip CTL-5 (control removed from CONTROLS)",
+   "file": "H01-skip-ctl-5-control-removed-from-controls-r55_ctl_c3.py",
+   "old": "    (\"C3-CTL-5 old-wording-stuffed\", mut_old_wording, \"identical\", 13, \"ok\", \"ok\", \"ok\",\n     {\"stale\"}, {\"stale\"}, set(), set(), 0),\n",
+   "new": "",
+   "vs_stub": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=b00f1e96f5989dd2be755663365beab8bcea7135 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=9378945bf7021a275d3eb227f23a41f06a7019bb prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=68f6ff55091863fa5e0c9ff8e8324d85673f3b2d prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=124b0d4d37e7f3cf29e5227427fb7d77d00caa4e prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=f5897e64f31e418441d4c9ad3aab4e276d6d2e06 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+    ]
+   },
+   "vs_counter": {
+    "counter": "C06",
+    "desc": "stale leg dropped",
+    "result": {
+     "rc": 0,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=OK",
+     "killed": [],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+     ]
+    },
+    "orig_harness": {
+     "rc": 1,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+     "killed": [
+      "C3-CTL-5 old-wording-stuffed"
+     ],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=4c30f452e6b942fa71dd3381b235e05dc438400c prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+      "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+     ]
+    }
+   }
+  },
+  "H02": {
+   "name": "weaken CTL-5 required stale leg (must_o -> empty)",
+   "file": "H02-weaken-ctl-5-required-stale-leg-must-o-empty-r55_ctl_c3.py",
+   "old": "{\"stale\"}, {\"stale\"}, set(), set(), 0),",
+   "new": "set(), {\"stale\"}, set(), set(), 0),",
+   "vs_stub": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=fab5b2cd9544413f1ad886aee85ad4b35043e56f prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=bd8029d2eaf82f0363d67e717743d489b5c13b23 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=a332a2e80abc2ad20a4750a9a17a750ada42347b prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=c6cdc35c41b088203d6a8966f79b7c3db358e6af prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=4c30f452e6b942fa71dd3381b235e05dc438400c prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=7ef12c12ef45db38b5b90899910f88468e8f30ad prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+    ]
+   },
+   "vs_counter": {
+    "counter": "T01",
+    "desc": "stale as rows:heading",
+    "result": {
+     "rc": 1,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+     "killed": [
+      "C3-CTL-5 old-wording-stuffed"
+     ],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: FAIL (unexpected row leg(s) ['heading'] in missed=rows:heading) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+      "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+     ]
+    },
+    "orig_harness": {
+     "rc": 1,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+     "killed": [
+      "C3-CTL-5 old-wording-stuffed"
+     ],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: FAIL (required leg(s) ['stale'] absent from missed=rows:heading) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+      "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+     ]
+    }
+   }
+  },
+  "H03": {
+   "name": "accept collateral legs in CTL-6 (allow pin/p23/stale/prefix)",
+   "file": "H03-accept-collateral-legs-in-ctl-6-allow-pin-p23-stal-r55_ctl_c3.py",
+   "old": "{\"readme\"}, {\"readme\"}, set(), set(), 0),",
+   "new": "{\"readme\"}, {\"readme\", \"pin\", \"p23\", \"stale\", \"prefix\"}, set(), set(), 0),",
+   "vs_stub": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=6b555d7fd1ea592368a9944199c5ce8b62300a0a prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=f5ed746ef95b7e6ccebe8c227081f5f0ddf9c4a9 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=1dfd5769a9365d4b355f2aac9061649cd8d2ea37 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=caf188681be75926ce12bf01be24391093582d1f prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=b4bacd232cd64f752c7dfb349546602db5d49f90 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=7cbcaee8f49a9dd6ad7731e068504b04b9ab896d prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+    ]
+   },
+   "vs_counter": {
+    "counter": "T02",
+    "desc": "stale over-reported when readme missing",
+    "result": {
+     "rc": 0,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK",
+     "killed": [],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+      "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] stale,readme"
+     ]
+    },
+    "orig_harness": {
+     "rc": 1,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+     "killed": [
+      "C3-CTL-6 readme-missing"
+     ],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+      "C3-CTL-6 readme-missing: FAIL (unexpected leg(s) ['stale'] in missed=stale,readme) [removed P23 from 2 README line(s)]"
+     ]
+    }
+   }
+  },
+  "H04": {
+   "name": "drop the TARGET_MISSED requirement for controls (mutant admitted check)",
+   "file": "H04-drop-the-target-missed-requirement-for-controls-mu-r55_ctl_c3.py",
+   "old": "if d[\"verdict\"] != \"TARGET_MISSED\":",
+   "new": "if False:",
+   "vs_stub": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (rows=13/13 expected 0/13) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (prefix=identical expected changed) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (rows=13/13 expected 12/13) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (rows=13/13 expected 8/13) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (required leg(s) ['stale'] absent from missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (readme=ok expected bad) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  },
+  "H05": {
+   "name": "skip CTL-6 (readme control removed)",
+   "file": "H05-skip-ctl-6-readme-control-removed-r55_ctl_c3.py",
+   "old": "    (\"C3-CTL-6 readme-missing\", mut_readme_missing, \"identical\", 13, \"ok\", \"ok\", \"bad\",\n     {\"readme\"}, {\"readme\"}, set(), set(), 0),\n",
+   "new": "",
+   "vs_stub": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=513b895fc6cfeba4386939b31d2c837796a9813a prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=0f938947d256d3f103d66a4815a4c1934c4c7fc3 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=bbcd35d3ec91bb18d45a5fa6114edf614caeae1f prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=6f98f575d93a24f31d32571d185ee2b1546a57b8 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=b1ca4c0dea8a342f3f5c5c96572403f210ffae83 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']"
+    ]
+   },
+   "vs_counter": {
+    "counter": "C07",
+    "desc": "readme leg dropped",
+    "result": {
+     "rc": 0,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=OK",
+     "killed": [],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale"
+     ]
+    },
+    "orig_harness": {
+     "rc": 1,
+     "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+     "killed": [
+      "C3-CTL-6 readme-missing"
+     ],
+     "lines": [
+      "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+      "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+      "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+      "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+      "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+      "C3-CTL-6 readme-missing: FAIL (leg readme in missed=none disagrees with field readme=bad) [removed P23 from 2 README line(s)]"
+     ]
+    }
+   }
+  },
+  "H06": {
+   "name": "final verdict ignores control count (passed == len -> passed >= 0)",
+   "file": "H06-final-verdict-ignores-control-count-passed-len-pas-r55_ctl_c3.py",
+   "old": "passed == len(CONTROLS)",
+   "new": "passed >= 0",
+   "vs_stub": {
+    "rc": 0,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=0/6 verdict=OK",
+    "killed": [
+     "C3-CTL-1 absent",
+     "C3-CTL-2 rewritten-prefix",
+     "C3-CTL-3 altered-quote",
+     "C3-CTL-4 old-arm-only",
+     "C3-CTL-5 old-wording-stuffed",
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=eaa7b6033e5af14a82b31986a8a7173a36065752 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [block removed (entry == base bytes)]",
+     "C3-CTL-2 rewritten-prefix: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=7107159e240f7367f63c31abe58266d2fb4e7fa8 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [one byte of the P19 row changed]",
+     "C3-CTL-3 altered-quote: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=77ecc62461ab070d3f3e308b286708177c7284c2 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [Q09 quote 'key - 8' -> 'key - 9']",
+     "C3-CTL-4 old-arm-only: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=8a98e6b62f4de487f1d5fba991142ae4cbee6655 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [deleted 5 rows Q08-Q12]",
+     "C3-CTL-5 old-wording-stuffed: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=d6e6bfd6fe36a2ae19598f0240458518c79d6d44 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: FAIL (mutant admitted (verdict TARGET_MET): MADO_P19_FIX: rev=5d7aec2926bee9dd1b1881006bb233cfb01fa128 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  }
+ },
+ "targets": {
+  "T01": {
+   "name": "stale leg reported as rows:heading (only route for a row-only CTL-5 answer)",
+   "file": "T01-stale-leg-reported-as-rows-heading-only-route-for-a-row-only.py",
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-5 old-wording-stuffed"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: FAIL (required leg(s) ['stale'] absent from missed=rows:heading) [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise']",
+     "C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme"
+    ]
+   }
+  },
+  "T02": {
+   "name": "stale leg also reported when readme leg fails (CTL-6 collateral, consistent fields)",
+   "file": "T02-stale-leg-also-reported-when-readme-leg-fails-ctl-6-collater.py",
+   "harness": {
+    "rc": 1,
+    "line": "MADO_R55_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL",
+    "killed": [
+     "C3-CTL-6 readme-missing"
+    ],
+    "lines": [
+     "good: MADO_P19_FIX: rev=1f484da6285b5f38848945bc1c1d60d9e3383726 prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none",
+     "C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23",
+     "C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09",
+     "C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12",
+     "C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale",
+     "C3-CTL-6 readme-missing: FAIL (unexpected leg(s) ['stale'] in missed=stale,readme) [removed P23 from 2 README line(s)]"
+    ]
+   }
+  }
+ }
+}

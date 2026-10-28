@@ -1,0 +1,502 @@
+exact.conf=1048576 bytes; over.conf=1048577 bytes
+== M01 attack [orig] rc=2 argv=--config r30.conf --keyboard 
+-- stdout:
+MADO_KBDOPT: SETUP usage
+
+-- stderr last line: 
+== M01 attack [mut] rc=1 argv=--config r30.conf --keyboard 
+-- stdout:
+
+-- stderr last line: IndexError: list index out of range
+** M01 attack: stdout DIFFERS
+== M01 attack2 [orig] rc=2 argv=--config 
+-- stdout:
+MADO_KBDOPT: SETUP usage
+
+-- stderr last line: 
+== M01 attack2 [mut] rc=1 argv=--config 
+-- stdout:
+
+-- stderr last line: IndexError: list index out of range
+** M01 attack2: stdout DIFFERS
+== M01 control [orig] rc=0 argv=--config r30.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M01 control [mut] rc=0 argv=--config r30.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M01 control: stdout identical (rc orig=0)
+== M02 attack [orig] rc=2 argv=--config empty.conf --getoption g40.json --getoption g41.json 
+-- stdout:
+MADO_KBDOPT: SETUP usage
+
+-- stderr last line: 
+== M02 attack [mut] rc=0 argv=--config empty.conf --getoption g40.json --getoption g41.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=41 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M02 attack: stdout DIFFERS
+== M02 control [orig] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M02 control [mut] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M02 control: stdout identical (rc orig=0)
+== M04 attack [orig] rc=2 argv=--config empty.conf --keyboard $'kbd\177x' 
+-- stdout:
+MADO_KBDOPT: SETUP usage
+
+-- stderr last line: 
+== M04 attack [mut] rc=0 argv=--config empty.conf --keyboard $'kbd\177x' 
+-- stdout:
+MADO_KBDOPT: keyboard=kbdx repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M04 attack: stdout DIFFERS
+== M04 control [orig] rc=0 argv=--config empty.conf --keyboard kbd-x 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-x repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M04 control [mut] rc=0 argv=--config empty.conf --keyboard kbd-x 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-x repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M04 control: stdout identical (rc orig=0)
+== M05 attack [orig] rc=0 argv=--config r201.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+
+-- stderr last line: 
+== M05 attack [mut] rc=0 argv=--config r201.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=201 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M05 attack: stdout DIFFERS
+== M05 control [orig] rc=0 argv=--config r200.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=200 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M05 control [mut] rc=0 argv=--config r200.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=200 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M05 control: stdout identical (rc orig=0)
+== M06 attack [orig] rc=0 argv=--config vt.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M06 attack [mut] rc=0 argv=--config vt.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M06 attack: stdout DIFFERS
+== M06 control [orig] rc=0 argv=--config r30.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M06 control [mut] rc=0 argv=--config r30.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M06 control: stdout identical (rc orig=0)
+== M09 attack [orig] rc=0 argv=--config dev9.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+
+-- stderr last line: 
+== M09 attack [mut] rc=0 argv=--config dev9.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M09 attack: stdout DIFFERS
+== M09 control [orig] rc=0 argv=--config r30.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M09 control [mut] rc=0 argv=--config r30.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M09 control: stdout identical (rc orig=0)
+== M10 attack [orig] rc=0 argv=--config r40.conf --getoption g41.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=41 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M10 attack [mut] rc=0 argv=--config r40.conf --getoption g41.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=41 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M10 attack: stdout DIFFERS
+== M10 control [orig] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M10 control [mut] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M10 control: stdout identical (rc orig=0)
+== M11 attack [orig] rc=0 argv=--config empty.conf --getoption gstr.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M11 attack [mut] rc=0 argv=--config empty.conf --getoption gstr.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=x verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M11 attack: stdout DIFFERS
+== M11 control [orig] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M11 control [mut] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M11 control: stdout identical (rc orig=0)
+== M12 attack [orig] rc=0 argv=--config empty.conf --getoption gbool.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M12 attack [mut] rc=0 argv=--config empty.conf --getoption gbool.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=True verdict=DIFFER
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M12 attack: stdout DIFFERS
+== M12 control [orig] rc=0 argv=--config empty.conf --getoption gnum0.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=0 verdict=AGREE
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M12 control [mut] rc=0 argv=--config empty.conf --getoption gnum0.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=0 verdict=AGREE
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M12 control: stdout identical (rc orig=0)
+== M13 attack [orig] rc=0 argv=--config r40.conf --getoption gfloat.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M13 attack [mut] rc=0 argv=--config r40.conf --getoption gfloat.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40.0 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M13 attack: stdout DIFFERS
+== M13 control [orig] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M13 control [mut] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M13 control: stdout identical (rc orig=0)
+== M14 attack [orig] rc=2 argv=--config empty.conf --getoption gnan.json 
+-- stdout:
+MADO_KBDOPT: SETUP bad_json
+
+-- stderr last line: 
+== M14 attack [mut] rc=0 argv=--config empty.conf --getoption gnan.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M14 attack: stdout DIFFERS
+== M14 control [orig] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M14 control [mut] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M14 control: stdout identical (rc orig=0)
+== M16 attack [orig] rc=2 argv=--config empty.conf --getoption garr.json 
+-- stdout:
+MADO_KBDOPT: SETUP bad_json
+
+-- stderr last line: 
+== M16 attack [mut] rc=0 argv=--config empty.conf --getoption garr.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M16 attack: stdout DIFFERS
+== M16 control [orig] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M16 control [mut] rc=0 argv=--config empty.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+** M16 control: stdout identical (rc orig=0)
+== M17 attack [orig] rc=0 argv=--config exact.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M17 attack [mut] rc=2 argv=--config exact.conf 
+-- stdout:
+MADO_KBDOPT: SETUP too_large
+
+-- stderr last line: 
+** M17 attack: stdout DIFFERS
+== M17 control [orig] rc=0 argv=--config r30.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M17 control [mut] rc=0 argv=--config r30.conf 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M17 control: stdout identical (rc orig=0)
+== M18 attack [orig] rc=2 argv=--config over.conf 
+-- stdout:
+MADO_KBDOPT: SETUP too_large
+
+-- stderr last line: 
+== M18 attack [mut] rc=2 argv=--config over.conf 
+-- stdout:
+MADO_KBDOPT: SETUP unreadable
+
+-- stderr last line: 
+** M18 attack: stdout DIFFERS
+== M18 control [orig] rc=2 argv=--config no-such-file.conf 
+-- stdout:
+MADO_KBDOPT: SETUP unreadable
+
+-- stderr last line: 
+== M18 control [mut] rc=2 argv=--config no-such-file.conf 
+-- stdout:
+MADO_KBDOPT: SETUP unreadable
+
+-- stderr last line: 
+** M18 control: stdout identical (rc orig=2)
+== M20 attack [orig] rc=0 argv=--config dev20.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+== M20 attack [mut] rc=0 argv=--config dev20.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+
+-- stderr last line: 
+** M20 attack: stdout DIFFERS
+== M20 control [orig] rc=0 argv=--config dev9.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+
+-- stderr last line: 
+== M20 control [mut] rc=0 argv=--config dev9.conf --keyboard kbd-a 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1
+MADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE
+
+-- stderr last line: 
+** M20 control: stdout identical (rc orig=0)
+== M21 attack [orig] rc=0 argv=--config dev21.conf --keyboard kbd-a --getoption g50.json 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=30 live=50 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+
+-- stderr last line: 
+== M21 attack [mut] rc=0 argv=--config dev21.conf --keyboard kbd-a --getoption g50.json 
+-- stdout:
+MADO_KBDOPT: keyboard=kbd-a repeat_rate=50 repeat_delay=600 numlock=0 from=D/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=50 live=50 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M21 attack: stdout DIFFERS
+== M21 control [orig] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+== M21 control [mut] rc=0 argv=--config r40.conf --getoption g40.json 
+-- stdout:
+MADO_KBDOPT: keyboard=* repeat_rate=40 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=? verdict=UNKNOWN
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN
+
+-- stderr last line: 
+** M21 control: stdout identical (rc orig=0)

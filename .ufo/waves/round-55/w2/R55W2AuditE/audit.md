@@ -1,0 +1,31 @@
+# Sentence-to-pin audit: corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md (seat R55W2AuditE)
+
+Scope: rows K16, K17, E04, E05, E06, E07, E11 (QUALITY 104). Pins: `.ufo/waves/round-55/fetch/` at Hyprland efb50993780079460b0cbed1363e2166a2de1d9f and wayland 1.26.0. Labels: SUPPORTED (the quote entails the proposition), HELD (stated as held/unknown with boundary), OVERREACH (stronger than the cited line: a neighbour line's effect, an unscoped always/only/never, or a runtime claim), UNSUPPORTED.
+
+Upstream re-open: all three pin files compared byte-for-byte (`cmp`) to upstream raw files at the same commit or tag. `receipts/upstream-cmp.txt`.
+
+| Row | Proposition (as committed) | Pin:line (file) | Neighbour line that matters | Quote substring check | Upstream re-open | Label | Evidence and fix |
+|---|---|---|---|---|---|---|---|
+| K16 | On this line getConfigValueSafeDevice tests whether the device value pointer is absent or not set by the user, together with a non-empty fallback name; the fallback return that follows is line 1120. | Hyprland-legacy-ConfigManager.cpp:1119 | 1120 `return m_config->getConfigValuePtr(fallback.c_str());` (the fallback return); 1122 `return VAL;` | yes | src/config/legacy/ConfigManager.cpp, byte-equal | SUPPORTED | `(!VAL \|\| !VAL->m_bSetByUser) && !fallback.empty()` on 1119 is exactly the stated test; 1120 is the return. See extra row X1 below for an overreach in a sentence that cites K16. |
+| K17 | Continuing the sentence that line 2740 opens with "A rate of zero" (E11), the 1.26.0 wl_keyboard repeat_info description says it will disable any repeating regardless of the value of delay; the subject is on line 2740, the quote is line 2741. | wayland-1.26.0-wayland.xml:2741 | 2740 `Negative values for either rate or delay are illegal. A rate of zero` (subject); 2742 blank; 2743 "This event can be sent later on..." (not part of this claim) | yes | gitlab 1.26.0 protocol/wayland.xml, byte-equal | SUPPORTED | 2740 ends "A rate of zero", 2741 is "will disable any repeating (regardless of the value of delay)." The subject referent is bound by the proposition's own cell. |
+| E04 | The wl_keyboard repeat_info event is declared with since 4 on this line of the 1.26.0 protocol. | wayland-1.26.0-wayland.xml:2732 | 2730 `<!-- Version 4 additions -->`; line 2732 lies inside the wl_keyboard interface, 2573-2752 (checked by script) | yes | byte-equal | SUPPORTED | `<event name="repeat_info" since="4">` is on 2732. The proposition does not say wl_keyboard, but 2732 is inside that interface, so the entry's chain statement is also correct. |
+| E05 | The repeat_info description states, on this line, that negative values for rate or delay are illegal. | wayland-1.26.0-wayland.xml:2740 | 2741 `will disable any repeating (regardless of the value of delay).` (the rate-zero sentence, not this claim) | yes | byte-equal | SUPPORTED | 2740 contains `Negative values for either rate or delay are illegal.` The description is the `<description>` element opened at 2733; the statement is on 2740. |
+| E06 | CWLSeatProtocol::updateRepeatInfo tests whether m_currentCaps includes HID_INPUT_CAPABILITY_KEYBOARD on this line before its loop. | Hyprland-protocols-core-Seat.cpp:604 | 603 function header; 605 `return;`; 607 `for (auto const& k : m_keyboards) {` (the loop, after the test) | yes | src/protocols/core/Seat.cpp, byte-equal | SUPPORTED | `if (!(m_currentCaps & ...KEYBOARD))` on 604 is the test; the negation means the function returns when the bit is absent. "Tests whether ... includes" is the test's content, not its outcome, so no overreach. |
+| E07 | CWLSeatProtocol::updateRepeatInfo calls repeatInfo with rate and delayMs for each keyboard resource in the m_keyboards loop on this line. | Hyprland-protocols-core-Seat.cpp:608 | 607 `for (auto const& k : m_keyboards) {` is the loop header; 609 `}` closes it | yes (the call) | src/protocols/core/Seat.cpp, byte-equal | OVERREACH (citation scope; the claim is true) | Line 608 is the call `k->repeatInfo(rate, delayMs);`. The loop, and so the "for each keyboard resource" part, is the header on line 607, which the proposition puts "on this line". Minimal fix: "calls `k->repeatInfo(rate, delayMs)` on line 608 once per element `k` of the `m_keyboards` loop opened on line 607." Quote-alone check fails for "for each"; the content is correct. |
+| E11 | The repeat_info description opens the sentence that K17 finishes with the words `A rate of zero` at the end of this line. | wayland-1.26.0-wayland.xml:2740 | 2741 completes the sentence (K17); 2739 blank | yes | byte-equal | SUPPORTED | 2740 ends `A rate of zero`; the sentence starts after `illegal.` on the same line. "Opens the sentence" is correct. |
+
+## Extra row X1 (sentence in the entry's "What this entry settles" that cites K16; not a counted row)
+
+| Item | Exact sentence in the committed entry | Cited line and neighbour | Label | Minimal corrected wording |
+|---|---|---|---|---|
+| X1 | "getConfigValueSafeDevice returns the global value when the device value is absent or not set by the user (K16, E12)." | Hyprland-legacy-ConfigManager.cpp:1119 `if ((!VAL \|\| !VAL->m_bSetByUser) && !fallback.empty())`; neighbour 1120 is the fallback return | OVERREACH (unconditional; the condition on 1119 has a third term, `!fallback.empty()`) | "getConfigValueSafeDevice returns the global value when the device value is absent or not set by the user and the fallback name is non-empty (K16, E12)." All callers in the chain pass non-empty fallbacks (`input:repeat_rate`, `input:repeat_delay`, `input:numlock_by_default`, K01-K03), so the call-site behaviour is unchanged; only the sentence's generality is wrong. |
+
+## Counts
+
+- Counted rows audited: 7 (K16, K17, E04, E05, E06, E07, E11).
+- SUPPORTED: 6 (K16, K17, E04, E05, E06, E11). OVERREACH: 1 (E07, citation scope). UNSUPPORTED: 0. HELD: 0.
+- Extra: X1 OVERREACH (1).
+- Quote substring check: 7 of 7 quotes are exact substrings of the named pin line (`receipts/check_rows.out`).
+- Upstream byte-equal re-open: 3 files (legacy ConfigManager.cpp, protocols/core/Seat.cpp, wayland 1.26.0 wayland.xml), `receipts/upstream-cmp.txt`.
+
+Receipts: `receipts/check_rows.py` (reads the knowledge file and pins, read-only), `receipts/check_rows.out`, `receipts/upstream-cmp.txt`, `receipts/` upstream copies.

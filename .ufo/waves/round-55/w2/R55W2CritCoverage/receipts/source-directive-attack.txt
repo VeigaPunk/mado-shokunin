@@ -1,0 +1,27 @@
+# R55W2CritCoverage receipts: unchanged tool at 57584ed (sha256 9c69dd62c1737d4842a4a0e73db3f8317eda71ee103e71ad3cda11a19c837c2e), run from /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-55/w2/R55W2CritCoverage/inputs
+$ python3 -I mado-kbdopts.py --config a.conf --keyboard k   # a.conf = "source = b.conf"; b.conf = "input:repeat_rate = 50"
+MADO_KBDOPT: keyboard=k repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+$ python3 -I mado-kbdopts.py --config b.conf --keyboard k   # control
+MADO_KBDOPT: keyboard=k repeat_rate=50 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+$ python3 -I mado-kbdopts.py --config inline.conf --keyboard k  # control: line inlined
+MADO_KBDOPT: keyboard=k repeat_rate=50 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+$ python3 -I mado-kbdopts.py --config a2.conf --keyboard k  # a2.conf = "input {\n  repeat_rate = 30\n}\nsource = b.conf"
+MADO_KBDOPT: keyboard=k repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE
+$ python3 -I mado-kbdopts.py --config ~/.config/hypr/hyprland.conf --keyboard hl-virtual-keyboard-fcitx5 --getoption live-getoption.jsonl
+MADO_KBDOPT: keyboard=hl-virtual-keyboard-fcitx5 repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=25 live=40 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=250 verdict=DIFFER
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=1 verdict=DIFFER
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER
+$ python3 -I mado-kbdopts.py --config ~/.config/hypr/input.conf --keyboard hl-virtual-keyboard-fcitx5 --getoption live-getoption.jsonl  # control
+MADO_KBDOPT: keyboard=hl-virtual-keyboard-fcitx5 repeat_rate=40 repeat_delay=250 numlock=1 from=G/G/G unsupported=0
+MADO_KBDOPT_LIVE: option=input:repeat_rate config=40 live=40 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:repeat_delay config=250 live=250 verdict=AGREE
+MADO_KBDOPT_LIVE: option=input:numlock_by_default config=1 live=1 verdict=AGREE
+MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE
+$ python3 -I mado-kbdopts.py --selftest
+MADO_KBDOPT_SELFTEST: 83/83 assertions passed

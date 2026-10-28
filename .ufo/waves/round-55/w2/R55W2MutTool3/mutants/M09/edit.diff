@@ -1,0 +1,11 @@
+--- original/mado-kbdopts.py
++++ M09/mado-kbdopts.py
+@@ -169,7 +169,7 @@
+         if lhs.startswith("$") or lhs == "source":
+             continue
+         key = ":".join(stack + [lhs])
+-        in_device = stack == ["device"]
++        in_device = bool(stack) and stack[0] == "device"
+         if in_device and lhs == "name":
+             cur = rhs.split("#", 1)[0].strip(WS)
+             st.devices.setdefault(cur, {})

@@ -1,0 +1,33 @@
+PASS OK (freeze 13:00Z < launch 14:00Z, committer offset -03:00) rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS freeze_after_launch (freeze 14:11:10Z > launch 14:05:25Z) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=db0f7a001673 freeze_time=2026-10-27T11:11:10-03:00 launch=2026-10-27T14:05:25.338Z verdict=FAIL reason=freeze_after_launch
+FAIL equal time -> FAIL freeze_after_launch rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=84bf6bde8299 freeze_time=2026-10-27T11:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+    expected /MADO_FREEZE_ORDER: round=9 .* verdict=FAIL reason=freeze_after_launch/ rc=1
+PASS freeze_edited:registration.md (freeze= the edit commit: earliest commit whose blobs all equal REV's) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=bbfeef18a2dc freeze_time=2026-10-27T10:30:00-03:00 launch=2026-10-27T16:00:00.000Z verdict=FAIL reason=freeze_edited:registration.md
+PASS edit-then-revert (documented: blob-equality, freeze=aed7b39aba0e) rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T16:00:00.000Z verdict=OK reason=ok
+PASS no_freeze (registration.md absent) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=none freeze_time=none launch=none verdict=FAIL reason=no_freeze
+PASS no_registry (swarm-registry.json absent) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=none verdict=FAIL reason=no_registry
+PASS no_registry (createdAt unparsable) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=aed7b39aba0e freeze_time=2026-10-27T10:00:00-03:00 launch=none verdict=FAIL reason=no_registry
+PASS TRAP author 11:00Z < launch 14:00Z but committer 15:00Z > launch -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=321552294c40 freeze_time=2026-10-27T12:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS TRAP author 23:00Z > launch but committer 12:00Z < launch -> OK rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=7b487a9a1df4 freeze_time=2026-10-27T09:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS split freeze: registration.md lands 16:00Z after launch -> FAIL (freeze=f634d5c5f427) rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=f634d5c5f427 freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS frozen-tables.json absent is allowed rc=0
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=984eceb35f9d freeze_time=2026-10-27T10:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=OK reason=ok
+PASS freeze_edited:frozen-tables.json rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=0d2d17d36470 freeze_time=2026-10-27T10:30:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_edited:frozen-tables.json
+PASS merged-in freeze: first-parent freeze = merge commit 46b51cb630cf (16:00Z) -> FAIL rc=1
+    MADO_FREEZE_ORDER: round=9 wave=w1 freeze=46b51cb630cf freeze_time=2026-10-27T13:00:00-03:00 launch=2026-10-27T14:00:00.000Z verdict=FAIL reason=freeze_after_launch
+PASS setup: missing repo rc=2
+    SETUP repo_not_found
+PASS setup: bad rev -> SETUP rev_not_found rc=2
+MADO_FREEZE_ORDER_SELFTEST: FAIL 1 failed: equal time -> FAIL freeze_after_launch

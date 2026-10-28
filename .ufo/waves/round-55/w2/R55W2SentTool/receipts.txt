@@ -1,0 +1,112 @@
+tool sha256 9c69dd62c1737d4842a4a0e73db3f8317eda71ee103e71ad3cda11a19c837c2e
+harness sha256 3f6b8bb882ea91445489415dcdddc7c939c7b23e76ae7e570514afd2865262e6
+python 3.14.8
+== baseline | rc=0 t=0.02s rss_kb=15552
+   out: MADO_KBDOPT: keyboard=a repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 live=30 verdict=AGREE\nMADO_KBDOPT_LIVE: option=input:repeat_delay config=600 live=600 verdict=AGREE\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=0 verdict=AGREE\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE\n
+== F2a FIFO --config (no writer) | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2a FIFO --getoption (no writer) | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2a FIFO with data and an open writer as --config | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2a stdin pipe as --config /proc/self/fd/0 (open pipe, nothing written) | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2a /dev/stdin is an open pipe with no writes | rc=2 out=b'MADO_KBDOPT: SETUP unreadable\n'
+== F2b symlink -> regular file | rc=0 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F2b symlink -> /dev/zero as --config | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b symlink -> /dev/zero as --getoption | rc=2 t=0.041s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b /dev/zero direct | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b /dev/null direct | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b directory | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b /proc/kcore (huge st_size, root-only) | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2b /proc/self/mem (regular, st_size 0) | rc=2 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: SETUP unreadable\n
+== F2c /proc/self/maps (st_size 0) | rc=0 t=0.02s rss_kb=15808
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F2c /proc/kallsyms (st_size 0) | rc=2 t=0.051s rss_kb=15808
+   out: MADO_KBDOPT: SETUP too_large\n
+   wc -c /proc/kallsyms = 22508348 /proc/kallsyms
+== F2c regular file exactly 1048576 bytes | rc=0 t=0.02s rss_kb=17600
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F2c regular file 1048577 bytes | rc=2 t=0.02s rss_kb=17600
+   out: MADO_KBDOPT: SETUP too_large\n
+== F2d object with nested-array depth 100 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 500 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 900 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 990 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 1000 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 1500 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d object with nested-array depth 5000 | rc=0 out_last='WN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=UNKNOWN\n'
+== F2d 200000-deep bare array line | rc=2 t=0.03s rss_kb=25096
+   out: MADO_KBDOPT: SETUP bad_json\n
+== F2d 200000-deep nested inside valid option object | rc=2 t=0.031s rss_kb=24472
+   out: MADO_KBDOPT: SETUP bad_json\n
+== F2e 5000-digit int, option repeat_rate | rc=0 t=0.02s rss_kb=17600
+   out: MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 live=999999999999999999999999999999999999999999999999999 ...[5381 bytes]... : option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER\n
+   live field length: 5000
+== F2e 1000000-digit int (1 MB line) | rc=0 t=0.525s rss_kb=20420
+   out: MADO_KBDOPT: keyboard=* repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 live=999999999999999999999999999999999999999999999999999 ...[1000381 bytes]... : option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER\n
+== F2e 5000-digit config value | rc=0 t=0.02s rss_kb=18488
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1\nMADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE\n
+== F2e 1000000-digit config value | rc=0 t=0.03s rss_kb=18544
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=1\nMADO_KBDOPT: DONE keyboards=1 unsupported=1 live=NONE\n
+== F3 --keyboard 'x\ny' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\rMADO' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\x1b[2J' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\x7f' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\x0bq' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\x0cq' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 --keyboard 'x\tq' | rc=2 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 forged DONE via newline | rc=2 t=0.03s rss_kb=18544
+   out: MADO_KBDOPT: SETUP usage\n
+== F3 NEL U+0085 in --keyboard | rc=0 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: keyboard=aMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 l ...[437 bytes]... : option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER\n
+   bytes-split lines: 6 | str.splitlines lines: 6
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 num'
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER'
+   newline-split consumer DONE lines: ['MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER']
+== F3 LS U+2028 in --keyboard | rc=0 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: keyboard=a MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 l ...[437 bytes]... : option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER\n
+   bytes-split lines: 6 | str.splitlines lines: 6
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 num'
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER'
+   newline-split consumer DONE lines: ['MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER']
+== F3 PS U+2029 in --keyboard | rc=0 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: keyboard=a MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT_LIVE: option=input:repeat_rate config=30 l ...[437 bytes]... : option=input:repeat_delay config=600 live=? verdict=UNKNOWN\nMADO_KBDOPT_LIVE: option=input:numlock_by_default config=0 live=? verdict=UNKNOWN\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER\n
+   bytes-split lines: 6 | str.splitlines lines: 6
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=AGREE repeat_rate=30 repeat_delay=600 num'
+   splitlines consumer sees DONE line: 'MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER'
+   newline-split consumer DONE lines: ['MADO_KBDOPT: DONE keyboards=1 unsupported=0 live=DIFFER']
+== F3 non-UTF-8 argv byte 0x85/0xff in NAME | rc=0 t=0.02s rss_kb=18544
+   out: MADO_KBDOPT: keyboard=x��y repeat_rate=30 repeat_delay=600 numlock=0 from=G/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F4 10 x 1 MiB --config | rc=0 t=0.031s rss_kb=23812
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F4 50 x 1 MiB --config | rc=0 t=0.051s rss_kb=64388
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+== F4 200 x 1 MiB --config | rc=0 t=0.122s rss_kb=219268
+   out: MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- unsupported=0\nMADO_KBDOPT: DONE keyboards=1 unsupported=0 live=NONE\n
+   ARG_MAX=2097152; one '--config <path>' pair costs 68 bytes of argv
+   approx max pairs under ARG_MAX (path 59 bytes): 24917 -> 24917 MiB of config text
+== F4 100 x 1 MiB under ulimit -v 300000 KB | rc=0 stdout=b'MADO_KBDOPT: keyboard=* repeat_rate=25 repeat_delay=600 numlock=0 from=-/-/- uns' stderr_tail=[]
+== F5 harness run_prog, child writes 200 MiB to stdout | rc=1 stdout_bytes=67108864 (cap 67108864) t=0.13s driver_rss_kb 8398496->8398496
+== F5 harness run_prog, child spins ignoring EFBIG | rc=None stdout_bytes=0 t=3.01s
+== F5 forkgroup: harness rc=0 out=b'parent exits\n' | grandchild pid 2152465 alive after run_prog returned: False
+== F5 forkescape: harness rc=0 out=b'parent exits\n' | grandchild pid 2157752 alive after run_prog returned: True
+== F5 forkhang (parent hangs, child setsid): harness rc=None t=3.50s | grandchild alive: True
+== F5 harness run_isolated with argv '../../../../name.conf' | rc=0 out=b"ARGS ['--config', '../../../../name.conf']\nREAD b'input:repeat_rate = 30\\n'\n"
+   file written outside run dir and tree: /fast/scratch/hyaku/mado-r55/R55W2SentTool/trav/a/name.conf exists=True
+   run dir removed: True

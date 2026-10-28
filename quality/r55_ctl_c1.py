@@ -379,7 +379,8 @@ def _body(a, repo: str, work: Path) -> int:
         else:
             sys.stderr.write("%s %s: FAIL - %s\n" % (cid, name, why))
 
-    verdict = "OK" if good_ok and passed == len(CONTROLS) else "FAIL"
+    # registration v2 E9 / R55W2MutC1Harness M05: the denominator is the frozen 7, never len(CONTROLS), so a dropped control cannot pass
+    verdict = "OK" if good_ok and passed == 7 and len(CONTROLS) == 7 else "FAIL"
     sys.stdout.write("MADO_R55_CONTROLS: claim=c1 good=%s controls=%d/7 verdict=%s\n"
                      % ("ok" if good_ok else "bad", passed, verdict))
     sys.stdout.flush()

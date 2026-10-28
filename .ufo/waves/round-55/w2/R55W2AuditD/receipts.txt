@@ -1,0 +1,54 @@
+# R55W2AuditD receipts (read-only; upstream efb50993780079460b0cbed1363e2166a2de1d9f)
+## sha256 of lane pins vs SHA256SUMS.txt
+Hyprland-ConfigValues.cpp: OK
+Hyprland-SeatManager.cpp: OK
+Hyprland-protocols-core-Seat.cpp: OK
+## byte compare pin vs upstream raw
+BYTE-EQUAL Hyprland-protocols-core-Seat.cpp upstream src/…/Seat.cpp
+BYTE-EQUAL Hyprland-ConfigValues.cpp upstream src/…/ConfigValues.cpp
+BYTE-EQUAL Hyprland-SeatManager.cpp upstream src/…/SeatManager.cpp
+## sha256 upstream
+cc23bb8b4f1e44cd46ab278e5353275dbb03adfe3955393af64c7b828ed0818d  /fast/scratch/hyaku/mado-r55/R55W2AuditD/upstream/Seat.cpp
+a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754  /fast/scratch/hyaku/mado-r55/R55W2AuditD/upstream/ConfigValues.cpp
+bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  /fast/scratch/hyaku/mado-r55/R55W2AuditD/upstream/SeatManager.cpp
+## pinned lines K11 K12 (Seat.cpp 441-447, 350, 603-608)
+     1	    repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate, g_pSeatManager->m_keyboard->m_repeatDelay);
+     2	void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+     3	    if (!m_owner || m_resource->version() < 4 || (rate == m_lastRate && delayMs == m_lastDelayMs))
+     4	        return;
+     5	    m_lastRate    = rate;
+     6	    m_lastDelayMs = delayMs;
+     7	
+     8	    m_resource->sendRepeatInfo(rate, delayMs);
+     9	void CWLSeatProtocol::updateRepeatInfo(uint32_t rate, uint32_t delayMs) {
+    10	    if (!(m_currentCaps & eHIDCapabilityType::HID_INPUT_CAPABILITY_KEYBOARD))
+    11	        return;
+    12	
+    13	    for (auto const& k : m_keyboards) {
+    14	        k->repeatInfo(rate, delayMs);
+## pinned lines K13-K15 (ConfigValues.cpp 276-281)
+        MS<String>("input:kb_file", "Appropriate XKB keymap file", STRVAL_EMPTY, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Bool>("input:numlock_by_default", "Engage numlock by default.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Bool>("input:resolve_binds_by_sym", "Determines how keybinds act when multiple layouts are used.", false, {.refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Int>("input:repeat_rate", "The repeat rate for held-down keys, in repeats per second.", 25, {.min = 0, .max = 200, .refresh = Supplementary::REFRESH_INPUT_DEVICES}),
+        MS<Int>("input:repeat_delay", "Delay before a held-down key is repeated, in milliseconds.", 600, {.min = 0, .max = 2000}),
+        MS<Float>("input:sensitivity", "Sets the mouse input sensitivity. Value is clamped to the range -1.0 to 1.0.", 0,
+## upstream-only (not in lane pins): Seat.hpp 138-139 initialisers
+    uint32_t    m_lastRate    = 0;
+    uint32_t    m_lastDelayMs = 0;
+## upstream-only: MS=makeConfigValue def arg (ConfigValues.hpp:111-113) and CIntValue (IntValue.cpp:5-6, :17-22)
+    SP<T> makeConfigValue(const char* name, const char* description, Def&& def, valueOptions_t<T> options) {
+        return makeShared<T>(name, description, std::forward<Def>(def), std::move(options));
+    }
+CIntValue::CIntValue(const char* name, const char* description, Config::INTEGER def, SIntValueOptions&& options) :
+    IValue(options.refresh), m_min(options.min), m_max(options.max), m_map(std::move(options.map)), m_default(def) {
+}
+
+Config::INTEGER CIntValue::value() const {
+    if (!m_val.good())
+        return m_default;
+
+## pinned ConfigValues.cpp:50-70 min/max only reach the descriptions dump
+54:            x->name(), x->description(), x->defaultVal(), x->value(), opt(x->m_min), opt(x->m_max), opt(x->m_map));
+68:            x->name(), x->description(), x->defaultVal(), x->value(), opt(x->m_min), opt(x->m_max));
+82:            x->name(), x->description(), x->defaultVal().toString(), x->value().toString(), opt(x->m_min), opt(x->m_max));

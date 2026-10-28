@@ -1,0 +1,32 @@
+# counters and harnesses at rev 57584ed67716340b3d466fa04333ac0bab3fb79e (cwd=/fast/scratch/hyaku/mado-r55/R55W2CritAdmission; --repo /home/vgpnk/Projects/shokunin/mado-shokunin)
+$ python3 -I quality/counters/c1-r55-kbd-entry.py --repo . --rev 57584ed67716340b3d466fa04333ac0bab3fb79e --work <scratch>/c1
+MADO_KBD_ENTRY: rev=57584ed67716340b3d466fa04333ac0bab3fb79e rows=18/18 hosts=6/6 sources=18/18 new_rows=3/3 verdict=TARGET_MET missed=none
+rc=0
+$ python3 -I quality/check-r55-controls.py --claim c1 --repo . --rev 57584ed67716340b3d466fa04333ac0bab3fb79e --work <scratch>/hc1
+good: ok
+C1-CTL-1 absent: ok - counter missed=entry_absent
+C1-CTL-2 spliced-quote: ok - counter missed=quote:K04
+C1-CTL-3 shifted-anchor: ok - counter missed=anchor:K01
+C1-CTL-4 wrong-source: ok - counter missed=source_cell:K10
+C1-CTL-5 dropped-row: ok - counter missed=row:K17
+C1-CTL-6 host-forged: ok - counter missed=quote:H02,host:H02
+C1-CTL-7 pin-tamper: ok - counter missed=pin_hash,tables_sha
+MADO_R55_CONTROLS: claim=c1 good=ok controls=7/7 verdict=OK
+rc=0
+$ python3 -I quality/counters/c3-r55-p19.py --repo . --rev 57584ed67716340b3d466fa04333ac0bab3fb79e --work <scratch>/c3
+MADO_P19_FIX: rev=57584ed67716340b3d466fa04333ac0bab3fb79e prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+rc=0
+$ python3 -I quality/check-r55-controls.py --claim c3 --repo . --rev 57584ed67716340b3d466fa04333ac0bab3fb79e --work <scratch>/hc3
+good: MADO_P19_FIX: rev=57584ed67716340b3d466fa04333ac0bab3fb79e prefix=identical rows=13/13 pin=ok p23=ok readme=ok verdict=TARGET_MET missed=none
+C3-CTL-1 absent: pass [block removed (entry == base bytes)] rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+C3-CTL-2 rewritten-prefix: pass [one byte of the P19 row changed] prefix,rows:heading,rows:Q01,rows:Q02,rows:Q03,rows:Q04,rows:Q05,rows:Q06,rows:Q07,rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12,rows:Q13,p23
+C3-CTL-3 altered-quote: pass [Q09 quote 'key - 8' -> 'key - 9'] rows:Q09
+C3-CTL-4 old-arm-only: pass [deleted 5 rows Q08-Q12] rows:Q08,rows:Q09,rows:Q10,rows:Q11,rows:Q12
+C3-CTL-5 old-wording-stuffed: pass [P23 proposition cell := P19 sentence + ' == 0 RELEASED otherwise'] stale
+C3-CTL-6 readme-missing: pass [removed P23 from 2 README line(s)] readme
+MADO_R55_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK
+rc=0
+$ python3 -I quality/check-r55-controls.py --claim c2 --repo . --rev 57584ed67716340b3d466fa04333ac0bab3fb79e --work <scratch>/hc2
+r55_ctl_c2: controls const-host.py:1+0:ok empty.py:0+0:ok lookup-committed.py:18+0:ok
+MADO_R55_C2: rev=57584ed67716340b3d466fa04333ac0bab3fb79e fixtures=18/18 holdout=8/8 holdout_commit=ok controls=3/3 verdict=TARGET_MET
+rc=0

@@ -112,6 +112,10 @@ class Repo:
         self.sha = r.stdout.decode("ascii", "replace").strip()
         if not re.fullmatch(r"[0-9a-f]{40,64}", self.sha):
             raise SetupError("rev resolved to an unexpected object name")
+        # R55W2RevC1Code D1: --repo must be the repository root; a subdirectory of a repo scored files by repo-root paths
+        top = self.git(["rev-parse", "--show-toplevel"])
+        if top.returncode == 0 and os.path.realpath(top.stdout.decode("utf-8", "replace").strip()) != os.path.realpath(repo):
+            raise SetupError("repo is not the repository root")
 
     def git(self, args, inp=None):
         try:

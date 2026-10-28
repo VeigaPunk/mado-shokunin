@@ -1,0 +1,24 @@
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/r55_ctl_c2.py	2026-10-28 20:09:46.060160721 -0300
++++ noiso/quality/r55_ctl_c2.py	2026-10-28 20:25:30.070226876 -0300
+@@ -293,8 +293,8 @@
+             hid_present = []
+         else:
+             hid_present = HOLDOUT_IDS
+-        fa, ffail = score(tool, COMMITTED_IDS, croot, tree, runs, env, isolate=True)
+-        hb, hfail = score(tool, hid_present, hroot, tree, runs, env, isolate=True) if hid_present else (0, list(HOLDOUT_IDS))
++        fa, ffail = score(tool, COMMITTED_IDS, croot, tree, runs, env, isolate=False)
++        hb, hfail = score(tool, hid_present, hroot, tree, runs, env, isolate=False) if hid_present else (0, list(HOLDOUT_IDS))
+ 
+         # --- controls: each stub run over every fixture the harness has (committed + hold-out when present)
+         ctl_ok = 0
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/quality/r55_ctl_c2.py	2026-10-28 20:09:46.060160721 -0300
++++ fixcopy/quality/r55_ctl_c2.py	2026-10-28 20:27:34.268280821 -0300
+@@ -185,7 +185,7 @@
+     from beside its inputs or from its own location (R55CritHoldout D1/D2, R55CritControls: sibling-read and
+     export-root lookup attacks). A hostile tool can still scan the filesystem outside the run directory; that stays a
+     declared limit of this harness."""
+-    rd = tempfile.mkdtemp(prefix="run-", dir=work)
++    rd = tempfile.mkdtemp(prefix="run-")  # FIX-COPY: run dir outside the export's ancestry (system tmp)
+     try:
+         dst = os.path.join(rd, "tools", os.path.basename(prog))
+         os.makedirs(os.path.dirname(dst))

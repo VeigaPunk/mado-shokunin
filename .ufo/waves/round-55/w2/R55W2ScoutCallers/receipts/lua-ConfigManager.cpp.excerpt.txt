@@ -1,0 +1,21 @@
+762:void CConfigManager::postConfigReload() {
+763:    static auto PSUPPRESSERRORS = CConfigValue<Config::INTEGER>("debug.suppress_errors");
+764:    static auto PXWAYLAND       = CConfigValue<Config::INTEGER>("xwayland.enabled");
+765:    static auto PMANUALCRASH    = CConfigValue<Config::INTEGER>("debug.manual_crash");
+766:    static auto PENABLESTDOUT   = CConfigValue<Config::INTEGER>("debug.enable_stdout_logs");
+845:                         "Further logs will be written to {}",
+846:                         g_pCompositor->m_instancePath + (ISDEBUG ? "/hyprlandd.log" : "/hyprland.log"));
+847:
+848:    handlePluginLoads();
+849:
+850:    Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);
+851:
+852:    Event::bus()->m_events.config.reloaded.emit();
+853:    if (g_pEventManager)
+854:        g_pEventManager->postEvent(SHyprIPCEvent{"configreloaded", ""});
+855:}
+856:
+857:void CConfigManager::addError(std::string&& str) {
+858:    if (m_isParsingConfig) {
+859:        m_errors.emplace_back(std::move(str));
+860:        return;

@@ -1,0 +1,47 @@
+# R55W2AuditB receipts (read-only; upstream re-fetched at efb50993780079460b0cbed1363e2166a2de1d9f)
+## upstream sha256 (scratch copies, removed after this receipt)
+feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765  InputManager.cpp
+82e0bc9e1f31f6342f193b0981000245b932719cf406988d98aba64f0f716f05  IKeyboard.hpp
+cc23bb8b4f1e44cd46ab278e5353275dbb03adfe3955393af64c7b828ed0818d  Seat.cpp
+bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  SeatManager.cpp
+## committed pin sha256 (SHA256SUMS.txt)
+feedf32e2e3d23aeaed7a02ef4ab94be2d66f4b22873b3166026da1e9ece4765  Hyprland-InputManager.cpp
+82e0bc9e1f31f6342f193b0981000245b932719cf406988d98aba64f0f716f05  Hyprland-IKeyboard.hpp
+cc23bb8b4f1e44cd46ab278e5353275dbb03adfe3955393af64c7b828ed0818d  Hyprland-protocols-core-Seat.cpp
+bd7485535c7e9f71382e587d92a7c73e048a0d7a5efcf518a1e671a188f94378  Hyprland-SeatManager.cpp
+## cmp upstream vs pin
+IDENTICAL InputManager.cpp == Hyprland-InputManager.cpp
+IDENTICAL IKeyboard.hpp == Hyprland-IKeyboard.hpp
+IDENTICAL Seat.cpp == Hyprland-protocols-core-Seat.cpp
+IDENTICAL SeatManager.cpp == Hyprland-SeatManager.cpp
+## sed of pin lines (neighbour window)
+    try {
+        if (NUMLOCKON == pKeyboard->m_numlockOn && REPEATDELAY == pKeyboard->m_repeatDelay && REPEATRATE == pKeyboard->m_repeatRate && RULES == pKeyboard->m_currentRules.rules &&
+            MODEL == pKeyboard->m_currentRules.model && LAYOUT == pKeyboard->m_currentRules.layout && VARIANT == pKeyboard->m_currentRules.variant &&
+            OPTIONS == pKeyboard->m_currentRules.options && FILEPATH == pKeyboard->m_xkbFilePath) {
+            Log::logger->log(Log::DEBUG, "Not applying config to keyboard, it did not change.");
+            return;
+        }
+    pKeyboard->m_repeatRate  = std::max(0, REPEATRATE);
+    pKeyboard->m_repeatDelay = std::max(0, REPEATDELAY);
+    pKeyboard->m_numlockOn   = NUMLOCKON;
+    int                            m_repeatRate        = 0;
+    int                            m_repeatDelay       = 0;
+    int                            m_numlockOn         = -1;
+void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+    if (!m_owner || m_resource->version() < 4 || (rate == m_lastRate && delayMs == m_lastDelayMs))
+        return;
+    m_lastRate    = rate;
+    m_lastDelayMs = delayMs;
+
+    m_resource->sendRepeatInfo(rate, delayMs);
+## grep writes/reads of stored numlock/repeat fields across all pins
+Hyprland-InputManager.cpp:1271:        if (NUMLOCKON == pKeyboard->m_numlockOn && REPEATDELAY == pKeyboard->m_repeatDelay && REPEATRATE == pKeyboard->m_repeatRate && RULES == pKeyboard->m_currentRules.rules &&
+Hyprland-InputManager.cpp:1284:    pKeyboard->m_numlockOn   = NUMLOCKON;
+Hyprland-protocols-core-Seat.cpp:350:    repeatInfo(g_pSeatManager->m_keyboard->m_repeatRate, g_pSeatManager->m_keyboard->m_repeatDelay);
+Hyprland-protocols-core-Seat.cpp:441:void CWLKeyboardResource::repeatInfo(uint32_t rate, uint32_t delayMs) {
+Hyprland-protocols-core-Seat.cpp:442:    if (!m_owner || m_resource->version() < 4 || (rate == m_lastRate && delayMs == m_lastDelayMs))
+Hyprland-protocols-core-Seat.cpp:445:    m_lastDelayMs = delayMs;
+Hyprland-protocols-core-Seat.cpp:447:    m_resource->sendRepeatInfo(rate, delayMs);
+Hyprland-protocols-core-Seat.cpp:608:        k->repeatInfo(rate, delayMs);
+Hyprland-IKeyboard.hpp:123:    int                            m_numlockOn         = -1;

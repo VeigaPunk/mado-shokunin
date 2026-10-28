@@ -10,18 +10,26 @@ for both and `AGREE` three times against the live read (the committed H04-H06 li
 How to read that output without overclaiming:
 
 - The host config holds no `device` block (`grep -rnE 'device\[|device \{|device\{' ~/.config/hypr` → no match, receipt
-  `.ufo/waves/round-55/w1/R55ScoutHost/receipts-cmp-grep.txt`), so by K16 every keyboard resolves to the global value; the two
-  per-keyboard lines are what the source implies for those names, not an observed per-keyboard value.
+  `.ufo/waves/round-55/w1/R55ScoutHost/receipts-cmp-grep.txt`), so the K16 rule (read at source level) predicts the global
+  value for every keyboard; the two per-keyboard lines are that prediction from the file bytes, [INFERENCE] about the running
+  compositor, not an observed per-keyboard value. The tool is only given `input.conf`: a `source =` line is skipped without a
+  count, so a value set in a file the caller did not pass is invisible to it.
 - `getoption` returns an option by name. [INFERENCE] It takes no device argument, so `AGREE` says the running compositor's
   global option equals the declared one; it cannot show a device override (the reply forms are held in
   `hyprctl-getoption-native-forms-r40.md`, not re-claimed here).
 - The `numLock` field of `hyprctl devices -j` is lock state, not this option (`hyprland-input-devices-r46.md` step 5); the
   tool never compares them.
-- `hyprland-input-devices-r46.md:70` lists these three options as applied per device and printed by no dump; K01-K03 and K08
-  now show the per-device read at source level and that sentence stays as history. Nothing here makes the dump print them.
-- The tool's `unsupported` count is its honesty valve: a value outside the modelled token set (`$` variables, `device[...]`
-  bracket forms, hex or signed numbers, out-of-range values, `##`) is counted, not guessed. The numlock 0..1 range is the
-  lane's modelling rule, not a source range (K15 declares a Bool without min or max).
+- `hyprland-input-devices-r46.md:70` lists these three options as applied per device and not printed by the `hyprctl devices`
+  dump (which prints lock state and libinput's default speed instead); K01-K03 and K08 now show the per-device read at source
+  level and that sentence stays as history. The global `getoption -j` read does return all three (H04-H06); neither read
+  prints a per-device value.
+- The tool's `unsupported` count is its honesty valve, and it must be read FIRST: a value outside the modelled token set
+  (`$` variables, `device[...]` bracket forms, hex or signed numbers, `##`) or outside the ranges it applies is counted and
+  ignored, so the value it then prints is the default or an earlier line, NOT what Hyprland stores, and an `AGREE` against the
+  live read is then unreliable (R55W2AuditF: `repeat_rate = 201` prints 25 and `AGREE` against a live 25). The ranges are the
+  lane's modelling rule: K15 declares a Bool without min or max, and a wave-2 source review reports that the legacy `.conf`
+  path does not enforce the table's min and max at all (R55W2RevToolSource), so for such a line Hyprland stores the written
+  value and the tool does not. Known divergences from Hyprland's own parser are listed in the tool's docstring.
 
 ## Adjacent ground (reported, not absorbed)
 
