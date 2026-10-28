@@ -1,0 +1,789 @@
+{
+ "base": "13f0acbe3a15da2d9c08357a576d91dcadc85273",
+ "c1": {
+  "commit": "efb50993780079460b0cbed1363e2166a2de1d9f",
+  "entry": "corpus/knowledge/hyprland-config-autoreload-r56.md",
+  "h": [
+   {
+    "id": "H01",
+    "line": 1,
+    "pin": "host-getoption.json",
+    "quote": "\"option\": \"misc:disable_autoreload\", \"int\": 0"
+   },
+   {
+    "id": "H02",
+    "line": 10,
+    "pin": "host-sources.txt",
+    "quote": "source = ~/.config/omarchy/current/theme/hyprland.conf"
+   },
+   {
+    "id": "H03",
+    "line": 3,
+    "pin": "host-version.json",
+    "quote": "\"commit\": \"efb50993780079460b0cbed1363e2166a2de1d9f\""
+   }
+  ],
+  "host_pin_sha256": {
+   "host-getoption.json": "7aa0fbf9c03ba51e84479462ceb480cc3b93e1073819c3ed06aa2417c8cffe98",
+   "host-sources.txt": "738b5945a2ab030ecba30369e234de8d22672ec765cfc78429a83990dd8da4bc",
+   "host-version.json": "124716ed07fbf9773fd553197eaae8a769ecee6d460374532ae3fc981716b5d8",
+   "host-watched-lstat.txt": "23623a923fa44986db2dc4b2ee5bafc5a0a0df242f344af8e104dbb1c33ec0df"
+  },
+  "k": [
+   {
+    "id": "K01",
+    "line": 492,
+    "pin": "Hyprland-ConfigValues.cpp",
+    "quote": "\"misc:disable_autoreload\", \"If true, the config will not reload automatically on save.\", false",
+    "sid": "S384"
+   },
+   {
+    "id": "K02",
+    "line": 492,
+    "pin": "Hyprland-ConfigValues.cpp",
+    "quote": "{.refresh = Supplementary::REFRESH_CONFIG_WATCHER}",
+    "sid": "S384"
+   },
+   {
+    "id": "K03",
+    "line": 33,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "CConfigValue<Config::INTEGER>(\"misc:disable_autoreload\");",
+    "sid": "S383"
+   },
+   {
+    "id": "K04",
+    "line": 34,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());",
+    "sid": "S383"
+   },
+   {
+    "id": "K05",
+    "line": 46,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "inotify_rm_watch(m_inotifyFd.get(), watch.wd);",
+    "sid": "S383"
+   },
+   {
+    "id": "K06",
+    "line": 54,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "std::filesystem::is_directory(path, ecDir);",
+    "sid": "S383"
+   },
+   {
+    "id": "K07",
+    "line": 55,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "fileMask      = IN_CLOSE_WRITE",
+    "sid": "S383"
+   },
+   {
+    "id": "K08",
+    "line": 56,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "directoryMask = fileMask",
+    "sid": "S383"
+   },
+   {
+    "id": "K09",
+    "line": 60,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask)",
+    "sid": "S383"
+   },
+   {
+    "id": "K10",
+    "line": 67,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "if (!ec && !ec2 && IS_SYMLINK) {",
+    "sid": "S383"
+   },
+   {
+    "id": "K11",
+    "line": 69,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),",
+    "sid": "S383"
+   },
+   {
+    "id": "K12",
+    "line": 105,
+    "pin": "Hyprland-ConfigWatcher.cpp",
+    "quote": "m_watchCallback(SConfigWatchEvent{",
+    "sid": "S383"
+   },
+   {
+    "id": "K13",
+    "line": 128,
+    "pin": "Hyprland-EventLoopManager.cpp",
+    "quote": "m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);",
+    "sid": "S386"
+   },
+   {
+    "id": "K14",
+    "line": 71,
+    "pin": "Hyprland-EventLoopManager.cpp",
+    "quote": "Config::watcher()->onInotifyEvent();",
+    "sid": "S386"
+   },
+   {
+    "id": "K15",
+    "line": 148,
+    "pin": "Hyprland-PropRefresher.cpp",
+    "quote": "if (m_propsTripped & REFRESH_CONFIG_WATCHER)",
+    "sid": "S385"
+   },
+   {
+    "id": "K16",
+    "line": 149,
+    "pin": "Hyprland-PropRefresher.cpp",
+    "quote": "Config::watcher()->update();",
+    "sid": "S385"
+   },
+   {
+    "id": "K17",
+    "line": 1079,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {",
+    "sid": "S387"
+   },
+   {
+    "id": "K18",
+    "line": 1080,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "CConfigManager: file {} modified, reloading",
+    "sid": "S387"
+   },
+   {
+    "id": "K19",
+    "line": 1070,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);",
+    "sid": "S387"
+   },
+   {
+    "id": "K20",
+    "line": 776,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "m_configPaths.clear();",
+    "sid": "S387"
+   },
+   {
+    "id": "K21",
+    "line": 1836,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "m_configPaths.emplace_back(value);",
+    "sid": "S387"
+   },
+   {
+    "id": "K22",
+    "line": 1835,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "if (std::filesystem::is_regular_file(file_status)) {",
+    "sid": "S387"
+   },
+   {
+    "id": "K23",
+    "line": 1844,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "\"source= skipping directory {}\", value);",
+    "sid": "S387"
+   },
+   {
+    "id": "K24",
+    "line": 1816,
+    "pin": "Hyprland-legacy-ConfigManager.cpp",
+    "quote": "glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get())",
+    "sid": "S387"
+   },
+   {
+    "id": "K25",
+    "line": 65,
+    "pin": "Hyprland-MiscFunctions.cpp",
+    "quote": "static const char* const ENVHOME = getenv(\"HOME\");",
+    "sid": "S388"
+   },
+   {
+    "id": "K26",
+    "line": 68,
+    "pin": "Hyprland-MiscFunctions.cpp",
+    "quote": "auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));",
+    "sid": "S388"
+   },
+   {
+    "id": "K27",
+    "line": 1223,
+    "pin": "Hyprland-HyprCtl.cpp",
+    "quote": "if (COMMAND.contains(\"misc:disable_autoreload\"))",
+    "sid": "S389"
+   },
+   {
+    "id": "K28",
+    "line": 1276,
+    "pin": "Hyprland-HyprCtl.cpp",
+    "quote": "Config::mgr()->reload();",
+    "sid": "S389"
+   },
+   {
+    "id": "K29",
+    "line": 186,
+    "pin": "man7-inotify.7.html",
+    "quote": "File opened for writing was closed.",
+    "sid": "S390"
+   },
+   {
+    "id": "K30",
+    "line": 262,
+    "pin": "man7-inotify.7.html",
+    "quote": "Don't dereference <i>pathname</i> if it is a symbolic link.",
+    "sid": "S390"
+   }
+  ],
+  "new_row_ids": [
+   "S383",
+   "S384",
+   "S385",
+   "S386",
+   "S387",
+   "S388",
+   "S389",
+   "S390"
+  ],
+  "new_rows_min": 8,
+  "opened": "2026-10-28",
+  "pin_dir": ".ufo/waves/round-56/fetch",
+  "pin_sha256": {
+   "Hyprland-ConfigValues.cpp": "a76f05079454e1f6d4402144e1673cc1cb890d285fbeb947d5afdb004ad97754",
+   "Hyprland-ConfigWatcher.cpp": "8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c",
+   "Hyprland-EventLoopManager.cpp": "104ff43a4c02fcc88e8711cade68becd3a1fe099e970e4b1306774c85dd76f7c",
+   "Hyprland-HyprCtl.cpp": "798b7c6c4c1684557842463d46ac99c96629be4179e0e461dca77670247b91fa",
+   "Hyprland-MiscFunctions.cpp": "065418241a3b40e21273bca1fd29036221942554cddb61e08422d86f0a13c1d9",
+   "Hyprland-PropRefresher.cpp": "65f01a1a50ef05ecb1630f8fd30bbbac91029b29f6b4b6bc3f353d0bb4b2817b",
+   "Hyprland-legacy-ConfigManager.cpp": "9db68cf44048d86557d8a53068dcc40b9bd7347c7d95f38edc501565f65be62b",
+   "man7-inotify.7.html": "79f5ab18e2fc423631cf4949ef82ca1384844353ea11a4dba42e1a77e8fdd8fd"
+  },
+  "pin_suffix": {
+   "Hyprland-ConfigValues.cpp": "src/config/values/ConfigValues.cpp",
+   "Hyprland-ConfigWatcher.cpp": "src/config/shared/inotify/ConfigWatcher.cpp",
+   "Hyprland-EventLoopManager.cpp": "src/managers/eventLoop/EventLoopManager.cpp",
+   "Hyprland-HyprCtl.cpp": "src/debug/HyprCtl.cpp",
+   "Hyprland-MiscFunctions.cpp": "src/helpers/MiscFunctions.cpp",
+   "Hyprland-PropRefresher.cpp": "src/config/supplementary/propRefresher/PropRefresher.cpp",
+   "Hyprland-legacy-ConfigManager.cpp": "src/config/legacy/ConfigManager.cpp",
+   "man7-inotify.7.html": "man7/inotify.7.html"
+  },
+  "rev_rule": {
+   "Hyprland-*": "efb50993780079460b0cbed1363e2166a2de1d9f",
+   "man7-inotify.7.html": "man7.org/linux/man-pages/man7/inotify.7.html"
+  },
+  "rows": {
+   "S383": "Hyprland-ConfigWatcher.cpp",
+   "S384": "Hyprland-ConfigValues.cpp",
+   "S385": "Hyprland-PropRefresher.cpp",
+   "S386": "Hyprland-EventLoopManager.cpp",
+   "S387": "Hyprland-legacy-ConfigManager.cpp",
+   "S388": "Hyprland-MiscFunctions.cpp",
+   "S389": "Hyprland-HyprCtl.cpp",
+   "S390": "man7-inotify.7.html"
+  }
+ },
+ "c2": {
+  "committed_count": 18,
+  "fixture_commit_sha256": "a9f552511cc4939e3c83190e7ca55a09d5f01dd520c59b3a6feeba2e0c4647d6",
+  "fixture_files": {
+   "F01/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F01/expected.out": {
+    "kind": "f",
+    "sha256": "6313f7f89989773a1bb1b65ae400ffd38e485205bcbe61cee38478820e8ae5b5"
+   },
+   "F01/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F01/note.txt": {
+    "kind": "f",
+    "sha256": "73a43ac2cafc2780fe5ba0452bffc79bf82ce831e13ad76eacff3edf651eb885"
+   },
+   "F01/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "1e444820a6884b3c0187c7a7c4d4049b0b07a7b2279dfaadf220833e436729f3"
+   },
+   "F02/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F02/expected.out": {
+    "kind": "f",
+    "sha256": "2bbafa2dd198bf9b0d458c552260ba983cd98bbb952c9f775e48ee7b156d1011"
+   },
+   "F02/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F02/note.txt": {
+    "kind": "f",
+    "sha256": "d1d34cae297a8ebb94602a45448a1c32e6ada2ded2c9b34948a7572e0bddbff1"
+   },
+   "F02/tree/bare.conf": {
+    "kind": "f",
+    "sha256": "f469842763db3981070764f968bbc779cb0779f326e386b99bbe3431f8f30c49"
+   },
+   "F02/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "5fa62bc17adbc8d17112a7dc8b332533460dfd60198bfe4eefa2ff45165766a9"
+   },
+   "F02/tree/rel.conf": {
+    "kind": "f",
+    "sha256": "9e26bf369911c45c243c684147b23fc9e1dcfcf257d299a1c632016a6fcd33f4"
+   },
+   "F02/tree/sub/deep.conf": {
+    "kind": "f",
+    "sha256": "c25fe834db58a2a130d8d3e862665b7d1ecec25cf37be4a116bf7e209aaf39a2"
+   },
+   "F02/tree/sub/side.conf": {
+    "kind": "f",
+    "sha256": "1636baf59137ea08b410b795143377a892f1d6d41725aee1d7862094443e0b7c"
+   },
+   "F02/tree/up.conf": {
+    "kind": "f",
+    "sha256": "d903085618fe9be727fa2056435a06156be4998efb6bdfdcf2d19f37ab079944"
+   },
+   "F03/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F03/expected.out": {
+    "kind": "f",
+    "sha256": "baa918c9f90c339f171288ef280bd02d802e2d244167264e3d1786ceb167c505"
+   },
+   "F03/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F03/note.txt": {
+    "kind": "f",
+    "sha256": "3e4bfd64a2c1b8a593da267318b673be490405abc5e86d21fff306c27a8cbe5b"
+   },
+   "F03/tree/conf.d/.hidden.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F03/tree/conf.d/C.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F03/tree/conf.d/a.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F03/tree/conf.d/b.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F03/tree/conf.d/dir.conf/inner.txt": {
+    "kind": "f",
+    "sha256": "73cb3858a687a8494ca3323053016282f3dad39d42cf62ca4e79dda2aac7d9ac"
+   },
+   "F03/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "18163ec0b157dda75cc7755a1159f73d7b452daa1d43dff62f16746a1858a011"
+   },
+   "F04/args.json": {
+    "kind": "f",
+    "sha256": "cf0bb4611ea28d59e8c8e1ecd95041a8142bd75cb5e4436056a0954ed8cfb756"
+   },
+   "F04/expected.out": {
+    "kind": "f",
+    "sha256": "d6000195b10d7a129478d68ed533eb1259685046707e054a180f2422c8d9b08a"
+   },
+   "F04/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F04/note.txt": {
+    "kind": "f",
+    "sha256": "15ac3eebb720e541bcd17c7258298ac9bee43d3f8b5f11e8ab3dd1e4307e2c4e"
+   },
+   "F04/tree/home/g/one.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F04/tree/home/g/two.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F04/tree/home/h.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F04/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "76348bb1b0dcd54e8338294280a0cd2c25a1d80943f0fe7fb4f49e61d09321b7"
+   },
+   "F05/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F05/expected.out": {
+    "kind": "f",
+    "sha256": "8e5596fc98c8fffdacf2ffdeaa276d40228f81ec6a83bd88e63b0fa42fb09cd9"
+   },
+   "F05/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F05/note.txt": {
+    "kind": "f",
+    "sha256": "a5153b358844cc2c2a0556ee8b6aa51d384bd87637ba1dc9550277c681127587"
+   },
+   "F05/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "ba70fb17c947ca53967a48ab2daa34e5c03df72010ac035f844d6916118409d4"
+   },
+   "F05/tree/linked.conf": {
+    "kind": "l",
+    "sha256": "9eb8fcb78171ca882f8963b8a8fa544fe6ab9d07940bc7d8acdab0a79e3ebb55"
+   },
+   "F05/tree/plain.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F05/tree/real/theme.conf": {
+    "kind": "f",
+    "sha256": "8b0c39cfc3fd7d5d9793f677ee0529989914af506c0e7b9d7bf9a8fda76d540e"
+   },
+   "F06/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F06/expected.out": {
+    "kind": "f",
+    "sha256": "d71f5e0f03b9c8f64d8930a73d73e5d16b3da9816f5deea77538f81d94602811"
+   },
+   "F06/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F06/note.txt": {
+    "kind": "f",
+    "sha256": "4796540affb96321365bcf3269ef601cdeaa76d62a4f689705a53011e0eb8555"
+   },
+   "F06/tree/hyprland.conf": {
+    "kind": "l",
+    "sha256": "5ad4606d3cd2b2b1f64a79c95bfdfe1d64f58b4e4569161a271917ada1a1788f"
+   },
+   "F06/tree/real/inc.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F06/tree/real/main.conf": {
+    "kind": "f",
+    "sha256": "c7de2f0c7571ca7efcfec7d00475f14b0f0582acd9b3b7f73f9083d1d575f910"
+   },
+   "F07/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F07/expected.out": {
+    "kind": "f",
+    "sha256": "0bd0b33d633e882181dc4f88c5306a159c2c6b732783e0c46f2039adec7aed78"
+   },
+   "F07/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F07/note.txt": {
+    "kind": "f",
+    "sha256": "658328b133c3a194feb220bee4e2ef85cf6c41918cd2a31d5f0f9f7ab7ea1d2c"
+   },
+   "F07/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "172e9b127c08ab6c1fbb4d86b640b9ec3c20cb751ae4563dd8edee38db8ced67"
+   },
+   "F07/tree/other.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F08/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F08/expected.out": {
+    "kind": "f",
+    "sha256": "1c6a9b43eaace50dc16b593859e21a81b6099197ccf8289d8df8d4b7f0f17b00"
+   },
+   "F08/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F08/note.txt": {
+    "kind": "f",
+    "sha256": "d63fe6ecd830921938646d24c47b9fe2df72468d6f5c6eea3d71ef4dbc4f63d2"
+   },
+   "F08/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "179110a97d5dec7345849fc838a0e59ff3311a5bf298c2942e678696756d8a82"
+   },
+   "F08/tree/o.conf": {
+    "kind": "f",
+    "sha256": "3897f1fc35a5fb95c32bff33bfef5269c641836aa0426f166e2ae8fe8f459555"
+   },
+   "F09/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F09/expected.out": {
+    "kind": "f",
+    "sha256": "401badbc58b91c2f569ef37ff607258ca3b6c6f77687b48c373675ab9f871dc0"
+   },
+   "F09/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F09/note.txt": {
+    "kind": "f",
+    "sha256": "44162f073ef9a0e4be274f02fd1e42396f5fd9946c6021d6e82701fdbfbaf886"
+   },
+   "F09/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "00804fdf1d3c5f9c8ec5b43defe0d5bbc7189e00b8c1a60f13826f1cf60c8be0"
+   },
+   "F09/tree/nested.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F10/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F10/expected.out": {
+    "kind": "f",
+    "sha256": "68f07cfc9ac1322c7b617a8ad269746cfa1f7169e0bdb4aa438259ba3ee05f16"
+   },
+   "F10/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F10/note.txt": {
+    "kind": "f",
+    "sha256": "9cae3856b608182da539f5c4bb5b2468ed2006d44e82bd9aa9d88e6bd8d116e5"
+   },
+   "F10/tree/after.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F10/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "20e195c023f62863fbf9a7807ff7792391f1172096101f1c6223812b0ba5a79f"
+   },
+   "F10/tree/mix/a.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F10/tree/mix/b.conf": {
+    "kind": "l",
+    "sha256": "c74e73701e46b38a3825079fdf4f1d4e8626351e985c5a40512322a08ff127ed"
+   },
+   "F11/args.json": {
+    "kind": "f",
+    "sha256": "b1dd104626568417263ea85b26013518992259930874458acd8c974e14e292a1"
+   },
+   "F11/expected.out": {
+    "kind": "f",
+    "sha256": "7aeee7630c57b5b262144039d1218ee6fb927fd3b8417ca5ffca0faf96b1c641"
+   },
+   "F11/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F11/note.txt": {
+    "kind": "f",
+    "sha256": "4c3f6fc665c1287d9ce51a0c3f6d7103c7f63b9f597f8229a97c4008bb637db7"
+   },
+   "F11/tree/go.json": {
+    "kind": "f",
+    "sha256": "7aa0fbf9c03ba51e84479462ceb480cc3b93e1073819c3ed06aa2417c8cffe98"
+   },
+   "F11/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "88063d7a34ca6f8051e1b8c3603cf9849d27d1ec4b3bb0b0ccd003e10c981896"
+   },
+   "F12/args.json": {
+    "kind": "f",
+    "sha256": "b1dd104626568417263ea85b26013518992259930874458acd8c974e14e292a1"
+   },
+   "F12/expected.out": {
+    "kind": "f",
+    "sha256": "3761b8416a8cf8eb643249b743878861f64854708649ccaba162ea2a0d46ef4b"
+   },
+   "F12/expected.rc": {
+    "kind": "f",
+    "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+   },
+   "F12/note.txt": {
+    "kind": "f",
+    "sha256": "831565f0c795da7dd3167b42903bc9bf7fb06b203929b6b19f1339c519f1d733"
+   },
+   "F12/tree/go.json": {
+    "kind": "f",
+    "sha256": "48fc9146bfbca58edc588648ec7b0bb9ae128fb56cbbfefcb028cd1e26448f54"
+   },
+   "F12/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F13/args.json": {
+    "kind": "f",
+    "sha256": "b1dd104626568417263ea85b26013518992259930874458acd8c974e14e292a1"
+   },
+   "F13/expected.out": {
+    "kind": "f",
+    "sha256": "ecc150f2282607ca73ba09ac0caf9143ded9e1df891fac2aa66fff8099d67231"
+   },
+   "F13/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F13/note.txt": {
+    "kind": "f",
+    "sha256": "67e85cd04a85419af478ebe02f20b1f2658e101710eb7869de0743d7f68dd1ac"
+   },
+   "F13/tree/go.json": {
+    "kind": "f",
+    "sha256": "e851ecc6b0838bb3aa91c62c2f243d473adb6dcc9da4b1287cd37a30f13596c7"
+   },
+   "F13/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F14/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F14/expected.out": {
+    "kind": "f",
+    "sha256": "499d6a699c78c91dda8dd67d9e4b40dc4751d22f4c04986fd18ed011fb5f1d42"
+   },
+   "F14/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F14/note.txt": {
+    "kind": "f",
+    "sha256": "32672f80a79f9d55a8220915f770b09c2d2130621400d66b21b9ee7a2466dc6a"
+   },
+   "F15/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F15/expected.out": {
+    "kind": "f",
+    "sha256": "fa49457043536062a90c0fa930821f18f576042bd38f4b66f6561c2c29bcaa81"
+   },
+   "F15/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F15/note.txt": {
+    "kind": "f",
+    "sha256": "c694a0b4a8c12efd1c3c48ae16d025ff52393dab533a1bf1178682a0dadbc9a0"
+   },
+   "F15/tree/a.conf": {
+    "kind": "f",
+    "sha256": "75bbf7bb6b18f0a553efc7c8ba458364edd726ee4252ab10f3504be5f1b68e29"
+   },
+   "F15/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "1f2a9bcfe1c20108a4d5173fb7d8a7864f43f5c7d2d7ddf58e9a54ff949318de"
+   },
+   "F16/args.json": {
+    "kind": "f",
+    "sha256": "ccfb539a61c11206061ca0959a7db485793f7383a62bfe22c1561e52d5afdd8e"
+   },
+   "F16/expected.out": {
+    "kind": "f",
+    "sha256": "f3c5b14871430f383d5e739e100117a5b55fe7b5fba371dedb0565dc19b9a185"
+   },
+   "F16/expected.rc": {
+    "kind": "f",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+   },
+   "F16/note.txt": {
+    "kind": "f",
+    "sha256": "e9e6643f17980f59cb1da5afe6c48f63c6cbd0773113ae1f9d6a2107a2eb382f"
+   },
+   "F16/tree/conf.d/x.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F16/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "f808292b5733bc3785576aa8dd0f3cd9523a55c80980c5146a0e899d41c0e0c3"
+   },
+   "F17/args.json": {
+    "kind": "f",
+    "sha256": "17b11dea276f28003ddb2c272adad7ebb5f813d945d9725b03506443d3439634"
+   },
+   "F17/expected.out": {
+    "kind": "f",
+    "sha256": "341c60d172e4c5360b4d98a08c3e29f5ee768e09c1b4f2a0286e5a3d20b2e8b2"
+   },
+   "F17/expected.rc": {
+    "kind": "f",
+    "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+   },
+   "F17/note.txt": {
+    "kind": "f",
+    "sha256": "9043be9df96bc929e79e756cf25c7f4f20c7a87ef965dbc31eb12abce681e126"
+   },
+   "F17/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "F18/args.json": {
+    "kind": "f",
+    "sha256": "b1dd104626568417263ea85b26013518992259930874458acd8c974e14e292a1"
+   },
+   "F18/expected.out": {
+    "kind": "f",
+    "sha256": "3761b8416a8cf8eb643249b743878861f64854708649ccaba162ea2a0d46ef4b"
+   },
+   "F18/expected.rc": {
+    "kind": "f",
+    "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+   },
+   "F18/note.txt": {
+    "kind": "f",
+    "sha256": "f4dddb9f08bdbf89a3203b9072582d08fedb4c86974dc2775be1d35809b61f75"
+   },
+   "F18/tree/go.json": {
+    "kind": "f",
+    "sha256": "0fad202fbcabc5aa98fc722f02ebcd19326a9fdfb010a9962aca72ab295d0c37"
+   },
+   "F18/tree/hyprland.conf": {
+    "kind": "f",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   }
+  },
+  "holdout_commit_sha256": "65dc9d3e318b15e6c6b0dea6fe9a8f98814914d37e2b2973dc3b8b088d2cb183",
+  "holdout_count": 8,
+  "holdout_file_count": 56
+ },
+ "c3": {
+  "base_rev": "13f0acbe3a15da2d9c08357a576d91dcadc85273",
+  "baseline": {
+   "dangling_source": 0,
+   "entries": 70,
+   "extra": 0,
+   "missing": 65,
+   "rows": 319
+  },
+  "sources_sha256_at_base": "422f35f8632ff267e46b5e838272f11b10f2cbf5a19017d65818ff980044e122"
+ },
+ "schema": "mado-r56-frozen-tables"
+}
