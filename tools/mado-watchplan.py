@@ -47,7 +47,7 @@ as separate watches while the kernel returns the same watch descriptor for the s
 attempts (a missing path's inotify_add_watch result is never checked by Hyprland); (6) the Lua configuration provider
 and a runtime `hyprctl keyword misc:disable_autoreload` are not modelled; (7) the value and line grammar is the hyprlang
 0.6.8 subset of the registration (the round-46 pin .ufo/waves/round-46/fetch/hyprlang-config.cpp is byte-identical to
-tag v0.6.8); `misc:disable_autoreload` is a Bool option in Hyprland's table (ConfigValues.cpp:492) read as an integer
+tag v0.6.8); (8) defensive budgets that Hyprland does not have and that end a run as `too_large`: more than 262144 list entries, more than 100000 event lines, more than 64 MiB read in total; printed paths and source texts show control bytes and undecodable bytes as \\xNN; `misc:disable_autoreload` is a Bool option in Hyprland's table (ConfigValues.cpp:492) read as an integer
 (ConfigWatcher.cpp:33), so values above 1 are reachable only as the integer the watcher reads.
 
 Output (stdout; every line starts MADO_WATCH or MADO_WATCH_LIVE; exit 0 on a completed run):
@@ -72,6 +72,24 @@ MAX_DEPTH = 16
 # Defensive cap, not in the registration: a file that sources itself from several lines grows the path list as
 # lines**16; past this many list entries the run is a setup failure too_large instead of an unbounded loop.
 MAX_ENTRIES = 262144
+# Defensive output and read budgets (round 56 wave-2 sentinel F3/F4; also `too_large`, named in the docstring divergence list).
+MAX_EVENTS = 100000
+MAX_TOTAL_BYTES = 64 * 1024 * 1024
+_read_total = [0]
+
+
+def esc(text):
+    """Printable form of a path or source text: control bytes, DEL and undecodable bytes become \\xNN (output-injection guard)."""
+    out = []
+    for ch in text:
+        o = ord(ch)
+        if o < 32 or o == 127:
+            out.append("\\x%02x" % o)
+        elif 0xDC80 <= o <= 0xDCFF:
+            out.append("\\x%02x" % (o - 0xDC00))
+        else:
+            out.append(ch)
+    return "".join(out)
 WS = " \t\r\n\x0b\x0c"
 OPTION = "misc:disable_autoreload"
 MASK_FILE = "IN_CLOSE_WRITE|IN_DONT_FOLLOW"
@@ -107,6 +125,9 @@ def read_limited(path):
     with open(path, "rb") as fh:
         data = fh.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
+        raise Setup("too_large")
+    _read_total[0] += len(data)
+    if _read_total[0] > MAX_TOTAL_BYTES:
         raise Setup("too_large")
     return data
 
@@ -183,8 +204,13 @@ class Plan:
     def show(self, path):
         for prefix in self.prefixes:
             if path == prefix or path.startswith(prefix + "/"):
-                return "$ROOT" + path[len(prefix):]
-        return path
+                return esc("$ROOT" + path[len(prefix):])
+        return esc(path)
+
+    def add_event(self, line):
+        if len(self.events) >= MAX_EVENTS:
+            raise Setup("too_large")
+        self.events.append(line)
 
     def add_entry(self, path, via):
         if len(self.entries) >= MAX_ENTRIES:
@@ -193,7 +219,7 @@ class Plan:
 
     def event_error(self, via, raw, reason):
         self.errors += 1
-        self.events.append("MADO_WATCH: ERROR via=%s source=%s reason=%s" % (via, raw, reason))
+        self.add_event("MADO_WATCH: ERROR via=%s source=%s reason=%s" % (via, esc(raw), reason))
 
     def parse_file(self, path, depth):
         try:
@@ -260,9 +286,9 @@ class Plan:
                 else:
                     self.parse_file(target, depth + 1)
             elif stat.S_ISDIR(mode):
-                self.events.append("MADO_WATCH: SKIP via=%s path=%s reason=directory" % (via, self.show(target)))
+                self.add_event("MADO_WATCH: SKIP via=%s path=%s reason=directory" % (via, self.show(target)))
             else:
-                self.events.append("MADO_WATCH: SKIP via=%s path=%s reason=nonregular" % (via, self.show(target)))
+                self.add_event("MADO_WATCH: SKIP via=%s path=%s reason=nonregular" % (via, self.show(target)))
 
     def watches(self):
         out = []
@@ -322,6 +348,7 @@ def live_value(data):
 
 
 def report(opts):
+    _read_total[0] = 0
     gdata = read_getoption(opts["--getoption"]) if "--getoption" in opts else None
     plan = Plan(opts)
     plan.add_entry(plan.config, "main")
@@ -397,6 +424,14 @@ def selftest():
                      ["--config=/a"], ["--config", "/a", "--display-root", "rel"],
                      ["--config", "/a", "--getoption", "x", "--getoption", "/y"]):
             check("usage %r" % (argv,), go(*argv) == (["MADO_WATCH: SETUP usage"], 2))
+        # output-injection guard and budgets (round 56 wave-2 sentinel F2-F4)
+        check("esc newline and DEL", esc("a\nb\x7f") == "a\\x0ab\\x7f")
+        check("esc undecodable byte", esc("a\udce9b") == "a\\xe9b")
+        nl = put("nl/a\nb.conf")
+        cfg = put("nl.conf", "source = %s/nl/*.conf\n" % root)
+        lines, rc = tool(cfg)
+        check("newline file name is escaped", rc == 0 and any("a\\x0ab.conf" in l for l in lines) and not any(l == "b.conf" for l in lines))
+        check("every printed line starts MADO_WATCH", all(l.startswith("MADO_WATCH") for l in lines))
         # absolute_path
         for raw, cur, home, want in (("~/a", "/c/m.conf", "/h", "/h/a"), ("/x", "/c/m.conf", None, "/x"),
                                      ("a", "/c/m.conf", None, "/c/a"), ("./a", "/c/m.conf", None, "/c/a"),

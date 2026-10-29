@@ -130,8 +130,15 @@ _BWRAP = shutil.which("bwrap", path=SAFE_PATH)
 _stage_n = [0]
 
 
+_NO_SANDBOX = [False]
+
+
 def staged_run(python, program, args, stage, cwd, env, sandbox):
-    """registration-v2 E6: the tool sees only the staged tree, an empty cwd and (with bwrap) nothing else."""
+    """registration-v2 E6: the tool sees only the staged tree, an empty cwd and (with bwrap) nothing else.
+    Fail closed (wave-2 R56W2CritC2Cheat D2, R56W2Sentinel F1): without bwrap the walk-up and absolute-path channels are open,
+    so the harness refuses to run unless --no-sandbox is given, and then says so on stderr."""
+    if sandbox and not _BWRAP and not _NO_SANDBOX[0]:
+        raise Setup("bwrap is not installed: the staged layout alone does not hide the answer key; pass --no-sandbox to run anyway")
     if sandbox and _BWRAP:
         cmd = [_BWRAP, "--unshare-all", "--die-with-parent", "--ro-bind", "/usr", "/usr", "--symlink", "usr/lib", "/lib",
                "--symlink", "usr/lib64", "/lib64", "--symlink", "usr/bin", "/bin", "--dev", "/dev",
@@ -187,8 +194,13 @@ def parse(argv):
     i = 0
     while i < len(argv):
         k = argv[i]
+        if k == "--no-sandbox" and k not in opts:
+            opts[k] = "1"
+            _NO_SANDBOX[0] = True
+            i += 1
+            continue
         if k not in ("--repo", "--rev", "--work", "--holdout") or k in opts or i + 1 >= len(argv):
-            raise Setup("usage: --repo REPO --rev REV --work DIR [--holdout DIR]")
+            raise Setup("usage: --repo REPO --rev REV --work DIR [--holdout DIR] [--no-sandbox]")
         opts[k] = argv[i + 1]
         i += 2
     for k in ("--repo", "--rev", "--work"):
@@ -283,7 +295,7 @@ def harness(opts):
             else:
                 ok = c_pass == 18 and h_pass == 0
             ctl_ok += 1 if ok else 0
-        sys.stderr.write("r56_ctl_c2: fixture_commit=%s control_scores=%s\n" % ("ok" if fx_ok else "bad", ctl_detail))
+        sys.stderr.write("r56_ctl_c2: sandbox=%s fixture_commit=%s control_scores=%s\n" % ("bwrap" if _BWRAP else "none", "ok" if fx_ok else "bad", ctl_detail))
         met = (a == 18 and b == 8 and ho_commit == "ok" and fx_ok and ctl_ok == 4)
         line = "MADO_R56_C2: rev=%s fixtures=%d/18 holdout=%d/8 holdout_commit=%s controls=%d/4 verdict=%s" % (
             rev, a, b, ho_commit, ctl_ok, "TARGET_MET" if met else "TARGET_MISSED")

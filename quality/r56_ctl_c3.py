@@ -589,6 +589,7 @@ def execute(argv):
             else:
                 ok, detail = judge_control(rc, out, sha, leg, own)
             k += ok
+            shutil.rmtree(d, ignore_errors=True)   # wave-2 R56W2Sentinel F7: one scratch clone alive at a time
             err("control %d %s: %s -- %s [%s; harness %s=%s]" % (n, name, "PASS" if ok else "FAIL", detail, note, leg, own.get(leg, "-")))
         verdict = "OK" if (good_ok and k == N_CONTROLS) else "FAIL"
         line = "MADO_R56_CONTROLS: claim=c3 good=%s controls=%d/%d verdict=%s" % ("ok" if good_ok else "bad", k, N_CONTROLS, verdict)
