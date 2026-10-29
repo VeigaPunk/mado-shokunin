@@ -1,0 +1,8 @@
+# Falsification probes. Scratch clone of the lane at 28fc86ac (git clone --shared, checkout of that rev, commits by -c user.name=ctl). The lane tree was not touched.
+# Counter run: python3 -I quality/counters/c1-r56-autoreload-entry.py --repo <clone> --rev HEAD --work <scratch>
+EXP A  K05 proposition made false ("...and the m_inotifyFd instance keeps that watch active")   -> MADO_AUTORELOAD_ENTRY ... verdict=TARGET_MET missed=none  exit 0
+EXP B  E08 proposition made false ("...it is in fact bit 42 and controls the monitor refresh")  -> TARGET_MET  exit 0
+EXP C  pin Hyprland-PropRefresher.hpp line 18 changed to "(1 << 42)" (E08 quote not updated)    -> TARGET_MET  exit 0   (hpp absent from frozen-tables.json and frozen-tables-v2.json)
+EXP D  K04 inverted ("When the cached PDISABLEAUTORELOAD value is zero, setWatchList is given an empty vector")  -> TARGET_MET  exit 0
+EXP E  K01 "...and a default of true."                                                          -> TARGET_MET  exit 0
+Baseline: counter at 28fc86ac -> MADO_AUTORELOAD_ENTRY: rev=28fc86ac... rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none  exit 0

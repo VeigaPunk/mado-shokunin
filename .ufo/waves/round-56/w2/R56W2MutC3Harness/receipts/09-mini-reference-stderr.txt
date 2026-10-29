@@ -1,0 +1,20 @@
+harness metrics of the good tree: {'entries': 71, 'rows': 328, 'missing': 24, 'extra': 0, 'dangling': 0}
+  note[good]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+good: ok (ok)
+  note[missing]: counter and harness numbers diverge (not scored): missing counter=41 harness=65
+control 1 base-registry: PASS -- missed=missing,dangling [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+control 2 fill-all: PASS -- missed=extra,conflict [used-by of all 328 rows := all 71 entry paths; harness extra=22898]
+  note[missing]: counter and harness numbers diverge (not scored): missing counter=1 harness=25
+control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=25]
+  note[dangling]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+  note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+  note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 6 fenced-cite: PASS -- missed=extra [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+  note[allow_sha]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 7 allow-everything: PASS -- missed=conflict,allow_sha,exempt [allowlist := every (S, entry) pair with its correct line-sha; harness allow_sha=-]
+  note[lost]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 8 delete-citation: PASS -- missed=extra,lost [replaced the only S015 token of corpus/knowledge/walker-route-r18.md by S---; harness lost=-]
+  note[stale]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 9 stale-allow: PASS -- missed=stale [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]

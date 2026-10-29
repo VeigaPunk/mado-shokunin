@@ -1,0 +1,821 @@
+[
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a full-line comment is skipped and must not push the category stack",
+  "files": {
+   "hyprland.conf": "bytes:37"
+  },
+  "killed": true,
+  "mutant": "M16",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K16"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "same: the `#` comment rule is part of the model",
+  "files": {
+   "hyprland.conf": "bytes:37"
+  },
+  "killed": true,
+  "mutant": "M17",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K17"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a `$` in the value line is unsupported: `on$x` must not parse as 1",
+  "files": {
+   "hyprland.conf": "bytes:31"
+  },
+  "killed": true,
+  "mutant": "M27",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K27"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a `{` in the value line is unsupported: `on{` must not parse as 1",
+  "files": {
+   "hyprland.conf": "bytes:30"
+  },
+  "killed": true,
+  "mutant": "M28",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K28"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a backslash in the value line is unsupported: `off\\` must not parse as 0",
+  "files": {
+   "hyprland.conf": "bytes:31"
+  },
+  "killed": true,
+  "mutant": "M29",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K29"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "an inaccessible match aborts the REST of that line's matches (dangling symlink first)",
+  "files": {
+   "hyprland.conf": "bytes:20",
+   "mix/a-broken.conf": [
+    "symlink",
+    "missing-target.conf"
+   ],
+   "mix/z.conf": "bytes:6"
+  },
+  "killed": true,
+  "mutant": "M44",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K44"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a dangling symlink --config lexists -> type=file, not type=missing",
+  "files": {
+   "hyprland.conf": [
+    "symlink",
+    "missing.conf"
+   ]
+  },
+  "killed": true,
+  "mutant": "M50",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K50"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/link/hyprland.conf",
+   "--display-root",
+   "{FX}/tree/link/"
+  ],
+  "desc": "--display-root that is a symlink path with a trailing slash (the given text loses its `/`)",
+  "files": {
+   "link": [
+    "symlink",
+    "real"
+   ],
+   "real/hyprland.conf": "bytes:28",
+   "real/x.conf": "bytes:6"
+  },
+  "killed": true,
+  "mutant": "M56",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K56"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}/tree/link"
+  ],
+  "desc": "the canonical watch path is printed through the display root's realpath",
+  "files": {
+   "hyprland.conf": "bytes:18",
+   "link": [
+    "symlink",
+    "real"
+   ],
+   "lnk.conf": [
+    "symlink",
+    "real/x.conf"
+   ],
+   "real/x.conf": "bytes:6"
+  },
+  "killed": true,
+  "mutant": "M57",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K57"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "/dev/null"
+  ],
+  "desc": "--getoption on a non-regular but readable file is `unreadable`",
+  "files": {
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M63",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K63"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a `;`-first line is NOT a comment: it is an ordinary line",
+  "files": {
+   "hyprland.conf": "bytes:37"
+  },
+  "killed": true,
+  "mutant": "M71",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K71"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a stray `}` on an empty stack is ignored (the pop is guarded)",
+  "files": {
+   "hyprland.conf": "bytes:30"
+  },
+  "killed": false,
+  "mutant": "M73",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K73"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "the value side of `=` is not stripped of `!`",
+  "files": {
+   "hyprland.conf": "bytes:29"
+  },
+  "killed": true,
+  "mutant": "M76",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K76"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "`source` inside a category is `unsupported` (the stack is non-empty)",
+  "files": {
+   "hyprland.conf": "bytes:27",
+   "x.conf": "bytes:6"
+  },
+  "killed": false,
+  "mutant": "M77",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K77"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "`##` in the VALUE is unsupported (and only in the value)",
+  "files": {
+   "hyprland.conf": "bytes:33"
+  },
+  "killed": false,
+  "mutant": "M78",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K78"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "the `$` check applies to the whole LINE, not just the RHS",
+  "files": {
+   "hyprland.conf": "bytes:32"
+  },
+  "killed": false,
+  "mutant": "M79",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K79"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "the `$` check applies to the whole LINE (a `$` in the LHS counts)",
+  "files": {
+   "hyprland.conf": "bytes:29"
+  },
+  "killed": false,
+  "mutant": "M80",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K80"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a `$`-prefixed LHS is ignored (the whole LHS, not a prefix of it)",
+  "files": {
+   "hyprland.conf": "bytes:34"
+  },
+  "killed": false,
+  "mutant": "M81",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K81"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a source line with no match still reports ERROR nomatch",
+  "files": {
+   "hyprland.conf": "bytes:24"
+  },
+  "killed": false,
+  "mutant": "M83",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K83"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a glob match is re-absolutised against the file holding the line",
+  "files": {
+   "hyprland.conf": "bytes:23",
+   "out/a.conf": "bytes:6"
+  },
+  "killed": false,
+  "mutant": "M85",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K85"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a dangling symlink in the list is type=file (lexists, not isfile)",
+  "files": {
+   "hyprland.conf": [
+    "symlink",
+    "missing.conf"
+   ]
+  },
+  "killed": true,
+  "mutant": "M89",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K89"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "the canonical watch uses the strict realpath (a broken link has no canonical watch)",
+  "files": {
+   "hyprland.conf": [
+    "symlink",
+    "missing.conf"
+   ]
+  },
+  "killed": true,
+  "mutant": "M90",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K90"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/link/hyprland.conf",
+   "--display-root",
+   "{FX}/tree/link"
+  ],
+  "desc": "--display-root without a trailing slash is used as given",
+  "files": {
+   "link": [
+    "symlink",
+    "real"
+   ],
+   "real/hyprland.conf": "bytes:28",
+   "real/x.conf": "bytes:6"
+  },
+  "killed": true,
+  "mutant": "M94",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K94"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "/dev/null"
+  ],
+  "desc": "a non-regular --getoption file is `unreadable` (not only a directory)",
+  "files": {
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M97",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K97"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "the live value comes from the `int` key only",
+  "files": {
+   "go.json": "bytes:50",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M98",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K98"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "no record for the option in the dump is UNKNOWN (live=?), not a silent 0",
+  "files": {
+   "go.json": "bytes:31",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": false,
+  "mutant": "M99",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K99"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "a negative live int is still a record (the option is present)",
+  "files": {
+   "go.json": "bytes:49",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M101",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K101"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "AGREE/DIFFER compares the live int with the config flag",
+  "files": {
+   "go.json": "bytes:48",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": false,
+  "mutant": "M104",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K104"
+ },
+ {
+  "args": [
+   "--config",
+   "rel.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a relative --config path is a usage error",
+  "files": {
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M04",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K04"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a file of exactly 1048576 bytes is read (MAX_BYTES is inclusive)",
+  "files": {
+   "hyprland.conf": "bytes:1048576"
+  },
+  "killed": true,
+  "mutant": "M06",
+  "mutant_rc": 2,
+  "pristine_rc": 0,
+  "proposal": "K06"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a file of 1048577 bytes is too_large (MAX_BYTES is inclusive)",
+  "files": {
+   "hyprland.conf": "bytes:1048577"
+  },
+  "killed": true,
+  "mutant": "M07",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K07"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a file of exactly 1048576 bytes is read (the bound is `>` not `>=`)",
+  "files": {
+   "hyprland.conf": "bytes:1048576"
+  },
+  "killed": true,
+  "mutant": "M11",
+  "mutant_rc": 2,
+  "pristine_rc": 0,
+  "proposal": "K11"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a file of 1048577 bytes is too_large (the read takes MAX_BYTES+1)",
+  "files": {
+   "hyprland.conf": "bytes:1048577"
+  },
+  "killed": true,
+  "mutant": "M12",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K12"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a stray `}` on an empty stack is ignored (no crash)",
+  "files": {
+   "hyprland.conf": "bytes:30"
+  },
+  "killed": true,
+  "mutant": "M18",
+  "mutant_rc": 1,
+  "pristine_rc": 0,
+  "proposal": "K18"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "the value is stripped of spaces before parsing (`1 # x` -> 1)",
+  "files": {
+   "hyprland.conf": "bytes:32"
+  },
+  "killed": true,
+  "mutant": "M26",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K26"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a value that only STARTS with digits is not an int",
+  "files": {
+   "hyprland.conf": "bytes:31"
+  },
+  "killed": true,
+  "mutant": "M33",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K33"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a directory watch carries the directory mask",
+  "files": {
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M54",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K54"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/sub2/hyprland.conf",
+   "--display-root",
+   "{FX}/tree/sub"
+  ],
+  "desc": "--display-root is a PATH prefix, not a string prefix",
+  "files": {
+   "sub/keep.conf": "bytes:6",
+   "sub2/hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M55",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K55"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "a bool `int` in the getoption dump is ignored (UNKNOWN, not AGREE)",
+  "files": {
+   "go.json": "bytes:52",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M60",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K60"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "no record for the option in the dump is UNKNOWN, not AGREE",
+  "files": {
+   "go.json": "bytes:31",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M62",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K62"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a directory watch carries the directory mask",
+  "files": {
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M93",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K93"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/link/hyprland.conf",
+   "--display-root",
+   "{FX}/tree/link"
+  ],
+  "desc": "the display root's realpath is used without a trailing slash",
+  "files": {
+   "link": [
+    "symlink",
+    "real"
+   ],
+   "real/hyprland.conf": "bytes:28",
+   "real/x.conf": "bytes:6"
+  },
+  "killed": false,
+  "mutant": "M96",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K96"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}"
+  ],
+  "desc": "a symlink source is followed (stat), not rejected as nonregular (lstat)",
+  "files": {
+   "hyprland.conf": "bytes:18",
+   "lnk.conf": [
+    "symlink",
+    "real.conf"
+   ],
+   "real.conf": "bytes:6"
+  },
+  "killed": true,
+  "mutant": "M86",
+  "mutant_rc": 0,
+  "pristine_rc": 0,
+  "proposal": "K86"
+ },
+ {
+  "args": [
+   "--config",
+   "{FX}/tree/hyprland.conf",
+   "--display-root",
+   "{FX}",
+   "--getoption",
+   "{FX}/tree/go.json"
+  ],
+  "desc": "a `#`-first line in the --getoption dump is NOT skipped: it is bad_json",
+  "files": {
+   "go.json": "bytes:58",
+   "hyprland.conf": "bytes:28"
+  },
+  "killed": true,
+  "mutant": "M100",
+  "mutant_rc": 0,
+  "pristine_rc": 2,
+  "proposal": "K100"
+ }
+]

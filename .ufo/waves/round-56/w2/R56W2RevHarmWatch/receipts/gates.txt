@@ -1,0 +1,51 @@
+# R56W2RevHarmWatch gate receipts — content rev 28fc86ac2359ec27406d8a2c63bef82ea6e947ed vs base 13f0acbe3a15da2d9c08357a576d91dcadc85273
+# each line: <gate> <rc> <result>
+mado-verify.sh --selftest            NEW rc=0  MADO_SELFTEST: 460/460 assertions passed
+mado-verify.sh --selftest            BASE rc=0  MADO_SELFTEST: 460/460 assertions passed
+sources-census.sh validate mado       NEW rc=0  32xW04 + 1xW01 + ok  (base: 28xW04 + 1xW01 + ok)
+check-index.py                       NEW rc=0  indexed=71/71 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+check-index.py                       BASE rc=0  indexed=70/70 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+check-index-rows.py                  NEW rc=0  rows=71 errors=0 warns=3
+check-index-rows.py                  BASE rc=1  rows=70 errors=3 warns=3  (row-outside-map x3: r52, r52-errata-r53, r55)
+check-tool-ledger.py                 NEW rc=0  population=97 ledger_rows=97 uncovered=0 verdict=TARGET_MET
+check-tool-ledger.py                 BASE rc=0  population=90 ledger_rows=90 uncovered=0 verdict=TARGET_MET
+check-evidence-pointers.py           NEW rc=0  verdict=TARGET_MET (identical fields to BASE)
+check-axis-scores.py                 NEW rc=1  navigation published=66/66 derived=71/71 STALE; calibration 86/86 MATCH; operability 12/12 MATCH
+check-axis-scores.py                 BASE rc=1  navigation published=66/66 derived=70/70 STALE; calibration 86/86 MATCH; operability 12/12 MATCH
+check-session-material.py            NEW rc=1  files=27734 findings=244 waived=49
+check-session-material.py            BASE rc=1  files=27508 findings=244 waived=49
+check-round-outcome-first.py         NEW rc=1  rounds=56 pass=4 fail=38 skip=14 (round 56 SKIP)
+check-round-outcome-first.py         BASE rc=1  rounds=56 pass=4 fail=38 skip=14 (round 56 SKIP)
+check-wave-done.py --round 56        NEW rc=1  MISSING  waves=0 settled=0 (no-launch-marker)
+check-wave-done.py --round 56        BASE rc=1  MISSING  waves=0 settled=0 (round-absent)
+check-wave-done.py --round 55        NEW/BASE rc=0  waves=2 settled=2 verdict=OK  (control)
+check-freeze-order.py r56 w1         NEW rc=0  freeze=3423ae285676 launch=2026-10-29T00:22:47.615Z verdict=OK
+check-freeze-order.py r56 w2 @28fc86ac rc=1  launch=none reason=no_registry
+check-freeze-order.py r56 w2 @tip    rc=0  freeze=3423ae285676 launch=2026-10-29T01:04:27.541Z verdict=OK
+check-population.py r56 registration  rc=2  UNREADABLE  reason=no **PRED-...** sentence with a supported target (gate healthy: r26 registration -> PASS rc=0)
+check-state-cite.py                   NEW rc=1 / BASE rc=1  claims=34 unresolved=34 FAIL (identical; no r56 claims file)
+c1-r56-autoreload-entry.py --selftest rc=0  242/242 assertions passed
+c3-r56-used-by.py --selftest         rc=0  MADO_USED_BY_SELFTEST: 16/16 assertions passed
+mado-watchplan.py --selftest         rc=0  MADO_WATCH_SELFTEST: 82/82 assertions passed
+c1-r56-autoreload-entry.py          NEW rc=0  MADO_AUTORELOAD_ENTRY: rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET
+c1-r56-autoreload-entry.py @BASE    rc=1  TARGET_MISSED missed=tables_sha,entry_absent,index
+c3-r56-used-by.py                    NEW rc=0  MADO_USED_BY: entries=71 rows=328 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET
+c3-r56-used-by.py @BASE              rc=2  setup error: frozen-tables-v2.json is not a regular blob at --rev (fail closed)
+check-r56-controls.py --claim c1     rc=0  good=ok controls=12/12 verdict=OK
+check-r56-controls.py --claim c2     rc=0  fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+check-r56-controls.py --claim c3     rc=0  good=ok controls=9/9 verdict=OK
+holdout sha256 recomputed            MATCH 65dc9d3e318b15e6c6b0dea6fe9a8f98814914d37e2b2973dc3b8b088d2cb183
+fixtures sha256 recomputed           MATCH a9f552511cc4939e3c83190e7ca55a09d5f01dd520c59b3a6feeba2e0c4647d6
+frozen-tables-v2.json sha256         MATCH 9511151ac2f72097310780357b4a3018e799691cca11905bf75a7e5f6bd795e2
+c3-name-only.tsv sha256              MATCH 70653e095839dc82f248d77fa5a0117134406a8b9e23778d2d79bf7072c948ee
+
+# MUTATIONS on scratch copies (fixture fx2: shared clone, branch fixture at 28fc86ac, base reachable)
+mutA corrupt Hyprland-PropRefresher.hpp pin bytes   -> c1 rc=0 TARGET_MET (BLIND: pin not in frozen pin_sha256)
+mutB doctor S391 row (status/tier/URL)               -> c1 rc=0 TARGET_MET; c3 rc=0 TARGET_MET (BLIND)
+mutC citation-only delete (S318)                     -> c3 rc=1 missed=extra
+mutD coordinated delete (S015, config-drift-r12)     -> c3 rc=1 missed=stale
+mutE coordinated delete (S158, rule-attribution-r24) -> c3 rc=0 TARGET_MET  <-- BLIND (outside the 65)
+mutF citation-only delete (S158)                     -> c3 rc=1 missed=extra
+mutG coordinated delete (S158)                       -> c3 rc=0 TARGET_MET  <-- BLIND
+mutH coordinated delete (S015, walker-route-r18)      -> c3 rc=1 missed=lost (inside the 65: caught)
+post-launch edit of registration-v2.md+claims-frozen-v2.md -> check-freeze-order r56 w2 rc=0 verdict=OK  <-- BLIND (v2 not in REQUIRED/OPTIONAL)

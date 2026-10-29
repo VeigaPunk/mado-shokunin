@@ -1,0 +1,10 @@
+== M97 (live)
+old: if not stat.S_ISREG(os.stat(path).st_mode):
+            raise Setup("unreadable")
+new: if not stat.S_ISREG(os.stat(path).st_mode) and stat.S_ISDIR(os.stat(path).st_mode):
+            raise Setup("unreadable")
+sha256: fd179bc667ab9cf4ab5826489a95ac67ab6268290f2352fee77db3520533efbc
+blob: e84627fee5174dd1bb5bc7b0820e289ab638fd87
+c2(rc=0): MADO_R56_C2: rev=418ee199aef2ce0153f4c9a15fa9a909a4a84fe5 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+selftest(rc=0): MADO_WATCH_SELFTEST: 82/82 assertions passed
+verdict: SURVIVED

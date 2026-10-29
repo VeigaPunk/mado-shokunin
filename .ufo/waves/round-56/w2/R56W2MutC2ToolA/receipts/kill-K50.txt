@@ -1,0 +1,13 @@
+proposal K50  mutant M50
+a dangling symlink --config lexists -> type=file, not type=missing
+args (after {FX} = staged path): --config /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K50/tree/hyprland.conf --display-root /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K50
+files: {"hyprland.conf": ["symlink", "missing.conf"]}
+--- pristine rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+--- mutant M50 rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=missing mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=NONE
+VERDICT: KILLS

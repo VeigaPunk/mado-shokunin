@@ -1,0 +1,58 @@
+# R56W2RevAuditB receipts (read-only lane; scratch clone /fast/scratch/hyaku/mado-r56/R56W2RevAuditB/tmp.jEHuvlIg6M, removed after capture)
+## pin sha256 (lane @28fc86ac, git show | sha256sum)
+8383b8abf43159986bc4127ad7a4416fbf1c3527bf388fa1ce052c28c40d516c  -
+79f5ab18e2fc423631cf4949ef82ca1384844353ea11a4dba42e1a77e8fdd8fd  -
+## negative greps on pin ConfigWatcher.cpp
+57:        const uint32_t  mask          = isDirectory ? directoryMask : fileMask;
+60:            .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+(grep exit=0; hits at 57,60 are the watch mask, not event mask)
+(Q_OVERFLOW grep exit=1)
+## counter on scratch base (archive of 28fc86ac)
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+## mutant commits: changed line and counter verdict
+c6e2a8c5 restore2
+e49ea7b3 m5_prose_false2
+671f548c m4_prose_false
+cc0ffa36 restore
+d43e20ef m3_k11_false
+de4e6d70 m2_k10_flip
+49722aaa m1_k07_false
+c75764a1 base
+== m1_k07_false 49722aaa0af79124b0b45730eee6af7d03ecc5b9
+22:3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) selects the directory mask (56; K08, the file mask plus 
+84:| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit only, so a watch on a symlink follows it to its target. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_C
+87:| K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` 
+88:| K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(
+MADO_AUTORELOAD_ENTRY: rev=49722aaa0af79124b0b45730eee6af7d03ecc5b9 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+== m2_k10_flip de4e6d70a74fb1de9a0ccd52c6bdfcae823fc6f9
+22:3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) selects the directory mask (56; K08, the file mask plus 
+84:| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+87:| K10 | This condition requires both error codes to be clear and IS_SYMLINK to fail before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` 
+88:| K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(
+MADO_AUTORELOAD_ENTRY: rev=de4e6d70a74fb1de9a0ccd52c6bdfcae823fc6f9 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+== m3_k11_false d43e20efe08b9121fdc9650be65372a684976af9
+22:3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) selects the directory mask (56; K08, the file mask plus 
+84:| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+87:| K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` 
+88:| K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE and IN_DONT_FOLLOW as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(
+MADO_AUTORELOAD_ENTRY: rev=d43e20efe08b9121fdc9650be65372a684976af9 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+== m4_prose_false 671f548c6fb3f1706ab39151e0bcbbc7de0543c4
+22:3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) selects the directory mask (56; K08, the file mask plus 
+84:| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+87:| K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` 
+88:| K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(
+MADO_AUTORELOAD_ENTRY: rev=671f548c6fb3f1706ab39151e0bcbbc7de0543c4 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+== m5_prose_false2 e49ea7b3032f5bbbb842101f4cdf00d8233d5996
+22:3. **Masks.** `setWatchList` removes every old watch (lines 45-47; K05), clears the list (49), then for each entry: `is_directory` (54; K06) selects the directory mask (56; K08, the file mask plus 
+84:| K07 | The fileMask variable is assigned the IN_CLOSE_WRITE inotify event bit in this declaration. | S383 | Hyprland-ConfigWatcher.cpp:55 | `fileMask      = IN_CLOSE_WRITE` |
+87:| K10 | This condition requires both error codes to be clear and IS_SYMLINK to hold before the canonical watch is added. | S383 | Hyprland-ConfigWatcher.cpp:67 | `if (!ec && !ec2 && IS_SYMLINK) {` 
+88:| K11 | The second watch is added on CANONICAL.c_str() with IN_CLOSE_WRITE as the only mask argument. | S383 | Hyprland-ConfigWatcher.cpp:69 | `inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(
+MADO_AUTORELOAD_ENTRY: rev=e49ea7b3032f5bbbb842101f4cdf00d8233d5996 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+exit=0

@@ -1,0 +1,60 @@
+# R56W2CritFreezeV2 receipts (decisive lines; full scripts beside this file)
+
+## 1. Freeze-order checker (quality/check-freeze-order.py, read-only; FREEZE set = v1 files only)
+MADO_FREEZE_ORDER: round=56 wave=w2 freeze=3423ae285676 freeze_time=2026-10-28T21:19:17-03:00 launch=none verdict=FAIL reason=no_registry   (rev 9c3ca28a)
+MADO_FREEZE_ORDER: round=56 wave=w1 freeze=3423ae285676 freeze_time=2026-10-28T21:19:17-03:00 launch=2026-10-29T00:22:47.615Z verdict=OK reason=ok   (rev 9c3ca28a)
+MADO_FREEZE_ORDER: round=56 wave=w2 freeze=3423ae285676 freeze_time=2026-10-28T21:19:17-03:00 launch=2026-10-29T01:04:27.541Z verdict=OK reason=ok   (rev 19be88b6)
+(full: freeze-order.txt)
+
+## 2. Chronology (committer times, git log --diff-filter=A)
+323a69c9 2026-10-28T21:44:35-03:00  v2 files: claims-frozen-v2.md, registration-v2.md, frozen-tables-v2.json, c3-name-only.tsv, ctl/sibling-reader.py, freeze-verify-v2.py
+2e39282e 2026-10-28T21:54:28-03:00  tools/mado-watchplan.py, quality/counters/c1-r56-autoreload-entry.py, quality/counters/c3-r56-used-by.py, quality/check-r56-controls.py, quality/r56_ctl_c{1,2,3}.py, fixtures/c2-holdout (56 files, hold-out reveal)
+0ff41272 2026-10-28T21:59:02-03:00  corpus/knowledge/hyprland-config-autoreload-r56.md, registry rows S383-S391, fetch/Hyprland-PropRefresher.hpp (A)
+28fc86ac 2026-10-28T22:00:24-03:00  C1 counter fix (E14), tool ledger
+15015e77 2026-10-28T22:04:18-03:00  registration-v2-errata.md (E12-E14), make-w2-spec.py
+19be88b6 2026-10-28T22:04:27-03:00  w2 dispatch and registry (createdAt 2026-10-29T01:04:27.541Z)
+file birth (stat %w): counters 21:45:07 (c1) and 21:49:56 (c3); tools/mado-watchplan.py 21:51:07; r56_ctl_c2.py 21:52:00; hold-out dir 21:54:21
+post-freeze diff 323a69c9..28fc86ac of v1+v2 frozen files: only status A (fixtures/c2-holdout 56 files; fetch/Hyprland-PropRefresher.hpp). No M or D entries.
+
+## 3. Wave-1 real-tree runs before 323a69c9 (seat receipts)
+13f0acbe (base): R56ExecC3CounterA receipt.txt 21:28 missing=65; R56CritCiteDef c3-base-own-reimpl.txt 21:30 missing=65; R56RevC3Contract runs.txt 21:32 missing=65 + variants
+3423ae28 (freeze): R56ExecC3CounterA 21:28 missing=65; R56ExecC1CounterA lane-freeze-run.txt 21:36 entry_absent; R56CritDoNothing critic-run.txt 21:37 missing=65, c3-delete-missing-cites TARGET_MET, c3-strip-all-citations TARGET_MET; R56CritHoldout probe-output 21:29 (committed fixtures, synthetic hold-out stand-in)
+2aa347b1 (lane pre-entry): R56ExecC1CounterB run-2aa347b1.txt 21:29 entry_absent; R56RevC1Contract checker-runs.txt 21:36 (git archive 2aa347b1 + variants)
+
+## 4. E12: frozen c3.base_pairs_sha256 vs base PAIRS
+base 13f0acbe: entries=70 PAIRS(base)=381 missing(base)=65
+sha256(65 base-missing pairs, "S###|path\n" sorted) = 630007b0a17540f45430068c9d9a38a731268e47e5fb9855887a7ae4f8d673ef  == frozen c3.base_pairs_sha256
+sha256(381 PAIRS(base))                          = 79545d6bc91df573a2cb24612d56d5b4705c92bc3dfad7a703ec31fe5aadd1b6  != frozen
+=> registration-v2 §C3-v2 text ("PAIRS(base)" with c3.base_pairs_sha256) is unsatisfiable as written; the frozen hash is over the 65.
+(counter at 2e39282e already: "lost = the base `missing` pairs (registration-v2 E12; 65 at base)")
+
+## 5. E12 mutation on scratch clone (no lane write); counter quality/counters/c3-r56-used-by.py at each scratch commit
+M1 (312342783e2e): entry corpus/knowledge/window-rule-effects-getprop.md: S002 -> S--- (its only citation); row S002 used-by emptied
+MADO_USED_BY: rev=312342783e2e1aebb90df68db33d73d673fbc02a entries=71 rows=328 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none   exit=0
+M1b (32272b2a9562): entry kept, used-by row emptied only
+MADO_USED_BY: rev=32272b2a9562f797038b82853a9a3eec3027424e entries=71 rows=328 missing=1 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MISSED missed=missing   exit=1
+Under the registered PAIRS(base) definition, (S002, window-rule-effects-getprop.md) is in PAIRS(base) (True) and not in PAIRS(M1) => lost=1 (TARGET_MISSED).
+
+## 6. Allowlist vs reader labels (65 base pairs)
+allowlist 24 rows: RevC3 MIS 23 + REAL 1 (S359); CritCiteDef N/R/M-N on 22 + U (S096) + M-U (S044, S113) + M-N (S359)
+  reader disagreement inside the 24 (other reader says reliance or leaning): S096 (U), S044 (M-U), S113 (M-U), S359 (REAL)
+remaining 41: (REAL,U)=35, (REAL,M-U)=5, (BORD,U)=1 (S046)
+labels mtimes: pairs-65.tsv 21:30:59; classification.json & pairs.md 21:32:19; c3-name-only.tsv 21:42:32; frozen-tables-v2.json 21:43:46; first used-by fill of any pair: after 323a69c9 (used-by cells changed base->323a69c9: 0)
+
+## 7. Hold-out commitment
+commitment(fixtures/c2-holdout extracted from git archive 28fc86ac) = 65dc9d3e318b15e6c6b0dea6fe9a8f98814914d37e2b2973dc3b8b088d2cb183 == frozen c2.holdout_commit_sha256 (MATCH)
+
+## 8. Freeze verifier
+python3 -I .ufo/waves/round-56/freeze-verify-v2.py at 323a69c9: FREEZE_VERIFY_V2: bad=0 ... OK
+same at 28fc86ac: FREEZE_VERIFY_V2: bad=0 ... OK
+
+## 9. S391 / unfrozen pin
+frozen c1.new_row_ids = S383..S390 (8); registry at 28fc86ac has S383..S391 (9 new rows; 319 -> 328)
+frozen c1.pin_sha256 keys: 8 entries, no Hyprland-PropRefresher.hpp; frozen K/H pins: no .hpp
+entry E08 (line 128) cites S391 `Hyprland-PropRefresher.hpp:18` `REFRESH_CONFIG_WATCHER     = (1 << 8),`; hpp line 18 at 28fc86ac: `REFRESH_CONFIG_WATCHER     = (1 << 8),` (match)
+entry E09 (line 129) cites S391 `Hyprland-PropRefresher.hpp:21`; hpp line 21 matches the quoted REFRESH_ALL line
+
+## 10. E3 bound (scope_covers with nlines = len(pin.split(b"\n")))
+Hyprland-ConfigWatcher.cpp: wc-l=111, len(split)=112 (last element empty)
+ConfigWatcher.cpp:100-112 line=100 -> scope_covers=True   (112 is one line past EOF)
+ConfigWatcher.cpp:100-113 line=100 -> scope_covers=False

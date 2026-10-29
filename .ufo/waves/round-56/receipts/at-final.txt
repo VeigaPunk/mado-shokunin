@@ -1,0 +1,50 @@
+# at-final receipts, content revision 8a7b734627b06583a9106fcc0940f0a180ff331d (L1, 2026-10-28T23:41:17-03:00)
+# gates at 8a7b734627b06583a9106fcc0940f0a180ff331d  2026-10-28T23:40:33-03:00
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d --work /fast/scratch/hyaku/mado-r56/L1/gw/a
+MADO_AUTORELOAD_ENTRY: rev=8a7b734627b06583a9106fcc0940f0a180ff331d rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d --work /fast/scratch/hyaku/mado-r56/L1/gw/b
+C1-CTL-12 anchor-past-eof: ok (required scope:K03) - counter missed=scope:K03,scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,...(+2 more)
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+1 more)
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+rc=0
+$ python3 -I quality/counters/c3-r56-used-by.py --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d --work /fast/scratch/hyaku/mado-r56/L1/gw/c
+MADO_USED_BY: rev=8a7b734627b06583a9106fcc0940f0a180ff331d entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+$ python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d --work /fast/scratch/hyaku/mado-r56/L1/gw/e
+r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+MADO_R56_C2: rev=8a7b734627b06583a9106fcc0940f0a180ff331d fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+rc=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin mado
+mado	W04	S389 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S392 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/inotify/ConfigWatcher.cpp across scopes
+mado	W04	S393 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/helpers/MiscFunctions.cpp across scopes
+mado	W04	S394 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp across scopes
+mado	W04	S395 duplicate url raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/ConfigManager.cpp across scopes
+mado	ok	/home/vgpnk/Projects/shokunin/mado-shokunin/corpus/SOURCES.md
+rc=0
+$ grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+332
+$ python3 -I quality/check-index.py --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d
+MADO_INDEX: rev=8a7b734627b06583a9106fcc0940f0a180ff331d indexed=71/71 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+$ python3 -I quality/check-index-rows.py --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/getprop-*.txt` in row knowledge/window-rule-effects-getprop.md
+WARN cited-glob-nomatch: `.ufo/evidence/round-12/drift-*.txt` in row knowledge/config-drift-r12.md
+WARN cited-glob-nomatch: `.ufo/waves/round-24/fetch/S###.bin` in row knowledge/rule-attribution-r24.md
+rc=0
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d
+LEDGER: population=97 ledger_rows=97 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=8a7b734627b06583a9106fcc0940f0a180ff331d
+rc=0
+$ knowledge entries / index rows
+71
+71
+$ python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev 8a7b734627b06583a9106fcc0940f0a180ff331d --work /fast/scratch/hyaku/mado-r56/L1/gw/d
+  note[stale]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+control 9 stale-allow: PASS -- missed=stale [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+rc=0
+done
+$ bash tools/mado-verify.sh --selftest (git archive export)
+MADO_SELFTEST: 460/460 assertions passed
+MADO_WAVE_DONE: not run; operator wrap-up stopped wave 2 (33 of 35 seats reported; w1 settled 43/43, results w1-results.json)

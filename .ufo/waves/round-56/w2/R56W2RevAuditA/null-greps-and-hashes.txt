@@ -1,0 +1,20 @@
+# null-result greps at 28fc86ac2359ec27406d8a2c63bef82ea6e947ed, pins read via git show
+$ grep -nE "ev->name|->name|IN_Q_OVERFLOW" Hyprland-ConfigWatcher.cpp
+rc=1 (1 = no match)
+$ grep -n "ev->" Hyprland-ConfigWatcher.cpp
+95:        if (offset + sizeof(inotify_event) + ev->len > sc<size_t>(bytesRead)) {
+100:        const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });
+103:            Log::logger->log(Log::ERR, "CConfigWatcher: got an event for wd {} which we don't have?!", ev->wd);
+109:        offset += sizeof(inotify_event) + ev->len;
+$ grep -n "makeConfigValue(" Hyprland-ConfigValues.cpp
+rc=1 (1 = no definition in pin)
+$ grep -n "defaultVal() ? 1 : 0" Hyprland-legacy-ConfigManager.cpp
+496:            registerConfigVar(NAME, Hyprlang::INT{p->defaultVal() ? 1 : 0});
+2164:        addPluginConfigVar(handle, NAME, Hyprlang::INT{p->defaultVal() ? 1 : 0});
+$ grep -c PropRefresher.hpp frozen-tables-v2.json / frozen-tables.json
+0
+0
+$ grep -nE "modifies an existing watch|same inode|watch descriptor is removed" man7-inotify.7.html
+90:          creates a new watch item, or modifies an existing watch.  Each
+301:                  same inode, and multiple calls to <a href="../man2/inotify_add_watch.2.html">inotify_add_watch(2)</a>
+551:       When a watch descriptor is removed by calling <a href="../man2/inotify_rm_watch.2.html">inotify_rm_watch(2)</a>

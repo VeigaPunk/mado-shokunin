@@ -1,0 +1,110 @@
+====================================================================================================
+PAIR S015  corpus/knowledge/walker-route-r18.md
+--- L236 ---
+Per the S015 protocol, these moved pins are reported with old and new values.
+====================================================================================================
+PAIR S041  corpus/knowledge/input-debugging-boundaries-r15.md
+--- L34 ---
+| Wayland seat/capability: what can a client bind? | S052 `wl_seat.capabilities`, XML:2004–2087 | `[OBS-source]` capabilities change on bind/gain/loss; keyboard/pointer objects have capability-dependent lifecycles | S041 retained only `wl_seat` interface/version 9, not capability bits; no captured focus or key event follows |
+====================================================================================================
+PAIR S046  corpus/knowledge/output-colour-boundaries-r14.md
+--- L87 ---
+**Global records contain interface/version only; sanitized probe/session metadata is also retained.** The top-level capture also includes package/probe/compositor pins, a socket name and later non-atomic session-correlation metadata. Output identities, raw device paths, geometry and colourimetry detail blocks were excluded. The diagnostic used for S041 did bind/query some interfaces (S046 in the U4 note); “retained registry headers” never means “the diagnostic sent zero protocol requests.”
+====================================================================================================
+PAIR S057  corpus/knowledge/terminal-trees-r23.md
+--- L87 ---
+  entries carry `Hidden=true`, which the round-17 resolver honours (S057); not re-derived here.
+====================================================================================================
+PAIR S059  corpus/knowledge/xdg-terminal-selection-r47.md
+--- L74 ---
+The hotkey is the entry point: `bindd = SUPER, RETURN, Terminal, exec, uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)"` (~/.config/hypr/bindings.conf:2, held as row S059), so the resolver runs with `XDG_CURRENT_DESKTOP=Hyprland`, `XDG_CONFIG_DIRS=/etc/xdg`, `XDG_DATA_DIRS=/usr/local/share:/usr/share` and the user's `XDG_CONFIG_HOME`/`XDG_DATA_HOME`. Step 1 yields eight list slots; present are `~/.config/xdg-terminals.list`, byte-identical to omarchy's shipped list (S331, sha256 d035da57...; its line 3 names `Alacritty.desktop`, omarchy-xdg-terminals.list:3), and the distro list `/usr/share/xdg-terminal-exec/xdg-terminals.list` (held as S060), which only excludes four entries from the fallback. Two `Alacritty.desktop` files exist: the system one (sha256 d420b0f4..., no `X-TerminalArg*` key) and the user override under `~/.local/share/applications/`, byte-identical to omarchy's (S330, sha256 713703ba...), which adds `X-TerminalArgExec=-e` and the app-id, title and dir keys (omarchy-Alacritty.desktop:14-17).
+====================================================================================================
+PAIR S060  corpus/knowledge/xdg-terminal-selection-r47.md
+--- L11 ---
+ground: the resolver's executed selection, from list files to the printed command, measured against the real script (C1 fixtures `quality/counters/c1-r47-fixtures.json`); held neighbours: the documentary route in terminal-route-r17.md (rows S056-S060), terminal-trees-r23.md, terminals-and-omarchy.md
+--- L74 ---
+The hotkey is the entry point: `bindd = SUPER, RETURN, Terminal, exec, uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)"` (~/.config/hypr/bindings.conf:2, held as row S059), so the resolver runs with `XDG_CURRENT_DESKTOP=Hyprland`, `XDG_CONFIG_DIRS=/etc/xdg`, `XDG_DATA_DIRS=/usr/local/share:/usr/share` and the user's `XDG_CONFIG_HOME`/`XDG_DATA_HOME`. Step 1 yields eight list slots; present are `~/.config/xdg-terminals.list`, byte-identical to omarchy's shipped list (S331, sha256 d035da57...; its line 3 names `Alacritty.desktop`, omarchy-xdg-terminals.list:3), and the distro list `/usr/share/xdg-terminal-exec/xdg-terminals.list` (held as S060), which only excludes four entries from the fallback. Two `Alacritty.desktop` files exist: the system one (sha256 d420b0f4..., no `X-TerminalArg*` key) and the user override under `~/.local/share/applications/`, byte-identical to omarchy's (S330, sha256 713703ba...), which adds `X-TerminalArgExec=-e` and the app-id, title and dir keys (omarchy-Alacritty.desktop:14-17).
+====================================================================================================
+PAIR S073  corpus/knowledge/walker-deep.md
+--- L623 ---
+- Version-bound, dated 2026-10-14 and not re-run on 2.17.2: the `walker --help` flag table (§5), the embedded-default byte run at offset 784,064 (§2.1), struct/field-arity and error/fallback token strings (§2.2-2.3, §6.1, §6.3), and every `/etc/xdg/walker/config.toml` line anchor (§2.1-2.4, §4.2, §7.4). The note's L1 pin (298 L, 13,220 B, sha256 prefix 5b4e47b7d2314bf8) is superseded: the host file now reads 13,743 B, sha256 prefix 3c5c6867d0216d0c (S091; upstream v2.17.2 default S073; DeltaWalkerConfig w1 round 19: 2.17.1 added `blur_corner_radius`, the `[niri]` table, a desktopapplications edit action and changed clipboard `after` to `SimpleDelete`, so §2.1-2.4 key enumerations are incomplete for 2.17.2).
+====================================================================================================
+PAIR S090  corpus/knowledge/arc-synthesis.md
+--- L392 ---
+- The walker version pins in this note (line 229, the only `2.17.0` in the file) are dated 2026-10-14 (the note's verified-at; identity re-measured r9) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L394 ---
+- Host-state, dated 2026-10-14, not re-measured this round: `config.toml` parse, theme package `omarchy-default`, `app-walker@autostart.service` + `elephant.service` active, sockets `srwxr-xr-x` 0 B, `dev.benz.walker` D-Bus owner == walker pid. The restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090) leave the post-restart process state [UNK].
+====================================================================================================
+PAIR S090  corpus/knowledge/closeout-r11.md
+--- L299 ---
+- The walker version pins in this note (lines 43) are dated 2026-10-14 (`verified-at`, line 12; §1 measurement) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+====================================================================================================
+PAIR S090  corpus/knowledge/config-health-report-r3.md
+--- L1009 ---
+- The walker version pin in this note (line 900: `walker --version` expectation `2.17.0`, measured in the 2026-10-14 probe window of line 3 and the round-4 kit at lines 951-953) is dated 2026-10-14 and describes walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090; the 2.17.0 window starts at line 1943). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L1010 ---
+- Version-bound, dated, not re-asserted: the version print (line 900); the help-text statement "`walker --help` = launch flags only" (line 249); the service state "Main PID 1808 from boot" (lines 245-246, 896), which may no longer be current after the restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090); current PID is `[UNK]`.
+====================================================================================================
+PAIR S090  corpus/knowledge/remaining-planes-census.md
+--- L338 ---
+- The walker version pin in this note (line 246, `walker 2.17.0-1`) is dated 2026-10-14 (probe window 17:39-17:41Z) and describes walker 2.17.0; on 2026-10-20 the host package moved to 2.17.2 per `/var/log/pacman.log:2929` (S090); the host binary bytes (one `2.17.2` literal, sha256 `25240650…`) are recorded as S096 [wave-2 corrected wording]. Current routing: corpus/knowledge/walker-route-r18.md.
+--- L340 ---
+- Walker process and CSS import rows (§2 walker row, §4 clients): PID 1203471 and the `walker --gapplication-service` sample are 2026-10-14 point samples; the 2026-10-20 upgrade logged walker-restart.hook entries (S090 lines 3062, 3123), so no live walker process fact is re-asserted. The config.toml and style.css lines cited there are file-level bytes read on 2026-10-14, not checked against 2.17.2 behaviour.
+====================================================================================================
+PAIR S090  corpus/knowledge/walker-deep-r9.md
+--- L403 ---
+- The walker version pins in this note (lines 30, 58, 60, 78, 103, 110, 111, 305, 316, 317) are dated 2026-10-14 (19:59:02–20:01:39Z) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090) and the binary's compiled-in version literal read as file bytes (S096). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L404 ---
+- Version-bound and dated, superseded for the host by S090 line 2929: printed `--version` bytes (§1 line 58, §2.1, §5.1); binary identity (sha256, size, mtime, BuildID, `.comment` toolchain, rodata literal offset 847,791; §1, §2.2, §2.3, §5.3–5.4); package row and `pacman -Qkk` count (line 60, line 103, §5.6).
+--- L412 ---
+- The printed `--version` bytes are not superseded "by S090": a log line carries no printed output; the 2.17.2 print stays [UNK] (inferred from the S096 literal only).
+--- L414 ---
+- Process state (PIDs, sockets, layers) is voided, not merely dated: the walker-restart hook ran (`/var/log/pacman.log:3062`, `:3123`, S090) and the host booted at 2026-10-20 09:56:56 -0300 (w2 seat read of `/proc/stat` btime).
+====================================================================================================
+PAIR S090  corpus/knowledge/walker-deep.md
+--- L622 ---
+- The walker version pins in this note (line 27) are dated 2026-10-14 (the note's own measurement date, lines 3-4) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090) and the binary's compiled-in version literal `2.17.2`, read as file bytes (S096). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L624 ---
+- Elephant-bound, dated 2026-10-14: `elephant version` 2.21.0 (line 28), the `listproviders` census and plugin list (§4.1), ElephantConfig defaults and generated-doc counts (§4.1, §5). S090 (line 3095) records elephant 2.21.0-1 -> 2.22.1-1 on this host; not re-measured.
+====================================================================================================
+PAIR S090  corpus/knowledge/walker-live-surface.md
+--- L305 ---
+- The walker version pins in this note (lines 19, 37, 38) are dated 2026-10-14 (the measurement window in line 6) and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090); the host binary bytes were re-read this round and are recorded as S096 (sha256 `25240650…`, one `2.17.2` literal) [wave-2 corrected wording]. Current routing: corpus/knowledge/walker-route-r18.md.
+====================================================================================================
+PAIR S090  corpus/knowledge/waybar-walker-plane.md
+--- L479 ---
+- The walker version pins in this note (lines 38, 197, 405) are dated 2026-10-14 and describe walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L481 ---
+- Process and unit state, dated and superseded: walker PID 1808 and its 2026-10-13 start (`:31-33`, `:172`, `:404`); the walker restart hooks at `/var/log/pacman.log:3062` and `:3123` (S090) make that PID likely stale [INFERENCE: S090 records hook runs, not process state]. Elephant `is-enabled` (`:181`) is dated host state; elephant 2.21.0 to 2.22.1 (`/var/log/pacman.log:3095`, S090) is not pinned in this note.
+--- L483 ---
+- Waybar, hypridle, hyprlock and swayosd version prints (`:37-40`) are outside S090 and were not re-measured this round.
+====================================================================================================
+PAIR S090  corpus/knowledge/waybar-walker-semantics.md
+--- L467 ---
+- The walker version pin in this note (line 23 only) is dated 2026-10-14 (line 4) and describes walker 2.17.0. On 2026-10-20 the host package moved to 2.17.2: `/var/log/pacman.log:2929` (S090). Current routing: corpus/knowledge/walker-route-r18.md.
+--- L469 ---
+- Version-bound elephant pin (line 24, pkg 2.21.0-1): S090 records elephant 2.21.0-1 -> 2.22.1-1 at `/var/log/pacman.log:3095`; the provider `.so` list (§6.5) is dated 2026-10-14.
+--- L477 ---
+- §1 does carry a walker version pin (line 23), and the §6.7/§6.8 live state (PID 1808, running) is voided by the walker-restart hook runs (`/var/log/pacman.log:3062`, `:3123`, S090), not merely dated. Theme-file bytes are unchanged, but their meaning on 2.17.2 may differ (w1 DeltaWalkerConfig: blur radius handling on GTK 4.24) — [UNK].
+====================================================================================================
+PAIR S091  corpus/knowledge/arc-synthesis.md
+--- L402 ---
+- The binary sha `25240650…` is the S096/S091 file-byte value (S096 recorded at `df84807`, not pending).
+====================================================================================================
+PAIR S091  corpus/knowledge/walker-deep-r9.md
+--- L415 ---
+- Further delta sites (w2 ReviewDeltaCarry): line 176's `config.toml:117-296` rows are `:123-303` in the 2.17.2 default and changed (`SimpleDelete`, new ctrl-e edit row); §4's embedded offset 784,064 is 806,960 and §6's `5b4e47b7…` is `3c5c6867…` (S091) — both version-bound, not "not version-bound" as the pointer says.
+====================================================================================================
+PAIR S091  corpus/knowledge/walker-deep.md
+--- L623 ---
+- Version-bound, dated 2026-10-14 and not re-run on 2.17.2: the `walker --help` flag table (§5), the embedded-default byte run at offset 784,064 (§2.1), struct/field-arity and error/fallback token strings (§2.2-2.3, §6.1, §6.3), and every `/etc/xdg/walker/config.toml` line anchor (§2.1-2.4, §4.2, §7.4). The note's L1 pin (298 L, 13,220 B, sha256 prefix 5b4e47b7d2314bf8) is superseded: the host file now reads 13,743 B, sha256 prefix 3c5c6867d0216d0c (S091; upstream v2.17.2 default S073; DeltaWalkerConfig w1 round 19: 2.17.1 added `blur_corner_radius`, the `[niri]` table, a desktopapplications edit action and changed clipboard `after` to `SimpleDelete`, so §2.1-2.4 key enumerations are incomplete for 2.17.2).
+--- L630 ---
+- Three items the block calls "not re-run on 2.17.2" were re-read this round as file bytes: the embedded default run (now at offset 806,960, byte-equal to `/etc/xdg/walker/config.toml`, S091), the `struct Walker` arity (31 elements in the 2.17.2 binary, w1 DeltaWalkerConfig) and the `/etc/xdg` line anchors (shifted +6/+7, map in w1 DeltaWalkerConfig). Error/fallback tokens were not re-read.
+====================================================================================================
+PAIR S091  corpus/knowledge/walker-live-surface.md
+--- L314 ---
+- The 29-entry package file list is version-invariant (both packages list the same 29 entries); only the packaged config content moved (13,220 B `5b4e47b7…` → 13,743 B `3c5c6867…`, S091). The §1 PIDs and unit state (lines 39-42) are dated 2026-10-14 like §3/§4/§7.
+====================================================================================================
+PAIR S091  corpus/knowledge/waybar-walker-semantics.md
+--- L476 ---
+- The packaged default and the user walker config were re-read this round as file bytes (`/etc/xdg/walker/config.toml` 305 L / 13,743 B / `3c5c6867…`, S091; `~/.config/walker/config.toml` 49 L / 1,336 B / `fecf71fa…`, unchanged; w1 DeltaWalkerConfig, w2 AtkPtrWaybarWalkerSemantics), so "not re-checked"/"not re-hashed this round" above is wrong for those two files; the binary bytes are S096.

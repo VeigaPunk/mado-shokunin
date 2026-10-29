@@ -1,0 +1,15 @@
+proposal K101  mutant M101
+a negative live int is still a record (the option is present)
+args (after {FX} = staged path): --config /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K101/tree/hyprland.conf --display-root /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K101 --getoption /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K101/tree/go.json
+files: {"go.json": "bytes:49", "hyprland.conf": "bytes:28"}
+--- pristine rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=0 paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH_LIVE: option=misc:disable_autoreload config=0 live=-1 verdict=DIFFER
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=DIFFER
+--- mutant M101 rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=0 paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH_LIVE: option=misc:disable_autoreload config=0 live=? verdict=UNKNOWN
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=UNKNOWN
+VERDICT: KILLS

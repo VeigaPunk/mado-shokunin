@@ -1,0 +1,16 @@
+== R56W2RevAuditC receipts ==
+Seat: R56W2RevAuditC. Lane: /home/vgpnk/Projects/shokunin/mado-shokunin
+Target revision: 28fc86ac2359ec27406d8a2c63bef82ea6e947ed (lane tip 9c3ca28a59de0dd23ee9950d22349333fc168a11)
+Scratch: /fast/scratch/hyaku/mado-r56/R56W2RevAuditC (removed at end of seat)
+
+## R1 - baseline counter at the target revision (unmutated lane, read-only)
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 28fc86ac2359ec27406d8a2c63bef82ea6e947ed --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=28fc86ac2359ec27406d8a2c63bef82ea6e947ed rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+
+## R2 - baseline C1 harness at the target revision
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 28fc86ac... --work <scratch>
+C1-CTL-12 anchor-past-eof: ok (required scope:K03) - counter missed=scope:K03,scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,...(+2 more)
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+1 more)
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+exit=0

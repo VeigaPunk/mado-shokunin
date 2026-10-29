@@ -1,0 +1,118 @@
+== R3 - the pins, in full context, for the sentence-to-pin audit of K13..K18 ==
+Pins read from the lane at 28fc86ac...: .ufo/waves/round-56/fetch/
+
+## Hyprland-EventLoopManager.cpp lines 68-73 (K14 context: the callback)
+  L1+67: }
+  L2+67: 
+  L3+67: static int configWatcherWrite(int fd, uint32_t mask, void* data) {
+  L4+67:     Config::watcher()->onInotifyEvent();
+  L5+67:     return 0;
+  L6+67: }
+
+## Hyprland-EventLoopManager.cpp lines 124-130 (K13 context: enterLoop)
+  L124: void CEventLoopManager::enterLoop() {
+  L125:     m_wayland.eventSource = wl_event_loop_add_fd(m_wayland.loop, m_timers.timerfd.get(), WL_EVENT_READABLE, timerWrite, nullptr);
+  L126: 
+  L127:     if (const auto& FD = Config::watcher()->getInotifyFD(); FD.isValid())
+  L128:         m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);
+  L129: 
+  L130:     syncPollFDs();
+
+## Hyprland-PropRefresher.cpp lines 146-150 (K15/K16 context)
+  L146:     }
+  L147: 
+  L148:     if (m_propsTripped & REFRESH_CONFIG_WATCHER)
+  L149:         Config::watcher()->update();
+  L150: 
+
+## Hyprland-PropRefresher.cpp lines 29-42 (scheduleRefresh: OR into m_propsTripped, doLater)
+  L29: void CPropRefresher::scheduleRefresh(PropRefreshBits prop) {
+  L30: 
+  L31:     m_propsTripped |= prop;
+  L32: 
+  L33:     if (!m_scheduled && g_pEventLoopManager) {
+  L34:         m_scheduledRefreshSeq = g_pEventLoopManager->doLater([this, weak = WP<CPropRefresher>{refresher()}] {
+  L35:             if (!weak)
+  L36:                 return;
+  L37:             refreshProp(true);
+  L38:         });
+  L39: 
+  L40:         m_scheduled = true;
+  L41:     }
+  L42: }
+
+## Hyprland-PropRefresher.hpp lines 9-24 (the enum; REFRESH_CONFIG_WATCHER is bit 8, REFRESH_ALL = max of uint16_t)
+  L9:     enum ePropRefreshProp : uint16_t {
+  L10:         REFRESH_LAYOUTS            = (1 << 0),
+  L11:         REFRESH_INPUT_DEVICES      = (1 << 1),
+  L12:         REFRESH_SCREEN_SHADER      = (1 << 2),
+  L13:         REFRESH_BLUR_FB            = (1 << 3),
+  L14:         REFRESH_RULES              = (1 << 4),
+  L15:         REFRESH_WINDOW_STATES      = (1 << 5) | REFRESH_RULES,
+  L16:         REFRESH_MONITOR_STATES     = (1 << 6) | REFRESH_LAYOUTS,
+  L17:         REFRESH_CURSOR_ZOOMS       = (1 << 7),
+  L18:         REFRESH_CONFIG_WATCHER     = (1 << 8),
+  L19:         REFRESH_GRADIENTS_GROUPBAR = (1 << 9),
+  L20: 
+  L21:         REFRESH_ALL = std::numeric_limits<std::underlying_type_t<ePropRefreshProp>>::max(),
+  L22:     };
+  L23: 
+  L24:     using PropRefreshBits = std::underlying_type_t<ePropRefreshProp>;
+
+## Hyprland-legacy-ConfigManager.cpp lines 1077-1087 (K17/K18 context: CConfigManager::init)
+  L1077: void CConfigManager::init() {
+  L1078: 
+  L1079:     Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {
+  L1080:         Log::logger->log(Log::DEBUG, "CConfigManager: file {} modified, reloading", e.file);
+  L1081:         reload();
+  L1082:     });
+  L1083: 
+  L1084:     reload();
+  L1085: 
+  L1086:     m_isFirstLaunch = false;
+  L1087: }
+
+## Hyprland-legacy-ConfigManager.cpp lines 1068-1072 (postConfigReload schedules REFRESH_ALL)
+  L1068:     handlePluginLoads();
+  L1069: 
+  L1070:     Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);
+  L1071: 
+  L1072:     Event::bus()->m_events.config.reloaded.emit();
+
+## Hyprland-ConfigWatcher.cpp lines 76-111 (setOnChange, onInotifyEvent, callback, .file = WD->file)
+  L76: void CConfigWatcher::setOnChange(const std::function<void(const SConfigWatchEvent&)>& fn) {
+  L77:     m_watchCallback = fn;
+  L78: }
+  L79: 
+  L80: void CConfigWatcher::onInotifyEvent() {
+  L81:     constexpr size_t                                     BUFFER_SIZE = sizeof(inotify_event) + NAME_MAX + 1;
+  L82:     alignas(inotify_event) std::array<char, BUFFER_SIZE> buffer      = {};
+  L83:     const ssize_t                                        bytesRead   = read(m_inotifyFd.get(), buffer.data(), buffer.size());
+  L84:     if (bytesRead <= 0)
+  L85:         return;
+  L86: 
+  L87:     for (size_t offset = 0; offset < sc<size_t>(bytesRead);) {
+  L88:         const auto* ev = rc<const inotify_event*>(buffer.data() + offset);
+  L89: 
+  L90:         if (offset + sizeof(inotify_event) > sc<size_t>(bytesRead)) {
+  L91:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated header");
+  L92:             break;
+  L93:         }
+  L94: 
+  L95:         if (offset + sizeof(inotify_event) + ev->len > sc<size_t>(bytesRead)) {
+  L96:             Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");
+  L97:             break;
+  L98:         }
+  L99: 
+  L100:         const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });
+  L101: 
+  L102:         if (WD == m_watches.end())
+  L103:             Log::logger->log(Log::ERR, "CConfigWatcher: got an event for wd {} which we don't have?!", ev->wd);
+  L104:         else
+  L105:             m_watchCallback(SConfigWatchEvent{
+  L106:                 .file = WD->file,
+  L107:             });
+  L108: 
+  L109:         offset += sizeof(inotify_event) + ev->len;
+  L110:     }
+  L111: }

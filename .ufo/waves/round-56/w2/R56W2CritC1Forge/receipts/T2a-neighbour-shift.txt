@@ -1,0 +1,37 @@
+variant: T2a-neighbour-shift
+commit: d6050caba4b35ab5ecace94f4349baa57f703caa
+
+[counter rc=1]
+MADO_AUTORELOAD_ENTRY: rev=d6050caba4b35ab5ecace94f4349baa57f703caa rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=4/33 new_rows=8/8 verdict=TARGET_MISSED missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,tok:K10,tok:K11,tok:K12,tok:K14,tok:K15,tok:K17,tok:K18,tok:K19,tok:K21,tok:K22,tok:K23,tok:K24,tok:K25,tok:K26,tok:K27,tok:K28,tok:K29,tok:K30,tok:H01,tok:H02,tok:H03
+
+
+[c3 rc=0]
+MADO_USED_BY: rev=d6050caba4b35ab5ecace94f4349baa57f703caa entries=71 rows=328 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+
+
+[harness rc=1]
+MADO_R56_CONTROLS: claim=c1 good=bad controls=12/12 verdict=FAIL
+good: bad - verdict=TARGET_MISSED missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,tok:K10,tok:K11,tok:K12,tok:K14,tok:K15,tok:K17,tok:K18,tok:K19,tok:K21,tok:K22,tok:K23,tok:K24,tok:K25,tok:K26,tok:K27,tok:K28,tok:K29,tok:K30,tok:H01,tok:H02,tok:H03
+C1-CTL-01 entry-absent: ok (required entry_absent) - counter missed=entry_absent
+C1-CTL-02 junk-placeholders: ok (required tok:<id> + content<33) - counter missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K07,tok:K08,...(+24 more)
+C1-CTL-03 false-number: ok (required num:K04) - counter missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,...(+22 more)
+  note: collateral legs beyond the registered ones: tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,...(+21 more)
+C1-CTL-04 cross-pin-source: ok (required source_cell:K10) - counter missed=source_cell:K10,scope:K10,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,...(+23 more)
+  note: collateral legs beyond the registered ones: scope:K10,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,...(+22 more)
+C1-CTL-05 scope-swap: ok (required scope:K10) - counter missed=prov,source_cell:K10,scope:K10,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,...(+24 more)
+  note: collateral legs beyond the registered ones: prov,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,...(+22 more)
+C1-CTL-06 provenance-dangling: ok (required prov) - counter missed=prov,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,...(+22 more)
+  note: collateral legs beyond the registered ones: tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,...(+21 more)
+C1-CTL-07 dropped-row: ok (required row:K17) - counter missed=row:K17,source_cell:K17,scope:K17,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,...(+26 more)
+  note: collateral legs beyond the registered ones: source_cell:K17,scope:K17,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,...(+25 more)
+C1-CTL-08 edited-quote: ok (required row:K05) - counter missed=row:K05,quote:K05,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,...(+23 more)
+  note: collateral legs beyond the registered ones: tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,...(+21 more)
+C1-CTL-09 pin-byte: ok (required pin_hash) - counter missed=pin_hash,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,...(+22 more)
+  note: collateral legs beyond the registered ones: tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K08,tok:K09,...(+21 more)
+C1-CTL-10 new-row-missing: ok (required new_rows) - counter missed=prov,source_cell:K29,source_cell:K30,scope:K29,scope:K30,tok:K01,tok:K02,tok:K03,...(+27 more)
+  note: collateral legs beyond the registered ones: prov,scope:K29,scope:K30,tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,...(+24 more)
+C1-CTL-11 quote-echo: ok (required echo:<id>) - counter missed=tok:K08,tok:K28,echo:K01,echo:K02,echo:K03,echo:K04,echo:K05,echo:K06,...(+23 more)
+  note: collateral legs beyond the registered ones: tok:K08,tok:K28,echo:K01,echo:K02,echo:K03,echo:K04,echo:K05,echo:K06,...(+23 more)
+C1-CTL-12 anchor-past-eof: ok (required scope:K03) - counter missed=scope:K03,scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,...(+31 more)
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+30 more)
+

@@ -1,0 +1,51 @@
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/ref/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/mini --rev 307dc1440cad4ace4e9b9e7331df5a7f15637205 --work /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/rcpt.A-real-counter --counter /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/tree/quality/counters/c3-r56-used-by.py
+rc=0
+stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+stderr (last 12 lines):
+    note[dangling]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+    note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+    note[extra]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 6 fenced-cite: PASS -- missed=extra [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+    note[allow_sha]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 7 allow-everything: PASS -- missed=conflict,allow_sha,exempt [allowlist := every (S, entry) pair with its correct line-sha; harness allow_sha=-]
+    note[lost]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 8 delete-citation: PASS -- missed=extra,lost [replaced the only S015 token of corpus/knowledge/walker-route-r18.md by S---; harness lost=-]
+    note[stale]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  control 9 stale-allow: PASS -- missed=stale [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/ref/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/mini --rev 307dc1440cad4ace4e9b9e7331df5a7f15637205 --work /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/rcpt.B-always-green-stub --counter /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/stubs/stub_green.py
+rc=1
+stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=0/9 verdict=FAIL
+stderr (last 12 lines):
+  harness metrics of the good tree: {'entries': 71, 'rows': 328, 'missing': 24, 'extra': 0, 'dangling': 0}
+    note[good]: counter and harness numbers diverge (not scored): missing counter=0 harness=24
+  good: ok (ok)
+  control 1 base-registry: FAIL -- counter printed TARGET_MET on a mutated tree [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+  control 2 fill-all: FAIL -- counter printed TARGET_MET on a mutated tree [used-by of all 328 rows := all 71 entry paths; harness extra=22898]
+  control 3 drop-one: FAIL -- counter printed TARGET_MET on a mutated tree [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=25]
+  control 4 dangling-source: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+  control 5 ghost-path: FAIL -- counter printed TARGET_MET on a mutated tree [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+  control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+  control 7 allow-everything: FAIL -- counter printed TARGET_MET on a mutated tree [allowlist := every (S, entry) pair with its correct line-sha; harness allow_sha=-]
+  control 8 delete-citation: FAIL -- counter printed TARGET_MET on a mutated tree [replaced the only S015 token of corpus/knowledge/walker-route-r18.md by S---; harness lost=-]
+  control 9 stale-allow: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+
+$ python3 -I /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/ref/check-r56-controls.py --claim c3 --repo /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/mini --rev 307dc1440cad4ace4e9b9e7331df5a7f15637205 --work /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/rcpt.C-every-leg-missed-stub --counter /fast/scratch/hyaku/mado-r56/R56W2MutC3Harness/stubs/stub_legs.py
+rc=1
+stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=8/9 verdict=FAIL
+stderr (last 12 lines):
+  control 3 drop-one: PASS -- missed=missing,extra,dangling,conflict,stale,lost [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=25]
+    note[dangling]: counter and harness numbers diverge (not scored): missing counter=1 harness=24; extra counter=1 harness=0
+  control 4 dangling-source: PASS -- missed=missing,extra,dangling,conflict,stale,lost [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+    note[extra]: counter and harness numbers diverge (not scored): missing counter=1 harness=24; dangling counter=1 harness=0
+  control 5 ghost-path: PASS -- missed=missing,extra,dangling,conflict,stale,lost [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+    note[extra]: counter and harness numbers diverge (not scored): missing counter=1 harness=24; extra counter=1 harness=4; dangling counter=1 harness=0
+  control 6 fenced-cite: PASS -- missed=missing,extra,dangling,conflict,stale,lost [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+  control 7 allow-everything: FAIL -- missed=missing,extra,dangling,conflict,stale,lost lacks allow_sha [allowlist := every (S, entry) pair with its correct line-sha; harness allow_sha=-]
+    note[lost]: counter and harness numbers diverge (not scored): missing counter=1 harness=24; dangling counter=1 harness=0
+  control 8 delete-citation: PASS -- missed=missing,extra,dangling,conflict,stale,lost [replaced the only S015 token of corpus/knowledge/walker-route-r18.md by S---; harness lost=-]
+    note[stale]: counter and harness numbers diverge (not scored): missing counter=1 harness=24; extra counter=1 harness=0; dangling counter=1 harness=0
+  control 9 stale-allow: PASS -- missed=missing,extra,dangling,conflict,stale,lost [appended ' x' to the first citing line of S005 in corpus/knowledge/output-colour-boundaries-r14.md; harness stale=-]
+

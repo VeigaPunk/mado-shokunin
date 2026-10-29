@@ -1,0 +1,28 @@
+== R4 - counter-safe corrections to K14, K16, K18 (scratch copy) ==
+Commit d9b0f120 (correction containing the exact format text) and commit 640f1a0d (counter-safe wording).
+
+## R4a - a correction that restores the literal format text FAILS the echo leg (E4)
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo <scratch>/clone --rev d9b0f120... --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=d9b0f1202984949096d12f3f1de2e699825235fc rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=echo:K18
+exit=1
+
+## R4b - the counter-safe wording keeps TARGET_MET
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo <scratch>/clone --rev 640f1a0d... --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=640f1a0de7d7106ce1871f5d795917d9aa707dad rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+
+## R5 - null results (commands that found nothing)
+$ grep -rn -- "ev->name" <pins>          # the inotify event name field
+(no match: ev->name is never read in the pins)
+$ grep -rn "IN_Q_OVERFLOW" <pins>       # queue-overflow branch in the watcher
+(no match: no IN_Q_OVERFLOW branch in ConfigWatcher.cpp)
+$ sed -n "70,73p" Hyprland-EventLoopManager.cpp   # the callback body
+static int configWatcherWrite(int fd, uint32_t mask, void* data) {
+    Config::watcher()->onInotifyEvent();
+    return 0;
+}
+$ sed -n "80,83p" Hyprland-ConfigWatcher.cpp      # onInotifyEvent: no argument, own read
+void CConfigWatcher::onInotifyEvent() {
+    constexpr size_t                                     BUFFER_SIZE = sizeof(inotify_event) + NAME_MAX + 1;
+    alignas(inotify_event) std::array<char, BUFFER_SIZE> buffer      = {};
+    const ssize_t                                        bytesRead   = read(m_inotifyFd.get(), buffer.data(), buffer.size());

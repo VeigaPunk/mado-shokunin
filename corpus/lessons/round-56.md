@@ -95,4 +95,4 @@ entailment for C1 (a lexical rewrite of all 33 propositions keeps `content=33/33
 
 ## Census
 
-Start: `.ufo/waves/round-56/receipts/census-before.txt` → `mado ok`, 319 rows, exit 0. End: see the round report and `receipts/at-final.txt` (332 rows).
+Start: `.ufo/waves/round-56/receipts/census-before.txt` → `mado ok`, 319 rows, exit 0. End: `receipts/at-final.txt` (`mado ok`, exit 0, 332 rows).

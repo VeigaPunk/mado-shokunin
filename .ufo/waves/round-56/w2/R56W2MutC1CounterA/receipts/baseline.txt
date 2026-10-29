@@ -1,0 +1,23 @@
+Baseline receipts (pristine counter = quality/counters/c1-r56-autoreload-entry.py at 28fc86ac2359ec27406d8a2c63bef82ea6e947ed)
+
+Source: `git -C /home/vgpnk/Projects/shokunin/mado-shokunin show 28fc86ac2359ec27406d8a2c63bef82ea6e947ed:quality/counters/c1-r56-autoreload-entry.py`
+md5 6d13eec77e2cdf520f44c870ef50c0a6 (pristine-c1-counter.py; same bytes as the blob)
+Tree of 28fc86ac: d83d2ebefce58f6d87b7d031f500107840005bf7
+Scratch copy: `git archive 28fc86ac2359ec27406d8a2c63bef82ea6e947ed` into a fresh git repo (commit 3be5bb0f39ce5bd1b671e621c8e1764d93fe9381, toplevel asserted).
+
+1. counter on the scratch copy (exit 0):
+   python3 -I <base>/quality/counters/c1-r56-autoreload-entry.py --repo <base> --rev 3be5bb0f --work <work>
+   MADO_AUTORELOAD_ENTRY: rev=3be5bb0f39ce5bd1b671e621c8e1764d93fe9381 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+2. counter selftest (exit 0):
+   python3 -I <base>/quality/counters/c1-r56-autoreload-entry.py --selftest --repo <base> --rev 3be5bb0f --work <work>
+   242/242 assertions passed
+
+3. frozen harness, claim c1 (exit 0):
+   python3 -I <base>/quality/check-r56-controls.py --claim c1 --repo <base> --rev 3be5bb0f --work <work>
+   MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+   stderr: receipts/harness-baseline-stderr.txt
+
+Mutation sweep (67 one-line mutants, both oracles per mutant): mut-results-67.json (driver: mutate.py).
+Killer fixtures (22 proposed; pristine vs mutant on the same repo): killers-results.json (driver: killers.py).
+Randomized equivalence differential (300 trials x 5 candidates, seed 56): equiv-fuzz-300.json (driver: equiv_fuzz.py).

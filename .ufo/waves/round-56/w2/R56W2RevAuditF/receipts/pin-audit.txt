@@ -1,0 +1,159 @@
+# R56W2RevAuditF receipts — pin reading at 28fc86ac (fetch/ extracted read-only via git show)
+
+## E02 — Hyprland-ConfigWatcher.cpp lines 52-73 (setWatchList)
+52	    for (const auto& path : paths) {
+53	        std::error_code ecDir;
+54	        const bool      isDirectory   = std::filesystem::is_directory(path, ecDir);
+55	        const uint32_t  fileMask      = IN_CLOSE_WRITE | IN_DONT_FOLLOW;
+56	        const uint32_t  directoryMask = fileMask | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM;
+57	        const uint32_t  mask          = isDirectory ? directoryMask : fileMask;
+58	
+59	        m_watches.emplace_back(SInotifyWatch{
+60	            .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+61	            .file = path,
+62	        });
+63	
+64	        std::error_code ec, ec2;
+65	        const auto      CANONICAL  = std::filesystem::canonical(path, ec);
+66	        const auto      IS_SYMLINK = std::filesystem::is_symlink(path, ec2);
+67	        if (!ec && !ec2 && IS_SYMLINK) {
+68	            m_watches.emplace_back(SInotifyWatch{
+69	                .wd   = inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),
+70	                .file = path,
+71	            });
+72	        }
+73	    }
+
+## E03 — Hyprland-ConfigWatcher.cpp lines 87-111 (onInotifyEvent)
+87	    for (size_t offset = 0; offset < sc<size_t>(bytesRead);) {
+88	        const auto* ev = rc<const inotify_event*>(buffer.data() + offset);
+89	
+90	        if (offset + sizeof(inotify_event) > sc<size_t>(bytesRead)) {
+91	            Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated header");
+92	            break;
+93	        }
+94	
+95	        if (offset + sizeof(inotify_event) + ev->len > sc<size_t>(bytesRead)) {
+96	            Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");
+97	            break;
+98	        }
+99	
+100	        const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });
+101	
+102	        if (WD == m_watches.end())
+103	            Log::logger->log(Log::ERR, "CConfigWatcher: got an event for wd {} which we don't have?!", ev->wd);
+104	        else
+105	            m_watchCallback(SConfigWatchEvent{
+106	                .file = WD->file,
+107	            });
+108	
+109	        offset += sizeof(inotify_event) + ev->len;
+110	    }
+111	}
+
+## E04 — Hyprland-HyprCtl.cpp lines 1160-1192 (dispatchKeyword) and 2036-2038 (registration)
+1160	static std::string dispatchKeyword(eHyprCtlOutputFormat format, std::string in) {
+1161	
+1162	    if (Config::mgr()->type() != Config::CONFIG_LEGACY)
+1163	        return "keyword can't work with non-legacy parsers. Use eval.";
+1164	
+1165	    WP<Config::Legacy::CConfigManager> mgr = dynamicPointerCast<Config::Legacy::CConfigManager>(WP<Config::IConfigManager>(Config::mgr()));
+1166	
+1167	    // Find the first space to strip the keyword keyword
+1168	    auto const firstSpacePos = in.find_first_of(' ');
+1169	    if (firstSpacePos == std::string::npos) // Handle the case where there's no space found (invalid input)
+1170	        return "Invalid input: no space found";
+1171	
+1172	    // Strip the keyword
+1173	    in = in.substr(firstSpacePos + 1);
+1174	
+1175	    // Find the next space for the COMMAND and VALUE
+1176	    auto const secondSpacePos = in.find_first_of(' ');
+1177	    if (secondSpacePos == std::string::npos) // Handle the case where there's no second space (invalid input)
+1178	        return "Invalid input: command and value not properly formatted";
+1179	
+1180	    // Extract COMMAND and VALUE
+1181	    const auto COMMAND = in.substr(0, secondSpacePos);
+1182	    const auto VALUE   = in.substr(secondSpacePos + 1);
+1183	
+1184	    // If COMMAND is empty, handle accordingly
+1185	    if (COMMAND.empty())
+1186	        return "Invalid input: command is empty";
+1187	
+1188	    g_pHyprCtl->m_currentRequestParams.isDynamicKeyword = true;
+1189	
+1190	    std::string retval = mgr->parseKeyword(COMMAND, VALUE);
+1191	
+1192	    g_pHyprCtl->m_currentRequestParams.isDynamicKeyword = false;
+2036	    registerCommand(SHyprCtlCommand{"dispatch", false, dispatchRequest});
+2037	    registerCommand(SHyprCtlCommand{"keyword", false, dispatchKeyword});
+2038	    registerCommand(SHyprCtlCommand{"setcursor", false, dispatchSetCursor});
+
+## legacy 1089-1090 (parseKeyword -> parseDynamic) and 610-618 (handler registration)
+1089	std::string CConfigManager::parseKeyword(const std::string& COMMAND, const std::string& VALUE) {
+1090	    const auto RET = m_config->parseDynamic(COMMAND.c_str(), VALUE.c_str());
+610	    m_config->registerHandler(&::handleWindowrule, "windowrule", {false});
+611	    m_config->registerHandler(&::handleLayerrule, "layerrule", {false});
+612	    m_config->registerHandler(&::handleBezier, "bezier", {false});
+613	    m_config->registerHandler(&::handleAnimation, "animation", {false});
+614	    m_config->registerHandler(&::handleSource, "source", {false});
+615	    m_config->registerHandler(&::handleSubmap, "submap", {false});
+616	    m_config->registerHandler(&::handlePlugin, "plugin", {false});
+617	    m_config->registerHandler(&::handlePermission, "permission", {false});
+618	    m_config->registerHandler(&::handleGesture, "gesture", {true});
+
+## H rows — host capture files (whole files)
+--- host-getoption.json
+     1	{"option": "misc:disable_autoreload", "int": 0, "set": false }
+--- host-sources.txt
+     1	source = ~/.local/share/omarchy/default/hypr/autostart.conf
+     2	source = ~/.local/share/omarchy/default/hypr/bindings/media.conf
+     3	source = ~/.local/share/omarchy/default/hypr/bindings/clipboard.conf
+     4	source = ~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf
+     5	source = ~/.local/share/omarchy/default/hypr/bindings/utilities.conf
+     6	source = ~/.local/share/omarchy/default/hypr/envs.conf
+     7	source = ~/.local/share/omarchy/default/hypr/looknfeel.conf
+     8	source = ~/.local/share/omarchy/default/hypr/input.conf
+     9	source = ~/.local/share/omarchy/default/hypr/windows.conf
+    10	source = ~/.config/omarchy/current/theme/hyprland.conf
+    11	source = ~/.config/hypr/monitors.conf
+    12	source = ~/.config/hypr/input.conf
+    13	source = ~/.config/hypr/bindings.conf
+    14	source = ~/.config/hypr/looknfeel.conf
+    15	source = ~/.config/hypr/autostart.conf
+    16	source = ~/.local/state/omarchy/toggles/hypr/*.conf
+    17	source = ~/.config/hypr/ai-usage.conf
+    18	source = ~/.config/hypr/gkeep.conf
+--- host-version.json
+     1	{
+     2	    "branch": "v0.56.2",
+     3	    "commit": "efb50993780079460b0cbed1363e2166a2de1d9f",
+     4	    "version": "0.56.2",
+     5	    "dirty": false,
+     6	    "commit_message": "[gha] Nix: update inputs",
+     7	    "commit_date": "Wed Aug 5 14:13:21 2026",
+     8	    "tag": "v0.56.2",
+     9	    "commits": "7661",
+    10	    "buildAquamarine": "0.15.1",
+    11	    "buildHyprlang": "0.6.8",
+    12	    "buildHyprutils": "0.14.2",
+    13	    "buildHyprcursor": "0.1.13",
+    14	    "buildHyprgraphics": "0.5.1",
+    15	    "systemAquamarine": "0.15.1",
+    16	    "systemHyprlang": "0.6.8",
+    17	    "systemHyprutils": "0.14.2",
+    18	    "systemHyprcursor": "0.1.13",
+    19	    "systemHyprgraphics": "0.5.1",
+    20	    "abiHash": "efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.15_hu_0.14_hg_0.5_hc_0.1_hlg_0.6",
+    21	    "flags": []
+    22	}
+--- host-watched-lstat.txt line 8
+8	regular file|'~/.config/omarchy/current/theme/gum.env.conf'
+
+## chain prose: does onInotifyEvent ever read ev->name?
+13:using namespace Hyprutils::OS;
+14:using namespace Config;
+96:            Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");
+13:using namespace Hyprutils::OS;
+14:using namespace Config;
+96:            Log::logger->log(Log::ERR, "CConfigWatcher: malformed inotify event, truncated name field");

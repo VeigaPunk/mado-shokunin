@@ -1,0 +1,11 @@
+== M87 (source)
+old: if stat.S_ISREG(mode):
+                self.add_entry(target, via)
+new: if stat.S_ISREG(mode):
+                self.add_entry(target, via)
+                self.events.append("MADO_WATCH: SKIP via=%s path=%s reason=nonregular" % (via, self.show(target)))
+sha256: 264c4d0a914fe3144a7afdaf04549fed60c0332b4d0f186d8c62aff682eb8b2b
+blob: c0a1aad2234002b604e547699fe1fb0495999c09
+c2(rc=1): MADO_R56_C2: rev=56c47f76efdedef29344db9309262c2072adbb55 fixtures=10/18 holdout=3/8 holdout_commit=ok controls=4/4 verdict=TARGET_MISSED
+selftest(rc=1): MADO_WATCH_SELFTEST: 81/82 assertions passed
+verdict: KILLED

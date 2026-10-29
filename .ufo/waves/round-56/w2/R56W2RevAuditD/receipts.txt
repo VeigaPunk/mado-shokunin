@@ -1,0 +1,80 @@
+# R56W2RevAuditD receipts (verbatim decisive output from the session; scratch removed after this file was written)
+
+## A. Counter at the integrated revision (baseline, read-only)
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo /home/vgpnk/Projects/shokunin/mado-shokunin --rev 28fc86ac2359ec27406d8a2c63bef82ea6e947ed --work <scratch>/work
+MADO_AUTORELOAD_ENTRY: rev=28fc86ac2359ec27406d8a2c63bef82ea6e947ed rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+
+## B. Pin hashes (extracted with git show at 28fc86ac; compared to frozen-tables-v2.json c1.pin_sha256)
+Hyprland-ConfigWatcher.cpp           match
+Hyprland-EventLoopManager.cpp        match
+Hyprland-HyprCtl.cpp                 match
+Hyprland-MiscFunctions.cpp           match
+Hyprland-PropRefresher.cpp           match
+Hyprland-legacy-ConfigManager.cpp    match
+man7-inotify.7.html                  match
+Hyprland-PropRefresher.hpp  in frozen pin_sha256: False   (grep -c hpp frozen-tables-v2.json = 0)
+
+## C. Pinned lines that decide the rows (sed/awk on the extracted pins; indentation kept)
+Hyprland-legacy-ConfigManager.cpp
+  630   resetHLConfig();                      (constructor CConfigManager() spans 480-641)
+  776   m_configPaths.clear();                (resetHLConfig 764-786)
+  777-779 mainConfigPath / log / m_configPaths.emplace_back(mainConfigPath);
+  731   resetHLConfig();                      (reload() 726-751)
+  750   postConfigReload(...)                 (reload)
+  1070  Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);  (postConfigReload 970-1075; 4-space body indent; no return in 970-1069)
+  1816  if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+  1817-1820 nomatch/read/nomem return
+  1824  for (size_t i = 0; i < glob_buf->gl_pathc; i++) {
+  1825  auto value = absolutePath(glob_buf->gl_pathv[i], m_configCurrentPath);
+  1828  file_status = std::filesystem::status(value, ec);   (follows symlinks)
+  1830-1833 inaccessible return
+  1835  if (std::filesystem::is_regular_file(file_status)) {
+  1836  m_configPaths.emplace_back(value);
+  1837-1840 backup / m_configCurrentPath = value / parseFile / restore
+  1843-1845 else if (is_directory) { log "source= skipping directory {}" ; continue; }
+  1846-1848 else { non-regular skip }
+  2133-2134 const std::vector<std::string>& CConfigManager::getConfigPaths() { return m_configPaths; }
+Hyprland-MiscFunctions.cpp
+  64-66 '~' -> getenv("HOME") replace(0,1,...)
+  68    currentDir = currentPath.substr(0, currentPath.find_last_of('/'));
+  70-79 '.', '..', './', other-'.', bare name branches
+Hyprland-ConfigWatcher.cpp
+  33-34 update(): *PDISABLEAUTORELOAD ? {} : Config::mgr()->getConfigPaths()
+  45-47 inotify_rm_watch loop; 49 clear
+  52-62 per-path: isDirectory, masks, .wd = inotify_add_watch(...), .file = path
+  64-72 canonical watch when IS_SYMLINK
+  100-107 find_if by wd; m_watchCallback(SConfigWatchEvent{.file = WD->file})
+Hyprland-PropRefresher.hpp
+  9     enum ePropRefreshProp : uint16_t
+  18    REFRESH_CONFIG_WATCHER = (1 << 8),
+  21    REFRESH_ALL = std::numeric_limits<std::underlying_type_t<ePropRefreshProp>>::max(),
+Hyprland-PropRefresher.cpp
+  31    m_propsTripped |= prop;   34 doLater ; 148-149 if (m_propsTripped & REFRESH_CONFIG_WATCHER) Config::watcher()->update();
+man7-inotify.7.html (plain text after tag strip)
+  186   File opened for writing was closed.
+  225-228 inode-based monitoring text
+  262   Don't dereference pathname if it is a symbolic link.
+  276-281 IN_MASK_ADD: "If a watch instance already exists for the filesystem object ... add (OR) the events ... (instead of replacing the mask)"
+  294-302 IN_MASK_CREATE text: "multiple paths may refer to the same inode, and multiple calls to inotify_add_watch(2) without this flag may clobber existing watch masks."
+HyprCtl.cpp
+  1190 parseKeyword(COMMAND, VALUE); 1223-1224 misc:disable_autoreload -> update(); 1262-1274 full-reset branch returns; 1276 Config::mgr()->reload(); 2028 registerCommand("reload", ..., reloadRequest)
+
+## D. Host reads (read-only)
+$ grep -c '^source' ~/.config/hypr/hyprland.conf            -> 18
+lines 4-12 omarchy default paths; line 13 source = ~/.config/omarchy/current/theme/hyprland.conf
+$ envs.conf line 3: source = ~/.config/omarchy/current/theme/gum.env.conf ; stat: regular file
+$ hyprctl version -j : commit efb50993780079460b0cbed1363e2166a2de1d9f (line 3)
+
+## E. Counter-blindness runs (fixtures under scratch, one mutation each, all in committed scratch commits; lane untouched)
+fixture toplevel assert: $D == git -C $D rev-parse --show-toplevel (passed)
+E1 K19 proposition extended with false clause "...and immediately clears every inotify watch that the Supplementary refresher holds." -> TARGET_MET missed=none exit 0
+E2 E05 proposition extended with false clause "...sorted in reverse alphabetical order..." -> TARGET_MET missed=none exit 0
+E3 E06 quote cell changed from `m_configCurrentPath          = value;` to `... = nowhere;` -> TARGET_MET missed=none exit 0
+E4 Hyprland-PropRefresher.hpp pin bytes changed (REFRESH_CONFIG_WATCHER (1 << 8) -> (1 << 9)) -> TARGET_MET missed=none exit 0
+E5 E08 / E09 propositions and quotes rewritten to false bit claims (bit 1, uint32_t) -> TARGET_MET missed=none exit 0
+Conclusion: the counter does not score E-rows at all, does not hash the hpp pin, and cannot detect a false clause in a K proposition.
+
+## F. absolutePath simulation (python transliteration of MiscFunctions.cpp:61-83; for the empty-cur edge only)
+cur="/home/u/.config/hypr/hyprland.conf": foo.conf->/home/u/.config/hypr/foo.conf ; ../x.conf->/home/u/.config/x.conf ; ~user/x.conf->$HOME+"user/x.conf"
+cur="" (constructor, no parse run there): foo.conf->/foo.conf ; ./x.conf->x.conf   (edge only; constructor does not parse)

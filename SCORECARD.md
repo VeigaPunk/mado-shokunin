@@ -2888,3 +2888,31 @@ Sources: 314 -> 319 rows (S378-S382). Round: w1 40 + w2 37 = 77 seats. Mistakes 
 2. Raise counter/harness kill power (M55-11) and close harness sniffing channels (randomized identity/history).
 3. Non-author admit/reject review of S378/S380 and P23.
 
+
+## Round 56 — three claims, one capability; honest stop at operator wrap-up (2026-10-28, hyaku run 11, attempt 1)
+
+Axis posture: SCORECARD saturation 9.0 / window N=3, last capability r55, so the stagnation window has not elapsed and the lowest-axis obligation applies. The published scored sub-axes (navigation 10.0, operability 10.0, freshness 9.6552) are saturated or finite; calibration, depth and adjacency carry no scored rubric except the gate rubric below, so C3 works the least-evidenced axis with a rubric introduced this round and labelled for what it measures (registry back-reference consistency, token level). Frozen at `3423ae28`; pre-data re-registration `323a69c9` (v1 files untouched; E1-E11) and integration errata `15015e77` (E12-E14). Measured at `8a7b734627b0` (`.ufo/waves/round-56/receipts/at-final.txt`).
+
+| Claim / axis | Before -> after | Counting command | Verdict |
+|---|---|---|---|
+| C1 **coverage** (sourced), Hyprland config auto-reload chain | `git grep -liE 'disable_autoreload\|ConfigWatcher\|IN_CLOSE_WRITE\|inotify_add_watch' 13f0acbe -- corpus/knowledge \| wc -l` 0 -> entry `knowledge/hyprland-config-autoreload-r56.md`; counter `rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 TARGET_MET`; harness `controls=12/12`; entries 70 -> 71; index 70/70 -> 71/71; registry 319 -> 332 rows (S383-S395) | `python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev <rev> --work <s>`; `python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev <rev> --work <s>` | **TARGET_MET** (quote identity, registry binding, anchor scope, lexical grounding). Not entailment: a lexical rewrite of all 33 propositions keeps `content=33/33` (`w2/R56W2CritC1Forge.md`). Wave-2 sentence-to-pin audits found 9 K and 7 E propositions over-stated or false; all corrected before this measurement; the rest audited SUPPORTED. |
+| C2 **operability** (capability), `tools/mado-watchplan.py` | tool and harness absent -> `fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 TARGET_MET`; selftest 86/86; read-only host run `MADO_WATCH: DONE watches=40 unsupported=0 errors=0 live=AGREE` (`receipts/live-watchplan.txt`); the running compositor's `/proc` inotify table held the same 40 watches in the predicted order (`w2/R56W2RevProcFdinfo/comparison.md`) | `python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev <rev> --work <s>` | **TARGET_MET**; hold-out revealed at integration, so an embedded lookup of all 26 fixtures also passes (`w2/R56W2CritC2Cheat.md`); the unseen-hold-out score of four wave-1 tools (4/4 at 18/18 + 8/8, `receipts/holdout-preveal.txt`) and the tool's code are the non-counted evidence; model with 8 listed divergences |
+| C3 **registry back-reference consistency** (calibration axis; token level, 24 reviewed exemptions; not a confidence measure) | base `entries=70 rows=319 missing=41 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24` (v1 token count 65) -> `entries=71 rows=332 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 TARGET_MET`; `used-by` cell of 23 existing rows gained 41 paths; no entry text changed | `python3 -I quality/counters/c3-r56-used-by.py --repo . --rev <rev> --work <s>`; `python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev <rev> --work <s>` | **TARGET_MET** with disclosed limits: the allowlist is two readers' judgment; `lost` covers the 65 base-missing pairs only (E12; D1 of `w2/R56W2CritC3Gaming.md`); 5 of the 41 fills are hedged (`w2/R56W2RevUsedBy*.md`) |
+
+Harm watch (at `8a7b734627b0`): `MADO_SELFTEST: 460/460 assertions passed` (baseline `receipts/selftest-before.txt`); index 71/71; census `mado ok` exit 0, 332 rows; tool ledger 97/97 (round 55: 90/90); `MADO_AXIS_ROW` calibration (resolved-active) 86/86 unchanged. Verdicts are the operator's to rule; no axis score is asserted beyond the verdicts. Wave 2 was stopped before all mutation seats finished; the wave-2 mutation reports that exist show oracle kill rates of 58 % (C1 counter, 39/67), 70 % (C2 tool, 82/117) and survivors with verified killing fixtures, none landed this round.
+
+### Capabilities (round 56)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| watch-list predictor for `misc:disable_autoreload` (`tools/mado-watchplan.py`) | predicts the inotify watch list Hyprland 0.56.2 registers for a config tree (main config, its `source =` closure, glob and `~` forms, symlink canonical watches), joined to a captured `hyprctl getoption` reply; read-only, stdout only; source-level model | `receipts/live-watchplan.txt`; `w2/R56W2RevProcFdinfo/comparison.md` (40/40 against the kernel's watch table at one host and moment); C2 line above | 56 |
+
+### Sources, saturation, planned
+
+Sources 319 -> 332 rows (S383-S395, tier A except S390 tier B, `mined`, opened 2026-10-28; S384, S387, S388, S389 and S392-S395 repeat held URLs under new scopes: census W04, QUALITY 17 review in `corpus/lessons/round-56.md`); census exit 0 both ends. Knowledge entries 70 -> 71. Round: w1 43 + w2 35 dispatched = 78 seats; 33 of 35 wave-2 seats reported, `R56W2MutC3Counter` and `R56W2MutC2Harness` were stopped by the operator wrap-up with no report (not findings). Mistakes M56-1..M56-10. Axis table re-derived at `8a7b734627b0` (`receipts/axis-tip.txt`): navigation 71/71; calibration resolved-active 86/86; operability selftest 12/12.
+
+### Planned (round 57; intent only)
+
+1. A committed checker for criterion 107 that reads every row class and the EOF, reversed-range, duplicate-id and malformed-pin clauses, with able-to-fail receipts (the wave-1 draft is not that checker).
+2. Kill-power: the survivor fixtures proposed by the wave-2 mutation seats (`w2/R56W2MutC1CounterA`, `MutC1CounterB`, `MutC2ToolA`, `MutC2ToolB`, `MutC3Harness`) landed and the mutation scores re-measured.
+3. Entailment for C1 and a fresh sealed hold-out for C2; C3 `lost` over all citations and an honest-rename rule (`w2/R56W2CritC3Gaming.md` D1, D9).

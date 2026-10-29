@@ -1,0 +1,26 @@
+== R2b - the six false propositions (K13..K18), applied to a COPY ==
+Clone: git clone --shared <lane> <scratch>/clone ; checkout 28fc86ac... ; assert rev-parse --show-toplevel == <scratch>/clone
+/fast/scratch/hyaku/mado-r56/R56W2RevAuditC/clone
+
+The six propositions as mutated (each a FALSE statement about the pin):
+90:| K13 | This line registers the FD descriptor with the Wayland event loop as a writable source that calls configWatcherWrite and immediately reloads the compositor. | S386 | Hyprland-EventLoopManager.cpp:128 | `m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);` |
+91:| K14 | On this line the event-loop callback forwards the readable event's file path to the watcher by calling onInotifyEvent on the watcher from Config::watcher(). | S386 | Hyprland-EventLoopManager.cpp:71 | `Config::watcher()->onInotifyEvent();` |
+92:| K15 | The guard enters its branch only when the m_propsTripped bit mask contains REFRESH_CONFIG_WATCHER and REFRESH_GRADIENTS_GROUPBAR. | S385 | Hyprland-PropRefresher.cpp:148 | `if (m_propsTripped & REFRESH_CONFIG_WATCHER)` |
+93:| K16 | The guarded statement calls update on the object returned by Config::watcher(), sending a SIGHUP to the compositor process. | S385 | Hyprland-PropRefresher.cpp:149 | `Config::watcher()->update();` |
+94:| K17 | The init function registers a change callback with setOnChange on the config watcher, taking an SConfigWatchEvent argument and clearing the watch list. | S387 | Hyprland-legacy-ConfigManager.cpp:1079 | `Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {` |
+95:| K18 | The debug line logs the text CConfigManager: file modified, reloading and passes the event's watch descriptor number as its argument. | S387 | Hyprland-legacy-ConfigManager.cpp:1080 | `CConfigManager: file {} modified, reloading` |
+
+Commit of the mutated tree (scratch only):
+a8a7c35b838dd70b002c83ffe930dc2bfe449e11
+
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo <scratch>/clone --rev a8a7c35... --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=a8a7c35b838dd70b002c83ffe930dc2bfe449e11 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+exit=0
+
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo <scratch>/clone --rev a8a7c35... --work <scratch>
+C1-CTL-12 anchor-past-eof: ok (required scope:K03) - counter missed=scope:K03,scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,...(+2 more)
+  note: collateral legs beyond the registered ones: scope:K04,scope:K05,scope:K06,scope:K07,scope:K08,scope:K09,scope:K10,scope:K11,...(+1 more)
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+exit=0
+
+=> six false propositions: counter verdict TARGET_MET, content=33/33, harness controls=12/12 verdict=OK.

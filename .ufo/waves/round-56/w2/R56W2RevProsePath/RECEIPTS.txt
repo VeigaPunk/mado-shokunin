@@ -1,0 +1,39 @@
+R56W2RevProsePath receipts (host probes; decisive lines, trimmed). Scratch removed after copy.
+Host: glibc (libc.so.6 via ctypes), g++ GCC 16.2.1, libstdc++. No Hyprland process touched; no config, reload or hyprctl state change.
+Fixture tree (scratch): d/{B.conf,a.conf,_x.conf,.hid.conf,real.conf}, d/link.conf -> real.conf, d/dangle.conf -> nowhere, topdirlink -> d.
+
+## glob-probe.py (copied as glob-probe.py)  run: python3 -I glob-probe.py C | python3 -I glob-probe.py en en_US.utf8 | ... en C.utf8
+locale C        star          : B.conf _x.conf a.conf dangle.conf dirlink link.conf real.conf   (bytewise)
+locale C.utf8   star          : B.conf _x.conf a.conf dangle.conf dirlink link.conf real.conf   (bytewise)
+locale en_US    star          : a.conf B.conf dangle.conf dirlink link.conf real.conf _x.conf   (locale collation)
+all locales     star+period   : .hid.conf NOT returned (leading dot not matched by *)
+all locales     dot-star      : returns ., .., .hid.conf
+all locales     literal miss  : rc=3 (GLOB_NOMATCH), no paths
+all locales     literal dangle: rc=0, returns dangle.conf (dangling link IS a match)
+all locales     literal link  : rc=0, returns link.conf (link spelling, not resolved)
+all locales     wild dangle   : rc=0, returns dangle.conf
+all locales     tilde-user    : rc=3 (nosuchuser, GLOB_TILDE)
+
+## std-filesystem-status-probe.cpp (copied) output
+d/real.conf      status_ec=ok regular=1 dir=0
+d/link.conf      status_ec=ok regular=1 dir=0      (status follows the link)
+d/dangle.conf    status_ec=No such file or directory regular=0 dir=0
+d/missing.conf   status_ec=No such file or directory regular=0 dir=0
+
+## std-filesystem-dirlink-probe.cpp (copied) output
+topdirlink (symlink to dir)  status_ec=ok dir=1 regular=0   (lstat is_link True; stat is_dir True)
+
+## null-string-ctor-probe.cpp (copied) output  (env var unset -> nullptr, as getenv("HOME") when HOME unset)
+threw: basic_string: construction from null is not valid
+rc=0      => libstdc++ throws std::logic_error at std::string(nullptr); not a crash, not silent UB, in this libstdc++.
+
+## inotify probe (inline ctypes, same run; code is not copied: reproduce with inotify_init1(IN_NONBLOCK) + inotify_add_watch)
+add f.txt mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW -> wd=1
+add f.txt mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW -> wd=1     (same inode: same wd)
+add link.txt (symlink, IN_DONT_FOLLOW)      -> wd=2     (symlink inode: distinct wd)
+canonical target of link via inotify_add_watch -> wd=1  (same as f.txt watch)
+second inotify_rm_watch(wd=1)               -> -1 errno 22 (EINVAL)  (duplicate entries in m_watches free one wd twice)
+
+## Not run
+- No run of Hyprland, hyprlang or the watch-plan tool on the fixture tree.
+- No setlocale call inside Hyprland could be checked (not in pins).

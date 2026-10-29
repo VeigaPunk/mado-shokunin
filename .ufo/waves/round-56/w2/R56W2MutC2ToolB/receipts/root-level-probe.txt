@@ -1,0 +1,17 @@
+== pristine-tool.py
+MADO_WATCH: config=/hyprland.conf autoreload=on disable_autoreload=unset paths=3 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=primary path=/sub/x.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=/hyprland.conf:1
+MADO_WATCH: n=3 role=primary path=/a.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=/sub/x.conf:1
+MADO_WATCH: DONE watches=3 unsupported=0 errors=0 live=NONE
+== m75.py
+MADO_WATCH: config=/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=1
+MADO_WATCH: ERROR via=/hyprland.conf:1 source=sub/x.conf reason=nomatch
+MADO_WATCH: n=1 role=primary path=/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE
+== m76.py
+MADO_WATCH: config=/hyprland.conf autoreload=on disable_autoreload=unset paths=2 unsupported=0 errors=1
+MADO_WATCH: ERROR via=/sub/x.conf:1 source=../a.conf reason=nomatch
+MADO_WATCH: n=1 role=primary path=/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=primary path=/sub/x.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=/hyprland.conf:1
+MADO_WATCH: DONE watches=2 unsupported=0 errors=1 live=NONE

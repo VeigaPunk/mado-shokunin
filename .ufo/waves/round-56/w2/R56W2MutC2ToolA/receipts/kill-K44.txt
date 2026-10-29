@@ -1,0 +1,16 @@
+proposal K44  mutant M44
+an inaccessible match aborts the REST of that line's matches (dangling symlink first)
+args (after {FX} = staged path): --config /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K44/tree/hyprland.conf --display-root /fast/scratch/hyaku/mado-r56/R56W2MutC2ToolA/work/kill4b/stage-K44
+files: {"hyprland.conf": "bytes:20", "mix/a-broken.conf": ["symlink", "missing-target.conf"], "mix/z.conf": "bytes:6"}
+--- pristine rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=1
+MADO_WATCH: ERROR via=$ROOT/tree/hyprland.conf:1 source=mix/*.conf reason=inaccessible
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: DONE watches=1 unsupported=0 errors=1 live=NONE
+--- mutant M44 rc=0
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=2 unsupported=0 errors=1
+MADO_WATCH: ERROR via=$ROOT/tree/hyprland.conf:1 source=mix/*.conf reason=inaccessible
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH: n=2 role=primary path=$ROOT/tree/mix/z.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=$ROOT/tree/hyprland.conf:1
+MADO_WATCH: DONE watches=2 unsupported=0 errors=1 live=NONE
+VERDICT: KILLS

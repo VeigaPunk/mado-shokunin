@@ -1,0 +1,71 @@
+### (a) tripwire-precision-r20.md L1 full source: line — does it name S113/S116-S120? ###
+source: S099 (git v2.56.0 git-commit: --dry-run, -n = --no-verify); S100 (git-add -n/--dry-run); S101 (git-push -n/--dry-run); S102 (git.c --help rewrite, parse-options -h); S103 (jj v0.45.1 help before workspace load); S104 (jj git push --dry-run); S105 (CPython 3.14.8 builtins); S106 (collections); S107 (shlex.join); S108 (subprocess args); S109 (util-linux 2.42.4 unshare/mount); S110 (bash 5.3 set -e exceptions); S111 (CPython execution model, name resolution); S112 (man-pages 6.16 user_namespaces); S113 (CPython os Process Management); S114 (json.dumps); S115 (subprocess.list2cmdline)
+  tokens on L1: ['S099', 'S100', 'S101', 'S102', 'S103', 'S104', 'S105', 'S106', 'S107', 'S108', 'S109', 'S110', 'S111', 'S112', 'S113', 'S114', 'S115']
+  -> S116/S119/S120 on the source: line? [False, False, False]
+
+### (b) allowlist reason-quote locality, exact ###
+  r01 S005  "Neither the S005 README's earlier commit nor the later S040 governance c"
+        -> LITERAL@cited hits=[65] cited_refs=[65]
+  r02 S007  "S051 supersedes queued S007's loose composite tools description"
+        -> LITERAL@cited hits=[10] cited_refs=[10]
+  r03 S030  'Every historical S030 occurrence ... resolves to S017, not to an admitte'
+        -> NOT-LITERAL hits=[] cited_refs=[127, 132, 139]
+  r03 S030  'the original S030 stays rejected'
+        -> LITERAL@cited hits=[139] cited_refs=[127, 132, 139]
+  r04 S040  "do not apply S040's wayland-protocols governance as its authority"
+        -> LITERAL@cited hits=[20] cited_refs=[20, 65, 106]
+  r04 S040  'not substituted'
+        -> LITERAL@other-line hits=[81] cited_refs=[20, 65, 106]
+  r04 S040  'S040 governance makes wlr-output-management stable. Reject'
+        -> NOT-LITERAL hits=[] cited_refs=[20, 65, 106]
+  r05 S043  "S052 adds the core input contract, distinct from S043's registry scope"
+        -> LITERAL@cited hits=[11] cited_refs=[11]
+  r06 S044  'round-13 S044 cites the actual gate-maintenance rule'
+        -> NOT-LITERAL hits=[] cited_refs=[160]
+  r07 S045  'by superseding registry row S045'
+        -> LITERAL@cited hits=[139] cited_refs=[139]
+  r08 S056  'held neighbours: the documentary route in terminal-route-r17.md (rows S0'
+        -> LITERAL@cited hits=[11] cited_refs=[11]
+  r09 S061  'Source rows: S056-S060 (mined) and S061-S062 (rejected)'
+        -> NOT-LITERAL hits=[] cited_refs=[152]
+  r10 S062  (no quoted span in reason) cited_refs=[152]
+  r11 S084  'Head source: token S084 ... was replaced in place by S098. S084 is now r'
+        -> NOT-LITERAL hits=[] cited_refs=[327]
+  r12 S094  'do not reproduce'
+        -> LITERAL@other-line hits=[159] cited_refs=[158, 162, 167]
+  r12 S094  'S094 is now rejected'
+        -> NOT-LITERAL hits=[] cited_refs=[158, 162, 167]
+  r13 S096  'S096 (host walker bytes) now exists and is not cited here'
+        -> LITERAL@cited hits=[1017] cited_refs=[1017]
+  r14 S113  "S119 explicitly supersedes the universal inference in S113's teaches fie"
+        -> NOT-LITERAL hits=[] cited_refs=[34]
+  r14 S113  'retained'
+        -> LITERAL@cited hits=[7, 24, 34, 44] cited_refs=[34]
+  r15 S116  '(S116-S120)'
+        -> NOT-LITERAL hits=[] cited_refs=[146]
+  r16 S119  "S119 explicitly supersedes S113's finite-module-list inference"
+        -> LITERAL@cited hits=[146] cited_refs=[146]
+  r17 S120  '(S116-S120)'
+        -> NOT-LITERAL hits=[] cited_refs=[146]
+  r18 S132  'S132 stays queued and supports nothing.'
+        -> LITERAL@cited hits=[1] cited_refs=[1]
+  r19 S187  'package S187 -> S189'
+        -> NOT-LITERAL hits=[] cited_refs=[80]
+  r20 S188  'S188 -> S201'
+        -> NOT-LITERAL hits=[] cited_refs=[80]
+  r21 S214  'S214 -> S212'
+        -> NOT-LITERAL hits=[] cited_refs=[80]
+  r22 S357  'S357/S358 serve that tool only'
+        -> LITERAL@cited hits=[3] cited_refs=[3]
+  r23 S358  'S357/S358 serve that tool only'
+        -> LITERAL@cited hits=[3] cited_refs=[3]
+  r24 S359  'held (cited...)'
+        -> NOT-LITERAL hits=[] cited_refs=[]
+  reason quotes failing literal-and-cited locality: 16 of 24 rows
+
+### (c) en-dash check on '(S116-S120)' ###
+  L146 segment='(S116–S120)' codepoints=['0x28', '0x53', '0x31', '0x31', '0x36', '0x2013', '0x53', '0x31']
+
+### (d) lesson-file citation pairs outside the audited axis ###
+  lesson-file (row,file) citation pairs: 1149; NOT recorded in the row's used-by: 1129; distinct rows affected: 296
+  example: ['S001', 'S002', 'S003', 'S005', 'S006', 'S007', 'S008', 'S009', 'S010', 'S011', 'S012', 'S013']

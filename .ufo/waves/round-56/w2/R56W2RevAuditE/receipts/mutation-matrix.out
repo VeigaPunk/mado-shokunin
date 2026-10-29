@@ -1,0 +1,15 @@
+Scratch export: git archive 28fc86ac2359ec27406d8a2c63bef82ea6e947ed -> fresh git init, one commit per mutation (ctl identity). Driver: receipts/mutate-c1-counter.py. Counter: c1-r56-autoreload-entry.py from the rev. Each mutation changes ONE line of the entry, then runs the counter.
+
+BASELINE 475667a3adfcf4a3b62d2ca27426a5c84b710ba5 (export commit; the entry bytes equal 28fc86ac)
+base rc=0  MADO_AUTORELOAD_ENTRY: rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+M1_K25_wrong_envvar   (K25 prop: "...getenv of the PATH variable on this line.")                  rc=0 TARGET_MET missed=none
+M2_K26_first_not_last (K26 prop: "...cut ... at its FIRST slash found by find_last_of...")         rc=0 TARGET_MET missed=none
+M3_K27_wrong_text     (K27 prop: "...tests whether COMMAND contains the monitor keyword text...")   rc=0 TARGET_MET missed=none
+M4_K28_wrong_object   (K28 prop: "...reload on the object returned by Config::watcher()...")      rc=0 TARGET_MET missed=none
+M5_K29_read_not_write (K29 prop: "...a file opened for reading and then closed...")               rc=0 TARGET_MET missed=none
+M6_K30_regular_not_symlink (K30 prop: "...not dereferenced when it is a regular file.")           rc=0 TARGET_MET missed=none
+M7_E01_quote_wrong_line (E01 pin column changed to Hyprland-MiscFunctions.cpp:99, a line past EOF) rc=0 TARGET_MET missed=none
+M8_E01_prop_false     (E01 prop: "...the user name looked up in the password database...")          rc=0 TARGET_MET missed=none
+
+Reading: the counter cannot see a false K-row proposition whose shared identifiers survive (M1-M6), and it does not read E rows at all (M7, M8).

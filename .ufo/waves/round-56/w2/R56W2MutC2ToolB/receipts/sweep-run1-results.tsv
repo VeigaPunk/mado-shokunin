@@ -1,0 +1,118 @@
+id	area	verdict	selftest	fixtures_passed	note
+m01	absolute_path	SURVIVED	ok	26	tilde only expands when a slash follows
+m02	absolute_path	KILLED	FAIL(rc=1)	24	off-by-one in the ../ branch
+m03	absolute_path	KILLED	FAIL(rc=1)	24	./ branch never taken
+m04	absolute_path	KILLED	FAIL(rc=1)	26	bare/dot path loses its separator
+m05	absolute_path	KILLED	FAIL(rc=1)	24	off-by-one on the parent directory bound
+m06	absolute_path	SURVIVED	ok	26	tilde with home=None falls through
+m07	glob	SURVIVED	ok	26	recursive glob enables ** semantics
+m08	glob	SURVIVED	ok	26	bytewise order replaced by code-point order
+m09	glob	SURVIVED	ok	26	re.error/RecursionError no longer swallowed
+m10	glob	KILLED	FAIL(rc=1)	22	nomatch reason renamed
+m100	getoption	KILLED	FAIL(rc=1)	24	the first record of an option wins
+m101	getoption	INVALID	FAIL(rc=None)	-	the record filter inverted
+m102	getoption	SURVIVED	ok	26	a space-padded zero is not off
+m103	grammar	KILLED	FAIL(rc=1)	21	the variable rule inverted
+m104	grammar	SURVIVED	ok	26	the right-hand side is not stripped
+m105	grammar	SURVIVED	ok	26	the last '=' splits instead of the first
+m106	grammar	KILLED	FAIL(rc=1)	18	the option-key test inverted
+m107	grammar	INVALID	FAIL(rc=None)	-	the value-accept test inverted
+m108	grammar	SURVIVED	ok	26	the unsupported-value test moved from the line to the RHS
+m109	limits	SURVIVED	ok	26	entry cap halved
+m11	glob	KILLED	FAIL(rc=1)	12	glob pattern not made absolute
+m110	limits	KILLED	FAIL(rc=1)	25	depth cap raised
+m111	limits	KILLED	FAIL(rc=1)	26	size limit doubled
+m112	limits	KILLED	FAIL(rc=1)	3	the size limit is never applied
+m113	usage	KILLED	FAIL(rc=1)	2	the argument count test changed
+m114	usage	SURVIVED	ok	26	the argument value is stripped
+m115	watchlist	KILLED	FAIL(rc=1)	21	a value of 1 does not empty the watch list
+m116	watchlist	SURVIVED	ok	26	the watch-list gate always fires
+m117	watchlist	KILLED	FAIL(rc=1)	22	the primary watch prints the realpath
+m12	stat	KILLED	FAIL(rc=1)	25	inaccessible downgraded to nomatch
+m13	stat	KILLED	FAIL(rc=1)	23	stat replaced by lstat (symlink not followed)
+m14	stat	SURVIVED	ok	26	the rest of the line's matches is no longer skipped
+m15	stat	SURVIVED	ok	26	ValueError no longer caught
+m16	canonical	KILLED	FAIL(rc=1)	23	canonical watch never emitted
+m17	canonical	KILLED	FAIL(rc=1)	23	canonical watch carries the primary mask
+m18	canonical	SURVIVED	ok	26	realpath no longer strict
+m19	canonical	SURVIVED	ok	26	RuntimeError no longer caught
+m20	canonical	KILLED	FAIL(rc=1)	24	canonical watch loses its via
+m21	typing	SURVIVED	ok	26	lexists replaced by exists (dangling symlink becomes missing)
+m22	typing	KILLED	FAIL(rc=1)	25	missing watch carries the directory mask
+m23	typing	KILLED	FAIL(rc=1)	25	missing watch typed as file
+m24	typing	KILLED	FAIL(rc=1)	26	directory watch carries the file mask
+m25	typing	SURVIVED	ok	26	symlink to a directory typed as file
+m26	duplicates	KILLED	FAIL(rc=1)	24	paths= counts distinct paths
+m27	duplicates	KILLED	FAIL(rc=1)	4	paths= count off by one
+m28	duplicates	KILLED	FAIL(rc=1)	7	last entry dropped
+m29	duplicates	KILLED	ok	14	primary watch loses its via
+m30	display-root	SURVIVED	ok	26	trailing slash of display-root kept
+m31	display-root	SURVIVED	ok	26	the given text of display-root is not a prefix
+m32	display-root	KILLED	FAIL(rc=1)	26	display-root realpath not used as prefix
+m33	display-root	KILLED	FAIL(rc=1)	26	prefix match without a path-separator boundary
+m34	display-root	KILLED	FAIL(rc=1)	4	$ROOT suffix drops a character
+m35	display-root	KILLED	FAIL(rc=1)	4	$ROOT gains a separator
+m36	display-root	SURVIVED	ok	26	display-root always loses its last character
+m37	getoption	KILLED	FAIL(rc=1)	7	no --getoption behaves like an empty dump
+m38	getoption	KILLED	FAIL(rc=1)	26	bool accepted as an int value
+m39	getoption	KILLED	FAIL(rc=1)	25	JSON arrays accepted as records
+m40	getoption	KILLED	FAIL(rc=1)	26	RecursionError no longer caught
+m41	getoption	KILLED	FAIL(rc=1)	26	NaN/Infinity accepted
+m42	getoption	KILLED	ok	25	a blank line ends the dump scan
+m43	getoption	KILLED	FAIL(rc=1)	26	an absent option reads as 0
+m44	getoption	KILLED	FAIL(rc=1)	23	AGREE and DIFFER swapped
+m45	getoption	KILLED	FAIL(rc=1)	23	config flag inverted
+m46	getoption	KILLED	FAIL(rc=1)	24	any set value counts as off
+m47	getoption	KILLED	ok	24	a zero value empties the watch list
+m48	getoption	KILLED	FAIL(rc=1)	26	comment not cut from an option value
+m49	getoption	SURVIVED	ok	26	backslash no longer unsupported
+m50	grammar	KILLED	ok	25	source inside a category no longer unsupported
+m51	grammar	SURVIVED	ok	26	a key merely starting with source is a source
+m52	grammar	KILLED	FAIL(rc=1)	22	category stack ignored in the key
+m53	grammar	KILLED	FAIL(rc=1)	26	pop without an emptiness guard
+m54	grammar	KILLED	FAIL(rc=1)	22	category name keeps its brace
+m55	grammar	SURVIVED	ok	26	comment lines are parsed
+m56	grammar	SURVIVED	ok	26	strip uses the wider default set
+m57	grammar	KILLED	FAIL(rc=1)	12	line numbers start at 0
+m58	grammar	KILLED	ok	25	source path not stripped
+m59	limits	KILLED	FAIL(rc=1)	25	depth cap off by one
+m60	limits	KILLED	FAIL(rc=1)	25	depth cap lowered
+m61	limits	KILLED	FAIL(rc=1)	26	size limit lowered
+m62	limits	KILLED	FAIL(rc=1)	26	one byte too few is read to detect oversize
+m63	limits	KILLED	FAIL(rc=1)	26	size comparison off by one
+m64	limits	SURVIVED	ok	26	entry cap lowered
+m65	limits	SURVIVED	ok	26	entry cap comparison off by one
+m66	usage	KILLED	FAIL(rc=1)	2	argument parity inverted
+m67	usage	KILLED	FAIL(rc=1)	25	a repeated flag is accepted
+m68	usage	KILLED	FAIL(rc=1)	26	a relative argument value is accepted
+m69	usage	KILLED	FAIL(rc=1)	1	config requirement inverted
+m70	absolute_path	KILLED	FAIL(rc=1)	12	absolute-path test inverted
+m71	absolute_path	KILLED	FAIL(rc=1)	26	../ prefix widened to any two dots
+m72	absolute_path	KILLED	FAIL(rc=1)	26	./ prefix widened to any dot
+m73	absolute_path	KILLED	FAIL(rc=1)	14	directory bound off by one
+m74	absolute_path	KILLED	FAIL(rc=1)	24	tilde home joined without a separator
+m75	absolute_path	SURVIVED	ok	26	directory bound off by one
+m76	absolute_path	SURVIVED	ok	26	parent bound off by one
+m77	glob	SURVIVED	ok	26	explicitly non-recursive glob
+m78	glob	KILLED	ok	22	bytewise order reversed
+m79	glob	KILLED	ok	25	hidden files included in the glob
+m80	stat	KILLED	FAIL(rc=1)	12	regular-file test inverted
+m81	stat	KILLED	FAIL(rc=1)	23	directory test inverted
+m82	stat	INVALID	FAIL(rc=None)	-	match not made absolute
+m83	stat	KILLED	FAIL(rc=1)	24	bogus threshold lowered
+m84	stat	KILLED	ok	25	bogus threshold raised
+m85	canonical	KILLED	FAIL(rc=1)	23	canonical via replaced by the path
+m86	canonical	KILLED	FAIL(rc=1)	8	symlink test inverted
+m87	canonical	INVALID	FAIL(rc=None)	-	primary watch via replaced by a canonical name
+m88	typing	KILLED	FAIL(rc=1)	8	directory test replaced by file test
+m89	typing	KILLED	ok	9	existence test replaced by a symlink test
+m90	typing	KILLED	FAIL(rc=1)	26	directory watch typed as missing
+m91	duplicates	KILLED	FAIL(rc=1)	14	entry order reversed
+m92	duplicates	KILLED	FAIL(rc=1)	7	first entry dropped
+m93	duplicates	KILLED	FAIL(rc=1)	7	entry tuple order swapped
+m94	display-root	SURVIVED	ok	26	the prefix itself no longer matches
+m95	display-root	SURVIVED	ok	26	display-root loses its first character
+m96	display-root	KILLED	FAIL(rc=1)	26	realpath prefix gains a separator
+m97	getoption	SURVIVED	ok	26	an empty dump is treated as no dump
+m98	getoption	KILLED	FAIL(rc=1)	26	the LIVE line is emitted for an empty dump
+m99	getoption	KILLED	FAIL(rc=1)	23	the dump's key is renamed

@@ -1,0 +1,40 @@
+# R56W2RevAuditF receipts — counter coverage mutations
+# Fixture: git archive of the lane at 28fc86ac2359ec27406d8a2c63bef82ea6e947ed, then one commit per
+# mutation in the fixture clone (toplevel asserted == fixture dir before any commit). No lane ref touched.
+
+## 0. Baseline — counter at the real rev, no edit
+python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 28fc86ac… --work <scratch>
+MADO_AUTORELOAD_ENTRY: rev=28fc86ac2359ec27406d8a2c63bef82ea6e947ed rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none   (rc 0)
+python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 28fc86ac… --work <scratch>
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK   (rc 0)
+
+## M1 (in scope: E03) — proposition gets a FALSE clause ('... and it is the canonical target path of the symlink';
+#    the canonical watch stores .file = path (the LINK path) at ConfigWatcher.cpp:70, so the clause is false).
+#    E-rows are not in the counter at all (content=33/33 counts only c1['k']+c1['h'] = 30 K + 3 H).
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+## M2 (in scope: E03) — pin:line moved 106 -> 107, so the quote is no longer on the cited line.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+## M3 (in scope: H01) — proposition 'an int value of zero' -> 'an int value of seven' (spelled out).
+#    The num leg only constrains ASCII digit runs (RUN_RE = [0-9]+); 'seven' has none, tok still overlaps, echo clean.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+## M4 (control) — same mutation with a DIGIT: 'an int value of 7'.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=num:H01
+
+## M5 (in scope: H02) — proposition renamed to '… names the omarchy gum environment file gum.env.conf …' (quote unchanged).
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+harness: MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+
+## M6 (adjacent: hpp pin) — fetch/Hyprland-PropRefresher.hpp line 18 (1 << 8) -> (1 << 9).
+#    The .hpp is in fetch/ but is in NEITHER c1.pin_sha256 NOR c1.host_pin_sha256 (12 of the 13 fetch files are hashed).
+#    E08/E09 quote this file; the Chain step 7 bit arithmetic depends on it.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+## M7 (adjacent: S391 anchor) — registry anchor cell 'PropRefresher.hpp:18,21 @ efb5099…' -> 'PropRefresher.hpp:3,4 @ efb5099…'.
+#    S391 is not in c1['rows'] nor new_row_ids (those carry S383-S390 only), so no source_cell/scope/new_rows leg covers it.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+
+## POSITIVE CONTROL — corrupt K12's quote cell (append 'X'); the counter must see it, and does.
+counter: MADO_AUTORELOAD_ENTRY: rev=… rows=29/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K12,quote:K12
