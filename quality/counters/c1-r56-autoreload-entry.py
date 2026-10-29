@@ -610,8 +610,6 @@ def evaluate(repo):
         counts["c"] = sum(1 for r in c1["k"] if src_ok[r["id"]])
         counts["d"] = sum(1 for r in c1["k"] if scope_flag[r["id"]])
         counts["e"] = sum(1 for r in c1["k"] + c1["h"] if tok_ok[r["id"]] and num_ok[r["id"]] and echo_ok[r["id"]])
-        if counts["e"] != 33:
-            missed.append("content")
     return finish(repo, missed, counts, entry_present)
 
 
@@ -819,14 +817,14 @@ def selftest(src_repo, src_rev, work):
                          if r["id"][0] == "K" else "placeholder host proposition %s, not a read" % r["id"])
         f[ENTRY] = render_entry(e)
     f2, e2 = mutate(junk)
-    _, _, ln = run(f2, 1, "ctl2 junk-placeholders", legs=["content"])
+    _, _, ln = run(f2, 1, "ctl2 junk-placeholders", legs=["tok:K01"])
     ck.check(any(s.startswith("tok:") for s in ln.split(" missed=")[1].split(",")), "ctl2: tok legs")
     ck.check("content=" in ln and "/33" in ln and "content=33/33" not in ln, "ctl2: e<33")
 
     def falsenum(f, e):
         row(e, "K04")["prop"] += " The value is capped at 200 by this call."
         f[ENTRY] = render_entry(e)
-    run(mutate(falsenum)[0], 1, "ctl3 false-number", legs=["num:K04", "content"], nolegs=["num:K05"])
+    run(mutate(falsenum)[0], 1, "ctl3 false-number", legs=["num:K04"], nolegs=["num:K05"])
 
     def cross(f, e):
         row(e, "K10")["src"] = "S385"
@@ -980,7 +978,7 @@ def selftest(src_repo, src_rev, work):
             if len(r["quote"]) >= ECHO_MIN:
                 r["prop"] = r["quote"] + " echoed on this line, no analysis added here"
         f[ENTRY] = render_entry(e)
-    run(mutate(echoq)[0], 1, "ctl11 quote-echo", legs=["echo:K01", "content"], nolegs=["echo:K08"])
+    run(mutate(echoq)[0], 1, "ctl11 quote-echo", legs=["echo:K01"], nolegs=["echo:K08"])
 
     def toknone(f, e):
         row(e, "K29")["prop"] = "Zzzz qqqq wwww xxxx vvvv bbbb nnnn mmmm kkkk jjjj hhhh gggg"
