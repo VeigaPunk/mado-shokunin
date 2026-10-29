@@ -589,7 +589,7 @@ def execute(argv):
             else:
                 ok, detail = judge_control(rc, out, sha, leg, own)
             k += ok
-            err("control %d %s: %s -- %s [%s; harness %s=%d]" % (n, name, "PASS" if ok else "FAIL", detail, note, leg, own[leg]))
+            err("control %d %s: %s -- %s [%s; harness %s=%s]" % (n, name, "PASS" if ok else "FAIL", detail, note, leg, own.get(leg, "-")))
         verdict = "OK" if (good_ok and k == N_CONTROLS) else "FAIL"
         line = "MADO_R56_CONTROLS: claim=c3 good=%s controls=%d/%d verdict=%s" % ("ok" if good_ok else "bad", k, N_CONTROLS, verdict)
         return line, (0 if verdict == "OK" else 1)
