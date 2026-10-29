@@ -1,0 +1,69 @@
+=== ref_counter
+good: ok
+C1-CTL-01 entry-absent: ok (required entry_absent) - counter missed=entry_absent
+C1-CTL-02 junk-placeholders: ok (required tok:<id> + content<33) - counter missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K07,tok:K08,...(+24 more)
+C1-CTL-03 false-number: ok (required num:K04) - counter missed=num:K04
+C1-CTL-04 cross-pin-source: ok (required source_cell:K10) - counter missed=source_cell:K10,scope:K10
+  note: collateral legs beyond the registered ones: scope:K10
+C1-CTL-05 scope-swap: ok (required scope:K10) - counter missed=source_cell:K10,scope:K10,prov
+  note: collateral legs beyond the registered ones: prov
+C1-CTL-06 provenance-dangling: ok (required prov) - counter missed=prov
+C1-CTL-07 dropped-row: ok (required row:K17) - counter missed=row:K17
+C1-CTL-08 edited-quote: ok (required quote:K05) - counter missed=quote:K05
+C1-CTL-09 pin-byte: ok (required pin_hash) - counter missed=pin_hash
+C1-CTL-10 new-row-missing: ok (required new_rows) - counter missed=prov,source_cell:K29,scope:K29,source_cell:K30,scope:K30,new_rows
+  note: collateral legs beyond the registered ones: prov,scope:K29,scope:K30
+MADO_R56_CONTROLS: claim=c1 good=ok controls=10/10 verdict=OK
+rc=0
+=== stub_green
+good: ok
+C1-CTL-01 entry-absent: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-02 junk-placeholders: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-03 false-number: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-04 cross-pin-source: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-05 scope-swap: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-06 provenance-dangling: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-07 dropped-row: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-08 edited-quote: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-09 pin-byte: FAIL - verdict=TARGET_MET (mutant admitted)
+C1-CTL-10 new-row-missing: FAIL - verdict=TARGET_MET (mutant admitted)
+MADO_R56_CONTROLS: claim=c1 good=ok controls=0/10 verdict=FAIL
+rc=1
+=== stub_reject_min
+good: bad - verdict=TARGET_MISSED missed=tables_sha
+C1-CTL-01 entry-absent: FAIL - required leg entry_absent not in missed=tables_sha
+C1-CTL-02 junk-placeholders: FAIL - no tok:<id> leg in missed=tables_sha
+C1-CTL-03 false-number: FAIL - required leg num:K04 not in missed=tables_sha
+C1-CTL-04 cross-pin-source: FAIL - required leg source_cell:K10 not in missed=tables_sha
+C1-CTL-05 scope-swap: FAIL - required leg scope:K10 not in missed=tables_sha
+C1-CTL-06 provenance-dangling: FAIL - required leg prov not in missed=tables_sha
+C1-CTL-07 dropped-row: FAIL - required leg row:K17 not in missed=tables_sha
+C1-CTL-08 edited-quote: FAIL - required leg quote:K05 not in missed=tables_sha
+C1-CTL-09 pin-byte: FAIL - required leg pin_hash not in missed=tables_sha
+C1-CTL-10 new-row-missing: FAIL - required leg new_rows not in missed=tables_sha
+MADO_R56_CONTROLS: claim=c1 good=bad controls=0/10 verdict=FAIL
+rc=1
+=== stub_reject_shotgun
+good: bad - verdict=TARGET_MISSED missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,row:K03,row:K04,row:K05,row:K06,row:K07,row:K08,row:K09,row:K10,row:K11,row:K12,row:K13,row:K14,row:K15,row:K16,row:K17,
+C1-CTL-01 entry-absent: ok (required entry_absent) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,row:K03,...(+192 more)
+C1-CTL-02 junk-placeholders: ok (required tok:<id> + content<33) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+160 more)
+C1-CTL-03 false-number: ok (required num:K04) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+192 more)
+C1-CTL-04 cross-pin-source: ok (required source_cell:K10) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+192 more)
+C1-CTL-05 scope-swap: ok (required scope:K10) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+191 more)
+C1-CTL-06 provenance-dangling: ok (required prov) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,index,pin_hash,new_rows,row:K01,row:K02,row:K03,...(+192 more)
+C1-CTL-07 dropped-row: ok (required row:K17) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+192 more)
+C1-CTL-08 edited-quote: ok (required quote:K05) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+192 more)
+C1-CTL-09 pin-byte: ok (required pin_hash) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,new_rows,row:K01,row:K02,row:K03,...(+192 more)
+C1-CTL-10 new-row-missing: ok (required new_rows) - counter missed=entry_absent,tables_sha,prov,index,pin_hash,new_rows,row:K01,row:K02,...(+193 more)
+  note: collateral legs beyond the registered ones: entry_absent,tables_sha,prov,index,pin_hash,row:K01,row:K02,row:K03,...(+162 more)
+MADO_R56_CONTROLS: claim=c1 good=bad controls=10/10 verdict=FAIL
+rc=1

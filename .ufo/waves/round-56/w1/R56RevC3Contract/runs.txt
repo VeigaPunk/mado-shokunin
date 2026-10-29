@@ -1,0 +1,39 @@
+R56RevC3Contract — decisive outputs (copied from the seat session; commands run with python3 -I)
+
+# base, literal reading (c3_seat.py and c3_v.py agree)
+MADO_USED_BY: rev=13f0acbe3a15da2d9c08357a576d91dcadc85273 entries=70 rows=319 missing=65 extra=0 dangling=0 verdict=TARGET_MISSED
+sha256(corpus/SOURCES.md @ base) = 422f35f8632ff267e46b5e838272f11b10f2cbf5a19017d65818ff980044e122  (= frozen c3.sources_sha256_at_base)
+
+# variants at base
+--commonmark                         missing=65 extra=0 dangling=0
+--ranges                             missing=70 extra=0 dangling=0   (+S176, S117, S118, S057, S058)
+--allsource                          missing=65 extra=0 dangling=0
+--commonmark --ranges --allsource    missing=70 extra=0 dangling=0
+
+# sensitivity on scratch copies of corpus/ at base (one mutation each, one commit each in a mktemp fixture)
+base                                   missing=65 extra=0 dangling=0
+unclosed fence at line 1 (arc-synthesis)  missing=62 extra=0 dangling=0
+ZWSP inside S090/S096 (closeout-r11)      missing=63 extra=0 dangling=0
+fullwidth S-glyph S090/S096 (closeout-r11) missing=63 extra=0 dangling=0
+move arc-synthesis to corpus/knowledge/archive/   missing=62 extra=0 dangling=0
+move walker-deep.md to archive/ (used-by lists it for S096) missing=62 extra=1 dangling=0
+walker-deep.md replaced by symlink             missing=62 extra=1 dangling=0
+S999 appended to source: line 19 (dispatcher-r51), window 15  dangling=0
+S999 appended to source: line 19 (dispatcher-r51), --allsource dangling=1
+S999 appended to source: line 1 (keyboard-repeat-numlock-r55) dangling=1   (control)
+**source:** prefix + S999 on line 1 (keyboard-repeat-numlock-r55) dangling=0
+mixed fence "```" open, "~~~" line, S091, "```" close: toggle counter missing=66; --commonmark missing=65
+new entry plain cite S091 (no used-by)  missing=66 (control)
+HTML comment <!-- S030 --> in closeout-r11 missing=66 (control)
+new entry "S100–S110" (en dash): literal missing=67 ; with --ranges missing=81
+new entry "S100-S110" (ascii dash):  literal missing=67 ; with --ranges missing=81
+
+# harness control 6 (fenced-cite) ordering check
+wrap arc-synthesis L402 in fence (pair (S091, arc-synthesis) NOT in used-by; first pair under (entry,S) order): missing=63 extra=0  -> control 6 would NOT print extra
+wrap window-rule-effects-getprop L3 (pair (S002, ...) IS in used-by; first pair under (S,entry) order):  missing=65 extra=4 -> control 6 prints extra>0
+
+# harness control 3/4 pick at base
+first entry sorted = corpus/knowledge/animation-table-r26.md ; first row (sorted) listing it = S158 ; S158 cites it on lines 7,81,...  -> drop-one valid
+animation-table-r26.md source: at line 3 -> append S999 gives dangling=1 -> dangling-source valid
+
+# host guard: lane touched only by git cat-file / ls-tree / archive (read-only). Scratch fixtures: git init + add + commit with -c user.name=ctl -c user.email=ctl@ctl; rev-parse --show-toplevel asserted before commit in forge.py and in the batch runs; the control-6 wrap run did not repeat the explicit assertion (fixture was a fresh mktemp dir + git init in the same call).

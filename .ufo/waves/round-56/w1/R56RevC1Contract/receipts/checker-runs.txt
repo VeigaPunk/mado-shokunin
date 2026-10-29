@@ -1,0 +1,44 @@
+# seat R56RevC1Contract - checker runs (independent checker, registration section C1 only)
+# fixtures: git archive of lane rev 2aa347b1 + variant edits, one commit each (head shown by make_variant)
+== variant cheap
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+== variant honest
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+== variant falsified
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+== variant junk
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=1/33 new_rows=8/8 verdict=TARGET_MISSED missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K07,tok:K08,tok:K09,tok:K10,tok:K11,tok:K12,tok:K13,tok:K14,tok:K15,tok:K16,tok:K17,tok:K18,tok:K19,tok:K20,tok:K21,tok:K22,tok:K24,tok:K25,tok:K26,tok:K27,tok:K28,tok:K29,tok:K30,tok:H01,tok:H02,tok:H03
+rc=1
+== variant absent
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=0/30 hosts=0/3 sources=0/30 scope=0/30 content=0/33 new_rows=8/8 verdict=TARGET_MISSED missed=entry_absent
+rc=1
+== variant false-number
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=num:K04
+rc=1
+== variant dropped-row
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=29/30 hosts=3/3 sources=29/30 scope=30/30 content=32/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K17,source_cell:K17,tok:K17,num:K17
+rc=1
+== variant edited-quote
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=29/30 hosts=3/3 sources=29/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05,source_cell:K05
+rc=1
+== variant new-row-missing
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=28/30 scope=28/30 content=33/33 new_rows=7/8 verdict=TARGET_MISSED missed=prov,source_cell:K29,scope:K29,source_cell:K30,scope:K30,new_rows
+rc=1
+== --repo /fast/scratch/hyaku/mado-r56/R56RevC1Contract/work2/fx-edited-quote
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=29/30 hosts=3/3 sources=29/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05,source_cell:K05
+rc=1
+== --repo /fast/scratch/hyaku/mado-r56/R56RevC1Contract/work2/fx-edited-quote --quote-leg carried
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=29/30 hosts=3/3 sources=29/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:K05,quote:K05,source_cell:K05
+rc=1
+== --repo /fast/scratch/hyaku/mado-r56/R56RevC1Contract/work2/fx-edit-h02
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=2/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:H02,host:H02
+rc=1
+== --repo /fast/scratch/hyaku/mado-r56/R56RevC1Contract/work2/fx-edit-h02 --quote-leg carried
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=2/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MISSED missed=row:H02,host:H02
+rc=1
+== lane freeze tree rev 2aa347b1 (no entry)
+MADO_AUTORELOAD_ENTRY: rev=2aa347b1175cded6628465acf335f9232183d40c rows=0/30 hosts=0/3 sources=0/30 scope=0/30 content=0/33 new_rows=0/8 verdict=TARGET_MISSED missed=entry_absent,index,new_rows
+rc=1

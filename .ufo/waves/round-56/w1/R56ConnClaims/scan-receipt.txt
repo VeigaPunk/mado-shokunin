@@ -1,0 +1,40 @@
+R56ConnClaims cross-claim scan receipt (read-only; lane rev 3423ae285676c2a10273000f4519163472b443db)
+
+[1] frozen-tables.json sha256 (matches registration embed)
+d50d2b7b16506c50cb44358d4284e4f0eb0d14e433594d068a0fbe74c5edf9af  .ufo/waves/round-56/frozen-tables.json
+
+[2] entry presence at lane rev
+git cat-file -t 3423ae28... -> commit
+git ls-tree -r --name-only 3423ae28... -- corpus/knowledge | grep -i autoreload -> (no output)
+entries at lane rev: 70; corpus/knowledge/hyprland-config-autoreload-r56.md absent
+w1/R56Scribe*Entry*, R56RevC1*: directories empty at scan time (no entry prose to check)
+
+[3] K-row -> S-id map (frozen-tables.json c1.k), checked against new_row_ids S383..S390
+K01,K02 S384 | K03..K12 S383 | K13,K14 S386 | K15,K16 S385 | K17..K24 S387 | K25,K26 S388 | K27,K28 S389 | K29,K30 S390
+all 8 new ids cited by >=1 K row: yes (every row used-by must name the entry; entry cites all 8 in table src cells)
+
+[4] Pins sha256 (receipts/pins.sha256 re-read) - unchanged; freeze-verify.txt: all pins ok, K01..K28 ok
+
+[5] Line anchors verified by sed on pins
+ConfigWatcher.cpp:54 is_directory(path,ecDir) | :55 fileMask | :56 directoryMask | :60 add_watch | :67 if(!ec&&!ec2&&IS_SYMLINK) | :69 canonical add_watch IN_CLOSE_WRITE | :70 .file = path (canonical watch records symlink path)
+ConfigWatcher.cpp:21-27 (onInotifyEvent) std::ranges::find_if over m_watches -> first wd match -> m_watchCallback(.file = WD->file)
+ConfigValues.cpp:492 misc:disable_autoreload Bool default false, refresh REFRESH_CONFIG_WATCHER
+legacy ConfigManager.cpp:776 m_configPaths.clear(); :779 m_configPaths.emplace_back(mainConfigPath)  (779 cited by no K row)
+legacy :1816 glob(absolutePath(...), GLOB_TILDE,...); :1819 return on GLOB_NOMATCH branch (~1816-1820); :1830-1833 status ec -> "inaccessible" return (uncited); :1835 is_regular_file; :1836 emplace_back; :1844 skipping directory; :1846-1848 non-regular branch (uncited)
+legacy :486 Hyprlang::SConfigOptions{.throwAllErrors = true}
+MiscFunctions.cpp:65 getenv("HOME"); :68 currentDir substr/find_last_of; :10-12 leading ~ replaced BEFORE glob sees the path
+man7 pin: :186 "File opened for writing was closed." (IN_CLOSE_WRITE); :262 "Don't dereference pathname if it is a symbolic link." (IN_DONT_FOLLOW); ~:276-283 IN_MASK_ADD: existing watch instance -> mask REPLACED unless IN_MASK_ADD; ~:294-300 IN_MASK_CREATE / multiple paths may refer to the same object
+
+[6] Registry (corpus/SOURCES.md at lane rev, read via git show)
+rows with id regex: 319; every row 11 cells (awk NF-2 = 11 for all 319)
+draft rows R56ScribeSourcesB/rows.md S383..S390: each 11 cells
+
+[7] Base corpus scan (70 entries, read via git show)
+entries with a source: line: 50; all first occurrences at line <=15 (max observed: 3)
+entries with no source: line: 20 (e.g. bind-table-r25.md, config-health-report-r3.md, ...)
+S-ids inside HTML comments: none; S-ids inside fenced blocks: none
+first sorted entry (control 4 target): corpus/knowledge/animation-table-r26.md, source: at line 3
+
+[8] Registration C3 baseline re-read: entries=70 rows=319 missing=65 extra=0 dangling=0 (claims-frozen and registration agree)
+
+Not run: any counter or harness (verification is the main agent's job); no hold-out path was opened; no hyprctl call (not needed for a text scan).

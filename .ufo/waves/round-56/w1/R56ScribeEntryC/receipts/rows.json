@@ -1,0 +1,518 @@
+{
+ "rows": [
+  {
+   "id": "K01",
+   "prop": "Line 492 registers the option misc:disable_autoreload as MS<Bool> with the description 'If true, the config will not reload automatically on save' and default false.",
+   "src": "S384",
+   "pin": "Hyprland-ConfigValues.cpp",
+   "line": 492,
+   "quote": "\"misc:disable_autoreload\", \"If true, the config will not reload automatically on save.\", false",
+   "frozen": true
+  },
+  {
+   "id": "K02",
+   "prop": "Line 492 sets the refresh field of misc:disable_autoreload to the flag REFRESH_CONFIG_WATCHER, which is the refresh action this option carries.",
+   "src": "S384",
+   "pin": "Hyprland-ConfigValues.cpp",
+   "line": 492,
+   "quote": "{.refresh = Supplementary::REFRESH_CONFIG_WATCHER}",
+   "frozen": true
+  },
+  {
+   "id": "K03",
+   "prop": "Line 33 reads the option misc:disable_autoreload into a static CConfigValue of type Config::INTEGER, so the watcher takes its value as an integer.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 33,
+   "quote": "CConfigValue<Config::INTEGER>(\"misc:disable_autoreload\");",
+   "frozen": true
+  },
+  {
+   "id": "K04",
+   "prop": "Line 34 passes an empty list to setWatchList when PDISABLEAUTORELOAD is non-zero, and the list from Config::mgr()->getConfigPaths() otherwise.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 34,
+   "quote": "setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());",
+   "frozen": true
+  },
+  {
+   "id": "K05",
+   "prop": "Line 46 calls inotify_rm_watch on the inotify fd for each existing watch.wd, removing the previous watch descriptors before the list is rebuilt.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 46,
+   "quote": "inotify_rm_watch(m_inotifyFd.get(), watch.wd);",
+   "frozen": true
+  },
+  {
+   "id": "K06",
+   "prop": "Line 54 tests path with std::filesystem::is_directory and stores the answer in isDirectory, which chooses between the file and directory masks.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 54,
+   "quote": "std::filesystem::is_directory(path, ecDir);",
+   "frozen": true
+  },
+  {
+   "id": "K07",
+   "prop": "Line 55 starts the file mask fileMask with IN_CLOSE_WRITE and OR-s IN_DONT_FOLLOW onto it on the same line.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 55,
+   "quote": "fileMask      = IN_CLOSE_WRITE",
+   "frozen": true
+  },
+  {
+   "id": "K08",
+   "prop": "Line 56 defines directoryMask from fileMask and OR-s IN_CREATE, IN_DELETE, IN_MOVED_TO and IN_MOVED_FROM onto it on the same line.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 56,
+   "quote": "directoryMask = fileMask",
+   "frozen": true
+  },
+  {
+   "id": "K09",
+   "prop": "Line 60 adds an inotify watch on path with mask on the watcher inotify fd, and the returned descriptor is stored as the wd of that watch entry.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 60,
+   "quote": "inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask)",
+   "frozen": true
+  },
+  {
+   "id": "K10",
+   "prop": "Line 67 takes the branch for a second watch only when both error codes are clear and IS_SYMLINK holds, which is the symlink case.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 67,
+   "quote": "if (!ec && !ec2 && IS_SYMLINK) {",
+   "frozen": true
+  },
+  {
+   "id": "K11",
+   "prop": "Line 69 adds a second watch on CANONICAL, the resolved target of a symlink, with the mask IN_CLOSE_WRITE alone and no IN_DONT_FOLLOW.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 69,
+   "quote": "inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),",
+   "frozen": true
+  },
+  {
+   "id": "K12",
+   "prop": "Line 105 invokes the stored m_watchCallback with an SConfigWatchEvent whose file is the file of the matched watch entry.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 105,
+   "quote": "m_watchCallback(SConfigWatchEvent{",
+   "frozen": true
+  },
+  {
+   "id": "K13",
+   "prop": "Line 128 registers the watcher inotify fd on the Wayland event loop for readability, with configWatcherWrite as the callback.",
+   "src": "S386",
+   "pin": "Hyprland-EventLoopManager.cpp",
+   "line": 128,
+   "quote": "m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);",
+   "frozen": true
+  },
+  {
+   "id": "K14",
+   "prop": "Line 71 is the body of configWatcherWrite and calls onInotifyEvent on the config watcher singleton.",
+   "src": "S386",
+   "pin": "Hyprland-EventLoopManager.cpp",
+   "line": 71,
+   "quote": "Config::watcher()->onInotifyEvent();",
+   "frozen": true
+  },
+  {
+   "id": "K15",
+   "prop": "Line 148 tests whether m_propsTripped carries the REFRESH_CONFIG_WATCHER bit, which opens the watcher branch of refreshProp.",
+   "src": "S385",
+   "pin": "Hyprland-PropRefresher.cpp",
+   "line": 148,
+   "quote": "if (m_propsTripped & REFRESH_CONFIG_WATCHER)",
+   "frozen": true
+  },
+  {
+   "id": "K16",
+   "prop": "Line 149 calls update on the config watcher singleton, the body of the branch that line 148 opens.",
+   "src": "S385",
+   "pin": "Hyprland-PropRefresher.cpp",
+   "line": 149,
+   "quote": "Config::watcher()->update();",
+   "frozen": true
+  },
+  {
+   "id": "K17",
+   "prop": "Line 1079 registers a lambda with setOnChange on the config watcher, capturing this and taking the SConfigWatchEvent by reference.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1079,
+   "quote": "Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {",
+   "frozen": true
+  },
+  {
+   "id": "K18",
+   "prop": "Line 1080 logs at DEBUG level the message that a file was modified and reloading, from inside the setOnChange lambda.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1080,
+   "quote": "CConfigManager: file {} modified, reloading",
+   "frozen": true
+  },
+  {
+   "id": "K19",
+   "prop": "Inside postConfigReload, line 1070 calls scheduleRefresh with REFRESH_ALL on the refresher singleton, after the plugin loads.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1070,
+   "quote": "Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);",
+   "frozen": true
+  },
+  {
+   "id": "K20",
+   "prop": "Line 776 clears m_configPaths at the start of resetHLConfig, before the main config path is added again.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 776,
+   "quote": "m_configPaths.clear();",
+   "frozen": true
+  },
+  {
+   "id": "K21",
+   "prop": "Line 1836 appends the resolved value path to m_configPaths inside handleSource, for each matched regular file.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1836,
+   "quote": "m_configPaths.emplace_back(value);",
+   "frozen": true
+  },
+  {
+   "id": "K22",
+   "prop": "Line 1835 branches on std::filesystem::is_regular_file applied to file_status, so only regular files reach the parse.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1835,
+   "quote": "if (std::filesystem::is_regular_file(file_status)) {",
+   "frozen": true
+  },
+  {
+   "id": "K23",
+   "prop": "Line 1844 logs a WARN message that source= skips a directory match, in the branch that handles directories.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1844,
+   "quote": "\"source= skipping directory {}\", value);",
+   "frozen": true
+  },
+  {
+   "id": "K24",
+   "prop": "Line 1816 passes absolutePath of rawpath to glob with the flag GLOB_TILDE, the pattern expansion behind each source= line.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1816,
+   "quote": "glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get())",
+   "frozen": true
+  },
+  {
+   "id": "K25",
+   "prop": "Line 65 reads the HOME environment variable with getenv into the static ENVHOME, which absolutePath uses for a leading tilde.",
+   "src": "S388",
+   "pin": "Hyprland-MiscFunctions.cpp",
+   "line": 65,
+   "quote": "static const char* const ENVHOME = getenv(\"HOME\");",
+   "frozen": true
+  },
+  {
+   "id": "K26",
+   "prop": "Line 68 sets currentDir to the part of currentPath before its last slash, the directory that relative paths resolve against.",
+   "src": "S388",
+   "pin": "Hyprland-MiscFunctions.cpp",
+   "line": 68,
+   "quote": "auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));",
+   "frozen": true
+  },
+  {
+   "id": "K27",
+   "prop": "Line 1223 tests whether the keyword COMMAND contains misc:disable_autoreload and, if it does, calls update on the config watcher.",
+   "src": "S389",
+   "pin": "Hyprland-HyprCtl.cpp",
+   "line": 1223,
+   "quote": "if (COMMAND.contains(\"misc:disable_autoreload\"))",
+   "frozen": true
+  },
+  {
+   "id": "K28",
+   "prop": "Line 1276 calls reload on the config manager singleton, the branch of reloadRequest that is taken for a hyprctl reload request.",
+   "src": "S389",
+   "pin": "Hyprland-HyprCtl.cpp",
+   "line": 1276,
+   "quote": "Config::mgr()->reload();",
+   "frozen": true
+  },
+  {
+   "id": "K29",
+   "prop": "The inotify man page describes IN_CLOSE_WRITE on line 186 as: a file opened for writing was closed.",
+   "src": "S390",
+   "pin": "man7-inotify.7.html",
+   "line": 186,
+   "quote": "File opened for writing was closed.",
+   "frozen": true
+  },
+  {
+   "id": "K30",
+   "prop": "The inotify man page on line 262 states that IN_DONT_FOLLOW means pathname is not dereferenced when it is a symbolic link.",
+   "src": "S390",
+   "pin": "man7-inotify.7.html",
+   "line": 262,
+   "quote": "Don't dereference <i>pathname</i> if it is a symbolic link.",
+   "frozen": true
+  },
+  {
+   "id": "H01",
+   "prop": "The captured hyprctl getoption record reports misc:disable_autoreload with int 0 and set false on the host.",
+   "src": "host",
+   "pin": "host-getoption.json",
+   "line": 1,
+   "quote": "\"option\": \"misc:disable_autoreload\", \"int\": 0",
+   "frozen": true
+  },
+  {
+   "id": "H02",
+   "prop": "Line 10 of the host source capture lists the omarchy theme hyprland.conf as a source line of the main config.",
+   "src": "host",
+   "pin": "host-sources.txt",
+   "line": 10,
+   "quote": "source = ~/.config/omarchy/current/theme/hyprland.conf",
+   "frozen": true
+  },
+  {
+   "id": "H03",
+   "prop": "The captured hyprctl version record gives the build commit efb50993780079460b0cbed1363e2166a2de1d9f on line 3, the pinned commit.",
+   "src": "host",
+   "pin": "host-version.json",
+   "line": 3,
+   "quote": "\"commit\": \"efb50993780079460b0cbed1363e2166a2de1d9f\"",
+   "frozen": true
+  },
+  {
+   "id": "E01",
+   "prop": "Line 726 opens the definition of CConfigManager::reload, the function the watcher callback calls on a change.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 726,
+   "quote": "void CConfigManager::reload() {",
+   "frozen": false
+  },
+  {
+   "id": "E02",
+   "prop": "Line 1081 calls reload inside the watcher callback, after the DEBUG log line, so each callback invocation runs reload.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1081,
+   "quote": "reload();",
+   "frozen": false
+  },
+  {
+   "id": "E03",
+   "prop": "Line 970 opens postConfigReload, which reload calls with the parse result and which ends by scheduling the refresh of K19.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 970,
+   "quote": "void CConfigManager::postConfigReload(const Hyprlang::CParseResult& result) {",
+   "frozen": false
+  },
+  {
+   "id": "E04",
+   "prop": "Line 29 opens scheduleRefresh, which ORs the requested prop bits into m_propsTripped before it defers the refresh.",
+   "src": "S385",
+   "pin": "Hyprland-PropRefresher.cpp",
+   "line": 29,
+   "quote": "void CPropRefresher::scheduleRefresh(PropRefreshBits prop) {",
+   "frozen": false
+  },
+  {
+   "id": "E05",
+   "prop": "Line 33 tests m_scheduled and the event loop pointer before the refresh is deferred, so a second call does not queue a second callback.",
+   "src": "S385",
+   "pin": "Hyprland-PropRefresher.cpp",
+   "line": 33,
+   "quote": "if (!m_scheduled && g_pEventLoopManager) {",
+   "frozen": false
+  },
+  {
+   "id": "E06",
+   "prop": "Line 34 defers refreshProp through an event-loop doLater callback when no refresh is already scheduled.",
+   "src": "S385",
+   "pin": "Hyprland-PropRefresher.cpp",
+   "line": 34,
+   "quote": "m_scheduledRefreshSeq = g_pEventLoopManager->doLater([this, weak = WP<CPropRefresher>{refresher()}] {",
+   "frozen": false
+  },
+  {
+   "id": "E07",
+   "prop": "Line 215 opens CEventLoopManager::doLater, which queues the function as an idle callback and returns a sequence number.",
+   "src": "S386",
+   "pin": "Hyprland-EventLoopManager.cpp",
+   "line": 215,
+   "quote": "uint64_t CEventLoopManager::doLater(const std::function<void()>& fn) {",
+   "frozen": false
+  },
+  {
+   "id": "E08",
+   "prop": "Line 127 registers the watcher inotify fd only when getInotifyFD returns a valid descriptor, so the check precedes the registration on line 128.",
+   "src": "S386",
+   "pin": "Hyprland-EventLoopManager.cpp",
+   "line": 127,
+   "quote": "if (const auto& FD = Config::watcher()->getInotifyFD(); FD.isValid())",
+   "frozen": false
+  },
+  {
+   "id": "E09",
+   "prop": "Line 80 opens onInotifyEvent, which reads the inotify buffer and calls the change callback for each event it matches.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 80,
+   "quote": "void CConfigWatcher::onInotifyEvent() {",
+   "frozen": false
+  },
+  {
+   "id": "E10",
+   "prop": "Line 100 finds the m_watches entry for each event by comparing the wd field alone, so the callback receives only the matched file.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 100,
+   "quote": "const auto WD = std::ranges::find_if(m_watches, [wd = ev->wd](const auto& e) { return e.wd == wd; });",
+   "frozen": false
+  },
+  {
+   "id": "E11",
+   "prop": "Line 22 tests m_inotifyFd for validity right after the constructor's inotify_init1 call and returns early when it is not valid.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 22,
+   "quote": "if (!m_inotifyFd.isValid()) {",
+   "frozen": false
+  },
+  {
+   "id": "E12",
+   "prop": "Line 59 appends a SInotifyWatch record to m_watches, and the wd field is filled from the inotify_add_watch call on line 60.",
+   "src": "S383",
+   "pin": "Hyprland-ConfigWatcher.cpp",
+   "line": 59,
+   "quote": "m_watches.emplace_back(SInotifyWatch{",
+   "frozen": false
+  },
+  {
+   "id": "E13",
+   "prop": "Line 1190 applies the keyword through mgr->parseKeyword before the misc:disable_autoreload test that K27 covers in the same function.",
+   "src": "S389",
+   "pin": "Hyprland-HyprCtl.cpp",
+   "line": 1190,
+   "quote": "std::string retval = mgr->parseKeyword(COMMAND, VALUE);",
+   "frozen": false
+  },
+  {
+   "id": "E14",
+   "prop": "Line 1262 branches on a request that ends with full-reset, the branch that rebuilds the config manager instead of calling reload.",
+   "src": "S389",
+   "pin": "Hyprland-HyprCtl.cpp",
+   "line": 1262,
+   "quote": "if (request.ends_with(\"full-reset\")) {",
+   "frozen": false
+  },
+  {
+   "id": "E15",
+   "prop": "Line 2028 registers the hyprctl command named reload with the handler reloadRequest, the path a hyprctl reload request takes.",
+   "src": "S389",
+   "pin": "Hyprland-HyprCtl.cpp",
+   "line": 2028,
+   "quote": "registerCommand(SHyprCtlCommand{\"reload\", false, reloadRequest});",
+   "frozen": false
+  },
+  {
+   "id": "E16",
+   "prop": "Line 2133 opens getConfigPaths, the accessor that returns m_configPaths and that the watcher update passes to setWatchList.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 2133,
+   "quote": "const std::vector<std::string>& CConfigManager::getConfigPaths() {",
+   "frozen": false
+  },
+  {
+   "id": "E17",
+   "prop": "Line 1839 parses the sourced regular file with parseFile, the recursive parse that follows the append on line 1836.",
+   "src": "S387",
+   "pin": "Hyprland-legacy-ConfigManager.cpp",
+   "line": 1839,
+   "quote": "const auto THISRESULT        = m_config->parseFile(value.c_str());",
+   "frozen": false
+  },
+  {
+   "id": "E18",
+   "prop": "Line 73 replaces the leading two characters of value with parentDir for a ../ path, using the length 2 plus currentPath.empty().",
+   "src": "S388",
+   "pin": "Hyprland-MiscFunctions.cpp",
+   "line": 73,
+   "quote": "value.replace(0, 2 + currentPath.empty(), parentDir);",
+   "frozen": false
+  }
+ ],
+ "counted": [
+  "H01",
+  "H02",
+  "H03",
+  "K01",
+  "K02",
+  "K03",
+  "K04",
+  "K05",
+  "K06",
+  "K07",
+  "K08",
+  "K09",
+  "K10",
+  "K11",
+  "K12",
+  "K13",
+  "K14",
+  "K15",
+  "K16",
+  "K17",
+  "K18",
+  "K19",
+  "K20",
+  "K21",
+  "K22",
+  "K23",
+  "K24",
+  "K25",
+  "K26",
+  "K27",
+  "K28",
+  "K29",
+  "K30"
+ ],
+ "extra": [
+  "E01",
+  "E02",
+  "E03",
+  "E04",
+  "E05",
+  "E06",
+  "E07",
+  "E08",
+  "E09",
+  "E10",
+  "E11",
+  "E12",
+  "E13",
+  "E14",
+  "E15",
+  "E16",
+  "E17",
+  "E18"
+ ]
+}

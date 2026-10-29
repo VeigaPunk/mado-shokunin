@@ -1,0 +1,88 @@
+== tables sha256 ==
+d50d2b7b16506c50cb44358d4284e4f0eb0d14e433594d068a0fbe74c5edf9af
+== pin files: working tree sha vs frozen; committed blob at freeze vs working tree ==
+Hyprland-ConfigValues.cpp: wt=ok committed=ok
+Hyprland-ConfigWatcher.cpp: wt=ok committed=ok
+Hyprland-EventLoopManager.cpp: wt=ok committed=ok
+Hyprland-HyprCtl.cpp: wt=ok committed=ok
+Hyprland-MiscFunctions.cpp: wt=ok committed=ok
+Hyprland-PropRefresher.cpp: wt=ok committed=ok
+Hyprland-legacy-ConfigManager.cpp: wt=ok committed=ok
+man7-inotify.7.html: wt=ok committed=ok
+host-getoption.json: wt=ok committed=ok
+host-sources.txt: wt=ok committed=ok
+host-version.json: wt=ok committed=ok
+host-watched-lstat.txt: wt=ok committed=ok
+
+== row checks: id | pin | sid->pin | line | quote-on-line | file-occurrences | lines-containing | pipe | ws ==
+K01 Hyprland-ConfigValues.cpp:492 line_has=True occ=1 lines=1 pipe=False ws=False sid=S384->ok len=94
+    LINE:         MS<Bool>("misc:disable_autoreload", "If true, the config will not reload automatically on save.", false, {.refresh = Supplementary::REFRESH_CONFIG_WATCHER}),
+K02 Hyprland-ConfigValues.cpp:492 line_has=True occ=1 lines=1 pipe=False ws=False sid=S384->ok len=50
+    LINE:         MS<Bool>("misc:disable_autoreload", "If true, the config will not reload automatically on save.", false, {.refresh = Supplementary::REFRESH_CONFIG_WATCHER}),
+K03 Hyprland-ConfigWatcher.cpp:33 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=57
+    LINE:     static const auto PDISABLEAUTORELOAD = CConfigValue<Config::INTEGER>("misc:disable_autoreload");
+K04 Hyprland-ConfigWatcher.cpp:34 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=97
+    LINE:     setWatchList(*PDISABLEAUTORELOAD ? std::vector<std::string>{} : Config::mgr()->getConfigPaths());
+K05 Hyprland-ConfigWatcher.cpp:46 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=46
+    LINE:         inotify_rm_watch(m_inotifyFd.get(), watch.wd);
+K06 Hyprland-ConfigWatcher.cpp:54 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=43
+    LINE:         const bool      isDirectory   = std::filesystem::is_directory(path, ecDir);
+K07 Hyprland-ConfigWatcher.cpp:55 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=30
+    LINE:         const uint32_t  fileMask      = IN_CLOSE_WRITE | IN_DONT_FOLLOW;
+K08 Hyprland-ConfigWatcher.cpp:56 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=24
+    LINE:         const uint32_t  directoryMask = fileMask | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM;
+K09 Hyprland-ConfigWatcher.cpp:60 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=56
+    LINE:             .wd   = inotify_add_watch(m_inotifyFd.get(), path.c_str(), mask),
+K10 Hyprland-ConfigWatcher.cpp:67 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=32
+    LINE:         if (!ec && !ec2 && IS_SYMLINK) {
+K11 Hyprland-ConfigWatcher.cpp:69 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=72
+    LINE:                 .wd   = inotify_add_watch(m_inotifyFd.get(), CANONICAL.c_str(), IN_CLOSE_WRITE),
+K12 Hyprland-ConfigWatcher.cpp:105 line_has=True occ=1 lines=1 pipe=False ws=False sid=S383->ok len=34
+    LINE:             m_watchCallback(SConfigWatchEvent{
+K13 Hyprland-EventLoopManager.cpp:128 line_has=True occ=1 lines=1 pipe=False ws=False sid=S386->ok len=126
+    LINE:         m_configWatcherInotifySource = wl_event_loop_add_fd(m_wayland.loop, FD.get(), WL_EVENT_READABLE, configWatcherWrite, nullptr);
+K14 Hyprland-EventLoopManager.cpp:71 line_has=True occ=1 lines=1 pipe=False ws=False sid=S386->ok len=36
+    LINE:     Config::watcher()->onInotifyEvent();
+K15 Hyprland-PropRefresher.cpp:148 line_has=True occ=1 lines=1 pipe=False ws=False sid=S385->ok len=44
+    LINE:     if (m_propsTripped & REFRESH_CONFIG_WATCHER)
+K16 Hyprland-PropRefresher.cpp:149 line_has=True occ=1 lines=1 pipe=False ws=False sid=S385->ok len=28
+    LINE:         Config::watcher()->update();
+K17 Hyprland-legacy-ConfigManager.cpp:1079 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=83
+    LINE:     Config::watcher()->setOnChange([this](const CConfigWatcher::SConfigWatchEvent& e) {
+K18 Hyprland-legacy-ConfigManager.cpp:1080 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=43
+    LINE:         Log::logger->log(Log::DEBUG, "CConfigManager: file {} modified, reloading", e.file);
+K19 Hyprland-legacy-ConfigManager.cpp:1070 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=80
+    LINE:     Config::Supplementary::refresher()->scheduleRefresh(Supplementary::REFRESH_ALL);
+K20 Hyprland-legacy-ConfigManager.cpp:776 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=22
+    LINE:     m_configPaths.clear();
+K21 Hyprland-legacy-ConfigManager.cpp:1836 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=34
+    LINE:             m_configPaths.emplace_back(value);
+K22 Hyprland-legacy-ConfigManager.cpp:1835 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=52
+    LINE:         if (std::filesystem::is_regular_file(file_status)) {
+K23 Hyprland-legacy-ConfigManager.cpp:1844 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=40
+    LINE:             Log::logger->log(Log::WARN, "source= skipping directory {}", value);
+K24 Hyprland-legacy-ConfigManager.cpp:1816 line_has=True occ=1 lines=1 pipe=False ws=False sid=S387->ok len=93
+    LINE:     if (auto r = glob(absolutePath(rawpath, m_configCurrentPath).c_str(), GLOB_TILDE, nullptr, glob_buf.get()); r != 0) {
+K25 Hyprland-MiscFunctions.cpp:65 line_has=True occ=1 lines=1 pipe=False ws=False sid=S388->ok len=50
+    LINE:         static const char* const ENVHOME = getenv("HOME");
+K26 Hyprland-MiscFunctions.cpp:68 line_has=True occ=1 lines=1 pipe=False ws=False sid=S388->ok len=71
+    LINE:         auto currentDir = currentPath.substr(0, currentPath.find_last_of('/'));
+K27 Hyprland-HyprCtl.cpp:1223 line_has=True occ=1 lines=1 pipe=False ws=False sid=S389->ok len=48
+    LINE:     if (COMMAND.contains("misc:disable_autoreload"))
+K28 Hyprland-HyprCtl.cpp:1276 line_has=True occ=1 lines=1 pipe=False ws=False sid=S389->ok len=24
+    LINE:     Config::mgr()->reload();
+K29 man7-inotify.7.html:186 line_has=True occ=1 lines=1 pipe=False ws=False sid=S390->ok len=35
+    LINE:                   File opened for writing was closed.
+K30 man7-inotify.7.html:262 line_has=True occ=1 lines=1 pipe=False ws=False sid=S390->ok len=59
+    LINE:                   Don't dereference <i>pathname</i> if it is a symbolic link.
+H01 host-getoption.json:1 line_has=True occ=1 lines=1 pipe=False ws=False sid=host len=45
+    LINE: {"option": "misc:disable_autoreload", "int": 0, "set": false }
+H02 host-sources.txt:10 line_has=True occ=1 lines=1 pipe=False ws=False sid=host len=54
+    LINE: source = ~/.config/omarchy/current/theme/hyprland.conf
+H03 host-version.json:3 line_has=True occ=1 lines=1 pipe=False ws=False sid=host len=52
+    LINE:     "commit": "efb50993780079460b0cbed1363e2166a2de1d9f",
+
+K rows: 30 H rows: 3
+sid set used by K: ['S383', 'S384', 'S385', 'S386', 'S387', 'S388', 'S389', 'S390'] new_row_ids ['S383', 'S384', 'S385', 'S386', 'S387', 'S388', 'S389', 'S390']
+rows registry map covers new ids: True
+FAILS: none

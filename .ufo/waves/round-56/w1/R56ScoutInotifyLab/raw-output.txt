@@ -1,0 +1,98 @@
+# kernel: 7.2.11-arch1-1  arch: x86_64
+# python: 3.14.8  work: /fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work
+# FILE_MASK=0x2000008 DIR_MASK=0x20003c8 CANON_MASK=0x8
+# inotifywait used: NO (absent on host; python3 ctypes/glibc inotify_* instead)
+
+=== [a1] regular file + FILE_MASK: in-place write (open/append/close) ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a1/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after in-place write:
+    [file-watch] IN_CLOSE_WRITE
+
+=== [a2] regular file + FILE_MASK: truncate-write (open 'wb' = O_TRUNC) ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a2/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after truncate-write:
+    [file-watch] IN_CLOSE_WRITE
+
+=== [a3] regular file + FILE_MASK: echo > file ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a3/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after echo > file:
+    [file-watch] IN_CLOSE_WRITE
+
+=== [a4] regular file + FILE_MASK: atomic save (temp file in same dir, rename over target) ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a4/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after atomic save:
+    [file-watch] IN_IGNORED
+  follow-up: second in-place write on the same path (watch possibly dead):
+  after follow-up write: NONE
+
+=== [a5] regular file + FILE_MASK: touch (utimensat) ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a5/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after touch: NONE
+
+=== [a6] regular file + FILE_MASK: mv of the file away (rename within dir) ===
+  watch wd=1 [file-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/a6/hyprland.conf mask=0x2000008
+  pre-action drain: clean
+  after mv away: NONE
+  follow-up: recreate file at the original path and write it (old watch expected dead):
+  after write to recreated file: NONE
+
+=== [b1] symlink + FILE_MASK on link, CANON_MASK on target: write through the symlink ===
+  watch wd=1 [symlink-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/b1/link.conf mask=0x2000008
+  watch wd=2 [canonical-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/b1/real.conf mask=0x8
+  pre-action drain: clean
+  after write via symlink path:
+    [canonical-watch] IN_CLOSE_WRITE
+
+=== [b2] EXTRA — symlink setup: atomic save whose temp is renamed over the SYMLINK path ===
+  watch wd=1 [symlink-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/b2/link.conf mask=0x2000008
+  watch wd=2 [canonical-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/b2/real.conf mask=0x8
+  pre-action drain: clean
+  after rename over symlink path:
+    [symlink-watch] IN_IGNORED
+  note: after this, lstat(l)=0o100644 (regular file, symlink gone)
+
+=== [c1] directory + DIR_MASK: echo > dir/newfile ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c1 mask=0x20003c8
+  pre-action drain: clean
+  after echo > existing file in dir:
+    [dir-watch] IN_CLOSE_WRITE name='hyprland.conf'
+
+=== [c2] directory + DIR_MASK: atomic save over a file in the dir ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c2 mask=0x20003c8
+  pre-action drain: clean
+  after atomic save in dir:
+    [dir-watch] IN_CREATE name='.tmp-editor'
+    [dir-watch] IN_CLOSE_WRITE name='.tmp-editor'
+    [dir-watch] IN_MOVED_FROM name='.tmp-editor' cookie=0x1751e9f3
+    [dir-watch] IN_MOVED_TO name='hyprland.conf' cookie=0x1751e9f3
+
+=== [c3] directory + DIR_MASK: mv of a file away ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c3 mask=0x20003c8
+  pre-action drain: clean
+  after mv away:
+    [dir-watch] IN_MOVED_FROM name='hyprland.conf' cookie=0x1751edec
+    [dir-watch] IN_MOVED_TO name='moved-away' cookie=0x1751edec
+
+=== [c4] directory + DIR_MASK: rm of a file ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c4 mask=0x20003c8
+  pre-action drain: clean
+  after rm:
+    [dir-watch] IN_DELETE name='hyprland.conf'
+
+=== [c5] directory + DIR_MASK: mkdir subdir ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c5 mask=0x20003c8
+  pre-action drain: clean
+  after mkdir:
+    [dir-watch] IN_CREATE|IN_ISDIR name='subdir'
+
+=== [c6] directory + DIR_MASK: touch of an existing file in the dir ===
+  watch wd=1 [dir-watch] path=/fast/scratch/hyaku/mado-r56/R56ScoutInotifyLab/work/c6 mask=0x20003c8
+  pre-action drain: clean
+  after touch: NONE
+
+# lab complete

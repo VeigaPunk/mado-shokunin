@@ -1,0 +1,79 @@
+## C3 checker on freeze copy (baseline, expect 70/319/65/0/0)
+MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=65 extra=0 dangling=0 verdict=TARGET_MISSED missed=missing
+rc=1
+## C1 checker on freeze copy (entry absent, expect TARGET_MISSED)
+MADO_AUTORELOAD_ENTRY: rev=HEAD rows=0/30 hosts=0/3 sources=0/30 scope=0/30 content=0/33 new_rows=0/8 verdict=TARGET_MISSED missed=index,entry_absent,row:H01,row:H02,row:H03,row:K01,row:K02,row:K03,ro
+rc=0
+## C2 reference tool, full model (must reproduce 18 committed fixtures)
+CRITIC_C2: tool=c2_ref.py ablate=none fixtures=18/18 target=MET
+## C2 ablation: source
+F02: MISMATCH rc=0/0
+F03: MISMATCH rc=0/0
+F04: MISMATCH rc=0/0
+F05: MISMATCH rc=0/0
+F06: MISMATCH rc=0/0
+F07: MISMATCH rc=0/0
+F08: MISMATCH rc=0/0
+F10: MISMATCH rc=0/0
+F15: MISMATCH rc=0/0
+F16: MISMATCH rc=0/0
+CRITIC_C2: tool=c2_ref.py ablate=source fixtures=8/18 target=MISSED
+## C2 ablation: symlink
+F05: MISMATCH rc=0/0
+F06: MISMATCH rc=0/0
+CRITIC_C2: tool=c2_ref.py ablate=symlink fixtures=16/18 target=MISSED
+## C2 ablation: disable
+F07: MISMATCH rc=0/0
+F08: MISMATCH rc=0/0
+F09: MISMATCH rc=0/0
+F11: MISMATCH rc=0/0
+CRITIC_C2: tool=c2_ref.py ablate=disable fixtures=14/18 target=MISSED
+## C2 contract stubs (ctl/) and replay control
+CRITIC_C2: tool=c2-replay.py ablate=none fixtures=18/18 target=MET
+F01: MISMATCH rc=0/0
+F02: MISMATCH rc=0/0
+F03: MISMATCH rc=0/0
+F04: MISMATCH rc=0/0
+F05: MISMATCH rc=0/0
+F06: MISMATCH rc=0/0
+F07: MISMATCH rc=0/0
+F08: MISMATCH rc=0/0
+F09: MISMATCH rc=0/0
+F10: MISMATCH rc=0/0
+F11: MISMATCH rc=0/0
+F12: MISMATCH rc=0/2
+F13: MISMATCH rc=0/0
+F14: MISMATCH rc=0/0
+F15: MISMATCH rc=0/0
+F16: MISMATCH rc=0/0
+F17: MISMATCH rc=0/2
+F18: MISMATCH rc=0/2
+CRITIC_C2: tool=empty.py ablate=none fixtures=0/18 target=MISSED
+F01: MISMATCH rc=0/0
+F03: MISMATCH rc=0/0
+F04: MISMATCH rc=0/0
+F05: MISMATCH rc=0/0
+F06: MISMATCH rc=0/0
+F07: MISMATCH rc=0/0
+F08: MISMATCH rc=0/0
+F09: MISMATCH rc=0/0
+F10: MISMATCH rc=0/0
+F11: MISMATCH rc=0/0
+F12: MISMATCH rc=0/2
+F13: MISMATCH rc=0/0
+F14: MISMATCH rc=0/0
+F15: MISMATCH rc=0/0
+F16: MISMATCH rc=0/0
+F17: MISMATCH rc=0/2
+F18: MISMATCH rc=0/2
+CRITIC_C2: tool=const-host.py ablate=none fixtures=1/18 target=MISSED
+CRITIC_C2: tool=lookup-committed.py ablate=none fixtures=18/18 target=MET
+## C1/C3 cheap variants (each a fresh scratch commit; checkers from c1_check.py / c3_check.py)
+c1-junk-full: rc=0 MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+c1-junk-no-registry: rc=1 MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=0/30 scope=0/30 content=33/33 new_rows=0/8 verdict=TARGET_MISSED missed=source_cell:K01,scope:K01,source_cell:K02,scope:K02,source_cell:K03,scope:K03,source_cell:K04,scope:K04,source_cell:K05,scope:K05,source_cell:K06,scope:K06,source_cell:K07,scope:K07,source_cell:K08,scope:K08,source_cell:K09,scope:K09,source_cell:K10,scope:K10,source_cell:K11,scope:K11,source_cell:K12,scope:K12,source_cell:K13,scope:K13,source_cell:K14,scope:K14,source_cell:K15,scope:K15,source_cell:K16,scope:K16,source_cell:K17,scope:K17,source_cell:K18,scope:K18,source_cell:K19,scope:K19,source_cell:K20,scope:K20,source_cell:K21,scope:K21,source_cell:K22,scope:K22,source_cell:K23,scope:K23,source_cell:K24,scope:K24,source_cell:K25,scope:K25,source_cell:K26,scope:K26,source_cell:K27,scope:K27,source_cell:K28,scope:K28,source_cell:K29,scope:K29,source_cell:K30,scope:K30,prov,new_rows
+c1-placeholder-full: rc=1 MADO_AUTORELOAD_ENTRY: rev=HEAD rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=1/33 new_rows=8/8 verdict=TARGET_MISSED missed=tok:K01,tok:K02,tok:K03,tok:K04,tok:K05,tok:K06,tok:K07,tok:K08,tok:K09,tok:K10,tok:K11,tok:K12,tok:K13,tok:K14,tok:K15,tok:K16,tok:K17,tok:K18,tok:K19,tok:K20,tok:K21,tok:K22,tok:K24,tok:K25,tok:K26,tok:K27,tok:K28,tok:K29,tok:K30,tok:H01,tok:H02,tok:H03
+c3-fill-all: rc=1 MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=0 extra=21949 dangling=0 verdict=TARGET_MISSED missed=extra
+c3-comment-line-per-row: rc=1 MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=65 extra=0 dangling=0 verdict=TARGET_MISSED missed=missing
+c3-comment-in-cell-per-row: rc=1 MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=65 extra=0 dangling=0 verdict=TARGET_MISSED missed=missing
+c3-delete-missing-cites: rc=0 MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=0 extra=0 dangling=0 verdict=TARGET_MET missed=none
+c3-strip-all-citations: rc=0 MADO_USED_BY: rev=HEAD entries=70 rows=319 missing=0 extra=0 dangling=0 verdict=TARGET_MET missed=none

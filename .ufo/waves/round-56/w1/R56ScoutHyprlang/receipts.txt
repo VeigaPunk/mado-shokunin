@@ -1,0 +1,117 @@
+# Receipts — seat R56ScoutHyprlang (wave w1)
+
+All commands run 2026-10-28. Fetch only; no tooling installed (no pacman, no uv, no binaries — none needed).
+
+## 1. Fetch of hyprlang v0.6.8 src/config.cpp
+
+```
+$ curl -fsSL -o config.cpp https://raw.githubusercontent.com/hyprwm/hyprlang/v0.6.8/src/config.cpp
+$ wc -l config.cpp
+1158 config.cpp
+$ sha256sum config.cpp
+fa1b6898f2f1676de73220450f18f09603f0c3f8833e4c0a7c42c12aebe1de3e  config.cpp
+```
+
+## 2. Round-46 pin identity
+
+```
+$ diff -u <lane>/.ufo/waves/round-46/fetch/hyprlang-config.cpp config.cpp ; echo "DIFF_EXIT=$?"
+(no output) DIFF_EXIT=0
+$ sha256sum <lane>/.ufo/waves/round-46/fetch/hyprlang-config.cpp
+fa1b6898f2f1676de73220450f18f09603f0c3f8833e4c0a7c42c12aebe1de3e  <lane>/.ufo/waves/round-46/fetch/hyprlang-config.cpp
+```
+
+Pin and fresh fetch are byte-identical: the round-46 pin IS v0.6.8.
+
+## 3. Full v0.6.8 tree + `source` grep (proves `source` is not built into hyprlang)
+
+```
+$ curl -fsSL https://github.com/hyprwm/hyprlang/archive/refs/tags/v0.6.8.tar.gz -o hl.tgz && tar xzf hl.tgz
+$ find hyprlang-0.6.8/src hyprlang-0.6.8/include -type f | sort
+hyprlang-0.6.8/include/hyprlang.hpp
+hyprlang-0.6.8/src/common.cpp
+hyprlang-0.6.8/src/config.cpp
+hyprlang-0.6.8/src/config.hpp
+hyprlang-0.6.8/src/core.hpp
+hyprlang-0.6.8/src/logger.hpp
+hyprlang-0.6.8/src/public.hpp
+$ grep -rn -i 'source' hyprlang-0.6.8/src hyprlang-0.6.8/include | grep -v 'resource\|Resource'
+hyprlang-0.6.8/include/hyprlang.hpp:366:            recommended to use for stuff like source = path.conf
+```
+
+Zero code occurrences of `source` in hyprlang src/; the only hit is the registerHandler doc comment.
+
+## 4. Hyprland side (wave pins, read-only)
+
+```
+$ grep -n 'registerHandler(&::handleSource' fetch/Hyprland-legacy-ConfigManager.cpp
+614:    m_config->registerHandler(&::handleSource, "source", {false});
+$ grep -n 'disable_autoreload' fetch/Hyprland-ConfigValues.cpp
+492:        MS<Bool>("misc:disable_autoreload", "If true, the config will not reload automatically on save.", false, {.refresh = Supplementary::REFRESH_CONFIG_WATCHER}),
+```
+
+## 5. hyprutils isNumber / trim (hyprlang v0.6.8 CMakeLists.txt:40 declares `hyprutils>=0.7.1`)
+
+```
+$ curl -fsSL https://raw.githubusercontent.com/hyprwm/hyprutils/v0.7.1/src/string/String.cpp -o hyprutils-String-v0.7.1.cpp
+$ sed -n '25,45p' hyprutils-String-v0.7.1.cpp
+bool Hyprutils::String::isNumber(const std::string& str, bool allowfloat) {
+    if (str.empty())
+        return false;
+    bool decimalParsed = false;
+    for (size_t i = 0; i < str.length(); ++i) {
+        const char& c = str.at(i);
+        if (i == 0 && str.at(i) == '-') {
+            // only place where we allow -
+            continue;
+        }
+        if (!isdigit(c)) {
+            if (!allowfloat)
+                return false;
+            ...
+```
+
+trim() (String.cpp:6-20) strips std::isspace on both ends — C-locale set {space, \t, \n, \v, \f, \r}, exactly the six chars the §C2 model names.
+
+## 6. Exact-line grep against src/config.cpp (citations used in the report)
+
+```
+config.cpp:195:    if (VALUE.starts_with("0x")) {
+config.cpp:259:    } else if (VALUE.starts_with("true") || VALUE.starts_with("on") || VALUE.starts_with("yes")) {
+config.cpp:261:    } else if (VALUE.starts_with("false") || VALUE.starts_with("off") || VALUE.starts_with("no")) {
+config.cpp:265:    if (VALUE.empty() || !isNumber(VALUE, false))
+config.cpp:282:        valueName += c + ':';
+config.cpp:285:    valueName += command;
+config.cpp:356:            if (!valueName.contains(":"))
+config.cpp:447:            result.setError(std::format("config option <{}> does not exist.", valueName));
+config.cpp:455:            const auto INT = configStringToInt(value);
+config.cpp:570:    if (!COMMENT.starts_with("hyprlang"))
+config.cpp:672:    line = trim(line);
+config.cpp:674:    auto commentPos = line.find('#');
+config.cpp:676:    if (commentPos == 0) {
+config.cpp:683:    if (!impl->currentFlags.ifDatas.empty() && impl->currentFlags.ifDatas.back().failed)
+config.cpp:690:        if (commentPos < line.length() - 1) {
+config.cpp:697:        if (!escaped) {
+config.cpp:701:            line       = line.substr(0, commentPos + 1) + line.substr(commentPos + 2);
+config.cpp:702:            commentPos = line.find('#', lastHashPos);
+config.cpp:711:    auto equalsPos = line.find('=');
+config.cpp:715:        result.setError("Invalid config line");
+config.cpp:722:        auto         LHS = trim(line.substr(0, equalsPos));
+config.cpp:726:            result.setError("Empty lhs.");
+config.cpp:730:        const bool ISVARIABLE = *LHS.begin() == '$';
+config.cpp:806:            return parseVariable(LHS, RHS, dynamic);
+config.cpp:832:            auto [f, rv]    = configSetValueSafe(LHS, RHS);
+config.cpp:839:            for (auto& h : impl->handlers) {
+config.cpp:844:                const bool UNSCOPED    = !h.name.contains(":");
+config.cpp:866:                if (UNSCOPED && HANDLERNAME != LHS && !h.options.allowFlags)
+config.cpp:872:                ret   = h.func(LHS.c_str(), RHS.c_str());
+config.cpp:884:                result.setError("Invalid config line");      (inside the '}' branch)
+config.cpp:889:                result.setError("Stray category close");
+config.cpp:893:            impl->categories.pop_back();
+config.cpp:901:            if (!line.ends_with("{")) {
+config.cpp:902:                result.setError("Invalid category open, garbage after {");
+config.cpp:907-908: line = trim(line); impl->categories.push_back(line);
+config.cpp:1048: parseError += "Config error in file {}: Unclosed category at EOF"
+config.cpp:1052: impl->categories.clear();      (end of parseFile)
+config.cpp:1070-1071: void CConfig::clearState() { impl->categories.clear();
+```

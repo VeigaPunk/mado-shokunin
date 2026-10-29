@@ -1,0 +1,136 @@
+# The focus grab: a client's own focus whitelist, how Hyprland 0.56.2 enforces it, and what this host advertises
+
+source: [ref] - hyprwm/hyprland-protocols focus-grab-v1.xml @ cd1aba6bd78775825eb230b3a4274c48b6705eb7 - both interfaces, every request, the `cleared` event
+source: [ref] - hyprwm/Hyprland src/protocols/FocusGrab.cpp @ efb50993780079460b0cbed1363e2166a2de1d9f - the compositor-side grab object and the seat grab it installs
+source: [ref] - quickshell-mirror/quickshell src/wayland/hyprland/focus_grab/grab.cpp @ 9b0f339b19057f4731bf3b48293307d7ef241671 - one real client's grab lifecycle
+source: [ref] - hyprwm/xdg-desktop-portal-hyprland v1.4.1 src/core/PortalManager.cpp - the registry listener that logs every global and has ten named bind branches
+source: [ref] - github.com/hyprwm/Hyprland/issues/565 - the rule-level counterpart, as a closed 2022 tracker record
+source: [ref] - hyprwm/hyprland-protocols README.md @ cd1aba6bd78775825eb230b3a4274c48b6705eb7 - what upstream says the protocol is for
+source: [ref] - own-work: `journalctl --user -u xdg-desktop-portal-hyprland --no-pager -o short-iso`, saved at .ufo/waves/round-41/fetch/xdph-journal.txt (sha256 bf8fa91a321197277cf9c1260d17524e9ddf862f7f76ddf440fc057aa600aaf7) - the host advertisement census
+source: [ref] - xdg-desktop-portal-hyprland v1.4.1 release (held row; installed package 1.4.1-2) - the identity of the portal whose journal this is
+verified-at: 2026-10-25
+recheck: 90d - re-pull the four pinned files, re-read the installed package record, re-run the journal census; a Hyprland tag after v0.56.2 is the earlier trigger
+ground: what a client-side focus limiter is on this compositor - the protocol surface, the enforcement point, the host's advertisement of it, one client's lifecycle, and the rule layer it is not
+Lane: mado-shokunin. Round: 41.
+assimilated-from: merge/mado/knowledge/corpus/knowledge/focus-grab-protocol-live-on-host-r14.md and merge/mado/knowledge/corpus/knowledge/focus-control-surfaces-r28.md (sections 1, 2 and 4; its section 3 is the localized documentation channel, outside PROVINCE.md, and is not cited here)
+
+## §1 The protocol: a manager, a grab, and a whitelist
+
+**OBS** [ref] (`hyprland_focus_grab_v1`, the grab interface's description): "This interface restricts input focus to a specified whitelist of surfaces" - and at protocol level the same file says "This protocol allows clients to limit input focus to a specific set of surfaces", so the surface is a *limiter over a set of surfaces the client names*, not a way to focus anyone else's.
+
+**OBS** [ref] (`hyprland_focus_grab_manager_v1`, version 1): the manager has exactly two requests - `create_grab`, taking a `new_id` of `hyprland_focus_grab_v1`, and the destructor `destroy`, whose description says it "doesn't destroy existing focus grab objects". The grab has `add_surface` and `remove_surface` (each taking a `wl_surface`), `commit`, its own destructor, and one event, `cleared`.
+
+| interface | member | kind | what it does |
+|---|---|---|---|
+| `hyprland_focus_grab_manager_v1` (v1) | `create_grab(grab: new_id hyprland_focus_grab_v1)` | request | makes one grab object |
+| | `destroy` | destructor request | destroys the manager only; existing grabs survive |
+| `hyprland_focus_grab_v1` (v1) | `add_surface(surface: wl_surface)` | request | whitelists a surface; duplicate additions ignored; takes effect on `commit` |
+| | `remove_surface(surface: wl_surface)` | request | un-whitelists; a destroyed surface is treated as this call; takes effect on `commit` |
+| | `commit` | request | applies the pending list: empty -> non-empty starts the grab, non-empty -> empty makes it inert |
+| | `destroy` | destructor request | destroys the grab and removes it if active |
+| | `cleared` | event | the compositor cancelled an active grab |
+
+**OBS** [ref] (`commit`, the transition rule): "If the list previously had no entries and now has at least one, the grab will start." The start/stop condition is in the request text, not left to the compositor.
+
+**OBS** [ref] (`hyprland_focus_grab_v1`, routing and the trigger): the keyboard goes to one surface the compositor picks from the set - "a compositor-picked surface in the whitelist will receive a wl_keyboard::enter event" - pointer and touch inside a whitelisted surface pass normally, and "Upon meeting implementation-defined criteria usually meaning a mouse or touch input outside of any whitelisted surfaces" the compositor clears the whitelist, renders the grab inert and sends `cleared`; the same happens if another focus grab or similar action starts, at the compositor's discretion.
+
+**INF** The protocol cannot move focus outside the set: the keyboard lands on a *compositor-picked* whitelisted surface and no request names a focus target: the client controls the set, the commit timing and the grab's lifetime. `Basis:` [ref]'s interface description and the `commit` request text.
+
+**UNK** What "implementation-defined criteria" and "similar action" cover beyond pointer/touch-outside and a competing grab. The XML enumerates neither, and [ref] is read below for the branches it contains, not as an enumeration.
+
+## §2 The compositor side: a seat grab carrying a surface set
+
+**OBS** [ref] (`src/protocols/FocusGrab.cpp`, `CFocusGrab::CFocusGrab`): "m_grab->m_keyboard = true;" - the grab object allocates a `CSeatGrab` with keyboard and pointer both enabled, and "m_grab->setCallback([this]() { finish(true); });" registers a callback that finishes the grab *itself*, with the `cleared` event; what triggers that callback lives in `CSeatGrab`, which the receipt only forward-declares.
+
+**OBS** [ref] (`CFocusGrab::start`): "m_grabActive = true; g_pSeatManager->setGrab(m_grab);" - starting means installing this object as the seat's grab; the same method then calls `simulateMouseMovement()` and `refocusKeyboard()`.
+
+**OBS** [ref] (`CFocusGrab::finish`): "if (sendCleared) m_resource->sendCleared();" - the event is conditional on the flag, the destructor calls `finish(false)`, and the seat grab is dropped only if it is still the current one ("if (g_pSeatManager->m_seatGrab == m_grab) g_pSeatManager->setGrab(nullptr);"), so a grab object destroyed while another grab owns the seat does not unseat it.
+
+**OBS** [ref] (`CFocusGrab::commit`): "if (surfacesChanged) { if (anyCommitted) start(); else finish(true); }" - each surface carries a three-valued state (`PendingAddition`, `PendingRemoval`, `Committed`); a normal commit promotes additions into the seat grab and erases removals (the destroy-path `commit(true)` only erases removals), and only a change of the set triggers start or finish. A surface's destroy signal routes to `eraseSurface`, which removes it and commits with `removeOnly = true`, so destruction can never re-add a surface.
+
+**OBS** [ref] (`CFocusGrab::refocusKeyboard`): the keyboard is moved to the first committed surface through `Desktop::focusState()->rawSurfaceFocus(surface)`, and the no-surface branch logs "called with no committed surfaces. This should never happen." - the function logs an error and returns; no clear and no client error follows.
+
+**OBS** [ref] (`CFocusGrabProtocol::onCreateGrab`): a grab whose resource fails `good()` gets `pMgr->noMemory()` and is popped from the protocol's list, so a resource that is not `good()` is answered with `noMemory()` and dropped from the list.
+
+**INF** The whitelist is installed as the seat's grab: nothing in this file consults a window or workspace rule, and the object's effect is the `CSeatGrab` it installs and removes; how that grab filters events is unread (UNK below). `Basis:` [ref]'s constructor, `start` and `finish`.
+
+**UNK** How `CSeatGrab` routes an event that falls outside the set - the receipt holds the grab object, not the seat manager. The XML states the effect (outside input clears the grab; keyboard goes to a whitelisted surface); the seat's own code was not read this round.
+
+## §3 What this host advertises, and who is listening
+
+**OBS** [ref] (saved journal, latest session, `2026-10-25T13:36:24-03:00`, pid 1952): "Got interface: hyprland_focus_grab_manager_v1 (ver 1)" - one advert, version 1, in a session that opens with "Gathering exported interfaces" after "XDG_CURRENT_DESKTOP set to Hyprland".
+
+journal sessions=2 adverts=78 interfaces=63 focus_grab=1
+
+**OBS** [ref] (session structure): the file holds two portal sessions - pid 1918, whose slice opens mid-stream at 13:16:45 with 15 adverts and closes at "Stopped Portal service (Hyprland implementation)." - it belongs to the previous boot, which ended at 13:35:34 (`journalctl --list-boots`, read-only) - and pid 1952, which opens at "Starting Portal service (Hyprland implementation)" and carries the other 63. The `-- Boot` marker sits between them.
+
+**INF** The first session is a slice of the previous boot's portal (the `-- Boot` marker lies between the sessions): its 15 adverts over 8 names are a fragment and say nothing about the current registry. The census line above reports the latest session - 63 distinct names, none advertised twice - but 63 is what the log retained, not proof of the compositor's complete registry: that session holds no `wl_output` and no `zwp_linux_dmabuf_v1` advert, which the previous boot's slice shows the same portal logged and its handler binds, and the lane's round-13 wayland-info capture (a held row, 71 names) holds both. `Basis:` the journal's own lines 8-9 and the session structure.
+
+**OBS** [ref] (`src/core/PortalManager.cpp`, `CPortalManager::onGlobal`, lines 85-261): every global is logged before any branch, with 'Debug::log(LOG, " | Got interface: {} (ver {})", INTERFACE, version);', and what follows is a fixed set of ten named branches (nine direct `wl_registry_bind` calls and the foreign-toplevel branch, which hands name and version to `CToplevelManager`) - screencopy, global shortcuts, input capture ("if (INTERFACE == hyprland_input_capture_manager_v1_interface.name)"), xdg-output, toplevel export, `wl_output`, dmabuf, `wl_shm`, foreign toplevel, toplevel mapping. The focus-grab manager is not one of them.
+
+**OBS** [ref] and [ref] (measured this round, read-only): `grep -in focus` over `PortalManager.cpp` exits 1 - the string does not occur in the file at all - and in the whole journal the string `focus` occurs exactly once, on the advert line itself, while the same session logs `[input-capture] init successful` and `[globalshortcuts] registered`. The portal logs the global and does not use it.
+
+**OBS** [ref] (installed package record, read-only file read of `/var/lib/pacman/local/xdg-desktop-portal-hyprland-1.4.1-2/desc`): "%NAME% xdg-desktop-portal-hyprland %VERSION% 1.4.1-2" - the portal that wrote this journal is upstream v1.4.1 at pkgrel 2, so the installed package is upstream v1.4.1 at pkgrel 2; that the running binary is that package's file and that the packaging left the source untouched are not established by this receipt. This receipt grounds the *installed* version, not the release page: the tag anchor `v1.4.1` and its commit `cc8e5ef` are [ref]'s own row, not re-fetched this round.
+
+**INF** The advertisement is a *compositor* fact, not a portal capability: the line exists because the portal dumps the registry it was handed, and the portal source's own bind branches exclude the manager. A client that wants the protocol binds it itself; the `wl_registry` is the only gate the receipts show, and the XML names no app-id, sandbox or permission condition. `Basis:` [ref], [ref], [ref].
+
+**INF** The compositor that logged this is the one [ref] is pinned at: `hyprctl version` this round printed `Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f`, the same commit as the source pin. That version read is a dated measurement, not a registry row; the pin is what this entry cites.
+
+**UNK** Which process on this host binds `hyprland_focus_grab_manager_v1` today, and whether any does. The journal shows the advert, not a bind, and this round ran no Wayland client of its own.
+
+## §4 A real client's lifecycle: quickshell
+
+**OBS** [ref] (`src/wayland/hyprland/focus_grab/grab.cpp`, `FocusGrab::sync`): "the protocol will always send cleared() when the grab is deactivated," - the client's own comment states the invariant it relies on, which is exactly the compositor's `finish(true)` path, and why the destructor's `finish(false)` matters for a client that is being torn down anyway.
+
+**OBS** [ref] (`FocusGrab::addWaylandWindow`): "this->pendingAdditions.append(window); this->commitRequired = true;" - adding a window sends `add_surface` at once (`grab.cpp:66`) and then records it for the commit; `sync()` is the only place that commits.
+
+**OBS** [ref] (`FocusGrab::sync`): "if (!this->active) { this->active = true; emit this->activated(); }" - the client's `active` flips only after a commit that left pending additions, and `hyprland_focus_grab_v1_cleared()` sets it back to false and emits `cleared`.
+
+**OBS** [ref] (`FocusGrab::addWindow` and `removeWindow`): a `QWindow` that is not yet a `QWaylandWindow` is added on `surfaceCreated`, or on `visibleChanged` after `window->create()`; removal disconnects the window, drops it from `pendingAdditions`, calls `remove_surface` and sets `commitRequired`.
+
+**INF** The client treats the protocol as a two-phase set operation with a transaction boundary: `startTransaction()` and `completeTransaction()` suspend `sync()`, so a batch of windows becomes one `commit` and at most one `activated`. `Basis:` [ref]'s `sync`, `startTransaction`, `completeTransaction`.
+
+**UNK** Whether one Qt transaction is one frame in practice. A `cleared` arriving between `add_surface` and `commit` is visible in the receipts' code paths (`startTransaction()` suspends `sync()`; the handler sets `active = false` without touching `pendingAdditions`; the compositor's `finish` clears its surface map), so the client's `active` and the compositor's grab can disagree after such a `cleared`; no run observed it.
+
+## §5 The rule-level counterpart: focus the compositor decides
+
+**OBS** [ref] (issue 565, body): the reporter's rule is `windowrule = workspace 4 silent,^(pavucontrol)$` and the expectation is "If a workspace windowrule contains `silent` then matching windows should not get focus, unless that window's workspace is already the active one.", while the observed behaviour is that "When the new window opens in a different workspace, it seems to steal it momentarily" and then hands focus back to the previous window.
+
+**OBS** [ref] (log excerpt in the issue): the compositor prints "Tried to set workspace silent rule to a nofocus window!" - both the rule and the focus decision are the compositor's, and their disagreement is visible only in its log.
+
+**OBS** [ref] (maintainer reply, Aug 2022): "fixed in b09f157" - the issue is closed, and it predates the 0.56 line by years.
+
+**OBS** [ref] (hyprland-protocols README, finished protocols): the protocol is listed as "for grabbing input focus, primarily for complex context menus", and the README gives the reason the set exists at all - "we have to maintain a set of protocols Hyprland uses" - because wayland-protocols is slow to change and does not admit Hyprland-specific work.
+
+**INF** Two layers, two owners. The protocol lets a *client* narrow focus over surfaces it already owns and hands the pick back to the compositor; the rule layer lets the *config* constrain the compositor's choice over windows the client never names. Issue 565 is the rule layer failing on its own terms, and it shows the rule layer deciding focus over a window; no receipt shows a rule granting a grab, and the rule's subject is a window while the grab's subject is a set of surfaces. `Basis:` [ref], [ref], [ref].
+
+**UNK** Whether 0.56.2 still exhibits the momentary steal of #565. The record is from 2022 against an unnamed revision, and this round measured no focus transition (no input was injected).
+
+**INF** The three held rule entries named here hold no focus-rule semantics: `grep -rli 'focus_grab\|focus-grab\|focus grab' corpus PROVINCE.md SKILL.md tools` exits 1 at base; `window-rule-effects-getprop.md` and `workspace-rules-r27.md` contain no `focus` line, and `rule-attribution-r24.md`'s only hit is a block rule named `jetbrains-focus`; other held rule entries were not scanned. This section is a pointer to the tracker record, not a restatement of held rule semantics.
+
+## §6 The decision table
+
+| question | where the answer lives | state |
+|---|---|---|
+| What can a client ask for? | [ref]: two interfaces, six requests (two on the manager, four on the grab), one event (§1) | OBS |
+| When does a grab start, and when does it end? | [ref] `commit` text; [ref] `commit`, `start`, `finish` (§1-§2) | OBS |
+| What ends an active grab? | [ref]'s seat-grab callback into `finish(true)`; [ref]'s "implementation-defined criteria" (§2) | OBS for the branches, UNK for the criteria |
+| Is the whitelist a rule or a seat grab? | [ref]: a `CSeatGrab` with keyboard and pointer, installed on the seat (§2) | INF |
+| Does this host advertise it? | [ref]: one advert, version 1, latest session (§3) | OBS |
+| Does `PortalManager.cpp` bind it? | [ref] and [ref]: logged, no branch for it, no other line (§3) | OBS |
+| Who binds it on this host? | nowhere in the receipts | UNK |
+| What does this client do between `add_surface` and `commit`? | [ref]: record in `pendingAdditions`, then `sync()` commits (§4) | OBS |
+| What does a client do on `cleared`? | [ref]: `active = false`, emit `cleared` (§4) | OBS |
+| How is ordinary window focus decided instead? | [ref] plus the held rule entries (§5) | INF, and UNK for the current release |
+| Is the protocol part of wayland-protocols? | [ref]: Hyprland maintains its own set (§5) | OBS |
+| Is there a version above 1? | [ref]: both interfaces declare `version="1"` (§1) | OBS |
+
+## §7 What this does not license
+
+- No live grab was exercised: no client was run and no input was injected, so "a grab works on this host" is not a measured claim. The advert (§3) and the code (§2) are.
+- The census is one host, one day, two portal sessions, and the first of them is a slice (§3). Re-run the census; never reuse the counts.
+- Issue #565 is a 2022 record. It supports "the rule layer decides focus and can be wrong", not any 0.56.2 behaviour.
+- `CSeatGrab`'s routing is unread here (§2 UNK): the entry states what the protocol promises an outside event does, not how the seat implements it.
+- Nothing here says the protocol is a security boundary. No receipt gates it by client identity, and no malicious or racing client was tested.
+- The portal's non-binding (§3) is a statement about v1.4.1's `PortalManager.cpp` and this journal, not about later releases or other code paths.
+- The staged `focus-control-surfaces-r28` section 3 (localized documentation channel) is outside PROVINCE.md and is not a source here; the entry rests only on the rows above.

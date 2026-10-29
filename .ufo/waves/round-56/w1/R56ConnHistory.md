@@ -1,0 +1,115 @@
+# R56ConnHistory — round 56 w1: failure-class coverage scan and forgery recipes
+
+Seat: R56ConnHistory (leaf; no subagents). Read-only scan. Contract: freeze commit `3423ae285676c2a10273000f4519163472b443db` (`round-56: freeze claims, registration, frozen tables, fixtures, controls, pins, baselines`, committer 2026-10-28T21:19:17-03:00). Lane HEAD at scan time `2aa347b1`. Frozen `frozen-tables.json` sha256 `d50d2b7b16506c50cb44358d4284e4f0eb0d14e433594d068a0fbe74c5edf9af` (matches the orchestrator's value).
+
+Deliverables (all under `.ufo/waves/round-56/w1/R56ConnHistory/`):
+- `recipes.py` + `recipes.out`: in-memory re-implementation of registration §C3 (CITE / SRC / USEDBY, missing / extra / dangling) and of the §C1 lexical legs (tok / num / length), run against the base and freeze objects; forgery recipes A–C and probes.
+- `sibling-run.py` + `reader.py` + `sibling-run.out`: harness-shaped run (export at freeze commit, `{FX}` substitution, cwd = export root) of a short tool (`reader.py`, about 20 lines) that never parses its config.
+- `freeze-order.out`: `quality/check-freeze-order.py` at HEAD (read-only).
+
+## 1. Bottom line
+
+- Round 56 catches the defects it was built for: the scope leg replays to the two r55 failures (K14, K17); identifier-free placeholder junk fails `tok`; frozen quotes are byte-substrings of their pin lines; the fixture commitment recomputes to the frozen value; no quote contains a pipe; the freeze precedes the launch.
+- The frozen set does not contain the instruments. No `quality/counters/c1-r56-*`, `check-r56-controls.py`, `c3-r56-used-by.py`, `tools/mado-watchplan.py` or entry is committed at `3423ae28`. The predicates are satisfiable by candidate-side code (forgery recipe 1).
+- Verified misses: a C2 sibling-read passes all 18 committed fixtures (the r55 M55-4 channel, whose isolation fix the r56 registration does not carry); C3 citation erasure reaches `missing=0 extra=0 dangling=0`; lexically grounded false propositions pass C1's legs.
+- Three of the seven named classes have undeclared misses (harness channels, self-attesting controls, scope via registry cells). Content-blind counters and junk entries are declared limits, but the frozen §9 "cheapest do-nothing control" is mislabelled.
+
+## 2. Commands and decisive output (trimmed)
+
+1. Freeze commit and frozen tables (read-only git):
+   - `git show --name-status --format='COMMIT %H %cI %s' 3423ae28…` → 80+ `A` rows: `claims-frozen.md`, `ctl/*`, `fetch/*`, `fixtures/c2/F01…`, and so on.
+   - `git ls-tree -r --name-only 3423ae28 -- quality/counters/c1-r56-autoreload-entry.py quality/check-r56-controls.py quality/counters/c3-r56-used-by.py tools/mado-watchplan.py corpus/knowledge/hyprland-config-autoreload-r56.md` → **no output** (none present at the freeze commit).
+   - `quality/**r56*` and `quality/**check-r56*` globs → no matches; only `.ufo/waves/round-56/ctl/` is listed.
+2. Fixture commitment (python, git objects only): `fixture_files_at_rev= 119 symlinks= 3`; `computed fixture_commit= a9f552511cc4939e3c83190e7ca55a09d5f01dd520c59b3a6feeba2e0c4647d6`; frozen `c2.fixture_commit_sha256` identical.
+3. Quotes and tables (python): K=30, H=3; K/H fields containing `|`: **0**; `c3.baseline = {entries:70, rows:319, missing:65, extra:0, dangling_source:0}`.
+4. `receipts/freeze-verify.txt` (read, not re-run): all 30 K and 3 H rows `ok`, `rows K=30 H=3`, `fixture commitment ok files=119`, `FREEZE_VERIFY: bad=0 … OK`.
+5. `receipts/scope-replay-r55.txt` (read, not re-run): `REPLAY scope leg on r55 entry at 63f48dc1 K rows 18 scope-failing 2` — K14 (S318, anchor 271-279, quote line 280) and K17 (S052, anchor 2573-2699, quote line 2741).
+6. `receipts/witness.txt` (read): `witness K rows 30 failures []`.
+7. `recipes.py` → `recipes.out` (rc 0):
+   ```
+   BASELINE base=13f0acbe3a15 entries=70 rows=319 row_lines=319 missing=65 extra=0 dangling=0
+   REGISTRY max_id=S382 rows_with_4plus_digit_ids=0
+   CITE_PROBE 'S0383 s383 S 383 S383a S1000 S383' -> ['S383']
+   RECIPE_A erase_tokens entries=28 tokens_removed=123 -> missing=0 extra=0 dangling=0
+   RECIPE_B fence_naive lines_wrapped=87 -> missing=0 extra=6 dangling=0
+   RECIPE_B fence_precise lines_wrapped=55 -> missing=34 extra=0 dangling=0
+   RECIPE_C window entry=corpus/knowledge/animation-table-r26.md ghost_at_line16 dangling=0 ghost_at_line15 dangling=1
+   LEX K01 asserts true default; quote carries 'false' as final token -> {'tok': True, 'num': True, 'len40': True}
+   LEX K01 do-nothing control text (registration control 2) -> {'tok': False, 'num': True, 'len40': True}
+   LEX K04 control-3 appended sentence alone (registration control 3) -> {'tok': False, 'num': False, 'len40': True}
+   ```
+   The C3 baseline reproduces the frozen `70/319/65/0/0`, so the recipe numbers rest on a faithful §C3 implementation. The implementation is mine, not the lane's counter (which is absent). Declared simplification: a fence toggles on any fence line.
+8. Control preconditions (in-memory, base tree and frozen tables): first sorted entry `corpus/knowledge/animation-table-r26.md` has `source:` on line 3 (control 4 buildable); `S001` is a base row (control 5 buildable); K04 quote (`setWatchList(*PDISABLEAUTORELOAD ? …`) contains no `200` (control 3 buildable via `num`).
+9. `sibling-run.py --work <scratch>` → `sibling-run.out`: `SIBLING_READER rev=3423ae285676 committed_pass=18/18 fail=[]` (rc 0). The tool answers from `expected.out` beside/above an absolute path argument. The hold-out was not exported or read.
+10. `git grep -n 'c2-holdout' 3423ae28 -- registration.md claims-frozen.md` (read-only): `registration.md` lines 85, 152, 155, 156 name `fixtures/c2-holdout`; `claims-frozen.md` has no hit.
+11. `quality/check-freeze-order.py --repo <lane> --rev HEAD --round 56 --wave w1 --work <scratch>` → `MADO_FREEZE_ORDER: round=56 wave=w1 freeze=3423ae285676 freeze_time=2026-10-28T21:19:17-03:00 launch=2026-10-29T00:22:47.615Z verdict=OK reason=ok` (rc 0). The FREEZE set in this instrument is `claims-frozen.md`, `registration.md`, `frozen-tables.json` only (`check-freeze-order.py` lines 10–12, 36–37).
+12. Round-55 evidence read (not re-run): lessons `round-53.md`, `round-54.md`, `round-55.md`, `round-55-verifier-spotcheck.md`; `QUALITY.md` criteria 97–106 (raw lines 520–588); wave-2 reports `R55W2CritC1Forge`, `R55W2CritC3Stale`, `R55W2CritC1Env`, `R55W2CritAdmission`, `R55W2CritFreezeFool`, `R55W2CritToolIsolation`, `R55W2MutC1Harness`, `R55W2MutC3`, `R55W2MutC1CounterB`, `R55W2CritCoverage`, `R55W2RevCriterion106`.
+
+## 3. Failure-class coverage
+
+| Named class (source) | Round-56 frozen contract catches | Misses | Declared where |
+|---|---|---|---|
+| **Content-blind counters** (M55-9; M54-5; QUALITY 104/105) | C1 `tok`/`num` catch identifier-free placeholders (LEX row 2). Quote identity is byte-exact (freeze-verify). C3 is count-only by design. | Lexically grounded false propositions pass (LEX row 1; recipe 3). Citation erasure passes C3 (recipe 4). | C1: yes ("what the counter proves and does not"). C3 erasure: **no**. |
+| **Junk entry passing** (M55-9 J1/B1/B2/C1/P1) | P1-type `S999`: caught (`prov`, `source_cell`). Same-family K-row swap: caught by the frozen per-row `sid` (the r55 C1 forge is now red). Placeholder junk: caught by `tok`. | Identifier-carrying false propositions (recipe 3). The frozen §9 calls the placeholder "the cheapest entry that copies the frozen quotes" — false (LEX row 1 shows a cheaper honest-looking route). | Identifier reuse: yes. The mislabelled "cheapest" control: no (D5). |
+| **Scope / anchor mismatch** (M56-1; K14/K17 in r55) | Scope leg reproduces both r55 failures (scope-replay-r55.txt). | Anchor cells are read from the candidate's `SOURCES.md`; no leg freezes or compares them (recipe 5). Control 5 swaps the cited id, not an anchor, so the leg's own bypass is untested. New rows S383–S390 have unconstrained anchors. | **No.** The registration says C1 "proves … registry binding and scope" (overclaim). |
+| **Harness sniffing channels** (M55-4 sibling read; M55-10; R55 C1Env env/ppid/path/cache) | C1/C3: counter reads git objects only; generic declaration covers counter env-sniff, cache and forgery (registration lines 18–20). | **C2 sibling read (recipe 2; sibling-run 18/18).** The r55 isolated run directory (`run_isolated`) is not in the r56 §C2 harness text (cwd = export root). Expectations are read from the candidate export (D3). | Generic sentence covers counters only. The tool/expectation channel is **undeclared**. |
+| **Frozen sentence unsatisfiable as written** (M55-2 K16 `\|\|`, K17 URL; M55-3 empty stack; M54-3 quotes) | `\|` in quotes: none (checked). Quotes at exact pin lines (freeze-verify). Fixture commitment recomputes to frozen value. Control 3/4/5 preconditions satisfiable (checked). | `c3.sources_sha256_at_base` is frozen but unused (D9). The witness receipt does not show legs (D10). `const-host ≤1 of 26` depends on sealed hold-out content, unverifiable before reveal (D14). | n/a (satisfiability is a freeze-time check; partial evidence only). |
+| **Quote normalization** (M53-3 P16 spliced; M54-3 wrapped / emphasised quote; round-52 space-joined) | Strict byte-substring on one line rejects whitespace-collapsed, spliced and emphasis-stripped quotes. | Pin fidelity to upstream: nothing binds `fetch/*` to the upstream bytes beyond the committed pin sha (pins are self-hashed). Proposition text is not normalisation-checked. | Pin provenance: **undeclared** (registration is silent). |
+| **Self-attesting controls** (M54-6; R55 C1Env #8 expectation tamper, 7/7 OK vs 0/7 committed; M05 skipped control; M11 always-green shortcut) | None. The freeze contains no harness; control verdicts are printed by the unfrozen harness. | Recipe 1. `controls=<k>/10` (and /6, /3) are printed as literal denominators; the verdict rule does not require 10 executed controls (D12). | **No.** Declared limits cover only counter sniffing/caching/forging. |
+| Hold-out destination named to builders (M55-5) — recurrence | Hold-out content is outside the repo until reveal; commitment is frozen. | Path named in committed `registration.md` (lines 85, 152, 155, 156) and in builder specs; the sentinel check (`make-w1-spec.py` line 92) fails on its own registration text (D4). | Registration says "seats are not told where it is held" — contradicted by its own text. |
+| Freeze after launch (M54-2/M54-4/M55-1) | Caught: `freeze_time` 2026-10-28T21:19:17-03:00 < `createdAt` 2026-10-29T00:22:47.615Z → OK. | Freeze-set gaps (D11): fixtures, ctl, fetch, freeze-verify and receipts are not in the 106 set; its declared limits name only errata files, deletion and `createdAt`. | Partly (106 limits (a)–(c)); fixtures/ctl/fetch **undeclared**. |
+
+## 4. The five most likely ways the three predicates can pass without the claimed work (most dangerous first)
+
+1. **Self-attesting instruments (all three predicates).** The predicate sentences name a counter that "prints one line … and exits 0", a harness that prints `controls=10/10 verdict=OK`, and a tool that prints `holdout_commit=ok`. None of those files is frozen (absent at `3423ae28`; the w1 outputs are seat drafts such as `w1/R56ExecC3CounterA/c3-r56-used-by.py` and `w1/R56ExecWatchplanHarness/r56_ctl_c2.py`). A candidate counter that prints the frozen line and a harness that prints the frozen control line pass as the sentences are written, with no entry, tool or fixture. [INFERENCE from the sentence text and freeze contents; the r55 analogue is measured: `R55W2CritC1Env` #8 — a tampered harness reads `controls=7/7 verdict=OK` while the committed harness reads 0/7.] Defence: freeze the counter, harness and tool blob shas, and run the harness from freeze-commit blobs.
+
+2. **C2 sibling read plus committed-expectation edit.** Verified: `sibling-run.out` → `committed_pass=18/18` for a short reader (`reader.py`) that never parses its config; it answers from `expected.out` one or two levels above an argument path, because `args.json` passes `{FX}` as the fixture root (`F02`: `--config {FX}/tree/hyprland.conf`, `--display-root {FX}`). The §C2 harness runs with cwd = export root and no run-directory isolation, and the hold-out uses the same `{FX}` layout (registration lines 148–149). [INFERENCE for the 8 hold-out fixtures: they would pass the same way; sealed, not run.] A second route: edit a committed `fixtures/c2/F*/expected.out` in the candidate tree. The harness compares to the export's file; the fixture commitment is recomputed but not a verdict field (registration lines 157–159); QUALITY 106's freeze set excludes fixtures. Defence: run the tool in a private directory holding only argv-named inputs (the r55 `run_isolated` fix), and compare to freeze-commit blobs, not export files.
+
+3. **C1 lexically grounded false propositions.** Verified (`LEX` row 1): a proposition asserting that the quoted entry "sets its value to true by default" passes `tok` (shared `disable_autoreload`), `num` (no digits) and length ≥40, though the quoted K01 line ends in `false`. `num` also accepts `0`, `1`, `2`, `3` unconditionally, so a false default written as `0` or `1` passes. [INFERENCE for a full 30-row entry: the r55 analogue is measured — `R55W2CritC1Forge` B2, all 18 K and 6 H propositions contradicting their pin lines, reads `TARGET_MET … 7/7 OK`; r56 adds only `tok`/`num`, which this forge satisfies.] This is the most likely practical route because it needs no harness edit. It is a declared limit for identifier reuse, but the registered "do-nothing" control does not test it (D5).
+
+4. **C3 citation erasure.** Verified (`RECIPE_A`): deleting the 123 cited `S###` tokens from 28 entries' prose, with no `used-by` edit, makes the faithful §C3 implementation read `missing=0 extra=0 dangling=0` from the 65-pair baseline. Fence wrapping does not reach 0/0/0 as I ran it (`RECIPE_B`: `extra=6` naive; `missing=34` precise), so erasure is the clean route. A ghost `source: S999` at line 16 reads `dangling=0` (`RECIPE_C`); the SRC window is 15 lines while C1's `prov` window is 30. Spelled variants (`S0383`, `s383`, `S 383`, `S1000`) are invisible to CITE (`CITE_PROBE`). None of this is declared. The harness controls each still produce their expected leg on an erased tree [INFERENCE from the control definitions; not run].
+
+5. **C1 scope via a registry anchor edit.** [INFERENCE from the frozen grammar; the counter is not on disk.] The scope leg reads the `anchor` cell of the rev's `corpus/SOURCES.md`, which is not frozen: widening S318's anchor `Hyprland-ConfigValues.cpp:271-279` to include `280` turns the r55 K14 failure green; new rows S383–S390 carry their own anchors, and `source_cell` does not read anchors. Control 5 changes the cited id to a different row, so the leg's own bypass is never exercised. The M56-1 fix would then read green on its own replay target. Defence: freeze the anchor, URL, tier and status cells of pre-existing rows by blob sha, and add a control that edits an anchor.
+
+## 5. Defects and ambiguities (with inputs)
+
+- **D1 — instruments outside the freeze.** Input: `git ls-tree` (§2.1) empty for the four r56 instrument paths and the entry; `claims-frozen.md` lines 3–6 say "No predicate, counter sentence, control, fixture or target here changes after any seat has scored" — nothing enforces it for counters, harness or tool. `registration.md` lines 4–5 list the freeze set without them.
+- **D2 — C2 isolation regression.** Input: `registration.md` lines 155–158 ("cwd = export root"); r55 lesson M55-4 fix (private run directory). Measured: `sibling-run.out` 18/18.
+- **D3 — expectations read from the candidate tree; fixture commitment not a verdict leg.** Input: `registration.md` lines 157–159 ("compares stdout bytes and exit status with `expected.out`/`expected.rc`, recomputes the two commitments, and prints … holdout_commit=…"). The printed line has no fixture-commitment field. Also ambiguous: whether the compare reads the export or the `--rev` blob, and whether the recompute happens before or after the tool runs (r55 A8 wrote into the export).
+- **D4 — hold-out destination named to builders (M55-5 recurrence).** Input: `registration.md` lines 85, 152, 155, 156 (git grep at `3423ae28`); `w1-spec.json` line 69 and `make-w1-spec.py` line 51 tell the builder to use `.ufo/waves/round-56/fixtures/c2-holdout … when present`; `make-w1-spec.py` line 92 asks the sentinel to confirm "no committed file under {W} names the sealed hold-out location", which the committed registration fails. Content is not exposed by this; the registration's statement "seats are not told where it is held" is contradicted by its own text.
+- **D5 — "cheapest" do-nothing control mislabelled.** Input: `claims-frozen.md` line 36 ("controls 1 (absent) and 2 (junk placeholders: the cheapest entry that copies the frozen quotes and fills placeholder propositions)"). LEX row 2 shows control 2 is caught only because its placeholder shares no identifier with the quote; LEX row 1 passes with identifier overlap.
+- **D6 — `num` widening.** Input: registration §C1 `num` leg accepts digit runs equal to `0,1,2,3` or to "the line of another frozen row of the same pin". Any proposition with those digits passes `num`; not declared.
+- **D7 — scope claimed, anchors unfrozen.** Input: `registration.md` lines 57–58 ("It proves … registry binding and scope"); §C1 `source_cell` checks status/tier/opened/URL/used-by only; control 5 (lines 67–68) mutates the cited id.
+- **D8 — C3 definitional gaps.** Input: `registration.md` §C3 CITE regex `S[0-9]{3}` (3-digit only; `CITE_PROBE` shows `S1000`, `S0383`, `s383`, `S 383` invisible); SRC window "first 15 lines" (`RECIPE_C`: ghost at line 16 → dangling 0); fence closing rule unstated (D15). Latent: no current row has a 4-digit id (`rows_with_4plus_digit_ids=0`, max `S382`), so the id gap is unreachable at base.
+- **D9 — unused frozen constant.** Input: `frozen-tables.json` `c3.sources_sha256_at_base` = `422f35f8632ff267e46b5e838272f11b10f2cbf5a19017d65818ff980044e122`; no match for `sources_sha` in `registration.md`, `claims-frozen.md` or `freeze-verify.py`. The C3 base-registry control reads base bytes through git, not this hash.
+- **D10 — witness claim not evidenced.** Input: `claims-frozen.md` lines 9–10 ("an L1 witness (every row, `tok`, `num`, `scope` leg)"); `receipts/witness.txt` is one line, `witness K rows 30 failures []`. It records no leg, no H row and no new row. I did not re-run it.
+- **D11 — QUALITY 106 freeze set narrower than the registration's freeze.** Input: `check-freeze-order.py` lines 10–12, 36–37 (three names); `registration.md` lines 4–5 freezes `fixtures/c2`, `ctl/`, `fetch/`, `freeze-verify.py`, `receipts/` too. Post-launch edits to those are invisible to the 106 instrument and absent from its declared limits (a)–(c). The check itself reads OK at HEAD (§2.11).
+- **D12 — literal denominators, no executed-count rule.** Input: `registration.md` lines 63–72 and 160–162 print `controls=<k>/10` (and /6, /3) and define `verdict` without requiring that all controls ran with their expected legs. The r55 analogue is `R55W2MutC1Harness` M05 (a dropped control reads `controls=6/7 verdict=OK`).
+- **D13 — three tool candidates, selection risk.** Input: `w1/R56ExecTool1/mado-watchplan.py`, `w1/R56ExecTool2/…`, `w1/R56ExecTool3/…`; the lane path `tools/mado-watchplan.py` is absent. Which candidate is committed is an integrator choice made after the committed fixtures are visible. Selection must not use the hold-out score (the r55 M55-5 disclosure).
+- **D14 — control thresholds depend on sealed material.** Input: `registration.md` lines 160–161 (`const-host` passes "at most 1 of the 26 fixtures"). Whether any hold-out `expected.out` equals F02's output is unknowable before reveal. `lookup-committed` passes 0/8 hold-out only because the hold-out ids are not `F##`; it does not police the sibling channel its name suggests.
+- **D15 — fence rule ambiguity.** Input: `registration.md` §C3 names ``` / ~~~ fences with 0–3 leading spaces, but not closing-marker matching. I used "any matching line toggles".
+- **D16 — C1 proposition leg checks, not truth.** Declared in registration §C1; repeated here so the table is complete.
+
+No defect found in: the frozen K-row `\|` grammar (zero pipes), the fixture commitment, the C3 baseline (reproduced exactly), the freeze ordering, or the scope replay.
+
+## 6. Not verified
+
+- The lane's counters, harness and tool (`quality/counters/c1-r56-*`, `quality/check-r56-controls.py`, `quality/counters/c3-r56-used-by.py`, `tools/mado-watchplan.py`) do not exist at the freeze commit or in the tree. Nothing was run against them. QUALITY 105 ("run the attack against the unchanged counter") therefore could not be met; my §C3 numbers come from a re-implementation whose baseline matches the registered baseline.
+- `freeze-verify.txt`, `scope-replay-r55.txt` and `witness.txt` were read as receipts, not re-run.
+- Recipes 1 (self-attesting instruments), 3 (full 30-row forge) and 5 (anchor edit) are inferences from the frozen text and r55 measurements, not run on r56 artefacts.
+- C2 hold-out (H01–H08): sealed, not read, not exported. Whether the sibling read passes them is an inference from the shared `{FX}` layout.
+- Whether `R56ExecWatchplanHarness`'s tool or any w1 counter is final is unknown; I did not evaluate them.
+- Pin fidelity to upstream Hyprland bytes: not checked (no network; no pin re-fetch).
+
+## 7. Sealed material and hold-out disclosure
+
+- I did not enumerate, open or read any hold-out path or file. My glob of `.ufo/waves/round-56/**` was capped at 80 results and showed only `fixtures/c2/` (no `c2-holdout`). I did not list the untracked-files output past its 40-line truncation.
+- I searched committed text for the name `c2-holdout` (git grep at `3423ae28`, registration and claims only). The name is in the committed registration (D4). The name is not sealed content; the content is.
+- The sibling-run used `git archive` of `.ufo/waves/round-56/fixtures/c2` only.
+
+## 8. Tooling, scratch, lane hygiene
+
+- No tool installed, upgraded or removed. Interpreter `python3 -I`; `git` read-only (`ls-tree`, `cat-file`, `show`, `archive`, `grep`, `rev-parse`). No pacman, no `hyprctl`, no network, no service, no subagent.
+- Scratch `/fast/scratch/hyaku/mado-r56/R56ConnHistory/` (export of the committed fixtures, reader copy, the freeze-order work dir) was removed before this report; the verification command confirmed it is absent.
+- Written: this report and the directory `.ufo/waves/round-56/w1/R56ConnHistory/` (`recipes.py`, `recipes.out`, `sibling-run.py`, `sibling-run.out`, `reader.py`, `freeze-order.out`). No tracked file, index, ref or commit touched; the lane was read only.
+- Checks the main agent should run once after integration: (1) the `recipes.py` numbers against the real counter once it exists; (2) the freeze-blob comparison for counter, harness and tool (D1); (3) a sibling-read run on the hold-out only after reveal, from a non-author reader.

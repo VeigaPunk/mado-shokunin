@@ -1,0 +1,131 @@
+witness A fix: 65 (row,entry) additions over 45 rows; metrics after: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+== witnessA counter=ref rc=0
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: PASS -- missed=extra [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: PASS -- missed=extra [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessA counter=always_green rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   | control 1 base-registry: FAIL -- counter printed TARGET_MET on a mutated tree [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: FAIL -- counter printed TARGET_MET on a mutated tree [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: FAIL -- counter printed TARGET_MET on a mutated tree [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- counter printed TARGET_MET on a mutated tree [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessA counter=missing_only rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=2/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: FAIL -- counter printed TARGET_MET on a mutated tree [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- counter printed TARGET_MET on a mutated tree [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessA counter=no_fence rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=5/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: PASS -- missed=extra [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessA counter=always_red rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=2/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: bad (rc=1 verdict=TARGET_MISSED counts={'missing': 1, 'extra': 0, 'dangling': 0})
+   |   note[missing]: counter and harness numbers diverge (not scored): missing counter=1 harness=65
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: FAIL -- missed=missing lacks extra [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: FAIL -- missed=missing lacks dangling [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- missed=missing lacks extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- missed=missing lacks extra [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessA counter=silent_exit0 rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=0/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 70, 'rows': 319, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: bad (stdout does not end with a newline)
+   | control 1 base-registry: FAIL -- exit status 0 (want 1) [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=65]
+   | control 2 fill-all: FAIL -- exit status 0 (want 1) [used-by of all 319 rows := all 70 entry paths; harness extra=21949]
+   | control 3 drop-one: FAIL -- exit status 0 (want 1) [removed corpus/knowledge/animation-table-r26.md from the used-by of S158; harness missing=1]
+   | control 4 dangling-source: FAIL -- exit status 0 (want 1) [appended ' S999' to the source: line of corpus/knowledge/animation-table-r26.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- exit status 0 (want 1) [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- exit status 0 (want 1) [wrapped line 3 of corpus/knowledge/window-rule-effects-getprop.md (only citation of S002) in a ``` fence; harness extra=4]
+== witnessB counter=ref rc=0
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=6/6 verdict=OK
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   | control 1 base-registry: PASS -- missed=missing,extra [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   | control 2 fill-all: PASS -- missed=extra [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   | control 4 dangling-source: PASS -- missed=dangling [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   | control 5 ghost-path: PASS -- missed=extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: PASS -- missed=extra [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]
+== witnessB counter=always_green rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=0/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   |   note[good]: counter and harness numbers diverge (not scored): entries counter=70 harness=4; rows counter=319 harness=6
+   | good: ok (ok)
+   | control 1 base-registry: FAIL -- counter printed TARGET_MET on a mutated tree [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   | control 2 fill-all: FAIL -- counter printed TARGET_MET on a mutated tree [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   | control 3 drop-one: FAIL -- counter printed TARGET_MET on a mutated tree [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   | control 4 dangling-source: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- counter printed TARGET_MET on a mutated tree [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]
+== witnessB counter=missing_only rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=ok controls=2/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: ok (ok)
+   |   note[missing]: counter and harness numbers diverge (not scored): extra counter=0 harness=316
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   | control 2 fill-all: FAIL -- counter printed TARGET_MET on a mutated tree [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   | control 4 dangling-source: FAIL -- counter printed TARGET_MET on a mutated tree [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- counter printed TARGET_MET on a mutated tree [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- counter printed TARGET_MET on a mutated tree [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]
+== witnessB counter=no_fence rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=5/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: bad (rc=1 verdict=TARGET_MISSED counts={'missing': 1, 'extra': 0, 'dangling': 0})
+   |   note[missing]: counter and harness numbers diverge (not scored): missing counter=8 harness=7
+   | control 1 base-registry: PASS -- missed=missing,extra [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   |   note[extra]: counter and harness numbers diverge (not scored): extra counter=16 harness=17
+   | control 2 fill-all: PASS -- missed=extra [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   |   note[missing]: counter and harness numbers diverge (not scored): missing counter=2 harness=1
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   |   note[dangling]: counter and harness numbers diverge (not scored): missing counter=1 harness=0
+   | control 4 dangling-source: PASS -- missed=missing,dangling [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   |   note[extra]: counter and harness numbers diverge (not scored): missing counter=1 harness=0
+   | control 5 ghost-path: PASS -- missed=missing,extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- missed=missing lacks extra [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]
+== witnessB counter=always_red rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=2/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: bad (rc=1 verdict=TARGET_MISSED counts={'missing': 1, 'extra': 0, 'dangling': 0})
+   |   note[missing]: counter and harness numbers diverge (not scored): entries counter=70 harness=4; missing counter=1 harness=7; extra counter=0 harness=316
+   | control 1 base-registry: PASS -- missed=missing [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   | control 2 fill-all: FAIL -- missed=missing lacks extra [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   |   note[missing]: counter and harness numbers diverge (not scored): entries counter=70 harness=4; rows counter=319 harness=6
+   | control 3 drop-one: PASS -- missed=missing [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   | control 4 dangling-source: FAIL -- missed=missing lacks dangling [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- missed=missing lacks extra [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- missed=missing lacks extra [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]
+== witnessB counter=silent_exit0 rc=1
+   stdout: MADO_R56_CONTROLS: claim=c3 good=bad controls=0/6 verdict=FAIL
+   | harness metrics of the good tree: {'entries': 4, 'rows': 6, 'missing': 0, 'extra': 0, 'dangling': 0}
+   | good: bad (stdout does not end with a newline)
+   | control 1 base-registry: FAIL -- exit status 0 (want 1) [corpus/SOURCES.md := bytes at the frozen base revision; harness missing=7]
+   | control 2 fill-all: FAIL -- exit status 0 (want 1) [used-by of all 6 rows := all 4 entry paths; harness extra=17]
+   | control 3 drop-one: FAIL -- exit status 0 (want 1) [removed corpus/knowledge/alpha.md from the used-by of S001; harness missing=1]
+   | control 4 dangling-source: FAIL -- exit status 0 (want 1) [appended ' S999' to the source: line of corpus/knowledge/alpha.md; harness dangling=1]
+   | control 5 ghost-path: FAIL -- exit status 0 (want 1) [added corpus/knowledge/no-such-entry.md to the used-by of S001; harness extra=1]
+   | control 6 fenced-cite: FAIL -- exit status 0 (want 1) [wrapped line 3 of corpus/knowledge/beta.md (only citation of S001) in a ``` fence; harness extra=2]

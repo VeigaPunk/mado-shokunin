@@ -1,0 +1,61 @@
+Receipt for R56RevC2Spec. Commands (python3 -I, scratch dir /fast/scratch/hyaku/mado-r56/R56RevC2Spec, temp tree created by probe.py under that dir, removed after the run is not claimed; the temp tree names are random):
+
+  python3 -I /fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe.py /fast/scratch/hyaku/mado-r56/R56RevC2Spec
+  python3 -I -c 'import os,json; print(os.path.realpath(""), os.getcwd()); ...'   (inline, see report)
+  (undecodable-name probe, ASCII-only output, python3 -I -c with LANG=C.UTF-8 and LANG=C)
+
+Python: 3.14.8 (host python3). `hyprctl getoption misc:disable_autoreload -j` on host printed one line:
+  {"option": "misc:disable_autoreload", "int": 0, "set": false }
+
+--- probe.py output (verbatim) ---
+glob('sub/..'): ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/sub/..']
+glob('conf.d/') dir w/ slash: ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/conf.d/']
+glob('f/') file w/ slash: []
+glob('dangle.conf') literal: ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/dangle.conf']
+glob('*.conf') sorted: ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/dangle.conf']
+glob('[x]/a.conf') literal bracket dir: []
+glob(escape dir) : ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/[x]/a.conf']
+glob('dirlink/') symlink-to-dir w/ slash: ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/dirlink/']
+glob('sub/./') : ['/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/sub/./']
+glob('*') excludes dot: []
+realpath strict loop EXC: "OSError: [Errno 40] Too many levels of symbolic links: '/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/loopA'"
+realpath strict dangle EXC: "FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/mado-r56/R56RevC2Spec/probe-r78ky4ew/nope.conf'"
+lexists dangle: True
+isdir dirlink: True
+islink dirlink: True
+strip NBSP (str.strip): 'a.conf'
+strip explicit set: 'a.conf\xa0'
+strip \x1c: 'a.conf'
+bool is int: True
+json int 1.0 type: 'float'
+json int 1e2 type: 'float'
+json.loads '{"option": "misc:disable_autoreload", "i' EXC: 'JSONDecodeError'
+json.loads '{"a":1}{"b":2}' EXC: 'JSONDecodeError'
+json.loads '{"int": 1, "int": 0}': {'int': 0}
+json.loads '{"int": NaN}': {'int': nan}
+BOM strip: '\ufeffsource'
+splitlines vs split on \n: ['a\x0cb\rc', 'd']
+splitlines(): ['a', 'b', 'c', 'd']
+decode replace: 'a�b.conf'
+glob non-utf8 name via replacement: []
+rc=0
+
+--- inline probe (verbatim) ---
+realpath(empty)= /fast/scratch/hyaku/mado-r56/R56RevC2Spec cwd= /fast/scratch/hyaku/mado-r56/R56RevC2Spec
+bom json EXC JSONDecodeError
+lexists under file False
+isdir(/dev/null) False realpath(/dev/null) /dev/null
+readlink -f /fast -> /fast (not a symlink; so committed fixtures never exercise the display-root realpath branch)
+
+--- undecodable filename probe (name created as bytes a\xff.conf; output ASCII-only) ---
+glob_names_ascii= ["'a\\udcff.conf'"]
+strict-print EXC UnicodeEncodeError         (LANG as inherited, UTF-8 locale path)
+C-locale print: a�.conf                     (env -i LANG=C)
+C-locale ok
+
+--- fixture-tree facts (git ls-tree / cat-file at 3423ae285676c2a10273000f4519163472b443db) ---
+modes: symlinks are 120000 at F05/tree/linked.conf (-> real/theme.conf), F06/tree/hyprland.conf (-> real/main.conf), F10/tree/mix/b.conf (-> missing-target.conf); all other fixture blobs 100644.
+expected.out trailing byte: "\n" present in all checked files (F01, F02, F12, F17, F18).
+frozen-tables.json sha256 = d50d2b7b16506c50cb44358d4284e4f0eb0d14e433594d068a0fbe74c5edf9af (matches registration).
+F12/note.txt says "UNKNOWN: no record; non-object lines are bad_json"; F12/expected.out is "MADO_WATCH: SETUP bad_json" rc 2.
+--- end ---

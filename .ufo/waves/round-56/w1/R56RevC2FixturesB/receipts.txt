@@ -1,0 +1,36 @@
+# python3 -VV
+Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+# git cat-file -t 3423ae…
+commit
+# git archive 3423ae… -- .ufo/waves/round-56/fixtures/c2 | tar -x -C export; find -type l
+  F05/tree/linked.conf -> real/theme.conf
+  F06/tree/hyprland.conf -> real/main.conf
+  F10/tree/mix/b.conf -> missing-target.conf
+# git ls-tree 120000 entries (committed)
+  120000 blob 85177784cb2f28ca648b130c147b4e0c646da79c	.ufo/waves/round-56/fixtures/c2/F05/tree/linked.conf
+  120000 blob aa17c54cd4717466a425307e223ac5064aac5c8e	.ufo/waves/round-56/fixtures/c2/F06/tree/hyprland.conf
+  120000 blob 56919386db07d7864da7eb3b67683c25ff5f195a	.ufo/waves/round-56/fixtures/c2/F10/tree/mix/b.conf
+# driver: independent interp vs expected.out/rc, export (symlinks kept)
+F10 PASS rc=0 exp=0
+F11 PASS rc=0 exp=0
+F12 PASS rc=2 exp=2
+F13 PASS rc=0 exp=0
+F14 PASS rc=0 exp=0
+F15 PASS rc=0 exp=0
+F16 PASS rc=0 exp=0
+F17 PASS rc=2 exp=2
+F18 PASS rc=2 exp=2
+pass 9/9
+# driver: independent interp vs expected.out/rc, working tree (read-only)
+pass 9/9
+# F12 minimal variant (non-object lines dropped) -> UNKNOWN
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=1 unsupported=0 errors=0
+MADO_WATCH: n=1 role=primary path=$ROOT/tree/hyprland.conf type=file mask=IN_CLOSE_WRITE|IN_DONT_FOLLOW via=main
+MADO_WATCH_LIVE: option=misc:disable_autoreload config=0 live=? verdict=UNKNOWN
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=UNKNOWN
+# F10 + mix/c.conf: break (interp) vs continue-mutant
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=3 unsupported=0 errors=3
+MADO_WATCH: config=$ROOT/tree/hyprland.conf autoreload=on disable_autoreload=unset paths=4 unsupported=0 errors=3
+# F13 bool-only getoption: interp vs bool-accepting mutant
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=UNKNOWN
+MADO_WATCH: DONE watches=1 unsupported=0 errors=0 live=DIFFER

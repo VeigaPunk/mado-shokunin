@@ -1,0 +1,21 @@
+# Commands run by seat R56RevQuality (read-only against the lane; scratch-only writes; abbreviated)
+R=/home/vgpnk/Projects/shokunin/mado-shokunin
+git -C $R cat-file -t 3423ae285676c2a10273000f4519163472b443db
+git -C $R merge-base --is-ancestor 3423ae28 HEAD            -> ANCESTOR
+git -C $R diff --stat 3423ae28 HEAD -- <freeze files>        -> empty (no freeze file changed after freeze)
+git -C $R show 63f48dc1:corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md  -> r55/entry.md (scratch)
+git -C $R show 63f48dc1:corpus/SOURCES.md                    -> r55/SOURCES.md (scratch)
+git -C $R show 2aa347b1:.ufo/waves/round-48/w1/ScrMistakes/check100.py -> tools/check100.py (scratch)
+python3 -I tools/check-freeze-order.py --repo $R --rev 2aa347b1 --round 56 --wave w1 --work <scratch>/work/fo  -> receipts/freeze-order-w1.out
+python3 -I tools/check100.py --spec $R/.ufo/waves/round-56/w1-spec.json  -> receipts/check100-w1-spec.out (rc 1)
+python3 -I crit/c3-count.py $R 13f0acbe / 3423ae28 / 2aa347b1  -> receipts/c3-baseline-*.out (65 missing at each)
+python3 -I crit/check-anchor-cover.py --repo $R --rev 63f48dc1 --entry corpus/knowledge/hyprland-keyboard-repeat-numlock-r55.md --work <scratch>/work/c107e  -> receipts/anchor-cover-r55-63f48dc1.out (rc 1, miss=7)
+scratch variant repo (git init; asserted rev-parse --show-toplevel == dir; commits with -c user.name=ctl -c user.email=ctl@ctl):
+  positive: anchors widened -> receipts/anchor-cover-variant-positive.out (rc 0, miss=0)
+  negative: S318 shrunk to 271-278 -> receipts/anchor-cover-variant-negative.out (rc 1, miss=2)
+git -C $R archive 3423ae28 .ufo/waves/round-56/fixtures/c2 | tar -x -C <scratch>/c2export
+python3 -I receipts/run-c2-committed.py <scratch>/c2export sib.py  -> receipts/sibling-reader-committed.out (18/18)
+git -C $R show 3423ae28:.ufo/waves/round-56/fetch/Hyprland-legacy-ConfigManager.cpp | sed -n 1802,1806p  -> receipts/handleSource-pin-lines.txt
+git -C $R show 13f0acbe:SCORECARD.md | sed -n '244p;2722p;2867p'  -> receipts/scorecard-excerpt.txt
+git -C $R grep -l scope-failing 2aa347b1   -> only .ufo/waves/round-56/receipts/scope-replay-r55.txt (no producer)
+git -C $R grep -nE 'Hyprland/efb5099.../src/(config/values/ConfigValues|...)\.cpp' 13f0acbe -- corpus/SOURCES.md  -> receipts/url-duplicates-base.txt
