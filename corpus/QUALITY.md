@@ -595,12 +595,12 @@ Scope. Every evidence row of a knowledge entry, any row class: a table row, outs
 
 For each such row, let R be the registry row whose first cell is that id in `corpus/SOURCES.md` at the checked revision:
 
-1. Uniqueness. R must be the only row with that id. Zero rows reads `reason=no-registry-row`; two or more read `reason=dup-id`, whatever their content.
-2. NAME. The last path component of the last `http(s)://` token in R's source cell (cell 2), with trailing `).,;` removed. If NAME contains `#` or `?`, the row reads `reason=no-name` and must be read by hand.
-3. Bounded occurrence. An occurrence of `NAME:` in R's anchor cell (cell 6) counts only when the character before it is absent or is not in `[A-Za-z0-9_]`. A hyphen or a slash before it is allowed; `OldConfigWatcher.cpp:` does not contain an occurrence of `ConfigWatcher.cpp:`.
-4. Locator list. Right after `NAME:` comes a comma-separated list of locators. Each locator is `N` or `N-M`, decimal, with N at least 1. One optional space may follow a comma. The list continues only while the next item starts with a digit. A locator with M less than N denotes no line and covers nothing.
-5. Cover. Some locator of some counted occurrence has N <= L <= M, where L is the quoted line. A single `N` means N = L.
-6. Length. If the anchor cell names its pin as `pin <path>`, the blob at that path at the checked revision is read, and every locator of the counted occurrence must have max(N, M) <= the blob's line count (the number of `\n`-separated pieces). A locator past the end of the file reads `reason=past-eof` for every row of that pin. An anchor with no named pin reads `eof=unchecked` in the output.
+(1) Uniqueness. R must be the only row with that id. Zero rows reads `reason=no-registry-row`; two or more read `reason=dup-id`, whatever their content.
+(2) NAME. The last path component of the last `http(s)://` token in R's source cell (cell 2), with trailing `).,;` removed. If NAME contains `#` or `?`, the row reads `reason=no-name` and must be read by hand.
+(3) Bounded occurrence. An occurrence of `NAME:` in R's anchor cell (cell 6) counts only when the character before it is absent or is not in `[A-Za-z0-9_]`. A hyphen or a slash before it is allowed; `OldConfigWatcher.cpp:` does not contain an occurrence of `ConfigWatcher.cpp:`.
+(4) Locator list. Right after `NAME:` comes a comma-separated list of locators. Each locator is `N` or `N-M`, decimal, with N at least 1. One optional space may follow a comma. The list continues only while the next item starts with a digit. A locator with M less than N denotes no line and covers nothing.
+(5) Cover. Some locator of some counted occurrence has N <= L <= M, where L is the quoted line. A single `N` means N = L.
+(6) Length. If the anchor cell names its pin as `pin <path>`, the blob at that path at the checked revision is read, and every locator of the counted occurrence must have max(N, M) <= the blob's line count (the number of `\n`-separated pieces). A locator past the end of the file reads `reason=past-eof` for every row of that pin. An anchor with no named pin reads `eof=unchecked` in the output.
 
 Output: one line per evidence row, `ANCHOR_COVER: row=<id> sid=<S###> line=<N> name=<NAME> locators=<list|none> eof=checked|unchecked verdict=OK|MISS [reason=...]`, then `CHECK107: rows=<n> covered=<k> miss=<m> verdict=OK|FAIL`. The requirement is `miss=0` with `rows>0`. Exit 0 on OK, 1 on FAIL, 2 on setup error with empty stdout. The check reads git objects at `<rev>` only and writes only under `--work`.
 
