@@ -291,3 +291,19 @@ items are named in the report; the L1's own receipts are the lane's, not a non-a
   await an operator `jj abandon` (L0 filed, orchestrator messaged); routed criterion for
   round 57: wave items that probe env channels must assert the channel's existence without
   printing values, and a seat-side secret sweep over its own deliverables before yielding.
+- **M56-18 — `jj abandon` of unpushed content-bearing commits strips the working copy on
+  auto-rebase.** Class `landing` (VCS mechanics). Evidence: the 2026-10-30 attempt-2
+  sanitization (operator ruling 15:21 -03, SECURITY HOLD lifted) abandoned
+  `0f3a5436..master` ({cfc63604, f808ca67}); jj auto-rebased the working-copy commit onto
+  0f3a5436 and, because @ owned only its own 2-file delta (the probe-receipt redaction and
+  the M56-17 row), the rebase dropped the 2673-file attempt-2 tree from @ — `jj st`
+  reported "removed 2674 files" plus a conflict at the w3 probe receipt. Captured-by: none
+  that fired — the prepared operator path named the two commands but not the
+  working-copy-delta precondition. Fix, shown able to fail (the strip above is the
+  red-before): `jj op restore` the pre-abandon operation, fold the to-be-abandoned delta
+  into @ FIRST (`jj squash --from '0f3a5436..master' --into @`) so @ owns the full
+  content, then abandon the now-empty commits and re-land through `jj-lane.sh` — landed
+  `441347bc`, GH013 cleared, ls-remote verified. Routed for round 57: a lane sanitization
+  runbook must state "the working copy owns the full delta (squash first) before
+  content-bearing commits are abandoned"; never abandon content that lives only in the
+  commits being abandoned.

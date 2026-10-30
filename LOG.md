@@ -2663,3 +2663,14 @@ W1's held-token attack claim (`tokens=[the]`) was **not reproduced**: W2 ran the
 - Mined M56-11..M56-15 in `corpus/lessons/round-56.md` (attempt-2 section); appended the
   owed round-55 census correction (routed round-55 defect 1). Open L0: rounds 28, 29 and 34
   (three lines) remain outstanding — named in the report (M56-13).
+- 2026-10-30 15:21-03 operator ruling (events log): SECURITY HOLD lifted, dispatch with a
+  credential-sanitization-first mandate; GH013 stays the remote guard. Sanitized and landed:
+  folded the full attempt-2 delta into the working copy (`jj squash --from '0f3a5436..master'
+  --into @`), abandoned the secret-bearing {cfc63604, f808ca67}, re-landed the redacted tree
+  through `jj-lane.sh` as `441347bc` on base `0f3a5436`; push passed GH013; ls-remote
+  verified local=remote=`441347bc`, ahead=0 (M56-18 documents the abandon strip-and-recover).
+  Post-push battery all green at `441347bc` (`.ufo/waves/round-56/receipts/attempt2-l1-postpush.txt`);
+  census exit 0 (`receipts/census-attempt2-end.txt`); secret-pattern set-compare base→tip:
+  0 new matches (11 lookalikes are scanner pattern literals and short lowercase identifiers).
+  Still operator-owned: revoke/rotate BOTH captured credential classes (sanitization does
+  not invalidate live secrets); residual secret-bearing local objects until GC. Mined M56-18.

@@ -1,0 +1,78 @@
+# L1 attempt-2 post-push verification at LANDED tip 441347bc4abfdab315c525d912af693fadaa9c20
+# date: 2026-10-30T15:44:11-03:00
+
+$ python3 -I quality/counters/c1-r56-autoreload-entry.py --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --work /fast/scratch/hyaku/mado-r56/l1/work-c1
+MADO_AUTORELOAD_ENTRY: rev=441347bc4abfdab315c525d912af693fadaa9c20 rows=30/30 hosts=3/3 sources=30/30 scope=30/30 content=33/33 new_rows=8/8 verdict=TARGET_MET missed=none
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c1 --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --work /fast/scratch/hyaku/mado-r56/l1/work-c1
+MADO_R56_CONTROLS: claim=c1 good=ok controls=12/12 verdict=OK
+rc=0
+
+$ python3 -I quality/counters/c3-r56-used-by.py --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --work /fast/scratch/hyaku/mado-r56/l1/work-c3
+MADO_USED_BY: rev=441347bc4abfdab315c525d912af693fadaa9c20 entries=71 rows=334 missing=0 extra=0 dangling=0 conflict=0 stale=0 lost=0 exempt=24 verdict=TARGET_MET missed=none
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c3 --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --work /fast/scratch/hyaku/mado-r56/l1/work-c3
+MADO_R56_CONTROLS: claim=c3 good=ok controls=9/9 verdict=OK
+rc=0
+
+$ python3 -I quality/check-r56-controls.py --claim c2 --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --work /fast/scratch/hyaku/mado-r56/l1/work-c2
+r56_ctl_c2: sandbox=bwrap fixture_commit=ok control_scores={'const-host': (1, 0), 'empty': (0, 0), 'sibling-reader': (0, 0), 'lookup-committed': (18, 0)}
+MADO_R56_C2: rev=441347bc4abfdab315c525d912af693fadaa9c20 fixtures=18/18 holdout=8/8 holdout_commit=ok controls=4/4 verdict=TARGET_MET
+rc=0
+
+$ python3 -I quality/check-index.py --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20
+MADO_INDEX: rev=441347bc4abfdab315c525d912af693fadaa9c20 indexed=71/71 missing=0 dangling=0 duplicates=0 coverage=10.0000/10
+rc=0
+
+$ python3 -I quality/check-tool-ledger.py --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20
+LEDGER: population=98 ledger_rows=98 uncovered=0 dangling=0 bad_pointer=0 empty_desc=0 verdict=TARGET_MET rev=441347bc4abfdab315c525d912af693fadaa9c20
+rc=0
+
+$ python3 -I quality/check-anchor-cover.py --repo . --rev 441347bc4abfdab315c525d912af693fadaa9c20 --entry corpus/knowledge/hyprland-config-autoreload-r56.md --work /fast/scratch/hyaku/mado-r56/l1/work-107
+ANCHOR_COVER: row=K01 sid=S384 line=492 name=ConfigValues.cpp locators=492 eof=checked verdict=OK
+ANCHOR_COVER: row=K02 sid=S384 line=492 name=ConfigValues.cpp locators=492 eof=checked verdict=OK
+ANCHOR_COVER: row=K03 sid=S383 line=33 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K04 sid=S383 line=34 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K05 sid=S383 line=46 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K06 sid=S383 line=54 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K07 sid=S383 line=55 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K08 sid=S383 line=56 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K09 sid=S383 line=60 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K10 sid=S383 line=67 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K11 sid=S383 line=69 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K12 sid=S383 line=105 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=K13 sid=S386 line=128 name=EventLoopManager.cpp locators=71,128 eof=checked verdict=OK
+ANCHOR_COVER: row=K14 sid=S386 line=71 name=EventLoopManager.cpp locators=71,128 eof=checked verdict=OK
+ANCHOR_COVER: row=K15 sid=S385 line=148 name=PropRefresher.cpp locators=148-149 eof=checked verdict=OK
+ANCHOR_COVER: row=K16 sid=S385 line=149 name=PropRefresher.cpp locators=148-149 eof=checked verdict=OK
+ANCHOR_COVER: row=K17 sid=S387 line=1079 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K18 sid=S387 line=1080 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K19 sid=S387 line=1070 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K20 sid=S387 line=776 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K21 sid=S387 line=1836 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K22 sid=S387 line=1835 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K23 sid=S387 line=1844 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K24 sid=S387 line=1816 name=ConfigManager.cpp locators=776,1070,1079-1080,1816,1835-1836,1844 eof=checked verdict=OK
+ANCHOR_COVER: row=K25 sid=S388 line=65 name=MiscFunctions.cpp locators=65,68 eof=checked verdict=OK
+ANCHOR_COVER: row=K26 sid=S388 line=68 name=MiscFunctions.cpp locators=65,68 eof=checked verdict=OK
+ANCHOR_COVER: row=K27 sid=S389 line=1223 name=HyprCtl.cpp locators=1223,1276 eof=checked verdict=OK
+ANCHOR_COVER: row=K28 sid=S389 line=1276 name=HyprCtl.cpp locators=1223,1276 eof=checked verdict=OK
+ANCHOR_COVER: row=K29 sid=S390 line=186 name=inotify.7.html locators=186,262 eof=checked verdict=OK
+ANCHOR_COVER: row=K30 sid=S390 line=262 name=inotify.7.html locators=186,262 eof=checked verdict=OK
+ANCHOR_COVER: row=E01 sid=S393 line=66 name=MiscFunctions.cpp locators=66 eof=checked verdict=OK
+ANCHOR_COVER: row=E02 sid=S383 line=60 name=ConfigWatcher.cpp locators=33-34,46,54-56,60,67,69,105 eof=checked verdict=OK
+ANCHOR_COVER: row=E03 sid=S392 line=106 name=ConfigWatcher.cpp locators=106 eof=checked verdict=OK
+ANCHOR_COVER: row=E04 sid=S394 line=1190 name=HyprCtl.cpp locators=1190 eof=checked verdict=OK
+ANCHOR_COVER: row=E05 sid=S395 line=630 name=ConfigManager.cpp locators=630,1838,2134 eof=checked verdict=OK
+ANCHOR_COVER: row=E06 sid=S395 line=1838 name=ConfigManager.cpp locators=630,1838,2134 eof=checked verdict=OK
+ANCHOR_COVER: row=E07 sid=S395 line=2134 name=ConfigManager.cpp locators=630,1838,2134 eof=checked verdict=OK
+ANCHOR_COVER: row=E08 sid=S391 line=18 name=PropRefresher.hpp locators=18,21 eof=checked verdict=OK
+ANCHOR_COVER: row=E09 sid=S391 line=21 name=PropRefresher.hpp locators=18,21 eof=checked verdict=OK
+CHECK107: rows=39 covered=39 miss=0 verdict=OK
+rc=0
+
+$ python3 tools/mado-watchplan.py --selftest
+MADO_WATCH_SELFTEST: 86/86 assertions passed
+rc=0
